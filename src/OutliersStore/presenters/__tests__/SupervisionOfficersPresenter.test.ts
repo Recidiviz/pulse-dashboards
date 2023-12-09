@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { configure } from "mobx";
+
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
@@ -40,6 +42,7 @@ const getOutlierOfficerDataMock = jest.mocked(getOutlierOfficerData);
 
 beforeEach(() => {
   jest.resetModules();
+  configure({ safeDescriptors: false });
   jest
     .spyOn(UserStore.prototype, "userPseudoId", "get")
     .mockImplementation(() => pseudoId);
@@ -52,12 +55,14 @@ beforeEach(() => {
     new OutliersStore(new RootStore()),
     OutliersConfigFixture
   );
+  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
   presenter = new SupervisionOfficersPresenter(store, pseudoId);
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
+  configure({ safeDescriptors: true });
 });
 
 test("outlierOfficersData", async () => {

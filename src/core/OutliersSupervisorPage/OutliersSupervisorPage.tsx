@@ -49,6 +49,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     outlierOfficersData,
     allOfficers,
     supervisorIsCurrentUser,
+    userCanAccessAllSupervisors,
     timePeriod,
     labels,
   } = presenter;
@@ -108,7 +109,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
       pageTitle={pageTitle}
       infoItems={infoItems}
       contentsAboveTitle={
-        !supervisorIsCurrentUser && (
+        userCanAccessAllSupervisors && (
           <NavigationBackButton
             action={{ url: outliersUrl("supervisionSupervisorsList") }}
           >

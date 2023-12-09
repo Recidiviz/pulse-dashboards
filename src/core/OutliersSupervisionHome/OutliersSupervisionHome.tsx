@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { Redirect } from "react-router-dom";
 
+import { Error } from "../../components/HydrationStatus";
 import { useRootStore } from "../../components/StoreProvider";
 import { outliersUrl } from "../views";
 
@@ -29,7 +30,11 @@ export const OutliersSupervisionHome = observer(
 
     if (!supervisionStore) return null;
 
-    if (supervisionStore?.currentSupervisorUser) {
+    if (supervisionStore.userCanAccessAllSupervisors) {
+      return <Redirect to={outliersUrl("supervisionSupervisorsList")} />;
+    }
+
+    if (supervisionStore.currentSupervisorUser) {
       return (
         <Redirect
           to={outliersUrl("supervisionSupervisor", {
@@ -40,6 +45,6 @@ export const OutliersSupervisionHome = observer(
       );
     }
 
-    return <Redirect to={outliersUrl("supervisionSupervisorsList")} />;
+    return <Error />;
   }
 );

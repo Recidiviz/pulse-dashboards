@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { configure } from "mobx";
+
 import { RootStore } from "../../../RootStore";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
@@ -27,16 +29,19 @@ let store: OutliersSupervisionStore;
 let presenter: SupervisionOfficerSupervisorsPresenter;
 
 beforeEach(() => {
+  configure({ safeDescriptors: false });
   store = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
     OutliersConfigFixture
   );
+  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
   presenter = new SupervisionOfficerSupervisorsPresenter(store);
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
+  configure({ safeDescriptors: true });
 });
 
 test("hydrate", async () => {

@@ -197,10 +197,16 @@ export class OutliersSupervisionStore {
   get supervisionOfficerSupervisors():
     | SupervisionOfficerSupervisor[]
     | undefined {
-    // if the user is a supervisor, the only record they need is their own
-    if (this.currentSupervisorUser) return [this.currentSupervisorUser];
-
-    return this.allSupervisionOfficerSupervisors;
+    if (this.userCanAccessAllSupervisors) {
+      return this.allSupervisionOfficerSupervisors;
+    }
+    if (this.currentSupervisorUser) {
+      // if the user is a supervisor, the only record they need is their own
+      return [this.currentSupervisorUser];
+    }
+    throw new Error(
+      "User is not a supervisor but cannot access all supervisors"
+    );
   }
 
   get benchmarksTimePeriod(): string | undefined {
@@ -254,10 +260,10 @@ export class OutliersSupervisionStore {
     OutliersAPI["supervisionOfficerSupervisors"],
     void
   > {
-    // note that this will bypass hydration if the current user is a supervisor
-    // (since we expect to have already populated this list with their Auth0 data).
-    // we expect the API request to fail for these users anyway so there is no reason
-    // to let the request proceed
+    // note that this will bypass hydration if the current user is a supervisor and does not have
+    // permission to see all supervisors (since we expect to have already populated this list with
+    // their data from /user-info). We expect the API request to fail for these users anyway so
+    // there is no reason to let the request proceed
     if (this.supervisionOfficerSupervisors) return;
 
     this.allSupervisionOfficerSupervisors =

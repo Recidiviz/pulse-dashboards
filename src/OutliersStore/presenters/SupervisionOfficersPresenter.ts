@@ -175,6 +175,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
     );
   }
 
+  get userCanAccessAllSupervisors() {
+    return this.supervisionStore.userCanAccessAllSupervisors;
+  }
+
   get labels(): ConfigLabels {
     return this.supervisionStore.labels;
   }

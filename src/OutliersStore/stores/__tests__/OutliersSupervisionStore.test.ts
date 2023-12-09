@@ -188,6 +188,7 @@ test("adverse metric configs", async () => {
 });
 
 test("hydrate supervisionOfficerSupervisors", async () => {
+  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   expect(store.supervisionOfficerSupervisors).toBeFalsy();
 
   await expect(
@@ -286,11 +287,10 @@ test("userCanAccessAllSupervisors with true route", () => {
   expect(store.userCanAccessAllSupervisors).toBeTrue();
 });
 
-test("current user record for supervisor=", async () => {
+test("current user record for supervisor", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
-      role: "supervision_staff",
       externalId: "abc123",
       pseudonymizedId: "hashed-mdavis123",
       district: "District One",
@@ -332,7 +332,6 @@ test("no current user record for non-supervisor", () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
-      role: "leadership_role",
       externalId: "abc123",
       stateCode: "us_mi",
     });
@@ -344,11 +343,14 @@ test("hydrate supervisors list with current user", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
-      role: "supervision_staff",
       externalId: "abc123",
       pseudonymizedId: "hashed-mdavis123",
       district: "District One",
       stateCode: "us_mi",
+      routes: observable({
+        insights: true,
+        "insights_supervision_supervisors-list": false,
+      }),
     });
   await flowResult(store.hydrateUserInfo());
 
@@ -371,15 +373,18 @@ test("hydrate supervisors list with current user", async () => {
   `);
 });
 
-test("current supervisor user does not hydrate via supervisors API", async () => {
+test("current supervisor user without supervisors list permission does not hydrate via supervisors API", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
-      role: "supervision_staff",
       externalId: "abc123",
       pseudonymizedId: "hashed-mdavis123",
       district: "District One",
       stateCode: "us_mi",
+      routes: observable({
+        insights: true,
+        "insights_supervision_supervisors-list": false,
+      }),
     });
 
   jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
@@ -393,7 +398,58 @@ test("current supervisor user does not hydrate via supervisors API", async () =>
   ).not.toHaveBeenCalled();
 });
 
+test("current supervisor user with supervisors list permission does hydrate via supervisors API", async () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      externalId: "abc123",
+      pseudonymizedId: "hashed-mdavis123",
+      district: "District One",
+      stateCode: "us_mi",
+      routes: observable({
+        insights: true,
+        "insights_supervision_supervisors-list": true,
+      }),
+    });
+
+  jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
+  await flowResult(store.hydrateUserInfo());
+
+  await expect(
+    flowResult(store.hydrateSupervisionOfficerSupervisors())
+  ).toResolve();
+  expect(
+    store.outliersStore.apiClient.supervisionOfficerSupervisors
+  ).toHaveBeenCalled();
+});
+
+test("non-supervisor user without supervisors list permission errors in hydration", async () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      pseudonymizedId: "hashed-leadership123",
+      stateCode: "us_mi",
+      routes: observable({
+        insights: true,
+        "insights_supervision_supervisors-list": false,
+      }),
+    });
+
+  jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
+  await flowResult(store.hydrateUserInfo());
+
+  await expect(
+    flowResult(store.hydrateSupervisionOfficerSupervisors())
+  ).rejects.toThrow(
+    "User is not a supervisor but cannot access all supervisors"
+  );
+  expect(
+    store.outliersStore.apiClient.supervisionOfficerSupervisors
+  ).not.toHaveBeenCalled();
+});
+
 test("look up supervisor by ID", async () => {
+  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   await flowResult(store.hydrateSupervisionOfficerSupervisors());
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];
@@ -403,6 +459,7 @@ test("look up supervisor by ID", async () => {
 });
 
 test("look up supervisor by pseudonymized ID", async () => {
+  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   await flowResult(store.hydrateSupervisionOfficerSupervisors());
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];

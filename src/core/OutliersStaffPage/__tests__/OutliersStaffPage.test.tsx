@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render } from "@testing-library/react";
+import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
@@ -30,8 +31,13 @@ jest.mock(
   "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
 );
 
+beforeEach(() => {
+  configure({ safeDescriptors: false });
+});
+
 afterEach(() => {
   jest.resetAllMocks();
+  configure({ safeDescriptors: true });
 });
 
 describe("Hydrated Staff Page", () => {
@@ -40,7 +46,7 @@ describe("Hydrated Staff Page", () => {
   const supervisorPseudoId = "hashed-mdavis123";
   const officerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     jest
       .spyOn(UserStore.prototype, "userPseudoId", "get")
       .mockImplementation(() => supervisorPseudoId);
@@ -53,6 +59,9 @@ describe("Hydrated Staff Page", () => {
       new RootStore().outliersStore,
       OutliersConfigFixture
     );
+    jest
+      .spyOn(store, "userCanAccessAllSupervisors", "get")
+      .mockReturnValue(true);
     presenter = new SupervisionOfficerDetailPresenter(store, officerPseudoId);
     await presenter?.hydrate();
   });

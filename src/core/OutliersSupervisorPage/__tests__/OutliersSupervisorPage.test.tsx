@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render, screen } from "@testing-library/react";
-import { configure, flowResult } from "mobx";
+import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
+import { supervisionOfficerSupervisorsFixture } from "../../../OutliersStore/models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionOfficersPresenter } from "../../../OutliersStore/presenters/SupervisionOfficersPresenter";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
 import { RootStore } from "../../../RootStore";
@@ -49,11 +50,13 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
+const supervisorUser = supervisionOfficerSupervisorsFixture[0];
+const supervisorPseudoId = supervisorUser.pseudonymizedId;
+
 describe("Hydrated Supervisor Page", () => {
   let presenter: SupervisionOfficersPresenter;
   let rootStore: RootStore;
   let store: OutliersSupervisionStore;
-  const supervisorPseudoId = "hashed-mdavis123";
 
   beforeEach(async () => {
     rootStore = new RootStore();
@@ -67,7 +70,12 @@ describe("Hydrated Supervisor Page", () => {
     await presenter?.hydrate();
   });
 
-  test("Renders the correct title", () => {
+  test("Renders the correct title", async () => {
+    jest
+      .spyOn(store, "userCanAccessAllSupervisors", "get")
+      .mockReturnValue(true);
+    // re-hydrate to pick up the mock
+    await presenter?.hydrate();
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
@@ -84,22 +92,9 @@ describe("Hydrated Supervisor Page", () => {
   });
 
   test("Renders the info items", () => {
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
-    );
-
-    [
-      "D1",
-      "Miles D Davis",
-      "Duke Ellington, Chet Baker, Louis Armstrong",
-    ].forEach((text) => {
-      expect(screen.getByText(text)).toBeInTheDocument();
-    });
-  });
-
-  test("Renders the info items", () => {
+    jest
+      .spyOn(store, "currentSupervisorUser", "get")
+      .mockReturnValue(supervisorUser);
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
@@ -116,6 +111,9 @@ describe("Hydrated Supervisor Page", () => {
   });
 
   test("renders back button", () => {
+    jest
+      .spyOn(store, "userCanAccessAllSupervisors", "get")
+      .mockReturnValue(true);
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
@@ -126,15 +124,30 @@ describe("Hydrated Supervisor Page", () => {
     ).toBeInTheDocument();
   });
 
-  test("does not render back button when viewer is supervisor", async () => {
-    store.outliersStore.rootStore.userStore.user = {
-      "test-metadata-namespace/app_metadata": {
-        stateCode: "us_mi",
-        externalId: "mdavis123",
-        pseudonymizedId: supervisorPseudoId,
-      },
-    };
-    await flowResult(store.hydrateUserInfo());
+  test("renders back button for supervisor who can access all supervisors", () => {
+    jest
+      .spyOn(store, "currentSupervisorUser", "get")
+      .mockReturnValue(supervisorUser);
+    jest
+      .spyOn(store, "userCanAccessAllSupervisors", "get")
+      .mockReturnValue(true);
+    render(
+      <BrowserRouter>
+        <SupervisorPage presenter={presenter} />
+      </BrowserRouter>
+    );
+    expect(
+      screen.getByRole("link", { name: "Go to supervisors list" })
+    ).toBeInTheDocument();
+  });
+
+  test("does not render back button", () => {
+    jest
+      .spyOn(store, "currentSupervisorUser", "get")
+      .mockReturnValue(supervisorUser);
+    jest
+      .spyOn(store, "userCanAccessAllSupervisors", "get")
+      .mockReturnValue(false);
 
     render(
       <BrowserRouter>
@@ -146,15 +159,10 @@ describe("Hydrated Supervisor Page", () => {
     ).toBeNull();
   });
 
-  test("Renders the correct title if current user is supervisor", async () => {
-    store.outliersStore.rootStore.userStore.user = {
-      "test-metadata-namespace/app_metadata": {
-        stateCode: "us_mi",
-        externalId: "mdavis123",
-        pseudonymizedId: supervisorPseudoId,
-      },
-    };
-    await flowResult(store.hydrateUserInfo());
+  test("Renders the correct title if current user is supervisor", () => {
+    jest
+      .spyOn(store, "currentSupervisorUser", "get")
+      .mockReturnValue(supervisorUser);
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
@@ -175,6 +183,9 @@ describe("Hydrated Supervisor Page", () => {
     jest
       .spyOn(rootStore.userStore, "userPseudoId", "get")
       .mockReturnValue(supervisorPseudoId);
+    jest
+      .spyOn(store, "currentSupervisorUser", "get")
+      .mockReturnValue(supervisorUser);
 
     render(
       <BrowserRouter>
@@ -204,6 +215,9 @@ describe("Outliers Supervisor Page", () => {
     rootStore.outliersStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
 
+    jest
+      .spyOn(store, "userCanAccessAllSupervisors", "get")
+      .mockReturnValue(true);
     store.setSupervisorPseudoId("hashed-mdavis123");
   });
 

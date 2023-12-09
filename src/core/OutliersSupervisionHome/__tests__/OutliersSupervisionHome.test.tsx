@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { configure, runInAction } from "mobx";
 import { StaticRouter, StaticRouterProps } from "react-router-dom";
 
@@ -46,7 +46,7 @@ beforeEach(() => {
   );
   outliersStore.supervisionStore = supervisionStore;
 
-  useRootStoreMock.mockReturnValue({ outliersStore });
+  useRootStoreMock.mockReturnValue(outliersStore.rootStore);
 
   routerContext = {};
 });
@@ -56,7 +56,7 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-test("homepage redirects supervisors to their own report", () => {
+test("homepage redirects supervisors without the list permission to their own report", () => {
   jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
     displayName: "",
     fullName: {},
@@ -64,6 +64,9 @@ test("homepage redirects supervisors to their own report", () => {
     pseudonymizedId: "hashed-abc123",
     supervisionDistrict: null,
   });
+  jest
+    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
+    .mockReturnValue(false);
 
   render(
     <StaticRouter location={outliersUrl("supervision")} context={routerContext}>
@@ -78,7 +81,18 @@ test("homepage redirects supervisors to their own report", () => {
   );
 });
 
-test("homepage redirects non-supervisors to the supervisors list page", () => {
+test("homepage redirects supervisors to the supervisors list page if they have the list permission", () => {
+  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
+    displayName: "",
+    fullName: {},
+    externalId: "abc123",
+    pseudonymizedId: "hashed-abc123",
+    supervisionDistrict: null,
+  });
+  jest
+    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
+    .mockReturnValue(true);
+
   render(
     <StaticRouter location={outliersUrl("supervision")} context={routerContext}>
       <OutliersSupervisionHome>null</OutliersSupervisionHome>
@@ -88,7 +102,37 @@ test("homepage redirects non-supervisors to the supervisors list page", () => {
   expect(routerContext.url).toBe(outliersUrl("supervisionSupervisorsList"));
 });
 
+test("homepage redirects non-supervisors to the supervisors list page if they have the list permission", () => {
+  jest
+    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
+    .mockReturnValue(true);
+  render(
+    <StaticRouter location={outliersUrl("supervision")} context={routerContext}>
+      <OutliersSupervisionHome>null</OutliersSupervisionHome>
+    </StaticRouter>
+  );
+
+  expect(routerContext.url).toBe(outliersUrl("supervisionSupervisorsList"));
+});
+
+test("homepage errors for non-supervisors without the list permission", () => {
+  jest
+    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
+    .mockReturnValue(false);
+  render(
+    <StaticRouter location={outliersUrl("supervision")} context={routerContext}>
+      <OutliersSupervisionHome>null</OutliersSupervisionHome>
+    </StaticRouter>
+  );
+  expect(
+    screen.getByText("Sorry, we’re having trouble loading this page")
+  ).toBeInTheDocument();
+});
+
 test("redirect waits for supervision store to be hydrated", async () => {
+  jest
+    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
+    .mockReturnValue(false);
   jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
     displayName: "",
     fullName: {},
