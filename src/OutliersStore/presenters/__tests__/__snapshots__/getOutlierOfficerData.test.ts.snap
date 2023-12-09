@@ -1412,6 +1412,7 @@ Object {
       "config": Object {
         "bodyDisplayName": "absconsion rate",
         "eventName": "absconsions",
+        "eventNameSingular": "absconsion",
         "name": "absconsions_bench_warrants",
         "outcomeType": "ADVERSE",
         "titleDisplayName": "Absconsion Rate",

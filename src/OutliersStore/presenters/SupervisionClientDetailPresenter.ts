@@ -120,6 +120,13 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     );
   }
 
+  get eventsLabelSingular(): string {
+    return (
+      this.supervisionStore.metricConfigsById?.get(this.metricId)
+        ?.eventNameSingular ?? ""
+    );
+  }
+
   get supervisionDetails(): SupervisionDetails | undefined {
     const metricEvents =
       this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId

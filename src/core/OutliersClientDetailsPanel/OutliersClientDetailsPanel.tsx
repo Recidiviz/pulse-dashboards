@@ -125,7 +125,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
     clientId,
     officerPseudoId,
     metricId,
-    eventsLabel,
+    eventsLabelSingular,
     outcomeDate,
   } = presenter;
   const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientId));
@@ -176,7 +176,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
         <OutliersClientDetails
           client={clientInfo}
           supervisionDetails={supervisionDetails}
-          eventsLabel={eventsLabel}
+          eventsLabel={eventsLabelSingular}
           outcomeDate={outcomeDate}
         />
         <OutliersClientEventsTable

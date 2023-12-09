@@ -193,6 +193,7 @@ Array [
         "config": Object {
           "bodyDisplayName": "absconsion rate",
           "eventName": "absconsions",
+          "eventNameSingular": "absconsion",
           "name": "absconsions_bench_warrants",
           "outcomeType": "ADVERSE",
           "titleDisplayName": "Absconsion Rate",
@@ -421,6 +422,7 @@ Array [
         "config": Object {
           "bodyDisplayName": "incarceration rate",
           "eventName": "incarcerations",
+          "eventNameSingular": "incarceration",
           "name": "incarceration_starts",
           "outcomeType": "ADVERSE",
           "titleDisplayName": "Incarceration Rate",
@@ -1859,6 +1861,7 @@ Array [
         "config": Object {
           "bodyDisplayName": "absconsion rate",
           "eventName": "absconsions",
+          "eventNameSingular": "absconsion",
           "name": "absconsions_bench_warrants",
           "outcomeType": "ADVERSE",
           "titleDisplayName": "Absconsion Rate",

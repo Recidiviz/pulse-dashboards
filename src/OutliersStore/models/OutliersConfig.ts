@@ -32,6 +32,7 @@ export const outliersConfigSchema = z.object({
       titleDisplayName: z.string(),
       bodyDisplayName: z.string(),
       eventName: z.string(),
+      eventNameSingular: z.string(),
     })
   ),
   clientEvents: z.array(

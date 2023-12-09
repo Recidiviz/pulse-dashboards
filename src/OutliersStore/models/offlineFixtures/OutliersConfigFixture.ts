@@ -32,6 +32,7 @@ export const OutliersConfigFixture: OutliersConfig = {
       bodyDisplayName: "absconsion rate",
       titleDisplayName: "Absconsion Rate",
       eventName: "absconsions",
+      eventNameSingular: "absconsion",
       outcomeType: "ADVERSE",
     },
     {
@@ -39,6 +40,7 @@ export const OutliersConfigFixture: OutliersConfig = {
       bodyDisplayName: "incarceration rate",
       titleDisplayName: "Incarceration Rate",
       eventName: "incarcerations",
+      eventNameSingular: "incarceration",
       outcomeType: "ADVERSE",
     },
     {
@@ -46,6 +48,7 @@ export const OutliersConfigFixture: OutliersConfig = {
       bodyDisplayName: "technical incarceration rate",
       titleDisplayName: "Technical Incarceration Rate",
       eventName: "technical incarcerations",
+      eventNameSingular: "technical incarceration",
       outcomeType: "ADVERSE",
     },
   ],

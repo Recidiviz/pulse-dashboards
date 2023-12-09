@@ -17,7 +17,6 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import moment from "moment";
-import pluralize from "pluralize";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
@@ -129,10 +128,7 @@ function ClientSupervisionDetails({
         </Detail>
 
         <Detail>
-          <DetailTitle>
-            {/* TODO(#4357) Read singular label from config */}
-            Date of {toTitleCase(pluralize.singular(eventsLabel))}
-          </DetailTitle>
+          <DetailTitle>Date of {toTitleCase(eventsLabel)}</DetailTitle>
           <DetailContent>{formatWorkflowsDate(outcomeDate)}</DetailContent>
         </Detail>
 
