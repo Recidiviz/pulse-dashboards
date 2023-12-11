@@ -15,16 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays, subDays } from "date-fns";
-
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
-import { ClientEvent } from "../models/ClientEvent";
-import { ClientInfo } from "../models/ClientInfo";
+import { formatDateToISO } from "../../utils";
+import { ClientEvent, clientEventSchema } from "../models/ClientEvent";
+import { ClientInfo, clientInfoSchema } from "../models/ClientInfo";
 import {
   MetricBenchmark,
   metricBenchmarkSchema,
 } from "../models/MetricBenchmark";
-import { LATEST_END_DATE } from "../models/offlineFixtures/constants";
 import { outliersConfigSchema } from "../models/OutliersConfig";
 import {
   SupervisionOfficer,
@@ -139,38 +137,30 @@ export class OutliersAPIClient implements OutliersAPI {
     });
   }
 
-  // TODO(#4307): Fetch real data from backend
-  // eslint-disable-next-line class-methods-use-this
   async clientInfo(clientPseudoId: string): Promise<ClientInfo> {
-    const { clientInfoFixture } = await import(
-      "../models/offlineFixtures/ClientInfoFixture"
-    );
-
-    const clientInfo = clientInfoFixture[clientPseudoId];
-
-    if (!clientInfo) {
-      throw new Error(`Client ${clientPseudoId} not present in fixture data`);
-    }
-
-    return clientInfo;
+    const endpoint = `outliers/${this.tenantId()}/client/${clientPseudoId}`;
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      const clientData = fetchedData.client as unknown;
+      return clientInfoSchema.parse(clientData);
+    });
   }
 
-  // TODO(#4307): Fetch real data from backend
-  // eslint-disable-next-line class-methods-use-this
   async clientEvents(
     clientPseudoId: string,
     endDate: Date
   ): Promise<Array<ClientEvent>> {
-    const { clientEventFixture } = await import(
-      "../models/offlineFixtures/ClientEventFixture"
-    );
-
-    // adjust fixture dates relative to the input
-    const dateOffsetInDays = differenceInDays(LATEST_END_DATE, endDate);
-
-    return clientEventFixture.map((event) => ({
-      ...event,
-      eventDate: subDays(event.eventDate, dateOffsetInDays),
-    }));
+    const endpoint = `outliers/${this.tenantId()}/client/${clientPseudoId}/events?period_end_date=${formatDateToISO(
+      endDate
+    )}`;
+    return callNewMetricsApi(
+      endpoint,
+      this.outliersStore.rootStore.getTokenSilently
+    ).then((fetchedData) => {
+      const eventsData = fetchedData.events as Array<unknown>;
+      return eventsData.map((b) => clientEventSchema.parse(b));
+    });
   }
 }

@@ -135,7 +135,7 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     const clientEvent = metricEvents?.find(
       (e: SupervisionOfficerMetricEvent) => {
         return (
-          e.clientId === this.clientId &&
+          e.pseudonymizedClientId === this.clientPseudoId &&
           // Only compare dates to the day granularity - since that is the
           // granularity of outcomeDate in the SupervisionStore
           moment(e.eventDate).isSame(moment(this.outcomeDate), "day")
@@ -151,18 +151,13 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     );
   }
 
-  get clientId(): string | undefined {
-    return this.supervisionStore.clientId;
-  }
-
   trackViewed(): void {
     const { userPseudoId } =
       this.supervisionStore.outliersStore.rootStore.userStore;
 
     this.supervisionStore.outliersStore.rootStore.analyticsStore.trackOutliersClientPageViewed(
       {
-        // TODO (#4448) Change this to this.clientPseudoId once clientPseudoId is in the url
-        clientPseudonymizedId: this.clientInfo?.pseudonymizedClientId,
+        clientPseudonymizedId: this.clientPseudoId,
         outcomeDate: this.outcomeDate,
         viewedBy: userPseudoId,
       }

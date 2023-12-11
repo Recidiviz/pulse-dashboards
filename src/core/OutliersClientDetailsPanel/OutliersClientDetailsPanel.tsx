@@ -93,14 +93,15 @@ function withPresenter(
       outliersStore: { supervisionStore },
     } = useRootStore();
     if (!supervisionStore) return null;
-    const { clientId, metricId, officerPseudoId, outcomeDate } =
+    const { clientPseudoId, metricId, officerPseudoId, outcomeDate } =
       supervisionStore;
-    if (!clientId || !metricId || !officerPseudoId || !outcomeDate) return null;
+    if (!clientPseudoId || !metricId || !officerPseudoId || !outcomeDate)
+      return null;
 
     const presenter = new SupervisionClientDetailPresenter(
       supervisionStore,
       officerPseudoId,
-      clientId,
+      clientPseudoId,
       metricId,
       outcomeDate
     );
@@ -122,13 +123,13 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
     clientInfo,
     clientEvents,
     supervisionDetails,
-    clientId,
+    clientPseudoId,
     officerPseudoId,
     metricId,
     eventsLabelSingular,
     outcomeDate,
   } = presenter;
-  const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientId));
+  const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientPseudoId));
   const [isRedirect, setIsRedirect] = useState(false);
 
   const [scrollElement, setScrollElement] = useState(null);
@@ -139,9 +140,9 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   }, [presenter]);
 
   useEffect(() => {
-    setModalIsOpen(Boolean(clientId));
+    setModalIsOpen(Boolean(clientPseudoId));
     setIsRedirect(false);
-  }, [clientId]);
+  }, [clientPseudoId]);
 
   if (!outliersClientDetail || isRedirect) {
     return (

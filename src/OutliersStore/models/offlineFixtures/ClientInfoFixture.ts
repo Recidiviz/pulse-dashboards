@@ -20,7 +20,7 @@ import { mapValues } from "lodash";
 import { ClientInfo, clientInfoSchema, RawClientInfo } from "../ClientInfo";
 
 export const rawClientInfoFixture: Record<string, RawClientInfo> = {
-  "707222": {
+  "hashed-707222": {
     clientName: {
       givenNames: "Gary",
       surname: "Alexander",
@@ -31,7 +31,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "205752": {
+  "hashed-205752": {
     clientName: {
       givenNames: "Beau",
       surname: "Riley",
@@ -42,7 +42,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "792381": {
+  "hashed-792381": {
     clientName: {
       givenNames: "Deena",
       surname: "Dunlap",
@@ -53,7 +53,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "869516": {
+  "hashed-869516": {
     clientName: {
       givenNames: "Angelo",
       surname: "Cohen",
@@ -64,7 +64,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "170571": {
+  "hashed-170571": {
     clientName: {
       givenNames: "Ward",
       surname: "Bradley",
@@ -75,7 +75,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "461718": {
+  "hashed-461718": {
     clientName: {
       givenNames: "Janette",
       surname: "Sosa",
@@ -86,7 +86,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "837771": {
+  "hashed-837771": {
     clientName: {
       givenNames: "Nora",
       surname: "Robbins",
@@ -97,7 +97,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: null,
     birthdate: null,
   },
-  "617754": {
+  "hashed-617754": {
     clientName: {
       givenNames: "Jason",
       surname: "Barton",
@@ -109,7 +109,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     birthdate: "1971-03-15",
   },
 
-  "985771": {
+  "hashed-985771": {
     clientName: {
       givenNames: "Nicholas",
       surname: "Rhodes",
@@ -120,7 +120,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "326160": {
+  "hashed-326160": {
     clientName: {
       givenNames: "Ethel",
       surname: "Leonard",
@@ -131,7 +131,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "931890": {
+  "hashed-931890": {
     clientName: {
       givenNames: "Ricardo",
       surname: "Wood",
@@ -142,7 +142,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "930441": {
+  "hashed-930441": {
     clientName: {
       givenNames: "Stanley",
       surname: "Maxwell",
@@ -153,7 +153,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "564940": {
+  "hashed-564940": {
     clientName: {
       givenNames: "Miguel",
       surname: "Haynes",
@@ -165,7 +165,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     birthdate: "1971-03-15",
   },
 
-  "144925": {
+  "hashed-144925": {
     clientName: {
       givenNames: "Inez",
       surname: "Griffith",
@@ -176,7 +176,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "283496": {
+  "hashed-283496": {
     clientName: {
       givenNames: "Gerald",
       surname: "Barber",
@@ -187,7 +187,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "334531": {
+  "hashed-334531": {
     clientName: {
       givenNames: "Leroy",
       surname: "Stone",
@@ -198,7 +198,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "840134": {
+  "hashed-840134": {
     clientName: {
       givenNames: "Patrick",
       surname: "Schneider",
@@ -209,7 +209,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "968048": {
+  "hashed-968048": {
     clientName: {
       givenNames: "Violet",
       surname: "Johnson",
@@ -220,7 +220,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "413899": {
+  "hashed-413899": {
     clientName: {
       givenNames: "Warren",
       surname: "Franklin",
@@ -231,7 +231,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "415630": {
+  "hashed-415630": {
     clientName: {
       givenNames: "Alta",
       surname: "Jackson",
@@ -243,7 +243,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     birthdate: "1971-03-15",
   },
 
-  "235261": {
+  "hashed-235261": {
     clientName: {
       givenNames: "Rosie",
       surname: "Luna",
@@ -254,7 +254,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "531407": {
+  "hashed-531407": {
     clientName: {
       givenNames: "Glenn",
       surname: "Francis",
@@ -265,7 +265,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "436502": {
+  "hashed-436502": {
     clientName: {
       givenNames: "Steve",
       surname: "Schwartz",
@@ -276,7 +276,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "339710": {
+  "hashed-339710": {
     clientName: {
       givenNames: "Bertha",
       surname: "Figueroa",
@@ -288,7 +288,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     birthdate: "1971-03-15",
   },
 
-  "803013": {
+  "hashed-803013": {
     clientName: {
       givenNames: "Troy",
       surname: "Rodgers",
@@ -299,7 +299,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "470308": {
+  "hashed-470308": {
     clientName: {
       givenNames: "Leo",
       surname: "Marshall",
@@ -310,7 +310,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "582059": {
+  "hashed-582059": {
     clientName: {
       givenNames: "Shawn",
       surname: "Romero",
@@ -321,7 +321,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "374673": {
+  "hashed-374673": {
     clientName: {
       givenNames: "Jeremiah",
       surname: "Walsh",
@@ -332,7 +332,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "128785": {
+  "hashed-128785": {
     clientName: {
       givenNames: "Dorothy",
       surname: "Luna",
@@ -343,7 +343,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "914408": {
+  "hashed-914408": {
     clientName: {
       givenNames: "Viola",
       surname: "Schultz",
@@ -354,7 +354,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     raceOrEthnicity: "BLACK",
     birthdate: "1971-03-15",
   },
-  "504894": {
+  "hashed-504894": {
     clientName: {
       givenNames: "Marie",
       surname: "Hudson",

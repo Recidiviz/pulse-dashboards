@@ -31,7 +31,7 @@ const RouteSync = observer(function RouteSync({ children }) {
     supervisorPseudoId,
     officerPseudoId,
     metricId,
-    clientId,
+    clientPseudoId,
     outcomeDate,
   } = routeParams;
   const loc: Location = useLocation();
@@ -52,12 +52,12 @@ const RouteSync = observer(function RouteSync({ children }) {
         supervisionStore.setSupervisorPseudoId(supervisorPseudoId);
         supervisionStore.setOfficerPseudoId(officerPseudoId);
         supervisionStore.setMetricId(metricId);
-        supervisionStore.setClientId(clientId);
+        supervisionStore.setClientPseudoId(clientPseudoId);
         supervisionStore.setOutcomeDate(outcomeDate);
       }
     });
     syncParams();
-  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId, clientId, outcomeDate]);
+  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId, clientPseudoId, outcomeDate]);
 
   if (
     !supervisionStore?.userCanAccessAllSupervisors &&

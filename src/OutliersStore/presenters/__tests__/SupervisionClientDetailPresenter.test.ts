@@ -30,7 +30,7 @@ import { SupervisionClientDetailPresenter } from "../SupervisionClientDetailPres
 
 let store: OutliersSupervisionStore;
 const pseudoId = "hashed-mdavis123";
-const clientId = "985771";
+const clientPseudoId = "hashed-985771";
 const endDate = "2023-05-01";
 
 jest.mock("../utils", () => {
@@ -54,13 +54,13 @@ beforeEach(() => {
   );
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
   store.setMetricId(testMetric.metricId);
-  store.setClientId(clientId);
+  store.setClientPseudoId(clientPseudoId);
   store.setOutcomeDate(endDate);
 
   presenter = new SupervisionClientDetailPresenter(
     store,
     testOfficer.pseudonymizedId,
-    clientId,
+    clientPseudoId,
     testMetric.metricId,
     new Date(endDate)
   );
@@ -78,9 +78,9 @@ describe("with client data already hydrated", () => {
   beforeEach(async () => {
     await Promise.all([
       flowResult(
-        store.hydrateClientEventsForClient(clientId, parseISO(endDate))
+        store.hydrateClientEventsForClient(clientPseudoId, parseISO(endDate))
       ),
-      flowResult(store.hydrateClientInfoForClient(clientId)),
+      flowResult(store.hydrateClientInfoForClient(clientPseudoId)),
     ]);
   });
 
@@ -139,7 +139,10 @@ test("has clientInfo", async () => {
 test("has supervisionDetails if metric event date matches outcomeDate", async () => {
   const officerMetricEventDate = supervisionOfficerMetricEventFixture.find(
     (e) => {
-      return e.clientId === clientId && e.metricId === testMetric.metricId;
+      return (
+        e.pseudonymizedClientId === clientPseudoId &&
+        e.metricId === testMetric.metricId
+      );
     }
   )?.eventDate;
   store.setOutcomeDate(officerMetricEventDate?.toISOString());
@@ -148,7 +151,7 @@ test("has supervisionDetails if metric event date matches outcomeDate", async ()
     presenter = new SupervisionClientDetailPresenter(
       store,
       testOfficer.pseudonymizedId,
-      clientId,
+      clientPseudoId,
       testMetric.metricId,
       store.outcomeDate
     );
@@ -187,7 +190,7 @@ test("tracks events", async () => {
   expect(
     store.outliersStore.rootStore.analyticsStore.trackOutliersClientPageViewed
   ).toHaveBeenCalledWith({
-    clientPseudonymizedId: presenter.clientInfo?.pseudonymizedClientId,
+    clientPseudonymizedId: presenter.clientPseudoId,
     outcomeDate: new Date(endDate),
     viewedBy: pseudoId,
   });

@@ -49,7 +49,7 @@ export class OutliersSupervisionStore {
 
   metricId?: string;
 
-  clientId?: string;
+  clientPseudoId?: string;
 
   outcomeDate?: Date;
 
@@ -299,8 +299,8 @@ export class OutliersSupervisionStore {
     this.metricId = metricId;
   }
 
-  setClientId(clientId: string | undefined): void {
-    this.clientId = clientId;
+  setClientPseudoId(clientPseudoId: string | undefined): void {
+    this.clientPseudoId = clientPseudoId;
   }
 
   setOutcomeDate(dateString: string | undefined): void {

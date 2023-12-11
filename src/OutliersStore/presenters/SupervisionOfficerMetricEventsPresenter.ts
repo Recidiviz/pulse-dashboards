@@ -103,8 +103,8 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
     );
   }
 
-  get clientId() {
-    return this.supervisionStore.clientId;
+  get clientPseudoId() {
+    return this.supervisionStore.clientPseudoId;
   }
 
   get clientDetailLinks(): Array<string> | undefined {
@@ -118,7 +118,7 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
       outliersUrl("supervisionClientDetail", {
         officerPseudoId: this.officerPseudoId,
         metricId: this.metricId,
-        clientId: d.clientId,
+        clientPseudoId: d.pseudonymizedClientId,
         outcomeDate: formatDateToISO(d.eventDate),
       })
     );

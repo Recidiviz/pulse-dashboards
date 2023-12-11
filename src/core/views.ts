@@ -299,7 +299,7 @@ export const OUTLIERS_PATHS: Record<OutliersPage, string> = {
   supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorPseudoId`,
   supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId`,
   supervisionStaffMetric: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId`,
-  supervisionClientDetail: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId/client/:clientId/:outcomeDate`,
+  supervisionClientDetail: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
 };
 
 export type OutliersPage = keyof typeof OUTLIERS_PAGES;
@@ -332,7 +332,7 @@ export function outliersUrl(
   params: {
     officerPseudoId: string;
     metricId: string;
-    clientId: string;
+    clientPseudoId: string;
     outcomeDate: string;
   }
 ): string;

@@ -102,7 +102,7 @@ const OutliersTable = <T extends object>({
   columns,
   rowLinks,
   scrollElement,
-  hiddenColumnId = "clientId",
+  hiddenColumnId = "clientPseudoId",
   rowSize = DEFAULT_TABLE_ROW_SIZE,
   transformToMobile = false,
 }: OutlierTableProps<T>) => {

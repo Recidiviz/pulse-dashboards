@@ -54,8 +54,7 @@ type StaffPageTrackingMetadata = {
 };
 
 type ClientPageTrackingMetadata = {
-  // TODO (#4448) Change this to required once clientPseudoId is in the url
-  clientPseudonymizedId?: string;
+  clientPseudonymizedId: string;
   outcomeDate: Date;
   viewedBy?: string;
 };

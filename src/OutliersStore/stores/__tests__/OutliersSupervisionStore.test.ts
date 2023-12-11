@@ -21,7 +21,7 @@ import { configure, flowResult, observable } from "mobx";
 import { ValuesType } from "utility-types";
 
 import { RootStore } from "../../../RootStore";
-import { formatDate } from "../../../utils";
+import { formatDateToISO } from "../../../utils";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import {
   CASELOAD_TYPE_IDS,
@@ -495,8 +495,9 @@ test("hydrate latestBenchmarksDate", async () => {
 });
 
 test("hydrate clientEvents", async () => {
-  const testClientPseudoId = supervisionOfficerMetricEventFixture[0].clientId;
-  const outcomeDateString = formatDate(LATEST_END_DATE, "yyyy-MM-dd");
+  const testClientPseudoId =
+    supervisionOfficerMetricEventFixture[0].pseudonymizedClientId;
+  const outcomeDateString = formatDateToISO(LATEST_END_DATE);
   store.setOutcomeDate(outcomeDateString);
 
   function getTestEvents() {
@@ -521,7 +522,8 @@ test("hydrate clientEvents", async () => {
 });
 
 test("hydrate clientInfo", async () => {
-  const testClientPseudoId = supervisionOfficerMetricEventFixture[0].clientId;
+  const testClientPseudoId =
+    supervisionOfficerMetricEventFixture[0].pseudonymizedClientId;
 
   function getTestInfo() {
     return store.clientInfoByClientPseudoId.get(testClientPseudoId);
