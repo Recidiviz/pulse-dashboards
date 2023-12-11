@@ -15,17 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PATHWAYS_TENANTS } from "./pathwaysTenants";
+import simplur from "simplur";
 
-export const US_CA = "US_CA";
-export const US_OR = "US_OR";
+import { OpportunityConfig } from "../../OpportunityConfigs";
+import { UsOrEarlyDischargeOpportunity } from "./UsOrEarlyDischargeOpportunity";
 
-export const WORKFLOWS_ONLY_TENANTS = [US_CA, US_OR] as const;
-
-/**
- * Tenants that have access to the Recidiviz Dashboard, including Pathways, Operations, and Workflows.
- */
-export const DASHBOARD_TENANTS = [
-  ...WORKFLOWS_ONLY_TENANTS,
-  ...PATHWAYS_TENANTS,
-];
+export const usOrEarlyDischargeConfig: OpportunityConfig<UsOrEarlyDischargeOpportunity> =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_OR",
+    urlSection: "earlyDischarge",
+    label: "Early Discharge",
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be `,
+      opportunityText: "eligible for early discharge",
+      callToAction:
+        "Review clients who may be eligible for Early Discharge and complete the paperwork.",
+    }),
+    firestoreCollection: "US_OR-earlyDischarge",
+  };

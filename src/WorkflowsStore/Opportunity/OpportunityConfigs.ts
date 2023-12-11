@@ -16,6 +16,7 @@
 // =============================================================================
 import { SystemId } from "../../core/models/types";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
+import { PartialRecord } from "../../utils/typeUtils";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { OpportunityBase } from "./OpportunityBase";
@@ -39,6 +40,7 @@ import { usMiPastFTRDConfig as usMiPastFTRD } from "./UsMi/UsMiPastFTRDOpportuni
 import { usMiSupervisionLevelDowngradeConfig as usMiSupervisionLevelDowngrade } from "./UsMi/UsMiSupervisionLevelDowngradeOpportunity/config";
 import { usMoRestrictiveHousingStatusHearingConfig as usMoRestrictiveHousingStatusHearing } from "./UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/config";
 import { usNdEarlyTerminationConfig as earlyTermination } from "./UsNd/UsNdEarlyTerminationOpportunity/config";
+import { usOrEarlyDischargeConfig as usOrEarlyDischarge } from "./UsOr/UsOrEarlyDischargeOpportunity/config";
 import { usTnCompliantReportingConfig as compliantReporting } from "./UsTn/CompliantReportingOpportunity/config";
 import { UsTnAnnualReclassificationReviewConfig as usTnAnnualReclassification } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/config";
 import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./UsTn/UsTnCustodyLevelDowngradeOpportunity/config";
@@ -146,6 +148,9 @@ export const OPPORTUNITY_CONFIGS = {
   /* US_ND */
   earlyTermination,
 
+  /* US_OR */
+  usOrEarlyDischarge,
+
   /* US_TN */
   compliantReporting,
   usTnCustodyLevelDowngrade,
@@ -211,7 +216,7 @@ export const INCARCERATION_OPPORTUNITY_TYPES =
     "INCARCERATION"
   );
 
-type ConfigsByStateMapping = Record<
+type ConfigsByStateMapping = PartialRecord<
   TenantId,
   Record<OpportunityType, OpportunityConfig<Opportunity>>
 >;
@@ -257,6 +262,6 @@ export function isOpportunityTypeUrlForState(
 export const getStateOpportunityTypes = (
   stateCode: keyof typeof OPPORTUNITY_CONFIGS_BY_STATE
 ): OpportunityType[] => {
-  const stateConfigs: any = OPPORTUNITY_CONFIGS_BY_STATE[stateCode];
-  return Object.keys(stateConfigs) as OpportunityType[];
+  const stateConfigs = OPPORTUNITY_CONFIGS_BY_STATE[stateCode];
+  return stateConfigs ? (Object.keys(stateConfigs) as OpportunityType[]) : [];
 };

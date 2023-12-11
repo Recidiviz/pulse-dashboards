@@ -20,6 +20,7 @@ import { TenantConfig } from "./core/models/types";
 import {
   DASHBOARD_TENANTS,
   US_CA,
+  US_OR,
 } from "./RootStore/TenantStore/dashboardTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
@@ -33,6 +34,7 @@ import US_MI_CONFIG from "./tenants/US_MI";
 import US_MO_CONFIG from "./tenants/US_MO";
 import US_NC_CONFIG from "./tenants/US_NC";
 import US_ND_CONFIG from "./tenants/US_ND";
+import US_OR_CONFIG from "./tenants/US_OR";
 import US_PA_CONFIG from "./tenants/US_PA";
 import US_TN_CONFIG from "./tenants/US_TN";
 
@@ -55,6 +57,7 @@ const TENANTS: Tenants = {
   [lantern.US_MO]: US_MO_CONFIG,
   [pathways.US_NC]: US_NC_CONFIG,
   [pathways.US_ND]: US_ND_CONFIG,
+  [US_OR]: US_OR_CONFIG,
   [lantern.US_PA]: US_PA_CONFIG,
   [pathways.US_TN]: US_TN_CONFIG,
   RECIDIVIZ: {

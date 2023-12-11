@@ -43,6 +43,7 @@ const TenantIds = [
   pathways.US_MI,
   pathways.US_NC,
   pathways.US_ND,
+  workflows.US_OR,
   RECIDIVIZ_TENANT,
   CSG,
   ...InternalTenantIds,

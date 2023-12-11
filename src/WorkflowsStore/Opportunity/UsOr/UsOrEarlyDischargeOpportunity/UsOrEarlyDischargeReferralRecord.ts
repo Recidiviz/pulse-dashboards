@@ -15,17 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PATHWAYS_TENANTS } from "./pathwaysTenants";
+import { z } from "zod";
 
-export const US_CA = "US_CA";
-export const US_OR = "US_OR";
+export const usOrEarlyDischargeSchema = z.object({
+  stateCode: z.string(),
+  externalId: z.string(),
+  formInformation: z.object({}),
+  eligibleCriteria: z.object({}),
+  ineligibleCriteria: z.object({}),
+});
 
-export const WORKFLOWS_ONLY_TENANTS = [US_CA, US_OR] as const;
+export type UsOrEarlyDischargeReferralRecordRaw = z.input<
+  typeof usOrEarlyDischargeSchema
+>;
 
-/**
- * Tenants that have access to the Recidiviz Dashboard, including Pathways, Operations, and Workflows.
- */
-export const DASHBOARD_TENANTS = [
-  ...WORKFLOWS_ONLY_TENANTS,
-  ...PATHWAYS_TENANTS,
-];
+export type UsOrEarlyDischargeReferralRecord = z.infer<
+  typeof usOrEarlyDischargeSchema
+>;
