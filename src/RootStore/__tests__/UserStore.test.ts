@@ -863,16 +863,28 @@ describe("feature variants", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     store = new UserStore({});
+    runInAction(() => {
+      store.isAuthorized = true;
+      store.userIsLoading = false;
+    });
   });
 
   afterEach(() => {
     jest.useRealTimers();
   });
 
+  test("Does not throw error on failed logins", () => {
+    runInAction(() => {
+      getMockUserObject({});
+      store.isAuthorized = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({});
+  });
+
   test("feature variants active by default for Recidiviz users", async () => {
     runInAction(() => {
       store.user = getMockUserObject({ stateCode: "RECIDIVIZ" });
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
@@ -902,7 +914,6 @@ describe("feature variants", () => {
         featureVariants: { TEST: {} },
         stateCode: "RECIDIVIZ",
       });
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toEqual({ TEST: {} });
@@ -911,7 +922,6 @@ describe("feature variants", () => {
   test("no feature variants", async () => {
     runInAction(() => {
       store.user = getMockUserObject();
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toEqual({});
@@ -922,7 +932,6 @@ describe("feature variants", () => {
       store.user = getMockUserObject({
         featureVariants: { TEST: { variant: "a" } },
       });
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toEqual({
@@ -939,7 +948,6 @@ describe("feature variants", () => {
           },
         },
       });
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toEqual({
@@ -956,7 +964,6 @@ describe("feature variants", () => {
           },
         },
       });
-      store.userIsLoading = false;
     });
     expect(store.activeFeatureVariants).toEqual({});
 
@@ -979,7 +986,6 @@ describe("feature variants", () => {
         featureVariants: { TEST: { variant: "a" } },
         demoModeFeatureVariants: { usMeWorkRelease: {} },
       });
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toEqual({
@@ -993,7 +999,6 @@ describe("feature variants", () => {
 
     runInAction(() => {
       store.user = getMockUserObject({ featureVariants: { TEST: {} } });
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toEqual({
@@ -1008,7 +1013,6 @@ describe("feature variants", () => {
           TEST: {},
         },
       });
-      store.userIsLoading = false;
     });
 
     expect(store.activeFeatureVariants).toEqual({});

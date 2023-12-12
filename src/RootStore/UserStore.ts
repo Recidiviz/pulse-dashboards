@@ -421,7 +421,7 @@ export default class UserStore {
    * the activeDate for each feature and observing the current Date for reactivity
    */
   get activeFeatureVariants(): ActiveFeatureVariantRecord {
-    if (this.userIsLoading) {
+    if (this.userIsLoading || !this.isAuthorized) {
       return {};
     }
 

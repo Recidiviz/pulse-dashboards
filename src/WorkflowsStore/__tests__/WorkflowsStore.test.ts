@@ -783,6 +783,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
         featureVariants,
       },
     };
+    rootStore.userStore.isAuthorized = true;
     rootStore.userStore.userIsLoading = false;
   };
 
@@ -907,6 +908,7 @@ describe("opportunityTypes for US_TN", () => {
         },
       };
       rootStore.userStore.userIsLoading = false;
+      rootStore.userStore.isAuthorized = true;
     });
 
     expect(workflowsStore.opportunityTypes).toContain("usTnExpiration");
@@ -926,6 +928,7 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
           featureVariants: { [TEST_FEAT_VAR]: {} },
         },
       };
+      rootStore.userStore.isAuthorized = true;
       rootStore.userStore.userIsLoading = false;
     });
   beforeEach(() => {
