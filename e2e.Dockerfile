@@ -9,6 +9,9 @@
 
 FROM andreysenov/firebase-tools:latest-node-lts
 WORKDIR /home/node
+RUN mkdir -p /home/node/.npm-global
 USER node
-ENV PATH="/home/node/.yarn/bin:$PATH"
+ENV PATH="/home/node/.npm-global/bin:/home/node/.yarn/bin:$PATH"
+RUN npm config set prefix '/home/node/.npm-global' && \
+    npm install -g wget
 RUN yarn global add firebase-tools env-cmd serve
