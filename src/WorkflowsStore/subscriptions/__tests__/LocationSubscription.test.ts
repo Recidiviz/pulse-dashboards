@@ -31,48 +31,81 @@ let rootStoreMock: RootStore;
 let sub: LocationSubscription;
 
 describe("LocationSubscription tests", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
+  describe("when activeSystem is SUPERVISION", () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
 
-    rootStoreMock = observable({
-      currentTenantId: "US_ND",
-      workflowsStore: {
-        caseloadDistrict: "TEST",
-        activeSystem: "SUPERVISION",
-        searchField: "district",
-      },
-      firestoreStore: {
-        db: jest.fn(),
-      },
-    }) as unknown as RootStore;
-    sub = new LocationSubscription(rootStoreMock);
-  });
-
-  test("dataSource reflects observables", () => {
-    sub.subscribe();
-
-    // args may be undefined because of incomplete firestore mocking,
-    // generally we don't care about that in these tests
-    expect(collectionMock).toHaveBeenCalledWith(
-      rootStoreMock.firestoreStore.db,
-      "locations"
-    );
-    expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
-    expect(whereMock).toHaveBeenCalledWith("idType", "==", "district");
-    expect(queryMock).toHaveBeenCalled();
-  });
-
-  test("dataSource reacts to observables", () => {
-    sub.subscribe();
-
-    runInAction(() => {
-      // @ts-ignore
-      rootStoreMock.currentTenantId = "US_TN";
-      // @ts-ignore
-      rootStoreMock.workflowsStore.searchField = "facilityId";
+      rootStoreMock = observable({
+        currentTenantId: "US_ND",
+        workflowsStore: {
+          caseloadDistrict: "TEST",
+          activeSystem: "SUPERVISION",
+          searchField: "district",
+        },
+        firestoreStore: {
+          db: jest.fn(),
+        },
+      }) as unknown as RootStore;
+      sub = new LocationSubscription(rootStoreMock);
     });
 
-    expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
-    expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
+    test("dataSource reflects observables", () => {
+      sub.subscribe();
+
+      // args may be undefined because of incomplete firestore mocking,
+      // generally we don't care about that in these tests
+      expect(collectionMock).toHaveBeenCalledWith(
+        rootStoreMock.firestoreStore.db,
+        "locations"
+      );
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "district");
+      expect(queryMock).toHaveBeenCalled();
+    });
+
+    test("dataSource reacts to observables", () => {
+      sub.subscribe();
+
+      runInAction(() => {
+        // @ts-ignore
+        rootStoreMock.currentTenantId = "US_TN";
+        // @ts-ignore
+        rootStoreMock.workflowsStore.searchField = "facilityId";
+      });
+
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
+    });
+  });
+
+  describe("when activeSystem === ALL", () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
+
+      rootStoreMock = observable({
+        currentTenantId: "US_ND",
+        workflowsStore: {
+          caseloadDistrict: "TEST",
+          activeSystem: "ALL",
+          searchField: "district",
+        },
+        firestoreStore: {
+          db: jest.fn(),
+        },
+      }) as unknown as RootStore;
+      sub = new LocationSubscription(rootStoreMock);
+    });
+
+    test("it selects the searchField from the tenant config", () => {
+      sub.subscribe();
+
+      runInAction(() => {
+        // @ts-ignore
+        rootStoreMock.currentTenantId = "US_ID";
+      });
+
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ID");
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
+    });
   });
 });

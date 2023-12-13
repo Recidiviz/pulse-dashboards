@@ -20,6 +20,7 @@ import { collection, Query, query, where } from "firebase/firestore";
 import { LocationRecord } from "../../FirestoreStore";
 import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import { RootStore } from "../../RootStore";
+import tenants from "../../tenants";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
 export class LocationSubscription extends FirestoreQuerySubscription<LocationRecord> {
@@ -30,15 +31,26 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
     this.rootStore = rootStore;
   }
 
-  get dataSource(): Query {
-    const { searchField } = this.rootStore.workflowsStore;
-
+  get dataSource(): Query | undefined {
+    const { searchField, activeSystem } = this.rootStore.workflowsStore;
     const stateCode = this.rootStore.currentTenantId;
+    if (!stateCode) return;
 
-    const constraints = [
-      where("stateCode", "==", stateCode),
-      where("idType", "==", searchField),
-    ];
+    const locationSearchField = Object.values(
+      tenants[stateCode].workflowsSystemConfigs ?? {}
+    )
+      .filter((config) => config.searchType === "LOCATION")
+      .map((c) => c.searchField)[0];
+
+    const constraints = [where("stateCode", "==", stateCode)];
+
+    if (activeSystem === "ALL" && locationSearchField) {
+      /* If activeSystem is ALL, then we need to select the location type's search field. */
+      constraints.push(where("idType", "==", locationSearchField));
+    } else {
+      /* If the activeSystem is already selected, then we can use the computed searchField */
+      constraints.push(where("idType", "==", searchField));
+    }
 
     return query(
       collection(
