@@ -90,7 +90,8 @@ export type FeatureVariant =
   | "usCaEnableSMS"
   | "usTnAnnualReclassification"
   | "outliersClientDetail"
-  | "usNdWriteToDocstars";
+  | "usNdWriteToDocstars"
+  | "formRevertButton";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -119,6 +120,7 @@ const allFeatureVariants: FeatureVariantMapping = {
   outliersClientDetail: {},
   usNdWriteToDocstars: {},
   supervisionUnrestrictedSearch: {},
+  formRevertButton: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"

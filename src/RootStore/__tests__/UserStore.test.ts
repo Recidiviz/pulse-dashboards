@@ -892,6 +892,7 @@ describe("feature variants", () => {
         "CompliantReportingAlmostEligible": Object {},
         "TEST": Object {},
         "enableSnooze": Object {},
+        "formRevertButton": Object {},
         "outliersClientDetail": Object {},
         "responsiveRevamp": Object {},
         "supervisionUnrestrictedSearch": Object {},

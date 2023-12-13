@@ -453,6 +453,15 @@ export default class FirestoreStore {
     );
   }
 
+  async clearFormDraftData(form: FormBase<any>) {
+    const { opportunity, type } = form;
+    const { person } = opportunity;
+
+    await this.updateOpportunity(type, person.recordId, {
+      referralForm: deleteField(),
+    });
+  }
+
   async updateFormDraftData(
     form: FormBase<any>,
     name: string,

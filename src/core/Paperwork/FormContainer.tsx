@@ -30,6 +30,7 @@ import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
 import { FormLastEdited } from "../FormLastEdited";
 import { REACTIVE_INPUT_UPDATE_DELAY } from "./utils";
@@ -107,7 +108,12 @@ export const FormContainer = observer(function FormContainer({
   opportunity,
   children,
 }: FormHeaderProps): React.ReactElement {
-  const { form } = opportunity;
+  const {
+    form,
+    rootStore: { firestoreStore },
+  } = opportunity;
+
+  const { formRevertButton } = useFeatureVariants();
 
   if (!form) return <div />;
 
@@ -127,6 +133,14 @@ export const FormContainer = observer(function FormContainer({
           </div>
         </FormHeaderSection>
         <FormHeaderSection>
+          {formRevertButton && form.formLastUpdated && (
+            <DownloadButton
+              className="WorkflowsFormActionButton"
+              onClick={() => firestoreStore.clearFormDraftData(form)}
+            >
+              Clear All Edits
+            </DownloadButton>
+          )}
           <DownloadButton
             className="WorkflowsFormActionButton"
             disabled={form.formIsDownloading}
