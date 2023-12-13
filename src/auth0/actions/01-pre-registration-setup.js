@@ -113,7 +113,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     }
 
     /** 2. Add user's state_code to the app_metadata */
-    const acceptedStateCodes = ["co", "id", "mo", "nd", "pa", "me", "mi", "tn"];
+    const acceptedStateCodes = ["ca", "co", "id", "mo", "nd", "pa", "me", "mi", "tn"];
     const domainSplit = userDomain.split(".");
 
     // assumes the state is always the second to last component of the domain
@@ -145,6 +145,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     /** 3. Add the user's restrictions to the app_metadata */
     // Other states do not currently have any sign up or user restrictions
     const stateCodesWithRestrictions = [
+      "us_ca",
       "us_co",
       "us_id",
       "us_me",

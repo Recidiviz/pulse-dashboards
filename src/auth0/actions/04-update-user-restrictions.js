@@ -59,6 +59,7 @@ exports.onExecutePostLogin = async (event, api) => {
   }
   const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
   const statesWithRestrictions = [
+    "us_ca",
     "us_co",
     "us_id",
     "us_me",
