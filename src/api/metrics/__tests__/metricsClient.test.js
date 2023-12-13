@@ -89,7 +89,7 @@ describe("metricsClient", () => {
     });
   });
 
-  describe("when callMetricsApi fails", () => {
+  describe("when callMetricsApi fails from old backend", () => {
     beforeEach(async () => {
       process.env = Object.assign(process.env, {
         REACT_APP_API_URL: "test-url",
@@ -127,6 +127,48 @@ describe("metricsClient", () => {
         expect(error).toEqual(
           new Error(
             `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: ["API error"]`
+          )
+        );
+      }
+    });
+  });
+
+  describe("when callMetricsApi fails from new backend", () => {
+    beforeEach(async () => {
+      process.env = Object.assign(process.env, {
+        REACT_APP_API_URL: "test-url",
+      });
+      global.fetch.mockClear();
+      global.fetch.mockResolvedValue({
+        ok: false,
+        status: 400,
+        statusText: "Bad Request",
+        json: jest.fn().mockResolvedValue({ message: "API error" }),
+      });
+    });
+
+    it("retries 2 more times before throwing an error", async () => {
+      expect.assertions(2);
+      try {
+        await callMetricsApi(endpoint, getTokenSilently);
+      } catch (error) {
+        expect(global.fetch.mock.calls.length).toEqual(3);
+        expect(error).toEqual(
+          new Error(
+            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: "API error"`
+          )
+        );
+      }
+    });
+
+    it("throws an error", async () => {
+      expect.assertions(1);
+      try {
+        await callMetricsApi(endpoint, getTokenSilently);
+      } catch (error) {
+        expect(error).toEqual(
+          new Error(
+            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: "API error"`
           )
         );
       }

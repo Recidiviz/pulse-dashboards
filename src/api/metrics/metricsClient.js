@@ -27,10 +27,14 @@ import { isAbortException } from "../../core/utils/exceptions";
 async function validateResponse(response) {
   const responseJson = await response.json();
   if (!response.ok) {
+    // Different backends are formatting the responses slightly differently, so we need to look for
+    // the status code, status message, and error message in different places
+    const status = responseJson.status ?? response.status;
+    const errors = responseJson.errors ?? responseJson.message;
     throw new Error(
-      `Fetching data from API failed.\nStatus: ${responseJson.status} - ${
+      `Fetching data from API failed.\nStatus: ${status} - ${
         response.statusText
-      }\nErrors: ${JSON.stringify(responseJson.errors)}`
+      }\nErrors: ${JSON.stringify(errors)}`
     );
   } else {
     return responseJson;
