@@ -64,6 +64,7 @@ import {
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
+import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
@@ -668,6 +669,13 @@ export class WorkflowsStore implements Hydratable {
       case "OFFICER": {
         return this.availableOfficers
           .map((officer) => new Officer(officer))
+          .filter((officer) =>
+            officer.hasCaseloadForSystemId(this.activeSystem)
+          );
+      }
+      case "CASELOAD": {
+        return this.availableOfficers
+          .map((officer) => new CaseloadSearchable(officer))
           .filter((officer) =>
             officer.hasCaseloadForSystemId(this.activeSystem)
           );

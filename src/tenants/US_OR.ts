@@ -24,7 +24,6 @@ import {
   getStateOpportunityTypes,
   OpportunityType,
 } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
-import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
   getStateOpportunityTypes("US_OR");
@@ -37,12 +36,11 @@ const US_OR_CONFIG: TenantConfig = {
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
-  workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSystemConfigs: {
     SUPERVISION: {
-      searchType: "OFFICER",
+      searchType: "CASELOAD",
       searchField: "officerId",
-      searchTitleOverride: "agent",
+      searchTitleOverride: "caseload",
     },
   },
   navigation: {

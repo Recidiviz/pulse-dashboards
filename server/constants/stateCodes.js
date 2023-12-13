@@ -7,6 +7,7 @@ const stateCodes = {
   US_MO: "US_MO",
   US_NC: "US_NC",
   US_ND: "US_ND",
+  US_OR: "US_OR",
   US_PA: "US_PA",
   US_TN: "US_TN",
 };

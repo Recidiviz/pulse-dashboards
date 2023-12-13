@@ -950,6 +950,53 @@ const US_ND_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
+const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+  {
+    personName: {
+      givenNames: "PETER",
+      surname: "PIPER",
+    },
+    personExternalId: "001",
+    displayId: "d001",
+    pseudonymizedId: "p001",
+    stateCode: "US_OR",
+    officerId: "314159",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    supervisionStartDate: "2022-01-01",
+    expirationDate: "2024-12-31",
+    currentBalance: 1221.88,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: "2022-01-04",
+    allEligibleOpportunities: ["usOrEarlyDischarge"],
+  },
+  {
+    personName: {
+      givenNames: "EDWARD",
+      surname: "ESTLIN",
+    },
+    personExternalId: "002",
+    displayId: "d002",
+    pseudonymizedId: "p002",
+    stateCode: "US_OR",
+    officerId: "271828",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    supervisionStartDate: "2022-01-01",
+    expirationDate: "2024-12-31",
+    currentBalance: 1221.88,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: "2022-01-04",
+    allEligibleOpportunities: ["usOrEarlyDischarge"],
+  },
+];
+
 const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
@@ -1244,6 +1291,7 @@ const data: Omit<ClientRecord, "personType" | "recordId">[] = [
   ...US_ME_CLIENTS,
   ...US_MI_CLIENTS,
   ...US_ND_CLIENTS,
+  ...US_OR_CLIENTS,
   ...US_TN_CLIENTS,
 ];
 
