@@ -18,6 +18,7 @@ import { parseISO } from "date-fns";
 
 import { ResidentRecord } from "../../../../FirestoreStore";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "..";
+import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 
 export const usMoPersonRecord: ResidentRecord = {
   recordId: "us_mo_111",
@@ -72,3 +73,43 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
       numMinorCdvsBeforeLastHearing: 5,
     },
   };
+
+export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <T>(
+  externalIdSuffix: number,
+  additionalCriteria?: Record<string, any>
+): BaseUsMoOverdueRestrictiveHousingReferralRecordRaw | T => ({
+  stateCode: "US_MO",
+  externalId: `rh-${externalIdSuffix}`,
+  eligibleCriteria: {
+    usMoInRestrictiveHousing: {
+      confinementType: "COMMUNITY",
+    },
+    usMoNoActiveD1Sanctions: {
+      latestSanctionStartDate: "2023-08-15",
+      latestSanctionEndDate: "2023-12-05",
+    },
+    ...(additionalCriteria || {}),
+  },
+  ineligibleCriteria: {},
+  metadata: {
+    mostRecentHearingDate: "2022-09-03",
+    mostRecentHearingType: "hearing type",
+    mostRecentHearingFacility: "FACILITY NAME",
+    mostRecentHearingComments: "Reason for Hearing: 30 day review",
+    currentFacility: "FACILITY 01",
+    restrictiveHousingStartDate: "2022-10-01",
+    bedNumber: "03",
+    roomNumber: "05",
+    complexNumber: "2",
+    buildingNumber: "13",
+    housingUseCode: "123456",
+    majorCdvs: [
+      {
+        cdvDate: "2022-02-20",
+        cdvRule: "Rule 7.2",
+      },
+    ],
+    cdvsSinceLastHearing: [],
+    numMinorCdvsBeforeLastHearing: "5",
+  },
+});
