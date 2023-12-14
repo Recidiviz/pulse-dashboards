@@ -149,7 +149,10 @@ export type OpportunityTab =
   | "Other"
   | "Overdue For Hearing"
   | "Missing Review Date"
-  | "Upcoming Hearings";
+  | "Upcoming Hearings"
+  | "Due this week"
+  | `Overdue as of ${string}`
+  | "Coming up";
 
 export type DenialConfirmationModalProps = {
   opportunity: Opportunity;

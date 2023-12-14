@@ -91,6 +91,7 @@ export type FeatureVariant =
   | "usTnAnnualReclassification"
   | "outliersClientDetail"
   | "usNdWriteToDocstars"
+  | "usMoOverdueRHPilot"
   | "formRevertButton";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
@@ -121,6 +122,7 @@ const allFeatureVariants: FeatureVariantMapping = {
   usNdWriteToDocstars: {},
   supervisionUnrestrictedSearch: {},
   formRevertButton: {},
+  usMoOverdueRHPilot: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"
@@ -133,6 +135,7 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         usMeWorkRelease: {},
         usTnAnnualReclassification: {},
         supervisionUnrestrictedSearch: {},
+        usMoOverdueRHPilot: {},
       }
     : allFeatureVariants;
 
