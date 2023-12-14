@@ -19,6 +19,7 @@ import { parseISO } from "date-fns";
 import { ResidentRecord } from "../../../../FirestoreStore";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "..";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
+import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
 
 export const usMoPersonRecord: ResidentRecord = {
   recordId: "us_mo_111",
@@ -113,3 +114,18 @@ export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <T>(
     numMinorCdvsBeforeLastHearing: "5",
   },
 });
+
+export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw>(
+    1,
+    {
+      usMoD1SanctionAfterMostRecentHearing: {
+        latestD1SanctionEndDate: "2023-10-15",
+        latestRestrictiveHousingHearingDate: "2023-09-20",
+      },
+      usMoD1SanctionAfterRestrictiveHousingStart: {
+        latestD1SanctionStartDate: "2023-08-15",
+        restrictiveHousingStartDate: "2023-08-15",
+      },
+    }
+  );
