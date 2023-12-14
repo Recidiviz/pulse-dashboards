@@ -36,6 +36,7 @@ import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarn
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
+import { FormUsOrEarlyDischarge } from "../Paperwork/US_OR/EarlyDischarge/FormUsOrEarlyDischarge";
 import RecidivizLogo from "../RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { DASHBOARD_VIEWS, workflowsUrl } from "../views";
@@ -101,6 +102,7 @@ const FormComponents = {
   WorkflowsUsTnReclassForm,
   WorkflowsUsCaSupervisionLevelDowngradeForm,
   FormFurloughRelease,
+  FormUsOrEarlyDischarge,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;

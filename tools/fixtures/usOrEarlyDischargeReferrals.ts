@@ -15,31 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { UsOrEarlyDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsOr";
+import { fixtureWithIdKey } from "./utils";
 
-export const usOrEarlyDischargeSchema = z.object({
-  stateCode: z.string(),
-  externalId: z.string(),
-  formInformation: z.object({}),
-  eligibleCriteria: z.object({}),
-  ineligibleCriteria: z.object({}),
-});
-
-export type UsOrEarlyDischargeReferralRecordRaw = z.input<
-  typeof usOrEarlyDischargeSchema
->;
-
-export type UsOrEarlyDischargeReferralRecord = z.infer<
-  typeof usOrEarlyDischargeSchema
->;
-
-export type UsOrEarlyDischargeDraftData = {
-  givenNames: string;
-  middleNames: string;
-  surname: string;
-  clientId: string;
-  officerName: string;
-  offenses: string;
-  sentenceStartDate: string;
-  todaysDate: string;
-};
+export const usOrEarlyDischargeReferrals =
+  fixtureWithIdKey<UsOrEarlyDischargeReferralRecordRaw>("externalId", [
+    {
+      stateCode: "US_OR",
+      externalId: "001",
+      eligibleCriteria: {},
+      formInformation: {},
+      ineligibleCriteria: {},
+    },
+    {
+      stateCode: "US_OR",
+      externalId: "002",
+      eligibleCriteria: {},
+      formInformation: {},
+      ineligibleCriteria: {},
+    },
+  ]);

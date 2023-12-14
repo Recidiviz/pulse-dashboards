@@ -22,6 +22,7 @@ import { makeObservable } from "mobx";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
+import { UsOrEarlyDischargeForm } from "../../Forms/UsOrEarlyDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
 import { OpportunityRequirement } from "../../types";
@@ -38,6 +39,8 @@ export class UsOrEarlyDischargeOpportunity extends OpportunityBase<
 > {
   client: Client;
 
+  form: UsOrEarlyDischargeForm;
+
   constructor(client: Client) {
     super(
       client,
@@ -47,6 +50,8 @@ export class UsOrEarlyDischargeOpportunity extends OpportunityBase<
     );
 
     this.client = client;
+
+    this.form = new UsOrEarlyDischargeForm(this, client.rootStore);
 
     makeObservable(this, { requirementsMet: true });
   }
