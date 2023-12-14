@@ -17,13 +17,91 @@
 
 import { z } from "zod";
 
-export const usOrEarlyDischargeSchema = z.object({
-  stateCode: z.string(),
-  externalId: z.string(),
-  formInformation: z.object({}),
-  eligibleCriteria: z.object({}),
-  ineligibleCriteria: z.object({}),
-});
+import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
+
+export const usOrEarlyDischargeSchema = opportunitySchemaBase
+  .extend({
+    formInformation: z.object({}),
+    eligibleCriteria: z.object({
+      usOrSentenceEligible: z.object({
+        activeSentences: z.array(
+          z.object({
+            sentenceId: z.string(),
+            sentenceImposedDate: dateStringSchema,
+            supervisionSentenceStartDate: dateStringSchema,
+            numDaysAbsconsion: z.number(),
+            eligibleDate: dateStringSchema,
+            sentenceStatute: z.string(),
+            latestConvictionDate: dateStringSchema,
+          })
+        ),
+      }),
+      usOrNoSupervisionSanctionsWithin6Months: z.object({}).nullable(),
+    }),
+    ineligibleCriteria: z.object({}),
+    metadata: z.object({
+      programs: z.array(
+        z.object({
+          entryDate: dateStringSchema,
+          exitDate: dateStringSchema,
+          treatmentId: z.string(),
+          exitCode: z.string(),
+        })
+      ),
+      eligibleSentences: z.array(
+        z.object({
+          sentenceId: z.string(),
+          courtCaseNumber: z.string(),
+          sentenceStatute: z.string(),
+          sentenceSubType: z.string(),
+          sentenceImposedDate: dateStringSchema,
+          sentenceStartDate: dateStringSchema,
+          sentenceEndDate: dateStringSchema,
+          sentenceCounty: z.string(),
+          chargeCounty: z.string(),
+          judgeFullName: z.string(),
+          conditions: z
+            .array(
+              z.object({
+                county: z.string(),
+                conditionCode: z.string(),
+                conditionDescription: z.string(),
+              })
+            )
+            .nullable(),
+        })
+      ),
+    }),
+  })
+  .transform(
+    ({
+      stateCode,
+      externalId,
+      eligibleCriteria,
+      metadata: { eligibleSentences, ...personLevelMetadata },
+    }) => {
+      const metadataById = Object.fromEntries(
+        eligibleSentences.map((s) => [s.sentenceId, s])
+      );
+      return {
+        stateCode,
+        externalId,
+        metadata: personLevelMetadata,
+        subOpportunities:
+          eligibleCriteria.usOrSentenceEligible.activeSentences.map((s) => ({
+            id: s.sentenceId,
+            eligibleCriteria: {
+              eligibleStatute: {},
+              pastHalfCompletionOrSixMonths: {},
+              noAdministrativeSanction: {},
+              noConvictionDuringSentence: {},
+            },
+            ineligibleCriteria: {},
+            metadata: metadataById[s.sentenceId],
+          })),
+      };
+    }
+  );
 
 export type UsOrEarlyDischargeReferralRecordRaw = z.input<
   typeof usOrEarlyDischargeSchema

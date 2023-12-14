@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -45,9 +46,34 @@ function createTestUnit() {
   oppRecord = {
     stateCode: "US_OZ",
     externalId: "pei1",
-    formInformation: {},
-    eligibleCriteria: {},
-    ineligibleCriteria: {},
+    metadata: {
+      programs: [],
+    },
+    subOpportunities: [
+      {
+        eligibleCriteria: {
+          eligibleStatute: {},
+          noAdministrativeSanction: {},
+          noConvictionDuringSentence: {},
+          pastHalfCompletionOrSixMonths: {},
+        },
+        ineligibleCriteria: {},
+        id: "sent1",
+        metadata: {
+          sentenceId: "sent1",
+          courtCaseNumber: "cc1",
+          sentenceSubType: "subtype",
+          sentenceImposedDate: parseISO("2020-01-01"),
+          sentenceStartDate: parseISO("2020-01-01"),
+          sentenceEndDate: parseISO("2020-01-01"),
+          sentenceCounty: "COUNTY",
+          chargeCounty: "CHARGE COUNTY",
+          judgeFullName: "Judge Reinhold",
+          sentenceStatute: "STATUTE",
+          conditions: [],
+        },
+      },
+    ],
   };
   staffRecord = {
     id: "zzz",

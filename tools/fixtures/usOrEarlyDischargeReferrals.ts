@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsOrEarlyDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsOr";
+import { UsOrEarlyDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsOr/UsOrEarlyDischargeOpportunity/UsOrEarlyDischargeReferralRecord";
 import { fixtureWithIdKey } from "./utils";
 
 export const usOrEarlyDischargeReferrals =
@@ -23,15 +23,63 @@ export const usOrEarlyDischargeReferrals =
     {
       stateCode: "US_OR",
       externalId: "001",
-      eligibleCriteria: {},
       formInformation: {},
+      eligibleCriteria: {
+        usOrSentenceEligible: {
+          activeSentences: [
+            {
+              sentenceId: "sent1",
+              sentenceImposedDate: "2020-01-01",
+              supervisionSentenceStartDate: "2020-01-01",
+              numDaysAbsconsion: 0,
+              eligibleDate: "2020-01-01",
+              sentenceStatute: "STATUTE",
+              latestConvictionDate: "2020-01-01",
+            },
+            {
+              sentenceId: "sent2",
+              sentenceImposedDate: "2020-01-01",
+              supervisionSentenceStartDate: "2020-01-01",
+              numDaysAbsconsion: 0,
+              eligibleDate: "2020-01-01",
+              sentenceStatute: "STATUTE",
+              latestConvictionDate: "2020-01-01",
+            },
+          ],
+        },
+        usOrNoSupervisionSanctionsWithin6Months: null,
+      },
       ineligibleCriteria: {},
-    },
-    {
-      stateCode: "US_OR",
-      externalId: "002",
-      eligibleCriteria: {},
-      formInformation: {},
-      ineligibleCriteria: {},
+      metadata: {
+        programs: [],
+        eligibleSentences: [
+          {
+            sentenceId: "sent1",
+            courtCaseNumber: "cc1",
+            sentenceSubType: "subtype",
+            sentenceImposedDate: "2020-01-01",
+            sentenceStartDate: "2020-01-01",
+            sentenceEndDate: "2020-01-01",
+            sentenceCounty: "COUNTY",
+            chargeCounty: "CHARGE COUNTY",
+            judgeFullName: "Judge Reinhold",
+            sentenceStatute: "STATUTE",
+            conditions: [],
+          },
+          {
+            sentenceId: "sent2",
+            courtCaseNumber: "cc2",
+            sentenceSubType: "subtype",
+            sentenceImposedDate: "2020-01-01",
+            sentenceStartDate: "2020-01-01",
+            sentenceEndDate: "2020-01-01",
+            sentenceCounty: "COUNTY",
+            chargeCounty: "CHARGE COUNTY",
+            judgeFullName: "Judge Reinhold",
+            sentenceStatute: "STATUTE",
+            conditions: [],
+          },
+        ],
+      },
     },
   ]);
