@@ -42,7 +42,7 @@ const DENIAL_REASONS_MAP = {
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeSCCPCriteria,
-  Required<OpportunityRequirement>
+  OpportunityRequirement
 > = {
   usMeCustodyLevelIsMinimumOrCommunity: {
     text: "Currently on $CUSTODY_LEVEL",
@@ -114,7 +114,7 @@ export function hydrateXMonthsRemainingRequirement(
 
 function hydrateServedXPortionOfSentence(
   criterion: NonNullable<UsMeSCCPCriteria["usMeServedXPortionOfSentence"]>,
-  copy: Required<OpportunityRequirement>
+  copy: OpportunityRequirement
 ): OpportunityRequirement {
   const { xPortionServed, eligibleDate } = criterion;
   const lengthCondition =
@@ -131,14 +131,18 @@ function hydrateServedXPortionOfSentence(
       ? `Within ${-daysRemaining} days of having served`
       : "Served at least";
 
-  const text = copy.text
-    .replace("$MINIMUM_FRACTION", xPortionServed)
-    .replace("$TIME_UNIT", timeUnit)
-    .replace("$TIME_REMAINING", `${timeRemaining}`)
-    .replace("$SERVED_CONDITION", servedCondition);
-  const tooltip = copy.tooltip
-    .replaceAll("$MINIMUM_FRACTION", xPortionServed)
-    .replace("$LENGTH_CONDITION", lengthCondition);
+  const text =
+    copy.text &&
+    copy.text
+      .replace("$MINIMUM_FRACTION", xPortionServed)
+      .replace("$TIME_UNIT", timeUnit)
+      .replace("$TIME_REMAINING", `${timeRemaining}`)
+      .replace("$SERVED_CONDITION", servedCondition);
+  const tooltip =
+    copy.tooltip &&
+    copy.tooltip
+      .replaceAll("$MINIMUM_FRACTION", xPortionServed)
+      .replace("$LENGTH_CONDITION", lengthCondition);
 
   return { text, tooltip };
 }

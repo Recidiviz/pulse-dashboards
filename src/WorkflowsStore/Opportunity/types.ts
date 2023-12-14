@@ -33,6 +33,7 @@ import { FormBase } from "./Forms/FormBase";
 import { AutoSnoozeUntil, OpportunityType } from "./OpportunityConfigs";
 
 export type OpportunityRequirement = {
+  isHeading?: boolean;
   text: string;
   tooltip?: string;
 };

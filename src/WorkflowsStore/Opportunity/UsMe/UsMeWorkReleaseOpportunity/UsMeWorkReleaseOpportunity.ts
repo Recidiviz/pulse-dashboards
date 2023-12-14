@@ -42,7 +42,7 @@ const DENIAL_REASONS_MAP = {
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeWorkReleaseCriteria,
-  Required<OpportunityRequirement>
+  OpportunityRequirement
 > = {
   usMeCustodyLevelIsMinimum: {
     text: "Currently on minimum",

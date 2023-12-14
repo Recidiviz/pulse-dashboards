@@ -19,6 +19,7 @@ import {
   Icon,
   IconSVG,
   Sans14,
+  Sans16,
   spacing,
   typography,
 } from "@recidiviz/design-system";
@@ -43,6 +44,11 @@ const Wrapper = styled.ul<{ alert?: boolean }>`
 
 const KeepTogether = styled.span`
   white-space: nowrap;
+`;
+
+const CriterionHeading = styled(Sans16)<{ isFirst?: boolean }>`
+  margin-top: ${(props) => (props.isFirst ? "0" : rem(spacing.md))};
+  grid-column: 1;
 `;
 
 const CriterionIcon = styled(Icon)`
@@ -101,27 +107,35 @@ export const CriteriaList = observer(function CriteriaList({
           </CriterionWrapper>
         );
       })}
-      {opportunity.requirementsMet.map(({ text, tooltip }) => {
+      {opportunity.requirementsMet.map(({ text, tooltip, isHeading }, i) => {
         // split text so we can prevent orphaned tooltips
         const textTokens = text.split(" ");
         return (
           <CriterionWrapper key={text}>
-            <CriterionIcon
-              kind={alert ? IconSVG.Error : IconSVG.Success}
-              color={colors.icon}
-              size={16}
-            />
-            <CriterionContentWrapper>
-              {textTokens.slice(0, -1).join(" ")}{" "}
-              <KeepTogether>
-                {textTokens.slice(-1)}{" "}
-                {tooltip && (
-                  <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                    <InfoButton infoUrl={opportunity.policyOrMethodologyUrl} />
-                  </InfoTooltipWrapper>
-                )}
-              </KeepTogether>
-            </CriterionContentWrapper>
+            {isHeading ? (
+              <CriterionHeading isFirst={i === 0}>{text}</CriterionHeading>
+            ) : (
+              <>
+                <CriterionIcon
+                  kind={alert ? IconSVG.Error : IconSVG.Success}
+                  color={colors.icon}
+                  size={16}
+                />
+                <CriterionContentWrapper>
+                  {textTokens.slice(0, -1).join(" ")}{" "}
+                  <KeepTogether>
+                    {textTokens.slice(-1)}{" "}
+                    {tooltip && (
+                      <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                        <InfoButton
+                          infoUrl={opportunity.policyOrMethodologyUrl}
+                        />
+                      </InfoTooltipWrapper>
+                    )}
+                  </KeepTogether>
+                </CriterionContentWrapper>
+              </>
+            )}
           </CriterionWrapper>
         );
       })}

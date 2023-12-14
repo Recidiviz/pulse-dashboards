@@ -26,12 +26,54 @@ import { UsOrEarlyDischargeForm } from "../../Forms/UsOrEarlyDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
 import { OpportunityRequirement } from "../../types";
+import { CriteriaCopy, hydrateCriteria } from "../../utils";
 import {
   UsOrEarlyDischargeReferralRecord,
   usOrEarlyDischargeSchema,
 } from "./UsOrEarlyDischargeReferralRecord";
 
 const OPPORTUNITY_TYPE: SupervisionOpportunityType = "usOrEarlyDischarge";
+
+const CRITERIA_COPY: CriteriaCopy<
+  UsOrEarlyDischargeReferralRecord["subOpportunities"][number]
+> = {
+  eligibleCriteria: [
+    [
+      "eligibleStatute",
+      {
+        text: "Currently serving for a felony or misdemeanor that is eligible for EDIS",
+        tooltip:
+          "Felony and/or designated drug-related or person misdemeanor convictions sentenced to Probation, Local Control Post-Prison Supervision or Board Post-Prison Supervision",
+      },
+    ],
+
+    [
+      "pastHalfCompletionOrSixMonths",
+      {
+        text: "Has served at least 6 months or half the supervision period",
+        tooltip:
+          "Served the minimum period of active supervision on the case under consideration (minimum of 6 months or half of the supervision period whichever is greater)",
+      },
+    ],
+    [
+      "noAdministrativeSanction",
+      {
+        text: "No administrative sanctions and has not been found in violation of the court in the past 6 months",
+        tooltip:
+          "Has not been administratively sanctioned or found in violation by the court in the immediate six months prior to review",
+      },
+    ],
+    [
+      "noConvictionDuringSentence",
+      {
+        text: "Not convicted of a crime while supervision case was under review",
+        tooltip:
+          "Has not been convicted of a crime (felony or misdemeanor) that occurred while on supervision for the case(s) under review.",
+      },
+    ],
+  ],
+  ineligibleCriteria: [],
+};
 
 export class UsOrEarlyDischargeOpportunity extends OpportunityBase<
   Client,
@@ -58,8 +100,15 @@ export class UsOrEarlyDischargeOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
-
-    return [];
+    let out: OpportunityRequirement[] = [];
+    this.record.subOpportunities.forEach((subOpp) => {
+      out = [
+        ...out,
+        { isHeading: true, text: subOpp.id },
+        ...hydrateCriteria(subOpp, "eligibleCriteria", CRITERIA_COPY),
+      ];
+    });
+    return out;
   }
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
