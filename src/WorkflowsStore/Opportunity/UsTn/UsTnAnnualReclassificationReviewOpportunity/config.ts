@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { add } from "date-fns";
 import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
@@ -37,6 +36,7 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
     }),
     firestoreCollection: "US_TN-annualReclassificationReferrals",
     snooze: {
-      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+      maxSnoozeDays: 90,
+      defaultSnoozeDays: 30,
     },
   };

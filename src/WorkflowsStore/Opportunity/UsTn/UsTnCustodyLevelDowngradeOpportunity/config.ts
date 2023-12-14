@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { add } from "date-fns";
 import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
@@ -33,6 +32,7 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevel
     }),
     firestoreCollection: "US_TN-custodyLevelDowngradeReferrals",
     snooze: {
-      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 90,
     },
   };
