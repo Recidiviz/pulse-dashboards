@@ -74,28 +74,28 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
 
   const { isMobile } = useIsMobile(true);
 
-  const displayTabs = useMemo(() => {
-    if (opportunityType) {
-      return intersection(
-        allOpportunitiesByType[opportunityType][0]?.tabOrder,
-        Object.keys(opportunitiesByTab[opportunityType]) as OpportunityTab[]
-      );
-    }
-    return [];
-  }, [allOpportunitiesByType, opportunitiesByTab, opportunityType]);
+  const displayTabs = useMemo(
+    () =>
+      opportunityType && allOpportunitiesByType[opportunityType]?.[0]
+        ? intersection(
+            allOpportunitiesByType[opportunityType][0].tabOrder,
+            Object.keys(opportunitiesByTab[opportunityType]) as OpportunityTab[]
+          )
+        : [],
+    // if any of the elements in the dependency array are not defined, return [].
+    [allOpportunitiesByType, opportunitiesByTab, opportunityType]
+  );
 
   const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
 
   useEffect(() => {
-    if (!activeTab && displayTabs) {
-      setActiveTab(displayTabs[0]);
-    }
-  }, [activeTab, displayTabs]);
+    setActiveTab((prevTab) => prevTab || displayTabs[0]);
+  }, [displayTabs]);
 
   useEffect(() => {
     if (
-      !!opportunityType &&
-      (opportunitiesByTab[opportunityType][activeTab] ?? []).length === 0
+      opportunityType &&
+      !opportunitiesByTab[opportunityType]?.[activeTab]?.length
     ) {
       setActiveTab(displayTabs[0]);
     }
@@ -103,35 +103,26 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
 
   if (!opportunityType || !displayTabs) return null;
 
-  const opportunityLabel = OPPORTUNITY_CONFIGS[opportunityType].label;
+  const { label } = OPPORTUNITY_CONFIGS[opportunityType];
   const eligibleOpps = allOpportunitiesByType[opportunityType].filter(
     (opp) => !opp.denial
   );
-
-  const totalOpps = eligibleOpps.length;
-
   const handleTabClick = (tab: OpportunityTab) => {
     analyticsStore.trackOpportunityTabClicked({ tab });
     setActiveTab(tab);
   };
-
   const hydratedHeader = generateOpportunityHydratedHeader(
     opportunityType,
-    totalOpps
+    eligibleOpps.length
   );
   const initialHeader = generateOpportunityInitialHeader(
     opportunityType,
     justiceInvolvedPersonTitle,
     workflowsSearchFieldTitle
   );
-
   const initial = (
-    <WorkflowsResults
-      headerText={opportunityLabel}
-      callToActionText={initialHeader}
-    />
+    <WorkflowsResults headerText={label} callToActionText={initialHeader} />
   );
-
   const empty = (
     <WorkflowsResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
@@ -139,9 +130,18 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       ]} ${pluralizeWord(
         workflowsSearchFieldTitle,
         selectedSearchIds.length
-      )}['s|'] caseloads are eligible for ${opportunityLabel.toLowerCase()}. Search for another ${workflowsSearchFieldTitle}.`}
+      )}['s|'] caseloads are eligible for ${label.toLowerCase()}. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );
+
+  const renderOpportunitiesList = opportunitiesByTab[opportunityType][
+    activeTab
+  ]?.map((opportunity) => (
+    <PersonListItem
+      key={opportunity.person.recordId}
+      opportunity={opportunity}
+    />
+  ));
 
   const hydrated = (
     <>
@@ -168,14 +168,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
             key={`PersonList_${activeTab}`}
             className={`PersonList_${activeTab} PersonList`}
           >
-            {opportunitiesByTab[opportunityType][activeTab]?.map(
-              (opportunity) => (
-                <PersonListItem
-                  key={opportunity.person.recordId}
-                  opportunity={opportunity}
-                />
-              )
-            )}
+            {renderOpportunitiesList}
           </PersonList>
         </WorkflowsTabbedPersonList>
       ) : (
