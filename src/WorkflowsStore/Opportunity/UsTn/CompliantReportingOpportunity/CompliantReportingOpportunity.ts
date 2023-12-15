@@ -291,11 +291,8 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       drugScreensPastYear,
       eligibilityCategory,
       eligibleLevelStart,
-      lastSpecialConditionsNote,
       lifetimeOffensesExpired,
       pastOffenses,
-      specialConditionsFlag,
-      specialConditionsTerminatedDate,
       zeroToleranceCodes,
       offenseTypeEligibility,
       eligibleCriteria,
@@ -394,26 +391,21 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     let specialConditionsText: string;
 
-    switch (specialConditionsFlag) {
-      case "current":
+    switch (metadata.mostRecentSpeNote?.contactType) {
+      case "SPEC":
         specialConditionsText = `Special conditions up to date, last SPEC on ${formatWorkflowsDate(
-          lastSpecialConditionsNote
+          metadata.mostRecentSpeNote.contactDate
         )}`;
         break;
-      case "none":
-        specialConditionsText = "No special conditions";
-        break;
-      case "terminated":
+      case "SPET":
         specialConditionsText = `SPET on ${formatWorkflowsDate(
-          specialConditionsTerminatedDate
+          metadata.mostRecentSpeNote.contactDate
         )}`;
         break;
       default:
-        // this can happen if we get an unexpected value;
-        // provides a generic fallback
-        specialConditionsText = "Special conditions up to date";
-        break;
+        specialConditionsText = "No special conditions";
     }
+
     requirements.push({
       text: specialConditionsText,
       tooltip: CRITERIA.specialConditions.tooltip,

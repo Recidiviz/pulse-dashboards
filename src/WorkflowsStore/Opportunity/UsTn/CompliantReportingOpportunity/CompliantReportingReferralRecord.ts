@@ -23,6 +23,8 @@ import { TransformFunction } from "../../../subscriptions";
 import { fieldToDate, optionalFieldToDate } from "../../../utils";
 import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
+const SpecialConditionsNoteType = ["SPEC", "SPET"] as const;
+
 export const compliantReportingSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z.object({
     usTnFinesFeesEligible: z
@@ -51,6 +53,9 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       .null()
       .transform((_val) => ({}))
       .optional(),
+    usTnSpecialConditionsAreCurrent: z.object({
+      speNoteDue: dateStringSchema.nullable(),
+    }),
     usTnNotServingIneligibleCrOffense: z.null().transform((_val) => ({})),
   }),
   ineligibleCriteria: z.object({
@@ -86,6 +91,12 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
         contactDate: dateStringSchema,
         contactType: z.literal("ARRN"),
       }),
+      mostRecentSpeNote: z
+        .object({
+          contactDate: dateStringSchema,
+          contactType: z.enum(SpecialConditionsNoteType),
+        })
+        .optional(), // in theory someone could have no special conditions so marking as optional (in practice this is always set)
     })
     .passthrough(), // temporary passthrough to allow fixture data with metadata fields we haven't accounted for yet
 });
@@ -114,14 +125,10 @@ export type CompliantReportingReferralRecord = {
   eligibleLevelStart?: Date;
   drugScreensPastYear: { result: string; date: Date }[];
   judicialDistrict: string;
-  lastSpecialConditionsNote?: Date | undefined;
   lifetimeOffensesExpired: string[];
-  nextSpecialConditionsCheck?: Date | undefined;
   pastOffenses: string[];
   /** Any number greater than zero indicates the client is _almost_ eligible. */
   remainingCriteriaNeeded: number;
-  specialConditionsFlag?: SpecialConditionsStatus;
-  specialConditionsTerminatedDate?: Date | undefined;
   zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
   offenseTypeEligibility: string;
 };
@@ -278,13 +285,9 @@ export const transformCompliantReportingReferral: TransformFunction<
     eligibilityCategory,
     eligibleLevelStart,
     judicialDistrict,
-    lastSpecialConditionsNote,
     lifetimeOffensesExpired,
-    nextSpecialConditionsCheck,
     pastOffenses,
     remainingCriteriaNeeded,
-    specialConditionsFlag,
-    specialConditionsTerminatedDate,
     zeroToleranceCodes,
     offenseTypeEligibility,
     tdocId,
@@ -301,6 +304,10 @@ export const transformCompliantReportingReferral: TransformFunction<
     finesFeesEligible,
     supervisionFeeExemptionType,
     mostRecentArrestCheck,
+    lastSpecialConditionsNote,
+    nextSpecialConditionsCheck,
+    specialConditionsFlag,
+    specialConditionsTerminatedDate,
     almostEligibleCriteria,
     ...recordWithoutLegacyFields
   } = record;
@@ -321,17 +328,42 @@ export const transformCompliantReportingReferral: TransformFunction<
         ? formInformation.currentOffenses
         : currentOffenses,
   };
+  let oldStyleSpeNote: z.input<
+    typeof compliantReportingSchema.shape.metadata.shape.mostRecentSpeNote
+  >;
+  switch (specialConditionsFlag) {
+    case "current":
+      oldStyleSpeNote = {
+        contactDate: lastSpecialConditionsNote,
+        contactType: "SPEC",
+      };
+      break;
+    case "terminated":
+      oldStyleSpeNote = {
+        contactDate: specialConditionsTerminatedDate,
+        contactType: "SPET",
+      };
+      break;
+    default:
+      oldStyleSpeNote = undefined;
+      break;
+  }
   const newMetadata: z.input<typeof compliantReportingSchema.shape.metadata> = {
     mostRecentArrestCheck: {
       contactDate:
         mostRecentArrestCheck ?? metadata?.mostRecentArrestCheck?.contactDate,
       contactType: metadata?.mostRecentArrestCheck?.contactType ?? "ARRN",
     },
+    mostRecentSpeNote: metadata.mostRecentSpeNote ?? oldStyleSpeNote,
   };
   const newEligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.eligibleCriteria
   > = {
     usTnNoArrestsInPastYear: null, // This will always be null for eligible clients, and arrests aren't an almost eligible criteria
+    usTnSpecialConditionsAreCurrent:
+      eligibleCriteria.usTnSpecialConditionsAreCurrent ?? {
+        speNoteDue: nextSpecialConditionsCheck ?? null,
+      },
     usTnNotServingIneligibleCrOffense: null, // This will always be null for eligible clients, and ineligible offenses aren't an almost eligible criteria
   };
   const newIneligibleCriteria: z.input<
@@ -438,15 +470,9 @@ export const transformCompliantReportingReferral: TransformFunction<
       date: fieldToDate(date),
     })),
     judicialDistrict: judicialDistrict ?? "Unknown",
-    lastSpecialConditionsNote: optionalFieldToDate(lastSpecialConditionsNote),
     lifetimeOffensesExpired,
-    nextSpecialConditionsCheck: optionalFieldToDate(nextSpecialConditionsCheck),
     pastOffenses,
     remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
-    specialConditionsTerminatedDate: optionalFieldToDate(
-      specialConditionsTerminatedDate
-    ),
-    specialConditionsFlag,
     zeroToleranceCodes:
       zeroToleranceCodes?.map(({ contactNoteDate, contactNoteType }) => ({
         contactNoteType,

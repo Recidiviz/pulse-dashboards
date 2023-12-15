@@ -281,6 +281,9 @@ export const usTnCompliantReportingReferrals =
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,
+        usTnSpecialConditionsAreCurrent: {
+          speNoteDue: "2023-10-01",
+        },
         usTnNotServingIneligibleCrOffense: null,
       },
       ineligibleCriteria: {},
@@ -297,10 +300,9 @@ export const usTnCompliantReportingReferrals =
           contactType: "ARRN",
         },
         mostRecentSpeNote: {
-          contactDate: "2021-01-22",
-          contactType: "SPET",
+          contactDate: "2023-03-01",
+          contactType: "SPEC",
         },
-        specialConditionsTerminatedDate: "2021-01-22",
       },
       caseNotes: {},
     },
@@ -348,6 +350,9 @@ export const usTnCompliantReportingReferrals =
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
+        usTnSpecialConditionsAreCurrent: {
+          speNoteDue: null,
+        },
         usTnNotServingIneligibleCrOffense: null,
       },
       ineligibleCriteria: {
@@ -375,7 +380,6 @@ export const usTnCompliantReportingReferrals =
           contactDate: "2019-08-15",
           contactType: "SPET",
         },
-        specialConditionsTerminatedDate: "2019-08-15",
       },
       caseNotes: {},
     },

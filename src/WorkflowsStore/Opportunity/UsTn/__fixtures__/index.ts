@@ -119,8 +119,6 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
-    specialConditionsFlag: "current",
-    lastSpecialConditionsNote: parseISO("2022-03-15"),
     eligibleCriteria: {
       usTnFinesFeesEligible: {
         hasFinesFeesBalanceBelow500: {
@@ -134,6 +132,9 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
       usTnNoArrestsInPastYear: {},
       usTnNoHighSanctionsInPastYear: {},
       usTnNoRecentCompliantReportingRejections: {},
+      usTnSpecialConditionsAreCurrent: {
+        speNoteDue: null,
+      },
       usTnNotServingIneligibleCrOffense: {},
     },
     ineligibleCriteria: {},
@@ -145,6 +146,10 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
       mostRecentArrestCheck: {
         contactDate: parseISO("2022-05-28"),
         contactType: "ARRN",
+      },
+      mostRecentSpeNote: {
+        contactDate: parseISO("2022-03-15"),
+        contactType: "SPEC",
       },
     },
   };
@@ -180,6 +185,9 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       usTnNoArrestsInPastYear: {},
       usTnNoHighSanctionsInPastYear: {},
       usTnNoRecentCompliantReportingRejections: {},
+      usTnSpecialConditionsAreCurrent: {
+        speNoteDue: null,
+      },
       usTnNotServingIneligibleCrOffense: {},
     },
     ineligibleCriteria: {},
@@ -192,6 +200,10 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       mostRecentArrestCheck: {
         contactDate: parseISO("2022-05-28"),
         contactType: "ARRN",
+      },
+      mostRecentSpeNote: {
+        contactDate: parseISO("2022-05-28"),
+        contactType: "SPET",
       },
     },
   };
@@ -232,11 +244,12 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
     drugScreensPastYear: [],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
-    specialConditionsFlag: "current",
-    lastSpecialConditionsNote: parseISO("2022-03-15"),
 
     eligibleCriteria: {
       usTnNoArrestsInPastYear: {},
+      usTnSpecialConditionsAreCurrent: {
+        speNoteDue: null,
+      },
       usTnNotServingIneligibleCrOffense: {},
     },
     ineligibleCriteria: {},
@@ -248,6 +261,10 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
       mostRecentArrestCheck: {
         contactDate: parseISO("2022-05-28"),
         contactType: "ARRN",
+      },
+      mostRecentSpeNote: {
+        contactDate: parseISO("2022-03-15"),
+        contactType: "SPEC",
       },
     },
   };
