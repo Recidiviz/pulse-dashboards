@@ -367,13 +367,15 @@ export const transformCompliantReportingReferral: TransformFunction<
     };
   }
 
-  if (!seriousSanctionsEligibilityDate) {
-    // If the legacy-style data tells us they're eligible but the new style doesn't, set the new
-    // fields to match what the legacy data is telling us.
-    newEligibleCriteria.usTnNoHighSanctionsInPastYear = null;
-  } else if (!ineligibleCriteria.usTnNoHighSanctionsInPastYear) {
-    // If the legacy-style data tells us they're almost eligible but the new style doesn't, set the
-    // new fields to match what the legacy data is telling us.
+  if (eligibleCriteria.usTnNoHighSanctionsInPastYear !== undefined) {
+    newEligibleCriteria.usTnNoHighSanctionsInPastYear =
+      eligibleCriteria.usTnNoHighSanctionsInPastYear;
+  } else if (ineligibleCriteria.usTnNoHighSanctionsInPastYear) {
+    newIneligibleCriteria.usTnNoHighSanctionsInPastYear =
+      ineligibleCriteria.usTnNoHighSanctionsInPastYear;
+  }
+  // If they don't have new-style data, fill it in from the old style
+  else if (seriousSanctionsEligibilityDate) {
     newIneligibleCriteria.usTnNoHighSanctionsInPastYear = {
       latestHighSanctionDate: sub(
         fieldToDate(seriousSanctionsEligibilityDate),
@@ -383,11 +385,7 @@ export const transformCompliantReportingReferral: TransformFunction<
       ).toISOString(),
     };
   } else {
-    // if the old and new eligibility match each other, keep both
-    newEligibleCriteria.usTnNoHighSanctionsInPastYear =
-      eligibleCriteria.usTnNoHighSanctionsInPastYear;
-    newIneligibleCriteria.usTnNoHighSanctionsInPastYear =
-      ineligibleCriteria.usTnNoHighSanctionsInPastYear;
+    newEligibleCriteria.usTnNoHighSanctionsInPastYear = null;
   }
 
   if (eligibleCriteria.usTnNoRecentCompliantReportingRejections !== undefined) {

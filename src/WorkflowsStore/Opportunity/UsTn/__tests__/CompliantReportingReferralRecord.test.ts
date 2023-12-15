@@ -253,6 +253,33 @@ test("transform record, old + new format, almost eligible but for fines/fees in 
   ).toBeUndefined();
 });
 
+test("transform record, old + new format, almost eligible but for sanctions in new only", () => {
+  const { usTnNoHighSanctionsInPastYear, ...eligibleCriteriaExceptSanctions } =
+    eligibleCriteria;
+  const rawRecord = {
+    ...rawRecordOldSchema,
+    formInformation,
+    metadata,
+    caseNotes: {},
+    eligibleCriteria: eligibleCriteriaExceptSanctions,
+    ineligibleCriteria: {
+      usTnNoHighSanctionsInPastYear: {
+        latestHighSanctionDate: "2022-10-01",
+      },
+    },
+  };
+
+  const transformedRecord = transformCompliantReportingReferral(rawRecord);
+  expect(
+    transformedRecord?.eligibleCriteria.usTnNoHighSanctionsInPastYear
+  ).toBeUndefined();
+  expect(
+    transformedRecord?.ineligibleCriteria.usTnNoHighSanctionsInPastYear
+  ).toEqual({
+    latestHighSanctionDate: parseISO("2022-10-01"),
+  });
+});
+
 test("transform record, old + new format, almost eligible but for sanctions in old only", () => {
   const rawRecord = {
     ...rawRecordOldSchema,
@@ -271,13 +298,10 @@ test("transform record, old + new format, almost eligible but for sanctions in o
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
   expect(
     transformedRecord?.eligibleCriteria.usTnNoHighSanctionsInPastYear
-  ).toBeUndefined();
+  ).toEqual({});
   expect(
     transformedRecord?.ineligibleCriteria.usTnNoHighSanctionsInPastYear
-  ).toEqual({
-    // sanction eligibility date is 1 year after latest high sanction date
-    latestHighSanctionDate: parseISO("2022-10-01"),
-  });
+  ).toBeUndefined();
 });
 
 test("transform record, old format, almost eligible but for recent rejections in old only", () => {
