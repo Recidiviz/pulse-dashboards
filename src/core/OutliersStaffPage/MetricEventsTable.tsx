@@ -16,11 +16,12 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { ComponentType } from "react";
+import { ComponentType, useEffect, useRef, useState } from "react";
 import { Column } from "react-table";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerMetricEvent } from "../../OutliersStore/models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerMetricEventsPresenter";
 import { formatDate, toTitleCase } from "../../utils";
@@ -31,7 +32,9 @@ import OutliersTable from "../OutliersTable";
 import { FullName } from "../types/personMetadata";
 
 const Wrapper = styled.div`
-  overflow-x: auto;
+  max-height: 555px;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 type MetricEventsTableWrapperProps = {
@@ -67,23 +70,6 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
   });
 }
 
-const columns = [
-  {
-    title: "Name",
-    accessor: "clientName",
-  },
-  {
-    title: "ID",
-    accessor: "clientId",
-    width: 60,
-  },
-  {
-    title: "Date",
-    accessor: "eventDate",
-    width: 60,
-  },
-];
-
 const createTableColumn = (column: Column) => {
   const { accessor } = column;
 
@@ -106,7 +92,32 @@ const createTableColumn = (column: Column) => {
 
 export const MetricEventsTable = withPresenter(
   observer(function MetricEventsTable({ presenter }: MetricEventsTableProps) {
+    const { isMobile } = useIsMobile(true);
     const { officerMetricEvents, eventsLabel, clientDetailLinks } = presenter;
+    const scrollElementRef = useRef(null);
+    const [scrollElement, setScrollElement] = useState(null);
+
+    useEffect(() => {
+      setScrollElement(scrollElementRef.current);
+    }, [scrollElementRef]);
+
+    const columns = [
+      {
+        title: "Name",
+        accessor: "clientName",
+        width: isMobile ? 40 : 150,
+      },
+      {
+        title: "ID",
+        accessor: "clientId",
+        width: 40,
+      },
+      {
+        title: "Date",
+        accessor: "eventDate",
+        width: isMobile ? 40 : 60,
+      },
+    ];
 
     return (
       <>
@@ -114,11 +125,12 @@ export const MetricEventsTable = withPresenter(
           title={`List of ${toTitleCase(eventsLabel)}`}
           hasLegend={false}
         >
-          <Wrapper>
+          <Wrapper ref={scrollElementRef}>
             <OutliersTable<SupervisionOfficerMetricEvent>
               data={officerMetricEvents}
               columns={columns.map((c) => createTableColumn(c))}
               rowLinks={clientDetailLinks}
+              scrollElement={scrollElement}
             />
           </Wrapper>
         </OutliersChartCard>
