@@ -199,7 +199,7 @@
     "@babel/register": "^7.13.14",
     "@cucumber/cucumber": "^7.1.0",
     "@firebase/rules-unit-testing": "^2.0.2",
-    "@google-cloud/firestore": "^5.0.2",
+    "@google-cloud/firestore": "^6.2.0",
     "@google-cloud/secret-manager": "^4.2.1",
     "@juggle/resize-observer": "^3.4.0",
     "@octokit/rest": "^19.0.7",
