@@ -29,11 +29,11 @@ import { getTicks } from "../../utils";
 import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import OverTimeMetric from "../models/OverTimeMetric";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { formatMonthAndYear } from "../PopulationTimeSeriesChart/helpers";
 import PopulationTimeSeriesLegend from "../PopulationTimeSeriesChart/PopulationTimeSeriesLegend";
 import VizPathways from "../VizPathways";
-import withMetricHydrator from "../withMetricHydrator";
 
 type VizCountOverTimeWithAvgProps = {
   metric: OverTimeMetric;
@@ -207,4 +207,4 @@ const ChartCountOverTimeWithAvgTooltip: React.FC<
   );
 };
 
-export default withMetricHydrator(observer(VizCountOverTimeWithAvg));
+export default withPathwaysMetricHelpers(observer(VizCountOverTimeWithAvg));

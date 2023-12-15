@@ -23,7 +23,7 @@ import styles from "../CoreConstants.module.scss";
 import { useCoreStore } from "../CoreStoreProvider";
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
 import { PopulationProjectionTimeSeriesRecord } from "../models/types";
-import withMetricHydrator from "../withMetricHydrator";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import {
   getChartBottom,
   getChartTop,
@@ -177,6 +177,6 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
   );
 };
 
-export default withMetricHydrator(
+export default withPathwaysMetricHelpers(
   observer(PopulationProjectionTimeSeriesChart)
 );

@@ -27,9 +27,9 @@ import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import { SnapshotDataRecord } from "../models/types";
 import { filterUnknownLengthOfStay } from "../models/utils";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import VizPathways from "../VizPathways";
-import withMetricHydrator from "../withMetricHydrator";
 
 type VizLengthOfStayProps = {
   metric: SupervisionPopulationSnapshotMetric | SnapshotMetric;
@@ -141,4 +141,4 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
   );
 };
 
-export default withMetricHydrator(observer(VizLengthOfStay));
+export default withPathwaysMetricHelpers(observer(VizLengthOfStay));

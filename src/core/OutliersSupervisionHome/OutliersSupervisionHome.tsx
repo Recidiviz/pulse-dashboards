@@ -18,7 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { Redirect } from "react-router-dom";
 
-import { Error } from "../../components/HydrationStatus";
+import { ErrorMessage } from "../../components/StatusMessage";
 import { useRootStore } from "../../components/StoreProvider";
 import { outliersUrl } from "../views";
 
@@ -45,6 +45,6 @@ export const OutliersSupervisionHome = observer(
       );
     }
 
-    return <Error />;
+    return <ErrorMessage />;
   }
 );

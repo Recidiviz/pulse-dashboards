@@ -19,11 +19,12 @@ import { typography } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
 
-import styles from "./CoreConstants.module.scss";
-import ModelHydrator from "./ModelHydrator";
-import { HydratablePathwaysMetric } from "./models/types";
+import styles from "../CoreConstants.module.scss";
+import ModelHydrator from "../ModelHydrator";
+import { HydratablePathwaysMetric } from "../models/types";
+import { PathwaysNoDataHelper } from "./PathwaysNoDataHelper";
 
-type withMetricHydratorProps = {
+type withPathwaysMetricHelperProps = {
   metric: HydratablePathwaysMetric;
 };
 
@@ -36,14 +37,16 @@ const MetricVizHydrator = styled(ModelHydrator)`
   box-shadow: ${styles.insetShadow30};
 `;
 
-const withMetricHydrator = <Props extends withMetricHydratorProps>(
+const withPathwaysMetricHelpers = <Props extends withPathwaysMetricHelperProps>(
   OriginalComponent: React.ComponentType<Props>
 ): React.ComponentType<Props> => {
   const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
     const { metric } = props;
     return (
       <MetricVizHydrator model={metric}>
-        <OriginalComponent {...props} />
+        <PathwaysNoDataHelper metric={metric}>
+          <OriginalComponent {...props} />
+        </PathwaysNoDataHelper>
       </MetricVizHydrator>
     );
   };
@@ -51,4 +54,4 @@ const withMetricHydrator = <Props extends withMetricHydratorProps>(
   return ComponentWithHydrator;
 };
 
-export default withMetricHydrator;
+export default withPathwaysMetricHelpers;

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,30 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "./HydrationStatus.scss";
-
-import React from "react";
-
-type Props = {
-  icon: React.ReactElement;
-  title: string;
-  subtitle?: string | React.ReactElement;
-};
-
-const HydrationStatus: React.FC<Props> = ({
-  icon,
-  title,
-  subtitle,
-  children,
-}) => {
-  return (
-    <div className="HydrationStatus">
-      {icon}
-      <div className="HydrationStatus__title">{title}</div>
-      <div className="HydrationStatus__subtitle">{subtitle}</div>
-      <div className="HydrationStatus__content">{children}</div>
-    </div>
-  );
-};
-
-export default HydrationStatus;
+export * from "./ErrorMessage";
+export * from "./StatusMessage";

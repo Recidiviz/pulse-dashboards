@@ -24,10 +24,10 @@ import PathwaysTable from "../../components/PathwaysTable";
 import { formatDate, toHumanReadable, toTitleCase } from "../../utils";
 import { useCoreStore } from "../CoreStoreProvider";
 import PersonLevelMetric from "../models/PersonLevelMetric";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import { TableColumn } from "../types/charts";
 import { PopulationFilterLabels } from "../types/filters";
 import VizPathways from "../VizPathways";
-import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationPersonLevelProps = {
   metric: PersonLevelMetric;
@@ -110,4 +110,4 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
   );
 };
 
-export default withMetricHydrator(observer(VizPopulationPersonLevel));
+export default withPathwaysMetricHelpers(observer(VizPopulationPersonLevel));

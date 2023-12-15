@@ -21,7 +21,7 @@ import React from "react";
 import OverTimeMetric from "../models/OverTimeMetric";
 import { TimeSeriesDataRecord } from "../models/types";
 import { getRecordDate } from "../models/utils";
-import withMetricHydrator from "../withMetricHydrator";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import { getChartBottom, getChartTop, getDateRange } from "./helpers";
 import PopulationTimeSeriesBaseChart from "./PopulationTimeSeriesBaseChart";
 
@@ -65,4 +65,4 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   );
 };
 
-export default withMetricHydrator(observer(PopulationTimeSeriesChart));
+export default withPathwaysMetricHelpers(observer(PopulationTimeSeriesChart));

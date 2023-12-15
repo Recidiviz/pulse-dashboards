@@ -19,9 +19,9 @@ import React from "react";
 
 import { ReactComponent as ErrorLogo } from "../../assets/static/images/error_logo.svg";
 import useLogout from "../../hooks/useLogout";
-import HydrationStatus from "./HydrationStatus";
+import { StatusMessage } from ".";
 
-const Error: React.FC = () => {
+export const ErrorMessage: React.FC = () => {
   const logout = useLogout();
 
   const onReload = () => {
@@ -29,7 +29,7 @@ const Error: React.FC = () => {
   };
 
   return (
-    <HydrationStatus
+    <StatusMessage
       icon={<ErrorLogo />}
       title="Sorry, we’re having trouble loading this page"
       subtitle={
@@ -48,8 +48,6 @@ const Error: React.FC = () => {
       <button type="button" onClick={logout}>
         Log out
       </button>
-    </HydrationStatus>
+    </StatusMessage>
   );
 };
-
-export default Error;

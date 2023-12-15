@@ -22,8 +22,8 @@ import React, { useEffect } from "react";
 import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
-import { Error, NoData } from "../components/HydrationStatus";
-import { HydratablePathwaysMetric } from "./models/types";
+import { ErrorMessage } from "../components/StatusMessage";
+import { Hydratable } from "./models/types";
 
 const Wrapper = styled.div`
   position: relative;
@@ -41,21 +41,22 @@ const StatusWrapper = styled(animated.div)`
     width: 100%;
   }
 `;
+
+const ContentWrapper = styled(animated.div)`
+  height: 100%;
+`;
+
 /**
  * Creates an atomic status variable for transitions
  */
-function getHydrationStatus(
-  model: HydratablePathwaysMetric
-): "pending" | "error" | "done" | "no data" {
+function getHydrationStatus(model: Hydratable): "pending" | "error" | "done" {
   if (model.error) {
     return "error";
   }
   if (!model.isHydrated) {
     return "pending";
   }
-  if (model.isEmpty) {
-    return "no data";
-  }
+
   return "done";
 }
 
@@ -69,7 +70,7 @@ const crossFade = {
 
 type ModelHydratorProps = {
   children: React.ReactElement;
-  model: HydratablePathwaysMetric;
+  model: Hydratable;
   className?: string;
 };
 
@@ -105,20 +106,14 @@ function ModelHydrator({
           case "error":
             return (
               <StatusWrapper key={key} style={props}>
-                <Error />
-              </StatusWrapper>
-            );
-          case "no data":
-            return (
-              <StatusWrapper key={key} style={props}>
-                <NoData />
+                <ErrorMessage />
               </StatusWrapper>
             );
           case "done":
             return (
-              <animated.div key={key} style={props}>
+              <ContentWrapper key={key} style={props}>
                 {children}
-              </animated.div>
+              </ContentWrapper>
             );
           default:
             return null;

@@ -15,6 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { default as Error } from "./Error";
-export { default as HydrationStatus } from "./HydrationStatus";
-export { default as NoData } from "./NoData";
+import "./StatusMessage.scss";
+
+import React from "react";
+
+type Props = {
+  icon: React.ReactElement;
+  title: string;
+  subtitle?: string | React.ReactElement;
+};
+
+export const StatusMessage: React.FC<Props> = ({
+  icon,
+  title,
+  subtitle,
+  children,
+}) => {
+  return (
+    <div className="StatusMessage">
+      {icon}
+      <div className="StatusMessage__title">{title}</div>
+      <div className="StatusMessage__subtitle">{subtitle}</div>
+      <div className="StatusMessage__content">{children}</div>
+    </div>
+  );
+};

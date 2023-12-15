@@ -36,12 +36,12 @@ import { useCoreStore } from "../CoreStoreProvider";
 import SnapshotMetric from "../models/SnapshotMetric";
 import SupervisionPopulationSnapshotMetric from "../models/SupervisionPopulationSnapshotMetric";
 import { SupervisionPopulationSnapshotRecord } from "../models/types";
+import withPathwaysMetricHelpers from "../PathwaysMetricHelpers/withPathwaysMetricHelpers";
 import PathwaysTooltip from "../PathwaysTooltip/PathwaysTooltip";
 import { Dimension } from "../types/dimensions";
 import { PopulationFilterLabels } from "../types/filters";
 import { METRIC_MODES } from "../utils/constants";
 import VizPathways from "../VizPathways";
-import withMetricHydrator from "../withMetricHydrator";
 
 type VizPopulationOverTimeProps = {
   metric: SupervisionPopulationSnapshotMetric | SnapshotMetric;
@@ -316,4 +316,4 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
   );
 };
 
-export default withMetricHydrator(observer(VizPopulationSnapshot));
+export default withPathwaysMetricHelpers(observer(VizPopulationSnapshot));
