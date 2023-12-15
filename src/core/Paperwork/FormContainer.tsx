@@ -69,6 +69,7 @@ const DownloadButton = styled(Button).attrs({
 })`
   background-color: ${rgba(palette.marble1, 0.1)};
   padding: ${rem(spacing.sm)} ${rem(spacing.md)};
+  width: max-content;
 `;
 
 const FormContainerElement = styled.div`
@@ -133,12 +134,13 @@ export const FormContainer = observer(function FormContainer({
           </div>
         </FormHeaderSection>
         <FormHeaderSection>
-          {formRevertButton && form.formLastUpdated && (
+          {formRevertButton && (
             <DownloadButton
+              disabled={!form.formLastUpdated}
               className="WorkflowsFormActionButton"
               onClick={() => firestoreStore.clearFormDraftData(form)}
             >
-              Clear All Edits
+              Revert All Edits
             </DownloadButton>
           )}
           <DownloadButton
