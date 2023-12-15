@@ -288,7 +288,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { supervisionLevel, supervisionLevelStart } = this.person;
     const {
-      currentOffenses,
       drugScreensPastYear,
       eligibilityCategory,
       eligibleLevelStart,
@@ -301,6 +300,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       offenseTypeEligibility,
       eligibleCriteria,
       metadata,
+      formInformation: { currentOffenses },
     } = this.record;
     const { requirementAlmostMetMap } = this;
 

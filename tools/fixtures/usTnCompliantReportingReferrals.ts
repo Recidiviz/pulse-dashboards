@@ -281,10 +281,12 @@ export const usTnCompliantReportingReferrals =
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,
+        usTnNotServingIneligibleCrOffense: null,
       },
       ineligibleCriteria: {},
       formInformation: {
         sentenceStartDate: "2013-10-09",
+        currentOffenses: ["BURGLARY"],
       },
       metadata: {
         allOffenses: ["BURGLARY", "THEFT"],
@@ -346,6 +348,7 @@ export const usTnCompliantReportingReferrals =
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
+        usTnNotServingIneligibleCrOffense: null,
       },
       ineligibleCriteria: {
         usTnFinesFeesEligible: {
@@ -358,6 +361,7 @@ export const usTnCompliantReportingReferrals =
       },
       formInformation: {
         sentenceStartDate: "2020-03-07",
+        currentOffenses: ["EVADING ARREST"],
       },
       metadata: {
         allOffenses: ["FAILURE TO APPEAR (FELONY)", "EVADING ARREST"],

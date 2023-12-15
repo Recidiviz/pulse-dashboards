@@ -34,6 +34,7 @@ export class CompliantReportingForm extends FormBase<
     return transform(
       this.person,
       {
+        ...this.opportunity.record,
         sentenceStartDate: formatDate(
           this.opportunity.record?.formInformation.sentenceStartDate,
           "yyyy-MM-dd"
@@ -42,7 +43,8 @@ export class CompliantReportingForm extends FormBase<
           this.opportunity.record?.eligibleCriteria.usTnFinesFeesEligible
             ?.hasPermanentFinesFeesExemption?.currentExemptions ?? []
         ).join(", "),
-        ...this.opportunity.record,
+        currentOffenses:
+          this.opportunity.record?.formInformation.currentOffenses,
       } ?? {}
     );
   }

@@ -117,7 +117,6 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
     drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
-    currentOffenses: ["EXAMPLE CURRENT"],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     specialConditionsFlag: "current",
@@ -135,10 +134,12 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
       usTnNoArrestsInPastYear: {},
       usTnNoHighSanctionsInPastYear: {},
       usTnNoRecentCompliantReportingRejections: {},
+      usTnNotServingIneligibleCrOffense: {},
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
+      currentOffenses: ["EXAMPLE CURRENT"],
     },
     metadata: {
       mostRecentArrestCheck: {
@@ -165,9 +166,6 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       { contactNoteDate: parseISO("2022-06-01"), contactNoteType: "ZTVR" },
     ],
 
-    // Eligible with discretion: Missing sentence information
-    currentOffenses: [],
-
     // TODO(#3587): Make this actually be eligible with discretion
     eligibleCriteria: {
       usTnFinesFeesEligible: {
@@ -182,10 +180,13 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       usTnNoArrestsInPastYear: {},
       usTnNoHighSanctionsInPastYear: {},
       usTnNoRecentCompliantReportingRejections: {},
+      usTnNotServingIneligibleCrOffense: {},
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
+      // Eligible with discretion: Missing sentence information
+      currentOffenses: [],
     },
     metadata: {
       mostRecentArrestCheck: {
@@ -229,7 +230,6 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
     eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
     drugScreensPastYear: [],
-    currentOffenses: ["EXAMPLE CURRENT"],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     specialConditionsFlag: "current",
@@ -237,10 +237,12 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
 
     eligibleCriteria: {
       usTnNoArrestsInPastYear: {},
+      usTnNotServingIneligibleCrOffense: {},
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
+      currentOffenses: ["EXAMPLE OFFENSE"],
     },
     metadata: {
       mostRecentArrestCheck: {

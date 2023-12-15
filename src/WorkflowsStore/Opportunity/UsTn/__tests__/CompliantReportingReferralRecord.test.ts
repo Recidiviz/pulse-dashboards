@@ -80,7 +80,7 @@ const formInformation = {
   courtCostsPaid: null,
   courtName: "Circuit Court",
   currentExemptionsAndExpiration: null,
-  currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+  currentOffenses: ["STOLEN PROPERTY"],
   dateToday: "2023-07-21",
   docketNumbers: ["10000"],
   driversLicense: null,

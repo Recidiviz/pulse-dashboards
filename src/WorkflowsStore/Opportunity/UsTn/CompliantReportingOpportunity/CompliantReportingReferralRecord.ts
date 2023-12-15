@@ -51,6 +51,7 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       .null()
       .transform((_val) => ({}))
       .optional(),
+    usTnNotServingIneligibleCrOffense: z.null().transform((_val) => ({})),
   }),
   ineligibleCriteria: z.object({
     usTnFinesFeesEligible: z
@@ -77,6 +78,7 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
   }),
   formInformation: z.object({
     sentenceStartDate: dateStringSchema.optional(),
+    currentOffenses: z.array(z.string()),
   }),
   metadata: z
     .object({
@@ -108,7 +110,6 @@ export type AlmostEligibleCriteriaRaw = {
 
 export type CompliantReportingReferralRecord = {
   almostEligibleCriteria?: AlmostEligibleCriteria;
-  currentOffenses: string[];
   eligibilityCategory: string;
   eligibleLevelStart?: Date;
   drugScreensPastYear: { result: string; date: Date }[];
@@ -313,7 +314,12 @@ export const transformCompliantReportingReferral: TransformFunction<
   const newFormInformation: z.input<
     typeof compliantReportingSchema.shape.formInformation
   > = {
-    sentenceStartDate: sentenceStartDate ?? formInformation?.sentenceStartDate,
+    sentenceStartDate: formInformation.sentenceStartDate ?? sentenceStartDate,
+    currentOffenses:
+      // We can't differentiate "0 offenses in new schema" from "not eligible in new schema" so look at the criteria instead
+      eligibleCriteria.usTnNotServingIneligibleCrOffense !== undefined
+        ? formInformation.currentOffenses
+        : currentOffenses,
   };
   const newMetadata: z.input<typeof compliantReportingSchema.shape.metadata> = {
     mostRecentArrestCheck: {
@@ -326,6 +332,7 @@ export const transformCompliantReportingReferral: TransformFunction<
     typeof compliantReportingSchema.shape.eligibleCriteria
   > = {
     usTnNoArrestsInPastYear: null, // This will always be null for eligible clients, and arrests aren't an almost eligible criteria
+    usTnNotServingIneligibleCrOffense: null, // This will always be null for eligible clients, and ineligible offenses aren't an almost eligible criteria
   };
   const newIneligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.ineligibleCriteria
@@ -424,7 +431,6 @@ export const transformCompliantReportingReferral: TransformFunction<
 
   const transformedRecord: CompliantReportingReferralRecordFull = {
     ...zodRecord,
-    currentOffenses,
     eligibilityCategory,
     eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
     drugScreensPastYear: drugScreensPastYear.map(({ result, date }) => ({

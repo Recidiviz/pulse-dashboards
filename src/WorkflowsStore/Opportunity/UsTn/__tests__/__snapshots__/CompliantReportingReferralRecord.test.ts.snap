@@ -25,10 +25,14 @@ Object {
     "usTnNoArrestsInPastYear": Object {},
     "usTnNoHighSanctionsInPastYear": Object {},
     "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNotServingIneligibleCrOffense": Object {},
   },
   "eligibleLevelStart": undefined,
   "externalId": "202",
   "formInformation": Object {
+    "currentOffenses": Array [
+      "STOLEN PROPERTY",
+    ],
     "sentenceStartDate": 2020-03-07T00:00:00.000Z,
   },
   "ineligibleCriteria": Object {},
@@ -105,10 +109,14 @@ Object {
     "usTnNoArrestsInPastYear": Object {},
     "usTnNoHighSanctionsInPastYear": Object {},
     "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNotServingIneligibleCrOffense": Object {},
   },
   "eligibleLevelStart": undefined,
   "externalId": "202",
   "formInformation": Object {
+    "currentOffenses": Array [
+      "FAILURE TO APPEAR (FELONY)",
+    ],
     "sentenceStartDate": 2020-03-07T00:00:00.000Z,
   },
   "ineligibleCriteria": Object {},
