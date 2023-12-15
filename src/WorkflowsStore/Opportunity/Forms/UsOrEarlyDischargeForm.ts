@@ -20,6 +20,8 @@ import { formatWorkflowsDate } from "../../../utils";
 import {
   UsOrEarlyDischargeDraftData,
   UsOrEarlyDischargeOpportunity,
+  UsOrEarlyDischargeSentenceDraftData,
+  UsOrEarlyDischargeSubOpportunity,
 } from "../UsOr";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
@@ -34,6 +36,30 @@ export class UsOrEarlyDischargeForm extends FormBase<
     return "FormUsOrEarlyDischarge";
   }
 
+  private static sentenceFormData(
+    subOpportunity: UsOrEarlyDischargeSubOpportunity
+  ): UsOrEarlyDischargeSentenceDraftData {
+    const {
+      sentenceStatute,
+      sentenceSubType,
+      sentenceStartDate,
+      sentenceEndDate,
+      sentenceCounty,
+      judgeFullName,
+      courtCaseNumber,
+    } = subOpportunity.metadata;
+
+    return {
+      offenses: sentenceStatute,
+      sentenceType: sentenceSubType,
+      sentenceStartDate: formatWorkflowsDate(sentenceStartDate),
+      sentenceExpirationDate: formatWorkflowsDate(sentenceEndDate),
+      county: sentenceCounty,
+      judgeName: judgeFullName,
+      docket: courtCaseNumber,
+    };
+  }
+
   prefilledDataTransformer: PrefilledDataTransformer<UsOrEarlyDischargeDraftData> =
     () => {
       if (!this.opportunity.record) return {};
@@ -46,7 +72,12 @@ export class UsOrEarlyDischargeForm extends FormBase<
 
       const todaysDate = formatWorkflowsDate(new Date());
 
-      // TODO(#4437): Add sentence information once populated in record
+      const sentences = Object.fromEntries(
+        this.opportunity.record.subOpportunities.map((subopp) => [
+          subopp.id,
+          UsOrEarlyDischargeForm.sentenceFormData(subopp),
+        ])
+      );
 
       return {
         givenNames,
@@ -55,6 +86,7 @@ export class UsOrEarlyDischargeForm extends FormBase<
         clientId,
         officerName,
         todaysDate,
+        sentences,
       };
     };
 }

@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`prefilledDataTransformer transform multiple sentences 1`] = `
+Object {
+  "clientId": "pei1",
+  "givenNames": "Joe",
+  "middleNames": "Quimby",
+  "officerName": "Caseload 8675309",
+  "sentences": Object {
+    "sent1": Object {
+      "county": "COUNTY",
+      "docket": "cc1",
+      "judgeName": "Judge Reinhold",
+      "offenses": "STATUTE",
+      "sentenceExpirationDate": "Mar 8, 2022",
+      "sentenceStartDate": "Jan 5, 2020",
+      "sentenceType": "subtype",
+    },
+    "sent2": Object {
+      "county": "COUNTY",
+      "docket": "cc2",
+      "judgeName": "Judge Judge",
+      "offenses": "STATUTE",
+      "sentenceExpirationDate": "Aug 8, 2022",
+      "sentenceStartDate": "Apr 5, 2020",
+      "sentenceType": "subtype2",
+    },
+    "sent3": Object {
+      "county": "COUNTY",
+      "docket": "cc3",
+      "judgeName": "Judge Jury",
+      "offenses": "STATUTE",
+      "sentenceExpirationDate": "Jun 8, 2022",
+      "sentenceStartDate": "Jul 5, 2020",
+      "sentenceType": "subtype3",
+    },
+  },
+  "surname": "Test",
+  "todaysDate": "Dec 12, 2023",
+}
+`;

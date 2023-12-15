@@ -30,13 +30,12 @@ import { CriteriaCopy, hydrateCriteria } from "../../utils";
 import {
   UsOrEarlyDischargeReferralRecord,
   usOrEarlyDischargeSchema,
+  UsOrEarlyDischargeSubOpportunity,
 } from "./UsOrEarlyDischargeReferralRecord";
 
 const OPPORTUNITY_TYPE: SupervisionOpportunityType = "usOrEarlyDischarge";
 
-const CRITERIA_COPY: CriteriaCopy<
-  UsOrEarlyDischargeReferralRecord["subOpportunities"][number]
-> = {
+const CRITERIA_COPY: CriteriaCopy<UsOrEarlyDischargeSubOpportunity> = {
   eligibleCriteria: [
     [
       "eligibleStatute",

@@ -111,6 +111,19 @@ export type UsOrEarlyDischargeReferralRecord = z.infer<
   typeof usOrEarlyDischargeSchema
 >;
 
+export type UsOrEarlyDischargeSubOpportunity =
+  UsOrEarlyDischargeReferralRecord["subOpportunities"][number];
+
+export type UsOrEarlyDischargeSentenceDraftData = {
+  offenses: string;
+  sentenceType: string;
+  sentenceStartDate: string;
+  county: string;
+  docket: string;
+  judgeName: string;
+  sentenceExpirationDate: string;
+};
+
 export type UsOrEarlyDischargeDraftData = {
   givenNames: string;
   middleNames: string;
@@ -120,4 +133,7 @@ export type UsOrEarlyDischargeDraftData = {
   offenses: string;
   sentenceStartDate: string;
   todaysDate: string;
+  // Note that if we want to edit this form in the frontend, we will need to flatten this out
+  // This will also require changing to a stable id for each sentence
+  sentences: Record<string, UsOrEarlyDischargeSentenceDraftData>;
 };

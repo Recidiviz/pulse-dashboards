@@ -64,8 +64,8 @@ function createTestUnit() {
           courtCaseNumber: "cc1",
           sentenceSubType: "subtype",
           sentenceImposedDate: parseISO("2020-01-01"),
-          sentenceStartDate: parseISO("2020-01-01"),
-          sentenceEndDate: parseISO("2020-01-01"),
+          sentenceStartDate: parseISO("2020-01-05"),
+          sentenceEndDate: parseISO("2022-03-08"),
           sentenceCounty: "COUNTY",
           chargeCounty: "CHARGE COUNTY",
           judgeFullName: "Judge Reinhold",
@@ -111,9 +111,94 @@ describe("prefilledDataTransformer", () => {
         "givenNames": "Joe",
         "middleNames": "Quimby",
         "officerName": "Caseload 8675309",
+        "sentences": Object {
+          "sent1": Object {
+            "county": "COUNTY",
+            "docket": "cc1",
+            "judgeName": "Judge Reinhold",
+            "offenses": "STATUTE",
+            "sentenceExpirationDate": "Mar 8, 2022",
+            "sentenceStartDate": "Jan 5, 2020",
+            "sentenceType": "subtype",
+          },
+        },
         "surname": "Test",
         "todaysDate": "Dec 12, 2023",
       }
     `);
+  });
+
+  test("transform multiple sentences", () => {
+    const criteria = {
+      eligibleCriteria: {
+        eligibleStatute: {},
+        noAdministrativeSanction: {},
+        noConvictionDuringSentence: {},
+        pastHalfCompletionOrSixMonths: {},
+      },
+      ineligibleCriteria: {},
+    };
+    const multioppRecord = {
+      stateCode: "US_OZ",
+      externalId: "pei1",
+      metadata: {
+        programs: [],
+      },
+      subOpportunities: [
+        {
+          ...criteria,
+          id: "sent1",
+          metadata: {
+            sentenceId: "sent1",
+            courtCaseNumber: "cc1",
+            sentenceSubType: "subtype",
+            sentenceImposedDate: parseISO("2020-01-01"),
+            sentenceStartDate: parseISO("2020-01-05"),
+            sentenceEndDate: parseISO("2022-03-08"),
+            sentenceCounty: "COUNTY",
+            chargeCounty: "CHARGE COUNTY",
+            judgeFullName: "Judge Reinhold",
+            sentenceStatute: "STATUTE",
+            conditions: [],
+          },
+        },
+        {
+          ...criteria,
+          id: "sent2",
+          metadata: {
+            sentenceId: "sent2",
+            courtCaseNumber: "cc2",
+            sentenceSubType: "subtype2",
+            sentenceImposedDate: parseISO("2020-04-04"),
+            sentenceStartDate: parseISO("2020-04-05"),
+            sentenceEndDate: parseISO("2022-08-08"),
+            sentenceCounty: "COUNTY",
+            chargeCounty: "CHARGE COUNTY",
+            judgeFullName: "Judge Judge",
+            sentenceStatute: "STATUTE",
+            conditions: [],
+          },
+        },
+        {
+          ...criteria,
+          id: "sent3",
+          metadata: {
+            sentenceId: "sent3",
+            courtCaseNumber: "cc3",
+            sentenceSubType: "subtype3",
+            sentenceImposedDate: parseISO("2020-02-01"),
+            sentenceStartDate: parseISO("2020-07-05"),
+            sentenceEndDate: parseISO("2022-06-08"),
+            sentenceCounty: "COUNTY",
+            chargeCounty: "CHARGE COUNTY 3",
+            judgeFullName: "Judge Jury",
+            sentenceStatute: "STATUTE",
+            conditions: [],
+          },
+        },
+      ],
+    };
+    jest.spyOn(opp, "record", "get").mockImplementation(() => multioppRecord);
+    expect(form.prefilledDataTransformer()).toMatchSnapshot();
   });
 });

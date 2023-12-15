@@ -20,8 +20,10 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Client } from "../../../../WorkflowsStore";
-import { downloadSingle } from "../../DOCXFormGenerator";
+import { UsOrEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsOr";
+import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
+import { downloadZipFile } from "../../utils";
 import p1 from "./assets/p1.png";
 
 const FormPreviewPage = styled.img`
@@ -30,7 +32,7 @@ const FormPreviewPage = styled.img`
 `;
 
 const formDownloader = async (client: Client): Promise<void> => {
-  let contents = {};
+  let contents: Partial<UsOrEarlyDischargeDraftData> = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
@@ -38,13 +40,29 @@ const formDownloader = async (client: Client): Promise<void> => {
     };
   });
 
-  await downloadSingle(
-    `${client.displayName} - EDIS County Review Checklist.docx`,
-    client.stateCode,
-    "edis_review_checklist.docx",
-    contents,
+  const { sentences } = contents;
+
+  if (!sentences) {
+    throw new Error(
+      "[Workflows][US_OR] Unable to generate Earned Discharge forms due to missing sentences"
+    );
+  }
+
+  const fileInputs: FileGeneratorArgs[] = Object.values(sentences).map(
+    (sentence) => [
+      `${client.displayName} - ${sentence.docket} - EDIS County Review Checklist.docx`,
+      client.stateCode,
+      "edis_review_checklist.docx",
+      { ...contents, ...sentence },
+    ]
+  );
+
+  const documents = await renderMultipleDocx(
+    fileInputs,
     client.rootStore.getTokenSilently
   );
+
+  downloadZipFile(`${client.displayName} EDIS packet.zip`, documents);
 };
 
 export const FormUsOrEarlyDischarge = observer(function FormSCCP() {
@@ -60,9 +78,9 @@ export const FormUsOrEarlyDischarge = observer(function FormSCCP() {
 
   return (
     <FormContainer
-      heading="Early Discahrge"
+      heading="Early Discharge"
       agencyName="ODOC"
-      downloadButtonLabel="Download .DOCX"
+      downloadButtonLabel="Download packet"
       onClickDownload={() => formDownloader(client)}
       opportunity={opportunity}
     >
