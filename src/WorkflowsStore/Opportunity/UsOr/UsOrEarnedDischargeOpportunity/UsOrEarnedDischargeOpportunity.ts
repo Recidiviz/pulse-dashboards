@@ -22,20 +22,20 @@ import { makeObservable } from "mobx";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
-import { UsOrEarlyDischargeForm } from "../../Forms/UsOrEarlyDischargeForm";
+import { UsOrEarnedDischargeForm } from "../../Forms/UsOrEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, hydrateCriteria } from "../../utils";
 import {
-  UsOrEarlyDischargeReferralRecord,
-  usOrEarlyDischargeSchema,
-  UsOrEarlyDischargeSubOpportunity,
-} from "./UsOrEarlyDischargeReferralRecord";
+  UsOrEarnedDischargeReferralRecord,
+  usOrEarnedDischargeSchema,
+  UsOrEarnedDischargeSubOpportunity,
+} from "./UsOrEarnedDischargeReferralRecord";
 
-const OPPORTUNITY_TYPE: SupervisionOpportunityType = "usOrEarlyDischarge";
+const OPPORTUNITY_TYPE: SupervisionOpportunityType = "usOrEarnedDischarge";
 
-const CRITERIA_COPY: CriteriaCopy<UsOrEarlyDischargeSubOpportunity> = {
+const CRITERIA_COPY: CriteriaCopy<UsOrEarnedDischargeSubOpportunity> = {
   eligibleCriteria: [
     [
       "eligibleStatute",
@@ -74,25 +74,25 @@ const CRITERIA_COPY: CriteriaCopy<UsOrEarlyDischargeSubOpportunity> = {
   ineligibleCriteria: [],
 };
 
-export class UsOrEarlyDischargeOpportunity extends OpportunityBase<
+export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
   Client,
-  UsOrEarlyDischargeReferralRecord
+  UsOrEarnedDischargeReferralRecord
 > {
   client: Client;
 
-  form: UsOrEarlyDischargeForm;
+  form: UsOrEarnedDischargeForm;
 
   constructor(client: Client) {
     super(
       client,
       OPPORTUNITY_TYPE,
       client.rootStore,
-      usOrEarlyDischargeSchema.parse
+      usOrEarnedDischargeSchema.parse
     );
 
     this.client = client;
 
-    this.form = new UsOrEarlyDischargeForm(this, client.rootStore);
+    this.form = new UsOrEarnedDischargeForm(this, client.rootStore);
 
     makeObservable(this, { requirementsMet: true });
   }
@@ -121,6 +121,10 @@ export class UsOrEarlyDischargeOpportunity extends OpportunityBase<
   readonly tooltipEligibilityText = "Eligible for early discharge";
 
   denialReasonsMap = {
+    FINES:
+      "Compensatory fines and restitution have been paid in full or current on payment plan",
+    PROGRAMS: "Incomplete specialty court programs or treatment programs",
+    "CASE PLAN": "Not in compliance with supervision case plan",
     [OTHER_KEY]: "Other: please specify a reason",
   };
 }

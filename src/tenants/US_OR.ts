@@ -30,7 +30,7 @@ const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
 
 const US_OR_CONFIG: TenantConfig = {
   name: "Oregon",
-  stateCode: "CA",
+  stateCode: "OR",
   domain: "doc.oregon.gov",
   availableStateCodes: [dashboard.US_OR],
   enableUserRestrictions: false,

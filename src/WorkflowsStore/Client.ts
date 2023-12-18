@@ -60,7 +60,7 @@ import {
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
 import { SupervisionOpportunityType } from "./Opportunity/OpportunityConfigs";
-import { UsOrEarlyDischargeOpportunity } from "./Opportunity/UsOr/UsOrEarlyDischargeOpportunity/UsOrEarlyDischargeOpportunity";
+import { UsOrEarnedDischargeOpportunity } from "./Opportunity/UsOr/UsOrEarnedDischargeOpportunity/UsOrEarnedDischargeOpportunity";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
@@ -108,7 +108,7 @@ const supervisionOpportunityConstructors: Record<
   usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingOpportunity,
   usMiPastFTRD: UsMiPastFTRDOpportunity,
   usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,
-  usOrEarlyDischarge: UsOrEarlyDischargeOpportunity,
+  usOrEarnedDischarge: UsOrEarnedDischargeOpportunity,
 };
 
 export const createClientOpportunity: OpportunityFactory<

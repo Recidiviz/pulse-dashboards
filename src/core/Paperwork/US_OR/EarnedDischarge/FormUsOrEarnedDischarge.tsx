@@ -20,7 +20,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Client } from "../../../../WorkflowsStore";
-import { UsOrEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsOr";
+import { UsOrEarnedDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsOr";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { downloadZipFile } from "../../utils";
@@ -32,11 +32,11 @@ const FormPreviewPage = styled.img`
 `;
 
 const formDownloader = async (client: Client): Promise<void> => {
-  let contents: Partial<UsOrEarlyDischargeDraftData> = {};
+  let contents: Partial<UsOrEarnedDischargeDraftData> = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
-      ...toJS(client.verifiedOpportunities.usOrEarlyDischarge?.form?.formData),
+      ...toJS(client.verifiedOpportunities.usOrEarnedDischarge?.form?.formData),
     };
   });
 
@@ -65,10 +65,10 @@ const formDownloader = async (client: Client): Promise<void> => {
   downloadZipFile(`${client.displayName} EDIS packet.zip`, documents);
 };
 
-export const FormUsOrEarlyDischarge = observer(function FormSCCP() {
+export const FormUsOrEarnedDischarge = observer(function FormSCCP() {
   const { workflowsStore } = useRootStore();
   const opportunity =
-    workflowsStore?.selectedPerson?.verifiedOpportunities?.usOrEarlyDischarge;
+    workflowsStore?.selectedPerson?.verifiedOpportunities?.usOrEarnedDischarge;
 
   if (!opportunity) {
     return null;
@@ -78,7 +78,7 @@ export const FormUsOrEarlyDischarge = observer(function FormSCCP() {
 
   return (
     <FormContainer
-      heading="Early Discharge"
+      heading="EDIS Checklist"
       agencyName="ODOC"
       downloadButtonLabel="Download packet"
       onClickDownload={() => formDownloader(client)}

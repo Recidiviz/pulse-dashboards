@@ -19,7 +19,7 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
-export const usOrEarlyDischargeSchema = opportunitySchemaBase
+export const usOrEarnedDischargeSchema = opportunitySchemaBase
   .extend({
     formInformation: z.object({}),
     eligibleCriteria: z.object({
@@ -103,18 +103,18 @@ export const usOrEarlyDischargeSchema = opportunitySchemaBase
     }
   );
 
-export type UsOrEarlyDischargeReferralRecordRaw = z.input<
-  typeof usOrEarlyDischargeSchema
+export type UsOrEarnedDischargeReferralRecordRaw = z.input<
+  typeof usOrEarnedDischargeSchema
 >;
 
-export type UsOrEarlyDischargeReferralRecord = z.infer<
-  typeof usOrEarlyDischargeSchema
+export type UsOrEarnedDischargeReferralRecord = z.infer<
+  typeof usOrEarnedDischargeSchema
 >;
 
-export type UsOrEarlyDischargeSubOpportunity =
-  UsOrEarlyDischargeReferralRecord["subOpportunities"][number];
+export type UsOrEarnedDischargeSubOpportunity =
+  UsOrEarnedDischargeReferralRecord["subOpportunities"][number];
 
-export type UsOrEarlyDischargeSentenceDraftData = {
+export type UsOrEarnedDischargeSentenceDraftData = {
   offenses: string;
   sentenceType: string;
   sentenceStartDate: string;
@@ -124,7 +124,7 @@ export type UsOrEarlyDischargeSentenceDraftData = {
   sentenceExpirationDate: string;
 };
 
-export type UsOrEarlyDischargeDraftData = {
+export type UsOrEarnedDischargeDraftData = {
   givenNames: string;
   middleNames: string;
   surname: string;
@@ -135,5 +135,5 @@ export type UsOrEarlyDischargeDraftData = {
   todaysDate: string;
   // Note that if we want to edit this form in the frontend, we will need to flatten this out
   // This will also require changing to a stable id for each sentence
-  sentences: Record<string, UsOrEarlyDischargeSentenceDraftData>;
+  sentences: Record<string, UsOrEarnedDischargeSentenceDraftData>;
 };

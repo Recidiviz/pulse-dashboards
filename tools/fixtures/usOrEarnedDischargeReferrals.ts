@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsOrEarlyDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsOr/UsOrEarlyDischargeOpportunity/UsOrEarlyDischargeReferralRecord";
+import { UsOrEarnedDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeOpportunity/UsOrEarnedDischargeReferralRecord";
 import { fixtureWithIdKey } from "./utils";
 
-export const usOrEarlyDischargeReferrals =
-  fixtureWithIdKey<UsOrEarlyDischargeReferralRecordRaw>("externalId", [
+export const usOrEarnedDischargeReferrals =
+  fixtureWithIdKey<UsOrEarnedDischargeReferralRecordRaw>("externalId", [
     {
       stateCode: "US_OR",
       externalId: "001",

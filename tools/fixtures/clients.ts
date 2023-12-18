@@ -971,7 +971,7 @@ const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     currentBalance: 1221.88,
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-04",
-    allEligibleOpportunities: ["usOrEarlyDischarge"],
+    allEligibleOpportunities: ["usOrEarnedDischarge"],
   },
   {
     personName: {
@@ -993,7 +993,7 @@ const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     currentBalance: 1221.88,
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-04",
-    allEligibleOpportunities: ["usOrEarlyDischarge"],
+    allEligibleOpportunities: ["usOrEarnedDischarge"],
   },
 ];
 

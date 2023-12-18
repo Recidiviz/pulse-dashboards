@@ -18,27 +18,27 @@
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatWorkflowsDate } from "../../../utils";
 import {
-  UsOrEarlyDischargeDraftData,
-  UsOrEarlyDischargeOpportunity,
-  UsOrEarlyDischargeSentenceDraftData,
-  UsOrEarlyDischargeSubOpportunity,
+  UsOrEarnedDischargeDraftData,
+  UsOrEarnedDischargeOpportunity,
+  UsOrEarnedDischargeSentenceDraftData,
+  UsOrEarnedDischargeSubOpportunity,
 } from "../UsOr";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
-export class UsOrEarlyDischargeForm extends FormBase<
-  UsOrEarlyDischargeDraftData,
-  UsOrEarlyDischargeOpportunity
+export class UsOrEarnedDischargeForm extends FormBase<
+  UsOrEarnedDischargeDraftData,
+  UsOrEarnedDischargeOpportunity
 > {
-  navigateToFormText = "Generate paperwork";
+  navigateToFormText = "Generate EDIS check-list";
 
   // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
-    return "FormUsOrEarlyDischarge";
+    return "FormUsOrEarnedDischarge";
   }
 
   private static sentenceFormData(
-    subOpportunity: UsOrEarlyDischargeSubOpportunity
-  ): UsOrEarlyDischargeSentenceDraftData {
+    subOpportunity: UsOrEarnedDischargeSubOpportunity
+  ): UsOrEarnedDischargeSentenceDraftData {
     const {
       sentenceStatute,
       sentenceSubType,
@@ -60,7 +60,7 @@ export class UsOrEarlyDischargeForm extends FormBase<
     };
   }
 
-  prefilledDataTransformer: PrefilledDataTransformer<UsOrEarlyDischargeDraftData> =
+  prefilledDataTransformer: PrefilledDataTransformer<UsOrEarnedDischargeDraftData> =
     () => {
       if (!this.opportunity.record) return {};
 
@@ -75,7 +75,7 @@ export class UsOrEarlyDischargeForm extends FormBase<
       const sentences = Object.fromEntries(
         this.opportunity.record.subOpportunities.map((subopp) => [
           subopp.id,
-          UsOrEarlyDischargeForm.sentenceFormData(subopp),
+          UsOrEarnedDischargeForm.sentenceFormData(subopp),
         ])
       );
 

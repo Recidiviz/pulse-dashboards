@@ -21,10 +21,10 @@ import tk from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
-import { UsOrEarlyDischargeOpportunity } from "../../UsOr";
-import { UsOrEarlyDischargeForm } from "../UsOrEarlyDischargeForm";
+import { UsOrEarnedDischargeOpportunity } from "../../UsOr";
+import { UsOrEarnedDischargeForm } from "../UsOrEarnedDischargeForm";
 
-let form: UsOrEarlyDischargeForm;
+let form: UsOrEarnedDischargeForm;
 let opp: typeof form["opportunity"];
 let personRecord: typeof opp["person"]["record"];
 let oppRecord: typeof opp["record"] & object;
@@ -41,7 +41,7 @@ function createTestUnit() {
     personExternalId: "pei1",
     personName: { givenNames: "Joe", middleNames: "Quimby", surname: "Test" },
     officerId: "zzz",
-    allEligibleOpportunities: ["usOrEarlyDischarge"],
+    allEligibleOpportunities: ["usOrEarnedDischarge"],
   };
   oppRecord = {
     stateCode: "US_OZ",
@@ -85,7 +85,7 @@ function createTestUnit() {
     email: null,
   };
   const person = new Client(personRecord, rootStore);
-  opp = new UsOrEarlyDischargeOpportunity(person);
+  opp = new UsOrEarnedDischargeOpportunity(person);
   jest.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
   jest.spyOn(person, "assignedStaff", "get").mockReturnValue(staffRecord);
   form = opp.form;

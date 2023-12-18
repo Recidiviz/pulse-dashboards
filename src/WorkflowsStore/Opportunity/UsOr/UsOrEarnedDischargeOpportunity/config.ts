@@ -18,19 +18,19 @@
 import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { UsOrEarlyDischargeOpportunity } from "./UsOrEarlyDischargeOpportunity";
+import { UsOrEarnedDischargeOpportunity } from "./UsOrEarnedDischargeOpportunity";
 
-export const usOrEarlyDischargeConfig: OpportunityConfig<UsOrEarlyDischargeOpportunity> =
+export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpportunity> =
   {
     systemType: "SUPERVISION",
     stateCode: "US_OR",
-    urlSection: "earlyDischarge",
-    label: "Early Discharge",
+    urlSection: "earnedDischarge",
+    label: "Earned Discharge",
     hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText: "eligible for early discharge",
+      eligibilityText: simplur`${formattedCount} client[|s] on [a|] funded sentence[|s] may be `,
+      opportunityText: "eligible for Earned Discharge from Supervision",
       callToAction:
-        "Review clients who may be eligible for Early Discharge and complete the paperwork.",
+        "Review clients who may be eligible for ED and complete the EDIS check-list.",
     }),
-    firestoreCollection: "US_OR-earlyDischarge",
+    firestoreCollection: "US_OR-earnedDischarge",
   };

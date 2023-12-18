@@ -40,7 +40,7 @@ import { usMiPastFTRDConfig as usMiPastFTRD } from "./UsMi/UsMiPastFTRDOpportuni
 import { usMiSupervisionLevelDowngradeConfig as usMiSupervisionLevelDowngrade } from "./UsMi/UsMiSupervisionLevelDowngradeOpportunity/config";
 import { usMoRestrictiveHousingStatusHearingConfig as usMoRestrictiveHousingStatusHearing } from "./UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/config";
 import { usNdEarlyTerminationConfig as earlyTermination } from "./UsNd/UsNdEarlyTerminationOpportunity/config";
-import { usOrEarlyDischargeConfig as usOrEarlyDischarge } from "./UsOr/UsOrEarlyDischargeOpportunity/config";
+import { usOrEarnedDischargeConfig as usOrEarnedDischarge } from "./UsOr/UsOrEarnedDischargeOpportunity/config";
 import { usTnCompliantReportingConfig as compliantReporting } from "./UsTn/CompliantReportingOpportunity/config";
 import { UsTnAnnualReclassificationReviewConfig as usTnAnnualReclassification } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/config";
 import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./UsTn/UsTnCustodyLevelDowngradeOpportunity/config";
@@ -149,7 +149,7 @@ export const OPPORTUNITY_CONFIGS = {
   earlyTermination,
 
   /* US_OR */
-  usOrEarlyDischarge,
+  usOrEarnedDischarge,
 
   /* US_TN */
   compliantReporting,
