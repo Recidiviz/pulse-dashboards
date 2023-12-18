@@ -27,7 +27,7 @@ import {
 import { noop } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
@@ -35,6 +35,7 @@ import styled, { css } from "styled-components/macro";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import useIsOverflown from "../../hooks/useIsOverflown";
 import { SupervisionOfficerDetailPresenter } from "../../OutliersStore/presenters/SupervisionOfficerDetailPresenter";
 import { getDistrictWithoutLabel } from "../../OutliersStore/presenters/utils";
 import { formatDate, toTitleCase } from "../../utils";
@@ -70,9 +71,13 @@ const scrollShadowStyles = css`
   width: ${rem(16)};
   height: ${rem(40)};
   z-index: ${zindex.tooltip - 1};
+  margin: 0 -${rem(spacing.md)};
 `;
 
-const StyledTabList = styled(TabList)<{ $isMobile: boolean }>`
+const StyledTabList = styled(TabList)<{
+  $isMobile: boolean;
+  $showScrollShadow: boolean;
+}>`
   display: block;
   padding: ${rem(spacing.md)} ${rem(spacing.sm)} 0;
   white-space: nowrap;
@@ -87,7 +92,7 @@ const StyledTabList = styled(TabList)<{ $isMobile: boolean }>`
       rgba(255, 255, 255, 0) 109.62%
     );
     left: 0;
-    opacity: ${({ $isMobile }) => ($isMobile ? 1 : 0)};
+    opacity: ${({ $showScrollShadow }) => ($showScrollShadow ? 1 : 0)};
   }
 
   &::after {
@@ -98,7 +103,7 @@ const StyledTabList = styled(TabList)<{ $isMobile: boolean }>`
       rgba(255, 255, 255, 0) 109.62%
     );
     right: 0;
-    opacity: ${({ $isMobile }) => ($isMobile ? 1 : 0)};
+    opacity: ${({ $showScrollShadow }) => ($showScrollShadow ? 1 : 0)};
   }
 `;
 
@@ -143,6 +148,8 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   presenter: SupervisionOfficerDetailPresenter;
 }) {
   const { isMobile, isTablet } = useIsMobile(true);
+  const [tabListEl, setTabListEl] = useState<HTMLElement | null>(null);
+  const isTabListOverflown = useIsOverflown(tabListEl);
 
   const {
     outlierOfficerData,
@@ -158,6 +165,10 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   useEffect(() => {
     presenter.trackViewed();
   }, [presenter]);
+
+  useEffect(() => {
+    setTabListEl(document.getElementById("outliersStaffTabList"));
+  }, []);
 
   const supervisorLinkProps = supervisorInfo && {
     linkText: `Go to ${
@@ -263,7 +274,11 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         // so we don't actually have to maintain any tab state here
         onSelect={noop}
       >
-        <StyledTabList $isMobile={isMobile}>
+        <StyledTabList
+          id="outliersStaffTabList"
+          $isMobile={isMobile}
+          $showScrollShadow={isMobile && isTabListOverflown}
+        >
           {outlierOfficerData.outlierMetrics.map((metric) => (
             <StyledTab key={metric.metricId}>
               <Link
