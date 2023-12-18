@@ -35,7 +35,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -48,7 +48,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: null,
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: null,
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -61,7 +61,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: null,
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: null,
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -74,7 +74,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -87,7 +87,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -100,7 +100,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -113,7 +113,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -126,7 +126,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
 
     {
@@ -140,7 +140,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -153,7 +153,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -166,7 +166,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -179,7 +179,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -192,7 +192,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
 
     {
@@ -207,7 +207,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -221,7 +221,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -235,7 +235,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -249,7 +249,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -263,7 +263,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -277,7 +277,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -291,7 +291,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
 
     {
@@ -305,7 +305,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -318,7 +318,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -331,7 +331,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -344,7 +344,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
 
     {
@@ -359,7 +359,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -373,7 +373,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -387,7 +387,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -401,7 +401,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -415,7 +415,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -429,7 +429,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
       metricId:
@@ -443,7 +443,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       officerAssignmentEndDate: "2022-02-05",
       supervisionStartDate: "2021-01-08",
       supervisionEndDate: "2022-02-05",
-      supervisionType: "PAROLE",
+      supervisionType: "COMMUNITY_CONFINEMENT",
     },
   ];
 

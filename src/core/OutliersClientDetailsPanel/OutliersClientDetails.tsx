@@ -22,7 +22,7 @@ import styled from "styled-components/macro";
 
 import { ClientInfo } from "../../OutliersStore/models/ClientInfo";
 import { SupervisionDetails } from "../../OutliersStore/presenters/types";
-import { formatWorkflowsDate, toTitleCase } from "../../utils";
+import { formatWorkflowsDate, toHumanReadable, toTitleCase } from "../../utils";
 
 const Wrapper = styled.div``;
 
@@ -120,7 +120,8 @@ function ClientSupervisionDetails({
       <DetailsList direction="column">
         <Detail>
           <DetailTitle>
-            {toTitleCase(supervisionDetails.supervisionType)} Start Date
+            {toTitleCase(toHumanReadable(supervisionDetails.supervisionType))}{" "}
+            Start Date
           </DetailTitle>
           <DetailContent>
             {formatWorkflowsDate(supervisionDetails.supervisionStartDate)}

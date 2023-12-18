@@ -15,7 +15,7 @@ Array [
     "pseudonymizedClientId": "hashed-339710",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "235261",
@@ -30,7 +30,7 @@ Array [
     "pseudonymizedClientId": "hashed-235261",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "531407",
@@ -45,7 +45,7 @@ Array [
     "pseudonymizedClientId": "hashed-531407",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "436502",
@@ -60,7 +60,7 @@ Array [
     "pseudonymizedClientId": "hashed-436502",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "985771",
@@ -75,7 +75,7 @@ Array [
     "pseudonymizedClientId": "hashed-985771",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "931890",
@@ -90,7 +90,7 @@ Array [
     "pseudonymizedClientId": "hashed-931890",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "326160",
@@ -105,7 +105,7 @@ Array [
     "pseudonymizedClientId": "hashed-326160",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "930441",
@@ -120,7 +120,7 @@ Array [
     "pseudonymizedClientId": "hashed-930441",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
   Object {
     "clientId": "564940",
@@ -135,7 +135,7 @@ Array [
     "pseudonymizedClientId": "hashed-564940",
     "supervisionEndDate": 2022-02-05T00:00:00.000Z,
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-    "supervisionType": "PAROLE",
+    "supervisionType": "COMMUNITY_CONFINEMENT",
   },
 ]
 `;

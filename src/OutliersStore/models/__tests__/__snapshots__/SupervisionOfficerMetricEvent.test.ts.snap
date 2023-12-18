@@ -14,7 +14,7 @@ Object {
   "pseudonymizedClientId": "hashed-707222",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -32,7 +32,7 @@ Object {
   "pseudonymizedClientId": "hashed-205752",
   "supervisionEndDate": null,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -50,7 +50,7 @@ Object {
   "pseudonymizedClientId": "hashed-792381",
   "supervisionEndDate": null,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -68,7 +68,7 @@ Object {
   "pseudonymizedClientId": "hashed-869516",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -86,7 +86,7 @@ Object {
   "pseudonymizedClientId": "hashed-170571",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -104,7 +104,7 @@ Object {
   "pseudonymizedClientId": "hashed-461718",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -122,7 +122,7 @@ Object {
   "pseudonymizedClientId": "hashed-837771",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -140,7 +140,7 @@ Object {
   "pseudonymizedClientId": "hashed-617754",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -158,7 +158,7 @@ Object {
   "pseudonymizedClientId": "hashed-985771",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -176,7 +176,7 @@ Object {
   "pseudonymizedClientId": "hashed-326160",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -194,7 +194,7 @@ Object {
   "pseudonymizedClientId": "hashed-931890",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -212,7 +212,7 @@ Object {
   "pseudonymizedClientId": "hashed-930441",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -230,7 +230,7 @@ Object {
   "pseudonymizedClientId": "hashed-564940",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -248,7 +248,7 @@ Object {
   "pseudonymizedClientId": "hashed-144925",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -266,7 +266,7 @@ Object {
   "pseudonymizedClientId": "hashed-283496",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -284,7 +284,7 @@ Object {
   "pseudonymizedClientId": "hashed-334531",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -302,7 +302,7 @@ Object {
   "pseudonymizedClientId": "hashed-840134",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -320,7 +320,7 @@ Object {
   "pseudonymizedClientId": "hashed-968048",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -338,7 +338,7 @@ Object {
   "pseudonymizedClientId": "hashed-413899",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -356,7 +356,7 @@ Object {
   "pseudonymizedClientId": "hashed-415630",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -374,7 +374,7 @@ Object {
   "pseudonymizedClientId": "hashed-235261",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -392,7 +392,7 @@ Object {
   "pseudonymizedClientId": "hashed-531407",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -410,7 +410,7 @@ Object {
   "pseudonymizedClientId": "hashed-436502",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -428,7 +428,7 @@ Object {
   "pseudonymizedClientId": "hashed-339710",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -446,7 +446,7 @@ Object {
   "pseudonymizedClientId": "hashed-803013",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -464,7 +464,7 @@ Object {
   "pseudonymizedClientId": "hashed-470308",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -482,7 +482,7 @@ Object {
   "pseudonymizedClientId": "hashed-582059",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -500,7 +500,7 @@ Object {
   "pseudonymizedClientId": "hashed-374673",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -518,7 +518,7 @@ Object {
   "pseudonymizedClientId": "hashed-128785",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -536,7 +536,7 @@ Object {
   "pseudonymizedClientId": "hashed-914408",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
 
@@ -554,6 +554,6 @@ Object {
   "pseudonymizedClientId": "hashed-504894",
   "supervisionEndDate": 2022-02-05T00:00:00.000Z,
   "supervisionStartDate": 2021-01-08T00:00:00.000Z,
-  "supervisionType": "PAROLE",
+  "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
