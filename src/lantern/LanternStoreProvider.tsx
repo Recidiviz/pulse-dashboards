@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 
 import RootStore from "../RootStore";
 import type UserStore from "../RootStore/UserStore";
@@ -24,15 +24,15 @@ import type DataStore from "./LanternStore/DataStore/DataStore";
 import type FiltersStore from "./LanternStore/FiltersStore";
 
 const LanternContext = React.createContext<LanternStore | undefined>(undefined);
-const lanternStore = new LanternStore(RootStore);
 
 interface ProviderProps {
   children: React.ReactElement;
 }
 
 const LanternStoreProvider: React.FC<ProviderProps> = ({ children }) => {
+  const lanternStore = useRef(new LanternStore(RootStore));
   return (
-    <LanternContext.Provider value={lanternStore}>
+    <LanternContext.Provider value={lanternStore.current}>
       {children}
     </LanternContext.Provider>
   );
