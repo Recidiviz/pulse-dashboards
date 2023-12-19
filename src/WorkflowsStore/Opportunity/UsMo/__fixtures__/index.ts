@@ -18,6 +18,7 @@ import { parseISO } from "date-fns";
 
 import { ResidentRecord } from "../../../../FirestoreStore";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "..";
+import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
 
@@ -39,6 +40,7 @@ export const usMoPersonRecord: ResidentRecord = {
   allEligibleOpportunities: [
     "usMoRestrictiveHousingStatusHearing",
     "usMoOverdueRestrictiveHousingRelease",
+    "usMoOverdueRestrictiveHousingInitialHearing",
   ],
 };
 
@@ -128,6 +130,22 @@ export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
       usMoD1SanctionAfterRestrictiveHousingStart: {
         latestD1SanctionStartDate: "2023-08-15",
         restrictiveHousingStartDate: "2023-08-15",
+      },
+    }
+  );
+
+export const usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture =
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw>(
+    1,
+    {
+      usMoInitialHearingPastDueDate: {
+        nextReviewDate: "2023-10-15", // Example date, adjust as needed
+        dueDateInferred: true,
+      },
+      usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: {
+        restrictiveHousingStartDate: "2023-08-15",
+        latestHearingDate: "2023-09-20", // Example date, adjust as needed
+        latestScheduledReviewDate: "2023-09-25", // Example date, adjust as needed
       },
     }
   );

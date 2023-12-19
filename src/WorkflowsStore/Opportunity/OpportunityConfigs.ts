@@ -38,6 +38,7 @@ import { usMiEarlyDischargeConfig as usMiEarlyDischarge } from "./UsMi/UsMiEarly
 import { usMiMinimumTelephoneReportingConfig as usMiMinimumTelephoneReporting } from "./UsMi/UsMiMinimumTelephoneReportingOpportunity/config";
 import { usMiPastFTRDConfig as usMiPastFTRD } from "./UsMi/UsMiPastFTRDOpportunity/config";
 import { usMiSupervisionLevelDowngradeConfig as usMiSupervisionLevelDowngrade } from "./UsMi/UsMiSupervisionLevelDowngradeOpportunity/config";
+import { usMoOverdueRestrictiveHousingInitialHearingConfig as usMoOverdueRestrictiveHousingInitialHearing } from "./UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity/config";
 import { usMoOverdueRestrictiveHousingReleaseConfig as usMoOverdueRestrictiveHousingRelease } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity/config";
 import { usMoRestrictiveHousingStatusHearingConfig as usMoRestrictiveHousingStatusHearing } from "./UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/config";
 import { usNdEarlyTerminationConfig as earlyTermination } from "./UsNd/UsNdEarlyTerminationOpportunity/config";
@@ -146,6 +147,7 @@ export const OPPORTUNITY_CONFIGS = {
   /* US_MO */
   usMoRestrictiveHousingStatusHearing,
   usMoOverdueRestrictiveHousingRelease,
+  usMoOverdueRestrictiveHousingInitialHearing,
 
   /* US_ND */
   earlyTermination,
