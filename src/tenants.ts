@@ -26,6 +26,7 @@ import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
 import { TenantConfigId } from "./RootStore/types";
+import { CSG_CONFIG } from "./tenants/CSG";
 import US_CA_CONFIG from "./tenants/US_CA";
 import US_CO_CONFIG from "./tenants/US_CO";
 import US_ID_CONFIG from "./tenants/US_ID";
@@ -80,16 +81,7 @@ const TENANTS: Tenants = {
     availableStateCodes: ALL_TENANTS,
     enableUserRestrictions: true,
   },
-  CSG: {
-    name: "CSG",
-    stateCode: "CSG",
-    availableStateCodes: [
-      ...lantern.LANTERN_TENANTS,
-      pathways.US_MI,
-      pathways.US_TN,
-    ],
-    enableUserRestrictions: false,
-  },
+  CSG: CSG_CONFIG,
 };
 
 export default TENANTS;

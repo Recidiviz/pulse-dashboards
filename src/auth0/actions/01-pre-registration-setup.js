@@ -87,6 +87,18 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       api.user.setAppMetadata("stateCode", "CSG");
       // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", "CSG");
+      /** Set route permissions */
+      api.user.setAppMetadata("routes", {
+        system_libertyToPrison: true,
+        system_prison: true,
+        system_prisonToSupervision: true,
+        system_supervision: true,
+        system_supervisionToLiberty: true,
+        system_supervisionToPrison: true,
+      });
+      api.user.setAppMetadata("featureVariants", {
+        responsiveRevamp: true
+      });
       return;
     }
     // Set state_code for Recidiviz users

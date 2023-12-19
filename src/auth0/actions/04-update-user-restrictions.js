@@ -83,15 +83,10 @@ exports.onExecutePostLogin = async (event, api) => {
   /** Set stateCode in appMetadata for everyone. */
   api.user.setAppMetadata("stateCode", stateCode);
 
-  /** Set route permissions for CSG users. */
+  /** Set featureVariants to allow CSG access to insights (permission is still required) */
   if (stateCode === "csg") {
-    api.user.setAppMetadata("routes", {
-      system_libertyToPrison: true,
-      system_prison: true,
-      system_prisonToSupervision: true,
-      system_supervision: true,
-      system_supervisionToLiberty: true,
-      system_supervisionToPrison: true,
+    api.user.setAppMetadata("featureVariants", {
+      responsiveRevamp: true
     });
   }
 
