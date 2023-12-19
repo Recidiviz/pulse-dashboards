@@ -171,10 +171,13 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     reasons.includes(OTHER_KEY) &&
     (otherReason ?? "").length < minOtherReasonCharLength;
 
-  const reasonsUnchanged = isEqual(
-    new Set(reasons),
-    new Set(opportunity.denial?.reasons)
-  );
+  const otherReasonChanged =
+    reasons.includes(OTHER_KEY) &&
+    otherReason === opportunity.denial?.otherReason;
+
+  const reasonsUnchanged =
+    isEqual(new Set(reasons), new Set(opportunity.denial?.reasons)) &&
+    !otherReasonChanged;
 
   const disableSaveButton =
     reasonsUnchanged || unsetSlider || otherReasonInvalid;
