@@ -17,48 +17,46 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { Hydratable } from "../../core/models/types";
+import { HydrationState, HydrationStateMachine } from "../../core/models/types";
+import {
+  isHydrationFinished,
+  isHydrationInProgress,
+} from "../../core/models/utils";
 import { castToError } from "../../utils/castToError";
 import { OutliersStore } from "../OutliersStore";
 
 /**
  * Sits above all of the Outliers supervision pages and ensures the supervisionStore is hydrated
  */
-export class SupervisionPresenter implements Hydratable {
-  isLoading?: boolean;
-
-  error?: Error;
-
+export class SupervisionPresenter implements HydrationStateMachine {
   constructor(private outliersStore: OutliersStore) {
     makeAutoObservable(this);
   }
 
-  get isHydrated() {
-    return (
-      this.outliersStore.supervisionStore !== undefined &&
-      this.outliersStore.supervisionStore.userInfo !== undefined
-    );
+  hydrationState: HydrationState = { status: "needs hydration" };
+
+  private setHydrationState(newValue: HydrationState) {
+    this.hydrationState = newValue;
   }
 
   async hydrate(): Promise<void> {
-    this.setError(undefined);
-    this.setIsLoading(true);
+    if (isHydrationInProgress(this) || isHydrationFinished(this)) return;
+
+    this.setHydrationState({ status: "loading" });
 
     try {
       await flowResult(this.outliersStore.hydrateSupervisionStore());
       await flowResult(this.outliersStore.supervisionStore?.hydrateUserInfo());
-      this.setIsLoading(false);
+
+      // we expect this to be true after the preceding hydration promises resolve,
+      // but we guard against the possibility that something went wrong
+      if (this.outliersStore.supervisionStore?.userInfo !== undefined) {
+        this.setHydrationState({ status: "hydrated" });
+      } else {
+        throw new Error("Expected data is missing after hydration");
+      }
     } catch (e) {
-      this.setError(castToError(e));
-      this.setIsLoading(false);
+      this.setHydrationState({ status: "failed", error: castToError(e) });
     }
-  }
-
-  private setIsLoading(val?: boolean) {
-    this.isLoading = val;
-  }
-
-  private setError(val?: Error) {
-    this.error = val;
   }
 }

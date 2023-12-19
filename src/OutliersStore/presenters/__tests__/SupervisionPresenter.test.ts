@@ -47,17 +47,15 @@ test("hydrate", async () => {
     });
   jest.spyOn(OutliersStore.prototype, "hydrateSupervisionStore");
 
-  expect(presenter.isHydrated).toBeFalse();
-  expect(presenter.isLoading).toBeFalsy();
+  expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
 
   const hydrationPromise = presenter.hydrate();
-  expect(presenter.isLoading).toBeTrue();
+  expect(presenter.hydrationState).toEqual({ status: "loading" });
 
   await hydrationPromise;
 
-  expect(presenter.isHydrated).toBeTrue();
+  expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   expect(store.hydrateSupervisionStore).toHaveBeenCalled();
-  expect(presenter.isLoading).toBeFalse();
 
   // For some reason creating a spy of hydrateUserInfo does not work so this serves the same purpose
   expect(store.supervisionStore).toBeDefined();
@@ -73,11 +71,24 @@ test("hydration error", async () => {
       throw err;
     });
 
-  expect(presenter.error).toBeUndefined();
-
   await presenter.hydrate();
 
-  expect(presenter.isHydrated).toBeFalse();
-  expect(presenter.isLoading).toBeFalse();
-  expect(presenter.error).toEqual(err);
+  expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
+});
+
+test("no redundant hydration while in progress", () => {
+  jest.spyOn(store, "hydrateSupervisionStore");
+
+  presenter.hydrate();
+  presenter.hydrate();
+  expect(store.hydrateSupervisionStore).toHaveBeenCalledTimes(1);
+});
+
+test("don't hydrate if already hydrated", async () => {
+  jest.spyOn(store, "hydrateSupervisionStore");
+
+  await presenter.hydrate();
+  presenter.hydrate();
+
+  expect(store.hydrateSupervisionStore).toHaveBeenCalledTimes(1);
 });

@@ -16,13 +16,13 @@
 // =============================================================================
 
 import { Loading } from "@recidiviz/design-system";
-import { some } from "lodash";
 import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { isHydrationInProgress } from "../models/utils";
 
 type PersonOpportunitiesHydratorProps = {
   hydrated: React.ReactNode;
@@ -53,11 +53,10 @@ export const SelectedPersonOpportunitiesHydrator = observer(
       [person, opportunityTypes]
     );
 
-    const displayLoading = some(
-      opportunityTypes.map(
-        (oppType) => person?.potentialOpportunities[oppType]?.isLoading
-      )
-    );
+    const displayLoading = opportunityTypes.some((oppType) => {
+      const opp = person?.potentialOpportunities[oppType];
+      return opp && isHydrationInProgress(opp);
+    });
 
     const displayEmpty =
       opportunityTypes.filter(

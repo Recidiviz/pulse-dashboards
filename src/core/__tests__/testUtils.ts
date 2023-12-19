@@ -32,7 +32,7 @@ export const mockOpportunity: Opportunity<Client> = {
   denialReasonsMap: { CODE: "Denial Code", [OTHER_KEY]: "Other" },
   lastViewed: undefined,
   hydrate: () => undefined,
-  isHydrated: true,
+  hydrationState: { status: "hydrated" },
   policyOrMethodologyUrl: "https://example.com",
   requirementsAlmostMet: [],
   requirementsMet: [],

@@ -19,6 +19,7 @@ import { render, screen } from "@testing-library/react";
 import { observable, runInAction } from "mobx";
 
 import { useRootStore } from "../../../components/StoreProvider";
+import { Opportunity } from "../../../WorkflowsStore";
 import { dateToTimestamp } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { WorkflowProgress } from "../WorkflowProgress";
@@ -78,8 +79,8 @@ test("viewed", () => {
 test("no render until hydrated", () => {
   const observableOpportunity = observable({
     ...mockOpportunity,
-    isHydrated: false,
-  });
+    hydrationState: { status: "loading" },
+  } as Opportunity);
   const { container } = render(
     <WorkflowProgress opportunity={observableOpportunity} />
   );
@@ -87,7 +88,7 @@ test("no render until hydrated", () => {
   expect(container).toBeEmptyDOMElement();
 
   runInAction(() => {
-    observableOpportunity.isHydrated = true;
+    observableOpportunity.hydrationState = { status: "hydrated" };
   });
 
   expect(container).not.toBeEmptyDOMElement();

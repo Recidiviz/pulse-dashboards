@@ -22,6 +22,7 @@ import React, { useEffect } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { isHydrated } from "../models/utils";
 
 type OpportunitiesHydratorProps = {
   initial: React.ReactNode;
@@ -46,7 +47,7 @@ export const CaseloadOpportunitiesHydrator = observer(
           workflowsStore
             .potentialOpportunities(opportunityTypes)
             .forEach((opp) => {
-              if (!opp.isHydrated) opp.hydrate();
+              if (!isHydrated(opp)) opp.hydrate();
             });
         }),
       [workflowsStore, opportunityTypes]

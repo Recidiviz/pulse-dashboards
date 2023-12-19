@@ -198,7 +198,7 @@ function populateResidents(residents: ResidentRecord[]): void {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  jest.restoreAllMocks();
   // this lets us spy on observables, e.g. the tenant ID getter
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
@@ -675,36 +675,38 @@ describe("opportunitiesLoaded", () => {
   });
 
   test("opportunitiesLoaded is false when not all provided opportunities are hydrated", async () => {
-    const compliantReportingIsHydratedMock = jest.spyOn(
+    const compliantReportingHydrationStateMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
-      "isHydrated",
+      "hydrationState",
       "get"
     );
-    const lsuIsHydratedMock = jest.spyOn(
+    const lsuHydrationStateMock = jest.spyOn(
       LSUOpportunity.prototype,
-      "isHydrated",
+      "hydrationState",
       "get"
     );
     await waitForHydration();
     populateClients(mockClients);
 
-    compliantReportingIsHydratedMock.mockReturnValue(true);
-    lsuIsHydratedMock.mockReturnValue(false);
+    compliantReportingHydrationStateMock.mockReturnValue({
+      status: "hydrated",
+    });
+    lsuHydrationStateMock.mockReturnValue({ status: "loading" });
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting", "LSU"])
     ).toBeFalse();
   });
 
   test("opportunitiesLoaded is true when opportunities are hydrated", async () => {
-    const isLoadingMock = jest.spyOn(
+    const hydrationStateMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
-      "isLoading",
+      "hydrationState",
       "get"
     );
     await waitForHydration();
     populateClients(mockClients);
 
-    isLoadingMock.mockReturnValue(false);
+    hydrationStateMock.mockReturnValue({ status: "hydrated" });
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting"])
     ).toBeTrue();
@@ -725,30 +727,24 @@ describe("hasOpportunities", () => {
   });
 
   test("hasOpportunities is false if no client has opportunities for those types", async () => {
-    const isHydratedMock = jest.spyOn(
+    const hydrationStateMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
-      "isHydrated",
+      "hydrationState",
       "get"
     );
     await waitForHydration();
     populateClients(mockClients);
-    isHydratedMock.mockReturnValue(true);
+    hydrationStateMock.mockReturnValue({ status: "hydrated" });
     expect(workflowsStore.hasOpportunities(["earlyTermination"])).toBeFalse();
   });
 
   test("hasOpportunities is true if any client has opportunities for any of the provided types", async () => {
     jest
-      .spyOn(CompliantReportingOpportunity.prototype, "isHydrated", "get")
-      .mockReturnValue(true);
+      .spyOn(CompliantReportingOpportunity.prototype, "hydrationState", "get")
+      .mockReturnValue({ status: "hydrated" });
     jest
-      .spyOn(CompliantReportingOpportunity.prototype, "isLoading", "get")
-      .mockReturnValue(false);
-    jest
-      .spyOn(UsNdEarlyTerminationOpportunity.prototype, "isHydrated", "get")
-      .mockReturnValue(true);
-    jest
-      .spyOn(UsNdEarlyTerminationOpportunity.prototype, "isLoading", "get")
-      .mockReturnValue(false);
+      .spyOn(UsNdEarlyTerminationOpportunity.prototype, "hydrationState", "get")
+      .mockReturnValue({ status: "hydrated" });
 
     await waitForHydration();
     populateClients(mockClients);

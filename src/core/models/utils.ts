@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import assertNever from "assert-never";
 import { every } from "lodash";
 import { property } from "lodash/fp";
 import moment from "moment";
@@ -28,6 +29,7 @@ import {
 import {
   AgeGroup,
   Gender,
+  HydrationStateMachine,
   LengthOfStay,
   LengthOfStayRawValue,
   MetricRecord,
@@ -295,3 +297,58 @@ export const getTimePeriodRawValue = (
       timePeriodMap[timePeriodRawValue as TimePeriodRawValue] === String(months)
   );
 };
+
+/**
+ * Returns true if hydration has reached any terminal state and false otherwise.
+ */
+export function isHydrationFinished(
+  hydratable: HydrationStateMachine
+): boolean {
+  switch (hydratable.hydrationState.status) {
+    case "hydrated":
+    case "failed":
+      return true;
+    case "loading":
+    case "pending":
+    case "needs hydration":
+      return false;
+    default:
+      assertNever(hydratable.hydrationState);
+  }
+}
+
+/**
+ * Returns true if hydration has reached a successful terminal state and false otherwise.
+ */
+export function isHydrated(hydratable: HydrationStateMachine): boolean {
+  switch (hydratable.hydrationState.status) {
+    case "hydrated":
+      return true;
+    case "failed":
+    case "loading":
+    case "pending":
+    case "needs hydration":
+      return false;
+    default:
+      assertNever(hydratable.hydrationState);
+  }
+}
+
+/**
+ * Returns true if hydration has started but not reached a terminal state, false otherwise.
+ */
+export function isHydrationInProgress(
+  hydratable: HydrationStateMachine
+): boolean {
+  switch (hydratable.hydrationState.status) {
+    case "loading":
+    case "pending":
+      return true;
+    case "hydrated":
+    case "failed":
+    case "needs hydration":
+      return false;
+    default:
+      assertNever(hydratable.hydrationState);
+  }
+}

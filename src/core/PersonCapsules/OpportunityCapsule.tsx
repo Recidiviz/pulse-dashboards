@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { usePersonTracking } from "../hooks/usePersonTracking";
+import { isHydrated } from "../models/utils";
 import { EligibilityStatus, WorkflowProgress } from "../OpportunityStatus";
 import {
   JusticeInvolvedPersonCapsule,
@@ -33,14 +34,14 @@ export const OpportunityCapsule = observer(function OpportunityCapsule({
   opportunity,
   ...otherProps
 }: Props) {
-  const { person, isHydrated } = opportunity;
+  const { person } = opportunity;
   usePersonTracking(person, () => {
     opportunity.trackListViewed();
   });
 
   let status: React.ReactNode = null;
 
-  if (isHydrated) {
+  if (isHydrated(opportunity)) {
     status = (
       <>
         {opportunity.showEligibilityStatus("OpportunityCapsule") && (

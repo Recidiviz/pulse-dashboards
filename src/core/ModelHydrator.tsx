@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Loading } from "@recidiviz/design-system";
+import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect } from "react";
@@ -23,7 +24,11 @@ import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
 import { ErrorMessage } from "../components/StatusMessage";
-import { Hydratable } from "./models/types";
+import {
+  Hydratable,
+  HydrationStateMachine,
+  HydrationStatus,
+} from "./models/types";
 
 const Wrapper = styled.div`
   position: relative;
@@ -49,15 +54,17 @@ const ContentWrapper = styled(animated.div)`
 /**
  * Creates an atomic status variable for transitions
  */
-function getHydrationStatus(model: Hydratable): "pending" | "error" | "done" {
+function getHydrationStatus(
+  model: Hydratable
+): "pending" | "failed" | "hydrated" {
   if (model.error) {
-    return "error";
+    return "failed";
   }
   if (!model.isHydrated) {
     return "pending";
   }
 
-  return "done";
+  return "hydrated";
 }
 
 const crossFade = {
@@ -70,7 +77,7 @@ const crossFade = {
 
 type ModelHydratorProps = {
   children: React.ReactElement;
-  model: Hydratable;
+  model: Hydratable | HydrationStateMachine;
   className?: string;
 };
 
@@ -84,39 +91,51 @@ function ModelHydrator({
   model,
   className,
 }: ModelHydratorProps): React.ReactElement {
-  const needsHydration = !model.isHydrated && !model.isLoading && !model.error;
+  let needsHydration: boolean;
+  let hydrationStatus: HydrationStatus;
+
+  if ("hydrationState" in model) {
+    hydrationStatus = model.hydrationState.status;
+    needsHydration = hydrationStatus === "needs hydration";
+  } else {
+    hydrationStatus = getHydrationStatus(model);
+    needsHydration = !model.isHydrated && !model.isLoading && !model.error;
+  }
+
   useEffect(() => {
     if (needsHydration) {
       model.hydrate();
     }
   }, [model, needsHydration]);
 
-  const transitions = useTransition(getHydrationStatus(model), null, crossFade);
+  const transitions = useTransition(hydrationStatus, null, crossFade);
 
   return (
     <Wrapper className={className}>
       {transitions.map(({ item, key, props }) => {
         switch (item) {
+          case "needs hydration":
+          case "loading":
           case "pending":
             return (
               <StatusWrapper key={key} style={props}>
                 <Loading />
               </StatusWrapper>
             );
-          case "error":
+          case "failed":
             return (
               <StatusWrapper key={key} style={props}>
                 <ErrorMessage />
               </StatusWrapper>
             );
-          case "done":
+          case "hydrated":
             return (
               <ContentWrapper key={key} style={props}>
                 {children}
               </ContentWrapper>
             );
           default:
-            return null;
+            return assertNever(item);
         }
       })}
     </Wrapper>

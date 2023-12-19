@@ -46,6 +46,7 @@ import {
   SystemId,
   WorkflowsSystemConfig,
 } from "../core/models/types";
+import { isHydrationFinished } from "../core/models/utils";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
@@ -601,7 +602,7 @@ export class WorkflowsStore implements Hydratable {
 
     return (
       this.potentialOpportunities(opportunityTypes).filter(
-        (opp) => opp.isLoading !== false
+        (opp) => isHydrationFinished(opp) === false
       ).length === 0 && this.selectedSearchIds.length > 0
     );
   }

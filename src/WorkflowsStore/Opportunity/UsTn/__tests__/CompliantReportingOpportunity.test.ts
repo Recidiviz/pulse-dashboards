@@ -255,31 +255,6 @@ describe.each([
   }
 );
 
-describe("hydration is lowest common denominator of all subscriptions", () => {
-  beforeEach(() => {
-    createTestUnit(compliantReportingEligibleClientRecord);
-    referralSub = cr.referralSubscription;
-    updatesSub = cr.updatesSubscription;
-  });
-
-  test.each([
-    [undefined, undefined, undefined],
-    [undefined, true, undefined],
-    [undefined, false, undefined],
-    [true, true, true],
-    [true, false, true],
-    [false, false, false],
-  ])("%s + %s = %s", (statusA, statusB, result) => {
-    referralSub.isLoading = statusA;
-    updatesSub.isLoading = statusB;
-    expect(cr.isLoading).toBe(result);
-
-    referralSub.isLoading = statusB;
-    updatesSub.isLoading = statusA;
-    expect(cr.isLoading).toBe(result);
-  });
-});
-
 test("hydrate", () => {
   createTestUnit(compliantReportingEligibleClientRecord);
 

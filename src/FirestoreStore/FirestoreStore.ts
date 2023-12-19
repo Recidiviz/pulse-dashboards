@@ -47,6 +47,7 @@ import {
   fetchFirebaseToken,
   fetchImpersonatedFirebaseToken,
 } from "../api/fetchFirebaseToken";
+import { isHydrated } from "../core/models/utils";
 import type RootStore from "../RootStore";
 import { UserAppMetadata } from "../RootStore/types";
 import UserStore from "../RootStore/UserStore";
@@ -470,7 +471,7 @@ export default class FirestoreStore {
     const { opportunity, currentUserEmail, formLastUpdated, type } = form;
     const { person } = opportunity;
 
-    await when(() => opportunity.isHydrated);
+    await when(() => isHydrated(opportunity));
 
     const update = {
       referralForm: {

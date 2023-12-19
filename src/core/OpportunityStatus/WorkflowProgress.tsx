@@ -20,6 +20,7 @@ import React from "react";
 
 import { formatDate } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
+import { isHydrated } from "../models/utils";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 
 type OpportunityWorkflowStatusProps = {
@@ -30,13 +31,12 @@ export const WorkflowProgress: React.FC<OpportunityWorkflowStatusProps> =
   observer(function WorkflowProgress({ opportunity }) {
     const {
       lastViewed,
-      isHydrated,
       supportsExternalRequest,
       externalRequestData,
       externalRequestStatusMessage,
     } = opportunity;
 
-    if (!isHydrated) return null;
+    if (!isHydrated(opportunity)) return null;
 
     if (supportsExternalRequest && externalRequestData?.status === "SUCCESS") {
       return (

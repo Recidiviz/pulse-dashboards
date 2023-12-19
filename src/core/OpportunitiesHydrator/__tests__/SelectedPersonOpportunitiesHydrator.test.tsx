@@ -36,12 +36,10 @@ beforeEach(() => {
 });
 
 const setUp = ({
-  lsuLoading = false,
-  pastFTRDLoading = false,
+  lsuHydrationState = { status: "hydrated" },
+  pastFTRDHydrationState = { status: "hydrated" },
   lsuVerified = true,
   pastFTRDVerified = true,
-  lsuHydrated = true,
-  pastFTRDHydrated = true,
 }) => {
   lsuHydrateMock = jest.fn();
   pastFTRDHydrateMock = jest.fn();
@@ -51,13 +49,11 @@ const setUp = ({
         potentialOpportunities: {
           LSU: {
             hydrate: lsuHydrateMock,
-            isLoading: lsuLoading,
-            isHydrated: lsuHydrated,
+            hydrationState: lsuHydrationState,
           },
           pastFTRD: {
             hydrate: pastFTRDHydrateMock,
-            isLoading: pastFTRDLoading,
-            isHydrated: pastFTRDHydrated,
+            hydrationState: pastFTRDHydrationState,
           },
         },
         verifiedOpportunities: {},
@@ -67,15 +63,13 @@ const setUp = ({
   if (lsuVerified) {
     // @ts-ignore
     mockRoot.workflowsStore.selectedPerson.verifiedOpportunities.LSU = {
-      isLoading: lsuLoading,
-      isHydrated: lsuHydrated,
+      hydrationState: lsuHydrationState,
     };
   }
   if (pastFTRDVerified) {
     // @ts-ignore
     mockRoot.workflowsStore.selectedPerson.verifiedOpportunities.pastFTRD = {
-      isLoading: pastFTRDLoading,
-      isHydrated: pastFTRDHydrated,
+      hydrationState: pastFTRDHydrationState,
     };
   }
   useRootStoreMock.mockReturnValue(mockRoot);
@@ -140,7 +134,10 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
   });
 
   it("renders loading state if loading is not complete", () => {
-    setUp({ lsuLoading: true, pastFTRDLoading: true });
+    setUp({
+      lsuHydrationState: { status: "loading" },
+      pastFTRDHydrationState: { status: "loading" },
+    });
 
     render(
       <SelectedPersonOpportunitiesHydrator
@@ -154,7 +151,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
   });
 
   it("renders loading state if one is loaded and the other is not", () => {
-    setUp({ lsuLoading: true });
+    setUp({ lsuHydrationState: { status: "loading" } });
 
     render(
       <SelectedPersonOpportunitiesHydrator
@@ -182,7 +179,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
   });
 
   it("renders hydrated state only based on specified opportunities", () => {
-    setUp({ lsuLoading: true });
+    setUp({ lsuHydrationState: { status: "loading" } });
 
     render(
       <SelectedPersonOpportunitiesHydrator
@@ -231,8 +228,8 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
 
   it("exits loading state even if hydration fails", () => {
     setUp({
-      lsuHydrated: false,
-      pastFTRDHydrated: false,
+      lsuHydrationState: { status: "failed" },
+      pastFTRDHydrationState: { status: "failed" },
       lsuVerified: false,
       pastFTRDVerified: false,
     });

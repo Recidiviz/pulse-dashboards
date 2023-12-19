@@ -26,8 +26,8 @@ import { EligibilityStatus } from "../EligibilityStatus";
 test("render nothing until hydrated", () => {
   const observableOpportunity = observable({
     ...mockOpportunity,
-    isHydrated: false,
-  });
+    hydrationState: { status: "loading" },
+  } as Opportunity);
 
   const { container } = render(
     <EligibilityStatus opportunity={observableOpportunity} />
@@ -35,7 +35,7 @@ test("render nothing until hydrated", () => {
   expect(container).toBeEmptyDOMElement();
 
   runInAction(() => {
-    observableOpportunity.isHydrated = true;
+    observableOpportunity.hydrationState = { status: "hydrated" };
   });
   expect(container).not.toBeEmptyDOMElement();
 });

@@ -241,6 +241,8 @@ describe("opportunities", () => {
         const [opp] = opportunityInstances;
         opp.referralSubscription.isHydrated = true;
         opp.updatesSubscription.isHydrated = true;
+        opp.referralSubscription.isLoading = false;
+        opp.updatesSubscription.isLoading = false;
       });
     });
 
@@ -273,6 +275,9 @@ describe("opportunities", () => {
       runInAction(() => {
         const [opp] = opportunityInstances;
         opp.referralSubscription.isHydrated = true;
+        opp.referralSubscription.isLoading = false;
+
+        opp.updatesSubscription.isLoading = false;
         opp.updatesSubscription.isHydrated = false;
         opp.updatesSubscription.error = new Error("test");
       });

@@ -30,6 +30,7 @@ import {
   values,
 } from "mobx";
 
+import { isHydrated, isHydrationFinished } from "../core/models/utils";
 import { FullName } from "../core/types/personMetadata";
 import {
   ContactMethodType,
@@ -249,7 +250,7 @@ export class JusticeInvolvedPersonBase<
   get verifiedOpportunities(): OpportunityMapping {
     return entries(this.potentialOpportunities).reduce(
       (opportunities, [opportunityType, opportunity]) => {
-        if (!opportunity?.isHydrated || opportunity.error) {
+        if (!opportunity || !isHydrated(opportunity)) {
           return opportunities;
         }
         return {
@@ -264,7 +265,7 @@ export class JusticeInvolvedPersonBase<
   get allOpportunitiesLoaded(): boolean {
     return (
       values(this.potentialOpportunities).filter(
-        (opp) => opp !== undefined && !(opp.isLoading === false)
+        (opp) => opp !== undefined && !isHydrationFinished(opp)
       ).length === 0
     );
   }

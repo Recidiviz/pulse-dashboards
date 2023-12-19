@@ -17,7 +17,7 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { Hydratable } from "../../core/models/types";
+import { HydrationStateMachine } from "../../core/models/types";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   AutoSnoozeUpdate,
@@ -75,7 +75,7 @@ export type FormVariant = "deferred";
  */
 export interface Opportunity<
   PersonType extends JusticeInvolvedPerson = JusticeInvolvedPerson
-> extends Hydratable {
+> extends HydrationStateMachine {
   record: DocumentData | undefined;
   almostEligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES

@@ -45,7 +45,9 @@ function createTestUnit() {
     recordId: "us_id_001",
   } as Client;
   opp = new TestOpportunity(client, "LSU", rootStore);
-  jest.spyOn(opp, "isHydrated", "get").mockReturnValue(true);
+  jest
+    .spyOn(opp, "hydrationState", "get")
+    .mockReturnValue({ status: "hydrated" });
   form = new FormBase<any>(opp, rootStore);
   opp.form = form;
 }

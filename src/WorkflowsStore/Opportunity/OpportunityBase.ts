@@ -26,6 +26,8 @@ import {
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
+import { HydrationState } from "../../core/models/types";
+import { isHydrated } from "../../core/models/utils";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   AutoSnoozeUpdate,
@@ -156,13 +158,11 @@ export abstract class OpportunityBase<
       isSnoozed: computed,
       snoozeForDays: computed,
       manualSnoozeUntilDate: computed,
-      error: computed,
       hydrate: action,
-      isLoading: computed,
+      hydrationState: computed,
       record: computed,
       updates: computed,
       reviewStatus: computed,
-      isHydrated: computed,
       setCompletedIfEligible: action,
     });
 
@@ -264,7 +264,7 @@ export abstract class OpportunityBase<
 
   setLastViewed(): void {
     when(
-      () => this.isHydrated,
+      () => isHydrated(this),
       () => {
         const { currentUserEmail } = this.rootStore.workflowsStore;
         // should not happen in practice
@@ -306,7 +306,7 @@ export abstract class OpportunityBase<
 
   setCompletedIfEligible(): void {
     when(
-      () => this.isHydrated,
+      () => isHydrated(this),
       () => {
         const { currentUserEmail } = this.rootStore.workflowsStore;
         if (!currentUserEmail) return;
@@ -329,11 +329,45 @@ export abstract class OpportunityBase<
     );
   }
 
-  get isHydrated(): boolean {
-    return (
+  /**
+   * An Opportunity is only as hydrated as its least-hydrated Subscription.
+   */
+  get hydrationState(): HydrationState {
+    if (this.referralSubscription.error || this.updatesSubscription.error) {
+      const error = new AggregateError([
+        this.referralSubscription.error,
+        this.updatesSubscription.error,
+      ]);
+      return {
+        status: "failed",
+        error,
+      };
+    }
+
+    if (
+      this.referralSubscription.isLoading === undefined ||
+      this.updatesSubscription.isLoading === undefined
+    ) {
+      return { status: "needs hydration" };
+    }
+
+    if (
+      this.referralSubscription.isLoading ||
+      this.updatesSubscription.isLoading
+    ) {
+      return { status: "loading" };
+    }
+
+    if (
       this.referralSubscription.isHydrated &&
       this.updatesSubscription.isHydrated
-    );
+    ) {
+      return { status: "hydrated" };
+    }
+
+    return {
+      status: "needs hydration",
+    };
   }
 
   /**
@@ -342,25 +376,6 @@ export abstract class OpportunityBase<
   hydrate(): void {
     this.referralSubscription.hydrate();
     this.updatesSubscription.hydrate();
-  }
-
-  /**
-   * An Opportunity is only as hydrated as its least-hydrated Subscription.
-   */
-  get isLoading(): boolean | undefined {
-    if (
-      this.referralSubscription.isLoading === undefined ||
-      this.updatesSubscription.isLoading === undefined
-    ) {
-      return undefined;
-    }
-    return (
-      this.referralSubscription.isLoading || this.updatesSubscription.isLoading
-    );
-  }
-
-  get error(): Error | undefined {
-    return this.referralSubscription.error || this.updatesSubscription.error;
   }
 
   async deleteOpportunityDenialAndSnooze(): Promise<void> {

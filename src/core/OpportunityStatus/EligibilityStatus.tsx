@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { Opportunity } from "../../WorkflowsStore";
+import { isHydrated } from "../models/utils";
 
 type EligibilityStatusProps = {
   opportunity: Opportunity;
@@ -31,11 +32,10 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
       eligibleStatusMessage,
       defaultEligibility,
       denial,
-      isHydrated,
       isAlert,
     } = opportunity;
 
-    if (!isHydrated) return null;
+    if (!isHydrated(opportunity)) return null;
 
     if (denial?.reasons.length) {
       const statusText = isAlert ? "Override" : "Currently ineligible";

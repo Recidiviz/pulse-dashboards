@@ -370,6 +370,23 @@ export interface HydratablePathwaysMetric extends Hydratable {
   isEmpty?: boolean;
 }
 
+// TODO: migrate all uses of Hydratable to this new interface
+export type HydrationState =
+  | { status: "needs hydration" }
+  | { status: "loading" }
+  // TODO: this is a legacy status that conflates "needs hydration" and "loading",
+  // it should be removed once all hydratables are migrated
+  | { status: "pending" }
+  | { status: "failed"; error: Error }
+  | { status: "hydrated" };
+export type HydrationStatus = HydrationState["status"];
+
+// TODO: rename this back to Hydratable once everything is migrated
+export interface HydrationStateMachine {
+  hydrate: () => void;
+  hydrationState: HydrationState;
+}
+
 export type PathwaysMetricRecords =
   | PopulationProjectionTimeSeriesRecord[]
   | PrisonPopulationSnapshotRecord[]
