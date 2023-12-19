@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export * from "./config";
-export * from "./UsMoOverdueRestrictiveHousingReleaseOpportunity";
-export * from "./UsMoOverdueRestrictiveHousingReleaseReferralRecord";
+import { OpportunityConfig } from "../../OpportunityConfigs";
+import { baseUsMoOverdueRestrictiveHousingConfig } from "../UsMoOverdueRestrictiveHousingOpportunityBase/config";
+import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMoOverdueRestrictiveHousingReleaseOpportunity";
+
+export const usMoOverdueRestrictiveHousingReleaseConfig: OpportunityConfig<UsMoOverdueRestrictiveHousingReleaseOpportunity> =
+  baseUsMoOverdueRestrictiveHousingConfig(
+    "Release",
+    "release from their Restrictive Housing stay",
+    "Review residents for release and prepare necessary paperwork for their return to general population."
+  );

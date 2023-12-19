@@ -49,6 +49,7 @@ import { usMiEarlyDischargeReferralsFixture } from "./fixtures/usMiEarlyDischarg
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
 import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
+import { usMoOverdueRestrictiveHousingReleaseReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReleaseReferrals";
 import { usMoRestrictiveHousingStatusHearingFixture } from "./fixtures/usMoRestrictiveHousingStatusHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 import { usOrEarnedDischargeReferrals } from "./fixtures/usOrEarnedDischargeReferrals";
@@ -107,6 +108,7 @@ const FIXTURES_TO_LOAD: Partial<
   usIdCRCResidentWorkerReferrals,
   usIdCRCWorkReleaseReferrals,
   usIdExpandedCRCReferrals,
+  usMoOverdueRestrictiveHousingReleaseReferrals,
   usIdSupervisionLevelDowngradeReferrals,
   usMeSCCPReferrals: usMeSCCPFixture,
   usMeWorkReleaseReferrals,

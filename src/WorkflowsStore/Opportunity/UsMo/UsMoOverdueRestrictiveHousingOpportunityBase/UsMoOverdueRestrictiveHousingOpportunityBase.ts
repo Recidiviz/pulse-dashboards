@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { nextSunday, startOfWeek } from "date-fns";
+import {
+  differenceInCalendarDays,
+  formatDistanceStrict,
+  nextSunday,
+  startOfWeek,
+} from "date-fns";
 import { computed, makeObservable } from "mobx";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
@@ -109,5 +114,67 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
 
   showEligibilityStatus(component: Component): boolean {
     return this.reviewStatus === "DENIED" || component === "OpportunityCapsule";
+  }
+
+  /**
+   * Generates the message that informs the user when the opportunity was or is due. It uses the eligibilityDate to determine if the
+   * sentence's verb and prepositional temporal phrase should be in the past, present, or future tense.
+   * @param subject the noun that describes the opportunity (e.g. `Segregation period`, `Hearing`)
+   * @param tenseVerbs the verb(s) of the sentence that indicates the subject's state in time.
+   *  Can be an array of `[past: string, presentAndFuture: string]` or a single word if it works for all tenses. (e.g. `overdue`, `['was due', 'is due']`).
+   * @returns the message indicating the status of the opportunity `${subject} ${(tense)Verb} ${prepositional phrase}`
+   * @example
+   * // Example 1: Eligibility date in the past and array instead of string for `tenseVerbs`
+   * this.eligibilityDate = new Date('2023-01-01'); // assume that today is '2023-01-04'
+   * const message1 = this.generateUsMoOverdueEligibilityStatusMessage('Your application', ['was due', 'is due']);
+   * console.log(message1); // Output: "Your application was due 3 days ago."
+   *
+   *  @example
+   * // Example 2: Eligibility date is today and string instead of array for `tenseVerbs`
+   * this.eligibilityDate = new Date(); // Assuming today is 2023-01-04
+   * const message2 = this.generateUsMoOverdueEligibilityStatusMessage('Hearing', 'due');
+   * console.log(message2); // Output: "Hearing due today."
+   */
+  generateUsMoOverdueEligibilityStatusMessage(
+    subject: string,
+    tenseVerbs: [past: string, presentAndFuture: string] | string
+  ): string {
+    const { eligibilityDate } = this;
+    if (!eligibilityDate) return "Date(s) are unknown";
+
+    // START: Message construction
+
+    /**
+     * Determines the tense of the message.
+     */
+    const numOfDays = differenceInCalendarDays(eligibilityDate, new Date());
+
+    /**
+     * if the number of days is negative, the verb should be in the past tense (i.e. `tenseVerbs[0]` | `tenseVerbs`)
+     * otherwise, the present and future tense (i.e. `tenseVerbs` | `tenseVerbs`).
+     */
+    let verb;
+    if (Array.isArray(tenseVerbs))
+      verb = numOfDays < 0 ? tenseVerbs[0] : tenseVerbs[1];
+    else if (tenseVerbs === undefined) verb = tenseVerbs;
+    else verb = tenseVerbs;
+
+    /**
+     * if the number of days is negative, the sentence should be in the past tense (i.e. `formatDistanceStrict(..)`)
+     * otherwise, it should be in the present or future tense (i.e. `today`, `in X days`)
+     */
+    const prepositionalPhrase =
+      numOfDays === 0
+        ? "today"
+        : formatDistanceStrict(eligibilityDate, new Date(), {
+            unit: "day",
+            addSuffix: true,
+            roundingMethod: "ceil",
+          });
+
+    // END: Message construction
+
+    // filter out empty words and return the words joined together
+    return [subject, verb, prepositionalPhrase].filter(Boolean).join(" ");
   }
 }

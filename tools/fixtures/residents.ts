@@ -205,6 +205,70 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     // Resident record query doesn't currently write start/end dates for MO
   },
   {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES007",
+    displayId: "dRES007",
+    personName: {
+      givenNames: "Seventh",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres007",
+    facilityId: "FACILITY2",
+    unitId: "UNIT E",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES008",
+    displayId: "dRES008",
+    personName: {
+      givenNames: "Eighth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres008",
+    facilityId: "FACILITY2",
+    unitId: "UNIT F",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES009",
+    displayId: "dRES009",
+    personName: {
+      givenNames: "Ninth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres009",
+    facilityId: "FACILITY2",
+    unitId: "UNIT G",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES010",
+    displayId: "dRES010",
+    personName: {
+      givenNames: "Tenth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres010",
+    facilityId: "FACILITY2",
+    unitId: "UNIT H",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
     officerId: "OFFICER5",
     stateCode: "US_TN",

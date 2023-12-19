@@ -36,7 +36,10 @@ export const usMoPersonRecord: ResidentRecord = {
   officerId: "CASE_MANAGER_1",
   admissionDate: "2020-03-10",
   releaseDate: "2025-05-20",
-  allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
+  allEligibleOpportunities: [
+    "usMoRestrictiveHousingStatusHearing",
+    "usMoOverdueRestrictiveHousingRelease",
+  ],
 };
 
 export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHousingStatusHearingReferralRecord =
@@ -74,7 +77,6 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
       numMinorCdvsBeforeLastHearing: 5,
     },
   };
-
 export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <T>(
   externalIdSuffix: number,
   additionalCriteria?: Record<string, any>
