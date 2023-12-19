@@ -40,6 +40,7 @@ import { usMiPastFTRDConfig as usMiPastFTRD } from "./UsMi/UsMiPastFTRDOpportuni
 import { usMiSupervisionLevelDowngradeConfig as usMiSupervisionLevelDowngrade } from "./UsMi/UsMiSupervisionLevelDowngradeOpportunity/config";
 import { usMoOverdueRestrictiveHousingInitialHearingConfig as usMoOverdueRestrictiveHousingInitialHearing } from "./UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity/config";
 import { usMoOverdueRestrictiveHousingReleaseConfig as usMoOverdueRestrictiveHousingRelease } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity/config";
+import { usMoOverdueRestrictiveHousingReviewHearingConfig as usMoOverdueRestrictiveHousingReviewHearing } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/config";
 import { usMoRestrictiveHousingStatusHearingConfig as usMoRestrictiveHousingStatusHearing } from "./UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/config";
 import { usNdEarlyTerminationConfig as earlyTermination } from "./UsNd/UsNdEarlyTerminationOpportunity/config";
 import { usOrEarnedDischargeConfig as usOrEarnedDischarge } from "./UsOr/UsOrEarnedDischargeOpportunity/config";
@@ -148,6 +149,7 @@ export const OPPORTUNITY_CONFIGS = {
   usMoRestrictiveHousingStatusHearing,
   usMoOverdueRestrictiveHousingRelease,
   usMoOverdueRestrictiveHousingInitialHearing,
+  usMoOverdueRestrictiveHousingReviewHearing,
 
   /* US_ND */
   earlyTermination,

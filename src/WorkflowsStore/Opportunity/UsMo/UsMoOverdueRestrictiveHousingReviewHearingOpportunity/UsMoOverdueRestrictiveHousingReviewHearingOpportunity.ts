@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { reduce } from "lodash";
 import { makeObservable, override } from "mobx";
-import { ValuesType } from "utility-types";
 
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Resident } from "../../../Resident";
@@ -30,23 +28,23 @@ import {
   UsMoOverdueRestrictiveHousingBase,
 } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingOpportunityBase";
 import {
-  UsMoOverdueRestrictiveHousingReleaseReferralRecord,
-  usMoOverdueRestrictiveHousingReleaseSchema,
-} from "./UsMoOverdueRestrictiveHousingReleaseReferralRecord";
+  UsMoOverdueRestrictiveHousingReviewHearingReferralRecord,
+  usMoOverdueRestrictiveHousingReviewHearingSchema,
+} from "./UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 
-const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReleaseReferralRecord> =
+const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> =
   {
     eligibleCriteria: [
       [
-        "usMoD1SanctionAfterMostRecentHearing",
+        "usMoHearingOrNextReviewSinceRestrictiveHousingStart",
         {
-          text: "In Restrictive Housing due to a D1 sanction",
+          text: "Has had a meaningful hearing while in (Extended) Restrictive Housing",
         },
       ],
       [
-        "usMoD1SanctionAfterRestrictiveHousingStart",
+        "usMoPastLatestScheduledReviewDate",
         {
-          text: "In Restrictive Housing due to a D1 sanction",
+          text: "Past due date, or scheduled date, for review hearing",
         },
       ],
       usMoNoActiveD1Sanctions,
@@ -55,7 +53,7 @@ const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReleaseReferralRe
     ineligibleCriteria: [],
   };
 
-export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReleaseReferralRecord> {
+export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "UsMoIncarceration",
     "UsMoRestrictiveHousing",
@@ -66,8 +64,8 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
   constructor(resident: Resident) {
     super(
       resident,
-      "usMoOverdueRestrictiveHousingRelease",
-      usMoOverdueRestrictiveHousingReleaseSchema.parse
+      "usMoOverdueRestrictiveHousingReviewHearing",
+      usMoOverdueRestrictiveHousingReviewHearingSchema.parse
     );
     this.resident = resident;
 
@@ -82,53 +80,18 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
   };
 
   get requirementsMet(): OpportunityRequirement[] {
-    type ThisCriteriaCopyInstance = typeof CRITERIA_COPY;
-
-    /**
-     * Removes `usMoD1SanctionAfterMostRecentHearing` if both `usMoD1SanctionAfterRestrictiveHousingStart`
-     * are present
-     * @param criteriaCopy
-     * @returns {ThisCriteriaCopyInstance} {@link CRITERIA_COPY} unchanged or with `usMoD1SanctionAfterMostRecentHearing` removed.
-     */
-    const REMOVE_DUPLICATE_COPY_IF_PRESENT = (
-      criteriaCopy: typeof CRITERIA_COPY
-    ): ThisCriteriaCopyInstance => {
-      const {
-        usMoD1SanctionAfterRestrictiveHousingStart,
-        usMoD1SanctionAfterMostRecentHearing,
-      } = this.record?.eligibleCriteria || {};
-
-      return usMoD1SanctionAfterRestrictiveHousingStart &&
-        usMoD1SanctionAfterMostRecentHearing
-        ? reduce(
-            criteriaCopy,
-            (acc: any, value: ValuesType<ThisCriteriaCopyInstance>, key) => {
-              acc[key] = value.filter(
-                (arr) => arr[0] !== "usMoD1SanctionAfterMostRecentHearing"
-              );
-              return acc as ThisCriteriaCopyInstance;
-            },
-            {}
-          )
-        : criteriaCopy;
-    };
-
-    return hydrateCriteria(
-      this.record,
-      "eligibleCriteria",
-      REMOVE_DUPLICATE_COPY_IF_PRESENT(CRITERIA_COPY)
-    );
+    return hydrateCriteria(this.record, "eligibleCriteria", CRITERIA_COPY);
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria.usMoNoActiveD1Sanctions
-      ?.latestSanctionEndDate;
+    return this.record?.eligibleCriteria.usMoPastLatestScheduledReviewDate
+      .nextReviewDate;
   }
 
   get eligibleStatusMessage(): string {
     return this.generateUsMoOverdueEligibilityStatusMessage(
-      "Segregation period",
-      ["ended", "ends"]
+      "Status hearing",
+      ""
     );
   }
 }

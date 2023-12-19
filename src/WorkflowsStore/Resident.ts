@@ -37,6 +37,7 @@ import {
 } from "./Opportunity/UsMe";
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
+import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
@@ -59,6 +60,8 @@ const residentialOpportunityConstructors: Record<
     UsMoOverdueRestrictiveHousingReleaseOpportunity,
   usMoOverdueRestrictiveHousingInitialHearing:
     UsMoOverdueRestrictiveHousingInitialHearingOpportunity,
+  usMoOverdueRestrictiveHousingReviewHearing:
+    UsMoOverdueRestrictiveHousingReviewHearingOpportunity,
 };
 
 const createResidentOpportunity: OpportunityFactory<

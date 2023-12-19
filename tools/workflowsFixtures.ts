@@ -51,6 +51,7 @@ import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
 import { usMoOverdueRestrictiveHousingInitialHearingReferrals } from "./fixtures/usMoOverdueRestrictiveHousingInitialHearingReferrals";
 import { usMoOverdueRestrictiveHousingReleaseReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReleaseReferrals";
+import { usMoOverdueRestrictiveHousingReviewHearingReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReviewHearingReferrals";
 import { usMoRestrictiveHousingStatusHearingFixture } from "./fixtures/usMoRestrictiveHousingStatusHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 import { usOrEarnedDischargeReferrals } from "./fixtures/usOrEarnedDischargeReferrals";
@@ -129,6 +130,7 @@ const FIXTURES_TO_LOAD: Partial<
   usTnExpirationReferrals: usTnExpirationFixture,
   usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewFixture,
   usMoOverdueRestrictiveHousingInitialHearingReferrals,
+  usMoOverdueRestrictiveHousingReviewHearingReferrals,
 } as const;
 
 // If we're writing to the real firestore, don't clobber the real data

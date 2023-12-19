@@ -151,7 +151,7 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
 
     /**
      * if the number of days is negative, the verb should be in the past tense (i.e. `tenseVerbs[0]` | `tenseVerbs`)
-     * otherwise, the present and future tense (i.e. `tenseVerbs` | `tenseVerbs`).
+     * otherwise, the present and future tense (i.e. `tenseVerbs[1]` | `tenseVerbs`).
      */
     let verb;
     if (Array.isArray(tenseVerbs))
@@ -161,7 +161,7 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
 
     /**
      * if the number of days is negative, the sentence should be in the past tense (i.e. `formatDistanceStrict(..)`)
-     * otherwise, it should be in the present or future tense (i.e. `today`, `in X days`)
+     * otherwise, it should be in the present or future tense (i.e. `today`, `in X days`, `X days ago`)
      */
     const prepositionalPhrase =
       numOfDays === 0

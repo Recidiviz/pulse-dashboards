@@ -79,6 +79,7 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
       numMinorCdvsBeforeLastHearing: 5,
     },
   };
+
 export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <T>(
   externalIdSuffix: number,
   additionalCriteria?: Record<string, any>
@@ -139,13 +140,28 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture =
     1,
     {
       usMoInitialHearingPastDueDate: {
-        nextReviewDate: "2023-10-15", // Example date, adjust as needed
+        nextReviewDate: "2023-10-15",
         dueDateInferred: true,
       },
       usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: {
         restrictiveHousingStartDate: "2023-08-15",
-        latestHearingDate: "2023-09-20", // Example date, adjust as needed
-        latestScheduledReviewDate: "2023-09-25", // Example date, adjust as needed
+        latestHearingDate: "2023-09-20",
+        latestScheduledReviewDate: "2023-09-25",
+      },
+    }
+  );
+
+export const usMoOverdueRestrictiveHousingReviewHearingReferralRecordFixture =
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw>(
+    1,
+    {
+      usMoPastLatestScheduledReviewDate: {
+        nextReviewDate: "2023-10-15",
+        dueDateInferred: true,
+      },
+      usMoHearingOrNextReviewSinceRestrictiveHousingStart: {
+        restrictiveHousingStartDate: "2023-08-15",
+        latestRestrictiveHousingHearingDate: "2023-09-20",
       },
     }
   );

@@ -42,6 +42,7 @@ import { usMiPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiP
 import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiSupervisionLevelDowngradeOpportunity/UsMiSupervisionLevelDowngradeReferralRecord";
 import { usMoOverdueRestrictiveHousingInitialHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { usMoOverdueRestrictiveHousingReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
+import { usMoOverdueRestrictiveHousingReviewHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
 import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdEarlyTerminationOpportunity/UsNdEarlyTerminationReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
@@ -107,6 +108,8 @@ const SCHEMAS: Partial<Record<FirestoreCollectionKey, z.ZodTypeAny>> = {
     usMoOverdueRestrictiveHousingReleaseSchema,
   usMoOverdueRestrictiveHousingInitialHearingReferrals:
     usMoOverdueRestrictiveHousingInitialHearingSchema,
+  usMoOverdueRestrictiveHousingReviewHearingReferrals:
+    usMoOverdueRestrictiveHousingReviewHearingSchema,
 };
 
 async function testCollection(

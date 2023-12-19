@@ -333,6 +333,70 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     // Resident record query doesn't currently write start/end dates for MO
   },
   {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES015",
+    displayId: "dRES015",
+    personName: {
+      givenNames: "Fifteenth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres015",
+    facilityId: "FACILITY2",
+    unitId: "UNIT E",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES016",
+    displayId: "dRES016",
+    personName: {
+      givenNames: "Sixteenth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres016",
+    facilityId: "FACILITY2",
+    unitId: "UNIT F",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES017",
+    displayId: "dRES017",
+    personName: {
+      givenNames: "Seventeenth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres017",
+    facilityId: "FACILITY2",
+    unitId: "UNIT G",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
+    allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
+    officerId: "OFFICER1",
+    stateCode: "US_MO",
+    personExternalId: "RES018",
+    displayId: "dRES018",
+    personName: {
+      givenNames: "Eighteenth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres018",
+    facilityId: "FACILITY2",
+    unitId: "UNIT H",
+    custodyLevel: "MINIMUM",
+    // Resident record query doesn't currently write start/end dates for MO
+  },
+  {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
     officerId: "OFFICER5",
     stateCode: "US_TN",
