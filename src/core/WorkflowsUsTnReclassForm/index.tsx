@@ -159,7 +159,7 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
     <FormContainer
       heading="Reclassification Packet"
       agencyName="TDOC"
-      dataProviso="Please review any data pre-filled in lines 2, 4, 5 and 9 in the Classification Assessment Form."
+      dataProviso="Please review any data pre-filled from previous Classification scores for questions 3, 4, 5 and 9 in the Classification Assessment Form."
       downloadButtonLabel={form.downloadText}
       onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}
