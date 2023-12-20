@@ -73,11 +73,11 @@ describe("fully eligible", () => {
     createTestUnit(UsTnExpirationEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = UsTnExpirationReferralRecordFixture;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {

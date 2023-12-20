@@ -72,11 +72,11 @@ describe("fully eligible", () => {
     createTestUnit(usNdEarlyTerminationEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = usNdEarlyTerminationReferralRecord;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {
@@ -93,11 +93,11 @@ describe("almost eligible past discharge date coming up", () => {
     createTestUnit(usNdEarlyTerminationAlmostEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = usNdEarlyTerminationAlmostEligibleReferralRecord;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {

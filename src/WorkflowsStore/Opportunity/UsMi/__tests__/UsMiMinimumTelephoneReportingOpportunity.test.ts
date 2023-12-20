@@ -71,11 +71,11 @@ describe("fully eligible", () => {
     createTestUnit(usMiMinimumTelephoneReportingEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = usMiMinimumTelephoneReportingReferralRecord;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {

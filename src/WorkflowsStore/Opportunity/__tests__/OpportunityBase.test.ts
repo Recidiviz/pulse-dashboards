@@ -21,6 +21,7 @@ import { shuffle } from "lodash";
 import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 
+import { HydrationState } from "../../../core/models/types";
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
@@ -95,10 +96,8 @@ function mockHydration({
   updateData?: OpportunityUpdate;
 } = {}) {
   runInAction(() => {
-    referralSub.isHydrated = true;
-    updatesSub.isHydrated = true;
-    referralSub.isLoading = false;
-    updatesSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
+    updatesSub.hydrationState = { status: "hydrated" };
     if (referralData) {
       referralSub.data = referralData;
     }
@@ -159,73 +158,58 @@ afterEach(() => {
 });
 
 describe("hydrationState", () => {
+  const statuses = {
+    needsHydration: { status: "needs hydration" },
+    loading: { status: "loading" },
+    failed: { status: "failed", error: new Error("test") },
+    hydrated: { status: "hydrated" },
+  } satisfies Record<string, HydrationState>;
+
   test.each([
-    [undefined, undefined],
-    [undefined, true],
-    [undefined, false],
-  ])("ready (subs loading %s + %s)", (loadingStatusA, loadingStatusB) => {
-    referralSub.isLoading = loadingStatusA;
-    updatesSub.isLoading = loadingStatusB;
-    expect(opp.hydrationState).toEqual({ status: "needs hydration" });
+    [statuses.needsHydration, statuses.needsHydration],
+    [statuses.needsHydration, statuses.loading],
+    [statuses.needsHydration, statuses.hydrated],
+  ])(
+    "needs hydration (subs hydration %s + %s)",
+    (hydrationStateA, hydrationStateB) => {
+      referralSub.hydrationState = hydrationStateA;
+      updatesSub.hydrationState = hydrationStateB;
+      expect(opp.hydrationState).toEqual({ status: "needs hydration" });
 
-    referralSub.isLoading = loadingStatusB;
-    updatesSub.isLoading = loadingStatusA;
-    expect(opp.hydrationState).toEqual({ status: "needs hydration" });
+      referralSub.hydrationState = hydrationStateB;
+      updatesSub.hydrationState = hydrationStateA;
+      expect(opp.hydrationState).toEqual({ status: "needs hydration" });
+    }
+  );
 
-    // trumps isHydrated if they don't agree
-    referralSub.isHydrated = true;
-    updatesSub.isHydrated = true;
-    expect(opp.hydrationState).toEqual({ status: "needs hydration" });
+  test.each([
+    [statuses.loading, statuses.loading],
+    [statuses.loading, statuses.hydrated],
+  ])("loading (subs hydration %s + %s)", (hydrationStateA, hydrationStateB) => {
+    referralSub.hydrationState = hydrationStateA;
+    updatesSub.hydrationState = hydrationStateB;
+    expect(opp.hydrationState).toEqual({ status: "loading" });
+
+    referralSub.hydrationState = hydrationStateB;
+    updatesSub.hydrationState = hydrationStateA;
+    expect(opp.hydrationState).toEqual({ status: "loading" });
   });
 
   test.each([
-    [true, true],
-    [true, false],
-  ])("loading (subs loading %s + %s)", (loadingStatusA, loadingStatusB) => {
-    referralSub.isLoading = loadingStatusA;
-    updatesSub.isLoading = loadingStatusB;
-    expect(opp.hydrationState).toEqual({ status: "loading" });
-
-    referralSub.isLoading = loadingStatusB;
-    updatesSub.isLoading = loadingStatusA;
-    expect(opp.hydrationState).toEqual({ status: "loading" });
-
-    // trumps isHydrated if they don't agree
-    referralSub.isHydrated = true;
-    updatesSub.isHydrated = true;
-    expect(opp.hydrationState).toEqual({ status: "loading" });
-  });
-
-  test.each([
-    [Error("1"), Error("2")],
-    [Error("1"), undefined],
-  ])("failed (subs error %s + %s)", (errorA, errorB) => {
-    referralSub.error = errorA;
-    updatesSub.error = errorB;
+    [statuses.failed, statuses.failed],
+    [statuses.failed, statuses.loading],
+    [statuses.failed, statuses.hydrated],
+    [statuses.failed, statuses.needsHydration],
+  ])("failed (subs hydration %s + %s)", (hydrationStateA, hydrationStateB) => {
+    referralSub.hydrationState = hydrationStateA;
+    updatesSub.hydrationState = hydrationStateB;
     expect(opp.hydrationState).toEqual({
       status: "failed",
       error: expect.any(Error),
     });
 
-    referralSub.error = errorB;
-    updatesSub.error = errorA;
-    expect(opp.hydrationState).toEqual({
-      status: "failed",
-      error: expect.any(Error),
-    });
-
-    // error trumps all other hydration flags
-    referralSub.isLoading = true;
-    updatesSub.isLoading = true;
-    expect(opp.hydrationState).toEqual({
-      status: "failed",
-      error: expect.any(Error),
-    });
-
-    referralSub.isLoading = false;
-    updatesSub.isLoading = false;
-    referralSub.isHydrated = true;
-    updatesSub.isHydrated = true;
+    referralSub.hydrationState = hydrationStateB;
+    updatesSub.hydrationState = hydrationStateA;
     expect(opp.hydrationState).toEqual({
       status: "failed",
       error: expect.any(Error),
@@ -233,19 +217,9 @@ describe("hydrationState", () => {
   });
 
   test("hydrated", () => {
-    referralSub.isHydrated = true;
-    updatesSub.isHydrated = true;
-    referralSub.isLoading = false;
-    updatesSub.isLoading = false;
+    referralSub.hydrationState = statuses.hydrated;
+    updatesSub.hydrationState = statuses.hydrated;
     expect(opp.hydrationState).toEqual({ status: "hydrated" });
-  });
-
-  test("defaults to ready if no other state can be determined", () => {
-    // not currently loading, but not hydrated and there is no error;
-    // this is not a condition we ever really expect but it is possible
-    referralSub.isLoading = false;
-    updatesSub.isLoading = false;
-    expect(opp.hydrationState).toEqual({ status: "needs hydration" });
   });
 });
 

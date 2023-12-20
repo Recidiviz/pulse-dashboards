@@ -16,6 +16,7 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react";
+import { waitFor } from "@testing-library/dom";
 import {
   DocumentData,
   FirestoreError,
@@ -107,16 +108,16 @@ test("results", () => {
   expect(sub.data).toEqual([]);
 });
 
-test("subscription responds to observation", () => {
+test("subscription responds to observation", async () => {
   jest.spyOn(sub, "subscribe");
   jest.spyOn(sub, "unsubscribe");
   // simulates the data being observed in a datastore or component
   const testObserver = keepAlive(computed(() => sub.data));
-  expect(sub.subscribe).toHaveBeenCalled();
+  await waitFor(async () => expect(sub.subscribe).toHaveBeenCalled());
 
   // disposes of the observation
   testObserver();
-  expect(sub.unsubscribe).toHaveBeenCalled();
+  await waitFor(() => expect(sub.unsubscribe).toHaveBeenCalled());
 });
 
 test("reactive query", () => {
@@ -174,15 +175,15 @@ test("no duplicate listeners", () => {
 test("hydration", () => {
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 
-  expect(sub.isLoading).toBeUndefined();
+  expect(sub.hydrationState.status).toBe("needs hydration");
 
   sub.hydrate();
 
-  expect(sub.isLoading).toBe(true);
+  expect(sub.hydrationState.status).toBe("loading");
 
   mockReceive([]);
 
-  expect(sub.isLoading).toBe(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("no data transformer or validation function required", () => {
@@ -250,9 +251,7 @@ test("raw data fails validation", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual([]);
-  expect(sub.isHydrated).toBe(true);
-  expect(sub.error).toEqual(expect.any(AggregateError));
-  expect(sub.isLoading).toBe(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("transform errors logged to Sentry", () => {
@@ -331,9 +330,7 @@ test("raw data passes validation", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual(mockData);
-  expect(sub.isHydrated).toBe(true);
-  expect(sub.error).toBeUndefined();
-  expect(sub.isLoading).toBe(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("validator is not called on undefined data", () => {
@@ -350,9 +347,7 @@ test("validator is not called on undefined data", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual([]);
-  expect(sub.isHydrated).toEqual(true);
-  expect(sub.error).toBeUndefined();
-  expect(sub.isLoading).toEqual(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("stale data cleared when validation fails", () => {
@@ -383,8 +378,7 @@ test("handles Firestore error", () => {
 
   mockReceiveError(testError);
   expect(Sentry.captureException).toHaveBeenCalledWith(testError);
-  expect(sub.error).toEqual(testError);
-  expect(sub.isHydrated).toBe(false);
-  expect(sub.isLoading).toBe(false);
+  expect(sub.hydrationState).toEqual({ status: "failed", error: testError });
+
   expect(sub.data).toEqual([]);
 });

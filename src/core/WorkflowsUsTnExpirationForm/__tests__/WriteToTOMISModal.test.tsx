@@ -79,11 +79,11 @@ describe("WriteToTOMISModal", () => {
   beforeEach(() => {
     createTestUnit(UsTnExpirationEligibleClientRecord, usTnUserRecord);
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = UsTnExpirationReferralRecordFixture;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
 
     render(
       <WriteToTOMISModal

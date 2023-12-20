@@ -207,7 +207,9 @@ describe("opportunities", () => {
         testPerson.personUpdatesSubscription = {
           data: { preferredName: "two names" },
         } as unknown as CollectionDocumentSubscription<PersonUpdateRecord>;
-        testPerson.personUpdatesSubscription.isHydrated = true;
+        testPerson.personUpdatesSubscription.hydrationState = {
+          status: "hydrated",
+        };
       });
 
       expect(testPerson.displayPreferredName).toEqual(
@@ -219,7 +221,9 @@ describe("opportunities", () => {
         testPerson.personUpdatesSubscription = {
           data: { preferredName: null },
         } as unknown as CollectionDocumentSubscription<PersonUpdateRecord>;
-        testPerson.personUpdatesSubscription.isHydrated = true;
+        testPerson.personUpdatesSubscription.hydrationState = {
+          status: "hydrated",
+        };
       });
       expect(testPerson.displayPreferredName).toEqual("Real Person");
     });
@@ -228,7 +232,9 @@ describe("opportunities", () => {
         testPerson.personUpdatesSubscription = {
           data: { preferredName: "Real" },
         } as unknown as CollectionDocumentSubscription<PersonUpdateRecord>;
-        testPerson.personUpdatesSubscription.isHydrated = true;
+        testPerson.personUpdatesSubscription.hydrationState = {
+          status: "hydrated",
+        };
       });
       expect(testPerson.displayPreferredName).toEqual("Real Person");
     });
@@ -239,10 +245,8 @@ describe("opportunities", () => {
       createTestUnit(mockFactory);
       runInAction(() => {
         const [opp] = opportunityInstances;
-        opp.referralSubscription.isHydrated = true;
-        opp.updatesSubscription.isHydrated = true;
-        opp.referralSubscription.isLoading = false;
-        opp.updatesSubscription.isLoading = false;
+        opp.referralSubscription.hydrationState = { status: "hydrated" };
+        opp.updatesSubscription.hydrationState = { status: "hydrated" };
       });
     });
 
@@ -274,12 +278,12 @@ describe("opportunities", () => {
       createTestUnit(mockFactory);
       runInAction(() => {
         const [opp] = opportunityInstances;
-        opp.referralSubscription.isHydrated = true;
-        opp.referralSubscription.isLoading = false;
+        opp.referralSubscription.hydrationState = { status: "hydrated" };
 
-        opp.updatesSubscription.isLoading = false;
-        opp.updatesSubscription.isHydrated = false;
-        opp.updatesSubscription.error = new Error("test");
+        opp.updatesSubscription.hydrationState = {
+          status: "failed",
+          error: new Error("test"),
+        };
       });
     });
 
