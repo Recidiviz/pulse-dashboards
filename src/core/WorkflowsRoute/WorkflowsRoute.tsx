@@ -88,14 +88,16 @@ const RouteSync = observer(function RouteSync({ children }) {
 
         /* 2. Update selectedPerson if there is a personId */
         // updateSelectedPerson relies on the active system, so set it after the above
-        workflowsStore.updateSelectedPerson(personId).catch(() => {
-          if (isOpportunityPage) {
-            // Redirect home if person is no long eligible for opportunity
-            setRedirectPath(workflowsUrl(homepage));
-          } else {
-            setNotFound(true);
-          }
-        });
+        if (personId) {
+          workflowsStore.updateSelectedPerson(personId).catch(() => {
+            if (isOpportunityPage) {
+              // Redirect home if person is no long eligible for opportunity
+              setRedirectPath(workflowsUrl(homepage));
+            } else {
+              setNotFound(true);
+            }
+          });
+        }
 
         /* 3. Redirect to first available opportunity page if only 1 opportunity or homepage for multiple */
         if (!page) {
