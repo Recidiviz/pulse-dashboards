@@ -220,6 +220,7 @@ export type ResidentRecord = JusticeInvolvedPersonRecord & {
   releaseDate?: Timestamp | string;
   allEligibleOpportunities: IncarcerationOpportunityType[];
   portionServedNeeded?: "1/2" | "2/3";
+  sccpEligibilityDate?: Timestamp | string;
 };
 
 export type LocationRecord = {

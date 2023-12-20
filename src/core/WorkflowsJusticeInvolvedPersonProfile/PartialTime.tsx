@@ -22,6 +22,7 @@ import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { DetailsSubheading, SecureDetailsContent } from "./styles";
+import { UsMeSCCPEligibilityDate } from "./US_ME/UsMeSCCPEligibilityDate";
 
 export const PartialTime = observer(function PartialTime({
   person,
@@ -29,14 +30,19 @@ export const PartialTime = observer(function PartialTime({
   person: Resident | Client;
 }) {
   const dates = person.portionServedDates;
-  const partialDates = dates.map((requirement) => (
-    <React.Fragment key={requirement.heading}>
-      <DetailsSubheading>{requirement.heading}</DetailsSubheading>
-      <SecureDetailsContent>
-        {formatWorkflowsDate(requirement.date)}
-      </SecureDetailsContent>
-    </React.Fragment>
-  ));
-
-  return <>{partialDates}</>;
+  return (
+    <>
+      {person instanceof Resident && (
+        <UsMeSCCPEligibilityDate person={person} />
+      )}
+      {dates.map(({ heading, date }) => (
+        <React.Fragment key={heading}>
+          <DetailsSubheading>{heading}</DetailsSubheading>
+          <SecureDetailsContent>
+            {formatWorkflowsDate(date)}
+          </SecureDetailsContent>
+        </React.Fragment>
+      ))}
+    </>
+  );
 });

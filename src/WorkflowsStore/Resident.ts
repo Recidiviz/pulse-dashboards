@@ -110,6 +110,10 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
     return this.record.portionServedNeeded;
   }
 
+  get sccpEligibilityDate(): Date | undefined {
+    return optionalFieldToDate(this.record.sccpEligibilityDate);
+  }
+
   get portionServedDates(): PortionServedDates {
     const startDate = optionalFieldToDate(this.record.admissionDate);
     const endDate = optionalFieldToDate(this.record.releaseDate);

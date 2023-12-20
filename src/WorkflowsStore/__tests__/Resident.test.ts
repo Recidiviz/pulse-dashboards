@@ -46,6 +46,7 @@ beforeEach(() => {
     unitId: "UNIT1",
     admissionDate: "2021-11-01",
     releaseDate: "2029-06-01",
+    sccpEligibilityDate: "2026-01-01",
     personType: "RESIDENT",
   };
 });
@@ -70,4 +71,9 @@ test("admission date", () => {
 
 test("release date", () => {
   expect(testResident.releaseDate).toEqual(new Date(2029, 5, 1));
+});
+
+test("SCCP eligibility date", () => {
+  createTestUnit();
+  expect(testResident.sccpEligibilityDate).toEqual(new Date(2026, 0, 1));
 });
