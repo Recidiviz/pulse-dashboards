@@ -54,6 +54,9 @@ const RouteSync = observer(function RouteSync({ children }) {
   const [notFound, setNotFound] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | undefined>();
 
+  const [previousLocContainedPersonId, setPreviousLocContainedPersonId] =
+    useState(false);
+
   useEffect(
     () =>
       autorun(() => {
@@ -88,7 +91,7 @@ const RouteSync = observer(function RouteSync({ children }) {
 
         /* 2. Update selectedPerson if there is a personId */
         // updateSelectedPerson relies on the active system, so set it after the above
-        if (personId) {
+        if (personId || previousLocContainedPersonId) {
           workflowsStore.updateSelectedPerson(personId).catch(() => {
             if (isOpportunityPage) {
               // Redirect home if person is no long eligible for opportunity
@@ -98,6 +101,8 @@ const RouteSync = observer(function RouteSync({ children }) {
             }
           });
         }
+
+        setPreviousLocContainedPersonId(!!personId);
 
         /* 3. Redirect to first available opportunity page if only 1 opportunity or homepage for multiple */
         if (!page) {
@@ -119,7 +124,7 @@ const RouteSync = observer(function RouteSync({ children }) {
           });
         }
       }),
-    [loc, workflowsStore, currentTenantId]
+    [loc, workflowsStore, currentTenantId, previousLocContainedPersonId]
   );
 
   if (notFound) {
