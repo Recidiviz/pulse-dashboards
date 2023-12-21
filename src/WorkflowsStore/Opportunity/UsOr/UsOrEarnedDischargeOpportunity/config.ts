@@ -33,4 +33,5 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
         "Review clients who may be eligible for ED and complete the EDIS check-list.",
     }),
     firestoreCollection: "US_OR-earnedDischarge",
+    denialButtonText: "Additional Eligibility",
   };

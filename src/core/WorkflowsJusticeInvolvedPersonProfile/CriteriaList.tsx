@@ -48,7 +48,7 @@ const KeepTogether = styled.span`
 
 const CriterionHeading = styled(Sans16)<{ isFirst?: boolean }>`
   margin-top: ${(props) => (props.isFirst ? "0" : rem(spacing.md))};
-  grid-column: 1;
+  grid-column: 1 / 3;
 `;
 
 const CriterionIcon = styled(Icon)`

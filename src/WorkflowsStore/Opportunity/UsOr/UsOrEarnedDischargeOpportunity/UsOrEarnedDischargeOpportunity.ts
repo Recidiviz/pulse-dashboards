@@ -103,7 +103,10 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
     this.record.subOpportunities.forEach((subOpp) => {
       out = [
         ...out,
-        { isHeading: true, text: subOpp.id },
+        {
+          isHeading: true,
+          text: `${subOpp.metadata.courtCaseNumber}: ${subOpp.metadata.sentenceStatute}`,
+        },
         ...hydrateCriteria(subOpp, "eligibleCriteria", CRITERIA_COPY),
       ];
     });

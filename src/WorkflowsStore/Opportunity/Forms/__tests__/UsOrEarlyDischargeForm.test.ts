@@ -110,7 +110,7 @@ describe("prefilledDataTransformer", () => {
         "clientId": "pei1",
         "givenNames": "Joe",
         "middleNames": "Quimby",
-        "officerName": "Caseload 8675309",
+        "officerName": "8675309 8675309",
         "sentences": Object {
           "sent1": Object {
             "county": "COUNTY",

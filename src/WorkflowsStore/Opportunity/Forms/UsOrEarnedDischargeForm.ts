@@ -68,7 +68,7 @@ export class UsOrEarnedDischargeForm extends FormBase<
 
       const clientId = this.person.externalId;
 
-      const officerName = `Caseload ${this.person.assignedStaff?.surname}`;
+      const officerName = `${this.person.assignedStaff?.givenNames} ${this.person.assignedStaff?.surname}`;
 
       const todaysDate = formatWorkflowsDate(new Date());
 

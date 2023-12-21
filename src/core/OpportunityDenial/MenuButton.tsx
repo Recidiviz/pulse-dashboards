@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { darken } from "polished";
 import styled from "styled-components/macro";
 
-import { Opportunity } from "../../WorkflowsStore";
+import { Opportunity, OPPORTUNITY_CONFIGS } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
 
 const StatusAwareDropdownToggle = styled(DropdownToggle).attrs({
@@ -59,6 +59,8 @@ export const MenuButton = observer(function MenuButton({
   onDenialButtonClick?: () => void;
   responsiveRevamp?: boolean;
 }) {
+  const config = OPPORTUNITY_CONFIGS[opportunity.type];
+
   const colors = useStatusColors(opportunity);
 
   const reasons = opportunity.denial?.reasons;
@@ -69,7 +71,9 @@ export const MenuButton = observer(function MenuButton({
     textColor: reasons?.length ? colors.text : undefined,
   };
 
-  let buttonText = opportunity.isAlert ? "Override?" : "Update eligibility";
+  let buttonText =
+    config.denialButtonText ??
+    (opportunity.isAlert ? "Override?" : "Update eligibility");
   if (reasons?.length && !responsiveRevamp) {
     buttonText = `${reasons[0]}${
       reasons.length > 1 ? ` + ${reasons.length - 1} more` : ""

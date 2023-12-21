@@ -117,6 +117,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   customTabOrder?: OpportunityTab[];
   initialHeader?: string;
   hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
+  denialButtonText?: string;
 };
 
 export const OPPORTUNITY_CONFIGS = {

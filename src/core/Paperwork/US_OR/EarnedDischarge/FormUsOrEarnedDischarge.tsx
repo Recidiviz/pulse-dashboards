@@ -50,7 +50,10 @@ const formDownloader = async (client: Client): Promise<void> => {
 
   const fileInputs: FileGeneratorArgs[] = Object.values(sentences).map(
     (sentence) => [
-      `${client.displayName} - ${sentence.docket} - EDIS County Review Checklist.docx`,
+      `${client.displayName} - ${sentence.docket} - EDIS County Review Checklist.docx`.replaceAll(
+        "/",
+        "-"
+      ),
       client.stateCode,
       "edis_review_checklist.docx",
       { ...contents, ...sentence },
