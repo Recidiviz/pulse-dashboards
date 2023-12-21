@@ -173,9 +173,10 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
   );
 
   const bottomTickValues = statewidePoints.map((d) => d.date);
-  const { maxTickValue, tickValues: leftTickValues } = getTicks(
+  const { maxTickValue } = getTicks(
     Math.max(...usersPoints.concat(statewidePoints).map((d) => d.value))
   );
+
   const yRange = [0, maxTickValue];
 
   return (
@@ -236,7 +237,7 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
         axes={[
           {
             orient: "left",
-            tickValues: leftTickValues,
+            ticks: 5,
             tickFormat: (n: number, t: number) =>
               t === 0 ? null : formatPercent(n),
           },
