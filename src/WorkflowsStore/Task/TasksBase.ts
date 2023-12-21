@@ -19,8 +19,7 @@
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
-import { HydrationState, SnoozeTaskConfig } from "../../core/models/types";
-import { compositeHydrationState, isHydrated } from "../../core/models/utils";
+import { SnoozeTaskConfig } from "../../core/models/types";
 import { TaskValidationError } from "../../errors";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { FirestoreCollectionKey } from "../../FirestoreStore/types";
@@ -67,10 +66,12 @@ export abstract class TasksBase<
     validateRecord?: ValidateFunction<TaskRecord>
   ) {
     makeObservable(this, {
+      error: computed,
       hydrate: action,
-      hydrationState: computed,
+      isLoading: computed,
       record: computed,
       updates: computed,
+      isHydrated: computed,
       tasks: true,
       needs: true,
     });
@@ -101,7 +102,7 @@ export abstract class TasksBase<
   }
 
   get tasks(): SupervisionTask<SupervisionTaskType>[] {
-    if (!isHydrated(this)) return [];
+    if (!this.isHydrated) return [];
     return (this.record?.tasks || []).map(
       <T extends SupervisionTaskType>(task: SupervisionTaskRecord<T>) => {
         if (
@@ -168,6 +169,12 @@ export abstract class TasksBase<
     return this.tasks.filter((task) => !task.isSnoozed);
   }
 
+  get isHydrated(): boolean {
+    return (
+      this.taskSubscription.isHydrated && this.updatesSubscription.isHydrated
+    );
+  }
+
   get snoozeTasksConfig(): SnoozeTaskConfig | undefined {
     if (!this.rootStore.currentTenantId) return;
     return tenants[this.rootStore.currentTenantId].workflowsTasksConfig;
@@ -178,11 +185,20 @@ export abstract class TasksBase<
     this.updatesSubscription.hydrate();
   }
 
-  get hydrationState(): HydrationState {
-    return compositeHydrationState([
-      this.taskSubscription,
-      this.updatesSubscription,
-    ]);
+  get isLoading(): boolean | undefined {
+    if (
+      this.taskSubscription.isLoading === undefined ||
+      this.updatesSubscription.isLoading === undefined
+    ) {
+      return undefined;
+    }
+    return (
+      this.taskSubscription.isLoading || this.updatesSubscription.isLoading
+    );
+  }
+
+  get error(): Error | undefined {
+    return this.taskSubscription.error || this.updatesSubscription.error;
   }
 
   trackPreviewed(): void {

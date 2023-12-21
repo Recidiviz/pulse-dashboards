@@ -72,7 +72,7 @@ describe("fully eligible", () => {
     createTestUnit(usMePersonRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = usMeSCCPEligibleRecordFixture;
   });
 
@@ -90,7 +90,8 @@ test("requirements for half sentence served", () => {
   createTestUnit(usMePersonRecordShorterSentence);
 
   referralSub = opp.referralSubscription;
-  referralSub.hydrationState = { status: "hydrated" };
+  referralSub.isLoading = false;
+  referralSub.isHydrated = true;
   referralSub.data = usMeSCCPEligibleRecordHalfPortionFixture;
 
   expect(opp.requirementsMet[1]).toMatchSnapshot();
@@ -101,7 +102,7 @@ describe("almost eligible but for months remaining", () => {
     createTestUnit(usMePersonRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = usMeSCCPAlmostEligibleXMonthsRecordFixture;
   });
 
@@ -142,7 +143,7 @@ describe("ensure requirements text updates when source changes", () => {
     createTestUnit(usMePersonRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = usMeSCCPEligibleRecordFixture;
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
@@ -166,7 +167,7 @@ describe("almost eligible but for class A/B discipline", () => {
     createTestUnit(usMePersonRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = usMeSCCPAlmostEligibleViolationRecordFixture;
   });
 
@@ -191,7 +192,7 @@ describe("almost eligible but for fraction of sentence served", () => {
     createTestUnit(usMePersonRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture;
   });
 

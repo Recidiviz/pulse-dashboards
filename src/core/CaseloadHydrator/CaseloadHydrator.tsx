@@ -21,7 +21,6 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { isHydrated } from "../models/utils";
 
 type CaseloadHydratorProps = {
   initial: React.ReactNode;
@@ -41,7 +40,7 @@ const CaseloadHydrator = observer(function CaseloadHydrator({
     () =>
       autorun(() => {
         workflowsStore.caseloadSubscription?.forEach((caseload) => {
-          if (!isHydrated(caseload)) caseload.hydrate();
+          if (!caseload.isHydrated) caseload.hydrate();
         });
       }),
     [workflowsStore, selectedSearchIds]

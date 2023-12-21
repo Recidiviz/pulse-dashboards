@@ -229,9 +229,8 @@ test("reject empty result", () => {
 
   mockReceive([]);
 
-  expect(sub.hydrationState).toEqual({
-    status: "failed",
-    error: expect.any(Error),
-  });
+  expect(sub.error).toEqual(expect.any(Error));
+  expect(sub.isHydrated).toBe(false);
+  expect(sub.isLoading).toBe(false);
   expect(sub.data).toEqual([]);
 });

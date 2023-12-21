@@ -67,7 +67,8 @@ describe("fully eligible", () => {
     createTestUnit(pastFTRDEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
+    referralSub.isHydrated = true;
     referralSub.data = pastFTRDRecordEligibleFixture;
   });
 
@@ -81,7 +82,8 @@ describe("almost eligible", () => {
     createTestUnit(pastFTRDEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
+    referralSub.isHydrated = true;
     referralSub.data = pastFTRDAlmostEligibleFixture;
   });
 

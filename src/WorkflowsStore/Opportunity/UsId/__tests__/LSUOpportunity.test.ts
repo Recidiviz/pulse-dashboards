@@ -73,11 +73,13 @@ describe("fully eligible", () => {
     createTestUnit(LSUEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
+    referralSub.isHydrated = true;
     referralSub.data = LSUReferralRecordFixture;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
+    updatesSub.isHydrated = true;
   });
 
   test("requirements almost met", () => {
@@ -201,7 +203,8 @@ describe("no UA required", () => {
     createTestUnit(LSUEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
+    referralSub.isHydrated = true;
     const record = LSUReferralRecordFixture;
     record.eligibleCriteria.negativeUaWithin90Days = {
       latestUaDates: [],
@@ -210,7 +213,8 @@ describe("no UA required", () => {
     referralSub.data = record;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
+    referralSub.isHydrated = true;
   });
 
   test("requirements almost met", () => {
@@ -235,11 +239,11 @@ describe("almost eligible income verified within 3 months", () => {
     createTestUnit(LSUEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = almostEligibleIncomeVerified;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {
@@ -280,11 +284,11 @@ describe("almost eligible on supervision at least a year", () => {
     createTestUnit(LSUEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = almostEligibleSupervisionLength;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {
@@ -323,11 +327,11 @@ describe("almost eligible days remaining on supervision", () => {
     tk.freeze(new Date(2023, 1, 23));
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = almostEligibleSupervisionLength;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {

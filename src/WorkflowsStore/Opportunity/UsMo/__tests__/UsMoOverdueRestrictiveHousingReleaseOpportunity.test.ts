@@ -87,11 +87,11 @@ describe("fully eligible", () => {
     createTestUnit(usMoPersonRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = fixtureData;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {

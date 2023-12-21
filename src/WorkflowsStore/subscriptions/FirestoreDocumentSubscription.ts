@@ -23,21 +23,14 @@ import {
   onSnapshot,
   Unsubscribe,
 } from "firebase/firestore";
-import { defer } from "lodash";
 import {
   action,
   makeObservable,
   observable,
   onBecomeObserved,
   onBecomeUnobserved,
-  runInAction,
 } from "mobx";
 
-import { HydrationState } from "../../core/models/types";
-import {
-  isHydrationInProgress,
-  isHydrationUntouched,
-} from "../../core/models/utils";
 import { FeatureGateError } from "../../errors";
 import { castToError } from "../../utils/castToError";
 import {
@@ -90,18 +83,20 @@ export abstract class FirestoreDocumentSubscription<
       data: observable.struct,
       updateData: action,
       hydrate: action,
-      hydrationState: observable,
       subscribe: action,
+      isLoading: observable,
+      error: observable,
+      isHydrated: observable,
+      setError: action,
     });
 
     // these automatically stop/start the listener based on whether any MobX
-    // observers are actually watching for subscription data on this object.
-    // they run async in case they cause state updates to avoid render disruptions
-    onBecomeObserved(this, "data", () => defer(() => this.subscribe()));
+    // observers are actually watching for subscription data on this object
+    onBecomeObserved(this, "data", () => this.subscribe());
     // this has the additional effect of preventing orphaned listeners
     // if this object gets garbage collected, since it should also become unobserved
     // at or before that point
-    onBecomeUnobserved(this, "data", () => defer(() => this.unsubscribe()));
+    onBecomeUnobserved(this, "data", () => this.unsubscribe());
   }
 
   /**
@@ -116,7 +111,8 @@ export abstract class FirestoreDocumentSubscription<
 
       if (!snapshotData) {
         this.data = undefined;
-        this.hydrationState = { status: "hydrated" };
+        this.isHydrated = true;
+        this.isLoading = false;
         return;
       }
 
@@ -127,15 +123,30 @@ export abstract class FirestoreDocumentSubscription<
       if (record !== undefined) this.validateRecord(record);
 
       this.data = record;
-      this.hydrationState = { status: "hydrated" };
+      this.isHydrated = true;
+      this.error = undefined;
     } catch (e) {
-      this.hydrationState = { status: "failed", error: castToError(e) };
-      this.data = undefined;
+      this.setError(castToError(e));
       // don't log routine feature flag checks, but do log everything else
       if (!(e instanceof FeatureGateError)) {
         Sentry.captureException(e);
       }
     }
+
+    if (this.isLoading) {
+      this.isLoading = false;
+    }
+  }
+
+  /**
+   * Sets all hydration properties as needed to represent an error state.
+   * Error and hydrated states are mutually exclusive for this class!
+   */
+  setError(e: Error): void {
+    this.error = e;
+    this.data = undefined;
+    this.isHydrated = false;
+    this.isLoading = false;
   }
 
   get isActive(): boolean {
@@ -147,30 +158,27 @@ export abstract class FirestoreDocumentSubscription<
    * create a redundant listener if one is already active.
    */
   subscribe(): void {
-    if (
-      this.isActive ||
-      // if the subscription is inactive, we will rehydrate if we're already hydrated
-      // or failed. This is different from fetch-based hydration flows
-      isHydrationInProgress(this)
-    )
-      return;
+    if (this.isActive || this.isLoading) return;
 
-    if (isHydrationUntouched(this)) {
-      this.hydrationState = { status: "loading" };
+    if (this.isLoading === undefined) {
+      this.isLoading = true;
     }
+
     this.cancelSnapshotListener = onSnapshot(
       this.dataSource,
       (result) => this.updateData(result),
       (error) => {
-        runInAction(() => {
-          this.hydrationState = { status: "failed", error };
-        });
+        this.setError(error);
         Sentry.captureException(error);
       }
     );
   }
 
-  hydrationState: HydrationState = { status: "needs hydration" };
+  isLoading: boolean | undefined = undefined;
+
+  error: Error | undefined = undefined;
+
+  isHydrated = false;
 
   hydrate(): void {
     this.subscribe();

@@ -17,7 +17,6 @@
 
 import { makeObservable, observable } from "mobx";
 
-import { HydrationState } from "../../../core/models/types";
 import { constructorSpy } from "../../Opportunity/__tests__/testUtils";
 import { QuerySubscription } from "../types";
 
@@ -30,12 +29,15 @@ export class MockQuerySubscription implements QuerySubscription<any> {
 
   hydrate = jest.fn();
 
-  hydrationState: HydrationState = { status: "needs hydration" };
+  isHydrated = false;
+
+  isLoading = undefined;
 
   constructor(...args: any[]) {
     makeObservable(this, {
       data: observable,
-      hydrationState: observable,
+      isHydrated: observable,
+      isLoading: observable,
     });
     constructorSpy(...args);
   }

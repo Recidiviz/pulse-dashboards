@@ -18,7 +18,10 @@
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { HydrationState, HydrationStateMachine } from "../../core/models/types";
-import { isHydrationStarted } from "../../core/models/utils";
+import {
+  isHydrationFinished,
+  isHydrationInProgress,
+} from "../../core/models/utils";
 import { castToError } from "../../utils/castToError";
 import { OutliersStore } from "../OutliersStore";
 
@@ -37,7 +40,7 @@ export class SupervisionPresenter implements HydrationStateMachine {
   }
 
   async hydrate(): Promise<void> {
-    if (isHydrationStarted(this)) return;
+    if (isHydrationInProgress(this) || isHydrationFinished(this)) return;
 
     this.setHydrationState({ status: "loading" });
 

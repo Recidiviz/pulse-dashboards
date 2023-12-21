@@ -21,7 +21,7 @@ import { difference } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
-import { HydrationState, SystemId } from "../../core/models/types";
+import { SystemId } from "../../core/models/types";
 import FirestoreStore, {
   ClientRecord,
   CombinedUserRecord,
@@ -169,33 +169,31 @@ async function waitForHydration({
   // mock the results of active firestore subscriptions
   runInAction(() => {
     workflowsStore.userSubscription.data = [info];
-    workflowsStore.userSubscription.hydrationState = { status: "hydrated" };
+    workflowsStore.userSubscription.isHydrated = true;
 
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
     // these subs will not be null because we called hydrate() above!
     workflowsStore.userUpdatesSubscription!.data = updates;
-    workflowsStore.userUpdatesSubscription!.hydrationState = {
-      status: "hydrated",
-    };
+    workflowsStore.userUpdatesSubscription!.isHydrated = true;
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
   });
 
-  await when(() => workflowsStore.hydrationState.status === "hydrated");
+  await when(() => workflowsStore.isHydrated);
 }
 
 function populateClients(clients: ClientRecord[]): void {
   runInAction(() => {
     workflowsStore.clientsSubscription.data = clients;
-    workflowsStore.clientsSubscription.hydrationState = { status: "hydrated" };
+    workflowsStore.clientsSubscription.isHydrated = true;
+    workflowsStore.clientsSubscription.isLoading = false;
   });
 }
 
 function populateResidents(residents: ResidentRecord[]): void {
   runInAction(() => {
     workflowsStore.residentsSubscription.data = residents;
-    workflowsStore.residentsSubscription.hydrationState = {
-      status: "hydrated",
-    };
+    workflowsStore.residentsSubscription.isHydrated = true;
+    workflowsStore.residentsSubscription.isLoading = false;
   });
 }
 
@@ -229,7 +227,7 @@ test("hydration fails without authentication", () => {
     rootStore.userStore.user = undefined;
   });
   workflowsStore.hydrate();
-  expect(workflowsStore.hydrationState.status).toBe("failed");
+  expect(workflowsStore.error).toEqual(expect.any(Error));
 });
 
 test("hydration creates subscriptions", () => {
@@ -248,124 +246,57 @@ test("hydration triggers subscriptions", () => {
 });
 
 test("hydration reflects subscriptions", async () => {
-  expect(workflowsStore.hydrationState.status).toBe("needs hydration");
+  expect(workflowsStore.isHydrated).toBe(false);
 
   workflowsStore.hydrate();
 
   runInAction(() => {
-    workflowsStore.userSubscription.hydrationState = { status: "hydrated" };
+    workflowsStore.userSubscription.isHydrated = true;
   });
-  expect(workflowsStore.hydrationState.status).toBe("needs hydration");
+  expect(workflowsStore.isHydrated).toBe(false);
 
   runInAction(() => {
     // @ts-expect-error
     workflowsStore.userSubscription.data = [{ stateCode: "US_XX" }];
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    workflowsStore.userUpdatesSubscription!.hydrationState = {
-      status: "hydrated",
-    };
+    workflowsStore.userUpdatesSubscription!.isHydrated = true;
   });
 
-  expect(workflowsStore.hydrationState.status).toBe("hydrated");
+  expect(workflowsStore.isHydrated).toBe(true);
 });
 
-describe("hydrationState", () => {
-  const statuses = {
-    needsHydration: { status: "needs hydration" },
-    loading: { status: "loading" },
-    failed: { status: "failed", error: new Error("test") },
-    hydrated: { status: "hydrated" },
-  } satisfies Record<string, HydrationState>;
-
-  beforeEach(() => {
+describe("hydration loading reflects subscriptions", () => {
+  test.each([
+    [undefined, undefined, undefined, undefined],
+    [undefined, true, true, undefined],
+    [undefined, false, true, undefined],
+    [true, true, true, true],
+    [true, false, true, true],
+    [false, false, false, false],
+  ])("%s + %s + %s = %s", (statusA, statusB, statusC, result) => {
+    mockAuthedUser();
     workflowsStore.hydrate();
-  });
 
-  test.each([
-    [statuses.needsHydration, statuses.needsHydration],
-    [statuses.needsHydration, statuses.loading],
-    [statuses.needsHydration, statuses.hydrated],
-  ])(
-    "needs hydration (subs hydration %s + %s)",
-    (hydrationStateA, hydrationStateB) => {
-      workflowsStore.userSubscription.hydrationState = hydrationStateA;
+    runInAction(() => {
+      workflowsStore.userSubscription.isLoading = statusA;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      workflowsStore.userUpdatesSubscription!.hydrationState = hydrationStateB;
-      expect(workflowsStore.hydrationState).toEqual({
-        status: "needs hydration",
-      });
-
-      workflowsStore.userSubscription.hydrationState = hydrationStateB;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      workflowsStore.userUpdatesSubscription!.hydrationState = hydrationStateA;
-      expect(workflowsStore.hydrationState).toEqual({
-        status: "needs hydration",
-      });
-    }
-  );
-
-  test.each([
-    [statuses.loading, statuses.loading],
-    [statuses.loading, statuses.hydrated],
-  ])("loading (subs hydration %s + %s)", (hydrationStateA, hydrationStateB) => {
-    workflowsStore.userSubscription.hydrationState = hydrationStateA;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    workflowsStore.userUpdatesSubscription!.hydrationState = hydrationStateB;
-    expect(workflowsStore.hydrationState).toEqual({ status: "loading" });
-
-    workflowsStore.userSubscription.hydrationState = hydrationStateB;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    workflowsStore.userUpdatesSubscription!.hydrationState = hydrationStateA;
-    expect(workflowsStore.hydrationState).toEqual({ status: "loading" });
-  });
-
-  test.each([
-    [statuses.failed, statuses.failed],
-    [statuses.failed, statuses.loading],
-    [statuses.failed, statuses.hydrated],
-    [statuses.failed, statuses.needsHydration],
-  ])("failed (subs hydration %s + %s)", (hydrationStateA, hydrationStateB) => {
-    workflowsStore.userSubscription.hydrationState = hydrationStateA;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    workflowsStore.userUpdatesSubscription!.hydrationState = hydrationStateB;
-    expect(workflowsStore.hydrationState).toEqual({
-      status: "failed",
-      error: expect.any(Error),
+      workflowsStore.userUpdatesSubscription!.isLoading = statusB;
     });
 
-    workflowsStore.userSubscription.hydrationState = hydrationStateB;
+    expect(workflowsStore.isLoading).toBe(result);
+  });
+});
+
+test("hydration error reflects subscriptions", () => {
+  mockAuthedUser();
+  workflowsStore.hydrate();
+
+  runInAction(() => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    workflowsStore.userUpdatesSubscription!.hydrationState = hydrationStateA;
-    expect(workflowsStore.hydrationState).toEqual({
-      status: "failed",
-      error: expect.any(Error),
-    });
+    workflowsStore.userUpdatesSubscription!.error = new Error("TEST");
   });
 
-  test("hydrated", () => {
-    workflowsStore.userSubscription.hydrationState = statuses.hydrated;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    workflowsStore.userUpdatesSubscription!.hydrationState = statuses.hydrated;
-    expect(workflowsStore.hydrationState).toEqual({ status: "hydrated" });
-  });
-
-  describe("before userUpdatesSubscription is created", () => {
-    test.each([
-      [statuses.loading],
-      [statuses.hydrated],
-      [statuses.needsHydration],
-    ])("needs hydration with user sub = %s", (userSubStatus) => {
-      workflowsStore.userSubscription.hydrationState = userSubStatus;
-      expect(workflowsStore.hydrationState).toEqual({
-        status: "needs hydration",
-      });
-    });
-
-    test("failed with user sub = failed", () => {
-      workflowsStore.userSubscription.hydrationState = statuses.failed;
-      expect(workflowsStore.hydrationState.status).toEqual("failed");
-    });
-  });
+  expect(workflowsStore.error).toEqual(expect.any(Error));
 });
 
 test("user data waits for hydration to be complete", () => {
@@ -1144,9 +1075,8 @@ describe("residents for US_ME", () => {
       rootStore.tenantStore.currentTenantId = "US_ME";
       workflowsStore.updateActiveSystem("INCARCERATION");
       workflowsStore.residentsSubscription.data = mockResidents;
-      workflowsStore.residentsSubscription.hydrationState = {
-        status: "hydrated",
-      };
+      workflowsStore.residentsSubscription.isHydrated = true;
+      workflowsStore.residentsSubscription.isLoading = false;
     });
 
     expect(workflowsStore.justiceInvolvedPersons).toEqual({

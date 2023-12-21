@@ -72,11 +72,11 @@ describe("fully eligible", () => {
     createTestUnit(EarnedDischargeEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = EarnedDischargeReferralRecordFixture;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements almost met", () => {
@@ -94,11 +94,11 @@ describe("almost eligible income verified within 3 months", () => {
     createTestUnit(EarnedDischargeEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = earnedDischargeAlmostEligibleVerifiedIncome;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {
@@ -130,11 +130,11 @@ describe("almost eligible on probation at least a year", () => {
     createTestUnit(EarnedDischargeEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = earnedDischargeAlmostEligibleSupervisionLength;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {
@@ -169,11 +169,11 @@ describe("almost eligible days remaining on length of stay", () => {
     earnedDischargeAlmostEligibleSupervisionLength.ineligibleCriteria.pastEarnedDischargeEligibleDate =
       { eligibleDate: new Date(2022, 1, 24) };
     referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
+    referralSub.isLoading = false;
     referralSub.data = earnedDischargeAlmostEligibleSupervisionLength;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
+    updatesSub.isLoading = false;
   });
 
   test("requirements met", () => {

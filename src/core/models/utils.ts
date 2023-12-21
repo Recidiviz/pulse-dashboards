@@ -16,7 +16,7 @@
 // =============================================================================
 import assertNever from "assert-never";
 import { every } from "lodash";
-import { identity, isError, property } from "lodash/fp";
+import { property } from "lodash/fp";
 import moment from "moment";
 
 import { toTitleCase } from "../../utils";
@@ -29,7 +29,6 @@ import {
 import {
   AgeGroup,
   Gender,
-  HydrationState,
   HydrationStateMachine,
   LengthOfStay,
   LengthOfStayRawValue,
@@ -352,96 +351,4 @@ export function isHydrationInProgress(
     default:
       assertNever(hydratable.hydrationState);
   }
-}
-
-/**
- * Returns true if hydration is neither in progress nor completed, false otherwise.
- */
-export function isHydrationUntouched(
-  hydratable: HydrationStateMachine
-): boolean {
-  switch (hydratable.hydrationState.status) {
-    case "needs hydration":
-      return true;
-    case "loading":
-    case "pending":
-    case "hydrated":
-    case "failed":
-      return false;
-    default:
-      assertNever(hydratable.hydrationState);
-  }
-}
-
-/**
- * Returns true if hydration is in progress or finished, false otherwise.
- */
-export function isHydrationStarted(hydratable: HydrationStateMachine): boolean {
-  switch (hydratable.hydrationState.status) {
-    case "needs hydration":
-      return false;
-    case "loading":
-    case "pending":
-    case "hydrated":
-    case "failed":
-      return true;
-    default:
-      assertNever(hydratable.hydrationState);
-  }
-}
-
-/**
- * Returns the associated error if hydration has failed
- */
-export function hydrationFailure(
-  hydratable: HydrationStateMachine
-): Error | undefined {
-  switch (hydratable.hydrationState.status) {
-    case "failed":
-      return hydratable.hydrationState.error;
-    case "loading":
-    case "pending":
-    case "hydrated":
-    case "needs hydration":
-      return;
-    default:
-      assertNever(hydratable.hydrationState);
-  }
-}
-
-/**
- * Computes a lowest-common-denominator state based on the passed-in objects, with a failure
- * in any of them taking precedence over all other possible states.
- */
-export function compositeHydrationState(
-  hydratables: Array<HydrationStateMachine>
-): HydrationState {
-  const errors = hydratables.map(hydrationFailure).filter(isError);
-  if (errors.length) {
-    const error = new AggregateError(errors);
-    return {
-      status: "failed",
-      error,
-    };
-  }
-
-  if (hydratables.map(isHydrationUntouched).some(identity)) {
-    return { status: "needs hydration" };
-  }
-
-  if (hydratables.map(isHydrationInProgress).some(identity)) {
-    return { status: "loading" };
-  }
-
-  if (hydratables.map(isHydrated).every(identity)) {
-    return { status: "hydrated" };
-  }
-
-  // there is no other possible state expected; either input data was invalid
-  // or this function has become outdated
-  throw new Error(
-    `Unable to determine valid hydration state: ${JSON.stringify(
-      hydratables.map((h) => h.hydrationState)
-    )}`
-  );
 }
