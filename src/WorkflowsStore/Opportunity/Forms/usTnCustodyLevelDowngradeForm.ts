@@ -161,12 +161,28 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       if (q8Notes) {
         out.q8Note = q8Notes
           .map(
-            ({ detainerReceivedDate, detainerFelonyFlag }) =>
-              `${formatDate(detainerReceivedDate)} - ${
-                detainerFelonyFlag ? "Felony" : "Misdemeanor"
-              }`
+            ({
+              detainerReceivedDate,
+              detainerFelonyFlag,
+              detainerMisdemeanorFlag,
+              jurisdiction,
+              description,
+              chargePending,
+            }) => {
+              const parts = [formatDate(detainerReceivedDate)];
+              if (detainerFelonyFlag || detainerMisdemeanorFlag)
+                parts.push(detainerFelonyFlag ? "Felony" : "Misdemeanor");
+              if (description !== undefined) parts.push(description);
+              if (jurisdiction !== undefined)
+                parts.push(`Jurisdiction: ${jurisdiction}`);
+              if (chargePending !== undefined)
+                parts.push(
+                  chargePending ? "Charge Pending" : "No Charge Pending"
+                );
+              return parts.join(" - ");
+            }
           )
-          .join(", ");
+          .join("; ");
       }
     }
     return out;

@@ -281,7 +281,7 @@ describe("prefilledDataTransformer", () => {
 
     expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
       ...baseResult,
-      q8Note: "2/1/19 - Felony, 2/1/20 - Misdemeanor",
+      q8Note: "2/1/19 - Felony; 2/1/20 - Misdemeanor",
     });
   });
 });

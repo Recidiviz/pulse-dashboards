@@ -269,7 +269,7 @@ describe("prefilledDataTransformer", () => {
     });
   });
 
-  test("formats q8Notes", () => {
+  test("formats q8Notes (old format)", () => {
     oppRecord.formInformation.q8Notes = [
       {
         detainerFelonyFlag: true,
@@ -285,7 +285,34 @@ describe("prefilledDataTransformer", () => {
 
     expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
       ...baseResult,
-      q8Note: "2/1/19 - Felony, 2/1/20 - Misdemeanor",
+      q8Note: "2/1/19 - Felony; 2/1/20 - Misdemeanor",
+    });
+  });
+
+  test("formats q8Notes (new format)", () => {
+    oppRecord.formInformation.q8Notes = [
+      {
+        detainerFelonyFlag: false,
+        detainerMisdemeanorFlag: false,
+        detainerReceivedDate: new Date("2019-02-01"),
+        jurisdiction: "TN",
+        description: "DESCRIPTION",
+        chargePending: true,
+      },
+      {
+        detainerFelonyFlag: false,
+        detainerMisdemeanorFlag: true,
+        detainerReceivedDate: new Date("2020-02-01"),
+        jurisdiction: "TN",
+        description: "DESCRIPTION",
+        chargePending: false,
+      },
+    ];
+
+    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+      ...baseResult,
+      q8Note:
+        "2/1/19 - DESCRIPTION - Jurisdiction: TN - Charge Pending; 2/1/20 - Misdemeanor - DESCRIPTION - Jurisdiction: TN - No Charge Pending",
     });
   });
 
