@@ -76,14 +76,6 @@ const US_CO_CONFIG: TenantConfig = {
     ],
     "id-methodology": ["system"],
   },
-  pagesWithRestrictions: [
-    "libertyToPrison",
-    "prison",
-    "prisonToSupervision",
-    "supervisionToPrison",
-    "supervisionToLiberty",
-    "supervision",
-  ],
   tableColumns: enabledTableColumns[pathways.US_CO],
 };
 

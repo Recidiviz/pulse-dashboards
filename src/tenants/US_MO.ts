@@ -103,15 +103,6 @@ const US_MO_CONFIG: TenantConfig = {
     revocations: [],
     "id-methodology": ["system"],
   },
-  pagesWithRestrictions: [
-    "libertyToPrison",
-    "prison",
-    "prisonToSupervision",
-    "supervisionToPrison",
-    "supervisionToLiberty",
-    "supervision",
-    "workflows",
-  ],
   tableColumns: enabledTableColumns[pathways.US_MO],
 };
 

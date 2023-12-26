@@ -96,16 +96,6 @@ const US_ND_CONFIG: TenantConfig = {
     ],
     "id-methodology": ["system", "operations"],
   },
-  pagesWithRestrictions: [
-    "operations",
-    "libertyToPrison",
-    "prison",
-    "prisonToSupervision",
-    "supervisionToPrison",
-    "supervisionToLiberty",
-    "supervision",
-    "workflows",
-  ],
   tableColumns: enabledTableColumns[pathways.US_ND],
   vitalsMetrics: [
     {

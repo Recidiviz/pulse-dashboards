@@ -123,15 +123,6 @@ const US_ME_CONFIG: TenantConfig = {
     ],
     "id-methodology": ["system"],
   },
-  pagesWithRestrictions: [
-    "libertyToPrison",
-    "prison",
-    "prisonToSupervision",
-    "supervisionToPrison",
-    "supervisionToLiberty",
-    "supervision",
-    "workflows",
-  ],
   tableColumns: enabledTableColumns[pathways.US_ME],
 };
 

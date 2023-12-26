@@ -62,7 +62,6 @@ export type TenantConfig = {
   enableUserRestrictions: boolean;
   navigation?: Navigation;
   vitalsMetrics?: VitalsMetric[];
-  pagesWithRestrictions?: string[];
   tableColumns?: TableColumns;
   opportunityTypes?: OpportunityType[];
   workflowsSupportedSystems?: SystemId[];

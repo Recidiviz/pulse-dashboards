@@ -39,7 +39,6 @@ const US_NC_CONFIG: TenantConfig = {
     ],
     "id-methodology": ["system"],
   },
-  pagesWithRestrictions: ["prison"],
   tableColumns: enabledTableColumns[pathways.US_NC],
 };
 

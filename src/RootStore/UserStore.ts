@@ -44,7 +44,11 @@ import {
   NavigationSection,
   RoutePermission,
 } from "../core/types/navigation";
-import { PATHWAYS_SECTIONS, PathwaysPageIdList } from "../core/views";
+import {
+  PATHWAYS_SECTIONS,
+  PathwaysPageIdList,
+  UNRESTRICTED_PAGES,
+} from "../core/views";
 import { UserRole } from "../FirestoreStore";
 import tenants from "../tenants";
 import { castToError } from "../utils/castToError";
@@ -457,8 +461,7 @@ export default class UserStore {
    */
   get userAllowedNavigation(): Navigation | undefined {
     if (!this.rootStore?.currentTenantId) return {};
-    const { navigation, pagesWithRestrictions } =
-      tenants[this.rootStore.currentTenantId];
+    const { navigation } = tenants[this.rootStore.currentTenantId];
 
     const allowed = navigation;
     if (!allowed) return {};
@@ -467,19 +470,18 @@ export default class UserStore {
       delete allowed.workflows;
     }
 
-    if (pagesWithRestrictions) {
-      pagesWithRestrictions.forEach((page) => {
-        if (!this.canAccessRestrictedPage(page)) {
-          // System page permissions are on the page level,
-          // so remove them as necessary from the system key array
-          if (PathwaysPageIdList.includes(page)) {
-            if (!allowed.system || allowed.system.indexOf(page) < 0) return;
-            allowed.system.splice(allowed.system.indexOf(page), 1);
-          }
-          delete allowed[page as NavigationSection];
+    /* Remove pages that may be allowed for the tenant but restricted for the user */
+    Object.keys(navigation).forEach((page) => {
+      if (!this.isUserAllowedRoute(page)) {
+        // System page permissions are on the page level,
+        // so remove them as necessary from the system key array
+        if (PathwaysPageIdList.includes(page)) {
+          allowed.system?.splice(allowed.system?.indexOf(page), 1);
         }
-      });
-    }
+        delete allowed[page as NavigationSection];
+      }
+    });
+
     // If there are not any allowed system pages, delete the system key
     if (allowed.system?.length === 0) {
       delete allowed.system;
@@ -495,11 +497,10 @@ export default class UserStore {
     return { ...allowed, ...getAllowedMethodology(allowed) };
   }
 
-  canAccessRestrictedPage(pageName: string): boolean {
-    if (!this.rootStore?.currentTenantId) return false;
-    const { pagesWithRestrictions } = tenants[this.rootStore.currentTenantId];
-    const permission = this.getRoutePermission(pageName);
-    return permission || !pagesWithRestrictions?.includes(pageName);
+  isUserAllowedRoute(pageName: string): boolean {
+    return (
+      this.getRoutePermission(pageName) || UNRESTRICTED_PAGES.includes(pageName)
+    );
   }
 
   getRoutePermission(route: string): boolean {
