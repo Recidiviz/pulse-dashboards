@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,28 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import "./AuthWall.scss";
-
-import { Loading } from "@recidiviz/design-system";
 import { when } from "mobx";
-import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useIdleTimer } from "react-idle-timer";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import NotFound from "../components/NotFound";
 import { useRootStore } from "../components/StoreProvider";
 
-/**
- * Verifies authorization before rendering its children.
- */
-const AuthWall: React.FC = ({ children }) => {
-  const { pathname, search } = useLocation();
-  const currentView = pathname.split("/")[1];
-  const { userStore, currentTenantId, tenantStore } = useRootStore();
+const useAuth = () => {
+  const { search } = useLocation();
+  const { userStore, tenantStore } = useRootStore();
   const stateCodeParam = new URLSearchParams(search).get("stateCode");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(
     () =>
@@ -47,12 +37,12 @@ const AuthWall: React.FC = ({ children }) => {
         () =>
           userStore.authorize((targetUrl: string) => {
             const url = new URL(targetUrl);
-            history.replace(url.pathname);
+            navigate(url.pathname, { replace: true });
           })
       ),
     // these references should never really change, so this is essentially
     // calling the effect on mount and cleaning it up on unmount
-    [history, userStore]
+    [navigate, userStore]
   );
 
   useIdleTimer({
@@ -70,32 +60,10 @@ const AuthWall: React.FC = ({ children }) => {
     throw userStore.authError;
   }
 
-  if (userStore.userIsLoading) {
-    return (
-      <div className="Loading__container">
-        <Loading />
-      </div>
-    );
-  }
   if (userStore.isAuthorized) {
     if (userStore.stateCode?.toLowerCase() === "recidiviz" && stateCodeParam)
       tenantStore.setCurrentTenantId(stateCodeParam);
-
-    const authorizedChildren = React.Children.map(children, (child: any) => {
-      const { tenantIds, views } = child.props;
-
-      return tenantIds.includes(currentTenantId) && views.includes(currentView)
-        ? child
-        : null;
-    });
-    return authorizedChildren && authorizedChildren.length > 0 ? (
-      <>{authorizedChildren}</>
-    ) : (
-      <NotFound />
-    );
   }
-
-  return null;
 };
 
-export default observer(AuthWall);
+export default useAuth;

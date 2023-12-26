@@ -18,6 +18,7 @@
 import { render } from "@testing-library/react";
 import { observable } from "mobx";
 import React from "react";
+import { MemoryRouter } from "react-router-dom";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import StoreProvider from "../../components/StoreProvider";
@@ -118,7 +119,9 @@ describe("Revocations component tests", () => {
   it("should render Revocations component with proper filters and charts", () => {
     const { getByTestId } = render(
       <StoreProvider>
-        <Revocations />
+        <MemoryRouter>
+          <Revocations />
+        </MemoryRouter>
       </StoreProvider>
     );
 
@@ -147,7 +150,9 @@ describe("Revocations component tests", () => {
     filterOptionsMap[mockTenantId][ADMISSION_TYPE].componentEnabled = false;
     const { queryByTestId } = render(
       <StoreProvider>
-        <Revocations />
+        <MemoryRouter>
+          <Revocations />
+        </MemoryRouter>
       </StoreProvider>
     );
 

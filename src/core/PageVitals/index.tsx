@@ -18,10 +18,10 @@
 import "../DetailsGroup.scss";
 import "./PageVitals.scss";
 
-import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import Loading from "../../components/Loading";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
 import DetailsGroup from "../DetailsGroup";
@@ -60,9 +60,7 @@ const PageVitals: React.FC = () => {
   if (isLoading || currentEntitySummary === undefined) {
     return (
       <PageTemplate>
-        <div className="Loading__container">
-          <Loading />
-        </div>
+        <Loading />
       </PageTemplate>
     );
   }

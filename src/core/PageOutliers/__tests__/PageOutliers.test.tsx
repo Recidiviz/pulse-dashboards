@@ -17,15 +17,15 @@
 
 import { render, screen } from "@testing-library/react";
 import { configure } from "mobx";
-import { StaticRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
 import { OutliersStore } from "../../../OutliersStore/OutliersStore";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
 import { RootStore } from "../../../RootStore";
-import { outliersUrl } from "../../views";
-import { OutliersSupervisionRouter } from "../OutliersSupervisionRouter";
+import { outliersRoute } from "../../views";
+import PageOutliers from "../PageOutliers";
 
 jest.mock(
   "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
@@ -54,11 +54,11 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-function renderRouter(url?: string) {
+function renderRouter(relativePath?: string) {
   render(
-    <StaticRouter location={url}>
-      <OutliersSupervisionRouter />
-    </StaticRouter>
+    <MemoryRouter initialEntries={[relativePath ?? "/"]}>
+      <PageOutliers />
+    </MemoryRouter>
   );
 }
 
@@ -70,8 +70,8 @@ test("hydrates", () => {
   expect(outliersStore.hydrateSupervisionStore).toHaveBeenCalled();
 });
 
-test("invalid route", async () => {
-  renderRouter("/insights/supervision/invalid-path-to-nowhere");
+test("invalid routes", async () => {
+  renderRouter("/supervision/invalid-path-to-nowhere");
 
   expect(
     await screen.findByText("Page Not Found", {
@@ -88,7 +88,8 @@ test("valid route", async () => {
   jest
     .spyOn(outliersStore.supervisionStore, "userCanAccessAllSupervisors", "get")
     .mockReturnValue(true);
-  renderRouter(outliersUrl("supervisionSupervisorsList"));
+
+  renderRouter(outliersRoute({ routeName: "supervisionSupervisorsList" }));
 
   expect(
     await screen.findByText("supervisors across the state have one or more", {

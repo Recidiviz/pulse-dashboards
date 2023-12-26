@@ -20,7 +20,7 @@ import "./StateSelection.scss";
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { getStateNameForStateCode } from "../../utils/navigation";
 import { useRootStore } from "../StoreProvider";
@@ -31,7 +31,7 @@ type StateSelectOption = {
 };
 
 const StateSelection: React.FC = () => {
-  const { push } = useHistory();
+  const navigate = useNavigate();
   const { userStore, tenantStore } = useRootStore();
 
   const availableStatesOptions = userStore.availableStateCodes
@@ -43,7 +43,7 @@ const StateSelection: React.FC = () => {
 
   const handleOnClick = (option: StateSelectOption) => {
     tenantStore.setCurrentTenantId(option.value);
-    push({ pathname: "/" });
+    navigate("/");
   };
 
   if (availableStatesOptions.length < 2) return null;

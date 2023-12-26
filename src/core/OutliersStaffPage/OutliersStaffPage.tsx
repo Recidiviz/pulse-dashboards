@@ -28,7 +28,7 @@ import { noop } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useEffect, useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
 
@@ -195,7 +195,8 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   // if current metric is not set, we need to redirect to the default metric URL
   if (!metricId) {
     return (
-      <Redirect
+      <Navigate
+        replace
         to={outliersUrl("supervisionStaffMetric", {
           officerPseudoId,
           metricId: defaultMetricId,

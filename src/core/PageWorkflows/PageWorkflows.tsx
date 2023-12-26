@@ -16,7 +16,7 @@
 // =============================================================================
 
 import React, { useEffect } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
@@ -25,7 +25,7 @@ import isIE11 from "../../utils/isIE11";
 import { CaseloadView } from "../CaseloadView";
 import ModelHydrator from "../ModelHydrator";
 import { OpportunityCaseloadView } from "../OpportunityCaseloadView";
-import { WORKFLOWS_PATHS, workflowsRoute } from "../views";
+import { workflowsRoute } from "../views";
 import WorkflowsHomepage from "../WorkflowsHomepage";
 import { FullProfile } from "../WorkflowsJusticeInvolvedPersonProfile";
 import { WorkflowsFormLayout } from "../WorkflowsLayouts";
@@ -66,94 +66,55 @@ const PageWorkflows: React.FC = () => {
 
   return (
     <ModelHydrator model={workflowsStore}>
-      <Switch>
-        <Route
-          exact
-          path={workflowsRoute({ routeName: "home" })}
-          render={() => (
-            <WorkflowsRoute>
-              <WorkflowsHomepage />
-            </WorkflowsRoute>
-          )}
-        />
+      <Routes>
+        <Route element={<WorkflowsRoute />}>
+          <Route
+            path={workflowsRoute({ routeName: "home" })}
+            element={<WorkflowsHomepage />}
+          />
 
-        <Route
-          exact
-          path={workflowsRoute({ routeName: "milestones" })}
-          render={() => (
-            <WorkflowsRoute>
-              <WorkflowsMilestones />
-            </WorkflowsRoute>
-          )}
-        />
-        <Route
-          exact
-          path={[
+          <Route
+            path={workflowsRoute({ routeName: "milestones" })}
+            element={<WorkflowsMilestones />}
+          />
+          {[
             workflowsRoute({
               routeName: "clientProfile",
             }),
             workflowsRoute({ routeName: "residentProfile" }),
-          ]}
-          render={() => (
-            <WorkflowsRoute>
-              <FullProfile />
-            </WorkflowsRoute>
-          )}
-        />
-        <Route
-          exact
-          path={[
+          ].map((path) => {
+            return <Route key={path} path={path} element={<FullProfile />} />;
+          })}
+          {[
             workflowsRoute({
               routeName: "caseloadClients",
             }),
             workflowsRoute({ routeName: "caseloadResidents" }),
-          ]}
-          render={() => (
-            <WorkflowsRoute>
-              <CaseloadView />
-            </WorkflowsRoute>
-          )}
-        />
-        <Route
-          exact
-          path={workflowsRoute({
-            routeName: "tasks",
+          ].map((path) => {
+            return <Route key={path} path={path} element={<CaseloadView />} />;
           })}
-          render={() => (
-            <WorkflowsRoute>
-              <WorkflowsTasks />
-            </WorkflowsRoute>
-          )}
-        />
-        <Route
-          exact
-          path={workflowsRoute({
-            routeName: "opportunityClients",
-          })}
-          render={() => (
-            <WorkflowsRoute>
-              <OpportunityCaseloadView />
-            </WorkflowsRoute>
-          )}
-        />
-        <Route
-          exact
-          path={workflowsRoute({
-            routeName: "opportunityAction",
-          })}
-          render={() => (
-            <WorkflowsRoute>
-              <WorkflowsFormLayout />
-            </WorkflowsRoute>
-          )}
-        />
-        <Route
-          exact
-          path={WORKFLOWS_PATHS.workflows}
-          render={() => <WorkflowsRoute />}
-        />
-        <NotFound />
-      </Switch>
+
+          <Route
+            path={workflowsRoute({
+              routeName: "tasks",
+            })}
+            element={<WorkflowsTasks />}
+          />
+          <Route
+            path={workflowsRoute({
+              routeName: "opportunityClients",
+            })}
+            element={<OpportunityCaseloadView />}
+          />
+          <Route
+            path={workflowsRoute({
+              routeName: "opportunityAction",
+            })}
+            element={<WorkflowsFormLayout />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
     </ModelHydrator>
   );
 };

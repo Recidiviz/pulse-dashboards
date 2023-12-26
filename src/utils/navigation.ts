@@ -101,3 +101,9 @@ export const removeUndefinedValuesFromObject = (
   );
   return cleanObj;
 };
+
+/* Helper function to append active class names to NavLink components */
+export function appendActiveClassName(baseClassName: string) {
+  return ({ isActive }: { isActive: boolean }) =>
+    `${baseClassName}${isActive ? ` ${baseClassName}--active` : ""}`;
+}

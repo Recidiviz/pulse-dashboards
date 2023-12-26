@@ -20,40 +20,30 @@ import "./LanternLayout.scss";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Redirect, useLocation } from "react-router-dom";
 
 import Footer from "../components/Footer";
 import IE11Banner from "../components/IE11Banner";
+import NotFound from "../components/NotFound";
 import { useRootStore } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
-import * as lantern from "../RootStore/TenantStore/lanternTenants";
+import { LANTERN_TENANTS } from "../RootStore/TenantStore/lanternTenants";
 import { setTranslateLocale } from "../utils/i18nSettings";
 import LanternErrorBoundary from "./ErrorBoundary";
 import usePageLayout from "./hooks/usePageLayout";
 import LanternStoreProvider from "./LanternStoreProvider";
 import LanternTopBar from "./LanternTopBar";
+import Revocations from "./Revocations";
 
-interface Props {
-  children: React.ReactElement;
-}
-
-const LANTERN_PATHS = ["/community/revocations", "/revocations", "/profile"];
-
-const LanternLayout: React.FC<Props> | undefined = ({
-  children,
-}): React.ReactElement | null => {
+const LanternLayout: React.FC = (): React.ReactElement | null => {
   const { currentTenantId, pageStore } = useRootStore();
-  const { pathname } = useLocation();
-
   useIntercom();
   usePageLayout(pageStore.hideTopBar);
 
-  if (currentTenantId === lantern.US_PA && pathname === "/")
-    return <Redirect to="/community/revocations" />;
-  if (!LANTERN_PATHS.includes(pathname)) return null;
-
   setTranslateLocale(currentTenantId);
 
+  if (!LANTERN_TENANTS.includes(currentTenantId)) {
+    return <NotFound />;
+  }
   return (
     <LanternStoreProvider>
       <LanternErrorBoundary>
@@ -67,7 +57,7 @@ const LanternLayout: React.FC<Props> | undefined = ({
           <div className="wide-page-container">
             <LanternTopBar />
             <IE11Banner lantern />
-            {children}
+            <Revocations />
             <Footer />
           </div>
         </div>

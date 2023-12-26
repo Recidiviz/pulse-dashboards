@@ -16,7 +16,7 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { useUserStore } from "./components/StoreProvider";
 import { getPathsFromNavigation } from "./utils/navigation";
@@ -27,7 +27,7 @@ export const RedirectHome: React.FC = ({ ...rest }) => {
   const allowedPaths = getPathsFromNavigation(
     userStore.userAllowedNavigation ?? {}
   );
-  return <Redirect {...rest} exact to={allowedPaths[0]} />;
+  return <Navigate {...rest} replace to={allowedPaths[0]} />;
 };
 
 export default observer(RedirectHome);

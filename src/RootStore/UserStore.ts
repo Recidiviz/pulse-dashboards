@@ -138,7 +138,6 @@ export default class UserStore {
    */
   async authorize(handleTargetUrl: (targetUrl: string) => void): Promise<void> {
     if (isOfflineMode()) {
-      this.isAuthorized = true;
       const offlineUser = await fetchOfflineUser({
         allowedStates: tenants.RECIDIVIZ.availableStateCodes,
       });
@@ -148,6 +147,7 @@ export default class UserStore {
       );
       runInAction(() => {
         this.user = offlineUser;
+        this.isAuthorized = true;
         this.userIsLoading = false;
       });
       this.getToken = () => "";

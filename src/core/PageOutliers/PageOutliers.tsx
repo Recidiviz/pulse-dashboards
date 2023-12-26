@@ -15,34 +15,60 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import React, { memo } from "react";
+import { Route, Routes } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
+import { useRootStore } from "../../components/StoreProvider";
+import { SupervisionPresenter } from "../../OutliersStore/presenters/SupervisionPresenter";
+import ModelHydrator from "../ModelHydrator";
 import OutliersNavLayout from "../OutliersNavLayout";
-import { DASHBOARD_PATHS, OUTLIERS_PATHS } from "../views";
-import { OutliersSupervisionRouter } from "./OutliersSupervisionRouter";
+import { OutliersRoute } from "../OutliersRoute";
+import OutliersStaffPage from "../OutliersStaffPage";
+import { OutliersSupervisionHome } from "../OutliersSupervisionHome";
+import OutliersSupervisorPage from "../OutliersSupervisorPage";
+import OutliersSupervisorsListPage from "../OutliersSupervisorsListPage";
+import { outliersRoute } from "../views";
 
-const PageOutliers: React.FC = () => {
+// memo is used to prevent re-rendering the entire component on route changes
+const PageOutliers: React.FC = memo(function PageOutliers() {
   window.scrollTo({
     top: 0,
   });
+  const { outliersStore } = useRootStore();
 
   return (
     <OutliersNavLayout>
-      <Switch>
-        <Route
-          exact
-          path={DASHBOARD_PATHS.outliers}
-          render={() => <Redirect to={OUTLIERS_PATHS.supervision} />}
-        />
-        <Route path={OUTLIERS_PATHS.supervision}>
-          <OutliersSupervisionRouter />
-        </Route>
-        <NotFound />
-      </Switch>
+      <ModelHydrator model={new SupervisionPresenter(outliersStore)}>
+        <Routes>
+          <Route element={<OutliersRoute />}>
+            <Route
+              path={outliersRoute({ routeName: "supervision" })}
+              element={<OutliersSupervisionHome />}
+            />
+            <Route
+              path={outliersRoute({ routeName: "supervisionSupervisorsList" })}
+              element={<OutliersSupervisorsListPage />}
+            />
+
+            <Route
+              path={outliersRoute({ routeName: "supervisionSupervisor" })}
+              element={<OutliersSupervisorPage />}
+            />
+
+            {[
+              outliersRoute({ routeName: "supervisionStaff" }),
+              outliersRoute({ routeName: "supervisionStaffMetric" }),
+              outliersRoute({ routeName: "supervisionClientDetail" }),
+            ].map((path) => (
+              <Route key={path} path={path} element={<OutliersStaffPage />} />
+            ))}
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ModelHydrator>
     </OutliersNavLayout>
   );
-};
+});
 
 export default PageOutliers;

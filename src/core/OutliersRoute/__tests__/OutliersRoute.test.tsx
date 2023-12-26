@@ -17,7 +17,7 @@
 
 import { render, screen } from "@testing-library/react";
 import { configure, observable } from "mobx";
-import { Route, StaticRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { ADVERSE_METRIC_IDS } from "../../../OutliersStore/models/offlineFixtures/constants";
@@ -57,14 +57,18 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-test("handles params for supervision home page", () => {
-  render(
-    <StaticRouter location={outliersUrl("supervision")}>
-      <Route path={OUTLIERS_PATHS.supervision}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+const renderWithRouter = (initialEntry: string, path: string) => {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route path={path} element={<OutliersRoute>null</OutliersRoute>} />
+      </Routes>
+    </MemoryRouter>
   );
+};
+
+test("handles params for supervision home page", () => {
+  renderWithRouter(outliersUrl("supervision"), OUTLIERS_PATHS.supervision);
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
   // making non-null assertions here because we don't want false positives if supervisionStore is undefined
@@ -77,16 +81,11 @@ test("handles params for supervision home page", () => {
 test("handles params for supervision supervisor page", () => {
   const mockSupervisorPseudoId = "123abc";
 
-  render(
-    <StaticRouter
-      location={outliersUrl("supervisionSupervisor", {
-        supervisorPseudoId: mockSupervisorPseudoId,
-      })}
-    >
-      <Route path={OUTLIERS_PATHS.supervisionSupervisor}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+  renderWithRouter(
+    outliersUrl("supervisionSupervisor", {
+      supervisorPseudoId: mockSupervisorPseudoId,
+    }),
+    OUTLIERS_PATHS.supervisionSupervisor
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBe(mockSupervisorPseudoId);
@@ -105,16 +104,11 @@ test("supervisor restricted from another supervisor's page", () => {
       stateCode: "us_mi",
     });
 
-  render(
-    <StaticRouter
-      location={outliersUrl("supervisionSupervisor", {
-        supervisorPseudoId: "456xyz",
-      })}
-    >
-      <Route path={OUTLIERS_PATHS.supervisionSupervisor}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+  renderWithRouter(
+    outliersUrl("supervisionSupervisor", {
+      supervisorPseudoId: "456xyz",
+    }),
+    OUTLIERS_PATHS.supervisionSupervisor
   );
 
   expect(
@@ -124,17 +118,11 @@ test("supervisor restricted from another supervisor's page", () => {
 
 test("handles params for supervision officer page", () => {
   const mockOfficerPseudoId = "123abc";
-
-  render(
-    <StaticRouter
-      location={outliersUrl("supervisionStaff", {
-        officerPseudoId: mockOfficerPseudoId,
-      })}
-    >
-      <Route path={OUTLIERS_PATHS.supervisionStaff}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+  renderWithRouter(
+    outliersUrl("supervisionStaff", {
+      officerPseudoId: mockOfficerPseudoId,
+    }),
+    OUTLIERS_PATHS.supervisionStaff
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBeUndefined();
@@ -145,17 +133,12 @@ test("handles params for supervision officer metric page", () => {
   const mockOfficerPseudoId = "123abc";
   const mockMetricId = ADVERSE_METRIC_IDS.enum.incarceration_starts;
 
-  render(
-    <StaticRouter
-      location={outliersUrl("supervisionStaffMetric", {
-        officerPseudoId: mockOfficerPseudoId,
-        metricId: mockMetricId,
-      })}
-    >
-      <Route path={OUTLIERS_PATHS.supervisionStaffMetric}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+  renderWithRouter(
+    outliersUrl("supervisionStaffMetric", {
+      officerPseudoId: mockOfficerPseudoId,
+      metricId: mockMetricId,
+    }),
+    OUTLIERS_PATHS.supervisionStaffMetric
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBeUndefined();
@@ -164,12 +147,9 @@ test("handles params for supervision officer metric page", () => {
 });
 
 test("handles params for supervision supervisors list page", async () => {
-  render(
-    <StaticRouter location={outliersUrl("supervisionSupervisorsList")}>
-      <Route path={OUTLIERS_PATHS.supervisionSupervisorsList}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+  renderWithRouter(
+    outliersUrl("supervisionSupervisorsList"),
+    OUTLIERS_PATHS.supervisionSupervisorsList
   );
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -193,12 +173,9 @@ test("supervisors restricted from supervisors list page", () => {
       stateCode: "us_mi",
     });
 
-  render(
-    <StaticRouter location={outliersUrl("supervisionSupervisorsList")}>
-      <Route path={OUTLIERS_PATHS.supervisionSupervisorsList}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+  renderWithRouter(
+    outliersUrl("supervisionSupervisorsList"),
+    OUTLIERS_PATHS.supervisionSupervisorsList
   );
 
   expect(
@@ -212,19 +189,14 @@ test("handles params for client detail page", () => {
   const mockClientPseudoId = "hashed-client123";
   const mockOutcomeDate = "2023-05-14";
 
-  render(
-    <StaticRouter
-      location={outliersUrl("supervisionClientDetail", {
-        officerPseudoId: mockOfficerPseudoId,
-        metricId: mockMetricId,
-        clientPseudoId: mockClientPseudoId,
-        outcomeDate: mockOutcomeDate,
-      })}
-    >
-      <Route path={OUTLIERS_PATHS.supervisionClientDetail}>
-        <OutliersRoute>null</OutliersRoute>
-      </Route>
-    </StaticRouter>
+  renderWithRouter(
+    outliersUrl("supervisionClientDetail", {
+      officerPseudoId: mockOfficerPseudoId,
+      metricId: mockMetricId,
+      clientPseudoId: mockClientPseudoId,
+      outcomeDate: mockOutcomeDate,
+    }),
+    OUTLIERS_PATHS.supervisionClientDetail
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBeUndefined();

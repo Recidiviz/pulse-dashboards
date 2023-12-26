@@ -18,8 +18,9 @@
 import { autorun, runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
-import { Redirect, RouteProps, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
+import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
 import { WorkflowsRouteParams } from "../../WorkflowsStore";
@@ -32,7 +33,7 @@ import {
   getSystemIdFromPage,
 } from "../../WorkflowsStore/utils";
 import { SystemId } from "../models/types";
-import { WORKFLOWS_PATHS, WorkflowsPage, workflowsUrl } from "../views";
+import { WorkflowsPage, workflowsUrl } from "../views";
 
 // react-router does not seem to export this type directly
 type RouterLocation = ReturnType<typeof useLocation>;
@@ -128,10 +129,10 @@ const RouteSync = observer(function RouteSync({ children }) {
   );
 
   if (notFound) {
-    return <Redirect to={WORKFLOWS_PATHS.workflows404} />;
+    return <NotFound />;
   }
   if (redirectPath) {
-    return <Redirect to={redirectPath} />;
+    return <Navigate replace to={redirectPath} />;
   }
   return <>{children}</>;
 });
@@ -139,8 +140,12 @@ const RouteSync = observer(function RouteSync({ children }) {
 /**
  * Wraps a react-router Route to sync route data to the Workflows datastore.
  */
-const WorkflowsRoute: React.FC<RouteProps> = ({ children }) => {
-  return <RouteSync>{children}</RouteSync>;
+const WorkflowsRoute: React.FC = () => {
+  return (
+    <RouteSync>
+      <Outlet />
+    </RouteSync>
+  );
 };
 
 export default WorkflowsRoute;

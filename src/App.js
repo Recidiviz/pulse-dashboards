@@ -20,42 +20,17 @@ import "./assets/scripts/index";
 import "./assets/styles/index.scss";
 
 import { useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import tk from "timekeeper";
 import { QueryParamProvider } from "use-query-params";
+import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 
-import AuthWall from "./AuthWall";
 import NotFound from "./components/NotFound";
 import SentryErrorBoundary from "./components/SentryErrorBoundary";
 import StoreProvider from "./components/StoreProvider";
 import StyledToaster from "./components/StyledToaster";
 import VerificationNeeded from "./components/VerificationNeeded";
-import DashboardLayout from "./core/DashboardLayout";
-import PageImpact from "./core/PageImpact";
-import PageMethodology from "./core/PageMethodology";
-import PageOutliers from "./core/PageOutliers";
-import PageSystem from "./core/PageSystem";
-import PageVitals from "./core/PageVitals";
-import PageWorkflows from "./core/PageWorkflows";
-import Profile from "./core/Profile";
-import {
-  DASHBOARD_PATHS,
-  DASHBOARD_VIEWS,
-  IMPACT_PATHS,
-  WORKFLOWS_PATHS,
-} from "./core/views";
-import LanternLayout from "./lantern/LanternLayout";
-import Revocations from "./lantern/Revocations";
-import { LANTERN_VIEWS } from "./lantern/views";
-import ProtectedRoute from "./ProtectedRoute";
-import RedirectHome from "./RedirectHome";
-import { DASHBOARD_TENANTS } from "./RootStore/TenantStore/dashboardTenants";
-import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
+import ProtectedLayout from "./ProtectedLayout";
 import { initI18n } from "./utils/i18nSettings";
 import initIntercomSettings from "./utils/initIntercomSettings";
 import { isDemoMode } from "./utils/isDemoMode";
@@ -64,8 +39,6 @@ if (!isDemoMode()) {
   initIntercomSettings();
 }
 initI18n();
-
-const SHARED_VIEWS = ["", "profile"];
 
 function App() {
   useEffect(() => {
@@ -84,85 +57,12 @@ function App() {
     <StoreProvider>
       <Router>
         <SentryErrorBoundary>
-          <QueryParamProvider ReactRouterRoute={Route}>
-            <Switch>
-              <Route path="/verify">
-                <VerificationNeeded />
-              </Route>
-              <AuthWall>
-                <DashboardLayout
-                  tenantIds={DASHBOARD_TENANTS}
-                  views={Object.values(DASHBOARD_VIEWS).concat(SHARED_VIEWS)}
-                >
-                  <Switch>
-                    <Route path={DASHBOARD_PATHS.system}>
-                      <ProtectedRoute>
-                        <PageSystem />
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path={DASHBOARD_PATHS.operations}>
-                      <ProtectedRoute>
-                        <PageVitals />
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path={DASHBOARD_PATHS.methodology}>
-                      <ProtectedRoute>
-                        <PageMethodology />
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path={DASHBOARD_PATHS.outliers}>
-                      <ProtectedRoute>
-                        <PageOutliers />
-                      </ProtectedRoute>
-                    </Route>
-                    <Route
-                      path={`${WORKFLOWS_PATHS.workflows}/:opportunityType/:clientId/preview`}
-                      render={() => (
-                        <Redirect to={WORKFLOWS_PATHS.clientProfile} />
-                      )}
-                    />
-                    <Route path={WORKFLOWS_PATHS.workflows}>
-                      <ProtectedRoute>
-                        <PageWorkflows />
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path={IMPACT_PATHS.impact}>
-                      <ProtectedRoute>
-                        <PageImpact />
-                      </ProtectedRoute>
-                    </Route>
-                    <Route path="/profile">
-                      <Profile />
-                    </Route>
-                    <Route
-                      path="/system"
-                      render={() => <Redirect to="/system/prison" />}
-                    />
-                    <Route path="/" render={() => <RedirectHome />} />
-                    <NotFound />
-                  </Switch>
-                </DashboardLayout>
-
-                <LanternLayout
-                  tenantIds={LANTERN_TENANTS}
-                  views={Object.values(LANTERN_VIEWS).concat(SHARED_VIEWS)}
-                >
-                  <Switch>
-                    <Route path="/community/revocations">
-                      <Revocations />
-                    </Route>
-                    <Route path="/profile">
-                      <Profile />
-                    </Route>
-                    <Route
-                      path="/revocations"
-                      render={() => <Redirect to="/community/revocations" />}
-                    />
-                    <NotFound />
-                  </Switch>
-                </LanternLayout>
-              </AuthWall>
-            </Switch>
+          <QueryParamProvider adapter={ReactRouter6Adapter}>
+            <Routes>
+              <Route path="/verify" element={<VerificationNeeded />} />
+              <Route path="/*" element={<ProtectedLayout />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
             <StyledToaster />
           </QueryParamProvider>
         </SentryErrorBoundary>

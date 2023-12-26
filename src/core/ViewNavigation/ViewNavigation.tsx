@@ -25,6 +25,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
+import { appendActiveClassName } from "../../utils/navigation";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
@@ -61,8 +62,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
 
   return (
     <NavLink
-      activeClassName="ViewNavigation__navlink--active"
-      className="ViewNavigation__navlink"
+      className={appendActiveClassName(`ViewNavigation__navlink`)}
       to={`/${DASHBOARD_VIEWS.system}`}
       onClick={() => filtersStore.resetFilters()}
     >
@@ -75,8 +75,7 @@ function PathwaysLink({ enabled }: OptionalLinkProps) {
 function ProfileNavLink() {
   return (
     <NavLink
-      activeClassName="ViewNavigation__navlink--active"
-      className="ViewNavigation__navlink"
+      className={appendActiveClassName(`ViewNavigation__navlink`)}
       to={`/${DASHBOARD_VIEWS.profile}`}
     >
       <UserAvatar />
@@ -134,8 +133,11 @@ function WorkflowsLink({ enabled }: OptionalLinkProps) {
 
   return (
     <NavLink
-      activeClassName="ViewNavigation__navlink--active"
-      className="ViewNavigation__navlink"
+      className={({ isActive }) =>
+        `ViewNavigation__navlink${
+          isActive ? " ViewNavigation__navlink--active" : ""
+        }`
+      }
       to={`/${DASHBOARD_VIEWS.workflows}`}
     >
       <Icon kind={IconSVG.Workflows} width={24} />
@@ -150,8 +152,11 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
   return (
     <NavLink
-      activeClassName="ViewNavigation__navlink--active"
-      className="ViewNavigation__navlink"
+      className={({ isActive }) =>
+        `ViewNavigation__navlink${
+          isActive ? " ViewNavigation__navlink--active" : ""
+        }`
+      }
       to={`/${DASHBOARD_VIEWS.operations}`}
       onClick={() => vitalsStore.resetCurrentEntityId()}
     >

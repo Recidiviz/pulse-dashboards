@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Location } from "history";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
@@ -34,7 +33,7 @@ const RouteSync = observer(function RouteSync({ children }) {
     clientPseudoId,
     outcomeDate,
   } = routeParams;
-  const loc: Location = useLocation();
+  const loc = useLocation();
 
   const {
     outliersStore: { supervisionStore },
@@ -75,8 +74,10 @@ const RouteSync = observer(function RouteSync({ children }) {
 /**
  * Syncs route data to the Outliers datastore.
  */
-export const OutliersRoute: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  return <RouteSync>{children}</RouteSync>;
+export const OutliersRoute: React.FC = () => {
+  return (
+    <RouteSync>
+      <Outlet />
+    </RouteSync>
+  );
 };

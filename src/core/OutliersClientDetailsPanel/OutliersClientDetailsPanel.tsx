@@ -25,7 +25,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { ComponentType, useEffect, useRef, useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import lanternLogo from "../../assets/static/images/lantern_logo.png";
@@ -146,7 +146,8 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
 
   if (!outliersClientDetail || isRedirect) {
     return (
-      <Redirect
+      <Navigate
+        replace
         to={outliersUrl("supervisionStaffMetric", {
           officerPseudoId,
           metricId,

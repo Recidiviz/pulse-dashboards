@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { mount } from "enzyme";
-import { StaticRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
 import {
@@ -36,7 +36,6 @@ jest.mock("use-query-params");
 jest.mock("../../CoreStoreProvider");
 jest.mock("../../../components/StoreProvider");
 jest.mock("react-router-dom", () => ({
-  // @ts-ignore
   ...jest.requireActual("react-router-dom"),
   useLocation: jest.fn().mockReturnValue({
     pathname: "/system",
@@ -59,9 +58,9 @@ const useQueryParamsMock = useQueryParams as jest.Mock;
 describe("CoreLayout tests", () => {
   const renderPageNavigation = () => {
     return mount(
-      <StaticRouter>
+      <MemoryRouter>
         <PageNavigation />
-      </StaticRouter>
+      </MemoryRouter>
     );
   };
 

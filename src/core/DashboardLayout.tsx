@@ -21,29 +21,64 @@ import { palette } from "@recidiviz/design-system";
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import IE11Banner from "../components/IE11Banner";
-import { useFeatureVariants } from "../components/StoreProvider";
+import NotFound from "../components/NotFound";
+import { useFeatureVariants, useRootStore } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import useIsMobile from "../hooks/useIsMobile";
+import { DASHBOARD_TENANTS } from "../RootStore/TenantStore/dashboardTenants";
+import {
+  getPathsFromNavigation,
+  getPathWithoutParams,
+} from "../utils/navigation";
 import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
+import PageImpact from "./PageImpact";
+import PageMethodology from "./PageMethodology";
+import PageOutliers from "./PageOutliers";
+import PageSystem from "./PageSystem";
+import PageVitals from "./PageVitals";
+import PageWorkflows from "./PageWorkflows";
 import PathwaysNavigation from "./PathwaysNavigation";
 import ViewNavigation from "./ViewNavigation";
-import { DASHBOARD_VIEWS } from "./views";
+import {
+  DASHBOARD_PATHS,
+  DASHBOARD_VIEWS,
+  IMPACT_PATHS,
+  OUTLIERS_PATHS,
+  WORKFLOWS_PATHS,
+} from "./views";
 
-interface Props {
-  children: React.ReactElement;
-}
+const ALL_DASHBOARD_VIEWS = [...Object.values(DASHBOARD_VIEWS), "", "profile"];
 
-const DashboardLayout: React.FC<Props> = ({ children }): React.ReactElement => {
+const DashboardLayout: React.FC = () => {
   useIntercom();
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1];
+  const {
+    currentTenantId,
+    userStore: { userAllowedNavigation },
+  } = useRootStore();
   const { responsiveRevamp } = useFeatureVariants();
+  const dashboardAllowedPaths = [
+    ...getPathsFromNavigation(userAllowedNavigation),
+    "/profile",
+    "/system",
+  ];
+
+  if (
+    !(
+      DASHBOARD_TENANTS.includes(currentTenantId) &&
+      ALL_DASHBOARD_VIEWS.includes(currentView) &&
+      dashboardAllowedPaths.includes(getPathWithoutParams(pathname))
+    )
+  ) {
+    return <NotFound />;
+  }
 
   return (
     <CoreStoreProvider>
@@ -70,7 +105,38 @@ const DashboardLayout: React.FC<Props> = ({ children }): React.ReactElement => {
           <div className="DashboardLayout__main">
             <PathwaysNavigation />
             <IE11Banner />
-            {children}
+            <Routes>
+              <Route path={DASHBOARD_PATHS.system} element={<PageSystem />} />
+              <Route
+                path={DASHBOARD_PATHS.operations}
+                element={<PageVitals />}
+              />
+              <Route
+                path={DASHBOARD_PATHS.methodology}
+                element={<PageMethodology />}
+              />
+              <Route
+                path={`${DASHBOARD_PATHS.outliers}/*`}
+                element={<PageOutliers />}
+              />
+              <Route
+                path={`${DASHBOARD_PATHS.outliers}`}
+                element={<Navigate replace to={OUTLIERS_PATHS.supervision} />}
+              />
+              <Route
+                path={`${WORKFLOWS_PATHS.workflows}/*`}
+                element={<PageWorkflows />}
+              />
+              <Route
+                path={`${IMPACT_PATHS.impact}/*`}
+                element={<PageImpact />}
+              />
+              <Route
+                path="/system"
+                element={<Navigate replace to="/system/prison" />}
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </div>
         </div>
       </ErrorBoundary>

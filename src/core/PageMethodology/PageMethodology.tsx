@@ -17,7 +17,7 @@
 import "./PageMethodology.scss";
 
 import React from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
 import MethodologyPathways from "../MethodologyPathways";
@@ -26,8 +26,9 @@ import MethodologyProjections from "../MethodologyProjections";
 const PageMethodology: React.FC = () => {
   const { userStore, tenantStore } = useRootStore();
   const { userHasAccess } = userStore;
-  const { dashboard }: { dashboard: string } = useParams();
-  const { push, location } = useHistory();
+  const { dashboard } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const stateCode = new URLSearchParams(location.search).get("stateCode");
   if (stateCode && userHasAccess(stateCode)) {
     tenantStore.setCurrentTenantId(stateCode);
@@ -39,11 +40,12 @@ const PageMethodology: React.FC = () => {
     system: MethodologyPathways,
   };
 
-  const Methodology = methodologies[dashboard];
-
-  if (!Methodology || (stateCode && !userHasAccess(stateCode))) {
-    push({ pathname: "/" });
+  if (!dashboard || (stateCode && !userHasAccess(stateCode))) {
+    navigate("/");
+    return null;
   }
+
+  const Methodology = methodologies[dashboard];
 
   return <Methodology />;
 };

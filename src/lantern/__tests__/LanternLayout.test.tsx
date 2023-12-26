@@ -18,62 +18,69 @@ import { render } from "@testing-library/react";
 import React from "react";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
-import StoreProvider from "../../components/StoreProvider";
-import { UserAvatar } from "../../core/Avatar";
+import IE11Banner from "../../components/IE11Banner";
+import NotFound from "../../components/NotFound";
+import { useRootStore } from "../../components/StoreProvider";
 import useIntercom from "../../hooks/useIntercom";
 import usePageLayout from "../hooks/usePageLayout";
 import LanternLayout from "../LanternLayout";
+import LanternTopBar from "../LanternTopBar";
+import Revocations from "../Revocations";
 
+jest.mock("react-router-dom");
 jest.mock("mobx-react-lite", () => {
   return {
-    observer: (component) => component,
+    observer: (component: any) => component,
   };
 });
-jest.mock("react-router-dom", () => {
-  return {
-    Link: ({ children }) => children,
-    useHistory: jest.fn(),
-    useLocation: jest.fn().mockImplementation(() => {
-      return {
-        pathname: "/community/revocations",
-      };
-    }),
-  };
-});
+jest.mock("../../components/StoreProvider");
 jest.mock("../hooks/usePageLayout");
-jest.mock("../../core/Avatar");
 jest.mock("../../hooks/useIntercom");
 jest.mock("../../utils/i18nSettings");
+jest.mock("../Revocations");
+jest.mock("../../components/NotFound");
+jest.mock("../../components/IE11Banner");
+jest.mock("../LanternTopBar");
+
+const mockUseRootStore = useRootStore as jest.Mock;
 
 describe("LanternLayout tests", () => {
-  UserAvatar.mockReturnValue(null);
-  const mockChildrenId = "children-test-id";
-  const mockChildren = mockWithTestId(mockChildrenId);
+  (NotFound as jest.Mock).mockReturnValue(mockWithTestId("not-found-id"));
+  (Revocations as unknown as jest.Mock).mockReturnValue(
+    mockWithTestId("revocations-id")
+  );
+  (IE11Banner as jest.Mock).mockReturnValue(mockWithTestId("ie11-banner"));
+  (LanternTopBar as jest.Mock).mockReturnValue(null);
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseRootStore.mockReturnValue({
+      currentTenantId: "US_PA",
+      pageStore: {},
+    });
   });
 
-  const renderLanternLayout = () => {
-    return render(
-      <StoreProvider>
-        <LanternLayout>{mockChildren}</LanternLayout>
-      </StoreProvider>
-    );
-  };
+  it("should render Revocations for lantern tenants", () => {
+    const { getByTestId } = render(<LanternLayout />);
+    expect(getByTestId("revocations-id")).toBeInTheDocument();
+  });
 
-  it("should render children", () => {
-    const { getByTestId } = renderLanternLayout();
-    expect(getByTestId(mockChildrenId)).toBeInTheDocument();
+  it("should render NotFound if tenantId is invalid", () => {
+    mockUseRootStore.mockReturnValue({
+      currentTenantId: "US_XX",
+      pageStore: {},
+    });
+    const { getByTestId } = render(<LanternLayout />);
+    expect(getByTestId("not-found-id")).toBeInTheDocument();
   });
 
   it("should use Intercom for Lantern layout", () => {
-    renderLanternLayout();
+    render(<LanternLayout />);
     expect(useIntercom).toHaveBeenCalled();
   });
 
   it("should use Page Layout hook", () => {
-    renderLanternLayout();
+    render(<LanternLayout />);
     expect(usePageLayout).toHaveBeenCalled();
   });
 });

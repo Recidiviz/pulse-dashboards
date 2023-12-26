@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,30 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { observer } from "mobx-react-lite";
-import React from "react";
-import { useLocation } from "react-router-dom";
 
-import NotFound from "./components/NotFound";
-import { useRootStore } from "./components/StoreProvider";
-import {
-  getPathsFromNavigation,
-  getPathWithoutParams,
-} from "./utils/navigation";
+import { Loading as LoadingSpinner } from "@recidiviz/design-system";
+import styled from "styled-components/macro";
 
-interface ProtectedRouteProps {
-  children: React.ReactElement;
-}
+const LoadingContainer = styled.div`
+  position: fixed;
+  left: calc(50% - 45px);
+  top: calc(50% - 45px);
+`;
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { userStore } = useRootStore();
-  const { pathname } = useLocation();
-  const allowedPaths = getPathsFromNavigation(userStore.userAllowedNavigation);
-  return allowedPaths.includes(getPathWithoutParams(pathname)) ? (
-    children
-  ) : (
-    <NotFound />
+export default function Loading() {
+  return (
+    <LoadingContainer>
+      <LoadingSpinner />
+    </LoadingContainer>
   );
-};
-
-export default observer(ProtectedRoute);
+}

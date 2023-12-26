@@ -36,7 +36,7 @@ export const DASHBOARD_VIEWS = {
   impact: "impact",
   outliers: "insights",
 } as const;
-type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
+export type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
 
 export const isValidDashboardRootPath = (str: string): boolean => {
   return Object.values(DASHBOARD_VIEWS).includes(str as DashboardViewRootPath);
@@ -51,6 +51,7 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   methodologySystem: `/${DASHBOARD_VIEWS.methodology}/system`,
   methodologyOperations: `/${DASHBOARD_VIEWS.methodology}/operations`,
   outliers: `/${DASHBOARD_VIEWS.outliers}`,
+  workflows: `/${DASHBOARD_VIEWS.workflows}`,
 };
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
@@ -208,7 +209,6 @@ export const WORKFLOWS_PATHS = {
   opportunityClients: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl`,
   opportunityAction: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl/:justiceInvolvedPersonId`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
-  workflows404: `/${DASHBOARD_VIEWS.workflows}/not-found`,
   home: `/${DASHBOARD_VIEWS.workflows}/home`,
   tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
   milestones: `/${DASHBOARD_VIEWS.workflows}/milestones`,
@@ -235,7 +235,6 @@ export const WorkflowsPageIdList = [
   "opportunityClients",
   "opportunityAction",
   "workflows",
-  "workflows404",
   "tasks",
   "milestones",
 ] as const;
@@ -253,18 +252,17 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   tasks: "tasks",
   milestones: "milestones",
   workflows: "workflows",
-  workflows404: "workflows404",
 };
 
 /**
- * @returns the route template string for a Workflows page
+ * @returns the relative route template string for a Workflows page
  */
 export function workflowsRoute({
   routeName,
 }: {
   routeName: WorkflowsPage;
 }): string {
-  return WORKFLOWS_PATHS[routeName];
+  return getRelativePath(WORKFLOWS_PATHS[routeName]);
 }
 
 type WorkflowsRouteParams = {
@@ -318,6 +316,17 @@ export const OUTLIERS_PAGES = {
 type OutliersRouteParams = {
   [k: string]: string;
 };
+
+/**
+ * @returns the relative route template string for a Outliers page
+ */
+export function outliersRoute({
+  routeName,
+}: {
+  routeName: OutliersPage;
+}): string {
+  return getRelativePath(OUTLIERS_PATHS[routeName]);
+}
 
 export function outliersUrl(routeName: "supervision"): string;
 export function outliersUrl(routeName: "supervisionSupervisorsList"): string;
@@ -378,3 +387,13 @@ export const DEFAULT_IMPACT_SECTION_BY_PAGE: Record<string, string> = {
     IMPACT_SECTIONS.avgPopulationCompliantReporting,
 };
 export type ImpactPageRootPath = typeof IMPACT_PAGES[ImpactPage];
+
+export function getRelativePath(absolutePath: string): string {
+  const matchingRootPath = Object.values(DASHBOARD_PATHS).find((rootPath) =>
+    absolutePath.startsWith(rootPath)
+  );
+
+  if (!matchingRootPath) return absolutePath;
+
+  return absolutePath.replace(matchingRootPath, "");
+}

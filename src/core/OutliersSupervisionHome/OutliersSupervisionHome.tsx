@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { ErrorMessage } from "../../components/StatusMessage";
 import { useRootStore } from "../../components/StoreProvider";
@@ -31,12 +31,13 @@ export const OutliersSupervisionHome = observer(
     if (!supervisionStore) return null;
 
     if (supervisionStore.userCanAccessAllSupervisors) {
-      return <Redirect to={outliersUrl("supervisionSupervisorsList")} />;
+      return <Navigate to={outliersUrl("supervisionSupervisorsList")} />;
     }
 
     if (supervisionStore.currentSupervisorUser) {
       return (
-        <Redirect
+        <Navigate
+          replace
           to={outliersUrl("supervisionSupervisor", {
             supervisorPseudoId:
               supervisionStore.currentSupervisorUser.pseudonymizedId,

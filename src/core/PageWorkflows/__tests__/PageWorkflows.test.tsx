@@ -18,7 +18,7 @@
  */
 import { render, screen } from "@testing-library/react";
 import React from "react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import {
   useFeatureVariants,
@@ -28,6 +28,7 @@ import isIE11 from "../../../utils/isIE11";
 import { WorkflowsStore } from "../../../WorkflowsStore";
 import { CaseloadView } from "../../CaseloadView";
 import { OpportunityCaseloadView } from "../../OpportunityCaseloadView";
+import { WORKFLOWS_PATHS } from "../../views";
 import WorkflowsHomepage from "../../WorkflowsHomepage";
 import { FullProfile } from "../../WorkflowsJusticeInvolvedPersonProfile";
 import { WorkflowsFormLayout } from "../../WorkflowsLayouts";
@@ -97,6 +98,16 @@ function mockWorkflowsStore(mockStore: any) {
   });
 }
 
+function renderRouter(relativePath?: string) {
+  render(
+    <MemoryRouter initialEntries={[relativePath ?? "/"]}>
+      <Routes>
+        <Route path="/workflows/*" element={<PageWorkflows />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
 describe("PageWorkflows", () => {
   let baseMockWorkflowsStore: any;
   beforeEach(() => {
@@ -128,6 +139,7 @@ describe("PageWorkflows", () => {
       });
       baseMockWorkflowsStore = {
         isHydrated: true,
+        opportunityTypes: [],
         workflowsSupportedSystems: ["SUPERVISION"],
         setActivePage: jest.fn(),
         updateActiveSystem: jest.fn(),
@@ -137,6 +149,12 @@ describe("PageWorkflows", () => {
           .mockImplementation(() => ({ catch: jest.fn() })),
         activeSystem: "SUPERVISION",
       };
+      (WorkflowsHomepage as jest.Mock).mockReturnValue(
+        <div>Workflows Homepage</div>
+      );
+      (WorkflowsFormLayout as jest.Mock).mockReturnValue(
+        <div>Opportunity Action Page</div>
+      );
     });
 
     afterEach(() => {
@@ -148,14 +166,9 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "home",
       });
-      (WorkflowsHomepage as jest.Mock).mockReturnValue(
-        <div>Workflows Homepage</div>
-      );
-      render(
-        <MemoryRouter initialEntries={["/workflows/home"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+
+      renderRouter(WORKFLOWS_PATHS.home);
+
       expect(screen.getByText("Workflows Homepage")).toBeInTheDocument();
     });
 
@@ -167,11 +180,7 @@ describe("PageWorkflows", () => {
       (WorkflowsMilestones as jest.Mock).mockReturnValue(
         <div>Workflows Milestones Page</div>
       );
-      render(
-        <MemoryRouter initialEntries={["/workflows/milestones"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+      renderRouter(WORKFLOWS_PATHS.milestones);
       expect(screen.getByText("Workflows Milestones Page")).toBeInTheDocument();
     });
 
@@ -180,12 +189,10 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "clientProfile",
       });
+
       (FullProfile as jest.Mock).mockReturnValue(<div>Client FullProfile</div>);
-      render(
-        <MemoryRouter initialEntries={["/workflows/clients/101"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+      renderRouter(`${WORKFLOWS_PATHS.caseloadClients}/101`);
+
       expect(screen.getByText("Client FullProfile")).toBeInTheDocument();
     });
 
@@ -197,15 +204,12 @@ describe("PageWorkflows", () => {
       (FullProfile as jest.Mock).mockReturnValue(
         <div>Resident FullProfile</div>
       );
-      render(
-        <MemoryRouter initialEntries={["/workflows/residents/101"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+      renderRouter(`${WORKFLOWS_PATHS.caseloadResidents}/101`);
+
       expect(screen.getByText("Resident FullProfile")).toBeInTheDocument();
     });
 
-    it("renders the caseload route /caseloadClients", () => {
+    it("renders the caseload route /clients", () => {
       mockWorkflowsStore({
         ...baseMockWorkflowsStore,
         activePage: "caseloadClients",
@@ -213,15 +217,12 @@ describe("PageWorkflows", () => {
       (CaseloadView as jest.Mock).mockReturnValue(
         <div>Client CaseloadView</div>
       );
-      render(
-        <MemoryRouter initialEntries={["/workflows/clients"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+      renderRouter(WORKFLOWS_PATHS.caseloadClients);
+
       expect(screen.getByText("Client CaseloadView")).toBeInTheDocument();
     });
 
-    it("renders the caseload route /caseloadResidents", () => {
+    it("renders the caseload route /residents", () => {
       mockWorkflowsStore({
         ...baseMockWorkflowsStore,
         activePage: "caseloadResidents",
@@ -229,11 +230,8 @@ describe("PageWorkflows", () => {
       (CaseloadView as jest.Mock).mockReturnValue(
         <div>Resident CaseloadView</div>
       );
-      render(
-        <MemoryRouter initialEntries={["/workflows/residents"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+      renderRouter(WORKFLOWS_PATHS.caseloadResidents);
+
       expect(screen.getByText("Resident CaseloadView")).toBeInTheDocument();
     });
 
@@ -243,11 +241,8 @@ describe("PageWorkflows", () => {
         activePage: "tasks",
       });
       (WorkflowsTasks as jest.Mock).mockReturnValue(<div>Tasks</div>);
-      render(
-        <MemoryRouter initialEntries={["/workflows/tasks"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+      renderRouter(WORKFLOWS_PATHS.tasks);
+
       expect(screen.getByText("Tasks")).toBeInTheDocument();
     });
 
@@ -259,11 +254,9 @@ describe("PageWorkflows", () => {
       (OpportunityCaseloadView as jest.Mock).mockReturnValue(
         <div>Opportunity Caseload View</div>
       );
-      render(
-        <MemoryRouter initialEntries={["/workflows/compliantReporting"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+
+      renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
+
       expect(screen.getByText("Opportunity Caseload View")).toBeInTheDocument();
     });
 
@@ -272,54 +265,52 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "opportunityAction",
       });
-      (WorkflowsFormLayout as jest.Mock).mockReturnValue(
-        <div>Opportunity Action Page</div>
-      );
-      render(
-        <MemoryRouter initialEntries={["/workflows/compliantReporting/101"]}>
-          <PageWorkflows />
-        </MemoryRouter>
-      );
+
+      renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting/101`);
+
       expect(screen.getByText("Opportunity Action Page")).toBeInTheDocument();
     });
   });
 
   describe("WorkflowsRoute logic and redirects", () => {
+    beforeEach(() => {
+      (isIE11 as jest.Mock).mockReturnValue(false);
+      (useFeatureVariants as jest.Mock).mockReturnValue({
+        responsiveRevamp: true,
+      });
+      baseMockWorkflowsStore = {
+        isHydrated: true,
+        homepage: "home",
+        workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
+        opportunityTypes: [],
+        setActivePage: jest.fn(),
+        updateActiveSystem: jest.fn(),
+        updateSelectedOpportunityType: jest.fn(),
+        updateSelectedPerson: jest
+          .fn()
+          .mockImplementation(() => ({ catch: jest.fn() })),
+      };
+      (WorkflowsTasks as jest.Mock).mockReturnValue(<div>Tasks Page</div>);
+      (OpportunityCaseloadView as jest.Mock).mockReturnValue(
+        <div>Opportunity Caseload View</div>
+      );
+      (WorkflowsHomepage as jest.Mock).mockReturnValue(
+        <div>Workflows Homepage</div>
+      );
+      (FullProfile as jest.Mock).mockReturnValue(<div>Full profile</div>);
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     describe("/workflows/tasks", () => {
-      beforeEach(() => {
-        (isIE11 as jest.Mock).mockReturnValue(false);
-        (useFeatureVariants as jest.Mock).mockReturnValue({
-          responsiveRevamp: true,
-        });
-        baseMockWorkflowsStore = {
-          isHydrated: true,
-          homepage: "home",
-          workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
-          opportunityTypes: [],
-          setActivePage: jest.fn(),
-          updateActiveSystem: jest.fn(),
-          updateSelectedOpportunityType: jest.fn(),
-          updateSelectedPerson: jest
-            .fn()
-            .mockImplementation(() => ({ catch: jest.fn() })),
-        };
-
-        (WorkflowsTasks as jest.Mock).mockReturnValue(<div>Tasks Page</div>);
-      });
-
-      afterEach(() => {
-        jest.clearAllMocks();
-      });
-
       it("updates activeSystem based on page", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
         });
-        render(
-          <MemoryRouter initialEntries={["/workflows/tasks"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(WORKFLOWS_PATHS.tasks);
+
         expect(
           useRootStore().workflowsStore.updateActiveSystem
         ).toHaveBeenCalledWith("SUPERVISION");
@@ -327,42 +318,12 @@ describe("PageWorkflows", () => {
     });
 
     describe("/workflows/:opportunityTypeUrl route", () => {
-      beforeEach(() => {
-        (isIE11 as jest.Mock).mockReturnValue(false);
-        (useFeatureVariants as jest.Mock).mockReturnValue({
-          responsiveRevamp: true,
-        });
-        baseMockWorkflowsStore = {
-          isHydrated: true,
-          homepage: "home",
-          workflowsSupportedSystems: ["INCARCERATION"],
-          opportunityTypes: [],
-          setActivePage: jest.fn(),
-          updateActiveSystem: jest.fn(),
-          updateSelectedOpportunityType: jest.fn(),
-          updateSelectedPerson: jest
-            .fn()
-            .mockImplementation(() => ({ catch: jest.fn() })),
-        };
-
-        (OpportunityCaseloadView as jest.Mock).mockReturnValue(
-          <div>Opportunity Caseload View</div>
-        );
-      });
-
-      afterEach(() => {
-        jest.clearAllMocks();
-      });
-
       it("updates activeSystem based on page for SUPERVISION", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
         });
-        render(
-          <MemoryRouter initialEntries={["/workflows/compliantReporting"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
+
         expect(
           useRootStore().workflowsStore.updateActiveSystem
         ).toHaveBeenCalledWith("SUPERVISION");
@@ -372,11 +333,8 @@ describe("PageWorkflows", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
         });
-        render(
-          <MemoryRouter initialEntries={["/workflows/custodyLevelDowngrade"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
+
         expect(
           useRootStore().workflowsStore.updateActiveSystem
         ).toHaveBeenCalledWith("INCARCERATION");
@@ -386,11 +344,8 @@ describe("PageWorkflows", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
         });
-        render(
-          <MemoryRouter initialEntries={["/workflows/custodyLevelDowngrade"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
+
         expect(
           useRootStore().workflowsStore.updateSelectedOpportunityType
         ).toHaveBeenCalledWith("usTnCustodyLevelDowngrade");
@@ -398,38 +353,12 @@ describe("PageWorkflows", () => {
     });
 
     describe("/workflows route", () => {
-      beforeEach(() => {
-        (isIE11 as jest.Mock).mockReturnValue(false);
-        (useFeatureVariants as jest.Mock).mockReturnValue({
-          responsiveRevamp: true,
-        });
-        baseMockWorkflowsStore = {
-          isHydrated: true,
-          homepage: "home",
-          workflowsSupportedSystems: ["INCARCERATION"],
-          opportunityTypes: [],
-          setActivePage: jest.fn(),
-          updateActiveSystem: jest.fn(),
-          updateSelectedOpportunityType: jest.fn(),
-          updateSelectedPerson: jest
-            .fn()
-            .mockImplementation(() => ({ catch: jest.fn() })),
-        };
-      });
-
-      afterEach(() => {
-        jest.clearAllMocks();
-      });
-
       it("updates activeSystem based on workflowsSupportedSystems", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
+          workflowsSupportedSystems: ["INCARCERATION"],
         });
-        render(
-          <MemoryRouter initialEntries={["/workflows"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
           useRootStore().workflowsStore.updateActiveSystem
         ).toHaveBeenCalledWith("INCARCERATION");
@@ -439,11 +368,7 @@ describe("PageWorkflows", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
         });
-        render(
-          <MemoryRouter initialEntries={["/workflows"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
           useRootStore().workflowsStore.updateSelectedOpportunityType
         ).toHaveBeenCalledWith(undefined);
@@ -454,14 +379,7 @@ describe("PageWorkflows", () => {
           ...baseMockWorkflowsStore,
           opportunityTypes: ["compliantReporting"],
         });
-        (OpportunityCaseloadView as jest.Mock).mockReturnValue(
-          <div>Opportunity Caseload View</div>
-        );
-        render(
-          <MemoryRouter initialEntries={["/workflows"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
           screen.getByText("Opportunity Caseload View")
         ).toBeInTheDocument();
@@ -472,15 +390,21 @@ describe("PageWorkflows", () => {
           ...baseMockWorkflowsStore,
           opportunityTypes: ["compliantReporting", "classificationReview"],
         });
-        (WorkflowsHomepage as jest.Mock).mockReturnValue(
-          <div>Workflows Homepage</div>
-        );
-        render(
-          <MemoryRouter initialEntries={["/workflows"]}>
-            <PageWorkflows />
-          </MemoryRouter>
-        );
+        renderRouter(WORKFLOWS_PATHS.workflows);
         expect(screen.getByText("Workflows Homepage")).toBeInTheDocument();
+      });
+    });
+
+    describe("Person profile route", () => {
+      it("updates the selected person", () => {
+        mockWorkflowsStore({
+          ...baseMockWorkflowsStore,
+          opportunityTypes: ["compliantReporting"],
+        });
+        renderRouter(`${WORKFLOWS_PATHS.workflows}/clients/p101`);
+        expect(
+          useRootStore().workflowsStore.updateSelectedPerson
+        ).toHaveBeenCalledWith("p101");
       });
     });
   });

@@ -17,7 +17,13 @@
 
 import * as Sentry from "@sentry/react";
 import React, { useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigate,
+  useNavigationType,
+} from "react-router-dom";
 
 import ErrorMessage from "./ErrorMessage";
 
@@ -30,20 +36,26 @@ function SentryErrorBoundary({
   children,
   handleBeforeCapture,
 }: Props): JSX.Element {
-  const history = useHistory();
+  const navigate = useNavigate();
   useEffect(() => {
     Sentry.init({
       environment: process.env.REACT_APP_SENTRY_ENV,
       dsn: process.env.REACT_APP_SENTRY_DSN,
       integrations: [
         new Sentry.BrowserTracing({
-          routingInstrumentation: Sentry.reactRouterV5Instrumentation(history),
+          routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+            useEffect,
+            useLocation,
+            useNavigationType,
+            createRoutesFromChildren,
+            matchRoutes
+          ),
         }),
       ],
       tracesSampleRate: 1,
       maxValueLength: 1000, // default is 250, this lets us see longer error messages
     });
-  }, [history]);
+  }, [navigate]);
   return (
     <Sentry.ErrorBoundary
       fallback={ErrorMessage}

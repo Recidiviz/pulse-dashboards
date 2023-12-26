@@ -16,15 +16,15 @@
 // =============================================================================
 
 import {
+  WORKFLOWS_PATHS,
   WorkflowsPage,
   WorkflowsPageIdList,
-  workflowsRoute,
   workflowsUrl,
 } from "../views";
 
 test("URL with no params", () => {
   WorkflowsPageIdList.forEach((pageId) => {
-    expect(workflowsUrl(pageId)).toBe(workflowsRoute({ routeName: pageId }));
+    expect(workflowsUrl(pageId)).toBe(WORKFLOWS_PATHS[pageId]);
   });
 });
 
@@ -37,9 +37,10 @@ test("URL with opportunityType", () => {
     expect(
       workflowsUrl(pageId, { opportunityType: "compliantReporting" })
     ).toBe(
-      workflowsRoute({
-        routeName: pageId,
-      }).replace(":opportunityTypeUrl", "compliantReporting")
+      WORKFLOWS_PATHS[pageId].replace(
+        ":opportunityTypeUrl",
+        "compliantReporting"
+      )
     );
   });
 });
@@ -51,9 +52,7 @@ test("URL with opportunityType with custom URL", () => {
   ] as WorkflowsPage[];
   OPPORTUNITY_PAGES.forEach((pageId) => {
     expect(workflowsUrl(pageId, { opportunityType: "usTnExpiration" })).toBe(
-      workflowsRoute({
-        routeName: pageId,
-      }).replace(":opportunityTypeUrl", "expiration")
+      WORKFLOWS_PATHS[pageId].replace(":opportunityTypeUrl", "expiration")
     );
   });
 });
@@ -65,9 +64,7 @@ test("URL with person ID", () => {
   ] as WorkflowsPage[];
   CLIENT_PAGES.forEach((pageId) => {
     expect(workflowsUrl(pageId, { justiceInvolvedPersonId: "test123" })).toBe(
-      workflowsRoute({
-        routeName: pageId,
-      }).replace(":justiceInvolvedPersonId", "test123")
+      WORKFLOWS_PATHS[pageId].replace(":justiceInvolvedPersonId", "test123")
     );
   });
 });

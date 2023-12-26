@@ -117,7 +117,7 @@ const NavSectionLabel = styled(Sans12)`
   line-height: ${rem(16)};
 `;
 
-const BrandedNavLink = styled(NavLink).attrs({ exact: true })`
+const BrandedNavLink = styled(NavLink).attrs({ exact: "true" })`
   ${typography.Sans14}
 
   color: ${palette.slate80};

@@ -116,7 +116,7 @@ The build process, as described below, ensures that the proper values are compil
 
 ### Authentication
 
-The backend API server and most frontend views in the app are authenticated via [Auth0](https://auth0.com/). You can control which views are authenticated by specifying `Route` versus `ProtectedRoute` in `src/App.js`. If you are setting this app up completely fresh, you will need to create your own Auth0 account.
+The backend API server and most frontend views in the app are authenticated via [Auth0](https://auth0.com/). You can control which views are authenticated by specifying the allowed paths in `ProtectedLayout.tsx`. If you are setting this app up completely fresh, you will need to create your own Auth0 account.
 
 This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. The development and staging environments should be configured in `auth_config_dev.json`, demo environment in `auth_config_demo.json` and production in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `REACT_APP_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
 
