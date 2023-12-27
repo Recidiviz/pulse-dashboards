@@ -50,7 +50,7 @@ export function getAllowedMethodology(
       allowedMethodology.push(page);
   });
   return {
-    "id-methodology": allowedMethodology,
+    methodology: allowedMethodology,
   };
 }
 

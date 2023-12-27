@@ -130,7 +130,7 @@ const US_ID_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
-    "id-methodology": ["system", "operations"],
+    methodology: ["system", "operations"],
   },
   tableColumns: enabledTableColumns[pathways.US_ID],
   vitalsMetrics: [

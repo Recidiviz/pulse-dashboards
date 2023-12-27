@@ -134,7 +134,7 @@ const IndicatorsWrapper = styled.div<{
 `;
 
 const Indicators = (isMobile: boolean) =>
-  function IndicatorsContainer({
+  observer(function IndicatorsContainer({
     children,
   }: IndicatorContainerProps<SelectOption, true>) {
     const {
@@ -150,7 +150,7 @@ const Indicators = (isMobile: boolean) =>
         <DistrictIndicator />
       </IndicatorsWrapper>
     );
-  };
+  });
 
 const Option = ({ children, ...props }: OptionProps<SelectOption, true>) => {
   return (

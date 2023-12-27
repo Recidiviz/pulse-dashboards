@@ -32,7 +32,7 @@ jest.mock("react-router-dom", () => ({
   // @ts-ignore
   ...jest.requireActual("react-router-dom"),
   useLocation: jest.fn().mockReturnValue({
-    pathname: "/id-methodology/system",
+    pathname: "/methodology/system",
   }),
 }));
 jest.mock("../../../components/StoreProvider");

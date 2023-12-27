@@ -101,7 +101,7 @@ const US_MO_CONFIG: TenantConfig = {
     // TODO remove once LANTERN is deprecated
     // @ts-ignore
     revocations: [],
-    "id-methodology": ["system"],
+    methodology: ["system"],
   },
   tableColumns: enabledTableColumns[pathways.US_MO],
 };

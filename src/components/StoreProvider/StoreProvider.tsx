@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { reaction } from "mobx";
+import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
@@ -34,7 +35,7 @@ const StoreContext = React.createContext<undefined | StoreContextType>(
   undefined
 );
 
-const StoreProvider: React.FC = ({ children }) => {
+const StoreProvider: React.FC = observer(function StoreProvider({ children }) {
   const { userStore } = store;
   const [featureVariants, setFeatureVariants] = useState<FeatureVariantRecord>(
     userStore.activeFeatureVariants
@@ -60,7 +61,7 @@ const StoreProvider: React.FC = ({ children }) => {
       {children}
     </StoreContext.Provider>
   );
-};
+});
 
 StoreProvider.propTypes = {
   children: PropTypes.node.isRequired,

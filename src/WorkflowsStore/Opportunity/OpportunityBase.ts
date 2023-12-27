@@ -164,6 +164,10 @@ export abstract class OpportunityBase<
       updates: computed,
       reviewStatus: computed,
       setCompletedIfEligible: action,
+      setAutoSnooze: action,
+      setManualSnooze: action,
+      setDenialReasons: action,
+      setOtherReasonText: action,
     });
 
     this.person = person;

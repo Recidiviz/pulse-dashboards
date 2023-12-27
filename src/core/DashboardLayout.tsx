@@ -28,6 +28,7 @@ import NotFound from "../components/NotFound";
 import { useFeatureVariants, useRootStore } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import useIsMobile from "../hooks/useIsMobile";
+import RedirectMethodology from "../RedirectMethodology";
 import { DASHBOARD_TENANTS } from "../RootStore/TenantStore/dashboardTenants";
 import {
   getPathsFromNavigation,
@@ -52,7 +53,12 @@ import {
   WORKFLOWS_PATHS,
 } from "./views";
 
-const ALL_DASHBOARD_VIEWS = [...Object.values(DASHBOARD_VIEWS), "", "profile"];
+const ALL_DASHBOARD_VIEWS = [
+  ...Object.values(DASHBOARD_VIEWS),
+  "",
+  "profile",
+  "id-methodology",
+];
 
 const DashboardLayout: React.FC = () => {
   useIntercom();
@@ -130,6 +136,11 @@ const DashboardLayout: React.FC = () => {
               <Route
                 path={`${IMPACT_PATHS.impact}/*`}
                 element={<PageImpact />}
+              />
+              {/* TODO(#4601): Remove redirect after confirming no longer in use */}
+              <Route
+                path="/id-methodology/:dashboard"
+                element={<RedirectMethodology />}
               />
               <Route
                 path="/system"

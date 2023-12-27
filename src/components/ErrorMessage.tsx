@@ -1,11 +1,14 @@
 import "./Error.scss";
 
-import PropTypes from "prop-types";
 import React from "react";
 
 import warningIcon from "../assets/static/images/warning.svg";
 
-function ErrorMessage({ error }) {
+function ErrorMessage({
+  error = new Error("Something went wrong while loading this chart."),
+}: {
+  error: Error;
+}) {
   return (
     <div className="Error">
       <img src={warningIcon} alt="Error icon" className="Error__icon" />
@@ -18,13 +21,5 @@ function ErrorMessage({ error }) {
     </div>
   );
 }
-
-ErrorMessage.defaultProps = {
-  error: new Error("Something went wrong while loading this chart."),
-};
-
-ErrorMessage.propTypes = {
-  error: PropTypes.instanceOf(Error),
-};
 
 export default ErrorMessage;

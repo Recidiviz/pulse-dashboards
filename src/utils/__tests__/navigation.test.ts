@@ -24,13 +24,13 @@ import {
 describe("getPathsFromNavigation", () => {
   it("returns the correct allowed paths paths", () => {
     const navigation = {
-      "id-methodology": ["operations"],
+      methodology: ["operations"],
       system: ["prison"],
     };
     const allowedPaths = getPathsFromNavigation(navigation);
     const expected = [
-      "/id-methodology/operations",
-      "/id-methodology",
+      "/methodology/operations",
+      "/methodology",
       "/system/prison",
       "/system",
     ];

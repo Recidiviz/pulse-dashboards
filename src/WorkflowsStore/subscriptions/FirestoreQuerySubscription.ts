@@ -159,7 +159,9 @@ export abstract class FirestoreQuerySubscription<
   }
 
   unsubscribe(): void {
-    this.isLoading = false;
+    runInAction(() => {
+      this.isLoading = false;
+    });
     this.cancelSnapshotListener?.();
     this.cancelSnapshotListener = undefined;
     this.disposeDynamicDataSource?.();

@@ -16,23 +16,33 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import PropTypes from "prop-types";
 import React from "react";
 import Select from "react-select";
 
+import { TenantId } from "../RootStore/types";
 import { getStateNameForStateCode } from "../utils/navigation";
 import { useRootStore } from "./StoreProvider";
 
-function StateSelector({ onChange }) {
+type StateSelectorOption = {
+  value: TenantId;
+  label: string;
+};
+
+function StateSelector({
+  onChange,
+}: {
+  onChange: (option: StateSelectorOption) => void;
+}) {
   const { userStore, tenantStore } = useRootStore();
   const availableStatesOptions = userStore.availableStateCodes
     .sort()
-    .map((code) => ({
+    .map((code: TenantId) => ({
       value: code,
       label: getStateNameForStateCode(code),
     }));
   const defaultValue = availableStatesOptions.find(
-    (availableState) => availableState.value === tenantStore.currentTenantId
+    (availableState: StateSelectorOption) =>
+      availableState.value === tenantStore.currentTenantId
   );
 
   return (
@@ -45,9 +55,5 @@ function StateSelector({ onChange }) {
     />
   );
 }
-
-StateSelector.propTypes = {
-  onChange: PropTypes.func.isRequired,
-};
 
 export default observer(StateSelector);

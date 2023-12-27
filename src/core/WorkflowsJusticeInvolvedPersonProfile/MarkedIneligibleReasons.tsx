@@ -17,7 +17,6 @@
 
 import { palette, typography } from "@recidiviz/design-system";
 import { format } from "date-fns";
-import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
@@ -71,11 +70,7 @@ const MarkedIneligibleReasons: React.FC<{
   opportunity: Opportunity;
   snoozeUntil?: Date;
   denialReasons?: string[];
-}> = observer(function MarkedIneligibleReason({
-  opportunity,
-  snoozeUntil,
-  denialReasons,
-}) {
+}> = ({ opportunity, snoozeUntil, denialReasons }) => {
   const { enableSnooze } = useFeatureVariants();
 
   if (!denialReasons || !enableSnooze) return null;
@@ -112,5 +107,5 @@ const MarkedIneligibleReasons: React.FC<{
       <div>{ineligibleReasonsList}</div>
     </MarkedIneligibleReasonsText>
   );
-});
+};
 export default MarkedIneligibleReasons;

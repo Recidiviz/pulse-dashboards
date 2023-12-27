@@ -108,7 +108,7 @@ const US_TN_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
-    "id-methodology": [DASHBOARD_VIEWS.system],
+    methodology: [DASHBOARD_VIEWS.system],
     impact: [IMPACT_PAGES.compliantReportingWorkflows],
     compliantReportingWorkflows: [
       IMPACT_SECTIONS.avgPopulationCompliantReporting,

@@ -37,7 +37,7 @@ const US_NC_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByRace,
       PATHWAYS_SECTIONS.personLevelDetail,
     ],
-    "id-methodology": ["system"],
+    methodology: ["system"],
   },
   tableColumns: enabledTableColumns[pathways.US_NC],
 };

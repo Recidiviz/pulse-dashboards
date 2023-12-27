@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
 import React from "react";
 
 import OverTimeMetric from "../models/OverTimeMetric";
@@ -65,4 +64,4 @@ const PopulationTimeSeriesChart: React.FC<Props> = ({
   );
 };
 
-export default withPathwaysMetricHelpers(observer(PopulationTimeSeriesChart));
+export default withPathwaysMetricHelpers(PopulationTimeSeriesChart);

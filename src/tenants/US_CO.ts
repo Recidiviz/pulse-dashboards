@@ -74,7 +74,7 @@ const US_CO_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
-    "id-methodology": ["system"],
+    methodology: ["system"],
   },
   tableColumns: enabledTableColumns[pathways.US_CO],
 };

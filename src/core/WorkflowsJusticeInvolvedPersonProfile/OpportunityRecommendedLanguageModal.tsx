@@ -26,7 +26,6 @@ import {
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React, { useState } from "react";
 import useClipboard from "react-use-clipboard";
@@ -89,64 +88,58 @@ type OpportunityRecommendedLanguageModalProps = {
   children: string;
 };
 
-export const OpportunityRecommendedLanguageModal = observer(
-  function OpportunityRecommendedLanguageModal({
-    opportunity,
-    children,
-  }: OpportunityRecommendedLanguageModalProps) {
-    const [showModal, setShowModal] = useState(false);
-    const [isCopied, copyToClipboard] = useClipboard(
-      opportunity.almostEligibleRecommendedNote?.text ?? "",
-      { successDuration: 5000 }
-    );
+export const OpportunityRecommendedLanguageModal = ({
+  opportunity,
+  children,
+}: OpportunityRecommendedLanguageModalProps) => {
+  const [showModal, setShowModal] = useState(false);
+  const [isCopied, copyToClipboard] = useClipboard(
+    opportunity.almostEligibleRecommendedNote?.text ?? "",
+    { successDuration: 5000 }
+  );
 
-    // if no note specified then this component should just be a noop
-    if (!opportunity.almostEligibleRecommendedNote) return <>{children}</>;
+  // if no note specified then this component should just be a noop
+  if (!opportunity.almostEligibleRecommendedNote) return <>{children}</>;
 
-    return (
-      <>
-        <TriggerButton
-          onClick={() => setShowModal(!showModal)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              setShowModal(!showModal);
-              event.preventDefault();
-            }
-          }}
-        >
-          {children}
-        </TriggerButton>
-        <StyledModal
-          isOpen={showModal}
-          onRequestClose={() => setShowModal(false)}
-        >
-          <ModalControls>
-            <Button kind="link" onClick={() => setShowModal(false)}>
-              <Icon kind="Close" size="14" color={palette.pine2} />
-            </Button>
-          </ModalControls>
-          <ModalTitle>
-            {opportunity.almostEligibleRecommendedNote.title}
-          </ModalTitle>
-          <LanguagePrompt>
-            Let {opportunity.person.fullName.givenNames} know they are almost
-            eligible:
-          </LanguagePrompt>
-          <RecommendedLanguage>
-            {opportunity.almostEligibleRecommendedNote.text}
-          </RecommendedLanguage>
-          <CopyButtonWrapper>
-            <Button
-              kind="primary"
-              shape="pill"
-              onClick={() => copyToClipboard()}
-            >
-              Copy to clipboard
-            </Button>{" "}
-            {isCopied ? <Sans14>Note text copied</Sans14> : null}
-          </CopyButtonWrapper>
-        </StyledModal>
-      </>
-    );
-  }
-);
+  return (
+    <>
+      <TriggerButton
+        onClick={() => setShowModal(!showModal)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            setShowModal(!showModal);
+            event.preventDefault();
+          }
+        }}
+      >
+        {children}
+      </TriggerButton>
+      <StyledModal
+        isOpen={showModal}
+        onRequestClose={() => setShowModal(false)}
+      >
+        <ModalControls>
+          <Button kind="link" onClick={() => setShowModal(false)}>
+            <Icon kind="Close" size="14" color={palette.pine2} />
+          </Button>
+        </ModalControls>
+        <ModalTitle>
+          {opportunity.almostEligibleRecommendedNote.title}
+        </ModalTitle>
+        <LanguagePrompt>
+          Let {opportunity.person.fullName.givenNames} know they are almost
+          eligible:
+        </LanguagePrompt>
+        <RecommendedLanguage>
+          {opportunity.almostEligibleRecommendedNote.text}
+        </RecommendedLanguage>
+        <CopyButtonWrapper>
+          <Button kind="primary" shape="pill" onClick={() => copyToClipboard()}>
+            Copy to clipboard
+          </Button>{" "}
+          {isCopied ? <Sans14>Note text copied</Sans14> : null}
+        </CopyButtonWrapper>
+      </StyledModal>
+    </>
+  );
+};

@@ -166,7 +166,7 @@ describe("DashboardLayout", () => {
     });
     it("should render the system methodology page", () => {
       mockUseRootStore.mockReturnValue({
-        userStore: { userAllowedNavigation: { "id-methodology": ["system"] } },
+        userStore: { userAllowedNavigation: { methodology: ["system"] } },
         currentTenantId: "US_ID",
       });
       renderLayout(`/${DASHBOARD_VIEWS.methodology}/system`);
@@ -177,7 +177,7 @@ describe("DashboardLayout", () => {
     it("should render the system methodology page for Operations", () => {
       mockUseRootStore.mockReturnValue({
         userStore: {
-          userAllowedNavigation: { "id-methodology": ["operations"] },
+          userAllowedNavigation: { methodology: ["operations"] },
         },
         currentTenantId: "US_ID",
       });

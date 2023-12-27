@@ -24,6 +24,11 @@ import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
 import ProtectedLayout from "../ProtectedLayout";
 
+jest.mock("mobx-react-lite", () => {
+  return {
+    observer: (component: any) => component,
+  };
+});
 jest.mock("../utils/initIntercomSettings");
 jest.mock("../utils/i18nSettings");
 
@@ -37,19 +42,22 @@ jest.mock("../components/VerificationNeeded");
 
 jest.mock("../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
 
+const ProtectedLayoutMock = ProtectedLayout as jest.Mock;
+
 describe("App tests", () => {
   const mockNotFoundId = "not-found-id";
   const mockErrorId = "error-test-id";
   const mockVerificationNeededId = "verification-needed-test-id";
+  (StoreProvider as jest.Mock).mockImplementation(({ children }) => children);
+  ProtectedLayoutMock.mockReturnValue(() => <div>Protected Layout</div>);
 
-  const ProtectedLayoutMock = ProtectedLayout.type;
-
-  StoreProvider.mockImplementation(({ children }) => children);
-  ProtectedLayoutMock.mockImplementation(() => <div>Protected Layout</div>);
-
-  NotFound.mockReturnValue(mockWithTestId(mockNotFoundId));
-  ErrorMessage.mockReturnValue(mockWithTestId(mockErrorId));
-  VerificationNeeded.mockReturnValue(mockWithTestId(mockVerificationNeededId));
+  (NotFound as jest.Mock).mockReturnValue(mockWithTestId(mockNotFoundId));
+  (ErrorMessage as unknown as jest.Mock).mockReturnValue(
+    mockWithTestId(mockErrorId)
+  );
+  (VerificationNeeded as jest.Mock).mockReturnValue(
+    mockWithTestId(mockVerificationNeededId)
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,8 +75,8 @@ describe("App tests", () => {
     });
 
     // do not log the expected error - keep tests less verbose
-    jest.spyOn(console, "error").mockImplementation(() => {});
-    jest.spyOn(console, "log").mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => null);
+    jest.spyOn(console, "log").mockImplementation(() => null);
     const { getByTestId } = render(<App />);
 
     expect(getByTestId(mockErrorId)).toBeInTheDocument();
@@ -76,7 +84,7 @@ describe("App tests", () => {
 
   it("should render the Verification Needed component", () => {
     window.history.pushState({}, "", "/verify");
-    useRootStore.mockReturnValue({
+    (useRootStore as jest.Mock).mockReturnValue({
       userStore: { user: {}, isAuthorized: true },
     });
 

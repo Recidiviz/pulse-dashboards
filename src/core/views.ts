@@ -21,7 +21,7 @@ import {
 } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { MetricId, SystemId } from "./models/types";
 
-export const UNRESTRICTED_PAGES = ["profile", "id-methodology", ""];
+export const UNRESTRICTED_PAGES = ["profile", "methodology", ""];
 
 export type DashboardView = keyof typeof DASHBOARD_VIEWS;
 /**
@@ -30,7 +30,7 @@ export type DashboardView = keyof typeof DASHBOARD_VIEWS;
 export const DASHBOARD_VIEWS = {
   system: "system",
   operations: "operations",
-  methodology: "id-methodology",
+  methodology: "methodology",
   profile: "profile",
   workflows: "workflows",
   impact: "impact",

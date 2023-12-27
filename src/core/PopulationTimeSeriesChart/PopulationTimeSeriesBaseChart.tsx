@@ -22,6 +22,7 @@ import "../VizPathways.scss";
 import "./PopulationTimeSeriesChart.scss";
 
 import { scaleTime } from "d3-scale";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { ResponsiveXYFrame } from "semiotic";
 
@@ -130,4 +131,4 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   );
 };
 
-export default PopulationTimeSeriesBaseChart;
+export default observer(PopulationTimeSeriesBaseChart);
