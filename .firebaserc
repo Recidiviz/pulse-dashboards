@@ -4,6 +4,7 @@
     "production-backend": "recidiviz-dashboard-production",
     "staging": "recidiviz-dashboard-stag-e1108",
     "staging-backend": "recidiviz-dashboard-staging",
-    "demo": "recidiviz-dashboard-demo"
+    "demo": "recidiviz-dashboard-demo",
+    "default": "recidiviz-dashboard-stag-e1108"
   }
 }

@@ -12,7 +12,8 @@
   "scripts": {
     "start": "node server.js",
     "build": "source ./load_environment.sh env_production && ./load_config_files.sh && react-scripts build",
-    "build-staging": "source ./load_environment.sh env_staging && ./load_config_files.sh && react-scripts build",
+    "build-staging-no-config-files": "source ./load_environment.sh env_staging && react-scripts build",
+    "build-staging": "./load_config_files.sh && yarn build-staging-no-config-files",
     "build-demo": "source ./load_environment.sh env_staging_demo && ./load_config_files.sh && react-scripts build",
     "build-e2e": "env-cmd -f .env.offline react-scripts build",
     "test-e2e-lantern": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite lantern --retry 2",
