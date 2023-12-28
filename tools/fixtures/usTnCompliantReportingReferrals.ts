@@ -268,6 +268,11 @@ export const usTnCompliantReportingReferrals =
       specialConditionsProgrammingFswCurrent: false,
       externalId: "201",
       eligibleCriteria: {
+        usTnOnEligibleLevelForSufficientTime: {
+          eligibleDate: "2023-11-11",
+          eligibleLevel: "MEDIUM",
+          startDateOnEligibleLevel: "2021-11-11",
+        },
         usTnFinesFeesEligible: {
           hasFinesFeesBalanceBelow500: { amountOwed: 45 },
           hasPayments3ConsecutiveMonths: {
@@ -348,6 +353,11 @@ export const usTnCompliantReportingReferrals =
       specialConditionsProgrammingFsw: false,
       specialConditionsProgrammingFswCurrent: false,
       eligibleCriteria: {
+        usTnOnEligibleLevelForSufficientTime: {
+          eligibleDate: "2022-11-04",
+          eligibleLevel: "MINIMUM",
+          startDateOnEligibleLevel: "2021-05-04",
+        },
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
         usTnSpecialConditionsAreCurrent: {

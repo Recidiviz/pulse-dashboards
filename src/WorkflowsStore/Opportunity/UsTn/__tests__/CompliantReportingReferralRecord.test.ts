@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { parseISO } from "date-fns";
+import tk from "timekeeper";
 
 import {
   CompliantReportingReferralRecordFullRaw,
@@ -45,6 +46,7 @@ const rawRecordOldSchema: CompliantReportingReferralRecordFullRaw = {
   specialConditionsFlag: "current",
   lastSpecialConditionsNote: "2022-01-10",
   nextSpecialConditionsCheck: "2022-09-10",
+  eligibleLevelStart: "2019-09-01",
   specialConditionsAlcDrugScreen: false,
   specialConditionsAlcDrugAssessmentComplete: false,
   specialConditionsAlcDrugTreatment: false,
@@ -143,6 +145,7 @@ const eligibleCriteria = {
   usTnOnEligibleLevelForSufficientTime: {
     eligibleDate: "2020-08-01",
     eligibleLevel: "MINIMUM",
+    startDateOnEligibleLevel: "2019-08-01",
   },
   usTnPassedDrugScreenCheck: {
     hasAtLeast1NegativeDrugTestPastYear: {
@@ -171,6 +174,14 @@ const eligibleCriteria = {
 
 const { usTnFinesFeesEligible, ...eligibleCriteriaExceptFinesFees } =
   eligibleCriteria;
+
+beforeEach(() => {
+  tk.freeze(new Date("2023-12-01"));
+});
+
+afterEach(() => {
+  tk.reset();
+});
 
 test("transform record, old format", () => {
   expect(

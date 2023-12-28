@@ -160,7 +160,7 @@ describe.each([
     /get any sanctions/,
   ],
   [
-    "currentLevelEligibilityDate",
+    "usTnOnEligibleLevelForSufficientTime",
     4,
     "Needs 14 more days on medium",
     /minimum supervision level for 1 year /,

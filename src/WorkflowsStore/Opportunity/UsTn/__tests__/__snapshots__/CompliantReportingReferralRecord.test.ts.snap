@@ -26,11 +26,15 @@ Object {
     "usTnNoHighSanctionsInPastYear": Object {},
     "usTnNoRecentCompliantReportingRejections": Object {},
     "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnOnEligibleLevelForSufficientTime": Object {
+      "eligibleDate": 2020-08-01T00:00:00.000Z,
+      "eligibleLevel": "MINIMUM",
+      "startDateOnEligibleLevel": 2019-08-01T00:00:00.000Z,
+    },
     "usTnSpecialConditionsAreCurrent": Object {
       "speNoteDue": null,
     },
   },
-  "eligibleLevelStart": undefined,
   "externalId": "202",
   "formInformation": Object {
     "currentOffenses": Array [
@@ -113,11 +117,15 @@ Object {
     "usTnNoHighSanctionsInPastYear": Object {},
     "usTnNoRecentCompliantReportingRejections": Object {},
     "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnOnEligibleLevelForSufficientTime": Object {
+      "eligibleDate": 2023-12-01T00:00:00.000Z,
+      "eligibleLevel": "UNKNOWN",
+      "startDateOnEligibleLevel": 2019-09-01T00:00:00.000Z,
+    },
     "usTnSpecialConditionsAreCurrent": Object {
       "speNoteDue": 2022-09-10T00:00:00.000Z,
     },
   },
-  "eligibleLevelStart": undefined,
   "externalId": "202",
   "formInformation": Object {
     "currentOffenses": Array [

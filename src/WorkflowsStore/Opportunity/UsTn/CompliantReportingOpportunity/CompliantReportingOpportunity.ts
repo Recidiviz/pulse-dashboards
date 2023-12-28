@@ -55,7 +55,7 @@ export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (
   "passedDrugScreenNeeded",
   "usTnNoRecentCompliantReportingRejections",
   "usTnNoHighSanctionsInPastYear",
-  "currentLevelEligibilityDate",
+  "usTnOnEligibleLevelForSufficientTime",
 ];
 
 /**
@@ -175,6 +175,20 @@ const getRecordValidator =
     }
   };
 
+const currentLevelAlmostEligibleText = (
+  eligibleDate: Date,
+  supervisionLevel: string
+) => {
+  const currentLevelEligibilityDaysRemaining = differenceInCalendarDays(
+    eligibleDate,
+    new Date()
+  );
+  return `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
+    "day",
+    currentLevelEligibilityDaysRemaining
+  )} on ${supervisionLevel.toLowerCase()}`;
+};
+
 const sanctionsAlmostEligibleText = (latestHighSanctionDate: Date) => {
   const seriousSanctionsEligibilityDate = add(latestHighSanctionDate, {
     years: 1,
@@ -290,7 +304,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     const {
       drugScreensPastYear,
       eligibilityCategory,
-      eligibleLevelStart,
       lifetimeOffensesExpired,
       pastOffenses,
       zeroToleranceCodes,
@@ -311,28 +324,23 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     // required time on required supervision level
 
-    if (eligibilityCategory === "c4") {
-      requirements.push({
-        text: "ICOTS",
-        tooltip: CRITERIA.icots.tooltip,
-      });
-    } else if (!requirementAlmostMetMap.currentLevelEligibilityDate) {
+    if (eligibleCriteria.usTnOnEligibleLevelForSufficientTime) {
       // current level by default
       let requiredSupervisionLevel = `${supervisionLevel.toLowerCase()} supervision`;
       // if eligible start is not the same as current level start,
       // this indicates they moved up or down a level but qualify under medium
+      const eligibleLevelStart =
+        eligibleCriteria.usTnOnEligibleLevelForSufficientTime
+          .startDateOnEligibleLevel;
       if (
         supervisionLevelStart &&
-        eligibleLevelStart &&
         !isEqual(supervisionLevelStart, eligibleLevelStart)
       ) {
         requiredSupervisionLevel = "medium supervision or less";
       }
       requirements.push({
         text: `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
-          // this date should only ever be missing for ICOTS cases,
-          // since it's not actually part of their eligibility criteria
-          eligibleLevelStart as Date
+          eligibleLevelStart
         )}`,
         tooltip: CRITERIA.timeOnSupervision.tooltip,
       });
@@ -487,7 +495,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       Partial<OpportunityRequirement>
     > = {
       passedDrugScreenNeeded: CRITERIA.drug,
-      currentLevelEligibilityDate: CRITERIA.timeOnSupervision,
     };
 
     const { validAlmostEligibleKeys } = this;
@@ -498,6 +505,16 @@ export class CompliantReportingOpportunity extends OpportunityBase<
         requirements.push({ text, tooltip: configMap[criterionKey].tooltip });
       }
     });
+
+    if (ineligibleCriteria?.usTnOnEligibleLevelForSufficientTime) {
+      requirements.push({
+        text: currentLevelAlmostEligibleText(
+          ineligibleCriteria.usTnOnEligibleLevelForSufficientTime.eligibleDate,
+          this.person.supervisionLevel
+        ),
+        tooltip: CRITERIA.timeOnSupervision.tooltip,
+      });
+    }
 
     if (ineligibleCriteria?.usTnNoRecentCompliantReportingRejections) {
       requirements.push({
@@ -532,12 +549,8 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       return {};
     }
 
-    const { currentLevelEligibilityDate, passedDrugScreenNeeded } =
+    const { passedDrugScreenNeeded } =
       this.record?.almostEligibleCriteria ?? {};
-
-    const currentLevelEligibilityDaysRemaining = currentLevelEligibilityDate
-      ? differenceInCalendarDays(currentLevelEligibilityDate, new Date())
-      : undefined;
 
     return mapValues(
       toJS(this.record?.almostEligibleCriteria),
@@ -547,14 +560,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
             return passedDrugScreenNeeded
               ? "Needs one more passed drug screen"
               : undefined;
-          case "currentLevelEligibilityDate": {
-            return currentLevelEligibilityDaysRemaining !== undefined
-              ? `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
-                  "day",
-                  currentLevelEligibilityDaysRemaining
-                )} on ${this.person.supervisionLevel.toLowerCase()}`
-              : undefined;
-          }
           default:
             return assertNever(key);
         }
@@ -593,6 +598,16 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       criterionSpecificCopy = `don’t get any sanctions higher than level 1 until ${formatNoteDate(
         seriousSanctionsEligibilityDate
       )}`;
+    } else if (ineligibleCriteria.usTnOnEligibleLevelForSufficientTime) {
+      const { eligibleDate } =
+        ineligibleCriteria.usTnOnEligibleLevelForSufficientTime;
+      title = currentLevelAlmostEligibleText(
+        eligibleDate,
+        this.person.supervisionLevel
+      );
+      criterionSpecificCopy = `stay on your current supervision level until ${formatNoteDate(
+        eligibleDate
+      )}`;
     } else {
       const missingCriterionKey = this.validAlmostEligibleKeys[0];
 
@@ -600,17 +615,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       // not expected to happen in practice but Typescript doesn't know that
       if (!title) return undefined;
 
-      const { currentLevelEligibilityDate } =
-        this.record?.almostEligibleCriteria ?? {};
-
       switch (missingCriterionKey) {
-        case "currentLevelEligibilityDate":
-          criterionSpecificCopy =
-            currentLevelEligibilityDate &&
-            `stay on your current supervision level until ${formatNoteDate(
-              currentLevelEligibilityDate
-            )}`;
-          break;
         case "passedDrugScreenNeeded":
           criterionSpecificCopy = "pass one drug screen";
           break;

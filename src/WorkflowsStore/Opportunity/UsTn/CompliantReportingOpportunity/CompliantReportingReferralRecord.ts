@@ -19,14 +19,22 @@ import { sub } from "date-fns";
 import { DocumentData, Timestamp } from "firebase/firestore";
 import { z } from "zod";
 
+import { formatDateToISO } from "../../../../utils/formatStrings";
 import { TransformFunction } from "../../../subscriptions";
-import { fieldToDate, optionalFieldToDate } from "../../../utils";
+import { fieldToDate } from "../../../utils";
 import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
 const SpecialConditionsNoteType = ["SPEC", "SPET"] as const;
 
 export const compliantReportingSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z.object({
+    usTnOnEligibleLevelForSufficientTime: z
+      .object({
+        eligibleDate: dateStringSchema,
+        eligibleLevel: z.string(),
+        startDateOnEligibleLevel: dateStringSchema,
+      })
+      .optional(),
     usTnFinesFeesEligible: z
       .object({
         hasFinesFeesBalanceBelow500: z.object({
@@ -59,6 +67,13 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
     usTnNotServingIneligibleCrOffense: z.null().transform((_val) => ({})),
   }),
   ineligibleCriteria: z.object({
+    usTnOnEligibleLevelForSufficientTime: z
+      .object({
+        eligibleDate: dateStringSchema,
+        eligibleLevel: z.string(),
+        startDateOnEligibleLevel: dateStringSchema,
+      })
+      .optional(),
     usTnFinesFeesEligible: z
       .object({
         hasFinesFeesBalanceBelow500: z.object({
@@ -107,7 +122,6 @@ export type CompliantReportingReferralRecordFull = z.infer<
   CompliantReportingReferralRecord;
 
 export type AlmostEligibleCriteria = {
-  currentLevelEligibilityDate?: Date;
   passedDrugScreenNeeded?: boolean;
 };
 
@@ -122,7 +136,6 @@ export type AlmostEligibleCriteriaRaw = {
 export type CompliantReportingReferralRecord = {
   almostEligibleCriteria?: AlmostEligibleCriteria;
   eligibilityCategory: string;
-  eligibleLevelStart?: Date;
   drugScreensPastYear: { result: string; date: Date }[];
   judicialDistrict: string;
   lifetimeOffensesExpired: string[];
@@ -283,7 +296,6 @@ export const transformCompliantReportingReferral: TransformFunction<
     currentOffenses,
     drugScreensPastYear,
     eligibilityCategory,
-    eligibleLevelStart,
     judicialDistrict,
     lifetimeOffensesExpired,
     pastOffenses,
@@ -309,12 +321,14 @@ export const transformCompliantReportingReferral: TransformFunction<
     specialConditionsFlag,
     specialConditionsTerminatedDate,
     almostEligibleCriteria,
+    eligibleLevelStart,
     ...recordWithoutLegacyFields
   } = record;
   const {
     paymentNeeded,
     seriousSanctionsEligibilityDate,
     recentRejectionCodes,
+    currentLevelEligibilityDate,
     ...newAlmostEligibleCriteria
   } = almostEligibleCriteria ?? {};
 
@@ -369,6 +383,33 @@ export const transformCompliantReportingReferral: TransformFunction<
   const newIneligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.ineligibleCriteria
   > = {};
+
+  if (eligibleCriteria.usTnOnEligibleLevelForSufficientTime !== undefined) {
+    newEligibleCriteria.usTnOnEligibleLevelForSufficientTime =
+      eligibleCriteria.usTnOnEligibleLevelForSufficientTime;
+  } else if (ineligibleCriteria.usTnOnEligibleLevelForSufficientTime) {
+    newIneligibleCriteria.usTnOnEligibleLevelForSufficientTime =
+      ineligibleCriteria.usTnOnEligibleLevelForSufficientTime;
+  }
+  // If they don't have new-style data, fill it in from the old style
+  else if (currentLevelEligibilityDate) {
+    newIneligibleCriteria.usTnOnEligibleLevelForSufficientTime = {
+      eligibleDate: currentLevelEligibilityDate,
+      // eligible level came from the client record in the old style, so we don't know it here.
+      eligibleLevel: "UNKNOWN",
+      startDateOnEligibleLevel: eligibleLevelStart,
+    };
+  } else {
+    newEligibleCriteria.usTnOnEligibleLevelForSufficientTime = {
+      // eligible date came from the almost eligible criteria in the old style, so we don't know it here.
+      // We only use the eligible date in the copy for almost eligible, so it can be set to anything
+      // when the client is eligible.
+      eligibleDate: formatDateToISO(new Date()),
+      // eligible level came from the client record in the old style, so we don't know it here.
+      eligibleLevel: "UNKNOWN",
+      startDateOnEligibleLevel: eligibleLevelStart,
+    };
+  }
 
   if (eligibleCriteria.usTnFinesFeesEligible) {
     newEligibleCriteria.usTnFinesFeesEligible =
@@ -464,7 +505,6 @@ export const transformCompliantReportingReferral: TransformFunction<
   const transformedRecord: CompliantReportingReferralRecordFull = {
     ...zodRecord,
     eligibilityCategory,
-    eligibleLevelStart: optionalFieldToDate(eligibleLevelStart),
     drugScreensPastYear: drugScreensPastYear.map(({ result, date }) => ({
       result,
       date: fieldToDate(date),
@@ -482,13 +522,9 @@ export const transformCompliantReportingReferral: TransformFunction<
   };
 
   if (almostEligibleCriteria) {
-    const { currentLevelEligibilityDate, passedDrugScreenNeeded } =
-      almostEligibleCriteria;
+    const { passedDrugScreenNeeded } = almostEligibleCriteria;
 
     transformedRecord.almostEligibleCriteria = {
-      currentLevelEligibilityDate: optionalFieldToDate(
-        currentLevelEligibilityDate
-      ),
       passedDrugScreenNeeded,
     };
   }

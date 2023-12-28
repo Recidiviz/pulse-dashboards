@@ -114,12 +114,16 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
   {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
-    eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
     drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     eligibleCriteria: {
+      usTnOnEligibleLevelForSufficientTime: {
+        eligibleDate: parseISO("2021-12-20"),
+        eligibleLevel: "MEDIUM",
+        startDateOnEligibleLevel: parseISO("2019-12-20"),
+      },
       usTnFinesFeesEligible: {
         hasFinesFeesBalanceBelow500: {
           amountOwed: 750,
@@ -157,7 +161,6 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
 export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
     // Required fields
-    eligibleLevelStart: parseISO("2019-12-20"),
     drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
     lifetimeOffensesExpired: [],
 
@@ -173,6 +176,11 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
 
     // TODO(#3587): Make this actually be eligible with discretion
     eligibleCriteria: {
+      usTnOnEligibleLevelForSufficientTime: {
+        eligibleDate: parseISO("2021-12-20"),
+        eligibleLevel: "MEDIUM",
+        startDateOnEligibleLevel: parseISO("2019-12-20"),
+      },
       usTnFinesFeesEligible: {
         hasFinesFeesBalanceBelow500: {
           amountOwed: 600,
@@ -212,12 +220,16 @@ export const compliantReportingAlmostEligibleCriteria: Required<
   NonNullable<CompliantReportingReferralRecord["almostEligibleCriteria"]>
 > = {
   passedDrugScreenNeeded: true,
-  currentLevelEligibilityDate: parseISO("2022-08-15"),
 };
 
 export const compliantReportingIneligibleCriteria: Required<
   NonNullable<CompliantReportingReferralRecordFull["ineligibleCriteria"]>
 > = {
+  usTnOnEligibleLevelForSufficientTime: {
+    eligibleDate: parseISO("2022-08-15"),
+    eligibleLevel: "MEDIUM",
+    startDateOnEligibleLevel: parseISO("2019-12-20"),
+  },
   usTnFinesFeesEligible: {
     hasFinesFeesBalanceBelow500: {
       amountOwed: 600,
@@ -239,7 +251,6 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
   {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
-    eligibleLevelStart: parseISO("2019-12-20"),
     judicialDistrict: "A",
     drugScreensPastYear: [],
     pastOffenses: [],
