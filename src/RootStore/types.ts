@@ -105,7 +105,7 @@ export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
 export type ActiveFeatureVariantRecord = Partial<
   Record<FeatureVariant, Omit<FeatureVariantValue, "activeDate">>
 >;
-const allFeatureVariants: FeatureVariantMapping = {
+export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
   CompliantReportingAlmostEligible: {},
   usMeWorkRelease: {},

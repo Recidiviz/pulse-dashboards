@@ -45,6 +45,7 @@
     "pull-pathways-backend": "docker compose pull case_triage_backend",
     "pathways-backend": "sh tools/run_pathways_backend.sh",
     "sync-content": "source ./load_environment.sh env_sync_content && ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",
+    "verify-feature-variant-documentation": "source ./load_environment.sh env_sync_content && ts-node tools/verifyFeatureVariantDocumentation.ts",
     "firebase-emulator": "firebase --project=demo-dev emulators:start --import firestore-config/emulator-fixtures",
     "update-workflows-fixture": "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'NODE_OPTIONS=\"--unhandled-rejections=strict\" ts-node tools/loadWorkflowsFixtures.ts'",
     "firebase-offline": "run-s update-workflows-fixture firebase-emulator",
