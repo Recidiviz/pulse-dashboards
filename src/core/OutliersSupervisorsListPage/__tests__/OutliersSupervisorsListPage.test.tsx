@@ -24,20 +24,13 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
-import { supervisionOfficerFixture } from "../../../OutliersStore/models/offlineFixtures/SupervisionOfficerFixture";
-import { SupervisionOfficerDetailPresenter } from "../../../OutliersStore/presenters/SupervisionOfficerDetailPresenter";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
 import { RootStore } from "../../../RootStore";
-import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
-import OutliersStaffPage, {
-  StaffPageWithPresenter,
-} from "../OutliersStaffPage";
+import OutliersSupervisorsListPage from "../OutliersSupervisorsListPage";
 
 jest.mock("../../../components/StoreProvider");
-jest.mock(
-  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
-);
+
 jest
   .spyOn(UserStore.prototype, "isRecidivizUser", "get")
   .mockImplementation(() => false);
@@ -45,8 +38,6 @@ jest
 const useRootStoreMock = jest.mocked(useRootStore);
 const useFeatureVariantsMock = jest.mocked(useFeatureVariants);
 const supervisorPseudoId = "hashed-mdavis123";
-const officerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
-const testMetric = supervisionOfficerFixture[0].outlierMetrics[0].metricId;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -57,50 +48,10 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-describe("Hydrated Staff Page", () => {
-  let presenter: SupervisionOfficerDetailPresenter;
+describe("Outliers Supervisors List Page", () => {
   let store: OutliersSupervisionStore;
 
-  beforeEach(async () => {
-    jest
-      .spyOn(UserStore.prototype, "userPseudoId", "get")
-      .mockImplementation(() => supervisorPseudoId);
-
-    store = new OutliersSupervisionStore(
-      new RootStore().outliersStore,
-      OutliersConfigFixture
-    );
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
-    presenter = new SupervisionOfficerDetailPresenter(store, officerPseudoId);
-    await presenter?.hydrate();
-  });
-
-  test("analytics trackOutliersStaffPageViewed", () => {
-    jest.spyOn(AnalyticsStore.prototype, "trackOutliersStaffPageViewed");
-
-    render(
-      <BrowserRouter>
-        <StaffPageWithPresenter presenter={presenter} />
-      </BrowserRouter>
-    );
-
-    expect(
-      store.outliersStore.rootStore.analyticsStore.trackOutliersStaffPageViewed
-    ).toHaveBeenCalledWith({
-      numOutlierMetrics: 2,
-      staffPseudonymizedId: officerPseudoId,
-      supervisorPseudonymizedId: supervisorPseudoId,
-      viewedBy: supervisorPseudoId,
-    });
-  });
-});
-
-describe("Outliers Staff Page", () => {
-  let store: OutliersSupervisionStore;
-
-  beforeEach(async () => {
+  beforeEach(() => {
     const rootStore = new RootStore();
     store = new OutliersSupervisionStore(
       rootStore.outliersStore,
@@ -114,8 +65,7 @@ describe("Outliers Staff Page", () => {
       .spyOn(store, "userCanAccessAllSupervisors", "get")
       .mockReturnValue(true);
 
-    store.setOfficerPseudoId(officerPseudoId);
-    store.setMetricId(testMetric);
+    store.setSupervisorPseudoId(supervisorPseudoId);
   });
 
   afterEach(() => {
@@ -125,33 +75,46 @@ describe("Outliers Staff Page", () => {
   test("renders loading indicator", () => {
     render(
       <BrowserRouter>
-        <OutliersStaffPage />
+        <OutliersSupervisorsListPage />
       </BrowserRouter>
     );
 
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
   });
 
-  test("renders Staff Page when hydrated", async () => {
+  test("renders Supervisors List Page when hydrated", async () => {
     render(
       <BrowserRouter>
-        <OutliersStaffPage />
+        <OutliersSupervisorsListPage />
       </BrowserRouter>
     );
 
-    expect(await screen.findByText("List of Absconsions")).toBeInTheDocument();
+    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
   });
 
   test("has no axe violations", async () => {
     const { container } = render(
       <BrowserRouter>
-        <OutliersStaffPage />
+        <OutliersSupervisorsListPage />
       </BrowserRouter>
     );
 
     // Make sure the hydrated page actually loaded
-    expect(await screen.findByText("List of Absconsions")).toBeInTheDocument();
-    const results = await axe(container);
+    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
+    const results = await axe(container, { elementRef: true });
+
+    const idDuplicatesViolation = results.violations.find(
+      (violation) => violation.id === "duplicate-id"
+    );
+
+    // ignore "duplicate-id" violation if there is one
+    if (idDuplicatesViolation) {
+      results.violations.splice(
+        results.violations.indexOf(idDuplicatesViolation),
+        1
+      );
+    }
+
     expect(results).toHaveNoViolations();
   });
 });

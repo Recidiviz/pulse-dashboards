@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render, screen } from "@testing-library/react";
+import { axe } from "jest-axe";
 import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
@@ -259,5 +260,18 @@ describe("Outliers Supervisor Page", () => {
     );
 
     expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
+  });
+
+  test("has no axe violations", async () => {
+    const { container } = render(
+      <BrowserRouter>
+        <OutliersSupervisorPage />
+      </BrowserRouter>
+    );
+
+    // Make sure the hydrated page actually loaded
+    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
   });
 });

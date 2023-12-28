@@ -28,7 +28,7 @@ import { noop } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
 
@@ -110,25 +110,17 @@ const StyledTabList = styled(TabList)<{
 const StyledTab = styled(Tab)`
   font-size: ${rem(spacing.md)};
   display: inline-block;
-  padding: 0;
-  border: 0;
+  padding: ${rem(spacing.sm)} 0;
+  color: ${palette.slate60};
+  border-bottom: ${rem(4)} solid transparent;
 
-  & a {
-    display: inline-block;
-    padding: ${rem(spacing.sm)} 0;
-    color: ${palette.slate60};
-    border-bottom: ${rem(4)} solid transparent;
-
-    &:hover {
-      color: ${palette.pine2};
-    }
+  &:hover {
+    color: ${palette.pine2};
   }
 
   &.Tab--selected {
-    & a {
-      border-bottom-color: ${palette.pine2};
-      color: ${palette.pine2};
-    }
+    border-bottom-color: ${palette.pine2};
+    color: ${palette.pine2};
   }
 `;
 
@@ -147,6 +139,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 }: {
   presenter: SupervisionOfficerDetailPresenter;
 }) {
+  const navigate = useNavigate();
   const { isMobile, isTablet } = useIsMobile(true);
   const [tabListEl, setTabListEl] = useState<HTMLElement | null>(null);
   const isTabListOverflown = useIsOverflown(tabListEl);
@@ -280,18 +273,22 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           $isMobile={isMobile}
           $showScrollShadow={isMobile && isTabListOverflown}
         >
-          {outlierOfficerData.outlierMetrics.map((metric) => (
-            <StyledTab key={metric.metricId}>
-              <Link
-                to={outliersUrl("supervisionStaffMetric", {
+          {outlierOfficerData.outlierMetrics.map((metric) => {
+            const handleTabClick = () => {
+              navigate(
+                outliersUrl("supervisionStaffMetric", {
                   officerPseudoId: outlierOfficerData.pseudonymizedId,
                   metricId: metric.metricId,
-                })}
-              >
+                })
+              );
+            };
+
+            return (
+              <StyledTab key={metric.metricId} onClick={handleTabClick}>
                 {toTitleCase(metric.config.eventName)}
-              </Link>
-            </StyledTab>
-          ))}
+              </StyledTab>
+            );
+          })}
         </StyledTabList>
         {outlierOfficerData.outlierMetrics.map((metric) => {
           const firstDate = metric.benchmark.benchmarks[0]?.endDate;

@@ -22,6 +22,7 @@ import { ResizeObserver } from "@juggle/resize-observer";
 import { cleanup } from "@testing-library/react";
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 import { configure } from "enzyme";
+import { toHaveNoViolations } from "jest-axe";
 import * as matchers from "jest-extended";
 import { configure as configureMobx } from "mobx";
 import { createMocks } from "react-idle-timer";
@@ -44,6 +45,8 @@ beforeAll(() => {
 afterAll(cleanup);
 
 expect.extend(matchers);
+
+expect.extend(toHaveNoViolations);
 
 configureMobx({
   enforceActions: "never",
