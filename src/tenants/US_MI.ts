@@ -51,6 +51,7 @@ const US_MI_CONFIG: TenantConfig = {
     },
   },
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  outliersLanternState: true,
   navigation: {
     insights: [OUTLIERS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],

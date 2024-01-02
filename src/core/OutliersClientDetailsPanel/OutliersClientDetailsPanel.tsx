@@ -28,7 +28,6 @@ import { ComponentType, useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import lanternLogo from "../../assets/static/images/lantern_logo.png";
 import NotFound from "../../components/NotFound";
 import {
   useFeatureVariants,
@@ -36,6 +35,7 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionClientDetailPresenter } from "../../OutliersStore/presenters/SupervisionClientDetailPresenter";
+import LanternLogo from "../LanternLogo";
 import ModelHydrator from "../ModelHydrator";
 import { outliersUrl } from "../views";
 import { OutliersClientCapsule } from "./OutliersClientCapsule";
@@ -187,7 +187,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
         />
       </Content>
       <ModalFooter>
-        <img height={15} src={lanternLogo} alt="Lantern" />
+        <LanternLogo />
       </ModalFooter>
     </StyledDrawerModal>
   );

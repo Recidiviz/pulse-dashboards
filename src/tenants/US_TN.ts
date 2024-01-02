@@ -55,6 +55,7 @@ const US_TN_CONFIG: TenantConfig = {
       searchTitleOverride: "unit",
     },
   },
+  outliersLanternState: true,
   navigation: {
     insights: [OUTLIERS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],

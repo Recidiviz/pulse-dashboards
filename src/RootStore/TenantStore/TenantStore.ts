@@ -133,6 +133,11 @@ export default class TenantStore {
     );
   }
 
+  get outliersLanternState(): boolean {
+    if (!this.currentTenantId) return false;
+    return tenants[this.currentTenantId].outliersLanternState ?? false;
+  }
+
   /**
    * Returns the function used to filter which staff members a user can search for. If the tenant
    * config does not specify one, returns a function which allows all staff to search for anyone

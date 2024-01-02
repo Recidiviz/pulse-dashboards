@@ -42,8 +42,10 @@ import { TenantId } from "../RootStore/types";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { UserAvatar } from "./Avatar";
 import { useCoreStore } from "./CoreStoreProvider";
-import RecidivizLogo from "./RecidivizLogo/RecidivizLogo";
+import LanternLogo from "./LanternLogo";
+import RecidivizLogo from "./RecidivizLogo";
 import { DASHBOARD_VIEWS } from "./views";
+import { Separator } from "./WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const Wrapper = styled.div``;
 
@@ -178,6 +180,15 @@ const DrawerProfileMenu = styled.div`
   }
 `;
 
+const MainLogoNavLink = styled(Link)`
+  display: flex;
+  align-items: end;
+
+  ${Separator} {
+    padding: 0 0.75rem;
+  }
+`;
+
 type OptionalLinkProps = { enabled: boolean };
 
 function MethodologyLink({
@@ -225,6 +236,25 @@ function MethodologyLink({
     >
       {linkContents}
     </NavLink>
+  );
+}
+
+function MainLogo({
+  enabled,
+  enabledLanternLogo,
+}: OptionalLinkProps & { enabledLanternLogo: boolean }) {
+  if (!enabled) return null;
+
+  return (
+    <MainLogoNavLink to="/">
+      <RecidivizLogo />
+      {enabledLanternLogo && (
+        <>
+          <Separator>|</Separator>
+          <LanternLogo />
+        </>
+      )}
+    </MainLogoNavLink>
   );
 }
 
@@ -347,7 +377,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
 
     const view = pathname.split("/")[1];
-    const { currentTenantId, userStore } = useRootStore();
+    const { currentTenantId, userStore, tenantStore } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
 
     if (!userAllowedNavigation || !currentTenantId) return null;
@@ -359,6 +389,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enabledImpact =
       !!userAllowedNavigation.impact && userStore.isRecidivizUser;
     const enabledOutliers = !!userAllowedNavigation.insights;
+
+    const isOutliersView = view === DASHBOARD_VIEWS.outliers;
+    const isOutliersLanternState =
+      tenantStore && tenantStore.outliersLanternState;
 
     const quickLinks = (
       <>
@@ -384,11 +418,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           isFixed={isFixed}
           backgroundColor={backgroundColor}
         >
-          {(!isMobile || !isFixed) && (
-            <Link to="/">
-              <RecidivizLogo />
-            </Link>
-          )}
+          <MainLogo
+            enabled={!isMobile || !isFixed}
+            enabledLanternLogo={isOutliersLanternState && isOutliersView}
+          />
           <NavMenu alignBottom={isMobile && isFixed}>
             <NavLinks>{children}</NavLinks>
             {isMobile ? (
