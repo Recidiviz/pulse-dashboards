@@ -39,7 +39,6 @@ test("hydrate", async () => {
   jest
     .spyOn(store.rootStore.userStore, "userAppMetadata", "get")
     .mockReturnValue({
-      role: "supervision_staff",
       externalId: "abc123",
       pseudonymizedId: "hashed-mdavis123",
       district: "District One",

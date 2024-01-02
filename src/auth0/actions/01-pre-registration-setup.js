@@ -194,7 +194,6 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         );
         api.user.setAppMetadata("routes", restrictions.routes || null);
         api.user.setAppMetadata("userHash", restrictions.userHash);
-        api.user.setAppMetadata("role", restrictions.role || null);
         api.user.setAppMetadata("district", restrictions.district);
         api.user.setAppMetadata("externalId", restrictions.externalId);
         api.user.setAppMetadata(

@@ -60,7 +60,6 @@ import {
   ResidentRecord,
   StaffRecord,
   UserMetadata,
-  UserRole,
   UserUpdateRecord,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
@@ -275,10 +274,6 @@ export class WorkflowsStore implements Hydratable {
 
     const [info] = this.userSubscription.data;
 
-    if (this.rootStore.userStore.userRole) {
-      set(info, { role: this.rootStore.userStore.userRole });
-    }
-
     const updates = this.userUpdatesSubscription?.data ?? {
       stateCode: info.stateCode,
     };
@@ -439,21 +434,18 @@ export class WorkflowsStore implements Hydratable {
       return workflowsSupportedSystems;
     }
 
-    const role = this.user?.info.role;
+    const userAllowedSystems: Array<SystemId> = [];
+    if (this.rootStore.userStore.getRoutePermission("workflowsSupervision")) {
+      userAllowedSystems.push("SUPERVISION");
+    }
+    if (this.rootStore.userStore.getRoutePermission("workflowsFacilities")) {
+      userAllowedSystems.push("INCARCERATION");
+    }
 
-    const roleAllowedSystems: Record<UserRole, SystemId[]> = {
-      supervision_staff: ["SUPERVISION"],
-      supervision_leadership: ["SUPERVISION"],
-      facilities_staff: ["INCARCERATION"],
-      leadership_role: ["SUPERVISION", "INCARCERATION"],
-    };
-
-    return role
-      ? difference(
-          intersection(workflowsSupportedSystems, roleAllowedSystems[role]),
-          this.unsupportedWorkflowSystemsByFeatureVariants
-        )
-      : undefined;
+    return difference(
+      intersection(workflowsSupportedSystems, userAllowedSystems),
+      this.unsupportedWorkflowSystemsByFeatureVariants
+    );
   }
 
   updateActiveSystem(systemId: SystemId): void {

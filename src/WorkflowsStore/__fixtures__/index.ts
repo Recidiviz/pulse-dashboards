@@ -35,7 +35,6 @@ export const mockOfficer: CombinedUserRecord = {
     hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer",
-    role: "leadership_role",
   },
 };
 
@@ -49,7 +48,6 @@ export const mockOfficer2: CombinedUserRecord = {
     email: "test-officer2@example.com",
     givenNames: "Foo",
     surname: "Fakename",
-    role: "supervision_staff",
   },
 };
 
@@ -63,7 +61,6 @@ export const mockSupervisor: CombinedUserRecord = {
     hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Supervisor",
-    role: "leadership_role",
   },
 };
 

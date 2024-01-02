@@ -49,7 +49,6 @@ import {
   PathwaysPageIdList,
   UNRESTRICTED_PAGES,
 } from "../core/views";
-import { UserRole } from "../FirestoreStore";
 import tenants from "../tenants";
 import { castToError } from "../utils/castToError";
 import { isDemoMode } from "../utils/isDemoMode";
@@ -323,10 +322,6 @@ export default class UserStore {
 
   get userPseudoId(): string | undefined {
     return this.userAppMetadata?.pseudonymizedId;
-  }
-
-  get userRole(): UserRole | undefined {
-    return this.userAppMetadata?.role;
   }
 
   /**

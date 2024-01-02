@@ -328,17 +328,6 @@ test("hydrateUserInfo requires pseudo ID", async () => {
   );
 });
 
-test("no current user record for non-supervisor", () => {
-  jest
-    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      externalId: "abc123",
-      stateCode: "us_mi",
-    });
-
-  expect(store.currentSupervisorUser).toBeUndefined();
-});
-
 test("hydrate supervisors list with current user", async () => {
   jest
     .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")

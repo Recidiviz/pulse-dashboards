@@ -153,7 +153,6 @@ function mockAuthedUser() {
       email: mockOfficer.info.email,
       [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
         stateCode: mockOfficer.info.stateCode,
-        role: "leadership_role",
       },
     };
     rootStore.tenantStore.setCurrentTenantId(mockOfficer.info.stateCode as any);
@@ -771,12 +770,20 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
     SESSION_SUPPORTED_SYSTEMS,
     SESSION_SYSTEMS_WITH_GATES
   );
-  const setUser = (featureVariants: any, stateCode = SESSION_STATE_CODE) => {
+  const setUser = (
+    featureVariants: any,
+    stateCode = SESSION_STATE_CODE,
+    routes: Record<string, boolean> = {
+      workflowsSupervision: true,
+      workflowsFacilities: true,
+    }
+  ) => {
     rootStore.userStore.user = {
       email: "foo@example.com",
       [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
         stateCode,
         featureVariants,
+        routes,
       },
     };
     rootStore.userStore.isAuthorized = true;
@@ -874,6 +881,34 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
       );
     }
   );
+
+  test("systems are gated by routes", () => {
+    setUser({}, "US_ME", {
+      workflowsSupervision: true,
+      workflowsFacilities: true,
+    });
+    expect(workflowsStore.workflowsSupportedSystems).toEqual(
+      expect.arrayContaining(["SUPERVISION", "INCARCERATION"])
+    );
+
+    setUser({}, "US_ME", {
+      workflowsSupervision: true,
+      workflowsFacilities: false,
+    });
+    expect(workflowsStore.workflowsSupportedSystems).toEqual(["SUPERVISION"]);
+
+    setUser({}, "US_ME", {
+      workflowsSupervision: false,
+      workflowsFacilities: true,
+    });
+    expect(workflowsStore.workflowsSupportedSystems).toEqual(["INCARCERATION"]);
+
+    setUser({}, "US_ME", {
+      workflowsSupervision: false,
+      workflowsFacilities: false,
+    });
+    expect(workflowsStore.workflowsSupportedSystems).toEqual([]);
+  });
 });
 
 describe("opportunityTypes for US_TN", () => {

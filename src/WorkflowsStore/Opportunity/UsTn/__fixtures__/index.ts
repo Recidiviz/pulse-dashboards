@@ -106,7 +106,6 @@ export const usTnUserRecord: CombinedUserRecord = {
     hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer1",
-    role: "supervision_staff",
   },
 };
 

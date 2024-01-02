@@ -30,6 +30,7 @@ import { OPPORTUNITY_CONFIGS } from "../WorkflowsStore/Opportunity/OpportunityCo
 import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTn";
 import { FIRESTORE_GENERAL_COLLECTION_MAP as FIRESTORE_GENERAL_COLLECTIONS_MAP } from "./constants";
 
+// TODO(#4618): Consider getting rid of this and replacing the relevant logic with a feature variant
 export type RoleSubtype =
   | "SUPERVISION_OFFICER"
   | "SUPERVISION_OFFICER_SUPERVISOR"
@@ -68,13 +69,7 @@ export const SYSTEM_ID_TO_CASELOAD_FIELD = {
 // This should be `satisfies Record<Exclude<SystemId, "ALL">, keyof StaffRecord>;`
 // but we can't use that yet: TODO(#3499)
 
-export type UserRole =
-  | "supervision_staff"
-  | "supervision_leadership"
-  | "facilities_staff"
-  | "leadership_role";
-
-export type UserRecord = StaffRecord & { email: string; role?: UserRole };
+export type UserRecord = StaffRecord & { email: string };
 export function isUserRecord(
   staffRecord: StaffRecord
 ): staffRecord is UserRecord {

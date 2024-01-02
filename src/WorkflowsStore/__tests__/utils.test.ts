@@ -151,7 +151,6 @@ describe("filterByUserDistrict", () => {
       hasCaseload: true,
       hasFacilityCaseload: false,
       id: "test",
-      role: "supervision_staff",
       stateCode: "US_XX",
       surname: "test",
     },
@@ -230,13 +229,12 @@ describe("usCaFilterByRoleSubtype", () => {
     supervisionUnrestrictedSearch: {},
   };
 
-  it("should return undefined when the feature variant is active, regardless of user role", () => {
+  it("should return undefined when the feature variant is active", () => {
     expect(
       usCaFilterByRoleSubtype(
         {
           info: {
             ...userWithoutDistrictOrRole.info,
-            role: "leadership_role",
           },
         },
         enabledFeatureVariant
@@ -248,7 +246,6 @@ describe("usCaFilterByRoleSubtype", () => {
         {
           info: {
             ...userWithoutDistrictOrRole.info,
-            role: "supervision_staff",
             district: "district 1",
             roleSubtype: "SUPERVISION_OFFICER",
           },
@@ -258,22 +255,10 @@ describe("usCaFilterByRoleSubtype", () => {
     ).toBeUndefined();
   });
 
-  it("should return undefined for leadership users", () => {
+  it("should restrict to the user's id", () => {
     const user: CombinedUserRecord = {
       info: {
         ...userWithoutDistrictOrRole.info,
-        role: "leadership_role",
-      },
-    };
-
-    expect(usCaFilterByRoleSubtype(user, {})).toBeUndefined();
-  });
-
-  it("should restrict to the user's id for officers", () => {
-    const user: CombinedUserRecord = {
-      info: {
-        ...userWithoutDistrictOrRole.info,
-        role: "supervision_staff",
         district: "district 1",
         roleSubtype: "SUPERVISION_OFFICER",
       },
@@ -287,13 +272,11 @@ describe("usCaFilterByRoleSubtype", () => {
     expect(usCaFilterByRoleSubtype(user, {})).toEqual(expected);
   });
 
-  it("should restrict to the user's district for supervisors", () => {
+  it("should restrict to the user's district", () => {
     const user: CombinedUserRecord = {
       info: {
         ...userWithoutDistrictOrRole.info,
-        role: "supervision_staff",
         district: "district 1",
-        roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR",
       },
     };
 
@@ -305,36 +288,16 @@ describe("usCaFilterByRoleSubtype", () => {
     expect(usCaFilterByRoleSubtype(user, {})).toEqual(expected);
   });
 
-  it("should restrict to the user's id for supervisors with no district set", () => {
+  it("should restrict to the user's id with no district set", () => {
     const user: CombinedUserRecord = {
       info: {
         ...userWithoutDistrictOrRole.info,
-        role: "supervision_staff",
-        roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR",
       },
     };
 
     const expected: StaffFilter = {
       filterField: "email",
       filterValues: [user.info.id],
-    };
-
-    expect(usCaFilterByRoleSubtype(user, {})).toEqual(expected);
-  });
-
-  it("should prefer the role subtype when set for leadership users", () => {
-    const user: CombinedUserRecord = {
-      info: {
-        ...userWithoutDistrictOrRole.info,
-        role: "leadership_role",
-        district: "district 1",
-        roleSubtype: "SUPERVISION_DISTRICT_MANAGER",
-      },
-    };
-
-    const expected: StaffFilter = {
-      filterField: "district",
-      filterValues: ["district 1"],
     };
 
     expect(usCaFilterByRoleSubtype(user, {})).toEqual(expected);

@@ -73,7 +73,6 @@ function createTestUnit() {
       hasFacilityCaseload: false,
       id: "abc123",
       surname: "",
-      role: "supervision_staff",
     },
   };
   root = new RootStore();

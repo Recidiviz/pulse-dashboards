@@ -250,19 +250,8 @@ export const usCaFilterByRoleSubtype: StaffFilterFunction = (
 ) => {
   if (featureVariants.supervisionUnrestrictedSearch) return;
 
-  // TODO(#4431): remove this and only check the feature variant
-  // If we don't have a staff record for the user and we've listed them as leadership or they have
-  // no role (for recidiviz + offline users), let them search for anyone.
-  if (
-    !user.info.roleSubtype &&
-    (!user.info.role ||
-      ["leadership_role", "supervision_leadership"].includes(user.info.role))
-  ) {
-    return undefined;
-  }
-
-  // At this point, assume they're a line staff or supervisor and we need to restrict to searching
-  // for themselves or their district.
+  // TODO(#4618): Consider getting rid of the role subtype comparison and replacing the relevant
+  // logic with a feature variant
 
   // Regular Parole Agents only get access to their own caseload If we don't have a district for a
   // user and we didn't list them as leadership, restrict them to their own caseload as well.

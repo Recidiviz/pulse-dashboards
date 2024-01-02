@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 /* eslint camelcase: 0 */
-import { UserRole } from "../FirestoreStore";
 import { CSG, RECIDIVIZ_TENANT } from "../tenants";
 import * as workflows from "./TenantStore/dashboardTenants";
 import * as lantern from "./TenantStore/lanternTenants";
@@ -68,7 +67,6 @@ export type UserAppMetadata = {
   pseudonymizedId?: string;
   segmentId?: string;
   intercomId?: string;
-  role?: UserRole;
   district?: string;
   externalId?: string;
 };
