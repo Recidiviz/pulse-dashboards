@@ -11,12 +11,16 @@ Array [
     "metricId": "violations",
   },
   Object {
-    "attributes": null,
+    "attributes": Object {
+      "code": null,
+      "description": null,
+    },
     "eventDate": 2023-01-19T00:00:00.000Z,
     "metricId": "treatment_completion",
   },
   Object {
     "attributes": Object {
+      "code": null,
       "description": "PAROLE REINSTATED",
     },
     "eventDate": 2023-01-09T00:00:00.000Z,
@@ -67,12 +71,16 @@ Array [
     "metricId": "violations",
   },
   Object {
-    "attributes": null,
+    "attributes": Object {
+      "code": null,
+      "description": null,
+    },
     "eventDate": 2023-01-19T00:00:00.000Z,
     "metricId": "treatment_completion",
   },
   Object {
     "attributes": Object {
+      "code": null,
       "description": "PAROLE REINSTATED",
     },
     "eventDate": 2023-01-09T00:00:00.000Z,

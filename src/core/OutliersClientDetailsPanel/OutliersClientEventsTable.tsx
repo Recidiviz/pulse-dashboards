@@ -21,7 +21,10 @@ import { Column } from "react-table";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { ClientEvent } from "../../OutliersStore/models/ClientEvent";
+import {
+  ClientEvent,
+  ClientEventAttributes,
+} from "../../OutliersStore/models/ClientEvent";
 import { formatDate, humanReadableTitleCase } from "../../utils";
 import OutliersTable from "../OutliersTable";
 
@@ -72,13 +75,8 @@ const createTableColumn = (column: Column) => {
     case "attributes":
       return {
         ...column,
-        Cell: ({ value }: { value: any }) => {
-          if (!value)
-            return (
-              <Description>NO ADDITIONAL INFORMATION AVAILABLE</Description>
-            );
-
-          if (value.code)
+        Cell: ({ value }: { value: ClientEventAttributes }) => {
+          if (value.code && value.description)
             return (
               <>
                 <Code>{value.code}</Code>
@@ -87,7 +85,10 @@ const createTableColumn = (column: Column) => {
               </>
             );
 
-          return value.description;
+          if (value.code) return <Code>{value.code}</Code>;
+          if (value.description) return value.description;
+
+          return <Description>NO ADDITIONAL INFORMATION AVAILABLE</Description>;
         },
       };
     case "eventDate":

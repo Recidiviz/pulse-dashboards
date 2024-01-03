@@ -22,13 +22,14 @@ import { dateStringSchema } from "./schemaHelpers";
 export const clientEventSchema = z.object({
   eventDate: dateStringSchema,
   metricId: z.string(),
-  attributes: z
-    .object({
-      code: z.string().optional(),
-      description: z.string().optional(),
-    })
-    .nullable(),
+  attributes: z.object({
+    code: z.string().nullable(),
+    description: z.string().nullable(),
+  }),
 });
 
 export type ClientEvent = z.infer<typeof clientEventSchema>;
 export type RawClientEvent = z.input<typeof clientEventSchema>;
+export type ClientEventAttributes = z.infer<
+  typeof clientEventSchema.shape.attributes
+>;

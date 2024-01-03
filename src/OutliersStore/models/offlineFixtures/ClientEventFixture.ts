@@ -30,6 +30,7 @@ export const rawClientEventFixture: Array<RawClientEvent> = [
     metricId: "violation_responses",
     eventDate: "2023-05-12",
     attributes: {
+      code: null,
       description: "PAROLE REINSTATED",
     },
   },
@@ -45,7 +46,10 @@ export const rawClientEventFixture: Array<RawClientEvent> = [
   {
     metricId: "treatment_completion",
     eventDate: "2023-05-22",
-    attributes: null,
+    attributes: {
+      code: null,
+      description: null,
+    },
   },
 ];
 
