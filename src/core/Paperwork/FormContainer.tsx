@@ -25,7 +25,6 @@ import {
   spacing,
 } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
-import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
@@ -63,7 +62,7 @@ const LastEditedMessage = styled(Sans12)`
   width: 70%;
 `;
 
-const DownloadButton = styled(Button).attrs({
+export const DownloadButton = styled(Button).attrs({
   kind: "primary",
   shape: "block",
 })`
@@ -90,19 +89,23 @@ const FormPreviewContainer = styled.div`
   background-color: ${palette.pine1};
 `;
 
-type FormHeaderProps = {
+export type FormHeaderProps = {
   agencyName: string;
   dataProviso?: string;
   heading: string;
+  isMissingContent?: boolean;
   onClickDownload: () => Promise<void>;
   downloadButtonLabel: string;
   opportunity: OpportunityBase<any, any>;
   children: React.ReactNode;
 };
 
+export const RevertButton = DownloadButton;
+
 export const FormContainer = observer(function FormContainer({
   downloadButtonLabel,
   heading,
+  isMissingContent,
   onClickDownload,
   agencyName,
   dataProviso,
@@ -113,10 +116,37 @@ export const FormContainer = observer(function FormContainer({
     form,
     rootStore: { firestoreStore },
   } = opportunity;
-
+  const isDownloadButtonDisabled = isMissingContent || false;
   const { formRevertButton } = useFeatureVariants();
 
   if (!form) return <div />;
+
+  const handleDownloadClick = async () => {
+    form.markDownloading();
+
+    // Wait for any inputs to save their state
+    await new Promise((resolve) =>
+      setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
+    );
+
+    try {
+      if (!isMissingContent) {
+        await onClickDownload();
+      }
+    } catch (e) {
+      Sentry.captureException(e);
+    } finally {
+      form.formIsDownloading = false;
+    }
+  };
+
+  const createDownloadLabel = (
+    formIsDownloading: boolean,
+    buttonIsDisabled: boolean | undefined
+  ): string => {
+    if (buttonIsDisabled) return "Download Unavailable";
+    return formIsDownloading ? "Downloading..." : downloadButtonLabel;
+  };
 
   return (
     <FormContainerElement>
@@ -135,36 +165,23 @@ export const FormContainer = observer(function FormContainer({
         </FormHeaderSection>
         <FormHeaderSection>
           {formRevertButton && (
-            <DownloadButton
+            <RevertButton
               disabled={!form.formLastUpdated}
               className="WorkflowsFormActionButton"
               onClick={() => firestoreStore.clearFormDraftData(form)}
             >
               Revert All Edits
-            </DownloadButton>
+            </RevertButton>
           )}
           <DownloadButton
             className="WorkflowsFormActionButton"
-            disabled={form.formIsDownloading}
-            onClick={async () => {
-              form.markDownloading();
-
-              // Wait for any inputs to save their state
-              await new Promise((resolve) =>
-                setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
-              );
-
-              try {
-                await onClickDownload();
-              } catch (e) {
-                Sentry.captureException(e);
-              }
-              runInAction(() => {
-                form.formIsDownloading = false;
-              });
-            }}
+            disabled={isDownloadButtonDisabled || form.formIsDownloading}
+            onClick={handleDownloadClick}
           >
-            {form.formIsDownloading ? "Downloading..." : downloadButtonLabel}
+            {createDownloadLabel(
+              form.formIsDownloading,
+              isDownloadButtonDisabled
+            )}
           </DownloadButton>
         </FormHeaderSection>
       </FormHeaderBar>

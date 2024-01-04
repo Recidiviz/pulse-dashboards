@@ -16,7 +16,7 @@
 // =============================================================================
 import jsPDF from "jspdf";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { FormContainer } from "../Paperwork/FormContainer";
@@ -32,8 +32,13 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
   } = useRootStore();
 
   const form = useOpportunityFormContext();
-
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+  const [isMissingContent, setIsMissingContent] = useState(false);
+
+  useEffect(() => {
+    const pages = formRef.current?.querySelectorAll(PrintablePage);
+    setIsMissingContent(!(pages && pages.length > 0));
+  }, [formRef]);
 
   const onClickDownload = async () => {
     return generate(formRef.current, `${PrintablePage}`).then((pdf: jsPDF) => {
@@ -46,6 +51,7 @@ const WorkflowsCompliantReportingForm: React.FC = () => {
       heading="Compliant Reporting"
       agencyName="TDOC"
       downloadButtonLabel={form.downloadText}
+      isMissingContent={isMissingContent}
       onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}
     >
