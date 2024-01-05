@@ -587,7 +587,6 @@ describe("userAllowedNavigation", () => {
       [metadataField]: {
         stateCode,
         routes: {
-          system: true,
           system_prison: true,
           system_libertyToPrison: true,
         },
@@ -610,7 +609,6 @@ describe("userAllowedNavigation", () => {
       [metadataField]: {
         stateCode,
         routes: {
-          system: true,
           operations: true,
         },
       },
@@ -631,7 +629,6 @@ describe("userAllowedNavigation", () => {
       [metadataField]: {
         stateCode,
         routes: {
-          system: true,
           system_libertyToPrison: true,
           system_prison: false,
         },
@@ -656,7 +653,6 @@ describe("userAllowedNavigation", () => {
         [metadataField]: {
           stateCode,
           routes: {
-            system: true,
             system_prison: true,
             system_libertyToPrison: true,
             system_supervisionToPrison: true,

@@ -45,6 +45,7 @@ import {
   RoutePermission,
 } from "../core/types/navigation";
 import {
+  DASHBOARD_VIEWS,
   PATHWAYS_SECTIONS,
   PathwaysPageIdList,
   UNRESTRICTED_PAGES,
@@ -473,7 +474,9 @@ export default class UserStore {
         if (PathwaysPageIdList.includes(page)) {
           allowed.system?.splice(allowed.system?.indexOf(page), 1);
         }
-        delete allowed[page as NavigationSection];
+        // Do not delete the system view from allowed navigation if it exists
+        if (page !== DASHBOARD_VIEWS.system)
+          delete allowed[page as NavigationSection];
       }
     });
 
