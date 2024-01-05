@@ -189,9 +189,36 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         snoozedOn: formatDateToISO(startOfToday()),
       });
 
+  const savingWillUnsnooze = reasons.length === 0 && !reasonsUnchanged;
+
   const prompt = opportunity.isAlert
     ? `Please select the reason(s) ${opportunity.person?.displayPreferredName} should be overridden:`
     : `Which of the following requirements has ${opportunity.person?.displayPreferredName} not met?`;
+
+  const snoozeSection = (
+    <>
+      {maxManualSnoozeDays && (
+        <SliderWrapper>
+          <SliderLabel>Snooze for:</SliderLabel>
+          <Slider
+            data-testid="OpportunityDenialView__slider"
+            disabled={disableSlider}
+            max={maxManualSnoozeDays}
+            value={sliderDays}
+            onChange={handleSliderChange}
+            tooltipLabelFormatter={(currentValue) => `${currentValue} days`}
+          />
+        </SliderWrapper>
+      )}
+      {snoozeUntilDate !== undefined && (
+        <SnoozeUntilReminderText>
+          <div>{buildResurfaceText(opportunity, snoozeUntilDate)}</div>
+          <br />
+          <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
+        </SnoozeUntilReminderText>
+      )}
+    </>
+  );
 
   return (
     <SidePanelContents
@@ -258,26 +285,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           </OtherReasonSection>
         )}
       </>
-      {snoozeEnabled && maxManualSnoozeDays && (
-        <SliderWrapper>
-          <SliderLabel>Snooze for:</SliderLabel>
-          <Slider
-            data-testid="OpportunityDenialView__slider"
-            disabled={disableSlider}
-            max={maxManualSnoozeDays}
-            value={sliderDays}
-            onChange={handleSliderChange}
-            tooltipLabelFormatter={(currentValue) => `${currentValue} days`}
-          />
-        </SliderWrapper>
-      )}
-      {snoozeEnabled && snoozeUntilDate !== undefined && (
-        <SnoozeUntilReminderText>
-          <div>{buildResurfaceText(opportunity, snoozeUntilDate)}</div>
-          <br />
-          <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
-        </SnoozeUntilReminderText>
-      )}
+      {snoozeEnabled && !savingWillUnsnooze && snoozeSection}
       <ActionButton
         data-testid="OpportunityDenialView__button"
         disabled={disableSaveButton}
