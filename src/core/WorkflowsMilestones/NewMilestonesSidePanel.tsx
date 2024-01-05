@@ -14,9 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { useState } from "react";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { TextMessageStatus, TextMessageStatuses } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import ComposeMessageView from "./ComposeMessage";
@@ -36,12 +38,32 @@ interface NewMilestonesSidePanelProps {
   client: Client;
 }
 
+const messageAlreadySent = (status: TextMessageStatus | undefined): boolean => {
+  return (
+    !!status &&
+    [TextMessageStatuses.SUCCESS, TextMessageStatuses.IN_PROGRESS].includes(
+      status
+    )
+  );
+};
+
 const NewMilestonesSidePanel = function NewMilestonesSidePanel({
   client,
 }: NewMilestonesSidePanelProps): JSX.Element {
   const { workflowsStore } = useRootStore();
   const [currentView, setCurrentView] =
-    useState<NEW_MILESTONES_SIDE_PANEL_VIEW>("COMPOSING");
+    useState<NEW_MILESTONES_SIDE_PANEL_VIEW>(
+      messageAlreadySent(client.milestoneMessagesUpdates?.status)
+        ? "MESSAGE_SENT"
+        : "COMPOSING"
+    );
+
+  // This ensures that the status doesn't get into a weird state if two people are viewing/editing the
+  // same client's ComposeMessageView simultaneously
+  useEffect(() => {
+    if (messageAlreadySent(client.milestoneMessagesUpdates?.status))
+      setCurrentView("MESSAGE_SENT");
+  }, [client.milestoneMessagesUpdates?.status]);
 
   switch (currentView) {
     case "COMPOSING":
@@ -105,4 +127,4 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
   }
 };
 
-export default NewMilestonesSidePanel;
+export default observer(NewMilestonesSidePanel);
