@@ -25,6 +25,7 @@
         "sentenceType": "PAROLE"
       }
     },
+    "ineligibleCriteria": {},
     "caseNotes": {
       "Treatment": [
         {
@@ -94,6 +95,7 @@
         "sentenceType": "PAROLE"
       }
     },
+    "ineligibleCriteria": {},
     "caseNotes": {
       "Treatment": [
         {
