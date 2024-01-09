@@ -23,6 +23,7 @@ import {
   QuerySnapshot,
   Unsubscribe,
 } from "firebase/firestore";
+import { defer } from "lodash";
 import {
   action,
   computed,
@@ -35,6 +36,8 @@ import {
 } from "mobx";
 import { IDisposer } from "mobx-utils";
 
+import { HydrationState } from "../../core/models/types";
+import { isHydrationInProgress } from "../../core/models/utils";
 import { FeatureGateError } from "../../errors";
 import {
   QuerySubscription,
@@ -67,19 +70,20 @@ export abstract class FirestoreQuerySubscription<
       data: observable,
       dataSource: computed,
       updateData: action,
-      isLoading: observable,
-      isHydrated: observable,
-      error: observable,
       subscribe: action,
+      unsubscribe: action,
       resetHydration: action,
+      hydrate: action,
+      hydrationState: observable,
     });
 
     this.transformRecord = transformFunction;
 
     this.validateRecord = validateFunction;
 
-    onBecomeObserved(this, "data", () => this.subscribe());
-    onBecomeUnobserved(this, "data", () => this.unsubscribe());
+    // run side effects async in case they cause state updates, to avoid render disruptions
+    onBecomeObserved(this, "data", () => defer(() => this.subscribe()));
+    onBecomeUnobserved(this, "data", () => defer(() => this.unsubscribe()));
   }
 
   protected updateData(snapshot: QuerySnapshot | undefined): void {
@@ -109,23 +113,28 @@ export abstract class FirestoreQuerySubscription<
     });
 
     this.data = docs;
-    this.error = errors.length ? new AggregateError(errors) : undefined;
-
-    this.isHydrated = true;
-    this.isLoading = false;
+    // regardless of errors we always consider this hydrated
+    this.hydrationState = { status: "hydrated" };
   }
 
   get isActive(): boolean {
     return this.cancelSnapshotListener !== undefined;
   }
 
+  /**
+   * Activates a listener on `this.dataSource`. Safe to call repeatedly: it will not
+   * create a redundant listener if one is already active.
+   */
   subscribe(): void {
-    // `subscribe`, on its own, will not re-subscribe if a listener already exists;
-    // replacing the subscription with a new one requires further orchestration,
-    // as seen in the reaction defined below.
-    if (this.isActive || this.isLoading) return;
+    if (
+      this.isActive ||
+      // if the subscription is inactive, we will rehydrate if we're already hydrated
+      // or failed. This is different from fetch-based hydration flows
+      isHydrationInProgress(this)
+    )
+      return;
 
-    this.isLoading = true;
+    this.hydrationState = { status: "loading" };
 
     if (!this.dataSource) {
       this.updateData(undefined);
@@ -137,9 +146,7 @@ export abstract class FirestoreQuerySubscription<
           runInAction(() => {
             // an error that occurs after data is fetched is considered a partial failure,
             // but this one means that the fetch operation itself failed and therefore so does hydration.
-            this.error = error;
-            this.isHydrated = false;
-            this.isLoading = false;
+            this.hydrationState = { status: "failed", error };
             this.data = [];
           });
           Sentry.captureException(error);
@@ -159,9 +166,11 @@ export abstract class FirestoreQuerySubscription<
   }
 
   unsubscribe(): void {
-    runInAction(() => {
-      this.isLoading = false;
-    });
+    // if we are unsubscribing before receiving any data, ensure that we
+    // return to the initial hydration state. Otherwise leave it as is
+    if (isHydrationInProgress(this)) {
+      this.resetHydration();
+    }
     this.cancelSnapshotListener?.();
     this.cancelSnapshotListener = undefined;
     this.disposeDynamicDataSource?.();
@@ -171,15 +180,9 @@ export abstract class FirestoreQuerySubscription<
     this.subscribe();
   }
 
-  isLoading: boolean | undefined = undefined;
-
-  error: Error | undefined = undefined;
-
-  isHydrated = false;
+  hydrationState: HydrationState = { status: "needs hydration" };
 
   resetHydration(): void {
-    this.isLoading = false;
-    this.isHydrated = false;
-    this.error = undefined;
+    this.hydrationState = { status: "needs hydration" };
   }
 }

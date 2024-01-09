@@ -66,7 +66,7 @@ describe("fully eligible", () => {
     createTestUnit(usMePersonRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = usMeFurloughReleaseEligibleRecordFixture;
   });
 

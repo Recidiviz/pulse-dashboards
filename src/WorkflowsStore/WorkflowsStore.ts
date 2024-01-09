@@ -22,7 +22,6 @@ import { ascending } from "d3-array";
 import {
   difference,
   groupBy,
-  identity,
   intersection,
   mapValues,
   pick,
@@ -40,13 +39,19 @@ import {
 } from "mobx";
 
 import {
-  Hydratable,
+  HydrationState,
+  HydrationStateMachine,
   Searchable,
   SearchType,
   SystemId,
   WorkflowsSystemConfig,
 } from "../core/models/types";
-import { isHydrationFinished } from "../core/models/utils";
+import {
+  compositeHydrationState,
+  hydrationFailure,
+  isHydrated,
+  isHydrationFinished,
+} from "../core/models/utils";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
@@ -64,6 +69,7 @@ import {
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
+import { castToError } from "../utils/castToError";
 import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
@@ -96,10 +102,10 @@ import { staffNameComparator } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
 
-export class WorkflowsStore implements Hydratable {
+export class WorkflowsStore implements HydrationStateMachine {
   rootStore: RootStore;
 
-  private hydrationError?: unknown;
+  private hydrationError?: Error;
 
   userSubscription: UserSubscription;
 
@@ -229,17 +235,27 @@ export class WorkflowsStore implements Hydratable {
       }
       this.userUpdatesSubscription.hydrate();
     } catch (e) {
-      this.hydrationError = e;
+      this.hydrationError = castToError(e);
     }
   }
 
-  get isHydrated(): boolean {
-    return !!(
-      this.userSubscription.isHydrated &&
-      this.userUpdatesSubscription?.isHydrated &&
-      // error and hydration are mutually exclusive for this class
-      !this.error
-    );
+  get hydrationState(): HydrationState {
+    if (this.hydrationError) {
+      return { status: "failed", error: this.hydrationError };
+    }
+    if (!this.userUpdatesSubscription) {
+      const userErr = hydrationFailure(this.userSubscription);
+
+      if (userErr) {
+        return { status: "failed", error: userErr };
+      }
+      return { status: "needs hydration" };
+    }
+
+    return compositeHydrationState([
+      this.userSubscription,
+      this.userUpdatesSubscription,
+    ]);
   }
 
   disposeUserProfileSubscriptions(): void {
@@ -248,29 +264,8 @@ export class WorkflowsStore implements Hydratable {
     this.userUpdatesSubscription = undefined;
   }
 
-  get isLoading(): boolean | undefined {
-    const subsLoading = [
-      this.userSubscription.isLoading,
-      this.userUpdatesSubscription?.isLoading,
-    ];
-
-    if (subsLoading.some((status) => status === undefined)) return undefined;
-
-    return subsLoading.some(identity);
-  }
-
-  get error(): Error | undefined {
-    const errorSources = [
-      this.hydrationError,
-      this.userSubscription.error,
-      this.userUpdatesSubscription?.error,
-    ].filter(identity);
-
-    if (errorSources.length) return new AggregateError(errorSources);
-  }
-
   get user(): CombinedUserRecord | undefined {
-    if (!this.isHydrated) return undefined;
+    if (!isHydrated(this)) return undefined;
 
     const [info] = this.userSubscription.data;
 
@@ -600,11 +595,9 @@ export class WorkflowsStore implements Hydratable {
   }
 
   caseloadLoaded(): boolean {
-    return (
+    return Boolean(
       this.caseloadPersons.length > 0 ||
-      (this.caseloadSubscription?.every((s) => s.isHydrated) &&
-        !this.caseloadSubscription.some((s) => s.isLoading)) ||
-      false
+        this.caseloadSubscription?.every((s) => isHydrated(s))
     );
   }
 
@@ -612,7 +605,7 @@ export class WorkflowsStore implements Hydratable {
     // Wait until we have an active caseload before checking that tasks are loading.
     if (!this.caseloadLoaded()) return false;
     return this.caseloadPersons.every(
-      (person) => person.supervisionTasks?.isHydrated
+      (person) => person.supervisionTasks && isHydrated(person.supervisionTasks)
     );
   }
 
@@ -720,12 +713,11 @@ export class WorkflowsStore implements Hydratable {
    */
   get opportunityTypes(): OpportunityType[] {
     const {
-      isHydrated,
       rootStore: { currentTenantId },
       activeSystem,
       featureVariants,
     } = this;
-    if (!isHydrated || !currentTenantId || !activeSystem) return [];
+    if (!isHydrated(this) || !currentTenantId || !activeSystem) return [];
 
     const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
     const activeSystemFilters: Record<SystemId, Partial<OpportunityType>[]> = {
@@ -751,8 +743,9 @@ export class WorkflowsStore implements Hydratable {
   get hasSupervisionTasks(): boolean {
     return this.caseloadPersons.some((person) => {
       return (
-        person.supervisionTasks?.isHydrated &&
-        person.supervisionTasks?.tasks.length > 0
+        person.supervisionTasks &&
+        isHydrated(person.supervisionTasks) &&
+        person.supervisionTasks.tasks.length > 0
       );
     });
   }

@@ -70,11 +70,11 @@ describe("Annual Reclassification Opportunity for fully eligible resident", () =
     createTestUnit(UsTnAnnualReclassificationEligibleResidentRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = UsTnAnnualReclassificationReferralRecordFixture01;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {

@@ -83,16 +83,18 @@ describe("form downloading", () => {
 
     expect(rootStore.workflowsStore.formIsDownloading).toBe(true);
   });
+});
 
+describe("record form download", () => {
   test("updates opportunity status", () => {
     jest.spyOn(opp, "setCompletedIfEligible");
-    form.markDownloading();
+    form.recordSuccessfulDownload();
 
     expect(opp.setCompletedIfEligible).toHaveBeenCalled();
   });
 
   test("sends tracking event", () => {
-    form.markDownloading();
+    form.recordSuccessfulDownload();
     expect(
       rootStore.analyticsStore.trackReferralFormDownloaded
     ).toHaveBeenCalledWith({

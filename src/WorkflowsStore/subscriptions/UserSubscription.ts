@@ -179,9 +179,10 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     if (user && this.userWithoutCaseload) {
       return super.updateData(mockOverrideSnapshot(this.userWithoutCaseload));
     }
-    this.isLoading = false;
-    this.isHydrated = false;
-    this.error = new Error("No user record found");
+    this.hydrationState = {
+      status: "failed",
+      error: new Error("No user record found"),
+    };
     this.data = [];
   }
 }

@@ -71,11 +71,11 @@ describe("fully eligible resident", () => {
     createTestUnit(UsTnCustodyLevelDowngradeEligibleResidentRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = UsTnCustodyLevelDowngradeReferralRecordFixture;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {

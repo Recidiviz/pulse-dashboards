@@ -21,6 +21,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { isHydrated } from "../models/utils";
 
 type TasksHydrator = {
   initial: React.ReactNode;
@@ -40,8 +41,9 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
     () =>
       autorun(() => {
         workflowsStore.caseloadPersons.forEach((person) => {
-          if (!person.supervisionTasks?.isHydrated)
-            person.supervisionTasks?.hydrate();
+          if (person.supervisionTasks && !isHydrated(person.supervisionTasks)) {
+            person.supervisionTasks.hydrate();
+          }
         });
       }),
     [workflowsStore]

@@ -55,7 +55,6 @@ import { Divider } from "./styles";
 type OpportunitySidebarProfileProps = {
   opportunity?: Opportunity;
   formLinkButton?: boolean;
-  formPrintButton?: boolean;
   formView?: boolean;
   onDenialButtonClick?: () => void;
 };
@@ -119,7 +118,6 @@ export type OpportunityProfileModuleName =
 export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
   observer(function OpportunitySidebarProfile({
     formLinkButton = false,
-    formPrintButton = false,
     formView = false,
     onDenialButtonClick = () => null,
     opportunity,
@@ -151,7 +149,6 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
           <OpportunityModule
             opportunity={opportunity}
             formLinkButton={formLinkButton}
-            formDownloadButton={formPrintButton}
           />
         )}
         {opportunity.opportunityProfileModules.map((componentName) => {

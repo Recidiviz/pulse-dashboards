@@ -17,7 +17,7 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { Hydratable } from "../../core/models/types";
+import { HydrationStateMachine } from "../../core/models/types";
 
 export interface Subscription<DataFormat> {
   data: DataFormat;
@@ -27,11 +27,11 @@ export interface Subscription<DataFormat> {
 
 export interface DocumentSubscription<DataFormat>
   extends Subscription<DataFormat | undefined>,
-    Hydratable {}
+    HydrationStateMachine {}
 
 export interface QuerySubscription<DataFormat>
   extends Subscription<DataFormat[]>,
-    Hydratable {}
+    HydrationStateMachine {}
 
 export type TransformFunction<DataFormat> = (
   rawRecord: DocumentData

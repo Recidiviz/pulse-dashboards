@@ -106,10 +106,11 @@ export class FormBase<
   }
 
   markDownloading(): void {
-    this.opportunity?.setCompletedIfEligible();
-
     this.formIsDownloading = true;
+  }
 
+  recordSuccessfulDownload(): void {
+    this.opportunity?.setCompletedIfEligible();
     this.rootStore.analyticsStore.trackReferralFormDownloaded({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,

@@ -17,6 +17,7 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 import * as Sentry from "@sentry/react";
+import { waitFor } from "@testing-library/dom";
 import {
   DocumentReference,
   FirestoreError,
@@ -84,14 +85,14 @@ test("results", () => {
   expect(sub.data).toBeUndefined();
 });
 
-test("subscription responds to observation", () => {
+test("subscription responds to observation", async () => {
   // simulates the data being observed in a datastore or component
   const testObserver = keepAlive(computed(() => sub.data));
-  expect(onSnapshot).toHaveBeenCalled();
+  await waitFor(() => expect(onSnapshot).toHaveBeenCalled());
 
   // disposes of the observation
   testObserver();
-  expect(cancelSnapshotMock).toHaveBeenCalled();
+  await waitFor(() => expect(cancelSnapshotMock).toHaveBeenCalled());
 });
 
 test("no duplicate listeners", () => {
@@ -103,15 +104,15 @@ test("no duplicate listeners", () => {
 test("hydration", () => {
   const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
 
-  expect(sub.isLoading).toBeUndefined();
+  expect(sub.hydrationState.status).toBe("needs hydration");
 
   sub.hydrate();
 
-  expect(sub.isLoading).toBe(true);
+  expect(sub.hydrationState.status).toBe("loading");
 
   mockReceive({});
 
-  expect(sub.isLoading).toBe(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("no data transformer or validation function required", () => {
@@ -154,7 +155,7 @@ test("does not throw an error for undefined records when transformFn provided", 
   sub.subscribe();
 
   mockReceive(mockData);
-  expect(sub.error).toBeUndefined();
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("passes empty object through instead of detecting as falsy", () => {
@@ -203,9 +204,7 @@ test("raw data fails validation", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual(undefined);
-  expect(sub.isHydrated).toEqual(false);
-  expect(sub.error).toEqual(testError);
-  expect(sub.isLoading).toEqual(false);
+  expect(sub.hydrationState).toEqual({ status: "failed", error: testError });
 });
 
 test("transform errors logged to Sentry", () => {
@@ -279,9 +278,7 @@ test("raw data passes validation", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual(mockData);
-  expect(sub.isHydrated).toEqual(true);
-  expect(sub.error).toEqual(undefined);
-  expect(sub.isLoading).toEqual(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("validator is not called on undefined data", () => {
@@ -297,9 +294,7 @@ test("validator is not called on undefined data", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual(mockData);
-  expect(sub.isHydrated).toEqual(true);
-  expect(sub.error).toEqual(undefined);
-  expect(sub.isLoading).toEqual(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("stale data cleared when validation fails", () => {
@@ -317,7 +312,7 @@ test("stale data cleared when validation fails", () => {
   expect(sub.data).toBeDefined();
   mockReceive({ bar: "foo" });
   expect(sub.data).toBeUndefined();
-  expect(sub.error).toBeDefined();
+  expect(sub.hydrationState.status).toBe("failed");
 });
 
 test("handles Firestore error", () => {
@@ -331,9 +326,7 @@ test("handles Firestore error", () => {
 
   mockReceiveError(testError);
   expect(Sentry.captureException).toHaveBeenCalledOnceWith(testError);
-  expect(sub.error).toEqual(testError);
-  expect(sub.isHydrated).toBe(false);
-  expect(sub.isLoading).toBeFalse();
+  expect(sub.hydrationState).toEqual({ status: "failed", error: testError });
   expect(sub.data).toBeUndefined();
 });
 
@@ -353,7 +346,5 @@ test("update function is called with record", () => {
   mockReceive(mockData);
   expect(testUpdateFn).toHaveBeenCalledWith(mockData);
   expect(sub.data).toEqual(mockData);
-  expect(sub.isHydrated).toEqual(true);
-  expect(sub.error).toEqual(undefined);
-  expect(sub.isLoading).toEqual(false);
+  expect(sub.hydrationState.status).toBe("hydrated");
 });

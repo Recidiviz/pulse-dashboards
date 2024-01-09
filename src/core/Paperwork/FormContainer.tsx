@@ -132,6 +132,7 @@ export const FormContainer = observer(function FormContainer({
     try {
       if (!isMissingContent) {
         await onClickDownload();
+        form.recordSuccessfulDownload();
       }
     } catch (e) {
       Sentry.captureException(e);

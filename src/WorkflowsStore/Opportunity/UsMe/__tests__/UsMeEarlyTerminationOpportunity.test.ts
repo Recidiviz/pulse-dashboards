@@ -74,11 +74,11 @@ describe("fully eligible", () => {
     createTestUnit(usMeEarlyTerminationEligibleClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data = usMeEarlyTerminationReferralRecord;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {
@@ -95,12 +95,12 @@ describe("almost eligible restitution owed", () => {
     createTestUnit(usMeEarlyTerminationAlmostEligibleRestitutionClientRecord);
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data =
       usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {
@@ -129,12 +129,12 @@ describe("almost eligible pending violation", () => {
     );
 
     referralSub = opp.referralSubscription;
-    referralSub.isLoading = false;
+    referralSub.hydrationState = { status: "hydrated" };
     referralSub.data =
       usMeEarlyTerminationViolationAlmostEligibleReferralRecord;
 
     updatesSub = opp.updatesSubscription;
-    updatesSub.isLoading = false;
+    updatesSub.hydrationState = { status: "hydrated" };
   });
 
   test("requirements almost met", () => {

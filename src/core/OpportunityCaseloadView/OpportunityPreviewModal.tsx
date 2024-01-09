@@ -49,7 +49,6 @@ export function OpportunityPreviewModal({
           <OpportunityProfile
             opportunity={opportunity}
             formLinkButton={!!opportunity?.form}
-            formPrintButton={false}
           />
         }
       />
@@ -71,7 +70,6 @@ export function OpportunityPreviewModal({
             <OpportunityProfile
               opportunity={opportunity}
               formLinkButton={!!opportunity?.form}
-              formPrintButton={false}
               onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
             />
           }

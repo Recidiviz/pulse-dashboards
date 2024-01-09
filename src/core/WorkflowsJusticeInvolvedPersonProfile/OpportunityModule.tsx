@@ -78,7 +78,6 @@ const FormActionButton = styled(Button).attrs({
 
 type OpportunityModuleProps = {
   formLinkButton?: boolean;
-  formDownloadButton?: boolean;
   // form-related features (e.g. download button) are optional, but the corresponding fields
   // do need to be hydrated if you are trying to use any of them
   opportunity: Opportunity;
@@ -89,7 +88,6 @@ type OpportunityModuleProps = {
 export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
   function OpportunityModule({
     formLinkButton,
-    formDownloadButton,
     opportunity,
     hideHeader = false,
     onDenialButtonClick = () => null,
@@ -121,7 +119,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             denialReasons={opportunity.denial?.reasons}
           />
         )}
-        {(formDownloadButton || showDenialButton || formLinkButton) && (
+        {(showDenialButton || formLinkButton) && (
           <ActionButtons isMobile={!!responsiveRevamp && isLaptop}>
             {formLinkButton && opportunity?.form && (
               <Link
@@ -144,17 +142,6 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                   {opportunity.form.navigateToFormText}
                 </FormActionButton>
               </Link>
-            )}
-            {formDownloadButton && opportunity.form && (
-              <div>
-                <FormActionButton
-                  className="WorkflowsFormActionButton"
-                  buttonFill={colors.buttonFill}
-                  onClick={() => opportunity.form?.markDownloading()}
-                >
-                  {opportunity.form.downloadText}
-                </FormActionButton>
-              </div>
             )}
             {responsiveRevamp
               ? showDenialButton &&
