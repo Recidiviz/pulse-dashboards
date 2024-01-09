@@ -732,8 +732,12 @@ export class WorkflowsStore implements HydrationStateMachine {
         activeSystemFilters[activeSystem].includes(oppType);
       if (!isInSystem) return false;
 
-      const gatingVariant = OPPORTUNITY_CONFIGS[oppType]?.featureVariant;
-      return !gatingVariant || featureVariants[gatingVariant];
+      const { featureVariant, inverseFeatureVariant } =
+        OPPORTUNITY_CONFIGS[oppType];
+      return (
+        (!featureVariant || featureVariants[featureVariant]) &&
+        (!inverseFeatureVariant || !featureVariants[inverseFeatureVariant])
+      );
     });
   }
 

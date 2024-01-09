@@ -25,6 +25,7 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
     systemType: "INCARCERATION",
     stateCode: "US_MO",
     urlSection: "restrictiveHousingStatusHearing",
+    inverseFeatureVariant: "usMoOverdueRHPilot",
     label: "Restrictive Housing Status Hearing",
     snooze: {
       defaultSnoozeUntilFn: (snoozedOn: Date) => nextMonday(snoozedOn),

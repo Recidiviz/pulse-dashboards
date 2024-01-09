@@ -32,7 +32,7 @@ import FirestoreStore, {
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
-import { FeatureVariant } from "../../RootStore/types";
+import { FeatureVariant, TenantId } from "../../RootStore/types";
 import type {
   IncarcerationOpportunityType,
   OpportunityType,
@@ -120,7 +120,10 @@ const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
     availableStateCodes: ["US_ME"],
   },
   US_MO: {
-    opportunityTypes: ["usMoRestrictiveHousingStatusHearing"],
+    opportunityTypes: [
+      "usMoRestrictiveHousingStatusHearing",
+      "usMoOverdueRestrictiveHousingRelease",
+    ],
     workflowsSupportedSystems: ["INCARCERATION"],
     workflowsSystemConfigs: {
       INCARCERATION: {
@@ -826,6 +829,26 @@ describe("hasOpportunities", () => {
   });
 });
 
+const setUser = (
+  featureVariants: any,
+  stateCode = "US_BB",
+  routes: Record<string, boolean> = {
+    workflowsSupervision: true,
+    workflowsFacilities: true,
+  }
+) => {
+  rootStore.userStore.user = {
+    email: "foo@example.com",
+    [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+      stateCode,
+      featureVariants,
+      routes,
+    },
+  };
+  rootStore.userStore.isAuthorized = true;
+  rootStore.userStore.userIsLoading = false;
+};
+
 describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByFeatureVariants testing", () => {
   const SESSION_STATE_CODE = "US_BB" as any;
   const TEST_GATED_SYSTEM = "INCARCERATION";
@@ -839,25 +862,6 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
     SESSION_SUPPORTED_SYSTEMS,
     SESSION_SYSTEMS_WITH_GATES
   );
-  const setUser = (
-    featureVariants: any,
-    stateCode = SESSION_STATE_CODE,
-    routes: Record<string, boolean> = {
-      workflowsSupervision: true,
-      workflowsFacilities: true,
-    }
-  ) => {
-    rootStore.userStore.user = {
-      email: "foo@example.com",
-      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
-        stateCode,
-        featureVariants,
-        routes,
-      },
-    };
-    rootStore.userStore.isAuthorized = true;
-    rootStore.userStore.userIsLoading = false;
-  };
 
   beforeEach(async () => {
     runInAction(() => {
@@ -977,6 +981,72 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
       workflowsFacilities: false,
     });
     expect(workflowsStore.workflowsSupportedSystems).toEqual([]);
+  });
+});
+
+describe("test state-specific opportunity type feature variant filters", () => {
+  beforeEach(() => {
+    configure({ safeDescriptors: false });
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    configure({ safeDescriptors: true });
+    jest.useRealTimers();
+  });
+  describe("for US_XX", () => {
+    const SESSION_STATE_CODE = "US_XX";
+    beforeEach(async () => {
+      runInAction(() => {
+        workflowsStore.updateActiveSystem("SUPERVISION");
+        rootStore.tenantStore.currentTenantId = SESSION_STATE_CODE as TenantId;
+      });
+      await waitForHydration({ ...mockOfficer });
+    });
+
+    test("US_XX oppTypes list does not include compliantReporting", async () => {
+      // should be in the list when the feat var isn't on
+      expect(
+        workflowsStore.opportunityTypes.includes("compliantReporting")
+      ).toBeTruthy();
+
+      // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
+      OPPORTUNITY_CONFIGS.compliantReporting.inverseFeatureVariant =
+        "fakeFeatVar" as FeatureVariant;
+
+      setUser({ fakeFeatVar: {} }, SESSION_STATE_CODE);
+      // should no longer be in the list with inverse setting on now.
+      expect(
+        workflowsStore.opportunityTypes.includes("compliantReporting")
+      ).toBeFalsy();
+      OPPORTUNITY_CONFIGS.compliantReporting.inverseFeatureVariant = undefined;
+    });
+  });
+
+  describe("for US_MO", () => {
+    const SESSION_STATE_CODE = "US_MO";
+
+    beforeEach(async () => {
+      runInAction(() => {
+        workflowsStore.updateActiveSystem("INCARCERATION");
+        rootStore.tenantStore.currentTenantId = SESSION_STATE_CODE;
+      });
+      await waitForHydration({ ...mockOfficer });
+    });
+
+    test("US_MO opp does not include usMoOverdueRestrictiveHousingRelease", async () => {
+      setUser({ usMoOverdueRHPilot: {} }, SESSION_STATE_CODE);
+      expect(workflowsStore.opportunityTypes).toEqual([
+        "usMoOverdueRestrictiveHousingRelease",
+      ]);
+    });
+
+    test("includes all non-gated opportunityTypes", async () => {
+      setUser({}, SESSION_STATE_CODE);
+      expect(workflowsStore.opportunityTypes).toEqual([
+        "usMoRestrictiveHousingStatusHearing",
+      ]);
+    });
   });
 });
 

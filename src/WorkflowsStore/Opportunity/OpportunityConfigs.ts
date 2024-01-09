@@ -111,6 +111,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   stateCode: TenantId;
   urlSection: string;
   featureVariant?: FeatureVariant;
+  inverseFeatureVariant?: FeatureVariant;
   label: string;
   firestoreCollection: string;
   snooze?: SnoozeConfig;
