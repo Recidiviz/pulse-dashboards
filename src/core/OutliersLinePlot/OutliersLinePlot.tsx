@@ -25,6 +25,7 @@ import { rem } from "polished";
 import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components/macro";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import { TargetStatus } from "../../OutliersStore/models/schemaHelpers";
 import { MetricWithConfig } from "../../OutliersStore/presenters/types";
 import { formatDate, formatPercent, getTicks } from "../../utils";
@@ -45,6 +46,7 @@ const Wrapper = styled.div`
     }
 
     .axis.bottom {
+      transform: translateX(4px);
     }
 
     .axis.left {
@@ -136,6 +138,16 @@ const formatDateToYearRange = (date: Date): string => {
   )}`;
 };
 
+const reduceBottomTicks = (ticks: Date[], isMobile: boolean) => {
+  const result = ticks.filter((_, index: number) =>
+    isMobile ? index % 2 !== 0 : index % 2 === 0
+  );
+  if (isMobile ? ticks.length % 2 === 0 : ticks.length % 2 !== 0)
+    return result.slice(0, -1);
+
+  return result;
+};
+
 type OutliersLinePlotType = {
   metric: MetricWithConfig;
 };
@@ -147,6 +159,8 @@ type Point = {
 };
 
 const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
+  const { isMobile, isLaptop } = useIsMobile(true);
+
   const usersPoints: Point[] = metric.statusesOverTime.map((d) => ({
     date: d.endDate,
     value: d.metricRate * 100,
@@ -169,10 +183,12 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
   const { beginDate, endDate } = getDateRange(
     statewidePoints[0]?.date,
     statewidePoints.slice(-1)[0]?.date,
-    10
+    16
   );
 
   const bottomTickValues = statewidePoints.map((d) => d.date);
+  const reducedBottomTickValues = reduceBottomTicks(bottomTickValues, isMobile);
+
   const { maxTickValue } = getTicks(
     Math.max(...usersPoints.concat(statewidePoints).map((d) => d.value))
   );
@@ -244,7 +260,7 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
           {
             orient: "bottom",
             // @ts-ignore
-            tickValues: bottomTickValues,
+            tickValues: isLaptop ? reducedBottomTickValues : bottomTickValues,
             tickFormat: (d: Date) => formatDateToYearRange(d),
           },
         ]}
