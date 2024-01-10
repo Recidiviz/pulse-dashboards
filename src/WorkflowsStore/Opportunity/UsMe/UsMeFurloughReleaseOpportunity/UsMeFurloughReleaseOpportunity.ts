@@ -26,7 +26,11 @@ import { OTHER_KEY } from "../../../utils";
 import { UsMeFurloughReleaseForm } from "../../Forms/UsMeFurloughReleaseForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
+import {
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "../../utils/criteriaUtils";
 import {
   UsMeFurloughReleaseReferralRecord,
   usMeFurloughReleaseSchema,

@@ -26,7 +26,11 @@ import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityType } from "./OpportunityConfigs";
 import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
-import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "./utils";
+import {
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "./utils/criteriaUtils";
 
 const CRITERIA_FORMATTERS: CriteriaFormatters<BasePastFTRDReferralRecord> = {
   eligibleCriteria: {

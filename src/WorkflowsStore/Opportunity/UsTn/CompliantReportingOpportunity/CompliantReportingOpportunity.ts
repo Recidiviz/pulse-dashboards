@@ -38,7 +38,7 @@ import {
   OpportunityRequirement,
   OpportunityStatus,
 } from "../../types";
-import { formatNoteDate } from "../../utils";
+import { formatNoteDate } from "../../utils/caseNotesUtils";
 import {
   AlmostEligibleCriteria,
   CompliantReportingDraftData,

@@ -29,11 +29,11 @@ import {
   OpportunityType,
 } from "../OpportunityConfigs";
 import { Opportunity } from "../types";
+import { monthsOrDaysRemainingFromToday } from "../utils/criteriaUtils";
 import {
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
-  monthsOrDaysRemainingFromToday,
-} from "../utils";
+} from "../utils/generateHeadersUtils";
 
 jest.mock("../../subscriptions");
 jest.mock("firebase/firestore");

@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { CopyTuple } from "../utils";
+import { CopyTuple } from "../utils/criteriaUtils";
 
 export const custodyLevelIsMinimum = z.object({
   custodyLevel: z.string(),

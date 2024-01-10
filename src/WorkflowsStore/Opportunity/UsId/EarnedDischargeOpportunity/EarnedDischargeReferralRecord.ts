@@ -20,7 +20,7 @@ import { camelCase, cloneDeep } from "lodash";
 import { TransformFunction } from "../../../subscriptions";
 import { fieldToDate } from "../../../utils";
 import { WithCaseNotes } from "../../types";
-import { transformCaseNotes } from "../../utils";
+import { transformCaseNotes } from "../../utils/caseNotesUtils";
 import {
   LSUEarnedDischargeEligibleCriteria,
   LSUEarnedDischargeIneligibleCriteria,

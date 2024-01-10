@@ -25,7 +25,7 @@ import { OTHER_KEY } from "../../../utils";
 import { UsIdEarnedDischargeForm } from "../../Forms/UsIdEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import { monthsOrDaysRemainingFromToday } from "../../utils";
+import { monthsOrDaysRemainingFromToday } from "../../utils/criteriaUtils";
 import {
   LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
   LSUEarnedDischargeCommonRequirementsMet,

@@ -3,7 +3,10 @@ import { format as formatPhone } from "phone-fns";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { LSUDraftData, LSUOpportunity } from "../UsId";
-import { defaultFormValueJoiner, formatFormValueDateMMDDYYYYY } from "../utils";
+import {
+  defaultFormValueJoiner,
+  formatFormValueDateMMDDYYYYY,
+} from "../utils/formUtils";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {

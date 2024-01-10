@@ -24,7 +24,7 @@ import {
   optionalFieldToDateArray,
 } from "../../../utils";
 import { WithCaseNotes } from "../../types";
-import { transformCaseNotes } from "../../utils";
+import { transformCaseNotes } from "../../utils/caseNotesUtils";
 
 export type LSUEarnedDischargeEligibleCriteria = {
   negativeUaWithin90Days: {

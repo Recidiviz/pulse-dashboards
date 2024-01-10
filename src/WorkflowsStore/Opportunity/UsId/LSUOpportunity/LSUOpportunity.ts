@@ -25,7 +25,7 @@ import { OTHER_KEY } from "../../../utils";
 import { LSUForm } from "../../Forms/LSUForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import { monthsOrDaysRemainingFromToday } from "../../utils";
+import { monthsOrDaysRemainingFromToday } from "../../utils/criteriaUtils";
 import { INELIGIBLE_CRITERIA_COPY } from "../EarnedDischargeOpportunity";
 import {
   LSUDraftData,

@@ -24,7 +24,11 @@ import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../..";
 import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
+import {
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "../../utils/criteriaUtils";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
   UsTnAnnualReclassificationReviewReferralRecord,

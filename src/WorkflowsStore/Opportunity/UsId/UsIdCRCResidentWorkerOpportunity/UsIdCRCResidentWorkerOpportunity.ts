@@ -22,7 +22,7 @@ import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeI
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
-import { CriteriaCopy, hydrateCriteria } from "../../utils";
+import { CriteriaCopy, hydrateCriteria } from "../../utils/criteriaUtils";
 import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase";
 import {
   custodyLevelIsMinimumCopy,

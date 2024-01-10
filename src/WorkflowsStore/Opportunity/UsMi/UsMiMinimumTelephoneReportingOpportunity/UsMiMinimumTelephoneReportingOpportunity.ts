@@ -24,7 +24,11 @@ import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
+import {
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "../../utils/criteriaUtils";
 import {
   UsMiMinimumTelephoneReportingReferralRecord,
   usMiMinimumTelephoneReportingSchema,

@@ -25,7 +25,7 @@ import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import { CriteriaCopy, hydrateCriteria } from "../../utils";
+import { CriteriaCopy, hydrateCriteria } from "../../utils/criteriaUtils";
 import {
   getValidator,
   UsMiSupervisionLevelDowngradeReferralRecord,

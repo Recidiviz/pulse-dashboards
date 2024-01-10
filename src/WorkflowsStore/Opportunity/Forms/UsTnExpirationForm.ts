@@ -25,12 +25,7 @@ import {
   UsTnExpirationDraftData,
   UsTnExpirationOpportunity,
 } from "../UsTn";
-import {
-  defaultFormValueJoiner,
-  displayList,
-  displayString,
-  formatFormValueDateMMDDYYYYY,
-} from "../utils";
+import { defaultFormValueJoiner, formatFormValueDateMMDDYYYYY } from "../utils";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 function voterRightsText(code: string): string {
@@ -42,6 +37,17 @@ function voterRightsText(code: string): string {
   }
   return "";
 }
+
+const displayString = (str: string | undefined, prefix?: string): string => {
+  const displayText = str || "";
+  return !prefix ? displayText : `${prefix} ${displayText}`;
+};
+
+const displayList = (lst: string[] | undefined, prefix?: string): string => {
+  const hasContents = lst?.length;
+  const displayText = hasContents ? lst.join(", ") : "";
+  return !prefix || !hasContents ? displayText : `${prefix} ${displayText}`;
+};
 
 function contactTypes(voterRightsCode?: string): string {
   return ["TEPE", voterRightsCode].filter((v) => v).join(", ");

@@ -30,7 +30,6 @@ import {
   DENIED_UPDATE,
   INCOMPLETE_FORM_UPDATE,
 } from "../../testUtils";
-import { rankByReviewStatus } from "../../utils";
 import {
   compliantReportingAlmostEligibleClientRecord,
   compliantReportingAlmostEligibleCriteria,
@@ -120,10 +119,6 @@ describe("fully eligible", () => {
   test("recommended note", () => {
     // this is for almost eligible only
     expect(cr.almostEligibleRecommendedNote).toBeUndefined();
-  });
-
-  test("rank by review status", () => {
-    expect(rankByReviewStatus(cr)).toEqual(0);
   });
 });
 
@@ -246,11 +241,6 @@ describe.each([
       } else {
         expect(cr.almostEligibleRecommendedNote).toBeUndefined();
       }
-    });
-
-    test("rank by review status", () => {
-      updatesSub.data = DENIED_UPDATE;
-      expect(rankByReviewStatus(cr)).toEqual(5);
     });
   }
 );

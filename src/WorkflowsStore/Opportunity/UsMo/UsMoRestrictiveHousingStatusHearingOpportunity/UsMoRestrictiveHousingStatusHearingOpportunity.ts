@@ -30,7 +30,11 @@ import {
   OpportunityRequirement,
   OpportunityTab,
 } from "../../types";
-import { CriteriaCopy, CriteriaFormatters, hydrateCriteria } from "../../utils";
+import {
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "../../utils/criteriaUtils";
 import {
   UsMoRestrictiveHousingStatusHearingReferralRecord,
   usMoRestrictiveHousingStatusHearingSchema,
