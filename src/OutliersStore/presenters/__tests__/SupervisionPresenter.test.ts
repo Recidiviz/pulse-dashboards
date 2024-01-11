@@ -44,7 +44,7 @@ test("hydrate", async () => {
       district: "District One",
       stateCode: "us_mi",
     });
-  jest.spyOn(OutliersStore.prototype, "hydrateSupervisionStore");
+  jest.spyOn(OutliersStore.prototype, "populateSupervisionStore");
 
   expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
 
@@ -54,7 +54,7 @@ test("hydrate", async () => {
   await hydrationPromise;
 
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-  expect(store.hydrateSupervisionStore).toHaveBeenCalled();
+  expect(store.populateSupervisionStore).toHaveBeenCalled();
 
   // For some reason creating a spy of hydrateUserInfo does not work so this serves the same purpose
   expect(store.supervisionStore).toBeDefined();
@@ -65,7 +65,7 @@ test("hydrate", async () => {
 test("hydration error", async () => {
   const err = new Error("oops");
   jest
-    .spyOn(OutliersStore.prototype, "hydrateSupervisionStore")
+    .spyOn(OutliersStore.prototype, "populateSupervisionStore")
     .mockImplementation(() => {
       throw err;
     });
@@ -75,19 +75,30 @@ test("hydration error", async () => {
   expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
 });
 
-test("no redundant hydration while in progress", () => {
-  jest.spyOn(store, "hydrateSupervisionStore");
+test("no redundant hydration while in progress", async () => {
+  jest.spyOn(store, "populateSupervisionStore");
 
-  presenter.hydrate();
-  presenter.hydrate();
-  expect(store.hydrateSupervisionStore).toHaveBeenCalledTimes(1);
+  const h1 = presenter.hydrate();
+  const h2 = presenter.hydrate();
+
+  await Promise.all([h1, h2]);
+  expect(store.populateSupervisionStore).toHaveBeenCalledTimes(1);
 });
 
 test("don't hydrate if already hydrated", async () => {
-  jest.spyOn(store, "hydrateSupervisionStore");
+  jest.spyOn(store, "populateSupervisionStore");
+  jest
+    .spyOn(store.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      externalId: "abc123",
+      pseudonymizedId: "hashed-mdavis123",
+      district: "District One",
+      stateCode: "us_mi",
+    });
 
   await presenter.hydrate();
+  expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   presenter.hydrate();
 
-  expect(store.hydrateSupervisionStore).toHaveBeenCalledTimes(1);
+  expect(store.populateSupervisionStore).toHaveBeenCalledTimes(1);
 });

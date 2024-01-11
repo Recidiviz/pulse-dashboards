@@ -18,74 +18,69 @@
 import { descending } from "d3-array";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { Hydratable } from "../../core/models/types";
+import { HydratesFromSource } from "../../core/models/HydratesFromSource";
+import { HydrationStateMachine } from "../../core/models/types";
 import { outliersUrl } from "../../core/views";
 import { formatDateToISO } from "../../utils";
-import { castToError } from "../../utils/castToError";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 
-export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
-  error?: Error | undefined;
-
-  isLoading?: boolean;
-
+export class SupervisionOfficerMetricEventsPresenter
+  implements HydrationStateMachine
+{
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public officerPseudoId: string,
     public metricId: string
   ) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
+
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [
+        this.expectEventsPopulated,
+        this.expectMetricConfigsPopulated,
+      ],
+      populate: async () => {
+        await Promise.all([
+          flowResult(
+            this.supervisionStore.populateMetricEventsForOfficer(
+              this.officerPseudoId,
+              this.metricId
+            )
+          ),
+          flowResult(this.supervisionStore.populateMetricConfigs()),
+        ]);
+      },
+    });
   }
 
-  get isHydrated(): boolean {
-    return this.areEventsHydrated && this.areMetricConfigsHydrated;
+  private hydrator: HydratesFromSource;
+
+  private expectEventsPopulated() {
+    if (
+      !(
+        this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId
+          .get(this.officerPseudoId)
+          ?.has(this.metricId) ?? false
+      )
+    )
+      throw new Error("Failed to populate metric events");
   }
 
-  private get areEventsHydrated(): boolean {
-    return (
-      this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId
-        .get(this.officerPseudoId)
-        ?.has(this.metricId) ?? false
-    );
-  }
-
-  private get areMetricConfigsHydrated() {
-    return this.supervisionStore.metricConfigsById !== undefined;
+  private expectMetricConfigsPopulated() {
+    if (this.supervisionStore.metricConfigsById === undefined)
+      throw new Error("Failed to populate metric configs");
   }
 
   /**
    * Initiates hydration for all data needed within this presenter class
    */
   async hydrate(): Promise<void> {
-    if (this.isHydrated) return;
-
-    this.setIsLoading(true);
-    this.setError(undefined);
-
-    try {
-      await Promise.all([
-        flowResult(
-          this.supervisionStore.hydrateMetricEventsForOfficer(
-            this.officerPseudoId,
-            this.metricId
-          )
-        ),
-        flowResult(this.supervisionStore.hydrateMetricConfigs()),
-      ]);
-      this.setIsLoading(false);
-    } catch (e) {
-      this.setError(castToError(e));
-      this.setIsLoading(false);
-    }
+    return this.hydrator.hydrate();
   }
 
-  setError(error: Error | undefined) {
-    this.error = error;
-  }
-
-  setIsLoading(loadingValue: boolean) {
-    this.isLoading = loadingValue;
+  get hydrationState() {
+    return this.hydrator.hydrationState;
   }
 
   get officerMetricEvents(): Array<SupervisionOfficerMetricEvent> {

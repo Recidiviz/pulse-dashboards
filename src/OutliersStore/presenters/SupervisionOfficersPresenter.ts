@@ -17,7 +17,8 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { Hydratable } from "../../core/models/types";
+import { HydratesFromSource } from "../../core/models/HydratesFromSource";
+import { HydrationState, HydrationStateMachine } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
@@ -25,96 +26,69 @@ import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
-export class SupervisionOfficersPresenter implements Hydratable {
-  error?: Error | undefined;
-
-  isLoading = false;
-
+export class SupervisionOfficersPresenter implements HydrationStateMachine {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public supervisorPseudoId: string
   ) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
+
+    this.hydrator = new HydratesFromSource({
+      populate: async () => {
+        await Promise.all([
+          flowResult(this.supervisionStore.populateMetricConfigs()),
+          flowResult(
+            this.supervisionStore.populateOfficersForSupervisor(
+              this.supervisorPseudoId
+            )
+          ),
+          flowResult(
+            this.supervisionStore.populateSupervisionOfficerSupervisors()
+          ),
+        ]);
+      },
+      expectPopulated: [
+        this.expectMetricsPopulated,
+        this.expectOfficersPopulated,
+        this.expectSupervisorPopulated,
+        this.expectOutlierDataPopulated,
+      ],
+    });
   }
 
-  get isHydrated(): boolean {
-    return (
-      this.areMetricsHydrated &&
-      this.areOfficersHydrated &&
-      this.isSupervisorHydrated
-    );
+  private hydrator: HydratesFromSource;
+
+  get hydrationState(): HydrationState {
+    return this.hydrator.hydrationState;
   }
 
-  private get areMetricsHydrated() {
-    return this.supervisionStore.metricConfigsById !== undefined;
+  private expectMetricsPopulated() {
+    if (this.supervisionStore.metricConfigsById === undefined)
+      throw new Error("Failed to populate metrics");
   }
 
-  private get areOfficersHydrated() {
-    return this.supervisionStore.officersBySupervisorPseudoId.has(
-      this.supervisorPseudoId
-    );
+  private expectOfficersPopulated() {
+    if (
+      !this.supervisionStore.officersBySupervisorPseudoId.has(
+        this.supervisorPseudoId
+      )
+    )
+      throw new Error("failed to populate officers");
   }
 
-  private get isSupervisorHydrated() {
-    return this.supervisorInfo !== undefined;
+  private expectSupervisorPopulated() {
+    if (!this.supervisorInfo) throw new Error("failed to populate supervisor");
+  }
+
+  private expectOutlierDataPopulated() {
+    if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
   }
 
   /**
    * Initiates hydration for all data needed within this presenter class
    */
   async hydrate(): Promise<void> {
-    if (this.isHydrated) return;
-
-    this.setIsLoading(true);
-    this.setError(undefined);
-
-    try {
-      await Promise.all([
-        flowResult(this.supervisionStore.hydrateMetricConfigs()),
-        flowResult(
-          this.supervisionStore.hydrateOfficersForSupervisor(
-            this.supervisorPseudoId
-          )
-        ),
-        flowResult(
-          this.supervisionStore.hydrateSupervisionOfficerSupervisors()
-        ),
-      ]);
-
-      const { supervisionOfficerSupervisors, officersBySupervisorPseudoId } =
-        this.supervisionStore;
-      if (
-        supervisionOfficerSupervisors &&
-        !supervisionOfficerSupervisors.find(
-          (s) => s.pseudonymizedId === this.supervisorPseudoId
-        )
-      ) {
-        throw new Error(
-          `Data for supervisor ${this.supervisorPseudoId} is not available.`
-        );
-      }
-
-      const officers = officersBySupervisorPseudoId.get(
-        this.supervisorPseudoId
-      );
-      if (!officers || officers.length === 0) {
-        throw new Error(
-          `Supervisor ${this.supervisorPseudoId} does not have any assigned officers`
-        );
-      }
-      this.setIsLoading(false);
-    } catch (e) {
-      this.setError(castToError(e));
-      this.setIsLoading(false);
-    }
-  }
-
-  setError(error: Error | undefined) {
-    this.error = error;
-  }
-
-  setIsLoading(loadingValue: boolean) {
-    this.isLoading = loadingValue;
+    return this.hydrator.hydrate();
   }
 
   get areCaseloadTypeBreakdownsEnabled() {
@@ -123,23 +97,39 @@ export class SupervisionOfficersPresenter implements Hydratable {
 
   /**
    * Augments officer data with all necessary relationships fully hydrated.
-   * It triggers an error state rather than returning a partial result, so that none of the UI
-   * components that consume this data have to worry about parts of it being missing
+   * If this fails for any reason the value will instead be the error that was encountered,
+   * useful mainly for debugging.
    */
-  get outlierOfficersData(): OutlierOfficerData[] | undefined {
-    if (!this.areMetricsHydrated || !this.areOfficersHydrated) return;
-
+  private get outlierDataOrError(): OutlierOfficerData[] | Error {
     try {
-      const outlierOfficers = this.supervisionStore.officersBySupervisorPseudoId
-        .get(this.supervisorPseudoId)
-        ?.filter((o) => o.outlierMetrics.length > 0)
+      const officersData =
+        this.supervisionStore.officersBySupervisorPseudoId.get(
+          this.supervisorPseudoId
+        );
+
+      // not expected in practice due to checks above, but needed for type safety
+      if (!officersData) {
+        throw new Error("Missing expected data for supervised officers");
+      }
+
+      return officersData
+        .filter((o) => o.outlierMetrics.length > 0)
         .map((o): OutlierOfficerData => {
           return getOutlierOfficerData(o, this.supervisionStore);
         });
-      return outlierOfficers;
     } catch (e) {
-      this.setError(castToError(e));
+      return castToError(e);
     }
+  }
+
+  /**
+   * Augments officer data with all necessary relationships fully hydrated.
+   */
+  get outlierOfficersData(): OutlierOfficerData[] | undefined {
+    if (this.outlierDataOrError instanceof Error) {
+      return undefined;
+    }
+    return this.outlierDataOrError;
   }
 
   /**

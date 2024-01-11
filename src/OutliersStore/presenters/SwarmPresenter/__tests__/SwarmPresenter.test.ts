@@ -35,7 +35,7 @@ beforeEach(async () => {
     new RootStore().outliersStore,
     OutliersConfigFixture
   );
-  await flowResult(store.hydrateMetricConfigs());
+  await flowResult(store.populateMetricConfigs());
 
   const processedOfficerData = getOutlierOfficerData(
     supervisionOfficerFixture[2],

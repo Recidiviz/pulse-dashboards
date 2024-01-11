@@ -56,7 +56,7 @@ afterEach(() => {
 });
 
 test("hydrate benchmarks", async () => {
-  await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
+  await expect(flowResult(store.populateMetricConfigs())).toResolve();
 });
 
 test("cannot hydrate benchmarks with API error", async () => {
@@ -64,7 +64,7 @@ test("cannot hydrate benchmarks with API error", async () => {
     .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
     .mockRejectedValue(new Error("something went wrong"));
 
-  await expect(flowResult(store.hydrateMetricConfigs())).toReject();
+  await expect(flowResult(store.populateMetricConfigs())).toReject();
 
   expect(store.metricConfigsById).toBeUndefined();
 });
@@ -77,7 +77,7 @@ test("can hydrate benchmarks with missing metrics", async () => {
     // this should include only 2 of the 3 expected metric types
     .mockResolvedValue(metricBenchmarksFixture.slice(0, 2));
 
-  await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
+  await expect(flowResult(store.populateMetricConfigs())).toResolve();
 
   const techsConfig = store.metricConfigsById?.get(
     "incarceration_starts_technical_violation"
@@ -88,7 +88,7 @@ test("can hydrate benchmarks with missing metrics", async () => {
 });
 
 test("configs include benchmarks", async () => {
-  await flowResult(store.hydrateMetricConfigs());
+  await flowResult(store.populateMetricConfigs());
 
   store.metricConfigsById?.forEach((mc) => {
     // benchmarks data should be hydrated
@@ -108,7 +108,7 @@ test("hydrated benchmarks can be missing caseload types", async () => {
     // this should be missing the SEX_OFFENSE caseload type for all metrics
     .mockResolvedValue(metricBenchmarksFixture.slice(0, 3));
 
-  await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
+  await expect(flowResult(store.populateMetricConfigs())).toResolve();
 
   expect(store.metricConfigsById).toBeDefined();
 
@@ -127,7 +127,7 @@ test("hydrated benchmarks can be missing caseload types", async () => {
 test("caseload typebreakdowns enabled", async () => {
   expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
 
-  await flowResult(store.hydrateMetricConfigs());
+  await flowResult(store.populateMetricConfigs());
   expect(store.areCaseloadTypeBreakdownsEnabled).toBeTrue();
 });
 
@@ -139,7 +139,7 @@ test("caseload typebreakdowns not enabled", async () => {
     // this should be missing the SEX_OFFENSE caseload type for all metrics
     .mockResolvedValue(metricBenchmarksFixture.slice(0, 3));
 
-  await flowResult(store.hydrateMetricConfigs());
+  await flowResult(store.populateMetricConfigs());
 
   expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
 });
@@ -171,7 +171,7 @@ test("adverse metric configs", async () => {
     .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
     .mockResolvedValue([...metricBenchmarksFixture, additionalMetricBenchmark]);
 
-  await flowResult(store.hydrateMetricConfigs());
+  await flowResult(store.populateMetricConfigs());
 
   // base config mapping should have all metrics
   additionalConfigsFixture.metrics.forEach((m) => {
@@ -192,7 +192,7 @@ test("hydrate supervisionOfficerSupervisors", async () => {
   expect(store.supervisionOfficerSupervisors).toBeFalsy();
 
   await expect(
-    flowResult(store.hydrateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors())
   ).resolves.not.toThrow();
   expect(store.supervisionOfficerSupervisors?.length).toBe(
     supervisionOfficerSupervisorsFixture.length
@@ -207,7 +207,7 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   ).toBeFalse();
 
   await expect(
-    flowResult(store.hydrateOfficersForSupervisor(testSupervisorPseudoId))
+    flowResult(store.populateOfficersForSupervisor(testSupervisorPseudoId))
   ).resolves.not.toThrow();
 
   expect(
@@ -296,7 +296,7 @@ test("current user record for supervisor", async () => {
       district: "District One",
       stateCode: "us_mi",
     });
-  await flowResult(store.hydrateUserInfo());
+  await flowResult(store.populateUserInfo());
 
   expect(store.currentSupervisorUser).toBeDefined();
   expect(store.currentSupervisorUser).toMatchInlineSnapshot(`
@@ -323,7 +323,7 @@ test("hydrateUserInfo requires pseudo ID", async () => {
       stateCode: "us_mi",
     });
 
-  await expect(() => store.hydrateUserInfo()).rejects.toThrow(
+  await expect(() => store.populateUserInfo()).rejects.toThrow(
     "Missing pseudonymizedId for user"
   );
 });
@@ -341,7 +341,7 @@ test("hydrate supervisors list with current user", async () => {
         "insights_supervision_supervisors-list": false,
       }),
     });
-  await flowResult(store.hydrateUserInfo());
+  await flowResult(store.populateUserInfo());
 
   expect(store.supervisionOfficerSupervisors).toBeDefined();
   expect(store.supervisionOfficerSupervisors).toMatchInlineSnapshot(`
@@ -377,10 +377,10 @@ test("current supervisor user without supervisors list permission does not hydra
     });
 
   jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
-  await flowResult(store.hydrateUserInfo());
+  await flowResult(store.populateUserInfo());
 
   await expect(
-    flowResult(store.hydrateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors())
   ).toResolve();
   expect(
     store.outliersStore.apiClient.supervisionOfficerSupervisors
@@ -402,10 +402,10 @@ test("current supervisor user with supervisors list permission does hydrate via 
     });
 
   jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
-  await flowResult(store.hydrateUserInfo());
+  await flowResult(store.populateUserInfo());
 
   await expect(
-    flowResult(store.hydrateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors())
   ).toResolve();
   expect(
     store.outliersStore.apiClient.supervisionOfficerSupervisors
@@ -425,10 +425,10 @@ test("non-supervisor user without supervisors list permission errors in hydratio
     });
 
   jest.spyOn(store.outliersStore.apiClient, "supervisionOfficerSupervisors");
-  await flowResult(store.hydrateUserInfo());
+  await flowResult(store.populateUserInfo());
 
   await expect(
-    flowResult(store.hydrateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors())
   ).rejects.toThrow(
     "User is not a supervisor but cannot access all supervisors"
   );
@@ -439,7 +439,7 @@ test("non-supervisor user without supervisors list permission errors in hydratio
 
 test("look up supervisor by ID", async () => {
   jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
-  await flowResult(store.hydrateSupervisionOfficerSupervisors());
+  await flowResult(store.populateSupervisionOfficerSupervisors());
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];
   expect(
@@ -449,7 +449,7 @@ test("look up supervisor by ID", async () => {
 
 test("look up supervisor by pseudonymized ID", async () => {
   jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
-  await flowResult(store.hydrateSupervisionOfficerSupervisors());
+  await flowResult(store.populateSupervisionOfficerSupervisors());
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];
   expect(
@@ -470,7 +470,7 @@ test("hydrate supervisionOfficerMetricEvents", async () => {
   expect(getTestEvents()).toBeUndefined();
 
   await flowResult(
-    store.hydrateMetricEventsForOfficer(testOfficerPseudoId, testMetricId)
+    store.populateMetricEventsForOfficer(testOfficerPseudoId, testMetricId)
   );
 
   expect(getTestEvents()).toBeDefined();
@@ -478,7 +478,7 @@ test("hydrate supervisionOfficerMetricEvents", async () => {
 });
 
 test("hydrate latestBenchmarksDate", async () => {
-  await expect(flowResult(store.hydrateMetricConfigs())).toResolve();
+  await expect(flowResult(store.populateMetricConfigs())).toResolve();
 
   expect(store.latestBenchmarksDate).toEqual(LATEST_END_DATE);
 });
@@ -500,7 +500,7 @@ test("hydrate clientEvents", async () => {
   expect(getTestEvents()).toBeUndefined();
 
   await flowResult(
-    store.hydrateClientEventsForClient(
+    store.populateClientEventsForClient(
       testClientPseudoId,
       parseISO(outcomeDateString)
     )
@@ -519,7 +519,7 @@ test("hydrate clientInfo", async () => {
   }
   expect(getTestInfo()).toBeUndefined();
 
-  await flowResult(store.hydrateClientInfoForClient(testClientPseudoId));
+  await flowResult(store.populateClientInfoForClient(testClientPseudoId));
 
   expect(getTestInfo()).toBeDefined();
   expect(getTestInfo()).toMatchSnapshot();

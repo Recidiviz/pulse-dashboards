@@ -20,6 +20,7 @@ import { configure, flowResult } from "mobx";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
+import { unpackAggregatedErrors } from "../../../testUtils";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
@@ -79,15 +80,15 @@ describe("with unit data already hydrated", () => {
   beforeEach(async () => {
     await Promise.all([
       flowResult(
-        store.hydrateOfficersForSupervisor(testSupervisor.pseudonymizedId)
+        store.populateOfficersForSupervisor(testSupervisor.pseudonymizedId)
       ),
-      flowResult(store.hydrateSupervisionOfficerSupervisors()),
-      flowResult(store.hydrateMetricConfigs()),
+      flowResult(store.populateSupervisionOfficerSupervisors()),
+      flowResult(store.populateMetricConfigs()),
     ]);
   });
 
   test("is immediately hydrated", () => {
-    expect(presenter.isHydrated).toBeTrue();
+    expect(presenter.hydrationState.status).toBe("hydrated");
   });
 
   test("makes no additional API calls", async () => {
@@ -118,7 +119,7 @@ describe("with unit data already hydrated", () => {
     ).not.toHaveBeenCalled();
   });
 
-  test("has outlierOfficerData", () => {
+  test("has outlierOfficerData", async () => {
     expect(presenter.outlierOfficerData).toBeDefined();
     expect(presenter.outlierOfficerData).toMatchSnapshot();
   });
@@ -148,11 +149,11 @@ test("hydration", async () => {
     "supervisionOfficerMetricEvents"
   );
 
-  expect(presenter.isHydrated).toBeFalse();
+  expect(presenter.hydrationState.status).toBe("needs hydration");
 
   await presenter.hydrate();
 
-  expect(presenter.isHydrated).toBeTrue();
+  expect(presenter.hydrationState.status).toBe("hydrated");
   expect(store.outliersStore.apiClient.metricBenchmarks).toHaveBeenCalled();
   expect(store.outliersStore.apiClient.supervisionOfficer).toHaveBeenCalledWith(
     testOfficer.pseudonymizedId
@@ -199,26 +200,33 @@ test("has timePeriod", async () => {
 test("hydration error in dependency", async () => {
   const err = new Error("fake error");
   jest
-    .spyOn(OutliersSupervisionStore.prototype, "hydrateMetricConfigs")
+    .spyOn(OutliersSupervisionStore.prototype, "populateMetricConfigs")
     .mockImplementation(() => {
       throw err;
     });
 
   await presenter.hydrate();
-  expect(presenter.error).toEqual(err);
+  expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
 });
 
 test("error assembling metrics data", async () => {
-  const err = new Error("oops");
   getOutlierOfficerDataMock.mockImplementation(() => {
-    throw err;
+    throw new Error("oops");
   });
 
   await presenter.hydrate();
-  expect(presenter.error).toBeUndefined();
-
+  expect(presenter.hydrationState).toMatchInlineSnapshot(`
+    Object {
+      "error": [AggregateError: Expected data failed to populate],
+      "status": "failed",
+    }
+  `);
+  expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
+    Array [
+      [Error: oops],
+    ]
+  `);
   expect(presenter.outlierOfficerData).toBeUndefined();
-  expect(presenter.error).toEqual(err);
 });
 
 test("tracks events", async () => {

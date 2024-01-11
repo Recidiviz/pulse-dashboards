@@ -62,7 +62,7 @@ export class OutliersStore {
    * Creates this.supervisionStore for the current tenant, if it does not already exist.
    * This is a MobX flow method and should be called with mobx.flowResult.
    */
-  *hydrateSupervisionStore(): FlowMethod<OutliersAPI["init"], void> {
+  *populateSupervisionStore(): FlowMethod<OutliersAPI["init"], void> {
     if (this.supervisionStore) return;
 
     const config = yield this.apiClient.init();

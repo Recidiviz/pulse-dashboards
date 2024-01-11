@@ -81,7 +81,7 @@ export class OutliersSupervisionStore {
    *
    * This is a MobX flow method and should be called with mobx.flowResult.
    */
-  *hydrateMetricConfigs(): FlowMethod<OutliersAPI["metricBenchmarks"], void> {
+  *populateMetricConfigs(): FlowMethod<OutliersAPI["metricBenchmarks"], void> {
     if (this.benchmarksByMetricAndCaseloadType) return;
 
     const benchmarks = yield this.outliersStore.apiClient.metricBenchmarks();
@@ -106,7 +106,7 @@ export class OutliersSupervisionStore {
     this.latestBenchmarksDate = latestBenchmarksDate;
   }
 
-  *hydrateUserInfo(): FlowMethod<OutliersAPI["userInfo"], void> {
+  *populateUserInfo(): FlowMethod<OutliersAPI["userInfo"], void> {
     if (this.userInfo) return;
 
     const { userAppMetadata, isRecidivizUser, stateCode } =
@@ -256,7 +256,7 @@ export class OutliersSupervisionStore {
   /**
    * Fetches supervision officer supervisor data for the current tenant.
    */
-  *hydrateSupervisionOfficerSupervisors(): FlowMethod<
+  *populateSupervisionOfficerSupervisors(): FlowMethod<
     OutliersAPI["supervisionOfficerSupervisors"],
     void
   > {
@@ -273,7 +273,7 @@ export class OutliersSupervisionStore {
   /**
    * Fetches officer and metric data for the specified supervisor
    */
-  *hydrateOfficersForSupervisor(
+  *populateOfficersForSupervisor(
     supervisorPseudoId: string
   ): FlowMethod<OutliersAPI["officersForSupervisor"], void> {
     if (this.officersBySupervisorPseudoId.has(supervisorPseudoId)) return;
@@ -310,7 +310,7 @@ export class OutliersSupervisionStore {
   /*
    * Fetches events data for the specified officer and metric.
    */
-  *hydrateMetricEventsForOfficer(
+  *populateMetricEventsForOfficer(
     officerPseudoId: string,
     metricId: string
   ): FlowMethod<OutliersAPI["supervisionOfficerMetricEvents"], void> {
@@ -342,7 +342,7 @@ export class OutliersSupervisionStore {
   /*
    * Fetches events specified client and outcome date.
    */
-  *hydrateClientEventsForClient(
+  *populateClientEventsForClient(
     clientPseudoId: string,
     outcomeDate: Date
   ): FlowMethod<OutliersAPI["clientEvents"], void> {
@@ -373,7 +373,7 @@ export class OutliersSupervisionStore {
   /*
    * Fetches profile info for  specified client.
    */
-  *hydrateClientInfoForClient(
+  *populateClientInfoForClient(
     clientPseudoId: string
   ): FlowMethod<OutliersAPI["clientInfo"], void> {
     if (this.clientInfoByClientPseudoId.get(clientPseudoId)) return;

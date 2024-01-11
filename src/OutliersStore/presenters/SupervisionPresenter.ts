@@ -17,9 +17,8 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { HydratesFromSource } from "../../core/models/HydratesFromSource";
 import { HydrationState, HydrationStateMachine } from "../../core/models/types";
-import { isHydrationStarted } from "../../core/models/utils";
-import { castToError } from "../../utils/castToError";
 import { OutliersStore } from "../OutliersStore";
 
 /**
@@ -28,32 +27,30 @@ import { OutliersStore } from "../OutliersStore";
 export class SupervisionPresenter implements HydrationStateMachine {
   constructor(private outliersStore: OutliersStore) {
     makeAutoObservable(this);
+
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [
+        () => {
+          if (this.outliersStore.supervisionStore?.userInfo === undefined)
+            throw new Error("failed to populate userInfo");
+        },
+      ],
+      populate: async () => {
+        await flowResult(this.outliersStore.populateSupervisionStore());
+        await flowResult(
+          this.outliersStore.supervisionStore?.populateUserInfo()
+        );
+      },
+    });
   }
 
-  hydrationState: HydrationState = { status: "needs hydration" };
+  private hydrator: HydratesFromSource;
 
-  private setHydrationState(newValue: HydrationState) {
-    this.hydrationState = newValue;
+  get hydrationState(): HydrationState {
+    return this.hydrator.hydrationState;
   }
 
   async hydrate(): Promise<void> {
-    if (isHydrationStarted(this)) return;
-
-    this.setHydrationState({ status: "loading" });
-
-    try {
-      await flowResult(this.outliersStore.hydrateSupervisionStore());
-      await flowResult(this.outliersStore.supervisionStore?.hydrateUserInfo());
-
-      // we expect this to be true after the preceding hydration promises resolve,
-      // but we guard against the possibility that something went wrong
-      if (this.outliersStore.supervisionStore?.userInfo !== undefined) {
-        this.setHydrationState({ status: "hydrated" });
-      } else {
-        throw new Error("Expected data is missing after hydration");
-      }
-    } catch (e) {
-      this.setHydrationState({ status: "failed", error: castToError(e) });
-    }
+    return this.hydrator.hydrate();
   }
 }

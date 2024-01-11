@@ -20,19 +20,15 @@ import { pick } from "lodash/fp";
 import { flowResult, makeAutoObservable } from "mobx";
 import moment from "moment";
 
-import { Hydratable } from "../../core/models/types";
-import { castToError } from "../../utils/castToError";
+import { HydratesFromSource } from "../../core/models/HydratesFromSource";
+import { HydrationStateMachine } from "../../core/models/types";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { SupervisionDetails } from "./types";
 
-export class SupervisionClientDetailPresenter implements Hydratable {
-  error?: Error | undefined;
-
-  isLoading?: boolean;
-
+export class SupervisionClientDetailPresenter implements HydrationStateMachine {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public officerPseudoId: string,
@@ -40,62 +36,58 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     public metricId: string,
     public outcomeDate: Date
   ) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
+
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [
+        this.expectEventsPopulated,
+        this.expectProfileInfoHydrated,
+      ],
+      populate: async () => {
+        await Promise.all([
+          flowResult(
+            this.supervisionStore.populateClientEventsForClient(
+              this.clientPseudoId,
+              this.outcomeDate
+            )
+          ),
+          flowResult(
+            this.supervisionStore.populateClientInfoForClient(
+              this.clientPseudoId
+            )
+          ),
+          flowResult(
+            this.supervisionStore.populateMetricEventsForOfficer(
+              this.officerPseudoId,
+              this.metricId
+            )
+          ),
+          flowResult(this.supervisionStore.populateMetricConfigs()),
+        ]);
+      },
+    });
   }
 
-  get isHydrated(): boolean {
-    return this.areEventsHydrated && this.isProfileInfoHydrated;
+  private hydrator: HydratesFromSource;
+
+  private expectEventsPopulated() {
+    if (!this.clientEvents) throw new Error("Failed to populate client events");
   }
 
-  private get areEventsHydrated(): boolean {
-    return this.clientEvents !== undefined;
-  }
-
-  private get isProfileInfoHydrated() {
-    return this.clientInfo !== undefined;
+  private expectProfileInfoHydrated() {
+    if (!this.clientInfo)
+      throw new Error("Failed to populate client profile info");
   }
 
   /**
    * Initiates hydration for all data needed within this presenter class
    */
   async hydrate(): Promise<void> {
-    if (this.isHydrated) return;
-
-    this.setIsLoading(true);
-    this.setError(undefined);
-
-    try {
-      await Promise.all([
-        flowResult(
-          this.supervisionStore.hydrateClientEventsForClient(
-            this.clientPseudoId,
-            this.outcomeDate
-          )
-        ),
-        flowResult(
-          this.supervisionStore.hydrateClientInfoForClient(this.clientPseudoId)
-        ),
-        flowResult(
-          this.supervisionStore.hydrateMetricEventsForOfficer(
-            this.officerPseudoId,
-            this.metricId
-          )
-        ),
-        flowResult(this.supervisionStore.hydrateMetricConfigs()),
-      ]);
-      this.setIsLoading(false);
-    } catch (e) {
-      this.setError(castToError(e));
-      this.setIsLoading(false);
-    }
+    return this.hydrator.hydrate();
   }
 
-  setError(error: Error | undefined) {
-    this.error = error;
-  }
-
-  setIsLoading(loadingValue: boolean) {
-    this.isLoading = loadingValue;
+  get hydrationState() {
+    return this.hydrator.hydrationState;
   }
 
   get clientEvents(): ClientEvent[] | undefined {

@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable, runInAction } from "mobx";
+import { flowResult, makeAutoObservable } from "mobx";
 
-import { Hydratable } from "../../core/models/types";
+import { HydratesFromSource } from "../../core/models/HydratesFromSource";
+import { HydrationStateMachine } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
 import { OutliersAPI } from "../api/interface";
 import { MetricConfig } from "../models/MetricConfig";
@@ -28,20 +29,38 @@ import { FlowMethod } from "../types";
 import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
-export class SupervisionOfficerDetailPresenter implements Hydratable {
-  error?: Error | undefined;
-
-  isLoading = false;
-
+export class SupervisionOfficerDetailPresenter
+  implements HydrationStateMachine
+{
   // rather than dealing with a partially hydrated unit in the supervisionStore,
   // we will just put the API response here (when applicable)
   private fetchedOfficerRecord?: SupervisionOfficer;
+
+  private hydrator: HydratesFromSource;
 
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public officerPseudoId: string
   ) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
+
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [
+        this.expectMetricsPopulated,
+        this.expectOfficerPopulated,
+        this.expectSupervisorPopulated,
+        this.expectOutlierDataPopulated,
+      ],
+      populate: async () => {
+        await Promise.all([
+          flowResult(this.supervisionStore.populateMetricConfigs()),
+          flowResult(
+            this.supervisionStore.populateSupervisionOfficerSupervisors()
+          ),
+          flowResult(this.populateSupervisionOfficer()),
+        ]);
+      },
+    });
   }
 
   trackViewed(): void {
@@ -58,8 +77,9 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     );
   }
 
-  private get areMetricsHydrated() {
-    return this.supervisionStore.metricConfigsById !== undefined;
+  private expectMetricsPopulated() {
+    if (!this.supervisionStore.metricConfigsById)
+      throw new Error("Failed to populate metric configs");
   }
 
   private get officerRecordFromStore(): SupervisionOfficer | undefined {
@@ -74,16 +94,25 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return this.officerRecordFromStore ?? this.fetchedOfficerRecord;
   }
 
-  get outlierOfficerData(): OutlierOfficerData | undefined {
-    if (!this.officerRecord) return;
-
+  /**
+   * Augments officer data with all necessary relationships fully hydrated.
+   * If this fails for any reason, the value will instead reflect the error that was encountered.
+   */
+  private get outlierDataOrError(): OutlierOfficerData | Error {
     try {
+      if (!this.officerRecord) throw new Error("Missing officer record");
       return getOutlierOfficerData(this.officerRecord, this.supervisionStore);
     } catch (e) {
-      runInAction(() => {
-        this.setError(castToError(e));
-      });
+      return castToError(e);
     }
+  }
+
+  /**
+   * Augments officer data with all necessary relationships fully hydrated.
+   */
+  get outlierOfficerData(): OutlierOfficerData | undefined {
+    if (this.outlierDataOrError instanceof Error) return;
+    return this.outlierDataOrError;
   }
 
   get defaultMetricId() {
@@ -128,32 +157,33 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
   }
 
-  private get isOfficerHydrated() {
-    return this.officerRecord !== undefined;
+  private expectOfficerPopulated() {
+    if (!this.officerRecord) throw new Error("Failed to populate officer data");
   }
 
-  private get isSupervisorHydrated() {
-    return this.supervisorInfo !== undefined;
+  private expectSupervisorPopulated() {
+    if (!this.supervisorInfo)
+      throw new Error("Failed to populate supervisor info");
   }
 
-  get isHydrated() {
-    return (
-      this.areMetricsHydrated &&
-      this.isOfficerHydrated &&
-      this.isSupervisorHydrated
-    );
+  private expectOutlierDataPopulated() {
+    if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
   }
 
-  private *hydrateSupervisionOfficer(): FlowMethod<
+  private get isOfficerPopulated() {
+    return !(this.outlierDataOrError instanceof Error);
+  }
+
+  private *populateSupervisionOfficer(): FlowMethod<
     OutliersAPI["supervisionOfficer"],
     void
   > {
-    if (this.isOfficerHydrated) return;
+    if (this.isOfficerPopulated) return;
 
     if (this.metricId) {
       // we can prefetch metric event data here also rather than waiting for the page to load,
       // saving an additional loading spinner in the events table UI
-      this.supervisionStore.hydrateMetricEventsForOfficer(
+      this.supervisionStore.populateMetricEventsForOfficer(
         this.officerPseudoId,
         this.metricId
       );
@@ -169,31 +199,10 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
    * Initiates hydration for all data needed within this presenter class
    */
   async hydrate(): Promise<void> {
-    if (this.isHydrated) return;
-
-    this.setIsLoading(true);
-    this.setError(undefined);
-
-    try {
-      await Promise.all([
-        flowResult(this.supervisionStore.hydrateMetricConfigs()),
-        flowResult(
-          this.supervisionStore.hydrateSupervisionOfficerSupervisors()
-        ),
-        flowResult(this.hydrateSupervisionOfficer()),
-      ]);
-      this.setIsLoading(false);
-    } catch (e) {
-      this.setError(castToError(e));
-      this.setIsLoading(false);
-    }
+    return this.hydrator.hydrate();
   }
 
-  private setError(error: Error | undefined) {
-    this.error = error;
-  }
-
-  private setIsLoading(loadingValue: boolean) {
-    this.isLoading = loadingValue;
+  get hydrationState() {
+    return this.hydrator.hydrationState;
   }
 }

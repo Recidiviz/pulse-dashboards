@@ -78,14 +78,14 @@ describe("with client data already hydrated", () => {
   beforeEach(async () => {
     await Promise.all([
       flowResult(
-        store.hydrateClientEventsForClient(clientPseudoId, parseISO(endDate))
+        store.populateClientEventsForClient(clientPseudoId, parseISO(endDate))
       ),
-      flowResult(store.hydrateClientInfoForClient(clientPseudoId)),
+      flowResult(store.populateClientInfoForClient(clientPseudoId)),
     ]);
   });
 
   test("is immediately hydrated", () => {
-    expect(presenter.isHydrated).toBeTrue();
+    expect(presenter.hydrationState.status).toBe("hydrated");
   });
 
   test("makes no additional API calls", async () => {
@@ -113,11 +113,11 @@ test("hydration", async () => {
   jest.spyOn(OutliersOfflineAPIClient.prototype, "clientEvents");
   jest.spyOn(OutliersOfflineAPIClient.prototype, "clientInfo");
 
-  expect(presenter.isHydrated).toBeFalse();
+  expect(presenter.hydrationState.status).toBe("needs hydration");
 
   await presenter.hydrate();
 
-  expect(presenter.isHydrated).toBeTrue();
+  expect(presenter.hydrationState.status).toBe("hydrated");
   expect(store.outliersStore.apiClient.clientEvents).toHaveBeenCalled();
   expect(store.outliersStore.apiClient.clientInfo).toHaveBeenCalled();
 });
@@ -161,7 +161,7 @@ test("has supervisionDetails if metric event date matches outcomeDate", async ()
   expect(presenter.supervisionDetails).toMatchSnapshot();
 });
 
-test("supervisionDetails is undefined if metric event date does not atch outcomeDate", async () => {
+test("supervisionDetails is undefined if metric event date does not match outcomeDate", async () => {
   // bogus outcome date
   store.setOutcomeDate("2000-01-01");
   await presenter.hydrate();
@@ -172,13 +172,13 @@ test("supervisionDetails is undefined if metric event date does not atch outcome
 test("hydration error in dependency", async () => {
   const err = new Error("fake error");
   jest
-    .spyOn(OutliersSupervisionStore.prototype, "hydrateClientInfoForClient")
+    .spyOn(OutliersSupervisionStore.prototype, "populateClientInfoForClient")
     .mockImplementation(() => {
       throw err;
     });
 
   await presenter.hydrate();
-  expect(presenter.error).toEqual(err);
+  expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
 });
 
 test("tracks events", async () => {

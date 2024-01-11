@@ -48,7 +48,7 @@ afterEach(() => {
 });
 
 test("combines related data", async () => {
-  await flowResult(supervisionStore.hydrateMetricConfigs());
+  await flowResult(supervisionStore.populateMetricConfigs());
   expect(
     getOutlierOfficerData(officerData, supervisionStore)
   ).toMatchSnapshot();
@@ -80,7 +80,7 @@ test("excludes current officer from the benchmark data points", async () => {
     .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
     .mockResolvedValue(benchmarks);
 
-  await flowResult(supervisionStore.hydrateMetricConfigs());
+  await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(
     supervisionStore.adverseMetricConfigsById
@@ -113,7 +113,7 @@ test("throws on missing config", async () => {
     }
   );
 
-  await flowResult(supervisionStore.hydrateMetricConfigs());
+  await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
     `Missing metric configuration for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
@@ -127,7 +127,7 @@ test("throws if benchmark data was not fully hydrated", async () => {
     .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
     .mockResolvedValue(benchmarks);
 
-  await flowResult(supervisionStore.hydrateMetricConfigs());
+  await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
     `Missing metric benchmark data for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
@@ -144,7 +144,7 @@ test("throws on missing benchmark for required caseload type", async () => {
     .spyOn(OutliersOfflineAPIClient.prototype, "metricBenchmarks")
     .mockResolvedValue(benchmarks);
 
-  await flowResult(supervisionStore.hydrateMetricConfigs());
+  await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
     `Missing metric benchmark data for caseload type ${CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`

@@ -29,26 +29,26 @@ beforeEach(() => {
 test("initialize supervision store", async () => {
   expect(store.supervisionStore).toBeUndefined();
 
-  await flowResult(store.hydrateSupervisionStore());
+  await flowResult(store.populateSupervisionStore());
   expect(store.supervisionStore).toBeDefined();
 });
 
 test("reset supervision store", async () => {
-  await flowResult(store.hydrateSupervisionStore());
+  await flowResult(store.populateSupervisionStore());
   expect(store.supervisionStore).toBeDefined();
   store.reset();
   expect(store.supervisionStore).toBeUndefined();
 });
 
 test("automatically reset when state code changes", async () => {
-  await flowResult(store.hydrateSupervisionStore());
+  await flowResult(store.populateSupervisionStore());
   expect(store.supervisionStore).toBeDefined();
   store.rootStore.tenantStore.setCurrentTenantId("US_MI");
   expect(store.supervisionStore).toBeUndefined();
 });
 
 test("automatically reset when user changes", async () => {
-  await flowResult(store.hydrateSupervisionStore());
+  await flowResult(store.populateSupervisionStore());
   expect(store.supervisionStore).toBeDefined();
   store.rootStore.userStore.user = {};
   expect(store.supervisionStore).toBeUndefined();

@@ -129,7 +129,8 @@ describe("Outliers Staff Page", () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText("Loading data...")).toBeInTheDocument();
+    // due to animated transitions the element may appear twice
+    expect(screen.getAllByText("Loading data...")).toHaveLength(2);
   });
 
   test("renders Staff Page when hydrated", async () => {

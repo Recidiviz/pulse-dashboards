@@ -45,11 +45,11 @@ afterEach(() => {
 });
 
 test("hydrate", async () => {
-  expect(presenter.isHydrated).toBe(false);
+  expect(presenter.hydrationState.status).toBe("needs hydration");
 
   await presenter.hydrate();
 
-  expect(presenter.isHydrated).toBe(true);
+  expect(presenter.hydrationState.status).toBe("hydrated");
 });
 
 test("hydrated with no results", async () => {
@@ -59,7 +59,7 @@ test("hydrated with no results", async () => {
 
   await presenter.hydrate();
 
-  expect(presenter.isHydrated).toBe(true);
+  expect(presenter.hydrationState.status).toBe("hydrated");
 });
 
 test("all supervisors data", async () => {

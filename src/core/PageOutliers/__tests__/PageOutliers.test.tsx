@@ -63,11 +63,11 @@ function renderRouter(relativePath?: string) {
 }
 
 test("hydrates", () => {
-  jest.spyOn(outliersStore, "hydrateSupervisionStore");
+  jest.spyOn(outliersStore, "populateSupervisionStore");
 
   renderRouter();
 
-  expect(outliersStore.hydrateSupervisionStore).toHaveBeenCalled();
+  expect(outliersStore.populateSupervisionStore).toHaveBeenCalled();
 });
 
 test("invalid routes", async () => {

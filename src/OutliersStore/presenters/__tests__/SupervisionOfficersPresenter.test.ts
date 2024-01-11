@@ -20,6 +20,7 @@ import { configure } from "mobx";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
+import { unpackAggregatedErrors } from "../../../testUtils";
 import { OutliersOfflineAPIClient } from "../../api/OutliersOfflineAPIClient";
 import { OutliersConfigFixture } from "../../models/offlineFixtures/OutliersConfigFixture";
 import { OutliersStore } from "../../OutliersStore";
@@ -91,22 +92,31 @@ test("timePeriod", async () => {
 test("hydration error in dependency", async () => {
   const err = new Error("fake error");
   jest
-    .spyOn(OutliersSupervisionStore.prototype, "hydrateMetricConfigs")
+    .spyOn(OutliersSupervisionStore.prototype, "populateMetricConfigs")
     .mockImplementation(() => {
       throw err;
     });
 
   await presenter.hydrate();
-  expect(presenter.error).toEqual(err);
+  expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
 });
 
 test("supervisorId not found in supervisionOfficerSupervisors", async () => {
   presenter = new SupervisionOfficersPresenter(store, "nonExistentId");
   await presenter.hydrate();
-  expect(presenter.isHydrated).toBeFalse();
-  expect(presenter.error).toEqual(
-    new Error("Data for supervisor nonExistentId is not available.")
-  );
+  expect(presenter.hydrationState).toMatchInlineSnapshot(`
+    Object {
+      "error": [AggregateError: Expected data failed to populate],
+      "status": "failed",
+    }
+  `);
+  expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
+    Array [
+      [Error: failed to populate officers],
+      [Error: failed to populate supervisor],
+      [Error: Missing expected data for supervised officers],
+    ]
+  `);
 });
 
 test("supervisorId not found in officersBySupervisor", async () => {
@@ -116,24 +126,42 @@ test("supervisorId not found in officersBySupervisor", async () => {
 
   await presenter.hydrate();
 
-  expect(presenter.isHydrated).toBeFalse();
-  expect(presenter.error).toEqual(
-    new Error("Supervisor hashed-mdavis123 does not have any assigned officers")
-  );
+  expect(presenter.hydrationState).toMatchInlineSnapshot(`
+    Object {
+      "error": [AggregateError: Expected data failed to populate],
+      "status": "failed",
+    }
+  `);
+
+  expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
+    Array [
+      [Error: failed to populate officers],
+      [Error: Missing expected data for supervised officers],
+    ]
+  `);
 });
 
 test("error assembling metrics data", async () => {
-  const err = new Error("oops");
   getOutlierOfficerDataMock.mockImplementation(() => {
-    throw err;
+    throw new Error("oops");
   });
 
   await presenter.hydrate();
 
-  expect(presenter.error).toBeUndefined();
-
   expect(presenter.outlierOfficersData).toBeUndefined();
-  expect(presenter.error).toEqual(err);
+
+  expect(presenter.hydrationState).toMatchInlineSnapshot(`
+    Object {
+      "error": [AggregateError: Expected data failed to populate],
+      "status": "failed",
+    }
+  `);
+
+  expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
+    Array [
+      [Error: oops],
+    ]
+  `);
 });
 
 test("tracks events", async () => {

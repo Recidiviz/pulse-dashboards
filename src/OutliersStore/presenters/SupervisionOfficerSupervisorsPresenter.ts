@@ -21,47 +21,40 @@ import pipe from "lodash/fp/pipe";
 import values from "lodash/fp/values";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { Hydratable } from "../../core/models/types";
-import { castToError } from "../../utils/castToError";
+import { HydratesFromSource } from "../../core/models/HydratesFromSource";
+import { HydrationStateMachine } from "../../core/models/types";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { ConfigLabels } from "./types";
 
-export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
-  isLoading?: boolean;
-
-  error?: Error;
-
+export class SupervisionOfficerSupervisorsPresenter
+  implements HydrationStateMachine
+{
   constructor(private supervisionStore: OutliersSupervisionStore) {
     makeAutoObservable(this);
+
+    this.hydrator = new HydratesFromSource({
+      expectPopulated: [
+        () => {
+          if (this.supervisionStore.supervisionOfficerSupervisors === undefined)
+            throw new Error("Failed to populate supervisors");
+        },
+      ],
+      populate: () =>
+        flowResult(
+          this.supervisionStore.populateSupervisionOfficerSupervisors()
+        ),
+    });
   }
 
-  get isHydrated() {
-    return this.supervisionStore.supervisionOfficerSupervisors !== undefined;
+  private hydrator: HydratesFromSource;
+
+  get hydrationState() {
+    return this.hydrator.hydrationState;
   }
 
-  async hydrate(): Promise<void> {
-    if (this.isHydrated) return;
-
-    this.isLoading = true;
-    this.error = undefined;
-    try {
-      await flowResult(
-        this.supervisionStore.hydrateSupervisionOfficerSupervisors()
-      );
-      this.setIsLoading(false);
-    } catch (e) {
-      this.setError(castToError(e));
-      this.setIsLoading(false);
-    }
-  }
-
-  setError(e: Error | undefined) {
-    this.error = e;
-  }
-
-  setIsLoading(isLoading?: boolean) {
-    this.isLoading = isLoading;
+  hydrate(): Promise<void> {
+    return this.hydrator.hydrate();
   }
 
   get allSupervisors() {

@@ -233,11 +233,12 @@ describe("Outliers Supervisor Page", () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText("Loading data...")).toBeInTheDocument();
+    // two elements expected because of animated transition
+    expect(screen.getAllByText("Loading data...")).toHaveLength(2);
   });
 
-  test("renders error page", () => {
-    jest.spyOn(store, "hydrateMetricConfigs").mockImplementation(() => {
+  test("renders error page", async () => {
+    jest.spyOn(store, "populateMetricConfigs").mockImplementation(() => {
       throw new Error("There was an error");
     });
 
@@ -248,7 +249,7 @@ describe("Outliers Supervisor Page", () => {
     );
 
     expect(
-      screen.getByText("Sorry, we’re having trouble loading this page")
+      await screen.findByText("Sorry, we’re having trouble loading this page")
     ).toBeInTheDocument();
   });
 
