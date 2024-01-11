@@ -124,7 +124,6 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       return;
     }
 
-    /** 2. Add user's state_code to the app_metadata */
     const acceptedStateCodes = ["ca", "co", "id", "mo", "nd", "pa", "me", "mi", "tn"];
     const domainSplit = userDomain.split(".");
 
@@ -148,26 +147,20 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     const stateCode = `us_${state}`;
 
-    if (acceptedStateCodes.includes(state)) {
+    /** 2. If state code is us_pa, add state code to the app metadata and return
+     *  since those user's aren't in the admin panel roster
+     */
+    // TODO (#4639) Remove PA specific logic once PA users are in Admin Panel roster
+    if (stateCode === "us_pa") {
       api.user.setAppMetadata("stateCode", stateCode);
       // TODO #3170 Remove this once UserAppMetadata has been transitioned
       api.user.setAppMetadata("state_code", stateCode);
+      return;
     }
 
-    /** 3. Add the user's restrictions to the app_metadata */
-    // Other states do not currently have any sign up or user restrictions
-    const stateCodesWithRestrictions = [
-      "us_ca",
-      "us_co",
-      "us_id",
-      "us_me",
-      "us_mi",
-      "us_mo",
-      "us_nd",
-      "us_tn",
-    ];
-
-    if (stateCodesWithRestrictions.includes(stateCode.toLowerCase())) {
+    /** 3. All other users, request metadata and permissions from the auth
+     * endpoint and update app metadata */
+    if (acceptedStateCodes.includes(state)) {
       try {
         const auth = new GoogleAuth({ credentials });
         const client = await auth.getIdTokenClient(
@@ -182,6 +175,9 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         const apiResponse = await client.request({ url, retry: true });
         const restrictions = apiResponse.data;
 
+        api.user.setAppMetadata("stateCode", stateCode);
+        // TODO #3170 Remove this once UserAppMetadata has been transitioned
+        api.user.setAppMetadata("state_code", stateCode);
         api.user.setAppMetadata(
           "allowedSupervisionLocationIds",
           !restrictions.allowedSupervisionLocationIds

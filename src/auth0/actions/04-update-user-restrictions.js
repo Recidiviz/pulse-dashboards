@@ -58,16 +58,6 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("state_code", stateCode);
   }
   const authorizedDomains = ["recidiviz.org", "csg.org", "recidiviz-test.org"]; // add authorized domains here
-  const statesWithRestrictions = [
-    "us_ca",
-    "us_co",
-    "us_id",
-    "us_me",
-    "us_mi",
-    "us_mo",
-    "us_nd",
-    "us_tn",
-  ];
   const emailSplit = email?.split("@") || [];
   const userDomain =
     (email?.length ?? 0) > 1 && emailSplit[emailSplit.length - 1].toLowerCase();
@@ -88,7 +78,14 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("featureVariants", {
       responsiveRevamp: true
     });
+    return;
   }
+
+  /** If state code is us_pa, return without making a request to the auth endpoint
+   *  since those user's aren't in the admin panel roster
+   */
+  // TODO (#4639) Remove PA specific logic once PA users are in Admin Panel roster
+  if (stateCode === "us_pa") return;
 
   /**
    * Set allowedStateCodes from Recidiviz users and skip adding
@@ -114,82 +111,80 @@ exports.onExecutePostLogin = async (event, api) => {
   /**
    * Set user restrictions from Admin Panel backend for all users other than Recidiviz and CSG.
    */
-  if (statesWithRestrictions.includes(stateCode)) {
-    try {
-      /** Get user restrictions from Admin Panel backend */
-      const auth = new GoogleAuth({ credentials });
-      const client = await auth.getIdTokenClient(event.secrets.TARGET_AUDIENCE);
+  try {
+    /** Get user restrictions from Admin Panel backend */
+    const auth = new GoogleAuth({ credentials });
+    const client = await auth.getIdTokenClient(event.secrets.TARGET_AUDIENCE);
 
-      // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
-      const request_email = event.user.email?.replace(
-        "iddoc.onmicrosoft.com",
-        "idoc.idaho.gov"
-      );
+    // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
+    const request_email = event.user.email?.replace(
+      "iddoc.onmicrosoft.com",
+      "idoc.idaho.gov"
+    );
 
-      let userHash = Base64.stringify(SHA256(request_email?.toLowerCase()));
-      if (userHash.startsWith("/")) {
-        userHash = userHash.replace("/", "_");
-      }
-      const url = `${event.secrets.RECIDIVIZ_APP_URL}auth/users/${userHash}`;
-
-      const apiResponse = await client.request({ url, retry: true });
-      const restrictions = apiResponse.data;
-
-      const arrayOfLocations =
-        (restrictions.allowedSupervisionLocationIds ?? "") === ""
-          ? []
-          : restrictions.allowedSupervisionLocationIds.split(",");
-
-      /** Add restrictions to app_metadata */
-      api.user.setAppMetadata(
-        "allowedSupervisionLocationIds",
-        arrayOfLocations
-      );
-      api.user.setAppMetadata(
-        "allowedSupervisionLocationLevel",
-        restrictions.allowedSupervisionLocationLevel
-      );
-      api.user.setAppMetadata("routes", restrictions.routes || null);
-      api.user.setAppMetadata("stateCode", stateCode);
-      api.user.setAppMetadata("userHash", restrictions.userHash);
-      api.user.setAppMetadata("pseudonymizedId", restrictions.pseudonymizedId);
-      api.user.setAppMetadata("district", restrictions.district);
-      api.user.setAppMetadata("externalId", restrictions.externalId);
-      api.user.setAppMetadata("featureVariants", restrictions.featureVariants);
-
-      // TODO #3170 Remove these once UserAppMetadata has been transitioned
-      api.user.setAppMetadata(
-        "allowed_supervision_location_ids",
-        arrayOfLocations
-      );
-      api.user.setAppMetadata(
-        "allowed_supervision_location_level",
-        restrictions.allowedSupervisionLocationLevel
-      );
-      api.user.setAppMetadata("user_hash", restrictions.userHash);
-    } catch (apiError) {
-      const { user } = event;
-
-      analytics.track({
-        userId: user.user_id,
-        event: "Failed Login",
-        properties: {
-          ...user.app_metadata,
-          email: user.email,
-          email_verified: user.email_verified,
-          identities: user.identities,
-          last_ip: event.request.ip,
-          logins_count: event.stats.logins_count,
-          name: user.name,
-          nickname: user.nickname,
-          picture: user.picture,
-          updated_at: user.updated_at,
-          user_id: user.user_id,
-        },
-      });
-
-      await analytics.flush();
-      api.access.deny(DENY_MESSAGE);
+    let userHash = Base64.stringify(SHA256(request_email?.toLowerCase()));
+    if (userHash.startsWith("/")) {
+      userHash = userHash.replace("/", "_");
     }
+    const url = `${event.secrets.RECIDIVIZ_APP_URL}auth/users/${userHash}`;
+
+    const apiResponse = await client.request({ url, retry: true });
+    const restrictions = apiResponse.data;
+
+    const arrayOfLocations =
+      (restrictions.allowedSupervisionLocationIds ?? "") === ""
+        ? []
+        : restrictions.allowedSupervisionLocationIds.split(",");
+
+    /** Add restrictions to app_metadata */
+    api.user.setAppMetadata(
+      "allowedSupervisionLocationIds",
+      arrayOfLocations
+    );
+    api.user.setAppMetadata(
+      "allowedSupervisionLocationLevel",
+      restrictions.allowedSupervisionLocationLevel
+    );
+    api.user.setAppMetadata("routes", restrictions.routes || null);
+    api.user.setAppMetadata("stateCode", stateCode);
+    api.user.setAppMetadata("userHash", restrictions.userHash);
+    api.user.setAppMetadata("pseudonymizedId", restrictions.pseudonymizedId);
+    api.user.setAppMetadata("district", restrictions.district);
+    api.user.setAppMetadata("externalId", restrictions.externalId);
+    api.user.setAppMetadata("featureVariants", restrictions.featureVariants);
+
+    // TODO #3170 Remove these once UserAppMetadata has been transitioned
+    api.user.setAppMetadata(
+      "allowed_supervision_location_ids",
+      arrayOfLocations
+    );
+    api.user.setAppMetadata(
+      "allowed_supervision_location_level",
+      restrictions.allowedSupervisionLocationLevel
+    );
+    api.user.setAppMetadata("user_hash", restrictions.userHash);
+  } catch (apiError) {
+    const { user } = event;
+
+    analytics.track({
+      userId: user.user_id,
+      event: "Failed Login",
+      properties: {
+        ...user.app_metadata,
+        email: user.email,
+        email_verified: user.email_verified,
+        identities: user.identities,
+        last_ip: event.request.ip,
+        logins_count: event.stats.logins_count,
+        name: user.name,
+        nickname: user.nickname,
+        picture: user.picture,
+        updated_at: user.updated_at,
+        user_id: user.user_id,
+      },
+    });
+
+    await analytics.flush();
+    api.access.deny(DENY_MESSAGE);
   }
 };
