@@ -29,6 +29,7 @@ import {
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
+import { castToError } from "../../utils/castToError";
 import { isDemoMode } from "../../utils/isDemoMode";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import { getMethodologyCopy, getMetricCopy } from "../content";
@@ -45,6 +46,7 @@ import {
 import PathwaysMetric from "./PathwaysMetric";
 import {
   HydratablePathwaysMetric,
+  HydrationState,
   MetricId,
   MetricRecord,
   NewBackendRecord,
@@ -88,10 +90,6 @@ export default abstract class PathwaysNewBackendMetric<
 
   readonly accessorIsNotFilterType: boolean;
 
-  isLoading?: boolean;
-
-  isHydrated = false;
-
   protected allRecords?: RecordFormat[];
 
   // this is just a noop stub method to be overridden when needed
@@ -101,8 +99,6 @@ export default abstract class PathwaysNewBackendMetric<
   ) => {
     return d;
   };
-
-  error?: Error;
 
   lastUpdated?: Date;
 
@@ -131,10 +127,8 @@ export default abstract class PathwaysNewBackendMetric<
 
     makeObservable<PathwaysNewBackendMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
-      error: observable,
       hydrate: action,
-      isLoading: observable,
-      isHydrated: observable,
+      hydrationState: observable,
     });
 
     reaction(
@@ -152,7 +146,7 @@ export default abstract class PathwaysNewBackendMetric<
         // hydration status so that the loading bar is displayed the next time we navigate to it.
         if (!this.isCurrentlyViewedMetric) {
           runInAction(() => {
-            this.isHydrated = false;
+            this.hydrationState = { status: "needs hydration" };
           });
           return;
         }
@@ -274,6 +268,8 @@ export default abstract class PathwaysNewBackendMetric<
     );
   }
 
+  hydrationState: HydrationState = { status: "needs hydration" };
+
   /**
    * Fetches metric data and stores the result reactively on this Metric instance.
    */
@@ -281,8 +277,8 @@ export default abstract class PathwaysNewBackendMetric<
     if (PathwaysMetric.backendForMetric(this.id) === "OLD") {
       return Promise.resolve();
     }
-    this.isLoading = true;
-    this.error = undefined;
+    this.hydrationState = { status: "loading" };
+
     this.fetchNewMetrics(this.getQueryParams())
       .then((fetchedData) => {
         runInAction(() => {
@@ -290,8 +286,7 @@ export default abstract class PathwaysNewBackendMetric<
           this.lastUpdated = formatDateString(
             fetchedData.metadata?.lastUpdated
           );
-          this.isLoading = false;
-          this.isHydrated = true;
+          this.hydrationState = { status: "hydrated" };
         });
       })
       .catch((e) => {
@@ -300,9 +295,7 @@ export default abstract class PathwaysNewBackendMetric<
         // from the aborted request could override the actual data we want.
         if (!isAbortException(e)) {
           runInAction(() => {
-            this.isLoading = false;
-            this.error = e;
-            this.isHydrated = false;
+            this.hydrationState = { status: "failed", error: castToError(e) };
           });
         }
       });

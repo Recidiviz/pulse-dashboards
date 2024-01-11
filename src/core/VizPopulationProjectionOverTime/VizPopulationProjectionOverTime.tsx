@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
+import { hydrationFailure, isHydrationInProgress } from "../models/utils";
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
 import { PopulationProjectionTimeSeriesChart } from "../PopulationTimeSeriesChart";
 
@@ -29,15 +30,15 @@ type VizPopulationProjectionOverTimeProps = {
 const VizPopulationProjectionOverTime: React.FC<
   VizPopulationProjectionOverTimeProps
 > = ({ metric }) => {
-  const { dataSeries, chartTitle, error, simulationDate, isLoading } = metric;
+  const { dataSeries, chartTitle, simulationDate } = metric;
 
   return (
     <>
       <PopulationSummaryMetrics
         data={dataSeries}
         simulationDate={simulationDate}
-        isLoading={isLoading}
-        isError={error}
+        isLoading={isHydrationInProgress(metric)}
+        isError={hydrationFailure(metric)}
       />
       <PopulationProjectionTimeSeriesChart
         metric={metric}

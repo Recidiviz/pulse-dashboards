@@ -138,8 +138,8 @@ describe("PersonLevelMetric", () => {
     );
   });
 
-  it("sets isLoading to false", () => {
-    expect(metric.isLoading).toEqual(false);
+  it("sets hydration state", () => {
+    expect(metric.hydrationState.status).toBe("hydrated");
   });
 
   it("sets isEmpty to false", () => {

@@ -365,7 +365,7 @@ export interface Hydratable {
   hydrate: () => void;
 }
 
-export interface HydratablePathwaysMetric extends Hydratable {
+export interface HydratablePathwaysMetric extends HydrationStateMachine {
   dataSeries?: PathwaysMetricRecords;
   isEmpty?: boolean;
 }

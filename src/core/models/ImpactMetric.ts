@@ -28,11 +28,17 @@ import {
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
+import { castToError } from "../../utils/castToError";
 import { isDemoMode } from "../../utils/isDemoMode";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import ImpactStore from "../ImpactStore";
 import { isAbortException } from "../utils/exceptions";
-import { Hydratable, MetricRecord, NewBackendRecord } from "./types";
+import {
+  HydrationState,
+  HydrationStateMachine,
+  MetricRecord,
+  NewBackendRecord,
+} from "./types";
 
 export type ImpactMetricConstructorOptions = {
   endpoint: string;
@@ -40,15 +46,13 @@ export type ImpactMetricConstructorOptions = {
 };
 
 export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
-  implements Hydratable
+  implements HydrationStateMachine
 {
   readonly endpoint: string;
 
   readonly rootStore: ImpactStore;
 
-  isLoading?: boolean;
-
-  isHydrated = false;
+  hydrationState: HydrationState = { status: "needs hydration" };
 
   protected allRecords?: RecordFormat[];
 
@@ -60,8 +64,6 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
     return d;
   };
 
-  error?: Error;
-
   protected abortController?: AbortController;
 
   constructor({ endpoint, rootStore }: ImpactMetricConstructorOptions) {
@@ -71,10 +73,8 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
     makeObservable<ImpactMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable,
       records: computed,
-      error: observable,
       hydrate: action,
-      isLoading: observable,
-      isHydrated: observable,
+      hydrationState: observable,
     });
 
     reaction(
@@ -87,7 +87,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
         // if (!this.isCurrentlyViewedMetric) {
         // }
         runInAction(() => {
-          this.isHydrated = false;
+          this.hydrationState = { status: "needs hydration" };
         });
 
         this.hydrate();
@@ -132,14 +132,12 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
    * Fetches metric data and stores the result reactively on this Metric instance.
    */
   async hydrate(): Promise<void> {
-    this.isLoading = true;
-    this.error = undefined;
+    this.hydrationState = { status: "loading" };
     this.fetchNewMetrics()
       .then((fetchedData) => {
         runInAction(() => {
           this.allRecords = this.dataTransformer(fetchedData.data);
-          this.isLoading = false;
-          this.isHydrated = true;
+          this.hydrationState = { status: "hydrated" };
         });
       })
       .catch((e) => {
@@ -148,9 +146,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
         // from the aborted request could override the actual data we want.
         if (!isAbortException(e)) {
           runInAction(() => {
-            this.isLoading = false;
-            this.error = e;
-            this.isHydrated = false;
+            this.hydrationState = { status: "failed", error: castToError(e) };
           });
         }
       });

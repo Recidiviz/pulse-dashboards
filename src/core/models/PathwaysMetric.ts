@@ -43,6 +43,7 @@ import { dimensionsByMetricType } from "./dimensions";
 import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
 import {
   HydratablePathwaysMetric,
+  HydrationState,
   MetricId,
   MetricRecord,
   PathwaysMetricRecords,
@@ -96,13 +97,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   eagerExpand: boolean;
 
-  isLoading?: boolean;
-
-  isHydrated = false;
-
   protected allRecords?: RecordFormat[];
-
-  error?: Error;
 
   filters: Filters;
 
@@ -144,9 +139,8 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   }: BaseMetricConstructorOptions<RecordFormat>) {
     makeObservable<PathwaysMetric<RecordFormat>, "allRecords">(this, {
       allRecords: observable.ref,
-      error: observable,
       hydrate: action,
-      isLoading: observable,
+      hydrationState: observable,
     });
 
     this.rootStore = rootStore;
@@ -259,24 +253,23 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
     ];
   }
 
+  hydrationState: HydrationState = { status: "needs hydration" };
+
   /**
    * Fetches metric data and stores the result reactively on this Metric instance.
    */
   async hydrate(): Promise<void> {
-    this.isLoading = true;
+    this.hydrationState = { status: "loading" };
     try {
       const fetchedData = await this.fetchAndTransform();
       runInAction(() => {
         this.allRecords = fetchedData;
-        this.isLoading = false;
-        this.isHydrated = true;
+        this.hydrationState = { status: "hydrated" };
         this.newBackendMetric?.hydrate();
       });
     } catch (e) {
       runInAction(() => {
-        this.isLoading = false;
-        this.error = castToError(e);
-        this.isHydrated = false;
+        this.hydrationState = { status: "failed", error: castToError(e) };
       });
     }
   }
