@@ -84,12 +84,24 @@ describe("FirestoreStore", () => {
   });
 
   describe("authenticate", () => {
-    test("Should call /token if user can access workflows", async () => {
+    test("Should call /token if user can access workflows supervision", async () => {
       const auth0Token = "token123";
       const appMetadata: UserAppMetadata = {
         stateCode: "us_nd",
         routes: {
-          workflows: true,
+          workflowsSupervision: true,
+        },
+      };
+      await store.authenticate(auth0Token, appMetadata);
+      expect(mockFetchFirebaseToken).toBeCalled();
+    });
+
+    test("Should call /token if user can access workflows facilities", async () => {
+      const auth0Token = "token123";
+      const appMetadata: UserAppMetadata = {
+        stateCode: "us_nd",
+        routes: {
+          workflowsFacilities: true,
         },
       };
       await store.authenticate(auth0Token, appMetadata);
@@ -101,7 +113,7 @@ describe("FirestoreStore", () => {
       const appMetadata: UserAppMetadata = {
         stateCode: "us_nd",
         routes: {
-          workflows: false,
+          workflowsSupervision: false,
         },
       };
       await store.authenticate(auth0Token, appMetadata);
@@ -141,7 +153,7 @@ describe("FirestoreStore", () => {
       const appMetadata: UserAppMetadata = {
         stateCode: "recidiviz",
         routes: {
-          workflows: true,
+          workflowsSupervision: true,
         },
       };
       await store.authenticateImpersonatedUser(
@@ -157,7 +169,7 @@ describe("FirestoreStore", () => {
       const appMetadata: UserAppMetadata = {
         stateCode: "us_nd",
         routes: {
-          workflows: false,
+          workflowsSupervision: false,
         },
       };
       await store.authenticateImpersonatedUser(

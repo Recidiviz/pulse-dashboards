@@ -133,7 +133,8 @@ export default class FirestoreStore {
     const shouldGenerateToken =
       appMetadata?.stateCode === "recidiviz" ||
       isOfflineMode() ||
-      appMetadata?.routes?.workflows;
+      appMetadata?.routes?.workflowsSupervision ||
+      appMetadata?.routes?.workflowsFacilities;
 
     if (shouldGenerateToken) {
       const firebaseToken = await fetchFirebaseToken(auth0Token);
