@@ -25,7 +25,12 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { ComponentType, useEffect, useRef, useState } from "react";
-import { Navigate } from "react-router-dom";
+import {
+  matchPath,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
@@ -130,7 +135,8 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
     outcomeDate,
   } = presenter;
   const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientPseudoId));
-  const [isRedirect, setIsRedirect] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [scrollElement, setScrollElement] = useState(null);
   const scrollElementRef = useRef(null);
@@ -141,13 +147,11 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
 
   useEffect(() => {
     setModalIsOpen(Boolean(clientPseudoId));
-    setIsRedirect(false);
   }, [clientPseudoId]);
 
-  if (!outliersClientDetail || isRedirect) {
+  if (!outliersClientDetail) {
     return (
       <Navigate
-        replace
         to={outliersUrl("supervisionStaffMetric", {
           officerPseudoId,
           metricId,
@@ -157,14 +161,37 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   }
 
   if (!clientInfo || !clientEvents) return <NotFound />;
-
   return (
     <StyledDrawerModal
       isOpen={modalIsOpen}
       onAfterOpen={() => setScrollElement(scrollElementRef.current)}
-      onRequestClose={() => setModalIsOpen(false)}
+      onRequestClose={() => {
+        setModalIsOpen(false);
+      }}
       // this is necessary for drawer to smoothly close
-      onAfterClose={() => setIsRedirect(true)}
+      onAfterClose={() => {
+        // If navigating from the staff page, go back
+        if (
+          location?.state &&
+          matchPath(
+            location.state?.from,
+            outliersUrl("supervisionStaffMetric", {
+              officerPseudoId,
+              metricId,
+            })
+          )
+        )
+          navigate(-1);
+        // Otherwise, navigate to the staff page on modal close
+        else
+          navigate(
+            outliersUrl("supervisionStaffMetric", {
+              officerPseudoId,
+              metricId,
+            }),
+            { replace: true }
+          );
+      }}
       width={650}
       isMobile={isMobile}
     >

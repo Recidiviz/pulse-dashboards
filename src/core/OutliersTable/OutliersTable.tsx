@@ -18,7 +18,7 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
 import React, { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Column, useFlexLayout, useTable } from "react-table";
 import List from "react-virtualized/dist/commonjs/List";
 import WindowScroller from "react-virtualized/dist/commonjs/WindowScroller";
@@ -108,6 +108,7 @@ const OutliersTable = <T extends object>({
 }: OutlierTableProps<T>) => {
   const { isMobile } = useIsMobile(true);
   const [isColumnHidden, hideColumn] = useState(false);
+  const location = useLocation();
 
   const {
     getTableProps,
@@ -162,14 +163,18 @@ const OutliersTable = <T extends object>({
       );
 
       return rowLinks ? (
-        <StyledLink key={index} to={rowLinks[index]}>
+        <StyledLink
+          key={index}
+          to={rowLinks[index]}
+          state={{ from: location.pathname }}
+        >
           {rowViz}
         </StyledLink>
       ) : (
         rowViz
       );
     },
-    [prepareRow, rows, rowLinks, transformToMobile]
+    [prepareRow, rows, rowLinks, transformToMobile, location.pathname]
   );
 
   return (
