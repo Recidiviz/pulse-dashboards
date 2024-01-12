@@ -34,8 +34,8 @@ import { isOfflineMode } from "../../utils/isOfflineMode";
 import ImpactStore from "../ImpactStore";
 import { isAbortException } from "../utils/exceptions";
 import {
+  Hydratable,
   HydrationState,
-  HydrationStateMachine,
   MetricRecord,
   NewBackendRecord,
 } from "./types";
@@ -46,7 +46,7 @@ export type ImpactMetricConstructorOptions = {
 };
 
 export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
-  implements HydrationStateMachine
+  implements Hydratable
 {
   readonly endpoint: string;
 

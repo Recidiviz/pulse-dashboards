@@ -21,14 +21,14 @@ import { flowResult, makeAutoObservable } from "mobx";
 import moment from "moment";
 
 import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { HydrationStateMachine } from "../../core/models/types";
+import { Hydratable } from "../../core/models/types";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { SupervisionDetails } from "./types";
 
-export class SupervisionClientDetailPresenter implements HydrationStateMachine {
+export class SupervisionClientDetailPresenter implements Hydratable {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public officerPseudoId: string,

@@ -44,8 +44,8 @@ describe("Impact Page", () => {
     useRootStoreMock.mockReturnValue({
       impactStore: {
         hydrate: jest.fn(),
+        hydrationState: { status: "needs hydration" },
       },
-      isHydrated: false,
     });
 
     render(
@@ -74,7 +74,7 @@ describe("Impact Page", () => {
           useAvgDailyPopulationData: [{ months: 0, value: 3927.9999999999995 }],
           useValidYExtent: [0, 4000],
         },
-        isHydrated: true,
+        hydrationState: { status: "hydrated" },
         page: "compliantReportingWorkflows",
       },
       userStore: {

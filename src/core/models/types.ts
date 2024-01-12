@@ -353,36 +353,23 @@ export type ViewMethodology = {
   };
 };
 
+export interface HydratablePathwaysMetric extends Hydratable {
+  dataSeries?: PathwaysMetricRecords;
+  isEmpty?: boolean;
+}
+
+export type HydrationState =
+  | { status: "needs hydration" }
+  | { status: "loading" }
+  | { status: "failed"; error: Error }
+  | { status: "hydrated" };
+
 /**
  * Describes the hydration state and mechanism,
  * but not what the hydrated object will look like
  * (because it may vary by model)
  */
 export interface Hydratable {
-  isLoading?: boolean;
-  isHydrated: boolean;
-  error?: Error;
-  hydrate: () => void;
-}
-
-export interface HydratablePathwaysMetric extends HydrationStateMachine {
-  dataSeries?: PathwaysMetricRecords;
-  isEmpty?: boolean;
-}
-
-// TODO: migrate all uses of Hydratable to this new interface
-export type HydrationState =
-  | { status: "needs hydration" }
-  | { status: "loading" }
-  // TODO: this is a legacy status that conflates "needs hydration" and "loading",
-  // it should be removed once all hydratables are migrated
-  | { status: "pending" }
-  | { status: "failed"; error: Error }
-  | { status: "hydrated" };
-export type HydrationStatus = HydrationState["status"];
-
-// TODO: rename this back to Hydratable once everything is migrated
-export interface HydrationStateMachine {
   hydrate: () => void;
   hydrationState: HydrationState;
 }

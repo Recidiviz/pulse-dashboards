@@ -22,14 +22,12 @@ import values from "lodash/fp/values";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { HydrationStateMachine } from "../../core/models/types";
+import { Hydratable } from "../../core/models/types";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { ConfigLabels } from "./types";
 
-export class SupervisionOfficerSupervisorsPresenter
-  implements HydrationStateMachine
-{
+export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   constructor(private supervisionStore: OutliersSupervisionStore) {
     makeAutoObservable(this);
 

@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx";
 import { RootStore } from "../../RootStore";
 import type TenantStore from "../../RootStore/TenantStore";
 import { TenantId } from "../../RootStore/types";
-import { HydrationStateMachine } from "../models/types";
+import { Hydratable } from "../models/types";
 import UsTnCompliantReportingWorkflowsImpactMetric from "../models/UsTnCompliantReportingWorkflowsImpactMetric";
 import {
   DASHBOARD_VIEWS,
@@ -19,7 +19,7 @@ interface ImpactStoreProps {
   rootStore: RootStore;
 }
 
-export default class ImpactStore implements HydrationStateMachine {
+export default class ImpactStore implements Hydratable {
   tenantStore: TenantStore;
 
   rootStore: RootStore;

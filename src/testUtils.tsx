@@ -18,7 +18,7 @@
 import { autorun } from "mobx";
 import { SafeParseReturnType, ZodError, ZodFormattedError } from "zod";
 
-import { HydrationStateMachine } from "./core/models/types";
+import { Hydratable } from "./core/models/types";
 
 /**
  * Convenience method to run an immediate, one-time reactive effect
@@ -49,7 +49,7 @@ export function getParseErrorFormatted<Input, Output>(
   return getParseError(result).format();
 }
 
-export function unpackAggregatedErrors(presenter: HydrationStateMachine) {
+export function unpackAggregatedErrors(presenter: Hydratable) {
   if (presenter.hydrationState.status === "failed") {
     const { error } = presenter.hydrationState;
     if (error instanceof AggregateError) {

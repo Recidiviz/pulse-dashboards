@@ -39,8 +39,8 @@ import {
 } from "mobx";
 
 import {
+  Hydratable,
   HydrationState,
-  HydrationStateMachine,
   Searchable,
   SearchType,
   SystemId,
@@ -102,7 +102,7 @@ import { staffNameComparator } from "./utils";
 
 type ConstructorOpts = { rootStore: RootStore };
 
-export class WorkflowsStore implements HydrationStateMachine {
+export class WorkflowsStore implements Hydratable {
   rootStore: RootStore;
 
   private hydrationError?: Error;

@@ -19,7 +19,7 @@ import * as Sentry from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 
 import { castToError } from "../../utils/castToError";
-import { HydrationState, HydrationStateMachine } from "./types";
+import { Hydratable, HydrationState } from "./types";
 import { isHydrated, isHydrationInProgress } from "./utils";
 
 type HydrationSource = {
@@ -41,7 +41,7 @@ type HydrationSource = {
  * - if not populated, this class calls populator methods on the source object
  *   and updates its own hydration status based on the progress of the populators
  */
-export class HydratesFromSource implements HydrationStateMachine {
+export class HydratesFromSource implements Hydratable {
   constructor(public source: HydrationSource) {
     makeAutoObservable(this);
   }

@@ -17,7 +17,7 @@
 
 import { noop } from "lodash";
 
-import { HydrationState, HydrationStateMachine } from "../types";
+import { Hydratable, HydrationState } from "../types";
 import { compositeHydrationState } from "../utils";
 
 describe("compositeHydrationState", () => {
@@ -28,12 +28,12 @@ describe("compositeHydrationState", () => {
     hydrated: { status: "hydrated" },
   } satisfies Record<string, HydrationState>;
 
-  const h1: HydrationStateMachine = {
+  const h1: Hydratable = {
     hydrationState: { status: "needs hydration" },
     hydrate: noop,
   };
 
-  const h2: HydrationStateMachine = {
+  const h2: Hydratable = {
     hydrationState: { status: "needs hydration" },
     hydrate: noop,
   };

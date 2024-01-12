@@ -24,11 +24,8 @@ import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
 import { ErrorMessage } from "../components/StatusMessage";
-import {
-  Hydratable,
-  HydrationStateMachine,
-  HydrationStatus,
-} from "./models/types";
+import { Hydratable } from "./models/types";
+import { isHydrationUntouched } from "./models/utils";
 
 const Wrapper = styled.div`
   position: relative;
@@ -51,22 +48,6 @@ const ContentWrapper = styled(animated.div)`
   height: 100%;
 `;
 
-/**
- * Creates an atomic status variable for transitions
- */
-function getHydrationStatus(
-  model: Hydratable
-): "pending" | "failed" | "hydrated" {
-  if (model.error) {
-    return "failed";
-  }
-  if (!model.isHydrated) {
-    return "pending";
-  }
-
-  return "hydrated";
-}
-
 const crossFade = {
   initial: { opacity: 1, top: 0 },
   from: { opacity: 0 },
@@ -77,7 +58,7 @@ const crossFade = {
 
 type ModelHydratorProps = {
   children: React.ReactElement;
-  model: Hydratable | HydrationStateMachine;
+  model: Hydratable;
   className?: string;
 };
 
@@ -91,16 +72,8 @@ function ModelHydrator({
   model,
   className,
 }: ModelHydratorProps): React.ReactElement {
-  let needsHydration: boolean;
-  let hydrationStatus: HydrationStatus;
-
-  if ("hydrationState" in model) {
-    hydrationStatus = model.hydrationState.status;
-    needsHydration = hydrationStatus === "needs hydration";
-  } else {
-    hydrationStatus = getHydrationStatus(model);
-    needsHydration = !model.isHydrated && !model.isLoading && !model.error;
-  }
+  const hydrationStatus = model.hydrationState.status;
+  const needsHydration = isHydrationUntouched(model);
 
   useEffect(() => {
     if (needsHydration) {
@@ -116,7 +89,6 @@ function ModelHydrator({
         switch (item) {
           case "needs hydration":
           case "loading":
-          case "pending":
             return (
               <StatusWrapper key={key} style={props}>
                 <Loading />

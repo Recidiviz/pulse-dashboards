@@ -114,6 +114,7 @@ describe("PageWorkflows", () => {
     jest.clearAllMocks();
     mockWorkflowsStore({
       hydrate: jest.fn().mockReturnValue(jest.fn()),
+      hydrationState: { status: "needs hydration" },
     });
   });
 
@@ -138,7 +139,7 @@ describe("PageWorkflows", () => {
         responsiveRevamp: true,
       });
       baseMockWorkflowsStore = {
-        isHydrated: true,
+        hydrationState: { status: "hydrated" },
         opportunityTypes: [],
         workflowsSupportedSystems: ["SUPERVISION"],
         setActivePage: jest.fn(),
@@ -279,7 +280,7 @@ describe("PageWorkflows", () => {
         responsiveRevamp: true,
       });
       baseMockWorkflowsStore = {
-        isHydrated: true,
+        hydrationState: { status: "hydrated" },
         homepage: "home",
         workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
         opportunityTypes: [],

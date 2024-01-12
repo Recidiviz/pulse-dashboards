@@ -18,7 +18,7 @@
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { HydrationStateMachine } from "../../core/models/types";
+import { Hydratable } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
 import { OutliersAPI } from "../api/interface";
 import { MetricConfig } from "../models/MetricConfig";
@@ -29,9 +29,7 @@ import { FlowMethod } from "../types";
 import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
-export class SupervisionOfficerDetailPresenter
-  implements HydrationStateMachine
-{
+export class SupervisionOfficerDetailPresenter implements Hydratable {
   // rather than dealing with a partially hydrated unit in the supervisionStore,
   // we will just put the API response here (when applicable)
   private fetchedOfficerRecord?: SupervisionOfficer;

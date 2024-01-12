@@ -19,15 +19,13 @@ import { descending } from "d3-array";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { HydrationStateMachine } from "../../core/models/types";
+import { Hydratable } from "../../core/models/types";
 import { outliersUrl } from "../../core/views";
 import { formatDateToISO } from "../../utils";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 
-export class SupervisionOfficerMetricEventsPresenter
-  implements HydrationStateMachine
-{
+export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public officerPseudoId: string,

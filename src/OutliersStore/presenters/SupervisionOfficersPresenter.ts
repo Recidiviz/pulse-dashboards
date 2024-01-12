@@ -18,7 +18,7 @@
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { HydrationState, HydrationStateMachine } from "../../core/models/types";
+import { Hydratable, HydrationState } from "../../core/models/types";
 import { castToError } from "../../utils/castToError";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
@@ -26,7 +26,7 @@ import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
-export class SupervisionOfficersPresenter implements HydrationStateMachine {
+export class SupervisionOfficersPresenter implements Hydratable {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public supervisorPseudoId: string

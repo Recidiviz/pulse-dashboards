@@ -29,8 +29,8 @@ import {
 import {
   AgeGroup,
   Gender,
+  Hydratable,
   HydrationState,
-  HydrationStateMachine,
   LengthOfStay,
   LengthOfStayRawValue,
   MetricRecord,
@@ -302,15 +302,12 @@ export const getTimePeriodRawValue = (
 /**
  * Returns true if hydration has reached any terminal state and false otherwise.
  */
-export function isHydrationFinished(
-  hydratable: HydrationStateMachine
-): boolean {
+export function isHydrationFinished(hydratable: Hydratable): boolean {
   switch (hydratable.hydrationState.status) {
     case "hydrated":
     case "failed":
       return true;
     case "loading":
-    case "pending":
     case "needs hydration":
       return false;
     default:
@@ -321,13 +318,12 @@ export function isHydrationFinished(
 /**
  * Returns true if hydration has reached a successful terminal state and false otherwise.
  */
-export function isHydrated(hydratable: HydrationStateMachine): boolean {
+export function isHydrated(hydratable: Hydratable): boolean {
   switch (hydratable.hydrationState.status) {
     case "hydrated":
       return true;
     case "failed":
     case "loading":
-    case "pending":
     case "needs hydration":
       return false;
     default:
@@ -338,12 +334,9 @@ export function isHydrated(hydratable: HydrationStateMachine): boolean {
 /**
  * Returns true if hydration has started but not reached a terminal state, false otherwise.
  */
-export function isHydrationInProgress(
-  hydratable: HydrationStateMachine
-): boolean {
+export function isHydrationInProgress(hydratable: Hydratable): boolean {
   switch (hydratable.hydrationState.status) {
     case "loading":
-    case "pending":
       return true;
     case "hydrated":
     case "failed":
@@ -357,14 +350,11 @@ export function isHydrationInProgress(
 /**
  * Returns true if hydration is neither in progress nor completed, false otherwise.
  */
-export function isHydrationUntouched(
-  hydratable: HydrationStateMachine
-): boolean {
+export function isHydrationUntouched(hydratable: Hydratable): boolean {
   switch (hydratable.hydrationState.status) {
     case "needs hydration":
       return true;
     case "loading":
-    case "pending":
     case "hydrated":
     case "failed":
       return false;
@@ -376,12 +366,11 @@ export function isHydrationUntouched(
 /**
  * Returns true if hydration is in progress or finished, false otherwise.
  */
-export function isHydrationStarted(hydratable: HydrationStateMachine): boolean {
+export function isHydrationStarted(hydratable: Hydratable): boolean {
   switch (hydratable.hydrationState.status) {
     case "needs hydration":
       return false;
     case "loading":
-    case "pending":
     case "hydrated":
     case "failed":
       return true;
@@ -393,14 +382,11 @@ export function isHydrationStarted(hydratable: HydrationStateMachine): boolean {
 /**
  * Returns the associated error if hydration has failed
  */
-export function hydrationFailure(
-  hydratable: HydrationStateMachine
-): Error | undefined {
+export function hydrationFailure(hydratable: Hydratable): Error | undefined {
   switch (hydratable.hydrationState.status) {
     case "failed":
       return hydratable.hydrationState.error;
     case "loading":
-    case "pending":
     case "hydrated":
     case "needs hydration":
       return;
@@ -414,7 +400,7 @@ export function hydrationFailure(
  * in any of them taking precedence over all other possible states.
  */
 export function compositeHydrationState(
-  hydratables: Array<HydrationStateMachine>
+  hydratables: Array<Hydratable>
 ): HydrationState {
   const errors = hydratables.map(hydrationFailure).filter(isError);
   if (errors.length) {

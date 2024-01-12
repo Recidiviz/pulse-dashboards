@@ -14,10 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import {
-  HydrationStateMachine,
-  SnoozeTaskConfig,
-} from "../../core/models/types";
+import { Hydratable, SnoozeTaskConfig } from "../../core/models/types";
 import { RootStore } from "../../RootStore";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
@@ -110,7 +107,7 @@ export interface SupervisionTasksRecord {
 /**
  * A SupervisionTask is associated with a single client and it has a list of tasks.
  */
-export interface SupervisionTaskInterface extends HydrationStateMachine {
+export interface SupervisionTaskInterface extends Hydratable {
   readonly tasks: SupervisionTask<SupervisionTaskType>[];
   readonly needs: SupervisionNeed[];
   overdueTasks: SupervisionTask<SupervisionTaskType>[];

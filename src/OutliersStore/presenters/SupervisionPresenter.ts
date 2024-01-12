@@ -18,13 +18,13 @@
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { HydrationState, HydrationStateMachine } from "../../core/models/types";
+import { Hydratable, HydrationState } from "../../core/models/types";
 import { OutliersStore } from "../OutliersStore";
 
 /**
  * Sits above all of the Outliers supervision pages and ensures the supervisionStore is hydrated
  */
-export class SupervisionPresenter implements HydrationStateMachine {
+export class SupervisionPresenter implements Hydratable {
   constructor(private outliersStore: OutliersStore) {
     makeAutoObservable(this);
 
