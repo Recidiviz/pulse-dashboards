@@ -61,7 +61,6 @@ function fetchOfflineUser({
         usTnExpiration: {},
         enableSnooze: {},
         outliersClientDetail: {},
-        usMoOverdueRHPilot: {},
       },
     },
   };
