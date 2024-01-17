@@ -129,5 +129,7 @@ export type UsTnSharedReclassificationDraftData = {
   inmateAppeal: boolean;
   disagreementReasons: string;
   denialReasons: string;
+  hearingDate: string;
+  hearingLocation: string;
 } & DraftDataSelections &
   DraftDataNotes;

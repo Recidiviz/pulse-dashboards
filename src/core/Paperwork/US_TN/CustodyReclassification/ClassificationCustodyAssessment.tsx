@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ import AssessmentScore from "./AssessmentScore";
 import CoverSheet from "./CoverSheet";
 import FormInput from "./FormInput";
 import HeaderFields from "./HeaderFields";
+import HearingNotice from "./HearingNotice";
 import { FormContainer, Label } from "./styles";
 
 const Header = styled.div`
@@ -156,6 +157,13 @@ const ClassificationCustodyAssessment: React.FC = () => {
                 { text: "Minimum", max: 6 },
               ]}
             />
+          </FormContainer>
+        </PrintablePage>
+      </PrintablePageMargin>
+      <PrintablePageMargin>
+        <PrintablePage>
+          <FormContainer {...formViewerContext}>
+            <HearingNotice />
           </FormContainer>
         </PrintablePage>
       </PrintablePageMargin>

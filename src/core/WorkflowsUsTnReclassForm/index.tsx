@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { format } from "date-fns";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
@@ -31,9 +32,14 @@ import {
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassification/ClassificationCustodyAssessment";
 
 export function templateValuesForFormData(
-  formData: Partial<UsTnSharedReclassificationDraftData>
+  formData: Partial<UsTnSharedReclassificationDraftData> & {
+    userExternalId?: string;
+  }
 ) {
   const out: Record<string, any> = { ...formData };
+
+  out.downloadDate = format(new Date(), "MM/dd/yyyy");
+  out.downloadTime = format(new Date(), "hh:mm bb");
 
   // Add tabs before newlines so the underlining looks right in these big blocks
   [
@@ -138,6 +144,8 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
     workflowsStore: { selectedResident: resident },
   } = useRootStore();
 
+  const userExternalId = resident?.rootStore.userStore.externalId;
+
   const form = useOpportunityFormContext() as UsTnCustodyLevelDowngradeForm;
 
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -150,7 +158,7 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
       `${resident.displayName} - Reclassification Packet.docx`,
       resident.stateCode,
       "custody_reclassification_template.docx",
-      templateValuesForFormData(formData),
+      templateValuesForFormData({ ...formData, userExternalId }),
       resident.rootStore.getTokenSilently
     );
   };
