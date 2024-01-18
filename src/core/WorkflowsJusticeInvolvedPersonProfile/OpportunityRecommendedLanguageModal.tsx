@@ -26,6 +26,7 @@ import {
   Sans24,
   spacing,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React, { useState } from "react";
 import useClipboard from "react-use-clipboard";
@@ -88,7 +89,7 @@ type OpportunityRecommendedLanguageModalProps = {
   children: string;
 };
 
-export const OpportunityRecommendedLanguageModal = ({
+const OpportunityRecommendedLanguageModal = ({
   opportunity,
   children,
 }: OpportunityRecommendedLanguageModalProps) => {
@@ -143,3 +144,5 @@ export const OpportunityRecommendedLanguageModal = ({
     </>
   );
 };
+
+export default observer(OpportunityRecommendedLanguageModal);

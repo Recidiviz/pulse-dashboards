@@ -31,7 +31,7 @@ import styled from "styled-components/macro";
 import { Opportunity } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { InfoButton } from "./InfoButton";
-import { OpportunityRecommendedLanguageModal } from "./OpportunityRecommendedLanguageModal";
+import OpportunityRecommendedLanguageModal from "./OpportunityRecommendedLanguageModal";
 import { InfoTooltipWrapper } from "./styles";
 
 const Wrapper = styled.ul<{ alert?: boolean }>`
