@@ -104,9 +104,8 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   if (!opportunityType || !displayTabs) return null;
 
   const { label } = OPPORTUNITY_CONFIGS[opportunityType];
-  const eligibleOpps = allOpportunitiesByType[opportunityType].filter(
-    (opp) => !opp.denial
-  );
+  const eligibleOpps =
+    allOpportunitiesByType[opportunityType]?.filter((opp) => !opp.denial) || [];
   const handleTabClick = (tab: OpportunityTab) => {
     analyticsStore.trackOpportunityTabClicked({ tab });
     setActiveTab(tab);
