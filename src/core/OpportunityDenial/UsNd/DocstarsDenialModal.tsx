@@ -24,6 +24,7 @@ import {
   Sans16,
   Sans24,
   spacing,
+  typography,
 } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { startOfToday } from "date-fns";
@@ -37,6 +38,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatDateToISO, formatWorkflowsDate } from "../../../utils";
 import {
+  Client,
   DenialConfirmationModalProps,
   Opportunity,
 } from "../../../WorkflowsStore";
@@ -44,10 +46,9 @@ import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 
 const StyledModal = styled(Modal)`
   .ReactModal__Content {
-    padding: 0;
+    padding: ${rem(spacing.lg)} ${rem(spacing.xl)} ${rem(spacing.xl)};
     max-width: 85vw;
-    width: ${rem(740)};
-    min-height: ${rem(500)};
+    width: ${rem(600)};
     display: flex;
     flex-direction: column;
   }
@@ -65,22 +66,42 @@ const CenteredContainer = styled.div`
 const ModalTitle = styled(Sans24)`
   color: ${palette.pine1};
   padding: ${rem(spacing.md)} ${rem(spacing.xl)};
+  text-align: center;
 `;
 
 const ModalControls = styled.div`
-  padding: ${rem(spacing.lg)} ${rem(spacing.lg)} ${rem(spacing.sm)};
+  padding: 0 0 ${rem(spacing.sm)};
   text-align: right;
 `;
 
 const ActionButton = styled(Button).attrs({ kind: "primary", shape: "block" })`
   margin: ${rem(spacing.lg)} ${rem(spacing.xl)} ${rem(spacing.sm)};
   padding: ${rem(spacing.md)};
-  align-self: flex-start;
   flex: none;
 `;
 
 const ModalText = styled(Sans16)`
   color: ${palette.slate80};
+  margin: ${rem(spacing.sm)} 0;
+`;
+
+const ConfirmationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: stretch;
+`;
+
+const ConfirmationLabel = styled.dt`
+  ${typography.Sans16}
+  color: rgba(53, 83, 98, 0.5);
+  margin-bottom: ${rem(spacing.xs)};
+`;
+
+const ConfirmationField = styled.dd.attrs({ className: "fs-exclude" })`
+  ${typography.Sans16}
+  color: rgba(53, 83, 98, 0.9);
 `;
 
 export function buildJustificationReasons(
@@ -97,7 +118,7 @@ export function buildJustificationReasons(
       }
       return false;
     })
-    .filter(Boolean);
+    .filter(Boolean) as { code: string; description: string }[]; // assertion because TS doesn't infer that falses are filtered out
 }
 
 const createDocstarsRequestBody = (
@@ -205,29 +226,45 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
   const submissionModal = (
     <div data-testid="docstars-confirmation-screen">
       {closeButtonControls}
-      {/* TODO(#4372) Finalize copy and format */}
-      <ModalTitle>Confirm</ModalTitle>
-      <div>
-        Reasons: <span>{reasons}</span>
-      </div>
-      <div>
-        otherReason: <span>{otherReason}</span>
-      </div>
-      <div>
-        snooze until: <span>{formatWorkflowsDate(snoozeUntilDate)}</span>
-      </div>
-      <div>
-        sid: <span>{opportunity.person.externalId}</span>
-      </div>
-      <div>
-        user: <span>{currentUserEmail}</span>
-      </div>
-      <ActionButton
-        data-testid="docstars-submit-button"
-        onClick={onSubmitButtonClick}
-      >
-        Sync note to DOCSTARS
-      </ActionButton>
+      <ConfirmationContainer>
+        <ModalTitle>Confirm DOCSTARS Note</ModalTitle>
+        <dl>
+          <ConfirmationLabel>Client Name</ConfirmationLabel>{" "}
+          <ConfirmationField>
+            {opportunity.person.displayPreferredName}
+          </ConfirmationField>
+          <ConfirmationLabel>Client ID</ConfirmationLabel>{" "}
+          <ConfirmationField>{opportunity.person.externalId}</ConfirmationField>
+          <ConfirmationLabel>Supervision End Date</ConfirmationLabel>
+          <ConfirmationField>
+            {formatWorkflowsDate((opportunity.person as Client).expirationDate)}
+          </ConfirmationField>
+          <ConfirmationLabel>New Early Termination Date</ConfirmationLabel>
+          <ConfirmationField>
+            {formatWorkflowsDate(snoozeUntilDate)}
+          </ConfirmationField>
+          <ConfirmationLabel>Justification Reasons</ConfirmationLabel>
+          <ConfirmationField>
+            <ul>
+              {buildJustificationReasons(opportunity, reasons, otherReason).map(
+                ({ code, description }) => (
+                  <li key={code}>
+                    {code}: {description}
+                  </li>
+                )
+              )}
+            </ul>
+          </ConfirmationField>
+          <ConfirmationLabel>Staff ID</ConfirmationLabel>{" "}
+          <ConfirmationField>{currentUserEmail}</ConfirmationField>
+        </dl>
+        <ActionButton
+          data-testid="docstars-submit-button"
+          onClick={onSubmitButtonClick}
+        >
+          Sync note to DOCSTARS
+        </ActionButton>
+      </ConfirmationContainer>
     </div>
   );
 
