@@ -255,3 +255,230 @@ test("hydrated with eligible and ineligible opps", () => {
     screen.getByText("2 clients may be eligible for early termination")
   ).toBeInTheDocument();
 });
+
+test("when `allOpportunitiesByType` is undefined", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: undefined,
+      opportunitiesByTab: {
+        earlyTermination: {
+          [firstTabText]: [opp],
+        },
+      },
+    },
+  });
+
+  const { container } = render(<OpportunityPersonList />);
+
+  expect(container).toContainHTML("<div></div>");
+});
+
+test("when `allOpportunitiesByType` is an empty object", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: {},
+      opportunitiesByTab: {
+        earlyTermination: {
+          [firstTabText]: [opp],
+        },
+      },
+    },
+  });
+
+  const { container } = render(<OpportunityPersonList />);
+
+  expect(container).toContainHTML("<div></div>");
+});
+
+test("when `opportunitiesByTab` is undefined", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  const almostOpp = { ...opp, reviewStatus: "ALMOST" };
+
+  const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: {
+        earlyTermination: [opp, almostOpp, ineligibleOpp],
+      },
+      opportunitiesByTab: undefined,
+    },
+  });
+
+  const { container } = render(<OpportunityPersonList />);
+
+  expect(container).toContainHTML("<div></div>");
+});
+
+test("when `opportunitiesByTab` is an empty object", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  const almostOpp = { ...opp, reviewStatus: "ALMOST" };
+
+  const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: {
+        earlyTermination: [opp, almostOpp, ineligibleOpp],
+      },
+      opportunitiesByTab: {},
+    },
+  });
+
+  const { container } = render(<OpportunityPersonList />);
+
+  expect(container).toContainHTML("<div></div>");
+});
+
+test("when `earlyTermination` in `allOpportunitiesByType` is an empty list", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: {
+        earlyTermination: [],
+      },
+      opportunitiesByTab: {
+        earlyTermination: {
+          [firstTabText]: [opp],
+        },
+      },
+    },
+  });
+  render(<OpportunityPersonList />);
+  expect(
+    screen.getByText(
+      "None of the clients on the selected officer's caseloads are eligible for early termination. Search for another officer."
+    )
+  ).toBeInTheDocument();
+});
+
+test("when `earlyTermination` in `opportunitiesByTab` is undefined", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: {
+        earlyTermination: undefined,
+      },
+      opportunitiesByTab: {
+        earlyTermination: {
+          [firstTabText]: [opp],
+        },
+      },
+    },
+  });
+  const { container } = render(<OpportunityPersonList />);
+
+  expect(container).toContainHTML("<div></div>");
+});
+
+test("an opp is undefined in `opportunitiesByTab`", () => {
+  const firstTabText = "Eligible Now";
+
+  const opp = {
+    ...mockOpportunity,
+    tabOrder: [firstTabText],
+    person: {
+      recordId: "4",
+    } as Client,
+  };
+
+  const almostOpp = { ...opp, reviewStatus: "ALMOST" };
+
+  const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: {
+        earlyTermination: [opp, almostOpp, ineligibleOpp],
+      },
+      opportunitiesByTab: {
+        earlyTermination: undefined,
+      },
+    },
+  });
+
+  const { container } = render(<OpportunityPersonList />);
+
+  expect(container).toContainHTML("<div></div>");
+});

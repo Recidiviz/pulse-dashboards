@@ -43,12 +43,12 @@ export const useOrderedActiveTab: () => OrderedActiveTab =
       if (opportunityType) {
         const opportunityTabs = opportunitiesByTab[opportunityType];
 
-        const tabOrder = (Object.values(opportunityTabs) ?? {}).flat()[0]
+        const tabOrder = (Object.values(opportunityTabs ?? {}) ?? {}).flat()[0]
           ?.tabOrder;
 
         const tabsForDisplay: OpportunityTab[] = intersection(
           [...(tabOrder ?? [])],
-          Object.keys(opportunityTabs)
+          Object.keys(opportunityTabs ?? {})
         ) as OpportunityTab[];
 
         setDisplayTabs(tabsForDisplay);

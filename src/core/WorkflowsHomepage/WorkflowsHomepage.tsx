@@ -90,11 +90,13 @@ const WorkflowsHomepage = observer(
     const empty = <WorkflowsResults callToActionText={emptyCallToAction} />;
 
     const opportunitySummaries = opportunityTypes.map((opportunityType) => {
-      if (allOpportunitiesByType[opportunityType].length) {
+      const opportunities = allOpportunitiesByType[opportunityType] || [];
+
+      if (opportunities.length) {
         return (
           <OpportunityTypeSummary
             key={opportunityType}
-            opportunities={allOpportunitiesByType[opportunityType]}
+            opportunities={opportunities}
             opportunityType={opportunityType}
           />
         );

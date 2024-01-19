@@ -31,18 +31,19 @@ export const OpportunityPersonListWithSectionTitles = observer(
       },
     } = useRootStore();
     const { displayTabs } = useOrderedActiveTab();
-
     if (!opportunityType) return null;
+    const oppsByTabMap = opportunitiesByTab[opportunityType];
 
     return (
       <>
         {displayTabs.map((sectionTitle) => {
           return (
-            opportunitiesByTab[opportunityType][sectionTitle]?.length > 0 && (
+            oppsByTabMap &&
+            oppsByTabMap?.[sectionTitle]?.length > 0 && (
               <div key={sectionTitle}>
                 {/* Only display the section title if there are multiple sections or the one we're
             displaying isn't the first in the section order (such as "Almost Eligible") */}
-                {(Object.keys(opportunitiesByTab[opportunityType]).length > 1 ||
+                {(Object.keys(oppsByTabMap).length > 1 ||
                   sectionTitle !== displayTabs[0]) && (
                   <SectionLabelText>{sectionTitle}</SectionLabelText>
                 )}
@@ -50,14 +51,12 @@ export const OpportunityPersonListWithSectionTitles = observer(
                   key={`PersonList_${sectionTitle}`}
                   className={`PersonList_${sectionTitle} PersonList`}
                 >
-                  {opportunitiesByTab[opportunityType][sectionTitle]?.map(
-                    (opportunity) => (
-                      <PersonListItem
-                        key={opportunity.person.recordId}
-                        opportunity={opportunity}
-                      />
-                    )
-                  )}
+                  {oppsByTabMap[sectionTitle]?.map((opportunity) => (
+                    <PersonListItem
+                      key={opportunity.person.recordId}
+                      opportunity={opportunity}
+                    />
+                  ))}
                 </PersonList>
               </div>
             )

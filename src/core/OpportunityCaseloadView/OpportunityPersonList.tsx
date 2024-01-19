@@ -74,17 +74,34 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
 
   const { isMobile } = useIsMobile(true);
 
-  const displayTabs = useMemo(
-    () =>
-      opportunityType && allOpportunitiesByType[opportunityType]?.[0]
-        ? intersection(
-            allOpportunitiesByType[opportunityType][0].tabOrder,
-            Object.keys(opportunitiesByTab[opportunityType]) as OpportunityTab[]
-          )
-        : [],
-    // if any of the elements in the dependency array are not defined, return [].
-    [allOpportunitiesByType, opportunitiesByTab, opportunityType]
-  );
+  const oppsFromOpportunitiesByTab = useMemo(() => {
+    if (opportunitiesByTab && opportunityType) {
+      const oppsRecord = opportunitiesByTab[opportunityType];
+      return oppsRecord;
+    }
+    return undefined;
+  }, [opportunitiesByTab, opportunityType]);
+
+  const oppsFromOpportunitiesByOppType = useMemo(() => {
+    if (allOpportunitiesByType && opportunityType) {
+      return allOpportunitiesByType[opportunityType];
+    }
+    return undefined;
+  }, [allOpportunitiesByType, opportunityType]);
+
+  const displayTabs = useMemo(() => {
+    return oppsFromOpportunitiesByTab &&
+      oppsFromOpportunitiesByOppType &&
+      oppsFromOpportunitiesByOppType[0]
+      ? intersection(
+          oppsFromOpportunitiesByOppType[0].tabOrder,
+          Object.keys(oppsFromOpportunitiesByTab)
+        )
+      : [];
+  }, [
+    oppsFromOpportunitiesByTab,
+    oppsFromOpportunitiesByOppType,
+  ]) as OpportunityTab[];
 
   const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
 
@@ -93,19 +110,22 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   }, [displayTabs]);
 
   useEffect(() => {
-    if (
-      opportunityType &&
-      !opportunitiesByTab[opportunityType]?.[activeTab]?.length
-    ) {
+    if (!oppsFromOpportunitiesByTab?.[activeTab]?.length) {
       setActiveTab(displayTabs[0]);
     }
-  }, [opportunitiesByTab, opportunityType, activeTab, displayTabs]);
+  }, [oppsFromOpportunitiesByTab, activeTab, displayTabs]);
 
-  if (!opportunityType || !displayTabs) return null;
+  if (
+    !opportunityType ||
+    !oppsFromOpportunitiesByOppType ||
+    !oppsFromOpportunitiesByTab
+  )
+    return null;
 
   const { label } = OPPORTUNITY_CONFIGS[opportunityType];
   const eligibleOpps =
-    allOpportunitiesByType[opportunityType]?.filter((opp) => !opp.denial) || [];
+    oppsFromOpportunitiesByOppType?.filter((opp) => !opp.denial) || undefined;
+
   const handleTabClick = (tab: OpportunityTab) => {
     analyticsStore.trackOpportunityTabClicked({ tab });
     setActiveTab(tab);
@@ -119,9 +139,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     justiceInvolvedPersonTitle,
     workflowsSearchFieldTitle
   );
-  const initial = (
-    <WorkflowsResults headerText={label} callToActionText={initialHeader} />
-  );
+
   const empty = (
     <WorkflowsResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
@@ -133,16 +151,22 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     />
   );
 
-  const renderOpportunitiesList = opportunitiesByTab[opportunityType][
-    activeTab
-  ]?.map((opportunity) => (
-    <PersonListItem
-      key={opportunity.person.recordId}
-      opportunity={opportunity}
-    />
-  ));
+  const initial = (
+    <WorkflowsResults headerText={label} callToActionText={initialHeader} />
+  );
 
-  const hydrated = (
+  const renderOpportunitiesList = oppsFromOpportunitiesByTab?.[activeTab]?.map(
+    (opportunity) => (
+      <PersonListItem
+        key={opportunity.person.recordId}
+        opportunity={opportunity}
+      />
+    )
+  );
+
+  const hydrated = !eligibleOpps?.length ? (
+    empty
+  ) : (
     <>
       <Heading
         isMobile={isMobile && responsiveRevamp}

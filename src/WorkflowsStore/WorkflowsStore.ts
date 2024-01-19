@@ -574,9 +574,8 @@ export class WorkflowsStore implements Hydratable {
     return this.opportunitiesByEligibilityStatus("opportunitiesDenied");
   }
 
-  get opportunitiesByTab(): Record<
-    OpportunityType,
-    Record<OpportunityTab, Opportunity[]>
+  get opportunitiesByTab(): Partial<
+    Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>
   > {
     return mapValues(this.allOpportunitiesByType, (opps) => {
       return groupBy(opps, "tabTitle") as Record<OpportunityTab, Opportunity[]>;
@@ -620,16 +619,16 @@ export class WorkflowsStore implements Hydratable {
     return Object.values(mapping).flat();
   }
 
-  get allOpportunitiesByType(): Record<OpportunityType, Opportunity[]> {
+  get allOpportunitiesByType(): Partial<
+    Record<OpportunityType, Opportunity[]>
+  > {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadPersons
-        .map((c) => c.verifiedOpportunities[opportunityType])
-        .filter((opp) => !!opp)
-        .map((opp) => opp as Opportunity)
-        .sort((a: Opportunity, b: Opportunity) => a.compare(b));
+        .flatMap((c) => c.verifiedOpportunities[opportunityType] || []) // Flatten and handle undefined entries
+        .sort((a, b) => a.compare(b));
 
-      mapping[opportunityType] = opportunities as Opportunity[];
+      mapping[opportunityType] = opportunities;
     });
     return mapping;
   }
