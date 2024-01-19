@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { palette, Sans14, typography } from "@recidiviz/design-system";
-import { parseISO, startOfToday } from "date-fns";
+import { differenceInDays, parseISO, startOfToday } from "date-fns";
 import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -122,9 +122,28 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const snoozeEnabled = enableSnooze && snoozeConfig !== undefined;
 
-  const maxManualSnoozeDays = snoozeConfig?.maxSnoozeDays;
+  let releaseDate: Date | undefined;
+  const { person } = opportunity;
+  if ("expirationDate" in person && person.expirationDate instanceof Date) {
+    releaseDate = person.expirationDate;
+  } else if ("releaseDate" in person && person.releaseDate instanceof Date) {
+    releaseDate = person.releaseDate;
+  }
 
-  const defaultManualSnoozeDays = snoozeConfig?.defaultSnoozeDays;
+  const daysToRelease =
+    releaseDate !== undefined
+      ? differenceInDays(releaseDate, startOfToday())
+      : Infinity;
+
+  const maxManualSnoozeDays =
+    snoozeConfig?.maxSnoozeDays !== undefined
+      ? Math.min(daysToRelease, snoozeConfig?.maxSnoozeDays)
+      : undefined;
+
+  const defaultManualSnoozeDays =
+    snoozeConfig?.defaultSnoozeDays !== undefined
+      ? Math.min(daysToRelease, snoozeConfig?.defaultSnoozeDays)
+      : undefined;
 
   const defaultAutoSnoozeFn = snoozeConfig?.defaultSnoozeUntilFn;
 

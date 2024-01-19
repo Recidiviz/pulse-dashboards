@@ -26,6 +26,7 @@ export const mockOpportunity: Opportunity<Client> = {
     displayPreferredName: "Client Name",
     recordId: "123",
     stateCode: "US_OZ",
+    expirationDate: new Date(2025, 1, 1),
   } as Client,
   defaultEligibility: "ELIGIBLE",
   denial: undefined,

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { palette, typography } from "@recidiviz/design-system";
-import { format } from "date-fns";
+import { format, isEqual } from "date-fns";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
@@ -49,9 +49,23 @@ export function buildResurfaceText(
   snoozeUntil?: Date
 ): string | undefined {
   if (!snoozeUntil) return;
-  return `${
-    opportunity.person.displayPreferredName
-  } may be surfaced again on or after ${format(snoozeUntil, "LLLL d, yyyy")}.`;
+  const dateStr = format(snoozeUntil, "LLLL d, yyyy");
+  const { person } = opportunity;
+  if (
+    "expirationDate" in person &&
+    person.expirationDate instanceof Date &&
+    isEqual(snoozeUntil, person.expirationDate)
+  ) {
+    return `${dateStr} is ${person.displayPreferredName}'s supervision end date.`;
+  }
+  if (
+    "releaseDate" in person &&
+    person.releaseDate instanceof Date &&
+    isEqual(snoozeUntil, person.releaseDate)
+  ) {
+    return `${dateStr} is ${person.displayPreferredName}'s release date.`;
+  }
+  return `${person.displayPreferredName} may be surfaced again on or after ${dateStr}.`;
 }
 
 export function buildDenialReasonsListText(

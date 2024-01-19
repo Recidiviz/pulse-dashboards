@@ -302,6 +302,31 @@ describe("OpportunityDenialView", () => {
     });
   });
 
+  describe("sentence length cap", () => {
+    beforeEach(() => {
+      timekeeper.freeze("2025-01-15");
+      renderElement({
+        ...mockOpportunity,
+        type: "compliantReporting",
+      });
+    });
+
+    it("caps the slider's value at the person's release date", () => {
+      const slider = screen
+        .getByTestId("OpportunityDenialView__slider")
+        .getElementsByTagName("input")[0];
+      expect(slider).toHaveValue("17");
+    });
+
+    it("shows the special explanatory text", () => {
+      expect(
+        screen.getByText(
+          "February 1, 2025 is Client Name's supervision end date."
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
   describe("Override opportunity", () => {
     beforeEach(() => {
       renderElement({

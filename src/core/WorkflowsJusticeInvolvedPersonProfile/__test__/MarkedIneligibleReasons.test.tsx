@@ -112,6 +112,17 @@ describe("buildResurfaceText", () => {
     };
     expect(buildResurfaceText(testOpp, undefined)).toBeUndefined();
   });
+
+  test("end of supervision term", () => {
+    const testOpp = {
+      ...mockOpportunity,
+      deniedTabTitle: "Marked ineligible",
+      snoozedOnDate: new Date(2023, 9, 10),
+    };
+    expect(buildResurfaceText(testOpp, new Date(2025, 1, 1))).toEqual(
+      "February 1, 2025 is Client Name's supervision end date."
+    );
+  });
 });
 
 describe("MarkedIneligibleReasons", () => {
