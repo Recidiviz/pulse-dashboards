@@ -196,11 +196,6 @@
 }
 
 .TopBar {
-  &--hidden {
-    overflow: hidden;
-    transform: translateY(-100%);
-  }
-
   &--wide {
     width: 100%;
   }

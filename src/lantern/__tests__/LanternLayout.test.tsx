@@ -22,7 +22,6 @@ import IE11Banner from "../../components/IE11Banner";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIntercom from "../../hooks/useIntercom";
-import usePageLayout from "../hooks/usePageLayout";
 import LanternLayout from "../LanternLayout";
 import LanternTopBar from "../LanternTopBar";
 import Revocations from "../Revocations";
@@ -34,7 +33,6 @@ jest.mock("mobx-react-lite", () => {
   };
 });
 jest.mock("../../components/StoreProvider");
-jest.mock("../hooks/usePageLayout");
 jest.mock("../../hooks/useIntercom");
 jest.mock("../../utils/i18nSettings");
 jest.mock("../Revocations");
@@ -77,10 +75,5 @@ describe("LanternLayout tests", () => {
   it("should use Intercom for Lantern layout", () => {
     render(<LanternLayout />);
     expect(useIntercom).toHaveBeenCalled();
-  });
-
-  it("should use Page Layout hook", () => {
-    render(<LanternLayout />);
-    expect(usePageLayout).toHaveBeenCalled();
   });
 });

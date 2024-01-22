@@ -26,8 +26,6 @@ export default class PageStore {
 
   ie11BannerIsVisible: boolean;
 
-  hideTopBar: boolean;
-
   constructor({ rootStore }: { rootStore: typeof RootStore }) {
     makeAutoObservable(this);
 
@@ -35,16 +33,10 @@ export default class PageStore {
     const storageIsVisible =
       sessionStorage.getItem(IE_11_BANNER_VISIBLE) || "true";
     this.ie11BannerIsVisible = storageIsVisible === "true" && this.isIE11;
-
-    this.hideTopBar = false;
   }
 
   hideIE11Banner = (): void => {
     this.ie11BannerIsVisible = false;
     sessionStorage.setItem(IE_11_BANNER_VISIBLE, "false");
-  };
-
-  setHideTopBar = (value: boolean): void => {
-    this.hideTopBar = value;
   };
 }

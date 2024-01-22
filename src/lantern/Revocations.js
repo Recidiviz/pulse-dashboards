@@ -22,7 +22,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import Sticky from "react-sticky-fill";
 
-import { useRootStore } from "../components/StoreProvider";
 import CaseTable from "./CaseTable/CaseTable";
 import ErrorBoundary from "./ErrorBoundary";
 import AdmissionTypeFilter from "./FiltersBar/AdmissionTypeFilter";
@@ -45,7 +44,6 @@ import { getTimeDescription } from "./utils/format";
 
 function Revocations() {
   const lanternStore = useLanternStore();
-  const { pageStore } = useRootStore();
   const { filters, filterOptions } = lanternStore.filtersStore;
 
   const timeDescription = getTimeDescription(
@@ -57,10 +55,7 @@ function Revocations() {
 
   return (
     <div className="Revocations">
-      <Sticky
-        className="LanternFilterBar"
-        style={{ zIndex: 700, top: pageStore.hideTopBar ? 0 : 65 }}
-      >
+      <Sticky className="LanternFilterBar" style={{ zIndex: 700, top: 65 }}>
         <ErrorBoundary>
           <>
             <div className="top-level-filters d-f">

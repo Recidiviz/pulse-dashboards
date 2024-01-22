@@ -29,21 +29,20 @@ import useIntercom from "../hooks/useIntercom";
 import { LANTERN_TENANTS } from "../RootStore/TenantStore/lanternTenants";
 import { setTranslateLocale } from "../utils/i18nSettings";
 import LanternErrorBoundary from "./ErrorBoundary";
-import usePageLayout from "./hooks/usePageLayout";
 import LanternStoreProvider from "./LanternStoreProvider";
 import LanternTopBar from "./LanternTopBar";
 import Revocations from "./Revocations";
 
 const LanternLayout: React.FC = (): React.ReactElement | null => {
-  const { currentTenantId, pageStore } = useRootStore();
+  const { currentTenantId } = useRootStore();
   useIntercom();
-  usePageLayout(pageStore.hideTopBar);
 
   setTranslateLocale(currentTenantId);
 
   if (!LANTERN_TENANTS.includes(currentTenantId)) {
     return <NotFound />;
   }
+
   return (
     <LanternStoreProvider>
       <LanternErrorBoundary>

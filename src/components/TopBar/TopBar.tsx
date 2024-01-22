@@ -18,26 +18,16 @@
 import cn from "classnames";
 import React from "react";
 
-import { useRootStore } from "../StoreProvider";
-
 interface Props {
   children: JSX.Element[];
-  isHidable: boolean;
   isWide: boolean;
 }
 
-const TopBar: React.FC<Props> = ({
-  isHidable = false,
-  isWide = false,
-  children,
-}) => {
-  const { pageStore } = useRootStore();
-
+const TopBar: React.FC<Props> = ({ isWide = false, children }) => {
   return (
     <div
       className={cn("TopBar", "header", "navbar", {
         "TopBar--wide": isWide,
-        "TopBar--hidden": pageStore.hideTopBar && isHidable,
       })}
     >
       <div className="TopBar__container header-container">{children}</div>

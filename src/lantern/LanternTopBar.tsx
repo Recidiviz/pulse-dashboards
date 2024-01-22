@@ -22,7 +22,7 @@ import TopBarLogo from "../components/TopBar/TopBarLogo";
 
 const LanternTopBar: React.FC = () => {
   return (
-    <TopBar isHidable isWide>
+    <TopBar isWide>
       <TopBarLogo />
       <ul className="nav-right">
         <ProfileLink />
