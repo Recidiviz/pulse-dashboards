@@ -134,6 +134,7 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         usTnAnnualReclassification: {},
         supervisionUnrestrictedSearch: {},
         usMoOverdueRHPilot: {},
+        outliersClientDetail: {},
       }
     : allFeatureVariants;
 
