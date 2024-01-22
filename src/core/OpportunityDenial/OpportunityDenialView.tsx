@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { palette, Sans14, typography } from "@recidiviz/design-system";
-import { differenceInDays, parseISO, startOfToday } from "date-fns";
+import { differenceInDays, isAfter, parseISO, startOfToday } from "date-fns";
 import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -131,7 +131,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   }
 
   const daysToRelease =
-    releaseDate !== undefined
+    releaseDate !== undefined && isAfter(releaseDate, startOfToday())
       ? differenceInDays(releaseDate, startOfToday())
       : Infinity;
 

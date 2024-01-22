@@ -303,15 +303,13 @@ describe("OpportunityDenialView", () => {
   });
 
   describe("sentence length cap", () => {
-    beforeEach(() => {
+    it("caps the slider's value at the person's release date", () => {
       timekeeper.freeze("2025-01-15");
       renderElement({
         ...mockOpportunity,
         type: "compliantReporting",
       });
-    });
 
-    it("caps the slider's value at the person's release date", () => {
       const slider = screen
         .getByTestId("OpportunityDenialView__slider")
         .getElementsByTagName("input")[0];
@@ -319,9 +317,34 @@ describe("OpportunityDenialView", () => {
     });
 
     it("shows the special explanatory text", () => {
+      timekeeper.freeze("2025-01-15");
+      renderElement({
+        ...mockOpportunity,
+        type: "compliantReporting",
+      });
+
       expect(
         screen.getByText(
           "February 1, 2025 is Client Name's supervision end date."
+        )
+      ).toBeInTheDocument();
+    });
+
+    it("doesn't cap if the release date isn't in the future", () => {
+      timekeeper.freeze("2025-02-01"); // our client's supervision end date
+      renderElement({
+        ...mockOpportunity,
+        type: "compliantReporting",
+      });
+
+      const slider = screen
+        .getByTestId("OpportunityDenialView__slider")
+        .getElementsByTagName("input")[0];
+      expect(slider).toHaveValue("30");
+
+      expect(
+        screen.getByText(
+          "Client Name may be surfaced again on or after March 3, 2025."
         )
       ).toBeInTheDocument();
     });
