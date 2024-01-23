@@ -115,6 +115,7 @@ function refreshRedisCache(fetchMetrics, stateCode, metricType, callback) {
     })
     .catch((error) => {
       const message = `Error occurred while caching files for metricType: ${metricType}`;
+      // TODO (#4685): Join together the console.error and Sentry.captureException calls, so we're not double calling unnecessarily.
       console.error(message, error);
       responseError = error;
       Sentry.captureException(message, responseError);

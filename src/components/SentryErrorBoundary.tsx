@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Debug } from "@sentry/integrations";
 import * as Sentry from "@sentry/react";
 import React, { useEffect } from "react";
 import {
@@ -32,6 +33,28 @@ interface Props {
   handleBeforeCapture?: (scope: Sentry.Scope) => void;
 }
 
+/**
+ * `True` for any non-`production` environment (i.e. `dev`, `staging`, etc.).
+ */
+const IS_DEBUG = process.env.REACT_APP_DEPLOY_ENV
+  ? !["production", "staging", "demo"].includes(
+      process.env.REACT_APP_DEPLOY_ENV
+    )
+  : false;
+
+// SENTRY INTEGRATIONS
+const BROWSER_TRACING_INTEGRATION = new Sentry.BrowserTracing({
+  // See docs for support of different versions of variation of react router
+  // https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/react-router/
+  routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+    React.useEffect,
+    useLocation,
+    useNavigationType,
+    createRoutesFromChildren,
+    matchRoutes
+  ),
+});
+
 function SentryErrorBoundary({
   children,
   handleBeforeCapture,
@@ -41,17 +64,16 @@ function SentryErrorBoundary({
     Sentry.init({
       environment: process.env.REACT_APP_SENTRY_ENV,
       dsn: process.env.REACT_APP_SENTRY_DSN,
-      integrations: [
-        new Sentry.BrowserTracing({
-          routingInstrumentation: Sentry.reactRouterV6Instrumentation(
-            useEffect,
-            useLocation,
-            useNavigationType,
-            createRoutesFromChildren,
-            matchRoutes
-          ),
-        }),
-      ],
+      debug: IS_DEBUG,
+
+      integrations: [new Debug(), BROWSER_TRACING_INTEGRATION],
+      beforeSend: (event, hint) => {
+        // only works if `Debug` integration is enabled.
+        // https://docs.sentry.io/platforms/javascript/configuration/integrations/debug/?original_referrer=https://www.google.com/
+        if (IS_DEBUG)
+          console.error(hint.originalException || hint.syntheticException); // log the error in the console.
+        return event; // send the error to sentry
+      },
       tracesSampleRate: 1,
       maxValueLength: 1000, // default is 250, this lets us see longer error messages
     });
