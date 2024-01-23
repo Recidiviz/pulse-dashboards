@@ -24,13 +24,12 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
     formInformation: z.object({}),
     eligibleCriteria: z.object({
       usOrSentenceEligible: z.object({
-        activeSentences: z.array(
+        eligibleSentences: z.array(
           z.object({
-            sentenceId: z.string(),
+            sentenceId: z.number(),
             sentenceImposedDate: dateStringSchema,
             supervisionSentenceStartDate: dateStringSchema,
             numDaysAbsconsion: z.number(),
-            eligibleDate: dateStringSchema,
             sentenceStatute: z.string(),
             latestConvictionDate: dateStringSchema,
           })
@@ -42,15 +41,15 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
     metadata: z.object({
       programs: z.array(
         z.object({
-          entryDate: dateStringSchema,
-          exitDate: dateStringSchema,
+          entryDate: dateStringSchema.nullable(),
+          exitDate: dateStringSchema.nullable(),
           treatmentId: z.string(),
-          exitCode: z.string(),
+          exitCode: z.string().nullable(),
         })
       ),
       eligibleSentences: z.array(
         z.object({
-          sentenceId: z.string(),
+          sentenceId: z.number(),
           courtCaseNumber: z.string(),
           sentenceStatute: z.string(),
           sentenceSubType: z.string(),
@@ -59,7 +58,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
           sentenceEndDate: dateStringSchema,
           sentenceCounty: z.string(),
           chargeCounty: z.string(),
-          judgeFullName: z.string(),
+          judgeFullName: z.string().nullable(),
           conditions: z
             .array(
               z.object({
@@ -88,7 +87,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
         externalId,
         metadata: personLevelMetadata,
         subOpportunities:
-          eligibleCriteria.usOrSentenceEligible.activeSentences.map((s) => ({
+          eligibleCriteria.usOrSentenceEligible.eligibleSentences.map((s) => ({
             id: s.sentenceId,
             eligibleCriteria: {
               eligibleStatute: {},

@@ -58,9 +58,9 @@ function createTestUnit() {
           pastHalfCompletionOrSixMonths: {},
         },
         ineligibleCriteria: {},
-        id: "sent1",
+        id: 123,
         metadata: {
-          sentenceId: "sent1",
+          sentenceId: 123,
           courtCaseNumber: "cc1",
           sentenceSubType: "subtype",
           sentenceImposedDate: parseISO("2020-01-01"),
@@ -112,7 +112,7 @@ describe("prefilledDataTransformer", () => {
         "middleNames": "Quimby",
         "officerName": "8675309 8675309",
         "sentences": Object {
-          "sent1": Object {
+          "123": Object {
             "county": "COUNTY",
             "docket": "cc1",
             "judgeName": "Judge Reinhold",
@@ -147,9 +147,9 @@ describe("prefilledDataTransformer", () => {
       subOpportunities: [
         {
           ...criteria,
-          id: "sent1",
+          id: 123,
           metadata: {
-            sentenceId: "sent1",
+            sentenceId: 123,
             courtCaseNumber: "cc1",
             sentenceSubType: "subtype",
             sentenceImposedDate: parseISO("2020-01-01"),
@@ -164,9 +164,9 @@ describe("prefilledDataTransformer", () => {
         },
         {
           ...criteria,
-          id: "sent2",
+          id: 456,
           metadata: {
-            sentenceId: "sent2",
+            sentenceId: 456,
             courtCaseNumber: "cc2",
             sentenceSubType: "subtype2",
             sentenceImposedDate: parseISO("2020-04-04"),
@@ -181,9 +181,9 @@ describe("prefilledDataTransformer", () => {
         },
         {
           ...criteria,
-          id: "sent3",
+          id: 789,
           metadata: {
-            sentenceId: "sent3",
+            sentenceId: 789,
             courtCaseNumber: "cc3",
             sentenceSubType: "subtype3",
             sentenceImposedDate: parseISO("2020-02-01"),

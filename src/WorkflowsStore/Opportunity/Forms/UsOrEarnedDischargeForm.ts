@@ -55,7 +55,7 @@ export class UsOrEarnedDischargeForm extends FormBase<
       sentenceStartDate: formatWorkflowsDate(sentenceStartDate),
       sentenceExpirationDate: formatWorkflowsDate(sentenceEndDate),
       county: sentenceCounty,
-      judgeName: judgeFullName,
+      judgeName: judgeFullName ?? "",
       docket: courtCaseNumber,
     };
   }

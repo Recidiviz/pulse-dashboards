@@ -26,22 +26,20 @@ export const usOrEarnedDischargeReferrals =
       formInformation: {},
       eligibleCriteria: {
         usOrSentenceEligible: {
-          activeSentences: [
+          eligibleSentences: [
             {
-              sentenceId: "sent1",
+              sentenceId: 123,
               sentenceImposedDate: "2020-01-01",
               supervisionSentenceStartDate: "2020-01-01",
               numDaysAbsconsion: 0,
-              eligibleDate: "2020-01-01",
               sentenceStatute: "STATUTE",
               latestConvictionDate: "2020-01-01",
             },
             {
-              sentenceId: "sent2",
+              sentenceId: 456,
               sentenceImposedDate: "2020-01-01",
               supervisionSentenceStartDate: "2020-01-01",
               numDaysAbsconsion: 0,
-              eligibleDate: "2020-01-01",
               sentenceStatute: "STATUTE",
               latestConvictionDate: "2020-01-01",
             },
@@ -54,7 +52,7 @@ export const usOrEarnedDischargeReferrals =
         programs: [],
         eligibleSentences: [
           {
-            sentenceId: "sent1",
+            sentenceId: 123,
             courtCaseNumber: "cc1",
             sentenceSubType: "subtype",
             sentenceImposedDate: "2020-01-01",
@@ -67,7 +65,7 @@ export const usOrEarnedDischargeReferrals =
             conditions: [],
           },
           {
-            sentenceId: "sent2",
+            sentenceId: 456,
             courtCaseNumber: "cc2",
             sentenceSubType: "subtype",
             sentenceImposedDate: "2020-01-01",
@@ -88,22 +86,20 @@ export const usOrEarnedDischargeReferrals =
       formInformation: {},
       eligibleCriteria: {
         usOrSentenceEligible: {
-          activeSentences: [
+          eligibleSentences: [
             {
-              sentenceId: "sent1",
+              sentenceId: 1123,
               sentenceImposedDate: "2020-01-01",
               supervisionSentenceStartDate: "2020-01-01",
               numDaysAbsconsion: 0,
-              eligibleDate: "2020-01-01",
               sentenceStatute: "STATUTE",
               latestConvictionDate: "2020-01-01",
             },
             {
-              sentenceId: "sent2",
+              sentenceId: 4456,
               sentenceImposedDate: "2020-01-01",
               supervisionSentenceStartDate: "2020-01-01",
               numDaysAbsconsion: 0,
-              eligibleDate: "2020-01-01",
               sentenceStatute: "STATUTE",
               latestConvictionDate: "2020-01-01",
             },
@@ -116,7 +112,7 @@ export const usOrEarnedDischargeReferrals =
         programs: [],
         eligibleSentences: [
           {
-            sentenceId: "sent1",
+            sentenceId: 1123,
             courtCaseNumber: "cc1",
             sentenceSubType: "subtype",
             sentenceImposedDate: "2020-01-01",
@@ -129,7 +125,7 @@ export const usOrEarnedDischargeReferrals =
             conditions: [],
           },
           {
-            sentenceId: "sent2",
+            sentenceId: 4456,
             courtCaseNumber: "cc2",
             sentenceSubType: "subtype",
             sentenceImposedDate: "2020-01-01",

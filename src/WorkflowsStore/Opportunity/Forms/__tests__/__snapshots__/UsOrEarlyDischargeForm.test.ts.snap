@@ -7,7 +7,7 @@ Object {
   "middleNames": "Quimby",
   "officerName": "8675309 8675309",
   "sentences": Object {
-    "sent1": Object {
+    "123": Object {
       "county": "COUNTY",
       "docket": "cc1",
       "judgeName": "Judge Reinhold",
@@ -16,7 +16,7 @@ Object {
       "sentenceStartDate": "Jan 5, 2020",
       "sentenceType": "subtype",
     },
-    "sent2": Object {
+    "456": Object {
       "county": "COUNTY",
       "docket": "cc2",
       "judgeName": "Judge Judge",
@@ -25,7 +25,7 @@ Object {
       "sentenceStartDate": "Apr 5, 2020",
       "sentenceType": "subtype2",
     },
-    "sent3": Object {
+    "789": Object {
       "county": "COUNTY",
       "docket": "cc3",
       "judgeName": "Judge Jury",
