@@ -133,6 +133,11 @@ export default class TenantStore {
     );
   }
 
+  get outliersLaunchedDistricts(): string[] | undefined {
+    if (!this.currentTenantId) return;
+    return tenants[this.currentTenantId].outliersLaunchedDistricts;
+  }
+
   get outliersLanternState(): boolean {
     if (!this.currentTenantId) return false;
     return tenants[this.currentTenantId].outliersLanternState ?? false;

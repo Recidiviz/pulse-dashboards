@@ -170,3 +170,48 @@ test("supervisors with outliers count", async () => {
   await presenter.hydrate();
   expect(presenter.supervisorsWithOutliersCount).toMatchInlineSnapshot(`2`);
 });
+
+describe("outliersLeadershipPageAllDistricts feature variant not set", () => {
+  const mockOutliersLeadershipPageAllDistricts = undefined;
+  const launchedDistricts = ["REGION 6"];
+
+  beforeEach(() => {
+    jest
+      .spyOn(
+        store.outliersStore.rootStore.tenantStore,
+        "outliersLaunchedDistricts",
+        "get"
+      )
+      .mockReturnValue(launchedDistricts);
+
+    jest.spyOn(store, "supervisionOfficerSupervisors", "get").mockReturnValue(
+      supervisionOfficerSupervisorsFixture.concat({
+        supervisionDistrict: launchedDistricts[0],
+        externalId: "testid1",
+        displayName: "Test Name",
+        fullName: {
+          givenNames: "Test",
+          surname: "Name",
+        },
+        hasOutliers: true,
+        pseudonymizedId: "hashed-testid1",
+      })
+    );
+
+    presenter = new SupervisionOfficerSupervisorsPresenter(
+      store,
+      mockOutliersLeadershipPageAllDistricts
+    );
+  });
+
+  it("only show supervisors from launched districts", async () => {
+    await presenter.hydrate();
+
+    expect(presenter.supervisorsWithOutliersCount).toEqual(1);
+    expect(
+      presenter.supervisorsWithOutliersByDistrict.map(
+        ({ district }) => district
+      )
+    ).toEqual(launchedDistricts);
+  });
+});

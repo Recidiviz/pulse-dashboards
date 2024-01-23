@@ -85,6 +85,7 @@ export type TenantConfig = {
   milestoneTypes?: MilestoneType[];
   pathwaysNameOverride?: "Pathways" | "System-Level Trends";
   workflowsStaffFilterFn?: StaffFilterFunction;
+  outliersLaunchedDistricts?: string[];
   outliersLanternState?: boolean;
 };
 

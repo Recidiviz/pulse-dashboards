@@ -23,12 +23,16 @@ import { flowResult, makeAutoObservable } from "mobx";
 
 import { HydratesFromSource } from "../../core/models/HydratesFromSource";
 import { Hydratable } from "../../core/models/types";
+import { FeatureVariantValue } from "../../RootStore/types";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { OutliersSupervisionStore } from "../stores/OutliersSupervisionStore";
 import { ConfigLabels } from "./types";
 
 export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
-  constructor(private supervisionStore: OutliersSupervisionStore) {
+  constructor(
+    private supervisionStore: OutliersSupervisionStore,
+    private outliersLeadershipPageAllDistricts?: FeatureVariantValue
+  ) {
     makeAutoObservable(this);
 
     this.hydrator = new HydratesFromSource({
@@ -56,7 +60,19 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   }
 
   get allSupervisors() {
-    return this.supervisionStore.supervisionOfficerSupervisors ?? [];
+    const launchedDistricts =
+      this.supervisionStore.outliersStore.rootStore.tenantStore
+        .outliersLaunchedDistricts;
+    const supervisors =
+      this.supervisionStore.supervisionOfficerSupervisors ?? [];
+    if (launchedDistricts && !this.outliersLeadershipPageAllDistricts) {
+      return supervisors.filter(
+        ({ supervisionDistrict }) =>
+          supervisionDistrict &&
+          launchedDistricts.includes(supervisionDistrict.toUpperCase())
+      );
+    }
+    return supervisors;
   }
 
   private get allSupervisorsWithOutliers() {

@@ -19,7 +19,10 @@ import { render, screen } from "@testing-library/react";
 import { configure } from "mobx";
 import { MemoryRouter } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
 import { OutliersStore } from "../../../OutliersStore/OutliersStore";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
@@ -33,6 +36,7 @@ jest.mock(
 jest.mock("../../../components/StoreProvider");
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 let outliersStore: OutliersStore;
 
@@ -42,6 +46,9 @@ beforeEach(() => {
   outliersStore = rootStore.outliersStore;
 
   useRootStoreMock.mockReturnValue(rootStore);
+  useFeatureVariantsMock.mockReturnValue({
+    outliersLeadershipPageAllDistricts: true,
+  });
   jest.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
     externalId: "user",
     pseudonymizedId: "hashed-user",

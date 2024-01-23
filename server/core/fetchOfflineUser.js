@@ -61,6 +61,7 @@ function fetchOfflineUser({
         usTnExpiration: {},
         enableSnooze: {},
         outliersClientDetail: {},
+        outliersLeadershipPageAllDistricts: {},
       },
     },
   };

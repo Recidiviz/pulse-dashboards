@@ -906,6 +906,7 @@ describe("feature variants", () => {
         "enableSnooze": Object {},
         "formRevertButton": Object {},
         "outliersClientDetail": Object {},
+        "outliersLeadershipPageAllDistricts": Object {},
         "responsiveRevamp": Object {},
         "supervisionUnrestrictedSearch": Object {},
         "usCaEnableSMS": Object {},

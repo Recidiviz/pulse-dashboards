@@ -27,7 +27,10 @@ import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerSupervisorsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerSupervisorsPresenter";
 import { PersonInitialsAvatar } from "../Avatar";
@@ -88,7 +91,6 @@ const SupervisorsList = observer(function SupervisorsList({
   presenter: SupervisionOfficerSupervisorsPresenter;
 }) {
   const { isMobile, isLaptop } = useIsMobile(true);
-
   const {
     supervisorsWithOutliersByDistrict,
     supervisorsWithOutliersCount,
@@ -132,6 +134,7 @@ const SupervisorsList = observer(function SupervisorsList({
 
 const OutliersSupervisorsListPage = observer(
   function OutliersSupervisorsListPage() {
+    const { outliersLeadershipPageAllDistricts } = useFeatureVariants();
     const {
       outliersStore: { supervisionStore },
     } = useRootStore();
@@ -139,7 +142,8 @@ const OutliersSupervisorsListPage = observer(
     if (!supervisionStore) return null;
 
     const presenter = new SupervisionOfficerSupervisorsPresenter(
-      supervisionStore
+      supervisionStore,
+      outliersLeadershipPageAllDistricts
     );
 
     return (

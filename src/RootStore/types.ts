@@ -90,7 +90,8 @@ export type FeatureVariant =
   | "outliersClientDetail"
   | "usNdWriteToDocstars"
   | "usMoOverdueRHPilot"
-  | "formRevertButton";
+  | "formRevertButton"
+  | "outliersLeadershipPageAllDistricts";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -121,6 +122,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisionUnrestrictedSearch: {},
   formRevertButton: {},
   usMoOverdueRHPilot: {},
+  outliersLeadershipPageAllDistricts: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"
