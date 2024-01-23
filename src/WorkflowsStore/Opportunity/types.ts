@@ -36,6 +36,7 @@ export type OpportunityRequirement = {
   isHeading?: boolean;
   text: string;
   tooltip?: string;
+  key?: string; // only needed when multiple requirements might have the same text
 };
 
 // ranked roughly by actionability

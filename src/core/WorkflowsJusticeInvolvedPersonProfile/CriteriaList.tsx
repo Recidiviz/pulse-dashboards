@@ -107,38 +107,40 @@ export const CriteriaList = observer(function CriteriaList({
           </CriterionWrapper>
         );
       })}
-      {opportunity.requirementsMet.map(({ text, tooltip, isHeading }, i) => {
-        // split text so we can prevent orphaned tooltips
-        const textTokens = text.split(" ");
-        return (
-          <CriterionWrapper key={text}>
-            {isHeading ? (
-              <CriterionHeading isFirst={i === 0}>{text}</CriterionHeading>
-            ) : (
-              <>
-                <CriterionIcon
-                  kind={alert ? IconSVG.Error : IconSVG.Success}
-                  color={colors.icon}
-                  size={16}
-                />
-                <CriterionContentWrapper>
-                  {textTokens.slice(0, -1).join(" ")}{" "}
-                  <KeepTogether>
-                    {textTokens.slice(-1)}{" "}
-                    {tooltip && (
-                      <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                        <InfoButton
-                          infoUrl={opportunity.policyOrMethodologyUrl}
-                        />
-                      </InfoTooltipWrapper>
-                    )}
-                  </KeepTogether>
-                </CriterionContentWrapper>
-              </>
-            )}
-          </CriterionWrapper>
-        );
-      })}
+      {opportunity.requirementsMet.map(
+        ({ text, tooltip, isHeading, key }, i) => {
+          // split text so we can prevent orphaned tooltips
+          const textTokens = text.split(" ");
+          return (
+            <CriterionWrapper key={key ?? text}>
+              {isHeading ? (
+                <CriterionHeading isFirst={i === 0}>{text}</CriterionHeading>
+              ) : (
+                <>
+                  <CriterionIcon
+                    kind={alert ? IconSVG.Error : IconSVG.Success}
+                    color={colors.icon}
+                    size={16}
+                  />
+                  <CriterionContentWrapper>
+                    {textTokens.slice(0, -1).join(" ")}{" "}
+                    <KeepTogether>
+                      {textTokens.slice(-1)}{" "}
+                      {tooltip && (
+                        <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                          <InfoButton
+                            infoUrl={opportunity.policyOrMethodologyUrl}
+                          />
+                        </InfoTooltipWrapper>
+                      )}
+                    </KeepTogether>
+                  </CriterionContentWrapper>
+                </>
+              )}
+            </CriterionWrapper>
+          );
+        }
+      )}
     </Wrapper>
   );
 });

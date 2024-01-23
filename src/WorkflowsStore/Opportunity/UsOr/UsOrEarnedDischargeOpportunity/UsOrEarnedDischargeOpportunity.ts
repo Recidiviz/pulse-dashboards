@@ -107,7 +107,9 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
           isHeading: true,
           text: `${subOpp.metadata.courtCaseNumber}: ${subOpp.metadata.sentenceStatute}`,
         },
-        ...hydrateCriteria(subOpp, "eligibleCriteria", CRITERIA_COPY),
+        ...hydrateCriteria(subOpp, "eligibleCriteria", CRITERIA_COPY).map(
+          (oppReq) => ({ ...oppReq, key: `${subOpp.id}-${oppReq.text}` })
+        ),
       ];
     });
     return out;
@@ -117,7 +119,8 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
     "ClientProfileDetails",
   ];
 
-  readonly policyOrMethodologyUrl = "TBD";
+  readonly policyOrMethodologyUrl =
+    "https://drive.google.com/file/d/1-V5qxOjurPggO4NrHSRBDB_pn8gmYjoa/view";
 
   readonly isAlert = false;
 

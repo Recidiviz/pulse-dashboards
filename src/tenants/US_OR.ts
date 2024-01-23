@@ -38,9 +38,9 @@ const US_OR_CONFIG: TenantConfig = {
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSystemConfigs: {
     SUPERVISION: {
-      searchType: "OFFICER",
+      searchType: "CASELOAD",
       searchField: "officerId",
-      searchTitleOverride: "officer",
+      searchTitleOverride: "caseload",
     },
   },
   navigation: {

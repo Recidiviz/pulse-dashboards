@@ -30,7 +30,7 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   officerEmail,
 }) => {
   const {
-    workflowsStore: { availableOfficers },
+    workflowsStore: { availableOfficers, searchType },
   } = useRootStore();
 
   if (!officerId && !officerEmail) return null;
@@ -44,6 +44,9 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   if (officer?.givenNames && officer?.surname) {
     officerFullName = `${officer.givenNames} ${officer.surname}`.trim();
   }
+
+  if (searchType === "CASELOAD" && officerId)
+    officerFullName = `Caseload ${officerId}`;
 
   return (
     <span className="fs-exclude">

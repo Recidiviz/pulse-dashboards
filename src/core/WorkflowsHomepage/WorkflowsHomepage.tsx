@@ -65,14 +65,15 @@ const WorkflowsHomepage = observer(
         )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
       opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`;
 
-    const emptyCallToAction = supportsMultipleSystems
-      ? `None of the selected caseloads are eligible for opportunities. Search for another caseload.`
-      : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-          selectedSearchIds.length,
-        ]} ${pluralizeWord(
-          workflowsSearchFieldTitle,
-          selectedSearchIds.length
-        )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`;
+    const emptyCallToAction =
+      supportsMultipleSystems || workflowsSearchFieldTitle === "caseload"
+        ? `None of the selected caseloads are eligible for opportunities. Search for another caseload.`
+        : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
+            selectedSearchIds.length,
+          ]} ${pluralizeWord(
+            workflowsSearchFieldTitle,
+            selectedSearchIds.length
+          )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`;
 
     const hydratedCallToAction = `Hi, ${
       user?.info.givenNames
