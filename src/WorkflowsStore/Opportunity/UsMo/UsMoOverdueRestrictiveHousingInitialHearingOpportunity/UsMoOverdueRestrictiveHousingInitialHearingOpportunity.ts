@@ -41,12 +41,6 @@ const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingInitialHearingRef
           text: "Past due date, or scheduled date, for initial meaningful hearing",
         },
       ],
-      [
-        "usMoNoHearingOrNextReviewSinceRestrictiveHousingStart",
-        {
-          text: "Hasn't had a hearing since Restrictive Housing placement",
-        },
-      ],
       usMoNoActiveD1Sanctions,
       usMoInRestrictiveHousing,
     ],
@@ -85,10 +79,10 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
 
   get eligibilityDate(): Date | undefined {
     return this.record?.eligibleCriteria.usMoInitialHearingPastDueDate
-      .nextReviewDate;
+      ?.nextReviewDate;
   }
 
-  get OpportunityTab(): OpportunityTab {
+  get tabTitle(): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     if (!this.eligibilityDate) return "Missing Review Date";
     return "Coming up";

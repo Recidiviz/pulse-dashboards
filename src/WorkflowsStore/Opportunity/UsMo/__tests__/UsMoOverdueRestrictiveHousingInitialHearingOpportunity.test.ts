@@ -101,9 +101,6 @@ describe("fully eligible", () => {
           "text": "Past due date, or scheduled date, for initial meaningful hearing",
         },
         Object {
-          "text": "Hasn't had a hearing since Restrictive Housing placement",
-        },
-        Object {
           "text": "No active D1 sanctions",
         },
         Object {
@@ -114,16 +111,14 @@ describe("fully eligible", () => {
   });
 
   test("requirements met, overdue today", () => {
-    fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-      today;
+    if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+        today;
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
           "text": "Past due date, or scheduled date, for initial meaningful hearing",
-        },
-        Object {
-          "text": "Hasn't had a hearing since Restrictive Housing placement",
         },
         Object {
           "text": "No active D1 sanctions",
@@ -136,16 +131,14 @@ describe("fully eligible", () => {
   });
 
   test("requirements met, overdue yesterday", () => {
-    fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-      subDays(today, 1);
+    if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+        subDays(today, 1);
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
           "text": "Past due date, or scheduled date, for initial meaningful hearing",
-        },
-        Object {
-          "text": "Hasn't had a hearing since Restrictive Housing placement",
         },
         Object {
           "text": "No active D1 sanctions",
@@ -158,16 +151,14 @@ describe("fully eligible", () => {
   });
 
   test("requirements almost met, hearing tomorrow", () => {
-    fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-      addDays(today, 1);
+    if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+        addDays(today, 1);
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
           "text": "Past due date, or scheduled date, for initial meaningful hearing",
-        },
-        Object {
-          "text": "Hasn't had a hearing since Restrictive Housing placement",
         },
         Object {
           "text": "No active D1 sanctions",
@@ -197,29 +188,33 @@ describe("fully eligible", () => {
     });
 
     test("Due this week", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        today;
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          today;
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
+      expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
     });
 
     test("Due this week, on day of reset", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        startOfWeek(today, { weekStartsOn: 1 });
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          startOfWeek(today, { weekStartsOn: 1 });
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
+      expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
     });
 
     test("Due last week", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        subWeeks(today, 1);
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          subWeeks(today, 1);
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
+      expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
     });
 
     test("Due next week", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        addWeeks(new Date(), 1);
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          addWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
     });
@@ -227,15 +222,17 @@ describe("fully eligible", () => {
 
   describe("eligibility message", () => {
     test("Due this week", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        today;
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          today;
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(/\b(Initial hearing today)/gm);
     });
 
     test("Due this week, on day of reset", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        startOfWeek(new Date(), { weekStartsOn: 1 });
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          startOfWeek(new Date(), { weekStartsOn: 1 });
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Initial hearing 3 days ago)/gm
@@ -243,8 +240,9 @@ describe("fully eligible", () => {
     });
 
     test("Due last week", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        subWeeks(new Date(), 1);
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          subWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Initial hearing 7 days ago)/gm
@@ -252,8 +250,9 @@ describe("fully eligible", () => {
     });
 
     test("Due next week", () => {
-      fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        addWeeks(new Date(), 1);
+      if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
+          addWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Initial hearing in 7 days)/gm

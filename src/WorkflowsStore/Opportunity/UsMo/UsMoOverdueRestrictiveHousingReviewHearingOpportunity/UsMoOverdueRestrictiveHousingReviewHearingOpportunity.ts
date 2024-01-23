@@ -36,12 +36,6 @@ const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReviewHearingRefe
   {
     eligibleCriteria: [
       [
-        "usMoHearingOrNextReviewSinceRestrictiveHousingStart",
-        {
-          text: "Has had a meaningful hearing while in (Extended) Restrictive Housing",
-        },
-      ],
-      [
         "usMoPastLatestScheduledReviewDate",
         {
           text: "Past due date, or scheduled date, for review hearing",
@@ -85,7 +79,7 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
 
   get eligibilityDate(): Date | undefined {
     return this.record?.eligibleCriteria.usMoPastLatestScheduledReviewDate
-      .nextReviewDate;
+      ?.nextReviewDate;
   }
 
   get eligibleStatusMessage(): string {

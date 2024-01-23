@@ -27,10 +27,6 @@ describe("UsMoOverdueRestrictiveHousingReviewHearingReferralRecord", () => {
     ).toMatchInlineSnapshot(`
       Object {
         "eligibleCriteria": Object {
-          "usMoHearingOrNextReviewSinceRestrictiveHousingStart": Object {
-            "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
-            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
-          },
           "usMoInRestrictiveHousing": Object {
             "confinementType": "COMMUNITY",
           },

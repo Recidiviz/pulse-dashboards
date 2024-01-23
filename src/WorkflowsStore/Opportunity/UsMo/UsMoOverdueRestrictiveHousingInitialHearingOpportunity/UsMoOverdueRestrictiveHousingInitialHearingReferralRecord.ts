@@ -22,15 +22,12 @@ import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestricti
 
 const eligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.eligibleCriteria.extend({
-    usMoInitialHearingPastDueDate: z.object({
-      nextReviewDate: dateStringSchema,
-      dueDateInferred: z.boolean(),
-    }),
-    usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: z.object({
-      restrictiveHousingStartDate: dateStringSchema,
-      latestHearingDate: dateStringSchema,
-      latestScheduledReviewDate: dateStringSchema,
-    }),
+    usMoInitialHearingPastDueDate: z
+      .object({
+        nextReviewDate: dateStringSchema,
+        dueDateInferred: z.boolean(),
+      })
+      .optional(),
   });
 
 export const usMoOverdueRestrictiveHousingInitialHearingSchema =

@@ -28,11 +28,6 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
         externalId: "RES011",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestHearingDate: "2023-01-20",
-            latestScheduledReviewDate: "2023-01-25",
-          },
           usMoInitialHearingPastDueDate: {
             nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
             dueDateInferred: false,
@@ -72,11 +67,6 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
         externalId: "RES012",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestHearingDate: "2023-01-20",
-            latestScheduledReviewDate: "2023-01-25",
-          },
           usMoInitialHearingPastDueDate: {
             nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
             dueDateInferred: true,
@@ -116,11 +106,6 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
         externalId: "RES013",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestHearingDate: "2023-01-20",
-            latestScheduledReviewDate: "2023-01-25",
-          },
           usMoInitialHearingPastDueDate: {
             nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
             dueDateInferred: true,
@@ -160,11 +145,6 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
         externalId: "RES014",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestHearingDate: "2023-01-20",
-            latestScheduledReviewDate: "2023-01-25",
-          },
           usMoInitialHearingPastDueDate: {
             nextReviewDate: `${formatDateToISO(new Date())}`,
             dueDateInferred: true,

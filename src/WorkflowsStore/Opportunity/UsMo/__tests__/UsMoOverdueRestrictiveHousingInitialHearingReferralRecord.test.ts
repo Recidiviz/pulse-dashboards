@@ -38,11 +38,6 @@ describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
             "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
             "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
           },
-          "usMoNoHearingOrNextReviewSinceRestrictiveHousingStart": Object {
-            "latestHearingDate": 2023-09-20T00:00:00.000Z,
-            "latestScheduledReviewDate": 2023-09-25T00:00:00.000Z,
-            "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
-          },
         },
         "externalId": "rh-1",
         "ineligibleCriteria": Object {},

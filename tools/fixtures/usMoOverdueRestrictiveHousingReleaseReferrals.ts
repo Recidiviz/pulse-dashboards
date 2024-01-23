@@ -29,7 +29,6 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         stateCode: "US_MO",
         eligibleCriteria: {
           usMoD1SanctionAfterMostRecentHearing: {
-            latestD1SanctionEndDate: "2023-02-01",
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
           usMoD1SanctionAfterRestrictiveHousingStart: {
@@ -72,7 +71,6 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         stateCode: "US_MO",
         eligibleCriteria: {
           usMoD1SanctionAfterMostRecentHearing: {
-            latestD1SanctionEndDate: "2023-02-01",
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
           usMoD1SanctionAfterRestrictiveHousingStart: {
@@ -115,7 +113,6 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         stateCode: "US_MO",
         eligibleCriteria: {
           usMoD1SanctionAfterMostRecentHearing: {
-            latestD1SanctionEndDate: "2023-02-01",
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
           usMoD1SanctionAfterRestrictiveHousingStart: {
@@ -158,7 +155,6 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
         stateCode: "US_MO",
         eligibleCriteria: {
           usMoD1SanctionAfterMostRecentHearing: {
-            latestD1SanctionEndDate: "2023-02-01",
             latestRestrictiveHousingHearingDate: "2023-01-20",
           },
           usMoD1SanctionAfterRestrictiveHousingStart: {

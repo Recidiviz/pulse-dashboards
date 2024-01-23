@@ -23,8 +23,7 @@ import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestricti
 const eligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.eligibleCriteria.extend({
     usMoD1SanctionAfterMostRecentHearing: z.object({
-      latestD1SanctionEndDate: dateStringSchema,
-      latestRestrictiveHousingHearingDate: dateStringSchema,
+      latestRestrictiveHousingHearingDate: dateStringSchema.nullable(),
     }),
     usMoD1SanctionAfterRestrictiveHousingStart: z.object({
       latestD1SanctionStartDate: dateStringSchema,

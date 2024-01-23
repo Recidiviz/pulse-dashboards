@@ -111,8 +111,9 @@ describe("fully eligible", () => {
   });
 
   test("requirements met, overdue today", () => {
-    fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-      today;
+    if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+        today;
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
@@ -130,8 +131,9 @@ describe("fully eligible", () => {
   });
 
   test("requirements met, overdue yesterday", () => {
-    fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-      subDays(today, 1);
+    if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+        subDays(today, 1);
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
@@ -149,8 +151,9 @@ describe("fully eligible", () => {
   });
 
   test("requirements almost met, hearing tomorrow", () => {
-    fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-      addDays(today, 1);
+    if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+        addDays(today, 1);
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
@@ -185,29 +188,33 @@ describe("fully eligible", () => {
     });
 
     test("Due this week", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        today;
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          today;
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due this week, on day of reset", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        startOfWeek(today, { weekStartsOn: 1 });
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          startOfWeek(today, { weekStartsOn: 1 });
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due last week", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        subWeeks(today, 1);
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          subWeeks(today, 1);
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
     });
 
     test("Due next week", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        addWeeks(new Date(), 1);
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          addWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
     });
@@ -215,8 +222,9 @@ describe("fully eligible", () => {
 
   describe("eligibility message", () => {
     test("Due this week", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        today;
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          today;
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Segregation period ends today)/gm
@@ -224,8 +232,9 @@ describe("fully eligible", () => {
     });
 
     test("Due this week, on day of reset", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        startOfWeek(new Date(), { weekStartsOn: 1 });
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          startOfWeek(new Date(), { weekStartsOn: 1 });
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Segregation period ended 3 days ago)/gm
@@ -233,8 +242,9 @@ describe("fully eligible", () => {
     });
 
     test("Due last week", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        subWeeks(new Date(), 1);
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          subWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Segregation period ended 7 days ago)/gm
@@ -242,8 +252,9 @@ describe("fully eligible", () => {
     });
 
     test("Due next week", () => {
-      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        addWeeks(new Date(), 1);
+      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
+        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
+          addWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Segregation period ends in 7 days)/gm

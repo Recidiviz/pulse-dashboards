@@ -28,10 +28,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         externalId: "RES015",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestRestrictiveHousingHearingDate: "2023-01-25",
-          },
           usMoPastLatestScheduledReviewDate: {
             nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
             dueDateInferred: true,
@@ -71,10 +67,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         externalId: "RES016",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestRestrictiveHousingHearingDate: "2023-01-25",
-          },
           usMoPastLatestScheduledReviewDate: {
             nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
             dueDateInferred: true,
@@ -114,10 +106,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         externalId: "RES017",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestRestrictiveHousingHearingDate: "2023-01-25",
-          },
           usMoPastLatestScheduledReviewDate: {
             nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
             dueDateInferred: true,
@@ -157,10 +145,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         externalId: "RES018",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoHearingOrNextReviewSinceRestrictiveHousingStart: {
-            restrictiveHousingStartDate: "2023-01-10",
-            latestRestrictiveHousingHearingDate: "2023-01-25",
-          },
           usMoPastLatestScheduledReviewDate: {
             nextReviewDate: `${formatDateToISO(new Date())}`,
             dueDateInferred: true,

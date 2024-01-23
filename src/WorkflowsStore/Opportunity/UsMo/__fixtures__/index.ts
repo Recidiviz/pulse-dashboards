@@ -125,7 +125,6 @@ export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
     1,
     {
       usMoD1SanctionAfterMostRecentHearing: {
-        latestD1SanctionEndDate: "2023-10-15",
         latestRestrictiveHousingHearingDate: "2023-09-20",
       },
       usMoD1SanctionAfterRestrictiveHousingStart: {
@@ -143,11 +142,6 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture =
         nextReviewDate: "2023-10-15",
         dueDateInferred: true,
       },
-      usMoNoHearingOrNextReviewSinceRestrictiveHousingStart: {
-        restrictiveHousingStartDate: "2023-08-15",
-        latestHearingDate: "2023-09-20",
-        latestScheduledReviewDate: "2023-09-25",
-      },
     }
   );
 
@@ -158,10 +152,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferralRecordFixture =
       usMoPastLatestScheduledReviewDate: {
         nextReviewDate: "2023-10-15",
         dueDateInferred: true,
-      },
-      usMoHearingOrNextReviewSinceRestrictiveHousingStart: {
-        restrictiveHousingStartDate: "2023-08-15",
-        latestRestrictiveHousingHearingDate: "2023-09-20",
       },
     }
   );

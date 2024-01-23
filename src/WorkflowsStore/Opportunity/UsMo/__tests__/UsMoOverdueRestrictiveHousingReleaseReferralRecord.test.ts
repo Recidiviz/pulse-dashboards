@@ -28,7 +28,6 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
       Object {
         "eligibleCriteria": Object {
           "usMoD1SanctionAfterMostRecentHearing": Object {
-            "latestD1SanctionEndDate": 2023-10-15T00:00:00.000Z,
             "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
           },
           "usMoD1SanctionAfterRestrictiveHousingStart": Object {

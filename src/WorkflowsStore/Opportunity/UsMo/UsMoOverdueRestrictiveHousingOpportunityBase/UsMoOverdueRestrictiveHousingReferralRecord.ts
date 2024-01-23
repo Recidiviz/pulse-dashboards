@@ -76,10 +76,12 @@ export const usMoInRestrictiveHousing = z.object({
   confinementType: z.string(),
 });
 
-export const usMoNoActiveD1Sanctions = z.object({
-  latestSanctionStartDate: dateStringSchema,
-  latestSanctionEndDate: dateStringSchema,
-});
+export const usMoNoActiveD1Sanctions = z
+  .object({
+    latestSanctionStartDate: dateStringSchema,
+    latestSanctionEndDate: dateStringSchema,
+  })
+  .nullish();
 
 export const baseUsMoOverdueRestrictiveHousingSchema =
   opportunitySchemaBase.extend({
