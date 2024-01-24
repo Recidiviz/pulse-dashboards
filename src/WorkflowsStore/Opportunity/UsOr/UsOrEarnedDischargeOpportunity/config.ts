@@ -34,4 +34,8 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
     }),
     firestoreCollection: "US_OR-earnedDischarge",
     denialButtonText: "Additional Eligibility",
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 180,
+    },
   };
