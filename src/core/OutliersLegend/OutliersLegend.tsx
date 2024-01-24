@@ -36,20 +36,20 @@ const LegendWrapper = styled.div<{ direction: "row" | "column" }>`
   flex-wrap: wrap;
 `;
 
-const LegendItem = styled.div<{ hoverable?: boolean }>`
+const LegendItem = styled.div`
   display: flex;
   align-items: center;
-
-  ${({ hoverable }) =>
-    hoverable &&
-    `&:hover {
-    cursor: pointer;
-  }`}
 `;
 
 const LegendText = styled.div`
   margin: 0 ${rem(spacing.xs)};
   color: ${palette.slate85};
+`;
+
+const TooltipIcon = styled(Icon)`
+  &:hover {
+    cursor: default;
+  }
 `;
 
 export const circleLegendIcon = (color: string) => {
@@ -110,31 +110,25 @@ const OutliersLegend: React.FC<OutliersLegendType> = ({
       {items.map((item) => {
         const hasTooltip = Boolean(item.tooltip);
 
-        const legendItemViz = (
-          <LegendItem key={item.label} hoverable={hasTooltip}>
+        return (
+          <LegendItem key={item.label}>
             {item.icon}
             <LegendText>
               {item.label}&ensp;
               {hasTooltip && (
-                <Icon kind="Info" size={12} color={palette.slate60} />
+                <TooltipTrigger
+                  key={item.label}
+                  contents={item.tooltip?.replace(
+                    "$OFFICER_LABEL",
+                    toTitleCase(supervisionOfficerLabel)
+                  )}
+                  maxWidth={300}
+                >
+                  <TooltipIcon kind="Info" size={12} color={palette.slate60} />
+                </TooltipTrigger>
               )}
             </LegendText>
           </LegendItem>
-        );
-
-        return hasTooltip ? (
-          <TooltipTrigger
-            key={item.label}
-            contents={item.tooltip?.replace(
-              "$OFFICER_LABEL",
-              toTitleCase(supervisionOfficerLabel)
-            )}
-            maxWidth={300}
-          >
-            {legendItemViz}
-          </TooltipTrigger>
-        ) : (
-          legendItemViz
         );
       })}
     </LegendWrapper>

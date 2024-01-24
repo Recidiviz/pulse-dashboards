@@ -58,7 +58,7 @@ const Title = styled.div<{
 const HighlightedText = styled.span`
   border-bottom: 2px dashed ${palette.pine2};
   &:hover {
-    cursor: pointer;
+    cursor: default;
   }
 `;
 

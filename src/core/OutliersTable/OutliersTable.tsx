@@ -17,7 +17,7 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Column, useFlexLayout, useTable } from "react-table";
 import List from "react-virtualized/dist/commonjs/List";
@@ -127,22 +127,15 @@ const OutliersTable = <T extends object>({
 
   const handleHideColumnWidth = useCallback((ref, width) => {
     if (ref) {
-      if (width < TABLE_HIDE_COLUMN_WIDTH) {
-        hideColumn(true);
-      } else {
-        hideColumn(false);
-      }
+      hideColumn(width < TABLE_HIDE_COLUMN_WIDTH);
     }
   }, []);
-
-  useEffect(() => {
-    toggleHideColumn(hiddenColumnId, isColumnHidden || isMobile);
-  }, [isColumnHidden, isMobile, toggleHideColumn, hiddenColumnId]);
 
   const RenderRow = useCallback(
     ({ index, style }) => {
       const row = rows[index];
       prepareRow(row);
+      toggleHideColumn(hiddenColumnId, isColumnHidden || isMobile);
 
       const rowViz = (
         <TR
@@ -174,7 +167,17 @@ const OutliersTable = <T extends object>({
         rowViz
       );
     },
-    [prepareRow, rows, rowLinks, transformToMobile, location.pathname]
+    [
+      prepareRow,
+      rows,
+      rowLinks,
+      transformToMobile,
+      location.pathname,
+      isColumnHidden,
+      isMobile,
+      toggleHideColumn,
+      hiddenColumnId,
+    ]
   );
 
   return (

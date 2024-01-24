@@ -67,7 +67,13 @@ const OutliersStaffLegend: React.FC<OutliersStaffLegendType> = ({ note }) => {
           {note && <LegendNote>Note: {note}</LegendNote>}
           {methodologyUrl && (
             <MethodologyLinkContainer>
-              <a href={methodologyUrl}>Methodology</a>
+              <a
+                href={methodologyUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                Methodology
+              </a>
             </MethodologyLinkContainer>
           )}
         </CardContent>
