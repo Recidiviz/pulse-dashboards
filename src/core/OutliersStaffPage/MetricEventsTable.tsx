@@ -131,6 +131,7 @@ export const MetricEventsTable = withPresenter(
               columns={columns.map((c) => createTableColumn(c))}
               rowLinks={clientDetailLinks}
               scrollElement={scrollElement}
+              intercomTargetOnFirstRow="First client"
             />
           </Wrapper>
         </OutliersChartCard>

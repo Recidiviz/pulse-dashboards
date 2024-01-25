@@ -71,6 +71,7 @@ const OutliersStaffLegend: React.FC<OutliersStaffLegendType> = ({ note }) => {
                 href={methodologyUrl}
                 target="_blank"
                 rel="noreferrer noopener"
+                data-intercom-target="Methodology Link"
               >
                 Methodology
               </a>

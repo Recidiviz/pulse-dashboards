@@ -98,12 +98,19 @@ const SupervisorsList = observer(function SupervisorsList({
   } = presenter;
 
   const districtViz = supervisorsWithOutliersByDistrict.map(
-    ({ district, supervisors }) => (
+    ({ district, supervisors }, districtIndex) => (
       <div key={district}>
         <DistrictName>{district ?? "Unknown"}</DistrictName>
         <SupervisorLinksWrapper isMobile={isMobile}>
-          {supervisors.map((supervisor) => (
-            <SupervisorWrapper key={supervisor.externalId}>
+          {supervisors.map((supervisor, supervisorIndex) => (
+            <SupervisorWrapper
+              key={supervisor.externalId}
+              data-intercom-target={
+                districtIndex === 0 && supervisorIndex === 0
+                  ? "First supervisor in list"
+                  : undefined
+              }
+            >
               <TooltipTrigger contents="See insights">
                 <StyledLink
                   key={supervisor.externalId}

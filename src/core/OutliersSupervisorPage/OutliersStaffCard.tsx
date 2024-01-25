@@ -116,12 +116,14 @@ const MetricSection = styled(Link)<{ $hasBorder: boolean }>`
 
 type OutliersStaffCardType = {
   officer: OutlierOfficerData;
+  officerIndex: number;
   title?: string;
   subtitle?: string;
 };
 
 const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
   officer,
+  officerIndex,
   title,
   subtitle,
 }) => {
@@ -134,7 +136,7 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
         <CardSubtitle>{subtitle}</CardSubtitle>
       </CardHeader>
       <CardBody>
-        {officer.outlierMetrics.map((metric) => (
+        {officer.outlierMetrics.map((metric, metricIndex) => (
           <MetricSection
             to={outliersUrl("supervisionStaffMetric", {
               officerPseudoId: officer.pseudonymizedId,
@@ -142,6 +144,11 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
             })}
             key={metric.metricId}
             $hasBorder={isTablet}
+            data-intercom-target={
+              officerIndex === 0 && metricIndex === 0
+                ? "First outlier on supervisor page"
+                : undefined
+            }
           >
             <MetricHeader>
               <MetricTitle>{toTitleCase(metric.config.eventName)}</MetricTitle>

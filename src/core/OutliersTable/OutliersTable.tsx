@@ -95,6 +95,7 @@ type OutlierTableProps<T extends object> = {
   rowSize?: number;
   transformToMobile?: boolean;
   scrollElement?: any;
+  intercomTargetOnFirstRow?: string;
 };
 
 const OutliersTable = <T extends object>({
@@ -105,6 +106,7 @@ const OutliersTable = <T extends object>({
   hiddenColumnId = "clientId",
   rowSize = DEFAULT_TABLE_ROW_SIZE,
   transformToMobile = false,
+  intercomTargetOnFirstRow,
 }: OutlierTableProps<T>) => {
   const { isMobile } = useIsMobile(true);
   const [isColumnHidden, hideColumn] = useState(false);
@@ -140,6 +142,11 @@ const OutliersTable = <T extends object>({
       const rowViz = (
         <TR
           transformToMobile={transformToMobile}
+          data-intercom-target={
+            intercomTargetOnFirstRow && index === 0
+              ? intercomTargetOnFirstRow
+              : undefined
+          }
           {...row.getRowProps({ style })}
         >
           {row.cells.map((cell) => {
@@ -173,6 +180,7 @@ const OutliersTable = <T extends object>({
       rowLinks,
       transformToMobile,
       location.pathname,
+      intercomTargetOnFirstRow,
       isColumnHidden,
       isMobile,
       toggleHideColumn,

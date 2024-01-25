@@ -422,7 +422,10 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
             enabled={!isMobile || !isFixed}
             enabledLanternLogo={isOutliersLanternState && isOutliersView}
           />
-          <NavMenu alignBottom={isMobile && isFixed}>
+          <NavMenu
+            alignBottom={isMobile && isFixed}
+            data-intercom-target="Profile"
+          >
             <NavLinks>{children}</NavLinks>
             {isMobile ? (
               <>

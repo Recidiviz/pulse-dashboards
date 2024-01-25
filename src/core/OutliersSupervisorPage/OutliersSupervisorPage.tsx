@@ -129,11 +129,12 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
           />
         </Sidebar>
         <Body>
-          {outlierOfficersData.map((officer) => {
+          {outlierOfficersData.map((officer, officerIndex) => {
             return (
               <OutliersStaffCard
                 key={officer.externalId}
                 officer={officer}
+                officerIndex={officerIndex}
                 subtitle={
                   (presenter.areCaseloadTypeBreakdownsEnabled &&
                     officer.caseloadType) ||

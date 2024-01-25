@@ -150,7 +150,12 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
               {infoItems.map(
                 (item) =>
                   item.info && (
-                    <InfoItem key={item.title}>
+                    <InfoItem
+                      key={item.title}
+                      data-intercom-target={
+                        item.title === "staff" ? "Roster" : undefined
+                      }
+                    >
                       <span>{humanReadableTitleCase(item.title)}: </span>
                       {item.info}
                     </InfoItem>
