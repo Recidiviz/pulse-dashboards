@@ -31,6 +31,7 @@ import OutliersTable from "../OutliersTable";
 const Wrapper = styled.div`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
   border-top: 1px solid ${palette.slate10};
+  overflow-y: hidden;
 `;
 
 const Title = styled.div`
@@ -107,12 +108,10 @@ const createTableColumn = (column: Column) => {
 };
 
 type OutliersClientEventsTableType = {
-  scrollElement: React.ReactNode;
   events: ClientEvent[];
 };
 
 const OutliersClientEventsTable: React.FC<OutliersClientEventsTableType> = ({
-  scrollElement,
   events,
 }) => {
   const { isMobile } = useIsMobile(true);
@@ -126,7 +125,6 @@ const OutliersClientEventsTable: React.FC<OutliersClientEventsTableType> = ({
         columns={columns.map((c) => createTableColumn(c))}
         rowSize={isMobile ? 110 : 76}
         transformToMobile={isMobile}
-        scrollElement={scrollElement}
       />
     </Wrapper>
   );

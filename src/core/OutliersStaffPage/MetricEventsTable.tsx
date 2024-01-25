@@ -33,7 +33,7 @@ import { FullName } from "../types/personMetadata";
 
 const Wrapper = styled.div`
   max-height: 555px;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
 `;
 

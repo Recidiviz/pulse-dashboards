@@ -138,7 +138,6 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [scrollElement, setScrollElement] = useState(null);
   const scrollElementRef = useRef(null);
 
   useEffect(() => {
@@ -164,7 +163,6 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   return (
     <StyledDrawerModal
       isOpen={modalIsOpen}
-      onAfterOpen={() => setScrollElement(scrollElementRef.current)}
       onRequestClose={() => {
         setModalIsOpen(false);
       }}
@@ -208,10 +206,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
           eventsLabel={eventsLabelSingular}
           outcomeDate={outcomeDate}
         />
-        <OutliersClientEventsTable
-          events={clientEvents}
-          scrollElement={scrollElement}
-        />
+        <OutliersClientEventsTable events={clientEvents} />
       </Content>
       <ModalFooter>
         <LanternLogo />

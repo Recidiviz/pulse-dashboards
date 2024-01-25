@@ -17,12 +17,18 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
-import React, { useCallback, useState } from "react";
+import React, {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Column, useFlexLayout, useTable } from "react-table";
-import List from "react-virtualized/dist/commonjs/List";
 import WindowScroller from "react-virtualized/dist/commonjs/WindowScroller";
 import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList, FixedSizeList as List } from "react-window";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
@@ -110,7 +116,15 @@ const OutliersTable = <T extends object>({
 }: OutlierTableProps<T>) => {
   const { isMobile } = useIsMobile(true);
   const [isColumnHidden, hideColumn] = useState(false);
+  const [scrollIndex, setScrollIndex] = useState(0);
   const location = useLocation();
+
+  const listRef = useRef<FixedSizeList>(
+    null
+  ) as MutableRefObject<FixedSizeList>;
+  useEffect(() => {
+    listRef.current?.scrollToItem(scrollIndex);
+  }, [scrollIndex]);
 
   const {
     getTableProps,
@@ -167,6 +181,7 @@ const OutliersTable = <T extends object>({
           key={index}
           to={rowLinks[index]}
           state={{ from: location.pathname }}
+          onClick={() => setScrollIndex(index)}
         >
           {rowViz}
         </StyledLink>
@@ -214,19 +229,25 @@ const OutliersTable = <T extends object>({
               ref={(ref) => handleHideColumnWidth(ref, width)}
               scrollElement={scrollElement || window}
             >
-              {({ height, isScrolling, onChildScroll, scrollTop }) => (
-                <List
-                  autoHeight
-                  height={height}
-                  isScrolling={isScrolling}
-                  onScroll={onChildScroll}
-                  rowCount={rows.length}
-                  rowHeight={rowSize}
-                  rowRenderer={RenderRow}
-                  scrollTop={scrollTop}
-                  width={width}
-                />
-              )}
+              {({ height }) => {
+                // If there is a scroll element, find the height of the element
+                // minus the height of the header, minus the border for the listHeight.
+                // Otherwise the list height is the number of rows * height of each row.
+                const listHeight = scrollElement
+                  ? height - rowSize - 1
+                  : rows.length * rowSize;
+                return (
+                  <List
+                    ref={listRef}
+                    height={listHeight}
+                    itemCount={rows.length}
+                    itemSize={rowSize}
+                    width={width}
+                  >
+                    {RenderRow}
+                  </List>
+                );
+              }}
             </WindowScroller>
           )}
         </AutoSizer>
