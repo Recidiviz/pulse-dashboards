@@ -64,7 +64,6 @@ function useChartData(url) {
 
       return await responseData;
     } catch (error) {
-      console.error(error);
       Sentry.captureException(error, (scope) => {
         scope.setContext("useChartData.fetchChartData", {
           url,

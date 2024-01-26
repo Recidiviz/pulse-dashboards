@@ -37,9 +37,7 @@ interface Props {
  * `True` for any non-`production` environment (i.e. `dev`, `staging`, etc.).
  */
 const IS_DEBUG = process.env.REACT_APP_DEPLOY_ENV
-  ? !["production", "staging", "demo"].includes(
-      process.env.REACT_APP_DEPLOY_ENV
-    )
+  ? !["production", "demo"].includes(process.env.REACT_APP_DEPLOY_ENV)
   : false;
 
 // SENTRY INTEGRATIONS
@@ -64,8 +62,6 @@ function SentryErrorBoundary({
     Sentry.init({
       environment: process.env.REACT_APP_SENTRY_ENV,
       dsn: process.env.REACT_APP_SENTRY_DSN,
-      debug: IS_DEBUG,
-
       integrations: [new Debug(), BROWSER_TRACING_INTEGRATION],
       beforeSend: (event, hint) => {
         // only works if `Debug` integration is enabled.

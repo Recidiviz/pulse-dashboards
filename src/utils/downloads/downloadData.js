@@ -107,9 +107,6 @@ export function downloadCanvasAsImage({
       downloadjs(imageData, filename, "image/png;base64");
     }
   } catch (error) {
-    // TODO (#4685): Join together the console.error and Sentry.captureException calls, so we're not double calling unnecessarily.
-
-    console.error(error);
     Sentry.captureException(error, (scope) => {
       scope.setContext("downloadCanvasAsImage", {
         chartId,
