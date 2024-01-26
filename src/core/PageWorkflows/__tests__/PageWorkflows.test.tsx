@@ -115,6 +115,8 @@ describe("PageWorkflows", () => {
     mockWorkflowsStore({
       hydrate: jest.fn().mockReturnValue(jest.fn()),
       hydrationState: { status: "needs hydration" },
+      keepUserObserved: jest.fn(),
+      stopKeepingUserObserved: jest.fn(),
     });
   });
 
@@ -129,6 +131,33 @@ describe("PageWorkflows", () => {
       (isIE11 as jest.Mock).mockReturnValue(true);
       render(<PageWorkflows />);
       expect(useRootStore().workflowsStore.hydrate).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe("Workflows user data", () => {
+    beforeEach(() => {
+      (isIE11 as jest.Mock).mockReturnValue(false);
+      baseMockWorkflowsStore = {
+        hydrate: jest.fn().mockReturnValue(jest.fn()),
+        hydrationState: { status: "needs hydration" },
+        keepUserObserved: jest.fn(),
+        stopKeepingUserObserved: jest.fn(),
+      };
+      mockWorkflowsStore(baseMockWorkflowsStore);
+    });
+
+    it("is observed on component mount", () => {
+      render(<PageWorkflows />);
+      expect(baseMockWorkflowsStore.keepUserObserved).toHaveBeenCalled();
+    });
+
+    it("is unobserved on component unmount", () => {
+      const { unmount } = render(<PageWorkflows />);
+      expect(
+        baseMockWorkflowsStore.stopKeepingUserObserved
+      ).not.toHaveBeenCalled();
+      unmount();
+      expect(baseMockWorkflowsStore.stopKeepingUserObserved).toHaveBeenCalled();
     });
   });
 
@@ -149,6 +178,8 @@ describe("PageWorkflows", () => {
           .fn()
           .mockImplementation(() => ({ catch: jest.fn() })),
         activeSystem: "SUPERVISION",
+        keepUserObserved: jest.fn(),
+        stopKeepingUserObserved: jest.fn(),
       };
       (WorkflowsHomepage as jest.Mock).mockReturnValue(
         <div>Workflows Homepage</div>
@@ -290,6 +321,8 @@ describe("PageWorkflows", () => {
         updateSelectedPerson: jest
           .fn()
           .mockImplementation(() => ({ catch: jest.fn() })),
+        keepUserObserved: jest.fn(),
+        stopKeepingUserObserved: jest.fn(),
       };
       (WorkflowsTasks as jest.Mock).mockReturnValue(<div>Tasks Page</div>);
       (OpportunityCaseloadView as jest.Mock).mockReturnValue(

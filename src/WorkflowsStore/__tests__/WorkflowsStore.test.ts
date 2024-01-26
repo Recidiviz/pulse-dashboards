@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { difference } from "lodash";
+import { difference, noop } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
@@ -224,6 +224,7 @@ afterEach(() => {
   if (testObserver) {
     testObserver();
   }
+  workflowsStore.stopKeepingUserObserved();
 });
 
 test("hydration fails without authentication", () => {
@@ -232,6 +233,12 @@ test("hydration fails without authentication", () => {
   });
   workflowsStore.hydrate();
   expect(workflowsStore.hydrationState.status).toBe("failed");
+});
+
+test("hydration creates a persistent observer for user data", () => {
+  jest.spyOn(workflowsStore, "keepUserObserved").mockImplementation(noop);
+  workflowsStore.hydrate();
+  expect(workflowsStore.keepUserObserved).toHaveBeenCalled();
 });
 
 test("hydration creates subscriptions", () => {
@@ -1262,5 +1269,39 @@ describe("residents for US_ME", () => {
         workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
       ).toBe(pseudonymizedId);
     });
+  });
+});
+
+describe("user data observer", () => {
+  // for lack of a better test mechanism, we are verifying the behavior of a private property here.
+  // It's still better for the property to stay private because it should not be
+  // accessed directly outside of WorkflowsStore in a real application context.
+
+  test("starts observing", () => {
+    // @ts-expect-error
+    expect(workflowsStore.userKeepAliveDisposer).toBeUndefined();
+
+    workflowsStore.keepUserObserved();
+
+    // @ts-expect-error
+    expect(workflowsStore.userKeepAliveDisposer).toBeDefined();
+  });
+  test("stops observing", async () => {
+    workflowsStore.keepUserObserved();
+
+    // @ts-expect-error
+    const spy = jest.spyOn(workflowsStore, "userKeepAliveDisposer");
+
+    workflowsStore.stopKeepingUserObserved();
+
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test("resets observer state", () => {
+    workflowsStore.keepUserObserved();
+    workflowsStore.stopKeepingUserObserved();
+
+    // @ts-expect-error
+    expect(workflowsStore.userKeepAliveDisposer).toBeUndefined();
   });
 });

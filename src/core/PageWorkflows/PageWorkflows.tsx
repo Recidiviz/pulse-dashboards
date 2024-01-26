@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { action } from "mobx";
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
@@ -51,6 +52,18 @@ const PageWorkflows: React.FC = () => {
     });
   });
   const { workflowsStore } = useRootStore();
+  useEffect(() => {
+    // Ensure user data remains active and hydrated while we're in the Workflows UI area
+    // (this prevents it from automatically unsubscribing and resubscribing to Firestore
+    // if it happens to become unobserved by the application for some reason)
+    workflowsStore.keepUserObserved();
+
+    return action("unmounting PageWorkflows", () => {
+      // because we are leaving the Workflows UI area, remove the observer
+      // on Workflows user data to avoid a memory leak
+      workflowsStore.stopKeepingUserObserved();
+    });
+  }, [workflowsStore]);
 
   if (isIE11()) {
     return (

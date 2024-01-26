@@ -37,6 +37,7 @@ import {
   values,
   when,
 } from "mobx";
+import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
   Hydratable,
@@ -110,6 +111,8 @@ export class WorkflowsStore implements Hydratable {
   userSubscription: UserSubscription;
 
   userUpdatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
+
+  private userKeepAliveDisposer?: IDisposer;
 
   private selectedPersonPseudoId?: string;
 
@@ -234,6 +237,8 @@ export class WorkflowsStore implements Hydratable {
         );
       }
       this.userUpdatesSubscription.hydrate();
+
+      this.keepUserObserved();
     } catch (e) {
       this.hydrationError = castToError(e);
     }
@@ -286,6 +291,31 @@ export class WorkflowsStore implements Hydratable {
     }
 
     return { info, updates, metadata };
+  }
+
+  /**
+   * Prevents the user object (and by extension its underlying subscriptions)
+   * from becoming unobserved, to ensure the subscriptions remain active and hydrated
+   * even if their data is not being observed.
+   *
+   * NOTE: This needs to be cleaned up manually when it is no longer needed,
+   * to prevent a memory leak from occuring. See `this.stopKeepingUserObserved`.
+   */
+  keepUserObserved(): void {
+    if (!this.userKeepAliveDisposer) {
+      this.userKeepAliveDisposer = keepAlive(this, "user");
+    }
+  }
+
+  /**
+   * Disposes of the keepAlive reaction created by `this.keepUserObserved`
+   * and resets the state so another keepAlive can be initiated later, if needed.
+   */
+  stopKeepingUserObserved(): void {
+    if (this.userKeepAliveDisposer) {
+      this.userKeepAliveDisposer();
+      this.userKeepAliveDisposer = undefined;
+    }
   }
 
   get selectedSearchIds(): string[] {
