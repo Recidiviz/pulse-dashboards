@@ -106,6 +106,7 @@ const DENIAL_REASONS_MAP = {
 export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<UsIdExpandedCRCReferralRecord> {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "Incarceration",
+    "UsIdPastTwoYearsAlert",
     "CaseNotes",
   ];
 

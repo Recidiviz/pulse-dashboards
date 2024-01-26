@@ -68,7 +68,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     facilityId: "FACILITY1",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
-    admissionDate: "2021-07-12",
+    admissionDate: "2017-07-12",
     releaseDate: "2027-06-06",
   },
   {

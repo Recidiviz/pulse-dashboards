@@ -50,6 +50,7 @@ import {
   UsMoRestrictiveHousing,
   UsTnCommonlyUsedOverrideCodes,
 } from "./ResidentDetailSidebarComponents";
+import { UsIdPastTwoYearsAlert } from "./ResidentDetailSidebarComponents/US_ID/UsIdPastTwoYearsAlert";
 import { Divider } from "./styles";
 
 type OpportunitySidebarProfileProps = {
@@ -84,6 +85,7 @@ const ResidentDetailSidebarComponents = {
   Incarceration,
   ResidentHousing,
   UsMoIncarceration,
+  UsIdPastTwoYearsAlert,
 };
 
 type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;

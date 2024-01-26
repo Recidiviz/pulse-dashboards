@@ -129,6 +129,8 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
     ? {
         CompliantReportingAlmostEligible: {},
         responsiveRevamp: {},
+        usIdCRC: {},
+        usIdExpandedCRC: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         usMeFurloughRelease: {},
@@ -137,6 +139,7 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         supervisionUnrestrictedSearch: {},
         usMoOverdueRHPilot: {},
         outliersClientDetail: {},
+        enableSnooze: {},
       }
     : allFeatureVariants;
 

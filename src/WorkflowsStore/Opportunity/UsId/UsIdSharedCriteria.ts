@@ -60,7 +60,7 @@ export const usIdNoDetainersForXcrcAndCrcCopy: CopyTuple<"usIdNoDetainersForXcrc
   [
     "usIdNoDetainersForXcrcAndCrc",
     {
-      text: "No active detainers or holds",
-      tooltip: "Cannot have any detainers or holds",
+      text: "No active felony detainers or holds",
+      tooltip: "Cannot have any felony detainers or holds",
     },
   ];
