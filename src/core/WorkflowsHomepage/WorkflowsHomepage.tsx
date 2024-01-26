@@ -77,7 +77,7 @@ const WorkflowsHomepage = observer(
 
     const hydratedCallToAction = `Hi, ${
       user?.info.givenNames
-    }, we’ve found some outstanding items across ${
+    }. We’ve found some outstanding items across ${
       selectedSearchIds.length
     } ${pluralizeWord("caseload", selectedSearchIds.length)}`;
 

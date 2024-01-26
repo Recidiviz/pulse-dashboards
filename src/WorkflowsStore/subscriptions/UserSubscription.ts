@@ -138,6 +138,10 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     // there are no records in Firestore for Recidiviz users;
     // construct a record that will grant them universal access
     else if (stateCode === "RECIDIVIZ") {
+      let formattedUserName;
+
+      if (user?.name) formattedUserName = splitAuth0UserName(user.name);
+
       injectedUserData = {
         id: "RECIDIVIZ",
         email: user?.email ?? "",
@@ -145,8 +149,8 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         stateCode: currentTenantId as string,
         hasCaseload: false,
         hasFacilityCaseload: false,
-        givenNames: "Recidiviz",
-        surname: "Staff",
+        givenNames: (user?.given_name || formattedUserName?.firstName) ?? "",
+        surname: (user?.family_name || formattedUserName?.lastName) ?? "",
       };
     }
     return injectedUserData;

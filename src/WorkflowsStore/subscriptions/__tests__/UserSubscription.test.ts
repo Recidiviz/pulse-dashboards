@@ -91,12 +91,12 @@ test("inject record for Recidiviz users", () => {
     Array [
       Object {
         "email": "test@example.com",
-        "givenNames": "Recidiviz",
+        "givenNames": "Geri",
         "hasCaseload": false,
         "hasFacilityCaseload": false,
         "id": "RECIDIVIZ",
         "stateCode": "US_XX",
-        "surname": "Staff",
+        "surname": "Halliwell",
       },
     ]
   `);
@@ -107,12 +107,12 @@ test("inject record for Recidiviz users", () => {
     Array [
       Object {
         "email": "test@example.com",
-        "givenNames": "Recidiviz",
+        "givenNames": "Geri",
         "hasCaseload": false,
         "hasFacilityCaseload": false,
         "id": "RECIDIVIZ",
         "stateCode": "US_XX",
-        "surname": "Staff",
+        "surname": "Halliwell",
       },
     ]
   `);
