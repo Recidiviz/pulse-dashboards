@@ -125,6 +125,8 @@ export class FormBase<
 
   navigateToFormText = "Navigate to form";
 
+  allowRevert = true;
+
   // eslint-disable-next-line class-methods-use-this
   get downloadText(): string {
     return "";

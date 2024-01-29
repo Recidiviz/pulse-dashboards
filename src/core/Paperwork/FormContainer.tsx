@@ -165,7 +165,7 @@ export const FormContainer = observer(function FormContainer({
           </div>
         </FormHeaderSection>
         <FormHeaderSection>
-          {formRevertButton && (
+          {formRevertButton && form.allowRevert && (
             <RevertButton
               disabled={!form.formLastUpdated}
               className="WorkflowsFormActionButton"
