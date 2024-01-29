@@ -108,6 +108,10 @@ describe("prefilledDataTransformer", () => {
     expect(form.prefilledDataTransformer()).toMatchInlineSnapshot(`
       Object {
         "clientId": "pei1",
+        "countyAddress": "(Your County Address}",
+        "countyFax": "(   )",
+        "countyName": "(Your County}",
+        "countyPhone": "(   )",
         "givenNames": "Joe",
         "middleNames": "Quimby",
         "officerName": "8675309 8675309",

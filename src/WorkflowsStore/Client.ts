@@ -267,6 +267,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return CLIENT_DETAILS_COPY[this.stateCode];
   }
 
+  get district() {
+    // For some reason typescript doesn't like super.district
+    // eslint-disable-next-line dot-notation
+    return this.record.district ?? super["district"];
+  }
+
   get portionServedDates(): PortionServedDates {
     const startDate = optionalFieldToDate(this.record.supervisionStartDate);
     const endDate = optionalFieldToDate(this.record.expirationDate);

@@ -23,6 +23,7 @@ import {
   UsOrEarnedDischargeSentenceDraftData,
   UsOrEarnedDischargeSubOpportunity,
 } from "../UsOr";
+import { getCountyInfo } from "../UsOr/UsOrCountyInfo";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 export class UsOrEarnedDischargeForm extends FormBase<
@@ -64,11 +65,17 @@ export class UsOrEarnedDischargeForm extends FormBase<
     () => {
       if (!this.opportunity.record) return {};
 
-      const { givenNames, middleNames, surname } = this.person.fullName;
+      const {
+        fullName: { givenNames, middleNames, surname },
+        externalId: clientId,
+        assignedStaff,
+        district,
+      } = this.person;
 
-      const clientId = this.person.externalId;
-
-      const officerName = `${this.person.assignedStaff?.givenNames} ${this.person.assignedStaff?.surname}`;
+      const officerName =
+        !assignedStaff || assignedStaff.id === assignedStaff.surname
+          ? `(Your Name)`
+          : `${assignedStaff?.givenNames} ${assignedStaff?.surname}`;
 
       const todaysDate = formatWorkflowsDate(new Date());
 
@@ -79,6 +86,8 @@ export class UsOrEarnedDischargeForm extends FormBase<
         ])
       );
 
+      const countyInfo = district ? getCountyInfo(district) : undefined;
+
       return {
         givenNames,
         middleNames,
@@ -87,6 +96,10 @@ export class UsOrEarnedDischargeForm extends FormBase<
         officerName,
         todaysDate,
         sentences,
+        countyName: countyInfo?.name ?? "(Your County}",
+        countyAddress: countyInfo?.address ?? "(Your County Address}",
+        countyPhone: countyInfo?.phone ?? "(   )",
+        countyFax: countyInfo?.fax ?? "(   )",
       };
     };
 }

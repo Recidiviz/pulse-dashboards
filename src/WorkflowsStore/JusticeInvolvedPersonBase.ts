@@ -178,7 +178,7 @@ export class JusticeInvolvedPersonBase<
     );
   }
 
-  get assignedStaffDistrict(): string | undefined {
+  get district(): string | undefined {
     return this.assignedStaff?.district;
   }
 

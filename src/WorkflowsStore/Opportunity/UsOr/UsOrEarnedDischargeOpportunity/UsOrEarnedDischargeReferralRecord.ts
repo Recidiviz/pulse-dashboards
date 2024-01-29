@@ -132,6 +132,10 @@ export type UsOrEarnedDischargeDraftData = {
   offenses: string;
   sentenceStartDate: string;
   todaysDate: string;
+  countyName: string;
+  countyAddress: string;
+  countyPhone: string;
+  countyFax: string;
   // Note that if we want to edit this form in the frontend, we will need to flatten this out
   // This will also require changing to a stable id for each sentence
   sentences: Record<string, UsOrEarnedDischargeSentenceDraftData>;
