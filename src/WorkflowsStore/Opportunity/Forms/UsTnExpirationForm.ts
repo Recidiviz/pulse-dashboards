@@ -19,7 +19,7 @@ import { compact } from "lodash";
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { SpecialConditionCode } from "../../../FirestoreStore";
 import flags from "../../../flags";
-import { ParsedSpecialConditionOrString } from "../../Client";
+import { ParsedSpecialConditionOrString, UNKNOWN } from "../../Client";
 import {
   Contact,
   UsTnExpirationDraftData,
@@ -151,7 +151,7 @@ export class UsTnExpirationForm extends FormBase<
               )} on ${formatFormValueDateMMDDYYYYY(form.latestPse.contactDate)}`
             : ""
         ),
-        address: person.address,
+        address: person.address || UNKNOWN,
         employmentInformation: defaultFormValueJoiner(
           displayString(
             form.latestEmp?.contactType,

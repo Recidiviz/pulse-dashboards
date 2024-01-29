@@ -283,7 +283,7 @@ function ContactDetails({
       <ContactCell responsiveRevamp={responsiveRevamp}>
         {responsiveRevamp && <ContactLabel>Contacts</ContactLabel>}
         <ContactValue className="fs-exclude" alignRight={!responsiveRevamp}>
-          {person.formattedPhoneNumber || "Phone number unavailable"}
+          {person.phoneNumber || "Phone number unavailable"}
         </ContactValue>
         <ContactValue className="fs-exclude" alignRight={!responsiveRevamp}>
           {person.emailAddress || "Email unavailable"}

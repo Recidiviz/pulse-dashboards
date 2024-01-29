@@ -26,7 +26,7 @@ import React, { useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Client } from "../../WorkflowsStore";
+import { Client, UNKNOWN } from "../../WorkflowsStore";
 import {
   formatPhoneNumber,
   validatePhoneNumber,
@@ -117,7 +117,7 @@ const PhoneNumberInput = ({
           <TooltipTrigger
             contents={
               <TooltipDetails
-                phoneNumber={client.phoneNumber}
+                phoneNumber={client.phoneNumber || UNKNOWN}
                 internalSystemName={internalSystemName}
               />
             }

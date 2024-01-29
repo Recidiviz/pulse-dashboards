@@ -49,7 +49,7 @@ export const transform = (
     allDockets,
     clientFullName: client.displayName,
     dateToday: formatWorkflowsDate(new Date()),
-    telephoneNumber: client.formattedPhoneNumber,
+    telephoneNumber: client.phoneNumber,
     specialConditionsCounselingAngerManagementComplete:
       !!data.specialConditionsCounselingAngerManagementCompleteDate,
     specialConditionsCounselingMentalHealthComplete:

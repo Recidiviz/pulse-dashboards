@@ -169,7 +169,7 @@ function filteredMilestoneTypes(
 export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   supervisionLevelStart?: Date;
 
-  address!: string;
+  address?: string;
 
   private rawPhoneNumber?: string;
 
@@ -218,7 +218,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.supervisionLevelStart = optionalFieldToDate(
       record.supervisionLevelStart
     );
-    this.address = record.address || UNKNOWN;
+    this.address = record.address;
     this.rawPhoneNumber = record.phoneNumber;
     this.expirationDate = optionalFieldToDate(record.expirationDate);
     this.currentBalance = record.currentBalanceNew ?? record.currentBalance;
@@ -257,14 +257,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     );
   }
 
-  get formattedPhoneNumber(): string | undefined {
+  get phoneNumber(): string | undefined {
     return this.rawPhoneNumber
       ? formatPhone("(NNN) NNN-NNNN", this.rawPhoneNumber)
       : undefined;
-  }
-
-  get phoneNumber(): string {
-    return this.formattedPhoneNumber || UNKNOWN;
   }
 
   get detailsCopy(): ClientDetailsCopy {

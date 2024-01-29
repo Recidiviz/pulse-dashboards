@@ -27,14 +27,23 @@ import {
 } from "../styles";
 import { ClientProfileProps } from "../types";
 
-export function Contact({ client }: ClientProfileProps): React.ReactElement {
+export function Contact({
+  client,
+}: ClientProfileProps): React.ReactElement | null {
+  if (!client.phoneNumber && !client.emailAddress && !client.address)
+    return null;
+
   return (
     <DetailsSection>
       <DetailsHeading>Contact</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
-          <DetailsSubheading>Telephone</DetailsSubheading>
-          <SecureDetailsContent>{client.phoneNumber}</SecureDetailsContent>
+          {client.phoneNumber && (
+            <>
+              <DetailsSubheading>Telephone</DetailsSubheading>
+              <SecureDetailsContent>{client.phoneNumber}</SecureDetailsContent>
+            </>
+          )}
           {client.emailAddress && (
             <>
               <DetailsSubheading>Email</DetailsSubheading>

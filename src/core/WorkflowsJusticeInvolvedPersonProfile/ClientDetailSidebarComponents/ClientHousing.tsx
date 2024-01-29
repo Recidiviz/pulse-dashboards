@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import { UNKNOWN } from "../../../WorkflowsStore";
 import {
   DetailsHeading,
   DetailsList,
@@ -35,7 +36,9 @@ export function ClientHousing({
       <SecureDetailsContent>
         <DetailsList>
           <DetailsSubheading>Address</DetailsSubheading>
-          <SecureDetailsContent>{client.address}</SecureDetailsContent>
+          <SecureDetailsContent>
+            {client.address || UNKNOWN}
+          </SecureDetailsContent>
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>
