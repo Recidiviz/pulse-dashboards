@@ -318,6 +318,7 @@
     "immer": "^9.0.6",
     "json-schema": "^0.4.0",
     "icss-utils": "^5.1.0",
-    "@types/react": "^17.0.38"
+    "@types/react": "^17.0.38",
+    "stream-shift": "^1.0.2"
   }
 }
