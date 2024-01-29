@@ -29,7 +29,7 @@ export class UsOrEarnedDischargeForm extends FormBase<
   UsOrEarnedDischargeDraftData,
   UsOrEarnedDischargeOpportunity
 > {
-  navigateToFormText = "Generate EDIS check-list";
+  navigateToFormText = "Generate EDIS checklist";
 
   // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {

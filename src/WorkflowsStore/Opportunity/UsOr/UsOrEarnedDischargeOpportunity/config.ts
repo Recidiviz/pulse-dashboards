@@ -30,7 +30,7 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
       eligibilityText: simplur`${formattedCount} client[|s] on [a|] funded sentence[|s] may be `,
       opportunityText: "eligible for Earned Discharge from Supervision",
       callToAction:
-        "Review clients who may be eligible for ED and complete the EDIS check-list.",
+        "Review clients who may be eligible for ED and complete the EDIS checklist.",
     }),
     firestoreCollection: "US_OR-earnedDischarge",
     denialButtonText: "Additional Eligibility",

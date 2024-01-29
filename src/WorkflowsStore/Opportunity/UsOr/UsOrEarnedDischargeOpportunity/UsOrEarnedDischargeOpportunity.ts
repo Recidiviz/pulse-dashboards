@@ -19,6 +19,7 @@
 
 import { makeObservable } from "mobx";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
 import { OTHER_KEY } from "../../../utils";
@@ -65,7 +66,7 @@ const CRITERIA_COPY: CriteriaCopy<UsOrEarnedDischargeSubOpportunity> = {
     [
       "noConvictionDuringSentence",
       {
-        text: "Not convicted of a crime while supervision case was under review",
+        text: "Not convicted of a crime that occurred while on supervision for the case under review",
         tooltip:
           "Has not been convicted of a crime (felony or misdemeanor) that occurred while on supervision for the case(s) under review.",
       },
@@ -119,8 +120,7 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
     "ClientProfileDetails",
   ];
 
-  readonly policyOrMethodologyUrl =
-    "https://drive.google.com/file/d/1-V5qxOjurPggO4NrHSRBDB_pn8gmYjoa/view";
+  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_OR;
 
   readonly isAlert = false;
 
@@ -128,7 +128,7 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
 
   denialReasonsMap = {
     FINES:
-      "Compensatory fines and restitution have been paid in full or current on payment plan",
+      "Compensatory fines and restitution have not been paid in full or not current on payment plan",
     PROGRAMS: "Incomplete specialty court programs or treatment programs",
     "CASE PLAN": "Not in compliance with supervision case plan",
     [OTHER_KEY]: "Other: please specify a reason",

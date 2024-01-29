@@ -79,4 +79,6 @@ export const WORKFLOWS_METHODOLOGY_URL: Record<string, string> = {
     "https://drive.google.com/file/d/1iFXPpD9b7xwcGO4AjagwOLJO-rwYBrqU/view",
   US_MI:
     "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+  US_OR:
+    "https://drive.google.com/file/d/1-V5qxOjurPggO4NrHSRBDB_pn8gmYjoa/view",
 };
