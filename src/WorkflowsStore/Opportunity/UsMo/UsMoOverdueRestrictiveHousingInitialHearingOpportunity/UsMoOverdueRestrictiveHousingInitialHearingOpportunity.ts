@@ -18,11 +18,18 @@
 import { makeObservable, override } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
-import { OpportunityRequirement, OpportunityTab } from "../../types";
-import { CriteriaCopy, hydrateCriteria } from "../../utils";
+import { OpportunityRequirement } from "../../types";
 import {
+  CopyTuple,
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "../../utils";
+import {
+  US_MO_DAYS_PAST,
   usMoInRestrictiveHousing,
   usMoNoActiveD1Sanctions,
   UsMoOverdueRestrictiveHousingBase,
@@ -32,19 +39,45 @@ import {
   usMoOverdueRestrictiveHousingInitialHearingSchema,
 } from "./UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 
+const usMoInitialHearingPastDueDateCopy: CopyTuple<"usMoInitialHearingPastDueDate"> =
+  [
+    "usMoInitialHearingPastDueDate",
+    {
+      text: "Initial meaningful hearing due $DAYS_PAST ($DATE)",
+      tooltip:
+        "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
+    },
+  ];
+
 const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingInitialHearingReferralRecord> =
   {
     eligibleCriteria: [
-      [
-        "usMoInitialHearingPastDueDate",
-        {
-          text: "Past due date, or scheduled date, for initial meaningful hearing",
-        },
-      ],
+      usMoInitialHearingPastDueDateCopy,
       usMoNoActiveD1Sanctions,
       usMoInRestrictiveHousing,
     ],
-    ineligibleCriteria: [],
+    ineligibleCriteria: [usMoInitialHearingPastDueDateCopy],
+  };
+
+const usMoInitialHearingPastDueDateCriteriaFormatter: NonNullable<
+  CriteriaFormatters<UsMoOverdueRestrictiveHousingInitialHearingReferralRecord>[
+    | "eligibleCriteria"
+    | "ineligibleCriteria"]
+>["usMoInitialHearingPastDueDate"] = {
+  DAYS_PAST: ({ nextReviewDate }) => US_MO_DAYS_PAST(nextReviewDate),
+  DATE: ({ nextReviewDate }) => formatWorkflowsDate(nextReviewDate),
+};
+
+const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingInitialHearingReferralRecord> =
+  {
+    eligibleCriteria: {
+      usMoInitialHearingPastDueDate:
+        usMoInitialHearingPastDueDateCriteriaFormatter,
+    },
+    ineligibleCriteria: {
+      usMoInitialHearingPastDueDate:
+        usMoInitialHearingPastDueDateCriteriaFormatter,
+    },
   };
 
 export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingInitialHearingReferralRecord> {
@@ -69,29 +102,44 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
   }
 
   denialReasonsMap = {
-    "NOT UP-TO-DATE": "Released this week",
+    RELEASED: "Released this week",
+    OUTDATED: "Hearing already occurred this weeK",
+    EXTENDED:
+      "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
+    REFERRED:
+      "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
     [OTHER_KEY]: "Other",
   };
 
   get requirementsMet(): OpportunityRequirement[] {
-    return hydrateCriteria(this.record, "eligibleCriteria", CRITERIA_COPY);
+    return hydrateCriteria(
+      this.record,
+      "eligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    return hydrateCriteria(
+      this.record,
+      "ineligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria.usMoInitialHearingPastDueDate
-      ?.nextReviewDate;
-  }
-
-  get tabTitle(): OpportunityTab {
-    if (this.denied) return this.deniedTabTitle;
-    if (!this.eligibilityDate) return "Missing Review Date";
-    return "Coming up";
+    const initialHearingPastDueDate =
+      this.record?.eligibleCriteria.usMoInitialHearingPastDueDate ||
+      this.record?.ineligibleCriteria.usMoInitialHearingPastDueDate;
+    return initialHearingPastDueDate?.nextReviewDate;
   }
 
   get eligibleStatusMessage(): string {
     return super.generateUsMoOverdueEligibilityStatusMessage(
       "Initial hearing",
-      ""
+      "due"
     );
   }
 }

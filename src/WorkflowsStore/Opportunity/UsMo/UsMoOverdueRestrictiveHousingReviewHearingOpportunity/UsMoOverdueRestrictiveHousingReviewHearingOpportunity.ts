@@ -18,11 +18,18 @@
 import { makeObservable, override } from "mobx";
 
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
-import { CriteriaCopy, hydrateCriteria } from "../../utils";
 import {
+  CopyTuple,
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "../../utils";
+import {
+  US_MO_DAYS_PAST,
   usMoInRestrictiveHousing,
   usMoNoActiveD1Sanctions,
   UsMoOverdueRestrictiveHousingBase,
@@ -32,19 +39,51 @@ import {
   usMoOverdueRestrictiveHousingReviewHearingSchema,
 } from "./UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 
+const usMoPastLatestScheduledReviewDateCopy: CopyTuple<"usMoPastLatestScheduledReviewDate"> =
+  [
+    "usMoPastLatestScheduledReviewDate",
+    {
+      text: "Status hearing due $DAYS_PAST ($DATE)",
+      tooltip:
+        "If the meaningful hearing is scheduled, the due date is the scheduled date. If NOT scheduled, the due date is 30 calendar days after the previous meaningful hearing or the date of assignment.",
+    },
+  ];
+
+const usMoPastLatestScheduledReviewDateCriteriaFormatter: NonNullable<
+  CriteriaFormatters<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord>[
+    | "eligibleCriteria"
+    | "ineligibleCriteria"]
+>["usMoPastLatestScheduledReviewDate"] = {
+  DAYS_PAST: (usMoPastLatestScheduledReviewDate) =>
+    !usMoPastLatestScheduledReviewDate
+      ? "date is unavailable"
+      : US_MO_DAYS_PAST(usMoPastLatestScheduledReviewDate.nextReviewDate),
+  DATE: (usMoPastLatestScheduledReviewDate) =>
+    !usMoPastLatestScheduledReviewDate
+      ? "N/A"
+      : formatWorkflowsDate(usMoPastLatestScheduledReviewDate.nextReviewDate),
+};
+
 const CRITERIA_COPY: CriteriaCopy<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> =
   {
     eligibleCriteria: [
-      [
-        "usMoPastLatestScheduledReviewDate",
-        {
-          text: "Past due date, or scheduled date, for review hearing",
-        },
-      ],
+      usMoPastLatestScheduledReviewDateCopy,
       usMoNoActiveD1Sanctions,
       usMoInRestrictiveHousing,
     ],
-    ineligibleCriteria: [],
+    ineligibleCriteria: [usMoPastLatestScheduledReviewDateCopy],
+  };
+
+const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> =
+  {
+    eligibleCriteria: {
+      usMoPastLatestScheduledReviewDate:
+        usMoPastLatestScheduledReviewDateCriteriaFormatter,
+    },
+    ineligibleCriteria: {
+      usMoPastLatestScheduledReviewDate:
+        usMoPastLatestScheduledReviewDateCriteriaFormatter,
+    },
   };
 
 export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> {
@@ -69,22 +108,42 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
   }
 
   denialReasonsMap = {
-    "NOT UP-TO-DATE": "Released this week",
+    BEDS: "Due to emergent need for Extended Restrictive Housing beds, released early",
+    RELEASED: "Released this week",
+    OUTDATED: "Hearing occurred this weeK",
     [OTHER_KEY]: "Other",
   };
 
   get requirementsMet(): OpportunityRequirement[] {
-    return hydrateCriteria(this.record, "eligibleCriteria", CRITERIA_COPY);
+    return hydrateCriteria(
+      this.record,
+      "eligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    return hydrateCriteria(
+      this.record,
+      "ineligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS
+    );
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria.usMoPastLatestScheduledReviewDate
-      ?.nextReviewDate;
+    const pastLatestScheduledReviewDate =
+      this.record?.eligibleCriteria.usMoPastLatestScheduledReviewDate ||
+      this.record?.ineligibleCriteria.usMoPastLatestScheduledReviewDate;
+    const { nextReviewDate } = pastLatestScheduledReviewDate ?? {};
+
+    return nextReviewDate;
   }
 
   get eligibleStatusMessage(): string {
     return this.generateUsMoOverdueEligibilityStatusMessage(
-      "Status hearing",
+      "Status hearing due",
       ""
     );
   }

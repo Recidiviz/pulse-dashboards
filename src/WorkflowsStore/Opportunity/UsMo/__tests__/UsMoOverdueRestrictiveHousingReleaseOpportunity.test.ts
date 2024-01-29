@@ -98,10 +98,10 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "No longer subject to D1 sanction 2 days ago (Dec 5, 2023)",
         },
         Object {
-          "text": "No active D1 sanctions",
+          "text": "In Restrictive Housing due to a D1 sanction",
         },
         Object {
           "text": "In a Restrictive Housing cell",
@@ -118,10 +118,10 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "No longer subject to D1 sanction today (Dec 7, 2023)",
         },
         Object {
-          "text": "No active D1 sanctions",
+          "text": "In Restrictive Housing due to a D1 sanction",
         },
         Object {
           "text": "In a Restrictive Housing cell",
@@ -138,10 +138,10 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "No longer subject to D1 sanction 1 day ago (Dec 6, 2023)",
         },
         Object {
-          "text": "No active D1 sanctions",
+          "text": "In Restrictive Housing due to a D1 sanction",
         },
         Object {
           "text": "In a Restrictive Housing cell",
@@ -158,10 +158,10 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "In Restrictive Housing due to a D1 sanction",
+          "text": "No longer subject to D1 sanction in 1 day (Dec 8, 2023)",
         },
         Object {
-          "text": "No active D1 sanctions",
+          "text": "In Restrictive Housing due to a D1 sanction",
         },
         Object {
           "text": "In a Restrictive Housing cell",
@@ -188,17 +188,31 @@ describe("fully eligible", () => {
     });
 
     test("Due this week", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          today;
+      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      fixtureData.ineligibleCriteria = {
+        ...fixtureData.ineligibleCriteria,
+        usMoNoActiveD1Sanctions: {
+          latestSanctionStartDate:
+            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+          latestSanctionEndDate: today,
+        },
+      };
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due this week, on day of reset", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          startOfWeek(today, { weekStartsOn: 1 });
+      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      fixtureData.ineligibleCriteria = {
+        ...fixtureData.ineligibleCriteria,
+        usMoNoActiveD1Sanctions: {
+          latestSanctionStartDate:
+            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+          latestSanctionEndDate: startOfWeek(today, { weekStartsOn: 1 }),
+        },
+      };
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
     });
@@ -212,23 +226,28 @@ describe("fully eligible", () => {
     });
 
     test("Due next week", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          addWeeks(new Date(), 1);
+      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      fixtureData.ineligibleCriteria = {
+        ...fixtureData.ineligibleCriteria,
+        usMoNoActiveD1Sanctions: {
+          latestSanctionStartDate:
+            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+          latestSanctionEndDate: addWeeks(new Date(), 1),
+        },
+      };
       referralSub.data = fixtureData;
       expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
     });
   });
 
-  describe("eligibility message", () => {
+  describe("(in)eligibility message", () => {
     test("Due this week", () => {
       if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
         fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
           today;
       referralSub.data = fixtureData;
-      expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Segregation period ends today)/gm
-      );
+      expect(opp.eligibleStatusMessage).toMatch(/\b(Sanction ends today)/gm);
     });
 
     test("Due this week, on day of reset", () => {
@@ -237,27 +256,41 @@ describe("fully eligible", () => {
           startOfWeek(new Date(), { weekStartsOn: 1 });
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Segregation period ended 3 days ago)/gm
+        /\b(Sanction ended 3 days ago)/gm
       );
     });
 
     test("Due last week", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          subWeeks(new Date(), 1);
+      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      fixtureData.ineligibleCriteria = {
+        ...fixtureData.ineligibleCriteria,
+        usMoNoActiveD1Sanctions: {
+          latestSanctionStartDate:
+            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+          latestSanctionEndDate: subWeeks(new Date(), 1),
+        },
+      };
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Segregation period ended 7 days ago)/gm
+        /\b(Sanction ended 7 days ago)/gm
       );
     });
 
     test("Due next week", () => {
-      if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
-        fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          addWeeks(new Date(), 1);
+      const { usMoNoActiveD1Sanctions } = fixtureData.eligibleCriteria;
+      fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions = null;
+      fixtureData.ineligibleCriteria = {
+        ...fixtureData.ineligibleCriteria,
+        usMoNoActiveD1Sanctions: {
+          latestSanctionStartDate:
+            usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
+          latestSanctionEndDate: addWeeks(new Date(), 1),
+        },
+      };
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Segregation period ends in 7 days)/gm
+        /\b(Sanction ends in 7 days)/gm
       );
     });
   });

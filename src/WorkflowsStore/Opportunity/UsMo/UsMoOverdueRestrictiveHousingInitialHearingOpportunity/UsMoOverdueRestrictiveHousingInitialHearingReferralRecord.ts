@@ -20,19 +20,27 @@ import { z } from "zod";
 import { dateStringSchema } from "../../schemaHelpers";
 import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 
+const usMoInitialHearingPastDueDate = z
+  .object({
+    nextReviewDate: dateStringSchema,
+    dueDateInferred: z.boolean(),
+  })
+  .optional();
+
 const eligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.eligibleCriteria.extend({
-    usMoInitialHearingPastDueDate: z
-      .object({
-        nextReviewDate: dateStringSchema,
-        dueDateInferred: z.boolean(),
-      })
-      .optional(),
+    usMoInitialHearingPastDueDate,
+  });
+
+const ineligibleCriteria =
+  baseUsMoOverdueRestrictiveHousingSchema.shape.ineligibleCriteria.extend({
+    usMoInitialHearingPastDueDate,
   });
 
 export const usMoOverdueRestrictiveHousingInitialHearingSchema =
   baseUsMoOverdueRestrictiveHousingSchema.extend({
     eligibleCriteria,
+    ineligibleCriteria,
   });
 
 export type UsMoOverdueRestrictiveHousingInitialHearingReferralRecord = z.infer<

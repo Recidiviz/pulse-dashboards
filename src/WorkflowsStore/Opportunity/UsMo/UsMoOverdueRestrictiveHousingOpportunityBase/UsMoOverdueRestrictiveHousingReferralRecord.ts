@@ -44,6 +44,14 @@ const cdvSchema = z.object({
   cdvDate: dateStringSchema,
   cdvRule: z.string(),
 });
+
+const allSanctionsSchema = z.object({
+  sanctionCode: z.string().nullable(),
+  sanctionExpirationDate: dateStringSchema.nullable(),
+  sanctionId: z.number().nullable(),
+  sanctionStartDate: dateStringSchema.nullable(),
+});
+
 export type UsMoConductViolationInfo = z.infer<typeof cdvSchema>;
 
 const nonOptionalMetadata = z.object({
@@ -55,6 +63,7 @@ const nonOptionalMetadata = z.object({
 
 const optionalMetadata = z
   .object({
+    allSanctions: z.array(allSanctionsSchema),
     mentalHealthAssessmentScore: z.string().nullable(),
     classesRecent: z.array(classesSchema),
     aicScore: z.string(),
@@ -78,8 +87,8 @@ export const usMoInRestrictiveHousing = z.object({
 
 export const usMoNoActiveD1Sanctions = z
   .object({
-    latestSanctionStartDate: dateStringSchema,
-    latestSanctionEndDate: dateStringSchema,
+    latestSanctionStartDate: dateStringSchema.nullable(),
+    latestSanctionEndDate: dateStringSchema.nullable(),
   })
   .nullish();
 

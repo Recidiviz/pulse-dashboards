@@ -106,10 +106,6 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
         externalId: "RES013",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoInitialHearingPastDueDate: {
-            nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            dueDateInferred: true,
-          },
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
@@ -118,7 +114,12 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferrals =
             latestSanctionStartDate: "2023-01-15",
           },
         },
-        ineligibleCriteria: {},
+        ineligibleCriteria: {
+          usMoInitialHearingPastDueDate: {
+            nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
+            dueDateInferred: true,
+          },
+        },
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",

@@ -15,10 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { maxBy } from "lodash";
 import { z } from "zod";
 
 import { dateStringSchema } from "../../schemaHelpers";
-import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
+import {
+  baseUsMoOverdueRestrictiveHousingSchema,
+  usMoNoActiveD1Sanctions,
+} from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 
 const eligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.eligibleCriteria.extend({
@@ -31,10 +35,54 @@ const eligibleCriteria =
     }),
   });
 
-export const usMoOverdueRestrictiveHousingReleaseSchema =
-  baseUsMoOverdueRestrictiveHousingSchema.extend({
-    eligibleCriteria,
+const ineligibleCriteria =
+  baseUsMoOverdueRestrictiveHousingSchema.shape.ineligibleCriteria.extend({
+    usMoNoActiveD1Sanctions,
   });
+
+export const usMoOverdueRestrictiveHousingReleaseSchema =
+  baseUsMoOverdueRestrictiveHousingSchema
+    .extend({
+      eligibleCriteria,
+      ineligibleCriteria,
+    })
+    .transform((record) => {
+      if (
+        // if the criterion is null, not undefined, the dates should be filled.
+        record.eligibleCriteria.usMoNoActiveD1Sanctions === null ||
+        record.ineligibleCriteria.usMoNoActiveD1Sanctions === null
+      ) {
+        const { allSanctions } = record.metadata;
+        const latestSanction = allSanctions?.length
+          ? maxBy(allSanctions, "sanctionStartDate")
+          : undefined;
+
+        const rectifiedUsMoNoActiveD1Sanctions = latestSanction
+          ? {
+              latestSanctionEndDate: latestSanction.sanctionExpirationDate,
+              latestSanctionStartDate: latestSanction.sanctionStartDate,
+            }
+          : null;
+
+        return record.eligibleCriteria.usMoNoActiveD1Sanctions === null
+          ? {
+              ...record,
+              eligibleCriteria: {
+                ...record.eligibleCriteria,
+                usMoNoActiveD1Sanctions: rectifiedUsMoNoActiveD1Sanctions,
+              },
+            }
+          : {
+              ...record,
+              ineligibleCriteria: {
+                ...record.ineligibleCriteria,
+                usMoNoActiveD1Sanctions: rectifiedUsMoNoActiveD1Sanctions,
+              },
+            };
+      }
+
+      return record;
+    });
 
 export type UsMoOverdueRestrictiveHousingReleaseReferralRecord = z.infer<
   typeof usMoOverdueRestrictiveHousingReleaseSchema

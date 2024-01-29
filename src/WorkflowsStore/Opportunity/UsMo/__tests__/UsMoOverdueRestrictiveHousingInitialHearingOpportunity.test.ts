@@ -98,7 +98,8 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "Past due date, or scheduled date, for initial meaningful hearing",
+          "text": "Initial meaningful hearing due 53 days ago (Oct 15, 2023)",
+          "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         Object {
           "text": "No active D1 sanctions",
@@ -118,7 +119,8 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "Past due date, or scheduled date, for initial meaningful hearing",
+          "text": "Initial meaningful hearing due today (Dec 7, 2023)",
+          "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         Object {
           "text": "No active D1 sanctions",
@@ -138,7 +140,8 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "Past due date, or scheduled date, for initial meaningful hearing",
+          "text": "Initial meaningful hearing due 1 day ago (Dec 6, 2023)",
+          "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         Object {
           "text": "No active D1 sanctions",
@@ -158,7 +161,8 @@ describe("fully eligible", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       Array [
         Object {
-          "text": "Past due date, or scheduled date, for initial meaningful hearing",
+          "text": "Initial meaningful hearing due in 1 day (Dec 8, 2023)",
+          "tooltip": "If the hearing is scheduled in ITSC, the due date is the scheduled date. If NOT scheduled in ITSC, the due date is seven (7) business days after the initial assignment.",
         },
         Object {
           "text": "No active D1 sanctions",
@@ -192,7 +196,7 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           today;
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
+      expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due this week, on day of reset", () => {
@@ -200,7 +204,7 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           startOfWeek(today, { weekStartsOn: 1 });
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
+      expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due last week", () => {
@@ -208,7 +212,7 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           subWeeks(today, 1);
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
+      expect(opp.tabTitle).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
     });
 
     test("Due next week", () => {
@@ -226,16 +230,20 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           today;
       referralSub.data = fixtureData;
-      expect(opp.eligibleStatusMessage).toMatch(/\b(Initial hearing today)/gm);
+      expect(opp.eligibleStatusMessage).toMatch(
+        /\b(Initial hearing due today)/gm
+      );
     });
 
     test("Due this week, on day of reset", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
-        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          startOfWeek(new Date(), { weekStartsOn: 1 });
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate = {
+          nextReviewDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+          dueDateInferred: false,
+        };
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Initial hearing 3 days ago)/gm
+        /\b(Initial hearing due 3 days ago)/gm
       );
     });
 
@@ -245,17 +253,20 @@ describe("fully eligible", () => {
           subWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Initial hearing 7 days ago)/gm
+        /\b(Initial hearing due 7 days ago)/gm
       );
     });
 
     test("Due next week", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
-        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          addWeeks(new Date(), 1);
+        fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate = {
+          nextReviewDate: addWeeks(new Date(), 1),
+          dueDateInferred: false,
+        };
+
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Initial hearing in 7 days)/gm
+        /\b(Initial hearing due in 7 days)/gm
       );
     });
   });

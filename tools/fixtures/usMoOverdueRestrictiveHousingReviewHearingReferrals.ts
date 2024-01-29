@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { nextMonday, startOfTomorrow } from "date-fns";
+import { addDays, nextMonday, previousMonday, startOfTomorrow } from "date-fns";
 
 import { formatDateToISO } from "../../src/utils";
 import { UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
@@ -28,10 +28,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         externalId: "RES015",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoPastLatestScheduledReviewDate: {
-            nextReviewDate: `${formatDateToISO(startOfTomorrow())}`,
-            dueDateInferred: true,
-          },
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
@@ -39,8 +35,16 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
+          usMoHearingAfterRestrictiveHousingStart: {
+            latestRestrictiveHousingHearingDate: `${formatDateToISO(
+              startOfTomorrow()
+            )}`,
+            restrictiveHousingStartDate: "2023-09-15",
+          },
         },
-        ineligibleCriteria: {},
+        ineligibleCriteria: {
+          usMoPastLatestScheduledReviewDate: null,
+        },
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",
@@ -67,10 +71,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         externalId: "RES016",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoPastLatestScheduledReviewDate: {
-            nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            dueDateInferred: true,
-          },
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
@@ -78,8 +78,16 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
+          usMoHearingAfterRestrictiveHousingStart: {
+            latestRestrictiveHousingHearingDate: `${formatDateToISO(
+              nextMonday(new Date())
+            )}`,
+            restrictiveHousingStartDate: "2023-09-15",
+          },
         },
-        ineligibleCriteria: {},
+        ineligibleCriteria: {
+          usMoPastLatestScheduledReviewDate: null,
+        },
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",
@@ -106,10 +114,6 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         externalId: "RES017",
         stateCode: "US_MO",
         eligibleCriteria: {
-          usMoPastLatestScheduledReviewDate: {
-            nextReviewDate: `${formatDateToISO(nextMonday(new Date()))}`,
-            dueDateInferred: true,
-          },
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
@@ -117,8 +121,16 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
+          usMoHearingAfterRestrictiveHousingStart: {
+            latestRestrictiveHousingHearingDate: `${formatDateToISO(
+              nextMonday(new Date())
+            )}`,
+            restrictiveHousingStartDate: "2023-09-15",
+          },
         },
-        ineligibleCriteria: {},
+        ineligibleCriteria: {
+          usMoPastLatestScheduledReviewDate: null,
+        },
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",
@@ -146,7 +158,9 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         stateCode: "US_MO",
         eligibleCriteria: {
           usMoPastLatestScheduledReviewDate: {
-            nextReviewDate: `${formatDateToISO(new Date())}`,
+            nextReviewDate: `${formatDateToISO(
+              addDays(previousMonday(new Date()), 30)
+            )}`,
             dueDateInferred: true,
           },
           usMoInRestrictiveHousing: {
@@ -155,6 +169,12 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           usMoNoActiveD1Sanctions: {
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
+          },
+          usMoHearingAfterRestrictiveHousingStart: {
+            latestRestrictiveHousingHearingDate: `${formatDateToISO(
+              previousMonday(new Date())
+            )}`,
+            restrictiveHousingStartDate: "2023-09-15",
           },
         },
         ineligibleCriteria: {},

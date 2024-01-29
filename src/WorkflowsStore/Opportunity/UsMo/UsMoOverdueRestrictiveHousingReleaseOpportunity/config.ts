@@ -21,6 +21,6 @@ import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMoOverdueRe
 export const usMoOverdueRestrictiveHousingReleaseConfig: OpportunityConfig<UsMoOverdueRestrictiveHousingReleaseOpportunity> =
   baseUsMoOverdueRestrictiveHousingConfig(
     "Release",
-    "release from their Restrictive Housing stay",
+    "to review for release from Restrictive Housing",
     "Review residents for release and prepare necessary paperwork for their return to general population."
   );

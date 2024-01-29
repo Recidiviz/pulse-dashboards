@@ -80,12 +80,13 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
+        },
+        ineligibleCriteria: {
           usMoNoActiveD1Sanctions: {
             latestSanctionEndDate: `${formatDateToISO(startOfTomorrow())}`,
             latestSanctionStartDate: "2023-01-15",
           },
         },
-        ineligibleCriteria: {},
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",
@@ -122,12 +123,13 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
+        },
+        ineligibleCriteria: {
           usMoNoActiveD1Sanctions: {
             latestSanctionEndDate: `${formatDateToISO(nextMonday(new Date()))}`,
             latestSanctionStartDate: "2023-01-15",
           },
         },
-        ineligibleCriteria: {},
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",
@@ -164,12 +166,13 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
           usMoInRestrictiveHousing: {
             confinementType: "COMMUNITY",
           },
+        },
+        ineligibleCriteria: {
           usMoNoActiveD1Sanctions: {
             latestSanctionEndDate: `${formatDateToISO(new Date())}`,
             latestSanctionStartDate: "2023-01-15",
           },
         },
-        ineligibleCriteria: {},
         metadata: {
           mostRecentHearingDate: "2022-09-03",
           mostRecentHearingType: "hearing type",

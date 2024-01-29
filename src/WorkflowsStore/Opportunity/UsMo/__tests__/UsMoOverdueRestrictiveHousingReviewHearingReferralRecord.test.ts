@@ -27,6 +27,10 @@ describe("UsMoOverdueRestrictiveHousingReviewHearingReferralRecord", () => {
     ).toMatchInlineSnapshot(`
       Object {
         "eligibleCriteria": Object {
+          "usMoHearingAfterRestrictiveHousingStart": Object {
+            "latestRestrictiveHousingHearingDate": 2023-10-15T00:00:00.000Z,
+            "restrictiveHousingStartDate": 2023-09-15T00:00:00.000Z,
+          },
           "usMoInRestrictiveHousing": Object {
             "confinementType": "COMMUNITY",
           },
@@ -41,6 +45,61 @@ describe("UsMoOverdueRestrictiveHousingReviewHearingReferralRecord", () => {
         },
         "externalId": "rh-1",
         "ineligibleCriteria": Object {},
+        "metadata": Object {
+          "bedNumber": "03",
+          "buildingNumber": "13",
+          "cdvsSinceLastHearing": Array [],
+          "complexNumber": "2",
+          "currentFacility": "FACILITY 01",
+          "housingUseCode": "123456",
+          "majorCdvs": Array [
+            Object {
+              "cdvDate": 2022-02-20T00:00:00.000Z,
+              "cdvRule": "Rule 7.2",
+            },
+          ],
+          "mostRecentHearingComments": "Reason for Hearing: 30 day review",
+          "mostRecentHearingDate": 2022-09-03T00:00:00.000Z,
+          "mostRecentHearingFacility": "FACILITY NAME",
+          "mostRecentHearingType": "hearing type",
+          "numMinorCdvsBeforeLastHearing": 5,
+          "restrictiveHousingStartDate": 2022-10-01T00:00:00.000Z,
+          "roomNumber": "05",
+        },
+        "stateCode": "US_MO",
+      }
+    `);
+  });
+
+  it("should have a valid schema when usMoPastLatestScheduledReviewDate is undefined ", () => {
+    const record =
+      usMoOverdueRestrictiveHousingReviewHearingReferralRecordFixture;
+    record.ineligibleCriteria.usMoPastLatestScheduledReviewDate = null;
+    record.eligibleCriteria.usMoPastLatestScheduledReviewDate = undefined;
+    expect(usMoOverdueRestrictiveHousingReviewHearingSchema.parse(record))
+      .toMatchInlineSnapshot(`
+      Object {
+        "eligibleCriteria": Object {
+          "usMoHearingAfterRestrictiveHousingStart": Object {
+            "latestRestrictiveHousingHearingDate": 2023-10-15T00:00:00.000Z,
+            "restrictiveHousingStartDate": 2023-09-15T00:00:00.000Z,
+          },
+          "usMoInRestrictiveHousing": Object {
+            "confinementType": "COMMUNITY",
+          },
+          "usMoNoActiveD1Sanctions": Object {
+            "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
+            "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
+          },
+          "usMoPastLatestScheduledReviewDate": undefined,
+        },
+        "externalId": "rh-1",
+        "ineligibleCriteria": Object {
+          "usMoPastLatestScheduledReviewDate": Object {
+            "dueDateInferred": true,
+            "nextReviewDate": 2023-11-14T00:00:00.000Z,
+          },
+        },
         "metadata": Object {
           "bedNumber": "03",
           "buildingNumber": "13",

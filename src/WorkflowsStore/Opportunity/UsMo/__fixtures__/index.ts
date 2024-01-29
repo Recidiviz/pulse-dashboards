@@ -21,6 +21,7 @@ import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "..";
 import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
+import { UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 
 export const usMoPersonRecord: ResidentRecord = {
   recordId: "us_mo_111",
@@ -80,45 +81,48 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
     },
   };
 
-export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <T>(
+export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
+  T extends BaseUsMoOverdueRestrictiveHousingReferralRecordRaw
+>(
   externalIdSuffix: number,
   additionalCriteria?: Record<string, any>
-): BaseUsMoOverdueRestrictiveHousingReferralRecordRaw | T => ({
-  stateCode: "US_MO",
-  externalId: `rh-${externalIdSuffix}`,
-  eligibleCriteria: {
-    usMoInRestrictiveHousing: {
-      confinementType: "COMMUNITY",
-    },
-    usMoNoActiveD1Sanctions: {
-      latestSanctionStartDate: "2023-08-15",
-      latestSanctionEndDate: "2023-12-05",
-    },
-    ...(additionalCriteria || {}),
-  },
-  ineligibleCriteria: {},
-  metadata: {
-    mostRecentHearingDate: "2022-09-03",
-    mostRecentHearingType: "hearing type",
-    mostRecentHearingFacility: "FACILITY NAME",
-    mostRecentHearingComments: "Reason for Hearing: 30 day review",
-    currentFacility: "FACILITY 01",
-    restrictiveHousingStartDate: "2022-10-01",
-    bedNumber: "03",
-    roomNumber: "05",
-    complexNumber: "2",
-    buildingNumber: "13",
-    housingUseCode: "123456",
-    majorCdvs: [
-      {
-        cdvDate: "2022-02-20",
-        cdvRule: "Rule 7.2",
+): T =>
+  ({
+    stateCode: "US_MO",
+    externalId: `rh-${externalIdSuffix}`,
+    eligibleCriteria: {
+      usMoInRestrictiveHousing: {
+        confinementType: "COMMUNITY",
       },
-    ],
-    cdvsSinceLastHearing: [],
-    numMinorCdvsBeforeLastHearing: "5",
-  },
-});
+      usMoNoActiveD1Sanctions: {
+        latestSanctionStartDate: "2023-08-15",
+        latestSanctionEndDate: "2023-12-05",
+      },
+      ...additionalCriteria,
+    },
+    ineligibleCriteria: {},
+    metadata: {
+      mostRecentHearingDate: "2022-09-03",
+      mostRecentHearingType: "hearing type",
+      mostRecentHearingFacility: "FACILITY NAME",
+      mostRecentHearingComments: "Reason for Hearing: 30 day review",
+      currentFacility: "FACILITY 01",
+      restrictiveHousingStartDate: "2022-10-01",
+      bedNumber: "03",
+      roomNumber: "05",
+      complexNumber: "2",
+      buildingNumber: "13",
+      housingUseCode: "123456",
+      majorCdvs: [
+        {
+          cdvDate: "2022-02-20",
+          cdvRule: "Rule 7.2",
+        },
+      ],
+      cdvsSinceLastHearing: [],
+      numMinorCdvsBeforeLastHearing: "5",
+    },
+  } as BaseUsMoOverdueRestrictiveHousingReferralRecordRaw as T);
 
 export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
   baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw>(
@@ -146,12 +150,16 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture =
   );
 
 export const usMoOverdueRestrictiveHousingReviewHearingReferralRecordFixture =
-  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw>(
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw>(
     1,
     {
       usMoPastLatestScheduledReviewDate: {
         nextReviewDate: "2023-10-15",
         dueDateInferred: true,
+      },
+      usMoHearingAfterRestrictiveHousingStart: {
+        latestRestrictiveHousingHearingDate: "2023-10-15",
+        restrictiveHousingStartDate: "2023-09-15",
       },
     }
   );

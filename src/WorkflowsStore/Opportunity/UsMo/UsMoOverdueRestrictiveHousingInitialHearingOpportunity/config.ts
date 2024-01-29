@@ -21,6 +21,6 @@ import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./UsMoOv
 export const usMoOverdueRestrictiveHousingInitialHearingConfig: OpportunityConfig<UsMoOverdueRestrictiveHousingInitialHearingOpportunity> =
   baseUsMoOverdueRestrictiveHousingConfig(
     "InitialHearing",
-    "their Temporary Assignment hearing",
+    "on Temporary Assignment to review for their initial meaningful hearing",
     "Review residents and prepare necessary paperwork for their hearing."
   );

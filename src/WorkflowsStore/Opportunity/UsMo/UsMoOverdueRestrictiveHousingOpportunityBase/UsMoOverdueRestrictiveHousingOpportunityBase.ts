@@ -23,7 +23,6 @@ import {
 } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
@@ -48,6 +47,19 @@ export const usMoInRestrictiveHousing: CopyTuple<"usMoInRestrictiveHousing"> = [
   },
 ];
 
+// TODO: Add extra tests for dates that round down and up.
+export const US_MO_DAYS_PAST = (eligibilityDate: Date, numOfDays?: number) => {
+  const daysPast =
+    numOfDays ?? differenceInCalendarDays(eligibilityDate, new Date());
+  return daysPast === 0
+    ? "today"
+    : formatDistanceStrict(eligibilityDate, new Date(), {
+        unit: "day",
+        addSuffix: true,
+        roundingMethod: daysPast > 0 ? "ceil" : "floor",
+      });
+};
+
 export abstract class UsMoOverdueRestrictiveHousingBase<
   ReferralRecord extends BaseUsMoOverdueRestrictiveHousingReferralRecord
 > extends OpportunityBase<Resident, ReferralRecord> {
@@ -57,8 +69,6 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
   ];
 
   readonly isAlert = true;
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MO;
 
   constructor(
     resident: Resident,
@@ -163,14 +173,7 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
      * if the number of days is negative, the sentence should be in the past tense (i.e. `formatDistanceStrict(..)`)
      * otherwise, it should be in the present or future tense (i.e. `today`, `in X days`, `X days ago`)
      */
-    const prepositionalPhrase =
-      numOfDays === 0
-        ? "today"
-        : formatDistanceStrict(eligibilityDate, new Date(), {
-            unit: "day",
-            addSuffix: true,
-            roundingMethod: "ceil",
-          });
+    const prepositionalPhrase = US_MO_DAYS_PAST(eligibilityDate, numOfDays);
 
     // END: Message construction
 

@@ -43,7 +43,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
       defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
     },
     hydratedHeader: (formattedCount: CountFormatter) => ({
-      fullText: simplur`${formattedCount} resident[|s] [is|are] currently overdue or due for ${fullTextPartial}`,
+      fullText: simplur`${formattedCount} resident[|s] ${fullTextPartial}`,
       opportunityText: `${segregationTypeMapping[usMoOverdueRHOppVariant]}`,
       callToAction,
     }),
@@ -53,9 +53,9 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
         startOfWeek(new Date(), { weekStartsOn: 1 })
       )}`,
       "Due this week",
-      "Missing Review Date",
       "Coming up",
       "Overridden",
+      "Missing Review Date",
     ],
   };
 };

@@ -14,25 +14,61 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { addDays } from "date-fns";
 import { z } from "zod";
 
 import { dateStringSchema } from "../../schemaHelpers";
 import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 
+const usMoPastLatestScheduledReviewDate = z
+  .object({
+    nextReviewDate: dateStringSchema,
+    dueDateInferred: z.boolean(),
+  })
+  .nullish();
+
 const eligibleCriteria =
   baseUsMoOverdueRestrictiveHousingSchema.shape.eligibleCriteria.extend({
-    usMoPastLatestScheduledReviewDate: z
-      .object({
-        nextReviewDate: dateStringSchema,
-        dueDateInferred: z.boolean(),
-      })
-      .optional(),
+    usMoPastLatestScheduledReviewDate,
+    usMoHearingAfterRestrictiveHousingStart: z.object({
+      latestRestrictiveHousingHearingDate: dateStringSchema,
+      restrictiveHousingStartDate: dateStringSchema,
+    }),
+  });
+
+const ineligibleCriteria =
+  baseUsMoOverdueRestrictiveHousingSchema.shape.ineligibleCriteria.extend({
+    usMoPastLatestScheduledReviewDate,
   });
 
 export const usMoOverdueRestrictiveHousingReviewHearingSchema =
-  baseUsMoOverdueRestrictiveHousingSchema.extend({
-    eligibleCriteria,
-  });
+  baseUsMoOverdueRestrictiveHousingSchema
+    .extend({
+      eligibleCriteria,
+      ineligibleCriteria,
+    })
+    .transform((record) => {
+      if (record.ineligibleCriteria?.usMoPastLatestScheduledReviewDate !== null)
+        return record;
+
+      const rectifiedUsMoPastLatestScheduledReviewDate = {
+        nextReviewDate: addDays(
+          record.eligibleCriteria.usMoHearingAfterRestrictiveHousingStart
+            .latestRestrictiveHousingHearingDate,
+          30
+        ),
+        dueDateInferred: true,
+      };
+
+      return {
+        ...record,
+        ineligibleCriteria: {
+          ...record.ineligibleCriteria,
+          usMoPastLatestScheduledReviewDate:
+            rectifiedUsMoPastLatestScheduledReviewDate,
+        },
+      };
+    });
 
 export type UsMoOverdueRestrictiveHousingReviewHearingReferralRecord = z.infer<
   typeof usMoOverdueRestrictiveHousingReviewHearingSchema

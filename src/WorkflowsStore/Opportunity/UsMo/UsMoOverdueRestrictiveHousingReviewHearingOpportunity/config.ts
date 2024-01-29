@@ -21,6 +21,6 @@ import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMoOve
 export const usMoOverdueRestrictiveHousingReviewHearingConfig: OpportunityConfig<UsMoOverdueRestrictiveHousingReviewHearingOpportunity> =
   baseUsMoOverdueRestrictiveHousingConfig(
     "ReviewHearing",
-    "their next Extended Restrictive Housing hearing",
+    "in Extended Restrictive Housing to review for their next hearing",
     "Review residents and prepare necessary paperwork for their next hearing"
   );
