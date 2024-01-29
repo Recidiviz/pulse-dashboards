@@ -124,7 +124,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       return;
     }
 
-    const acceptedStateCodes = ["ca", "co", "id", "mo", "nd", "pa", "me", "mi", "tn"];
+    const acceptedStateCodes = ["ca", "co", "id", "mo", "nd", "or", "pa", "me", "mi", "tn"];
     const domainSplit = userDomain.split(".");
 
     // assumes the state is always the second to last component of the domain
@@ -136,6 +136,11 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       idaho: "id",
       maine: "me",
       michigan: "mi",
+
+      // Some oregon users have county email addresses
+      oregon: "or",
+      deschutes: "or",
+      clackamas: "or",
     };
 
     if (
