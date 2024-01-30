@@ -60,7 +60,7 @@ Object {
     },
     "gender": "FEMALE",
     "pseudonymizedClientId": "hashed-235261",
-    "raceOrEthnicity": "BLACK",
+    "raceOrEthnicity": "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
   },
   "hashed-283496": Object {
     "birthdate": 1971-03-15T00:00:00.000Z,
@@ -108,7 +108,7 @@ Object {
     },
     "gender": "FEMALE",
     "pseudonymizedClientId": "hashed-339710",
-    "raceOrEthnicity": "BLACK",
+    "raceOrEthnicity": "AMERICAN_INDIAN_ALASKAN_NATIVE",
   },
   "hashed-374673": Object {
     "birthdate": 1971-03-15T00:00:00.000Z,

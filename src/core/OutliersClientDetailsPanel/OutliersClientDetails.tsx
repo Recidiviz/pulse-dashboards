@@ -22,7 +22,12 @@ import styled from "styled-components/macro";
 
 import { ClientInfo } from "../../OutliersStore/models/ClientInfo";
 import { SupervisionDetails } from "../../OutliersStore/presenters/types";
-import { formatWorkflowsDate, toHumanReadable, toTitleCase } from "../../utils";
+import {
+  formatWorkflowsDate,
+  raceValueToHumanReadable,
+  toHumanReadable,
+  toTitleCase,
+} from "../../utils";
 
 const Wrapper = styled.div``;
 
@@ -79,7 +84,9 @@ function ClientDetails({
         <Detail>
           <DetailTitle>Race / Ethnicity</DetailTitle>
           <DetailContent>
-            {raceOrEthnicity ? toTitleCase(raceOrEthnicity) : "Unknown"}
+            {raceOrEthnicity
+              ? raceValueToHumanReadable(raceOrEthnicity)
+              : "Unknown"}
           </DetailContent>
         </Detail>
 

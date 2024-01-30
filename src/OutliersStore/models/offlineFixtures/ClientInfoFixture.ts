@@ -251,7 +251,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     clientId: "235261",
     pseudonymizedClientId: "hashed-235261",
     gender: "FEMALE",
-    raceOrEthnicity: "BLACK",
+    raceOrEthnicity: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
     birthdate: "1971-03-15",
   },
   "hashed-531407": {
@@ -284,7 +284,7 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
     clientId: "339710",
     pseudonymizedClientId: "hashed-339710",
     gender: "FEMALE",
-    raceOrEthnicity: "BLACK",
+    raceOrEthnicity: "AMERICAN_INDIAN_ALASKAN_NATIVE",
     birthdate: "1971-03-15",
   },
 
