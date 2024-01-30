@@ -132,7 +132,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   };
   const hydratedHeader = generateOpportunityHydratedHeader(
     opportunityType,
-    eligibleOpps.length
+    eligibleOpps?.length || 0
   );
   const initialHeader = generateOpportunityInitialHeader(
     opportunityType,
@@ -164,7 +164,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     )
   );
 
-  const hydrated = !eligibleOpps?.length ? (
+  const hydrated = !oppsFromOpportunitiesByOppType.length ? (
     empty
   ) : (
     <>
