@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { UsMoRestrictiveHousingStatusHearingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMo";
+import { UsMoRestrictiveHousingStatusHearingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity";
 import { FixtureData } from "../workflowsFixtures";
 import { externalIdFunc } from "./utils";
 

@@ -19,11 +19,7 @@ import { differenceInDays } from "date-fns";
 import React from "react";
 
 import { formatWorkflowsDate } from "../../../../utils";
-import {
-  UsMoClassInfo,
-  UsMoConductViolationInfo,
-  UsMoRestrictiveHousingStatusHearingReferralRecord,
-} from "../../../../WorkflowsStore/Opportunity/UsMo";
+import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import {
   CaseNoteDate,
   CaseNoteTitle,
@@ -35,71 +31,9 @@ import {
   SecureDetailsList,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
-
-export function UsMoClassesList({
-  classes,
-}: {
-  classes: UsMoClassInfo[];
-}): React.ReactElement {
-  return (
-    <>
-      {classes && classes.length > 0 ? (
-        <DetailsList>
-          {classes.map(
-            ({
-              startDate,
-              endDate,
-              classTitle,
-              classExitReason,
-            }: UsMoClassInfo) => {
-              return (
-                <SecureDetailsContent key={`${classTitle}-${startDate}`}>
-                  <CaseNoteTitle>
-                    {classTitle || "CLASS TITLE UNAVAILABLE"}
-                  </CaseNoteTitle>
-                  <br />
-                  <CaseNoteDate>
-                    {formatWorkflowsDate(startDate)} -{" "}
-                    {endDate ? formatWorkflowsDate(endDate) : "current"}
-                  </CaseNoteDate>
-                  <br />
-                  Exit Reason: {classExitReason || "N/A"}
-                </SecureDetailsContent>
-              );
-            }
-          )}
-        </DetailsList>
-      ) : (
-        "None"
-      )}
-    </>
-  );
-}
-
-export function UsMoConductViolationsList({
-  cdvs,
-}: {
-  cdvs: UsMoConductViolationInfo[];
-}): React.ReactElement {
-  return (
-    <>
-      {cdvs.length > 0 && cdvs ? (
-        <DetailsList>
-          {cdvs.map(({ cdvDate, cdvRule }: UsMoConductViolationInfo) => {
-            return (
-              <SecureDetailsContent key={cdvRule}>
-                <CaseNoteTitle>{cdvRule}:</CaseNoteTitle>{" "}
-                {formatWorkflowsDate(cdvDate)}
-              </SecureDetailsContent>
-            );
-          })}
-        </DetailsList>
-      ) : (
-        "None"
-      )}
-    </>
-  );
-}
+import { UsMoClassesList } from "./UsMoClassesList";
+import { UsMoConductViolationsList } from "./UsMoConductViolationsList";
+import { UsMoSanctionsList } from "./UsMoSanctionsList";
 
 export function UsMoRestrictiveHousing({
   opportunity,
@@ -125,6 +59,7 @@ export function UsMoRestrictiveHousing({
     classesRecent,
     mentalHealthAssessmentScore,
     mostRecentHearingComments,
+    allSanctions,
   } = opportunityRecord.metadata;
 
   return (
@@ -159,18 +94,20 @@ export function UsMoRestrictiveHousing({
             <DetailsSubheading>
               Last Restrictive Housing Status Hearing
             </DetailsSubheading>
-            {mostRecentHearingDate ? (
-              <SecureDetailsContent>
-                {formatWorkflowsDate(mostRecentHearingDate)} (
-                {differenceInDays(new Date(), mostRecentHearingDate)} days ago)
-              </SecureDetailsContent>
-            ) : (
-              "None"
-            )}
+
+            <SecureDetailsContent>
+              {mostRecentHearingDate
+                ? `${formatWorkflowsDate(mostRecentHearingDate)} 
+                (${differenceInDays(
+                  new Date(),
+                  mostRecentHearingDate
+                )} days ago)`
+                : "None"}
+            </SecureDetailsContent>
 
             <DetailsSubheading>Last Hearing Facility</DetailsSubheading>
             <SecureDetailsContent>
-              {mostRecentHearingFacility}
+              {mostRecentHearingFacility || "None"}
             </SecureDetailsContent>
             <DetailsSubheading>Adult in Custody (AIC) Score</DetailsSubheading>
             <SecureDetailsContent>{aicScore}</SecureDetailsContent>
@@ -208,6 +145,8 @@ export function UsMoRestrictiveHousing({
         </SecureDetailsContent>
       </DetailsSection>
 
+      <UsMoSanctionsList sanctions={allSanctions} />
+
       <DetailsSection>
         <DetailsHeading>Conduct Violations (CDVs)</DetailsHeading>
         <SecureDetailsList>
@@ -222,7 +161,9 @@ export function UsMoRestrictiveHousing({
           <DetailsSubheading>
             Minor Conduct Violations, Past 6 Months
           </DetailsSubheading>
-          {numMinorCdvsBeforeLastHearing || "None"}
+          {numMinorCdvsBeforeLastHearing || (
+            <SecureDetailsContent>None</SecureDetailsContent>
+          )}
         </SecureDetailsList>
       </DetailsSection>
 

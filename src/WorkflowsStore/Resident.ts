@@ -26,7 +26,6 @@ import {
   Opportunity,
   OpportunityFactory,
   UsMeSCCPOpportunity,
-  UsMoRestrictiveHousingStatusHearingOpportunity,
 } from "./Opportunity";
 import { UsIdExpandedCRCOpportunity } from "./Opportunity/UsId";
 import { UsIdCRCResidentWorkerOpportunity } from "./Opportunity/UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
@@ -38,6 +37,7 @@ import {
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
+import { UsMoRestrictiveHousingStatusHearingOpportunity } from "./Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";

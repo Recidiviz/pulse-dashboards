@@ -20,64 +20,12 @@ import { z } from "zod";
 
 import { OpportunityValidationError } from "../../../../errors";
 import { ValidateFunction } from "../../../subscriptions";
-import {
-  dateStringSchema,
-  opportunitySchemaBase,
-  stringToIntSchema,
-} from "../../schemaHelpers";
-
-const classesSchema = z.object({
-  startDate: dateStringSchema,
-  endDate: dateStringSchema.nullable(),
-  classTitle: z.string().nullable(),
-  classExitReason: z.string().nullable(),
-});
-export type UsMoClassInfo = z.infer<typeof classesSchema>;
-
-const unwaivedEnemiesSchema = z.object({
-  enemyExternalId: z.string().nullable(),
-  enemyBedNumber: z.string().nullable(),
-  enemyRoomNumber: z.string().nullable(),
-  enemyComplexNumber: z.string().nullable(),
-  enemyBuildingNumber: z.string().nullable(),
-  enemyHousingUseCode: z.string().nullable(),
-});
-
-const cdvSchema = z.object({
-  cdvDate: dateStringSchema,
-  cdvRule: z.string(),
-});
-export type UsMoConductViolationInfo = z.infer<typeof cdvSchema>;
-
-const nonOptionalMetadata = z.object({
-  majorCdvs: z.array(cdvSchema),
-  cdvsSinceLastHearing: z.array(cdvSchema),
-  numMinorCdvsBeforeLastHearing: stringToIntSchema,
-  restrictiveHousingStartDate: dateStringSchema,
-});
-
-const optionalMetadata = z
-  .object({
-    mentalHealthAssessmentScore: z.string().nullable(),
-    classesRecent: z.array(classesSchema),
-    aicScore: z.string(),
-    unwaivedEnemies: z.array(unwaivedEnemiesSchema),
-    mostRecentHearingDate: dateStringSchema,
-    mostRecentHearingType: z.string(),
-    mostRecentHearingFacility: z.string(),
-    mostRecentHearingComments: z.string(),
-    currentFacility: z.string(),
-    bedNumber: z.string(),
-    roomNumber: z.string(),
-    complexNumber: z.string(),
-    buildingNumber: z.string(),
-    housingUseCode: z.string(),
-  })
-  .partial();
+import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { usMoMetadataSchema as metadata } from "../common";
 
 export const usMoRestrictiveHousingStatusHearingSchema = opportunitySchemaBase
   .extend({
-    metadata: nonOptionalMetadata.merge(optionalMetadata),
+    metadata,
     eligibleCriteria: z.object({
       usMoOverdueForHearing: z
         .object({

@@ -17,69 +17,8 @@
 
 import { z } from "zod";
 
-import {
-  dateStringSchema,
-  opportunitySchemaBase,
-  stringToIntSchema,
-} from "../../schemaHelpers";
-
-const classesSchema = z.object({
-  startDate: dateStringSchema,
-  endDate: dateStringSchema.nullable(),
-  classTitle: z.string().nullable(),
-  classExitReason: z.string().nullable(),
-});
-export type UsMoClassInfo = z.infer<typeof classesSchema>;
-
-const unwaivedEnemiesSchema = z.object({
-  enemyExternalId: z.string().nullable(),
-  enemyBedNumber: z.string().nullable(),
-  enemyRoomNumber: z.string().nullable(),
-  enemyComplexNumber: z.string().nullable(),
-  enemyBuildingNumber: z.string().nullable(),
-  enemyHousingUseCode: z.string().nullable(),
-});
-
-const cdvSchema = z.object({
-  cdvDate: dateStringSchema,
-  cdvRule: z.string(),
-});
-
-const allSanctionsSchema = z.object({
-  sanctionCode: z.string().nullable(),
-  sanctionExpirationDate: dateStringSchema.nullable(),
-  sanctionId: z.number().nullable(),
-  sanctionStartDate: dateStringSchema.nullable(),
-});
-
-export type UsMoConductViolationInfo = z.infer<typeof cdvSchema>;
-
-const nonOptionalMetadata = z.object({
-  majorCdvs: z.array(cdvSchema),
-  cdvsSinceLastHearing: z.array(cdvSchema),
-  numMinorCdvsBeforeLastHearing: stringToIntSchema,
-  restrictiveHousingStartDate: dateStringSchema,
-});
-
-const optionalMetadata = z
-  .object({
-    allSanctions: z.array(allSanctionsSchema),
-    mentalHealthAssessmentScore: z.string().nullable(),
-    classesRecent: z.array(classesSchema),
-    aicScore: z.string(),
-    unwaivedEnemies: z.array(unwaivedEnemiesSchema),
-    mostRecentHearingDate: dateStringSchema,
-    mostRecentHearingType: z.string(),
-    mostRecentHearingFacility: z.string(),
-    mostRecentHearingComments: z.string(),
-    currentFacility: z.string(),
-    bedNumber: z.string(),
-    roomNumber: z.string(),
-    complexNumber: z.string(),
-    buildingNumber: z.string(),
-    housingUseCode: z.string(),
-  })
-  .partial();
+import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { usMoMetadataSchema as metadata } from "../common";
 
 export const usMoInRestrictiveHousing = z.object({
   confinementType: z.string(),
@@ -94,7 +33,7 @@ export const usMoNoActiveD1Sanctions = z
 
 export const baseUsMoOverdueRestrictiveHousingSchema =
   opportunitySchemaBase.extend({
-    metadata: nonOptionalMetadata.merge(optionalMetadata),
+    metadata,
     eligibleCriteria: z.object({
       usMoInRestrictiveHousing,
       usMoNoActiveD1Sanctions,
