@@ -26,6 +26,7 @@ import StateSelection from "../../components/StateSelection";
 import { useRootStore } from "../../components/StoreProvider";
 import useLogout from "../../hooks/useLogout";
 import { isOfflineMode } from "../../utils/isOfflineMode";
+import CoreStoreProvider from "../CoreStoreProvider";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
 import { ImpersonationForm } from "./ImpersonationForm";
@@ -49,63 +50,65 @@ function Profile() {
   };
 
   return (
-    <PageTemplate mobileNavigation={<MobileNavigation title="Profile" />}>
-      <div className="Profile">
-        <div className="Profile__header-container">
-          <div className="Profile__title-container">
-            <div className="Profile__title">{user.email}</div>
-            <div className="Profile__subtitle">{userStore.stateName}</div>
+    <CoreStoreProvider>
+      <PageTemplate mobileNavigation={<MobileNavigation title="Profile" />}>
+        <div className="Profile">
+          <div className="Profile__header-container">
+            <div className="Profile__title-container">
+              <div className="Profile__title">{user.email}</div>
+              <div className="Profile__subtitle">{userStore.stateName}</div>
+            </div>
+            {showImpersonationForm && (
+              <ImpersonationForm
+                defaultStateCode={tenantStore.currentTenantId}
+                onSubmit={handleImpersonation}
+                isImpersonating={userStore.isImpersonating}
+                impersonationError={userStore.impersonationError}
+              />
+            )}
           </div>
-          {showImpersonationForm && (
-            <ImpersonationForm
-              defaultStateCode={tenantStore.currentTenantId}
-              onSubmit={handleImpersonation}
-              isImpersonating={userStore.isImpersonating}
-              impersonationError={userStore.impersonationError}
-            />
-          )}
+          <StateSelection />
+          <div>
+            <Link to="/">
+              <Button className="Profile__button">Back to dashboard</Button>
+            </Link>
+            <Button
+              className="Profile__button"
+              onClick={logout}
+              disabled={isOfflineMode()}
+            >
+              Log out
+            </Button>
+          </div>
+          <div className="Profile__footer">
+            © {new Date().getFullYear()}
+            <a
+              href="https://www.recidiviz.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Recidiviz
+            </a>
+            ·
+            <a
+              href="https://www.recidiviz.org/legal/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Privacy Policy
+            </a>
+            ·
+            <a
+              href="https://www.recidiviz.org/legal/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Terms of Service
+            </a>
+          </div>
         </div>
-        <StateSelection />
-        <div>
-          <Link to="/">
-            <Button className="Profile__button">Back to dashboard</Button>
-          </Link>
-          <Button
-            className="Profile__button"
-            onClick={logout}
-            disabled={isOfflineMode()}
-          >
-            Log out
-          </Button>
-        </div>
-        <div className="Profile__footer">
-          © {new Date().getFullYear()}
-          <a
-            href="https://www.recidiviz.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Recidiviz
-          </a>
-          ·
-          <a
-            href="https://www.recidiviz.org/legal/privacy-policy"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Privacy Policy
-          </a>
-          ·
-          <a
-            href="https://www.recidiviz.org/legal/terms"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Terms of Service
-          </a>
-        </div>
-      </div>
-    </PageTemplate>
+      </PageTemplate>
+    </CoreStoreProvider>
   );
 }
 
