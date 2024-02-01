@@ -272,7 +272,7 @@ if (deployFrontendPrompt.deployFrontend) {
         switch (deployEnv) {
           case "production":
             // eslint-disable-next-line no-await-in-loop
-            await $`firebase deploy --except functions -P production -m "${nextVersion}"`.pipe(
+            await $`firebase deploy --except functions -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
               process.stdout
             );
             publishReleaseNotes = true;
@@ -321,4 +321,6 @@ if (publishReleaseNotes) {
   console.log(`Release published at ${release.data.html_url}`);
 }
 
-console.log(`Finished with the ${deployEnv} deploy!`);
+console.log(
+  `Finished with the ${deployEnv} deploy! Commit hash: ${currentRevision}`
+);
