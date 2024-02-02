@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { mapKeys } from "lodash";
 import { z } from "zod";
 
 import { fieldToDate } from "../utils";
@@ -62,3 +63,20 @@ export type MergedCriteria<Eligible, Ineligible> = {
     | Eligible[EK]
     | (EK extends keyof Ineligible ? Ineligible[EK] : never);
 };
+/**
+ * Renames all occurrences of the keys in `obj` that are present as a key in `oldToNewKeyMapping`.
+ * @param obj The object to be renamed.
+ * @param oldToNewKeyMapping Mapping of keys to be renamed. The keys of this object are the old keys, and the values are the new keys.
+ * @returns The object with the renamed keys.
+ */
+export function renameObjectKeys<
+  T extends object,
+  M extends Partial<Record<keyof T, string>>
+>(oldToNewKeyMapping: M) {
+  return function (obj: T) {
+    return mapKeys(
+      obj,
+      (_, k) => oldToNewKeyMapping[k as keyof T] ?? k
+    ) as Omit<T, keyof M>;
+  };
+}

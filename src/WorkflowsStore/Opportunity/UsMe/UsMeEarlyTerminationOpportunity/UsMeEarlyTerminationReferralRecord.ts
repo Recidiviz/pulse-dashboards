@@ -22,6 +22,7 @@ import {
   dateStringSchema,
   NullCoalesce,
   opportunitySchemaBase,
+  renameObjectKeys,
 } from "../../schemaHelpers";
 
 const usMePaidAllOwedRestitution = NullCoalesce(
@@ -71,14 +72,8 @@ const eligibleCriteria = z
     ])
   )
   .transform(
-    ({
-      onMediumSupervisionLevelOrLower,
-      supervisionLevelIsMediumOrLower,
-      ...rest
-    }) => ({
-      supervisionLevelIsMediumOrLower:
-        supervisionLevelIsMediumOrLower ?? onMediumSupervisionLevelOrLower,
-      ...rest,
+    renameObjectKeys({
+      onMediumSupervisionLevelOrLower: "supervisionLevelIsMediumOrLower",
     })
   );
 
