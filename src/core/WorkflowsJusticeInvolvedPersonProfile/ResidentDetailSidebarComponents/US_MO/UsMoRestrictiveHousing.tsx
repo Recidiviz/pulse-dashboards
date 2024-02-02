@@ -22,18 +22,18 @@ import { formatWorkflowsDate } from "../../../../utils";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import {
   CaseNoteDate,
-  CaseNoteTitle,
   DetailsHeading,
-  DetailsList,
   DetailsSection,
   DetailsSubheading,
   SecureDetailsContent,
   SecureDetailsList,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
-import { UsMoClassesList } from "./UsMoClassesList";
-import { UsMoConductViolationsList } from "./UsMoConductViolationsList";
-import { UsMoSanctionsList } from "./UsMoSanctionsList";
+import { UsMoClasses } from "./UsMoClasses";
+import { UsMoConductViolations } from "./UsMoConductViolations";
+import { UsMoMostRecentHearingComments } from "./UsMoMostRecentHearingComments";
+import { UsMoSanctions } from "./UsMoSanctions";
+import { UsMoUnwaivedEnemies } from "./UsMoUnwaivedEnemies";
 
 export function UsMoRestrictiveHousing({
   opportunity,
@@ -94,7 +94,6 @@ export function UsMoRestrictiveHousing({
             <DetailsSubheading>
               Last Restrictive Housing Status Hearing
             </DetailsSubheading>
-
             <SecureDetailsContent>
               {mostRecentHearingDate
                 ? `${formatWorkflowsDate(mostRecentHearingDate)} 
@@ -117,81 +116,32 @@ export function UsMoRestrictiveHousing({
             <SecureDetailsContent>
               {mentalHealthAssessmentScore}
             </SecureDetailsContent>
-            <DetailsSubheading>Unwaived Enemies</DetailsSubheading>
-            <SecureDetailsContent>
-              {unwaivedEnemies && unwaivedEnemies.length > 0
-                ? unwaivedEnemies.map(
-                    ({
-                      enemyExternalId,
-                      enemyHousingUseCode,
-                      enemyBuildingNumber,
-                      enemyComplexNumber,
-                      enemyRoomNumber,
-                      enemyBedNumber,
-                    }) => (
-                      <span className="fs-exclude" key={`${enemyExternalId}`}>
-                        <CaseNoteTitle>[ID# {enemyExternalId}] </CaseNoteTitle>
-                        Housing Use Code: <b>{enemyHousingUseCode}</b>
-                        <br />
-                        Building {enemyBuildingNumber}, Complex{" "}
-                        {enemyComplexNumber}, Room {enemyRoomNumber}, Bed{" "}
-                        {enemyBedNumber}
-                      </span>
-                    )
-                  )
-                : "None"}
-            </SecureDetailsContent>
           </SecureDetailsList>
         </SecureDetailsContent>
       </DetailsSection>
 
-      <UsMoSanctionsList sanctions={allSanctions} />
+      <UsMoUnwaivedEnemies unwaivedEnemies={unwaivedEnemies} />
 
-      <DetailsSection>
-        <DetailsHeading>Conduct Violations (CDVs)</DetailsHeading>
-        <SecureDetailsList>
-          <DetailsSubheading>
-            Major Conduct Violations, Past 12 Months
-          </DetailsSubheading>
-          <UsMoConductViolationsList cdvs={majorCdvs} />
-          <DetailsSubheading>
-            Conduct Violations, Since Last Hearing
-          </DetailsSubheading>
-          <UsMoConductViolationsList cdvs={cdvsSinceLastHearing} />
-          <DetailsSubheading>
-            Minor Conduct Violations, Past 6 Months
-          </DetailsSubheading>
-          {numMinorCdvsBeforeLastHearing || (
-            <SecureDetailsContent>None</SecureDetailsContent>
-          )}
-        </SecureDetailsList>
-      </DetailsSection>
+      <UsMoSanctions sanctions={allSanctions} />
 
-      <DetailsSection>
-        <DetailsHeading>Most Recent 10 Classes</DetailsHeading>
-        <SecureDetailsContent>
-          <UsMoClassesList
-            classes={(classesRecent || [])
-              .sort(
-                (a, b) =>
-                  new Date(b.startDate).getTime() -
-                  new Date(a.startDate).getTime()
-              )
-              .slice(0, 10)}
-          />
-        </SecureDetailsContent>
-      </DetailsSection>
+      <UsMoConductViolations
+        majorCdvs={majorCdvs}
+        cdvsSinceLastHearing={cdvsSinceLastHearing}
+        numMinorCdvsBeforeLastHearing={numMinorCdvsBeforeLastHearing}
+      />
 
-      <DetailsSection>
-        <DetailsHeading>Previous Hearing Comments</DetailsHeading>
-        <SecureDetailsContent>
-          <DetailsList>
-            <SecureDetailsContent>
-              {mostRecentHearingComments}
-            </SecureDetailsContent>
-          </DetailsList>
-        </SecureDetailsContent>
-      </DetailsSection>
+      <UsMoClasses
+        classes={(classesRecent || [])
+          .sort(
+            (a, b) =>
+              new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+          )
+          .slice(0, 10)}
+      />
+
+      <UsMoMostRecentHearingComments
+        mostRecentHearingComments={mostRecentHearingComments}
+      />
     </>
   );
 }

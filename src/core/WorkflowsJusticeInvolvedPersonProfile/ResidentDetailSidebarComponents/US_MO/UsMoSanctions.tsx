@@ -25,7 +25,7 @@ import {
   SecureDetailsList,
 } from "../../styles";
 
-export function UsMoSanctionsList({
+export function UsMoSanctions({
   sanctions,
 }: {
   sanctions: UsMoSanctionInfo[] | undefined;

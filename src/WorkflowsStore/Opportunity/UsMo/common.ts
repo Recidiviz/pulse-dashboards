@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { mapValues } from "lodash";
 import { z } from "zod";
 
 import { dateStringSchema, stringToIntSchema } from "../schemaHelpers";
@@ -36,10 +37,13 @@ const unwaivedEnemiesSchema = z.object({
   enemyHousingUseCode: z.string().nullable(),
 });
 
+export type UsMoUnwaivedEnemyInfo = z.infer<typeof unwaivedEnemiesSchema>;
+
 const cdvSchema = z.object({
   cdvDate: dateStringSchema,
   cdvRule: z.string(),
 });
+
 export type UsMoConductViolationInfo = z.infer<typeof cdvSchema>;
 
 const sanctionsSchema = z.object({
@@ -50,12 +54,65 @@ const sanctionsSchema = z.object({
 });
 export type UsMoSanctionInfo = z.infer<typeof sanctionsSchema>;
 
-const nonOptionalMetadata = z.object({
+const cdvMetadata = z.object({
   majorCdvs: z.array(cdvSchema),
   cdvsSinceLastHearing: z.array(cdvSchema),
   numMinorCdvsBeforeLastHearing: stringToIntSchema,
-  restrictiveHousingStartDate: dateStringSchema,
 });
+
+export type UsMoConductViolationMetadata = z.infer<typeof cdvMetadata>;
+
+const mostRecentHearingCommentsSchema = z.object({
+  mostRecentHearingComments: z
+    .string()
+    .transform((rawMostRecentHearingCommentsComments) => {
+      // Processes and returns the `mostRecentHearingComments`, if present, trimmed of any trailing whitespace as an object of several subsections.
+
+      /**
+       *
+       * @param text - the raw text from the most recent hearing comments field.
+       * @returns the text, if present, trimmed of any trailing whitespace. If the text is falsy, it returns `undefined`.
+       */
+      const process = (text: string | undefined) => text?.trim() || undefined;
+      const unparsedText = process(rawMostRecentHearingCommentsComments);
+      if (!unparsedText) return unparsedText;
+
+      /**
+       * Captures and names the several groups that appear in `rawMostRecentHearingCommentsComments`.
+       */
+      const regex =
+        /(?:Reason for Hearing:(?<reasonForHearing>[\s\S]*?))?(?:Resident Statement:(?<residentStatement>[\s\S]*?))?(?:Offender Statement:(?<offenderStatement>[\s\S]*?))?(?:Summary of Findings:(?<summaryOfFindings>[\s\S]*?))?(?:Recommendation(s?):(?<recommendation>[\s\S]*))/;
+      const match = unparsedText.match(regex);
+
+      if (!match || !match.groups) return unparsedText;
+
+      const {
+        reasonForHearing,
+        residentStatement,
+        offenderStatement,
+        summaryOfFindings,
+        recommendation,
+      } = mapValues(match.groups, (v) => process(v));
+
+      return {
+        reasonForHearing,
+        // We rename the "Resident Statement" section to "Offender Statement" because they are used interchangeably by facilities.
+        residentStatement: residentStatement || offenderStatement,
+        // As a fallback, in the event that both appear in the text, we keep both. We do NOT expect this to happen.
+        ...(offenderStatement && residentStatement
+          ? { offenderStatement }
+          : {}),
+        summaryOfFindings,
+        recommendation,
+      };
+    }),
+});
+
+const nonOptionalMetadata = z
+  .object({
+    restrictiveHousingStartDate: dateStringSchema,
+  })
+  .merge(cdvMetadata);
 
 const optionalMetadata = z
   .object({
@@ -67,7 +124,6 @@ const optionalMetadata = z
     mostRecentHearingDate: dateStringSchema,
     mostRecentHearingType: z.string(),
     mostRecentHearingFacility: z.string(),
-    mostRecentHearingComments: z.string(),
     currentFacility: z.string(),
     bedNumber: z.string(),
     roomNumber: z.string(),
@@ -75,6 +131,11 @@ const optionalMetadata = z
     buildingNumber: z.string(),
     housingUseCode: z.string(),
   })
+  .merge(mostRecentHearingCommentsSchema)
   .partial();
+
+export type UsMoMostRecentHearingCommentsMetadata = z.infer<
+  typeof optionalMetadata.shape.mostRecentHearingComments
+>;
 
 export const usMoMetadataSchema = nonOptionalMetadata.merge(optionalMetadata);

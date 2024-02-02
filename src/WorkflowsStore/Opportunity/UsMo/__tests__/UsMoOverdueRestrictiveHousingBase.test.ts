@@ -66,3 +66,146 @@ test("validateReferral", () => {
     }
   `);
 });
+
+const baseRecord =
+  baseUsMoOverdueRestrictiveHousingReferralRecordFixture<BaseUsMoOverdueRestrictiveHousingReferralRecordRaw>(
+    1
+  );
+
+const createMostRecentHearingCommentsTestCase = (
+  mostRecentHearingComments?: string
+) => {
+  const metadataWithHearingCommentsCase = baseRecord;
+  metadataWithHearingCommentsCase.metadata.mostRecentHearingComments =
+    mostRecentHearingComments;
+  return baseUsMoOverdueRestrictiveHousingSchema.parse(
+    metadataWithHearingCommentsCase
+  ).metadata.mostRecentHearingComments;
+};
+
+describe("test mostRecentHearingComments parser", () => {
+  test("when it is undefined", () => {
+    expect(createMostRecentHearingCommentsTestCase()).toMatchInlineSnapshot(
+      `undefined`
+    );
+  });
+
+  test("when all sections are filled", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase(
+        "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Resident Statement: None. Summary of Findings: Lorem Ipsum Recommendation: Continue."
+      )
+    ).toMatchInlineSnapshot(`
+      Object {
+        "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
+        "recommendation": "Continue.",
+        "residentStatement": "None.",
+        "summaryOfFindings": "Lorem Ipsum",
+      }
+    `);
+  });
+
+  test("when the string is a space", () => {
+    expect(createMostRecentHearingCommentsTestCase(" ")).toMatchInlineSnapshot(
+      `undefined`
+    );
+  });
+
+  test("when the string is empty", () => {
+    expect(createMostRecentHearingCommentsTestCase(" ")).toMatchInlineSnapshot(
+      `undefined`
+    );
+  });
+
+  test("when Recommendations instead of Recommendation is used", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase(
+        "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Offender Statement: None. Summary of Findings: Lorem Ipsum Recommendations: Continue."
+      )
+    ).toMatchInlineSnapshot(`
+      Object {
+        "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
+        "recommendation": "Continue.",
+        "residentStatement": "None.",
+        "summaryOfFindings": "Lorem Ipsum",
+      }
+    `);
+  });
+
+  test("when Offender Statement is used instead of Resident Statement", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase(
+        "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Offender Statement: None. Summary of Findings: Lorem Ipsum Recommendation: Continue."
+      )
+    ).toMatchInlineSnapshot(`
+      Object {
+        "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
+        "recommendation": "Continue.",
+        "residentStatement": "None.",
+        "summaryOfFindings": "Lorem Ipsum",
+      }
+    `);
+  });
+
+  test("when both Resident and Offender statement are present", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase(
+        "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Resident Statement: None. Offender Statement: None. Summary of Findings: Lorem Ipsum Recommendation: Continue."
+      )
+    ).toMatchInlineSnapshot(`
+      Object {
+        "offenderStatement": "None.",
+        "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
+        "recommendation": "Continue.",
+        "residentStatement": "None.",
+        "summaryOfFindings": "Lorem Ipsum",
+      }
+    `);
+  });
+
+  test("when multiple sections are empty", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase(
+        "Reason for Hearing: Resident Statement: Offender Statement: Summary of Findings: Recommendation:"
+      )
+    ).toMatchInlineSnapshot(`
+      Object {
+        "reasonForHearing": undefined,
+        "recommendation": undefined,
+        "residentStatement": undefined,
+        "summaryOfFindings": undefined,
+      }
+    `);
+  });
+
+  test("when Recommendation is missing", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase(
+        "Reason for Hearing: Test fails to parse Resident Statement: Offender Statement: Summary of Findings:"
+      )
+    ).toMatchInlineSnapshot(
+      `"Reason for Hearing: Test fails to parse Resident Statement: Offender Statement: Summary of Findings:"`
+    );
+  });
+
+  test("when a section prior to Recommendation is missing", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase(
+        "Reason for Hearing: Test fails to parse Summary of Findings: Recommendation:"
+      )
+    ).toMatchInlineSnapshot(`
+      Object {
+        "reasonForHearing": "Test fails to parse",
+        "recommendation": undefined,
+        "residentStatement": undefined,
+        "summaryOfFindings": undefined,
+      }
+    `);
+  });
+
+  test("when there are no sections ", () => {
+    expect(
+      createMostRecentHearingCommentsTestCase("Test without any sections")
+    ).toMatchInlineSnapshot(`"Test without any sections"`);
+  });
+});

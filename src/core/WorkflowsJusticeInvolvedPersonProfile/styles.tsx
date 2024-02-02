@@ -62,7 +62,8 @@ export const DetailsSubheading = styled.dt`
   color: rgba(53, 83, 98, 0.5);
   margin-bottom: ${rem(spacing.xs)};
 `;
-const DetailsContent = styled.dd`
+
+export const DetailsContent = styled.dd`
   ${typography.Sans14}
   color: rgba(53, 83, 98, 0.9);
 `;

@@ -56,6 +56,7 @@
     "pdfformfiller-boilerplate": "ts-node tools/pdfFormFillerBoilerplate.mjs"
   },
   "dependencies": {
+    "@artsy/to-title-case": "^1.1.0",
     "@auth0/auth0-spa-js": "^1.12.1",
     "@floating-ui/react": "^0.26.1",
     "@google-cloud/storage": "^5.0.0",
