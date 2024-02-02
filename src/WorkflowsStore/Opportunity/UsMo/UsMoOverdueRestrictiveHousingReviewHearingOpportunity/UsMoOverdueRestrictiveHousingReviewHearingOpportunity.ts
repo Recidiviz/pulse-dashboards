@@ -17,7 +17,6 @@
 
 import { makeObservable, override } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
@@ -87,11 +86,6 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingRevie
   };
 
 export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "UsMoIncarceration",
-    "UsMoRestrictiveHousing",
-  ];
-
   resident: Resident;
 
   constructor(resident: Resident) {
@@ -108,8 +102,6 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
   }
 
   denialReasonsMap = {
-    BEDS: "Due to emergent need for Extended Restrictive Housing beds, released early",
-    RELEASED: "Released this week",
     OUTDATED: "Hearing occurred this weeK",
     [OTHER_KEY]: "Other",
   };

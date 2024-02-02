@@ -19,7 +19,6 @@ import { reduce } from "lodash";
 import { makeObservable, override } from "mobx";
 import { ValuesType } from "utility-types";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OTHER_KEY } from "../../../utils";
@@ -129,11 +128,6 @@ const removeDuplicateCopyIfPresent = (
 };
 
 export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReleaseReferralRecord> {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "UsMoIncarceration",
-    "UsMoRestrictiveHousing",
-  ];
-
   resident: Resident;
 
   constructor(resident: Resident) {
@@ -150,8 +144,8 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
   }
 
   denialReasonsMap = {
-    BEDS: "Due to emergent need for Restrictive Housing beds, released early",
     RELEASED: "Released this week",
+    OUTDATED: "Hearing occurred this week",
     EXTENDED:
       "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
     REFERRED:
