@@ -23,22 +23,18 @@ import {
   QuerySnapshot,
   Unsubscribe,
 } from "firebase/firestore";
-import { defer } from "lodash";
 import {
   action,
   computed,
   makeObservable,
-  observable,
-  onBecomeObserved,
-  onBecomeUnobserved,
+  override,
   reaction,
   runInAction,
 } from "mobx";
 import { IDisposer } from "mobx-utils";
 
-import { HydrationState } from "../../core/models/types";
-import { isHydrationInProgress } from "../../core/models/utils";
 import { FeatureGateError } from "../../errors";
+import { FirestoreSubscription } from "./FirestoreSubscription";
 import {
   QuerySubscription,
   TransformFunction,
@@ -47,51 +43,44 @@ import {
 import { defaultTransformFunction, defaultValidateFunction } from "./utils";
 
 export abstract class FirestoreQuerySubscription<
-  DataFormat extends DocumentData
-> implements QuerySubscription<DataFormat>
+    DataFormat extends DocumentData
+  >
+  extends FirestoreSubscription<DataFormat[]>
+  implements QuerySubscription<DataFormat>
 {
-  data: DataFormat[] = [];
-
   abstract get dataSource(): Query | undefined;
 
-  cancelSnapshotListener?: Unsubscribe;
-
-  disposeDynamicDataSource?: IDisposer;
-
-  transformRecord: TransformFunction<DataFormat>;
-
-  validateRecord: ValidateFunction<DataFormat>;
+  protected disposeDynamicDataSource?: IDisposer;
 
   constructor(
-    transformFunction: TransformFunction<DataFormat> = defaultTransformFunction,
-    validateFunction: ValidateFunction<DataFormat> = defaultValidateFunction
+    protected transformRecord: TransformFunction<DataFormat> = defaultTransformFunction,
+    protected validateRecord: ValidateFunction<DataFormat> = defaultValidateFunction
   ) {
+    super([]);
+
     makeObservable<this, "updateData">(this, {
-      data: observable,
       dataSource: computed,
       updateData: action,
-      subscribe: action,
-      unsubscribe: action,
-      resetHydration: action,
-      hydrate: action,
-      hydrationState: observable,
+      subscribe: override,
+      unsubscribe: override,
     });
-
-    this.transformRecord = transformFunction;
-
-    this.validateRecord = validateFunction;
-
-    // run side effects async in case they cause state updates, to avoid render disruptions
-    onBecomeObserved(this, "data", () => defer(() => this.subscribe()));
-    onBecomeUnobserved(this, "data", () => defer(() => this.unsubscribe()));
   }
 
   protected updateData(snapshot: QuerySnapshot | undefined): void {
     const docs: DataFormat[] = [];
 
+    // receiving no snapshot at all is a special case that indicates there is no valid data source;
+    // when this happens we want to reset the hydration state in addition to clearing out any data
+    // that may already exist from previous updates
+    if (!snapshot) {
+      this.data = docs;
+      this.hydrationState = { status: "needs hydration" };
+      return;
+    }
+
     const errors: unknown[] = [];
 
-    snapshot?.forEach((doc) => {
+    snapshot.forEach((doc) => {
       try {
         const record = this.transformRecord(
           doc.data({ serverTimestamps: "estimate" })
@@ -117,29 +106,11 @@ export abstract class FirestoreQuerySubscription<
     this.hydrationState = { status: "hydrated" };
   }
 
-  get isActive(): boolean {
-    return this.cancelSnapshotListener !== undefined;
-  }
-
-  /**
-   * Activates a listener on `this.dataSource`. Safe to call repeatedly: it will not
-   * create a redundant listener if one is already active.
-   */
-  subscribe(): void {
-    if (
-      this.isActive ||
-      // if the subscription is inactive, we will rehydrate if we're already hydrated
-      // or failed. This is different from fetch-based hydration flows
-      isHydrationInProgress(this)
-    )
-      return;
-
-    this.hydrationState = { status: "loading" };
-
+  protected startSnapshotListener(): Unsubscribe | undefined {
     if (!this.dataSource) {
       this.updateData(undefined);
     } else {
-      this.cancelSnapshotListener = onSnapshot(
+      return onSnapshot(
         this.dataSource,
         (result) => this.updateData(result),
         (error) => {
@@ -153,36 +124,23 @@ export abstract class FirestoreQuerySubscription<
         }
       );
     }
+  }
+
+  subscribe(): void {
+    super.subscribe();
 
     // watches dataSource for changes and re-subscribes accordingly
     this.disposeDynamicDataSource = reaction(
       () => this.dataSource,
       () => {
         this.unsubscribe();
-        this.resetHydration();
         this.subscribe();
       }
     );
   }
 
   unsubscribe(): void {
-    // if we are unsubscribing before receiving any data, ensure that we
-    // return to the initial hydration state. Otherwise leave it as is
-    if (isHydrationInProgress(this)) {
-      this.resetHydration();
-    }
-    this.cancelSnapshotListener?.();
-    this.cancelSnapshotListener = undefined;
+    super.unsubscribe();
     this.disposeDynamicDataSource?.();
-  }
-
-  hydrate(): void {
-    this.subscribe();
-  }
-
-  hydrationState: HydrationState = { status: "needs hydration" };
-
-  resetHydration(): void {
-    this.hydrationState = { status: "needs hydration" };
   }
 }

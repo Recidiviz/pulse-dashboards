@@ -81,10 +81,13 @@ test("subscribe", () => {
 test("unsubscribe", () => {
   sub.subscribe();
 
+  // @ts-expect-error this is private with respect to the application,
+  // but we need to verify its behavior to prevent memory leaks
   jest.spyOn(sub, "disposeDynamicDataSource");
   sub.unsubscribe();
 
   expect(cancelSnapshotMock).toHaveBeenCalled();
+  // @ts-expect-error
   expect(sub.disposeDynamicDataSource).toHaveBeenCalled();
 });
 
@@ -164,6 +167,7 @@ test("undefined query resets data", () => {
   expect(sub.unsubscribe).toHaveBeenCalled();
   expect(sub.subscribe).toHaveBeenCalled();
   expect(sub.isActive).toBe(false);
+  expect(sub.hydrationState.status).toBe("needs hydration");
 });
 
 test("no duplicate listeners", () => {
@@ -184,6 +188,10 @@ test("hydration", () => {
   mockReceive([]);
 
   expect(sub.hydrationState.status).toBe("hydrated");
+
+  mockReceive(undefined);
+
+  expect(sub.hydrationState.status).toBe("needs hydration");
 });
 
 test("no data transformer or validation function required", () => {
@@ -251,7 +259,6 @@ test("raw data fails validation", () => {
 
   mockReceive(mockData);
   expect(sub.data).toEqual([]);
-  expect(sub.hydrationState.status).toBe("hydrated");
 });
 
 test("transform errors logged to Sentry", () => {

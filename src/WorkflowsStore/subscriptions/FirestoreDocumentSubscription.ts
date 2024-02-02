@@ -23,23 +23,11 @@ import {
   onSnapshot,
   Unsubscribe,
 } from "firebase/firestore";
-import { defer } from "lodash";
-import {
-  action,
-  makeObservable,
-  observable,
-  onBecomeObserved,
-  onBecomeUnobserved,
-  runInAction,
-} from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 
-import { HydrationState } from "../../core/models/types";
-import {
-  isHydrationInProgress,
-  isHydrationUntouched,
-} from "../../core/models/utils";
 import { FeatureGateError } from "../../errors";
 import { castToError } from "../../utils/castToError";
+import { FirestoreSubscription } from "./FirestoreSubscription";
 import {
   DocumentSubscription,
   TransformFunction,
@@ -53,55 +41,26 @@ import {
 } from "./utils";
 
 export abstract class FirestoreDocumentSubscription<
-  DataFormat extends DocumentData = DocumentData
-> implements DocumentSubscription<DataFormat>
+    DataFormat extends DocumentData = DocumentData
+  >
+  extends FirestoreSubscription<DataFormat | undefined>
+  implements DocumentSubscription<DataFormat>
 {
-  /**
-   * Observable handle for fetched data. Always holds the most recently fetched data,
-   * which may become stale while the subscription is inactive.
-   */
-  data: DataFormat | undefined;
-
   abstract readonly dataSource: DocumentReference;
 
-  cancelSnapshotListener?: Unsubscribe;
-
-  transformRecord: TransformFunction<DataFormat>;
-
-  validateRecord: ValidateFunction<DataFormat>;
-
-  updateRecord: UpdateFunction<DocumentData>;
-
   constructor(
-    transformFunction: TransformFunction<DataFormat> = defaultTransformFunction,
-    validateFunction: ValidateFunction<DataFormat> = defaultValidateFunction,
-    updateFunction: UpdateFunction<DocumentData> = defaultUpdateFunction
-  ) {
     // default passes through raw record, assuming it already conforms to the desired format
-    this.transformRecord = transformFunction;
-
-    this.validateRecord = validateFunction;
-
-    this.updateRecord = updateFunction;
+    protected transformRecord: TransformFunction<DataFormat> = defaultTransformFunction,
+    protected validateRecord: ValidateFunction<DataFormat> = defaultValidateFunction,
+    protected updateRecord: UpdateFunction<DocumentData> = defaultUpdateFunction
+  ) {
+    super(undefined, observable.struct);
 
     // note that dataSource is not observable by default.
     // in the base case there is really no need for it
     makeObservable<this, "updateData">(this, {
-      data: observable.struct,
       updateData: action,
-      hydrate: action,
-      hydrationState: observable,
-      subscribe: action,
     });
-
-    // these automatically stop/start the listener based on whether any MobX
-    // observers are actually watching for subscription data on this object.
-    // they run async in case they cause state updates to avoid render disruptions
-    onBecomeObserved(this, "data", () => defer(() => this.subscribe()));
-    // this has the additional effect of preventing orphaned listeners
-    // if this object gets garbage collected, since it should also become unobserved
-    // at or before that point
-    onBecomeUnobserved(this, "data", () => defer(() => this.unsubscribe()));
   }
 
   /**
@@ -110,7 +69,7 @@ export abstract class FirestoreDocumentSubscription<
    * Validates the record and does not set `this.data` property if the result
    * fails validation.
    */
-  updateData(snapshot: DocumentSnapshot): void {
+  protected updateData(snapshot: DocumentSnapshot): void {
     try {
       const snapshotData = snapshot.data({ serverTimestamps: "estimate" });
 
@@ -138,27 +97,8 @@ export abstract class FirestoreDocumentSubscription<
     }
   }
 
-  get isActive(): boolean {
-    return this.cancelSnapshotListener !== undefined;
-  }
-
-  /**
-   * Activates a listener on `this.dataSource`. Safe to call repeatedly: it will not
-   * create a redundant listener if one is already active.
-   */
-  subscribe(): void {
-    if (
-      this.isActive ||
-      // if the subscription is inactive, we will rehydrate if we're already hydrated
-      // or failed. This is different from fetch-based hydration flows
-      isHydrationInProgress(this)
-    )
-      return;
-
-    if (isHydrationUntouched(this)) {
-      this.hydrationState = { status: "loading" };
-    }
-    this.cancelSnapshotListener = onSnapshot(
+  protected startSnapshotListener(): Unsubscribe | undefined {
+    return onSnapshot(
       this.dataSource,
       (result) => this.updateData(result),
       (error) => {
@@ -168,19 +108,5 @@ export abstract class FirestoreDocumentSubscription<
         Sentry.captureException(error);
       }
     );
-  }
-
-  hydrationState: HydrationState = { status: "needs hydration" };
-
-  hydrate(): void {
-    this.subscribe();
-  }
-
-  /**
-   * Cancels the listener on `this.dataSource`.
-   */
-  unsubscribe(): void {
-    this.cancelSnapshotListener?.();
-    this.cancelSnapshotListener = undefined;
   }
 }

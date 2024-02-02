@@ -60,7 +60,7 @@ function mockQuerySnapshotResults(mockData: any[]) {
  */
 export function getMockQuerySnapshotHandler(
   snapshotMock: jest.Mock
-): (mockData: any[]) => void {
+): (mockData: any[] | undefined) => void {
   let subscriptionHandler: any;
 
   snapshotMock.mockImplementation((query, handler) => {
@@ -70,8 +70,12 @@ export function getMockQuerySnapshotHandler(
   snapshotMock();
   snapshotMock.mockClear();
 
-  return function mockReceiveQuerySnapshot(mockData: any[]): void {
-    subscriptionHandler(mockQuerySnapshotResults(mockData));
+  return function mockReceiveQuerySnapshot(mockData: any[] | undefined): void {
+    if (mockData) {
+      subscriptionHandler(mockQuerySnapshotResults(mockData));
+    } else {
+      subscriptionHandler(undefined);
+    }
   };
 }
 

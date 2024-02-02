@@ -19,7 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { Hydratable } from "../../core/models/types";
 
-export interface Subscription<DataFormat> {
+interface Subscription<DataFormat> {
   data: DataFormat;
   subscribe: () => void;
   unsubscribe: () => void;
