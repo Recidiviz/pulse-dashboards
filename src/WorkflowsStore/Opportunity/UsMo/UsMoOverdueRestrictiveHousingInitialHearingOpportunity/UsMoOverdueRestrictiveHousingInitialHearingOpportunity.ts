@@ -96,7 +96,7 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
   }
 
   denialReasonsMap = {
-    OUTDATED: "Hearing occurred this weeK",
+    OUTDATED: "Hearing occurred this week",
     [OTHER_KEY]: "Other",
   };
 
