@@ -302,6 +302,7 @@ test("current user record for supervisor", async () => {
   expect(store.currentSupervisorUser).toMatchInlineSnapshot(`
     Object {
       "displayName": "Miles D Davis",
+      "email": "mock-email",
       "externalId": "mdavis123",
       "fullName": Object {
         "givenNames": "Miles",
@@ -348,6 +349,7 @@ test("hydrate supervisors list with current user", async () => {
     Array [
       Object {
         "displayName": "Miles D Davis",
+        "email": "mock-email",
         "externalId": "mdavis123",
         "fullName": Object {
           "givenNames": "Miles",

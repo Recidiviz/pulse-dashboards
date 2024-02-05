@@ -21,11 +21,11 @@ import { addDisplayName, fullNameSchema } from "./schemaHelpers";
 
 export const supervisionOfficerSupervisorSchema = z
   .object({
-    email: z.string().optional(),
+    email: z.string().nullable(),
     externalId: z.string(),
     fullName: fullNameSchema,
     pseudonymizedId: z.string(),
-    hasOutliers: z.boolean().optional(),
+    hasOutliers: z.boolean(),
     supervisionDistrict: z.string().nullable(),
   })
   .transform(addDisplayName);

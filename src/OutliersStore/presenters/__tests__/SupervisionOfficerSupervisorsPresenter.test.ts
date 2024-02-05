@@ -90,6 +90,7 @@ test("districts ordered correctly", async () => {
       },
       hasOutliers: true,
       pseudonymizedId: "hashed-testid1",
+      email: "mock-email",
     },
     {
       supervisionDistrict: "REGION 4B",
@@ -101,6 +102,7 @@ test("districts ordered correctly", async () => {
       },
       hasOutliers: true,
       pseudonymizedId: "hashed-testid2",
+      email: "mock-email",
     },
     {
       supervisionDistrict: "REGION 1",
@@ -112,6 +114,7 @@ test("districts ordered correctly", async () => {
       },
       hasOutliers: true,
       pseudonymizedId: "hashed-testid3",
+      email: "mock-email",
     },
     {
       supervisionDistrict: "REGION 10 - CENTRAL",
@@ -123,6 +126,7 @@ test("districts ordered correctly", async () => {
       },
       hasOutliers: true,
       pseudonymizedId: "hashed-testid4",
+      email: "mock-email",
     },
     {
       supervisionDistrict: "REGION 4A",
@@ -134,6 +138,7 @@ test("districts ordered correctly", async () => {
       },
       hasOutliers: true,
       pseudonymizedId: "hashed-testid6",
+      email: "mock-email",
     },
     {
       supervisionDistrict: "REGION 10 - WEST",
@@ -145,6 +150,7 @@ test("districts ordered correctly", async () => {
       },
       hasOutliers: true,
       pseudonymizedId: "hashed-testid6",
+      email: null,
     }
   );
   const orderedDistrictList = [
@@ -195,6 +201,7 @@ describe("outliersLeadershipPageAllDistricts feature variant not set", () => {
         },
         hasOutliers: true,
         pseudonymizedId: "hashed-testid1",
+        email: null,
       })
     );
 

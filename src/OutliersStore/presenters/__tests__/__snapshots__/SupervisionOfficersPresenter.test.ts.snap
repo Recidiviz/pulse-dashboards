@@ -1915,6 +1915,7 @@ Array [
 exports[`supervisorInfo 1`] = `
 Object {
   "displayName": "Miles D Davis",
+  "email": "mock-email",
   "externalId": "mdavis123",
   "fullName": Object {
     "givenNames": "Miles",

@@ -11,6 +11,7 @@ exports[`supervisor transformation 1`] = `
 Object {
   "entity": Object {
     "displayName": "Miles D Davis",
+    "email": "mock-email",
     "externalId": "mdavis123",
     "fullName": Object {
       "givenNames": "Miles",

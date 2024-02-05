@@ -28,6 +28,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
       supervisionDistrict: "Region D1",
       pseudonymizedId: "hashed-mdavis123",
       hasOutliers: true,
+      email: "mock-email",
     },
     {
       fullName: { givenNames: "Billie", surname: "Holiday" },
@@ -35,6 +36,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
       supervisionDistrict: null,
       pseudonymizedId: "hashed-bholiday456",
       hasOutliers: true,
+      email: null,
     },
     {
       fullName: { givenNames: "Ella", surname: "Fitzgerald" },
@@ -42,6 +44,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
       supervisionDistrict: "D1",
       pseudonymizedId: "hashed-efitzgerald789",
       hasOutliers: false,
+      email: "mock-email",
     },
     {
       fullName: { givenNames: "John", surname: "Coltrane" },
@@ -49,6 +52,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
       supervisionDistrict: null,
       pseudonymizedId: "hashed-jColtrane321",
       hasOutliers: false,
+      email: null,
     },
   ];
 export const supervisionOfficerSupervisorsFixture =

@@ -3,6 +3,7 @@
 exports[`transformations 1`] = `
 Object {
   "displayName": "Miles D Davis",
+  "email": "mock-email",
   "externalId": "mdavis123",
   "fullName": Object {
     "givenNames": "Miles",
@@ -18,6 +19,7 @@ Object {
 exports[`transformations 2`] = `
 Object {
   "displayName": "Billie Holiday",
+  "email": null,
   "externalId": "bholiday456",
   "fullName": Object {
     "givenNames": "Billie",
@@ -32,6 +34,7 @@ Object {
 exports[`transformations 3`] = `
 Object {
   "displayName": "Ella Fitzgerald",
+  "email": "mock-email",
   "externalId": "efitzgerald789",
   "fullName": Object {
     "givenNames": "Ella",
@@ -46,6 +49,7 @@ Object {
 exports[`transformations 4`] = `
 Object {
   "displayName": "John Coltrane",
+  "email": null,
   "externalId": "jColtrane321",
   "fullName": Object {
     "givenNames": "John",
