@@ -451,7 +451,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         newValue.map((item: SelectOption) => item.value)
       );
       analyticsStore.trackCaseloadSearch({
-        officerCount: newValue.length,
+        searchCount: newValue.length,
         isDefault: false,
         searchType,
       });

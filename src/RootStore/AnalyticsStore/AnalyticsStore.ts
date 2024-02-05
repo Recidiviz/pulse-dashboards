@@ -75,6 +75,17 @@ type SnoozeTrackingMetadata = {
   reasons: string[];
 };
 
+export type CopyCTAMetadata = {
+  stateCode: string;
+  opportunityType: OpportunityType;
+  almostEligibleCriteria: string;
+  justiceInvolvedPersonId: string;
+  justiceInvolvedPersonName: string;
+  staffId: string;
+  staffName: string;
+  date: Date;
+};
+
 export default class AnalyticsStore {
   rootStore;
 
@@ -186,7 +197,7 @@ export default class AnalyticsStore {
   trackCaseloadSearch(metadata: {
     searchCount: number;
     isDefault: boolean;
-    searchType: SearchType;
+    searchType: SearchType | undefined;
   }): void {
     this.track("frontend.caseload_search", metadata);
   }
@@ -252,5 +263,13 @@ export default class AnalyticsStore {
 
   trackOpportunitySnoozed(metadata: SnoozeTrackingMetadata) {
     this.track("frontend.opportunity_snoozed", metadata);
+  }
+
+  trackAlmostEligibleCopyCTAViewed(metadata: CopyCTAMetadata) {
+    this.track("frontend.almost_eligible_copy_cta_viewed", metadata);
+  }
+
+  trackAlmostEligibleCopyCTAClicked(metadata: CopyCTAMetadata) {
+    this.track("frontend.almost_eligible_copy_cta_clicked", metadata);
   }
 }

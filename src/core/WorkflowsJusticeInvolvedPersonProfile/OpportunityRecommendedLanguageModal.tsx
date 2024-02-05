@@ -32,6 +32,8 @@ import React, { useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import { CopyCTAMetadata } from "../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Opportunity } from "../../WorkflowsStore";
 
 // we want this to display inline, which a <button> cannot do
@@ -93,11 +95,41 @@ const OpportunityRecommendedLanguageModal = ({
   opportunity,
   children,
 }: OpportunityRecommendedLanguageModalProps) => {
+  const { analyticsStore } = useRootStore();
   const [showModal, setShowModal] = useState(false);
   const [isCopied, copyToClipboard] = useClipboard(
     opportunity.almostEligibleRecommendedNote?.text ?? "",
     { successDuration: 5000 }
   );
+
+  const trackingMetadata: Omit<CopyCTAMetadata, "date"> = {
+    stateCode: opportunity.person.stateCode,
+    opportunityType: opportunity.type,
+    almostEligibleCriteria:
+      opportunity.almostEligibleRecommendedNote?.title ?? "",
+    justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+    justiceInvolvedPersonName: opportunity.person.displayPreferredName,
+    staffId: opportunity.person.assignedStaffId,
+    staffName: opportunity.person.assignedStaffFullName,
+  };
+
+  const handleCopyClick = () => {
+    copyToClipboard();
+    analyticsStore.trackAlmostEligibleCopyCTAClicked({
+      ...trackingMetadata,
+      date: new Date(),
+    });
+  };
+
+  const handleModalToggle = (shouldOpen: boolean) => {
+    setShowModal(shouldOpen);
+    if (shouldOpen) {
+      analyticsStore.trackAlmostEligibleCopyCTAViewed({
+        ...trackingMetadata,
+        date: new Date(),
+      });
+    }
+  };
 
   // if no note specified then this component should just be a noop
   if (!opportunity.almostEligibleRecommendedNote) return <>{children}</>;
@@ -105,10 +137,10 @@ const OpportunityRecommendedLanguageModal = ({
   return (
     <>
       <TriggerButton
-        onClick={() => setShowModal(!showModal)}
+        onClick={() => handleModalToggle(!showModal)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
-            setShowModal(!showModal);
+            handleModalToggle(!showModal);
             event.preventDefault();
           }
         }}
@@ -135,7 +167,7 @@ const OpportunityRecommendedLanguageModal = ({
           {opportunity.almostEligibleRecommendedNote.text}
         </RecommendedLanguage>
         <CopyButtonWrapper>
-          <Button kind="primary" shape="pill" onClick={() => copyToClipboard()}>
+          <Button kind="primary" shape="pill" onClick={() => handleCopyClick()}>
             Copy to clipboard
           </Button>{" "}
           {isCopied ? <Sans14>Note text copied</Sans14> : null}

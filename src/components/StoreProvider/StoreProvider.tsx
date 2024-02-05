@@ -22,6 +22,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { OutliersStore } from "../../OutliersStore/OutliersStore";
 import store, { RootStore } from "../../RootStore";
+import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
 import type UserStore from "../../RootStore/UserStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
@@ -75,6 +76,7 @@ export default StoreProvider;
 interface PartiallyTypedRootStore {
   outliersStore: OutliersStore;
   workflowsStore: WorkflowsStore;
+  analyticsStore: AnalyticsStore;
   [key: string]: any;
 }
 
