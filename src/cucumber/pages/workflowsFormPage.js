@@ -39,7 +39,7 @@ class WorkflowsFormPage extends Page {
   }
 
   async formActionButton() {
-    return $(".WorkflowsFormActionButton");
+    return $(".WorkflowsFormDownloadButton");
   }
 }
 

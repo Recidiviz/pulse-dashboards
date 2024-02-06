@@ -57,11 +57,9 @@ function fetchOfflineUser({
         // workflowsSupervision: true,
       },
       featureVariants: {
-        responsiveRevamp: {},
-        usTnExpiration: {},
-        enableSnooze: {},
-        outliersClientDetail: {},
-        outliersLeadershipPageAllDistricts: {},
+        // By setting the active date to the far future, we effectively disable these feature variants
+        usMoOverdueRHPilot: { activeDate: "9999" },
+        usTnExpirationSubmitToTomis: { activeDate: "9999" },
       },
     },
   };

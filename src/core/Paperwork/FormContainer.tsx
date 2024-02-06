@@ -168,14 +168,14 @@ export const FormContainer = observer(function FormContainer({
           {formRevertButton && form.allowRevert && (
             <RevertButton
               disabled={!form.formLastUpdated}
-              className="WorkflowsFormActionButton"
+              className="WorkflowsFormRevertButton"
               onClick={() => firestoreStore.clearFormDraftData(form)}
             >
               Revert All Edits
             </RevertButton>
           )}
           <DownloadButton
-            className="WorkflowsFormActionButton"
+            className="WorkflowsFormDownloadButton"
             disabled={isDownloadButtonDisabled || form.formIsDownloading}
             onClick={handleDownloadClick}
           >
