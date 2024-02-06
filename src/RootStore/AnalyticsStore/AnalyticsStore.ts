@@ -102,7 +102,11 @@ export default class AnalyticsStore {
       isImpersonating,
       userStore: { isRecidivizUser },
     } = this.rootStore;
-    return isImpersonating || isAnalyticsDisabled || isRecidivizUser;
+    return (
+      isImpersonating ||
+      isAnalyticsDisabled ||
+      (isRecidivizUser && process.env.REACT_APP_DEPLOY_ENV !== "staging")
+    );
   }
 
   identify(userId: string): void {
