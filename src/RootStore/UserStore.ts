@@ -25,14 +25,7 @@ import createAuth0Client, {
 } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 import { intersection } from "lodash";
-import {
-  action,
-  entries,
-  makeAutoObservable,
-  runInAction,
-  toJS,
-  when,
-} from "mobx";
+import { action, entries, makeAutoObservable, runInAction, when } from "mobx";
 import { now } from "mobx-utils";
 import qs from "qs";
 
@@ -60,9 +53,6 @@ import type RootStore from ".";
 import {
   ActiveFeatureVariantRecord,
   defaultFeatureVariantsActive,
-  FeatureVariant,
-  FeatureVariantRecord,
-  FeatureVariantValue,
   InternalTenantId,
   TenantId,
   UserAppMetadata,
@@ -398,25 +388,6 @@ export default class UserStore {
   }
 
   /**
-   * Returns which feature variants the user has access to, or when in the future they will have
-   * access.
-   */
-  private get featureVariantsConfig(): FeatureVariantRecord {
-    const fvs = isDemoMode()
-      ? this.userAppMetadata?.demoModeFeatureVariants ??
-        this.userAppMetadata?.featureVariants
-      : this.userAppMetadata?.featureVariants;
-    return Object.entries(toJS(fvs) ?? {}).reduce((acc, [key, value]) => {
-      const { activeDate, variant } = value;
-      acc[key as FeatureVariant] = {
-        ...(activeDate && { activeDate: new Date(activeDate) }),
-        variant,
-      } as FeatureVariantValue;
-      return acc as FeatureVariantRecord;
-    }, {} as FeatureVariantRecord);
-  }
-
-  /**
    * All feature variants currently active for this user, taking into account
    * the activeDate for each feature and observing the current Date for reactivity
    */
@@ -425,21 +396,25 @@ export default class UserStore {
       return {};
     }
 
-    const configuredFlags = Object.entries(this.featureVariantsConfig);
+    let fvs = this.userAppMetadata?.featureVariants ?? {};
 
-    // for internal users, if no feature are variants are set, use the configured defaults
-    if (!configuredFlags.length && this.stateCode === "RECIDIVIZ") {
-      return defaultFeatureVariantsActive;
-    }
-    return configuredFlags.reduce(
+    if (isDemoMode() && this.userAppMetadata?.demoModeFeatureVariants)
+      fvs = this.userAppMetadata?.demoModeFeatureVariants;
+
+    if (this.isRecidivizUser) fvs = { ...defaultFeatureVariantsActive, ...fvs };
+
+    return Object.entries(fvs).reduce(
       (activeVariants, [variantName, variantInfo]) => {
         if (!variantInfo) return activeVariants;
 
         const { variant, activeDate } = variantInfo;
         // check date once a minute so there isn't too much lag when we cross the threshold
-        if (activeDate && activeDate.getTime() > now(1000 * 60))
+        if (activeDate && new Date(activeDate).getTime() > now(1000 * 60))
           return activeVariants;
-        return { ...activeVariants, [variantName]: { variant } };
+        return {
+          ...activeVariants,
+          [variantName]: { ...(variant && { variant }) },
+        };
       },
       {}
     );
@@ -462,7 +437,7 @@ export default class UserStore {
     const allowed = navigation;
     if (!allowed) return {};
 
-    if (this.stateCode === "CSG") {
+    if (this.isCSGUser) {
       delete allowed.workflows;
     }
 
@@ -537,6 +512,10 @@ export default class UserStore {
 
   get isRecidivizUser(): boolean {
     return this.stateCode === "RECIDIVIZ";
+  }
+
+  get isCSGUser(): boolean {
+    return this.stateCode === "CSG";
   }
 
   async getTokenSilently(): Promise<any> {

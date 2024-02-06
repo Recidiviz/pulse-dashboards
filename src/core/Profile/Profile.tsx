@@ -17,27 +17,33 @@
 
 import "./Profile.scss";
 
-import { Button } from "@recidiviz/design-system";
+import { Button, TooltipTrigger } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link } from "react-router-dom";
 
 import StateSelection from "../../components/StateSelection";
-import { useRootStore } from "../../components/StoreProvider";
+import { useUserStore } from "../../components/StoreProvider";
 import useLogout from "../../hooks/useLogout";
 import { isOfflineMode } from "../../utils/isOfflineMode";
 import CoreStoreProvider from "../CoreStoreProvider";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";
+import FeatureVariantsList from "./FeatureVariantsList";
 import { ImpersonationForm } from "./ImpersonationForm";
 
 function Profile() {
-  const { userStore, tenantStore } = useRootStore();
+  const userStore = useUserStore();
   const { user } = userStore;
   const logout = useLogout();
 
   const showImpersonationForm =
-    userStore.user.impersonator || userStore.isRecidivizUser;
+    userStore.isImpersonating || userStore.isRecidivizUser;
+
+  const showFeatureVariants =
+    userStore.isImpersonating ||
+    userStore.isRecidivizUser ||
+    userStore.isCSGUser;
 
   const handleImpersonation = async ({
     email,
@@ -49,18 +55,22 @@ function Profile() {
     await userStore.impersonateUser(email, stateCode);
   };
 
+  const copyright = <span>© {new Date().getFullYear()}</span>;
+
   return (
     <CoreStoreProvider>
       <PageTemplate mobileNavigation={<MobileNavigation title="Profile" />}>
         <div className="Profile">
           <div className="Profile__header-container">
             <div className="Profile__title-container">
-              <div className="Profile__title">{user.email}</div>
+              <div className="Profile__title">{user?.email}</div>
               <div className="Profile__subtitle">{userStore.stateName}</div>
             </div>
             {showImpersonationForm && (
               <ImpersonationForm
-                defaultStateCode={tenantStore.currentTenantId}
+                defaultStateCode={
+                  userStore.rootStore?.tenantStore.currentTenantId ?? ""
+                }
                 onSubmit={handleImpersonation}
                 isImpersonating={userStore.isImpersonating}
                 impersonationError={userStore.impersonationError}
@@ -81,7 +91,13 @@ function Profile() {
             </Button>
           </div>
           <div className="Profile__footer">
-            © {new Date().getFullYear()}
+            {showFeatureVariants ? (
+              <TooltipTrigger contents={<FeatureVariantsList />}>
+                {copyright}
+              </TooltipTrigger>
+            ) : (
+              { copyright }
+            )}
             <a
               href="https://www.recidiviz.org"
               target="_blank"

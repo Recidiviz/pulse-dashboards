@@ -926,12 +926,65 @@ describe("feature variants", () => {
   test("recidiviz user with feature variant defined", async () => {
     runInAction(() => {
       store.user = getMockUserObject({
-        featureVariants: { TEST: {} },
+        featureVariants: { EXTRA_FV: {} } as any,
         stateCode: "RECIDIVIZ",
       });
     });
 
-    expect(store.activeFeatureVariants).toEqual({ TEST: {} });
+    expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
+      Object {
+        "CompliantReportingAlmostEligible": Object {},
+        "EXTRA_FV": Object {},
+        "TEST": Object {},
+        "enableSnooze": Object {},
+        "formRevertButton": Object {},
+        "outliersClientDetail": Object {},
+        "outliersLeadershipPageAllDistricts": Object {},
+        "responsiveRevamp": Object {},
+        "supervisionUnrestrictedSearch": Object {},
+        "usCaEnableSMS": Object {},
+        "usIdCRC": Object {},
+        "usIdExpandedCRC": Object {},
+        "usMeFurloughRelease": Object {},
+        "usMeWorkRelease": Object {},
+        "usMoOverdueRHPilot": Object {},
+        "usNdWriteToDocstars": Object {},
+        "usTnAnnualReclassification": Object {},
+        "usTnExpiration": Object {},
+        "usTnExpirationSubmitToTomis": Object {},
+      }
+    `);
+  });
+
+  test("recidiviz user with feature variant disabled", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: { TEST: { activeDate: "9999" } },
+        stateCode: "RECIDIVIZ",
+      });
+    });
+
+    expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
+      Object {
+        "CompliantReportingAlmostEligible": Object {},
+        "enableSnooze": Object {},
+        "formRevertButton": Object {},
+        "outliersClientDetail": Object {},
+        "outliersLeadershipPageAllDistricts": Object {},
+        "responsiveRevamp": Object {},
+        "supervisionUnrestrictedSearch": Object {},
+        "usCaEnableSMS": Object {},
+        "usIdCRC": Object {},
+        "usIdExpandedCRC": Object {},
+        "usMeFurloughRelease": Object {},
+        "usMeWorkRelease": Object {},
+        "usMoOverdueRHPilot": Object {},
+        "usNdWriteToDocstars": Object {},
+        "usTnAnnualReclassification": Object {},
+        "usTnExpiration": Object {},
+        "usTnExpirationSubmitToTomis": Object {},
+      }
+    `);
   });
 
   test("no feature variants", async () => {

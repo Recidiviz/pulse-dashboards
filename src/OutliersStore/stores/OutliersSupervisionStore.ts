@@ -109,12 +109,12 @@ export class OutliersSupervisionStore {
   *populateUserInfo(): FlowMethod<OutliersAPI["userInfo"], void> {
     if (this.userInfo) return;
 
-    const { userAppMetadata, isRecidivizUser, stateCode } =
+    const { userAppMetadata, isRecidivizUser, isCSGUser } =
       this.outliersStore.rootStore.userStore;
 
     // Recidiviz and CSG users might not have pseudonymizedIds, but should have an experience
     // similar to leadership users.
-    if (isRecidivizUser || stateCode === "CSG") {
+    if (isRecidivizUser || isCSGUser) {
       this.userInfo = {
         entity: null,
         role: null,
