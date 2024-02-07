@@ -21,11 +21,17 @@ import { rawSupervisionOfficerSupervisorFixture } from "./SupervisionOfficerSupe
 export const rawSupervisorUserInfoFixture: RawUserInfo = {
   role: "supervision_officer_supervisor",
   entity: rawSupervisionOfficerSupervisorFixture[0],
+  metadata: {
+    hasSeenOnboarding: false,
+  },
 };
 
 export const rawLeadershipUserInfoFixture: RawUserInfo = {
   role: null,
   entity: null,
+  metadata: {
+    hasSeenOnboarding: false,
+  },
 };
 
 export const supervisorUserInfoFixture = userInfoSchema.parse(

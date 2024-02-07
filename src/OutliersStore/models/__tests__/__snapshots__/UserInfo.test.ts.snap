@@ -3,6 +3,9 @@
 exports[`leadership transformation 1`] = `
 Object {
   "entity": null,
+  "metadata": Object {
+    "hasSeenOnboarding": false,
+  },
   "role": null,
 }
 `;
@@ -21,6 +24,9 @@ Object {
     "hasOutliers": true,
     "pseudonymizedId": "hashed-mdavis123",
     "supervisionDistrict": "Region D1",
+  },
+  "metadata": Object {
+    "hasSeenOnboarding": false,
   },
   "role": "supervision_officer_supervisor",
 }

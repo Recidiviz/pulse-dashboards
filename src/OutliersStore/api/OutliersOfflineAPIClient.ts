@@ -28,9 +28,14 @@ import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetri
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
 import type { OutliersStore } from "../OutliersStore";
-import { OutliersAPI } from "./interface";
+import { OutliersAPI, PatchUserInfoProps } from "./interface";
 
 export class OutliersOfflineAPIClient implements OutliersAPI {
+  private pseudoIdToEditableUserInfo: Map<
+    string,
+    { metadata: PatchUserInfoProps }
+  > = new Map();
+
   // eslint-disable-next-line no-useless-constructor
   constructor(public readonly outliersStore: OutliersStore) {}
 
@@ -54,10 +59,30 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
       return {
         role: "supervision_officer_supervisor",
         entity: matchingSupervisor,
+        ...(this.pseudoIdToEditableUserInfo.get(userPseudoId) ?? {
+          metadata: {
+            hasSeenOnboarding: false,
+          },
+        }),
       };
     }
 
-    return leadershipUserInfoFixture;
+    return {
+      ...leadershipUserInfoFixture,
+      ...(this.pseudoIdToEditableUserInfo.get(userPseudoId) ?? {
+        metadata: {
+          hasSeenOnboarding: false,
+        },
+      }),
+    };
+  }
+
+  async patchUserInfo(
+    userPseudoId: string,
+    props: PatchUserInfoProps
+  ): Promise<UserInfo> {
+    this.pseudoIdToEditableUserInfo.set(userPseudoId, { metadata: props });
+    return this.userInfo(userPseudoId);
   }
 
   async metricBenchmarks(): Promise<MetricBenchmark[]> {

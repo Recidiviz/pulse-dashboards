@@ -96,7 +96,7 @@ export default class UserStore {
 
   user?: User;
 
-  getToken?: (options?: GetTokenSilentlyOptions) => void;
+  getToken?: (options?: GetTokenSilentlyOptions) => Promise<any> | undefined;
 
   logout?: (options?: LogoutOptions) => void;
 
@@ -140,7 +140,7 @@ export default class UserStore {
         this.isAuthorized = true;
         this.userIsLoading = false;
       });
-      this.getToken = () => "";
+      this.getToken = () => Promise.resolve("");
       this.logout = () => null;
       return;
     }

@@ -18,6 +18,8 @@
 import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
 
 import { RootStore } from "../../../RootStore";
+import { APIStore } from "../../../RootStore/APIStore";
+import UserStore from "../../../RootStore/UserStore";
 import { ADVERSE_METRIC_IDS } from "../../models/offlineFixtures/constants";
 import {
   metricBenchmarksFixture,
@@ -55,10 +57,13 @@ describe("OutliersAPIClient", () => {
       REACT_APP_DEPLOY_ENV: "dev",
       REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+    const mockUserStore = {
+      getToken: () => Promise.resolve(""),
+    } as UserStore;
     // @ts-ignore
     const mockRootStore = {
-      getTokenSilently: jest.fn(),
       currentTenantId: mockTenantId,
+      apiStore: new APIStore(mockUserStore),
     } as RootStore;
     client = new OutliersAPIClient(new OutliersStore(mockRootStore));
   });
@@ -107,6 +112,26 @@ describe("OutliersAPIClient", () => {
     expect(response).toEqual(leadershipUserInfoFixture);
   });
 
+  it("userInfo parses the data for supervisor", async () => {
+    // We can't test that the API actually modified anything here, but since it returns the updated
+    // result we can at least test that it correctly parses the updated result.
+    fetchMock.mockResponse(JSON.stringify(rawSupervisorUserInfoFixture));
+    const response = await client.patchUserInfo("fake-pseudo-id", {
+      hasSeenOnboarding: false,
+    });
+    expect(response).toEqual(supervisorUserInfoFixture);
+  });
+
+  it("patchUserInfo parses the data for leadership", async () => {
+    // We can't test that the API actually modified anything here, but since it returns the updated
+    // result we can at least test that it correctly parses the updated result.
+    fetchMock.mockResponse(JSON.stringify(rawLeadershipUserInfoFixture));
+    const response = await client.patchUserInfo("fake-pseudo-id", {
+      hasSeenOnboarding: false,
+    });
+    expect(response).toEqual(leadershipUserInfoFixture);
+  });
+
   it("supervisionOfficerSupervisors calls the correct endpoint", async () => {
     fetchMock.mockResponse(JSON.stringify({ supervisors: [] }));
     await client.supervisionOfficerSupervisors();
@@ -126,11 +151,10 @@ describe("OutliersAPIClient", () => {
   it("supervisionOfficerSupervisors throws error if tenantId is undefined", async () => {
     // @ts-ignore
     const mockRootStore = {
-      getTokenSilently: jest.fn(),
       currentTenantId: undefined,
     } as RootStore;
     const badClient = new OutliersAPIClient(new OutliersStore(mockRootStore));
-    expect(() => badClient.supervisionOfficerSupervisors()).toThrow(
+    expect(badClient.supervisionOfficerSupervisors()).rejects.toThrow(
       "Attempted to fetch data with undefined tenantId"
     );
   });

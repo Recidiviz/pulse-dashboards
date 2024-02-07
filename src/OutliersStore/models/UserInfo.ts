@@ -18,13 +18,36 @@ import { z } from "zod";
 
 import { supervisionOfficerSupervisorSchema } from "./SupervisionOfficerSupervisor";
 
-export const userInfoSchema = z.discriminatedUnion("role", [
-  z.object({
-    role: z.literal("supervision_officer_supervisor"),
-    entity: supervisionOfficerSupervisorSchema,
-  }),
-  z.object({ role: z.null(), entity: z.null() }),
-]);
+export const userInfoSchema = z
+  .discriminatedUnion("role", [
+    z.object({
+      role: z.literal("supervision_officer_supervisor"),
+      entity: supervisionOfficerSupervisorSchema,
+    }),
+    z.object({ role: z.null(), entity: z.null() }),
+  ])
+  .and(
+    // TODO(#4651): Remove union type once backend sends metadata
+    z.union([
+      z.object({
+        hasSeenOnboarding: z.boolean(),
+        metadata: z.undefined(),
+      }),
+      z.object({
+        hasSeenOnboarding: z.undefined(),
+        metadata: z.object({
+          hasSeenOnboarding: z.boolean(),
+        }),
+      }),
+    ])
+  )
+  .transform(({ hasSeenOnboarding, metadata, ...rest }) => ({
+    metadata: {
+      hasSeenOnboarding:
+        metadata?.hasSeenOnboarding ?? hasSeenOnboarding ?? false, // this "false" should never occur due to the definitions above, but typescript is only _so_ smart, so provide it as a fallback
+    },
+    ...rest,
+  }));
 
 export type UserInfo = z.infer<typeof userInfoSchema>;
 export type RawUserInfo = z.input<typeof userInfoSchema>;

@@ -24,9 +24,14 @@ import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetri
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
 
+export type PatchUserInfoProps = { hasSeenOnboarding: boolean };
 export interface OutliersAPI {
   init(): Promise<OutliersConfig>;
   userInfo(userPseudoId: string): Promise<UserInfo>;
+  patchUserInfo(
+    userPseudoId: string,
+    props: PatchUserInfoProps
+  ): Promise<UserInfo>;
   metricBenchmarks(): Promise<Array<MetricBenchmark>>;
   supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
   officersForSupervisor(

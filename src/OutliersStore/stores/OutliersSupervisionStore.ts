@@ -118,6 +118,11 @@ export class OutliersSupervisionStore {
       this.userInfo = {
         entity: null,
         role: null,
+        // Recidiviz/CSG users don't need to see the onboarding flow to learn how to use the tool,
+        // so hard code that they've already seen it.
+        metadata: {
+          hasSeenOnboarding: true,
+        },
       };
       return;
     }

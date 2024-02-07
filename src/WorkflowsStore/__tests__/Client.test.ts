@@ -22,7 +22,7 @@ import { configure, runInAction } from "mobx";
 import { ClientRecord, MilestonesMessage } from "../../FirestoreStore";
 import FirestoreStore from "../../FirestoreStore/FirestoreStore";
 import { RootStore } from "../../RootStore";
-import APIStore from "../../RootStore/APIStore";
+import { APIStore } from "../../RootStore/APIStore";
 import { Client } from "../Client";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { OTHER_KEY } from "../utils";

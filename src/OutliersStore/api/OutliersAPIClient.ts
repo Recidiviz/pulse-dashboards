@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import { formatDateToISO } from "../../utils";
 import { ClientEvent, clientEventSchema } from "../models/ClientEvent";
 import { ClientInfo, clientInfoSchema } from "../models/ClientInfo";
@@ -38,13 +37,21 @@ import {
 } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo, userInfoSchema } from "../models/UserInfo";
 import type { OutliersStore } from "../OutliersStore";
-import { OutliersAPI } from "./interface";
+import { OutliersAPI, PatchUserInfoProps } from "./interface";
 
 export class OutliersAPIClient implements OutliersAPI {
   // eslint-disable-next-line no-useless-constructor
   constructor(public readonly outliersStore: OutliersStore) {}
 
-  tenantId(): string {
+  private get apiStore() {
+    return this.outliersStore.rootStore.apiStore;
+  }
+
+  private get baseUrl() {
+    return `${process.env.REACT_APP_NEW_BACKEND_API_URL}/outliers/${this.tenantId}`;
+  }
+
+  get tenantId(): string {
     const { currentTenantId } = this.outliersStore.rootStore;
     if (!currentTenantId) {
       throw new Error(`Attempted to fetch data with undefined tenantId`);
@@ -52,115 +59,93 @@ export class OutliersAPIClient implements OutliersAPI {
     return currentTenantId;
   }
 
-  init() {
-    const endpoint = `outliers/${this.tenantId()}/configuration`.toLowerCase();
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      return outliersConfigSchema.parse(fetchedData.config);
-    });
+  async init() {
+    const endpoint = `${this.baseUrl}/configuration`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    return outliersConfigSchema.parse(fetchedData.config);
   }
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {
-    const endpoint = `outliers/${this.tenantId()}/user-info/${userPseudoId}`;
-    const fetchedData = await callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    );
+    const endpoint = `${this.baseUrl}/user-info/${userPseudoId}`;
+    const fetchedData = await this.apiStore.get(endpoint);
     return userInfoSchema.parse(fetchedData);
   }
 
-  metricBenchmarks(): Promise<MetricBenchmark[]> {
-    const endpoint = `outliers/${this.tenantId()}/benchmarks`.toLowerCase();
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      const benchmarkData = fetchedData.metrics as Array<unknown>;
-      return benchmarkData.map((d) => {
-        return metricBenchmarkSchema.parse(d);
-      });
+  async patchUserInfo(
+    userPseudoId: string,
+    props: PatchUserInfoProps
+  ): Promise<UserInfo> {
+    const endpoint = `${this.baseUrl}/user-info/${userPseudoId}`;
+    const fetchedData = await this.apiStore.patch(endpoint, props);
+    return userInfoSchema.parse(fetchedData);
+  }
+
+  async metricBenchmarks(): Promise<MetricBenchmark[]> {
+    const endpoint = `${this.baseUrl}/benchmarks`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const benchmarkData = fetchedData.metrics as Array<unknown>;
+    return benchmarkData.map((d) => {
+      return metricBenchmarkSchema.parse(d);
     });
   }
 
-  supervisionOfficerSupervisors(): Promise<SupervisionOfficerSupervisor[]> {
-    const endpoint = `outliers/${this.tenantId()}/supervisors`.toLowerCase();
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      const supervisorData = fetchedData.supervisors as Array<unknown>;
-      return supervisorData.map((b) =>
-        supervisionOfficerSupervisorSchema.parse(b)
-      );
-    });
+  async supervisionOfficerSupervisors(): Promise<
+    SupervisionOfficerSupervisor[]
+  > {
+    const endpoint = `${this.baseUrl}/supervisors`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const supervisorData = fetchedData.supervisors as Array<unknown>;
+    return supervisorData.map((b) =>
+      supervisionOfficerSupervisorSchema.parse(b)
+    );
   }
 
   async officersForSupervisor(
     supervisorPseudoId: string
   ): Promise<Array<SupervisionOfficer>> {
-    const endpoint = `outliers/${this.tenantId()}/supervisor/${supervisorPseudoId}/officers`;
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      const officerData = fetchedData.officers as Array<unknown>;
-      return officerData.map((b) => supervisionOfficerSchema.parse(b));
-    });
+    const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/officers`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const officerData = fetchedData.officers as Array<unknown>;
+    return officerData.map((b) => supervisionOfficerSchema.parse(b));
   }
 
-  supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer> {
-    const endpoint = `outliers/${this.tenantId()}/officer/${officerPseudoId}`;
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      const officerData = fetchedData.officer as unknown;
-      return supervisionOfficerSchema.parse(officerData);
-    });
+  async supervisionOfficer(
+    officerPseudoId: string
+  ): Promise<SupervisionOfficer> {
+    const endpoint = `${this.baseUrl}/officer/${officerPseudoId}`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const officerData = fetchedData.officer as unknown;
+    return supervisionOfficerSchema.parse(officerData);
   }
 
-  supervisionOfficerMetricEvents(
+  async supervisionOfficerMetricEvents(
     officerPseudoId: string,
     metricId: string
   ): Promise<SupervisionOfficerMetricEvent[]> {
-    const endpoint = `outliers/${this.tenantId()}/officer/${officerPseudoId}/events?metric_id=${metricId}`;
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      const eventsData = fetchedData.events as Array<unknown>;
-      return eventsData.map((b) =>
-        supervisionOfficerMetricEventSchema.parse(b)
-      );
-    });
+    const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/events?metric_id=${metricId}`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const eventsData = fetchedData.events as Array<unknown>;
+    return eventsData.map((b) => supervisionOfficerMetricEventSchema.parse(b));
   }
 
   async clientInfo(clientPseudoId: string): Promise<ClientInfo> {
-    const endpoint = `outliers/${this.tenantId()}/client/${clientPseudoId}`;
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      const clientData = fetchedData.client as unknown;
-      return clientInfoSchema.parse(clientData);
-    });
+    const endpoint = `${this.baseUrl}/client/${clientPseudoId}`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const clientData = fetchedData.client as unknown;
+    return clientInfoSchema.parse(clientData);
   }
 
   async clientEvents(
     clientPseudoId: string,
     endDate: Date
   ): Promise<Array<ClientEvent>> {
-    const endpoint = `outliers/${this.tenantId()}/client/${clientPseudoId}/events?period_end_date=${formatDateToISO(
+    const endpoint = `${
+      this.baseUrl
+    }/client/${clientPseudoId}/events?period_end_date=${formatDateToISO(
       endDate
     )}`;
-    return callNewMetricsApi(
-      endpoint,
-      this.outliersStore.rootStore.getTokenSilently
-    ).then((fetchedData) => {
-      const eventsData = fetchedData.events as Array<unknown>;
-      return eventsData.map((b) => clientEventSchema.parse(b));
-    });
+    const fetchedData = await this.apiStore.get(endpoint);
+    const eventsData = fetchedData.events as Array<unknown>;
+    return eventsData.map((b) => clientEventSchema.parse(b));
   }
 }

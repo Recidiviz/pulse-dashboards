@@ -20,7 +20,7 @@ import UserStore from "./UserStore";
 
 interface RequestProps {
   path: string;
-  method: "GET" | "POST" | "DELETE";
+  method: "GET" | "POST" | "PATCH" | "DELETE";
   body?: Record<string, unknown>;
   retrying?: boolean;
 }
@@ -33,7 +33,7 @@ type ExternalSMSMessageRequest = {
   userHash: string;
 };
 
-class API {
+export class APIStore {
   userStore: UserStore;
 
   constructor(userStore: UserStore) {
@@ -45,7 +45,7 @@ class API {
     method,
     body,
     retrying = false,
-  }: RequestProps): Promise<Body | Response | string> {
+  }: RequestProps): Promise<any> {
     if (!this.userStore.getToken) {
       return Promise.reject();
     }
@@ -63,8 +63,7 @@ class API {
       headers,
     });
 
-    // Clone response in order to read json here but still return Response obj (and use .json() there)
-    const json = await response.clone().json();
+    const json = await response.json();
 
     if (!response.ok) {
       throw new Error(
@@ -73,26 +72,22 @@ class API {
             Errors: ${JSON.stringify(json.errors ?? json)}`
       );
     }
-    return response;
+    return json;
   }
 
-  async get(
-    path: string,
-    body: Record<string, string> = {}
-  ): Promise<Body | Response | string> {
+  async get(path: string, body: Record<string, string> = {}): Promise<any> {
     return this.request({ path, body, method: "GET" });
   }
 
-  async post(
-    path: string,
-    body: Record<string, unknown> = {}
-  ): Promise<Body | Response | string> {
+  async post(path: string, body: Record<string, unknown> = {}): Promise<any> {
     return this.request({ path, body, method: "POST" });
   }
 
-  async postExternalSMSMessage(
-    body: ExternalSMSMessageRequest
-  ): Promise<Body | Response | string> {
+  async patch(path: string, body: Record<string, unknown> = {}): Promise<any> {
+    return this.request({ path, body, method: "PATCH" });
+  }
+
+  async postExternalSMSMessage(body: ExternalSMSMessageRequest): Promise<any> {
     const stateCode = this.userStore.isRecidivizUser
       ? this.userStore.rootStore?.currentTenantId
       : this.userStore.stateCode;
@@ -102,5 +97,3 @@ class API {
     );
   }
 }
-
-export default API;

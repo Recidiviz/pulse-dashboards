@@ -26,7 +26,7 @@ import FirestoreStore from "../FirestoreStore";
 import { OutliersStore } from "../OutliersStore/OutliersStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import AnalyticsStore from "./AnalyticsStore";
-import APIStore from "./APIStore";
+import { APIStore } from "./APIStore";
 import PageStore from "./PageStore";
 import TenantStore from "./TenantStore";
 import { TenantId } from "./types";

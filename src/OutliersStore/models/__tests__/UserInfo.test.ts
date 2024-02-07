@@ -19,7 +19,7 @@ import {
   rawLeadershipUserInfoFixture,
   rawSupervisorUserInfoFixture,
 } from "../offlineFixtures/UserInfoFixture";
-import { userInfoSchema } from "../UserInfo";
+import { RawUserInfo, userInfoSchema } from "../UserInfo";
 
 test("supervisor transformation", () => {
   expect(userInfoSchema.parse(rawSupervisorUserInfoFixture)).toMatchSnapshot();
@@ -27,4 +27,39 @@ test("supervisor transformation", () => {
 
 test("leadership transformation", () => {
   expect(userInfoSchema.parse(rawLeadershipUserInfoFixture)).toMatchSnapshot();
+});
+
+test("null entity with supervisor role fails", () => {
+  expect(() => {
+    userInfoSchema.parse({
+      ...rawSupervisorUserInfoFixture,
+      entity: null,
+    });
+  }).toThrow();
+});
+
+test("present entity with null role fails", () => {
+  expect(() => {
+    userInfoSchema.parse({
+      ...rawSupervisorUserInfoFixture,
+      role: null,
+    });
+  }).toThrow();
+});
+
+test("hasSeenOnboarding is moved into metadata", () => {
+  const testUserInfo: RawUserInfo = {
+    entity: null,
+    role: null,
+    hasSeenOnboarding: true,
+  };
+  expect(userInfoSchema.parse(testUserInfo)).toMatchInlineSnapshot(`
+    Object {
+      "entity": null,
+      "metadata": Object {
+        "hasSeenOnboarding": true,
+      },
+      "role": null,
+    }
+  `);
 });
