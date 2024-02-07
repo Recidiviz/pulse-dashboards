@@ -65,6 +65,17 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       speNoteDue: dateStringSchema.nullable(),
     }),
     usTnNotServingIneligibleCrOffense: z.null().transform((_val) => ({})),
+    usTnPassedDrugScreenCheck: z.object({
+      hasAtLeast1NegativeDrugTestPastYear: z.array(
+        z.object({
+          negativeScreenDate: dateStringSchema,
+          negativeScreenResult: z.string(),
+        })
+      ),
+      // omitting hasAtLeast2NegativeDrugTestsPastYear because if they have at least 2, they have at least 1
+      // omitting latestDrugTestIsNegative because it is not used in any copy
+      // omitting latestAlcoholDrugNeedLevel because it is not used in any copy
+    }),
   }),
   ineligibleCriteria: z.object({
     usTnOnEligibleLevelForSufficientTime: z
@@ -121,22 +132,15 @@ export type CompliantReportingReferralRecordFull = z.infer<
 > &
   CompliantReportingReferralRecord;
 
-export type AlmostEligibleCriteria = {
-  passedDrugScreenNeeded?: boolean;
-};
-
 export type AlmostEligibleCriteriaRaw = {
   currentLevelEligibilityDate?: string;
-  passedDrugScreenNeeded?: boolean;
   paymentNeeded?: boolean;
   recentRejectionCodes?: string[];
   seriousSanctionsEligibilityDate?: string;
 };
 
 export type CompliantReportingReferralRecord = {
-  almostEligibleCriteria?: AlmostEligibleCriteria;
   eligibilityCategory: string;
-  drugScreensPastYear: { result: string; date: Date }[];
   judicialDistrict: string;
   lifetimeOffensesExpired: string[];
   pastOffenses: string[];
@@ -266,10 +270,6 @@ export interface CompliantReportingDraftData {
 }
 
 type RawCompliantReportingReferralRecord = DocumentData & {
-  drugScreensPastYear: {
-    result: string;
-    date: Timestamp | string;
-  }[];
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
   almostEligibleCriteria?: AlmostEligibleCriteriaRaw;
 };
@@ -294,7 +294,6 @@ export const transformCompliantReportingReferral: TransformFunction<
 
   const {
     currentOffenses,
-    drugScreensPastYear,
     eligibilityCategory,
     judicialDistrict,
     lifetimeOffensesExpired,
@@ -312,6 +311,7 @@ export const transformCompliantReportingReferral: TransformFunction<
   // Make sure legacy fields aren't getting copied into the new record- we want to rely on their
   // new counterparts instead.
   const {
+    drugScreensPastYear,
     sentenceStartDate,
     finesFeesEligible,
     supervisionFeeExemptionType,
@@ -362,6 +362,11 @@ export const transformCompliantReportingReferral: TransformFunction<
       oldStyleSpeNote = undefined;
       break;
   }
+  const typeSafeDrugScreensPastYear = drugScreensPastYear as {
+    result: string;
+    date: Timestamp | string;
+  }[];
+
   const newMetadata: z.input<typeof compliantReportingSchema.shape.metadata> = {
     mostRecentArrestCheck: {
       contactDate:
@@ -379,6 +384,14 @@ export const transformCompliantReportingReferral: TransformFunction<
         speNoteDue: nextSpecialConditionsCheck ?? null,
       },
     usTnNotServingIneligibleCrOffense: null, // This will always be null for eligible clients, and ineligible offenses aren't an almost eligible criteria
+    usTnPassedDrugScreenCheck: eligibleCriteria.usTnPassedDrugScreenCheck ?? {
+      hasAtLeast1NegativeDrugTestPastYear: typeSafeDrugScreensPastYear.map(
+        (ds) => ({
+          negativeScreenDate: ds.date,
+          negativeScreenResult: ds.result,
+        })
+      ),
+    },
   };
   const newIneligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.ineligibleCriteria
@@ -505,10 +518,6 @@ export const transformCompliantReportingReferral: TransformFunction<
   const transformedRecord: CompliantReportingReferralRecordFull = {
     ...zodRecord,
     eligibilityCategory,
-    drugScreensPastYear: drugScreensPastYear.map(({ result, date }) => ({
-      result,
-      date: fieldToDate(date),
-    })),
     judicialDistrict: judicialDistrict ?? "Unknown",
     lifetimeOffensesExpired,
     pastOffenses,
@@ -520,14 +529,6 @@ export const transformCompliantReportingReferral: TransformFunction<
       })) ?? [],
     offenseTypeEligibility,
   };
-
-  if (almostEligibleCriteria) {
-    const { passedDrugScreenNeeded } = almostEligibleCriteria;
-
-    transformedRecord.almostEligibleCriteria = {
-      passedDrugScreenNeeded,
-    };
-  }
 
   return transformedRecord;
 };

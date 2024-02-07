@@ -32,7 +32,6 @@ import {
 } from "../../testUtils";
 import {
   compliantReportingAlmostEligibleClientRecord,
-  compliantReportingAlmostEligibleCriteria,
   compliantReportingAlmostEligibleReferralRecord,
   compliantReportingEligibleClientRecord,
   compliantReportingEligibleWithDiscretionReferralRecord,
@@ -132,14 +131,6 @@ describe.each([
     /make a payment three months in a row/,
   ],
   [
-    "passedDrugScreenNeeded",
-    1,
-    "Needs one more passed drug screen",
-    /drug screen/,
-    /drug screens/,
-    /pass one drug screen/,
-  ],
-  [
     "usTnNoRecentCompliantReportingRejections",
     2,
     "Double check TEST1 contact note",
@@ -162,7 +153,7 @@ describe.each([
     /on medium supervision for /,
     /stay on your current supervision level/,
   ],
-] as [criterionKey: keyof typeof compliantReportingAlmostEligibleCriteria | keyof CompliantReportingReferralRecordFull["ineligibleCriteria"], expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
+] as [criterionKey: keyof CompliantReportingReferralRecordFull["ineligibleCriteria"], expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
   "almost eligible but for %s",
   (
     criterionKey,
@@ -180,21 +171,13 @@ describe.each([
       const testRecord = cloneDeep(
         compliantReportingAlmostEligibleReferralRecord
       );
-      if (criterionKey in compliantReportingAlmostEligibleCriteria) {
-        testRecord.almostEligibleCriteria = {
-          [criterionKey]:
-            compliantReportingAlmostEligibleCriteria[
-              criterionKey as keyof typeof compliantReportingAlmostEligibleCriteria
-            ],
-        };
-      } else {
-        testRecord.ineligibleCriteria = {
-          [criterionKey]:
-            compliantReportingIneligibleCriteria[
-              criterionKey as keyof typeof compliantReportingIneligibleCriteria
-            ],
-        };
-      }
+
+      testRecord.ineligibleCriteria = {
+        [criterionKey]:
+          compliantReportingIneligibleCriteria[
+            criterionKey as keyof typeof compliantReportingIneligibleCriteria
+          ],
+      };
 
       createTestUnit(compliantReportingAlmostEligibleClientRecord);
 

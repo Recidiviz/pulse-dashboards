@@ -10,7 +10,6 @@ Object {
     "FAILURE TO APPEAR (FELONY)",
   ],
   "dateToday": "2022-03-25",
-  "drugScreensPastYear": Array [],
   "eligibilityCategory": "c3",
   "eligibleCriteria": Object {
     "usTnFinesFeesEligible": Object {
@@ -30,6 +29,18 @@ Object {
       "eligibleDate": 2020-08-01T00:00:00.000Z,
       "eligibleLevel": "MINIMUM",
       "startDateOnEligibleLevel": 2019-08-01T00:00:00.000Z,
+    },
+    "usTnPassedDrugScreenCheck": Object {
+      "hasAtLeast1NegativeDrugTestPastYear": Array [
+        Object {
+          "negativeScreenDate": 2023-02-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+        Object {
+          "negativeScreenDate": 2023-01-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+      ],
     },
     "usTnSpecialConditionsAreCurrent": Object {
       "speNoteDue": null,
@@ -95,7 +106,6 @@ Object {
     "FAILURE TO APPEAR (FELONY)",
   ],
   "dateToday": "2022-03-25",
-  "drugScreensPastYear": Array [],
   "eligibilityCategory": "c3",
   "eligibleCriteria": Object {
     "usTnFinesFeesEligible": Object {
@@ -121,6 +131,9 @@ Object {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
       "eligibleLevel": "UNKNOWN",
       "startDateOnEligibleLevel": 2019-09-01T00:00:00.000Z,
+    },
+    "usTnPassedDrugScreenCheck": Object {
+      "hasAtLeast1NegativeDrugTestPastYear": Array [],
     },
     "usTnSpecialConditionsAreCurrent": Object {
       "speNoteDue": 2022-09-10T00:00:00.000Z,

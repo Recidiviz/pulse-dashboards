@@ -290,6 +290,18 @@ export const usTnCompliantReportingReferrals =
           speNoteDue: "2023-10-01",
         },
         usTnNotServingIneligibleCrOffense: null,
+        usTnPassedDrugScreenCheck: {
+          hasAtLeast1NegativeDrugTestPastYear: [
+            {
+              negativeScreenDate: "2023-10-28",
+              negativeScreenResult: "DRUN",
+            },
+            {
+              negativeScreenDate: "2023-09-28",
+              negativeScreenResult: "DRUN",
+            },
+          ],
+        },
       },
       ineligibleCriteria: {},
       formInformation: {
@@ -364,6 +376,9 @@ export const usTnCompliantReportingReferrals =
           speNoteDue: null,
         },
         usTnNotServingIneligibleCrOffense: null,
+        usTnPassedDrugScreenCheck: {
+          hasAtLeast1NegativeDrugTestPastYear: [],
+        },
       },
       ineligibleCriteria: {
         usTnFinesFeesEligible: {

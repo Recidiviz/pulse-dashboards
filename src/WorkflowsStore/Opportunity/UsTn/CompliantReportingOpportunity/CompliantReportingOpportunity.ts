@@ -15,17 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import assertNever from "assert-never";
 import { add, differenceInCalendarDays, isEqual } from "date-fns";
-import { mapValues } from "lodash";
-import { makeObservable, toJS } from "mobx";
+import { makeObservable } from "mobx";
 
 import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
-import {
-  FeatureGateError,
-  OpportunityValidationError,
-} from "../../../../errors";
+import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../../../utils";
 import { Client } from "../../../Client";
@@ -40,23 +35,19 @@ import {
 } from "../../types";
 import { formatNoteDate } from "../../utils/caseNotesUtils";
 import {
-  AlmostEligibleCriteria,
   CompliantReportingDraftData,
   CompliantReportingReferralRecordFull,
   transformCompliantReportingReferral,
 } from "./CompliantReportingReferralRecord";
 
 // ranked roughly by actionability
-export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (
-  | keyof AlmostEligibleCriteria
-  | keyof CompliantReportingReferralRecordFull["ineligibleCriteria"]
-)[] = [
-  "usTnFinesFeesEligible",
-  "passedDrugScreenNeeded",
-  "usTnNoRecentCompliantReportingRejections",
-  "usTnNoHighSanctionsInPastYear",
-  "usTnOnEligibleLevelForSufficientTime",
-];
+export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof CompliantReportingReferralRecordFull["ineligibleCriteria"])[] =
+  [
+    "usTnFinesFeesEligible",
+    "usTnNoRecentCompliantReportingRejections",
+    "usTnNoHighSanctionsInPastYear",
+    "usTnOnEligibleLevelForSufficientTime",
+  ];
 
 /**
  * Clients with values other than these should not appear as eligible in the UI.
@@ -138,40 +129,12 @@ const getRecordValidator =
     if (!record) {
       throw new OpportunityValidationError("No opportunity record found");
     }
-    const {
-      eligibilityCategory,
-      remainingCriteriaNeeded,
-      almostEligibleCriteria,
-    } = record;
+    const { eligibilityCategory } = record;
 
     // only the explicitly allowed categories can be shown to users.
     // if any others are added they must be suppressed until explicitly enabled.
     if (!COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(eligibilityCategory)) {
       throw new OpportunityValidationError("Unsupported eligibility category");
-    }
-
-    if (remainingCriteriaNeeded) {
-      const definedAlmostEligibleKeys = almostEligibleCriteria
-        ? (
-            Object.keys(
-              almostEligibleCriteria
-            ) as (keyof AlmostEligibleCriteria)[]
-          ).filter((key) => almostEligibleCriteria[key] !== undefined)
-        : [];
-
-      // almost eligible is currently defined as missing exactly one criterion
-      if (remainingCriteriaNeeded > 1) {
-        throw new OpportunityValidationError(`Too many remaining criteria`);
-      }
-
-      // drug screen criteria remain behind a feature gate while initial backstop analysis is ongoing
-      if (
-        definedAlmostEligibleKeys.includes("passedDrugScreenNeeded") &&
-        !client.rootStore.workflowsStore.featureVariants
-          .CompliantReportingAlmostEligible
-      ) {
-        throw new FeatureGateError("Missing drug screen feature disabled");
-      }
     }
   };
 
@@ -238,28 +201,20 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       getRecordValidator(client)
     );
 
-    makeObservable<CompliantReportingOpportunity, "requirementAlmostMetMap">(
-      this,
-      {
-        almostEligible: true,
-        almostEligibleStatusMessage: true,
-        requirementsMet: true,
-        requirementsAlmostMet: true,
-        requirementAlmostMetMap: true,
-        almostEligibleRecommendedNote: true,
-        validAlmostEligibleKeys: true,
-      }
-    );
+    makeObservable<CompliantReportingOpportunity>(this, {
+      almostEligible: true,
+      almostEligibleStatusMessage: true,
+      requirementsMet: true,
+      requirementsAlmostMet: true,
+      almostEligibleRecommendedNote: true,
+    });
 
     this.denialReasonsMap = DENIAL_REASONS_MAP;
     this.form = new CompliantReportingForm(this, client.rootStore);
   }
 
   get almostEligible(): boolean {
-    return (
-      this.validAlmostEligibleKeys.length > 0 ||
-      Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0
-    );
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get reviewStatus(): OpportunityStatus {
@@ -287,13 +242,9 @@ export class CompliantReportingOpportunity extends OpportunityBase<
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.record) return undefined;
 
-    const { validAlmostEligibleKeys, almostEligible } = this;
+    const { almostEligible } = this;
 
     if (!almostEligible) return;
-
-    if (validAlmostEligibleKeys.length > 1) {
-      return `Needs ${validAlmostEligibleKeys.length} updates`;
-    }
 
     return this.requirementsAlmostMet[0]?.text ?? "Status unknown";
   }
@@ -302,7 +253,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { supervisionLevel, supervisionLevelStart } = this.person;
     const {
-      drugScreensPastYear,
       eligibilityCategory,
       lifetimeOffensesExpired,
       pastOffenses,
@@ -312,7 +262,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       metadata,
       formInformation: { currentOffenses },
     } = this.record;
-    const { requirementAlmostMetMap } = this;
 
     const requirements: OpportunityRequirement[] = [];
 
@@ -382,18 +331,22 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     }
 
     // Required drug screen history
-    if (!requirementAlmostMetMap.passedDrugScreenNeeded) {
-      requirements.push({
-        text: `Passed drug screens in last 12 months: ${
-          drugScreensPastYear
-            .map(
-              ({ result, date }) => `${result} on ${formatWorkflowsDate(date)}`
-            )
-            .join("; ") || "None"
-        }`,
-        tooltip: CRITERIA.drug.tooltip,
-      });
-    }
+    const drugScreensPastYear =
+      eligibleCriteria.usTnPassedDrugScreenCheck
+        .hasAtLeast1NegativeDrugTestPastYear;
+    requirements.push({
+      text: `Passed drug screens in last 12 months: ${
+        drugScreensPastYear
+          .map(
+            ({ negativeScreenDate, negativeScreenResult }) =>
+              `${negativeScreenResult} on ${formatWorkflowsDate(
+                negativeScreenDate
+              )}`
+          )
+          .join("; ") || "None"
+      }`,
+      tooltip: CRITERIA.drug.tooltip,
+    });
 
     // required special conditions status
 
@@ -490,22 +443,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       requirements.push({ text, tooltip: CRITERIA.payments.tooltip });
     }
 
-    const configMap: Record<
-      keyof AlmostEligibleCriteria,
-      Partial<OpportunityRequirement>
-    > = {
-      passedDrugScreenNeeded: CRITERIA.drug,
-    };
-
-    const { validAlmostEligibleKeys } = this;
-    validAlmostEligibleKeys.forEach((criterionKey) => {
-      const text = this.requirementAlmostMetMap[criterionKey];
-      // in practice this should always be true so this is mostly type safety
-      if (text) {
-        requirements.push({ text, tooltip: configMap[criterionKey].tooltip });
-      }
-    });
-
     if (ineligibleCriteria?.usTnOnEligibleLevelForSufficientTime) {
       requirements.push({
         text: currentLevelAlmostEligibleText(
@@ -538,35 +475,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     return requirements;
   }
 
-  /**
-   * Maps each possible almost-eligible criterion to a display value,
-   * where valid data exists for this client.
-   */
-  private get requirementAlmostMetMap(): Partial<
-    Record<keyof AlmostEligibleCriteria, string | undefined>
-  > {
-    if (!this.record?.almostEligibleCriteria) {
-      return {};
-    }
-
-    const { passedDrugScreenNeeded } =
-      this.record?.almostEligibleCriteria ?? {};
-
-    return mapValues(
-      toJS(this.record?.almostEligibleCriteria),
-      (_value: unknown, key: keyof AlmostEligibleCriteria) => {
-        switch (key) {
-          case "passedDrugScreenNeeded":
-            return passedDrugScreenNeeded
-              ? "Needs one more passed drug screen"
-              : undefined;
-          default:
-            return assertNever(key);
-        }
-      }
-    );
-  }
-
   get almostEligibleRecommendedNote():
     | { title: string; text: string }
     | undefined {
@@ -575,12 +483,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     const { ineligibleCriteria } = this.record;
 
     // note functionality only supports a single missing criterion
-    if (
-      this.validAlmostEligibleKeys.length +
-        Object.keys(ineligibleCriteria).length !==
-      1
-    )
-      return undefined;
+    if (Object.keys(ineligibleCriteria).length !== 1) return undefined;
 
     let criterionSpecificCopy: string | undefined;
     let title: string | undefined;
@@ -609,19 +512,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
         eligibleDate
       )}`;
     } else {
-      const missingCriterionKey = this.validAlmostEligibleKeys[0];
-
-      title = this.requirementAlmostMetMap[missingCriterionKey];
-      // not expected to happen in practice but Typescript doesn't know that
-      if (!title) return undefined;
-
-      switch (missingCriterionKey) {
-        case "passedDrugScreenNeeded":
-          criterionSpecificCopy = "pass one drug screen";
-          break;
-        default:
-          break;
-      }
+      return undefined;
     }
 
     if (!criterionSpecificCopy) return undefined;
@@ -636,13 +527,5 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       );
 
     return { title, text };
-  }
-
-  get validAlmostEligibleKeys(): (keyof AlmostEligibleCriteria)[] {
-    return (
-      Object.keys(
-        this.requirementAlmostMetMap
-      ) as (keyof AlmostEligibleCriteria)[]
-    ).filter((key) => this.requirementAlmostMetMap[key] !== undefined);
   }
 }

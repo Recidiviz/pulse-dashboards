@@ -24,10 +24,7 @@ import {
 import { dateToTimestamp } from "../../../utils";
 import { UsTnCustodyLevelDowngradeReferralRecord } from "../..";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
-import {
-  CompliantReportingReferralRecord,
-  CompliantReportingReferralRecordFull,
-} from "../CompliantReportingOpportunity";
+import { CompliantReportingReferralRecordFull } from "../CompliantReportingOpportunity";
 import { UsTnAnnualReclassificationReviewReferralRecord } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationOpportunity";
 
@@ -114,7 +111,6 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
     judicialDistrict: "A",
-    drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     eligibleCriteria: {
@@ -139,6 +135,14 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
         speNoteDue: null,
       },
       usTnNotServingIneligibleCrOffense: {},
+      usTnPassedDrugScreenCheck: {
+        hasAtLeast1NegativeDrugTestPastYear: [
+          {
+            negativeScreenDate: parseISO("2022-01-04"),
+            negativeScreenResult: "DRUN",
+          },
+        ],
+      },
     },
     ineligibleCriteria: {},
     formInformation: {
@@ -160,7 +164,6 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
 export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
     // Required fields
-    drugScreensPastYear: [{ result: "DRUN", date: parseISO("2022-01-04") }],
     lifetimeOffensesExpired: [],
 
     // Eligible with discretion: Prior offenses and lifetime offenses expired less than 10 years ago
@@ -196,6 +199,14 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
         speNoteDue: null,
       },
       usTnNotServingIneligibleCrOffense: {},
+      usTnPassedDrugScreenCheck: {
+        hasAtLeast1NegativeDrugTestPastYear: [
+          {
+            negativeScreenDate: parseISO("2022-01-04"),
+            negativeScreenResult: "DRUN",
+          },
+        ],
+      },
     },
     ineligibleCriteria: {},
     formInformation: {
@@ -214,12 +225,6 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       },
     },
   };
-
-export const compliantReportingAlmostEligibleCriteria: Required<
-  NonNullable<CompliantReportingReferralRecord["almostEligibleCriteria"]>
-> = {
-  passedDrugScreenNeeded: true,
-};
 
 export const compliantReportingIneligibleCriteria: Required<
   NonNullable<CompliantReportingReferralRecordFull["ineligibleCriteria"]>
@@ -251,7 +256,6 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
     judicialDistrict: "A",
-    drugScreensPastYear: [],
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
 
@@ -261,6 +265,14 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
         speNoteDue: null,
       },
       usTnNotServingIneligibleCrOffense: {},
+      usTnPassedDrugScreenCheck: {
+        hasAtLeast1NegativeDrugTestPastYear: [
+          {
+            negativeScreenDate: parseISO("2022-01-04"),
+            negativeScreenResult: "DRUN",
+          },
+        ],
+      },
     },
     ineligibleCriteria: {},
     formInformation: {

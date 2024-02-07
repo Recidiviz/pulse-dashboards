@@ -148,19 +148,16 @@ const eligibleCriteria = {
     startDateOnEligibleLevel: "2019-08-01",
   },
   usTnPassedDrugScreenCheck: {
-    hasAtLeast1NegativeDrugTestPastYear: {
-      latestNegativeScreenDates: ["2023-02-28"],
-      latestNegativeScreenResults: ["DRUN"],
-    },
-    hasAtLeast2NegativeDrugTestsPastYear: {
-      latestNegativeScreenDates: ["2023-02-28"],
-      latestNegativeScreenResults: ["DRUN"],
-    },
-    latestAlcoholDrugNeedLevel: "LOW",
-    latestDrugTestIsNegative: {
-      latestDrugScreenDate: "2023-02-28",
-      latestDrugScreenResult: "DRUN",
-    },
+    hasAtLeast1NegativeDrugTestPastYear: [
+      {
+        negativeScreenDate: "2023-02-28",
+        negativeScreenResult: "DRUN",
+      },
+      {
+        negativeScreenDate: "2023-01-28",
+        negativeScreenResult: "DRUN",
+      },
+    ],
   },
   usTnSpecialConditionsAreCurrent: { speNoteDue: null },
   usTnFinesFeesEligible: {
