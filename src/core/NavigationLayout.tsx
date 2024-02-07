@@ -81,7 +81,7 @@ const NavMenu = styled.div<{ alignBottom?: boolean }>`
   ${({ alignBottom }) =>
     alignBottom &&
     `width: 100%;
-      justify-content: space-between;`}
+    gap: ${rem(spacing.md)};`}
 `;
 
 const NavLinks = styled.ul`
@@ -178,6 +178,12 @@ const DrawerProfileMenu = styled.div`
       }
     }
   }
+`;
+
+const ProfileButtonMobile = styled(Button).attrs({ kind: "link" })<{
+  order?: number;
+}>`
+  ${({ order }) => order && `order: ${order};`}
 `;
 
 const MainLogoNavLink = styled(Link)`
@@ -429,9 +435,12 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
             <NavLinks>{children}</NavLinks>
             {isMobile ? (
               <>
-                <Button onClick={() => setDrawerIsOpen(true)} kind="link">
+                <ProfileButtonMobile
+                  order={isMobile && -1}
+                  onClick={() => setDrawerIsOpen(true)}
+                >
                   <UserAvatar />
-                </Button>
+                </ProfileButtonMobile>
                 <Drawer
                   bodyStyles={DrawerBodyStyles}
                   overlayStyles={DrawerOverlayStyles}
