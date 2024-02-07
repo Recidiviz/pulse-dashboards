@@ -39,9 +39,9 @@ import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { Heading, SubHeading } from "../sharedComponents";
 import WorkflowsResults from "../WorkflowsResults";
 import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList";
+import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import { OpportunityPersonListWithSectionTitles } from "./OpportunityPersonListWithSectionTitles";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
-import { PersonListItem } from "./PersonListItem";
 
 export const PersonList = styled.ul`
   column-gap: ${rem(spacing.md)};
@@ -155,15 +155,6 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     <WorkflowsResults headerText={label} callToActionText={initialHeader} />
   );
 
-  const renderOpportunitiesList = oppsFromOpportunitiesByTab?.[activeTab]?.map(
-    (opportunity) => (
-      <PersonListItem
-        key={opportunity.person.recordId}
-        opportunity={opportunity}
-      />
-    )
-  );
-
   const hydrated = !oppsFromOpportunitiesByOppType.length ? (
     empty
   ) : (
@@ -187,12 +178,9 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
           activeTab={activeTab}
           onClick={handleTabClick}
         >
-          <PersonList
-            key={`PersonList_${activeTab}`}
-            className={`PersonList_${activeTab} PersonList`}
-          >
-            {renderOpportunitiesList}
-          </PersonList>
+          <CaseloadOpportunityGrid
+            items={oppsFromOpportunitiesByTab?.[activeTab]}
+          />
         </WorkflowsTabbedPersonList>
       ) : (
         <OpportunityPersonListWithSectionTitles />

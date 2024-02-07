@@ -19,8 +19,8 @@ import { observer } from "mobx-react-lite";
 import { useRootStore } from "../../components/StoreProvider";
 import { useOrderedActiveTab } from "../../hooks/useOrderedActiveTab";
 import { SectionLabelText } from "../sharedComponents";
+import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import { PersonList } from "./OpportunityPersonList";
-import { PersonListItem } from "./PersonListItem";
 
 export const OpportunityPersonListWithSectionTitles = observer(
   function OpportunityPersonListWithSectionTitles() {
@@ -51,12 +51,7 @@ export const OpportunityPersonListWithSectionTitles = observer(
                   key={`PersonList_${sectionTitle}`}
                   className={`PersonList_${sectionTitle} PersonList`}
                 >
-                  {oppsByTabMap[sectionTitle]?.map((opportunity) => (
-                    <PersonListItem
-                      key={opportunity.person.recordId}
-                      opportunity={opportunity}
-                    />
-                  ))}
+                  <CaseloadOpportunityGrid items={oppsByTabMap[sectionTitle]} />
                 </PersonList>
               </div>
             )

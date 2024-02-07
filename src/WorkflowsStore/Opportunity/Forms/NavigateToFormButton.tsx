@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Button, ButtonProps } from "@recidiviz/design-system";
+import { Button, ButtonProps, spacing } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
 import { Link, LinkProps } from "react-router-dom";
 import styled from "styled-components/macro";
@@ -35,6 +35,7 @@ const NavigateToFormButtonStyle = styled(Button)`
   max-height: 32px;
   min-height: 32px;
   max-width: ${rem(175)};
+  padding: ${rem(spacing.md)} 0;
 
   &:hover,
   &:focus {
