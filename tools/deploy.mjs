@@ -79,6 +79,7 @@ if (deployEnv === "preview") {
 const owner = "Recidiviz";
 const repo = "pulse-dashboards";
 const currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
+const currentRevisionFull = (await $`git rev-parse HEAD`).stdout.trim();
 const octokit = new Octokit({
   auth: deployScriptPat.payload.data.toString(),
 });
@@ -101,7 +102,7 @@ if (deployEnv === "production") {
     per_page: 1, // Limit to 1 run to get the latest
     page: 1, // Page number, starting at 1
     event: "push", // Filter by event type (e.g., 'push')
-    sha: currentRevision, // Filter by current revision
+    head_sha: currentRevisionFull, // Filter by current revision
   });
 
   // Check if any workflow runs were found
