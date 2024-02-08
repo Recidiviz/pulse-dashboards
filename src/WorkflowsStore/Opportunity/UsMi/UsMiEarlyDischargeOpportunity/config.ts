@@ -36,4 +36,5 @@ export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOppor
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    eligibilityDateText: "Earliest Eligibility Date for Early Discharge",
   };

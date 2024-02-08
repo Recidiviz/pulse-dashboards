@@ -36,6 +36,9 @@ test("transform record", () => {
       usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
     },
     ineligibleCriteria: {},
+    metadata: {
+      eligibleDate: "2022-08-12",
+    },
   };
 
   expect(

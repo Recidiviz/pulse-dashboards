@@ -38,4 +38,5 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
         "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
     }),
     firestoreCollection: "US_MI-classificationReviewReferrals",
+    eligibilityDateText: "Next Classification Due Date",
   };

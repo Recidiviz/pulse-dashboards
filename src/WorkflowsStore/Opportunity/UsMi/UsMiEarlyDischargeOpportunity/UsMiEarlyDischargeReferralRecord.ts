@@ -19,7 +19,11 @@
 
 import { z } from "zod";
 
-import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import {
+  dateStringSchema,
+  eligibleDateSchema,
+  opportunitySchemaBase,
+} from "../../schemaHelpers";
 
 const objectOrNull = z.object({}).nullable();
 
@@ -49,19 +53,26 @@ const probationCriteria = z.object({
 
 const interstateFlag = z.enum(["IC-OUT", "IC-IN"]).optional();
 
+const sharedMetadata = z.object({
+  interstateFlag,
+  eligibleDate: dateStringSchema,
+});
+
 const paroleRecord = opportunitySchemaBase.extend({
-  metadata: z.object({
-    interstateFlag,
-    supervisionType: z.literal("Parole"),
-  }),
+  metadata: sharedMetadata.merge(
+    z.object({
+      supervisionType: z.literal("Parole"),
+    })
+  ),
   eligibleCriteria: sharedCriteria.merge(paroleDualCriteria),
 });
 
 const probationRecord = opportunitySchemaBase.extend({
-  metadata: z.object({
-    interstateFlag,
-    supervisionType: z.literal("Probation"),
-  }),
+  metadata: sharedMetadata.merge(
+    z.object({
+      supervisionType: z.literal("Probation"),
+    })
+  ),
   eligibleCriteria: sharedCriteria.merge(probationCriteria),
 });
 

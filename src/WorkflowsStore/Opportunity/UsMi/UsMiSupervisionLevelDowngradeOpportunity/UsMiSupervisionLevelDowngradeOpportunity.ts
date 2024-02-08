@@ -86,6 +86,7 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
+    "EligibilityDate",
     "CaseNotes",
   ];
 
@@ -104,10 +105,6 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   };
 
   get eligibilityDate(): Date | undefined {
-    if (!this.record) return;
-    return (
-      this.record.eligibleCriteria.supervisionLevelHigherThanAssessmentLevel
-        .latestAssessmentDate ?? undefined
-    );
+    return this.record?.metadata.eligibleDate;
   }
 }

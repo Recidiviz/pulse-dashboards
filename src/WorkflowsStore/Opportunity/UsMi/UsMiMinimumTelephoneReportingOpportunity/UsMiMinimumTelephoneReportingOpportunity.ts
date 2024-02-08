@@ -108,6 +108,7 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
 > {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "ClientProfileDetails",
+    "EligibilityDate",
   ];
 
   readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
@@ -135,5 +136,9 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       CRITERIA_COPY,
       CRITERIA_FORMATTERS
     );
+  }
+
+  get eligibilityDate(): Date | undefined {
+    return this.record?.metadata.eligibleDate;
   }
 }

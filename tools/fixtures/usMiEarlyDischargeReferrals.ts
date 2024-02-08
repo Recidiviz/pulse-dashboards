@@ -26,6 +26,7 @@ export const usMiEarlyDischargeReferralsFixture =
       metadata: {
         supervisionType: "Parole",
         interstateFlag: "IC-OUT",
+        eligibleDate: "2022-03-01",
       },
       eligibleCriteria: {
         supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
@@ -70,6 +71,7 @@ export const usMiEarlyDischargeReferralsFixture =
       externalId: "ed-eligible-2",
       metadata: {
         supervisionType: "Probation",
+        eligibleDate: "2022-03-01",
       },
       eligibleCriteria: {
         supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {

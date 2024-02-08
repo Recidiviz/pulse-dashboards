@@ -135,6 +135,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "UsMiEarlyDischargeIcDetails",
     "ClientProfileDetails",
+    "EligibilityDate",
   ];
 
   constructor(client: Client) {
@@ -212,10 +213,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   };
 
   get eligibilityDate(): Date | undefined {
-    if (!this.record) return;
-    return this.record.eligibleCriteria
-      .supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate
-      ?.eligibleDate;
+    return this.record?.metadata.eligibleDate;
   }
 
   get metadata(): UsMiEarlyDischargeReferralRecord["metadata"] | undefined {

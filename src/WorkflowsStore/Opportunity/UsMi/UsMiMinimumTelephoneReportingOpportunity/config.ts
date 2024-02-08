@@ -36,4 +36,6 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumT
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    eligibilityDateText:
+      "Earliest Eligibility Date for Minimum Telephone Reporting",
   };

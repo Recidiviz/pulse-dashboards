@@ -119,6 +119,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   initialHeader?: string;
   hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
   denialButtonText?: string;
+  eligibilityDateText?: string;
 };
 
 export const OPPORTUNITY_CONFIGS = {

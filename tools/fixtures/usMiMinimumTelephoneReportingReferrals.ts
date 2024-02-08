@@ -37,6 +37,9 @@ export const usMiMinimumTelephoneReportingReferralsFixture =
           usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: null,
         },
         ineligibleCriteria: {},
+        metadata: {
+          eligibleDate: "2024-02-03",
+        },
       },
     ]
   );

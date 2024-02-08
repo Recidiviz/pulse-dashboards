@@ -63,6 +63,9 @@ export const usMiMinimumTelephoneReportingSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: criteria,
     ineligibleCriteria: z.strictObject({}),
+    metadata: z.object({
+      eligibleDate: dateStringSchema,
+    }),
   })
   .merge(caseNotesSchema);
 

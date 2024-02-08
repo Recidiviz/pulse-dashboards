@@ -24,6 +24,9 @@ Object {
   },
   "externalId": "sld-eligible-1",
   "ineligibleCriteria": Object {},
+  "metadata": Object {
+    "eligibleDate": 2022-12-12T00:00:00.000Z,
+  },
   "stateCode": "US_MI",
 }
 `;

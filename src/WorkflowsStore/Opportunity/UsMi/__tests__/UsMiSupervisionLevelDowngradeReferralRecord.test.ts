@@ -39,6 +39,9 @@ test("transform record for SLD", () => {
         latestAssessmentDate: "2022-10-12",
       },
     },
+    metadata: {
+      eligibleDate: "2022-12-12",
+    },
     ineligibleCriteria: {},
     caseNotes: {
       "Recommended supervision level": [

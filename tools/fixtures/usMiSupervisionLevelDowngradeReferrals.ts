@@ -38,6 +38,9 @@ export const usMiSupervisionLevelDowngradeReferrals =
             null,
         },
         ineligibleCriteria: {},
+        metadata: {
+          eligibleDate: "2024-02-03",
+        },
       },
     ]
   );

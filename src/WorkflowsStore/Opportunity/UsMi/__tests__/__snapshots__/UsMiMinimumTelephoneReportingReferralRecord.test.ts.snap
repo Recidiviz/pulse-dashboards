@@ -16,6 +16,9 @@ Object {
   },
   "externalId": "010",
   "ineligibleCriteria": Object {},
+  "metadata": Object {
+    "eligibleDate": 2022-08-12T00:00:00.000Z,
+  },
   "stateCode": "US_MI",
 }
 `;

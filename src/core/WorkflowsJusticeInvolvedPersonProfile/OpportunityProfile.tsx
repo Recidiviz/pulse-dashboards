@@ -39,6 +39,7 @@ import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
 import {
   CaseNotes,
+  EligibilityDate,
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
@@ -74,11 +75,12 @@ const ClientDetailSidebarComponents = {
 type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;
 
 const OpportunityDetailSidebarComponents = {
-  UsMiEarlyDischargeIcDetails,
   CaseNotes,
+  EligibilityDate,
+  UsMiEarlyDischargeIcDetails,
+  UsMiRecommendedSupervisionLevel,
   UsMoRestrictiveHousing,
   UsTnCommonlyUsedOverrideCodes,
-  UsMiRecommendedSupervisionLevel,
 };
 
 const ResidentDetailSidebarComponents = {

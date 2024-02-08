@@ -37,4 +37,5 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervis
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    eligibilityDateText: "Initial Classification Due Date",
   };

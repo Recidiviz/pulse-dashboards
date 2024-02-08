@@ -49,6 +49,9 @@ export const usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLeve
             .object({})
             .nullable(),
         }),
+        metadata: z.object({
+          eligibleDate: dateStringSchema,
+        }),
       })
       .merge(caseNotesSchema);
   };

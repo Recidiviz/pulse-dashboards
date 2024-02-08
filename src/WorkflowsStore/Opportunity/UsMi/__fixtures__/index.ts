@@ -130,6 +130,9 @@ export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneRe
         },
       ],
     },
+    metadata: {
+      eligibleDate: parseISO("2022-07-02"),
+    },
   };
 
 export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecord = {
