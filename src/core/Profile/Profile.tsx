@@ -96,7 +96,7 @@ function Profile() {
                 {copyright}
               </TooltipTrigger>
             ) : (
-              { copyright }
+              copyright
             )}
             <a
               href="https://www.recidiviz.org"
