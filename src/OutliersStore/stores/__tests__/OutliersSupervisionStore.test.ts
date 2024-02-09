@@ -439,6 +439,44 @@ test("non-supervisor user without supervisors list permission errors in hydratio
   ).not.toHaveBeenCalled();
 });
 
+test("patch user info: set hasSeenOnboarding", async () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      externalId: "abc123",
+      pseudonymizedId: "hashed-mdavis123",
+      district: "District One",
+      stateCode: "us_mi",
+      routes: observable({
+        insights: true,
+        "insights_supervision_supervisors-list": false,
+      }),
+    });
+  await flowResult(store.populateUserInfo());
+  expect(store.userInfo?.metadata.hasSeenOnboarding).toBeFalse();
+
+  await flowResult(
+    store.patchUserInfoForCurrentUser({ hasSeenOnboarding: true })
+  );
+  expect(store.userInfo?.metadata.hasSeenOnboarding).toBeTrue();
+});
+
+test("patch user info fails for recidiviz user", async () => {
+  jest
+    .spyOn(store.outliersStore.rootStore.userStore, "userAppMetadata", "get")
+    .mockReturnValue({
+      stateCode: "recidiviz",
+    });
+  await flowResult(store.populateUserInfo());
+  expect(store.userInfo?.metadata.hasSeenOnboarding).toBeTrue();
+
+  await expect(
+    flowResult(store.patchUserInfoForCurrentUser({ hasSeenOnboarding: false }))
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"Cannot update user info for Recidiviz or CSG user"`
+  );
+});
+
 test("look up supervisor by ID", async () => {
   jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   await flowResult(store.populateSupervisionOfficerSupervisors());

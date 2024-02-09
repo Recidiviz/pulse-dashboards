@@ -22,7 +22,7 @@ import { makeAutoObservable, observable } from "mobx";
 import moment from "moment";
 
 import { formatDate } from "../../utils";
-import { OutliersAPI } from "../api/interface";
+import { OutliersAPI, PatchUserInfoProps } from "../api/interface";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
@@ -388,5 +388,35 @@ export class OutliersSupervisionStore {
     );
 
     this.clientInfoByClientPseudoId.set(clientPseudoId, clientInfo);
+  }
+
+  /*
+   * Updates user info for specified user.
+   */
+  *patchUserInfoForCurrentUser(
+    props: PatchUserInfoProps
+  ): FlowMethod<OutliersAPI["patchUserInfo"], void> {
+    const { userAppMetadata, isRecidivizUser, isCSGUser } =
+      this.outliersStore.rootStore.userStore;
+
+    // Recidiviz and CSG users might not have pseudonymizedIds, but should have an experience
+    // similar to leadership users.
+    if (isRecidivizUser || isCSGUser) {
+      throw new Error("Cannot update user info for Recidiviz or CSG user");
+    }
+
+    if (!userAppMetadata) {
+      throw new Error("Missing app_metadata for user");
+    }
+
+    const { pseudonymizedId } = userAppMetadata;
+
+    if (!pseudonymizedId) {
+      throw new Error("Missing pseudonymizedId for user");
+    }
+    this.userInfo = yield this.outliersStore.apiClient.patchUserInfo(
+      pseudonymizedId,
+      props
+    );
   }
 }
