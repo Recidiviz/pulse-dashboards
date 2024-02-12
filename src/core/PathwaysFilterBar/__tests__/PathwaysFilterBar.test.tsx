@@ -19,10 +19,7 @@ import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import selectEvent from "react-select-event";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../../components/StoreProvider";
+import { useRootStore } from "../../../components/StoreProvider";
 import { render, screen } from "../../../testUtils";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
@@ -35,8 +32,6 @@ const mockSetFilters = jest.fn();
 jest.mock("../../CoreStoreProvider");
 jest.mock("../../../components/StoreProvider");
 
-const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
-
 const mockCoreStore = { currentTenantId: "US_ID" } as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 
@@ -47,7 +42,6 @@ beforeEach(() => {
   (useRootStore as jest.Mock).mockReturnValue({
     userStore: { userAllowedNavigation: {} },
   });
-  useFeatureVariantsMock.mockReturnValue({});
   filtersStore.setFilters = mockSetFilters;
 });
 

@@ -22,14 +22,12 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
-import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import PageNavigation from "../PageNavigation";
 import { DASHBOARD_VIEWS } from "../views";
 
 const PathwaysNavigation: React.FC = () => {
   const { currentTenantId } = useRootStore();
   const { pathname } = useLocation();
-  const isDisplayNav = useDisplayPageNavigation();
   const view = pathname.split("/")[1];
   if (
     !currentTenantId ||
@@ -37,8 +35,7 @@ const PathwaysNavigation: React.FC = () => {
       DASHBOARD_VIEWS.system,
       DASHBOARD_VIEWS.methodology,
       DASHBOARD_VIEWS.impact,
-    ].includes(view as any) ||
-    !isDisplayNav
+    ].includes(view as any)
   )
     return null;
 

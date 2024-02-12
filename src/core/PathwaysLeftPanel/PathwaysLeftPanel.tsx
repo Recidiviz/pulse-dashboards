@@ -20,7 +20,6 @@ import "./PathwaysLeftPanel.scss";
 import cn from "classnames";
 import React from "react";
 
-import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import useIsMobile from "../../hooks/useIsMobile";
 import SectionNavigation from "../SectionNavigation";
 
@@ -28,13 +27,12 @@ const PathwaysLeftPanel: React.FC<{
   title: string;
   description: string;
 }> = ({ title, description }) => {
-  const isDisplayNav = useDisplayPageNavigation();
   const isMobile = useIsMobile();
 
   return (
     <div
       className={cn("PathwaysLeftPanel", {
-        "pt-5 pb-5": isDisplayNav && !isMobile,
+        "pt-5 pb-5": !isMobile,
       })}
     >
       <div className="PathwaysLeftPanel__title">{title}</div>

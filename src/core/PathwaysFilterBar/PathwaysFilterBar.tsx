@@ -22,7 +22,6 @@ import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import useDisplayPageNavigation from "../../hooks/useDisplayPageNavigation";
 import useIsMobile from "../../hooks/useIsMobile";
 import useResizeFilterBar from "../../hooks/useResizeFilterBar";
 import { sortByLabel } from "../../utils/datasets";
@@ -57,7 +56,6 @@ const PathwaysFilterBar: React.FC<{
   const { filtersStore } = useCoreStore();
   const { filters } = filtersStore;
 
-  const isDisplayNav = useDisplayPageNavigation();
   const isMobile = useIsMobile();
 
   const filtersRef = React.useRef() as React.MutableRefObject<HTMLElement>;
@@ -73,7 +71,7 @@ const PathwaysFilterBar: React.FC<{
   return (
     <div
       className={cn("PathwaysFilterBar", {
-        "pt-5": isDisplayNav && !isMobile,
+        "pt-5": !isMobile,
       })}
     >
       <FilterBar
