@@ -95,6 +95,9 @@ test("valid route", async () => {
   jest
     .spyOn(outliersStore.supervisionStore, "userCanAccessAllSupervisors", "get")
     .mockReturnValue(true);
+  jest
+    .spyOn(outliersStore.supervisionStore, "userHasSeenOnboarding", "get")
+    .mockReturnValue(true);
 
   renderRouter(outliersRoute({ routeName: "supervisionSupervisorsList" }));
 

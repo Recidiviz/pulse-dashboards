@@ -23,6 +23,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionPresenter } from "../../OutliersStore/presenters/SupervisionPresenter";
 import ModelHydrator from "../ModelHydrator";
 import OutliersNavLayout from "../OutliersNavLayout";
+import OutliersOnboardingPage from "../OutliersOnboardingPage";
 import { OutliersRoute } from "../OutliersRoute";
 import OutliersStaffPage from "../OutliersStaffPage";
 import { OutliersSupervisionHome } from "../OutliersSupervisionHome";
@@ -64,6 +65,10 @@ const PageOutliers: React.FC = memo(function PageOutliers() {
               <Route key={path} path={path} element={<OutliersStaffPage />} />
             ))}
           </Route>
+          <Route
+            path={outliersRoute({ routeName: "supervisionOnboarding" })}
+            element={<OutliersOnboardingPage />}
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ModelHydrator>

@@ -91,7 +91,8 @@ export type FeatureVariant =
   | "usNdWriteToDocstars"
   | "usMoOverdueRHPilot"
   | "formRevertButton"
-  | "outliersLeadershipPageAllDistricts";
+  | "outliersLeadershipPageAllDistricts"
+  | "outliersOnboarding";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -123,6 +124,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   formRevertButton: {},
   usMoOverdueRHPilot: {},
   outliersLeadershipPageAllDistricts: {},
+  outliersOnboarding: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"
@@ -140,6 +142,7 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         usMoOverdueRHPilot: {},
         outliersClientDetail: {},
         enableSnooze: {},
+        outliersOnboarding: {},
       }
     : allFeatureVariants;
 

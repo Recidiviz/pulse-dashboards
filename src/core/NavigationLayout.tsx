@@ -47,10 +47,12 @@ import RecidivizLogo from "./RecidivizLogo";
 import { DASHBOARD_VIEWS } from "./views";
 import { Separator } from "./WorkflowsJusticeInvolvedPersonProfile/styles";
 
+export const NAV_BAR_HEIGHT = 64;
+
 const Wrapper = styled.div``;
 
 const Banner = styled.div`
-  height: 4rem;
+  height: ${rem(NAV_BAR_HEIGHT)};
 `;
 
 const NavContainer = styled.nav<{
@@ -60,7 +62,7 @@ const NavContainer = styled.nav<{
 }>`
   padding: 0 ${rem(spacing.md)};
   display: flex;
-  height: 4rem;
+  height: ${rem(NAV_BAR_HEIGHT)};
   width: 100%;
   align-items: center;
   justify-content: space-between;

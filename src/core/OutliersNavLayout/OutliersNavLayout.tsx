@@ -63,7 +63,6 @@ const OutliersNavLayout: React.FC = ({ children }) => {
       <NavigationLayout
         externalMethodologyUrl={supervisionStore?.methodologyUrl}
       />
-
       <Main isMobile={isMobile}>{children}</Main>
     </Wrapper>
   );

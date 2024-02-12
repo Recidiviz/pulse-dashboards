@@ -19,7 +19,10 @@ import { render, screen } from "@testing-library/react";
 import { configure, observable } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { ADVERSE_METRIC_IDS } from "../../../OutliersStore/models/offlineFixtures/constants";
 import { OutliersConfigFixture } from "../../../OutliersStore/models/offlineFixtures/OutliersConfigFixture";
 import { OutliersSupervisionStore } from "../../../OutliersStore/stores/OutliersSupervisionStore";
@@ -30,6 +33,7 @@ import { OutliersRoute } from "../OutliersRoute";
 jest.mock("../../../components/StoreProvider");
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useFeatureVariantsMock = jest.mocked(useFeatureVariants);
 
 let supervisionStore: OutliersSupervisionStore;
 
@@ -44,6 +48,8 @@ beforeEach(() => {
   );
   outliersStore.supervisionStore = supervisionStore;
 
+  useRootStoreMock.mockReturnValue(rootStore);
+  useFeatureVariantsMock.mockReturnValue({ outliersOnboarding: {} });
   useRootStoreMock.mockReturnValue(rootStore);
   jest.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
     pseudonymizedId: "hashed-abc123",

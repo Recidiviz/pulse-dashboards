@@ -295,6 +295,7 @@ export function workflowsUrl(
 
 export const OUTLIERS_PATHS: Record<OutliersPage, string> = {
   supervision: `/${DASHBOARD_VIEWS.outliers}/supervision`,
+  supervisionOnboarding: `/${DASHBOARD_VIEWS.outliers}/supervision/onboarding`,
   supervisionSupervisorsList: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisors-list`,
   supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorPseudoId`,
   supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId`,
@@ -306,6 +307,7 @@ export type OutliersPage = keyof typeof OUTLIERS_PAGES;
 
 export const OUTLIERS_PAGES = {
   supervision: "supervision",
+  supervisionOnboarding: "supervisionOnboarding",
   supervisionSupervisor: "supervisionSupervisor",
   supervisionSupervisorsList: "supervisionSupervisorsList",
   supervisionStaff: "supervisionStaff",
@@ -329,6 +331,7 @@ export function outliersRoute({
 }
 
 export function outliersUrl(routeName: "supervision"): string;
+export function outliersUrl(routeName: "supervisionOnboarding"): string;
 export function outliersUrl(routeName: "supervisionSupervisorsList"): string;
 export function outliersUrl(
   routeName: "supervisionSupervisor",

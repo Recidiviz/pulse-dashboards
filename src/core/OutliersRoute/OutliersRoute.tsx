@@ -18,10 +18,13 @@
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { Outlet, useLocation, useParams } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { OUTLIERS_PATHS, outliersUrl } from "../views";
 
 const RouteSync = observer(function RouteSync({ children }) {
@@ -39,6 +42,7 @@ const RouteSync = observer(function RouteSync({ children }) {
     outliersStore: { supervisionStore },
     userStore,
   } = useRootStore();
+  const { outliersOnboarding } = useFeatureVariants();
 
   useEffect(() => {
     // entire function cannot be wrapped in action()
@@ -66,6 +70,10 @@ const RouteSync = observer(function RouteSync({ children }) {
       (supervisorPseudoId && supervisorPseudoId !== userStore.userPseudoId))
   ) {
     return <NotFound />;
+  }
+
+  if (outliersOnboarding && !supervisionStore?.userHasSeenOnboarding) {
+    return <Navigate to={outliersUrl("supervisionOnboarding")} />;
   }
 
   return <>{children}</>;

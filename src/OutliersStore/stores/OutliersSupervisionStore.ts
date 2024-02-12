@@ -193,6 +193,10 @@ export class OutliersSupervisionStore {
     return userStore.getRoutePermission("supervisors-list");
   }
 
+  get userHasSeenOnboarding(): boolean {
+    return this.userInfo?.metadata.hasSeenOnboarding ?? false;
+  }
+
   get currentSupervisorUser(): SupervisionOfficerSupervisor | undefined {
     if (this.userInfo?.role === "supervision_officer_supervisor") {
       return this.userInfo.entity;

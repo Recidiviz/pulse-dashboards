@@ -51,6 +51,10 @@ export class UserOnboardingPresenter implements Hydratable {
       throw new Error("failed to populate userInfo");
   }
 
+  get labels() {
+    return this.supervisionStore.labels;
+  }
+
   get userInfo() {
     return this.supervisionStore.userInfo;
   }

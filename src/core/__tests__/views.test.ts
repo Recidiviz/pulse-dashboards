@@ -48,6 +48,7 @@ describe("getRelativePath", () => {
 
   const OUTLIERS_RELATIVE_PATHS = {
     supervision: `/supervision`,
+    supervisionOnboarding: `/supervision/onboarding`,
     supervisionSupervisorsList: `/supervision/supervisors-list`,
     supervisionSupervisor: `/supervision/supervisor/:supervisorPseudoId`,
     supervisionStaff: `/supervision/staff/:officerPseudoId`,
