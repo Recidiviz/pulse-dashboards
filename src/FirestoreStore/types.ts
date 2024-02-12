@@ -141,6 +141,8 @@ export const congratulationsMilestoneTypes = [
   "GAINED_EMPLOYMENT",
   "EMPLOYED_6_MONTHS",
   "EMPLOYED_12_MONTHS",
+  "PARTICIPATED_IN_PROGRAMMING_FOR_6_TO_8_MONTHS",
+  "PARTICIPATED_IN_PROGRAMMING_FOR_12_TO_14_MONTHS",
 ] as const;
 
 export type MilestoneType =
