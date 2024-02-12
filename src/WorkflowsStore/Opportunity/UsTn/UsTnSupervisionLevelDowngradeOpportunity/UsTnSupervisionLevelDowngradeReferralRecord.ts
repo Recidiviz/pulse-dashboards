@@ -19,10 +19,8 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema } from "../../schemaHelpers";
 import {
   getBaseSLDValidator,
-  SupervisionLevelDowngradeReferralRecordRaw,
   supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
 } from "../../SupervisionLevelDowngradeReferralRecord";
 
@@ -30,45 +28,10 @@ type Schema = ReturnType<
   typeof usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter
 >;
 
-// TODO: this raw shape is not perfect: it still has index signatures etc.
-// It would be nice to figure out how to construct these automatically
-export type UsTnSupervisionLevelDowngradeReferralRecordRaw = z.input<Schema> &
-  SupervisionLevelDowngradeReferralRecordRaw;
+export type UsTnSupervisionLevelDowngradeReferralRecordRaw = z.input<Schema>;
 export type UsTnSupervisionLevelDowngradeReferralRecord = z.infer<Schema>;
 
 export const usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter =
-  (fmt?: (raw: string) => string) => {
-    const base =
-      supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-        fmt
-      );
-
-    return z
-      .object({
-        metadata: z
-          .object({
-            violations: z
-              .object({
-                violationCode: z.string(),
-                violationDate: z.string(),
-              })
-              .array(),
-          })
-          .passthrough(),
-      })
-      .passthrough()
-      .transform((r) => ({
-        ...r,
-        caseNotes: {
-          Violations: r.metadata.violations.map(
-            ({ violationCode, violationDate }) => ({
-              noteBody: violationCode,
-              eventDate: violationDate,
-            })
-          ),
-        },
-      }))
-      .pipe(base.and(caseNotesSchema));
-  };
+  supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter;
 
 export const getSLDValidator = getBaseSLDValidator;

@@ -33,10 +33,10 @@ export const usTnSupervisionLevelDowngradeReferrals =
           },
         },
         ineligibleCriteria: {},
-        metadata: {
-          violations: [
-            { violationDate: "2021-05-03", violationCode: "VRPT" },
-            { violationDate: "2020-01-10", violationCode: "ARRP" },
+        caseNotes: {
+          Violations: [
+            { eventDate: "2021-05-03", noteTitle: "VRPT" },
+            { eventDate: "2020-01-10", noteTitle: "ARRP" },
           ],
         },
       },
