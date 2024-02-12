@@ -57,90 +57,19 @@ export const PersonList = styled.ul`
   }
 `;
 
-export const OpportunityPersonList = observer(function OpportunityPersonList() {
-  const { responsiveRevamp } = useFeatureVariants();
+const Empty = observer(function Empty() {
   const {
     workflowsStore: {
       selectedOpportunityType: opportunityType,
       selectedSearchIds,
       justiceInvolvedPersonTitle,
       workflowsSearchFieldTitle,
-      opportunitiesByTab,
-      allOpportunitiesByType,
-      selectedPerson,
     },
-    analyticsStore,
   } = useRootStore();
-
-  const { isMobile } = useIsMobile(true);
-
-  const oppsFromOpportunitiesByTab = useMemo(() => {
-    if (opportunitiesByTab && opportunityType) {
-      const oppsRecord = opportunitiesByTab[opportunityType];
-      return oppsRecord;
-    }
-    return undefined;
-  }, [opportunitiesByTab, opportunityType]);
-
-  const oppsFromOpportunitiesByOppType = useMemo(() => {
-    if (allOpportunitiesByType && opportunityType) {
-      return allOpportunitiesByType[opportunityType];
-    }
-    return undefined;
-  }, [allOpportunitiesByType, opportunityType]);
-
-  const displayTabs = useMemo(() => {
-    return oppsFromOpportunitiesByTab &&
-      oppsFromOpportunitiesByOppType &&
-      oppsFromOpportunitiesByOppType[0]
-      ? intersection(
-          oppsFromOpportunitiesByOppType[0].tabOrder,
-          Object.keys(oppsFromOpportunitiesByTab)
-        )
-      : [];
-  }, [
-    oppsFromOpportunitiesByTab,
-    oppsFromOpportunitiesByOppType,
-  ]) as OpportunityTab[];
-
-  const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
-
-  useEffect(() => {
-    setActiveTab((prevTab) => prevTab || displayTabs[0]);
-  }, [displayTabs]);
-
-  useEffect(() => {
-    if (!oppsFromOpportunitiesByTab?.[activeTab]?.length) {
-      setActiveTab(displayTabs[0]);
-    }
-  }, [oppsFromOpportunitiesByTab, activeTab, displayTabs]);
-
-  if (
-    !opportunityType ||
-    !oppsFromOpportunitiesByOppType ||
-    !oppsFromOpportunitiesByTab
-  )
-    return null;
+  if (!opportunityType) return null;
 
   const { label } = OPPORTUNITY_CONFIGS[opportunityType];
-  const eligibleOpps =
-    oppsFromOpportunitiesByOppType?.filter((opp) => !opp.denial) || undefined;
-
-  const handleTabClick = (tab: OpportunityTab) => {
-    analyticsStore.trackOpportunityTabClicked({ tab });
-    setActiveTab(tab);
-  };
-  const hydratedHeader = generateOpportunityHydratedHeader(
-    opportunityType,
-    eligibleOpps?.length || 0
-  );
-  const initialHeader = generateOpportunityInitialHeader(
-    opportunityType,
-    justiceInvolvedPersonTitle,
-    workflowsSearchFieldTitle
-  );
-
-  const empty = (
+  return (
     <WorkflowsResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
         selectedSearchIds.length,
@@ -150,46 +79,147 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       )}['s|'] caseloads are eligible for ${label.toLowerCase()}. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );
+});
+
+const HydratedOpportunityPersonList = observer(
+  function HydratedOpportunityPersonList() {
+    const { responsiveRevamp } = useFeatureVariants();
+    const {
+      workflowsStore: {
+        selectedOpportunityType: opportunityType,
+        opportunitiesByTab,
+        allOpportunitiesByType,
+        selectedPerson,
+      },
+      analyticsStore,
+    } = useRootStore();
+
+    const { isMobile } = useIsMobile(true);
+
+    const oppsFromOpportunitiesByTab = useMemo(() => {
+      if (opportunitiesByTab && opportunityType) {
+        const oppsRecord = opportunitiesByTab[opportunityType];
+        return oppsRecord;
+      }
+      return undefined;
+    }, [opportunitiesByTab, opportunityType]);
+
+    const oppsFromOpportunitiesByOppType = useMemo(() => {
+      if (allOpportunitiesByType && opportunityType) {
+        return allOpportunitiesByType[opportunityType];
+      }
+      return undefined;
+    }, [allOpportunitiesByType, opportunityType]);
+
+    const displayTabs = useMemo(() => {
+      return oppsFromOpportunitiesByTab &&
+        oppsFromOpportunitiesByOppType &&
+        oppsFromOpportunitiesByOppType[0]
+        ? intersection(
+            oppsFromOpportunitiesByOppType[0].tabOrder,
+            Object.keys(oppsFromOpportunitiesByTab)
+          )
+        : [];
+    }, [
+      oppsFromOpportunitiesByTab,
+      oppsFromOpportunitiesByOppType,
+    ]) as OpportunityTab[];
+
+    const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
+
+    useEffect(() => {
+      setActiveTab((prevTab) => prevTab || displayTabs[0]);
+    }, [displayTabs]);
+
+    useEffect(() => {
+      if (!oppsFromOpportunitiesByTab?.[activeTab]?.length) {
+        setActiveTab(displayTabs[0]);
+      }
+    }, [oppsFromOpportunitiesByTab, activeTab, displayTabs]);
+
+    if (
+      !opportunityType ||
+      !oppsFromOpportunitiesByOppType ||
+      !oppsFromOpportunitiesByTab
+    )
+      return null;
+
+    const eligibleOpps =
+      oppsFromOpportunitiesByOppType?.filter((opp) => !opp.denial) || undefined;
+
+    const handleTabClick = (tab: OpportunityTab) => {
+      analyticsStore.trackOpportunityTabClicked({ tab });
+      setActiveTab(tab);
+    };
+    const hydratedHeader = generateOpportunityHydratedHeader(
+      opportunityType,
+      eligibleOpps?.length || 0
+    );
+
+    return !oppsFromOpportunitiesByOppType.length ? (
+      <Empty />
+    ) : (
+      <>
+        <Heading
+          isMobile={isMobile && responsiveRevamp}
+          className="PersonList__Heading"
+        >
+          {hydratedHeader.fullText ?? (
+            <>
+              {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
+            </>
+          )}
+        </Heading>
+        <SubHeading className="PersonList__Subheading">
+          {hydratedHeader.callToAction}
+        </SubHeading>
+        {responsiveRevamp ? (
+          <WorkflowsTabbedPersonList<OpportunityTab>
+            tabs={[...displayTabs]}
+            activeTab={activeTab}
+            onClick={handleTabClick}
+          >
+            <CaseloadOpportunityGrid
+              items={oppsFromOpportunitiesByTab?.[activeTab]}
+            />
+          </WorkflowsTabbedPersonList>
+        ) : (
+          <OpportunityPersonListWithSectionTitles />
+        )}
+        <OpportunityPreviewModal
+          opportunity={selectedPerson?.verifiedOpportunities[opportunityType]}
+        />
+      </>
+    );
+  }
+);
+
+export const OpportunityPersonList = observer(function OpportunityPersonList() {
+  const {
+    workflowsStore: {
+      selectedOpportunityType: opportunityType,
+      justiceInvolvedPersonTitle,
+      workflowsSearchFieldTitle,
+    },
+  } = useRootStore();
+
+  if (!opportunityType) return null;
+
+  const { label } = OPPORTUNITY_CONFIGS[opportunityType];
+
+  const initialHeader = generateOpportunityInitialHeader(
+    opportunityType,
+    justiceInvolvedPersonTitle,
+    workflowsSearchFieldTitle
+  );
+
+  const empty = <Empty />;
 
   const initial = (
     <WorkflowsResults headerText={label} callToActionText={initialHeader} />
   );
 
-  const hydrated = !oppsFromOpportunitiesByOppType.length ? (
-    empty
-  ) : (
-    <>
-      <Heading
-        isMobile={isMobile && responsiveRevamp}
-        className="PersonList__Heading"
-      >
-        {hydratedHeader.fullText ?? (
-          <>
-            {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
-          </>
-        )}
-      </Heading>
-      <SubHeading className="PersonList__Subheading">
-        {hydratedHeader.callToAction}
-      </SubHeading>
-      {responsiveRevamp ? (
-        <WorkflowsTabbedPersonList<OpportunityTab>
-          tabs={[...displayTabs]}
-          activeTab={activeTab}
-          onClick={handleTabClick}
-        >
-          <CaseloadOpportunityGrid
-            items={oppsFromOpportunitiesByTab?.[activeTab]}
-          />
-        </WorkflowsTabbedPersonList>
-      ) : (
-        <OpportunityPersonListWithSectionTitles />
-      )}
-      <OpportunityPreviewModal
-        opportunity={selectedPerson?.verifiedOpportunities[opportunityType]}
-      />
-    </>
-  );
+  const hydrated = <HydratedOpportunityPersonList />;
 
   return (
     <CaseloadOpportunitiesHydrator

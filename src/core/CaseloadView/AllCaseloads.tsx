@@ -83,14 +83,14 @@ export const AllCaseloads = observer(function AllCaseloads() {
   const { responsiveRevamp } = useFeatureVariants();
   const {
     workflowsStore: {
-      caseloadPersons,
+      caseloadPersonsSorted,
       selectedSearchables,
       workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
     },
   } = useRootStore();
 
-  const caseloads = groupBy(caseloadPersons, "searchIdValue");
+  const caseloads = groupBy(caseloadPersonsSorted, "searchIdValue");
 
   const allCaseloadsViz = (
     <>
@@ -128,7 +128,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
         ) : (
           <WorkflowsResults
             headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
-              caseloadPersons.length
+              caseloadPersonsSorted.length
             })`}
           >
             {allCaseloadsViz}

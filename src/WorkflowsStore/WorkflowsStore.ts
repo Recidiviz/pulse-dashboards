@@ -542,22 +542,24 @@ export class WorkflowsStore implements Hydratable {
       (this.activeSystem === "INCARCERATION" && p instanceof Resident) ||
       (this.activeSystem === "SUPERVISION" && p instanceof Client);
 
-    return values(this.justiceInvolvedPersons)
-      .filter(
-        (p) =>
-          this.selectedSearchIds.includes(p.searchIdValue) &&
-          personTypeMatchesActiveSystem(p)
-      )
-      .sort((a, b) => {
-        return (
-          ascending(a.fullName.surname, b.fullName.surname) ||
-          ascending(a.fullName.givenNames, b.fullName.givenNames)
-        );
-      });
+    return values(this.justiceInvolvedPersons).filter(
+      (p) =>
+        this.selectedSearchIds.includes(p.searchIdValue) &&
+        personTypeMatchesActiveSystem(p)
+    );
+  }
+
+  get caseloadPersonsSorted(): JusticeInvolvedPerson[] {
+    return this.caseloadPersons.sort((a, b) => {
+      return (
+        ascending(a.fullName.surname, b.fullName.surname) ||
+        ascending(a.fullName.givenNames, b.fullName.givenNames)
+      );
+    });
   }
 
   get milestonesClients(): Client[] {
-    return this.caseloadPersons.filter((person) => {
+    return this.caseloadPersonsSorted.filter((person) => {
       return isClient(person) && person.congratulationsMilestones.length > 0;
     }) as Client[];
   }
@@ -581,7 +583,7 @@ export class WorkflowsStore implements Hydratable {
   ): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType) => {
-      const opportunities = this.caseloadPersons
+      const opportunities = this.caseloadPersonsSorted
         .map((c) => c[opportunityStatus][opportunityType])
         .filter((opp) => opp !== undefined)
         .map((opp) => opp as Opportunity)
@@ -639,14 +641,14 @@ export class WorkflowsStore implements Hydratable {
   }
 
   potentialOpportunities(opportunityTypes: OpportunityType[]): Opportunity[] {
-    const mapping = {} as Record<OpportunityType, Opportunity[]>;
-    opportunityTypes.forEach((opportunityType) => {
-      const opportunities = this.caseloadPersons
-        .map((c) => c.potentialOpportunities[opportunityType])
-        .filter((opp) => opp !== undefined);
-      mapping[opportunityType] = opportunities as Opportunity[];
+    const out: Opportunity[] = [];
+    this.caseloadPersons.forEach((person) => {
+      opportunityTypes.forEach((oppType) => {
+        const opp = person.potentialOpportunities[oppType];
+        if (opp) out.push(opp);
+      });
     });
-    return Object.values(mapping).flat();
+    return out;
   }
 
   get allOpportunitiesByType(): Partial<
@@ -654,7 +656,7 @@ export class WorkflowsStore implements Hydratable {
   > {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType) => {
-      const opportunities = this.caseloadPersons
+      const opportunities = this.caseloadPersonsSorted
         .flatMap((c) => c.verifiedOpportunities[opportunityType] || []) // Flatten and handle undefined entries
         .sort((a, b) => a.compare(b));
 

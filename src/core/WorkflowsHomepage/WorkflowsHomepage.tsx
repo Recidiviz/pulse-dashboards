@@ -41,6 +41,29 @@ function getSelectOpportunitiesText(
   return labels.join(" and ");
 }
 
+const OpportunitySummaries = observer(function OpportunitySummaries() {
+  const { workflowsStore } = useRootStore();
+  const { opportunityTypes, allOpportunitiesByType } = workflowsStore;
+  return (
+    <>
+      {opportunityTypes.map((opportunityType) => {
+        const opportunities = allOpportunitiesByType[opportunityType] || [];
+
+        if (opportunities.length) {
+          return (
+            <OpportunityTypeSummary
+              key={opportunityType}
+              opportunities={opportunities}
+              opportunityType={opportunityType}
+            />
+          );
+        }
+        return null;
+      })}
+    </>
+  );
+});
+
 const WorkflowsHomepage = observer(
   function WorkflowsHomepage(): React.ReactElement | null {
     const { workflowsStore } = useRootStore();
@@ -49,7 +72,6 @@ const WorkflowsHomepage = observer(
     const {
       selectedSearchIds,
       opportunityTypes,
-      allOpportunitiesByType,
       user,
       workflowsSearchFieldTitle,
       supportsMultipleSystems,
@@ -90,27 +112,12 @@ const WorkflowsHomepage = observer(
 
     const empty = <WorkflowsResults callToActionText={emptyCallToAction} />;
 
-    const opportunitySummaries = opportunityTypes.map((opportunityType) => {
-      const opportunities = allOpportunitiesByType[opportunityType] || [];
-
-      if (opportunities.length) {
-        return (
-          <OpportunityTypeSummary
-            key={opportunityType}
-            opportunities={opportunities}
-            opportunityType={opportunityType}
-          />
-        );
-      }
-      return null;
-    });
-
     const hydrated = responsiveRevamp ? (
       <WorkflowsResults headerText={hydratedCallToAction}>
-        {opportunitySummaries}
+        <OpportunitySummaries />
       </WorkflowsResults>
     ) : (
-      opportunitySummaries
+      <OpportunitySummaries />
     );
 
     return (
