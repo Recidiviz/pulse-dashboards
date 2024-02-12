@@ -28,6 +28,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { humanReadableTitleCase, pluralizeWord } from "../../utils";
+import OutliersInfoModal from "../OutliersInfoModal";
 
 const PageWrapper = styled.div`
   display: flex;
@@ -103,12 +104,14 @@ type OutliersPageLayoutProps = {
   infoItems: { title: string; info: string | undefined | null }[];
   contentsAboveTitle?: ReactNode;
   textToHighlight?: string;
+  hasSupervisionInfoModal?: boolean;
 };
 
 const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
   pageTitle,
   infoItems,
   contentsAboveTitle,
+  hasSupervisionInfoModal,
   textToHighlight = "outlier",
   children,
 }) => {
@@ -118,8 +121,10 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
     outliersStore: { supervisionStore },
   } = useRootStore();
 
-  const supervisionOfficerLabel =
-    supervisionStore?.labels.supervisionOfficerLabel || "officer";
+  if (!supervisionStore) return null;
+
+  const { labels, methodologyUrl, exclusionReasonDescription } =
+    supervisionStore;
 
   const hasHighlightedSubstring = pageTitle.includes(textToHighlight);
   const textToHighlightPlural = pluralizeWord(textToHighlight);
@@ -137,7 +142,7 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
             {pageTitleStart}
             {hasHighlightedSubstring && (
               <TooltipTrigger
-                contents={`Outliers means the ${supervisionOfficerLabel} has a rate over 1 Interquartile Range above the statewide rate.`}
+                contents={`Outliers means the ${labels.supervisionOfficerLabel} has a rate over 1 Interquartile Range above the statewide rate.`}
                 maxWidth={310}
               >
                 <HighlightedText>{outlierSubstring}</HighlightedText>
@@ -162,6 +167,16 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
                   )
               )}
             </InfoSection>
+          )}
+          {hasSupervisionInfoModal && (
+            <OutliersInfoModal
+              buttonText="Why aren't all my staff showing up?"
+              title="Staff Lists"
+              methodologyLink={methodologyUrl}
+              copy={`We're listing all ${labels.supervisionOfficerLabel}s that we know to currently be reporting to this ${labels.supervisionSupervisorLabel} and that have caseload sizes within the ranges listed below.<br><br> 
+              ${exclusionReasonDescription} <br><br>
+              If an ${labels.supervisionOfficerLabel} is missing from this list or is incorrectly assigned to a ${labels.supervisionSupervisorLabel}, please let us know by messaging us via the support icon in the bottom right or by emailing **feedback@recidiviz.org.**`}
+            />
           )}
         </Header>
       </Wrapper>

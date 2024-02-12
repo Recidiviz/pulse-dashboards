@@ -108,6 +108,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
     <OutliersPageLayout
       pageTitle={pageTitle}
       infoItems={infoItems}
+      hasSupervisionInfoModal
       contentsAboveTitle={
         userCanAccessAllSupervisors && (
           <NavigationBackButton

@@ -226,6 +226,10 @@ export class OutliersSupervisionStore {
     )}`;
   }
 
+  get exclusionReasonDescription(): string {
+    return this.config.exclusionReasonDescription;
+  }
+
   get methodologyUrl(): string {
     return this.config.learnMoreUrl;
   }

@@ -35,6 +35,8 @@ const Header = styled.div`
 `;
 
 const Title = styled.div`
+  display: flex;
+  gap: ${rem(spacing.xs)};
   ${typography.Sans16}
   color: ${palette.pine1};
 `;
@@ -51,18 +53,23 @@ type OutliersChartCardType = {
   title: string;
   subtitle?: string;
   hasLegend?: boolean;
+  infoModal?: React.ReactElement;
 };
 
 const OutliersChartCard: React.FC<OutliersChartCardType> = ({
   title,
   subtitle,
+  infoModal,
   hasLegend = true,
   children,
 }) => {
   return (
     <Wrapper>
       <Header>
-        <Title>{title}</Title>
+        <Title>
+          {title}
+          {infoModal}
+        </Title>
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
       </Header>
       <Content>{children}</Content>

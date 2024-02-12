@@ -1411,7 +1411,12 @@ Object {
       },
       "config": Object {
         "bodyDisplayName": "absconsion rate",
+        "descriptionMarkdown": "**All reported absconsions and warrants for the time period**, as captured in the data we receive by supervision levels \\"9AB\\", \\"ZAB\\", \\"ZAC\\", \\"ZAP\\" or supervision type “ABS” for absconsions, and “9WR\\", \\"NIA\\", \\"WRT\\", \\"ZWS\\" for warrants, in a given time period.
+
+<br />
+**Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
         "eventName": "absconsions",
+        "eventNamePastTense": "were absconded",
         "eventNameSingular": "absconsion",
         "name": "absconsions_bench_warrants",
         "outcomeType": "ADVERSE",

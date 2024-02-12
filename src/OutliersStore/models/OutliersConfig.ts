@@ -29,6 +29,7 @@ export const outliersConfigSchema = z.object({
   atOrBelowRateLabel: z.string(),
   noneAreOutliersLabel: z.string(),
   learnMoreUrl: z.string(),
+  exclusionReasonDescription: z.string(),
   metrics: z.array(
     z.object({
       name: z.string(),
@@ -37,6 +38,8 @@ export const outliersConfigSchema = z.object({
       bodyDisplayName: z.string(),
       eventName: z.string(),
       eventNameSingular: z.string(),
+      eventNamePastTense: z.string(),
+      descriptionMarkdown: z.string(),
     })
   ),
   clientEvents: z.array(

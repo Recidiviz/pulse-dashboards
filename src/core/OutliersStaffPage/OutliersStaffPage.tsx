@@ -24,6 +24,7 @@ import {
   Tabs,
   zindex,
 } from "@recidiviz/design-system";
+import { sub } from "date-fns";
 import { noop } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -43,6 +44,7 @@ import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
 import OutliersChartCard from "../OutliersChartCard";
 import OutliersEmptyPage from "../OutliersEmptyPage";
+import OutliersInfoModal from "../OutliersInfoModal";
 import OutliersLinePlot from "../OutliersLinePlot";
 import { INTERCOM_HEIGHT } from "../OutliersNavLayout/OutliersNavLayout";
 import OutliersPageLayout from "../OutliersPageLayout";
@@ -153,6 +155,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     supervisorInfo,
     timePeriod,
     labels,
+    methodologyUrl,
   } = presenter;
 
   useEffect(() => {
@@ -292,22 +295,65 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         </StyledTabList>
         {outlierOfficerData.outlierMetrics.map((metric) => {
           const firstDate = metric.benchmark.benchmarks[0]?.endDate;
-          const lastDate = metric.benchmark.benchmarks.slice(-1)[0]?.endDate;
+          const secondToLastDate = metric.benchmark.benchmarks.at(-2)?.endDate;
+          const lastDate = metric.benchmark.benchmarks.at(-1)?.endDate;
+
+          const {
+            eventName,
+            eventNameSingular,
+            eventNamePastTense,
+            bodyDisplayName,
+          } = metric.config;
+
+          const secondToLastDateHint = secondToLastDate
+            ? `The dot before the most recent one shows the ${
+                labels.supervisionOfficerLabel
+              }’s ${bodyDisplayName} from ${formatDate(
+                sub(secondToLastDate, { years: 1 }),
+                "MMMM yyyy"
+              )} to ${formatDate(
+                secondToLastDate,
+                "MMMM yyyy"
+              )} — again representing the ${
+                labels.supervisionOfficerLabel
+              }’s rate for a full year, but starting a month earlier.`
+            : "";
 
           return (
             <StyledTabPanel key={metric.metricId}>
               <Wrapper isLaptop={isTablet}>
                 <Sidebar>
-                  <MetricEventsTable
-                    officerPseudoId={presenter.officerPseudoId}
-                    metricId={metric.metricId}
-                  />
+                  <OutliersChartCard
+                    title={`List of ${toTitleCase(eventName)}`}
+                    infoModal={
+                      <OutliersInfoModal
+                        title={`List of ${toTitleCase(eventName)}`}
+                        copy={`This is the list of ${eventNameSingular} events which are being counted in the numerator of this metric.
+                        The name of the ${labels.supervisionJiiLabel}, their DOC ID, and the date of the ${eventNameSingular} are listed within this table. <br><br>
+                        Click on a ${labels.supervisionJiiLabel} to see more information about this case, such as how long they had been with this ${labels.supervisionOfficerLabel} and more.`}
+                        methodologyLink={methodologyUrl}
+                      />
+                    }
+                    hasLegend={false}
+                  >
+                    <MetricEventsTable
+                      officerPseudoId={presenter.officerPseudoId}
+                      metricId={metric.metricId}
+                    />
+                  </OutliersChartCard>
                 </Sidebar>
                 <Body>
                   <OutliersChartCard
-                    title={`${toTitleCase(
-                      metric.config.bodyDisplayName
-                    )} Compared to State`}
+                    title={`${toTitleCase(bodyDisplayName)} Compared to State`}
+                    infoModal={
+                      <OutliersInfoModal
+                        title="Rate Compared to State"
+                        copy={`This plot shows the selected ${labels.supervisionOfficerLabel} and all other ${labels.supervisionOfficerLabel}s in the state based on their rate for this metric. <br><br>
+                        This rate is calculated by taking the total number of ${eventName} on this ${labels.supervisionOfficerLabel}'s caseload in the past 12 months and dividing it by the ${labels.supervisionOfficerLabel}'s average daily caseload. <br><br>
+                        For example, if 25 ${labels.supervisionJiiLabel}s on an ${labels.supervisionOfficerLabel}'s caseload ${eventNamePastTense} in the past 12 months, and the ${labels.supervisionOfficerLabel} had an average daily caseload of 50 ${labels.supervisionJiiLabel}s, their ${bodyDisplayName} would appear as 50% in this tool. As a result, this rate can be over 100%.`}
+                        methodologyLink={methodologyUrl}
+                      />
+                    }
                   >
                     <OutliersSwarmPlot metric={metric} />
                   </OutliersChartCard>
@@ -315,6 +361,16 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                     title={`Historical ${toTitleCase(
                       metric.config.bodyDisplayName
                     )}`}
+                    infoModal={
+                      <OutliersInfoModal
+                        title="Historical Rate"
+                        copy={`This chart shows a “yearly rolling window,” which means that each dot on the line represents the ${labels.supervisionOfficerLabel}’s ${metric.config.bodyDisplayName} for a full year. 
+                        The most recent dot on the line chart matches up with the rate that is shown in the chart above and represents the ${bodyDisplayName} over the past 12 months. 
+                        ${secondToLastDateHint} <br><br>
+                        12-month rates are used in order to ensure this line plot is less affected by seasonal spikes or dips.`}
+                        methodologyLink={methodologyUrl}
+                      />
+                    }
                     subtitle={`${formatDate(
                       firstDate,
                       "MMMM yyyy"

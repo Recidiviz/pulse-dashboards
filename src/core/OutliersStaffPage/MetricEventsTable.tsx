@@ -24,9 +24,8 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerMetricEvent } from "../../OutliersStore/models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerMetricEventsPresenter } from "../../OutliersStore/presenters/SupervisionOfficerMetricEventsPresenter";
-import { formatDate, toTitleCase } from "../../utils";
+import { formatDate } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
-import OutliersChartCard from "../OutliersChartCard";
 import OutliersClientDetailsPanel from "../OutliersClientDetailsPanel";
 import OutliersTable from "../OutliersTable";
 import { FullName } from "../types/personMetadata";
@@ -93,7 +92,7 @@ const createTableColumn = (column: Column) => {
 export const MetricEventsTable = withPresenter(
   observer(function MetricEventsTable({ presenter }: MetricEventsTableProps) {
     const { isMobile } = useIsMobile(true);
-    const { officerMetricEvents, eventsLabel, clientDetailLinks } = presenter;
+    const { officerMetricEvents, clientDetailLinks } = presenter;
     const scrollElementRef = useRef(null);
     const [scrollElement, setScrollElement] = useState(null);
 
@@ -121,20 +120,16 @@ export const MetricEventsTable = withPresenter(
 
     return (
       <>
-        <OutliersChartCard
-          title={`List of ${toTitleCase(eventsLabel)}`}
-          hasLegend={false}
-        >
-          <Wrapper ref={scrollElementRef}>
-            <OutliersTable<SupervisionOfficerMetricEvent>
-              data={officerMetricEvents}
-              columns={columns.map((c) => createTableColumn(c))}
-              rowLinks={clientDetailLinks}
-              scrollElement={scrollElement}
-              intercomTargetOnFirstRow="First client"
-            />
-          </Wrapper>
-        </OutliersChartCard>
+        <Wrapper ref={scrollElementRef}>
+          <OutliersTable<SupervisionOfficerMetricEvent>
+            data={officerMetricEvents}
+            columns={columns.map((c) => createTableColumn(c))}
+            rowLinks={clientDetailLinks}
+            scrollElement={scrollElement}
+            intercomTargetOnFirstRow="First client"
+          />
+        </Wrapper>
+
         <OutliersClientDetailsPanel />
       </>
     );

@@ -191,7 +191,12 @@ Object {
       },
       "config": Object {
         "bodyDisplayName": "absconsion rate",
+        "descriptionMarkdown": "**All reported absconsions and warrants for the time period**, as captured in the data we receive by supervision levels \\"9AB\\", \\"ZAB\\", \\"ZAC\\", \\"ZAP\\" or supervision type “ABS” for absconsions, and “9WR\\", \\"NIA\\", \\"WRT\\", \\"ZWS\\" for warrants, in a given time period.
+
+<br />
+**Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
         "eventName": "absconsions",
+        "eventNamePastTense": "were absconded",
         "eventNameSingular": "absconsion",
         "name": "absconsions_bench_warrants",
         "outcomeType": "ADVERSE",
@@ -420,7 +425,16 @@ Object {
       },
       "config": Object {
         "bodyDisplayName": "incarceration rate",
+        "descriptionMarkdown": "“Incarcerations” include:
+* All transitions to incarceration (state prison or county jail) from supervision in the past 12 months, regardless of whether the final decision was a revocation or sanction admission
+* Transitions from probation to the Special Alternative for Incarceration (SAI)
+* Transitions from supervision to incarceration due to any “New Commitment” movement reasons in OMNI
+
+<br />
+“Incarcerations” does not include:
+* Absconsions and bench warrants",
         "eventName": "incarcerations",
+        "eventNamePastTense": "were incarcerated",
         "eventNameSingular": "incarceration",
         "name": "incarceration_starts",
         "outcomeType": "ADVERSE",
@@ -642,7 +656,12 @@ Object {
       },
       "config": Object {
         "bodyDisplayName": "absconsion rate",
+        "descriptionMarkdown": "**All reported absconsions and warrants for the time period**, as captured in the data we receive by supervision levels \\"9AB\\", \\"ZAB\\", \\"ZAC\\", \\"ZAP\\" or supervision type “ABS” for absconsions, and “9WR\\", \\"NIA\\", \\"WRT\\", \\"ZWS\\" for warrants, in a given time period.
+
+<br />
+**Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
         "eventName": "absconsions",
+        "eventNamePastTense": "were absconded",
         "eventNameSingular": "absconsion",
         "name": "absconsions_bench_warrants",
         "outcomeType": "ADVERSE",
@@ -871,7 +890,16 @@ Object {
       },
       "config": Object {
         "bodyDisplayName": "incarceration rate",
+        "descriptionMarkdown": "“Incarcerations” include:
+* All transitions to incarceration (state prison or county jail) from supervision in the past 12 months, regardless of whether the final decision was a revocation or sanction admission
+* Transitions from probation to the Special Alternative for Incarceration (SAI)
+* Transitions from supervision to incarceration due to any “New Commitment” movement reasons in OMNI
+
+<br />
+“Incarcerations” does not include:
+* Absconsions and bench warrants",
         "eventName": "incarcerations",
+        "eventNamePastTense": "were incarcerated",
         "eventNameSingular": "incarceration",
         "name": "incarceration_starts",
         "outcomeType": "ADVERSE",

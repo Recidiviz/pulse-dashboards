@@ -23,12 +23,15 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
+import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { OutlierOfficerData } from "../../OutliersStore/presenters/types";
 import { toTitleCase } from "../../utils";
+import OutliersInfoModal from "../OutliersInfoModal";
 import { OutliersSwarmPlot } from "../OutliersSwarmPlot";
 import { outliersUrl } from "../views";
 
@@ -82,6 +85,8 @@ const MetricHeader = styled.div`
 const MetricTitle = styled.div`
   ${typography.Sans16}
   color: ${palette.pine1};
+  display: flex;
+  gap: ${rem(spacing.xs)};
 `;
 
 const MetricHint = styled.div`
@@ -129,6 +134,10 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
 }) => {
   const { isTablet } = useIsMobile(true);
 
+  const {
+    outliersStore: { supervisionStore },
+  } = useRootStore();
+
   return (
     <CardWrapper noFlex={isTablet}>
       <CardHeader hasBorder={!isTablet}>
@@ -136,37 +145,46 @@ const OutliersStaffCard: React.FC<OutliersStaffCardType> = ({
         <CardSubtitle>{subtitle}</CardSubtitle>
       </CardHeader>
       <CardBody>
-        {officer.outlierMetrics.map((metric, metricIndex) => (
-          <MetricSection
-            to={outliersUrl("supervisionStaffMetric", {
-              officerPseudoId: officer.pseudonymizedId,
-              metricId: metric.metricId,
-            })}
-            key={metric.metricId}
-            $hasBorder={isTablet}
-            data-intercom-target={
-              officerIndex === 0 && metricIndex === 0
-                ? "First outlier on supervisor page"
-                : undefined
-            }
-          >
-            <MetricHeader>
-              <MetricTitle>{toTitleCase(metric.config.eventName)}</MetricTitle>
-              <MetricHint>
-                See trends and cases
-                <Icon
-                  kind={IconSVG.Arrow}
-                  fill={palette.signal.links}
-                  height={16}
-                  width={16}
-                />
-              </MetricHint>
-            </MetricHeader>
-            <CardContent noFlex>
-              <OutliersSwarmPlot metric={metric} />
-            </CardContent>
-          </MetricSection>
-        ))}
+        {officer.outlierMetrics.map((metric, metricIndex) => {
+          return (
+            <MetricSection
+              to={outliersUrl("supervisionStaffMetric", {
+                officerPseudoId: officer.pseudonymizedId,
+                metricId: metric.metricId,
+              })}
+              key={metric.metricId}
+              $hasBorder={isTablet}
+              data-intercom-target={
+                officerIndex === 0 && metricIndex === 0
+                  ? "First outlier on supervisor page"
+                  : undefined
+              }
+            >
+              <MetricHeader>
+                <MetricTitle>
+                  {toTitleCase(metric.config.eventName)}
+                  <OutliersInfoModal
+                    title={toTitleCase(metric.config.eventName)}
+                    copy={metric.config.descriptionMarkdown}
+                    methodologyLink={supervisionStore?.methodologyUrl}
+                  />
+                </MetricTitle>
+                <MetricHint>
+                  See trends and cases
+                  <Icon
+                    kind={IconSVG.Arrow}
+                    fill={palette.signal.links}
+                    height={16}
+                    width={16}
+                  />
+                </MetricHint>
+              </MetricHeader>
+              <CardContent noFlex>
+                <OutliersSwarmPlot metric={metric} />
+              </CardContent>
+            </MetricSection>
+          );
+        })}
       </CardBody>
     </CardWrapper>
   );

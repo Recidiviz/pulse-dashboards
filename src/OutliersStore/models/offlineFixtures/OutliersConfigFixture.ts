@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import dedent from "dedent";
+
 import { OutliersConfig } from "../OutliersConfig";
 import { ADVERSE_METRIC_IDS } from "./constants";
 
@@ -30,6 +32,8 @@ export const OutliersConfigFixture: OutliersConfig = {
   worseThanRateLabel: "Far worse than statewide rate",
   noneAreOutliersLabel: "are outliers",
   learnMoreUrl: "https://recidiviz.org",
+  exclusionReasonDescription: dedent`We've excluded officers from this list with particularly large or small average caseloads (larger than 175 or smaller than 10). 
+  We also excluded officers who didn’t have a caseload of at least 10 clients for at least 75% of the observation period.`,
   metrics: [
     {
       name: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
@@ -37,7 +41,12 @@ export const OutliersConfigFixture: OutliersConfig = {
       titleDisplayName: "Absconsion Rate",
       eventName: "absconsions",
       eventNameSingular: "absconsion",
+      eventNamePastTense: "were absconded",
       outcomeType: "ADVERSE",
+      descriptionMarkdown: dedent`**All reported absconsions and warrants for the time period**, as captured in the data we receive by supervision levels "9AB", "ZAB", "ZAC", "ZAP" or supervision type “ABS” for absconsions, and “9WR", "NIA", "WRT", "ZWS" for warrants, in a given time period.
+     
+      <br />
+      **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.`,
     },
     {
       name: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -45,7 +54,16 @@ export const OutliersConfigFixture: OutliersConfig = {
       titleDisplayName: "Incarceration Rate",
       eventName: "incarcerations",
       eventNameSingular: "incarceration",
+      eventNamePastTense: "were incarcerated",
       outcomeType: "ADVERSE",
+      descriptionMarkdown: dedent`“Incarcerations” include:
+      * All transitions to incarceration (state prison or county jail) from supervision in the past 12 months, regardless of whether the final decision was a revocation or sanction admission
+      * Transitions from probation to the Special Alternative for Incarceration (SAI)
+      * Transitions from supervision to incarceration due to any “New Commitment” movement reasons in OMNI
+
+      <br />
+      “Incarcerations” does not include:
+      * Absconsions and bench warrants`,
     },
     {
       name: ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
@@ -53,7 +71,15 @@ export const OutliersConfigFixture: OutliersConfig = {
       titleDisplayName: "Technical Incarceration Rate",
       eventName: "technical incarcerations",
       eventNameSingular: "technical incarceration",
+      eventNamePastTense:
+        "were incarcerated with a technical violation as their most severe violation",
       outcomeType: "ADVERSE",
+      descriptionMarkdown: dedent`“Technical Incarcerations” include:
+      * All transitions to incarceration from supervision (regardless of whether the final decision was a revocation or sanction admission) where the movement reason in OMNI was “Technical” <br>
+      * All transitions to incarceration from supervision (regardless of whether the final decision was a revocation or sanction admission) where the most serious violation type among all violations occurring within the past 24 months was a technical violation <br><br>
+      
+      <br />
+      Note: There are situations where we are unable to associate an incarceration with a violation type, especially if the revocation leads to time in county jail. We may also associate an incorrect violation type, if for example, there are no violations due to poor data entry.`,
     },
   ],
   clientEvents: [

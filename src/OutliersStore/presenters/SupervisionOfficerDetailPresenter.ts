@@ -143,6 +143,10 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     );
   }
 
+  get methodologyUrl(): string {
+    return this.supervisionStore.methodologyUrl;
+  }
+
   get labels(): ConfigLabels {
     return this.supervisionStore.labels;
   }

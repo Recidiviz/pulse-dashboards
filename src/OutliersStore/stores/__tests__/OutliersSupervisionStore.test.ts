@@ -152,7 +152,9 @@ test("adverse metric configs", async () => {
     titleDisplayName: "Successful discharge rate",
     eventName: "successful discharges",
     eventNameSingular: "successful discharge",
+    eventNamePastTense: "successfully discharged",
     outcomeType: "FAVORABLE",
+    descriptionMarkdown: "rate description",
   };
   additionalConfigsFixture.metrics.push(favorableMetricConfig);
 
