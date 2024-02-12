@@ -63,7 +63,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     "Nice work"
   )}! None of the ${labels.supervisionOfficerLabel}s in your ${
     labels.supervisionUnitLabel
-  } are currently outliers on any metrics.`;
+  } ${labels.noneAreOutliersLabel}.`;
 
   if (!outlierOfficersData || outlierOfficersData.length === 0)
     return (

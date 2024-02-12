@@ -25,7 +25,6 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { toTitleCase } from "../../utils";
 import { GOAL_COLORS } from "../OutliersSwarmPlot/constants";
 
 const LegendWrapper = styled.div<{ direction: "row" | "column" }>`
@@ -68,24 +67,28 @@ export const lineLegendIcon = (color: string) => {
   );
 };
 
-export const defaultLegendItems = [
+export const defaultLegendItems = (
+  atOrBelowLabel: string,
+  slightlyWorseLabel: string,
+  farWorseLabel: string,
+  supervisionOfficerLabel: string
+) => [
   {
     label: "Statewide rate",
     icon: lineLegendIcon(palette.slate60),
   },
   {
-    label: "At or below statewide rate",
+    label: atOrBelowLabel,
     icon: circleLegendIcon(GOAL_COLORS.MET),
   },
   {
-    label: "Slightly worse than statewide rate",
+    label: slightlyWorseLabel,
     icon: circleLegendIcon(GOAL_COLORS.NEAR),
   },
   {
-    label: "Far worse than statewide rate",
+    label: farWorseLabel,
     icon: circleLegendIcon(GOAL_COLORS.FAR),
-    tooltip:
-      "$OFFICER_LABEL has a rate over 1 Interquartile Range above the statewide rate",
+    tooltip: `${supervisionOfficerLabel} has a rate over 1 Interquartile Range above the statewide rate`,
   },
 ];
 
@@ -95,15 +98,27 @@ type OutliersLegendType = {
 };
 
 const OutliersLegend: React.FC<OutliersLegendType> = ({
-  items = defaultLegendItems,
   direction = "column",
 }) => {
   const {
     outliersStore: { supervisionStore },
   } = useRootStore();
 
-  const supervisionOfficerLabel =
-    supervisionStore?.labels.supervisionOfficerLabel || "officer";
+  if (!supervisionStore) return null;
+
+  const {
+    atOrBelowRateLabel,
+    slightlyWorseThanRateLabel,
+    worseThanRateLabel,
+    supervisionOfficerLabel,
+  } = supervisionStore.labels;
+
+  const items = defaultLegendItems(
+    atOrBelowRateLabel,
+    slightlyWorseThanRateLabel,
+    worseThanRateLabel,
+    supervisionOfficerLabel
+  );
 
   return (
     <LegendWrapper direction={direction}>
@@ -118,10 +133,7 @@ const OutliersLegend: React.FC<OutliersLegendType> = ({
               {hasTooltip && (
                 <TooltipTrigger
                   key={item.label}
-                  contents={item.tooltip?.replace(
-                    "$OFFICER_LABEL",
-                    toTitleCase(supervisionOfficerLabel)
-                  )}
+                  contents={item.tooltip}
                   maxWidth={300}
                 >
                   <TooltipIcon kind="Info" size={12} color={palette.slate60} />

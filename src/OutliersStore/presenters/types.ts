@@ -44,6 +44,10 @@ export type ConfigLabels = Pick<
   | "supervisionJiiLabel"
   | "supervisionSupervisorLabel"
   | "supervisionUnitLabel"
+  | "atOrBelowRateLabel"
+  | "slightlyWorseThanRateLabel"
+  | "worseThanRateLabel"
+  | "noneAreOutliersLabel"
 >;
 export type SupervisionDetails = Pick<
   SupervisionOfficerMetricEvent,

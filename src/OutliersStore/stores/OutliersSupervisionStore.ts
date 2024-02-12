@@ -239,6 +239,10 @@ export class OutliersSupervisionStore {
       supervisionJiiLabel: this.config.supervisionJiiLabel,
       supervisionSupervisorLabel: this.config.supervisionSupervisorLabel,
       supervisionUnitLabel: this.config.supervisionUnitLabel,
+      atOrBelowRateLabel: this.config.atOrBelowRateLabel,
+      slightlyWorseThanRateLabel: this.config.slightlyWorseThanRateLabel,
+      worseThanRateLabel: this.config.worseThanRateLabel,
+      noneAreOutliersLabel: this.config.noneAreOutliersLabel,
     };
   }
 

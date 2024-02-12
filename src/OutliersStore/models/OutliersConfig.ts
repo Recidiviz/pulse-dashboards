@@ -24,6 +24,10 @@ export const outliersConfigSchema = z.object({
   supervisionJiiLabel: z.string(),
   supervisionSupervisorLabel: z.string(),
   supervisionUnitLabel: z.string(),
+  worseThanRateLabel: z.string(),
+  slightlyWorseThanRateLabel: z.string(),
+  atOrBelowRateLabel: z.string(),
+  noneAreOutliersLabel: z.string(),
   learnMoreUrl: z.string(),
   metrics: z.array(
     z.object({

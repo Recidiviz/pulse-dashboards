@@ -25,6 +25,10 @@ export const OutliersConfigFixture: OutliersConfig = {
   supervisionJiiLabel: "client",
   supervisionSupervisorLabel: "supervisor",
   supervisionUnitLabel: "team",
+  atOrBelowRateLabel: "At or below statewide rate",
+  slightlyWorseThanRateLabel: "Slightly worse than statewide rate",
+  worseThanRateLabel: "Far worse than statewide rate",
+  noneAreOutliersLabel: "are outliers",
   learnMoreUrl: "https://recidiviz.org",
   metrics: [
     {
