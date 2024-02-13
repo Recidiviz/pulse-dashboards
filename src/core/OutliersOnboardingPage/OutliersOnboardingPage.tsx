@@ -161,7 +161,7 @@ const OnboardingPage = observer(function OnboardingPage({
       description: [
         `${toTitleCase(
           labels.supervisionSupervisorLabel
-        )}s, district and regional management, and FOA and DOC administrators have access to this tool. ${toTitleCase(
+        )}s, district and regional management, and DOC administrators have access to this tool. ${toTitleCase(
           labels.supervisionOfficerLabel
         )}s do not have access.`,
         "# If you have questions, we’re here to help.",
