@@ -18,24 +18,14 @@
 import { palette } from "@recidiviz/design-system";
 import { rgba } from "polished";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import type { Opportunity } from "../../WorkflowsStore";
 
 export const OPPORTUNITY_STATUS_COLORS = {
-  responsiveRevamp: {
+  eligible: {
     icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
     background: "rgb(247,251,249)",
     border: "rgb(234,246,241)",
-    text: palette.pine4,
-    buttonFill: palette.signal.links,
-    link: palette.signal.links,
-  },
-  eligible: {
-    icon: palette.signal.highlight,
-    iconAlmost: palette.data.gold1,
-    background: rgba(palette.signal.highlight, 0.1),
-    border: rgba(palette.signal.highlight, 0.3),
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.signal.links,
@@ -81,28 +71,28 @@ export const OPPORTUNITY_STATUS_COLORS = {
 export type StatusPalette =
   typeof OPPORTUNITY_STATUS_COLORS[keyof typeof OPPORTUNITY_STATUS_COLORS];
 
-export function useStatusColors(opportunity: Opportunity): StatusPalette {
-  const { responsiveRevamp } = useFeatureVariants();
-
-  if (opportunity.isAlert) {
-    if (opportunity?.reviewStatus === "DENIED") {
+export function useStatusColors({
+  isAlert,
+  reviewStatus,
+  almostEligible,
+}: Opportunity): StatusPalette {
+  if (isAlert) {
+    if (reviewStatus === "DENIED") {
       return OPPORTUNITY_STATUS_COLORS.alertOverride;
     }
-    if (opportunity?.almostEligible) {
+    if (almostEligible) {
       return OPPORTUNITY_STATUS_COLORS.almostEligible;
     }
     return OPPORTUNITY_STATUS_COLORS.alert;
   }
 
-  if (opportunity?.reviewStatus === "DENIED") {
+  if (reviewStatus === "DENIED") {
     return OPPORTUNITY_STATUS_COLORS.ineligible;
   }
 
-  if (opportunity?.almostEligible) {
+  if (almostEligible) {
     return OPPORTUNITY_STATUS_COLORS.almostEligible;
   }
 
-  return responsiveRevamp
-    ? OPPORTUNITY_STATUS_COLORS.responsiveRevamp
-    : OPPORTUNITY_STATUS_COLORS.eligible;
+  return OPPORTUNITY_STATUS_COLORS.eligible;
 }
