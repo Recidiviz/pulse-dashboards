@@ -102,6 +102,8 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
   }
 
   denialReasonsMap = {
+    BEDS: "Released early due to a need for Extended Restrictive Housing beds",
+    RELEASED: "Released this week",
     OUTDATED: "Hearing occurred this week",
     [OTHER_KEY]: "Other",
   };
