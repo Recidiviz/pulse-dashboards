@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, typography } from "@recidiviz/design-system";
+import { palette, spacing, typography } from "@recidiviz/design-system";
 import { format, isEqual } from "date-fns";
+import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { TextLink } from "../WorkflowsMilestones/styles";
 
 const MarkedIneligibleReasonsText = styled.div`
   ${typography.Sans14}
@@ -32,13 +32,24 @@ const MarkedIneligibleReasonsText = styled.div`
   margin: 1.5rem 0;
 `;
 
-export function buildSnoozedByText(
-  opportunity: Opportunity,
-  snoozedOnDate?: Date,
-  snoozedBy?: string
-): string | undefined {
+const OtherReasonText = styled.pre`
+  ${typography.Sans14}
+  color: ${palette.slate85};
+  text-wrap: inherit;
+  margin: ${rem(spacing.md)} 0 0 0;
+`;
+
+export function buildSnoozedByText({
+  deniedTabTitle,
+  snoozedOnDate,
+  snoozedBy,
+}: {
+  deniedTabTitle: string;
+  snoozedOnDate?: Date;
+  snoozedBy?: string;
+}): string | undefined {
   if (!snoozedOnDate || !snoozedBy) return;
-  return `${opportunity.deniedTabTitle} by ${snoozedBy} on ${format(
+  return `${deniedTabTitle} by ${snoozedBy} on ${format(
     snoozedOnDate,
     "LLLL d, yyyy"
   )}.`;
@@ -80,45 +91,53 @@ export function buildDenialReasonsListText(
   return `${ineligibleReasonsListCopy}${" "}${denialReasonsList}`;
 }
 
+export function buildSnoozedByTextAndResurfaceText(
+  opportunity: Opportunity,
+  snoozeUntil?: Date
+) {
+  const snoozedByText = buildSnoozedByText(opportunity);
+  const resurfaceText = buildResurfaceText(opportunity, snoozeUntil);
+  return [snoozedByText, resurfaceText];
+}
+
 const MarkedIneligibleReasons: React.FC<{
   opportunity: Opportunity;
-  snoozeUntil?: Date;
+  snoozedByTextAndResurfaceTextPair: ReturnType<
+    typeof buildSnoozedByTextAndResurfaceText
+  >;
   denialReasons?: string[];
-}> = ({ opportunity, snoozeUntil, denialReasons }) => {
+}> = ({ opportunity, snoozedByTextAndResurfaceTextPair, denialReasons }) => {
   const { enableSnooze } = useFeatureVariants();
 
   if (!denialReasons || !enableSnooze) return null;
-
-  const handleUndoClick = async () => {
-    await opportunity.deleteOpportunityDenialAndSnooze();
-  };
-
-  const snoozedByText = buildSnoozedByText(
-    opportunity,
-    opportunity.snoozedOnDate,
-    opportunity.snoozedBy
-  );
-
-  const resurfaceText = buildResurfaceText(opportunity, snoozeUntil);
 
   const ineligibleReasonsList = buildDenialReasonsListText(
     opportunity,
     denialReasons
   );
 
+  const snoozedByTextAndResurfaceText = snoozedByTextAndResurfaceTextPair.every(
+    (text) => text
+  )
+    ? snoozedByTextAndResurfaceTextPair.join(" ")
+    : undefined;
+
   return (
     <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
-      {snoozedByText && resurfaceText && (
+      {snoozedByTextAndResurfaceText && (
         <>
           {" "}
-          <div>
-            {snoozedByText} {resurfaceText}{" "}
-            <TextLink onClick={handleUndoClick}>Undo</TextLink>
-          </div>{" "}
-          <br />
+          <div>{snoozedByTextAndResurfaceText} </div> <br />
         </>
       )}
-      <div>{ineligibleReasonsList}</div>
+      <div>
+        {ineligibleReasonsList}
+        {opportunity.denial?.otherReason ? (
+          <OtherReasonText>
+            &quot;{opportunity.denial.otherReason}&quot;
+          </OtherReasonText>
+        ) : null}
+      </div>
     </MarkedIneligibleReasonsText>
   );
 };

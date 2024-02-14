@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, spacing } from "@recidiviz/design-system";
+import { Button, palette, spacing, typography } from "@recidiviz/design-system";
 import { parseISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
@@ -31,8 +31,11 @@ import { OpportunityDenialDropdown } from "../OpportunityDenial";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
+import { TextLink } from "../WorkflowsMilestones/styles";
 import { CriteriaList } from "./CriteriaList";
-import MarkedIneligibleReasons from "./MarkedIneligibleReasons";
+import MarkedIneligibleReasons, {
+  buildSnoozedByTextAndResurfaceText,
+} from "./MarkedIneligibleReasons";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 
 const Wrapper = styled.div<{
@@ -57,7 +60,8 @@ const Wrapper = styled.div<{
 const ActionButtons = styled.div<{ isMobile: boolean }>`
   margin-top: ${rem(spacing.md)};
   display: flex;
-  gap: ${({ isMobile }) => (isMobile ? rem(spacing.sm) : 0)};
+  align-items: baseline;
+  gap: ${({ isMobile }) => (isMobile ? rem(spacing.sm) : rem(spacing.sm))};
   flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
 `;
 
@@ -73,6 +77,14 @@ const FormActionButton = styled(Button).attrs({
   &:hover,
   &:focus {
     background: ${(props) => darken(0.1, props.buttonFill)};
+  }
+`;
+
+const RevertChangesButtonLink = styled(TextLink)`
+  ${typography.Sans14};
+  color: ${palette.slate70};
+  &:hover {
+    color: ${palette.slate};
   }
 `;
 
@@ -108,6 +120,15 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         ? parseISO(opportunity?.autoSnooze?.snoozeUntil)
         : undefined);
 
+    const [snoozedByText, resurfaceText] = buildSnoozedByTextAndResurfaceText(
+      opportunity,
+      snoozeUntil
+    );
+
+    const handleUndoClick = async () => {
+      await opportunity.deleteOpportunityDenialAndSnooze();
+    };
+
     return (
       <Wrapper responsiveRevamp={!!responsiveRevamp} {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
@@ -115,7 +136,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         {!!responsiveRevamp && showDenialButton && (
           <MarkedIneligibleReasons
             opportunity={opportunity}
-            snoozeUntil={snoozeUntil}
+            snoozedByTextAndResurfaceTextPair={[snoozedByText, resurfaceText]}
             denialReasons={opportunity.denial?.reasons}
           />
         )}
@@ -146,14 +167,29 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             {responsiveRevamp
               ? showDenialButton &&
                 onDenialButtonClick && (
-                  <MenuButton
-                    responsiveRevamp={!!responsiveRevamp}
-                    opportunity={opportunity}
-                    onDenialButtonClick={onDenialButtonClick}
-                  />
+                  <>
+                    <MenuButton
+                      responsiveRevamp={!!responsiveRevamp}
+                      opportunity={opportunity}
+                      onDenialButtonClick={onDenialButtonClick}
+                    />
+                    {snoozedByText && resurfaceText && (
+                      <RevertChangesButtonLink onClick={handleUndoClick}>
+                        Revert Changes
+                      </RevertChangesButtonLink>
+                    )}
+                  </>
                 )
               : showDenialButton && (
-                  <OpportunityDenialDropdown opportunity={opportunity} />
+                  <>
+                    <OpportunityDenialDropdown opportunity={opportunity} />(
+                    {snoozedByText && resurfaceText && (
+                      <RevertChangesButtonLink onClick={handleUndoClick}>
+                        Revert Changes
+                      </RevertChangesButtonLink>
+                    )}
+                    )
+                  </>
                 )}
           </ActionButtons>
         )}

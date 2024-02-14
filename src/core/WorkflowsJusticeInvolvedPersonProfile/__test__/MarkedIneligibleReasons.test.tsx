@@ -25,6 +25,7 @@ import MarkedIneligibleReasons, {
   buildDenialReasonsListText,
   buildResurfaceText,
   buildSnoozedByText,
+  buildSnoozedByTextAndResurfaceText,
 } from "../MarkedIneligibleReasons";
 
 jest.mock("../../../components/StoreProvider");
@@ -53,20 +54,24 @@ describe("snoozedByText", () => {
     const testOpp = {
       ...mockOpportunity,
       deniedTabTitle: "Marked ineligible",
+      snoozedOnDate: new Date(2023, 9, 15),
+      snoozedBy: "test-email",
     };
-    expect(
-      buildSnoozedByText(testOpp, new Date(2023, 9, 15), "test-email")
-    ).toEqual("Marked ineligible by test-email on October 15, 2023.");
+    expect(buildSnoozedByText(testOpp)).toEqual(
+      "Marked ineligible by test-email on October 15, 2023."
+    );
   });
 
   test("override opportunities", () => {
     const testOpp = {
       ...mockOpportunity,
       deniedTabTitle: "Overridden",
+      snoozedOnDate: new Date(2023, 9, 15),
+      snoozedBy: "test-email",
     };
-    expect(
-      buildSnoozedByText(testOpp, new Date(2023, 9, 15), "test-email")
-    ).toEqual("Overridden by test-email on October 15, 2023.");
+    expect(buildSnoozedByText(testOpp)).toEqual(
+      "Overridden by test-email on October 15, 2023."
+    );
   });
 
   test("no snoozed on date supplied", () => {
@@ -75,9 +80,7 @@ describe("snoozedByText", () => {
       deniedTabTitle: "Marked ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
-    expect(
-      buildSnoozedByText(testOpp, undefined, "test-email")
-    ).toBeUndefined();
+    expect(buildSnoozedByText(testOpp)).toBeUndefined();
   });
 
   test("no snoozed by supplied", () => {
@@ -86,9 +89,7 @@ describe("snoozedByText", () => {
       deniedTabTitle: "Marked ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
-    expect(
-      buildSnoozedByText(testOpp, testOpp.snoozedOnDate, undefined)
-    ).toBeUndefined();
+    expect(buildSnoozedByText(testOpp)).toBeUndefined();
   });
 });
 
@@ -128,26 +129,31 @@ describe("buildResurfaceText", () => {
 describe("MarkedIneligibleReasons", () => {
   beforeEach(() => {
     useFeatureVariantsMock.mockReturnValue({ enableSnooze: {} });
+    const opp = {
+      ...mockOpportunity,
+      isAlert: true,
+      snoozedBy: "test-email",
+      deniedTabTitle: "Overridden",
+      snoozedOnDate: new Date(2023, 9, 10),
+      autoSnooze: {
+        snoozeUntil: "2023-10-15",
+        snoozedBy: "",
+        snoozedOn: "",
+      },
+      denial: {
+        reasons: ["REASON"],
+        otherReason: "Other Reason",
+      },
+    };
+    const testText = buildSnoozedByTextAndResurfaceText(
+      opp,
+      new Date(2023, 9, 15)
+    );
     render(
       <BrowserRouter>
         <MarkedIneligibleReasons
-          opportunity={{
-            ...mockOpportunity,
-            isAlert: true,
-            snoozedBy: "test-email",
-            deniedTabTitle: "Overridden",
-            snoozedOnDate: new Date(2023, 9, 10),
-            autoSnooze: {
-              snoozeUntil: "2023-10-15",
-              snoozedBy: "",
-              snoozedOn: "",
-            },
-            denial: {
-              reasons: ["REASON"],
-              otherReason: "Other Reason",
-            },
-          }}
-          snoozeUntil={new Date(2023, 9, 15)}
+          opportunity={opp}
+          snoozedByTextAndResurfaceTextPair={testText}
           denialReasons={["REASON", OTHER_KEY]}
         />
       </BrowserRouter>
@@ -168,7 +174,7 @@ describe("MarkedIneligibleReasons", () => {
     ).toBeInTheDocument();
   });
 
-  test("undo link", () => {
-    expect(screen.getByText("Undo")).toBeInTheDocument();
+  test("otherReason text", () => {
+    expect(screen.getByText('"Other Reason"')).toBeInTheDocument();
   });
 });
