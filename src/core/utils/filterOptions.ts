@@ -940,6 +940,8 @@ export const TnPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
     options: [
       { label: "All", value: "ALL" },
+      { label: "Absconded", value: "ABSCONSION" },
+      { label: "Furlough", value: "FURLOUGH" },
       { label: "Minimum", value: "MINIMUM" },
       { label: "Medium", value: "MEDIUM" },
       { label: "Maximum", value: "HIGH" },
@@ -948,7 +950,6 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "Compliant Reporting", value: "LIMITED" },
       { label: "Inactive", value: "UNSUPERVISED" },
       { label: "Intake", value: "UNASSIGNED" },
-      { label: "Absconded", value: "ABSCONDED" },
       { label: "Warrant", value: "WARRANT" },
       { label: "ICOTS", value: "INTERSTATE_COMPACT" },
       { label: "Other", value: "OTHER" },
