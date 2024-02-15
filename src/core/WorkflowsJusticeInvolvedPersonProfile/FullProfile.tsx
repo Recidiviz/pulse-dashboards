@@ -22,10 +22,7 @@ import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { Client } from "../../WorkflowsStore";
@@ -52,7 +49,6 @@ import {
   ClientProfileProps,
   PersonProfileProps,
   ResidentProfileProps,
-  ResponsiveRevamp,
 } from "./types";
 
 const COLUMNS = "1fr 1.2fr";
@@ -61,41 +57,36 @@ const GUTTER = rem(spacing.sm * 15);
 const SMALL_GUTTER = rem(spacing.md);
 
 const Wrapper = styled.div<{
-  responsiveRevamp: boolean;
   isMobile: boolean;
 }>`
   display: grid;
   column-gap: ${GUTTER};
   padding-bottom: ${rem(spacing.lg)};
-  row-gap: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? SMALL_GUTTER : rem(spacing.lg)};
+  row-gap: ${SMALL_GUTTER};
 
-  ${({ responsiveRevamp, isMobile }) =>
-    responsiveRevamp &&
+  ${({ isMobile }) =>
     !isMobile &&
     `div[class*="AccordionWrapper"] {
       margin: 0;
     }`}
 `;
 
-const Header = styled.div<{ responsiveRevamp: boolean; isMobile: boolean }>`
+const Header = styled.div<{ isMobile: boolean }>`
   border-bottom: 1px solid ${rgba(palette.slate, 0.15)};
   gap: ${({ isMobile }) => (isMobile ? rem(spacing.xl) : SMALL_GUTTER)};
   display: grid;
   grid-template-columns: ${({ isMobile }) => (isMobile ? `100%` : COLUMNS)};
-  padding-top: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? 0 : rem(spacing.lg)};
+  padding-top: 0;
   padding-bottom: ${rem(spacing.md)};
   cursor: default;
   min-width: ${rem(280)};
 `;
 
 const Content = styled.div<{
-  responsiveRevamp: boolean;
   isMobile: boolean;
 }>`
   display: grid;
-  gap: ${({ responsiveRevamp }) => (responsiveRevamp ? SMALL_GUTTER : GUTTER)};
+  gap: ${SMALL_GUTTER};
   grid-template-columns: ${({ isMobile }) => (isMobile ? `100%` : COLUMNS)};
 
   & > div {
@@ -104,82 +95,62 @@ const Content = styled.div<{
     }
   }
 
-  ${({ responsiveRevamp }) =>
-    responsiveRevamp &&
-    `hr[class*="TaskItemDivider"] {
-      margin: 0;
-    }`}
+  hr[class*="TaskItemDivider"] {
+    margin: 0;
+  }
 `;
 
 const ContactDetailsContainer = styled.div<{
-  responsiveRevamp: boolean;
   isMobile: boolean;
 }>`
   display: grid;
-  gap: ${({ responsiveRevamp }) => (responsiveRevamp ? rem(spacing.md) : 0)};
-  grid-template-columns: ${({ responsiveRevamp, isMobile }) =>
-    isMobile
-      ? `repeat(auto-fill, minmax(${rem(176)}, 1fr));`
-      : `${responsiveRevamp ? "1fr" : "2fr"} 1fr 1fr;`};
+  gap: ${rem(spacing.md)};
+  grid-template-columns: ${({ isMobile }) =>
+    isMobile ? `repeat(auto-fill, minmax(${rem(176)}, 1fr));` : `1fr 1fr 1fr;`};
 
-  ${({ responsiveRevamp, isMobile }) =>
-    responsiveRevamp &&
+  ${({ isMobile }) =>
     `max-width: ${isMobile ? "unset" : rem(500)}; justify-self: ${
       isMobile ? "unset" : "end"
     };`}
 `;
 
-const ContactCell = styled.dl<{ responsiveRevamp: boolean }>`
+const ContactCell = styled.dl`
   ${typography.Sans14}
   color: ${palette.slate70};
   margin: 0;
-  padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? 0 : `0 ${rem(spacing.md)}`};
-
-  :not(:last-child) {
-    ${({ responsiveRevamp }) =>
-      !responsiveRevamp && `border-right: 1px solid ${palette.slate20};`}
-  }
+  padding: 0;
 `;
 
 const ContactLabel = styled.dt`
   font-weight: inherit;
 `;
 
-const ContactValue = styled.dd<{ alignRight?: boolean }>`
+const ContactValue = styled.dd`
   ${typography.Sans16};
   color: ${palette.pine2};
   margin: 0;
   padding-top: 5px;
-  text-align: ${(props) => (props.alignRight ? "right" : "left")};
+  text-align: left;
 
   :first-child {
     padding-top: 0;
   }
 `;
 
-const SectionHeading = styled(Sans16)<{ responsiveRevamp: boolean }>`
-  color: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? palette.slate80 : palette.pine2};
+const SectionHeading = styled(Sans16)`
+  color: ${palette.slate80};
   margin-bottom: ${rem(spacing.md)};
 `;
 
 export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
 
-function AdditionalDetails({
-  person,
-  responsiveRevamp,
-}: PersonProfileProps & ResponsiveRevamp): React.ReactElement {
+function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
   if (person instanceof Client) {
-    return (
-      <ClientDetails responsiveRevamp={responsiveRevamp} client={person} />
-    );
+    return <ClientDetails client={person} />;
   }
 
   if (person instanceof Resident) {
-    return (
-      <ResidentDetails responsiveRevamp={responsiveRevamp} resident={person} />
-    );
+    return <ResidentDetails resident={person} />;
   }
 
   return <div />;
@@ -187,13 +158,10 @@ function AdditionalDetails({
 
 const ClientDetails = observer(function ClientDetails({
   client,
-  responsiveRevamp,
-}: ClientProfileProps & ResponsiveRevamp): React.ReactElement {
+}: ClientProfileProps): React.ReactElement {
   return (
     <>
-      <SectionHeading responsiveRevamp={responsiveRevamp}>
-        Progress toward success
-      </SectionHeading>
+      <SectionHeading>Progress toward success</SectionHeading>
       <Divider />
       <SupervisionProgress client={client} />
       <Divider />
@@ -226,13 +194,10 @@ const ClientDetails = observer(function ClientDetails({
 
 const ResidentDetails = observer(function ResidentDetails({
   resident,
-  responsiveRevamp,
-}: ResidentProfileProps & ResponsiveRevamp): React.ReactElement {
+}: ResidentProfileProps): React.ReactElement {
   return (
     <>
-      <SectionHeading responsiveRevamp={responsiveRevamp}>
-        Progress toward success
-      </SectionHeading>
+      <SectionHeading>Progress toward success</SectionHeading>
       <Divider />
       {
         // MO residents don't have start/end dates or officer IDs in their resident record
@@ -251,13 +216,13 @@ const ResidentDetails = observer(function ResidentDetails({
   );
 });
 
-const PreferredName: React.FC<ClientProfileProps & ResponsiveRevamp> = observer(
-  function PreferredName({ client, responsiveRevamp }): React.ReactElement {
+const PreferredName: React.FC<ClientProfileProps> = observer(
+  function PreferredName({ client }): React.ReactElement {
     const name =
       client.preferredName || toJS(client.fullName).givenNames || "Unknown";
     return (
       <ClientDetailsInput
-        text={responsiveRevamp ? toTitleCase(name) : name}
+        text={toTitleCase(name)}
         client={client}
         updateType="preferredName"
       />
@@ -265,37 +230,32 @@ const PreferredName: React.FC<ClientProfileProps & ResponsiveRevamp> = observer(
   }
 );
 
-type ContactDetailsType = { isMobile: boolean } & PersonProfileProps &
-  ResponsiveRevamp;
+type ContactDetailsType = { isMobile: boolean } & PersonProfileProps;
 
 function ContactDetails({
   person,
-  responsiveRevamp,
   isMobile,
 }: ContactDetailsType): React.ReactElement | null {
   if (!(person instanceof Client)) return null;
 
   return (
-    <ContactDetailsContainer
-      responsiveRevamp={responsiveRevamp}
-      isMobile={responsiveRevamp && isMobile}
-    >
-      <ContactCell responsiveRevamp={responsiveRevamp}>
-        {responsiveRevamp && <ContactLabel>Contacts</ContactLabel>}
-        <ContactValue className="fs-exclude" alignRight={!responsiveRevamp}>
+    <ContactDetailsContainer isMobile={isMobile}>
+      <ContactCell>
+        <ContactLabel>Contacts</ContactLabel>
+        <ContactValue className="fs-exclude">
           {person.phoneNumber || "Phone number unavailable"}
         </ContactValue>
-        <ContactValue className="fs-exclude" alignRight={!responsiveRevamp}>
+        <ContactValue className="fs-exclude">
           {person.emailAddress || "Email unavailable"}
         </ContactValue>
       </ContactCell>
-      <ContactCell responsiveRevamp={responsiveRevamp}>
+      <ContactCell>
         <ContactLabel>Preferred Name</ContactLabel>
         <ContactValue>
-          <PreferredName responsiveRevamp={responsiveRevamp} client={person} />
+          <PreferredName client={person} />
         </ContactValue>
       </ContactCell>
-      <ContactCell responsiveRevamp={responsiveRevamp}>
+      <ContactCell>
         <ContactLabel>Preferred Contact</ContactLabel>
         <ContactValue>
           <PreferredContact client={person} />
@@ -307,8 +267,6 @@ function ContactDetails({
 
 export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {
-    const { responsiveRevamp } = useFeatureVariants();
-
     const {
       workflowsStore: { selectedPerson: person },
     } = useRootStore();
@@ -322,38 +280,23 @@ export const FullProfile = observer(
 
     return (
       <WorkflowsNavLayout>
-        <Wrapper isMobile={isMobile} responsiveRevamp={!!responsiveRevamp}>
-          <Header
-            isMobile={!!responsiveRevamp && isTablet}
-            responsiveRevamp={!!responsiveRevamp}
-          >
+        <Wrapper isMobile={isMobile}>
+          <Header isMobile={isTablet}>
             <ProfileCapsule
               avatarSize="lg"
               person={person}
-              textSize={responsiveRevamp ? "sm" : "lg"}
+              textSize="sm"
               hideTooltip
               nameHoverState={false}
             />
-            <ContactDetails
-              person={person}
-              responsiveRevamp={!!responsiveRevamp}
-              isMobile={!!responsiveRevamp && isTablet}
-            />
+            <ContactDetails person={person} isMobile={isTablet} />
           </Header>
-          <Content
-            isMobile={!!responsiveRevamp && isTablet}
-            responsiveRevamp={!!responsiveRevamp}
-          >
+          <Content isMobile={isTablet}>
             <div className="ProfileDetails">
-              <AdditionalDetails
-                responsiveRevamp={!!responsiveRevamp}
-                person={person}
-              />
+              <AdditionalDetails person={person} />
             </div>
             <div>
-              <SectionHeading responsiveRevamp={!!responsiveRevamp}>
-                Opportunities
-              </SectionHeading>
+              <SectionHeading>Opportunities</SectionHeading>
               <OpportunitiesAccordion person={person} formLinkButton />
               <PreviewTasks person={person} showSnoozeDropdown={false} />
             </div>

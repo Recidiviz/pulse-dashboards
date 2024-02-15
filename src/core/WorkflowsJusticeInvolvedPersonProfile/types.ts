@@ -19,10 +19,6 @@ import type { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 
-export type ResponsiveRevamp = {
-  responsiveRevamp: boolean;
-};
-
 export type PersonProfileProps = {
   person: JusticeInvolvedPerson;
 };
