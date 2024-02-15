@@ -28,7 +28,7 @@ When("I click on the person link on the preview modal", async () => {
 });
 
 When("I click on the Undo link", async () => {
-  const undoLink = await $(`span=Undo`);
+  const undoLink = await $(`span=Revert Changes`);
   await undoLink.waitForExist();
   await undoLink.click();
   await waitForNetworkIdle();
