@@ -17,7 +17,6 @@
 
 import { useState } from "react";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
@@ -32,28 +31,11 @@ type OPPORTUNITY_SIDE_PANEL_VIEW = "OPPORTUNITY_PREVIEW" | "MARK_INELIGIBLE";
 export function OpportunityPreviewModal({
   opportunity,
 }: OpportunityCaseloadProps): JSX.Element | null {
-  const { responsiveRevamp } = useFeatureVariants();
-
   const [currentView, setCurrentView] = useState<OPPORTUNITY_SIDE_PANEL_VIEW>(
     "OPPORTUNITY_PREVIEW"
   );
 
   if (!opportunity) return null;
-
-  if (!responsiveRevamp) {
-    return (
-      <WorkflowsPreviewModal
-        isOpen={!!opportunity}
-        onAfterOpen={() => opportunity?.trackPreviewed()}
-        pageContent={
-          <OpportunityProfile
-            opportunity={opportunity}
-            formLinkButton={!!opportunity?.form}
-          />
-        }
-      />
-    );
-  }
 
   function resetPreviewView() {
     setCurrentView("OPPORTUNITY_PREVIEW");

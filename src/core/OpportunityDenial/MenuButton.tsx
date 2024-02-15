@@ -15,33 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, DropdownToggle } from "@recidiviz/design-system";
+import { Button } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { darken } from "polished";
 import styled from "styled-components/macro";
 
 import { Opportunity, OPPORTUNITY_CONFIGS } from "../../WorkflowsStore";
-import { useStatusColors } from "../utils/workflowsUtils";
-
-const StatusAwareDropdownToggle = styled(DropdownToggle).attrs({
-  kind: "secondary",
-  shape: "block",
-  showCaret: true,
-})<{ background: string; border?: string; textColor?: string }>`
-  ${(props) => (props.border ? `border-color: ${props.border};` : "")}
-  ${(props) => (props.textColor ? `color: ${props.textColor};` : "")}
-
-  &:hover,
-  &:focus {
-    background-color: ${(props) => props.background};
-  }
-
-  &:active,
-  &[aria-expanded="true"] {
-    ${(props) =>
-      props.border ? `border-color: ${darken(0.2, props.border)};` : ""}
-  }
-`;
 
 const StatusAwareButton = styled(Button).attrs({
   kind: "secondary",
@@ -53,40 +31,16 @@ const StatusAwareButton = styled(Button).attrs({
 export const MenuButton = observer(function MenuButton({
   opportunity,
   onDenialButtonClick = () => null,
-  responsiveRevamp = false,
 }: {
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
-  responsiveRevamp?: boolean;
 }) {
   const config = OPPORTUNITY_CONFIGS[opportunity.type];
 
-  const colors = useStatusColors(opportunity);
-
-  const reasons = opportunity.denial?.reasons;
-
-  const buttonProps = {
-    background: colors.background,
-    border: reasons?.length ? colors.border : undefined,
-    textColor: reasons?.length ? colors.text : undefined,
-  };
-
-  let buttonText =
+  const buttonText =
     config.denialButtonText ??
     (opportunity.isAlert ? "Override?" : "Update eligibility");
-  if (reasons?.length && !responsiveRevamp) {
-    buttonText = `${reasons[0]}${
-      reasons.length > 1 ? ` + ${reasons.length - 1} more` : ""
-    }`;
-  }
 
-  if (!responsiveRevamp) {
-    return (
-      <StatusAwareDropdownToggle {...buttonProps}>
-        {buttonText}
-      </StatusAwareDropdownToggle>
-    );
-  }
   return (
     <StatusAwareButton onClick={onDenialButtonClick}>
       {buttonText}

@@ -169,7 +169,6 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 onDenialButtonClick && (
                   <>
                     <MenuButton
-                      responsiveRevamp={!!responsiveRevamp}
                       opportunity={opportunity}
                       onDenialButtonClick={onDenialButtonClick}
                     />

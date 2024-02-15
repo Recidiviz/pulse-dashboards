@@ -22,10 +22,7 @@ import { useEffect, useMemo, useState } from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
@@ -40,7 +37,6 @@ import { Heading, SubHeading } from "../sharedComponents";
 import WorkflowsResults from "../WorkflowsResults";
 import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
-import { OpportunityPersonListWithSectionTitles } from "./OpportunityPersonListWithSectionTitles";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 
 export const PersonList = styled.ul`
@@ -83,7 +79,6 @@ const Empty = observer(function Empty() {
 
 const HydratedOpportunityPersonList = observer(
   function HydratedOpportunityPersonList() {
-    const { responsiveRevamp } = useFeatureVariants();
     const {
       workflowsStore: {
         selectedOpportunityType: opportunityType,
@@ -160,10 +155,7 @@ const HydratedOpportunityPersonList = observer(
       <Empty />
     ) : (
       <>
-        <Heading
-          isMobile={isMobile && responsiveRevamp}
-          className="PersonList__Heading"
-        >
+        <Heading isMobile={isMobile} className="PersonList__Heading">
           {hydratedHeader.fullText ?? (
             <>
               {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
@@ -173,19 +165,15 @@ const HydratedOpportunityPersonList = observer(
         <SubHeading className="PersonList__Subheading">
           {hydratedHeader.callToAction}
         </SubHeading>
-        {responsiveRevamp ? (
-          <WorkflowsTabbedPersonList<OpportunityTab>
-            tabs={[...displayTabs]}
-            activeTab={activeTab}
-            onClick={handleTabClick}
-          >
-            <CaseloadOpportunityGrid
-              items={oppsFromOpportunitiesByTab?.[activeTab]}
-            />
-          </WorkflowsTabbedPersonList>
-        ) : (
-          <OpportunityPersonListWithSectionTitles />
-        )}
+        <WorkflowsTabbedPersonList<OpportunityTab>
+          tabs={[...displayTabs]}
+          activeTab={activeTab}
+          onClick={handleTabClick}
+        >
+          <CaseloadOpportunityGrid
+            items={oppsFromOpportunitiesByTab?.[activeTab]}
+          />
+        </WorkflowsTabbedPersonList>
         <OpportunityPreviewModal
           opportunity={selectedPerson?.verifiedOpportunities[opportunityType]}
         />

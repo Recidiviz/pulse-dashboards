@@ -20,7 +20,6 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 
 const WorkflowsResultsWrapper = styled.div<{
@@ -73,21 +72,20 @@ function WorkflowsResults({
   callToActionText,
   children,
 }: WorkflowsResultsProps): React.ReactElement | null {
-  const { responsiveRevamp } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
 
   return (
     <WorkflowsResultsWrapper
-      verticallyCentered={!!callToActionText && isMobile && !!responsiveRevamp}
-      largeMargin={!!callToActionText && !!responsiveRevamp && !isMobile}
-      centered={!!callToActionText || !responsiveRevamp}
+      verticallyCentered={!!callToActionText && isMobile}
+      largeMargin={!!callToActionText && !isMobile}
+      centered={!!callToActionText}
       className="WorkflowsHomepageText"
     >
       {headerText && (
         <HeaderText
-          isMobile={isMobile && !!responsiveRevamp}
-          centered={!!callToActionText || !responsiveRevamp}
-          largeMargin={!callToActionText && !!responsiveRevamp}
+          isMobile={isMobile}
+          centered={!!callToActionText}
+          largeMargin={!callToActionText}
         >
           {headerText}
         </HeaderText>
