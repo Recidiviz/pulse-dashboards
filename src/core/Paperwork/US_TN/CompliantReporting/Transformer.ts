@@ -13,18 +13,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { DocumentData } from "firebase/firestore";
+import _ from "lodash";
 import moment from "moment";
 
-import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
-import type { Client } from "../../../../WorkflowsStore";
-import { CompliantReportingDraftData } from "../../../../WorkflowsStore";
+import {
+  formatAsCurrency,
+  formatDate,
+  formatWorkflowsDate,
+} from "../../../../utils";
+import type {
+  Client,
+  CompliantReportingReferralRecordFull,
+  CompliantReportingTransformedETLFormInput,
+} from "../../../../WorkflowsStore";
 
 function formatSentenceLength(
-  startDate: string,
-  sentenceLengthDays: string
+  startDate?: Date,
+  sentenceLengthDays?: number
 ): string {
-  if (!sentenceLengthDays) return "";
+  if (!sentenceLengthDays || !startDate) return "";
 
   const start = moment.utc(startDate);
   const end = start.clone().add(sentenceLengthDays, "days");
@@ -35,29 +42,22 @@ function formatSentenceLength(
 
 export const transform = (
   client: Client,
-  data: DocumentData
-): Partial<CompliantReportingDraftData> => {
-  let allDockets;
-  try {
-    allDockets = (JSON.parse(data.allDockets) as string[]).join(", ");
-  } catch {
-    allDockets = data.allDockets;
-  }
+  record: CompliantReportingReferralRecordFull
+): CompliantReportingTransformedETLFormInput => {
+  const { formInformation } = record;
 
   return {
-    ...data,
-    allDockets,
+    docketNumbers: formInformation.docketNumbers?.join(", ") ?? "",
+    sentenceStartDate: formatDate(
+      formInformation.sentenceStartDate,
+      "yyyy-MM-dd"
+    ),
+    expirationDate: formatDate(formInformation.expirationDate, "yyyy-MM-dd"),
     clientFullName: client.displayName,
     dateToday: formatWorkflowsDate(new Date()),
-    telephoneNumber: client.phoneNumber,
-    specialConditionsCounselingAngerManagementComplete:
-      !!data.specialConditionsCounselingAngerManagementCompleteDate,
-    specialConditionsCounselingMentalHealthComplete:
-      !!data.specialConditionsCounselingMentalHealthCompleteDate,
-
-    currentOffenses: data.currentOffenses || [],
+    telephoneNumber: client.phoneNumber ?? "",
     restitutionMonthlyPaymentTo:
-      data.restitutionMonthlyPaymentTo?.join("; ") ?? "",
+      formInformation.restitutionMonthlyPaymentTo?.join("; ") ?? "",
     isParole: client.supervisionType === "Parole",
     isProbation:
       client.supervisionType === "Probation" ||
@@ -65,28 +65,61 @@ export const transform = (
       client.supervisionType === "Misdemeanor Probation",
     isIsc: client.supervisionType === "ISC",
     is4035313: client.supervisionType === "Diversion",
+    physicalAddress: client.address ?? "",
 
-    poFullName: `${data.poFirstName} ${data.poLastName}`,
+    poFullName: client.assignedStaffFullName,
     sentenceLengthDaysText: formatSentenceLength(
-      data.sentenceStartDate,
-      data.sentenceLengthDays
+      formInformation.sentenceStartDate,
+      formInformation.sentenceLengthDays
     ),
-    specialConditionsAlcDrugTreatmentIsInpatient:
-      data.specialConditionsAlcDrugTreatmentInOut === "INPATIENT",
-    specialConditionsAlcDrugTreatmentIsOutpatient:
-      data.specialConditionsAlcDrugTreatmentInOut === "OUTPATIENT",
-
-    supervisionFeeArrearagedAmount: data.supervisionFeeArrearagedAmount
-      ? formatAsCurrency(data.supervisionFeeArrearagedAmount)
+    supervisionFeeArrearagedAmount:
+      formInformation.supervisionFeeArrearagedAmount
+        ? formatAsCurrency(formInformation.supervisionFeeArrearagedAmount)
+        : "",
+    supervisionFeeAssessed: formInformation.supervisionFeeAssessed
+      ? formatAsCurrency(formInformation.supervisionFeeAssessed)
       : "",
-    supervisionFeeAssessed: data.supervisionFeeAssessed
-      ? formatAsCurrency(data.supervisionFeeAssessed)
+    supervisionFeeArrearaged: !!formInformation.supervisionFeeArrearaged,
+    supervisionFeeWaived: formInformation.supervisionFeeWaived
+      ? "Fees Waived"
       : "",
 
-    currentOffenses0: data.currentOffenses[0] || "",
-    currentOffenses1: data.currentOffenses[1] || "",
-    currentOffenses2: data.currentOffenses[2] || "",
-    currentOffenses3: data.currentOffenses[3] || "",
-    currentOffenses4: data.currentOffenses[4] || "",
+    currentOffenses0: formInformation.currentOffenses?.[0] || "",
+    currentOffenses1: formInformation.currentOffenses?.[1] || "",
+    currentOffenses2: formInformation.currentOffenses?.[2] || "",
+    currentOffenses3: formInformation.currentOffenses?.[3] || "",
+    currentOffenses4: formInformation.currentOffenses?.[4] || "",
+
+    supervisionFeeExemptionType: (
+      record.eligibleCriteria.usTnFinesFeesEligible
+        ?.hasPermanentFinesFeesExemption?.currentExemptions ?? []
+    ).join(", "),
+    supervisionFeeExemptionExpirDate: _.uniq(
+      formInformation.currentExemptionsAndExpiration?.map(
+        (exemptionInfo) => exemptionInfo.endDate
+      )
+    )
+      .filter((d): d is Date => !!d)
+      .map((d) => formatDate(d, "yyyy-MM-dd"))
+      .join(", "),
+    judicialDistrict: formInformation.judicialDistrict?.length
+      ? _.uniq(formInformation.judicialDistrict).join(", ")
+      : "Unknown",
+    driversLicense: formInformation.driversLicense ?? "",
+    restitutionAmt: formInformation.restitutionAmt
+      ? formInformation.restitutionAmt.toString()
+      : "",
+    restitutionMonthlyPayment: formInformation.restitutionMonthlyPayment
+      ? formInformation.restitutionMonthlyPayment.toString()
+      : "",
+    courtCostsPaid: !!formInformation.courtCostsPaid,
+    tdocId: record.externalId,
+    specialConditionsAlcDrugScreenDate: formatDate(
+      record.eligibleCriteria.usTnPassedDrugScreenCheck.latestDrugTestIsNegative
+        .latestDrugScreenDate,
+      "yyyy-MM-dd"
+    ),
+    convictionCounty: record.metadata.convictionCounties.join(", "),
+    courtName: "Circuit Court",
   };
 };

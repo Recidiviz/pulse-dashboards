@@ -5,7 +5,6 @@ Object {
   "caseNotes": Object {},
   "clientFirstName": "LINDA",
   "clientLastName": "SMITH",
-  "courtCostsPaid": false,
   "currentOffenses": Array [
     "FAILURE TO APPEAR (FELONY)",
   ],
@@ -41,6 +40,10 @@ Object {
           "negativeScreenResult": "DRUN",
         },
       ],
+      "latestDrugTestIsNegative": Object {
+        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
+        "latestDrugScreenResult": "DRUN",
+      },
     },
     "usTnSpecialConditionsAreCurrent": Object {
       "speNoteDue": null,
@@ -51,12 +54,31 @@ Object {
     "currentOffenses": Array [
       "STOLEN PROPERTY",
     ],
+    "docketNumbers": Array [
+      "10000",
+    ],
+    "expirationDate": 2030-02-12T00:00:00.000Z,
+    "judicialDistrict": Array [
+      "1",
+    ],
+    "restitutionAmt": 100,
+    "restitutionMonthlyPayment": 0,
+    "restitutionMonthlyPaymentTo": Array [
+      "PAYMENT TO",
+    ],
+    "sentenceLengthDays": 3629,
     "sentenceStartDate": 2020-03-07T00:00:00.000Z,
+    "supervisionFeeArrearaged": true,
+    "supervisionFeeArrearagedAmount": 700,
+    "supervisionFeeAssessed": 700,
+    "supervisionFeeWaived": false,
   },
   "ineligibleCriteria": Object {},
-  "judicialDistrict": "Unknown",
   "lifetimeOffensesExpired": Array [],
   "metadata": Object {
+    "convictionCounties": Array [
+      "123ABC",
+    ],
     "mostRecentArrestCheck": Object {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
@@ -89,7 +111,6 @@ Object {
   "specialConditionsProgrammingVictimImpact": false,
   "specialConditionsProgrammingVictimImpactCurrent": false,
   "stateCode": "US_TN",
-  "supervisionFeeArrearaged": false,
   "supervisionType": "TN PROBATIONER",
   "tdocId": "202",
   "zeroToleranceCodes": Array [],
@@ -101,7 +122,6 @@ Object {
   "caseNotes": Object {},
   "clientFirstName": "LINDA",
   "clientLastName": "SMITH",
-  "courtCostsPaid": false,
   "currentOffenses": Array [
     "FAILURE TO APPEAR (FELONY)",
   ],
@@ -133,7 +153,20 @@ Object {
       "startDateOnEligibleLevel": 2019-09-01T00:00:00.000Z,
     },
     "usTnPassedDrugScreenCheck": Object {
-      "hasAtLeast1NegativeDrugTestPastYear": Array [],
+      "hasAtLeast1NegativeDrugTestPastYear": Array [
+        Object {
+          "negativeScreenDate": 2023-02-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+        Object {
+          "negativeScreenDate": 2023-01-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+      ],
+      "latestDrugTestIsNegative": Object {
+        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
+        "latestDrugScreenResult": "DRUN",
+      },
     },
     "usTnSpecialConditionsAreCurrent": Object {
       "speNoteDue": 2022-09-10T00:00:00.000Z,
@@ -141,15 +174,46 @@ Object {
   },
   "externalId": "202",
   "formInformation": Object {
+    "courtCostsPaid": false,
+    "currentExemptionsAndExpiration": Array [
+      Object {
+        "endDate": null,
+        "exemptionReason": "SSDB",
+      },
+      Object {
+        "endDate": null,
+        "exemptionReason": "SSDB",
+      },
+    ],
     "currentOffenses": Array [
       "FAILURE TO APPEAR (FELONY)",
     ],
+    "docketNumbers": Array [
+      "10000",
+    ],
+    "driversLicense": "ABC123",
+    "expirationDate": 2030-02-12T00:00:00.000Z,
+    "judicialDistrict": Array [
+      "1",
+    ],
+    "restitutionAmt": 100,
+    "restitutionMonthlyPayment": 0,
+    "restitutionMonthlyPaymentTo": Array [
+      "PAYMENT TO",
+    ],
+    "sentenceLengthDays": 3629,
     "sentenceStartDate": 2020-03-07T00:00:00.000Z,
+    "supervisionFeeArrearaged": false,
+    "supervisionFeeArrearagedAmount": 700,
+    "supervisionFeeAssessed": 700,
+    "supervisionFeeWaived": false,
   },
   "ineligibleCriteria": Object {},
-  "judicialDistrict": "Unknown",
   "lifetimeOffensesExpired": Array [],
   "metadata": Object {
+    "convictionCounties": Array [
+      "123ABC",
+    ],
     "mostRecentArrestCheck": Object {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
@@ -182,7 +246,6 @@ Object {
   "specialConditionsProgrammingVictimImpact": false,
   "specialConditionsProgrammingVictimImpactCurrent": false,
   "stateCode": "US_TN",
-  "supervisionFeeArrearaged": false,
   "supervisionType": "TN PROBATIONER",
   "tdocId": "202",
   "zeroToleranceCodes": Array [],

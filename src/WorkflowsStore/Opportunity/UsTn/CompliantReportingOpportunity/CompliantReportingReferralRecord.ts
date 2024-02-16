@@ -72,8 +72,11 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
           negativeScreenResult: z.string(),
         })
       ),
+      latestDrugTestIsNegative: z.object({
+        latestDrugScreenDate: dateStringSchema,
+        latestDrugScreenResult: z.string(),
+      }),
       // omitting hasAtLeast2NegativeDrugTestsPastYear because if they have at least 2, they have at least 1
-      // omitting latestDrugTestIsNegative because it is not used in any copy
       // omitting latestAlcoholDrugNeedLevel because it is not used in any copy
     }),
   }),
@@ -107,10 +110,31 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       })
       .optional(),
   }),
-  formInformation: z.object({
-    sentenceStartDate: dateStringSchema.optional(),
-    currentOffenses: z.array(z.string()),
-  }),
+  formInformation: z
+    .object({
+      sentenceStartDate: dateStringSchema,
+      expirationDate: dateStringSchema,
+      sentenceLengthDays: z.coerce.number().int(),
+      currentOffenses: z.array(z.string()),
+      driversLicense: z.string(),
+      restitutionAmt: z.number(),
+      restitutionMonthlyPayment: z.number(),
+      restitutionMonthlyPaymentTo: z.array(z.string()),
+      courtCostsPaid: z.boolean(),
+      supervisionFeeAssessed: z.number(),
+      supervisionFeeArrearaged: z.boolean(),
+      supervisionFeeArrearagedAmount: z.number(),
+      currentExemptionsAndExpiration: z.array(
+        z.object({
+          exemptionReason: z.string(),
+          endDate: dateStringSchema.nullish(),
+        })
+      ),
+      supervisionFeeWaived: z.boolean(),
+      docketNumbers: z.array(z.string()),
+      judicialDistrict: z.array(z.string()),
+    })
+    .partial(),
   metadata: z
     .object({
       mostRecentArrestCheck: z.object({
@@ -123,6 +147,9 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
           contactType: z.enum(SpecialConditionsNoteType),
         })
         .optional(), // in theory someone could have no special conditions so marking as optional (in practice this is always set)
+      // this should really be in formInformation, but was put into metadata accidentally and it's
+      // not really worth fixing at this point
+      convictionCounties: z.array(z.string()),
     })
     .passthrough(), // temporary passthrough to allow fixture data with metadata fields we haven't accounted for yet
 });
@@ -141,7 +168,6 @@ export type AlmostEligibleCriteriaRaw = {
 
 export type CompliantReportingReferralRecord = {
   eligibilityCategory: string;
-  judicialDistrict: string;
   lifetimeOffensesExpired: string[];
   pastOffenses: string[];
   /** Any number greater than zero indicates the client is _almost_ eligible. */
@@ -156,122 +182,111 @@ export type CompliantReportingFinesFeesEligible =
 
 export type SpecialConditionsStatus = "none" | "terminated" | "current";
 
-export interface CompliantReportingDraftData {
-  /* Computed fields */
-  clientFullName: string;
-  poFullName: string;
-  restitutionMonthlyPaymentTo: string;
-  sentenceLengthDaysText: string;
-  specialConditionsCounselingAngerManagementComplete: boolean;
-  specialConditionsCounselingMentalHealthComplete: boolean;
-
-  /* Converted fields */
-  supervisionFeeAssessed: string;
-  supervisionFeeArrearagedAmount: string;
-
-  /* Fields directly passed from ETL */
-  allDockets: string;
-  clientFirstName: string;
-  clientLastName: string;
-  convictionCounty: string;
-  courtCostsBalance: string;
-  courtCostsMonthlyAmt1: string;
-  courtCostsMonthlyAmt2: string;
-  courtCostsPaid: boolean;
-  courtName: string;
-  currentEmployer: string;
-  currentOffenses: string[];
-  dateToday: string;
-  driversLicense: string;
-  driversLicenseRevoked: string;
-  driversLicenseSuspended: string;
-  expirationDate: string;
-  lastSpecialConditionsNote?: string;
-  nextSpecialConditionsCheck?: Timestamp | string;
-  pastOffenses: string[];
-  physicalAddress: string;
-  poFirstName: string;
-  poLastName: string;
-  remainingCriteriaNeeded?: number;
-  restitutionAmt: string;
-  restitutionMonthlyPayment: string;
-  sentenceLengthDays: string;
+export type CompliantReportingTransformedETLFormInput = {
+  // From opportunity record
   sentenceStartDate: string;
-  specialConditionsAlcDrugScreen: boolean;
-  specialConditionsAlcDrugAssessment: string;
-  specialConditionsAlcDrugAssessmentComplete: boolean;
-  specialConditionsAlcDrugAssessmentCompleteDate: string;
-  specialConditionsAlcDrugScreenDate: string;
-  specialConditionsAlcDrugTreatment: boolean;
-  specialConditionsAlcDrugTreatmentCompleteDate: string;
-  specialConditionsAlcDrugTreatmentCurrent: boolean;
-  specialConditionsAlcDrugTreatmentInOut: "INPATIENT" | "OUTPATIENT";
-  specialConditionsCommunityService: boolean;
-  specialConditionsCommunityServiceCompletionDate: string;
-  specialConditionsCommunityServiceCurrent: boolean;
-  specialConditionsCommunityServiceHours: string;
-  specialConditionsCounseling: boolean;
-  specialConditionsCounselingAngerManagement: boolean;
-  specialConditionsCounselingAngerManagementCompleteDate: string;
-  specialConditionsCounselingAngerManagementCurrent: boolean;
-  specialConditionsCounselingMentalHealth: boolean;
-  specialConditionsCounselingMentalHealthCompleteDate: string;
-  specialConditionsCounselingMentalHealthCurrent: boolean;
-  specialConditionsFlag: SpecialConditionsStatus;
-  specialConditionsProgramming: boolean;
-  specialConditionsProgrammingCognitiveBehavior: boolean;
-  specialConditionsProgrammingCognitiveBehaviorCompletionDate: string;
-  specialConditionsProgrammingCognitiveBehaviorCurrent: boolean;
-  specialConditionsProgrammingFsw: boolean;
-  specialConditionsProgrammingFswCompletionDate: string;
-  specialConditionsProgrammingFswCurrent: boolean;
-  specialConditionsProgrammingSafe: boolean;
-  specialConditionsProgrammingSafeCompletionDate: string;
-  specialConditionsProgrammingSafeCurrent: boolean;
-  specialConditionsProgrammingVictimImpact: boolean;
-  specialConditionsProgrammingVictimImpactCompletionDate: string;
-  specialConditionsProgrammingVictimImpactCurrent: boolean;
-  supervisionFeeArrearaged: boolean;
-  supervisionFeeExemptionExpirDate: string;
-  supervisionFeeExemptionType: string;
-  supervisionFeeWaived: string;
-  supervisionType: string;
-  tdocId: string;
-
-  /* Fields in the UI that are not included in the ETL */
+  expirationDate: string;
+  sentenceLengthDaysText: string;
   currentOffenses0: string;
   currentOffenses1: string;
   currentOffenses2: string;
   currentOffenses3: string;
   currentOffenses4: string;
-  licenseYears: string;
+  driversLicense: string;
+  restitutionAmt: string;
+  restitutionMonthlyPayment: string;
+  restitutionMonthlyPaymentTo: string;
+  courtCostsPaid: boolean;
+  supervisionFeeAssessed: string;
+  supervisionFeeArrearaged: boolean;
+  supervisionFeeArrearagedAmount: string;
+  supervisionFeeExemptionExpirDate: string;
+  supervisionFeeExemptionType: string;
+  supervisionFeeWaived: string;
+  docketNumbers: string;
+  judicialDistrict: string;
+  tdocId: string;
+  specialConditionsAlcDrugScreenDate: string;
+  convictionCounty: string;
+
+  // From client record
+  clientFullName: string;
   telephoneNumber: string;
-  supervisorFullName: string;
-  iotSanctioning: boolean;
-  atrSupervisionTransfer: boolean;
-  seeAdditionalOffenses: boolean;
+  isParole: boolean;
   isProbation: boolean;
   isIsc: boolean;
-  isParole: boolean;
   is4035313: boolean;
-  specialConditionsAlcDrugTreatmentIsInpatient: boolean;
-  specialConditionsAlcDrugTreatmentIsOutpatient: boolean;
-  specialConditionsNoContact: boolean;
-  specialConditionsNoContactName: string;
-  specialConditionsSocialWorker: boolean;
-  specialConditionsAlcDrugAssessmentPending: boolean;
-  specialConditionsAlcDrugTreatmentComplete: boolean;
-  specialConditionsCounselingComplete: boolean;
-  specialConditionsCommunityServiceComplete: boolean;
-  specialConditionsProgrammingCognitiveBehaviorComplete: boolean;
-  specialConditionsProgrammingSafeComplete: boolean;
-  specialConditionsProgrammingVictimImpactComplete: boolean;
-  specialConditionsProgrammingFswComplete: boolean;
-}
+  poFullName: string;
+  physicalAddress: string;
+
+  // Other
+  dateToday: string;
+  courtName: string;
+};
+
+export type CompliantReportingDraftData =
+  CompliantReportingTransformedETLFormInput & {
+    /* Fields in the UI that are not included in the ETL */
+    atrSupervisionTransfer: boolean;
+    courtCostsBalance: string;
+    courtCostsMonthlyAmt1: string;
+    currentEmployer: string;
+    driversLicenseRevoked: string;
+    driversLicenseSuspended: string;
+    iotSanctioning: boolean;
+    licenseYears: string;
+    seeAdditionalOffenses: boolean;
+    specialConditionsAlcDrugScreen: boolean;
+    specialConditionsAlcDrugAssessment: string;
+    specialConditionsAlcDrugAssessmentComplete: boolean;
+    specialConditionsAlcDrugAssessmentCompleteDate: string;
+    specialConditionsAlcDrugAssessmentPending: boolean;
+    specialConditionsAlcDrugTreatment: boolean;
+    specialConditionsAlcDrugTreatmentComplete: boolean;
+    specialConditionsAlcDrugTreatmentCompleteDate: string;
+    specialConditionsAlcDrugTreatmentCurrent: boolean;
+    specialConditionsAlcDrugTreatmentIsInpatient: boolean;
+    specialConditionsAlcDrugTreatmentIsOutpatient: boolean;
+    specialConditionsCommunityService: boolean;
+    specialConditionsCommunityServiceCompletionDate: string;
+    specialConditionsCommunityServiceCurrent: boolean;
+    specialConditionsCommunityServiceHours: string;
+    specialConditionsCounseling: boolean;
+    specialConditionsCounselingAngerManagement: boolean;
+    specialConditionsCounselingAngerManagementComplete: boolean;
+    specialConditionsCounselingAngerManagementCompleteDate: string;
+    specialConditionsCounselingAngerManagementCurrent: boolean;
+    specialConditionsCounselingMentalHealth: boolean;
+    specialConditionsCounselingMentalHealthComplete: boolean;
+    specialConditionsCounselingMentalHealthCompleteDate: string;
+    specialConditionsCounselingMentalHealthCurrent: boolean;
+    specialConditionsProgramming: boolean;
+    specialConditionsProgrammingCognitiveBehavior: boolean;
+    specialConditionsProgrammingCognitiveBehaviorCompletionDate: string;
+    specialConditionsProgrammingCognitiveBehaviorCurrent: boolean;
+    specialConditionsProgrammingFsw: boolean;
+    specialConditionsProgrammingFswCompletionDate: string;
+    specialConditionsProgrammingFswCurrent: boolean;
+    specialConditionsProgrammingSafe: boolean;
+    specialConditionsProgrammingSafeCompletionDate: string;
+    specialConditionsProgrammingSafeCurrent: boolean;
+    specialConditionsProgrammingVictimImpact: boolean;
+    specialConditionsProgrammingVictimImpactCompletionDate: string;
+    specialConditionsProgrammingVictimImpactCurrent: boolean;
+    specialConditionsNoContact: boolean;
+    specialConditionsNoContactName: string;
+    specialConditionsCommunityServiceComplete: boolean;
+    specialConditionsProgrammingCognitiveBehaviorComplete: boolean;
+    specialConditionsProgrammingSafeComplete: boolean;
+    specialConditionsProgrammingVictimImpactComplete: boolean;
+    specialConditionsProgrammingFswComplete: boolean;
+    supervisorFullName: string;
+  };
 
 type RawCompliantReportingReferralRecord = DocumentData & {
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
   almostEligibleCriteria?: AlmostEligibleCriteriaRaw;
+  supervisionFeeExemptionType?: string[];
 };
 
 type compliantReportingInputSchema = z.input<typeof compliantReportingSchema>;
@@ -295,13 +310,13 @@ export const transformCompliantReportingReferral: TransformFunction<
   const {
     currentOffenses,
     eligibilityCategory,
-    judicialDistrict,
     lifetimeOffensesExpired,
     pastOffenses,
     remainingCriteriaNeeded,
     zeroToleranceCodes,
     offenseTypeEligibility,
     tdocId,
+    externalId,
     eligibleCriteria,
     ineligibleCriteria,
     formInformation,
@@ -322,8 +337,22 @@ export const transformCompliantReportingReferral: TransformFunction<
     specialConditionsTerminatedDate,
     almostEligibleCriteria,
     eligibleLevelStart,
+    allDockets,
+    expirationDate,
+    sentenceLengthDays,
+    driversLicense,
+    restitutionAmt,
+    restitutionMonthlyPayment,
+    restitutionMonthlyPaymentTo,
+    courtCostsPaid,
+    supervisionFeeAssessed,
+    supervisionFeeArrearaged,
+    supervisionFeeArrearagedAmount,
+    supervisionFeeWaived,
+    judicialDistrict,
+    convictionCounties,
     ...recordWithoutLegacyFields
-  } = record;
+  } = record as RawCompliantReportingReferralRecord;
   const {
     paymentNeeded,
     seriousSanctionsEligibilityDate,
@@ -332,16 +361,45 @@ export const transformCompliantReportingReferral: TransformFunction<
     ...newAlmostEligibleCriteria
   } = almostEligibleCriteria ?? {};
 
+  let oldStyleDockets;
+  if (allDockets) {
+    try {
+      oldStyleDockets = JSON.parse(allDockets) as string[];
+    } catch {
+      oldStyleDockets = [allDockets];
+    }
+  }
   const newFormInformation: z.input<
     typeof compliantReportingSchema.shape.formInformation
-  > = {
-    sentenceStartDate: formInformation.sentenceStartDate ?? sentenceStartDate,
-    currentOffenses:
-      // We can't differentiate "0 offenses in new schema" from "not eligible in new schema" so look at the criteria instead
-      eligibleCriteria.usTnNotServingIneligibleCrOffense !== undefined
-        ? formInformation.currentOffenses
-        : currentOffenses,
-  };
+  > =
+    // We can't differentiate "0 offenses in new schema" from "not eligible in new schema" (and same
+    // deal for other fields) so look at an arbitrary criteria instead to determine whether to look
+    // at the old or new form fields
+    eligibleCriteria.usTnNotServingIneligibleCrOffense !== undefined
+      ? formInformation
+      : {
+          sentenceStartDate,
+          expirationDate,
+          sentenceLengthDays,
+          currentOffenses,
+          driversLicense,
+          restitutionAmt,
+          restitutionMonthlyPayment,
+          restitutionMonthlyPaymentTo,
+          courtCostsPaid,
+          supervisionFeeAssessed,
+          supervisionFeeArrearaged,
+          supervisionFeeArrearagedAmount,
+          currentExemptionsAndExpiration: supervisionFeeExemptionType?.map(
+            (exemption) => ({
+              exemptionReason: exemption,
+              endDate: null, // This is null for all records in the old schema
+            })
+          ),
+          supervisionFeeWaived: supervisionFeeWaived === "Fees Waived",
+          docketNumbers: oldStyleDockets,
+          judicialDistrict: judicialDistrict ? [judicialDistrict] : [],
+        };
   let oldStyleSpeNote: z.input<
     typeof compliantReportingSchema.shape.metadata.shape.mostRecentSpeNote
   >;
@@ -374,6 +432,9 @@ export const transformCompliantReportingReferral: TransformFunction<
       contactType: metadata?.mostRecentArrestCheck?.contactType ?? "ARRN",
     },
     mostRecentSpeNote: metadata.mostRecentSpeNote ?? oldStyleSpeNote,
+    convictionCounties: metadata.convictionCounties?.length
+      ? metadata.convictionCounties
+      : convictionCounties,
   };
   const newEligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.eligibleCriteria
@@ -391,6 +452,16 @@ export const transformCompliantReportingReferral: TransformFunction<
           negativeScreenResult: ds.result,
         })
       ),
+      latestDrugTestIsNegative: typeSafeDrugScreensPastYear
+        .map((ds) => ({
+          latestDrugScreenDate: ds.date,
+          latestDrugScreenResult: ds.result,
+        }))
+        .reduce((acc, current) => {
+          return current.latestDrugScreenDate > acc.latestDrugScreenDate
+            ? current
+            : acc;
+        }),
     },
   };
   const newIneligibleCriteria: z.input<
@@ -504,7 +575,7 @@ export const transformCompliantReportingReferral: TransformFunction<
     ...(Object.keys(newAlmostEligibleCriteria).length && {
       almostEligibleCriteria: newAlmostEligibleCriteria,
     }),
-    externalId: tdocId,
+    externalId: externalId ?? tdocId,
     eligibleCriteria: newEligibleCriteria,
     ineligibleCriteria: newIneligibleCriteria,
     formInformation: newFormInformation,
@@ -518,7 +589,6 @@ export const transformCompliantReportingReferral: TransformFunction<
   const transformedRecord: CompliantReportingReferralRecordFull = {
     ...zodRecord,
     eligibilityCategory,
-    judicialDistrict: judicialDistrict ?? "Unknown",
     lifetimeOffensesExpired,
     pastOffenses,
     remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,

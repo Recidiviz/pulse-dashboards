@@ -110,7 +110,6 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
   {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
-    judicialDistrict: "A",
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     eligibleCriteria: {
@@ -142,12 +141,17 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
             negativeScreenResult: "DRUN",
           },
         ],
+        latestDrugTestIsNegative: {
+          latestDrugScreenDate: parseISO("2022-01-04"),
+          latestDrugScreenResult: "DRUN",
+        },
       },
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
       currentOffenses: ["EXAMPLE CURRENT"],
+      judicialDistrict: ["A"],
     },
     metadata: {
       mostRecentArrestCheck: {
@@ -158,6 +162,7 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
         contactDate: parseISO("2022-03-15"),
         contactType: "SPEC",
       },
+      convictionCounties: [],
     },
   };
 
@@ -206,6 +211,10 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
             negativeScreenResult: "DRUN",
           },
         ],
+        latestDrugTestIsNegative: {
+          latestDrugScreenDate: parseISO("2022-01-04"),
+          latestDrugScreenResult: "DRUN",
+        },
       },
     },
     ineligibleCriteria: {},
@@ -223,6 +232,7 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
         contactDate: parseISO("2022-05-28"),
         contactType: "SPET",
       },
+      convictionCounties: [],
     },
   };
 
@@ -255,7 +265,6 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
   {
     eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
-    judicialDistrict: "A",
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
 
@@ -272,12 +281,17 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
             negativeScreenResult: "DRUN",
           },
         ],
+        latestDrugTestIsNegative: {
+          latestDrugScreenDate: parseISO("2022-01-04"),
+          latestDrugScreenResult: "DRUN",
+        },
       },
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
       currentOffenses: ["EXAMPLE OFFENSE"],
+      judicialDistrict: ["A"],
     },
     metadata: {
       mostRecentArrestCheck: {
@@ -288,6 +302,7 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
         contactDate: parseISO("2022-03-15"),
         contactType: "SPEC",
       },
+      convictionCounties: [],
     },
   };
 

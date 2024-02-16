@@ -382,9 +382,9 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
     // required offense types
     requirements.push({
-      text: `Valid current offense${currentOffenses.length !== 1 ? "s" : ""}: ${
-        currentOffenses.join("; ") || "None"
-      }`,
+      text: `Valid current offense${
+        currentOffenses?.length !== 1 ? "s" : ""
+      }: ${currentOffenses?.join("; ") || "None"}`,
       tooltip: CRITERIA.currentOffenses.tooltip,
     });
 
@@ -420,7 +420,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       });
     }
 
-    if (eligibilityCategory === "c3" && currentOffenses.length === 0) {
+    if (eligibilityCategory === "c3" && currentOffenses?.length === 0) {
       requirements.push({
         text: "Eligible with discretion: Missing sentence information",
         tooltip: CRITERIA.missingSentences.tooltip,

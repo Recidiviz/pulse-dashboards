@@ -301,12 +301,32 @@ export const usTnCompliantReportingReferrals =
               negativeScreenResult: "DRUN",
             },
           ],
+          latestDrugTestIsNegative: {
+            latestDrugScreenDate: "2023-10-28",
+            latestDrugScreenResult: "DRUN",
+          },
         },
       },
       ineligibleCriteria: {},
       formInformation: {
         sentenceStartDate: "2013-10-09",
         currentOffenses: ["BURGLARY"],
+        driversLicense: "12345",
+        courtCostsPaid: false,
+        supervisionFeeAssessed: 0,
+        supervisionFeeArrearaged: false,
+        supervisionFeeArrearagedAmount: 0,
+        currentExemptionsAndExpiration: [
+          {
+            exemptionReason: "SSDB",
+            endDate: null,
+          },
+          {
+            exemptionReason: "SSDB",
+            endDate: null,
+          },
+        ],
+        supervisionFeeWaived: true,
       },
       metadata: {
         allOffenses: ["BURGLARY", "THEFT"],
@@ -340,7 +360,6 @@ export const usTnCompliantReportingReferrals =
       currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
       supervisionType: "TN PROBATIONER",
       supervisionFeeArrearaged: false,
-      supervisionFeeExemptionType: null,
       mostRecentArrestCheck: "2023-04-01",
       almostEligibleCriteria: {
         paymentNeeded: true,
@@ -377,7 +396,16 @@ export const usTnCompliantReportingReferrals =
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [],
+          hasAtLeast1NegativeDrugTestPastYear: [
+            {
+              negativeScreenDate: "2023-03-09",
+              negativeScreenResult: "DRUN",
+            },
+          ],
+          latestDrugTestIsNegative: {
+            latestDrugScreenDate: "2023-03-09",
+            latestDrugScreenResult: "DRUN",
+          },
         },
       },
       ineligibleCriteria: {
@@ -392,6 +420,8 @@ export const usTnCompliantReportingReferrals =
       formInformation: {
         sentenceStartDate: "2020-03-07",
         currentOffenses: ["EVADING ARREST"],
+        courtCostsPaid: false,
+        supervisionFeeArrearaged: false,
       },
       metadata: {
         allOffenses: ["FAILURE TO APPEAR (FELONY)", "EVADING ARREST"],

@@ -148,7 +148,7 @@ const FormCR3947Rev0518: React.FC = () => {
                   </Emphasize>
                 </span>
               </Item>
-              <FormInput placeholder="Docket(s)" name="allDockets" />
+              <FormInput placeholder="Docket(s)" name="docketNumbers" />
             </Grid>
             <Grid columns="100px 1fr">
               <Item>
