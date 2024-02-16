@@ -23,11 +23,9 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { desktopLinkGate } from "../desktopLinkGate";
-import { OpportunityDenialDropdown } from "../OpportunityDenial";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { workflowsUrl } from "../views";
@@ -41,20 +39,14 @@ import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 const Wrapper = styled.div<{
   background: string;
   border: string;
-  responsiveRevamp: boolean;
 }>`
   background-color: ${({ background: backgroundColor }) => backgroundColor};
   border-color: ${({ border: borderColor }) => borderColor};
   border-style: solid;
   border-width: 1px 0;
   color: ${palette.pine1};
-
-  margin: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? 0 : `0 -${rem(spacing.lg)}`};
-  padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp
-      ? rem(spacing.md)
-      : `${rem(spacing.md)} ${rem(spacing.lg)}`};
+  margin: $0;
+  padding: ${rem(spacing.md)};
 `;
 
 const ActionButtons = styled.div<{ isMobile: boolean }>`
@@ -104,7 +96,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
     onDenialButtonClick = () => null,
   }) {
-    const { responsiveRevamp } = useFeatureVariants();
+    // We use isLaptop here, rather than isTablet or isMobile, as we've seen issues with profile formatting
+    // on screen sizes smaller than desktop.
     const { isLaptop } = useIsMobile(true);
 
     useEffect(() => {
@@ -130,10 +123,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     };
 
     return (
-      <Wrapper responsiveRevamp={!!responsiveRevamp} {...colors}>
+      <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
-        {!!responsiveRevamp && showDenialButton && (
+        {showDenialButton && (
           <MarkedIneligibleReasons
             opportunity={opportunity}
             snoozedByTextAndResurfaceTextPair={[snoozedByText, resurfaceText]}
@@ -141,7 +134,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           />
         )}
         {(showDenialButton || formLinkButton) && (
-          <ActionButtons isMobile={!!responsiveRevamp && isLaptop}>
+          <ActionButtons isMobile={isLaptop}>
             {formLinkButton && opportunity?.form && (
               <Link
                 to={workflowsUrl("opportunityAction", {
@@ -152,44 +145,27 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 <FormActionButton
                   className="NavigateToFormButton"
                   buttonFill={colors.buttonFill}
-                  onClick={
-                    responsiveRevamp
-                      ? desktopLinkGate({
-                          headline: "Referral Unavailable in Mobile View",
-                        })
-                      : undefined
-                  }
+                  onClick={desktopLinkGate({
+                    headline: "Referral Unavailable in Mobile View",
+                  })}
                 >
                   {opportunity.form.navigateToFormText}
                 </FormActionButton>
               </Link>
             )}
-            {responsiveRevamp
-              ? showDenialButton &&
-                onDenialButtonClick && (
-                  <>
-                    <MenuButton
-                      opportunity={opportunity}
-                      onDenialButtonClick={onDenialButtonClick}
-                    />
-                    {snoozedByText && resurfaceText && (
-                      <RevertChangesButtonLink onClick={handleUndoClick}>
-                        Revert Changes
-                      </RevertChangesButtonLink>
-                    )}
-                  </>
-                )
-              : showDenialButton && (
-                  <>
-                    <OpportunityDenialDropdown opportunity={opportunity} />(
-                    {snoozedByText && resurfaceText && (
-                      <RevertChangesButtonLink onClick={handleUndoClick}>
-                        Revert Changes
-                      </RevertChangesButtonLink>
-                    )}
-                    )
-                  </>
+            {showDenialButton && onDenialButtonClick && (
+              <>
+                <MenuButton
+                  opportunity={opportunity}
+                  onDenialButtonClick={onDenialButtonClick}
+                />
+                {snoozedByText && resurfaceText && (
+                  <RevertChangesButtonLink onClick={handleUndoClick}>
+                    Revert Changes
+                  </RevertChangesButtonLink>
                 )}
+              </>
+            )}
           </ActionButtons>
         )}
       </Wrapper>

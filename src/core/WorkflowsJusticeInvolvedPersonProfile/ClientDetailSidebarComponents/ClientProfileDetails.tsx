@@ -17,7 +17,6 @@
 
 import React from "react";
 
-import { useFeatureVariants } from "../../../components/StoreProvider";
 import { Divider } from "../styles";
 import { ClientProfileProps } from "../types";
 import { Contact } from "./Contact";
@@ -27,16 +26,14 @@ import { Supervision } from "./Supervision";
 export function ClientProfileDetails({
   client,
 }: ClientProfileProps): React.ReactElement {
-  const { responsiveRevamp } = useFeatureVariants();
-
   return (
     <>
       <Supervision client={client} />
-      {responsiveRevamp && <Divider />}
+      <Divider />
       {client.profileMilestones.length > 0 && (
         <>
           <Milestones client={client} />
-          {responsiveRevamp && <Divider />}
+          <Divider />
         </>
       )}
       <Contact client={client} />

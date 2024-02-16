@@ -20,10 +20,7 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import {
   ClientEmployer,
@@ -44,7 +41,6 @@ import {
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
 } from "./OpportunityDetailSidebarComponents";
-import { OpportunityModule } from "./OpportunityModule";
 import {
   Incarceration,
   ResidentHousing,
@@ -92,17 +88,11 @@ const ResidentDetailSidebarComponents = {
 
 type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;
 
-export function DetailsSection({
-  hasDivider,
-  children,
-}: {
-  hasDivider: boolean;
-  children: React.ReactNode;
-}) {
+export function DetailsSection({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      {hasDivider && <Divider />}
+      <Divider />
     </>
   );
 }
@@ -126,7 +116,6 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     onDenialButtonClick = () => null,
     opportunity,
   }) {
-    const { responsiveRevamp } = useFeatureVariants();
     const {
       workflowsStore: { selectedPerson, selectedClient, selectedResident },
     } = useRootStore();
@@ -137,24 +126,13 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     return (
       <article>
         <Heading person={selectedPerson} />
-        {responsiveRevamp ? (
-          <AccordionWrapper
-            $responsiveRevamp={!!responsiveRevamp}
-            allowZeroExpanded
-            preExpanded={[opportunity.type]}
-          >
-            <AccordionSection
-              opportunity={opportunity}
-              formLinkButton={formLinkButton}
-              onDenialButtonClick={onDenialButtonClick}
-            />
-          </AccordionWrapper>
-        ) : (
-          <OpportunityModule
+        <AccordionWrapper allowZeroExpanded preExpanded={[opportunity.type]}>
+          <AccordionSection
             opportunity={opportunity}
             formLinkButton={formLinkButton}
+            onDenialButtonClick={onDenialButtonClick}
           />
-        )}
+        </AccordionWrapper>
         {opportunity.opportunityProfileModules.map((componentName) => {
           if (componentName in FormViewOnlyComponent && !formView) return null;
           if (componentName in ClientDetailSidebarComponents) {
@@ -164,10 +142,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 componentName as ClientDetailComponentName
               ];
             return (
-              <DetailsSection
-                key={componentName}
-                hasDivider={!!responsiveRevamp}
-              >
+              <DetailsSection key={componentName}>
                 <Component client={selectedClient} />
               </DetailsSection>
             );
@@ -180,10 +155,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 componentName as ResidentDetailComponentName
               ];
             return (
-              <DetailsSection
-                key={componentName}
-                hasDivider={!!responsiveRevamp}
-              >
+              <DetailsSection key={componentName}>
                 <Component resident={selectedResident} />
               </DetailsSection>
             );
@@ -195,10 +167,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
                 componentName as OpportunityDetailComponentName
               ];
             return (
-              <DetailsSection
-                key={componentName}
-                hasDivider={!!responsiveRevamp}
-              >
+              <DetailsSection key={componentName}>
                 <Component opportunity={opportunity} />
               </DetailsSection>
             );

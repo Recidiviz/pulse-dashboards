@@ -28,10 +28,7 @@ import {
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityDenialView } from "../OpportunityDenial";
@@ -52,13 +49,8 @@ const OpportunityWrapper = styled.div<{ background: string; border: string }>`
   }
 `;
 
-const AccordionButton = styled(AccordionItemButton)<{
-  $responsiveRevamp: boolean;
-}>`
-  padding: ${({ $responsiveRevamp }) =>
-    $responsiveRevamp
-      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : rem(spacing.lg)};
+const AccordionButton = styled(AccordionItemButton)`
+  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
   position: relative;
   cursor: pointer;
 
@@ -72,8 +64,7 @@ const AccordionButton = styled(AccordionItemButton)<{
     display: inline-block;
     font-size: 1rem;
     position: absolute;
-    right: ${({ $responsiveRevamp }) =>
-      $responsiveRevamp ? rem(spacing.sm) : rem(spacing.lg)};
+    right: ${rem(spacing.sm)};
     top: calc(${rem(spacing.lg)} - 3px);
     color: ${palette.pine1};
   }
@@ -94,11 +85,8 @@ const AccordionButton = styled(AccordionItemButton)<{
   }
 `;
 
-const AccordionBody = styled(AccordionItemPanel)<{
-  $responsiveRevamp: boolean;
-}>`
-  padding: ${({ $responsiveRevamp }) =>
-    $responsiveRevamp ? 0 : `0 ${rem(spacing.lg)}`};
+const AccordionBody = styled(AccordionItemPanel)`
+  padding: 0;
   margin-top: -${rem(spacing.lg)};
 
   & > *:first-child {
@@ -107,10 +95,8 @@ const AccordionBody = styled(AccordionItemPanel)<{
   }
 `;
 
-export const AccordionWrapper = styled(Accordion)<{
-  $responsiveRevamp: boolean;
-}>`
-  margin: 0 -${({ $responsiveRevamp }) => ($responsiveRevamp ? rem(spacing.md) : rem(spacing.lg))};
+export const AccordionWrapper = styled(Accordion)`
+  margin: 0 -${rem(spacing.md)};
 
   & + hr {
     display: none;
@@ -143,18 +129,17 @@ export const AccordionSection = observer(function AccordionSection({
   formLinkButton?: boolean;
   onDenialButtonClick?: () => void;
 }) {
-  const { responsiveRevamp } = useFeatureVariants();
   const colors = useStatusColors(opportunity);
 
   return (
     <OpportunityWrapper className="ProfileOpportunityItem" {...colors}>
       <AccordionItem uuid={opportunity.type}>
         <AccordionItemHeading>
-          <AccordionButton $responsiveRevamp={!!responsiveRevamp}>
+          <AccordionButton>
             <OpportunityModuleHeader opportunity={opportunity} />
           </AccordionButton>
         </AccordionItemHeading>
-        <AccordionBody $responsiveRevamp={!!responsiveRevamp}>
+        <AccordionBody>
           <OpportunityModule
             hideHeader
             opportunity={opportunity}
@@ -176,7 +161,6 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   hideEmpty?: boolean;
   formLinkButton?: boolean;
 }) {
-  const { responsiveRevamp } = useFeatureVariants();
   const {
     workflowsStore,
     workflowsStore: { opportunityTypes, selectedOpportunityOnFullProfile },
@@ -196,52 +180,43 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
     </NoOpportunities>
   );
 
-  const hydrated =
-    opportunities.length === 1 && !responsiveRevamp ? (
-      <div className="ProfileOpportunityItem">
-        <OpportunityModule
-          opportunity={opportunities[0]}
-          formLinkButton={!!opportunities[0].form}
-        />
-      </div>
-    ) : (
-      <AccordionWrapper
-        $responsiveRevamp={!!responsiveRevamp}
-        allowZeroExpanded
-        preExpanded={opportunities.length ? [opportunities[0].type] : [0]}
-      >
-        {opportunities.map((opportunity) => {
-          if (!opportunity) return undefined;
-          return (
-            <AccordionSection
-              key={opportunity.type}
-              opportunity={opportunity}
-              formLinkButton={formLinkButton}
-              onDenialButtonClick={() => {
-                workflowsStore.updateSelectedOpportunityOnFullProfile(
-                  opportunity
-                );
-              }}
-            />
-          );
-        })}
-        <WorkflowsPreviewModal
-          isOpen={!!selectedOpportunityOnFullProfile}
-          clearSelectedPersonOnClose={false}
-          onClose={() =>
-            workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
-          }
-          pageContent={
-            <OpportunityDenialView
-              onSubmit={() =>
-                workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
-              }
-              opportunity={selectedOpportunityOnFullProfile}
-            />
-          }
-        />
-      </AccordionWrapper>
-    );
+  const hydrated = (
+    <AccordionWrapper
+      allowZeroExpanded
+      preExpanded={opportunities.length ? [opportunities[0].type] : [0]}
+    >
+      {opportunities.map((opportunity) => {
+        if (!opportunity) return undefined;
+        return (
+          <AccordionSection
+            key={opportunity.type}
+            opportunity={opportunity}
+            formLinkButton={formLinkButton}
+            onDenialButtonClick={() => {
+              workflowsStore.updateSelectedOpportunityOnFullProfile(
+                opportunity
+              );
+            }}
+          />
+        );
+      })}
+      <WorkflowsPreviewModal
+        isOpen={!!selectedOpportunityOnFullProfile}
+        clearSelectedPersonOnClose={false}
+        onClose={() =>
+          workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
+        }
+        pageContent={
+          <OpportunityDenialView
+            onSubmit={() =>
+              workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
+            }
+            opportunity={selectedOpportunityOnFullProfile}
+          />
+        }
+      />
+    </AccordionWrapper>
+  );
 
   return (
     <SelectedPersonOpportunitiesHydrator

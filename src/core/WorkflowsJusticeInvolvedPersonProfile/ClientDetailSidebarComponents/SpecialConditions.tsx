@@ -18,7 +18,6 @@
 import { parseJSON } from "date-fns";
 import React from "react";
 
-import { useFeatureVariants } from "../../../components/StoreProvider";
 import * as pathwaysTenants from "../../../RootStore/TenantStore/pathwaysTenants";
 import { formatWorkflowsDate } from "../../../utils";
 import { Client } from "../../../WorkflowsStore";
@@ -95,8 +94,6 @@ export function ProbationSpecialConditionsMarkup(
 export function SpecialConditions({
   client,
 }: ClientProfileProps): React.ReactElement | null {
-  const { responsiveRevamp } = useFeatureVariants();
-
   const emptySpecialConditionStrings =
     STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS[client.stateCode];
   if (!emptySpecialConditionStrings) return null;
@@ -110,7 +107,7 @@ export function SpecialConditions({
           emptySpecialConditionStrings.probation
         )}
       </SecureDetailsContent>
-      {responsiveRevamp && <Divider />}
+      <Divider />
       <DetailsHeading>Parole Special Conditions</DetailsHeading>
       <SecureDetailsContent>
         <>
