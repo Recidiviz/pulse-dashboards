@@ -92,7 +92,8 @@ export type FeatureVariant =
   | "usMoOverdueRHPilot"
   | "formRevertButton"
   | "outliersLeadershipPageAllDistricts"
-  | "outliersOnboarding";
+  | "outliersOnboarding"
+  | "hideDenialRevert";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -125,6 +126,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMoOverdueRHPilot: {},
   outliersLeadershipPageAllDistricts: {},
   outliersOnboarding: {},
+  hideDenialRevert: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"

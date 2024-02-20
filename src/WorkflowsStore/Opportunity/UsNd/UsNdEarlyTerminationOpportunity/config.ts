@@ -36,4 +36,5 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    hideDenialRevert: true,
   };

@@ -23,8 +23,9 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { Opportunity } from "../../WorkflowsStore";
+import { Opportunity, OPPORTUNITY_CONFIGS } from "../../WorkflowsStore";
 import { desktopLinkGate } from "../desktopLinkGate";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { useStatusColors } from "../utils/workflowsUtils";
@@ -96,6 +97,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
     onDenialButtonClick = () => null,
   }) {
+    const { hideDenialRevert } = useFeatureVariants();
+
     // We use isLaptop here, rather than isTablet or isMobile, as we've seen issues with profile formatting
     // on screen sizes smaller than desktop.
     const { isLaptop } = useIsMobile(true);
@@ -116,6 +119,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const [snoozedByText, resurfaceText] = buildSnoozedByTextAndResurfaceText(
       opportunity,
       snoozeUntil
+    );
+
+    const showRevertLink = !(
+      hideDenialRevert && OPPORTUNITY_CONFIGS[opportunity.type].hideDenialRevert
     );
 
     const handleUndoClick = async () => {
@@ -159,7 +166,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                   opportunity={opportunity}
                   onDenialButtonClick={onDenialButtonClick}
                 />
-                {snoozedByText && resurfaceText && (
+                {showRevertLink && snoozedByText && resurfaceText && (
                   <RevertChangesButtonLink onClick={handleUndoClick}>
                     Revert Changes
                   </RevertChangesButtonLink>
