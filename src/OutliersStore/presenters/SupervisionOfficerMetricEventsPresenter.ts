@@ -101,11 +101,10 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
   }
 
   get clientDetailLinks(): Array<string> | undefined {
-    const { outliersClientDetail } =
-      this.supervisionStore.outliersStore.rootStore.userStore
-        .activeFeatureVariants;
+    const { outliersLanternState } =
+      this.supervisionStore.outliersStore.rootStore.tenantStore;
 
-    if (!outliersClientDetail) return;
+    if (!outliersLanternState) return;
 
     return Array.from(this.officerMetricEvents, (d) =>
       outliersUrl("supervisionClientDetail", {

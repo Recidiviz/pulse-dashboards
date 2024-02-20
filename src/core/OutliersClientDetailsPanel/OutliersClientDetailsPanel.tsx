@@ -34,10 +34,7 @@ import {
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionClientDetailPresenter } from "../../OutliersStore/presenters/SupervisionClientDetailPresenter";
 import LanternLogo from "../LanternLogo";
@@ -122,7 +119,10 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
   presenter,
 }: OutliersClientDetailsPanelProps) {
   const { isMobile } = useIsMobile(true);
-  const { outliersClientDetail } = useFeatureVariants();
+  const { tenantStore } = useRootStore();
+
+  const isOutliersLanternState =
+    tenantStore && tenantStore.outliersLanternState;
 
   const {
     clientInfo,
@@ -148,7 +148,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
     setModalIsOpen(Boolean(clientPseudoId));
   }, [clientPseudoId]);
 
-  if (!outliersClientDetail) {
+  if (!isOutliersLanternState) {
     return (
       <Navigate
         to={outliersUrl("supervisionStaffMetric", {

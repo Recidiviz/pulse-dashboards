@@ -87,7 +87,6 @@ export type FeatureVariant =
   | "usIdExpandedCRC"
   | "usCaEnableSMS"
   | "usTnAnnualReclassification"
-  | "outliersClientDetail"
   | "usNdWriteToDocstars"
   | "usMoOverdueRHPilot"
   | "formRevertButton"
@@ -119,7 +118,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usCaEnableSMS: {},
   usTnAnnualReclassification: {},
   enableSnooze: {},
-  outliersClientDetail: {},
   usNdWriteToDocstars: {},
   supervisionUnrestrictedSearch: {},
   formRevertButton: {},
@@ -142,7 +140,6 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         usTnAnnualReclassification: {},
         supervisionUnrestrictedSearch: {},
         usMoOverdueRHPilot: {},
-        outliersClientDetail: {},
         enableSnooze: {},
         outliersOnboarding: {},
       }
