@@ -279,6 +279,17 @@ describe("OpportunityDenialView", () => {
       ).toBeDisabled();
     });
 
+    it("disables the save button if the slider is touched but a reason is not selected", () => {
+      const slider = screen
+        .getByTestId("OpportunityDenialView__slider")
+        .getElementsByTagName("input")[0];
+      expect(slider).toBeInTheDocument();
+      if (slider) fireEvent.change(slider, { target: { value: 60 } });
+      expect(
+        screen.getByTestId("OpportunityDenialView__button")
+      ).toBeDisabled();
+    });
+
     it("enables the save button when a reason is selected", () => {
       const checkbox = getCheckbox("CODE");
       if (checkbox) fireEvent.click(checkbox);
@@ -299,6 +310,59 @@ describe("OpportunityDenialView", () => {
       expect(
         screen.getByText("Not eligible reasons: CODE")
       ).toBeInTheDocument();
+    });
+  });
+
+  describe("save button logic when editing", () => {
+    beforeEach(() => {
+      renderElement({
+        ...mockOpportunity,
+        type: "compliantReporting",
+        snoozedOnDate: new Date(2023, 9, 5),
+        manualSnooze: {
+          snoozeForDays: 30,
+          snoozedOn: "2023-10-05",
+          snoozedBy: "",
+        },
+        denial: {
+          reasons: ["CODE"],
+        },
+        denialReasonsMap: {
+          CODE: "Denial reason",
+          CODE2: "Denial reason2",
+        },
+      });
+    });
+
+    it("disables the save button if the form is untouched", () => {
+      expect(
+        screen.getByTestId("OpportunityDenialView__button")
+      ).toBeDisabled();
+    });
+
+    it("enables the save button when the slider is moved", () => {
+      const slider = screen
+        .getByTestId("OpportunityDenialView__slider")
+        .getElementsByTagName("input")[0];
+      if (slider) fireEvent.change(slider, { target: { value: 60 } });
+      expect(screen.getByTestId("OpportunityDenialView__button")).toBeEnabled();
+
+      if (slider) fireEvent.change(slider, { target: { value: 30 } });
+      expect(
+        screen.getByTestId("OpportunityDenialView__button")
+      ).toBeDisabled();
+    });
+
+    it("enables the save button when another reason is checked", () => {
+      const checkbox = getCheckbox("CODE2");
+      if (checkbox) fireEvent.click(checkbox);
+      expect(screen.getByTestId("OpportunityDenialView__button")).toBeEnabled();
+    });
+
+    it("enables the save button when all reasons are unchecked", () => {
+      const checkbox = getCheckbox("CODE");
+      if (checkbox) fireEvent.click(checkbox);
+      expect(screen.getByTestId("OpportunityDenialView__button")).toBeEnabled();
     });
   });
 

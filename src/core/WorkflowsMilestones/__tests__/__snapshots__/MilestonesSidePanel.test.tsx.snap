@@ -61,7 +61,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 kUPbZp WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
+              class="styles__SidePanelContents-sc-b21pq-16 kHILeQ"
               data-testid="CongratulatedSidePanel"
             >
               <div
@@ -354,7 +354,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 kUPbZp WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
+              class="styles__SidePanelContents-sc-b21pq-16 kHILeQ"
               data-testid="DeclinedSidePanel"
             >
               <div
@@ -645,7 +645,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 kUPbZp WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
+              class="styles__SidePanelContents-sc-b21pq-16 kHILeQ"
               data-testid="ComposeMessageView"
             >
               <div
@@ -1010,7 +1010,7 @@ Object {
             class="WorkflowsPreviewModal__Wrapper-sc-e3xhhy-2 kUPbZp WorkflowsPreviewModal"
           >
             <div
-              class="styles__SidePanelContents-sc-b21pq-16 hGlsjt"
+              class="styles__SidePanelContents-sc-b21pq-16 kHILeQ"
               data-testid="CongratulatedSidePanel"
             >
               <div

@@ -39,9 +39,9 @@ const TooltipSlider = ({
   value = 0,
   ...props
 }: SliderProps) => {
-  const min = 0;
+  const min = 1;
   const range = max - min;
-  const ratio = value / range;
+  const ratio = (value - min) / range;
 
   return (
     <SliderWrapper

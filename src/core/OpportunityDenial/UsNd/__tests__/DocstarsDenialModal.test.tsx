@@ -34,20 +34,30 @@ jest.mock("react-hot-toast");
 
 const mockRootStore = ({
   featureVariants = { usNdWriteToDocstars: {} } as object,
-  post = jest.fn(),
-  updateOmsSnoozeStatus = jest.fn(),
-} = {}) =>
+} = {}) => {
+  const apiPost = jest.fn();
+  const updateOmsSnoozeStatus = jest.fn();
+  updateOmsSnoozeStatus.mockImplementation(
+    (opp, _email, _state, _pei, _date, _ts, status) => {
+      // eslint-disable-next-line no-param-reassign
+      opp.omsSnoozeStatus = status;
+    }
+  );
+
   (useRootStore as jest.Mock).mockReturnValue({
     workflowsStore: {
       currentUserEmail: "mock-email@nd.gov",
       featureVariants,
     },
     userStore: { stateCode: "US_ND" },
-    apiStore: { post },
+    apiStore: { post: apiPost },
     firestoreStore: {
       updateOmsSnoozeStatus,
     },
   });
+
+  return { apiPost, updateOmsSnoozeStatus };
+};
 
 let existingEnv: typeof process.env;
 
@@ -121,9 +131,7 @@ describe("DocstarsDenialModal", () => {
   });
 
   it("hits the api and writes pending to firestore when Submit is clicked", async () => {
-    const apiPost = jest.fn();
-    const updateOmsSnoozeStatus = jest.fn();
-    mockRootStore({ post: apiPost, updateOmsSnoozeStatus });
+    const { apiPost, updateOmsSnoozeStatus } = mockRootStore();
 
     updateOmsSnoozeStatus.mockImplementation(
       (_opp, _email, _state, _pei, _date, _ts, status) => {
@@ -135,7 +143,7 @@ describe("DocstarsDenialModal", () => {
       ...mockOpportunity,
     };
 
-    render(
+    const { rerender } = render(
       <DocstarsDenialModal
         opportunity={opp}
         reasons={["CODE"]}
@@ -148,6 +156,18 @@ describe("DocstarsDenialModal", () => {
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
+
+    rerender(
+      <DocstarsDenialModal
+        opportunity={opp}
+        reasons={["CODE"]}
+        otherReason=""
+        snoozeUntilDate={parseISO("2025-07-04")}
+        showModal
+        onCloseFn={jest.fn()}
+        onSuccessFn={jest.fn()}
+      />
+    );
 
     await waitFor(() => {
       expect(updateOmsSnoozeStatus).toHaveBeenCalledWith(
@@ -174,21 +194,15 @@ describe("DocstarsDenialModal", () => {
   });
 
   it("writes failure to firestore if the api request fails", async () => {
-    const apiPost = jest.fn().mockRejectedValue(new Error("mock error"));
-    const updateOmsSnoozeStatus = jest.fn();
-    mockRootStore({ post: apiPost, updateOmsSnoozeStatus });
+    const { apiPost, updateOmsSnoozeStatus } = mockRootStore();
 
-    updateOmsSnoozeStatus.mockImplementation(
-      (_opp, _email, _state, _pei, _date, _ts, status) => {
-        opp.omsSnoozeStatus = status;
-      }
-    );
+    apiPost.mockRejectedValue(new Error("mock error"));
 
     const opp: Opportunity = {
       ...mockOpportunity,
     };
 
-    render(
+    const { rerender } = render(
       <DocstarsDenialModal
         opportunity={opp}
         reasons={["CODE"]}
@@ -201,6 +215,18 @@ describe("DocstarsDenialModal", () => {
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
+
+    rerender(
+      <DocstarsDenialModal
+        opportunity={opp}
+        reasons={["CODE"]}
+        otherReason=""
+        snoozeUntilDate={parseISO("2025-07-04")}
+        showModal
+        onCloseFn={jest.fn()}
+        onSuccessFn={jest.fn()}
+      />
+    );
 
     await waitFor(() => {
       expect(updateOmsSnoozeStatus).toHaveBeenLastCalledWith(
@@ -223,7 +249,7 @@ describe("DocstarsDenialModal", () => {
       ...mockOpportunity,
     };
 
-    render(
+    const { rerender } = render(
       <DocstarsDenialModal
         opportunity={opp}
         reasons={["CODE"]}
@@ -236,7 +262,32 @@ describe("DocstarsDenialModal", () => {
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
+
+    rerender(
+      <DocstarsDenialModal
+        opportunity={opp}
+        reasons={["CODE"]}
+        otherReason=""
+        snoozeUntilDate={parseISO("2025-07-04")}
+        showModal
+        onCloseFn={jest.fn()}
+        onSuccessFn={jest.fn()}
+      />
+    );
+
     opp.omsSnoozeStatus = "FAILURE";
+
+    rerender(
+      <DocstarsDenialModal
+        opportunity={opp}
+        reasons={["CODE"]}
+        otherReason=""
+        snoozeUntilDate={parseISO("2025-07-04")}
+        showModal
+        onCloseFn={jest.fn()}
+        onSuccessFn={jest.fn()}
+      />
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId("docstars-failure-screen")).toBeInTheDocument();
@@ -252,7 +303,7 @@ describe("DocstarsDenialModal", () => {
 
     const onSuccessFn = jest.fn();
 
-    render(
+    const { rerender } = render(
       <DocstarsDenialModal
         opportunity={opp}
         reasons={[]}
@@ -265,7 +316,32 @@ describe("DocstarsDenialModal", () => {
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
+
+    rerender(
+      <DocstarsDenialModal
+        opportunity={opp}
+        reasons={[]}
+        otherReason=""
+        snoozeUntilDate={undefined}
+        showModal
+        onCloseFn={jest.fn()}
+        onSuccessFn={onSuccessFn}
+      />
+    );
+
     opp.omsSnoozeStatus = "SUCCESS";
+
+    rerender(
+      <DocstarsDenialModal
+        opportunity={opp}
+        reasons={[]}
+        otherReason=""
+        snoozeUntilDate={undefined}
+        showModal
+        onCloseFn={jest.fn()}
+        onSuccessFn={onSuccessFn}
+      />
+    );
 
     await waitFor(() => {
       expect(onSuccessFn).toHaveBeenCalledOnce();
@@ -317,7 +393,6 @@ describe("DocstarsDenialModal", () => {
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
-    opp.omsSnoozeStatus = "PENDING";
 
     await waitFor(() => {
       expect(screen.getByTestId("docstars-loading-screen")).toBeInTheDocument();

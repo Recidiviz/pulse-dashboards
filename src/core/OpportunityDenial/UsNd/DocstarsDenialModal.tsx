@@ -104,21 +104,25 @@ const ConfirmationField = styled.dd.attrs({ className: "fs-exclude" })`
   color: rgba(53, 83, 98, 0.9);
 `;
 
+type JustificationReason = { code: string; description: string };
+
 export function buildJustificationReasons(
   opportunity: Opportunity,
   reasons: string[],
   otherReason: string
-) {
-  return reasons
-    .map((code) => {
-      if (code in opportunity.denialReasonsMap) {
-        const description =
-          code === OTHER_KEY ? otherReason : opportunity.denialReasonsMap[code];
-        return { code, description };
+): JustificationReason[] {
+  const out: JustificationReason[] = [];
+  Object.entries(opportunity.denialReasonsMap).forEach(
+    ([code, description]) => {
+      if (reasons.includes(code)) {
+        out.push({
+          code,
+          description: code === OTHER_KEY ? otherReason : description,
+        });
       }
-      return false;
-    })
-    .filter(Boolean) as { code: string; description: string }[]; // assertion because TS doesn't infer that falses are filtered out
+    }
+  );
+  return out;
 }
 
 const createDocstarsRequestBody = (
@@ -163,14 +167,29 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
     if (!featureVariants.usNdWriteToDocstars && showModal) onSuccessFn();
   });
 
-  // This state lets us ignore the firestore status until submission.
-  // Otherwise users can't edit snoozed people because the modal thinks
-  // it already fired.
-  const [hasSubmitted, setHasSubmitted] = useState(false);
+  // Rather than using opportunity.omsSnoozeStatus directly, we keep track
+  // of our own status, with a defined set of allowable transitions.
+  const [phase, setPhase] = useState<
+    "REVIEWING" | "SUBMITTED" | "FAILED" | "SUCCEEDED"
+  >("REVIEWING");
+
+  // Whenever the modal opens, reset to REVIEWING
+  useEffect(() => {
+    if (showModal) setPhase("REVIEWING");
+  }, [showModal]);
 
   useEffect(() => {
-    if (!showModal) setHasSubmitted(false);
-  }, [showModal]);
+    const { omsSnoozeStatus } = opportunity;
+    // phase is set to SUMBITTED inside onSubmitButtonClick after
+    // omsSnoozeStatus is set to PENDING
+    if (phase === "SUBMITTED" && omsSnoozeStatus === "FAILURE")
+      setPhase("FAILED");
+    else if (phase === "SUBMITTED" && omsSnoozeStatus === "SUCCESS") {
+      setPhase("SUCCEEDED");
+      toast("Note successfully synced to DOCSTARS");
+      onSuccessFn();
+    }
+  }, [opportunity, phase, onSuccessFn]);
 
   const onSubmitButtonClick = async () => {
     const submittedTimestamp = Timestamp.fromDate(new Date());
@@ -185,7 +204,7 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
       "PENDING"
     );
 
-    setHasSubmitted(true);
+    setPhase("SUBMITTED");
 
     const requestBody = createDocstarsRequestBody(
       opportunity,
@@ -290,32 +309,16 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
     </div>
   );
 
-  useEffect(() => {
-    if (hasSubmitted && opportunity.omsSnoozeStatus === "SUCCESS") {
-      toast("Note successfully synced to DOCSTARS");
-      onSuccessFn();
-    }
-  });
-
-  const getModalContent = () => {
-    if (!hasSubmitted) return submissionModal;
-
-    switch (opportunity.omsSnoozeStatus) {
-      case "SUCCESS":
-        return null;
-      case "PENDING":
-      case "IN_PROGRESS":
-        return loadingModal;
-      case "FAILURE":
-        return failureModal;
-      default:
-        return submissionModal;
-    }
+  const modalContent: Record<typeof phase, JSX.Element> = {
+    REVIEWING: submissionModal,
+    SUBMITTED: loadingModal,
+    SUCCEEDED: loadingModal, // Continue to show loader as the modal fades out
+    FAILED: failureModal,
   };
 
   return (
     <StyledModal isOpen={showModal} onRequestClose={onCloseFn}>
-      {getModalContent()}
+      {modalContent[phase]}
     </StyledModal>
   );
 });

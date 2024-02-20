@@ -198,8 +198,14 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     isEqual(new Set(reasons), new Set(opportunity.denial?.reasons)) &&
     !otherReasonChanged;
 
+  const sliderUnchanged =
+    sliderDays === opportunity?.manualSnooze?.snoozeForDays ||
+    !maxManualSnoozeDays; // true if autoSnooze
+
   const disableSaveButton =
-    reasonsUnchanged || unsetSlider || otherReasonInvalid;
+    (reasonsUnchanged && (sliderUnchanged || reasons.length === 0)) ||
+    unsetSlider ||
+    otherReasonInvalid;
 
   const snoozeUntilDate = autoSnoozeUntil
     ? parseISO(autoSnoozeUntil)
@@ -225,7 +231,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
             max={maxManualSnoozeDays}
             value={sliderDays}
             onChange={handleSliderChange}
-            tooltipLabelFormatter={(currentValue) => `${currentValue} days`}
+            tooltipLabelFormatter={(currentValue) =>
+              currentValue === 1 ? "1 day" : `${currentValue} days`
+            }
           />
         </SliderWrapper>
       )}

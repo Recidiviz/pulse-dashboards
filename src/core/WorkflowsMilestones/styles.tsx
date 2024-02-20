@@ -173,7 +173,6 @@ export const TextLink = styled.span`
 export const SidePanelContents = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  height: 85vh;
 `;
 
 // Define the pulse animation
