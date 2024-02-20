@@ -17,12 +17,14 @@
 import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
+import { generateTabs } from "../../utils/tabUtils";
 import { UsTnSupervisionLevelDowngradeOpportunity } from "./UsTnSupervisionLevelDowngradeOpportunity";
 
 export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervisionLevelDowngradeOpportunity> =
   {
     systemType: "SUPERVISION",
     stateCode: "US_TN",
+
     urlSection: "supervisionLevelDowngrade",
     label: "Supervision Level Downgrade",
     hydratedHeader: (formattedCount) => ({
@@ -36,4 +38,5 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervis
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    tabOrder: generateTabs({ isAlert: true }),
   };

@@ -67,7 +67,6 @@ export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
   label: "Mock Opportunity",
   featureVariant: "usXxMockOpportunity" as FeatureVariant,
   initialHeader: "Mock initial header to search for something",
-  customTabOrder: ["Eligible Now", "Missing Review Date", "Overridden"],
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
   },

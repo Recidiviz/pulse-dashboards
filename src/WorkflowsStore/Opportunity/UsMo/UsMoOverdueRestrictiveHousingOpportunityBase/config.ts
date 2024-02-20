@@ -21,6 +21,7 @@ import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { CountFormatter, OpportunityConfig } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
+import { generateTabs } from "../../utils/tabUtils";
 
 export const baseUsMoOverdueRestrictiveHousingConfig = (
   usMoOverdueRHOppVariant: "Release" | "InitialHearing" | "ReviewHearing",
@@ -48,14 +49,17 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
       callToAction,
     }),
     firestoreCollection: `US_MO-overdueRestrictiveHousing${usMoOverdueRHOppVariant}Referrals`,
-    customTabOrder: [
-      `Overdue as of ${formatWorkflowsDate(
-        startOfWeek(new Date(), { weekStartsOn: 1 })
-      )}`,
-      "Due this week",
-      "Coming up",
-      "Overridden",
-      "Missing Review Date",
-    ],
+    tabOrder: generateTabs({
+      isAlert: true,
+      customTabOrder: [
+        `Overdue as of ${formatWorkflowsDate(
+          startOfWeek(new Date(), { weekStartsOn: 1 })
+        )}`,
+        "Due this week",
+        "Coming up",
+        "Overridden",
+        "Missing Review Date",
+      ],
+    }),
   };
 };

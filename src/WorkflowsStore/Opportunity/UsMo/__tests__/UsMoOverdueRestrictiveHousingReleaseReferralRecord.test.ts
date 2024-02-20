@@ -18,7 +18,7 @@
 import { maxBy } from "lodash";
 
 import { usMoOverdueRestrictiveHousingReleaseReferralRecordFixture } from "../__fixtures__";
-import { usMoOverdueRestrictiveHousingReleaseSchema } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
+import { usMoOverdueRestrictiveHousingReleaseSchema } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 
 const recordWithNullUsMoNoD1Sanctions = {
   ...usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,

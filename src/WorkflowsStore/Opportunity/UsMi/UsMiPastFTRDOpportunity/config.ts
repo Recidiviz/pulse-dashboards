@@ -18,6 +18,7 @@ import { add } from "date-fns";
 import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
+import { generateTabs } from "../../utils/tabUtils";
 import { UsMiPastFTRDOpportunity } from "./UsMiPastFTRDOpportunity";
 
 export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
@@ -35,4 +36,5 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
   },
+  tabOrder: generateTabs({ isAlert: true }),
 };

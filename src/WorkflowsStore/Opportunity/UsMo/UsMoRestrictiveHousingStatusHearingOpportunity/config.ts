@@ -18,6 +18,7 @@ import { nextMonday } from "date-fns";
 import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
+import { generateTabs } from "../../utils/tabUtils";
 import { UsMoRestrictiveHousingStatusHearingOpportunity } from "./UsMoRestrictiveHousingStatusHearingOpportunity";
 
 export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRestrictiveHousingStatusHearingOpportunity> =
@@ -36,10 +37,13 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
       callToAction: "Conduct a Restrictive Housing Status Hearing",
     }),
     firestoreCollection: "US_MO-restrictiveHousingStatusHearingReferrals",
-    customTabOrder: [
-      "Overdue For Hearing",
-      "Missing Review Date",
-      "Upcoming Hearings",
-      "Overridden",
-    ],
+    tabOrder: generateTabs({
+      isAlert: true,
+      customTabOrder: [
+        "Overdue For Hearing",
+        "Missing Review Date",
+        "Upcoming Hearings",
+        "Overridden",
+      ],
+    }),
   };

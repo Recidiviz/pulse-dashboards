@@ -19,6 +19,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { useRootStore } from "../components/StoreProvider";
 import { OpportunityTab } from "../WorkflowsStore";
+import { getTabOrderForOpportunityType } from "../WorkflowsStore/Opportunity/utils/tabUtils";
 
 type OrderedActiveTab = {
   displayTabs: OpportunityTab[];
@@ -43,11 +44,10 @@ export const useOrderedActiveTab: () => OrderedActiveTab =
       if (opportunityType) {
         const opportunityTabs = opportunitiesByTab[opportunityType];
 
-        const tabOrder = (Object.values(opportunityTabs ?? {}) ?? {}).flat()[0]
-          ?.tabOrder;
+        const tabOrder = getTabOrderForOpportunityType(opportunityType);
 
         const tabsForDisplay: OpportunityTab[] = intersection(
-          [...(tabOrder ?? [])],
+          tabOrder,
           Object.keys(opportunityTabs ?? {})
         ) as OpportunityTab[];
 

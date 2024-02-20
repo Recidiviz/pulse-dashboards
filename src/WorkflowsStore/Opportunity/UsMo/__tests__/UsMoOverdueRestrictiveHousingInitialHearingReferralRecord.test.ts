@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture } from "../__fixtures__";
-import { usMoOverdueRestrictiveHousingInitialHearingSchema } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
+import { usMoOverdueRestrictiveHousingInitialHearingSchema } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 
 describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
   it("should have a valid schema", () => {

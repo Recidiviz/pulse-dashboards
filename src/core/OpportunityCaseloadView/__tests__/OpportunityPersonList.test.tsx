@@ -16,9 +16,18 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import { cloneDeep } from "lodash";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
+import {
+  OPPORTUNITY_CONFIGS,
+  OpportunityType,
+} from "../../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import {
+  Opportunity,
+  OpportunityTab,
+} from "../../../WorkflowsStore/Opportunity/types";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
 
@@ -41,9 +50,13 @@ const baseWorkflowsStoreMock = {
   potentialOpportunities: () => [],
   hasOpportunities: () => false,
 };
-
+const OPPORTUNITY_CONFIG_CONSTANT = cloneDeep(OPPORTUNITY_CONFIGS);
 beforeEach(() => {
   jest.resetAllMocks();
+});
+
+afterEach(() => {
+  Object.assign(OPPORTUNITY_CONFIGS, OPPORTUNITY_CONFIG_CONSTANT);
 });
 
 test("initial", () => {
@@ -92,13 +105,11 @@ test("empty", () => {
 });
 
 test("hydrated", () => {
-  const firstTabText = "Displays first";
-  const emptyTabText = "Empty Tab";
-  const otherTabText = "Displays after";
-  const oppTabOrder = [firstTabText, emptyTabText, otherTabText];
+  const firstTabText = "Eligible Now";
+  const otherTabText = "Almost Eligible";
+  const emptyTabText = "Overridden";
   const opp1 = {
     ...mockOpportunity,
-    tabOrder: oppTabOrder,
     person: {
       recordId: "1",
     } as Client,
@@ -109,6 +120,16 @@ test("hydrated", () => {
       recordId: "2",
     } as Client,
   };
+
+  const opportunitiesByTab: Partial<
+    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
+  > = {
+    earlyTermination: {
+      [firstTabText]: [opp1 as Opportunity],
+      [otherTabText]: [opp2 as Opportunity],
+      [emptyTabText]: [],
+    },
+  };
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -116,12 +137,7 @@ test("hydrated", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
-      opportunitiesByTab: {
-        earlyTermination: {
-          [otherTabText]: [opp1],
-          [firstTabText]: [opp2],
-        },
-      },
+      opportunitiesByTab,
     },
   });
 
@@ -179,14 +195,22 @@ test("hydrated with one tab", () => {
 
 test("hydrated with a tab that is not listed as the first tab in the order", () => {
   const firstTabText = "Eligible Now";
-  const overriddenTabText = "Overridden";
-  const oppTabOrder = [firstTabText, overriddenTabText];
+  const overriddenTabText = "Marked ineligible";
+
   const opp = {
     ...mockOpportunity,
-    tabOrder: oppTabOrder,
     person: {
       recordId: "3",
     } as Client,
+    tabTitle: overriddenTabText,
+  };
+
+  const opportunitiesByTab: Partial<
+    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
+  > = {
+    earlyTermination: {
+      [overriddenTabText]: [opp as Opportunity],
+    },
   };
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
@@ -195,11 +219,7 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
-      opportunitiesByTab: {
-        earlyTermination: {
-          [overriddenTabText]: [opp],
-        },
-      },
+      opportunitiesByTab,
     },
   });
 

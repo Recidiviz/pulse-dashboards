@@ -127,7 +127,6 @@ export interface Opportunity<
   readonly tooltipEligibilityText?: string;
   readonly eligibilityCallToActionText?: string;
   tabTitle?: OpportunityTab;
-  tabOrder: Readonly<OpportunityTab[]>;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
   readonly portionServedRequirement?: string[];

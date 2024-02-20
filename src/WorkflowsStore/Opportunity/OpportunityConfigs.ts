@@ -115,7 +115,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   label: string;
   firestoreCollection: string;
   snooze?: SnoozeConfig;
-  customTabOrder?: OpportunityTab[];
+  tabOrder?: ReadonlyArray<OpportunityTab>;
   initialHeader?: string;
   hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
   denialButtonText?: string;

@@ -31,6 +31,7 @@ import {
   OpportunityTab,
 } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { getTabOrderForOpportunityType } from "../../WorkflowsStore/Opportunity/utils/tabUtils";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { Heading, SubHeading } from "../sharedComponents";
@@ -107,18 +108,13 @@ const HydratedOpportunityPersonList = observer(
     }, [allOpportunitiesByType, opportunityType]);
 
     const displayTabs = useMemo(() => {
-      return oppsFromOpportunitiesByTab &&
-        oppsFromOpportunitiesByOppType &&
-        oppsFromOpportunitiesByOppType[0]
+      return oppsFromOpportunitiesByTab && opportunityType
         ? intersection(
-            oppsFromOpportunitiesByOppType[0].tabOrder,
+            getTabOrderForOpportunityType(opportunityType),
             Object.keys(oppsFromOpportunitiesByTab)
           )
         : [];
-    }, [
-      oppsFromOpportunitiesByTab,
-      oppsFromOpportunitiesByOppType,
-    ]) as OpportunityTab[];
+    }, [opportunityType, oppsFromOpportunitiesByTab]) as OpportunityTab[];
 
     const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
 

@@ -55,11 +55,7 @@ import {
   snoozeUntilDateInTheFuture,
 } from "../utils";
 import { FormBase } from "./Forms/FormBase";
-import {
-  AutoSnoozeUntil,
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "./OpportunityConfigs";
+import { AutoSnoozeUntil, OpportunityType } from "./OpportunityConfigs";
 import {
   Component,
   DefaultEligibility,
@@ -529,20 +525,6 @@ export abstract class OpportunityBase<
     if (this.denied) return this.deniedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
     return "Eligible Now";
-  }
-
-  // Note that this needs to be a getter instead of a base property, otherwise it gets initialized
-  // before any subclasses are initialized. At that point in time, this.isAlert will always be
-  // false (see https://www.typescriptlang.org/docs/handbook/2/classes.html#initialization-order)
-  // so deniedTabTitle will always be "Marked ineligible".
-  get tabOrder(): Readonly<OpportunityTab[]> {
-    return (
-      OPPORTUNITY_CONFIGS[this.type].customTabOrder ?? [
-        "Eligible Now",
-        "Almost Eligible",
-        this.deniedTabTitle,
-      ]
-    );
   }
 
   /*
