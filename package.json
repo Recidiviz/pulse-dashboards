@@ -53,7 +53,9 @@
     "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules",
     "deploy": "node ./tools/deploy.mjs",
     "load-prod-fixtures": "ts-node tools/loadProdTestFixtures.mjs",
-    "pdfformfiller-boilerplate": "ts-node tools/pdfFormFillerBoilerplate.mjs"
+    "pdfformfiller-boilerplate": "ts-node tools/pdfFormFillerBoilerplate.mjs",
+    "update-missing-snooze-staging": "source ./load_environment.sh env_dev_server && ts-node tools/updateMissingSnooze.ts",
+    "update-missing-snooze-local": "source ./load_environment.sh env_dev_demo_server && ts-node tools/updateMissingSnooze.ts"
   },
   "dependencies": {
     "@artsy/to-title-case": "^1.1.0",
