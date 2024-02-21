@@ -22,10 +22,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord, toTitleCase } from "../../utils";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
@@ -34,18 +31,10 @@ import { SectionLabelText } from "../sharedComponents";
 import { workflowsUrl } from "../views";
 import WorkflowsResults from "../WorkflowsResults";
 
-const CaseloadWrapper = styled.ul<{
-  isTwoColumns?: boolean;
-}>`
+const CaseloadWrapper = styled.ul`
   column-gap: ${rem(spacing.md)};
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(
-      max(${rem(320)}, ${({ isTwoColumns }) => (isTwoColumns ? 3 : 2)}0vw),
-      1fr
-    )
-  );
+  grid-template-columns: repeat(auto-fill, minmax(max(${rem(320)}, 30vw), 1fr));
   list-style-type: none;
   margin: 0;
   margin-top: ${rem(spacing.md)};
@@ -53,13 +42,7 @@ const CaseloadWrapper = styled.ul<{
   row-gap: ${rem(spacing.sm)};
 `;
 
-function Caseload({
-  persons,
-  isResponsiveRevamp,
-}: {
-  persons: JusticeInvolvedPerson[];
-  isResponsiveRevamp?: boolean;
-}) {
+function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
   if (!persons.length) return null;
   const items = persons.map((person) => (
     <li key={`externalId-${person.externalId}`}>
@@ -74,13 +57,10 @@ function Caseload({
     </li>
   ));
 
-  return (
-    <CaseloadWrapper isTwoColumns={isResponsiveRevamp}>{items}</CaseloadWrapper>
-  );
+  return <CaseloadWrapper>{items}</CaseloadWrapper>;
 }
 
 export const AllCaseloads = observer(function AllCaseloads() {
-  const { responsiveRevamp } = useFeatureVariants();
   const {
     workflowsStore: {
       caseloadPersonsSorted,
@@ -103,10 +83,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
           )}
           {/* in practice there should never be a missing caseload,
             but fall back to an empty array for type safety */}
-          <Caseload
-            persons={caseloads[searchable.searchId] ?? []}
-            isResponsiveRevamp={!!responsiveRevamp}
-          />
+          <Caseload persons={caseloads[searchable.searchId] ?? []} />
         </React.Fragment>
       ))}
     </>
@@ -123,17 +100,13 @@ export const AllCaseloads = observer(function AllCaseloads() {
         />
       }
       hydrated={
-        !responsiveRevamp ? (
-          allCaseloadsViz
-        ) : (
-          <WorkflowsResults
-            headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
-              caseloadPersonsSorted.length
-            })`}
-          >
-            {allCaseloadsViz}
-          </WorkflowsResults>
-        )
+        <WorkflowsResults
+          headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
+            caseloadPersonsSorted.length
+          })`}
+        >
+          {allCaseloadsViz}
+        </WorkflowsResults>
       }
       empty={null}
     />

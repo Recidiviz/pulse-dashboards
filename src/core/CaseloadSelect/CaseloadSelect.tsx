@@ -46,10 +46,7 @@ import { IndicatorProps } from "react-select/src/components/indicators";
 import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { Searchable } from "../models/types";
@@ -64,28 +61,11 @@ const ValuePill = styled(Pill).attrs({ color: palette.slate20, filled: false })`
   height: ${rem(32)};
 `;
 
-const DisabledMessage = styled.div<{ responsiveRevamp?: boolean }>`
+const DisabledMessage = styled.div`
   color: ${palette.signal.notification};
   /* non-standard padding value to match library styles */
-  padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp ? `${rem(spacing.sm)} ${rem(spacing.md)}` : "12px"};
+  padding: ${rem(spacing.sm)} ${rem(spacing.md)};
 `;
-
-const Disabled = (searchFieldTitle: string) =>
-  function DisabledMenuList({
-    children,
-    ...props
-  }: MenuListComponentProps<{ label: string; value: string }, true>) {
-    return (
-      <components.MenuList {...props}>
-        <DisabledMessage>
-          Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
-          {pluralizeWord(searchFieldTitle)}.
-        </DisabledMessage>
-        {children}
-      </components.MenuList>
-    );
-  };
 
 type SelectOption = { label: string; value: string };
 
@@ -222,7 +202,7 @@ const MenuListWithShadow = (
         <components.MenuList {...props}>
           <div ref={topShadow.ref} />
           {isDisabled && (
-            <DisabledMessage responsiveRevamp>
+            <DisabledMessage>
               Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
               {pluralizeWord(searchFieldTitle)}.
             </DisabledMessage>
@@ -238,10 +218,9 @@ const MenuListWithShadow = (
     );
   };
 
-const CaseloadSelectContainer = styled(Sans14)<{ marginBottom?: number }>`
+const CaseloadSelectContainer = styled(Sans14)`
   color: ${palette.slate85};
-  margin-bottom: ${({ marginBottom }) =>
-    marginBottom ? rem(marginBottom) : rem(spacing.xxl)};
+  margin-bottom: ${rem(spacing.lg)};
 `;
 
 const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
@@ -279,7 +258,6 @@ export const CaseloadSelect = observer(function CaseloadSelect({
 }: CaseloadSelectProps) {
   const { workflowsStore, analyticsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
-  const { responsiveRevamp } = useFeatureVariants();
   const {
     availableSearchables,
     selectedSearchables,
@@ -307,82 +285,13 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const disableAdditionalSelections =
     selectedSearchables.length >= SELECTED_SEARCH_LIMIT;
 
-  if (disableAdditionalSelections) {
-    customComponents.MenuList = Disabled(searchTitle);
-  }
+  customComponents.MenuList = MenuListWithShadow(
+    availableSearchables.length,
+    disableAdditionalSelections,
+    searchTitle
+  );
 
-  if (responsiveRevamp) {
-    customComponents.MenuList = MenuListWithShadow(
-      availableSearchables.length,
-      disableAdditionalSelections,
-      searchTitle
-    );
-  }
-
-  const oldStyles: Partial<
-    Styles<SelectOption, true, GroupTypeBase<SelectOption>>
-  > = {
-    control: (base) => ({
-      ...base,
-      borderColor: palette.slate20,
-      borderRadius: rem(8),
-      minHeight: rem(48),
-      padding: rem(spacing.sm),
-    }),
-    menu: (base) => ({ ...base, zIndex: zindex.tooltip - 1 }),
-  };
-
-  const newStyles: Partial<
-    Styles<SelectOption, true, GroupTypeBase<SelectOption>>
-  > = {
-    container: (base) => ({
-      ...base,
-      margin: isMobile && "0 -1rem",
-    }),
-    menuList: (base) => ({
-      ...base,
-      maxHeight: rem(300),
-      padding: `${rem(spacing.sm)} 0`,
-    }),
-    control: (base, state) => ({
-      ...base,
-      borderWidth: state.menuIsOpen ? "0" : `1px`,
-      borderStyle: "solid",
-      borderColor: `${palette.slate10} !important`,
-      borderRadius: state.menuIsOpen ? "8px 8px 0 0" : rem(8),
-      minHeight: rem(48),
-      padding: `${rem(isMobile ? spacing.md : spacing.sm)} ${rem(spacing.md)}`,
-      margin: 0,
-      boxShadow:
-        state.menuIsOpen && !isMobile
-          ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
-          : "none",
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: zindex.tooltip - 1,
-      margin: 0,
-      border: "none",
-      borderTop: `1px solid ${palette.slate20}`,
-      borderRadius: "0 0 8px 8px",
-      boxShadow: !isMobile ? "0px 15px 20px rgba(53, 83, 98, 0.2)" : "none",
-    }),
-    option: (base) => ({
-      ...base,
-      backgroundColor: "none",
-      color: disableAdditionalSelections ? palette.slate20 : palette.pine3,
-      pointerEvents: disableAdditionalSelections ? "none" : "initial",
-      padding: isMobile
-        ? `${rem(10)} ${rem(spacing.xl)}`
-        : `${rem(spacing.sm)} ${rem(spacing.md)}`,
-
-      "&:hover": {
-        backgroundColor: palette.slate10,
-      },
-    }),
-  };
-
-  const baseStyles: Partial<
+  const styles: Partial<
     Styles<SelectOption, true, GroupTypeBase<SelectOption>>
   > = {
     clearIndicator: (base) => ({
@@ -433,12 +342,52 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       gap: rem(spacing.sm),
       color: palette.slate60,
     }),
-  };
+    container: (base) => ({
+      ...base,
+      margin: isMobile && "0 -1rem",
+    }),
+    menuList: (base) => ({
+      ...base,
+      maxHeight: rem(300),
+      padding: `${rem(spacing.sm)} 0`,
+    }),
+    control: (base, state) => ({
+      ...base,
+      borderWidth: state.menuIsOpen ? "0" : `1px`,
+      borderStyle: "solid",
+      borderColor: `${palette.slate10} !important`,
+      borderRadius: state.menuIsOpen ? "8px 8px 0 0" : rem(8),
+      minHeight: rem(48),
+      padding: `${rem(isMobile ? spacing.md : spacing.sm)} ${rem(spacing.md)}`,
+      margin: 0,
+      boxShadow:
+        state.menuIsOpen && !isMobile
+          ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
+          : "none",
+    }),
+    menu: (base) => ({
+      ...base,
+      zIndex: zindex.tooltip - 1,
+      margin: 0,
+      border: "none",
+      borderTop: `1px solid ${palette.slate20}`,
+      borderRadius: "0 0 8px 8px",
+      boxShadow: !isMobile ? "0px 15px 20px rgba(53, 83, 98, 0.2)" : "none",
+    }),
+    option: (base) => ({
+      ...base,
+      backgroundColor: "none",
+      color: disableAdditionalSelections ? palette.slate20 : palette.pine3,
+      pointerEvents: disableAdditionalSelections ? "none" : "initial",
+      padding: isMobile
+        ? `${rem(10)} ${rem(spacing.xl)}`
+        : `${rem(spacing.sm)} ${rem(spacing.md)}`,
 
-  const styles = Object.assign(
-    baseStyles,
-    responsiveRevamp ? newStyles : oldStyles
-  );
+      "&:hover": {
+        backgroundColor: palette.slate10,
+      },
+    }),
+  };
 
   const defaultOptions = {
     classNamePrefix: "CaseloadSelect",
@@ -468,9 +417,9 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     if (!isMobile) setModalIsOpen(false);
   }, [isMobile]);
 
-  if (isMobile && responsiveRevamp) {
+  if (isMobile) {
     return (
-      <CaseloadSelectContainer marginBottom={responsiveRevamp && spacing.lg}>
+      <CaseloadSelectContainer>
         Caseloads:
         <CaseloadSelectMobileButton onClick={() => setModalIsOpen(true)}>
           {selectedSearchIds.length > 0
@@ -494,7 +443,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   }
 
   return (
-    <CaseloadSelectContainer marginBottom={responsiveRevamp && spacing.lg}>
+    <CaseloadSelectContainer>
       <ReactSelect {...defaultOptions} />
     </CaseloadSelectContainer>
   );

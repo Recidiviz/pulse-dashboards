@@ -20,10 +20,7 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import tenants from "../../tenants";
 import { toTitleCase } from "../../utils";
 import { PillButton } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
@@ -32,15 +29,13 @@ const CaseloadTypeSelect = observer(
   function CaseloadTypeSelect(): React.ReactElement | null {
     const rootStore = useRootStore();
     const { workflowsStore } = rootStore;
-    const { responsiveRevamp } = useFeatureVariants();
     const {
       activeSystem,
       supportsMultipleSystems,
       rootStore: { currentTenantId },
     } = workflowsStore;
 
-    if (!supportsMultipleSystems || !responsiveRevamp || !currentTenantId)
-      return null;
+    if (!supportsMultipleSystems || !currentTenantId) return null;
 
     const supervisionTitle =
       tenants[currentTenantId].workflowsSystemConfigs?.SUPERVISION
