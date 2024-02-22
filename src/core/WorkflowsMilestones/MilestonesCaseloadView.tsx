@@ -18,10 +18,11 @@
 import { palette, typography } from "@recidiviz/design-system";
 import { uniq } from "lodash/fp";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
-import { ReactComponent as TealStar } from "../../assets/static/images/tealStar.svg";
+import { ReactComponent as TealStarBase } from "../../assets/static/images/tealStar.svg";
 import { useRootStore } from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";
@@ -34,6 +35,14 @@ import { TasksOpportunitiesSection } from "../WorkflowsTasks/TasksOpportunitiesS
 import { TooltipDetails, WorkflowsTooltip } from "../WorkflowsTooltip";
 import { MilestonesSidePanel } from "./MilestonesSidePanel";
 import { MilestonesItem, MilestonesList, MilestonesText } from "./styles";
+
+const MILESTONE_ICON_SIZING = rem(16);
+
+const TealStar = styled(TealStarBase)`
+  height: ${MILESTONE_ICON_SIZING};
+  width: ${MILESTONE_ICON_SIZING};
+  min-width: ${MILESTONE_ICON_SIZING};
+`;
 
 const MilestonesClientWrapper = styled.div`
   display: flex;
@@ -79,7 +88,7 @@ export function ClientMilestones({
         if (index < 2 || showAll) {
           return (
             <MilestonesItem key={`${client.pseudonymizedId}-${milestone.type}`}>
-              <TealStar height="16" width="16" />
+              <TealStar />
               <MilestonesText>{milestone.text}</MilestonesText>
             </MilestonesItem>
           );
