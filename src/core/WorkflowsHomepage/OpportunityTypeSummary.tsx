@@ -19,7 +19,6 @@ import {
   Icon,
   IconSVG,
   palette,
-  Sans18,
   spacing,
   typography,
 } from "@recidiviz/design-system";
@@ -28,7 +27,6 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   generateOpportunityHydratedHeader,
@@ -39,45 +37,31 @@ import { PersonInitialsAvatar } from "../Avatar";
 import { workflowsUrl } from "../views";
 
 const OpportunityTypeSummaryWrapper = styled.div<{
-  hasBorder?: boolean;
   isMobile: boolean;
 }>`
   display: flex;
   flex-flow: row ${({ isMobile }) => !isMobile && "no"}wrap;
   justify-content: space-between;
-
-  ${({ hasBorder }) =>
-    hasBorder
-      ? `margin-top: ${rem(spacing.xxl)};
-          padding-top: ${rem(spacing.md)};   
-          border-top: 1px solid ${palette.slate20};`
-      : `margin: ${rem(spacing.xxl)} 6rem 4rem 6rem;`}
+  margin-top: ${rem(spacing.xxl)};
+  padding-top: ${rem(spacing.md)};   
+  border-top: 1px solid ${palette.slate20};}
 `;
 
 const OpportunityHeaderWrapper = styled.div<{
-  squished?: boolean;
   isMobile: boolean;
 }>`
   padding-right: ${({ isMobile }) => (isMobile ? 0 : rem(spacing.xxl))};
-  width: ${({ squished, isMobile }) =>
-    squished && !isMobile ? rem(550) : "100%"};
+  width: ${({ isMobile }) => (!isMobile ? rem(550) : "100%")};
 
   ${({ isMobile }) => isMobile && "order: 2;"}
 `;
 
 const OpportunityHeader = styled.div<{
-  responsiveRevamp: boolean;
   isMobile: boolean;
 }>`
-  ${({ responsiveRevamp }) =>
-    responsiveRevamp ? typography.Sans24 : typography.Serif24};
+  ${typography.Sans24};
   ${({ isMobile }) => isMobile && typography.Sans18};
   color: ${palette.pine2};
-`;
-
-const OpportunityTypeSummaryCTA = styled(Sans18)`
-  color: ${palette.slate70};
-  padding-bottom: ${rem(spacing.sm)};
 `;
 
 const ViewAllArrow = styled.div`
@@ -101,12 +85,6 @@ const ViewAllLink = styled(Link)<{ $isMobile: boolean }>`
   }
 `;
 
-const OpportunityHighlight = styled.span`
-  color: ${palette.pine2};
-  border-bottom: 2px solid;
-  border-color: ${palette.data.gold1};
-`;
-
 const ClientsWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-flow: row nowrap;
@@ -114,20 +92,8 @@ const ClientsWrapper = styled.div<{ isMobile: boolean }>`
   ${({ isMobile }) => isMobile && "margin: 0 1rem 1rem;"}
 `;
 
-const ClientAvatarWrapper = styled.div<{
-  hasBorder?: boolean;
-}>`
-  margin-left: ${({ hasBorder }) => (hasBorder ? "-10" : "-20")}px;
-
-  ${({ hasBorder }) =>
-    hasBorder &&
-    `& > div {
-    border: 2px solid transparent;
-  }
-  &:not(:only-child) > div {
-    border: 2px solid ${palette.white};
-  }`}
-
+const ClientAvatarWrapper = styled.div`
+  margin-left: -20px;
   &:nth-child(1) {
     z-index: 0;
   }
@@ -161,11 +127,9 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunities: Opportunity[];
   opportunityType: OpportunityType;
 }): React.ReactElement | null {
-  const { responsiveRevamp } = useFeatureVariants();
-
   const { isMobile } = useIsMobile(true);
 
-  const defaultAvatarsShown = responsiveRevamp ? 4 : 3;
+  const defaultAvatarsShown = 4;
   const sliceIndex =
     opportunities.length > defaultAvatarsShown
       ? defaultAvatarsShown - 1
@@ -186,45 +150,26 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
 
   return (
     <OpportunityTypeSummaryWrapper
-      isMobile={isMobile && responsiveRevamp}
-      hasBorder={!!responsiveRevamp}
+      isMobile={isMobile}
       className="OpportunityTypeSummaryWrapper"
     >
-      <OpportunityHeaderWrapper
-        isMobile={isMobile && responsiveRevamp}
-        squished={!!responsiveRevamp}
-      >
-        <OpportunityHeader
-          responsiveRevamp={!!responsiveRevamp}
-          isMobile={isMobile && responsiveRevamp}
-        >
+      <OpportunityHeaderWrapper isMobile={isMobile}>
+        <OpportunityHeader isMobile={isMobile}>
           {header.fullText ?? (
             <>
-              {header.eligibilityText}{" "}
-              {responsiveRevamp ? (
-                header.opportunityText
-              ) : (
-                <OpportunityHighlight>
-                  {header.opportunityText}
-                </OpportunityHighlight>
-              )}
+              {header.eligibilityText} {header.opportunityText}
             </>
           )}
         </OpportunityHeader>
-        {!responsiveRevamp && (
-          <OpportunityTypeSummaryCTA>
-            {header.callToAction}
-          </OpportunityTypeSummaryCTA>
-        )}
         <ReviewStatusWrapper>
-          {!!responsiveRevamp && numIneligible > 0 && (
+          {numIneligible > 0 && (
             <ReviewStatusCount>
               {reviewStatusText}: {numIneligible}
             </ReviewStatusCount>
           )}
         </ReviewStatusWrapper>
         <ViewAllLink
-          $isMobile={isMobile && responsiveRevamp}
+          $isMobile={isMobile}
           className={`ViewAllLink__${opportunityType}`}
           to={workflowsUrl("opportunityClients", { opportunityType })}
         >
@@ -240,15 +185,9 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           </ViewAllArrow>
         </ViewAllLink>
       </OpportunityHeaderWrapper>
-      <ClientsWrapper
-        isMobile={isMobile && responsiveRevamp}
-        className="OpportunityClientsWrapper"
-      >
+      <ClientsWrapper isMobile={isMobile} className="OpportunityClientsWrapper">
         {previewOpportunities.map((opportunity) => (
-          <ClientAvatarWrapper
-            key={opportunity.person.recordId}
-            hasBorder={!responsiveRevamp}
-          >
+          <ClientAvatarWrapper key={opportunity.person.recordId}>
             <PersonInitialsAvatar
               size={56}
               name={opportunity.person.displayPreferredName}
@@ -256,7 +195,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           </ClientAvatarWrapper>
         ))}
         {numOpportunitiesToDisplay > 0 && (
-          <ClientAvatarWrapper hasBorder={!responsiveRevamp}>
+          <ClientAvatarWrapper>
             <PersonInitialsAvatar
               size={56}
               name={`+ ${numOpportunitiesToDisplay}`}

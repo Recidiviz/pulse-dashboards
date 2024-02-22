@@ -15,56 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  palette,
-  Sans12,
-  spacing,
-  typography,
-  zindex,
-} from "@recidiviz/design-system";
+import { palette, spacing, typography, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem, rgba } from "polished";
+import { rem } from "polished";
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
-import {
-  getJusticeInvolvedPersonTitle,
-  getSystemIdFromOpportunityType,
-} from "../../WorkflowsStore/utils";
+import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
 import cssVars from "../CoreConstants.module.scss";
 import { SystemId } from "../models/types";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
-import RecidivizLogo from "../RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { WorkflowsPage, workflowsUrl } from "../views";
 
-const Wrapper = styled.div<{ responsiveRevamp?: boolean }>`
+const Wrapper = styled.div`
   background-color: ${palette.marble1};
   min-height: 100vh;
   width: 100%;
-
-  ${({ responsiveRevamp }) =>
-    !responsiveRevamp &&
-    `display: grid;
-      grid-template-columns: ${rem(230)} minmax(0, ${rem(1268 + spacing.md)});`}
-`;
-
-const Sidebar = styled.nav`
-  grid-column: 1;
-  padding: ${rem(spacing.md)};
 `;
 
 const Main = styled.main<{
-  responsiveRevamp?: boolean;
   isMobile?: boolean;
 }>`
   grid-column: 2;
@@ -73,48 +48,21 @@ const Main = styled.main<{
   /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(spacing.md * 4)};
 
-  ${({ responsiveRevamp, isMobile }) =>
-    responsiveRevamp &&
-    `max-width: 75vw;
-      margin: 0 auto;
-      padding: ${
-        isMobile
-          ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-          : `${rem(spacing.xl)} ${rem(spacing.lg)}`
-      };
-      padding-bottom: ${rem(spacing.md * 5)};
-      
-      @media screen and (max-width: ${cssVars.breakpointSxs}) {
-        max-width: 90vw;
-      }
+  max-width: 75vw;
+  margin: 0 auto;
+  padding: ${({ isMobile }) =>
+    isMobile
+      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
+      : `${rem(spacing.xl)} ${rem(spacing.lg)}`};
+  padding-bottom: ${rem(spacing.md * 5)};
 
-      @media screen and (max-width: ${cssVars.breakpointXs}) {
-        max-width: unset;
-      }`}
-`;
-
-const NavLinks = styled.ul`
-  list-style: none;
-  margin: 0;
-  margin-top: ${rem(72)};
-  padding: 0;
-
-  li {
-    margin-bottom: ${rem(spacing.xs)};
+  @media screen and (max-width: ${cssVars.breakpointSxs}) {
+    max-width: 90vw;
   }
-`;
 
-const NavSection = styled.ul`
-  list-style: none;
-  margin: 0;
-  margin-top: ${rem(spacing.lg)};
-  padding: 0;
-`;
-
-const NavSectionLabel = styled(Sans12)`
-  color: ${rgba(palette.slate, 0.5)};
-  font-size: ${rem(13)};
-  line-height: ${rem(16)};
+  @media screen and (max-width: ${cssVars.breakpointXs}) {
+    max-width: unset;
+  }
 `;
 
 const BrandedNavLink = styled(NavLink).attrs({ exact: "true" })`
@@ -155,12 +103,10 @@ const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
 
 export const WorkflowsNavLayout: React.FC = observer(
   function WorkflowsNavLayout({ children }) {
-    const { responsiveRevamp } = useFeatureVariants();
     const {
       currentTenantId,
       workflowsStore,
       workflowsStore: {
-        opportunityTypes,
         allowSupervisionTasks,
         workflowsSupportedSystems,
         homepage: workflowsHomepage,
@@ -170,140 +116,49 @@ export const WorkflowsNavLayout: React.FC = observer(
     const { isMobile, isLaptop } = useIsMobile(true);
 
     return (
-      <Wrapper responsiveRevamp={!!responsiveRevamp}>
-        {responsiveRevamp ? (
-          <>
-            <NavigationLayout
-              externalMethodologyUrl={
-                WORKFLOWS_METHODOLOGY_URL[currentTenantId]
-              }
-            >
-              <li>
-                <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
-                  Home
-                </BrandedNavLink>
-              </li>
-              {allowSupervisionTasks && (
-                <li>
-                  <BrandedNavLink
-                    to={workflowsUrl("tasks")}
-                    onClick={() =>
-                      workflowsStore.updateActiveSystem("SUPERVISION")
-                    }
-                  >
-                    Tasks
-                  </BrandedNavLink>
-                </li>
-              )}
-
-              {workflowsSupportedSystems?.map((systemId: SystemId) => {
-                return (
-                  <li key={systemId}>
-                    <BrandedNavLink
-                      to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
-                      onClick={() =>
-                        workflowsStore.updateActiveSystem(systemId)
-                      }
-                    >
-                      {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
-                    </BrandedNavLink>
-                  </li>
-                );
-              })}
-            </NavigationLayout>
-            {!activePageIsHomepage && (
-              <BackButtonWrapper $fixed={!isLaptop}>
-                <NavigationBackButton
-                  action={{ url: workflowsUrl(workflowsHomepage) }}
-                >
-                  Home
-                </NavigationBackButton>
-              </BackButtonWrapper>
-            )}
-          </>
-        ) : (
-          <Sidebar>
-            <Link
-              to={workflowsUrl(workflowsHomepage)}
-              onClick={() => workflowsStore.updateActiveSystem("ALL")}
-            >
-              <RecidivizLogo />
-            </Link>
-            <NavLinks>
-              <li>
-                <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
-                  Home
-                </BrandedNavLink>
-              </li>
-              {allowSupervisionTasks && (
-                <li>
-                  <BrandedNavLink
-                    to={workflowsUrl("tasks")}
-                    onClick={() =>
-                      workflowsStore.updateActiveSystem("SUPERVISION")
-                    }
-                  >
-                    Tasks
-                  </BrandedNavLink>
-                </li>
-              )}
-
-              {workflowsSupportedSystems?.map((systemId: SystemId) => {
-                return (
-                  <li key={systemId}>
-                    <BrandedNavLink
-                      to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
-                      onClick={() =>
-                        workflowsStore.updateActiveSystem(systemId)
-                      }
-                    >
-                      All {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}
-                      s
-                    </BrandedNavLink>
-                  </li>
-                );
-              })}
-
-              <li>
-                <NavSection>
-                  <li>
-                    <NavSectionLabel>Shortcuts</NavSectionLabel>
-                  </li>
-                  {opportunityTypes.map((opportunityType) => {
-                    const systemId =
-                      getSystemIdFromOpportunityType(opportunityType);
-                    if (workflowsSupportedSystems?.includes(systemId)) {
-                      return (
-                        <li key={opportunityType}>
-                          <BrandedNavLink
-                            className={`BrandedNavLink__${opportunityType}`}
-                            to={workflowsUrl("opportunityClients", {
-                              opportunityType,
-                            })}
-                            onClick={() =>
-                              workflowsStore.updateActiveSystem(
-                                getSystemIdFromOpportunityType(opportunityType)
-                              )
-                            }
-                          >
-                            {OPPORTUNITY_CONFIGS[opportunityType].label}
-                          </BrandedNavLink>
-                        </li>
-                      );
-                    }
-                    return null;
-                  })}
-                </NavSection>
-              </li>
-            </NavLinks>
-          </Sidebar>
-        )}
-        <Main
-          responsiveRevamp={!!responsiveRevamp}
-          isMobile={!!responsiveRevamp && isMobile}
+      <Wrapper>
+        <NavigationLayout
+          externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
         >
-          {children}
-        </Main>
+          <li>
+            <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
+              Home
+            </BrandedNavLink>
+          </li>
+          {allowSupervisionTasks && (
+            <li>
+              <BrandedNavLink
+                to={workflowsUrl("tasks")}
+                onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
+              >
+                Tasks
+              </BrandedNavLink>
+            </li>
+          )}
+
+          {workflowsSupportedSystems?.map((systemId: SystemId) => {
+            return (
+              <li key={systemId}>
+                <BrandedNavLink
+                  to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
+                  onClick={() => workflowsStore.updateActiveSystem(systemId)}
+                >
+                  {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
+                </BrandedNavLink>
+              </li>
+            );
+          })}
+        </NavigationLayout>
+        {!activePageIsHomepage && (
+          <BackButtonWrapper $fixed={!isLaptop}>
+            <NavigationBackButton
+              action={{ url: workflowsUrl(workflowsHomepage) }}
+            >
+              Home
+            </NavigationBackButton>
+          </BackButtonWrapper>
+        )}
+        <Main isMobile={isMobile}>{children}</Main>
       </Wrapper>
     );
   }

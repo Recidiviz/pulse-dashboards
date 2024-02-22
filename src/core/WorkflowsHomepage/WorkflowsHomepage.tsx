@@ -18,10 +18,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import simplur from "simplur";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { getWelcomeText, pluralizeWord } from "../../utils";
 import { OpportunityType } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
@@ -67,7 +64,6 @@ const OpportunitySummaries = observer(function OpportunitySummaries() {
 const WorkflowsHomepage = observer(
   function WorkflowsHomepage(): React.ReactElement | null {
     const { workflowsStore } = useRootStore();
-    const { responsiveRevamp } = useFeatureVariants();
 
     const {
       selectedSearchIds,
@@ -112,12 +108,10 @@ const WorkflowsHomepage = observer(
 
     const empty = <WorkflowsResults callToActionText={emptyCallToAction} />;
 
-    const hydrated = responsiveRevamp ? (
+    const hydrated = (
       <WorkflowsResults headerText={hydratedCallToAction}>
         <OpportunitySummaries />
       </WorkflowsResults>
-    ) : (
-      <OpportunitySummaries />
     );
 
     return (
