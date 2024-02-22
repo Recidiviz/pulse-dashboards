@@ -28,7 +28,6 @@ import { rem } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
@@ -112,8 +111,6 @@ export const JusticeInvolvedPersonCapsule = observer(
     hideTooltip = false,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
-    const { responsiveRevamp } = useFeatureVariants();
-
     const IdentityEl = SIZES.identity[textSize];
     const StatusEl = SIZES.status[textSize];
 
@@ -132,7 +129,7 @@ export const JusticeInvolvedPersonCapsule = observer(
             </TooltipTrigger>
             {!hideId && (
               <>
-                <Separator>{responsiveRevamp ? " " : " • "}</Separator>
+                <Separator> </Separator>
                 <PersonId className="fs-exclude">{person.displayId}</PersonId>
               </>
             )}

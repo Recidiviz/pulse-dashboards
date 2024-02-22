@@ -20,10 +20,7 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../../components/StoreProvider";
+import { useRootStore } from "../../../components/StoreProvider";
 import isIE11 from "../../../utils/isIE11";
 import { WorkflowsStore } from "../../../WorkflowsStore";
 import { CaseloadView } from "../../CaseloadView";
@@ -164,9 +161,6 @@ describe("PageWorkflows", () => {
   describe("WorkflowsRoute without redirects", () => {
     beforeEach(() => {
       (isIE11 as jest.Mock).mockReturnValue(false);
-      (useFeatureVariants as jest.Mock).mockReturnValue({
-        responsiveRevamp: true,
-      });
       baseMockWorkflowsStore = {
         hydrationState: { status: "hydrated" },
         opportunityTypes: [],
@@ -307,9 +301,6 @@ describe("PageWorkflows", () => {
   describe("WorkflowsRoute logic and redirects", () => {
     beforeEach(() => {
       (isIE11 as jest.Mock).mockReturnValue(false);
-      (useFeatureVariants as jest.Mock).mockReturnValue({
-        responsiveRevamp: true,
-      });
       baseMockWorkflowsStore = {
         hydrationState: { status: "hydrated" },
         homepage: "home",

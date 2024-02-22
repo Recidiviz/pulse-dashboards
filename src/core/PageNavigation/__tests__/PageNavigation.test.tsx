@@ -19,11 +19,7 @@ import { mount } from "enzyme";
 import { MemoryRouter } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-  useUserStore,
-} from "../../../components/StoreProvider";
+import { useRootStore, useUserStore } from "../../../components/StoreProvider";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore/TenantStore";
 import CoreStore from "../../CoreStore";
@@ -49,7 +45,6 @@ let tenantStore: TenantStore;
 let rootStoreMock: any;
 let coreStoreMock: any;
 
-const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 const useRootStoreMock = useRootStore as jest.Mock;
 const useCoreStoreMock = useCoreStore as jest.Mock;
 const useUserStoreMock = useUserStore as jest.Mock;
@@ -79,7 +74,6 @@ describe("CoreLayout tests", () => {
     };
 
     useRootStoreMock.mockReturnValue(rootStoreMock);
-    useFeatureVariantsMock.mockReturnValue({ responsiveRevamp: {} });
 
     coreStoreMock = {
       page: "page1",

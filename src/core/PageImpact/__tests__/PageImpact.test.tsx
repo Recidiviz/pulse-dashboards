@@ -17,23 +17,18 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../../components/StoreProvider";
+import { useRootStore } from "../../../components/StoreProvider";
 import PageImpact from "..";
 
 jest.mock("../../../components/StoreProvider");
 
 const useRootStoreMock = useRootStore as jest.Mock;
-const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
 
 describe("Impact Page", () => {
   beforeEach(() => {
     jest.resetAllMocks();
     // Quiet errors during test runs
     jest.spyOn(console, "error").mockImplementation();
-    useFeatureVariantsMock.mockReturnValue({ responsiveRevamp: {} });
   });
 
   afterEach(() => {

@@ -23,35 +23,12 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
 import { appendActiveClassName } from "../../utils/navigation";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { DASHBOARD_VIEWS } from "../views";
-
-const ViewTooltip: React.FC<{ title: string; body?: string }> = ({
-  children,
-  title,
-  body,
-}) => {
-  if (!children) return null;
-
-  return (
-    <div className="ViewNavigation__tooltip-box">
-      {children}
-      <div className="ViewNavigation__tooltip">
-        <div className="ViewNavigation__tooltip-header">{title}</div>
-        {body && <div className="ViewNavigation__tooltip-body">{body}</div>}
-      </div>
-    </div>
-  );
-};
-
-interface ViewNavigationProps {
-  drawer?: boolean;
-}
 
 type OptionalLinkProps = { enabled: boolean };
 
@@ -166,14 +143,10 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
   );
 }
 
-const ViewNavigation: React.FC<ViewNavigationProps> = ({
-  children,
-  drawer = false,
-}) => {
+const ViewNavigation: React.FC = ({ children }) => {
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
-  const { currentTenantId, userStore, tenantStore } = useCoreStore();
-  const { responsiveRevamp } = useFeatureVariants();
+  const { currentTenantId, userStore } = useCoreStore();
 
   const navigationLayout = userStore.userAllowedNavigation;
   if (!navigationLayout || !currentTenantId) return <div />;
@@ -182,54 +155,15 @@ const ViewNavigation: React.FC<ViewNavigationProps> = ({
   const enableOperations = !!navigationLayout.operations;
   const enableWorkflows = !!navigationLayout.workflows;
 
-  if (responsiveRevamp && !drawer) return null;
-
-  if (drawer) {
-    return (
-      <div className="ViewNavigation__mobile">
-        <PathwaysLink enabled={enabledPathwaysPages} />
-        {children}
-        <OperationsLink enabled={enableOperations} />
-        <WorkflowsLink enabled={enableWorkflows} />
-        <MethodologyLink currentTenantId={currentTenantId} view={view} />
-        <ProfileNavLink />
-      </div>
-    );
-  }
-
   return (
-    <aside className="ViewNavigation">
-      <ViewTooltip
-        title={tenantStore.pathwaysName}
-        body="A real-time map of the corrections system and how people are moving through it"
-      >
-        <PathwaysLink enabled={enabledPathwaysPages} />
-      </ViewTooltip>
-
-      <ViewTooltip
-        title="Operational Metrics"
-        body="A birds-eye view of staff- and region-level trends"
-      >
-        <OperationsLink enabled={enableOperations} />
-      </ViewTooltip>
-
-      <ViewTooltip
-        title="Workflows"
-        body="A tool to identify and take action on opportunities to improve outcomes"
-      >
-        <WorkflowsLink enabled={enableWorkflows} />
-      </ViewTooltip>
-
-      <div className="ViewNavigation__bottom">
-        <ViewTooltip title="Methodology">
-          <MethodologyLink currentTenantId={currentTenantId} view={view} />
-        </ViewTooltip>
-
-        <ViewTooltip title="Profile">
-          <ProfileNavLink />
-        </ViewTooltip>
-      </div>
-    </aside>
+    <div className="ViewNavigation__mobile">
+      <PathwaysLink enabled={enabledPathwaysPages} />
+      {children}
+      <OperationsLink enabled={enableOperations} />
+      <WorkflowsLink enabled={enableWorkflows} />
+      <MethodologyLink currentTenantId={currentTenantId} view={view} />
+      <ProfileNavLink />
+    </div>
   );
 };
 

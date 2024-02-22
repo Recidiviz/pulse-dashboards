@@ -41,7 +41,7 @@ let form: FormBase<any>;
 function setup(props: Partial<FormHeaderProps> = {}) {
   rootStore = new RootStore();
   (useFeatureVariants as jest.Mock).mockReturnValue({
-    responsiveRevamp: {},
+    formRevertButton: {},
   });
   rootStore.userStore = {
     isRecidivizUser: false,

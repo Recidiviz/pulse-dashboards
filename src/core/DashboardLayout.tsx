@@ -44,7 +44,6 @@ import PageSystem from "./PageSystem";
 import PageVitals from "./PageVitals";
 import PageWorkflows from "./PageWorkflows";
 import PathwaysNavigation from "./PathwaysNavigation";
-import ViewNavigation from "./ViewNavigation";
 import {
   DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
@@ -100,9 +99,6 @@ const DashboardLayout: React.FC = () => {
             Outliers: currentView === DASHBOARD_VIEWS.outliers,
           })}
         >
-          {currentView === DASHBOARD_VIEWS.workflows || !isMobile ? (
-            <ViewNavigation />
-          ) : null}
           {currentView === DASHBOARD_VIEWS.operations &&
           responsiveRevamp &&
           !isMobile ? (

@@ -44,7 +44,7 @@ const MobileNavigation: React.FC<Props> = ({ title }) => {
   return isMobile ? (
     <>
       <Drawer isShowing={open} hide={() => setOpen(false)}>
-        <ViewNavigation drawer>
+        <ViewNavigation>
           {currentView === DASHBOARD_VIEWS.system && <PageNavigation />}
         </ViewNavigation>
       </Drawer>
