@@ -55,7 +55,7 @@ describe("MilestonesSidePanel", () => {
     jest.resetAllMocks();
     // Quiet errors during test runs
     jest.spyOn(console, "error").mockImplementation();
-    useFeatureVariantsMock.mockReturnValue({ responsiveRevamp: {} });
+    useFeatureVariantsMock.mockReturnValue({});
     useRootStoreMock.mockReturnValue({
       ...baseRootStoreMock,
       workflowsStore: {

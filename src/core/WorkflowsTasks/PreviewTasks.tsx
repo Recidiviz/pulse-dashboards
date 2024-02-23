@@ -20,7 +20,6 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
@@ -86,7 +85,6 @@ export const PreviewTasks = observer(function PreviewTasks({
   person,
   showSnoozeDropdown,
 }: PersonProfileProps & { showSnoozeDropdown: boolean }) {
-  const { responsiveRevamp } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
 
   const tasks = person.supervisionTasks?.orderedTasks ?? [];
@@ -103,7 +101,7 @@ export const PreviewTasks = observer(function PreviewTasks({
             <div key={`${task.type}-${task.person.externalId}`}>
               <TaskItem showSnoozeDropdown={showSnoozeDropdown}>
                 <TaskContent>
-                  <TaskTitle isMobile={!!responsiveRevamp && isMobile}>
+                  <TaskTitle isMobile={isMobile}>
                     <TaskName>{task.displayName}</TaskName>
                     <TaskDivider> &bull; </TaskDivider>
                     <TaskDueDate
@@ -111,7 +109,7 @@ export const PreviewTasks = observer(function PreviewTasks({
                       marginLeft="0"
                       overdue={task.isOverdue}
                       title={task.dueDateDisplayShort}
-                      isMobile={!!responsiveRevamp && isMobile}
+                      isMobile={isMobile}
                     >
                       {task.dueDateDisplayShort}
                     </TaskDueDate>

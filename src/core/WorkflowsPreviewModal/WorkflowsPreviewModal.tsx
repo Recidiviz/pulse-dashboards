@@ -25,10 +25,7 @@ import { rem } from "polished";
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
 import WorkflowsPreviewModalContext from "./WorkflowsPreviewModalContext";
@@ -48,41 +45,26 @@ export const StyledDrawerModal = styled(DrawerModal)<{
   }
 `;
 
-const ModalControls = styled.div<{
-  responsiveRevamp: boolean;
-}>`
-  ${({ responsiveRevamp }) =>
-    responsiveRevamp
-      ? `
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        justify-content: space-between;
-        border-bottom: 1px solid ${palette.slate10};
-        padding: 1rem;
+const ModalControls = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: space-between;
+  border-bottom: 1px solid ${palette.slate10};
+  padding: 1rem;
 
-        .WorkflowsPreviewModal__close {
-          grid-column: 2;
-          justify-self: flex-end;
-        };
+  .WorkflowsPreviewModal__close {
+    grid-column: 2;
+    justify-self: flex-end;
+  };
 
-        .WorkflowsPreviewModal__back {
-          grid-column 1;
-          justify-self: flex-start;
-        }
-      `
-      : `padding: ${rem(spacing.md)};
-          text-align: right;`}
-
-  z-index: 10;
+  .WorkflowsPreviewModal__back {
+    grid-column 1;
+    justify-self: flex-start;
+  }
 `;
 
-const Wrapper = styled.div<{
-  responsiveRevamp: boolean;
-}>`
-  padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp
-      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : `0 ${rem(spacing.lg)} ${rem(spacing.lg)}`};
+const Wrapper = styled.div`
+  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
 
   hr + hr {
     display: none;
@@ -106,12 +88,10 @@ export function WorkflowsPreviewModal({
   onClose = () => null,
   clearSelectedPersonOnClose = true,
 }: PreviewModalProps): JSX.Element {
-  const { responsiveRevamp } = useFeatureVariants();
   const { workflowsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
   const CLOSE_TIMEOUT_MS = 1000;
-  const WIDTH_REVAMP = 480;
-  const WIDTH_DEFAULT = 555;
+  const MODAL_WIDTH = 480;
 
   // Managing the modal isOpen state here instead of tying it directly to
   // props helps to smooth out the open/close transition
@@ -143,10 +123,10 @@ export function WorkflowsPreviewModal({
         workflowsStore.updateSelectedPerson(undefined)
       }
       closeTimeoutMS={CLOSE_TIMEOUT_MS}
-      width={responsiveRevamp && !isMobile ? WIDTH_REVAMP : WIDTH_DEFAULT}
-      isMobile={isMobile && !!responsiveRevamp}
+      width={MODAL_WIDTH}
+      isMobile={isMobile}
     >
-      <ModalControls responsiveRevamp={!!responsiveRevamp}>
+      <ModalControls>
         {onBackClick && (
           <Button
             className="WorkflowsPreviewModal__back"
@@ -165,12 +145,7 @@ export function WorkflowsPreviewModal({
         </Button>
       </ModalControls>
       <WorkflowsPreviewModalContext.Provider value={contextValue}>
-        <Wrapper
-          className="WorkflowsPreviewModal"
-          responsiveRevamp={!!responsiveRevamp}
-        >
-          {pageContent}
-        </Wrapper>
+        <Wrapper className="WorkflowsPreviewModal">{pageContent}</Wrapper>
       </WorkflowsPreviewModalContext.Provider>
     </StyledDrawerModal>
   );

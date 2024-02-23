@@ -31,10 +31,7 @@ import React, { ReactNode } from "react";
 import simplur from "simplur";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
@@ -106,13 +103,6 @@ const TaskClientItem = styled.div`
   min-width: fit-content;
 `;
 
-const TaskClientTasksCount = styled(Sans12)<{ responsiveRevamp: boolean }>`
-  ${({ responsiveRevamp }) =>
-    !responsiveRevamp &&
-    `display: inline-block;
-      margin-left: 0.5rem;`}
-`;
-
 export const TaskDueDate = styled.div<{
   overdue: boolean;
   font: FlattenSimpleInterpolation;
@@ -142,7 +132,6 @@ type TaskListItemProps = {
 const TaskListItem: React.FC<TaskListItemProps> = observer(
   function TaskListItem({ person, task }: TaskListItemProps) {
     const { workflowsStore } = useRootStore();
-    const { responsiveRevamp } = useFeatureVariants();
     const { isMobile } = useIsMobile(true);
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
     const readyOrderedTasks = person.supervisionTasks?.readyOrderedTasks ?? [];
@@ -161,15 +150,15 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
             <PersonInitialsAvatar name={person.displayName} size={24} />
             <div>
               <TaskClientName>{person.displayName}</TaskClientName>
-              <TaskClientTasksCount responsiveRevamp={!!responsiveRevamp}>
+              <Sans12>
                 {task ? null : simplur`${orderedTasks.length} task[|s]`}
-              </TaskClientTasksCount>
+              </Sans12>
             </div>
           </TaskClientItem>
           <TaskDueDate
             font={typography.Sans14}
             overdue={taskToDisplay.isOverdue}
-            isMobile={!!responsiveRevamp && isMobile}
+            isMobile={isMobile}
           >
             {taskToDisplay.dueDateDisplayLong}
           </TaskDueDate>
@@ -182,7 +171,6 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
 const NeedListItem: React.FC<TaskListItemProps> = observer(
   function NeedListItem({ person, task }: TaskListItemProps) {
     const { workflowsStore } = useRootStore();
-    const { responsiveRevamp } = useFeatureVariants();
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
 
     return (
@@ -195,10 +183,10 @@ const NeedListItem: React.FC<TaskListItemProps> = observer(
           <PersonInitialsAvatar name={person.displayName} size={32} />
           <TaskClientItem>
             <TaskClientName>{person.displayName}</TaskClientName>
-            <TaskClientTasksCount responsiveRevamp={!!responsiveRevamp}>
+            <Sans12>
               {orderedTasks.length > 0 &&
                 simplur` ${orderedTasks.length} task[|s]`}
-            </TaskClientTasksCount>
+            </Sans12>
           </TaskClientItem>
         </TaskClient>
       </TaskListTooltip>

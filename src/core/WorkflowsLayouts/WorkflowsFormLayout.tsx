@@ -19,13 +19,9 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.module.scss";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
@@ -37,9 +33,8 @@ import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRel
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { FormUsOrEarnedDischarge } from "../Paperwork/US_OR/EarnedDischarge/FormUsOrEarnedDischarge";
-import RecidivizLogo from "../RecidivizLogo";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
-import { DASHBOARD_VIEWS, workflowsUrl } from "../views";
+import { workflowsUrl } from "../views";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -70,13 +65,8 @@ const Sidebar = styled.div`
   background: ${palette.marble1};
 `;
 
-const SidebarSection = styled.section<{
-  responsiveRevamp: boolean;
-}>`
-  padding: ${({ responsiveRevamp }) =>
-    responsiveRevamp
-      ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : rem(spacing.lg)};
+const SidebarSection = styled.section`
+  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
 
   &:first-child {
     border-bottom: 1px solid ${palette.slate20};
@@ -110,7 +100,6 @@ export type OpportunityFormComponentName = keyof typeof FormComponents;
 type FormSidebarView = "OPPORTUNITY" | "DENIAL";
 
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
-  const { responsiveRevamp } = useFeatureVariants();
   const {
     currentTenantId,
     workflowsStore: {
@@ -136,7 +125,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
     : null;
 
   const sidebarContents =
-    currentView === "DENIAL" && !!responsiveRevamp ? (
+    currentView === "DENIAL" ? (
       <OpportunityDenialView
         opportunity={opportunity}
         onSubmit={() => setCurrentView("OPPORTUNITY")}
@@ -153,35 +142,25 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const hydrated = (
     <Wrapper>
       <Sidebar>
-        {responsiveRevamp ? (
-          <NavigationLayout
-            externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
-            isFixed={false}
-          />
-        ) : (
-          <SidebarSection responsiveRevamp={!!responsiveRevamp}>
-            <Link to={`/${DASHBOARD_VIEWS.workflows}`}>
-              <RecidivizLogo />
-            </Link>
-          </SidebarSection>
-        )}
-        <SidebarSection responsiveRevamp={!!responsiveRevamp}>
-          {responsiveRevamp && (
-            <BackButtonWrapper>
-              {currentView === "OPPORTUNITY" && (
-                <NavigationBackButton action={{ url: workflowsUrl(homepage) }}>
-                  Home
-                </NavigationBackButton>
-              )}
-              {currentView === "DENIAL" && (
-                <NavigationBackButton
-                  action={{ onClick: () => setCurrentView("OPPORTUNITY") }}
-                >
-                  Back
-                </NavigationBackButton>
-              )}
-            </BackButtonWrapper>
-          )}
+        <NavigationLayout
+          externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+          isFixed={false}
+        />
+        <SidebarSection>
+          <BackButtonWrapper>
+            {currentView === "OPPORTUNITY" && (
+              <NavigationBackButton action={{ url: workflowsUrl(homepage) }}>
+                Home
+              </NavigationBackButton>
+            )}
+            {currentView === "DENIAL" && (
+              <NavigationBackButton
+                action={{ onClick: () => setCurrentView("OPPORTUNITY") }}
+              >
+                Back
+              </NavigationBackButton>
+            )}
+          </BackButtonWrapper>
           {sidebarContents}
         </SidebarSection>
       </Sidebar>
