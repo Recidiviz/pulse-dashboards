@@ -73,14 +73,6 @@ exports.onExecutePostLogin = async (event, api) => {
   /** Set stateCode in appMetadata for everyone. */
   api.user.setAppMetadata("stateCode", stateCode);
 
-  /** Set featureVariants to allow CSG access to insights (permission is still required) */
-  if (stateCode === "csg") {
-    api.user.setAppMetadata("featureVariants", {
-      responsiveRevamp: true
-    });
-    return;
-  }
-
   /** If state code is us_pa, return without making a request to the auth endpoint
    *  since those user's aren't in the admin panel roster
    */
@@ -137,10 +129,7 @@ exports.onExecutePostLogin = async (event, api) => {
         : restrictions.allowedSupervisionLocationIds.split(",");
 
     /** Add restrictions to app_metadata */
-    api.user.setAppMetadata(
-      "allowedSupervisionLocationIds",
-      arrayOfLocations
-    );
+    api.user.setAppMetadata("allowedSupervisionLocationIds", arrayOfLocations);
     api.user.setAppMetadata(
       "allowedSupervisionLocationLevel",
       restrictions.allowedSupervisionLocationLevel

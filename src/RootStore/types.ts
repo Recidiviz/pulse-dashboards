@@ -82,7 +82,6 @@ export type FeatureVariant =
   | "usMeFurloughRelease"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
-  | "responsiveRevamp"
   | "usIdCRC"
   | "usIdExpandedCRC"
   | "usCaEnableSMS"
@@ -112,7 +111,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMeFurloughRelease: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
-  responsiveRevamp: {},
   usIdCRC: {},
   usIdExpandedCRC: {},
   usCaEnableSMS: {},
@@ -130,7 +128,6 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"
     ? {
         CompliantReportingAlmostEligible: {},
-        responsiveRevamp: {},
         usIdCRC: {},
         usIdExpandedCRC: {},
         usTnExpiration: {},

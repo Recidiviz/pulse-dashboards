@@ -25,7 +25,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import IE11Banner from "../components/IE11Banner";
 import NotFound from "../components/NotFound";
-import { useFeatureVariants, useRootStore } from "../components/StoreProvider";
+import { useRootStore } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import useIsMobile from "../hooks/useIsMobile";
 import RedirectMethodology from "../RedirectMethodology";
@@ -68,7 +68,6 @@ const DashboardLayout: React.FC = () => {
     currentTenantId,
     userStore: { userAllowedNavigation },
   } = useRootStore();
-  const { responsiveRevamp } = useFeatureVariants();
   const dashboardAllowedPaths = [
     ...getPathsFromNavigation(userAllowedNavigation),
     "/profile",
@@ -91,17 +90,11 @@ const DashboardLayout: React.FC = () => {
         <div
           id="app"
           className={cn("DashboardLayout", {
-            Operations:
-              currentView === DASHBOARD_VIEWS.operations &&
-              !isMobile &&
-              !responsiveRevamp,
             Workflows: currentView === DASHBOARD_VIEWS.workflows,
             Outliers: currentView === DASHBOARD_VIEWS.outliers,
           })}
         >
-          {currentView === DASHBOARD_VIEWS.operations &&
-          responsiveRevamp &&
-          !isMobile ? (
+          {currentView === DASHBOARD_VIEWS.operations && !isMobile ? (
             <NavigationLayout backgroundColor={palette.marble3} />
           ) : null}
           <div className="DashboardLayout__main">

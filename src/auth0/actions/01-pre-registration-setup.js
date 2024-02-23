@@ -96,9 +96,6 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         system_supervisionToLiberty: true,
         system_supervisionToPrison: true,
       });
-      api.user.setAppMetadata("featureVariants", {
-        responsiveRevamp: true
-      });
       return;
     }
     // Set state_code for Recidiviz users
@@ -124,7 +121,18 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       return;
     }
 
-    const acceptedStateCodes = ["ca", "co", "id", "mo", "nd", "or", "pa", "me", "mi", "tn"];
+    const acceptedStateCodes = [
+      "ca",
+      "co",
+      "id",
+      "mo",
+      "nd",
+      "or",
+      "pa",
+      "me",
+      "mi",
+      "tn",
+    ];
     const domainSplit = userDomain.split(".");
 
     // assumes the state is always the second to last component of the domain

@@ -21,10 +21,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import IE11Banner from "../../components/IE11Banner";
 import NotFound from "../../components/NotFound";
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { UserAvatar } from "../Avatar";
 import DashboardLayout from "../DashboardLayout";
 import PageImpact from "../PageImpact";
@@ -58,13 +55,11 @@ jest.mock("../PageImpact");
 jest.mock("../PageMethodology");
 jest.mock("../../components/NotFound");
 
-const mockUseFeatureVariants = useFeatureVariants as jest.Mock;
 const mockUseRootStore = useRootStore as jest.Mock;
 
 describe("DashboardLayout", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseFeatureVariants.mockReturnValue({ responsiveRevamp: true });
     (UserAvatar as jest.Mock).mockReturnValue(null);
     (IE11Banner as jest.Mock).mockReturnValue(null);
     (PageSystem as jest.Mock).mockReturnValue(mockWithTestId("page-system-id"));
