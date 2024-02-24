@@ -1,0 +1,559 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transformations 1`] = `
+Object {
+  "clientId": "707222",
+  "clientName": Object {
+    "givenNames": "Gary",
+    "surname": "Alexander",
+  },
+  "eventDate": 2023-03-18T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-707222",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 2`] = `
+Object {
+  "clientId": "205752",
+  "clientName": Object {
+    "givenNames": "Beau",
+    "surname": "Riley",
+  },
+  "eventDate": 2023-04-21T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": null,
+  "pseudonymizedClientId": "hashed-205752",
+  "supervisionEndDate": null,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 3`] = `
+Object {
+  "clientId": "792381",
+  "clientName": Object {
+    "givenNames": "Deena",
+    "surname": "Dunlap",
+  },
+  "eventDate": 2023-06-07T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": null,
+  "pseudonymizedClientId": "hashed-792381",
+  "supervisionEndDate": null,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 4`] = `
+Object {
+  "clientId": "869516",
+  "clientName": Object {
+    "givenNames": "Angelo",
+    "surname": "Cohen",
+  },
+  "eventDate": 2023-06-08T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-869516",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 5`] = `
+Object {
+  "clientId": "170571",
+  "clientName": Object {
+    "givenNames": "Ward",
+    "surname": "Bradley",
+  },
+  "eventDate": 2023-03-21T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-170571",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 6`] = `
+Object {
+  "clientId": "461718",
+  "clientName": Object {
+    "givenNames": "Janette",
+    "surname": "Sosa",
+  },
+  "eventDate": 2023-06-05T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-461718",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 7`] = `
+Object {
+  "clientId": "837771",
+  "clientName": Object {
+    "givenNames": "Nora",
+    "surname": "Robbins",
+  },
+  "eventDate": 2022-12-27T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-837771",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 8`] = `
+Object {
+  "clientId": "617754",
+  "clientName": Object {
+    "givenNames": "Jason",
+    "surname": "Barton",
+  },
+  "eventDate": 2022-11-24T00:00:00.000Z,
+  "metricId": "incarceration_starts",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-617754",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 9`] = `
+Object {
+  "clientId": "985771",
+  "clientName": Object {
+    "givenNames": "Nicholas",
+    "surname": "Rhodes",
+  },
+  "eventDate": 2022-12-24T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-985771",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 10`] = `
+Object {
+  "clientId": "326160",
+  "clientName": Object {
+    "givenNames": "Ethel",
+    "surname": "Leonard",
+  },
+  "eventDate": 2022-12-21T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-326160",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 11`] = `
+Object {
+  "clientId": "931890",
+  "clientName": Object {
+    "givenNames": "Ricardo",
+    "surname": "Wood",
+  },
+  "eventDate": 2022-12-24T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-931890",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 12`] = `
+Object {
+  "clientId": "930441",
+  "clientName": Object {
+    "givenNames": "Stanley",
+    "surname": "Maxwell",
+  },
+  "eventDate": 2022-10-24T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-930441",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 13`] = `
+Object {
+  "clientId": "564940",
+  "clientName": Object {
+    "givenNames": "Miguel",
+    "surname": "Haynes",
+  },
+  "eventDate": 2022-09-05T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-564940",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 14`] = `
+Object {
+  "clientId": "144925",
+  "clientName": Object {
+    "givenNames": "Inez",
+    "surname": "Griffith",
+  },
+  "eventDate": 2022-12-07T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-144925",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 15`] = `
+Object {
+  "clientId": "283496",
+  "clientName": Object {
+    "givenNames": "Gerald",
+    "surname": "Barber",
+  },
+  "eventDate": 2022-09-05T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-283496",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 16`] = `
+Object {
+  "clientId": "334531",
+  "clientName": Object {
+    "givenNames": "Leroy",
+    "surname": "Stone",
+  },
+  "eventDate": 2022-09-14T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-334531",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 17`] = `
+Object {
+  "clientId": "840134",
+  "clientName": Object {
+    "givenNames": "Patrick",
+    "surname": "Schneider",
+  },
+  "eventDate": 2022-11-23T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-840134",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 18`] = `
+Object {
+  "clientId": "968048",
+  "clientName": Object {
+    "givenNames": "Violet",
+    "surname": "Johnson",
+  },
+  "eventDate": 2022-10-17T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-968048",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 19`] = `
+Object {
+  "clientId": "413899",
+  "clientName": Object {
+    "givenNames": "Warren",
+    "surname": "Franklin",
+  },
+  "eventDate": 2022-11-23T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-413899",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 20`] = `
+Object {
+  "clientId": "415630",
+  "clientName": Object {
+    "givenNames": "Alta",
+    "surname": "Jackson",
+  },
+  "eventDate": 2022-12-11T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-415630",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 21`] = `
+Object {
+  "clientId": "235261",
+  "clientName": Object {
+    "givenNames": "Rosie",
+    "surname": "Luna",
+  },
+  "eventDate": 2023-05-06T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-235261",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 22`] = `
+Object {
+  "clientId": "531407",
+  "clientName": Object {
+    "givenNames": "Glenn",
+    "surname": "Francis",
+  },
+  "eventDate": 2023-04-07T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-531407",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 23`] = `
+Object {
+  "clientId": "436502",
+  "clientName": Object {
+    "givenNames": "Steve",
+    "surname": "Schwartz",
+  },
+  "eventDate": 2023-02-15T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-436502",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 24`] = `
+Object {
+  "clientId": "339710",
+  "clientName": Object {
+    "givenNames": "Bertha",
+    "surname": "Figueroa",
+  },
+  "eventDate": 2023-05-14T00:00:00.000Z,
+  "metricId": "absconsions_bench_warrants",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-339710",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 25`] = `
+Object {
+  "clientId": "803013",
+  "clientName": Object {
+    "givenNames": "Troy",
+    "surname": "Rodgers",
+  },
+  "eventDate": 2023-02-07T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-803013",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 26`] = `
+Object {
+  "clientId": "470308",
+  "clientName": Object {
+    "givenNames": "Leo",
+    "surname": "Marshall",
+  },
+  "eventDate": 2023-06-24T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-470308",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 27`] = `
+Object {
+  "clientId": "582059",
+  "clientName": Object {
+    "givenNames": "Shawn",
+    "surname": "Romero",
+  },
+  "eventDate": 2023-01-18T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-582059",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 28`] = `
+Object {
+  "clientId": "374673",
+  "clientName": Object {
+    "givenNames": "Jeremiah",
+    "surname": "Walsh",
+  },
+  "eventDate": 2023-01-06T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-374673",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 29`] = `
+Object {
+  "clientId": "128785",
+  "clientName": Object {
+    "givenNames": "Dorothy",
+    "surname": "Luna",
+  },
+  "eventDate": 2023-04-25T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-128785",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 30`] = `
+Object {
+  "clientId": "914408",
+  "clientName": Object {
+    "givenNames": "Viola",
+    "surname": "Schultz",
+  },
+  "eventDate": 2023-01-18T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-914408",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;
+
+exports[`transformations 31`] = `
+Object {
+  "clientId": "504894",
+  "clientName": Object {
+    "givenNames": "Marie",
+    "surname": "Hudson",
+  },
+  "eventDate": 2023-03-20T00:00:00.000Z,
+  "metricId": "incarceration_starts_technical_violation",
+  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentEndDate": 2022-02-05T00:00:00.000Z,
+  "pseudonymizedClientId": "hashed-504894",
+  "supervisionEndDate": 2022-02-05T00:00:00.000Z,
+  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "supervisionType": "COMMUNITY_CONFINEMENT",
+}
+`;

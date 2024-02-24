@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`almost eligible days remaining on length of stay requirements met 1`] = `
+Array [
+  Object {
+    "text": "Negative UA within past 90 days",
+    "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
+  },
+  Object {
+    "text": "No felony convictions in past 24 months",
+    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
+  },
+  Object {
+    "text": "Verified compliant employment",
+    "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
+  },
+  Object {
+    "text": "Currently moderate risk with no increase in risk level in past 360 days",
+    "tooltip": "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
+  },
+]
+`;
+
+exports[`almost eligible income verified within 3 months requirements met 1`] = `
+Array [
+  Object {
+    "text": "Negative UA within past 90 days",
+    "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
+  },
+  Object {
+    "text": "No felony convictions in past 24 months",
+    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
+  },
+  Object {
+    "text": "Minimum time has been served for eligibility",
+    "tooltip": "Policy requirement: If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
+  },
+  Object {
+    "text": "Currently moderate risk with no increase in risk level in past 360 days",
+    "tooltip": "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
+  },
+]
+`;
+
+exports[`almost eligible income verified within 3 months requirements met 2`] = `
+Array [
+  Object {
+    "text": "Needs employment verification",
+    "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months.",
+  },
+]
+`;
+
+exports[`almost eligible on probation at least a year requirements met 1`] = `
+Array [
+  Object {
+    "text": "Negative UA within past 90 days",
+    "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
+  },
+  Object {
+    "text": "No felony convictions in past 24 months",
+    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
+  },
+  Object {
+    "text": "Verified compliant employment",
+    "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
+  },
+  Object {
+    "text": "Currently moderate risk with no increase in risk level in past 360 days",
+    "tooltip": "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
+  },
+]
+`;
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "Negative UA within past 90 days",
+    "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
+  },
+  Object {
+    "text": "No felony convictions in past 24 months",
+    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
+  },
+  Object {
+    "text": "Verified compliant employment",
+    "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
+  },
+  Object {
+    "text": "Minimum time has been served for eligibility",
+    "tooltip": "Policy requirement: If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
+  },
+  Object {
+    "text": "Currently moderate risk with no increase in risk level in past 360 days",
+    "tooltip": "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
+  },
+]
+`;

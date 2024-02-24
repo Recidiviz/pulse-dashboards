@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`criteria are required 1`] = `
+Object {
+  "_errors": Array [],
+  "eligibleCriteria": Object {
+    "_errors": Array [],
+    "usNdImpliedValidEarlyTerminationSentenceType": Object {
+      "_errors": Array [
+        "Required",
+      ],
+    },
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
+      "_errors": Array [
+        "Required",
+      ],
+    },
+    "usNdNotInActiveRevocationStatus": Object {
+      "_errors": Array [
+        "Required",
+      ],
+    },
+  },
+}
+`;
+
+exports[`eligibleCriteria must not be empty 1`] = `
+Object {
+  "_errors": Array [],
+  "eligibleCriteria": Object {
+    "_errors": Array [],
+    "usNdImpliedValidEarlyTerminationSentenceType": Object {
+      "_errors": Array [],
+      "supervisionType": Object {
+        "_errors": Array [
+          "Required",
+        ],
+      },
+    },
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
+      "_errors": Array [],
+      "supervisionLevel": Object {
+        "_errors": Array [
+          "Required",
+        ],
+      },
+    },
+    "usNdNotInActiveRevocationStatus": Object {
+      "_errors": Array [],
+      "revocationDate": Object {
+        "_errors": Array [
+          "Required",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`ineligiibleCriteria 1`] = `
+Object {
+  "data": Object {
+    "eligibleCriteria": Object {
+      "supervisionPastEarlyDischargeDate": Object {
+        "eligibleDate": 2022-01-03T00:00:00.000Z,
+      },
+      "usNdImpliedValidEarlyTerminationSentenceType": Object {
+        "supervisionType": "PROBATION",
+      },
+      "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
+        "supervisionLevel": "MEDIUM",
+      },
+      "usNdNotInActiveRevocationStatus": Object {
+        "revocationDate": null,
+      },
+    },
+    "externalId": "abc123",
+    "formInformation": Object {
+      "clientName": "Firstname Lastname",
+      "convictionCounty": "Bloom",
+      "crimeNames": Array [
+        "Crime1",
+        "crime2",
+      ],
+      "criminalNumber": "123456",
+      "judgeName": "Judgename",
+      "judicialDistrictCode": "XX",
+      "priorCourtDate": 2022-01-01T00:00:00.000Z,
+      "probationExpirationDate": 2024-05-01T00:00:00.000Z,
+      "probationOfficerFullName": "Fakename Officername",
+      "sentenceLengthMonths": 24,
+    },
+    "ineligibleCriteria": Object {
+      "supervisionPastEarlyDischargeDate": Object {
+        "eligibleDate": 2024-01-03T00:00:00.000Z,
+      },
+    },
+    "metadata": Object {
+      "ICOut": false,
+      "multipleSentences": false,
+      "outOfState": false,
+    },
+    "stateCode": "US_OZ",
+  },
+  "success": true,
+}
+`;
+
+exports[`must not have revocation date 1`] = `
+Object {
+  "_errors": Array [],
+  "eligibleCriteria": Object {
+    "_errors": Array [],
+    "usNdNotInActiveRevocationStatus": Object {
+      "_errors": Array [],
+      "revocationDate": Object {
+        "_errors": Array [
+          "Expected null, received string",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`transform record 1`] = `
+Object {
+  "eligibleCriteria": Object {
+    "supervisionPastEarlyDischargeDate": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+    "usNdImpliedValidEarlyTerminationSentenceType": Object {
+      "supervisionType": "PROBATION",
+    },
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usNdNotInActiveRevocationStatus": Object {
+      "revocationDate": null,
+    },
+  },
+  "externalId": "abc123",
+  "formInformation": Object {
+    "clientName": "Firstname Lastname",
+    "convictionCounty": "Bloom",
+    "crimeNames": Array [
+      "Crime1",
+      "crime2",
+    ],
+    "criminalNumber": "123456",
+    "judgeName": "Judgename",
+    "judicialDistrictCode": "XX",
+    "priorCourtDate": 2022-01-01T00:00:00.000Z,
+    "probationExpirationDate": 2024-05-01T00:00:00.000Z,
+    "probationOfficerFullName": "Fakename Officername",
+    "sentenceLengthMonths": 24,
+  },
+  "ineligibleCriteria": Object {},
+  "metadata": Object {
+    "ICOut": false,
+    "multipleSentences": false,
+    "outOfState": false,
+  },
+  "stateCode": "US_OZ",
+}
+`;

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Generate header when initialHeader is not provided in config 1`] = `"Search for TEST_FIELDS above to review and refer eligible TEST_PEOPLE for mock opportunity."`;
+
+exports[`Generate header when initialHeader is provided in config 1`] = `"Mock initial header to search for something"`;
+
+exports[`Generate hydrated header to match snapshot 1`] = `
+Array [
+  Object {
+    "callToAction": "Review these clients and complete their auto-generated TEPE Note.",
+    "eligibilityText": "Some clients may be ",
+    "opportunityText": "on or past their expiration date",
+  },
+  Object {
+    "callToAction": "Review these clients and complete their auto-generated TEPE Note.",
+    "fullText": "1 client may be ",
+    "opportunityText": "on or past their expiration date",
+  },
+]
+`;

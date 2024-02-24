@@ -1,0 +1,120 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2022 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
+@import "../../assets/styles/spec/settings/index";
+@import "../CoreConstants.module.scss";
+
+.CoreSelect {
+  flex-grow: 1;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: $pine-3;
+
+  &__control {
+    border: 1px solid $core-border-color !important;
+    box-shadow: none !important;
+    border-radius: 1.25rem !important;
+    background-color: $marble-3 !important;
+    transition: border-radius 0s !important;
+    cursor: pointer !important;
+
+    &--menu-is-open {
+      border-bottom-right-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+    }
+  }
+
+  &__container {
+    background-color: $marble-3 !important;
+  }
+
+  &__single-value {
+    line-height: 1rem;
+  }
+
+  &__menu {
+    @include sans-14;
+    color: $pine-3;
+    background-color: $marble-3 !important;
+    border: 1px solid $core-border-color;
+    border-radius: 0rem 0rem 1.25rem 1.25rem !important;
+    border-top: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
+
+  &__menu-list {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  &__option {
+    cursor: pointer !important;
+    padding-left: 1rem !important;
+
+    &--is-multi {
+      background-color: transparent !important;
+    }
+
+    &--is-focused {
+      background-color: inherit !important;
+    }
+
+    &--is-selected {
+      background-color: #006c67 !important;
+      color: white !important;
+    }
+
+    &:active,
+    &:hover {
+      background: $core-focused-color !important;
+      color: $pine-3 !important;
+    }
+  }
+
+  &__group {
+    margin-left: 20px;
+  }
+
+  &__value-container {
+    color: $pine-3;
+    @include sans-14;
+    padding-left: 1rem !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__custom-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+  }
+
+  &__custom-arrow {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4px 4px 0 4px;
+    border-color: $pine-3 transparent transparent transparent;
+    &--changed {
+      border-color: $signal-links transparent transparent transparent;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2021 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+.PathwaysFilterBar {
+  #timePeriod {
+    width: 8rem;
+  }
+  #gender {
+    width: 7.5rem;
+  }
+  #legalStatus {
+    width: 10rem;
+  }
+  #admissionReason {
+    width: 11rem;
+  }
+  #supervisionType {
+    width: 12rem;
+  }
+  #supervisionLevel {
+    width: 11rem;
+  }
+  #ageGroup {
+    width: 8rem;
+  }
+  #facility {
+    width: 9rem;
+  }
+  #district {
+    width: 11rem;
+  }
+  #judicialDistrict {
+    width: 11rem;
+  }
+  #mostSevereViolation {
+    width: 10rem
+  }
+  #numberOfViolations {
+    width: 8rem
+  }
+  #race {
+    width: 11rem
+  }
+  &__toggle-pill {
+    margin-right: 1.5rem;
+  }
+}

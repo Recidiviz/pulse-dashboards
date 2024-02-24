@@ -1,30 +1,38 @@
 {
   "root": true,
-  "extends": ["@recidiviz", "plugin:wdio/recommended"],
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nx", "simple-import-sort"],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx"],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        // TODO TS re-enable this after repo is ported to TS
-        "@typescript-eslint/no-explicit-any": "off",
-        // TODO TS re-enable this after repo is ported to TS
-        "@typescript-eslint/ban-ts-comment": "off"
+        "@nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ],
+        "array-callback-return": ["warn", { "allowImplicit": true }],
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error"
       }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nx/typescript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nx/javascript"],
+      "rules": {}
     }
-  ],
-  "rules": {
-    "no-console": ["error", { "allow": ["warn", "error"] }],
-    "react/display-name": ["error"],
-    "react/react-in-jsx-scope": "off",
-    "no-restricted-syntax": [
-      "error",
-      {
-        "message": "Do not use Firestore's setDoc directly, use the FirestoreStore.updateDocument method instead.",
-        "selector": "CallExpression[callee.name='setDoc']"
-      }
-    ]
-  },
-  "settings": {
-    "componentWrapperFunctions": ["observer"]
-  }
+  ]
 }

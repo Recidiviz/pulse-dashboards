@@ -1,0 +1,23 @@
+.Error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  &__icon {
+    margin-bottom: 10px;
+    width: 75px;
+    color: #72777a;
+  }
+
+  &__text {
+    text-align: center;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 300;
+  }
+}

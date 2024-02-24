@@ -1,1 +1,2 @@
-server/core/demo_data/
+**/server/core/demo_data
+/.nx/cache

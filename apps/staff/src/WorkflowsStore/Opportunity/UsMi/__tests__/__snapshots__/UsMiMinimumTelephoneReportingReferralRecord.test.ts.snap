@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "onMinimumSupervisionAtLeastSixMonths": null,
+    "supervisionNotPastFullTermCompletionDateOrUpcoming90Days": null,
+    "usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision": null,
+    "usMiNotRequiredToRegisterUnderSora": null,
+    "usMiNotServingIneligibleOffensesForTelephoneReporting": null,
+    "usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting": Object {
+      "initialAssessmentLevel": "MEDIUM",
+      "supervisionLevelRawText": "MEDIUM",
+    },
+  },
+  "externalId": "010",
+  "ineligibleCriteria": Object {},
+  "metadata": Object {
+    "eligibleDate": 2022-08-12T00:00:00.000Z,
+  },
+  "stateCode": "US_MI",
+}
+`;

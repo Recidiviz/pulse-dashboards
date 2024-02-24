@@ -1,0 +1,54 @@
+{
+  "extends": [
+    "plugin:@nx/react-base",
+    "plugin:@nx/react-jsx",
+    "../../.eslintrc.json"
+  ],
+  "ignorePatterns": ["!**/*", "build/", "public/"],
+  "overrides": [
+    {
+      "extends": ["plugin:@nx/react-typescript"],
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        // TODO TS re-enable this after repo is ported to TS
+        "@typescript-eslint/no-explicit-any": "off",
+        // TODO TS re-enable this after repo is ported to TS
+        "@typescript-eslint/ban-ts-comment": "off",
+        // common workaround for strict return types
+        "react/jsx-no-useless-fragment": ["error", { "allowExpressions": true }]
+      }
+    },
+    { "files": ["*.js", "*.jsx"], "rules": {} },
+    {
+      "files": ["src/cucumber/**/*", "wdio.conf.js"],
+      "extends": ["plugin:wdio/recommended"],
+      "rules": {}
+    }
+  ],
+  "rules": {
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "react/display-name": ["error"],
+    "react/react-in-jsx-scope": "off",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "message": "Do not use Firestore's setDoc directly, use the FirestoreStore.updateDocument method instead.",
+        "selector": "CallExpression[callee.name='setDoc']"
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "styled-components",
+            "message": "Please import from styled-components/macro."
+          }
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "componentWrapperFunctions": ["observer"]
+  }
+}

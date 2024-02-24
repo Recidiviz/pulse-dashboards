@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`supervisors with outliers data 1`] = `
+Array [
+  Object {
+    "district": "Region D1",
+    "supervisors": Array [
+      Object {
+        "displayName": "Miles D Davis",
+        "email": "mock-email",
+        "externalId": "mdavis123",
+        "fullName": Object {
+          "givenNames": "Miles",
+          "middleNames": "D",
+          "surname": "Davis",
+        },
+        "hasOutliers": true,
+        "pseudonymizedId": "hashed-mdavis123",
+        "supervisionDistrict": "Region D1",
+      },
+    ],
+  },
+  Object {
+    "district": null,
+    "supervisors": Array [
+      Object {
+        "displayName": "Billie Holiday",
+        "email": null,
+        "externalId": "bholiday456",
+        "fullName": Object {
+          "givenNames": "Billie",
+          "surname": "Holiday",
+        },
+        "hasOutliers": true,
+        "pseudonymizedId": "hashed-bholiday456",
+        "supervisionDistrict": null,
+      },
+    ],
+  },
+]
+`;

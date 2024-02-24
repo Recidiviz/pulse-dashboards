@@ -1,0 +1,88 @@
+{
+  "name": "staff",
+  "version": "0.3.0",
+  "engines": {
+    "node": "20.x.x"
+  },
+  "description": "Bringing criminal justice analysis to decision makers to help reduce incarceration",
+  "private": true,
+  "repository": "git@github.com:Recidiviz/pulse-dashboards.git",
+  "author": "Recidiviz <team@recidiviz.org>",
+  "license": "GNU General Public License v3",
+  "scripts": {
+    "start": "node server.js",
+    "build": "source ./load_environment.sh env_production && ./load_config_files.sh && react-scripts build",
+    "build-staging-no-config-files": "source ./load_environment.sh env_staging && react-scripts build",
+    "build-staging": "./load_config_files.sh && yarn build-staging-no-config-files",
+    "build-demo": "source ./load_environment.sh env_staging_demo && ./load_config_files.sh && react-scripts build",
+    "build-e2e": "env-cmd -f .env.offline react-scripts build",
+    "test-e2e-lantern": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite lantern --retry 2",
+    "test-e2e-login": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite login --retry 2",
+    "test-e2e-users": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite userAccess --retry 2",
+    "test-e2e-workflows": "env-cmd -f .env.offline wdio ./wdio.conf.js --suite workflows --retry 2",
+    "test-react": "TZ=UTC react-scripts test --resetMocks=false --verbose=false",
+    "test-server": "TZ=UTC jest ./server --setupFilesAfterEnv ./server/setupTests.js --resetMocks=false --runInBand",
+    "test-filters": "TZ=UTC jest ./shared-filters --resetMocks=false",
+    "test-firestore": "TZ=UTC firebase emulators:exec --only firestore 'yarn jest ./firestore-config --env=node'",
+    "test-zod": "source ./load_environment.sh env_dev_server && ts-node tools/testZodSchema.ts",
+    "load-demo-fixtures": "source ./load_environment.sh env_dev_server && ts-node tools/loadWorkflowsFixtures.ts",
+    "test": "yarn test-server && yarn test-filters && yarn test-react",
+    "redis-server": "redis-server --port 6380",
+    "server": "nodemon server.js",
+    "dev": "./load_config_files.sh && npm-run-all --parallel spa server:dev",
+    "spa": "source ./load_environment.sh env_dev_spa && react-scripts start",
+    "server:dev": "source ./load_environment.sh env_dev_server && npm-run-all --parallel server redis-server",
+    "dev:be": "npm-run-all --parallel spa:be server:dev",
+    "spa:be": "source ./load_environment.sh env_dev_spa,env_dev_be_spa && react-scripts start",
+    "demo": "npm-run-all --parallel spa:demo server:demo",
+    "spa:demo": "source ./load_environment.sh env_dev_spa,env_dev_demo_spa && react-scripts start",
+    "server:demo": "source ./load_environment.sh env_dev_server,env_dev_demo_server && npm-run-all --parallel server redis-server",
+    "offline": "env-cmd -f .env.offline npm-run-all --parallel spa:offline server redis-server firebase-offline",
+    "spa:offline": "env-cmd -f .env.offline react-scripts start",
+    "server:offline": "env-cmd -f .env.offline npm-run-all --parallel server redis-server firebase-offline",
+    "offline:be": "npm-run-all --parallel pathways-backend offline",
+    "pull-pathways-backend": "docker compose pull case_triage_backend",
+    "pathways-backend": "sh tools/run_pathways_backend.sh",
+    "sync-content": "source ./load_environment.sh env_sync_content && ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",
+    "verify-feature-variant-documentation": "source ./load_environment.sh env_sync_content && ts-node tools/verifyFeatureVariantDocumentation.ts",
+    "firebase-emulator": "firebase --project=demo-dev emulators:start --import firestore-config/emulator-fixtures",
+    "update-workflows-fixture": "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'NODE_OPTIONS=\"--unhandled-rejections=strict\" ts-node tools/loadWorkflowsFixtures.ts'",
+    "firebase-offline": "run-s update-workflows-fixture firebase-emulator",
+    "update-rules-staging": "firebase --project=staging-backend deploy --only firestore:rules",
+    "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules",
+    "deploy": "node ./tools/deploy.mjs",
+    "load-prod-fixtures": "ts-node tools/loadProdTestFixtures.mjs",
+    "pdfformfiller-boilerplate": "ts-node tools/pdfFormFillerBoilerplate.mjs",
+    "update-missing-snooze-staging": "source ./load_environment.sh env_dev_server && ts-node tools/updateMissingSnooze.ts",
+    "update-missing-snooze-local": "source ./load_environment.sh env_dev_demo_server && ts-node tools/updateMissingSnooze.ts"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version",
+      "ie 11"
+    ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|scss|sass)$": "<rootDir>/__mocks__/styleMock.js",
+      "test-service-account.json": "<rootDir>/__mocks__/test-service-account.json"
+    },
+    "collectCoverageFrom": [
+      "server/**/*.js",
+      "!src/auth0/rules/*.js",
+      "src/**/*.js"
+    ],
+    "testMatch": [
+      "**/__tests__/**/!(testUtils).[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)"
+    ]
+  }
+}

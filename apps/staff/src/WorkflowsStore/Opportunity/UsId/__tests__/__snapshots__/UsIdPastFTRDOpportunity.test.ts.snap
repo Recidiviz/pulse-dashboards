@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`almost eligible requirements almost met 1`] = `
+Array [
+  Object {
+    "text": "31 days until FTRD (Sep 1, 2022)",
+  },
+]
+`;
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "210 days past FTRD (Jan 3, 2022)",
+  },
+]
+`;

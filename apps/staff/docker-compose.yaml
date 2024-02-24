@@ -1,0 +1,70 @@
+# Defines services needed to run the Case Triage / Pathways backend in offline mode
+# Run via `docker-compose -f docker-compose.yaml -f docker-compose.case-triage.yaml up`
+
+version: "3"
+
+services:
+  case_triage_backend:
+    image: us-docker.pkg.dev/recidiviz-staging/case-triage-pathways/case-triage-pathways:latest
+    volumes:
+      - "./server/core/offline_config:/app/recidiviz/local"
+      - "./server/core/offline_config:/app/recidiviz/case_triage/local"
+      - "./server/core/demo_data:/app/recidiviz/local/fixtures"
+      - case_triage_db_socket:/cloudsql/case_triage
+      - pathways_db_socket:/cloudsql/pathways
+    depends_on:
+      - case_triage_db
+      - pathways_db
+
+    ports:
+      - "5000:5000"
+    # Running with threads and no debugger seems to improve latency on first request
+    command: pipenv run flask run -h 0.0.0.0 --with-threads --no-debugger --extra-files ${FIXTURE_FILES}
+
+    environment:
+      - FLASK_APP=/app/recidiviz/case_triage/server.py
+      - FLASK_ENV=development
+      # The virtual env files are packaged with the image so they do not change during the lifecycle of the container
+      # They can safely be excluded from the stat reloader for a performance boost
+      - FLASK_RUN_EXCLUDE_PATTERNS=/app/.venv/**/*
+      - IS_DEV=true
+      - IS_OFFLINE_MODE=true
+      - SEGMENT_WRITE_KEY=dev-key-wont-send-data
+    links:
+      - "redis:rate_limit_cache"
+      - "redis:sessions_cache"
+      - "redis:pathways_metric_cache"
+
+  case_triage_db:
+    image: postgres:13.1-alpine
+    environment:
+      POSTGRES_USER: case_triage_user
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - case_triage_db_data:/var/lib/postgresql/data
+      - case_triage_db_socket:/var/run/postgresql/
+
+  pathways_db:
+    image: postgres:13.1-alpine
+    environment:
+      POSTGRES_USER: pathways_user
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
+    volumes:
+      - pathways_db_data:/var/lib/postgresql/data
+      - pathways_db_socket:/var/run/postgresql/
+
+  redis:
+    image: redis:5.0
+    ports:
+      - "6379:6379"
+
+volumes:
+  case_triage_db_data:
+  case_triage_db_socket:
+  pathways_db_data:
+  pathways_db_socket:

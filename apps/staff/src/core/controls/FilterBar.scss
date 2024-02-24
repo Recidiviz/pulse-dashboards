@@ -1,0 +1,69 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2022 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
+@import "../CoreConstants.module.scss";
+
+.FilterBar {
+  background: $marble-3;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1rem;
+
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    max-width: $core-max-view-width;
+    width: 100%;
+
+    @media screen and (max-width: $core-breakpoint-sm) {
+      flex-wrap: nowrap;
+      padding-top: 3rem;
+    }
+
+    .Filter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 1.5rem;
+      padding-bottom: 0.5rem;
+
+      @media screen and (max-width: $core-breakpoint-sm) {
+        padding-right: 1rem;
+      }
+
+      &__title {
+        color: $slate-80;
+        @include sans-14;
+        padding-right: 0.5rem;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  &__filters {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  &__details {
+    display: flex;
+    flex-flow: row;
+    padding-bottom: 0.5rem;
+    white-space: nowrap;
+  }
+}

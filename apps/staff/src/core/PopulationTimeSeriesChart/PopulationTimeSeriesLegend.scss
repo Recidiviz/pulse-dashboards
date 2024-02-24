@@ -1,0 +1,45 @@
+@import "../CoreConstants.module.scss";
+
+.PopulationTimeSeriesLegend {
+  display: flex;
+  gap: 1.5rem;
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+
+  &__icon {
+    align-items: center;
+    width: 1.5rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    display: flex;
+  }
+
+  &__line {
+    stroke: $indigo;
+    stroke-width: 4;
+    width: 100%;
+  }
+
+  &__text {
+    white-space: nowrap;
+  }
+
+  .ProjectedLegend {
+    background: $indigo-10;
+
+    .PopulationTimeSeriesLegend__line {
+      stroke-dasharray: 3.5, 4.5, 8, 4.5, 3.5;
+    }
+  }
+
+  .MonthlyLegend {
+    background: $indigo-10;
+
+    .PopulationTimeSeriesLegend__line {
+      display: none;
+    }
+  }
+}

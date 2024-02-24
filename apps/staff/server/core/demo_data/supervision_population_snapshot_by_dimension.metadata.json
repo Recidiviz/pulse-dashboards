@@ -1,0 +1,1 @@
+{"value_keys": [ "gender", "last_updated", "person_count", "supervision_type", "total_population" ], "dimension_manifest": [ [ "district", [ "all", "district_1", "district_2", "district_3", "district_4", "district_5" ] ], [ "race", [ "all", "black", "hispanic", "white" ] ], [ "supervision_level", [ "all", "maximum", "medium", "minimum" ] ] ], "total_data_points": 864}

@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform function 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "supervisionPastFullTermCompletionDateOrUpcoming1Day": Object {
+      "eligibleDate": 2022-03-03T00:00:00.000Z,
+    },
+    "usTnNoZeroToleranceCodesSpans": Object {},
+    "usTnNotOnLifeSentenceOrLifetimeSupervision": Object {
+      "lifetimeFlag": false,
+    },
+  },
+  "externalId": "abc123",
+  "formInformation": Object {
+    "alcoholHistory": Array [
+      Object {
+        "contactComment": "HAD APPOINTMENT",
+        "contactDate": 2022-02-12T00:00:00.000Z,
+        "contactType": "FSWR",
+      },
+      Object {
+        "contactComment": "HAD ANOTHER APPOINTMENT",
+        "contactDate": 2022-02-07T00:00:00.000Z,
+        "contactType": "FSWR",
+      },
+    ],
+    "convictionCounties": Array [
+      "010",
+    ],
+    "docketNumbers": Array [
+      "123",
+      "456",
+    ],
+    "latestEmp": Object {
+      "contactComment": "Comment about employment",
+      "contactDate": 2022-05-05T00:00:00.000Z,
+      "contactType": "EMPV",
+    },
+    "latestFee": Object {
+      "contactDate": 2022-04-04T00:00:00.000Z,
+      "contactType": "FEEP",
+    },
+    "latestPse": Object {
+      "contactDate": 2022-06-01T00:00:00.000Z,
+      "contactType": "PSET",
+    },
+    "latestSpe": Object {
+      "contactComment": "Special conditions check",
+      "contactDate": 2022-05-05T00:00:00.000Z,
+      "contactType": "SPEC",
+    },
+    "latestVrr": Object {
+      "contactDate": 2022-03-03T00:00:00.000Z,
+      "contactType": "VRRE",
+    },
+    "newOffenses": Array [
+      Object {
+        "contactComment": "ARRESTED",
+        "contactDate": 2022-02-09T00:00:00.000Z,
+        "contactType": "NCAF",
+      },
+      Object {
+        "contactComment": "INTERROGATED",
+        "contactDate": 2022-02-17T00:00:00.000Z,
+        "contactType": "NCAC",
+      },
+    ],
+    "offenses": Array [
+      "FAILURE1",
+      "FAILURE2",
+    ],
+    "sexOffenses": Array [
+      "sex offense",
+    ],
+  },
+  "stateCode": "US_XX",
+}
+`;

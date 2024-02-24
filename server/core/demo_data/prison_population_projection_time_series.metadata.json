@@ -1,2 +1,0 @@
-{"value_keys": [ "month", "simulation_tag", "total_population", "total_population_max", "total_population_min", "year" ], 
-  "dimension_manifest": [ [ "gender", [ "all", "female", "male" ] ], [ "legal_status", [ "all", "general", "parole_board_hold", "treatment_in_prison" ] ], [ "state_code", [ "us_id" ] ] ], "total_data_points": 396}

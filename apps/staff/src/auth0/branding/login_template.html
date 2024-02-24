@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+  <head>
+    {%- auth0:head -%}
+    <style>
+      body {
+        background-color: #e5e5e5;
+      }
+      .footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        margin-bottom: 32px;
+        padding: 16px 0;
+        width: 100%;
+        color: #355362;
+        /* Use negative index to hide behind widget on smaller screens */
+        z-index: -1;
+      }
+      .footer p {
+        color: #355362;
+        font-family: "Public Sans", sans-serif;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: center;
+        margin: 0 10%;
+      }
+    </style>
+    <title>{{ prompt.screen.texts.pageTitle }}</title>
+  </head>
+  <body class="_widget-auto-layout">
+    {%- auth0:widget -%}
+    <footer class="footer">
+      <p>
+        Recidiviz applications are restricted to authorized individuals in the
+        performance of their assigned duties. Any unauthorized use, misuse, or
+        modification of the data in transit or from this system is strictly
+        prohibited. This system and the equipment are subject to monitoring to
+        ensure proper performance of applicable security features or procedures.
+        Such monitoring may result in the acquisition, recording and analysis of
+        all data being communicated, transmitted, processed, or stored in this
+        system by a user. If monitoring reveals possible evidence of criminal
+        activity, such evidence may be provided to Law Enforcement Personnel.
+        Unauthorized use of the system is prohibited and subject to criminal and
+        civil penalties. Use of the system indicates consent to monitoring and
+        recording. Data hosted in this application is confidential. Users should 
+        log off of this system if they do not agree to these requirements.
+      </p>
+    </footer>
+  </body>
+</html>

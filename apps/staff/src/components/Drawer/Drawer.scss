@@ -1,0 +1,114 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2021 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+@import "../../core/CoreConstants.module.scss";
+
+.Drawer {
+  &__overlay {
+    position: fixed;
+    visibility: hidden;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background: $slate-10;
+    backdrop-filter: blur(4px);
+    transition: opacity 300ms ease, visibility 300ms ease;
+    &--open {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &__wrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+    z-index: 999;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+    transition: transform 300ms ease;
+    box-shadow: 0px 15px 40px rgba(53, 83, 98, 0.3),
+      inset 0px -1px 1px rgba(19, 44, 82, 0.2);
+    &--open {
+      transform: translateX(0) !important;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    z-index: 99;
+    background: $pine-3;
+    position: relative;
+    min-height: 15rem;
+    height: 100%;
+    padding: 1.25rem 2.5rem;
+  }
+
+  &__close-icon {
+    color: $white;
+    cursor: pointer;
+    transform: rotate(0.5turn);
+    display: flex;
+    margin-left: auto;
+  }
+
+  &__left {
+    .Drawer__wrapper {
+      left: 0;
+      right: inherit;
+      transform: translateX(-105%);
+    }
+    .Drawer__close-icon {
+      transform: rotate(0.5turn);
+      margin-left: 0;
+    }
+  }
+
+  &__right {
+    .Drawer__wrapper {
+      left: inherit;
+      right: 0;
+      transform: translateX(105%);
+    }
+  }
+
+  &__bottom {
+    .Drawer__wrapper {
+      top: inherit;
+      bottom: 0;
+      transform: translateY(105%);
+    }
+  }
+
+  &__top {
+    .Drawer__wrapper {
+      top: 0;
+      bottom: inherit;
+      transform: translateY(-105%);
+    }
+  }
+}

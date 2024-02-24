@@ -1,0 +1,87 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2021 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+@import "~@recidiviz/design-system/dist/scss/typography/mixins";
+@import "../CoreConstants.module.scss";
+@import "../../assets/styles/spec/tools/mixins/mediaQueriesRanges.scss";
+
+@mixin loading-value {
+  background-color: $marble-3;
+  border-radius: 4px;
+}
+
+.PopulationSummaryMetrics {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 1rem;
+  width: 100%;
+  justify-content: space-evenly;
+
+  @media screen and (max-width: $core-breakpoint-xs) {
+    flex-flow: row wrap;
+  }
+
+  &__metric {
+    display: flex;
+    flex-flow: column;
+    margin-right: 1rem;
+    text-align: end;
+  }
+
+  &__value {
+    @include serif-34;
+    color: $pine-3;
+    padding: 0 0 0;
+
+    &--loading {
+      height: 2rem;
+      width: 7rem;
+      @include loading-value;
+    }
+  }
+
+  &__min-max {
+    @include sans-14;
+    color: $slate-80;
+    white-space: nowrap;
+
+    &--loading {
+      height: 1rem;
+      width: 6rem;
+      margin-top: 0.5rem;
+      @include loading-value;
+    }
+  }
+
+  &__delta {
+    @include sans-14;
+    line-height: 1.5rem;
+
+    &--loading {
+      text-indent: -9999px;
+      height: 1.5rem;
+      width: 4rem;
+      @include loading-value;
+    }
+
+    &--error {
+      text-indent: -9999px;
+      height: 0;
+      width: 2rem;
+      border: 2px solid $slate-20;
+    }
+  }
+}

@@ -1,0 +1,97 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2022 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+$core-breakpoint-lg: 1920px;
+$core-breakpoint-ml: 1760px;
+$core-breakpoint-md: 1366px;
+$core-breakpoint-sm: 1280px; /* iPad Pro */
+$core-breakpoint-sxs: 1024px; /* iPad in landscape */
+$core-breakpoint-xs: 768px; /* iPad */
+$core-breakpoint-xxs: 480px; /* Mobile */
+
+$core-max-view-width: 93rem;
+
+$box-shadow-color-30: rgba(19, 44, 82, 0.3);
+$box-shadow-color-20: rgba(19, 44, 82, 0.2);
+$inset-shadow-20: inset 0px -1px 1px $box-shadow-color-20;
+$inset-shadow-30: inset 0px -1px 1px $box-shadow-color-30;
+
+/* System Design Colors */
+$white: #fff;
+$crimson: #bf7474;
+$crimson-dark: #a43939;
+$crimson-dark-50: rgba(164, 57, 57, 0.5);
+$data-forest: #25636f;
+$data-forest-07: rgba(37, 99, 111, 0.07);
+$data-forest-dark: #004b5b;
+$data-teal: #90aeb5;
+$data-gold: #d9a95f;
+$data-gold-dark: #b7873d;
+$indigo: rgba(76, 98, 144, 1);
+$indigo-10: rgba(76, 98, 144, 0.1);
+$marble-3: #f4f5f5;
+$marble-4: #eff1f1;
+$pine-1: rgb(1, 35, 34);
+$pine-2: #003331;
+$pine-3: #00413e;
+$signal-links: #006c67;
+$signal-links-lite: #4d9895;
+$signal-highlight: #25b894;
+$signal-notifications: #237caf;
+$signal-outline: #3797cd;
+$signal-tooltip: #082249;
+$signal-error: #a43939;
+$signal-error-lite: #bf7474;
+$slate-10: rgba(53, 83, 98, 0.1);
+$slate-20: rgba(53, 83, 98, 0.2);
+$slate-30: rgba(53, 83, 98, 0.3);
+$slate-30-opaque: #c2cbd0;
+$slate-60: rgba(53, 83, 98, 0.6);
+$slate-70: rgba(53, 83, 98, 0.7);
+$slate-80: rgba(53, 83, 98, 0.8);
+$slate-85: rgba(53, 83, 98, 0.85);
+
+/* Colors missing from system design */
+$core-border-color: #d2d8d8;
+$core-focused-color: #e3e6e6;
+
+:export {
+  crimson: $crimson;
+  crimsonDark: $crimson-dark;
+  crimsonDark50: $crimson-dark-50;
+  indigo: $indigo;
+  pine1: $pine-1;
+  pine3: $pine-3;
+  marble4: $marble-4;
+  signalLinks: $signal-links;
+  signalHighlight: $signal-highlight;
+  slate30Opaque: $slate-30-opaque;
+  slate80: $slate-80;
+  slate60: $slate-60;
+  white: $white;
+  dataForest: $data-forest;
+  dataForestDark: $data-forest-dark;
+  dataTeal: $data-teal;
+  dataGold: $data-gold;
+  dataGoldDark: $data-gold-dark;
+
+  insetShadow30: $inset-shadow-30;
+
+  breakpointSm: $core-breakpoint-sm;
+  breakpointSxs: $core-breakpoint-sxs;
+  breakpointXs: $core-breakpoint-xs;
+  breakpointXxs: $core-breakpoint-xxs;
+}

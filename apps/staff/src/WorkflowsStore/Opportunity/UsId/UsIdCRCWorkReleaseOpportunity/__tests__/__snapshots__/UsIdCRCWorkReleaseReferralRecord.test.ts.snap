@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UsIdCRCWorkReleaseReferralRecord transforms eligible record with multiple temporal criteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "custodyLevelIsMinimum": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdIncarcerationWithin18MonthsOfFtcdOrTpd": Object {
+      "fullTermCompletionDate": 2023-10-10T00:00:00.000Z,
+      "tentativeParoleDate": null,
+    },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNoDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "crc-work-release-eligible-01",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`transforms eligible record with life temporal criteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "custodyLevelIsMinimum": Object {
+      "custodyLevel": "MINIMUM",
+    },
+    "notServingForSexualOffense": null,
+    "usIdIncarcerationWithin1YearOfTpdAndLifeSentence": Object {
+      "tentativeParoleDate": 2024-08-14T00:00:00.000Z,
+    },
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNoDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "crc-work-release-eligible-02",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
+}
+`;

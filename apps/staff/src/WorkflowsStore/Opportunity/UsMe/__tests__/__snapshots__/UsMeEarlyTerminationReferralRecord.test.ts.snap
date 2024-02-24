@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record with null pending violation criteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "supervisionLevelIsMediumOrLower": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMeNoPendingViolationsWhileSupervised": Object {},
+    "usMePaidAllOwedRestitution": Object {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`transform record with old criterion: onMediumSupervisionLevelOrLower 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "supervisionLevelIsMediumOrLower": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMePaidAllOwedRestitution": Object {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`transform record with pending violation ineligibleCriteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "supervisionLevelIsMediumOrLower": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMePaidAllOwedRestitution": Object {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "ineligibleCriteria": Object {
+    "usMeNoPendingViolationsWhileSupervised": Object {
+      "currentStatus": "Pending Violation",
+      "violationDate": 2022-07-13T00:00:00.000Z,
+    },
+  },
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`transform record with restitution case 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "supervisionLevelIsMediumOrLower": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMePaidAllOwedRestitution": Object {
+      "amountOwed": 0,
+    },
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`transform record with restitution ineligibleCriteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "supervisionLevelIsMediumOrLower": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "ineligibleCriteria": Object {
+    "usMePaidAllOwedRestitution": Object {
+      "amountOwed": 500,
+    },
+  },
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`transform record without restitution case 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "noConvictionWithin6Months": Object {},
+    "supervisionLevelIsMediumOrLower": Object {
+      "supervisionLevel": "MEDIUM",
+    },
+    "usMePaidAllOwedRestitution": Object {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+    },
+  },
+  "externalId": "abc123",
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ME",
+}
+`;

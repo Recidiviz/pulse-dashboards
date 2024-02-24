@@ -1,0 +1,7 @@
+@import "../core/CoreConstants.module.scss";
+
+.toaster-container {
+  @media screen and (min-width: $core-breakpoint-sxs) {
+    right: 5rem !important;
+  }
+}

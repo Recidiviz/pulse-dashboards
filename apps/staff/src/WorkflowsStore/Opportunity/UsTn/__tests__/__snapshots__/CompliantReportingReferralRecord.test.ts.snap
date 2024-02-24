@@ -1,0 +1,253 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform record, old + new format, eligible 1`] = `
+Object {
+  "caseNotes": Object {},
+  "clientFirstName": "LINDA",
+  "clientLastName": "SMITH",
+  "currentOffenses": Array [
+    "FAILURE TO APPEAR (FELONY)",
+  ],
+  "dateToday": "2022-03-25",
+  "eligibilityCategory": "c3",
+  "eligibleCriteria": Object {
+    "usTnFinesFeesEligible": Object {
+      "hasFinesFeesBalanceBelow500": Object {
+        "amountOwed": 400,
+      },
+      "hasPayments3ConsecutiveMonths": Object {
+        "amountOwed": 400,
+        "consecutiveMonthlyPayments": null,
+      },
+    },
+    "usTnNoArrestsInPastYear": Object {},
+    "usTnNoHighSanctionsInPastYear": Object {},
+    "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnOnEligibleLevelForSufficientTime": Object {
+      "eligibleDate": 2020-08-01T00:00:00.000Z,
+      "eligibleLevel": "MINIMUM",
+      "startDateOnEligibleLevel": 2019-08-01T00:00:00.000Z,
+    },
+    "usTnPassedDrugScreenCheck": Object {
+      "hasAtLeast1NegativeDrugTestPastYear": Array [
+        Object {
+          "negativeScreenDate": 2023-02-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+        Object {
+          "negativeScreenDate": 2023-01-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+      ],
+      "latestDrugTestIsNegative": Object {
+        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
+        "latestDrugScreenResult": "DRUN",
+      },
+    },
+    "usTnSpecialConditionsAreCurrent": Object {
+      "speNoteDue": null,
+    },
+  },
+  "externalId": "202",
+  "formInformation": Object {
+    "currentOffenses": Array [
+      "STOLEN PROPERTY",
+    ],
+    "docketNumbers": Array [
+      "10000",
+    ],
+    "expirationDate": 2030-02-12T00:00:00.000Z,
+    "judicialDistrict": Array [
+      "1",
+    ],
+    "restitutionAmt": 100,
+    "restitutionMonthlyPayment": 0,
+    "restitutionMonthlyPaymentTo": Array [
+      "PAYMENT TO",
+    ],
+    "sentenceLengthDays": 3629,
+    "sentenceStartDate": 2020-03-07T00:00:00.000Z,
+    "supervisionFeeArrearaged": true,
+    "supervisionFeeArrearagedAmount": 700,
+    "supervisionFeeAssessed": 700,
+    "supervisionFeeWaived": false,
+  },
+  "ineligibleCriteria": Object {},
+  "lifetimeOffensesExpired": Array [],
+  "metadata": Object {
+    "convictionCounties": Array [
+      "123ABC",
+    ],
+    "mostRecentArrestCheck": Object {
+      "contactDate": 2023-04-01T00:00:00.000Z,
+      "contactType": "ARRN",
+    },
+    "mostRecentSpeNote": Object {
+      "contactDate": 2019-08-15T00:00:00.000Z,
+      "contactType": "SPET",
+    },
+  },
+  "offenseTypeEligibility": undefined,
+  "pastOffenses": undefined,
+  "poFirstName": "TEST",
+  "poLastName": "OFFICER1",
+  "remainingCriteriaNeeded": 0,
+  "specialConditionsAlcDrugAssessmentComplete": false,
+  "specialConditionsAlcDrugScreen": false,
+  "specialConditionsAlcDrugTreatment": false,
+  "specialConditionsAlcDrugTreatmentCurrent": false,
+  "specialConditionsCommunityService": false,
+  "specialConditionsCommunityServiceCurrent": false,
+  "specialConditionsCounseling": false,
+  "specialConditionsCounselingAngerManagementCurrent": false,
+  "specialConditionsProgramming": false,
+  "specialConditionsProgrammingCognitiveBehavior": false,
+  "specialConditionsProgrammingCognitiveBehaviorCurrent": false,
+  "specialConditionsProgrammingFsw": false,
+  "specialConditionsProgrammingFswCurrent": false,
+  "specialConditionsProgrammingSafe": false,
+  "specialConditionsProgrammingSafeCurrent": false,
+  "specialConditionsProgrammingVictimImpact": false,
+  "specialConditionsProgrammingVictimImpactCurrent": false,
+  "stateCode": "US_TN",
+  "supervisionType": "TN PROBATIONER",
+  "tdocId": "202",
+  "zeroToleranceCodes": Array [],
+}
+`;
+
+exports[`transform record, old format 1`] = `
+Object {
+  "caseNotes": Object {},
+  "clientFirstName": "LINDA",
+  "clientLastName": "SMITH",
+  "currentOffenses": Array [
+    "FAILURE TO APPEAR (FELONY)",
+  ],
+  "dateToday": "2022-03-25",
+  "eligibilityCategory": "c3",
+  "eligibleCriteria": Object {
+    "usTnFinesFeesEligible": Object {
+      "hasFinesFeesBalanceBelow500": Object {
+        "amountOwed": 600,
+      },
+      "hasPayments3ConsecutiveMonths": Object {
+        "amountOwed": 0,
+        "consecutiveMonthlyPayments": 0,
+      },
+      "hasPermanentFinesFeesExemption": Object {
+        "currentExemptions": Array [
+          "SSDB",
+          "SSDB",
+        ],
+      },
+    },
+    "usTnNoArrestsInPastYear": Object {},
+    "usTnNoHighSanctionsInPastYear": Object {},
+    "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnOnEligibleLevelForSufficientTime": Object {
+      "eligibleDate": 2023-12-01T00:00:00.000Z,
+      "eligibleLevel": "UNKNOWN",
+      "startDateOnEligibleLevel": 2019-09-01T00:00:00.000Z,
+    },
+    "usTnPassedDrugScreenCheck": Object {
+      "hasAtLeast1NegativeDrugTestPastYear": Array [
+        Object {
+          "negativeScreenDate": 2023-02-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+        Object {
+          "negativeScreenDate": 2023-01-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+      ],
+      "latestDrugTestIsNegative": Object {
+        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
+        "latestDrugScreenResult": "DRUN",
+      },
+    },
+    "usTnSpecialConditionsAreCurrent": Object {
+      "speNoteDue": 2022-09-10T00:00:00.000Z,
+    },
+  },
+  "externalId": "202",
+  "formInformation": Object {
+    "courtCostsPaid": false,
+    "currentExemptionsAndExpiration": Array [
+      Object {
+        "endDate": null,
+        "exemptionReason": "SSDB",
+      },
+      Object {
+        "endDate": null,
+        "exemptionReason": "SSDB",
+      },
+    ],
+    "currentOffenses": Array [
+      "FAILURE TO APPEAR (FELONY)",
+    ],
+    "docketNumbers": Array [
+      "10000",
+    ],
+    "driversLicense": "ABC123",
+    "expirationDate": 2030-02-12T00:00:00.000Z,
+    "judicialDistrict": Array [
+      "1",
+    ],
+    "restitutionAmt": 100,
+    "restitutionMonthlyPayment": 0,
+    "restitutionMonthlyPaymentTo": Array [
+      "PAYMENT TO",
+    ],
+    "sentenceLengthDays": 3629,
+    "sentenceStartDate": 2020-03-07T00:00:00.000Z,
+    "supervisionFeeArrearaged": false,
+    "supervisionFeeArrearagedAmount": 700,
+    "supervisionFeeAssessed": 700,
+    "supervisionFeeWaived": false,
+  },
+  "ineligibleCriteria": Object {},
+  "lifetimeOffensesExpired": Array [],
+  "metadata": Object {
+    "convictionCounties": Array [
+      "123ABC",
+    ],
+    "mostRecentArrestCheck": Object {
+      "contactDate": 2023-04-01T00:00:00.000Z,
+      "contactType": "ARRN",
+    },
+    "mostRecentSpeNote": Object {
+      "contactDate": 2022-01-10T00:00:00.000Z,
+      "contactType": "SPEC",
+    },
+  },
+  "offenseTypeEligibility": undefined,
+  "pastOffenses": undefined,
+  "poFirstName": "TEST",
+  "poLastName": "OFFICER1",
+  "remainingCriteriaNeeded": 0,
+  "specialConditionsAlcDrugAssessmentComplete": false,
+  "specialConditionsAlcDrugScreen": false,
+  "specialConditionsAlcDrugTreatment": false,
+  "specialConditionsAlcDrugTreatmentCurrent": false,
+  "specialConditionsCommunityService": false,
+  "specialConditionsCommunityServiceCurrent": false,
+  "specialConditionsCounseling": false,
+  "specialConditionsCounselingAngerManagementCurrent": false,
+  "specialConditionsProgramming": false,
+  "specialConditionsProgrammingCognitiveBehavior": false,
+  "specialConditionsProgrammingCognitiveBehaviorCurrent": false,
+  "specialConditionsProgrammingFsw": false,
+  "specialConditionsProgrammingFswCurrent": false,
+  "specialConditionsProgrammingSafe": false,
+  "specialConditionsProgrammingSafeCurrent": false,
+  "specialConditionsProgrammingVictimImpact": false,
+  "specialConditionsProgrammingVictimImpactCurrent": false,
+  "stateCode": "US_TN",
+  "supervisionType": "TN PROBATIONER",
+  "tdocId": "202",
+  "zeroToleranceCodes": Array [],
+}
+`;

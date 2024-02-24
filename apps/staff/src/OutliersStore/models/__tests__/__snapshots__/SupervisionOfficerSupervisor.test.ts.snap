@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transformations 1`] = `
+Object {
+  "displayName": "Miles D Davis",
+  "email": "mock-email",
+  "externalId": "mdavis123",
+  "fullName": Object {
+    "givenNames": "Miles",
+    "middleNames": "D",
+    "surname": "Davis",
+  },
+  "hasOutliers": true,
+  "pseudonymizedId": "hashed-mdavis123",
+  "supervisionDistrict": "Region D1",
+}
+`;
+
+exports[`transformations 2`] = `
+Object {
+  "displayName": "Billie Holiday",
+  "email": null,
+  "externalId": "bholiday456",
+  "fullName": Object {
+    "givenNames": "Billie",
+    "surname": "Holiday",
+  },
+  "hasOutliers": true,
+  "pseudonymizedId": "hashed-bholiday456",
+  "supervisionDistrict": null,
+}
+`;
+
+exports[`transformations 3`] = `
+Object {
+  "displayName": "Ella Fitzgerald",
+  "email": "mock-email",
+  "externalId": "efitzgerald789",
+  "fullName": Object {
+    "givenNames": "Ella",
+    "surname": "Fitzgerald",
+  },
+  "hasOutliers": false,
+  "pseudonymizedId": "hashed-efitzgerald789",
+  "supervisionDistrict": "D1",
+}
+`;
+
+exports[`transformations 4`] = `
+Object {
+  "displayName": "John Coltrane",
+  "email": null,
+  "externalId": "jColtrane321",
+  "fullName": Object {
+    "givenNames": "John",
+    "surname": "Coltrane",
+  },
+  "hasOutliers": false,
+  "pseudonymizedId": "hashed-jColtrane321",
+  "supervisionDistrict": null,
+}
+`;

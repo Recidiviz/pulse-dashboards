@@ -1,0 +1,252 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`formInformation parses 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [],
+      "latestUaResults": Array [],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {
+    "caseNumbers": Array [
+      "12858",
+      "13085",
+      "14558",
+    ],
+    "chargeDescriptions": Array [
+      "Shoplifting",
+      "Public Intoxication",
+      "Trespassing",
+    ],
+    "countyNames": Array [
+      "Duane",
+      "Duane",
+      "Moraga",
+    ],
+    "currentFinesBalance": 12.18,
+    "currentRestitutionBalance": 0,
+    "dateImposed": Array [
+      2022-08-13T00:00:00.000Z,
+      2022-09-30T00:00:00.000Z,
+      2022-10-03T00:00:00.000Z,
+    ],
+    "firstAssessmentDate": 2020-03-28T00:00:00.000Z,
+    "firstAssessmentScore": 27,
+    "fullTermReleaseDates": Array [
+      2023-08-11T00:00:00.000Z,
+      2023-07-30T00:00:00.000Z,
+      2023-06-10T00:00:00.000Z,
+    ],
+    "initialFines": 98.25,
+    "initialRestitution": 4289.63,
+    "judgeNames": Array [
+      Object {
+        "givenNames": "Starla",
+        "surname": "Murieta",
+      },
+      Object {
+        "givenNames": "Raymond",
+        "surname": "Dart",
+      },
+      Object {
+        "givenNames": "Ahmud",
+        "surname": "Blake",
+      },
+    ],
+    "lastFinesPaymentDate": 2022-09-08T00:00:00.000Z,
+    "lastRestitutionPaymentDate": 2022-08-09T00:00:00.000Z,
+    "latestAssessmentDate": 2022-10-24T00:00:00.000Z,
+    "latestAssessmentScore": 19,
+    "ncicCheckDate": 2022-11-10T00:00:00.000Z,
+    "sentenceMax": Array [
+      365,
+      334,
+      60,
+    ],
+    "sentenceMin": Array [
+      92,
+      61,
+      15,
+    ],
+  },
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`optional criteria have sane fallbacks 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [],
+      "latestUaResults": Array [],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {},
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`transform dual/parole record 1`] = `
+Object {
+  "caseNotes": Object {
+    "foo": Array [
+      Object {
+        "eventDate": 2022-04-06T00:00:00.000Z,
+        "noteBody": "Body1",
+        "noteTitle": "Title1",
+      },
+    ],
+  },
+  "eligibleCriteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [
+        2022-01-03T00:00:00.000Z,
+      ],
+      "latestUaResults": Array [
+        false,
+      ],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [
+        2022-01-05T00:00:00.000Z,
+        2022-05-28T00:00:00.000Z,
+      ],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {},
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`transform probation record 1`] = `
+Object {
+  "caseNotes": Object {
+    "foo": Array [
+      Object {
+        "eventDate": 2022-04-06T00:00:00.000Z,
+        "noteBody": "Body1",
+        "noteTitle": "Title1",
+      },
+    ],
+  },
+  "eligibleCriteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [
+        2022-01-03T00:00:00.000Z,
+      ],
+      "latestUaResults": Array [
+        false,
+      ],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [
+        2022-01-05T00:00:00.000Z,
+        2022-05-28T00:00:00.000Z,
+      ],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {},
+  "ineligibleCriteria": Object {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`transforms records with eligible and ineligible criteria 1`] = `
+Object {
+  "caseNotes": Object {},
+  "eligibleCriteria": Object {
+    "negativeUaWithin90Days": Object {
+      "latestUaDates": Array [],
+      "latestUaResults": Array [],
+    },
+    "noFelonyWithin24Months": Object {
+      "latestFelonyConvictions": Array [],
+    },
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2022-05-22T00:00:00.000Z,
+      "sentenceType": "DUAL",
+    },
+    "usIdIncomeVerifiedWithin3Months": Object {
+      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
+    },
+    "usIdLsirLevelLowModerateForXDays": Object {
+      "eligibleDate": 2022-01-03T00:00:00.000Z,
+      "riskLevel": "MODERATE",
+    },
+  },
+  "eligibleStartDate": 2022-10-05T00:00:00.000Z,
+  "externalId": "001",
+  "formInformation": Object {},
+  "ineligibleCriteria": Object {
+    "pastEarnedDischargeEligibleDate": Object {
+      "eligibleDate": 2025-06-19T00:00:00.000Z,
+      "sentenceType": "PAROLE",
+    },
+  },
+  "stateCode": "US_ID",
+}
+`;

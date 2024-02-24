@@ -9,54 +9,9 @@
   "repository": "git@github.com:Recidiviz/pulse-dashboards.git",
   "author": "Recidiviz <team@recidiviz.org>",
   "license": "GNU General Public License v3",
-  "scripts": {
-    "start": "node server.js",
-    "build": "source ./load_environment.sh env_production && ./load_config_files.sh && react-scripts build",
-    "build-staging-no-config-files": "source ./load_environment.sh env_staging && react-scripts build",
-    "build-staging": "./load_config_files.sh && yarn build-staging-no-config-files",
-    "build-demo": "source ./load_environment.sh env_staging_demo && ./load_config_files.sh && react-scripts build",
-    "build-e2e": "env-cmd -f .env.offline react-scripts build",
-    "test-e2e-lantern": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite lantern --retry 2",
-    "test-e2e-login": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite login --retry 2",
-    "test-e2e-users": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite userAccess --retry 2",
-    "test-e2e-workflows": "env-cmd -f .env.offline wdio ./wdio.conf.js --suite workflows --retry 2",
-    "test-react": "TZ=UTC react-scripts test --resetMocks=false --verbose=false",
-    "test-server": "TZ=UTC jest ./server --setupFilesAfterEnv ./server/setupTests.js --resetMocks=false --runInBand",
-    "test-filters": "TZ=UTC jest ./shared-filters --resetMocks=false",
-    "test-firestore": "TZ=UTC firebase emulators:exec --only firestore 'yarn jest ./firestore-config --env=node'",
-    "test-zod": "source ./load_environment.sh env_dev_server && ts-node tools/testZodSchema.ts",
-    "load-demo-fixtures": "source ./load_environment.sh env_dev_server && ts-node tools/loadWorkflowsFixtures.ts",
-    "test": "yarn test-server && yarn test-filters && yarn test-react",
-    "lint": "tsc && eslint '**/*.{js,ts,tsx}'",
-    "redis-server": "redis-server --port 6380",
-    "server": "nodemon server.js",
-    "dev": "./load_config_files.sh && npm-run-all --parallel spa server:dev",
-    "spa": "source ./load_environment.sh env_dev_spa && react-scripts start",
-    "server:dev": "source ./load_environment.sh env_dev_server && npm-run-all --parallel server redis-server",
-    "dev:be": "npm-run-all --parallel spa:be server:dev",
-    "spa:be": "source ./load_environment.sh env_dev_spa,env_dev_be_spa && react-scripts start",
-    "demo": "npm-run-all --parallel spa:demo server:demo",
-    "spa:demo": "source ./load_environment.sh env_dev_spa,env_dev_demo_spa && react-scripts start",
-    "server:demo": "source ./load_environment.sh env_dev_server,env_dev_demo_server && npm-run-all --parallel server redis-server",
-    "offline": "env-cmd -f .env.offline npm-run-all --parallel spa:offline server redis-server firebase-offline",
-    "spa:offline": "env-cmd -f .env.offline react-scripts start",
-    "server:offline": "env-cmd -f .env.offline npm-run-all --parallel server redis-server firebase-offline",
-    "offline:be": "npm-run-all --parallel pathways-backend offline",
-    "pull-pathways-backend": "docker compose pull case_triage_backend",
-    "pathways-backend": "sh tools/run_pathways_backend.sh",
-    "sync-content": "source ./load_environment.sh env_sync_content && ts-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",
-    "verify-feature-variant-documentation": "source ./load_environment.sh env_sync_content && ts-node tools/verifyFeatureVariantDocumentation.ts",
-    "firebase-emulator": "firebase --project=demo-dev emulators:start --import firestore-config/emulator-fixtures",
-    "update-workflows-fixture": "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'NODE_OPTIONS=\"--unhandled-rejections=strict\" ts-node tools/loadWorkflowsFixtures.ts'",
-    "firebase-offline": "run-s update-workflows-fixture firebase-emulator",
-    "update-rules-staging": "firebase --project=staging-backend deploy --only firestore:rules",
-    "update-rules-production": "firebase --project=production-backend deploy --only firestore:rules",
-    "deploy": "node ./tools/deploy.mjs",
-    "load-prod-fixtures": "ts-node tools/loadProdTestFixtures.mjs",
-    "pdfformfiller-boilerplate": "ts-node tools/pdfFormFillerBoilerplate.mjs",
-    "update-missing-snooze-staging": "source ./load_environment.sh env_dev_server && ts-node tools/updateMissingSnooze.ts",
-    "update-missing-snooze-local": "source ./load_environment.sh env_dev_demo_server && ts-node tools/updateMissingSnooze.ts"
-  },
+  "workspaces": [
+    "apps/staff"
+  ],
   "dependencies": {
     "@artsy/to-title-case": "^1.1.0",
     "@auth0/auth0-spa-js": "^1.12.1",
@@ -189,7 +144,7 @@
     "sass": "^1.52.2",
     "sass-graph": "^2.2.4",
     "semiotic": "1.20.6",
-    "shared-filters": "file:./shared-filters",
+    "shared-filters": "file:./apps/staff/shared-filters",
     "simplur": "^3.0.1",
     "styled-components": "^5.2.1",
     "supertest": "^6.0.1",
@@ -209,9 +164,11 @@
     "@google-cloud/firestore": "^6.3.0",
     "@google-cloud/secret-manager": "^4.2.1",
     "@juggle/resize-observer": "^3.4.0",
+    "@nx/eslint": "18.0.2",
+    "@nx/eslint-plugin": "18.0.2",
+    "@nx/js": "18.0.2",
+    "@nx/workspace": "18.0.2",
     "@octokit/rest": "^19.0.7",
-    "@recidiviz/eslint-config": "^3.0.0",
-    "@recidiviz/tsconfig": "^2.0.0",
     "@testing-library/dom": "^8.19.0",
     "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^12.0.0",
@@ -245,16 +202,20 @@
     "coveralls": "^3.1.0",
     "devtools": "^7.27.0",
     "enzyme": "^3.11.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-wdio": "^7.0.0",
     "google-auth-library": "^8.7.0",
     "google-spreadsheet": "^4.1.1",
-    "husky": "^4.2.3",
+    "husky": "^9.0.11",
     "inquirer": "^9.1.5",
     "jest-axe": "^8.0.0",
     "jest-canvas-mock": "^2.3.0",
     "jest-extended": "^3.2.0",
-    "lint-staged": "^10.0.9",
+    "jest-styled-components": "^7.2.0",
+    "lint-staged": "^15.2.2",
     "nodemon": "^2.0.4",
+    "nx": "18.0.2",
+    "prettier": "^3.2.5",
     "prompts": "^2.4.2",
     "react-scripts": "^5.0.1",
     "react-textarea-autosize": "^8.3.4",
@@ -265,48 +226,6 @@
     "utility-types": "^3.10.0",
     "yarn": "^1.22.13",
     "zx": "^7.2.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.js": "eslint --fix",
-    "**/*.{ts,tsx}": [
-      "bash -c tsc",
-      "eslint --fix"
-    ],
-    "**/*.json": "prettier -w"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version",
-      "ie 11"
-    ]
-  },
-  "jest": {
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|scss|sass)$": "<rootDir>/__mocks__/styleMock.js",
-      "test-service-account.json": "<rootDir>/__mocks__/test-service-account.json"
-    },
-    "collectCoverageFrom": [
-      "server/**/*.js",
-      "!src/auth0/rules/*.js",
-      "src/**/*.js"
-    ],
-    "testMatch": [
-      "**/__tests__/**/!(testUtils).[jt]s?(x)",
-      "**/?(*.)+(spec|test).[jt]s?(x)"
-    ]
   },
   "resolutions": {
     "eslint-plugin-react": "^7.31.11",
@@ -324,5 +243,8 @@
     "icss-utils": "^5.1.0",
     "@types/react": "^17.0.38",
     "stream-shift": "^1.0.2"
+  },
+  "scripts": {
+    "prepare": "husky"
   }
 }

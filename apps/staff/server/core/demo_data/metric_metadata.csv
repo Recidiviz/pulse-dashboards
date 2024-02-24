@@ -1,0 +1,10 @@
+metric,last_updated
+LibertyToPrisonTransitions,2022-01-01
+PrisonPopulationByDimension,2022-01-02
+PrisonPopulationOverTime,2022-01-03
+PrisonPopulationPersonLevel,2022-01-04
+PrisonToSupervisionTransitions,2022-01-05
+SupervisionPopulationByDimension,2022-01-06
+SupervisionPopulationOverTime,2022-01-07
+SupervisionToLibertyTransitions,2022-01-08
+SupervisionToPrisonTransitions,2022-01-09

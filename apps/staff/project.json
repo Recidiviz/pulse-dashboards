@@ -1,0 +1,14 @@
+{
+  "name": "staff",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p ./tsconfig.json --noEmit",
+        "cwd": "{projectRoot}",
+        "forwardAllArgs": false
+      }
+    }
+  }
+}

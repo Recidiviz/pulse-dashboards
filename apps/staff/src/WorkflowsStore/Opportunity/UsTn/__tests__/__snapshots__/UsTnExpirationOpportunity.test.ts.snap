@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "180 days past expiration date (Feb 2, 2022)",
+    "tooltip": undefined,
+  },
+  Object {
+    "text": "No zero tolerance codes since most recent sentence imposed date",
+  },
+  Object {
+    "text": "Not on lifetime supervision or lifetime sentence",
+  },
+]
+`;

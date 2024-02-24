@@ -10,17 +10,18 @@
 .env.test
 .env.test.local
 .env-cmdrc
+.nx
 
 # Production build directory
 build/
-/.firebase
+.firebase/
 
 # Dependency directory
 node_modules/
-/.pnp
+.pnp
 .pnp.js
-/.config
-/.yarn
+.config
+.yarn
 
 # Code coverage directory
 coverage/
@@ -54,7 +55,7 @@ dump.rdb
 *.tsbuildinfo
 
 # fixtures for offline mode
-firestore-config/emulator-fixtures
+emulator-fixtures
 
 # ignore vim swap files
 *.sw[a-z]
