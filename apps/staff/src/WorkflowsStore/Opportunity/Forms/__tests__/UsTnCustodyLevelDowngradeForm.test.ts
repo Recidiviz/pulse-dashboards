@@ -79,6 +79,7 @@ function createTestUnit() {
         { incompatibleOffenderId: "3", incompatibleType: "O" },
       ],
       statusAtHearingSeg: "GEN",
+      latestVantageCompletedDate: new Date("2022-02-23"),
     },
     eligibleCriteria: {
       custodyLevelHigherThanRecommended: {
@@ -128,7 +129,8 @@ const baseResult: PartialFormData = {
   hasIncompatibles: true,
   incompatiblesList: "1, 2, 3",
   statusAtHearing: "GEN",
-  recommendationJustification: "Level of Care: LOC",
+  recommendationJustification:
+    "Level of Care: LOC\nLatest Vantage Risk Assessment Date: 2/23/22",
 };
 
 beforeEach(() => {
