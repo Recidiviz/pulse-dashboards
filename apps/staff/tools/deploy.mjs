@@ -189,6 +189,7 @@ const deployBackendPrompt = await inquirer.prompt({
 
 if (deployBackendPrompt.deployBackend) {
   const gaeVersion = nextVersion.replaceAll(".", "-");
+  cd("../..")
   let retryBackend = false;
   do {
     try {
@@ -225,7 +226,10 @@ if (deployBackendPrompt.deployBackend) {
       retryBackend = retryBackendPrompt.retryBackend;
     }
   } while (retryBackend);
+
+  cd("apps/staff")
 }
+
 
 const deployFrontendPrompt = await inquirer.prompt({
   type: "confirm",

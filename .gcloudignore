@@ -43,3 +43,6 @@ coverage/
 # Offline fixture files
 server/core/demo_data/*.json
 server/core/demo_data/*.txt
+
+# Dev tooling 
+.nx

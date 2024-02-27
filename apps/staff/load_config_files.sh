@@ -28,8 +28,8 @@ echo "${auth_config_production}" > ./src/auth_config_production.json
 # update GAE yaml files
 echo "Update GAE yaml files..."
 gae_staging=$(gcloud secrets versions access latest --secret=env_gae_staging --project recidiviz-dashboard-staging)
-echo "${gae_staging}" > ./gae-staging.yaml
+echo "${gae_staging}" > ../../gae-staging.yaml
 gae_staging_demo=$(gcloud secrets versions access latest --secret=env_gae_staging_demo --project recidiviz-dashboard-staging)
-echo "${gae_staging_demo}" > ./gae-staging-demo.yaml
+echo "${gae_staging_demo}" > ../../gae-staging-demo.yaml
 gae_production=$(gcloud secrets versions access latest --secret=env_gae_production --project recidiviz-dashboard-staging)
-echo "${gae_production}" > ./gae-production.yaml
+echo "${gae_production}" > ../../gae-production.yaml
