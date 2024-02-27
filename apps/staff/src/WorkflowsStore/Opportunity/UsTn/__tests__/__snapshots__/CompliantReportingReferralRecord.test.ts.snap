@@ -23,6 +23,7 @@ Object {
     "usTnNoArrestsInPastYear": Object {},
     "usTnNoHighSanctionsInPastYear": Object {},
     "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNoZeroToleranceCodesSpans": null,
     "usTnNotServingIneligibleCrOffense": Object {},
     "usTnOnEligibleLevelForSufficientTime": Object {
       "eligibleDate": 2020-08-01T00:00:00.000Z,
@@ -113,7 +114,6 @@ Object {
   "stateCode": "US_TN",
   "supervisionType": "TN PROBATIONER",
   "tdocId": "202",
-  "zeroToleranceCodes": Array [],
 }
 `;
 
@@ -146,6 +146,7 @@ Object {
     "usTnNoArrestsInPastYear": Object {},
     "usTnNoHighSanctionsInPastYear": Object {},
     "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNoZeroToleranceCodesSpans": null,
     "usTnNotServingIneligibleCrOffense": Object {},
     "usTnOnEligibleLevelForSufficientTime": Object {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
@@ -248,6 +249,5 @@ Object {
   "stateCode": "US_TN",
   "supervisionType": "TN PROBATIONER",
   "tdocId": "202",
-  "zeroToleranceCodes": Array [],
 }
 `;

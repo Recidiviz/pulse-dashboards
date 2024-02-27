@@ -146,6 +146,7 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
           latestDrugScreenResult: "DRUN",
         },
       },
+      usTnNoZeroToleranceCodesSpans: null,
     },
     ineligibleCriteria: {},
     formInformation: {
@@ -177,9 +178,6 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
 
     // Eligible with discretion: Previous zero-tolerance codes
     eligibilityCategory: "c3",
-    zeroToleranceCodes: [
-      { contactNoteDate: parseISO("2022-06-01"), contactNoteType: "ZTVR" },
-    ],
 
     // TODO(#3587): Make this actually be eligible with discretion
     eligibleCriteria: {
@@ -215,6 +213,10 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
           latestDrugScreenDate: parseISO("2022-01-04"),
           latestDrugScreenResult: "DRUN",
         },
+      },
+      // Eligible with discretion: Previous zero-tolerance codes
+      usTnNoZeroToleranceCodesSpans: {
+        zeroToleranceCodeDates: [parseISO("2022-06-01")],
       },
     },
     ineligibleCriteria: {},
@@ -286,6 +288,7 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
           latestDrugScreenResult: "DRUN",
         },
       },
+      usTnNoZeroToleranceCodesSpans: null,
     },
     ineligibleCriteria: {},
     formInformation: {

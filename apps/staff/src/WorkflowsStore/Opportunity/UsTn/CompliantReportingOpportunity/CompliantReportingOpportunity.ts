@@ -256,7 +256,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       eligibilityCategory,
       lifetimeOffensesExpired,
       pastOffenses,
-      zeroToleranceCodes,
       offenseTypeEligibility,
       eligibleCriteria,
       metadata,
@@ -408,13 +407,12 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       });
     }
 
-    if (eligibilityCategory === "c3" && zeroToleranceCodes.length) {
+    const zeroToleranceCodeDates =
+      eligibleCriteria.usTnNoZeroToleranceCodesSpans?.zeroToleranceCodeDates;
+    if (zeroToleranceCodeDates?.length) {
       requirements.push({
-        text: `Eligible with discretion: Previous zero-tolerance codes ${zeroToleranceCodes
-          .map(
-            ({ contactNoteDate, contactNoteType }) =>
-              `${contactNoteType} on ${formatWorkflowsDate(contactNoteDate)}`
-          )
+        text: `Eligible with discretion: Previous zero-tolerance codes on ${zeroToleranceCodeDates
+          .map((d) => formatWorkflowsDate(d))
           .join("; ")}`,
         tooltip: CRITERIA.zeroToleranceCodes.tooltip,
       });

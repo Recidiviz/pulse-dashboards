@@ -309,6 +309,7 @@ export const usTnCompliantReportingReferrals =
             latestDrugScreenResult: "DRUN",
           },
         },
+        usTnNoZeroToleranceCodesSpans: null,
       },
       ineligibleCriteria: {},
       formInformation: {
@@ -410,6 +411,7 @@ export const usTnCompliantReportingReferrals =
             latestDrugScreenResult: "DRUN",
           },
         },
+        usTnNoZeroToleranceCodesSpans: null,
       },
       ineligibleCriteria: {
         usTnFinesFeesEligible: {

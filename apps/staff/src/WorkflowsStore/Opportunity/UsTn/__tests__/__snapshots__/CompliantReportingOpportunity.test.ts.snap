@@ -48,7 +48,7 @@ Array [
     "tooltip": "If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
   },
   Object {
-    "text": "Eligible with discretion: Previous zero-tolerance codes ZTVR on Jun 1, 2022",
+    "text": "Eligible with discretion: Previous zero-tolerance codes on Jun 1, 2022",
     "tooltip": "If the person has received a zero tolerance code since starting their latest supervision, they may still be eligible for compliant reporting.",
   },
   Object {

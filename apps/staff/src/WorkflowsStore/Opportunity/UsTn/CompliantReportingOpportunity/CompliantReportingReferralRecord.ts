@@ -79,6 +79,11 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       // omitting hasAtLeast2NegativeDrugTestsPastYear because if they have at least 2, they have at least 1
       // omitting latestAlcoholDrugNeedLevel because it is not used in any copy
     }),
+    usTnNoZeroToleranceCodesSpans: z
+      .object({
+        zeroToleranceCodeDates: z.array(dateStringSchema).nullable(),
+      })
+      .nullable(),
   }),
   ineligibleCriteria: z.object({
     usTnOnEligibleLevelForSufficientTime: z
@@ -172,7 +177,6 @@ export type CompliantReportingReferralRecord = {
   pastOffenses: string[];
   /** Any number greater than zero indicates the client is _almost_ eligible. */
   remainingCriteriaNeeded: number;
-  zeroToleranceCodes: { contactNoteType: string; contactNoteDate: Date }[];
   offenseTypeEligibility: string;
 };
 export type CompliantReportingFinesFeesEligible =
@@ -284,6 +288,10 @@ export type CompliantReportingDraftData =
   };
 
 type RawCompliantReportingReferralRecord = DocumentData & {
+  drugScreensPastYear: {
+    result: string;
+    date: Timestamp | string;
+  }[];
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
   almostEligibleCriteria?: AlmostEligibleCriteriaRaw;
   supervisionFeeExemptionType?: string[];
@@ -313,7 +321,6 @@ export const transformCompliantReportingReferral: TransformFunction<
     lifetimeOffensesExpired,
     pastOffenses,
     remainingCriteriaNeeded,
-    zeroToleranceCodes,
     offenseTypeEligibility,
     tdocId,
     externalId,
@@ -337,6 +344,7 @@ export const transformCompliantReportingReferral: TransformFunction<
     specialConditionsTerminatedDate,
     almostEligibleCriteria,
     eligibleLevelStart,
+    zeroToleranceCodes,
     allDockets,
     expirationDate,
     sentenceLengthDays,
@@ -420,10 +428,21 @@ export const transformCompliantReportingReferral: TransformFunction<
       oldStyleSpeNote = undefined;
       break;
   }
-  const typeSafeDrugScreensPastYear = drugScreensPastYear as {
-    result: string;
-    date: Timestamp | string;
-  }[];
+  let newNoZeroToleranceCodesSpans: z.input<
+    typeof compliantReportingSchema.shape.eligibleCriteria.shape.usTnNoZeroToleranceCodesSpans
+  >;
+  if (eligibleCriteria.usTnNoZeroToleranceCodesSpans !== undefined) {
+    newNoZeroToleranceCodesSpans =
+      eligibleCriteria.usTnNoZeroToleranceCodesSpans;
+  } else if (eligibilityCategory === "c3" && zeroToleranceCodes?.length) {
+    newNoZeroToleranceCodesSpans = {
+      zeroToleranceCodeDates: zeroToleranceCodes?.map(
+        (val) => val.contactNoteDate
+      ),
+    };
+  } else {
+    newNoZeroToleranceCodesSpans = null;
+  }
 
   const newMetadata: z.input<typeof compliantReportingSchema.shape.metadata> = {
     mostRecentArrestCheck: {
@@ -446,13 +465,11 @@ export const transformCompliantReportingReferral: TransformFunction<
       },
     usTnNotServingIneligibleCrOffense: null, // This will always be null for eligible clients, and ineligible offenses aren't an almost eligible criteria
     usTnPassedDrugScreenCheck: eligibleCriteria.usTnPassedDrugScreenCheck ?? {
-      hasAtLeast1NegativeDrugTestPastYear: typeSafeDrugScreensPastYear.map(
-        (ds) => ({
-          negativeScreenDate: ds.date,
-          negativeScreenResult: ds.result,
-        })
-      ),
-      latestDrugTestIsNegative: typeSafeDrugScreensPastYear
+      hasAtLeast1NegativeDrugTestPastYear: drugScreensPastYear.map((ds) => ({
+        negativeScreenDate: ds.date,
+        negativeScreenResult: ds.result,
+      })),
+      latestDrugTestIsNegative: drugScreensPastYear
         .map((ds) => ({
           latestDrugScreenDate: ds.date,
           latestDrugScreenResult: ds.result,
@@ -463,6 +480,7 @@ export const transformCompliantReportingReferral: TransformFunction<
             : acc;
         }),
     },
+    usTnNoZeroToleranceCodesSpans: newNoZeroToleranceCodesSpans,
   };
   const newIneligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.ineligibleCriteria
@@ -592,11 +610,6 @@ export const transformCompliantReportingReferral: TransformFunction<
     lifetimeOffensesExpired,
     pastOffenses,
     remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
-    zeroToleranceCodes:
-      zeroToleranceCodes?.map(({ contactNoteDate, contactNoteType }) => ({
-        contactNoteType,
-        contactNoteDate: new Date(contactNoteDate),
-      })) ?? [],
     offenseTypeEligibility,
   };
 
