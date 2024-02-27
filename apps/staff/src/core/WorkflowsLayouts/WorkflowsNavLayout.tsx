@@ -101,8 +101,8 @@ const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
   ALL: "home",
 } as const;
 
-export const WorkflowsNavLayout: React.FC = observer(
-  function WorkflowsNavLayout({ children }) {
+export const WorkflowsNavLayout: React.FC<{ children?: React.ReactNode }> =
+  observer(function WorkflowsNavLayout({ children }) {
     const {
       currentTenantId,
       workflowsStore,
@@ -161,5 +161,4 @@ export const WorkflowsNavLayout: React.FC = observer(
         <Main isMobile={isMobile}>{children}</Main>
       </Wrapper>
     );
-  }
-);
+  });

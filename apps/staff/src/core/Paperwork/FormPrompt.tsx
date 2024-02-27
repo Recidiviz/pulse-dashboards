@@ -14,7 +14,9 @@ const PromptElement = styled.div`
   padding: ${rem(spacing.md)};
 `;
 
-export const Prompt: React.FC = ({ children }) => {
+export const Prompt: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return (
     <PromptElement className="fs-exclude">
       <Icon size={14} kind="Info" /> {children}

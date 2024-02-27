@@ -28,6 +28,7 @@ type Props = {
   title?: string;
   footer?: React.ReactElement;
   backgroundColor?: string;
+  children?: React.ReactNode;
 };
 
 const Modal: React.FC<Props> = ({
@@ -84,7 +85,7 @@ const Modal: React.FC<Props> = ({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { observable, runInAction } from "mobx";
 
 import { useRootStore } from "../../../components/StoreProvider";
@@ -56,7 +56,7 @@ test("viewed", () => {
           date: dateToTimestamp("2022-08-15"),
         },
       }}
-    />
+    />,
   );
 
   expect(useRootStoreMock).toHaveBeenCalled();
@@ -69,20 +69,20 @@ test("viewed", () => {
     screen.getByText((_, element) => {
       const elementHasText = element?.textContent === expectedText;
       const childrenDontHaveText = Array.from(element?.children || []).every(
-        (child) => child.textContent !== expectedText
+        (child) => child.textContent !== expectedText,
       );
       return elementHasText && childrenDontHaveText;
-    })
+    }),
   ).toBeInTheDocument();
 });
 
-test("no render until hydrated", () => {
+test("no render until hydrated", async () => {
   const observableOpportunity = observable({
     ...mockOpportunity,
     hydrationState: { status: "loading" },
   } as Opportunity);
   const { container } = render(
-    <WorkflowProgress opportunity={observableOpportunity} />
+    <WorkflowProgress opportunity={observableOpportunity} />,
   );
 
   expect(container).toBeEmptyDOMElement();
@@ -91,5 +91,7 @@ test("no render until hydrated", () => {
     observableOpportunity.hydrationState = { status: "hydrated" };
   });
 
-  expect(container).not.toBeEmptyDOMElement();
+  await waitFor(() => {
+    expect(container).not.toBeEmptyDOMElement();
+  });
 });

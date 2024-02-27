@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { useCallback } from "react";
+import { MouseEvent, useCallback } from "react";
 
 import { useRootStore } from "../components/StoreProvider";
 
-const useLogout = (): ((e: any) => void) => {
+const useLogout = (): ((e: MouseEvent) => void) => {
   const {
     userStore: { logout },
   } = useRootStore();
 
   const onLogout = useCallback(
-    (e) => {
+    (e: MouseEvent) => {
       e.preventDefault();
       if (logout) logout({ returnTo: window.location.origin });
     },
-    [logout]
+    [logout],
   );
 
   return onLogout;

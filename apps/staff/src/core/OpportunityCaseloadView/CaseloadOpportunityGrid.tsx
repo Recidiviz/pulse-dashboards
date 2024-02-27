@@ -46,8 +46,8 @@ const CaseloadOpportunityGrid = ({
   const itemsPerRow = isMobile ? 1 : 2;
   const rowCount = Math.ceil(items.length / itemsPerRow);
 
-  const RenderRow = useCallback(
-    ({ index, key, style }) => {
+  const RenderRow = useCallback<List["props"]["children"]>(
+    ({ index, style }) => {
       const fromIndex = index * itemsPerRow;
       const toIndex = Math.min(fromIndex + itemsPerRow, items.length);
 
@@ -63,12 +63,12 @@ const CaseloadOpportunityGrid = ({
       ));
 
       return (
-        <CaseloadOpportunityRow key={key} style={{ display: "flex", ...style }}>
+        <CaseloadOpportunityRow style={{ display: "flex", ...style }}>
           {opportunityCells}
         </CaseloadOpportunityRow>
       );
     },
-    [items, itemsPerRow]
+    [items, itemsPerRow],
   );
 
   return (
@@ -77,7 +77,7 @@ const CaseloadOpportunityGrid = ({
         <AutoSizer disableHeight>
           {({ width }) => (
             <List
-              ref={registerChild}
+              outerRef={registerChild}
               height={DEFAULT_ITEM_HEIGHT * rowCount}
               itemCount={rowCount}
               itemSize={DEFAULT_ITEM_HEIGHT}

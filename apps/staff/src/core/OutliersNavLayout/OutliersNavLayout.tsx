@@ -51,7 +51,9 @@ const Main = styled.main<{
   flex: auto;
 `;
 
-const OutliersNavLayout: React.FC = ({ children }) => {
+const OutliersNavLayout: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const { isMobile } = useIsMobile(true);
 
   const {

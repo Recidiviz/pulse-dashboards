@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 import { useLocation } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -60,7 +60,7 @@ describe("useAuth", () => {
       },
     });
 
-    expect(renderHook(() => useAuth()).result.error).toEqual(authError);
+    expect(() => renderHook(() => useAuth())).toThrowError(authError);
   });
 
   it("sets the currentTenantId for recidiviz users with a state code param", () => {
@@ -78,7 +78,7 @@ describe("useAuth", () => {
     });
     renderHook(() => useAuth());
     expect(
-      mockUseRootStore().tenantStore.setCurrentTenantId
+      mockUseRootStore().tenantStore.setCurrentTenantId,
     ).toHaveBeenCalledOnceWith("US_TN");
   });
 });

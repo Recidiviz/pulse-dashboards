@@ -57,6 +57,7 @@ const BackButton = styled.button`
 
 type NavigationBackButtonProps = {
   action: { url: string } | { onClick: () => void };
+  children?: React.ReactNode;
 };
 
 export const NavigationBackButton: FC<NavigationBackButtonProps> = ({

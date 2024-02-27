@@ -23,6 +23,7 @@ type Props = {
   icon: React.ReactElement;
   title: string;
   subtitle?: string | React.ReactElement;
+  children: React.ReactNode;
 };
 
 export const StatusMessage: React.FC<Props> = ({

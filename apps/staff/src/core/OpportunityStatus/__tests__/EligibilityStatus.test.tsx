@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { observable, runInAction } from "mobx";
 
 import { Opportunity } from "../../../WorkflowsStore";
@@ -23,21 +23,24 @@ import { dateToTimestamp } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { EligibilityStatus } from "../EligibilityStatus";
 
-test("render nothing until hydrated", () => {
+test("render nothing until hydrated", async () => {
   const observableOpportunity = observable({
     ...mockOpportunity,
     hydrationState: { status: "loading" },
   } as Opportunity);
 
   const { container } = render(
-    <EligibilityStatus opportunity={observableOpportunity} />
+    <EligibilityStatus opportunity={observableOpportunity} />,
   );
   expect(container).toBeEmptyDOMElement();
 
   runInAction(() => {
     observableOpportunity.hydrationState = { status: "hydrated" };
   });
-  expect(container).not.toBeEmptyDOMElement();
+
+  await waitFor(() => {
+    expect(container).not.toBeEmptyDOMElement();
+  });
 });
 
 test("inferred eligible", () => {
@@ -58,7 +61,7 @@ test("inferred maybe eligible", () => {
   render(
     <EligibilityStatus
       opportunity={{ ...mockOpportunity, defaultEligibility: "MAYBE" }}
-    />
+    />,
   );
   expect(screen.getByText("May be eligible")).toBeInTheDocument();
 });
@@ -80,7 +83,7 @@ describe("ineligible", () => {
   test("with reasons", () => {
     render(<EligibilityStatus opportunity={denied} includeReasons />);
     expect(
-      screen.getByText("Currently ineligible (foo, bar)")
+      screen.getByText("Currently ineligible (foo, bar)"),
     ).toBeInTheDocument();
   });
 });
@@ -95,7 +98,7 @@ test("ignore reverted denial", () => {
           updated: { by: "test@test.gov", date: dateToTimestamp("2022-03-15") },
         },
       }}
-    />
+    />,
   );
   expect(screen.queryByText("Currently ineligible")).not.toBeInTheDocument();
 });

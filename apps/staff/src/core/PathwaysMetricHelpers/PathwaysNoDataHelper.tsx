@@ -18,6 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { ReactNode } from "react";
 import styled from "styled-components/macro";
 
 import { ReactComponent as NoDataLogo } from "../../assets/static/images/no_data_logo.svg";
@@ -27,6 +28,7 @@ import { HydratablePathwaysMetric } from "../models/types";
 
 type NoDataHelperProps = {
   metric: HydratablePathwaysMetric;
+  children?: ReactNode;
 };
 
 const Wrapper = styled.div`
@@ -72,5 +74,5 @@ export const PathwaysNoDataHelper: React.FC<NoDataHelperProps> = observer(
       return <NoData />;
     }
     return <>{children}</>;
-  }
+  },
 );

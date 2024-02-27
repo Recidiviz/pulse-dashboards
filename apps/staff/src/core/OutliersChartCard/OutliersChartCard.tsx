@@ -54,6 +54,7 @@ type OutliersChartCardType = {
   subtitle?: string;
   hasLegend?: boolean;
   infoModal?: React.ReactElement;
+  children?: React.ReactNode;
 };
 
 const OutliersChartCard: React.FC<OutliersChartCardType> = ({

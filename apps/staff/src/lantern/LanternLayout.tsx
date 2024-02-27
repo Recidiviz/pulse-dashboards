@@ -47,6 +47,7 @@ const LanternLayout: React.FC = (): React.ReactElement | null => {
     <LanternStoreProvider>
       <LanternErrorBoundary>
         <div className="LanternLayout" id="app">
+          {/* @ts-expect-error Helmet component type relies on implicit children */}
           <Helmet>
             <link
               href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&display=swap"

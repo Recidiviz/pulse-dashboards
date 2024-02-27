@@ -42,7 +42,7 @@ jest.mock("../components/VerificationNeeded");
 
 jest.mock("../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
 
-const ProtectedLayoutMock = ProtectedLayout as jest.Mock;
+const ProtectedLayoutMock = ProtectedLayout as unknown as jest.Mock;
 
 describe("App tests", () => {
   const mockNotFoundId = "not-found-id";
@@ -53,10 +53,10 @@ describe("App tests", () => {
 
   (NotFound as jest.Mock).mockReturnValue(mockWithTestId(mockNotFoundId));
   (ErrorMessage as unknown as jest.Mock).mockReturnValue(
-    mockWithTestId(mockErrorId)
+    mockWithTestId(mockErrorId),
   );
   (VerificationNeeded as jest.Mock).mockReturnValue(
-    mockWithTestId(mockVerificationNeededId)
+    mockWithTestId(mockVerificationNeededId),
   );
 
   beforeEach(() => {

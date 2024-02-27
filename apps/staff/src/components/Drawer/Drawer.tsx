@@ -30,6 +30,7 @@ type Props = {
   bodyStyles?: any;
   closeButton?: boolean;
   position?: "left" | "right" | "top" | "bottom";
+  children?: React.ReactNode;
 };
 
 const Drawer: React.FC<Props> = ({
@@ -101,7 +102,7 @@ const Drawer: React.FC<Props> = ({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

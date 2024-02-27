@@ -44,7 +44,7 @@ beforeEach(() => {
 
   supervisionStore = new OutliersSupervisionStore(
     outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   outliersStore.supervisionStore = supervisionStore;
 
@@ -67,9 +67,9 @@ const renderWithRouter = (initialEntry: string, path: string) => {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <Routes>
-        <Route path={path} element={<OutliersRoute>null</OutliersRoute>} />
+        <Route path={path} element={<OutliersRoute />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 };
 
@@ -91,7 +91,7 @@ test("handles params for supervision supervisor page", () => {
     outliersUrl("supervisionSupervisor", {
       supervisorPseudoId: mockSupervisorPseudoId,
     }),
-    OUTLIERS_PATHS.supervisionSupervisor
+    OUTLIERS_PATHS.supervisionSupervisor,
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBe(mockSupervisorPseudoId);
@@ -102,7 +102,7 @@ test("supervisor restricted from another supervisor's page", () => {
     .spyOn(
       supervisionStore.outliersStore.rootStore.userStore,
       "userAppMetadata",
-      "get"
+      "get",
     )
     .mockReturnValue({
       pseudonymizedId: "hashed-abc123",
@@ -114,11 +114,11 @@ test("supervisor restricted from another supervisor's page", () => {
     outliersUrl("supervisionSupervisor", {
       supervisorPseudoId: "456xyz",
     }),
-    OUTLIERS_PATHS.supervisionSupervisor
+    OUTLIERS_PATHS.supervisionSupervisor,
   );
 
   expect(
-    screen.getByText("Page Not Found", { exact: false })
+    screen.getByText("Page Not Found", { exact: false }),
   ).toBeInTheDocument();
 });
 
@@ -128,7 +128,7 @@ test("handles params for supervision officer page", () => {
     outliersUrl("supervisionStaff", {
       officerPseudoId: mockOfficerPseudoId,
     }),
-    OUTLIERS_PATHS.supervisionStaff
+    OUTLIERS_PATHS.supervisionStaff,
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBeUndefined();
@@ -144,7 +144,7 @@ test("handles params for supervision officer metric page", () => {
       officerPseudoId: mockOfficerPseudoId,
       metricId: mockMetricId,
     }),
-    OUTLIERS_PATHS.supervisionStaffMetric
+    OUTLIERS_PATHS.supervisionStaffMetric,
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBeUndefined();
@@ -155,7 +155,7 @@ test("handles params for supervision officer metric page", () => {
 test("handles params for supervision supervisors list page", async () => {
   renderWithRouter(
     outliersUrl("supervisionSupervisorsList"),
-    OUTLIERS_PATHS.supervisionSupervisorsList
+    OUTLIERS_PATHS.supervisionSupervisorsList,
   );
 
   /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -171,7 +171,7 @@ test("supervisors restricted from supervisors list page", () => {
     .spyOn(
       supervisionStore.outliersStore.rootStore.userStore,
       "userAppMetadata",
-      "get"
+      "get",
     )
     .mockReturnValue({
       pseudonymizedId: "hashed-abc123",
@@ -181,11 +181,11 @@ test("supervisors restricted from supervisors list page", () => {
 
   renderWithRouter(
     outliersUrl("supervisionSupervisorsList"),
-    OUTLIERS_PATHS.supervisionSupervisorsList
+    OUTLIERS_PATHS.supervisionSupervisorsList,
   );
 
   expect(
-    screen.getByText("Page Not Found", { exact: false })
+    screen.getByText("Page Not Found", { exact: false }),
   ).toBeInTheDocument();
 });
 
@@ -202,7 +202,7 @@ test("handles params for client detail page", () => {
       clientPseudoId: mockClientPseudoId,
       outcomeDate: mockOutcomeDate,
     }),
-    OUTLIERS_PATHS.supervisionClientDetail
+    OUTLIERS_PATHS.supervisionClientDetail,
   );
 
   expect(supervisionStore?.supervisorPseudoId).toBeUndefined();

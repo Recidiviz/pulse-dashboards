@@ -27,7 +27,11 @@ import {
 } from "../../components/StoreProvider";
 import { OUTLIERS_PATHS, outliersUrl } from "../views";
 
-const RouteSync = observer(function RouteSync({ children }) {
+const RouteSync = observer(function RouteSync({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
   const routeParams: Record<string, string | undefined> = useParams();
   const {
     supervisorPseudoId,
@@ -60,7 +64,15 @@ const RouteSync = observer(function RouteSync({ children }) {
       }
     });
     syncParams();
-  }, [supervisionStore, loc, supervisorPseudoId, officerPseudoId, metricId, clientPseudoId, outcomeDate]);
+  }, [
+    supervisionStore,
+    loc,
+    supervisorPseudoId,
+    officerPseudoId,
+    metricId,
+    clientPseudoId,
+    outcomeDate,
+  ]);
 
   if (
     !supervisionStore?.userCanAccessAllSupervisors &&

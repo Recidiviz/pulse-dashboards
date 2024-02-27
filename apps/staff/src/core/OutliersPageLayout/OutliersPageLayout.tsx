@@ -105,6 +105,7 @@ type OutliersPageLayoutProps = {
   contentsAboveTitle?: ReactNode;
   textToHighlight?: string;
   hasSupervisionInfoModal?: boolean;
+  children?: ReactNode;
 };
 
 const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
@@ -164,7 +165,7 @@ const OutliersPageLayout: React.FC<OutliersPageLayoutProps> = ({
                       <span>{humanReadableTitleCase(item.title)}: </span>
                       {item.info}
                     </InfoItem>
-                  )
+                  ),
               )}
             </InfoSection>
           )}

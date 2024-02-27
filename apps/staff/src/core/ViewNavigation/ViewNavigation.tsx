@@ -143,7 +143,9 @@ function OperationsLink({ enabled }: OptionalLinkProps) {
   );
 }
 
-const ViewNavigation: React.FC = ({ children }) => {
+const ViewNavigation: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const { pathname } = useLocation();
   const view = pathname.split("/")[1];
   const { currentTenantId, userStore } = useCoreStore();

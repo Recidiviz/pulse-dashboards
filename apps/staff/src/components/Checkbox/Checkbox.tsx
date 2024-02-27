@@ -25,6 +25,7 @@ type Props = {
   checked: boolean;
   disabled?: boolean;
   onChange?: () => void;
+  children?: React.ReactNode;
 };
 
 const Checkbox: React.FC<Props> = ({

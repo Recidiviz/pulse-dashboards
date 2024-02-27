@@ -69,7 +69,7 @@ const columns = [
   },
 ];
 
-const createTableColumn = (column: Column) => {
+const createTableColumn = (column: Column): Column => {
   const { accessor } = column;
 
   switch (accessor) {
@@ -87,7 +87,7 @@ const createTableColumn = (column: Column) => {
             );
 
           if (value.code) return <Code>{value.code}</Code>;
-          if (value.description) return value.description;
+          if (value.description) return <>value.description</>;
 
           return <Description>NO ADDITIONAL INFORMATION AVAILABLE</Description>;
         },
@@ -95,12 +95,16 @@ const createTableColumn = (column: Column) => {
     case "eventDate":
       return {
         ...column,
-        Cell: ({ value }: { value: string }) => formatDate(new Date(value)),
+        Cell: ({ value }: { value: string }) => (
+          <>{formatDate(new Date(value))}</>
+        ),
       };
     case "metricId":
       return {
         ...column,
-        Cell: ({ value }: { value: string }) => humanReadableTitleCase(value),
+        Cell: ({ value }: { value: string }) => (
+          <>{humanReadableTitleCase(value)}</>
+        ),
       };
     default:
       return column;

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { cleanup, renderHook } from "@testing-library/react-hooks";
+import { renderHook, waitFor } from "@testing-library/react";
 
 import {
   awaitingResults,
@@ -34,7 +34,7 @@ describe("useChartData", () => {
     useRootStore.mockReturnValue({ userStore: {} });
 
     awaitingResults.mockImplementation(
-      (loading, user, awaitingApi) => awaitingApi
+      (loading, user, awaitingApi) => awaitingApi,
     );
   });
 
@@ -67,35 +67,29 @@ describe("useChartData", () => {
     });
 
     it("should load data", async () => {
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useChartData(mockUrl)
-      );
+      const { result } = renderHook(() => useChartData(mockUrl));
 
       expect(callMetricsApi).toHaveBeenCalledTimes(1);
       expect(callMetricsApi.mock.calls[0][0]).toBe(`${mockUrl}`);
 
-      await waitForNextUpdate();
-
-      expect(result.current.apiData).toEqual(expectedApiData);
-      expect(result.current.isLoading).toBeFalse();
-      expect(result.current.isError).toBeFalse();
-
-      await cleanup();
+      await waitFor(() => {
+        expect(result.current.apiData).toEqual(expectedApiData);
+        expect(result.current.isLoading).toBeFalse();
+        expect(result.current.isError).toBeFalse();
+      });
     });
 
     it("only fire one request if 2 components request same file", async () => {
-      const { result: firstResult, waitForNextUpdate } = renderHook(() =>
-        useChartData(mockUrl)
-      );
+      const { result: firstResult } = renderHook(() => useChartData(mockUrl));
       const { result: secondResult } = renderHook(() => useChartData(mockUrl));
 
-      await waitForNextUpdate();
-
-      expect(callMetricsApi).toHaveBeenCalledTimes(1);
-      expect(firstResult.current.apiData).toEqual(expectedApiData);
-      expect(firstResult.current.apiData).toEqual(secondResult.current.apiData);
-
-      await cleanup();
+      await waitFor(() => {
+        expect(callMetricsApi).toHaveBeenCalledTimes(1);
+        expect(firstResult.current.apiData).toEqual(expectedApiData);
+        expect(firstResult.current.apiData).toEqual(
+          secondResult.current.apiData,
+        );
+      });
     });
   });
 
@@ -114,13 +108,11 @@ describe("useChartData", () => {
     });
 
     it("returns isError = true", async () => {
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useChartData("anyURL", "anyFile")
-      );
-      await waitForNextUpdate();
-
-      expect(result.current.isError).toBe(true);
-      expect(result.current.apiData).toEqual({});
+      const { result } = renderHook(() => useChartData("anyURL", "anyFile"));
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+        expect(result.current.apiData).toEqual({});
+      });
     });
   });
 });

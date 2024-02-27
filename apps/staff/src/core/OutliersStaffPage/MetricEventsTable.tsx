@@ -58,7 +58,7 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
     const presenter = new SupervisionOfficerMetricEventsPresenter(
       supervisionStore,
       officerPseudoId,
-      metricId
+      metricId,
     );
 
     return (
@@ -69,20 +69,23 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
   });
 }
 
-const createTableColumn = (column: Column) => {
+const createTableColumn = (column: Column): Column => {
   const { accessor } = column;
 
   switch (accessor) {
     case "clientName":
       return {
         ...column,
-        Cell: ({ value }: { value: FullName }) =>
-          `${value.givenNames} ${value.surname}`,
+        Cell: ({ value }: { value: FullName }) => (
+          <>
+            {value.givenNames} {value.surname}
+          </>
+        ),
       };
     case "eventDate":
       return {
         ...column,
-        Cell: ({ value }: { value: Date }) => formatDate(value),
+        Cell: ({ value }: { value: Date }) => <>{formatDate(value)}</>,
       };
     default:
       return column;
@@ -133,5 +136,5 @@ export const MetricEventsTable = withPresenter(
         <OutliersClientDetailsPanel />
       </>
     );
-  })
+  }),
 );

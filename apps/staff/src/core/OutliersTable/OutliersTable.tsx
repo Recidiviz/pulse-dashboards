@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import { defer } from "lodash";
 import { rem, rgba } from "polished";
-import React, {
+import {
   MutableRefObject,
   useCallback,
   useEffect,
@@ -64,7 +65,7 @@ const TR = styled.div<{ transformToMobile?: boolean }>`
   ${({ transformToMobile }) =>
     transformToMobile &&
     `flex-direction: column; gap: ${rem(spacing.xxs)}; padding: ${rem(
-      spacing.md
+      spacing.md,
     )};`}
 `;
 
@@ -120,7 +121,7 @@ const OutliersTable = <T extends object>({
   const location = useLocation();
 
   const listRef = useRef<FixedSizeList>(
-    null
+    null,
   ) as MutableRefObject<FixedSizeList>;
   useEffect(() => {
     listRef.current?.scrollToItem(scrollIndex);
@@ -138,16 +139,19 @@ const OutliersTable = <T extends object>({
       columns,
       data,
     },
-    useFlexLayout
+    useFlexLayout,
   );
 
-  const handleHideColumnWidth = useCallback((ref, width) => {
-    if (ref) {
-      hideColumn(width < TABLE_HIDE_COLUMN_WIDTH);
-    }
-  }, []);
+  const handleHideColumnWidth = useCallback(
+    (ref: WindowScroller | null, width: number) => {
+      if (ref) {
+        defer(() => hideColumn(width < TABLE_HIDE_COLUMN_WIDTH));
+      }
+    },
+    [],
+  );
 
-  const RenderRow = useCallback(
+  const RenderRow = useCallback<FixedSizeList["props"]["children"]>(
     ({ index, style }) => {
       const row = rows[index];
       prepareRow(row);
@@ -200,7 +204,7 @@ const OutliersTable = <T extends object>({
       isMobile,
       toggleHideColumn,
       hiddenColumnId,
-    ]
+    ],
   );
 
   return (

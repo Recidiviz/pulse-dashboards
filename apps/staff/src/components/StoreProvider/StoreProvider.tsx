@@ -17,7 +17,6 @@
 
 import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
-import PropTypes from "prop-types";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { OutliersStore } from "../../OutliersStore/OutliersStore";
@@ -33,40 +32,37 @@ type StoreContextType = {
 };
 
 const StoreContext = React.createContext<undefined | StoreContextType>(
-  undefined
+  undefined,
 );
 
-const StoreProvider: React.FC = observer(function StoreProvider({ children }) {
-  const { userStore } = store;
-  const [featureVariants, setFeatureVariants] = useState<FeatureVariantRecord>(
-    userStore.activeFeatureVariants
-  );
+const StoreProvider: React.FC<{ children: React.ReactNode }> = observer(
+  function StoreProvider({ children }) {
+    const { userStore } = store;
+    const [featureVariants, setFeatureVariants] =
+      useState<FeatureVariantRecord>(userStore.activeFeatureVariants);
 
-  useEffect(() => {
-    const disposer = reaction(
-      () => userStore.activeFeatureVariants,
-      (activeFeatureVariants: FeatureVariantRecord) => {
-        setFeatureVariants(activeFeatureVariants);
-      }
+    useEffect(() => {
+      const disposer = reaction(
+        () => userStore.activeFeatureVariants,
+        (activeFeatureVariants: FeatureVariantRecord) => {
+          setFeatureVariants(activeFeatureVariants);
+        },
+      );
+
+      return () => disposer();
+    }, [userStore]);
+
+    const contextValue = useMemo(() => {
+      return { store, featureVariants };
+    }, [featureVariants]);
+
+    return (
+      <StoreContext.Provider value={contextValue}>
+        {children}
+      </StoreContext.Provider>
     );
-
-    return () => disposer();
-  }, [userStore]);
-
-  const contextValue = useMemo(() => {
-    return { store, featureVariants };
-  }, [featureVariants]);
-
-  return (
-    <StoreContext.Provider value={contextValue}>
-      {children}
-    </StoreContext.Provider>
-  );
-});
-
-StoreProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+  },
+);
 
 export default StoreProvider;
 

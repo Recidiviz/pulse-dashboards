@@ -46,7 +46,7 @@ let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
   clientRecord: typeof UsTnExpirationEligibleClientRecord,
-  userRecord: CombinedUserRecord
+  userRecord: CombinedUserRecord,
 ) {
   root = new RootStore();
   jest
@@ -95,7 +95,7 @@ describe("WriteToTOMISModal", () => {
         ]}
         opportunity={opp}
         showSubmitPage
-      />
+      />,
     );
     submitButton = screen.getByRole("button", {
       name: "Submit note to eTomis",
@@ -117,34 +117,38 @@ describe("WriteToTOMISModal", () => {
   test("renders preview", () => {
     expectPreviewContents();
     expect(
-      screen.getByRole("button", { name: "Submit note to eTomis" })
+      screen.getByRole("button", { name: "Submit note to eTomis" }),
     ).toBeInTheDocument();
   });
 
-  test("renders loading", () => {
+  test("renders loading", async () => {
     updatesSub.data = {
       contactNote: {
         status: "PENDING",
       },
     };
 
-    expect(
-      screen.getByText("Submitting notes to TOMIS...")
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText("Submitting notes to TOMIS..."),
+      ).toBeInTheDocument();
 
-    expect(screen.queryByText("Betty Rubble")).not.toBeInTheDocument();
+      expect(screen.queryByText("Betty Rubble")).not.toBeInTheDocument();
+    });
   });
 
-  test("renders success", () => {
+  test("renders success", async () => {
     updatesSub.data = {
       contactNote: {
         status: "SUCCESS",
       },
     };
 
-    expect(
-      screen.getByText("2-page TEPE note successfully submitted")
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText("2-page TEPE note successfully submitted"),
+      ).toBeInTheDocument();
+    });
   });
 
   describe("failure", () => {
@@ -156,23 +160,28 @@ describe("WriteToTOMISModal", () => {
       };
     });
 
-    test("renders", () => {
+    test("renders", async () => {
       expectPreviewContents();
 
-      expect(
-        screen.getByText("Note did not submit to TOMIS")
-      ).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByText("Note did not submit to TOMIS"),
+        ).toBeInTheDocument();
+      });
     });
 
-    test("copies note", () => {
+    test("copies note", async () => {
       jest.spyOn(opp, "setCompletedIfEligible");
-      const copyButton = screen.getByRole("button", { name: "Copy page 1" });
-      expect(copyButton).toBeInTheDocument();
 
-      expect(opp.setCompletedIfEligible).not.toHaveBeenCalled();
-      fireEvent.click(copyButton);
+      await waitFor(() => {
+        const copyButton = screen.getByRole("button", { name: "Copy page 1" });
+        expect(copyButton).toBeInTheDocument();
 
-      expect(opp.setCompletedIfEligible).toHaveBeenCalled();
+        expect(opp.setCompletedIfEligible).not.toHaveBeenCalled();
+        fireEvent.click(copyButton);
+
+        expect(opp.setCompletedIfEligible).toHaveBeenCalled();
+      });
     });
   });
 
@@ -216,8 +225,8 @@ describe("WriteToTOMISModal", () => {
             noteStatus: {},
             error: "test error",
           },
-        }
-      )
+        },
+      ),
     );
   });
 
@@ -229,7 +238,7 @@ describe("WriteToTOMISModal", () => {
         1: ["page 1, line 1", "page 1, line 2"],
         2: ["page 2, line 1"],
       },
-      new Date(2023, 2, 10)
+      new Date(2023, 2, 10),
     );
 
     expect(contactNoteRequestBody).toMatchInlineSnapshot(`

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIntercom from "../useIntercom";
@@ -41,37 +41,33 @@ describe("useIntercom hook tests", () => {
     intercomId: mockIntercomId,
   };
 
-  useRootStore.mockReturnValue({
-    userStore: {
-      user: mockUser,
-      userAppMetadata: mockUserAppMetadata,
-    },
-    tenantStore: { currentTenantId: mockStateCode },
-  });
-
   const intercom = jest.fn();
   window.Intercom = intercom;
 
   let rendered;
 
-  beforeAll(() => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    useRootStore.mockReturnValue({
+      userStore: {
+        user: mockUser,
+        userAppMetadata: mockUserAppMetadata,
+      },
+      tenantStore: { currentTenantId: mockStateCode },
+    });
     rendered = renderHook(() => useIntercom());
   });
 
   it("should update intercom with user data", () => {
-    expect(intercom).toHaveBeenCalledTimes(1);
-    expect(intercom.mock.calls[0]).toEqual([
-      "update",
-      {
-        state_code: mockStateCode,
-        name: mockName,
-        nickname: mockNickname,
-        email: mockEmail,
-        user_id: mockUserId,
-        user_hash: mockIntercomId,
-        hide_default_launcher: false,
-      },
-    ]);
+    expect(intercom).toHaveBeenCalledWith("update", {
+      state_code: mockStateCode,
+      name: mockName,
+      nickname: mockNickname,
+      email: mockEmail,
+      user_id: mockUserId,
+      user_hash: mockIntercomId,
+      hide_default_launcher: false,
+    });
   });
 
   it("should update intercom if user data changed", () => {
@@ -86,29 +82,23 @@ describe("useIntercom hook tests", () => {
     rendered.rerender();
 
     expect(intercom).toHaveBeenCalledTimes(2);
-    expect(intercom.mock.calls[1]).toEqual([
-      "update",
-      {
-        state_code: mockStateCode,
-        name: mockNewName,
-        nickname: mockNickname,
-        email: mockEmail,
-        user_id: mockUserId,
-        user_hash: mockIntercomId,
-        hide_default_launcher: false,
-      },
-    ]);
+    expect(intercom).toHaveBeenLastCalledWith("update", {
+      state_code: mockStateCode,
+      name: mockNewName,
+      nickname: mockNickname,
+      email: mockEmail,
+      user_id: mockUserId,
+      user_hash: mockIntercomId,
+      hide_default_launcher: false,
+    });
   });
 
   it("should hide intercom on unmount", () => {
     rendered.unmount();
 
-    expect(intercom).toHaveBeenCalledTimes(3);
-    expect(intercom.mock.calls[2]).toEqual([
-      "update",
-      {
-        hide_default_launcher: true,
-      },
-    ]);
+    expect(intercom).toHaveBeenCalledTimes(2);
+    expect(intercom).toHaveBeenLastCalledWith("update", {
+      hide_default_launcher: true,
+    });
   });
 });

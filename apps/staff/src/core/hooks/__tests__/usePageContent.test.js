@@ -17,7 +17,7 @@
  * =============================================================================
  *
  */
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook } from "@testing-library/react";
 import { runInAction } from "mobx";
 import React from "react";
 
@@ -56,7 +56,7 @@ describe("Tests for usePageContent()", () => {
     testPageContent(
       "supervisionToLiberty",
       "Supervision to Liberty",
-      "Default supervision to liberty summary"
+      "Default supervision to liberty summary",
     );
   });
 
@@ -70,7 +70,7 @@ describe("Tests for usePageContent()", () => {
     testPageContent(
       "supervisionToLiberty",
       "Supervision to Liberty",
-      "Default supervision to liberty summary"
+      "Default supervision to liberty summary",
     );
   });
 });

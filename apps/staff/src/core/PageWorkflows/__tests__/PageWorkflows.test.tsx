@@ -86,7 +86,7 @@ jest.mock("../../WorkflowsLayouts", () => {
   };
 });
 
-const mockUseRootStore = useRootStore as jest.Mock;
+const mockUseRootStore = useRootStore as unknown as jest.Mock;
 
 function mockWorkflowsStore(mockStore: any) {
   mockUseRootStore.mockReturnValue({
@@ -101,7 +101,7 @@ function renderRouter(relativePath?: string) {
       <Routes>
         <Route path="/workflows/*" element={<PageWorkflows />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -119,13 +119,13 @@ describe("PageWorkflows", () => {
 
   describe("IE11", () => {
     it("attempts to hydrate the workflows models when not on IE11", () => {
-      (isIE11 as jest.Mock).mockReturnValue(false);
+      (isIE11 as unknown as jest.Mock).mockReturnValue(false);
       render(<PageWorkflows />);
       expect(useRootStore().workflowsStore.hydrate).toHaveBeenCalledTimes(1);
     });
 
     it("does not attempt to hydrate the workflows models when on IE11", () => {
-      (isIE11 as jest.Mock).mockReturnValue(true);
+      (isIE11 as unknown as jest.Mock).mockReturnValue(true);
       render(<PageWorkflows />);
       expect(useRootStore().workflowsStore.hydrate).toHaveBeenCalledTimes(0);
     });
@@ -133,7 +133,7 @@ describe("PageWorkflows", () => {
 
   describe("Workflows user data", () => {
     beforeEach(() => {
-      (isIE11 as jest.Mock).mockReturnValue(false);
+      (isIE11 as unknown as jest.Mock).mockReturnValue(false);
       baseMockWorkflowsStore = {
         hydrate: jest.fn().mockReturnValue(jest.fn()),
         hydrationState: { status: "needs hydration" },
@@ -151,7 +151,7 @@ describe("PageWorkflows", () => {
     it("is unobserved on component unmount", () => {
       const { unmount } = render(<PageWorkflows />);
       expect(
-        baseMockWorkflowsStore.stopKeepingUserObserved
+        baseMockWorkflowsStore.stopKeepingUserObserved,
       ).not.toHaveBeenCalled();
       unmount();
       expect(baseMockWorkflowsStore.stopKeepingUserObserved).toHaveBeenCalled();
@@ -175,11 +175,11 @@ describe("PageWorkflows", () => {
         keepUserObserved: jest.fn(),
         stopKeepingUserObserved: jest.fn(),
       };
-      (WorkflowsHomepage as jest.Mock).mockReturnValue(
-        <div>Workflows Homepage</div>
+      (WorkflowsHomepage as unknown as jest.Mock).mockReturnValue(
+        <div>Workflows Homepage</div>,
       );
-      (WorkflowsFormLayout as jest.Mock).mockReturnValue(
-        <div>Opportunity Action Page</div>
+      (WorkflowsFormLayout as unknown as jest.Mock).mockReturnValue(
+        <div>Opportunity Action Page</div>,
       );
     });
 
@@ -203,8 +203,8 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "milestones",
       });
-      (WorkflowsMilestones as jest.Mock).mockReturnValue(
-        <div>Workflows Milestones Page</div>
+      (WorkflowsMilestones as unknown as jest.Mock).mockReturnValue(
+        <div>Workflows Milestones Page</div>,
       );
       renderRouter(WORKFLOWS_PATHS.milestones);
       expect(screen.getByText("Workflows Milestones Page")).toBeInTheDocument();
@@ -216,7 +216,9 @@ describe("PageWorkflows", () => {
         activePage: "clientProfile",
       });
 
-      (FullProfile as jest.Mock).mockReturnValue(<div>Client FullProfile</div>);
+      (FullProfile as unknown as jest.Mock).mockReturnValue(
+        <div>Client FullProfile</div>,
+      );
       renderRouter(`${WORKFLOWS_PATHS.caseloadClients}/101`);
 
       expect(screen.getByText("Client FullProfile")).toBeInTheDocument();
@@ -227,8 +229,8 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "residentProfile",
       });
-      (FullProfile as jest.Mock).mockReturnValue(
-        <div>Resident FullProfile</div>
+      (FullProfile as unknown as jest.Mock).mockReturnValue(
+        <div>Resident FullProfile</div>,
       );
       renderRouter(`${WORKFLOWS_PATHS.caseloadResidents}/101`);
 
@@ -240,8 +242,8 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "caseloadClients",
       });
-      (CaseloadView as jest.Mock).mockReturnValue(
-        <div>Client CaseloadView</div>
+      (CaseloadView as unknown as jest.Mock).mockReturnValue(
+        <div>Client CaseloadView</div>,
       );
       renderRouter(WORKFLOWS_PATHS.caseloadClients);
 
@@ -253,8 +255,8 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "caseloadResidents",
       });
-      (CaseloadView as jest.Mock).mockReturnValue(
-        <div>Resident CaseloadView</div>
+      (CaseloadView as unknown as jest.Mock).mockReturnValue(
+        <div>Resident CaseloadView</div>,
       );
       renderRouter(WORKFLOWS_PATHS.caseloadResidents);
 
@@ -266,7 +268,9 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "tasks",
       });
-      (WorkflowsTasks as jest.Mock).mockReturnValue(<div>Tasks</div>);
+      (WorkflowsTasks as unknown as jest.Mock).mockReturnValue(
+        <div>Tasks</div>,
+      );
       renderRouter(WORKFLOWS_PATHS.tasks);
 
       expect(screen.getByText("Tasks")).toBeInTheDocument();
@@ -277,8 +281,8 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "opportunityClients",
       });
-      (OpportunityCaseloadView as jest.Mock).mockReturnValue(
-        <div>Opportunity Caseload View</div>
+      (OpportunityCaseloadView as unknown as jest.Mock).mockReturnValue(
+        <div>Opportunity Caseload View</div>,
       );
 
       renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
@@ -315,14 +319,18 @@ describe("PageWorkflows", () => {
         keepUserObserved: jest.fn(),
         stopKeepingUserObserved: jest.fn(),
       };
-      (WorkflowsTasks as jest.Mock).mockReturnValue(<div>Tasks Page</div>);
-      (OpportunityCaseloadView as jest.Mock).mockReturnValue(
-        <div>Opportunity Caseload View</div>
+      (WorkflowsTasks as unknown as jest.Mock).mockReturnValue(
+        <div>Tasks Page</div>,
       );
-      (WorkflowsHomepage as jest.Mock).mockReturnValue(
-        <div>Workflows Homepage</div>
+      (OpportunityCaseloadView as unknown as jest.Mock).mockReturnValue(
+        <div>Opportunity Caseload View</div>,
       );
-      (FullProfile as jest.Mock).mockReturnValue(<div>Full profile</div>);
+      (WorkflowsHomepage as unknown as jest.Mock).mockReturnValue(
+        <div>Workflows Homepage</div>,
+      );
+      (FullProfile as unknown as jest.Mock).mockReturnValue(
+        <div>Full profile</div>,
+      );
     });
 
     afterEach(() => {
@@ -337,7 +345,7 @@ describe("PageWorkflows", () => {
         renderRouter(WORKFLOWS_PATHS.tasks);
 
         expect(
-          useRootStore().workflowsStore.updateActiveSystem
+          useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("SUPERVISION");
       });
     });
@@ -350,7 +358,7 @@ describe("PageWorkflows", () => {
         renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
 
         expect(
-          useRootStore().workflowsStore.updateActiveSystem
+          useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("SUPERVISION");
       });
 
@@ -361,7 +369,7 @@ describe("PageWorkflows", () => {
         renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
 
         expect(
-          useRootStore().workflowsStore.updateActiveSystem
+          useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("INCARCERATION");
       });
 
@@ -372,7 +380,7 @@ describe("PageWorkflows", () => {
         renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
 
         expect(
-          useRootStore().workflowsStore.updateSelectedOpportunityType
+          useRootStore().workflowsStore.updateSelectedOpportunityType,
         ).toHaveBeenCalledWith("usTnCustodyLevelDowngrade");
       });
     });
@@ -385,7 +393,7 @@ describe("PageWorkflows", () => {
         });
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
-          useRootStore().workflowsStore.updateActiveSystem
+          useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("INCARCERATION");
       });
 
@@ -395,7 +403,7 @@ describe("PageWorkflows", () => {
         });
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
-          useRootStore().workflowsStore.updateSelectedOpportunityType
+          useRootStore().workflowsStore.updateSelectedOpportunityType,
         ).toHaveBeenCalledWith(undefined);
       });
 
@@ -406,7 +414,7 @@ describe("PageWorkflows", () => {
         });
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
-          screen.getByText("Opportunity Caseload View")
+          screen.getByText("Opportunity Caseload View"),
         ).toBeInTheDocument();
       });
 
@@ -428,7 +436,7 @@ describe("PageWorkflows", () => {
         });
         renderRouter(`${WORKFLOWS_PATHS.workflows}/clients/p101`);
         expect(
-          useRootStore().workflowsStore.updateSelectedPerson
+          useRootStore().workflowsStore.updateSelectedPerson,
         ).toHaveBeenCalledWith("p101");
       });
     });

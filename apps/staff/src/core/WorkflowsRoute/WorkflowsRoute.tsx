@@ -48,7 +48,11 @@ function parseLocation(loc: RouterLocation): WorkflowsRouteParams {
   return { page, personId };
 }
 
-const RouteSync = observer(function RouteSync({ children }) {
+const RouteSync = observer(function RouteSync({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
   const { workflowsStore, currentTenantId } = useRootStore();
   const loc = useLocation();
 
@@ -76,7 +80,7 @@ const RouteSync = observer(function RouteSync({ children }) {
               page
             ];
           workflowsStore.updateActiveSystem(
-            getSystemIdFromOpportunityType(opportunityType)
+            getSystemIdFromOpportunityType(opportunityType),
           );
           workflowsStore.updateSelectedOpportunityType(opportunityType);
         } else {
@@ -117,7 +121,7 @@ const RouteSync = observer(function RouteSync({ children }) {
               setRedirectPath(
                 workflowsUrl("opportunityClients", {
                   opportunityType: opportunityTypes[0],
-                })
+                }),
               );
             } else {
               setRedirectPath(workflowsUrl(homepage));
@@ -125,7 +129,7 @@ const RouteSync = observer(function RouteSync({ children }) {
           });
         }
       }),
-    [loc, workflowsStore, currentTenantId, previousLocContainedPersonId]
+    [loc, workflowsStore, currentTenantId, previousLocContainedPersonId],
   );
 
   if (notFound) {

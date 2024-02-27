@@ -38,12 +38,12 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
         data,
       },
       useSortBy,
-      useFlexLayout
+      useFlexLayout,
     );
 
   const scrollBarSize = useMemo(() => getScrollBarWidth(), []);
 
-  const RenderRow = useCallback(
+  const RenderRow = useCallback<List["props"]["children"]>(
     ({ index, style }) => {
       const row = rows[index];
       prepareRow(row);
@@ -56,7 +56,7 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
                 {...cell.getCellProps(
                   ["Age", "Facility"].includes(String(cell.column.Header))
                     ? { style: { wordSpacing: "100vw" } }
-                    : {}
+                    : {},
                 )}
               >
                 {cell.render("Cell")}
@@ -66,7 +66,7 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
         </div>
       );
     },
-    [prepareRow, rows]
+    [prepareRow, rows],
   );
 
   const getItemSize = (index: number) => {
@@ -105,7 +105,7 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
                           {
                             "VitalsSummaryTable__sort__button--active":
                               column.isSorted && column.isSortedDesc,
-                          }
+                          },
                         )}
                       />
                       <div
@@ -114,7 +114,7 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
                           {
                             "VitalsSummaryTable__sort__button--active":
                               column.isSorted && !column.isSortedDesc,
-                          }
+                          },
                         )}
                       />
                     </div>

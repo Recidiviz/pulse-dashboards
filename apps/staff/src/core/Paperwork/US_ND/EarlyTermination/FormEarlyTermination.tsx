@@ -100,7 +100,9 @@ const FormTransformContainer = styled.section`
   max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
 `;
 
-export const FormSkeleton: React.FC = ({ children }) => {
+export const FormSkeleton: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
   const {

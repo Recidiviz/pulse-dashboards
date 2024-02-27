@@ -30,6 +30,7 @@ type Props = {
   className?: string;
   legend?: React.ReactNode;
   withPadding?: boolean;
+  children?: React.ReactNode;
 };
 
 const VizPathways: React.FC<Props> = ({

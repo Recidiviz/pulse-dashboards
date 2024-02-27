@@ -23,6 +23,7 @@ import useOnClickOutside from "use-onclickoutside";
 
 type Props = {
   expand?: boolean;
+  children?: React.ReactNode;
 };
 
 const DetailsGroup: React.FC<Props> = ({ expand, children }) => {
