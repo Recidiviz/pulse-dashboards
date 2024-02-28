@@ -465,7 +465,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
                       </title>
                       <mask
                         height="80"
-                        id="mask__marble"
+                        id=":r2:"
                         maskUnits="userSpaceOnUse"
                         width="80"
                         x="0"
@@ -479,7 +479,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
                         />
                       </mask>
                       <g
-                        mask="url(#mask__marble)"
+                        mask="url(#:r2:)"
                       >
                         <rect
                           fill="#90aeb5"
@@ -1051,7 +1051,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
                       </title>
                       <mask
                         height="80"
-                        id="mask__marble"
+                        id=":r1:"
                         maskUnits="userSpaceOnUse"
                         width="80"
                         x="0"
@@ -1065,7 +1065,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
                         />
                       </mask>
                       <g
-                        mask="url(#mask__marble)"
+                        mask="url(#:r1:)"
                       >
                         <rect
                           fill="#90aeb5"
@@ -1841,7 +1841,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
                       </title>
                       <mask
                         height="80"
-                        id="mask__marble"
+                        id=":r0:"
                         maskUnits="userSpaceOnUse"
                         width="80"
                         x="0"
@@ -1855,7 +1855,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
                         />
                       </mask>
                       <g
-                        mask="url(#mask__marble)"
+                        mask="url(#:r0:)"
                       >
                         <rect
                           fill="#90aeb5"
@@ -2525,7 +2525,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
                       </title>
                       <mask
                         height="80"
-                        id="mask__marble"
+                        id=":r3:"
                         maskUnits="userSpaceOnUse"
                         width="80"
                         x="0"
@@ -2539,7 +2539,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
                         />
                       </mask>
                       <g
-                        mask="url(#mask__marble)"
+                        mask="url(#:r3:)"
                       >
                         <rect
                           fill="#90aeb5"

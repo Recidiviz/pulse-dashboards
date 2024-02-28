@@ -41,7 +41,7 @@
     "acorn": "^6.0.7",
     "assert-never": "^1.2.1",
     "bootstrap": "^4.6.2",
-    "boring-avatars": "^1.6.3",
+    "boring-avatars": "^1.10.1",
     "build-url": "^6.0.1",
     "cache-manager": "^3.6.1",
     "cache-manager-ioredis": "^2.1.0",

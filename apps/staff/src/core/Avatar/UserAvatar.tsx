@@ -47,7 +47,7 @@ const AvatarElement = styled.div(
     border-radius: 8px;
 
   }
-`
+`,
 );
 
 export const AvatarInitials = styled.div`
@@ -93,6 +93,8 @@ const UserAvatar: React.FC<AvatarProps> = ({ size = 32 }) => {
           name={user.name}
           colors={palette.data.defaultOrder}
           square
+          // @ts-ignore the title prop is missing from the package's types
+          title // required for axe compliance
         />
 
         <AvatarInitials>

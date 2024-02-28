@@ -47,7 +47,7 @@ const AvatarElement = styled.div(
       left: 0;
       position: absolute;
     }
-  `
+  `,
 );
 
 const AvatarInitials = styled(Sans14)<{ size: number }>`
@@ -87,6 +87,8 @@ export const PersonInitialsAvatar: React.FC<AvatarProps> = ({
         name={initials}
         colors={palette.data.defaultOrder}
         square={square}
+        // @ts-ignore the title prop is missing from the package's types
+        title // required for axe compliance
       />
       <AvatarInitials className="fs-exclude" size={size}>
         {initials}
