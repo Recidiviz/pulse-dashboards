@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="h-100">
   <head>
     <meta charset="utf-8" />
@@ -105,14 +105,14 @@
       const isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
       if (isIE11) {
         document.write(
-          '<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"><\/script>'
+          '<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"><\/script>',
         );
         document.write(
-          '<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.svg.min.js"><\/script>'
+          '<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.svg.min.js"><\/script>',
         );
       } else {
         document.write(
-          '<script src="https://unpkg.com/html2canvas@1.0.0-rc.1/dist/html2canvas.js" integrity="sha256-Qo98toXuki/Fd6k4h2SQCsOmggjweKsAiuYeXQewZoU=" crossorigin="anonymous"><\/script>'
+          '<script src="https://unpkg.com/html2canvas@1.0.0-rc.1/dist/html2canvas.js" integrity="sha256-Qo98toXuki/Fd6k4h2SQCsOmggjweKsAiuYeXQewZoU=" crossorigin="anonymous"><\/script>',
         );
       }
     </script>

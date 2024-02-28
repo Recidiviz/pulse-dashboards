@@ -50,7 +50,7 @@ const CaseloadTypeSelect = observer(
         <PillButton
           onClick={() =>
             workflowsStore.updateActiveSystem(
-              activeSystem === "SUPERVISION" ? "ALL" : "SUPERVISION"
+              activeSystem === "SUPERVISION" ? "ALL" : "SUPERVISION",
             )
           }
           active={activeSystem === "SUPERVISION"}
@@ -60,7 +60,7 @@ const CaseloadTypeSelect = observer(
         <PillButton
           onClick={() =>
             workflowsStore.updateActiveSystem(
-              activeSystem === "INCARCERATION" ? "ALL" : "INCARCERATION"
+              activeSystem === "INCARCERATION" ? "ALL" : "INCARCERATION",
             )
           }
           active={activeSystem === "INCARCERATION"}
@@ -69,7 +69,7 @@ const CaseloadTypeSelect = observer(
         </PillButton>
       </>
     );
-  }
+  },
 );
 
 export default CaseloadTypeSelect;

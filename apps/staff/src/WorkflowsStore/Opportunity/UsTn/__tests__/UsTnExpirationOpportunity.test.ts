@@ -39,7 +39,7 @@ let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
-  clientRecord: typeof UsTnExpirationEligibleClientRecord
+  clientRecord: typeof UsTnExpirationEligibleClientRecord,
 ) {
   root = new RootStore();
   jest
@@ -94,7 +94,7 @@ describe("fully eligible", () => {
 
     const actual = hydrateExpirationDateRequirementText(
       UsTnExpirationReferralRecordFixture.eligibleCriteria
-        .supervisionPastFullTermCompletionDateOrUpcoming1Day
+        .supervisionPastFullTermCompletionDateOrUpcoming1Day,
     );
 
     expect(actual).toEqual("Expiration date is today (Feb 2, 2022)");
@@ -106,7 +106,7 @@ describe("fully eligible", () => {
 
     const actual = hydrateExpirationDateRequirementText(
       UsTnExpirationReferralRecordFixture.eligibleCriteria
-        .supervisionPastFullTermCompletionDateOrUpcoming1Day
+        .supervisionPastFullTermCompletionDateOrUpcoming1Day,
     );
 
     expect(actual).toEqual("1 day past expiration date (Feb 2, 2022)");

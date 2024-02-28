@@ -129,7 +129,7 @@ describe("Test fileParser.parseResponseByFileFormat", () => {
     };
     const parsedResponse = methods.parseResponseByFileFormat(
       response,
-      "my_metric_file"
+      "my_metric_file",
     );
     expect(parsedResponse).toEqual({
       data: EXPANDED_FORMAT,
@@ -149,7 +149,7 @@ describe("Test fileParser.parseResponseByFileFormat", () => {
     const parsedResponse = methods.parseResponseByFileFormat(
       response,
       "my_metric_file",
-      false
+      false,
     );
     expect(parsedResponse).toEqual({
       data: UNFLATTENED_VALUES,
@@ -166,7 +166,7 @@ describe("Test fileParser.parseResponseByFileFormat", () => {
     };
     const parsedResponse = methods.parseResponseByFileFormat(
       response,
-      "my_metric_file"
+      "my_metric_file",
     );
     expect(parsedResponse).toEqual(response.my_metric_file);
   });

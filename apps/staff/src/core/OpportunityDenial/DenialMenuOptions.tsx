@@ -61,7 +61,7 @@ export const DenialMenuOptions = observer(function DenialMenuOptions({
             placeholder="Please specify a reason…"
             onChange={debounce(
               (event) => opportunity.setOtherReasonText(event.target.value),
-              500
+              500,
             )}
           />
         </OtherReasonInputWrapper>

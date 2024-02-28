@@ -34,13 +34,13 @@ export interface QuerySubscription<DataFormat>
     Hydratable {}
 
 export type TransformFunction<DataFormat> = (
-  rawRecord: DocumentData
+  rawRecord: DocumentData,
 ) => DataFormat;
 
 export type ValidateFunction<DataFormat> = (
-  transformedRecord: DataFormat
+  transformedRecord: DataFormat,
 ) => void;
 
 export type UpdateFunction<DocumentData> = (
-  rawRecord: DocumentData
+  rawRecord: DocumentData,
 ) => Promise<void>;

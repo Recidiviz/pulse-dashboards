@@ -48,7 +48,7 @@ describe("UserAvatar tests", () => {
     return mount(
       <Router>
         <UserAvatar />
-      </Router>
+      </Router>,
     );
   };
 
@@ -60,10 +60,10 @@ describe("UserAvatar tests", () => {
   it("renders an image when the profile icon is not from Gravatar.", () => {
     const avatar = renderAvatar(
       "Essun",
-      "https://the-fulcrum.com/avatar/indite"
+      "https://the-fulcrum.com/avatar/indite",
     );
     expect(
-      avatar.find(`${AvatarImage}`)?.prop("style")?.backgroundImage
+      avatar.find(`${AvatarImage}`)?.prop("style")?.backgroundImage,
     ).toEqual(`url("https://the-fulcrum.com/avatar/indite")`);
   });
 });

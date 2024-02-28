@@ -80,7 +80,7 @@ test("can hydrate benchmarks with missing metrics", async () => {
   await expect(flowResult(store.populateMetricConfigs())).toResolve();
 
   const techsConfig = store.metricConfigsById?.get(
-    "incarceration_starts_technical_violation"
+    "incarceration_starts_technical_violation",
   );
   expect(techsConfig).toBeDefined();
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -95,7 +95,7 @@ test("configs include benchmarks", async () => {
     expect(mc.metricBenchmarksByCaseloadType).toBeDefined();
     // both caseload types should be present for all
     expect(Array.from(mc.metricBenchmarksByCaseloadType?.keys() ?? [])).toEqual(
-      expect.arrayContaining(CASELOAD_TYPE_IDS.options)
+      expect.arrayContaining(CASELOAD_TYPE_IDS.options),
     );
   });
 
@@ -115,11 +115,13 @@ test("hydrated benchmarks can be missing caseload types", async () => {
   store.metricConfigsById?.forEach((mc) => {
     expect(
       mc.metricBenchmarksByCaseloadType?.get(
-        CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER
-      )
+        CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+      ),
     ).toBeDefined();
     expect(
-      mc.metricBenchmarksByCaseloadType?.get(CASELOAD_TYPE_IDS.enum.SEX_OFFENSE)
+      mc.metricBenchmarksByCaseloadType?.get(
+        CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+      ),
     ).toBeUndefined();
   });
 });
@@ -160,7 +162,7 @@ test("adverse metric configs", async () => {
 
   store = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
-    additionalConfigsFixture
+    additionalConfigsFixture,
   );
 
   expect(store.adverseMetricConfigsById).toBeUndefined();
@@ -185,7 +187,7 @@ test("adverse metric configs", async () => {
     expect(store.adverseMetricConfigsById?.get(m.name)).toBeDefined();
   });
   expect(
-    store.adverseMetricConfigsById?.get(favorableMetricConfig.name)
+    store.adverseMetricConfigsById?.get(favorableMetricConfig.name),
   ).toBeUndefined();
 });
 
@@ -194,10 +196,10 @@ test("hydrate supervisionOfficerSupervisors", async () => {
   expect(store.supervisionOfficerSupervisors).toBeFalsy();
 
   await expect(
-    flowResult(store.populateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors()),
   ).resolves.not.toThrow();
   expect(store.supervisionOfficerSupervisors?.length).toBe(
-    supervisionOfficerSupervisorsFixture.length
+    supervisionOfficerSupervisorsFixture.length,
   );
 });
 
@@ -205,15 +207,15 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   const testSupervisorPseudoId =
     supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
   expect(
-    store.officersBySupervisorPseudoId.has(testSupervisorPseudoId)
+    store.officersBySupervisorPseudoId.has(testSupervisorPseudoId),
   ).toBeFalse();
 
   await expect(
-    flowResult(store.populateOfficersForSupervisor(testSupervisorPseudoId))
+    flowResult(store.populateOfficersForSupervisor(testSupervisorPseudoId)),
   ).resolves.not.toThrow();
 
   expect(
-    store.officersBySupervisorPseudoId.get(testSupervisorPseudoId)
+    store.officersBySupervisorPseudoId.get(testSupervisorPseudoId),
   ).toEqual(expect.arrayContaining(supervisionOfficerFixture.slice(0, 2)));
 });
 
@@ -327,7 +329,7 @@ test("hydrateUserInfo requires pseudo ID", async () => {
     });
 
   await expect(() => store.populateUserInfo()).rejects.toThrow(
-    "Missing pseudonymizedId for user"
+    "Missing pseudonymizedId for user",
   );
 });
 
@@ -384,10 +386,10 @@ test("current supervisor user without supervisors list permission does not hydra
   await flowResult(store.populateUserInfo());
 
   await expect(
-    flowResult(store.populateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors()),
   ).toResolve();
   expect(
-    store.outliersStore.apiClient.supervisionOfficerSupervisors
+    store.outliersStore.apiClient.supervisionOfficerSupervisors,
   ).not.toHaveBeenCalled();
 });
 
@@ -409,10 +411,10 @@ test("current supervisor user with supervisors list permission does hydrate via 
   await flowResult(store.populateUserInfo());
 
   await expect(
-    flowResult(store.populateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors()),
   ).toResolve();
   expect(
-    store.outliersStore.apiClient.supervisionOfficerSupervisors
+    store.outliersStore.apiClient.supervisionOfficerSupervisors,
   ).toHaveBeenCalled();
 });
 
@@ -432,12 +434,12 @@ test("non-supervisor user without supervisors list permission errors in hydratio
   await flowResult(store.populateUserInfo());
 
   await expect(
-    flowResult(store.populateSupervisionOfficerSupervisors())
+    flowResult(store.populateSupervisionOfficerSupervisors()),
   ).rejects.toThrow(
-    "User is not a supervisor but cannot access all supervisors"
+    "User is not a supervisor but cannot access all supervisors",
   );
   expect(
-    store.outliersStore.apiClient.supervisionOfficerSupervisors
+    store.outliersStore.apiClient.supervisionOfficerSupervisors,
   ).not.toHaveBeenCalled();
 });
 
@@ -458,7 +460,7 @@ test("patch user info: set hasSeenOnboarding", async () => {
   expect(store.userInfo?.metadata.hasSeenOnboarding).toBeFalse();
 
   await flowResult(
-    store.patchUserInfoForCurrentUser({ hasSeenOnboarding: true })
+    store.patchUserInfoForCurrentUser({ hasSeenOnboarding: true }),
   );
   expect(store.userInfo?.metadata.hasSeenOnboarding).toBeTrue();
 });
@@ -473,9 +475,9 @@ test("patch user info fails for recidiviz user", async () => {
   expect(store.userInfo?.metadata.hasSeenOnboarding).toBeTrue();
 
   await expect(
-    flowResult(store.patchUserInfoForCurrentUser({ hasSeenOnboarding: false }))
+    flowResult(store.patchUserInfoForCurrentUser({ hasSeenOnboarding: false })),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"Cannot update user info for Recidiviz or CSG user"`
+    `"Cannot update user info for Recidiviz or CSG user"`,
   );
 });
 
@@ -485,7 +487,7 @@ test("look up supervisor by ID", async () => {
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];
   expect(
-    store.supervisionOfficerSupervisorByExternalId(testSupervisor.externalId)
+    store.supervisionOfficerSupervisorByExternalId(testSupervisor.externalId),
   ).toEqual(testSupervisor);
 });
 
@@ -495,7 +497,9 @@ test("look up supervisor by pseudonymized ID", async () => {
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];
   expect(
-    store.supervisionOfficerSupervisorByPseudoId(testSupervisor.pseudonymizedId)
+    store.supervisionOfficerSupervisorByPseudoId(
+      testSupervisor.pseudonymizedId,
+    ),
   ).toEqual(testSupervisor);
 });
 
@@ -512,7 +516,7 @@ test("hydrate supervisionOfficerMetricEvents", async () => {
   expect(getTestEvents()).toBeUndefined();
 
   await flowResult(
-    store.populateMetricEventsForOfficer(testOfficerPseudoId, testMetricId)
+    store.populateMetricEventsForOfficer(testOfficerPseudoId, testMetricId),
   );
 
   expect(getTestEvents()).toBeDefined();
@@ -544,8 +548,8 @@ test("hydrate clientEvents", async () => {
   await flowResult(
     store.populateClientEventsForClient(
       testClientPseudoId,
-      parseISO(outcomeDateString)
-    )
+      parseISO(outcomeDateString),
+    ),
   );
 
   expect(getTestEvents()).toBeDefined();

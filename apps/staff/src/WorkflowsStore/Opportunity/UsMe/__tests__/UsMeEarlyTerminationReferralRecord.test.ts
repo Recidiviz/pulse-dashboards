@@ -65,7 +65,7 @@ test("transform record with restitution ineligibleCriteria", () => {
     externalId: "abc123",
     eligibleCriteria: omit(
       defaultEligibleCriteria,
-      "usMePaidAllOwedRestitution"
+      "usMePaidAllOwedRestitution",
     ),
     ineligibleCriteria: {
       usMePaidAllOwedRestitution: {
@@ -83,7 +83,7 @@ test("transform record with pending violation ineligibleCriteria", () => {
     externalId: "abc123",
     eligibleCriteria: omit(
       defaultEligibleCriteria,
-      "usMeNoPendingViolationsWhileSupervised"
+      "usMeNoPendingViolationsWhileSupervised",
     ),
     ineligibleCriteria: {
       usMeNoPendingViolationsWhileSupervised: {

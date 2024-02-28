@@ -29,7 +29,7 @@ export const getTimeDescription = (
   months,
   admissionTypeEnabled,
   admissionOptions,
-  admissionType
+  admissionType,
 ) => {
   const trailingLabel = getTrailingLabelFromMetricPeriodMonthsFilter(months);
   const periodLabel = getPeriodLabelFromMetricPeriodMonthsFilter(months);
@@ -40,7 +40,7 @@ export const getTimeDescription = (
 
   const admissionTypeOptions = excludeOption(
     flatOptions(admissionOptions),
-    admissionOptions[0]
+    admissionOptions[0],
   ).filter((ao) => admissionType.includes(ao.value));
 
   const admissionFilter = formatSelectOptionValue({

@@ -90,7 +90,7 @@ function PercentRevokedChart({
                 tooltipData,
                 numerators,
                 denominators,
-                includeWarning
+                includeWarning,
               ),
             footer: (tooltipItem) =>
               includeWarning &&
@@ -111,7 +111,7 @@ PercentRevokedChart.propTypes = {
         label: PropTypes.string,
         backgroundColor: PropTypes.func,
         data: PropTypes.arrayOf(PropTypes.string),
-      })
+      }),
     ),
   }).isRequired,
   numerators: PropTypes.arrayOf(PropTypes.number).isRequired,

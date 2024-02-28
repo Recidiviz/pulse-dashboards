@@ -62,7 +62,7 @@ const paroleRecord = opportunitySchemaBase.extend({
   metadata: sharedMetadata.merge(
     z.object({
       supervisionType: z.literal("Parole"),
-    })
+    }),
   ),
   eligibleCriteria: sharedCriteria.merge(paroleDualCriteria),
 });
@@ -71,7 +71,7 @@ const probationRecord = opportunitySchemaBase.extend({
   metadata: sharedMetadata.merge(
     z.object({
       supervisionType: z.literal("Probation"),
-    })
+    }),
   ),
   eligibleCriteria: sharedCriteria.merge(probationCriteria),
 });

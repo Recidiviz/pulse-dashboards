@@ -90,7 +90,7 @@ function cacheResponse(cacheKey, fetchValue, callback) {
       (error) => {
         console.error("Rejected promise from cache.wrap: ", error);
         callback(error, null);
-      }
+      },
     )
     .catch((error) => {
       console.error("Error calling cache.wrap: ", error);

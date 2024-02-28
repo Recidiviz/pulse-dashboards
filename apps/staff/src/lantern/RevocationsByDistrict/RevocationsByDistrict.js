@@ -39,7 +39,7 @@ const RevocationsByDistrict = observer(
 
     const xAxisLabel = translate("District");
     const currentDistrictsClassName = `RevocationsByDimension--${CHART_ID}--${currentDistricts.join(
-      "-"
+      "-",
     )}`;
 
     return (
@@ -81,7 +81,7 @@ const RevocationsByDistrict = observer(
         }
         generateChartData={createGenerateChartData(
           districtChartData,
-          currentDistricts
+          currentDistricts,
         )}
         chartTitle={CHART_TITLE}
         metricTitle={CHART_TITLE}
@@ -96,7 +96,7 @@ const RevocationsByDistrict = observer(
       />
     );
   },
-  { forwardRef: true }
+  { forwardRef: true },
 );
 
 RevocationsByDistrict.defaultProps = { containerHeight: null };

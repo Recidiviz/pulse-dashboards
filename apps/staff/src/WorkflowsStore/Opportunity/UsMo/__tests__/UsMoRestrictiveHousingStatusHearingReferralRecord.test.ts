@@ -152,38 +152,40 @@ afterEach(() => {
 test("transform record", () => {
   expect(
     usMoRestrictiveHousingStatusHearingSchema.parse(
-      rawRecordUpcomingHearingToday
-    )
+      rawRecordUpcomingHearingToday,
+    ),
   ).toMatchSnapshot();
   expect(
-    usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordOverdue)
-  ).toMatchSnapshot();
-  expect(
-    usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordMissingHearingDate)
+    usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordOverdue),
   ).toMatchSnapshot();
   expect(
     usMoRestrictiveHousingStatusHearingSchema.parse(
-      rawRecordMissingHearingDateCriteria
-    )
+      rawRecordMissingHearingDate,
+    ),
+  ).toMatchSnapshot();
+  expect(
+    usMoRestrictiveHousingStatusHearingSchema.parse(
+      rawRecordMissingHearingDateCriteria,
+    ),
   ).toMatchSnapshot();
 });
 
 test("transform ineligible record with hearing date in past into eligible criteria", () => {
   const parsedRecord = usMoRestrictiveHousingStatusHearingSchema.parse(
-    rawRecordIneligibleButDateInPast
+    rawRecordIneligibleButDateInPast,
   );
   expect(parsedRecord).toMatchSnapshot();
   expect(parsedRecord.ineligibleCriteria).toBeEmpty();
   expect(
-    parsedRecord.eligibleCriteria.usMoOverdueForHearing?.nextReviewDate
+    parsedRecord.eligibleCriteria.usMoOverdueForHearing?.nextReviewDate,
   ).toBeDefined();
 });
 
 test("record validates: overdue for hearing in the past", () => {
   expect(() =>
     validateReferral(
-      usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordOverdue)
-    )
+      usMoRestrictiveHousingStatusHearingSchema.parse(rawRecordOverdue),
+    ),
   ).not.toThrow(OpportunityValidationError);
 });
 
@@ -191,9 +193,9 @@ test("record validates: next review date today", () => {
   expect(() =>
     validateReferral(
       usMoRestrictiveHousingStatusHearingSchema.parse(
-        rawRecordUpcomingHearingToday
-      )
-    )
+        rawRecordUpcomingHearingToday,
+      ),
+    ),
   ).not.toThrow(OpportunityValidationError);
 });
 
@@ -201,9 +203,9 @@ test("record validates: missing hearing date", () => {
   expect(() =>
     validateReferral(
       usMoRestrictiveHousingStatusHearingSchema.parse(
-        rawRecordMissingHearingDate
-      )
-    )
+        rawRecordMissingHearingDate,
+      ),
+    ),
   ).not.toThrow(OpportunityValidationError);
 });
 
@@ -211,9 +213,9 @@ test("record validates: hearing date far in future", () => {
   expect(() =>
     validateReferral(
       usMoRestrictiveHousingStatusHearingSchema.parse(
-        rawRecordHearingDateFarInFuture
-      )
-    )
+        rawRecordHearingDateFarInFuture,
+      ),
+    ),
   ).not.toThrow(OpportunityValidationError);
 });
 
@@ -232,7 +234,7 @@ test("record does not validate: overdue in the future", () => {
     };
   expect(() =>
     validateReferral(
-      usMoRestrictiveHousingStatusHearingSchema.parse(overdueInFuture)
-    )
+      usMoRestrictiveHousingStatusHearingSchema.parse(overdueInFuture),
+    ),
   ).toThrow(OpportunityValidationError);
 });

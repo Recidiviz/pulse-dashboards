@@ -92,7 +92,7 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
     super(
       resident,
       "usMoOverdueRestrictiveHousingReviewHearing",
-      usMoOverdueRestrictiveHousingReviewHearingSchema.parse
+      usMoOverdueRestrictiveHousingReviewHearingSchema.parse,
     );
     this.resident = resident;
 
@@ -113,7 +113,7 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -122,7 +122,7 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
       this.record,
       "ineligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -138,7 +138,7 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
   get eligibleStatusMessage(): string {
     return this.generateUsMoOverdueEligibilityStatusMessage(
       "Status hearing due",
-      ""
+      "",
     );
   }
 }

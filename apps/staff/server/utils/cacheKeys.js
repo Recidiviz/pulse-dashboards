@@ -141,7 +141,7 @@ function getCacheKey({
 }) {
   if (!stateCode && !metricType && !cacheKeyPrefix) {
     throw new Error(
-      "Missing required parameters to generate cache key: stateCode, metricType"
+      "Missing required parameters to generate cache key: stateCode, metricType",
     );
   }
   let cacheKey = cacheKeyPrefix || `${stateCode.toUpperCase()}-${metricType}`;

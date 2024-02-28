@@ -59,13 +59,13 @@ export const usTnExpirationSchema = opportunitySchemaBase
           .object({
             zeroToleranceCodeDates: z.array(dateStringSchema).nullish(),
           })
-          .optional()
+          .optional(),
       ),
       usTnNotOnLifeSentenceOrLifetimeSupervision: NullCoalesce(
         {},
         z.object({
           lifetimeFlag: z.boolean().optional(),
-        })
+        }),
       ),
     }),
   })
@@ -106,7 +106,7 @@ export type UsTnExpirationDraftData = {
 };
 
 export function getUsTnExpirationValidator(
-  client: Client
+  client: Client,
 ): ValidateFunction<UsTnExpirationReferralRecord> {
   return (transformedRecord) => {
     const { eligibleDate } =
@@ -115,7 +115,7 @@ export function getUsTnExpirationValidator(
 
     if (eligibleDate.getTime() !== client.expirationDate?.getTime())
       throw new OpportunityValidationError(
-        "Expiration date does not match client record"
+        "Expiration date does not match client record",
       );
   };
 }

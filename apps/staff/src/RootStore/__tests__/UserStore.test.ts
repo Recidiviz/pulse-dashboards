@@ -275,10 +275,10 @@ test.each(Object.keys(tenants))(
     }
 
     expect(store.availableStateCodes).toBe(
-      tenants[currentTenantId as TenantId].availableStateCodes
+      tenants[currentTenantId as TenantId].availableStateCodes,
     );
     expect(store.stateName).toBe(tenants[currentTenantId as TenantId].name);
-  }
+  },
 );
 
 test("Error from getTokenSilently redirects to login", async () => {
@@ -535,7 +535,7 @@ describe("isUserAllowedRoute", () => {
       tenants[tenantId].navigation = { operations: [] };
       await store.authorize(mockHandleUrl);
       expect(store.isUserAllowedRoute(page)).toBe(true);
-    }
+    },
   );
 });
 
@@ -835,7 +835,7 @@ describe("recidivizAllowedStates", () => {
     });
     await store.authorize(mockHandleUrl);
     expect(store.recidivizAllowedStates).toEqual(
-      tenants.RECIDIVIZ.availableStateCodes
+      tenants.RECIDIVIZ.availableStateCodes,
     );
   });
 });

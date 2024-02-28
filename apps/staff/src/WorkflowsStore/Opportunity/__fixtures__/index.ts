@@ -53,7 +53,7 @@ export const mockUsXxTwoOpp: OpportunityType =
   "mockUsXxTwoOpp" as OpportunityType;
 
 export class TestOpportunity<
-  T extends JusticeInvolvedPerson
+  T extends JusticeInvolvedPerson,
 > extends OpportunityBase<T, any, any> {
   constructor(...[person, type, rootStore, ...args]: any[]) {
     super(person, type, rootStore, ...args);

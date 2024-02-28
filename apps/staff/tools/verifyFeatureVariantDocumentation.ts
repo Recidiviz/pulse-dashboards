@@ -51,14 +51,14 @@ async function verifyFeatureVariantDocumentation() {
   if (missingVariants.length > 0) {
     throw new Error(
       `FeatureVariants missing from go/dashboard-feature-variants: ${missingVariants.join(
-        ", "
-      )}`
+        ", ",
+      )}`,
     );
   }
 
   // eslint-disable-next-line no-console
   console.log(
-    "All FeatureVariants accounted for in go/dashboard-feature-variants"
+    "All FeatureVariants accounted for in go/dashboard-feature-variants",
   );
 }
 

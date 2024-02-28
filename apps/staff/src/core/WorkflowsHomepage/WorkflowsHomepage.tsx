@@ -30,7 +30,7 @@ import WorkflowsResults from "../WorkflowsResults";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
 
 function getSelectOpportunitiesText(
-  opportunityTypes: OpportunityType[]
+  opportunityTypes: OpportunityType[],
 ): string {
   const labels = opportunityTypes
     .slice(0, 2)
@@ -76,10 +76,10 @@ const WorkflowsHomepage = observer(
 
     const initialCallToAction = supportsMultipleSystems
       ? `Search above to review and refer people eligible for opportunities like  ${getSelectOpportunitiesText(
-          opportunityTypes
+          opportunityTypes,
         )}.`
       : `Search for ${pluralizeWord(
-          workflowsSearchFieldTitle
+          workflowsSearchFieldTitle,
         )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
       opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`;
 
@@ -90,7 +90,7 @@ const WorkflowsHomepage = observer(
             selectedSearchIds.length,
           ]} ${pluralizeWord(
             workflowsSearchFieldTitle,
-            selectedSearchIds.length
+            selectedSearchIds.length,
           )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`;
 
     const hydratedCallToAction = `Hi, ${
@@ -123,7 +123,7 @@ const WorkflowsHomepage = observer(
         />
       </WorkflowsNavLayout>
     );
-  }
+  },
 );
 
 export default WorkflowsHomepage;

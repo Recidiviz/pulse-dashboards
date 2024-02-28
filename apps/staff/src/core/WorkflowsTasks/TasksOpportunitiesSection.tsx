@@ -30,7 +30,7 @@ export const TasksOpportunitiesSection: React.FC<{
   person: JusticeInvolvedPerson;
 }> = observer(function OpportunitiesSection({ person }) {
   const opportunities = Object.values(person.verifiedOpportunities).filter(
-    (o: Opportunity) => !!o?.tooltipEligibilityText
+    (o: Opportunity) => !!o?.tooltipEligibilityText,
   );
   if (opportunities.length === 0) {
     return null;

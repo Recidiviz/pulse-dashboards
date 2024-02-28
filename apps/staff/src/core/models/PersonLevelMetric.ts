@@ -82,7 +82,7 @@ export default class PersonLevelMetric extends PathwaysNewBackendMetric<PersonLe
           if (c.useFilterLabels) {
             row[c.Header] = this.rootStore?.filtersStore.getFilterLabel(
               c.accessor as keyof PopulationFilterLabels,
-              value.toString()
+              value.toString(),
             );
           } else if (c.useTitleCase) {
             row[c.Header] = toTitleCase(toHumanReadable(value.toString()));

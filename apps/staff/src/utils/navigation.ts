@@ -28,7 +28,7 @@ import { TenantId } from "../RootStore/types";
 import TENANTS from "../tenants";
 
 export function getPathsFromNavigation(
-  userAllowedNavigation: Navigation
+  userAllowedNavigation: Navigation,
 ): string[] {
   if (!userAllowedNavigation) return [];
   return Object.entries(userAllowedNavigation).flatMap((navItem) => {
@@ -41,7 +41,7 @@ export function getPathsFromNavigation(
 }
 
 export function getAllowedMethodology(
-  allowed: Partial<Navigation>
+  allowed: Partial<Navigation>,
 ): Partial<Navigation> {
   const methodologyPages = ["system", "operations"];
   const allowedMethodology = [] as string[];
@@ -85,7 +85,7 @@ export function getStateNameForStateCode(stateCode: string): string {
 
 export const filterQueryParams = Object.values(FILTER_TYPES).reduce(
   (acc, filter) => ({ ...acc, [filter]: StringParam }),
-  {}
+  {},
 ) as QueryParamConfigMap;
 
 export const metricQueryParams = {
@@ -93,11 +93,11 @@ export const metricQueryParams = {
 } as QueryParamConfigMap;
 
 export const removeUndefinedValuesFromObject = (
-  obj: Record<string, string>
+  obj: Record<string, string>,
 ): Record<string, string> => {
   const cleanObj = { ...obj };
   Object.keys(cleanObj).forEach(
-    (key) => cleanObj[key] === undefined && delete cleanObj[key]
+    (key) => cleanObj[key] === undefined && delete cleanObj[key],
   );
   return cleanObj;
 };

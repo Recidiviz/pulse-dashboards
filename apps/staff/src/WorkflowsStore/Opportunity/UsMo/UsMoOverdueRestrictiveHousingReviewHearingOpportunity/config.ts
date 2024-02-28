@@ -22,5 +22,5 @@ export const usMoOverdueRestrictiveHousingReviewHearingConfig: OpportunityConfig
   baseUsMoOverdueRestrictiveHousingConfig(
     "ReviewHearing",
     "in Extended Restrictive Housing to review for their next hearing",
-    "Review residents and prepare necessary paperwork for their next hearing"
+    "Review residents and prepare necessary paperwork for their next hearing",
   );

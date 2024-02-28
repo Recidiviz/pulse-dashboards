@@ -56,25 +56,25 @@ function contactTypes(voterRightsCode?: string): string {
 function formatSpecialConditions(
   latestSpe?: Contact,
   paroleSpecialConditions?: SpecialConditionCode[],
-  probationSpecialConditions?: ParsedSpecialConditionOrString[]
+  probationSpecialConditions?: ParsedSpecialConditionOrString[],
 ): string[] {
   const specialConditionsText = [];
   if (latestSpe) {
     specialConditionsText.push(
       defaultFormValueJoiner(
         displayString(latestSpe.contactType, "Latest SPE code:"),
-        displayString(latestSpe.contactComment, "Comment: ")
-      )
+        displayString(latestSpe.contactComment, "Comment: "),
+      ),
     );
   }
 
   if (paroleSpecialConditions?.length) {
     const conditions = paroleSpecialConditions.map(
       ({ condition, conditionDescription }) =>
-        `${condition} (${conditionDescription})`
+        `${condition} (${conditionDescription})`,
     );
     specialConditionsText.push(
-      `Board conditions to be monitored: ${displayList(conditions)}`
+      `Board conditions to be monitored: ${displayList(conditions)}`,
     );
   }
 
@@ -86,11 +86,11 @@ function formatSpecialConditions(
             return condition;
           }
           return condition.conditions_on_date;
-        }
-      )
+        },
+      ),
     );
     specialConditionsText.push(
-      `Special conditions on current sentences: ${displayList(conditions)}`
+      `Special conditions on current sentences: ${displayList(conditions)}`,
     );
   }
 
@@ -107,10 +107,10 @@ function formatOffenseList(offenses?: Contact[]): string | undefined {
           `Contact code: ${
             offense.contactType
           } on ${formatFormValueDateMMDDYYYYY(offense.contactDate)}`,
-          displayString(offense?.contactComment)
-        )
+          displayString(offense?.contactComment),
+        ),
       )
-      .join("\n\n")
+      .join("\n\n"),
   );
 }
 
@@ -138,7 +138,7 @@ export class UsTnExpirationForm extends FormBase<
         contactTypes: contactTypes(form.latestVrr?.contactType.toUpperCase()),
         expirationDate: formatFormValueDateMMDDYYYYY(
           criterion.supervisionPastFullTermCompletionDateOrUpcoming1Day
-            .eligibleDate
+            .eligibleDate,
         ),
         currentOffenses: displayList(form.offenses),
         convictionCounties: displayList(form.convictionCounties),
@@ -147,22 +147,22 @@ export class UsTnExpirationForm extends FormBase<
           displayList(form.sexOffenses),
           form.latestPse
             ? `${displayString(
-                form.latestPse.contactType
+                form.latestPse.contactType,
               )} on ${formatFormValueDateMMDDYYYYY(form.latestPse.contactDate)}`
-            : ""
+            : "",
         ),
         address: person.address || UNKNOWN,
         employmentInformation: defaultFormValueJoiner(
           displayString(
             form.latestEmp?.contactType,
-            "Latest EMP contact code:"
+            "Latest EMP contact code:",
           ),
-          displayString(form.latestEmp?.contactComment)
+          displayString(form.latestEmp?.contactComment),
         ),
         feeHistory: defaultFormValueJoiner(
           displayString(
             form.latestFee?.contactType,
-            "Latest fee contact code:"
+            "Latest fee contact code:",
           ),
           person.currentBalance
             ? `Current balance: $${person.currentBalance}`
@@ -171,18 +171,18 @@ export class UsTnExpirationForm extends FormBase<
             ? `Latest payment: $${person.lastPaymentAmount} ${
                 person.lastPaymentDate
                   ? `on ${formatFormValueDateMMDDYYYYY(
-                      person.lastPaymentDate.toString()
+                      person.lastPaymentDate.toString(),
                     )}`
                   : ""
               }`
-            : ""
+            : "",
         ),
         specialConditions: defaultFormValueJoiner(
           ...formatSpecialConditions(
             form.latestSpe,
             person.paroleSpecialConditions,
-            person.formattedProbationSpecialConditions
-          )
+            person.formattedProbationSpecialConditions,
+          ),
         ),
         votersRightsInformation: form.latestVrr
           ? voterRightsText(form.latestVrr.contactType.toUpperCase())
@@ -193,7 +193,7 @@ export class UsTnExpirationForm extends FormBase<
       if (flags.enableTepeAdditionalFields) {
         prefilledFields.newOffenses = formatOffenseList(form.newOffenses);
         prefilledFields.alcoholDrugInformation = formatOffenseList(
-          form.alcoholHistory
+          form.alcoholHistory,
         );
       }
 

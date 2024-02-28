@@ -185,7 +185,7 @@ function getCollections(stateCode = null) {
       return PATHWAYS_COLLECTIONS;
     default:
       throw new Error(
-        `getCollections received an unexpected state code: ${stateCode}`
+        `getCollections received an unexpected state code: ${stateCode}`,
       );
   }
 }

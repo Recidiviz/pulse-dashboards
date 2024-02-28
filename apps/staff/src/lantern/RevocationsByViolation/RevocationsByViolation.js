@@ -77,7 +77,7 @@ const RevocationsByViolation = observer(
         )}
         generateChartData={createGenerateChartData(
           revocationsChartStore.filteredData,
-          violationTypes
+          violationTypes,
         )}
         chartTitle={CHART_TITLE}
         metricTitle={CHART_TITLE}
@@ -86,7 +86,7 @@ const RevocationsByViolation = observer(
       />
     );
   },
-  { forwardRef: true }
+  { forwardRef: true },
 );
 
 RevocationsByViolation.defaultProps = { containerHeight: null };

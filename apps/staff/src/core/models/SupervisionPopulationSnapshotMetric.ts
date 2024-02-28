@@ -43,7 +43,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
   constructor(
     props: BaseMetricConstructorOptions<SupervisionPopulationSnapshotRecord> & {
       accessor: keyof SupervisionPopulationSnapshotRecord;
-    }
+    },
   ) {
     super(props);
 
@@ -72,15 +72,15 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         return (
           this.dimensions.every(
             // @ts-ignore
-            (dimensionId) => record[dimensionId] === "ALL"
+            (dimensionId) => record[dimensionId] === "ALL",
           ) &&
           filterTimePeriod(
             record.timePeriod,
             timePeriod[0] as TimePeriod,
-            this.hasTimePeriodDimension
+            this.hasTimePeriodDimension,
           )
         );
-      }
+      },
     );
 
     if (allRows.length === 0) {
@@ -105,15 +105,15 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
             record,
             this.dimensions,
             filters,
-            this.accessor
+            this.accessor,
           ) &&
           filterTimePeriod(
             record.timePeriod,
             timePeriod[0] as TimePeriod,
-            this.hasTimePeriodDimension
+            this.hasTimePeriodDimension,
           )
         );
-      }
+      },
     );
 
     const result = pipe(
@@ -124,7 +124,7 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
           (group: SupervisionPopulationSnapshotRecord) => {
             const { count, ...rest } = group;
             return rest;
-          }
+          },
         );
         const denominator =
           this.id === "supervisionToPrisonPopulationByOfficer"
@@ -135,11 +135,11 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         return {
           count: sumBy("count", dataset),
           populationProportion: populationProportion.toFixed(
-            populationProportion < 1 ? 2 : 0
+            populationProportion < 1 ? 2 : 0,
           ),
           ...datasetWithoutCount[0],
         };
-      })
+      }),
     )(filteredRecords);
 
     return result as SupervisionPopulationSnapshotRecord[];
@@ -161,8 +161,8 @@ export default class SupervisionPopulationSnapshotMetric extends PathwaysMetric<
         labels.push(
           this.rootStore?.filtersStore.getFilterLabel(
             this.accessor as keyof PopulationFilterLabels,
-            d[this.accessor].toString()
-          ) || d[this.accessor].toString()
+            d[this.accessor].toString(),
+          ) || d[this.accessor].toString(),
         );
       }
     });

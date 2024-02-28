@@ -184,7 +184,7 @@ const ScrollShadow = styled.div<{ show: boolean; side: "top" | "bottom" }>`
 const MenuListWithShadow = (
   entriesNumber: number,
   isDisabled: boolean,
-  searchFieldTitle: string
+  searchFieldTitle: string,
 ) =>
   function MenuList({
     children,
@@ -288,7 +288,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   customComponents.MenuList = MenuListWithShadow(
     availableSearchables.length,
     disableAdditionalSelections,
-    searchTitle
+    searchTitle,
   );
 
   const styles: Partial<
@@ -397,7 +397,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     isOptionDisabled: () => disableAdditionalSelections,
     onChange: (newValue: any) => {
       workflowsStore.updateSelectedSearch(
-        newValue.map((item: SelectOption) => item.value)
+        newValue.map((item: SelectOption) => item.value),
       );
       analyticsStore.trackCaseloadSearch({
         searchCount: newValue.length,

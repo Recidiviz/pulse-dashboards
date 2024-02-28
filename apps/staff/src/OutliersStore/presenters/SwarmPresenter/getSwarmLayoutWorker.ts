@@ -21,6 +21,6 @@ import { SwarmLayout } from "./types";
 
 export function getSwarmLayoutWorker() {
   return Comlink.wrap<SwarmLayout>(
-    new Worker(new URL("./swarmWorker", import.meta.url))
+    new Worker(new URL("./swarmWorker", import.meta.url)),
   );
 }

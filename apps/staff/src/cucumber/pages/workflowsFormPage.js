@@ -22,7 +22,7 @@ class WorkflowsFormPage extends Page {
   async open(opportunityType, pseudonymizedId) {
     const pageName = OPPORTUNITY_CONFIGS[opportunityType].urlSection;
     await super.open(
-      `${browser.config.baseUrl}/workflows/${pageName}/${pseudonymizedId}`
+      `${browser.config.baseUrl}/workflows/${pageName}/${pseudonymizedId}`,
     );
   }
 

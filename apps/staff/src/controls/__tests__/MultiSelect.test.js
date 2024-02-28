@@ -35,7 +35,7 @@ describe("MultiSelect", () => {
             { label: "02", value: "02" },
           ]}
           summingOption={{ label: "ALL", value: "ALL" }}
-        />
+        />,
       );
     };
     expect(renderer).not.toThrow();
@@ -51,7 +51,7 @@ describe("MultiSelect", () => {
             { label: "ALL", value: "ALL" },
             { label: "02", value: "02" },
           ]}
-        />
+        />,
       );
     };
     expect(renderer).not.toThrow();

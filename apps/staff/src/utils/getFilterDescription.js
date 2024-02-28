@@ -63,7 +63,7 @@ const formatSupervisionType = (supervisionType) =>
     ? "All supervision types"
     : `Supervision type: ${pipe(
         find({ value: supervisionType }),
-        get("label")
+        get("label"),
       )(DefaultPopulationFilterOptions.supervisionType.options)}`;
 
 const formatSupervisionLevel = (supervisionLevel) =>
@@ -71,7 +71,7 @@ const formatSupervisionLevel = (supervisionLevel) =>
     ? "All supervision levels"
     : `Supervision level: ${pipe(
         find({ value: supervisionLevel }),
-        get("label")
+        get("label"),
       )(SUPERVISION_LEVELS.options)}`;
 
 const formatAdmissionType = (admissionTypes) => {
@@ -79,7 +79,7 @@ const formatAdmissionType = (admissionTypes) => {
     ? `All ${translate("admission")} types`
     : `${translate("Admission")} type: ${getLabelsString(
         admissionTypes,
-        ADMISSION_TYPES.flattenedOptions
+        ADMISSION_TYPES.flattenedOptions,
       )}`;
 };
 
@@ -93,7 +93,7 @@ const formatLegalStatus = (legalStatus, filterOptions) => {
   const statusLabels = legalStatus.map((status) => {
     return pipe(
       find({ value: status }),
-      get("label")
+      get("label"),
     )(filterOptions.legalStatus.options);
   });
   return legalStatus === "ALL"
@@ -106,7 +106,7 @@ function getFilters(toggleStates, filterOptions) {
 
   if (toggleStates.metricPeriodMonths) {
     filters.push(
-      formatMetricPeriodMonthsFilter(toggleStates.metricPeriodMonths)
+      formatMetricPeriodMonthsFilter(toggleStates.metricPeriodMonths),
     );
   }
 
@@ -120,7 +120,7 @@ function getFilters(toggleStates, filterOptions) {
 
   if (toggleStates.supervisionType) {
     filters.push(
-      formatSupervisionType(toggleStates.supervisionType, filterOptions)
+      formatSupervisionType(toggleStates.supervisionType, filterOptions),
     );
   }
 
@@ -134,7 +134,7 @@ function getFilters(toggleStates, filterOptions) {
 
   if (toggleStates.timePeriod) {
     filters.push(
-      `Time period: ${formatMetricPeriodMonthsFilter(toggleStates.timePeriod)}`
+      `Time period: ${formatMetricPeriodMonthsFilter(toggleStates.timePeriod)}`,
     );
   }
 

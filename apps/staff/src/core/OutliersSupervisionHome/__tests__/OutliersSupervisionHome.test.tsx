@@ -49,7 +49,7 @@ function addPathToRouter(path: string) {
     {
       initialEntries: [outliersUrl("supervision")],
       initialIndex: 0,
-    }
+    },
   );
   render(<RouterProvider router={router} />);
   return router;
@@ -61,7 +61,7 @@ beforeEach(() => {
 
   supervisionStore = new OutliersSupervisionStore(
     outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   outliersStore.supervisionStore = supervisionStore;
 
@@ -92,7 +92,7 @@ test("homepage redirects supervisors without the list permission to their own re
   expect(router.state.location.pathname).toEqual(
     outliersUrl("supervisionSupervisor", {
       supervisorPseudoId: "hashed-abc123",
-    })
+    }),
   );
 });
 
@@ -113,7 +113,7 @@ test("homepage redirects non-supervisors to the supervisors list page", () => {
   const router = addPathToRouter(OUTLIERS_PATHS.supervisionSupervisorsList);
 
   expect(router.state.location.pathname).toBe(
-    outliersUrl("supervisionSupervisorsList")
+    outliersUrl("supervisionSupervisorsList"),
   );
 });
 
@@ -124,7 +124,7 @@ test("homepage redirects non-supervisors to the supervisors list page if they ha
   const router = addPathToRouter(outliersUrl("supervisionSupervisorsList"));
 
   expect(router.state.location.pathname).toBe(
-    outliersUrl("supervisionSupervisorsList")
+    outliersUrl("supervisionSupervisorsList"),
   );
 });
 
@@ -136,7 +136,7 @@ test("homepage errors for non-supervisors without the list permission", () => {
   addPathToRouter(OUTLIERS_PATHS.supervision);
 
   expect(
-    screen.getByText("Sorry, we’re having trouble loading this page")
+    screen.getByText("Sorry, we’re having trouble loading this page"),
   ).toBeInTheDocument();
 });
 
@@ -173,6 +173,6 @@ test("redirect waits for supervision store to be hydrated", async () => {
   expect(router.state.location.pathname).toBe(
     outliersUrl("supervisionSupervisor", {
       supervisorPseudoId: "hashed-abc123",
-    })
+    }),
   );
 });

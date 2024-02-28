@@ -48,14 +48,14 @@ function MultiSelect({
         const newOptions = getNewOptions(
           options,
           summingOption,
-          selectedOptions
+          selectedOptions,
         );
         onChange(newOptions);
         return;
       }
       onChange(selectedOptions);
     },
-    [onChange, options, summingOption]
+    [onChange, options, summingOption],
   );
   const replacedComponents = useMemo(
     () => ({
@@ -73,7 +73,7 @@ function MultiSelect({
         />
       ),
     }),
-    [handleChange, options, summingOption]
+    [handleChange, options, summingOption],
   );
 
   const CustomStyles = {

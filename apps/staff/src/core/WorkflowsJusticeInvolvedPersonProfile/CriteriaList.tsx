@@ -139,7 +139,7 @@ export const CriteriaList = observer(function CriteriaList({
               )}
             </CriterionWrapper>
           );
-        }
+        },
       )}
     </Wrapper>
   );

@@ -39,7 +39,7 @@ exports.onExecutePostLogin = async (event, api) => {
   const namespace = "https://dashboard.recidiviz.org";
   api.idToken.setCustomClaim(
     `${namespace}/user_metadata`,
-    event.user.user_metadata
+    event.user.user_metadata,
   );
   api.idToken.setCustomClaim(`${namespace}/app_metadata`, {
     ...event.user.app_metadata,
@@ -51,14 +51,14 @@ exports.onExecutePostLogin = async (event, api) => {
   });
   api.accessToken.setCustomClaim(
     `${namespace}/app_metadata`,
-    event.user.app_metadata
+    event.user.app_metadata,
   );
   api.accessToken.setCustomClaim(
     `${namespace}/registration_date`,
-    event.user.created_at
+    event.user.created_at,
   );
   api.accessToken.setCustomClaim(
     `${namespace}/email_address`,
-    event.user.email
+    event.user.email,
   );
 };

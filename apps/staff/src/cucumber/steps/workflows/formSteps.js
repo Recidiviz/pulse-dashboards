@@ -37,7 +37,7 @@ Given(
     await WorkflowsHomepage.open();
     await switchUserStateCode(stateCode);
     await WorkflowsFormPage.open(opportunityType, pseudonymizedId);
-  }
+  },
 );
 
 /**
@@ -57,7 +57,7 @@ When(
     await criteriaList.click();
     // Wait for data to save to firestore
     await browser.pause(2500);
-  }
+  },
 );
 
 When("I click on the export form button", async () => {
@@ -111,7 +111,7 @@ When("I click on preview page {int}", async (pageNumber) => {
 Then("I should see the text {string} on the form", async (formText) => {
   const formViewerContainer = await WorkflowsFormPage.formViewerContainer();
   expect(await formViewerContainer.getText()).toEqual(
-    expect.stringContaining(formText)
+    expect.stringContaining(formText),
   );
 });
 
@@ -125,7 +125,7 @@ Then(
     await browser.pause(3000);
     const formValue = await formField.getValue(inputValue);
     expect(formValue).toEqual(inputValue);
-  }
+  },
 );
 
 Then(
@@ -134,7 +134,7 @@ Then(
     const button = await WorkflowsFormPage.formActionButton();
     await button.waitForExist();
     expect(await button.getText()).toEqual(exportButtonText);
-  }
+  },
 );
 
 Then("the form should export for filename {string}", async (filename) => {
@@ -157,9 +157,9 @@ Then(
     await denialForm.waitForExist();
     const menuItem = await $(`span.Checkbox__label*=${ineligibleReason}`);
     expect(await menuItem.getText()).toEqual(
-      expect.stringContaining(ineligibleReason)
+      expect.stringContaining(ineligibleReason),
     );
-  }
+  },
 );
 
 Then(
@@ -167,7 +167,7 @@ Then(
   async (eligibilityStatus) => {
     const eligibilityStatusEl = await $("span.EligibilityStatus");
     expect(await eligibilityStatusEl.getText()).toEqual(eligibilityStatus);
-  }
+  },
 );
 
 Then("I should see the {string} dropdown", async (dropdownLabel) => {

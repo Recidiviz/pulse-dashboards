@@ -122,11 +122,11 @@ export const createClientOpportunity: OpportunityFactory<
 };
 
 export type TaskFactory<PersonType extends JusticeInvolvedPerson> = (
-  person: PersonType
+  person: PersonType,
 ) => SupervisionTaskInterface | undefined;
 
 const createClientSupervisionTasks: TaskFactory<Client> = (
-  person
+  person,
 ): SupervisionTaskInterface | undefined => {
   const { allowSupervisionTasks } = person.rootStore.workflowsStore;
   if (
@@ -139,7 +139,7 @@ const createClientSupervisionTasks: TaskFactory<Client> = (
 };
 
 export function isClient(
-  person: Client | JusticeInvolvedPerson
+  person: Client | JusticeInvolvedPerson,
 ): person is Client {
   return person instanceof Client;
 }
@@ -158,7 +158,7 @@ export type ParsedSpecialConditionOrString =
 
 function filteredMilestoneTypes(
   milestones: Milestone[] | undefined,
-  types: readonly MilestoneType[]
+  types: readonly MilestoneType[],
 ) {
   return (milestones ?? []).filter(({ type }) => types.includes(type));
 }
@@ -198,7 +198,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       record,
       rootStore,
       createClientOpportunity,
-      createClientSupervisionTasks
+      createClientSupervisionTasks,
     );
     makeObservable(this, {
       supervisionLevel: true,
@@ -216,21 +216,21 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   updateRecord(record: ClientRecord): void {
     super.updateRecord(record);
     this.supervisionLevelStart = optionalFieldToDate(
-      record.supervisionLevelStart
+      record.supervisionLevelStart,
     );
     this.address = record.address;
     this.rawPhoneNumber = record.phoneNumber;
     this.expirationDate = optionalFieldToDate(record.expirationDate);
     this.currentBalance = record.currentBalanceNew ?? record.currentBalance;
     this.lastPaymentDate = optionalFieldToDate(
-      record.lastPaymentDateNew ?? record.lastPaymentDate
+      record.lastPaymentDateNew ?? record.lastPaymentDate,
     );
     this.lastPaymentAmount =
       record.lastPaymentAmountNew ?? record.lastPaymentAmount;
     this.probationSpecialConditions = record.specialConditions;
     this.paroleSpecialConditions = record.boardConditions ?? [];
     this.supervisionStartDate = optionalFieldToDate(
-      record.supervisionStartDate
+      record.supervisionStartDate,
     );
     this.currentEmployers = record.currentEmployers;
     this.emailAddress = record.emailAddress;
@@ -253,7 +253,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get supervisionLevel(): string {
     return this.rootStore.workflowsStore.formatSupervisionLevel(
-      this.record.supervisionLevel
+      this.record.supervisionLevel,
     );
   }
 
@@ -280,7 +280,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     const opportunityDates: PortionServedDates = [];
 
     const opportunities = Object.values(
-      this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {}
+      this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {},
     );
 
     opportunities.forEach((opp) => {
@@ -317,7 +317,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
           // the specialConditions strings are almost valid JSON,
           // except they may include NULL instead of null as a value;
           // work around this by converting to lowercase
-          conditionsJson.toLowerCase()
+          conditionsJson.toLowerCase(),
         );
 
         conditionsForSentence.forEach(
@@ -331,9 +331,9 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
             // to display them properly
             conditionsToDisplay.push(
               // eslint-disable-next-line camelcase
-              mapValues({ note_update_date, conditions_on_date }, toUpper)
+              mapValues({ note_update_date, conditions_on_date }, toUpper),
             );
-          }
+          },
         );
       } catch (e) {
         // if we couldn't hack our way to valid JSON,
@@ -361,7 +361,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   get congratulationsMilestones(): Milestone[] {
     return filteredMilestoneTypes(
       this.tenantMilestones,
-      congratulationsMilestoneTypes
+      congratulationsMilestoneTypes,
     );
   }
 
@@ -409,7 +409,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   async updateMilestonesDeclineReasons(
     reasons: DeclineReason[],
-    otherReason?: string
+    otherReason?: string,
   ): Promise<void> {
     const otherReasonField = reasons.includes(OTHER_KEY)
       ? { otherReason }
@@ -428,7 +428,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
           ...(reasons.length ? { reasons } : {}),
           ...otherReasonField,
         },
-      }
+      },
     );
   }
 
@@ -443,13 +443,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         updated,
         status: TextMessageStatuses.PENDING,
         declinedReasons: deleteField(),
-      }
+      },
     );
   }
 
   async updateMilestonesPhoneNumber(
     phoneNumber: string,
-    deletePhoneNumber = false
+    deletePhoneNumber = false,
   ): Promise<void> {
     const updated = {
       by: this.rootStore.workflowsStore.currentUserEmail,
@@ -463,13 +463,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         stateCode: this.stateCode,
         recipient: deletePhoneNumber ? deleteField() : phoneNumber,
         userHash: this.rootStore.workflowsStore.currentUserHash,
-      }
+      },
     );
   }
 
   async updateMilestonesTextMessage(
     additionalMessage?: string,
-    deleteAdditionalMessage = false
+    deleteAdditionalMessage = false,
   ): Promise<void> {
     let pendingMessage: Partial<Record<"pendingMessage", string | FieldValue>>;
     if (deleteAdditionalMessage) {
@@ -499,7 +499,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
             ${additionalMessage || ""}
           `,
-      }
+      },
     );
   }
 
@@ -513,7 +513,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         },
         status,
         userHash: this.rootStore.workflowsStore.currentUserHash,
-      }
+      },
     );
   }
 
@@ -529,7 +529,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
           },
           status: TextMessageStatuses.IN_PROGRESS,
           userHash: this.rootStore.workflowsStore.currentUserHash,
-        }
+        },
       );
       await this.rootStore.apiStore.postExternalSMSMessage({
         message: this.milestonesFullTextMessage,
@@ -548,10 +548,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
           },
           status: TextMessageStatuses.PENDING,
           userHash: this.rootStore.workflowsStore.currentUserHash,
-        }
+        },
       );
       toast.error(
-        "We couldn't send your message. Please wait a moment and try again."
+        "We couldn't send your message. Please wait a moment and try again.",
       );
       throw e;
     }

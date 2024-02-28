@@ -109,7 +109,7 @@ type JustificationReason = { code: string; description: string };
 export function buildJustificationReasons(
   opportunity: Opportunity,
   reasons: string[],
-  otherReason: string
+  otherReason: string,
 ): JustificationReason[] {
   const out: JustificationReason[] = [];
   Object.entries(opportunity.denialReasonsMap).forEach(
@@ -120,7 +120,7 @@ export function buildJustificationReasons(
           description: code === OTHER_KEY ? otherReason : description,
         });
       }
-    }
+    },
   );
   return out;
 }
@@ -130,7 +130,7 @@ const createDocstarsRequestBody = (
   userEmail: string,
   reasons: string[],
   otherReason: string,
-  snoozeUntilDate: Date
+  snoozeUntilDate: Date,
 ) => ({
   personExternalId: opportunity.person.externalId,
   userEmail,
@@ -138,7 +138,7 @@ const createDocstarsRequestBody = (
   justificationReasons: buildJustificationReasons(
     opportunity,
     reasons,
-    otherReason
+    otherReason,
   ),
 });
 
@@ -201,7 +201,7 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
       opportunity.person.recordId,
       formatDateToISO(snoozeUntilDate),
       submittedTimestamp,
-      "PENDING"
+      "PENDING",
     );
 
     setPhase("SUBMITTED");
@@ -211,13 +211,13 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
       currentUserEmail,
       reasons,
       otherReason,
-      snoozeUntilDate
+      snoozeUntilDate,
     );
 
     try {
       await apiStore.post(
         `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${opportunity.person.stateCode}/update_docstars_early_termination_date`,
-        requestBody
+        requestBody,
       );
     } catch (e) {
       firestoreStore.updateOmsSnoozeStatus(
@@ -228,7 +228,7 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
         formatDateToISO(snoozeUntilDate),
         submittedTimestamp,
         "FAILURE",
-        (e as Error)?.message
+        (e as Error)?.message,
       );
       Sentry.captureException(e);
     }
@@ -270,7 +270,7 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
                   <li key={code}>
                     {code}: {description}
                   </li>
-                )
+                ),
               )}
             </ul>
           </ConfirmationField>

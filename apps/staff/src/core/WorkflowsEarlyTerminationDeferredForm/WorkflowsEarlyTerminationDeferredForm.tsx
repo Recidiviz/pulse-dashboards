@@ -45,7 +45,7 @@ function WorkflowsEarlyTerminationDeferredForm() {
       client.stateCode,
       "early_termination_deferred_template.docx",
       contents,
-      client.rootStore.getTokenSilently
+      client.rootStore.getTokenSilently,
     );
   };
 

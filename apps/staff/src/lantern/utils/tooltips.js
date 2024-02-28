@@ -25,7 +25,7 @@ export function tooltipForRateMetricWithCounts(
   numerators,
   denominators,
   includeWarning,
-  includePercentage
+  includePercentage,
 ) {
   const { datasetIndex, index: dataPointIndex } = tooltipItem;
   const label = data.datasets[datasetIndex].label || "";
@@ -42,7 +42,7 @@ export function tooltipForRateMetricWithCounts(
       ? `${formatPercent((numerator / denominator) * 100)} `
       : "";
     appendedCounts = ` ${percentage}(${formatLargeNumber(
-      numerator
+      numerator,
     )}/${formatLargeNumber(denominator)})`;
   }
 
@@ -55,11 +55,11 @@ export function tooltipForRateMetricWithCounts(
     ? `${tooltipWithoutTrendlineLabel(
         tooltipItem,
         data,
-        ""
+        "",
       )}${appendedCounts}${cue}`
     : `${label}: ${tooltipWithoutTrendlineLabel(
         tooltipItem,
         data,
-        "%"
+        "%",
       )}${appendedCounts}${cue}`;
 }

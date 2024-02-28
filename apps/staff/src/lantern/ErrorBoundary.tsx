@@ -39,7 +39,7 @@ function ErrorBoundary({ children }: Props): React.ReactElement {
     if (allowedSupervisionLocationIds.length) {
       scope.setTag(
         "allowedSupervisionLocationIds",
-        allowedSupervisionLocationIds.join(",")
+        allowedSupervisionLocationIds.join(","),
       );
     }
     if (filters) {

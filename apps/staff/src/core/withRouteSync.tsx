@@ -52,7 +52,7 @@ type NormalizedParams = {
 
 const normalizeRouteParams = (
   rawParams: RouteParams,
-  currentTenantId?: TenantId
+  currentTenantId?: TenantId,
 ): NormalizedParams => {
   const {
     entityId: rawEntityId,
@@ -77,7 +77,7 @@ const normalizeRouteParams = (
  * Passes all props through `RouteComponent`, with route parameters normalized.
  */
 const withRouteSync = <Props extends RouteParams>(
-  RouteComponent: ComponentType<Props>
+  RouteComponent: ComponentType<Props>,
 ): ComponentType<Props> => {
   const WrappedRouteComponent: React.FC<Props> = (props) => {
     const { pathname } = useLocation();
@@ -94,7 +94,7 @@ const withRouteSync = <Props extends RouteParams>(
     const [viewId, pageId] = pathname.split("/").slice(1, 3);
     const { entityId, sectionId } = normalizeRouteParams(
       useParams(),
-      currentTenantId
+      currentTenantId,
     );
 
     // prepare query params to sync with store
@@ -122,12 +122,12 @@ const withRouteSync = <Props extends RouteParams>(
           filtersStore.setFilters(
             convertLabelsToValues(
               cleanQuery as PopulationFilterLabels,
-              filtersStore.filterOptions
-            )
+              filtersStore.filterOptions,
+            ),
           );
         }
       }),
-      []
+      [],
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,7 +154,7 @@ const withRouteSync = <Props extends RouteParams>(
                 // @ts-ignore
                 [filter]: filtersStore.filtersLabels[filter],
               }),
-              {}
+              {},
             );
             setQuery(updatedQuery);
           }
@@ -166,7 +166,7 @@ const withRouteSync = <Props extends RouteParams>(
         pageId,
         sectionId,
         vitalsStore.selectedMetricId,
-      ]
+      ],
     );
 
     return <RouteComponent {...props} />;

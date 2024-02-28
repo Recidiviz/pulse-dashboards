@@ -69,7 +69,7 @@ Then(
 
     expect(heading).toEqual(expect.stringContaining(opportunityName));
     expect(subheading.length).toBeGreaterThan(0);
-  }
+  },
 );
 
 Then("I should see {int} people listed", async (numPeople) => {
@@ -96,5 +96,5 @@ Then(
       /Viewed on \d{1,2}\/\d{1,2}\/\d{1,2} by notarealemail@recidiviz.org/;
 
     expect(text).toEqual(expect.stringMatching(expectedStatus));
-  }
+  },
 );

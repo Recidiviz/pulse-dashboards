@@ -43,7 +43,7 @@ const validateStateCode = () => {
       res
         .status(401)
         .send(
-          `User is not authorized for stateCode: ${reqStateCode.toUpperCase()}`
+          `User is not authorized for stateCode: ${reqStateCode.toUpperCase()}`,
         );
     }
   };

@@ -34,8 +34,8 @@ describe("getTimeDescription", () => {
           months,
           admissionTypeEnabled,
           admissionOptions,
-          admissionType
-        )
+          admissionType,
+        ),
       ).toEqual("Last 12 months (5/1/2020 to present)");
     });
   });
@@ -54,10 +54,10 @@ describe("getTimeDescription", () => {
           months,
           admissionTypeEnabled,
           admissionOptions,
-          admissionType
-        )
+          admissionType,
+        ),
       ).toEqual(
-        "Last 3 years (5/1/2018 to present); PVC, SCI - All Short Term"
+        "Last 3 years (5/1/2018 to present); PVC, SCI - All Short Term",
       );
     });
   });
@@ -75,8 +75,8 @@ describe("getTimeDescription", () => {
         months,
         admissionTypeEnabled,
         admissionOptions,
-        admissionType
-      )
+        admissionType,
+      ),
     ).toEqual("Last 3 months (2/1/2021 to present)");
   });
 });

@@ -42,7 +42,7 @@ const messageAlreadySent = (status: TextMessageStatus | undefined): boolean => {
   return (
     !!status &&
     [TextMessageStatuses.SUCCESS, TextMessageStatuses.IN_PROGRESS].includes(
-      status
+      status,
     )
   );
 };
@@ -55,7 +55,7 @@ const NewMilestonesSidePanel = function NewMilestonesSidePanel({
     useState<NEW_MILESTONES_SIDE_PANEL_VIEW>(
       messageAlreadySent(client.milestoneMessagesUpdates?.status)
         ? "MESSAGE_SENT"
-        : "COMPOSING"
+        : "COMPOSING",
     );
 
   // This ensures that the status doesn't get into a weird state if two people are viewing/editing the

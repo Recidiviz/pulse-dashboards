@@ -39,13 +39,13 @@ function GroupHeading({
     if (allOptionsSelected) {
       const newOptions = previousOptions.filter(
         (previousOption) =>
-          !groupOptions.some(({ value }) => value === previousOption.value)
+          !groupOptions.some(({ value }) => value === previousOption.value),
       );
 
       onChange(newOptions);
     } else {
       const newOptions = previousOptions.concat(
-        groupOptions.filter((option) => !getIsOptionSelected(option))
+        groupOptions.filter((option) => !getIsOptionSelected(option)),
       );
 
       onChange(newOptions);

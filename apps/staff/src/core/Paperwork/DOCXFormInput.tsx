@@ -75,11 +75,11 @@ const DOCXFormInput = observer(function FormInput<DraftData>({
   const opportunityForm = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(
     name,
-    opportunityForm
+    opportunityForm,
   );
 
   const inputRef = useRef<HTMLInputElement>(
-    null
+    null,
   ) as MutableRefObject<HTMLInputElement>;
 
   const setInputRef = React.useCallback(
@@ -88,7 +88,7 @@ const DOCXFormInput = observer(function FormInput<DraftData>({
         inputRef.current = inputElement;
       }
     },
-    []
+    [],
   );
 
   useAnimatedValue(inputRef, value);

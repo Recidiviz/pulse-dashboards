@@ -141,7 +141,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
       `${mockTenantId.toLowerCase()}/pathways/supervision_to_prison_population_snapshot_by_dimension`,
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
     );
   });
 

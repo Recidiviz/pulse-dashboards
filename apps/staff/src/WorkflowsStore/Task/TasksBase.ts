@@ -49,7 +49,7 @@ import {
 export abstract class TasksBase<
   PersonType extends JusticeInvolvedPerson,
   TaskRecord extends DocumentData,
-  UpdateRecord extends SupervisionTaskUpdate
+  UpdateRecord extends SupervisionTaskUpdate,
 > implements SupervisionTaskInterface
 {
   rootStore: RootStore;
@@ -64,7 +64,7 @@ export abstract class TasksBase<
     rootStore: RootStore,
     person: PersonType,
     firestoreCollectionKey: FirestoreCollectionKey,
-    validateRecord?: ValidateFunction<TaskRecord>
+    validateRecord?: ValidateFunction<TaskRecord>,
   ) {
     makeObservable(this, {
       hydrate: action,
@@ -82,13 +82,13 @@ export abstract class TasksBase<
       firestoreCollectionKey,
       person.recordId,
       undefined,
-      validateRecord
+      validateRecord,
     );
 
     this.updatesSubscription =
       new SupervisionTaskUpdateSubscription<UpdateRecord>(
         this.rootStore.firestoreStore,
-        person.recordId
+        person.recordId,
       );
   }
 
@@ -115,7 +115,7 @@ export abstract class TasksBase<
 
         if (TaskConstructor === undefined) {
           throw new TaskValidationError(
-            `Missing a class constructor for task with type: ${task.type}`
+            `Missing a class constructor for task with type: ${task.type}`,
           );
         }
 
@@ -123,9 +123,9 @@ export abstract class TasksBase<
           this.rootStore,
           task,
           this.person,
-          this.updates?.[task.type]
+          this.updates?.[task.type],
         );
-      }
+      },
     );
   }
 
@@ -198,5 +198,5 @@ export abstract class TasksBase<
 
 export const taskDueDateComparator = (
   a: SupervisionTask<any>,
-  b: SupervisionTask<any>
+  b: SupervisionTask<any>,
 ) => +a.dueDate - +b.dueDate;

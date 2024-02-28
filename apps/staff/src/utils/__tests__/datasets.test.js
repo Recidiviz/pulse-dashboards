@@ -116,10 +116,10 @@ describe("test datasets", () => {
       data,
       mountCount,
       valueKey,
-      emptyValue
+      emptyValue,
     );
     expect(dataAfterFiltersByMethod).toEqual(
-      dataFiltersSupplementMostRecentMonth
+      dataFiltersSupplementMostRecentMonth,
     );
   });
 

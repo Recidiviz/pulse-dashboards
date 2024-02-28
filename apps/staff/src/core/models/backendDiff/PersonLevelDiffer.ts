@@ -46,14 +46,14 @@ export class PersonLevelDiffer extends Differ<
   }
 
   getValue(
-    result: PrisonPopulationPersonLevelRecord
+    result: PrisonPopulationPersonLevelRecord,
   ): PrisonPopulationPersonLevelRecord {
     return result;
   }
 
   compare(
     value: PrisonPopulationPersonLevelRecord,
-    other: PrisonPopulationPersonLevelRecord
+    other: PrisonPopulationPersonLevelRecord,
   ): boolean {
     if (value === undefined || other === undefined) {
       // if both are undefined, something has gone wrong, and we'll see it in the diff
@@ -61,12 +61,12 @@ export class PersonLevelDiffer extends Differ<
     }
     return isEqual(
       this.transformForComparison(value),
-      this.transformForComparison(other)
+      this.transformForComparison(other),
     );
   }
 
   transformForComparison(
-    record: PrisonPopulationPersonLevelRecord
+    record: PrisonPopulationPersonLevelRecord,
   ): PrisonPopulationPersonLevelRecord {
     const transformed = {
       ...record,

@@ -40,7 +40,7 @@ type TasksByCategory = Record<
 type PersonsByNeed = Record<SupervisionNeedType, JusticeInvolvedPerson[]>;
 
 const buildRecordList = <K extends string, V>(
-  types: readonly string[]
+  types: readonly string[],
 ): Record<K, V[]> => {
   return types.reduce((memo, type) => {
     return {
@@ -109,7 +109,7 @@ export class WorkflowsTasksStore {
     });
     getEntries(personsByNeed).forEach(([type, persons]) => {
       personsByNeed[type] = orderBy(persons, (person) =>
-        person.fullName?.surname?.toLowerCase()
+        person.fullName?.surname?.toLowerCase(),
       );
     });
 
@@ -128,13 +128,13 @@ export class WorkflowsTasksStore {
 
   get clientsPartitionedByStatus(): [
     JusticeInvolvedPerson[],
-    JusticeInvolvedPerson[]
+    JusticeInvolvedPerson[],
   ] {
     const personsWithOverdueTasks = this.workflowsStore.caseloadPersonsSorted
       .filter(
         (person) =>
           !!person.supervisionTasks &&
-          person.supervisionTasks.overdueTasks.length > 0
+          person.supervisionTasks.overdueTasks.length > 0,
       )
       .sort((personA, personB) => {
         if (!personA.supervisionTasks || !personB.supervisionTasks) return 0;
@@ -149,7 +149,7 @@ export class WorkflowsTasksStore {
         (person) =>
           !!person.supervisionTasks &&
           person.supervisionTasks.upcomingTasks.length > 0 &&
-          !(person.supervisionTasks.overdueTasks.length > 0)
+          !(person.supervisionTasks.overdueTasks.length > 0),
       )
       .sort((personA, personB) => {
         if (!personA.supervisionTasks || !personB.supervisionTasks) return 0;

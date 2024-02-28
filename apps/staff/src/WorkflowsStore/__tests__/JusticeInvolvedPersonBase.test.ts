@@ -43,12 +43,12 @@ let record: JusticeInvolvedPersonRecord;
 let mockOpportunityTypes: IObservableValue<OpportunityType[]>;
 
 function createTestUnit(
-  opportunityFactory: OpportunityFactory<any, any> = () => undefined as any
+  opportunityFactory: OpportunityFactory<any, any> = () => undefined as any,
 ) {
   testPerson = new JusticeInvolvedPersonBase(
     record,
     rootStoreMock,
-    opportunityFactory
+    opportunityFactory,
   );
 }
 
@@ -94,7 +94,7 @@ afterEach(() => {
 
 const PROPERTIES_FROM_RECORD: [
   keyof JusticeInvolvedPersonBase,
-  keyof JusticeInvolvedPersonRecord
+  keyof JusticeInvolvedPersonRecord,
 ][] = [
   ["externalId", "personExternalId"],
   ["assignedStaffId", "officerId"],
@@ -108,7 +108,7 @@ test.each(PROPERTIES_FROM_RECORD)(
   (property, recordKey) => {
     createTestUnit();
     expect(testPerson[property]).toEqual(record[recordKey]);
-  }
+  },
 );
 
 test("display name", () => {
@@ -134,7 +134,7 @@ describe("opportunities", () => {
       .fn()
       .mockImplementation(
         (opportunityType, person) =>
-          new TestOpportunity(person, opportunityType, rootStoreMock)
+          new TestOpportunity(person, opportunityType, rootStoreMock),
       );
     mockOpportunityTypes.set(["LSU"]);
     record.allEligibleOpportunities = ["LSU"];
@@ -213,7 +213,7 @@ describe("opportunities", () => {
       });
 
       expect(testPerson.displayPreferredName).toEqual(
-        "Real (Two Names) Person"
+        "Real (Two Names) Person",
       );
     });
     test("without preferred name", () => {
@@ -340,7 +340,7 @@ describe("opportunities", () => {
     expect(mockFactory).toHaveBeenNthCalledWith(
       2,
       "earlyTermination",
-      testPerson
+      testPerson,
     );
     expect(testPerson.potentialOpportunities).toStrictEqual({
       earlyTermination: opportunityInstances[1],

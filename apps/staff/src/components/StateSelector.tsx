@@ -42,7 +42,7 @@ function StateSelector({
     }));
   const defaultValue = availableStatesOptions.find(
     (availableState: StateSelectorOption) =>
-      availableState.value === tenantStore.currentTenantId
+      availableState.value === tenantStore.currentTenantId,
   );
 
   return (

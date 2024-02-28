@@ -30,7 +30,7 @@ const tepeTemplate = (form?: Partial<UsTnExpirationDraftData>): string => {
   const lines = [
     noteLine("Subject expired his/her probation on", form?.expirationDate),
     `Offender appeared in ${orNA(form?.convictionCounties)} on case ${orNA(
-      form?.docketNumbers
+      form?.docketNumbers,
     )}`,
     noteLine("Offender currently serving sentences for", form?.currentOffenses),
     noteLine("SEX OFFENSE HISTORY:", form?.sexOffenseInformation),
@@ -41,15 +41,15 @@ const tepeTemplate = (form?: Partial<UsTnExpirationDraftData>): string => {
     noteLine("REVOCATION HEARINGS:", form?.revocationHearings),
     noteLine(
       "NEW MISDEAMEANOR OR FELONY OFFENSES WHILE ON SUPERVISION:",
-      form?.newOffenses
+      form?.newOffenses,
     ),
     noteLine(
       "HISTORY OF PRIOR VIOLENCE, ESCAPE, BOND JUMPING, ETC:",
-      form?.historyOfPriorViolenceEtc
+      form?.historyOfPriorViolenceEtc,
     ),
     noteLine(
       "MEDICAL OR PSYCHOLOGICAL HISTORY:",
-      form?.medicalPsychologicalHistory
+      form?.medicalPsychologicalHistory,
     ),
     noteLine("GANG AFFILIATION:", form?.gangAffiliation),
     noteLine("TRANSFER INFORMATION:", form?.transferHistory),
@@ -63,14 +63,14 @@ const tepeTemplate = (form?: Partial<UsTnExpirationDraftData>): string => {
 
 export function charLimitedNote(
   fullText: string,
-  charsPerLine: number
+  charsPerLine: number,
 ): string {
   return wrap(fullText, { width: charsPerLine, indent: "", trim: true });
 }
 
 export function paginatedTEPENoteByLine(
   text: string,
-  linesPerPage: number
+  linesPerPage: number,
 ): string[][] {
   const allLines = text.split("\n");
   const note: string[][] = [];

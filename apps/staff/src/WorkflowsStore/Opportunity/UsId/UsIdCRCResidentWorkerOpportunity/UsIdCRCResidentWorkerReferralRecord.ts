@@ -34,14 +34,14 @@ const usIdCrcResidentWorkerTimeBasedCriteria = z.object({
     z.discriminatedUnion("criteriaName", [
       z.object({
         criteriaName: z.literal(
-          "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD"
+          "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD",
         ),
         fullTermCompletionDate: dateStringSchema.nullable(),
         tentativeParoleDate: dateStringSchema.nullable(),
       }),
       z.object({
         criteriaName: z.literal(
-          "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD"
+          "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD",
         ),
         fullTermCompletionDate: dateStringSchema,
         paroleEligibilityDate: dateStringSchema,
@@ -49,11 +49,11 @@ const usIdCrcResidentWorkerTimeBasedCriteria = z.object({
       }),
       z.object({
         criteriaName: z.literal(
-          "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE"
+          "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE",
         ),
         tentativeParoleDate: dateStringSchema,
       }),
-    ])
+    ]),
   ),
 });
 
@@ -101,7 +101,7 @@ export const usIdCRCResidentWorkerSchema = opportunitySchemaBase
               acc[criteriaName] = otherReasons;
               return acc;
             },
-            {}
+            {},
           );
 
           for (const criteria of criteriaPriority) {
@@ -121,7 +121,7 @@ export const usIdCRCResidentWorkerSchema = opportunitySchemaBase
                   break;
                 default:
                   throw new Error(
-                    `Unexpected time-based criteria for CRC Work Release: ${criteria}`
+                    `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
                   );
               }
               break;
@@ -129,7 +129,7 @@ export const usIdCRCResidentWorkerSchema = opportunitySchemaBase
           }
 
           return transformedCriteria;
-        }
+        },
       ),
     ineligibleCriteria: z.object({}),
   })

@@ -50,8 +50,8 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
       "usMiClassificationReview",
       client.rootStore,
       usMiClassificationReviewSchemaForSupervisionLevelFormatter((raw) =>
-        client.rootStore.workflowsStore.formatSupervisionLevel(raw)
-      ).parse
+        client.rootStore.workflowsStore.formatSupervisionLevel(raw),
+      ).parse,
     );
 
     makeObservable(this, { requirementsMet: true });
@@ -66,7 +66,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
     return [
       {
         text: `Recommended classification review date, based on supervision start date and last classification review date, is ${formatWorkflowsDate(
-          eligibleDate
+          eligibleDate,
         )}`,
         tooltip:
           "Classification reviews shall be completed after six months of active supervision […] " +

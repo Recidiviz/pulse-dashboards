@@ -13,9 +13,9 @@ describe("getViolationTypeDescription tests", () => {
       getViolationTypeDescription({
         reportedViolations: mockReportedViolations,
         violationType: mockViolationType,
-      })
+      }),
     ).toBe(
-      "3 violations or notices of citation, Most severe violation: Felony"
+      "3 violations or notices of citation, Most severe violation: Felony",
     );
   });
 });

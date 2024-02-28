@@ -23,7 +23,7 @@ export function sortByYearAndMonth(dataPoints) {
   return dataPoints.sort((a, b) =>
     Number(a.year) === Number(b.year)
       ? Number(a.month) - Number(b.month)
-      : Number(a.year) - Number(b.year)
+      : Number(a.year) - Number(b.year),
   );
 }
 
@@ -61,7 +61,7 @@ function addEmptyMonthsToData(dataPoints, monthCount, valueKey, emptyValue) {
 
     if (dateMonthsAgo.getMonth() !== month - 1) {
       console.error(
-        `Month mismatch: month=${month}, dateMonthsAgo=${dateMonthsAgo}`
+        `Month mismatch: month=${month}, dateMonthsAgo=${dateMonthsAgo}`,
       );
     }
 
@@ -87,13 +87,13 @@ export function sortFilterAndSupplementMostRecentMonths(
   unsortedDataPoints,
   monthCount,
   valueKey,
-  emptyValue
+  emptyValue,
 ) {
   const updatedDataPoints = addEmptyMonthsToData(
     unsortedDataPoints,
     monthCount,
     valueKey,
-    emptyValue
+    emptyValue,
   );
   const sortedData = sortByYearAndMonth(updatedDataPoints);
   return filterMostRecentMonths(sortedData, monthCount);
@@ -121,7 +121,7 @@ export function sortByLabel(
   labelKey,
   desc,
   valueKey,
-  supervisionLevelOrder
+  supervisionLevelOrder,
 ) {
   if (supervisionLevelOrder) {
     return dataPoints.sort((a, b) => {

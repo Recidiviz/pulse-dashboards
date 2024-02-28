@@ -10,11 +10,11 @@ function filterOptimizedDataFormat(
   unflattenedMatrix,
   metadata,
   filterFn,
-  skipFilterFn = () => false
+  skipFilterFn = () => false,
 ) {
   if (!Array.isArray(unflattenedMatrix[0])) {
     throw new Error(
-      `Invalid data type supplied to filterOptimizedDataFormat, expected 2D array of values.`
+      `Invalid data type supplied to filterOptimizedDataFormat, expected 2D array of values.`,
     );
   }
 
@@ -38,7 +38,7 @@ function filterOptimizedDataFormat(
       const dimensionValue = getDimensionValue(
         dimensions,
         j,
-        dimensionValueIndex
+        dimensionValueIndex,
       );
 
       if (skipFilterFn(dimensionKey)) {
@@ -49,7 +49,7 @@ function filterOptimizedDataFormat(
       } else {
         matchesFilter = filterFn(
           { [dimensionKey]: dimensionValue.toLowerCase() },
-          dimensionKey
+          dimensionKey,
         );
       }
 

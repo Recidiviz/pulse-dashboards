@@ -65,7 +65,7 @@ const FormHeading: React.FC = () => {
   const form = useOpportunityFormContext() as UsIdEarnedDischargeForm;
 
   const supervisionType = toTitleCase(
-    form.formData.supervisionType || "Supervision"
+    form.formData.supervisionType || "Supervision",
   );
 
   return (

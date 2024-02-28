@@ -51,7 +51,7 @@ interface AggregateMetricsInterface<T> {
 export function recordsWithAggregateMetrics<T = MetricRecord>(
   metric: AggregateMetricsInterface<T>,
   filters: PopulationFilterValues,
-  monthRange: number
+  monthRange: number,
 ): T[] {
   const { dimensions, mostRecentDate, records } = metric;
 
@@ -68,7 +68,7 @@ export function recordsWithAggregateMetrics<T = MetricRecord>(
   const matchingDimensions = partialRight(
     filterRecordByDimensions,
     dimensions,
-    filters
+    filters,
   );
 
   return pipe(
@@ -84,7 +84,7 @@ export function recordsWithAggregateMetrics<T = MetricRecord>(
       return memo;
     }, []),
     filter(matchingDateRange),
-    sortBy(["year", "month"])
+    sortBy(["year", "month"]),
   )(records);
 }
 
@@ -95,7 +95,7 @@ export type MonthOverMonthMetrics = {
 
 export function calculateAggregateMetrics<T>(
   pastMonths: T[],
-  currentMonthRecords: T[]
+  currentMonthRecords: T[],
 ): MonthOverMonthMetrics {
   /*
     @param pastMonths chronological list of past months' aggregates
@@ -109,7 +109,7 @@ export function calculateAggregateMetrics<T>(
   const threeMonthWindow = [
     ...map(
       property("count"),
-      pastMonths.slice(-THREE_MONTH_AGGREGATE_LOOKBACK)
+      pastMonths.slice(-THREE_MONTH_AGGREGATE_LOOKBACK),
     ),
     currentMonthCount,
   ];

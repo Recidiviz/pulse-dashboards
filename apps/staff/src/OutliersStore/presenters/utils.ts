@@ -29,7 +29,7 @@ import { OutlierOfficerData } from "./types";
  */
 export function getOutlierOfficerData(
   officerData: SupervisionOfficer,
-  supervisionStore: OutliersSupervisionStore
+  supervisionStore: OutliersSupervisionStore,
 ): OutlierOfficerData {
   return {
     ...officerData,
@@ -38,7 +38,7 @@ export function getOutlierOfficerData(
       // specifically, the metric configs for this officer and the benchmarks
       // for their caseload type
       const metricConfig = supervisionStore.metricConfigsById?.get(
-        metric.metricId
+        metric.metricId,
       );
       if (!metricConfig) {
         throw new Error(`Missing metric configuration for ${metric.metricId}`);
@@ -53,7 +53,7 @@ export function getOutlierOfficerData(
       const benchmark = metricBenchmarks.get(caseloadType);
       if (!benchmark) {
         throw new Error(
-          `Missing metric benchmark data for caseload type ${caseloadType} for ${metric.metricId}`
+          `Missing metric benchmark data for caseload type ${caseloadType} for ${metric.metricId}`,
         );
       }
 
@@ -69,7 +69,7 @@ export function getOutlierOfficerData(
         ...filteredBenchmark.latestPeriodValues,
       ];
       const matchingIndex = filteredBenchmark.latestPeriodValues.findIndex(
-        (v) => v.value === currentPeriodData.metricRate
+        (v) => v.value === currentPeriodData.metricRate,
       );
       // in practice we always expect a match,
       // but if we miss we don't want to arbitrarily delete the last element
@@ -94,7 +94,7 @@ export function getOutlierOfficerData(
 
 export function getDistrictWithoutLabel(
   district: string | null | undefined,
-  label: string
+  label: string,
 ): string | undefined {
   return district?.toUpperCase().startsWith(label.toUpperCase())
     ? district.toUpperCase().split(`${label.toUpperCase()} `)[1]

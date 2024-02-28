@@ -68,7 +68,7 @@ export function CaseNotes({
                   {notes.length > 0 ? (
                     notes
                       .sort((noteA, noteB) =>
-                        descending(noteA.eventDate, noteB.eventDate)
+                        descending(noteA.eventDate, noteB.eventDate),
                       )
                       .map((note, index) => {
                         return (

@@ -36,13 +36,13 @@ let testEnv;
 function testWriteToCollectionsWithoutStateCodePrefix(
   collectionNames,
   db,
-  assertFn
+  assertFn,
 ) {
   return Promise.all(
     collectionNames.map((collectionName) =>
       // eslint-disable-next-line no-restricted-syntax
-      assertFn(setDoc(doc(db, collectionName, "foo"), {}))
-    )
+      assertFn(setDoc(doc(db, collectionName, "foo"), {})),
+    ),
   );
 }
 
@@ -50,13 +50,13 @@ function testWriteToCollectionsForStateWithStateCodePrefix(
   collectionNames,
   db,
   assertFn,
-  stateCode
+  stateCode,
 ) {
   return Promise.all(
     collectionNames.map((collectionName) =>
       // eslint-disable-next-line no-restricted-syntax
-      assertFn(setDoc(doc(db, collectionName, `${stateCode}_someID`), {}))
-    )
+      assertFn(setDoc(doc(db, collectionName, `${stateCode}_someID`), {})),
+    ),
   );
 }
 
@@ -86,9 +86,9 @@ test.each([
     await testWriteToCollectionsWithoutStateCodePrefix(
       [...ETL_COLLECTION_NAMES],
       getUserContext(testEnv).firestore(),
-      assertFails
+      assertFails,
     );
-  }
+  },
 );
 
 test.each([
@@ -98,7 +98,7 @@ test.each([
   await testWriteToCollectionsWithoutStateCodePrefix(
     SHARED_UPDATE_COLLECTION_NAMES,
     getUserContext(testEnv).firestore(),
-    assertFails
+    assertFails,
   );
 });
 
@@ -112,9 +112,9 @@ test.each([
     await testWriteToCollectionsWithoutStateCodePrefix(
       SHARED_UPDATE_COLLECTION_NAMES,
       getUserContext(testEnv).firestore(),
-      assertFails
+      assertFails,
     );
-  }
+  },
 );
 
 test.each([
@@ -125,7 +125,7 @@ test.each([
     SHARED_UPDATE_COLLECTION_NAMES,
     getUserContext(testEnv).firestore(),
     assertSucceeds,
-    "US_TN"
+    "US_TN",
   );
 });
 
@@ -137,7 +137,7 @@ test.each([
     SHARED_UPDATE_COLLECTION_NAMES,
     getUserContext(testEnv).firestore(),
     assertSucceeds,
-    "US_ND"
+    "US_ND",
   );
 });
 
@@ -151,9 +151,9 @@ test.each([
       SHARED_UPDATE_COLLECTION_NAMES,
       getUserContext(testEnv).firestore(),
       assertFails,
-      `US_${state}`
+      `US_${state}`,
     );
-  }
+  },
 );
 
 test.each([
@@ -166,16 +166,16 @@ test.each([
       SHARED_UPDATE_COLLECTION_NAMES,
       getOtherUserContext(testEnv).firestore(),
       assertSucceeds,
-      `US_${otherUserState}`
+      `US_${otherUserState}`,
     );
 
     await testWriteToCollectionsForStateWithStateCodePrefix(
       SHARED_UPDATE_COLLECTION_NAMES,
       getUserContext(testEnv).firestore(),
       assertFails,
-      `US_${otherUserState}`
+      `US_${otherUserState}`,
     );
-  }
+  },
 );
 
 test.each([
@@ -188,16 +188,16 @@ test.each([
       SHARED_UPDATE_COLLECTION_NAMES,
       getOtherUserContext(testEnv).firestore(),
       assertSucceeds,
-      `US_${otherUserState}`
+      `US_${otherUserState}`,
     );
 
     await testWriteToCollectionsForStateWithStateCodePrefix(
       SHARED_UPDATE_COLLECTION_NAMES,
       getRecidivizUser(testEnv).firestore(),
       assertSucceeds,
-      `US_${otherUserState}`
+      `US_${otherUserState}`,
     );
-  }
+  },
 );
 
 test.each([["PA"], ["CA"]])(
@@ -207,9 +207,9 @@ test.each([["PA"], ["CA"]])(
       SHARED_UPDATE_COLLECTION_NAMES,
       getRecidivizUser(testEnv).firestore(),
       assertFails,
-      `US_${userState}`
+      `US_${userState}`,
     );
-  }
+  },
 );
 
 test.each([
@@ -224,12 +224,12 @@ test.each([
         doc(
           getUserContext(testEnv).firestore(),
           PERSONAL_UPDATE_COLLECTION_NAME,
-          `user@${userState}.gov`
+          `user@${userState}.gov`,
         ),
-        {}
-      )
+        {},
+      ),
     );
-  }
+  },
 );
 
 test.each([
@@ -244,12 +244,12 @@ test.each([
         doc(
           getUserContext(testEnv).firestore(),
           PERSONAL_UPDATE_COLLECTION_NAME,
-          `otherUser@${userState}.gov`
+          `otherUser@${userState}.gov`,
         ),
-        {}
-      )
+        {},
+      ),
     );
-  }
+  },
 );
 
 test("impersonating user cannot write to collections", async () => {
@@ -257,7 +257,7 @@ test("impersonating user cannot write to collections", async () => {
     SHARED_UPDATE_COLLECTION_NAMES,
     getImpersonatedUser(testEnv).firestore(),
     assertFails,
-    "US_TN"
+    "US_TN",
   );
 });
 
@@ -266,6 +266,6 @@ test("impersonating user cannot write to personal update collection", async () =
     [PERSONAL_UPDATE_COLLECTION_NAME],
     getImpersonatedUser(testEnv).firestore(),
     assertFails,
-    "US_TN"
+    "US_TN",
   );
 });

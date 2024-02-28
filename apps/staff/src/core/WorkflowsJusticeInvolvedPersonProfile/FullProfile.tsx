@@ -227,7 +227,7 @@ const PreferredName: React.FC<ClientProfileProps> = observer(
         updateType="preferredName"
       />
     );
-  }
+  },
 );
 
 type ContactDetailsType = { isMobile: boolean } & PersonProfileProps;
@@ -304,5 +304,5 @@ export const FullProfile = observer(
         </Wrapper>
       </WorkflowsNavLayout>
     );
-  }
+  },
 );

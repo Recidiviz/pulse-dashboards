@@ -115,10 +115,10 @@ describe("OverTimeMetric", () => {
   it("fetches metrics when initialized", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
+        `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -128,7 +128,7 @@ describe("OverTimeMetric", () => {
 
   it("finds most recent month", () => {
     expect(OverTimeMetric.mostRecentDate(metric.dataSeries)).toEqual(
-      new Date(2022, 3)
+      new Date(2022, 3),
     );
   });
 
@@ -168,7 +168,7 @@ describe("OverTimeMetric", () => {
     metric.hydrate();
 
     expect(OverTimeMetric.mostRecentDate(metric.dataSeries)).toEqual(
-      new Date(9999, 11, 31)
+      new Date(9999, 11, 31),
     );
   });
 
@@ -183,10 +183,10 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -198,10 +198,10 @@ describe("OverTimeMetric", () => {
 
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `pathways/${newTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`
+        `pathways/${newTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -223,10 +223,10 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).not.toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -248,10 +248,10 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).not.toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -271,10 +271,10 @@ describe("OverTimeMetric", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/LibertyToPrisonTransitionsCount?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`
+          `&filters[gender]=MALE&filters[judicial_district]=JUDICIAL_DISTRICT_1&filters[judicial_district]=JUDICIAL_DISTRICT_2`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 

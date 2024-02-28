@@ -93,7 +93,7 @@ const PopulationSummaryMetrics: React.FC<PropTypes> = ({
   const currentData = data.find(
     (d) =>
       d.year === simulationDate.getFullYear() &&
-      d.month === simulationDate.getMonth() + 1
+      d.month === simulationDate.getMonth() + 1,
   ) as PopulationProjectionTimeSeriesRecord;
 
   const historicalData = data[0];

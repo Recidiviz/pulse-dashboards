@@ -182,7 +182,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
             {opportunity.externalRequestStatus === "SUCCESS" ? (
               <SubmittedText>
                 {`Note submitted to TOMIS on ${formatDate(
-                  opportunity.externalRequestData?.submitted.date.toDate()
+                  opportunity.externalRequestData?.submitted.date.toDate(),
                 )}
                 `}
               </SubmittedText>
@@ -211,7 +211,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
         />
       </FormContainer>
     );
-  }
+  },
 );
 
 export default WorkflowsUsTnExpirationForm;

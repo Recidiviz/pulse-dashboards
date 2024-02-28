@@ -50,7 +50,7 @@ export class OutliersStore {
       },
       () => {
         runInAction(() => this.reset());
-      }
+      },
     );
   }
 

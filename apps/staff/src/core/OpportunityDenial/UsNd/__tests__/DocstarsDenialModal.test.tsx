@@ -41,7 +41,7 @@ const mockRootStore = ({
     (opp, _email, _state, _pei, _date, _ts, status) => {
       // eslint-disable-next-line no-param-reassign
       opp.omsSnoozeStatus = status;
-    }
+    },
   );
 
   (useRootStore as jest.Mock).mockReturnValue({
@@ -91,7 +91,7 @@ describe("DocstarsDenialModal", () => {
         showModal={false}
         onCloseFn={jest.fn()}
         onSuccessFn={onSuccessFn}
-      />
+      />,
     );
     expect(onSuccessFn).not.toHaveBeenCalled();
 
@@ -105,7 +105,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={onSuccessFn}
-      />
+      />,
     );
     expect(onSuccessFn).toHaveBeenCalledOnce();
     expect(toast).not.toHaveBeenCalled();
@@ -123,7 +123,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     // TODO(#4372) add more comprehensive tests once the confirmation screen is done
@@ -136,7 +136,7 @@ describe("DocstarsDenialModal", () => {
     updateOmsSnoozeStatus.mockImplementation(
       (_opp, _email, _state, _pei, _date, _ts, status) => {
         opp.omsSnoozeStatus = status;
-      }
+      },
     );
 
     const opp: Opportunity = {
@@ -152,7 +152,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
@@ -166,7 +166,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -177,7 +177,7 @@ describe("DocstarsDenialModal", () => {
         "123",
         "2025-07-04",
         expect.anything(),
-        "PENDING"
+        "PENDING",
       );
       expect(apiPost).toHaveBeenCalledOnce();
       expect(apiPost).toHaveBeenCalledWith(
@@ -187,7 +187,7 @@ describe("DocstarsDenialModal", () => {
           justificationReasons: [{ code: "CODE", description: "Denial Code" }],
           personExternalId: undefined,
           userEmail: "mock-email@nd.gov",
-        }
+        },
       );
       expect(screen.getByTestId("docstars-loading-screen")).toBeInTheDocument();
     });
@@ -211,7 +211,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
@@ -225,7 +225,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -237,7 +237,7 @@ describe("DocstarsDenialModal", () => {
         "2025-07-04",
         expect.anything(),
         "FAILURE",
-        "mock error"
+        "mock error",
       );
     });
   });
@@ -258,7 +258,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
@@ -272,7 +272,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     opp.omsSnoozeStatus = "FAILURE";
@@ -286,7 +286,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     await waitFor(() => {
@@ -312,7 +312,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={onSuccessFn}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
@@ -326,7 +326,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={onSuccessFn}
-      />
+      />,
     );
 
     opp.omsSnoozeStatus = "SUCCESS";
@@ -340,13 +340,13 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={onSuccessFn}
-      />
+      />,
     );
 
     await waitFor(() => {
       expect(onSuccessFn).toHaveBeenCalledOnce();
       expect(toast).toHaveBeenCalledOnceWith(
-        "Note successfully synced to DOCSTARS"
+        "Note successfully synced to DOCSTARS",
       );
     });
   });
@@ -365,11 +365,11 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     expect(
-      screen.getByTestId("docstars-confirmation-screen")
+      screen.getByTestId("docstars-confirmation-screen"),
     ).toBeInTheDocument();
   });
 
@@ -389,7 +389,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
@@ -408,7 +408,7 @@ describe("DocstarsDenialModal", () => {
         showModal={false}
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     // show modal
@@ -421,12 +421,12 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={jest.fn()}
         onSuccessFn={jest.fn()}
-      />
+      />,
     );
 
     await waitFor(() => {
       expect(
-        screen.getByTestId("docstars-confirmation-screen")
+        screen.getByTestId("docstars-confirmation-screen"),
       ).toBeInTheDocument();
     });
   });
@@ -442,7 +442,7 @@ describe("DocstarsDenialModal", () => {
           },
         } as unknown as Opportunity,
         [],
-        ""
+        "",
       );
 
       expect(out).toStrictEqual([]);
@@ -458,7 +458,7 @@ describe("DocstarsDenialModal", () => {
           },
         } as unknown as Opportunity,
         [OTHER_KEY],
-        "Other reason"
+        "Other reason",
       );
 
       expect(out).toStrictEqual([
@@ -476,7 +476,7 @@ describe("DocstarsDenialModal", () => {
           },
         } as unknown as Opportunity,
         ["CODE", OTHER_KEY],
-        "Other reason"
+        "Other reason",
       );
 
       expect(out).toStrictEqual([

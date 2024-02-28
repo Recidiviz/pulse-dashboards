@@ -82,7 +82,7 @@ const testStateCodes = [
   "US_YY",
 ] as const;
 
-type testStateCode = typeof testStateCodes[number];
+type testStateCode = (typeof testStateCodes)[number];
 const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
   US_XX: {
     opportunityTypes: [
@@ -310,7 +310,7 @@ describe("hydrationState", () => {
       expect(workflowsStore.hydrationState).toEqual({
         status: "needs hydration",
       });
-    }
+    },
   );
 
   test.each([
@@ -561,7 +561,7 @@ test("update clients from subscription", async () => {
   });
   mockClients.forEach(({ pseudonymizedId }) => {
     expect(
-      workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+      workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId,
     ).toBe(pseudonymizedId);
   });
 });
@@ -585,7 +585,8 @@ describe("caseloadSubscription", () => {
       });
       [...mockClients, ...mockResidents].forEach(({ pseudonymizedId }) => {
         expect(
-          workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+          workflowsStore.justiceInvolvedPersons[pseudonymizedId]
+            .pseudonymizedId,
         ).toBe(pseudonymizedId);
       });
     });
@@ -606,7 +607,8 @@ describe("caseloadSubscription", () => {
 
       mockResidents.forEach(({ pseudonymizedId }) => {
         expect(
-          workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+          workflowsStore.justiceInvolvedPersons[pseudonymizedId]
+            .pseudonymizedId,
         ).toBe(pseudonymizedId);
       });
     });
@@ -628,7 +630,8 @@ describe("caseloadSubscription", () => {
       });
       mockClients.forEach(({ pseudonymizedId }) => {
         expect(
-          workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+          workflowsStore.justiceInvolvedPersons[pseudonymizedId]
+            .pseudonymizedId,
         ).toBe(pseudonymizedId);
       });
     });
@@ -687,7 +690,7 @@ test("no client selected", async () => {
 
   // simulate a UI displaying CR data
   testObserver = keepAlive(
-    computed(() => workflowsStore.eligibleOpportunities.compliantReporting)
+    computed(() => workflowsStore.eligibleOpportunities.compliantReporting),
   );
 
   expect(workflowsStore.selectedClient).toBeUndefined();
@@ -722,7 +725,7 @@ test("select unfetched client", async () => {
 
   expect(rootStore.firestoreStore.getClient).toHaveBeenCalledWith(
     idToSelect,
-    ineligibleClient.stateCode
+    ineligibleClient.stateCode,
   );
   expect(workflowsStore.selectedClient?.pseudonymizedId).toBe(idToSelect);
 });
@@ -733,14 +736,14 @@ describe("opportunitiesLoaded", () => {
     await waitForHydration(mockOfficer2);
     populateClients([]);
     expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
     ).toBeTrue();
   });
 
   test("opportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
     await waitForHydration(mockSupervisor);
     expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
     ).toBeFalse();
   });
 
@@ -748,7 +751,7 @@ describe("opportunitiesLoaded", () => {
     await waitForHydration();
     populateClients(mockClients);
     expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
     ).toBeFalse();
   });
 
@@ -756,12 +759,12 @@ describe("opportunitiesLoaded", () => {
     const compliantReportingHydrationStateMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
       "hydrationState",
-      "get"
+      "get",
     );
     const lsuHydrationStateMock = jest.spyOn(
       LSUOpportunity.prototype,
       "hydrationState",
-      "get"
+      "get",
     );
     await waitForHydration();
     populateClients(mockClients);
@@ -771,7 +774,7 @@ describe("opportunitiesLoaded", () => {
     });
     lsuHydrationStateMock.mockReturnValue({ status: "loading" });
     expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting", "LSU"])
+      workflowsStore.opportunitiesLoaded(["compliantReporting", "LSU"]),
     ).toBeFalse();
   });
 
@@ -779,14 +782,14 @@ describe("opportunitiesLoaded", () => {
     const hydrationStateMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
       "hydrationState",
-      "get"
+      "get",
     );
     await waitForHydration();
     populateClients(mockClients);
 
     hydrationStateMock.mockReturnValue({ status: "hydrated" });
     expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"])
+      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
     ).toBeTrue();
   });
 });
@@ -808,7 +811,7 @@ describe("hasOpportunities", () => {
     const hydrationStateMock = jest.spyOn(
       CompliantReportingOpportunity.prototype,
       "hydrationState",
-      "get"
+      "get",
     );
     await waitForHydration();
     populateClients(mockClients);
@@ -831,7 +834,7 @@ describe("hasOpportunities", () => {
       workflowsStore.hasOpportunities([
         "earlyTermination",
         "compliantReporting",
-      ])
+      ]),
     ).toBeTrue();
   });
 });
@@ -842,7 +845,7 @@ const setUser = (
   routes: Record<string, boolean> = {
     workflowsSupervision: true,
     workflowsFacilities: true,
-  }
+  },
 ) => {
   rootStore.userStore.user = {
     email: "foo@example.com",
@@ -863,11 +866,11 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
     stateConfigs[SESSION_STATE_CODE as testStateCode].workflowsSupportedSystems;
   const SESSION_SYSTEMS_WITH_GATES = Object.keys(
     (stateConfigs[SESSION_STATE_CODE as testStateCode]
-      .workflowsSystemsGatedByFeatureVariant as Record<any, any[]>) || {}
+      .workflowsSystemsGatedByFeatureVariant as Record<any, any[]>) || {},
   );
   const SESSION_SYSTEMS_WITHOUT_GATES = difference(
     SESSION_SUPPORTED_SYSTEMS,
-    SESSION_SYSTEMS_WITH_GATES
+    SESSION_SYSTEMS_WITH_GATES,
   );
 
   beforeEach(async () => {
@@ -883,7 +886,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
       expect.arrayContaining([
         TEST_GATED_SYSTEM,
         ...SESSION_SYSTEMS_WITHOUT_GATES,
-      ])
+      ]),
     );
   });
 
@@ -893,30 +896,30 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
       expect.arrayContaining([
         TEST_GATED_SYSTEM,
         ...SESSION_SYSTEMS_WITHOUT_GATES,
-      ])
+      ]),
     );
   });
 
   test("does not include supported system if the user does not have featureVariant", () => {
     setUser({});
     expect(workflowsStore.workflowsSupportedSystems).not.toContain(
-      TEST_GATED_SYSTEM
+      TEST_GATED_SYSTEM,
     );
     expect(workflowsStore.workflowsSupportedSystems).not.toEqual(
       expect.arrayContaining([
         TEST_GATED_SYSTEM,
         ...SESSION_SYSTEMS_WITHOUT_GATES,
-      ])
+      ]),
     );
   });
 
   test(`unsupportedWorkflowsSystems contains ${TEST_GATED_SYSTEM} if user does not have associated featureVariant for gated system`, () => {
     setUser({});
     expect(workflowsStore.unsupportedWorkflowSystemsByFeatureVariants).toEqual(
-      expect.arrayContaining([TEST_GATED_SYSTEM])
+      expect.arrayContaining([TEST_GATED_SYSTEM]),
     );
     expect(
-      workflowsStore.unsupportedWorkflowSystemsByFeatureVariants
+      workflowsStore.unsupportedWorkflowSystemsByFeatureVariants,
     ).not.toEqual(expect.arrayContaining([...SESSION_SYSTEMS_WITHOUT_GATES]));
   });
 
@@ -932,34 +935,34 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
           (stateConfigs[code].workflowsSystemsGatedByFeatureVariant as Record<
             any,
             any[]
-          >) || {}
-        ).includes(TEST_GATED_SYSTEM)
-    )
+          >) || {},
+        ).includes(TEST_GATED_SYSTEM),
+    ),
   )(
     `given gated system(s), ${TEST_GATED_SYSTEM}, in ${SESSION_STATE_CODE}, %p systems remain unaffected when the same system is gated in another stateCode`,
     (stateCode) => {
       setUser({}, stateCode);
       expect(workflowsStore.workflowsSupportedSystems).toContain(
-        TEST_GATED_SYSTEM
+        TEST_GATED_SYSTEM,
       );
       expect(
-        workflowsStore.unsupportedWorkflowSystemsByFeatureVariants
+        workflowsStore.unsupportedWorkflowSystemsByFeatureVariants,
       ).not.toContain(TEST_GATED_SYSTEM);
 
       const SYSTEMS_WITHOUT_GATING_IN_OTHER_STATES = difference(
         stateConfigs[stateCode].workflowsSupportedSystems as any[],
         Object.keys(
           (stateConfigs[stateCode]
-            .workflowsSystemsGatedByFeatureVariant as Record<any, any[]>) || {}
-        )
+            .workflowsSystemsGatedByFeatureVariant as Record<any, any[]>) || {},
+        ),
       );
       expect(workflowsStore.workflowsSupportedSystems).toEqual(
         expect.arrayContaining([
           TEST_GATED_SYSTEM,
           ...SYSTEMS_WITHOUT_GATING_IN_OTHER_STATES,
-        ])
+        ]),
       );
-    }
+    },
   );
 
   test("systems are gated by routes", () => {
@@ -968,7 +971,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
       workflowsFacilities: true,
     });
     expect(workflowsStore.workflowsSupportedSystems).toEqual(
-      expect.arrayContaining(["SUPERVISION", "INCARCERATION"])
+      expect.arrayContaining(["SUPERVISION", "INCARCERATION"]),
     );
 
     setUser({}, "US_ME", {
@@ -1014,7 +1017,7 @@ describe("test state-specific opportunity type feature variant filters", () => {
     test("US_XX oppTypes list does not include compliantReporting", async () => {
       // should be in the list when the feat var isn't on
       expect(
-        workflowsStore.opportunityTypes.includes("compliantReporting")
+        workflowsStore.opportunityTypes.includes("compliantReporting"),
       ).toBeTruthy();
 
       // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
@@ -1024,7 +1027,7 @@ describe("test state-specific opportunity type feature variant filters", () => {
       setUser({ fakeFeatVar: {} }, SESSION_STATE_CODE);
       // should no longer be in the list with inverse setting on now.
       expect(
-        workflowsStore.opportunityTypes.includes("compliantReporting")
+        workflowsStore.opportunityTypes.includes("compliantReporting"),
       ).toBeFalsy();
       OPPORTUNITY_CONFIGS.compliantReporting.inverseFeatureVariant = undefined;
     });
@@ -1136,9 +1139,9 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
     expect(
       oppTypes.every((oppType) =>
         INCARCERATION_OPPORTUNITY_TYPES.includes(
-          oppType as IncarcerationOpportunityType
-        )
-      )
+          oppType as IncarcerationOpportunityType,
+        ),
+      ),
     ).toBeTruthy();
   });
 
@@ -1153,9 +1156,9 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
       oppTypes.length > 0 &&
         oppTypes.every((oppType) =>
           SUPERVISION_OPPORTUNITY_TYPES.includes(
-            oppType as SupervisionOpportunityType
-          )
-        )
+            oppType as SupervisionOpportunityType,
+          ),
+        ),
     ).toBeTruthy();
   });
 
@@ -1212,7 +1215,7 @@ describe("getMilestonesClientsByStatus", () => {
     const newMilestonesClients = workflowsStore.getMilestonesClientsByStatus();
     expect(newMilestonesClients.length).toEqual(1);
     expect(
-      newMilestonesClients[0].milestoneMessagesUpdates?.status
+      newMilestonesClients[0].milestoneMessagesUpdates?.status,
     ).toBeUndefined();
   });
 
@@ -1222,8 +1225,8 @@ describe("getMilestonesClientsByStatus", () => {
     expect(congratulatedMilestonesClients.length).toEqual(2);
     expect(
       congratulatedMilestonesClients.map(
-        (c) => c.milestoneMessagesUpdates?.status
-      )
+        (c) => c.milestoneMessagesUpdates?.status,
+      ),
     ).toIncludeAllMembers(["IN_PROGRESS", "SUCCESS"]);
   });
 
@@ -1232,7 +1235,7 @@ describe("getMilestonesClientsByStatus", () => {
       workflowsStore.getMilestonesClientsByStatus(["DECLINED"]);
     expect(declinedMilestonesClients.length).toEqual(1);
     expect(
-      declinedMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status)
+      declinedMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status),
     ).toIncludeAllMembers(["DECLINED"]);
   });
   test("Clients who had an error sending the message", () => {
@@ -1241,7 +1244,7 @@ describe("getMilestonesClientsByStatus", () => {
     ]);
     expect(errorMilestonesClients.length).toEqual(1);
     expect(
-      errorMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status)
+      errorMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status),
     ).toIncludeAllMembers(["FAILURE"]);
   });
 });
@@ -1266,7 +1269,7 @@ describe("residents for US_ME", () => {
     });
     mockResidents.forEach(({ pseudonymizedId }) => {
       expect(
-        workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId
+        workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId,
       ).toBe(pseudonymizedId);
     });
   });

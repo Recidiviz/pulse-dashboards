@@ -30,21 +30,21 @@ export interface OutliersAPI {
   userInfo(userPseudoId: string): Promise<UserInfo>;
   patchUserInfo(
     userPseudoId: string,
-    props: PatchUserInfoProps
+    props: PatchUserInfoProps,
   ): Promise<UserInfo>;
   metricBenchmarks(): Promise<Array<MetricBenchmark>>;
   supervisionOfficerSupervisors(): Promise<Array<SupervisionOfficerSupervisor>>;
   officersForSupervisor(
-    supervisorPseudoId: string
+    supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>>;
   supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer>;
   supervisionOfficerMetricEvents(
     officerPseudoId: string,
-    metricId: string
+    metricId: string,
   ): Promise<Array<SupervisionOfficerMetricEvent>>;
   clientInfo(clientPseudoId: string): Promise<ClientInfo>;
   clientEvents(
     clientPseudoId: string,
-    endDate: Date
+    endDate: Date,
   ): Promise<Array<ClientEvent>>;
 }

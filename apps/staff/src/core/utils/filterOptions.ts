@@ -66,32 +66,35 @@ export const defaultDistrict = [defaultDistrictOption.value];
 
 export const convertLabelsToValues = (
   filtersLabels: PopulationFilterLabels,
-  filterOptions: PopulationFilters
+  filterOptions: PopulationFilters,
 ): Record<string, string | string[]> => {
   if (!filterOptions) return {};
-  return Object.keys(filtersLabels).reduce((acc, filterType) => {
-    const options = filterOptions[
-      filterType as keyof PopulationFilterLabels
-    ].options.filter((o) =>
-      filtersLabels[filterType as keyof PopulationFilterLabels]
-        .split(",")
-        .includes(o.label)
-    );
-    const values = options.map((o) => o.value);
-    if (options) acc[filterType] = values;
-    return acc;
-  }, {} as Record<string, string | string[]>);
+  return Object.keys(filtersLabels).reduce(
+    (acc, filterType) => {
+      const options = filterOptions[
+        filterType as keyof PopulationFilterLabels
+      ].options.filter((o) =>
+        filtersLabels[filterType as keyof PopulationFilterLabels]
+          .split(",")
+          .includes(o.label),
+      );
+      const values = options.map((o) => o.value);
+      if (options) acc[filterType] = values;
+      return acc;
+    },
+    {} as Record<string, string | string[]>,
+  );
 };
 
 export const getFilterOption = (
   value: string,
-  options: FilterOption[]
+  options: FilterOption[],
 ): FilterOption =>
   options.find((option) => option.value === value) ?? options[0];
 
 export const getFilterOptions = (
   value: string[],
-  options: FilterOption[]
+  options: FilterOption[],
 ): FilterOption[] => {
   return (
     options.filter((option) => value.includes(option.value)) ?? [options[0]]

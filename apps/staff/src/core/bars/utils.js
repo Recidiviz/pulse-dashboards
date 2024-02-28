@@ -39,7 +39,7 @@ export const groupByMonth = (barKeys) => (dataset) =>
           [barKey]: sumBy((o) => toInteger(o[barKey]), data),
         }),
         {},
-        barKeys
+        barKeys,
       ),
-    }))
+    })),
   )(dataset);

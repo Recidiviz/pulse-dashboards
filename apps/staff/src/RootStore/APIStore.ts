@@ -69,7 +69,7 @@ export class APIStore {
       throw new Error(
         dedent`API request failed.
             Status: ${response.status} - ${response.statusText}
-            Errors: ${JSON.stringify(json.errors ?? json)}`
+            Errors: ${JSON.stringify(json.errors ?? json)}`,
       );
     }
     return json;
@@ -93,7 +93,7 @@ export class APIStore {
       : this.userStore.stateCode;
     return this.post(
       `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${stateCode}/enqueue_sms_request`,
-      body
+      body,
     );
   }
 }

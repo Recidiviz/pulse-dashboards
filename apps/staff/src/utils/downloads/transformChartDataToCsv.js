@@ -21,10 +21,10 @@ async function transformChartDataToCsv(
   labels,
   dataExportLabel,
   convertValuesToNumbers,
-  fixLabelsInColumns = null
+  fixLabelsInColumns = null,
 ) {
   const datasetsWithoutTrendLine = datasets.filter(
-    (dataset) => dataset.label !== "trendline"
+    (dataset) => dataset.label !== "trendline",
   );
 
   let formattedData;
@@ -53,7 +53,7 @@ async function transformChartDataToCsv(
           ...acc,
           [labels[index]]: dataPoint,
         }),
-        dataset.label ? { [dataExportLabel]: dataset.label } : {}
+        dataset.label ? { [dataExportLabel]: dataset.label } : {},
       );
     });
   }

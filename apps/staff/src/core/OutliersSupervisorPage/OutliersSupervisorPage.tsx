@@ -60,7 +60,7 @@ export const SupervisorPage = observer(function SupervisorPage({
 
   const emptyPageHeaderText = `${getWelcomeText(
     supervisorInfo?.fullName.givenNames,
-    "Nice work"
+    "Nice work",
   )}! None of the ${labels.supervisionOfficerLabel}s in your ${
     labels.supervisionUnitLabel
   } ${labels.noneAreOutliersLabel}.`;
@@ -79,7 +79,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
       title: labels.supervisionDistrictLabel,
       info: getDistrictWithoutLabel(
         supervisorInfo?.supervisionDistrict,
-        labels.supervisionDistrictLabel
+        labels.supervisionDistrictLabel,
       ),
     },
     {
@@ -159,7 +159,7 @@ const OutliersSupervisorPage = observer(function OutliersSupervisorPage() {
 
   const presenter = new SupervisionOfficersPresenter(
     supervisionStore,
-    supervisionStore.supervisorPseudoId
+    supervisionStore.supervisorPseudoId,
   );
 
   return (

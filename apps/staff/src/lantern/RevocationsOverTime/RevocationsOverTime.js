@@ -63,13 +63,13 @@ function RevocationsOverTime({ timeDescription }) {
       dataset,
       toNumber(get(filters, METRIC_PERIOD_MONTHS)),
       "total_revocations",
-      0
-    )
+      0,
+    ),
   )(store.filteredData);
 
   const labels = monthNamesAllWithYearsFromNumbers(
     map("month", chartData),
-    false
+    false,
   );
   const dataPoints = map("total_revocations", chartData);
 
@@ -136,7 +136,7 @@ function RevocationsOverTime({ timeDescription }) {
     },
     annotation: currentMonthBox(
       "currentMonthBoxRevocationsOverTime",
-      chartLabels
+      chartLabels,
     ),
   };
 

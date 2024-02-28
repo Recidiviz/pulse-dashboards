@@ -73,8 +73,9 @@ export const SliderWrapper = styled.div<{
   }
 
   input[type="range"].range-slider::-webkit-slider-runnable-track {
-    background: linear-gradient(${palette.pine4}, ${palette.pine4}) 0 /
-        var(--position) 100% no-repeat,
+    background:
+      linear-gradient(${palette.pine4}, ${palette.pine4}) 0 / var(--position)
+        100% no-repeat,
       ${palette.slate10} !important;
   }
 

@@ -90,7 +90,7 @@ RevocationCountChart.propTypes = {
           PropTypes.string,
         ]),
         data: PropTypes.arrayOf(PropTypes.number),
-      })
+      }),
     ),
   }).isRequired,
   xAxisLabel: PropTypes.string.isRequired,

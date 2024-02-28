@@ -26,7 +26,7 @@ import {
 } from "../../schemaHelpers";
 
 export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
-  formatter: (raw: string) => string = (s) => s
+  formatter: (raw: string) => string = (s) => s,
 ) =>
   opportunitySchemaBase
     .extend({
@@ -50,7 +50,7 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
               usMiPastInitialClassificationReviewDate: z.undefined(),
               usMiSixMonthsPastLastClassificationReviewDate: eligibleDateSchema,
             }),
-          ])
+          ]),
         )
         .transform(
           ({
@@ -62,7 +62,7 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
               usMiPastInitialClassificationReviewDate ??
               usMiSixMonthsPastLastClassificationReviewDate,
             ...rest,
-          })
+          }),
         ),
       metadata: z.object({
         recommendedSupervisionLevel: z.string().optional(),

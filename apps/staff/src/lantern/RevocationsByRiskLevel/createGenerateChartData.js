@@ -63,7 +63,7 @@ const createGenerateChartData = (filteredData) => (mode) => {
         denominator,
         rate: rate.toFixed(2),
       };
-    })
+    }),
   )(filteredData);
 
   const chartDataPoints = map("rate", riskLevelCounts);
@@ -77,7 +77,7 @@ const createGenerateChartData = (filteredData) => (mode) => {
         label: getLabelByMode(mode),
         backgroundColor: applyStatisticallySignificantShadingToDataset(
           COLORS["lantern-orange"],
-          denominators
+          denominators,
         ),
         data: chartDataPoints,
       },

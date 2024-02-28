@@ -131,10 +131,10 @@ describe("PersonLevelMetric", () => {
   it("fetches metrics when initialized", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
-        `pathways/${mockTenantId}/PrisonPopulationPersonLevel?filters[time_period]=months_0_6`
+        `pathways/${mockTenantId}/PrisonPopulationPersonLevel?filters[time_period]=months_0_6`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 
@@ -174,10 +174,10 @@ describe("PersonLevelMetric", () => {
     expect(callNewMetricsApi).toHaveBeenCalledWith(
       encodeURI(
         `pathways/${mockTenantId}/PrisonPopulationPersonLevel?filters[time_period]=months_0_6` +
-          `&filters[gender]=MALE&filters[facility]=Bedrock`
+          `&filters[gender]=MALE&filters[facility]=Bedrock`,
       ),
       RootStore.getTokenSilently,
-      expect.any(AbortSignal)
+      expect.any(AbortSignal),
     );
   });
 

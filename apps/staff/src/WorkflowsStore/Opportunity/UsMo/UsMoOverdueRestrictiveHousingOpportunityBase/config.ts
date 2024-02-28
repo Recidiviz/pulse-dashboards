@@ -26,7 +26,7 @@ import { generateTabs } from "../../utils/tabUtils";
 export const baseUsMoOverdueRestrictiveHousingConfig = (
   usMoOverdueRHOppVariant: "Release" | "InitialHearing" | "ReviewHearing",
   fullTextPartial: string,
-  callToAction: string
+  callToAction: string,
 ): OpportunityConfig<OpportunityBase<Resident, any, any>> => {
   const segregationTypeMapping = {
     Release: "Due for Release",
@@ -53,7 +53,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
       isAlert: true,
       customTabOrder: [
         `Overdue as of ${formatWorkflowsDate(
-          startOfWeek(new Date(), { weekStartsOn: 1 })
+          startOfWeek(new Date(), { weekStartsOn: 1 }),
         )}`,
         "Due this week",
         "Coming up",

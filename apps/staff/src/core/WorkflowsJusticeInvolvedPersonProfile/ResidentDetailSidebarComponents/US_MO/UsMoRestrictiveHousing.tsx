@@ -79,7 +79,7 @@ export function UsMoRestrictiveHousing({
                 {" "}
                 – {differenceInDays(
                   new Date(),
-                  restrictiveHousingStartDate
+                  restrictiveHousingStartDate,
                 )}{" "}
                 days
               </CaseNoteDate>
@@ -99,7 +99,7 @@ export function UsMoRestrictiveHousing({
                 ? `${formatWorkflowsDate(mostRecentHearingDate)} 
                 (${differenceInDays(
                   new Date(),
-                  mostRecentHearingDate
+                  mostRecentHearingDate,
                 )} days ago)`
                 : "None"}
             </SecureDetailsContent>
@@ -134,7 +134,7 @@ export function UsMoRestrictiveHousing({
         classes={(classesRecent || [])
           .sort(
             (a, b) =>
-              new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+              new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
           )
           .slice(0, 10)}
       />

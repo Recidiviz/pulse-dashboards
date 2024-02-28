@@ -140,12 +140,12 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     ? "Overridden"
     : "Ineligible";
   const numIneligible = opportunities.filter(
-    (opp) => opp.reviewStatus === "DENIED"
+    (opp) => opp.reviewStatus === "DENIED",
   ).length;
 
   const header = generateOpportunityHydratedHeader(
     opportunityType,
-    opportunities.length - numIneligible
+    opportunities.length - numIneligible,
   );
 
   return (

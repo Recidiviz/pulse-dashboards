@@ -77,7 +77,7 @@ const SelectOption = {
       secondaryValue: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired,
-    })
+    }),
   ),
 };
 

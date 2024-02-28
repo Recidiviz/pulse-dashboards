@@ -153,7 +153,14 @@ describe.each([
     /on medium supervision for /,
     /stay on your current supervision level/,
   ],
-] as [criterionKey: keyof CompliantReportingReferralRecordFull["ineligibleCriteria"], expectedRank: number, expectedListText: string, expectedToolip: RegExp | undefined, expectedMissingText: RegExp, expectedNote?: RegExp][])(
+] as [
+  criterionKey: keyof CompliantReportingReferralRecordFull["ineligibleCriteria"],
+  expectedRank: number,
+  expectedListText: string,
+  expectedToolip: RegExp | undefined,
+  expectedMissingText: RegExp,
+  expectedNote?: RegExp,
+][])(
   "almost eligible but for %s",
   (
     criterionKey,
@@ -161,7 +168,7 @@ describe.each([
     expectedListText,
     expectedTooltip,
     expectedMissingText,
-    expectedNote
+    expectedNote,
   ) => {
     beforeEach(() => {
       jest
@@ -169,7 +176,7 @@ describe.each([
         .mockReturnValue({ CompliantReportingAlmostEligible: {} });
 
       const testRecord = cloneDeep(
-        compliantReportingAlmostEligibleReferralRecord
+        compliantReportingAlmostEligibleReferralRecord,
       );
 
       testRecord.ineligibleCriteria = {
@@ -214,7 +221,7 @@ describe.each([
       expect(
         cr.requirementsMet.find((req) => {
           return req.text.match(expectedMissingText);
-        })
+        }),
       ).toBeUndefined();
     });
 
@@ -225,7 +232,7 @@ describe.each([
         expect(cr.almostEligibleRecommendedNote).toBeUndefined();
       }
     });
-  }
+  },
 );
 
 test("hydrate", () => {
@@ -248,6 +255,6 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
     "compliantReportingReferrals",
     compliantReportingEligibleClientRecord.recordId,
     transformCompliantReportingReferral,
-    expect.any(Function)
+    expect.any(Function),
   );
 });

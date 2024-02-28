@@ -86,7 +86,7 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
     super(
       resident,
       "usMoOverdueRestrictiveHousingInitialHearing",
-      usMoOverdueRestrictiveHousingInitialHearingSchema.parse
+      usMoOverdueRestrictiveHousingInitialHearingSchema.parse,
     );
     this.resident = resident;
 
@@ -111,7 +111,7 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -120,7 +120,7 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
       this.record,
       "ineligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -134,7 +134,7 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
   get eligibleStatusMessage(): string {
     return super.generateUsMoOverdueEligibilityStatusMessage(
       "Initial hearing",
-      "due"
+      "due",
     );
   }
 }

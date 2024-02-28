@@ -22,5 +22,5 @@ export const usMoOverdueRestrictiveHousingInitialHearingConfig: OpportunityConfi
   baseUsMoOverdueRestrictiveHousingConfig(
     "InitialHearing",
     "on Temporary Assignment to review for their initial meaningful hearing",
-    "Review residents and prepare necessary paperwork for their hearing."
+    "Review residents and prepare necessary paperwork for their hearing.",
   );

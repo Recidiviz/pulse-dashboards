@@ -52,5 +52,5 @@ function formatViolationRecord(records) {
 
 export const parseAndFormatViolationRecord = compose(
   formatViolationRecord,
-  parseViolationRecord
+  parseViolationRecord,
 );

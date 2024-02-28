@@ -65,7 +65,7 @@ const PathwaysFilterBar: React.FC<{
     filtersRef,
     containerRef,
     enabledFilters,
-    enableMetricModeToggle
+    enableMetricModeToggle,
   );
 
   return (
@@ -82,11 +82,11 @@ const PathwaysFilterBar: React.FC<{
             <DetailsGroup>
               <MoreFilters
                 enabledFilters={enabledFilters.slice(
-                  enabledFiltersDisplayCount
+                  enabledFiltersDisplayCount,
                 )}
                 filterOptions={pick(
                   enabledFilters.slice(enabledFiltersDisplayCount),
-                  filterOptions
+                  filterOptions,
                 )}
               />
               <DownloadDataButton handleOnClick={handleDownload} />
@@ -99,11 +99,11 @@ const PathwaysFilterBar: React.FC<{
             <div className="FilterBar__details">
               <MoreFilters
                 enabledFilters={enabledFilters.slice(
-                  enabledFiltersDisplayCount
+                  enabledFiltersDisplayCount,
                 )}
                 filterOptions={pick(
                   enabledFilters.slice(enabledFiltersDisplayCount),
-                  filterOptions
+                  filterOptions,
                 )}
               />
               <DetailsGroup>
@@ -138,7 +138,7 @@ const PathwaysFilterBar: React.FC<{
                     id={filter.type}
                     value={getFilterOptions(
                       get(filters, filter.type),
-                      filter.options
+                      filter.options,
                     )}
                     options={
                       filter.type === FILTER_TYPES.TIME_PERIOD
@@ -151,7 +151,7 @@ const PathwaysFilterBar: React.FC<{
                       filter.defaultValue !==
                       getFilterOptions(
                         get(filters, filter.type),
-                        filter.options
+                        filter.options,
                       )[0]?.value
                     }
                   />
@@ -161,7 +161,7 @@ const PathwaysFilterBar: React.FC<{
                     summingOption={{ value: "ALL", label: "All" }}
                     value={getFilterOptions(
                       get(filters, filter.type),
-                      filter.options
+                      filter.options,
                     )}
                     options={
                       filter.type === FILTER_TYPES.TIME_PERIOD
@@ -174,7 +174,7 @@ const PathwaysFilterBar: React.FC<{
                       filter.defaultValue !==
                       getFilterOptions(
                         get(filters, filter.type),
-                        filter.options
+                        filter.options,
                       )[0]?.value
                     }
                   />

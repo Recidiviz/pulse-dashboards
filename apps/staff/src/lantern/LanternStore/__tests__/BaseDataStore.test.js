@@ -131,13 +131,13 @@ describe("BaseDataStore", () => {
 
       it("throws an error if filteredData is accessed by the parent class", () => {
         expect(() => baseStore.filteredData).toThrowError(
-          `filteredData should be defined in the subclass.`
+          `filteredData should be defined in the subclass.`,
         );
       });
 
       it("sets ignoredSubsetDimensions to the default values", () => {
         expect(baseStore.ignoredSubsetDimensions).toEqual(
-          DEFAULT_IGNORED_DIMENSIONS
+          DEFAULT_IGNORED_DIMENSIONS,
         );
       });
     });
@@ -186,7 +186,7 @@ describe("BaseDataStore", () => {
         expect(mockFilterOptimizedDataFormat).toHaveBeenCalledWith(
           data,
           metadata,
-          mockDataFilter
+          mockDataFilter,
         );
       });
     });
@@ -207,7 +207,7 @@ describe("BaseDataStore", () => {
         expect(callMetricsApi).toHaveBeenCalledTimes(1);
         expect(callMetricsApi).toHaveBeenCalledWith(
           expectedEndpoint,
-          mockGetTokenSilently
+          mockGetTokenSilently,
         );
       });
 
@@ -252,7 +252,7 @@ describe("BaseDataStore", () => {
         it("sends an error and context information to Sentry", () => {
           expect(Sentry.captureException).toHaveBeenCalledWith(
             apiError,
-            expect.any(Function)
+            expect.any(Function),
           );
         });
       });
@@ -275,7 +275,7 @@ describe("BaseDataStore", () => {
       supervisionType=All&supervisionLevel=All&levelOneSupervisionLocation[0]=All&
       levelTwoSupervisionLocation[0]=All&admissionType[0]=All`.replace(
           /\n\s+/g,
-          ""
+          "",
         );
 
       lanternStore.filtersStore.setFilters({
@@ -284,7 +284,7 @@ describe("BaseDataStore", () => {
 
       expect(callMetricsApi).toHaveBeenCalledWith(
         expectedEndpoint,
-        mockGetTokenSilently
+        mockGetTokenSilently,
       );
     });
   });

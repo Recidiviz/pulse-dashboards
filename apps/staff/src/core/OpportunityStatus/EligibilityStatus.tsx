@@ -59,5 +59,5 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
     if (defaultEligibility === "MAYBE") return <>May be eligible</>;
 
     return eligibleStatusMessage ? <>{eligibleStatusMessage}</> : <>Eligible</>;
-  }
+  },
 );

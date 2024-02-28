@@ -42,7 +42,7 @@ export function useLanternStore(): LanternStore {
   const context = useContext(LanternContext);
   if (context === undefined) {
     throw new Error(
-      "useLanternStore must be used within a LanternStoreProvider"
+      "useLanternStore must be used within a LanternStoreProvider",
     );
   }
   return context;

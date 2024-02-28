@@ -71,13 +71,13 @@ describe("MethodologyPathways", () => {
       });
 
       const notAllowedNavigation = Object.keys(pageCopy).filter(
-        (page) => !allowedNavigation.system.includes(page)
+        (page) => !allowedNavigation.system.includes(page),
       );
       notAllowedNavigation.forEach((pageId: string) => {
         it(`does not render the TOC link for ${pageId}`, () => {
           const { queryByRole } = render(<MethodologyPathways />);
           expect(
-            queryByRole("link", { name: pageCopy[pageId].title })
+            queryByRole("link", { name: pageCopy[pageId].title }),
           ).toBeNull();
         });
       });
@@ -97,11 +97,11 @@ describe("MethodologyPathways", () => {
         const allowedMetrics = Object.keys(metricCopy).filter(
           (metricId) =>
             allowedSections.includes(
-              getSectionIdForMetric(metricId as MetricId)
+              getSectionIdForMetric(metricId as MetricId),
             ) &&
             getMetricIdsForPage(pageId as PathwaysPage).includes(
-              metricId as MetricId
-            )
+              metricId as MetricId,
+            ),
         );
 
         allowedMetrics.forEach((metricId) => {
@@ -114,30 +114,30 @@ describe("MethodologyPathways", () => {
         const notAllowedMetrics = Object.keys(metricCopy).filter(
           (metricId) =>
             !allowedSections.includes(
-              getSectionIdForMetric(metricId as MetricId)
+              getSectionIdForMetric(metricId as MetricId),
             ) &&
             getMetricIdsForPage(pageId as PathwaysPage).includes(
-              metricId as MetricId
-            )
+              metricId as MetricId,
+            ),
         );
         notAllowedMetrics.forEach((metricId) => {
           it(`does not render the methodology block for the ${pageId} page's metric ${metricId}`, () => {
             const { queryByRole } = render(<MethodologyPathways />);
             expect(
-              queryByRole("heading", { name: metricCopy[metricId].title })
+              queryByRole("heading", { name: metricCopy[metricId].title }),
             ).toBeNull();
           });
         });
       });
 
       const notAllowedPages = Object.keys(pageCopy).filter(
-        (page) => !allowedNavigation.system.includes(page)
+        (page) => !allowedNavigation.system.includes(page),
       );
       notAllowedPages.forEach((pageId: string) => {
         it(`does not render the methodology block for page ${pageId}`, () => {
           const { queryByRole } = render(<MethodologyPathways />);
           expect(
-            queryByRole("heading", { name: pageCopy[pageId].title })
+            queryByRole("heading", { name: pageCopy[pageId].title }),
           ).toBeNull();
         });
       });

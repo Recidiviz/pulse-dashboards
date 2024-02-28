@@ -121,7 +121,7 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
     const twoThirdsTimeDate = fractionalDateBetweenTwoDates(
       startDate,
       endDate,
-      2 / 3
+      2 / 3,
     );
 
     const opportunityDates: PortionServedDates = [];
@@ -134,7 +134,7 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
     }
 
     const opportunities = Object.values(
-      this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {}
+      this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {},
     );
 
     opportunities.forEach((opp) => {

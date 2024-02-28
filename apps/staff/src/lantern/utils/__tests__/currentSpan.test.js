@@ -67,7 +67,7 @@ describe("test for currentSpan", () => {
 
     const { drawTime, annotations } = currentSpanMethods.currentMonthBox(
       annotationId,
-      chartLabels
+      chartLabels,
     );
     expect(drawTime).toBe("beforeDatasetsDraw");
     expect(annotations[0].type).toBe("box");
@@ -81,7 +81,7 @@ describe("test for currentSpan", () => {
 
     const smallCurrentMonthBox = currentSpanMethods.currentMonthBox(
       annotationId,
-      smallChartLabels
+      smallChartLabels,
     );
     expect(smallCurrentMonthBox).toBe(null);
 
@@ -90,7 +90,7 @@ describe("test for currentSpan", () => {
 
     const currentMonthBoxForDifferentDate = currentSpanMethods.currentMonthBox(
       annotationId,
-      smallChartLabels
+      smallChartLabels,
     );
     expect(currentMonthBoxForDifferentDate).toBe(null);
   });
@@ -165,10 +165,10 @@ describe("test for currentSpan", () => {
     const monthNamesWithYearsDifferentOrderArray =
       currentSpanMethods.monthNamesAllWithYearsFromNumbers(
         monthNumbersOutOfOrder,
-        true
+        true,
       );
     expect(monthNamesWithYearsDifferentOrderArray).toEqual(
-      expectedForDifferentOrder
+      expectedForDifferentOrder,
     );
 
     const monthNamesWithYearsEmptyArray =
@@ -186,7 +186,7 @@ describe("test for currentSpan", () => {
       currentSpanMethods.monthNamesAllWithYearsFromNumbers(
         testData,
         true,
-        false
+        false,
       );
     }).toThrow();
   });

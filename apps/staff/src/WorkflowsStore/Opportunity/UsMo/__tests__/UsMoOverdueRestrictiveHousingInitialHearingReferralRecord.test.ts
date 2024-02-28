@@ -22,8 +22,8 @@ describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
   it("should have a valid schema", () => {
     expect(
       usMoOverdueRestrictiveHousingInitialHearingSchema.parse(
-        usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture
-      )
+        usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
+      ),
     ).toMatchInlineSnapshot(`
       Object {
         "eligibleCriteria": Object {

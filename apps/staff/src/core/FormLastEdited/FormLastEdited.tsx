@@ -44,5 +44,5 @@ export const FormLastEdited: React.FC<FormLastEditedProps> = observer(
         . {dataProviso}
       </>
     );
-  }
+  },
 );

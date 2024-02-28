@@ -20,6 +20,6 @@ import { supervisionOfficerSchema } from "../SupervisionOfficer";
 
 test("transformations", () => {
   rawSupervisionOfficerFixture.forEach((so) =>
-    expect(supervisionOfficerSchema.parse(so)).toMatchSnapshot()
+    expect(supervisionOfficerSchema.parse(so)).toMatchSnapshot(),
   );
 });

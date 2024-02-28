@@ -63,7 +63,7 @@ export const ImpersonationForm: React.FC<{
   >();
 
   const inputRef = useRef<HTMLInputElement>(
-    null
+    null,
   ) as MutableRefObject<HTMLInputElement>;
 
   const setInputRef = React.useCallback(
@@ -72,7 +72,7 @@ export const ImpersonationForm: React.FC<{
         inputRef.current = inputElement;
       }
     },
-    []
+    [],
   );
 
   function handleEmailInput(email: string | undefined) {
@@ -86,7 +86,7 @@ export const ImpersonationForm: React.FC<{
       getEmailDomain(formattedEmail) !== TENANTS[stateCode as TenantId].domain
     ) {
       setFormValidationError(
-        "The entered email address does not match this state's expected domain."
+        "The entered email address does not match this state's expected domain.",
       );
       return;
     }

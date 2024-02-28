@@ -43,7 +43,7 @@ import {
 import { defaultTransformFunction, defaultValidateFunction } from "./utils";
 
 export abstract class FirestoreQuerySubscription<
-    DataFormat extends DocumentData
+    DataFormat extends DocumentData,
   >
   extends FirestoreSubscription<DataFormat[]>
   implements QuerySubscription<DataFormat>
@@ -54,7 +54,7 @@ export abstract class FirestoreQuerySubscription<
 
   constructor(
     protected transformRecord: TransformFunction<DataFormat> = defaultTransformFunction,
-    protected validateRecord: ValidateFunction<DataFormat> = defaultValidateFunction
+    protected validateRecord: ValidateFunction<DataFormat> = defaultValidateFunction,
   ) {
     super([]);
 
@@ -83,7 +83,7 @@ export abstract class FirestoreQuerySubscription<
     snapshot.forEach((doc) => {
       try {
         const record = this.transformRecord(
-          doc.data({ serverTimestamps: "estimate" })
+          doc.data({ serverTimestamps: "estimate" }),
         );
 
         if (record !== undefined) this.validateRecord(record);
@@ -121,7 +121,7 @@ export abstract class FirestoreQuerySubscription<
             this.data = [];
           });
           Sentry.captureException(error);
-        }
+        },
       );
     }
   }
@@ -135,7 +135,7 @@ export abstract class FirestoreQuerySubscription<
       () => {
         this.unsubscribe();
         this.subscribe();
-      }
+      },
     );
   }
 

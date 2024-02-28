@@ -97,7 +97,7 @@ export class UsIdEarnedDischargeForm extends FormBase<
       sentenceMax?.length || 0,
       sentenceMin?.length || 0,
       caseNumbers?.length || 0,
-      dateImposed?.length || 0
+      dateImposed?.length || 0,
     );
 
     if (countyNames) {
@@ -109,7 +109,7 @@ export class UsIdEarnedDischargeForm extends FormBase<
     if (judgeNames) {
       judgeNames.forEach((judge, index) => {
         initialData[`judgeNames${index}`] = `Judge ${toTitleCase(
-          judge.givenNames
+          judge.givenNames,
         )} ${toTitleCase(judge.surname)}`;
       });
     }

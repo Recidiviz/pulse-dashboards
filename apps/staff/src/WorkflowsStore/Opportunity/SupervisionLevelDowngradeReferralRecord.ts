@@ -54,10 +54,10 @@ export type SupervisionLevelDowngradeReferralRecord = z.infer<
 >;
 
 export function getBaseSLDValidator(
-  client: Client
+  client: Client,
 ): ValidateFunction<SupervisionLevelDowngradeReferralRecord> {
   const validator: ValidateFunction<SupervisionLevelDowngradeReferralRecord> = (
-    transformedRecord
+    transformedRecord,
   ) => {
     const { supervisionLevel } =
       transformedRecord.eligibleCriteria
@@ -65,7 +65,7 @@ export function getBaseSLDValidator(
 
     if (supervisionLevel !== client.supervisionLevel)
       throw new OpportunityValidationError(
-        "Supervision level does not match client record"
+        "Supervision level does not match client record",
       );
   };
 
@@ -73,7 +73,7 @@ export function getBaseSLDValidator(
 }
 
 export function formatBaseSLDRequirements(
-  transformedRecord: SupervisionLevelDowngradeReferralRecord
+  transformedRecord: SupervisionLevelDowngradeReferralRecord,
 ): OpportunityRequirement[] {
   const { assessmentLevel, latestAssessmentDate, supervisionLevel } =
     transformedRecord.eligibleCriteria

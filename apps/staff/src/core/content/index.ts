@@ -86,7 +86,7 @@ export const getPageCopy = (currentTenantId: TenantId): PageCopy => {
 };
 
 export const getMetricCopy = (
-  currentTenantId: TenantId | undefined
+  currentTenantId: TenantId | undefined,
 ): MetricCopy => {
   return currentTenantId && currentTenantId in metricContentOverrides
     ? merge(defaultMetricContent, metricContentOverrides[currentTenantId])
@@ -94,7 +94,7 @@ export const getMetricCopy = (
 };
 
 export const getMethodologyCopy = (
-  currentTenantId: TenantId
+  currentTenantId: TenantId,
 ): ViewMethodology => {
   switch (currentTenantId) {
     case pathwaysTenants.US_CO:
@@ -115,7 +115,7 @@ export const getMethodologyCopy = (
       return usTnMethodology;
     default:
       throw new Error(
-        `methodology does not exist for state code ${currentTenantId}`
+        `methodology does not exist for state code ${currentTenantId}`,
       );
   }
 };

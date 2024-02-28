@@ -457,5 +457,5 @@ export const rawMetricBenchmarksFixture = [
 ] satisfies RawMetricBenchmark[];
 
 export const metricBenchmarksFixture = rawMetricBenchmarksFixture.map((b) =>
-  metricBenchmarkSchema.parse(b)
+  metricBenchmarkSchema.parse(b),
 );

@@ -133,7 +133,7 @@ describe("createSubset", () => {
 
       it("returns a filtered dataset as a flattenedValueMatrix", () => {
         expect(output[fileKey].flattenedValueMatrix).toEqual(
-          expectedFilteredValues
+          expectedFilteredValues,
         );
       });
     });
@@ -170,7 +170,7 @@ describe("createSubset", () => {
 
       it("returns the data with the user restrictions applied", () => {
         expect(output[fileKey].flattenedValueMatrix).toEqual(
-          expectedFilteredValues
+          expectedFilteredValues,
         );
         expect(output[fileKey].metadata).toEqual(expectedMetadata);
       });

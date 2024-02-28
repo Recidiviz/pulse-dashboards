@@ -47,7 +47,7 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client,
       OPPORTUNITY_TYPE,
       client.rootStore,
-      usCaSupervisionLevelDowngradeSchema.parse
+      usCaSupervisionLevelDowngradeSchema.parse,
     );
 
     this.client = client;

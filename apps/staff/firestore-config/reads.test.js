@@ -70,14 +70,14 @@ async function testAllReadsForState(db, assertFn, stateCode) {
         getDocs(
           query(
             collection(db, collectionName),
-            where("stateCode", "==", stateCode)
-          )
-        )
+            where("stateCode", "==", stateCode),
+          ),
+        ),
       );
     }),
     ...SHARED_UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
-        getDoc(doc(collection(db, collectionName), `${stateCode}_12345`))
+        getDoc(doc(collection(db, collectionName), `${stateCode}_12345`)),
       );
     }),
   ]);
@@ -91,7 +91,7 @@ test.each([
 ])("%s user cannot read unrestricted", async (userType, getUserContext) => {
   await testAllReadsUnrestricted(
     getUserContext(testEnv).firestore(),
-    assertFails
+    assertFails,
   );
 });
 
@@ -102,7 +102,7 @@ test.each([
   await testAllReadsForState(
     getUserContext(testEnv).firestore(),
     assertFails,
-    "US_TN"
+    "US_TN",
   );
 });
 
@@ -112,9 +112,9 @@ test.each([["TN"], ["ND"]])(
     await testAllReadsForState(
       getRecidivizUser(testEnv).firestore(),
       assertSucceeds,
-      `US_${userState}`
+      `US_${userState}`,
     );
-  }
+  },
 );
 
 test.each([["CA"], ["PA"]])(
@@ -123,9 +123,9 @@ test.each([["CA"], ["PA"]])(
     await testAllReadsForState(
       getRecidivizUser(testEnv).firestore(),
       assertFails,
-      `US_${userState}`
+      `US_${userState}`,
     );
-  }
+  },
 );
 
 test.each([
@@ -137,9 +137,9 @@ test.each([
     await testAllReadsForState(
       getUserContext(testEnv).firestore(),
       assertSucceeds,
-      `US_${userState}`
+      `US_${userState}`,
     );
-  }
+  },
 );
 
 test.each([
@@ -151,9 +151,9 @@ test.each([
     await testAllReadsForState(
       getUserContext(testEnv).firestore(),
       assertFails,
-      `US_${otherState}`
+      `US_${otherState}`,
     );
-  }
+  },
 );
 
 test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
@@ -164,13 +164,13 @@ test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
         doc(
           collection(
             getUserContext(testEnv).firestore(),
-            PERSONAL_UPDATE_COLLECTION_NAME
+            PERSONAL_UPDATE_COLLECTION_NAME,
           ),
-          `user@${userState}.gov`
-        )
-      )
+          `user@${userState}.gov`,
+        ),
+      ),
     );
-  }
+  },
 );
 
 test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
@@ -181,11 +181,11 @@ test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
         doc(
           collection(
             getUserContext(testEnv).firestore(),
-            PERSONAL_UPDATE_COLLECTION_NAME
+            PERSONAL_UPDATE_COLLECTION_NAME,
           ),
-          `other_user@${userState}.gov`
-        )
-      )
+          `other_user@${userState}.gov`,
+        ),
+      ),
     );
-  }
+  },
 );

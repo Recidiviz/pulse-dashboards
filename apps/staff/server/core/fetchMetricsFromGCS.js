@@ -50,12 +50,12 @@ function fetchMetricsFromGCS(stateCode, metricType, metricName) {
       const filePromise = objectStorage.downloadFile(
         BUCKET_NAME,
         stateCode,
-        filename
+        filename,
       );
       const metadataPromise = objectStorage.downloadFileMetadata(
         BUCKET_NAME,
         stateCode,
-        filename
+        filename,
       );
 
       promises.push(
@@ -71,18 +71,18 @@ function fetchMetricsFromGCS(stateCode, metricType, metricName) {
               metadata.value_keys = JSON.parse(rawMetadata.value_keys);
               metadata.total_data_points = rawMetadata.total_data_points;
               metadata.dimension_manifest = JSON.parse(
-                rawMetadata.dimension_manifest
+                rawMetadata.dimension_manifest,
               );
             }
 
             metric.validateDimensionsForFile(
               fileKey,
-              metadata.dimension_manifest
+              metadata.dimension_manifest,
             );
 
             return { fileKey, extension, metadata, contents };
-          }
-        )
+          },
+        ),
       );
     });
   } catch (e) {

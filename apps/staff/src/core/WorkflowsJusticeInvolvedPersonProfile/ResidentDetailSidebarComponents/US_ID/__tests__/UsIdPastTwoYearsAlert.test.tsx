@@ -36,8 +36,8 @@ describe("UsIdPastTwoYearsAlert tests", () => {
 
     expect(
       screen.getByText(
-        "Fred Flintstone has served more than 2 years of their sentence."
-      )
+        "Fred Flintstone has served more than 2 years of their sentence.",
+      ),
     ).not.toBeNull();
   });
 
@@ -48,8 +48,8 @@ describe("UsIdPastTwoYearsAlert tests", () => {
 
     expect(
       screen.queryByText(
-        "Fred Flintstone has served more than 2 years of their sentence."
-      )
+        "Fred Flintstone has served more than 2 years of their sentence.",
+      ),
     ).toBeNull();
   });
 });

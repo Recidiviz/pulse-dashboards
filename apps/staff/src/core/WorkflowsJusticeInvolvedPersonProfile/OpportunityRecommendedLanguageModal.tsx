@@ -99,7 +99,7 @@ const OpportunityRecommendedLanguageModal = ({
   const [showModal, setShowModal] = useState(false);
   const [isCopied, copyToClipboard] = useClipboard(
     opportunity.almostEligibleRecommendedNote?.text ?? "",
-    { successDuration: 5000 }
+    { successDuration: 5000 },
   );
 
   const trackingMetadata: Omit<CopyCTAMetadata, "date"> = {

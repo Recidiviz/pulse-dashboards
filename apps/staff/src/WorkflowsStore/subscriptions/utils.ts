@@ -24,7 +24,7 @@ import { TransformFunction, UpdateFunction, ValidateFunction } from "./types";
 // by default, we pass through undefined
 // and retype the raw record as the formatted record
 export const defaultTransformFunction: TransformFunction<any> = <DataFormat>(
-  rawRecord: DocumentData | undefined
+  rawRecord: DocumentData | undefined,
 ): DataFormat | undefined => {
   if (rawRecord === undefined) {
     return;
@@ -33,13 +33,13 @@ export const defaultTransformFunction: TransformFunction<any> = <DataFormat>(
 };
 
 export const defaultValidateFunction: ValidateFunction<any> = <DataFormat>(
-  transformedRecord: DataFormat
+  transformedRecord: DataFormat,
 ): void => {
   /* do no validation by default */
 };
 
 export const defaultUpdateFunction: UpdateFunction<DocumentData> = async (
-  rawRecord: DocumentData | undefined
+  rawRecord: DocumentData | undefined,
 ): Promise<void> => {
   /* do no updates by default */
 };

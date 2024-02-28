@@ -49,7 +49,7 @@ Given(
     } else {
       await pageMapping.opportunity.open(pageName);
     }
-  }
+  },
 );
 
 Given(
@@ -58,7 +58,7 @@ Given(
     WorkflowsHomepage.open();
     await switchUserStateCode(stateCode);
     await pageMapping.profile.open(personID);
-  }
+  },
 );
 
 /**
@@ -99,9 +99,9 @@ Then(
   async (opportunityType) => {
     const url = await browser.getUrl();
     expect(url).toEqual(
-      expect.stringContaining(`/workflows/${opportunityType}`)
+      expect.stringContaining(`/workflows/${opportunityType}`),
     );
-  }
+  },
 );
 
 Then(
@@ -109,9 +109,9 @@ Then(
   async (personID) => {
     const url = await browser.getUrl();
     expect(url).toEqual(
-      expect.stringContaining(`/workflows/clients/${personID}`)
+      expect.stringContaining(`/workflows/clients/${personID}`),
     );
-  }
+  },
 );
 
 Then("I should navigate to the {string} form page", async (opportunityType) => {
@@ -125,9 +125,9 @@ Then(
   async (criteriaText) => {
     const criteriaList = await WorkflowsFormPage.criteriaList();
     expect(await criteriaList.getText()).toEqual(
-      expect.stringContaining(criteriaText)
+      expect.stringContaining(criteriaText),
     );
-  }
+  },
 );
 
 Then(
@@ -135,9 +135,9 @@ Then(
   async (detailsText) => {
     const detailsSection = await WorkflowsFormPage.detailsSection();
     expect(await detailsSection.getText()).toEqual(
-      expect.stringContaining(detailsText)
+      expect.stringContaining(detailsText),
     );
-  }
+  },
 );
 
 Then(
@@ -146,7 +146,7 @@ Then(
     const navigateToFormButton =
       await WorkflowsOpportunityPage.navigateToFormButton();
     expect(await navigateToFormButton.getText()).toEqual(buttonText);
-  }
+  },
 );
 
 Then(
@@ -156,5 +156,5 @@ Then(
     await previewWrapper.waitForExist();
     const text = await previewWrapper.getText();
     expect(text).toEqual(expect.stringContaining(personName));
-  }
+  },
 );

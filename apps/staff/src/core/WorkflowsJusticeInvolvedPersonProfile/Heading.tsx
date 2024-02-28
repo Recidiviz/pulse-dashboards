@@ -39,7 +39,7 @@ export const Heading = observer(function Heading({
         className="PersonProfileLink"
         to={workflowsUrl(
           person instanceof Client ? "clientProfile" : "residentProfile",
-          { justiceInvolvedPersonId: person.pseudonymizedId }
+          { justiceInvolvedPersonId: person.pseudonymizedId },
         )}
       >
         <ProfileCapsule avatarSize="md" person={person} textSize="sm" />

@@ -36,7 +36,7 @@ export const usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLeve
   (fmt?: (raw: string) => string) => {
     const base =
       supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-        fmt
+        fmt,
       );
 
     return base

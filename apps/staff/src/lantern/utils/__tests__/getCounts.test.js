@@ -64,8 +64,8 @@ describe("getCounts", () => {
         labels,
         dimensions,
         populationData,
-        "race_or_ethnicity"
-      )
+        "race_or_ethnicity",
+      ),
     ).toEqual(expected);
   });
 });

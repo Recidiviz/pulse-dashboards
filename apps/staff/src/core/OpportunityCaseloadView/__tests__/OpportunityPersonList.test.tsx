@@ -68,8 +68,8 @@ test("initial", () => {
 
   expect(
     screen.getByText(
-      "Search for officers above to review and refer eligible clients for early termination."
-    )
+      "Search for officers above to review and refer eligible clients for early termination.",
+    ),
   ).toBeInTheDocument();
 });
 
@@ -99,8 +99,8 @@ test("empty", () => {
 
   expect(
     screen.getByText(
-      "None of the clients on the selected officer's caseloads are eligible for early termination. Search for another officer."
-    )
+      "None of the clients on the selected officer's caseloads are eligible for early termination. Search for another officer.",
+    ),
   ).toBeInTheDocument();
 });
 
@@ -144,7 +144,7 @@ test("hydrated", () => {
   render(<OpportunityPersonList />);
 
   expect(
-    screen.getByText("2 clients may be eligible for early termination")
+    screen.getByText("2 clients may be eligible for early termination"),
   ).toBeInTheDocument();
 
   expect(screen.queryByText(emptyTabText)).not.toBeInTheDocument();
@@ -155,7 +155,7 @@ test("hydrated", () => {
   expect(firstTab).toBeInTheDocument();
   expect(otherTab).toBeInTheDocument();
   expect(firstTab.compareDocumentPosition(otherTab)).toBe(
-    Node.DOCUMENT_POSITION_FOLLOWING
+    Node.DOCUMENT_POSITION_FOLLOWING,
   );
 });
 
@@ -187,7 +187,7 @@ test("hydrated with one tab", () => {
   render(<OpportunityPersonList />);
 
   expect(
-    screen.getByText("1 client may be eligible for early termination")
+    screen.getByText("1 client may be eligible for early termination"),
   ).toBeInTheDocument();
 
   expect(screen.queryByText(firstTabText)).toBeInTheDocument();
@@ -226,7 +226,7 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
   render(<OpportunityPersonList />);
 
   expect(
-    screen.getByText("1 client may be eligible for early termination")
+    screen.getByText("1 client may be eligible for early termination"),
   ).toBeInTheDocument();
 
   expect(screen.queryByText(firstTabText)).not.toBeInTheDocument();
@@ -267,7 +267,7 @@ test("hydrated with eligible and ineligible opps", () => {
   render(<OpportunityPersonList />);
 
   expect(
-    screen.getByText("2 clients may be eligible for early termination")
+    screen.getByText("2 clients may be eligible for early termination"),
   ).toBeInTheDocument();
 });
 
@@ -427,8 +427,8 @@ test("when `earlyTermination` in `allOpportunitiesByType` is an empty list", () 
   render(<OpportunityPersonList />);
   expect(
     screen.getByText(
-      "None of the clients on the selected officer's caseloads are eligible for early termination. Search for another officer."
-    )
+      "None of the clients on the selected officer's caseloads are eligible for early termination. Search for another officer.",
+    ),
   ).toBeInTheDocument();
 });
 

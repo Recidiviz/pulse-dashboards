@@ -56,7 +56,7 @@ export const flatOptions = (options) =>
       ...(option.value ? [option] : []),
       ...(option.options ? filter("value", option.options) : []),
     ],
-    []
+    [],
   );
 
 export const formatSelectOptionValue = ({
@@ -78,7 +78,7 @@ export const formatSelectOptionValue = ({
   const selectedGroups = allOptions
     .filter((o) => o.options)
     .filter((group) =>
-      group.options.every((o) => selectedValues.includes(o.value))
+      group.options.every((o) => selectedValues.includes(o.value)),
     );
   if (
     selectedGroups.length === 1 &&
@@ -93,17 +93,17 @@ export const formatSelectOptionValue = ({
 
   const groupOptions = excludeOption(
     flatOptions(selectedGroups),
-    summingOption
+    summingOption,
   );
   const optionLabels = selectedOptions
     .filter(
       (option) =>
-        !groupOptions.find((groupOption) => groupOption.value === option.value)
+        !groupOptions.find((groupOption) => groupOption.value === option.value),
     )
     .map((option) => option.label);
   const groupLabels = map(
     (group) => `${group.label} - ${group.allSelectedLabel}`,
-    selectedGroups
+    selectedGroups,
   );
 
   return optionLabels.concat(groupLabels).join(", ");
@@ -112,7 +112,7 @@ export const formatSelectOptionValue = ({
 export const getNewOptions = (
   allOptions,
   summingOption,
-  selectedOptions = []
+  selectedOptions = [],
 ) => {
   const options = excludeOption(flatOptions(allOptions), summingOption);
   const selectedValues = map("value", selectedOptions);
@@ -125,7 +125,7 @@ export const getNewOptions = (
     selectedValues[selectedValues.length - 1] === summingOption.value;
 
   const isAllOptionsSelected = options.every((o) =>
-    selectedValues.includes(o.value)
+    selectedValues.includes(o.value),
   );
 
   if (isNoOptionsSelected || isSummingOptionSelected || isAllOptionsSelected) {

@@ -71,7 +71,7 @@ export const SYSTEM_ID_TO_CASELOAD_FIELD = {
 
 export type UserRecord = StaffRecord & { email: string };
 export function isUserRecord(
-  staffRecord: StaffRecord
+  staffRecord: StaffRecord,
 ): staffRecord is UserRecord {
   return staffRecord.email !== null;
 }
@@ -91,7 +91,7 @@ export type UserUpdateRecord = {
 
 export type PersonUpdateType = "preferredName" | "preferredContactMethod";
 export const contactMethods = ["Call", "Text", "Email", "None"];
-export type ContactMethodType = typeof contactMethods[number];
+export type ContactMethodType = (typeof contactMethods)[number];
 export type PortionServedDates = {
   heading: string;
   date: Date | undefined;
@@ -146,8 +146,8 @@ export const congratulationsMilestoneTypes = [
 ] as const;
 
 export type MilestoneType =
-  | typeof profileMilestoneTypes[number]
-  | typeof congratulationsMilestoneTypes[number];
+  | (typeof profileMilestoneTypes)[number]
+  | (typeof congratulationsMilestoneTypes)[number];
 export type Milestone = {
   type: MilestoneType;
   text: string;
@@ -385,14 +385,14 @@ export type FirestoreGeneralCollectionKey =
   keyof typeof FIRESTORE_GENERAL_COLLECTIONS_MAP;
 
 export type FirestoreGeneralCollection =
-  typeof FIRESTORE_GENERAL_COLLECTIONS_MAP[FirestoreGeneralCollectionKey];
+  (typeof FIRESTORE_GENERAL_COLLECTIONS_MAP)[FirestoreGeneralCollectionKey];
 
 export type FirestoreOpportunityReferrals = {
   [K in keyof typeof OPPORTUNITY_CONFIGS]: `${K}Referrals`;
 }[keyof typeof OPPORTUNITY_CONFIGS];
 
 export type FirestoreOpportunityCollection = {
-  [K in keyof typeof OPPORTUNITY_CONFIGS]: typeof OPPORTUNITY_CONFIGS[K]["firestoreCollection"];
+  [K in keyof typeof OPPORTUNITY_CONFIGS]: (typeof OPPORTUNITY_CONFIGS)[K]["firestoreCollection"];
 }[keyof typeof OPPORTUNITY_CONFIGS];
 
 export type FirestoreCollectionKey =

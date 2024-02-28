@@ -77,7 +77,7 @@ export default class FiltersStore {
       (filters: Filters) => {
         this.clearDisabledFilters(filters);
       },
-      { delay: 300 }
+      { delay: 300 },
     );
   }
 
@@ -86,7 +86,7 @@ export default class FiltersStore {
       set(
         this.filters,
         filterKey,
-        updatedFilters[filterKey as keyof PopulationFilters]
+        updatedFilters[filterKey as keyof PopulationFilters],
       );
     });
   }
@@ -156,13 +156,13 @@ export default class FiltersStore {
           acc.push(
             `${title}: ${
               this.filtersLabels[key as keyof PopulationFilterLabels]
-            }`
+            }`,
           );
         }
 
         return acc;
       },
-      [] as string[]
+      [] as string[],
     );
     return filtersStrings.join(";\n").concat("\n");
   }
@@ -177,7 +177,7 @@ export default class FiltersStore {
         this.filterOptions[filterType as keyof PopulationFilterLabels];
       const labels = getFilterOptions(
         this.filters[filter.type] as string[],
-        filter.options
+        filter.options,
       )
         .map((o) => o.label)
         .join(", ");
@@ -197,7 +197,7 @@ export default class FiltersStore {
     const { current: metric } = this.rootStore.metricsStore;
 
     return filtersOrder.filter((item: EnabledFilter) =>
-      metric.filters?.enabledFilters.includes(item)
+      metric.filters?.enabledFilters.includes(item),
     );
   }
 
@@ -211,22 +211,22 @@ export default class FiltersStore {
 
   getFilterLabel(
     filterType: keyof PopulationFilters,
-    filterValue: string
+    filterValue: string,
   ): string {
     return (
       this.filterOptions[filterType]?.options.find(
-        (option: FilterOption) => option.value === filterValue
+        (option: FilterOption) => option.value === filterValue,
       )?.label || ""
     );
   }
 
   getFilterLongLabel(
     filterType: keyof PopulationFilters,
-    filterValue: string
+    filterValue: string,
   ): string | undefined {
     return (
       this.filterOptions[filterType].options.find(
-        (option: FilterOption) => option.value === filterValue
+        (option: FilterOption) => option.value === filterValue,
       )?.longLabel || undefined
     );
   }

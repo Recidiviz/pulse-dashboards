@@ -28,11 +28,11 @@ import { UsCaSupervisionLevelDowngradeForm } from "../UsCaSupervisionLevelDowngr
 // changing the personRecord.
 
 let form: UsCaSupervisionLevelDowngradeForm;
-let opp: typeof form["opportunity"];
-let personRecord: typeof opp["person"]["record"];
-let oppRecord: typeof opp["record"] & object;
+let opp: (typeof form)["opportunity"];
+let personRecord: (typeof opp)["person"]["record"];
+let oppRecord: (typeof opp)["record"] & object;
 
-type PartialFormData = ReturnType<typeof form["prefilledDataTransformer"]>;
+type PartialFormData = ReturnType<(typeof form)["prefilledDataTransformer"]>;
 
 function createTestUnit() {
   const rootStore = new RootStore();

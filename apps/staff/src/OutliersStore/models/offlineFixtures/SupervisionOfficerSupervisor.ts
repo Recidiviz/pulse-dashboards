@@ -57,5 +57,5 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
   ];
 export const supervisionOfficerSupervisorsFixture =
   rawSupervisionOfficerSupervisorFixture.map((b) =>
-    supervisionOfficerSupervisorSchema.parse(b)
+    supervisionOfficerSupervisorSchema.parse(b),
   );

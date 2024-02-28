@@ -27,7 +27,7 @@ import {
 
 const usMePaidAllOwedRestitution = NullCoalesce(
   {},
-  z.object({ amountOwed: z.number().optional() })
+  z.object({ amountOwed: z.number().optional() }),
 ).optional();
 
 const eligibleCriteria = z
@@ -39,7 +39,7 @@ const eligibleCriteria = z
         .object({
           latestConvictions: z.array(z.string()).optional(),
         })
-        .optional()
+        .optional(),
     ).optional(),
     usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: z.object({
       eligibleDate: dateStringSchema,
@@ -51,7 +51,7 @@ const eligibleCriteria = z
           currentStatus: z.string().optional(),
           violationDate: dateStringSchema.optional(),
         })
-        .optional()
+        .optional(),
     ).optional(),
   })
   // TODO(#4484): Remove deprecated `onMediumSupervisionLevelOrLower` criterion from Early Discharge
@@ -69,12 +69,12 @@ const eligibleCriteria = z
           supervisionLevel: z.string(),
         }),
       }),
-    ])
+    ]),
   )
   .transform(
     renameObjectKeys({
       onMediumSupervisionLevelOrLower: "supervisionLevelIsMediumOrLower",
-    })
+    }),
   );
 
 const ineligibleCriteria = z.object({

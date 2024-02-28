@@ -34,5 +34,5 @@ export const LOOKBACK_END_DATES = range(6)
   .sort(ascending);
 
 export const LOOKBACK_END_DATE_STRINGS = LOOKBACK_END_DATES.map((endDate) =>
-  formatISO(endDate, { representation: "date" })
+  formatISO(endDate, { representation: "date" }),
 );

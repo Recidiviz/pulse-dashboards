@@ -81,7 +81,7 @@ const NeedsSection: React.FC<{ person: JusticeInvolvedPerson }> = observer(
         ))}
       </TooltipSection>
     );
-  }
+  },
 );
 
 const PersonSection: React.FC<{ person: JusticeInvolvedPerson }> = ({

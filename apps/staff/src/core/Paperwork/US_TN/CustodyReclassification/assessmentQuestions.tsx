@@ -28,7 +28,8 @@ export type AssessmentQuestionSpec = {
 // question numbers into typeland so keys like q3Score can check
 export const assessmentQuestionNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
-export type AssessmentQuestionNumber = typeof assessmentQuestionNumbers[number];
+export type AssessmentQuestionNumber =
+  (typeof assessmentQuestionNumbers)[number];
 
 type TupleWithArity<OutType, InTuple> = {
   [K in keyof InTuple]: OutType;

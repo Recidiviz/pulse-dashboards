@@ -65,7 +65,7 @@ function validateSubsetManifest() {
 function getSubsetManifest() {
   if (!validateSubsetManifest()) {
     throw new Error(
-      `Found invalid subset dimension in the SUBSET_MANIFEST: ${INVALID_SUBSET_DIMENSIONS}`
+      `Found invalid subset dimension in the SUBSET_MANIFEST: ${INVALID_SUBSET_DIMENSIONS}`,
     );
   }
   return SUBSET_MANIFEST;

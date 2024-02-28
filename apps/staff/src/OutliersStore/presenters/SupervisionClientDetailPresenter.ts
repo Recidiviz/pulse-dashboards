@@ -34,7 +34,7 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     public officerPseudoId: string,
     public clientPseudoId: string,
     public metricId: string,
-    public outcomeDate: Date
+    public outcomeDate: Date,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -48,19 +48,19 @@ export class SupervisionClientDetailPresenter implements Hydratable {
           flowResult(
             this.supervisionStore.populateClientEventsForClient(
               this.clientPseudoId,
-              this.outcomeDate
-            )
+              this.outcomeDate,
+            ),
           ),
           flowResult(
             this.supervisionStore.populateClientInfoForClient(
-              this.clientPseudoId
-            )
+              this.clientPseudoId,
+            ),
           ),
           flowResult(
             this.supervisionStore.populateMetricEventsForOfficer(
               this.officerPseudoId,
-              this.metricId
-            )
+              this.metricId,
+            ),
           ),
           flowResult(this.supervisionStore.populateMetricConfigs()),
         ]);
@@ -101,7 +101,7 @@ export class SupervisionClientDetailPresenter implements Hydratable {
 
   get clientInfo(): ClientInfo | undefined {
     return this.supervisionStore.clientInfoByClientPseudoId.get(
-      this.clientPseudoId
+      this.clientPseudoId,
     );
   }
 
@@ -132,14 +132,14 @@ export class SupervisionClientDetailPresenter implements Hydratable {
           // granularity of outcomeDate in the SupervisionStore
           moment(e.eventDate).isSame(moment(this.outcomeDate), "day")
         );
-      }
+      },
     );
 
     if (!clientEvent) return undefined;
 
     return pick(
       ["officerAssignmentDate", "supervisionStartDate", "supervisionType"],
-      clientEvent
+      clientEvent,
     );
   }
 
@@ -152,7 +152,7 @@ export class SupervisionClientDetailPresenter implements Hydratable {
         clientPseudonymizedId: this.clientPseudoId,
         outcomeDate: this.outcomeDate,
         viewedBy: userPseudoId,
-      }
+      },
     );
   }
 }

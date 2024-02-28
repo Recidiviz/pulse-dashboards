@@ -88,7 +88,7 @@ const lengthOfStayMap = {
 const mergeDefaults = (
   record: any,
   defaults: any,
-  enabledFilters: EnabledFilters
+  enabledFilters: EnabledFilters,
 ) =>
   Object.assign(
     {},
@@ -100,11 +100,11 @@ const mergeDefaults = (
           : {};
       }
       return { [k]: v };
-    })
+    }),
   );
 
 export function convertLengthOfStay(
-  record: SnapshotDataRecord
+  record: SnapshotDataRecord,
 ): LengthOfStay | undefined {
   return (
     record.lengthOfStay &&
@@ -113,7 +113,7 @@ export function convertLengthOfStay(
 }
 
 export function createProjectionTimeSeries(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
 ): PopulationProjectionTimeSeriesRecord[] {
   return rawRecords.map((record) => {
     return {
@@ -132,7 +132,7 @@ export function createProjectionTimeSeries(
 
 export function createSupervisionPopulationSnapshot(
   rawRecords: RawMetricData,
-  enabledFilters: EnabledFilters
+  enabledFilters: EnabledFilters,
 ): SupervisionPopulationSnapshotRecord[] {
   return rawRecords.map((record) => {
     return mergeDefaults(
@@ -163,13 +163,13 @@ export function createSupervisionPopulationSnapshot(
           timePeriodMap[record.time_period.toLowerCase() as TimePeriodRawValue],
       },
       supervisionDimensionDefaults,
-      enabledFilters
+      enabledFilters,
     );
   });
 }
 
 export function addLastUpdatedToRecords<T extends MetricRecord>(
-  response: NewBackendRecord<T>
+  response: NewBackendRecord<T>,
 ): T[] {
   if (response.metadata?.lastUpdated) {
     return response.data.map((record) => {
@@ -202,7 +202,7 @@ export const formatDateString = (dateString: string): Date | undefined => {
 export const filterTimePeriod = (
   recordTimePeriodValue: TimePeriod,
   filterTimePeriodValue: TimePeriod,
-  shouldFilter = false
+  shouldFilter = false,
 ): boolean => {
   return shouldFilter
     ? Number(recordTimePeriodValue) <= Number(filterTimePeriodValue)
@@ -210,7 +210,7 @@ export const filterTimePeriod = (
 };
 
 export const filterUnknownLengthOfStay = (
-  recordLengthOfStayValue: LengthOfStay | undefined
+  recordLengthOfStayValue: LengthOfStay | undefined,
 ): boolean => {
   return !!recordLengthOfStayValue && recordLengthOfStayValue !== "UNKNOWN";
 };
@@ -219,7 +219,7 @@ export const filterRecordByDimensions = (
   record: MetricRecord,
   dimensions: Dimension[],
   filters: PopulationFilterValues,
-  accessor?: string
+  accessor?: string,
 ): boolean => {
   return dimensions.every((dimensionId) => {
     // @ts-ignore
@@ -256,12 +256,12 @@ interface DateFilters {
 
 export const filterRecordByDate = (
   record: TimeSeriesRecord,
-  { monthRange, since, stepSize = 1 }: DateFilters
+  { monthRange, since, stepSize = 1 }: DateFilters,
 ): boolean => {
   const date = getRecordDate(record);
   const monthsOut = Math.abs(
     (date.getFullYear() - since.getFullYear()) * 12 +
-      (date.getMonth() - since.getMonth())
+      (date.getMonth() - since.getMonth()),
   );
 
   return monthsOut <= monthRange && monthsOut % stepSize === 0;
@@ -269,7 +269,7 @@ export const filterRecordByDate = (
 export const filterPersonLevelRecordByDimensions = (
   record: MetricRecord,
   dimensions: Dimension[],
-  filters: PopulationFilterValues
+  filters: PopulationFilterValues,
 ): boolean => {
   const handleFilters = (filter: string[] | string, recordValue: string) => {
     const allFilters = Array.isArray(filter) ? filter : [filter];
@@ -291,11 +291,12 @@ export const filterPersonLevelRecordByDimensions = (
 };
 
 export const getTimePeriodRawValue = (
-  months: string | number
+  months: string | number,
 ): string | undefined => {
   return Object.keys(timePeriodMap).find(
     (timePeriodRawValue) =>
-      timePeriodMap[timePeriodRawValue as TimePeriodRawValue] === String(months)
+      timePeriodMap[timePeriodRawValue as TimePeriodRawValue] ===
+      String(months),
   );
 };
 
@@ -400,7 +401,7 @@ export function hydrationFailure(hydratable: Hydratable): Error | undefined {
  * in any of them taking precedence over all other possible states.
  */
 export function compositeHydrationState(
-  hydratables: Array<Hydratable>
+  hydratables: Array<Hydratable>,
 ): HydrationState {
   const errors = hydratables.map(hydrationFailure).filter(isError);
   if (errors.length) {
@@ -427,7 +428,7 @@ export function compositeHydrationState(
   // or this function has become outdated
   throw new Error(
     `Unable to determine valid hydration state: ${JSON.stringify(
-      hydratables.map((h) => h.hydrationState)
-    )}`
+      hydratables.map((h) => h.hydrationState),
+    )}`,
   );
 }

@@ -118,7 +118,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
     const [snoozedByText, resurfaceText] = buildSnoozedByTextAndResurfaceText(
       opportunity,
-      snoozeUntil
+      snoozeUntil,
     );
 
     const showRevertLink = !(
@@ -177,5 +177,5 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         )}
       </Wrapper>
     );
-  }
+  },
 );

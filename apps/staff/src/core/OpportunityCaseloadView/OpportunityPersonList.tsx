@@ -72,7 +72,7 @@ const Empty = observer(function Empty() {
         selectedSearchIds.length,
       ]} ${pluralizeWord(
         workflowsSearchFieldTitle,
-        selectedSearchIds.length
+        selectedSearchIds.length,
       )}['s|'] caseloads are eligible for ${label.toLowerCase()}. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );
@@ -111,7 +111,7 @@ const HydratedOpportunityPersonList = observer(
       return oppsFromOpportunitiesByTab && opportunityType
         ? intersection(
             getTabOrderForOpportunityType(opportunityType),
-            Object.keys(oppsFromOpportunitiesByTab)
+            Object.keys(oppsFromOpportunitiesByTab),
           )
         : [];
     }, [opportunityType, oppsFromOpportunitiesByTab]) as OpportunityTab[];
@@ -144,7 +144,7 @@ const HydratedOpportunityPersonList = observer(
     };
     const hydratedHeader = generateOpportunityHydratedHeader(
       opportunityType,
-      eligibleOpps?.length || 0
+      eligibleOpps?.length || 0,
     );
 
     return !oppsFromOpportunitiesByOppType.length ? (
@@ -175,7 +175,7 @@ const HydratedOpportunityPersonList = observer(
         />
       </>
     );
-  }
+  },
 );
 
 export const OpportunityPersonList = observer(function OpportunityPersonList() {
@@ -194,7 +194,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const initialHeader = generateOpportunityInitialHeader(
     opportunityType,
     justiceInvolvedPersonTitle,
-    workflowsSearchFieldTitle
+    workflowsSearchFieldTitle,
   );
 
   const empty = <Empty />;

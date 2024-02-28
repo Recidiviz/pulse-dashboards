@@ -44,7 +44,7 @@ function fetchMetrics(stateCode, metricType, metricName, isOffline) {
   const metricPromises = fetcher(
     stateCode.toUpperCase(),
     metricType,
-    metricName
+    metricName,
   );
   return Promise.allSettled(metricPromises).then((allFileContents) => {
     const results = {};
@@ -53,7 +53,7 @@ function fetchMetrics(stateCode, metricType, metricName, isOffline) {
         results[contents.value.fileKey] = processMetricFile(
           contents.value.contents,
           contents.value.metadata,
-          contents.value.extension
+          contents.value.extension,
         );
       } else if (contents.status === "rejected") {
         Sentry.captureException(contents.reason);

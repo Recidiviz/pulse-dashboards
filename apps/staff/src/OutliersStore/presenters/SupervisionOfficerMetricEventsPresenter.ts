@@ -29,7 +29,7 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
     public officerPseudoId: string,
-    public metricId: string
+    public metricId: string,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -43,8 +43,8 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
           flowResult(
             this.supervisionStore.populateMetricEventsForOfficer(
               this.officerPseudoId,
-              this.metricId
-            )
+              this.metricId,
+            ),
           ),
           flowResult(this.supervisionStore.populateMetricConfigs()),
         ]);
@@ -112,7 +112,7 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
         metricId: this.metricId,
         clientPseudoId: d.pseudonymizedClientId,
         outcomeDate: formatDateToISO(d.eventDate),
-      })
+      }),
     );
   }
 }

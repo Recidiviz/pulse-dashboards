@@ -42,7 +42,7 @@ jest.mock("../../../subscriptions");
 function createResidentTestUnit(
   residentRecord: typeof usMePersonRecord,
   verifiedOpps: Record<string, any>,
-  portionServedNeeded: string
+  portionServedNeeded: string,
 ) {
   root = new RootStore();
   // @ts-ignore
@@ -68,7 +68,7 @@ type clientType =
 
 function createClientTestUnit(
   clientRecord: clientType,
-  verifiedOpps: Record<string, any>
+  verifiedOpps: Record<string, any>,
 ) {
   root = new RootStore();
 
@@ -110,15 +110,17 @@ describe("resident has 2/3 date; eligible for SCCP and Furlough", () => {
 
   test("portionServedDates has half", () => {
     expect(
-      resident.portionServedDates.some((entry) => entry.heading === "Half Time")
+      resident.portionServedDates.some(
+        (entry) => entry.heading === "Half Time",
+      ),
     ).toBeTruthy();
   });
 
   test("portionServedDates has two thirds", () => {
     expect(
       resident.portionServedDates.some(
-        (entry) => entry.heading === "Two Thirds Time"
-      )
+        (entry) => entry.heading === "Two Thirds Time",
+      ),
     ).toBeTruthy();
   });
 });
@@ -132,21 +134,23 @@ describe("resident has 1/2 date; eligible for SCCP and Furlough", () => {
     createResidentTestUnit(
       usMePersonRecordShorterSentence,
       testOpportunities,
-      "1/2"
+      "1/2",
     );
   });
 
   test("portionServedDates has half", () => {
     expect(
-      resident.portionServedDates.some((entry) => entry.heading === "Half Time")
+      resident.portionServedDates.some(
+        (entry) => entry.heading === "Half Time",
+      ),
     ).toBeTruthy();
   });
 
   test("portionServedDates does not have two thirds", () => {
     expect(
       resident.portionServedDates.some(
-        (entry) => entry.heading === "Two Thirds Time"
-      )
+        (entry) => entry.heading === "Two Thirds Time",
+      ),
     ).toBeFalsy();
   });
 });
@@ -162,15 +166,17 @@ describe("resident has 2/3 date; eligible for SCCP", () => {
 
   test("portionServedDates does have half, which is the default.", () => {
     expect(
-      resident.portionServedDates.some((entry) => entry.heading === "Half Time")
+      resident.portionServedDates.some(
+        (entry) => entry.heading === "Half Time",
+      ),
     ).toBeTruthy();
   });
 
   test("portionServedDates has two thirds", () => {
     expect(
       resident.portionServedDates.some(
-        (entry) => entry.heading === "Two Thirds Time"
-      )
+        (entry) => entry.heading === "Two Thirds Time",
+      ),
     ).toBeTruthy();
   });
 
@@ -202,7 +208,7 @@ describe("resident has 1/2 date; eligible for Work Release", () => {
     createResidentTestUnit(
       usMePersonRecordShorterSentence,
       testOpportunities,
-      "1/2"
+      "1/2",
     );
   });
 
@@ -222,13 +228,15 @@ describe("resident has 1/2 date; eligible for all incarceration opp", () => {
     createResidentTestUnit(
       usMePersonRecordShorterSentence,
       testOpportunities,
-      "1/2"
+      "1/2",
     );
   });
 
   test("portionServedDates has half", () => {
     expect(
-      resident.portionServedDates.some((entry) => entry.heading === "Half Time")
+      resident.portionServedDates.some(
+        (entry) => entry.heading === "Half Time",
+      ),
     ).toBeTruthy();
   });
 
@@ -248,21 +256,23 @@ describe("resident has 2/3 date; eligible for all incarceration opp", () => {
     createResidentTestUnit(
       usMePersonRecordShorterSentence,
       testOpportunities,
-      "2/3"
+      "2/3",
     );
   });
 
   test("portionServedDates has half", () => {
     expect(
-      resident.portionServedDates.some((entry) => entry.heading === "Half Time")
+      resident.portionServedDates.some(
+        (entry) => entry.heading === "Half Time",
+      ),
     ).toBeTruthy();
   });
 
   test("portionServedDates has two thirds", () => {
     expect(
       resident.portionServedDates.some(
-        (entry) => entry.heading === "Two Thirds Time"
-      )
+        (entry) => entry.heading === "Two Thirds Time",
+      ),
     ).toBeTruthy();
   });
 
@@ -278,14 +288,16 @@ describe("resident does not have any opps, and none are active. The resident sho
     createResidentTestUnit(
       { ...usMePersonRecordShorterSentence, allEligibleOpportunities: [] },
       testOpportunities,
-      "2/3"
+      "2/3",
     );
   });
 
   test("portionServedDates has half-time date if user tenantId is US_ME", () => {
     expect(resident.portionServedDates.length).toEqual(1);
     expect(
-      resident.portionServedDates.some((entry) => entry.heading === "Half Time")
+      resident.portionServedDates.some(
+        (entry) => entry.heading === "Half Time",
+      ),
     ).toBeTruthy();
   });
 });
@@ -313,13 +325,13 @@ describe("client on EarlyTermination", () => {
 
     createClientTestUnit(
       usMeEarlyTerminationEligibleClientRecord,
-      testOpportunities
+      testOpportunities,
     );
   });
 
   test("portionServedDates has half", () => {
     expect(
-      client.portionServedDates.some((entry) => entry.heading === "Half Time")
+      client.portionServedDates.some((entry) => entry.heading === "Half Time"),
     ).toBeTruthy();
   });
 

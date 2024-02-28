@@ -105,7 +105,7 @@ export function WorkflowsPreviewModal({
   // useMemo here to prevent creating a new object on every render
   const contextValue = useMemo(
     () => ({ setDismissAfterMs, setModalIsOpen }),
-    [setDismissAfterMs, setModalIsOpen]
+    [setDismissAfterMs, setModalIsOpen],
   );
 
   function handleCloseModal() {

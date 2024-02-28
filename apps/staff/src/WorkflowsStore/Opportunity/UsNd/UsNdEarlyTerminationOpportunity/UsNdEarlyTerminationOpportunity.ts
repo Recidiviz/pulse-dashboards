@@ -86,7 +86,7 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
       client,
       "earlyTermination",
       client.rootStore,
-      usNdEarlyTerminationSchema.parse
+      usNdEarlyTerminationSchema.parse,
     );
 
     makeObservable(this, {
@@ -141,7 +141,7 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
     if (supervisionPastEarlyDischargeDate?.eligibleDate) {
       requirements.push({
         text: `Early termination date is ${formatWorkflowsDate(
-          supervisionPastEarlyDischargeDate.eligibleDate
+          supervisionPastEarlyDischargeDate.eligibleDate,
         )}`,
         tooltip: CRITERIA.supervisionPastEarlyDischargeDate.tooltip,
       });

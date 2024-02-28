@@ -110,7 +110,7 @@ describe("validateStateCode with csgStateCodes", () => {
     (reqStateCode) => {
       const req = makeReq("/api/us_xx/foo", reqStateCode, "csg");
       expectSuccess(req);
-    }
+    },
   );
 
   it(`should return 401 if stateCode is csg and stateCode in request is not a csgStateCode: ${csgStateCodes}`, () => {

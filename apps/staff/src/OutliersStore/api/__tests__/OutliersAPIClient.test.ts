@@ -81,7 +81,7 @@ describe("OutliersAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify({ config: OutliersConfigFixture }));
     await client.init();
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/configuration`)
+      encodeURI(`${BASE_URL}/configuration`),
     );
   });
 
@@ -96,7 +96,7 @@ describe("OutliersAPIClient", () => {
     const pseudoId = "fake-pseudo-id";
     await client.userInfo(pseudoId);
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/user-info/${pseudoId}`)
+      encodeURI(`${BASE_URL}/user-info/${pseudoId}`),
     );
   });
 
@@ -136,13 +136,13 @@ describe("OutliersAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify({ supervisors: [] }));
     await client.supervisionOfficerSupervisors();
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/supervisors`)
+      encodeURI(`${BASE_URL}/supervisors`),
     );
   });
 
   it("supervisionOfficerSupervisors parses the data", async () => {
     fetchMock.mockResponse(
-      JSON.stringify({ supervisors: supervisionOfficerSupervisorsFixture })
+      JSON.stringify({ supervisors: supervisionOfficerSupervisorsFixture }),
     );
     const response = await client.supervisionOfficerSupervisors();
     expect(response).toEqual(supervisionOfficerSupervisorsFixture);
@@ -155,7 +155,7 @@ describe("OutliersAPIClient", () => {
     } as RootStore;
     const badClient = new OutliersAPIClient(new OutliersStore(mockRootStore));
     expect(badClient.supervisionOfficerSupervisors()).rejects.toThrow(
-      "Attempted to fetch data with undefined tenantId"
+      "Attempted to fetch data with undefined tenantId",
     );
   });
 
@@ -163,13 +163,13 @@ describe("OutliersAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify({ metrics: [] }));
     await client.metricBenchmarks();
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/benchmarks`)
+      encodeURI(`${BASE_URL}/benchmarks`),
     );
   });
 
   it("metricBenchmarks parses the data", async () => {
     fetchMock.mockResponse(
-      JSON.stringify({ metrics: rawMetricBenchmarksFixture })
+      JSON.stringify({ metrics: rawMetricBenchmarksFixture }),
     );
     const response = await client.metricBenchmarks();
     expect(response).toEqual(metricBenchmarksFixture);
@@ -179,16 +179,16 @@ describe("OutliersAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify({ officers: [] }));
     await client.officersForSupervisor("any-hashed-id");
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/supervisor/any-hashed-id/officers`)
+      encodeURI(`${BASE_URL}/supervisor/any-hashed-id/officers`),
     );
   });
 
   it("officersForSupervisor parses the data", async () => {
     fetchMock.mockResponse(
-      JSON.stringify({ officers: rawSupervisionOfficerFixture })
+      JSON.stringify({ officers: rawSupervisionOfficerFixture }),
     );
     const response = await client.officersForSupervisor(
-      supervisionOfficerSupervisorsFixture[0].externalId
+      supervisionOfficerSupervisorsFixture[0].externalId,
     );
 
     expect(response).toEqual(supervisionOfficerFixture);
@@ -196,20 +196,20 @@ describe("OutliersAPIClient", () => {
 
   it("supervisionOfficer calls the correct endpoint", async () => {
     fetchMock.mockResponse(
-      JSON.stringify({ officer: rawSupervisionOfficerFixture[0] })
+      JSON.stringify({ officer: rawSupervisionOfficerFixture[0] }),
     );
     await client.supervisionOfficer("any-hashed-id");
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/officer/any-hashed-id`)
+      encodeURI(`${BASE_URL}/officer/any-hashed-id`),
     );
   });
 
   it("supervisionOfficer parses the data", async () => {
     fetchMock.mockResponse(
-      JSON.stringify({ officer: rawSupervisionOfficerFixture[0] })
+      JSON.stringify({ officer: rawSupervisionOfficerFixture[0] }),
     );
     const response = await client.supervisionOfficer(
-      supervisionOfficerSupervisorsFixture[0].pseudonymizedId
+      supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
     );
 
     expect(response).toEqual(supervisionOfficerFixture[0]);
@@ -219,17 +219,17 @@ describe("OutliersAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify({ events: [] }));
     await client.supervisionOfficerMetricEvents("any-hashed-id", "metricID");
     expect(fetchMock.mock.calls[0][0]).toEqual(
-      encodeURI(`${BASE_URL}/officer/any-hashed-id/events?metric_id=metricID`)
+      encodeURI(`${BASE_URL}/officer/any-hashed-id/events?metric_id=metricID`),
     );
   });
 
   it("supervisionOfficerMetricEvents parses the data", async () => {
     fetchMock.mockResponse(
-      JSON.stringify({ events: rawSupervisionOfficerMetricEventFixture })
+      JSON.stringify({ events: rawSupervisionOfficerMetricEventFixture }),
     );
     const response = await client.supervisionOfficerMetricEvents(
       supervisionOfficerSupervisorsFixture[0].externalId,
-      ADVERSE_METRIC_IDS.enum.incarceration_starts
+      ADVERSE_METRIC_IDS.enum.incarceration_starts,
     );
 
     expect(response).toEqual(supervisionOfficerMetricEventFixture);

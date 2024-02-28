@@ -46,7 +46,7 @@ describe("Impact Page", () => {
     render(
       <BrowserRouter>
         <PageImpact />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
@@ -84,11 +84,11 @@ describe("Impact Page", () => {
     render(
       <BrowserRouter>
         <PageImpact />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
-      screen.getByText("Compliant Reporting Workflows")
+      screen.getByText("Compliant Reporting Workflows"),
     ).toBeInTheDocument();
   });
 });

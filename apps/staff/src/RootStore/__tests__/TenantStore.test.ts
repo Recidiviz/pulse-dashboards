@@ -38,7 +38,7 @@ describe("TenantStore", () => {
   const createMockRootStore = (mockUserStore: any) =>
     ({
       userStore: mockUserStore as UserStore,
-    } as typeof RootStore);
+    }) as typeof RootStore;
 
   beforeEach(() => {
     jest.clearAllMocks();

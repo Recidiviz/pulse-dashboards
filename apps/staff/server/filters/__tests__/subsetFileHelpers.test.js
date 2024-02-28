@@ -84,7 +84,7 @@ describe("subsetFileHelpers", () => {
 
     it("creates a metadata object with new total_data_points and dimension_manifest from subsets", () => {
       expect(
-        createSubsetMetadata(totalDataPoints, originalMetadata, subsetFilters)
+        createSubsetMetadata(totalDataPoints, originalMetadata, subsetFilters),
       ).toEqual({
         ...originalMetadata,
         total_data_points: totalDataPoints,
@@ -104,7 +104,11 @@ describe("subsetFileHelpers", () => {
         subsetFilters.level_1_supervision_location = ["04n"];
 
         expect(
-          createSubsetMetadata(totalDataPoints, originalMetadata, subsetFilters)
+          createSubsetMetadata(
+            totalDataPoints,
+            originalMetadata,
+            subsetFilters,
+          ),
         ).toEqual({
           ...originalMetadata,
           total_data_points: totalDataPoints,
@@ -138,7 +142,7 @@ describe("subsetFileHelpers", () => {
     };
     it("creates a flattened value matrix string", () => {
       expect(
-        createFlattenedValueMatrix(filteredDataPoints, subsetMetadata)
+        createFlattenedValueMatrix(filteredDataPoints, subsetMetadata),
       ).toEqual("0,1,1,0,0,0,1,2,3");
     });
   });

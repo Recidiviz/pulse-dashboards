@@ -19,7 +19,7 @@ import UserStore from "../RootStore/UserStore";
 export async function fetchWorkflowsTemplates(
   stateCode: string,
   templateName: string,
-  getTokenSilently: UserStore["getTokenSilently"]
+  getTokenSilently: UserStore["getTokenSilently"],
 ): Promise<ArrayBuffer> {
   const token = await getTokenSilently();
 
@@ -33,7 +33,7 @@ export async function fetchWorkflowsTemplates(
 
   if (!response.ok) {
     throw new Error(
-      `Fetching Workflows Template from API failed.\nStatus: ${response.status} - ${response.statusText}`
+      `Fetching Workflows Template from API failed.\nStatus: ${response.status} - ${response.statusText}`,
     );
   }
   return response.arrayBuffer();

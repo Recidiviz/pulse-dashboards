@@ -49,7 +49,7 @@ function DistrictFilter() {
   };
 
   const selectedValues = flatOptions(options).filter((option) =>
-    get(filters, filterKey).includes(option.value)
+    get(filters, filterKey).includes(option.value),
   );
 
   return (

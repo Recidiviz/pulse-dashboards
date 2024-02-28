@@ -66,7 +66,7 @@ const TextMessageInput: React.FC<TextMessageInputProps> = ({
   const characterLimit = 1600;
   const placeholder = "Add your own message (Optional)";
   const [additionalMessage, setAdditionalMessage] = useState(
-    client.milestonesPendingMessage ?? ""
+    client.milestonesPendingMessage ?? "",
   );
   const defaultMessage = client.defaultMilestonesMessage;
 

@@ -22,7 +22,7 @@ import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 
 export class SupervisionTaskUpdateSubscription<
-  RecordType extends SupervisionTaskUpdate
+  RecordType extends SupervisionTaskUpdate,
 > extends CollectionDocumentSubscription<RecordType> {
   // needs to be redefined because it's read-only but otherwise unchanged
   readonly dataSource: DocumentReference<RecordType>;
@@ -36,7 +36,7 @@ export class SupervisionTaskUpdateSubscription<
       FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
       recordId,
       FIRESTORE_COLLECTIONS_MAP.taskUpdates,
-      "supervision"
+      "supervision",
     ) as DocumentReference<RecordType>;
   }
 }

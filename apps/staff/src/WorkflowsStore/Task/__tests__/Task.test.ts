@@ -41,7 +41,7 @@ let mockUpdates: SupervisionTaskUpdate[SupervisionTaskType] | undefined;
 const testDate = "2023-05-18";
 
 function createTestUnit(
-  updates: SupervisionTaskUpdate[SupervisionTaskType] = mockUpdates
+  updates: SupervisionTaskUpdate[SupervisionTaskType] = mockUpdates,
 ) {
   rootStore = new RootStore();
   mockPerson = new Client(supervisionTaskClientRecord, rootStore);
@@ -49,7 +49,7 @@ function createTestUnit(
     rootStore,
     homeVisitTaskRecord,
     mockPerson,
-    updates
+    updates,
   );
 }
 
@@ -127,7 +127,7 @@ describe("Task", () => {
       task.updateSupervisionTask(30);
 
       expect(
-        rootStore.firestoreStore.updateSupervisionTask
+        rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(task.type, supervisionTaskClientRecord.recordId, {
         homeVisit: {
           snoozeForDays: 30,
@@ -148,7 +148,7 @@ describe("Task", () => {
       task.updateSupervisionTask(undefined);
 
       expect(
-        rootStore.firestoreStore.updateSupervisionTask
+        rootStore.firestoreStore.updateSupervisionTask,
       ).toHaveBeenCalledWith(task.type, supervisionTaskClientRecord.recordId, {
         homeVisit: deleteField(),
       });

@@ -132,7 +132,9 @@
     border-radius: 0.25rem;
     letter-spacing: -0.01em;
     opacity: 0;
-    transition: opacity 0.2s, visibility 0.2s;
+    transition:
+      opacity 0.2s,
+      visibility 0.2s;
     transition-delay: 0.2s;
     &:hover {
       visibility: visible;

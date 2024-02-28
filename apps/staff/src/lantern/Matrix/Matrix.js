@@ -83,7 +83,7 @@ function Matrix({ timeDescription }) {
     mobxGet(filters, VIOLATION_TYPE) || mobxGet(filters, REPORTED_VIOLATIONS);
 
   const filteredData = pipe(
-    filter((data) => violationTypes.includes(data.violation_type))
+    filter((data) => violationTypes.includes(data.violation_type)),
   )(store.filteredData);
 
   const dataMatrix = pipe(
@@ -91,9 +91,9 @@ function Matrix({ timeDescription }) {
     mapValues(
       pipe(
         groupBy("reported_violations"),
-        mapValues(sumByInteger("total_revocations"))
-      )
-    )
+        mapValues(sumByInteger("total_revocations")),
+      ),
+    ),
   )(filteredData);
 
   if (!dataMatrix) {
@@ -104,18 +104,18 @@ function Matrix({ timeDescription }) {
     () =>
       violationTypes.map((rowLabel) =>
         VIOLATION_COUNTS.map((columnLabel) =>
-          getOr(0, [rowLabel, columnLabel], dataMatrix)
-        )
+          getOr(0, [rowLabel, columnLabel], dataMatrix),
+        ),
       ),
     flatten,
-    max
+    max,
   )();
 
   const violationsSum = sumByInteger("total_revocations")(filteredData);
   const reportedViolationsSum = pipe(
     (count) =>
       filter((data) => data.reported_violations === count, filteredData),
-    sumByInteger("total_revocations")
+    sumByInteger("total_revocations"),
   );
 
   const isSelected = (violationType, reportedViolations) =>
@@ -136,7 +136,7 @@ function Matrix({ timeDescription }) {
   const exportableMatrixData = violationTypes.map((rowLabel) => ({
     label: matrixViolationTypeToLabel[rowLabel],
     data: VIOLATION_COUNTS.map((columnLabel) =>
-      getOr(0, [rowLabel, columnLabel], dataMatrix)
+      getOr(0, [rowLabel, columnLabel], dataMatrix),
     ),
   }));
 
@@ -178,7 +178,7 @@ function Matrix({ timeDescription }) {
             <span
               className={cx(
                 "Matrix__violation-sum-column",
-                "Matrix__top-right-total"
+                "Matrix__top-right-total",
               )}
             >
               Total
@@ -212,7 +212,7 @@ function Matrix({ timeDescription }) {
                 key={i}
                 className={cx(
                   "Matrix__violation-column",
-                  "Matrix__violation-sum"
+                  "Matrix__violation-sum",
                 )}
               >
                 {reportedViolationsSum(count)}
@@ -223,7 +223,7 @@ function Matrix({ timeDescription }) {
               className={cx(
                 "Matrix__violation-sum-column",
                 "Matrix__violation-sum",
-                "Matrix__bottom-right-total"
+                "Matrix__bottom-right-total",
               )}
             >
               {violationsSum}

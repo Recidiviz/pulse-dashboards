@@ -67,7 +67,7 @@ const FormTransformContainer = styled.section`
 const formDownloader = async (client: Client): Promise<void> => {
   const contents = {
     ...toJS(
-      client.verifiedOpportunities.earnedDischarge?.form?.prepareDataForTemplate()
+      client.verifiedOpportunities.earnedDischarge?.form?.prepareDataForTemplate(),
     ),
   };
 
@@ -76,7 +76,7 @@ const formDownloader = async (client: Client): Promise<void> => {
     client.stateCode,
     "earned_discharge_template.docx",
     contents,
-    client.rootStore.getTokenSilently
+    client.rootStore.getTokenSilently,
   );
 };
 

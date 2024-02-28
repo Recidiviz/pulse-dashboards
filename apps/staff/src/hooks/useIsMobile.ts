@@ -33,13 +33,13 @@ const useIsMobile = (moreBreakpoints?: boolean): any => {
     : breakpoints.desktop;
 
   const [isLaptop, setIsLaptop] = useState(
-    window.innerWidth <= breakpointLaptop
+    window.innerWidth <= breakpointLaptop,
   );
   const [isTablet, setIsTablet] = useState(
-    window.innerWidth <= breakpointTablet
+    window.innerWidth <= breakpointTablet,
   );
   const [isMobile, setIsMobile] = useState(
-    window.innerWidth <= breakpointMobile
+    window.innerWidth <= breakpointMobile,
   );
 
   useEffect(() => {

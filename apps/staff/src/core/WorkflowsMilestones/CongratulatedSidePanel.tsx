@@ -55,7 +55,7 @@ const MessageSentView = function MessageSentView({
   const messageSentBy =
     milestonesMessageUpdateLog?.by ?? client.rootStore.userStore.userFullName;
   const messageSentOn = formatWorkflowsDate(
-    optionalFieldToDate(milestonesMessageUpdateLog?.date)
+    optionalFieldToDate(milestonesMessageUpdateLog?.date),
   );
 
   useHydrateOpportunities(client);

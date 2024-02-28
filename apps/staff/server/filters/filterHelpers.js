@@ -96,7 +96,7 @@ function createSubsetFilters({ filters }) {
     if (subsetDimensionKeys.includes(filterKey)) {
       subsetFilters[filterKey] = getSubsetDimensionValues(
         filterKey,
-        filters[filterKey]
+        filters[filterKey],
       );
     }
   });
@@ -134,7 +134,7 @@ const createUserRestrictionsFilters = (appMetadata) => {
 
   return {
     [allowedSupervisionLocationLevel]: allowedSupervisionLocationIds.map((d) =>
-      d.toLowerCase()
+      d.toLowerCase(),
     ),
   };
 };

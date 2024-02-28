@@ -41,7 +41,7 @@ describe("PercentDelta", () => {
         width={width}
         height={height}
         improvesOnIncrease={improvesOnIncrease}
-      />
+      />,
     );
   };
 

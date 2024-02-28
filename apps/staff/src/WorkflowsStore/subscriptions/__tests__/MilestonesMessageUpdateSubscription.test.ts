@@ -50,7 +50,7 @@ test("dataSource", () => {
 
   sub = new MilestonesMessageUpdateSubscription(
     firestoreStoreMock,
-    "record123"
+    "record123",
   );
 
   expect(docMock).toHaveBeenLastCalledWith(
@@ -59,7 +59,7 @@ test("dataSource", () => {
     "clientUpdatesV2",
     "record123",
     "milestonesMessages",
-    "milestones_01_2022"
+    "milestones_01_2022",
   );
 
   expect(sub.dataSource).toBe(mockRef);

@@ -37,7 +37,7 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
     if (!stateCode) return;
 
     const locationSearchField = Object.values(
-      tenants[stateCode].workflowsSystemConfigs ?? {}
+      tenants[stateCode].workflowsSystemConfigs ?? {},
     )
       .filter((config) => config.searchType === "LOCATION")
       .map((c) => c.searchField)[0];
@@ -55,9 +55,9 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
     return query(
       collection(
         this.rootStore.firestoreStore.db,
-        FIRESTORE_COLLECTIONS_MAP.locations
+        FIRESTORE_COLLECTIONS_MAP.locations,
       ),
-      ...constraints
+      ...constraints,
     );
   }
 }

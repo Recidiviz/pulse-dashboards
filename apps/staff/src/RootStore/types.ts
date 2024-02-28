@@ -20,11 +20,11 @@ import * as workflows from "./TenantStore/dashboardTenants";
 import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
 
-export type LanternTenants = typeof lantern.LANTERN_TENANTS[number];
-export type PathwaysTenants = typeof pathways.PATHWAYS_TENANTS[number];
+export type LanternTenants = (typeof lantern.LANTERN_TENANTS)[number];
+export type PathwaysTenants = (typeof pathways.PATHWAYS_TENANTS)[number];
 
 export function isPathwaysTenantId(
-  tenantId: TenantId | undefined
+  tenantId: TenantId | undefined,
 ): tenantId is PathwaysTenants {
   return pathways.PATHWAYS_TENANTS.includes(tenantId as PathwaysTenants);
 }
@@ -48,11 +48,11 @@ const TenantIds = [
   ...InternalTenantIds,
 ] as const;
 
-export type TenantConfigId = typeof TenantIds[number];
-export type InternalTenantId = typeof InternalTenantIds[number];
+export type TenantConfigId = (typeof TenantIds)[number];
+export type InternalTenantId = (typeof InternalTenantIds)[number];
 export type TenantId = Exclude<
   TenantConfigId,
-  typeof InternalTenantIds[number]
+  (typeof InternalTenantIds)[number]
 >;
 
 export type UserAppMetadata = {

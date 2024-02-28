@@ -61,6 +61,6 @@ test("Ensure note is char limited", () => {
   const formByLine = charLimitedForm.split("\n");
 
   formByLine.forEach((line) =>
-    expect(line.length).toBeLessThanOrEqual(charsPerLine)
+    expect(line.length).toBeLessThanOrEqual(charsPerLine),
   );
 });

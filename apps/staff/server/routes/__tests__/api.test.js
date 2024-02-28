@@ -124,7 +124,7 @@ describe("API GET tests", () => {
 
   function fakeRequest(
     routeHandler,
-    req = { params: { stateCode, metricType } }
+    req = { params: { stateCode, metricType } },
   ) {
     return new Promise((resolve) => {
       const send = resolve;
@@ -143,7 +143,7 @@ describe("API GET tests", () => {
     controllerFn,
     numCalls,
     request,
-    mockFetch = fetchMetrics
+    mockFetch = fetchMetrics,
   ) {
     await fakeRequest(controllerFn, request);
     expect(mockFetch.mock.calls.length).toBe(numCalls);
@@ -169,7 +169,7 @@ describe("API GET tests", () => {
 
         await requestAndExpectFetchMetricsCalled(controllerFn, 1);
         await requestAndExpectFetchMetricsCalled(controllerFn, 0);
-      }
+      },
     );
 
     it("newRevocations - calls fetchMetrics with the correct args", async () => {
@@ -178,7 +178,7 @@ describe("API GET tests", () => {
         stateCode,
         "newRevocation",
         null,
-        false
+        false,
       );
     });
 
@@ -189,7 +189,7 @@ describe("API GET tests", () => {
         stateCode,
         "newRevocation",
         null,
-        false
+        false,
       );
     });
   });
@@ -223,7 +223,7 @@ describe("API GET tests", () => {
       };
 
       expect(async () =>
-        fakeRequest(newRevocationFile, requestWithoutRestrictions)
+        fakeRequest(newRevocationFile, requestWithoutRestrictions),
       ).not.toThrow();
     });
 
@@ -277,14 +277,14 @@ describe("API GET tests", () => {
         newRevocationFile,
         1,
         request,
-        fetchAndFilterNewRevocationFile
+        fetchAndFilterNewRevocationFile,
       );
 
       await requestAndExpectFetchMetricsCalled(
         newRevocationFile,
         0,
         request,
-        fetchAndFilterNewRevocationFile
+        fetchAndFilterNewRevocationFile,
       );
 
       clearCache();
@@ -293,14 +293,14 @@ describe("API GET tests", () => {
         newRevocationFile,
         1,
         request,
-        fetchAndFilterNewRevocationFile
+        fetchAndFilterNewRevocationFile,
       );
 
       await requestAndExpectFetchMetricsCalled(
         newRevocationFile,
         0,
         request,
-        fetchAndFilterNewRevocationFile
+        fetchAndFilterNewRevocationFile,
       );
     });
   });

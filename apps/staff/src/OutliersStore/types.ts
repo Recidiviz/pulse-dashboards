@@ -25,7 +25,7 @@ import { PromiseType } from "utility-types";
  */
 export type FlowMethod<
   FunctionToYield extends (...args: any[]) => Promise<unknown>,
-  FlowReturn
+  FlowReturn,
 > = Generator<
   ReturnType<FunctionToYield>,
   FlowReturn,

@@ -55,7 +55,7 @@ describe("CoreLayout tests", () => {
     return mount(
       <MemoryRouter>
         <PageNavigation />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -107,7 +107,7 @@ describe("CoreLayout tests", () => {
 
     const selector = renderPageNavigation();
     expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
-      1
+      1,
     );
   });
 
@@ -116,7 +116,7 @@ describe("CoreLayout tests", () => {
 
     const selector = renderPageNavigation();
     expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
-      0
+      0,
     );
   });
 

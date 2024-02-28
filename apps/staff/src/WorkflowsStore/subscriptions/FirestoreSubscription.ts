@@ -58,7 +58,7 @@ export abstract class FirestoreSubscription<DataFormat> implements Hydratable {
      */
 
     public data: DataFormat,
-    dataAnnotation: Annotation = observable
+    dataAnnotation: Annotation = observable,
   ) {
     makeObservable<this, "cancelSnapshotListener">(this, {
       cancelSnapshotListener: observable,

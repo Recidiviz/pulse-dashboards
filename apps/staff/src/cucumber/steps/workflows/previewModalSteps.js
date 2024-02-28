@@ -43,5 +43,5 @@ Then(
     const ineligibleReasonText = await $(`.MarkedIneligibleReasonsText`);
     const text = await ineligibleReasonText.getText();
     expect(text).toContain(ineligibleReason);
-  }
+  },
 );

@@ -57,7 +57,7 @@ describe("createMethodologyFile functions", () => {
         "Data last updated on: 4/6/2021\n\n" +
         "Export Date: 11/20/2020\n\n" +
         "methodology header\n" +
-        "methodology body\n\n"
+        "methodology body\n\n",
     );
   });
 
@@ -77,7 +77,7 @@ describe("createMethodologyFile functions", () => {
       "Chart: Revocations Count\n\n" +
         "Export Date: 11/20/2020\n\n" +
         "methodology header\n" +
-        "methodology body\n\n"
+        "methodology body\n\n",
     );
   });
 
@@ -104,7 +104,7 @@ describe("createMethodologyFile functions", () => {
           "- some filters text\n" +
           "- some violation text\n\n" +
           "Export Date: 11/20/2020\n\n" +
-          "methodology body\n\n"
+          "methodology body\n\n",
       );
     });
   });

@@ -98,18 +98,18 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   onSubmit?: () => void;
 }): JSX.Element | null {
   const [reasons, setReasons] = useState<string[]>(
-    opportunity?.denial?.reasons ?? []
+    opportunity?.denial?.reasons ?? [],
   );
   const [otherReason, setOtherReason] = useState<string>(
-    opportunity?.denial?.otherReason ?? ""
+    opportunity?.denial?.otherReason ?? "",
   );
 
   const [snoozeForDays, setSnoozeForDays] = useState<number>(
-    opportunity?.manualSnooze?.snoozeForDays ?? 0
+    opportunity?.manualSnooze?.snoozeForDays ?? 0,
   );
 
   const [autoSnoozeUntil, setAutoSnoozeUntil] = useState<string | undefined>(
-    opportunity?.autoSnooze?.snoozeUntil
+    opportunity?.autoSnooze?.snoozeUntil,
   );
 
   const { enableSnooze } = useFeatureVariants();
@@ -268,8 +268,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
                   if (defaultAutoSnoozeFn && updatedReasons.length) {
                     setAutoSnoozeUntil(
                       formatDateToISO(
-                        defaultAutoSnoozeFn(startOfToday(), opportunity)
-                      )
+                        defaultAutoSnoozeFn(startOfToday(), opportunity),
+                      ),
                     );
                   } else {
                     setAutoSnoozeUntil(undefined);
@@ -286,7 +286,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
                 {description}
               </Checkbox>
             </MenuItem>
-          )
+          ),
         )}
 
         {reasons.includes(OTHER_KEY) && (

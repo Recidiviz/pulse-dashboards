@@ -28,7 +28,7 @@ describe("TogglePill tests", () => {
         leftPill={{ label: "Left", value: "left" }}
         rightPill={{ label: "Right", value: "right" }}
         onChange={() => undefined}
-      />
+      />,
     );
   };
 

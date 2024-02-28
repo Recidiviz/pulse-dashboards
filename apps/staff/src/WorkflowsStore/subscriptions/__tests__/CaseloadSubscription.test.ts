@@ -50,7 +50,7 @@ beforeEach(() => {
   sub = new CaseloadSubscription<ClientRecord>(
     workflowsStoreMock,
     "clients",
-    "CLIENT"
+    "CLIENT",
   );
 });
 
@@ -63,7 +63,7 @@ test("dataSource reflects observables with defined search field", () => {
 
   expect(collectionMock).toHaveBeenCalledWith(
     workflowsStoreMock.rootStore.firestoreStore.db,
-    "clients"
+    "clients",
   );
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
   expect(whereMock).toHaveBeenCalledWith("facilityId", "in", ["TEST1"]);

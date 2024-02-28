@@ -79,7 +79,7 @@ export type TenantConfig = {
       rootStore: RootStore,
       task: SupervisionTaskRecord<k>,
       person: JusticeInvolvedPerson,
-      updates?: SupervisionTaskUpdate[k]
+      updates?: SupervisionTaskUpdate[k],
     ) => Task<k>;
   };
   milestoneTypes?: MilestoneType[];

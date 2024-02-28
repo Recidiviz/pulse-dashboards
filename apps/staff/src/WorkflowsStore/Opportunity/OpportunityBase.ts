@@ -71,7 +71,7 @@ import {
 export function updateOpportunityEligibility(
   opportunityType: OpportunityType,
   recordId: string,
-  rootStore: RootStore
+  rootStore: RootStore,
 ) {
   return async (record: DocumentData) => {
     // If the record is eligible, then no update is needed.
@@ -94,7 +94,7 @@ export function updateOpportunityEligibility(
     // denial reasons and the manual and auto snooze configs.
     await rootStore.firestoreStore.deleteOpportunityDenialAndSnooze(
       opportunityType,
-      recordId
+      recordId,
     );
   };
 }
@@ -107,7 +107,7 @@ export function updateOpportunityEligibility(
 export abstract class OpportunityBase<
   PersonType extends JusticeInvolvedPerson,
   ReferralRecord extends DocumentData,
-  UpdateRecord extends OpportunityUpdateWithForm<any> = OpportunityUpdate
+  UpdateRecord extends OpportunityUpdateWithForm<any> = OpportunityUpdate,
 > implements Opportunity<PersonType>
 {
   readonly type: OpportunityType;
@@ -145,7 +145,7 @@ export abstract class OpportunityBase<
     type: OpportunityType,
     rootStore: RootStore,
     transformReferral?: TransformFunction<ReferralRecord>,
-    validateRecord?: ValidateFunction<ReferralRecord>
+    validateRecord?: ValidateFunction<ReferralRecord>,
   ) {
     makeObservable(this, {
       denial: computed,
@@ -173,7 +173,7 @@ export abstract class OpportunityBase<
     this.updateOpportunityEligibility = updateOpportunityEligibility(
       this.type,
       this.person.recordId,
-      this.rootStore
+      this.rootStore,
     );
 
     this.referralSubscription =
@@ -182,13 +182,13 @@ export abstract class OpportunityBase<
         `${type}Referrals` as const,
         person.recordId,
         transformReferral,
-        validateRecord
+        validateRecord,
       );
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       this.rootStore.firestoreStore,
       person.recordId,
       type,
-      this.updateOpportunityEligibility
+      this.updateOpportunityEligibility,
     );
   }
 
@@ -280,9 +280,9 @@ export abstract class OpportunityBase<
         this.rootStore.firestoreStore.updateOpportunityLastViewed(
           currentUserEmail,
           this.person.recordId,
-          this.type
+          this.type,
         );
-      }
+      },
     );
   }
 
@@ -317,7 +317,7 @@ export abstract class OpportunityBase<
         this.rootStore.firestoreStore.updateOpportunityCompleted(
           currentUserEmail,
           recordId,
-          this.type
+          this.type,
         );
         this.rootStore.analyticsStore.trackSetOpportunityStatus({
           clientId: pseudonymizedId,
@@ -325,7 +325,7 @@ export abstract class OpportunityBase<
           status: "COMPLETED",
           opportunityType: this.type,
         });
-      }
+      },
     );
   }
 
@@ -350,7 +350,7 @@ export abstract class OpportunityBase<
   async deleteOpportunityDenialAndSnooze(): Promise<void> {
     await this.rootStore.firestoreStore.deleteOpportunityDenialAndSnooze(
       this.type,
-      this.person.recordId
+      this.person.recordId,
     );
   }
 
@@ -378,13 +378,13 @@ export abstract class OpportunityBase<
         snoozedOn: format(new Date(), "yyyy-MM-dd"),
         snoozeForDays: days,
       },
-      deleteSnoozeField
+      deleteSnoozeField,
     );
   }
 
   async setAutoSnooze(
     defaultSnoozeUntilFn: AutoSnoozeUntil["defaultSnoozeUntilFn"],
-    reasons: string[]
+    reasons: string[],
   ): Promise<void> {
     const { currentUserEmail } = this.rootStore.workflowsStore;
     const { recordId } = this.person;
@@ -411,14 +411,14 @@ export abstract class OpportunityBase<
         snoozedOn: format(new Date(), "yyyy-MM-dd"),
         snoozeUntil: formatDateToISO(snoozeUntil),
       },
-      deleteSnoozeField
+      deleteSnoozeField,
     );
   }
 
   sortByReviewStatus(other: Opportunity): number {
     return ascending(
       OPPORTUNITY_STATUS_RANKED.indexOf(this.reviewStatus),
-      OPPORTUNITY_STATUS_RANKED.indexOf(other.reviewStatus)
+      OPPORTUNITY_STATUS_RANKED.indexOf(other.reviewStatus),
     );
   }
 
@@ -457,14 +457,14 @@ export abstract class OpportunityBase<
       recordId,
       { reasons },
       this.type,
-      deletions
+      deletions,
     );
 
     await this.rootStore.firestoreStore.updateOpportunityCompleted(
       currentUserEmail,
       recordId,
       this.type,
-      true
+      true,
     );
 
     if (reasons.length) {
@@ -498,7 +498,7 @@ export abstract class OpportunityBase<
         {
           otherReason,
         },
-        this.type
+        this.type,
       );
     }
   }

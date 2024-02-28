@@ -80,21 +80,21 @@ const expectStateToBe = (expectedState: "HYDRATED" | "EMPTY" | "LOADING") => {
   switch (expectedState) {
     case "LOADING":
       expect(
-        screen.queryByText("Loading", { exact: false })
+        screen.queryByText("Loading", { exact: false }),
       ).toBeInTheDocument();
       expect(screen.queryByText("Empty!")).not.toBeInTheDocument();
       expect(screen.queryByText("Hydrated!")).not.toBeInTheDocument();
       break;
     case "EMPTY":
       expect(
-        screen.queryByText("Loading", { exact: false })
+        screen.queryByText("Loading", { exact: false }),
       ).not.toBeInTheDocument();
       expect(screen.queryByText("Empty!")).toBeInTheDocument();
       expect(screen.queryByText("Hydrated!")).not.toBeInTheDocument();
       break;
     case "HYDRATED":
       expect(
-        screen.queryByText("Loading", { exact: false })
+        screen.queryByText("Loading", { exact: false }),
       ).not.toBeInTheDocument();
       expect(screen.queryByText("Empty!")).not.toBeInTheDocument();
       expect(screen.queryByText("Hydrated!")).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
-      />
+      />,
     );
 
     expect(lsuHydrateMock).toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU"]}
-      />
+      />,
     );
 
     expect(lsuHydrateMock).toHaveBeenCalled();
@@ -144,7 +144,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
-      />
+      />,
     );
 
     expectStateToBe("LOADING");
@@ -158,7 +158,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
-      />
+      />,
     );
 
     expectStateToBe("LOADING");
@@ -172,7 +172,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
-      />
+      />,
     );
 
     expectStateToBe("HYDRATED");
@@ -186,7 +186,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["pastFTRD"]}
-      />
+      />,
     );
 
     expectStateToBe("HYDRATED");
@@ -203,7 +203,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
-      />
+      />,
     );
 
     expectStateToBe("EMPTY");
@@ -220,7 +220,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU"]}
-      />
+      />,
     );
 
     expectStateToBe("EMPTY");
@@ -239,7 +239,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
-      />
+      />,
     );
 
     expectStateToBe("EMPTY");

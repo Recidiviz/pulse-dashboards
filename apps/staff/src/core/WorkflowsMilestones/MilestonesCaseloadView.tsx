@@ -175,13 +175,13 @@ const MILESTONES_TABS = [
   "Errors",
 ] as const;
 
-export type MilestonesTab = typeof MILESTONES_TABS[number];
+export type MilestonesTab = (typeof MILESTONES_TABS)[number];
 
 const MilestonesCaseloadView: React.FC = observer(
   function MilestonesCaseloadView() {
     const { workflowsStore, analyticsStore } = useRootStore();
     const [activeTab, setActiveTab] = useState<MilestonesTab>(
-      MILESTONES_TABS[0]
+      MILESTONES_TABS[0],
     );
 
     const handleTabClick = (tab: MilestonesTab) => {
@@ -250,7 +250,7 @@ const MilestonesCaseloadView: React.FC = observer(
         empty={empty}
       />
     );
-  }
+  },
 );
 
 export default MilestonesCaseloadView;

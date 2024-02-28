@@ -63,7 +63,7 @@ describe("SnapshotMetric", () => {
         metadata: {
           lastUpdated: "2022-01-01",
         },
-      })
+      }),
     );
     mockCoreStore.setPage("libertyToPrison");
     mockCoreStore.setSection("countByLocation");
@@ -100,8 +100,8 @@ describe("SnapshotMetric", () => {
   it("fetches metrics when initialized", () => {
     expect(fetchMock.mock.calls[0][0]).toEqual(
       encodeURI(
-        `${BASE_URL}?filters[time_period]=months_0_6&group=judicial_district`
-      )
+        `${BASE_URL}?filters[time_period]=months_0_6&group=judicial_district`,
+      ),
     );
   });
 
@@ -149,8 +149,8 @@ describe("SnapshotMetric", () => {
       encodeURI(
         `${BASE_URL}?filters[time_period]=months_0_6` +
           `&filters[gender]=MALE&filters[age_group]=25-29&filters[age_group]=30-34` +
-          `&group=judicial_district`
-      )
+          `&group=judicial_district`,
+      ),
     );
   });
 
@@ -166,8 +166,8 @@ describe("SnapshotMetric", () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(fetchMock.mock.calls[1][0]).toEqual(
       encodeURI(
-        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`
-      )
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`,
+      ),
     );
   });
 
@@ -212,9 +212,9 @@ describe("SnapshotMetric", () => {
                     },
                   }),
                 }),
-              1000
-            )
-          )
+              1000,
+            ),
+          ),
       )
       // Fast request
       .mockResponseOnce(
@@ -232,7 +232,7 @@ describe("SnapshotMetric", () => {
           metadata: {
             lastUpdated: "2022-01-01",
           },
-        })
+        }),
       );
     // Trigger the slow request
     runInAction(() => {
@@ -252,13 +252,13 @@ describe("SnapshotMetric", () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(fetchMock.mock.calls[0][0]).toEqual(
       encodeURI(
-        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`
-      )
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=MALE&group=judicial_district`,
+      ),
     );
     expect(fetchMock.mock.calls[1][0]).toEqual(
       encodeURI(
-        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=FEMALE&group=judicial_district`
-      )
+        `${BASE_URL}?filters[time_period]=months_0_6&filters[gender]=FEMALE&group=judicial_district`,
+      ),
     );
     expect(isAbortException(fetchMock.mock.results[0].value)).toBe(true);
     expect(metric.dataSeries).toEqual([

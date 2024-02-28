@@ -133,7 +133,7 @@ export default class UserStore {
       });
       await this.rootStore?.firestoreStore.authenticate(
         "fakeAuth0Token",
-        offlineUser[`${METADATA_NAMESPACE}app_metadata`]
+        offlineUser[`${METADATA_NAMESPACE}app_metadata`],
       );
       runInAction(() => {
         this.user = offlineUser;
@@ -179,7 +179,7 @@ export default class UserStore {
         if (user) {
           await this.rootStore?.firestoreStore.authenticate(
             await auth0.getTokenSilently(),
-            user[`${METADATA_NAMESPACE}app_metadata`]
+            user[`${METADATA_NAMESPACE}app_metadata`],
           );
           runInAction(() => {
             this.user = user;
@@ -213,7 +213,7 @@ export default class UserStore {
 
   async impersonateUser(
     impersonatedEmail: string,
-    impersonatedStateCode: string
+    impersonatedStateCode: string,
   ): Promise<void> {
     this.userIsLoading = true;
     this.rootStore?.workflowsStore.disposeUserProfileSubscriptions();
@@ -224,14 +224,14 @@ export default class UserStore {
         impersonatedEmail,
         impersonatedStateCode,
         this.getTokenSilently,
-        this.userAppMetadata
+        this.userAppMetadata,
       );
 
       // Fetch dashboard userAppMetadata to build mocked auth0 user
       const userRestrictions = await fetchImpersonatedUserAppMetadata(
         impersonatedEmail,
         impersonatedStateCode,
-        this.getTokenSilently
+        this.getTokenSilently,
       );
 
       runInAction(() => {
@@ -249,7 +249,7 @@ export default class UserStore {
           stateCode: impersonatedStateCode,
         };
         this.rootStore?.tenantStore.setCurrentTenantId(
-          impersonatedStateCode as TenantId
+          impersonatedStateCode as TenantId,
         );
         this.userIsLoading = false;
       });
@@ -303,7 +303,7 @@ export default class UserStore {
     }
     return intersection(
       availableStateCodes,
-      this.userAppMetadata?.allowedStates ?? []
+      this.userAppMetadata?.allowedStates ?? [],
     );
   }
 
@@ -339,7 +339,7 @@ export default class UserStore {
         const urlComponents = fullRoute.split("_");
         const route = urlComponents.at(-1);
         return [route, permission];
-      }
+      },
     );
     return routes;
   }
@@ -416,7 +416,7 @@ export default class UserStore {
           [variantName]: { ...(variant && { variant }) },
         };
       },
-      {}
+      {},
     );
   }
 
@@ -462,7 +462,7 @@ export default class UserStore {
 
     if (isIE11() && allowed?.supervisionToPrison) {
       const indexOfOfficerChart = allowed.supervisionToPrison?.findIndex(
-        (r) => r === PATHWAYS_SECTIONS.countByOfficer
+        (r) => r === PATHWAYS_SECTIONS.countByOfficer,
       );
       allowed.supervisionToPrison.splice(indexOfOfficerChart, 1);
     }
@@ -485,7 +485,7 @@ export default class UserStore {
         // special case for the "workflows" route:
         // there are actual multiple "routes" in the config that control the same URL route.
         // if any of them are true then the route should be permitted
-        (route === "workflows" && r[0].startsWith("workflows") && r[1])
+        (route === "workflows" && r[0].startsWith("workflows") && r[1]),
     );
     // If the route does not exist in the RoutePermissions object, default to false;
     if (!routePermission) return false;

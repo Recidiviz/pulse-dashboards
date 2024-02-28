@@ -99,5 +99,5 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
 ];
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(
-  (officer) => supervisionOfficerSchema.parse(officer)
+  (officer) => supervisionOfficerSchema.parse(officer),
 );

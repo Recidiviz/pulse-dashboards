@@ -72,9 +72,9 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client.rootStore,
       usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
         (raw: string) =>
-          client.rootStore.workflowsStore.formatSupervisionLevel(raw)
+          client.rootStore.workflowsStore.formatSupervisionLevel(raw),
       ).parse,
-      getValidator(client)
+      getValidator(client),
     );
 
     makeObservable(this, { requirementsMet: true });

@@ -76,7 +76,7 @@ export function formatPhoneNumber(phoneNumber: string): string {
   const digitsOnly = clearPhoneNumberFormatting(phoneNumber);
   const formattedPhoneNumber = digitsOnly.replace(
     /(\d{3})(\d{3})(\d{4})/,
-    "($1) $2-$3"
+    "($1) $2-$3",
   );
 
   return formattedPhoneNumber;
@@ -84,7 +84,7 @@ export function formatPhoneNumber(phoneNumber: string): string {
 
 export function formatFacilityHousingUnit(
   facilityId: string | undefined,
-  unitId: string | undefined
+  unitId: string | undefined,
 ): string {
   const formattedFacilityHousingUnit = `${facilityId ?? ""}${
     facilityId && unitId ? "/" : ""
@@ -125,7 +125,7 @@ export function fieldToDate(field: Timestamp | string): Date {
 }
 
 export function optionalFieldToDate(
-  field?: Timestamp | string
+  field?: Timestamp | string,
 ): Date | undefined {
   if (field) return fieldToDate(field);
 }
@@ -135,7 +135,7 @@ export function fieldToDateArray(field: Timestamp[] | string[]): Date[] {
 }
 
 export function optionalFieldToDateArray(
-  field?: Timestamp[] | string[]
+  field?: Timestamp[] | string[],
 ): Date[] | undefined {
   if (field) return fieldToDateArray(field);
 }
@@ -143,7 +143,7 @@ export function optionalFieldToDateArray(
 export function fractionalDateBetweenTwoDates(
   dateLeft: Date | undefined,
   dateRight: Date | undefined,
-  fractionalPortion: number
+  fractionalPortion: number,
 ): Date | undefined {
   if (dateLeft && dateRight) {
     const diffInDays = moment(dateRight).diff(moment(dateLeft), "days");
@@ -189,7 +189,7 @@ export const getEntries = <T extends object>(obj: T) =>
   Object.entries(obj) as Entries<T>;
 
 export function getJusticeInvolvedPersonTitle(
-  systemId: SystemId | undefined
+  systemId: SystemId | undefined,
 ): string {
   switch (systemId) {
     case "INCARCERATION":
@@ -205,7 +205,7 @@ export function getJusticeInvolvedPersonTitle(
 }
 
 export function getSystemIdFromOpportunityType(
-  opportunityType: OpportunityType
+  opportunityType: OpportunityType,
 ): SystemId {
   return OPPORTUNITY_CONFIGS[opportunityType].systemType;
 }
@@ -224,7 +224,7 @@ export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {
 
 export const filterByUserDistrict: StaffFilterFunction = (
   user: CombinedUserRecord,
-  featureVariants: ActiveFeatureVariantRecord
+  featureVariants: ActiveFeatureVariantRecord,
 ) => {
   if (featureVariants.supervisionUnrestrictedSearch) return;
 
@@ -246,7 +246,7 @@ export const filterByUserDistrict: StaffFilterFunction = (
 
 export const usCaFilterByRoleSubtype: StaffFilterFunction = (
   user: CombinedUserRecord,
-  featureVariants: ActiveFeatureVariantRecord
+  featureVariants: ActiveFeatureVariantRecord,
 ) => {
   if (featureVariants.supervisionUnrestrictedSearch) return;
 

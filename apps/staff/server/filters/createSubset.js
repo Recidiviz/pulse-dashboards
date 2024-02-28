@@ -46,25 +46,25 @@ function applyFiltersToOptimizedFormat(data, filters, filterFn, skipFilterFn) {
   const totalDataPoints = toInteger(metadata.total_data_points);
   const unflattenedMatrix = convertFromStringToUnflattenedMatrix(
     flattenedValueMatrix,
-    totalDataPoints
+    totalDataPoints,
   );
 
   const filteredData = filterOptimizedDataFormat(
     unflattenedMatrix,
     metadata,
     filterFn,
-    skipFilterFn
+    skipFilterFn,
   );
 
   const subsetMetadata = createSubsetMetadata(
     filteredData.length,
     metadata,
-    filters
+    filters,
   );
 
   const subsetFlattenedValueMatrix = createFlattenedValueMatrix(
     filteredData,
-    subsetMetadata
+    subsetMetadata,
   );
 
   return {
@@ -100,7 +100,7 @@ function applyFiltersToDataPoints(dataPoints, filters, filterFn, metricName) {
   const subsetMetadata = createSubsetMetadata(
     filteredData.length,
     metadata,
-    filters
+    filters,
   );
 
   return {
@@ -143,7 +143,7 @@ function createSubset(metricName, filters, metricFile) {
   const skipFilterFn = (dimensionKey) =>
     !getSubsetDimensionKeys()
       .concat(
-        levelOneSupervisionLocation ? ["level_1_supervision_location"] : []
+        levelOneSupervisionLocation ? ["level_1_supervision_location"] : [],
       )
       .includes(dimensionKey);
 
@@ -153,7 +153,7 @@ function createSubset(metricName, filters, metricFile) {
         metricFile[metricName],
         filters,
         filterFn,
-        metricName
+        metricName,
       ),
     };
   }
@@ -161,8 +161,8 @@ function createSubset(metricName, filters, metricFile) {
   /* eslint-disable no-console */
   console.log(
     `Creating subset file for: ${metricName} with filters: ${JSON.stringify(
-      filters
-    )}`
+      filters,
+    )}`,
   );
 
   return {
@@ -170,7 +170,7 @@ function createSubset(metricName, filters, metricFile) {
       metricFile[metricName],
       filters,
       filterFn,
-      skipFilterFn
+      skipFilterFn,
     ),
   };
 }

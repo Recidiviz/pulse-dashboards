@@ -66,7 +66,7 @@ test("eligibleCriteria must not be empty", () => {
   };
 
   expect(
-    getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord))
+    getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord)),
   ).toMatchSnapshot();
 });
 
@@ -77,7 +77,7 @@ test("criteria are required", () => {
   };
 
   expect(
-    getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord))
+    getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord)),
   ).toMatchSnapshot();
 });
 
@@ -91,7 +91,7 @@ test("must not have revocation date", () => {
   };
 
   expect(
-    getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord))
+    getParseErrorFormatted(usNdEarlyTerminationSchema.safeParse(testRecord)),
   ).toMatchSnapshot();
 });
 

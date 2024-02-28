@@ -69,7 +69,7 @@ const CRITERIA_COPY: CriteriaCopy<BasePastFTRDReferralRecord> = {
 };
 
 export abstract class PastFTRDOpportunityBase<
-  ReferralRecord extends BasePastFTRDReferralRecord
+  ReferralRecord extends BasePastFTRDReferralRecord,
 > extends OpportunityBase<Client, ReferralRecord> {
   readonly isAlert = true;
 
@@ -83,7 +83,7 @@ export abstract class PastFTRDOpportunityBase<
     client: Client,
     type: OpportunityType,
     transformReferral?: TransformFunction<ReferralRecord>,
-    validateRecord?: ValidateFunction<ReferralRecord>
+    validateRecord?: ValidateFunction<ReferralRecord>,
   ) {
     super(client, type, client.rootStore, transformReferral, validateRecord);
     makeObservable(this, {
@@ -96,7 +96,7 @@ export abstract class PastFTRDOpportunityBase<
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -105,7 +105,7 @@ export abstract class PastFTRDOpportunityBase<
       this.record,
       "ineligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 

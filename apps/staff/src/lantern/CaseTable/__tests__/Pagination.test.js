@@ -30,7 +30,7 @@ describe("test for component CaseTablePaging", () => {
         end={15}
         total={1000}
         createUpdatePage={updatePage}
-      />
+      />,
     );
 
     expect(getByText("Showing 1-15 of 1000")).toBeInTheDocument();

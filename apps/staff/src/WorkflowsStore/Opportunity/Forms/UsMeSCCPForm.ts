@@ -41,11 +41,11 @@ export class UsMeSCCPForm extends FormBase<
       const mdocNo = this.person.externalId;
       const facilityHousingUnit = formatFacilityHousingUnit(
         this.person.facilityId,
-        this.person.unitId
+        this.person.unitId,
       );
       const caseManagerRecord =
         this.rootStore.workflowsStore.availableOfficers.find(
-          (r) => r.id === this.person.assignedStaffId
+          (r) => r.id === this.person.assignedStaffId,
         );
       const caseManager = `${caseManagerRecord?.givenNames} ${caseManagerRecord?.surname}`;
 

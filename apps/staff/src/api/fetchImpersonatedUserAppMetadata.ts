@@ -22,11 +22,11 @@ import UserStore from "../RootStore/UserStore";
 export async function fetchImpersonatedUserAppMetadata(
   impersonatedEmail: string,
   impersonatedStateCode: string,
-  getTokenSilently?: UserStore["getTokenSilently"]
+  getTokenSilently?: UserStore["getTokenSilently"],
 ): Promise<UserAppMetadata> {
   if (!getTokenSilently) {
     throw new Error(
-      "Missing required auth0 authentication to request Firebase token for impersonation."
+      "Missing required auth0 authentication to request Firebase token for impersonation.",
     );
   }
   const token = await getTokenSilently();
@@ -42,11 +42,11 @@ export async function fetchImpersonatedUserAppMetadata(
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
   if (!response.ok) {
     throw Error(
-      `There was a problem fetching user app metdata for the user: ${impersonatedEmail} and state ${impersonatedStateCode}`
+      `There was a problem fetching user app metdata for the user: ${impersonatedEmail} and state ${impersonatedStateCode}`,
     );
   }
   const userAppMetadata = await response.json();

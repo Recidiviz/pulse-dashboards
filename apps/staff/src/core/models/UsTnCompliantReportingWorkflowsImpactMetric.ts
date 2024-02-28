@@ -50,15 +50,18 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
   // eslint-disable-next-line class-methods-use-this
   aggregatedChartData(data: DataItem[]): DataItem[] {
     const aggregatedData: DataItem[] = Object.entries(
-      data.reduce((total, d) => {
-        const updatedTotal = { ...total };
-        if (!updatedTotal[d.months]) {
-          updatedTotal[d.months] = d.value;
-        } else {
-          updatedTotal[d.months] += d.value;
-        }
-        return updatedTotal;
-      }, {} as { [months: number]: number })
+      data.reduce(
+        (total, d) => {
+          const updatedTotal = { ...total };
+          if (!updatedTotal[d.months]) {
+            updatedTotal[d.months] = d.value;
+          } else {
+            updatedTotal[d.months] += d.value;
+          }
+          return updatedTotal;
+        },
+        {} as { [months: number]: number },
+      ),
     )
       .map(([months, value]) => ({ months: Number(months), value }))
       .sort((a, b) => a.months - b.months);
@@ -71,7 +74,7 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
       (d: UsTnCompliantReportingWorkflowsImpactRecord) => ({
         months: d.monthsSinceTreatment,
         value: d.avgDailyPopulation,
-      })
+      }),
     );
 
     return this.aggregatedChartData(data);
@@ -82,7 +85,7 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
       (d: UsTnCompliantReportingWorkflowsImpactRecord) => ({
         months: d.monthsSinceTreatment,
         value: d.avgPopulationLimitedSupervisionLevel,
-      })
+      }),
     );
 
     return this.aggregatedChartData(data);
@@ -143,7 +146,7 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
     return this.calculateTreatmentEffect(
       "monthsSinceTreatment",
       "avgDailyPopulation",
-      "supervisionDistrict"
+      "supervisionDistrict",
     );
   }
 
@@ -151,7 +154,7 @@ export default class UsTnCompliantReportingWorkflowsImpactMetric extends ImpactM
     return this.calculateTreatmentEffect(
       "monthsSinceTreatment",
       "avgPopulationLimitedSupervisionLevel",
-      "supervisionDistrict"
+      "supervisionDistrict",
     );
   }
 

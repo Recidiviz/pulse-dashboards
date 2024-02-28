@@ -31,7 +31,7 @@ const credentialFile = process.env.FIREBASE_CREDENTIAL;
 const appOptions = { projectId };
 if (!isOfflineMode() && credentialFile) {
   appOptions.credential = firebaseAdmin.credential.cert(
-    JSON.parse(fs.readFileSync(credentialFile).toString())
+    JSON.parse(fs.readFileSync(credentialFile).toString()),
   );
 }
 
@@ -61,7 +61,7 @@ function getFirebaseToken(impersonateUser = false) {
       uid = req.user[`${METADATA_NAMESPACE}email_address`];
       stateCode = appMetadata.stateCode;
       recidivizAllowedStates = (appMetadata.allowedStates ?? []).map((sc) =>
-        sc.toUpperCase()
+        sc.toUpperCase(),
       );
     }
 

@@ -50,13 +50,13 @@ describe("monthsOrDaysRemainingFromToday", () => {
 
   test("months remaining", () => {
     expect(monthsOrDaysRemainingFromToday(new Date(2023, 5, 23))).toEqual(
-      "4 more months"
+      "4 more months",
     );
   });
 
   test("days remaining", () => {
     expect(monthsOrDaysRemainingFromToday(new Date(2023, 1, 30))).toEqual(
-      "7 more days"
+      "7 more days",
     );
   });
 });
@@ -81,7 +81,7 @@ describe("Generate header", () => {
     const header = generateOpportunityInitialHeader(
       mockUsXxOpp,
       TEST_TITLE,
-      TEST_FIELD
+      TEST_FIELD,
     );
     expect(header).toMatchSnapshot();
   });
@@ -91,7 +91,7 @@ describe("Generate header", () => {
     const header = generateOpportunityInitialHeader(
       mockUsXxOpp,
       TEST_TITLE,
-      TEST_FIELD
+      TEST_FIELD,
     );
     expect(header).toMatchSnapshot();
   });
@@ -104,7 +104,7 @@ describe("Generate hydrated header", () => {
     Object.entries(MOCK_OPPORTUNITY_CONFIGS).forEach(([key, value], index) => {
       OPPORTUNITY_CONFIGS[key as OpportunityType] = value as never;
       hydratedHeaders.push(
-        generateOpportunityHydratedHeader(key as OpportunityType, index)
+        generateOpportunityHydratedHeader(key as OpportunityType, index),
       );
     });
   });
@@ -119,7 +119,7 @@ describe("Generate hydrated header", () => {
   test("to generate correctly", () => {
     expect(hydratedHeaders).toBeDefined();
     expect(hydratedHeaders.length).toEqual(
-      Object.keys(MOCK_OPPORTUNITY_CONFIGS).length
+      Object.keys(MOCK_OPPORTUNITY_CONFIGS).length,
     );
   });
 

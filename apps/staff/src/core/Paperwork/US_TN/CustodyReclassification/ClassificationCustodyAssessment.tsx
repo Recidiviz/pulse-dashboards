@@ -56,7 +56,7 @@ const Seal = styled.img.attrs({ src: SealPng, alt: "TN Seal" })`
 
 const totalScoreForQuestions = (
   numberedQuestions: [AssessmentQuestionSpec, AssessmentQuestionNumber][],
-  formData: UsTnSharedReclassificationDraftData
+  formData: UsTnSharedReclassificationDraftData,
 ) => {
   const scores = numberedQuestions.map(([{ options }, n]) => {
     const selection = formData[`q${n}Selection`];
@@ -76,7 +76,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
 
   const numberedQuestions = zip(
     assessmentQuestions,
-    assessmentQuestionNumbers
+    assessmentQuestionNumbers,
   ) as [AssessmentQuestionSpec, AssessmentQuestionNumber][];
 
   const scheduleA = numberedQuestions.slice(0, 4);

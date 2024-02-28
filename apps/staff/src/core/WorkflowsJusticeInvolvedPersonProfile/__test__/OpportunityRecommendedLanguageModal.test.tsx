@@ -80,7 +80,7 @@ describe("OpportunityRecommendedLanguageModal", () => {
         opportunity={almostEligibleMockOpportunity}
       >
         {almostEligibleMockOpportunity.almostEligibleRecommendedNote.title}
-      </OpportunityRecommendedLanguageModal>
+      </OpportunityRecommendedLanguageModal>,
     );
   });
 
@@ -102,7 +102,7 @@ describe("OpportunityRecommendedLanguageModal", () => {
     expect(
       screen.getByRole("button", {
         name: "Copy to clipboard",
-      })
+      }),
     ).toBeInTheDocument();
     expect(viewedSpy).toHaveBeenCalledOnce();
     expect(viewedSpy).toHaveBeenCalledWith({

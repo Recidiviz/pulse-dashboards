@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {error} from "firebase-functions/logger";
+import { error } from "firebase-functions/logger";
 
 export const throwErrorCustom = (errorMessage: string) => {
   error(errorMessage);

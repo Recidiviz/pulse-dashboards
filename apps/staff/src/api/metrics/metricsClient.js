@@ -34,7 +34,7 @@ async function validateResponse(response) {
     throw new Error(
       `Fetching data from API failed.\nStatus: ${status} - ${
         response.statusText
-      }\nErrors: ${JSON.stringify(errors)}`
+      }\nErrors: ${JSON.stringify(errors)}`,
     );
   } else {
     return responseJson;
@@ -65,7 +65,7 @@ async function callApi(url, getTokenSilently, abortSignal) {
       },
     },
     retryTimes,
-    abortSignal
+    abortSignal,
   );
 
   return responseJson;

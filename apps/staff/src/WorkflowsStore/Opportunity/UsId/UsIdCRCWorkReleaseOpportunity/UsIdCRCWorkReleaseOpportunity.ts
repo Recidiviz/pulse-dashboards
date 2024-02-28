@@ -99,7 +99,7 @@ export class UsIdCRCWorkReleaseOpportunity extends UsIdCRCOpportunityBase<UsIdCR
       resident,
       "usIdCRCWorkRelease",
       resident.rootStore,
-      usIdCRCWorkReleaseSchema.parse
+      usIdCRCWorkReleaseSchema.parse,
     );
 
     makeObservable(this, { requirementsMet: computed });

@@ -44,7 +44,7 @@ describe("convertLabelsToValues", () => {
       timePeriod: ["6"],
     };
     expect(convertLabelsToValues(filtersLabels, filterOptions.US_ID)).toEqual(
-      expected
+      expected,
     );
   });
 });

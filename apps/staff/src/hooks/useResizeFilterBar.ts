@@ -22,14 +22,14 @@ const useResizeFilterBar = (
   filtersRef: React.MutableRefObject<HTMLElement>,
   containerRef: React.MutableRefObject<HTMLElement>,
   enabledFilters: EnabledFilters,
-  enableMetricModeToggle?: boolean
+  enableMetricModeToggle?: boolean,
 ): number => {
   const [renderCount, setRenderCount] = useState(enabledFilters.length);
 
   const getRenderCount = (
     array: number[],
     outerWidth: number,
-    initialWidth: number
+    initialWidth: number,
   ) => {
     let total = initialWidth;
     for (let i = 0; i < array.length; i += 1) {
@@ -43,7 +43,7 @@ const useResizeFilterBar = (
 
   useEffect(() => {
     const filtersWidths = Array.from(filtersRef.current?.children).map(
-      (item: any) => item.getBoundingClientRect().width
+      (item: any) => item.getBoundingClientRect().width,
     );
 
     const handleResize = () => {

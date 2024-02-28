@@ -29,7 +29,7 @@ import { TransformFunction, UpdateFunction, ValidateFunction } from "./types";
  * the data source itself is not validated or even strongly typed. Proceed with caution!
  */
 export class CollectionDocumentSubscription<
-  RecordType extends DocumentData
+  RecordType extends DocumentData,
 > extends FirestoreDocumentSubscription<RecordType> {
   readonly dataSource: DocumentReference;
 
@@ -39,14 +39,14 @@ export class CollectionDocumentSubscription<
     recordId: string,
     transformFn?: TransformFunction<RecordType>,
     validateFn?: ValidateFunction<RecordType>,
-    updateFn?: UpdateFunction<DocumentData>
+    updateFn?: UpdateFunction<DocumentData>,
   ) {
     super(transformFn, validateFn, updateFn);
 
     this.dataSource = doc(
       firestoreStore.db,
       FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
-      recordId
+      recordId,
     );
   }
 }

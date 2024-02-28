@@ -45,7 +45,7 @@ export type PreparedChartData = {
 export type PrepareFn = (
   metric: MetricWithConfig,
   width: number,
-  height: number
+  height: number,
 ) => PreparedChartData;
 
 export type SwarmLayout = {

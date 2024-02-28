@@ -48,7 +48,7 @@ beforeEach(() => {
 
   store = new OutliersSupervisionStore(
     new RootStore().outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
 
   presenter = new UserOnboardingPresenter(store);

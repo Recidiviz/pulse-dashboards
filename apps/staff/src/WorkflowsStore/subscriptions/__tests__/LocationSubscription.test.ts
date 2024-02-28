@@ -56,7 +56,7 @@ describe("LocationSubscription tests", () => {
       // generally we don't care about that in these tests
       expect(collectionMock).toHaveBeenCalledWith(
         rootStoreMock.firestoreStore.db,
-        "locations"
+        "locations",
       );
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
       expect(whereMock).toHaveBeenCalledWith("idType", "==", "district");

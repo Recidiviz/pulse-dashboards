@@ -113,8 +113,8 @@ describe("metricsClient", () => {
         expect(global.fetch.mock.calls.length).toEqual(3);
         expect(error).toEqual(
           new Error(
-            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: ["API error"]`
-          )
+            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: ["API error"]`,
+          ),
         );
       }
     });
@@ -126,8 +126,8 @@ describe("metricsClient", () => {
       } catch (error) {
         expect(error).toEqual(
           new Error(
-            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: ["API error"]`
-          )
+            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: ["API error"]`,
+          ),
         );
       }
     });
@@ -155,8 +155,8 @@ describe("metricsClient", () => {
         expect(global.fetch.mock.calls.length).toEqual(3);
         expect(error).toEqual(
           new Error(
-            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: "API error"`
-          )
+            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: "API error"`,
+          ),
         );
       }
     });
@@ -168,8 +168,8 @@ describe("metricsClient", () => {
       } catch (error) {
         expect(error).toEqual(
           new Error(
-            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: "API error"`
-          )
+            `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: "API error"`,
+          ),
         );
       }
     });

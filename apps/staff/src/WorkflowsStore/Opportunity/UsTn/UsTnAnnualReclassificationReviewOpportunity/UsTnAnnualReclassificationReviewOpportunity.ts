@@ -86,7 +86,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
       resident,
       "usTnAnnualReclassification",
       resident.rootStore,
-      usTnAnnualReclassificationReviewSchema.parse
+      usTnAnnualReclassificationReviewSchema.parse,
     );
 
     this.resident = resident;
@@ -97,7 +97,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
 
     this.form = new UsTnAnnualReclassificationReviewForm(
       this,
-      resident.rootStore
+      resident.rootStore,
     );
   }
 
@@ -106,7 +106,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 

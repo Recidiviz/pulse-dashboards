@@ -59,7 +59,7 @@ const CRITERIA: Record<
 };
 
 export function hydrateExpirationDateRequirementText(
-  criterion: Required<UsTnExpirationReferralRecord>["eligibleCriteria"]["supervisionPastFullTermCompletionDateOrUpcoming1Day"]
+  criterion: Required<UsTnExpirationReferralRecord>["eligibleCriteria"]["supervisionPastFullTermCompletionDateOrUpcoming1Day"],
 ) {
   const eligibleDate = criterion?.eligibleDate;
   const today = new Date();
@@ -70,7 +70,7 @@ export function hydrateExpirationDateRequirementText(
   }
   const daysPast = differenceInDays(today, eligibleDate);
   return simplur`${daysPast} day[|s] past expiration date (${formatWorkflowsDate(
-    eligibleDate
+    eligibleDate,
   )})`;
 }
 
@@ -99,7 +99,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
       "usTnExpiration",
       client.rootStore,
       usTnExpirationSchema.parse,
-      getUsTnExpirationValidator(client)
+      getUsTnExpirationValidator(client),
     );
 
     makeObservable(this, { requirementsMet: true });
@@ -116,7 +116,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
     if (eligibleCriteria?.supervisionPastFullTermCompletionDateOrUpcoming1Day) {
       requirements.push({
         text: hydrateExpirationDateRequirementText(
-          eligibleCriteria.supervisionPastFullTermCompletionDateOrUpcoming1Day
+          eligibleCriteria.supervisionPastFullTermCompletionDateOrUpcoming1Day,
         ),
         tooltip:
           CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming1Day.tooltip,

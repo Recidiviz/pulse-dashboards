@@ -32,7 +32,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
             numDaysAbsconsion: z.number(),
             sentenceStatute: z.string(),
             latestConvictionDate: dateStringSchema,
-          })
+          }),
         ),
       }),
       usOrNoSupervisionSanctionsWithin6Months: z.object({}).nullable(),
@@ -45,7 +45,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
           exitDate: dateStringSchema.nullable(),
           treatmentId: z.string(),
           exitCode: z.string().nullable(),
-        })
+        }),
       ),
       eligibleSentences: z.array(
         z.object({
@@ -65,10 +65,10 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
                 county: z.string(),
                 conditionCode: z.string(),
                 conditionDescription: z.string(),
-              })
+              }),
             )
             .nullable(),
-        })
+        }),
       ),
     }),
   })
@@ -80,7 +80,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
       metadata: { eligibleSentences, ...personLevelMetadata },
     }) => {
       const metadataById = Object.fromEntries(
-        eligibleSentences.map((s) => [s.sentenceId, s])
+        eligibleSentences.map((s) => [s.sentenceId, s]),
       );
       return {
         stateCode,
@@ -99,7 +99,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
             metadata: metadataById[s.sentenceId],
           })),
       };
-    }
+    },
   );
 
 export type UsOrEarnedDischargeReferralRecordRaw = z.input<

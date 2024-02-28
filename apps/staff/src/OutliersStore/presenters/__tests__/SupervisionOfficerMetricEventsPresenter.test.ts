@@ -31,13 +31,13 @@ const testMetricId = testOfficer.outlierMetrics[0].metricId;
 beforeEach(() => {
   store = new OutliersSupervisionStore(
     new RootStore().outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
 
   presenter = new SupervisionOfficerMetricEventsPresenter(
     store,
     testOfficerId,
-    testMetricId
+    testMetricId,
   );
 });
 

@@ -449,5 +449,5 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
 
 export const supervisionOfficerMetricEventFixture =
   rawSupervisionOfficerMetricEventFixture.map((b) =>
-    supervisionOfficerMetricEventSchema.parse(b)
+    supervisionOfficerMetricEventSchema.parse(b),
   );

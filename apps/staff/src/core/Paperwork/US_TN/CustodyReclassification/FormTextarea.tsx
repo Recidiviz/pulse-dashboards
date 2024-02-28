@@ -45,11 +45,11 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
 
     const [value, onChange] = useReactiveInput<HTMLTextAreaElement>(
       name,
-      opportunityForm
+      opportunityForm,
     );
 
     const inputRef = useRef<HTMLTextAreaElement>(
-      null
+      null,
     ) as MutableRefObject<HTMLTextAreaElement>;
 
     // On mount, the autosize input has its value set, which causes it to resize to fit its content. During animation,
@@ -66,7 +66,7 @@ const FormTextarea: React.FC<FormTextareaProps> = observer(
         {...props}
       />
     );
-  }
+  },
 );
 
 export default FormTextarea;

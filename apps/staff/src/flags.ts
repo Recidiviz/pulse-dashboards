@@ -15,30 +15,30 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
       },
     }
   : process.env.REACT_APP_DEPLOY_ENV === "staging"
-  ? {
-      enableTepeAdditionalFields: true,
-      enableRevocationRateByExit: false,
-      enableVitalsGoalLine: false,
-      defaultMetricBackend: "NEW",
-      metricBackendOverrides: {
-        // The new backend doesn't have officer names yet
-        supervisionToPrisonPopulationByOfficer: "OLD",
-        // The new backend doesn't handle projections yet
-        projectedPrisonPopulationOverTime: "OLD",
-        projectedSupervisionPopulationOverTime: "OLD",
-      },
-    }
-  : {
-      // Development
-      enableTepeAdditionalFields: true,
-      enableRevocationRateByExit: false,
-      enableVitalsGoalLine: false,
-      defaultMetricBackend: "NEW",
-      metricBackendOverrides: {
-        // The new backend doesn't have officer names yet
-        supervisionToPrisonPopulationByOfficer: "OLD",
-        // The new backend doesn't handle projections yet
-        projectedPrisonPopulationOverTime: "OLD",
-        projectedSupervisionPopulationOverTime: "OLD",
-      },
-    };
+    ? {
+        enableTepeAdditionalFields: true,
+        enableRevocationRateByExit: false,
+        enableVitalsGoalLine: false,
+        defaultMetricBackend: "NEW",
+        metricBackendOverrides: {
+          // The new backend doesn't have officer names yet
+          supervisionToPrisonPopulationByOfficer: "OLD",
+          // The new backend doesn't handle projections yet
+          projectedPrisonPopulationOverTime: "OLD",
+          projectedSupervisionPopulationOverTime: "OLD",
+        },
+      }
+    : {
+        // Development
+        enableTepeAdditionalFields: true,
+        enableRevocationRateByExit: false,
+        enableVitalsGoalLine: false,
+        defaultMetricBackend: "NEW",
+        metricBackendOverrides: {
+          // The new backend doesn't have officer names yet
+          supervisionToPrisonPopulationByOfficer: "OLD",
+          // The new backend doesn't handle projections yet
+          projectedPrisonPopulationOverTime: "OLD",
+          projectedSupervisionPopulationOverTime: "OLD",
+        },
+      };

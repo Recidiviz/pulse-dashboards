@@ -33,7 +33,7 @@ import OutliersSupervisorPage, {
 
 jest.mock("../../../components/StoreProvider");
 jest.mock(
-  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
+  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker",
 );
 
 jest
@@ -63,7 +63,7 @@ describe("Hydrated Supervisor Page", () => {
     rootStore = new RootStore();
     store = new OutliersSupervisionStore(
       rootStore.outliersStore,
-      OutliersConfigFixture
+      OutliersConfigFixture,
     );
     rootStore.outliersStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
@@ -80,7 +80,7 @@ describe("Hydrated Supervisor Page", () => {
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     [
@@ -99,7 +99,7 @@ describe("Hydrated Supervisor Page", () => {
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     [
@@ -118,10 +118,10 @@ describe("Hydrated Supervisor Page", () => {
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(
-      screen.getByRole("link", { name: "Go to supervisors list" })
+      screen.getByRole("link", { name: "Go to supervisors list" }),
     ).toBeInTheDocument();
   });
 
@@ -135,10 +135,10 @@ describe("Hydrated Supervisor Page", () => {
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(
-      screen.getByRole("link", { name: "Go to supervisors list" })
+      screen.getByRole("link", { name: "Go to supervisors list" }),
     ).toBeInTheDocument();
   });
 
@@ -153,10 +153,10 @@ describe("Hydrated Supervisor Page", () => {
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(
-      screen.queryByRole("link", { name: "Go to supervisors list" })
+      screen.queryByRole("link", { name: "Go to supervisors list" }),
     ).toBeNull();
   });
 
@@ -167,7 +167,7 @@ describe("Hydrated Supervisor Page", () => {
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     [
@@ -191,12 +191,12 @@ describe("Hydrated Supervisor Page", () => {
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       store.outliersStore.rootStore.analyticsStore
-        .trackOutliersSupervisorPageViewed
+        .trackOutliersSupervisorPageViewed,
     ).toHaveBeenCalledWith({
       supervisorPseudonymizedId: supervisorPseudoId,
       viewedBy: supervisorPseudoId,
@@ -211,7 +211,7 @@ describe("Outliers Supervisor Page", () => {
     const rootStore = new RootStore();
     store = new OutliersSupervisionStore(
       rootStore.outliersStore,
-      OutliersConfigFixture
+      OutliersConfigFixture,
     );
     rootStore.outliersStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
@@ -230,7 +230,7 @@ describe("Outliers Supervisor Page", () => {
     render(
       <BrowserRouter>
         <OutliersSupervisorPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     // two elements expected because of animated transition
@@ -245,11 +245,11 @@ describe("Outliers Supervisor Page", () => {
     render(
       <BrowserRouter>
         <OutliersSupervisorPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
-      await screen.findByText("Sorry, we’re having trouble loading this page")
+      await screen.findByText("Sorry, we’re having trouble loading this page"),
     ).toBeInTheDocument();
   });
 
@@ -257,7 +257,7 @@ describe("Outliers Supervisor Page", () => {
     render(
       <BrowserRouter>
         <OutliersSupervisorPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
@@ -267,7 +267,7 @@ describe("Outliers Supervisor Page", () => {
     const { container } = render(
       <BrowserRouter>
         <OutliersSupervisorPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     // Make sure the hydrated page actually loaded

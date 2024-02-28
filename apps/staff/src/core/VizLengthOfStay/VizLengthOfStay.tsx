@@ -61,7 +61,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
     metric instanceof SnapshotMetric
       ? metric.lastUpdated
       : filteredRecords[0]?.lastUpdated,
-    "MMMM dd, yyyy"
+    "MMMM dd, yyyy",
   );
 
   const totalCount = filteredRecords.reduce((accumulator, d) => {
@@ -79,7 +79,7 @@ const VizLengthOfStay: React.FC<VizLengthOfStayProps> = ({ metric }) => {
   data.unshift({ lengthOfStay: 0, count: 0, cohortProportion: 0 });
 
   const { maxTickValue } = getTicks(
-    Math.max(...data.map((d) => d.cohortProportion))
+    Math.max(...data.map((d) => d.cohortProportion)),
   );
 
   const yRange = [0, maxTickValue];

@@ -110,19 +110,19 @@ describe("standardTooltipForCountMetricLabel", () => {
 
     const standardToolTipCount = standardTooltipForCountMetricLabel(
       tooltip,
-      data
+      data,
     );
     expect(standardToolTipCount).toBe("Successful completions: 203");
 
     const tooltipMetricYLabel = standardTooltipForCountMetricLabel(
       tooltipYLabel,
-      data
+      data,
     );
     expect(tooltipMetricYLabel).toBe("Successful completions: 204");
 
     const tooltipEmptyMetric = standardTooltipForCountMetricLabel(
       tooltip,
-      dataEmptyLabel
+      dataEmptyLabel,
     );
     expect(tooltipEmptyMetric).toBe("203");
   });
@@ -159,14 +159,14 @@ describe("standardTooltipForCountMetricLabel", () => {
     const tooltipForTrendline = tooltipWithoutTrendlineLabel(
       tooltipItemTrendline,
       dataForTrendline,
-      units
+      units,
     );
     expect(tooltipForTrendline).toBe("");
 
     const tooltipEmptyYLabel = tooltipWithoutTrendlineLabel(
       tooltipItem,
       data,
-      undefined
+      undefined,
     );
     expect(tooltipEmptyYLabel).toBe("Revocation count: ");
   });

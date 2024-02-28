@@ -25,7 +25,7 @@ function getViolation({ reportedViolations, violationType }) {
 
   if (violationType) {
     str += `Most severe violation: ${humanReadableTitleCase(
-      violationType.toLowerCase()
+      violationType.toLowerCase(),
     )}`;
   }
 

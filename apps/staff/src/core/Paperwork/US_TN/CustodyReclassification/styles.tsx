@@ -29,7 +29,7 @@ import styled, { css } from "styled-components/macro";
 import type { FormViewerContextData } from "../../FormViewer";
 
 const EDIT_BACKGROUND = iconToDataURI(
-  <Icon kind={IconSVG.Edit} color={palette.slate60} />
+  <Icon kind={IconSVG.Edit} color={palette.slate60} />,
 );
 
 export const Label = styled.label`

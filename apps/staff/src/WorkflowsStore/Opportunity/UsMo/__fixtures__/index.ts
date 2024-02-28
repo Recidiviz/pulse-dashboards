@@ -82,10 +82,10 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
   };
 
 export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
-  T extends BaseUsMoOverdueRestrictiveHousingReferralRecordRaw
+  T extends BaseUsMoOverdueRestrictiveHousingReferralRecordRaw,
 >(
   externalIdSuffix: number,
-  additionalCriteria?: Record<string, any>
+  additionalCriteria?: Record<string, any>,
 ): T =>
   ({
     stateCode: "US_MO",
@@ -122,7 +122,7 @@ export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
       cdvsSinceLastHearing: [],
       numMinorCdvsBeforeLastHearing: "5",
     },
-  } as BaseUsMoOverdueRestrictiveHousingReferralRecordRaw as T);
+  }) as BaseUsMoOverdueRestrictiveHousingReferralRecordRaw as T;
 
 export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
   baseUsMoOverdueRestrictiveHousingReferralRecordFixture<UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw>(
@@ -135,7 +135,7 @@ export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =
         latestD1SanctionStartDate: "2023-08-15",
         restrictiveHousingStartDate: "2023-08-15",
       },
-    }
+    },
   );
 
 export const usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture =
@@ -146,7 +146,7 @@ export const usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture =
         nextReviewDate: "2023-10-15",
         dueDateInferred: true,
       },
-    }
+    },
   );
 
 export const usMoOverdueRestrictiveHousingReviewHearingReferralRecordFixture =
@@ -161,5 +161,5 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferralRecordFixture =
         latestRestrictiveHousingHearingDate: "2023-10-15",
         restrictiveHousingStartDate: "2023-09-15",
       },
-    }
+    },
   );

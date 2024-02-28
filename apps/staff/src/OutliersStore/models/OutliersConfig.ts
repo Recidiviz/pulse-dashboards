@@ -40,13 +40,13 @@ export const outliersConfigSchema = z.object({
       eventNameSingular: z.string(),
       eventNamePastTense: z.string(),
       descriptionMarkdown: z.string(),
-    })
+    }),
   ),
   clientEvents: z.array(
     z.object({
       displayName: z.string(),
       name: z.string(),
-    })
+    }),
   ),
 });
 

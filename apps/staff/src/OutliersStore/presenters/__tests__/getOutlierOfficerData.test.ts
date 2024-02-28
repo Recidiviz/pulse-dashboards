@@ -39,7 +39,7 @@ beforeEach(() => {
   [, , officerData] = supervisionOfficerFixture;
   supervisionStore = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
 });
 
@@ -50,7 +50,7 @@ afterEach(() => {
 test("combines related data", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
   expect(
-    getOutlierOfficerData(officerData, supervisionStore)
+    getOutlierOfficerData(officerData, supervisionStore),
   ).toMatchSnapshot();
 });
 
@@ -63,7 +63,7 @@ test("excludes current officer from the benchmark data points", async () => {
   const matchingBenchmarkForOfficer = benchmarks.find(
     (b) =>
       b.caseloadType === officerData.caseloadType &&
-      b.metricId === outlierMetric.metricId
+      b.metricId === outlierMetric.metricId,
   );
 
   if (!matchingBenchmarkForOfficer)
@@ -86,17 +86,17 @@ test("excludes current officer from the benchmark data points", async () => {
     supervisionStore.adverseMetricConfigsById
       ?.get(matchingBenchmarkForOfficer.metricId)
       ?.metricBenchmarksByCaseloadType?.get(
-        matchingBenchmarkForOfficer.caseloadType
+        matchingBenchmarkForOfficer.caseloadType,
       )
-      ?.latestPeriodValues.filter((d) => d.value === currentOutlierRate)
+      ?.latestPeriodValues.filter((d) => d.value === currentOutlierRate),
   ).toHaveLength(2);
 
   const outlierData = getOutlierOfficerData(officerData, supervisionStore);
 
   expect(
     outlierData.outlierMetrics[0].benchmark.latestPeriodValues.filter(
-      (d) => d.value === currentOutlierRate
-    )
+      (d) => d.value === currentOutlierRate,
+    ),
   ).toHaveLength(1);
 });
 
@@ -110,13 +110,13 @@ test("throws on missing config", async () => {
     {
       ...OutliersConfigFixture,
       metrics: OutliersConfigFixture.metrics.slice(1),
-    }
+    },
   );
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
-    `Missing metric configuration for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
+    `Missing metric configuration for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
 
@@ -130,7 +130,7 @@ test("throws if benchmark data was not fully hydrated", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
-    `Missing metric benchmark data for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
+    `Missing metric benchmark data for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
 
@@ -147,6 +147,6 @@ test("throws on missing benchmark for required caseload type", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
-    `Missing metric benchmark data for caseload type ${CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`
+    `Missing metric benchmark data for caseload type ${CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });

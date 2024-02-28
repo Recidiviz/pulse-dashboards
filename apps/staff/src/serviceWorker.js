@@ -16,8 +16,8 @@ const isLocalhost = Boolean(
     window.location.hostname === "[::1]" ||
     // 127.0.0.1/8 is considered localhost for IPv4.
     window.location.hostname.match(
-      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-    )
+      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/,
+    ),
 );
 
 function registerValidSW(swUrl, config) {
@@ -39,7 +39,7 @@ function registerValidSW(swUrl, config) {
               // eslint-disable-next-line no-console
               console.log(
                 "New content is available and will be used when all " +
-                  "tabs for this page are closed. See https://bit.ly/CRA-PWA."
+                  "tabs for this page are closed. See https://bit.ly/CRA-PWA.",
               );
 
               // Execute callback
@@ -91,7 +91,7 @@ function checkValidServiceWorker(swUrl, config) {
     .catch(() => {
       // eslint-disable-next-line no-console
       console.log(
-        "No internet connection found. App is running in offline mode."
+        "No internet connection found. App is running in offline mode.",
       );
     });
 }
@@ -120,7 +120,7 @@ export function register(config) {
           // eslint-disable-next-line no-console
           console.log(
             "This web app is being served cache-first by a service " +
-              "worker. To learn more, visit https://bit.ly/CRA-PWA"
+              "worker. To learn more, visit https://bit.ly/CRA-PWA",
           );
         });
       } else {

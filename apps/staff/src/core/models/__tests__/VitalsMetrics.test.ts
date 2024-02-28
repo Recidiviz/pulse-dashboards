@@ -73,7 +73,7 @@ describe("VitalsMetrics", () => {
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
       `${mockTenantId.toLowerCase()}/vitals`,
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
     );
   });
 

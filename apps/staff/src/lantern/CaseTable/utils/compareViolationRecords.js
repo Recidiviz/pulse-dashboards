@@ -32,10 +32,10 @@ export function compareViolationRecords(aRecordLabel, bRecordLabel) {
   const violationsBySeverity = translate("violationsBySeverity");
 
   const aMostSevereViolation = violationsBySeverity.find(
-    (violation) => aRecords[violation]
+    (violation) => aRecords[violation],
   );
   const bMostSevereViolation = violationsBySeverity.find(
-    (violation) => bRecords[violation]
+    (violation) => bRecords[violation],
   );
 
   const aMostSevereViolationIndex =

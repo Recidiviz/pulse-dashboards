@@ -287,7 +287,7 @@ exports.config = {
 
     /* Delete all data from emulator project */
     execSync(
-      `curl -v -X DELETE 'http://localhost:${firebase.emulators.firestore.port}/emulator/v1/projects/${process.env.FIREBASE_PROJECT}/databases/(default)/documents'`
+      `curl -v -X DELETE 'http://localhost:${firebase.emulators.firestore.port}/emulator/v1/projects/${process.env.FIREBASE_PROJECT}/databases/(default)/documents'`,
     );
     /* Load fixtures to firestore database */
     await loadWorkflowsFixtures({ quietLogs: true });

@@ -78,7 +78,7 @@ describe("FiltersStore", () => {
         });
 
         expect(rootStore.filtersStore.defaultFilterValues).toEqual(
-          defaultFilters
+          defaultFilters,
         );
       });
     });
@@ -108,7 +108,7 @@ describe("FiltersStore", () => {
       expect(
         rootStore.filtersStore.defaultFilterValues[
           getDistrictFilterKey(tenantId)
-        ]
+        ],
       ).toStrictEqual([userDistrict]);
     });
 
@@ -130,7 +130,7 @@ describe("FiltersStore", () => {
 
       // Expect default filters
       expect(rootStore.filtersStore.defaultFilterValues).toEqual(
-        defaultFilters
+        defaultFilters,
       );
 
       // Set district filter for US_MO
@@ -140,7 +140,7 @@ describe("FiltersStore", () => {
 
       // Expect level_1 filter set
       expect(
-        Object.fromEntries(rootStore.filtersStore.filters)[usMOFilterKey]
+        Object.fromEntries(rootStore.filtersStore.filters)[usMOFilterKey],
       ).toEqual(["01"]);
 
       // Expect US_PA filter key to be "ALL"
@@ -160,7 +160,7 @@ describe("FiltersStore", () => {
 
       // Expect US_PA filter set to filter value
       expect(
-        Object.fromEntries(rootStore.filtersStore.filters)[usPAFilterKey]
+        Object.fromEntries(rootStore.filtersStore.filters)[usPAFilterKey],
       ).toEqual(["10 - PHILADELPHIA"]);
 
       // Expect US_MO filter key to be "ALL"
@@ -211,7 +211,7 @@ describe("FiltersStore", () => {
         });
         expect(
           rootStore.filtersStore.filterOptions[getDistrictFilterKey(tenantId)]
-            .options
+            .options,
         ).toEqual([allOption]);
       });
     });
@@ -227,7 +227,7 @@ describe("FiltersStore", () => {
           });
           expect(
             rootStore.filtersStore.filterOptions[getDistrictFilterKey(tenantId)]
-              .options
+              .options,
           ).toEqual([
             allOption,
             {
@@ -276,7 +276,7 @@ describe("FiltersStore", () => {
           });
           expect(
             rootStore.filtersStore.filterOptions[getDistrictFilterKey(tenantId)]
-              .options
+              .options,
           ).toEqual([
             allOption,
             { value: "CO - CENTRAL OFFICE", label: "CENTRAL OFFICE - CO" },
@@ -309,7 +309,7 @@ describe("FiltersStore", () => {
 
           expect(
             rootStore.filtersStore.filterOptions[getDistrictFilterKey(tenantId)]
-              .options
+              .options,
           ).toEqual([
             {
               label: "03 - HARRISBURG",

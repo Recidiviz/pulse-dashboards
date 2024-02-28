@@ -124,8 +124,10 @@ const DropdownProfile = styled(Dropdown)`
 
 const DropdownProfileMenu = styled(DropdownMenu)`
   background: #ffffff;
-  box-shadow: 0px 0px 1px rgba(43, 84, 105, 0.1),
-    0px 4px 8px rgba(43, 84, 105, 0.06), 0px 8px 56px rgba(43, 84, 105, 0.12);
+  box-shadow:
+    0px 0px 1px rgba(43, 84, 105, 0.1),
+    0px 4px 8px rgba(43, 84, 105, 0.06),
+    0px 8px 56px rgba(43, 84, 105, 0.12);
   border-radius: 8px;
   padding: 12px 0;
   width: max-content;
@@ -469,5 +471,5 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         {!isMobile && isFixed && <Banner />}
       </Wrapper>
     );
-  }
+  },
 );

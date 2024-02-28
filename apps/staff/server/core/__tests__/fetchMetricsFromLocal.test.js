@@ -54,7 +54,7 @@ describe("fetchMetricsFromLocal tests", () => {
     const readFileSpy = jest.spyOn(fs, "readFile");
     const readFileSyncSpy = jest.spyOn(fs, "readFileSync");
     readFileSpy.mockImplementation((_, callback) =>
-      callback(null, promiseResValue)
+      callback(null, promiseResValue),
     );
     readFileSyncSpy.mockReturnValue(JSON.stringify(metadata));
 
@@ -85,7 +85,7 @@ describe("fetchMetricsFromLocal tests", () => {
     const readFileSpy = jest.spyOn(fs, "readFile");
     const readFileSyncSpy = jest.spyOn(fs, "readFileSync");
     readFileSpy.mockImplementation((_, callback) =>
-      callback(null, promiseResValue)
+      callback(null, promiseResValue),
     );
     readFileSyncSpy.mockReturnValue(JSON.stringify(metadata));
 
@@ -119,7 +119,7 @@ describe("fetchMetricsFromLocal tests", () => {
       });
 
       const fetchPromises = Promise.all(
-        fetchMetricsFromLocal(stateCode, metricType, file)
+        fetchMetricsFromLocal(stateCode, metricType, file),
       );
 
       await expect(fetchPromises).rejects.toEqual(error);
@@ -143,7 +143,7 @@ describe("fetchMetricsFromLocal tests", () => {
       });
 
       const fetchPromises = Promise.all(
-        fetchMetricsFromLocal(stateCode, metricType, file)
+        fetchMetricsFromLocal(stateCode, metricType, file),
       );
 
       await expect(fetchPromises).rejects.toEqual(error);

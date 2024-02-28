@@ -39,12 +39,12 @@ const getDimensionValue = (dimensions, dimensionIndex, dimensionValueIndex) => {
     value = dimensions[dimensionIndex][1][dimensionValueIndex];
   } catch (error) {
     throw new Error(
-      `Could not parse dimension manifest of ${dimensions} with dimension index of ${dimensionIndex} and dimension value index of ${dimensionValueIndex}`
+      `Could not parse dimension manifest of ${dimensions} with dimension index of ${dimensionIndex} and dimension value index of ${dimensionValueIndex}`,
     );
   }
   if (!value) {
     throw new Error(
-      `Metric file value array references dimension value index of ${dimensionValueIndex} which is not found in the dimension_manifest for dimension of index ${dimensionIndex}. Dimension manifest for that dimension is ${dimensions[dimensionIndex]}`
+      `Metric file value array references dimension value index of ${dimensionValueIndex} which is not found in the dimension_manifest for dimension of index ${dimensionIndex}. Dimension manifest for that dimension is ${dimensions[dimensionIndex]}`,
     );
   }
   return value.toUpperCase();
@@ -94,7 +94,7 @@ const unflattenValues = (flattenedValues, totalDataPoints) => {
  */
 const convertFromStringToUnflattenedMatrix = (
   contentsAsString,
-  totalDataPoints
+  totalDataPoints,
 ) => {
   const flattenedValues = stringToArray(contentsAsString);
   return unflattenValues(flattenedValues, totalDataPoints);
@@ -111,26 +111,26 @@ const convertFromStringToUnflattenedMatrix = (
 const validateMetadata = (metadata) => {
   if (metadata.total_data_points == null) {
     throw new Error(
-      'Given metric file metadata has undefined or null "total_data_points"'
+      'Given metric file metadata has undefined or null "total_data_points"',
     );
   }
   if (Number.isNaN(Number(metadata.total_data_points))) {
     throw new Error(
-      `Given metric file metadata has a non-numeric value for "total_data_points": ${metadata.total_data_points}`
+      `Given metric file metadata has a non-numeric value for "total_data_points": ${metadata.total_data_points}`,
     );
   }
 
   const valueKeys = metadata.value_keys;
   if (!Array.isArray(valueKeys) || !valueKeys.length) {
     throw new Error(
-      `Given metric file metadata requires a non-empty array of value keys, but "value_keys" equals ${valueKeys}`
+      `Given metric file metadata requires a non-empty array of value keys, but "value_keys" equals ${valueKeys}`,
     );
   }
 
   const dimensions = metadata.dimension_manifest;
   if (!Array.isArray(dimensions) || !dimensions.length) {
     throw new Error(
-      `Given metric file metadata requires a non-empty array of dimension ranges, but "dimension_manifest" equals ${dimensions}`
+      `Given metric file metadata requires a non-empty array of dimension ranges, but "dimension_manifest" equals ${dimensions}`,
     );
   }
 
@@ -143,8 +143,8 @@ const validateMetadata = (metadata) => {
   if (malformedDimensions.length > 0) {
     throw new Error(
       `Given metric file dimension manifest contains malformed dimensions that are not tuples: ${malformedDimensions.join(
-        ", "
-      )}`
+        ", ",
+      )}`,
     );
   }
 
@@ -157,8 +157,8 @@ const validateMetadata = (metadata) => {
   if (malformedDimensionRanges.length > 0) {
     throw new Error(
       `Given metric file dimension manifest contains dimensions with a set of possible values that is not an array: ${malformedDimensionRanges.join(
-        ", "
-      )}`
+        ", ",
+      )}`,
     );
   }
 };

@@ -140,7 +140,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
 
   constructor(client: Client) {
     super(client, "usMiEarlyDischarge", client.rootStore, (r) =>
-      usMiEarlyDischargeSchema.parse(r)
+      usMiEarlyDischargeSchema.parse(r),
     );
 
     makeObservable(this, { requirementsMet: true });

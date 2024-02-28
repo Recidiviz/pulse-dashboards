@@ -78,7 +78,7 @@ const ReviewTypeCheckbox = observer(function ReviewTypeCheckbox() {
     firestoreStore.updateFormDraftData(
       opportunityForm,
       "reviewType",
-      event.target.value
+      event.target.value,
     );
   };
 

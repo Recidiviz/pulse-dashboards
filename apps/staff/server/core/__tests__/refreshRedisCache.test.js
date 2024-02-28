@@ -93,7 +93,7 @@ describe("refreshRedisCache", () => {
             expect(mockCache.set).toHaveBeenCalledTimes(1);
             expect(mockCache.set).toHaveBeenCalledWith(cacheKey, metricFile);
             done();
-          }
+          },
         );
       });
 
@@ -108,7 +108,7 @@ describe("refreshRedisCache", () => {
           expect(err).toEqual(error);
           expect(Sentry.captureException).toHaveBeenCalledWith(
             "Error occurred while caching files for metricType: newRevocation",
-            error
+            error,
           );
           done();
         });
@@ -146,11 +146,11 @@ describe("refreshRedisCache", () => {
                 index + 1,
                 fileName,
                 transformedFilters,
-                metricFile
+                metricFile,
               );
             });
             done();
-          }
+          },
         );
       });
 
@@ -176,11 +176,11 @@ describe("refreshRedisCache", () => {
               expect(mockCache.set).toHaveBeenNthCalledWith(
                 index + 1,
                 `${cacheKeyPrefix}${subsetKey}`,
-                metricFile
+                metricFile,
               );
             });
             done();
-          }
+          },
         );
       });
 
@@ -196,7 +196,7 @@ describe("refreshRedisCache", () => {
           expect(err).toEqual(error);
           expect(Sentry.captureException).toHaveBeenCalledWith(
             "Error occurred while caching files for metricType: newRevocation",
-            error
+            error,
           );
           done();
         });
@@ -239,7 +239,7 @@ describe("refreshRedisCache", () => {
             expect(mockCache.set).toHaveBeenCalledTimes(1);
             expect(mockCache.set).toHaveBeenCalledWith(cacheKey, metricFile);
             done();
-          }
+          },
         );
       });
 
@@ -254,7 +254,7 @@ describe("refreshRedisCache", () => {
           expect(err).toEqual(error);
           expect(Sentry.captureException).toHaveBeenCalledWith(
             "Error occurred while caching files for metricType: pathways",
-            error
+            error,
           );
           done();
         });
@@ -285,7 +285,7 @@ describe("refreshRedisCache", () => {
           expect(mockCache.set).toHaveBeenCalledTimes(1);
           expect(mockCache.set).toHaveBeenCalledWith(cacheKey, metricFile);
           done();
-        }
+        },
       );
     });
 
@@ -300,7 +300,7 @@ describe("refreshRedisCache", () => {
         expect(err).toEqual(error);
         expect(Sentry.captureException).toHaveBeenCalledWith(
           "Error occurred while caching files for metricType: vitals",
-          error
+          error,
         );
         done();
       });

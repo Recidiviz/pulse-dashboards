@@ -63,7 +63,7 @@ const VizPopulationPersonLevel: React.FC<VizPopulationPersonLevelProps> = ({
     metric instanceof PersonLevelMetric
       ? metric.lastUpdated
       : dataSeries[0]?.lastUpdated,
-    "MMMM dd, yyyy"
+    "MMMM dd, yyyy",
   );
 
   const createTableColumn = (column: TableColumn): Column => {

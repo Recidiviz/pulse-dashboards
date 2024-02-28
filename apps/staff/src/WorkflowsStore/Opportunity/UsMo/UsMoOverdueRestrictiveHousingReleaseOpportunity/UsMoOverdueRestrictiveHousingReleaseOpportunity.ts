@@ -103,7 +103,7 @@ type ThisCriteriaCopyInstance = typeof CRITERIA_COPY;
  */
 const removeDuplicateCopyIfPresent = (
   criteriaCopy: typeof CRITERIA_COPY,
-  record: UsMoOverdueRestrictiveHousingReleaseReferralRecord | undefined
+  record: UsMoOverdueRestrictiveHousingReleaseReferralRecord | undefined,
 ): ThisCriteriaCopyInstance => {
   if (!record) return criteriaCopy;
 
@@ -118,11 +118,11 @@ const removeDuplicateCopyIfPresent = (
         criteriaCopy,
         (acc: any, value: ValuesType<ThisCriteriaCopyInstance>, key) => {
           acc[key] = value.filter(
-            (arr) => arr[0] !== "usMoD1SanctionAfterMostRecentHearing"
+            (arr) => arr[0] !== "usMoD1SanctionAfterMostRecentHearing",
           );
           return acc as ThisCriteriaCopyInstance;
         },
-        {}
+        {},
       )
     : criteriaCopy;
 };
@@ -134,7 +134,7 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
     super(
       resident,
       "usMoOverdueRestrictiveHousingRelease",
-      usMoOverdueRestrictiveHousingReleaseSchema.parse
+      usMoOverdueRestrictiveHousingReleaseSchema.parse,
     );
     this.resident = resident;
 
@@ -159,7 +159,7 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
       record,
       "eligibleCriteria",
       removeDuplicateCopyIfPresent(CRITERIA_COPY, record),
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -169,7 +169,7 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
       this.record,
       "ineligibleCriteria",
       removeDuplicateCopyIfPresent(CRITERIA_COPY, record),
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 

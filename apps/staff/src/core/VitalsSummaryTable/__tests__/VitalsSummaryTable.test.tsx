@@ -85,7 +85,7 @@ describe("VitalsSummaryTable", () => {
           const { getAllByText } = render(
             <Router>
               <VitalsSummaryTable />
-            </Router>
+            </Router>,
           );
           expect(getAllByText(metric));
         });

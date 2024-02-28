@@ -10,7 +10,7 @@ export const SUPERVISION_TASK_CATEGORIES = [
   ...SUPERVISION_NEED_TYPES,
 ] as const;
 export type SupervisionTaskCategory =
-  typeof SUPERVISION_TASK_CATEGORIES[number];
+  (typeof SUPERVISION_TASK_CATEGORIES)[number];
 
 export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   DUE_THIS_MONTH: "Due this month",

@@ -56,7 +56,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
 
   const timePeriod: MonthOptions = parseInt(
     // the timePeriod filter will only ever be single-select so always use the 0 index
-    filtersStore.filters.timePeriod[0]
+    filtersStore.filters.timePeriod[0],
   ) as MonthOptions;
 
   const dateSpacing = getDateSpacing(timePeriod);
@@ -68,7 +68,7 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
 
   const { beginDate, endDate } = getDateRange(
     historicalPopulation[0].date,
-    projectedPopulation.slice(-1)[0].date
+    projectedPopulation.slice(-1)[0].date,
   );
 
   // update uncertainty range so areas align
@@ -178,5 +178,5 @@ const PopulationProjectionTimeSeriesChart: React.FC<Props> = ({
 };
 
 export default withPathwaysMetricHelpers(
-  observer(PopulationProjectionTimeSeriesChart)
+  observer(PopulationProjectionTimeSeriesChart),
 );

@@ -58,20 +58,20 @@ describe("MetricsStore", () => {
 
     it("has a reference to the projectedPrisonPopulationOverTime metric", () => {
       expect(
-        coreStore.metricsStore.projectedPrisonPopulationOverTime
+        coreStore.metricsStore.projectedPrisonPopulationOverTime,
       ).toBeInstanceOf(PopulationProjectionOverTimeMetric);
     });
 
     it("defaults metrics to the old backend when no flags are configured", () => {
       expect(
-        coreStore.metricsStore.supervisionToPrisonPopulationByOfficer
+        coreStore.metricsStore.supervisionToPrisonPopulationByOfficer,
       ).toBeInstanceOf(SupervisionPopulationSnapshotMetric);
     });
 
     it("defaults metrics to the specified backend", () => {
       flags.defaultMetricBackend = "NEW";
       expect(
-        coreStore.metricsStore.libertyToPrisonPopulationOverTime
+        coreStore.metricsStore.libertyToPrisonPopulationOverTime,
       ).toBeInstanceOf(OverTimeMetric);
     });
 
@@ -84,7 +84,7 @@ describe("MetricsStore", () => {
         projectedSupervisionPopulationOverTime: "OLD",
       };
       expect(
-        coreStore.metricsStore.supervisionToPrisonPopulationByOfficer
+        coreStore.metricsStore.supervisionToPrisonPopulationByOfficer,
       ).toBeInstanceOf(SupervisionPopulationSnapshotMetric);
     });
   });
@@ -95,7 +95,7 @@ describe("MetricsStore", () => {
     flags.defaultMetricBackend = "OLD";
     coreStore = new CoreStore(RootStore);
     const pathwaysMetrics = Object.entries(
-      Object.getOwnPropertyDescriptors(coreStore.metricsStore)
+      Object.getOwnPropertyDescriptors(coreStore.metricsStore),
     )
       .map(([name, descriptor]) => {
         return [name, descriptor?.get?.call(coreStore.metricsStore)];
@@ -119,13 +119,13 @@ describe("MetricsStore", () => {
         expect(newBackendMetric.filters).toEqual(metric.filters);
         // Use !! to consider false and undefined equivalent
         expect(!!newBackendMetric?.enableMetricModeToggle).toEqual(
-          !!metric.enableMetricModeToggle
+          !!metric.enableMetricModeToggle,
         );
         expect(!!newBackendMetric.isHorizontal).toEqual(!!metric.isHorizontal);
         expect(!!newBackendMetric.isGeographic).toEqual(!!metric.isGeographic);
         expect(!!newBackendMetric.rotateLabels).toEqual(!!metric.rotateLabels);
         expect(!!newBackendMetric.accessorIsNotFilterType).toEqual(
-          !!metric.accessorIsNotFilterType
+          !!metric.accessorIsNotFilterType,
         );
       }
     });

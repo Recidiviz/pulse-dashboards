@@ -129,7 +129,7 @@ describe("almost eligible but for months remaining", () => {
     };
     referralSub.data = almostEligibleInDays;
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "30 months and 13 days until release"
+      "30 months and 13 days until release",
     );
   });
 });
@@ -147,14 +147,14 @@ describe("ensure requirements text updates when source changes", () => {
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textEligible = opp.requirementsMet.find(({ text }) =>
-      text.includes("months remaining on sentence")
+      text.includes("months remaining on sentence"),
     )!.text;
 
     referralSub.data = usMeSCCPAlmostEligibleXMonthsRecordFixture;
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textAlmostEligible = opp.requirementsAlmostMet.find(({ text }) =>
-      text.includes("months remaining on sentence")
+      text.includes("months remaining on sentence"),
     )!.text;
 
     expect(textEligible).not.toEqual(textAlmostEligible);
@@ -181,7 +181,7 @@ describe("almost eligible but for class A/B discipline", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
-      `"Needs 45 more days without a Class A or B discipline"`
+      `"Needs 45 more days without a Class A or B discipline"`,
     );
   });
 });
@@ -206,7 +206,7 @@ describe("almost eligible but for fraction of sentence served", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
-      `"Needs to serve 3 more months on sentence."`
+      `"Needs to serve 3 more months on sentence."`,
     );
   });
 });

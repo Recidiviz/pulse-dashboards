@@ -142,5 +142,5 @@ export const JusticeInvolvedPersonCapsule = observer(
         </PersonInfo>
       </Wrapper>
     );
-  }
+  },
 );

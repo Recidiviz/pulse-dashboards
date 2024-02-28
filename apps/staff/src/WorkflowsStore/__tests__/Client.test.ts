@@ -106,7 +106,7 @@ describe("Client", () => {
       createTestUnit();
       testClient.updateMilestonesTextMessage("This is a message");
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -129,7 +129,7 @@ describe("Client", () => {
       createTestUnit();
       testClient.updateMilestonesTextMessage("", true);
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -150,7 +150,7 @@ describe("Client", () => {
       createTestUnit();
       testClient.updateMilestonesTextMessage();
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -173,7 +173,7 @@ describe("Client", () => {
       createTestUnit();
       testClient.updateMilestonesPhoneNumber("1112223333");
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -190,7 +190,7 @@ describe("Client", () => {
       createTestUnit();
       testClient.updateMilestonesPhoneNumber("", true);
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -209,10 +209,10 @@ describe("Client", () => {
       createTestUnit();
       testClient.updateMilestonesDeclineReasons(
         ["MILESTONE_NOT_MET", OTHER_KEY],
-        "Other reason here"
+        "Other reason here",
       );
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -229,7 +229,7 @@ describe("Client", () => {
       createTestUnit();
       testClient.updateMilestonesDeclineReasons(["MILESTONE_NOT_MET"]);
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -248,7 +248,7 @@ describe("Client", () => {
     createTestUnit();
     testClient.updateMilestonesStatus("PENDING");
     expect(
-      mockRootStore.firestoreStore.updateMilestonesMessages
+      mockRootStore.firestoreStore.updateMilestonesMessages,
     ).toHaveBeenCalledWith("us_xx_PERSON1", {
       updated: {
         by: "staff@email.com",
@@ -263,7 +263,7 @@ describe("Client", () => {
     createTestUnit();
     testClient.undoMilestonesDeclined();
     expect(
-      mockRootStore.firestoreStore.updateMilestonesMessages
+      mockRootStore.firestoreStore.updateMilestonesMessages,
     ).toHaveBeenCalledWith("us_xx_PERSON1", {
       updated: {
         by: "staff@email.com",
@@ -278,14 +278,14 @@ describe("Client", () => {
     test("phoneNumber matches", () => {
       createTestUnit();
       expect(
-        testClient.milestonesPhoneNumberDoesNotMatchClient("1112223333")
+        testClient.milestonesPhoneNumberDoesNotMatchClient("1112223333"),
       ).toEqual(false);
     });
 
     test("phoneNumber does not match", () => {
       createTestUnit();
       expect(
-        testClient.milestonesPhoneNumberDoesNotMatchClient("7778889999")
+        testClient.milestonesPhoneNumberDoesNotMatchClient("7778889999"),
       ).toEqual(true);
     });
   });
@@ -308,7 +308,7 @@ describe("Client", () => {
       });
       await testClient.sendMilestonesMessage();
       expect(
-        mockRootStore.firestoreStore.updateMilestonesMessages
+        mockRootStore.firestoreStore.updateMilestonesMessages,
       ).toHaveBeenCalledWith("us_xx_PERSON1", {
         updated: {
           by: "staff@email.com",
@@ -319,7 +319,7 @@ describe("Client", () => {
       });
 
       expect(
-        mockRootStore.apiStore.postExternalSMSMessage
+        mockRootStore.apiStore.postExternalSMSMessage,
       ).toHaveBeenCalledWith({
         message: "Test message",
         recipientExternalId: record.personExternalId,
@@ -357,7 +357,7 @@ describe("Client", () => {
         expect(await testClient.sendMilestonesMessage()).toThrow();
 
         expect(
-          mockRootStore.firestoreStore.updateMilestonesMessages
+          mockRootStore.firestoreStore.updateMilestonesMessages,
         ).toHaveBeenCalledWith("us_xx_PERSON1", {
           updated: {
             by: "staff@email.com",
@@ -368,7 +368,7 @@ describe("Client", () => {
         });
 
         expect(
-          mockRootStore.apiStore.postExternalSMSMessage
+          mockRootStore.apiStore.postExternalSMSMessage,
         ).not.toHaveBeenCalled();
       } catch (e: any) {
         expect(e.message).toEqual("backend error");

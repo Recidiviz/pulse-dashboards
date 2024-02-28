@@ -61,7 +61,7 @@ function CoreMultiSelect({
       const newOptions = getNewOptions(options, summingOption, selectedOptions);
       onChange(newOptions);
     },
-    [onChange, options, summingOption]
+    [onChange, options, summingOption],
   );
 
   const replacedComponents = useMemo(
@@ -89,7 +89,7 @@ function CoreMultiSelect({
         />
       ),
     }),
-    [handleChange, options, summingOption]
+    [handleChange, options, summingOption],
   );
 
   return (

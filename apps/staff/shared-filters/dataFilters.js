@@ -43,7 +43,7 @@ const matchesTopLevelFilters =
       !skippedFilters.includes(METRIC_PERIOD_MONTHS) &&
       !nullSafeComparison(
         item.metric_period_months,
-        filters[METRIC_PERIOD_MONTHS]
+        filters[METRIC_PERIOD_MONTHS],
       )
     ) {
       return false;
@@ -70,7 +70,7 @@ const matchesTopLevelFilters =
       ) &&
       !nullSafeComparison(
         item.level_1_supervision_location,
-        filters[LEVEL_1_SUPERVISION_LOCATION]
+        filters[LEVEL_1_SUPERVISION_LOCATION],
       )
     ) {
       return false;
@@ -87,7 +87,7 @@ const matchesTopLevelFilters =
       ) &&
       !nullSafeComparison(
         item.level_2_supervision_location,
-        filters[LEVEL_2_SUPERVISION_LOCATION]
+        filters[LEVEL_2_SUPERVISION_LOCATION],
       )
     ) {
       return false;
@@ -151,7 +151,7 @@ const matchesMatrixFilters =
       filters[REPORTED_VIOLATIONS] &&
       !nullSafeComparison(
         item.reported_violations,
-        filters[REPORTED_VIOLATIONS]
+        filters[REPORTED_VIOLATIONS],
       ) &&
       !(treatCategoryAllAsAbsent && isAllItem(filters[REPORTED_VIOLATIONS]))
     ) {
@@ -170,7 +170,7 @@ const matchesAllFilters =
     });
     const matrixFilterFn = matchesMatrixFilters(
       filters,
-      treatCategoryAllAsAbsent
+      treatCategoryAllAsAbsent,
     );
     return (
       topLevelFilterFn(item, dimensionKey) && matrixFilterFn(item, dimensionKey)

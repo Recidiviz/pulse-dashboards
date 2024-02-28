@@ -29,7 +29,7 @@ const { readFile, writeFile } = promises;
  */
 const createPageCopyFile = async (
   doc: GoogleSpreadsheet,
-  stateCode?: string
+  stateCode?: string,
 ): Promise<void> => {
   const pageCopySheet =
     doc.sheetsByTitle[stateCode ? `Pages - ${stateCode}` : "Pages"];
@@ -38,7 +38,7 @@ const createPageCopyFile = async (
     const rows = await pageCopySheet.getRows();
 
     const enabledRows = rows.filter((row) =>
-      PathwaysPageIdList.includes(row.get("Page ID"))
+      PathwaysPageIdList.includes(row.get("Page ID")),
     );
 
     const content = Object.fromEntries(
@@ -55,28 +55,28 @@ const createPageCopyFile = async (
           ...(row.get("Methodology")
             ? {
                 methodology: convertCurlyQuotesToStraight(
-                  row.get("Methodology")
+                  row.get("Methodology"),
                 ),
               }
             : {}),
         },
-      ])
+      ]),
     );
 
     const fileTemplate = await readFile(
       "tools/templates/pageCopy.template",
-      "utf-8"
+      "utf-8",
     );
 
     let copyFileContents = fileTemplate.replace(
       /COPY_CONTENT/,
-      JSON.stringify(content, null, 2)
+      JSON.stringify(content, null, 2),
     );
 
     if (stateCode) {
       copyFileContents = copyFileContents.replace(
         /PageCopy/g,
-        "StateSpecificPageCopy"
+        "StateSpecificPageCopy",
       );
     }
 

@@ -54,7 +54,7 @@ export class EarlyTerminationForm extends FormBase<
       judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",
       priorCourtDate: moment(priorCourtDate).format(FORM_DATE_FORMAT),
       probationExpirationDate: moment(probationExpirationDate).format(
-        FORM_DATE_FORMAT
+        FORM_DATE_FORMAT,
       ),
       sentenceLengthMonths: sentenceLengthMonths
         ? pluralize(sentenceLengthMonths, "month")
@@ -86,11 +86,11 @@ export class EarlyTerminationForm extends FormBase<
 
   get additionalDepositionLines(): string[] {
     const additionalDepositionLines = Object.keys(this.draftData).filter(
-      (key: string) => key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX)
+      (key: string) => key.startsWith(ADDITIONAL_DEPOSITION_LINES_PREFIX),
     );
 
     return sortBy(additionalDepositionLines, (key) =>
-      Number(key.split(ADDITIONAL_DEPOSITION_LINES_PREFIX)[1])
+      Number(key.split(ADDITIONAL_DEPOSITION_LINES_PREFIX)[1]),
     );
   }
 

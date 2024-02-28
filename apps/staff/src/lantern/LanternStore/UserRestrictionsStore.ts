@@ -47,7 +47,7 @@ export default class UserRestrictionsStore {
   get enabledRevocationsCharts(): string[] {
     if (this.hasUserRestrictions && this.rootStore.currentTenantId === US_MO) {
       return Object.keys(CHARTS).filter(
-        (chartId) => !["Race", "Gender"].includes(chartId)
+        (chartId) => !["Race", "Gender"].includes(chartId),
       );
     }
     return Object.keys(CHARTS);
@@ -60,7 +60,7 @@ export default class UserRestrictionsStore {
   get allowedSupervisionLocationIds(): string[] {
     const normalizedIds = typeSafeIncludes(
       this.rootStore.districtsStore.districtIds,
-      this.rootStore.userStore.allowedSupervisionLocationIds
+      this.rootStore.userStore.allowedSupervisionLocationIds,
     );
 
     return normalizedIds || [];
@@ -69,7 +69,7 @@ export default class UserRestrictionsStore {
   verifyUserRestrictions(): void {
     const verifiedLocations = typeSafeIncludes(
       this.rootStore.userStore.allowedSupervisionLocationIds,
-      this.rootStore.districtsStore.districtIds
+      this.rootStore.districtsStore.districtIds,
     );
     if (
       this.rootStore.userStore.allowedSupervisionLocationIds.length > 0 &&

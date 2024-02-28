@@ -42,12 +42,12 @@ function cacheEachSubsetFile(
   cacheKey,
   fileKey,
   metricFile,
-  subsetCombinations
+  subsetCombinations,
 ) {
   const cachePromises = [];
   subsetCombinations.forEach((subsetCombination) => {
     const subsetCacheKey = `${cacheKey}-${getCacheKeyForSubsetCombination(
-      subsetCombination
+      subsetCombination,
     )}`;
     const subsetFilters = createSubsetFilters({
       filters: subsetCombination,
@@ -78,7 +78,7 @@ function cacheFiles({ files, metricType, cacheKeyPrefix }) {
           cacheKey,
           fileKey,
           metricFile,
-          subsetCombinations
+          subsetCombinations,
         );
         cachePromises.push(...subsetCachePromises);
       } else {
@@ -91,7 +91,7 @@ function cacheFiles({ files, metricType, cacheKeyPrefix }) {
   }
 
   console.log(
-    `Waiting for ${cachePromises.length} cache promises to resolve for ${cacheKeyPrefix}...`
+    `Waiting for ${cachePromises.length} cache promises to resolve for ${cacheKeyPrefix}...`,
   );
   return cachePromises;
 }
@@ -120,7 +120,7 @@ function refreshRedisCache(fetchMetrics, stateCode, metricType, callback) {
     })
     .finally(() => {
       console.log(
-        `Finally responding to request and finished resolving ${cachePromises.length} cache promises.`
+        `Finally responding to request and finished resolving ${cachePromises.length} cache promises.`,
       );
       callback(responseError, "OK");
     });

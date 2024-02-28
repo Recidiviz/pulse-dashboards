@@ -68,7 +68,7 @@ export class OutliersSupervisionStore {
 
   constructor(
     public readonly outliersStore: OutliersStore,
-    private readonly config: OutliersConfig
+    private readonly config: OutliersConfig,
   ) {
     makeAutoObservable<this, "config">(this, {
       // this object will be static so there's no need to deeply observe it
@@ -88,7 +88,7 @@ export class OutliersSupervisionStore {
     const benchmarksByMetricAndCaseloadType = index(
       benchmarks,
       (b) => b.metricId,
-      (b) => b.caseloadType
+      (b) => b.caseloadType,
     );
 
     const latestBenchmarksDate = new Date(
@@ -97,9 +97,9 @@ export class OutliersSupervisionStore {
           benchmarks
             .map((b) => b.benchmarks.map((d) => d.endDate))
             .flat(2)
-            .map((d) => d.getTime())
-        )
-      )
+            .map((d) => d.getTime()),
+        ),
+      ),
     );
 
     this.benchmarksByMetricAndCaseloadType = benchmarksByMetricAndCaseloadType;
@@ -136,16 +136,15 @@ export class OutliersSupervisionStore {
     if (!pseudonymizedId) {
       throw new Error("Missing pseudonymizedId for user");
     }
-    this.userInfo = yield this.outliersStore.apiClient.userInfo(
-      pseudonymizedId
-    );
+    this.userInfo =
+      yield this.outliersStore.apiClient.userInfo(pseudonymizedId);
   }
 
   private get allCaseloadTypes(): Set<string> {
     return new Set(
       ...Array.from(
-        this.benchmarksByMetricAndCaseloadType?.values() ?? []
-      ).flatMap((b) => b.keys())
+        this.benchmarksByMetricAndCaseloadType?.values() ?? [],
+      ).flatMap((b) => b.keys()),
     );
   }
 
@@ -171,7 +170,7 @@ export class OutliersSupervisionStore {
           metricBenchmarksByCaseloadType,
         };
       }),
-      (m) => m.name
+      (m) => m.name,
     );
   }
 
@@ -183,8 +182,8 @@ export class OutliersSupervisionStore {
 
     return new Map(
       Array.from(this.metricConfigsById.entries()).filter(
-        ([id, m]) => m.outcomeType === "ADVERSE"
-      )
+        ([id, m]) => m.outcomeType === "ADVERSE",
+      ),
     );
   }
 
@@ -214,7 +213,7 @@ export class OutliersSupervisionStore {
       return [this.currentSupervisorUser];
     }
     throw new Error(
-      "User is not a supervisor but cannot access all supervisors"
+      "User is not a supervisor but cannot access all supervisors",
     );
   }
 
@@ -226,7 +225,7 @@ export class OutliersSupervisionStore {
       .toDate();
 
     return `${formatDate(latestBenchmarkDateOneYearEarlier)} - ${formatDate(
-      this.latestBenchmarksDate
+      this.latestBenchmarksDate,
     )}`;
   }
 
@@ -255,18 +254,18 @@ export class OutliersSupervisionStore {
   }
 
   supervisionOfficerSupervisorByExternalId(
-    supervisorId: string
+    supervisorId: string,
   ): SupervisionOfficerSupervisor | undefined {
     return this.supervisionOfficerSupervisors?.find(
-      (s) => s.externalId === supervisorId
+      (s) => s.externalId === supervisorId,
     );
   }
 
   supervisionOfficerSupervisorByPseudoId(
-    supervisorPseudoId: string
+    supervisorPseudoId: string,
   ): SupervisionOfficerSupervisor | undefined {
     return this.supervisionOfficerSupervisors?.find(
-      (s) => s.pseudonymizedId === supervisorPseudoId
+      (s) => s.pseudonymizedId === supervisorPseudoId,
     );
   }
 
@@ -291,13 +290,13 @@ export class OutliersSupervisionStore {
    * Fetches officer and metric data for the specified supervisor
    */
   *populateOfficersForSupervisor(
-    supervisorPseudoId: string
+    supervisorPseudoId: string,
   ): FlowMethod<OutliersAPI["officersForSupervisor"], void> {
     if (this.officersBySupervisorPseudoId.has(supervisorPseudoId)) return;
 
     const officersData =
       yield this.outliersStore.apiClient.officersForSupervisor(
-        supervisorPseudoId
+        supervisorPseudoId,
       );
 
     if (officersData.length > 0)
@@ -329,7 +328,7 @@ export class OutliersSupervisionStore {
    */
   *populateMetricEventsForOfficer(
     officerPseudoId: string,
-    metricId: string
+    metricId: string,
   ): FlowMethod<OutliersAPI["supervisionOfficerMetricEvents"], void> {
     if (
       this.metricEventsByOfficerPseudoIdAndMetricId
@@ -341,7 +340,7 @@ export class OutliersSupervisionStore {
     const eventsData =
       yield this.outliersStore.apiClient.supervisionOfficerMetricEvents(
         officerPseudoId,
-        metricId
+        metricId,
       );
 
     const metricsMap =
@@ -351,7 +350,7 @@ export class OutliersSupervisionStore {
     if (!this.metricEventsByOfficerPseudoIdAndMetricId.has(officerPseudoId)) {
       this.metricEventsByOfficerPseudoIdAndMetricId.set(
         officerPseudoId,
-        metricsMap
+        metricsMap,
       );
     }
   }
@@ -361,7 +360,7 @@ export class OutliersSupervisionStore {
    */
   *populateClientEventsForClient(
     clientPseudoId: string,
-    outcomeDate: Date
+    outcomeDate: Date,
   ): FlowMethod<OutliersAPI["clientEvents"], void> {
     if (
       this.clientEventsByClientPseudoIdAndOutcomeDate
@@ -372,7 +371,7 @@ export class OutliersSupervisionStore {
 
     const clientEventsData = yield this.outliersStore.apiClient.clientEvents(
       clientPseudoId,
-      outcomeDate
+      outcomeDate,
     );
 
     const metricsMap =
@@ -382,7 +381,7 @@ export class OutliersSupervisionStore {
     if (!this.clientEventsByClientPseudoIdAndOutcomeDate.has(clientPseudoId)) {
       this.clientEventsByClientPseudoIdAndOutcomeDate.set(
         clientPseudoId,
-        metricsMap
+        metricsMap,
       );
     }
   }
@@ -391,13 +390,12 @@ export class OutliersSupervisionStore {
    * Fetches profile info for  specified client.
    */
   *populateClientInfoForClient(
-    clientPseudoId: string
+    clientPseudoId: string,
   ): FlowMethod<OutliersAPI["clientInfo"], void> {
     if (this.clientInfoByClientPseudoId.get(clientPseudoId)) return;
 
-    const clientInfo = yield this.outliersStore.apiClient.clientInfo(
-      clientPseudoId
-    );
+    const clientInfo =
+      yield this.outliersStore.apiClient.clientInfo(clientPseudoId);
 
     this.clientInfoByClientPseudoId.set(clientPseudoId, clientInfo);
   }
@@ -406,7 +404,7 @@ export class OutliersSupervisionStore {
    * Updates user info for specified user.
    */
   *patchUserInfoForCurrentUser(
-    props: PatchUserInfoProps
+    props: PatchUserInfoProps,
   ): FlowMethod<OutliersAPI["patchUserInfo"], void> {
     const { userAppMetadata, isRecidivizUser, isCSGUser } =
       this.outliersStore.rootStore.userStore;
@@ -428,7 +426,7 @@ export class OutliersSupervisionStore {
     }
     this.userInfo = yield this.outliersStore.apiClient.patchUserInfo(
       pseudonymizedId,
-      props
+      props,
     );
   }
 }

@@ -151,12 +151,12 @@ export class WorkflowsStore implements Hydratable {
     this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
       this,
       "clients",
-      "CLIENT"
+      "CLIENT",
     );
     this.residentsSubscription = new CaseloadSubscription<ResidentRecord>(
       this,
       "residents",
-      "RESIDENT"
+      "RESIDENT",
     );
     this.userSubscription = new UserSubscription(rootStore);
     this.locationsSubscription = new LocationSubscription(rootStore);
@@ -165,7 +165,7 @@ export class WorkflowsStore implements Hydratable {
       () => [this.caseloadSubscription?.map((s) => s.data).flat()],
       ([newRecords]) => {
         this.updateCaseload(newRecords);
-      }
+      },
     );
 
     // clear saved caseload and search when changing tenants, to prevent cross-contamination
@@ -174,7 +174,7 @@ export class WorkflowsStore implements Hydratable {
       () => {
         this.updateSelectedSearch([]);
         this.justiceInvolvedPersons = {};
-      }
+      },
     );
 
     // log default caseload search injection, when applicable
@@ -193,7 +193,7 @@ export class WorkflowsStore implements Hydratable {
             searchType: "OFFICER",
           });
         }
-      }
+      },
     );
 
     this.workflowsTasksStore = new WorkflowsTasksStore(this);
@@ -202,7 +202,7 @@ export class WorkflowsStore implements Hydratable {
   hasOpportunities(opportunityTypes: OpportunityType[]): boolean {
     const opportunitiesByTypes = pick(
       this.allOpportunitiesByType,
-      opportunityTypes
+      opportunityTypes,
     );
     return (
       this.opportunitiesLoaded(opportunityTypes) &&
@@ -233,7 +233,7 @@ export class WorkflowsStore implements Hydratable {
         this.userUpdatesSubscription = new CollectionDocumentSubscription(
           firestoreStore,
           "userUpdates",
-          email.toLowerCase()
+          email.toLowerCase(),
         );
       }
       this.userUpdatesSubscription.hydrate();
@@ -335,11 +335,11 @@ export class WorkflowsStore implements Hydratable {
       this.activeSystem === "SUPERVISION"
         ? await this.rootStore.firestoreStore.getClient(
             personId,
-            this.rootStore.currentTenantId
+            this.rootStore.currentTenantId,
           )
         : await this.rootStore.firestoreStore.getResident(
             personId,
-            this.rootStore.currentTenantId
+            this.rootStore.currentTenantId,
           );
     if (personRecord) {
       this.updateCaseload([personRecord]);
@@ -355,7 +355,7 @@ export class WorkflowsStore implements Hydratable {
   updatePerson(
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     record: any,
-    PersonClass: typeof Client | typeof Resident
+    PersonClass: typeof Client | typeof Resident,
   ): void {
     const existingPerson = this.justiceInvolvedPersons[record.pseudonymizedId];
     if (existingPerson instanceof PersonClass) {
@@ -364,7 +364,7 @@ export class WorkflowsStore implements Hydratable {
       set(
         this.justiceInvolvedPersons,
         record.pseudonymizedId,
-        new PersonClass(record, this.rootStore)
+        new PersonClass(record, this.rootStore),
       );
     }
   }
@@ -385,7 +385,7 @@ export class WorkflowsStore implements Hydratable {
     this.rootStore.firestoreStore.updateSelectedSearchIds(
       this.user.info.email,
       this.rootStore.currentTenantId,
-      searchIds
+      searchIds,
     );
   }
 
@@ -413,7 +413,7 @@ export class WorkflowsStore implements Hydratable {
 
   get selectedSearchables(): Searchable[] {
     return this.availableSearchables.filter((searchable) =>
-      this.selectedSearchIds.includes(searchable.searchId)
+      this.selectedSearchIds.includes(searchable.searchId),
     );
   }
 
@@ -439,8 +439,8 @@ export class WorkflowsStore implements Hydratable {
     return Object.entries(workflowsGatedSystems)
       .filter(([_, systemAllowedFeatureVariants]) =>
         systemAllowedFeatureVariants.every(
-          (feature) => !featureVariantKeys.has(feature)
-        )
+          (feature) => !featureVariantKeys.has(feature),
+        ),
       )
       .map(([system]) => system as SystemId);
   }
@@ -469,7 +469,7 @@ export class WorkflowsStore implements Hydratable {
 
     return difference(
       intersection(workflowsSupportedSystems, userAllowedSystems),
-      this.unsupportedWorkflowSystemsByFeatureVariants
+      this.unsupportedWorkflowSystemsByFeatureVariants,
     );
   }
 
@@ -528,7 +528,7 @@ export class WorkflowsStore implements Hydratable {
     const { filterField, filterValues } =
       this.rootStore.tenantStore.workflowsStaffFilterFn(
         this.user,
-        this.rootStore.userStore.activeFeatureVariants
+        this.rootStore.userStore.activeFeatureVariants,
       ) ?? {};
     if (filterField === "district") {
       return filterValues;
@@ -545,7 +545,7 @@ export class WorkflowsStore implements Hydratable {
     return values(this.justiceInvolvedPersons).filter(
       (p) =>
         this.selectedSearchIds.includes(p.searchIdValue) &&
-        personTypeMatchesActiveSystem(p)
+        personTypeMatchesActiveSystem(p),
     );
   }
 
@@ -565,7 +565,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   getMilestonesClientsByStatus(
-    statuses?: MilestonesMessage["status"][]
+    statuses?: MilestonesMessage["status"][],
   ): Client[] {
     return this.milestonesClients.filter((client) => {
       if (statuses === undefined)
@@ -579,7 +579,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   opportunitiesByEligibilityStatus(
-    opportunityStatus: EligibilityStatus
+    opportunityStatus: EligibilityStatus,
   ): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType) => {
@@ -620,7 +620,7 @@ export class WorkflowsStore implements Hydratable {
 
     return (
       this.potentialOpportunities(opportunityTypes).filter(
-        (opp) => isHydrationFinished(opp) === false
+        (opp) => isHydrationFinished(opp) === false,
       ).length === 0 && this.selectedSearchIds.length > 0
     );
   }
@@ -628,7 +628,7 @@ export class WorkflowsStore implements Hydratable {
   caseloadLoaded(): boolean {
     return Boolean(
       this.caseloadPersons.length > 0 ||
-        this.caseloadSubscription?.every((s) => isHydrated(s))
+        this.caseloadSubscription?.every((s) => isHydrated(s)),
     );
   }
 
@@ -636,7 +636,8 @@ export class WorkflowsStore implements Hydratable {
     // Wait until we have an active caseload before checking that tasks are loading.
     if (!this.caseloadLoaded()) return false;
     return this.caseloadPersons.every(
-      (person) => person.supervisionTasks && isHydrated(person.supervisionTasks)
+      (person) =>
+        person.supervisionTasks && isHydrated(person.supervisionTasks),
     );
   }
 
@@ -680,29 +681,29 @@ export class WorkflowsStore implements Hydratable {
     switch (this.searchType) {
       case "LOCATION": {
         return this.availableLocations.map(
-          (location) => new Location(location)
+          (location) => new Location(location),
         );
       }
       case "OFFICER": {
         return this.availableOfficers
           .map((officer) => new Officer(officer))
           .filter((officer) =>
-            officer.hasCaseloadForSystemId(this.activeSystem)
+            officer.hasCaseloadForSystemId(this.activeSystem),
           );
       }
       case "CASELOAD": {
         return this.availableOfficers
           .map((officer) => new CaseloadSearchable(officer))
           .filter((officer) =>
-            officer.hasCaseloadForSystemId(this.activeSystem)
+            officer.hasCaseloadForSystemId(this.activeSystem),
           );
       }
       case "ALL": {
         const locations = this.availableLocations.map(
-          (location) => new Location(location)
+          (location) => new Location(location),
         );
         const officers = this.availableOfficers.map(
-          (officer) => new Officer(officer)
+          (officer) => new Officer(officer),
         );
         return [...officers, ...locations];
       }

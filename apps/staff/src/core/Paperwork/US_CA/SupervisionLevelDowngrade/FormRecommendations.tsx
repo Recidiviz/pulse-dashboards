@@ -27,7 +27,7 @@ import { MainLabelTextStyle, SectionRow, SquareInputSelector } from "./styles";
 
 const NOTIFICATION_METHODS: [
   keyof UsCaSupervisionLevelDowngradeDraftData,
-  string
+  string,
 ][] = [
   ["notifiedInPerson", "IN-PERSON"],
   ["notifiedByMail", "MAIL"],
@@ -85,7 +85,7 @@ const FormRecommendations = observer(function FormRecommendations() {
       firestoreStore.updateFormDraftData(
         opportunityForm,
         field,
-        invert ? !event.target.checked : event.target.checked
+        invert ? !event.target.checked : event.target.checked,
       );
     };
 

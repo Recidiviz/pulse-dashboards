@@ -67,77 +67,77 @@ describe("UsIdCRCWorkReleaseReferralRecord", () => {
   test("US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD should be `undefined`", () => {
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd
+        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd
+        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd,
     ).not.toBeUndefined();
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence
+        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE and US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD should be `undefined`", () => {
     rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria.reasons.splice(
       1,
-      1
+      1,
     );
 
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd
+        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd,
     ).not.toBeUndefined();
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence
+        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence,
     ).toBeUndefined();
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd
+        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
     rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria.reasons.splice(
       0,
-      1
+      1,
     );
 
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd
+        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd,
     ).toBeUndefined();
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd
+        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd,
     ).not.toBeUndefined();
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence
+        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD should be `undefined`", () => {
     rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria.reasons.splice(
       0,
-      2
+      2,
     );
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd
+        .usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd,
     ).toBeUndefined();
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd
+        .usIdIncarcerationWithin18MonthsOfFtcdOrTpd,
     ).toBeUndefined();
     expect(
       usIdCRCWorkReleaseSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence
+        .usIdIncarcerationWithin1YearOfTpdAndLifeSentence,
     ).not.toBeUndefined();
   });
 });

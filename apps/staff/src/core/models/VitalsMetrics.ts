@@ -27,7 +27,7 @@ import {
 } from "./types";
 
 export function createVitalsSummaryMetric(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
 ): VitalsSummaryRecord[] {
   return rawRecords.map((record) => {
     return {
@@ -47,7 +47,7 @@ export function createVitalsSummaryMetric(
 }
 
 export function createVitalsTimeSeriesMetric(
-  rawRecords: RawMetricData
+  rawRecords: RawMetricData,
 ): VitalsTimeSeriesRecord[] {
   return rawRecords.map((record) => {
     return {
@@ -76,7 +76,7 @@ export default class VitalsMetrics extends Metric<MetricRecords> {
     const summaries = parseResponseByFileFormat(
       this.apiData,
       "vitals_summaries",
-      this.eagerExpand
+      this.eagerExpand,
     );
     return createVitalsSummaryMetric(summaries.data);
   }
@@ -86,7 +86,7 @@ export default class VitalsMetrics extends Metric<MetricRecords> {
     const timeSeries = parseResponseByFileFormat(
       this.apiData,
       "vitals_time_series",
-      this.eagerExpand
+      this.eagerExpand,
     );
     return createVitalsTimeSeriesMetric(timeSeries.data);
   }

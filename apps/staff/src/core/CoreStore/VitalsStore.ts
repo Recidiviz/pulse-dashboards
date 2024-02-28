@@ -61,7 +61,7 @@ export default class VitalsStore {
     this.downloadData = this.downloadData.bind(this);
     reaction(
       () => this.rootStore.currentTenantId,
-      () => this.setCurrentEntityId(DEFAULT_ENTITY_ID)
+      () => this.setCurrentEntityId(DEFAULT_ENTITY_ID),
     );
   }
 
@@ -113,7 +113,7 @@ export default class VitalsStore {
       .filter(
         (d) =>
           d.parentEntityId === this.currentEntityId &&
-          d.parentEntityId !== d.entityId
+          d.parentEntityId !== d.entityId,
       )
       .map((d) => {
         const { entityId, entityName, entityType, ...attrs } = d;
@@ -131,26 +131,26 @@ export default class VitalsStore {
   get parentEntityName(): string {
     return (
       this.summaries.find(
-        (d) => d.entityId === this.currentEntitySummary?.parentEntityId
+        (d) => d.entityId === this.currentEntitySummary?.parentEntityId,
       )?.entityName || "Unknown"
     );
   }
 
   get selectedMetricTimeSeries(): VitalsTimeSeriesRecord[] | undefined {
     const selectedTimeSeries = this.currentEntityTimeSeries.filter(
-      (d) => d.metric === this.selectedMetricId
+      (d) => d.metric === this.selectedMetricId,
     );
     return selectedTimeSeries.length > 0 ? selectedTimeSeries : undefined;
   }
 
   get currentEntityTimeSeries(): VitalsTimeSeriesRecord[] {
     const selectedTimeSeries = this.timeSeries.filter(
-      (d) => d.entityId === this.currentEntityId
+      (d) => d.entityId === this.currentEntityId,
     );
     return selectedTimeSeries.sort(
       (a: VitalsTimeSeriesRecord, b: VitalsTimeSeriesRecord) => {
         return +new Date(a.date) - +new Date(b.date);
-      }
+      },
     );
   }
 
@@ -159,7 +159,7 @@ export default class VitalsStore {
       ? formatISODateString(
           this.selectedMetricTimeSeries[
             this.selectedMetricTimeSeries.length - 1
-          ].date
+          ].date,
         )
       : "Unknown";
   }
@@ -197,7 +197,7 @@ export default class VitalsStore {
     const datasets = [] as DownloadableDataset[];
     this.metrics.forEach((metric) => {
       const metricData = this.currentEntityTimeSeries.filter(
-        (d: VitalsTimeSeriesRecord) => d.metric === metric.id
+        (d: VitalsTimeSeriesRecord) => d.metric === metric.id,
       );
       labels = metricData.map((d) => d.date);
       ids = metricData.map((d) => d.entityId);
@@ -251,7 +251,7 @@ export default class VitalsStore {
           "90D change": formatPercent(d.overall90Day, true),
           ...metrics,
         };
-      }
+      },
     );
 
     datasets.push({ data: downloadableData, label: "" });

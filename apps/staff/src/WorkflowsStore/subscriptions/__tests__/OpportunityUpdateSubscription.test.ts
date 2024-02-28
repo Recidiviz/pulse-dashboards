@@ -34,7 +34,7 @@ const firestoreStoreMock = new FirestoreStore({
 const getDocMock = getDoc as jest.Mock;
 
 const testUpdateRecord: UpdateFunction<DocumentData> = async (
-  rawRecord?: DocumentData
+  rawRecord?: DocumentData,
 ) => {
   await Promise.resolve();
 };
@@ -54,7 +54,7 @@ test("dataSource", () => {
     firestoreStoreMock,
     "record123",
     "compliantReporting",
-    testUpdateRecord
+    testUpdateRecord,
   );
 
   expect(docMock).toHaveBeenLastCalledWith(
@@ -63,7 +63,7 @@ test("dataSource", () => {
     "clientUpdatesV2",
     "record123",
     "clientOpportunityUpdates",
-    "compliantReporting"
+    "compliantReporting",
   );
 
   expect(sub.dataSource).toBe(mockRef);

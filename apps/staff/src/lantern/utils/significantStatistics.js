@@ -39,7 +39,7 @@ function applyStatisticallySignificantShading(color, denominator) {
         STATISTICALLY_INSIGNIFICANT_PATTERN,
         color,
         COLORS.white,
-        shadingSize
+        shadingSize,
       );
 }
 
@@ -55,12 +55,12 @@ function applyStatisticallySignificantShadingToDataset(color, denominators) {
 
 function tooltipForFooterWithCounts([{ index }], denominators) {
   const isNested = denominators.every((denominator) =>
-    Array.isArray(denominator)
+    Array.isArray(denominator),
   );
   const isStatisticsSignificant = (
     isNested ? denominators : [denominators]
   ).every((denominator) =>
-    isDenominatorStatisticallySignificant(denominator[index])
+    isDenominatorStatisticallySignificant(denominator[index]),
   );
 
   if (isStatisticsSignificant) {

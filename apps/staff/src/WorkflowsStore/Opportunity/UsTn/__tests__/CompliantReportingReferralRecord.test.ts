@@ -202,7 +202,7 @@ afterEach(() => {
 
 test("transform record, old format", () => {
   expect(
-    transformCompliantReportingReferral(rawRecordOldSchema)
+    transformCompliantReportingReferral(rawRecordOldSchema),
   ).toMatchSnapshot();
 });
 
@@ -250,7 +250,7 @@ test("transform record, old + new format, almost eligible in both", () => {
 
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
   expect(
-    transformedRecord?.eligibleCriteria.usTnFinesFeesEligible
+    transformedRecord?.eligibleCriteria.usTnFinesFeesEligible,
   ).toBeUndefined();
   expect(transformedRecord?.ineligibleCriteria).toEqual(ineligibleCriteria);
 });
@@ -277,10 +277,10 @@ test("transform record, old + new format, almost eligible but for fines/fees in 
 
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
   expect(transformedRecord?.eligibleCriteria.usTnFinesFeesEligible).toEqual(
-    rawRecord.eligibleCriteria.usTnFinesFeesEligible
+    rawRecord.eligibleCriteria.usTnFinesFeesEligible,
   );
   expect(
-    transformedRecord?.ineligibleCriteria.usTnFinesFeesEligible
+    transformedRecord?.ineligibleCriteria.usTnFinesFeesEligible,
   ).toBeUndefined();
 });
 
@@ -302,10 +302,10 @@ test("transform record, old + new format, almost eligible but for sanctions in n
 
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
   expect(
-    transformedRecord?.eligibleCriteria.usTnNoHighSanctionsInPastYear
+    transformedRecord?.eligibleCriteria.usTnNoHighSanctionsInPastYear,
   ).toBeUndefined();
   expect(
-    transformedRecord?.ineligibleCriteria.usTnNoHighSanctionsInPastYear
+    transformedRecord?.ineligibleCriteria.usTnNoHighSanctionsInPastYear,
   ).toEqual({
     latestHighSanctionDate: parseISO("2022-10-01"),
   });
@@ -328,10 +328,10 @@ test("transform record, old + new format, almost eligible but for sanctions in o
 
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
   expect(
-    transformedRecord?.eligibleCriteria.usTnNoHighSanctionsInPastYear
+    transformedRecord?.eligibleCriteria.usTnNoHighSanctionsInPastYear,
   ).toEqual({});
   expect(
-    transformedRecord?.ineligibleCriteria.usTnNoHighSanctionsInPastYear
+    transformedRecord?.ineligibleCriteria.usTnNoHighSanctionsInPastYear,
   ).toBeUndefined();
 });
 
@@ -348,11 +348,12 @@ test("transform record, old format, almost eligible but for recent rejections in
 
   // old says almost, new says nothing, use data from old
   expect(
-    transformedRecord?.eligibleCriteria.usTnNoRecentCompliantReportingRejections
+    transformedRecord?.eligibleCriteria
+      .usTnNoRecentCompliantReportingRejections,
   ).toBeUndefined();
   expect(
     transformedRecord?.ineligibleCriteria
-      .usTnNoRecentCompliantReportingRejections
+      .usTnNoRecentCompliantReportingRejections,
   ).toEqual({
     contactCode: ["DEDU", "DECF"],
   });
@@ -377,11 +378,12 @@ test("transform record, old + new format, almost eligible but for recent rejecti
 
   // old says almost, new says eligible, use data from new
   expect(
-    transformedRecord?.eligibleCriteria.usTnNoRecentCompliantReportingRejections
+    transformedRecord?.eligibleCriteria
+      .usTnNoRecentCompliantReportingRejections,
   ).toEqual({});
   expect(
     transformedRecord?.ineligibleCriteria
-      .usTnNoRecentCompliantReportingRejections
+      .usTnNoRecentCompliantReportingRejections,
   ).toBeUndefined();
 });
 
@@ -409,11 +411,12 @@ test("transform record, old + new format, almost eligible but for recent rejecti
 
   // old says eligible, new says almost, use data from new
   expect(
-    transformedRecord?.eligibleCriteria.usTnNoRecentCompliantReportingRejections
+    transformedRecord?.eligibleCriteria
+      .usTnNoRecentCompliantReportingRejections,
   ).toBeUndefined();
   expect(
     transformedRecord?.ineligibleCriteria
-      .usTnNoRecentCompliantReportingRejections
+      .usTnNoRecentCompliantReportingRejections,
   ).toEqual({
     contactCode: ["DEDU", "DECF"],
   });
@@ -440,9 +443,9 @@ test("transform record, old + new format, almost eligible but for fines/fees in 
 
   const transformedRecord = transformCompliantReportingReferral(rawRecord);
   expect(
-    transformedRecord?.eligibleCriteria.usTnFinesFeesEligible
+    transformedRecord?.eligibleCriteria.usTnFinesFeesEligible,
   ).toBeUndefined();
   expect(transformedRecord?.ineligibleCriteria.usTnFinesFeesEligible).toEqual(
-    rawRecord.ineligibleCriteria.usTnFinesFeesEligible
+    rawRecord.ineligibleCriteria.usTnFinesFeesEligible,
   );
 });

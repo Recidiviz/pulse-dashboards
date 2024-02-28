@@ -33,10 +33,10 @@ if (process.argv.length > 2) {
           f.constructor.name
         } ${opts}`;
       })
-      .join("\n")
+      .join("\n"),
   );
 } else {
   console.log(
-    "Pass a PDF with a form as an argument, and this script will print the boilerplate for filling the form with PDFFormFiller."
+    "Pass a PDF with a form as an argument, and this script will print the boilerplate for filling the form with PDFFormFiller.",
   );
 }

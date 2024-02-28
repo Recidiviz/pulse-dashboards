@@ -37,7 +37,7 @@ const useHydrateOpportunities = (person: JusticeInvolvedPerson): void => {
           potentialOpportunities[opportunityType]?.hydrate();
         });
       }),
-    [person, opportunityTypes]
+    [person, opportunityTypes],
   );
 };
 

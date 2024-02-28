@@ -88,7 +88,7 @@ export const LSU_CRITERIA: Record<
 };
 
 export const LSUEarnedDischargeCommonRequirementsMet = (
-  eligibleCriteria: LSUEarnedDischargeEligibleCriteria
+  eligibleCriteria: LSUEarnedDischargeEligibleCriteria,
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
   const {
@@ -170,12 +170,12 @@ export class LSUOpportunity extends OpportunityBase<
       ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
     ) {
       const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
+        ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate,
       );
       onSupervisionAtLeastOneYear.text =
         onSupervisionAtLeastOneYear.text.replace(
           "$TIME_REMAINING",
-          `${monthsOrDaysRemaining}`
+          `${monthsOrDaysRemaining}`,
         );
       requirements.push(onSupervisionAtLeastOneYear);
     }
@@ -194,11 +194,11 @@ export class LSUOpportunity extends OpportunityBase<
       onSupervisionAtLeastOneYear.eligibleDate
     ) {
       const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        onSupervisionAtLeastOneYear.eligibleDate
+        onSupervisionAtLeastOneYear.eligibleDate,
       );
       return INELIGIBLE_CRITERIA_COPY.onSupervisionAtLeastOneYear.text.replace(
         "$TIME_REMAINING",
-        `${monthsOrDaysRemaining}`
+        `${monthsOrDaysRemaining}`,
       );
     }
   }

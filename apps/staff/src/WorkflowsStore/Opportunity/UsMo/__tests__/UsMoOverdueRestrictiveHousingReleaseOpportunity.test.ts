@@ -62,8 +62,8 @@ beforeAll(() => {
   // this lets us spy on observables, e.g. computed getters
   fixtureData = cloneDeep(
     usMoOverdueRestrictiveHousingReleaseSchema.parse(
-      usMoOverdueRestrictiveHousingReleaseReferralRecordFixture
-    )
+      usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
+    ),
   );
   configure({ safeDescriptors: false });
   jest.useFakeTimers().setSystemTime(today);
@@ -176,8 +176,8 @@ describe("fully eligible", () => {
     freeze(today);
     fixtureData = cloneDeep(
       usMoOverdueRestrictiveHousingReleaseSchema.parse(
-        usMoOverdueRestrictiveHousingReleaseReferralRecordFixture
-      )
+        usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
+      ),
     );
   });
 
@@ -256,7 +256,7 @@ describe("fully eligible", () => {
           startOfWeek(new Date(), { weekStartsOn: 1 });
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Sanction ended 3 days ago)/gm
+        /\b(Sanction ended 3 days ago)/gm,
       );
     });
 
@@ -273,7 +273,7 @@ describe("fully eligible", () => {
       };
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Sanction ended 7 days ago)/gm
+        /\b(Sanction ended 7 days ago)/gm,
       );
     });
 
@@ -290,7 +290,7 @@ describe("fully eligible", () => {
       };
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Sanction ends in 7 days)/gm
+        /\b(Sanction ends in 7 days)/gm,
       );
     });
   });
@@ -304,7 +304,7 @@ class TestOpportunity extends UsMoOverdueRestrictiveHousingReleaseOpportunity {
 
 const createOpportunityInstance = (
   reviewStatus: OpportunityStatus,
-  eligibilityDate: Date | undefined
+  eligibilityDate: Date | undefined,
 ) => {
   const mockRoot = new RootStore();
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
@@ -320,7 +320,7 @@ const createOpportunityInstance = (
 
 const initOpportunitiesList = (
   reviewStatuses: OpportunityStatus[],
-  eligibilityDates: (Date | undefined)[]
+  eligibilityDates: (Date | undefined)[],
 ) => {
   return reviewStatuses.map((reviewStatus, index) => {
     return createOpportunityInstance(reviewStatus, eligibilityDates[index]);
@@ -371,18 +371,18 @@ describe("Test custom compare function", () => {
 
   it("should sort undefined opportunities to the front of the array", () => {
     const shuffledDates = shuffle(orderedDates).map(
-      (date: Date | undefined, idx) => (idx % 2 === 1 ? undefined : date)
+      (date: Date | undefined, idx) => (idx % 2 === 1 ? undefined : date),
     );
 
     opportunities = initOpportunitiesList(
       shuffle(orderedReviewStatuses),
-      shuffledDates
+      shuffledDates,
     );
     opportunities.sort((a, b) => a.compare(b));
     expect(
       evaluateForUndefinedDatesFirstOnly(
-        opportunities.map((mockOpp) => mockOpp.eligibilityDate)
-      )
+        opportunities.map((mockOpp) => mockOpp.eligibilityDate),
+      ),
     ).toBeTruthy();
   });
 });

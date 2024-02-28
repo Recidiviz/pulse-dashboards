@@ -28,7 +28,7 @@ const mockClient = {
 };
 
 const transformer = usMiClassificationReviewSchemaForSupervisionLevelFormatter(
-  mockClient.rootStore.workflowsStore.formatSupervisionLevel
+  mockClient.rootStore.workflowsStore.formatSupervisionLevel,
 ).parse;
 
 test("transform record for initial CR", () => {

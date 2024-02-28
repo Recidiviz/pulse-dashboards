@@ -55,7 +55,7 @@ describe("Outliers Supervisors List Page", () => {
     const rootStore = new RootStore();
     store = new OutliersSupervisionStore(
       rootStore.outliersStore,
-      OutliersConfigFixture
+      OutliersConfigFixture,
     );
     rootStore.outliersStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
@@ -76,7 +76,7 @@ describe("Outliers Supervisors List Page", () => {
     render(
       <BrowserRouter>
         <OutliersSupervisorsListPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     // due to animated transitions the element may appear twice
@@ -87,7 +87,7 @@ describe("Outliers Supervisors List Page", () => {
     render(
       <BrowserRouter>
         <OutliersSupervisorsListPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
@@ -97,7 +97,7 @@ describe("Outliers Supervisors List Page", () => {
     const { container } = render(
       <BrowserRouter>
         <OutliersSupervisorsListPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     // Make sure the hydrated page actually loaded
@@ -105,14 +105,14 @@ describe("Outliers Supervisors List Page", () => {
     const results = await axe(container, { elementRef: true });
 
     const idDuplicatesViolation = results.violations.find(
-      (violation) => violation.id === "duplicate-id"
+      (violation) => violation.id === "duplicate-id",
     );
 
     // ignore "duplicate-id" violation if there is one
     if (idDuplicatesViolation) {
       results.violations.splice(
         results.violations.indexOf(idDuplicatesViolation),
-        1
+        1,
       );
     }
 

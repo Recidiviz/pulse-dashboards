@@ -37,14 +37,14 @@ describe("BaseMetrics", () => {
 
   it("sets the metrics property", () => {
     expect(metric.metrics).toEqual(
-      getCollectionsByStateCode(stateCode)[COLLECTIONS.NEW_REVOCATION]
+      getCollectionsByStateCode(stateCode)[COLLECTIONS.NEW_REVOCATION],
     );
     expect(metric.metrics).toHaveProperty(filename);
   });
 
   it("throws an error for incorrect metric types", () => {
     expect(() => new BaseMetrics("fakeType", stateCode)).toThrowError(
-      new Error(`Cannot instantiate BaseMetrics with metricType: fakeType`)
+      new Error(`Cannot instantiate BaseMetrics with metricType: fakeType`),
     );
   });
 

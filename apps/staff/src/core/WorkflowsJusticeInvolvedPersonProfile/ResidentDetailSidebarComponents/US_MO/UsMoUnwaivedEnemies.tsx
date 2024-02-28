@@ -55,7 +55,7 @@ export function UsMoUnwaivedEnemies({
                     </SecureDetailsContent>
                   </SecureDetailsList>
                 );
-              }
+              },
             )
           : "None"}
       </SecureDetailsContent>

@@ -154,12 +154,12 @@ const VitalsSummaryTable: React.FC = () => {
         columns: metricColumns,
       },
     ],
-    [entityType, overallColumns, metricColumns, basePath]
+    [entityType, overallColumns, metricColumns, basePath],
   );
 
   const sortBy = useMemo(
     () => ({ id: selectedSortBy, desc: false }),
-    [selectedSortBy]
+    [selectedSortBy],
   );
 
   const {
@@ -175,7 +175,7 @@ const VitalsSummaryTable: React.FC = () => {
       data,
       initialState: { sortBy: [sortBy] },
     },
-    useSortBy
+    useSortBy,
   );
 
   useEffect(() => {
@@ -207,7 +207,7 @@ const VitalsSummaryTable: React.FC = () => {
                             {
                               "VitalsSummaryTable__sort__button--active":
                                 column.isSorted && column.isSortedDesc,
-                            }
+                            },
                           )}
                         />
                         <div
@@ -216,7 +216,7 @@ const VitalsSummaryTable: React.FC = () => {
                             {
                               "VitalsSummaryTable__sort__button--active":
                                 column.isSorted && !column.isSortedDesc,
-                            }
+                            },
                           )}
                         />
                       </div>

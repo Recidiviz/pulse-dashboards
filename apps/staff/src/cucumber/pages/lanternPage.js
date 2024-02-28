@@ -64,7 +64,7 @@ class LanternPage extends Page {
 
   async getDistrictChartWrapperByDistrictIds(districtIds) {
     return $(
-      `.RevocationsByDimension--admissionsByDistrict--${districtIds.join("-")}`
+      `.RevocationsByDimension--admissionsByDistrict--${districtIds.join("-")}`,
     );
   }
 

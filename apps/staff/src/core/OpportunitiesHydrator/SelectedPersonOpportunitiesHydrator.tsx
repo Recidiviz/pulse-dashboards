@@ -50,7 +50,7 @@ export const SelectedPersonOpportunitiesHydrator = observer(
             });
           }
         }),
-      [person, opportunityTypes]
+      [person, opportunityTypes],
     );
 
     const displayLoading = opportunityTypes.some((oppType) => {
@@ -60,7 +60,7 @@ export const SelectedPersonOpportunitiesHydrator = observer(
 
     const displayEmpty =
       opportunityTypes.filter(
-        (oppType) => oppType in (person?.verifiedOpportunities ?? {})
+        (oppType) => oppType in (person?.verifiedOpportunities ?? {}),
       ).length === 0;
 
     if (displayLoading) return <Loading />;
@@ -68,5 +68,5 @@ export const SelectedPersonOpportunitiesHydrator = observer(
     if (displayEmpty) return <>{empty}</>;
 
     return <>{hydrated}</>;
-  }
+  },
 );

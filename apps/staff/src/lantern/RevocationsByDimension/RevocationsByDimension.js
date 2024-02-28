@@ -43,7 +43,7 @@ const RevocationsByDimension = observer(
       dataExportLabel,
       includeWarning,
     },
-    ref
+    ref,
   ) {
     const [mode, setMode] = useState(defaultMode);
 
@@ -103,7 +103,7 @@ const RevocationsByDimension = observer(
       </div>
     );
   },
-  { forwardRef: true }
+  { forwardRef: true },
 );
 
 RevocationsByDimension.defaultProps = {

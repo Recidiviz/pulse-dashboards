@@ -26,7 +26,7 @@ function fetchAndFilterNewRevocationFile({
   return fetchMetrics(stateCode, metricType, metricName, isOfflineMode).then(
     (metricFile) => {
       return createSubset(metricName, filters, metricFile);
-    }
+    },
   );
 }
 

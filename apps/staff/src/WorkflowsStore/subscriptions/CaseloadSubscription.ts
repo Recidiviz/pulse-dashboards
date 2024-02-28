@@ -29,7 +29,7 @@ import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
 export class CaseloadSubscription<
-  RecordType extends DocumentData
+  RecordType extends DocumentData,
 > extends FirestoreQuerySubscription<RecordType> {
   workflowsStore: WorkflowsStore;
 
@@ -40,7 +40,7 @@ export class CaseloadSubscription<
   constructor(
     workflowsStore: WorkflowsStore,
     firestoreCollectionKey: FirestoreCollectionKey,
-    personType: RecordType["personType"]
+    personType: RecordType["personType"],
   ) {
     super();
     this.workflowsStore = workflowsStore;
@@ -63,7 +63,7 @@ export class CaseloadSubscription<
     return query(
       collection(firestoreStore.db, collectionId),
       where("stateCode", "==", currentTenantId),
-      where(searchField, "in", selectedSearchIds)
+      where(searchField, "in", selectedSearchIds),
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);

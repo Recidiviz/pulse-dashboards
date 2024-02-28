@@ -40,7 +40,7 @@ describe("ImpactStore", () => {
   describe("metrics", () => {
     it("has reference to usTnCompliantReportingWorkflowsImpact metrics", () => {
       expect(impactStore.usTnCompliantReportingWorkflowsImpact).toBeInstanceOf(
-        ImpactMetric
+        ImpactMetric,
       );
     });
   });

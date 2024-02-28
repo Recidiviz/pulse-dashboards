@@ -27,7 +27,7 @@ import { supervisionOfficerMetricEventSchema } from "../SupervisionOfficerMetric
 
 test("transformations", () => {
   rawSupervisionOfficerMetricEventFixture.forEach((b) =>
-    expect(supervisionOfficerMetricEventSchema.parse(b)).toMatchSnapshot()
+    expect(supervisionOfficerMetricEventSchema.parse(b)).toMatchSnapshot(),
   );
 });
 
@@ -37,8 +37,8 @@ test("all metrics should have events", () => {
     .forEach((metricId) => {
       expect(
         supervisionOfficerMetricEventFixture.filter(
-          (e) => e.metricId === metricId
-        ).length
+          (e) => e.metricId === metricId,
+        ).length,
       ).toBePositive();
     });
 });

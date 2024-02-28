@@ -38,7 +38,7 @@ let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
-  clientRecord: typeof EarnedDischargeEligibleClientRecord
+  clientRecord: typeof EarnedDischargeEligibleClientRecord,
 ) {
   root = new RootStore();
   jest
@@ -120,7 +120,7 @@ describe("almost eligible income verified within 3 months", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs employment verification"
+      "Needs employment verification",
     );
   });
 });
@@ -157,7 +157,7 @@ describe("almost eligible on probation at least a year", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs 16 more months on supervision"
+      "Needs 16 more months on supervision",
     );
   });
 });
@@ -196,7 +196,7 @@ describe("almost eligible days remaining on length of stay", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs 1 more day on supervision"
+      "Needs 1 more day on supervision",
     );
   });
 });

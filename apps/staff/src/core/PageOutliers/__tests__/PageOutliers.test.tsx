@@ -31,7 +31,7 @@ import { outliersRoute } from "../../views";
 import PageOutliers from "../PageOutliers";
 
 jest.mock(
-  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
+  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker",
 );
 jest.mock("../../../components/StoreProvider");
 
@@ -65,7 +65,7 @@ function renderRouter(relativePath?: string) {
   render(
     <MemoryRouter initialEntries={[relativePath ?? "/"]}>
       <PageOutliers />
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 }
 
@@ -83,14 +83,14 @@ test("invalid routes", async () => {
   expect(
     await screen.findByText("Page Not Found", {
       exact: false,
-    })
+    }),
   ).toBeInTheDocument();
 });
 
 test("valid route", async () => {
   outliersStore.supervisionStore = new OutliersSupervisionStore(
     outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   jest
     .spyOn(outliersStore.supervisionStore, "userCanAccessAllSupervisors", "get")
@@ -104,6 +104,6 @@ test("valid route", async () => {
   expect(
     await screen.findByText("supervisors across the state have one or more", {
       exact: false,
-    })
+    }),
   ).toBeInTheDocument();
 });

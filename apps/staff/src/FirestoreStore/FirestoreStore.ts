@@ -128,7 +128,7 @@ export default class FirestoreStore {
   /* Authenticate with Firebase for users with access to workflows */
   async authenticate(
     auth0Token: string,
-    appMetadata?: UserAppMetadata
+    appMetadata?: UserAppMetadata,
   ): Promise<ReturnType<typeof signInWithCustomToken> | undefined> {
     const shouldGenerateToken =
       appMetadata?.stateCode === "recidiviz" ||
@@ -151,14 +151,14 @@ export default class FirestoreStore {
     impersonatedEmail: string,
     impersonatedStateCode: string,
     getTokenSilently: UserStore["getTokenSilently"],
-    appMetadata?: UserAppMetadata
+    appMetadata?: UserAppMetadata,
   ): Promise<ReturnType<typeof signInWithCustomToken> | undefined> {
     const shouldGenerateToken = appMetadata?.stateCode === "recidiviz";
     if (shouldGenerateToken) {
       const firebaseToken = await fetchImpersonatedFirebaseToken(
         impersonatedEmail,
         impersonatedStateCode,
-        getTokenSilently
+        getTokenSilently,
       );
       const auth = getAuth(this.app);
       if (this.useOfflineFirestore) {
@@ -170,7 +170,7 @@ export default class FirestoreStore {
 
   async getClient(
     clientId: string,
-    stateCode: string
+    stateCode: string,
   ): Promise<ClientRecord | undefined> {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
@@ -178,8 +178,8 @@ export default class FirestoreStore {
         collection(this.db, FIRESTORE_COLLECTIONS_MAP.clients),
         where("pseudonymizedId", "==", clientId),
         where("stateCode", "==", stateCode),
-        limit(1)
-      )
+        limit(1),
+      ),
     );
 
     const result = results.docs[0];
@@ -193,7 +193,7 @@ export default class FirestoreStore {
 
   async getResident(
     residentId: string,
-    stateCode: string
+    stateCode: string,
   ): Promise<ResidentRecord | undefined> {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
@@ -201,8 +201,8 @@ export default class FirestoreStore {
         collection(this.db, FIRESTORE_COLLECTIONS_MAP.residents),
         where("pseudonymizedId", "==", residentId),
         where("stateCode", "==", stateCode),
-        limit(1)
-      )
+        limit(1),
+      ),
     );
 
     const result = results.docs[0];
@@ -222,14 +222,14 @@ export default class FirestoreStore {
     documentType: string,
     recordId: string,
     docRef: DocumentReference<DocumentData>,
-    update: any
+    update: any,
   ) {
     if (this.rootStore.isImpersonating) {
       // eslint-disable-next-line
       console.log(
         `[IMPERSONATOR] Skipping update for: ${documentType} for id ${recordId} with updates ${JSON.stringify(
-          update
-        )}`
+          update,
+        )}`,
       );
       return;
     }
@@ -246,14 +246,14 @@ export default class FirestoreStore {
     documentType: string,
     recordId: string,
     docRef: DocumentReference<DocumentData>,
-    update: any
+    update: any,
   ) {
     if (this.rootStore.isImpersonating) {
       // eslint-disable-next-line
       console.log(
         `[IMPERSONATOR] Skipping update for: ${documentType} for id ${recordId} with updates ${JSON.stringify(
-          update
-        )}`
+          update,
+        )}`,
       );
       return;
     }
@@ -271,12 +271,12 @@ export default class FirestoreStore {
     recordId: string,
     update:
       | Record<PersonUpdateType, string | ContactMethodType>
-      | Record<"stateCode", string>
+      | Record<"stateCode", string>,
   ) {
     const docRef = doc(
       this.db,
       FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}`
+      `${recordId}`,
     );
 
     // This is the only place an update should be made to `clientUpdatesV2` without using
@@ -285,19 +285,19 @@ export default class FirestoreStore {
       FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
       recordId,
       docRef,
-      { ...update }
+      { ...update },
     );
   }
 
   async updateSupervisionTask(
     taskType: SupervisionTaskType,
     recordId: string,
-    update: SupervisionTaskUpdate
+    update: SupervisionTaskUpdate,
   ) {
     const taskDocRef = doc(
       this.db,
       FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.taskUpdates}/supervision`
+      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.taskUpdates}/supervision`,
     );
 
     return this.updateClientUpdatesV2Document(taskType, recordId, taskDocRef, {
@@ -307,20 +307,20 @@ export default class FirestoreStore {
 
   async updateMilestonesMessages(
     recordId: string,
-    update: PartialWithFieldValue<MilestonesMessage>
+    update: PartialWithFieldValue<MilestonesMessage>,
   ) {
     const dateKey = `milestones_${getMonthYearFromDate(startOfToday())}`;
     const taskDocRef = doc(
       this.db,
       FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.milestonesMessages}/${dateKey}`
+      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.milestonesMessages}/${dateKey}`,
     );
 
     return this.updateClientUpdatesV2Document(
       FIRESTORE_COLLECTIONS_MAP.milestonesMessages,
       recordId,
       taskDocRef,
-      update
+      update,
     );
   }
 
@@ -329,12 +329,12 @@ export default class FirestoreStore {
     recordId: string,
     update: PartialWithFieldValue<
       OpportunityUpdateWithForm<Record<string, any>>
-    >
+    >,
   ) {
     const opportunityDocRef = doc(
       this.db,
       FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.clientOpportunityUpdates}/${opportunityType}`
+      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.clientOpportunityUpdates}/${opportunityType}`,
     );
 
     return this.updateClientUpdatesV2Document(
@@ -343,7 +343,7 @@ export default class FirestoreStore {
       opportunityDocRef,
       {
         ...update,
-      }
+      },
     );
   }
 
@@ -351,7 +351,7 @@ export default class FirestoreStore {
     opportunityType: OpportunityType,
     recordId: string,
     snoozeUpdate: AutoSnoozeUpdate,
-    deleteSnoozeField: boolean
+    deleteSnoozeField: boolean,
   ): Promise<void> {
     const changes = deleteSnoozeField
       ? { autoSnooze: deleteField() }
@@ -366,7 +366,7 @@ export default class FirestoreStore {
     opportunityType: OpportunityType,
     recordId: string,
     snoozeUpdate: ManualSnoozeUpdate,
-    deleteSnoozeField: boolean
+    deleteSnoozeField: boolean,
   ): Promise<void> {
     const changes = deleteSnoozeField
       ? { manualSnooze: deleteField() }
@@ -387,7 +387,7 @@ export default class FirestoreStore {
     opportunityType: OpportunityType,
     deleteFields?: {
       otherReason: boolean;
-    }
+    },
   ): Promise<void> {
     // Firestore will reject any undefined values so filter them out
     const filteredUpdates = pickBy(fieldUpdates);
@@ -412,7 +412,7 @@ export default class FirestoreStore {
     userEmail: string,
     recordId: string,
     opportunityType: OpportunityType,
-    clearCompletion = false
+    clearCompletion = false,
   ): Promise<void> {
     return this.updateOpportunity(opportunityType, recordId, {
       completed: clearCompletion
@@ -429,7 +429,7 @@ export default class FirestoreStore {
   async updateOpportunityLastViewed(
     userEmail: string,
     recordId: string,
-    opportunityType: OpportunityType
+    opportunityType: OpportunityType,
   ): Promise<void> {
     return this.updateOpportunity(opportunityType, recordId, {
       lastViewed: { by: userEmail, date: serverTimestamp() },
@@ -439,7 +439,7 @@ export default class FirestoreStore {
   updateSelectedSearchIds(
     userEmail: string,
     stateCode: string,
-    selectedSearchIds: string[]
+    selectedSearchIds: string[],
   ): Promise<void> | undefined {
     return this.updateDocument(
       FIRESTORE_COLLECTIONS_MAP.userUpdates,
@@ -451,7 +451,7 @@ export default class FirestoreStore {
         // selectedOfficerIds was renamed to selectedSearchIds, so delete the old field to make
         // the data a bit more manageable.
         selectedOfficerIds: deleteField(),
-      }
+      },
     );
   }
 
@@ -467,7 +467,7 @@ export default class FirestoreStore {
   async updateFormDraftData(
     form: FormBase<any>,
     name: string,
-    value: FieldValue | string | number | boolean
+    value: FieldValue | string | number | boolean,
   ): Promise<void> {
     const { opportunity, currentUserEmail, formLastUpdated, type } = form;
     const { person } = opportunity;
@@ -515,7 +515,7 @@ export default class FirestoreStore {
     contactNote: Record<number, string[]>,
     submittedTimestamp: Timestamp,
     status: ExternalSystemRequestStatus,
-    error?: string
+    error?: string,
   ) {
     // Ignore recidiviz and non-state users in prod
     if (
@@ -540,7 +540,7 @@ export default class FirestoreStore {
     return this.updateOpportunity(
       opportunity.type,
       recordId,
-      contactNoteUpdate
+      contactNoteUpdate,
     );
   }
 
@@ -552,7 +552,7 @@ export default class FirestoreStore {
     snoozeUntil: string,
     submittedTimestamp: Timestamp,
     status: ExternalSystemRequestStatus,
-    error?: string
+    error?: string,
   ) {
     // Ignore recidiviz and non-state users in prod
     if (
@@ -576,7 +576,7 @@ export default class FirestoreStore {
 
   async deleteOpportunityDenialAndSnooze(
     opportunityType: OpportunityType,
-    recordId: string
+    recordId: string,
   ) {
     this.updateOpportunity(opportunityType, recordId, {
       denial: deleteField(),

@@ -49,7 +49,7 @@ const BROWSER_TRACING_INTEGRATION = new Sentry.BrowserTracing({
     useLocation,
     useNavigationType,
     createRoutesFromChildren,
-    matchRoutes
+    matchRoutes,
   ),
 });
 

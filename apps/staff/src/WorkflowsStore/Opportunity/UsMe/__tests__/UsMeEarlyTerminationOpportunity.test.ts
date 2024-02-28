@@ -40,7 +40,7 @@ let updatesSub: DocumentSubscription<any>;
 jest.mock("../../../subscriptions");
 
 function createTestUnit(
-  clientRecord: typeof usMeEarlyTerminationEligibleClientRecord
+  clientRecord: typeof usMeEarlyTerminationEligibleClientRecord,
 ) {
   root = new RootStore();
   jest
@@ -113,7 +113,7 @@ describe("almost eligible restitution owed", () => {
 
   test("almost eligible status message", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Remaining Restitution Balance $500.00"
+      "Remaining Restitution Balance $500.00",
     );
   });
 
@@ -125,7 +125,7 @@ describe("almost eligible restitution owed", () => {
 describe("almost eligible pending violation", () => {
   beforeEach(() => {
     createTestUnit(
-      usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord
+      usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord,
     );
 
     referralSub = opp.referralSubscription;
@@ -147,7 +147,7 @@ describe("almost eligible pending violation", () => {
 
   test("almost eligible status message", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Violation Pending since Jan 1, 2023"
+      "Violation Pending since Jan 1, 2023",
     );
   });
 

@@ -52,7 +52,7 @@ describe("generateDatasets", () => {
       const result = generateDatasets(
         dataPoints,
         denominators,
-        CHART_COLORS
+        CHART_COLORS,
       ).map((d) => {
         const { data, label } = d;
         return { data, label };
@@ -272,7 +272,7 @@ describe("createGenerateChartData", () => {
             filteredData,
             statePopulationData,
           },
-          stacked
+          stacked,
         )("WHITE");
         expect(chartData.data.datasets[0].data).toEqual(expected.data);
         expect(chartData.numerators).toEqual(expected.numerators);
@@ -293,7 +293,7 @@ describe("createGenerateChartData", () => {
             filteredData,
             statePopulationData,
           },
-          stacked
+          stacked,
         )();
         expect(chartData.data.datasets[0].data).toEqual(expected.data[0]);
         expect(chartData.numerators[0]).toEqual(expected.numerators);

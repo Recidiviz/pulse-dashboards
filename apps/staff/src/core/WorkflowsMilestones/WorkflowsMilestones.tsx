@@ -45,7 +45,7 @@ const WorkflowsMilestones = observer(
         <MilestonesCaseloadView />
       </WorkflowsNavLayout>
     );
-  }
+  },
 );
 
 export default WorkflowsMilestones;

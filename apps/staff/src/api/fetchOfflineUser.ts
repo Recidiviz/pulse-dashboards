@@ -29,14 +29,14 @@ type OfflineUserOptions = {
 };
 
 export async function fetchOfflineUser(
-  options: OfflineUserOptions
+  options: OfflineUserOptions,
 ): Promise<User> {
   if (!isOfflineMode()) {
     throw new Error(`fetchOfflineUser can only be used in offline mode!`);
   }
   const queryParams = qs.stringify(options, { addQueryPrefix: true });
   const response = await fetch(
-    `${process.env.REACT_APP_API_URL}/api/offlineUser${queryParams}`
+    `${process.env.REACT_APP_API_URL}/api/offlineUser${queryParams}`,
   );
   return response.json();
 }

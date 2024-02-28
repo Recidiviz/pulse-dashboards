@@ -32,7 +32,7 @@ export function UsMoSanctions({
 }): React.ReactElement {
   const D1_SANCTION_DATE_COPY = (
     sanctionStartDate: UsMoSanctionInfo["sanctionStartDate"],
-    sanctionExpirationDate: UsMoSanctionInfo["sanctionExpirationDate"]
+    sanctionExpirationDate: UsMoSanctionInfo["sanctionExpirationDate"],
   ) => {
     const startDateText = sanctionStartDate
       ? formatWorkflowsDate(sanctionStartDate)
@@ -58,11 +58,11 @@ export function UsMoSanctions({
               <SecureDetailsContent key={`${sanctionId}`}>
                 {D1_SANCTION_DATE_COPY(
                   sanctionStartDate,
-                  sanctionExpirationDate
+                  sanctionExpirationDate,
                 )}
               </SecureDetailsContent>
             );
-          }
+          },
         )
       ) : (
         <SecureDetailsContent>None</SecureDetailsContent>

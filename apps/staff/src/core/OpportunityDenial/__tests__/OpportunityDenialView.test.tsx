@@ -43,7 +43,7 @@ function renderElement(opportunity: Opportunity) {
   render(
     <BrowserRouter>
       <OpportunityDenialView opportunity={opportunity} />
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 }
 
@@ -87,7 +87,7 @@ describe("OpportunityDenialView", () => {
       const checkbox = getCheckbox("Other");
       if (checkbox) fireEvent.click(checkbox);
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -98,7 +98,7 @@ describe("OpportunityDenialView", () => {
       if (otherInput) fireEvent.change(otherInput, { target: { value: "12" } });
 
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -138,7 +138,7 @@ describe("OpportunityDenialView", () => {
       renderWithDenialReasons([]);
 
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
 
       const checkbox = getCheckbox("reason1");
@@ -151,7 +151,7 @@ describe("OpportunityDenialView", () => {
       renderWithDenialReasons(["reason1"]);
 
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
 
       const checkbox = getCheckbox("reason2");
@@ -167,7 +167,7 @@ describe("OpportunityDenialView", () => {
       const checkbox3 = getCheckbox("reason3");
 
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
 
       fireEvent.click(checkbox1);
@@ -177,7 +177,7 @@ describe("OpportunityDenialView", () => {
       fireEvent.click(checkbox1);
 
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
 
       fireEvent.click(checkbox3);
@@ -187,7 +187,7 @@ describe("OpportunityDenialView", () => {
       fireEvent.click(checkbox3);
 
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -195,7 +195,7 @@ describe("OpportunityDenialView", () => {
       renderWithDenialReasons(["reason3"]);
 
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
 
       const checkbox = getCheckbox("reason3");
@@ -227,7 +227,7 @@ describe("OpportunityDenialView", () => {
 
     it("disables the save button until a reason is selected", () => {
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -240,8 +240,8 @@ describe("OpportunityDenialView", () => {
     it("displays the marked ineligible text", () => {
       expect(
         screen.getByText(
-          "Client Name may be surfaced again on or after October 10, 2024."
-        )
+          "Client Name may be surfaced again on or after October 10, 2024.",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -249,7 +249,7 @@ describe("OpportunityDenialView", () => {
       const checkbox = getCheckbox("CODE");
       if (checkbox) fireEvent.click(checkbox);
       expect(
-        screen.getByText("Not eligible reasons: CODE")
+        screen.getByText("Not eligible reasons: CODE"),
       ).toBeInTheDocument();
     });
   });
@@ -269,13 +269,13 @@ describe("OpportunityDenialView", () => {
     it("shows the slider", () => {
       expect(screen.getByText("Snooze for:")).toBeInTheDocument();
       expect(
-        screen.getByTestId("OpportunityDenialView__slider")
+        screen.getByTestId("OpportunityDenialView__slider"),
       ).toBeInTheDocument();
     });
 
     it("disables the save button if a reason is not selected", () => {
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -286,7 +286,7 @@ describe("OpportunityDenialView", () => {
       expect(slider).toBeInTheDocument();
       if (slider) fireEvent.change(slider, { target: { value: 60 } });
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -299,8 +299,8 @@ describe("OpportunityDenialView", () => {
     it("displays resurface text and denial reason codes", () => {
       expect(
         screen.getByText(
-          "Client Name may be surfaced again on or after November 4, 2023."
-        )
+          "Client Name may be surfaced again on or after November 4, 2023.",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -308,7 +308,7 @@ describe("OpportunityDenialView", () => {
       const checkbox = getCheckbox("CODE");
       if (checkbox) fireEvent.click(checkbox);
       expect(
-        screen.getByText("Not eligible reasons: CODE")
+        screen.getByText("Not eligible reasons: CODE"),
       ).toBeInTheDocument();
     });
   });
@@ -336,7 +336,7 @@ describe("OpportunityDenialView", () => {
 
     it("disables the save button if the form is untouched", () => {
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -349,7 +349,7 @@ describe("OpportunityDenialView", () => {
 
       if (slider) fireEvent.change(slider, { target: { value: 30 } });
       expect(
-        screen.getByTestId("OpportunityDenialView__button")
+        screen.getByTestId("OpportunityDenialView__button"),
       ).toBeDisabled();
     });
 
@@ -389,8 +389,8 @@ describe("OpportunityDenialView", () => {
 
       expect(
         screen.getByText(
-          "February 1, 2025 is Client Name's supervision end date."
-        )
+          "February 1, 2025 is Client Name's supervision end date.",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -408,8 +408,8 @@ describe("OpportunityDenialView", () => {
 
       expect(
         screen.getByText(
-          "Client Name may be surfaced again on or after March 3, 2025."
-        )
+          "Client Name may be surfaced again on or after March 3, 2025.",
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -430,8 +430,8 @@ describe("OpportunityDenialView", () => {
     it("shows the resurface text", () => {
       expect(
         screen.getByText(
-          "Client Name may be surfaced again on or after November 4, 2023."
-        )
+          "Client Name may be surfaced again on or after November 4, 2023.",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -476,7 +476,7 @@ describe("OpportunityDenialView", () => {
       });
 
       expect(
-        screen.queryByText("You will be reminded about this opportunity")
+        screen.queryByText("You will be reminded about this opportunity"),
       ).toBeNull();
     });
 
@@ -501,7 +501,7 @@ describe("OpportunityDenialView", () => {
         const checkbox = getCheckbox("Other");
         if (checkbox) fireEvent.click(checkbox);
         expect(
-          screen.getByTestId("OpportunityDenialView__button")
+          screen.getByTestId("OpportunityDenialView__button"),
         ).toBeDisabled();
       });
 
@@ -513,7 +513,7 @@ describe("OpportunityDenialView", () => {
           fireEvent.change(otherInput, { target: { value: "12" } });
 
         expect(
-          screen.getByTestId("OpportunityDenialView__button")
+          screen.getByTestId("OpportunityDenialView__button"),
         ).toBeDisabled();
       });
 
@@ -525,7 +525,7 @@ describe("OpportunityDenialView", () => {
           fireEvent.change(otherInput, { target: { value: "123" } });
 
         expect(
-          screen.getByTestId("OpportunityDenialView__button")
+          screen.getByTestId("OpportunityDenialView__button"),
         ).toBeEnabled();
       });
     });
@@ -555,7 +555,7 @@ describe("OpportunityDenialView", () => {
       fireEvent.click(screen.getByTestId("OpportunityDenialView__button"));
 
       expect(
-        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls
+        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls,
       ).toHaveLength(1);
     });
 
@@ -587,7 +587,7 @@ describe("OpportunityDenialView", () => {
       if (checkbox) fireEvent.click(checkbox);
 
       expect(screen.getByTestId("stub-modal")).toHaveTextContent(
-        "MODAL NOT SHOWN"
+        "MODAL NOT SHOWN",
       );
 
       fireEvent.click(screen.getByTestId("OpportunityDenialView__button"));
@@ -595,7 +595,7 @@ describe("OpportunityDenialView", () => {
       expect(screen.getByTestId("stub-modal")).toHaveTextContent("MODAL SHOWN");
 
       expect(
-        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls
+        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls,
       ).toHaveLength(0);
     });
   });

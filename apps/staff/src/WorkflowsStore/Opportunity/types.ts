@@ -47,7 +47,7 @@ export const OPPORTUNITY_STATUS_RANKED = [
   "COMPLETED",
   "ALMOST",
 ] as const;
-export type OpportunityStatus = typeof OPPORTUNITY_STATUS_RANKED[number];
+export type OpportunityStatus = (typeof OPPORTUNITY_STATUS_RANKED)[number];
 
 export type DenialReasonsMap = Record<string, string>;
 
@@ -75,7 +75,7 @@ export type FormVariant = "deferred";
  * should generally override them to be required.
  */
 export interface Opportunity<
-  PersonType extends JusticeInvolvedPerson = JusticeInvolvedPerson
+  PersonType extends JusticeInvolvedPerson = JusticeInvolvedPerson,
 > extends Hydratable {
   record: DocumentData | undefined;
   almostEligible: boolean;
@@ -112,7 +112,7 @@ export interface Opportunity<
   readonly externalRequestStatusMessage?: string;
   setAutoSnooze: (
     defaultSnoozeUntilFn: AutoSnoozeUntil["defaultSnoozeUntilFn"],
-    reasons: string[]
+    reasons: string[],
   ) => Promise<void>;
   setManualSnooze: (days: number, reasons: string[]) => Promise<void>;
   setDenialReasons: (reasons: string[]) => Promise<void>;
@@ -137,7 +137,7 @@ export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
 
 export type OpportunityFactory<
   OpportunitySubtype extends OpportunityType,
-  PersonType extends JusticeInvolvedPerson
+  PersonType extends JusticeInvolvedPerson,
 > = (type: OpportunitySubtype, person: PersonType) => Opportunity;
 
 export type OpportunityTab =

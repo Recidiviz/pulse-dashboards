@@ -24,7 +24,7 @@ import { getMonthYearFromDate } from "../utils";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 
 export class MilestonesMessageUpdateSubscription<
-  RecordType extends MilestonesMessage
+  RecordType extends MilestonesMessage,
 > extends CollectionDocumentSubscription<RecordType> {
   // needs to be redefined because it's read-only but otherwise unchanged
   readonly dataSource: DocumentReference<RecordType>;
@@ -39,7 +39,7 @@ export class MilestonesMessageUpdateSubscription<
       FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
       recordId,
       FIRESTORE_COLLECTIONS_MAP.milestonesMessages,
-      dateKey
+      dateKey,
     ) as DocumentReference<RecordType>;
   }
 }

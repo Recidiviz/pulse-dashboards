@@ -66,7 +66,7 @@ const MoreFilters: React.FC<Props> = ({
     const filter = filterOptions[filterType];
     activeFiltersCount += getFilterOptions(
       get(filters, filter.type),
-      filter.options
+      filter.options,
     ).filter((option) => option.value !== filter.defaultValue).length;
   });
 
@@ -138,7 +138,7 @@ const MoreFilters: React.FC<Props> = ({
                     defaultValue={
                       getFilterOption(
                         get(filters, filter.type)[0],
-                        filter.options
+                        filter.options,
                       ).value
                     }
                     onChange={onUpdateFilters}

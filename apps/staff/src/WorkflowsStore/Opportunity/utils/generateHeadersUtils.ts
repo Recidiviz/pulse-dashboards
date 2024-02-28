@@ -25,22 +25,22 @@ import {
 export const generateOpportunityInitialHeader = (
   opportunityType: OpportunityType,
   justiceInvolvedPersonTitle: string,
-  workflowsSearchFieldTitle: string
+  workflowsSearchFieldTitle: string,
 ): string => {
   const { label, initialHeader } = OPPORTUNITY_CONFIGS[opportunityType];
   return (
     initialHeader ||
     `Search for ${pluralizeWord(
-      workflowsSearchFieldTitle
+      workflowsSearchFieldTitle,
     )} above to review and refer eligible ${pluralizeWord(
-      justiceInvolvedPersonTitle
+      justiceInvolvedPersonTitle,
     )} for ${label.toLowerCase()}.`
   );
 };
 
 export type CountFormatter = [
   count: number,
-  formatter: (quantity: number) => string | number
+  formatter: (quantity: number) => string | number,
 ];
 /** Formatter for opportunity headers */
 const hydratedHeaderFormatter = (quantity: number): string | number => {
@@ -49,7 +49,7 @@ const hydratedHeaderFormatter = (quantity: number): string | number => {
 
 export const generateOpportunityHydratedHeader = (
   opportunityType: OpportunityType,
-  count: number
+  count: number,
 ): OpportunityHydratedHeader => {
   return OPPORTUNITY_CONFIGS[opportunityType].hydratedHeader([
     count,

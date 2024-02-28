@@ -40,7 +40,7 @@ export abstract class Differ<DataRecord, DiffValueType> {
 
   diff(
     oldData: DataRecord[] | undefined,
-    newData: DataRecord[] | undefined
+    newData: DataRecord[] | undefined,
   ): Diff<DiffValueType> {
     const diffs = new Map<string, DiffValue<DiffValueType>>();
     let totalDiffs = 0;

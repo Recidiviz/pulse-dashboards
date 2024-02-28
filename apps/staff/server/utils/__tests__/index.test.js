@@ -34,7 +34,7 @@ describe("formatKeysToSnakeCase", () => {
       formatKeysToSnakeCase({
         violation_type: "all",
         charge_category: "general",
-      })
+      }),
     ).toEqual({
       violation_type: "all",
       charge_category: "general",

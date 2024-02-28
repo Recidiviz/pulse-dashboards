@@ -41,7 +41,7 @@ import {
 } from "./utils";
 
 export abstract class FirestoreDocumentSubscription<
-    DataFormat extends DocumentData = DocumentData
+    DataFormat extends DocumentData = DocumentData,
   >
   extends FirestoreSubscription<DataFormat | undefined>
   implements DocumentSubscription<DataFormat>
@@ -52,7 +52,7 @@ export abstract class FirestoreDocumentSubscription<
     // default passes through raw record, assuming it already conforms to the desired format
     protected transformRecord: TransformFunction<DataFormat> = defaultTransformFunction,
     protected validateRecord: ValidateFunction<DataFormat> = defaultValidateFunction,
-    protected updateRecord: UpdateFunction<DocumentData> = defaultUpdateFunction
+    protected updateRecord: UpdateFunction<DocumentData> = defaultUpdateFunction,
   ) {
     super(undefined, observable.struct);
 
@@ -106,7 +106,7 @@ export abstract class FirestoreDocumentSubscription<
           this.hydrationState = { status: "failed", error };
         });
         Sentry.captureException(error);
-      }
+      },
     );
   }
 }

@@ -112,7 +112,7 @@ const pointStyles = {
 const getDateRange = (
   firstDate: Date,
   lastDate: Date,
-  offset: number
+  offset: number,
 ): { beginDate: Date; endDate: Date } => {
   const beginDate = new Date(firstDate);
   const endDate = new Date(lastDate);
@@ -134,13 +134,13 @@ const formatDateToYearRange = (date: Date): string => {
 
   return `${formatDate(date, "MMM")} '${previousYear} - '${formatDate(
     date,
-    "yy"
+    "yy",
   )}`;
 };
 
 const reduceBottomTicks = (ticks: Date[], isMobile: boolean) => {
   const result = ticks.filter((_, index: number) =>
-    isMobile ? index % 2 !== 0 : index % 2 === 0
+    isMobile ? index % 2 !== 0 : index % 2 === 0,
   );
   if (isMobile ? ticks.length % 2 === 0 : ticks.length % 2 !== 0)
     return result.slice(0, -1);
@@ -183,14 +183,14 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
   const { beginDate, endDate } = getDateRange(
     statewidePoints[0]?.date,
     statewidePoints.slice(-1)[0]?.date,
-    16
+    16,
   );
 
   const bottomTickValues = statewidePoints.map((d) => d.date);
   const reducedBottomTickValues = reduceBottomTicks(bottomTickValues, isMobile);
 
   const { maxTickValue } = getTicks(
-    Math.max(...usersPoints.concat(statewidePoints).map((d) => d.value))
+    Math.max(...usersPoints.concat(statewidePoints).map((d) => d.value)),
   );
 
   const yRange = [0, maxTickValue];

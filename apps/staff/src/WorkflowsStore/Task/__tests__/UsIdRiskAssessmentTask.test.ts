@@ -40,10 +40,10 @@ describe("UsIdRiskAssessmentTask", () => {
       task = new UsIdRiskAssessmentTask(
         mockRootStore,
         mockTaskRecord,
-        mockPerson
+        mockPerson,
       );
       expect(task.additionalDetails).toEqual(
-        "Last assessed on 3/1/23; Score: LOW"
+        "Last assessed on 3/1/23; Score: LOW",
       );
     });
 
@@ -59,7 +59,7 @@ describe("UsIdRiskAssessmentTask", () => {
       task = new UsIdRiskAssessmentTask(
         mockRootStore,
         mockTaskRecord,
-        mockPerson
+        mockPerson,
       );
       expect(task.additionalDetails).toEqual("Score: LOW");
     });
@@ -76,7 +76,7 @@ describe("UsIdRiskAssessmentTask", () => {
       task = new UsIdRiskAssessmentTask(
         mockRootStore,
         mockTaskRecord,
-        mockPerson
+        mockPerson,
       );
       expect(task.additionalDetails).toEqual("Last assessed on 3/1/23; ");
     });
@@ -93,7 +93,7 @@ describe("UsIdRiskAssessmentTask", () => {
       task = new UsIdRiskAssessmentTask(
         mockRootStore,
         mockTaskRecord,
-        mockPerson
+        mockPerson,
       );
       expect(task.additionalDetails).toEqual("");
     });

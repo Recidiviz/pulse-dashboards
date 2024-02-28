@@ -48,7 +48,7 @@ const FormPreviewPage = styled.img`
 const previewImages = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10];
 
 const fillerFunc: (
-  formData: Partial<UsMeFurloughReleaseDraftData>
+  formData: Partial<UsMeFurloughReleaseDraftData>,
 ) => PDFFillerFunc = (formData) => async (set, form, doc) => {
   set("RESIDENTS NAME", formData.residentName);
   set("FACILITY HOUSING UNIT", formData.facilityHousingUnit);
@@ -73,7 +73,7 @@ export const FormFurloughRelease = observer(function FormWorkRelease() {
     runInAction(() => {
       contents = {
         ...toJS(
-          resident.verifiedOpportunities.usMeFurloughRelease?.form?.formData
+          resident.verifiedOpportunities.usMeFurloughRelease?.form?.formData,
         ),
       };
     });
@@ -82,7 +82,7 @@ export const FormFurloughRelease = observer(function FormWorkRelease() {
 
     const fileNameFormatter = (
       filename: string,
-      residentName: string
+      residentName: string,
     ): string => `${residentName} - ${startCase(filename)}`;
 
     const fileInputs: FileGeneratorArgs[] = [
@@ -108,7 +108,7 @@ export const FormFurloughRelease = observer(function FormWorkRelease() {
         resident.stateCode,
         `${pdfTemplateName}.pdf`,
         fillerFunc(contents),
-        getTokenSilently
+        getTokenSilently,
       ),
       renderMultipleDocx(fileInputs, getTokenSilently),
     ]);

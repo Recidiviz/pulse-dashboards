@@ -52,7 +52,7 @@ const daysUntilNextReviewDateString = (nextReviewDate: Date) => {
     // startOfToday is important here because eligibility dates don't have times, so they're
     // parsed as midnight. differenceInDays rounds down, so we need to compare with today's
     // midnight so we don't end up off by one.
-    startOfToday()
+    startOfToday(),
   );
   let daysString;
   if (daysUntilNextReviewDate === 0) {
@@ -76,7 +76,7 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoRestrictiveHousingStatusHearin
           return criteria?.nextReviewDate
             ? differenceInDays(
                 startOfToday(),
-                criteria.nextReviewDate
+                criteria.nextReviewDate,
               ).toString()
             : "Unknown";
         },
@@ -90,7 +90,7 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoRestrictiveHousingStatusHearin
           }
           const reviewDate = formatWorkflowsDate(criteria.nextReviewDate);
           const daysUntilNextReviewDate = daysUntilNextReviewDateString(
-            criteria.nextReviewDate
+            criteria.nextReviewDate,
           );
           return `Next review date (${reviewDate}) is ${daysUntilNextReviewDate}`;
         },
@@ -146,7 +146,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       "usMoRestrictiveHousingStatusHearing",
       resident.rootStore,
       usMoRestrictiveHousingStatusHearingSchema.parse,
-      validateReferral
+      validateReferral,
     );
     this.resident = resident;
     this.denialReasonsMap = DENIAL_REASONS_MAP;
@@ -161,7 +161,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -170,7 +170,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       this.record,
       "ineligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 
@@ -182,7 +182,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
     return this.record?.eligibleCriteria.usMoOverdueForHearing
       ? CRITERIA_FORMATTERS.eligibleCriteria?.usMoOverdueForHearing?.REVIEW_DATE(
           this.record.eligibleCriteria.usMoOverdueForHearing,
-          this.record
+          this.record,
         )
       : undefined;
   }
@@ -192,7 +192,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       this.almostEligible
       ? CRITERIA_FORMATTERS.ineligibleCriteria?.usMoOverdueForHearing?.UPCOMING_OR_EMPTY_SHORT_TEXT(
           this.record.ineligibleCriteria.usMoOverdueForHearing,
-          this.record
+          this.record,
         )
       : undefined;
   }

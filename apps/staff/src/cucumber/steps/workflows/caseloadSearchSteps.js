@@ -34,7 +34,7 @@ Given("There are no officers pre-selected in the dropdown", async () => {
 
 When("I clear the officer {string}", async (officerName) => {
   const option = await $(
-    `div.CaseloadSelect__multi-value__label=${officerName}`
+    `div.CaseloadSelect__multi-value__label=${officerName}`,
   );
   await option.waitForExist();
   const clearIcon = await option.$(function () {
@@ -46,7 +46,7 @@ When("I clear the officer {string}", async (officerName) => {
 
 When("I click on the Clear Officers link", async () => {
   const link = await $(
-    `.CaseloadSelect__indicator.CaseloadSelect__clear-indicator`
+    `.CaseloadSelect__indicator.CaseloadSelect__clear-indicator`,
   );
   await link.click();
 });
@@ -59,12 +59,12 @@ Then(
   async (officerName) => {
     await waitForNetworkIdle();
     const selectedOption = await $(
-      `div.CaseloadSelect__multi-value__label=${officerName}`
+      `div.CaseloadSelect__multi-value__label=${officerName}`,
     );
     await selectedOption.waitForExist();
     const selectedOptionText = await selectedOption.getText();
     expect(selectedOptionText).toEqual(officerName);
-  }
+  },
 );
 
 Then(
@@ -73,7 +73,7 @@ Then(
     const selectedOptions = await $$(".CaseloadSelect__multi-value__label");
     await waitForElementsToExist(selectedOptions);
     expect(selectedOptions.length).toEqual(numSelected);
-  }
+  },
 );
 
 Then("I should see no officers selected", async () => {

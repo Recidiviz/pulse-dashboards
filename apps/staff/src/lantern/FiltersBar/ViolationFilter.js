@@ -50,7 +50,7 @@ function ViolationFilter() {
     }
     if (reportedViolations && !isAllItem(reportedViolations)) {
       parts.push(
-        pluralize(violationCountLabel(reportedViolations), "violation")
+        pluralize(violationCountLabel(reportedViolations), "violation"),
       );
     }
     return parts.join(", ");

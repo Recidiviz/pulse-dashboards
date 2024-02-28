@@ -71,7 +71,7 @@ export default class FiltersStore {
           this.filters.clear();
           this.setFilters(this.defaultFilterValues);
         }
-      }
+      },
     );
 
     autorun(() => {
@@ -182,7 +182,7 @@ export default class FiltersStore {
           acc[key] = value;
         return acc;
       },
-      {}
+      {},
     );
     return {
       filtersDescription: getFilters(enabledFilters),

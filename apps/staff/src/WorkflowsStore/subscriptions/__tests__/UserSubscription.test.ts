@@ -70,7 +70,7 @@ test("dataSource reflects user auth data", () => {
 
   expect(collection).toHaveBeenCalledWith(
     rootStoreMock.firestoreStore.db,
-    "staff"
+    "staff",
   );
   expect(where).toHaveBeenCalledWith("stateCode", "==", "US_XX");
   expect(where).toHaveBeenCalledWith("email", "==", "test@example.com");

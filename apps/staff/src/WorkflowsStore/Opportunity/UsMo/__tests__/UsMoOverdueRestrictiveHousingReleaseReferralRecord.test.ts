@@ -49,8 +49,8 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
   it("should have a valid schema", () => {
     expect(
       usMoOverdueRestrictiveHousingReleaseSchema.parse(
-        usMoOverdueRestrictiveHousingReleaseReferralRecordFixture
-      )
+        usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
+      ),
     ).toMatchInlineSnapshot(`
       Object {
         "eligibleCriteria": Object {
@@ -105,7 +105,7 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
           ...recordWithNullUsMoNoD1Sanctions.metadata,
           allSanctions: undefined,
         },
-      })
+      }),
     ).toMatchInlineSnapshot(`
       Object {
         "eligibleCriteria": Object {
@@ -153,8 +153,8 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
   it("should have a valid schema when usMoD1Sanctions is null and metadata allSanctions is defined", () => {
     expect(
       usMoOverdueRestrictiveHousingReleaseSchema.parse(
-        recordWithNullUsMoNoD1Sanctions
-      )
+        recordWithNullUsMoNoD1Sanctions,
+      ),
     ).toMatchInlineSnapshot(`
       Object {
         "eligibleCriteria": Object {
@@ -217,7 +217,7 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
 
   it("should equal the latest sanction end date when usMoNoActiveD1Sanctions is null", () => {
     const definedRecord = usMoOverdueRestrictiveHousingReleaseSchema.parse(
-      recordWithNullUsMoNoD1Sanctions
+      recordWithNullUsMoNoD1Sanctions,
     );
     const { latestSanctionEndDate } = definedRecord.eligibleCriteria
       .usMoNoActiveD1Sanctions ?? { undefined };
@@ -228,7 +228,7 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
 
     expect(latestSanctionEndDate).toBeDefined();
     expect(latestSanctionEndDate).toEqual(
-      latestSanction?.sanctionExpirationDate
+      latestSanction?.sanctionExpirationDate,
     );
   });
 });

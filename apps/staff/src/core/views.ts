@@ -36,7 +36,7 @@ export const DASHBOARD_VIEWS = {
   impact: "impact",
   outliers: "insights",
 } as const;
-export type DashboardViewRootPath = typeof DASHBOARD_VIEWS[DashboardView];
+export type DashboardViewRootPath = (typeof DASHBOARD_VIEWS)[DashboardView];
 
 export const isValidDashboardRootPath = (str: string): boolean => {
   return Object.values(DASHBOARD_VIEWS).includes(str as DashboardViewRootPath);
@@ -64,7 +64,7 @@ export const PATHWAYS_PAGES = {
   supervisionToPrison: "supervisionToPrison",
 } as const;
 export const PathwaysPageIdList = Object.keys(PATHWAYS_PAGES);
-export type PathwaysPageRootPath = typeof PATHWAYS_PAGES[PathwaysPage];
+export type PathwaysPageRootPath = (typeof PATHWAYS_PAGES)[PathwaysPage];
 
 export type PathwaysSection = keyof typeof PATHWAYS_SECTIONS;
 export const PATHWAYS_SECTIONS: Record<string, string> = {
@@ -239,7 +239,7 @@ export const WorkflowsPageIdList = [
   "milestones",
 ] as const;
 
-export type WorkflowsPage = typeof WorkflowsPageIdList[number];
+export type WorkflowsPage = (typeof WorkflowsPageIdList)[number];
 
 export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   home: "home",
@@ -275,7 +275,7 @@ type WorkflowsRouteParams = {
  */
 export function workflowsUrl(
   routeName: WorkflowsPage,
-  params?: WorkflowsRouteParams
+  params?: WorkflowsRouteParams,
 ): string {
   if (params) {
     const transformedParams = {
@@ -335,11 +335,11 @@ export function outliersUrl(routeName: "supervisionOnboarding"): string;
 export function outliersUrl(routeName: "supervisionSupervisorsList"): string;
 export function outliersUrl(
   routeName: "supervisionSupervisor",
-  params: { supervisorPseudoId: string }
+  params: { supervisorPseudoId: string },
 ): string;
 export function outliersUrl(
   routeName: "supervisionStaff",
-  params: { officerPseudoId: string }
+  params: { officerPseudoId: string },
 ): string;
 export function outliersUrl(
   routeName: "supervisionClientDetail",
@@ -348,16 +348,16 @@ export function outliersUrl(
     metricId: string;
     clientPseudoId: string;
     outcomeDate: string;
-  }
+  },
 ): string;
 export function outliersUrl(
   routeName: "supervisionStaffMetric",
-  params: { officerPseudoId: string; metricId: string }
+  params: { officerPseudoId: string; metricId: string },
 ): string;
 
 export function outliersUrl(
   routeName: OutliersPage,
-  params?: OutliersRouteParams
+  params?: OutliersRouteParams,
 ): string {
   if (params) {
     let path = OUTLIERS_PATHS[routeName];
@@ -389,11 +389,11 @@ export const DEFAULT_IMPACT_SECTION_BY_PAGE: Record<string, string> = {
   [IMPACT_PAGES.compliantReportingWorkflows]:
     IMPACT_SECTIONS.avgPopulationCompliantReporting,
 };
-export type ImpactPageRootPath = typeof IMPACT_PAGES[ImpactPage];
+export type ImpactPageRootPath = (typeof IMPACT_PAGES)[ImpactPage];
 
 export function getRelativePath(absolutePath: string): string {
   const matchingRootPath = Object.values(DASHBOARD_PATHS).find((rootPath) =>
-    absolutePath.startsWith(rootPath)
+    absolutePath.startsWith(rootPath),
   );
 
   if (!matchingRootPath) return absolutePath;

@@ -36,7 +36,7 @@ import dedent from "dedent";
 
 async function migrate(
   db: Firestore,
-  { shouldUpdate }: { shouldUpdate: boolean }
+  { shouldUpdate }: { shouldUpdate: boolean },
 ) {
   const clientOpportunityUpdates = (
     await db.collectionGroup("clientOpportunityUpdates").get()
@@ -63,10 +63,10 @@ async function migrate(
           if (shouldUpdate) {
             console.log(
               `Setting firstViewed value of ${JSON.stringify(
-                firstViewedValue
+                firstViewedValue,
               )} to lastViewed field. Previous lastViewed value: ${JSON.stringify(
-                lastViewedValue
-              )}`
+                lastViewedValue,
+              )}`,
             );
             await snapshot.ref.update(
               {
@@ -75,11 +75,11 @@ async function migrate(
               },
               // This precondition tells the server to fail the update
               // if the document has been updated since we fetched it.
-              { lastUpdateTime: snapshot.updateTime }
+              { lastUpdateTime: snapshot.updateTime },
             );
           } else {
             console.log(
-              `Would be adding lastViewed property to ${snapshot.ref.path}`
+              `Would be adding lastViewed property to ${snapshot.ref.path}`,
             );
           }
           updatedCount += 1;
@@ -90,10 +90,10 @@ async function migrate(
           if (shouldUpdate) {
             console.log(
               `Deleting old firstViewed value of ${JSON.stringify(
-                firstViewedValue
+                firstViewedValue,
               )} to lastViewed field. lastViewed value is: ${JSON.stringify(
-                lastViewedValue
-              )}`
+                lastViewedValue,
+              )}`,
             );
             await snapshot.ref.update(
               snapshot.ref,
@@ -102,11 +102,11 @@ async function migrate(
               },
               // This precondition tells the server to fail the update
               // if the document has been updated since we fetched it.
-              { lastUpdateTime: snapshot.updateTime }
+              { lastUpdateTime: snapshot.updateTime },
             );
           } else {
             console.log(
-              `Would be deleting firstViewed property for path ${snapshot.ref.path}`
+              `Would be deleting firstViewed property for path ${snapshot.ref.path}`,
             );
           }
           updatedCount += 1;
@@ -115,12 +115,12 @@ async function migrate(
         console.log(`Couldn't migrate ${snapshot.ref.path}:`, e);
         failureCount += 1;
       }
-    })
+    }),
   );
   console.log(
     dedent`Done!
     ${updatedCount} updates.
-    ${failureCount} failures.`
+    ${failureCount} failures.`,
   );
 }
 
@@ -144,7 +144,7 @@ const fsdb = new Firestore(fsSettings);
 
 if (!FIREBASE_CREDENTIAL) {
   console.log(
-    "Running against firebase emulator. Set the FIREBASE_PROJECT and FIREBASE_CREDENTIAL environment variables to run against a real firestore."
+    "Running against firebase emulator. Set the FIREBASE_PROJECT and FIREBASE_CREDENTIAL environment variables to run against a real firestore.",
   );
 }
 

@@ -1,7 +1,8 @@
 @font-face {
   font-family: "themify";
   src: url("../../static/fonts/icons/themify/themify.eot?-fvbane");
-  src: url("../../static/fonts/icons/themify/themify.eot?#iefix-fvbane")
+  src:
+    url("../../static/fonts/icons/themify/themify.eot?#iefix-fvbane")
       format("embedded-opentype"),
     url("../../static/fonts/icons/themify/themify.woff?-fvbane") format("woff"),
     url("../../static/fonts/icons/themify/themify.ttf?-fvbane")

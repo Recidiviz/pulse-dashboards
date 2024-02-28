@@ -52,7 +52,7 @@ const createPopulationMap = (field) => (acc, data) => {
           toInteger(data[NUMERATOR_KEYS[2]]),
         getOr(0, [data[field], "SUPERVISION_POPULATION", 1], acc) +
           toInteger(data[DENOMINATOR_KEYS[2]]),
-      ]
+      ],
     ),
     set(
       [data[field], "REVOKED"],
@@ -61,7 +61,7 @@ const createPopulationMap = (field) => (acc, data) => {
           toInteger(data[NUMERATOR_KEYS[0]]),
         getOr(0, [data[field], "REVOKED", 1], acc) +
           toInteger(data[DENOMINATOR_KEYS[0]]),
-      ]
+      ],
     ),
     set(
       [data[field], "RECOMMENDED_FOR_REVOCATION"],
@@ -70,8 +70,8 @@ const createPopulationMap = (field) => (acc, data) => {
           toInteger(data[NUMERATOR_KEYS[1]]),
         getOr(0, [data[field], "RECOMMENDED_FOR_REVOCATION", 1], acc) +
           toInteger(data[DENOMINATOR_KEYS[1]]),
-      ]
-    )
+      ],
+    ),
   )(acc);
 };
 

@@ -165,7 +165,7 @@ const TaskListItem: React.FC<TaskListItemProps> = observer(
         </TaskClient>
       </TaskListTooltip>
     );
-  }
+  },
 );
 
 const NeedListItem: React.FC<TaskListItemProps> = observer(
@@ -191,7 +191,7 @@ const NeedListItem: React.FC<TaskListItemProps> = observer(
         </TaskClient>
       </TaskListTooltip>
     );
-  }
+  },
 );
 
 type TaskCalendarHeadingProps = {
@@ -239,7 +239,7 @@ const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
           <div key="overdue-divider">
             <Divider />
             <Sans14>Overdue</Sans14>
-          </div>
+          </div>,
         );
       } else if (
         !previous ||
@@ -250,7 +250,7 @@ const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
           <TaskCalendarHeading
             dueDate={task.dueDate}
             key={task.dueDate.toDateString()}
-          />
+          />,
         );
       }
 
@@ -259,14 +259,14 @@ const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
           person={task.person}
           key={task.person.recordId}
           task={task}
-        />
+        />,
       );
 
       previous = task;
     }
 
     return <>{calendar}</>;
-  }
+  },
 );
 
 const AllTasksView = observer(function AllTasksViewComponent() {
@@ -319,7 +319,7 @@ const AllNeedsView: React.FC<NeedsViewProps> = observer(
         ))}
       </>
     );
-  }
+  },
 );
 
 const LIST_VIEWS_BY_CATEGORY = {
@@ -357,7 +357,7 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
         selectedSearchIds.length,
       ]} ${pluralizeWord(
         workflowsSearchFieldTitle,
-        selectedSearchIds.length
+        selectedSearchIds.length,
       )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
     />
   );

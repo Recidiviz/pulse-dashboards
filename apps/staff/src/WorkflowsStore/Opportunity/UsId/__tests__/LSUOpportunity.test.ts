@@ -192,7 +192,7 @@ describe("fully eligible", () => {
       expect(actual).toEqual(expected);
 
       opp.record.formInformation = originalFormInformation;
-    }
+    },
   );
 });
 
@@ -261,7 +261,7 @@ describe("almost eligible income verified within 3 months", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs employment verification"
+      "Needs employment verification",
     );
   });
 });
@@ -304,7 +304,7 @@ describe("almost eligible on supervision at least a year", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs 5 more months on supervision"
+      "Needs 5 more months on supervision",
     );
   });
 });
@@ -347,7 +347,7 @@ describe("almost eligible days remaining on supervision", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs 7 more days on supervision"
+      "Needs 7 more days on supervision",
     );
   });
 });

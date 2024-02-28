@@ -27,35 +27,35 @@ describe("isIE11", () => {
 
   it("returns true if the user agent is IE11", () => {
     userAgentGetter.mockReturnValue(
-      "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; Touch; rv:11.0) like Gecko"
+      "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; Touch; rv:11.0) like Gecko",
     );
     expect(isIE11()).toBe(true);
   });
 
   it("returns false if the user agent is Edge", () => {
     userAgentGetter.mockReturnValue(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/99.0.1150.36"
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/99.0.1150.36",
     );
     expect(isIE11()).toBe(false);
   });
 
   it("returns false if the user agent is Chrome", () => {
     userAgentGetter.mockReturnValue(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36"
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36",
     );
     expect(isIE11()).toBe(false);
   });
 
   it("returns false if the user agent is Firefox", () => {
     userAgentGetter.mockReturnValue(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0"
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0",
     );
     expect(isIE11()).toBe(false);
   });
 
   it("returns false if the user agent is Opera", () => {
     userAgentGetter.mockReturnValue(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 OPR/85.0.4341.18"
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 OPR/85.0.4341.18",
     );
     expect(isIE11()).toBe(false);
   });

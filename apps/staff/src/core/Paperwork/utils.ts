@@ -35,7 +35,7 @@ export const useAnimatedValue = (
   input: MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>,
   value?: string,
   duration = DEFAULT_ANIMATION_DURATION,
-  delay = 250
+  delay = 250,
 ): boolean => {
   const [mountedAt, setMountedAt] = useState<number>(+new Date() + delay);
   const [animated, setAnimated] = useState<boolean>(false);
@@ -78,7 +78,7 @@ export const useAnimatedValue = (
           setMountedAt(0);
           setAnimated(true);
         }
-      }
+      },
     );
   }, [workflowsStore]);
 
@@ -99,7 +99,7 @@ export interface UseResizeForm {
 
 export const useResizeForm = (
   formRef: React.MutableRefObject<HTMLDivElement>,
-  pageSelector = `${PrintablePageMargin}`
+  pageSelector = `${PrintablePageMargin}`,
 ): UseResizeForm => {
   const [layout, setLayout] = useState<ResizeFormLayout>({
     margin: 0,
@@ -113,7 +113,7 @@ export const useResizeForm = (
       const container = formRef.current;
       if (!container) return;
       const pages = container.querySelectorAll(
-        pageSelector
+        pageSelector,
       ) as NodeListOf<HTMLDivElement>;
 
       if (pages.length === 0) {
@@ -158,12 +158,12 @@ export const useResizeForm = (
     const eventList = ["resize", "scroll"];
 
     eventList.forEach((eventName) =>
-      window.addEventListener(eventName, resize)
+      window.addEventListener(eventName, resize),
     );
 
     return () => {
       eventList.forEach((eventName) =>
-        window.removeEventListener(eventName, resize)
+        window.removeEventListener(eventName, resize),
       );
     };
   }, [formRef, pageSelector]);
@@ -176,11 +176,11 @@ type ReactiveInputReturnValue<
   E extends
     | HTMLInputElement
     | HTMLTextAreaElement
-    | HTMLSelectElement = HTMLInputElement
+    | HTMLSelectElement = HTMLInputElement,
 > = [ReactiveInputValue, (event: React.ChangeEvent<E>) => void];
 
 function useReactiveInput<
-  E extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  E extends HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
 >(name: string, form: FormBase<any>): ReactiveInputReturnValue<E> {
   /*
     Hook which integrates a controlled input component and Firestore and MobX.
@@ -195,7 +195,7 @@ function useReactiveInput<
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
       firestoreStore.updateFormDraftData(form, name, valueToStore);
-    }, REACTIVE_INPUT_UPDATE_DELAY)
+    }, REACTIVE_INPUT_UPDATE_DELAY),
   );
 
   const onChange = (event: React.ChangeEvent<E>) => {
@@ -212,7 +212,7 @@ function useReactiveInput<
       (newValue) => {
         setValue(newValue);
       },
-      { name: `useReactiveInput(${name})` }
+      { name: `useReactiveInput(${name})` },
     );
   });
 
@@ -223,7 +223,7 @@ export { useReactiveInput };
 
 export const downloadZipFile = (
   zipFilename: string,
-  files: { filename: string; fileContents: any }[]
+  files: { filename: string; fileContents: any }[],
 ) => {
   try {
     const zip = new PizZip();

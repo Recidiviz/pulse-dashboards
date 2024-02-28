@@ -34,7 +34,7 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
   constructor(
     props: BaseMetricConstructorOptions<PopulationProjectionTimeSeriesRecord> & {
       compartment: SimulationCompartment;
-    }
+    },
   ) {
     super(props);
     this.compartment = props.compartment;
@@ -63,14 +63,14 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
           status.includes(record.legalStatus) &&
           filterRecordByDimensions(record, this.dimensions, filters)
         );
-      }
+      },
     );
   }
 
   get note(): string {
     return `${this.content.note} ${formatDate(
       this.simulationDate,
-      "MMMM yyyy"
+      "MMMM yyyy",
     )}.`;
   }
 
@@ -82,7 +82,7 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
     }
 
     return getRecordDate(
-      allRecords.filter((d) => d.simulationTag === "HISTORICAL").slice(-1)[0]
+      allRecords.filter((d) => d.simulationTag === "HISTORICAL").slice(-1)[0],
     );
   }
 

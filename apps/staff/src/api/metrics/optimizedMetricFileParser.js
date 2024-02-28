@@ -49,7 +49,7 @@ const expandMetricRepresentation = (contents, metadata) => {
 
   const unflattenedValues = convertFromStringToUnflattenedMatrix(
     contents,
-    totalDataPoints
+    totalDataPoints,
   );
 
   const dataPoints = [];
@@ -64,7 +64,7 @@ const expandMetricRepresentation = (contents, metadata) => {
       const dimensionValue = getDimensionValue(
         dimensions,
         j,
-        dimensionValueIndex
+        dimensionValueIndex,
       );
       dataPoint[dimensionKey] = dimensionValue;
     }

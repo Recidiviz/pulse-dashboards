@@ -28,7 +28,7 @@ import type { FormViewerContextData } from "../../FormViewer";
 import FormInput from "./FormInput";
 
 const EDIT_BACKGROUND = iconToDataURI(
-  <Icon kind={IconSVG.Edit} color={palette.slate60} />
+  <Icon kind={IconSVG.Edit} color={palette.slate60} />,
 );
 
 const Input = styled.input`
@@ -86,7 +86,7 @@ const Grid = styled.div<GridProps>(
     label& {
       margin-bottom: 0;
     }
-  `
+  `,
 );
 
 const Emphasize = styled.span`

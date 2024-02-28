@@ -73,7 +73,7 @@ export const FormColGroup = ({
 };
 
 export const FormEDInputCell = (
-  props: FormEDInputProps
+  props: FormEDInputProps,
 ): React.ReactElement => (
   <td>
     <FormEDInput {...props} />

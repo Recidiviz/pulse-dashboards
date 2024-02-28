@@ -31,19 +31,19 @@ const createGenerateChartData = (filteredData, violationTypes) => () => {
   const allViolationTypeKeys = map("key", violationTypes);
   const violationToCount = pipe(
     map(pick(concat(allViolationTypeKeys, violationCountKey))),
-    mergeAllWith((a, b) => toInteger(a) + toInteger(b))
+    mergeAllWith((a, b) => toInteger(a) + toInteger(b)),
   )(filteredData);
 
   const totalViolationCount = toInteger(violationToCount[violationCountKey]);
   const numerators = map(
     (type) => parseInt(violationToCount[type]),
-    allViolationTypeKeys
+    allViolationTypeKeys,
   );
   const denominators = map(() => totalViolationCount, allViolationTypeKeys);
   const chartDataPoints = map(
     (type) =>
       calculateRate(violationToCount[type], totalViolationCount).toFixed(2),
-    allViolationTypeKeys
+    allViolationTypeKeys,
   );
 
   // This sets bar color to lantern-medium-blue when it's a technical violation, orange when it's law

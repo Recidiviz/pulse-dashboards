@@ -41,12 +41,12 @@ export const usMoRestrictiveHousingStatusHearingSchema = opportunitySchemaBase
         .object({
           nextReviewDate: dateStringSchema.nullish().transform((nullableDate) =>
             // Transform nulls into undefineds just to make typing a bit more convenient elsewhere
-            nullableDate === null ? undefined : nullableDate
+            nullableDate === null ? undefined : nullableDate,
           ),
         })
         .nullish()
         .transform((nullableObject) =>
-          nullableObject === null ? {} : nullableObject
+          nullableObject === null ? {} : nullableObject,
         ),
     }),
   })
@@ -91,11 +91,11 @@ export const validateReferral: ValidateFunction<
       record.eligibleCriteria.usMoOverdueForHearing?.nextReviewDate,
       // startOfToday is important here because eligibility dates don't have times, so they're
       // parsed as midnight. If we used new Date(), we would exclude today.
-      startOfToday()
+      startOfToday(),
     )
   ) {
     throw new OpportunityValidationError(
-      "Overdue review date is not in the past"
+      "Overdue review date is not in the past",
     );
   }
 };

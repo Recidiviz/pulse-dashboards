@@ -33,13 +33,13 @@ let presenter: SwarmPresenter;
 beforeEach(async () => {
   const store = new OutliersSupervisionStore(
     new RootStore().outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   await flowResult(store.populateMetricConfigs());
 
   const processedOfficerData = getOutlierOfficerData(
     supervisionOfficerFixture[2],
-    store
+    store,
   );
 
   presenter = new SwarmPresenter(processedOfficerData.outlierMetrics[0]);

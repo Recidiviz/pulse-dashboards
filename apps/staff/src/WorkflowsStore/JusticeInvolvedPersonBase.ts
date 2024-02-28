@@ -56,7 +56,7 @@ import {
 } from "./types";
 
 export class JusticeInvolvedPersonBase<
-  RecordType extends PersonRecordType = JusticeInvolvedPersonRecord
+  RecordType extends PersonRecordType = JusticeInvolvedPersonRecord,
 > implements JusticeInvolvedPerson
 {
   rootStore: RootStore;
@@ -77,7 +77,7 @@ export class JusticeInvolvedPersonBase<
       OpportunityTypeForRecord<RecordType>,
       PersonClassForRecord<RecordType>
     >,
-    taskFactory?: TaskFactory<PersonClassForRecord<RecordType>>
+    taskFactory?: TaskFactory<PersonClassForRecord<RecordType>>,
   ) {
     this.rootStore = rootStore;
 
@@ -100,13 +100,13 @@ export class JusticeInvolvedPersonBase<
       new CollectionDocumentSubscription<PersonUpdateRecord>(
         this.rootStore.firestoreStore,
         "clientUpdatesV2",
-        record.recordId
+        record.recordId,
       );
 
     this.milestonesMessageUpdatesSubscription =
       new MilestonesMessageUpdateSubscription(
         this.rootStore.firestoreStore,
-        record.recordId
+        record.recordId,
       );
 
     this.supervisionTasks = taskFactory
@@ -117,7 +117,7 @@ export class JusticeInvolvedPersonBase<
     autorun(() => {
       const incomingOpps = intersection(
         this.record.allEligibleOpportunities,
-        rootStore.workflowsStore.opportunityTypes
+        rootStore.workflowsStore.opportunityTypes,
       ) as OpportunityTypeForRecord<RecordType>[];
       incomingOpps.forEach((opportunityType) => {
         runInAction(() => {
@@ -127,15 +127,15 @@ export class JusticeInvolvedPersonBase<
               opportunityType,
               opportunityFactory(
                 opportunityType,
-                this as unknown as PersonClassForRecord<RecordType>
-              )
+                this as unknown as PersonClassForRecord<RecordType>,
+              ),
             );
           }
         });
       });
 
       const existingOpps = keys(
-        this.potentialOpportunities
+        this.potentialOpportunities,
       ) as OpportunityType[];
       const oppsToDelete = xor(incomingOpps, existingOpps);
       oppsToDelete.forEach((opportunityType) => {
@@ -174,7 +174,7 @@ export class JusticeInvolvedPersonBase<
 
   get assignedStaff(): StaffRecord | undefined {
     return this.rootStore.workflowsStore?.availableOfficers.find(
-      (o) => o.id === this.assignedStaffId
+      (o) => o.id === this.assignedStaffId,
     );
   }
 
@@ -195,7 +195,7 @@ export class JusticeInvolvedPersonBase<
     return humanReadableTitleCase(
       [this.fullName.givenNames, this.fullName.surname]
         .filter((n) => Boolean(n))
-        .join(" ")
+        .join(" "),
     );
   }
 
@@ -228,7 +228,7 @@ export class JusticeInvolvedPersonBase<
 
   updatePerson(
     type: PersonUpdateType,
-    update: string | ContactMethodType
+    update: string | ContactMethodType,
   ): Promise<void> {
     return this.rootStore.firestoreStore.updatePerson(this.recordId, {
       [type]: update,
@@ -258,14 +258,14 @@ export class JusticeInvolvedPersonBase<
           [opportunityType as OpportunityType]: opportunity,
         };
       },
-      {} as OpportunityMapping
+      {} as OpportunityMapping,
     );
   }
 
   get allOpportunitiesLoaded(): boolean {
     return (
       values(this.potentialOpportunities).filter(
-        (opp) => opp !== undefined && !isHydrationFinished(opp)
+        (opp) => opp !== undefined && !isHydrationFinished(opp),
       ).length === 0
     );
   }
@@ -285,7 +285,7 @@ export class JusticeInvolvedPersonBase<
         }
         return opportunities;
       },
-      {} as OpportunityMapping
+      {} as OpportunityMapping,
     );
   }
 
@@ -297,7 +297,7 @@ export class JusticeInvolvedPersonBase<
         }
         return opportunities;
       },
-      {} as OpportunityMapping
+      {} as OpportunityMapping,
     );
   }
 
@@ -309,7 +309,7 @@ export class JusticeInvolvedPersonBase<
         }
         return opportunities;
       },
-      {} as OpportunityMapping
+      {} as OpportunityMapping,
     );
   }
 

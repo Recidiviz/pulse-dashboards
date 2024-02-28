@@ -29,7 +29,7 @@ import type {
 
 function formatSentenceLength(
   startDate?: Date,
-  sentenceLengthDays?: number
+  sentenceLengthDays?: number,
 ): string {
   if (!sentenceLengthDays || !startDate) return "";
 
@@ -42,7 +42,7 @@ function formatSentenceLength(
 
 export const transform = (
   client: Client,
-  record: CompliantReportingReferralRecordFull
+  record: CompliantReportingReferralRecordFull,
 ): CompliantReportingTransformedETLFormInput => {
   const { formInformation } = record;
 
@@ -50,7 +50,7 @@ export const transform = (
     docketNumbers: formInformation.docketNumbers?.join(", ") ?? "",
     sentenceStartDate: formatDate(
       formInformation.sentenceStartDate,
-      "yyyy-MM-dd"
+      "yyyy-MM-dd",
     ),
     expirationDate: formatDate(formInformation.expirationDate, "yyyy-MM-dd"),
     clientFullName: client.displayName,
@@ -70,7 +70,7 @@ export const transform = (
     poFullName: client.assignedStaffFullName,
     sentenceLengthDaysText: formatSentenceLength(
       formInformation.sentenceStartDate,
-      formInformation.sentenceLengthDays
+      formInformation.sentenceLengthDays,
     ),
     supervisionFeeArrearagedAmount:
       formInformation.supervisionFeeArrearagedAmount
@@ -96,8 +96,8 @@ export const transform = (
     ).join(", "),
     supervisionFeeExemptionExpirDate: _.uniq(
       formInformation.currentExemptionsAndExpiration?.map(
-        (exemptionInfo) => exemptionInfo.endDate
-      )
+        (exemptionInfo) => exemptionInfo.endDate,
+      ),
     )
       .filter((d): d is Date => !!d)
       .map((d) => formatDate(d, "yyyy-MM-dd"))
@@ -117,7 +117,7 @@ export const transform = (
     specialConditionsAlcDrugScreenDate: formatDate(
       record.eligibleCriteria.usTnPassedDrugScreenCheck.latestDrugTestIsNegative
         .latestDrugScreenDate,
-      "yyyy-MM-dd"
+      "yyyy-MM-dd",
     ),
     convictionCounty: record.metadata.convictionCounties.join(", "),
     courtName: "Circuit Court",

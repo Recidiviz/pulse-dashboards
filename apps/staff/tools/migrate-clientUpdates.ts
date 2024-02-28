@@ -48,7 +48,7 @@ type MigrateOptions = {
 // If either is false, it will instead log the operations it would have done.
 async function migrate(
   db: Firestore,
-  { shouldUpdate, shouldDelete }: MigrateOptions
+  { shouldUpdate, shouldDelete }: MigrateOptions,
 ) {
   const legacyDocs = (await db.collection("clientUpdates").get()).docs;
   console.log(`Fetched ${legacyDocs.length} documents.`);
@@ -68,7 +68,7 @@ async function migrate(
               throw new Error(`Found non-opportunity key ${oppKey}`);
             }
             const updateRef = db.doc(
-              `clientUpdatesV2/us_tn_${legacySnapshot.id}/clientOpportunityUpdates/${oppKey}`
+              `clientUpdatesV2/us_tn_${legacySnapshot.id}/clientOpportunityUpdates/${oppKey}`,
             );
             const updateSnapshot = await updateRef.get();
             if (!updateSnapshot.exists) {
@@ -82,7 +82,7 @@ async function migrate(
               }
               updateCount += 1;
             }
-          })
+          }),
         );
         if (shouldDelete) {
           await legacySnapshot.ref.delete();
@@ -95,13 +95,13 @@ async function migrate(
         console.log(`Couldn't migrate ${legacySnapshot.ref.path}:`, e);
         failureCount += 1;
       }
-    })
+    }),
   );
   console.log(
     dedent`Done!
     ${shouldUpdate ? "Updated" : "Would update"} ${updateCount}.
     ${shouldDelete ? "Deleted" : "Would delete"} ${deleteCount}.
-    ${failureCount} failures.`
+    ${failureCount} failures.`,
   );
 }
 
@@ -125,7 +125,7 @@ const fsdb = new Firestore(fsSettings);
 
 if (!FIREBASE_CREDENTIAL) {
   console.log(
-    "Running against firebase emulator. Set the FIREBASE_PROJECT and FIREBASE_CREDENTIAL environment variables to run against a real firestore."
+    "Running against firebase emulator. Set the FIREBASE_PROJECT and FIREBASE_CREDENTIAL environment variables to run against a real firestore.",
   );
 }
 

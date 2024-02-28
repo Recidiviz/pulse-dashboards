@@ -195,7 +195,7 @@ ExportMenu.propTypes = {
         PropTypes.arrayOf(PropTypes.string),
         PropTypes.arrayOf(PropTypes.number),
       ]).isRequired,
-    })
+    }),
   ),
   labels: PropTypes.arrayOf(PropTypes.string),
   fixLabelsInColumns: PropTypes.bool,

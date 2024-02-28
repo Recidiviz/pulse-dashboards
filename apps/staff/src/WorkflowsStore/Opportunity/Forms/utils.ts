@@ -21,7 +21,7 @@ import { formatWorkflowsDate } from "../../../utils";
 
 type KeysWithPossibleValueType<
   RecordType extends Record<string, unknown>,
-  ValueType
+  ValueType,
 > = keyof {
   [P in keyof RecordType as RecordType[P] extends ValueType | undefined
     ? P
@@ -30,10 +30,10 @@ type KeysWithPossibleValueType<
 
 export const transformPossibleDateFields = <
   FormData extends Record<string, unknown>,
-  DateKeys extends KeysWithPossibleValueType<FormData, Date>
+  DateKeys extends KeysWithPossibleValueType<FormData, Date>,
 >(
   formInformation: FormData,
-  fields: DateKeys[]
+  fields: DateKeys[],
 ): Partial<Record<DateKeys, string>> => {
   return Object.keys(formInformation).reduce((acc, cur) => {
     // @ts-expect-error We expect to filter out keys not in DateKeys
@@ -50,10 +50,10 @@ export const transformPossibleDateFields = <
 
 export const transformPossibleNumberFields = <
   FormData extends Record<string, unknown>,
-  NumberKeys extends KeysWithPossibleValueType<FormData, number>
+  NumberKeys extends KeysWithPossibleValueType<FormData, number>,
 >(
   formInformation: FormData,
-  fields: NumberKeys[]
+  fields: NumberKeys[],
 ): Partial<Record<NumberKeys, string>> => {
   return Object.keys(formInformation).reduce((acc, cur) => {
     // @ts-expect-error We expect to filter out keys not in NumberKeys

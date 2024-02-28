@@ -45,7 +45,7 @@ function fetchMetricsFromLocal(stateCode, metricType, metricName) {
       if (extension === ".txt") {
         const metadataFilePath = path.resolve(
           __dirname,
-          `./demo_data/${fileKey}.metadata.json`
+          `./demo_data/${fileKey}.metadata.json`,
         );
 
         metadata = JSON.parse(fs.readFileSync(metadataFilePath));
@@ -57,7 +57,7 @@ function fetchMetricsFromLocal(stateCode, metricType, metricName) {
           extension,
           metadata,
           contents,
-        }))
+        })),
       );
     });
   } catch (e) {

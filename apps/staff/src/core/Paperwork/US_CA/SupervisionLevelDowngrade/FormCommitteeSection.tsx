@@ -93,7 +93,7 @@ const FormCommitteeSection = observer(function FormCommitteeSection() {
       firestoreStore.updateFormDraftData(
         opportunityForm,
         field,
-        event.target.value
+        event.target.value,
       );
     };
 

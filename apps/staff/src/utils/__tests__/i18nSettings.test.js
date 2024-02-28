@@ -48,7 +48,7 @@ describe("i18nSettings", () => {
 
       it("translates a known term", () => {
         expect(translate("violationReports")).toEqual(
-          "violation reports and notices of citation"
+          "violation reports and notices of citation",
         );
       });
 

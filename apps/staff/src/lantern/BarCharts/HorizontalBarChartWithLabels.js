@@ -111,7 +111,7 @@ function HorizontalBarChartWithLabels({
                 numerators,
                 denominators,
                 includeWarning,
-                includePercentageInTooltip
+                includePercentageInTooltip,
               );
             },
             footer: (tooltipItem) =>
@@ -137,15 +137,21 @@ HorizontalBarChartWithLabels.propTypes = {
           PropTypes.string,
         ]),
         data: PropTypes.arrayOf(PropTypes.string),
-      })
+      }),
     ),
   }).isRequired,
 
   numerators: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number])
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.number),
+      PropTypes.number,
+    ]),
   ).isRequired,
   denominators: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number])
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.number),
+      PropTypes.number,
+    ]),
   ).isRequired,
   includeWarning: PropTypes.bool,
   stacked: PropTypes.bool,

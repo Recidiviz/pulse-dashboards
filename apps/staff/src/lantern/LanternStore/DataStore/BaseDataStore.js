@@ -107,7 +107,7 @@ export default class BaseDataStore {
     this.skippedFilters = skippedFilters;
     this.treatCategoryAllAsAbsent = treatCategoryAllAsAbsent;
     this.ignoredSubsetDimensions = DEFAULT_IGNORED_DIMENSIONS.concat(
-      ignoredSubsetDimensions
+      ignoredSubsetDimensions,
     );
     this.rootStore = rootStore;
 
@@ -119,7 +119,7 @@ export default class BaseDataStore {
             tenantId: this.rootStore.currentTenantId,
           });
         }
-      }
+      },
     );
 
     autorun(() => {
@@ -200,12 +200,12 @@ export default class BaseDataStore {
       this.isLoading = true;
       const responseData = yield callMetricsApi(
         endpoint,
-        this.getTokenSilently
+        this.getTokenSilently,
       );
       this.apiData = parseResponseByFileFormat(
         responseData,
         filename,
-        this.eagerExpand
+        this.eagerExpand,
       );
       this.isLoading = false;
       this.isError = false;
@@ -232,14 +232,14 @@ export default class BaseDataStore {
       this.isStatePopulationLoading = true;
       const responseData = yield callMetricsApi(
         endpoint,
-        this.getTokenSilently
+        this.getTokenSilently,
       );
       // The state population files will never be optimized format
       // so always use eagerExpand = true when processing response data
       const { data } = parseResponseByFileFormat(
         responseData,
         this.statePopulationFile,
-        true
+        true,
       );
       this.statePopulationData = data;
       this.isStatePopulationLoading = false;

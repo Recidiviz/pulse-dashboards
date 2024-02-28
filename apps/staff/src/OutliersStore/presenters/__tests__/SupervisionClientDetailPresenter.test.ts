@@ -50,7 +50,7 @@ beforeEach(() => {
 
   store = new OutliersSupervisionStore(
     new RootStore().outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
   store.setMetricId(testMetric.metricId);
@@ -62,7 +62,7 @@ beforeEach(() => {
     testOfficer.pseudonymizedId,
     clientPseudoId,
     testMetric.metricId,
-    new Date(endDate)
+    new Date(endDate),
   );
 });
 
@@ -78,7 +78,7 @@ describe("with client data already hydrated", () => {
   beforeEach(async () => {
     await Promise.all([
       flowResult(
-        store.populateClientEventsForClient(clientPseudoId, parseISO(endDate))
+        store.populateClientEventsForClient(clientPseudoId, parseISO(endDate)),
       ),
       flowResult(store.populateClientInfoForClient(clientPseudoId)),
     ]);
@@ -143,7 +143,7 @@ test("has supervisionDetails if metric event date matches outcomeDate", async ()
         e.pseudonymizedClientId === clientPseudoId &&
         e.metricId === testMetric.metricId
       );
-    }
+    },
   )?.eventDate;
   store.setOutcomeDate(officerMetricEventDate?.toISOString());
 
@@ -153,7 +153,7 @@ test("has supervisionDetails if metric event date matches outcomeDate", async ()
       testOfficer.pseudonymizedId,
       clientPseudoId,
       testMetric.metricId,
-      store.outcomeDate
+      store.outcomeDate,
     );
   await presenter.hydrate();
 
@@ -188,7 +188,7 @@ test("tracks events", async () => {
   presenter.trackViewed();
 
   expect(
-    store.outliersStore.rootStore.analyticsStore.trackOutliersClientPageViewed
+    store.outliersStore.rootStore.analyticsStore.trackOutliersClientPageViewed,
   ).toHaveBeenCalledWith({
     clientPseudonymizedId: presenter.clientPseudoId,
     outcomeDate: new Date(endDate),

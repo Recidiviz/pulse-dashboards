@@ -48,7 +48,7 @@ export const useOrderedActiveTab: () => OrderedActiveTab =
 
         const tabsForDisplay: OpportunityTab[] = intersection(
           tabOrder,
-          Object.keys(opportunityTabs ?? {})
+          Object.keys(opportunityTabs ?? {}),
         ) as OpportunityTab[];
 
         setDisplayTabs(tabsForDisplay);

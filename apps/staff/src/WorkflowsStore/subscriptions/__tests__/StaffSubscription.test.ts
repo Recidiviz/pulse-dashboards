@@ -73,7 +73,7 @@ describe("StaffSubscription tests", () => {
     // generally we don't care about that in these tests
     expect(collectionMock).toHaveBeenCalledWith(
       rootStoreMock.firestoreStore.db,
-      "staff"
+      "staff",
     );
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
     expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
@@ -98,7 +98,7 @@ describe("StaffSubscription tests", () => {
     runInAction(() => {
       // @ts-ignore
       rootStoreMock.tenantStore.workflowsStaffFilterFn = (
-        user: CombinedUserRecord
+        user: CombinedUserRecord,
       ) => undefined;
     });
 
@@ -107,7 +107,7 @@ describe("StaffSubscription tests", () => {
     expect(whereMock).not.toHaveBeenCalledWith(
       "district",
       "==",
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -119,7 +119,7 @@ describe("StaffSubscription tests", () => {
       rootStoreMock.currentTenantId = "US_TN";
       // @ts-ignore
       rootStoreMock.tenantStore.workflowsStaffFilterFn = (
-        user: CombinedUserRecord
+        user: CombinedUserRecord,
       ) => ({
         filterField: "district",
         filterValues: ["TEST2", "TEST3"],
@@ -145,7 +145,7 @@ describe("StaffSubscription tests", () => {
     expect(whereMock).not.toHaveBeenCalledWith(
       "hasCaseload",
       "==",
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -163,12 +163,12 @@ describe("StaffSubscription tests", () => {
     expect(whereMock).not.toHaveBeenCalledWith(
       "hasFacilityCaseload",
       "==",
-      expect.anything()
+      expect.anything(),
     );
     expect(whereMock).not.toHaveBeenCalledWith(
       "hasCaseload",
       "==",
-      expect.anything()
+      expect.anything(),
     );
   });
 });

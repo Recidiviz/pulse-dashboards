@@ -29,7 +29,7 @@ import { getOutlierOfficerData } from "./utils";
 export class SupervisionOfficersPresenter implements Hydratable {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
-    public supervisorPseudoId: string
+    public supervisorPseudoId: string,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -39,11 +39,11 @@ export class SupervisionOfficersPresenter implements Hydratable {
           flowResult(this.supervisionStore.populateMetricConfigs()),
           flowResult(
             this.supervisionStore.populateOfficersForSupervisor(
-              this.supervisorPseudoId
-            )
+              this.supervisorPseudoId,
+            ),
           ),
           flowResult(
-            this.supervisionStore.populateSupervisionOfficerSupervisors()
+            this.supervisionStore.populateSupervisionOfficerSupervisors(),
           ),
         ]);
       },
@@ -70,7 +70,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   private expectOfficersPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(
-        this.supervisorPseudoId
+        this.supervisorPseudoId,
       )
     )
       throw new Error("failed to populate officers");
@@ -104,7 +104,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
     try {
       const officersData =
         this.supervisionStore.officersBySupervisorPseudoId.get(
-          this.supervisorPseudoId
+          this.supervisorPseudoId,
         );
 
       // not expected in practice due to checks above, but needed for type safety
@@ -137,7 +137,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
    */
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
     return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
-      this.supervisorPseudoId
+      this.supervisorPseudoId,
     );
   }
 
@@ -153,7 +153,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
    */
   get allOfficers(): SupervisionOfficer[] | undefined {
     return this.supervisionStore?.officersBySupervisorPseudoId.get(
-      this.supervisorPseudoId
+      this.supervisorPseudoId,
     );
   }
 
@@ -180,7 +180,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
       {
         supervisorPseudonymizedId: this.supervisorPseudoId,
         viewedBy: userPseudoId,
-      }
+      },
     );
   }
 }

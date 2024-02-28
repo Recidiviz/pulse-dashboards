@@ -88,7 +88,7 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
       client,
       OPPORTUNITY_TYPE,
       client.rootStore,
-      usOrEarnedDischargeSchema.parse
+      usOrEarnedDischargeSchema.parse,
     );
 
     this.client = client;
@@ -109,7 +109,7 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
           text: `${subOpp.metadata.courtCaseNumber}: ${subOpp.metadata.sentenceStatute}`,
         },
         ...hydrateCriteria(subOpp, "eligibleCriteria", CRITERIA_COPY).map(
-          (oppReq) => ({ ...oppReq, key: `${subOpp.id}-${oppReq.text}` })
+          (oppReq) => ({ ...oppReq, key: `${subOpp.id}-${oppReq.text}` }),
         ),
       ];
     });

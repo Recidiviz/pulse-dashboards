@@ -20,7 +20,7 @@ import styles from "../CoreConstants.module.scss";
 import { FilterOption } from "../types/filters";
 
 export const coreSelectCustomStyles = (
-  isChanged: boolean
+  isChanged: boolean,
 ): Partial<StylesConfig<FilterOption, false>> => {
   return {
     singleValue: (provided: any) => ({

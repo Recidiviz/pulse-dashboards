@@ -86,7 +86,7 @@ function hydrateThreeYearsRemainingRequirement(
   criterion: NonNullable<
     UsMeWorkReleaseCriteria["usMeThreeYearsRemainingOnSentence"]
   >,
-  copy: OpportunityRequirement
+  copy: OpportunityRequirement,
 ) {
   const monthsRemaining =
     differenceInMonths(criterion.eligibleDate, new Date()) + 36;
@@ -98,7 +98,7 @@ function hydrateThreeYearsRemainingRequirement(
 }
 
 const requirementsForEligibleCriteria = (
-  criteria: Partial<UsMeWorkReleaseCriteria>
+  criteria: Partial<UsMeWorkReleaseCriteria>,
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 
@@ -118,8 +118,8 @@ const requirementsForEligibleCriteria = (
     requirements.push(
       hydrateThreeYearsRemainingRequirement(
         criteria.usMeThreeYearsRemainingOnSentence,
-        usMeThreeYearsRemainingOnSentence
-      )
+        usMeThreeYearsRemainingOnSentence,
+      ),
     );
   }
 
@@ -129,7 +129,7 @@ const requirementsForEligibleCriteria = (
 
   if (criteria.usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease) {
     requirements.push(
-      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease
+      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease,
     );
   }
 

@@ -104,7 +104,7 @@ export class UsIdCRCResidentWorkerOpportunity extends UsIdCRCOpportunityBase<UsI
       resident,
       "usIdCRCResidentWorker",
       resident.rootStore,
-      usIdCRCResidentWorkerSchema.parse
+      usIdCRCResidentWorkerSchema.parse,
     );
 
     makeObservable(this, { requirementsMet: computed });

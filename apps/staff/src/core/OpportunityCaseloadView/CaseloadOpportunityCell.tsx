@@ -107,5 +107,5 @@ export const CaseloadOpportunityCell = observer(
         </WorkflowsTooltip>
       </CellItem>
     );
-  }
+  },
 );

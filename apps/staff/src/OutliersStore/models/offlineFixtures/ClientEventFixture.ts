@@ -54,5 +54,5 @@ export const rawClientEventFixture: Array<RawClientEvent> = [
 ];
 
 export const clientEventFixture: Array<ClientEvent> = rawClientEventFixture.map(
-  (e) => clientEventSchema.parse(e)
+  (e) => clientEventSchema.parse(e),
 );

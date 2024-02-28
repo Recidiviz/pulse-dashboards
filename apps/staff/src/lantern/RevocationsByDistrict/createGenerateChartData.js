@@ -34,7 +34,7 @@ import { sumCounts } from "../utils/sumCounts";
 const generatePercentChartData = (
   districtChartData,
   currentDistricts,
-  mode
+  mode,
 ) => {
   const fieldName =
     mode === "exits" ? "exit_count" : "supervision_population_count";
@@ -58,7 +58,7 @@ const generatePercentChartData = (
       [fieldName]: dataPoint[fieldName],
       rate: calculateRate(dataPoint.count, dataPoint[fieldName]),
     })),
-    orderBy(["rate"], ["desc"])
+    orderBy(["rate"], ["desc"]),
   )(districtChartData);
   const dataPoints = map((item) => item.rate.toFixed(2), transformedData);
 
@@ -73,7 +73,7 @@ const generatePercentChartData = (
       currentDistricts.find(
         (currentDistrict) =>
           currentDistrict &&
-          currentDistrict.toLowerCase() === labels[dataIndex].toLowerCase()
+          currentDistrict.toLowerCase() === labels[dataIndex].toLowerCase(),
       )
         ? COLORS["lantern-light-blue"]
         : COLORS["lantern-orange"];
@@ -95,7 +95,7 @@ const generatePercentChartData = (
 
   const averageRate = calculateRate(
     sumCounts("revocation_count", districtChartData),
-    sumCounts("supervision_population_count", districtChartData)
+    sumCounts("supervision_population_count", districtChartData),
   );
 
   return { data, numerators, denominators, averageRate };
@@ -110,7 +110,7 @@ const generateCountChartData = (districtChartData, currentDistricts) => {
       district: formatDistrictLabel(dataset[0].district),
       count: sumBy((item) => toInteger(item.revocation_count), dataset),
     })),
-    orderBy(["count"], ["desc"])
+    orderBy(["count"], ["desc"]),
   )(districtChartData);
 
   const labels = map("district", transformedData);
@@ -121,7 +121,7 @@ const generateCountChartData = (districtChartData, currentDistricts) => {
     currentDistricts.find(
       (currentDistrict) =>
         currentDistrict &&
-        currentDistrict.toLowerCase() === labels[dataIndex].toLowerCase()
+        currentDistrict.toLowerCase() === labels[dataIndex].toLowerCase(),
     )
       ? COLORS["lantern-light-blue"]
       : COLORS["lantern-orange"];
@@ -147,7 +147,7 @@ const createGenerateChartData =
         return generatePercentChartData(
           districtChartData,
           currentDistricts,
-          mode
+          mode,
         );
     }
   };

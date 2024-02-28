@@ -29,7 +29,9 @@
     height: 100vh;
     background: $slate-10;
     backdrop-filter: blur(4px);
-    transition: opacity 300ms ease, visibility 300ms ease;
+    transition:
+      opacity 300ms ease,
+      visibility 300ms ease;
     &--open {
       visibility: visible;
       opacity: 1;
@@ -49,7 +51,8 @@
     overflow-y: auto;
     outline: 0;
     transition: transform 300ms ease;
-    box-shadow: 0px 15px 40px rgba(53, 83, 98, 0.3),
+    box-shadow:
+      0px 15px 40px rgba(53, 83, 98, 0.3),
       inset 0px -1px 1px rgba(19, 44, 82, 0.2);
     &--open {
       transform: translateX(0) !important;

@@ -15,7 +15,7 @@ import {
 import { FormBase } from "./FormBase";
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
 function formatViolationNotes(
-  notes: { eventDate: Date; noteBody: string }[]
+  notes: { eventDate: Date; noteBody: string }[],
 ): string {
   return notes
     .map(({ eventDate, noteBody }) => `${formatDate(eventDate)} - ${noteBody}`)
@@ -65,7 +65,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       out.lastCafDate = formatDate(formInformation.lastCafDate);
       out.lastCafTotal = formInformation.lastCafTotal;
       out.latestClassificationDate = formatDate(
-        formInformation.latestClassificationDate
+        formInformation.latestClassificationDate,
       );
       out.levelOfCare = formInformation.levelOfCare;
 
@@ -85,19 +85,19 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       const justifications: string[] = [];
       if (formInformation.sentenceExpirationDate) {
         justifications.push(
-          `Release Date: ${formatDate(formInformation.sentenceExpirationDate)}`
+          `Release Date: ${formatDate(formInformation.sentenceExpirationDate)}`,
         );
       }
       if (formInformation.sentenceReleaseEligibilityDate) {
         justifications.push(
           `RED Date: ${formatDate(
-            formInformation.sentenceReleaseEligibilityDate
-          )}`
+            formInformation.sentenceReleaseEligibilityDate,
+          )}`,
         );
       }
       if (formInformation.healthClassification) {
         justifications.push(
-          `Medical Classification: ${formInformation.healthClassification}`
+          `Medical Classification: ${formInformation.healthClassification}`,
         );
       }
       if (formInformation.levelOfCare) {
@@ -105,14 +105,14 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       }
       if (formInformation.latestVantageRiskLevel) {
         justifications.push(
-          `Latest Vantage Risk Level: ${formInformation.latestVantageRiskLevel}`
+          `Latest Vantage Risk Level: ${formInformation.latestVantageRiskLevel}`,
         );
       }
       if (formInformation.latestVantageCompletedDate) {
         justifications.push(
           `Latest Vantage Risk Assessment Date: ${formatDate(
-            formInformation.latestVantageCompletedDate
-          )}`
+            formInformation.latestVantageCompletedDate,
+          )}`,
         );
       }
       if (
@@ -122,9 +122,9 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
         justifications.push(
           `Active Recommendations: ${uniq(
             formInformation.activeRecommendations.map(
-              ({ Recommendation }) => Recommendation
-            )
-          ).join(", ")}`
+              ({ Recommendation }) => Recommendation,
+            ),
+          ).join(", ")}`,
         );
       }
       out.recommendationJustification = justifications.join("\n");
@@ -141,7 +141,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
               noteTitle &&
               eventDate &&
               ["AOW", "ASW", "ASV"].includes(noteTitle.slice(0, 3)) &&
-              differenceInMonths(new Date(), eventDate) < 18
+              differenceInMonths(new Date(), eventDate) < 18,
           );
           out.q1Selection = recentWeapon ? 1 : 3;
           return;
@@ -184,10 +184,10 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
                 parts.push(`Jurisdiction: ${jurisdiction}`);
               if (chargePending !== undefined)
                 parts.push(
-                  chargePending ? "Charge Pending" : "No Charge Pending"
+                  chargePending ? "Charge Pending" : "No Charge Pending",
                 );
               return parts.join(" - ");
-            }
+            },
           )
           .join("; ");
       }

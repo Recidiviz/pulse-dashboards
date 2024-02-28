@@ -32,7 +32,7 @@ export function getDb(): Firestore {
 async function deleteQueryBatch(
   db: Firestore,
   query: Query,
-  resolve: () => void
+  resolve: () => void,
 ) {
   const snapshot = await query.get();
 
@@ -60,7 +60,7 @@ async function deleteQueryBatch(
 export async function deleteCollection(
   db: Firestore,
   collectionPath: string,
-  batchSize = 100
+  batchSize = 100,
 ): Promise<void> {
   const collectionRef = db.collection(collectionPath);
   const query = collectionRef.orderBy("__name__").limit(batchSize);

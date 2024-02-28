@@ -369,5 +369,5 @@ export const rawClientInfoFixture: Record<string, RawClientInfo> = {
 
 export const clientInfoFixture: Record<string, ClientInfo> = mapValues(
   rawClientInfoFixture,
-  (c) => clientInfoSchema.parse(c)
+  (c) => clientInfoSchema.parse(c),
 );

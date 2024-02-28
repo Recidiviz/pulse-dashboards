@@ -26,11 +26,10 @@ export type ExpectFalse<T extends false> = T;
 export type IsTrue<T extends true> = T;
 export type IsFalse<T extends false> = T;
 
-export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
-  T
->() => T extends Y ? 1 : 2
-  ? true
-  : false;
+export type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
 export type NotEqual<X, Y> = true extends Equal<X, Y> ? false : true;
 
 // https://stackoverflow.com/questions/49927523/disallow-call-with-any/49928360#49928360
@@ -48,7 +47,7 @@ export type Alike<X, Y> = Equal<MergeInsertions<X>, MergeInsertions<Y>>;
 export type Extends<EXPECTED, VALUE> = EXPECTED extends VALUE ? true : false;
 export type ValidArgs<
   FUNC extends (...args: any[]) => any,
-  ARGS extends any[]
+  ARGS extends any[],
 > = ARGS extends Parameters<FUNC> ? true : false;
 
 export type UnionToIntersection<U> = (

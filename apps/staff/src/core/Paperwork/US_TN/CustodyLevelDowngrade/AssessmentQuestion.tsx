@@ -80,7 +80,7 @@ const AssessmentQuestion: React.FC<AssessmentQuestionProps> = ({
     firestoreStore.updateFormDraftData(
       opportunityForm,
       selectionKey,
-      parseInt(event.target.value)
+      parseInt(event.target.value),
     );
   };
 

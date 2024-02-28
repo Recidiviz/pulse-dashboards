@@ -20,11 +20,11 @@ import UserStore from "../RootStore/UserStore";
 export async function fetchImpersonatedFirebaseToken(
   impersonatedEmail: string,
   impersonatedStateCode: string,
-  getTokenSilently?: UserStore["getTokenSilently"]
+  getTokenSilently?: UserStore["getTokenSilently"],
 ): Promise<string> {
   if (!getTokenSilently) {
     throw new Error(
-      "Missing required auth0 authentication to request Firebase token for impersonation."
+      "Missing required auth0 authentication to request Firebase token for impersonation.",
     );
   }
   const token = await getTokenSilently();
@@ -43,7 +43,7 @@ export async function fetchImpersonatedFirebaseToken(
 
   if (!response.ok) {
     throw new Error(
-      `Fetching impersonated Firebase token failed.\nStatus: ${response.status} - ${response.statusText}`
+      `Fetching impersonated Firebase token failed.\nStatus: ${response.status} - ${response.statusText}`,
     );
   }
   const { firebaseToken } = await response.json();
@@ -61,7 +61,7 @@ export async function fetchFirebaseToken(token: string): Promise<string> {
 
   if (!response.ok) {
     throw new Error(
-      `Fetching Firebase token failed.\nStatus: ${response.status} - ${response.statusText}`
+      `Fetching Firebase token failed.\nStatus: ${response.status} - ${response.statusText}`,
     );
   }
   const { firebaseToken } = await response.json();

@@ -114,7 +114,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
   it("fetches metrics when initialized", () => {
     expect(callMetricsApi).toHaveBeenCalledWith(
       `${mockTenantId.toLowerCase()}/pathways/prison_population_projection_time_series`,
-      RootStore.getTokenSilently
+      RootStore.getTokenSilently,
     );
   });
 
@@ -246,14 +246,14 @@ describe("PopulationProjectionOverTimeMetric", () => {
           headers: {
             Authorization: `Bearer auth token`,
           },
-        }
+        },
       );
 
       expect(pdf).toEqual(
         expect.objectContaining({
           name: "population_projections_methodology.pdf",
           type: "binary",
-        })
+        }),
       );
       expect(pdf.data.text()).resolves.toBe("blob");
     });

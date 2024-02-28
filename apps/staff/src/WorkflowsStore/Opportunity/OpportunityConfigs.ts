@@ -92,9 +92,8 @@ export type OpportunityHydratedHeader =
   | OpportunityHeadersWithEligibilityTextType
   | OpportunityHeadersWithFullTextType;
 
-type ExtractPersonType<T> = T extends OpportunityBase<infer P, any, any>
-  ? P
-  : never;
+type ExtractPersonType<T> =
+  T extends OpportunityBase<infer P, any, any> ? P : never;
 
 type ClientSystemType<T> = T extends Client
   ? Extract<SystemId, "SUPERVISION">
@@ -183,7 +182,7 @@ export type OpportunityType = keyof typeof OPPORTUNITY_CONFIGS;
  * @see {@link SUPERVISION_OPPORTUNITY_TYPES} for a list of their related configurations.
  */
 export type SupervisionOpportunityType = {
-  [key in keyof typeof OPPORTUNITY_CONFIGS]: typeof OPPORTUNITY_CONFIGS[key] extends OpportunityConfig<
+  [key in keyof typeof OPPORTUNITY_CONFIGS]: (typeof OPPORTUNITY_CONFIGS)[key] extends OpportunityConfig<
     infer T
   >
     ? T extends OpportunityBase<Client, any, any>
@@ -200,7 +199,7 @@ export type SupervisionOpportunityType = {
  * @see {@link INCARCERATION_OPPORTUNITY_TYPES} for a list of their related configurations.
  */
 export type IncarcerationOpportunityType = {
-  [key in keyof typeof OPPORTUNITY_CONFIGS]: typeof OPPORTUNITY_CONFIGS[key] extends OpportunityConfig<
+  [key in keyof typeof OPPORTUNITY_CONFIGS]: (typeof OPPORTUNITY_CONFIGS)[key] extends OpportunityConfig<
     infer T
   >
     ? T extends OpportunityBase<Resident, any, any>
@@ -210,11 +209,11 @@ export type IncarcerationOpportunityType = {
 }[keyof typeof OPPORTUNITY_CONFIGS];
 
 const getOpportunityTypesBySystemType = <T extends OpportunityType>(
-  type: typeof OPPORTUNITY_CONFIGS[T]["systemType"]
+  type: (typeof OPPORTUNITY_CONFIGS)[T]["systemType"],
 ) => {
   return Object.keys(OPPORTUNITY_CONFIGS).filter(
     (oppType) =>
-      OPPORTUNITY_CONFIGS[oppType as OpportunityType].systemType === type
+      OPPORTUNITY_CONFIGS[oppType as OpportunityType].systemType === type,
   ) as T[];
 };
 
@@ -223,7 +222,7 @@ export const SUPERVISION_OPPORTUNITY_TYPES =
 
 export const INCARCERATION_OPPORTUNITY_TYPES =
   getOpportunityTypesBySystemType<IncarcerationOpportunityType>(
-    "INCARCERATION"
+    "INCARCERATION",
   );
 
 type ConfigsByStateMapping = PartialRecord<
@@ -240,7 +239,7 @@ export const OPPORTUNITY_CONFIGS_BY_STATE: ConfigsByStateMapping =
         [oppType]: config,
       },
     }),
-    {}
+    {},
   ) as ConfigsByStateMapping;
 
 type OppTypeForUrlByStateMapping = Record<
@@ -259,18 +258,18 @@ export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: Record<
       [config.urlSection]: oppType,
     },
   }),
-  {}
+  {},
 ) as OppTypeForUrlByStateMapping;
 
 export function isOpportunityTypeUrlForState(
   stateCode: TenantId,
-  s: string
+  s: string,
 ): boolean {
   return s in (OPPORTUNITY_TYPE_FOR_URL_BY_STATE[stateCode] ?? {});
 }
 
 export const getStateOpportunityTypes = (
-  stateCode: keyof typeof OPPORTUNITY_CONFIGS_BY_STATE
+  stateCode: keyof typeof OPPORTUNITY_CONFIGS_BY_STATE,
 ): OpportunityType[] => {
   const stateConfigs = OPPORTUNITY_CONFIGS_BY_STATE[stateCode];
   return stateConfigs ? (Object.keys(stateConfigs) as OpportunityType[]) : [];

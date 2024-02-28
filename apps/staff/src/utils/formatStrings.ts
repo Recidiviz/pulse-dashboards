@@ -111,7 +111,7 @@ function toTitleCase(str: string): string {
     str &&
     str.replace(
       /\w[^\s-/]*/g,
-      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+      (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
     )
   );
 }
@@ -121,7 +121,7 @@ function formatCurrentAddress(address: string, stateCode: string): string {
   const titleStateCode = toTitleCase(stateCode.replace("US_", ""));
   return titleCaseAddress.replace(
     ` ${titleStateCode} `,
-    ` ${titleStateCode.toUpperCase()} `
+    ` ${titleStateCode.toUpperCase()} `,
   );
 }
 
@@ -155,7 +155,7 @@ const pluralize = (count: number, term: string): string => {
 };
 
 function getPeriodLabelFromMetricPeriodMonthsFilter(
-  toggledValue: string
+  toggledValue: string,
 ): string | null {
   const months = toNumber(toggledValue);
 
@@ -169,7 +169,7 @@ function getPeriodLabelFromMetricPeriodMonthsFilter(
 }
 
 function getTrailingLabelFromMetricPeriodMonthsFilter(
-  toggledValue: string
+  toggledValue: string,
 ): string {
   if (toggledValue === "1") {
     return "Current month";
@@ -206,7 +206,7 @@ function toNumber(stringValue: string): null | number {
 
 function formatPercent(
   percentage: number,
-  preserveNegativeValues = false
+  preserveNegativeValues = false,
 ): string {
   const percent = preserveNegativeValues ? percentage : Math.abs(percentage);
   return `${numeral(percent).format("0")}%`;
@@ -266,7 +266,7 @@ function decrypt(hexString: string): string {
 }
 
 const getTicks = (
-  value: number
+  value: number,
 ): { maxTickValue: number; tickValues: number[]; ticksMargin: number } => {
   const precision = Math.floor(Math.log10(value));
   const max = ceil(value, precision >= 2 ? -precision + 1 : -precision);
@@ -282,7 +282,7 @@ const getTicks = (
   }
 
   const ticks = Array.from({ length: ticksCount + 1 }, (_, i) =>
-    Math.round((max / ticksCount) * i)
+    Math.round((max / ticksCount) * i),
   );
 
   const getMarginFactor = (n: number, isFloat: boolean) => {
@@ -335,7 +335,7 @@ function formatName(fullName: string): string {
 
 const getDimensionLabel = (
   dimensionType: Dimension,
-  dimensionValue: string
+  dimensionValue: string,
 ): string => {
   if (
     dimensionType === "priorLengthOfIncarceration" &&
@@ -353,7 +353,7 @@ const formatDueDateFromToday = (dueDate: Date): string => {
 };
 
 function splitAuth0UserName(
-  name: string
+  name: string,
 ): Record<"firstName" | "lastName", string> {
   if (name.includes(", ")) {
     const [lastName, firstName] = name.split(", ");
@@ -384,7 +384,7 @@ function formatNameLastFirst(fullName: FullName): string {
 
 function getWelcomeText(
   userName: string | undefined,
-  welcomeText: string | undefined = "Welcome"
+  welcomeText: string | undefined = "Welcome",
 ): string {
   if (!userName) return welcomeText;
   return `${welcomeText}, ${userName}`;

@@ -32,7 +32,7 @@ export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
         form.currentPhoneNumber
           ? formatPhone("(NNN) NNN-NNNN", form.currentPhoneNumber)
           : undefined,
-        form.emailAddress
+        form.emailAddress,
       ),
 
       employmentInformation: defaultFormValueJoiner(
@@ -43,9 +43,9 @@ export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
           : "",
         form.employmentDateVerified
           ? `Verified ${formatFormValueDateMMDDYYYYY(
-              form.employmentDateVerified
+              form.employmentDateVerified,
             )}`
-          : ""
+          : "",
       ),
 
       assessmentInformation: dedent`
@@ -53,7 +53,7 @@ export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
         ${
           form.assessmentDate
             ? `Last assessed: ${formatFormValueDateMMDDYYYYY(
-                form.assessmentDate
+                form.assessmentDate,
               )}`
             : ""
         }
@@ -61,7 +61,7 @@ export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
 
       substanceTest: form.latestNegativeDrugScreenDate
         ? `Tested negative on ${formatFormValueDateMMDDYYYYY(
-            form.latestNegativeDrugScreenDate
+            form.latestNegativeDrugScreenDate,
           )}`
         : "",
 
@@ -69,16 +69,16 @@ export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
         form.ncicReviewDate
           ? `Completed on ${formatFormValueDateMMDDYYYYY(form.ncicReviewDate)}`
           : "",
-        form.ncicNoteBody
+        form.ncicNoteBody,
       ),
 
       treatmentCompletionDate: defaultFormValueJoiner(
         form.txDischargeDate
           ? `${form.txNoteTitle} on ${formatFormValueDateMMDDYYYYY(
-              form.txDischargeDate
+              form.txDischargeDate,
             )}`
           : "",
-        form.txNoteBody
+        form.txNoteBody,
       ),
     };
   };

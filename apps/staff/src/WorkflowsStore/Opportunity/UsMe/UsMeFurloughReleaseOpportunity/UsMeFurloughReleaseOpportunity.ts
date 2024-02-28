@@ -160,10 +160,10 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
       ({ eligibleCriteria: { usMeServedHalfOfSentence } }) => {
         if (!usMeServedHalfOfSentence) {
           throw new FeatureGateError(
-            "UsMeFurloughReleaseOpportunity doesn't yet support Almost Eligible"
+            "UsMeFurloughReleaseOpportunity doesn't yet support Almost Eligible",
           );
         }
-      }
+      },
     );
     this.resident = resident;
 
@@ -181,7 +181,7 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 }

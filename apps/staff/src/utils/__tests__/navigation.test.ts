@@ -63,7 +63,7 @@ describe("convertToSlug", () => {
 
   it("returns a slug for text", () => {
     expect(convertToSlug("Over-Time Calculations: ")).toEqual(
-      "over-time-calculations"
+      "over-time-calculations",
     );
   });
 });

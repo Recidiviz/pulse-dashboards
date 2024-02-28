@@ -22,6 +22,6 @@ import { rawClientInfoFixture } from "../offlineFixtures/ClientInfoFixture";
 
 test("transformations", () => {
   expect(
-    mapValues(rawClientInfoFixture, (c) => clientInfoSchema.parse(c))
+    mapValues(rawClientInfoFixture, (c) => clientInfoSchema.parse(c)),
   ).toMatchSnapshot();
 });

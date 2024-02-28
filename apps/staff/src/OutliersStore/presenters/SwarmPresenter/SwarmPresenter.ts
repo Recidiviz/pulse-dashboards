@@ -51,12 +51,12 @@ export class SwarmPresenter {
     return Math.max(
       this.chartHeight - (SWARM_AREA_TOP_OFFSET + SWARM_AREA_BOTTOM_OFFSET),
       // clamping this to zero to avoid nonsensical intermediate values that could cause HTML errors
-      0
+      0,
     );
   }
 
   *prepareChartData(
-    width: number
+    width: number,
   ): FlowMethod<Comlink.Remote<SwarmLayout>["prepareChartData"], void> {
     if (width === 0) return;
     // NOTE: we don't reset loading state on every recalculation.
@@ -70,7 +70,7 @@ export class SwarmPresenter {
     const preparedData = yield swarmLayout.prepareChartData(
       toJS(this.metric),
       width,
-      this.swarmHeight
+      this.swarmHeight,
     );
 
     this.chartData = preparedData;

@@ -46,7 +46,7 @@ const countyInfos: Record<string, CountyInfo> = Object.fromEntries(
   tsv.split("\n").map((line) => {
     const [name, address, phone, fax] = line.split("\t");
     return [name.slice(0, 4), { name, address, phone, fax }];
-  })
+  }),
 );
 
 countyInfos.BAKR = countyInfos.BAKE;

@@ -79,7 +79,7 @@ export type UsMeSCCPDraftData = {
 };
 
 export const transformReferral: TransformFunction<UsMeSCCPReferralRecord> = (
-  record
+  record,
 ) => {
   return usMeSCCPSchema.parse(record);
 };

@@ -57,7 +57,7 @@ function createFlattenedValueMatrix(filteredDataPoints, subsetMetadata) {
       const dimensionKey = dimensions[i][0];
       const dimensionValues = dimensions[i][1];
       const dimensionValueIndex = dimensionValues.indexOf(
-        filteredDataPoints[j][dimensionKey].toLowerCase()
+        filteredDataPoints[j][dimensionKey].toLowerCase(),
       );
       if (unflattenedMatrix[i]) {
         unflattenedMatrix[i][j] = dimensionValueIndex;
@@ -97,7 +97,7 @@ function createFlattenedValueMatrix(filteredDataPoints, subsetMetadata) {
  */
 function createSubsetDimensionManifest(dimensionManifest, filters) {
   const subsetKeys = getSubsetDimensionKeys().concat(
-    "level_1_supervision_location"
+    "level_1_supervision_location",
   );
   const transformedDimensionManifest = [];
 
@@ -129,7 +129,7 @@ function createSubsetMetadata(totalDataPoints, metadata, filters) {
     total_data_points: totalDataPoints,
     dimension_manifest: createSubsetDimensionManifest(
       metadata.dimension_manifest,
-      filters
+      filters,
     ),
   };
 }

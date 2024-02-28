@@ -62,7 +62,7 @@ test.each(PROPERTIES_FROM_RECORD)(
   (property, recordKey) => {
     createTestUnit();
     expect(testResident[property]).toEqual(record[recordKey]);
-  }
+  },
 );
 
 test("admission date", () => {

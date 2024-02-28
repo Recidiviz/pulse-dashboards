@@ -39,7 +39,7 @@ export const userInfoSchema = z
           hasSeenOnboarding: z.boolean(),
         }),
       }),
-    ])
+    ]),
   )
   .transform(({ hasSeenOnboarding, metadata, ...rest }) => ({
     metadata: {

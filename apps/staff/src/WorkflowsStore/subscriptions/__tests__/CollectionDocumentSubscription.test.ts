@@ -36,7 +36,7 @@ beforeEach(() => {
   sub = new CollectionDocumentSubscription(
     firestoreStoreMock,
     "compliantReportingReferrals",
-    "abc123"
+    "abc123",
   );
 });
 
@@ -45,7 +45,7 @@ test("dataSource", () => {
     // undefined results from mocking firestore, it would be a Firestore instance
     undefined,
     "compliantReportingReferrals",
-    "abc123"
+    "abc123",
   );
 
   expect(sub.dataSource).toBe(mockRef);

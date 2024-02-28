@@ -38,7 +38,7 @@ const PREFERRED_SORT_ORDER: OpportunityType[] = [
 ];
 
 const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = getStateOpportunityTypes(
-  "US_ME"
+  "US_ME",
 ).sort((a, b) => {
   const indexA = PREFERRED_SORT_ORDER.indexOf(a);
   const indexB = PREFERRED_SORT_ORDER.indexOf(b);

@@ -75,7 +75,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
       setSelectedOptions(newOptions);
       onChange(newOptions, filter.type);
     },
-    [selectedOptions, enabledOptions, summingOption, onChange, filter.type]
+    [selectedOptions, enabledOptions, summingOption, onChange, filter.type],
   );
 
   const checkBoxOptions = (

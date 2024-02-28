@@ -55,7 +55,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingSchema =
         nextReviewDate: addDays(
           record.eligibleCriteria.usMoHearingAfterRestrictiveHousingStart
             .latestRestrictiveHousingHearingDate,
-          30
+          30,
         ),
         dueDateInferred: true,
       };

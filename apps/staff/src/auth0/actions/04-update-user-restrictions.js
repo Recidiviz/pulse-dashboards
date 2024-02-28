@@ -93,7 +93,7 @@ exports.onExecutePostLogin = async (event, api) => {
 
       const contents = JSON.parse(jsonFile);
       const allowedStates = (contents.allowedStates ?? []).map((sc) =>
-        sc.toUpperCase()
+        sc.toUpperCase(),
       );
       api.user.setAppMetadata("allowedStates", allowedStates);
     }
@@ -111,7 +111,7 @@ exports.onExecutePostLogin = async (event, api) => {
     // some ID accounts come up with an onmicrosoft domain. This patches the email for the request
     const request_email = event.user.email?.replace(
       "iddoc.onmicrosoft.com",
-      "idoc.idaho.gov"
+      "idoc.idaho.gov",
     );
 
     let userHash = Base64.stringify(SHA256(request_email?.toLowerCase()));
@@ -132,7 +132,7 @@ exports.onExecutePostLogin = async (event, api) => {
     api.user.setAppMetadata("allowedSupervisionLocationIds", arrayOfLocations);
     api.user.setAppMetadata(
       "allowedSupervisionLocationLevel",
-      restrictions.allowedSupervisionLocationLevel
+      restrictions.allowedSupervisionLocationLevel,
     );
     api.user.setAppMetadata("routes", restrictions.routes || null);
     api.user.setAppMetadata("stateCode", stateCode);
@@ -145,11 +145,11 @@ exports.onExecutePostLogin = async (event, api) => {
     // TODO #3170 Remove these once UserAppMetadata has been transitioned
     api.user.setAppMetadata(
       "allowed_supervision_location_ids",
-      arrayOfLocations
+      arrayOfLocations,
     );
     api.user.setAppMetadata(
       "allowed_supervision_location_level",
-      restrictions.allowedSupervisionLocationLevel
+      restrictions.allowedSupervisionLocationLevel,
     );
     api.user.setAppMetadata("user_hash", restrictions.userHash);
   } catch (apiError) {

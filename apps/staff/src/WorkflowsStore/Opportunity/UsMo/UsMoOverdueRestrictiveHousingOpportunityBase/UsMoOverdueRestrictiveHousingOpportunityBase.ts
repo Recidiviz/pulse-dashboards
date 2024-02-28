@@ -61,7 +61,7 @@ export const US_MO_DAYS_PAST = (eligibilityDate: Date, numOfDays?: number) => {
 };
 
 export abstract class UsMoOverdueRestrictiveHousingBase<
-  ReferralRecord extends BaseUsMoOverdueRestrictiveHousingReferralRecord
+  ReferralRecord extends BaseUsMoOverdueRestrictiveHousingReferralRecord,
 > extends OpportunityBase<Resident, ReferralRecord> {
   readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
     "UsMoIncarceration",
@@ -74,14 +74,14 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
     resident: Resident,
     type: OpportunityType,
     transformReferral?: TransformFunction<ReferralRecord>,
-    validateRecord?: ValidateFunction<ReferralRecord>
+    validateRecord?: ValidateFunction<ReferralRecord>,
   ) {
     super(
       resident,
       type,
       resident.rootStore,
       transformReferral,
-      validateRecord
+      validateRecord,
     );
     makeObservable(this, {
       requirementsMet: computed,
@@ -147,7 +147,7 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
    */
   generateUsMoOverdueEligibilityStatusMessage(
     subject: string,
-    tenseVerbs: [past: string, presentAndFuture: string] | string
+    tenseVerbs: [past: string, presentAndFuture: string] | string,
   ): string {
     const { eligibilityDate } = this;
     if (!eligibilityDate) return "Date(s) are unknown";

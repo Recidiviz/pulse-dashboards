@@ -38,7 +38,7 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
     firestoreStore.updateFormDraftData(
       opportunityForm,
       name,
-      value || event.target.checked !== !!invert
+      value || event.target.checked !== !!invert,
     );
   };
 

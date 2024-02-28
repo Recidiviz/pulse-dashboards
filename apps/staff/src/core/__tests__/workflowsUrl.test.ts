@@ -35,12 +35,12 @@ test("URL with opportunityType", () => {
   ] as WorkflowsPage[];
   OPPORTUNITY_PAGES.forEach((pageId) => {
     expect(
-      workflowsUrl(pageId, { opportunityType: "compliantReporting" })
+      workflowsUrl(pageId, { opportunityType: "compliantReporting" }),
     ).toBe(
       WORKFLOWS_PATHS[pageId].replace(
         ":opportunityTypeUrl",
-        "compliantReporting"
-      )
+        "compliantReporting",
+      ),
     );
   });
 });
@@ -52,7 +52,7 @@ test("URL with opportunityType with custom URL", () => {
   ] as WorkflowsPage[];
   OPPORTUNITY_PAGES.forEach((pageId) => {
     expect(workflowsUrl(pageId, { opportunityType: "usTnExpiration" })).toBe(
-      WORKFLOWS_PATHS[pageId].replace(":opportunityTypeUrl", "expiration")
+      WORKFLOWS_PATHS[pageId].replace(":opportunityTypeUrl", "expiration"),
     );
   });
 });
@@ -64,7 +64,7 @@ test("URL with person ID", () => {
   ] as WorkflowsPage[];
   CLIENT_PAGES.forEach((pageId) => {
     expect(workflowsUrl(pageId, { justiceInvolvedPersonId: "test123" })).toBe(
-      WORKFLOWS_PATHS[pageId].replace(":justiceInvolvedPersonId", "test123")
+      WORKFLOWS_PATHS[pageId].replace(":justiceInvolvedPersonId", "test123"),
     );
   });
 });

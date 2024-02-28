@@ -67,7 +67,7 @@ export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
         {...props}
       />
     );
-  }
+  },
 );
 
 CoreSelect.displayName = "Select";

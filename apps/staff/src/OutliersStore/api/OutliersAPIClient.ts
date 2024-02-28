@@ -73,7 +73,7 @@ export class OutliersAPIClient implements OutliersAPI {
 
   async patchUserInfo(
     userPseudoId: string,
-    props: PatchUserInfoProps
+    props: PatchUserInfoProps,
   ): Promise<UserInfo> {
     const endpoint = `${this.baseUrl}/user-info/${userPseudoId}`;
     const fetchedData = await this.apiStore.patch(endpoint, props);
@@ -96,12 +96,12 @@ export class OutliersAPIClient implements OutliersAPI {
     const fetchedData = await this.apiStore.get(endpoint);
     const supervisorData = fetchedData.supervisors as Array<unknown>;
     return supervisorData.map((b) =>
-      supervisionOfficerSupervisorSchema.parse(b)
+      supervisionOfficerSupervisorSchema.parse(b),
     );
   }
 
   async officersForSupervisor(
-    supervisorPseudoId: string
+    supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
     const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/officers`;
     const fetchedData = await this.apiStore.get(endpoint);
@@ -110,7 +110,7 @@ export class OutliersAPIClient implements OutliersAPI {
   }
 
   async supervisionOfficer(
-    officerPseudoId: string
+    officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}`;
     const fetchedData = await this.apiStore.get(endpoint);
@@ -120,7 +120,7 @@ export class OutliersAPIClient implements OutliersAPI {
 
   async supervisionOfficerMetricEvents(
     officerPseudoId: string,
-    metricId: string
+    metricId: string,
   ): Promise<SupervisionOfficerMetricEvent[]> {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/events?metric_id=${metricId}`;
     const fetchedData = await this.apiStore.get(endpoint);
@@ -137,12 +137,12 @@ export class OutliersAPIClient implements OutliersAPI {
 
   async clientEvents(
     clientPseudoId: string,
-    endDate: Date
+    endDate: Date,
   ): Promise<Array<ClientEvent>> {
     const endpoint = `${
       this.baseUrl
     }/client/${clientPseudoId}/events?period_end_date=${formatDateToISO(
-      endDate
+      endDate,
     )}`;
     const fetchedData = await this.apiStore.get(endpoint);
     const eventsData = fetchedData.events as Array<unknown>;

@@ -13,5 +13,9 @@
       "presets": ["@babel/env", "@babel/react"]
     }
   },
-  "plugins": ["@babel/transform-runtime", "emotion", "@babel/plugin-proposal-class-properties"]
+  "plugins": [
+    "@babel/transform-runtime",
+    "emotion",
+    "@babel/plugin-proposal-class-properties"
+  ]
 }

@@ -40,7 +40,7 @@ function CaseTable({ timeDescription }) {
   const { columns, formatTableData, formatExportData, formatAdmissionHistory } =
     store;
   const { sortOrder, sortField, toggleOrder, comparator } = useSort(
-    formatAdmissionHistory
+    formatAdmissionHistory,
   );
   const { containerHeight, containerRef } = useContainerHeight();
 
@@ -103,7 +103,7 @@ function CaseTable({ timeDescription }) {
                 .join("")}-${idx + 1}`}
             >
               {columns.map((column) =>
-                nullSafeCell(column.key, details[column.key], idx)
+                nullSafeCell(column.key, details[column.key], idx),
               )}
             </tr>
           ))}

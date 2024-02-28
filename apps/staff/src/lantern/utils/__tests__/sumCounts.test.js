@@ -176,8 +176,8 @@ describe("#calculateAverageRate", () => {
     expect(
       calculateRate(
         sumCounts("revocation_count", revocationData),
-        sumCounts("total_population", supervisionData)
-      )
+        sumCounts("total_population", supervisionData),
+      ),
     ).toEqual(25);
   });
 });

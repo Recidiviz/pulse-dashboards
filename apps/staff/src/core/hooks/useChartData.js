@@ -79,7 +79,7 @@ function useChartData(url) {
       .then((responseData) => {
         const metricFiles = parseResponsesByFileFormat(
           responseData,
-          eagerExpand
+          eagerExpand,
         );
         setApiData(metricFiles);
       })

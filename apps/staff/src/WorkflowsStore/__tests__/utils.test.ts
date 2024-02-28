@@ -92,7 +92,7 @@ test("staffNameComparator", () => {
       "Jane Doe",
       "John Doe",
       "Chad Doe-Adams",
-    ]
+    ],
   );
 });
 
@@ -105,7 +105,7 @@ describe("fractionalDateBetweenTwoDates", () => {
     const fractionalDate = fractionalDateBetweenTwoDates(
       dateLeft,
       dateRight,
-      0.5
+      0.5,
     ); // 0.5 for half
 
     expect(fractionalDate).toEqual(halfDate);
@@ -122,10 +122,10 @@ describe("fractionalDateBetweenTwoDates", () => {
       const halfDate = fractionalDateBetweenTwoDates(
         new Date(dateLeft),
         new Date(dateRight),
-        0.5
+        0.5,
       );
       expect(halfDate).toEqual(parseISO(result));
-    }
+    },
   );
 
   it("should return the date 2/3 between the two dates", () => {
@@ -136,7 +136,7 @@ describe("fractionalDateBetweenTwoDates", () => {
     const fractionalDate = fractionalDateBetweenTwoDates(
       dateLeft,
       dateRight,
-      2 / 3
+      2 / 3,
     );
 
     expect(fractionalDate).toEqual(twoThirdsDate);
@@ -207,7 +207,7 @@ describe("filterByUserDistrict", () => {
     expect(
       filterByUserDistrict(user, {
         supervisionUnrestrictedSearch: {},
-      })
+      }),
     ).toBeUndefined();
   });
 });
@@ -237,8 +237,8 @@ describe("usCaFilterByRoleSubtype", () => {
             ...userWithoutDistrictOrRole.info,
           },
         },
-        enabledFeatureVariant
-      )
+        enabledFeatureVariant,
+      ),
     ).toBeUndefined();
 
     expect(
@@ -250,8 +250,8 @@ describe("usCaFilterByRoleSubtype", () => {
             roleSubtype: "SUPERVISION_OFFICER",
           },
         },
-        enabledFeatureVariant
-      )
+        enabledFeatureVariant,
+      ),
     ).toBeUndefined();
   });
 
@@ -308,13 +308,13 @@ describe("getSnoozeUntilDate", () => {
   test("when auto snoozeUntil value exists", () => {
     const snoozeUntilDate = "2024-10-25";
     expect(getSnoozeUntilDate({ snoozeUntil: snoozeUntilDate })).toEqual(
-      parseISO(snoozeUntilDate)
+      parseISO(snoozeUntilDate),
     );
   });
 
   test("when manual snoozeForDays and snoozedOn values exist", () => {
     expect(
-      getSnoozeUntilDate({ snoozeForDays: 5, snoozedOn: "2023-09-25" })
+      getSnoozeUntilDate({ snoozeForDays: 5, snoozedOn: "2023-09-25" }),
     ).toEqual(parseISO("2023-09-30"));
   });
 });
@@ -326,7 +326,7 @@ describe("snoozeUntilDateInTheFuture", () => {
 
   test("not snoozed", () => {
     expect(
-      snoozeUntilDateInTheFuture(sub(new Date(), { days: 5 }))
+      snoozeUntilDateInTheFuture(sub(new Date(), { days: 5 })),
     ).toBeFalse();
   });
 });
@@ -337,7 +337,7 @@ describe("can detect supervision vs. incarceration type", () => {
     const arr = listOfTypes.filter(
       (type) =>
         getSystemIdFromOpportunityType(type as SupervisionOpportunityType) ===
-        "SUPERVISION"
+        "SUPERVISION",
     );
     expect(arr).toEqual(SUPERVISION_OPPORTUNITY_TYPES);
   });
@@ -346,19 +346,19 @@ describe("can detect supervision vs. incarceration type", () => {
     const arr = listOfTypes.filter(
       (type) =>
         getSystemIdFromOpportunityType(type as IncarcerationOpportunityType) ===
-        "INCARCERATION"
+        "INCARCERATION",
     );
     expect(arr).toEqual(INCARCERATION_OPPORTUNITY_TYPES);
   });
 
   test("usTnCustodyLevelDowngrade is a incarceration type", () => {
     expect(getSystemIdFromOpportunityType("usTnCustodyLevelDowngrade")).toBe(
-      "INCARCERATION"
+      "INCARCERATION",
     );
   });
   test("usCaSupervisionLevelDowngrade is a supervision type", () => {
     expect(
-      getSystemIdFromOpportunityType("usCaSupervisionLevelDowngrade")
+      getSystemIdFromOpportunityType("usCaSupervisionLevelDowngrade"),
     ).toBe("SUPERVISION");
   });
 });

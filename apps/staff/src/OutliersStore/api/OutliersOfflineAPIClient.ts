@@ -52,7 +52,7 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
       "../models/offlineFixtures/SupervisionOfficerSupervisor"
     );
     const matchingSupervisor = supervisionOfficerSupervisorsFixture.find(
-      (supervisor) => supervisor.pseudonymizedId === userPseudoId
+      (supervisor) => supervisor.pseudonymizedId === userPseudoId,
     );
 
     if (matchingSupervisor) {
@@ -79,7 +79,7 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
 
   async patchUserInfo(
     userPseudoId: string,
-    props: PatchUserInfoProps
+    props: PatchUserInfoProps,
   ): Promise<UserInfo> {
     this.pseudoIdToEditableUserInfo.set(userPseudoId, { metadata: props });
     return this.userInfo(userPseudoId);
@@ -102,26 +102,26 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
   }
 
   async officersForSupervisor(
-    supervisorPseudoId: string
+    supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
     const { supervisionOfficerFixture } = await import(
       "../models/offlineFixtures/SupervisionOfficerFixture"
     );
 
     return supervisionOfficerFixture.filter(
-      (o) => `hashed-${o.supervisorExternalId}` === supervisorPseudoId
+      (o) => `hashed-${o.supervisorExternalId}` === supervisorPseudoId,
     );
   }
 
   async supervisionOfficer(
-    officerPseudoId: string
+    officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
     const { supervisionOfficerFixture } = await import(
       "../models/offlineFixtures/SupervisionOfficerFixture"
     );
 
     const officerFixture = supervisionOfficerFixture.find(
-      (o) => o.pseudonymizedId === officerPseudoId
+      (o) => o.pseudonymizedId === officerPseudoId,
     );
 
     if (!officerFixture)
@@ -132,13 +132,13 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
 
   async supervisionOfficerMetricEvents(
     officerPseudoId: string,
-    metricId: string
+    metricId: string,
   ): Promise<SupervisionOfficerMetricEvent[]> {
     const { supervisionOfficerMetricEventFixture } = await import(
       "../models/offlineFixtures/SupervisionOfficerMetricEventFixture"
     );
     return supervisionOfficerMetricEventFixture.filter(
-      (e) => e.metricId === metricId
+      (e) => e.metricId === metricId,
     );
   }
 
@@ -158,7 +158,7 @@ export class OutliersOfflineAPIClient implements OutliersAPI {
 
   async clientEvents(
     clientPseudoId: string,
-    endDate: Date
+    endDate: Date,
   ): Promise<Array<ClientEvent>> {
     const { clientEventFixture } = await import(
       "../models/offlineFixtures/ClientEventFixture"

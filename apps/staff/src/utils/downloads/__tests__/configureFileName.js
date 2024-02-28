@@ -27,7 +27,7 @@ describe("configureFilename tests", () => {
     const actual = configureFilename(mockChartId, mockFilters, false);
 
     expect(actual).toBe(
-      `${mockChartId}-${mockTimeStamp}-${mockMetricType}-${mockMetricPeriodMonths}-${mockSupervisionType}-${mockDistrict}`
+      `${mockChartId}-${mockTimeStamp}-${mockMetricType}-${mockMetricPeriodMonths}-${mockSupervisionType}-${mockDistrict}`,
     );
   });
 });

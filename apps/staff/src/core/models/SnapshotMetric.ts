@@ -42,7 +42,7 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
   constructor(
     props: BaseNewMetricConstructorOptions & {
       accessor: keyof SnapshotDataRecord;
-    }
+    },
   ) {
     super(props);
 
@@ -112,8 +112,8 @@ export default class SnapshotMetric extends PathwaysNewBackendMetric<SnapshotDat
           labels.push(
             this.rootStore?.filtersStore.getFilterLabel(
               this.accessor as keyof PopulationFilterLabels,
-              filterValue.toString()
-            ) || filterValue.toString()
+              filterValue.toString(),
+            ) || filterValue.toString(),
           );
         }
       }

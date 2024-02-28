@@ -26,7 +26,7 @@ import type { JusticeInvolvedPerson } from "../../WorkflowsStore";
  */
 export function usePersonTracking(
   person: JusticeInvolvedPerson | undefined,
-  trackingFn: () => void
+  trackingFn: () => void,
 ): void {
   useEffect(
     () => {
@@ -34,6 +34,6 @@ export function usePersonTracking(
     },
     // Using the ID prevents logging redundant events if the object reference itself is not stable
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [person?.pseudonymizedId]
+    [person?.pseudonymizedId],
   );
 }

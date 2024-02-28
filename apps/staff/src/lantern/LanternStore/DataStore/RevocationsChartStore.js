@@ -91,7 +91,7 @@ export default class RevocationsChartStore extends BaseDataStore {
         this.fetchStatePopulationData({
           tenantId: this.rootStore.currentTenantId,
         });
-      }
+      },
     );
   }
 

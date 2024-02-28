@@ -44,7 +44,7 @@ const formDownloader = async (client: Client): Promise<void> => {
 
   if (!sentences) {
     throw new Error(
-      "[Workflows][US_OR] Unable to generate Earned Discharge forms due to missing sentences"
+      "[Workflows][US_OR] Unable to generate Earned Discharge forms due to missing sentences",
     );
   }
 
@@ -52,17 +52,17 @@ const formDownloader = async (client: Client): Promise<void> => {
     (sentence) => [
       `${client.displayName} - ${sentence.docket} - EDIS County Review Checklist.docx`.replaceAll(
         "/",
-        "-"
+        "-",
       ),
       client.stateCode,
       "edis_review_checklist.docx",
       { ...contents, ...sentence },
-    ]
+    ],
   );
 
   const documents = await renderMultipleDocx(
     fileInputs,
-    client.rootStore.getTokenSilently
+    client.rootStore.getTokenSilently,
   );
 
   downloadZipFile(`${client.displayName} EDIS packet.zip`, documents);

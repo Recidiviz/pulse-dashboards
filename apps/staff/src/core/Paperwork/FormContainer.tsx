@@ -126,7 +126,7 @@ export const FormContainer = observer(function FormContainer({
 
     // Wait for any inputs to save their state
     await new Promise((resolve) =>
-      setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY)
+      setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY),
     );
 
     try {
@@ -143,7 +143,7 @@ export const FormContainer = observer(function FormContainer({
 
   const createDownloadLabel = (
     formIsDownloading: boolean,
-    buttonIsDisabled: boolean | undefined
+    buttonIsDisabled: boolean | undefined,
   ): string => {
     if (buttonIsDisabled) return "Download Unavailable";
     return formIsDownloading ? "Downloading..." : downloadButtonLabel;
@@ -181,7 +181,7 @@ export const FormContainer = observer(function FormContainer({
           >
             {createDownloadLabel(
               form.formIsDownloading,
-              isDownloadButtonDisabled
+              isDownloadButtonDisabled,
             )}
           </DownloadButton>
         </FormHeaderSection>

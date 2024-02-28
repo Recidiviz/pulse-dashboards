@@ -43,7 +43,7 @@ const FormInput: React.FC<FormInputProps> = ({ name, hideValue, ...props }) => {
   const form = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
   const inputRef = useRef<HTMLInputElement>(
-    null
+    null,
   ) as MutableRefObject<HTMLInputElement>;
 
   const valueForDisplay = hideValue ? "" : value;

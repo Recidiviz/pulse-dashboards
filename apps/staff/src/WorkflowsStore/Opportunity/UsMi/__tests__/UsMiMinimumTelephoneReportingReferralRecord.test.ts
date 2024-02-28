@@ -42,6 +42,6 @@ test("transform record", () => {
   };
 
   expect(
-    usMiMinimumTelephoneReportingSchema.parse(rawRecord)
+    usMiMinimumTelephoneReportingSchema.parse(rawRecord),
   ).toMatchSnapshot();
 });

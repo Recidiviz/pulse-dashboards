@@ -54,13 +54,13 @@ const Seal = styled.img.attrs({ src: SealPng, alt: "TN Seal" })`
 
 const totalScoreForQuestions = (
   numberedQuestions: [AssessmentQuestionSpec, AssessmentQuestionNumber][],
-  formData: UsTnSharedReclassificationDraftData
+  formData: UsTnSharedReclassificationDraftData,
 ) =>
   sum(
     numberedQuestions.map(([{ options }, n]) => {
       const selection = formData[`q${n}Selection`];
       return selection === -1 ? 0 : options[selection].score;
-    })
+    }),
   );
 
 const ClassificationCustodyAssessment: React.FC = () => {
@@ -70,7 +70,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
 
   const numberedQuestions = zip(
     assessmentQuestions,
-    assessmentQuestionNumbers
+    assessmentQuestionNumbers,
   ) as [AssessmentQuestionSpec, AssessmentQuestionNumber][];
 
   const scheduleA = numberedQuestions.slice(0, 4);

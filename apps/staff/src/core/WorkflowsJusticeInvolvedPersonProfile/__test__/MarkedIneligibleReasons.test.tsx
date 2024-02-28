@@ -39,12 +39,12 @@ describe("buildDenialReasonsListText", () => {
       isAlert: true,
     };
     expect(buildDenialReasonsListText(testOpp, ["REASON"])).toEqual(
-      "Override reasons: REASON"
+      "Override reasons: REASON",
     );
   });
   test("marked ineligible opportunities", () => {
     expect(buildDenialReasonsListText(mockOpportunity, ["REASON"])).toEqual(
-      "Not eligible reasons: REASON"
+      "Not eligible reasons: REASON",
     );
   });
 });
@@ -58,7 +58,7 @@ describe("snoozedByText", () => {
       snoozedBy: "test-email",
     };
     expect(buildSnoozedByText(testOpp)).toEqual(
-      "Marked ineligible by test-email on October 15, 2023."
+      "Marked ineligible by test-email on October 15, 2023.",
     );
   });
 
@@ -70,7 +70,7 @@ describe("snoozedByText", () => {
       snoozedBy: "test-email",
     };
     expect(buildSnoozedByText(testOpp)).toEqual(
-      "Overridden by test-email on October 15, 2023."
+      "Overridden by test-email on October 15, 2023.",
     );
   });
 
@@ -101,7 +101,7 @@ describe("buildResurfaceText", () => {
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(buildResurfaceText(testOpp, new Date(2023, 9, 15))).toEqual(
-      "Client Name may be surfaced again on or after October 15, 2023."
+      "Client Name may be surfaced again on or after October 15, 2023.",
     );
   });
 
@@ -121,7 +121,7 @@ describe("buildResurfaceText", () => {
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(buildResurfaceText(testOpp, new Date(2025, 1, 1))).toEqual(
-      "February 1, 2025 is Client Name's supervision end date."
+      "February 1, 2025 is Client Name's supervision end date.",
     );
   });
 });
@@ -147,7 +147,7 @@ describe("MarkedIneligibleReasons", () => {
     };
     const testText = buildSnoozedByTextAndResurfaceText(
       opp,
-      new Date(2023, 9, 15)
+      new Date(2023, 9, 15),
     );
     render(
       <BrowserRouter>
@@ -156,21 +156,21 @@ describe("MarkedIneligibleReasons", () => {
           snoozedByTextAndResurfaceTextPair={testText}
           denialReasons={["REASON", OTHER_KEY]}
         />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
   });
 
   test("displays full text", () => {
     expect(
       screen.getByText(
-        "Overridden by test-email on October 10, 2023. Client Name may be surfaced again on or after October 15, 2023."
-      )
+        "Overridden by test-email on October 10, 2023. Client Name may be surfaced again on or after October 15, 2023.",
+      ),
     ).toBeInTheDocument();
   });
 
   test("ineligible reasons list", () => {
     expect(
-      screen.getByText("Override reasons: REASON, Other")
+      screen.getByText("Override reasons: REASON, Other"),
     ).toBeInTheDocument();
   });
 

@@ -24,7 +24,7 @@ import { OpportunityBase } from "../OpportunityBase";
 import { Opportunity } from "../types";
 
 export abstract class UsIdCRCOpportunityBase<
-  ReferralRecord extends DocumentData
+  ReferralRecord extends DocumentData,
 > extends OpportunityBase<Resident, ReferralRecord> {
   compare(other: Opportunity<JusticeInvolvedPerson>): number {
     const { releaseDate } = this.person;

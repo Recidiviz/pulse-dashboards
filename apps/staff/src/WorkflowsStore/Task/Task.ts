@@ -59,7 +59,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     rootStore: RootStore,
     task: SupervisionTaskRecord<TaskType>,
     person: JusticeInvolvedPerson,
-    updates?: SupervisionTaskUpdate[TaskType]
+    updates?: SupervisionTaskUpdate[TaskType],
   ) {
     makeObservable(this, {
       updates: true,
@@ -100,7 +100,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
 
     return addDays(
       parseISO(this.updates.snoozedOn),
-      this.updates.snoozeForDays
+      this.updates.snoozeForDays,
     );
   }
 
@@ -133,7 +133,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     firestoreStore.updateSupervisionTask(
       this.type,
       this.person.recordId,
-      update
+      update,
     );
   }
 }

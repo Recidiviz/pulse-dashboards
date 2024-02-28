@@ -10,7 +10,7 @@ import { Prompt } from "../../FormPrompt";
 
 const getMetadataPrompts = (
   client?: Client,
-  metadata: Partial<UsNdEarlyTerminationReferralRecord["metadata"]> = {}
+  metadata: Partial<UsNdEarlyTerminationReferralRecord["metadata"]> = {},
 ): React.ReactChild[] => {
   const prompts = [];
   if (metadata.outOfState) {
@@ -18,7 +18,7 @@ const getMetadataPrompts = (
       <Prompt key="outOfState">
         This case is eligible for early termination. Please send a request to
         the sending state for early termination via ICOTS.
-      </Prompt>
+      </Prompt>,
     );
   }
   if (metadata.ICOut) {
@@ -26,7 +26,7 @@ const getMetadataPrompts = (
       <Prompt key="ICOut">
         This case is eligible for early termination. Please contact receiving
         state for early termination consideration.
-      </Prompt>
+      </Prompt>,
     );
   }
   if (metadata.multipleSentences) {
@@ -34,14 +34,14 @@ const getMetadataPrompts = (
       <Prompt key="multipleSentences">
         {client?.displayName} has multiple sentences that are eligible for Early
         Termination. Fill out additional forms for other sentences.
-      </Prompt>
+      </Prompt>,
     );
   }
   return prompts;
 };
 
 const FormPrompts: React.FC<React.HTMLAttributes<HTMLElement>> = (
-  props: React.HTMLAttributes<HTMLElement>
+  props: React.HTMLAttributes<HTMLElement>,
 ) => {
   const { workflowsStore } = useRootStore();
 

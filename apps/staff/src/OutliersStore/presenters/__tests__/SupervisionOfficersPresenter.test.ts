@@ -54,7 +54,7 @@ beforeEach(() => {
 
   store = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
@@ -172,7 +172,7 @@ test("tracks events", async () => {
 
   expect(
     store.outliersStore.rootStore.analyticsStore
-      .trackOutliersSupervisorPageViewed
+      .trackOutliersSupervisorPageViewed,
   ).toHaveBeenCalledWith({
     supervisorPseudonymizedId: pseudoId,
     viewedBy: pseudoId,

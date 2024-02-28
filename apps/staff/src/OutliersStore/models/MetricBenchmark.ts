@@ -32,10 +32,10 @@ export const metricBenchmarkSchema = z.object({
       z.object({
         target: z.number(),
         endDate: dateStringSchema,
-      })
+      }),
     )
     .transform((benchmarks) =>
-      benchmarks.sort((a, b) => ascending(a.endDate, b.endDate))
+      benchmarks.sort((a, b) => ascending(a.endDate, b.endDate)),
     ),
   latestPeriodValues: uppercaseSchemaKeys(
     // can't just pass the key enum to z.record because it does not enforce key exhaustiveness
@@ -43,7 +43,7 @@ export const metricBenchmarkSchema = z.object({
       [targetStatusSchema.enum.FAR]: z.array(z.number()),
       [targetStatusSchema.enum.MET]: z.array(z.number()),
       [targetStatusSchema.enum.NEAR]: z.array(z.number()),
-    })
+    }),
   ).transform((mapping) => {
     return targetStatusSchema.options.flatMap((key) => {
       return mapping[key].map((value) => ({ value, targetStatus: key }));

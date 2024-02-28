@@ -33,14 +33,14 @@ import {
 function forEachOutlierFixture(
   cb: (
     metric: RawSupervisionOfficerMetricOutlier,
-    benchmarkData: ValuesType<typeof rawMetricBenchmarksFixture>
-  ) => void
+    benchmarkData: ValuesType<typeof rawMetricBenchmarksFixture>,
+  ) => void,
 ) {
   Object.entries(rawSupervisionOfficerMetricOutlierFixtures).forEach(
     ([metricId, byCaseloadType]) => {
       Object.entries(byCaseloadType).forEach(([caseloadType, metrics]) => {
         const benchmarkData = rawMetricBenchmarksFixture.find(
-          (b) => b.metricId === metricId && b.caseloadType === caseloadType
+          (b) => b.metricId === metricId && b.caseloadType === caseloadType,
         );
 
         if (!benchmarkData)
@@ -51,7 +51,7 @@ function forEachOutlierFixture(
           cb(metric, benchmarkData);
         });
       });
-    }
+    },
   );
 }
 
@@ -62,10 +62,10 @@ test("data should be sorted chronologically", () => {
     expect(
       supervisionOfficerMetricOutlierSchema
         .parse(shuffledMetric)
-        .statusesOverTime.map((s) => s.endDate)
+        .statusesOverTime.map((s) => s.endDate),
     ).toEqual(
       // not all have to be complete, but all must be chronological up to the latest period
-      LOOKBACK_END_DATES.slice(-1 * shuffledMetric.statusesOverTime.length)
+      LOOKBACK_END_DATES.slice(-1 * shuffledMetric.statusesOverTime.length),
     );
   });
 });
@@ -74,8 +74,8 @@ test("fixture rate values should also appear in benchmark data", () => {
   forEachOutlierFixture((metric, benchmarkData) => {
     expect(benchmarkData.latestPeriodValues.far).toContain(
       metric.statusesOverTime.find(
-        (s) => s.endDate === LOOKBACK_END_DATE_STRINGS.at(-1)
-      )?.metricRate
+        (s) => s.endDate === LOOKBACK_END_DATE_STRINGS.at(-1),
+      )?.metricRate,
     );
   });
 });
@@ -84,20 +84,20 @@ test("fixture lookback values should correspond to benchmark ranges", () => {
   forEachOutlierFixture((metric, benchmarkData) => {
     metric.statusesOverTime.forEach((d) => {
       const targetValue = benchmarkData.benchmarks.find(
-        (b) => b.endDate === d.endDate
+        (b) => b.endDate === d.endDate,
       )?.target as number;
       expect(targetValue).toBeDefined();
 
       switch (d.status) {
         case "FAR":
           expect(d.metricRate).toBeGreaterThan(
-            Math.max(...benchmarkData.latestPeriodValues.near)
+            Math.max(...benchmarkData.latestPeriodValues.near),
           );
           break;
         case "NEAR":
           expect(d.metricRate).toBeGreaterThan(targetValue);
           expect(d.metricRate).toBeLessThan(
-            Math.min(...benchmarkData.latestPeriodValues.far)
+            Math.min(...benchmarkData.latestPeriodValues.far),
           );
           break;
         case "MET":

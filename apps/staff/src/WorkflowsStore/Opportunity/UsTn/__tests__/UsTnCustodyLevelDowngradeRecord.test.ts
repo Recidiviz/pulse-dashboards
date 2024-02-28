@@ -70,6 +70,6 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
 
 test("record is properly parsed for opportunity", () => {
   expect(
-    usTnCustodyLevelDowngradeSchema.parse(usTnCustodyLevelDowngradeRecordRaw)
+    usTnCustodyLevelDowngradeSchema.parse(usTnCustodyLevelDowngradeRecordRaw),
   ).toMatchSnapshot();
 });

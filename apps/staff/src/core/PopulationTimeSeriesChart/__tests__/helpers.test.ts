@@ -48,7 +48,7 @@ describe("Tests for helpers", () => {
   const checkExpectedBound = (
     helperFn: (data: ChartPoint[]) => number,
     mockData: number[],
-    expectedBound: number
+    expectedBound: number,
   ): void => {
     const data = generateData(mockData);
     expect(helperFn(data)).toEqual(expectedBound);

@@ -65,16 +65,16 @@ describe("DashboardLayout", () => {
     (PageSystem as jest.Mock).mockReturnValue(mockWithTestId("page-system-id"));
     (PageImpact as jest.Mock).mockReturnValue(mockWithTestId("page-impact-id"));
     (PageWorkflows as jest.Mock).mockReturnValue(
-      mockWithTestId("page-workflows-id")
+      mockWithTestId("page-workflows-id"),
     );
     (PageVitals as jest.Mock).mockReturnValue(
-      mockWithTestId("page-operations-id")
+      mockWithTestId("page-operations-id"),
     );
     (PageOutliers as jest.Mock).mockReturnValue(
-      mockWithTestId("page-outliers-id")
+      mockWithTestId("page-outliers-id"),
     );
     (PageMethodology as jest.Mock).mockReturnValue(
-      mockWithTestId("page-methodology-id")
+      mockWithTestId("page-methodology-id"),
     );
     (NotFound as jest.Mock).mockReturnValue(mockWithTestId("not-found-id"));
   });
@@ -85,7 +85,7 @@ describe("DashboardLayout", () => {
         <Routes>
           <Route path="/*" element={<DashboardLayout />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 

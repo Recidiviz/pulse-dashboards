@@ -103,7 +103,7 @@ describe("DistrictsStore", () => {
       expect(callMetricsApi).toHaveBeenCalledTimes(1);
       expect(callMetricsApi).toHaveBeenCalledWith(
         endpoint,
-        mockGetTokenSilently
+        mockGetTokenSilently,
       );
     });
 
@@ -158,7 +158,7 @@ describe("DistrictsStore", () => {
     it("sends an error and context information to Sentry", () => {
       expect(Sentry.captureException).toHaveBeenCalledWith(
         apiError,
-        expect.any(Function)
+        expect.any(Function),
       );
     });
   });

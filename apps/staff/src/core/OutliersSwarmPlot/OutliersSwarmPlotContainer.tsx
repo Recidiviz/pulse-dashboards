@@ -44,7 +44,7 @@ const OutliersSwarmPlotContainer = observer(
         </AspectRatio>
       </PlotMeasurer>
     );
-  }
+  },
 );
 
 function getThrottledUpdater() {
@@ -54,7 +54,7 @@ function getThrottledUpdater() {
         presenter.prepareChartData(measuredWidth);
       }
     },
-    400
+    400,
   );
 }
 
@@ -71,7 +71,7 @@ const PlotMeasurer: FC<OutliersSwarmPlotWrappedProps> = observer(
     }, [lastWidth, measuredWidth, presenter]);
 
     return <div ref={ref}>{children}</div>;
-  }
+  },
 );
 
 export { OutliersSwarmPlotContainer };

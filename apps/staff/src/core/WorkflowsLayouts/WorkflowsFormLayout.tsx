@@ -120,7 +120,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const FormComponent = formContents
     ? connectComponentToOpportunityForm(
         FormComponents[formContents],
-        opportunityType
+        opportunityType,
       )
     : null;
 

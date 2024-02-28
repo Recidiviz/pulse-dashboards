@@ -220,7 +220,7 @@ const DischargeReviewBox = observer(function DischargeReviewBox() {
     firestoreStore.updateFormDraftData(
       opportunityForm,
       "seeDischargeReport",
-      event.target.checked
+      event.target.checked,
     );
   };
 
@@ -263,7 +263,7 @@ const ObjectiveOutcome = observer(function ObjectiveOutcome({
     firestoreStore.updateFormDraftData(
       opportunityForm,
       formRecordKey,
-      parseInt(event.target.value)
+      parseInt(event.target.value),
     );
   };
 

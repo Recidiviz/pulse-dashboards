@@ -25,7 +25,7 @@ export function unflattenValues(metricFile) {
     ? []
     : convertFromStringToUnflattenedMatrix(
         metricFile.flattenedValueMatrix,
-        totalDataPoints
+        totalDataPoints,
       );
 }
 
@@ -38,7 +38,7 @@ const parseResponseByFileFormat = (responseData, file, eagerExpand = true) => {
   if (!metricFile) {
     const keys = Object.keys(responseData);
     throw new Error(
-      `Response payload for file ${file} is empty. Response keys are: ${keys}`
+      `Response payload for file ${file} is empty. Response keys are: ${keys}`,
     );
   }
 
@@ -61,7 +61,7 @@ const parseResponseByFileFormat = (responseData, file, eagerExpand = true) => {
     return {
       data: expandMetricRepresentation(
         metricFile.flattenedValueMatrix,
-        metricFile.metadata
+        metricFile.metadata,
       ),
       metadata: metricFile.metadata,
     };
@@ -88,7 +88,7 @@ const parseResponsesByFileFormat = (responseData, eagerExpand = true) => {
     const parsedResponse = parseResponseByFileFormat(
       responseData,
       file,
-      eagerExpand
+      eagerExpand,
     );
     parsedResponses[file] = parsedResponse;
   });

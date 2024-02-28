@@ -37,13 +37,12 @@ import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
 
-type ExtractOpportunityFromConfig<T> = T extends OpportunityConfig<infer U>
-  ? U
-  : never;
+type ExtractOpportunityFromConfig<T> =
+  T extends OpportunityConfig<infer U> ? U : never;
 
 export type OpportunityMapping = {
   [K in OpportunityType]?: ExtractOpportunityFromConfig<
-    typeof OPPORTUNITY_CONFIGS[K]
+    (typeof OPPORTUNITY_CONFIGS)[K]
   >;
 };
 
@@ -115,15 +114,15 @@ export type PersonClassForRecord<RecordType extends PersonRecordType> =
   RecordType extends ResidentRecord
     ? Resident
     : RecordType extends ClientRecord
-    ? Client
-    : JusticeInvolvedPerson;
+      ? Client
+      : JusticeInvolvedPerson;
 
 export type OpportunityTypeForRecord<PersonRecord extends PersonRecordType> =
   PersonRecord extends ClientRecord
     ? SupervisionOpportunityType
     : PersonRecord extends ResidentRecord
-    ? IncarcerationOpportunityType
-    : never;
+      ? IncarcerationOpportunityType
+      : never;
 
 export type EligibilityStatus =
   | "opportunitiesEligible"
@@ -137,5 +136,5 @@ export type WorkflowsRouteParams = { page?: string; personId?: string };
 
 export type StaffFilterFunction = (
   user: CombinedUserRecord,
-  featureVariants: ActiveFeatureVariantRecord
+  featureVariants: ActiveFeatureVariantRecord,
 ) => StaffFilter | undefined;

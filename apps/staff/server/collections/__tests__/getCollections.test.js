@@ -32,7 +32,7 @@ describe("getCollections", () => {
       ["US_PA", "US_MO"].forEach((stateCode) => {
         const collections = getCollections(stateCode);
         const expectedDimensions = Object.keys(
-          dimensionsByStateCode[stateCode]
+          dimensionsByStateCode[stateCode],
         );
         expect(collections).toHaveProperty(COLLECTIONS.NEW_REVOCATION);
         Object.keys(collections[COLLECTIONS.NEW_REVOCATION]).forEach(
@@ -41,10 +41,10 @@ describe("getCollections", () => {
               collections[COLLECTIONS.NEW_REVOCATION][metricName];
             if (dimensions) {
               expect(expectedDimensions).toEqual(
-                expect.arrayContaining(Object.keys(dimensions))
+                expect.arrayContaining(Object.keys(dimensions)),
               );
             }
-          }
+          },
         );
       });
       // There are 9 metrics in newRevocations that have dimensions
@@ -56,11 +56,11 @@ describe("getCollections", () => {
         const collections = getCollections(stateCode);
         expect(collections).toHaveProperty(COLLECTIONS.NEW_REVOCATION);
         expect(collections[COLLECTIONS.NEW_REVOCATION]).toHaveProperty(
-          "revocations_matrix_events_by_month"
+          "revocations_matrix_events_by_month",
         );
         expect(
           collections[COLLECTIONS.NEW_REVOCATION]
-            .revocations_matrix_events_by_month.dimensions.charge_category
+            .revocations_matrix_events_by_month.dimensions.charge_category,
         ).toEqual(dimensionsByStateCode[stateCode].charge_category);
       });
     });

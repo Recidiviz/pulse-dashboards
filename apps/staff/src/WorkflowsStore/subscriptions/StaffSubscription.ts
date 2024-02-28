@@ -47,18 +47,18 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
       workflowsSupportedSystems.length === 1
     ) {
       constraints.push(
-        where(SYSTEM_ID_TO_CASELOAD_FIELD[activeSystem], "==", true)
+        where(SYSTEM_ID_TO_CASELOAD_FIELD[activeSystem], "==", true),
       );
     }
 
     if (user) {
       const staffFilter = this.rootStore.tenantStore.workflowsStaffFilterFn(
         user,
-        this.rootStore.userStore.activeFeatureVariants
+        this.rootStore.userStore.activeFeatureVariants,
       );
       if (staffFilter) {
         constraints.push(
-          where(staffFilter.filterField, "in", staffFilter.filterValues)
+          where(staffFilter.filterField, "in", staffFilter.filterValues),
         );
       }
     }
@@ -66,9 +66,9 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
     return query(
       collection(
         this.rootStore.firestoreStore.db,
-        FIRESTORE_COLLECTIONS_MAP.staff
+        FIRESTORE_COLLECTIONS_MAP.staff,
       ),
-      ...constraints
+      ...constraints,
     );
   }
 }

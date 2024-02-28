@@ -57,7 +57,7 @@ describe("ProtectedLayout", () => {
         <Routes>
           <Route path="/*" element={<ProtectedLayout />} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
   });
@@ -76,7 +76,7 @@ describe("ProtectedLayout", () => {
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.getByText("DashboardLayout")).toBeInTheDocument();
     });
@@ -87,7 +87,7 @@ describe("ProtectedLayout", () => {
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.queryByText("LanternLayout")).not.toBeInTheDocument();
     });
@@ -102,7 +102,7 @@ describe("ProtectedLayout", () => {
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.getByText("DashboardLayout")).toBeInTheDocument();
     });
@@ -121,7 +121,7 @@ describe("ProtectedLayout", () => {
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.getByText("LanternLayout")).toBeInTheDocument();
     });
@@ -132,7 +132,7 @@ describe("ProtectedLayout", () => {
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.getByText("LanternLayout")).toBeInTheDocument();
     });
@@ -143,7 +143,7 @@ describe("ProtectedLayout", () => {
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.getByText("LanternLayout")).toBeInTheDocument();
     });
@@ -154,7 +154,7 @@ describe("ProtectedLayout", () => {
           <Routes>
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(screen.queryByText("DashboardLayout")).not.toBeInTheDocument();
     });

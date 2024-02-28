@@ -80,7 +80,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       client,
       "usMeEarlyTermination",
       client.rootStore,
-      usMeEarlyTerminationSchema.parse
+      usMeEarlyTerminationSchema.parse,
     );
 
     makeObservable(this, {
@@ -103,14 +103,14 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     if (ineligibleCriteria.usMePaidAllOwedRestitution?.amountOwed) {
       return `Remaining Restitution Balance ${formatAsCurrency(
-        ineligibleCriteria.usMePaidAllOwedRestitution.amountOwed
+        ineligibleCriteria.usMePaidAllOwedRestitution.amountOwed,
       )}`;
     }
     if (
       ineligibleCriteria.usMeNoPendingViolationsWhileSupervised?.violationDate
     ) {
       return `Violation Pending since ${formatWorkflowsDate(
-        ineligibleCriteria.usMeNoPendingViolationsWhileSupervised.violationDate
+        ineligibleCriteria.usMeNoPendingViolationsWhileSupervised.violationDate,
       )}`;
     }
   }
@@ -199,7 +199,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     if (usMeNoPendingViolationsWhileSupervised?.violationDate) {
       requirementsAlmostMet.push({
         text: `Violation Pending since ${formatWorkflowsDate(
-          usMeNoPendingViolationsWhileSupervised?.violationDate
+          usMeNoPendingViolationsWhileSupervised?.violationDate,
         )}`,
         tooltip: CRITERIA.usMeNoPendingViolationsWhileSupervised.tooltip,
       });
@@ -208,7 +208,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     if (usMePaidAllOwedRestitution?.amountOwed) {
       requirementsAlmostMet.push({
         text: `Remaining Restitution Balance ${formatAsCurrency(
-          usMePaidAllOwedRestitution?.amountOwed
+          usMePaidAllOwedRestitution?.amountOwed,
         )}`,
         tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,
       });

@@ -129,7 +129,7 @@ export const transformEarnedDischargeReferral: TransformFunction<
   transformedRecord.eligibleCriteria.usIdLsirLevelLowModerateForXDays = {
     riskLevel: eligibleCriteria.usIdLsirLevelLowModerateForXDays.riskLevel,
     eligibleDate: fieldToDate(
-      eligibleCriteria.usIdLsirLevelLowModerateForXDays.eligibleDate
+      eligibleCriteria.usIdLsirLevelLowModerateForXDays.eligibleDate,
     ),
   };
 
@@ -144,7 +144,7 @@ export const transformEarnedDischargeReferral: TransformFunction<
       eligibleDate: fieldToDate(
         eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
           ?.eligibleDate ??
-          eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
+          eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate,
       ),
       sentenceType:
         eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
@@ -162,7 +162,7 @@ export const transformEarnedDischargeReferral: TransformFunction<
       eligibleDate: fieldToDate(
         ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
           ?.eligibleDate ??
-          ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate
+          ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate,
       ),
       sentenceType:
         ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
@@ -214,7 +214,7 @@ export const transformEarnedDischargeReferral: TransformFunction<
 
   if (lastRestitutionPaymentDate) {
     transformedRecord.formInformation.lastRestitutionPaymentDate = fieldToDate(
-      lastRestitutionPaymentDate
+      lastRestitutionPaymentDate,
     );
   }
 
@@ -235,7 +235,7 @@ export const transformEarnedDischargeReferral: TransformFunction<
 
   if (dateImposed) {
     transformedRecord.formInformation.dateImposed = dateImposed.map(
-      (d: string) => fieldToDate(d)
+      (d: string) => fieldToDate(d),
     );
   }
 
@@ -249,12 +249,12 @@ export const transformEarnedDischargeReferral: TransformFunction<
       (blob: string) => {
         try {
           return Object.fromEntries(
-            Object.entries(JSON.parse(blob)).map(([k, v]) => [camelCase(k), v])
+            Object.entries(JSON.parse(blob)).map(([k, v]) => [camelCase(k), v]),
           );
         } catch (e) {
           return {};
         }
-      }
+      },
     );
   }
   return transformedRecord;

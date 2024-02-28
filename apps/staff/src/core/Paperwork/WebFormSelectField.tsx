@@ -62,7 +62,7 @@ const WebFormSelectField: React.FC<WebFormSelectFieldProps> = ({
 
   const [value, onChange] = useReactiveInput<HTMLSelectElement>(
     name,
-    opportunityForm
+    opportunityForm,
   );
 
   let { persistent, validationMsg = false } = (props.helpText ||

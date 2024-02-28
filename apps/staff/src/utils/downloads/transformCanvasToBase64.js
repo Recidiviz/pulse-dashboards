@@ -36,13 +36,13 @@ function transformCanvasToBase64(canvas, chartTitle, filters, violation) {
     destinationCtx.fillText(
       `Applied filters: ${filters}`,
       canvas.width / 2,
-      topPadding - 40
+      topPadding - 40,
     );
     if (violation) {
       destinationCtx.fillText(
         `${violation}`,
         canvas.width / 2,
-        topPadding - 20
+        topPadding - 20,
       );
     }
   }

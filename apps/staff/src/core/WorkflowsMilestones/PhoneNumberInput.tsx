@@ -93,7 +93,7 @@ const PhoneNumberInput = ({
     workflowsStore: { internalSystemName },
   } = useRootStore();
   const [phoneNumber, setPhoneNumber] = useState(
-    client?.milestonesPhoneNumber ?? ""
+    client?.milestonesPhoneNumber ?? "",
   );
 
   const showTooltip =

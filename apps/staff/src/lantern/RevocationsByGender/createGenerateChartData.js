@@ -42,7 +42,7 @@ export const generateDatasets = (dataPoints, denominators) => {
     label: genderLabel,
     backgroundColor: applyStatisticallySignificantShadingToDataset(
       CHART_COLORS[index],
-      denominators
+      denominators,
     ),
     data: dataPoints[index],
   }));
@@ -57,27 +57,27 @@ const transformData = (filteredData, statePopulationData) => {
       gender: dataset[0].gender,
       revocation_count: sumBy(
         (item) => toInteger(item.revocation_count),
-        dataset
+        dataset,
       ),
       revocation_count_all: sumBy(
         (item) => toInteger(item.revocation_count_all),
-        dataset
+        dataset,
       ),
       supervision_population_count: sumBy(
         (item) => toInteger(item.supervision_population_count),
-        dataset
+        dataset,
       ),
       supervision_count_all: sumBy(
         (item) => toInteger(item.supervision_count_all),
-        dataset
+        dataset,
       ),
       recommended_for_revocation_count: sumBy(
         (item) => toInteger(item.recommended_for_revocation_count),
-        dataset
+        dataset,
       ),
       recommended_for_revocation_count_all: sumBy(
         (item) => toInteger(item.recommended_for_revocation_count_all),
-        dataset
+        dataset,
       ),
     })),
     groupBy("gender"),
@@ -85,11 +85,11 @@ const transformData = (filteredData, statePopulationData) => {
       gender: dataset[0].gender,
       revocation_count: sumBy(
         (item) => toInteger(item.revocation_count),
-        dataset
+        dataset,
       ),
       revocation_count_all: sumBy(
         (item) => toInteger(item.revocation_count_all),
-        dataset
+        dataset,
       ),
       supervision_population_count: dataset[0].supervision_population_count,
       supervision_count_all: dataset[0].supervision_count_all,
@@ -103,11 +103,11 @@ const transformData = (filteredData, statePopulationData) => {
       gender: dataset[0].gender,
       revocation_count: sumBy(
         (item) => toInteger(item.revocation_count),
-        dataset
+        dataset,
       ),
       revocation_count_all: sumBy(
         (item) => toInteger(item.revocation_count_all),
-        dataset
+        dataset,
       ),
       supervision_population_count: dataset[0].supervision_population_count,
       supervision_count_all: dataset[0].supervision_count_all,
@@ -123,8 +123,8 @@ const transformData = (filteredData, statePopulationData) => {
         getStatePopulations(),
         genders,
         statePopulationData,
-        "gender"
-      )
+        "gender",
+      ),
   )(filteredData);
 };
 
@@ -134,7 +134,7 @@ const createGenerateStackedChartData = ({
 }) => {
   const { dataPoints, numerators, denominators } = transformData(
     filteredData,
-    statePopulationData
+    statePopulationData,
   );
   const datasets = generateDatasets(dataPoints, denominators);
   const data = {
@@ -151,15 +151,15 @@ const createGenerateStackedChartData = ({
 
 const createGenerateChartDataByMode = (
   { filteredData, statePopulationData },
-  mode
+  mode,
 ) => {
   const { dataPoints, numerators, denominators } = transformData(
     filteredData,
-    statePopulationData
+    statePopulationData,
   );
   const datasets = generateDatasets(dataPoints, denominators);
   const datasetIndex = datasets.findIndex(
-    (d) => d.label === genderValueToLabel[mode]
+    (d) => d.label === genderValueToLabel[mode],
   );
   const data = {
     labels: getStatePopulationsLabels(),

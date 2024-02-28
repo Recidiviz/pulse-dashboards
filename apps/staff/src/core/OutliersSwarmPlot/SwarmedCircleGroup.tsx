@@ -42,7 +42,7 @@ export function SwarmedCircleGroup({
             fill={GOAL_COLORS[targetStatus]}
             fillOpacity={opacity}
           />
-        )
+        ),
       )}
     </g>
   );

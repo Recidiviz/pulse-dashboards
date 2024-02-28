@@ -126,7 +126,7 @@ const SupervisorsList = observer(function SupervisorsList({
           ))}
         </SupervisorLinksWrapper>
       </div>
-    )
+    ),
   );
 
   const pageTitle = simplur`${supervisorsWithOutliersCount} ${labels.supervisionSupervisorLabel}[|s] across the state have one or more outlier ${labels.supervisionOfficerLabel}s in their ${labels.supervisionUnitLabel}`;
@@ -150,7 +150,7 @@ const OutliersSupervisorsListPage = observer(
 
     const presenter = new SupervisionOfficerSupervisorsPresenter(
       supervisionStore,
-      outliersLeadershipPageAllDistricts
+      outliersLeadershipPageAllDistricts,
     );
 
     return (
@@ -158,7 +158,7 @@ const OutliersSupervisorsListPage = observer(
         <SupervisorsList presenter={presenter} />
       </ModelHydrator>
     );
-  }
+  },
 );
 
 export default OutliersSupervisorsListPage;

@@ -119,7 +119,7 @@ describe("test for file trendline", () => {
     expect(trendlineTestEmptyArray).toBe(NaN);
 
     const trendlineTestInvalidEntries = trendlineMethods.trendlineSlope(
-      trendlineWithInvalidValues
+      trendlineWithInvalidValues,
     );
     expect(trendlineTestInvalidEntries).toBe(22.212072616239322);
 
@@ -155,7 +155,7 @@ describe("test for file trendline", () => {
     expect(trendlineErrorData).toEqual([]);
 
     const trendlineIncorrectData = trendlineMethods.trendlineData(
-      dataWithInvalidPoints
+      dataWithInvalidPoints,
     );
     expect(trendlineIncorrectData).toEqual(expectedIncorrectData);
   });

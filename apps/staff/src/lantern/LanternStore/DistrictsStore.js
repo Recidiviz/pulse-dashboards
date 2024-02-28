@@ -70,12 +70,12 @@ export default class DistrictsStore {
       this.isLoading = true;
       const responseData = yield callMetricsApi(
         endpoint,
-        this.rootStore.userStore.getTokenSilently
+        this.rootStore.userStore.getTokenSilently,
       );
       this.apiData = parseResponseByFileFormat(
         responseData,
         this.file,
-        this.eagerExpand
+        this.eagerExpand,
       );
       this.districts = this.apiData.data;
       this.setDistrictIdToLabel();

@@ -160,9 +160,9 @@ const OnboardingPage = observer(function OnboardingPage({
       title: "Who has access to this tool?",
       description: [
         `${toTitleCase(
-          labels.supervisionSupervisorLabel
+          labels.supervisionSupervisorLabel,
         )}s, district and regional management, and DOC administrators have access to this tool. ${toTitleCase(
-          labels.supervisionOfficerLabel
+          labels.supervisionOfficerLabel,
         )}s do not have access.`,
         "# If you have questions, we’re here to help.",
         "Click on the chat button in the bottom right corner of the screen to ask a question or send us feedback anytime.",

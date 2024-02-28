@@ -45,7 +45,7 @@ export function UsTnCommonlyUsedOverrideCodes({
         <CaseNoteTitle>{key}: </CaseNoteTitle>
         {value}
       </SecureDetailsContent>
-    )
+    ),
   );
 
   return (

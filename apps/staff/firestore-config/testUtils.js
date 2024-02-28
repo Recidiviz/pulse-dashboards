@@ -41,7 +41,7 @@ export function startTestEnv() {
     firestore: {
       rules: fs.readFileSync(
         `${path.basename(__dirname)}/firestore.rules`,
-        "utf8"
+        "utf8",
       ),
     },
   });

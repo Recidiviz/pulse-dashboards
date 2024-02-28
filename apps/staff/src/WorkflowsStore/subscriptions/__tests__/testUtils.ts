@@ -22,7 +22,7 @@ import { FirestoreError } from "firebase/firestore";
  * so that test data can be piped through the subscription on demand
  */
 export function getMockDocumentSnapshotHandler(
-  snapshotMock: jest.Mock
+  snapshotMock: jest.Mock,
 ): (mockData: any) => void {
   let subscriptionHandler: any;
 
@@ -59,7 +59,7 @@ function mockQuerySnapshotResults(mockData: any[]) {
  * so that test data can be piped through the subscription on demand
  */
 export function getMockQuerySnapshotHandler(
-  snapshotMock: jest.Mock
+  snapshotMock: jest.Mock,
 ): (mockData: any[] | undefined) => void {
   let subscriptionHandler: any;
 
@@ -85,7 +85,7 @@ export function getMockQuerySnapshotHandler(
  * so it can be tested on demand
  */
 export function getMockSnapshotErrorHandler(
-  snapshotMock: jest.Mock
+  snapshotMock: jest.Mock,
 ): (error: FirestoreError) => void {
   let errorHandler: any;
 

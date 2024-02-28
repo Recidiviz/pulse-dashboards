@@ -55,7 +55,7 @@ const ComposeMessageView = observer(function ComposeMessageView({
   const { analyticsStore } = useRootStore();
 
   const [disableReviewButton, setDisableReviewButton] = useState(
-    !validatePhoneNumber(client.milestonesPhoneNumber)
+    !validatePhoneNumber(client.milestonesPhoneNumber),
   );
 
   const handleUpdatePhoneNumber = async (updatedPhoneNumber: string) => {
@@ -63,7 +63,7 @@ const ComposeMessageView = observer(function ComposeMessageView({
     setDisableReviewButton(invalidPhoneNumber);
     await client.updateMilestonesPhoneNumber(
       updatedPhoneNumber,
-      invalidPhoneNumber
+      invalidPhoneNumber,
     );
   };
 
@@ -71,7 +71,7 @@ const ComposeMessageView = observer(function ComposeMessageView({
     const deletePendingMessage = additionalMessage === "";
     await client.updateMilestonesTextMessage(
       additionalMessage,
-      deletePendingMessage
+      deletePendingMessage,
     );
   };
 
@@ -82,7 +82,7 @@ const ComposeMessageView = observer(function ComposeMessageView({
 
   const handleOnCongratulatedClick = async () => {
     await client.updateMilestonesStatus(
-      TextMessageStatuses.CONGRATULATED_ANOTHER_WAY
+      TextMessageStatuses.CONGRATULATED_ANOTHER_WAY,
     );
     analyticsStore.trackMilestonesCongratulatedAnotherWay({
       justiceInvolvedPersonId: client.pseudonymizedId,

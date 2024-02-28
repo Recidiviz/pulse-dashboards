@@ -145,12 +145,12 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate
     ) {
       const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate
+        ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate,
       );
       pastEarnedDischargeEligibleDate.text =
         pastEarnedDischargeEligibleDate.text.replace(
           "$TIME_REMAINING",
-          `${monthsOrDaysRemaining}`
+          `${monthsOrDaysRemaining}`,
         );
       requirements.push(pastEarnedDischargeEligibleDate);
     }
@@ -170,12 +170,12 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       pastEarnedDischargeEligibleDate.eligibleDate
     ) {
       const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        pastEarnedDischargeEligibleDate.eligibleDate
+        pastEarnedDischargeEligibleDate.eligibleDate,
       );
 
       return INELIGIBLE_CRITERIA_COPY.pastEarnedDischargeEligibleDate.text.replace(
         "$TIME_REMAINING",
-        `${monthsOrDaysRemaining}`
+        `${monthsOrDaysRemaining}`,
       );
     }
   }

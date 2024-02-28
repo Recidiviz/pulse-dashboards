@@ -39,7 +39,7 @@ const formatTargetAndHighlight = format(".1%");
 export const prepareChartData: PrepareFn = (
   metric: MetricWithConfig,
   width: number,
-  height: number
+  height: number,
 ) => {
   const currentMetricData = metric.currentPeriodData;
 
@@ -74,7 +74,7 @@ export const prepareChartData: PrepareFn = (
           targetStatus,
           radius: backgroundRadius,
           opacity: 0.15,
-        })
+        }),
       ),
       {
         position: xScale(currentMetricData.metricRate),
@@ -85,7 +85,7 @@ export const prepareChartData: PrepareFn = (
         highlight: true,
       },
     ],
-    height
+    height,
   );
 
   // swarm positions are relative to vertical center, so the layout will need this
@@ -97,11 +97,11 @@ export const prepareChartData: PrepareFn = (
   }s in the state for ${
     metric.benchmark.caseloadType
   } caseloads, highlighting a value of ${formatTargetAndHighlight(
-    currentMetricData.metricRate
+    currentMetricData.metricRate,
   )}, which is far worse than the statewide rate of ${formatTargetAndHighlight(
-    metric.benchmark.currentPeriodTarget
+    metric.benchmark.currentPeriodTarget,
   )}. Other values in the chart range from ${formatTickLabel(
-    min
+    min,
   )} to ${formatTickLabel(max)}.`;
 
   return {

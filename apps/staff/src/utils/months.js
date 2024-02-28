@@ -47,7 +47,7 @@ const MONTH_NAMES_ABBREVIATED = [
 
 const monthNamesFromNumbers = function monthNamesFromNumbers(
   monthNumbers,
-  abbreviated
+  abbreviated,
 ) {
   const monthList = [];
   const namesArray = abbreviated ? MONTH_NAMES_ABBREVIATED : MONTH_NAMES;
@@ -62,7 +62,7 @@ const monthNamesFromNumbers = function monthNamesFromNumbers(
 const monthNamesWithYears = function monthNamesWithyears(
   monthNumbers,
   abbreviated,
-  allMonths
+  allMonths,
 ) {
   const monthNames = monthNamesFromNumbers(monthNumbers, abbreviated);
   const monthNumbersNormalized = monthNumbers.map((month) => Number(month));

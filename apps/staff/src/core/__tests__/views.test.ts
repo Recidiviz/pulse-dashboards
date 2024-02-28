@@ -41,9 +41,9 @@ describe("getRelativePath", () => {
     "it returns the relative path for workflows",
     (routeName) => {
       expect(
-        getRelativePath(WORKFLOWS_PATHS[routeName as WorkflowsPage])
+        getRelativePath(WORKFLOWS_PATHS[routeName as WorkflowsPage]),
       ).toEqual(WORKFLOWS_RELATIVE_PATHS[routeName as WorkflowsPage]);
-    }
+    },
   );
 
   const OUTLIERS_RELATIVE_PATHS = {
@@ -60,8 +60,8 @@ describe("getRelativePath", () => {
     "it returns the relative path for outliers",
     (routeName) => {
       expect(
-        getRelativePath(OUTLIERS_PATHS[routeName as OutliersPage])
+        getRelativePath(OUTLIERS_PATHS[routeName as OutliersPage]),
       ).toEqual(OUTLIERS_RELATIVE_PATHS[routeName as OutliersPage]);
-    }
+    },
   );
 });

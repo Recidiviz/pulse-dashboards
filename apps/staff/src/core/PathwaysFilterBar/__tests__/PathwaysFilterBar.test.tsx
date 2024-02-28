@@ -57,7 +57,7 @@ test("selecting from menu sets the filters", async () => {
         handleDownload={jest.fn()}
         enabledFilters={["timePeriod", "gender"]}
       />
-    </Router>
+    </Router>,
   );
 
   await selectEvent.select(screen.getByText("6 months"), ["1 year"]);

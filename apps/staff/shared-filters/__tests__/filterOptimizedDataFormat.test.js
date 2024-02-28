@@ -121,7 +121,7 @@ describe("filterOptimizedDataFormat", () => {
       const filtered = filterOptimizedDataFormat(
         unflattenedMatrix,
         metadata,
-        () => true
+        () => true,
       );
       expect(filtered).toEqual(fullOutput);
     });
@@ -132,7 +132,7 @@ describe("filterOptimizedDataFormat", () => {
         metadata,
         (item, dimensionKey) =>
           dimensionKey !== "supervision_type" ||
-          item.supervision_type.toUpperCase() === "PAROLE"
+          item.supervision_type.toUpperCase() === "PAROLE",
       );
 
       const expected = [
@@ -159,7 +159,7 @@ describe("filterOptimizedDataFormat", () => {
       const filtered = filterOptimizedDataFormat(
         unflattenedMatrix,
         metadata,
-        filterFn
+        filterFn,
       );
 
       const expected = [fullOutput[0], fullOutput[2], fullOutput[4]];
@@ -170,7 +170,7 @@ describe("filterOptimizedDataFormat", () => {
       const filtered = filterOptimizedDataFormat(
         unflattenedMatrix,
         metadata,
-        () => false
+        () => false,
       );
 
       expect(filtered).toEqual([]);
@@ -195,7 +195,7 @@ describe("filterOptimizedDataFormat", () => {
         unflattenedMatrix,
         metadata,
         filterFn,
-        skipFilterFn
+        skipFilterFn,
       );
 
       expect(filtered).toEqual([
@@ -213,8 +213,8 @@ describe("filterOptimizedDataFormat", () => {
     it("throws an error", () => {
       expect(() => filterOptimizedDataFormat([])).toThrowError(
         new Error(
-          `Invalid data type supplied to filterOptimizedDataFormat, expected 2D array of values.`
-        )
+          `Invalid data type supplied to filterOptimizedDataFormat, expected 2D array of values.`,
+        ),
       );
     });
   });

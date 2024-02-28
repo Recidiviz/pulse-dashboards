@@ -47,5 +47,5 @@ export const OutliersSupervisionHome = observer(
     }
 
     return <ErrorMessage />;
-  }
+  },
 );

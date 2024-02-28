@@ -97,7 +97,7 @@ if (authEnv === "production") {
 
 if (!authConfig.domain || !authConfig.audience) {
   throw new Error(
-    "Please make sure that auth_config.json is in place and populated"
+    "Please make sure that auth_config.json is in place and populated",
   );
 }
 
@@ -119,7 +119,7 @@ app.use(
         "require-trusted-types-for": ["'script'"],
       },
     },
-  })
+  }),
 );
 app.use(helmet.frameguard({ action: "DENY" }));
 
@@ -174,7 +174,7 @@ if (!isOfflineMode && authEnv !== "test") {
   // for all state-specific routes
   app.use(
     stateApiBaseRoute,
-    validateStateCode().unless({ path: routesExemptFromStateCodeValidation })
+    validateStateCode().unless({ path: routesExemptFromStateCodeValidation }),
   );
 }
 
@@ -182,18 +182,18 @@ app.get("/api/offlineUser", validateOfflineRequest, api.offlineUser);
 app.get(
   `${stateApiBaseRoute}:metricType/refreshCache`,
   validateCronRequest,
-  api.refreshCache
+  api.refreshCache,
 );
 app.get(`${stateApiBaseRoute}newRevocations`, api.newRevocations);
 app.get(
   "/api/:stateCode/newRevocations/:file",
   newRevocationsParamValidations,
-  api.newRevocationFile
+  api.newRevocationFile,
 );
 app.get(`${stateApiBaseRoute}vitals`, api.vitals);
 app.get(
   `${stateApiBaseRoute}projections/methodology.pdf`,
-  api.populationProjectionsMethodology
+  api.populationProjectionsMethodology,
 );
 app.get(`${stateApiBaseRoute}pathways/:file`, api.pathways);
 app.post("/api/generateFileLink", upload.single("zip"), api.generateFileLink);
@@ -201,7 +201,7 @@ app.get("/file/:name", api.upload);
 app.get(
   `${stateApiBaseRoute}workflows/templates`,
   workflowsTemplatesParamValidations,
-  api.workflowsTemplates
+  api.workflowsTemplates,
 );
 
 // An App Engine-specific API for handling warmup requests on new instance initialization

@@ -71,7 +71,7 @@ if (deployEnv === "preview") {
   ]);
   await $`yarn build-staging`.pipe(process.stdout);
   await $`firebase hosting:channel:deploy ${previewAppName} -P staging --expires ${expiration}`.pipe(
-    process.stdout
+    process.stdout,
   );
   process.exit();
 }
@@ -122,7 +122,7 @@ if (deployEnv === "production") {
     });
     if (!e2eTestsFailedPrompt.continueToDeploy) {
       console.log(
-        `Cancelling deploy to ${deployEnv} because of E2E test failures.`
+        `Cancelling deploy to ${deployEnv} because of E2E test failures.`,
       );
       process.exit();
     }
@@ -189,7 +189,7 @@ const deployBackendPrompt = await inquirer.prompt({
 
 if (deployBackendPrompt.deployBackend) {
   const gaeVersion = nextVersion.replaceAll(".", "-");
-  cd("../..")
+  cd("../..");
   let retryBackend = false;
   do {
     try {
@@ -197,20 +197,20 @@ if (deployBackendPrompt.deployBackend) {
         case "production":
           // eslint-disable-next-line no-await-in-loop
           await $`gcloud app deploy gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
-            process.stdout
+            process.stdout,
           );
           publishReleaseNotes = true;
           break;
         case "demo":
           // eslint-disable-next-line no-await-in-loop
           await $`gcloud app deploy gae-staging-demo.yaml --project recidiviz-dashboard-staging`.pipe(
-            process.stdout
+            process.stdout,
           );
           break;
         default:
           // eslint-disable-next-line no-await-in-loop
           await $`gcloud app deploy gae-staging.yaml --project recidiviz-dashboard-staging`.pipe(
-            process.stdout
+            process.stdout,
           );
           break;
       }
@@ -227,9 +227,8 @@ if (deployBackendPrompt.deployBackend) {
     }
   } while (retryBackend);
 
-  cd("apps/staff")
+  cd("apps/staff");
 }
-
 
 const deployFrontendPrompt = await inquirer.prompt({
   type: "confirm",
@@ -258,7 +257,7 @@ if (deployFrontendPrompt.deployFrontend) {
   // clever with `screen` and piping output, this is much easier.
   console.log("Deploying preview application...");
   await $`firebase hosting:channel:deploy ${nextVersion} -P ${deployEnv}  --expires 1h`.pipe(
-    process.stdout
+    process.stdout,
   );
 
   // Ask if the preview is good. If not, exit.
@@ -278,14 +277,14 @@ if (deployFrontendPrompt.deployFrontend) {
           case "production":
             // eslint-disable-next-line no-await-in-loop
             await $`firebase deploy --except functions -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
-              process.stdout
+              process.stdout,
             );
             publishReleaseNotes = true;
             break;
           default:
             // eslint-disable-next-line no-await-in-loop
             await $`firebase deploy --except functions -P ${deployEnv} -m "${currentRevision}"`.pipe(
-              process.stdout
+              process.stdout,
             );
         }
         retryFrontend = false;
@@ -327,5 +326,5 @@ if (publishReleaseNotes) {
 }
 
 console.log(
-  `Finished with the ${deployEnv} deploy! Commit hash: ${currentRevision}`
+  `Finished with the ${deployEnv} deploy! Commit hash: ${currentRevision}`,
 );

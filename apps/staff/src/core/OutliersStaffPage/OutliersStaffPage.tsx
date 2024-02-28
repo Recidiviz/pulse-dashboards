@@ -204,7 +204,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   // empty page where the staff is not an outlier on the page the user landed at
   if (
     !outlierOfficerData.outlierMetrics.find(
-      (metric) => metric.metricId === metricInfo.name
+      (metric) => metric.metricId === metricInfo.name,
     )
   ) {
     const linkProps = {
@@ -219,7 +219,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         headerText={`${
           outlierOfficerData.displayName
         } is not currently an outlier on ${toTitleCase(
-          metricInfo.eventName
+          metricInfo.eventName,
         )}. They are an outlier on other metrics.`}
         {...linkProps}
       />
@@ -239,7 +239,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       title: labels.supervisionDistrictLabel,
       info: getDistrictWithoutLabel(
         outlierOfficerData.district,
-        labels.supervisionDistrictLabel
+        labels.supervisionDistrictLabel,
       ),
     },
     {
@@ -282,7 +282,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                 outliersUrl("supervisionStaffMetric", {
                   officerPseudoId: outlierOfficerData.pseudonymizedId,
                   metricId: metric.metricId,
-                })
+                }),
               );
             };
 
@@ -310,10 +310,10 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                 labels.supervisionOfficerLabel
               }’s ${bodyDisplayName} from ${formatDate(
                 sub(secondToLastDate, { years: 1 }),
-                "MMMM yyyy"
+                "MMMM yyyy",
               )} to ${formatDate(
                 secondToLastDate,
-                "MMMM yyyy"
+                "MMMM yyyy",
               )} — again representing the ${
                 labels.supervisionOfficerLabel
               }’s rate for a full year, but starting a month earlier.`
@@ -359,7 +359,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                   </OutliersChartCard>
                   <OutliersChartCard
                     title={`Historical ${toTitleCase(
-                      metric.config.bodyDisplayName
+                      metric.config.bodyDisplayName,
                     )}`}
                     infoModal={
                       <OutliersInfoModal
@@ -373,7 +373,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                     }
                     subtitle={`${formatDate(
                       firstDate,
-                      "MMMM yyyy"
+                      "MMMM yyyy",
                     )} - ${formatDate(lastDate, "MMMM yyyy")}`}
                   >
                     <OutliersLinePlot metric={metric} />
@@ -399,7 +399,7 @@ const OutliersStaffPage = observer(function OutliersStaffPage() {
 
   const presenter = new SupervisionOfficerDetailPresenter(
     supervisionStore,
-    officerPseudoId
+    officerPseudoId,
   );
 
   return (

@@ -69,7 +69,7 @@ export type BaseNewMetricConstructorOptions = {
 };
 
 export default abstract class PathwaysNewBackendMetric<
-  RecordFormat extends MetricRecord
+  RecordFormat extends MetricRecord,
 > implements HydratablePathwaysMetric
 {
   readonly id: MetricId;
@@ -95,7 +95,7 @@ export default abstract class PathwaysNewBackendMetric<
   // this is just a noop stub method to be overridden when needed
   // eslint-disable-next-line class-methods-use-this
   protected dataTransformer: (d: RecordFormat[]) => RecordFormat[] = (
-    d: RecordFormat[]
+    d: RecordFormat[],
   ) => {
     return d;
   };
@@ -162,7 +162,7 @@ export default abstract class PathwaysNewBackendMetric<
         // values at all. This one solves the problem where we always think things are different
         // because two objects with all the same properties don't compare as equal with ===.
         equals: comparer.structural,
-      }
+      },
     );
   }
 
@@ -254,7 +254,7 @@ export default abstract class PathwaysNewBackendMetric<
   }
 
   protected async fetchNewMetrics(
-    params: URLSearchParams
+    params: URLSearchParams,
   ): Promise<NewBackendRecord<RecordFormat>> {
     // This could abort requests that have already completed, but that's not a big deal.
     this.abortController?.abort();
@@ -264,7 +264,7 @@ export default abstract class PathwaysNewBackendMetric<
     return callNewMetricsApi(
       `pathways/${stateCode}/${this.endpoint}?${params.toString()}`,
       RootStore.getTokenSilently,
-      this.abortController.signal
+      this.abortController.signal,
     );
   }
 
@@ -284,7 +284,7 @@ export default abstract class PathwaysNewBackendMetric<
         runInAction(() => {
           this.allRecords = this.dataTransformer(fetchedData.data);
           this.lastUpdated = formatDateString(
-            fetchedData.metadata?.lastUpdated
+            fetchedData.metadata?.lastUpdated,
           );
           this.hydrationState = { status: "hydrated" };
         });

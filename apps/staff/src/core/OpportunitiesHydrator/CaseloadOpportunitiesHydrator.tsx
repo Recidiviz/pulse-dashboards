@@ -50,7 +50,7 @@ export const CaseloadOpportunitiesHydrator = observer(
               if (!isHydrated(opp)) opp.hydrate();
             });
         }),
-      [workflowsStore, opportunityTypes]
+      [workflowsStore, opportunityTypes],
     );
 
     const displayInitialState = !selectedSearchIds.length;
@@ -69,5 +69,5 @@ export const CaseloadOpportunitiesHydrator = observer(
     if (displayNoResults) return <>{empty}</>;
 
     return <>{hydrated}</>;
-  }
+  },
 );

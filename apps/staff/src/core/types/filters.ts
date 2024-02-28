@@ -54,7 +54,7 @@ export type PopulationFilterLabels = {
 };
 
 export type SetPopulationFilters = (
-  filtersStore: FiltersStore
+  filtersStore: FiltersStore,
 ) => (option: FilterOption[] | FilterOption) => void;
 
 export type FilterOption = {

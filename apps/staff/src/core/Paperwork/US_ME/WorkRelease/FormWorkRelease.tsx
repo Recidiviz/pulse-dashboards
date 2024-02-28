@@ -66,7 +66,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
 
   const documents = await renderMultipleDocx(
     fileInputs,
-    resident.rootStore.getTokenSilently
+    resident.rootStore.getTokenSilently,
   );
   downloadZipFile(`${resident.displayName} Work Release Packet.zip`, documents);
 };

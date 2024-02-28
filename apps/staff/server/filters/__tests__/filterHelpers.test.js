@@ -135,7 +135,7 @@ describe("getNewRevocationsFiltersByMetricName", () => {
             metricName,
             subsetFilters,
             userRestrictionsFilters,
-          })
+          }),
         ).toEqual({ ...subsetFilters, ...userRestrictionsFilters });
       });
     });
@@ -152,7 +152,7 @@ describe("getNewRevocationsFiltersByMetricName", () => {
             metricName,
             subsetFilters,
             userRestrictionsFilters,
-          })
+          }),
         ).toEqual({
           level_1_supervision_location: ["03"],
         });
@@ -167,7 +167,7 @@ describe("getNewRevocationsFiltersByMetricName", () => {
           metricName: "revocations_matrix_distribution_by_district",
           subsetFilters,
           userRestrictionsFilters,
-        })
+        }),
       ).toEqual({
         violation_type: "all",
       });
@@ -181,7 +181,7 @@ describe("getNewRevocationsFiltersByMetricName", () => {
           metricName: "revocations_matrix_supervision_location_ids_to_names",
           subsetFilters,
           userRestrictionsFilters,
-        })
+        }),
       ).toEqual({});
     });
   });

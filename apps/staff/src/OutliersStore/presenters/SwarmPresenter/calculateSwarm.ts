@@ -44,7 +44,7 @@ export function calculateSwarm(data: InputPoint[], spread?: number) {
     spread ?? calculateRequiredSpread(unconstrainedSwarmPoints);
 
   const swarmPoints = unconstrainedSwarmPoints.map(
-    handleOverflowingCircles(swarmSpread)
+    handleOverflowingCircles(swarmSpread),
   );
 
   return {
@@ -80,7 +80,7 @@ function sortSwarm(a: SwarmPoint, b: SwarmPoint) {
  */
 function placementReducer(
   placedCircles: SwarmPoint[],
-  currentCircle: SwarmPoint
+  currentCircle: SwarmPoint,
 ): SwarmPoint[] {
   const maxRadius = max(...placedCircles.map((d) => d.radius)) || 0;
 
@@ -92,15 +92,15 @@ function placementReducer(
   const placedCirclesClosestFirst = [...placedCircles].sort((a, b) =>
     ascending(
       abs(currentCircle.position - a.position),
-      abs(currentCircle.position - b.position)
-    )
+      abs(currentCircle.position - b.position),
+    ),
   );
   for (let i = 0; i < placedCirclesClosestFirst.length; i += 1) {
     const otherCircle = placedCirclesClosestFirst[i];
     const requiredDistanceBetweenCenters =
       currentCircle.radius + otherCircle.radius;
     const distanceBetweenCenters = abs(
-      currentCircle.position - otherCircle.position
+      currentCircle.position - otherCircle.position,
     );
     const possibleOverlapDistance = currentCircle.radius + maxRadius;
     // stop scanning once it becomes clear that no remaining circles can possibly overlap the current one
@@ -114,7 +114,7 @@ function placementReducer(
       // where the hypotenuse connects the centers of the two circles)
       const offset = sqrt(
         requiredDistanceBetweenCenters * requiredDistanceBetweenCenters -
-          distanceBetweenCenters * distanceBetweenCenters
+          distanceBetweenCenters * distanceBetweenCenters,
       );
       // use that offset to create an interval within which this circle is forbidden
       intervals.push([
@@ -134,7 +134,7 @@ function placementReducer(
       // sorting by absolute values to find the one closest to zero first
       .sort((a, b) => ascending(abs(a), abs(b)))
       .find((candidate) =>
-        intervals.every(([lo, hi]) => candidate <= lo || candidate >= hi)
+        intervals.every(([lo, hi]) => candidate <= lo || candidate >= hi),
       ) ??
     // if there weren't any overlaps, retain the default offset
     currentCircle.spreadOffset;
@@ -190,13 +190,13 @@ function handleOverflowingCircles(swarmSpread: number) {
  */
 function calculateRequiredSpread(swarmPoints: SwarmPoint[]): number {
   const farthestSpreadDistance = max(
-    ...swarmPoints.map((d) => abs(d.spreadOffset))
+    ...swarmPoints.map((d) => abs(d.spreadOffset)),
   );
   const pointsAtFarthestDistance = swarmPoints.filter(
-    (d) => abs(d.spreadOffset) === farthestSpreadDistance
+    (d) => abs(d.spreadOffset) === farthestSpreadDistance,
   );
   const largestRadiusAtFarthestdistance = max(
-    ...pointsAtFarthestDistance.map((d) => d.radius)
+    ...pointsAtFarthestDistance.map((d) => d.radius),
   );
 
   // double value to reflect this spread on both sides of zero

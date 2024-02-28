@@ -118,7 +118,7 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       client,
       "usMiMinimumTelephoneReporting",
       client.rootStore,
-      usMiMinimumTelephoneReportingSchema.parse
+      usMiMinimumTelephoneReportingSchema.parse,
     );
 
     makeObservable(this, {
@@ -134,7 +134,7 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 

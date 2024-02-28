@@ -44,7 +44,7 @@ const CaseloadHydrator = observer(function CaseloadHydrator({
           if (!isHydrated(caseload)) caseload.hydrate();
         });
       }),
-    [workflowsStore, selectedSearchIds]
+    [workflowsStore, selectedSearchIds],
   );
 
   const displayInitialState = !selectedSearchIds.length;

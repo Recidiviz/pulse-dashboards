@@ -158,7 +158,7 @@ export async function loadFixtures(logger: Logger): Promise<void> {
         db
           .collection(generateCollectionName(coll))
           .doc(`${record.stateCode.toLowerCase()}_${externalId}`),
-        record
+        record,
       );
     });
 
@@ -169,7 +169,7 @@ export async function loadFixtures(logger: Logger): Promise<void> {
 }
 
 export async function loadOpportunityReferralFixtures(
-  logger: Logger
+  logger: Logger,
 ): Promise<void> {
   for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
     logger(`wiping existing ${opportunity} referral data ...`);
@@ -179,7 +179,7 @@ export async function loadOpportunityReferralFixtures(
     const bulkWriter = db.bulkWriter();
 
     const rawRecords = JSON.parse(
-      fs.readFileSync(`tools/fixtures/${opportunity}.json`).toString()
+      fs.readFileSync(`tools/fixtures/${opportunity}.json`).toString(),
     );
 
     rawRecords.forEach((rawReferral: any) => {
@@ -189,7 +189,7 @@ export async function loadOpportunityReferralFixtures(
         db
           .collection(generateCollectionName(opportunity))
           .doc(`${rawReferral.stateCode.toLowerCase()}_${externalId}`),
-        rawReferral
+        rawReferral,
       );
     });
 
@@ -218,9 +218,9 @@ async function loadClientUpdatesV2(logger: Logger): Promise<void> {
           .doc(externalId)
           .collection(generateCollectionName("milestonesMessages"))
           .doc(getMonthYearFromDate(new Date())),
-        record
+        record,
       );
-    }
+    },
   );
   bulkWriter.close().then(() => logger(`new  data loaded successfully`));
 }

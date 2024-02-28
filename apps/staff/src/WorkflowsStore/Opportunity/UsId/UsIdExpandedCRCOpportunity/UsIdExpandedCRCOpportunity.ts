@@ -119,7 +119,7 @@ export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<UsIdExpan
       resident,
       "usIdExpandedCRC",
       resident.rootStore,
-      usIdExpandedCRCSchema.parse
+      usIdExpandedCRCSchema.parse,
     );
 
     makeObservable(this, { requirementsMet: computed });
@@ -130,7 +130,7 @@ export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<UsIdExpan
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 }

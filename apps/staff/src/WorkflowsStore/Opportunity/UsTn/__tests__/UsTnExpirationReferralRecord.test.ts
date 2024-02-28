@@ -107,7 +107,7 @@ test("transform function", () => {
 test("record validates", () => {
   const validator = getValidator(mockClient as any);
   expect(() =>
-    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw))
+    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw)),
   ).not.toThrow(OpportunityValidationError);
 });
 
@@ -117,6 +117,6 @@ test("record does not validate", () => {
     expirationDate: fieldToDate("2022-04-04"),
   } as any);
   expect(() =>
-    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw))
+    validator(usTnExpirationSchema.parse(usTnExpirationRecordRaw)),
   ).toThrow(OpportunityValidationError);
 });

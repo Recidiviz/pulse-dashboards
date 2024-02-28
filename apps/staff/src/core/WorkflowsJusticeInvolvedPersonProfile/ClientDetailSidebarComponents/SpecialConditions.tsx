@@ -53,7 +53,7 @@ export const STATE_SPECIFIC_EMPTY_SPECIAL_CONDITION_STRINGS: Record<
 
 export function ProbationSpecialConditionsMarkup(
   client: Client,
-  emptySpecialConditionString: string
+  emptySpecialConditionString: string,
 ): JSX.Element {
   const { formattedProbationSpecialConditions } = client;
 
@@ -104,7 +104,7 @@ export function SpecialConditions({
       <SecureDetailsContent>
         {ProbationSpecialConditionsMarkup(
           client,
-          emptySpecialConditionStrings.probation
+          emptySpecialConditionStrings.probation,
         )}
       </SecureDetailsContent>
       <Divider />
@@ -126,7 +126,7 @@ export function SpecialConditions({
                     </SpecialConditionsCopy>
                   </SecureDetailsContent>
                 );
-              }
+              },
             )}
           </DetailsList>
         </>

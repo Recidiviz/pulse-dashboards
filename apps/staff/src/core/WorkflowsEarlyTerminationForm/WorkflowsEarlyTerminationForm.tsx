@@ -28,7 +28,7 @@ import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyT
 const collectAdditionalDepositionLinesToDownload = (client: Client) => {
   const { earlyTermination } = client.verifiedOpportunities;
   return earlyTermination?.form?.additionalDepositionLines.map(
-    (key) => earlyTermination?.form?.formData[key]
+    (key) => earlyTermination?.form?.formData[key],
   );
 };
 
@@ -55,7 +55,7 @@ function WorkflowsEarlyTerminationForm() {
       client.stateCode,
       "early_termination_template.docx",
       contents,
-      client.rootStore.getTokenSilently
+      client.rootStore.getTokenSilently,
     );
   };
 

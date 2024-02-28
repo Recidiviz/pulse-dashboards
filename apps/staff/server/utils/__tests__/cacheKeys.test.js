@@ -40,7 +40,7 @@ describe("cacheKeys utils", () => {
         getCacheKeyForSubsetCombination({
           violation_type: 0,
           charge_category: 1,
-        })
+        }),
       ).toEqual("violation_type=0-charge_category=1");
     });
   });
@@ -48,7 +48,7 @@ describe("cacheKeys utils", () => {
   describe("getSubsetCombinations", () => {
     it("returns an array of all possible subset filters", () => {
       expect(getSubsetCombinations(subsetManifest)).toEqual(
-        allSubsetCombinations
+        allSubsetCombinations,
       );
     });
   });
@@ -59,7 +59,7 @@ describe("cacheKeys utils", () => {
         level_1_supervision_location: ["24", "04n"],
       };
       expect(getUserRestrictionCacheKeyValues({ cacheKeySubset })).toEqual(
-        "-level_1_supervision_location=04n,24"
+        "-level_1_supervision_location=04n,24",
       );
     });
 
@@ -80,7 +80,7 @@ describe("cacheKeys utils", () => {
             metricType: "goals",
             metricName: null,
             cacheKeySubset: {},
-          })
+          }),
         ).toEqual("US_MO-goals");
       });
     });
@@ -93,7 +93,7 @@ describe("cacheKeys utils", () => {
             metricType: "newRevocations",
             metricName: "random_file_name",
             cacheKeySubset: {},
-          })
+          }),
         ).toEqual("US_MO-newRevocations-random_file_name");
       });
     });
@@ -108,9 +108,9 @@ describe("cacheKeys utils", () => {
             cacheKeySubset: {
               violation_type: "felony",
             },
-          })
+          }),
         ).toEqual(
-          "US_MO-newRevocations-revocations_matrix_distribution_by_district-violation_type=4"
+          "US_MO-newRevocations-revocations_matrix_distribution_by_district-violation_type=4",
         );
 
         expect(
@@ -121,9 +121,9 @@ describe("cacheKeys utils", () => {
             cacheKeySubset: {
               violation_type: "all",
             },
-          })
+          }),
         ).toEqual(
-          "US_MO-newRevocations-revocations_matrix_distribution_by_district-violation_type=0"
+          "US_MO-newRevocations-revocations_matrix_distribution_by_district-violation_type=0",
         );
       });
     });
@@ -137,9 +137,9 @@ describe("cacheKeys utils", () => {
               metricType: "newRevocations",
               metricName: "random_file_name",
               cacheKeySubset: { level_1_supervision_location: ["03"] },
-            })
+            }),
           ).toEqual(
-            "US_MO-newRevocations-random_file_name-level_1_supervision_location=03"
+            "US_MO-newRevocations-random_file_name-level_1_supervision_location=03",
           );
         });
       });
@@ -155,9 +155,9 @@ describe("cacheKeys utils", () => {
                 violation_type: "felony",
                 level_1_supervision_location: ["03"],
               },
-            })
+            }),
           ).toEqual(
-            "US_MO-newRevocations-revocations_matrix_distribution_by_gender-violation_type=4-level_1_supervision_location=03"
+            "US_MO-newRevocations-revocations_matrix_distribution_by_gender-violation_type=4-level_1_supervision_location=03",
           );
         });
       });
@@ -173,9 +173,9 @@ describe("cacheKeys utils", () => {
                 violation_type: "felony",
                 level_1_supervision_location: ["03"],
               },
-            })
+            }),
           ).toEqual(
-            "US_MO-newRevocations-revocations_matrix_distribution_by_district-violation_type=4"
+            "US_MO-newRevocations-revocations_matrix_distribution_by_district-violation_type=4",
           );
         });
       });

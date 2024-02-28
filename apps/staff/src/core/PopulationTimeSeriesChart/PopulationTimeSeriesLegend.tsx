@@ -31,7 +31,7 @@ const PopulationTimeSeriesLegend: React.FC<propTypes> = ({ items }) => {
           <div
             className={`PopulationTimeSeriesLegend__icon ${label.split(
               " ",
-              1
+              1,
             )}Legend`}
           >
             <svg height="2" width="24">

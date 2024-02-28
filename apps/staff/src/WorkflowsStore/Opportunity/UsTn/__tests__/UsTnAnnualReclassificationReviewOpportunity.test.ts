@@ -36,7 +36,7 @@ let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
-  residentRecord: typeof UsTnAnnualReclassificationEligibleResidentRecord
+  residentRecord: typeof UsTnAnnualReclassificationEligibleResidentRecord,
 ) {
   root = new RootStore();
   jest

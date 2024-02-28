@@ -41,7 +41,7 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
     ? client.verifiedOpportunities.usCaSupervisionLevelDowngrade
     : undefined;
   const { setDismissAfterMs, setModalIsOpen } = useContext(
-    WorkflowsPreviewModalContext
+    WorkflowsPreviewModalContext,
   );
   const closeModalTimeoutMS = opportunity ? 10000 : 4000;
   setDismissAfterMs(closeModalTimeoutMS);

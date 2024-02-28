@@ -72,7 +72,7 @@ export function downloadCanvasAsImage({
     canvas,
     chartTitle,
     filters,
-    violation
+    violation,
   );
   try {
     if (shouldZipDownload || isMobile) {
@@ -236,7 +236,7 @@ export function configureDataDownloadButton({
         file.chartLabels,
         file.dataExportLabel,
         convertValuesToNumbers,
-        fixLabelsInColumns
+        fixLabelsInColumns,
       );
     });
     Promise.all(promises).then((csvs) => {
@@ -246,7 +246,7 @@ export function configureDataDownloadButton({
           const filename = configureFilename(
             fileContents[index].chartId,
             filters,
-            shouldZipDownload
+            shouldZipDownload,
           );
           const formattedCSV = includeFiltersDescriptionInCSV
             ? [filters, csv].join("\n")

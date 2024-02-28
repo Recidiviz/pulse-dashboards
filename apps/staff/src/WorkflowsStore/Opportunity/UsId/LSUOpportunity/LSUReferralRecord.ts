@@ -132,7 +132,7 @@ export const transformLSUEarnedDischargeCriteria: TransformFunction<
       negativeUaWithin90Days: {
         latestUaDates:
           optionalFieldToDateArray(
-            eligibleCriteria.negativeUaWithin90Days?.latestUaDates
+            eligibleCriteria.negativeUaWithin90Days?.latestUaDates,
           ) ?? [],
         latestUaResults:
           eligibleCriteria.negativeUaWithin90Days?.latestUaResults ?? [],
@@ -140,7 +140,7 @@ export const transformLSUEarnedDischargeCriteria: TransformFunction<
       noFelonyWithin24Months: {
         latestFelonyConvictions:
           optionalFieldToDateArray(
-            eligibleCriteria.noFelonyWithin24Months?.latestFelonyConvictions
+            eligibleCriteria.noFelonyWithin24Months?.latestFelonyConvictions,
           ) ?? [],
       },
     },
@@ -151,7 +151,7 @@ export const transformLSUEarnedDischargeCriteria: TransformFunction<
   if (eligibleCriteria.usIdIncomeVerifiedWithin3Months) {
     transformedCriteria.eligibleCriteria.usIdIncomeVerifiedWithin3Months = {
       incomeVerifiedDate: optionalFieldToDate(
-        eligibleCriteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate
+        eligibleCriteria.usIdIncomeVerifiedWithin3Months.incomeVerifiedDate,
       ),
     };
   }
@@ -159,7 +159,7 @@ export const transformLSUEarnedDischargeCriteria: TransformFunction<
   if (
     Object.prototype.hasOwnProperty.call(
       ineligibleCriteria,
-      "usIdIncomeVerifiedWithin3Months"
+      "usIdIncomeVerifiedWithin3Months",
     )
   ) {
     transformedCriteria.ineligibleCriteria.usIdIncomeVerifiedWithin3Months = {
@@ -171,7 +171,7 @@ export const transformLSUEarnedDischargeCriteria: TransformFunction<
 };
 
 export const transformLSUReferral: TransformFunction<LSUReferralRecord> = (
-  record
+  record,
 ) => {
   if (!record) {
     throw new Error("No record found");
@@ -199,7 +199,7 @@ export const transformLSUReferral: TransformFunction<LSUReferralRecord> = (
     eligibleDate: eligibleCriteria.usIdLsirLevelLowFor90Days
       ? fieldToDate(eligibleCriteria.usIdLsirLevelLowFor90Days.eligibleDate)
       : fieldToDate(
-          eligibleCriteria.usIdLsirLevelLowModerateForXDays.eligibleDate
+          eligibleCriteria.usIdLsirLevelLowModerateForXDays.eligibleDate,
         ),
   };
 
@@ -221,7 +221,7 @@ export const transformLSUReferral: TransformFunction<LSUReferralRecord> = (
       eligibleDate:
         ineligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate &&
         fieldToDate(
-          ineligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate
+          ineligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate,
         ),
     };
   }

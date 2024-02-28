@@ -36,7 +36,7 @@ let updatesSub: DocumentSubscription<any>;
 jest.mock("../../../subscriptions");
 
 function createTestUnit(
-  clientRecord: typeof usMiMinimumTelephoneReportingEligibleClientRecord
+  clientRecord: typeof usMiMinimumTelephoneReportingEligibleClientRecord,
 ) {
   root = new RootStore();
   jest

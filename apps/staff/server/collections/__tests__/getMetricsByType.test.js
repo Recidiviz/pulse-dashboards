@@ -29,15 +29,15 @@ describe("getMetricsByType", () => {
     "stateCode %s for metric %s returns a %p metric class",
     (stateCode, metricType, metricClass) => {
       expect(getMetricsByType(metricType, stateCode)).toBeInstanceOf(
-        metricClass
+        metricClass,
       );
-    }
+    },
   );
 
   it("throws an error for unknown metric types", () => {
     const metricType = "made up type";
     expect(() => getMetricsByType(metricType, "US_MO")).toThrowError(
-      `No such metric type ${metricType} for US_MO`
+      `No such metric type ${metricType} for US_MO`,
     );
   });
 });

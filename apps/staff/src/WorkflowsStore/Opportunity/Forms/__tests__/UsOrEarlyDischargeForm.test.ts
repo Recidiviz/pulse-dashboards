@@ -25,10 +25,10 @@ import { UsOrEarnedDischargeOpportunity } from "../../UsOr";
 import { UsOrEarnedDischargeForm } from "../UsOrEarnedDischargeForm";
 
 let form: UsOrEarnedDischargeForm;
-let opp: typeof form["opportunity"];
-let personRecord: typeof opp["person"]["record"];
-let oppRecord: typeof opp["record"] & object;
-let staffRecord: typeof opp["person"]["assignedStaff"];
+let opp: (typeof form)["opportunity"];
+let personRecord: (typeof opp)["person"]["record"];
+let oppRecord: (typeof opp)["record"] & object;
+let staffRecord: (typeof opp)["person"]["assignedStaff"];
 
 function createTestUnit() {
   const rootStore = new RootStore();

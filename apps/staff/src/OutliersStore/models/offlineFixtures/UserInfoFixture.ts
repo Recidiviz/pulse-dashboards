@@ -35,9 +35,9 @@ export const rawLeadershipUserInfoFixture: RawUserInfo = {
 };
 
 export const supervisorUserInfoFixture = userInfoSchema.parse(
-  rawSupervisorUserInfoFixture
+  rawSupervisorUserInfoFixture,
 );
 
 export const leadershipUserInfoFixture = userInfoSchema.parse(
-  rawLeadershipUserInfoFixture
+  rawLeadershipUserInfoFixture,
 );

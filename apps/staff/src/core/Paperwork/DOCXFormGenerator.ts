@@ -31,13 +31,13 @@ export type FileGeneratorArgs = [
   fileName: string,
   stateCode: string,
   templateName: string,
-  formContents: DocxTemplateFormContents
+  formContents: DocxTemplateFormContents,
 ];
 
 export const renderDocument = (
   formContents: DocxTemplateFormContents,
   template: ArrayBuffer,
-  generatedType: GeneratedFileType
+  generatedType: GeneratedFileType,
 ) => {
   const zip = new PizZip(template);
   const docxTemplate = new Docxtemplater(zip, {
@@ -59,7 +59,7 @@ export const renderDocument = (
 const renderAndSaveDocument = (
   fileName: string,
   formContents: DocxTemplateFormContents,
-  template: ArrayBuffer
+  template: ArrayBuffer,
 ): void => {
   saveAs(renderDocument(formContents, template, "blob"), fileName);
 };
@@ -67,13 +67,13 @@ const renderAndSaveDocument = (
 export const downloadSingle = async (
   ...[fileName, stateCode, templateName, formContents, getTokenSilently]: [
     ...FileGeneratorArgs,
-    UserStore["getTokenSilently"]
+    UserStore["getTokenSilently"],
   ]
 ): Promise<void> => {
   const template = await fetchWorkflowsTemplates(
     stateCode,
     templateName,
-    getTokenSilently
+    getTokenSilently,
   );
   return renderAndSaveDocument(fileName, formContents, template);
 };
@@ -81,13 +81,13 @@ export const downloadSingle = async (
 export const renderDocx = async (
   ...[filename, stateCode, templateName, formContents, getTokenSilently]: [
     ...FileGeneratorArgs,
-    UserStore["getTokenSilently"]
+    UserStore["getTokenSilently"],
   ]
 ): Promise<{ filename: string; fileContents: any }> => {
   const template = await fetchWorkflowsTemplates(
     stateCode,
     templateName,
-    getTokenSilently
+    getTokenSilently,
   );
   return {
     filename,
@@ -97,7 +97,7 @@ export const renderDocx = async (
 
 export const renderMultipleDocx = async (
   fileInputs: FileGeneratorArgs[],
-  getTokenSilently: UserStore["getTokenSilently"]
+  getTokenSilently: UserStore["getTokenSilently"],
 ): Promise<
   {
     filename: string;
@@ -105,7 +105,7 @@ export const renderMultipleDocx = async (
   }[]
 > => {
   const renderedDocs = await Promise.all(
-    fileInputs.map((fileInput) => renderDocx(...fileInput, getTokenSilently))
+    fileInputs.map((fileInput) => renderDocx(...fileInput, getTokenSilently)),
   );
 
   return renderedDocs;

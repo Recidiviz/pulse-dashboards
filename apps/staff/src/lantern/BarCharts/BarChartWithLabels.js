@@ -96,7 +96,7 @@ function BarChartWithLabels({
                 tooltipItem,
                 tooltipData,
                 numerators,
-                denominators
+                denominators,
               ),
             footer: (tooltipItem) =>
               tooltipForFooterWithCounts(tooltipItem, denominators),
@@ -125,16 +125,22 @@ BarChartWithLabels.propTypes = {
           PropTypes.string,
         ]),
         data: PropTypes.arrayOf(PropTypes.string),
-      })
+      }),
     ),
   }).isRequired,
   xAxisLabel: PropTypes.string.isRequired,
   yAxisLabel: PropTypes.string.isRequired,
   numerators: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number])
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.number),
+      PropTypes.number,
+    ]),
   ).isRequired,
   denominators: PropTypes.arrayOf(
-    PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.number), PropTypes.number])
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.number),
+      PropTypes.number,
+    ]),
   ).isRequired,
   labelColors: PropTypes.arrayOf(PropTypes.string),
   legendOptions: PropTypes.shape({

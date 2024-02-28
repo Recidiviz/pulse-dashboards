@@ -65,7 +65,7 @@ describe("EligibilityDate sidebar component tests", () => {
     render(<EligibilityDate {...props} />);
 
     expect(
-      screen.queryByText("First Day of Eligibility", { exact: false })
+      screen.queryByText("First Day of Eligibility", { exact: false }),
     ).not.toBeNull();
   });
 
@@ -85,7 +85,7 @@ describe("EligibilityDate sidebar component tests", () => {
     render(<EligibilityDate {...props} />);
 
     expect(
-      screen.queryByText(eligibilityDateText, { exact: false })
+      screen.queryByText(eligibilityDateText, { exact: false }),
     ).not.toBeNull();
   });
 });

@@ -40,15 +40,15 @@ ModeSwitcher.propTypes = {
   mode: PropTypes.oneOf(
     ["counts", "rates", "exits"].concat(
       Object.keys(raceValueToLabel),
-      Object.keys(genderValueToLabel)
-    )
+      Object.keys(genderValueToLabel),
+    ),
   ).isRequired,
   setMode: PropTypes.func.isRequired,
   buttons: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired,
-    })
+    }),
   ).isRequired,
 };
 

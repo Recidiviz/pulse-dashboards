@@ -70,7 +70,7 @@ export class UserOnboardingPresenter implements Hydratable {
     if (isRecidivizUser || isCSGUser) return;
 
     return flowResult(
-      this.supervisionStore.patchUserInfoForCurrentUser({ hasSeenOnboarding })
+      this.supervisionStore.patchUserInfoForCurrentUser({ hasSeenOnboarding }),
     );
   }
 }

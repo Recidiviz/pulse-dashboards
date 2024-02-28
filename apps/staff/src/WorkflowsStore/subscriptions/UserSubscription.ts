@@ -79,7 +79,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       collection(firestoreStore.db, FIRESTORE_COLLECTIONS_MAP.staff),
       where("email", "==", email.toLowerCase()),
       where("stateCode", "==", currentTenantId),
-      limit(1)
+      limit(1),
     );
   }
 
@@ -170,7 +170,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   }
 
   protected updateData(
-    snapshot: QuerySnapshot<DocumentData> | undefined
+    snapshot: QuerySnapshot<DocumentData> | undefined,
   ): void {
     const { user } = this.rootStore;
     // Prioritize overrides

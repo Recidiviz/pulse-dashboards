@@ -169,7 +169,7 @@ describe("createGenerateChartData", () => {
             filteredData,
             statePopulationData,
           },
-          stacked
+          stacked,
         )("FEMALE");
         expect(chartData.data.datasets[0].data).toEqual(expected.data);
         expect(chartData.numerators).toEqual(expected.numerators);
@@ -199,7 +199,7 @@ describe("createGenerateChartData", () => {
             filteredData,
             statePopulationData,
           },
-          stacked
+          stacked,
         )();
         expect(chartData.data.datasets[0].data).toEqual(expected.data[0]);
         expect(chartData.data.datasets[1].data).toEqual(expected.data[1]);

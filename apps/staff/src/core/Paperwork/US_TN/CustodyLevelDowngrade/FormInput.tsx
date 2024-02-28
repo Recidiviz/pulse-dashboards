@@ -42,7 +42,7 @@ const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
   const form = useOpportunityFormContext();
   const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
   const inputRef = useRef<HTMLInputElement>(
-    null
+    null,
   ) as MutableRefObject<HTMLInputElement>;
 
   const hasAnimated = useAnimatedValue(inputRef, value);

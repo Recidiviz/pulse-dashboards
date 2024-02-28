@@ -32,7 +32,7 @@ export const DIMENSIONS_PX = {
 
 export const generate = async (
   element: HTMLElement,
-  selector: string
+  selector: string,
 ): Promise<jsPDF> => {
   const pages = Array.from(element.querySelectorAll(selector)) as HTMLElement[];
 

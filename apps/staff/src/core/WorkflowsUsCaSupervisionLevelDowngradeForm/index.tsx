@@ -30,7 +30,7 @@ import {
 import FormCDCR1657 from "../Paperwork/US_CA/SupervisionLevelDowngrade/FormCDCR1657";
 
 const fillerFunc: (
-  formData: Partial<UsCaSupervisionLevelDowngradeDraftData>
+  formData: Partial<UsCaSupervisionLevelDowngradeDraftData>,
 ) => PDFFillerFunc = (formData) => async (set, form, doc) => {
   const totalObjectiveScore =
     formData.objectiveScore1 &&
@@ -63,13 +63,13 @@ const fillerFunc: (
   set("SUPERVISION LEVEL", formData.supervisionLevel);
   set(
     "ABBREVIATED CASE CONFERENCE REVIEW",
-    formData.reviewType === "ABBREVIATED"
+    formData.reviewType === "ABBREVIATED",
   );
   set("CASE CONFERENCE REVIEW", formData.reviewType === "STANDARD");
   set("DISCHARGE CONSIDERATION COMMITTEE", formData.reviewType === "DISCHARGE");
   set(
     "OBJECTIVES RATING SCORES ONE SCORE PER OBJECTIVE",
-    formData.seeDischargeReport
+    formData.seeDischargeReport,
   );
   set("SEE DISCHARGE REVIEW REPORT DATED", formData.dischargeReportDate);
   set("OBJ 1", formData.objectiveScore1);
@@ -96,21 +96,21 @@ const fillerFunc: (
   if (formData.paroleePresent === "NO") {
     set(
       "Parolee participated telephonically",
-      formData.paroleeNotPresent === "TELEPHONED"
+      formData.paroleeNotPresent === "TELEPHONED",
     );
     set("Parolee failed to appear", formData.paroleeNotPresent === "FAILED");
     set(
       "Parolee declined to participate",
-      formData.paroleeNotPresent === "DECLINED"
+      formData.paroleeNotPresent === "DECLINED",
     );
     set(
       "Parolee did not respond to participation request",
-      formData.paroleeNotPresent === "NOT_RESPOND"
+      formData.paroleeNotPresent === "NOT_RESPOND",
     );
   }
   set(
     "Reasonable accommodation provided Describe",
-    formData.reasonableAccommodationProvided
+    formData.reasonableAccommodationProvided,
   );
   set("Copy of CDCR 1502DR provided to parolee", formData.cdcr1502DRProvided);
   set("Name", formData.otherParticipant1Name);
@@ -169,7 +169,7 @@ const FormUsCaSupervisionLeveDowngrade = observer(
         "US_CA",
         "CDCR1657.pdf",
         fillerFunc(formData),
-        getTokenSilently
+        getTokenSilently,
       );
     };
 
@@ -196,7 +196,7 @@ const FormUsCaSupervisionLeveDowngrade = observer(
         </FormViewer>
       </FormContainer>
     );
-  }
+  },
 );
 
 export default FormUsCaSupervisionLeveDowngrade;

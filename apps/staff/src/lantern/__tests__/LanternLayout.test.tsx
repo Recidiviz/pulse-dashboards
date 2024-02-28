@@ -45,7 +45,7 @@ const mockUseRootStore = useRootStore as jest.Mock;
 describe("LanternLayout tests", () => {
   (NotFound as jest.Mock).mockReturnValue(mockWithTestId("not-found-id"));
   (Revocations as unknown as jest.Mock).mockReturnValue(
-    mockWithTestId("revocations-id")
+    mockWithTestId("revocations-id"),
   );
   (IE11Banner as jest.Mock).mockReturnValue(mockWithTestId("ie11-banner"));
   (LanternTopBar as jest.Mock).mockReturnValue(null);

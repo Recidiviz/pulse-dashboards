@@ -86,7 +86,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       resident,
       "usTnCustodyLevelDowngrade",
       resident.rootStore,
-      usTnCustodyLevelDowngradeSchema.parse
+      usTnCustodyLevelDowngradeSchema.parse,
     );
     this.resident = resident;
 
@@ -104,7 +104,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
     ) {
       this.form = new UsTnAnnualReclassificationReviewForm(
         this,
-        resident.rootStore
+        resident.rootStore,
       );
     } else {
       this.form = new UsTnCustodyLevelDowngradeForm(this, resident.rootStore);
@@ -116,7 +116,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       this.record,
       "eligibleCriteria",
       CRITERIA_COPY,
-      CRITERIA_FORMATTERS
+      CRITERIA_FORMATTERS,
     );
   }
 }

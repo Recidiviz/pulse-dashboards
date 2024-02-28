@@ -34,14 +34,14 @@ describe("DataStore helpers", () => {
 
     it("returns a query string", () => {
       expect(getQueryStringFromFilters(filters)).toEqual(
-        "?district[0]=All&chargeCategory=GENERAL"
+        "?district[0]=All&chargeCategory=GENERAL",
       );
     });
 
     it("filters out empty values", () => {
       filters = { ...filters, supervisionLevel: "", supervisionType: "All" };
       expect(getQueryStringFromFilters(filters)).toEqual(
-        "?district[0]=All&chargeCategory=GENERAL&supervisionType=All"
+        "?district[0]=All&chargeCategory=GENERAL&supervisionType=All",
       );
     });
   });
@@ -66,7 +66,7 @@ describe("DataStore helpers", () => {
         metricPeriodMonths: ["1", "12", "3", "36", "6"],
       };
       expect(
-        dimensionManifestIncludesFilterValues({ filters, dimensionManifest })
+        dimensionManifestIncludesFilterValues({ filters, dimensionManifest }),
       ).toEqual(true);
     });
 
@@ -83,7 +83,7 @@ describe("DataStore helpers", () => {
         metricPeriodMonths: ["1", "12", "3", "36", "6"],
       };
       expect(
-        dimensionManifestIncludesFilterValues({ filters, dimensionManifest })
+        dimensionManifestIncludesFilterValues({ filters, dimensionManifest }),
       ).toEqual(false);
     });
 
@@ -110,7 +110,7 @@ describe("DataStore helpers", () => {
             filters,
             dimensionManifest,
             skippedFilters,
-          })
+          }),
         ).toEqual(true);
       });
 
@@ -121,7 +121,7 @@ describe("DataStore helpers", () => {
             filters,
             dimensionManifest,
             skippedFilters,
-          })
+          }),
         ).toEqual(false);
       });
     });
@@ -148,7 +148,7 @@ describe("DataStore helpers", () => {
             filters,
             dimensionManifest,
             ignoredSubsetDimensions,
-          })
+          }),
         ).toEqual(true);
       });
     });
@@ -173,7 +173,7 @@ describe("DataStore helpers", () => {
             filters,
             dimensionManifest,
             treatCategoryAllAsAbsent,
-          })
+          }),
         ).toEqual(true);
       });
     });

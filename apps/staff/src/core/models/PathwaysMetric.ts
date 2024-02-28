@@ -92,7 +92,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
 
   protected dataTransformer: (
     d: RawMetricData,
-    f: EnabledFilters
+    f: EnabledFilters,
   ) => RecordFormat[];
 
   eagerExpand: boolean;
@@ -177,12 +177,12 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
           Sentry.captureException(
             new DiffError(
               `${this.diffs.totalDiffs} diffs: ${JSON.stringify(
-                Object.fromEntries(this.diffs.samples)
-              )}`
-            )
+                Object.fromEntries(this.diffs.samples),
+              )}`,
+            ),
           );
         }
-      }
+      },
     );
   }
 
@@ -202,7 +202,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   get diffs(): Diff<any> | undefined {
     return this.differ?.diff(
       this.dataSeries,
-      this.newBackendMetric?.dataSeriesForDiffing
+      this.newBackendMetric?.dataSeriesForDiffing,
     );
   }
 
@@ -243,7 +243,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
   get methodology(): (PageContent | MetricContent)[] {
     if (!this.rootStore?.currentTenantId) return [];
     const methodology = getMethodologyCopy(
-      this.rootStore.currentTenantId
+      this.rootStore.currentTenantId,
     ).system;
     if (!methodology?.metricCopy || !methodology?.pageCopy) return [];
 
@@ -285,14 +285,14 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
       const parsedData = parseResponseByFileFormat(
         apiResponse,
         this.sourceFilename,
-        this.eagerExpand
+        this.eagerExpand,
       );
       return this.dataTransformer(
         parsedData.data,
         // TODO #1511 remove this concat once all filters are under single key
         this.filters.enabledFilters.concat(
-          this.filters.enabledMoreFilters || []
-        )
+          this.filters.enabledMoreFilters || [],
+        ),
       );
     }
     throw new Error(ERROR_MESSAGES.noMetricData);

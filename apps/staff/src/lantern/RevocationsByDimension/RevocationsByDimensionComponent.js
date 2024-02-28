@@ -87,9 +87,9 @@ RevocationsByDimensionComponent.propTypes = {
         PropTypes.func,
       ]),
       data: PropTypes.arrayOf(
-        PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       ),
-    })
+    }),
   ).isRequired,
   labels: PropTypes.arrayOf(PropTypes.string).isRequired,
   metricTitle: PropTypes.string.isRequired,

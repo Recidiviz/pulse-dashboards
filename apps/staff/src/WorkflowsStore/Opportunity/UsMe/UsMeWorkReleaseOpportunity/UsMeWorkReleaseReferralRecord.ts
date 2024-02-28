@@ -66,7 +66,7 @@ export const usMeWorkReleaseSchema = opportunitySchemaBase
               custodyLevel: z.string(),
             }),
           }),
-        ])
+        ]),
       )
       .transform(({ usMeCustodyLevelIsMinimumOrCommunity, ...rest }) => {
         if (usMeCustodyLevelIsMinimumOrCommunity)

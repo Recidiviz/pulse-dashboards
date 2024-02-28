@@ -32,7 +32,7 @@ describe("Modal.js", () => {
     render(
       <Modal isShowing={false} hide={mockHide}>
         Some content
-      </Modal>
+      </Modal>,
     );
 
     expect(screen.queryByText("Some content")).not.toBeInTheDocument();

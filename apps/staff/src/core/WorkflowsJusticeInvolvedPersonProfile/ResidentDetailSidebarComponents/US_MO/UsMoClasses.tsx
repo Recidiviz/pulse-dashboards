@@ -61,7 +61,7 @@ export function UsMoClasses({
                     </SecureDetailsContent>
                   </div>
                 );
-              }
+              },
             )}
           </DetailsList>
         ) : (

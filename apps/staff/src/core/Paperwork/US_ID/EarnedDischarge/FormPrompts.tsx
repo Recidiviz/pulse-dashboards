@@ -28,7 +28,7 @@ const FormPrompts: React.FC<FormPromptsProps> = ({ opportunity, ...props }) => {
       <Prompt key="dualSupervision">
         {client?.displayName} is on dual supervision. Download and fill out
         additional forms for other active sentences.
-      </Prompt>
+      </Prompt>,
     );
   }
   return <FormPromptsSection {...props}>{prompts}</FormPromptsSection>;

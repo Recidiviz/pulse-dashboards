@@ -22,7 +22,7 @@ class NewRevocationsMetrics extends BaseMetrics {
   constructor(metricType, stateCode) {
     if (metricType !== COLLECTIONS.NEW_REVOCATION) {
       throw new Error(
-        `Incorrect metricType for metric class NewRevocationsMetrics: ${metricType}`
+        `Incorrect metricType for metric class NewRevocationsMetrics: ${metricType}`,
       );
     }
     super(metricType, stateCode);
@@ -70,8 +70,8 @@ class NewRevocationsMetrics extends BaseMetrics {
     if (Object.keys(invalidDimensions).length > 0) {
       throw new Error(
         `${fileName} includes unexpected dimension values: ${this.constructor.formatInvalidDimensions(
-          invalidDimensions
-        )}`
+          invalidDimensions,
+        )}`,
       );
     }
   }

@@ -38,7 +38,7 @@ export class FormBase<
     any,
     any,
     OpportunityUpdateWithForm<any>
-  > = OpportunityBase<any, any, OpportunityUpdateWithForm<any>>
+  > = OpportunityBase<any, any, OpportunityUpdateWithForm<any>>,
 > {
   protected rootStore: RootStore;
 

@@ -19,12 +19,12 @@
  * https://firebase.google.com/docs/functions/typescript
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
-import {v1} from "@google-cloud/firestore";
+import { v1 } from "@google-cloud/firestore";
+import { pubsub } from "firebase-functions";
+import { info } from "firebase-functions/logger";
+import { defineString } from "firebase-functions/params";
 
-import {pubsub} from "firebase-functions";
-import {info} from "firebase-functions/logger";
-import {throwErrorCustom} from "./utils";
-import {defineString} from "firebase-functions/params";
+import { throwErrorCustom } from "./utils";
 
 const client = new v1.FirestoreAdminClient();
 
@@ -57,7 +57,6 @@ if (!outputBucketParam) {
   process.exit();
 }
 
-
 // EXPORTING FUNCTION
 exports.scheduledFirestoreExport = pubsub
   .schedule("every friday 23:59") // Runs every friday at 11:59 PM PDT
@@ -68,7 +67,7 @@ exports.scheduledFirestoreExport = pubsub
       throwErrorCustom(
         `❌ No collections specified.
          Specify the ${projectId} collections` +
-          `being exported to ${outputBucket}.`
+          `being exported to ${outputBucket}.`,
       );
     }
     // Logging the collections to be exported
@@ -76,8 +75,8 @@ exports.scheduledFirestoreExport = pubsub
       "⚙️ The following collections " +
       `will be exported from ${projectId} to ${outputBucket}:
     ${`${collectionIds
-    .map((collectionId) => `📁 ${collectionId}`)
-    .join("\n")}\n`}`;
+      .map((collectionId) => `📁 ${collectionId}`)
+      .join("\n")}\n`}`;
 
     info(configurationMessage);
 

@@ -24,7 +24,7 @@ import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription
 import { UpdateFunction } from "./types";
 
 export class OpportunityUpdateSubscription<
-  RecordType extends OpportunityUpdate
+  RecordType extends OpportunityUpdate,
 > extends CollectionDocumentSubscription<RecordType> {
   // needs to be redefined because it's read-only but otherwise unchanged
   readonly dataSource: DocumentReference<RecordType>;
@@ -35,7 +35,7 @@ export class OpportunityUpdateSubscription<
     firestoreStore: FirestoreStore,
     clientRecordId: string,
     opportunityType: OpportunityType,
-    updateOpportunityEligibility: UpdateFunction<DocumentData>
+    updateOpportunityEligibility: UpdateFunction<DocumentData>,
   ) {
     const firestoreCollectionKey = "clientUpdatesV2";
 
@@ -45,7 +45,7 @@ export class OpportunityUpdateSubscription<
       clientRecordId,
       undefined, // transformFn
       undefined, // validateFn
-      updateOpportunityEligibility
+      updateOpportunityEligibility,
     );
 
     this.dataSource = doc(
@@ -53,7 +53,7 @@ export class OpportunityUpdateSubscription<
       FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
       clientRecordId,
       FIRESTORE_COLLECTIONS_MAP.clientOpportunityUpdates,
-      opportunityType
+      opportunityType,
     ) as DocumentReference<RecordType>;
 
     this.opportunityType = opportunityType;

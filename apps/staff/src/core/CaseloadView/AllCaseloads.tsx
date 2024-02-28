@@ -49,7 +49,7 @@ function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
       <Link
         to={workflowsUrl(
           person instanceof Client ? "clientProfile" : "residentProfile",
-          { justiceInvolvedPersonId: person.pseudonymizedId }
+          { justiceInvolvedPersonId: person.pseudonymizedId },
         )}
       >
         <ProfileCapsule avatarSize="lg" person={person} textSize="sm" />
@@ -95,7 +95,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
         <WorkflowsResults
           headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
           callToActionText={`Search for ${pluralizeWord(
-            workflowsSearchFieldTitle
+            workflowsSearchFieldTitle,
           )} above to view their entire caseload.`}
         />
       }

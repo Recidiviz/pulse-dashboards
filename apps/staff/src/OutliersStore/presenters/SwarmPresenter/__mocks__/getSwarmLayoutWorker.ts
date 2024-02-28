@@ -23,7 +23,7 @@ export function getSwarmLayoutWorker() {
     prepareChartData: async (
       metric: MetricWithConfig,
       width: number,
-      height: number
+      height: number,
     ) => prepareChartData(metric, width, height),
   };
 }

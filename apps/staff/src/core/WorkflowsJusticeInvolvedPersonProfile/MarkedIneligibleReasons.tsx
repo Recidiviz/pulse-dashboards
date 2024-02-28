@@ -51,13 +51,13 @@ export function buildSnoozedByText({
   if (!snoozedOnDate || !snoozedBy) return;
   return `${deniedTabTitle} by ${snoozedBy} on ${format(
     snoozedOnDate,
-    "LLLL d, yyyy"
+    "LLLL d, yyyy",
   )}.`;
 }
 
 export function buildResurfaceText(
   opportunity: Opportunity,
-  snoozeUntil?: Date
+  snoozeUntil?: Date,
 ): string | undefined {
   if (!snoozeUntil) return;
   const dateStr = format(snoozeUntil, "LLLL d, yyyy");
@@ -81,7 +81,7 @@ export function buildResurfaceText(
 
 export function buildDenialReasonsListText(
   opportunity: Opportunity,
-  denialReasons: string[]
+  denialReasons: string[],
 ): string {
   const denialReasonsList = denialReasons.join(", ");
   const ineligibleReasonsListCopy = opportunity.isAlert
@@ -93,7 +93,7 @@ export function buildDenialReasonsListText(
 
 export function buildSnoozedByTextAndResurfaceText(
   opportunity: Opportunity,
-  snoozeUntil?: Date
+  snoozeUntil?: Date,
 ) {
   const snoozedByText = buildSnoozedByText(opportunity);
   const resurfaceText = buildResurfaceText(opportunity, snoozeUntil);
@@ -113,11 +113,11 @@ const MarkedIneligibleReasons: React.FC<{
 
   const ineligibleReasonsList = buildDenialReasonsListText(
     opportunity,
-    denialReasons
+    denialReasons,
   );
 
   const snoozedByTextAndResurfaceText = snoozedByTextAndResurfaceTextPair.every(
-    (text) => text
+    (text) => text,
   )
     ? snoozedByTextAndResurfaceTextPair.join(" ")
     : undefined;

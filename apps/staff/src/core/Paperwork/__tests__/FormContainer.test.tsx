@@ -73,7 +73,7 @@ function setup(props: Partial<FormHeaderProps> = {}) {
   return render(
     <BrowserRouter>
       <FormContainer {...defaultFormContainerProps} {...props} />
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 }
 
@@ -106,7 +106,7 @@ describe("FormContainer DownloadButton", () => {
     setup({ isMissingContent: true });
     // it should still render, the button should just be disabled is all
     const QueriedDownloadButton = await screen.findByText(
-      "Download Unavailable"
+      "Download Unavailable",
     );
     expect(QueriedDownloadButton).toBeDefined();
   });

@@ -35,6 +35,6 @@ export const generateTabs = ({
 };
 
 export const getTabOrderForOpportunityType = (
-  opportunityType: OpportunityType
+  opportunityType: OpportunityType,
 ): ReturnType<typeof generateTabs> =>
   OPPORTUNITY_CONFIGS[opportunityType].tabOrder ?? generateTabs({});

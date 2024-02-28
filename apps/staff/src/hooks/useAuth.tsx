@@ -38,11 +38,11 @@ const useAuth = () => {
           userStore.authorize((targetUrl: string) => {
             const url = new URL(targetUrl);
             navigate(url.pathname, { replace: true });
-          })
+          }),
       ),
     // these references should never really change, so this is essentially
     // calling the effect on mount and cleaning it up on unmount
-    [navigate, userStore]
+    [navigate, userStore],
   );
 
   useIdleTimer({

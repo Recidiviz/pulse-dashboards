@@ -71,7 +71,7 @@ test("form view tracking", () => {
     {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: "LSU",
-    }
+    },
   );
 });
 
@@ -96,7 +96,7 @@ describe("record form download", () => {
   test("sends tracking event", () => {
     form.recordSuccessfulDownload();
     expect(
-      rootStore.analyticsStore.trackReferralFormDownloaded
+      rootStore.analyticsStore.trackReferralFormDownloaded,
     ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,

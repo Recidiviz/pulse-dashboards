@@ -107,7 +107,7 @@ const UndoButton = styled.button`
 
 const snoozeTaskToast = (
   task: SupervisionTask<SupervisionTaskType>,
-  snoozeForDays: number
+  snoozeForDays: number,
 ) => {
   const personName = task.person.displayName;
   return toast(
@@ -128,7 +128,7 @@ const snoozeTaskToast = (
     {
       className: "SnoozeTaskToast",
       duration: 3000,
-    }
+    },
   );
 };
 

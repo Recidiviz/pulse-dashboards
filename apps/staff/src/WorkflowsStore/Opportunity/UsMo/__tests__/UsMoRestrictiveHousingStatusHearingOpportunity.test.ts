@@ -227,7 +227,7 @@ class TestOpportunity extends UsMoRestrictiveHousingStatusHearingOpportunity {
 
 const createOpportunityInstance = (
   reviewStatus: OpportunityStatus,
-  eligibilityDate: Date | undefined
+  eligibilityDate: Date | undefined,
 ) => {
   const mockRoot = new RootStore();
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
@@ -243,7 +243,7 @@ const createOpportunityInstance = (
 
 const initOpportunitiesList = (
   reviewStatuses: OpportunityStatus[],
-  eligibilityDates: (Date | undefined)[]
+  eligibilityDates: (Date | undefined)[],
 ) => {
   return reviewStatuses.map((reviewStatus, index) => {
     return createOpportunityInstance(reviewStatus, eligibilityDates[index]);
@@ -294,18 +294,18 @@ describe("Test custom compare function", () => {
 
   it("should sort undefined opportunities to the front of the array", () => {
     const shuffledDates = shuffle(orderedDates).map(
-      (date: Date | undefined, idx) => (idx % 2 === 1 ? undefined : date)
+      (date: Date | undefined, idx) => (idx % 2 === 1 ? undefined : date),
     );
 
     opportunities = initOpportunitiesList(
       shuffle(orderedReviewStatuses),
-      shuffledDates
+      shuffledDates,
     );
     opportunities.sort((a, b) => a.compare(b));
     expect(
       evaluateForUndefinedDatesFirstOnly(
-        opportunities.map((mockOpp) => mockOpp.eligibilityDate)
-      )
+        opportunities.map((mockOpp) => mockOpp.eligibilityDate),
+      ),
     ).toBeTruthy();
   });
 });

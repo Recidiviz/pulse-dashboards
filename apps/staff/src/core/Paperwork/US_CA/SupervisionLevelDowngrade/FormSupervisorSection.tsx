@@ -65,7 +65,7 @@ const FormSupervisorSection = observer(function FormSupervisorSection() {
       firestoreStore.updateFormDraftData(
         opportunityForm,
         field,
-        event.target.value
+        event.target.value,
       );
     };
 

@@ -1,11 +1,11 @@
 //----------------------------------------------------------
 // @IE11
-// 
+//
 // Mixin that includes a media query to detect IE11 browsers.
-// 
+//
 // Custom css for IE11 can be included which will only be
 // applied when the browser is IE11.
-// 
+//
 // Example:
 // .flexible-width-div {
 //   width: max-content;
@@ -13,11 +13,11 @@
 //     width: 350px;
 //   }
 // }
-// 
+//
 //----------------------------------------------------------
 
 @mixin ie11 {
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-    @content
+    @content;
   }
 }

@@ -88,7 +88,7 @@ type OutliersClientDetailsPanelProps = {
 };
 
 function withPresenter(
-  Component: ComponentType<OutliersClientDetailsPanelProps>
+  Component: ComponentType<OutliersClientDetailsPanelProps>,
 ) {
   return observer(function OutliersClientDetailsPanelWrapper() {
     const {
@@ -105,7 +105,7 @@ function withPresenter(
       officerPseudoId,
       clientPseudoId,
       metricId,
-      outcomeDate
+      outcomeDate,
     );
     return (
       <ModelHydrator model={presenter}>
@@ -176,7 +176,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
             outliersUrl("supervisionStaffMetric", {
               officerPseudoId,
               metricId,
-            })
+            }),
           )
         )
           navigate(-1);
@@ -187,7 +187,7 @@ const OutliersClientDetailsPanel = observer(function OutliersClientPanel({
               officerPseudoId,
               metricId,
             }),
-            { replace: true }
+            { replace: true },
           );
       }}
       width={650}

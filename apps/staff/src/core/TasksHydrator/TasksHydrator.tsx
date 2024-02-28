@@ -46,7 +46,7 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
           }
         });
       }),
-    [workflowsStore]
+    [workflowsStore],
   );
 
   const displayInitialState = !selectedSearchIds.length;

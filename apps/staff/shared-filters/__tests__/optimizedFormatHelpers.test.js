@@ -36,7 +36,7 @@ describe("Test getDimensionValue", () => {
     const dimensionValue = helpers.getDimensionValue(
       METADATA.dimension_manifest,
       0,
-      2
+      2,
     );
     expect(dimensionValue).toEqual("6");
   });
@@ -46,7 +46,7 @@ describe("Test getDimensionValue", () => {
     expect(() => {
       helpers.getDimensionValue(dimensions, 1, 0);
     }).toThrow(
-      `Could not parse dimension manifest of ${dimensions} with dimension index of 1 and dimension value index of 0`
+      `Could not parse dimension manifest of ${dimensions} with dimension index of 1 and dimension value index of 0`,
     );
   });
 });
@@ -76,7 +76,7 @@ describe("Test convertFromStringToUnflattenedMatrix", () => {
     const contents = FLATTENED_VALUES;
     const unflattened = helpers.convertFromStringToUnflattenedMatrix(
       contents,
-      11
+      11,
     );
     expect(unflattened).toEqual([
       ["0", "0", "1", "1", "2", "0", "0", "1", "1", "2", "2"],
@@ -108,7 +108,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      'Given metric file metadata has undefined or null "total_data_points"'
+      'Given metric file metadata has undefined or null "total_data_points"',
     );
   });
 
@@ -127,7 +127,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      'Given metric file metadata has undefined or null "total_data_points"'
+      'Given metric file metadata has undefined or null "total_data_points"',
     );
   });
 
@@ -146,7 +146,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      'Given metric file metadata has a non-numeric value for "total_data_points": lots of em'
+      'Given metric file metadata has a non-numeric value for "total_data_points": lots of em',
     );
   });
 
@@ -165,7 +165,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      'Given metric file metadata requires a non-empty array of value keys, but "value_keys" equals total_revocations'
+      'Given metric file metadata requires a non-empty array of value keys, but "value_keys" equals total_revocations',
     );
   });
 
@@ -184,7 +184,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      'Given metric file metadata requires a non-empty array of value keys, but "value_keys" equals '
+      'Given metric file metadata requires a non-empty array of value keys, but "value_keys" equals ',
     );
   });
 
@@ -198,7 +198,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      'Given metric file metadata requires a non-empty array of dimension ranges, but "dimension_manifest" equals something else entirely'
+      'Given metric file metadata requires a non-empty array of dimension ranges, but "dimension_manifest" equals something else entirely',
     );
   });
 
@@ -212,7 +212,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      'Given metric file metadata requires a non-empty array of dimension ranges, but "dimension_manifest" equals '
+      'Given metric file metadata requires a non-empty array of dimension ranges, but "dimension_manifest" equals ',
     );
   });
 
@@ -231,7 +231,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      "Given metric file dimension manifest contains malformed dimensions that are not tuples: month, supervision_type,parole,probation"
+      "Given metric file dimension manifest contains malformed dimensions that are not tuples: month, supervision_type,parole,probation",
     );
   });
 
@@ -250,7 +250,7 @@ describe("Test validateMetadata", () => {
     expect(() => {
       helpers.validateMetadata(metadata);
     }).toThrow(
-      "Given metric file dimension manifest contains dimensions with a set of possible values that is not an array: month"
+      "Given metric file dimension manifest contains dimensions with a set of possible values that is not an array: month",
     );
   });
 });

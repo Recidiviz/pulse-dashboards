@@ -74,7 +74,7 @@ const PopulationTimeSeriesBaseChart: React.FC<Props> = ({
   const tickValues = projectedPopulation
     ? getTickValues(
         historicalPopulation.concat(projectedPopulation.slice(1)), // don't double-draw center date
-        dateSpacing
+        dateSpacing,
       )
     : getTickValues(historicalPopulation, dateSpacing);
 

@@ -135,7 +135,7 @@ export function createContactNoteRequestBody(
   opportunity: UsTnExpirationOpportunity,
   person: Client,
   contactNoteObj: Record<number, string[]>,
-  contactNoteDateTime: Date
+  contactNoteDateTime: Date,
 ) {
   const staffId = opportunity.rootStore.workflowsStore.user?.info.id;
   const votersRightsCode = opportunity.form.formData.contactTypes
@@ -175,7 +175,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     paginatedNote[pageNumberSelected].join("\n"),
     {
       successDuration: animation.extendedDurationMs,
-    }
+    },
   );
 
   const onCopyButtonClick = () => {
@@ -190,13 +190,13 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
   const submitTEPEContactNote = async function (body: Record<string, unknown>) {
     return opportunity.rootStore.apiStore.post(
       `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${opportunity.rootStore.userStore.stateCode}/insert_tepe_contact_note`,
-      body
+      body,
     );
   };
 
   const onWriteButtonClick = () => {
     const contactNoteObj: Record<number, string[]> = Object.fromEntries(
-      paginatedNote.map((page, index) => [Number(index + 1), page])
+      paginatedNote.map((page, index) => [Number(index + 1), page]),
     );
     const contactNoteDateTime = new Date();
 
@@ -204,7 +204,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       opportunity,
       person,
       contactNoteObj,
-      contactNoteDateTime
+      contactNoteDateTime,
     );
 
     firestoreStore.updateUsTnExpirationContactNoteStatus(
@@ -213,7 +213,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       person.recordId,
       contactNoteObj,
       Timestamp.fromDate(contactNoteDateTime),
-      "PENDING"
+      "PENDING",
     );
 
     submitTEPEContactNote(contactNoteRequestBody)
@@ -232,7 +232,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
           contactNoteObj,
           Timestamp.fromDate(contactNoteDateTime),
           "FAILURE",
-          e.message
+          e.message,
         );
         Sentry.captureException(e);
       });

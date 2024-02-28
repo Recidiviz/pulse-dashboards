@@ -147,7 +147,7 @@ export const OutliersSwarmPlot = observer(function OutliersSwarmPlot({
         {/* highlighted officer */}
         <g
           transform={`translate(${xScale(
-            currentMetricData.metricRate
+            currentMetricData.metricRate,
           )} ${centerOfContentArea})`}
         >
           <RateHighlightMark

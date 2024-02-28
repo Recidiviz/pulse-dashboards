@@ -34,25 +34,25 @@ const usIdCrcWorkReleaseTimeBasedCriteria = z.object({
     z.discriminatedUnion("criteriaName", [
       z.object({
         criteriaName: z.literal(
-          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD"
+          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
         ),
         fullTermCompletionDate: dateStringSchema.nullable(),
         tentativeParoleDate: dateStringSchema.nullable(),
       }),
       z.object({
         criteriaName: z.literal(
-          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD"
+          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
         ),
         fullTermCompletionDate: dateStringSchema,
         minTermCompletionDate: dateStringSchema,
       }),
       z.object({
         criteriaName: z.literal(
-          "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE"
+          "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
         ),
         tentativeParoleDate: dateStringSchema,
       }),
-    ])
+    ]),
   ),
 });
 
@@ -99,7 +99,7 @@ export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
               acc[criteriaName] = otherReasons;
               return acc;
             },
-            {}
+            {},
           );
 
           for (const criteria of criteriaPriority) {
@@ -119,7 +119,7 @@ export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
                   break;
                 default:
                   throw new Error(
-                    `Unexpected time-based criteria for CRC Work Release: ${criteria}`
+                    `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
                   );
               }
               break;
@@ -127,7 +127,7 @@ export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
           }
 
           return transformedCriteria;
-        }
+        },
       ),
     ineligibleCriteria: z.object({}),
   })

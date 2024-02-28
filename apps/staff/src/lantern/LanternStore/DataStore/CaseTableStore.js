@@ -48,7 +48,7 @@ export default class CaseTableStore extends BaseDataStore {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ({ admissionType, ...record }) => ({
         data: Object.values(record),
-      })
+      }),
     );
   }
 
@@ -78,15 +78,15 @@ export default class CaseTableStore extends BaseDataStore {
       ...(this.includeOfficerRecommendation
         ? {
             officer_recommendation: nullSafeLabel(
-              normalizeOfficerRecommendation(row.officer_recommendation)
+              normalizeOfficerRecommendation(row.officer_recommendation),
             ),
           }
         : {}),
       violation_record: nullSafeLabel(
-        parseAndFormatViolationRecord(row.violation_record)
+        parseAndFormatViolationRecord(row.violation_record),
       ),
       admission_history_description: nullSafeLabel(
-        this.formatAdmissionHistory(row.admission_history_description)
+        this.formatAdmissionHistory(row.admission_history_description),
       ),
     }));
   }

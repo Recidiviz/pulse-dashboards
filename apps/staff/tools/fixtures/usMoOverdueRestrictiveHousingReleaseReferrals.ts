@@ -195,5 +195,5 @@ export const usMoOverdueRestrictiveHousingReleaseReferrals =
           numMinorCdvsBeforeLastHearing: "3",
         },
       },
-    ]
+    ],
   );

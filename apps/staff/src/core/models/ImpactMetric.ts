@@ -59,7 +59,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
   // this is just a noop stub method to be overridden when needed
   // eslint-disable-next-line class-methods-use-this
   protected dataTransformer: (d: RecordFormat[]) => RecordFormat[] = (
-    d: RecordFormat[]
+    d: RecordFormat[],
   ) => {
     return d;
   };
@@ -102,7 +102,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
         // values at all. This one solves the problem where we always think things are different
         // because two objects with all the same properties don't compare as equal with ===.
         equals: comparer.structural,
-      }
+      },
     );
   }
 
@@ -113,7 +113,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
   }
 
   protected async fetchNewMetrics(
-    params?: URLSearchParams
+    params?: URLSearchParams,
   ): Promise<NewBackendRecord<RecordFormat>> {
     // This could abort requests that have already completed, but that's not a big deal.
     this.abortController?.abort();
@@ -124,7 +124,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
     return callNewMetricsApi(
       `pathways/${stateCode}/${this.endpoint}?${params?.toString()}`,
       RootStore.getTokenSilently,
-      this.abortController.signal
+      this.abortController.signal,
     );
   }
 
@@ -159,7 +159,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
   calculateTreatmentEffect(
     months: string,
     avgValue: string,
-    supervisionDistrict: string
+    supervisionDistrict: string,
   ): number {
     const dataSeries = this.records;
     const data = dataSeries.map((d: any) => ({
@@ -176,7 +176,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
         }
         return acc;
       },
-      { totalSum: 0, totalDistricts: 0 }
+      { totalSum: 0, totalDistricts: 0 },
     );
 
     const afterExperiment = data.reduce(
@@ -187,7 +187,7 @@ export default abstract class ImpactMetric<RecordFormat extends MetricRecord>
         }
         return acc;
       },
-      { totalSum: 0, totalDistricts: 0 }
+      { totalSum: 0, totalDistricts: 0 },
     );
 
     const averageBeforeExperiment =

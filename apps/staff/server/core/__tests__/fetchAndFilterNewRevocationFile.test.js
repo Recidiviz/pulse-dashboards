@@ -68,7 +68,7 @@ describe("fetchAndFilterNewRevocationFile", () => {
       stateCode,
       metricType,
       metricName,
-      isOfflineMode
+      isOfflineMode,
     );
     expect.hasAssertions();
   });
@@ -77,7 +77,7 @@ describe("fetchAndFilterNewRevocationFile", () => {
     expect(createSubset).toHaveBeenCalledWith(
       metricName,
       filters,
-      mockMetricFiles
+      mockMetricFiles,
     );
     expect.hasAssertions();
   });

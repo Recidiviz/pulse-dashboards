@@ -79,17 +79,17 @@ describe("WorkflowsMilestones", () => {
     render(
       <BrowserRouter>
         <WorkflowsMilestones />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
-      screen.getByText("Congratulate your clients on their progress")
+      screen.getByText("Congratulate your clients on their progress"),
     ).toBeInTheDocument();
 
     expect(
       screen.getByText(
-        "Send a text message to celebrate your clients' milestones. This list will refresh every month."
-      )
+        "Send a text message to celebrate your clients' milestones. This list will refresh every month.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -105,7 +105,7 @@ describe("WorkflowsMilestones", () => {
     render(
       <BrowserRouter>
         <WorkflowsMilestones />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
@@ -125,13 +125,13 @@ describe("WorkflowsMilestones", () => {
     render(
       <BrowserRouter>
         <WorkflowsMilestones />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       screen.getByText(
-        "None of the selected caseloads have milestones to display. Search for another caseload."
-      )
+        "None of the selected caseloads have milestones to display. Search for another caseload.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -141,7 +141,7 @@ describe("WorkflowsMilestones", () => {
         new Client(client, {
           ...baseRootStoreMock,
           workflowsStore: baseWorkflowsStoreMock,
-        } as unknown as RootStore)
+        } as unknown as RootStore),
     );
     useRootStoreMock.mockReturnValue({
       ...baseRootStoreMock,
@@ -158,7 +158,7 @@ describe("WorkflowsMilestones", () => {
     render(
       <BrowserRouter>
         <WorkflowsMilestones />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     // Clients with milestones
     expect(screen.getByText("Tonye Thompson")).toBeInTheDocument();

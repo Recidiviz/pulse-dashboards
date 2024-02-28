@@ -32,11 +32,11 @@ export function reactImmediately(effect: () => void): void {
 export * from "@testing-library/react";
 
 export function getParseError<Input, Output>(
-  result: SafeParseReturnType<Input, Output>
+  result: SafeParseReturnType<Input, Output>,
 ): ZodError<Input> {
   if (result.success) {
     throw new Error(
-      "expected Zod parse failure, but received successful parse result"
+      "expected Zod parse failure, but received successful parse result",
     );
   }
 
@@ -44,7 +44,7 @@ export function getParseError<Input, Output>(
 }
 
 export function getParseErrorFormatted<Input, Output>(
-  result: SafeParseReturnType<Input, Output>
+  result: SafeParseReturnType<Input, Output>,
 ): ZodFormattedError<Input> {
   return getParseError(result).format();
 }

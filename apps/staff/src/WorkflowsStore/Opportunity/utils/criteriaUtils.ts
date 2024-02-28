@@ -55,12 +55,12 @@ export type CriteriaFormatters<R extends WithCriteria> = {
 
 export function hydrateCriteria<
   R extends WithCriteria,
-  C extends CriteriaGroupKey
+  C extends CriteriaGroupKey,
 >(
   record: R | undefined,
   criteriaGroupKey: C,
   criteriaCopy: CriteriaCopy<R>,
-  criteriaFormatters: CriteriaFormatters<R> = {}
+  criteriaFormatters: CriteriaFormatters<R> = {},
 ): OpportunityRequirement[] {
   if (!record) return [];
 
@@ -72,14 +72,14 @@ export function hydrateCriteria<
 
       const formatters = [
         ...Object.entries(
-          criteriaFormatters[criteriaGroupKey]?.[criterionKey] ?? {}
+          criteriaFormatters[criteriaGroupKey]?.[criterionKey] ?? {},
         ),
         // Auto-generate fallback formatters
         ...Object.entries(criterion ?? {}).map(
           ([k, v]): [string, () => string] => [
             snakeCase(k).toUpperCase(),
             () => String(v),
-          ]
+          ],
         ),
       ];
       formatters.forEach(([name, fmt]) => {

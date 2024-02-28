@@ -42,5 +42,5 @@ export const usMiSupervisionLevelDowngradeReferrals =
           eligibleDate: "2024-02-03",
         },
       },
-    ]
+    ],
   );

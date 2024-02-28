@@ -39,7 +39,7 @@ function AdmissionTypeFilter() {
   };
 
   const selectValue = flatOptions(options).filter((option) =>
-    value.includes(option.value)
+    value.includes(option.value),
   );
 
   return (

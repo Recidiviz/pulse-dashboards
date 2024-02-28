@@ -92,7 +92,7 @@ export const PreferredContact: React.FC<ClientProfileProps> = observer(
       setValue(newValue);
       client.updatePerson(
         "preferredContactMethod" as PersonUpdateType,
-        newValue
+        newValue,
       );
     };
 
@@ -119,5 +119,5 @@ export const PreferredContact: React.FC<ClientProfileProps> = observer(
         </DropdownMenu>
       </Dropdown>
     );
-  }
+  },
 );

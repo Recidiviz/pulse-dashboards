@@ -71,7 +71,7 @@ export const defaultLegendItems = (
   atOrBelowLabel: string,
   slightlyWorseLabel: string,
   farWorseLabel: string,
-  supervisionOfficerLabel: string
+  supervisionOfficerLabel: string,
 ) => [
   {
     label: "Statewide rate",
@@ -117,7 +117,7 @@ const OutliersLegend: React.FC<OutliersLegendType> = ({
     atOrBelowRateLabel,
     slightlyWorseThanRateLabel,
     worseThanRateLabel,
-    supervisionOfficerLabel
+    supervisionOfficerLabel,
   );
 
   return (

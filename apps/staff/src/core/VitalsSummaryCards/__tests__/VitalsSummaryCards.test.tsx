@@ -107,7 +107,7 @@ describe("VitalsSummaryCards", () => {
           const { getByText } = render(
             <Router>
               <VitalsSummaryCards />
-            </Router>
+            </Router>,
           );
           expect(getByText(metric));
         });
@@ -119,7 +119,7 @@ describe("VitalsSummaryCards", () => {
     render(
       <Router>
         <VitalsSummaryCards />
-      </Router>
+      </Router>,
     );
 
     mockSetSelectedMetricId.mockReset();

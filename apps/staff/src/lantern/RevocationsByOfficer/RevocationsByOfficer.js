@@ -89,7 +89,7 @@ const RevocationsByOfficer = observer(
           );
         }}
         generateChartData={createGenerateChartData(
-          revocationsChartStore.filteredData
+          revocationsChartStore.filteredData,
         )}
         chartTitle={CHART_TITLE}
         metricTitle={CHART_TITLE}
@@ -104,7 +104,7 @@ const RevocationsByOfficer = observer(
       />
     );
   },
-  { forwardRef: true }
+  { forwardRef: true },
 );
 
 RevocationsByOfficer.defaultProps = { containerHeight: null };

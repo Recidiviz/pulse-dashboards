@@ -98,25 +98,25 @@ describe("test for file months", () => {
 
     const monthNamesWithAbbreviated = monthMethods.monthNamesFromNumbers(
       monthNumbers,
-      true
+      true,
     );
     expect(monthNamesWithAbbreviated).toEqual(expectedForAbbreviated);
 
     const monthNamesWithoutAbbreviated = monthMethods.monthNamesFromNumbers(
       monthNumbers,
-      false
+      false,
     );
     expect(monthNamesWithoutAbbreviated).toEqual(expectedMonthNames);
 
     const monthNamesEmptyArray = monthMethods.monthNamesFromNumbers(
       [],
-      undefined
+      undefined,
     );
     expect(monthNamesEmptyArray).toEqual([]);
 
     const monthNamesWrongNumber = monthMethods.monthNamesFromNumbers(
       monthNumbersWithInvalidEntries,
-      true
+      true,
     );
     expect(monthNamesWrongNumber).toEqual(expectedForWrongNumbers);
   });

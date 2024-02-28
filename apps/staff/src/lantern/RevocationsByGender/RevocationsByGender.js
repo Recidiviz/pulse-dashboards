@@ -55,7 +55,7 @@ const RevocationsByGender = observer(
         )}
         generateChartData={createGenerateChartData(
           revocationsChartStore,
-          stacked
+          stacked,
         )}
         chartTitle={CHART_TITLE}
         metricTitle={
@@ -68,7 +68,7 @@ const RevocationsByGender = observer(
       />
     );
   },
-  { forwardRef: true }
+  { forwardRef: true },
 );
 
 RevocationsByGender.defaultProps = { containerHeight: null };

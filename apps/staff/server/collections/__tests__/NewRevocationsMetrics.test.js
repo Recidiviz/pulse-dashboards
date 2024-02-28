@@ -32,9 +32,9 @@ describe("NewRevocationsMetrics", () => {
 
   it("throws an error if instantiated with wrong metric type", () => {
     expect(
-      () => new NewRevocationsMetrics(COLLECTIONS.PATHWAYS, stateCode)
+      () => new NewRevocationsMetrics(COLLECTIONS.PATHWAYS, stateCode),
     ).toThrowError(
-      `Incorrect metricType for metric class NewRevocationsMetrics: ${COLLECTIONS.PATHWAYS}`
+      `Incorrect metricType for metric class NewRevocationsMetrics: ${COLLECTIONS.PATHWAYS}`,
     );
   });
 
@@ -45,7 +45,7 @@ describe("NewRevocationsMetrics", () => {
         DEFAULT_METRIC_PERIOD_MONTHS,
       ];
       expect(() =>
-        metric.validateDimensionsForFile(fileName, sourceDimensions)
+        metric.validateDimensionsForFile(fileName, sourceDimensions),
       ).not.toThrow();
     });
 
@@ -55,11 +55,11 @@ describe("NewRevocationsMetrics", () => {
       ];
 
       expect(() =>
-        metric.validateDimensionsForFile(fileName, sourceDimensions)
+        metric.validateDimensionsForFile(fileName, sourceDimensions),
       ).toThrowError(
         new Error(
-          `${fileName} includes unexpected dimension values: metric_period_months: 16`
-        )
+          `${fileName} includes unexpected dimension values: metric_period_months: 16`,
+        ),
       );
     });
 
@@ -67,7 +67,7 @@ describe("NewRevocationsMetrics", () => {
       const sourceDimensions = [["metric_period_months", ["12", "6"]]];
 
       expect(() =>
-        metric.validateDimensionsForFile(fileName, sourceDimensions)
+        metric.validateDimensionsForFile(fileName, sourceDimensions),
       ).not.toThrow();
     });
   });

@@ -133,7 +133,7 @@ export const ADMISSION_TYPES = {
   },
   get flattenedOptions() {
     const options = flattenDeep(
-      map("options", ADMISSION_TYPES.options).filter(Boolean)
+      map("options", ADMISSION_TYPES.options).filter(Boolean),
     );
     return [...this.options, ...options];
   },

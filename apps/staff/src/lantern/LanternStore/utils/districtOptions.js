@@ -45,7 +45,7 @@ export function generateNestedOptions(districts, districtKeys) {
 
     // Options are a unique set
     const labels = filterOptions[primaryId].options.map((o) =>
-      o.label.toLowerCase()
+      o.label.toLowerCase(),
     );
 
     if (!labels.includes(nestedLabel.toLowerCase())) {
@@ -55,7 +55,7 @@ export function generateNestedOptions(districts, districtKeys) {
   });
 
   const sortedOptions = Object.values(filterOptions).sort(
-    compareStrings("label")
+    compareStrings("label"),
   );
 
   return sortedOptions;

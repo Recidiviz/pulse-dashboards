@@ -41,7 +41,7 @@ jest.mock("../../../RootStore/UserStore", () => {
 
 const verifyUserRestrictionsSpy = jest.spyOn(
   UserRestrictionsStore.prototype,
-  "verifyUserRestrictions"
+  "verifyUserRestrictions",
 );
 
 const lanternStore: LanternStore = new LanternStore(RootStore);

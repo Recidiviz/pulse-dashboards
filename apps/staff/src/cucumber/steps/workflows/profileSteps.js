@@ -46,5 +46,5 @@ Then(
     await sentenceTimeline.waitForExist();
     const timelineText = await sentenceTimeline.getText();
     expect(timelineText).toEqual(expect.stringMatching(monthsLeftRegex));
-  }
+  },
 );

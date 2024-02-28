@@ -62,8 +62,8 @@ beforeAll(() => {
   // this lets us spy on observables, e.g. computed getters
   fixtureData = cloneDeep(
     usMoOverdueRestrictiveHousingInitialHearingSchema.parse(
-      usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture
-    )
+      usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
+    ),
   );
   configure({ safeDescriptors: false });
   jest.useFakeTimers().setSystemTime(today);
@@ -180,8 +180,8 @@ describe("fully eligible", () => {
     freeze(today);
     fixtureData = cloneDeep(
       usMoOverdueRestrictiveHousingInitialHearingSchema.parse(
-        usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture
-      )
+        usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
+      ),
     );
   });
 
@@ -231,7 +231,7 @@ describe("fully eligible", () => {
           today;
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Initial hearing due today)/gm
+        /\b(Initial hearing due today)/gm,
       );
     });
 
@@ -243,7 +243,7 @@ describe("fully eligible", () => {
         };
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Initial hearing due 3 days ago)/gm
+        /\b(Initial hearing due 3 days ago)/gm,
       );
     });
 
@@ -253,7 +253,7 @@ describe("fully eligible", () => {
           subWeeks(new Date(), 1);
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Initial hearing due 7 days ago)/gm
+        /\b(Initial hearing due 7 days ago)/gm,
       );
     });
 
@@ -266,7 +266,7 @@ describe("fully eligible", () => {
 
       referralSub.data = fixtureData;
       expect(opp.eligibleStatusMessage).toMatch(
-        /\b(Initial hearing due in 7 days)/gm
+        /\b(Initial hearing due in 7 days)/gm,
       );
     });
   });
@@ -280,7 +280,7 @@ class TestOpportunity extends UsMoOverdueRestrictiveHousingInitialHearingOpportu
 
 const createOpportunityInstance = (
   reviewStatus: OpportunityStatus,
-  eligibilityDate: Date | undefined
+  eligibilityDate: Date | undefined,
 ) => {
   const mockRoot = new RootStore();
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
@@ -296,7 +296,7 @@ const createOpportunityInstance = (
 
 const initOpportunitiesList = (
   reviewStatuses: OpportunityStatus[],
-  eligibilityDates: (Date | undefined)[]
+  eligibilityDates: (Date | undefined)[],
 ) => {
   return reviewStatuses.map((reviewStatus, index) => {
     return createOpportunityInstance(reviewStatus, eligibilityDates[index]);
@@ -347,18 +347,18 @@ describe("Test custom compare function", () => {
 
   it("should sort undefined opportunities to the front of the array", () => {
     const shuffledDates = shuffle(orderedDates).map(
-      (date: Date | undefined, idx) => (idx % 2 === 1 ? undefined : date)
+      (date: Date | undefined, idx) => (idx % 2 === 1 ? undefined : date),
     );
 
     opportunities = initOpportunitiesList(
       shuffle(orderedReviewStatuses),
-      shuffledDates
+      shuffledDates,
     );
     opportunities.sort((a, b) => a.compare(b));
     expect(
       evaluateForUndefinedDatesFirstOnly(
-        opportunities.map((mockOpp) => mockOpp.eligibilityDate)
-      )
+        opportunities.map((mockOpp) => mockOpp.eligibilityDate),
+      ),
     ).toBeTruthy();
   });
 });

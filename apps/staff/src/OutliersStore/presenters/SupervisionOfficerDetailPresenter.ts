@@ -38,7 +38,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
 
   constructor(
     private supervisionStore: OutliersSupervisionStore,
-    public officerPseudoId: string
+    public officerPseudoId: string,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -53,7 +53,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
         await Promise.all([
           flowResult(this.supervisionStore.populateMetricConfigs()),
           flowResult(
-            this.supervisionStore.populateSupervisionOfficerSupervisors()
+            this.supervisionStore.populateSupervisionOfficerSupervisors(),
           ),
           flowResult(this.populateSupervisionOfficer()),
         ]);
@@ -71,7 +71,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
         supervisorPseudonymizedId: this.supervisorInfo?.pseudonymizedId,
         viewedBy: userPseudoId,
         numOutlierMetrics: this.outlierOfficerData?.outlierMetrics.length,
-      }
+      },
     );
   }
 
@@ -82,7 +82,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
 
   private get officerRecordFromStore(): SupervisionOfficer | undefined {
     return Array.from(
-      this.supervisionStore.officersBySupervisorPseudoId.values()
+      this.supervisionStore.officersBySupervisorPseudoId.values(),
     )
       .flat()
       .find((o) => o.pseudonymizedId === this.officerPseudoId);
@@ -124,7 +124,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
   get currentMetricIndex(): number {
     return (
       this.outlierOfficerData?.outlierMetrics.findIndex(
-        (m) => m.metricId === this.metricId
+        (m) => m.metricId === this.metricId,
       ) ?? 0
     );
   }
@@ -139,7 +139,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     const supervisorExternalId = this.officerRecord?.supervisorExternalId;
     if (!supervisorExternalId) return;
     return this.supervisionStore.supervisionOfficerSupervisorByExternalId(
-      supervisorExternalId
+      supervisorExternalId,
     );
   }
 
@@ -187,13 +187,13 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
       // saving an additional loading spinner in the events table UI
       this.supervisionStore.populateMetricEventsForOfficer(
         this.officerPseudoId,
-        this.metricId
+        this.metricId,
       );
     }
 
     this.fetchedOfficerRecord =
       yield this.supervisionStore.outliersStore.apiClient.supervisionOfficer(
-        this.officerPseudoId
+        this.officerPseudoId,
       );
   }
 

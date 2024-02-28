@@ -67,67 +67,67 @@ describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
   test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd
+        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE and US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
     rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
       1,
-      1
+      1,
     );
 
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
     rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
       0,
-      1
+      1,
     );
 
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd
+        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd,
     ).not.toBeUndefined();
 
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin7YearsOfFtcdOrTpd
+        .usIdIncarcerationWithin7YearsOfFtcdOrTpd,
     ).toBeUndefined();
 
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence,
     ).toBeUndefined();
   });
 
   test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
     rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
       0,
-      2
+      2,
     );
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence
+        .usIdIncarcerationWithin3YearsOfTpdAndLifeSentence,
     ).not.toBeUndefined();
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin7YearsOfFtcdOrTpd
+        .usIdIncarcerationWithin7YearsOfFtcdOrTpd,
     ).toBeUndefined();
     expect(
       usIdCRCResidentWorkerSchema.parse(rawRecord).eligibleCriteria
-        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd
+        .usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd,
     ).toBeUndefined();
   });
 });

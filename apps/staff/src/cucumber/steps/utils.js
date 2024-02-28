@@ -35,7 +35,7 @@ async function waitForElementsToExist(elements) {
     async () => {
       return elements.length > 0;
     },
-    { timeout: 5000 }
+    { timeout: 5000 },
   );
 }
 
@@ -108,7 +108,9 @@ async function waitForFileToExist(filePath, timeout) {
 
     function handleTimeout() {
       reject(
-        new Error("File did not exists and was not created during the timeout.")
+        new Error(
+          "File did not exists and was not created during the timeout.",
+        ),
       );
     }
     const timer = setTimeout(handleTimeout, timeout);

@@ -101,7 +101,7 @@ const INELIGIBLE_CRITERIA_COPY = {
 
 export function hydrateXMonthsRemainingRequirement(
   criterion: NonNullable<UsMeSCCPCriteria["usMeXMonthsRemainingOnSentence"]>,
-  copy: OpportunityRequirement
+  copy: OpportunityRequirement,
 ) {
   const monthsRemaining =
     differenceInMonths(criterion.eligibleDate, new Date()) + 30;
@@ -114,7 +114,7 @@ export function hydrateXMonthsRemainingRequirement(
 
 function hydrateServedXPortionOfSentence(
   criterion: NonNullable<UsMeSCCPCriteria["usMeServedXPortionOfSentence"]>,
-  copy: OpportunityRequirement
+  copy: OpportunityRequirement,
 ): OpportunityRequirement {
   const { xPortionServed, eligibleDate } = criterion;
   const lengthCondition =
@@ -148,12 +148,12 @@ function hydrateServedXPortionOfSentence(
 }
 
 function hydrateDaysWithoutViolationRequirementText(
-  criterion: NonNullable<UsMeSCCPCriteria["usMeNoClassAOrBViolationFor90Days"]>
+  criterion: NonNullable<UsMeSCCPCriteria["usMeNoClassAOrBViolationFor90Days"]>,
 ) {
   if (criterion.eligibleDate) {
     const daysRemaining = differenceInDays(
       criterion.eligibleDate,
-      new Date()
+      new Date(),
     ).toString();
     return `Needs ${daysRemaining} more days without a Class A or B discipline`;
   }
@@ -162,7 +162,7 @@ function hydrateDaysWithoutViolationRequirementText(
 }
 
 const requirementsForEligibleCriteria = (
-  criteria: Partial<UsMeSCCPCriteria>
+  criteria: Partial<UsMeSCCPCriteria>,
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 
@@ -178,7 +178,7 @@ const requirementsForEligibleCriteria = (
     usMeCustodyLevelIsMinimumOrCommunity.text =
       usMeCustodyLevelIsMinimumOrCommunity.text.replace(
         "$CUSTODY_LEVEL",
-        criteria.usMeCustodyLevelIsMinimumOrCommunity.custodyLevel.toLowerCase()
+        criteria.usMeCustodyLevelIsMinimumOrCommunity.custodyLevel.toLowerCase(),
       );
     requirements.push(usMeCustodyLevelIsMinimumOrCommunity);
   }
@@ -187,8 +187,8 @@ const requirementsForEligibleCriteria = (
     requirements.push(
       hydrateServedXPortionOfSentence(
         criteria.usMeServedXPortionOfSentence,
-        usMeServedXPortionOfSentence
-      )
+        usMeServedXPortionOfSentence,
+      ),
     );
   }
 
@@ -196,8 +196,8 @@ const requirementsForEligibleCriteria = (
     requirements.push(
       hydrateXMonthsRemainingRequirement(
         criteria.usMeXMonthsRemainingOnSentence,
-        usMeXMonthsRemainingOnSentence
-      )
+        usMeXMonthsRemainingOnSentence,
+      ),
     );
   }
 
@@ -213,7 +213,7 @@ const requirementsForEligibleCriteria = (
 };
 
 const requirementsForIneligibleCriteria = (
-  criteria: Partial<UsMeSCCPCriteria>
+  criteria: Partial<UsMeSCCPCriteria>,
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 
@@ -227,8 +227,8 @@ const requirementsForIneligibleCriteria = (
     requirements.push(
       hydrateXMonthsRemainingRequirement(
         criteria.usMeXMonthsRemainingOnSentence,
-        usMeXMonthsRemainingOnSentence
-      )
+        usMeXMonthsRemainingOnSentence,
+      ),
     );
   }
 
@@ -236,15 +236,15 @@ const requirementsForIneligibleCriteria = (
     requirements.push(
       hydrateServedXPortionOfSentence(
         criteria.usMeServedXPortionOfSentence,
-        usMeServedXPortionOfSentence
-      )
+        usMeServedXPortionOfSentence,
+      ),
     );
   }
 
   if (criteria.usMeNoClassAOrBViolationFor90Days) {
     requirements.push({
       text: hydrateDaysWithoutViolationRequirementText(
-        criteria.usMeNoClassAOrBViolationFor90Days
+        criteria.usMeNoClassAOrBViolationFor90Days,
       ),
       tooltip: usMeNoClassAOrBViolationFor90Days.tooltip,
     });
@@ -321,7 +321,7 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
       if (monthsRemaining === 0) {
         daysRemaining = `and ${differenceInDays(
           eligibleDate,
-          new Date()
+          new Date(),
         )} days `;
       }
       return `${monthsRemaining + 30} months ${
@@ -331,13 +331,13 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
     if (usMeNoClassAOrBViolationFor90Days) {
       return hydrateDaysWithoutViolationRequirementText(
-        usMeNoClassAOrBViolationFor90Days
+        usMeNoClassAOrBViolationFor90Days,
       );
     }
 
     if (usMeServedXPortionOfSentence) {
       const { usMeServedXPortionOfSentence: copy } = cloneDeep(
-        INELIGIBLE_CRITERIA_COPY
+        INELIGIBLE_CRITERIA_COPY,
       );
 
       return hydrateServedXPortionOfSentence(usMeServedXPortionOfSentence, copy)

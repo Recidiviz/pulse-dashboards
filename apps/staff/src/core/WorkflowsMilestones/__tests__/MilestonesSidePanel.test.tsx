@@ -63,7 +63,7 @@ describe("MilestonesSidePanel", () => {
         availableOfficers: [],
         selectedClient: new Client(
           eligibleClient,
-          baseRootStoreMock as unknown as RootStore
+          baseRootStoreMock as unknown as RootStore,
         ),
       },
     });
@@ -78,7 +78,7 @@ describe("MilestonesSidePanel", () => {
       const { baseElement } = render(
         <BrowserRouter>
           <MilestonesSidePanel activeTab="New Milestones" />
-        </BrowserRouter>
+        </BrowserRouter>,
       );
       expect(baseElement).toMatchSnapshot();
       expect(screen.getByTestId("ComposeMessageView")).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe("MilestonesSidePanel", () => {
     const { baseElement } = render(
       <BrowserRouter>
         <MilestonesSidePanel activeTab="Declined to Send" />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(baseElement).toMatchSnapshot();
     expect(screen.getByTestId("DeclinedSidePanel")).toBeInTheDocument();
@@ -110,12 +110,12 @@ describe("MilestonesSidePanel", () => {
       const { baseElement } = render(
         <BrowserRouter>
           <MilestonesSidePanel activeTab="Congratulated" />
-        </BrowserRouter>
+        </BrowserRouter>,
       );
       expect(baseElement).toMatchSnapshot();
       expect(screen.getByTestId("CongratulatedSidePanel")).toBeInTheDocument();
       expect(
-        screen.getByText("This is the full text message")
+        screen.getByText("This is the full text message"),
       ).toBeInTheDocument();
     });
   });
@@ -133,12 +133,12 @@ describe("MilestonesSidePanel", () => {
     const { baseElement } = render(
       <BrowserRouter>
         <MilestonesSidePanel activeTab="Congratulated" />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(baseElement).toMatchSnapshot();
     expect(screen.getByTestId("CongratulatedSidePanel")).toBeInTheDocument();
     expect(
-      screen.getByText("indicated that they congratulated", { exact: false })
+      screen.getByText("indicated that they congratulated", { exact: false }),
     ).toBeInTheDocument();
   });
 });

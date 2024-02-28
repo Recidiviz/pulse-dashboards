@@ -34,7 +34,7 @@ import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassif
 export function templateValuesForFormData(
   formData: Partial<UsTnSharedReclassificationDraftData> & {
     userExternalId?: string;
-  }
+  },
 ) {
   const out: Record<string, any> = { ...formData };
 
@@ -53,7 +53,7 @@ export function templateValuesForFormData(
 
   function expandMultipleChoice<F extends keyof typeof formData>(
     field: F,
-    options: typeof formData[F][]
+    options: (typeof formData)[F][],
   ) {
     const val = formData[field];
     if (val === undefined) return;
@@ -159,7 +159,7 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
       resident.stateCode,
       "custody_reclassification_template.docx",
       templateValuesForFormData({ ...formData, userExternalId }),
-      resident.rootStore.getTokenSilently
+      resident.rootStore.getTokenSilently,
     );
   };
 

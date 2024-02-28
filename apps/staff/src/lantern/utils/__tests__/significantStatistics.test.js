@@ -79,7 +79,7 @@ describe("applyStatisticallySignificantShading function", () => {
 
     given.forEach((denominator) => {
       expect(applyStatisticallySignificantShading(color, denominator)).toBe(
-        color
+        color,
       );
     });
   });
@@ -90,7 +90,7 @@ describe("applyStatisticallySignificantShading function", () => {
 
     given.forEach((denominator) => {
       expect(
-        applyStatisticallySignificantShading(color, denominator).shapeType
+        applyStatisticallySignificantShading(color, denominator).shapeType,
       ).toEqual(STATISTICALLY_INSIGNIFICANT_PATTERN);
     });
   });
@@ -104,7 +104,7 @@ describe("applyStatisticallySignificantShadingToDataset function", () => {
 
     const backgroundColorFn = applyStatisticallySignificantShadingToDataset(
       color,
-      dataset
+      dataset,
     );
     dataset.forEach((_denominator, idx) => {
       expect(backgroundColorFn({ dataIndex: idx })).toBe(color);
@@ -116,11 +116,11 @@ describe("applyStatisticallySignificantShadingToDataset function", () => {
 
     const backgroundColorFn = applyStatisticallySignificantShadingToDataset(
       color,
-      dataset
+      dataset,
     );
     dataset.forEach((_denominator, idx) => {
       expect(backgroundColorFn({ dataIndex: idx }).shapeType).toEqual(
-        STATISTICALLY_INSIGNIFICANT_PATTERN
+        STATISTICALLY_INSIGNIFICANT_PATTERN,
       );
     });
   });
@@ -133,7 +133,7 @@ describe("applyStatisticallySignificantShadingToDataset function", () => {
 
       backgroundColorFn = applyStatisticallySignificantShadingToDataset(
         color,
-        dataset
+        dataset,
       );
     });
 
@@ -143,7 +143,7 @@ describe("applyStatisticallySignificantShadingToDataset function", () => {
 
     it("should not apply the shading to the statistically insignificant datapoint", () => {
       expect(
-        backgroundColorFn({ datasetIndex: 2, dataIndex: 2 }).shapeType
+        backgroundColorFn({ datasetIndex: 2, dataIndex: 2 }).shapeType,
       ).toEqual(STATISTICALLY_INSIGNIFICANT_PATTERN);
     });
   });
@@ -156,7 +156,7 @@ describe("tooltipForFooterWithCounts function", () => {
       const index = 2;
 
       expect(tooltipForFooterWithCounts([{ index }], given)).toBe(
-        "* indicates the group is too small to make generalizations"
+        "* indicates the group is too small to make generalizations",
       );
     });
 
@@ -174,7 +174,7 @@ describe("tooltipForFooterWithCounts function", () => {
       const index = 2;
 
       expect(tooltipForFooterWithCounts([{ index }], given)).toBe(
-        "* indicates the group is too small to make generalizations"
+        "* indicates the group is too small to make generalizations",
       );
     });
 

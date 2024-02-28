@@ -22,5 +22,5 @@ export const usMoOverdueRestrictiveHousingReleaseConfig: OpportunityConfig<UsMoO
   baseUsMoOverdueRestrictiveHousingConfig(
     "Release",
     "to review for release from Restrictive Housing",
-    "Review residents for release and prepare necessary paperwork for their return to general population."
+    "Review residents for release and prepare necessary paperwork for their return to general population.",
   );

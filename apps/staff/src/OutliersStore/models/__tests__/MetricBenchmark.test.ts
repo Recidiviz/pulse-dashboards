@@ -23,7 +23,7 @@ import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFi
 
 test("transformations", () => {
   rawMetricBenchmarksFixture.forEach((b) =>
-    expect(metricBenchmarkSchema.parse(b)).toMatchSnapshot()
+    expect(metricBenchmarkSchema.parse(b)).toMatchSnapshot(),
   );
 });
 
@@ -34,7 +34,7 @@ test("benchmarks should be sorted chronologically", () => {
     expect(
       metricBenchmarkSchema
         .parse(shuffledBenchmark)
-        .benchmarks.map((b) => b.endDate)
+        .benchmarks.map((b) => b.endDate),
     ).toEqual(LOOKBACK_END_DATES);
   });
 });

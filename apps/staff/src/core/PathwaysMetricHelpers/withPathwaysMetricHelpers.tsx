@@ -38,7 +38,7 @@ const MetricVizHydrator = styled(ModelHydrator)`
 `;
 
 const withPathwaysMetricHelpers = <Props extends withPathwaysMetricHelperProps>(
-  OriginalComponent: React.ComponentType<Props>
+  OriginalComponent: React.ComponentType<Props>,
 ): React.ComponentType<Props> => {
   const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
     const { metric } = props;

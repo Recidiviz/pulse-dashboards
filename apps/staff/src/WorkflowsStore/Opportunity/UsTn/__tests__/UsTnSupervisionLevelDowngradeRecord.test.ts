@@ -55,7 +55,7 @@ const mockClient = {
 
 const getTransformedRecord = () =>
   usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-    identity
+    identity,
   ).parse(usTnSupervisionLevelDowngradeRecordRaw);
 
 test("transform function", () => {
@@ -73,6 +73,6 @@ test("record does not validate", () => {
     supervisionLevel: "MEDIUM",
   } as any);
   expect(() => validator(getTransformedRecord())).toThrow(
-    OpportunityValidationError
+    OpportunityValidationError,
   );
 });

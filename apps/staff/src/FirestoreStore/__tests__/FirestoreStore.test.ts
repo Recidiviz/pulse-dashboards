@@ -59,12 +59,12 @@ jest.mock("../../api/fetchFirebaseToken", () => {
     fetchFirebaseToken: jest
       .fn()
       .mockImplementation(() =>
-        Promise.resolve({ json: () => Promise.resolve("token123") })
+        Promise.resolve({ json: () => Promise.resolve("token123") }),
       ),
     fetchImpersonatedFirebaseToken: jest
       .fn()
       .mockImplementation(() =>
-        Promise.resolve({ json: () => Promise.resolve("token123") })
+        Promise.resolve({ json: () => Promise.resolve("token123") }),
       ),
   };
 });
@@ -160,7 +160,7 @@ describe("FirestoreStore", () => {
         impersonatedEmail,
         impersonatedStateCode,
         mockGetTokenSilently,
-        appMetadata
+        appMetadata,
       );
       expect(mockFetchImpersonatedFirebaseToken).toBeCalled();
     });
@@ -176,7 +176,7 @@ describe("FirestoreStore", () => {
         impersonatedEmail,
         impersonatedStateCode,
         mockGetTokenSilently,
-        appMetadata
+        appMetadata,
       );
       expect(mockFetchImpersonatedFirebaseToken).not.toBeCalled();
     });
@@ -197,12 +197,12 @@ describe("FirestoreStore", () => {
         "testDocument",
         "recordId",
         {} as DocumentReference,
-        {}
+        {},
       );
       expect(mockSetDoc).not.toBeCalled();
       // eslint-disable-next-line no-console
       expect(console.log).toBeCalledWith(
-        "[IMPERSONATOR] Skipping update for: testDocument for id recordId with updates {}"
+        "[IMPERSONATOR] Skipping update for: testDocument for id recordId with updates {}",
       );
     });
 
@@ -215,7 +215,7 @@ describe("FirestoreStore", () => {
         "testDocument",
         "recordId",
         {} as DocumentReference,
-        {}
+        {},
       );
       expect(mockSetDoc).toBeCalled();
     });
@@ -302,7 +302,7 @@ describe("FirestoreStore", () => {
         "LSU",
         "us_id_123",
         update,
-        false
+        false,
       );
       expect(mockDoc.mock.calls).toEqual([
         [
@@ -375,7 +375,7 @@ describe("FirestoreStore", () => {
         "LSU",
         "us_id_123",
         update,
-        false
+        false,
       );
       expect(mockDoc.mock.calls).toEqual([
         [
@@ -414,7 +414,7 @@ describe("FirestoreStore", () => {
         "LSU",
         "us_id_123",
         update,
-        true
+        true,
       );
       expect(mockDoc.mock.calls).toEqual([
         [
@@ -450,7 +450,7 @@ describe("FirestoreStore", () => {
         };
       await store.updateMilestonesMessages(
         "us_ca_123",
-        milestonesMessagesUpdate
+        milestonesMessagesUpdate,
       );
       expect(mockDoc.mock.calls).toEqual([
         [

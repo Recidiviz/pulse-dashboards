@@ -97,7 +97,7 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
 
   const isValidTextarea = (
     pattern: string | undefined,
-    textareaValue: string | undefined
+    textareaValue: string | undefined,
   ) => {
     if (pattern && textareaValue) {
       const re = new RegExp(pattern);

@@ -26,7 +26,7 @@ type SetFunc = (fieldName: string, value?: string | boolean | number) => void;
 export type PDFFillerFunc = (
   set: SetFunc,
   form: PDFForm,
-  doc: PDFDocument
+  doc: PDFDocument,
 ) => Promise<void>;
 
 // fillerFunc() is the callback responsible for actually filling out the form.
@@ -42,7 +42,7 @@ export async function fillPDF(
   stateCode: string,
   templateName: string,
   fillerFunc: PDFFillerFunc,
-  getTokenSilently: () => Promise<any>
+  getTokenSilently: () => Promise<any>,
 ) {
   // While the template is being downloaded, we also dynamically import pdf-lib as
   // a separate code chunk. Otherwise it would add 200k to the bundle for everyone.
@@ -89,13 +89,13 @@ export async function fillAndSavePDF(
   stateCode: string,
   templateName: string,
   fillerFunc: PDFFillerFunc,
-  getTokenSilently: () => Promise<any>
+  getTokenSilently: () => Promise<any>,
 ) {
   const pdfBytes = await fillPDF(
     stateCode,
     templateName,
     fillerFunc,
-    getTokenSilently
+    getTokenSilently,
   );
 
   const blob = new Blob([pdfBytes]);

@@ -54,7 +54,7 @@ const generatePercentChartData = (filteredData, mode) => {
       [fieldName]: dataPoint[fieldName],
       rate: calculateRate(dataPoint.count, dataPoint[fieldName]),
     })),
-    orderBy(["rate", "count"], ["desc", "desc"])
+    orderBy(["rate", "count"], ["desc", "desc"]),
   )(filteredData);
 
   const dataPoints = map((item) => item.rate.toFixed(2), transformedData);
@@ -78,7 +78,7 @@ const generatePercentChartData = (filteredData, mode) => {
 
   const averageRate = calculateRate(
     sumCounts("revocation_count", filteredData),
-    sumCounts("supervision_population_count", filteredData)
+    sumCounts("supervision_population_count", filteredData),
   );
 
   return { data, numerators, denominators, averageRate };
@@ -92,7 +92,7 @@ const generateCountChartData = (filteredData) => {
       officer: formatOfficerLabel(dataset[0].officer_label),
       count: sumBy((item) => toInteger(item.revocation_count), dataset),
     })),
-    orderBy(["count"], ["desc"])
+    orderBy(["count"], ["desc"]),
   )(filteredData);
 
   const labels = map("officer", transformedData);

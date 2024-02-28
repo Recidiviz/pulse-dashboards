@@ -53,7 +53,7 @@ const RevocationsByRiskLevel = observer(
           />
         )}
         generateChartData={createGenerateChartData(
-          revocationsChartStore.filteredData
+          revocationsChartStore.filteredData,
         )}
         chartTitle={CHART_TITLE}
         metricTitle={(mode) => `${getLabelByMode(mode)} by risk level`}
@@ -64,7 +64,7 @@ const RevocationsByRiskLevel = observer(
       />
     );
   },
-  { forwardRef: true }
+  { forwardRef: true },
 );
 
 RevocationsByRiskLevel.defaultProps = { containerHeight: null };

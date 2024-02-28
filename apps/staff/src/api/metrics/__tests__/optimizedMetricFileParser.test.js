@@ -116,7 +116,7 @@ describe("Test expandMetricRepresentation", () => {
     const metadata = METADATA;
     const expandedRepresentation = expandMetricRepresentation(
       contents,
-      metadata
+      metadata,
     );
     expect(expandedRepresentation).toEqual(EXPECTED_OUTPUT);
   });
@@ -134,7 +134,7 @@ describe("Test expandMetricRepresentation", () => {
 
     const expandedRepresentation = expandMetricRepresentation(
       contents,
-      metadata
+      metadata,
     );
     expect(expandedRepresentation).toEqual(expectedOutput);
   });
@@ -155,7 +155,7 @@ describe("Test expandMetricRepresentation", () => {
 
     const expandedRepresentation = expandMetricRepresentation(
       contents,
-      metadata
+      metadata,
     );
     expect(expandedRepresentation).toEqual(expectedOutput);
   });
@@ -176,7 +176,7 @@ describe("Test expandMetricRepresentation", () => {
     expect(() => {
       expandMetricRepresentation(contents, metadata);
     }).toThrow(
-      "Metric file value array references dimension value index of 2 which is not found in the dimension_manifest for dimension of index 0. Dimension manifest for that dimension is district,4,5"
+      "Metric file value array references dimension value index of 2 which is not found in the dimension_manifest for dimension of index 0. Dimension manifest for that dimension is district,4,5",
     );
   });
 });

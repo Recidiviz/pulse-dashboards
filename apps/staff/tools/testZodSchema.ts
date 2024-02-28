@@ -93,7 +93,7 @@ const SCHEMAS: Partial<Record<FirestoreCollectionKey, z.ZodTypeAny>> = {
   usMeEarlyTerminationReferrals: usMeEarlyTerminationSchema,
   usMiSupervisionLevelDowngradeReferrals:
     usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-      (s) => s
+      (s) => s,
     ),
   usMiClassificationReviewReferrals:
     usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
@@ -116,7 +116,7 @@ const SCHEMAS: Partial<Record<FirestoreCollectionKey, z.ZodTypeAny>> = {
 
 async function testCollection(
   opportunityReferrals: FirestoreOpportunityReferrals,
-  limit?: number
+  limit?: number,
 ) {
   const schema = SCHEMAS[opportunityReferrals];
   if (!schema) {
@@ -181,7 +181,7 @@ async function manual(args: Args) {
 
   const { failures, ...result } = await testCollection(
     collection as FirestoreOpportunityReferrals,
-    limit
+    limit,
   );
 
   if (result.failed) console.log(JSON.stringify(failures, null, 2));

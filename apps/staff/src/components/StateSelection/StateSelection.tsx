@@ -62,7 +62,7 @@ const StateSelection: React.FC = () => {
               {
                 "StateSelection__select-item--selected":
                   option.value === tenantStore.currentTenantId,
-              }
+              },
             )}
             onClick={() => handleOnClick(option)}
           >

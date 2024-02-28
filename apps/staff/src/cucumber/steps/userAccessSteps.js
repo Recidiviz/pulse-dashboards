@@ -39,7 +39,7 @@ When(
     await el.click();
     await (await districtFilter.parentElement()).click();
     await !districtFilterMenu.isExisting();
-  }
+  },
 );
 
 When("I am viewing the Case Table", async () => {
@@ -58,7 +58,7 @@ Then("I should only see cases from district {string}", async (districtIds) => {
   const columnValues = await Promise.all(
     caseTableDistrictColumns.map(async function (el) {
       return el.getText();
-    })
+    }),
   );
   const expectedValues = districtIds.split(",").sort();
   expect(expectedValues).toEqual(expect.arrayContaining(uniq(columnValues)));
@@ -69,7 +69,7 @@ Then(
   async (districtId) => {
     const districtFilter = await lanternPage.districtFilter();
     expect(await districtFilter.getText()).toMatch(districtId);
-  }
+  },
 );
 
 Then("I should not be able to change the selected district", async () => {
@@ -82,8 +82,8 @@ Then(
   async (districtIds) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const chartWrapper = await lanternPage.getDistrictChartWrapperByDistrictIds(
-      districtIds.split(",")
+      districtIds.split(","),
     );
     expect(await chartWrapper.isExisting()).toEqual(true);
-  }
+  },
 );

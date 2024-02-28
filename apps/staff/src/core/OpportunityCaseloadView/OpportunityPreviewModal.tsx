@@ -32,7 +32,7 @@ export function OpportunityPreviewModal({
   opportunity,
 }: OpportunityCaseloadProps): JSX.Element | null {
   const [currentView, setCurrentView] = useState<OPPORTUNITY_SIDE_PANEL_VIEW>(
-    "OPPORTUNITY_PREVIEW"
+    "OPPORTUNITY_PREVIEW",
   );
 
   if (!opportunity) return null;

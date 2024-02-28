@@ -32,7 +32,7 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   store = new OutliersSupervisionStore(
     new OutliersStore(new RootStore()),
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
@@ -65,7 +65,7 @@ test("hydrated with no results", async () => {
 test("all supervisors data", async () => {
   await presenter.hydrate();
   expect(presenter.allSupervisors).toEqual(
-    expect.arrayContaining(supervisionOfficerSupervisorsFixture)
+    expect.arrayContaining(supervisionOfficerSupervisorsFixture),
   );
 });
 
@@ -151,7 +151,7 @@ test("districts ordered correctly", async () => {
       hasOutliers: true,
       pseudonymizedId: "hashed-testid6",
       email: null,
-    }
+    },
   );
   const orderedDistrictList = [
     "REGION 1",
@@ -166,9 +166,9 @@ test("districts ordered correctly", async () => {
   expect(
     Array.from(
       presenter.supervisorsWithOutliersByDistrict.map(
-        ({ district }) => district
-      )
-    )
+        ({ district }) => district,
+      ),
+    ),
   ).toEqual(orderedDistrictList);
 });
 
@@ -186,7 +186,7 @@ describe("outliersLeadershipPageAllDistricts feature variant not set", () => {
       .spyOn(
         store.outliersStore.rootStore.tenantStore,
         "outliersLaunchedDistricts",
-        "get"
+        "get",
       )
       .mockReturnValue(launchedDistricts);
 
@@ -202,12 +202,12 @@ describe("outliersLeadershipPageAllDistricts feature variant not set", () => {
         hasOutliers: true,
         pseudonymizedId: "hashed-testid1",
         email: null,
-      })
+      }),
     );
 
     presenter = new SupervisionOfficerSupervisorsPresenter(
       store,
-      mockOutliersLeadershipPageAllDistricts
+      mockOutliersLeadershipPageAllDistricts,
     );
   });
 
@@ -217,8 +217,8 @@ describe("outliersLeadershipPageAllDistricts feature variant not set", () => {
     expect(presenter.supervisorsWithOutliersCount).toEqual(1);
     expect(
       presenter.supervisorsWithOutliersByDistrict.map(
-        ({ district }) => district
-      )
+        ({ district }) => district,
+      ),
     ).toEqual(launchedDistricts);
   });
 });

@@ -24,7 +24,7 @@ const getCounts = (
   labels,
   dimensionValues,
   statePopulationData,
-  dimensionName
+  dimensionName,
 ) => {
   const dataPoints = [];
   const numerators = [];

@@ -54,7 +54,7 @@ beforeEach(() => {
 
   store = new OutliersSupervisionStore(
     new RootStore().outliersStore,
-    OutliersConfigFixture
+    OutliersConfigFixture,
   );
   jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
@@ -62,7 +62,7 @@ beforeEach(() => {
 
   presenter = new SupervisionOfficerDetailPresenter(
     store,
-    testOfficer.pseudonymizedId
+    testOfficer.pseudonymizedId,
   );
 });
 
@@ -80,7 +80,7 @@ describe("with unit data already hydrated", () => {
   beforeEach(async () => {
     await Promise.all([
       flowResult(
-        store.populateOfficersForSupervisor(testSupervisor.pseudonymizedId)
+        store.populateOfficersForSupervisor(testSupervisor.pseudonymizedId),
       ),
       flowResult(store.populateSupervisionOfficerSupervisors()),
       flowResult(store.populateMetricConfigs()),
@@ -96,26 +96,26 @@ describe("with unit data already hydrated", () => {
     jest.spyOn(OutliersOfflineAPIClient.prototype, "supervisionOfficer");
     jest.spyOn(
       OutliersOfflineAPIClient.prototype,
-      "supervisionOfficerSupervisors"
+      "supervisionOfficerSupervisors",
     );
     jest.spyOn(
       OutliersOfflineAPIClient.prototype,
-      "supervisionOfficerMetricEvents"
+      "supervisionOfficerMetricEvents",
     );
 
     await presenter.hydrate();
 
     expect(
-      store.outliersStore.apiClient.metricBenchmarks
+      store.outliersStore.apiClient.metricBenchmarks,
     ).not.toHaveBeenCalled();
     expect(
-      store.outliersStore.apiClient.supervisionOfficerSupervisors
+      store.outliersStore.apiClient.supervisionOfficerSupervisors,
     ).not.toHaveBeenCalled();
     expect(
-      store.outliersStore.apiClient.supervisionOfficer
+      store.outliersStore.apiClient.supervisionOfficer,
     ).not.toHaveBeenCalled();
     expect(
-      store.outliersStore.apiClient.supervisionOfficerMetricEvents
+      store.outliersStore.apiClient.supervisionOfficerMetricEvents,
     ).not.toHaveBeenCalled();
   });
 
@@ -132,7 +132,7 @@ describe("with unit data already hydrated", () => {
   test("has supervisorInfo", () => {
     expect(presenter.supervisorInfo).toBeDefined();
     expect(presenter.supervisorInfo).toEqual(
-      supervisionOfficerSupervisorsFixture[0]
+      supervisionOfficerSupervisorsFixture[0],
     );
   });
 });
@@ -142,11 +142,11 @@ test("hydration", async () => {
   jest.spyOn(OutliersOfflineAPIClient.prototype, "supervisionOfficer");
   jest.spyOn(
     OutliersOfflineAPIClient.prototype,
-    "supervisionOfficerSupervisors"
+    "supervisionOfficerSupervisors",
   );
   jest.spyOn(
     OutliersOfflineAPIClient.prototype,
-    "supervisionOfficerMetricEvents"
+    "supervisionOfficerMetricEvents",
   );
 
   expect(presenter.hydrationState.status).toBe("needs hydration");
@@ -156,13 +156,13 @@ test("hydration", async () => {
   expect(presenter.hydrationState.status).toBe("hydrated");
   expect(store.outliersStore.apiClient.metricBenchmarks).toHaveBeenCalled();
   expect(store.outliersStore.apiClient.supervisionOfficer).toHaveBeenCalledWith(
-    testOfficer.pseudonymizedId
+    testOfficer.pseudonymizedId,
   );
   expect(
-    store.outliersStore.apiClient.supervisionOfficerMetricEvents
+    store.outliersStore.apiClient.supervisionOfficerMetricEvents,
   ).toHaveBeenCalledWith(testOfficer.pseudonymizedId, testMetric.metricId);
   expect(
-    store.outliersStore.apiClient.supervisionOfficerSupervisors
+    store.outliersStore.apiClient.supervisionOfficerSupervisors,
   ).toHaveBeenCalled();
 });
 
@@ -184,7 +184,7 @@ test("has supervisorInfo", async () => {
 
   expect(presenter.supervisorInfo).toBeDefined();
   expect(presenter.supervisorInfo).toEqual(
-    supervisionOfficerSupervisorsFixture[0]
+    supervisionOfficerSupervisorsFixture[0],
   );
 });
 
@@ -236,7 +236,7 @@ test("tracks events", async () => {
   presenter.trackViewed();
 
   expect(
-    store.outliersStore.rootStore.analyticsStore.trackOutliersStaffPageViewed
+    store.outliersStore.rootStore.analyticsStore.trackOutliersStaffPageViewed,
   ).toHaveBeenCalledWith({
     staffPseudonymizedId: testOfficer.pseudonymizedId,
     supervisorPseudonymizedId:

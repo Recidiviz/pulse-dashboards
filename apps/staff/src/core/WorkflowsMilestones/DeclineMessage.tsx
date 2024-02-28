@@ -98,7 +98,7 @@ const DeclineMessageView = observer(function DeclineMessageView({
               placeholder="Please specify a reason…"
               onChange={debounce(
                 (event) => setOtherReason(event.target.value),
-                500
+                500,
               )}
             />
           </OtherReasonWrapper>

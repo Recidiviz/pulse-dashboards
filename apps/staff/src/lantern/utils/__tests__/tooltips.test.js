@@ -59,10 +59,10 @@ describe("tooltipForRateMetricWithCounts", () => {
       tooltipItemRate,
       dataMetric,
       numbers,
-      denominators
+      denominators,
     );
     expect(tooltipWithCount).toBe(
-      "Percent of standing population revoked: 10.56% (19/180)"
+      "Percent of standing population revoked: 10.56% (19/180)",
     );
   });
 
@@ -72,10 +72,10 @@ describe("tooltipForRateMetricWithCounts", () => {
       tooltipItemRate,
       dataMetric,
       [numbers],
-      [denominators]
+      [denominators],
     );
     expect(tooltipTest).toBe(
-      "Percent of standing population revoked: 10.56% (19/180)"
+      "Percent of standing population revoked: 10.56% (19/180)",
     );
   });
 
@@ -88,10 +88,10 @@ describe("tooltipForRateMetricWithCounts", () => {
       dataMetric,
       [numbers],
       [denominators],
-      includeWarning
+      includeWarning,
     );
     expect(tooltipTest).toBe(
-      "Percent of standing population revoked: 10.56% (2/3) *"
+      "Percent of standing population revoked: 10.56% (2/3) *",
     );
   });
 
@@ -104,10 +104,10 @@ describe("tooltipForRateMetricWithCounts", () => {
       dataMetric,
       [numbers],
       [denominators],
-      includeWarning
+      includeWarning,
     );
     expect(tooltipTest).toBe(
-      "Percent of standing population revoked: 10.56% (2/3)"
+      "Percent of standing population revoked: 10.56% (2/3)",
     );
   });
 
@@ -162,7 +162,7 @@ describe("tooltipForRateMetricWithCounts", () => {
           numbers,
           denominators,
           includeWarning,
-          includePercentage
+          includePercentage,
         );
         expect(tooltipWithCount).toBe("Admitted Population (56/857)");
       });
@@ -178,7 +178,7 @@ describe("tooltipForRateMetricWithCounts", () => {
             numbers,
             denominators,
             includeWarning,
-            includePercentage
+            includePercentage,
           );
           expect(tooltipWithCount).toBe("Admitted Population 7% (56/857)");
         });
@@ -194,7 +194,7 @@ describe("tooltipForRateMetricWithCounts", () => {
             numbers,
             denominators,
             includeWarning,
-            includePercentage
+            includePercentage,
           );
           expect(tooltipWithCount).toBe("Admitted Population");
         });
@@ -210,7 +210,7 @@ describe("tooltipForRateMetricWithCounts", () => {
             numbers,
             denominators,
             includeWarning,
-            includePercentage
+            includePercentage,
           );
           expect(tooltipWithCount).toBe("Admitted Population");
         });

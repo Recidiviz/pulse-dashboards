@@ -19,9 +19,15 @@
   border: 1px solid $grey-300;
   border-radius: 3px;
   background-color: $md-white;
-  -webkit-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
-  -o-transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
-  transition: border 0.15s ease-in-out, color 0.15s ease-in-out;
+  -webkit-transition:
+    border 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+  -o-transition:
+    border 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+  transition:
+    border 0.15s ease-in-out,
+    color 0.15s ease-in-out;
 }
 
 .checkbox label::after {

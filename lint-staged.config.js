@@ -4,9 +4,11 @@ module.exports = {
     (files) => `nx affected:lint --files=${files.join(",")} --fix`,
     (files) => `nx format:write --files=${files.join(",")}`,
   ],
-  "**/*.{js,jsx}": [
+  "**/*.{js,jsx,mjs}": [
     (files) => `nx affected:lint --files=${files.join(",")} --fix`,
     (files) => `nx format:write --files=${files.join(",")}`,
   ],
-  "**/*.json": [(files) => `nx format:write --files=${files.join(",")}`],
+  "**/*.{json,md,yml,yaml,html,scss}": [
+    (files) => `nx format:write --files=${files.join(",")}`,
+  ],
 };

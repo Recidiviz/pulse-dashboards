@@ -52,9 +52,9 @@ let serviceAccount;
 if (!isOfflineMode()) {
   /* eslint-disable global-require */
   // eslint-disable-next-line import/no-dynamic-require
-  serviceAccount = require(path.join(
-    `../../${process.env.GOOGLE_APPLICATION_CREDENTIALS}`
-  ));
+  serviceAccount = require(
+    path.join(`../../${process.env.GOOGLE_APPLICATION_CREDENTIALS}`),
+  );
   /* eslint-enable global-require */
 }
 
@@ -96,7 +96,7 @@ function refreshCache(req, res) {
     () => fetchMetrics(stateCode, metricType, null, isOfflineMode()),
     stateCode,
     metricType,
-    responder(res)
+    responder(res),
   );
 }
 
@@ -106,7 +106,7 @@ function respondWithForbidden(res) {
       status: FORBIDDEN,
       errors: ["User does not have permission to access this resource"],
     },
-    null
+    null,
   );
 }
 
@@ -116,7 +116,7 @@ function workflowsTemplates(req, res, next) {
   const sanitizedFileName = sanitizeFilename(filename);
   const filepath = path.resolve(
     __dirname,
-    `../assets/workflowsTemplates/${stateCode}/${sanitizedFileName}`
+    `../assets/workflowsTemplates/${stateCode}/${sanitizedFileName}`,
   );
   res.sendFile(filepath, {}, (err) => {
     if (err) {
@@ -135,7 +135,7 @@ function newRevocations(req, res) {
   cacheResponse(
     cacheKey,
     () => fetchMetrics(stateCode, metricType, null, isOfflineMode()),
-    responder(res)
+    responder(res),
   );
 }
 
@@ -180,7 +180,7 @@ function newRevocationFile(req, res) {
           filters,
           isOfflineMode: isOfflineMode(),
         }),
-      responder(res)
+      responder(res),
     );
   }
 }
@@ -188,7 +188,7 @@ function newRevocationFile(req, res) {
 function populationProjectionsMethodology(req, res) {
   const { stateCode } = req.params;
   const file = `${path.resolve(
-    "./"
+    "./",
   )}/server/assets/populationProjections/${stateCode.toLowerCase()}_methodology.pdf`;
   res.download(file);
 }
@@ -211,7 +211,7 @@ function vitals(req, res) {
   cacheResponse(
     cacheKey,
     () => fetchMetrics(stateCode, metricType, null, isOfflineMode()),
-    responder(res)
+    responder(res),
   );
 }
 
@@ -250,7 +250,7 @@ function pathways(req, res) {
   cacheResponse(
     cacheKey,
     () => fetchMetrics(stateCode, metricType, metricName, isOfflineMode()),
-    responder(res)
+    responder(res),
   );
 }
 
@@ -321,7 +321,7 @@ function sanitizeUserHash(userHash) {
 async function getImpersonatedUserRestrictions(req, res) {
   if (isOfflineMode()) {
     responder(res)(
-      new Error("Impersonate user is not available in offline mode")
+      new Error("Impersonate user is not available in offline mode"),
     );
     return;
   }
@@ -332,7 +332,7 @@ async function getImpersonatedUserRestrictions(req, res) {
   try {
     const auth = new GoogleAuth({ credentials: serviceAccount });
     const client = await auth.getIdTokenClient(
-      process.env.GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE
+      process.env.GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE,
     );
     const response = await client.request({ url });
     responder(res)(null, response.data);

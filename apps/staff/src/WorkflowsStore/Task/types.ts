@@ -21,7 +21,7 @@ import { JusticeInvolvedPerson } from "../types";
 
 export const SUPERVISION_TASKS_TYPES = ["usIdSupervisionTasks"] as const;
 
-export type SupervisionTasksType = typeof SUPERVISION_TASKS_TYPES[number];
+export type SupervisionTasksType = (typeof SUPERVISION_TASKS_TYPES)[number];
 
 // TODO: Remove optional lastHomeVisit and lastContacted once it's available in the data
 type HomeVisitDetails = {
@@ -50,14 +50,14 @@ type CheckSupervisionTaskDetailsMappingType = Expect<
 
 export const SUPERVISION_NEED_TYPES = ["employment"] as const;
 
-export type SupervisionNeedType = typeof SUPERVISION_NEED_TYPES[number];
+export type SupervisionNeedType = (typeof SUPERVISION_NEED_TYPES)[number];
 
 export const SUPERVISION_TASK_TYPES = [
   "homeVisit",
   "assessment",
   "contact",
 ] as const;
-export type SupervisionTaskType = typeof SUPERVISION_TASK_TYPES[number];
+export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
 export type SupervisionDetails =
   | HomeVisitDetails
   | AssessmentDetails

@@ -116,7 +116,7 @@ export default class AnalyticsStore {
     const log = `${
       isImpersonating ? "[Impersonation]" : ""
     }[Analytics] Identifying user: ${userId}, with traits: ${JSON.stringify(
-      traits
+      traits,
     )}`;
 
     if (this.disableAnalytics) {
@@ -137,7 +137,7 @@ export default class AnalyticsStore {
     const log = `${
       isImpersonating ? "[Impersonation]" : ""
     }[Analytics] Tracking event name: ${eventName}, with metadata: ${JSON.stringify(
-      fullMetadata
+      fullMetadata,
     )}`;
 
     if (this.disableAnalytics) {
@@ -149,7 +149,7 @@ export default class AnalyticsStore {
   }
 
   trackOutliersSupervisorPageViewed(
-    metadata: SupervisorPageTrackingMetadata
+    metadata: SupervisorPageTrackingMetadata,
   ): void {
     this.track("frontend.outliers_supervisor_page_viewed", metadata);
   }
@@ -189,7 +189,7 @@ export default class AnalyticsStore {
   trackSetOpportunityStatus<
     Metadata extends OpportunityTrackingMetadata & {
       status: OpportunityStatus;
-    }
+    },
   >(metadata: Metadata): void {
     this.track("frontend.opportunity_status_updated", metadata);
   }
@@ -219,7 +219,7 @@ export default class AnalyticsStore {
   }
 
   trackReferralFormCopiedToClipboard(
-    metadata: OpportunityTrackingMetadata
+    metadata: OpportunityTrackingMetadata,
   ): void {
     this.track("frontend.referral_form_copied_to_clipboard", metadata);
   }

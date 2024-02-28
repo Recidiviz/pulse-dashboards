@@ -29,9 +29,9 @@ describe("transformChartDataToCsv", () => {
 
     it("standard case", async () => {
       expect(
-        await transformChartDataToCsv(datasets, labels, exportLabel)
+        await transformChartDataToCsv(datasets, labels, exportLabel),
       ).toEqual(
-        `Export Label,Revocations\nLow,1\nMedium,2\nHigh,6\nNo Score,8`
+        `Export Label,Revocations\nLow,1\nMedium,2\nHigh,6\nNo Score,8`,
       );
     });
 
@@ -45,10 +45,10 @@ describe("transformChartDataToCsv", () => {
             },
           ]),
           labels,
-          exportLabel
-        )
+          exportLabel,
+        ),
       ).toEqual(
-        `Export Label,Revocations\nLow,1\nMedium,2\nHigh,6\nNo Score,8`
+        `Export Label,Revocations\nLow,1\nMedium,2\nHigh,6\nNo Score,8`,
       );
     });
   });
@@ -76,9 +76,9 @@ describe("transformChartDataToCsv", () => {
 
     it("datasets more than labels", async () => {
       expect(
-        await transformChartDataToCsv(datasets, labels, exportLabel)
+        await transformChartDataToCsv(datasets, labels, exportLabel),
       ).toEqual(
-        `Export Label,Low,Medium,High\nWomen,1,2,6\nMen,2,4,6\nDog,3,3,4\nCat,1,6,8`
+        `Export Label,Low,Medium,High\nWomen,1,2,6\nMen,2,4,6\nDog,3,3,4\nCat,1,6,8`,
       );
     });
 
@@ -93,8 +93,8 @@ describe("transformChartDataToCsv", () => {
           ],
           labels,
           false,
-          true
-        )
+          true,
+        ),
       ).toEqual(`Low,Medium,High\n1,2,6\n2,4,6\n3,3,4\n1,6,8`);
     });
   });

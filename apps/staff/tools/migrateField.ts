@@ -26,7 +26,7 @@ type MigrateFieldOptions = {
 
 async function migrateField(
   db: Firestore,
-  { collection, oldField, newField }: MigrateFieldOptions
+  { collection, oldField, newField }: MigrateFieldOptions,
 ) {
   const bulkWriter = db.bulkWriter();
 
@@ -48,7 +48,7 @@ async function migrateField(
           },
           // This precondition tells the server to fail the update
           // if the document has been updated since we fetched it.
-          { lastUpdateTime: doc.updateTime }
+          { lastUpdateTime: doc.updateTime },
         );
         updatedCount += 1;
       } catch (e) {

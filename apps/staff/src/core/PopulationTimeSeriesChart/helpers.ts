@@ -39,7 +39,7 @@ export type PreparedData = {
 
 export const prepareData = (
   metric: PopulationProjectionOverTimeMetric,
-  data: PopulationProjectionTimeSeriesRecord[]
+  data: PopulationProjectionTimeSeriesRecord[],
 ): PreparedData => {
   let historicalPopulation: ChartPoint[] = [];
   let projectedPopulation: ChartPoint[] = [];
@@ -60,7 +60,7 @@ export const prepareData = (
         value: d.totalPopulation,
         lowerBound: d.totalPopulationMin,
         upperBound: d.totalPopulationMax,
-      }))
+      })),
   );
 
   uncertainty = [
@@ -80,7 +80,7 @@ export const prepareData = (
 
 export const getDateRange = (
   firstDate: Date,
-  lastDate: Date
+  lastDate: Date,
 ): { beginDate: Date; endDate: Date } => {
   // set range slightly wider than data
   const beginDate = new Date(firstDate);
@@ -150,7 +150,7 @@ export const getDateSpacing = (timeRange: MonthOptions): number => {
 
 export const getTickValues = (
   population: ChartPoint[],
-  dateSpacing: number
+  dateSpacing: number,
 ): Date[] => {
   return population
     .filter((_, index) => index % dateSpacing === 0)

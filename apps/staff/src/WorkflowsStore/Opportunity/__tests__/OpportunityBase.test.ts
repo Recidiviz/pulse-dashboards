@@ -178,7 +178,7 @@ describe("hydrationState", () => {
       referralSub.hydrationState = hydrationStateB;
       updatesSub.hydrationState = hydrationStateA;
       expect(opp.hydrationState).toEqual({ status: "needs hydration" });
-    }
+    },
   );
 
   test.each([
@@ -315,7 +315,7 @@ describe("setLastViewed", () => {
   test("waits for hydration", () => {
     opp.setLastViewed();
     expect(
-      root.firestoreStore.updateOpportunityLastViewed
+      root.firestoreStore.updateOpportunityLastViewed,
     ).not.toHaveBeenCalled();
 
     mockHydration();
@@ -329,11 +329,11 @@ describe("setLastViewed", () => {
     opp.setLastViewed();
 
     expect(
-      root.firestoreStore.updateOpportunityLastViewed
+      root.firestoreStore.updateOpportunityLastViewed,
     ).toHaveBeenCalledWith(
       "test@email.gov",
       ineligibleClientRecord.recordId,
-      "TEST"
+      "TEST",
     );
   });
 
@@ -367,7 +367,7 @@ describe("setLastViewed", () => {
     opp.setLastViewed();
 
     expect(
-      root.firestoreStore.updateOpportunityLastViewed
+      root.firestoreStore.updateOpportunityLastViewed,
     ).not.toHaveBeenCalled();
   });
 });
@@ -383,7 +383,7 @@ describe("setCompletedIfEligible", () => {
   test("waits for hydration", () => {
     opp.setCompletedIfEligible();
     expect(
-      root.firestoreStore.updateOpportunityCompleted
+      root.firestoreStore.updateOpportunityCompleted,
     ).not.toHaveBeenCalled();
 
     mockHydration();
@@ -399,7 +399,7 @@ describe("setCompletedIfEligible", () => {
     expect(root.firestoreStore.updateOpportunityCompleted).toHaveBeenCalledWith(
       "test@email.gov",
       ineligibleClientRecord.recordId,
-      "TEST"
+      "TEST",
     );
   });
 
@@ -422,7 +422,7 @@ describe("setCompletedIfEligible", () => {
     opp.setCompletedIfEligible();
 
     expect(
-      root.firestoreStore.updateOpportunityCompleted
+      root.firestoreStore.updateOpportunityCompleted,
     ).not.toHaveBeenCalled();
   });
 
@@ -432,7 +432,7 @@ describe("setCompletedIfEligible", () => {
     opp.setCompletedIfEligible();
 
     expect(
-      root.firestoreStore.updateOpportunityCompleted
+      root.firestoreStore.updateOpportunityCompleted,
     ).not.toHaveBeenCalled();
   });
 
@@ -442,7 +442,7 @@ describe("setCompletedIfEligible", () => {
     opp.setCompletedIfEligible();
 
     expect(
-      root.analyticsStore.trackSetOpportunityStatus
+      root.analyticsStore.trackSetOpportunityStatus,
     ).not.toHaveBeenCalled();
   });
 
@@ -452,7 +452,7 @@ describe("setCompletedIfEligible", () => {
     opp.setCompletedIfEligible();
 
     expect(
-      root.analyticsStore.trackSetOpportunityStatus
+      root.analyticsStore.trackSetOpportunityStatus,
     ).not.toHaveBeenCalled();
   });
 });
@@ -483,7 +483,7 @@ describe("setDenialReasons", () => {
       client.recordId,
       { reasons },
       opp.type,
-      { otherReason: true }
+      { otherReason: true },
     );
   });
 
@@ -495,7 +495,7 @@ describe("setDenialReasons", () => {
       mockUser.info.email,
       client.recordId,
       opp.type,
-      true
+      true,
     );
   });
 
@@ -509,7 +509,7 @@ describe("setDenialReasons", () => {
       client.recordId,
       { reasons },
       opp.type,
-      undefined
+      undefined,
     );
   });
 
@@ -523,7 +523,7 @@ describe("setDenialReasons", () => {
       mockUser.info.email,
       client.recordId,
       { otherReason },
-      opp.type
+      opp.type,
     );
   });
 });
@@ -541,7 +541,7 @@ describe("tracking", () => {
       opportunityType: opp.type,
     });
     expect(
-      root.analyticsStore.trackOpportunityMarkedEligible
+      root.analyticsStore.trackOpportunityMarkedEligible,
     ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
@@ -561,7 +561,7 @@ describe("tracking", () => {
       deniedReasons: reasons,
     });
     expect(
-      root.analyticsStore.trackOpportunityMarkedEligible
+      root.analyticsStore.trackOpportunityMarkedEligible,
     ).not.toHaveBeenCalled();
   });
 
@@ -596,7 +596,7 @@ describe("setAutoSnooze", () => {
   test("when denial reasons are deleted", async () => {
     await opp.setAutoSnooze(defaultSnoozeUntilFn, []);
     expect(
-      root.firestoreStore.updateOpportunityAutoSnooze
+      root.firestoreStore.updateOpportunityAutoSnooze,
     ).toHaveBeenCalledWith(
       "TEST",
       "us_xx_001",
@@ -605,14 +605,14 @@ describe("setAutoSnooze", () => {
         snoozedBy: "test@email.gov",
         snoozedOn: "2023-10-25",
       },
-      true // deleteSnoozeField
+      true, // deleteSnoozeField
     );
   });
 
   test("when there are denial reasons", async () => {
     await opp.setAutoSnooze(defaultSnoozeUntilFn, ["REASON"]);
     expect(
-      root.firestoreStore.updateOpportunityAutoSnooze
+      root.firestoreStore.updateOpportunityAutoSnooze,
     ).toHaveBeenCalledWith(
       "TEST",
       "us_xx_001",
@@ -621,7 +621,7 @@ describe("setAutoSnooze", () => {
         snoozedBy: "test@email.gov",
         snoozedOn: "2023-10-25",
       },
-      false // deleteSnoozeField
+      false, // deleteSnoozeField
     );
   });
 
@@ -646,7 +646,7 @@ describe("setManualSnooze", () => {
   test("when denial reasons are deleted", async () => {
     await opp.setManualSnooze(5, []);
     expect(
-      root.firestoreStore.updateOpportunityManualSnooze
+      root.firestoreStore.updateOpportunityManualSnooze,
     ).toHaveBeenCalledWith(
       "TEST",
       "us_xx_001",
@@ -655,14 +655,14 @@ describe("setManualSnooze", () => {
         snoozedBy: "test@email.gov",
         snoozedOn: "2023-10-25",
       },
-      true // deleteSnoozeField
+      true, // deleteSnoozeField
     );
   });
 
   test("when there are denial reasons", async () => {
     await opp.setManualSnooze(5, ["REASON"]);
     expect(
-      root.firestoreStore.updateOpportunityManualSnooze
+      root.firestoreStore.updateOpportunityManualSnooze,
     ).toHaveBeenCalledWith(
       "TEST",
       "us_xx_001",
@@ -671,7 +671,7 @@ describe("setManualSnooze", () => {
         snoozedBy: "test@email.gov",
         snoozedOn: "2023-10-25",
       },
-      false // deleteSnoozeField
+      false, // deleteSnoozeField
     );
   });
 
@@ -700,7 +700,7 @@ describe("updateOpportunityEligibility", () => {
     testUpdateFn = updateOpportunityEligibility(
       opportunityType,
       mockRecordId,
-      root
+      root,
     );
   });
 
@@ -708,7 +708,7 @@ describe("updateOpportunityEligibility", () => {
     record = { recordId: mockRecordId };
     await testUpdateFn(record);
     expect(
-      root.firestoreStore.deleteOpportunityDenialAndSnooze
+      root.firestoreStore.deleteOpportunityDenialAndSnooze,
     ).not.toHaveBeenCalled();
   });
 
@@ -716,7 +716,7 @@ describe("updateOpportunityEligibility", () => {
     record = { denial: { reasons: ["test"] } };
     await testUpdateFn(record);
     expect(
-      root.firestoreStore.deleteOpportunityDenialAndSnooze
+      root.firestoreStore.deleteOpportunityDenialAndSnooze,
     ).not.toHaveBeenCalled();
   });
 
@@ -730,7 +730,7 @@ describe("updateOpportunityEligibility", () => {
     };
     await testUpdateFn(record);
     expect(
-      root.firestoreStore.deleteOpportunityDenialAndSnooze
+      root.firestoreStore.deleteOpportunityDenialAndSnooze,
     ).not.toHaveBeenCalled();
   });
 
@@ -744,7 +744,7 @@ describe("updateOpportunityEligibility", () => {
     };
     await testUpdateFn(record);
     expect(
-      root.firestoreStore.deleteOpportunityDenialAndSnooze
+      root.firestoreStore.deleteOpportunityDenialAndSnooze,
     ).not.toHaveBeenCalled();
   });
 
@@ -758,7 +758,7 @@ describe("updateOpportunityEligibility", () => {
     };
     await testUpdateFn(record);
     expect(
-      root.firestoreStore.deleteOpportunityDenialAndSnooze
+      root.firestoreStore.deleteOpportunityDenialAndSnooze,
     ).toHaveBeenCalledWith("LSU", "us_id_123");
   });
 
@@ -772,7 +772,7 @@ describe("updateOpportunityEligibility", () => {
     };
     await testUpdateFn(record);
     expect(
-      root.firestoreStore.deleteOpportunityDenialAndSnooze
+      root.firestoreStore.deleteOpportunityDenialAndSnooze,
     ).toHaveBeenCalledWith("LSU", "us_id_123");
   });
 });
@@ -801,7 +801,7 @@ export const orderedDates: (Date | undefined)[] = [
 
 function initOpportunitiesList(
   reviewStatuses: OpportunityStatus[],
-  eligibilityDates: (Date | undefined)[]
+  eligibilityDates: (Date | undefined)[],
 ): TestOpportunity[] {
   const opportunities: TestOpportunity[] = reviewStatuses.map((status, i) => {
     const currentOpp = createTestUnit();
@@ -830,24 +830,24 @@ describe("Sorting functions should work", () => {
   test("when list is shuffled and sorting by review status", () => {
     const opportunities = initOpportunitiesList(
       orderedReviewStatuses,
-      orderedDates
+      orderedDates,
     );
     expect(
       shuffle(opportunities)
         .sort((a, b) => a.sortByReviewStatus(b))
-        .map((a) => a.reviewStatus)
+        .map((a) => a.reviewStatus),
     ).toEqual(orderedReviewStatuses);
   });
 
   test("when list is shuffled and sorting by eligibility date", () => {
     const opportunities = initOpportunitiesList(
       orderedReviewStatuses,
-      orderedDates
+      orderedDates,
     );
     expect(
       shuffle(opportunities)
         .sort((a, b) => a.sortByEligibilityDate(b))
-        .map((a) => a.eligibilityDate)
+        .map((a) => a.eligibilityDate),
     ).toEqual(orderedDates);
   });
 
@@ -856,7 +856,7 @@ describe("Sorting functions should work", () => {
       getDatesWithUndefinedMembers(orderedDates);
     const opportunities = initOpportunitiesList(
       orderedReviewStatuses,
-      datesWithUndefinedMembers
+      datesWithUndefinedMembers,
     );
     const sortedReviewStatuses = shuffle(opportunities)
       .sort((a, b) => a.compare(b))
@@ -867,12 +867,12 @@ describe("Sorting functions should work", () => {
   test("when list is shuffled and sorting by review status and eligibility date", () => {
     const opportunities = initOpportunitiesList(
       orderedReviewStatuses,
-      orderedDates
+      orderedDates,
     );
     expect(
       shuffle(opportunities)
         .sort((a, b) => a.compare(b))
-        .map((a) => [a.reviewStatus, a.eligibilityDate])
+        .map((a) => [a.reviewStatus, a.eligibilityDate]),
     ).toMatchSnapshot();
   });
 
@@ -881,12 +881,12 @@ describe("Sorting functions should work", () => {
       getDatesWithUndefinedMembers(orderedDates);
     const opportunities = initOpportunitiesList(
       orderedReviewStatuses,
-      datesWithUndefinedMembers
+      datesWithUndefinedMembers,
     );
     expect(
       shuffle(opportunities)
         .sort((a, b) => a.compare(b))
-        .map((a) => a.reviewStatus)
+        .map((a) => a.reviewStatus),
     ).toEqual(orderedReviewStatuses);
   });
 });

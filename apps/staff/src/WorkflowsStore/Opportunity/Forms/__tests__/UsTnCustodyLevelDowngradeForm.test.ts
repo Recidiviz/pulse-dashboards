@@ -30,11 +30,11 @@ import { UsTnCustodyLevelDowngradeForm } from "../usTnCustodyLevelDowngradeForm"
 // changing the personRecord.
 
 let form: UsTnCustodyLevelDowngradeForm;
-let opp: typeof form["opportunity"];
-let personRecord: typeof opp["person"]["record"];
-let oppRecord: typeof opp["record"] & object;
+let opp: (typeof form)["opportunity"];
+let personRecord: (typeof opp)["person"]["record"];
+let oppRecord: (typeof opp)["record"] & object;
 
-type PartialFormData = ReturnType<typeof form["prefilledDataTransformer"]>;
+type PartialFormData = ReturnType<(typeof form)["prefilledDataTransformer"]>;
 
 function createTestUnit() {
   const rootStore = new RootStore();
@@ -148,7 +148,7 @@ afterEach(() => {
 describe("prefilledDataTransformer", () => {
   test("fills fields", () => {
     expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>(
-      baseResult
+      baseResult,
     );
   });
 

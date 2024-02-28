@@ -112,7 +112,7 @@ function useSort(formatAdmissionHistory) {
         officer_recommendation: compareStrings,
         violation_record: compareViolationRecords,
         admission_history_description: compareAdmissionHistoryDescriptions(
-          formatAdmissionHistory
+          formatAdmissionHistory,
         ),
       }[sort.field];
 
@@ -125,7 +125,7 @@ function useSort(formatAdmissionHistory) {
         0
       );
     },
-    [sort.order, sort.field, formatAdmissionHistory]
+    [sort.order, sort.field, formatAdmissionHistory],
   );
 
   return {

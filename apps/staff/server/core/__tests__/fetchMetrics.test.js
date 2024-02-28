@@ -64,14 +64,14 @@ describe("fetchMetrics tests", () => {
       expect(fetchMetricsFromLocal).toHaveBeenCalledWith(
         upperCasedStateCode,
         metricType,
-        file
+        file,
       );
 
       expect(processMetricFile).toHaveBeenCalledTimes(1);
       expect(processMetricFile).toHaveBeenCalledWith(
         contents,
         metadata,
-        extension
+        extension,
       );
       expect(results).toStrictEqual({ [fileKey]: deserializedFile });
     });
@@ -88,14 +88,14 @@ describe("fetchMetrics tests", () => {
       expect(fetchMetricsFromGCS).toHaveBeenCalledWith(
         upperCasedStateCode,
         metricType,
-        file
+        file,
       );
 
       expect(processMetricFile).toHaveBeenCalledTimes(1);
       expect(processMetricFile).toHaveBeenCalledWith(
         contents,
         metadata,
-        extension
+        extension,
       );
       expect(results).toStrictEqual({ [fileKey]: deserializedFile });
     });
@@ -116,14 +116,14 @@ describe("fetchMetrics tests", () => {
       expect(fetchMetricsFromGCS).toHaveBeenCalledWith(
         upperCasedStateCode,
         metricType,
-        file
+        file,
       );
 
       expect(processMetricFile).toHaveBeenCalledTimes(1);
       expect(processMetricFile).toHaveBeenCalledWith(
         contents,
         metadata,
-        extension
+        extension,
       );
       expect(results).toStrictEqual({ [fileKey]: deserializedFile });
       expect(Sentry.captureException).toHaveBeenCalledWith(error);

@@ -29,7 +29,7 @@ export const supervisionOfficerMetricOutlierSchema = z.object({
         endDate: dateStringSchema,
         metricRate: z.number(),
         status: targetStatusSchema,
-      })
+      }),
     )
     .transform((v) => v.sort((a, b) => ascending(a.endDate, b.endDate))),
 });

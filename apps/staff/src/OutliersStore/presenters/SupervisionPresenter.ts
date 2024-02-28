@@ -38,7 +38,7 @@ export class SupervisionPresenter implements Hydratable {
       populate: async () => {
         await flowResult(this.outliersStore.populateSupervisionStore());
         await flowResult(
-          this.outliersStore.supervisionStore?.populateUserInfo()
+          this.outliersStore.supervisionStore?.populateUserInfo(),
         );
       },
     });

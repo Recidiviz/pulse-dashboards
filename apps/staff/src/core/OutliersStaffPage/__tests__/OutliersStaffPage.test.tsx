@@ -36,7 +36,7 @@ import OutliersStaffPage, {
 
 jest.mock("../../../components/StoreProvider");
 jest.mock(
-  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker"
+  "../../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker",
 );
 jest
   .spyOn(UserStore.prototype, "isRecidivizUser", "get")
@@ -68,7 +68,7 @@ describe("Hydrated Staff Page", () => {
 
     store = new OutliersSupervisionStore(
       new RootStore().outliersStore,
-      OutliersConfigFixture
+      OutliersConfigFixture,
     );
     jest
       .spyOn(store, "userCanAccessAllSupervisors", "get")
@@ -83,11 +83,11 @@ describe("Hydrated Staff Page", () => {
     render(
       <BrowserRouter>
         <StaffPageWithPresenter presenter={presenter} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
-      store.outliersStore.rootStore.analyticsStore.trackOutliersStaffPageViewed
+      store.outliersStore.rootStore.analyticsStore.trackOutliersStaffPageViewed,
     ).toHaveBeenCalledWith({
       numOutlierMetrics: 2,
       staffPseudonymizedId: officerPseudoId,
@@ -104,7 +104,7 @@ describe("Outliers Staff Page", () => {
     const rootStore = new RootStore();
     store = new OutliersSupervisionStore(
       rootStore.outliersStore,
-      OutliersConfigFixture
+      OutliersConfigFixture,
     );
     rootStore.outliersStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
@@ -126,7 +126,7 @@ describe("Outliers Staff Page", () => {
     render(
       <BrowserRouter>
         <OutliersStaffPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     // due to animated transitions the element may appear twice
@@ -137,7 +137,7 @@ describe("Outliers Staff Page", () => {
     render(
       <BrowserRouter>
         <OutliersStaffPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(await screen.findByText("List of Absconsions")).toBeInTheDocument();
@@ -147,7 +147,7 @@ describe("Outliers Staff Page", () => {
     const { container } = render(
       <BrowserRouter>
         <OutliersStaffPage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     // Make sure the hydrated page actually loaded

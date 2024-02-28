@@ -25,7 +25,7 @@ export function formatNoteDate(date: Date): string {
 }
 
 export const transformCaseNotes = (
-  caseNotes: Record<string, Record<string, string>[]> | undefined
+  caseNotes: Record<string, Record<string, string>[]> | undefined,
 ): Record<string, OpportunityCaseNote[]> => {
   if (!caseNotes) return {};
 
@@ -40,6 +40,6 @@ export const transformCaseNotes = (
         })),
       };
     },
-    {}
+    {},
   );
 };

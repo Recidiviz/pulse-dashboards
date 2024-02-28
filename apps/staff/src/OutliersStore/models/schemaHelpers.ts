@@ -48,20 +48,20 @@ export const fullNameSchema = z.object({
 });
 
 export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
-  schema: Schema
+  schema: Schema,
 ) {
   return z.preprocess(
     // we expect the backend to have transformed all keys into camel case;
     // uppercasing them should make them conform to the status enum
     (input) => mapKeys(input as Dictionary<unknown>, (v, k) => toUpper(k)),
-    schema
+    schema,
   );
 }
 
 export function addDisplayName<T>(
   obj: T & {
     fullName: FullName;
-  }
+  },
 ) {
   return {
     ...obj,

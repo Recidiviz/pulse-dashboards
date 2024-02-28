@@ -41,5 +41,5 @@ export const usMiMinimumTelephoneReportingReferralsFixture =
           eligibleDate: "2024-02-03",
         },
       },
-    ]
+    ],
   );

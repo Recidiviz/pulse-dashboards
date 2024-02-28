@@ -78,15 +78,15 @@ describe("Revocations component tests", () => {
   const RevocationChartsMock = RevocationCharts.type;
 
   SelectFilterMock.mockImplementation(({ label }) =>
-    mockWithTestId(`${filtersBarIdPrefix}${label}`)
+    mockWithTestId(`${filtersBarIdPrefix}${label}`),
   );
   DistrictFilterMock.mockReturnValue(mockWithTestId(DistrictFilterId));
   AdmissionTypeFilterMock.mockReturnValue(
-    mockWithTestId(admissionTypeFilterId)
+    mockWithTestId(admissionTypeFilterId),
   );
   ViolationFilterMock.mockReturnValue(mockWithTestId(violationFilterId));
   RevocationsOverTimeMock.mockReturnValue(
-    mockWithTestId(revocationsOverTimeId)
+    mockWithTestId(revocationsOverTimeId),
   );
   MatrixMock.mockReturnValue(mockWithTestId(revocationMatrixId));
   RevocationChartsMock.mockReturnValue(mockWithTestId(revocationChartsId));
@@ -122,16 +122,16 @@ describe("Revocations component tests", () => {
         <MemoryRouter>
           <Revocations />
         </MemoryRouter>
-      </StoreProvider>
+      </StoreProvider>,
     );
 
     expect(getByTestId(`${filtersBarIdPrefix}Time Period`)).toBeInTheDocument();
     expect(getByTestId(`${filtersBarIdPrefix}Case Type`)).toBeInTheDocument();
     expect(
-      getByTestId(`${filtersBarIdPrefix}Supervision Type`)
+      getByTestId(`${filtersBarIdPrefix}Supervision Type`),
     ).toBeInTheDocument();
     expect(
-      getByTestId(`${filtersBarIdPrefix}Supervision Level`)
+      getByTestId(`${filtersBarIdPrefix}Supervision Level`),
     ).toBeInTheDocument();
 
     expect(getByTestId(DistrictFilterId)).toBeInTheDocument();
@@ -153,7 +153,7 @@ describe("Revocations component tests", () => {
         <MemoryRouter>
           <Revocations />
         </MemoryRouter>
-      </StoreProvider>
+      </StoreProvider>,
     );
 
     expect(queryByTestId(`${filtersBarIdPrefix}Supervision Level`)).toBeNull();

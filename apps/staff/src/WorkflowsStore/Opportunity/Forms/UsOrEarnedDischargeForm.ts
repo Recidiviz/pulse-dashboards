@@ -40,7 +40,7 @@ export class UsOrEarnedDischargeForm extends FormBase<
   }
 
   private static sentenceFormData(
-    subOpportunity: UsOrEarnedDischargeSubOpportunity
+    subOpportunity: UsOrEarnedDischargeSubOpportunity,
   ): UsOrEarnedDischargeSentenceDraftData {
     const {
       sentenceStatute,
@@ -85,7 +85,7 @@ export class UsOrEarnedDischargeForm extends FormBase<
         this.opportunity.record.subOpportunities.map((subopp) => [
           subopp.id,
           UsOrEarnedDischargeForm.sentenceFormData(subopp),
-        ])
+        ]),
       );
 
       const countyInfo = district ? getCountyInfo(district) : undefined;

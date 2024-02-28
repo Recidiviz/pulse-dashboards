@@ -67,7 +67,7 @@ const VitalsSummaryCard: React.FC<PropTypes> = ({
       `VitalsSummaryCard__${id}`,
       { selected },
       getStatusClassName(status),
-      "p-0"
+      "p-0",
     )}
   >
     <div
@@ -79,7 +79,7 @@ const VitalsSummaryCard: React.FC<PropTypes> = ({
       </div>
       <div
         className={`VitalsSummaryCard__percent ${cn(
-          getStatusClassName(status)
+          getStatusClassName(status),
         )}__percent`}
       >
         <span>{formatPercent(percentage)}</span>

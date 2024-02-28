@@ -30,11 +30,11 @@ export const isMobile =
 export default async function exportDataOnMobileDevices(
   formData,
   filename,
-  getTokenSilently
+  getTokenSilently,
 ) {
   if (!isMobile) {
     throw new Error(
-      `Invalid export data client for user agent: ${navigator.userAgent}. Expected mobile device.`
+      `Invalid export data client for user agent: ${navigator.userAgent}. Expected mobile device.`,
     );
   }
 

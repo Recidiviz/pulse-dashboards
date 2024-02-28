@@ -51,20 +51,20 @@ describe("CaseNotes tests", () => {
     render(
       <CaseNotes
         opportunity={{ record: { caseNotes } } as unknown as Opportunity}
-      />
+      />,
     );
 
     const fooTag = screen.getByText("foo");
     const barTag = screen.getByText("bar");
 
     expect(fooTag.nextSibling).toContainElement(
-      screen.getByText("title1", { exact: false })
+      screen.getByText("title1", { exact: false }),
     );
     expect(fooTag.nextSibling).toContainElement(
-      screen.getByText("title2", { exact: false })
+      screen.getByText("title2", { exact: false }),
     );
     expect(barTag.nextSibling).toContainElement(
-      screen.getByText("title3", { exact: false })
+      screen.getByText("title3", { exact: false }),
     );
   });
 
@@ -94,17 +94,17 @@ describe("CaseNotes tests", () => {
         opportunity={
           { record: { caseNotes: unorderedNotes } } as unknown as Opportunity
         }
-      />
+      />,
     );
 
     const fooTag = screen.getByText("foo");
     const fooNoteTexts = fooTag.nextSibling?.textContent ?? "";
 
     expect(fooNoteTexts.indexOf("title2")).toBeLessThan(
-      fooNoteTexts.indexOf("title3")
+      fooNoteTexts.indexOf("title3"),
     );
     expect(fooNoteTexts.indexOf("title3")).toBeLessThan(
-      fooNoteTexts.indexOf("title1")
+      fooNoteTexts.indexOf("title1"),
     );
   });
 });

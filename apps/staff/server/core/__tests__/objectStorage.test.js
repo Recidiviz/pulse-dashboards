@@ -47,7 +47,7 @@ describe("objectStorage tests", () => {
 
   it("should call chain of methods to get file metadata", () => {
     expect(downloadFileMetadata(bucketName, stateCode, fileName)).toEqual(
-      returnValue
+      returnValue,
     );
     expect(Storage).toHaveBeenCalledTimes(1);
     expect(bucket).toHaveBeenCalledWith(bucketName);

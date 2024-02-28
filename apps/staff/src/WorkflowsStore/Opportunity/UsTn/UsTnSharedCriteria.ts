@@ -28,7 +28,7 @@ export const formInformationSchema = z.object({
       Recommendation: z.string(),
       TreatmentGoal: z.string(),
       VantagePointTitle: z.string(),
-    })
+    }),
   ),
   classificationType: z.string(),
   hasIncompatibles: z.boolean(),
@@ -36,7 +36,7 @@ export const formInformationSchema = z.object({
     z.object({
       incompatibleOffenderId: z.string(),
       incompatibleType: z.string(),
-    })
+    }),
   ),
   currentOffenses: z.string().array().optional(),
   lastCafDate: dateStringSchema.optional(),
@@ -64,16 +64,16 @@ export const formInformationSchema = z.object({
       z.object({
         eventDate: dateStringSchema,
         noteBody: z.string(),
-      })
-    )
+      }),
+    ),
   ),
   q7Notes: z.optional(
     z.array(
       z.object({
         eventDate: dateStringSchema,
         noteBody: z.string(),
-      })
-    )
+      }),
+    ),
   ),
   q8Notes: z.optional(
     z.array(
@@ -93,8 +93,8 @@ export const formInformationSchema = z.object({
           .string()
           .optional()
           .transform((raw) => (raw === undefined ? undefined : raw === "Y")),
-      })
-    )
+      }),
+    ),
   ),
 });
 

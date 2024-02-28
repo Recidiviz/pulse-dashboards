@@ -124,7 +124,7 @@ describe("CaseTableStore", () => {
       it("includes the officer recommendation column", () => {
         const result = store.formatTableData(tableData);
         expect(result[0].officer_recommendation).toEqual(
-          "Any Normal Recommendation"
+          "Any Normal Recommendation",
         );
       });
     });
@@ -151,7 +151,7 @@ describe("CaseTableStore", () => {
 
       it("formats admission history description", () => {
         expect(result[0].admission_history_description).toEqual(
-          "SCI 6 months, Revocation"
+          "SCI 6 months, Revocation",
         );
       });
     });

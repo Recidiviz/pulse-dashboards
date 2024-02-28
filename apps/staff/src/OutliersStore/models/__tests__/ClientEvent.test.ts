@@ -20,6 +20,6 @@ import { rawClientEventFixture } from "../offlineFixtures/ClientEventFixture";
 
 test("transformation", () => {
   expect(
-    rawClientEventFixture.map((e) => clientEventSchema.parse(e))
+    rawClientEventFixture.map((e) => clientEventSchema.parse(e)),
   ).toMatchSnapshot();
 });

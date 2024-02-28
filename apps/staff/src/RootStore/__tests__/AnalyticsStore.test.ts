@@ -37,7 +37,7 @@ describe("AnalyticsStore", () => {
   function getAnalyticsStoreWithEnv(
     env: string,
     authEnv: string,
-    rootStore: typeof RootStore = mockRootStore
+    rootStore: typeof RootStore = mockRootStore,
   ) {
     process.env = Object.assign(process.env, {
       NODE_ENV: env,
@@ -60,7 +60,7 @@ describe("AnalyticsStore", () => {
       analyticsStore = getAnalyticsStoreWithEnv(
         "staging",
         "staging",
-        rootStore
+        rootStore,
       );
     });
 
@@ -88,7 +88,7 @@ describe("AnalyticsStore", () => {
       analyticsStore = getAnalyticsStoreWithEnv(
         "production",
         "production",
-        rootStore
+        rootStore,
       );
     });
 
@@ -116,7 +116,7 @@ describe("AnalyticsStore", () => {
       analyticsStore = getAnalyticsStoreWithEnv(
         "production",
         "production",
-        rootStore
+        rootStore,
       );
     });
 

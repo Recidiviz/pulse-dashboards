@@ -97,13 +97,13 @@ describe("Server tests", () => {
         .then((response) => {
           expect(response.statusCode).toEqual(200);
           expect(response.body).toHaveProperty(
-            "revocations_matrix_events_by_month"
+            "revocations_matrix_events_by_month",
           );
           expect(
-            response.body.revocations_matrix_events_by_month
+            response.body.revocations_matrix_events_by_month,
           ).toHaveProperty("flattenedValueMatrix");
           expect(
-            response.body.revocations_matrix_events_by_month
+            response.body.revocations_matrix_events_by_month,
           ).toHaveProperty("metadata");
         });
     });
@@ -146,7 +146,7 @@ describe("Server tests", () => {
       };
       return request(app)
         .get(
-          "/api/US_MO/newRevocations/revocations_matrix_events_by_month?metricPeriodMonths=42"
+          "/api/US_MO/newRevocations/revocations_matrix_events_by_month?metricPeriodMonths=42",
         )
         .then((response) => {
           expect(response.statusCode).toEqual(400);
@@ -168,7 +168,7 @@ describe("Server tests", () => {
       };
       return request(app)
         .get(
-          "/api/US_MO/newRevocations/revocations_matrix_events_by_month?admissionType[0]=DOGWOOD"
+          "/api/US_MO/newRevocations/revocations_matrix_events_by_month?admissionType[0]=DOGWOOD",
         )
         .then((response) => {
           expect(response.statusCode).toEqual(400);
@@ -188,7 +188,7 @@ describe("Server tests", () => {
       jest.mock("../../core/fetchMetrics", () => {
         return {
           default: jest.fn(() =>
-            Promise.resolve({ file_1: "content_1", file_2: "content_2" })
+            Promise.resolve({ file_1: "content_1", file_2: "content_2" }),
           ),
         };
       });
@@ -240,7 +240,7 @@ describe("Server tests", () => {
       jest.mock("../../core/fetchMetrics", () => {
         return {
           default: jest.fn(() =>
-            Promise.resolve({ file_1: "content_1", file_2: "content_2" })
+            Promise.resolve({ file_1: "content_1", file_2: "content_2" }),
           ),
         };
       });
@@ -248,24 +248,24 @@ describe("Server tests", () => {
 
     it("succeeds when the user has permissions", async () => {
       const prisonResponse = await request(app).get(
-        "/api/US_MO/pathways/prison_population_time_series"
+        "/api/US_MO/pathways/prison_population_time_series",
       );
       expect(prisonResponse.statusCode).toEqual(200);
 
       const supervisionToLibertyResponse = await request(app).get(
-        "/api/US_MO/pathways/supervision_to_liberty_count_by_month"
+        "/api/US_MO/pathways/supervision_to_liberty_count_by_month",
       );
       expect(supervisionToLibertyResponse.statusCode).toEqual(200);
     });
 
     it("fails when the user does not have permissions", async () => {
       const prisonToSupervisionResponse = await request(app).get(
-        "/api/US_MO/pathways/prison_to_supervision_count_by_month"
+        "/api/US_MO/pathways/prison_to_supervision_count_by_month",
       );
       expect(prisonToSupervisionResponse.statusCode).toEqual(403);
 
       const supervisionResponse = await request(app).get(
-        "/api/US_MO/pathways/supervision_population_time_series"
+        "/api/US_MO/pathways/supervision_population_time_series",
       );
       expect(supervisionResponse.statusCode).toEqual(403);
     });
@@ -311,25 +311,25 @@ describe("Server tests", () => {
       });
       it("fails when the user state code does not match request", async () => {
         const response = await request(app).get(
-          "/api/US_ND/workflows/templates?filename=early_termination_template.docx"
+          "/api/US_ND/workflows/templates?filename=early_termination_template.docx",
         );
         expect(response.statusCode).toEqual(401);
         expect(response.text).toEqual(
-          "User is not authorized for stateCode: US_ND"
+          "User is not authorized for stateCode: US_ND",
         );
       });
     });
 
     it("succeeds when user state code matches the request", async () => {
       const response = await request(app).get(
-        "/api/US_ND/workflows/templates?filename=early_termination_template.docx"
+        "/api/US_ND/workflows/templates?filename=early_termination_template.docx",
       );
       expect(response.statusCode).toEqual(200);
     });
 
     it("fails when missing the filename param", async () => {
       const response = await request(app).get(
-        "/api/US_ND/workflows/templates?filename="
+        "/api/US_ND/workflows/templates?filename=",
       );
       expect(response.statusCode).toEqual(500);
       expect(response.body.status).toEqual(500);
@@ -377,7 +377,7 @@ describe("Server tests", () => {
     it("responds with error in offline mode", () => {
       return request(app)
         .get(
-          "/api/impersonateAuth0User?impersonatedstateCode=US_ID&impersonatedEmail=test@test.com"
+          "/api/impersonateAuth0User?impersonatedstateCode=US_ID&impersonatedEmail=test@test.com",
         )
         .then((response) => {
           expect(response.statusCode).toEqual(500);

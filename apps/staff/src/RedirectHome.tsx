@@ -25,7 +25,7 @@ export const RedirectHome: React.FC = ({ ...rest }) => {
   const userStore = useUserStore();
 
   const allowedPaths = getPathsFromNavigation(
-    userStore.userAllowedNavigation ?? {}
+    userStore.userAllowedNavigation ?? {},
   );
   return <Navigate {...rest} replace to={allowedPaths[0]} />;
 };

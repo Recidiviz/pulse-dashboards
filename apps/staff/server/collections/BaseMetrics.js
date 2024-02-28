@@ -37,14 +37,14 @@ class BaseMetrics {
   static validateMetricType(metricType) {
     if (!Object.values(COLLECTIONS).includes(metricType)) {
       throw new Error(
-        `Cannot instantiate BaseMetrics with metricType: ${metricType}`
+        `Cannot instantiate BaseMetrics with metricType: ${metricType}`,
       );
     }
   }
 
   getAllFileNames() {
     return Object.keys(this.metrics).map((metricName) =>
-      this.getFileName(metricName)
+      this.getFileName(metricName),
     );
   }
 
@@ -52,7 +52,7 @@ class BaseMetrics {
     const metric = this.metrics[metricName];
     if (!metric) {
       throw new Error(
-        `${metricName} file not found with either txt or json extension for metric type ${this.metricType}`
+        `${metricName} file not found with either txt or json extension for metric type ${this.metricType}`,
       );
     }
     return metric.filename;
@@ -68,7 +68,7 @@ class BaseMetrics {
   validateDimensionsForFile(metricName, sourceDimensions) {
     // eslint-disable-next-line no-console
     console.log(
-      `${this.metricType} - Source dimensions for ${metricName} validations skipped: ${sourceDimensions}`
+      `${this.metricType} - Source dimensions for ${metricName} validations skipped: ${sourceDimensions}`,
     );
   }
 }

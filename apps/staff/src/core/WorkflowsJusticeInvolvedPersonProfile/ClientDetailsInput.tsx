@@ -32,7 +32,7 @@ import { Client } from "../../WorkflowsStore";
 const INPUT_DELAY = 1000;
 
 const EDIT_BACKGROUND = iconToDataURI(
-  <Icon kind={IconSVG.Edit} color={palette.signal.links} />
+  <Icon kind={IconSVG.Edit} color={palette.signal.links} />,
 );
 
 const Input = styled.input`
@@ -59,12 +59,12 @@ type ReactiveInputValue = string;
 type ReactiveInputReturnValue<E extends HTMLInputElement> = [
   ReactiveInputValue,
   (event: React.ChangeEvent<E>) => void,
-  (event: React.FocusEvent<E>) => void
+  (event: React.FocusEvent<E>) => void,
 ];
 function useReactiveClientInput<E extends HTMLInputElement>(
   text: string,
   client: Client,
-  updateType: PersonUpdateType
+  updateType: PersonUpdateType,
 ): ReactiveInputReturnValue<E> {
   /*
     Hook which integrates a controlled input component and Firestore and MobX.
@@ -78,7 +78,7 @@ function useReactiveClientInput<E extends HTMLInputElement>(
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
       client.updatePerson(updateType, valueToStore);
-    }, INPUT_DELAY)
+    }, INPUT_DELAY),
   );
 
   const onChange = (event: React.ChangeEvent<E>) => {
@@ -101,7 +101,7 @@ function useReactiveClientInput<E extends HTMLInputElement>(
       (newValue) => {
         setValue(newValue);
       },
-      { name: `useReactiveInput(${text})` }
+      { name: `useReactiveInput(${text})` },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -123,7 +123,7 @@ const ClientDetailsInput: React.FC<ClientDetailsInputProps> = ({
   const [value, onChange, onBlur] = useReactiveClientInput<HTMLInputElement>(
     text,
     client,
-    updateType
+    updateType,
   );
   return (
     <Input

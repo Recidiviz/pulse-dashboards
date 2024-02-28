@@ -112,7 +112,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
       const contents = JSON.parse(jsonFile);
       const allowedStates = (contents.allowedStates ?? []).map((sc) =>
-        sc.toUpperCase()
+        sc.toUpperCase(),
       );
       api.user.setAppMetadata("allowedStates", allowedStates);
       api.user.setAppMetadata("stateCode", "recidiviz");
@@ -177,7 +177,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       try {
         const auth = new GoogleAuth({ credentials });
         const client = await auth.getIdTokenClient(
-          event.secrets.TARGET_AUDIENCE
+          event.secrets.TARGET_AUDIENCE,
         );
 
         let userHash = Base64.stringify(SHA256(email?.toLowerCase()));
@@ -195,11 +195,11 @@ exports.onExecutePreUserRegistration = async (event, api) => {
           "allowedSupervisionLocationIds",
           !restrictions.allowedSupervisionLocationIds
             ? []
-            : restrictions.allowedSupervisionLocationIds.split(",")
+            : restrictions.allowedSupervisionLocationIds.split(","),
         );
         api.user.setAppMetadata(
           "allowedSupervisionLocationLevel",
-          restrictions.allowedSupervisionLocationLevel
+          restrictions.allowedSupervisionLocationLevel,
         );
         api.user.setAppMetadata("routes", restrictions.routes || null);
         api.user.setAppMetadata("userHash", restrictions.userHash);
@@ -207,7 +207,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         api.user.setAppMetadata("externalId", restrictions.externalId);
         api.user.setAppMetadata(
           "featureVariants",
-          restrictions.featureVariants
+          restrictions.featureVariants,
         );
 
         // TODO #3170 Remove these once UserAppMetadata has been transitioned
@@ -216,17 +216,17 @@ exports.onExecutePreUserRegistration = async (event, api) => {
           "allowed_supervision_location_ids",
           !restrictions.allowedSupervisionLocationIds
             ? []
-            : restrictions.allowedSupervisionLocationIds.split(",")
+            : restrictions.allowedSupervisionLocationIds.split(","),
         );
         api.user.setAppMetadata(
           "allowed_supervision_location_level",
-          restrictions.allowedSupervisionLocationLevel
+          restrictions.allowedSupervisionLocationLevel,
         );
 
         return;
       } catch (apiError) {
         Sentry.captureMessage(
-          `Error while registering new user for state code ${stateCode} and email ${email}.`
+          `Error while registering new user for state code ${stateCode} and email ${email}.`,
         );
         Sentry.captureException(apiError, {
           tags: {
@@ -249,7 +249,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
 
     api.access.deny(
       `User ${email} does not have access to register.`,
-      clientMessage
+      clientMessage,
     );
     return;
   }

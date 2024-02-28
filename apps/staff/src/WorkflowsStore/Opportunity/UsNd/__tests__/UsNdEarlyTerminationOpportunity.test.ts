@@ -38,7 +38,7 @@ let updatesSub: DocumentSubscription<any>;
 jest.mock("../../../subscriptions");
 
 function createTestUnit(
-  clientRecord: typeof usNdEarlyTerminationEligibleClientRecord
+  clientRecord: typeof usNdEarlyTerminationEligibleClientRecord,
 ) {
   root = new RootStore();
   jest
@@ -110,7 +110,7 @@ describe("almost eligible past discharge date coming up", () => {
 
   test("almost eligible status message", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "Early termination date (as calculated by DOCSTARS) is within 60 days"
+      "Early termination date (as calculated by DOCSTARS) is within 60 days",
     );
   });
 

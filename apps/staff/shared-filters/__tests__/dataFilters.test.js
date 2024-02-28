@@ -94,7 +94,7 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { supervision_level: "MEDIUM" };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredSupervisionLevels = filtered.map((f) => f.supervision_level);
       });
@@ -114,7 +114,7 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { supervision_level: "ALL" };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredSupervisionLevels = filtered.map((f) => f.supervision_level);
       });
@@ -130,7 +130,7 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = {};
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
       });
 
@@ -153,7 +153,7 @@ describe("matchesTopLevelFilters", () => {
             filters,
             skippedFilters: [],
             treatCategoryAllAsAbsent,
-          })(item)
+          })(item),
         );
       });
 
@@ -187,11 +187,11 @@ describe("matchesTopLevelFilters", () => {
                 filters,
                 skippedFilters: [],
                 treatCategoryAllAsAbsent,
-              })(item)
+              })(item),
             );
 
             filteredSupervisionLevels = filtered.map(
-              (f) => f.supervision_level
+              (f) => f.supervision_level,
             );
           });
 
@@ -211,10 +211,10 @@ describe("matchesTopLevelFilters", () => {
                 filters,
                 skippedFilters: [],
                 treatCategoryAllAsAbsent,
-              })(item)
+              })(item),
             );
             filteredSupervisionLevels = filtered.map(
-              (f) => f.supervision_level
+              (f) => f.supervision_level,
             );
           });
 
@@ -255,10 +255,10 @@ describe("matchesTopLevelFilters", () => {
                 filters,
                 skippedFilters: [],
                 treatCategoryAllAsAbsent,
-              })(item)
+              })(item),
             );
             filteredSupervisionLevels = filtered.map(
-              (f) => f.supervision_level
+              (f) => f.supervision_level,
             );
           });
 
@@ -276,10 +276,10 @@ describe("matchesTopLevelFilters", () => {
                 filters,
                 skippedFilters: [],
                 treatCategoryAllAsAbsent,
-              })(item)
+              })(item),
             );
             filteredSupervisionLevels = filtered.map(
-              (f) => f.supervision_level
+              (f) => f.supervision_level,
             );
           });
 
@@ -299,7 +299,7 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { charge_category: "ALL" };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredChargeCategories = filtered.map((f) => f.charge_category);
       });
@@ -314,7 +314,7 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { charge_category: "SEX_OFFENSE" };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredChargeCategories = filtered.map((f) => f.charge_category);
       });
@@ -337,7 +337,7 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { admission_type: "ALL" };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredAdmissionTypes = filtered.map((f) => f.admission_type);
       });
@@ -352,7 +352,7 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { admission_type: "LEGAL_REVOCATION" };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredAdmissionTypes = filtered.map((f) => f.admission_type);
       });
@@ -375,10 +375,10 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { level_1_supervision_location: ["ALL"] };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredSupervisionLocations = filtered.map(
-          (f) => f.level_1_supervision_location
+          (f) => f.level_1_supervision_location,
         );
       });
 
@@ -392,10 +392,10 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { level_1_supervision_location: ["04B"] };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredSupervisionLocations = filtered.map(
-          (f) => f.level_1_supervision_location
+          (f) => f.level_1_supervision_location,
         );
       });
 
@@ -438,10 +438,10 @@ describe("matchesTopLevelFilters", () => {
             filters,
             skippedFilters: [],
             treatCategoryAllAsAbsent,
-          })(item)
+          })(item),
         );
         filteredSupervisionLocations = filtered.map(
-          (f) => f.level_1_supervision_location
+          (f) => f.level_1_supervision_location,
         );
       });
 
@@ -459,10 +459,10 @@ describe("matchesTopLevelFilters", () => {
       beforeEach(() => {
         filters = { level_2_supervision_location: ["ALL"] };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredSupervisionLocations = filtered.map(
-          (f) => f.level_2_supervision_location
+          (f) => f.level_2_supervision_location,
         );
       });
 
@@ -478,10 +478,10 @@ describe("matchesTopLevelFilters", () => {
           level_2_supervision_location: ["ROCKYROAD"],
         };
         filtered = data.filter((item) =>
-          matchesTopLevelFilters({ filters })(item)
+          matchesTopLevelFilters({ filters })(item),
         );
         filteredSupervisionLocations = filtered.map(
-          (f) => f.level_2_supervision_location
+          (f) => f.level_2_supervision_location,
         );
       });
 
@@ -524,10 +524,10 @@ describe("matchesTopLevelFilters", () => {
             filters,
             skippedFilters: [],
             treatCategoryAllAsAbsent,
-          })(item)
+          })(item),
         );
         filteredSupervisionLocations = filtered.map(
-          (f) => f.level_2_supervision_location
+          (f) => f.level_2_supervision_location,
         );
       });
 

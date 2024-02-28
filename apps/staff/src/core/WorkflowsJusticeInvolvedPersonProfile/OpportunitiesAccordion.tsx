@@ -168,9 +168,9 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
 
   const opportunities = sortBy(
     Object.values(person.verifiedOpportunities).filter(
-      (opp) => opp !== undefined
+      (opp) => opp !== undefined,
     ) as Opportunity[],
-    (opp: Opportunity) => opportunityTypes.indexOf(opp.type)
+    (opp: Opportunity) => opportunityTypes.indexOf(opp.type),
   );
 
   const empty = hideEmpty ? null : (
@@ -194,7 +194,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
             formLinkButton={formLinkButton}
             onDenialButtonClick={() => {
               workflowsStore.updateSelectedOpportunityOnFullProfile(
-                opportunity
+                opportunity,
               );
             }}
           />

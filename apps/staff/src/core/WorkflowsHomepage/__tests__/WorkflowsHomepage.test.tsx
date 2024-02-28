@@ -70,7 +70,7 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(screen.getByText("Welcome, Recidiviz")).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
@@ -107,7 +107,7 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(screen.getByText("Loading data...")).toBeInTheDocument();
@@ -124,13 +124,13 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       screen.getByText(
-        "None of the clients on the selected officer's caseloads are eligible for opportunities. Search for another officer."
-      )
+        "None of the clients on the selected officer's caseloads are eligible for opportunities. Search for another officer.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -146,13 +146,13 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       screen.getByText(
-        "None of the clients on the selected officers' caseloads are eligible for opportunities. Search for another officer."
-      )
+        "None of the clients on the selected officers' caseloads are eligible for opportunities. Search for another officer.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -168,13 +168,13 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       screen.getByText(
-        "None of the clients on the selected unicorn's caseloads are eligible for opportunities. Search for another unicorn."
-      )
+        "None of the clients on the selected unicorn's caseloads are eligible for opportunities. Search for another unicorn.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -194,13 +194,13 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       screen.getByText(
-        "1 client is nearing or past their full-term release date"
-      )
+        "1 client is nearing or past their full-term release date",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -221,13 +221,13 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       screen.getByText(
-        "Some clients are nearing or past their full-term release date"
-      )
+        "Some clients are nearing or past their full-term release date",
+      ),
     ).toBeInTheDocument();
 
     expect(screen.getByText("Ineligible: 1")).toBeInTheDocument();
@@ -260,13 +260,13 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(
       screen.getByText(
-        "2 clients are nearing or past their full-term release date"
-      )
+        "2 clients are nearing or past their full-term release date",
+      ),
     ).toBeInTheDocument();
 
     expect(screen.getByText("Ineligible: 1")).toBeInTheDocument();
@@ -305,7 +305,7 @@ describe("WorkflowsHomepage", () => {
     render(
       <BrowserRouter>
         <WorkflowsHomepage />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     expect(screen.getByText("Overridden: 1")).toBeInTheDocument();

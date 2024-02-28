@@ -39,7 +39,7 @@ describe("processMetricFile tests", () => {
     mockContents = Buffer.from("");
 
     expect(
-      processMetricFile(mockContents, mockMetadata, mockExtension)
+      processMetricFile(mockContents, mockMetadata, mockExtension),
     ).toStrictEqual(null);
   });
 
@@ -48,7 +48,7 @@ describe("processMetricFile tests", () => {
     processJsonLinesMetricFile.mockReturnValue(mockJson);
 
     expect(
-      processMetricFile(mockContents, mockMetadata, mockExtension)
+      processMetricFile(mockContents, mockMetadata, mockExtension),
     ).toStrictEqual(mockJson);
     expect(processJsonLinesMetricFile).toHaveBeenCalledWith(mockStringContents);
   });
@@ -57,7 +57,7 @@ describe("processMetricFile tests", () => {
     mockExtension = ".txt";
 
     expect(
-      processMetricFile(mockContents, mockMetadata, mockExtension)
+      processMetricFile(mockContents, mockMetadata, mockExtension),
     ).toStrictEqual({
       flattenedValueMatrix: mockStringContents,
       metadata: mockMetadata,
@@ -67,7 +67,7 @@ describe("processMetricFile tests", () => {
   it("should return empty object if extensions do not match", () => {
     mockExtension = ".someExtension";
     expect(
-      processMetricFile(mockContents, mockMetadata, mockExtension)
+      processMetricFile(mockContents, mockMetadata, mockExtension),
     ).toStrictEqual({});
   });
 });

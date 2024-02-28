@@ -27,7 +27,7 @@ export const stringToIntSchema = z.string().transform((s) => parseInt(s));
 
 export function NullCoalesce<T extends z.ZodTypeAny>(
   fallback: z.input<T>,
-  schema: T
+  schema: T,
 ) {
   return z.preprocess((val) => val ?? fallback, schema) as z.ZodEffects<
     T,
@@ -71,12 +71,12 @@ export type MergedCriteria<Eligible, Ineligible> = {
  */
 export function renameObjectKeys<
   T extends object,
-  M extends Partial<Record<keyof T, string>>
+  M extends Partial<Record<keyof T, string>>,
 >(oldToNewKeyMapping: M) {
   return function (obj: T) {
     return mapKeys(
       obj,
-      (_, k) => oldToNewKeyMapping[k as keyof T] ?? k
+      (_, k) => oldToNewKeyMapping[k as keyof T] ?? k,
     ) as Omit<T, keyof M>;
   };
 }

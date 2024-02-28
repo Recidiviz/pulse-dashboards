@@ -51,7 +51,7 @@ describe("fetchMetricsFromGCS tests", () => {
   const downloadFileSpy = jest.spyOn(objectStorage, "downloadFile");
   const downloadFileMetadataSpy = jest.spyOn(
     objectStorage,
-    "downloadFileMetadata"
+    "downloadFileMetadata",
   );
 
   it("returns data and metadata when both are provided in the downloaded file", async () => {
@@ -65,7 +65,7 @@ describe("fetchMetricsFromGCS tests", () => {
     downloadFileMetadataSpy.mockResolvedValue(downloadFileMetadataResponse);
 
     const fetchPromises = Promise.all(
-      fetchMetricsFromGCS(stateCode, metricType, file)
+      fetchMetricsFromGCS(stateCode, metricType, file),
     );
 
     await expect(fetchPromises).resolves.toStrictEqual([
@@ -99,7 +99,7 @@ describe("fetchMetricsFromGCS tests", () => {
     downloadFileMetadataSpy.mockResolvedValue([]);
 
     const fetchPromises = Promise.all(
-      fetchMetricsFromGCS(stateCode, metricType, file)
+      fetchMetricsFromGCS(stateCode, metricType, file),
     );
 
     await expect(fetchPromises).resolves.toStrictEqual([
@@ -131,7 +131,7 @@ describe("fetchMetricsFromGCS tests", () => {
       });
 
       const fetchPromises = Promise.all(
-        fetchMetricsFromGCS(stateCode, metricType, file)
+        fetchMetricsFromGCS(stateCode, metricType, file),
       );
 
       await expect(fetchPromises).rejects.toEqual(error);
@@ -152,7 +152,7 @@ describe("fetchMetricsFromGCS tests", () => {
       });
 
       const fetchPromises = Promise.all(
-        fetchMetricsFromGCS(stateCode, metricType, file)
+        fetchMetricsFromGCS(stateCode, metricType, file),
       );
 
       await expect(fetchPromises).rejects.toEqual(error);
@@ -174,7 +174,7 @@ describe("fetchMetricsFromGCS tests", () => {
       });
 
       const fetchPromises = Promise.all(
-        fetchMetricsFromGCS(stateCode, metricType, file)
+        fetchMetricsFromGCS(stateCode, metricType, file),
       );
 
       await expect(fetchPromises).rejects.toEqual(error);

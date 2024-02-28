@@ -37,7 +37,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           },
           usMoHearingAfterRestrictiveHousingStart: {
             latestRestrictiveHousingHearingDate: `${formatDateToISO(
-              startOfTomorrow()
+              startOfTomorrow(),
             )}`,
             restrictiveHousingStartDate: "2023-09-15",
           },
@@ -80,7 +80,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           },
           usMoHearingAfterRestrictiveHousingStart: {
             latestRestrictiveHousingHearingDate: `${formatDateToISO(
-              nextMonday(new Date())
+              nextMonday(new Date()),
             )}`,
             restrictiveHousingStartDate: "2023-09-15",
           },
@@ -123,7 +123,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           },
           usMoHearingAfterRestrictiveHousingStart: {
             latestRestrictiveHousingHearingDate: `${formatDateToISO(
-              nextMonday(new Date())
+              nextMonday(new Date()),
             )}`,
             restrictiveHousingStartDate: "2023-09-15",
           },
@@ -159,7 +159,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
         eligibleCriteria: {
           usMoPastLatestScheduledReviewDate: {
             nextReviewDate: `${formatDateToISO(
-              addDays(previousMonday(new Date()), 30)
+              addDays(previousMonday(new Date()), 30),
             )}`,
             dueDateInferred: true,
           },
@@ -172,7 +172,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           },
           usMoHearingAfterRestrictiveHousingStart: {
             latestRestrictiveHousingHearingDate: `${formatDateToISO(
-              previousMonday(new Date())
+              previousMonday(new Date()),
             )}`,
             restrictiveHousingStartDate: "2023-09-15",
           },
@@ -200,5 +200,5 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           numMinorCdvsBeforeLastHearing: "3",
         },
       },
-    ]
+    ],
   );

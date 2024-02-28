@@ -45,9 +45,9 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client.rootStore,
       supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
         (raw: string) =>
-          client.rootStore.workflowsStore.formatSupervisionLevel(raw)
+          client.rootStore.workflowsStore.formatSupervisionLevel(raw),
       ).parse,
-      getBaseSLDValidator(client)
+      getBaseSLDValidator(client),
     );
 
     makeObservable(this, { requirementsMet: true });

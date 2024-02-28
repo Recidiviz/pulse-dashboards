@@ -90,13 +90,13 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
       ? d[accessor]
       : getFilterLabel(
           accessor as keyof PopulationFilterLabels,
-          d[accessor].toString()
+          d[accessor].toString(),
         );
     const filterLongLabel = isNotFilter
       ? getDimensionLabel(accessor as Dimension, d[accessor].toString())
       : getFilterLongLabel(
           accessor as keyof PopulationFilterLabels,
-          d[accessor].toString()
+          d[accessor].toString(),
         );
     const currentValue = isRate ? d.populationProportion : d.count;
     return {
@@ -113,17 +113,17 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
     metric.isHorizontal ? "value" : "accessorLabel",
     metric.isHorizontal,
     "accessorValue",
-    isSupervisionLevel && supervisionLevelOrder
+    isSupervisionLevel && supervisionLevelOrder,
   );
   const latestUpdate = formatDate(
     metric instanceof SnapshotMetric
       ? metric.lastUpdated
       : dataSeries[0]?.lastUpdated,
-    "MMMM dd, yyyy"
+    "MMMM dd, yyyy",
   );
 
   const { maxTickValue, tickValues, ticksMargin } = getTicks(
-    Math.max(...data.map((d) => d.value))
+    Math.max(...data.map((d) => d.value)),
   );
 
   const yRange = [0, maxTickValue];
@@ -256,7 +256,7 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
                     caseloadData.caseload
                   } unique ${pluralizeWord(
                     "person",
-                    caseloadData.caseload
+                    caseloadData.caseload,
                   )} on caseload)`
                 : undefined
             }

@@ -31,7 +31,7 @@ import { ConfigLabels } from "./types";
 export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   constructor(
     private supervisionStore: OutliersSupervisionStore,
-    private outliersLeadershipPageAllDistricts?: FeatureVariantValue
+    private outliersLeadershipPageAllDistricts?: FeatureVariantValue,
   ) {
     makeAutoObservable(this);
 
@@ -44,7 +44,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
       ],
       populate: () =>
         flowResult(
-          this.supervisionStore.populateSupervisionOfficerSupervisors()
+          this.supervisionStore.populateSupervisionOfficerSupervisors(),
         ),
     });
   }
@@ -69,7 +69,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
       return supervisors.filter(
         ({ supervisionDistrict }) =>
           supervisionDistrict &&
-          launchedDistricts.includes(supervisionDistrict.toUpperCase())
+          launchedDistricts.includes(supervisionDistrict.toUpperCase()),
       );
     }
     return supervisors;
@@ -92,11 +92,11 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
           district: supervisionDistrict,
           supervisors: dataset as SupervisionOfficerSupervisor[],
         };
-      })
+      }),
     )(this.allSupervisorsWithOutliers ?? []);
 
     result.map(({ supervisors }) =>
-      supervisors.sort((a, b) => a.displayName.localeCompare(b.displayName))
+      supervisors.sort((a, b) => a.displayName.localeCompare(b.displayName)),
     );
 
     result.sort((a, b) => {

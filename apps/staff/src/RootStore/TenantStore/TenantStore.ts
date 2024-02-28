@@ -50,7 +50,7 @@ function getTenantIdFromUser(userStore: UserStore): TenantId | undefined {
 }
 
 const defaultStaffFilterFunction: StaffFilterFunction = (
-  user: CombinedUserRecord
+  user: CombinedUserRecord,
 ) => {
   return user.updates?.overrideDistrictIds
     ? ({
@@ -73,7 +73,7 @@ export default class TenantStore {
     when(
       () => !this.rootStore.userStore.userIsLoading,
       () =>
-        this.setCurrentTenantId(getTenantIdFromUser(this.rootStore.userStore))
+        this.setCurrentTenantId(getTenantIdFromUser(this.rootStore.userStore)),
     );
   }
 

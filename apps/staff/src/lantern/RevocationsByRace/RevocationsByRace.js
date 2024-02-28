@@ -54,7 +54,7 @@ const RevocationsByRace = observer(
         )}
         generateChartData={createGenerateChartData(
           revocationsChartStore,
-          stacked
+          stacked,
         )}
         chartTitle={CHART_TITLE}
         metricTitle={
@@ -69,7 +69,7 @@ const RevocationsByRace = observer(
       />
     );
   },
-  { forwardRef: true }
+  { forwardRef: true },
 );
 
 RevocationsByRace.defaultProps = { containerHeight: null };

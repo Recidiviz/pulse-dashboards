@@ -48,5 +48,5 @@ export const connectComponentToOpportunityForm = memoize(
         </OpportunityFormProvider>
       );
     });
-  }
+  },
 );

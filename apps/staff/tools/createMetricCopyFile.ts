@@ -29,7 +29,7 @@ const { readFile, writeFile } = promises;
  */
 const createMetricCopyFile = async (
   doc: GoogleSpreadsheet,
-  stateCode?: string
+  stateCode?: string,
 ): Promise<void> => {
   const metricCopySheet =
     doc.sheetsByTitle[stateCode ? `Metrics - ${stateCode}` : "Metrics"];
@@ -48,7 +48,7 @@ const createMetricCopyFile = async (
           ...(row.get("Methodology")
             ? {
                 methodology: convertCurlyQuotesToStraight(
-                  row.get("Methodology")
+                  row.get("Methodology"),
                 ),
               }
             : {}),
@@ -59,23 +59,23 @@ const createMetricCopyFile = async (
             ? { chartYAxisTitle: row.get("Y-Axis title") }
             : {}),
         },
-      ])
+      ]),
     ) as MetricContent;
 
     const fileTemplate = await readFile(
       "tools/templates/metricCopy.template",
-      "utf-8"
+      "utf-8",
     );
 
     let copyFileContents = fileTemplate.replace(
       /COPY_CONTENT/,
-      JSON.stringify(content, null, 2)
+      JSON.stringify(content, null, 2),
     );
 
     if (stateCode) {
       copyFileContents = copyFileContents.replace(
         /MetricCopy/g,
-        "StateSpecificMetricCopy"
+        "StateSpecificMetricCopy",
       );
     }
 

@@ -21,11 +21,16 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  const Analytics = require('analytics-node');
-  const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, { flushAt: 1  });
+  const Analytics = require("analytics-node");
+  const analytics = new Analytics(event.secrets.SEGMENT_WRITE_KEY, {
+    flushAt: 1,
+  });
 
   // Skip email verification on OpenID and SAML connections
-  if (event.connection.name.includes("OpenID") || event.connection.name.includes("SAML")) {
+  if (
+    event.connection.name.includes("OpenID") ||
+    event.connection.name.includes("SAML")
+  ) {
     return;
   }
 
@@ -34,7 +39,7 @@ exports.onExecutePostLogin = async (event, api) => {
 
     analytics.track({
       userId: user.user_id,
-      event: 'Failed Login',
+      event: "Failed Login",
       properties: {
         ...user.app_metadata,
         email: user.email,
@@ -47,7 +52,7 @@ exports.onExecutePostLogin = async (event, api) => {
         picture: user.picture,
         updated_at: user.updated_at,
         user_id: user.user_id,
-      }
+      },
     });
 
     await analytics.flush();
