@@ -50,7 +50,16 @@ const US_MI_CONFIG: TenantConfig = {
       searchTitleOverride: "agent",
     },
   },
-  outliersLaunchedDistricts: ["REGION 4B", "REGION 6"],
+  outliersLaunchedDistricts: [
+    "REGION 1",
+    "REGION 2",
+    "REGION 4B",
+    "REGION 6",
+    "REGION 7",
+    "REGION 9",
+    "REGION 10 - CENTRAL",
+    "REGION 10 - NORTHEAST",
+  ],
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   outliersLanternState: true,
   navigation: {
