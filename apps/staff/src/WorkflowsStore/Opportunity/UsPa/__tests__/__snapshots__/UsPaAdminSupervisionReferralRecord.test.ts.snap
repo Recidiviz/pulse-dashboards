@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parses empty ineligible offenses array 1`] = `
+Object {
+  "eligibleCriteria": Object {
+    "usPaFulfilledRequirements": Object {
+      "eligibleDate": 2023-12-01T00:00:00.000Z,
+    },
+    "usPaNoHighSanctionsInPastYear": Object {
+      "latestHighSanctionDate": 2022-02-02T00:00:00.000Z,
+    },
+    "usPaNotServingIneligibleAsOffense": Object {
+      "ineligibleOffenses": Array [],
+      "ineligibleSentencesExpirationDate": Array [],
+    },
+  },
+  "externalId": "abc123",
+  "stateCode": "US_PA",
+}
+`;
+
+exports[`parses null reason fields 1`] = `
+Object {
+  "eligibleCriteria": Object {
+    "usPaFulfilledRequirements": null,
+    "usPaNoHighSanctionsInPastYear": null,
+    "usPaNotServingIneligibleAsOffense": null,
+  },
+  "externalId": "abc123",
+  "stateCode": "US_PA",
+}
+`;
+
+exports[`record parses as expected 1`] = `
+Object {
+  "eligibleCriteria": Object {
+    "usPaFulfilledRequirements": Object {
+      "eligibleDate": 2023-12-01T00:00:00.000Z,
+    },
+    "usPaNoHighSanctionsInPastYear": Object {
+      "latestHighSanctionDate": 2022-02-02T00:00:00.000Z,
+    },
+    "usPaNotServingIneligibleAsOffense": Object {
+      "ineligibleOffenses": Array [
+        "ABC",
+        "DEF",
+      ],
+      "ineligibleSentencesExpirationDate": Array [
+        2023-06-01T00:00:00.000Z,
+        2022-01-01T00:00:00.000Z,
+      ],
+    },
+  },
+  "externalId": "abc123",
+  "stateCode": "US_PA",
+}
+`;
