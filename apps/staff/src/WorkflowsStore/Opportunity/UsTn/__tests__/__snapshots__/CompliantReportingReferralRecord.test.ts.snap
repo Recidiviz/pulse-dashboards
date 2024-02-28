@@ -5,12 +5,12 @@ Object {
   "caseNotes": Object {},
   "clientFirstName": "LINDA",
   "clientLastName": "SMITH",
-  "currentOffenses": Array [
-    "FAILURE TO APPEAR (FELONY)",
-  ],
   "dateToday": "2022-03-25",
   "eligibilityCategory": "c3",
   "eligibleCriteria": Object {
+    "hasActiveSentence": Object {
+      "hasActiveSentence": true,
+    },
     "usTnFinesFeesEligible": Object {
       "hasFinesFeesBalanceBelow500": Object {
         "amountOwed": 400,
@@ -122,12 +122,12 @@ Object {
   "caseNotes": Object {},
   "clientFirstName": "LINDA",
   "clientLastName": "SMITH",
-  "currentOffenses": Array [
-    "FAILURE TO APPEAR (FELONY)",
-  ],
   "dateToday": "2022-03-25",
   "eligibilityCategory": "c3",
   "eligibleCriteria": Object {
+    "hasActiveSentence": Object {
+      "hasActiveSentence": true,
+    },
     "usTnFinesFeesEligible": Object {
       "hasFinesFeesBalanceBelow500": Object {
         "amountOwed": 600,

@@ -310,6 +310,9 @@ export const usTnCompliantReportingReferrals =
           },
         },
         usTnNoZeroToleranceCodesSpans: null,
+        hasActiveSentence: {
+          hasActiveSentence: true,
+        },
       },
       ineligibleCriteria: {},
       formInformation: {
@@ -412,6 +415,9 @@ export const usTnCompliantReportingReferrals =
           },
         },
         usTnNoZeroToleranceCodesSpans: null,
+        hasActiveSentence: {
+          hasActiveSentence: true,
+        },
       },
       ineligibleCriteria: {
         usTnFinesFeesEligible: {

@@ -108,7 +108,6 @@ export const usTnUserRecord: CombinedUserRecord = {
 
 export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
-    eligibilityCategory: "c1",
     remainingCriteriaNeeded: 0,
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
@@ -147,6 +146,9 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
         },
       },
       usTnNoZeroToleranceCodesSpans: null,
+      hasActiveSentence: {
+        hasActiveSentence: true,
+      },
     },
     ineligibleCriteria: {},
     formInformation: {
@@ -176,10 +178,6 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
     pastOffenses: ["EXAMPLE PAST"],
     offenseTypeEligibility: "2",
 
-    // Eligible with discretion: Previous zero-tolerance codes
-    eligibilityCategory: "c3",
-
-    // TODO(#3587): Make this actually be eligible with discretion
     eligibleCriteria: {
       usTnOnEligibleLevelForSufficientTime: {
         eligibleDate: parseISO("2021-12-20"),
@@ -218,11 +216,14 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       usTnNoZeroToleranceCodesSpans: {
         zeroToleranceCodeDates: [parseISO("2022-06-01")],
       },
+      hasActiveSentence: {
+        // Eligible with discretion: Missing sentence information
+        hasActiveSentence: false,
+      },
     },
     ineligibleCriteria: {},
     formInformation: {
       sentenceStartDate: parseISO("2019-12-20"),
-      // Eligible with discretion: Missing sentence information
       currentOffenses: [],
     },
     metadata: {
@@ -265,7 +266,6 @@ export const compliantReportingIneligibleCriteria: Required<
 
 export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
-    eligibilityCategory: "c1",
     remainingCriteriaNeeded: 1,
     pastOffenses: [],
     lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
@@ -289,6 +289,9 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
         },
       },
       usTnNoZeroToleranceCodesSpans: null,
+      hasActiveSentence: {
+        hasActiveSentence: true,
+      },
     },
     ineligibleCriteria: {},
     formInformation: {

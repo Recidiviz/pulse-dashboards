@@ -49,11 +49,6 @@ export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof CompliantReporti
     "usTnOnEligibleLevelForSufficientTime",
   ];
 
-/**
- * Clients with values other than these should not appear as eligible in the UI.
- */
-const COMPLIANT_REPORTING_ACTIVE_CATEGORIES = ["c1", "c2", "c3", "c4"];
-
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
 const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
@@ -129,26 +124,19 @@ const getRecordValidator =
     if (!record) {
       throw new OpportunityValidationError("No opportunity record found");
     }
-    const { eligibilityCategory } = record;
-
-    // only the explicitly allowed categories can be shown to users.
-    // if any others are added they must be suppressed until explicitly enabled.
-    if (!COMPLIANT_REPORTING_ACTIVE_CATEGORIES.includes(eligibilityCategory)) {
-      throw new OpportunityValidationError("Unsupported eligibility category");
-    }
   };
 
 const currentLevelAlmostEligibleText = (
   eligibleDate: Date,
-  supervisionLevel: string
+  supervisionLevel: string,
 ) => {
   const currentLevelEligibilityDaysRemaining = differenceInCalendarDays(
     eligibleDate,
-    new Date()
+    new Date(),
   );
   return `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
     "day",
-    currentLevelEligibilityDaysRemaining
+    currentLevelEligibilityDaysRemaining,
   )} on ${supervisionLevel.toLowerCase()}`;
 };
 
@@ -158,12 +146,12 @@ const sanctionsAlmostEligibleText = (latestHighSanctionDate: Date) => {
   });
   const seriousSanctionsEligibilityDaysRemaining = differenceInCalendarDays(
     seriousSanctionsEligibilityDate,
-    new Date()
+    new Date(),
   );
   return {
     text: `Needs ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
       "day",
-      seriousSanctionsEligibilityDaysRemaining
+      seriousSanctionsEligibilityDaysRemaining,
     )} without sanction higher than level 1`,
     seriousSanctionsEligibilityDate,
   };
@@ -198,7 +186,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       "compliantReporting",
       client.rootStore,
       transformCompliantReportingReferral,
-      getRecordValidator(client)
+      getRecordValidator(client),
     );
 
     makeObservable<CompliantReportingOpportunity>(this, {
@@ -253,7 +241,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { supervisionLevel, supervisionLevelStart } = this.person;
     const {
-      eligibilityCategory,
       lifetimeOffensesExpired,
       pastOffenses,
       offenseTypeEligibility,
@@ -288,7 +275,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       }
       requirements.push({
         text: `On ${requiredSupervisionLevel} for ${formatRelativeToNow(
-          eligibleLevelStart
+          eligibleLevelStart,
         )}`,
         tooltip: CRITERIA.timeOnSupervision.tooltip,
       });
@@ -297,7 +284,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     // required arrest history
     requirements.push({
       text: `Negative arrest check on ${formatWorkflowsDate(
-        metadata.mostRecentArrestCheck.contactDate
+        metadata.mostRecentArrestCheck.contactDate,
       )}`,
       tooltip: CRITERIA.arrests.tooltip,
     });
@@ -316,7 +303,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
         "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months";
       const exemption =
         eligibleCriteria.usTnFinesFeesEligible.hasPermanentFinesFeesExemption?.currentExemptions.join(
-          ", "
+          ", ",
         );
       if (exemption) {
         feeText = `Exemption: ${exemption}`;
@@ -339,8 +326,8 @@ export class CompliantReportingOpportunity extends OpportunityBase<
           .map(
             ({ negativeScreenDate, negativeScreenResult }) =>
               `${negativeScreenResult} on ${formatWorkflowsDate(
-                negativeScreenDate
-              )}`
+                negativeScreenDate,
+              )}`,
           )
           .join("; ") || "None"
       }`,
@@ -354,12 +341,12 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     switch (metadata.mostRecentSpeNote?.contactType) {
       case "SPEC":
         specialConditionsText = `Special conditions up to date, last SPEC on ${formatWorkflowsDate(
-          metadata.mostRecentSpeNote.contactDate
+          metadata.mostRecentSpeNote.contactDate,
         )}`;
         break;
       case "SPET":
         specialConditionsText = `SPET on ${formatWorkflowsDate(
-          metadata.mostRecentSpeNote.contactDate
+          metadata.mostRecentSpeNote.contactDate,
         )}`;
         break;
       default:
@@ -418,7 +405,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       });
     }
 
-    if (eligibilityCategory === "c3" && currentOffenses?.length === 0) {
+    if (!eligibleCriteria.hasActiveSentence.hasActiveSentence) {
       requirements.push({
         text: "Eligible with discretion: Missing sentence information",
         tooltip: CRITERIA.missingSentences.tooltip,
@@ -445,7 +432,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       requirements.push({
         text: currentLevelAlmostEligibleText(
           ineligibleCriteria.usTnOnEligibleLevelForSufficientTime.eligibleDate,
-          this.person.supervisionLevel
+          this.person.supervisionLevel,
         ),
         tooltip: CRITERIA.timeOnSupervision.tooltip,
       });
@@ -454,7 +441,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     if (ineligibleCriteria?.usTnNoRecentCompliantReportingRejections) {
       requirements.push({
         text: `Double check ${ineligibleCriteria?.usTnNoRecentCompliantReportingRejections.contactCode.join(
-          "/"
+          "/",
         )} contact note`,
         tooltip: CRITERIA.compliance.tooltip,
       });
@@ -464,7 +451,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       requirements.push({
         text: sanctionsAlmostEligibleText(
           ineligibleCriteria.usTnNoHighSanctionsInPastYear
-            .latestHighSanctionDate
+            .latestHighSanctionDate,
         ).text,
         tooltip: CRITERIA.sanctions.tooltip,
       });
@@ -493,21 +480,21 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       const { text: sanctionsText, seriousSanctionsEligibilityDate } =
         sanctionsAlmostEligibleText(
           ineligibleCriteria.usTnNoHighSanctionsInPastYear
-            .latestHighSanctionDate
+            .latestHighSanctionDate,
         );
       title = sanctionsText;
       criterionSpecificCopy = `don’t get any sanctions higher than level 1 until ${formatNoteDate(
-        seriousSanctionsEligibilityDate
+        seriousSanctionsEligibilityDate,
       )}`;
     } else if (ineligibleCriteria.usTnOnEligibleLevelForSufficientTime) {
       const { eligibleDate } =
         ineligibleCriteria.usTnOnEligibleLevelForSufficientTime;
       title = currentLevelAlmostEligibleText(
         eligibleDate,
-        this.person.supervisionLevel
+        this.person.supervisionLevel,
       );
       criterionSpecificCopy = `stay on your current supervision level until ${formatNoteDate(
-        eligibleDate
+        eligibleDate,
       )}`;
     } else {
       return undefined;
@@ -521,7 +508,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     check-ins, rather than needing to report to the office. If you ${criterionSpecificCopy}, 
     you will meet all of the requirements and I can refer you.`.replace(
         /\s+/gm,
-        " "
+        " ",
       );
 
     return { title, text };

@@ -70,7 +70,7 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
         z.object({
           negativeScreenDate: dateStringSchema,
           negativeScreenResult: z.string(),
-        })
+        }),
       ),
       latestDrugTestIsNegative: z.object({
         latestDrugScreenDate: dateStringSchema,
@@ -84,6 +84,12 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
         zeroToleranceCodeDates: z.array(dateStringSchema).nullable(),
       })
       .nullable(),
+    hasActiveSentence: z
+      .object({
+        hasActiveSentence: z.boolean(),
+      })
+      .nullable()
+      .transform((val) => val ?? { hasActiveSentence: false }),
   }),
   ineligibleCriteria: z.object({
     usTnOnEligibleLevelForSufficientTime: z
@@ -133,7 +139,7 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
         z.object({
           exemptionReason: z.string(),
           endDate: dateStringSchema.nullish(),
-        })
+        }),
       ),
       supervisionFeeWaived: z.boolean(),
       docketNumbers: z.array(z.string()),
@@ -172,7 +178,6 @@ export type AlmostEligibleCriteriaRaw = {
 };
 
 export type CompliantReportingReferralRecord = {
-  eligibilityCategory: string;
   lifetimeOffensesExpired: string[];
   pastOffenses: string[];
   /** Any number greater than zero indicates the client is _almost_ eligible. */
@@ -316,7 +321,6 @@ export const transformCompliantReportingReferral: TransformFunction<
   }
 
   const {
-    currentOffenses,
     eligibilityCategory,
     lifetimeOffensesExpired,
     pastOffenses,
@@ -333,6 +337,7 @@ export const transformCompliantReportingReferral: TransformFunction<
   // Make sure legacy fields aren't getting copied into the new record- we want to rely on their
   // new counterparts instead.
   const {
+    currentOffenses,
     drugScreensPastYear,
     sentenceStartDate,
     finesFeesEligible,
@@ -402,7 +407,7 @@ export const transformCompliantReportingReferral: TransformFunction<
             (exemption) => ({
               exemptionReason: exemption,
               endDate: null, // This is null for all records in the old schema
-            })
+            }),
           ),
           supervisionFeeWaived: supervisionFeeWaived === "Fees Waived",
           docketNumbers: oldStyleDockets,
@@ -437,7 +442,7 @@ export const transformCompliantReportingReferral: TransformFunction<
   } else if (eligibilityCategory === "c3" && zeroToleranceCodes?.length) {
     newNoZeroToleranceCodesSpans = {
       zeroToleranceCodeDates: zeroToleranceCodes?.map(
-        (val) => val.contactNoteDate
+        (val) => val.contactNoteDate,
       ),
     };
   } else {
@@ -481,6 +486,10 @@ export const transformCompliantReportingReferral: TransformFunction<
         }),
     },
     usTnNoZeroToleranceCodesSpans: newNoZeroToleranceCodesSpans,
+    hasActiveSentence: eligibleCriteria.hasActiveSentence ?? {
+      hasActiveSentence:
+        eligibilityCategory !== "c3" || currentOffenses?.length > 0,
+    },
   };
   const newIneligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.ineligibleCriteria
@@ -563,7 +572,7 @@ export const transformCompliantReportingReferral: TransformFunction<
         fieldToDate(seriousSanctionsEligibilityDate),
         {
           years: 1,
-        }
+        },
       ).toISOString(),
     };
   } else {
@@ -606,7 +615,6 @@ export const transformCompliantReportingReferral: TransformFunction<
 
   const transformedRecord: CompliantReportingReferralRecordFull = {
     ...zodRecord,
-    eligibilityCategory,
     lifetimeOffensesExpired,
     pastOffenses,
     remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
