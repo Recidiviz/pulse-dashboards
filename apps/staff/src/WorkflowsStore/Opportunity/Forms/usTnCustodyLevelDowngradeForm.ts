@@ -179,9 +179,8 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
               const parts = [formatDate(detainerReceivedDate)];
               if (detainerFelonyFlag || detainerMisdemeanorFlag)
                 parts.push(detainerFelonyFlag ? "Felony" : "Misdemeanor");
-              if (description !== undefined) parts.push(description);
-              if (jurisdiction !== undefined)
-                parts.push(`Jurisdiction: ${jurisdiction}`);
+              if (description) parts.push(description);
+              if (jurisdiction) parts.push(`Jurisdiction: ${jurisdiction}`);
               if (chargePending !== undefined)
                 parts.push(
                   chargePending ? "Charge Pending" : "No Charge Pending",

@@ -87,12 +87,16 @@ export const formInformationSchema = z.object({
           .string()
           .nullable()
           .transform((raw) => raw === "X"),
-        jurisdiction: z.string().optional(),
-        description: z.string().optional(),
+        jurisdiction: z.string().nullish(),
+        description: z.string().nullish(),
         chargePending: z
           .string()
-          .optional()
-          .transform((raw) => (raw === undefined ? undefined : raw === "Y")),
+          .nullish()
+          .transform((raw) => {
+            if (raw === "Y") return true;
+            if (raw === "N") return false;
+            return undefined;
+          }),
       }),
     ),
   ),
