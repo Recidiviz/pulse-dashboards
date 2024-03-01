@@ -310,6 +310,9 @@ export const usTnCompliantReportingReferrals =
           },
         },
         usTnNoZeroToleranceCodesSpans: null,
+        usTnIneligibleOffensesExpired: null,
+        usTnNoPriorRecordWithIneligibleCrOffense: null,
+        usTnNotServingUnknownCrOffense: null,
         hasActiveSentence: {
           hasActiveSentence: true,
         },
@@ -415,6 +418,9 @@ export const usTnCompliantReportingReferrals =
           },
         },
         usTnNoZeroToleranceCodesSpans: null,
+        usTnIneligibleOffensesExpired: null,
+        usTnNoPriorRecordWithIneligibleCrOffense: null,
+        usTnNotServingUnknownCrOffense: null,
         hasActiveSentence: {
           hasActiveSentence: true,
         },

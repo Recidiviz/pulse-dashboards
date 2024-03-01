@@ -39,12 +39,15 @@ Array [
     "tooltip": "Policy requirement: Offense type not domestic abuse or sexual assault, DUI in past 5 years, not crime against person that resulted in physical bodily harm, not crime where victim was under 18.",
   },
   Object {
-    "text": "No lifetime offenses",
-    "tooltip": "Policy requirement: If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
+    "text": "Eligible with discretion: Ineligible offenses expired less than 10 years ago: EXAMPLE PAST (Projected Completion Date: Feb 2, 2023)",
+    "tooltip": "If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
   },
   Object {
-    "text": "Eligible with discretion: Prior offenses and lifetime offenses
-        expired less than 10 years ago: EXAMPLE PAST",
+    "text": "Eligible with discretion: Unknown offenses: EXAMPLE UNKNOWN (Projected Completion Date: May 5, 2025)",
+    "tooltip": "If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
+  },
+  Object {
+    "text": "Eligible with discretion: Ineligible offenses in prior record (expiration date unknown): EXAMPLE PAST INELIGIBLE (Offense Date: Mar 3, 2020)",
     "tooltip": "If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
   },
   Object {
@@ -97,7 +100,7 @@ Array [
     "tooltip": "Policy requirement: Offense type not domestic abuse or sexual assault, DUI in past 5 years, not crime against person that resulted in physical bodily harm, not crime where victim was under 18.",
   },
   Object {
-    "text": "Lifetime offense expired 10+ years ago: EXAMPLE EXPIRED",
+    "text": "Ineligible offense expired 10+ years ago: EXAMPLE EXPIRED",
     "tooltip": "Policy requirement: If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
   },
 ]

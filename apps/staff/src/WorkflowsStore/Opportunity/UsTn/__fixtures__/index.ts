@@ -109,8 +109,6 @@ export const usTnUserRecord: CombinedUserRecord = {
 export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
     remainingCriteriaNeeded: 0,
-    pastOffenses: [],
-    lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
     eligibleCriteria: {
       usTnOnEligibleLevelForSufficientTime: {
         eligibleDate: parseISO("2021-12-20"),
@@ -146,6 +144,9 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
         },
       },
       usTnNoZeroToleranceCodesSpans: null,
+      usTnIneligibleOffensesExpired: null,
+      usTnNoPriorRecordWithIneligibleCrOffense: null,
+      usTnNotServingUnknownCrOffense: null,
       hasActiveSentence: {
         hasActiveSentence: true,
       },
@@ -166,18 +167,12 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
         contactType: "SPEC",
       },
       convictionCounties: [],
+      ineligibleOffensesExpired: ["EXAMPLE EXPIRED"],
     },
   };
 
 export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
-    // Required fields
-    lifetimeOffensesExpired: [],
-
-    // Eligible with discretion: Prior offenses and lifetime offenses expired less than 10 years ago
-    pastOffenses: ["EXAMPLE PAST"],
-    offenseTypeEligibility: "2",
-
     eligibleCriteria: {
       usTnOnEligibleLevelForSufficientTime: {
         eligibleDate: parseISO("2021-12-20"),
@@ -216,6 +211,25 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       usTnNoZeroToleranceCodesSpans: {
         zeroToleranceCodeDates: [parseISO("2022-06-01")],
       },
+      // Eligible with discretion: Prior offenses and lifetime offenses expired less than 10 years ago
+      usTnIneligibleOffensesExpired: [
+        {
+          ineligibleOffense: "EXAMPLE PAST",
+          relevantDate: parseISO("2023-02-02"),
+        },
+      ],
+      usTnNoPriorRecordWithIneligibleCrOffense: [
+        {
+          ineligibleOffense: "EXAMPLE PAST INELIGIBLE",
+          relevantDate: parseISO("2020-03-03"),
+        },
+      ],
+      usTnNotServingUnknownCrOffense: [
+        {
+          ineligibleOffense: "EXAMPLE UNKNOWN",
+          relevantDate: parseISO("2025-05-05"),
+        },
+      ],
       hasActiveSentence: {
         // Eligible with discretion: Missing sentence information
         hasActiveSentence: false,
@@ -236,6 +250,7 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
         contactType: "SPET",
       },
       convictionCounties: [],
+      ineligibleOffensesExpired: [],
     },
   };
 
@@ -267,9 +282,6 @@ export const compliantReportingIneligibleCriteria: Required<
 export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecordFull> =
   {
     remainingCriteriaNeeded: 1,
-    pastOffenses: [],
-    lifetimeOffensesExpired: ["EXAMPLE EXPIRED"],
-
     eligibleCriteria: {
       usTnNoArrestsInPastYear: {},
       usTnSpecialConditionsAreCurrent: {
@@ -289,6 +301,9 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
         },
       },
       usTnNoZeroToleranceCodesSpans: null,
+      usTnIneligibleOffensesExpired: null,
+      usTnNoPriorRecordWithIneligibleCrOffense: null,
+      usTnNotServingUnknownCrOffense: null,
       hasActiveSentence: {
         hasActiveSentence: true,
       },
@@ -309,6 +324,7 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
         contactType: "SPEC",
       },
       convictionCounties: [],
+      ineligibleOffensesExpired: ["EXAMPLE EXPIRED"],
     },
   };
 

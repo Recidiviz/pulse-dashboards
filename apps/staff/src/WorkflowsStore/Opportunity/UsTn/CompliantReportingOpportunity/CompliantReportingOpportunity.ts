@@ -241,9 +241,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { supervisionLevel, supervisionLevelStart } = this.person;
     const {
-      lifetimeOffensesExpired,
-      pastOffenses,
-      offenseTypeEligibility,
       eligibleCriteria,
       metadata,
       formInformation: { currentOffenses },
@@ -375,23 +372,89 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     });
 
     // required prior offense types
-    let lifetimeOffensesText = "No lifetime offenses";
-    if (lifetimeOffensesExpired.length) {
-      lifetimeOffensesText = `Lifetime offense${
-        lifetimeOffensesExpired.length !== 1 ? "s" : ""
-      } expired 10+ years ago: ${lifetimeOffensesExpired.join("; ")}`;
-    }
-    requirements.push({
-      text: lifetimeOffensesText,
-      tooltip: CRITERIA.lifetimeOffenses.tooltip,
-    });
-
-    if (offenseTypeEligibility === "2" && pastOffenses.length) {
+    const { usTnIneligibleOffensesExpired } = eligibleCriteria;
+    if (usTnIneligibleOffensesExpired === null) {
+      let ineligibleOffensesText = "No expired ineligible offenses";
+      const { ineligibleOffensesExpired } = metadata;
+      if (ineligibleOffensesExpired.length) {
+        ineligibleOffensesText = `Ineligible offense${
+          ineligibleOffensesExpired.length !== 1 ? "s" : ""
+        } expired 10+ years ago: ${ineligibleOffensesExpired.join("; ")}`;
+      }
       requirements.push({
-        text: `Eligible with discretion: Prior offenses and lifetime offenses
-        expired less than 10 years ago: ${pastOffenses.join("; ")}`,
+        text: ineligibleOffensesText,
+        tooltip: CRITERIA.lifetimeOffenses.tooltip,
+      });
+    } else if (usTnIneligibleOffensesExpired) {
+      requirements.push({
+        text: `Eligible with discretion: Ineligible offenses expired less than 10 years ago: ${usTnIneligibleOffensesExpired
+          .map(
+            ({ ineligibleOffense, relevantDate }) =>
+              `${ineligibleOffense} (Projected Completion Date: ${formatWorkflowsDate(
+                relevantDate,
+              )})`,
+          )
+          .join("; ")}`,
         tooltip: CRITERIA.pastOffenses.tooltip,
       });
+    }
+
+    const { usTnNotServingUnknownCrOffense } = eligibleCriteria;
+    if (usTnNotServingUnknownCrOffense) {
+      requirements.push({
+        text: `Eligible with discretion: Unknown offenses: ${usTnNotServingUnknownCrOffense
+          .map(
+            ({ ineligibleOffense, relevantDate }) =>
+              `${ineligibleOffense} (Projected Completion Date: ${formatWorkflowsDate(
+                relevantDate,
+              )})`,
+          )
+          .join("; ")}`,
+        tooltip: CRITERIA.pastOffenses.tooltip,
+      });
+    }
+
+    const { usTnNoPriorRecordWithIneligibleCrOffense } = eligibleCriteria;
+    if (usTnNoPriorRecordWithIneligibleCrOffense) {
+      requirements.push({
+        text: `Eligible with discretion: Ineligible offenses in prior record (expiration date unknown): ${usTnNoPriorRecordWithIneligibleCrOffense
+          .map(
+            ({ ineligibleOffense, relevantDate }) =>
+              `${ineligibleOffense} (Offense Date: ${formatWorkflowsDate(
+                relevantDate,
+              )})`,
+          )
+          .join("; ")}`,
+        tooltip: CRITERIA.pastOffenses.tooltip,
+      });
+    }
+
+    if (
+      usTnIneligibleOffensesExpired === undefined &&
+      usTnNotServingUnknownCrOffense === undefined &&
+      usTnNoPriorRecordWithIneligibleCrOffense === undefined
+    ) {
+      // If these are unset, then use the legacy text
+      let lifetimeOffensesText = "No lifetime offenses";
+      const { legacyLifetimeOffensesExpired, legacyPastOffenses } =
+        eligibleCriteria;
+      if (legacyLifetimeOffensesExpired?.length) {
+        lifetimeOffensesText = `Lifetime offense${
+          legacyLifetimeOffensesExpired.length !== 1 ? "s" : ""
+        } expired 10+ years ago: ${legacyLifetimeOffensesExpired.join("; ")}`;
+      }
+      requirements.push({
+        text: lifetimeOffensesText,
+        tooltip: CRITERIA.lifetimeOffenses.tooltip,
+      });
+
+      if (legacyPastOffenses?.length) {
+        requirements.push({
+          text: `Eligible with discretion: Prior offenses and lifetime offenses
+          expired less than 10 years ago: ${legacyPastOffenses.join("; ")}`,
+          tooltip: CRITERIA.pastOffenses.tooltip,
+        });
+      }
     }
 
     const zeroToleranceCodeDates =

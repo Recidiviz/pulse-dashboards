@@ -11,6 +11,8 @@ Object {
     "hasActiveSentence": Object {
       "hasActiveSentence": true,
     },
+    "legacyLifetimeOffensesExpired": Array [],
+    "legacyPastOffenses": undefined,
     "usTnFinesFeesEligible": Object {
       "hasFinesFeesBalanceBelow500": Object {
         "amountOwed": 400,
@@ -20,11 +22,14 @@ Object {
         "consecutiveMonthlyPayments": null,
       },
     },
+    "usTnIneligibleOffensesExpired": null,
     "usTnNoArrestsInPastYear": Object {},
     "usTnNoHighSanctionsInPastYear": Object {},
+    "usTnNoPriorRecordWithIneligibleCrOffense": null,
     "usTnNoRecentCompliantReportingRejections": Object {},
     "usTnNoZeroToleranceCodesSpans": null,
     "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnNotServingUnknownCrOffense": null,
     "usTnOnEligibleLevelForSufficientTime": Object {
       "eligibleDate": 2020-08-01T00:00:00.000Z,
       "eligibleLevel": "MINIMUM",
@@ -75,11 +80,11 @@ Object {
     "supervisionFeeWaived": false,
   },
   "ineligibleCriteria": Object {},
-  "lifetimeOffensesExpired": Array [],
   "metadata": Object {
     "convictionCounties": Array [
       "123ABC",
     ],
+    "ineligibleOffensesExpired": Array [],
     "mostRecentArrestCheck": Object {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
@@ -89,8 +94,6 @@ Object {
       "contactType": "SPET",
     },
   },
-  "offenseTypeEligibility": undefined,
-  "pastOffenses": undefined,
   "poFirstName": "TEST",
   "poLastName": "OFFICER1",
   "remainingCriteriaNeeded": 0,
@@ -128,6 +131,8 @@ Object {
     "hasActiveSentence": Object {
       "hasActiveSentence": true,
     },
+    "legacyLifetimeOffensesExpired": Array [],
+    "legacyPastOffenses": undefined,
     "usTnFinesFeesEligible": Object {
       "hasFinesFeesBalanceBelow500": Object {
         "amountOwed": 600,
@@ -143,11 +148,14 @@ Object {
         ],
       },
     },
+    "usTnIneligibleOffensesExpired": undefined,
     "usTnNoArrestsInPastYear": Object {},
     "usTnNoHighSanctionsInPastYear": Object {},
+    "usTnNoPriorRecordWithIneligibleCrOffense": undefined,
     "usTnNoRecentCompliantReportingRejections": Object {},
     "usTnNoZeroToleranceCodesSpans": null,
     "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnNotServingUnknownCrOffense": undefined,
     "usTnOnEligibleLevelForSufficientTime": Object {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
       "eligibleLevel": "UNKNOWN",
@@ -210,11 +218,11 @@ Object {
     "supervisionFeeWaived": false,
   },
   "ineligibleCriteria": Object {},
-  "lifetimeOffensesExpired": Array [],
   "metadata": Object {
     "convictionCounties": Array [
       "123ABC",
     ],
+    "ineligibleOffensesExpired": Array [],
     "mostRecentArrestCheck": Object {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
@@ -224,8 +232,6 @@ Object {
       "contactType": "SPEC",
     },
   },
-  "offenseTypeEligibility": undefined,
-  "pastOffenses": undefined,
   "poFirstName": "TEST",
   "poLastName": "OFFICER1",
   "remainingCriteriaNeeded": 0,

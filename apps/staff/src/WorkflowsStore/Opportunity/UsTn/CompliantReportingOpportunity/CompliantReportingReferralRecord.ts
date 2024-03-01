@@ -17,6 +17,7 @@
 
 import { sub } from "date-fns";
 import { DocumentData, Timestamp } from "firebase/firestore";
+import { zipWith } from "lodash";
 import { z } from "zod";
 
 import { formatDateToISO } from "../../../../utils/formatStrings";
@@ -25,6 +26,15 @@ import { fieldToDate } from "../../../utils";
 import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
 const SpecialConditionsNoteType = ["SPEC", "SPET"] as const;
+
+const zipIneligibleOffenseAndDates = (
+  ineligibleOffenses: string[],
+  relevantDates: Date[],
+) =>
+  zipWith(ineligibleOffenses, relevantDates, (offense, date) => ({
+    ineligibleOffense: offense,
+    relevantDate: date,
+  }));
 
 export const compliantReportingSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z.object({
@@ -84,6 +94,46 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
         zeroToleranceCodeDates: z.array(dateStringSchema).nullable(),
       })
       .nullable(),
+    usTnIneligibleOffensesExpired: z
+      .object({
+        ineligibleOffenses: z.array(z.string()),
+        ineligibleSentencesExpirationDates: z.array(dateStringSchema),
+      })
+      .transform((val) =>
+        zipIneligibleOffenseAndDates(
+          val.ineligibleOffenses,
+          val.ineligibleSentencesExpirationDates,
+        ),
+      )
+      .nullish(),
+    usTnNotServingUnknownCrOffense: z
+      .object({
+        ineligibleOffenses: z.array(z.string()),
+        ineligibleSentencesExpirationDate: z.array(dateStringSchema),
+      })
+      .transform((val) =>
+        zipIneligibleOffenseAndDates(
+          val.ineligibleOffenses,
+          val.ineligibleSentencesExpirationDate,
+        ),
+      )
+      .nullish(),
+    usTnNoPriorRecordWithIneligibleCrOffense: z
+      .object({
+        ineligibleOffenses: z.array(z.string()),
+        ineligibleOffenseDates: z.array(dateStringSchema),
+      })
+      .transform((val) =>
+        zipIneligibleOffenseAndDates(
+          val.ineligibleOffenses,
+          val.ineligibleOffenseDates,
+        ),
+      )
+      .nullish(),
+    // These two fields don't map nicely into the above three, so continue displaying the legacy
+    // versions until we stop showing people eligible only in the old version of the query
+    legacyLifetimeOffensesExpired: z.array(z.string()).optional(),
+    legacyPastOffenses: z.array(z.string()).optional(),
     hasActiveSentence: z
       .object({
         hasActiveSentence: z.boolean(),
@@ -161,6 +211,7 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
       // this should really be in formInformation, but was put into metadata accidentally and it's
       // not really worth fixing at this point
       convictionCounties: z.array(z.string()),
+      ineligibleOffensesExpired: z.array(z.string()),
     })
     .passthrough(), // temporary passthrough to allow fixture data with metadata fields we haven't accounted for yet
 });
@@ -178,11 +229,8 @@ export type AlmostEligibleCriteriaRaw = {
 };
 
 export type CompliantReportingReferralRecord = {
-  lifetimeOffensesExpired: string[];
-  pastOffenses: string[];
   /** Any number greater than zero indicates the client is _almost_ eligible. */
   remainingCriteriaNeeded: number;
-  offenseTypeEligibility: string;
 };
 export type CompliantReportingFinesFeesEligible =
   | "low_balance"
@@ -300,6 +348,8 @@ type RawCompliantReportingReferralRecord = DocumentData & {
   zeroToleranceCodes?: { contactNoteType: string; contactNoteDate: string }[];
   almostEligibleCriteria?: AlmostEligibleCriteriaRaw;
   supervisionFeeExemptionType?: string[];
+  lifetimeOffensesExpired?: string[];
+  pastOffenses?: string[];
 };
 
 type compliantReportingInputSchema = z.input<typeof compliantReportingSchema>;
@@ -322,10 +372,7 @@ export const transformCompliantReportingReferral: TransformFunction<
 
   const {
     eligibilityCategory,
-    lifetimeOffensesExpired,
-    pastOffenses,
     remainingCriteriaNeeded,
-    offenseTypeEligibility,
     tdocId,
     externalId,
     eligibleCriteria,
@@ -350,6 +397,9 @@ export const transformCompliantReportingReferral: TransformFunction<
     almostEligibleCriteria,
     eligibleLevelStart,
     zeroToleranceCodes,
+    lifetimeOffensesExpired,
+    pastOffenses,
+    offenseTypeEligibility,
     allDockets,
     expirationDate,
     sentenceLengthDays,
@@ -459,6 +509,8 @@ export const transformCompliantReportingReferral: TransformFunction<
     convictionCounties: metadata.convictionCounties?.length
       ? metadata.convictionCounties
       : convictionCounties,
+    ineligibleOffensesExpired:
+      metadata.ineligibleOffensesExpired ?? lifetimeOffensesExpired,
   };
   const newEligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.eligibleCriteria
@@ -486,11 +538,21 @@ export const transformCompliantReportingReferral: TransformFunction<
         }),
     },
     usTnNoZeroToleranceCodesSpans: newNoZeroToleranceCodesSpans,
+    usTnIneligibleOffensesExpired:
+      eligibleCriteria.usTnIneligibleOffensesExpired,
+    usTnNotServingUnknownCrOffense:
+      eligibleCriteria.usTnNotServingUnknownCrOffense,
+    usTnNoPriorRecordWithIneligibleCrOffense:
+      eligibleCriteria.usTnNoPriorRecordWithIneligibleCrOffense,
+    legacyLifetimeOffensesExpired: lifetimeOffensesExpired,
+    legacyPastOffenses:
+      offenseTypeEligibility === "2" ? pastOffenses : undefined,
     hasActiveSentence: eligibleCriteria.hasActiveSentence ?? {
       hasActiveSentence:
         eligibilityCategory !== "c3" || currentOffenses?.length > 0,
     },
   };
+
   const newIneligibleCriteria: z.input<
     typeof compliantReportingSchema.shape.ineligibleCriteria
   > = {};
@@ -615,10 +677,7 @@ export const transformCompliantReportingReferral: TransformFunction<
 
   const transformedRecord: CompliantReportingReferralRecordFull = {
     ...zodRecord,
-    lifetimeOffensesExpired,
-    pastOffenses,
     remainingCriteriaNeeded: remainingCriteriaNeeded ?? 0,
-    offenseTypeEligibility,
   };
 
   return transformedRecord;
