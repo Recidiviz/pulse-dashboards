@@ -22,6 +22,7 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
+import useMeasure from "react-use-measure";
 import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components/macro";
 
@@ -160,6 +161,7 @@ type Point = {
 
 const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
+  const [ref, bounds] = useMeasure();
 
   const usersPoints: Point[] = metric.statusesOverTime.map((d) => ({
     date: d.endDate,
@@ -196,9 +198,9 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
   const yRange = [0, maxTickValue];
 
   return (
-    <Wrapper>
+    <Wrapper ref={ref}>
       <ResponsiveXYFrame
-        responsiveWidth
+        responsiveWidth={!bounds.width}
         hoverAnnotation
         // eslint-disable-next-line react/no-unstable-nested-components
         tooltipContent={(d: any) => {
@@ -233,7 +235,7 @@ const OutliersLinePlot: React.FC<OutliersLinePlotType> = ({ metric }) => {
         lineStyle={(l: any) => l.lineStyles}
         xAccessor="date"
         yAccessor="value"
-        size={[0, 300]}
+        size={[bounds.width - 10, 300]}
         margin={{
           bottom: 32,
         }}
