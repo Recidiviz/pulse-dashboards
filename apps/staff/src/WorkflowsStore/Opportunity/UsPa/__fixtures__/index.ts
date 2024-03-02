@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ClientRecord } from "../../../../FirestoreStore";
+import { dateToTimestamp } from "../../../utils";
 import { UsPaAdminSupervisionReferralRecord } from "../UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 
 export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRecord =
@@ -32,5 +34,31 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
         ineligibleOffenses: ["EXAMPLE"],
         ineligibleSentencesExpirationDate: [new Date("2021-06-01")],
       },
+      usPaSupervisionLevelIsNotLimited: {
+        limitedStartDate: null,
+        supervisionLevel: "EXAMPLE",
+      },
     },
+    ineligibleCriteria: {},
   };
+
+export const usPaAdminSupervisionEligibleClientRecord: ClientRecord = {
+  recordId: "us_pa_001",
+  personName: {
+    givenNames: "BETTY",
+    surname: "RUBBLE",
+  },
+  personExternalId: "001",
+  displayId: "d001",
+  pseudonymizedId: "p001",
+  stateCode: "US_PA",
+  officerId: "OFFICER3",
+  supervisionType: "PROBATION",
+  supervisionLevel: "MEDIUM",
+  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  address: "123 Bedrock Lane",
+  phoneNumber: "5555555678",
+  expirationDate: dateToTimestamp("2024-12-31"),
+  allEligibleOpportunities: ["usPaAdminSupervision"],
+  personType: "CLIENT",
+};

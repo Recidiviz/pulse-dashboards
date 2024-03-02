@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fully eligible requirements met 1`] = `
+Array [
+  Object {
+    "text": "Client has not incurred high sanctions within the last year",
+  },
+  Object {
+    "text": "Has fulfilled treatment and special condition requirements",
+  },
+  Object {
+    "text": "Not serving for an ineligible offense",
+  },
+  Object {
+    "text": "Currently on EXAMPLE supervision",
+  },
+]
+`;

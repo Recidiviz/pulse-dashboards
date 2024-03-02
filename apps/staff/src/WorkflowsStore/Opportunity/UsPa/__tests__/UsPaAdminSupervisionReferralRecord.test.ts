@@ -34,7 +34,12 @@ const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
       ineligibleOffenses: ["ABC", "DEF"],
       ineligibleSentencesExpirationDate: ["2023-06-01", "2022-01-01"],
     },
+    usPaSupervisionLevelIsNotLimited: {
+      limitedStartDate: null,
+      supervisionLevel: "EXAMPLE",
+    },
   },
+  ineligibleCriteria: {},
 };
 
 test("record parses as expected", () => {
@@ -45,6 +50,7 @@ test("parses null reason fields", () => {
   const testRecord: UsPaAdminSupervisionReferralRecordRaw = {
     ...rawRecord,
     eligibleCriteria: {
+      ...rawRecord.eligibleCriteria,
       usPaFulfilledRequirements: null,
       usPaNoHighSanctionsInPastYear: null,
       usPaNotServingIneligibleAsOffense: null,

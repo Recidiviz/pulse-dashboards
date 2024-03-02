@@ -13,8 +13,13 @@ Object {
       "ineligibleOffenses": Array [],
       "ineligibleSentencesExpirationDate": Array [],
     },
+    "usPaSupervisionLevelIsNotLimited": Object {
+      "limitedStartDate": null,
+      "supervisionLevel": "EXAMPLE",
+    },
   },
   "externalId": "abc123",
+  "ineligibleCriteria": Object {},
   "stateCode": "US_PA",
 }
 `;
@@ -25,8 +30,13 @@ Object {
     "usPaFulfilledRequirements": null,
     "usPaNoHighSanctionsInPastYear": null,
     "usPaNotServingIneligibleAsOffense": null,
+    "usPaSupervisionLevelIsNotLimited": Object {
+      "limitedStartDate": null,
+      "supervisionLevel": "EXAMPLE",
+    },
   },
   "externalId": "abc123",
+  "ineligibleCriteria": Object {},
   "stateCode": "US_PA",
 }
 `;
@@ -50,8 +60,13 @@ Object {
         2022-01-01T00:00:00.000Z,
       ],
     },
+    "usPaSupervisionLevelIsNotLimited": Object {
+      "limitedStartDate": null,
+      "supervisionLevel": "EXAMPLE",
+    },
   },
   "externalId": "abc123",
+  "ineligibleCriteria": Object {},
   "stateCode": "US_PA",
 }
 `;

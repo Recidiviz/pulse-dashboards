@@ -61,6 +61,7 @@ import {
 } from "./Opportunity";
 import { SupervisionOpportunityType } from "./Opportunity/OpportunityConfigs";
 import { UsOrEarnedDischargeOpportunity } from "./Opportunity/UsOr/UsOrEarnedDischargeOpportunity/UsOrEarnedDischargeOpportunity";
+import { UsPaAdminSupervisionOpportunity } from "./Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
@@ -109,6 +110,7 @@ const supervisionOpportunityConstructors: Record<
   usMiPastFTRD: UsMiPastFTRDOpportunity,
   usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,
   usOrEarnedDischarge: UsOrEarnedDischargeOpportunity,
+  usPaAdminSupervision: UsPaAdminSupervisionOpportunity,
 };
 
 export const createClientOpportunity: OpportunityFactory<

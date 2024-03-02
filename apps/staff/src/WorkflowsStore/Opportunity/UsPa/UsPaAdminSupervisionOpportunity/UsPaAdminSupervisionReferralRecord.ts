@@ -37,7 +37,12 @@ export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
         ineligibleSentencesExpirationDate: z.array(dateStringSchema),
       })
       .nullable(),
+    usPaSupervisionLevelIsNotLimited: z.object({
+      limitedStartDate: dateStringSchema.nullable(),
+      supervisionLevel: z.string(),
+    }),
   }),
+  ineligibleCriteria: z.object({}),
 });
 
 export type UsPaAdminSupervisionReferralRecord = z.infer<

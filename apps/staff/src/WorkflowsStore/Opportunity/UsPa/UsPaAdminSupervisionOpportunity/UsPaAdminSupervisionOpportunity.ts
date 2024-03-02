@@ -1,0 +1,114 @@
+/*
+ * Recidiviz - a data platform for criminal justice reform
+ * Copyright (C) 2024 Recidiviz, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * =============================================================================
+ */
+
+import { makeObservable } from "mobx";
+
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { Client } from "../../../Client";
+import { OTHER_KEY } from "../../../utils";
+import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityRequirement } from "../../types";
+import {
+  CriteriaCopy,
+  CriteriaFormatters,
+  hydrateCriteria,
+} from "../../utils/criteriaUtils";
+import {
+  UsPaAdminSupervisionReferralRecord,
+  usPaAdminSupervisionSchema,
+} from "./UsPaAdminSupervisionReferralRecord";
+
+const CRITERIA_FORMATTERS: CriteriaFormatters<UsPaAdminSupervisionReferralRecord> =
+  {
+    eligibleCriteria: {
+      usPaSupervisionLevelIsNotLimited: {
+        SUPERVISION_LEVEL: ({ supervisionLevel }) => supervisionLevel,
+      },
+    },
+  };
+
+const CRITERIA_COPY: CriteriaCopy<UsPaAdminSupervisionReferralRecord> = {
+  eligibleCriteria: [
+    [
+      "usPaNoHighSanctionsInPastYear",
+      {
+        text: "Client has not incurred high sanctions within the last year",
+      },
+    ],
+    [
+      "usPaFulfilledRequirements",
+      {
+        text: "Has fulfilled treatment and special condition requirements",
+      },
+    ],
+    [
+      "usPaNotServingIneligibleAsOffense",
+      {
+        text: "Not serving for an ineligible offense",
+      },
+    ],
+    [
+      "usPaSupervisionLevelIsNotLimited",
+      {
+        text: "Currently on $SUPERVISION_LEVEL supervision",
+      },
+    ],
+  ],
+  ineligibleCriteria: [],
+};
+
+const DENIAL_REASONS_MAP = {
+  FELONY_DRUG:
+    "Client is currently being supervised for an ineligible felony drug offense",
+  [OTHER_KEY]: "Other, please specify a reason",
+};
+
+export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
+  Client,
+  UsPaAdminSupervisionReferralRecord
+> {
+  constructor(client: Client) {
+    super(
+      client,
+      "usPaAdminSupervision",
+      client.rootStore,
+      usPaAdminSupervisionSchema.parse,
+    );
+
+    makeObservable(this, { requirementsMet: true });
+  }
+
+  get requirementsMet(): OpportunityRequirement[] {
+    return hydrateCriteria(
+      this.record,
+      "eligibleCriteria",
+      CRITERIA_COPY,
+      CRITERIA_FORMATTERS,
+    );
+  }
+
+  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
+    "ClientProfileDetails",
+  ];
+
+  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_PA;
+
+  denialReasonsMap = DENIAL_REASONS_MAP;
+}
