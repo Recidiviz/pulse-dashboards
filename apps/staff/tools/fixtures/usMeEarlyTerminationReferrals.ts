@@ -28,7 +28,7 @@ export const usMeEarlyTerminationReferralsFixture =
         usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
           eligibleDate: "2024-04-03",
         },
-        onMediumSupervisionLevelOrLower: {
+        supervisionLevelIsMediumOrLower: {
           supervisionLevel: "MEDIUM",
         },
         usMeNoPendingViolationsWhileSupervised: null,
@@ -55,7 +55,7 @@ export const usMeEarlyTerminationReferralsFixture =
         usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
           eligibleDate: "2024-04-03",
         },
-        onMediumSupervisionLevelOrLower: {
+        supervisionLevelIsMediumOrLower: {
           supervisionLevel: "MEDIUM",
         },
         usMeNoPendingViolationsWhileSupervised: null,
@@ -84,7 +84,7 @@ export const usMeEarlyTerminationReferralsFixture =
         usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
           eligibleDate: "2024-04-03",
         },
-        onMediumSupervisionLevelOrLower: {
+        supervisionLevelIsMediumOrLower: {
           supervisionLevel: "MEDIUM",
         },
       },

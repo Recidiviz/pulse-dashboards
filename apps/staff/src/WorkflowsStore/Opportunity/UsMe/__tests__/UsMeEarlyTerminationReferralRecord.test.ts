@@ -109,19 +109,3 @@ test("transform record with null pending violation criteria", () => {
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
 });
-
-// TODO(#4484): Remove deprecated `onMediumSupervisionLevelOrLower` criterion from Early Discharge
-test("transform record with old criterion: onMediumSupervisionLevelOrLower", () => {
-  const rawRecord: UsMeEarlyTerminationReferralRecordRaw = {
-    stateCode: "US_ME",
-    externalId: "abc123",
-    eligibleCriteria: {
-      ...omit(defaultEligibleCriteria, "supervisionLevelIsMediumOrLower"),
-      onMediumSupervisionLevelOrLower:
-        defaultEligibleCriteria.supervisionLevelIsMediumOrLower,
-    },
-    ineligibleCriteria: {},
-  };
-
-  expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
-});

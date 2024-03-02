@@ -20,25 +20,6 @@ Object {
 }
 `;
 
-exports[`transform record with old criterion: onMediumSupervisionLevelOrLower 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "noConvictionWithin6Months": Object {},
-    "supervisionLevelIsMediumOrLower": Object {
-      "supervisionLevel": "MEDIUM",
-    },
-    "usMePaidAllOwedRestitution": Object {},
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
-      "eligibleDate": 2022-01-03T00:00:00.000Z,
-    },
-  },
-  "externalId": "abc123",
-  "ineligibleCriteria": Object {},
-  "stateCode": "US_ME",
-}
-`;
-
 exports[`transform record with pending violation ineligibleCriteria 1`] = `
 Object {
   "caseNotes": Object {},
