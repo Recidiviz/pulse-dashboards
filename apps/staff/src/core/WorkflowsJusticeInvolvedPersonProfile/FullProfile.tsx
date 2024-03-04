@@ -286,7 +286,6 @@ export const FullProfile = observer(
               avatarSize="lg"
               person={person}
               textSize="sm"
-              hideTooltip
               nameHoverState={false}
             />
             <ContactDetails person={person} isMobile={isTablet} />

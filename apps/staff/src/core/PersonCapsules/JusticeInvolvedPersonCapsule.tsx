@@ -25,9 +25,13 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { useEffect } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import useClipboard from "react-use-clipboard";
 import styled, { css } from "styled-components/macro";
 
+import copyIcon from "../../assets/static/images/copy.svg";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
@@ -37,8 +41,8 @@ export type JusticeInvolvedPersonCapsuleProps = {
   person: JusticeInvolvedPerson;
   status: React.ReactNode;
   textSize: "sm" | "lg";
+  profileLink?: string;
   hideId?: boolean;
-  hideTooltip?: boolean;
   nameHoverState?: boolean;
 };
 
@@ -48,6 +52,22 @@ const PersonName = styled.span`
 
 const PersonId = styled.span`
   color: ${palette.data.teal1};
+  padding: 0 ${rem(spacing.xs)};
+  border-radius: ${rem(spacing.xs / 2)};
+  transition: all 0.3s ease;
+
+  &::after {
+    content: url(${copyIcon});
+    margin-left: ${rem(spacing.sm)};
+  }
+  &:hover {
+    background: rgba(53, 83, 98, 0.05);
+    cursor: pointer;
+  }
+  &:active {
+    background: ${palette.slate20};
+    cursor: pointer;
+  }
 `;
 
 const Wrapper = styled.div<{ nameHoverState: boolean }>`
@@ -86,6 +106,13 @@ const PersonStatusLg = styled(Sans16)`
   ${personStatusStyles}
 `;
 
+const StyledLink = styled(Link)`
+  &:hover ${PersonName} {
+    text-decoration: underline;
+    color: ${palette.signal.links};
+  }
+`;
+
 const SIZES = {
   avatar: {
     md: 40,
@@ -101,36 +128,74 @@ const SIZES = {
   },
 };
 
+const ProfileLinkWrapper: React.FC<{
+  link: string;
+  children: React.ReactElement;
+}> = ({ link, children }) => (
+  <StyledLink className="PersonProfileLink" to={link}>
+    <TooltipTrigger contents="Go to profile">{children}</TooltipTrigger>
+  </StyledLink>
+);
+
 export const JusticeInvolvedPersonCapsule = observer(
   function JusticeInvolvedPersonCapsule({
     avatarSize,
     person,
     status,
     textSize,
+    profileLink,
     hideId = false,
-    hideTooltip = false,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
+    const [isCopied, copyToClipboard] = useClipboard(person.displayId, {
+      successDuration: 5000,
+    });
+
+    useEffect(() => {
+      if (isCopied) toast("DOC ID copied!", { duration: 5000 });
+    }, [isCopied]);
+
     const IdentityEl = SIZES.identity[textSize];
     const StatusEl = SIZES.status[textSize];
 
     return (
       <Wrapper nameHoverState={nameHoverState}>
-        <PersonInitialsAvatar
-          name={person.displayPreferredName}
-          size={SIZES.avatar[avatarSize]}
-        />
+        {profileLink ? (
+          <ProfileLinkWrapper link={profileLink}>
+            <PersonInitialsAvatar
+              name={person.displayPreferredName}
+              size={SIZES.avatar[avatarSize]}
+            />
+          </ProfileLinkWrapper>
+        ) : (
+          <PersonInitialsAvatar
+            name={person.displayPreferredName}
+            size={SIZES.avatar[avatarSize]}
+          />
+        )}
         <PersonInfo>
           <IdentityEl>
-            <TooltipTrigger contents={!hideTooltip && "Go to profile"}>
+            {profileLink ? (
+              <ProfileLinkWrapper link={profileLink}>
+                <PersonName className="PersonName fs-exclude">
+                  {person.displayPreferredName}
+                </PersonName>
+              </ProfileLinkWrapper>
+            ) : (
               <PersonName className="PersonName fs-exclude">
                 {person.displayPreferredName}
               </PersonName>
-            </TooltipTrigger>
+            )}
             {!hideId && (
               <>
                 <Separator> </Separator>
-                <PersonId className="fs-exclude">{person.displayId}</PersonId>
+                <PersonId
+                  title="Copy DOC ID to clipboard"
+                  className="fs-exclude"
+                  onClick={() => copyToClipboard()}
+                >
+                  {person.displayId}
+                </PersonId>
               </>
             )}
           </IdentityEl>

@@ -32,11 +32,11 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   color: rgba(53,83,98,0.7);
 }
 
-.c16 {
+.c13 {
   pointer-events: none;
 }
 
-.c16 > * {
+.c13 > * {
   pointer-events: auto;
 }
 
@@ -125,7 +125,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   transform: translate( 30rem, -50% ) !important;
 }
 
-.c13 {
+.c15 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -133,7 +133,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   letter-spacing: -0.01em;
 }
 
-.c22 {
+.c23 {
   font: 500 1rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -141,7 +141,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   letter-spacing: -0.01em;
 }
 
-.c15 {
+.c17 {
   font: 500 1.125rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.02em;
   -moz-letter-spacing: -0.02em;
@@ -149,7 +149,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   letter-spacing: -0.02em;
 }
 
-.c12 {
+.c14 {
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -170,12 +170,12 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   width: 2.5rem;
 }
 
-.c12 svg {
+.c14 svg {
   left: 0;
   position: absolute;
 }
 
-.c14 {
+.c16 {
   color: white;
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
@@ -187,16 +187,35 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   text-align: center;
 }
 
-.c19 {
+.c20 {
   color: rgba(53,83,98,0.3);
 }
 
-.c18 {
+.c19 {
   color: #003331;
 }
 
-.c20 {
+.c21 {
   color: #90aeb5;
+  padding: 0 0.25rem;
+  border-radius: 0.125rem;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.c21::after {
+  content: url(-react-component:[object Object];);
+  margin-left: 0.5rem;
+}
+
+.c21:hover {
+  background: rgba(53,83,98,0.05);
+  cursor: pointer;
+}
+
+.c21:active {
+  background: rgba(53,83,98,0.2);
+  cursor: pointer;
 }
 
 .c11 {
@@ -210,16 +229,16 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   grid-template-columns: auto 1fr;
 }
 
-.c11:hover .c17 {
-  -webkit-text-decoration: underline;
-  text-decoration: underline;
-  color: #006c67;
-}
-
-.c21 {
+.c22 {
   color: rgba(53,83,98,0.7);
   text-wrap: balance;
   width: 18rem;
+}
+
+.c12:hover .c18 {
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  color: #006c67;
 }
 
 .c10 {
@@ -302,12 +321,12 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   justify-content: space-between;
 }
 
-.c23 {
+.c24 {
   color: rgba(53,83,98,0.85);
   margin: 1rem 0;
 }
 
-.c25 {
+.c26 {
   color: rgba(53,83,98,0.85);
   border: 1px solid rgba(53,83,98,0.2);
   margin: 1rem 0 0;
@@ -316,11 +335,11 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
   white-space: pre-line;
 }
 
-.c24 {
+.c25 {
   color: #012322;
 }
 
-.c26 {
+.c27 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -358,7 +377,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
 }
 
 @media (max-width:1372px) {
-  .c21 {
+  .c22 {
     width: 15rem;
   }
 }
@@ -441,131 +460,141 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
             <div
               class="c10"
             >
-              <a
-                class="PersonProfileLink"
-                href="/workflows/clients/p101"
+              <div
+                class="c11"
               >
-                <div
-                  class="c11"
+                <a
+                  class="c12 PersonProfileLink"
+                  href="/workflows/clients/p101"
                 >
-                  <div
-                    class="c12 UserAvatar"
-                    size="40"
+                  <span
+                    class="c13"
                   >
-                    <svg
-                      fill="none"
-                      height="40"
-                      role="img"
-                      viewBox="0 0 80 80"
-                      width="40"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>
-                        LH
-                      </title>
-                      <mask
-                        height="80"
-                        id=":r2:"
-                        maskUnits="userSpaceOnUse"
-                        width="80"
-                        x="0"
-                        y="0"
-                      >
-                        <rect
-                          fill="#FFFFFF"
-                          height="80"
-                          rx="160"
-                          width="80"
-                        />
-                      </mask>
-                      <g
-                        mask="url(#:r2:)"
-                      >
-                        <rect
-                          fill="#90aeb5"
-                          height="80"
-                          width="80"
-                        />
-                        <path
-                          d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-                          fill="#cc989c"
-                          filter="url(#prefix__filter0_f)"
-                          transform="translate(0 0) rotate(176 40 40) scale(1.2)"
-                        />
-                        <path
-                          d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-                          fill="#25636f"
-                          filter="url(#prefix__filter0_f)"
-                          style="mix-blend-mode: overlay;"
-                          transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
-                        />
-                      </g>
-                      <defs>
-                        <filter
-                          color-interpolation-filters="sRGB"
-                          filterUnits="userSpaceOnUse"
-                          id="prefix__filter0_f"
-                        >
-                          <feflood
-                            flood-opacity="0"
-                            result="BackgroundImageFix"
-                          />
-                          <feblend
-                            in="SourceGraphic"
-                            in2="BackgroundImageFix"
-                            result="shape"
-                          />
-                          <fegaussianblur
-                            result="effect1_foregroundBlur"
-                            stdDeviation="7"
-                          />
-                        </filter>
-                      </defs>
-                    </svg>
                     <div
-                      class="c13 c14 fs-exclude"
+                      class="c14 UserAvatar"
                       size="40"
                     >
-                      LH
+                      <svg
+                        fill="none"
+                        height="40"
+                        role="img"
+                        viewBox="0 0 80 80"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          LH
+                        </title>
+                        <mask
+                          height="80"
+                          id=":r2:"
+                          maskUnits="userSpaceOnUse"
+                          width="80"
+                          x="0"
+                          y="0"
+                        >
+                          <rect
+                            fill="#FFFFFF"
+                            height="80"
+                            rx="160"
+                            width="80"
+                          />
+                        </mask>
+                        <g
+                          mask="url(#:r2:)"
+                        >
+                          <rect
+                            fill="#90aeb5"
+                            height="80"
+                            width="80"
+                          />
+                          <path
+                            d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                            fill="#cc989c"
+                            filter="url(#prefix__filter0_f)"
+                            transform="translate(0 0) rotate(176 40 40) scale(1.2)"
+                          />
+                          <path
+                            d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                            fill="#25636f"
+                            filter="url(#prefix__filter0_f)"
+                            style="mix-blend-mode: overlay;"
+                            transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            color-interpolation-filters="sRGB"
+                            filterUnits="userSpaceOnUse"
+                            id="prefix__filter0_f"
+                          >
+                            <feflood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feblend
+                              in="SourceGraphic"
+                              in2="BackgroundImageFix"
+                              result="shape"
+                            />
+                            <fegaussianblur
+                              result="effect1_foregroundBlur"
+                              stdDeviation="7"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                      <div
+                        class="c15 c16 fs-exclude"
+                        size="40"
+                      >
+                        LH
+                      </div>
                     </div>
-                  </div>
+                  </span>
+                </a>
+                <div
+                  class=""
+                >
                   <div
-                    class=""
+                    class="c17"
                   >
-                    <div
-                      class="c15"
+                    <a
+                      class="c12 PersonProfileLink"
+                      href="/workflows/clients/p101"
                     >
                       <span
-                        class="c16"
+                        class="c13"
                       >
                         <span
-                          class="c17 c18 PersonName fs-exclude"
+                          class="c18 c19 PersonName fs-exclude"
                         >
                           Linet Hansen
                         </span>
                       </span>
-                      <span
-                        class="c19"
-                      >
-                         
-                      </span>
-                      <span
-                        class="c20 fs-exclude"
-                      >
-                        d101
-                      </span>
-                    </div>
-                    <div
-                      class="c13 c21 WorkflowsStatus__101 fs-exclude"
+                    </a>
+                    <span
+                      class="c20"
                     >
-                      TN PROBATIONER
-                    </div>
+                       
+                    </span>
+                    <span
+                      class="c21 fs-exclude"
+                      title="Copy DOC ID to clipboard"
+                    >
+                      d101
+                    </span>
+                  </div>
+                  <div
+                    class="c15 c22 WorkflowsStatus__101 fs-exclude"
+                  >
+                    TN PROBATIONER
                   </div>
                 </div>
-              </a>
+              </div>
             </div>
             <div
-              class="c22 c23"
+              class="c23 c24"
             >
               Firstname Smith
                sent the following text messages to
@@ -574,7 +603,7 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
                at
                
               <span
-                class="c24"
+                class="c25"
               >
                 (555) 555-5678
               </span>
@@ -583,17 +612,17 @@ exports[`MilestonesSidePanel Congratulated renders with text message preview 1`]
               .
             </div>
             <div
-              class="c22 c25"
+              class="c23 c26"
             >
               This is the full text message
             </div>
             <div
-              class="c22 c25"
+              class="c23 c26"
             >
               To stop receiving these texts, reply: STOP
             </div>
             <div
-              class="c26"
+              class="c27"
             />
           </div>
         </div>
@@ -635,11 +664,11 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   color: rgba(53,83,98,0.7);
 }
 
-.c13 {
+.c10 {
   pointer-events: none;
 }
 
-.c13 > * {
+.c10 > * {
   pointer-events: auto;
 }
 
@@ -728,7 +757,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   transform: translate( 30rem, -50% ) !important;
 }
 
-.c10 {
+.c12 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -736,7 +765,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   letter-spacing: -0.01em;
 }
 
-.c23 {
+.c24 {
   font: 500 1rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -744,7 +773,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   letter-spacing: -0.01em;
 }
 
-.c12 {
+.c14 {
   font: 500 1.125rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.02em;
   -moz-letter-spacing: -0.02em;
@@ -752,7 +781,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   letter-spacing: -0.02em;
 }
 
-.c9 {
+.c11 {
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -773,12 +802,12 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   width: 2.5rem;
 }
 
-.c9 svg {
+.c11 svg {
   left: 0;
   position: absolute;
 }
 
-.c11 {
+.c13 {
   color: white;
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
@@ -790,16 +819,35 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   text-align: center;
 }
 
-.c16 {
+.c17 {
   color: rgba(53,83,98,0.3);
 }
 
-.c15 {
+.c16 {
   color: #003331;
 }
 
-.c17 {
+.c18 {
   color: #90aeb5;
+  padding: 0 0.25rem;
+  border-radius: 0.125rem;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.c18::after {
+  content: url(-react-component:[object Object];);
+  margin-left: 0.5rem;
+}
+
+.c18:hover {
+  background: rgba(53,83,98,0.05);
+  cursor: pointer;
+}
+
+.c18:active {
+  background: rgba(53,83,98,0.2);
+  cursor: pointer;
 }
 
 .c8 {
@@ -813,16 +861,16 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   grid-template-columns: auto 1fr;
 }
 
-.c8:hover .c14 {
-  -webkit-text-decoration: underline;
-  text-decoration: underline;
-  color: #006c67;
-}
-
-.c18 {
+.c19 {
   color: rgba(53,83,98,0.7);
   text-wrap: balance;
   width: 18rem;
+}
+
+.c9:hover .c15 {
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  color: #006c67;
 }
 
 .c7 {
@@ -858,7 +906,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   display: none;
 }
 
-.c20 {
+.c21 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -872,11 +920,11 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   align-items: center;
 }
 
-.c21 {
+.c22 {
   margin-left: 0.5rem;
 }
 
-.c19 {
+.c20 {
   font: 500 1rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -905,12 +953,12 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   justify-content: space-between;
 }
 
-.c24 {
+.c25 {
   color: #012322;
   padding: 1rem 0;
 }
 
-.c22 {
+.c23 {
   -webkit-text-decoration: underline;
   text-decoration: underline;
   cursor: pointer;
@@ -926,7 +974,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   flex-flow: column nowrap;
 }
 
-.c27 {
+.c28 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -939,7 +987,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   align-self: center;
 }
 
-.c26 {
+.c27 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -950,7 +998,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
   padding: 4px 0;
 }
 
-.c25 {
+.c26 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -961,7 +1009,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
 }
 
 @media (max-width:1372px) {
-  .c18 {
+  .c19 {
     width: 15rem;
   }
 }
@@ -1027,170 +1075,180 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
             <div
               class="c7"
             >
-              <a
-                class="PersonProfileLink"
-                href="/workflows/clients/p101"
+              <div
+                class="c8"
               >
-                <div
-                  class="c8"
+                <a
+                  class="c9 PersonProfileLink"
+                  href="/workflows/clients/p101"
                 >
-                  <div
-                    class="c9 UserAvatar"
-                    size="40"
+                  <span
+                    class="c10"
                   >
-                    <svg
-                      fill="none"
-                      height="40"
-                      role="img"
-                      viewBox="0 0 80 80"
-                      width="40"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>
-                        LH
-                      </title>
-                      <mask
-                        height="80"
-                        id=":r1:"
-                        maskUnits="userSpaceOnUse"
-                        width="80"
-                        x="0"
-                        y="0"
-                      >
-                        <rect
-                          fill="#FFFFFF"
-                          height="80"
-                          rx="160"
-                          width="80"
-                        />
-                      </mask>
-                      <g
-                        mask="url(#:r1:)"
-                      >
-                        <rect
-                          fill="#90aeb5"
-                          height="80"
-                          width="80"
-                        />
-                        <path
-                          d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-                          fill="#cc989c"
-                          filter="url(#prefix__filter0_f)"
-                          transform="translate(0 0) rotate(176 40 40) scale(1.2)"
-                        />
-                        <path
-                          d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-                          fill="#25636f"
-                          filter="url(#prefix__filter0_f)"
-                          style="mix-blend-mode: overlay;"
-                          transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
-                        />
-                      </g>
-                      <defs>
-                        <filter
-                          color-interpolation-filters="sRGB"
-                          filterUnits="userSpaceOnUse"
-                          id="prefix__filter0_f"
-                        >
-                          <feflood
-                            flood-opacity="0"
-                            result="BackgroundImageFix"
-                          />
-                          <feblend
-                            in="SourceGraphic"
-                            in2="BackgroundImageFix"
-                            result="shape"
-                          />
-                          <fegaussianblur
-                            result="effect1_foregroundBlur"
-                            stdDeviation="7"
-                          />
-                        </filter>
-                      </defs>
-                    </svg>
                     <div
-                      class="c10 c11 fs-exclude"
+                      class="c11 UserAvatar"
                       size="40"
                     >
-                      LH
+                      <svg
+                        fill="none"
+                        height="40"
+                        role="img"
+                        viewBox="0 0 80 80"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          LH
+                        </title>
+                        <mask
+                          height="80"
+                          id=":r1:"
+                          maskUnits="userSpaceOnUse"
+                          width="80"
+                          x="0"
+                          y="0"
+                        >
+                          <rect
+                            fill="#FFFFFF"
+                            height="80"
+                            rx="160"
+                            width="80"
+                          />
+                        </mask>
+                        <g
+                          mask="url(#:r1:)"
+                        >
+                          <rect
+                            fill="#90aeb5"
+                            height="80"
+                            width="80"
+                          />
+                          <path
+                            d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                            fill="#cc989c"
+                            filter="url(#prefix__filter0_f)"
+                            transform="translate(0 0) rotate(176 40 40) scale(1.2)"
+                          />
+                          <path
+                            d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                            fill="#25636f"
+                            filter="url(#prefix__filter0_f)"
+                            style="mix-blend-mode: overlay;"
+                            transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            color-interpolation-filters="sRGB"
+                            filterUnits="userSpaceOnUse"
+                            id="prefix__filter0_f"
+                          >
+                            <feflood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feblend
+                              in="SourceGraphic"
+                              in2="BackgroundImageFix"
+                              result="shape"
+                            />
+                            <fegaussianblur
+                              result="effect1_foregroundBlur"
+                              stdDeviation="7"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                      <div
+                        class="c12 c13 fs-exclude"
+                        size="40"
+                      >
+                        LH
+                      </div>
                     </div>
-                  </div>
+                  </span>
+                </a>
+                <div
+                  class=""
+                >
                   <div
-                    class=""
+                    class="c14"
                   >
-                    <div
-                      class="c12"
+                    <a
+                      class="c9 PersonProfileLink"
+                      href="/workflows/clients/p101"
                     >
                       <span
-                        class="c13"
+                        class="c10"
                       >
                         <span
-                          class="c14 c15 PersonName fs-exclude"
+                          class="c15 c16 PersonName fs-exclude"
                         >
                           Linet Hansen
                         </span>
                       </span>
-                      <span
-                        class="c16"
-                      >
-                         
-                      </span>
-                      <span
-                        class="c17 fs-exclude"
-                      >
-                        d101
-                      </span>
-                    </div>
-                    <div
-                      class="c10 c18 WorkflowsStatus__101 fs-exclude"
+                    </a>
+                    <span
+                      class="c17"
                     >
-                      TN PROBATIONER
-                    </div>
+                       
+                    </span>
+                    <span
+                      class="c18 fs-exclude"
+                      title="Copy DOC ID to clipboard"
+                    >
+                      d101
+                    </span>
+                  </div>
+                  <div
+                    class="c12 c19 WorkflowsStatus__101 fs-exclude"
+                  >
+                    TN PROBATIONER
                   </div>
                 </div>
-              </a>
+              </div>
             </div>
             <div
-              class="c19"
+              class="c20"
             >
               <div
-                class="c20"
+                class="c21"
               >
                 <div />
                 <span
-                  class="c21"
+                  class="c22"
                 >
                   Declined
                 </span>
               </div>
               <span
-                class="c22"
+                class="c23"
               >
                 Undo
               </span>
             </div>
             <div
-              class="c23 c24"
+              class="c24 c25"
             >
               Reasons
             </div>
             <div
-              class="c25"
+              class="c26"
             />
             <div
-              class="c23 c24"
+              class="c24 c25"
             >
               Milestones
             </div>
             <div
-              class="c25"
+              class="c26"
             >
               <div
-                class="c26"
+                class="c27"
               >
                 <div />
                 <span
-                  class="c27"
+                  class="c28"
                 >
                   6 months violation-free
                 </span>
@@ -1205,7 +1263,7 @@ exports[`MilestonesSidePanel Declined to Send 1`] = `
 `;
 
 exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] = `
-.c35 {
+.c36 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1237,21 +1295,21 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   color: #fff;
 }
 
-.c35:disabled {
+.c36:disabled {
   cursor: not-allowed;
 }
 
-.c35:hover,
-.c35:focus {
+.c36:hover,
+.c36:focus {
   background-color: #014c48;
 }
 
-.c35:active,
-.c35[aria-expanded="true"] {
+.c36:active,
+.c36[aria-expanded="true"] {
   background-color: #00413e;
 }
 
-.c35:disabled {
+.c36:disabled {
   background-color: rgba(53,83,98,0.1);
   color: rgba(53,83,98,0.8);
 }
@@ -1287,11 +1345,11 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   color: rgba(53,83,98,0.7);
 }
 
-.c13 {
+.c10 {
   pointer-events: none;
 }
 
-.c13 > * {
+.c10 > * {
   pointer-events: auto;
 }
 
@@ -1380,7 +1438,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   transform: translate( 30rem, -50% ) !important;
 }
 
-.c31 {
+.c32 {
   font: 500 0.75rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1388,7 +1446,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   letter-spacing: -0.01em;
 }
 
-.c10 {
+.c12 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1396,7 +1454,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   letter-spacing: -0.01em;
 }
 
-.c19 {
+.c20 {
   font: 500 1rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1404,7 +1462,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   letter-spacing: -0.01em;
 }
 
-.c12 {
+.c14 {
   font: 500 1.125rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.02em;
   -moz-letter-spacing: -0.02em;
@@ -1412,7 +1470,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   letter-spacing: -0.02em;
 }
 
-.c9 {
+.c11 {
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -1433,12 +1491,12 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   width: 2.5rem;
 }
 
-.c9 svg {
+.c11 svg {
   left: 0;
   position: absolute;
 }
 
-.c11 {
+.c13 {
   color: white;
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
@@ -1450,16 +1508,35 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   text-align: center;
 }
 
-.c16 {
+.c17 {
   color: rgba(53,83,98,0.3);
 }
 
-.c15 {
+.c16 {
   color: #003331;
 }
 
-.c17 {
+.c18 {
   color: #90aeb5;
+  padding: 0 0.25rem;
+  border-radius: 0.125rem;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.c18::after {
+  content: url(-react-component:[object Object];);
+  margin-left: 0.5rem;
+}
+
+.c18:hover {
+  background: rgba(53,83,98,0.05);
+  cursor: pointer;
+}
+
+.c18:active {
+  background: rgba(53,83,98,0.2);
+  cursor: pointer;
 }
 
 .c8 {
@@ -1473,16 +1550,16 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   grid-template-columns: auto 1fr;
 }
 
-.c8:hover .c14 {
-  -webkit-text-decoration: underline;
-  text-decoration: underline;
-  color: #006c67;
-}
-
-.c18 {
+.c19 {
   color: rgba(53,83,98,0.7);
   text-wrap: balance;
   width: 18rem;
+}
+
+.c9:hover .c15 {
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  color: #006c67;
 }
 
 .c7 {
@@ -1518,17 +1595,17 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   display: none;
 }
 
-.c20 {
+.c21 {
   color: #012322;
   padding: 1rem 0;
 }
 
-.c32 {
+.c33 {
   color: rgba(53,83,98,0.85);
   margin: 0.75rem 0;
 }
 
-.c33 {
+.c34 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1555,14 +1632,14 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   align-items: center;
 }
 
-.c36 {
+.c37 {
   border-radius: 4px;
   color: #fff;
   width: 100%;
   margin-bottom: 0.75rem;
 }
 
-.c37 {
+.c38 {
   border-radius: 4px;
   background-color: #fff;
   border: 1px solid rgba(53,83,98,0.3);
@@ -1571,12 +1648,12 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   margin-bottom: 0.75rem;
 }
 
-.c37:hover,
-.c37:focus {
+.c38:hover,
+.c38:focus {
   color: #fff;
 }
 
-.c38 {
+.c39 {
   -webkit-text-decoration: underline;
   text-decoration: underline;
   cursor: pointer;
@@ -1592,7 +1669,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   flex-flow: column nowrap;
 }
 
-.c23 {
+.c24 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1605,7 +1682,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   align-self: center;
 }
 
-.c22 {
+.c23 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1616,7 +1693,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   padding: 4px 0;
 }
 
-.c21 {
+.c22 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1626,11 +1703,11 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   flex-flow: column nowrap;
 }
 
-.c34 {
+.c35 {
   width: 100%;
 }
 
-.c24 {
+.c25 {
   font: 500 0.75rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1650,7 +1727,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   border-radius: 8px;
 }
 
-.c26 {
+.c27 {
   font: 500 1rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1662,23 +1739,23 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   padding: 0;
 }
 
-.c26::-webkit-input-placeholder {
+.c27::-webkit-input-placeholder {
   color: rgba(53,83,98,0.6);
 }
 
-.c26::-moz-placeholder {
+.c27::-moz-placeholder {
   color: rgba(53,83,98,0.6);
 }
 
-.c26:-ms-input-placeholder {
+.c27:-ms-input-placeholder {
   color: rgba(53,83,98,0.6);
 }
 
-.c26::placeholder {
+.c27::placeholder {
   color: rgba(53,83,98,0.6);
 }
 
-.c25 {
+.c26 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1692,7 +1769,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   justify-content: space-between;
 }
 
-.c27 {
+.c28 {
   font: 500 1rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1705,12 +1782,12 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   padding: 1rem;
 }
 
-.c29 {
+.c30 {
   white-space: pre-line;
   padding-bottom: 1rem;
 }
 
-.c28 {
+.c29 {
   font: 500 0.75rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -1729,7 +1806,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   justify-content: space-between;
 }
 
-.c30 {
+.c31 {
   width: 100%;
   background-color: transparent;
   border: 0;
@@ -1737,24 +1814,24 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
   color: rgba(53,83,98,0.85);
 }
 
-.c30::-webkit-input-placeholder {
+.c31::-webkit-input-placeholder {
   color: rgba(53,83,98,0.6);
 }
 
-.c30::-moz-placeholder {
+.c31::-moz-placeholder {
   color: rgba(53,83,98,0.6);
 }
 
-.c30:-ms-input-placeholder {
+.c31:-ms-input-placeholder {
   color: rgba(53,83,98,0.6);
 }
 
-.c30::placeholder {
+.c31::placeholder {
   color: rgba(53,83,98,0.6);
 }
 
 @media (max-width:1372px) {
-  .c18 {
+  .c19 {
     width: 15rem;
   }
 }
@@ -1817,159 +1894,169 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
             <div
               class="c7"
             >
-              <a
-                class="PersonProfileLink"
-                href="/workflows/clients/p101"
+              <div
+                class="c8"
               >
-                <div
-                  class="c8"
+                <a
+                  class="c9 PersonProfileLink"
+                  href="/workflows/clients/p101"
                 >
-                  <div
-                    class="c9 UserAvatar"
-                    size="40"
+                  <span
+                    class="c10"
                   >
-                    <svg
-                      fill="none"
-                      height="40"
-                      role="img"
-                      viewBox="0 0 80 80"
-                      width="40"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>
-                        LH
-                      </title>
-                      <mask
-                        height="80"
-                        id=":r0:"
-                        maskUnits="userSpaceOnUse"
-                        width="80"
-                        x="0"
-                        y="0"
-                      >
-                        <rect
-                          fill="#FFFFFF"
-                          height="80"
-                          rx="160"
-                          width="80"
-                        />
-                      </mask>
-                      <g
-                        mask="url(#:r0:)"
-                      >
-                        <rect
-                          fill="#90aeb5"
-                          height="80"
-                          width="80"
-                        />
-                        <path
-                          d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-                          fill="#cc989c"
-                          filter="url(#prefix__filter0_f)"
-                          transform="translate(0 0) rotate(176 40 40) scale(1.2)"
-                        />
-                        <path
-                          d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-                          fill="#25636f"
-                          filter="url(#prefix__filter0_f)"
-                          style="mix-blend-mode: overlay;"
-                          transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
-                        />
-                      </g>
-                      <defs>
-                        <filter
-                          color-interpolation-filters="sRGB"
-                          filterUnits="userSpaceOnUse"
-                          id="prefix__filter0_f"
-                        >
-                          <feflood
-                            flood-opacity="0"
-                            result="BackgroundImageFix"
-                          />
-                          <feblend
-                            in="SourceGraphic"
-                            in2="BackgroundImageFix"
-                            result="shape"
-                          />
-                          <fegaussianblur
-                            result="effect1_foregroundBlur"
-                            stdDeviation="7"
-                          />
-                        </filter>
-                      </defs>
-                    </svg>
                     <div
-                      class="c10 c11 fs-exclude"
+                      class="c11 UserAvatar"
                       size="40"
                     >
-                      LH
+                      <svg
+                        fill="none"
+                        height="40"
+                        role="img"
+                        viewBox="0 0 80 80"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          LH
+                        </title>
+                        <mask
+                          height="80"
+                          id=":r0:"
+                          maskUnits="userSpaceOnUse"
+                          width="80"
+                          x="0"
+                          y="0"
+                        >
+                          <rect
+                            fill="#FFFFFF"
+                            height="80"
+                            rx="160"
+                            width="80"
+                          />
+                        </mask>
+                        <g
+                          mask="url(#:r0:)"
+                        >
+                          <rect
+                            fill="#90aeb5"
+                            height="80"
+                            width="80"
+                          />
+                          <path
+                            d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                            fill="#cc989c"
+                            filter="url(#prefix__filter0_f)"
+                            transform="translate(0 0) rotate(176 40 40) scale(1.2)"
+                          />
+                          <path
+                            d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                            fill="#25636f"
+                            filter="url(#prefix__filter0_f)"
+                            style="mix-blend-mode: overlay;"
+                            transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            color-interpolation-filters="sRGB"
+                            filterUnits="userSpaceOnUse"
+                            id="prefix__filter0_f"
+                          >
+                            <feflood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feblend
+                              in="SourceGraphic"
+                              in2="BackgroundImageFix"
+                              result="shape"
+                            />
+                            <fegaussianblur
+                              result="effect1_foregroundBlur"
+                              stdDeviation="7"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                      <div
+                        class="c12 c13 fs-exclude"
+                        size="40"
+                      >
+                        LH
+                      </div>
                     </div>
-                  </div>
+                  </span>
+                </a>
+                <div
+                  class=""
+                >
                   <div
-                    class=""
+                    class="c14"
                   >
-                    <div
-                      class="c12"
+                    <a
+                      class="c9 PersonProfileLink"
+                      href="/workflows/clients/p101"
                     >
                       <span
-                        class="c13"
+                        class="c10"
                       >
                         <span
-                          class="c14 c15 PersonName fs-exclude"
+                          class="c15 c16 PersonName fs-exclude"
                         >
                           Linet Hansen
                         </span>
                       </span>
-                      <span
-                        class="c16"
-                      >
-                         
-                      </span>
-                      <span
-                        class="c17 fs-exclude"
-                      >
-                        d101
-                      </span>
-                    </div>
-                    <div
-                      class="c10 c18 WorkflowsStatus__101 fs-exclude"
+                    </a>
+                    <span
+                      class="c17"
                     >
-                      TN PROBATIONER
-                    </div>
+                       
+                    </span>
+                    <span
+                      class="c18 fs-exclude"
+                      title="Copy DOC ID to clipboard"
+                    >
+                      d101
+                    </span>
+                  </div>
+                  <div
+                    class="c12 c19 WorkflowsStatus__101 fs-exclude"
+                  >
+                    TN PROBATIONER
                   </div>
                 </div>
-              </a>
+              </div>
             </div>
             <div
-              class="c19 c20"
+              class="c20 c21"
             >
               Milestones
             </div>
             <div
-              class="c21"
+              class="c22"
             >
               <div
-                class="c22"
+                class="c23"
               >
                 <div />
                 <span
-                  class="c23"
+                  class="c24"
                 >
                   6 months violation-free
                 </span>
               </div>
             </div>
             <div
-              class="c24"
+              class="c25"
             >
               <label
-                class="c25"
+                class="c26"
                 for="phoneNumber"
               >
                 Phone Number
               </label>
               <input
-                class="c26"
+                class="c27"
                 inputmode="numeric"
                 maxlength="14"
                 name="phoneNumber"
@@ -1979,10 +2066,10 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
               />
             </div>
             <div
-              class="c27"
+              class="c28"
             >
               <label
-                class="c28"
+                class="c29"
                 for="textMessage"
               >
                 Text Message
@@ -1995,7 +2082,7 @@ exports[`MilestonesSidePanel New Milestones renders with ComposeMessageView 1`] 
                 </span>
               </label>
               <div
-                class="c29"
+                class="c30"
               >
                 Message from Agent Smith at DOC:
 
@@ -2004,25 +2091,25 @@ Hey Linet! Congratulations on reaching these milestones:
 - 6 months violation-free
               </div>
               <textarea
-                class="c30"
+                class="c31"
                 id="textMessage"
                 maxlength="1483"
                 placeholder="Add your own message (Optional)"
               />
             </div>
             <div
-              class="c31 c32"
+              class="c32 c33"
             >
               Do not send critical information tied to deadlines. We cannot guarantee delivery of this text message.
             </div>
             <div
-              class="c33"
+              class="c34"
             >
               <span
-                class="c13 c34"
+                class="c10 c35"
               >
                 <button
-                  class="c35 c36"
+                  class="c36 c37"
                   disabled=""
                   kind="primary"
                   shape="pill"
@@ -2032,7 +2119,7 @@ Hey Linet! Congratulations on reaching these milestones:
                 </button>
               </span>
               <button
-                class="c35 c37"
+                class="c36 c38"
                 kind="primary"
                 shape="pill"
                 type="button"
@@ -2045,7 +2132,7 @@ Hey Linet! Congratulations on reaching these milestones:
                 Opt out of sending a congratulations text?
                  
                 <span
-                  class="c38"
+                  class="c39"
                 >
                   Tell us why
                 </span>
@@ -2091,11 +2178,11 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   color: rgba(53,83,98,0.7);
 }
 
-.c17 {
+.c14 {
   pointer-events: none;
 }
 
-.c17 > * {
+.c14 > * {
   pointer-events: auto;
 }
 
@@ -2184,7 +2271,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   transform: translate( 30rem, -50% ) !important;
 }
 
-.c14 {
+.c16 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -2192,7 +2279,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   letter-spacing: -0.01em;
 }
 
-.c23 {
+.c24 {
   font: 500 1rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -2200,7 +2287,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   letter-spacing: -0.01em;
 }
 
-.c16 {
+.c18 {
   font: 500 1.125rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.02em;
   -moz-letter-spacing: -0.02em;
@@ -2208,7 +2295,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   letter-spacing: -0.02em;
 }
 
-.c13 {
+.c15 {
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
@@ -2229,12 +2316,12 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   width: 2.5rem;
 }
 
-.c13 svg {
+.c15 svg {
   left: 0;
   position: absolute;
 }
 
-.c15 {
+.c17 {
   color: white;
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
@@ -2246,16 +2333,35 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   text-align: center;
 }
 
-.c20 {
+.c21 {
   color: rgba(53,83,98,0.3);
 }
 
-.c19 {
+.c20 {
   color: #003331;
 }
 
-.c21 {
+.c22 {
   color: #90aeb5;
+  padding: 0 0.25rem;
+  border-radius: 0.125rem;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.c22::after {
+  content: url(-react-component:[object Object];);
+  margin-left: 0.5rem;
+}
+
+.c22:hover {
+  background: rgba(53,83,98,0.05);
+  cursor: pointer;
+}
+
+.c22:active {
+  background: rgba(53,83,98,0.2);
+  cursor: pointer;
 }
 
 .c12 {
@@ -2269,16 +2375,16 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   grid-template-columns: auto 1fr;
 }
 
-.c12:hover .c18 {
-  -webkit-text-decoration: underline;
-  text-decoration: underline;
-  color: #006c67;
-}
-
-.c22 {
+.c23 {
   color: rgba(53,83,98,0.7);
   text-wrap: balance;
   width: 18rem;
+}
+
+.c13:hover .c19 {
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  color: #006c67;
 }
 
 .c11 {
@@ -2361,12 +2467,12 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
   justify-content: space-between;
 }
 
-.c24 {
+.c25 {
   color: rgba(53,83,98,0.85);
   margin: 1rem 0;
 }
 
-.c25 {
+.c26 {
   font: 500 0.875rem/1.2 "Public Sans",sans-serif;
   -webkit-letter-spacing: -0.01em;
   -moz-letter-spacing: -0.01em;
@@ -2410,7 +2516,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
 }
 
 @media (max-width:1372px) {
-  .c22 {
+  .c23 {
     width: 15rem;
   }
 }
@@ -2501,131 +2607,141 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
             <div
               class="c11"
             >
-              <a
-                class="PersonProfileLink"
-                href="/workflows/clients/p101"
+              <div
+                class="c12"
               >
-                <div
-                  class="c12"
+                <a
+                  class="c13 PersonProfileLink"
+                  href="/workflows/clients/p101"
                 >
-                  <div
-                    class="c13 UserAvatar"
-                    size="40"
+                  <span
+                    class="c14"
                   >
-                    <svg
-                      fill="none"
-                      height="40"
-                      role="img"
-                      viewBox="0 0 80 80"
-                      width="40"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>
-                        LH
-                      </title>
-                      <mask
-                        height="80"
-                        id=":r3:"
-                        maskUnits="userSpaceOnUse"
-                        width="80"
-                        x="0"
-                        y="0"
-                      >
-                        <rect
-                          fill="#FFFFFF"
-                          height="80"
-                          rx="160"
-                          width="80"
-                        />
-                      </mask>
-                      <g
-                        mask="url(#:r3:)"
-                      >
-                        <rect
-                          fill="#90aeb5"
-                          height="80"
-                          width="80"
-                        />
-                        <path
-                          d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
-                          fill="#cc989c"
-                          filter="url(#prefix__filter0_f)"
-                          transform="translate(0 0) rotate(176 40 40) scale(1.2)"
-                        />
-                        <path
-                          d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
-                          fill="#25636f"
-                          filter="url(#prefix__filter0_f)"
-                          style="mix-blend-mode: overlay;"
-                          transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
-                        />
-                      </g>
-                      <defs>
-                        <filter
-                          color-interpolation-filters="sRGB"
-                          filterUnits="userSpaceOnUse"
-                          id="prefix__filter0_f"
-                        >
-                          <feflood
-                            flood-opacity="0"
-                            result="BackgroundImageFix"
-                          />
-                          <feblend
-                            in="SourceGraphic"
-                            in2="BackgroundImageFix"
-                            result="shape"
-                          />
-                          <fegaussianblur
-                            result="effect1_foregroundBlur"
-                            stdDeviation="7"
-                          />
-                        </filter>
-                      </defs>
-                    </svg>
                     <div
-                      class="c14 c15 fs-exclude"
+                      class="c15 UserAvatar"
                       size="40"
                     >
-                      LH
+                      <svg
+                        fill="none"
+                        height="40"
+                        role="img"
+                        viewBox="0 0 80 80"
+                        width="40"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <title>
+                          LH
+                        </title>
+                        <mask
+                          height="80"
+                          id=":r3:"
+                          maskUnits="userSpaceOnUse"
+                          width="80"
+                          x="0"
+                          y="0"
+                        >
+                          <rect
+                            fill="#FFFFFF"
+                            height="80"
+                            rx="160"
+                            width="80"
+                          />
+                        </mask>
+                        <g
+                          mask="url(#:r3:)"
+                        >
+                          <rect
+                            fill="#90aeb5"
+                            height="80"
+                            width="80"
+                          />
+                          <path
+                            d="M32.414 59.35L50.376 70.5H72.5v-71H33.728L26.5 13.381l19.057 27.08L32.414 59.35z"
+                            fill="#cc989c"
+                            filter="url(#prefix__filter0_f)"
+                            transform="translate(0 0) rotate(176 40 40) scale(1.2)"
+                          />
+                          <path
+                            d="M22.216 24L0 46.75l14.108 38.129L78 86l-3.081-59.276-22.378 4.005 12.972 20.186-23.35 27.395L22.215 24z"
+                            fill="#25636f"
+                            filter="url(#prefix__filter0_f)"
+                            style="mix-blend-mode: overlay;"
+                            transform="translate(-4 -4) rotate(-84 40 40) scale(1.2)"
+                          />
+                        </g>
+                        <defs>
+                          <filter
+                            color-interpolation-filters="sRGB"
+                            filterUnits="userSpaceOnUse"
+                            id="prefix__filter0_f"
+                          >
+                            <feflood
+                              flood-opacity="0"
+                              result="BackgroundImageFix"
+                            />
+                            <feblend
+                              in="SourceGraphic"
+                              in2="BackgroundImageFix"
+                              result="shape"
+                            />
+                            <fegaussianblur
+                              result="effect1_foregroundBlur"
+                              stdDeviation="7"
+                            />
+                          </filter>
+                        </defs>
+                      </svg>
+                      <div
+                        class="c16 c17 fs-exclude"
+                        size="40"
+                      >
+                        LH
+                      </div>
                     </div>
-                  </div>
+                  </span>
+                </a>
+                <div
+                  class=""
+                >
                   <div
-                    class=""
+                    class="c18"
                   >
-                    <div
-                      class="c16"
+                    <a
+                      class="c13 PersonProfileLink"
+                      href="/workflows/clients/p101"
                     >
                       <span
-                        class="c17"
+                        class="c14"
                       >
                         <span
-                          class="c18 c19 PersonName fs-exclude"
+                          class="c19 c20 PersonName fs-exclude"
                         >
                           Linet Hansen
                         </span>
                       </span>
-                      <span
-                        class="c20"
-                      >
-                         
-                      </span>
-                      <span
-                        class="c21 fs-exclude"
-                      >
-                        d101
-                      </span>
-                    </div>
-                    <div
-                      class="c14 c22 WorkflowsStatus__101 fs-exclude"
+                    </a>
+                    <span
+                      class="c21"
                     >
-                      TN PROBATIONER
-                    </div>
+                       
+                    </span>
+                    <span
+                      class="c22 fs-exclude"
+                      title="Copy DOC ID to clipboard"
+                    >
+                      d101
+                    </span>
+                  </div>
+                  <div
+                    class="c16 c23 WorkflowsStatus__101 fs-exclude"
+                  >
+                    TN PROBATIONER
                   </div>
                 </div>
-              </a>
+              </div>
             </div>
             <div
-              class="c23 c24"
+              class="c24 c25"
             >
                indicated that they congratulated
                
@@ -2634,7 +2750,7 @@ exports[`MilestonesSidePanel renders without text message preview 1`] = `
                
             </div>
             <div
-              class="c25"
+              class="c26"
             />
           </div>
         </div>

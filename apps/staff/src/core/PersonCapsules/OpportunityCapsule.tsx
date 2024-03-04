@@ -58,7 +58,6 @@ export const OpportunityCapsule = observer(function OpportunityCapsule({
     <JusticeInvolvedPersonCapsule
       person={person}
       status={status}
-      hideTooltip
       {...otherProps}
     />
   );

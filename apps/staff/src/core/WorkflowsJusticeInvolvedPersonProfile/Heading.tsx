@@ -17,8 +17,6 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { Client } from "../../WorkflowsStore";
@@ -35,15 +33,16 @@ export const Heading = observer(function Heading({
 }: PersonProfileProps) {
   return (
     <HeadingWrapper>
-      <Link
-        className="PersonProfileLink"
-        to={workflowsUrl(
+      <ProfileCapsule
+        avatarSize="md"
+        person={person}
+        textSize="sm"
+        nameHoverState={false}
+        profileLink={workflowsUrl(
           person instanceof Client ? "clientProfile" : "residentProfile",
           { justiceInvolvedPersonId: person.pseudonymizedId },
         )}
-      >
-        <ProfileCapsule avatarSize="md" person={person} textSize="sm" />
-      </Link>
+      />
     </HeadingWrapper>
   );
 });
