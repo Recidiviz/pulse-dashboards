@@ -17,7 +17,7 @@
 import "@material/textfield/dist/mdc.textfield.css";
 
 import type { MDCTextFieldFoundation } from "@material/textfield";
-import { palette } from "@recidiviz/design-system";
+import { Icon, IconSVG, palette, Sans16 } from "@recidiviz/design-system";
 import {
   TextField,
   TextFieldHelperTextProps,
@@ -26,7 +26,7 @@ import {
 } from "@rmwc/textfield";
 import { observer } from "mobx-react-lite";
 import * as React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components/macro";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
@@ -48,9 +48,35 @@ const ThemeContainer = styled.div`
     color: ${palette.signal.links};
   }
 
+  .mdc-text-field {
+    padding: 0 16px;
+  }
+
+  .mdc-text-field--textarea {
+    flex-direction: row;
+  }
+
+  .mdc-text-field__input {
+    padding: 0;
+  }
+
+  .mdc-text-field__icon--trailing {
+    padding: 0 0 0 16px;
+    cursor: default;
+  }
+
   > label {
     width: 100%;
   }
+`;
+
+const SuccessIndicatorWrapper = styled(Sans16)`
+  display: inline-flex;
+  gap: 6px;
+`;
+
+const SuccessIndicatorText = styled(Sans16)`
+  color: ${palette.pine4};
 `;
 
 type BaseProps = TextFieldProps & TextFieldHTMLProps;
@@ -79,6 +105,19 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
     DEFAULT_ANIMATION_DURATION * Math.min(1, (value?.length ?? 0) / 100);
 
   useAnimatedValue(inputRef, value, duration);
+
+  const [showSuccessIndicator, setShowSuccessIndicator] = useState(false);
+  const [intermediateValue, setIntermediateValue] = useState(value);
+
+  const handleBlur = () => {
+    if (intermediateValue !== value) {
+      setShowSuccessIndicator(true);
+      setIntermediateValue(value);
+      setTimeout(() => {
+        setShowSuccessIndicator(false);
+      }, 3000);
+    }
+  };
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -133,10 +172,23 @@ const WebFormField: React.FC<WebFormFieldProps> = ({
         helpText={{ validationMsg, persistent, children }}
         value={value}
         onChange={onChange}
+        onBlur={handleBlur}
         foundationRef={foundationRef}
         inputRef={inputRef}
         className="fs-exclude"
         id={name}
+        trailingIcon={
+          showSuccessIndicator ? (
+            <SuccessIndicatorWrapper>
+              <Icon
+                kind={IconSVG.Success}
+                width={16}
+                color={palette.signal.highlight}
+              />
+              <SuccessIndicatorText>Saved</SuccessIndicatorText>
+            </SuccessIndicatorWrapper>
+          ) : null
+        }
       />
     </ThemeContainer>
   );

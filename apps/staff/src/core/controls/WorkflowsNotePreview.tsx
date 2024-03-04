@@ -51,6 +51,18 @@ export const LastEditedMessage = styled(Sans12)`
   color: ${palette.slate85};
 `;
 
+export const LastEditedMessagePulse = styled.span<{
+  isHighlighted: boolean;
+  darkMode?: boolean;
+}>`
+  color: ${({ isHighlighted, darkMode }) => {
+    if (isHighlighted) return palette.signal.highlight;
+    if (darkMode) return palette.marble1;
+    return palette.slate85;
+  }};
+  transition: all 2s ease;
+`;
+
 export const NotePreview = styled.article`
   background-color: ${palette.marble1};
   border: 1px solid ${palette.slate30};

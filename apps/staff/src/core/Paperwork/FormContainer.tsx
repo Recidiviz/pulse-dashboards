@@ -59,7 +59,6 @@ const FormHeading = styled(Sans24)`
 const LastEditedMessage = styled(Sans12)`
   color: ${palette.marble1};
   margin-top: ${rem(spacing.sm)};
-  width: 70%;
 `;
 
 export const DownloadButton = styled(Button).attrs({
@@ -160,6 +159,7 @@ export const FormContainer = observer(function FormContainer({
                 agencyName={agencyName}
                 dataProviso={dataProviso}
                 form={form}
+                darkMode
               />
             </LastEditedMessage>
           </div>

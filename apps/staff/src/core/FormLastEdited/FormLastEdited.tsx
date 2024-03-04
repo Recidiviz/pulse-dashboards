@@ -17,24 +17,51 @@
 
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
+import { LastEditedMessagePulse } from "../controls/WorkflowsNotePreview";
 
 type FormLastEditedProps = {
   form?: FormBase<any>;
   agencyName: string;
   dataProviso?: string;
+  darkMode?: boolean;
 };
 
 export const FormLastEdited: React.FC<FormLastEditedProps> = observer(
-  function FormLastEdited({ agencyName, form, dataProviso }) {
+  function FormLastEdited({ agencyName, form, dataProviso, darkMode }) {
     const { formLastUpdated } = form || {};
+    const [isHighlighted, setIsHighlighted] = useState(false);
+    const [intermediateTime, setIntermediateTime] = useState(
+      formLastUpdated?.date.seconds,
+    );
+
+    const showHighlight =
+      formLastUpdated &&
+      intermediateTime &&
+      intermediateTime - formLastUpdated?.date.seconds !== 0;
+
+    useEffect(() => {
+      if (showHighlight) {
+        setIsHighlighted(true);
+        setIntermediateTime(formLastUpdated?.date.seconds);
+        setTimeout(() => {
+          setIsHighlighted(false);
+        }, 3000);
+      }
+    }, [formLastUpdated?.date.seconds, showHighlight]);
+
     if (formLastUpdated) {
       return (
         <>
           Last edited by {formLastUpdated.by}{" "}
-          {moment(formLastUpdated.date.seconds * 1000).fromNow()}
+          <LastEditedMessagePulse
+            darkMode={darkMode}
+            isHighlighted={isHighlighted}
+          >
+            {moment(formLastUpdated.date.seconds * 1000).fromNow()}
+          </LastEditedMessagePulse>
         </>
       );
     }
