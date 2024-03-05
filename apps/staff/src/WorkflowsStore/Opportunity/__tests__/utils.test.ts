@@ -104,7 +104,7 @@ describe("Generate hydrated header", () => {
     Object.entries(MOCK_OPPORTUNITY_CONFIGS).forEach(([key, value], index) => {
       OPPORTUNITY_CONFIGS[key as OpportunityType] = value as never;
       hydratedHeaders.push(
-        generateOpportunityHydratedHeader(key as OpportunityType, index),
+        generateOpportunityHydratedHeader(value as any, index),
       );
     });
   });

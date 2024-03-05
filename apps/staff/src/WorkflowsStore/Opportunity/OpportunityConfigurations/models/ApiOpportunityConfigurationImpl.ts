@@ -15,18 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsStore } from "../../../WorkflowsStore";
-import {
-  ILocalOpportunityConfiguration,
-  OpportunityConfiguration,
-} from "../interfaces/LocalOpportunityConfiguration";
+import simplur from "simplur";
 
-export class LocalOpportunityConfiguration implements OpportunityConfiguration {
-  configurationObject: ILocalOpportunityConfiguration;
+import {
+  allFeatureVariants,
+  FeatureVariant,
+} from "../../../../RootStore/types";
+import { WorkflowsStore } from "../../../WorkflowsStore";
+import { CountFormatter } from "../../utils";
+import { IApiOpportunityConfiguration } from "../interfaces";
+import { OpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
+
+export class ApiOpportunityConfiguration implements OpportunityConfiguration {
+  configurationObject: IApiOpportunityConfiguration;
   workflowsStore: WorkflowsStore;
 
   constructor(
-    configurationObject: ILocalOpportunityConfiguration,
+    configurationObject: IApiOpportunityConfiguration,
     workflowsStore: WorkflowsStore,
   ) {
     this.configurationObject = configurationObject;
@@ -34,7 +39,7 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get systemType() {
-    return this.configurationObject.systemType;
+    return "SUPERVISION" as const; // TODO FIX
   }
   get stateCode() {
     return this.configurationObject.stateCode;
@@ -43,13 +48,17 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.urlSection;
   }
   get featureVariant() {
-    return this.configurationObject.featureVariant;
+    const { featureVariant } = this.configurationObject;
+    if (featureVariant in allFeatureVariants) {
+      return featureVariant as FeatureVariant;
+    }
+    return undefined;
   }
   get inverseFeatureVariant() {
-    return this.configurationObject.inverseFeatureVariant;
+    return undefined;
   }
   get label() {
-    return this.configurationObject.label;
+    return this.configurationObject.displayName;
   }
   get firestoreCollection() {
     return this.configurationObject.firestoreCollection;
@@ -58,22 +67,30 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.snooze;
   }
   get tabOrder() {
-    return this.configurationObject.tabOrder;
+    return ["Eligible Now"] as const;
   }
   get initialHeader() {
-    return this.configurationObject.initialHeader;
+    return "INITIAL HEADER";
   }
   get hydratedHeader() {
-    return this.configurationObject.hydratedHeader;
+    // todooo actually hydrate
+    return (formattedCount: CountFormatter) => ({
+      callToAction: this.configurationObject.callToAction,
+      opportunityText: "",
+      eligibilityText: simplur(
+        ["", " " + this.configurationObject.dynamicEligibilityText],
+        formattedCount,
+      ),
+    });
   }
   get denialButtonText() {
-    return this.configurationObject.denialButtonText;
+    return "DENIAL BUTTON TEXT";
   }
   get eligibilityDateText() {
-    return this.configurationObject.eligibilityDateText;
+    return "ELIGIBILITY DATE TEXT";
   }
   get hideDenialRevert() {
-    return this.configurationObject.hideDenialRevert;
+    return false;
   }
 
   get isEnabled(): boolean {

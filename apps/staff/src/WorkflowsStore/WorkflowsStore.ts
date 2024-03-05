@@ -85,6 +85,7 @@ import {
   OPPORTUNITY_CONFIGS,
   OpportunityType,
 } from "./Opportunity/OpportunityConfigs";
+import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { Resident } from "./Resident";
 import {
   CaseloadSubscription,
@@ -105,6 +106,8 @@ type ConstructorOpts = { rootStore: RootStore };
 
 export class WorkflowsStore implements Hydratable {
   rootStore: RootStore;
+
+  opportunityConfigurationStore: OpportunityConfigurationStore;
 
   private hydrationError?: Error;
 
@@ -146,6 +149,10 @@ export class WorkflowsStore implements Hydratable {
       hydrate: action,
       setActivePage: action,
     });
+
+    this.opportunityConfigurationStore = new OpportunityConfigurationStore(
+      this,
+    );
 
     this.officersSubscription = new StaffSubscription(rootStore);
     this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
@@ -225,6 +232,8 @@ export class WorkflowsStore implements Hydratable {
         throw new Error("Missing email for current user.");
       }
 
+      this.opportunityConfigurationStore.hydrate();
+
       this.userSubscription.hydrate();
 
       // we don't really ever expect the user to change during a session,
@@ -260,6 +269,7 @@ export class WorkflowsStore implements Hydratable {
     return compositeHydrationState([
       this.userSubscription,
       this.userUpdatesSubscription,
+      this.opportunityConfigurationStore,
     ]);
   }
 

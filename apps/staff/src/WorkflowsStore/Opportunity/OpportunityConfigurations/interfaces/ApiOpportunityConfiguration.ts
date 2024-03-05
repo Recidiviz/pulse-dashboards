@@ -16,7 +16,9 @@
 // =============================================================================
 import { z } from "zod";
 
+import { PartialRecord } from "../../../../utils/typeUtils";
 import { OpportunityType } from "../..";
+import { apiOpportunityConfigurationResponseSchema } from "../dtos/ApiOpportunityConfigurationResponseSchema";
 import { apiOpportunityConfigurationSchema } from "../dtos/ApiOpportunityConfigurationSchema";
 
 export type IApiOpportunityConfiguration = z.infer<
@@ -27,8 +29,11 @@ export type IApiOpportunityConfigurationRaw = z.input<
   typeof apiOpportunityConfigurationSchema
 >;
 
-export type ApiOpportunityConfigurationResponse = {
-  enabledConfigs: Partial<
-    Record<OpportunityType, IApiOpportunityConfigurationRaw>
-  >;
-};
+export type ApiOpportunityConfigurationMap = PartialRecord<
+  OpportunityType,
+  IApiOpportunityConfiguration
+>;
+
+export type ApiOpportunityConfigurationResponse = z.input<
+  typeof apiOpportunityConfigurationResponseSchema
+>;

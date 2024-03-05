@@ -43,20 +43,14 @@ export const TenantIds = [
   pathways.US_NC,
   pathways.US_ND,
   workflows.US_OR,
-  RECIDIVIZ_TENANT,
-  CSG,
-  ...InternalTenantIds,
 ] as const;
 
-export type TenantConfigId = (typeof TenantIds)[number];
 export type InternalTenantId = (typeof InternalTenantIds)[number];
-export type TenantId = Exclude<
-  TenantConfigId,
-  (typeof InternalTenantIds)[number]
->;
+export type TenantId = (typeof TenantIds)[number];
+export type TenantConfigId = InternalTenantId | TenantId;
 
 export type UserAppMetadata = {
-  stateCode: Lowercase<TenantId> | Lowercase<InternalTenantId>;
+  stateCode: Lowercase<TenantConfigId>;
   allowedStates?: TenantId[];
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
@@ -91,7 +85,8 @@ export type FeatureVariant =
   | "formRevertButton"
   | "outliersLeadershipPageAllDistricts"
   | "outliersOnboarding"
-  | "hideDenialRevert";
+  | "hideDenialRevert"
+  | "opportunityConfigurationAPI";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -123,6 +118,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   outliersLeadershipPageAllDistricts: {},
   outliersOnboarding: {},
   hideDenialRevert: {},
+  opportunityConfigurationAPI: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   process.env.REACT_APP_DEPLOY_ENV === "production"
@@ -140,7 +136,10 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         enableSnooze: {},
         outliersOnboarding: {},
       }
-    : allFeatureVariants;
+    : {
+        ...allFeatureVariants,
+        opportunityConfigurationAPI: undefined,
+      };
 
 export type LanternMethodologyByTenant = {
   [key in LanternTenants]: LanternMethodology;

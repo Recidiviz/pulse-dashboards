@@ -96,3 +96,8 @@ export function useFeatureVariants(): FeatureVariantRecord {
   }
   return context.featureVariants;
 }
+
+export function useOpportunityConfigurations() {
+  return useRootStore().workflowsStore.opportunityConfigurationStore
+    .opportunities;
+}

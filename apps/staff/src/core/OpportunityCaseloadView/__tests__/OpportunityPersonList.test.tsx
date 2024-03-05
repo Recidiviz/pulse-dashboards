@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
-import { cloneDeep } from "lodash";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
 import {
   OPPORTUNITY_CONFIGS,
@@ -35,6 +37,8 @@ jest.mock("../../../components/StoreProvider");
 jest.mock("../../../hooks/useHydrateOpportunities");
 
 const useRootStoreMock = useRootStore as jest.Mock;
+const useOpportunityConfigurationsMock =
+  useOpportunityConfigurations as jest.Mock;
 
 const baseWorkflowsStoreMock = {
   opportunityTypes: ["earlyTermination"],
@@ -50,13 +54,9 @@ const baseWorkflowsStoreMock = {
   potentialOpportunities: () => [],
   hasOpportunities: () => false,
 };
-const OPPORTUNITY_CONFIG_CONSTANT = cloneDeep(OPPORTUNITY_CONFIGS);
 beforeEach(() => {
   jest.resetAllMocks();
-});
-
-afterEach(() => {
-  Object.assign(OPPORTUNITY_CONFIGS, OPPORTUNITY_CONFIG_CONSTANT);
+  useOpportunityConfigurationsMock.mockReturnValue(OPPORTUNITY_CONFIGS);
 });
 
 test("initial", () => {

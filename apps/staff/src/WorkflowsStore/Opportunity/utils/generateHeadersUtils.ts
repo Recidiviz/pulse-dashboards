@@ -21,6 +21,7 @@ import {
   OpportunityHydratedHeader,
   OpportunityType,
 } from "..";
+import { OpportunityConfiguration } from "../OpportunityConfigurations";
 
 export const generateOpportunityInitialHeader = (
   opportunityType: OpportunityType,
@@ -48,11 +49,8 @@ const hydratedHeaderFormatter = (quantity: number): string | number => {
 };
 
 export const generateOpportunityHydratedHeader = (
-  opportunityType: OpportunityType,
+  config: OpportunityConfiguration,
   count: number,
 ): OpportunityHydratedHeader => {
-  return OPPORTUNITY_CONFIGS[opportunityType].hydratedHeader([
-    count,
-    hydratedHeaderFormatter,
-  ]);
+  return config.hydratedHeader([count, hydratedHeaderFormatter]);
 };

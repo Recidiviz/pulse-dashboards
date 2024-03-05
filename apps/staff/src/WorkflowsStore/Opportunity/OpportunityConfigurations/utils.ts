@@ -19,12 +19,11 @@ import { nextSunday } from "date-fns";
 import simplur from "simplur";
 
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
-import { Client } from "../../Client";
 import { JusticeInvolvedPerson } from "../../types";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { OpportunityType } from "..";
 import { OpportunityBase } from "../OpportunityBase";
-import { ILocalOpportunityConfiguration } from "./interfaces/ILocalOpportunityConfiguration";
+import { ILocalOpportunityConfiguration } from "./interfaces/LocalOpportunityConfiguration";
 
 export const mockUsXxOpp: OpportunityType = "mockUsXxOpp" as OpportunityType;
 export const mockUsXxTwoOpp: OpportunityType =
@@ -38,26 +37,25 @@ export class TestOpportunity<
   }
 }
 
-export const mockLocalOpportunityConfigurationObject: ILocalOpportunityConfiguration<
-  TestOpportunity<Client>
-> = {
-  systemType: "SUPERVISION",
-  stateCode: "US_XX" as TenantId,
-  urlSection: "mockOpportunity",
-  label: "Mock Opportunity",
-  featureVariant: "usXxMockOpportunity" as FeatureVariant,
-  initialHeader: "Mock initial header to search for something",
-  snooze: {
-    defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
-  },
-  hydratedHeader: (formattedCount) => ({
-    eligibilityText: simplur`${formattedCount} client[|s] may be `,
-    opportunityText: "on or past their expiration date",
-    callToAction:
-      "Review these clients and complete their auto-generated TEPE Note.",
-  }),
-  firestoreCollection: "US_XX_mockOpportunity",
-};
+export const mockLocalOpportunityConfigurationObject: ILocalOpportunityConfiguration =
+  {
+    systemType: "SUPERVISION",
+    stateCode: "US_XX" as TenantId,
+    urlSection: "mockOpportunity",
+    label: "Mock Opportunity",
+    featureVariant: "usXxMockOpportunity" as FeatureVariant,
+    initialHeader: "Mock initial header to search for something",
+    snooze: {
+      defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
+    },
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] may be `,
+      opportunityText: "on or past their expiration date",
+      callToAction:
+        "Review these clients and complete their auto-generated TEPE Note.",
+    }),
+    firestoreCollection: "US_XX_mockOpportunity",
+  };
 
 export const mockApiOpportunityConfigurationResponse = {
   usIdCrcWorkRelease: {

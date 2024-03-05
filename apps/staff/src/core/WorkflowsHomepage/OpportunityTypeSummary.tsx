@@ -27,6 +27,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   generateOpportunityHydratedHeader,
@@ -128,6 +129,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunityType: OpportunityType;
 }): React.ReactElement | null {
   const { isMobile } = useIsMobile(true);
+  const config = useOpportunityConfigurations()[opportunityType];
 
   const defaultAvatarsShown = 4;
   const sliceIndex =
@@ -144,7 +146,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   ).length;
 
   const header = generateOpportunityHydratedHeader(
-    opportunityType,
+    config,
     opportunities.length - numIneligible,
   );
 

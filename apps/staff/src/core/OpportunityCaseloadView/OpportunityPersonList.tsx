@@ -22,7 +22,10 @@ import { useEffect, useMemo, useState } from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
@@ -90,6 +93,8 @@ const HydratedOpportunityPersonList = observer(
       analyticsStore,
     } = useRootStore();
 
+    const opportunity_configs = useOpportunityConfigurations();
+
     const { isMobile } = useIsMobile(true);
 
     const oppsFromOpportunitiesByTab = useMemo(() => {
@@ -143,7 +148,7 @@ const HydratedOpportunityPersonList = observer(
       setActiveTab(tab);
     };
     const hydratedHeader = generateOpportunityHydratedHeader(
-      opportunityType,
+      opportunity_configs[opportunityType],
       eligibleOpps?.length || 0,
     );
 

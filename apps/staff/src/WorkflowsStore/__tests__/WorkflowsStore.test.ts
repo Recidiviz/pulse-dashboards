@@ -180,6 +180,8 @@ async function waitForHydration({
       status: "hydrated",
     };
     /* eslint-enable @typescript-eslint/no-non-null-assertion */
+
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
   });
 
   await when(() => workflowsStore.hydrationState.status === "hydrated");
@@ -273,6 +275,11 @@ test("hydration reflects subscriptions", async () => {
     workflowsStore.userUpdatesSubscription!.hydrationState = {
       status: "hydrated",
     };
+  });
+  expect(workflowsStore.hydrationState.status).toBe("loading");
+
+  runInAction(() => {
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
   });
 
   expect(workflowsStore.hydrationState.status).toBe("hydrated");
@@ -1041,11 +1048,11 @@ describe("test state-specific opportunity type feature variant filters", () => {
         workflowsStore.updateActiveSystem("INCARCERATION");
         rootStore.tenantStore.currentTenantId = SESSION_STATE_CODE;
       });
-      await waitForHydration({ ...mockOfficer });
     });
 
     test("US_MO opp does not include usMoOverdueRestrictiveHousingRelease", async () => {
       setUser({ usMoOverdueRHPilot: {} }, SESSION_STATE_CODE);
+      await waitForHydration({ ...mockOfficer });
       expect(workflowsStore.opportunityTypes).toEqual([
         "usMoOverdueRestrictiveHousingRelease",
       ]);
@@ -1053,6 +1060,7 @@ describe("test state-specific opportunity type feature variant filters", () => {
 
     test("includes all non-gated opportunityTypes", async () => {
       setUser({}, SESSION_STATE_CODE);
+      await waitForHydration({ ...mockOfficer });
       expect(workflowsStore.opportunityTypes).toEqual([
         "usMoRestrictiveHousingStatusHearing",
       ]);
@@ -1076,9 +1084,6 @@ describe("opportunityTypes for US_TN", () => {
   });
 
   test("includes usTnExpiration", async () => {
-    await waitForHydration({
-      ...mockOfficer,
-    });
     runInAction(() => {
       rootStore.userStore.user = {
         email: "foo@example.com",
@@ -1089,6 +1094,9 @@ describe("opportunityTypes for US_TN", () => {
       };
       rootStore.userStore.userIsLoading = false;
       rootStore.userStore.isAuthorized = true;
+    });
+    await waitForHydration({
+      ...mockOfficer,
     });
 
     expect(workflowsStore.opportunityTypes).toContain("usTnExpiration");
@@ -1168,8 +1176,8 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
   });
 
   test("gated opportunity is enabled when feature variant is set for current user", async () => {
-    await waitForHydration({ ...mockOfficer });
     setupHydration();
+    await waitForHydration({ ...mockOfficer });
 
     expect(workflowsStore.opportunityTypes.sort()).toEqual([
       TEST_GATED_OPP,

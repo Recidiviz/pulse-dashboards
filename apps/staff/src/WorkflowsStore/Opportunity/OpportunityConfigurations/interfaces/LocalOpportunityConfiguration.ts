@@ -16,10 +16,7 @@
 // =============================================================================
 import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
-import { Client } from "../../../Client";
-import { Resident } from "../../../Resident";
-import { OpportunityBase } from "../../OpportunityBase";
-import { Opportunity, OpportunityTab } from "../../types";
+import { OpportunityTab } from "../../types";
 import { CountFormatter } from "../../utils/generateHeadersUtils";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
@@ -42,23 +39,8 @@ export type OpportunityHydratedHeader =
   | OpportunityHeadersWithEligibilityTextType
   | OpportunityHeadersWithFullTextType;
 
-type ExtractPersonType<T> =
-  T extends OpportunityBase<infer P, any, any> ? P : never;
-
-type ClientSystemType<T> = T extends Client
-  ? Extract<SystemId, "SUPERVISION">
-  : never;
-
-type ResidentSystemType<T> = T extends Resident
-  ? Extract<SystemId, "INCARCERATION">
-  : never;
-
-type SystemType<T> = ClientSystemType<T> | ResidentSystemType<T>;
-
-export interface ILocalOpportunityConfiguration<
-  OpportunityVariant extends Opportunity,
-> {
-  systemType: SystemType<ExtractPersonType<OpportunityVariant>>;
+export interface ILocalOpportunityConfiguration {
+  systemType: SystemId;
   stateCode: TenantId;
   urlSection: string;
   featureVariant?: FeatureVariant;
@@ -72,5 +54,24 @@ export interface ILocalOpportunityConfiguration<
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;
+  // denialReasons: DenialReasonsMap;
+}
+
+export interface OpportunityConfiguration {
+  systemType: SystemId;
+  stateCode: TenantId;
+  urlSection: string;
+  featureVariant?: FeatureVariant;
+  inverseFeatureVariant?: FeatureVariant;
+  label: string;
+  firestoreCollection: string;
+  snooze?: SnoozeConfiguration;
+  tabOrder?: ReadonlyArray<OpportunityTab>;
+  initialHeader?: string;
+  hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
+  denialButtonText?: string;
+  eligibilityDateText?: string;
+  hideDenialRevert?: boolean;
+  isEnabled: boolean;
   // denialReasons: DenialReasonsMap;
 }
