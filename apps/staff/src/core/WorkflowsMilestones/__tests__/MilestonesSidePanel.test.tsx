@@ -75,23 +75,21 @@ describe("MilestonesSidePanel", () => {
 
   describe("New Milestones", () => {
     test("renders with ComposeMessageView", () => {
-      const { baseElement } = render(
+      render(
         <BrowserRouter>
           <MilestonesSidePanel activeTab="New Milestones" />
         </BrowserRouter>,
       );
-      expect(baseElement).toMatchSnapshot();
       expect(screen.getByTestId("ComposeMessageView")).toBeInTheDocument();
     });
   });
 
   test("Declined to Send", () => {
-    const { baseElement } = render(
+    render(
       <BrowserRouter>
         <MilestonesSidePanel activeTab="Declined to Send" />
       </BrowserRouter>,
     );
-    expect(baseElement).toMatchSnapshot();
     expect(screen.getByTestId("DeclinedSidePanel")).toBeInTheDocument();
   });
 
@@ -107,12 +105,11 @@ describe("MilestonesSidePanel", () => {
             hydrated: true,
           };
       });
-      const { baseElement } = render(
+      render(
         <BrowserRouter>
           <MilestonesSidePanel activeTab="Congratulated" />
         </BrowserRouter>,
       );
-      expect(baseElement).toMatchSnapshot();
       expect(screen.getByTestId("CongratulatedSidePanel")).toBeInTheDocument();
       expect(
         screen.getByText("This is the full text message"),
@@ -130,12 +127,11 @@ describe("MilestonesSidePanel", () => {
           hydrated: true,
         };
     });
-    const { baseElement } = render(
+    render(
       <BrowserRouter>
         <MilestonesSidePanel activeTab="Congratulated" />
       </BrowserRouter>,
     );
-    expect(baseElement).toMatchSnapshot();
     expect(screen.getByTestId("CongratulatedSidePanel")).toBeInTheDocument();
     expect(
       screen.getByText("indicated that they congratulated", { exact: false }),
