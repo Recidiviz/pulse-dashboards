@@ -81,10 +81,7 @@ import {
   OpportunityTab,
   SUPERVISION_OPPORTUNITY_TYPES,
 } from "./Opportunity";
-import {
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "./Opportunity/OpportunityConfigs";
+import { OpportunityType } from "./Opportunity/OpportunityConfigs";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { Resident } from "./Resident";
 import {
@@ -757,7 +754,6 @@ export class WorkflowsStore implements Hydratable {
     const {
       rootStore: { currentTenantId },
       activeSystem,
-      featureVariants,
     } = this;
     if (!isHydrated(this) || !currentTenantId || !activeSystem) return [];
 
@@ -774,12 +770,8 @@ export class WorkflowsStore implements Hydratable {
         activeSystemFilters[activeSystem].includes(oppType);
       if (!isInSystem) return false;
 
-      const { featureVariant, inverseFeatureVariant } =
-        OPPORTUNITY_CONFIGS[oppType];
-      return (
-        (!featureVariant || featureVariants[featureVariant]) &&
-        (!inverseFeatureVariant || !featureVariants[inverseFeatureVariant])
-      );
+      return this.opportunityConfigurationStore.opportunities[oppType]
+        .isEnabled;
     });
   }
 

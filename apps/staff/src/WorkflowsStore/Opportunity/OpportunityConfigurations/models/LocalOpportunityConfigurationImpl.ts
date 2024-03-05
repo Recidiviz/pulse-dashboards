@@ -79,13 +79,12 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   get isEnabled(): boolean {
     const { featureVariants } = this.workflowsStore;
     const { featureVariant, inverseFeatureVariant } = this;
-    if (!featureVariant) return false;
 
-    const featureVariantEnabled = !!featureVariants[featureVariant];
-    const inverseFeatureVariantDisabled = inverseFeatureVariant
-      ? !featureVariants[inverseFeatureVariant]
-      : true;
+    const featureVariantEnabled =
+      !featureVariant || !!featureVariants[featureVariant];
+    const inverseFeatureVariantDisabled =
+      !!inverseFeatureVariant && !!featureVariants[inverseFeatureVariant];
 
-    return featureVariantEnabled && inverseFeatureVariantDisabled;
+    return featureVariantEnabled && !inverseFeatureVariantDisabled;
   }
 }

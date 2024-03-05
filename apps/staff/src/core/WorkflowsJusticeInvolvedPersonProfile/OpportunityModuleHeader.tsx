@@ -20,7 +20,6 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { EligibilityStatus } from "../OpportunityStatus";
 import { Separator } from "./styles";
 
@@ -37,11 +36,9 @@ type OpportunityModuleHeaderProps = {
 
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
   observer(function OpportunityModuleHeader({ opportunity }) {
-    const opportunityLabel = OPPORTUNITY_CONFIGS[opportunity.type].label;
-
     return (
       <TitleText>
-        <OpportunityLabel>{opportunityLabel}</OpportunityLabel>
+        <OpportunityLabel>{opportunity.config.label}</OpportunityLabel>
         {opportunity.showEligibilityStatus("OpportunityModuleHeader") && (
           <>
             <Separator> • </Separator>

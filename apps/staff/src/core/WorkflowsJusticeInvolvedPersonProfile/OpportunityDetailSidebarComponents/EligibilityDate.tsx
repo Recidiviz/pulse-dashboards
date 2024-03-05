@@ -19,7 +19,6 @@ import { toTitleCase } from "@artsy/to-title-case";
 import React from "react";
 
 import { formatWorkflowsDate } from "../../../utils";
-import { OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore";
 import {
   DetailsHeading,
   DetailsSection,
@@ -33,14 +32,14 @@ const FALLBACK_ELIGIBILITY_TEXT = "First Day of Eligibility";
 export function EligibilityDate({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
-  const { type, eligibilityDate } = opportunity;
+  const {
+    config: { eligibilityDateText = FALLBACK_ELIGIBILITY_TEXT },
+    eligibilityDate,
+  } = opportunity;
 
   if (eligibilityDate === undefined) {
     return null;
   }
-
-  const { eligibilityDateText = FALLBACK_ELIGIBILITY_TEXT } =
-    OPPORTUNITY_CONFIGS[type];
 
   return (
     <DetailsSection>

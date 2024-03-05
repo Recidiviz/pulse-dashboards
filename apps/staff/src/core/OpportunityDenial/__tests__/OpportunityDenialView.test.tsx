@@ -258,6 +258,13 @@ describe("OpportunityDenialView", () => {
     beforeEach(() => {
       renderElement({
         ...mockOpportunity,
+        config: {
+          ...mockOpportunity.config,
+          snooze: {
+            defaultSnoozeDays: 30,
+            maxSnoozeDays: 90,
+          },
+        },
         snoozedOnDate: new Date(2023, 9, 5),
         type: "compliantReporting",
         denialReasonsMap: {
@@ -318,6 +325,13 @@ describe("OpportunityDenialView", () => {
       renderElement({
         ...mockOpportunity,
         type: "compliantReporting",
+        config: {
+          ...mockOpportunity.config,
+          snooze: {
+            defaultSnoozeDays: 30,
+            maxSnoozeDays: 90,
+          },
+        },
         snoozedOnDate: new Date(2023, 9, 5),
         manualSnooze: {
           snoozeForDays: 30,
@@ -372,6 +386,13 @@ describe("OpportunityDenialView", () => {
       renderElement({
         ...mockOpportunity,
         type: "compliantReporting",
+        config: {
+          ...mockOpportunity.config,
+          snooze: {
+            defaultSnoozeDays: 30,
+            maxSnoozeDays: 90,
+          },
+        },
       });
 
       const slider = screen
@@ -384,6 +405,13 @@ describe("OpportunityDenialView", () => {
       timekeeper.freeze("2025-01-15");
       renderElement({
         ...mockOpportunity,
+        config: {
+          ...mockOpportunity.config,
+          snooze: {
+            defaultSnoozeDays: 30,
+            maxSnoozeDays: 90,
+          },
+        },
         type: "compliantReporting",
       });
 
@@ -399,6 +427,13 @@ describe("OpportunityDenialView", () => {
       renderElement({
         ...mockOpportunity,
         type: "compliantReporting",
+        config: {
+          ...mockOpportunity.config,
+          snooze: {
+            defaultSnoozeDays: 30,
+            maxSnoozeDays: 90,
+          },
+        },
       });
 
       const slider = screen
@@ -422,6 +457,13 @@ describe("OpportunityDenialView", () => {
         snoozedOnDate: new Date(2023, 9, 5),
         deniedTabTitle: "Overridden",
         type: "compliantReporting",
+        config: {
+          ...mockOpportunity.config,
+          snooze: {
+            defaultSnoozeDays: 30,
+            maxSnoozeDays: 90,
+          },
+        },
         denialReasonsMap: {
           CODE: "Denial reason",
         },
@@ -452,6 +494,13 @@ describe("OpportunityDenialView", () => {
       timekeeper.freeze("2023-10-5");
       renderElement({
         ...mockOpportunity,
+        config: {
+          ...mockOpportunity.config,
+          snooze: {
+            defaultSnoozeDays: 30,
+            maxSnoozeDays: 90,
+          },
+        },
         type: "compliantReporting",
         denialReasonsMap: {
           CODE: "Denial reason",

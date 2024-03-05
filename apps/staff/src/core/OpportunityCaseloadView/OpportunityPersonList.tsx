@@ -33,7 +33,6 @@ import {
   generateOpportunityInitialHeader,
   OpportunityTab,
 } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { getTabOrderForOpportunityType } from "../../WorkflowsStore/Opportunity/utils/tabUtils";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -66,9 +65,12 @@ const Empty = observer(function Empty() {
       workflowsSearchFieldTitle,
     },
   } = useRootStore();
+
+  const opportunityConfigs = useOpportunityConfigurations();
+
   if (!opportunityType) return null;
 
-  const { label } = OPPORTUNITY_CONFIGS[opportunityType];
+  const { label } = opportunityConfigs[opportunityType];
   return (
     <WorkflowsResults
       callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
@@ -93,7 +95,7 @@ const HydratedOpportunityPersonList = observer(
       analyticsStore,
     } = useRootStore();
 
-    const opportunity_configs = useOpportunityConfigurations();
+    const opportunityConfigs = useOpportunityConfigurations();
 
     const { isMobile } = useIsMobile(true);
 
@@ -148,7 +150,7 @@ const HydratedOpportunityPersonList = observer(
       setActiveTab(tab);
     };
     const hydratedHeader = generateOpportunityHydratedHeader(
-      opportunity_configs[opportunityType],
+      opportunityConfigs[opportunityType],
       eligibleOpps?.length || 0,
     );
 
@@ -191,10 +193,11 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
       workflowsSearchFieldTitle,
     },
   } = useRootStore();
+  const opportunityConfigs = useOpportunityConfigurations();
 
   if (!opportunityType) return null;
 
-  const { label } = OPPORTUNITY_CONFIGS[opportunityType];
+  const { label } = opportunityConfigs[opportunityType];
 
   const initialHeader = generateOpportunityInitialHeader(
     opportunityType,

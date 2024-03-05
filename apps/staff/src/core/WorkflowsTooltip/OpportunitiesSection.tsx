@@ -19,7 +19,6 @@
 import { observer } from "mobx-react-lite";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import {
   TooltipRow,
   TooltipSection,
@@ -42,9 +41,7 @@ export const OpportunitiesSection: React.FC<{
       {opportunities.map((o: Opportunity) => (
         <TooltipRow key={`{${o.type}-${o.person.recordId}`}>
           <TooltipTealStar />
-          <TooltipSectionDetails>
-            {OPPORTUNITY_CONFIGS[o.type].label}
-          </TooltipSectionDetails>
+          <TooltipSectionDetails>{o.config.label}</TooltipSectionDetails>
         </TooltipRow>
       ))}
     </TooltipSection>

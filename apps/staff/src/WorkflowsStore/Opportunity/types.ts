@@ -31,6 +31,7 @@ import {
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
 import { AutoSnoozeUntil, OpportunityType } from "./OpportunityConfigs";
+import { OpportunityConfiguration } from "./OpportunityConfigurations";
 
 export type OpportunityRequirement = {
   isHeading?: boolean;
@@ -77,6 +78,7 @@ export type FormVariant = "deferred";
 export interface Opportunity<
   PersonType extends JusticeInvolvedPerson = JusticeInvolvedPerson,
 > extends Hydratable {
+  config: OpportunityConfiguration;
   record: DocumentData | undefined;
   almostEligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES

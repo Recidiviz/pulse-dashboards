@@ -17,11 +17,7 @@
 
 import { render, screen } from "@testing-library/react";
 
-import {
-  Opportunity,
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "../../../../WorkflowsStore";
+import { Opportunity, OpportunityType } from "../../../../WorkflowsStore";
 import { OpportunityProfileProps } from "../../types";
 import { EligibilityDate } from "../EligibilityDate";
 
@@ -36,12 +32,12 @@ describe("EligibilityDate sidebar component tests", () => {
   afterAll(() => {
     jest.resetModules();
     jest.restoreAllMocks();
-    delete OPPORTUNITY_CONFIGS[testOppType];
   });
 
   it("does not display if no eligibilityDate field is set on the opportunity", () => {
     const testOpp = {
       type: testOppType,
+      config: {},
     } as Opportunity;
 
     const props = { opportunity: testOpp } as OpportunityProfileProps;
@@ -55,10 +51,8 @@ describe("EligibilityDate sidebar component tests", () => {
     const testOpp = {
       type: testOppType,
       eligibilityDate: new Date(2022, 1, 3),
+      config: {},
     } as Opportunity;
-
-    // @ts-ignore
-    OPPORTUNITY_CONFIGS[testOppType] = {};
 
     const props = { opportunity: testOpp } as OpportunityProfileProps;
 
@@ -73,19 +67,15 @@ describe("EligibilityDate sidebar component tests", () => {
     const testOpp = {
       type: testOppType,
       eligibilityDate: new Date(2022, 1, 3),
+      config: { eligibilityDateText: "The cow goes oink" },
     } as Opportunity;
-
-    const eligibilityDateText = "The cow goes oink";
-
-    // @ts-ignore
-    OPPORTUNITY_CONFIGS[testOppType] = { eligibilityDateText };
 
     const props = { opportunity: testOpp } as OpportunityProfileProps;
 
     render(<EligibilityDate {...props} />);
 
     expect(
-      screen.queryByText(eligibilityDateText, { exact: false }),
+      screen.queryByText("The cow goes oink", { exact: false }),
     ).not.toBeNull();
   });
 });

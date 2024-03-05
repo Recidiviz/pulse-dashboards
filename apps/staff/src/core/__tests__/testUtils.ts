@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { add } from "date-fns";
+import simplur from "simplur";
+
 import { AutoSnoozeUpdate, ManualSnoozeUpdate } from "../../FirestoreStore";
 import { Client, Opportunity } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
@@ -63,4 +66,24 @@ export const mockOpportunity: Opportunity<Client> = {
   tabTitle: "Eligible Now",
   compare: () => 1,
   showEligibilityStatus: () => true,
+  config: {
+    systemType: "SUPERVISION",
+    stateCode: "US_ID",
+    urlSection: "pastFTRD",
+    label: "Past FTRD",
+    initialHeader:
+      "Search for officers above to review clients whose full-term release date is near or has passed.",
+    hydratedHeader: (formattedCount) => ({
+      eligibilityText: simplur`${formattedCount} client[|s] [is|are] nearing or `,
+      opportunityText: "past their full-term release date",
+      callToAction:
+        "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
+    }),
+    firestoreCollection: "US_ID-pastFTRDReferrals",
+    snooze: {
+      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+    },
+    tabOrder: [],
+    isEnabled: true,
+  },
 };

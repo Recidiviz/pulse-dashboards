@@ -19,7 +19,7 @@ import { Button } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { Opportunity, OPPORTUNITY_CONFIGS } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
 
 const StatusAwareButton = styled(Button).attrs({
   kind: "secondary",
@@ -35,10 +35,8 @@ export const MenuButton = observer(function MenuButton({
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
 }) {
-  const config = OPPORTUNITY_CONFIGS[opportunity.type];
-
   const buttonText =
-    config.denialButtonText ??
+    opportunity.config.denialButtonText ??
     (opportunity.isAlert ? "Override?" : "Update eligibility");
 
   return (

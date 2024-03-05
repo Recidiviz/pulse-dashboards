@@ -39,7 +39,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get systemType() {
-    return "SUPERVISION" as const; // TODO FIX
+    return "INCARCERATION" as const; // TODO FIX
   }
   get stateCode() {
     return this.configurationObject.stateCode;
@@ -66,9 +66,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get snooze() {
     return this.configurationObject.snooze;
   }
-  get tabOrder() {
-    return ["Eligible Now"] as const;
-  }
+
   get initialHeader() {
     return "INITIAL HEADER";
   }

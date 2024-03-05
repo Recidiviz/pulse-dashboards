@@ -28,7 +28,6 @@ import Slider from "../../components/Slider";
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { getSnoozeUntilDate, OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
@@ -118,7 +117,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   if (!opportunity) return null;
 
-  const snoozeConfig = OPPORTUNITY_CONFIGS[opportunity.type].snooze;
+  const snoozeConfig = opportunity.config.snooze;
 
   const snoozeEnabled = enableSnooze && snoozeConfig !== undefined;
 

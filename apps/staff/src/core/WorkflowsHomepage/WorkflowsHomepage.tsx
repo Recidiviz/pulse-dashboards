@@ -18,10 +18,13 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import simplur from "simplur";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { getWelcomeText, pluralizeWord } from "../../utils";
 import { OpportunityType } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -31,10 +34,11 @@ import OpportunityTypeSummary from "./OpportunityTypeSummary";
 
 function getSelectOpportunitiesText(
   opportunityTypes: OpportunityType[],
+  opportunityConfigs: Record<OpportunityType, OpportunityConfiguration>,
 ): string {
   const labels = opportunityTypes
     .slice(0, 2)
-    .map((ot) => OPPORTUNITY_CONFIGS[ot].label);
+    .map((ot) => opportunityConfigs[ot].label);
   return labels.join(" and ");
 }
 
@@ -74,14 +78,17 @@ const WorkflowsHomepage = observer(
       justiceInvolvedPersonTitle,
     } = workflowsStore;
 
+    const opportunityConfigs = useOpportunityConfigurations();
+
     const initialCallToAction = supportsMultipleSystems
       ? `Search above to review and refer people eligible for opportunities like  ${getSelectOpportunitiesText(
           opportunityTypes,
+          opportunityConfigs,
         )}.`
       : `Search for ${pluralizeWord(
           workflowsSearchFieldTitle,
         )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
-      opportunities like ${getSelectOpportunitiesText(opportunityTypes)}.`;
+      opportunities like ${getSelectOpportunitiesText(opportunityTypes, opportunityConfigs)}.`;
 
     const emptyCallToAction =
       supportsMultipleSystems || workflowsSearchFieldTitle === "caseload"

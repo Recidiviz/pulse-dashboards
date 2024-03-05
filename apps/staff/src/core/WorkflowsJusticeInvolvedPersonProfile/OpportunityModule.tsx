@@ -25,7 +25,7 @@ import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { Opportunity, OPPORTUNITY_CONFIGS } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
 import { desktopLinkGate } from "../desktopLinkGate";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { useStatusColors } from "../utils/workflowsUtils";
@@ -122,7 +122,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     );
 
     const showRevertLink = !(
-      hideDenialRevert && OPPORTUNITY_CONFIGS[opportunity.type].hideDenialRevert
+      hideDenialRevert && opportunity.config.hideDenialRevert
     );
 
     const handleUndoClick = async () => {

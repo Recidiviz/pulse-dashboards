@@ -192,6 +192,11 @@ export abstract class OpportunityBase<
     );
   }
 
+  get config() {
+    return this.rootStore.workflowsStore.opportunityConfigurationStore
+      .opportunities[this.type];
+  }
+
   get supportsDenial(): boolean {
     return Object.keys(this.denialReasonsMap).length > 0;
   }
