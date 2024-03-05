@@ -57,7 +57,7 @@ type OpportunitySidebarProfileProps = {
   onDenialButtonClick?: () => void;
 };
 
-const ClientDetailSidebarComponents = {
+export const ClientDetailSidebarComponents = {
   Supervision,
   Contact,
   ClientHousing,
@@ -70,7 +70,7 @@ const ClientDetailSidebarComponents = {
 
 type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;
 
-const OpportunityDetailSidebarComponents = {
+export const OpportunityDetailSidebarComponents = {
   CaseNotes,
   EligibilityDate,
   UsMiEarlyDischargeIcDetails,
@@ -79,7 +79,7 @@ const OpportunityDetailSidebarComponents = {
   UsTnCommonlyUsedOverrideCodes,
 };
 
-const ResidentDetailSidebarComponents = {
+export const ResidentDetailSidebarComponents = {
   Incarceration,
   ResidentHousing,
   UsMoIncarceration,

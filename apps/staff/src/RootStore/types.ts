@@ -31,7 +31,7 @@ export function isPathwaysTenantId(
 
 const InternalTenantIds = [RECIDIVIZ_TENANT, CSG] as const;
 
-const TenantIds = [
+export const TenantIds = [
   lantern.US_MO,
   lantern.US_PA,
   workflows.US_CA,
