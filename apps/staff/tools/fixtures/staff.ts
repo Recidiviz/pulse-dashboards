@@ -143,6 +143,26 @@ const data: StaffRecord[] = [
     surname: "314159",
   },
 
+  // US_PA - PENNSYLVANIA
+  {
+    email: "test-officer@example.com",
+    id: "OFFICER1",
+    stateCode: "US_PA",
+    hasCaseload: true,
+    hasFacilityCaseload: false,
+    givenNames: "TEST",
+    surname: "OFFICER1",
+  },
+  {
+    email: "test-officer@example.com",
+    id: "OFFICER2",
+    stateCode: "US_PA",
+    hasCaseload: true,
+    hasFacilityCaseload: false,
+    givenNames: "TEST",
+    surname: "OFFICER2",
+  },
+
   // US_TN - TENNESSEE
   {
     email: "test-officer@example.com",

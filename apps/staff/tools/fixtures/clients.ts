@@ -997,6 +997,76 @@ const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
+const US_PA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+  {
+    personName: {
+      givenNames: "BENJAMIN",
+      surname: "FRANKLIN",
+    },
+    personExternalId: "001",
+    displayId: "d001",
+    pseudonymizedId: "p001",
+    stateCode: "US_PA",
+    officerId: "OFFICER1",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    expirationDate: "2024-12-31",
+    currentBalance: 1221.88,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: "2022-01-03",
+    allEligibleOpportunities: ["usPaAdminSupervision"],
+  },
+  {
+    personName: {
+      givenNames: "LOUISA",
+      surname: "ALCOTT",
+      middleNames: "MAY",
+    },
+    personExternalId: "002",
+    displayId: "d002",
+    pseudonymizedId: "p002",
+    stateCode: "US_PA",
+    officerId: "OFFICER2",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    expirationDate: "2024-12-31",
+    currentBalance: 1221.88,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: "2022-01-03",
+    specialConditions: [
+      "OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS, OPEN TEXT FOR SPECIAL CONDITIONS",
+    ],
+    allEligibleOpportunities: ["usPaAdminSupervision"],
+  },
+  {
+    personName: {
+      givenNames: "KEVIN",
+      surname: "BACON",
+    },
+    personExternalId: "003",
+    displayId: "d003",
+    pseudonymizedId: "p003",
+    stateCode: "US_PA",
+    officerId: "OFFICER1",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionLevelStart: "2019-12-20",
+    address: "123 Bedrock Lane",
+    phoneNumber: "5555555678",
+    expirationDate: "2024-12-31",
+    currentBalance: 1221.88,
+    lastPaymentAmount: 125.75,
+    lastPaymentDate: "2022-01-03",
+    allEligibleOpportunities: ["usPaAdminSupervision"],
+  },
+];
+
 const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
@@ -1293,6 +1363,7 @@ const data: Omit<ClientRecord, "personType" | "recordId">[] = [
   ...US_ND_CLIENTS,
   ...US_OR_CLIENTS,
   ...US_TN_CLIENTS,
+  ...US_PA_CLIENTS,
 ];
 
 export const clientsData: FixtureData<
