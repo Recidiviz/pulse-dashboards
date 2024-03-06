@@ -19,15 +19,31 @@
  */
 
 import { TenantConfig } from "../core/models/types";
-import * as lantern from "../RootStore/TenantStore/lanternTenants";
+import * as dashboards from "../RootStore/TenantStore/dashboardTenants";
+import {
+  getStateOpportunityTypes,
+  OpportunityType,
+} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
+  getStateOpportunityTypes("US_PA");
 
 const US_PA_CONFIG: TenantConfig = {
   name: "Pennsylvania",
   stateCode: "PA",
   domain: "pa.gov",
-  availableStateCodes: [lantern.US_PA],
+  availableStateCodes: [dashboards.US_PA],
+  workflowsSupportedSystems: ["SUPERVISION"],
+  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
+  workflowsSystemConfigs: {
+    SUPERVISION: {
+      searchType: "OFFICER",
+      searchField: "officerId",
+    },
+  },
   enableUserRestrictions: false,
   navigation: {
+    workflows: ["home", "clients", ...WORKFLOWS_OPPORTUNITY_TYPES],
     // TODO remove once LANTERN is deprecated
     // @ts-ignore
     revocations: [],

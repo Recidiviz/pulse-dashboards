@@ -19,8 +19,9 @@ import { PATHWAYS_TENANTS } from "./pathwaysTenants";
 
 export const US_CA = "US_CA";
 export const US_OR = "US_OR";
+export const US_PA = "US_PA";
 
-export const WORKFLOWS_ONLY_TENANTS = [US_CA, US_OR] as const;
+export const WORKFLOWS_ONLY_TENANTS = [US_CA, US_OR, US_PA] as const;
 
 /**
  * Tenants that have access to the Recidiviz Dashboard, including Pathways, Operations, and Workflows.
