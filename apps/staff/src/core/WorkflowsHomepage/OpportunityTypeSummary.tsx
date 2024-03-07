@@ -30,6 +30,7 @@ import styled from "styled-components/macro";
 import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
+  countOpportunities,
   generateOpportunityHydratedHeader,
   Opportunity,
   OpportunityType,
@@ -147,7 +148,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
 
   const header = generateOpportunityHydratedHeader(
     config,
-    opportunities.length - numIneligible,
+    countOpportunities(opportunities, opportunityType),
   );
 
   return (

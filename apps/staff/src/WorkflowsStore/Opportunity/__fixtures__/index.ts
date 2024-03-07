@@ -90,6 +90,8 @@ export const mockUsXxTwoOppConfig: OpportunityConfig<
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",
   }),
+  countByFunction: (opportunities: Opportunity[]) =>
+    opportunities.filter((opp) => opp.isSnoozed).length,
 };
 
 export const MOCK_OPPORTUNITY_CONFIGS = {

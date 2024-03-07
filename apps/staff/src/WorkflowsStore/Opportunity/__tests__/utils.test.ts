@@ -31,6 +31,7 @@ import {
 import { Opportunity } from "../types";
 import { monthsOrDaysRemainingFromToday } from "../utils/criteriaUtils";
 import {
+  countOpportunities,
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
 } from "../utils/generateHeadersUtils";
@@ -138,4 +139,62 @@ describe("Generate hydrated header", () => {
       }
     });
   });
+});
+
+describe("Generate counts for opportunities", () => {
+  type MockAOpps = Pick<Opportunity, "type" | "reviewStatus">;
+  type MockBOpps = Pick<Opportunity, "type" | "isSnoozed">;
+
+  const emptyOppsList: Opportunity[] = [];
+
+  const aOpps: MockAOpps[] = [
+    { type: "mockUsXxOpp" as OpportunityType, reviewStatus: "IN_PROGRESS" },
+    { type: "mockUsXxOpp" as OpportunityType, reviewStatus: "IN_PROGRESS" },
+    {
+      type: "mockUsXxOpp" as OpportunityType,
+      reviewStatus: "DENIED",
+    },
+  ];
+
+  const bOpps: MockBOpps[] = [
+    { type: "mockUsXxTwoOpp" as OpportunityType, isSnoozed: true },
+    { type: "mockUsXxTwoOpp" as OpportunityType, isSnoozed: false },
+    { type: "mockUsXxTwoOpp" as OpportunityType, isSnoozed: true },
+  ] as unknown as Opportunity[];
+
+  const baseTests = [
+    [aOpps as Opportunity[], "mockUsXxOpp" as OpportunityType, 2],
+    [bOpps as Opportunity[], "mockUsXxTwoOpp" as OpportunityType, 2],
+    [emptyOppsList as Opportunity[], "mockUsXxOpp" as OpportunityType, 0],
+  ];
+
+  beforeEach(() => {
+    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
+    Object.entries(MOCK_OPPORTUNITY_CONFIGS).forEach(([key, value], index) => {
+      OPPORTUNITY_CONFIGS[key as OpportunityType] = value as never;
+    });
+  });
+
+  afterEach(() => {
+    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
+    Object.keys(MOCK_OPPORTUNITY_CONFIGS).forEach((key) => {
+      OPPORTUNITY_CONFIGS[key as OpportunityType] = undefined as any;
+    });
+  });
+
+  it.each(baseTests)(
+    `should count opportunities %o properly when type is %s (TEST CASE %#)`,
+    (opps, type, expected) =>
+      expect(
+        countOpportunities(opps as Opportunity[], type as OpportunityType),
+      ).toEqual(expected),
+  );
+
+  it(`should throw an error when the opportunities are different types`, () =>
+    expect(() =>
+      countOpportunities(
+        [...aOpps, ...bOpps] as Opportunity[],
+        "mockUsXxOpp" as OpportunityType,
+      ),
+    ).toThrowError());
 });

@@ -17,6 +17,7 @@
 
 import { pluralizeWord } from "../../../utils";
 import {
+  Opportunity,
   OPPORTUNITY_CONFIGS,
   OpportunityHydratedHeader,
   OpportunityType,
@@ -46,6 +47,35 @@ export type CountFormatter = [
 /** Formatter for opportunity headers */
 const hydratedHeaderFormatter = (quantity: number): string | number => {
   return quantity === 0 ? "Some" : quantity;
+};
+
+/**
+ * This counts the number of opportunities in a list using the default counting algorithm if there is not one defined for the opportunityType.
+ * @param opportunities list of opportunities
+ * @param opportunityType opportunityType to count in a list
+ * @returns number of opportunities according to counting algorithm or -1
+ */
+export const countOpportunities = (
+  opportunities: Opportunity[],
+  opportunityType: OpportunityType,
+): number => {
+  if (opportunities.length === 0) return 0;
+  opportunities.every((opportunity) => {
+    const { type } = opportunity;
+    if (type !== opportunityType)
+      throw new Error(
+        `Found unexpected opportunity of type "${type}" when expecting only "${opportunityType}" in list`,
+      );
+    return true;
+  });
+
+  const countByFunction = OPPORTUNITY_CONFIGS[opportunityType].countByFunction;
+  const count = countByFunction
+    ? countByFunction(opportunities)
+    : opportunities.filter(
+        (opp) => opp.reviewStatus !== "DENIED" && !opp.denial,
+      ).length;
+  return count;
 };
 
 export const generateOpportunityHydratedHeader = (

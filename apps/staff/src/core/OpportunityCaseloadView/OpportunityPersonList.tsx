@@ -29,6 +29,7 @@ import {
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
+  countOpportunities,
   generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
   OpportunityTab,
@@ -142,8 +143,9 @@ const HydratedOpportunityPersonList = observer(
     )
       return null;
 
-    const eligibleOpps =
-      oppsFromOpportunitiesByOppType?.filter((opp) => !opp.denial) || undefined;
+    const opportunityCount = oppsFromOpportunitiesByOppType
+      ? countOpportunities(oppsFromOpportunitiesByOppType, opportunityType)
+      : 0;
 
     const handleTabClick = (tab: OpportunityTab) => {
       analyticsStore.trackOpportunityTabClicked({ tab });
@@ -151,7 +153,7 @@ const HydratedOpportunityPersonList = observer(
     };
     const hydratedHeader = generateOpportunityHydratedHeader(
       opportunityConfigs[opportunityType],
-      eligibleOpps?.length || 0,
+      opportunityCount
     );
 
     return !oppsFromOpportunitiesByOppType.length ? (

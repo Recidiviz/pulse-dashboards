@@ -15,11 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { nextSunday, startOfWeek } from "date-fns";
+import { countBy } from "lodash";
 import simplur from "simplur";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { CountFormatter, OpportunityConfig } from "../..";
+import {
+  CountFormatter,
+  Opportunity,
+  OpportunityConfig,
+  OpportunityTab,
+} from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
 import { generateTabs } from "../../utils/tabUtils";
 
@@ -48,6 +54,18 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
       opportunityText: `${segregationTypeMapping[usMoOverdueRHOppVariant]}`,
       callToAction,
     }),
+    countByFunction: (opportunities: Opportunity[]) => {
+      const counts = countBy(opportunities, "tabTitle") as Record<
+        OpportunityTab,
+        number
+      >;
+      const tabs = Object.keys(counts) as OpportunityTab[];
+      const overdueTab = tabs.find((tab) => tab.startsWith("Overdue as of"));
+      const count = overdueTab
+        ? counts[overdueTab]
+        : counts["Due this week"] || counts["Coming up"] || 0;
+      return count;
+    },
     firestoreCollection: `US_MO-overdueRestrictiveHousing${usMoOverdueRHOppVariant}Referrals`,
     tabOrder: generateTabs({
       isAlert: true,

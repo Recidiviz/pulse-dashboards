@@ -113,12 +113,14 @@ test("hydrated", () => {
     person: {
       recordId: "1",
     } as Client,
+    type: "earlyTermination",
   };
   const opp2 = {
     ...opp1,
     person: {
       recordId: "2",
     } as Client,
+    type: "earlyTermination",
   };
 
   const opportunitiesByTab: Partial<
@@ -168,6 +170,7 @@ test("hydrated with one tab", () => {
     person: {
       recordId: "4",
     } as Client,
+    type: "earlyTermination",
   };
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
@@ -203,6 +206,7 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
       recordId: "3",
     } as Client,
     tabTitle: overriddenTabText,
+    type: "earlyTermination",
   };
 
   const opportunitiesByTab: Partial<
@@ -242,6 +246,7 @@ test("hydrated with eligible and ineligible opps", () => {
     person: {
       recordId: "4",
     } as Client,
+    type: "earlyTermination",
   };
 
   const almostOpp = { ...opp, reviewStatus: "ALMOST" };
@@ -254,7 +259,11 @@ test("hydrated with eligible and ineligible opps", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: {
-        earlyTermination: [opp, almostOpp, ineligibleOpp],
+        earlyTermination: [
+          opp,
+          { ...almostOpp, type: "earlyTermination" },
+          { ...ineligibleOpp, type: "earlyTermination" },
+        ],
       },
       opportunitiesByTab: {
         earlyTermination: {
@@ -280,6 +289,7 @@ test("when `allOpportunitiesByType` is undefined", () => {
     person: {
       recordId: "4",
     } as Client,
+    type: "earlyTermination",
   };
 
   useRootStoreMock.mockReturnValue({
@@ -291,7 +301,7 @@ test("when `allOpportunitiesByType` is undefined", () => {
       allOpportunitiesByType: undefined,
       opportunitiesByTab: {
         earlyTermination: {
-          [firstTabText]: [opp],
+          [firstTabText]: [{ ...opp, type: "earlyTermination" }],
         },
       },
     },

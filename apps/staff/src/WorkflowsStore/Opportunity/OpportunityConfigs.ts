@@ -106,6 +106,10 @@ type ResidentSystemType<T> = T extends Resident
 
 type SystemType<T> = ClientSystemType<T> | ResidentSystemType<T>;
 
+export type OpportunityCountByFunction = (
+  opportunities: Array<Opportunity>,
+) => number;
+
 export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   systemType: SystemType<ExtractPersonType<OpportunityVariant>>;
   stateCode: TenantId;
@@ -121,6 +125,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;
+  countByFunction?: OpportunityCountByFunction;
 };
 
 export const OPPORTUNITY_CONFIGS = {
