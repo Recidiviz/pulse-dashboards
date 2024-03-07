@@ -18,7 +18,7 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
 
 1. Grab the source:
 
-   `git clone git@github.com:Recidiviz/pulse-dashboards.git`
+   `git clone https://github.com/Recidiviz/pulse-dashboards.git`
 
 1. Ensure you are using the correct version of Node (if you don't use NVM, just check the .nvmrc file and ensure you are using that version).
 
