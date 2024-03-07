@@ -16,6 +16,8 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiEarlyDischargeOpportunity } from "./UsMiEarlyDischargeOpportunity";
 
@@ -37,4 +39,34 @@ export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOppor
       maxSnoozeDays: 90,
     },
     eligibilityDateText: "Earliest Eligibility Date for Early Discharge",
+    sidebarComponents: [
+      "UsMiEarlyDischargeIcDetails",
+      "ClientProfileDetails",
+      "EligibilityDate",
+    ],
+    methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
+    denialReasons: {
+      "CHILD ABUSE ORDER":
+        "CHILD ABUSE ORDER: Child abuse prevention order filed during supervision period",
+      "SUSPECTED OFFENSE":
+        "SUSPECTED OFFENSE: Suspected of a felony, assaultive misdemeanor, OWI, or offense requiring SORA registration",
+      "FELONY/STATE PROBATION":
+        "FELONY/STATE PROBATION: On parole and also on other state or federal probation supervision for an offense committed during the current period",
+      NEEDS:
+        "NEEDS: On parole and all criminogenic needs have not been addressed",
+      NONCOMPLIANT: "NONCOMPLIANT: Not compliant with the order of supervision",
+      PROGRAMMING: "PROGRAMMING: Has not completed all required programming",
+      "PRO-SOCIAL": "PRO-SOCIAL: Has not demonstrated pro-social behavior",
+      RESTITUTION:
+        "RESTITUTION: Has not completed court-ordered restitution payments",
+      "FINES & FEES":
+        "FINES & FEES: Willful nonpayment of restitution, fees, court costs, fines, and other monetary obligations despite clear ability to pay",
+      "PENDING CHARGES": "PENDING CHARGES: Pending felony charges/warrant",
+      "ORDERED TREATMENT":
+        "ORDERED TREATMENT: Has not completed all required treatment",
+      "EXCLUDED OFFENSE":
+        "EXCLUDED OFFENSE: On parole for an offense resulting in death or serious bodily injury or an offense involving the discharge of a firearm",
+      JUDGE: "JUDGE: County Judge declined client for consideration",
+      [OTHER_KEY]: "Other: please specify a reason",
+    },
   };

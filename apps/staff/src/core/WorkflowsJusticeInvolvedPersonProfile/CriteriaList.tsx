@@ -75,7 +75,7 @@ export const CriteriaList = observer(function CriteriaList({
 }): React.ReactElement {
   const colors = useStatusColors(opportunity);
 
-  const alert = opportunity.isAlert;
+  const alert = opportunity.config.isAlert;
 
   return (
     <Wrapper
@@ -99,7 +99,7 @@ export const CriteriaList = observer(function CriteriaList({
                 <>
                   {" "}
                   <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                    <InfoButton infoUrl={opportunity.policyOrMethodologyUrl} />
+                    <InfoButton infoUrl={opportunity.config.methodologyUrl} />
                   </InfoTooltipWrapper>
                 </>
               )}
@@ -129,7 +129,7 @@ export const CriteriaList = observer(function CriteriaList({
                       {tooltip && (
                         <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
                           <InfoButton
-                            infoUrl={opportunity.policyOrMethodologyUrl}
+                            infoUrl={opportunity.config.methodologyUrl}
                           />
                         </InfoTooltipWrapper>
                       )}

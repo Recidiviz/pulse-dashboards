@@ -17,11 +17,8 @@
 
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
 import {
   CriteriaCopy,
@@ -89,31 +86,7 @@ const CRITERIA_COPY: CriteriaCopy<UsIdExpandedCRCReferralRecord> = {
   ineligibleCriteria: [],
 };
 
-const DENIAL_REASONS_MAP = {
-  MEDICAL: "Was not approved by an IDOC medical provider",
-  PENDING:
-    "There are pending felony charges or felony investigations in which the resident is a suspect",
-  BEHAVIOR: "Resident has had poor institutional behavior",
-  PROGRAM: "Missing required facility programming",
-  TRUST: "Resident does not have $500.00 in their resident trust account",
-  EMPLOYMENT:
-    "Resident is not currently employed full-time or engaged in or accepted to a full-time " +
-    "Idaho educational program approved by the IDOC",
-  CLASS_A_OR_B: "Has class A or B disciplinary reports in the past six months",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
-
 export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<UsIdExpandedCRCReferralRecord> {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "Incarceration",
-    "UsIdPastTwoYearsAlert",
-    "CaseNotes",
-  ];
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ID;
-
-  denialReasonsMap = DENIAL_REASONS_MAP;
-
   constructor(resident: Resident) {
     super(
       resident,

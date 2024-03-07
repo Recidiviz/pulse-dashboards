@@ -18,11 +18,8 @@
 import { differenceInDays, startOfToday } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   Component,
@@ -40,11 +37,6 @@ import {
   usMoRestrictiveHousingStatusHearingSchema,
   validateReferral,
 } from "./UsMoRestrictiveHousingStatusHearingReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  COMP: "Hearing Completed",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 const daysUntilNextReviewDateString = (nextReviewDate: Date) => {
   const daysUntilNextReviewDate = differenceInDays(
@@ -129,16 +121,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
   Resident,
   UsMoRestrictiveHousingStatusHearingReferralRecord
 > {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "UsMoIncarceration",
-    "UsMoRestrictiveHousing",
-  ];
-
   resident: Resident;
-
-  readonly isAlert = true;
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MO;
 
   constructor(resident: Resident) {
     super(
@@ -149,7 +132,6 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       validateReferral,
     );
     this.resident = resident;
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
 
     makeObservable(this, {
       requirementsMet: computed,

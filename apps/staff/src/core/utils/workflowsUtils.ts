@@ -72,7 +72,7 @@ export type StatusPalette =
   (typeof OPPORTUNITY_STATUS_COLORS)[keyof typeof OPPORTUNITY_STATUS_COLORS];
 
 export function useStatusColors({
-  isAlert,
+  config: { isAlert },
   reviewStatus,
   almostEligible,
 }: Opportunity): StatusPalette {

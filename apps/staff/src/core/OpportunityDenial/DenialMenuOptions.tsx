@@ -33,7 +33,7 @@ export const DenialMenuOptions = observer(function DenialMenuOptions({
   const reasons = opportunity.denial?.reasons;
   return (
     <>
-      {Object.entries(opportunity?.denialReasonsMap).map(([code, desc]) => (
+      {Object.entries(opportunity?.config.denialReasons).map(([code, desc]) => (
         <DropdownMenuItem
           key={code}
           onClick={() => {

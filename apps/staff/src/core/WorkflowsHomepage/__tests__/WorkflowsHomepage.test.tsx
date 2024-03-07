@@ -281,18 +281,18 @@ describe("WorkflowsHomepage", () => {
   test("review status uses overridden text for alert opps", () => {
     const firstOpp = {
       ...mockOpportunity,
-      isAlert: true,
+      config: { ...mockOpportunity.config, isAlert: true },
       reviewStatus: "DENIED",
     };
     const secondOpp = {
       ...mockOpportunity,
-      isAlert: true,
+      config: { ...mockOpportunity.config, isAlert: true },
       reviewStatus: "IN_PROGRESS",
       person: { recordId: "2" },
     };
     const thirdOpp = {
       ...mockOpportunity,
-      isAlert: true,
+      config: { ...mockOpportunity.config, isAlert: true },
       reviewStatus: "IN_PROGRESS",
       person: { recordId: "3" },
     };

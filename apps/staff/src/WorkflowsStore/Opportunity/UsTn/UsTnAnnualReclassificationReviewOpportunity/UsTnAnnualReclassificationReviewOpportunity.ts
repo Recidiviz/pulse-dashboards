@@ -16,11 +16,9 @@
 // =============================================================================
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatDate } from "../../../../utils/formatStrings";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../..";
 import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -52,12 +50,6 @@ const CRITERIA_COPY: CriteriaCopy<UsTnAnnualReclassificationReviewReferralRecord
     ineligibleCriteria: [],
   };
 
-const DENIAL_REASONS_MAP = {
-  // TODO(#4032): Add denial reasons once they've been finalized.
-  OVERRIDE: "Reclassification date override",
-  [OTHER_KEY]: "Please specify a reason",
-};
-
 export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase<
   Resident,
   UsTnAnnualReclassificationReviewReferralRecord,
@@ -70,16 +62,6 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
   readonly caseNotesTitle = "Disciplinaries";
 
   form: UsTnAnnualReclassificationReviewForm;
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "Incarceration",
-    "CaseNotes",
-    "UsTnCommonlyUsedOverrideCodes",
-  ];
-
-  // TODO(#4087): Set policyOrMethodologyUrl once we know what to set it to.
-
-  denialReasonsMap = DENIAL_REASONS_MAP;
 
   constructor(resident: Resident) {
     super(

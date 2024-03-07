@@ -17,9 +17,7 @@
 
 import { makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { formatBaseSLDRequirements } from "../../SupervisionLevelDowngradeReferralRecord";
 import { OpportunityRequirement } from "../../types";
@@ -33,14 +31,6 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsTnSupervisionLevelDowngradeReferralRecord
 > {
-  readonly policyOrMethodologyUrl =
-    "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view";
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-    "CaseNotes",
-  ];
-
   readonly caseNotesTitle = "Relevant Contact Codes";
 
   constructor(client: Client) {
@@ -62,11 +52,4 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
     return formatBaseSLDRequirements(this.record);
   }
-
-  readonly isAlert = true;
-
-  denialReasonsMap = {
-    COURT: "COURT: Court mandates supervision at a higher level",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
 }

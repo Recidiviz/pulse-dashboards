@@ -18,7 +18,6 @@
 import { differenceInDays } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
@@ -71,14 +70,6 @@ const CRITERIA_COPY: CriteriaCopy<BasePastFTRDReferralRecord> = {
 export abstract class PastFTRDOpportunityBase<
   ReferralRecord extends BasePastFTRDReferralRecord,
 > extends OpportunityBase<Client, ReferralRecord> {
-  readonly isAlert = true;
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-  ];
-
-  readonly tooltipEligibilityText = "Eligible for discharge";
-
   constructor(
     client: Client,
     type: OpportunityType,

@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { PastFTRDOpportunityBase } from "../../PastFTRDOpportunityBase";
 import {
   UsMiPastFTRDReferralRecord,
@@ -25,15 +23,7 @@ import {
 } from "./UsMiPastFTRDReferralRecord";
 
 export class UsMiPastFTRDOpportunity extends PastFTRDOpportunityBase<UsMiPastFTRDReferralRecord> {
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
-
   constructor(client: Client) {
     super(client, "usMiPastFTRD", usMiPastFTRDSchema.parse);
   }
-
-  denialReasonsMap = {
-    DATE: "Expiration date is inaccurate",
-    CUSTODY: "Client is currently in custody",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
 }

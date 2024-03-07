@@ -17,11 +17,8 @@
 
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { toTitleCase } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import {
@@ -89,30 +86,10 @@ const CRITERIA_COPY: CriteriaCopy<UsMiMinimumTelephoneReportingReferralRecord> =
     ineligibleCriteria: [],
   };
 
-const DENIAL_REASONS_MAP = {
-  FIREARM:
-    "Serving on a felony offense involving possession or use of a firearm",
-  "SPEC COURT":
-    "Enrolled in a special issue court (e.g. Drug Treatment Court, Recovery Court, MH Court, Veterans Court)",
-  RPOSN:
-    "Designated as Reentry Project for Offenders with Special Needs (RPOSN - D-47)",
-  "HIGH PROFILE":
-    "Currently serving for an offense that resulted in the death of a person or a high-profile case with adverse community reaction (requires Max or higher based on risk score)",
-  JUDGE: "County Judge declined client for consideration",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
-
 export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
   Client,
   UsMiMinimumTelephoneReportingReferralRecord
 > {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-    "EligibilityDate",
-  ];
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
-
   constructor(client: Client) {
     super(
       client,
@@ -125,8 +102,6 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       requirementsMet: computed,
       requirementsAlmostMet: computed,
     });
-
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
   }
 
   get requirementsMet(): OpportunityRequirement[] {

@@ -19,10 +19,7 @@ import { differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { UsMeWorkReleaseForm } from "../../Forms/UsMeWorkReleaseForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
@@ -31,14 +28,6 @@ import {
   UsMeWorkReleaseCriteria,
   UsMeWorkReleaseReferralRecord,
 } from "./UsMeWorkReleaseReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  "CASE PLAN": "Not compliant with case plan goals",
-  PROGRAM:
-    "Has not completed, or is not currently participating in, required core programming",
-  DECLINE: "Resident declined opportunity to apply for Work Release",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeWorkReleaseCriteria,
@@ -148,14 +137,7 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
 
   form: UsMeWorkReleaseForm;
 
-  policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
-
   readonly hideUnknownCaseNoteDates = true;
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "Incarceration",
-    "CaseNotes",
-  ];
 
   constructor(resident: Resident) {
     super(resident, "usMeWorkRelease", resident.rootStore, transformReferral);
@@ -164,8 +146,6 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
     makeObservable(this, {
       requirementsMet: computed,
     });
-
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
 
     this.form = new UsMeWorkReleaseForm(this, resident.rootStore);
   }

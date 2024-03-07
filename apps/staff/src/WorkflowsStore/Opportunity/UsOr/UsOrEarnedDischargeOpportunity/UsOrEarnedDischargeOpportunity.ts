@@ -19,10 +19,7 @@
 
 import { makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { UsOrEarnedDischargeForm } from "../../Forms/UsOrEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
@@ -115,22 +112,4 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
     });
     return out;
   }
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-  ];
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_OR;
-
-  readonly isAlert = false;
-
-  readonly tooltipEligibilityText = "Eligible for early discharge";
-
-  denialReasonsMap = {
-    FINES:
-      "Compensatory fines and restitution have not been paid in full or not current on payment plan",
-    PROGRAMS: "Incomplete specialty court programs or treatment programs",
-    "CASE PLAN": "Not in compliance with supervision case plan",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
 }

@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { SystemId } from "../../../../core/models/types";
+import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
-import { OpportunityTab } from "../../types";
+import { DenialReasonsMap, OpportunityTab } from "../../types";
 import { CountFormatter } from "../../utils/generateHeadersUtils";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
@@ -54,7 +55,11 @@ export interface ILocalOpportunityConfiguration {
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;
-  // denialReasons: DenialReasonsMap;
+  methodologyUrl: string;
+  denialReasons: DenialReasonsMap;
+  sidebarComponents: OpportunityProfileModuleName[];
+  isAlert?: boolean;
+  tooltipEligibilityText?: string;
 }
 
 export interface OpportunityConfiguration {
@@ -73,5 +78,9 @@ export interface OpportunityConfiguration {
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;
   isEnabled: boolean;
-  // denialReasons: DenialReasonsMap;
+  methodologyUrl: string;
+  denialReasons: DenialReasonsMap;
+  sidebarComponents: string[];
+  isAlert?: boolean;
+  tooltipEligibilityText?: string;
 }

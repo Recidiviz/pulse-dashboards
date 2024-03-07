@@ -16,6 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
 import { UsTnSupervisionLevelDowngradeOpportunity } from "./UsTnSupervisionLevelDowngradeOpportunity";
@@ -39,4 +40,12 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervis
       maxSnoozeDays: 90,
     },
     tabOrder: generateTabs({ isAlert: true }),
+    methodologyUrl:
+      "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
+    sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+    denialReasons: {
+      COURT: "COURT: Court mandates supervision at a higher level",
+      [OTHER_KEY]: "Other: please specify a reason",
+    },
+    isAlert: true,
   };

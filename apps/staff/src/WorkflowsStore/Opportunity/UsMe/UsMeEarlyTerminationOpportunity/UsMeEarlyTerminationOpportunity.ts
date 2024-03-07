@@ -18,25 +18,14 @@
 import dedent from "dedent";
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import {
   UsMeEarlyTerminationReferralRecord,
   usMeEarlyTerminationSchema,
 } from "./UsMeEarlyTerminationReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  BENEFIT:
-    "Continuation on probation would benefit the community or the client",
-  COMPLETION: "Has not completed conditions of probation",
-  CONDUCT: "Has engaged in prohibited conduct",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 const CRITERIA: Record<
   keyof UsMeEarlyTerminationReferralRecord["eligibleCriteria"],
@@ -64,13 +53,6 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
   Client,
   UsMeEarlyTerminationReferralRecord
 > {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-    "CaseNotes",
-  ];
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
-
   readonly hideUnknownCaseNoteDates = true;
 
   readonly portionServedRequirement = ["1/2"];
@@ -89,8 +71,6 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       requirementsAlmostMet: computed,
       almostEligibleStatusMessage: computed,
     });
-
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
   }
 
   get almostEligible(): boolean {

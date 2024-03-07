@@ -21,7 +21,6 @@ import { ValuesType } from "utility-types";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
 import {
   CopyTuple,
@@ -142,16 +141,6 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
       requirementsMet: override,
     });
   }
-
-  denialReasonsMap = {
-    BEDS: "Released early due to a need for Restrictive Housing beds",
-    RELEASED: "Released this week",
-    EXTENDED:
-      "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
-    REFERRED:
-      "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
-    [OTHER_KEY]: "Other",
-  };
 
   get requirementsMet(): OpportunityRequirement[] {
     const { record } = this;

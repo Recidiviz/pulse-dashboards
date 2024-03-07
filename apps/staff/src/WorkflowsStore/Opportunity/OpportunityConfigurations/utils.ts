@@ -20,6 +20,7 @@ import simplur from "simplur";
 
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { JusticeInvolvedPerson } from "../../types";
+import { OTHER_KEY } from "../../utils";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { OpportunityType } from "..";
 import { OpportunityBase } from "../OpportunityBase";
@@ -55,6 +56,13 @@ export const mockLocalOpportunityConfigurationObject: ILocalOpportunityConfigura
         "Review these clients and complete their auto-generated TEPE Note.",
     }),
     firestoreCollection: "US_XX_mockOpportunity",
+    methodologyUrl: "methodologyUrl",
+    isAlert: true,
+    denialReasons: {
+      CODE: "Denial reason",
+      [OTHER_KEY]: "Other",
+    },
+    sidebarComponents: [],
   };
 
 export const mockApiOpportunityConfigurationResponse = {

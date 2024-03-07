@@ -19,7 +19,6 @@ import { differenceInDays } from "date-fns";
 import { makeObservable } from "mobx";
 import simplur from "simplur";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,
@@ -28,7 +27,6 @@ import {
 } from "../../../../FirestoreStore";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { UsTnExpirationForm } from "../../Forms/UsTnExpirationForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
@@ -37,11 +35,6 @@ import {
   UsTnExpirationReferralRecord,
   usTnExpirationSchema,
 } from "./UsTnExpirationReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  DATE: "DATE: Expiration date is incorrect or missing",
-  [OTHER_KEY]: "Other: please specify a reason",
-};
 
 const CRITERIA: Record<
   keyof Required<UsTnExpirationReferralRecord>["eligibleCriteria"],
@@ -85,14 +78,6 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
 
   form: UsTnExpirationForm;
 
-  readonly policyOrMethodologyUrl =
-    "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing";
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-    "CaseNotes",
-  ];
-
   constructor(client: Client) {
     super(
       client,
@@ -103,7 +88,6 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, { requirementsMet: true });
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
     this.form = new UsTnExpirationForm(this, client.rootStore);
   }
 

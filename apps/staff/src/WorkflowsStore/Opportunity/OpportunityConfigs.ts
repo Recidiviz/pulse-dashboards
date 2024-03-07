@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { SystemId } from "../../core/models/types";
+import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
 import { PartialRecord } from "../../utils/typeUtils";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { OpportunityBase } from "./OpportunityBase";
-import { Opportunity, OpportunityTab } from "./types";
+import { DenialReasonsMap, Opportunity, OpportunityTab } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
 import { usIdEarnedDischargeConfig as earnedDischarge } from "./UsId/EarnedDischargeOpportunity/config";
 import { usIdLSUConfig as LSU } from "./UsId/LSUOpportunity/config";
@@ -126,6 +127,11 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;
   countByFunction?: OpportunityCountByFunction;
+  methodologyUrl: string;
+  denialReasons: DenialReasonsMap;
+  sidebarComponents: OpportunityProfileModuleName[];
+  isAlert?: boolean;
+  tooltipEligibilityText?: string;
 };
 
 export const OPPORTUNITY_CONFIGS = {

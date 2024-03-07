@@ -18,10 +18,8 @@
 import { cloneDeep, some } from "lodash";
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { LSUForm } from "../../Forms/LSUForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
@@ -33,15 +31,6 @@ import {
   LSUReferralRecord,
   transformLSUReferral as transformReferral,
 } from "./LSUReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  SCNC: "SCNC: Not compliant with all court-ordered conditions and special conditions",
-  FFR: "FFR: Failure to make payments toward fines, fees, and restitution despite ability to pay",
-  "NCO/CPO": "NCO/CPO: Has an active NCO, CPO, or restraining order",
-  INTERLOCK: "INTERLOCK: Has an active interlock device",
-  MIS: "Has had a violent misdemeanor conviction in the past 12 months",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
@@ -127,16 +116,6 @@ export class LSUOpportunity extends OpportunityBase<
 > {
   form: LSUForm;
 
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-    "CaseNotes",
-  ];
-
-  readonly policyOrMethodologyUrl =
-    "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf";
-
-  readonly tooltipEligibilityText = "Eligible for transfer to LSU";
-
   constructor(client: Client) {
     super(client, "LSU", client.rootStore, transformReferral);
     makeObservable(this, {
@@ -146,7 +125,6 @@ export class LSUOpportunity extends OpportunityBase<
       almostEligibleStatusMessage: computed,
     });
 
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
     this.form = new LSUForm(this, client.rootStore);
   }
 

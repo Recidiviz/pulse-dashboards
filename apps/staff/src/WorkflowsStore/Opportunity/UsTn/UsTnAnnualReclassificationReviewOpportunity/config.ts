@@ -17,6 +17,7 @@
 
 import simplur from "simplur";
 
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTnAnnualReclassificationReviewOpportunity";
 
@@ -39,4 +40,15 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
       maxSnoozeDays: 90,
       defaultSnoozeDays: 30,
     },
+    denialReasons: {
+      // TODO(#4032): Add denial reasons once they've been finalized.
+      OVERRIDE: "Reclassification date override",
+      [OTHER_KEY]: "Please specify a reason",
+    },
+    sidebarComponents: [
+      "Incarceration",
+      "CaseNotes",
+      "UsTnCommonlyUsedOverrideCodes",
+    ],
+    methodologyUrl: "",
   };

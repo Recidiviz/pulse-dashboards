@@ -19,10 +19,7 @@
 
 import { makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, hydrateCriteria } from "../../utils/criteriaUtils";
@@ -84,25 +81,7 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     return hydrateCriteria(this.record, "eligibleCriteria", CRITERIA_COPY);
   }
 
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-    "EligibilityDate",
-    "CaseNotes",
-  ];
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
-
-  readonly isAlert = true;
-
   readonly hideUnknownCaseNoteDates = true;
-
-  denialReasonsMap = {
-    OVERRIDE:
-      "Agent supervision level override due to noncompliance with supervision",
-    "EXCLUDED CHARGE":
-      "Client is required to be supervised at a higher level of supervision by policy",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
 
   get eligibilityDate(): Date | undefined {
     return this.record?.metadata.eligibleDate;

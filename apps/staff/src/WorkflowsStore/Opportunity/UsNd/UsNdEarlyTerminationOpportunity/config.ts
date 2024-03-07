@@ -16,6 +16,8 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsNdEarlyTerminationOpportunity } from "./UsNdEarlyTerminationOpportunity";
 
@@ -37,4 +39,17 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
       maxSnoozeDays: 90,
     },
     hideDenialRevert: true,
+    methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ND,
+    sidebarComponents: ["ClientProfileDetails"],
+    denialReasons: {
+      "INT MEASURE":
+        "Under active intermediate measure as a result of 1+ violations",
+      "CASE PLAN NC": "Has not completed case plan goals",
+      SO: "Being supervised for sex offense",
+      DOP: "Being supervised for an offense resulting in the death of a person",
+      "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
+      INC: "Incarcerated on another offense",
+      "SA DECLINE": "State's Attorney permanently declined consideration",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
   };

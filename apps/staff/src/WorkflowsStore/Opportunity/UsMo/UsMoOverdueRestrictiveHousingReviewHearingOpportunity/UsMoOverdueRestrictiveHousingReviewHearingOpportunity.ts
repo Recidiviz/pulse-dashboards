@@ -19,7 +19,6 @@ import { makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
 import {
   CopyTuple,
@@ -100,13 +99,6 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
       requirementsMet: override,
     });
   }
-
-  denialReasonsMap = {
-    BEDS: "Released early due to a need for Extended Restrictive Housing beds",
-    RELEASED: "Released this week",
-    OUTDATED: "Hearing occurred this week",
-    [OTHER_KEY]: "Other",
-  };
 
   get requirementsMet(): OpportunityRequirement[] {
     return hydrateCriteria(

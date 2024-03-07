@@ -16,6 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { EarnedDischargeOpportunity } from "./EarnedDischargeOpportunity";
 
@@ -35,4 +36,18 @@ export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportu
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    methodologyUrl:
+      "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf",
+    denialReasons: {
+      SCNC: "Not compliant with special conditions",
+      FFR: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
+      INTERLOCK: "Has an active interlock device",
+      NCIC: "Did not pass NCIC check",
+      PCD: "Parole Commission permanently denied early discharge request",
+      CD: "Court permanently denied early discharge request",
+      MIS: "Has had a violent misdemeanor conviction in the past 12 months",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
+    sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+    tooltipEligibilityText: "Eligible for Earned Discharge",
   };

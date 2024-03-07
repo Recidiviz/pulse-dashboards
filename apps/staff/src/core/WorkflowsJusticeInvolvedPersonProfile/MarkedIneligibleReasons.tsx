@@ -84,7 +84,7 @@ export function buildDenialReasonsListText(
   denialReasons: string[],
 ): string {
   const denialReasonsList = denialReasons.join(", ");
-  const ineligibleReasonsListCopy = opportunity.isAlert
+  const ineligibleReasonsListCopy = opportunity.config.isAlert
     ? "Override reasons:"
     : "Not eligible reasons:";
 

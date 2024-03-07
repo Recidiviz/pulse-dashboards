@@ -215,7 +215,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const savingWillUnsnooze = reasons.length === 0 && !reasonsUnchanged;
 
-  const prompt = opportunity.isAlert
+  const prompt = opportunity.config.isAlert
     ? `Please select the reason(s) ${opportunity.person?.displayPreferredName} should be overridden:`
     : `Which of the following requirements has ${opportunity.person?.displayPreferredName} not met?`;
 
@@ -254,7 +254,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       <Heading person={opportunity.person} />
       <SidePanelHeader>{prompt}</SidePanelHeader>
       <>
-        {Object.entries(opportunity.denialReasonsMap).map(
+        {Object.entries(opportunity.config.denialReasons).map(
           ([code, description]) => (
             <MenuItem
               data-testid={`OpportunityDenialView__checkbox-${code}`}

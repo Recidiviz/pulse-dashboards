@@ -16,6 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { CompliantReportingOpportunity } from "./CompliantReportingOpportunity";
 
@@ -36,4 +37,22 @@ export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingO
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    denialReasons: {
+      DECF: "DECF: No effort to pay fine and costs",
+      DECR: "DECR: Criminal record",
+      DECT: "DECT: Insufficient time in supervision level",
+      DEDF: "DEDF: No effort to pay fees",
+      DEDU: "DEDU: Serious compliance problems ",
+      DEIJ: "DEIJ: Not allowed per court",
+      DEIR: "DEIR: Failure to report as instructed",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
+    methodologyUrl:
+      "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view",
+    sidebarComponents: [
+      "SpecialConditions",
+      "ClientProfileDetails",
+      "ClientHousing",
+      "FinesAndFees",
+    ],
   };

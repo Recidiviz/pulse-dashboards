@@ -18,12 +18,9 @@
 import { computed, makeObservable } from "mobx";
 
 import { DocstarsDenialModal } from "../../../../core/OpportunityDenial/UsNd/DocstarsDenialModal";
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { EarlyTerminationForm } from "../../Forms/EarlyTerminationForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { FormVariant, OpportunityRequirement } from "../../types";
@@ -32,18 +29,6 @@ import {
   UsNdEarlyTerminationReferralRecord,
   usNdEarlyTerminationSchema,
 } from "./UsNdEarlyTerminationReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  "INT MEASURE":
-    "Under active intermediate measure as a result of 1+ violations",
-  "CASE PLAN NC": "Has not completed case plan goals",
-  SO: "Being supervised for sex offense",
-  DOP: "Being supervised for an offense resulting in the death of a person",
-  "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
-  INC: "Incarcerated on another offense",
-  "SA DECLINE": "State's Attorney permanently declined consideration",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
@@ -73,12 +58,6 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
 > {
   form: EarlyTerminationForm;
 
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ND;
-
-  opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-  ];
-
   readonly DenialConfirmationModal = DocstarsDenialModal;
 
   constructor(client: Client) {
@@ -96,7 +75,6 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
       almostEligibleStatusMessage: computed,
     });
 
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
     this.form = new EarlyTerminationForm(this, client.rootStore);
   }
 

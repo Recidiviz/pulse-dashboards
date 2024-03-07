@@ -19,20 +19,14 @@ import { add, differenceInCalendarDays, isEqual } from "date-fns";
 import { makeObservable } from "mobx";
 
 import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityType } from "../../OpportunityConfigs";
-import {
-  DenialReasonsMap,
-  OpportunityRequirement,
-  OpportunityStatus,
-} from "../../types";
+import { OpportunityRequirement, OpportunityStatus } from "../../types";
 import { formatNoteDate } from "../../utils/caseNotesUtils";
 import {
   CompliantReportingDraftData,
@@ -104,17 +98,6 @@ const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
   },
 };
 
-const DENIAL_REASONS_MAP = {
-  DECF: "DECF: No effort to pay fine and costs",
-  DECR: "DECR: Criminal record",
-  DECT: "DECT: Insufficient time in supervision level",
-  DEDF: "DEDF: No effort to pay fees",
-  DEDU: "DEDU: Serious compliance problems ",
-  DEIJ: "DEIJ: Not allowed per court",
-  DEIR: "DEIR: Failure to report as instructed",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
-
 type CompliantReportingUpdateRecord =
   OpportunityUpdateWithForm<CompliantReportingDraftData>;
 
@@ -164,21 +147,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 > {
   readonly type: OpportunityType = "compliantReporting";
 
-  readonly denialReasonsMap: DenialReasonsMap;
-
   form: CompliantReportingForm;
-
-  readonly isAlert = false;
-
-  readonly policyOrMethodologyUrl =
-    "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view";
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "SpecialConditions",
-    "ClientProfileDetails",
-    "ClientHousing",
-    "FinesAndFees",
-  ];
 
   constructor(client: Client) {
     super(
@@ -197,7 +166,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       almostEligibleRecommendedNote: true,
     });
 
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
     this.form = new CompliantReportingForm(this, client.rootStore);
   }
 

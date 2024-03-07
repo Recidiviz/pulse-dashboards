@@ -75,6 +75,21 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   get hideDenialRevert() {
     return this.configurationObject.hideDenialRevert;
   }
+  get methodologyUrl() {
+    return this.configurationObject.methodologyUrl;
+  }
+  get denialReasons() {
+    return this.configurationObject.denialReasons;
+  }
+  get sidebarComponents() {
+    return this.configurationObject.sidebarComponents;
+  }
+  get isAlert() {
+    return this.configurationObject.isAlert;
+  }
+  get tooltipEligibilityText() {
+    return this.configurationObject.tooltipEligibilityText;
+  }
 
   get isEnabled(): boolean {
     const { featureVariants } = this.workflowsStore;

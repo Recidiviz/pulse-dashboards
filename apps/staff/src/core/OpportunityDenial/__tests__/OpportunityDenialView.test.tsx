@@ -77,8 +77,11 @@ describe("OpportunityDenialView", () => {
           snoozedOn: "",
           snoozedBy: "",
         },
-        denialReasonsMap: {
-          [OTHER_KEY]: "Other, please specify a reason",
+        config: {
+          ...mockOpportunity.config,
+          denialReasons: {
+            [OTHER_KEY]: "Other, please specify a reason",
+          },
         },
       });
     });
@@ -117,11 +120,14 @@ describe("OpportunityDenialView", () => {
     const renderWithDenialReasons = (reasons: string[]) => {
       const opportunity = {
         ...mockOpportunity,
-        denialReasonsMap: {
-          reason1: "The first reason",
-          reason2: "The second reason",
-          reason3: "The third reason",
-          [OTHER_KEY]: "Other, please specify a reason",
+        config: {
+          ...mockOpportunity.config,
+          denialReasons: {
+            reason1: "The first reason",
+            reason2: "The second reason",
+            reason3: "The third reason",
+            [OTHER_KEY]: "Other, please specify a reason",
+          },
         },
       };
 
@@ -209,14 +215,17 @@ describe("OpportunityDenialView", () => {
     beforeEach(() => {
       renderElement({
         ...mockOpportunity,
+        config: {
+          ...mockOpportunity.config,
+          denialReasons: {
+            CODE: "Denial reason",
+          },
+        },
         snoozedOnDate: new Date(2023, 9, 5),
         autoSnooze: {
           snoozeUntil: "2024-10-10",
           snoozedOn: "2023-10-05",
           snoozedBy: "",
-        },
-        denialReasonsMap: {
-          CODE: "Denial reason",
         },
       });
     });
@@ -264,12 +273,12 @@ describe("OpportunityDenialView", () => {
             defaultSnoozeDays: 30,
             maxSnoozeDays: 90,
           },
+          denialReasons: {
+            CODE: "Denial reason",
+          },
         },
         snoozedOnDate: new Date(2023, 9, 5),
         type: "compliantReporting",
-        denialReasonsMap: {
-          CODE: "Denial reason",
-        },
       });
     });
 
@@ -331,6 +340,10 @@ describe("OpportunityDenialView", () => {
             defaultSnoozeDays: 30,
             maxSnoozeDays: 90,
           },
+          denialReasons: {
+            CODE: "Denial reason",
+            CODE2: "Denial reason2",
+          },
         },
         snoozedOnDate: new Date(2023, 9, 5),
         manualSnooze: {
@@ -340,10 +353,6 @@ describe("OpportunityDenialView", () => {
         },
         denial: {
           reasons: ["CODE"],
-        },
-        denialReasonsMap: {
-          CODE: "Denial reason",
-          CODE2: "Denial reason2",
         },
       });
     });
@@ -453,7 +462,6 @@ describe("OpportunityDenialView", () => {
     beforeEach(() => {
       renderElement({
         ...mockOpportunity,
-        isAlert: true,
         snoozedOnDate: new Date(2023, 9, 5),
         deniedTabTitle: "Overridden",
         type: "compliantReporting",
@@ -463,9 +471,10 @@ describe("OpportunityDenialView", () => {
             defaultSnoozeDays: 30,
             maxSnoozeDays: 90,
           },
-        },
-        denialReasonsMap: {
-          CODE: "Denial reason",
+          isAlert: true,
+          denialReasons: {
+            CODE: "Denial reason",
+          },
         },
       });
     });
@@ -500,11 +509,11 @@ describe("OpportunityDenialView", () => {
             defaultSnoozeDays: 30,
             maxSnoozeDays: 90,
           },
+          denialReasons: {
+            CODE: "Denial reason",
+          },
         },
         type: "compliantReporting",
-        denialReasonsMap: {
-          CODE: "Denial reason",
-        },
       });
 
       expect(screen.queryByText("Snooze for:")).toBeNull();
@@ -514,13 +523,16 @@ describe("OpportunityDenialView", () => {
     it("does not display the auto-snooze date even if set in config", () => {
       renderElement({
         ...mockOpportunity,
+        config: {
+          ...mockOpportunity.config,
+          denialReasons: {
+            CODE: "Denial reason",
+          },
+        },
         autoSnooze: {
           snoozeUntil: "2024-10-10",
           snoozedOn: "",
           snoozedBy: "",
-        },
-        denialReasonsMap: {
-          CODE: "Denial reason",
         },
       });
 
@@ -535,13 +547,16 @@ describe("OpportunityDenialView", () => {
       beforeEach(() => {
         renderElement({
           ...mockOpportunity,
+          config: {
+            ...mockOpportunity.config,
+            denialReasons: {
+              [OTHER_KEY]: "Other, please specify a reason",
+            },
+          },
           autoSnooze: {
             snoozeUntil: "2024-10-10",
             snoozedOn: "",
             snoozedBy: "",
-          },
-          denialReasonsMap: {
-            [OTHER_KEY]: "Other, please specify a reason",
           },
         });
       });
@@ -584,8 +599,11 @@ describe("OpportunityDenialView", () => {
     it("submits directly if there's no modal", () => {
       const opp = {
         ...mockOpportunity,
-        denialReasonsMap: {
-          CODE: "Denial reason",
+        config: {
+          ...mockOpportunity.config,
+          denialReasons: {
+            CODE: "Denial reason",
+          },
         },
         denial: {
           reasons: ["CODE"],
@@ -611,8 +629,11 @@ describe("OpportunityDenialView", () => {
     it("opens the modal and doesn't immediately submit", () => {
       const opp = {
         ...mockOpportunity,
-        denialReasonsMap: {
-          CODE: "Denial reason",
+        config: {
+          ...mockOpportunity.config,
+          denialReasons: {
+            CODE: "Denial reason",
+          },
         },
         denial: {
           reasons: ["CODE"],

@@ -112,7 +112,7 @@ export function buildJustificationReasons(
   otherReason: string,
 ): JustificationReason[] {
   const out: JustificationReason[] = [];
-  Object.entries(opportunity.denialReasonsMap).forEach(
+  Object.entries(opportunity.config.denialReasons).forEach(
     ([code, description]) => {
       if (reasons.includes(code)) {
         out.push({

@@ -16,6 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./UsIdSupervisionLevelDowngradeOpportunity";
 
@@ -36,4 +37,15 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig<UsIdSupervis
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    methodologyUrl:
+      "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=share_link",
+    denialReasons: {
+      INCORRECT: "INCORRECT: Risk score listed here is incorrect",
+      OVERRIDE:
+        "OVERRIDE: Client is being overridden to a different supervision level",
+      [OTHER_KEY]: "Other: please specify a reason",
+    },
+    sidebarComponents: ["ClientProfileDetails"],
+    isAlert: true,
+    tooltipEligibilityText: "Eligible for supervision downgrade",
   };

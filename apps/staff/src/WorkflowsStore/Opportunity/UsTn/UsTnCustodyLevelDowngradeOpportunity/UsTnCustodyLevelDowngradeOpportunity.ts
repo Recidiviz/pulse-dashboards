@@ -17,10 +17,8 @@
 
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
 import { UsTnCustodyLevelDowngradeForm } from "../../Forms/usTnCustodyLevelDowngradeForm";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -73,12 +71,6 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
 
   almostEligibleRecommendedNote = undefined;
 
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "Incarceration",
-    "CaseNotes",
-    "UsTnCommonlyUsedOverrideCodes",
-  ];
-
   readonly caseNotesTitle = "Disciplinaries";
 
   constructor(resident: Resident) {
@@ -93,10 +85,6 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
     makeObservable(this, {
       requirementsMet: computed,
     });
-
-    this.denialReasonsMap = {
-      [OTHER_KEY]: "Please specify a reason",
-    };
 
     if (
       this.resident.rootStore.workflowsStore.featureVariants

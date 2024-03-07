@@ -19,9 +19,7 @@
 
 import { makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   formatBaseSLDRequirements,
@@ -58,24 +56,6 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
     return formatBaseSLDRequirements(this.record);
   }
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-  ];
-
-  readonly policyOrMethodologyUrl =
-    "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=share_link";
-
-  readonly isAlert = true;
-
-  readonly tooltipEligibilityText = "Eligible for supervision downgrade";
-
-  denialReasonsMap = {
-    INCORRECT: "INCORRECT: Risk score listed here is incorrect",
-    OVERRIDE:
-      "OVERRIDE: Client is being overridden to a different supervision level",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;

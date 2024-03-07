@@ -16,6 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { LSUOpportunity } from "./LSUOpportunity";
 
@@ -34,4 +35,16 @@ export const usIdLSUConfig: OpportunityConfig<LSUOpportunity> = {
     defaultSnoozeDays: 30,
     maxSnoozeDays: 90,
   },
+  methodologyUrl:
+    "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf",
+  denialReasons: {
+    SCNC: "SCNC: Not compliant with all court-ordered conditions and special conditions",
+    FFR: "FFR: Failure to make payments toward fines, fees, and restitution despite ability to pay",
+    "NCO/CPO": "NCO/CPO: Has an active NCO, CPO, or restraining order",
+    INTERLOCK: "INTERLOCK: Has an active interlock device",
+    MIS: "Has had a violent misdemeanor conviction in the past 12 months",
+    [OTHER_KEY]: "Other, please specify a reason",
+  },
+  sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+  tooltipEligibilityText: "Eligible for transfer to LSU",
 };

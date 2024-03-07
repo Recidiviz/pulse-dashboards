@@ -18,7 +18,6 @@
 import { DocumentData } from "firebase/firestore";
 
 import { Hydratable } from "../../core/models/types";
-import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   AutoSnoozeUpdate,
   Denial,
@@ -92,7 +91,6 @@ export interface Opportunity<
   requirementsMet: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
   readonly type: OpportunityType;
-  denialReasonsMap: DenialReasonsMap;
   denial: Denial | undefined;
   manualSnooze: ManualSnoozeUpdate | undefined;
   autoSnooze: AutoSnoozeUpdate | undefined;
@@ -107,7 +105,6 @@ export interface Opportunity<
   setLastViewed: () => void;
   setCompletedIfEligible: () => void;
   eligibilityDate: Date | undefined;
-  readonly isAlert: boolean;
   supportsDenial: boolean;
   readonly supportsExternalRequest: boolean;
   externalRequestData?: ExternalRequestUpdate<any>;
@@ -121,12 +118,9 @@ export interface Opportunity<
   setOtherReasonText: (otherReason?: string) => Promise<void>;
   trackListViewed: () => void;
   trackPreviewed: () => void;
-  readonly policyOrMethodologyUrl: string;
   readonly deniedTabTitle: string;
-  readonly opportunityProfileModules: OpportunityProfileModuleName[];
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
-  readonly tooltipEligibilityText?: string;
   readonly eligibilityCallToActionText?: string;
   tabTitle?: OpportunityTab;
   compare: (other: Opportunity) => number;

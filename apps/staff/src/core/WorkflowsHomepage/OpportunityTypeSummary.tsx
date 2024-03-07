@@ -139,7 +139,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
       : defaultAvatarsShown;
   const previewOpportunities = opportunities.slice(0, sliceIndex);
   const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
-  const reviewStatusText = opportunities[0].isAlert
+  const reviewStatusText = opportunities[0].config.isAlert
     ? "Overridden"
     : "Ineligible";
   const numIneligible = opportunities.filter(

@@ -36,7 +36,7 @@ describe("buildDenialReasonsListText", () => {
   test("override opportunities", () => {
     const testOpp = {
       ...mockOpportunity,
-      isAlert: true,
+      config: { ...mockOpportunity.config, isAlert: true },
     };
     expect(buildDenialReasonsListText(testOpp, ["REASON"])).toEqual(
       "Override reasons: REASON",
@@ -131,7 +131,7 @@ describe("MarkedIneligibleReasons", () => {
     useFeatureVariantsMock.mockReturnValue({ enableSnooze: {} });
     const opp = {
       ...mockOpportunity,
-      isAlert: true,
+      config: { ...mockOpportunity.config, isAlert: true },
       snoozedBy: "test-email",
       deniedTabTitle: "Overridden",
       snoozedOnDate: new Date(2023, 9, 10),

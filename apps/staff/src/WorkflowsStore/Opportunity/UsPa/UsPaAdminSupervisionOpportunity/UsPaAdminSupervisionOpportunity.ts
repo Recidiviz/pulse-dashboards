@@ -19,10 +19,7 @@
 
 import { makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import {
@@ -74,12 +71,6 @@ const CRITERIA_COPY: CriteriaCopy<UsPaAdminSupervisionReferralRecord> = {
   ineligibleCriteria: [],
 };
 
-const DENIAL_REASONS_MAP = {
-  FELONY_DRUG:
-    "Client is currently being supervised for an ineligible felony drug offense",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
-
 export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
   Client,
   UsPaAdminSupervisionReferralRecord
@@ -103,12 +94,4 @@ export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
       CRITERIA_FORMATTERS,
     );
   }
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-  ];
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_PA;
-
-  denialReasonsMap = DENIAL_REASONS_MAP;
 }

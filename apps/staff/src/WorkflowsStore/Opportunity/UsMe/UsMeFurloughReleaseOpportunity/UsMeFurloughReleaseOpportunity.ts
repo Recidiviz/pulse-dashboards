@@ -18,11 +18,8 @@
 import { differenceInMonths } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureGateError } from "../../../../errors";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { UsMeFurloughReleaseForm } from "../../Forms/UsMeFurloughReleaseForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
@@ -35,14 +32,6 @@ import {
   UsMeFurloughReleaseReferralRecord,
   usMeFurloughReleaseSchema,
 } from "./UsMeFurloughReleaseReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  "CASE PLAN": "Not compliant with case plan goals",
-  PROGRAM:
-    "Has not completed, or is not currently participating in, required core programming",
-  DECLINE: "Resident declined opportunity to apply for Furlough",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 const CRITERIA_COPY: CriteriaCopy<UsMeFurloughReleaseReferralRecord> = {
   eligibleCriteria: [
@@ -138,18 +127,11 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
 > {
   resident: Resident;
 
-  policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ME;
-
   readonly hideUnknownCaseNoteDates = true;
 
   form: UsMeFurloughReleaseForm;
 
   readonly portionServedRequirement = ["1/2"];
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "Incarceration",
-    "CaseNotes",
-  ];
 
   constructor(resident: Resident) {
     super(
@@ -170,8 +152,6 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
     makeObservable(this, {
       requirementsMet: computed,
     });
-
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
 
     this.form = new UsMeFurloughReleaseForm(this, resident.rootStore);
   }

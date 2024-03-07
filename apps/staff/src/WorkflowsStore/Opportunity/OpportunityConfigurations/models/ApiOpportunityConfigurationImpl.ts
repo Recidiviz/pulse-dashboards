@@ -91,6 +91,26 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return false;
   }
 
+  get methodologyUrl() {
+    return this.configurationObject.methodologyUrl;
+  }
+
+  get denialReasons() {
+    return this.configurationObject.denialReasons;
+  }
+
+  get sidebarComponents() {
+    return this.configurationObject.sidebarComponents;
+  }
+
+  get isAlert() {
+    return undefined;
+  }
+
+  get tooltipEligibilityText() {
+    return undefined;
+  }
+
   get isEnabled(): boolean {
     const { featureVariants } = this.workflowsStore;
     const { featureVariant, inverseFeatureVariant } = this;

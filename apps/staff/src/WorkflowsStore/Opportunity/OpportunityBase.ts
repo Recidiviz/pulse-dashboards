@@ -28,7 +28,6 @@ import { action, computed, makeObservable, when } from "mobx";
 
 import { HydrationState } from "../../core/models/types";
 import { compositeHydrationState, isHydrated } from "../../core/models/utils";
-import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import {
   AutoSnoozeUpdate,
   Denial,
@@ -59,7 +58,6 @@ import { AutoSnoozeUntil, OpportunityType } from "./OpportunityConfigs";
 import {
   Component,
   DefaultEligibility,
-  DenialReasonsMap,
   FormVariant,
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
@@ -121,13 +119,6 @@ export abstract class OpportunityBase<
   referralSubscription: DocumentSubscription<ReferralRecord>;
 
   updatesSubscription: DocumentSubscription<UpdateRecord>;
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [];
-
-  /**
-   * The "alert" flavor of opportunity receives a different UI treatment
-   */
-  readonly isAlert: boolean = false;
 
   /**
    * If the opportunity allows external system requests
@@ -198,7 +189,7 @@ export abstract class OpportunityBase<
   }
 
   get supportsDenial(): boolean {
-    return Object.keys(this.denialReasonsMap).length > 0;
+    return Object.keys(this.config.denialReasons).length > 0;
   }
 
   get record(): ReferralRecord | undefined {
@@ -523,7 +514,7 @@ export abstract class OpportunityBase<
   }
 
   get deniedTabTitle(): OpportunityTab {
-    return this.isAlert ? "Overridden" : "Marked ineligible";
+    return this.config.isAlert ? "Overridden" : "Marked ineligible";
   }
 
   get tabTitle(): OpportunityTab {
@@ -536,7 +527,7 @@ export abstract class OpportunityBase<
    * Alert-type opportunities only have a visible status if they're denied; others are always visible
    */
   showEligibilityStatus(component: Component): boolean {
-    return !this.isAlert || this.reviewStatus === "DENIED";
+    return !this.config.isAlert || this.reviewStatus === "DENIED";
   }
 
   // ===============================
@@ -553,10 +544,6 @@ export abstract class OpportunityBase<
   get denied(): boolean {
     return !!this.denial;
   }
-
-  readonly policyOrMethodologyUrl: string = "OVERRIDE_ME";
-
-  denialReasonsMap: DenialReasonsMap = {};
 
   // eslint-disable-next-line class-methods-use-this
   get requirementsMet(): OpportunityRequirement[] {

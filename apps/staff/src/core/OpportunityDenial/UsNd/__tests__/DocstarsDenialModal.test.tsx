@@ -435,10 +435,12 @@ describe("DocstarsDenialModal", () => {
     it("handles empty reasons list", () => {
       const out = buildJustificationReasons(
         {
-          denialReasonsMap: {
-            CODE: "Denial Code",
-            "CODE 2": "Denial Code 2",
-            [OTHER_KEY]: "Other Key",
+          config: {
+            denialReasons: {
+              CODE: "Denial Code",
+              "CODE 2": "Denial Code 2",
+              [OTHER_KEY]: "Other Key",
+            },
           },
         } as unknown as Opportunity,
         [],
@@ -451,10 +453,12 @@ describe("DocstarsDenialModal", () => {
     it("uses otherKey", () => {
       const out = buildJustificationReasons(
         {
-          denialReasonsMap: {
-            CODE: "Denial Code",
-            "CODE 2": "Denial Code 2",
-            [OTHER_KEY]: "Other Key",
+          config: {
+            denialReasons: {
+              CODE: "Denial Code",
+              "CODE 2": "Denial Code 2",
+              [OTHER_KEY]: "Other Key",
+            },
           },
         } as unknown as Opportunity,
         [OTHER_KEY],
@@ -469,10 +473,12 @@ describe("DocstarsDenialModal", () => {
     it("handles multiple codes", () => {
       const out = buildJustificationReasons(
         {
-          denialReasonsMap: {
-            CODE: "Denial Code",
-            "CODE 2": "Denial Code 2",
-            [OTHER_KEY]: "Other Key",
+          config: {
+            denialReasons: {
+              CODE: "Denial Code",
+              "CODE 2": "Denial Code 2",
+              [OTHER_KEY]: "Other Key",
+            },
           },
         } as unknown as Opportunity,
         ["CODE", OTHER_KEY],

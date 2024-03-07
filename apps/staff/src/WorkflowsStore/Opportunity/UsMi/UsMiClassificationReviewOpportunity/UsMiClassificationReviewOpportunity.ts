@@ -19,11 +19,8 @@
 
 import { makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import {
@@ -36,13 +33,6 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
   UsMiClassificationReviewReferralRecord
 > {
   readonly hideUnknownCaseNoteDates = true;
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "UsMiRecommendedSupervisionLevel",
-    "EligibilityDate",
-    "ClientProfileDetails",
-    "CaseNotes",
-  ];
 
   constructor(client: Client) {
     super(
@@ -89,21 +79,6 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
       },
     ];
   }
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_MI;
-
-  denialReasonsMap = {
-    VIOLATIONS: "Excessive violation behavior during current review period",
-    EMPLOYMENT:
-      "Chronic unemployment with no effort to job search or recent, concerning unemployment",
-    "FINES & FEES":
-      "No effort to pay fines and fees despite documented ability to pay",
-    "CASE PLAN":
-      "No progress toward completion of Transition Accountability Plan goals/tasks",
-    NONCOMPLIANT: "Noncompliant with the order of supervision",
-    ABSCONSION: "Chronic missing of reporting dates",
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;

@@ -16,6 +16,8 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdExpandedCRCOpportunity } from "./UsIdExpandedCRCOpportunity";
 
@@ -38,4 +40,20 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
       defaultSnoozeDays: 30,
       maxSnoozeDays: 30,
     },
+    denialReasons: {
+      MEDICAL: "Was not approved by an IDOC medical provider",
+      PENDING:
+        "There are pending felony charges or felony investigations in which the resident is a suspect",
+      BEHAVIOR: "Resident has had poor institutional behavior",
+      PROGRAM: "Missing required facility programming",
+      TRUST: "Resident does not have $500.00 in their resident trust account",
+      EMPLOYMENT:
+        "Resident is not currently employed full-time or engaged in or accepted to a full-time " +
+        "Idaho educational program approved by the IDOC",
+      CLASS_A_OR_B:
+        "Has class A or B disciplinary reports in the past six months",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
+    methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
+    sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],
   };

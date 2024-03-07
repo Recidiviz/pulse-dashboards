@@ -19,10 +19,8 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable, observable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { pluralizeWord } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { UsMeSCCPForm } from "../../Forms/UsMeSCCPForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
@@ -31,14 +29,6 @@ import {
   UsMeSCCPCriteria,
   UsMeSCCPReferralRecord,
 } from "./UsMeSCCPReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  "CASE PLAN": "Not compliant with case plan goals",
-  PROGRAM: "Has not completed required core programming",
-  DISCIPLINE: "Has a Class A or B disciplinary violation pending",
-  DECLINE: "Resident declined opportunity to apply for SCCP",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeSCCPCriteria,
@@ -263,15 +253,7 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
   readonly portionServedRequirement = ["1/2", "2/3"];
 
-  policyOrMethodologyUrl =
-    "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx";
-
   almostEligibleRecommendedNote = undefined;
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "Incarceration",
-    "CaseNotes",
-  ];
 
   constructor(resident: Resident) {
     super(resident, "usMeSCCP", resident.rootStore, transformReferral);
@@ -283,8 +265,6 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
       requirementsMet: computed,
       requirementsAlmostMet: computed,
     });
-
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
 
     this.form = new UsMeSCCPForm(this, resident.rootStore);
   }

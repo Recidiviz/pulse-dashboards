@@ -77,6 +77,9 @@ export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
       "Review these clients and complete their auto-generated TEPE Note.",
   }),
   firestoreCollection: "US_XX_mockOpportunity",
+  sidebarComponents: [],
+  denialReasons: {},
+  methodologyUrl: "",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfig<

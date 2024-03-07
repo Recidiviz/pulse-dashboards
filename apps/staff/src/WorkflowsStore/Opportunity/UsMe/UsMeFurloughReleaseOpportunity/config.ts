@@ -16,6 +16,8 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMeFurloughReleaseOpportunity } from "./UsMeFurloughReleaseOpportunity";
 
@@ -37,4 +39,13 @@ export const usMeFurloughReleaseConfig: OpportunityConfig<UsMeFurloughReleaseOpp
       defaultSnoozeDays: 30,
       maxSnoozeDays: 180,
     },
+    denialReasons: {
+      "CASE PLAN": "Not compliant with case plan goals",
+      PROGRAM:
+        "Has not completed, or is not currently participating in, required core programming",
+      DECLINE: "Resident declined opportunity to apply for Furlough",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
+    methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ME,
+    sidebarComponents: ["Incarceration", "CaseNotes"],
   };

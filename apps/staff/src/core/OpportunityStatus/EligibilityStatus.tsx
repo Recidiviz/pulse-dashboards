@@ -32,7 +32,7 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
       eligibleStatusMessage,
       defaultEligibility,
       denial,
-      isAlert,
+      config: { isAlert },
     } = opportunity;
 
     if (!isHydrated(opportunity)) return null;

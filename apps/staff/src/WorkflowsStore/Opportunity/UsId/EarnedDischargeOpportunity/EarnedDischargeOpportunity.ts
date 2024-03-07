@@ -18,10 +18,8 @@
 import { cloneDeep } from "lodash";
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { UsIdEarnedDischargeForm } from "../../Forms/UsIdEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
@@ -35,17 +33,6 @@ import {
   EarnedDischargeReferralRecord,
   transformEarnedDischargeReferral as transformReferral,
 } from "./EarnedDischargeReferralRecord";
-
-const DENIAL_REASONS_MAP = {
-  SCNC: "Not compliant with special conditions",
-  FFR: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
-  INTERLOCK: "Has an active interlock device",
-  NCIC: "Did not pass NCIC check",
-  PCD: "Parole Commission permanently denied early discharge request",
-  CD: "Court permanently denied early discharge request",
-  MIS: "Has had a violent misdemeanor conviction in the past 12 months",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
@@ -98,17 +85,7 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
   EarnedDischargeReferralRecord,
   OpportunityUpdateWithForm<EarnedDischargeDraftData>
 > {
-  readonly policyOrMethodologyUrl =
-    "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf";
-
   form?: UsIdEarnedDischargeForm;
-
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-    "CaseNotes",
-  ];
-
-  readonly tooltipEligibilityText = "Eligible for Earned Discharge";
 
   constructor(client: Client) {
     super(client, "earnedDischarge", client.rootStore, transformReferral);
@@ -119,8 +96,6 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       requirementsAlmostMet: computed,
       almostEligibleStatusMessage: computed,
     });
-
-    this.denialReasonsMap = DENIAL_REASONS_MAP;
 
     this.form = new UsIdEarnedDischargeForm(this, client.rootStore);
   }

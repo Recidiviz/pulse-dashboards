@@ -23,11 +23,9 @@ import {
 } from "date-fns";
 import { computed, makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { TransformFunction, ValidateFunction } from "../../../subscriptions";
-import { OTHER_KEY } from "../../../utils";
 import { CopyTuple, OpportunityType } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
 import { Component, Opportunity, OpportunityTab } from "../../types";
@@ -63,13 +61,6 @@ export const US_MO_DAYS_PAST = (eligibilityDate: Date, numOfDays?: number) => {
 export abstract class UsMoOverdueRestrictiveHousingBase<
   ReferralRecord extends BaseUsMoOverdueRestrictiveHousingReferralRecord,
 > extends OpportunityBase<Resident, ReferralRecord> {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "UsMoIncarceration",
-    "UsMoRestrictiveHousing",
-  ];
-
-  readonly isAlert = true;
-
   constructor(
     resident: Resident,
     type: OpportunityType,
@@ -87,10 +78,6 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
       requirementsMet: computed,
     });
   }
-
-  denialReasonsMap = {
-    [OTHER_KEY]: "Other",
-  };
 
   /**
    * The tab title for this opportunity.

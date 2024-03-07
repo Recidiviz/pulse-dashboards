@@ -16,6 +16,7 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./UsTnCustodyLevelDowngradeOpportunity";
 
@@ -35,4 +36,13 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevel
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    sidebarComponents: [
+      "Incarceration",
+      "CaseNotes",
+      "UsTnCommonlyUsedOverrideCodes",
+    ],
+    denialReasons: {
+      [OTHER_KEY]: "Please specify a reason",
+    },
+    methodologyUrl: "",
   };

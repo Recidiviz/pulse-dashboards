@@ -16,6 +16,8 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiMinimumTelephoneReportingOpportunity } from "./UsMiMinimumTelephoneReportingOpportunity";
 
@@ -38,4 +40,18 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumT
     },
     eligibilityDateText:
       "Earliest Eligibility Date for Minimum Telephone Reporting",
+    denialReasons: {
+      FIREARM:
+        "Serving on a felony offense involving possession or use of a firearm",
+      "SPEC COURT":
+        "Enrolled in a special issue court (e.g. Drug Treatment Court, Recovery Court, MH Court, Veterans Court)",
+      RPOSN:
+        "Designated as Reentry Project for Offenders with Special Needs (RPOSN - D-47)",
+      "HIGH PROFILE":
+        "Currently serving for an offense that resulted in the death of a person or a high-profile case with adverse community reaction (requires Max or higher based on risk score)",
+      JUDGE: "County Judge declined client for consideration",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
+    sidebarComponents: ["ClientProfileDetails", "EligibilityDate"],
+    methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
   };

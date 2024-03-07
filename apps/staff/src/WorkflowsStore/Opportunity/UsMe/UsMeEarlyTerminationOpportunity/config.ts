@@ -16,6 +16,8 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMeEarlyTerminationOpportunity } from "./UsMeEarlyTerminationOpportunity";
 
@@ -38,4 +40,13 @@ export const usMeEarlyTerminationConfig: OpportunityConfig<UsMeEarlyTerminationO
       defaultSnoozeDays: 30,
       maxSnoozeDays: 180,
     },
+    denialReasons: {
+      BENEFIT:
+        "Continuation on probation would benefit the community or the client",
+      COMPLETION: "Has not completed conditions of probation",
+      CONDUCT: "Has engaged in prohibited conduct",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
+    methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ME,
+    sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
   };

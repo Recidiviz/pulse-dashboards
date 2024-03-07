@@ -133,7 +133,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
             onDenialButtonClick={onDenialButtonClick}
           />
         </AccordionWrapper>
-        {opportunity.opportunityProfileModules.map((componentName) => {
+        {opportunity.config.sidebarComponents.map((componentName) => {
           if (componentName in FormViewOnlyComponent && !formView) return null;
           if (componentName in ClientDetailSidebarComponents) {
             if (!selectedClient) return null;

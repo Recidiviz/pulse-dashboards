@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { baseUsMoOverdueRestrictiveHousingConfig } from "../UsMoOverdueRestrictiveHousingOpportunityBase/config";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
@@ -23,4 +24,10 @@ export const usMoOverdueRestrictiveHousingReviewHearingConfig: OpportunityConfig
     "ReviewHearing",
     "in Extended Restrictive Housing to review for their next hearing",
     "Review residents and prepare necessary paperwork for their next hearing",
+    {
+      BEDS: "Released early due to a need for Extended Restrictive Housing beds",
+      RELEASED: "Released this week",
+      OUTDATED: "Hearing occurred this week",
+      [OTHER_KEY]: "Other",
+    },
   );

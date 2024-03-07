@@ -16,6 +16,8 @@
 // =============================================================================
 import simplur from "simplur";
 
+import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
+import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdCRCWorkReleaseOpportunity } from "./UsIdCRCWorkReleaseOpportunity";
 
@@ -38,4 +40,14 @@ export const usIdCRCWorkReleaseConfig: OpportunityConfig<UsIdCRCWorkReleaseOppor
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
+    methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
+    denialReasons: {
+      MEDICAL: "Was not approved by an IDOC medical provider",
+      PENDING:
+        "There are pending felony charges or felony investigations in which the resident is a suspect",
+      BEHAVIOR: "Resident has had poor institutional behavior",
+      PROGRAM: "Missing required facility programming",
+      [OTHER_KEY]: "Other, please specify a reason",
+    },
+    sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],
   };

@@ -17,10 +17,7 @@
 
 import { computed, makeObservable } from "mobx";
 
-import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityRequirement } from "../../types";
 import { CriteriaCopy, hydrateCriteria } from "../../utils/criteriaUtils";
 import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase";
@@ -74,26 +71,7 @@ const CRITERIA_COPY: CriteriaCopy<UsIdCRCWorkReleaseReferralRecord> = {
   ineligibleCriteria: [],
 };
 
-const DENIAL_REASONS_MAP = {
-  MEDICAL: "Was not approved by an IDOC medical provider",
-  PENDING:
-    "There are pending felony charges or felony investigations in which the resident is a suspect",
-  BEHAVIOR: "Resident has had poor institutional behavior",
-  PROGRAM: "Missing required facility programming",
-  [OTHER_KEY]: "Other, please specify a reason",
-};
-
 export class UsIdCRCWorkReleaseOpportunity extends UsIdCRCOpportunityBase<UsIdCRCWorkReleaseReferralRecord> {
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "Incarceration",
-    "UsIdPastTwoYearsAlert",
-    "CaseNotes",
-  ];
-
-  readonly policyOrMethodologyUrl = WORKFLOWS_METHODOLOGY_URL.US_ID;
-
-  denialReasonsMap = DENIAL_REASONS_MAP;
-
   constructor(resident: Resident) {
     super(
       resident,

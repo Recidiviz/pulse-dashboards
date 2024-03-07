@@ -37,7 +37,7 @@ export const MenuButton = observer(function MenuButton({
 }) {
   const buttonText =
     opportunity.config.denialButtonText ??
-    (opportunity.isAlert ? "Override?" : "Update eligibility");
+    (opportunity.config.isAlert ? "Override?" : "Update eligibility");
 
   return (
     <StatusAwareButton onClick={onDenialButtonClick}>

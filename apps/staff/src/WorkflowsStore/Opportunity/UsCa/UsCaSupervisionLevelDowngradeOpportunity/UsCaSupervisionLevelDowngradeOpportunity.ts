@@ -17,11 +17,10 @@
  * =============================================================================
  */
 
+import * as Sentry from "@sentry/react";
 import { makeObservable } from "mobx";
 
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { Client } from "../../../Client";
-import { OTHER_KEY } from "../../../utils";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
@@ -63,20 +62,6 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     return [];
   }
 
-  readonly opportunityProfileModules: OpportunityProfileModuleName[] = [
-    "ClientProfileDetails",
-  ];
-
-  readonly policyOrMethodologyUrl = "TBD";
-
-  readonly isAlert = false;
-
-  readonly tooltipEligibilityText = "Eligible for supervision downgrade";
-
-  denialReasonsMap = {
-    [OTHER_KEY]: "Other: please specify a reason",
-  };
-
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;
     return this.record.eligibleCriteria.supervisionLevelIsHighFor6Months
@@ -84,8 +69,17 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   }
 
   get eligibilityCallToActionText(): string {
+    const { tooltipEligibilityText } = this.config;
+    if (!tooltipEligibilityText) {
+      Sentry.captureException(
+        "null tooltipEligibilityText for UsCaSupervisionLevelDowngradeOpportunity",
+      );
+
+      return "";
+    }
+
     return `${
       this.client.displayPreferredName
-    } is ${this.tooltipEligibilityText.toLowerCase()}`;
+    } is ${tooltipEligibilityText.toLowerCase()}`;
   }
 }
