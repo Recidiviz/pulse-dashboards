@@ -38,8 +38,8 @@ import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
 import PageImpact from "./PageImpact";
+import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
-import PageOutliers from "./PageOutliers";
 import PageSystem from "./PageSystem";
 import PageVitals from "./PageVitals";
 import PageWorkflows from "./PageWorkflows";
@@ -48,7 +48,7 @@ import {
   DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
   IMPACT_PATHS,
-  OUTLIERS_PATHS,
+  INSIGHTS_PATHS,
   WORKFLOWS_PATHS,
 } from "./views";
 
@@ -91,7 +91,7 @@ const DashboardLayout: React.FC = () => {
           id="app"
           className={cn("DashboardLayout", {
             Workflows: currentView === DASHBOARD_VIEWS.workflows,
-            Outliers: currentView === DASHBOARD_VIEWS.outliers,
+            Insights: currentView === DASHBOARD_VIEWS.insights,
           })}
         >
           {currentView === DASHBOARD_VIEWS.operations && !isMobile ? (
@@ -111,12 +111,12 @@ const DashboardLayout: React.FC = () => {
                 element={<PageMethodology />}
               />
               <Route
-                path={`${DASHBOARD_PATHS.outliers}/*`}
-                element={<PageOutliers />}
+                path={`${DASHBOARD_PATHS.insights}/*`}
+                element={<PageInsights />}
               />
               <Route
-                path={`${DASHBOARD_PATHS.outliers}`}
-                element={<Navigate replace to={OUTLIERS_PATHS.supervision} />}
+                path={`${DASHBOARD_PATHS.insights}`}
+                element={<Navigate replace to={INSIGHTS_PATHS.supervision} />}
               />
               <Route
                 path={`${WORKFLOWS_PATHS.workflows}/*`}

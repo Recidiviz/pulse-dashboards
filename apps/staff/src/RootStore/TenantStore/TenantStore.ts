@@ -133,14 +133,14 @@ export default class TenantStore {
     );
   }
 
-  get outliersLaunchedDistricts(): string[] | undefined {
+  get insightsLaunchedDistricts(): string[] | undefined {
     if (!this.currentTenantId) return;
-    return tenants[this.currentTenantId].outliersLaunchedDistricts;
+    return tenants[this.currentTenantId].insightsLaunchedDistricts;
   }
 
-  get outliersLanternState(): boolean {
+  get insightsLanternState(): boolean {
     if (!this.currentTenantId) return false;
-    return tenants[this.currentTenantId].outliersLanternState ?? false;
+    return tenants[this.currentTenantId].insightsLanternState ?? false;
   }
 
   /**

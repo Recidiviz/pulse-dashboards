@@ -83,8 +83,8 @@ export type FeatureVariant =
   | "usNdWriteToDocstars"
   | "usMoOverdueRHPilot"
   | "formRevertButton"
-  | "outliersLeadershipPageAllDistricts"
-  | "outliersOnboarding"
+  | "insightsLeadershipPageAllDistricts"
+  | "insightsOnboarding"
   | "hideDenialRevert"
   | "opportunityConfigurationAPI";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
@@ -115,8 +115,8 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisionUnrestrictedSearch: {},
   formRevertButton: {},
   usMoOverdueRHPilot: {},
-  outliersLeadershipPageAllDistricts: {},
-  outliersOnboarding: {},
+  insightsLeadershipPageAllDistricts: {},
+  insightsOnboarding: {},
   hideDenialRevert: {},
   opportunityConfigurationAPI: {},
 };
@@ -134,7 +134,7 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         supervisionUnrestrictedSearch: {},
         usMoOverdueRHPilot: {},
         enableSnooze: {},
-        outliersOnboarding: {},
+        insightsOnboarding: {},
       }
     : {
         ...allFeatureVariants,

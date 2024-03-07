@@ -34,7 +34,7 @@ export const DASHBOARD_VIEWS = {
   profile: "profile",
   workflows: "workflows",
   impact: "impact",
-  outliers: "insights",
+  insights: "insights",
 } as const;
 export type DashboardViewRootPath = (typeof DASHBOARD_VIEWS)[DashboardView];
 
@@ -50,7 +50,7 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   methodology: `/${DASHBOARD_VIEWS.methodology}/:dashboard`,
   methodologySystem: `/${DASHBOARD_VIEWS.methodology}/system`,
   methodologyOperations: `/${DASHBOARD_VIEWS.methodology}/operations`,
-  outliers: `/${DASHBOARD_VIEWS.outliers}`,
+  insights: `/${DASHBOARD_VIEWS.insights}`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
 };
 
@@ -293,19 +293,19 @@ export function workflowsUrl(
   return WORKFLOWS_PATHS[routeName];
 }
 
-export const OUTLIERS_PATHS: Record<OutliersPage, string> = {
-  supervision: `/${DASHBOARD_VIEWS.outliers}/supervision`,
-  supervisionOnboarding: `/${DASHBOARD_VIEWS.outliers}/supervision/onboarding`,
-  supervisionSupervisorsList: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisors-list`,
-  supervisionSupervisor: `/${DASHBOARD_VIEWS.outliers}/supervision/supervisor/:supervisorPseudoId`,
-  supervisionStaff: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId`,
-  supervisionStaffMetric: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId`,
-  supervisionClientDetail: `/${DASHBOARD_VIEWS.outliers}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
+export const INSIGHTS_PATHS: Record<InsightsPage, string> = {
+  supervision: `/${DASHBOARD_VIEWS.insights}/supervision`,
+  supervisionOnboarding: `/${DASHBOARD_VIEWS.insights}/supervision/onboarding`,
+  supervisionSupervisorsList: `/${DASHBOARD_VIEWS.insights}/supervision/supervisors-list`,
+  supervisionSupervisor: `/${DASHBOARD_VIEWS.insights}/supervision/supervisor/:supervisorPseudoId`,
+  supervisionStaff: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId`,
+  supervisionStaffMetric: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId`,
+  supervisionClientDetail: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
 };
 
-export type OutliersPage = keyof typeof OUTLIERS_PAGES;
+export type InsightsPage = keyof typeof INSIGHTS_PAGES;
 
-export const OUTLIERS_PAGES = {
+export const INSIGHTS_PAGES = {
   supervision: "supervision",
   supervisionOnboarding: "supervisionOnboarding",
   supervisionSupervisor: "supervisionSupervisor",
@@ -315,33 +315,33 @@ export const OUTLIERS_PAGES = {
   supervisionClientDetail: "supervisionClientDetail",
 } as const;
 
-type OutliersRouteParams = {
+type InsightsRouteParams = {
   [k: string]: string;
 };
 
 /**
- * @returns the relative route template string for a Outliers page
+ * @returns the relative route template string for a Insights page
  */
-export function outliersRoute({
+export function insightsRoute({
   routeName,
 }: {
-  routeName: OutliersPage;
+  routeName: InsightsPage;
 }): string {
-  return getRelativePath(OUTLIERS_PATHS[routeName]);
+  return getRelativePath(INSIGHTS_PATHS[routeName]);
 }
 
-export function outliersUrl(routeName: "supervision"): string;
-export function outliersUrl(routeName: "supervisionOnboarding"): string;
-export function outliersUrl(routeName: "supervisionSupervisorsList"): string;
-export function outliersUrl(
+export function insightsUrl(routeName: "supervision"): string;
+export function insightsUrl(routeName: "supervisionOnboarding"): string;
+export function insightsUrl(routeName: "supervisionSupervisorsList"): string;
+export function insightsUrl(
   routeName: "supervisionSupervisor",
   params: { supervisorPseudoId: string },
 ): string;
-export function outliersUrl(
+export function insightsUrl(
   routeName: "supervisionStaff",
   params: { officerPseudoId: string },
 ): string;
-export function outliersUrl(
+export function insightsUrl(
   routeName: "supervisionClientDetail",
   params: {
     officerPseudoId: string;
@@ -350,23 +350,23 @@ export function outliersUrl(
     outcomeDate: string;
   },
 ): string;
-export function outliersUrl(
+export function insightsUrl(
   routeName: "supervisionStaffMetric",
   params: { officerPseudoId: string; metricId: string },
 ): string;
 
-export function outliersUrl(
-  routeName: OutliersPage,
-  params?: OutliersRouteParams,
+export function insightsUrl(
+  routeName: InsightsPage,
+  params?: InsightsRouteParams,
 ): string {
   if (params) {
-    let path = OUTLIERS_PATHS[routeName];
+    let path = INSIGHTS_PATHS[routeName];
     Object.entries(params).forEach(([key, value]) => {
       path = path.replace(`:${key}`, value);
     });
     return path;
   }
-  return OUTLIERS_PATHS[routeName];
+  return INSIGHTS_PATHS[routeName];
 }
 
 export const IMPACT_PATHS: Record<string, string> = {

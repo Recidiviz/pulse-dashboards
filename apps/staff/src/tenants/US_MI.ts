@@ -21,7 +21,7 @@
 import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import {
-  OUTLIERS_PAGES,
+  INSIGHTS_PAGES,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
 } from "../core/views";
@@ -50,7 +50,7 @@ const US_MI_CONFIG: TenantConfig = {
       searchTitleOverride: "agent",
     },
   },
-  outliersLaunchedDistricts: [
+  insightsLaunchedDistricts: [
     "REGION 1",
     "REGION 2",
     "REGION 4B",
@@ -61,9 +61,9 @@ const US_MI_CONFIG: TenantConfig = {
     "REGION 10 - NORTHEAST",
   ],
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
-  outliersLanternState: true,
+  insightsLanternState: true,
   navigation: {
-    insights: [OUTLIERS_PAGES.supervision],
+    insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [PATHWAYS_PAGES.prison],
     libertyToPrison: [

@@ -17,8 +17,8 @@
 
 import {
   getRelativePath,
-  OUTLIERS_PATHS,
-  OutliersPage,
+  INSIGHTS_PATHS,
+  InsightsPage,
   WORKFLOWS_PATHS,
   WorkflowsPage,
 } from "../views";
@@ -46,7 +46,7 @@ describe("getRelativePath", () => {
     },
   );
 
-  const OUTLIERS_RELATIVE_PATHS = {
+  const INSIGHTS_RELATIVE_PATHS = {
     supervision: `/supervision`,
     supervisionOnboarding: `/supervision/onboarding`,
     supervisionSupervisorsList: `/supervision/supervisors-list`,
@@ -56,12 +56,12 @@ describe("getRelativePath", () => {
     supervisionClientDetail: `/supervision/staff/:officerPseudoId/adverse-outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
   };
 
-  test.each([...Object.keys(OUTLIERS_PATHS)])(
-    "it returns the relative path for outliers",
+  test.each([...Object.keys(INSIGHTS_PATHS)])(
+    "it returns the relative path for insights",
     (routeName) => {
       expect(
-        getRelativePath(OUTLIERS_PATHS[routeName as OutliersPage]),
-      ).toEqual(OUTLIERS_RELATIVE_PATHS[routeName as OutliersPage]);
+        getRelativePath(INSIGHTS_PATHS[routeName as InsightsPage]),
+      ).toEqual(INSIGHTS_RELATIVE_PATHS[routeName as InsightsPage]);
     },
   );
 });

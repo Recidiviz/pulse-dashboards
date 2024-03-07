@@ -148,17 +148,17 @@ export default class AnalyticsStore {
     window.analytics.track(eventName, fullMetadata);
   }
 
-  trackOutliersSupervisorPageViewed(
+  trackInsightsSupervisorPageViewed(
     metadata: SupervisorPageTrackingMetadata,
   ): void {
     this.track("frontend.outliers_supervisor_page_viewed", metadata);
   }
 
-  trackOutliersStaffPageViewed(metadata: StaffPageTrackingMetadata): void {
+  trackInsightsStaffPageViewed(metadata: StaffPageTrackingMetadata): void {
     this.track("frontend.outliers_staff_page_viewed", metadata);
   }
 
-  trackOutliersClientPageViewed(metadata: ClientPageTrackingMetadata): void {
+  trackInsightsClientPageViewed(metadata: ClientPageTrackingMetadata): void {
     this.track("frontend.outliers_client_page_viewed", metadata);
   }
 

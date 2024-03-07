@@ -40,7 +40,7 @@ jest.mock("../components/StoreProvider");
 jest.mock("../components/ErrorMessage");
 jest.mock("../components/VerificationNeeded");
 
-jest.mock("../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
+jest.mock("../InsightsStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
 
 const ProtectedLayoutMock = ProtectedLayout as unknown as jest.Mock;
 

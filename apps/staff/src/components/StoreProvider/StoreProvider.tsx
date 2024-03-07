@@ -19,7 +19,7 @@ import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
-import { OutliersStore } from "../../OutliersStore/OutliersStore";
+import { InsightsStore } from "../../InsightsStore/InsightsStore";
 import store, { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
@@ -70,7 +70,7 @@ export default StoreProvider;
  * incrementally starts to enforce typing in RootStore consumers
  */
 interface PartiallyTypedRootStore {
-  outliersStore: OutliersStore;
+  insightsStore: InsightsStore;
   workflowsStore: WorkflowsStore;
   analyticsStore: AnalyticsStore;
   [key: string]: any;

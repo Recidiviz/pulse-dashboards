@@ -24,7 +24,7 @@ import {
   DASHBOARD_VIEWS,
   IMPACT_PAGES,
   IMPACT_SECTIONS,
-  OUTLIERS_PAGES,
+  INSIGHTS_PAGES,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
 } from "../core/views";
@@ -55,9 +55,9 @@ const US_TN_CONFIG: TenantConfig = {
       searchTitleOverride: "unit",
     },
   },
-  outliersLanternState: true,
+  insightsLanternState: true,
   navigation: {
-    insights: [OUTLIERS_PAGES.supervision],
+    insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

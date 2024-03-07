@@ -329,12 +329,12 @@ function ImpactLink({ enabled }: OptionalLinkProps) {
   );
 }
 
-function OutliersLink({ enabled }: OptionalLinkProps) {
+function InsightsLink({ enabled }: OptionalLinkProps) {
   const { isMobile } = useIsMobile(true);
 
   if (!enabled) return null;
   return (
-    <NavLink to={`/${DASHBOARD_VIEWS.outliers}`}>
+    <NavLink to={`/${DASHBOARD_VIEWS.insights}`}>
       {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
       Go to Insights
     </NavLink>
@@ -398,11 +398,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enableOperations = !!userAllowedNavigation.operations;
     const enabledImpact =
       !!userAllowedNavigation.impact && userStore.isRecidivizUser;
-    const enabledOutliers = !!userAllowedNavigation.insights;
+    const enabledInsights = !!userAllowedNavigation.insights;
 
-    const isOutliersView = view === DASHBOARD_VIEWS.outliers;
-    const isOutliersLanternState =
-      tenantStore && tenantStore.outliersLanternState;
+    const isInsightsView = view === DASHBOARD_VIEWS.insights;
+    const isInsightsLanternState =
+      tenantStore && tenantStore.insightsLanternState;
 
     const quickLinks = (
       <>
@@ -416,7 +416,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} />
         <ImpactLink enabled={enabledImpact} />
-        <OutliersLink enabled={enabledOutliers} />
+        <InsightsLink enabled={enabledInsights} />
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );
@@ -430,7 +430,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         >
           <MainLogo
             enabled={!isMobile || !isFixed}
-            enabledLanternLogo={isOutliersLanternState && isOutliersView}
+            enabledLanternLogo={isInsightsLanternState && isInsightsView}
           />
           <NavMenu
             alignBottom={isMobile && isFixed}

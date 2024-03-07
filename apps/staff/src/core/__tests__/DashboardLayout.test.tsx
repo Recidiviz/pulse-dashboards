@@ -25,8 +25,8 @@ import { useRootStore } from "../../components/StoreProvider";
 import { UserAvatar } from "../Avatar";
 import DashboardLayout from "../DashboardLayout";
 import PageImpact from "../PageImpact";
+import PageInsights from "../PageInsights";
 import PageMethodology from "../PageMethodology";
-import PageOutliers from "../PageOutliers";
 import PageSystem from "../PageSystem";
 import PageVitals from "../PageVitals";
 import PageWorkflows from "../PageWorkflows";
@@ -38,14 +38,14 @@ jest.mock("mobx-react-lite", () => {
     observer: (component: any) => component,
   };
 });
-jest.mock("../../OutliersStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
+jest.mock("../../InsightsStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
 jest.mock("../../components/StoreProvider");
 jest.mock("../Avatar");
 jest.mock("../../components/IE11Banner");
 jest.mock("../PageSystem");
 jest.mock("../PageVitals");
 jest.mock("../PageWorkflows");
-jest.mock("../PageOutliers", () => {
+jest.mock("../PageInsights", () => {
   return {
     __esModule: true,
     default: jest.fn(),
@@ -70,8 +70,8 @@ describe("DashboardLayout", () => {
     (PageVitals as jest.Mock).mockReturnValue(
       mockWithTestId("page-operations-id"),
     );
-    (PageOutliers as jest.Mock).mockReturnValue(
-      mockWithTestId("page-outliers-id"),
+    (PageInsights as jest.Mock).mockReturnValue(
+      mockWithTestId("page-insights-id"),
     );
     (PageMethodology as jest.Mock).mockReturnValue(
       mockWithTestId("page-methodology-id"),
@@ -194,7 +194,7 @@ describe("DashboardLayout", () => {
     });
   });
 
-  describe("PageOutliers", () => {
+  describe("PageInsights", () => {
     it("renders if the tenant and user allow it", () => {
       mockUseRootStore.mockReturnValue({
         userStore: {
@@ -203,9 +203,9 @@ describe("DashboardLayout", () => {
         currentTenantId: "US_TN",
       });
 
-      renderLayout(`${DASHBOARD_PATHS.outliers}/supervision`);
+      renderLayout(`${DASHBOARD_PATHS.insights}/supervision`);
 
-      expect(screen.getByTestId("page-outliers-id")).toBeInTheDocument();
+      expect(screen.getByTestId("page-insights-id")).toBeInTheDocument();
     });
 
     it("doesn't render if the tenant doesn't allow it but the user does", () => {
@@ -216,7 +216,7 @@ describe("DashboardLayout", () => {
         currentTenantId: "US_XX",
       });
 
-      renderLayout(`${DASHBOARD_PATHS.outliers}/supervision`);
+      renderLayout(`${DASHBOARD_PATHS.insights}/supervision`);
 
       expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
     });
@@ -229,7 +229,7 @@ describe("DashboardLayout", () => {
         currentTenantId: "US_TN",
       });
 
-      renderLayout(`${DASHBOARD_PATHS.outliers}/supervision`);
+      renderLayout(`${DASHBOARD_PATHS.insights}/supervision`);
 
       expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
     });
@@ -242,9 +242,9 @@ describe("DashboardLayout", () => {
         currentTenantId: "US_TN",
       });
 
-      renderLayout(`${DASHBOARD_PATHS.outliers}`);
+      renderLayout(`${DASHBOARD_PATHS.insights}`);
 
-      expect(screen.getByTestId("page-outliers-id")).toBeInTheDocument();
+      expect(screen.getByTestId("page-insights-id")).toBeInTheDocument();
     });
   });
 

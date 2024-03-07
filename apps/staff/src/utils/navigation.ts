@@ -20,7 +20,7 @@ import { Navigation } from "../core/types/navigation";
 import { FILTER_TYPES } from "../core/utils/constants";
 import {
   DASHBOARD_VIEWS,
-  OUTLIERS_PAGES,
+  INSIGHTS_PAGES,
   PATHWAYS_PAGES,
   WORKFLOWS_PAGES,
 } from "../core/views";
@@ -59,7 +59,7 @@ export function getPathWithoutParams(pathname: string): string {
     ...Object.values(DASHBOARD_VIEWS),
     ...Object.values(PATHWAYS_PAGES),
     ...Object.values(WORKFLOWS_PAGES),
-    ...Object.values(OUTLIERS_PAGES),
+    ...Object.values(INSIGHTS_PAGES),
   ];
   const basePath = pathname
     .split("/")

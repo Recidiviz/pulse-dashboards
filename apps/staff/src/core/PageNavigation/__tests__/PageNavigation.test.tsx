@@ -120,16 +120,16 @@ describe("CoreLayout tests", () => {
     );
   });
 
-  describe("Outliers link", () => {
+  describe("Insights link", () => {
     it("Hides if not enabled", () => {
       const selector = renderPageNavigation();
-      expect(selector.find("OutliersLink>NavLink")).toHaveLength(0);
+      expect(selector.find("InsightsLink>NavLink")).toHaveLength(0);
     });
 
     it("Shows if enabled", () => {
       rootStoreMock.userStore.userAllowedNavigation.insights = [];
       const selector = renderPageNavigation();
-      expect(selector.find("OutliersLink>NavLink")).toHaveLength(1);
+      expect(selector.find("InsightsLink>NavLink")).toHaveLength(1);
     });
   });
 });

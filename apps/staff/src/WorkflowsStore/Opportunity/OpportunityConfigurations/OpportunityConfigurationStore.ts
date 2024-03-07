@@ -20,7 +20,7 @@ import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { HydratesFromSource } from "../../../core/models/HydratesFromSource";
 import { Hydratable } from "../../../core/models/types";
-import { FlowMethod } from "../../../OutliersStore/types";
+import { FlowMethod } from "../../../InsightsStore/types";
 import { isDemoMode } from "../../../utils/isDemoMode";
 import { isOfflineMode } from "../../../utils/isOfflineMode";
 import { isTestEnv } from "../../../utils/isTestEnv";
