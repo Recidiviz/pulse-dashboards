@@ -25,6 +25,8 @@ import {
   FirestoreCollectionKey,
   MilestonesMessage,
 } from "../src/FirestoreStore/types";
+import { PartialRecord } from "../src/utils/typeUtils";
+import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 import { getMonthYearFromDate } from "../src/WorkflowsStore/utils";
 import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
@@ -81,7 +83,14 @@ console.log(fsSettings);
 
 const db = new Firestore(fsSettings);
 
-const OPPORTUNITIES_WITH_JSON_FIXTURES: string[] = [
+const OPPORTUNITIES_MAP = Object.fromEntries(
+  Object.entries(OPPORTUNITY_CONFIGS).map(([k, { firestoreCollection }]) => [
+    `${k}Referrals`,
+    firestoreCollection,
+  ]),
+) as Record<`${keyof typeof OPPORTUNITY_CONFIGS}Referrals`, string>;
+
+const OPPORTUNITIES_WITH_JSON_FIXTURES: (keyof typeof OPPORTUNITIES_MAP)[] = [
   "LSUReferrals",
   "earnedDischargeReferrals",
 ];
@@ -105,7 +114,10 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
   usIdSupervisionTasks: usIdSupervisionTasksData,
 } as const;
 
-const OPPORTUNITY_FIXTURES_TO_LOAD: Record<string, FixtureData<any>> = {
+const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
+  keyof typeof OPPORTUNITIES_MAP,
+  FixtureData<any>
+> = {
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
   pastFTRDReferrals: usIdPastFtrdFixture,
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
@@ -142,7 +154,15 @@ const FIXTURES_TO_LOAD = [
     ([k, v]) => [{ key: k }, v] as [FirestoreCollectionKey, FixtureData<any>],
   ),
   ...Object.entries(OPPORTUNITY_FIXTURES_TO_LOAD).map(
-    ([k, v]) => [{ raw: k }, v] as [FirestoreCollectionKey, FixtureData<any>],
+    ([k, v]) =>
+      [
+        {
+          raw: OPPORTUNITIES_MAP[
+            k as keyof typeof OPPORTUNITY_FIXTURES_TO_LOAD
+          ],
+        },
+        v,
+      ] as [FirestoreCollectionKey, FixtureData<any>],
   ),
 ];
 
@@ -189,7 +209,9 @@ export async function loadOpportunityReferralFixtures(
 ): Promise<void> {
   for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
     logger(`wiping existing ${opportunity} referral data ...`);
-    const collectionName = generateCollectionName({ raw: opportunity });
+    const collectionName = generateCollectionName({
+      raw: OPPORTUNITIES_MAP[opportunity],
+    });
     await deleteCollection(db, collectionName);
 
     logger(`loading new ${opportunity} referral data...`);
