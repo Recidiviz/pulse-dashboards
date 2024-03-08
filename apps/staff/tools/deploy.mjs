@@ -92,6 +92,13 @@ let releaseNotes;
 let e2eTestRun;
 
 if (deployEnv === "production") {
+  const { isCpDeploy } = await inquirer.prompt({
+    type: "confirm",
+    name: "isCpDeploy",
+    message: `Is this a cherry-pick deploy?`,
+    default: false,
+  });
+
   console.log("Checking e2e test results...");
   const {
     data: { workflow_runs: workflowRuns },
@@ -166,17 +173,30 @@ if (deployEnv === "production") {
     console.log(`${chalk.bold("New release notes:")}\n${releaseNotes}`);
   }
 
-  // Determine what to increase the version by
-  const releaseTypePrompt = await inquirer.prompt({
-    type: "list",
-    name: "releaseType",
-    message: "What type of release is this?",
-    choices: ["major", "minor", "patch"],
-    default: "minor",
-  });
+  let releaseType;
+  let versionToIncrement;
+  if (isCpDeploy) {
+    // Get the nearest annotated tag, so that if the minor version is updated and
+    // a CP is needed for a version with a lower minor, then the patch version
+    // is incremented for the correct minor
+    versionToIncrement = (await $`git describe --abbrev=0`).stdout.trim();
+    releaseType = "patch";
+  } else {
+    versionToIncrement = latestReleaseVersion;
+    // Determine what to increase the version by
+    const releaseTypePrompt = await inquirer.prompt({
+      type: "list",
+      name: "releaseType",
+      message: "What type of release is this?",
+      choices: ["major", "minor", "patch"],
+      default: "minor",
+    });
+
+    releaseType = releaseTypePrompt.releaseType;
+  }
 
   // Increment the version
-  nextVersion = `v${inc(latestReleaseVersion, releaseTypePrompt.releaseType)}`;
+  nextVersion = `v${inc(versionToIncrement, releaseType)}`;
 
   publishReleaseNotes = false;
 }
@@ -323,6 +343,20 @@ if (publishReleaseNotes) {
   });
 
   console.log(`Release published at ${release.data.html_url}`);
+
+  // Create and publish a release branch to use to commit to for CPs
+  if (!isCpDeploy) {
+    // Create a branch for this release
+    const versionSplit = nextVersion.substring(1).split(".");
+    // Only use the major and minor in the release branch name
+    const releaseBranchName = `releases/v${versionSplit[0]}.${versionSplit[1]}`;
+    await $`git checkout -b ${releaseBranchName}`.pipe(process.stdout);
+
+    // Publish the branch
+    await $`git push --set-upstream origin ${releaseBranchName}`.pipe(
+      process.stdout
+    );
+  }
 }
 
 console.log(
