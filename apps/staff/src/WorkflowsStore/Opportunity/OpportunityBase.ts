@@ -65,6 +65,7 @@ import {
   OpportunityStatus,
   OpportunityTab,
 } from "./types";
+import { hydrateUntypedCriteria } from "./utils/criteriaUtils";
 
 export function updateOpportunityEligibility(
   opportunityType: OpportunityType,
@@ -155,6 +156,8 @@ export abstract class OpportunityBase<
       setManualSnooze: action,
       setDenialReasons: action,
       setOtherReasonText: action,
+      requirementsMet: computed,
+      requirementsAlmostMet: computed,
     });
 
     this.person = person;
@@ -530,6 +533,30 @@ export abstract class OpportunityBase<
     return !this.config.isAlert || this.reviewStatus === "DENIED";
   }
 
+  get requirementsMet(): OpportunityRequirement[] {
+    const {
+      record,
+      config: { eligibleCriteriaCopy },
+    } = this;
+    if (!record) return [];
+    return hydrateUntypedCriteria(
+      record.eligibleCriteria,
+      eligibleCriteriaCopy,
+    );
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    const {
+      record,
+      config: { ineligibleCriteriaCopy },
+    } = this;
+    if (!record) return [];
+    return hydrateUntypedCriteria(
+      record.ineligibleCriteria,
+      ineligibleCriteriaCopy,
+    );
+  }
+
   // ===============================
   // properties below this line are stubs and in most cases should be overridden
   // in a subclass. Given their triviality they are not annotated by MobX either,
@@ -543,16 +570,6 @@ export abstract class OpportunityBase<
 
   get denied(): boolean {
     return !!this.denial;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get requirementsMet(): OpportunityRequirement[] {
-    return [];
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get requirementsAlmostMet(): OpportunityRequirement[] {
-    return [];
   }
 
   // eslint-disable-next-line class-methods-use-this

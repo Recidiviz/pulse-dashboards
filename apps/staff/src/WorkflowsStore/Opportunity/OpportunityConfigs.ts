@@ -132,6 +132,8 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   sidebarComponents: OpportunityProfileModuleName[];
   isAlert?: boolean;
   tooltipEligibilityText?: string;
+  eligibleCriteriaCopy?: Record<string, { text: string; tooltip?: string }>;
+  ineligibleCriteriaCopy?: Record<string, { text: string; tooltip?: string }>;
 };
 
 export const OPPORTUNITY_CONFIGS = {

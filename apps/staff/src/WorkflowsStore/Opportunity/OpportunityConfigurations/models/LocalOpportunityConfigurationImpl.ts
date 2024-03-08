@@ -91,6 +91,14 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.tooltipEligibilityText;
   }
 
+  get eligibleCriteriaCopy() {
+    return this.configurationObject.eligibleCriteriaCopy ?? {};
+  }
+
+  get ineligibleCriteriaCopy() {
+    return this.configurationObject.ineligibleCriteriaCopy ?? {};
+  }
+
   get isEnabled(): boolean {
     const { featureVariants } = this.workflowsStore;
     const { featureVariant, inverseFeatureVariant } = this;

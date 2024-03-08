@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { toTitleCase } from "../../../../utils";
 import { Client } from "../../../Client";
@@ -99,8 +99,8 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, {
-      requirementsMet: computed,
-      requirementsAlmostMet: computed,
+      requirementsMet: override,
+      requirementsAlmostMet: override,
     });
   }
 

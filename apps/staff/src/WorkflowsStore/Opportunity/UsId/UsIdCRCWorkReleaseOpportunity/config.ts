@@ -50,4 +50,36 @@ export const usIdCRCWorkReleaseConfig: OpportunityConfig<UsIdCRCWorkReleaseOppor
       [OTHER_KEY]: "Other, please specify a reason",
     },
     sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],
+    eligibleCriteriaCopy: {
+      custodyLevelIsMinimum: {
+        text: "Currently on Minimum custody",
+      },
+      notServingForSexualOffense: {
+        text: "Not serving for a sexual offense",
+      },
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
+        text: "No escape attempts in the last 10 years",
+        tooltip:
+          "No escape, eluding police, or absconsion offense(s) in the last 10 years",
+      },
+      usIdNoDetainersForXcrcAndCrc: {
+        text: "No active felony detainers or holds",
+        tooltip: "Cannot have any felony detainers or holds",
+      },
+      usIdIncarcerationWithin18MonthsOfFtcdOrTpd: {
+        text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
+        tooltip:
+          "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+      },
+      usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: {
+        text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
+        tooltip:
+          "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+      },
+      usIdIncarcerationWithin1YearOfTpdAndLifeSentence: {
+        text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
+        tooltip:
+          "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+      },
+    },
   };

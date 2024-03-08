@@ -15,66 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable } from "mobx";
-
 import { Resident } from "../../../Resident";
-import { OpportunityRequirement } from "../../types";
-import { CriteriaCopy, hydrateCriteria } from "../../utils/criteriaUtils";
 import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase";
-import {
-  custodyLevelIsMinimumCopy,
-  notServingForSexualOffenseCopy,
-  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
-  usIdNoDetainersForXcrcAndCrcCopy,
-} from "../UsIdSharedCriteria";
 import {
   UsIdCRCResidentWorkerReferralRecord,
   usIdCRCResidentWorkerSchema,
 } from "./UsIdCRCResidentWorkerReferralRecord";
-
-const COMMON_TEMPORAL_TOOLTIP = `The resident must fulfill one of the following three conditions:
-    1. Tentative Parole Date (TPD) within seven (7) years OR
-        Full Term Release Date (FTRD) within seven (7) years
-    2. Parole Eligibility Date (PED) within seven (7) years AND
-        Parole Hearing Date (PHD) within seven (7) years AND
-        Full Term Release Date (FTRD) within 20 years
-    3. Life sentence AND
-        Tentative Parole Date (TPD) within 3 years`;
-
-const CRITERIA_COPY: CriteriaCopy<UsIdCRCResidentWorkerReferralRecord> = {
-  eligibleCriteria: [
-    custodyLevelIsMinimumCopy,
-    notServingForSexualOffenseCopy,
-    usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy,
-    usIdNoDetainersForXcrcAndCrcCopy,
-    [
-      "usIdIncarcerationWithin7YearsOfFtcdOrTpd",
-      {
-        text:
-          "Tentative Parole Date (TPD) within seven (7) years OR Full Term Release Date " +
-          "(FTRD) within seven (7) years",
-        tooltip: COMMON_TEMPORAL_TOOLTIP,
-      },
-    ],
-    [
-      "usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd",
-      {
-        text:
-          "Parole Eligibility Date (PED) within seven (7) years AND Parole Hearing Date (PHD) " +
-          "within seven (7) years AND Full Term Release Date (FTRD) within 20 years",
-        tooltip: COMMON_TEMPORAL_TOOLTIP,
-      },
-    ],
-    [
-      "usIdIncarcerationWithin3YearsOfTpdAndLifeSentence",
-      {
-        text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
-        tooltip: COMMON_TEMPORAL_TOOLTIP,
-      },
-    ],
-  ],
-  ineligibleCriteria: [],
-};
 
 export class UsIdCRCResidentWorkerOpportunity extends UsIdCRCOpportunityBase<UsIdCRCResidentWorkerReferralRecord> {
   constructor(resident: Resident) {
@@ -84,11 +30,5 @@ export class UsIdCRCResidentWorkerOpportunity extends UsIdCRCOpportunityBase<UsI
       resident.rootStore,
       usIdCRCResidentWorkerSchema.parse,
     );
-
-    makeObservable(this, { requirementsMet: computed });
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    return hydrateCriteria(this.record, "eligibleCriteria", CRITERIA_COPY);
   }
 }

@@ -95,3 +95,12 @@ export function hydrateCriteria<
       return out;
     });
 }
+
+export function hydrateUntypedCriteria(
+  recordCriteria: Record<string, object | null>,
+  criteriaCopy: Record<string, OpportunityRequirement>,
+): OpportunityRequirement[] {
+  return Object.entries(criteriaCopy).flatMap(([criteria, copy]) =>
+    criteria in recordCriteria ? [copy] : [],
+  );
+}

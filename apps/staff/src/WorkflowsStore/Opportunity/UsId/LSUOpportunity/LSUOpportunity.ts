@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { cloneDeep, some } from "lodash";
-import { computed, makeObservable } from "mobx";
+import { computed, makeObservable, override } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
@@ -119,9 +119,9 @@ export class LSUOpportunity extends OpportunityBase<
   constructor(client: Client) {
     super(client, "LSU", client.rootStore, transformReferral);
     makeObservable(this, {
-      requirementsMet: computed,
+      requirementsMet: override,
       almostEligible: computed,
-      requirementsAlmostMet: computed,
+      requirementsAlmostMet: override,
       almostEligibleStatusMessage: computed,
     });
 

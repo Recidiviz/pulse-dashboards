@@ -18,7 +18,7 @@
  */
 
 import * as Sentry from "@sentry/react";
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
@@ -53,7 +53,7 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
     this.form = new UsCaSupervisionLevelDowngradeForm(this, client.rootStore);
 
-    makeObservable(this, { requirementsMet: true });
+    makeObservable(this, { requirementsMet: override });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -134,7 +134,7 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
       usMiEarlyDischargeSchema.parse(r),
     );
 
-    makeObservable(this, { requirementsMet: true });
+    makeObservable(this, { requirementsMet: override });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

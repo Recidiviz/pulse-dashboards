@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
@@ -83,7 +83,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
     this.resident = resident;
 
     makeObservable(this, {
-      requirementsMet: computed,
+      requirementsMet: override,
     });
 
     if (

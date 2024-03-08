@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
@@ -95,7 +95,7 @@ export class UsIdExpandedCRCOpportunity extends UsIdCRCOpportunityBase<UsIdExpan
       usIdExpandedCRCSchema.parse,
     );
 
-    makeObservable(this, { requirementsMet: computed });
+    makeObservable(this, { requirementsMet: override });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

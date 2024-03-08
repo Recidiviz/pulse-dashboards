@@ -17,7 +17,11 @@
 import { SystemId } from "../../../../core/models/types";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
-import { DenialReasonsMap, OpportunityTab } from "../../types";
+import {
+  DenialReasonsMap,
+  OpportunityRequirement,
+  OpportunityTab,
+} from "../../types";
 import { CountFormatter } from "../../utils/generateHeadersUtils";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
@@ -40,6 +44,8 @@ export type OpportunityHydratedHeader =
   | OpportunityHeadersWithEligibilityTextType
   | OpportunityHeadersWithFullTextType;
 
+type CriteriaCopy = Record<string, OpportunityRequirement>;
+
 export interface ILocalOpportunityConfiguration {
   systemType: SystemId;
   stateCode: TenantId;
@@ -60,6 +66,8 @@ export interface ILocalOpportunityConfiguration {
   sidebarComponents: OpportunityProfileModuleName[];
   isAlert?: boolean;
   tooltipEligibilityText?: string;
+  eligibleCriteriaCopy?: CriteriaCopy;
+  ineligibleCriteriaCopy?: CriteriaCopy;
 }
 
 export interface OpportunityConfiguration {
@@ -83,4 +91,6 @@ export interface OpportunityConfiguration {
   sidebarComponents: string[];
   isAlert?: boolean;
   tooltipEligibilityText?: string;
+  eligibleCriteriaCopy: CriteriaCopy;
+  ineligibleCriteriaCopy: CriteriaCopy;
 }

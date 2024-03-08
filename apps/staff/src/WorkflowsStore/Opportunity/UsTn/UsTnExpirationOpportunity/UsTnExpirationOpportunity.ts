@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { differenceInDays } from "date-fns";
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 import simplur from "simplur";
 
 import {
@@ -87,7 +87,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
       getUsTnExpirationValidator(client),
     );
 
-    makeObservable(this, { requirementsMet: true });
+    makeObservable(this, { requirementsMet: override });
     this.form = new UsTnExpirationForm(this, client.rootStore);
   }
 

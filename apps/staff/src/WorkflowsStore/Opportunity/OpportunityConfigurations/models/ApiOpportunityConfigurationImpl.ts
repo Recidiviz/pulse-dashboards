@@ -82,7 +82,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     });
   }
   get denialButtonText() {
-    return "DENIAL BUTTON TEXT";
+    return undefined;
   }
   get eligibilityDateText() {
     return "ELIGIBILITY DATE TEXT";
@@ -109,6 +109,14 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
 
   get tooltipEligibilityText() {
     return undefined;
+  }
+
+  get eligibleCriteriaCopy() {
+    return this.configurationObject.eligibleCriteriaCopy;
+  }
+
+  get ineligibleCriteriaCopy() {
+    return this.configurationObject.ineligibleCriteriaCopy;
   }
 
   get isEnabled(): boolean {

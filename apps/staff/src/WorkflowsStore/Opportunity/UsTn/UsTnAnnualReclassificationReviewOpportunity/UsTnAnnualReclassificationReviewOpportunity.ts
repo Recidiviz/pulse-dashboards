@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { computed, makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatDate } from "../../../../utils/formatStrings";
@@ -74,7 +74,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
     this.resident = resident;
 
     makeObservable(this, {
-      requirementsMet: computed,
+      requirementsMet: override,
     });
 
     this.form = new UsTnAnnualReclassificationReviewForm(

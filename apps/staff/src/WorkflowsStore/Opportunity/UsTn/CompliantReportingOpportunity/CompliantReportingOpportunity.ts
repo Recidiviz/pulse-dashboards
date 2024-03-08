@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { add, differenceInCalendarDays, isEqual } from "date-fns";
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
 import { OpportunityValidationError } from "../../../../errors";
@@ -161,8 +161,8 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     makeObservable<CompliantReportingOpportunity>(this, {
       almostEligible: true,
       almostEligibleStatusMessage: true,
-      requirementsMet: true,
-      requirementsAlmostMet: true,
+      requirementsMet: override,
+      requirementsAlmostMet: override,
       almostEligibleRecommendedNote: true,
     });
 

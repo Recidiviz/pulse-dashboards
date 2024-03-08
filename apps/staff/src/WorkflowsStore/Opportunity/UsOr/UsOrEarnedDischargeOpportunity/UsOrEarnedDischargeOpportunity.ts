@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
 import { UsOrEarnedDischargeForm } from "../../Forms/UsOrEarnedDischargeForm";
@@ -92,7 +92,7 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
 
     this.form = new UsOrEarnedDischargeForm(this, client.rootStore);
 
-    makeObservable(this, { requirementsMet: true });
+    makeObservable(this, { requirementsMet: override });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

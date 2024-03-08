@@ -85,5 +85,7 @@ export const mockOpportunity: Opportunity<Client> = {
     methodologyUrl: "https://example.com",
     sidebarComponents: [],
     isAlert: false,
+    eligibleCriteriaCopy: {},
+    ineligibleCriteriaCopy: {},
   },
 };

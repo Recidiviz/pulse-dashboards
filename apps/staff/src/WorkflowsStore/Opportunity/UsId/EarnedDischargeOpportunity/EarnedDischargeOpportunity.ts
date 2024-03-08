@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { cloneDeep } from "lodash";
-import { computed, makeObservable } from "mobx";
+import { computed, makeObservable, override } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
@@ -92,8 +92,8 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
 
     makeObservable(this, {
       almostEligible: computed,
-      requirementsMet: computed,
-      requirementsAlmostMet: computed,
+      requirementsMet: override,
+      requirementsAlmostMet: override,
       almostEligibleStatusMessage: computed,
     });
 

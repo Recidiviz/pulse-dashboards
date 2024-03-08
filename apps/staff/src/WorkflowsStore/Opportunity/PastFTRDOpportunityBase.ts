@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { differenceInDays } from "date-fns";
-import { computed, makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
@@ -78,7 +78,7 @@ export abstract class PastFTRDOpportunityBase<
   ) {
     super(client, type, client.rootStore, transformReferral, validateRecord);
     makeObservable(this, {
-      requirementsMet: computed,
+      requirementsMet: override,
     });
   }
 

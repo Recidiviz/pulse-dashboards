@@ -17,7 +17,7 @@
 
 import { differenceInDays, differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
-import { computed, makeObservable, observable } from "mobx";
+import { computed, makeObservable, observable, override } from "mobx";
 
 import { pluralizeWord } from "../../../../utils";
 import { Resident } from "../../../Resident";
@@ -262,8 +262,8 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
     makeObservable(this, {
       almostEligible: computed,
       almostEligibleRecommendedNote: observable,
-      requirementsMet: computed,
-      requirementsAlmostMet: computed,
+      requirementsMet: override,
+      requirementsAlmostMet: override,
     });
 
     this.form = new UsMeSCCPForm(this, resident.rootStore);

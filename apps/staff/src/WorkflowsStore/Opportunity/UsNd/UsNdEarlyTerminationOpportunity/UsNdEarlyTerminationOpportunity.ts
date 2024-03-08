@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable } from "mobx";
+import { computed, makeObservable, override } from "mobx";
 
 import { DocstarsDenialModal } from "../../../../core/OpportunityDenial/UsNd/DocstarsDenialModal";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
@@ -70,8 +70,8 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
 
     makeObservable(this, {
       almostEligible: computed,
-      requirementsMet: computed,
-      requirementsAlmostMet: computed,
+      requirementsMet: override,
+      requirementsAlmostMet: override,
       almostEligibleStatusMessage: computed,
     });
 

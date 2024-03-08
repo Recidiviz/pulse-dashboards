@@ -50,4 +50,36 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
     sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],
+    eligibleCriteriaCopy: {
+      custodyLevelIsMinimum: {
+        text: "Currently on Minimum custody",
+      },
+      notServingForSexualOffense: {
+        text: "Not serving for a sexual offense",
+      },
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
+        text: "No escape attempts in the last 10 years",
+        tooltip:
+          "No escape, eluding police, or absconsion offense(s) in the last 10 years",
+      },
+      usIdNoDetainersForXcrcAndCrc: {
+        text: "No active felony detainers or holds",
+        tooltip: "Cannot have any felony detainers or holds",
+      },
+      usIdIncarcerationWithin7YearsOfFtcdOrTpd: {
+        text: "Tentative Parole Date (TPD) within seven (7) years OR Full Term Release Date (FTRD) within seven (7) years",
+        tooltip:
+          "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+      },
+      usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd: {
+        text: "Parole Eligibility Date (PED) within seven (7) years AND Parole Hearing Date (PHD) within seven (7) years AND Full Term Release Date (FTRD) within 20 years",
+        tooltip:
+          "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+      },
+      usIdIncarcerationWithin3YearsOfTpdAndLifeSentence: {
+        text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
+        tooltip:
+          "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+      },
+    },
   };

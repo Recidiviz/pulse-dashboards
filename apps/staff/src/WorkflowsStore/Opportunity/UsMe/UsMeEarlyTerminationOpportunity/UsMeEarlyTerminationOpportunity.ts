@@ -16,7 +16,7 @@
 // =============================================================================
 
 import dedent from "dedent";
-import { computed, makeObservable } from "mobx";
+import { computed, makeObservable, override } from "mobx";
 
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
@@ -67,8 +67,8 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     makeObservable(this, {
       almostEligible: computed,
-      requirementsMet: computed,
-      requirementsAlmostMet: computed,
+      requirementsMet: override,
+      requirementsAlmostMet: override,
       almostEligibleStatusMessage: computed,
     });
   }

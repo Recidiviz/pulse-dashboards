@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
@@ -44,7 +44,7 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
       ).parse,
     );
 
-    makeObservable(this, { requirementsMet: true });
+    makeObservable(this, { requirementsMet: override });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

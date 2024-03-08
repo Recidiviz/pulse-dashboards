@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -83,7 +83,7 @@ export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
       usPaAdminSupervisionSchema.parse,
     );
 
-    makeObservable(this, { requirementsMet: true });
+    makeObservable(this, { requirementsMet: override });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

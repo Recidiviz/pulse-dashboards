@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { differenceInMonths } from "date-fns";
-import { computed, makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { FeatureGateError } from "../../../../errors";
 import { Resident } from "../../../Resident";
@@ -150,7 +150,7 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
     this.resident = resident;
 
     makeObservable(this, {
-      requirementsMet: computed,
+      requirementsMet: override,
     });
 
     this.form = new UsMeFurloughReleaseForm(this, resident.rootStore);

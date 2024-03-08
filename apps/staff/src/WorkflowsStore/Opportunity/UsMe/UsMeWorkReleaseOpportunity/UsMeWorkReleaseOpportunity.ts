@@ -17,7 +17,7 @@
 
 import { differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
-import { computed, makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { Resident } from "../../../Resident";
 import { UsMeWorkReleaseForm } from "../../Forms/UsMeWorkReleaseForm";
@@ -144,7 +144,7 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
     this.resident = resident;
 
     makeObservable(this, {
-      requirementsMet: computed,
+      requirementsMet: override,
     });
 
     this.form = new UsMeWorkReleaseForm(this, resident.rootStore);
