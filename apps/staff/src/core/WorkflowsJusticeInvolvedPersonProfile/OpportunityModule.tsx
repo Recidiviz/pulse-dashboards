@@ -23,7 +23,10 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useOpportunityConfigurations,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { desktopLinkGate } from "../desktopLinkGate";
@@ -129,6 +132,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       await opportunity.deleteOpportunityDenialAndSnooze();
     };
 
+    const OPPORTUNITY_CONFIGS = useOpportunityConfigurations();
+
     return (
       <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
@@ -145,7 +150,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             {formLinkButton && opportunity?.form && (
               <Link
                 to={workflowsUrl("opportunityAction", {
-                  opportunityType: opportunity.type,
+                  urlSection: OPPORTUNITY_CONFIGS[opportunity.type].urlSection,
                   justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
                 })}
               >

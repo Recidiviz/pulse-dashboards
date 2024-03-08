@@ -21,7 +21,10 @@ import React, { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
 import { WorkflowsRouteParams } from "../../WorkflowsStore";
 import {
@@ -62,6 +65,7 @@ const RouteSync = observer(function RouteSync({
   const [previousLocContainedPersonId, setPreviousLocContainedPersonId] =
     useState(false);
 
+  const OPPORTUNITY_CONFIGS = useOpportunityConfigurations();
   useEffect(
     () =>
       autorun(() => {
@@ -118,9 +122,10 @@ const RouteSync = observer(function RouteSync({
           runInAction(() => {
             const { opportunityTypes } = workflowsStore;
             if (opportunityTypes.length === 1) {
+              const { urlSection } = OPPORTUNITY_CONFIGS[opportunityTypes[0]];
               setRedirectPath(
                 workflowsUrl("opportunityClients", {
-                  opportunityType: opportunityTypes[0],
+                  urlSection,
                 }),
               );
             } else {
@@ -129,7 +134,13 @@ const RouteSync = observer(function RouteSync({
           });
         }
       }),
-    [loc, workflowsStore, currentTenantId, previousLocContainedPersonId],
+    [
+      OPPORTUNITY_CONFIGS,
+      loc,
+      workflowsStore,
+      currentTenantId,
+      previousLocContainedPersonId,
+    ],
   );
 
   if (notFound) {

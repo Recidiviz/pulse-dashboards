@@ -151,6 +151,8 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     countOpportunities(opportunities, opportunityType),
   );
 
+  const { urlSection } = useOpportunityConfigurations()[opportunityType];
+
   return (
     <OpportunityTypeSummaryWrapper
       isMobile={isMobile}
@@ -174,7 +176,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
         <ViewAllLink
           $isMobile={isMobile}
           className={`ViewAllLink__${opportunityType}`}
-          to={workflowsUrl("opportunityClients", { opportunityType })}
+          to={workflowsUrl("opportunityClients", { urlSection })}
         >
           View all{" "}
           <ViewAllArrow>

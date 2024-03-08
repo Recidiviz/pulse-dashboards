@@ -17,10 +17,12 @@
  * =============================================================================
  */
 import { render, screen } from "@testing-library/react";
-import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import isIE11 from "../../../utils/isIE11";
 import { WorkflowsStore } from "../../../WorkflowsStore";
 import { CaseloadView } from "../../CaseloadView";
@@ -87,6 +89,8 @@ jest.mock("../../WorkflowsLayouts", () => {
 });
 
 const mockUseRootStore = useRootStore as unknown as jest.Mock;
+const mockUseOpportunityConfigurations =
+  useOpportunityConfigurations as unknown as jest.Mock;
 
 function mockWorkflowsStore(mockStore: any) {
   mockUseRootStore.mockReturnValue({
@@ -408,10 +412,16 @@ describe("PageWorkflows", () => {
       });
 
       it("redirects to the opportunity page if there is only 1 opp", async () => {
+        mockUseOpportunityConfigurations.mockReturnValue({
+          compliantReporting: {
+            urlSection: "compliantReporting",
+          } as any,
+        } as any);
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
           opportunityTypes: ["compliantReporting"],
         });
+
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
           screen.getByText("Opportunity Caseload View"),

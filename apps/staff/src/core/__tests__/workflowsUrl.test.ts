@@ -34,9 +34,7 @@ test("URL with opportunityType", () => {
     "opportunityAction",
   ] as WorkflowsPage[];
   OPPORTUNITY_PAGES.forEach((pageId) => {
-    expect(
-      workflowsUrl(pageId, { opportunityType: "compliantReporting" }),
-    ).toBe(
+    expect(workflowsUrl(pageId, { urlSection: "compliantReporting" })).toBe(
       WORKFLOWS_PATHS[pageId].replace(
         ":opportunityTypeUrl",
         "compliantReporting",
@@ -51,7 +49,7 @@ test("URL with opportunityType with custom URL", () => {
     "opportunityAction",
   ] as WorkflowsPage[];
   OPPORTUNITY_PAGES.forEach((pageId) => {
-    expect(workflowsUrl(pageId, { opportunityType: "usTnExpiration" })).toBe(
+    expect(workflowsUrl(pageId, { urlSection: "expiration" })).toBe(
       WORKFLOWS_PATHS[pageId].replace(":opportunityTypeUrl", "expiration"),
     );
   });

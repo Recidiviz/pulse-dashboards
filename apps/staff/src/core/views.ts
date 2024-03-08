@@ -15,10 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { MetricId, SystemId } from "./models/types";
 
 export const UNRESTRICTED_PAGES = ["revocations", "profile", "methodology", ""];
@@ -267,7 +263,7 @@ export function workflowsRoute({
 
 type WorkflowsRouteParams = {
   justiceInvolvedPersonId?: string;
-  opportunityType?: OpportunityType;
+  urlSection?: string;
 };
 
 /**
@@ -280,9 +276,8 @@ export function workflowsUrl(
   if (params) {
     const transformedParams = {
       ...params,
-      ...(params.opportunityType && {
-        opportunityTypeUrl:
-          OPPORTUNITY_CONFIGS[params.opportunityType].urlSection,
+      ...(params.urlSection && {
+        opportunityTypeUrl: params.urlSection,
       }),
     };
     return Object.keys(transformedParams).reduce((path, param) => {

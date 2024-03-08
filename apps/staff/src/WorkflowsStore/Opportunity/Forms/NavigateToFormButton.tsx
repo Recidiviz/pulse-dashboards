@@ -19,6 +19,7 @@ import { darken, rem } from "polished";
 import { Link, LinkProps } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useOpportunityConfigurations } from "../../../components/StoreProvider";
 import { desktopLinkGate } from "../../../core/desktopLinkGate";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../core/views";
@@ -58,8 +59,9 @@ export function NavigateToFormButton({
   onClick,
   ...props
 }: React.PropsWithChildren<NavigateToFormButtonProps>): JSX.Element {
+  const { urlSection } = useOpportunityConfigurations()[opportunityType];
   const linkToForm = workflowsUrl("opportunityAction", {
-    opportunityType,
+    urlSection,
     justiceInvolvedPersonId: pseudonymizedId,
   });
 
