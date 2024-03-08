@@ -252,7 +252,7 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
 
   expect(constructorSpy).toHaveBeenCalledWith(
     root.firestoreStore,
-    "compliantReportingReferrals",
+    { raw: "compliantReportingReferrals" },
     compliantReportingEligibleClientRecord.recordId,
     transformCompliantReportingReferral,
     expect.any(Function),

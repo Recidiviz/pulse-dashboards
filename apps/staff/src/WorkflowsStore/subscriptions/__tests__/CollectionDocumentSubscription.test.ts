@@ -35,7 +35,7 @@ beforeEach(() => {
   docMock.mockReturnValue(mockRef);
   sub = new CollectionDocumentSubscription(
     firestoreStoreMock,
-    "compliantReportingReferrals",
+    { raw: "compliantReportingReferrals" },
     "abc123",
   );
 });

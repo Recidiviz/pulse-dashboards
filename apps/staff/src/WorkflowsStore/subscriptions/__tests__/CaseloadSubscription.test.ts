@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { collection, query, where } from "firebase/firestore";
+import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 
 import { ClientRecord } from "../../../FirestoreStore";
@@ -26,7 +26,7 @@ jest.mock("firebase/firestore");
 
 const queryMock = query as jest.Mock;
 const whereMock = where as jest.Mock;
-const collectionMock = collection as jest.Mock;
+const collectionMock = jest.fn();
 const withConverterMock = jest.fn();
 
 let workflowsStoreMock: WorkflowsStore;
@@ -43,13 +43,13 @@ beforeEach(() => {
     rootStore: {
       currentTenantId: "US_ND",
       firestoreStore: {
-        db: jest.fn(),
+        collection: collectionMock,
       },
     },
   }) as unknown as WorkflowsStore;
   sub = new CaseloadSubscription<ClientRecord>(
     workflowsStoreMock,
-    "clients",
+    { key: "clients" },
     "CLIENT",
   );
 });
@@ -61,10 +61,7 @@ test("dataSource reflects observables with defined search field", () => {
   });
   sub.subscribe();
 
-  expect(collectionMock).toHaveBeenCalledWith(
-    workflowsStoreMock.rootStore.firestoreStore.db,
-    "clients",
-  );
+  expect(collectionMock).toHaveBeenCalledWith({ key: "clients" });
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
   expect(whereMock).toHaveBeenCalledWith("facilityId", "in", ["TEST1"]);
   expect(queryMock).toHaveBeenCalled();

@@ -170,7 +170,7 @@ export abstract class OpportunityBase<
     this.referralSubscription =
       new CollectionDocumentSubscription<ReferralRecord>(
         this.rootStore.firestoreStore,
-        `${type}Referrals` as const,
+        { raw: this.config.firestoreCollection },
         person.recordId,
         transformReferral,
         validateRecord,

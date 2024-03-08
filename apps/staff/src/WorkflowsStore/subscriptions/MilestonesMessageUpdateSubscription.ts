@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { startOfToday } from "date-fns";
-import { doc, DocumentReference } from "firebase/firestore";
+import { DocumentReference } from "firebase/firestore";
 
 import FirestoreStore, { MilestonesMessage } from "../../FirestoreStore";
-import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../../FirestoreStore/constants";
 import { getMonthYearFromDate } from "../utils";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 
@@ -30,15 +30,14 @@ export class MilestonesMessageUpdateSubscription<
   readonly dataSource: DocumentReference<RecordType>;
 
   constructor(firestoreStore: FirestoreStore, recordId: string) {
-    const firestoreCollectionKey = "clientUpdatesV2";
+    const firestoreCollectionKey = { key: "clientUpdatesV2" } as const;
     super(firestoreStore, firestoreCollectionKey, recordId);
     const dateKey = `milestones_${getMonthYearFromDate(startOfToday())}`;
 
-    this.dataSource = doc(
-      firestoreStore.db,
-      FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
+    this.dataSource = firestoreStore.doc(
+      firestoreCollectionKey,
       recordId,
-      FIRESTORE_COLLECTIONS_MAP.milestonesMessages,
+      FIRESTORE_GENERAL_COLLECTION_MAP.milestonesMessages,
       dateKey,
     ) as DocumentReference<RecordType>;
   }

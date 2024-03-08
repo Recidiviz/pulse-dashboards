@@ -154,12 +154,12 @@ export class WorkflowsStore implements Hydratable {
     this.officersSubscription = new StaffSubscription(rootStore);
     this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
       this,
-      "clients",
+      { key: "clients" },
       "CLIENT",
     );
     this.residentsSubscription = new CaseloadSubscription<ResidentRecord>(
       this,
-      "residents",
+      { key: "residents" },
       "RESIDENT",
     );
     this.userSubscription = new UserSubscription(rootStore);
@@ -238,7 +238,7 @@ export class WorkflowsStore implements Hydratable {
       if (!this.userUpdatesSubscription) {
         this.userUpdatesSubscription = new CollectionDocumentSubscription(
           firestoreStore,
-          "userUpdates",
+          { key: "userUpdates" },
           email.toLowerCase(),
         );
       }

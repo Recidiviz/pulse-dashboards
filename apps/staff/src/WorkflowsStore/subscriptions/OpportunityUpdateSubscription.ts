@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { doc, DocumentData, DocumentReference } from "firebase/firestore";
+import { DocumentData, DocumentReference } from "firebase/firestore";
 
 import FirestoreStore, { OpportunityUpdate } from "../../FirestoreStore";
-import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../../FirestoreStore/constants";
 import { OpportunityType } from "../Opportunity/OpportunityConfigs";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 import { UpdateFunction } from "./types";
@@ -37,7 +37,7 @@ export class OpportunityUpdateSubscription<
     opportunityType: OpportunityType,
     updateOpportunityEligibility: UpdateFunction<DocumentData>,
   ) {
-    const firestoreCollectionKey = "clientUpdatesV2";
+    const firestoreCollectionKey = { key: "clientUpdatesV2" } as const;
 
     super(
       firestoreStore,
@@ -48,11 +48,10 @@ export class OpportunityUpdateSubscription<
       updateOpportunityEligibility,
     );
 
-    this.dataSource = doc(
-      firestoreStore.db,
-      FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
+    this.dataSource = firestoreStore.doc(
+      firestoreCollectionKey,
       clientRecordId,
-      FIRESTORE_COLLECTIONS_MAP.clientOpportunityUpdates,
+      FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates,
       opportunityType,
     ) as DocumentReference<RecordType>;
 

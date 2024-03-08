@@ -117,7 +117,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
     if (!currentUserEmail) return;
 
     if (snoozeForDays === undefined) {
-      firestoreStore.updateSupervisionTask(this.type, this.person.recordId, {
+      firestoreStore.updateSupervisionTask(this.person.recordId, {
         [this.type]: deleteField(),
       });
       return;
@@ -130,10 +130,6 @@ export abstract class Task<TaskType extends SupervisionTaskType>
         snoozedOn: formatDate(new Date(), "yyyy-MM-dd"),
       },
     };
-    firestoreStore.updateSupervisionTask(
-      this.type,
-      this.person.recordId,
-      update,
-    );
+    firestoreStore.updateSupervisionTask(this.person.recordId, update);
   }
 }

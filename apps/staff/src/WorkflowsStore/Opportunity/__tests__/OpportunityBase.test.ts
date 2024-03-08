@@ -36,6 +36,7 @@ import {
   updateOpportunityEligibility,
 } from "../OpportunityBase";
 import { OpportunityType } from "../OpportunityConfigs";
+import { OpportunityConfiguration } from "../OpportunityConfigurations";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
@@ -61,6 +62,10 @@ class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
   constructor(oppClient: Client, type: OpportunityType) {
     super(oppClient, type, root);
     this.form = new FormBase<any>(this, root);
+  }
+
+  get config() {
+    return {} as OpportunityConfiguration;
   }
 }
 

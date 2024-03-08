@@ -32,6 +32,7 @@ import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { OpportunityFactory, OpportunityType } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
+import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
 import { CollectionDocumentSubscription } from "../subscriptions";
 
 jest.mock("firebase/firestore");
@@ -73,7 +74,8 @@ beforeEach(() => {
       },
     },
     firestoreStore: {
-      db: jest.fn(),
+      doc: jest.fn(),
+      collection: jest.fn(),
     },
   } as unknown as RootStore;
   record = {
@@ -123,6 +125,10 @@ describe("opportunities", () => {
     constructor(...[person, type, rootStore, ...args]: any[]) {
       super(person, type, rootStore, ...args);
       opportunityInstances.push(this);
+    }
+
+    get config() {
+      return {} as OpportunityConfiguration;
     }
   }
 

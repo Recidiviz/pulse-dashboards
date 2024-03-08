@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { doc, DocumentData, DocumentReference } from "firebase/firestore";
+import { DocumentData, DocumentReference } from "firebase/firestore";
 
 import FirestoreStore from "../../FirestoreStore";
-import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import type { FirestoreCollectionKey } from "../../FirestoreStore/types";
 import { FirestoreDocumentSubscription } from "./FirestoreDocumentSubscription";
 import { TransformFunction, UpdateFunction, ValidateFunction } from "./types";
@@ -43,10 +42,6 @@ export class CollectionDocumentSubscription<
   ) {
     super(transformFn, validateFn, updateFn);
 
-    this.dataSource = doc(
-      firestoreStore.db,
-      FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
-      recordId,
-    );
+    this.dataSource = firestoreStore.doc(firestoreCollectionKey, recordId);
   }
 }

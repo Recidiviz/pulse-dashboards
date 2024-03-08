@@ -43,7 +43,8 @@ const mockGetMilestonesClientsByStatus = (mockClients: Client[]) => {
 
 const baseRootStoreMock = {
   firestoreStore: {
-    db: jest.fn(),
+    doc: jest.fn(),
+    collection: jest.fn(),
   },
 };
 const baseWorkflowsStoreMock = {

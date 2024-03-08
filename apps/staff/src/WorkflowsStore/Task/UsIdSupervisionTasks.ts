@@ -30,7 +30,7 @@ export class UsIdSupervisionTasks extends TasksBase<
   SupervisionTaskUpdate
 > {
   constructor(client: Client) {
-    super(client.rootStore, client, "usIdSupervisionTasks");
+    super(client.rootStore, client, { key: "usIdSupervisionTasks" });
     makeObservable(this, { needsEmployment: true });
   }
 

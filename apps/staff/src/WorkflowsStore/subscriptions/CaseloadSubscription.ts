@@ -15,15 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  collection,
-  DocumentData,
-  Query,
-  query,
-  where,
-} from "firebase/firestore";
+import { DocumentData, Query, query, where } from "firebase/firestore";
 
-import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import type { FirestoreCollectionKey } from "../../FirestoreStore/types";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
@@ -33,7 +26,7 @@ export class CaseloadSubscription<
 > extends FirestoreQuerySubscription<RecordType> {
   workflowsStore: WorkflowsStore;
 
-  collectionId: string;
+  firestoreCollectionKey: FirestoreCollectionKey;
 
   personType: RecordType["personType"];
 
@@ -44,7 +37,7 @@ export class CaseloadSubscription<
   ) {
     super();
     this.workflowsStore = workflowsStore;
-    this.collectionId = FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey];
+    this.firestoreCollectionKey = firestoreCollectionKey;
     this.personType = personType;
   }
 
@@ -59,9 +52,9 @@ export class CaseloadSubscription<
       return undefined;
     }
 
-    const { collectionId, personType } = this;
+    const { firestoreCollectionKey, personType } = this;
     return query(
-      collection(firestoreStore.db, collectionId),
+      firestoreStore.collection(firestoreCollectionKey),
       where("stateCode", "==", currentTenantId),
       where(searchField, "in", selectedSearchIds),
     ).withConverter({
@@ -71,7 +64,7 @@ export class CaseloadSubscription<
       },
       // these collections are read-only, so this should never be used, but it is required by Firestore
       toFirestore(record: any) {
-        throw new Error(`Writing to ${collectionId} is not allowed`);
+        throw new Error(`Writing to ${firestoreCollectionKey} is not allowed`);
       },
     });
   }

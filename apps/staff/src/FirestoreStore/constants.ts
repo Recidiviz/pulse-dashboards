@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import {
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
-import { FirestoreCollectionKey, FirestoreCollectionsMap } from "./types";
-
-// =============================================================================
 export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   staff: "staff",
   userUpdates: "userUpdates",
@@ -34,23 +27,3 @@ export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   taskUpdates: "taskUpdates",
   usIdSupervisionTasks: "US_ID-supervisionTasks",
 } as const;
-
-// TODO: Enforce a new standardized naming convention for collections so we can generate them
-const generateFirestoreCollectionsMap = (): FirestoreCollectionsMap => {
-  const mapping = {
-    ...FIRESTORE_GENERAL_COLLECTION_MAP,
-  } as FirestoreCollectionsMap;
-
-  for (const configKey in OPPORTUNITY_CONFIGS) {
-    if (Object.prototype.hasOwnProperty.call(OPPORTUNITY_CONFIGS, configKey)) {
-      const config = OPPORTUNITY_CONFIGS[configKey as OpportunityType];
-      const { firestoreCollection: collection } = config;
-      mapping[`${configKey}Referrals` as FirestoreCollectionKey] = collection;
-    }
-  }
-
-  return mapping;
-};
-
-export const FIRESTORE_COLLECTIONS_MAP: FirestoreCollectionsMap =
-  generateFirestoreCollectionsMap();

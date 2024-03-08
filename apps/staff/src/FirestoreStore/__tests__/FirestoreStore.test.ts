@@ -194,15 +194,13 @@ describe("FirestoreStore", () => {
       } as unknown as RootStore;
       store = new FirestoreStore({ rootStore: mockRootStore });
       store.updateDocument(
-        "testDocument",
-        "recordId",
-        {} as DocumentReference,
+        { path: "testDocument/recordId" } as DocumentReference,
         {},
       );
       expect(mockSetDoc).not.toBeCalled();
       // eslint-disable-next-line no-console
       expect(console.log).toBeCalledWith(
-        "[IMPERSONATOR] Skipping update for: testDocument for id recordId with updates {}",
+        "[IMPERSONATOR] Skipping update for: testDocument/recordId with updates {}",
       );
     });
 
@@ -211,12 +209,7 @@ describe("FirestoreStore", () => {
         isImpersonating: false,
       } as unknown as RootStore;
       store = new FirestoreStore({ rootStore: mockRootStore });
-      store.updateDocument(
-        "testDocument",
-        "recordId",
-        {} as DocumentReference,
-        {},
-      );
+      store.updateDocument({} as DocumentReference, {});
       expect(mockSetDoc).toBeCalled();
     });
   });
@@ -239,7 +232,7 @@ describe("FirestoreStore", () => {
           snoozedOn: "2023-01-01",
         },
       };
-      await store.updateSupervisionTask("homeVisit", "us_ca_123", taskUpdate);
+      await store.updateSupervisionTask("us_ca_123", taskUpdate);
 
       expect(mockSetDoc.mock.calls).toEqual([
         [

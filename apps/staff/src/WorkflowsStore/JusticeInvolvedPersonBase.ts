@@ -99,7 +99,7 @@ export class JusticeInvolvedPersonBase<
     this.personUpdatesSubscription =
       new CollectionDocumentSubscription<PersonUpdateRecord>(
         this.rootStore.firestoreStore,
-        "clientUpdatesV2",
+        { key: "clientUpdatesV2" },
         record.recordId,
       );
 

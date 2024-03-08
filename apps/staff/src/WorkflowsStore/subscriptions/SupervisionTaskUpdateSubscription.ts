@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { doc, DocumentReference } from "firebase/firestore";
+import { DocumentReference } from "firebase/firestore";
 
 import FirestoreStore, { SupervisionTaskUpdate } from "../../FirestoreStore";
-import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../../FirestoreStore/constants";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 
 export class SupervisionTaskUpdateSubscription<
@@ -28,14 +28,13 @@ export class SupervisionTaskUpdateSubscription<
   readonly dataSource: DocumentReference<RecordType>;
 
   constructor(firestoreStore: FirestoreStore, recordId: string) {
-    const firestoreCollectionKey = "clientUpdatesV2";
+    const firestoreCollectionKey = { key: "clientUpdatesV2" } as const;
     super(firestoreStore, firestoreCollectionKey, recordId);
 
-    this.dataSource = doc(
-      firestoreStore.db,
-      FIRESTORE_COLLECTIONS_MAP[firestoreCollectionKey],
+    this.dataSource = firestoreStore.doc(
+      firestoreCollectionKey,
       recordId,
-      FIRESTORE_COLLECTIONS_MAP.taskUpdates,
+      FIRESTORE_GENERAL_COLLECTION_MAP.taskUpdates,
       "supervision",
     ) as DocumentReference<RecordType>;
   }

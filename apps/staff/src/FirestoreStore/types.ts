@@ -26,9 +26,8 @@ import {
   SupervisionOpportunityType,
   SupervisionTaskType,
 } from "../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTn";
-import { FIRESTORE_GENERAL_COLLECTION_MAP as FIRESTORE_GENERAL_COLLECTIONS_MAP } from "./constants";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
 
 // TODO(#4618): Consider getting rid of this and replacing the relevant logic with a feature variant
 export type RoleSubtype =
@@ -381,25 +380,7 @@ export type UsTnExpirationOpportunityUpdate =
   OpportunityUpdateWithForm<UsTnExpirationDraftData> & {
     contactNote: ExternalRequestUpdate<UsTnContactNote>;
   };
-export type FirestoreGeneralCollectionKey =
-  keyof typeof FIRESTORE_GENERAL_COLLECTIONS_MAP;
-
-export type FirestoreGeneralCollection =
-  (typeof FIRESTORE_GENERAL_COLLECTIONS_MAP)[FirestoreGeneralCollectionKey];
-
-export type FirestoreOpportunityReferrals = {
-  [K in keyof typeof OPPORTUNITY_CONFIGS]: `${K}Referrals`;
-}[keyof typeof OPPORTUNITY_CONFIGS];
-
-export type FirestoreOpportunityCollection = {
-  [K in keyof typeof OPPORTUNITY_CONFIGS]: (typeof OPPORTUNITY_CONFIGS)[K]["firestoreCollection"];
-}[keyof typeof OPPORTUNITY_CONFIGS];
 
 export type FirestoreCollectionKey =
-  | FirestoreGeneralCollectionKey
-  | FirestoreOpportunityReferrals;
-
-export type FirestoreCollectionsMap = Record<
-  FirestoreCollectionKey,
-  FirestoreGeneralCollection | FirestoreOpportunityCollection
->;
+  | { key: keyof typeof FIRESTORE_GENERAL_COLLECTION_MAP; raw?: never }
+  | { raw: string; key?: never };

@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { collection, Query, query, where } from "firebase/firestore";
+import { Query, query, where } from "firebase/firestore";
 
 import { LocationRecord } from "../../FirestoreStore";
-import { FIRESTORE_COLLECTIONS_MAP } from "../../FirestoreStore/constants";
 import { RootStore } from "../../RootStore";
 import tenants from "../../tenants";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
@@ -53,10 +52,7 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
     }
 
     return query(
-      collection(
-        this.rootStore.firestoreStore.db,
-        FIRESTORE_COLLECTIONS_MAP.locations,
-      ),
+      this.rootStore.firestoreStore.collection({ key: "locations" }),
       ...constraints,
     );
   }

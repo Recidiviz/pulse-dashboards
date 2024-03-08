@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  collection,
-  limit,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { limit, onSnapshot, query, where } from "firebase/firestore";
 import { configure } from "mobx";
 
 import { RootStore } from "../../../RootStore";
@@ -34,6 +28,7 @@ jest.mock("../../../utils/isOfflineMode");
 
 const onSnapshotMock = onSnapshot as jest.Mock;
 const isOfflineModeMock = isOfflineMode as jest.Mock;
+const collectionMock = jest.fn();
 
 let rootStoreMock: RootStore;
 let sub: UserSubscription;
@@ -55,7 +50,7 @@ beforeEach(() => {
       family_name: "Halliwell",
     },
     firestoreStore: {
-      db: jest.fn(),
+      collection: collectionMock,
     },
   } as unknown as RootStore;
   sub = new UserSubscription(rootStoreMock);
@@ -68,10 +63,7 @@ afterEach(() => {
 test("dataSource reflects user auth data", () => {
   sub.subscribe();
 
-  expect(collection).toHaveBeenCalledWith(
-    rootStoreMock.firestoreStore.db,
-    "staff",
-  );
+  expect(collectionMock).toHaveBeenCalledWith({ key: "staff" });
   expect(where).toHaveBeenCalledWith("stateCode", "==", "US_XX");
   expect(where).toHaveBeenCalledWith("email", "==", "test@example.com");
   expect(limit).toHaveBeenCalledWith(1);

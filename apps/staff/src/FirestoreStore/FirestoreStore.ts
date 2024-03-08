@@ -56,9 +56,8 @@ import { isOfflineMode } from "../utils/isOfflineMode";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
-import { SupervisionTaskType } from "../WorkflowsStore/Task/types";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
-import { FIRESTORE_COLLECTIONS_MAP } from "./constants";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
 import {
   AutoSnoozeUpdate,
   ClientRecord,
@@ -91,12 +90,6 @@ function getFirestoreProjectId() {
 
 const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
 
-if (isDemoMode()) {
-  Object.entries(FIRESTORE_COLLECTIONS_MAP).forEach(([key, value]) => {
-    FIRESTORE_COLLECTIONS_MAP[key as FirestoreCollectionKey] = `DEMO_${value}`;
-  });
-}
-
 export default class FirestoreStore {
   rootStore;
 
@@ -104,7 +97,7 @@ export default class FirestoreStore {
 
   projectId: string = getFirestoreProjectId();
 
-  db: Firestore;
+  private db: Firestore;
 
   constructor({ rootStore }: { rootStore: typeof RootStore }) {
     makeAutoObservable(this, { useOfflineFirestore: false });
@@ -168,6 +161,22 @@ export default class FirestoreStore {
     }
   }
 
+  collectionNameForKey(collectionKey: FirestoreCollectionKey) {
+    let collectionName = collectionKey.key
+      ? FIRESTORE_GENERAL_COLLECTION_MAP[collectionKey.key]
+      : collectionKey.raw;
+    if (isDemoMode()) collectionName = `DEMO_${collectionName}`;
+    return collectionName;
+  }
+
+  collection(collectionKey: FirestoreCollectionKey) {
+    return collection(this.db, this.collectionNameForKey(collectionKey));
+  }
+
+  doc(collectionKey: FirestoreCollectionKey, ...paths: string[]) {
+    return doc(this.db, this.collectionNameForKey(collectionKey), ...paths);
+  }
+
   async getClient(
     clientId: string,
     stateCode: string,
@@ -175,7 +184,7 @@ export default class FirestoreStore {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
       query(
-        collection(this.db, FIRESTORE_COLLECTIONS_MAP.clients),
+        this.collection({ key: "clients" }),
         where("pseudonymizedId", "==", clientId),
         where("stateCode", "==", stateCode),
         limit(1),
@@ -198,7 +207,7 @@ export default class FirestoreStore {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
       query(
-        collection(this.db, FIRESTORE_COLLECTIONS_MAP.residents),
+        this.collection({ key: "residents" }),
         where("pseudonymizedId", "==", residentId),
         where("stateCode", "==", stateCode),
         limit(1),
@@ -218,16 +227,11 @@ export default class FirestoreStore {
    * All updates to Firestore should utilitize this method, which first checks that the user is an impersonator.
    * Do not use the Firestore setDoc directly.
    */
-  updateDocument(
-    documentType: string,
-    recordId: string,
-    docRef: DocumentReference<DocumentData>,
-    update: any,
-  ) {
+  updateDocument(docRef: DocumentReference<DocumentData>, update: any) {
     if (this.rootStore.isImpersonating) {
       // eslint-disable-next-line
       console.log(
-        `[IMPERSONATOR] Skipping update for: ${documentType} for id ${recordId} with updates ${JSON.stringify(
+        `[IMPERSONATOR] Skipping update for: ${docRef.path} with updates ${JSON.stringify(
           update,
         )}`,
       );
@@ -243,7 +247,6 @@ export default class FirestoreStore {
    * then updates the update document.
    */
   async updateClientUpdatesV2Document(
-    documentType: string,
     recordId: string,
     docRef: DocumentReference<DocumentData>,
     update: any,
@@ -251,7 +254,7 @@ export default class FirestoreStore {
     if (this.rootStore.isImpersonating) {
       // eslint-disable-next-line
       console.log(
-        `[IMPERSONATOR] Skipping update for: ${documentType} for id ${recordId} with updates ${JSON.stringify(
+        `[IMPERSONATOR] Skipping update for: ${docRef.path} with updates ${JSON.stringify(
           update,
         )}`,
       );
@@ -262,7 +265,7 @@ export default class FirestoreStore {
     await this.updatePerson(recordId, { stateCode: recordId.slice(0, 5) });
 
     // Then update the document with the actual update
-    await this.updateDocument(documentType, recordId, docRef, update);
+    await this.updateDocument(docRef, update);
   }
 
   // Function to add an update in `clientUpdatesV2`. All JusticeInvolvedPerson updates (both Clients and Residents)
@@ -273,34 +276,20 @@ export default class FirestoreStore {
       | Record<PersonUpdateType, string | ContactMethodType>
       | Record<"stateCode", string>,
   ) {
-    const docRef = doc(
-      this.db,
-      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}`,
-    );
+    const docRef = this.doc({ key: "clientUpdatesV2" }, `${recordId}`);
 
     // This is the only place an update should be made to `clientUpdatesV2` without using
     // the `updateClientUpdatesV2` method
-    return this.updateDocument(
-      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      recordId,
-      docRef,
-      { ...update },
-    );
+    return this.updateDocument(docRef, { ...update });
   }
 
-  async updateSupervisionTask(
-    taskType: SupervisionTaskType,
-    recordId: string,
-    update: SupervisionTaskUpdate,
-  ) {
-    const taskDocRef = doc(
-      this.db,
-      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.taskUpdates}/supervision`,
+  async updateSupervisionTask(recordId: string, update: SupervisionTaskUpdate) {
+    const taskDocRef = this.doc(
+      { key: "clientUpdatesV2" },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.taskUpdates}/supervision`,
     );
 
-    return this.updateClientUpdatesV2Document(taskType, recordId, taskDocRef, {
+    return this.updateClientUpdatesV2Document(recordId, taskDocRef, {
       ...update,
     });
   }
@@ -310,18 +299,12 @@ export default class FirestoreStore {
     update: PartialWithFieldValue<MilestonesMessage>,
   ) {
     const dateKey = `milestones_${getMonthYearFromDate(startOfToday())}`;
-    const taskDocRef = doc(
-      this.db,
-      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.milestonesMessages}/${dateKey}`,
+    const taskDocRef = this.doc(
+      { key: "clientUpdatesV2" },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.milestonesMessages}/${dateKey}`,
     );
 
-    return this.updateClientUpdatesV2Document(
-      FIRESTORE_COLLECTIONS_MAP.milestonesMessages,
-      recordId,
-      taskDocRef,
-      update,
-    );
+    return this.updateClientUpdatesV2Document(recordId, taskDocRef, update);
   }
 
   async updateOpportunity(
@@ -331,20 +314,14 @@ export default class FirestoreStore {
       OpportunityUpdateWithForm<Record<string, any>>
     >,
   ) {
-    const opportunityDocRef = doc(
-      this.db,
-      FIRESTORE_COLLECTIONS_MAP.clientUpdatesV2,
-      `${recordId}/${FIRESTORE_COLLECTIONS_MAP.clientOpportunityUpdates}/${opportunityType}`,
+    const opportunityDocRef = this.doc(
+      { key: "clientUpdatesV2" },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates}/${opportunityType}`,
     );
 
-    return this.updateClientUpdatesV2Document(
-      opportunityType,
-      recordId,
-      opportunityDocRef,
-      {
-        ...update,
-      },
-    );
+    return this.updateClientUpdatesV2Document(recordId, opportunityDocRef, {
+      ...update,
+    });
   }
 
   async updateOpportunityAutoSnooze(
@@ -441,18 +418,13 @@ export default class FirestoreStore {
     stateCode: string,
     selectedSearchIds: string[],
   ): Promise<void> | undefined {
-    return this.updateDocument(
-      FIRESTORE_COLLECTIONS_MAP.userUpdates,
-      userEmail,
-      doc(this.db, FIRESTORE_COLLECTIONS_MAP.userUpdates, userEmail),
-      {
-        stateCode,
-        selectedSearchIds,
-        // selectedOfficerIds was renamed to selectedSearchIds, so delete the old field to make
-        // the data a bit more manageable.
-        selectedOfficerIds: deleteField(),
-      },
-    );
+    return this.updateDocument(this.doc({ key: "userUpdates" }, userEmail), {
+      stateCode,
+      selectedSearchIds,
+      // selectedOfficerIds was renamed to selectedSearchIds, so delete the old field to make
+      // the data a bit more manageable.
+      selectedOfficerIds: deleteField(),
+    });
   }
 
   async clearFormDraftData(form: FormBase<any>) {

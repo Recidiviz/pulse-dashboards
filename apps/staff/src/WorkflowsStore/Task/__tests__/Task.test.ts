@@ -128,7 +128,7 @@ describe("Task", () => {
 
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
-      ).toHaveBeenCalledWith(task.type, supervisionTaskClientRecord.recordId, {
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
         homeVisit: {
           snoozeForDays: 30,
           snoozedBy: "test@email.gov",
@@ -149,7 +149,7 @@ describe("Task", () => {
 
       expect(
         rootStore.firestoreStore.updateSupervisionTask,
-      ).toHaveBeenCalledWith(task.type, supervisionTaskClientRecord.recordId, {
+      ).toHaveBeenCalledWith(supervisionTaskClientRecord.recordId, {
         homeVisit: deleteField(),
       });
     });

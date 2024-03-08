@@ -46,7 +46,8 @@ const baseRootStoreMock = {
     allowSupervisionTasks: false,
   },
   firestoreStore: {
-    db: jest.fn(),
+    doc: jest.fn(),
+    collection: jest.fn(),
   },
 };
 

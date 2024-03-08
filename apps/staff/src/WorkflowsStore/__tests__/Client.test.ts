@@ -70,7 +70,8 @@ describe("Client", () => {
       currentTenantId: "US_CA",
       firestoreStore: {
         updateMilestonesMessages: jest.fn(),
-        db: jest.fn(),
+        doc: jest.fn(),
+        collection: jest.fn(),
       } as unknown as FirestoreStore,
       apiStore: {
         postExternalSMSMessage: jest.fn(),

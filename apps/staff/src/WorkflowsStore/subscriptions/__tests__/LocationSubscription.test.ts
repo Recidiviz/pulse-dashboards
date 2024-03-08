@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { collection, query, where } from "firebase/firestore";
+import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 
 import { RootStore } from "../../../RootStore";
@@ -25,7 +25,7 @@ jest.mock("firebase/firestore");
 
 const queryMock = query as jest.Mock;
 const whereMock = where as jest.Mock;
-const collectionMock = collection as jest.Mock;
+const collectionMock = jest.fn();
 
 let rootStoreMock: RootStore;
 let sub: LocationSubscription;
@@ -43,7 +43,7 @@ describe("LocationSubscription tests", () => {
           searchField: "district",
         },
         firestoreStore: {
-          db: jest.fn(),
+          collection: collectionMock,
         },
       }) as unknown as RootStore;
       sub = new LocationSubscription(rootStoreMock);
@@ -54,10 +54,7 @@ describe("LocationSubscription tests", () => {
 
       // args may be undefined because of incomplete firestore mocking,
       // generally we don't care about that in these tests
-      expect(collectionMock).toHaveBeenCalledWith(
-        rootStoreMock.firestoreStore.db,
-        "locations",
-      );
+      expect(collectionMock).toHaveBeenCalledWith({ key: "locations" });
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
       expect(whereMock).toHaveBeenCalledWith("idType", "==", "district");
       expect(queryMock).toHaveBeenCalled();
@@ -90,7 +87,7 @@ describe("LocationSubscription tests", () => {
           searchField: "district",
         },
         firestoreStore: {
-          db: jest.fn(),
+          collection: collectionMock,
         },
       }) as unknown as RootStore;
       sub = new LocationSubscription(rootStoreMock);

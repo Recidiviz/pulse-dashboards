@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { collection, query, where } from "firebase/firestore";
+import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 
 import { CombinedUserRecord } from "../../../FirestoreStore";
@@ -29,7 +29,7 @@ jest.mock("firebase/firestore");
 
 const queryMock = query as jest.Mock;
 const whereMock = where as jest.Mock;
-const collectionMock = collection as jest.Mock;
+const collectionMock = jest.fn();
 
 let rootStoreMock: RootStore;
 let sub: StaffSubscription;
@@ -57,7 +57,7 @@ describe("StaffSubscription tests", () => {
         }),
       },
       firestoreStore: {
-        db: jest.fn(),
+        collection: collectionMock,
       },
       userStore: {
         activeFeatureVariants: {},
@@ -71,10 +71,7 @@ describe("StaffSubscription tests", () => {
 
     // args may be undefined because of incomplete firestore mocking,
     // generally we don't care about that in these tests
-    expect(collectionMock).toHaveBeenCalledWith(
-      rootStoreMock.firestoreStore.db,
-      "staff",
-    );
+    expect(collectionMock).toHaveBeenCalledWith({ key: "staff" });
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
     expect(whereMock).toHaveBeenCalledWith("hasCaseload", "==", true);
     expect(whereMock).toHaveBeenCalledWith("district", "in", ["TEST_DISTRICT"]);
