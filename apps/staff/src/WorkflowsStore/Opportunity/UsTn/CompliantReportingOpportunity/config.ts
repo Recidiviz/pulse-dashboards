@@ -52,7 +52,6 @@ export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingO
     sidebarComponents: [
       "SpecialConditions",
       "ClientProfileDetails",
-      "ClientHousing",
       "FinesAndFees",
     ],
   };
