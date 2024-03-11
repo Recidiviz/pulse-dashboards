@@ -17,7 +17,6 @@
 
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsCaSupervisionLevelDowngradeOpportunity } from "./UsCaSupervisionLevelDowngradeOpportunity";
 
@@ -36,7 +35,7 @@ export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig<UsCaSupervis
     firestoreCollection: "US_CA-supervisionLevelDowngrade",
     methodologyUrl: "TBD",
     denialReasons: {
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
     isAlert: false,
     tooltipEligibilityText: "Eligible for supervision downgrade",

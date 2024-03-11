@@ -21,7 +21,6 @@ import simplur from "simplur";
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { OTHER_KEY } from "../../../utils";
 import {
   CountFormatter,
   DenialReasonsMap,
@@ -37,7 +36,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
   fullTextPartial: string,
   callToAction: string,
   denialReasons: DenialReasonsMap = {
-    [OTHER_KEY]: "Other",
+    Other: "Other",
   },
 ): OpportunityConfig<OpportunityBase<Resident, any, any>> => {
   const segregationTypeMapping = {

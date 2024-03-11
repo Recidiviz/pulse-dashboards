@@ -17,7 +17,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdExpandedCRCOpportunity } from "./UsIdExpandedCRCOpportunity";
 
@@ -52,7 +51,7 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
         "Idaho educational program approved by the IDOC",
       CLASS_A_OR_B:
         "Has class A or B disciplinary reports in the past six months",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
     sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],

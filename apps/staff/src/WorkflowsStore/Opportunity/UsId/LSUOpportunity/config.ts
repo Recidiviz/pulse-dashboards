@@ -16,7 +16,6 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { LSUOpportunity } from "./LSUOpportunity";
 
@@ -43,7 +42,7 @@ export const usIdLSUConfig: OpportunityConfig<LSUOpportunity> = {
     "NCO/CPO": "NCO/CPO: Has an active NCO, CPO, or restraining order",
     INTERLOCK: "INTERLOCK: Has an active interlock device",
     MIS: "Has had a violent misdemeanor conviction in the past 12 months",
-    [OTHER_KEY]: "Other, please specify a reason",
+    Other: "Other, please specify a reason",
   },
   sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
   tooltipEligibilityText: "Eligible for transfer to LSU",

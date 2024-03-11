@@ -16,7 +16,6 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { CompliantReportingOpportunity } from "./CompliantReportingOpportunity";
 
@@ -45,7 +44,7 @@ export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingO
       DEDU: "DEDU: Serious compliance problems ",
       DEIJ: "DEIJ: Not allowed per court",
       DEIR: "DEIR: Failure to report as instructed",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
     methodologyUrl:
       "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view",

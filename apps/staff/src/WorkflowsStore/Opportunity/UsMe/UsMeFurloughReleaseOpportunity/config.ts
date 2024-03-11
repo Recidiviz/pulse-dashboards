@@ -17,7 +17,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMeFurloughReleaseOpportunity } from "./UsMeFurloughReleaseOpportunity";
 
@@ -44,7 +43,7 @@ export const usMeFurloughReleaseConfig: OpportunityConfig<UsMeFurloughReleaseOpp
       PROGRAM:
         "Has not completed, or is not currently participating in, required core programming",
       DECLINE: "Resident declined opportunity to apply for Furlough",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ME,
     sidebarComponents: ["Incarceration", "CaseNotes"],

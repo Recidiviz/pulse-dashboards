@@ -18,7 +18,6 @@ import { add } from "date-fns";
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
 import { UsIdPastFTRDOpportunity } from "./UsIdPastFTRDOpportunity";
@@ -45,7 +44,7 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
   denialReasons: {
     ABSCONDING: "Client is in absconder status",
     VIOLATION: "Client is in violation status",
-    [OTHER_KEY]: "Other: please specify a reason",
+    Other: "Other: please specify a reason",
   },
   sidebarComponents: ["ClientProfileDetails"],
   tooltipEligibilityText: "Eligible for discharge",

@@ -16,7 +16,6 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./UsTnCustodyLevelDowngradeOpportunity";
 
@@ -42,7 +41,7 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevel
       "UsTnCommonlyUsedOverrideCodes",
     ],
     denialReasons: {
-      [OTHER_KEY]: "Please specify a reason",
+      Other: "Please specify a reason",
     },
     methodologyUrl: "",
   };

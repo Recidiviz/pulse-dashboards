@@ -18,7 +18,6 @@ import { add } from "date-fns";
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
 import { UsMiPastFTRDOpportunity } from "./UsMiPastFTRDOpportunity";
@@ -46,6 +45,6 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
   denialReasons: {
     DATE: "Expiration date is inaccurate",
     CUSTODY: "Client is currently in custody",
-    [OTHER_KEY]: "Other: please specify a reason",
+    Other: "Other: please specify a reason",
   },
 };

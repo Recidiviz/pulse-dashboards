@@ -18,7 +18,6 @@ import { add } from "date-fns";
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiClassificationReviewOpportunity } from "./UsMiClassificationReviewOpportunity";
 
@@ -58,6 +57,6 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
         "No progress toward completion of Transition Accountability Plan goals/tasks",
       NONCOMPLIANT: "Noncompliant with the order of supervision",
       ABSCONSION: "Chronic missing of reporting dates",
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
   };

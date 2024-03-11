@@ -16,7 +16,6 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { EarnedDischargeOpportunity } from "./EarnedDischargeOpportunity";
 
@@ -46,7 +45,7 @@ export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportu
       PCD: "Parole Commission permanently denied early discharge request",
       CD: "Court permanently denied early discharge request",
       MIS: "Has had a violent misdemeanor conviction in the past 12 months",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
     sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
     tooltipEligibilityText: "Eligible for Earned Discharge",

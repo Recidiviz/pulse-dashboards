@@ -17,7 +17,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdCRCResidentWorkerOpportunity } from "./UsIdCRCResidentWorkerOpportunity";
 
@@ -46,7 +45,7 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
         "There are pending felony charges or felony investigations in which the resident is a suspect",
       BEHAVIOR: "Resident has had poor institutional behavior",
       PROGRAM: "Missing required facility programming",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
     sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],

@@ -17,7 +17,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
 import { UsMiSupervisionLevelDowngradeOpportunity } from "./UsMiSupervisionLevelDowngradeOpportunity";
@@ -50,6 +49,6 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervis
         "Agent supervision level override due to noncompliance with supervision",
       "EXCLUDED CHARGE":
         "Client is required to be supervised at a higher level of supervision by policy",
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
   };

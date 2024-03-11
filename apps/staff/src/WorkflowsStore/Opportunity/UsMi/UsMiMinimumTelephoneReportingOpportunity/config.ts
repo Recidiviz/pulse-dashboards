@@ -17,7 +17,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiMinimumTelephoneReportingOpportunity } from "./UsMiMinimumTelephoneReportingOpportunity";
 
@@ -50,7 +49,7 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumT
       "HIGH PROFILE":
         "Currently serving for an offense that resulted in the death of a person or a high-profile case with adverse community reaction (requires Max or higher based on risk score)",
       JUDGE: "County Judge declined client for consideration",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
     sidebarComponents: ["ClientProfileDetails", "EligibilityDate"],
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,

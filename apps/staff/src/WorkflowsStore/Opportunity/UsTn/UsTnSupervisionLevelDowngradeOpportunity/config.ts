@@ -16,7 +16,6 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
 import { UsTnSupervisionLevelDowngradeOpportunity } from "./UsTnSupervisionLevelDowngradeOpportunity";
@@ -45,7 +44,7 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervis
     sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
     denialReasons: {
       COURT: "COURT: Court mandates supervision at a higher level",
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
     isAlert: true,
   };

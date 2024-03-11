@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { baseUsMoOverdueRestrictiveHousingConfig } from "../UsMoOverdueRestrictiveHousingOpportunityBase/config";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMoOverdueRestrictiveHousingReleaseOpportunity";
@@ -31,6 +30,6 @@ export const usMoOverdueRestrictiveHousingReleaseConfig: OpportunityConfig<UsMoO
         "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
       REFERRED:
         "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
-      [OTHER_KEY]: "Other",
+      Other: "Other",
     },
   );

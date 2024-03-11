@@ -16,7 +16,6 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./UsIdSupervisionLevelDowngradeOpportunity";
 
@@ -43,7 +42,7 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig<UsIdSupervis
       INCORRECT: "INCORRECT: Risk score listed here is incorrect",
       OVERRIDE:
         "OVERRIDE: Client is being overridden to a different supervision level",
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
     sidebarComponents: ["ClientProfileDetails"],
     isAlert: true,

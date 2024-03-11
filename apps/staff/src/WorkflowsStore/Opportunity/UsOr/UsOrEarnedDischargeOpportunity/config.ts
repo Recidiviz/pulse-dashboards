@@ -18,7 +18,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsOrEarnedDischargeOpportunity } from "./UsOrEarnedDischargeOpportunity";
 
@@ -48,6 +47,6 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
         "Compensatory fines and restitution have not been paid in full or not current on payment plan",
       PROGRAMS: "Incomplete specialty court programs or treatment programs",
       "CASE PLAN": "Not in compliance with supervision case plan",
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
   };

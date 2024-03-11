@@ -17,7 +17,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsNdEarlyTerminationOpportunity } from "./UsNdEarlyTerminationOpportunity";
 
@@ -50,6 +49,6 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
       "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
       INC: "Incarcerated on another offense",
       "SA DECLINE": "State's Attorney permanently declined consideration",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
   };

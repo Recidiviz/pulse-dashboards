@@ -17,7 +17,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiEarlyDischargeOpportunity } from "./UsMiEarlyDischargeOpportunity";
 
@@ -67,6 +66,6 @@ export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOppor
       "EXCLUDED OFFENSE":
         "EXCLUDED OFFENSE: On parole for an offense resulting in death or serious bodily injury or an offense involving the discharge of a firearm",
       JUDGE: "JUDGE: County Judge declined client for consideration",
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
   };

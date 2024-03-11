@@ -18,7 +18,6 @@
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsPaAdminSupervisionOpportunity } from "./UsPaAdminSupervisionOpportunity";
 
@@ -44,6 +43,6 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
     denialReasons: {
       FELONY_DRUG:
         "Client is currently being supervised for an ineligible felony drug offense",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
   };

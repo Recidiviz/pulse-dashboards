@@ -18,7 +18,6 @@ import { nextMonday } from "date-fns";
 import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
 import { UsMoRestrictiveHousingStatusHearingOpportunity } from "./UsMoRestrictiveHousingStatusHearingOpportunity";
@@ -53,6 +52,6 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MO,
     denialReasons: {
       COMP: "Hearing Completed",
-      [OTHER_KEY]: "Other, please specify a reason",
+      Other: "Other, please specify a reason",
     },
   };

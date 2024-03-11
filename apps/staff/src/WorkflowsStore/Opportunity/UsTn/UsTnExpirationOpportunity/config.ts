@@ -17,7 +17,6 @@
 import { add } from "date-fns";
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnExpirationOpportunity } from "./UsTnExpirationOpportunity";
 
@@ -42,7 +41,7 @@ export const usTnExpirationConfig: OpportunityConfig<UsTnExpirationOpportunity> 
     },
     denialReasons: {
       DATE: "DATE: Expiration date is incorrect or missing",
-      [OTHER_KEY]: "Other: please specify a reason",
+      Other: "Other: please specify a reason",
     },
     methodologyUrl:
       "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing",
