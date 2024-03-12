@@ -90,14 +90,15 @@ let nextVersion = "deploy-candidate";
 let publishReleaseNotes;
 let releaseNotes;
 let e2eTestRun;
+let isCpDeploy;
 
 if (deployEnv === "production") {
-  const { isCpDeploy } = await inquirer.prompt({
+  ({ isCpDeploy } = await inquirer.prompt({
     type: "confirm",
     name: "isCpDeploy",
     message: `Is this a cherry-pick deploy?`,
     default: false,
-  });
+  }));
 
   console.log("Checking e2e test results...");
   const {
@@ -354,7 +355,7 @@ if (publishReleaseNotes) {
 
     // Publish the branch
     await $`git push --set-upstream origin ${releaseBranchName}`.pipe(
-      process.stdout
+      process.stdout,
     );
   }
 }
