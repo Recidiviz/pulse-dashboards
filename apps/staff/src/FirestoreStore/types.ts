@@ -82,8 +82,6 @@ export type UserUpdateRecord = {
   stateCode: string;
   // this persists their most recent caseload selection
   selectedSearchIds?: string[];
-  // previous version of ^, leaving in for backwards compatibility
-  selectedOfficerIds?: string[];
   // TODO(#3522): [Workflows][Auth] Rethink district overrides
   overrideDistrictIds?: string[];
 };

@@ -515,7 +515,6 @@ describe("FirestoreStore", () => {
       const update = {
         stateCode: "us_ca",
         selectedSearchIds,
-        selectedOfficerIds: "mock-delete-fn",
       };
       store.updateSelectedSearchIds(userEmail, stateCode, selectedSearchIds);
       expect(mockDoc.mock.calls).toEqual([

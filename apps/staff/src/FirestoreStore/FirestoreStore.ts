@@ -421,9 +421,6 @@ export default class FirestoreStore {
     return this.updateDocument(this.doc({ key: "userUpdates" }, userEmail), {
       stateCode,
       selectedSearchIds,
-      // selectedOfficerIds was renamed to selectedSearchIds, so delete the old field to make
-      // the data a bit more manageable.
-      selectedOfficerIds: deleteField(),
     });
   }
 

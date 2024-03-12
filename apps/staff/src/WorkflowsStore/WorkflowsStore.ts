@@ -185,14 +185,12 @@ export class WorkflowsStore implements Hydratable {
     when(
       () => !!this.user,
       () => {
-        const { selectedSearchIds, selectedOfficerIds } =
-          this.user?.updates ?? {};
+        const { selectedSearchIds } = this.user?.updates ?? {};
         const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
-        const selectedSearch = selectedSearchIds ?? selectedOfficerIds;
 
-        if (selectedSearch && isDefaultOfficerSelection) {
+        if (selectedSearchIds && isDefaultOfficerSelection) {
           this.rootStore.analyticsStore.trackCaseloadSearch({
-            searchCount: selectedSearch.length,
+            searchCount: selectedSearchIds.length,
             isDefault: true,
             searchType: "OFFICER",
           });
@@ -289,7 +287,7 @@ export class WorkflowsStore implements Hydratable {
 
     // set default caseload to the user's own, when applicable
     if (
-      !(updates.selectedOfficerIds || updates.selectedSearchIds) &&
+      !updates.selectedSearchIds &&
       info.hasCaseload &&
       this.searchType === "OFFICER"
     ) {
@@ -326,13 +324,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get selectedSearchIds(): string[] {
-    return (
-      this.user?.updates?.selectedSearchIds ??
-      // fall back to selectedOfficerIds since the field was renamed from that to selectedSearchIds
-      // TODO(#3154) get rid of selectedOfficerIds altogether
-      this.user?.updates?.selectedOfficerIds ??
-      []
-    );
+    return this.user?.updates?.selectedSearchIds ?? [];
   }
 
   async fetchPerson(personId: string): Promise<void> {
