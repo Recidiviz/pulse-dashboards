@@ -547,10 +547,13 @@ export const transformCompliantReportingReferral: TransformFunction<
     legacyLifetimeOffensesExpired: lifetimeOffensesExpired,
     legacyPastOffenses:
       offenseTypeEligibility === "2" ? pastOffenses : undefined,
-    hasActiveSentence: eligibleCriteria.hasActiveSentence ?? {
-      hasActiveSentence:
-        eligibilityCategory !== "c3" || currentOffenses?.length > 0,
-    },
+    hasActiveSentence:
+      eligibleCriteria.hasActiveSentence !== undefined
+        ? eligibleCriteria.hasActiveSentence
+        : {
+            hasActiveSentence:
+              eligibilityCategory !== "c3" || currentOffenses?.length > 0,
+          },
   };
 
   const newIneligibleCriteria: z.input<

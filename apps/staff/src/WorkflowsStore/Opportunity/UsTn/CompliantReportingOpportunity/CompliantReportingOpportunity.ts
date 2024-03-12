@@ -436,7 +436,11 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       });
     }
 
-    if (!eligibleCriteria.hasActiveSentence.hasActiveSentence) {
+    if (
+      !eligibleCriteria.hasActiveSentence.hasActiveSentence ||
+      // TODO(Recidiviz/recidiviz-data#28110): Have current offenses be part of the criteria
+      !currentOffenses?.length
+    ) {
       requirements.push({
         text: "Eligible with discretion: Missing sentence information",
         tooltip: CRITERIA.missingSentences.tooltip,
