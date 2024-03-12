@@ -33,6 +33,7 @@ import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRel
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { FormUsOrEarnedDischarge } from "../Paperwork/US_OR/EarnedDischarge/FormUsOrEarnedDischarge";
+import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
@@ -93,6 +94,7 @@ const FormComponents = {
   WorkflowsUsCaSupervisionLevelDowngradeForm,
   FormFurloughRelease,
   FormUsOrEarnedDischarge,
+  FormUsPaAdminSupervision,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;

@@ -20,6 +20,7 @@
 import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
+import { UsPaAdminSupervisionForm } from "../../Forms/UsPaAdminSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import {
@@ -75,6 +76,8 @@ export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
   Client,
   UsPaAdminSupervisionReferralRecord
 > {
+  form: UsPaAdminSupervisionForm;
+
   constructor(client: Client) {
     super(
       client,
@@ -82,7 +85,7 @@ export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
       client.rootStore,
       usPaAdminSupervisionSchema.parse,
     );
-
+    this.form = new UsPaAdminSupervisionForm(this, client.rootStore);
     makeObservable(this, { requirementsMet: override });
   }
 

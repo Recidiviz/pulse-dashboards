@@ -52,3 +52,10 @@ export type UsPaAdminSupervisionReferralRecord = z.infer<
 export type UsPaAdminSupervisionReferralRecordRaw = z.input<
   typeof usPaAdminSupervisionSchema
 >;
+
+export type UsPaAdminSupervisionDraftData = {
+  reentrantName: string;
+  paroleNumber: string;
+  dateOfReview: string;
+  currentGradeOfSupervisionLevel: string;
+};
