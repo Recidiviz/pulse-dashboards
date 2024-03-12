@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OPPORTUNITY_CONFIGS } from "../OpportunityConfigs";
-import { OpportunityType } from "../OpportunityType/types";
-import { OpportunityTab } from "../types";
-
-export const generateTabs = ({
-  customTabOrder,
-  isAlert = false,
-}: {
-  customTabOrder?: OpportunityTab[];
-  isAlert?: boolean;
-}): ReadonlyArray<OpportunityTab> => {
-  return (
-    customTabOrder ?? [
-      "Eligible Now",
-      "Almost Eligible",
-      isAlert ? "Overridden" : "Marked ineligible",
-    ]
-  );
-};
-
-export const getTabOrderForOpportunityType = (
-  opportunityType: OpportunityType,
-): ReturnType<typeof generateTabs> =>
-  OPPORTUNITY_CONFIGS[opportunityType].tabOrder ?? generateTabs({});
+export * from "./types";
+export * from "./utils";

@@ -18,6 +18,7 @@ export { CompliantReportingForm } from "./Forms/CompliantReportingForm";
 export { EarlyTerminationForm } from "./Forms/EarlyTerminationForm";
 export { LSUForm } from "./Forms/LSUForm";
 export * from "./OpportunityConfigs";
+export * from "./OpportunityType";
 export * from "./types";
 export * from "./UsCa";
 export * from "./UsId";

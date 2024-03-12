@@ -22,13 +22,9 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import {
-  getStateOpportunityTypes,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
-  getStateOpportunityTypes("US_MO");
+const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_MO");
 const US_MO_CONFIG: TenantConfig = {
   name: "Missouri",
   stateCode: "MO",

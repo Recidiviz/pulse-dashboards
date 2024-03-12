@@ -20,13 +20,9 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import {
-  getStateOpportunityTypes,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
-  getStateOpportunityTypes("US_OR");
+const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_OR");
 
 const US_OR_CONFIG: TenantConfig = {
   name: "Oregon",

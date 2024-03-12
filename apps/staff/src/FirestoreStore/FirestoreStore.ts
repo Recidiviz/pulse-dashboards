@@ -55,7 +55,7 @@ import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
-import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/types";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
 import {

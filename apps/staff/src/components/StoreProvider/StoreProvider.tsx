@@ -25,6 +25,8 @@ import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
 import type UserStore from "../../RootStore/UserStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
+import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 
 type StoreContextType = {
   store: RootStore;
@@ -97,7 +99,17 @@ export function useFeatureVariants(): FeatureVariantRecord {
   return context.featureVariants;
 }
 
-export function useOpportunityConfigurations() {
-  return useRootStore().workflowsStore.opportunityConfigurationStore
-    .opportunities;
+export function useOpportunityConfigurations(): Record<
+  OpportunityType,
+  OpportunityConfiguration
+>;
+export function useOpportunityConfigurations(
+  opportunityType: OpportunityType,
+): OpportunityConfiguration;
+export function useOpportunityConfigurations(
+  opportunityType?: OpportunityType,
+) {
+  const { opportunities } =
+    useRootStore().workflowsStore.opportunityConfigurationStore;
+  return opportunityType ? opportunities[opportunityType] : opportunities;
 }

@@ -21,6 +21,7 @@ import { PartialRecord } from "../../utils/typeUtils";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { OpportunityBase } from "./OpportunityBase";
+import { OpportunityType } from "./OpportunityType/types";
 import { DenialReasonsMap, Opportunity, OpportunityTab } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
 import { usIdEarnedDischargeConfig as earnedDischarge } from "./UsId/EarnedDischargeOpportunity/config";
@@ -52,7 +53,6 @@ import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./
 import { usTnExpirationConfig as usTnExpiration } from "./UsTn/UsTnExpirationOpportunity/config";
 import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from "./UsTn/UsTnSupervisionLevelDowngradeOpportunity/config";
 import { CountFormatter } from "./utils/generateHeadersUtils";
-
 /** Auto refers to users who have a default snooze until set.
  * defaultSnoozeUntilFn is used to calculate the default snooze until,
  * e.g. weekly on Mondays or 90 days.
@@ -188,11 +188,6 @@ export const OPPORTUNITY_CONFIGS = {
 export type OpportunityConfigMap = typeof OPPORTUNITY_CONFIGS;
 
 /**
- * An {@link OpportunityType} represents the string and type representation of an {@link Opportunity}
- */
-export type OpportunityType = keyof typeof OPPORTUNITY_CONFIGS;
-
-/**
  * A {@link SupervisionOpportunityType} represents an opportunity
  * that could be available to someone who is currently a {@link Client} under supervision.
  *
@@ -225,12 +220,15 @@ export type IncarcerationOpportunityType = {
     : never;
 }[keyof typeof OPPORTUNITY_CONFIGS];
 
-const getOpportunityTypesBySystemType = <T extends OpportunityType>(
+const getOpportunityTypesBySystemType = <
+  T extends keyof typeof OPPORTUNITY_CONFIGS,
+>(
   type: (typeof OPPORTUNITY_CONFIGS)[T]["systemType"],
 ) => {
   return Object.keys(OPPORTUNITY_CONFIGS).filter(
     (oppType) =>
-      OPPORTUNITY_CONFIGS[oppType as OpportunityType].systemType === type,
+      OPPORTUNITY_CONFIGS[oppType as keyof typeof OPPORTUNITY_CONFIGS]
+        .systemType === type,
   ) as T[];
 };
 
@@ -284,10 +282,3 @@ export function isOpportunityTypeUrlForState(
 ): boolean {
   return s in (OPPORTUNITY_TYPE_FOR_URL_BY_STATE[stateCode] ?? {});
 }
-
-export const getStateOpportunityTypes = (
-  stateCode: keyof typeof OPPORTUNITY_CONFIGS_BY_STATE,
-): OpportunityType[] => {
-  const stateConfigs = OPPORTUNITY_CONFIGS_BY_STATE[stateCode];
-  return stateConfigs ? (Object.keys(stateConfigs) as OpportunityType[]) : [];
-};

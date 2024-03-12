@@ -23,13 +23,9 @@ import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import {
-  getStateOpportunityTypes,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
-  getStateOpportunityTypes("US_ND");
+const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_ND");
 
 const US_ND_CONFIG: TenantConfig = {
   name: "North Dakota",

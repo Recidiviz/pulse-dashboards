@@ -29,8 +29,9 @@ import {
 } from "../../FirestoreStore";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
-import { AutoSnoozeUntil, OpportunityType } from "./OpportunityConfigs";
+import { AutoSnoozeUntil } from "./OpportunityConfigs";
 import { OpportunityConfiguration } from "./OpportunityConfigurations";
+import { OpportunityType } from "./OpportunityType/types";
 
 export type OpportunityRequirement = {
   isHeading?: boolean;

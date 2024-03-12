@@ -35,8 +35,8 @@ import {
   OpportunityBase,
   updateOpportunityEligibility,
 } from "../OpportunityBase";
-import { OpportunityType } from "../OpportunityConfigs";
 import { OpportunityConfiguration } from "../OpportunityConfigurations";
+import { OpportunityType } from "../OpportunityType/types";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,

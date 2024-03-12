@@ -22,7 +22,7 @@ import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
 import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityType } from "./OpportunityConfigs";
+import { OpportunityType } from "./OpportunityType/types";
 import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
 import { OpportunityRequirement } from "./types";
 import {

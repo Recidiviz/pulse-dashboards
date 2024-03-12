@@ -38,10 +38,8 @@ import {
 } from "../FirestoreStore/types";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
-import {
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "./Opportunity/OpportunityConfigs";
+import { OPPORTUNITY_CONFIGS } from "./Opportunity/OpportunityConfigs";
+import { OpportunityType } from "./Opportunity/OpportunityType/types";
 import { StaffFilterFunction } from "./types";
 
 /**

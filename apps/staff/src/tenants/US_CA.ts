@@ -20,14 +20,10 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import {
-  getStateOpportunityTypes,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import { usCaFilterByRoleSubtype } from "../WorkflowsStore/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
-  getStateOpportunityTypes("US_CA");
+const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_CA");
 
 const US_CA_CONFIG: TenantConfig = {
   name: "California",
@@ -39,8 +35,8 @@ const US_CA_CONFIG: TenantConfig = {
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
-  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsStaffFilterFn: usCaFilterByRoleSubtype,
+  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",

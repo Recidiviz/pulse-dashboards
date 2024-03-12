@@ -22,10 +22,8 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
-import {
-  OPPORTUNITY_CONFIGS,
-  OpportunityType,
-} from "../../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { OpportunityType } from "../../../WorkflowsStore/Opportunity/OpportunityType/types";
 import {
   Opportunity,
   OpportunityTab,

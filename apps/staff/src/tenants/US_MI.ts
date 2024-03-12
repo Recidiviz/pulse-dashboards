@@ -26,14 +26,10 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import {
-  getStateOpportunityTypes,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
-  getStateOpportunityTypes("US_MI");
+const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_MI");
 
 const US_MI_CONFIG: TenantConfig = {
   name: "Michigan",

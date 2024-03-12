@@ -24,7 +24,8 @@ import { Resident } from "../../Resident";
 import { JusticeInvolvedPerson } from "../../types";
 import { dateToTimestamp } from "../../utils";
 import { OpportunityBase } from "../OpportunityBase";
-import { OpportunityConfig, OpportunityType } from "../OpportunityConfigs";
+import { OpportunityConfig } from "../OpportunityConfigs";
+import { OpportunityType } from "../OpportunityType/types";
 import { Opportunity } from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {

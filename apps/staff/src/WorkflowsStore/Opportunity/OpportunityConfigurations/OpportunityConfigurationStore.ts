@@ -25,7 +25,8 @@ import { isDemoMode } from "../../../utils/isDemoMode";
 import { isOfflineMode } from "../../../utils/isOfflineMode";
 import { isTestEnv } from "../../../utils/isTestEnv";
 import { WorkflowsStore } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS, OpportunityType } from "..";
+import { OPPORTUNITY_CONFIGS } from "..";
+import { OpportunityType } from "../OpportunityType/types";
 import { OpportunityConfigurationAPI } from "./api/interface";
 import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfigurationAPIClient";
 import { OpportunityConfigurationOfflineAPIClient } from "./api/OpportunityConfigurationOfflineAPIClient";
@@ -35,7 +36,6 @@ import {
 } from "./interfaces";
 import { LocalOpportunityConfiguration } from "./models";
 import { ApiOpportunityConfiguration } from "./models/ApiOpportunityConfigurationImpl";
-
 export class OpportunityConfigurationStore implements Hydratable {
   apiClient: OpportunityConfigurationAPI;
   apiOpportunityConfigurations?: Partial<

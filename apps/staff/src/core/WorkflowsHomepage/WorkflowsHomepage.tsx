@@ -23,8 +23,8 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { getWelcomeText, pluralizeWord } from "../../utils";
-import { OpportunityType } from "../../WorkflowsStore";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";

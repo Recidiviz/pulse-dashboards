@@ -25,7 +25,7 @@ import { formatWorkflowsDate, pluralizeWord } from "../../../../utils";
 import { Client } from "../../../Client";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityType } from "../../OpportunityConfigs";
+import { OpportunityType } from "../../OpportunityType/types";
 import { OpportunityRequirement, OpportunityStatus } from "../../types";
 import { formatNoteDate } from "../../utils/caseNotesUtils";
 import {

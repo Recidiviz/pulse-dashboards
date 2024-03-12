@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OPPORTUNITY_CONFIGS } from "../OpportunityConfigs";
-import { OpportunityType } from "../OpportunityType/types";
-import { OpportunityTab } from "../types";
+import { OPPORTUNITY_TYPES_BY_STATE } from "./utils";
 
-export const generateTabs = ({
-  customTabOrder,
-  isAlert = false,
-}: {
-  customTabOrder?: OpportunityTab[];
-  isAlert?: boolean;
-}): ReadonlyArray<OpportunityTab> => {
-  return (
-    customTabOrder ?? [
-      "Eligible Now",
-      "Almost Eligible",
-      isAlert ? "Overridden" : "Marked ineligible",
-    ]
-  );
+export type DeepWriteable<T> = {
+  -readonly [P in keyof T]: DeepWriteable<T[P]>;
 };
 
-export const getTabOrderForOpportunityType = (
-  opportunityType: OpportunityType,
-): ReturnType<typeof generateTabs> =>
-  OPPORTUNITY_CONFIGS[opportunityType].tabOrder ?? generateTabs({});
+export type OpportunityTypeStateMap = DeepWriteable<
+  typeof OPPORTUNITY_TYPES_BY_STATE
+>;
+
+/**
+ * An {@link OpportunityType} represents the string and type representation of an {@link Opportunity}
+ */
+export type OpportunityType =
+  OpportunityTypeStateMap[keyof OpportunityTypeStateMap][number];

@@ -81,8 +81,8 @@ import {
   OpportunityTab,
   SUPERVISION_OPPORTUNITY_TYPES,
 } from "./Opportunity";
-import { OpportunityType } from "./Opportunity/OpportunityConfigs";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { OpportunityType } from "./Opportunity/OpportunityType/types";
 import { Resident } from "./Resident";
 import {
   CaseloadSubscription,

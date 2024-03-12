@@ -54,7 +54,8 @@ import {
   snoozeUntilDateInTheFuture,
 } from "../utils";
 import { FormBase } from "./Forms/FormBase";
-import { AutoSnoozeUntil, OpportunityType } from "./OpportunityConfigs";
+import { AutoSnoozeUntil } from "./OpportunityConfigs";
+import { OpportunityType } from "./OpportunityType/types";
 import {
   Component,
   DefaultEligibility,

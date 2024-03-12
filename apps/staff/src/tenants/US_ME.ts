@@ -24,10 +24,8 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import {
-  getStateOpportunityTypes,
-  OpportunityType,
-} from "../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/types";
+import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const PREFERRED_SORT_ORDER: OpportunityType[] = [

@@ -26,8 +26,8 @@ import {
   OPPORTUNITY_CONFIGS,
   OpportunityConfig,
   OpportunityHydratedHeader,
-  OpportunityType,
 } from "../OpportunityConfigs";
+import { OpportunityType } from "../OpportunityType/types";
 import { Opportunity } from "../types";
 import { monthsOrDaysRemainingFromToday } from "../utils/criteriaUtils";
 import {

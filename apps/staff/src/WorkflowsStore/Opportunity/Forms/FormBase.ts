@@ -21,7 +21,7 @@ import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { OpportunityUpdateWithForm, UpdateLog } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { OpportunityBase } from "../OpportunityBase";
-import { OpportunityType } from "../OpportunityConfigs";
+import { OpportunityType } from "../OpportunityType/types";
 
 export type PrefilledDataTransformer<FormInformation> =
   () => Partial<FormInformation>;
