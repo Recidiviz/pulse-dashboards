@@ -15,16 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import React from "react";
+import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Client } from "../../../../WorkflowsStore";
 import { FormContainer } from "../../FormContainer";
+import FormViewer from "../../FormViewer";
+import { PrintablePage, PrintablePageMargin } from "../../styles";
+import FormHeading from "./FormHeading";
+
+export const FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY =
+  "Calibri, Arial, sans-serif";
+
+const FormPage = styled.div`
+  font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
+  display: flex;
+  flex-direction: column;
+  font-size: ${rem(9)};
+  color: black;
+  background-color: white;
+  padding: 0 ${rem(18)};
+`;
 
 const formDownloader = async (client: Client): Promise<void> => {
   return;
 };
 
 export const FormUsPaAdminSupervision = observer(function FormSCCP() {
+  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+
   const { workflowsStore } = useRootStore();
   const opportunity =
     workflowsStore?.selectedPerson?.verifiedOpportunities?.usPaAdminSupervision;
@@ -43,7 +64,16 @@ export const FormUsPaAdminSupervision = observer(function FormSCCP() {
       opportunity={opportunity}
       downloadButtonLabel="Download DOCX"
     >
-      <div></div>
+      <FormViewer formRef={formRef}>
+        <PrintablePageMargin>
+          <PrintablePage>
+            <FormPage>
+              <FormHeading />
+              There will be a form here soon!
+            </FormPage>
+          </PrintablePage>
+        </PrintablePageMargin>
+      </FormViewer>
     </FormContainer>
   );
 });
