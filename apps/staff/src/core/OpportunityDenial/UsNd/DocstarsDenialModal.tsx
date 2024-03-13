@@ -303,7 +303,9 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
     <div data-testid="docstars-failure-screen" style={{ width: "100%" }}>
       {closeButtonControls}
       <CenteredContainer>
-        <ModalTitle>Currently unable to sync to DOCSTARS.</ModalTitle>
+        <ModalTitle>
+          Currently unable to save your change and add chrono to DOCSTARS.
+        </ModalTitle>
         <ModalText>Please try again later.</ModalText>
       </CenteredContainer>
     </div>
