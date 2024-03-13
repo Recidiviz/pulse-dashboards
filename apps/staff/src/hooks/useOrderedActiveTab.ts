@@ -17,9 +17,12 @@
 import { intersection } from "lodash";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { useRootStore } from "../components/StoreProvider";
+import {
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../components/StoreProvider";
 import { OpportunityTab } from "../WorkflowsStore";
-import { getTabOrderForOpportunityType } from "../WorkflowsStore/Opportunity/utils/tabUtils";
+import { determineTabsFromConfigTabs } from "../WorkflowsStore/Opportunity/utils/tabUtils";
 
 type OrderedActiveTab = {
   displayTabs: OpportunityTab[];
@@ -40,11 +43,15 @@ export const useOrderedActiveTab: () => OrderedActiveTab =
       "Eligible Now",
     ]);
 
+    const opportunityConfigs = useOpportunityConfigurations();
+
     useEffect(() => {
       if (opportunityType) {
         const opportunityTabs = opportunitiesByTab[opportunityType];
 
-        const tabOrder = getTabOrderForOpportunityType(opportunityType);
+        const tabOrder = determineTabsFromConfigTabs(
+          opportunityConfigs[opportunityType].tabOrder,
+        );
 
         const tabsForDisplay: OpportunityTab[] = intersection(
           tabOrder,
@@ -54,7 +61,7 @@ export const useOrderedActiveTab: () => OrderedActiveTab =
         setDisplayTabs(tabsForDisplay);
         setActiveTab(tabsForDisplay[0]);
       }
-    }, [opportunityType, opportunitiesByTab]);
+    }, [opportunityConfigs, opportunityType, opportunitiesByTab]);
 
     return { displayTabs, activeTab, setActiveTab };
   };

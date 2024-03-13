@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OPPORTUNITY_CONFIGS } from "../OpportunityConfigs";
-import { OpportunityType } from "../OpportunityType/types";
 import { OpportunityTab } from "../types";
 
 export const generateTabs = ({
@@ -35,7 +33,11 @@ export const generateTabs = ({
   );
 };
 
-export const getTabOrderForOpportunityType = (
-  opportunityType: OpportunityType,
-): ReturnType<typeof generateTabs> =>
-  OPPORTUNITY_CONFIGS[opportunityType].tabOrder ?? generateTabs({});
+/**
+ *
+ * @param tabs
+ * @returns the default tab order if the provided tabs from the config are undefined.
+ */
+export const determineTabsFromConfigTabs = (
+  opportunityTabs?: readonly OpportunityTab[],
+): ReturnType<typeof generateTabs> => opportunityTabs ?? generateTabs({});

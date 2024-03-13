@@ -24,7 +24,7 @@ import {
 import { WorkflowsStore } from "../../../WorkflowsStore";
 import { CountFormatter } from "../../utils";
 import { IApiOpportunityConfiguration } from "../interfaces";
-import { OpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
+import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
 
 export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   configurationObject: IApiOpportunityConfiguration;

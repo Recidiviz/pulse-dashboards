@@ -22,7 +22,7 @@ import {
   OpportunityHydratedHeader,
   OpportunityType,
 } from "..";
-import { OpportunityConfiguration } from "../OpportunityConfigurations";
+import { OpportunityConfiguration } from "../OpportunityConfigurations/interfaces/OpportunityConfiguration";
 
 export const generateOpportunityInitialHeader = (
   opportunityType: OpportunityType,

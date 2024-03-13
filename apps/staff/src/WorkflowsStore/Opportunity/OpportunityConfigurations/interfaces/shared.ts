@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./ApiOpportunityConfiguration";
-export * from "./LocalOpportunityConfiguration";
-export * from "./OpportunityConfiguration";
+import { OpportunityRequirement } from "../../types";
+
+export type CriteriaCopy = Record<string, OpportunityRequirement>;

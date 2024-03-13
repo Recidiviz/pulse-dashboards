@@ -16,10 +16,8 @@
 // =============================================================================
 
 import { WorkflowsStore } from "../../../WorkflowsStore";
-import {
-  ILocalOpportunityConfiguration,
-  OpportunityConfiguration,
-} from "../interfaces/LocalOpportunityConfiguration";
+import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
+import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
 
 export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   configurationObject: ILocalOpportunityConfiguration;

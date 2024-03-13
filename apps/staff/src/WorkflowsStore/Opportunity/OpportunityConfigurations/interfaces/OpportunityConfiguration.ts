@@ -14,39 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
 import { SystemId } from "../../../../core/models/types";
-import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
-import {
-  DenialReasonsMap,
-  OpportunityRequirement,
-  OpportunityTab,
-} from "../../types";
-import { CountFormatter } from "../../utils/generateHeadersUtils";
+import { DenialReasonsMap, OpportunityTab } from "../../types";
+import { CountFormatter } from "../../utils";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
-
-export type OpportunityHeadersBaseType = {
-  opportunityText: string;
-  callToAction: string;
-};
-
-type OpportunityHeadersWithEligibilityTextType = OpportunityHeadersBaseType & {
-  eligibilityText: string;
-  fullText?: never;
-};
-
-type OpportunityHeadersWithFullTextType = OpportunityHeadersBaseType & {
-  fullText: string;
-  eligibilityText?: never;
-};
-
-export type OpportunityHydratedHeader =
-  | OpportunityHeadersWithEligibilityTextType
-  | OpportunityHeadersWithFullTextType;
-
-type CriteriaCopy = Record<string, OpportunityRequirement>;
-
-export interface ILocalOpportunityConfiguration {
+import { OpportunityHydratedHeader } from "./LocalOpportunityConfiguration";
+import { CriteriaCopy } from "./shared";
+export interface OpportunityConfiguration {
   systemType: SystemId;
   stateCode: TenantId;
   urlSection: string;
@@ -61,11 +37,12 @@ export interface ILocalOpportunityConfiguration {
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;
+  isEnabled: boolean;
   methodologyUrl: string;
   denialReasons: DenialReasonsMap;
-  sidebarComponents: OpportunityProfileModuleName[];
+  sidebarComponents: string[];
   isAlert?: boolean;
   tooltipEligibilityText?: string;
-  eligibleCriteriaCopy?: CriteriaCopy;
-  ineligibleCriteriaCopy?: CriteriaCopy;
+  eligibleCriteriaCopy: CriteriaCopy;
+  ineligibleCriteriaCopy: CriteriaCopy;
 }
