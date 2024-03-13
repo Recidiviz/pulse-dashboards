@@ -49,6 +49,11 @@ function LineItem({
   );
 }
 
+const Title = styled.pre`
+  font: inherit;
+  margin-bottom: 0;
+`;
+
 const LineItemLeft = styled(LineItem).attrs({
   separator: ")",
 })``;
@@ -81,8 +86,9 @@ const FormHeading: React.FC<FormHeadingProps> = ({
           <DOCXFormInput name="plaintiff" style={{ maxWidth: "160px" }} />,
         </LineItemLeft>
         <LineItemLeft>
-          <span style={{ textIndent: 120 }}>Plaintiff</span>
+          <span style={{ paddingLeft: 120 }}>Plaintiff</span>
         </LineItemLeft>
+        <LineItemLeft />
         <LineItemLeft />
         <LineItemLeft suffix="ss.">
           <span style={{ textIndent: 50 }}>vs.</span>
@@ -92,7 +98,7 @@ const FormHeading: React.FC<FormHeadingProps> = ({
           <DOCXFormInput name="clientName" style={{ maxWidth: "160px" }} />,
         </LineItemLeft>
         <LineItemLeft>
-          <span style={{ textIndent: 120 }}>Defendant </span>
+          <span style={{ paddingLeft: 120 }}>Defendant </span>
         </LineItemLeft>
       </FormHeadingSection>
       <FormHeadingSection style={{ flex: 1 }}>
@@ -105,25 +111,30 @@ const FormHeading: React.FC<FormHeadingProps> = ({
           JUDICIAL DISTRICT
         </LineItem>
         <LineItem>&nbsp;</LineItem>
-        <LineItem>
-          Criminal No.{" "}
-          <DOCXFormInput
-            name="criminalNumber"
-            placeholder="Criminal Number"
-            style={{ maxWidth: "272px" }}
-          />
-        </LineItem>
-        <LineItem>
-          {saNumberTitle}{" "}
-          <DOCXFormInput
-            name="statesAttorneyNumber"
-            placeholder="States Attorney Number"
-            style={{ maxWidth: "298px" }}
-          />
-        </LineItem>
+        <FormHeadingMotionSection>
+          <LineItem>
+            Criminal No.{" "}
+            <DOCXFormInput
+              name="criminalNumber"
+              placeholder="Criminal Number"
+              style={{ maxWidth: "272px" }}
+            />
+          </LineItem>
+          <LineItem>
+            {saNumberTitle}{" "}
+            <DOCXFormInput
+              name="statesAttorneyNumber"
+              placeholder="States Attorney Number"
+              style={{ maxWidth: "298px" }}
+            />
+          </LineItem>
+        </FormHeadingMotionSection>
+        <LineItem>&nbsp;</LineItem>
         <LineItem>&nbsp;</LineItem>
         <FormHeadingMotionSection>
-          <LineItem>{title.toUpperCase()}</LineItem>
+          <LineItem>
+            <Title style={{ color: "gray" }}>{title.toUpperCase()}</Title>
+          </LineItem>
           <LineItem>SFN {sfnNumber}</LineItem>
         </FormHeadingMotionSection>
       </FormHeadingSection>

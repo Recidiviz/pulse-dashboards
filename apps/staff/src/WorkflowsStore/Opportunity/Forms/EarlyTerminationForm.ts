@@ -30,6 +30,8 @@ export class EarlyTerminationForm extends FormBase<
   prefilledDataTransformer(): Partial<UsNdEarlyTerminationDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
+    const { supervisionStartDate, displayName } = this.person;
+
     const {
       formInformation: {
         convictionCounty,
@@ -48,11 +50,13 @@ export class EarlyTerminationForm extends FormBase<
     } = this.opportunity.record;
 
     return {
-      clientName: this.person.displayName,
+      clientName: displayName,
       judgeName,
       convictionCounty: convictionCounty?.replaceAll("_", " ") ?? "",
       judicialDistrictCode: judicialDistrictCode?.replaceAll("_", " ") ?? "",
       priorCourtDate: moment(priorCourtDate).format(FORM_DATE_FORMAT),
+      supervisionStartDate:
+        moment(supervisionStartDate).format(FORM_DATE_FORMAT),
       probationExpirationDate: moment(probationExpirationDate).format(
         FORM_DATE_FORMAT,
       ),

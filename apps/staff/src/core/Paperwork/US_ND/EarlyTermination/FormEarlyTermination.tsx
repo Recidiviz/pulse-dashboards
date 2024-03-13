@@ -85,6 +85,15 @@ export const SectionOfficerDate = styled.section`
   }
 `;
 
+export const DistrictJudgeSection = styled.section`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+export const Spacer = ({ size }: { size: number }) => (
+  <div style={{ width: size, height: "auto", display: "inline-block" }}></div>
+);
+
 interface FormManualEntryProps {
   size: number;
 }
@@ -128,7 +137,7 @@ export const FormEarlyTermination: React.FC = () => {
     <FormSkeleton>
       <FormPage>
         <FormHeading
-          title="Motion to terminate probation"
+          title={`MOTION TO \n TERMINATE PROBATION`}
           saNumberTitle="SA No."
           sfnNumber={9281}
         />
@@ -143,18 +152,22 @@ export const FormEarlyTermination: React.FC = () => {
         <ol type="a">
           <li>
             That the Defendant appeared before Judge{" "}
-            <DOCXFormInput name="judgeName" placeholder="Judge name" /> on{" "}
-            <DOCXFormInput name="priorCourtDate" placeholder="Court date" />,
-            and was sentenced to{" "}
+            <DOCXFormInput name="judgeName" placeholder="Judge name" /> and was
+            sentenced to{" "}
             <DOCXFormInput
               name="sentenceLengthMonths"
               placeholder="Sentence length"
             />{" "}
-            supervised probation for the crime(s) of: <br />
+            supervised probation starting{" "}
+            <DOCXFormInput
+              name="supervisionStartDate"
+              placeholder="Supervision start date"
+            />{" "}
+            for the crime of: <br />
             <FormTextarea name="crimeNames" style={{ width: "100%" }} />
           </li>
           <li>
-            That the Defendant owes{" "}
+            That the Defendant still owes{" "}
             <DOCXFormInput name="finesAndFees" placeholder="Dollar amount" /> in
             fines, costs, and fees to the District Court.
           </li>
@@ -166,12 +179,17 @@ export const FormEarlyTermination: React.FC = () => {
             That the Defendant&apos;s probation will expire{" "}
             <DOCXFormInput name="probationExpirationDate" />.
           </li>
-
           <AdditionalDepositionLines />
         </ol>
         <section>
-          [2] Therefore, the Defendant requests the Court to terminate the
-          probation pursuant to N.D.C.C. § 12.1-32-06.1(7).
+          [2] Therefore, the Defendant requests the Court to reduce the fines,
+          costs, and fees to a civil judgment pursuant to N.D.C.C. § 29-26-22.1
+          and to terminate the probation pursuant to N.D.C.C. § 12.1-32-06.1(7).
+        </section>
+        <br />
+        <section>
+          Dated this <FormManualEntry size={5} /> day of{" "}
+          <FormManualEntry size={16} />, 20 <FormManualEntry size={2} />.
         </section>
         <br />
         <SectionDefendantDate>
@@ -180,11 +198,7 @@ export const FormEarlyTermination: React.FC = () => {
             <br />
             Defendant
           </section>
-          <section>
-            <FormManualEntry size={18} />
-            <br />
-            Date
-          </section>
+          <Spacer size={116} />
         </SectionDefendantDate>
         <section>
           Subscribed and sworn to before me, a notary public, this{" "}
@@ -193,9 +207,15 @@ export const FormEarlyTermination: React.FC = () => {
         </section>
         <br />
         <br />
-        <FormManualEntry size={38} />
+        <SectionDefendantDate>
+          <section>
+            <FormManualEntry size={38} />
+            <br />
+            Notary Public
+          </section>
+          <Spacer size={72} />
+        </SectionDefendantDate>
         <br />
-        Notary Public
         <SectionHeading>Approval of Termination of Probation</SectionHeading>
         <section>
           [3]{" "}
@@ -225,19 +245,22 @@ export const FormEarlyTermination: React.FC = () => {
             prosecuting attorney.
           </li>
         </ol>
+        <br />
+        <section>
+          Dated this <FormManualEntry size={5} /> day of{" "}
+          <FormManualEntry size={16} />, 20 <FormManualEntry size={2} />.
+        </section>
+        <br />
         <SectionOfficerDate>
+          <FormParagraph>I concur,</FormParagraph>
+          <Spacer size={176} />
           <section>
             <FormManualEntry size={30} />
             <br />
             Probation Officer
           </section>
-          <section>
-            <FormManualEntry size={26} />
-            <br />
-            Date
-          </section>
         </SectionOfficerDate>
-        <FormParagraph>I concur,</FormParagraph>
+        <br />
         <SectionOfficerDate>
           <section>
             <FormManualEntry size={39} />
@@ -268,6 +291,8 @@ export const FormEarlyTermination: React.FC = () => {
           placeholder="SA e-mail service address"
           style={{ minWidth: "210px" }}
         />
+        <br />
+        <br />
         <hr />
         <SectionHeading>ORDER</SectionHeading>
         <FormParagraph>
@@ -281,11 +306,14 @@ export const FormEarlyTermination: React.FC = () => {
           [2] The Court orders the remaining fines, fees, and costs shall be
           docketed to a civil judgment pursuant to N.D.C.C. § 29-26-22.1.
         </FormParagraph>
-        <section>
-          <FormManualEntry size={38} />
-          <br />
-          District Court Judge
-        </section>
+        <DistrictJudgeSection>
+          <div>
+            <FormManualEntry size={38} />
+            <br />
+            District Court Judge
+          </div>
+          <Spacer size={84} />
+        </DistrictJudgeSection>
       </FormPage>
     </FormSkeleton>
   );

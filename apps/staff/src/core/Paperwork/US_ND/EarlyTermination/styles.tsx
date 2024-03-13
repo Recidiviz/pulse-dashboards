@@ -14,6 +14,7 @@ export const FormHeadingLineItemSuffix = styled.span`
 
 export const FormHeadingContainer = styled.article`
   display: flex;
+  color: gray;
 
   ${FormHeadingSection}:first-child {
     width: 200px;
