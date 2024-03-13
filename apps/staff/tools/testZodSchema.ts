@@ -20,11 +20,8 @@ import { ArgumentParser } from "argparse";
 import prompts from "prompts";
 import { z } from "zod";
 
-import { FIRESTORE_COLLECTIONS_MAP } from "../src/FirestoreStore/constants";
-import {
-  FirestoreCollectionKey,
-  FirestoreOpportunityReferrals,
-} from "../src/FirestoreStore/types";
+import { OpportunityType } from "../src/WorkflowsStore";
+import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
@@ -74,55 +71,56 @@ function getDb() {
 
 const db = getDb();
 
-// TODO: Add to the config
-const SCHEMAS: Partial<Record<FirestoreCollectionKey, z.ZodTypeAny>> = {
-  compliantReportingReferrals: compliantReportingSchema,
-  earlyTerminationReferrals: usNdEarlyTerminationSchema,
-  pastFTRDReferrals: usIdPastFTRDSchema,
-  usMiPastFTRDReferrals: usMiPastFTRDSchema,
-  usMeSCCPReferrals: usMeSCCPSchema,
-  usIdCRCResidentWorkerReferrals: usIdCRCResidentWorkerSchema,
-  usIdCRCWorkReleaseReferrals: usIdCRCWorkReleaseSchema,
-  usIdExpandedCRCReferrals: usIdExpandedCRCSchema,
-  usIdSupervisionLevelDowngradeReferrals:
+const SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
+  compliantReporting: compliantReportingSchema,
+  earlyTermination: usNdEarlyTerminationSchema,
+  pastFTRD: usIdPastFTRDSchema,
+  usMiPastFTRD: usMiPastFTRDSchema,
+  usMeSCCP: usMeSCCPSchema,
+  usIdCRCResidentWorker: usIdCRCResidentWorkerSchema,
+  usIdCRCWorkRelease: usIdCRCWorkReleaseSchema,
+  usIdExpandedCRC: usIdExpandedCRCSchema,
+  usIdSupervisionLevelDowngrade:
     supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
-  supervisionLevelDowngradeReferrals:
+  supervisionLevelDowngrade:
     usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
-  usMoRestrictiveHousingStatusHearingReferrals:
+  usMoRestrictiveHousingStatusHearing:
     usMoRestrictiveHousingStatusHearingSchema,
-  usMeEarlyTerminationReferrals: usMeEarlyTerminationSchema,
-  usMiSupervisionLevelDowngradeReferrals:
+  usMeEarlyTermination: usMeEarlyTerminationSchema,
+  usMiSupervisionLevelDowngrade:
     usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
       (s) => s,
     ),
-  usMiClassificationReviewReferrals:
+  usMiClassificationReview:
     usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
-  usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeSchema,
-  usTnExpirationReferrals: usTnExpirationSchema,
-  usMeFurloughReleaseReferrals: usMeFurloughReleaseSchema,
-  usCaSupervisionLevelDowngradeReferrals: usCaSupervisionLevelDowngradeSchema,
-  usMiEarlyDischargeReferrals: usMiEarlyDischargeSchema,
-  usMiMinimumTelephoneReportingReferrals: usMiMinimumTelephoneReportingSchema,
-  usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewSchema,
-  usMeWorkReleaseReferrals: usMeWorkReleaseSchema,
-  usMoOverdueRestrictiveHousingReleaseReferrals:
+  usTnCustodyLevelDowngrade: usTnCustodyLevelDowngradeSchema,
+  usTnExpiration: usTnExpirationSchema,
+  usMeFurloughRelease: usMeFurloughReleaseSchema,
+  usCaSupervisionLevelDowngrade: usCaSupervisionLevelDowngradeSchema,
+  usMiEarlyDischarge: usMiEarlyDischargeSchema,
+  usMiMinimumTelephoneReporting: usMiMinimumTelephoneReportingSchema,
+  usTnAnnualReclassification: usTnAnnualReclassificationReviewSchema,
+  usMeWorkRelease: usMeWorkReleaseSchema,
+  usMoOverdueRestrictiveHousingRelease:
     usMoOverdueRestrictiveHousingReleaseSchema,
-  usMoOverdueRestrictiveHousingInitialHearingReferrals:
+  usMoOverdueRestrictiveHousingInitialHearing:
     usMoOverdueRestrictiveHousingInitialHearingSchema,
-  usMoOverdueRestrictiveHousingReviewHearingReferrals:
+  usMoOverdueRestrictiveHousingReviewHearing:
     usMoOverdueRestrictiveHousingReviewHearingSchema,
-  usOrEarnedDischargeReferrals: usOrEarnedDischargeSchema,
+  usOrEarnedDischarge: usOrEarnedDischargeSchema,
 };
 
 async function testCollection(
-  opportunityReferrals: FirestoreOpportunityReferrals,
+  opportunityType: OpportunityType,
   limit?: number,
 ) {
-  const schema = SCHEMAS[opportunityReferrals];
+  const schema = SCHEMAS[opportunityType];
   if (!schema) {
-    throw new Error(`No schema found for ${opportunityReferrals}`);
+    throw new Error(`No schema found for ${opportunityType}`);
   }
-  const coll = db.collection(FIRESTORE_COLLECTIONS_MAP[opportunityReferrals]);
+  const coll = db.collection(
+    OPPORTUNITY_CONFIGS[opportunityType].firestoreCollection,
+  );
   const query = limit ? coll.limit(limit) : coll;
 
   let succeeded = 0;
@@ -141,25 +139,26 @@ async function testCollection(
 }
 
 async function automatic() {
-  Object.keys(SCHEMAS).forEach(async (schemaKey) => {
-    const opportunityReferrals = schemaKey as FirestoreOpportunityReferrals;
-    const { failures, ...result } = await testCollection(opportunityReferrals);
+  Object.keys(SCHEMAS).forEach(async (oppType) => {
+    const { failures, ...result } = await testCollection(
+      oppType as OpportunityType,
+    );
     // don't print failures so we don't leave PII in the github logs
-    console.log(opportunityReferrals, result);
+    console.log(oppType, result);
     if (result.failed > 0) process.exit(1);
   });
 }
 
 async function manual(args: Args) {
-  let collection;
+  let opportunity;
   let limit;
-  if (args.collection) {
-    ({ collection, limit } = args);
+  if (args.opportunity) {
+    ({ opportunity, limit } = args);
   } else {
-    ({ collection, limit } = await prompts([
+    ({ opportunity, limit } = await prompts([
       {
         type: "select",
-        name: "collection",
+        name: "opportunity",
         message: `schema you want to test against ${FIREBASE_PROJECT}`,
         choices: Object.keys(SCHEMAS).map((k) => ({
           title: k,
@@ -175,12 +174,12 @@ async function manual(args: Args) {
     ]));
   }
 
-  if (!(collection in SCHEMAS)) {
+  if (!(opportunity in SCHEMAS)) {
     console.error("Unrecognized collection name");
   }
 
   const { failures, ...result } = await testCollection(
-    collection as FirestoreOpportunityReferrals,
+    opportunity as OpportunityType,
     limit,
   );
 
@@ -195,13 +194,13 @@ const parser = new ArgumentParser({
 parser.add_argument("-a", "--all", {
   dest: "all",
   action: "store_true",
-  help: "Test all collections",
+  help: "Test all opportunities",
 });
 
-parser.add_argument("-c", "--collection", {
-  dest: "collection",
+parser.add_argument("-o", "--opportunity", {
+  dest: "opportunity",
   default: null,
-  help: "Test COLLECTION",
+  help: "Test OPPORTUNITY",
 });
 
 parser.add_argument("-l", "--limit", {
@@ -213,7 +212,7 @@ parser.add_argument("-l", "--limit", {
 
 type Args = {
   all: boolean;
-  collection?: string;
+  opportunity?: string;
   limit?: number;
 };
 
