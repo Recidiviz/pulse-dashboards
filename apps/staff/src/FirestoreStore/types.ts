@@ -161,7 +161,7 @@ export type JusticeInvolvedPersonRecord = {
     | SupervisionOpportunityType[]
     | IncarcerationOpportunityType[];
   officerId: string;
-};
+} & TnCompliantReportingRefactorNewPersonRecordFields;
 
 export type ClientEmployer = {
   name: string;
@@ -196,9 +196,34 @@ export type ClientRecord = JusticeInvolvedPersonRecord & {
 // These come from the same data source as the TES version of the CR query, and ensure we have
 // consistency between the data in the opportunity record and the client record.
 export type TnCompliantReportingRefactorNewFields = {
+  districtNew?: string;
+  supervisionTypeNew?: string;
+  supervisionLevelNew?: string;
+  supervisionLevelStartNew?: Timestamp | string;
+  addressNew?: string;
+  phoneNumberNew?: string;
+  supervisionStartDateNew?: string;
+  expirationDateNew?: Timestamp | string;
   currentBalanceNew?: number;
   lastPaymentAmountNew?: number;
   lastPaymentDateNew?: Timestamp | string;
+  specialConditionsNew?: string[];
+  boardConditionsNew?: SpecialConditionCode[];
+  allEligibleOpportunitiesNew?: SupervisionOpportunityType[];
+  currentEmployersNew?: ClientEmployer[];
+  milestonesNew?: Milestone[];
+  emailAddressNew?: string;
+};
+
+export type TnCompliantReportingRefactorNewPersonRecordFields = {
+  personExternalIdNew?: string;
+  displayIdNew?: string;
+  stateCodeNew?: string;
+  personNameNew?: FullName;
+  allEligibleOpportunitiesNew?:
+    | SupervisionOpportunityType[]
+    | IncarcerationOpportunityType[];
+  officerIdNew?: string;
 };
 
 /**

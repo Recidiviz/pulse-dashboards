@@ -21,6 +21,7 @@ import {
   ClientRecord,
   ResidentRecord,
   TnCompliantReportingRefactorNewFields,
+  TnCompliantReportingRefactorNewPersonRecordFields,
 } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
 import {
@@ -275,7 +276,8 @@ export const usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture: UsMeSCCPRefe
 
 export const usMeEarlyTerminationEligibleClientRecord: Optional<
   RequireKeys<ClientRecord>,
-  keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewPersonRecordFields
 > = {
   personType: "CLIENT",
   recordId: "us_nd_009",
@@ -323,7 +325,8 @@ export const usMeEarlyTerminationEligibleClientRecord: Optional<
 
 export const usMeEarlyTerminationAlmostEligibleRestitutionClientRecord: Optional<
   RequireKeys<ClientRecord>,
-  keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewPersonRecordFields
 > = {
   ...usMeEarlyTerminationEligibleClientRecord,
   recordId: "us_nd_010",
@@ -339,7 +342,8 @@ export const usMeEarlyTerminationAlmostEligibleRestitutionClientRecord: Optional
 
 export const usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord: Optional<
   RequireKeys<ClientRecord>,
-  keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewPersonRecordFields
 > = {
   ...usMeEarlyTerminationEligibleClientRecord,
   recordId: "us_nd_011",
@@ -355,7 +359,8 @@ export const usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord: Opt
 
 export const usMeEarlyTerminationAlmostEligibleSupervisionStartClientRecord: Optional<
   RequireKeys<ClientRecord>,
-  keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewPersonRecordFields
 > = {
   ...usMeEarlyTerminationEligibleClientRecord,
   recordId: "us_nd_012",

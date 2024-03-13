@@ -20,13 +20,15 @@ import { Optional, Required as RequireKeys } from "utility-types";
 import {
   ClientRecord,
   TnCompliantReportingRefactorNewFields,
+  TnCompliantReportingRefactorNewPersonRecordFields,
 } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
 import { UsNdEarlyTerminationReferralRecord } from "../UsNdEarlyTerminationOpportunity";
 
 export const usNdEarlyTerminationEligibleClientRecord: Optional<
   RequireKeys<ClientRecord>,
-  keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewPersonRecordFields
 > = {
   personType: "CLIENT",
   recordId: "us_nd_110",
@@ -73,7 +75,8 @@ export const usNdEarlyTerminationEligibleClientRecord: Optional<
 };
 export const usNdEarlyTerminationAlmostEligibleClientRecord: Optional<
   RequireKeys<ClientRecord>,
-  keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewFields
+  | keyof TnCompliantReportingRefactorNewPersonRecordFields
 > = {
   ...usNdEarlyTerminationEligibleClientRecord,
   recordId: "us_nd_111",
