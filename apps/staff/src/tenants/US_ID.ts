@@ -21,7 +21,11 @@
 import { TenantConfig } from "../core/models/types";
 import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
-import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
+import {
+  INSIGHTS_PAGES,
+  PATHWAYS_PAGES,
+  PATHWAYS_SECTIONS,
+} from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import UsIdContactTask from "../WorkflowsStore/Task/UsIdContactTask";
@@ -71,6 +75,7 @@ const US_ID_CONFIG: TenantConfig = {
   },
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`
+    insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "tasks"],
     operations: [],
     system: [
