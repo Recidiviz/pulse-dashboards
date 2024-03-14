@@ -54,7 +54,7 @@
     "update-workflows-fixture": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["{projectRoot}/tools"],
+      "inputs": ["{projectRoot}/tools/**/*"],
       "outputs": ["{projectRoot}/firestore-config/emulator-fixtures"],
       "options": {
         "cwd": "{projectRoot}",
