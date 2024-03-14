@@ -247,6 +247,16 @@ Things to note:
 - The new Pathways backend is deployed to the Case Triage Cloud Run service during the `recidiviz-data` deploy. New versions can be deployed manually in the Cloud Console, but this should only be done sparingly.
 - Test vigorously on staging before deploying to production, and don't be afraid to rollback the deploy of frontend or backend through the Firebase and GAE consoles.
 
+### Cherry-pick deploys
+
+In order to cherry-pick or revert:
+
+- Checkout the desired release branch. The relevant release branch should follow the `releases/vXX.YY.ZZ` naming convention and should be listed in the Branches UI [here](https://github.com/Recidiviz/pulse-dashboards/branches). You can also find the version number of a release via the Firebase console [here](https://console.firebase.google.com/u/0/project/recidiviz-dashboard/hosting/sites/recidiviz-dashboard?pli=1), then use the aforementioned name convention to get the release branch.
+- Create a new branch.
+- Revert or cherry-pick the desired commit onto the new branch. For a detailed description of these steps, follow the steps in the 'Cherry-pick flow' section [here](https://github.com/Recidiviz/recidiviz-data/wiki/Code-Versioning-and-Release-Process#cherry-pick-flow) up to, but not including, 'All scenarios'.
+
+Once you've pushed the branch with the changes, create a PR for the change and set the base as the release branch selected earlier. Merge the change once approved. To deploy this change, switch to the release branch and pull the changes. Then deploy to production via the deploy script as normal, but be sure to select that this is a cherry-pick deploy when asked
+
 #### Firestore rules
 
 Firestore security rules and their tests are found in `./firestore-config`. Changes can be deployed with `nx update-rules-staging staff` or `nx update-rules-production staff`.
