@@ -19,6 +19,7 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -39,6 +40,7 @@ const Wrapper = styled.div`
 
 const Main = styled.main<{
   isMobile: boolean;
+  hasPadding?: boolean;
 }>`
   padding: ${({ isMobile }) =>
     isMobile ? `${rem(spacing.lg)} ${rem(spacing.md)}` : `${rem(spacing.lg)}`};
@@ -49,23 +51,36 @@ const Main = styled.main<{
   display: flex;
   flex-direction: column;
   flex: auto;
+
+  ${({ hasPadding }) => !hasPadding && `padding: 0 !important;`}
 `;
 
 const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
+  const { pathname } = useLocation();
   const { isMobile } = useIsMobile(true);
 
   const {
     insightsStore: { supervisionStore },
   } = useRootStore();
 
+  const isOnboardingView = pathname.split("/")[3] === "onboarding";
+  const isHideNavLayout =
+    !supervisionStore?.userHasSeenOnboarding ||
+    (supervisionStore?.insightsStore.rootStore.userStore.isRecidivizUser &&
+      isOnboardingView);
+
   return (
     <Wrapper>
-      <NavigationLayout
-        externalMethodologyUrl={supervisionStore?.methodologyUrl}
-      />
-      <Main isMobile={isMobile}>{children}</Main>
+      {!isHideNavLayout && (
+        <NavigationLayout
+          externalMethodologyUrl={supervisionStore?.methodologyUrl}
+        />
+      )}
+      <Main isMobile={isMobile} hasPadding={!isHideNavLayout}>
+        {children}
+      </Main>
     </Wrapper>
   );
 };

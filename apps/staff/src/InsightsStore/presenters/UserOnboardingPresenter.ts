@@ -55,12 +55,32 @@ export class UserOnboardingPresenter implements Hydratable {
     return this.supervisionStore.labels;
   }
 
+  get eventLabels() {
+    return this.supervisionStore.eventLabels;
+  }
+
   get userInfo() {
     return this.supervisionStore.userInfo;
   }
 
+  get userName(): string | undefined {
+    return (
+      this.userInfo?.entity?.fullName.givenNames ??
+      this.supervisionStore.insightsStore.rootStore.user?.given_name
+    );
+  }
+
+  get userPseudoId(): string | undefined {
+    return this.userInfo?.entity?.pseudonymizedId;
+  }
+
   get userHasSeenOnboarding(): boolean {
     return this.userInfo?.metadata.hasSeenOnboarding ?? false;
+  }
+
+  get isRecidivizUser(): boolean {
+    return this.supervisionStore.insightsStore.rootStore.userStore
+      .isRecidivizUser;
   }
 
   async setUserHasSeenOnboarding(hasSeenOnboarding: boolean) {

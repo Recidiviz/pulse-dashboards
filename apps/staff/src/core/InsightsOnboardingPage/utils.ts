@@ -15,35 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
-import { rem } from "polished";
-import React from "react";
-import styled from "styled-components/macro";
-
-export const PROGRESS_BAR_HEIGHT = 8;
-
-const Container = styled.div`
-  background: ${palette.slate10};
-  height: ${rem(PROGRESS_BAR_HEIGHT)};
-  width: 100%;
-`;
-
-const Bar = styled.div<{ progress: number }>`
-  background: ${palette.signal.highlight};
-  height: ${rem(PROGRESS_BAR_HEIGHT)};
-  max-width: 100%;
-  width: ${(props) => props.progress}%;
-  transition: width 0.5s ease;
-`;
-
-const ProgressBar: React.FC<{
-  percent: number;
-}> = ({ percent }) => {
+export const createLabelString = (
+  eventLabels: string[],
+  joinString: string,
+): string => {
   return (
-    <Container>
-      <Bar progress={percent} />
-    </Container>
+    eventLabels.slice(0).slice(0, -1).join(", ") +
+    `, ${joinString} ` +
+    eventLabels.slice(-1)
   );
 };
-
-export default ProgressBar;

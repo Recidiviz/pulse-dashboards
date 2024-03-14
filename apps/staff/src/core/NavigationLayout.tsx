@@ -59,6 +59,7 @@ const NavContainer = styled.nav<{
   isFixed?: boolean;
   alignBottom?: boolean;
   backgroundColor?: string;
+  hasBorder?: boolean;
 }>`
   padding: 0 ${rem(spacing.md)};
   display: flex;
@@ -74,6 +75,8 @@ const NavContainer = styled.nav<{
       ? `bottom: 0; 
           border-top: 1px solid ${palette.slate20};`
       : `border-bottom: 1px solid ${palette.slate20};`}
+
+  ${({ hasBorder }) => !hasBorder && `border: 0 !important;`}
 `;
 
 const NavMenu = styled.div<{ alignBottom?: boolean }>`
@@ -372,6 +375,7 @@ type NavigationLayoutProps = {
   backgroundColor?: string;
   isFixed?: boolean;
   externalMethodologyUrl?: string;
+  isNaked?: boolean;
   children?: React.ReactNode;
 };
 
@@ -381,6 +385,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     externalMethodologyUrl,
     children,
     isFixed = true,
+    isNaked = false,
   }) {
     const { pathname } = useLocation();
     const { isMobile } = useIsMobile(true);
@@ -427,46 +432,49 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
           alignBottom={isMobile && isFixed}
           isFixed={isFixed}
           backgroundColor={backgroundColor}
+          hasBorder={!isNaked}
         >
           <MainLogo
             enabled={!isMobile || !isFixed}
             enabledLanternLogo={isInsightsLanternState && isInsightsView}
           />
-          <NavMenu
-            alignBottom={isMobile && isFixed}
-            data-intercom-target="Profile"
-          >
-            <NavLinks>{children}</NavLinks>
-            {isMobile ? (
-              <>
-                <ProfileButtonMobile
-                  order={isMobile && -1}
-                  onClick={() => setDrawerIsOpen(true)}
-                >
-                  <UserAvatar />
-                </ProfileButtonMobile>
-                <Drawer
-                  bodyStyles={DrawerBodyStyles}
-                  overlayStyles={DrawerOverlayStyles}
-                  position="bottom"
-                  closeButton={false}
-                  isShowing={drawerIsOpen}
-                  hide={() => setDrawerIsOpen(false)}
-                >
-                  <DrawerProfileMenu>{quickLinks}</DrawerProfileMenu>
-                </Drawer>
-              </>
-            ) : (
-              <DropdownProfile>
-                <DropdownToggle kind="link">
-                  <UserAvatar />
-                </DropdownToggle>
-                <DropdownProfileMenu alignment="right">
-                  {quickLinks}
-                </DropdownProfileMenu>
-              </DropdownProfile>
-            )}
-          </NavMenu>
+          {!isNaked && (
+            <NavMenu
+              alignBottom={isMobile && isFixed}
+              data-intercom-target="Profile"
+            >
+              <NavLinks>{children}</NavLinks>
+              {isMobile ? (
+                <>
+                  <ProfileButtonMobile
+                    order={isMobile && -1}
+                    onClick={() => setDrawerIsOpen(true)}
+                  >
+                    <UserAvatar />
+                  </ProfileButtonMobile>
+                  <Drawer
+                    bodyStyles={DrawerBodyStyles}
+                    overlayStyles={DrawerOverlayStyles}
+                    position="bottom"
+                    closeButton={false}
+                    isShowing={drawerIsOpen}
+                    hide={() => setDrawerIsOpen(false)}
+                  >
+                    <DrawerProfileMenu>{quickLinks}</DrawerProfileMenu>
+                  </Drawer>
+                </>
+              ) : (
+                <DropdownProfile>
+                  <DropdownToggle kind="link">
+                    <UserAvatar />
+                  </DropdownToggle>
+                  <DropdownProfileMenu alignment="right">
+                    {quickLinks}
+                  </DropdownProfileMenu>
+                </DropdownProfile>
+              )}
+            </NavMenu>
+          )}
         </NavContainer>
         {!isMobile && isFixed && <Banner />}
       </Wrapper>

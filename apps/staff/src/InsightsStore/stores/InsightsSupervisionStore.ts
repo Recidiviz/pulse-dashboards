@@ -253,6 +253,10 @@ export class InsightsSupervisionStore {
     };
   }
 
+  get eventLabels(): string[] {
+    return this.config.metrics.map((metric) => metric.eventNameSingular);
+  }
+
   supervisionOfficerSupervisorByExternalId(
     supervisorId: string,
   ): SupervisionOfficerSupervisor | undefined {

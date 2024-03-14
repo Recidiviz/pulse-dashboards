@@ -15,93 +15,128 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, spacing, typography } from "@recidiviz/design-system";
+import {
+  Button,
+  Loading,
+  palette,
+  spacing,
+  TooltipTrigger,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import outliersDataPreview from "../../assets/static/images/outliersDataPreview.png";
-import outliersRatePreview from "../../assets/static/images/outliersRatePreview.png";
+import Checkbox from "../../components/Checkbox";
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { UserOnboardingPresenter } from "../../InsightsStore/presenters/UserOnboardingPresenter";
-import { toTitleCase } from "../../utils";
 import ModelHydrator from "../ModelHydrator";
+import { NAV_BAR_HEIGHT, NavigationLayout } from "../NavigationLayout";
 import { insightsUrl } from "../views";
-import ProgressBar from "./ProgressBar";
+import OnboardingFaq from "./OnboardingFaq";
+import OnboardingFeatures from "./OnboardingFeatures";
+import OutliersStaff, { TooltipContentWrapper } from "./OutliersStaff";
+import ProgressBar, { PROGRESS_BAR_HEIGHT } from "./ProgressBar";
 
-const Wrapper = styled.div<{ isLaptop: boolean; isMobile: boolean }>`
-  padding: ${({ isLaptop }) => (isLaptop ? "16px" : "48px 88px")};
-  ${({ isMobile }) => isMobile && `padding: unset`}
+const ROSTER_TAB_ID = "rosterTab";
+const CHECKBOX_TAB_ID = "checkboxTab";
+const LOADING_TAB_ID = "loadingTab";
+
+const Wrapper = styled.div<{ isMobile: boolean }>`
+  min-height: calc(100vh - ${rem(NAV_BAR_HEIGHT + PROGRESS_BAR_HEIGHT)});
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${rem(spacing.md)};
+
+  h1,
+  h2 {
+    ${({ isMobile }) => isMobile && `font-size: ${rem(24)} !important`}
+  }
+  p {
+    ${({ isMobile }) => isMobile && `font-size: ${rem(18)} !important`}
+  }
 `;
 
 const Content = styled.div`
-  max-width: 700px;
+  max-width: ${rem(555)};
+  text-align: center;
 `;
 
-const Tab = styled.div<{
-  isTablet: boolean;
-  isTwoColumn: boolean;
-}>`
-  height: 70vh;
-  display: ${({ isTablet }) => (isTablet ? "block" : "grid")};
-  grid-template-columns: ${({ isTwoColumn }) =>
-    isTwoColumn ? "1fr 1fr" : "unset"};
+const Tab = styled.div`
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0;
-  padding-top: ${rem(spacing.xxl)};
-
-  ${Wrapper} {
-    ${({ isTwoColumn }) => isTwoColumn && "max-width: 500px;"}
-  }
 `;
 
-const Title = styled.div<{
-  isLaptop: boolean;
-}>`
-  ${({ isLaptop }) => (isLaptop ? typography.Serif24 : typography.Serif34)}
+const H1 = styled.h1`
+  ${typography.Serif34}
   color: ${palette.pine2};
-  padding-bottom: ${({ isLaptop }) =>
-    isLaptop ? rem(spacing.xl) : rem(spacing.lg)};
+  margin-bottom: ${rem(spacing.md)};
 `;
 
-const StyledMarkdownView = styled(MarkdownView)<{ $isLaptop: boolean }>`
+const H2 = styled.h2`
+  ${typography.Sans24}
+  color: ${palette.pine2};
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
+const StyledMarkdownView = styled(MarkdownView)`
   p {
-    ${typography.Sans18};
+    ${typography.Sans24};
     color: ${palette.slate85};
     line-height: ${rem(spacing.xl)};
-    padding-bottom: ${rem(spacing.xl)};
-    margin: 0;
-  }
-
-  h1 {
-    ${({ $isLaptop }) => ($isLaptop ? typography.Serif24 : typography.Serif34)}
-    color: ${palette.pine2};
-    padding-bottom: ${rem(spacing.xl)};
-    margin: 0;
+    margin-bottom: ${rem(spacing.lg)};
   }
 
   strong {
     font-weight: normal;
-    color: ${palette.pine1};
+    color: ${palette.pine2};
   }
+
+  em {
+    font-style: normal;
+    color: ${palette.signal.error};
+  }
+`;
+
+const Extra = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-bottom: ${rem(spacing.lg)};
+
+  .Checkbox {
+    &__container {
+      height: inherit;
+      width: inherit;
+      margin: 0;
+    }
+    &__label {
+      top: -1px;
+      ${typography.Sans16};
+    }
+    &__box {
+      border-radius: ${rem(spacing.xs)};
+    }
+  }
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${rem(spacing.md)};
+  padding: ${rem(spacing.xl)} 0;
 `;
 
 const StyledButton = styled(Button).attrs({ shape: "block" })`
   padding: ${rem(spacing.md)} ${rem(spacing.xxl)};
-  margin: ${rem(spacing.lg)} 0;
-`;
-
-const Image = styled.div`
-  display: grid;
-  justify-content: center;
 `;
 
 const OnboardingPage = observer(function OnboardingPage({
@@ -110,105 +145,160 @@ const OnboardingPage = observer(function OnboardingPage({
   presenter: UserOnboardingPresenter;
 }) {
   const navigate = useNavigate();
-  const { isMobile, isTablet, isLaptop } = useIsMobile(true);
+  const { isMobile } = useIsMobile(true);
   const { insightsOnboarding } = useFeatureVariants();
   const [currentTabIndex, setTabIndex] = useState(0);
+  const [isAgreementChecked, setChecked] = useState(false);
 
-  const { setUserHasSeenOnboarding, labels } = presenter;
+  const {
+    setUserHasSeenOnboarding,
+    userHasSeenOnboarding,
+    userName,
+    userPseudoId,
+    labels,
+    eventLabels,
+    isRecidivizUser,
+  } = presenter;
 
-  if (!insightsOnboarding) {
-    return <Navigate replace to={insightsUrl("supervision")} />;
-  }
-
-  const onboardingTabs = [
+  const tabs = [
     {
-      title: "Introducing Recidiviz Insights",
-      description: [
-        `This coaching tool **highlights ${labels.supervisionOfficerLabel}s who may need support** with managing their caseload and helping their ${labels.supervisionJiiLabel}s succeed.`,
-        `Although ${labels.supervisionOfficerLabel}s don’t have direct control over their ${labels.supervisionJiiLabel}’s decisions, **their approach does affect their ${labels.supervisionJiiLabel}’s success**. Evidence suggests that good rapport can reduce absconsions, and **program and treatment referrals** can prevent violations that lead to incarceration.`,
-      ],
+      id: "welcomeTab",
+      h1: `Welcome, ${userName}`,
+      description: `Press ‘next’ to continue.`,
     },
     {
-      title: "What does this tool include?",
-      description: [
-        `This tool highlights **“outlier” ${labels.supervisionOfficerLabel}s** whose incarceration, technical incarceration and/or absconsion rates are **significantly higher than the statewide rate**.`,
-        "It also provides additional detail – like **over-time trends and case-level drill-downs** – to enable a productive coaching conversation.",
-      ],
-      image: outliersDataPreview,
+      id: "descriptionTab",
+      description: `This **new update** shows you which staff member might need help with their caseload.`,
     },
     {
-      title: "How is this tool meant to be used?",
-      description: [
-        `This tool is meant to enable more of **“coach” as opposed to a “referee” approach** to managing your team. It isn’t meant to be a “gotcha” to penalize your staff. Instead, it’s **an opportunity to learn more and start a conversation** with ${labels.supervisionOfficerLabel}s who may need extra support.`,
-      ],
+      id: "rosterTab",
+      description: `This is the list of staff we have reporting to you. You'll have the ability to report an inaccurate roster within this new tool.`,
+      extra: <OutliersStaff supervisorPseudoId={userPseudoId} />,
     },
     {
-      title: "What is an “outlier”?",
-      description: [
-        `An outlier ${labels.supervisionOfficerLabel} has an annual incarceration, technical incarceration or absconsion rate that is over 1 interquartile range higher than the statewide rate. That means that **the ${labels.supervisionOfficerLabel}’s rate is much higher than the other ${labels.supervisionOfficerLabel}s in the state**.`,
-      ],
-      image: outliersRatePreview,
+      id: "goalTab",
+      description: `Our goal is to help you have more **meaningful conversations** with your staff.`,
     },
     {
-      title: "Which metrics are shown in this tool?",
-      description: [
-        "This tool shows three rates: Incarceration rate, Technical Incarceration rate and Absconsion rate. Definitions of how these rates are calculated are available in detail within the tool.",
-        "The tool includes more detail about how those rates are calculated.",
-      ],
+      id: "explainTab",
+      description: `Evidence suggests that **good rapport** oftentimes reduces absconders and other violations.`,
     },
     {
-      title: "Who has access to this tool?",
-      description: [
-        `${toTitleCase(
-          labels.supervisionSupervisorLabel,
-        )}s, district and regional management, and DOC administrators have access to this tool. ${toTitleCase(
-          labels.supervisionOfficerLabel,
-        )}s do not have access.`,
-        "# If you have questions, we’re here to help.",
-        "Click on the chat button in the bottom right corner of the screen to ask a question or send us feedback anytime.",
-      ],
+      id: "checkboxTab",
+      h2: "Important: Please Confirm",
+      description: `Using this tool as a “gotcha” to penalize your staff creates an *unhealthy* work environment.`,
+      extra: (
+        <Checkbox
+          value="I will use this tool ethically and treat my staff fairly"
+          checked={isAgreementChecked}
+          onChange={() => setChecked(!isAgreementChecked)}
+        >
+          I will use this tool ethically and treat my staff fairly
+        </Checkbox>
+      ),
+    },
+    {
+      id: "loadingTab",
+      description: `Thank you. Here are the features we have in store...`,
+      extra: <Loading message="Loading" />,
+    },
+    {
+      id: "getStartedTab",
+      h2: "Ready to jump in?",
+      description: `Over time we will continue to add more features. Reach out to us with ideas!`,
     },
   ];
 
-  const currentTab = onboardingTabs[currentTabIndex];
-  const totalTabs = onboardingTabs.length;
-  const progressPercent = ((currentTabIndex + 1) / totalTabs) * 100;
-  const isLastTab = currentTabIndex + 1 === totalTabs;
+  const filteredTabs = tabs.filter((tab) =>
+    tab.id === ROSTER_TAB_ID && !userPseudoId ? null : tab,
+  );
 
-  const handleButtonClick = async () => {
-    if (!isLastTab) {
+  const currentTab = filteredTabs[currentTabIndex];
+  const totalTabs = filteredTabs.length;
+  const progressPercent = ((currentTabIndex + 1) / (totalTabs - 1)) * 100;
+  const isFirstTab = currentTabIndex === 0;
+  const isLastTab = currentTabIndex + 1 === totalTabs;
+  const isCheckboxTab = currentTab.id === CHECKBOX_TAB_ID;
+  const isLoadingTab = currentTab.id === LOADING_TAB_ID;
+
+  useEffect(() => {
+    if (isLoadingTab) {
+      setTimeout(() => {
+        setTabIndex((prevState) => prevState + 1);
+      }, 3000);
+    }
+  }, [isLoadingTab]);
+
+  const handleNextButtonClick = async () => {
+    if (!isLoadingTab && !isLastTab) {
       setTabIndex((prevState) => prevState + 1);
-    } else {
+    }
+
+    if (isLastTab) {
       await setUserHasSeenOnboarding(true);
       navigate(insightsUrl("supervision"));
     }
   };
 
+  const handleBackButtonClick = () => {
+    setTabIndex((prevState) => prevState - 1);
+  };
+
+  if (!insightsOnboarding || (!isRecidivizUser && userHasSeenOnboarding)) {
+    return <Navigate replace to={insightsUrl("supervision")} />;
+  }
+
   return (
-    <Wrapper isLaptop={isLaptop} isMobile={isMobile}>
-      <ProgressBar percent={progressPercent} />
-      <Tab isTablet={isTablet} isTwoColumn={!!currentTab.image}>
-        <Content>
-          <Title isLaptop={isLaptop}>{currentTab.title}</Title>
-          {currentTab.description.map((d) => (
+    <>
+      {!isLastTab && <ProgressBar percent={progressPercent} />}
+      <NavigationLayout isNaked isFixed={false} />
+      <Wrapper isMobile={isMobile}>
+        <Tab>
+          {isLastTab && (
+            <OnboardingFeatures labels={labels} eventLabels={eventLabels} />
+          )}
+          <Content>
+            {currentTab.h1 && <H1>{currentTab.h1}</H1>}
+            {currentTab.h2 && <H2>{currentTab.h2}</H2>}
             <StyledMarkdownView
-              key={d}
-              $isLaptop={isLaptop}
-              markdown={d}
+              markdown={currentTab.description}
               options={{ simpleLineBreaks: true }}
             />
-          ))}
-          <StyledButton onClick={handleButtonClick}>
-            {isLastTab ? "Get started" : "Next"}
-          </StyledButton>
-        </Content>
-        {!!currentTab.image && (
-          <Image>
-            <img src={currentTab.image} alt={currentTab.title} />
-          </Image>
-        )}
-      </Tab>
-    </Wrapper>
+            {currentTab.extra && <Extra>{currentTab.extra}</Extra>}
+            {!isLoadingTab && (
+              <Buttons>
+                {!isFirstTab && !isLastTab && (
+                  <StyledButton
+                    kind="secondary"
+                    onClick={handleBackButtonClick}
+                  >
+                    Back
+                  </StyledButton>
+                )}
+                <TooltipTrigger
+                  contents={
+                    isCheckboxTab &&
+                    !isAgreementChecked && (
+                      <TooltipContentWrapper>
+                        To proceed, click the checkbox above.
+                      </TooltipContentWrapper>
+                    )
+                  }
+                >
+                  <StyledButton
+                    disabled={isCheckboxTab && !isAgreementChecked}
+                    onClick={handleNextButtonClick}
+                  >
+                    {isLastTab ? "Get started" : "Next"}
+                  </StyledButton>
+                </TooltipTrigger>
+              </Buttons>
+            )}
+          </Content>
+        </Tab>
+      </Wrapper>
+      {isLastTab && <OnboardingFaq labels={labels} eventLabels={eventLabels} />}
+    </>
   );
 });
 
