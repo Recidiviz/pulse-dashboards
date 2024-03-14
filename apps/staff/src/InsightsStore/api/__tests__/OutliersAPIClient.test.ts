@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
-
 import { RootStore } from "../../../RootStore";
 import { APIStore } from "../../../RootStore/APIStore";
 import UserStore from "../../../RootStore/UserStore";
@@ -46,17 +44,13 @@ import { InsightsAPIClient } from "../InsightsAPIClient";
 
 const mockTenantId = "us_tn";
 const BASE_URL = `http://localhost:5000/outliers/${mockTenantId}`;
-const OLD_ENV = process.env;
 
 describe("InsightsAPIClient", () => {
   let client: InsightsAPIClient;
 
-  beforeAll(() => {
-    enableFetchMocks();
-    process.env = Object.assign(process.env, {
-      REACT_APP_DEPLOY_ENV: "dev",
-      REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
-    });
+  beforeEach(() => {
+    vi.stubEnv("VITE_DEPLOY_ENV", "dev");
+    vi.stubEnv("VITE_NEW_BACKEND_API_URL", "http://localhost:5000");
     const mockUserStore = {
       getToken: () => Promise.resolve(""),
     } as UserStore;
@@ -64,23 +58,15 @@ describe("InsightsAPIClient", () => {
     const mockRootStore = {
       currentTenantId: mockTenantId,
       apiStore: new APIStore(mockUserStore),
+      userStore: mockUserStore,
     } as RootStore;
     client = new InsightsAPIClient(new InsightsStore(mockRootStore));
-  });
-
-  afterEach(() => {
-    fetchMock.resetMocks();
-  });
-
-  afterAll(() => {
-    process.env = OLD_ENV;
-    disableFetchMocks();
   });
 
   it("init calls the correct endpoint", async () => {
     fetchMock.mockResponse(JSON.stringify({ config: InsightsConfigFixture }));
     await client.init();
-    expect(fetchMock.mock.calls[0][0]).toEqual(
+    expect(fetchMock.requests()[0].url).toEqual(
       encodeURI(`${BASE_URL}/configuration`),
     );
   });
@@ -112,7 +98,7 @@ describe("InsightsAPIClient", () => {
     expect(response).toEqual(leadershipUserInfoFixture);
   });
 
-  it("userInfo parses the data for supervisor", async () => {
+  it("patchUserInfo parses the data for supervisor", async () => {
     // We can't test that the API actually modified anything here, but since it returns the updated
     // result we can at least test that it correctly parses the updated result.
     fetchMock.mockResponse(JSON.stringify(rawSupervisorUserInfoFixture));

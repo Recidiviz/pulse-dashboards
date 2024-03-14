@@ -22,7 +22,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { ReactComponent as MethodologyLogo } from "../../assets/static/images/methodology.svg";
+import MethodologyLogo from "../../assets/static/images/methodology.svg?react";
 import { TenantId } from "../../RootStore/types";
 import { appendActiveClassName } from "../../utils/navigation";
 import { UserAvatar } from "../Avatar";

@@ -22,7 +22,7 @@ import * as React from "react";
 import styled from "styled-components/macro";
 
 import pdocLogo from "./assets/pdocLogo.png";
-import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./FormUsPaAdminSupervision";
+import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
 
 const Logo = styled.img`
   width: 175px;

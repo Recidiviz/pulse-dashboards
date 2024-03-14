@@ -1,8 +1,7 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const firebase = require("./firebase.json");
-const { loadWorkflowsFixtures } = require("./tools/workflowsFixtures");
+const firebase = require("../../firebase.json");
 
 global.downloadDir = path.join("/tmp", "tempDownloads");
 
@@ -227,6 +226,8 @@ exports.config = {
       // if it doesn't exist, create it
       fs.mkdirSync(global.downloadDir);
     }
+    // make sure the opportunity pages config exists
+    execSync("vite-node tools/makeOpportunityPageConfig.ts");
   },
   /**
    * Gets executed before a worker process is spawned and can be used to initialise specific service
@@ -290,7 +291,7 @@ exports.config = {
       `curl -v -X DELETE 'http://localhost:${firebase.emulators.firestore.port}/emulator/v1/projects/${process.env.FIREBASE_PROJECT}/databases/(default)/documents'`,
     );
     /* Load fixtures to firestore database */
-    await loadWorkflowsFixtures({ quietLogs: true });
+    execSync(`vite-node tools/loadWorkflowsFixtures.ts --quiet`);
   },
   /**
    * Runs before a Cucumber step

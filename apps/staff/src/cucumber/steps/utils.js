@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 
 async function clickOutsideElement(element = "body") {
   const body = await $(element);

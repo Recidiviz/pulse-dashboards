@@ -63,7 +63,7 @@ function createTestUnit() {
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsPaAdminSupervisionOpportunity(person);
-  jest.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
+  vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
   form = opp.form;
 }
 
@@ -75,7 +75,6 @@ beforeEach(() => {
 
 afterEach(() => {
   configure({ safeDescriptors: true });
-  jest.resetAllMocks();
   tk.reset();
 });
 
@@ -86,7 +85,7 @@ describe("prefilledDataTransformer", () => {
 
   test("basic transformation", () => {
     expect(form.prefilledDataTransformer()).toMatchInlineSnapshot(`
-      Object {
+      {
         "currentGradeOfSupervisionLevel": "Medium",
         "dateOfReview": "Dec 12, 2023",
         "paroleNumber": "pei1",

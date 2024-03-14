@@ -15,5 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 export function isDemoMode(): boolean {
-  return process.env.REACT_APP_AUTH_ENV === "demo";
+  return import.meta.env.VITE_AUTH_ENV === "demo";
 }

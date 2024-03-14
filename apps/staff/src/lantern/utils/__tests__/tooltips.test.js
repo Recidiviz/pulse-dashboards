@@ -111,7 +111,12 @@ describe("tooltipForRateMetricWithCounts", () => {
     );
   });
 
-  describe("for Race and Gender charts", () => {
+  describe.each([
+    "admissionsByRace",
+    "admissionsByGender",
+    "recommitmentsByRace",
+    "recommitmentsBySex",
+  ])("%s for Race and Gender charts", (metricId) => {
     beforeEach(() => {
       tooltipItemRate = {
         yLabel: "Admitted Population",
@@ -146,15 +151,25 @@ describe("tooltipForRateMetricWithCounts", () => {
       denominators = [857, 294, 267, 180];
     });
 
-    [
-      "admissionsByRace",
-      "admissionsByGender",
-      "recommitmentsByRace",
-      "recommitmentsBySex",
-    ].forEach((metricId) => {
-      it(`tooltip for rate metric with counts without trendline - ${metricId}`, () => {
+    it(`tooltip for rate metric with counts without trendline`, () => {
+      const includeWarning = false;
+      const includePercentage = false;
+      const tooltipWithCount = tooltipForRateMetricWithCounts(
+        metricId,
+        tooltipItemRate,
+        dataMetric,
+        numbers,
+        denominators,
+        includeWarning,
+        includePercentage,
+      );
+      expect(tooltipWithCount).toBe("Admitted Population (56/857)");
+    });
+
+    describe("when the tooltip should include a percentage", () => {
+      it(`formats the tooltip correctly`, () => {
         const includeWarning = false;
-        const includePercentage = false;
+        const includePercentage = true;
         const tooltipWithCount = tooltipForRateMetricWithCounts(
           metricId,
           tooltipItemRate,
@@ -164,56 +179,39 @@ describe("tooltipForRateMetricWithCounts", () => {
           includeWarning,
           includePercentage,
         );
-        expect(tooltipWithCount).toBe("Admitted Population (56/857)");
+        expect(tooltipWithCount).toBe("Admitted Population 7% (56/857)");
       });
 
-      describe("when the tooltip should include a percentage", () => {
-        it(`formats the tooltip correctly - ${metricId}`, () => {
-          const includeWarning = false;
-          const includePercentage = true;
-          const tooltipWithCount = tooltipForRateMetricWithCounts(
-            metricId,
-            tooltipItemRate,
-            dataMetric,
-            numbers,
-            denominators,
-            includeWarning,
-            includePercentage,
-          );
-          expect(tooltipWithCount).toBe("Admitted Population 7% (56/857)");
-        });
+      it(`handles an undefined denominator`, () => {
+        const includeWarning = false;
+        const includePercentage = true;
+        denominators[0] = undefined;
+        const tooltipWithCount = tooltipForRateMetricWithCounts(
+          metricId,
+          tooltipItemRate,
+          dataMetric,
+          numbers,
+          denominators,
+          includeWarning,
+          includePercentage,
+        );
+        expect(tooltipWithCount).toBe("Admitted Population");
+      });
 
-        it(`handles an undefined denominator`, () => {
-          const includeWarning = false;
-          const includePercentage = true;
-          denominators[0] = undefined;
-          const tooltipWithCount = tooltipForRateMetricWithCounts(
-            metricId,
-            tooltipItemRate,
-            dataMetric,
-            numbers,
-            denominators,
-            includeWarning,
-            includePercentage,
-          );
-          expect(tooltipWithCount).toBe("Admitted Population");
-        });
-
-        it(`handles a 0 denominator`, () => {
-          const includeWarning = false;
-          const includePercentage = true;
-          denominators[0] = 0;
-          const tooltipWithCount = tooltipForRateMetricWithCounts(
-            metricId,
-            tooltipItemRate,
-            dataMetric,
-            numbers,
-            denominators,
-            includeWarning,
-            includePercentage,
-          );
-          expect(tooltipWithCount).toBe("Admitted Population");
-        });
+      it(`handles a 0 denominator`, () => {
+        const includeWarning = false;
+        const includePercentage = true;
+        denominators[0] = 0;
+        const tooltipWithCount = tooltipForRateMetricWithCounts(
+          metricId,
+          tooltipItemRate,
+          dataMetric,
+          numbers,
+          denominators,
+          includeWarning,
+          includePercentage,
+        );
+        expect(tooltipWithCount).toBe("Admitted Population");
       });
     });
   });

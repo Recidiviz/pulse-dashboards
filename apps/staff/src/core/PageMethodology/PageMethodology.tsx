@@ -17,6 +17,7 @@
 import "./PageMethodology.scss";
 
 import React from "react";
+import { AnchorProvider } from "react-anchor-navigation";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -47,7 +48,12 @@ const PageMethodology: React.FC = () => {
 
   const Methodology = methodologies[dashboard];
 
-  return <Methodology />;
+  return (
+    <AnchorProvider offset={75}>
+      {/* per types this needs to be an array */}
+      {[<Methodology key="methodology" />]}
+    </AnchorProvider>
+  );
 };
 
 export default PageMethodology;

@@ -34,26 +34,25 @@ import InsightsStaffPage, {
   StaffPageWithPresenter,
 } from "../InsightsStaffPage";
 
-jest.mock("../../../components/StoreProvider");
-jest.mock(
+vi.mock("../../../components/StoreProvider");
+vi.mock(
   "../../../InsightsStore/presenters/SwarmPresenter/getSwarmLayoutWorker",
 );
-jest
-  .spyOn(UserStore.prototype, "isRecidivizUser", "get")
-  .mockImplementation(() => false);
 
-const useRootStoreMock = jest.mocked(useRootStore);
-const useFeatureVariantsMock = jest.mocked(useFeatureVariants);
+const useRootStoreMock = vi.mocked(useRootStore);
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 const supervisorPseudoId = "hashed-mdavis123";
 const officerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
 const testMetric = supervisionOfficerFixture[0].outlierMetrics[0].metricId;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
+  vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
+    () => false,
+  );
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -62,23 +61,21 @@ describe("Hydrated Staff Page", () => {
   let store: InsightsSupervisionStore;
 
   beforeEach(async () => {
-    jest
-      .spyOn(UserStore.prototype, "userPseudoId", "get")
-      .mockImplementation(() => supervisorPseudoId);
+    vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
+      () => supervisorPseudoId,
+    );
 
     store = new InsightsSupervisionStore(
       new RootStore().insightsStore,
       InsightsConfigFixture,
     );
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
     presenter = new SupervisionOfficerDetailPresenter(store, officerPseudoId);
     await presenter?.hydrate();
   });
 
   test("analytics trackInsightsStaffPageViewed", () => {
-    jest.spyOn(AnalyticsStore.prototype, "trackInsightsStaffPageViewed");
+    vi.spyOn(AnalyticsStore.prototype, "trackInsightsStaffPageViewed");
 
     render(
       <BrowserRouter>
@@ -110,16 +107,10 @@ describe("Insights Staff Page", () => {
     useRootStoreMock.mockReturnValue(rootStore);
     useFeatureVariantsMock.mockReturnValue({});
 
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
     store.setOfficerPseudoId(officerPseudoId);
     store.setMetricId(testMetric);
-  });
-
-  afterEach(() => {
-    jest.resetAllMocks();
   });
 
   test("renders loading indicator", () => {

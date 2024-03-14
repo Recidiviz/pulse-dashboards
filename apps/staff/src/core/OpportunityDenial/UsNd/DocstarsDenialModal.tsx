@@ -216,7 +216,7 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
 
     try {
       await apiStore.post(
-        `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${opportunity.person.stateCode}/update_docstars_early_termination_date`,
+        `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/${opportunity.person.stateCode}/update_docstars_early_termination_date`,
         requestBody,
       );
     } catch (e) {

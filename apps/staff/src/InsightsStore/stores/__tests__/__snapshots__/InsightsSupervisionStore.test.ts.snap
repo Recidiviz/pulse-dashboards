@@ -1,33 +1,33 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`hydrate clientEvents 1`] = `
-Array [
-  Object {
-    "attributes": Object {
+[
+  {
+    "attributes": {
       "code": "149",
       "description": "NOT ASSOCIATE WITH ANYONE YOU KNOW TO HAVE A FELONY RECORD",
     },
     "eventDate": 2023-07-22T00:00:00.000Z,
     "metricId": "violations",
   },
-  Object {
-    "attributes": Object {
+  {
+    "attributes": {
       "code": null,
       "description": "PAROLE REINSTATED",
     },
     "eventDate": 2023-05-12T00:00:00.000Z,
     "metricId": "violation_responses",
   },
-  Object {
-    "attributes": Object {
+  {
+    "attributes": {
       "code": "148",
       "description": "COMPLY WITH ALCOHOL AND DRUG TESTING ORDERED BY FIELD AGENT",
     },
     "eventDate": 2023-05-01T00:00:00.000Z,
     "metricId": "violations",
   },
-  Object {
-    "attributes": Object {
+  {
+    "attributes": {
       "code": null,
       "description": null,
     },
@@ -38,11 +38,11 @@ Array [
 `;
 
 exports[`hydrate clientInfo 1`] = `
-Object {
+{
   "birthdate": 1971-03-15T00:00:00.000Z,
   "clientId": "707222",
   "displayName": "Gary Alexander",
-  "fullName": Object {
+  "fullName": {
     "givenNames": "Gary",
     "surname": "Alexander",
   },
@@ -53,10 +53,10 @@ Object {
 `;
 
 exports[`hydrate supervisionOfficerMetricEvents 1`] = `
-Array [
-  Object {
+[
+  {
     "clientId": "985771",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Nicholas",
       "surname": "Rhodes",
     },
@@ -69,9 +69,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "326160",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Ethel",
       "surname": "Leonard",
     },
@@ -84,9 +84,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "931890",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Ricardo",
       "surname": "Wood",
     },
@@ -99,9 +99,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "930441",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Stanley",
       "surname": "Maxwell",
     },
@@ -114,9 +114,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "564940",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Miguel",
       "surname": "Haynes",
     },
@@ -129,9 +129,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "235261",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Rosie",
       "surname": "Luna",
     },
@@ -144,9 +144,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "531407",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Glenn",
       "surname": "Francis",
     },
@@ -159,9 +159,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "436502",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Steve",
       "surname": "Schwartz",
     },
@@ -174,9 +174,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "339710",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Bertha",
       "surname": "Figueroa",
     },

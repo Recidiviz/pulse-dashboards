@@ -24,11 +24,11 @@ import { DocumentSubscription } from "../types";
 export class MockDocumentSubscription implements DocumentSubscription<any> {
   data = undefined;
 
-  subscribe = jest.fn();
+  subscribe = vi.fn();
 
-  unsubscribe = jest.fn();
+  unsubscribe = vi.fn();
 
-  hydrate = jest.fn();
+  hydrate = vi.fn();
 
   hydrationState: HydrationState = { status: "needs hydration" };
 

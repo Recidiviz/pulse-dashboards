@@ -282,3 +282,9 @@ export function isOpportunityTypeUrlForState(
 ): boolean {
   return s in (OPPORTUNITY_TYPE_FOR_URL_BY_STATE[stateCode] ?? {});
 }
+
+export function getSystemIdFromOpportunityType(
+  opportunityType: OpportunityType,
+): SystemId {
+  return OPPORTUNITY_CONFIGS[opportunityType].systemType;
+}

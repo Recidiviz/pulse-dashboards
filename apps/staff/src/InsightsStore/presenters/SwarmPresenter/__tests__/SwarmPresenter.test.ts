@@ -24,9 +24,9 @@ import { InsightsSupervisionStore } from "../../../stores/InsightsSupervisionSto
 import { getOutlierOfficerData } from "../../utils";
 import { SwarmPresenter } from "../SwarmPresenter";
 
-// jest does not support Web Workers;
+// vitest does not support Web Workers;
 // this will substitute a manual mock with the same underlying implementation
-jest.mock("../getSwarmLayoutWorker");
+vi.mock("../getSwarmLayoutWorker");
 
 let presenter: SwarmPresenter;
 

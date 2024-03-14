@@ -35,7 +35,7 @@ import UserStore from "./UserStore";
  * Returns the auth settings configured for the current environment, if any.
  */
 export function getAuthSettings(): Auth0ClientOptions {
-  const authEnv = process.env.REACT_APP_AUTH_ENV;
+  const authEnv = import.meta.env.VITE_AUTH_ENV;
   let config: { [k: string]: string };
   if (authEnv === "production") {
     config = productionAuthConfig;
@@ -54,7 +54,7 @@ export function getAuthSettings(): Auth0ClientOptions {
 
 // This needs to be called from the RootStore so the instance is exported after
 // mobx is configured.
-if (process.env.NODE_ENV !== "test") {
+if (import.meta.env.MODE !== "test") {
   configure({
     // activate runtime linting
     computedRequiresReaction: true,
@@ -64,7 +64,7 @@ if (process.env.NODE_ENV !== "test") {
     observableRequiresReaction: false,
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  if (!import.meta.env.PROD) {
     configure({
       disableErrorBoundaries: true,
     });

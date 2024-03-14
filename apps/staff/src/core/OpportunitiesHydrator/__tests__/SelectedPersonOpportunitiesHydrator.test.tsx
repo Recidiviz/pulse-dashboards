@@ -18,21 +18,22 @@
  *
  */
 import { render, screen } from "@testing-library/react";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { SelectedPersonOpportunitiesHydrator } from "../SelectedPersonOpportunitiesHydrator";
 
-jest.mock("../../../components/StoreProvider");
-const useRootStoreMock = useRootStore as jest.Mock;
+vi.mock("../../../components/StoreProvider");
+const useRootStoreMock = useRootStore as Mock;
 
-let lsuHydrateMock: typeof jest.fn;
-let pastFTRDHydrateMock: typeof jest.fn;
+const lsuHydrateMock = vi.fn();
+const pastFTRDHydrateMock = vi.fn();
 
 const empty = <div>Empty!</div>;
 const hydrated = <div>Hydrated!</div>;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 const setUp = ({
@@ -41,8 +42,6 @@ const setUp = ({
   lsuVerified = true,
   pastFTRDVerified = true,
 }) => {
-  lsuHydrateMock = jest.fn();
-  pastFTRDHydrateMock = jest.fn();
   const mockRoot = {
     workflowsStore: {
       selectedPerson: {
@@ -72,7 +71,7 @@ const setUp = ({
       hydrationState: pastFTRDHydrationState,
     };
   }
-  useRootStoreMock.mockReturnValue(mockRoot);
+  useRootStoreMock.mockReturnValue(mockRoot as any);
 };
 
 const expectStateToBe = (expectedState: "HYDRATED" | "EMPTY" | "LOADING") => {

@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import { computed } from "mobx";
 import { keepAlive } from "mobx-utils";
+import { Mock } from "vitest";
 
 import { FeatureGateError } from "../../../errors";
 import { FirestoreDocumentSubscription } from "../FirestoreDocumentSubscription";
@@ -33,21 +34,21 @@ import {
   getMockSnapshotErrorHandler,
 } from "./testUtils";
 
-jest.mock("firebase/firestore");
-jest.mock("@sentry/react");
+vi.mock("firebase/firestore");
+vi.mock("@sentry/react");
 
-const onSnapshotMock = onSnapshot as jest.Mock;
+const onSnapshotMock = onSnapshot as Mock;
 
-const cancelSnapshotMock = jest.fn();
+const cancelSnapshotMock = vi.fn();
 
 let sub: FirestoreDocumentSubscription<any>;
 
 class TestSubscription extends FirestoreDocumentSubscription {
-  dataSource = jest.fn() as unknown as DocumentReference;
+  dataSource = vi.fn() as unknown as DocumentReference;
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 
   onSnapshotMock.mockReturnValue(cancelSnapshotMock);
 
@@ -223,7 +224,9 @@ test("transform errors logged to Sentry", () => {
 
   mockReceive(mockData);
 
-  expect(Sentry.captureException).toHaveBeenCalledOnceWith(transformError);
+  expect(Sentry.captureException).toHaveBeenCalledExactlyOnceWith(
+    transformError,
+  );
 });
 
 test("validation errors logged to Sentry", () => {
@@ -242,7 +245,9 @@ test("validation errors logged to Sentry", () => {
 
   mockReceive(mockData);
 
-  expect(Sentry.captureException).toHaveBeenCalledOnceWith(validationError);
+  expect(Sentry.captureException).toHaveBeenCalledExactlyOnceWith(
+    validationError,
+  );
 });
 
 test("feature gate errors not logged to Sentry", () => {
@@ -325,7 +330,7 @@ test("handles Firestore error", () => {
   sub.subscribe();
 
   mockReceiveError(testError);
-  expect(Sentry.captureException).toHaveBeenCalledOnceWith(testError);
+  expect(Sentry.captureException).toHaveBeenCalledExactlyOnceWith(testError);
   expect(sub.hydrationState).toEqual({ status: "failed", error: testError });
   expect(sub.data).toBeUndefined();
 });
@@ -333,11 +338,9 @@ test("handles Firestore error", () => {
 test("update function is called with record", () => {
   const mockData = { recordId: "us_id_123" };
   const mockReceive = getMockDocumentSnapshotHandler(onSnapshotMock);
-  const testUpdateFn = jest
-    .fn()
-    .mockImplementation(async (d?: DocumentData) => {
-      await Promise.resolve();
-    });
+  const testUpdateFn = vi.fn().mockImplementation(async (d?: DocumentData) => {
+    await Promise.resolve();
+  });
 
   sub = new TestSubscription(undefined, undefined, testUpdateFn);
 

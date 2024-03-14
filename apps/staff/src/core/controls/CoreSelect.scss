@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-@import "~@recidiviz/design-system/dist/scss/typography/mixins";
+@import "@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../../assets/styles/spec/settings/index";
 @import "../CoreConstants.module.scss";
 
@@ -113,7 +113,8 @@
     border-style: solid;
     border-width: 4px 4px 0 4px;
     border-color: $pine-3 transparent transparent transparent;
-    &--changed {
+
+    .CoreSelect--changed & {
       border-color: $signal-links transparent transparent transparent;
     }
   }

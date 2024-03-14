@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Comlink from "comlink";
+import { Remote } from "comlink";
 
-import { SwarmLayout } from "./types";
+export type SwarmWorker = Remote<typeof import("./swarmWorker")>;
 
-export function getSwarmLayoutWorker() {
-  return Comlink.wrap<SwarmLayout>(
-    new Worker(new URL("./swarmWorker", import.meta.url)),
+export function getSwarmLayoutWorker(): SwarmWorker {
+  return new ComlinkWorker<typeof import("./swarmWorker")>(
+    new URL("./swarmWorker", import.meta.url),
   );
 }

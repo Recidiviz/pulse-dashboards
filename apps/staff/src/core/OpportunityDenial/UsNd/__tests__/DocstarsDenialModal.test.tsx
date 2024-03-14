@@ -19,6 +19,8 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { parseISO } from "date-fns";
 import toast from "react-hot-toast";
 import ReactModal from "react-modal";
+import { setTimeout } from "timers/promises";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
@@ -29,14 +31,14 @@ import {
   DocstarsDenialModal,
 } from "../DocstarsDenialModal";
 
-jest.mock("../../../../components/StoreProvider");
-jest.mock("react-hot-toast");
+vi.mock("../../../../components/StoreProvider");
+vi.mock("react-hot-toast");
 
 const mockRootStore = ({
   featureVariants = { usNdWriteToDocstars: {} } as object,
 } = {}) => {
-  const apiPost = jest.fn();
-  const updateOmsSnoozeStatus = jest.fn();
+  const apiPost = vi.fn();
+  const updateOmsSnoozeStatus = vi.fn();
   updateOmsSnoozeStatus.mockImplementation(
     (opp, _email, _state, _pei, _date, _ts, status) => {
       // eslint-disable-next-line no-param-reassign
@@ -44,7 +46,7 @@ const mockRootStore = ({
     },
   );
 
-  (useRootStore as jest.Mock).mockReturnValue({
+  (useRootStore as Mock).mockReturnValue({
     workflowsStore: {
       currentUserEmail: "mock-email@nd.gov",
       featureVariants,
@@ -59,27 +61,21 @@ const mockRootStore = ({
   return { apiPost, updateOmsSnoozeStatus };
 };
 
-let existingEnv: typeof process.env;
-
 beforeEach(() => {
   ReactModal.setAppElement(document.createElement("div"));
-  existingEnv = process.env;
-  process.env = {
-    ...process.env,
-    REACT_APP_NEW_BACKEND_API_URL: "TEST_REACT_APP_NEW_BACKEND_API_URL",
-  };
+  vi.stubEnv("VITE_NEW_BACKEND_API_URL", "TEST_VITE_NEW_BACKEND_API_URL");
 });
 
-afterEach(() => {
-  jest.resetAllMocks();
-  process.env = existingEnv;
+afterEach(async () => {
+  // this prevents modal async close actions from erroring during teardown
+  await setTimeout(300);
 });
 
 describe("DocstarsDenialModal", () => {
   it("immediately succeeds if featureVariant isn't set", () => {
     mockRootStore({ featureVariants: {} });
 
-    const onSuccessFn = jest.fn();
+    const onSuccessFn = vi.fn();
 
     // modal not shown yet
     const modal = render(
@@ -89,7 +85,7 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal={false}
-        onCloseFn={jest.fn()}
+        onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
       />,
     );
@@ -103,7 +99,7 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
+        onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
       />,
     );
@@ -121,8 +117,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -150,8 +146,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={parseISO("2025-07-04")}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -164,8 +160,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={parseISO("2025-07-04")}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -181,7 +177,7 @@ describe("DocstarsDenialModal", () => {
       );
       expect(apiPost).toHaveBeenCalledOnce();
       expect(apiPost).toHaveBeenCalledWith(
-        "TEST_REACT_APP_NEW_BACKEND_API_URL/workflows/external_request/US_OZ/update_docstars_early_termination_date",
+        "TEST_VITE_NEW_BACKEND_API_URL/workflows/external_request/US_OZ/update_docstars_early_termination_date",
         {
           earlyTerminationDate: "2025-07-04",
           justificationReasons: [{ code: "CODE", description: "Denial Code" }],
@@ -209,8 +205,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={parseISO("2025-07-04")}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -223,8 +219,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={parseISO("2025-07-04")}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -256,8 +252,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={parseISO("2025-07-04")}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -270,8 +266,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={parseISO("2025-07-04")}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -284,8 +280,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={parseISO("2025-07-04")}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -301,7 +297,7 @@ describe("DocstarsDenialModal", () => {
       ...mockOpportunity,
     };
 
-    const onSuccessFn = jest.fn();
+    const onSuccessFn = vi.fn();
 
     const { rerender } = render(
       <DocstarsDenialModal
@@ -310,7 +306,7 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
+        onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
       />,
     );
@@ -324,7 +320,7 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
+        onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
       />,
     );
@@ -338,14 +334,14 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
+        onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
       />,
     );
 
     await waitFor(() => {
       expect(onSuccessFn).toHaveBeenCalledOnce();
-      expect(toast).toHaveBeenCalledOnceWith(
+      expect(toast).toHaveBeenCalledExactlyOnceWith(
         "Note successfully synced to DOCSTARS",
       );
     });
@@ -363,8 +359,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -387,8 +383,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -406,8 +402,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal={false}
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 
@@ -419,8 +415,8 @@ describe("DocstarsDenialModal", () => {
         otherReason=""
         snoozeUntilDate={undefined}
         showModal
-        onCloseFn={jest.fn()}
-        onSuccessFn={jest.fn()}
+        onCloseFn={vi.fn()}
+        onSuccessFn={vi.fn()}
       />,
     );
 

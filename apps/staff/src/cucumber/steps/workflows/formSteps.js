@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { Given, Then, When } from "@cucumber/cucumber";
-import fs from "fs";
-import fsPromise from "fs/promises";
-import path from "path";
+import * as fs from "fs";
+import * as fsPromise from "fs/promises";
+import * as path from "path";
 
 import { WorkflowsFormPage, WorkflowsHomepage } from "../../pages";
 import {

@@ -14,26 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import RootStore from "../../../RootStore";
+import MetricsStore from "../../../core/CoreStore/MetricsStore";
+import { RootStore } from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import UserStore from "../../../RootStore/UserStore";
 import { defaultPopulationFilterValues } from "../../utils/filterOptions";
 import CoreStore from "..";
 
 let coreStore: CoreStore;
 
-jest.mock("../../../RootStore/UserStore", () => {
-  return jest.fn().mockImplementation(() => ({
+vi.mock("../../../RootStore/UserStore");
+vi.mock("../../../RootStore/TenantStore");
+vi.mock("../../../core/CoreStore/MetricsStore");
+
+beforeEach(() => {
+  // @ts-expect-error
+  vi.mocked(UserStore).mockImplementation(() => ({
     user: {},
   }));
-});
-
-jest.mock("../../../RootStore/TenantStore", () => {
-  return jest.fn().mockImplementation(() => ({
+  // @ts-expect-error
+  vi.mocked(TenantStore).mockImplementation(() => ({
     currentTenantId: "US_ID",
   }));
-});
-
-jest.mock("../../../core/CoreStore/MetricsStore", () => {
-  return jest.fn().mockImplementation(() => ({
+  // @ts-expect-error
+  vi.mocked(MetricsStore).mockImplementation(() => ({
     current: {
       filters: {
         enabledFilters: [],
@@ -44,7 +48,7 @@ jest.mock("../../../core/CoreStore/MetricsStore", () => {
 
 describe("FiltersStore", () => {
   beforeEach(() => {
-    coreStore = new CoreStore(RootStore);
+    coreStore = new CoreStore(new RootStore());
   });
 
   describe("default filter values", () => {
@@ -121,6 +125,7 @@ describe("FiltersStore", () => {
         timePeriod: ["12"],
         facility: ["CAPP", "ISCC"],
       });
+
       expect(coreStore.filtersStore.filtersDescription).toEqual(
         "Time Period: 1 year;\nGender: All;\nFacility: CAPP, ISCC\n",
       );

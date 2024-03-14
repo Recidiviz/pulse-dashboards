@@ -189,7 +189,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
 
   const submitTEPEContactNote = async function (body: Record<string, unknown>) {
     return opportunity.rootStore.apiStore.post(
-      `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${opportunity.rootStore.userStore.stateCode}/insert_tepe_contact_note`,
+      `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/${opportunity.rootStore.userStore.stateCode}/insert_tepe_contact_note`,
       body,
     );
   };

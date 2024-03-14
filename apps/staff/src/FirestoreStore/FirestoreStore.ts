@@ -74,8 +74,8 @@ import {
 } from "./types";
 
 function getFirestoreProjectId() {
-  const projectId = process.env.REACT_APP_FIREBASE_BACKEND_PROJECT;
-  const testEnv = process.env.REACT_APP_TEST_ENV;
+  const projectId = import.meta.env.VITE_FIREBASE_BACKEND_PROJECT;
+  const testEnv = import.meta.env.VITE_TEST_ENV;
   // Avoid connection attempts to firestore emulator in tests
   if (testEnv) return "test";
 
@@ -88,7 +88,7 @@ function getFirestoreProjectId() {
   return projectId;
 }
 
-const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 
 export default class FirestoreStore {
   rootStore;
@@ -488,7 +488,7 @@ export default class FirestoreStore {
   ) {
     // Ignore recidiviz and non-state users in prod
     if (
-      process.env.REACT_APP_DEPLOY_ENV === "production" &&
+      import.meta.env.VITE_DEPLOY_ENV === "production" &&
       opportunity.rootStore.userStore.stateCode !== opportunity.person.stateCode
     )
       return;
@@ -525,7 +525,7 @@ export default class FirestoreStore {
   ) {
     // Ignore recidiviz and non-state users in prod
     if (
-      process.env.REACT_APP_DEPLOY_ENV === "production" &&
+      import.meta.env.VITE_DEPLOY_ENV === "production" &&
       userStateCode !== opportunity.person.stateCode
     )
       return;

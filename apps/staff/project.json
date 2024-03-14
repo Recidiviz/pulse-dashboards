@@ -1,13 +1,169 @@
 {
   "name": "staff",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/staff/src",
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc -p ./tsconfig.json --noEmit",
+        "commands": [
+          "tsc -p ./tsconfig.app.json --noEmit",
+          "tsc -p ./tsconfig.test.json --noEmit"
+        ],
         "cwd": "{projectRoot}",
         "forwardAllArgs": false
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/apps/staff"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "load-config-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["./load_config_files.sh"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "env-dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "source ./load_environment.sh env_dev_spa,env_dev_server && printenv > .env.dev"
+        ]
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-config-files", "env-dev"],
+      "options": {
+        "commands": [
+          "vite dev",
+          "nodemon server.js",
+          "redis-server --port 6380"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "update-workflows-fixture": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{projectRoot}/tools"],
+      "outputs": ["{projectRoot}/firestore-config/emulator-fixtures"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'NODE_OPTIONS=\"--unhandled-rejections=strict\" vite-node tools/loadWorkflowsFixtures.ts'"
+        ]
+      }
+    },
+    "firebase-offline": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["update-workflows-fixture"],
+      "options": {
+        "command": "firebase --project=demo-dev emulators:start --import firestore-config/emulator-fixtures",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "offline": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "vite dev",
+          "nodemon server.js",
+          "redis-server --port 6380",
+          "cd ../../ && nx firebase-offline staff"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "env-prod": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "source ./load_environment.sh env_production && printenv > .env.build"
+        ]
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "cache": true,
+      "dependsOn": ["load-config-files", "env-prod"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/staff"
+      }
+    },
+    "env-staging": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "source ./load_environment.sh env_staging && printenv > .env.build-staging"
+        ]
+      }
+    },
+    "build-staging": {
+      "executor": "@nx/vite:build",
+      "cache": true,
+      "dependsOn": ["load-config-files", "env-staging"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/staff"
+      }
+    },
+    "env-preview-ci": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "/bin/bash -c 'source ./load_environment.sh env_staging && printenv > .env.build-preview-ci'"
+        ]
+      }
+    },
+    "build-preview-ci": {
+      "executor": "@nx/vite:build",
+      "cache": true,
+      "dependsOn": ["env-preview-ci"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/staff"
+      }
+    },
+    "env-demo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "source ./load_environment.sh env_staging_demo && printenv > .env.build-demo"
+        ]
+      }
+    },
+    "build-demo": {
+      "executor": "@nx/vite:build",
+      "cache": true,
+      "dependsOn": ["load-config-files", "env-demo"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/staff"
+      }
+    },
+    "env-e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["cp .env.offline .env.build-e2e"]
+      }
+    },
+    "build-e2e": {
+      "executor": "@nx/vite:build",
+      "cache": true,
+      "dependsOn": ["env-e2e"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
     }
   }

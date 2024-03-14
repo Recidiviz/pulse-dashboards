@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render, screen } from "@testing-library/react";
-import React from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { Mock } from "vitest";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import IE11Banner from "../../components/IE11Banner";
@@ -32,51 +32,46 @@ import PageVitals from "../PageVitals";
 import PageWorkflows from "../PageWorkflows";
 import { DASHBOARD_PATHS, DASHBOARD_VIEWS } from "../views";
 
-jest.mock("../../hooks/useIntercom");
-jest.mock("mobx-react-lite", () => {
+vi.mock("../../hooks/useIntercom");
+vi.mock("mobx-react-lite", () => {
   return {
     observer: (component: any) => component,
   };
 });
-jest.mock("../../InsightsStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
-jest.mock("../../components/StoreProvider");
-jest.mock("../Avatar");
-jest.mock("../../components/IE11Banner");
-jest.mock("../PageSystem");
-jest.mock("../PageVitals");
-jest.mock("../PageWorkflows");
-jest.mock("../PageInsights", () => {
+vi.mock("../../InsightsStore/presenters/SwarmPresenter/getSwarmLayoutWorker");
+vi.mock("../../components/StoreProvider", () => ({ useRootStore: vi.fn() }));
+vi.mock("../Avatar");
+vi.mock("../../components/IE11Banner");
+vi.mock("../PageSystem");
+vi.mock("../PageVitals");
+vi.mock("../PageWorkflows");
+vi.mock("../PageInsights", () => {
   return {
     __esModule: true,
-    default: jest.fn(),
+    default: vi.fn(),
   };
 });
-jest.mock("../PageImpact");
-jest.mock("../PageMethodology");
-jest.mock("../../components/NotFound");
+vi.mock("../PageImpact");
+vi.mock("../PageMethodology");
+vi.mock("../../components/NotFound");
 
-const mockUseRootStore = useRootStore as jest.Mock;
+const mockUseRootStore = useRootStore as Mock;
 
 describe("DashboardLayout", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (UserAvatar as jest.Mock).mockReturnValue(null);
-    (IE11Banner as jest.Mock).mockReturnValue(null);
-    (PageSystem as jest.Mock).mockReturnValue(mockWithTestId("page-system-id"));
-    (PageImpact as jest.Mock).mockReturnValue(mockWithTestId("page-impact-id"));
-    (PageWorkflows as jest.Mock).mockReturnValue(
+    (UserAvatar as Mock).mockReturnValue(null);
+    (IE11Banner as Mock).mockReturnValue(null);
+    (PageSystem as Mock).mockReturnValue(mockWithTestId("page-system-id"));
+    (PageImpact as Mock).mockReturnValue(mockWithTestId("page-impact-id"));
+    (PageWorkflows as Mock).mockReturnValue(
       mockWithTestId("page-workflows-id"),
     );
-    (PageVitals as jest.Mock).mockReturnValue(
-      mockWithTestId("page-operations-id"),
-    );
-    (PageInsights as jest.Mock).mockReturnValue(
-      mockWithTestId("page-insights-id"),
-    );
-    (PageMethodology as jest.Mock).mockReturnValue(
+    (PageVitals as Mock).mockReturnValue(mockWithTestId("page-operations-id"));
+    (PageInsights as Mock).mockReturnValue(mockWithTestId("page-insights-id"));
+    (PageMethodology as Mock).mockReturnValue(
       mockWithTestId("page-methodology-id"),
     );
-    (NotFound as jest.Mock).mockReturnValue(mockWithTestId("not-found-id"));
+    (NotFound as Mock).mockReturnValue(mockWithTestId("not-found-id"));
   });
 
   const renderLayout = (route: string) => {
@@ -90,10 +85,6 @@ describe("DashboardLayout", () => {
   };
 
   describe("PageSystem", () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
     it("should render PageSystem for a user with a system prison page", () => {
       mockUseRootStore.mockReturnValue({
         userStore: { userAllowedNavigation: { system: ["prison"] } },
@@ -107,7 +98,7 @@ describe("DashboardLayout", () => {
 
   describe("PageImpact", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
     it("should render Impact page when currentTenantId is authorized", () => {
       mockUseRootStore.mockReturnValue({
@@ -132,7 +123,7 @@ describe("DashboardLayout", () => {
 
   describe("PageVitals", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
     it("should render operations page when currentTenantId is authorized", () => {
       mockUseRootStore.mockReturnValue({
@@ -157,7 +148,7 @@ describe("DashboardLayout", () => {
 
   describe("PageMethodology", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
     it("should render the system methodology page", () => {
       mockUseRootStore.mockReturnValue({

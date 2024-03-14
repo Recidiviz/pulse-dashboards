@@ -18,6 +18,7 @@
 import dedent from "dedent";
 import { deleteField } from "firebase/firestore";
 import { configure, runInAction } from "mobx";
+import { Mock } from "vitest";
 
 import { ClientRecord, MilestonesMessage } from "../../FirestoreStore";
 import FirestoreStore from "../../FirestoreStore/FirestoreStore";
@@ -27,21 +28,21 @@ import { Client } from "../Client";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { OTHER_KEY } from "../utils";
 
-jest.mock("../subscriptions");
-jest.mock("firebase/firestore", () => ({
-  deleteField: jest.fn(),
-  doc: jest.fn(),
+vi.mock("../subscriptions");
+vi.mock("firebase/firestore", () => ({
+  deleteField: vi.fn(),
+  doc: vi.fn(),
   serverTimestamp: function serverTimestamp() {
     return "2023-06-12";
   },
 }));
-jest.mock("../../FirestoreStore");
+vi.mock("../../FirestoreStore");
 
 let mockRootStore: RootStore;
 let rootStore: RootStore;
 let testClient: Client;
 let record: ClientRecord;
-const mockDeleteField = deleteField as jest.Mock;
+const mockDeleteField = deleteField as Mock;
 
 function createTestUnit() {
   testClient = new Client(record, mockRootStore);
@@ -50,31 +51,33 @@ function createTestUnit() {
 describe("Client", () => {
   beforeEach(() => {
     configure({ safeDescriptors: false });
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     rootStore = new RootStore();
-    jest
-      .spyOn(rootStore.workflowsStore, "currentUserEmail", "get")
-      .mockReturnValue("staff@email.com");
-    jest
-      .spyOn(rootStore.userStore, "userSurname", "get")
-      .mockReturnValue("Smith");
-    jest
-      .spyOn(rootStore.userStore, "userFullName", "get")
-      .mockReturnValue("Firstname Smith");
-    jest
-      .spyOn(rootStore.userStore, "userHash", "get")
-      .mockReturnValue("123-hash");
+    vi.spyOn(
+      rootStore.workflowsStore,
+      "currentUserEmail",
+      "get",
+    ).mockReturnValue("staff@email.com");
+    vi.spyOn(rootStore.userStore, "userSurname", "get").mockReturnValue(
+      "Smith",
+    );
+    vi.spyOn(rootStore.userStore, "userFullName", "get").mockReturnValue(
+      "Firstname Smith",
+    );
+    vi.spyOn(rootStore.userStore, "userHash", "get").mockReturnValue(
+      "123-hash",
+    );
     mockDeleteField.mockReturnValue("delete field");
     mockRootStore = {
       ...rootStore,
       currentTenantId: "US_CA",
       firestoreStore: {
-        updateMilestonesMessages: jest.fn(),
-        doc: jest.fn(),
-        collection: jest.fn(),
+        updateMilestonesMessages: vi.fn(),
+        doc: vi.fn(),
+        collection: vi.fn(),
       } as unknown as FirestoreStore,
       apiStore: {
-        postExternalSMSMessage: jest.fn(),
+        postExternalSMSMessage: vi.fn(),
       } as unknown as APIStore,
     } as unknown as RootStore;
     record = {
@@ -98,7 +101,7 @@ describe("Client", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     configure({ safeDescriptors: true });
   });
 
@@ -334,7 +337,7 @@ describe("Client", () => {
       mockRootStore = {
         ...mockRootStore,
         apiStore: {
-          postExternalSMSMessage: jest
+          postExternalSMSMessage: vi
             .fn()
             .mockRejectedValueOnce(new Error("backend error")),
         } as unknown as APIStore,

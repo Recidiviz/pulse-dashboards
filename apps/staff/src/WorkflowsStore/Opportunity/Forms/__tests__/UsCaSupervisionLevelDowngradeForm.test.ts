@@ -65,7 +65,7 @@ function createTestUnit() {
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsCaSupervisionLevelDowngradeOpportunity(person);
-  jest.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
+  vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
   form = opp.form;
 }
 
@@ -76,7 +76,7 @@ beforeEach(() => {
 
 afterEach(() => {
   configure({ safeDescriptors: true });
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 describe("prefilledDataTransformer", () => {

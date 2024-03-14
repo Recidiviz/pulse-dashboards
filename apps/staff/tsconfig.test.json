@@ -1,0 +1,31 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": [
+      "vitest/globals",
+      "vitest/importMeta",
+      "vite/client",
+      "node",
+      "vitest",
+      "vite-plugin-comlink/client"
+    ]
+  },
+  "files": [
+    "../../node_modules/@nx/react/typings/cssmodule.d.ts",
+    "../../node_modules/@nx/react/typings/image.d.ts"
+  ],
+  "include": [
+    "vite.config.ts",
+    "vitest.config.ts",
+    "src/setupTests.tsx",
+    "src/setupTestsGlobal.tsx",
+    "src/**/__tests__/**/*",
+    "**/__mocks__/**/*",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.test.js",
+    "src/**/*.test.jsx",
+    "src/**/*.d.ts"
+  ]
+}

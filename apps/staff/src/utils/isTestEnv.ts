@@ -15,5 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 export function isTestEnv(): boolean {
-  return process.env.NODE_ENV === "test";
+  return import.meta.env.MODE === "test";
 }

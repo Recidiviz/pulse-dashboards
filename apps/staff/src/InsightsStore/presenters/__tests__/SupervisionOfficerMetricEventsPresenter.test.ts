@@ -42,7 +42,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test("hydrate", async () => {
@@ -54,9 +54,10 @@ test("hydrate", async () => {
 });
 
 test("hydrated with no results", async () => {
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficerMetricEvents")
-    .mockResolvedValue([]);
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "supervisionOfficerMetricEvents",
+  ).mockResolvedValue([]);
 
   await presenter.hydrate();
 
@@ -65,11 +66,12 @@ test("hydrated with no results", async () => {
 
 test("hydration error in dependency", async () => {
   const err = new Error("fake error");
-  jest
-    .spyOn(InsightsSupervisionStore.prototype, "populateMetricEventsForOfficer")
-    .mockImplementation(() => {
-      throw err;
-    });
+  vi.spyOn(
+    InsightsSupervisionStore.prototype,
+    "populateMetricEventsForOfficer",
+  ).mockImplementation(() => {
+    throw err;
+  });
 
   await presenter.hydrate();
   expect(presenter.hydrationState).toEqual({ status: "failed", error: err });

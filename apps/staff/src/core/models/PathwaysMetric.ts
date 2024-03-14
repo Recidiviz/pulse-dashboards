@@ -169,7 +169,7 @@ export default abstract class PathwaysMetric<RecordFormat extends MetricRecord>
           !this.rootStore ||
           !this.newBackendMetric ||
           PathwaysMetric.backendForMetric(this.id) !== "OLD_WITH_DIFFING" ||
-          process.env.REACT_APP_DEPLOY_ENV === "production"
+          import.meta.env.VITE_DEPLOY_ENV === "production"
         )
           return;
 

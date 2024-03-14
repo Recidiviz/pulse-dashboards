@@ -37,7 +37,7 @@ let client: Client;
 let resident: Resident;
 let root: RootStore;
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 function createResidentTestUnit(
   residentRecord: typeof usMePersonRecord,
@@ -46,18 +46,18 @@ function createResidentTestUnit(
 ) {
   root = new RootStore();
   // @ts-ignore
-  jest.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
+  vi.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
     verifiedOpportunities: verifiedOpps,
   });
   // @ts-ignore
-  jest.spyOn(root.workflowsStore, "selectedResident", "get").mockReturnValue({
+  vi.spyOn(root.workflowsStore, "selectedResident", "get").mockReturnValue({
     ...usMePersonRecord,
     portionServedNeeded,
   });
 
-  jest
-    .spyOn(root, "currentTenantId", "get")
-    .mockReturnValue(residentRecord.stateCode as TenantId);
+  vi.spyOn(root, "currentTenantId", "get").mockReturnValue(
+    residentRecord.stateCode as TenantId,
+  );
 
   resident = new Resident(residentRecord, root);
 }
@@ -73,17 +73,17 @@ function createClientTestUnit(
   root = new RootStore();
 
   // @ts-ignore
-  jest.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
+  vi.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
     verifiedOpportunities: verifiedOpps,
   });
   // @ts-ignore
-  jest.spyOn(root.workflowsStore, "selectedClient", "get").mockReturnValue({
+  vi.spyOn(root.workflowsStore, "selectedClient", "get").mockReturnValue({
     ...usMeEarlyTerminationEligibleClientRecord,
   });
 
-  jest
-    .spyOn(root, "currentTenantId", "get")
-    .mockReturnValue(clientRecord.stateCode as TenantId);
+  vi.spyOn(root, "currentTenantId", "get").mockReturnValue(
+    clientRecord.stateCode as TenantId,
+  );
 
   client = new Client(clientRecord, root);
 }

@@ -19,15 +19,14 @@
  */
 import { renderHook } from "@testing-library/react";
 import { runInAction } from "mobx";
-import React from "react";
 
 import StoreProvider from "../../../components/StoreProvider";
 import RootStore from "../../../RootStore";
 import CoreStore from "../../CoreStore";
 import usePageContent from "../usePageContent";
 
-jest.mock("../../content/page/default");
-jest.mock("../../content/page/us_id");
+vi.mock("../../content/page/default");
+vi.mock("../../content/page/us_id");
 
 const testPageContent = (pageId, expectedTitle, expectedSummary) => {
   const wrapper = ({ children }) => <StoreProvider>{children}</StoreProvider>;

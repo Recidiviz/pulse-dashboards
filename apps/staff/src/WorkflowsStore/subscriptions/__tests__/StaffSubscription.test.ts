@@ -19,24 +19,25 @@
 
 import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
+import { Mock } from "vitest";
 
 import { CombinedUserRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { filterByUserDistrict } from "../../utils";
 import { StaffSubscription } from "../StaffSubscription";
 
-jest.mock("firebase/firestore");
+vi.mock("firebase/firestore");
 
-const queryMock = query as jest.Mock;
-const whereMock = where as jest.Mock;
-const collectionMock = jest.fn();
+const queryMock = query as Mock;
+const whereMock = where as Mock;
+const collectionMock = vi.fn();
 
 let rootStoreMock: RootStore;
 let sub: StaffSubscription;
 
 describe("StaffSubscription tests", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
 
     rootStoreMock = observable({
       currentTenantId: "US_ND",

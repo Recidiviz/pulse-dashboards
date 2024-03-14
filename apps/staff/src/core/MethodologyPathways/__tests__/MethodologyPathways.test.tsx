@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useLocation } from "react-router-dom";
+import { Mock } from "vitest";
+
 import { useRootStore } from "../../../components/StoreProvider";
 import { render } from "../../../testUtils";
 import { getMethodologyCopy } from "../../content";
@@ -26,22 +29,26 @@ import {
 } from "../../views";
 import MethodologyPathways from "..";
 
-jest.mock("react-router-dom", () => ({
-  // @ts-ignore
-  ...jest.requireActual("react-router-dom"),
-  useLocation: jest.fn().mockReturnValue({
-    pathname: "/methodology/system",
-  }),
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
+  useLocation: vi.fn(),
 }));
-jest.mock("../../../components/StoreProvider");
-jest.mock("../../content/page/default.ts");
-jest.mock("../../content/page/us_id.ts");
-jest.mock("../../content/metric/default.ts");
-jest.mock("../../content/metric/us_id.ts");
+vi.mock("../../../components/StoreProvider");
+vi.mock("../../content/page/default.ts");
+vi.mock("../../content/page/us_id.ts");
+vi.mock("../../content/metric/default.ts");
+vi.mock("../../content/metric/us_id.ts");
 
 describe("MethodologyPathways", () => {
+  beforeEach(() => {
+    // @ts-expect-error
+    vi.mocked(useLocation).mockReturnValue({
+      pathname: "/methodology/system",
+    });
+  });
+
   describe("when the tenant is US_ID", () => {
-    const allowedNavigation = {
+    const allowedNavigation: Record<string, Array<string>> = {
       system: ["prison", "supervision"],
       prison: ["projectedCountOverTime"],
       supervision: [],
@@ -50,7 +57,7 @@ describe("MethodologyPathways", () => {
     };
 
     beforeEach(() => {
-      (useRootStore as jest.Mock).mockReturnValue({
+      (useRootStore as Mock).mockReturnValue({
         userStore: {
           userAllowedNavigation: allowedNavigation,
         },
@@ -59,38 +66,42 @@ describe("MethodologyPathways", () => {
     });
 
     describe("TOC links", () => {
-      // @ts-ignore
+      // @ts-expect-error
       const { pageCopy } = getMethodologyCopy("US_ID").system;
-      allowedNavigation.system.forEach((pageId: string) => {
-        it(`renders the TOC link for ${pageId}`, () => {
+
+      it.each(allowedNavigation.system)(
+        "renders the TOC link for %s",
+        (pageId) => {
           const { getByRole } = render(<MethodologyPathways />);
           expect(getByRole("link", { name: pageCopy[pageId].title }));
-        });
-      });
+        },
+      );
 
       const notAllowedNavigation = Object.keys(pageCopy).filter(
         (page) => !allowedNavigation.system.includes(page),
       );
-      notAllowedNavigation.forEach((pageId: string) => {
-        it(`does not render the TOC link for ${pageId}`, () => {
+
+      it.each(notAllowedNavigation)(
+        "does not render the TOC link for %s",
+        (pageId) => {
           const { queryByRole } = render(<MethodologyPathways />);
           expect(
             queryByRole("link", { name: pageCopy[pageId].title }),
           ).toBeNull();
-        });
-      });
+        },
+      );
     });
 
-    describe("Methodology blocks", () => {
-      // @ts-ignore
-      const { metricCopy, pageCopy } = getMethodologyCopy("US_ID").system;
-      allowedNavigation.system.forEach((pageId: string) => {
-        it(`renders the methodology block for page ${pageId}`, () => {
+    describe.each(allowedNavigation.system)(
+      "Methodology blocks for %s",
+      (pageId) => {
+        // @ts-ignore
+        const { metricCopy, pageCopy } = getMethodologyCopy("US_ID").system;
+        it("renders the methodology block", () => {
           const { getByRole } = render(<MethodologyPathways />);
           expect(getByRole("heading", { name: pageCopy[pageId].title }));
         });
 
-        // @ts-ignore
         const allowedSections = allowedNavigation[pageId];
         const allowedMetrics = Object.keys(metricCopy).filter(
           (metricId) =>
@@ -102,12 +113,13 @@ describe("MethodologyPathways", () => {
             ),
         );
 
-        allowedMetrics.forEach((metricId) => {
-          it(`renders the methodology block for the ${pageId} page's metric ${metricId}`, () => {
+        it.each(allowedMetrics)(
+          "renders the methodology block for %s",
+          (metricId) => {
             const { getByRole } = render(<MethodologyPathways />);
             expect(getByRole("heading", { name: metricCopy[metricId].title }));
-          });
-        });
+          },
+        );
 
         const notAllowedMetrics = Object.keys(metricCopy).filter(
           (metricId) =>
@@ -118,27 +130,30 @@ describe("MethodologyPathways", () => {
               metricId as MetricId,
             ),
         );
-        notAllowedMetrics.forEach((metricId) => {
-          it(`does not render the methodology block for the ${pageId} page's metric ${metricId}`, () => {
+
+        it.each(notAllowedMetrics)(
+          "does not render the methodology block for %s",
+          (metricId) => {
             const { queryByRole } = render(<MethodologyPathways />);
             expect(
               queryByRole("heading", { name: metricCopy[metricId].title }),
             ).toBeNull();
-          });
-        });
-      });
+          },
+        );
 
-      const notAllowedPages = Object.keys(pageCopy).filter(
-        (page) => !allowedNavigation.system.includes(page),
-      );
-      notAllowedPages.forEach((pageId: string) => {
-        it(`does not render the methodology block for page ${pageId}`, () => {
+        it("does not render the methodology blocks for other pages", () => {
+          const notAllowedPages = Object.keys(pageCopy).filter(
+            (page) => !allowedNavigation.system.includes(page),
+          );
           const { queryByRole } = render(<MethodologyPathways />);
-          expect(
-            queryByRole("heading", { name: pageCopy[pageId].title }),
-          ).toBeNull();
+          notAllowedPages.forEach((otherPageId) => {
+            expect(
+              queryByRole("heading", { name: pageCopy[otherPageId].title }),
+            ).toBeNull();
+          });
+          expect.hasAssertions();
         });
-      });
-    });
+      },
+    );
   });
 });

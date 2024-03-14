@@ -58,7 +58,7 @@ import {
   UserAppMetadata,
 } from "./types";
 
-const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
+const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
 type ConstructorProps = {
   authSettings?: Auth0ClientOptions;

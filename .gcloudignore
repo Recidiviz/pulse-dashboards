@@ -39,10 +39,14 @@ archive/
 /build/report.html
 coverage/
 /*.md
+dist/
 
 # Offline fixture files
-server/core/demo_data/*.json
-server/core/demo_data/*.txt
+apps/staff/server/core/demo_data/*.json
+apps/staff/server/core/demo_data/*.txt
 
 # Dev tooling 
 .nx
+.vscode
+.yalc
+.firebase

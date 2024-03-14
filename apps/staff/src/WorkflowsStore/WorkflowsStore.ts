@@ -140,11 +140,12 @@ export class WorkflowsStore implements Hydratable {
 
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
-    makeAutoObservable(this, {
+    makeAutoObservable<this, "userKeepAliveDisposer">(this, {
       rootStore: false,
       formatSupervisionLevel: false,
       hydrate: action,
       setActivePage: action,
+      userKeepAliveDisposer: false,
     });
 
     this.opportunityConfigurationStore = new OpportunityConfigurationStore(

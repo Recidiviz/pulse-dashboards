@@ -25,6 +25,7 @@ import {
 } from "firebase/firestore";
 import { computed, IObservableValue, observable } from "mobx";
 import { keepAlive } from "mobx-utils";
+import { Mock } from "vitest";
 
 import { FeatureGateError } from "../../../errors";
 import { FirestoreQuerySubscription } from "../FirestoreQuerySubscription";
@@ -33,12 +34,12 @@ import {
   getMockSnapshotErrorHandler,
 } from "./testUtils";
 
-jest.mock("firebase/firestore");
-jest.mock("@sentry/react");
+vi.mock("firebase/firestore");
+vi.mock("@sentry/react");
 
-const onSnapshotMock = onSnapshot as jest.Mock;
+const onSnapshotMock = onSnapshot as Mock;
 
-const cancelSnapshotMock = jest.fn();
+const cancelSnapshotMock = vi.fn();
 
 let observableParam: IObservableValue<string | undefined>;
 
@@ -57,7 +58,7 @@ function getTestUnit(...constructorArgs: any[]) {
       // hook to let us trigger an undefined query
       if (!val) return;
 
-      return jest.fn().mockReturnValue(val) as unknown as Query;
+      return vi.fn().mockReturnValue(val) as unknown as Query;
     }
   }
 
@@ -65,7 +66,7 @@ function getTestUnit(...constructorArgs: any[]) {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 
   onSnapshotMock.mockReturnValue(cancelSnapshotMock);
 
@@ -83,7 +84,7 @@ test("unsubscribe", () => {
 
   // @ts-expect-error this is private with respect to the application,
   // but we need to verify its behavior to prevent memory leaks
-  jest.spyOn(sub, "disposeDynamicDataSource");
+  vi.spyOn(sub, "disposeDynamicDataSource");
   sub.unsubscribe();
 
   expect(cancelSnapshotMock).toHaveBeenCalled();
@@ -112,8 +113,8 @@ test("results", () => {
 });
 
 test("subscription responds to observation", async () => {
-  jest.spyOn(sub, "subscribe");
-  jest.spyOn(sub, "unsubscribe");
+  vi.spyOn(sub, "subscribe");
+  vi.spyOn(sub, "unsubscribe");
   // simulates the data being observed in a datastore or component
   const testObserver = keepAlive(computed(() => sub.data));
   await waitFor(async () => expect(sub.subscribe).toHaveBeenCalled());
@@ -126,8 +127,8 @@ test("subscription responds to observation", async () => {
 test("reactive query", () => {
   sub.subscribe();
 
-  jest.spyOn(sub, "subscribe");
-  jest.spyOn(sub, "unsubscribe");
+  vi.spyOn(sub, "subscribe");
+  vi.spyOn(sub, "unsubscribe");
 
   observableParam.set("TEST2");
 
@@ -154,8 +155,8 @@ test("undefined query resets data", () => {
 
   sub.subscribe();
 
-  jest.spyOn(sub, "subscribe");
-  jest.spyOn(sub, "unsubscribe");
+  vi.spyOn(sub, "subscribe");
+  vi.spyOn(sub, "unsubscribe");
 
   mockReceive(mockData);
 
@@ -278,7 +279,7 @@ test("transform errors logged to Sentry", () => {
   sub.subscribe();
 
   mockReceive(mockData);
-  expect(Sentry.captureException).toHaveBeenCalledOnceWith(testError);
+  expect(Sentry.captureException).toHaveBeenCalledExactlyOnceWith(testError);
 });
 
 test("validation errors logged to Sentry", () => {
@@ -298,7 +299,7 @@ test("validation errors logged to Sentry", () => {
   sub.subscribe();
 
   mockReceive(mockData);
-  expect(Sentry.captureException).toHaveBeenCalledOnceWith(testError);
+  expect(Sentry.captureException).toHaveBeenCalledExactlyOnceWith(testError);
 });
 
 test("feature gate errors not logged to Sentry", () => {

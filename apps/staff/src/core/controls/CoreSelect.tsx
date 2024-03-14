@@ -18,7 +18,7 @@ import "./CoreSelect.scss";
 
 import cn from "classnames";
 import React, { forwardRef } from "react";
-import ReactSelect, { IndicatorProps } from "react-select";
+import ReactSelect from "react-select";
 
 import { coreSelectCustomStyles } from "./utils";
 
@@ -36,16 +36,10 @@ type CoreSelectProps = {
   [key: string]: any;
 };
 
-const CustomDropdownIndicator = ({
-  selectProps,
-}: IndicatorProps<FilterOption, false>) => {
+const CustomDropdownIndicator = () => {
   return (
     <div className="CoreSelect__custom-indicator">
-      <span
-        className={cn("CoreSelect__custom-arrow", {
-          "CoreSelect__custom-arrow--changed": selectProps.isChanged,
-        })}
-      />
+      <span className={cn("CoreSelect__custom-arrow", {})} />
     </div>
   );
 };
@@ -57,7 +51,7 @@ export const CoreSelect = forwardRef<HTMLInputElement, CoreSelectProps>(
         // @ts-ignore
         ref={ref}
         aria-label={props.id}
-        className="CoreSelect"
+        className={`CoreSelect ${props.isChanged ? "CoreSelect--changed" : ""}`}
         classNamePrefix="CoreSelect"
         components={{
           IndicatorSeparator: () => null,

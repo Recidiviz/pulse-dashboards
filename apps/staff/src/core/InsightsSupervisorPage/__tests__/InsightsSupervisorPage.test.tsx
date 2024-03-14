@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
@@ -31,23 +31,21 @@ import InsightsSupervisorPage, {
   SupervisorPage,
 } from "../InsightsSupervisorPage";
 
-jest.mock("../../../components/StoreProvider");
-jest.mock(
+vi.mock("../../../components/StoreProvider");
+vi.mock(
   "../../../InsightsStore/presenters/SwarmPresenter/getSwarmLayoutWorker",
 );
 
-jest
-  .spyOn(UserStore.prototype, "isRecidivizUser", "get")
-  .mockImplementation(() => false);
-
-const useRootStoreMock = jest.mocked(useRootStore);
+const useRootStoreMock = vi.mocked(useRootStore);
 
 beforeEach(() => {
+  vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
+    () => false,
+  );
   configure({ safeDescriptors: false });
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -72,9 +70,7 @@ describe("Hydrated Supervisor Page", () => {
   });
 
   test("Renders the correct title", async () => {
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
     // re-hydrate to pick up the mock
     await presenter?.hydrate();
     render(
@@ -92,63 +88,67 @@ describe("Hydrated Supervisor Page", () => {
     });
   });
 
-  test("Renders the info items", () => {
-    jest
-      .spyOn(store, "currentSupervisorUser", "get")
-      .mockReturnValue(supervisorUser);
+  test("Renders the info items", async () => {
+    vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
+      supervisorUser,
+    );
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
       </BrowserRouter>,
     );
 
-    [
-      "D1",
-      "Miles D Davis",
-      "Duke Ellington, Chet Baker, Louis Armstrong",
-    ].forEach((text) => {
-      expect(screen.getByText(text)).toBeInTheDocument();
-    });
+    await Promise.all(
+      [
+        "D1",
+        "Miles D Davis",
+        "Duke Ellington, Chet Baker, Louis Armstrong",
+      ].map((text) =>
+        waitFor(() => expect(screen.getByText(text)).toBeInTheDocument()),
+      ),
+    );
   });
 
-  test("renders back button", () => {
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
+  test("renders back button", async () => {
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
       </BrowserRouter>,
     );
-    expect(
-      screen.getByRole("link", { name: "Go to supervisors list" }),
-    ).toBeInTheDocument();
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("link", { name: "Go to supervisors list" }),
+      ).toBeInTheDocument(),
+    );
   });
 
-  test("renders back button for supervisor who can access all supervisors", () => {
-    jest
-      .spyOn(store, "currentSupervisorUser", "get")
-      .mockReturnValue(supervisorUser);
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
+  test("renders back button for supervisor who can access all supervisors", async () => {
+    vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
+      supervisorUser,
+    );
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
       </BrowserRouter>,
     );
-    expect(
-      screen.getByRole("link", { name: "Go to supervisors list" }),
-    ).toBeInTheDocument();
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("link", { name: "Go to supervisors list" }),
+      ).toBeInTheDocument(),
+    );
   });
 
   test("does not render back button", () => {
-    jest
-      .spyOn(store, "currentSupervisorUser", "get")
-      .mockReturnValue(supervisorUser);
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(false);
+    vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
+      supervisorUser,
+    );
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(
+      false,
+    );
 
     render(
       <BrowserRouter>
@@ -160,33 +160,37 @@ describe("Hydrated Supervisor Page", () => {
     ).toBeNull();
   });
 
-  test("Renders the correct title if current user is supervisor", () => {
-    jest
-      .spyOn(store, "currentSupervisorUser", "get")
-      .mockReturnValue(supervisorUser);
+  test("Renders the correct title if current user is supervisor", async () => {
+    vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
+      supervisorUser,
+    );
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />
       </BrowserRouter>,
     );
 
-    [
-      "2 of the 3 officers in your team are",
-      "outliers",
-      "on one or more metrics",
-    ].forEach((text) => {
-      expect(screen.getByText(text, { exact: false })).toBeInTheDocument();
-    });
+    await Promise.all(
+      [
+        "2 of the 3 officers in your team are",
+        "outliers",
+        "on one or more metrics",
+      ].map((text) =>
+        waitFor(() =>
+          expect(screen.getByText(text, { exact: false })).toBeInTheDocument(),
+        ),
+      ),
+    );
   });
 
   test("analytics trackInsightsSupervisorPageViewed", () => {
-    jest.spyOn(AnalyticsStore.prototype, "trackInsightsSupervisorPageViewed");
-    jest
-      .spyOn(rootStore.userStore, "userPseudoId", "get")
-      .mockReturnValue(supervisorPseudoId);
-    jest
-      .spyOn(store, "currentSupervisorUser", "get")
-      .mockReturnValue(supervisorUser);
+    vi.spyOn(AnalyticsStore.prototype, "trackInsightsSupervisorPageViewed");
+    vi.spyOn(rootStore.userStore, "userPseudoId", "get").mockReturnValue(
+      supervisorPseudoId,
+    );
+    vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
+      supervisorUser,
+    );
 
     render(
       <BrowserRouter>
@@ -216,14 +220,8 @@ describe("Insights Supervisor Page", () => {
     rootStore.insightsStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
 
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
     store.setSupervisorPseudoId("hashed-mdavis123");
-  });
-
-  afterEach(() => {
-    jest.resetAllMocks();
   });
 
   test("renders loading indicator", () => {
@@ -238,7 +236,7 @@ describe("Insights Supervisor Page", () => {
   });
 
   test("renders error page", async () => {
-    jest.spyOn(store, "populateMetricConfigs").mockImplementation(() => {
+    vi.spyOn(store, "populateMetricConfigs").mockImplementation(() => {
       throw new Error("There was an error");
     });
 

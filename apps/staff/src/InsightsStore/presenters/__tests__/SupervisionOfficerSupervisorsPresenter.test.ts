@@ -34,13 +34,13 @@ beforeEach(() => {
     new InsightsStore(new RootStore()),
     InsightsConfigFixture,
   );
-  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
+  vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
   presenter = new SupervisionOfficerSupervisorsPresenter(store);
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -53,9 +53,10 @@ test("hydrate", async () => {
 });
 
 test("hydrated with no results", async () => {
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficerSupervisors")
-    .mockResolvedValue([]);
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "supervisionOfficerSupervisors",
+  ).mockResolvedValue([]);
 
   await presenter.hydrate();
 
@@ -182,15 +183,13 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
   const launchedDistricts = ["REGION 6"];
 
   beforeEach(() => {
-    jest
-      .spyOn(
-        store.insightsStore.rootStore.tenantStore,
-        "insightsLaunchedDistricts",
-        "get",
-      )
-      .mockReturnValue(launchedDistricts);
+    vi.spyOn(
+      store.insightsStore.rootStore.tenantStore,
+      "insightsLaunchedDistricts",
+      "get",
+    ).mockReturnValue(launchedDistricts);
 
-    jest.spyOn(store, "supervisionOfficerSupervisors", "get").mockReturnValue(
+    vi.spyOn(store, "supervisionOfficerSupervisors", "get").mockReturnValue(
       supervisionOfficerSupervisorsFixture.concat({
         supervisionDistrict: launchedDistricts[0],
         externalId: "testid1",

@@ -52,34 +52,34 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
         usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
       ),
     ).toMatchInlineSnapshot(`
-      Object {
-        "eligibleCriteria": Object {
-          "usMoD1SanctionAfterMostRecentHearing": Object {
+      {
+        "eligibleCriteria": {
+          "usMoD1SanctionAfterMostRecentHearing": {
             "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
           },
-          "usMoD1SanctionAfterRestrictiveHousingStart": Object {
+          "usMoD1SanctionAfterRestrictiveHousingStart": {
             "latestD1SanctionStartDate": 2023-08-15T00:00:00.000Z,
             "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
           },
-          "usMoInRestrictiveHousing": Object {
+          "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
           },
-          "usMoNoActiveD1Sanctions": Object {
+          "usMoNoActiveD1Sanctions": {
             "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
             "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
           },
         },
         "externalId": "rh-1",
-        "ineligibleCriteria": Object {},
-        "metadata": Object {
+        "ineligibleCriteria": {},
+        "metadata": {
           "bedNumber": "03",
           "buildingNumber": "13",
-          "cdvsSinceLastHearing": Array [],
+          "cdvsSinceLastHearing": [],
           "complexNumber": "2",
           "currentFacility": "FACILITY 01",
           "housingUseCode": "123456",
-          "majorCdvs": Array [
-            Object {
+          "majorCdvs": [
+            {
               "cdvDate": 2022-02-20T00:00:00.000Z,
               "cdvRule": "Rule 7.2",
             },
@@ -107,32 +107,32 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
         },
       }),
     ).toMatchInlineSnapshot(`
-      Object {
-        "eligibleCriteria": Object {
-          "usMoD1SanctionAfterMostRecentHearing": Object {
+      {
+        "eligibleCriteria": {
+          "usMoD1SanctionAfterMostRecentHearing": {
             "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
           },
-          "usMoD1SanctionAfterRestrictiveHousingStart": Object {
+          "usMoD1SanctionAfterRestrictiveHousingStart": {
             "latestD1SanctionStartDate": 2023-08-15T00:00:00.000Z,
             "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
           },
-          "usMoInRestrictiveHousing": Object {
+          "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
           },
           "usMoNoActiveD1Sanctions": null,
         },
         "externalId": "rh-1",
-        "ineligibleCriteria": Object {},
-        "metadata": Object {
+        "ineligibleCriteria": {},
+        "metadata": {
           "allSanctions": undefined,
           "bedNumber": "03",
           "buildingNumber": "13",
-          "cdvsSinceLastHearing": Array [],
+          "cdvsSinceLastHearing": [],
           "complexNumber": "2",
           "currentFacility": "FACILITY 01",
           "housingUseCode": "123456",
-          "majorCdvs": Array [
-            Object {
+          "majorCdvs": [
+            {
               "cdvDate": 2022-02-20T00:00:00.000Z,
               "cdvRule": "Rule 7.2",
             },
@@ -156,34 +156,34 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
         recordWithNullUsMoNoD1Sanctions,
       ),
     ).toMatchInlineSnapshot(`
-      Object {
-        "eligibleCriteria": Object {
-          "usMoD1SanctionAfterMostRecentHearing": Object {
+      {
+        "eligibleCriteria": {
+          "usMoD1SanctionAfterMostRecentHearing": {
             "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
           },
-          "usMoD1SanctionAfterRestrictiveHousingStart": Object {
+          "usMoD1SanctionAfterRestrictiveHousingStart": {
             "latestD1SanctionStartDate": 2023-08-15T00:00:00.000Z,
             "restrictiveHousingStartDate": 2023-08-15T00:00:00.000Z,
           },
-          "usMoInRestrictiveHousing": Object {
+          "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
           },
-          "usMoNoActiveD1Sanctions": Object {
+          "usMoNoActiveD1Sanctions": {
             "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
             "latestSanctionStartDate": 2023-08-24T00:00:00.000Z,
           },
         },
         "externalId": "rh-1",
-        "ineligibleCriteria": Object {},
-        "metadata": Object {
-          "allSanctions": Array [
-            Object {
+        "ineligibleCriteria": {},
+        "metadata": {
+          "allSanctions": [
+            {
               "sanctionCode": "D1",
               "sanctionExpirationDate": 2023-12-05T00:00:00.000Z,
               "sanctionId": 4000,
               "sanctionStartDate": 2023-08-15T00:00:00.000Z,
             },
-            Object {
+            {
               "sanctionCode": "D1",
               "sanctionExpirationDate": 2023-12-05T00:00:00.000Z,
               "sanctionId": 4001,
@@ -192,12 +192,12 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
           ],
           "bedNumber": "03",
           "buildingNumber": "13",
-          "cdvsSinceLastHearing": Array [],
+          "cdvsSinceLastHearing": [],
           "complexNumber": "2",
           "currentFacility": "FACILITY 01",
           "housingUseCode": "123456",
-          "majorCdvs": Array [
-            Object {
+          "majorCdvs": [
+            {
               "cdvDate": 2022-02-20T00:00:00.000Z,
               "cdvRule": "Rule 7.2",
             },

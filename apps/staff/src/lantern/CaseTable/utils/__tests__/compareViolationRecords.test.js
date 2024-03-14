@@ -18,13 +18,16 @@
 import { translate } from "../../../../utils/i18nSettings";
 import { compareViolationRecords } from "../compareViolationRecords";
 
-jest.mock("../../../../utils/i18nSettings");
+vi.mock("../../../../utils/i18nSettings");
 describe("compareViolationRecords function", () => {
   const violationsBySeverity = ["fel", "misd", "absc", "muni", "tech"];
   const mockTranslations = {
     violationsBySeverity,
   };
-  translate.mockImplementation((key) => mockTranslations[key]);
+
+  beforeEach(() => {
+    translate.mockImplementation((key) => mockTranslations[key]);
+  });
 
   it("if rows have no valid violations should stay in the same order", () => {
     const given = ["", "dsadasd", "fel", "ifoewnfwneog", "fdoiafad", "sada"];

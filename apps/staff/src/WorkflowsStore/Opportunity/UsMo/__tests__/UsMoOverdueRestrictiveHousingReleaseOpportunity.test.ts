@@ -41,7 +41,7 @@ let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 let fixtureData: UsMoOverdueRestrictiveHousingReleaseReferralRecord;
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 function createTestUnit(residentRecord: typeof usMoPersonRecord) {
   resident = new Resident(residentRecord, root);
@@ -66,24 +66,31 @@ beforeAll(() => {
     ),
   );
   configure({ safeDescriptors: false });
-  jest.useFakeTimers().setSystemTime(today);
 });
 
 afterAll(() => {
-  jest.useRealTimers();
   configure({ safeDescriptors: true });
 });
 
 describe("fully eligible", () => {
   beforeEach(() => {
+    // this lets us spy on observables, e.g. computed getters
     configure({ safeDescriptors: false });
+
+    freeze(today);
+    fixtureData = cloneDeep(
+      usMoOverdueRestrictiveHousingReleaseSchema.parse(
+        usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
+      ),
+    );
+
     root = new RootStore();
-    jest
-      .spyOn(root.workflowsStore, "opportunityTypes", "get")
-      .mockReturnValue(["usMoOverdueRestrictiveHousingRelease"]);
-    jest
-      .spyOn(root.workflowsStore, "featureVariants", "get")
-      .mockReturnValue({ usMoOverdueRHPilot: {} });
+    vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+      "usMoOverdueRestrictiveHousingRelease",
+    ]);
+    vi.spyOn(root.workflowsStore, "featureVariants", "get").mockReturnValue({
+      usMoOverdueRHPilot: {},
+    });
     createTestUnit(usMoPersonRecord);
 
     referralSub = opp.referralSubscription;
@@ -96,14 +103,14 @@ describe("fully eligible", () => {
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "text": "No longer subject to D1 sanction 2 days ago (Dec 5, 2023)",
         },
-        Object {
+        {
           "text": "In Restrictive Housing due to a D1 sanction",
         },
-        Object {
+        {
           "text": "In a Restrictive Housing cell",
         },
       ]
@@ -116,14 +123,14 @@ describe("fully eligible", () => {
         today;
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "text": "No longer subject to D1 sanction today (Dec 7, 2023)",
         },
-        Object {
+        {
           "text": "In Restrictive Housing due to a D1 sanction",
         },
-        Object {
+        {
           "text": "In a Restrictive Housing cell",
         },
       ]
@@ -136,14 +143,14 @@ describe("fully eligible", () => {
         subDays(today, 1);
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "text": "No longer subject to D1 sanction 1 day ago (Dec 6, 2023)",
         },
-        Object {
+        {
           "text": "In Restrictive Housing due to a D1 sanction",
         },
-        Object {
+        {
           "text": "In a Restrictive Housing cell",
         },
       ]
@@ -156,29 +163,18 @@ describe("fully eligible", () => {
         addDays(today, 1);
     referralSub.data = fixtureData;
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "text": "No longer subject to D1 sanction in 1 day (Dec 8, 2023)",
         },
-        Object {
+        {
           "text": "In Restrictive Housing due to a D1 sanction",
         },
-        Object {
+        {
           "text": "In a Restrictive Housing cell",
         },
       ]
     `);
-  });
-
-  beforeEach(() => {
-    // this lets us spy on observables, e.g. computed getters
-
-    freeze(today);
-    fixtureData = cloneDeep(
-      usMoOverdueRestrictiveHousingReleaseSchema.parse(
-        usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
-      ),
-    );
   });
 
   describe("tabs", () => {
@@ -310,10 +306,8 @@ const createOpportunityInstance = (
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
   const mockOpp = new TestOpportunity(mockResident);
 
-  jest.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
-  jest
-    .spyOn(mockOpp, "eligibilityDate", "get")
-    .mockReturnValue(eligibilityDate);
+  vi.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
+  vi.spyOn(mockOpp, "eligibilityDate", "get").mockReturnValue(eligibilityDate);
 
   return mockOpp;
 };
@@ -361,12 +355,7 @@ export const orderedDates: (Date | undefined)[] = [
 describe("Test custom compare function", () => {
   let opportunities: TestOpportunity[];
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(2022, 7, 1));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
+    freeze(new Date(2022, 7, 1));
   });
 
   it("should sort undefined opportunities to the front of the array", () => {

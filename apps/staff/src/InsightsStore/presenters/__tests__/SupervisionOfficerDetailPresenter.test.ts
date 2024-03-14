@@ -27,36 +27,25 @@ import { supervisionOfficerFixture } from "../../models/offlineFixtures/Supervis
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerDetailPresenter } from "../SupervisionOfficerDetailPresenter";
-import { getOutlierOfficerData } from "../utils";
+import * as utils from "../utils";
 
 let store: InsightsSupervisionStore;
 const pseudoId = "hashed-mdavis123";
 
-jest.mock("../utils", () => {
-  const original = jest.requireActual("../utils").getOutlierOfficerData;
-  return {
-    getOutlierOfficerData: jest.fn().mockImplementation(original),
-  };
-});
-
-const getOutlierOfficerDataMock = getOutlierOfficerData as jest.MockedFunction<
-  typeof getOutlierOfficerData
->;
-
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  jest
-    .spyOn(UserStore.prototype, "userPseudoId", "get")
-    .mockImplementation(() => pseudoId);
-  jest
-    .spyOn(UserStore.prototype, "isRecidivizUser", "get")
-    .mockImplementation(() => false);
+  vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
+    () => pseudoId,
+  );
+  vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
+    () => false,
+  );
 
   store = new InsightsSupervisionStore(
     new RootStore().insightsStore,
     InsightsConfigFixture,
   );
-  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
+  vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
   store.setMetricId(testMetric.metricId);
 
@@ -67,7 +56,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -92,13 +81,13 @@ describe("with unit data already hydrated", () => {
   });
 
   test("makes no additional API calls", async () => {
-    jest.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks");
-    jest.spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficer");
-    jest.spyOn(
+    vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks");
+    vi.spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficer");
+    vi.spyOn(
       InsightsOfflineAPIClient.prototype,
       "supervisionOfficerSupervisors",
     );
-    jest.spyOn(
+    vi.spyOn(
       InsightsOfflineAPIClient.prototype,
       "supervisionOfficerMetricEvents",
     );
@@ -138,13 +127,10 @@ describe("with unit data already hydrated", () => {
 });
 
 test("hydration", async () => {
-  jest.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks");
-  jest.spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficer");
-  jest.spyOn(
-    InsightsOfflineAPIClient.prototype,
-    "supervisionOfficerSupervisors",
-  );
-  jest.spyOn(
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks");
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficer");
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficerSupervisors");
+  vi.spyOn(
     InsightsOfflineAPIClient.prototype,
     "supervisionOfficerMetricEvents",
   );
@@ -199,30 +185,31 @@ test("has timePeriod", async () => {
 
 test("hydration error in dependency", async () => {
   const err = new Error("fake error");
-  jest
-    .spyOn(InsightsSupervisionStore.prototype, "populateMetricConfigs")
-    .mockImplementation(() => {
-      throw err;
-    });
+  vi.spyOn(
+    InsightsSupervisionStore.prototype,
+    "populateMetricConfigs",
+  ).mockImplementation(() => {
+    throw err;
+  });
 
   await presenter.hydrate();
   expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
 });
 
 test("error assembling metrics data", async () => {
-  getOutlierOfficerDataMock.mockImplementation(() => {
+  vi.spyOn(utils, "getOutlierOfficerData").mockImplementation(() => {
     throw new Error("oops");
   });
 
   await presenter.hydrate();
   expect(presenter.hydrationState).toMatchInlineSnapshot(`
-    Object {
+    {
       "error": [AggregateError: Expected data failed to populate],
       "status": "failed",
     }
   `);
   expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
-    Array [
+    [
       [Error: oops],
     ]
   `);
@@ -230,7 +217,7 @@ test("error assembling metrics data", async () => {
 });
 
 test("tracks events", async () => {
-  jest.spyOn(AnalyticsStore.prototype, "trackInsightsStaffPageViewed");
+  vi.spyOn(AnalyticsStore.prototype, "trackInsightsStaffPageViewed");
 
   await presenter.hydrate();
   presenter.trackViewed();

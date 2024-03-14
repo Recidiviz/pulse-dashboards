@@ -1,12 +1,12 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transformations 1`] = `
-Object {
-  "hashed-128785": Object {
+{
+  "hashed-128785": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "128785",
     "displayName": "Dorothy Luna",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Dorothy",
       "surname": "Luna",
     },
@@ -14,11 +14,11 @@ Object {
     "pseudonymizedClientId": "hashed-128785",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-144925": Object {
+  "hashed-144925": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "144925",
     "displayName": "Inez Griffith",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Inez",
       "surname": "Griffith",
     },
@@ -26,11 +26,11 @@ Object {
     "pseudonymizedClientId": "hashed-144925",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-170571": Object {
+  "hashed-170571": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "170571",
     "displayName": "Ward Bradley",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Ward",
       "surname": "Bradley",
     },
@@ -38,11 +38,11 @@ Object {
     "pseudonymizedClientId": "hashed-170571",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-205752": Object {
+  "hashed-205752": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "205752",
     "displayName": "Beau Riley",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Beau",
       "surname": "Riley",
     },
@@ -50,11 +50,11 @@ Object {
     "pseudonymizedClientId": "hashed-205752",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-235261": Object {
+  "hashed-235261": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "235261",
     "displayName": "Rosie Luna",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Rosie",
       "surname": "Luna",
     },
@@ -62,11 +62,11 @@ Object {
     "pseudonymizedClientId": "hashed-235261",
     "raceOrEthnicity": "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
   },
-  "hashed-283496": Object {
+  "hashed-283496": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "283496",
     "displayName": "Gerald Barber",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Gerald",
       "surname": "Barber",
     },
@@ -74,11 +74,11 @@ Object {
     "pseudonymizedClientId": "hashed-283496",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-326160": Object {
+  "hashed-326160": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "326160",
     "displayName": "Ethel Leonard",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Ethel",
       "surname": "Leonard",
     },
@@ -86,11 +86,11 @@ Object {
     "pseudonymizedClientId": "hashed-326160",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-334531": Object {
+  "hashed-334531": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "334531",
     "displayName": "Leroy Stone",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Leroy",
       "surname": "Stone",
     },
@@ -98,11 +98,11 @@ Object {
     "pseudonymizedClientId": "hashed-334531",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-339710": Object {
+  "hashed-339710": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "339710",
     "displayName": "Bertha Figueroa",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Bertha",
       "surname": "Figueroa",
     },
@@ -110,11 +110,11 @@ Object {
     "pseudonymizedClientId": "hashed-339710",
     "raceOrEthnicity": "AMERICAN_INDIAN_ALASKAN_NATIVE",
   },
-  "hashed-374673": Object {
+  "hashed-374673": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "374673",
     "displayName": "Jeremiah Walsh",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Jeremiah",
       "surname": "Walsh",
     },
@@ -122,11 +122,11 @@ Object {
     "pseudonymizedClientId": "hashed-374673",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-413899": Object {
+  "hashed-413899": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "413899",
     "displayName": "Warren Franklin",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Warren",
       "surname": "Franklin",
     },
@@ -134,11 +134,11 @@ Object {
     "pseudonymizedClientId": "hashed-413899",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-415630": Object {
+  "hashed-415630": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "415630",
     "displayName": "Alta Jackson",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Alta",
       "surname": "Jackson",
     },
@@ -146,11 +146,11 @@ Object {
     "pseudonymizedClientId": "hashed-415630",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-436502": Object {
+  "hashed-436502": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "436502",
     "displayName": "Steve Schwartz",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Steve",
       "surname": "Schwartz",
     },
@@ -158,11 +158,11 @@ Object {
     "pseudonymizedClientId": "hashed-436502",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-461718": Object {
+  "hashed-461718": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "461718",
     "displayName": "Janette Sosa",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Janette",
       "surname": "Sosa",
     },
@@ -170,11 +170,11 @@ Object {
     "pseudonymizedClientId": "hashed-461718",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-470308": Object {
+  "hashed-470308": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "470308",
     "displayName": "Leo Marshall",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Leo",
       "surname": "Marshall",
     },
@@ -182,11 +182,11 @@ Object {
     "pseudonymizedClientId": "hashed-470308",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-504894": Object {
+  "hashed-504894": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "504894",
     "displayName": "Marie Hudson",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Marie",
       "surname": "Hudson",
     },
@@ -194,11 +194,11 @@ Object {
     "pseudonymizedClientId": "hashed-504894",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-531407": Object {
+  "hashed-531407": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "531407",
     "displayName": "Glenn Francis",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Glenn",
       "surname": "Francis",
     },
@@ -206,11 +206,11 @@ Object {
     "pseudonymizedClientId": "hashed-531407",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-564940": Object {
+  "hashed-564940": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "564940",
     "displayName": "Miguel Haynes",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Miguel",
       "surname": "Haynes",
     },
@@ -218,11 +218,11 @@ Object {
     "pseudonymizedClientId": "hashed-564940",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-582059": Object {
+  "hashed-582059": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "582059",
     "displayName": "Shawn Romero",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Shawn",
       "surname": "Romero",
     },
@@ -230,11 +230,11 @@ Object {
     "pseudonymizedClientId": "hashed-582059",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-617754": Object {
+  "hashed-617754": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "617754",
     "displayName": "Jason Barton",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Jason",
       "surname": "Barton",
     },
@@ -242,11 +242,11 @@ Object {
     "pseudonymizedClientId": "hashed-617754",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-707222": Object {
+  "hashed-707222": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "707222",
     "displayName": "Gary Alexander",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Gary",
       "surname": "Alexander",
     },
@@ -254,11 +254,11 @@ Object {
     "pseudonymizedClientId": "hashed-707222",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-792381": Object {
+  "hashed-792381": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "792381",
     "displayName": "Deena Dunlap",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Deena",
       "surname": "Dunlap",
     },
@@ -266,11 +266,11 @@ Object {
     "pseudonymizedClientId": "hashed-792381",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-803013": Object {
+  "hashed-803013": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "803013",
     "displayName": "Troy Rodgers",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Troy",
       "surname": "Rodgers",
     },
@@ -278,11 +278,11 @@ Object {
     "pseudonymizedClientId": "hashed-803013",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-837771": Object {
+  "hashed-837771": {
     "birthdate": null,
     "clientId": "837771",
     "displayName": "Nora Robbins",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Nora",
       "surname": "Robbins",
     },
@@ -290,11 +290,11 @@ Object {
     "pseudonymizedClientId": "hashed-837771",
     "raceOrEthnicity": null,
   },
-  "hashed-840134": Object {
+  "hashed-840134": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "840134",
     "displayName": "Patrick Schneider",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Patrick",
       "surname": "Schneider",
     },
@@ -302,11 +302,11 @@ Object {
     "pseudonymizedClientId": "hashed-840134",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-869516": Object {
+  "hashed-869516": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "869516",
     "displayName": "Angelo Cohen",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Angelo",
       "surname": "Cohen",
     },
@@ -314,11 +314,11 @@ Object {
     "pseudonymizedClientId": "hashed-869516",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-914408": Object {
+  "hashed-914408": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "914408",
     "displayName": "Viola Schultz",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Viola",
       "surname": "Schultz",
     },
@@ -326,11 +326,11 @@ Object {
     "pseudonymizedClientId": "hashed-914408",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-930441": Object {
+  "hashed-930441": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "930441",
     "displayName": "Stanley Maxwell",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Stanley",
       "surname": "Maxwell",
     },
@@ -338,11 +338,11 @@ Object {
     "pseudonymizedClientId": "hashed-930441",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-931890": Object {
+  "hashed-931890": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "931890",
     "displayName": "Ricardo Wood",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Ricardo",
       "surname": "Wood",
     },
@@ -350,11 +350,11 @@ Object {
     "pseudonymizedClientId": "hashed-931890",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-968048": Object {
+  "hashed-968048": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "968048",
     "displayName": "Violet Johnson",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Violet",
       "surname": "Johnson",
     },
@@ -362,11 +362,11 @@ Object {
     "pseudonymizedClientId": "hashed-968048",
     "raceOrEthnicity": "BLACK",
   },
-  "hashed-985771": Object {
+  "hashed-985771": {
     "birthdate": 1971-03-15T00:00:00.000Z,
     "clientId": "985771",
     "displayName": "Nicholas Rhodes",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Nicholas",
       "surname": "Rhodes",
     },

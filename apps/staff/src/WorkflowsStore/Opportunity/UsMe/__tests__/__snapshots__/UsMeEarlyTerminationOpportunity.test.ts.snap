@@ -1,31 +1,31 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`almost eligible pending violation requirements almost met 1`] = `
-Array [
-  Object {
+exports[`almost eligible pending violation > requirements almost met 1`] = `
+[
+  {
     "text": "Violation Pending since Jan 1, 2023",
     "tooltip": undefined,
   },
 ]
 `;
 
-exports[`almost eligible pending violation requirements met 1`] = `
-Array [
-  Object {
+exports[`almost eligible pending violation > requirements met 1`] = `
+[
+  {
     "text": "Served 1/2 of probation term",
     "tooltip": undefined,
   },
-  Object {
+  {
     "text": "Currently on medium",
     "tooltip": undefined,
   },
-  Object {
+  {
     "text": "No restitution owed",
     "tooltip": "In compliance with Department Policy (ACC) 9.6, Restitution and Fees, 
 under no circumstances may a Probation Officer make a motion for or agree to early 
 termination of probation if the probationer has not paid the total amount of restitution owed.",
   },
-  Object {
+  {
     "text": "No new convictions in the past 6 months",
     "tooltip": "In addition, whenever a person on probation is convicted of a new crime 
 during the period of probation, the probation is not revoked, and the person
@@ -37,9 +37,9 @@ with the court for early termination of probation.",
 ]
 `;
 
-exports[`almost eligible restitution owed requirements almost met 1`] = `
-Array [
-  Object {
+exports[`almost eligible restitution owed > requirements almost met 1`] = `
+[
+  {
     "text": "Remaining Restitution Balance $500.00",
     "tooltip": "In compliance with Department Policy (ACC) 9.6, Restitution and Fees, 
 under no circumstances may a Probation Officer make a motion for or agree to early 
@@ -48,17 +48,17 @@ termination of probation if the probationer has not paid the total amount of res
 ]
 `;
 
-exports[`almost eligible restitution owed requirements met 1`] = `
-Array [
-  Object {
+exports[`almost eligible restitution owed > requirements met 1`] = `
+[
+  {
     "text": "Served 1/2 of probation term",
     "tooltip": undefined,
   },
-  Object {
+  {
     "text": "Currently on medium",
     "tooltip": undefined,
   },
-  Object {
+  {
     "text": "No new convictions in the past 6 months",
     "tooltip": "In addition, whenever a person on probation is convicted of a new crime 
 during the period of probation, the probation is not revoked, and the person
@@ -67,30 +67,30 @@ period of probation and the term of imprisonment will not expire until the
 period of probation is completed, the Probation Officer may file a motion
 with the court for early termination of probation.",
   },
-  Object {
+  {
     "text": "No Pending Violations",
     "tooltip": undefined,
   },
 ]
 `;
 
-exports[`fully eligible requirements met 1`] = `
-Array [
-  Object {
+exports[`fully eligible > requirements met 1`] = `
+[
+  {
     "text": "Served 1/2 of probation term",
     "tooltip": undefined,
   },
-  Object {
+  {
     "text": "Currently on medium",
     "tooltip": undefined,
   },
-  Object {
+  {
     "text": "Paid all owed restitution",
     "tooltip": "In compliance with Department Policy (ACC) 9.6, Restitution and Fees, 
 under no circumstances may a Probation Officer make a motion for or agree to early 
 termination of probation if the probationer has not paid the total amount of restitution owed.",
   },
-  Object {
+  {
     "text": "No new convictions in the past 6 months",
     "tooltip": "In addition, whenever a person on probation is convicted of a new crime 
 during the period of probation, the probation is not revoked, and the person
@@ -99,7 +99,7 @@ period of probation and the term of imprisonment will not expire until the
 period of probation is completed, the Probation Officer may file a motion
 with the court for early termination of probation.",
   },
-  Object {
+  {
     "text": "No Pending Violations",
     "tooltip": undefined,
   },

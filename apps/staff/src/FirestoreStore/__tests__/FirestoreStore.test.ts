@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-/* eslint-disable import/first */
-// Delete test env var to test firestore emulator connection
-delete process.env.REACT_APP_TEST_ENV;
+
 import { connectAuthEmulator } from "firebase/auth";
 import {
   deleteField,
@@ -26,6 +24,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import tk from "timekeeper";
+import { Mock } from "vitest";
 
 import {
   fetchFirebaseToken,
@@ -41,27 +40,35 @@ import {
   SupervisionTaskUpdate,
 } from "../types";
 
-jest.mock("firebase/auth");
-jest.mock("firebase/firestore");
-jest.mock("../../utils/isOfflineMode");
+vi.mock("firebase/auth");
+vi.mock("firebase/firestore");
+vi.mock("../../utils/isOfflineMode");
 
-const mockFetchFirebaseToken = fetchFirebaseToken as jest.Mock;
+const { VITE_TEST_ENV } = vi.hoisted(() => {
+  const VITE_TEST_ENV = import.meta.env.VITE_TEST_ENV;
+  // Delete test env var to test firestore emulator connection
+  import.meta.env.VITE_TEST_ENV = "";
+
+  return { VITE_TEST_ENV };
+});
+
+const mockFetchFirebaseToken = fetchFirebaseToken as Mock;
 const mockFetchImpersonatedFirebaseToken =
-  fetchImpersonatedFirebaseToken as jest.Mock;
-const mockConnectAuthEmulator = connectAuthEmulator as jest.Mock;
-const mockSetDoc = setDoc as jest.Mock;
-const mockDoc = doc as jest.Mock;
-const mockDeleteField = deleteField as jest.Mock;
-const mockGetTokenSilently = jest.fn();
+  fetchImpersonatedFirebaseToken as Mock;
+const mockConnectAuthEmulator = connectAuthEmulator as Mock;
+const mockSetDoc = setDoc as Mock;
+const mockDoc = doc as Mock;
+const mockDeleteField = deleteField as Mock;
+const mockGetTokenSilently = vi.fn();
 
-jest.mock("../../api/fetchFirebaseToken", () => {
+vi.mock("../../api/fetchFirebaseToken", () => {
   return {
-    fetchFirebaseToken: jest
+    fetchFirebaseToken: vi
       .fn()
       .mockImplementation(() =>
         Promise.resolve({ json: () => Promise.resolve("token123") }),
       ),
-    fetchImpersonatedFirebaseToken: jest
+    fetchImpersonatedFirebaseToken: vi
       .fn()
       .mockImplementation(() =>
         Promise.resolve({ json: () => Promise.resolve("token123") }),
@@ -69,12 +76,16 @@ jest.mock("../../api/fetchFirebaseToken", () => {
   };
 });
 
+afterAll(() => {
+  import.meta.env.VITE_TEST_ENV = VITE_TEST_ENV;
+});
+
 describe("FirestoreStore", () => {
   let store: FirestoreStore;
   let mockRootStore = {} as RootStore;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     tk.freeze(new Date("2022-01-01"));
     store = new FirestoreStore({ rootStore: mockRootStore });
   });
@@ -129,7 +140,7 @@ describe("FirestoreStore", () => {
     });
 
     test("Should call /token for offline user", async () => {
-      const isOfflineModeMock = isOfflineMode as jest.Mock;
+      const isOfflineModeMock = isOfflineMode as Mock;
       isOfflineModeMock.mockReturnValue(true);
       const auth0Token = "token123";
       await store.authenticate(auth0Token);
@@ -137,7 +148,7 @@ describe("FirestoreStore", () => {
     });
 
     test("Should call connectAuthEmulator for offline user", async () => {
-      const isOfflineModeMock = isOfflineMode as jest.Mock;
+      const isOfflineModeMock = isOfflineMode as Mock;
       isOfflineModeMock.mockReturnValue(true);
       const auth0Token = "token123";
       await store.authenticate(auth0Token);
@@ -184,8 +195,8 @@ describe("FirestoreStore", () => {
 
   describe("updateDocument", () => {
     beforeEach(() => {
-      jest.clearAllMocks();
-      jest.spyOn(console, "log");
+      vi.clearAllMocks();
+      vi.spyOn(console, "log");
     });
 
     test("Does not call setDoc when user is impersonating", () => {
@@ -397,7 +408,7 @@ describe("FirestoreStore", () => {
       ]);
     });
 
-    test("updateOpportunityManualSnooze", async () => {
+    test("updateOpportunityManualSnooze delete field", async () => {
       const update = {
         snoozeForDays: 10,
         snoozedBy: "test-email",

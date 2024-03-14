@@ -16,8 +16,10 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import { noop } from "lodash";
 import { runInAction } from "mobx";
 import { BrowserRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
 import {
   useFeatureVariants,
@@ -28,12 +30,12 @@ import { eligibleClient } from "../../../WorkflowsStore/__fixtures__";
 import { Client } from "../../../WorkflowsStore/Client";
 import { MilestonesSidePanel } from "../MilestonesSidePanel";
 
-jest.mock("../../../WorkflowsStore/subscriptions");
-jest.mock("firebase/firestore");
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../WorkflowsStore/subscriptions");
+vi.mock("firebase/firestore");
+vi.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
-const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 const baseRootStoreMock = {
   userStore: { userSurname: "Smith", userFullName: "Firstname Smith" },
@@ -46,16 +48,16 @@ const baseRootStoreMock = {
     allowSupervisionTasks: false,
   },
   firestoreStore: {
-    doc: jest.fn(),
-    collection: jest.fn(),
+    doc: vi.fn(),
+    collection: vi.fn(),
   },
 };
 
 describe("MilestonesSidePanel", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     // Quiet errors during test runs
-    jest.spyOn(console, "error").mockImplementation();
+    vi.spyOn(console, "error").mockImplementation(noop);
     useFeatureVariantsMock.mockReturnValue({});
     useRootStoreMock.mockReturnValue({
       ...baseRootStoreMock,
@@ -71,7 +73,7 @@ describe("MilestonesSidePanel", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   describe("New Milestones", () => {

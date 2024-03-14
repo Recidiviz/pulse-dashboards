@@ -1,11 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transformations 1`] = `
-Object {
+{
   "displayName": "Miles D Davis",
   "email": "mock-email",
   "externalId": "mdavis123",
-  "fullName": Object {
+  "fullName": {
     "givenNames": "Miles",
     "middleNames": "D",
     "surname": "Davis",
@@ -17,11 +17,11 @@ Object {
 `;
 
 exports[`transformations 2`] = `
-Object {
+{
   "displayName": "Billie Holiday",
   "email": null,
   "externalId": "bholiday456",
-  "fullName": Object {
+  "fullName": {
     "givenNames": "Billie",
     "surname": "Holiday",
   },
@@ -32,11 +32,11 @@ Object {
 `;
 
 exports[`transformations 3`] = `
-Object {
+{
   "displayName": "Ella Fitzgerald",
   "email": "mock-email",
   "externalId": "efitzgerald789",
-  "fullName": Object {
+  "fullName": {
     "givenNames": "Ella",
     "surname": "Fitzgerald",
   },
@@ -47,11 +47,11 @@ Object {
 `;
 
 exports[`transformations 4`] = `
-Object {
+{
   "displayName": "John Coltrane",
   "email": null,
   "externalId": "jColtrane321",
-  "fullName": Object {
+  "fullName": {
     "givenNames": "John",
     "surname": "Coltrane",
   },

@@ -14,6 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { ArgumentParser } from "argparse";
+
 import { loadWorkflowsFixtures } from "./workflowsFixtures";
 
-loadWorkflowsFixtures();
+const parser = new ArgumentParser({
+  description: "Load fixture data into Firestore",
+});
+
+parser.add_argument("-q", "--quiet", {
+  dest: "quietLogs",
+  action: "store_true",
+  help: "Suppress log messages",
+});
+
+type Args = {
+  quietLogs: boolean;
+};
+
+const args = parser.parse_args() as Args;
+
+loadWorkflowsFixtures(args);

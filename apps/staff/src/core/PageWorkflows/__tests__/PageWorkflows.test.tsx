@@ -18,6 +18,7 @@
  */
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { Mock } from "vitest";
 
 import {
   useOpportunityConfigurations,
@@ -35,62 +36,62 @@ import WorkflowsMilestones from "../../WorkflowsMilestones";
 import { WorkflowsTasks } from "../../WorkflowsTasks/WorkflowsTasks";
 import PageWorkflows from "../PageWorkflows";
 
-jest.mock("../../CoreStoreProvider");
-jest.mock("../../../utils/isIE11");
-jest.mock("../../../WorkflowsStore");
-jest.mock("../../../components/StoreProvider");
-jest.mock("../../WorkflowsHomepage", () => {
+vi.mock("../../CoreStoreProvider");
+vi.mock("../../../utils/isIE11");
+vi.mock("../../../WorkflowsStore");
+vi.mock("../../../components/StoreProvider");
+vi.mock("../../WorkflowsHomepage", () => {
   return {
     __esModule: true,
-    default: jest.fn(),
+    default: vi.fn(),
   };
 });
 
-jest.mock("../../WorkflowsMilestones/WorkflowsMilestones", () => {
+vi.mock("../../WorkflowsMilestones/WorkflowsMilestones", () => {
   return {
     __esModule: true,
-    default: jest.fn(),
+    default: vi.fn(),
   };
 });
 
-jest.mock("../../CaseloadView", () => {
+vi.mock("../../CaseloadView", () => {
   return {
     __esModule: true,
-    CaseloadView: jest.fn(),
+    CaseloadView: vi.fn(),
   };
 });
 
-jest.mock("../../WorkflowsJusticeInvolvedPersonProfile/FullProfile", () => {
+vi.mock("../../WorkflowsJusticeInvolvedPersonProfile/FullProfile", () => {
   return {
     __esModule: true,
-    FullProfile: jest.fn(),
+    FullProfile: vi.fn(),
   };
 });
 
-jest.mock("../../WorkflowsTasks/WorkflowsTasks", () => {
+vi.mock("../../WorkflowsTasks/WorkflowsTasks", () => {
   return {
     __esModule: true,
-    WorkflowsTasks: jest.fn(),
+    WorkflowsTasks: vi.fn(),
   };
 });
 
-jest.mock("../../OpportunityCaseloadView", () => {
+vi.mock("../../OpportunityCaseloadView", () => {
   return {
     __esModule: true,
-    OpportunityCaseloadView: jest.fn(),
+    OpportunityCaseloadView: vi.fn(),
   };
 });
 
-jest.mock("../../WorkflowsLayouts", () => {
+vi.mock("../../WorkflowsLayouts", () => {
   return {
     __esModule: true,
-    WorkflowsFormLayout: jest.fn(),
+    WorkflowsFormLayout: vi.fn(),
   };
 });
 
-const mockUseRootStore = useRootStore as unknown as jest.Mock;
+const mockUseRootStore = useRootStore as unknown as Mock;
 const mockUseOpportunityConfigurations =
-  useOpportunityConfigurations as unknown as jest.Mock;
+  useOpportunityConfigurations as unknown as Mock;
 
 function mockWorkflowsStore(mockStore: any) {
   mockUseRootStore.mockReturnValue({
@@ -112,24 +113,23 @@ function renderRouter(relativePath?: string) {
 describe("PageWorkflows", () => {
   let baseMockWorkflowsStore: any;
   beforeEach(() => {
-    jest.clearAllMocks();
     mockWorkflowsStore({
-      hydrate: jest.fn().mockReturnValue(jest.fn()),
+      hydrate: vi.fn().mockReturnValue(vi.fn()),
       hydrationState: { status: "needs hydration" },
-      keepUserObserved: jest.fn(),
-      stopKeepingUserObserved: jest.fn(),
+      keepUserObserved: vi.fn(),
+      stopKeepingUserObserved: vi.fn(),
     });
   });
 
   describe("IE11", () => {
     it("attempts to hydrate the workflows models when not on IE11", () => {
-      (isIE11 as unknown as jest.Mock).mockReturnValue(false);
+      (isIE11 as unknown as Mock).mockReturnValue(false);
       render(<PageWorkflows />);
       expect(useRootStore().workflowsStore.hydrate).toHaveBeenCalledTimes(1);
     });
 
     it("does not attempt to hydrate the workflows models when on IE11", () => {
-      (isIE11 as unknown as jest.Mock).mockReturnValue(true);
+      (isIE11 as unknown as Mock).mockReturnValue(true);
       render(<PageWorkflows />);
       expect(useRootStore().workflowsStore.hydrate).toHaveBeenCalledTimes(0);
     });
@@ -137,12 +137,12 @@ describe("PageWorkflows", () => {
 
   describe("Workflows user data", () => {
     beforeEach(() => {
-      (isIE11 as unknown as jest.Mock).mockReturnValue(false);
+      (isIE11 as unknown as Mock).mockReturnValue(false);
       baseMockWorkflowsStore = {
-        hydrate: jest.fn().mockReturnValue(jest.fn()),
+        hydrate: vi.fn().mockReturnValue(vi.fn()),
         hydrationState: { status: "needs hydration" },
-        keepUserObserved: jest.fn(),
-        stopKeepingUserObserved: jest.fn(),
+        keepUserObserved: vi.fn(),
+        stopKeepingUserObserved: vi.fn(),
       };
       mockWorkflowsStore(baseMockWorkflowsStore);
     });
@@ -164,31 +164,27 @@ describe("PageWorkflows", () => {
 
   describe("WorkflowsRoute without redirects", () => {
     beforeEach(() => {
-      (isIE11 as jest.Mock).mockReturnValue(false);
+      (isIE11 as Mock).mockReturnValue(false);
       baseMockWorkflowsStore = {
         hydrationState: { status: "hydrated" },
         opportunityTypes: [],
         workflowsSupportedSystems: ["SUPERVISION"],
-        setActivePage: jest.fn(),
-        updateActiveSystem: jest.fn(),
-        updateSelectedOpportunityType: jest.fn(),
-        updateSelectedPerson: jest
+        setActivePage: vi.fn(),
+        updateActiveSystem: vi.fn(),
+        updateSelectedOpportunityType: vi.fn(),
+        updateSelectedPerson: vi
           .fn()
-          .mockImplementation(() => ({ catch: jest.fn() })),
+          .mockImplementation(() => ({ catch: vi.fn() })),
         activeSystem: "SUPERVISION",
-        keepUserObserved: jest.fn(),
-        stopKeepingUserObserved: jest.fn(),
+        keepUserObserved: vi.fn(),
+        stopKeepingUserObserved: vi.fn(),
       };
-      (WorkflowsHomepage as unknown as jest.Mock).mockReturnValue(
+      (WorkflowsHomepage as unknown as Mock).mockReturnValue(
         <div>Workflows Homepage</div>,
       );
-      (WorkflowsFormLayout as unknown as jest.Mock).mockReturnValue(
+      (WorkflowsFormLayout as unknown as Mock).mockReturnValue(
         <div>Opportunity Action Page</div>,
       );
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
     });
 
     it("renders the homepage for route /home", () => {
@@ -207,7 +203,7 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "milestones",
       });
-      (WorkflowsMilestones as unknown as jest.Mock).mockReturnValue(
+      (WorkflowsMilestones as unknown as Mock).mockReturnValue(
         <div>Workflows Milestones Page</div>,
       );
       renderRouter(WORKFLOWS_PATHS.milestones);
@@ -220,7 +216,7 @@ describe("PageWorkflows", () => {
         activePage: "clientProfile",
       });
 
-      (FullProfile as unknown as jest.Mock).mockReturnValue(
+      (FullProfile as unknown as Mock).mockReturnValue(
         <div>Client FullProfile</div>,
       );
       renderRouter(`${WORKFLOWS_PATHS.caseloadClients}/101`);
@@ -233,7 +229,7 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "residentProfile",
       });
-      (FullProfile as unknown as jest.Mock).mockReturnValue(
+      (FullProfile as unknown as Mock).mockReturnValue(
         <div>Resident FullProfile</div>,
       );
       renderRouter(`${WORKFLOWS_PATHS.caseloadResidents}/101`);
@@ -246,7 +242,7 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "caseloadClients",
       });
-      (CaseloadView as unknown as jest.Mock).mockReturnValue(
+      (CaseloadView as unknown as Mock).mockReturnValue(
         <div>Client CaseloadView</div>,
       );
       renderRouter(WORKFLOWS_PATHS.caseloadClients);
@@ -259,7 +255,7 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "caseloadResidents",
       });
-      (CaseloadView as unknown as jest.Mock).mockReturnValue(
+      (CaseloadView as unknown as Mock).mockReturnValue(
         <div>Resident CaseloadView</div>,
       );
       renderRouter(WORKFLOWS_PATHS.caseloadResidents);
@@ -272,9 +268,7 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "tasks",
       });
-      (WorkflowsTasks as unknown as jest.Mock).mockReturnValue(
-        <div>Tasks</div>,
-      );
+      (WorkflowsTasks as unknown as Mock).mockReturnValue(<div>Tasks</div>);
       renderRouter(WORKFLOWS_PATHS.tasks);
 
       expect(screen.getByText("Tasks")).toBeInTheDocument();
@@ -285,7 +279,7 @@ describe("PageWorkflows", () => {
         ...baseMockWorkflowsStore,
         activePage: "opportunityClients",
       });
-      (OpportunityCaseloadView as unknown as jest.Mock).mockReturnValue(
+      (OpportunityCaseloadView as unknown as Mock).mockReturnValue(
         <div>Opportunity Caseload View</div>,
       );
 
@@ -308,37 +302,31 @@ describe("PageWorkflows", () => {
 
   describe("WorkflowsRoute logic and redirects", () => {
     beforeEach(() => {
-      (isIE11 as jest.Mock).mockReturnValue(false);
+      (isIE11 as Mock).mockReturnValue(false);
       baseMockWorkflowsStore = {
         hydrationState: { status: "hydrated" },
         homepage: "home",
         workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
         opportunityTypes: [],
-        setActivePage: jest.fn(),
-        updateActiveSystem: jest.fn(),
-        updateSelectedOpportunityType: jest.fn(),
-        updateSelectedPerson: jest
+        setActivePage: vi.fn(),
+        updateActiveSystem: vi.fn(),
+        updateSelectedOpportunityType: vi.fn(),
+        updateSelectedPerson: vi
           .fn()
-          .mockImplementation(() => ({ catch: jest.fn() })),
-        keepUserObserved: jest.fn(),
-        stopKeepingUserObserved: jest.fn(),
+          .mockImplementation(() => ({ catch: vi.fn() })),
+        keepUserObserved: vi.fn(),
+        stopKeepingUserObserved: vi.fn(),
       };
-      (WorkflowsTasks as unknown as jest.Mock).mockReturnValue(
+      (WorkflowsTasks as unknown as Mock).mockReturnValue(
         <div>Tasks Page</div>,
       );
-      (OpportunityCaseloadView as unknown as jest.Mock).mockReturnValue(
+      (OpportunityCaseloadView as unknown as Mock).mockReturnValue(
         <div>Opportunity Caseload View</div>,
       );
-      (WorkflowsHomepage as unknown as jest.Mock).mockReturnValue(
+      (WorkflowsHomepage as unknown as Mock).mockReturnValue(
         <div>Workflows Homepage</div>,
       );
-      (FullProfile as unknown as jest.Mock).mockReturnValue(
-        <div>Full profile</div>,
-      );
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
+      (FullProfile as unknown as Mock).mockReturnValue(<div>Full profile</div>);
     });
 
     describe("/workflows/tasks", () => {

@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { shuffle } from "lodash";
 import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
+import { MockInstance } from "vitest";
 
 import { HydrationState } from "../../../core/models/types";
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
@@ -45,8 +46,8 @@ import {
 } from "../testUtils";
 import { Opportunity, OpportunityStatus } from "../types";
 
-jest.mock("../../subscriptions");
-jest.mock("firebase/firestore");
+vi.mock("../../subscriptions");
+vi.mock("firebase/firestore");
 
 let opp: OpportunityBase<Client, any>;
 let client: Client;
@@ -54,7 +55,7 @@ let root: RootStore;
 let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
-let mockUserStateCode: jest.SpyInstance;
+let mockUserStateCode: MockInstance;
 
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
   form: FormBase<any>;
@@ -82,10 +83,10 @@ function createTestUnit() {
     },
   };
   root = new RootStore();
-  mockUserStateCode = jest.spyOn(root.userStore, "stateCode", "get");
-  jest
-    .spyOn(root.workflowsStore, "currentUserEmail", "get")
-    .mockReturnValue(mockUser.info.email);
+  mockUserStateCode = vi.spyOn(root.userStore, "stateCode", "get");
+  vi.spyOn(root.workflowsStore, "currentUserEmail", "get").mockReturnValue(
+    mockUser.info.email,
+  );
 
   // using an ineligible to avoid wasted work creating opportunities we don't need
   client = new Client(ineligibleClientRecord, root);
@@ -116,7 +117,7 @@ function mockDenied() {
     updateData: {
       denial: {
         reasons: ["boo"],
-        updated: { by: "foo", date: jest.fn() as any },
+        updated: { by: "foo", date: vi.fn() as any },
       },
     },
   });
@@ -125,7 +126,7 @@ function mockDenied() {
 function mockCompleted() {
   mockHydration({
     updateData: {
-      completed: { update: { by: "foo", date: jest.fn() as any } },
+      completed: { update: { by: "foo", date: vi.fn() as any } },
     },
   });
 }
@@ -133,7 +134,7 @@ function mockCompleted() {
 const originalEnv = process.env;
 
 beforeEach(() => {
-  jest.resetModules();
+  vi.resetModules();
   process.env = {
     ...originalEnv,
   };
@@ -145,19 +146,19 @@ beforeEach(() => {
   updatesSub = opp.updatesSubscription;
 
   // configure a mock user who is viewing this opportunity
-  jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
+  vi.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
 
-  jest.spyOn(AnalyticsStore.prototype, "trackSetOpportunityStatus");
-  jest.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
-  jest.spyOn(AnalyticsStore.prototype, "trackOpportunityPreviewed");
-  jest.spyOn(AnalyticsStore.prototype, "trackOpportunityMarkedEligible");
-  jest.spyOn(AnalyticsStore.prototype, "trackOpportunitySnoozed");
+  vi.spyOn(AnalyticsStore.prototype, "trackSetOpportunityStatus");
+  vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
+  vi.spyOn(AnalyticsStore.prototype, "trackOpportunityPreviewed");
+  vi.spyOn(AnalyticsStore.prototype, "trackOpportunityMarkedEligible");
+  vi.spyOn(AnalyticsStore.prototype, "trackOpportunitySnoozed");
   mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
 });
 
 afterEach(() => {
   process.env = originalEnv;
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -315,7 +316,7 @@ describe("snoozedOnDate", () => {
 
 describe("setLastViewed", () => {
   beforeEach(() => {
-    jest.spyOn(root.firestoreStore, "updateOpportunityLastViewed");
+    vi.spyOn(root.firestoreStore, "updateOpportunityLastViewed");
   });
   test("waits for hydration", () => {
     opp.setLastViewed();
@@ -344,7 +345,7 @@ describe("setLastViewed", () => {
 
   test("updates Firestore with latest viewed", () => {
     mockHydration({
-      updateData: { lastViewed: { by: "foo", date: jest.fn() as any } },
+      updateData: { lastViewed: { by: "foo", date: vi.fn() as any } },
     });
 
     opp.setLastViewed();
@@ -363,7 +364,7 @@ describe("setLastViewed", () => {
   });
 
   test("ignores Recidiviz users in prod", () => {
-    process.env.REACT_APP_DEPLOY_ENV = "production";
+    import.meta.env.VITE_DEPLOY_ENV = "production";
 
     mockHydration();
 
@@ -380,8 +381,8 @@ describe("setLastViewed", () => {
 describe("setCompletedIfEligible", () => {
   beforeEach(() => {
     // configure a mock user who is viewing this opportunity
-    jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
-    jest.spyOn(root.firestoreStore, "updateOpportunityCompleted");
+    vi.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
+    vi.spyOn(root.firestoreStore, "updateOpportunityCompleted");
     mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
   });
 
@@ -474,8 +475,8 @@ test("form updates override prefilled data", () => {
 
 describe("setDenialReasons", () => {
   beforeEach(() => {
-    jest.spyOn(root.firestoreStore, "updateOpportunityDenial");
-    jest.spyOn(root.firestoreStore, "updateOpportunityCompleted");
+    vi.spyOn(root.firestoreStore, "updateOpportunityDenial");
+    vi.spyOn(root.firestoreStore, "updateOpportunityCompleted");
   });
 
   test("updates reasons", async () => {
@@ -595,7 +596,7 @@ describe("setAutoSnooze", () => {
 
   beforeEach(() => {
     timekeeper.freeze(new Date(2023, 9, 25));
-    jest.spyOn(root.firestoreStore, "updateOpportunityAutoSnooze");
+    vi.spyOn(root.firestoreStore, "updateOpportunityAutoSnooze");
   });
 
   test("when denial reasons are deleted", async () => {
@@ -645,7 +646,7 @@ describe("setAutoSnooze", () => {
 describe("setManualSnooze", () => {
   beforeEach(() => {
     timekeeper.freeze(new Date(2023, 9, 25));
-    jest.spyOn(root.firestoreStore, "updateOpportunityManualSnooze");
+    vi.spyOn(root.firestoreStore, "updateOpportunityManualSnooze");
   });
 
   test("when denial reasons are deleted", async () => {
@@ -701,7 +702,7 @@ describe("updateOpportunityEligibility", () => {
 
   beforeEach(() => {
     timekeeper.freeze(snoozedOnDate);
-    jest.spyOn(root.firestoreStore, "deleteOpportunityDenialAndSnooze");
+    vi.spyOn(root.firestoreStore, "deleteOpportunityDenialAndSnooze");
     testUpdateFn = updateOpportunityEligibility(
       opportunityType,
       mockRecordId,
@@ -811,10 +812,10 @@ function initOpportunitiesList(
   const opportunities: TestOpportunity[] = reviewStatuses.map((status, i) => {
     const currentOpp = createTestUnit();
 
-    jest
-      .spyOn(currentOpp, "eligibilityDate", "get")
-      .mockReturnValue(eligibilityDates[i]);
-    jest.spyOn(currentOpp, "reviewStatus", "get").mockReturnValue(status);
+    vi.spyOn(currentOpp, "eligibilityDate", "get").mockReturnValue(
+      eligibilityDates[i],
+    );
+    vi.spyOn(currentOpp, "reviewStatus", "get").mockReturnValue(status);
 
     return currentOpp;
   });
@@ -826,10 +827,10 @@ const getDatesWithUndefinedMembers = (datesList: (Date | undefined)[]) =>
   datesList.map((a, idx) => (idx % 2 === 1 ? undefined : a));
 describe("Sorting functions should work", () => {
   beforeAll(() => {
-    jest.useFakeTimers("modern").setSystemTime(new Date(2021, 1, 1));
+    vi.useFakeTimers().setSystemTime(new Date(2021, 1, 1));
   });
   afterAll(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test("when list is shuffled and sorting by review status", () => {

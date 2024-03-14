@@ -16,7 +16,9 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import { noop } from "lodash";
 import { BrowserRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
@@ -27,15 +29,15 @@ import {
 import { Client } from "../../../WorkflowsStore/Client";
 import WorkflowsMilestones from "..";
 
-jest.mock("firebase/firestore");
-jest.mock("../../../components/StoreProvider");
-jest.mock("../../CaseloadSelect", () => ({
+vi.mock("firebase/firestore");
+vi.mock("../../../components/StoreProvider");
+vi.mock("../../CaseloadSelect", () => ({
   CaseloadSelect: () => {
     return <div data-testid="caseload-select" />;
   },
 }));
 
-const useRootStoreMock = useRootStore as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
 
 const mockGetMilestonesClientsByStatus = (mockClients: Client[]) => {
   return () => mockClients;
@@ -43,8 +45,8 @@ const mockGetMilestonesClientsByStatus = (mockClients: Client[]) => {
 
 const baseRootStoreMock = {
   firestoreStore: {
-    doc: jest.fn(),
-    collection: jest.fn(),
+    doc: vi.fn(),
+    collection: vi.fn(),
   },
 };
 const baseWorkflowsStoreMock = {
@@ -59,13 +61,13 @@ const baseWorkflowsStoreMock = {
 
 describe("WorkflowsMilestones", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     // Quiet errors during test runs
-    jest.spyOn(console, "error").mockImplementation();
+    vi.spyOn(console, "error").mockImplementation(noop);
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test("renders initial state", () => {

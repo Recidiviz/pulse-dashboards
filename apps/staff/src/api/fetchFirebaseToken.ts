@@ -29,7 +29,7 @@ export async function fetchImpersonatedFirebaseToken(
   }
   const token = await getTokenSilently();
   const url = `${
-    process.env.REACT_APP_API_URL
+    import.meta.env.VITE_API_URL
   }/api/impersonateToken?${new URLSearchParams({
     impersonatedEmail,
     impersonatedStateCode,
@@ -51,7 +51,7 @@ export async function fetchImpersonatedFirebaseToken(
 }
 
 export async function fetchFirebaseToken(token: string): Promise<string> {
-  const url = `${process.env.REACT_APP_API_URL}/token`;
+  const url = `${import.meta.env.VITE_API_URL}/token`;
 
   const response = await fetch(url, {
     headers: {

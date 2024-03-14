@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-// import { runInAction } from "mobx";
-// import CoreStore from "../../CoreStore";
+
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
 import VitalsMetrics from "../VitalsMetrics";
 
 const mockTenantId = "US_ND";
 
-jest.mock("../../../RootStore", () => ({
-  getTokenSilently: jest.fn(),
-}));
+vi.mock("../../../RootStore");
+vi.mock("../../../api/metrics/metricsClient");
 
-jest.mock("../../../api/metrics/metricsClient", () => {
-  return {
-    callMetricsApi: jest.fn().mockResolvedValue({
+describe("VitalsMetrics", () => {
+  let metric: VitalsMetrics;
+
+  beforeEach(() => {
+    vi.mocked(callMetricsApi).mockResolvedValue({
       vitals_summaries: [
         {
           entity_id: "STATE_DOC",
@@ -56,14 +56,8 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           value: 90.625,
         },
       ],
-    }),
-  };
-});
+    });
 
-describe("VitalsMetrics", () => {
-  let metric: VitalsMetrics;
-
-  beforeEach(() => {
     metric = new VitalsMetrics({
       tenantId: mockTenantId,
       sourceEndpoint: "vitals",

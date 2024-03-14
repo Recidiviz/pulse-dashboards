@@ -39,13 +39,13 @@ let root: RootStore;
 let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 function createTestUnit(residentRecord: typeof usMoPersonRecord) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["usMoRestrictiveHousingStatusHearing"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "usMoRestrictiveHousingStatusHearing",
+  ]);
   resident = new Resident(residentRecord, root);
 
   const maybeOpportunity =
@@ -233,10 +233,8 @@ const createOpportunityInstance = (
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
   const mockOpp = new TestOpportunity(mockResident);
 
-  jest.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
-  jest
-    .spyOn(mockOpp, "eligibilityDate", "get")
-    .mockReturnValue(eligibilityDate);
+  vi.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
+  vi.spyOn(mockOpp, "eligibilityDate", "get").mockReturnValue(eligibilityDate);
 
   return mockOpp;
 };
@@ -284,12 +282,12 @@ export const orderedDates: (Date | undefined)[] = [
 describe("Test custom compare function", () => {
   let opportunities: TestOpportunity[];
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(2022, 7, 1));
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2022, 7, 1));
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it("should sort undefined opportunities to the front of the array", () => {

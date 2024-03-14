@@ -16,22 +16,23 @@
 // =============================================================================
 import { DocumentData } from "@google-cloud/firestore";
 import { doc, DocumentReference, getDoc } from "firebase/firestore";
+import { Mock } from "vitest";
 
 import FirestoreStore from "../../../FirestoreStore";
 import RootStore from "../../../RootStore";
 import { OpportunityUpdateSubscription } from "../OpportunityUpdateSubscription";
 import { UpdateFunction } from "../types";
 
-jest.mock("firebase/firestore");
+vi.mock("firebase/firestore");
 
-const docMock = doc as jest.MockedFunction<typeof doc>;
-const mockRef = jest.fn() as unknown as DocumentReference;
+const docMock = vi.mocked(doc);
+const mockRef = vi.fn() as unknown as DocumentReference;
 const firestoreStoreMock = new FirestoreStore({
   rootStore: {
     isImpersonating: false,
   } as unknown as typeof RootStore,
 });
-const getDocMock = getDoc as jest.Mock;
+const getDocMock = getDoc as Mock;
 
 const testUpdateRecord: UpdateFunction<DocumentData> = async (
   rawRecord?: DocumentData,
@@ -42,13 +43,13 @@ const testUpdateRecord: UpdateFunction<DocumentData> = async (
 let sub: OpportunityUpdateSubscription<DocumentData>;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 test("dataSource", () => {
   docMock.mockReturnValue(mockRef);
   // simulates the migration already being complete
-  getDocMock.mockResolvedValue({ exists: jest.fn().mockReturnValue(true) });
+  getDocMock.mockResolvedValue({ exists: vi.fn().mockReturnValue(true) });
 
   sub = new OpportunityUpdateSubscription(
     firestoreStoreMock,

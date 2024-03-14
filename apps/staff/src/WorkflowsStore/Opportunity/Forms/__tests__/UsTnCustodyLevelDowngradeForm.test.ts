@@ -100,7 +100,7 @@ function createTestUnit() {
 
   const person = new Resident(personRecord, rootStore);
   opp = new UsTnCustodyLevelDowngradeOpportunity(person);
-  jest.spyOn(opp, "record", "get").mockImplementation(() => oppRecord as any);
+  vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord as any);
   form = opp.form;
 }
 
@@ -140,7 +140,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });

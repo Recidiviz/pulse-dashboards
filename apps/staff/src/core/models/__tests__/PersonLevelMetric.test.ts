@@ -26,7 +26,8 @@ import { FILTER_TYPES } from "../../utils/constants";
 import { defaultTableColumnsWidths } from "../../utils/enabledTableColumns";
 import PersonLevelMetric from "../PersonLevelMetric";
 
-const OLD_ENV = process.env;
+vi.mock("../../../RootStore");
+vi.mock("../../../api/metrics/metricsClient");
 
 const mockTenantId = "US_TN";
 const mockRootStore = {
@@ -34,13 +35,17 @@ const mockRootStore = {
   tenantStore: { currentTenantId: mockTenantId } as TenantStore,
 };
 const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
-jest.mock("../../../RootStore", () => ({
-  getTokenSilently: jest.fn().mockReturnValue("auth token"),
-}));
 
-jest.mock("../../../api/metrics/metricsClient", () => {
-  return {
-    callNewMetricsApi: jest.fn().mockResolvedValue({
+describe("PersonLevelMetric", () => {
+  let metric: PersonLevelMetric;
+
+  beforeEach(() => {
+    vi.stubEnv("REACT_APP_DEPLOY_ENV", "dev");
+    vi.stubEnv("REACT_APP_NEW_BACKEND_API_URL", "http://localhost:5000");
+
+    vi.mocked(RootStore).getTokenSilently.mockResolvedValue("auth token");
+
+    vi.mocked(callNewMetricsApi).mockResolvedValue({
       data: [
         {
           stateId: "1",
@@ -86,18 +91,8 @@ jest.mock("../../../api/metrics/metricsClient", () => {
       metadata: {
         lastUpdated: "2022-01-01",
       },
-    }),
-  };
-});
-
-describe("PersonLevelMetric", () => {
-  let metric: PersonLevelMetric;
-
-  beforeEach(() => {
-    process.env = Object.assign(process.env, {
-      REACT_APP_DEPLOY_ENV: "dev",
-      REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+
     mockCoreStore.setPage("prison");
     mockCoreStore.setSection("personLevelDetail");
     mockCoreStore.filtersStore.resetFilters();
@@ -116,16 +111,6 @@ describe("PersonLevelMetric", () => {
       },
     });
     metric.hydrate();
-  });
-
-  afterEach(() => {
-    process.env = OLD_ENV;
-  });
-
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-    jest.resetAllMocks();
   });
 
   it("fetches metrics when initialized", () => {
@@ -147,9 +132,9 @@ describe("PersonLevelMetric", () => {
   });
 
   it("sets isEmpty to true when there is no data", () => {
-    jest.mock("../../../api/metrics/metricsClient", () => {
+    vi.mock("../../../api/metrics/metricsClient", () => {
       return {
-        callNewMetricsApi: jest.fn().mockResolvedValue({}),
+        callNewMetricsApi: vi.fn().mockResolvedValue({}),
       };
     });
 

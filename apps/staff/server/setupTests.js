@@ -20,3 +20,5 @@ process.env = {
   GOOGLE_APPLICATION_CREDENTIALS: "test-service-account.json",
   GOOGLE_APPLICATION_CREDENTIALS_TARGET_AUDIENCE: "test-target-audience",
 };
+
+jest.mock("ioredis", () => jest.requireActual("ioredis-mock"));

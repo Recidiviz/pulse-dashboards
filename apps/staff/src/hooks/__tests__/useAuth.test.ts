@@ -16,23 +16,24 @@
 // =============================================================================
 import { renderHook } from "@testing-library/react";
 import { useLocation } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useAuth from "../useAuth";
 
-jest.mock("react-idle-timer");
-jest.mock("../../components/StoreProvider");
-jest.mock("react-router-dom");
-const authErrorMock = jest.fn();
+vi.mock("react-idle-timer");
+vi.mock("../../components/StoreProvider");
+vi.mock("react-router-dom");
+const authErrorMock = vi.fn();
 
 let userStore: any;
 
-const mockUseRootStore = useRootStore as jest.Mock;
-const mockUseLocation = useLocation as jest.Mock;
+const mockUseRootStore = useRootStore as Mock;
+const mockUseLocation = useLocation as Mock;
 
 describe("useAuth", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     userStore = {
       user: {},
       userIsLoading: false,
@@ -48,7 +49,7 @@ describe("useAuth", () => {
     });
   });
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it("throws an error when the userStore has an error", () => {
@@ -73,12 +74,12 @@ describe("useAuth", () => {
         stateCode: "RECIDIVIZ",
       },
       tenantStore: {
-        setCurrentTenantId: jest.fn(),
+        setCurrentTenantId: vi.fn(),
       },
     });
     renderHook(() => useAuth());
     expect(
       mockUseRootStore().tenantStore.setCurrentTenantId,
-    ).toHaveBeenCalledOnceWith("US_TN");
+    ).toHaveBeenCalledExactlyOnceWith("US_TN");
   });
 });

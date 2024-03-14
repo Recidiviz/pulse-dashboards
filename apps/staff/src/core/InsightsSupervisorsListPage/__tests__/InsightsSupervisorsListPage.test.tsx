@@ -29,22 +29,20 @@ import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
 import InsightsSupervisorsListPage from "../InsightsSupervisorsListPage";
 
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-jest
-  .spyOn(UserStore.prototype, "isRecidivizUser", "get")
-  .mockImplementation(() => false);
-
-const useRootStoreMock = jest.mocked(useRootStore);
-const useFeatureVariantsMock = jest.mocked(useFeatureVariants);
+const useRootStoreMock = vi.mocked(useRootStore);
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 const supervisorPseudoId = "hashed-mdavis123";
 
 beforeEach(() => {
+  vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
+    () => false,
+  );
   configure({ safeDescriptors: false });
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -61,15 +59,9 @@ describe("Insights Supervisors List Page", () => {
     useRootStoreMock.mockReturnValue(rootStore);
     useFeatureVariantsMock.mockReturnValue({});
 
-    jest
-      .spyOn(store, "userCanAccessAllSupervisors", "get")
-      .mockReturnValue(true);
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 
     store.setSupervisorPseudoId(supervisorPseudoId);
-  });
-
-  afterEach(() => {
-    jest.resetAllMocks();
   });
 
   test("renders loading indicator", () => {

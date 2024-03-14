@@ -23,14 +23,14 @@ import {
 import { useRootStore } from "../../../components/StoreProvider";
 import useChartData from "../useChartData";
 
-jest.mock("../../../api/metrics/metricsClient");
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../api/metrics/metricsClient");
+vi.mock("../../../components/StoreProvider");
 
 const mockUrl = "system/prison";
 const mockFile = "admissions_by_type_by_month";
 
 describe("useChartData", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     useRootStore.mockReturnValue({ userStore: {} });
 
     awaitingResults.mockImplementation(
@@ -58,12 +58,8 @@ describe("useChartData", () => {
       },
     };
 
-    beforeAll(() => {
-      callMetricsApi.mockResolvedValue(mockResponse);
-    });
-
     beforeEach(() => {
-      jest.clearAllMocks();
+      callMetricsApi.mockResolvedValue(mockResponse);
     });
 
     it("should load data", async () => {
@@ -94,17 +90,13 @@ describe("useChartData", () => {
   });
 
   describe("error responses", () => {
-    beforeAll(() => {
+    beforeEach(() => {
       callMetricsApi.mockImplementation(() => {
         throw new Error();
       });
 
       // do not log the expected error - keep tests less verbose
-      jest.spyOn(console, "error").mockImplementation(() => undefined);
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
     });
 
     it("returns isError = true", async () => {

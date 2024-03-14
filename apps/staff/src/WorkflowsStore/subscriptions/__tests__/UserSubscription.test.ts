@@ -17,24 +17,25 @@
 
 import { limit, onSnapshot, query, where } from "firebase/firestore";
 import { configure } from "mobx";
+import { Mock } from "vitest";
 
 import { RootStore } from "../../../RootStore";
 import { isOfflineMode } from "../../../utils/isOfflineMode";
 import { UserSubscription } from "../UserSubscription";
 import { getMockQuerySnapshotHandler } from "./testUtils";
 
-jest.mock("firebase/firestore");
-jest.mock("../../../utils/isOfflineMode");
+vi.mock("firebase/firestore");
+vi.mock("../../../utils/isOfflineMode");
 
-const onSnapshotMock = onSnapshot as jest.Mock;
-const isOfflineModeMock = isOfflineMode as jest.Mock;
-const collectionMock = jest.fn();
+const onSnapshotMock = onSnapshot as Mock;
+const isOfflineModeMock = isOfflineMode as Mock;
+const collectionMock = vi.fn();
 
 let rootStoreMock: RootStore;
 let sub: UserSubscription;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 
   configure({ safeDescriptors: false });
 
@@ -73,15 +74,15 @@ test("dataSource reflects user auth data", () => {
 test("inject record for Recidiviz users", () => {
   // @ts-ignore
   rootStoreMock.userStore.stateCode = "RECIDIVIZ";
-  jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
+  vi.spyOn(sub, "dataSource", "get").mockReturnValue(vi.fn() as any);
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 
   sub.subscribe();
 
   // data should be available immediately
   expect(sub.data).toMatchInlineSnapshot(`
-    Array [
-      Object {
+    [
+      {
         "email": "test@example.com",
         "givenNames": "Geri",
         "hasCaseload": false,
@@ -96,8 +97,8 @@ test("inject record for Recidiviz users", () => {
   // Firestore listener should not clobber our injected data
   mockReceive([]);
   expect(sub.data).toMatchInlineSnapshot(`
-    Array [
-      Object {
+    [
+      {
         "email": "test@example.com",
         "givenNames": "Geri",
         "hasCaseload": false,
@@ -113,15 +114,15 @@ test("inject record for Recidiviz users", () => {
 test("inject record in offline mode", () => {
   isOfflineModeMock.mockReturnValue(true);
 
-  jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
+  vi.spyOn(sub, "dataSource", "get").mockReturnValue(vi.fn() as any);
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 
   sub.subscribe();
 
   // data should be available immediately
   expect(sub.data).toMatchInlineSnapshot(`
-    Array [
-      Object {
+    [
+      {
         "email": "test@example.com",
         "givenNames": "Demo",
         "hasCaseload": false,
@@ -136,8 +137,8 @@ test("inject record in offline mode", () => {
   // Firestore listener should not clobber our injected data
   mockReceive([]);
   expect(sub.data).toMatchInlineSnapshot(`
-    Array [
-      Object {
+    [
+      {
         "email": "test@example.com",
         "givenNames": "Demo",
         "hasCaseload": false,
@@ -151,7 +152,7 @@ test("inject record in offline mode", () => {
 });
 
 test("supplement record for staff user without caseload", () => {
-  jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
+  vi.spyOn(sub, "dataSource", "get").mockReturnValue(vi.fn() as any);
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 
   sub.subscribe();
@@ -163,8 +164,8 @@ test("supplement record for staff user without caseload", () => {
 
   // data should be available immediately
   expect(sub.data).toMatchInlineSnapshot(`
-    Array [
-      Object {
+    [
+      {
         "district": "D5",
         "email": "test@example.com",
         "givenNames": "Geri",
@@ -184,7 +185,7 @@ test("supplement record for staff user without caseload but with id", () => {
       return "12345";
     },
   });
-  jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
+  vi.spyOn(sub, "dataSource", "get").mockReturnValue(vi.fn() as any);
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 
   sub.subscribe();
@@ -196,8 +197,8 @@ test("supplement record for staff user without caseload but with id", () => {
 
   // data should be available immediately
   expect(sub.data).toMatchInlineSnapshot(`
-    Array [
-      Object {
+    [
+      {
         "district": "D5",
         "email": "test@example.com",
         "givenNames": "Geri",
@@ -214,7 +215,7 @@ test("supplement record for staff user without caseload but with id", () => {
 test("reject empty result", () => {
   // @ts-ignore
   rootStoreMock.user = undefined;
-  jest.spyOn(sub, "dataSource", "get").mockReturnValue(jest.fn() as any);
+  vi.spyOn(sub, "dataSource", "get").mockReturnValue(vi.fn() as any);
   const mockReceive = getMockQuerySnapshotHandler(onSnapshotMock);
 
   sub.subscribe();

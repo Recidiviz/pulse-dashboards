@@ -30,7 +30,7 @@ import {
   UsTnExpirationOpportunity,
 } from "../UsTnExpirationOpportunity";
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 let opp: UsTnExpirationOpportunity;
 let client: Client;
@@ -42,9 +42,9 @@ function createTestUnit(
   clientRecord: typeof UsTnExpirationEligibleClientRecord,
 ) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["usTnExpiration"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "usTnExpiration",
+  ]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.potentialOpportunities.usTnExpiration;
@@ -63,7 +63,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });

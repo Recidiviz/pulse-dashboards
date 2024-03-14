@@ -18,6 +18,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import timekeeper from "timekeeper";
+import { Mock } from "vitest";
 
 import {
   useFeatureVariants,
@@ -31,13 +32,13 @@ import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityDenialView } from "../OpportunityDenialView";
 
-jest.mock("../../../components/StoreProvider");
-jest.mock("../../WorkflowsJusticeInvolvedPersonProfile/Heading", () => ({
+vi.mock("../../../components/StoreProvider");
+vi.mock("../../WorkflowsJusticeInvolvedPersonProfile/Heading", () => ({
   Heading: () => <div>Mock Person Heading</div>,
 }));
 
-const useRootStoreMock = useRootStore as jest.Mock;
-const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 function renderElement(opportunity: Opportunity) {
   render(
@@ -65,7 +66,7 @@ describe("OpportunityDenialView", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    timekeeper.reset();
   });
 
   describe("Other reason input", () => {
@@ -495,7 +496,7 @@ describe("OpportunityDenialView", () => {
 
   describe("enableSnooze featureVariant is not set", () => {
     beforeEach(() => {
-      jest.resetAllMocks();
+      vi.resetAllMocks();
       useFeatureVariantsMock.mockReturnValue({});
     });
 
@@ -610,7 +611,7 @@ describe("OpportunityDenialView", () => {
         },
       };
 
-      jest.spyOn(opp, "deleteOpportunityDenialAndSnooze");
+      vi.spyOn(opp, "deleteOpportunityDenialAndSnooze");
 
       renderElement(opp);
 
@@ -622,7 +623,7 @@ describe("OpportunityDenialView", () => {
       fireEvent.click(screen.getByTestId("OpportunityDenialView__button"));
 
       expect(
-        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls,
+        vi.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls,
       ).toHaveLength(1);
     });
 
@@ -647,7 +648,7 @@ describe("OpportunityDenialView", () => {
         ),
       };
 
-      jest.spyOn(opp, "deleteOpportunityDenialAndSnooze");
+      vi.spyOn(opp, "deleteOpportunityDenialAndSnooze");
 
       renderElement(opp);
 
@@ -665,7 +666,7 @@ describe("OpportunityDenialView", () => {
       expect(screen.getByTestId("stub-modal")).toHaveTextContent("MODAL SHOWN");
 
       expect(
-        jest.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls,
+        vi.mocked(opp.deleteOpportunityDenialAndSnooze).mock.calls,
       ).toHaveLength(0);
     });
   });

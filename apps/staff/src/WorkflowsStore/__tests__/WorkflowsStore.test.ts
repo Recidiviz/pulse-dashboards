@@ -64,13 +64,14 @@ import { Resident } from "../Resident";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { filterByUserDistrict } from "../utils";
 
-jest.mock("firebase/firestore", () => {
-  const originalModule = jest.requireActual("firebase/firestore");
+vi.mock("firebase/firestore", async (importOriginal) => {
+  const originalModule =
+    await importOriginal<typeof import("firebase/firestore")>();
 
   return {
     __esModule: true,
     ...originalModule,
-    connectFirestoreEmulator: jest.fn(),
+    connectFirestoreEmulator: vi.fn(),
   };
 });
 const testStateCodes = [
@@ -83,65 +84,75 @@ const testStateCodes = [
 ] as const;
 
 type testStateCode = (typeof testStateCodes)[number];
-const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
-  US_XX: {
-    opportunityTypes: [
-      "compliantReporting",
-      "LSU",
-      "usIdCRC",
-      "usIdExtendedCRC",
-    ],
-    workflowsSupportedSystems: ["SUPERVISION"],
-    availableStateCodes: ["US_XX"],
-  },
-  US_YY: {
-    workflowsSupportedSystems: ["SUPERVISION"],
-    availableStateCodes: ["US_YY"],
-  },
-  US_TN: {
-    opportunityTypes: [
-      "compliantReporting",
-      "supervisionLevelDowngrade",
-      "usTnExpiration",
-    ],
-    workflowsSupportedSystems: ["SUPERVISION"],
-    availableStateCodes: ["US_TN"],
-  },
-  US_BB: {
-    workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
-    workflowsSystemsGatedByFeatureVariant: {
-      INCARCERATION: ["usIdCRC", "usIdExtendedCRC"],
+const { stateConfigs } = vi.hoisted(() => {
+  const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
+    US_XX: {
+      opportunityTypes: [
+        "compliantReporting",
+        "LSU",
+        "usIdCRC",
+        "usIdExtendedCRC",
+      ],
+      workflowsSupportedSystems: ["SUPERVISION"],
+      availableStateCodes: ["US_XX"],
     },
-    availableStateCodes: ["US_BB"],
-  },
-  US_ME: {
-    opportunityTypes: [],
-    workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
-    availableStateCodes: ["US_ME"],
-  },
-  US_MO: {
-    opportunityTypes: [
-      "usMoRestrictiveHousingStatusHearing",
-      "usMoOverdueRestrictiveHousingRelease",
-    ],
-    workflowsSupportedSystems: ["INCARCERATION"],
-    workflowsSystemConfigs: {
-      INCARCERATION: {
-        searchType: "LOCATION",
-        searchField: "facilityId",
-        searchTitleOverride: "location",
+    US_YY: {
+      workflowsSupportedSystems: ["SUPERVISION"],
+      availableStateCodes: ["US_YY"],
+    },
+    US_TN: {
+      opportunityTypes: [
+        "compliantReporting",
+        "supervisionLevelDowngrade",
+        "usTnExpiration",
+      ],
+      workflowsSupportedSystems: ["SUPERVISION"],
+      availableStateCodes: ["US_TN"],
+    },
+    US_BB: {
+      workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+      workflowsSystemsGatedByFeatureVariant: {
+        INCARCERATION: ["usIdCRC", "usIdExtendedCRC"],
       },
+      availableStateCodes: ["US_BB"],
     },
-    availableStateCodes: ["US_MO"],
-  },
-  RECIDIVIZ: {
-    availableStateCodes: ["US_ME", "US_BB", "US_MO", "US_TN", "US_XX", "US_YY"],
-  },
-};
+    US_ME: {
+      opportunityTypes: [],
+      workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
+      availableStateCodes: ["US_ME"],
+    },
+    US_MO: {
+      opportunityTypes: [
+        "usMoRestrictiveHousingStatusHearing",
+        "usMoOverdueRestrictiveHousingRelease",
+      ],
+      workflowsSupportedSystems: ["INCARCERATION"],
+      workflowsSystemConfigs: {
+        INCARCERATION: {
+          searchType: "LOCATION",
+          searchField: "facilityId",
+          searchTitleOverride: "location",
+        },
+      },
+      availableStateCodes: ["US_MO"],
+    },
+    RECIDIVIZ: {
+      availableStateCodes: [
+        "US_ME",
+        "US_BB",
+        "US_MO",
+        "US_TN",
+        "US_XX",
+        "US_YY",
+      ],
+    },
+  };
+  return { stateConfigs };
+});
 
-jest.mock("../subscriptions");
-jest.mock("../../tenants", () => ({
-  __esModule: true,
+vi.mock("../subscriptions");
+vi.mock("../../tenants", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../tenants")>()),
   default: stateConfigs,
 }));
 
@@ -154,7 +165,7 @@ function mockAuthedUser() {
   runInAction(() => {
     rootStore.userStore.user = {
       email: mockOfficer.info.email,
-      [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+      [`${import.meta.env.VITE_METADATA_NAMESPACE}app_metadata`]: {
         stateCode: mockOfficer.info.stateCode,
       },
     };
@@ -204,11 +215,11 @@ function populateResidents(residents: ResidentRecord[]): void {
 }
 
 beforeEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   // this lets us spy on observables, e.g. the tenant ID getter
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
-  jest.spyOn(AnalyticsStore.prototype, "trackCaseloadSearch");
+  vi.spyOn(AnalyticsStore.prototype, "trackCaseloadSearch");
   mockAuthedUser();
   workflowsStore = rootStore.workflowsStore;
   stateConfigs.US_XX.workflowsStaffFilterFn = filterByUserDistrict;
@@ -238,7 +249,7 @@ test("hydration fails without authentication", () => {
 });
 
 test("hydration creates a persistent observer for user data", () => {
-  jest.spyOn(workflowsStore, "keepUserObserved").mockImplementation(noop);
+  vi.spyOn(workflowsStore, "keepUserObserved").mockImplementation(noop);
   workflowsStore.hydrate();
   expect(workflowsStore.keepUserObserved).toHaveBeenCalled();
 });
@@ -721,7 +732,7 @@ test("select unfetched client", async () => {
 
   const idToSelect = "unknownId";
 
-  jest.spyOn(FirestoreStore.prototype, "getClient").mockResolvedValue({
+  vi.spyOn(FirestoreStore.prototype, "getClient").mockResolvedValue({
     ...ineligibleClient,
     pseudonymizedId: idToSelect,
   });
@@ -763,12 +774,12 @@ describe("opportunitiesLoaded", () => {
   });
 
   test("opportunitiesLoaded is false when not all provided opportunities are hydrated", async () => {
-    const compliantReportingHydrationStateMock = jest.spyOn(
+    const compliantReportingHydrationStateMock = vi.spyOn(
       CompliantReportingOpportunity.prototype,
       "hydrationState",
       "get",
     );
-    const lsuHydrationStateMock = jest.spyOn(
+    const lsuHydrationStateMock = vi.spyOn(
       LSUOpportunity.prototype,
       "hydrationState",
       "get",
@@ -786,7 +797,7 @@ describe("opportunitiesLoaded", () => {
   });
 
   test("opportunitiesLoaded is true when opportunities are hydrated", async () => {
-    const hydrationStateMock = jest.spyOn(
+    const hydrationStateMock = vi.spyOn(
       CompliantReportingOpportunity.prototype,
       "hydrationState",
       "get",
@@ -815,7 +826,7 @@ describe("hasOpportunities", () => {
   });
 
   test("hasOpportunities is false if no client has opportunities for those types", async () => {
-    const hydrationStateMock = jest.spyOn(
+    const hydrationStateMock = vi.spyOn(
       CompliantReportingOpportunity.prototype,
       "hydrationState",
       "get",
@@ -827,12 +838,16 @@ describe("hasOpportunities", () => {
   });
 
   test("hasOpportunities is true if any client has opportunities for any of the provided types", async () => {
-    jest
-      .spyOn(CompliantReportingOpportunity.prototype, "hydrationState", "get")
-      .mockReturnValue({ status: "hydrated" });
-    jest
-      .spyOn(UsNdEarlyTerminationOpportunity.prototype, "hydrationState", "get")
-      .mockReturnValue({ status: "hydrated" });
+    vi.spyOn(
+      CompliantReportingOpportunity.prototype,
+      "hydrationState",
+      "get",
+    ).mockReturnValue({ status: "hydrated" });
+    vi.spyOn(
+      UsNdEarlyTerminationOpportunity.prototype,
+      "hydrationState",
+      "get",
+    ).mockReturnValue({ status: "hydrated" });
 
     await waitForHydration();
     populateClients(mockClients);
@@ -856,7 +871,7 @@ const setUser = (
 ) => {
   rootStore.userStore.user = {
     email: "foo@example.com",
-    [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+    [`${import.meta.env.VITE_METADATA_NAMESPACE}app_metadata`]: {
       stateCode,
       featureVariants,
       routes,
@@ -920,7 +935,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
     );
   });
 
-  test(`unsupportedWorkflowsSystems contains ${TEST_GATED_SYSTEM} if user does not have associated featureVariant for gated system`, () => {
+  test(`unsupportedWorkflowsSystems if user does not have associated featureVariant for gated system`, () => {
     setUser({});
     expect(workflowsStore.unsupportedWorkflowSystemsByFeatureVariants).toEqual(
       expect.arrayContaining([TEST_GATED_SYSTEM]),
@@ -946,7 +961,7 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
         ).includes(TEST_GATED_SYSTEM),
     ),
   )(
-    `given gated system(s), ${TEST_GATED_SYSTEM}, in ${SESSION_STATE_CODE}, %p systems remain unaffected when the same system is gated in another stateCode`,
+    `given gated system(s), %s systems remain unaffected when the same system is gated in another stateCode`,
     (stateCode) => {
       setUser({}, stateCode);
       expect(workflowsStore.workflowsSupportedSystems).toContain(
@@ -1004,12 +1019,12 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
 describe("test state-specific opportunity type feature variant filters", () => {
   beforeEach(() => {
     configure({ safeDescriptors: false });
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     configure({ safeDescriptors: true });
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
   describe("for US_XX", () => {
     const SESSION_STATE_CODE = "US_XX";
@@ -1027,16 +1042,20 @@ describe("test state-specific opportunity type feature variant filters", () => {
         workflowsStore.opportunityTypes.includes("compliantReporting"),
       ).toBeTruthy();
 
-      // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-      OPPORTUNITY_CONFIGS.compliantReporting.inverseFeatureVariant =
-        "fakeFeatVar" as FeatureVariant;
+      const spy = vi
+        .spyOn(OPPORTUNITY_CONFIGS, "compliantReporting", "get")
+        .mockReturnValue({
+          ...OPPORTUNITY_CONFIGS.compliantReporting,
+          inverseFeatureVariant: "fakeFeatVar" as FeatureVariant,
+        });
 
       setUser({ fakeFeatVar: {} }, SESSION_STATE_CODE);
       // should no longer be in the list with inverse setting on now.
       expect(
         workflowsStore.opportunityTypes.includes("compliantReporting"),
       ).toBeFalsy();
-      OPPORTUNITY_CONFIGS.compliantReporting.inverseFeatureVariant = undefined;
+
+      spy.mockRestore();
     });
   });
 
@@ -1087,7 +1106,7 @@ describe("opportunityTypes for US_TN", () => {
     runInAction(() => {
       rootStore.userStore.user = {
         email: "foo@example.com",
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+        [`${import.meta.env.VITE_METADATA_NAMESPACE}app_metadata`]: {
           stateCode: "US_TN",
           featureVariants: { usTnExpiration: {} },
         },
@@ -1111,7 +1130,7 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
     runInAction(() => {
       rootStore.userStore.user = {
         email: "foo@example.com",
-        [`${process.env.REACT_APP_METADATA_NAMESPACE}app_metadata`]: {
+        [`${import.meta.env.VITE_METADATA_NAMESPACE}app_metadata`]: {
           stateCode: "US_XX",
           featureVariants: { [TEST_FEAT_VAR]: {} },
         },
@@ -1128,9 +1147,9 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
   });
 
   test("undefined active system results in no opportunity types", async () => {
-    jest
-      .spyOn(workflowsStore, "activeSystem", "get")
-      .mockReturnValue(undefined as unknown as SystemId);
+    vi.spyOn(workflowsStore, "activeSystem", "get").mockReturnValue(
+      undefined as unknown as SystemId,
+    );
     await waitForHydration({ ...mockOfficer });
     setupHydration();
 
@@ -1138,9 +1157,9 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
   });
 
   test("active system filter should yield only opps that are in incarceration", async () => {
-    jest
-      .spyOn(workflowsStore, "activeSystem", "get")
-      .mockReturnValue("INCARCERATION");
+    vi.spyOn(workflowsStore, "activeSystem", "get").mockReturnValue(
+      "INCARCERATION",
+    );
     await waitForHydration({ ...mockOfficer });
 
     const oppTypes = workflowsStore.opportunityTypes;
@@ -1154,9 +1173,9 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
   });
 
   test("active system filter should yield only opps that are in supervision", async () => {
-    jest
-      .spyOn(workflowsStore, "activeSystem", "get")
-      .mockReturnValue("SUPERVISION");
+    vi.spyOn(workflowsStore, "activeSystem", "get").mockReturnValue(
+      "SUPERVISION",
+    );
     await waitForHydration({ ...mockOfficer });
 
     const oppTypes = workflowsStore.opportunityTypes;
@@ -1297,11 +1316,12 @@ describe("user data observer", () => {
     // @ts-expect-error
     expect(workflowsStore.userKeepAliveDisposer).toBeDefined();
   });
+
   test("stops observing", async () => {
     workflowsStore.keepUserObserved();
 
     // @ts-expect-error
-    const spy = jest.spyOn(workflowsStore, "userKeepAliveDisposer");
+    const spy = vi.spyOn(workflowsStore, "userKeepAliveDisposer");
 
     workflowsStore.stopKeepingUserObserved();
 

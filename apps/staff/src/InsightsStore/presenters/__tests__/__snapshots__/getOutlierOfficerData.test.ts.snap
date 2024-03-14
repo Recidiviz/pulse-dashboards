@@ -1,1417 +1,1417 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`combines related data 1`] = `
-Object {
+{
   "caseloadType": "GENERAL_OR_OTHER",
   "displayName": "Louis Armstrong",
   "district": "Region D1",
   "externalId": "so3",
-  "fullName": Object {
+  "fullName": {
     "givenNames": "Louis",
     "surname": "Armstrong",
   },
-  "outlierMetrics": Array [
-    Object {
-      "benchmark": Object {
-        "benchmarks": Array [
-          Object {
+  "outlierMetrics": [
+    {
+      "benchmark": {
+        "benchmarks": [
+          {
             "endDate": 2023-04-01T00:00:00.000Z,
             "target": 0.06030045665489481,
           },
-          Object {
+          {
             "endDate": 2023-05-01T00:00:00.000Z,
             "target": 0.06030045665489481,
           },
-          Object {
+          {
             "endDate": 2023-06-01T00:00:00.000Z,
             "target": 0.06030045665489481,
           },
-          Object {
+          {
             "endDate": 2023-07-01T00:00:00.000Z,
             "target": 0.06030045665489481,
           },
-          Object {
+          {
             "endDate": 2023-08-01T00:00:00.000Z,
             "target": 0.06030045665489481,
           },
-          Object {
+          {
             "endDate": 2023-09-01T00:00:00.000Z,
             "target": 0.06030045665489481,
           },
         ],
         "caseloadType": "GENERAL_OR_OTHER",
         "currentPeriodTarget": 0.06030045665489481,
-        "latestPeriodValues": Array [
-          Object {
+        "latestPeriodValues": [
+          {
             "targetStatus": "FAR",
             "value": 0.10914418994079302,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.10941656986547757,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.11293316831683167,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.11367175334786671,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.11447389054414302,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.1172335034438457,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.12070105820105821,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.12125238767544223,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.1453797132235794,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.1466368227731864,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.1604677745537677,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.16732885085574573,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.17811084001394215,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.18264611689351481,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.20845231296402056,
           },
-          Object {
+          {
             "targetStatus": "FAR",
             "value": 0.3634553149116256,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.060508102283559205,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.061162079510703356,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06229023266397406,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06230086481565772,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06283083014158454,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06285246889663783,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06404070532502851,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06445346989228325,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06457700586795624,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06507785569951266,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06574207492795389,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06643853070734282,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.0665971588687606,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06666423144360023,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06676625712630711,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06733489115729922,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06768032634897088,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06780605610254506,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06927639383155397,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.06955030487804878,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07001726453098024,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07017543859649122,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07060780748249314,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.0711593449441123,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07151253918495298,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07229870258492621,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07332630204409622,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07394951173062118,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07416890189384702,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.0754599958652057,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.0766581257613307,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07703440166430489,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07769594278172762,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07826907406613201,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07883369330453564,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.07957270547198604,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08151870463428253,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08213321332133214,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.0821627948856474,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08326996197718631,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.0850320326150262,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08620689655172414,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08649972351686547,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08696688110555158,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08734564946874701,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08740944740465785,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08756357355340177,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.08888131300832805,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.0914366832282577,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.09329788865599918,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.09465066311032082,
           },
-          Object {
+          {
             "targetStatus": "NEAR",
             "value": 0.09731603270529683,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01017449963762056,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.010426486131345161,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.010800414262464862,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.011311866612948213,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.011312567797923449,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.012574066418630288,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.012902085542594557,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.013264527383072284,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.013440860215053762,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.013622452787937596,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.014066594727917372,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.014609934755633831,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.014824141012102996,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015173560590313863,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015286677555806845,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015372952027966139,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015462825672527008,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015610966169111671,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015618982412597886,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015937472709807003,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.015993339759880817,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01614187157261631,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.016166179466737533,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.016212134671759793,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.016339137830699672,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.016348651796112158,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01639344262295082,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01640301995326263,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.016460719761883288,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.016575840145322436,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01664159029772489,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.016790100740604445,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01679241810820758,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01716596905422565,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.017402498331267283,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.017690965490500195,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.017743425210247434,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01821629984528622,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01849693406983226,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01871986870448251,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01878248340451809,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.01900942659236498,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.019356207243994273,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.019456289978678036,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.019791779633445396,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.019949715784871012,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.020779960148021637,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02078706076655846,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.021110468478889532,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02124975742286047,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02131884819811927,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.0214642752131726,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.022047053849173992,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.022634255239985118,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.023057485786481365,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02430497752621941,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.024344694190622292,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.024947882847476163,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02514640027557699,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02528926765052311,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.025892952151243216,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.025960170697012803,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.026017535105852165,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.026566707911783973,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.026671538180489587,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.026697875141718175,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02703503444189319,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.027182007745010426,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.027417501231324908,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.027432264852880386,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02781164279183176,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02804887420272036,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.028109356950327298,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.028159234686005247,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.028581496417524763,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02858709273182957,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02916383684231553,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.02919649642042955,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.029696525913269874,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03037490117754754,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.030785234333267734,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03128213918409325,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.031378954607977995,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.031385700159078204,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03146009308739872,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.031466873572136726,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03154165226408572,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03238543099241383,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.032399804713505835,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03241850963673505,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03249354580254607,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03254714878059655,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.032586376216409245,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03272075302554908,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.032875478495834276,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03297944431895188,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03309256852730515,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03340349592751899,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03346321338528536,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03392350945675914,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03403580753450205,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03409621672115833,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.034150449101796404,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.034471360438211265,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03482159893150162,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03521579725992153,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03550929078704154,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03564975338184304,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03593580781726888,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.035949965527430315,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.036246276067527304,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03630395862343346,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03652556789752827,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.036562671045429665,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03676100312216739,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03677026142144764,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.036772113640942974,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03691529709228824,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.037281037740666975,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.037865034493490324,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.037939158755457,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03813006006790284,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03827399989513972,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.038274668810514174,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03838266996161733,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.038437236731255264,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.038463564992886876,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03847775669407548,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03858147032397865,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03913509649749822,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03932765865747225,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03944453450045929,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03971276248503971,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.039851512173818104,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.03993872414925047,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.040711616753109144,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.040929989160094195,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04124060787526128,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04129737884216481,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.041405518845183065,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04153548533930129,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.041582804845630955,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.041633397969658946,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.041937151720572184,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04213564213564214,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04266843315278807,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04292097836312324,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04316802018449893,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04320293543232527,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04346790520423961,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04358902909916007,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04359076433121019,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.043719556016928854,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04497289305076392,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04513044553435272,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04571357004195628,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04593650693767108,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04610914603335018,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.046510640105339174,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04685494223363287,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04698562540227419,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.047228811731723094,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04724001811945901,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04739439058171745,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04758593716048846,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.048208153561680026,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04839992927864215,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04877722838433784,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.048781574375194904,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04879026868065767,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.049516143619426606,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.04974785334605424,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.0501764193740549,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05043526323062042,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05052602436323366,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.0507696587537092,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05090513514267385,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.051289257359657135,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.051435013387195264,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05144951369637739,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05165947208265515,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05201653128117429,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.052096714338728554,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05280862299707021,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05302342473215907,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.053297639328303725,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05392760403841418,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05486040656821854,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05491199037159621,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05547674536427196,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.055804709000101926,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05581039755351682,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05621438472200831,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.05638371823588476,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.0566699788846106,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.058151885289431764,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.058734552008238926,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.0596177927805303,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.06016152958628647,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.060194601726128304,
           },
-          Object {
+          {
             "targetStatus": "MET",
             "value": 0.060201220517895435,
           },
         ],
         "metricId": "absconsions_bench_warrants",
       },
-      "config": Object {
+      "config": {
         "bodyDisplayName": "absconsion rate",
-        "descriptionMarkdown": "**All reported absconsions and warrants for the time period**, as captured in the data we receive by supervision levels \\"9AB\\", \\"ZAB\\", \\"ZAC\\", \\"ZAP\\" or supervision type “ABS” for absconsions, and “9WR\\", \\"NIA\\", \\"WRT\\", \\"ZWS\\" for warrants, in a given time period.
+        "descriptionMarkdown": "**All reported absconsions and warrants for the time period**, as captured in the data we receive by supervision levels "9AB", "ZAB", "ZAC", "ZAP" or supervision type “ABS” for absconsions, and “9WR", "NIA", "WRT", "ZWS" for warrants, in a given time period.
 
 <br />
 **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
@@ -1422,39 +1422,39 @@ Object {
         "outcomeType": "ADVERSE",
         "titleDisplayName": "Absconsion Rate",
       },
-      "currentPeriodData": Object {
+      "currentPeriodData": {
         "endDate": 2023-09-01T00:00:00.000Z,
         "metricRate": 0.11521464646464646,
         "status": "FAR",
       },
       "metricId": "absconsions_bench_warrants",
-      "statusesOverTime": Array [
-        Object {
+      "statusesOverTime": [
+        {
           "endDate": 2023-04-01T00:00:00.000Z,
           "metricRate": 0.154553,
           "status": "FAR",
         },
-        Object {
+        {
           "endDate": 2023-05-01T00:00:00.000Z,
           "metricRate": 0.109407,
           "status": "FAR",
         },
-        Object {
+        {
           "endDate": 2023-06-01T00:00:00.000Z,
           "metricRate": 0.12125238767544223,
           "status": "FAR",
         },
-        Object {
+        {
           "endDate": 2023-07-01T00:00:00.000Z,
           "metricRate": 0.1466368227731864,
           "status": "FAR",
         },
-        Object {
+        {
           "endDate": 2023-08-01T00:00:00.000Z,
           "metricRate": 0.110487,
           "status": "FAR",
         },
-        Object {
+        {
           "endDate": 2023-09-01T00:00:00.000Z,
           "metricRate": 0.11521464646464646,
           "status": "FAR",

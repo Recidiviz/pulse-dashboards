@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render } from "@testing-library/react";
-import React from "react";
+import { Mock } from "vitest";
 
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import IE11Banner from "../../components/IE11Banner";
@@ -26,39 +26,39 @@ import LanternLayout from "../LanternLayout";
 import LanternTopBar from "../LanternTopBar";
 import Revocations from "../Revocations";
 
-jest.mock("react-router-dom");
-jest.mock("mobx-react-lite", () => {
+vi.mock("react-router-dom");
+vi.mock("mobx-react-lite", () => {
   return {
     observer: (component: any) => component,
   };
 });
-jest.mock("../../components/StoreProvider");
-jest.mock("../../hooks/useIntercom");
-jest.mock("../../utils/i18nSettings");
-jest.mock("../Revocations");
-jest.mock("../../components/NotFound");
-jest.mock("../../components/IE11Banner");
-jest.mock("../LanternTopBar");
+vi.mock("../../components/StoreProvider", () => ({
+  useRootStore: vi.fn(),
+}));
+vi.mock("../../hooks/useIntercom");
+vi.mock("../../utils/i18nSettings");
+vi.mock("../Revocations");
+vi.mock("../../components/NotFound");
+vi.mock("../../components/IE11Banner");
+vi.mock("../LanternTopBar");
 
-const mockUseRootStore = useRootStore as jest.Mock;
+const mockUseRootStore = useRootStore as Mock;
 
 describe("LanternLayout tests", () => {
-  (NotFound as jest.Mock).mockReturnValue(mockWithTestId("not-found-id"));
-  (Revocations as unknown as jest.Mock).mockReturnValue(
-    mockWithTestId("revocations-id"),
-  );
-  (IE11Banner as jest.Mock).mockReturnValue(mockWithTestId("ie11-banner"));
-  (LanternTopBar as jest.Mock).mockReturnValue(null);
-
   beforeEach(() => {
-    jest.clearAllMocks();
+    (NotFound as Mock).mockReturnValue(mockWithTestId("not-found-id"));
+    (Revocations as unknown as Mock).mockReturnValue(
+      mockWithTestId("revocations-id"),
+    );
+    (IE11Banner as Mock).mockReturnValue(mockWithTestId("ie11-banner"));
+    (LanternTopBar as Mock).mockReturnValue(null);
     mockUseRootStore.mockReturnValue({
       currentTenantId: "US_PA",
       pageStore: {},
     });
   });
 
-  it("should render Revocations for lantern tenants", () => {
+  it("should render Revocations for lantern tenants", async () => {
     const { getByTestId } = render(<LanternLayout />);
     expect(getByTestId("revocations-id")).toBeInTheDocument();
   });

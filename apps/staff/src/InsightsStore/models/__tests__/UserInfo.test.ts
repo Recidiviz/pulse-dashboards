@@ -54,9 +54,9 @@ test("hasSeenOnboarding is moved into metadata", () => {
     hasSeenOnboarding: true,
   };
   expect(userInfoSchema.parse(testUserInfo)).toMatchInlineSnapshot(`
-    Object {
+    {
       "entity": null,
-      "metadata": Object {
+      "metadata": {
         "hasSeenOnboarding": true,
       },
       "role": null,

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { runInAction } from "mobx";
+import { runInAction, when } from "mobx";
 
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
@@ -26,9 +26,11 @@ import SupervisionPopulationSnapshotMetric from "../SupervisionPopulationSnapsho
 import {
   createSupervisionPopulationSnapshot,
   formatDateString,
+  isHydrated,
 } from "../utils";
 
-const OLD_ENV = process.env;
+vi.mock("../../../RootStore");
+vi.mock("../../../api/metrics/metricsClient");
 
 const mockTenantId = "US_TN";
 const mockRootStore = {
@@ -36,13 +38,15 @@ const mockRootStore = {
   tenantStore: { currentTenantId: mockTenantId } as TenantStore,
 };
 const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
-jest.mock("../../../RootStore", () => ({
-  getTokenSilently: jest.fn().mockReturnValue("auth token"),
-}));
 
-jest.mock("../../../api/metrics/metricsClient", () => {
-  return {
-    callMetricsApi: jest.fn().mockResolvedValue({
+describe("SupervisionPopulationSnapshotMetric", () => {
+  let metric: SupervisionPopulationSnapshotMetric;
+
+  beforeEach(async () => {
+    vi.stubEnv("REACT_APP_API_URL", "test-url");
+
+    vi.mocked(RootStore).getTokenSilently.mockResolvedValue("auth token");
+    vi.mocked(callMetricsApi).mockResolvedValue({
       supervision_to_prison_population_snapshot_by_dimension: [
         // ALL row 6 months
         {
@@ -100,17 +104,8 @@ jest.mock("../../../api/metrics/metricsClient", () => {
           time_period: "months_0_6",
         },
       ],
-    }),
-  };
-});
-
-describe("SupervisionPopulationSnapshotMetric", () => {
-  let metric: SupervisionPopulationSnapshotMetric;
-
-  beforeEach(() => {
-    process.env = Object.assign(process.env, {
-      REACT_APP_API_URL: "test-url",
     });
+
     metric = new SupervisionPopulationSnapshotMetric({
       id: "supervisionToPrisonPopulationByDistrict",
       tenantId: mockTenantId,
@@ -129,13 +124,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
     });
 
     metric.hydrate();
-  });
 
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-    jest.resetAllMocks();
-    process.env = OLD_ENV;
+    await when(() => isHydrated(metric));
   });
 
   it("fetches metrics when initialized", () => {
@@ -245,7 +235,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
   });
 
   describe("totalCount", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       metric = new SupervisionPopulationSnapshotMetric({
         id: "supervisionToPrisonPopulationByDistrict",
         tenantId: mockTenantId,
@@ -264,6 +254,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         hasTimePeriodDimension: true,
       });
       metric.hydrate();
+
+      await when(() => isHydrated(metric));
     });
 
     it("returns the count from the ALL row", () => {
@@ -284,7 +276,7 @@ describe("SupervisionPopulationSnapshotMetric", () => {
   });
 
   describe("dataSeries", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       mockCoreStore.filtersStore.setFilters({
         timePeriod: ["6"],
       });
@@ -306,6 +298,8 @@ describe("SupervisionPopulationSnapshotMetric", () => {
         hasTimePeriodDimension: true,
       });
       metric.hydrate();
+
+      await when(() => isHydrated(metric));
     });
 
     it("filters by default values", () => {

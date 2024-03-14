@@ -33,13 +33,13 @@ let client: Client;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["pastFTRD"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "pastFTRD",
+  ]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.potentialOpportunities.pastFTRD;

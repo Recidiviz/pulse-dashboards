@@ -38,8 +38,6 @@ import {
 } from "../FirestoreStore/types";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { isDemoMode } from "../utils/isDemoMode";
-import { OPPORTUNITY_CONFIGS } from "./Opportunity/OpportunityConfigs";
-import { OpportunityType } from "./Opportunity/OpportunityType/types";
 import { StaffFilterFunction } from "./types";
 
 /**
@@ -200,12 +198,6 @@ export function getJusticeInvolvedPersonTitle(
     default:
       assertNever(systemId);
   }
-}
-
-export function getSystemIdFromOpportunityType(
-  opportunityType: OpportunityType,
-): SystemId {
-  return OPPORTUNITY_CONFIGS[opportunityType].systemType;
 }
 
 export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {

@@ -1,17 +1,17 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`fully eligible resident requirements met 1`] = `
-Array [
-  Object {
+exports[`fully eligible resident > requirements met 1`] = `
+[
+  {
     "text": "Custody level is higher than latest CAF score suggests",
   },
-  Object {
+  {
     "text": "Custody level is not maximum",
   },
-  Object {
+  {
     "text": "Not eligible for annual reclassification",
   },
-  Object {
+  {
     "text": "Last assessment did not include an override",
   },
 ]

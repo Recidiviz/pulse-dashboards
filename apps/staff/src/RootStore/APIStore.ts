@@ -92,7 +92,7 @@ export class APIStore {
       ? this.userStore.rootStore?.currentTenantId
       : this.userStore.stateCode;
     return this.post(
-      `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/external_request/${stateCode}/enqueue_sms_request`,
+      `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/${stateCode}/enqueue_sms_request`,
       body,
     );
   }

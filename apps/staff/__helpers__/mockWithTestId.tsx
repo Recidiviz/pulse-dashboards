@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,27 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { render, screen } from "@testing-library/react";
-import React from "react";
 
-import Modal from "../Modal";
+const mockWithTestId = (testId: string) => <div data-testid={testId} />;
 
-describe("Modal.js", () => {
-  const mockHide = jest.fn();
-
-  it("should render standard modal", () => {
-    render(<Modal isShowing>Some content</Modal>);
-
-    expect(screen.queryByText("Some content")).toBeInTheDocument();
-  });
-
-  it("should not be rendered if isShowing is false", () => {
-    render(
-      <Modal isShowing={false} hide={mockHide}>
-        Some content
-      </Modal>,
-    );
-
-    expect(screen.queryByText("Some content")).not.toBeInTheDocument();
-  });
-});
+export default mockWithTestId;

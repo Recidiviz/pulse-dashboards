@@ -17,6 +17,7 @@
 
 import { render, screen, waitFor } from "@testing-library/react";
 import { observable, runInAction } from "mobx";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { Opportunity } from "../../../WorkflowsStore";
@@ -24,12 +25,12 @@ import { dateToTimestamp } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { WorkflowProgress } from "../WorkflowProgress";
 
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 
   useRootStoreMock.mockReturnValue({
     workflowsStore: {

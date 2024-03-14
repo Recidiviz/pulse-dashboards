@@ -21,13 +21,13 @@ import FirestoreStore from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { CollectionDocumentSubscription } from "../CollectionDocumentSubscription";
 
-jest.mock("firebase/firestore");
+vi.mock("firebase/firestore");
 
 const firestoreStoreMock = new FirestoreStore({
-  rootStore: jest.fn() as unknown as RootStore,
+  rootStore: vi.fn() as unknown as RootStore,
 });
-const docMock = doc as jest.MockedFunction<typeof doc>;
-const mockRef = jest.fn() as unknown as DocumentReference;
+const docMock = vi.mocked(doc);
+const mockRef = vi.fn() as unknown as DocumentReference;
 
 let sub: CollectionDocumentSubscription<DocumentData>;
 

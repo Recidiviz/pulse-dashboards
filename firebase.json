@@ -1,9 +1,9 @@
 {
   "firestore": {
-    "rules": "firestore-config/firestore.rules"
+    "rules": "apps/staff/firestore-config/firestore.rules"
   },
   "hosting": {
-    "public": "build",
+    "public": "dist/apps/staff",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
@@ -43,7 +43,7 @@
   },
   "functions": [
     {
-      "source": "functions",
+      "source": "apps/staff/functions",
       "ignore": [
         "node_modules",
         ".git",

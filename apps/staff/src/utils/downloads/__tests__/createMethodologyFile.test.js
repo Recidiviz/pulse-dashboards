@@ -17,7 +17,7 @@
 
 import createMethodologyFile from "../createMethodologyFile";
 
-jest.mock("../../../utils/i18nSettings");
+vi.mock("../../../utils/i18nSettings");
 describe("createMethodologyFile functions", () => {
   const mockChartId = "revocations_count";
   const mockChartTitle = "Revocations Count";
@@ -36,8 +36,11 @@ describe("createMethodologyFile functions", () => {
   const violation = "some violation text";
   const lastUpdatedOn = "4/6/2021";
 
-  const nowSpy = jest.spyOn(Date, "now");
-  nowSpy.mockReturnValue(1605866733144);
+  const nowSpy = vi.spyOn(Date, "now");
+
+  beforeEach(() => {
+    nowSpy.mockReturnValue(1605866733144);
+  });
 
   it("should return methodology file for MO", () => {
     const actual = createMethodologyFile({

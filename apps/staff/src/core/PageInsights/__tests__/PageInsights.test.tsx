@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import { configure } from "mobx";
 import { MemoryRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
 import {
   useFeatureVariants,
@@ -30,13 +31,13 @@ import { RootStore } from "../../../RootStore";
 import { insightsRoute } from "../../views";
 import PageInsights from "../PageInsights";
 
-jest.mock(
+vi.mock(
   "../../../InsightsStore/presenters/SwarmPresenter/getSwarmLayoutWorker",
 );
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
-const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 let insightsStore: InsightsStore;
 
@@ -49,7 +50,7 @@ beforeEach(() => {
   useFeatureVariantsMock.mockReturnValue({
     insightsLeadershipPageAllDistricts: true,
   });
-  jest.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+  vi.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
     externalId: "user",
     pseudonymizedId: "hashed-user",
     stateCode: "us_mi",
@@ -57,7 +58,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -70,7 +70,7 @@ function renderRouter(relativePath?: string) {
 }
 
 test("hydrates", () => {
-  jest.spyOn(insightsStore, "populateSupervisionStore");
+  vi.spyOn(insightsStore, "populateSupervisionStore");
 
   renderRouter();
 
@@ -92,12 +92,16 @@ test("valid route", async () => {
     insightsStore,
     InsightsConfigFixture,
   );
-  jest
-    .spyOn(insightsStore.supervisionStore, "userCanAccessAllSupervisors", "get")
-    .mockReturnValue(true);
-  jest
-    .spyOn(insightsStore.supervisionStore, "userHasSeenOnboarding", "get")
-    .mockReturnValue(true);
+  vi.spyOn(
+    insightsStore.supervisionStore,
+    "userCanAccessAllSupervisors",
+    "get",
+  ).mockReturnValue(true);
+  vi.spyOn(
+    insightsStore.supervisionStore,
+    "userHasSeenOnboarding",
+    "get",
+  ).mockReturnValue(true);
 
   renderRouter(insightsRoute({ routeName: "supervisionSupervisorsList" }));
 

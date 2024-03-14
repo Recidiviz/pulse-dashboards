@@ -33,7 +33,7 @@ export async function fetchImpersonatedUserAppMetadata(
 
   const response = await fetch(
     `${
-      process.env.REACT_APP_API_URL
+      import.meta.env.VITE_API_URL
     }/api/impersonateAuth0User?${new URLSearchParams({
       impersonatedEmail,
       impersonatedStateCode,

@@ -1,72 +1,72 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`parses empty ineligible offenses array 1`] = `
-Object {
-  "eligibleCriteria": Object {
-    "usPaFulfilledRequirements": Object {
+{
+  "eligibleCriteria": {
+    "usPaFulfilledRequirements": {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
     },
-    "usPaNoHighSanctionsInPastYear": Object {
+    "usPaNoHighSanctionsInPastYear": {
       "latestHighSanctionDate": 2022-02-02T00:00:00.000Z,
     },
-    "usPaNotServingIneligibleAsOffense": Object {
-      "ineligibleOffenses": Array [],
-      "ineligibleSentencesExpirationDate": Array [],
+    "usPaNotServingIneligibleAsOffense": {
+      "ineligibleOffenses": [],
+      "ineligibleSentencesExpirationDate": [],
     },
-    "usPaSupervisionLevelIsNotLimited": Object {
+    "usPaSupervisionLevelIsNotLimited": {
       "limitedStartDate": null,
       "supervisionLevel": "EXAMPLE",
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_PA",
 }
 `;
 
 exports[`parses null reason fields 1`] = `
-Object {
-  "eligibleCriteria": Object {
+{
+  "eligibleCriteria": {
     "usPaFulfilledRequirements": null,
     "usPaNoHighSanctionsInPastYear": null,
     "usPaNotServingIneligibleAsOffense": null,
-    "usPaSupervisionLevelIsNotLimited": Object {
+    "usPaSupervisionLevelIsNotLimited": {
       "limitedStartDate": null,
       "supervisionLevel": "EXAMPLE",
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_PA",
 }
 `;
 
 exports[`record parses as expected 1`] = `
-Object {
-  "eligibleCriteria": Object {
-    "usPaFulfilledRequirements": Object {
+{
+  "eligibleCriteria": {
+    "usPaFulfilledRequirements": {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
     },
-    "usPaNoHighSanctionsInPastYear": Object {
+    "usPaNoHighSanctionsInPastYear": {
       "latestHighSanctionDate": 2022-02-02T00:00:00.000Z,
     },
-    "usPaNotServingIneligibleAsOffense": Object {
-      "ineligibleOffenses": Array [
+    "usPaNotServingIneligibleAsOffense": {
+      "ineligibleOffenses": [
         "ABC",
         "DEF",
       ],
-      "ineligibleSentencesExpirationDate": Array [
+      "ineligibleSentencesExpirationDate": [
         2023-06-01T00:00:00.000Z,
         2022-01-01T00:00:00.000Z,
       ],
     },
-    "usPaSupervisionLevelIsNotLimited": Object {
+    "usPaSupervisionLevelIsNotLimited": {
       "limitedStartDate": null,
       "supervisionLevel": "EXAMPLE",
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_PA",
 }
 `;

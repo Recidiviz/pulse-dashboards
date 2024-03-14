@@ -40,7 +40,7 @@ export default async function exportDataOnMobileDevices(
 
   const token = await getTokenSilently();
 
-  return fetch(`${process.env.REACT_APP_API_URL}/api/generateFileLink`, {
+  return fetch(`${import.meta.env.VITE_API_URL}/api/generateFileLink`, {
     method: "POST",
     body: formData,
     headers: {

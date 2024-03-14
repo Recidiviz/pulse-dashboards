@@ -121,7 +121,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   opportunityConfigurationAPI: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
-  process.env.REACT_APP_DEPLOY_ENV === "production"
+  import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
         CompliantReportingAlmostEligible: {},
         usIdCRC: {},

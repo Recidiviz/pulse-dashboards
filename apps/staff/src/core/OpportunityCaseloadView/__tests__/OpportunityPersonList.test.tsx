@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import { Mock } from "vitest";
 
 import {
   useOpportunityConfigurations,
@@ -31,12 +32,11 @@ import {
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
 
-jest.mock("../../../components/StoreProvider");
-jest.mock("../../../hooks/useHydrateOpportunities");
+vi.mock("../../../components/StoreProvider");
+vi.mock("../../../hooks/useHydrateOpportunities");
 
-const useRootStoreMock = useRootStore as jest.Mock;
-const useOpportunityConfigurationsMock =
-  useOpportunityConfigurations as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
+const useOpportunityConfigurationsMock = useOpportunityConfigurations as Mock;
 
 const baseWorkflowsStoreMock = {
   opportunityTypes: ["earlyTermination"],
@@ -53,7 +53,7 @@ const baseWorkflowsStoreMock = {
   hasOpportunities: () => false,
 };
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   useOpportunityConfigurationsMock.mockReturnValue(OPPORTUNITY_CONFIGS);
 });
 

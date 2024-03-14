@@ -15,5 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 export function isOfflineMode(): boolean {
-  return process.env.REACT_APP_IS_OFFLINE === "true";
+  return import.meta.env.VITE_IS_OFFLINE === "true";
 }

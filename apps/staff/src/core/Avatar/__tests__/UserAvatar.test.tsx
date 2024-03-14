@@ -19,22 +19,13 @@
  */
 
 import { mount } from "enzyme";
-import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useUserStore } from "../../../components/StoreProvider";
 import { AvatarImage, AvatarInitials, UserAvatar } from "../UserAvatar";
 
-jest.mock("../../../components/StoreProvider");
-
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
-afterAll(() => {
-  jest.resetModules();
-  jest.restoreAllMocks();
-});
+vi.mock("../../../components/StoreProvider");
 
 describe("UserAvatar tests", () => {
   const renderAvatar = (name: string, picture: string) => {
@@ -44,7 +35,7 @@ describe("UserAvatar tests", () => {
         picture,
       },
     };
-    (useUserStore as jest.Mock).mockReturnValue(userStore);
+    (useUserStore as Mock).mockReturnValue(userStore);
     return mount(
       <Router>
         <UserAvatar />

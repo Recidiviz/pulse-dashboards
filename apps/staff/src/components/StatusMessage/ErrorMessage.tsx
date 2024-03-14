@@ -17,7 +17,7 @@
 
 import React from "react";
 
-import { ReactComponent as ErrorLogo } from "../../assets/static/images/error_logo.svg";
+import ErrorLogo from "../../assets/static/images/error_logo.svg?react";
 import useLogout from "../../hooks/useLogout";
 import { StatusMessage } from ".";
 

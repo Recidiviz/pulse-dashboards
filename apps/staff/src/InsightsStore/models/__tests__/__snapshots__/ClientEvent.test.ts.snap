@@ -1,33 +1,33 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transformation 1`] = `
-Array [
-  Object {
-    "attributes": Object {
+[
+  {
+    "attributes": {
       "code": "149",
       "description": "NOT ASSOCIATE WITH ANYONE YOU KNOW TO HAVE A FELONY RECORD",
     },
     "eventDate": 2023-07-22T00:00:00.000Z,
     "metricId": "violations",
   },
-  Object {
-    "attributes": Object {
+  {
+    "attributes": {
       "code": null,
       "description": "PAROLE REINSTATED",
     },
     "eventDate": 2023-05-12T00:00:00.000Z,
     "metricId": "violation_responses",
   },
-  Object {
-    "attributes": Object {
+  {
+    "attributes": {
       "code": "148",
       "description": "COMPLY WITH ALCOHOL AND DRUG TESTING ORDERED BY FIELD AGENT",
     },
     "eventDate": 2023-05-01T00:00:00.000Z,
     "metricId": "violations",
   },
-  Object {
-    "attributes": Object {
+  {
+    "attributes": {
       "code": null,
       "description": null,
     },

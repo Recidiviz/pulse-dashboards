@@ -1,22 +1,22 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`criteria are required 1`] = `
-Object {
-  "_errors": Array [],
-  "eligibleCriteria": Object {
-    "_errors": Array [],
-    "usNdImpliedValidEarlyTerminationSentenceType": Object {
-      "_errors": Array [
+{
+  "_errors": [],
+  "eligibleCriteria": {
+    "_errors": [],
+    "usNdImpliedValidEarlyTerminationSentenceType": {
+      "_errors": [
         "Required",
       ],
     },
-    "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
-      "_errors": Array [
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": {
+      "_errors": [
         "Required",
       ],
     },
-    "usNdNotInActiveRevocationStatus": Object {
-      "_errors": Array [
+    "usNdNotInActiveRevocationStatus": {
+      "_errors": [
         "Required",
       ],
     },
@@ -25,30 +25,30 @@ Object {
 `;
 
 exports[`eligibleCriteria must not be empty 1`] = `
-Object {
-  "_errors": Array [],
-  "eligibleCriteria": Object {
-    "_errors": Array [],
-    "usNdImpliedValidEarlyTerminationSentenceType": Object {
-      "_errors": Array [],
-      "supervisionType": Object {
-        "_errors": Array [
+{
+  "_errors": [],
+  "eligibleCriteria": {
+    "_errors": [],
+    "usNdImpliedValidEarlyTerminationSentenceType": {
+      "_errors": [],
+      "supervisionType": {
+        "_errors": [
           "Required",
         ],
       },
     },
-    "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
-      "_errors": Array [],
-      "supervisionLevel": Object {
-        "_errors": Array [
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": {
+      "_errors": [],
+      "supervisionLevel": {
+        "_errors": [
           "Required",
         ],
       },
     },
-    "usNdNotInActiveRevocationStatus": Object {
-      "_errors": Array [],
-      "revocationDate": Object {
-        "_errors": Array [
+    "usNdNotInActiveRevocationStatus": {
+      "_errors": [],
+      "revocationDate": {
+        "_errors": [
           "Required",
         ],
       },
@@ -58,27 +58,27 @@ Object {
 `;
 
 exports[`ineligiibleCriteria 1`] = `
-Object {
-  "data": Object {
-    "eligibleCriteria": Object {
-      "supervisionPastEarlyDischargeDate": Object {
+{
+  "data": {
+    "eligibleCriteria": {
+      "supervisionPastEarlyDischargeDate": {
         "eligibleDate": 2022-01-03T00:00:00.000Z,
       },
-      "usNdImpliedValidEarlyTerminationSentenceType": Object {
+      "usNdImpliedValidEarlyTerminationSentenceType": {
         "supervisionType": "PROBATION",
       },
-      "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
+      "usNdImpliedValidEarlyTerminationSupervisionLevel": {
         "supervisionLevel": "MEDIUM",
       },
-      "usNdNotInActiveRevocationStatus": Object {
+      "usNdNotInActiveRevocationStatus": {
         "revocationDate": null,
       },
     },
     "externalId": "abc123",
-    "formInformation": Object {
+    "formInformation": {
       "clientName": "Firstname Lastname",
       "convictionCounty": "Bloom",
-      "crimeNames": Array [
+      "crimeNames": [
         "Crime1",
         "crime2",
       ],
@@ -90,12 +90,12 @@ Object {
       "probationOfficerFullName": "Fakename Officername",
       "sentenceLengthMonths": 24,
     },
-    "ineligibleCriteria": Object {
-      "supervisionPastEarlyDischargeDate": Object {
+    "ineligibleCriteria": {
+      "supervisionPastEarlyDischargeDate": {
         "eligibleDate": 2024-01-03T00:00:00.000Z,
       },
     },
-    "metadata": Object {
+    "metadata": {
       "ICOut": false,
       "multipleSentences": false,
       "outOfState": false,
@@ -107,14 +107,14 @@ Object {
 `;
 
 exports[`must not have revocation date 1`] = `
-Object {
-  "_errors": Array [],
-  "eligibleCriteria": Object {
-    "_errors": Array [],
-    "usNdNotInActiveRevocationStatus": Object {
-      "_errors": Array [],
-      "revocationDate": Object {
-        "_errors": Array [
+{
+  "_errors": [],
+  "eligibleCriteria": {
+    "_errors": [],
+    "usNdNotInActiveRevocationStatus": {
+      "_errors": [],
+      "revocationDate": {
+        "_errors": [
           "Expected null, received string",
         ],
       },
@@ -124,26 +124,26 @@ Object {
 `;
 
 exports[`transform record 1`] = `
-Object {
-  "eligibleCriteria": Object {
-    "supervisionPastEarlyDischargeDate": Object {
+{
+  "eligibleCriteria": {
+    "supervisionPastEarlyDischargeDate": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
-    "usNdImpliedValidEarlyTerminationSentenceType": Object {
+    "usNdImpliedValidEarlyTerminationSentenceType": {
       "supervisionType": "PROBATION",
     },
-    "usNdImpliedValidEarlyTerminationSupervisionLevel": Object {
+    "usNdImpliedValidEarlyTerminationSupervisionLevel": {
       "supervisionLevel": "MEDIUM",
     },
-    "usNdNotInActiveRevocationStatus": Object {
+    "usNdNotInActiveRevocationStatus": {
       "revocationDate": null,
     },
   },
   "externalId": "abc123",
-  "formInformation": Object {
+  "formInformation": {
     "clientName": "Firstname Lastname",
     "convictionCounty": "Bloom",
-    "crimeNames": Array [
+    "crimeNames": [
       "Crime1",
       "crime2",
     ],
@@ -155,8 +155,8 @@ Object {
     "probationOfficerFullName": "Fakename Officername",
     "sentenceLengthMonths": 24,
   },
-  "ineligibleCriteria": Object {},
-  "metadata": Object {
+  "ineligibleCriteria": {},
+  "metadata": {
     "ICOut": false,
     "multipleSentences": false,
     "outOfState": false,

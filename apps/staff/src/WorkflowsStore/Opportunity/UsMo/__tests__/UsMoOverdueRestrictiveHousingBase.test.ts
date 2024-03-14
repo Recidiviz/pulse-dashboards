@@ -29,27 +29,27 @@ test("validateReferral", () => {
       ),
     ),
   ).toMatchInlineSnapshot(`
-    Object {
-      "eligibleCriteria": Object {
-        "usMoInRestrictiveHousing": Object {
+    {
+      "eligibleCriteria": {
+        "usMoInRestrictiveHousing": {
           "confinementType": "COMMUNITY",
         },
-        "usMoNoActiveD1Sanctions": Object {
+        "usMoNoActiveD1Sanctions": {
           "latestSanctionEndDate": 2023-12-05T00:00:00.000Z,
           "latestSanctionStartDate": 2023-08-15T00:00:00.000Z,
         },
       },
       "externalId": "rh-1",
-      "ineligibleCriteria": Object {},
-      "metadata": Object {
+      "ineligibleCriteria": {},
+      "metadata": {
         "bedNumber": "03",
         "buildingNumber": "13",
-        "cdvsSinceLastHearing": Array [],
+        "cdvsSinceLastHearing": [],
         "complexNumber": "2",
         "currentFacility": "FACILITY 01",
         "housingUseCode": "123456",
-        "majorCdvs": Array [
-          Object {
+        "majorCdvs": [
+          {
             "cdvDate": 2022-02-20T00:00:00.000Z,
             "cdvRule": "Rule 7.2",
           },
@@ -96,7 +96,7 @@ describe("test mostRecentHearingComments parser", () => {
         "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Resident Statement: None. Summary of Findings: Lorem Ipsum Recommendation: Continue.",
       ),
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
         "recommendation": "Continue.",
         "residentStatement": "None.",
@@ -123,7 +123,7 @@ describe("test mostRecentHearingComments parser", () => {
         "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Offender Statement: None. Summary of Findings: Lorem Ipsum Recommendations: Continue.",
       ),
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
         "recommendation": "Continue.",
         "residentStatement": "None.",
@@ -138,7 +138,7 @@ describe("test mostRecentHearingComments parser", () => {
         "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Offender Statement: None. Summary of Findings: Lorem Ipsum Recommendation: Continue.",
       ),
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
         "recommendation": "Continue.",
         "residentStatement": "None.",
@@ -153,7 +153,7 @@ describe("test mostRecentHearingComments parser", () => {
         "Reason for Hearing: Resident Boy, Carter #111111 was assigned. Resident Statement: None. Offender Statement: None. Summary of Findings: Lorem Ipsum Recommendation: Continue.",
       ),
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "offenderStatement": "None.",
         "reasonForHearing": "Resident Boy, Carter #111111 was assigned.",
         "recommendation": "Continue.",
@@ -169,7 +169,7 @@ describe("test mostRecentHearingComments parser", () => {
         "Reason for Hearing: Resident Statement: Offender Statement: Summary of Findings: Recommendation:",
       ),
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "reasonForHearing": undefined,
         "recommendation": undefined,
         "residentStatement": undefined,
@@ -194,7 +194,7 @@ describe("test mostRecentHearingComments parser", () => {
         "Reason for Hearing: Test fails to parse Summary of Findings: Recommendation:",
       ),
     ).toMatchInlineSnapshot(`
-      Object {
+      {
         "reasonForHearing": "Test fails to parse",
         "recommendation": undefined,
         "residentStatement": undefined,

@@ -16,37 +16,38 @@
 // =============================================================================
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useUserStore } from "../../components/StoreProvider";
 import DashboardLayout from "../../core/DashboardLayout";
 import LanternLayout from "../../lantern/LanternLayout";
 import ProtectedLayout from "../ProtectedLayout";
 
-jest.mock("../../components/StoreProvider");
-jest.mock("../../core/DashboardLayout", () => {
+vi.mock("../../components/StoreProvider");
+vi.mock("../../core/DashboardLayout", () => {
   return {
     __esModule: true,
-    default: jest.fn(),
+    default: vi.fn(),
   };
 });
 
-jest.mock("../../lantern/LanternLayout", () => {
+vi.mock("../../lantern/LanternLayout", () => {
   return {
     __esModule: true,
-    default: jest.fn(),
+    default: vi.fn(),
   };
 });
 
-jest.mock("../../hooks/useAuth");
+vi.mock("../../hooks/useAuth");
 
-const mockUseUserStore = useUserStore as jest.Mock;
+const mockUseUserStore = useUserStore as Mock;
 
 describe("ProtectedLayout", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     mockUseUserStore.mockReturnValue({ userIsLoading: false });
-    (DashboardLayout as jest.Mock).mockReturnValue(<div>DashboardLayout</div>);
-    (LanternLayout as jest.Mock).mockReturnValue(<div>LanternLayout</div>);
+    (DashboardLayout as Mock).mockReturnValue(<div>DashboardLayout</div>);
+    (LanternLayout as Mock).mockReturnValue(<div>LanternLayout</div>);
   });
 
   it("renders Loading component when use is still loading", () => {

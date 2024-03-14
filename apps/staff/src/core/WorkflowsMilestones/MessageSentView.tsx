@@ -17,7 +17,7 @@
 
 import { useContext } from "react";
 
-import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
+import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Client } from "../../WorkflowsStore";

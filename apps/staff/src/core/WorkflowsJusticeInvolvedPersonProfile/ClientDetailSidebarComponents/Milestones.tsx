@@ -16,7 +16,7 @@
 // =============================================================================
 import React from "react";
 
-import { ReactComponent as GoldStar } from "../../../assets/static/images/goldStar.svg";
+import GoldStar from "../../../assets/static/images/goldStar.svg?react";
 import {
   DetailsHeading,
   DetailsSection,

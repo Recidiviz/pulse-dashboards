@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import { configure, observable } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { Mock } from "vitest";
 
 import {
   useFeatureVariants,
@@ -30,10 +31,10 @@ import { RootStore } from "../../../RootStore";
 import { INSIGHTS_PATHS, insightsUrl } from "../../views";
 import { InsightsRoute } from "../InsightsRoute";
 
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
-const useFeatureVariantsMock = jest.mocked(useFeatureVariants);
+const useRootStoreMock = useRootStore as Mock;
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 
 let supervisionStore: InsightsSupervisionStore;
 
@@ -51,7 +52,7 @@ beforeEach(() => {
   useRootStoreMock.mockReturnValue(rootStore);
   useFeatureVariantsMock.mockReturnValue({ insightsOnboarding: {} });
   useRootStoreMock.mockReturnValue(rootStore);
-  jest.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
+  vi.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
     pseudonymizedId: "hashed-abc123",
     routes: observable({ insights: true }),
     stateCode: "us_mi",
@@ -59,7 +60,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -98,17 +99,15 @@ test("handles params for supervision supervisor page", () => {
 });
 
 test("supervisor restricted from another supervisor's page", () => {
-  jest
-    .spyOn(
-      supervisionStore.insightsStore.rootStore.userStore,
-      "userAppMetadata",
-      "get",
-    )
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ insights: true }),
-      stateCode: "us_mi",
-    });
+  vi.spyOn(
+    supervisionStore.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    pseudonymizedId: "hashed-abc123",
+    routes: observable({ insights: true }),
+    stateCode: "us_mi",
+  });
 
   renderWithRouter(
     insightsUrl("supervisionSupervisor", {
@@ -167,17 +166,15 @@ test("handles params for supervision supervisors list page", async () => {
 });
 
 test("supervisors restricted from supervisors list page", () => {
-  jest
-    .spyOn(
-      supervisionStore.insightsStore.rootStore.userStore,
-      "userAppMetadata",
-      "get",
-    )
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ insights: true }),
-      stateCode: "us_mi",
-    });
+  vi.spyOn(
+    supervisionStore.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    pseudonymizedId: "hashed-abc123",
+    routes: observable({ insights: true }),
+    stateCode: "us_mi",
+  });
 
   renderWithRouter(
     insightsUrl("supervisionSupervisorsList"),

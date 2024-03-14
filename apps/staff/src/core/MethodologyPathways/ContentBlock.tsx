@@ -17,7 +17,7 @@
 
 import Markdown from "markdown-to-jsx";
 import React from "react";
-import ScrollableAnchor from "react-scrollable-anchor";
+import { AnchorSection } from "react-anchor-navigation";
 
 import { convertToSlug } from "../../utils/navigation";
 import { MethodologyContent } from "../models/types";
@@ -29,7 +29,7 @@ type Props = {
 
 const ContentBlock: React.FC<Props> = ({ content, subBlock = false }) => {
   return (
-    <ScrollableAnchor
+    <AnchorSection
       id={convertToSlug(content.title)}
       // The key is necessary here to force the ScrollableAnchor to remount
       // when there is new content to ensure the correct #id for TOC navigation
@@ -48,7 +48,7 @@ const ContentBlock: React.FC<Props> = ({ content, subBlock = false }) => {
           <Markdown>{content.methodology || ""}</Markdown>
         </div>
       </div>
-    </ScrollableAnchor>
+    </AnchorSection>
   );
 };
 

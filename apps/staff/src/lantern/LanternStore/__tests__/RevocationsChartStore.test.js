@@ -24,12 +24,12 @@ const mockFilteredData = [
   { level_2_supervision_location: "03", level_1_supervision_location: "ABC" },
   { level_2_supervision_location: "04", level_1_supervision_location: "CBA" },
 ];
-jest.mock("@sentry/react");
-jest.mock("..");
-jest.mock("shared-filters", () => {
+vi.mock("@sentry/react");
+vi.mock("..");
+vi.mock("shared-filters", async (importOriginal) => {
   return {
-    ...jest.requireActual("shared-filters"),
-    filterOptimizedDataFormat: jest.fn(() => mockFilteredData),
+    ...(await importOriginal("shared-filters")),
+    filterOptimizedDataFormat: vi.fn(() => mockFilteredData),
   };
 });
 

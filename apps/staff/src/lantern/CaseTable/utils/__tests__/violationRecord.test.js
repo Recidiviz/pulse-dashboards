@@ -18,13 +18,16 @@
 import { translate } from "../../../../utils/i18nSettings";
 import { parseAndFormatViolationRecord } from "../violationRecord";
 
-jest.mock("../../../../utils/i18nSettings");
+vi.mock("../../../../utils/i18nSettings");
 describe("parseAndFormatViolationRecord function", () => {
   const violationsBySeverity = ["fel", "misd", "absc", "muni", "tech"];
   const mockTranslations = {
     violationsBySeverity,
   };
-  translate.mockImplementation((key) => mockTranslations[key]);
+
+  beforeEach(() => {
+    translate.mockImplementation((key) => mockTranslations[key]);
+  });
 
   test("formats semicolon-separated strings", () => {
     const rawInput = "1fel;4absc;1muni";

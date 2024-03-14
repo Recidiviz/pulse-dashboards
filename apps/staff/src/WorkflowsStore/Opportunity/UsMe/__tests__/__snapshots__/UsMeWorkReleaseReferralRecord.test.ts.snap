@@ -1,61 +1,61 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transform record with usMeCustodyLevelIsMinimum 1`] = `
-Object {
-  "caseNotes": Object {
-    "foo": Array [
-      Object {
+{
+  "caseNotes": {
+    "foo": [
+      {
         "eventDate": 2022-06-28T00:00:00.000Z,
         "noteBody": "A body",
         "noteTitle": "A title",
       },
     ],
   },
-  "eligibleCriteria": Object {
-    "usMeCustodyLevelIsMinimum": Object {
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
       "custodyLevel": "MINIMUM",
     },
     "usMeNoClassAOrBViolationFor90Days": null,
     "usMeNoDetainersWarrantsOrOther": null,
-    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": Object {
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
       "eligibleDate": 2022-11-03T00:00:00.000Z,
     },
-    "usMeThreeYearsRemainingOnSentence": Object {
+    "usMeThreeYearsRemainingOnSentence": {
       "eligibleDate": 2022-08-07T00:00:00.000Z,
     },
   },
   "externalId": "001",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_ME",
 }
 `;
 
 exports[`transform record with usMeCustodyLevelIsMinimumOrCommunity 1`] = `
-Object {
-  "caseNotes": Object {
-    "foo": Array [
-      Object {
+{
+  "caseNotes": {
+    "foo": [
+      {
         "eventDate": 2022-06-28T00:00:00.000Z,
         "noteBody": "A body",
         "noteTitle": "A title",
       },
     ],
   },
-  "eligibleCriteria": Object {
-    "usMeCustodyLevelIsMinimum": Object {
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
       "custodyLevel": "MINIMUM",
     },
     "usMeNoClassAOrBViolationFor90Days": null,
     "usMeNoDetainersWarrantsOrOther": null,
-    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": Object {
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
       "eligibleDate": 2022-11-03T00:00:00.000Z,
     },
-    "usMeThreeYearsRemainingOnSentence": Object {
+    "usMeThreeYearsRemainingOnSentence": {
       "eligibleDate": 2022-08-07T00:00:00.000Z,
     },
   },
   "externalId": "001",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_ME",
 }
 `;

@@ -24,7 +24,7 @@ import { LANTERN_TENANTS } from "../../../RootStore/TenantStore/lanternTenants";
 import LanternStore from "..";
 import { allOption } from "../FiltersStore";
 
-jest.mock("../../../RootStore/TenantStore/districtKeyMappings");
+vi.mock("../../../RootStore/TenantStore/districtKeyMappings");
 
 let rootStore;
 
@@ -46,27 +46,28 @@ const defaultFilters = {
 };
 const userDistrict = "99";
 
-// We are mocking the return of districtFilterKey to test the logic when there are
-// different filter keys per tenant. This does not need to match the actual
-// tenant mappings.
-getDistrictKeyMap.mockImplementation((tenantId) => {
-  const mappings = {
-    ...districtKeyMappings,
-    districtFilterKey: {
-      US_MO: "levelOneSupervisionLocation",
-      US_PA: "levelTwoSupervisionLocation",
-    },
-  };
-  return {
-    districtFilterKey: mappings.districtFilterKey[tenantId],
-    districtFilterValueKey: mappings.districtFilterValueKey[tenantId],
-    districtSecondaryLabelKey: mappings.districtSecondaryLabelKey[tenantId],
-    districtPrimaryLabelKey: mappings.districtPrimaryLabelKey[tenantId],
-    districtPrimaryIdKey: mappings.districtPrimaryIdKey[tenantId],
-  };
-});
-
 describe("FiltersStore", () => {
+  beforeEach(() => {
+    // We are mocking the return of districtFilterKey to test the logic when there are
+    // different filter keys per tenant. This does not need to match the actual
+    // tenant mappings.
+    getDistrictKeyMap.mockImplementation((tenantId) => {
+      const mappings = {
+        ...districtKeyMappings,
+        districtFilterKey: {
+          US_MO: "levelOneSupervisionLocation",
+          US_PA: "levelTwoSupervisionLocation",
+        },
+      };
+      return {
+        districtFilterKey: mappings.districtFilterKey[tenantId],
+        districtFilterValueKey: mappings.districtFilterValueKey[tenantId],
+        districtSecondaryLabelKey: mappings.districtSecondaryLabelKey[tenantId],
+        districtPrimaryLabelKey: mappings.districtPrimaryLabelKey[tenantId],
+        districtPrimaryIdKey: mappings.districtPrimaryIdKey[tenantId],
+      };
+    });
+  });
   describe("default filter values", () => {
     it("are set correctly by default", () => {
       LANTERN_TENANTS.forEach((tenantId) => {

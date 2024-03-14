@@ -18,9 +18,9 @@
 import { unpackAggregatedErrors } from "../../../testUtils";
 import { HydratesFromSource } from "../HydratesFromSource";
 
-const mockExpectation = jest.fn();
+const mockExpectation = vi.fn();
 const source = {
-  populate: jest.fn(),
+  populate: vi.fn(),
   expectPopulated: [mockExpectation],
 };
 
@@ -29,7 +29,7 @@ const mockThrow = () => {
 };
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 test("source already populated", () => {
@@ -84,13 +84,13 @@ test("population fails to populate without throwing an error", async () => {
   const hfs = new HydratesFromSource(source);
   await hfs.hydrate();
   expect(hfs.hydrationState).toMatchInlineSnapshot(`
-    Object {
+    {
       "error": [AggregateError: Expected data failed to populate],
       "status": "failed",
     }
   `);
   expect(unpackAggregatedErrors(hfs)).toMatchInlineSnapshot(`
-    Array [
+    [
       [Error: oops],
     ]
   `);

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-@import "~@recidiviz/design-system/dist/scss/typography/mixins";
+@import "@recidiviz/design-system/dist/scss/typography/mixins";
 @import "../CoreConstants.module.scss";
 
 .main-content {
@@ -22,6 +22,14 @@
 }
 .Methodology {
   padding: 0px 0px 5rem 0px !important;
+
+  // this offsets the padding for anchor links
+  // so they don't overshoot the header on page load
+  // (slightly less than the offset defined in PageMethodology.tsx, for comfort).
+  // targets elements rendered by react-anchor-navigation
+  b[id] {
+    scroll-margin-top: 70px;
+  }
 
   &__main-title {
     color: $pine-3;

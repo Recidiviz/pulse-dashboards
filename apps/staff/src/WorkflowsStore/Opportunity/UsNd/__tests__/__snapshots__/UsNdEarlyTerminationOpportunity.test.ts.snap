@@ -1,50 +1,50 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`almost eligible past discharge date coming up requirements almost met 1`] = `
-Array [
-  Object {
+exports[`almost eligible past discharge date coming up > requirements almost met 1`] = `
+[
+  {
     "text": "Early termination date (as calculated by DOCSTARS) is within 60 days",
     "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
 ]
 `;
 
-exports[`almost eligible past discharge date coming up requirements met 1`] = `
-Array [
-  Object {
+exports[`almost eligible past discharge date coming up > requirements met 1`] = `
+[
+  {
     "text": "Early termination date is Jan 3, 2022",
     "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
-  Object {
+  {
     "text": "Currently on medium supervision",
     "tooltip": "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
   },
-  Object {
+  {
     "text": "Serving probation sentence",
     "tooltip": "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
   },
-  Object {
+  {
     "text": "Not on active revocation status",
     "tooltip": "Policy requirement: Not on active revocation status.",
   },
 ]
 `;
 
-exports[`fully eligible requirements met 1`] = `
-Array [
-  Object {
+exports[`fully eligible > requirements met 1`] = `
+[
+  {
     "text": "Early termination date is Jan 3, 2022",
     "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
-  Object {
+  {
     "text": "Currently on medium supervision",
     "tooltip": "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
   },
-  Object {
+  {
     "text": "Serving probation sentence",
     "tooltip": "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
   },
-  Object {
+  {
     "text": "Not on active revocation status",
     "tooltip": "Policy requirement: Not on active revocation status.",
   },

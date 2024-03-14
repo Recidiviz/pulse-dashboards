@@ -32,23 +32,23 @@ test("placement without fixed spread", () => {
     { position: 16, radius: 5, ...DEFAULT_FILL_PROPS },
   ];
   expect(calculateSwarm(testData)).toMatchInlineSnapshot(`
-    Object {
-      "swarmPoints": Array [
-        Object {
+    {
+      "swarmPoints": [
+        {
           "opacity": 1,
           "position": 2,
           "radius": 5,
           "spreadOffset": 0,
           "targetStatus": "FAR",
         },
-        Object {
+        {
           "opacity": 1,
           "position": 4,
           "radius": 5,
           "spreadOffset": 9.797958971132712,
           "targetStatus": "FAR",
         },
-        Object {
+        {
           "opacity": 1,
           "position": 16,
           "radius": 5,
@@ -68,23 +68,23 @@ test("placement fits within fixed spread", () => {
     { position: 7, radius: 5, ...DEFAULT_FILL_PROPS },
   ];
   expect(calculateSwarm(testData, 100)).toMatchInlineSnapshot(`
-    Object {
-      "swarmPoints": Array [
-        Object {
+    {
+      "swarmPoints": [
+        {
           "opacity": 1,
           "position": 2,
           "radius": 5,
           "spreadOffset": 0,
           "targetStatus": "FAR",
         },
-        Object {
+        {
           "opacity": 1,
           "position": 4,
           "radius": 5,
           "spreadOffset": -9.797958971132712,
           "targetStatus": "FAR",
         },
-        Object {
+        {
           "opacity": 1,
           "position": 7,
           "radius": 5,
@@ -104,23 +104,23 @@ test("placement constrained by fixed spread", () => {
     { position: 7, radius: 5, ...DEFAULT_FILL_PROPS },
   ];
   expect(calculateSwarm(testData, 25)).toMatchInlineSnapshot(`
-    Object {
-      "swarmPoints": Array [
-        Object {
+    {
+      "swarmPoints": [
+        {
           "opacity": 1,
           "position": 2,
           "radius": 5,
           "spreadOffset": 0,
           "targetStatus": "FAR",
         },
-        Object {
+        {
           "opacity": 1,
           "position": 4,
           "radius": 5,
           "spreadOffset": 5.2020410288672885,
           "targetStatus": "FAR",
         },
-        Object {
+        {
           "opacity": 1,
           "position": 7,
           "radius": 5,

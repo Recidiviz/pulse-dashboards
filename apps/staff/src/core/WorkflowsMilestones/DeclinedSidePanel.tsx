@@ -18,7 +18,7 @@ import { palette, Sans18 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { ReactComponent as GrayAlert } from "../../assets/static/images/grayAlert.svg";
+import GrayAlert from "../../assets/static/images/grayAlert.svg?react";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";

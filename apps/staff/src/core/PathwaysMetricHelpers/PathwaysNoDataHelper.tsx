@@ -21,7 +21,7 @@ import { rem } from "polished";
 import { ReactNode } from "react";
 import styled from "styled-components/macro";
 
-import { ReactComponent as NoDataLogo } from "../../assets/static/images/no_data_logo.svg";
+import NoDataLogo from "../../assets/static/images/no_data_logo.svg?react";
 import { StatusMessage } from "../../components/StatusMessage";
 import { useCoreStore } from "../CoreStoreProvider";
 import { HydratablePathwaysMetric } from "../models/types";

@@ -24,10 +24,8 @@ import { Client } from "../../../../WorkflowsStore";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
+import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
 import FormHeading from "./FormHeading";
-
-export const FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY =
-  "Calibri, Arial, sans-serif";
 
 const FormPage = styled.div`
   font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};

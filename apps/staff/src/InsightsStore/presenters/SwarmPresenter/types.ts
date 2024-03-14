@@ -47,7 +47,3 @@ export type PrepareFn = (
   width: number,
   height: number,
 ) => PreparedChartData;
-
-export type SwarmLayout = {
-  prepareChartData: PrepareFn;
-};

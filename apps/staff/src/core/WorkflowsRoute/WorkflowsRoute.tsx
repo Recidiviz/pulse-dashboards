@@ -28,13 +28,11 @@ import {
 import { TenantId } from "../../RootStore/types";
 import { WorkflowsRouteParams } from "../../WorkflowsStore";
 import {
+  getSystemIdFromOpportunityType,
   isOpportunityTypeUrlForState,
   OPPORTUNITY_TYPE_FOR_URL_BY_STATE,
 } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
-import {
-  getSystemIdFromOpportunityType,
-  getSystemIdFromPage,
-} from "../../WorkflowsStore/utils";
+import { getSystemIdFromPage } from "../../WorkflowsStore/utils";
 import { SystemId } from "../models/types";
 import { WorkflowsPage, workflowsUrl } from "../views";
 

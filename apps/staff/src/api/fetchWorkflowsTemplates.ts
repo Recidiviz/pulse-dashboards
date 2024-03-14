@@ -23,7 +23,7 @@ export async function fetchWorkflowsTemplates(
 ): Promise<ArrayBuffer> {
   const token = await getTokenSilently();
 
-  const url = `${process.env.REACT_APP_API_URL}/api/${stateCode}/workflows/templates?filename=${templateName}`;
+  const url = `${import.meta.env.VITE_API_URL}/api/${stateCode}/workflows/templates?filename=${templateName}`;
 
   const response = await fetch(url, {
     headers: {

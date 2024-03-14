@@ -41,11 +41,13 @@ const FILTER_KEYS = {
   },
 };
 
+const isServer = typeof "process" !== "undefined";
+
 function getFilterKeys() {
-  if (process.env.REACT_APP_API_URL) {
-    return FILTER_KEYS.APP;
+  if (isServer) {
+    return FILTER_KEYS.SERVER;
   }
-  return FILTER_KEYS.SERVER;
+  return FILTER_KEYS.APP;
 }
 
 module.exports = { getFilterKeys };

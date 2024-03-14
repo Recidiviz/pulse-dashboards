@@ -17,23 +17,24 @@
 
 import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
+import { Mock } from "vitest";
 
 import { ClientRecord } from "../../../FirestoreStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { CaseloadSubscription } from "../CaseloadSubscription";
 
-jest.mock("firebase/firestore");
+vi.mock("firebase/firestore");
 
-const queryMock = query as jest.Mock;
-const whereMock = where as jest.Mock;
-const collectionMock = jest.fn();
-const withConverterMock = jest.fn();
+const queryMock = query as Mock;
+const whereMock = where as Mock;
+const collectionMock = vi.fn();
+const withConverterMock = vi.fn();
 
 let workflowsStoreMock: WorkflowsStore;
 let sub: CaseloadSubscription<ClientRecord>;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 
   queryMock.mockReturnValue({ withConverter: withConverterMock });
 

@@ -33,17 +33,17 @@ import { rem, rgba } from "polished";
 import React from "react";
 import { useInView } from "react-intersection-observer";
 import ReactSelect, {
+  ClearIndicatorProps,
   components,
-  GroupTypeBase,
-  IndicatorContainerProps,
-  MenuListComponentProps,
+  GroupBase,
+  IndicatorsContainerProps,
+  MenuListProps,
   MultiValueProps,
+  MultiValueRemoveProps,
   OptionProps,
   SelectComponentsConfig,
-  Styles,
+  StylesConfig,
 } from "react-select";
-import { IndicatorProps } from "react-select/src/components/indicators";
-import { MultiValueRemoveProps } from "react-select/src/components/MultiValue";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -73,7 +73,7 @@ const buildSelectOption = (record: Searchable): SelectOption => {
   return { label: record.searchLabel, value: record.searchId };
 };
 
-const DistricIndicatorsWrapper = styled.div`
+const DistrictIndicatorsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: end;
@@ -88,14 +88,14 @@ const DistrictIndicator = observer(function DistrictIndicator() {
   if (!districtsFilteredBy) return null;
 
   return (
-    <DistricIndicatorsWrapper>
+    <DistrictIndicatorsWrapper>
       {districtsFilteredBy.map((district) => (
         <ValuePill key={district}>
           {district.match(/^\d/) ? `D${district}` : district}&nbsp;
           <Icon kind="Place" size={12} color={palette.slate60} />
         </ValuePill>
       ))}
-    </DistricIndicatorsWrapper>
+    </DistrictIndicatorsWrapper>
   );
 });
 
@@ -116,7 +116,7 @@ const IndicatorsWrapper = styled.div<{
 const Indicators = (isMobile: boolean) =>
   observer(function IndicatorsContainer({
     children,
-  }: IndicatorContainerProps<SelectOption, true>) {
+  }: IndicatorsContainerProps<SelectOption, true>) {
     const {
       workflowsStore: { districtsFilteredBy },
     } = useRootStore();
@@ -140,7 +140,10 @@ const Option = ({ children, ...props }: OptionProps<SelectOption, true>) => {
   );
 };
 
-const MultiValue = ({ children, ...props }: MultiValueProps<SelectOption>) => {
+const MultiValue = ({
+  children,
+  ...props
+}: MultiValueProps<SelectOption, true>) => {
   return (
     <components.MultiValue className="fs-exclude" {...props}>
       {children}
@@ -157,7 +160,7 @@ const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
 };
 
 const ClearAll = (searchFieldTitle: string) =>
-  function ClearAllButton(props: IndicatorProps<SelectOption, true>) {
+  function ClearAllButton(props: ClearIndicatorProps<SelectOption, true>) {
     return (
       <components.ClearIndicator {...props}>
         <>Clear {pluralizeWord(searchFieldTitle)}</>
@@ -186,10 +189,7 @@ const MenuListWithShadow = (
   isDisabled: boolean,
   searchFieldTitle: string,
 ) =>
-  function MenuList({
-    children,
-    ...props
-  }: MenuListComponentProps<SelectOption, true>) {
+  function MenuList({ children, ...props }: MenuListProps<SelectOption, true>) {
     const topShadow = useInView();
     const bottomShadow = useInView();
 
@@ -273,7 +273,11 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       ? "caseload"
       : workflowsSearchFieldTitle;
 
-  const customComponents: SelectComponentsConfig<SelectOption, true> = {
+  const customComponents: SelectComponentsConfig<
+    SelectOption,
+    true,
+    GroupBase<SelectOption>
+  > = {
     ClearIndicator: ClearAll(searchTitle),
     DropdownIndicator: null,
     IndicatorsContainer: Indicators(isMobile),
@@ -292,7 +296,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   );
 
   const styles: Partial<
-    Styles<SelectOption, true, GroupTypeBase<SelectOption>>
+    StylesConfig<SelectOption, true, GroupBase<SelectOption>>
   > = {
     clearIndicator: (base) => ({
       ...base,
@@ -409,7 +413,9 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     placeholder: `Search for one or more ${pluralizeWord(searchTitle)} …`,
     styles,
     value: selectedSearchables.map(buildSelectOption),
-  };
+    // use of satisfies narrows isMulti from boolean to true,
+    // which the custom components defined here will require
+  } satisfies { isMulti: true; [key: string]: unknown };
 
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
 

@@ -16,7 +16,7 @@
 // =============================================================================
 
 /**
- * Because it's challenging to combine Mobx observability and Jest mocking behavior in a single class,
+ * Because it's challenging to combine Mobx observability and Vitest mocking behavior in a single class,
  * manual mocks of observable classes should call this function in their constructors, passing all arguments
  */
-export const constructorSpy = jest.fn();
+export const constructorSpy = vi.fn();

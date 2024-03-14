@@ -22,7 +22,7 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
-import { ReactComponent as TealStarBase } from "../../assets/static/images/tealStar.svg";
+import TealStarBase from "../../assets/static/images/tealStar.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";

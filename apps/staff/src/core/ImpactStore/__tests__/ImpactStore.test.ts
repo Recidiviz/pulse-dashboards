@@ -14,27 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import RootStore from "../../../RootStore";
+import { RootStore } from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import UserStore from "../../../RootStore/UserStore";
 import ImpactMetric from "../../models/ImpactMetric";
 import ImpactStore from "..";
 
 let impactStore: ImpactStore;
 
-jest.mock("../../../RootStore/UserStore", () => {
-  return jest.fn().mockImplementation(() => ({
-    user: {},
-  }));
-});
-
-jest.mock("../../../RootStore/TenantStore", () => {
-  return jest.fn().mockImplementation(() => ({
-    currentTenantId: "US_TN",
-  }));
-});
+vi.mock("../../../RootStore/UserStore");
+vi.mock("../../../RootStore/TenantStore");
 
 describe("ImpactStore", () => {
   beforeEach(() => {
-    impactStore = new ImpactStore({ rootStore: RootStore });
+    // @ts-expect-error
+    vi.mocked(UserStore).mockImplementation(() => ({
+      user: {},
+    }));
+    // @ts-expect-error
+    vi.mocked(TenantStore).mockImplementation(() => ({
+      currentTenantId: "US_TN",
+    }));
+
+    impactStore = new ImpactStore({ rootStore: new RootStore() });
   });
 
   describe("metrics", () => {

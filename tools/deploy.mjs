@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,10 +40,6 @@ const [deployScriptPat] = await secretClient.accessSecretVersion({
   name: "projects/recidiviz-123/secrets/github_deploy_script_pat/versions/latest",
 });
 
-// Load environment files (auth config, service accounts, GAE config)
-console.log("Loading environment files from Secret Manager...");
-await $`./load_config_files.sh`.pipe(process.stdout);
-
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
   type: "list",
@@ -69,7 +65,7 @@ if (deployEnv === "preview") {
       type: "list",
     },
   ]);
-  await $`yarn build-staging`.pipe(process.stdout);
+  await $`nx build-staging staff`.pipe(process.stdout);
   await $`firebase hosting:channel:deploy ${previewAppName} -P staging --expires ${expiration}`.pipe(
     process.stdout,
   );
@@ -209,8 +205,11 @@ const deployBackendPrompt = await inquirer.prompt({
 });
 
 if (deployBackendPrompt.deployBackend) {
+  // Load environment files (auth config, service accounts, GAE config)
+  console.log("Loading environment files from Secret Manager...");
+  await $`nx load-config-files staff`.pipe(process.stdout);
+
   const gaeVersion = nextVersion.replaceAll(".", "-");
-  cd("../..");
   let retryBackend = false;
   do {
     try {
@@ -247,8 +246,6 @@ if (deployBackendPrompt.deployBackend) {
       retryBackend = retryBackendPrompt.retryBackend;
     }
   } while (retryBackend);
-
-  cd("apps/staff");
 }
 
 const deployFrontendPrompt = await inquirer.prompt({
@@ -263,13 +260,13 @@ if (deployFrontendPrompt.deployFrontend) {
   console.log("Building application...");
   switch (deployEnv) {
     case "production":
-      await $`yarn build`.pipe(process.stdout);
+      await $`nx build staff`.pipe(process.stdout);
       break;
     case "demo":
-      await $`yarn build-demo`.pipe(process.stdout);
+      await $`nx build-demo staff`.pipe(process.stdout);
       break;
     default:
-      await $`yarn build-staging`.pipe(process.stdout);
+      await $`nx build-staging staff`.pipe(process.stdout);
   }
 
   // Run a preview
@@ -297,14 +294,14 @@ if (deployFrontendPrompt.deployFrontend) {
         switch (deployEnv) {
           case "production":
             // eslint-disable-next-line no-await-in-loop
-            await $`firebase deploy --except functions -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
+            await $`firebase deploy --only hosting -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
               process.stdout,
             );
             publishReleaseNotes = true;
             break;
           default:
             // eslint-disable-next-line no-await-in-loop
-            await $`firebase deploy --except functions -P ${deployEnv} -m "${currentRevision}"`.pipe(
+            await $`firebase deploy --only hosting -P ${deployEnv} -m "${currentRevision}"`.pipe(
               process.stdout,
             );
         }

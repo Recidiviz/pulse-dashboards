@@ -20,6 +20,7 @@ import { Timestamp } from "firebase/firestore";
 import { configure } from "mobx";
 import ReactModal from "react-modal";
 import tk from "timekeeper";
+import { setTimeout } from "timers/promises";
 
 import { CombinedUserRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
@@ -35,8 +36,8 @@ import {
   WriteToTOMISModal,
 } from "../WriteToTOMISModal";
 
-jest.mock("firebase/firestore");
-jest.mock("../../../WorkflowsStore/subscriptions");
+vi.mock("firebase/firestore");
+vi.mock("../../../WorkflowsStore/subscriptions");
 
 let opp: UsTnExpirationOpportunity;
 let client: Client;
@@ -49,14 +50,14 @@ function createTestUnit(
   userRecord: CombinedUserRecord,
 ) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["usTnExpiration"]);
-  jest
-    .spyOn(root.workflowsStore, "currentUserEmail", "get")
-    .mockReturnValue("test-officer@example.com");
-  jest.spyOn(root.workflowsStore, "user", "get").mockReturnValue(userRecord);
-  jest.spyOn(root.userStore, "stateCode", "get").mockReturnValue("US_TN");
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "usTnExpiration",
+  ]);
+  vi.spyOn(root.workflowsStore, "currentUserEmail", "get").mockReturnValue(
+    "test-officer@example.com",
+  );
+  vi.spyOn(root.workflowsStore, "user", "get").mockReturnValue(userRecord);
+  vi.spyOn(root.userStore, "stateCode", "get").mockReturnValue("US_TN");
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.potentialOpportunities.usTnExpiration;
@@ -74,6 +75,11 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
 });
 
+afterEach(async () => {
+  // this prevents modal async close actions from erroring during teardown
+  await setTimeout(300);
+});
+
 describe("WriteToTOMISModal", () => {
   let submitButton: HTMLElement;
   beforeEach(() => {
@@ -88,7 +94,7 @@ describe("WriteToTOMISModal", () => {
     render(
       <WriteToTOMISModal
         showModal
-        onCloseFn={jest.fn()}
+        onCloseFn={vi.fn()}
         paginatedNote={[
           ["page 1, line 1", "page 1, line 2"],
           ["page 2, line 1"],
@@ -103,7 +109,7 @@ describe("WriteToTOMISModal", () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   function expectPreviewContents() {
@@ -171,7 +177,7 @@ describe("WriteToTOMISModal", () => {
     });
 
     test("copies note", async () => {
-      jest.spyOn(opp, "setCompletedIfEligible");
+      vi.spyOn(opp, "setCompletedIfEligible");
 
       await waitFor(() => {
         const copyButton = screen.getByRole("button", { name: "Copy page 1" });
@@ -186,8 +192,8 @@ describe("WriteToTOMISModal", () => {
   });
 
   test("submit success", async () => {
-    jest.spyOn(opp, "setCompletedIfEligible");
-    jest.spyOn(root.apiStore, "post").mockResolvedValue("success");
+    vi.spyOn(opp, "setCompletedIfEligible");
+    vi.spyOn(root.apiStore, "post").mockResolvedValue("success");
     expect(submitButton).toBeInTheDocument();
 
     expect(opp.setCompletedIfEligible).not.toHaveBeenCalled();
@@ -200,10 +206,10 @@ describe("WriteToTOMISModal", () => {
   test("submit failure", async () => {
     const now = new Date(2023, 2, 10);
     tk.freeze(now);
-    jest.spyOn(root.apiStore, "post").mockImplementation((path, body) => {
+    vi.spyOn(root.apiStore, "post").mockImplementation((path, body) => {
       throw Error("test error");
     });
-    jest.spyOn(root.firestoreStore, "updateOpportunity");
+    vi.spyOn(root.firestoreStore, "updateOpportunity");
 
     expect(submitButton).toBeInTheDocument();
     fireEvent.click(submitButton);
@@ -242,13 +248,13 @@ describe("WriteToTOMISModal", () => {
     );
 
     expect(contactNoteRequestBody).toMatchInlineSnapshot(`
-      Object {
-        "contactNote": Object {
-          "1": Array [
+      {
+        "contactNote": {
+          "1": [
             "page 1, line 1",
             "page 1, line 2",
           ],
-          "2": Array [
+          "2": [
             "page 2, line 1",
           ],
         },

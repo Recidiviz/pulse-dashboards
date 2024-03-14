@@ -15,16 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import RootStore from "..";
-import AnalyticsStore from "../AnalyticsStore";
+import type AnalyticsStore from "../AnalyticsStore";
 
 describe("AnalyticsStore", () => {
-  const OLD_ENV = process.env;
   let analyticsStore: AnalyticsStore;
 
-  afterEach(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-    process.env = OLD_ENV;
+  beforeEach(() => {
+    vi.resetModules();
   });
 
   const mockRootStore = {
@@ -34,30 +31,27 @@ describe("AnalyticsStore", () => {
     },
   } as typeof RootStore;
 
-  function getAnalyticsStoreWithEnv(
+  async function getAnalyticsStoreWithEnv(
     env: string,
     authEnv: string,
     rootStore: typeof RootStore = mockRootStore,
   ) {
-    process.env = Object.assign(process.env, {
-      NODE_ENV: env,
-      REACT_APP_AUTH_ENV: authEnv,
-    });
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-shadow
-    const AnalyticsStore = require("../AnalyticsStore").default;
+    vi.stubEnv("MODE", env);
+    vi.stubEnv("VITE_AUTH_ENV", authEnv);
+    const AnalyticsStore = (await import("../AnalyticsStore")).default;
 
     return new AnalyticsStore({ rootStore });
   }
 
   describe("Recidiviz user in staging", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       const rootStore = {
         isImpersonating: false,
         userStore: {
           isRecidivizUser: true,
         },
       } as typeof RootStore;
-      analyticsStore = getAnalyticsStoreWithEnv(
+      analyticsStore = await getAnalyticsStoreWithEnv(
         "staging",
         "staging",
         rootStore,
@@ -78,14 +72,14 @@ describe("AnalyticsStore", () => {
   });
 
   describe("Recidiviz user in production", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       const rootStore = {
         isImpersonating: false,
         userStore: {
           isRecidivizUser: true,
         },
       } as typeof RootStore;
-      analyticsStore = getAnalyticsStoreWithEnv(
+      analyticsStore = await getAnalyticsStoreWithEnv(
         "production",
         "production",
         rootStore,
@@ -106,14 +100,14 @@ describe("AnalyticsStore", () => {
   });
 
   describe("Impersonator", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       const rootStore = {
         isImpersonating: true,
         userStore: {
           isRecidivizUser: false,
         },
       } as typeof RootStore;
-      analyticsStore = getAnalyticsStoreWithEnv(
+      analyticsStore = await getAnalyticsStoreWithEnv(
         "production",
         "production",
         rootStore,
@@ -134,8 +128,8 @@ describe("AnalyticsStore", () => {
   });
 
   describe("Demo mode", () => {
-    beforeEach(() => {
-      analyticsStore = getAnalyticsStoreWithEnv("staging", "demo");
+    beforeEach(async () => {
+      analyticsStore = await getAnalyticsStoreWithEnv("staging", "demo");
     });
 
     it("disables analytics", () => {
@@ -152,8 +146,11 @@ describe("AnalyticsStore", () => {
   });
 
   describe("Development environment", () => {
-    beforeEach(() => {
-      analyticsStore = getAnalyticsStoreWithEnv("development", "development");
+    beforeEach(async () => {
+      analyticsStore = await getAnalyticsStoreWithEnv(
+        "development",
+        "development",
+      );
     });
 
     it("disables analytics", () => {
@@ -170,8 +167,8 @@ describe("AnalyticsStore", () => {
   });
 
   describe("Test environment", () => {
-    beforeEach(() => {
-      analyticsStore = getAnalyticsStoreWithEnv("test", "test");
+    beforeEach(async () => {
+      analyticsStore = await getAnalyticsStoreWithEnv("test", "test");
     });
 
     it("disables analytics", () => {
@@ -188,8 +185,8 @@ describe("AnalyticsStore", () => {
   });
 
   describe("Staging environment", () => {
-    beforeEach(() => {
-      analyticsStore = getAnalyticsStoreWithEnv("staging", "staging");
+    beforeEach(async () => {
+      analyticsStore = await getAnalyticsStoreWithEnv("staging", "staging");
     });
 
     it("does not disable analytics", () => {
@@ -206,8 +203,11 @@ describe("AnalyticsStore", () => {
   });
 
   describe("Production environment", () => {
-    beforeEach(() => {
-      analyticsStore = getAnalyticsStoreWithEnv("production", "production");
+    beforeEach(async () => {
+      analyticsStore = await getAnalyticsStoreWithEnv(
+        "production",
+        "production",
+      );
     });
 
     it("does not disable analytics", () => {

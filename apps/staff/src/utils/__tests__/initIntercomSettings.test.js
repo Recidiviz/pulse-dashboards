@@ -1,10 +1,20 @@
 const mockIntercomAppId = "some app id";
-process.env.REACT_APP_INTERCOM_APP_ID = mockIntercomAppId;
-const initIntercomSettings = require("../initIntercomSettings").default;
 
 describe("initIntercomSettings tests", () => {
-  const intercom = jest.fn();
-  window.Intercom = intercom;
+  const intercom = vi.fn();
+  let initIntercomSettings;
+
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.stubGlobal("Intercom", intercom);
+    vi.stubEnv("VITE_INTERCOM_APP_ID", mockIntercomAppId);
+
+    initIntercomSettings = (await import("../initIntercomSettings")).default;
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
 
   it("should set intercom app id and boot hidden intercom with settings", () => {
     initIntercomSettings();

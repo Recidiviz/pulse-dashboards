@@ -23,7 +23,7 @@ import MultiSelect from "../MultiSelect/MultiSelect";
 describe("MultiSelect", () => {
   it("Should not throw error when ref.current does not exist yet", () => {
     const onChange = () => undefined;
-    jest.spyOn(React, "useRef").mockReturnValueOnce({ current: null });
+    vi.spyOn(React, "useRef").mockReturnValueOnce({ current: null });
     const renderer = () => {
       render(
         <MultiSelect

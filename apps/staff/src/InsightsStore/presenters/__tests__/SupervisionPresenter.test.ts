@@ -31,20 +31,20 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 
 test("hydrate", async () => {
-  jest
-    .spyOn(store.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
+  vi.spyOn(store.rootStore.userStore, "userAppMetadata", "get").mockReturnValue(
+    {
       externalId: "abc123",
       pseudonymizedId: "hashed-mdavis123",
       district: "District One",
       stateCode: "us_mi",
-    });
-  jest.spyOn(InsightsStore.prototype, "populateSupervisionStore");
+    },
+  );
+  vi.spyOn(InsightsStore.prototype, "populateSupervisionStore");
 
   expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
 
@@ -64,11 +64,12 @@ test("hydrate", async () => {
 
 test("hydration error", async () => {
   const err = new Error("oops");
-  jest
-    .spyOn(InsightsStore.prototype, "populateSupervisionStore")
-    .mockImplementation(() => {
-      throw err;
-    });
+  vi.spyOn(
+    InsightsStore.prototype,
+    "populateSupervisionStore",
+  ).mockImplementation(() => {
+    throw err;
+  });
 
   await presenter.hydrate();
 
@@ -76,7 +77,7 @@ test("hydration error", async () => {
 });
 
 test("no redundant hydration while in progress", async () => {
-  jest.spyOn(store, "populateSupervisionStore");
+  vi.spyOn(store, "populateSupervisionStore");
 
   const h1 = presenter.hydrate();
   const h2 = presenter.hydrate();
@@ -86,15 +87,15 @@ test("no redundant hydration while in progress", async () => {
 });
 
 test("don't hydrate if already hydrated", async () => {
-  jest.spyOn(store, "populateSupervisionStore");
-  jest
-    .spyOn(store.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
+  vi.spyOn(store, "populateSupervisionStore");
+  vi.spyOn(store.rootStore.userStore, "userAppMetadata", "get").mockReturnValue(
+    {
       externalId: "abc123",
       pseudonymizedId: "hashed-mdavis123",
       district: "District One",
       stateCode: "us_mi",
-    });
+    },
+  );
 
   await presenter.hydrate();
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });

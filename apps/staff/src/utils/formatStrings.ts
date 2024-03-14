@@ -31,7 +31,7 @@ import { Dimension } from "../core/types/dimensions";
 import { FullName } from "../core/types/personMetadata";
 import { translate } from "./i18nSettings";
 
-const CRYPTO_PASSPHRASE = process.env.REACT_APP_CRYPTO_PASSPHRASE || "";
+const CRYPTO_PASSPHRASE = import.meta.env.VITE_CRYPTO_PASSPHRASE || "";
 
 function getStatePopulations(): string[] {
   return Object.keys(translate("populationChartAttributes"));

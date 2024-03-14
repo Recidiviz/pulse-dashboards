@@ -2,18 +2,14 @@
 .idea/
 .vscode/
 .env
-.env.local
-.env.development
-.env.development.local
-.env.production
-.env.production.local
-.env.test
-.env.test.local
+.env.*
+!.env.offline
 .env-cmdrc
 .nx
 
 # Production build directory
 build/
+dist/
 .firebase/
 
 # Dependency directory
@@ -62,3 +58,6 @@ emulator-fixtures
 
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
+
+# ephemeral test configuration
+opportunityPageConfig.json

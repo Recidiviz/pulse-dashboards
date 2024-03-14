@@ -15,11 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Comlink from "comlink";
-
-import { prepareChartData } from "./prepareChartData";
-import { SwarmLayout } from "./types";
-
-const preparer: SwarmLayout = { prepareChartData };
-
-Comlink.expose(preparer);
+export { prepareChartData } from "./prepareChartData";

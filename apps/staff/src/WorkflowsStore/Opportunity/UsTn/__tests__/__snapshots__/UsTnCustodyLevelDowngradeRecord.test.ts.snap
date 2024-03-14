@@ -1,34 +1,34 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`record is properly parsed for opportunity 1`] = `
-Object {
-  "caseNotes": Object {
-    "ASSAULTIVE DISCIPLINARIES": Array [],
+{
+  "caseNotes": {
+    "ASSAULTIVE DISCIPLINARIES": [],
   },
-  "eligibleCriteria": Object {
-    "custodyLevelHigherThanRecommended": Object {
+  "eligibleCriteria": {
+    "custodyLevelHigherThanRecommended": {
       "custodyLevel": "MAXIMUM",
       "recommendedCustodyLevel": "HIGH",
     },
     "custodyLevelIsNotMax": null,
-    "usTnIneligibleForAnnualReclassification": Object {
-      "ineligibleCriteria": Array [
+    "usTnIneligibleForAnnualReclassification": {
+      "ineligibleCriteria": [
         "Some reason",
       ],
     },
-    "usTnLatestCafAssessmentNotOverride": Object {
+    "usTnLatestCafAssessmentNotOverride": {
       "overrideReason": "Some reason",
     },
   },
   "externalId": "abc123",
-  "formInformation": Object {
-    "activeRecommendations": Array [],
+  "formInformation": {
+    "activeRecommendations": [],
     "classificationType": "SPECIAL",
-    "currentOffenses": Array [
+    "currentOffenses": [
       "ROBBERY-ARMED WITH DEADLY WEAPON",
     ],
     "hasIncompatibles": false,
-    "incompatibleArray": Array [],
+    "incompatibleArray": [],
     "lastCafDate": 2022-08-22T00:00:00.000Z,
     "lastCafTotal": "8",
     "q1Score": 1,
@@ -36,22 +36,22 @@ Object {
     "q3Score": 1,
     "q4Score": 1,
     "q5Score": 1,
-    "q6Notes": Array [
-      Object {
+    "q6Notes": [
+      {
         "eventDate": 2022-08-22T00:00:00.000Z,
         "noteBody": "Some note",
       },
     ],
     "q6Score": 1,
-    "q7Notes": Array [
-      Object {
+    "q7Notes": [
+      {
         "eventDate": 2022-08-22T00:00:00.000Z,
         "noteBody": "Some note",
       },
     ],
     "q7Score": 1,
-    "q8Notes": Array [
-      Object {
+    "q8Notes": [
+      {
         "detainerFelonyFlag": true,
         "detainerMisdemeanorFlag": true,
         "detainerReceivedDate": 2022-08-22T00:00:00.000Z,
@@ -61,7 +61,7 @@ Object {
     "q9Score": 1,
     "statusAtHearingSeg": "GEN",
   },
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_XX",
 }
 `;

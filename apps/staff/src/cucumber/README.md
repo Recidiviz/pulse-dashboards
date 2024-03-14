@@ -60,13 +60,13 @@ When you run tests locally, you can choose to run them within a browser or headl
 
 **Run each E2E suite individually**
 
-- Lantern tests: `yarn run test-e2e-lantern`
+- Lantern tests: `nx test-e2e-lantern staff`
 
-- Lantern user permissions tests: `yarn run test-e2e-users`
+- Lantern user permissions tests: `nx test-e2e-users staff`
 
-- Auth0 login tests: `yarn run test-e2e-login`
+- Auth0 login tests: `nx test-e2e-login staff`
 
-- Workflows tests: `yarn run test-e2e-workflows`
+- Workflows tests: `nx test-e2e-workflows staff`
 
 **Run a single test locally**
 

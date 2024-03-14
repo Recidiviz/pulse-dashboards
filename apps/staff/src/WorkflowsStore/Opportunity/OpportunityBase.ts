@@ -272,7 +272,7 @@ export abstract class OpportunityBase<
 
         // ignore recidiviz admins and other non-state actors in prod
         if (
-          process.env.REACT_APP_DEPLOY_ENV === "production" &&
+          import.meta.env.VITE_DEPLOY_ENV === "production" &&
           this.rootStore.userStore.stateCode !== this.person.stateCode
         )
           return;

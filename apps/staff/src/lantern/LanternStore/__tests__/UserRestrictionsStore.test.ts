@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import * as Sentry from "@sentry/react";
+import { Mock } from "vitest";
 
 import { ERROR_MESSAGES } from "../../../constants";
 import type TenantStore from "../../../RootStore/TenantStore";
@@ -22,11 +23,11 @@ import type UserStore from "../../../RootStore/UserStore";
 import LanternStore from "..";
 import UserRestrictionsStore from "../UserRestrictionsStore";
 
-jest.mock("@sentry/react");
-jest.mock("..");
+vi.mock("@sentry/react");
+vi.mock("..");
 
-const mockLanternStore = LanternStore as jest.Mock;
-const mockSetAuthError = jest.fn();
+const mockLanternStore = LanternStore as Mock;
+const mockSetAuthError = vi.fn();
 
 let userDistrict = "13";
 const authError = new Error(ERROR_MESSAGES.unauthorized);
@@ -59,8 +60,8 @@ describe("UserRestrictionsStore", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
-    jest.resetAllMocks();
+    vi.restoreAllMocks();
+    vi.resetAllMocks();
   });
 
   describe("when user has restrictions", () => {
@@ -135,7 +136,7 @@ describe("UserRestrictionsStore", () => {
     });
 
     afterEach(() => {
-      jest.resetAllMocks();
+      vi.resetAllMocks();
     });
 
     it("sets an authError", () => {
@@ -168,7 +169,7 @@ describe("UserRestrictionsStore", () => {
     });
 
     afterEach(() => {
-      jest.resetAllMocks();
+      vi.resetAllMocks();
     });
 
     it("does not set an auth error for numeric district", () => {
@@ -229,7 +230,7 @@ describe("UserRestrictionsStore", () => {
     });
 
     afterEach(() => {
-      jest.resetAllMocks();
+      vi.resetAllMocks();
     });
 
     it("does not set an auth error", () => {

@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
 import { runInAction } from "mobx";
 
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
@@ -25,70 +24,60 @@ import { FILTER_TYPES } from "../../utils/constants";
 import PopulationProjectionOverTimeMetric from "../PopulationProjectionOverTimeMetric";
 import { createProjectionTimeSeries } from "../utils";
 
-const OLD_ENV = process.env;
-
 const mockTenantId = "US_ID";
 const mockCoreStore = { currentTenantId: mockTenantId } as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
-jest.mock("../../../RootStore", () => ({
-  getTokenSilently: jest.fn().mockReturnValue("auth token"),
-}));
+vi.mock("../../../RootStore");
 
-jest.mock("../../../api/metrics/metricsClient", () => {
-  return {
-    callMetricsApi: jest.fn().mockResolvedValue({
-      prison_population_projection_time_series: [
-        {
-          gender: "MALE",
-          legal_status: "ALL",
-          month: "5",
-          simulation_tag: "HISTORICAL",
-          state_code: "US_ID",
-          total_population: 7641,
-          total_population_max: 7641,
-          total_population_min: 7641,
-          year: "2016",
-        },
-        {
-          gender: "ALL",
-          legal_status: "ALL",
-          month: "1",
-          simulation_tag: "HISTORICAL",
-          state_code: "US_ID",
-          total_population: 7641,
-          total_population_max: 7641,
-          total_population_min: 7641,
-          year: "2016",
-        },
-        {
-          gender: "ALL",
-          legal_status: "ALL",
-          month: "12",
-          simulation_tag: "HISTORICAL",
-          state_code: "US_ID",
-          total_population: 7641,
-          total_population_max: 7641,
-          total_population_min: 7641,
-          year: "2015",
-        },
-      ],
-    }),
-  };
+vi.mock("../../../api/metrics/metricsClient");
+
+beforeEach(() => {
+  vi.mocked(RootStore).getTokenSilently.mockResolvedValue("auth token");
+  vi.mocked(callMetricsApi).mockResolvedValue({
+    prison_population_projection_time_series: [
+      {
+        gender: "MALE",
+        legal_status: "ALL",
+        month: "5",
+        simulation_tag: "HISTORICAL",
+        state_code: "US_ID",
+        total_population: 7641,
+        total_population_max: 7641,
+        total_population_min: 7641,
+        year: "2016",
+      },
+      {
+        gender: "ALL",
+        legal_status: "ALL",
+        month: "1",
+        simulation_tag: "HISTORICAL",
+        state_code: "US_ID",
+        total_population: 7641,
+        total_population_max: 7641,
+        total_population_min: 7641,
+        year: "2016",
+      },
+      {
+        gender: "ALL",
+        legal_status: "ALL",
+        month: "12",
+        simulation_tag: "HISTORICAL",
+        state_code: "US_ID",
+        total_population: 7641,
+        total_population_max: 7641,
+        total_population_min: 7641,
+        year: "2015",
+      },
+    ],
+  });
+  fetchMock.mockResponse("blob");
+  vi.stubEnv("VITE_API_URL", "test-url");
+  mockCoreStore.filtersStore = filtersStore;
 });
 
 describe("PopulationProjectionOverTimeMetric", () => {
   let metric: PopulationProjectionOverTimeMetric;
-
-  beforeAll(() => {
-    enableFetchMocks();
-    fetchMock.mockResponse("blob");
-  });
-
-  beforeEach(() => {
-    process.env = Object.assign(process.env, {
-      REACT_APP_API_URL: "test-url",
-    });
-    mockCoreStore.filtersStore = filtersStore;
+  beforeEach(async () => {
     metric = new PopulationProjectionOverTimeMetric({
       id: "projectedPrisonPopulationOverTime",
       tenantId: mockTenantId,
@@ -100,15 +89,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
       },
       rootStore: mockCoreStore,
     });
-    metric.hydrate();
-  });
-
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-    jest.resetAllMocks();
-    disableFetchMocks();
-    process.env = OLD_ENV;
+    await metric.hydrate();
   });
 
   it("fetches metrics when initialized", () => {
@@ -139,10 +120,10 @@ describe("PopulationProjectionOverTimeMetric", () => {
     expect(metric.simulationDate).toEqual(new Date(2015, 11));
   });
 
-  it("does not throw when accessing the simluation date without loaded data", () => {
-    jest.mock("../../../api/metrics/metricsClient", () => {
+  it("does not throw when accessing the simulation date without loaded data", () => {
+    vi.mock("../../../api/metrics/metricsClient", () => {
       return {
-        callMetricsApi: jest.fn().mockResolvedValue({
+        callMetricsApi: vi.fn().mockResolvedValue({
           prison_population_projection_time_series: [],
         }),
       };
@@ -165,7 +146,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
   });
 
   describe("dataSeries", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       mockCoreStore.filtersStore = filtersStore;
 
       metric = new PopulationProjectionOverTimeMetric({
@@ -179,7 +160,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
         },
         rootStore: mockCoreStore,
       });
-      metric.hydrate();
+      await metric.hydrate();
     });
 
     it("filters by default values", () => {

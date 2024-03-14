@@ -14,14 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import pattern from "patternomaly";
+
 import {
   applyStatisticallySignificantShading,
   applyStatisticallySignificantShadingToDataset,
   isDenominatorsMatrixStatisticallySignificant,
   isDenominatorStatisticallySignificant,
-  STATISTICALLY_INSIGNIFICANT_PATTERN,
   tooltipForFooterWithCounts,
 } from "../significantStatistics";
+
+vi.mock("patternomaly");
 
 const statisticallySignificantDenominators = [0, 100, 1019];
 const statisticallyNotSignificantDenominators = [1, 10, 99];
@@ -82,6 +85,7 @@ describe("applyStatisticallySignificantShading function", () => {
         color,
       );
     });
+    expect(pattern.draw).not.toHaveBeenCalled();
   });
 
   it("should apply shading when not statistically significant", async () => {
@@ -89,10 +93,12 @@ describe("applyStatisticallySignificantShading function", () => {
     const color = "anyColor";
 
     given.forEach((denominator) => {
-      expect(
-        applyStatisticallySignificantShading(color, denominator).shapeType,
-      ).toEqual(STATISTICALLY_INSIGNIFICANT_PATTERN);
+      applyStatisticallySignificantShading(color, denominator);
     });
+
+    expect(pattern.draw).toHaveBeenCalledTimes(
+      statisticallyNotSignificantDenominators.length,
+    );
   });
 });
 
@@ -109,6 +115,7 @@ describe("applyStatisticallySignificantShadingToDataset function", () => {
     dataset.forEach((_denominator, idx) => {
       expect(backgroundColorFn({ dataIndex: idx })).toBe(color);
     });
+    expect(pattern.draw).not.toHaveBeenCalled();
   });
 
   it("should apply shading when not statistically significant", () => {
@@ -118,19 +125,18 @@ describe("applyStatisticallySignificantShadingToDataset function", () => {
       color,
       dataset,
     );
+
     dataset.forEach((_denominator, idx) => {
-      expect(backgroundColorFn({ dataIndex: idx }).shapeType).toEqual(
-        STATISTICALLY_INSIGNIFICANT_PATTERN,
-      );
+      backgroundColorFn({ dataIndex: idx });
     });
+    expect(pattern.draw).toHaveBeenCalledTimes(dataset.length);
   });
 
   describe("when the dataset is a matrix with an insignificant datapoint", () => {
     let backgroundColorFn;
+    const dataset = statisticallyNotSignificantDenominatorMatrix;
 
     beforeEach(() => {
-      const dataset = statisticallyNotSignificantDenominatorMatrix;
-
       backgroundColorFn = applyStatisticallySignificantShadingToDataset(
         color,
         dataset,
@@ -139,12 +145,12 @@ describe("applyStatisticallySignificantShadingToDataset function", () => {
 
     it("should not apply the shading to a statistically significant datapoint", () => {
       expect(backgroundColorFn({ datasetIndex: 2, dataIndex: 1 })).toBe(color);
+      expect(pattern.draw).not.toHaveBeenCalled();
     });
 
     it("should not apply the shading to the statistically insignificant datapoint", () => {
-      expect(
-        backgroundColorFn({ datasetIndex: 2, dataIndex: 2 }).shapeType,
-      ).toEqual(STATISTICALLY_INSIGNIFICANT_PATTERN);
+      backgroundColorFn({ datasetIndex: 2, dataIndex: 2 });
+      expect(pattern.draw).toHaveBeenCalled();
     });
   });
 });

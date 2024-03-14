@@ -16,10 +16,12 @@
 // =============================================================================
 
 import { mount } from "enzyme";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
+import { Mock } from "vitest";
 
 import { useRootStore, useUserStore } from "../../../components/StoreProvider";
+import useIsMobile from "../../../hooks/useIsMobile";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore/TenantStore";
 import CoreStore from "../../CoreStore";
@@ -28,15 +30,14 @@ import VitalsStore from "../../CoreStore/VitalsStore";
 import { useCoreStore } from "../../CoreStoreProvider";
 import PageNavigation from "..";
 
-jest.mock("use-query-params");
-jest.mock("../../CoreStoreProvider");
-jest.mock("../../../components/StoreProvider");
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useLocation: jest.fn().mockReturnValue({
-    pathname: "/system",
-  }),
+vi.mock("use-query-params");
+vi.mock("../../CoreStoreProvider");
+vi.mock("../../../components/StoreProvider");
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual("react-router-dom")),
+  useLocation: vi.fn(),
 }));
+vi.mock("../../../hooks/useIsMobile");
 
 let coreStore: CoreStore;
 let vitalsStore: VitalsStore;
@@ -45,10 +46,10 @@ let tenantStore: TenantStore;
 let rootStoreMock: any;
 let coreStoreMock: any;
 
-const useRootStoreMock = useRootStore as jest.Mock;
-const useCoreStoreMock = useCoreStore as jest.Mock;
-const useUserStoreMock = useUserStore as jest.Mock;
-const useQueryParamsMock = useQueryParams as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
+const useCoreStoreMock = useCoreStore as Mock;
+const useUserStoreMock = useUserStore as Mock;
+const useQueryParamsMock = useQueryParams as Mock;
 
 describe("CoreLayout tests", () => {
   const renderPageNavigation = () => {
@@ -60,6 +61,12 @@ describe("CoreLayout tests", () => {
   };
 
   beforeEach(() => {
+    // @ts-expect-error
+    vi.mocked(useLocation).mockReturnValue({
+      pathname: "/system",
+    });
+    vi.mocked(useIsMobile).mockReturnValue(false);
+
     coreStore = new CoreStore(RootStore);
     vitalsStore = coreStore.vitalsStore;
     filtersStore = coreStore.filtersStore;
@@ -78,8 +85,8 @@ describe("CoreLayout tests", () => {
     coreStoreMock = {
       page: "page1",
       vitalsStore,
-      setSection: jest.fn(),
-      setPage: jest.fn(),
+      setSection: vi.fn(),
+      setPage: vi.fn(),
       filtersStore,
       tenantStore,
     };
@@ -89,12 +96,7 @@ describe("CoreLayout tests", () => {
         name: "Test",
       },
     });
-    useQueryParamsMock.mockReturnValue(["query", jest.fn()]);
-  });
-
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
+    useQueryParamsMock.mockReturnValue(["query", vi.fn()]);
   });
 
   it("Should render a link for each page option", () => {

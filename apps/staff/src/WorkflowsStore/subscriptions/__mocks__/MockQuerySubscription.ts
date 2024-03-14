@@ -24,11 +24,11 @@ import { QuerySubscription } from "../types";
 export class MockQuerySubscription implements QuerySubscription<any> {
   data: any[] = [];
 
-  subscribe = jest.fn();
+  subscribe = vi.fn();
 
-  unsubscribe = jest.fn();
+  unsubscribe = vi.fn();
 
-  hydrate = jest.fn();
+  hydrate = vi.fn();
 
   hydrationState: HydrationState = { status: "needs hydration" };
 

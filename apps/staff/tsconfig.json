@@ -1,18 +1,27 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "wdio.conf.js"],
-
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "esModuleInterop": false,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "lib": ["esnext", "dom"],
     "resolveJsonModule": true,
     "strict": true,
+    "types": ["vite/client", "vitest"],
     "useDefineForClassFields": true
   },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    }
+  ],
   "ts-node": {
     // these options are overrides used only by ts-node
     "compilerOptions": {

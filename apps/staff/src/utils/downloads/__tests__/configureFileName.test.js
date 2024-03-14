@@ -1,7 +1,8 @@
 import configureFilename from "../configureFileName";
 import getTimeStamp from "../getTimeStamp";
 
-jest.mock("../getTimeStamp");
+vi.mock("../getTimeStamp");
+
 describe("configureFilename tests", () => {
   const mockChartId = "revocationsChart";
   const mockMetricType = "some_metric_type";
@@ -16,7 +17,10 @@ describe("configureFilename tests", () => {
   };
 
   const mockTimeStamp = "19.11.2020";
-  getTimeStamp.mockReturnValue(mockTimeStamp);
+
+  beforeEach(() => {
+    getTimeStamp.mockReturnValue(mockTimeStamp);
+  });
 
   it("should return filename with timestamp", () => {
     const actual = configureFilename(mockChartId, {}, true);

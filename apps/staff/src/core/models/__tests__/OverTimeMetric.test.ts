@@ -25,8 +25,6 @@ import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import OverTimeMetric from "../OverTimeMetric";
 
-const OLD_ENV = process.env;
-
 const mockTenantId = "US_TN";
 
 const mockRootStore = {
@@ -34,9 +32,16 @@ const mockRootStore = {
   tenantStore: { currentTenantId: mockTenantId } as TenantStore,
 };
 
-jest.mock("../../../api/metrics/metricsClient", () => {
-  return {
-    callNewMetricsApi: jest.fn().mockResolvedValue({
+vi.mock("../../../api/metrics/metricsClient");
+
+describe("OverTimeMetric", () => {
+  let metric: OverTimeMetric;
+
+  beforeEach(() => {
+    vi.stubEnv("REACT_APP_DEPLOY_ENV", "dev");
+    vi.stubEnv("REACT_APP_NEW_BACKEND_API_URL", "http://localhost:5000");
+
+    vi.mocked(callNewMetricsApi).mockResolvedValue({
       data: [
         {
           year: 2022,
@@ -69,18 +74,8 @@ jest.mock("../../../api/metrics/metricsClient", () => {
       metadata: {
         lastUpdated: "2022-05-01",
       },
-    }),
-  };
-});
-
-describe("OverTimeMetric", () => {
-  let metric: OverTimeMetric;
-
-  beforeEach(() => {
-    process.env = Object.assign(process.env, {
-      REACT_APP_DEPLOY_ENV: "dev",
-      REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
     });
+
     const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
     mockCoreStore.setPage("libertyToPrison");
     mockCoreStore.setSection("countOverTime");
@@ -99,17 +94,6 @@ describe("OverTimeMetric", () => {
     });
 
     metric.hydrate();
-  });
-
-  afterEach(() => {
-    process.env = OLD_ENV;
-    jest.clearAllMocks();
-  });
-
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-    jest.resetAllMocks();
   });
 
   it("fetches metrics when initialized", () => {
@@ -137,9 +121,9 @@ describe("OverTimeMetric", () => {
   });
 
   it("sets isEmpty to true when there is no data", () => {
-    jest.mock("../../../api/metrics/metricsClient", () => {
+    vi.mock("../../../api/metrics/metricsClient", () => {
       return {
-        callNewMetricsApi: jest.fn().mockResolvedValue({}),
+        callNewMetricsApi: vi.fn().mockResolvedValue({}),
       };
     });
 
@@ -154,9 +138,9 @@ describe("OverTimeMetric", () => {
   });
 
   it("does not throw when accessing the most recent date without loaded data", () => {
-    jest.mock("../../../api/metrics/metricsClient", () => {
+    vi.mock("../../../api/metrics/metricsClient", () => {
       return {
-        callNewMetricsApi: jest.fn().mockResolvedValue({}),
+        callNewMetricsApi: vi.fn().mockResolvedValue({}),
       };
     });
 

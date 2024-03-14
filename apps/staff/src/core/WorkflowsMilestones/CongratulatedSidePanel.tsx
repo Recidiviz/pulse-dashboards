@@ -16,7 +16,7 @@
 // =============================================================================
 import { observer } from "mobx-react-lite";
 
-import { ReactComponent as GreenCheckmark } from "../../assets/static/images/greenCheckmark.svg";
+import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import { TextMessageStatuses } from "../../FirestoreStore";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { formatWorkflowsDate } from "../../utils/formatStrings";

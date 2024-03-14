@@ -30,8 +30,8 @@ import { homeVisitTaskRecord, supervisionTaskClientRecord } from "../fixtures";
 import { SupervisionTask, SupervisionTaskType } from "../types";
 import UsIdHomeVisitTask from "../UsIdHomeVisitTask";
 
-jest.mock("../../subscriptions");
-jest.mock("firebase/firestore");
+vi.mock("../../subscriptions");
+vi.mock("firebase/firestore");
 
 let rootStore: RootStore;
 let task: SupervisionTask<SupervisionTaskType>;
@@ -56,12 +56,12 @@ function createTestUnit(
 describe("Task", () => {
   beforeEach(() => {
     tk.freeze(testDate);
-    jest.resetModules();
+    vi.resetModules();
     configure({ safeDescriptors: false });
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     configure({ safeDescriptors: true });
   });
 
@@ -117,12 +117,12 @@ describe("Task", () => {
     });
 
     test("updateSupervisionTask with update", () => {
-      jest.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
         info: {
           email: "test@email.gov",
         },
       });
-      jest.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
 
       task.updateSupervisionTask(30);
 
@@ -138,12 +138,12 @@ describe("Task", () => {
     });
 
     test("updateSupervisionTask undoing update", () => {
-      jest.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+      vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
         info: {
           email: "test@email.gov",
         },
       });
-      jest.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
+      vi.spyOn(FirestoreStore.prototype, "updateSupervisionTask");
 
       task.updateSupervisionTask(undefined);
 

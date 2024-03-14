@@ -19,7 +19,7 @@ import { ResidentRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Resident } from "../Resident";
 
-jest.mock("../subscriptions");
+vi.mock("../subscriptions");
 
 let rootStore: RootStore;
 let testResident: Resident;
@@ -30,7 +30,7 @@ function createTestUnit() {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   rootStore = new RootStore();
   record = {
     allEligibleOpportunities: [],

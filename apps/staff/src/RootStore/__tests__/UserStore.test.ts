@@ -18,6 +18,7 @@ import createAuth0Client, { User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 import { add } from "date-fns";
 import { runInAction } from "mobx";
+import { Mock } from "vitest";
 
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import {
@@ -33,31 +34,31 @@ import RootStore from "..";
 import { FeatureVariant, TenantId } from "../types";
 import UserStore from "../UserStore";
 
-jest.mock("@auth0/auth0-spa-js");
-jest.mock("@sentry/react");
-jest.mock("firebase/firestore");
-jest.mock("../../utils/isIE11");
-jest.mock("../../utils/isDemoMode");
+vi.mock("@auth0/auth0-spa-js");
+vi.mock("@sentry/react");
+vi.mock("firebase/firestore");
+vi.mock("../../utils/isIE11");
+vi.mock("../../utils/isDemoMode");
 
-const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
+const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
-const mockCreateAuth0Client = createAuth0Client as jest.Mock;
-const mockGetUser = jest.fn();
-const mockHandleRedirectCallback = jest.fn();
-const mockIsAuthenticated = jest.fn();
-const mockLoginWithRedirect = jest.fn();
-const mockGetTokenSilently = jest.fn();
+const mockCreateAuth0Client = createAuth0Client as Mock;
+const mockGetUser = vi.fn();
+const mockHandleRedirectCallback = vi.fn();
+const mockIsAuthenticated = vi.fn();
+const mockLoginWithRedirect = vi.fn();
+const mockGetTokenSilently = vi.fn();
 
-const mockHandleUrl = jest.fn();
-const mockIsIE11 = isIE11 as jest.Mock<boolean>;
+const mockHandleUrl = vi.fn();
+const mockIsIE11 = isIE11 as Mock<any[], boolean>;
 
 const mockRootStore = {
   analyticsStore: {
-    identify: jest.fn(),
+    identify: vi.fn(),
   },
   firestoreStore: {
-    authenticate: jest.fn(),
-    authenticateImpersonatedUser: jest.fn(),
+    authenticate: vi.fn(),
+    authenticateImpersonatedUser: vi.fn(),
   },
 } as unknown as typeof RootStore;
 
@@ -80,10 +81,6 @@ beforeEach(() => {
     getTokenSilently: mockGetTokenSilently,
   });
   mockIsIE11.mockReturnValue(false);
-});
-
-afterEach(() => {
-  jest.resetAllMocks();
 });
 
 test("authorization immediately pending", () => {
@@ -140,7 +137,7 @@ test("authorized when authenticated", async () => {
 test("error thrown in firebase token fetch sets authError", async () => {
   mockIsAuthenticated.mockResolvedValue(true);
   mockGetUser.mockResolvedValue({ email_verified: true, ...metadata });
-  mockRootStore.firestoreStore.authenticate = jest.fn(() => {
+  mockRootStore.firestoreStore.authenticate = vi.fn(() => {
     throw new Error("firebase token error");
   });
   const store = new UserStore({
@@ -199,7 +196,7 @@ test("handles Auth0 token params", async () => {
 
 test("calls target URL handler after redirect", async () => {
   // this needs to be a localhost URL or JSDOM will have problems
-  const mockUrl = "http://localhost/some/url";
+  const mockUrl = "http://localhost:3000/some/url";
   mockHandleRedirectCallback.mockResolvedValue({
     appState: { targetUrl: mockUrl },
   });
@@ -218,7 +215,7 @@ test("calls target URL handler after redirect", async () => {
 });
 
 test("urlQuery error", async () => {
-  const targetUrl = "http://localhost/somePage?id=1";
+  const targetUrl = "http://localhost:3000/somePage?id=1";
   mockHandleRedirectCallback.mockResolvedValue({ appState: { targetUrl } });
 
   const auth0LoginParams =
@@ -235,7 +232,7 @@ test("urlQuery error", async () => {
 });
 
 test("redirect to targetUrl after callback", async () => {
-  const targetUrl = "http://localhost/somePage?id=1";
+  const targetUrl = "http://localhost:3000/somePage?id=1";
   mockHandleRedirectCallback.mockResolvedValue({ appState: { targetUrl } });
 
   const auth0LoginParams = "code=123456&state=abcdef";
@@ -464,7 +461,7 @@ describe("isUserAllowedRoute", () => {
       rootStore: {
         currentTenantId: tenantId,
         firestoreStore: {
-          authenticate: jest.fn(),
+          authenticate: vi.fn(),
         },
       } as unknown as typeof RootStore,
     });
@@ -560,7 +557,7 @@ describe("userAllowedNavigation", () => {
       rootStore: {
         currentTenantId: stateCode,
         firestoreStore: {
-          authenticate: jest.fn(),
+          authenticate: vi.fn(),
         },
       } as unknown as typeof RootStore,
     });
@@ -821,7 +818,7 @@ describe("recidivizAllowedStates", () => {
   test("does not filter by allowedStates if in demo mode", async () => {
     const allowedStates = ["US_CA", "US_TN"];
 
-    const isDemoModeMock = isDemoMode as jest.Mock;
+    const isDemoModeMock = isDemoMode as Mock;
     isDemoModeMock.mockReturnValue(true);
 
     mockIsAuthenticated.mockResolvedValue(true);
@@ -873,7 +870,7 @@ describe("feature variants", () => {
   }
 
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     store = new UserStore({});
     runInAction(() => {
       store.isAuthorized = true;
@@ -882,7 +879,7 @@ describe("feature variants", () => {
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test("Does not throw error on failed logins", () => {
@@ -900,25 +897,25 @@ describe("feature variants", () => {
     });
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
-      Object {
-        "CompliantReportingAlmostEligible": Object {},
-        "TEST": Object {},
-        "enableSnooze": Object {},
-        "formRevertButton": Object {},
-        "hideDenialRevert": Object {},
-        "insightsLeadershipPageAllDistricts": Object {},
-        "insightsOnboarding": Object {},
-        "supervisionUnrestrictedSearch": Object {},
-        "usCaEnableSMS": Object {},
-        "usIdCRC": Object {},
-        "usIdExpandedCRC": Object {},
-        "usMeFurloughRelease": Object {},
-        "usMeWorkRelease": Object {},
-        "usMoOverdueRHPilot": Object {},
-        "usNdWriteToDocstars": Object {},
-        "usTnAnnualReclassification": Object {},
-        "usTnExpiration": Object {},
-        "usTnExpirationSubmitToTomis": Object {},
+      {
+        "CompliantReportingAlmostEligible": {},
+        "TEST": {},
+        "enableSnooze": {},
+        "formRevertButton": {},
+        "hideDenialRevert": {},
+        "insightsLeadershipPageAllDistricts": {},
+        "insightsOnboarding": {},
+        "supervisionUnrestrictedSearch": {},
+        "usCaEnableSMS": {},
+        "usIdCRC": {},
+        "usIdExpandedCRC": {},
+        "usMeFurloughRelease": {},
+        "usMeWorkRelease": {},
+        "usMoOverdueRHPilot": {},
+        "usNdWriteToDocstars": {},
+        "usTnAnnualReclassification": {},
+        "usTnExpiration": {},
+        "usTnExpirationSubmitToTomis": {},
       }
     `);
   });
@@ -932,26 +929,26 @@ describe("feature variants", () => {
     });
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
-      Object {
-        "CompliantReportingAlmostEligible": Object {},
-        "EXTRA_FV": Object {},
-        "TEST": Object {},
-        "enableSnooze": Object {},
-        "formRevertButton": Object {},
-        "hideDenialRevert": Object {},
-        "insightsLeadershipPageAllDistricts": Object {},
-        "insightsOnboarding": Object {},
-        "supervisionUnrestrictedSearch": Object {},
-        "usCaEnableSMS": Object {},
-        "usIdCRC": Object {},
-        "usIdExpandedCRC": Object {},
-        "usMeFurloughRelease": Object {},
-        "usMeWorkRelease": Object {},
-        "usMoOverdueRHPilot": Object {},
-        "usNdWriteToDocstars": Object {},
-        "usTnAnnualReclassification": Object {},
-        "usTnExpiration": Object {},
-        "usTnExpirationSubmitToTomis": Object {},
+      {
+        "CompliantReportingAlmostEligible": {},
+        "EXTRA_FV": {},
+        "TEST": {},
+        "enableSnooze": {},
+        "formRevertButton": {},
+        "hideDenialRevert": {},
+        "insightsLeadershipPageAllDistricts": {},
+        "insightsOnboarding": {},
+        "supervisionUnrestrictedSearch": {},
+        "usCaEnableSMS": {},
+        "usIdCRC": {},
+        "usIdExpandedCRC": {},
+        "usMeFurloughRelease": {},
+        "usMeWorkRelease": {},
+        "usMoOverdueRHPilot": {},
+        "usNdWriteToDocstars": {},
+        "usTnAnnualReclassification": {},
+        "usTnExpiration": {},
+        "usTnExpirationSubmitToTomis": {},
       }
     `);
   });
@@ -965,24 +962,24 @@ describe("feature variants", () => {
     });
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
-      Object {
-        "CompliantReportingAlmostEligible": Object {},
-        "enableSnooze": Object {},
-        "formRevertButton": Object {},
-        "hideDenialRevert": Object {},
-        "insightsLeadershipPageAllDistricts": Object {},
-        "insightsOnboarding": Object {},
-        "supervisionUnrestrictedSearch": Object {},
-        "usCaEnableSMS": Object {},
-        "usIdCRC": Object {},
-        "usIdExpandedCRC": Object {},
-        "usMeFurloughRelease": Object {},
-        "usMeWorkRelease": Object {},
-        "usMoOverdueRHPilot": Object {},
-        "usNdWriteToDocstars": Object {},
-        "usTnAnnualReclassification": Object {},
-        "usTnExpiration": Object {},
-        "usTnExpirationSubmitToTomis": Object {},
+      {
+        "CompliantReportingAlmostEligible": {},
+        "enableSnooze": {},
+        "formRevertButton": {},
+        "hideDenialRevert": {},
+        "insightsLeadershipPageAllDistricts": {},
+        "insightsOnboarding": {},
+        "supervisionUnrestrictedSearch": {},
+        "usCaEnableSMS": {},
+        "usIdCRC": {},
+        "usIdExpandedCRC": {},
+        "usMeFurloughRelease": {},
+        "usMeWorkRelease": {},
+        "usMoOverdueRHPilot": {},
+        "usNdWriteToDocstars": {},
+        "usTnAnnualReclassification": {},
+        "usTnExpiration": {},
+        "usTnExpirationSubmitToTomis": {},
       }
     `);
   });
@@ -1038,7 +1035,7 @@ describe("feature variants", () => {
     // We check once a second to see if the feature variant is active now, and since we set it to be
     // active 1 second in the future, the feature variant should become active if we advance time by 1
     // second.
-    jest.advanceTimersByTime(1000);
+    vi.advanceTimersByTime(1000);
 
     expect(store.activeFeatureVariants).toEqual({
       TEST: {},
@@ -1046,7 +1043,7 @@ describe("feature variants", () => {
   });
 
   test("demo mode with demo variant defined", () => {
-    const isDemoModeMock = isDemoMode as jest.Mock;
+    const isDemoModeMock = isDemoMode as Mock;
     isDemoModeMock.mockReturnValue(true);
 
     runInAction(() => {
@@ -1062,7 +1059,7 @@ describe("feature variants", () => {
   });
 
   test("demo mode with demo variant not defined", () => {
-    const isDemoModeMock = jest.mocked(isDemoMode);
+    const isDemoModeMock = vi.mocked(isDemoMode);
     isDemoModeMock.mockReturnValue(true);
 
     runInAction(() => {

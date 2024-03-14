@@ -17,6 +17,7 @@
 
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
 import {
   useOpportunityConfigurations,
@@ -26,16 +27,15 @@ import { OPPORTUNITY_CONFIGS, OpportunityType } from "../../../WorkflowsStore";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import WorkflowsHomepage from "..";
 
-jest.mock("../../../components/StoreProvider");
-jest.mock("../../CaseloadSelect", () => ({
+vi.mock("../../../components/StoreProvider");
+vi.mock("../../CaseloadSelect", () => ({
   CaseloadSelect: () => {
     return <div data-testid="caseload-select" />;
   },
 }));
 
-const useRootStoreMock = useRootStore as jest.Mock;
-const useOpportunityConfigurationsMock =
-  useOpportunityConfigurations as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
+const useOpportunityConfigurationsMock = useOpportunityConfigurations as Mock;
 
 const baseWorkflowsStoreMock = {
   opportunitiesLoaded: () => false,
@@ -57,12 +57,12 @@ describe("WorkflowsHomepage", () => {
   beforeEach(() => {
     // @ts-expect-error
     mockOpportunity.person.recordId = "1";
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     useOpportunityConfigurationsMock.mockReturnValue(OPPORTUNITY_CONFIGS);
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test("renders Welcome page on initial state", () => {

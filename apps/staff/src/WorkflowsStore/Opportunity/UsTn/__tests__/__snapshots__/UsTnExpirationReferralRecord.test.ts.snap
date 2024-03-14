@@ -1,77 +1,77 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transform function 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "supervisionPastFullTermCompletionDateOrUpcoming1Day": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "supervisionPastFullTermCompletionDateOrUpcoming1Day": {
       "eligibleDate": 2022-03-03T00:00:00.000Z,
     },
-    "usTnNoZeroToleranceCodesSpans": Object {},
-    "usTnNotOnLifeSentenceOrLifetimeSupervision": Object {
+    "usTnNoZeroToleranceCodesSpans": {},
+    "usTnNotOnLifeSentenceOrLifetimeSupervision": {
       "lifetimeFlag": false,
     },
   },
   "externalId": "abc123",
-  "formInformation": Object {
-    "alcoholHistory": Array [
-      Object {
+  "formInformation": {
+    "alcoholHistory": [
+      {
         "contactComment": "HAD APPOINTMENT",
         "contactDate": 2022-02-12T00:00:00.000Z,
         "contactType": "FSWR",
       },
-      Object {
+      {
         "contactComment": "HAD ANOTHER APPOINTMENT",
         "contactDate": 2022-02-07T00:00:00.000Z,
         "contactType": "FSWR",
       },
     ],
-    "convictionCounties": Array [
+    "convictionCounties": [
       "010",
     ],
-    "docketNumbers": Array [
+    "docketNumbers": [
       "123",
       "456",
     ],
-    "latestEmp": Object {
+    "latestEmp": {
       "contactComment": "Comment about employment",
       "contactDate": 2022-05-05T00:00:00.000Z,
       "contactType": "EMPV",
     },
-    "latestFee": Object {
+    "latestFee": {
       "contactDate": 2022-04-04T00:00:00.000Z,
       "contactType": "FEEP",
     },
-    "latestPse": Object {
+    "latestPse": {
       "contactDate": 2022-06-01T00:00:00.000Z,
       "contactType": "PSET",
     },
-    "latestSpe": Object {
+    "latestSpe": {
       "contactComment": "Special conditions check",
       "contactDate": 2022-05-05T00:00:00.000Z,
       "contactType": "SPEC",
     },
-    "latestVrr": Object {
+    "latestVrr": {
       "contactDate": 2022-03-03T00:00:00.000Z,
       "contactType": "VRRE",
     },
-    "newOffenses": Array [
-      Object {
+    "newOffenses": [
+      {
         "contactComment": "ARRESTED",
         "contactDate": 2022-02-09T00:00:00.000Z,
         "contactType": "NCAF",
       },
-      Object {
+      {
         "contactComment": "INTERROGATED",
         "contactDate": 2022-02-17T00:00:00.000Z,
         "contactType": "NCAC",
       },
     ],
-    "offenses": Array [
+    "offenses": [
       "FAILURE1",
       "FAILURE2",
     ],
-    "sexOffenses": Array [
+    "sexOffenses": [
       "sex offense",
     ],
   },

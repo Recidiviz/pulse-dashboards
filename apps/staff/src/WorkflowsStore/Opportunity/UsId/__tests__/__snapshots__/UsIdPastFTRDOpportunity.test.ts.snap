@@ -1,16 +1,16 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`almost eligible requirements almost met 1`] = `
-Array [
-  Object {
+exports[`almost eligible > requirements almost met 1`] = `
+[
+  {
     "text": "31 days until FTRD (Sep 1, 2022)",
   },
 ]
 `;
 
-exports[`fully eligible requirements met 1`] = `
-Array [
-  Object {
+exports[`fully eligible > requirements met 1`] = `
+[
+  {
     "text": "210 days past FTRD (Jan 3, 2022)",
   },
 ]

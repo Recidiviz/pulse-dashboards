@@ -26,7 +26,7 @@ import {
 import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
-import { ReactComponent as TealStar } from "../assets/static/images/tealStar.svg";
+import TealStar from "../assets/static/images/tealStar.svg?react";
 
 export const Heading = styled.div<{ isMobile?: boolean }>`
   ${({ isMobile }) => (isMobile ? typography.Serif24 : typography.Serif34)}

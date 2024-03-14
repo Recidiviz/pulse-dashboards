@@ -31,13 +31,13 @@ let resident: Resident;
 let root: RootStore;
 let referralSub: DocumentSubscription<any>;
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 function createTestUnit(residentRecord: typeof usMePersonRecord) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["usMeWorkRelease"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "usMeWorkRelease",
+  ]);
   resident = new Resident(residentRecord, root);
 
   const maybeOpportunity = resident.potentialOpportunities.usMeWorkRelease;

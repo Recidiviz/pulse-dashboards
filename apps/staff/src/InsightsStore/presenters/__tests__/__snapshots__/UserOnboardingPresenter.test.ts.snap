@@ -1,12 +1,12 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`has userInfo 1`] = `
-Object {
-  "entity": Object {
+{
+  "entity": {
     "displayName": "Miles D Davis",
     "email": "mock-email",
     "externalId": "mdavis123",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Miles",
       "middleNames": "D",
       "surname": "Davis",
@@ -15,20 +15,20 @@ Object {
     "pseudonymizedId": "hashed-mdavis123",
     "supervisionDistrict": "Region D1",
   },
-  "metadata": Object {
+  "metadata": {
     "hasSeenOnboarding": false,
   },
   "role": "supervision_officer_supervisor",
 }
 `;
 
-exports[`with user data already hydrated has userInfo 1`] = `
-Object {
-  "entity": Object {
+exports[`with user data already hydrated > has userInfo 1`] = `
+{
+  "entity": {
     "displayName": "Miles D Davis",
     "email": "mock-email",
     "externalId": "mdavis123",
-    "fullName": Object {
+    "fullName": {
       "givenNames": "Miles",
       "middleNames": "D",
       "surname": "Davis",
@@ -37,7 +37,7 @@ Object {
     "pseudonymizedId": "hashed-mdavis123",
     "supervisionDistrict": "Region D1",
   },
-  "metadata": Object {
+  "metadata": {
     "hasSeenOnboarding": false,
   },
   "role": "supervision_officer_supervisor",

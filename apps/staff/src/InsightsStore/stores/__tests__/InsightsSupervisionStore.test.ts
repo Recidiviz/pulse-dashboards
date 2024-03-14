@@ -40,7 +40,6 @@ import { InsightsSupervisionStore } from "../InsightsSupervisionStore";
 let store: InsightsSupervisionStore;
 
 beforeEach(async () => {
-  jest.resetModules();
   configure({ safeDescriptors: false });
   const insightsStore = new InsightsStore(new RootStore());
   const presenter = new SupervisionPresenter(insightsStore);
@@ -51,7 +50,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 
@@ -60,9 +59,10 @@ test("hydrate benchmarks", async () => {
 });
 
 test("cannot hydrate benchmarks with API error", async () => {
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
-    .mockRejectedValue(new Error("something went wrong"));
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "metricBenchmarks",
+  ).mockRejectedValue(new Error("something went wrong"));
 
   await expect(flowResult(store.populateMetricConfigs())).toReject();
 
@@ -72,8 +72,7 @@ test("cannot hydrate benchmarks with API error", async () => {
 // The verification for missing metrics happens in the presenter where we
 // have a more accurate idea of which metrics are necessary per supervisor/caseload type
 test("can hydrate benchmarks with missing metrics", async () => {
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
     // this should include only 2 of the 3 expected metric types
     .mockResolvedValue(metricBenchmarksFixture.slice(0, 2));
 
@@ -103,8 +102,7 @@ test("configs include benchmarks", async () => {
 });
 
 test("hydrated benchmarks can be missing caseload types", async () => {
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
     // this should be missing the SEX_OFFENSE caseload type for all metrics
     .mockResolvedValue(metricBenchmarksFixture.slice(0, 3));
 
@@ -136,8 +134,7 @@ test("caseload typebreakdowns enabled", async () => {
 test("caseload typebreakdowns not enabled", async () => {
   expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
 
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
     // this should be missing the SEX_OFFENSE caseload type for all metrics
     .mockResolvedValue(metricBenchmarksFixture.slice(0, 3));
 
@@ -171,9 +168,10 @@ test("adverse metric configs", async () => {
   // This is not realistic for this metric but it doesn't really matter for this test
   const additionalMetricBenchmark = cloneDeep(metricBenchmarksFixture[0]);
   additionalMetricBenchmark.metricId = favorableMetricConfig.name;
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
-    .mockResolvedValue([...metricBenchmarksFixture, additionalMetricBenchmark]);
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "metricBenchmarks",
+  ).mockResolvedValue([...metricBenchmarksFixture, additionalMetricBenchmark]);
 
   await flowResult(store.populateMetricConfigs());
 
@@ -192,7 +190,7 @@ test("adverse metric configs", async () => {
 });
 
 test("hydrate supervisionOfficerSupervisors", async () => {
-  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
+  vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   expect(store.supervisionOfficerSupervisors).toBeFalsy();
 
   await expect(
@@ -220,95 +218,67 @@ test("hydrate supervisionOfficers for supervisor", async () => {
 });
 
 test("userCanAccessAllSupervisors with missing route", () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ insights: true }),
-      stateCode: "us_mi",
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    pseudonymizedId: "hashed-abc123",
+    routes: observable({ insights: true }),
+    stateCode: "us_mi",
+  });
 
   expect(store.userCanAccessAllSupervisors).toBeFalse();
 });
 
 test("userCanAccessAllSupervisors with false route", () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ "insights_supervision_supervisors-list": false }),
-      stateCode: "us_mi",
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    pseudonymizedId: "hashed-abc123",
+    routes: observable({ "insights_supervision_supervisors-list": false }),
+    stateCode: "us_mi",
+  });
 
   expect(store.userCanAccessAllSupervisors).toBeFalse();
 });
 
 test("userCanAccessAllSupervisors with true route", () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ "insights_supervision_supervisors-list": true }),
-      stateCode: "us_mi",
-    });
-
-  expect(store.userCanAccessAllSupervisors).toBeTrue();
-});
-
-test("userCanAccessAllSupervisors with missing route", () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ insights: true }),
-      stateCode: "us_mi",
-    });
-
-  expect(store.userCanAccessAllSupervisors).toBeFalse();
-});
-
-test("userCanAccessAllSupervisors with false route", () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ "insights_supervision_supervisors-list": false }),
-      stateCode: "us_mi",
-    });
-
-  expect(store.userCanAccessAllSupervisors).toBeFalse();
-});
-
-test("userCanAccessAllSupervisors with true route", () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      pseudonymizedId: "hashed-abc123",
-      routes: observable({ "insights_supervision_supervisors-list": true }),
-      stateCode: "us_mi",
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    pseudonymizedId: "hashed-abc123",
+    routes: observable({ "insights_supervision_supervisors-list": true }),
+    stateCode: "us_mi",
+  });
 
   expect(store.userCanAccessAllSupervisors).toBeTrue();
 });
 
 test("current user record for supervisor", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      externalId: "abc123",
-      pseudonymizedId: "hashed-mdavis123",
-      district: "District One",
-      stateCode: "us_mi",
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: "abc123",
+    pseudonymizedId: "hashed-mdavis123",
+    district: "District One",
+    stateCode: "us_mi",
+  });
   await flowResult(store.populateUserInfo());
 
   expect(store.currentSupervisorUser).toBeDefined();
   expect(store.currentSupervisorUser).toMatchInlineSnapshot(`
-    Object {
+    {
       "displayName": "Miles D Davis",
       "email": "mock-email",
       "externalId": "mdavis123",
-      "fullName": Object {
+      "fullName": {
         "givenNames": "Miles",
         "middleNames": "D",
         "surname": "Davis",
@@ -321,12 +291,14 @@ test("current user record for supervisor", async () => {
 });
 
 test("hydrateUserInfo requires pseudo ID", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      district: "District One",
-      stateCode: "us_mi",
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    district: "District One",
+    stateCode: "us_mi",
+  });
 
   await expect(() => store.populateUserInfo()).rejects.toThrow(
     "Missing pseudonymizedId for user",
@@ -334,28 +306,30 @@ test("hydrateUserInfo requires pseudo ID", async () => {
 });
 
 test("hydrate supervisors list with current user", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      externalId: "abc123",
-      pseudonymizedId: "hashed-mdavis123",
-      district: "District One",
-      stateCode: "us_mi",
-      routes: observable({
-        insights: true,
-        "insights_supervision_supervisors-list": false,
-      }),
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: "abc123",
+    pseudonymizedId: "hashed-mdavis123",
+    district: "District One",
+    stateCode: "us_mi",
+    routes: observable({
+      insights: true,
+      "insights_supervision_supervisors-list": false,
+    }),
+  });
   await flowResult(store.populateUserInfo());
 
   expect(store.supervisionOfficerSupervisors).toBeDefined();
   expect(store.supervisionOfficerSupervisors).toMatchInlineSnapshot(`
-    Array [
-      Object {
+    [
+      {
         "displayName": "Miles D Davis",
         "email": "mock-email",
         "externalId": "mdavis123",
-        "fullName": Object {
+        "fullName": {
           "givenNames": "Miles",
           "middleNames": "D",
           "surname": "Davis",
@@ -369,20 +343,22 @@ test("hydrate supervisors list with current user", async () => {
 });
 
 test("current supervisor user without supervisors list permission does not hydrate via supervisors API", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      externalId: "abc123",
-      pseudonymizedId: "hashed-mdavis123",
-      district: "District One",
-      stateCode: "us_mi",
-      routes: observable({
-        insights: true,
-        "insights_supervision_supervisors-list": false,
-      }),
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: "abc123",
+    pseudonymizedId: "hashed-mdavis123",
+    district: "District One",
+    stateCode: "us_mi",
+    routes: observable({
+      insights: true,
+      "insights_supervision_supervisors-list": false,
+    }),
+  });
 
-  jest.spyOn(store.insightsStore.apiClient, "supervisionOfficerSupervisors");
+  vi.spyOn(store.insightsStore.apiClient, "supervisionOfficerSupervisors");
   await flowResult(store.populateUserInfo());
 
   await expect(
@@ -394,20 +370,22 @@ test("current supervisor user without supervisors list permission does not hydra
 });
 
 test("current supervisor user with supervisors list permission does hydrate via supervisors API", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      externalId: "abc123",
-      pseudonymizedId: "hashed-mdavis123",
-      district: "District One",
-      stateCode: "us_mi",
-      routes: observable({
-        insights: true,
-        "insights_supervision_supervisors-list": true,
-      }),
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: "abc123",
+    pseudonymizedId: "hashed-mdavis123",
+    district: "District One",
+    stateCode: "us_mi",
+    routes: observable({
+      insights: true,
+      "insights_supervision_supervisors-list": true,
+    }),
+  });
 
-  jest.spyOn(store.insightsStore.apiClient, "supervisionOfficerSupervisors");
+  vi.spyOn(store.insightsStore.apiClient, "supervisionOfficerSupervisors");
   await flowResult(store.populateUserInfo());
 
   await expect(
@@ -419,18 +397,20 @@ test("current supervisor user with supervisors list permission does hydrate via 
 });
 
 test("non-supervisor user without supervisors list permission errors in hydration", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      pseudonymizedId: "hashed-leadership123",
-      stateCode: "us_mi",
-      routes: observable({
-        insights: true,
-        "insights_supervision_supervisors-list": false,
-      }),
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    pseudonymizedId: "hashed-leadership123",
+    stateCode: "us_mi",
+    routes: observable({
+      insights: true,
+      "insights_supervision_supervisors-list": false,
+    }),
+  });
 
-  jest.spyOn(store.insightsStore.apiClient, "supervisionOfficerSupervisors");
+  vi.spyOn(store.insightsStore.apiClient, "supervisionOfficerSupervisors");
   await flowResult(store.populateUserInfo());
 
   await expect(
@@ -444,18 +424,20 @@ test("non-supervisor user without supervisors list permission errors in hydratio
 });
 
 test("patch user info: set hasSeenOnboarding", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      externalId: "abc123",
-      pseudonymizedId: "hashed-mdavis123",
-      district: "District One",
-      stateCode: "us_mi",
-      routes: observable({
-        insights: true,
-        "insights_supervision_supervisors-list": false,
-      }),
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: "abc123",
+    pseudonymizedId: "hashed-mdavis123",
+    district: "District One",
+    stateCode: "us_mi",
+    routes: observable({
+      insights: true,
+      "insights_supervision_supervisors-list": false,
+    }),
+  });
   await flowResult(store.populateUserInfo());
   expect(store.userInfo?.metadata.hasSeenOnboarding).toBeFalse();
 
@@ -466,23 +448,25 @@ test("patch user info: set hasSeenOnboarding", async () => {
 });
 
 test("patch user info fails for recidiviz user", async () => {
-  jest
-    .spyOn(store.insightsStore.rootStore.userStore, "userAppMetadata", "get")
-    .mockReturnValue({
-      stateCode: "recidiviz",
-    });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    stateCode: "recidiviz",
+  });
   await flowResult(store.populateUserInfo());
   expect(store.userInfo?.metadata.hasSeenOnboarding).toBeTrue();
 
   await expect(
     flowResult(store.patchUserInfoForCurrentUser({ hasSeenOnboarding: false })),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"Cannot update user info for Recidiviz or CSG user"`,
+    `[Error: Cannot update user info for Recidiviz or CSG user]`,
   );
 });
 
 test("look up supervisor by ID", async () => {
-  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
+  vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   await flowResult(store.populateSupervisionOfficerSupervisors());
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];
@@ -492,7 +476,7 @@ test("look up supervisor by ID", async () => {
 });
 
 test("look up supervisor by pseudonymized ID", async () => {
-  jest.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
+  vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   await flowResult(store.populateSupervisionOfficerSupervisors());
 
   const testSupervisor = supervisionOfficerSupervisorsFixture[0];

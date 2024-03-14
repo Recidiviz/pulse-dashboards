@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2022 Recidiviz, Inc.
 //
@@ -17,14 +16,9 @@
 // =============================================================================
 import tk from "timekeeper";
 
-import {
-  MOCK_OPPORTUNITY_CONFIGS,
-  mockUsXxOpp,
-  mockUsXxOppConfig,
-} from "../__fixtures__";
+import { MOCK_OPPORTUNITY_CONFIGS, mockUsXxOpp } from "../__fixtures__";
 import {
   OPPORTUNITY_CONFIGS,
-  OpportunityConfig,
   OpportunityHydratedHeader,
 } from "../OpportunityConfigs";
 import { OpportunityType } from "../OpportunityType/types";
@@ -36,9 +30,20 @@ import {
   generateOpportunityInitialHeader,
 } from "../utils/generateHeadersUtils";
 
-jest.mock("../../subscriptions");
-jest.mock("firebase/firestore");
-jest.mock("../Forms/FormBase");
+vi.mock("../../subscriptions");
+vi.mock("firebase/firestore");
+vi.mock("../Forms/FormBase");
+const hoisted = vi.hoisted(async () => {
+  const { MOCK_OPPORTUNITY_CONFIGS } = await import("../__fixtures__");
+  return { MOCK_OPPORTUNITY_CONFIGS };
+});
+
+vi.mock("../OpportunityConfigs", async (importOriginal) => {
+  return {
+    ...(await importOriginal<typeof import("../OpportunityConfigs")>()),
+    OPPORTUNITY_CONFIGS: (await hoisted).MOCK_OPPORTUNITY_CONFIGS,
+  };
+});
 
 describe("monthsOrDaysRemainingFromToday", () => {
   beforeEach(() => {
@@ -66,18 +71,6 @@ describe("Generate header", () => {
   const TEST_FIELD = "TEST_FIELD";
   const TEST_TITLE = "TEST_PERSON";
 
-  beforeAll(() => {
-    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-    (OPPORTUNITY_CONFIGS as Record<string, OpportunityConfig<Opportunity>>)[
-      mockUsXxOpp
-    ] = mockUsXxOppConfig;
-  });
-
-  afterAll(() => {
-    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-    OPPORTUNITY_CONFIGS[mockUsXxOpp] = undefined as any;
-  });
-
   test("when initialHeader is provided in config", () => {
     const header = generateOpportunityInitialHeader(
       mockUsXxOpp,
@@ -98,23 +91,11 @@ describe("Generate header", () => {
   });
 });
 
-const hydratedHeaders: OpportunityHydratedHeader[] = [];
 describe("Generate hydrated header", () => {
-  beforeAll(() => {
-    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-    Object.entries(MOCK_OPPORTUNITY_CONFIGS).forEach(([key, value], index) => {
-      OPPORTUNITY_CONFIGS[key as OpportunityType] = value as never;
-      hydratedHeaders.push(
-        generateOpportunityHydratedHeader(value as any, index),
-      );
-    });
-  });
-
-  afterAll(() => {
-    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-    Object.keys(MOCK_OPPORTUNITY_CONFIGS).forEach((key) => {
-      OPPORTUNITY_CONFIGS[key as OpportunityType] = undefined as any;
-    });
+  const hydratedHeaders: OpportunityHydratedHeader[] = Object.entries(
+    OPPORTUNITY_CONFIGS,
+  ).map(([key, value], index) => {
+    return generateOpportunityHydratedHeader(value as any, index);
   });
 
   test("to generate correctly", () => {
@@ -128,7 +109,7 @@ describe("Generate hydrated header", () => {
     expect(hydratedHeaders).toMatchSnapshot();
   });
 
-  test("to match snapshot", () => {
+  test("to match expected contents", () => {
     hydratedHeaders.forEach((hydratedHeader, index) => {
       const eligibilityOrFullText =
         hydratedHeader.eligibilityText || hydratedHeader.fullText;
@@ -167,20 +148,6 @@ describe("Generate counts for opportunities", () => {
     [bOpps as Opportunity[], "mockUsXxTwoOpp" as OpportunityType, 2],
     [emptyOppsList as Opportunity[], "mockUsXxOpp" as OpportunityType, 0],
   ];
-
-  beforeEach(() => {
-    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-    Object.entries(MOCK_OPPORTUNITY_CONFIGS).forEach(([key, value], index) => {
-      OPPORTUNITY_CONFIGS[key as OpportunityType] = value as never;
-    });
-  });
-
-  afterEach(() => {
-    // TODO(#4090): refactor to use jest.replaceProperty() once jest is updated to recognize the function.
-    Object.keys(MOCK_OPPORTUNITY_CONFIGS).forEach((key) => {
-      OPPORTUNITY_CONFIGS[key as OpportunityType] = undefined as any;
-    });
-  });
 
   it.each(baseTests)(
     `should count opportunities %o properly when type is %s (TEST CASE %#)`,

@@ -32,7 +32,7 @@ import {
   LSUReferralRecord,
 } from "../LSUOpportunity";
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 let opp: LSUOpportunity;
 let client: Client;
@@ -42,9 +42,9 @@ let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["LSU"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "LSU",
+  ]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.potentialOpportunities.LSU;
@@ -63,7 +63,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });

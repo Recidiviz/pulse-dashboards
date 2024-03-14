@@ -27,7 +27,7 @@ import {
 } from "../__fixtures__";
 import { UsTnAnnualReclassificationReviewOpportunity } from "../UsTnAnnualReclassificationReviewOpportunity";
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 let opp: UsTnAnnualReclassificationReviewOpportunity;
 let resident: Resident;
@@ -39,9 +39,9 @@ function createTestUnit(
   residentRecord: typeof UsTnAnnualReclassificationEligibleResidentRecord,
 ) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["usTnAnnualReclassification"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "usTnAnnualReclassification",
+  ]);
   resident = new Resident(residentRecord, root);
 
   const maybeOpportunity =
@@ -60,7 +60,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });

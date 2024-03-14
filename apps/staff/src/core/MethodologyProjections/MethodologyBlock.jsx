@@ -1,12 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
-import ScrollableAnchor from "react-scrollable-anchor";
+import { AnchorSection } from "react-anchor-navigation";
 
 import ModelInfrastructureBlock from "./ModelInfrastructureBlock";
 
 function MethodologyBlock({ contentBlock, target }) {
   return (
-    <ScrollableAnchor id={target}>
+    <AnchorSection id={target}>
       <div>
         <h3 className="Methodology__block--title ">{contentBlock.label}</h3>
         <hr />
@@ -32,7 +32,7 @@ function MethodologyBlock({ contentBlock, target }) {
           </>
         )}
       </div>
-    </ScrollableAnchor>
+    </AnchorSection>
   );
 }
 MethodologyBlock.propTypes = {

@@ -86,8 +86,8 @@ function createTestUnit() {
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsOrEarnedDischargeOpportunity(person);
-  jest.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
-  jest.spyOn(person, "assignedStaff", "get").mockReturnValue(staffRecord);
+  vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
+  vi.spyOn(person, "assignedStaff", "get").mockReturnValue(staffRecord);
   form = opp.form;
 }
 
@@ -99,14 +99,14 @@ beforeEach(() => {
 
 afterEach(() => {
   configure({ safeDescriptors: true });
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
 });
 
 describe("prefilledDataTransformer", () => {
   test("basic transformation", () => {
     expect(form.prefilledDataTransformer()).toMatchInlineSnapshot(`
-      Object {
+      {
         "clientId": "pei1",
         "countyAddress": "(Your County Address}",
         "countyFax": "(   )",
@@ -115,8 +115,8 @@ describe("prefilledDataTransformer", () => {
         "givenNames": "Joe",
         "middleNames": "Quimby",
         "officerName": "8675309 8675309",
-        "sentences": Object {
-          "123": Object {
+        "sentences": {
+          "123": {
             "county": "COUNTY",
             "docket": "cc1",
             "judgeName": "Judge Reinhold",
@@ -202,7 +202,7 @@ describe("prefilledDataTransformer", () => {
         },
       ],
     };
-    jest.spyOn(opp, "record", "get").mockImplementation(() => multioppRecord);
+    vi.spyOn(opp, "record", "get").mockImplementation(() => multioppRecord);
     expect(form.prefilledDataTransformer()).toMatchSnapshot();
   });
 });

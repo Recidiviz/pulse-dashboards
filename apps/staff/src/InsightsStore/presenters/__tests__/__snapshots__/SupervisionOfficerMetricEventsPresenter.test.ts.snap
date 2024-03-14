@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`events data 1`] = `
-Array [
-  Object {
+[
+  {
     "clientId": "339710",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Bertha",
       "surname": "Figueroa",
     },
@@ -17,9 +17,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "235261",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Rosie",
       "surname": "Luna",
     },
@@ -32,9 +32,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "531407",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Glenn",
       "surname": "Francis",
     },
@@ -47,9 +47,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "436502",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Steve",
       "surname": "Schwartz",
     },
@@ -62,9 +62,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "985771",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Nicholas",
       "surname": "Rhodes",
     },
@@ -77,9 +77,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "931890",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Ricardo",
       "surname": "Wood",
     },
@@ -92,9 +92,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "326160",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Ethel",
       "surname": "Leonard",
     },
@@ -107,9 +107,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "930441",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Stanley",
       "surname": "Maxwell",
     },
@@ -122,9 +122,9 @@ Array [
     "supervisionStartDate": 2021-01-08T00:00:00.000Z,
     "supervisionType": "COMMUNITY_CONFINEMENT",
   },
-  Object {
+  {
     "clientId": "564940",
-    "clientName": Object {
+    "clientName": {
       "givenNames": "Miguel",
       "surname": "Haynes",
     },

@@ -1,34 +1,34 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transform record for initial CR 1`] = `
-Object {
-  "caseNotes": Object {
-    "Recent employment (last 6 months)": Array [
-      Object {
+{
+  "caseNotes": {
+    "Recent employment (last 6 months)": [
+      {
         "eventDate": 2022-10-23T00:00:00.000Z,
         "noteBody": "Got a new job",
         "noteTitle": "Employed at Big Bob's Burger Joint",
       },
     ],
-    "Recommended supervision level": Array [
-      Object {
+    "Recommended supervision level": [
+      {
         "eventDate": null,
         "noteBody": "MEDIUM",
         "noteTitle": null,
       },
     ],
   },
-  "eligibleCriteria": Object {
-    "usMiClassificationReviewPastDueDate": Object {
+  "eligibleCriteria": {
+    "usMiClassificationReviewPastDueDate": {
       "eligibleDate": 2022-12-12T00:00:00.000Z,
     },
-    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": Object {
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
       "requiresSoRegistration": null,
       "supervisionLevel": "MAXIMUM",
     },
   },
   "externalId": "cr-eligible-1",
-  "metadata": Object {
+  "metadata": {
     "recommendedSupervisionLevel": "MEDIUM",
   },
   "stateCode": "US_MI",
@@ -36,42 +36,42 @@ Object {
 `;
 
 exports[`transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLevel 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "usMiClassificationReviewPastDueDate": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMiClassificationReviewPastDueDate": {
       "eligibleDate": 2023-03-14T00:00:00.000Z,
     },
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
   },
   "externalId": "cr-eligible-3",
-  "metadata": Object {},
+  "metadata": {},
   "stateCode": "US_MI",
 }
 `;
 
 exports[`transform record for six-month CR 1`] = `
-Object {
-  "caseNotes": Object {
-    "Recommended supervision level": Array [
-      Object {
+{
+  "caseNotes": {
+    "Recommended supervision level": [
+      {
         "eventDate": null,
         "noteBody": "MEDIUM",
         "noteTitle": null,
       },
     ],
   },
-  "eligibleCriteria": Object {
-    "usMiClassificationReviewPastDueDate": Object {
+  "eligibleCriteria": {
+    "usMiClassificationReviewPastDueDate": {
       "eligibleDate": 2019-01-12T00:00:00.000Z,
     },
-    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": Object {
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
       "requiresSoRegistration": null,
       "supervisionLevel": "MAXIMUM",
     },
   },
   "externalId": "cr-eligible-2",
-  "metadata": Object {
+  "metadata": {
     "recommendedSupervisionLevel": "MEDIUM",
   },
   "stateCode": "US_MI",

@@ -17,6 +17,7 @@
 
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useFeatureVariants } from "../../../components/StoreProvider";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
@@ -28,9 +29,9 @@ import MarkedIneligibleReasons, {
   buildSnoozedByTextAndResurfaceText,
 } from "../MarkedIneligibleReasons";
 
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-const useFeatureVariantsMock = useFeatureVariants as jest.Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 describe("buildDenialReasonsListText", () => {
   test("override opportunities", () => {

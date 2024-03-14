@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import "@testing-library/jest-dom/extend-expect";
-import "jest-canvas-mock";
+import "@testing-library/jest-dom";
+import "vitest-canvas-mock";
 import "jest-styled-components";
 
 import { ResizeObserver } from "@juggle/resize-observer";
@@ -23,29 +23,33 @@ import { cleanup } from "@testing-library/react";
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 import { configure } from "enzyme";
 import { toHaveNoViolations } from "jest-axe";
-import * as matchers from "jest-extended";
+import * as jestExtendedMatchers from "jest-extended";
 import { configure as configureMobx } from "mobx";
 import { createMocks } from "react-idle-timer";
+import createFetchMock from "vitest-fetch-mock";
 import { MessageChannel } from "worker_threads";
 
 import { initI18n } from "./utils/i18nSettings";
 
-jest.mock("./assets/static/images/tealStar.svg", () => ({
-  ReactComponent: () => {
-    return <div />;
-  },
-}));
+const fetchMocker = createFetchMock(vi);
 
 beforeAll(() => {
   createMocks();
+  fetchMocker.enableMocks();
+
   // prevents `ReferenceError: MessageChannel is not defined`
+  // @ts-expect-error
   global.MessageChannel = MessageChannel;
+});
+
+beforeEach(() => {
+  // because mocks are reset globally between tests we do have to re-enable
+  fetchMock.doMock();
 });
 
 afterAll(cleanup);
 
-expect.extend(matchers);
-
+expect.extend(jestExtendedMatchers);
 expect.extend(toHaveNoViolations);
 
 configureMobx({
@@ -58,17 +62,18 @@ configure({ adapter: new Adapter() });
 
 process.env = {
   ...process.env,
-  REACT_APP_TEST_ENV: true,
-  REACT_APP_METADATA_NAMESPACE: "test-metadata-namespace/",
+  VITE_TEST_ENV: "true",
+  VITE_METADATA_NAMESPACE: "test-metadata-namespace/",
 };
 
 // mock analytics configuration
 window.analytics = {
-  track: jest.fn(),
+  track: vi.fn(),
 };
 
-window.scrollTo = jest.fn();
+// @ts-expect-error
+window.scrollTo = vi.fn();
 
-window.prompt = jest.fn();
+window.prompt = vi.fn();
 
 window.ResizeObserver = ResizeObserver;

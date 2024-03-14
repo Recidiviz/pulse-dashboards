@@ -16,25 +16,24 @@
 // =============================================================================
 
 import createAuth0Client from "@auth0/auth0-spa-js";
+import { Mock } from "vitest";
 
 import RootStore from "..";
 
-const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
+const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
-jest.mock("@auth0/auth0-spa-js");
-jest.mock("../../FirestoreStore");
-jest.mock("../../api/metrics");
-jest.mock("../TenantStore", () => {
-  return jest.fn().mockImplementation(() => ({
-    currentTenantId: "US_MO",
-  }));
+vi.mock("@auth0/auth0-spa-js");
+vi.mock("../../FirestoreStore");
+vi.mock("../../api/metrics");
+vi.mock("../TenantStore", () => {
+  return {
+    default: vi.fn().mockImplementation(() => ({
+      currentTenantId: "US_MO",
+    })),
+  };
 });
 
 describe("RootStore", () => {
-  afterAll(() => {
-    jest.resetAllMocks();
-  });
-
   it("contains a TenantStore", () => {
     expect(RootStore.tenantStore).toBeDefined();
   });
@@ -61,13 +60,13 @@ describe("RootStore", () => {
       [metadataField]: { stateCode: "US_MO" },
       email_verified: true,
     };
-    (createAuth0Client as jest.Mock).mockResolvedValue({
+    (createAuth0Client as Mock).mockResolvedValue({
       getUser: () => user,
       isAuthenticated: () => true,
       getTokenSilently: () => "token",
     });
 
-    await RootStore.userStore.authorize(jest.fn());
+    await RootStore.userStore.authorize(vi.fn());
 
     expect(RootStore.user).toBeDefined();
   });

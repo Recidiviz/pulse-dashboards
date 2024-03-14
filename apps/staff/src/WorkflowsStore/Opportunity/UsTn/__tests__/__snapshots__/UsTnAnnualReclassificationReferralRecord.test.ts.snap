@@ -1,30 +1,30 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`UsTnAnnualReclassificationReviewReferralRecordRaw matches the snapshot 1`] = `
-Object {
-  "caseNotes": Object {
-    "ba bar": Array [
-      Object {
+exports[`UsTnAnnualReclassificationReviewReferralRecordRaw > matches the snapshot 1`] = `
+{
+  "caseNotes": {
+    "ba bar": [
+      {
         "eventDate": 2022-09-06T00:00:00.000Z,
         "noteBody": "Body3",
         "noteTitle": "Title3",
       },
     ],
-    "foo": Array [
-      Object {
+    "foo": [
+      {
         "eventDate": 2022-04-06T00:00:00.000Z,
         "noteBody": "Body1",
         "noteTitle": "Title1",
       },
-      Object {
+      {
         "eventDate": 2022-06-06T00:00:00.000Z,
         "noteBody": "Body2",
         "noteTitle": "Title2",
       },
     ],
   },
-  "eligibleCriteria": Object {
-    "custodyLevelComparedToRecommended": Object {
+  "eligibleCriteria": {
+    "custodyLevelComparedToRecommended": {
       "custodyLevel": "MINIMUM",
       "recommendedCustodyLevel": "MINIMUM",
     },
@@ -32,8 +32,8 @@ Object {
     "usTnAtLeast12MonthsSinceLatestAssessment": null,
   },
   "externalId": "reclass-01",
-  "formInformation": Object {
-    "currentOffenses": Array [
+  "formInformation": {
+    "currentOffenses": [
       "ROBBERY-ARMED WITH DEADLY WEAPON",
     ],
     "lastCafDate": 2022-08-22T00:00:00.000Z,
@@ -43,22 +43,22 @@ Object {
     "q3Score": 1,
     "q4Score": 1,
     "q5Score": 1,
-    "q6Notes": Array [
-      Object {
+    "q6Notes": [
+      {
         "eventDate": 2022-08-22T00:00:00.000Z,
         "noteBody": "Some note",
       },
     ],
     "q6Score": 1,
-    "q7Notes": Array [
-      Object {
+    "q7Notes": [
+      {
         "eventDate": 2022-08-22T00:00:00.000Z,
         "noteBody": "Some note",
       },
     ],
     "q7Score": 1,
-    "q8Notes": Array [
-      Object {
+    "q8Notes": [
+      {
         "detainerFelonyFlag": true,
         "detainerMisdemeanorFlag": true,
         "detainerReceivedDate": 2022-08-22T00:00:00.000Z,
@@ -68,16 +68,16 @@ Object {
     "q9Score": 1,
   },
   "formReclassificationDueDate": 2023-12-01T00:00:00.000Z,
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_TN",
 }
 `;
 
-exports[`UsTnAnnualReclassificationReviewReferralRecordRaw matches the snapshot without caseNotes 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "custodyLevelComparedToRecommended": Object {
+exports[`UsTnAnnualReclassificationReviewReferralRecordRaw > matches the snapshot without caseNotes 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelComparedToRecommended": {
       "custodyLevel": "MINIMUM",
       "recommendedCustodyLevel": "MINIMUM",
     },
@@ -85,8 +85,8 @@ Object {
     "usTnAtLeast12MonthsSinceLatestAssessment": null,
   },
   "externalId": "reclass-01",
-  "formInformation": Object {
-    "currentOffenses": Array [
+  "formInformation": {
+    "currentOffenses": [
       "ROBBERY-ARMED WITH DEADLY WEAPON",
     ],
     "lastCafDate": 2022-08-22T00:00:00.000Z,
@@ -96,22 +96,22 @@ Object {
     "q3Score": 1,
     "q4Score": 1,
     "q5Score": 1,
-    "q6Notes": Array [
-      Object {
+    "q6Notes": [
+      {
         "eventDate": 2022-08-22T00:00:00.000Z,
         "noteBody": "Some note",
       },
     ],
     "q6Score": 1,
-    "q7Notes": Array [
-      Object {
+    "q7Notes": [
+      {
         "eventDate": 2022-08-22T00:00:00.000Z,
         "noteBody": "Some note",
       },
     ],
     "q7Score": 1,
-    "q8Notes": Array [
-      Object {
+    "q8Notes": [
+      {
         "detainerFelonyFlag": true,
         "detainerMisdemeanorFlag": true,
         "detainerReceivedDate": 2022-08-22T00:00:00.000Z,
@@ -121,7 +121,7 @@ Object {
     "q9Score": 1,
   },
   "formReclassificationDueDate": 2023-12-01T00:00:00.000Z,
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_TN",
 }
 `;

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2020 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render } from "@testing-library/react";
-import React from "react";
+import { writeFileSync } from "fs";
+import { mapValues } from "lodash";
+import path from "path";
 
-import Pagination from "../Pagination";
+import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 
-describe("test for component CaseTablePaging", () => {
-  const updatePage = jest.fn();
+const pageConfigs = mapValues(
+  OPPORTUNITY_CONFIGS,
+  (config) => config.urlSection,
+);
 
-  it("displays initial label", async () => {
-    const { getByText } = render(
-      <Pagination
-        beginning={0}
-        end={15}
-        total={1000}
-        createUpdatePage={updatePage}
-      />,
-    );
-
-    expect(getByText("Showing 1-15 of 1000")).toBeInTheDocument();
-  });
-});
+writeFileSync(
+  path.join(__dirname, "../src/cucumber/opportunityPageConfig.json"),
+  JSON.stringify(pageConfigs),
+);

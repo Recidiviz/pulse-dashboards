@@ -17,7 +17,9 @@
 import { runInAction } from "mobx";
 
 import flags from "../../../flags";
-import RootStore from "../../../RootStore";
+import { RootStore } from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import UserStore from "../../../RootStore/UserStore";
 import OverTimeMetric from "../../models/OverTimeMetric";
 import PathwaysMetric from "../../models/PathwaysMetric";
 import PopulationProjectionOverTimeMetric from "../../models/PopulationProjectionOverTimeMetric";
@@ -27,22 +29,22 @@ import CoreStore from "..";
 
 let coreStore: CoreStore;
 
-jest.mock("../../../RootStore/UserStore", () => {
-  return jest.fn().mockImplementation(() => ({
-    user: {},
-  }));
-});
-
-jest.mock("../../models/VitalsMetrics");
-jest.mock("../../../RootStore/TenantStore", () => {
-  return jest.fn().mockImplementation(() => ({
-    currentTenantId: "US_TN",
-  }));
-});
+vi.mock("../../../RootStore/UserStore");
+vi.mock("../../models/VitalsMetrics");
+vi.mock("../../../RootStore/TenantStore");
 
 describe("MetricsStore", () => {
   beforeEach(() => {
-    coreStore = new CoreStore(RootStore);
+    // @ts-expect-error
+    vi.mocked(UserStore).mockImplementation(() => ({
+      user: {},
+    }));
+    // @ts-expect-error
+    vi.mocked(TenantStore).mockImplementation(() => ({
+      currentTenantId: "US_TN",
+    }));
+
+    coreStore = new CoreStore(new RootStore());
   });
 
   describe("metrics", () => {
@@ -93,7 +95,15 @@ describe("MetricsStore", () => {
     // set these values here instead of in a beforeAll/beforeEach so they can be used in the test
     // suite construction.
     flags.defaultMetricBackend = "OLD";
-    coreStore = new CoreStore(RootStore);
+    // @ts-expect-error
+    vi.mocked(UserStore).mockImplementation(() => ({
+      user: {},
+    }));
+    // @ts-expect-error
+    vi.mocked(TenantStore).mockImplementation(() => ({
+      currentTenantId: "US_TN",
+    }));
+    coreStore = new CoreStore(new RootStore());
     const pathwaysMetrics = Object.entries(
       Object.getOwnPropertyDescriptors(coreStore.metricsStore),
     )

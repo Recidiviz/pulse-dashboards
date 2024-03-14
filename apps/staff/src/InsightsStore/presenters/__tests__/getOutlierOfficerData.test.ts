@@ -36,15 +36,13 @@ let officerData: SupervisionOfficer;
 let supervisionStore: InsightsSupervisionStore;
 
 beforeEach(() => {
+  vi.restoreAllMocks();
+
   [, , officerData] = supervisionOfficerFixture;
   supervisionStore = new InsightsSupervisionStore(
     new InsightsStore(new RootStore()),
     InsightsConfigFixture,
   );
-});
-
-afterEach(() => {
-  jest.restoreAllMocks();
 });
 
 test("combines related data", async () => {
@@ -76,9 +74,10 @@ test("excludes current officer from the benchmark data points", async () => {
     targetStatus: "FAR",
     value: currentOutlierRate,
   });
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
-    .mockResolvedValue(benchmarks);
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "metricBenchmarks",
+  ).mockResolvedValue(benchmarks);
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
@@ -123,9 +122,10 @@ test("throws on missing config", async () => {
 test("throws if benchmark data was not fully hydrated", async () => {
   // this will be missing all benchmarks for the test metric
   const benchmarks = metricBenchmarksFixture.slice(0, 1);
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
-    .mockResolvedValue(benchmarks);
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "metricBenchmarks",
+  ).mockResolvedValue(benchmarks);
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
@@ -140,9 +140,10 @@ test("throws on missing benchmark for required caseload type", async () => {
     metricBenchmarksFixture[0],
     ...metricBenchmarksFixture.slice(2),
   ];
-  jest
-    .spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
-    .mockResolvedValue(benchmarks);
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "metricBenchmarks",
+  ).mockResolvedValue(benchmarks);
 
   await flowResult(supervisionStore.populateMetricConfigs());
 

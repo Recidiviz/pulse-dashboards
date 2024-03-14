@@ -36,7 +36,7 @@ export async function fetchOfflineUser(
   }
   const queryParams = qs.stringify(options, { addQueryPrefix: true });
   const response = await fetch(
-    `${process.env.REACT_APP_API_URL}/api/offlineUser${queryParams}`,
+    `${import.meta.env.VITE_API_URL}/api/offlineUser${queryParams}`,
   );
   return response.json();
 }

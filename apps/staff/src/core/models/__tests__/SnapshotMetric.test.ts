@@ -16,8 +16,7 @@
 // =============================================================================
 
 import { waitFor } from "@testing-library/dom";
-import { disableFetchMocks, enableFetchMocks } from "jest-fetch-mock";
-import { runInAction } from "mobx";
+import { runInAction, when } from "mobx";
 
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
@@ -25,8 +24,7 @@ import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import { isAbortException } from "../../utils/exceptions";
 import SnapshotMetric from "../SnapshotMetric";
-
-const OLD_ENV = process.env;
+import { isHydrated } from "../utils";
 
 const mockTenantId = "US_TN";
 const BASE_URL = `http://localhost:5000/pathways/${mockTenantId}/LibertyToPrisonTransitionsCount`;
@@ -34,20 +32,14 @@ const BASE_URL = `http://localhost:5000/pathways/${mockTenantId}/LibertyToPrison
 describe("SnapshotMetric", () => {
   let metric: SnapshotMetric;
 
-  beforeAll(() => {
-    enableFetchMocks();
-  });
-
-  beforeEach(() => {
+  beforeEach(async () => {
     const mockRootStore = {
       userStore: {} as UserStore,
       tenantStore: { currentTenantId: mockTenantId } as TenantStore,
     };
     const mockCoreStore: CoreStore = new CoreStore(mockRootStore);
-    process.env = Object.assign(process.env, {
-      REACT_APP_DEPLOY_ENV: "dev",
-      REACT_APP_NEW_BACKEND_API_URL: "http://localhost:5000",
-    });
+    vi.stubEnv("VITE_DEPLOY_ENV", "dev");
+    vi.stubEnv("VITE_NEW_BACKEND_API_URL", "http://localhost:5000");
     fetchMock.mockResponse(
       JSON.stringify({
         data: [
@@ -83,18 +75,7 @@ describe("SnapshotMetric", () => {
       },
     });
     metric.hydrate();
-  });
-
-  afterEach(() => {
-    process.env = OLD_ENV;
-    fetchMock.resetMocks();
-  });
-
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-    jest.resetAllMocks();
-    disableFetchMocks();
+    await when(() => isHydrated(metric));
   });
 
   it("fetches metrics when initialized", () => {
@@ -110,15 +91,11 @@ describe("SnapshotMetric", () => {
   });
 
   it("sets isEmpty to false", () => {
-    expect(metric.isEmpty).toEqual(false);
+    expect(metric.isEmpty).toBeFalse();
   });
 
-  it("sets isEmpty to true when there is no data", () => {
-    jest.mock("../../../api/metrics/metricsClient", () => {
-      return {
-        callNewMetricsApi: jest.fn().mockResolvedValue({}),
-      };
-    });
+  it("sets isEmpty to true when there is no data", async () => {
+    fetchMock.mockResponse(JSON.stringify({ data: [] }));
 
     const mockRootStore = {
       userStore: {} as UserStore,
@@ -131,6 +108,7 @@ describe("SnapshotMetric", () => {
       accessor: "judicialDistrict",
     });
     metric.hydrate();
+    await when(() => isHydrated(metric));
 
     expect(metric.isEmpty).toEqual(true);
   });

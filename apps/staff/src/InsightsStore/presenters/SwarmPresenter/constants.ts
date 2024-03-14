@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-
 export const SWARM_SIZE_BREAKPOINT = 400;
 export const SWARM_DOT_RADIUS_LG = 6;
 export const SWARM_DOT_RADIUS_SM = 4;
@@ -24,11 +22,16 @@ export const HIGHLIGHT_DOT_RADIUS_LG = 10;
 export const HIGHLIGHT_DOT_RADIUS_SM = 8;
 export const HIGHLIGHT_MARK_STROKE_WIDTH = 2;
 
+// this is equivalent to spacing.xxs from the design system;
+// we can't import from that package directly because it breaks the swarmWorker.
+// see https://github.com/vitejs/vite-plugin-react/issues/110
+const baseMargin = 1;
+
 export const MARGIN = {
-  top: spacing.xxs,
-  bottom: spacing.xxs,
-  left: spacing.xxs + HIGHLIGHT_DOT_RADIUS_LG,
-  right: spacing.xxs + HIGHLIGHT_DOT_RADIUS_LG,
+  top: baseMargin,
+  bottom: baseMargin,
+  left: baseMargin + HIGHLIGHT_DOT_RADIUS_LG,
+  right: baseMargin + HIGHLIGHT_DOT_RADIUS_LG,
 };
 
 const TARGET_LABEL_HEIGHT = 18;

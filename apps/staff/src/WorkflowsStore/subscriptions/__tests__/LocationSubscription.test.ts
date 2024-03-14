@@ -17,15 +17,16 @@
 
 import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
+import { Mock } from "vitest";
 
 import { RootStore } from "../../../RootStore";
 import { LocationSubscription } from "../LocationSubscription";
 
-jest.mock("firebase/firestore");
+vi.mock("firebase/firestore");
 
-const queryMock = query as jest.Mock;
-const whereMock = where as jest.Mock;
-const collectionMock = jest.fn();
+const queryMock = query as Mock;
+const whereMock = where as Mock;
+const collectionMock = vi.fn();
 
 let rootStoreMock: RootStore;
 let sub: LocationSubscription;
@@ -33,7 +34,7 @@ let sub: LocationSubscription;
 describe("LocationSubscription tests", () => {
   describe("when activeSystem is SUPERVISION", () => {
     beforeEach(() => {
-      jest.resetAllMocks();
+      vi.resetAllMocks();
 
       rootStoreMock = observable({
         currentTenantId: "US_ND",
@@ -77,7 +78,7 @@ describe("LocationSubscription tests", () => {
 
   describe("when activeSystem === ALL", () => {
     beforeEach(() => {
-      jest.resetAllMocks();
+      vi.resetAllMocks();
 
       rootStoreMock = observable({
         currentTenantId: "US_ND",

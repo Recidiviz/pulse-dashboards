@@ -25,7 +25,7 @@ import { formatFacilityHousingUnit } from "../../../utils";
 import { OpportunityBase } from "../../OpportunityBase";
 import { FormBase } from "../FormBase";
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 let rootStore: RootStore;
 let opp: OpportunityBase<any, any>;
@@ -45,19 +45,19 @@ function createTestUnit() {
     recordId: "us_id_001",
   } as Client;
   opp = new TestOpportunity(client, "LSU", rootStore);
-  jest
-    .spyOn(opp, "hydrationState", "get")
-    .mockReturnValue({ status: "hydrated" });
+  vi.spyOn(opp, "hydrationState", "get").mockReturnValue({
+    status: "hydrated",
+  });
   form = new FormBase<any>(opp, rootStore);
   opp.form = form;
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   configure({ safeDescriptors: false });
   createTestUnit();
-  jest.spyOn(AnalyticsStore.prototype, "trackReferralFormDownloaded");
-  jest.spyOn(AnalyticsStore.prototype, "trackReferralFormViewed");
+  vi.spyOn(AnalyticsStore.prototype, "trackReferralFormDownloaded");
+  vi.spyOn(AnalyticsStore.prototype, "trackReferralFormViewed");
 });
 
 afterEach(() => {
@@ -87,7 +87,7 @@ describe("form downloading", () => {
 
 describe("record form download", () => {
   test("updates opportunity status", () => {
-    jest.spyOn(opp, "setCompletedIfEligible");
+    vi.spyOn(opp, "setCompletedIfEligible");
     form.recordSuccessfulDownload();
 
     expect(opp.setCompletedIfEligible).toHaveBeenCalled();

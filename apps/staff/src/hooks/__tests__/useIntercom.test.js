@@ -20,7 +20,7 @@ import { renderHook } from "@testing-library/react";
 import { useRootStore } from "../../components/StoreProvider";
 import useIntercom from "../useIntercom";
 
-jest.mock("../../components/StoreProvider");
+vi.mock("../../components/StoreProvider");
 
 describe("useIntercom hook tests", () => {
   const mockName = "some user name";
@@ -41,13 +41,13 @@ describe("useIntercom hook tests", () => {
     intercomId: mockIntercomId,
   };
 
-  const intercom = jest.fn();
+  const intercom = vi.fn();
   window.Intercom = intercom;
 
   let rendered;
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     useRootStore.mockReturnValue({
       userStore: {
         user: mockUser,

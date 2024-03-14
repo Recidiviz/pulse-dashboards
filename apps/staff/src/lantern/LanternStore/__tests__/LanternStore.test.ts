@@ -14,44 +14,48 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { MockInstance } from "vitest";
+
 import RootStore from "../../../RootStore";
 import LanternStore from "..";
 import UserRestrictionsStore from "../UserRestrictionsStore";
 
-jest.mock("../../../api/metrics");
-jest.mock("../DataStore/DataStore");
-jest.mock("../../../RootStore/TenantStore", () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      currentTenantId: "US_MO",
-      methodology: {},
-      enableUserRestrictions: true,
-    };
-  });
+vi.mock("../../../api/metrics");
+vi.mock("../DataStore/DataStore");
+vi.mock("../../../RootStore/TenantStore", () => {
+  return {
+    default: vi.fn().mockImplementation(() => {
+      return {
+        currentTenantId: "US_MO",
+        methodology: {},
+        enableUserRestrictions: true,
+      };
+    }),
+  };
 });
-jest.mock("../../../RootStore/UserStore", () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      user: {},
-      allowedSupervisionLocationIds: [],
-      userIsLoading: false,
-    };
-  });
+vi.mock("../../../RootStore/UserStore", () => {
+  return {
+    default: vi.fn().mockImplementation(() => {
+      return {
+        user: {},
+        allowedSupervisionLocationIds: [],
+        userIsLoading: false,
+      };
+    }),
+  };
 });
 
-const verifyUserRestrictionsSpy = jest.spyOn(
-  UserRestrictionsStore.prototype,
-  "verifyUserRestrictions",
-);
-
-const lanternStore: LanternStore = new LanternStore(RootStore);
+let lanternStore: LanternStore = new LanternStore(RootStore);
 
 describe("LanternStore", () => {
-  afterAll(() => {
-    jest.resetAllMocks();
-    jest.resetModules();
+  let verifyUserRestrictionsSpy: MockInstance;
+  beforeEach(() => {
+    verifyUserRestrictionsSpy = vi.spyOn(
+      UserRestrictionsStore.prototype,
+      "verifyUserRestrictions",
+    );
+    lanternStore = new LanternStore(RootStore);
   });
-
   it("contains a FiltersStore", () => {
     expect(lanternStore.filtersStore).toBeDefined();
   });

@@ -44,8 +44,8 @@ import {
   transformCompliantReportingReferral,
 } from "../CompliantReportingOpportunity";
 
-jest.mock("firebase/firestore");
-jest.mock("../../../subscriptions");
+vi.mock("firebase/firestore");
+vi.mock("../../../subscriptions");
 
 let cr: CompliantReportingOpportunity;
 let client: Client;
@@ -55,10 +55,10 @@ let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(clientRecord: ClientRecord) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["compliantReporting"]);
-  jest.spyOn(root.workflowsStore, "featureVariants", "get").mockReturnValue({});
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "compliantReporting",
+  ]);
+  vi.spyOn(root.workflowsStore, "featureVariants", "get").mockReturnValue({});
   client = new Client(clientRecord, root);
   const maybeOpportunity = client.potentialOpportunities.compliantReporting;
   if (maybeOpportunity === undefined) {
@@ -71,11 +71,11 @@ beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
   tk.freeze(new Date(2022, 7, 1));
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });
@@ -171,9 +171,11 @@ describe.each([
     expectedNote,
   ) => {
     beforeEach(() => {
-      jest
-        .spyOn(WorkflowsStore.prototype, "featureVariants", "get")
-        .mockReturnValue({ CompliantReportingAlmostEligible: {} });
+      vi.spyOn(
+        WorkflowsStore.prototype,
+        "featureVariants",
+        "get",
+      ).mockReturnValue({ CompliantReportingAlmostEligible: {} });
 
       const testRecord = cloneDeep(
         compliantReportingAlmostEligibleReferralRecord,

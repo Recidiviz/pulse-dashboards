@@ -27,48 +27,27 @@ import UserRestrictionsStore from "../UserRestrictionsStore";
 
 let lanternStore;
 let baseStore;
-const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
+const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 const mockTenantId = "US_MO";
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
 const mockUser = { [metadataField]: { stateCode: mockTenantId } };
 const mockFilterOptimizedDataFormat = sharedFilters.filterOptimizedDataFormat;
-const mockGetTokenSilently = jest.fn();
+const mockGetTokenSilently = vi.fn();
 
-jest.mock("@sentry/react");
-jest.mock("../UserRestrictionsStore");
-jest.mock("../DistrictsStore");
-jest.mock("../DataStore/MatrixStore");
-jest.mock("../DataStore/CaseTableStore");
-jest.mock("../DataStore/RevocationsChartStore");
-jest.mock("../DataStore/RevocationsOverTimeStore");
-jest.mock("shared-filters", () => {
+vi.mock("@sentry/react");
+vi.mock("../UserRestrictionsStore");
+vi.mock("../DistrictsStore");
+vi.mock("../DataStore/MatrixStore");
+vi.mock("../DataStore/CaseTableStore");
+vi.mock("../DataStore/RevocationsChartStore");
+vi.mock("../DataStore/RevocationsOverTimeStore");
+vi.mock("shared-filters", async () => {
   return {
-    ...jest.requireActual("shared-filters"),
-    filterOptimizedDataFormat: jest.fn(),
+    ...(await vi.importActual("shared-filters")),
+    filterOptimizedDataFormat: vi.fn(),
   };
 });
-jest.mock("../../../api/metrics/metricsClient", () => {
-  return {
-    callMetricsApi: jest.fn().mockResolvedValue({
-      revocations_matrix_distribution_by_district: {
-        flattenedValueMatrix: "0,0",
-        metadata: {
-          total_data_points: 1,
-          dimension_manifest: [
-            ["metric_period_months", ["12"]],
-            ["charge_category", ["all"]],
-            ["reported_violations", ["all"]],
-            ["violation_type", ["felony"]],
-            ["supervision_level", ["all"]],
-            ["supervision_type", ["all"]],
-            ["district", ["all"]],
-          ],
-          value_keys: ["revocation_count"],
-        },
-      },
-    }),
-  };
-});
+vi.mock("../../../api/metrics/metricsClient");
 
 const mockRootStore = {
   tenantStore: {
@@ -86,10 +65,6 @@ describe("BaseDataStore", () => {
   const file = "revocations_matrix_distribution_by_district";
 
   beforeEach(() => {
-    jest.spyOn(console, "error").mockImplementation(() => undefined);
-  });
-
-  beforeAll(() => {
     DistrictsStore.mockImplementation(() => {
       return {
         apiData: { data: [] },
@@ -101,14 +76,28 @@ describe("BaseDataStore", () => {
     UserRestrictionsStore.mockImplementation(() => {
       return {
         isLoading: false,
-        verifyUserRestrictions: jest.fn(),
+        verifyUserRestrictions: vi.fn(),
       };
     });
-  });
-
-  afterEach(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
+    vi.mocked(callMetricsApi).mockResolvedValue({
+      revocations_matrix_distribution_by_district: {
+        flattenedValueMatrix: "0,0",
+        metadata: {
+          total_data_points: 1,
+          dimension_manifest: [
+            ["metric_period_months", ["12"]],
+            ["charge_category", ["all"]],
+            ["reported_violations", ["all"]],
+            ["violation_type", ["felony"]],
+            ["supervision_level", ["all"]],
+            ["supervision_type", ["all"]],
+            ["district", ["all"]],
+          ],
+          value_keys: ["revocation_count"],
+        },
+      },
+    });
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
   });
 
   describe("when user is authenticated", () => {
@@ -143,13 +132,13 @@ describe("BaseDataStore", () => {
     });
 
     describe("filterData", () => {
-      const mockDataFilter = jest.fn((item) => {
-        return item.violation_type === "law";
-      });
+      const mockDataFilter = vi.fn();
 
       beforeEach(() => {
         baseStore = new BaseDataStore({ rootStore: lanternStore, file });
-        mockDataFilter.mockClear();
+        mockDataFilter.mockImplementation((item) => {
+          return item.violation_type === "law";
+        });
       });
 
       it("returns an empty array when data is not set", () => {
@@ -193,7 +182,6 @@ describe("BaseDataStore", () => {
 
     describe("fetchData", () => {
       beforeEach(() => {
-        jest.clearAllMocks();
         baseStore = new BaseDataStore({ rootStore: lanternStore, file });
       });
 
@@ -291,8 +279,6 @@ describe("BaseDataStore", () => {
 
   describe("when user is pending authentication", () => {
     beforeAll(() => {
-      jest.resetAllMocks();
-
       lanternStore = new LanternStore({
         ...mockRootStore,
         userStore: {
@@ -302,10 +288,6 @@ describe("BaseDataStore", () => {
         },
       });
       baseStore = new BaseDataStore({ rootStore: lanternStore, file });
-    });
-
-    afterAll(() => {
-      jest.resetAllMocks();
     });
 
     it("does not fetch data", () => {
@@ -333,10 +315,6 @@ describe("BaseDataStore", () => {
         },
       });
       baseStore = new BaseDataStore({ rootStore: lanternStore, file });
-    });
-
-    afterEach(() => {
-      jest.resetAllMocks();
     });
 
     it("does not fetch data", () => {

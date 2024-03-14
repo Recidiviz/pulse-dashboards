@@ -116,7 +116,7 @@ export default class PopulationProjectionOverTimeMetric extends PathwaysMetric<P
   async fetchMethodologyPDF(): Promise<Record<string, any>> {
     const token = await RootStore.getTokenSilently();
     const endpoint = `${
-      process.env.REACT_APP_API_URL
+      import.meta.env.VITE_API_URL
     }/api/${this.rootStore?.currentTenantId?.toLowerCase()}/projections/methodology.pdf`;
     const pdf = await fetch(endpoint, {
       headers: {

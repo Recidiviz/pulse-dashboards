@@ -21,19 +21,12 @@ import { Opportunity, OpportunityType } from "../../../../WorkflowsStore";
 import { OpportunityProfileProps } from "../../types";
 import { EligibilityDate } from "../EligibilityDate";
 
-jest.mock("../../../../components/StoreProvider");
+// somewhere this is being called as a side effect and blowing up.
+// It's not really related to this component at all
+vi.mock("../../../../components/StoreProvider", () => ({}));
 const testOppType = "usXxTestOpp" as OpportunityType;
 
 describe("EligibilityDate sidebar component tests", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-  });
-
   it("does not display if no eligibilityDate field is set on the opportunity", () => {
     const testOpp = {
       type: testOppType,

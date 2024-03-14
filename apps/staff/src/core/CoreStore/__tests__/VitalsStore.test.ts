@@ -14,9 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import RootStore from "../../../RootStore";
+import { RootStore } from "../../../RootStore";
+import TenantStore from "../../../RootStore/TenantStore";
+import VitalsMetrics from "../../models/VitalsMetrics";
 import CoreStore from "..";
 import VitalsStore, { getSummaryStatus } from "../VitalsStore";
+
+vi.mock("../../models/VitalsMetrics");
+vi.mock("../../../RootStore/TenantStore");
 
 describe("getSummaryStatus", () => {
   describe("when value is less than 70", () => {
@@ -56,123 +61,124 @@ describe("getSummaryStatus", () => {
   });
 });
 
-jest.mock("../../models/VitalsMetrics", () => {
-  return jest.fn().mockImplementation(() => ({
-    timeSeries: [
-      {
-        date: "2021-03-11",
-        entityId: "STATE_DOC",
-        metric: "OVERALL",
-        value: 72.5,
-        monthlyAvg: 72.8,
-      },
-      {
-        date: "2021-03-12",
-        entityId: "STATE_DOC",
-        metric: "OVERALL",
-        value: 75.5,
-        monthlyAvg: 75.8,
-      },
-      {
-        date: "2021-03-11",
-        entityId: "STATE_DOC",
-        metric: "DISCHARGE",
-        value: 62.5,
-        monthlyAvg: 62.8,
-      },
-      {
-        date: "2021-03-12",
-        entityId: "STATE_DOC",
-        metric: "DISCHARGE",
-        value: 65.5,
-        monthlyAvg: 65.8,
-      },
-      {
-        date: "2021-03-11",
-        entityId: "STATE_DOC",
-        metric: "CONTACT",
-        value: 42.5,
-        monthlyAvg: 42.8,
-      },
-      {
-        date: "2021-03-12",
-        entityId: "STATE_DOC",
-        metric: "CONTACT",
-        value: 45.5,
-        monthlyAvg: 45.8,
-      },
-      {
-        date: "2021-03-11",
-        entityId: "STATE_DOC",
-        metric: "RISK_ASSESSMENT",
-        value: 32.5,
-        monthlyAvg: 32.8,
-      },
-      {
-        date: "2021-03-12",
-        entityId: "STATE_DOC",
-        metric: "RISK_ASSESSMENT",
-        value: 35.5,
-        monthlyAvg: 35.8,
-      },
-      {
-        date: "2021-03-11",
-        entityId: "STATE_DOC",
-        metric: "DOWNGRADE",
-        value: 67.5,
-        monthlyAvg: 67.8,
-      },
-      {
-        date: "2021-03-12",
-        entityId: "STATE_DOC",
-        metric: "DOWNGRADE",
-        value: 68.5,
-        monthlyAvg: 68.8,
-      },
-    ],
-    summaries: [
-      {
-        entityId: "OFFICE_A",
-        entityName: "Office A",
-        entityType: "LEVEL_1_SUPERVISION_LOCATION",
-        overall: 85,
-        overall30Day: 0,
-        overall90Day: -2,
-        parentEntityId: "STATE_DOC",
-        timelyContact: 60,
-        timelyDischarge: 63,
-        timelyRiskAssessment: 69,
-        timelyDowngrade: 67,
-      },
-      {
-        entityId: "OFFICE_B",
-        entityName: "Office B",
-        entityType: "LEVEL_1_SUPERVISION_LOCATION",
-        overall: 95,
-        overall30Day: 0,
-        overall90Day: -2,
-        parentEntityId: "STATE_DOC",
-        timelyContact: 90,
-        timelyDischarge: 93,
-        timelyRiskAssessment: 99,
-        timelyDowngrade: 67,
-      },
-    ],
-  }));
-});
-jest.mock("../../../RootStore/TenantStore", () => {
-  return jest.fn().mockImplementation(() => ({
-    currentTenantId: "US_ND",
-  }));
-});
-
 let coreStore: CoreStore;
 let vitalsStore: VitalsStore;
 
 describe("VitalsStore", () => {
+  beforeEach(() => {
+    // @ts-expect-error
+    vi.mocked(VitalsMetrics).mockImplementation(() => ({
+      timeSeries: [
+        {
+          date: "2021-03-11",
+          entityId: "STATE_DOC",
+          metric: "OVERALL",
+          value: 72.5,
+          monthlyAvg: 72.8,
+        },
+        {
+          date: "2021-03-12",
+          entityId: "STATE_DOC",
+          metric: "OVERALL",
+          value: 75.5,
+          monthlyAvg: 75.8,
+        },
+        {
+          date: "2021-03-11",
+          entityId: "STATE_DOC",
+          metric: "DISCHARGE",
+          value: 62.5,
+          monthlyAvg: 62.8,
+        },
+        {
+          date: "2021-03-12",
+          entityId: "STATE_DOC",
+          metric: "DISCHARGE",
+          value: 65.5,
+          monthlyAvg: 65.8,
+        },
+        {
+          date: "2021-03-11",
+          entityId: "STATE_DOC",
+          metric: "CONTACT",
+          value: 42.5,
+          monthlyAvg: 42.8,
+        },
+        {
+          date: "2021-03-12",
+          entityId: "STATE_DOC",
+          metric: "CONTACT",
+          value: 45.5,
+          monthlyAvg: 45.8,
+        },
+        {
+          date: "2021-03-11",
+          entityId: "STATE_DOC",
+          metric: "RISK_ASSESSMENT",
+          value: 32.5,
+          monthlyAvg: 32.8,
+        },
+        {
+          date: "2021-03-12",
+          entityId: "STATE_DOC",
+          metric: "RISK_ASSESSMENT",
+          value: 35.5,
+          monthlyAvg: 35.8,
+        },
+        {
+          date: "2021-03-11",
+          entityId: "STATE_DOC",
+          metric: "DOWNGRADE",
+          value: 67.5,
+          monthlyAvg: 67.8,
+        },
+        {
+          date: "2021-03-12",
+          entityId: "STATE_DOC",
+          metric: "DOWNGRADE",
+          value: 68.5,
+          monthlyAvg: 68.8,
+        },
+      ],
+      summaries: [
+        {
+          entityId: "OFFICE_A",
+          entityName: "Office A",
+          entityType: "LEVEL_1_SUPERVISION_LOCATION",
+          overall: 85,
+          overall30Day: 0,
+          overall90Day: -2,
+          parentEntityId: "STATE_DOC",
+          timelyContact: 60,
+          timelyDischarge: 63,
+          timelyRiskAssessment: 69,
+          timelyDowngrade: 67,
+        },
+        {
+          entityId: "OFFICE_B",
+          entityName: "Office B",
+          entityType: "LEVEL_1_SUPERVISION_LOCATION",
+          overall: 95,
+          overall30Day: 0,
+          overall90Day: -2,
+          parentEntityId: "STATE_DOC",
+          timelyContact: 90,
+          timelyDischarge: 93,
+          timelyRiskAssessment: 99,
+          timelyDowngrade: 67,
+        },
+      ],
+    }));
+  });
+
   describe("when the tenant is US_ND", () => {
     beforeEach(() => {
-      coreStore = new CoreStore(RootStore);
+      // @ts-expect-error
+      vi.mocked(TenantStore).mockImplementation(() => ({
+        currentTenantId: "US_ND",
+      }));
+
+      coreStore = new CoreStore(new RootStore());
       vitalsStore = coreStore.vitalsStore;
       coreStore.tenantStore.currentTenantId = "US_ND";
     });
@@ -320,7 +326,7 @@ describe("VitalsStore", () => {
 
   describe("when the tenant is US_ID", () => {
     beforeEach(() => {
-      coreStore = new CoreStore(RootStore);
+      coreStore = new CoreStore(new RootStore());
       vitalsStore = coreStore.vitalsStore;
       coreStore.tenantStore.currentTenantId = "US_ID";
     });

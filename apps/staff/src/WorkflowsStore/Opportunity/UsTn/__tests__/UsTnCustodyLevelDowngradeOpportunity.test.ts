@@ -27,7 +27,7 @@ import {
 } from "../__fixtures__";
 import { UsTnCustodyLevelDowngradeOpportunity } from "../UsTnCustodyLevelDowngradeOpportunity";
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 let opp: UsTnCustodyLevelDowngradeOpportunity;
 let resident: Resident;
@@ -39,9 +39,9 @@ function createTestUnit(
   residentRecord: typeof UsTnCustodyLevelDowngradeEligibleResidentRecord,
 ) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["usTnCustodyLevelDowngrade"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "usTnCustodyLevelDowngrade",
+  ]);
   resident = new Resident(residentRecord, root);
 
   const maybeOpportunity =
@@ -61,7 +61,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });

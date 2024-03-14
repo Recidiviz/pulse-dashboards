@@ -19,6 +19,7 @@
 import { render, screen } from "@testing-library/react";
 import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useFeatureVariants } from "../../../components/StoreProvider/StoreProvider";
 import { RootStore } from "../../../RootStore";
@@ -28,8 +29,8 @@ import { FormBase } from "../../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { OpportunityBase } from "../../../WorkflowsStore/Opportunity/OpportunityBase";
 import { FormContainer, FormHeaderProps } from "../FormContainer";
 
-jest.mock("../../../components/StoreProvider/StoreProvider", () => ({
-  useFeatureVariants: jest.fn(),
+vi.mock("../../../components/StoreProvider/StoreProvider", () => ({
+  useFeatureVariants: vi.fn(),
 }));
 
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {}
@@ -40,7 +41,7 @@ let form: FormBase<any>;
 
 function setup(props: Partial<FormHeaderProps> = {}) {
   rootStore = new RootStore();
-  (useFeatureVariants as jest.Mock).mockReturnValue({
+  (useFeatureVariants as Mock).mockReturnValue({
     formRevertButton: {},
   });
   rootStore.userStore = {
@@ -52,9 +53,9 @@ function setup(props: Partial<FormHeaderProps> = {}) {
     recordId: "us_id_001",
   } as Client;
   opp = new TestOpportunity(client, "LSU", rootStore);
-  jest
-    .spyOn(opp, "hydrationState", "get")
-    .mockReturnValue({ status: "hydrated" });
+  vi.spyOn(opp, "hydrationState", "get").mockReturnValue({
+    status: "hydrated",
+  });
   form = new FormBase<any>(opp, rootStore);
   opp.form = form;
 
@@ -64,7 +65,7 @@ function setup(props: Partial<FormHeaderProps> = {}) {
       "If this form is not approved by tomorrow, please redirect future applications to the Weenie Hut Jr. <3",
     heading: "Degrassi High School Application",
     isMissingContent: false,
-    onClickDownload: jest.fn(),
+    onClickDownload: vi.fn(),
     downloadButtonLabel: "Download Form",
     opportunity: opp,
     children: undefined,
@@ -78,13 +79,12 @@ function setup(props: Partial<FormHeaderProps> = {}) {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
-  jest.useFakeTimers();
+  vi.useFakeTimers();
   configure({ safeDescriptors: false });
 });
 
 afterEach(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
   configure({ safeDescriptors: true });
 });
 

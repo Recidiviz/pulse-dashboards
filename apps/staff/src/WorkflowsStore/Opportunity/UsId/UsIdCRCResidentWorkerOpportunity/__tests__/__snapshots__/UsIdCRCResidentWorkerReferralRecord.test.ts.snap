@@ -1,14 +1,14 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`UsIdCRCResidentWorkerReferralRecord multiple criteria transforms eligible record with multiple temporal criteria 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "custodyLevelIsMinimum": Object {
+exports[`UsIdCRCResidentWorkerReferralRecord multiple criteria > transforms eligible record with multiple temporal criteria 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
       "custodyLevel": "MINIMUM",
     },
     "notServingForSexualOffense": null,
-    "usIdIncarcerationWithin7YearsOfFtcdOrTpd": Object {
+    "usIdIncarcerationWithin7YearsOfFtcdOrTpd": {
       "fullTermCompletionDate": 2023-10-10T00:00:00.000Z,
       "tentativeParoleDate": null,
     },
@@ -16,27 +16,27 @@ Object {
     "usIdNoDetainersForXcrcAndCrc": null,
   },
   "externalId": "crc-work-release-eligible-01",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_ID",
 }
 `;
 
 exports[`transforms eligible record with life temporal criteria 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "custodyLevelIsMinimum": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
       "custodyLevel": "MINIMUM",
     },
     "notServingForSexualOffense": null,
-    "usIdIncarcerationWithin3YearsOfTpdAndLifeSentence": Object {
+    "usIdIncarcerationWithin3YearsOfTpdAndLifeSentence": {
       "tentativeParoleDate": 2025-08-14T00:00:00.000Z,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNoDetainersForXcrcAndCrc": null,
   },
   "externalId": "crc-work-release-eligible-02",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_ID",
 }
 `;

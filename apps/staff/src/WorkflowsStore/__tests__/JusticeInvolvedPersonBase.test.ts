@@ -22,6 +22,7 @@ import {
   observable,
   runInAction,
 } from "mobx";
+import { MockedFunction } from "vitest";
 
 import {
   JusticeInvolvedPersonRecord,
@@ -35,8 +36,8 @@ import { OpportunityBase } from "../Opportunity/OpportunityBase";
 import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
 import { CollectionDocumentSubscription } from "../subscriptions";
 
-jest.mock("firebase/firestore");
-jest.mock("../subscriptions");
+vi.mock("firebase/firestore");
+vi.mock("../subscriptions");
 
 let rootStoreMock: RootStore;
 let testPerson: JusticeInvolvedPersonBase;
@@ -54,7 +55,6 @@ function createTestUnit(
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
   configure({ safeDescriptors: false });
   mockOpportunityTypes = observable.box([]);
   rootStoreMock = {
@@ -74,8 +74,8 @@ beforeEach(() => {
       },
     },
     firestoreStore: {
-      doc: jest.fn(),
-      collection: jest.fn(),
+      doc: vi.fn(),
+      collection: vi.fn(),
     },
   } as unknown as RootStore;
   record = {
@@ -132,11 +132,11 @@ describe("opportunities", () => {
     }
   }
 
-  let mockFactory: jest.MockedFunction<OpportunityFactory<any, any>>;
+  let mockFactory: MockedFunction<OpportunityFactory<any, any>>;
 
   beforeEach(() => {
     opportunityInstances = [];
-    mockFactory = jest
+    mockFactory = vi
       .fn()
       .mockImplementation(
         (opportunityType, person) =>
@@ -269,9 +269,11 @@ describe("opportunities", () => {
     });
 
     test("almost eligible", () => {
-      jest
-        .spyOn(TestOpportunity.prototype, "almostEligible", "get")
-        .mockReturnValue(true);
+      vi.spyOn(
+        TestOpportunity.prototype,
+        "almostEligible",
+        "get",
+      ).mockReturnValue(true);
 
       expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({
         LSU: opportunityInstances[0],
@@ -302,9 +304,11 @@ describe("opportunities", () => {
     });
 
     test("almost eligible", () => {
-      jest
-        .spyOn(TestOpportunity.prototype, "almostEligible", "get")
-        .mockReturnValue(true);
+      vi.spyOn(
+        TestOpportunity.prototype,
+        "almostEligible",
+        "get",
+      ).mockReturnValue(true);
 
       expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({});
     });

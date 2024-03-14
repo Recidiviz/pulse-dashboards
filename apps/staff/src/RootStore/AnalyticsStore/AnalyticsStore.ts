@@ -36,7 +36,7 @@ import {
 import type RootStore from "..";
 
 const isAnalyticsDisabled =
-  isDemoMode() || !["staging", "production"].includes(process.env.NODE_ENV);
+  isDemoMode() || !["staging", "production"].includes(import.meta.env.MODE);
 
 type SupervisorPageTrackingMetadata = {
   supervisorPseudonymizedId: string;
@@ -105,7 +105,7 @@ export default class AnalyticsStore {
     return (
       isImpersonating ||
       isAnalyticsDisabled ||
-      (isRecidivizUser && process.env.REACT_APP_DEPLOY_ENV !== "staging")
+      (isRecidivizUser && import.meta.env.VITE_DEPLOY_ENV !== "staging")
     );
   }
 

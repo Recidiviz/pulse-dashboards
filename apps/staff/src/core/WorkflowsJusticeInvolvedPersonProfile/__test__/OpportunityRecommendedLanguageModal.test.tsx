@@ -16,7 +16,9 @@
 // =============================================================================
 
 import { fireEvent, render, screen } from "@testing-library/react";
+import { noop } from "lodash";
 import ReactModal from "react-modal";
+import { Mock, MockInstance } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
@@ -24,9 +26,9 @@ import { Client } from "../../../WorkflowsStore";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import OpportunityRecommendedLanguageModal from "../OpportunityRecommendedLanguageModal";
 
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
 
 const almostEligibleMockOpportunity = {
   ...mockOpportunity,
@@ -51,23 +53,19 @@ beforeEach(() => {
 });
 
 describe("OpportunityRecommendedLanguageModal", () => {
-  let clickedSpy: jest.SpiedFunction<
-    typeof AnalyticsStore.prototype.trackAlmostEligibleCopyCTAViewed
-  >;
-  let viewedSpy: jest.SpiedFunction<
-    typeof AnalyticsStore.prototype.trackAlmostEligibleCopyCTAViewed
-  >;
+  let clickedSpy: MockInstance;
+  let viewedSpy: MockInstance;
 
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date(2024, 1, 1));
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2024, 1, 1));
 
-    viewedSpy = jest
+    viewedSpy = vi
       .spyOn(AnalyticsStore.prototype, "trackAlmostEligibleCopyCTAViewed")
-      .mockImplementation();
-    clickedSpy = jest
+      .mockImplementation(noop);
+    clickedSpy = vi
       .spyOn(AnalyticsStore.prototype, "trackAlmostEligibleCopyCTAClicked")
-      .mockImplementation();
+      .mockImplementation(noop);
     useRootStoreMock.mockReturnValue({
       analyticsStore: {
         trackAlmostEligibleCopyCTAClicked: clickedSpy,
@@ -85,8 +83,8 @@ describe("OpportunityRecommendedLanguageModal", () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
-    jest.useRealTimers();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it("tracks when the copy CTA is viewed", () => {

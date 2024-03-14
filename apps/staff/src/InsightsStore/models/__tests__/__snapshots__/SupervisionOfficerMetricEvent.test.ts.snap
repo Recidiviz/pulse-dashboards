@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transformations 1`] = `
-Object {
+{
   "clientId": "707222",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Gary",
     "surname": "Alexander",
   },
@@ -19,9 +19,9 @@ Object {
 `;
 
 exports[`transformations 2`] = `
-Object {
+{
   "clientId": "205752",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Beau",
     "surname": "Riley",
   },
@@ -37,9 +37,9 @@ Object {
 `;
 
 exports[`transformations 3`] = `
-Object {
+{
   "clientId": "792381",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Deena",
     "surname": "Dunlap",
   },
@@ -55,9 +55,9 @@ Object {
 `;
 
 exports[`transformations 4`] = `
-Object {
+{
   "clientId": "869516",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Angelo",
     "surname": "Cohen",
   },
@@ -73,9 +73,9 @@ Object {
 `;
 
 exports[`transformations 5`] = `
-Object {
+{
   "clientId": "170571",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Ward",
     "surname": "Bradley",
   },
@@ -91,9 +91,9 @@ Object {
 `;
 
 exports[`transformations 6`] = `
-Object {
+{
   "clientId": "461718",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Janette",
     "surname": "Sosa",
   },
@@ -109,9 +109,9 @@ Object {
 `;
 
 exports[`transformations 7`] = `
-Object {
+{
   "clientId": "837771",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Nora",
     "surname": "Robbins",
   },
@@ -127,9 +127,9 @@ Object {
 `;
 
 exports[`transformations 8`] = `
-Object {
+{
   "clientId": "617754",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Jason",
     "surname": "Barton",
   },
@@ -145,9 +145,9 @@ Object {
 `;
 
 exports[`transformations 9`] = `
-Object {
+{
   "clientId": "985771",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Nicholas",
     "surname": "Rhodes",
   },
@@ -163,9 +163,9 @@ Object {
 `;
 
 exports[`transformations 10`] = `
-Object {
+{
   "clientId": "326160",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Ethel",
     "surname": "Leonard",
   },
@@ -181,9 +181,9 @@ Object {
 `;
 
 exports[`transformations 11`] = `
-Object {
+{
   "clientId": "931890",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Ricardo",
     "surname": "Wood",
   },
@@ -199,9 +199,9 @@ Object {
 `;
 
 exports[`transformations 12`] = `
-Object {
+{
   "clientId": "930441",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Stanley",
     "surname": "Maxwell",
   },
@@ -217,9 +217,9 @@ Object {
 `;
 
 exports[`transformations 13`] = `
-Object {
+{
   "clientId": "564940",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Miguel",
     "surname": "Haynes",
   },
@@ -235,9 +235,9 @@ Object {
 `;
 
 exports[`transformations 14`] = `
-Object {
+{
   "clientId": "144925",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Inez",
     "surname": "Griffith",
   },
@@ -253,9 +253,9 @@ Object {
 `;
 
 exports[`transformations 15`] = `
-Object {
+{
   "clientId": "283496",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Gerald",
     "surname": "Barber",
   },
@@ -271,9 +271,9 @@ Object {
 `;
 
 exports[`transformations 16`] = `
-Object {
+{
   "clientId": "334531",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Leroy",
     "surname": "Stone",
   },
@@ -289,9 +289,9 @@ Object {
 `;
 
 exports[`transformations 17`] = `
-Object {
+{
   "clientId": "840134",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Patrick",
     "surname": "Schneider",
   },
@@ -307,9 +307,9 @@ Object {
 `;
 
 exports[`transformations 18`] = `
-Object {
+{
   "clientId": "968048",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Violet",
     "surname": "Johnson",
   },
@@ -325,9 +325,9 @@ Object {
 `;
 
 exports[`transformations 19`] = `
-Object {
+{
   "clientId": "413899",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Warren",
     "surname": "Franklin",
   },
@@ -343,9 +343,9 @@ Object {
 `;
 
 exports[`transformations 20`] = `
-Object {
+{
   "clientId": "415630",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Alta",
     "surname": "Jackson",
   },
@@ -361,9 +361,9 @@ Object {
 `;
 
 exports[`transformations 21`] = `
-Object {
+{
   "clientId": "235261",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Rosie",
     "surname": "Luna",
   },
@@ -379,9 +379,9 @@ Object {
 `;
 
 exports[`transformations 22`] = `
-Object {
+{
   "clientId": "531407",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Glenn",
     "surname": "Francis",
   },
@@ -397,9 +397,9 @@ Object {
 `;
 
 exports[`transformations 23`] = `
-Object {
+{
   "clientId": "436502",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Steve",
     "surname": "Schwartz",
   },
@@ -415,9 +415,9 @@ Object {
 `;
 
 exports[`transformations 24`] = `
-Object {
+{
   "clientId": "339710",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Bertha",
     "surname": "Figueroa",
   },
@@ -433,9 +433,9 @@ Object {
 `;
 
 exports[`transformations 25`] = `
-Object {
+{
   "clientId": "803013",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Troy",
     "surname": "Rodgers",
   },
@@ -451,9 +451,9 @@ Object {
 `;
 
 exports[`transformations 26`] = `
-Object {
+{
   "clientId": "470308",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Leo",
     "surname": "Marshall",
   },
@@ -469,9 +469,9 @@ Object {
 `;
 
 exports[`transformations 27`] = `
-Object {
+{
   "clientId": "582059",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Shawn",
     "surname": "Romero",
   },
@@ -487,9 +487,9 @@ Object {
 `;
 
 exports[`transformations 28`] = `
-Object {
+{
   "clientId": "374673",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Jeremiah",
     "surname": "Walsh",
   },
@@ -505,9 +505,9 @@ Object {
 `;
 
 exports[`transformations 29`] = `
-Object {
+{
   "clientId": "128785",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Dorothy",
     "surname": "Luna",
   },
@@ -523,9 +523,9 @@ Object {
 `;
 
 exports[`transformations 30`] = `
-Object {
+{
   "clientId": "914408",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Viola",
     "surname": "Schultz",
   },
@@ -541,9 +541,9 @@ Object {
 `;
 
 exports[`transformations 31`] = `
-Object {
+{
   "clientId": "504894",
-  "clientName": Object {
+  "clientName": {
     "givenNames": "Marie",
     "surname": "Hudson",
   },

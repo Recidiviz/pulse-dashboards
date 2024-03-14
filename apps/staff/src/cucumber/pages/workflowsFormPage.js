@@ -15,12 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 /* eslint-disable class-methods-use-this */
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { readFileSync } from "fs";
+import { join } from "path";
+
 import Page from "./basePage";
+
+const opportunityPageConfig = JSON.parse(
+  readFileSync(join(__dirname, "../opportunityPageConfig.json")),
+);
 
 class WorkflowsFormPage extends Page {
   async open(opportunityType, pseudonymizedId) {
-    const pageName = OPPORTUNITY_CONFIGS[opportunityType].urlSection;
+    const pageName = opportunityPageConfig[opportunityType];
     await super.open(
       `${browser.config.baseUrl}/workflows/${pageName}/${pseudonymizedId}`,
     );

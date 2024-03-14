@@ -35,15 +35,15 @@ let root: RootStore;
 let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 function createTestUnit(
   clientRecord: typeof usNdEarlyTerminationEligibleClientRecord,
 ) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["earlyTermination"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "earlyTermination",
+  ]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.potentialOpportunities.earlyTermination;
@@ -62,7 +62,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });

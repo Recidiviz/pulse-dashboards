@@ -19,7 +19,7 @@ import LanternStore from "..";
 
 let rootStore;
 
-jest.mock("../../../api/metrics/metricsClient");
+vi.mock("../../../api/metrics/metricsClient");
 
 describe("DataStore", () => {
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe("DataStore", () => {
   });
 
   afterAll(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   it("contains a RevocationsOverTimeStore", () => {

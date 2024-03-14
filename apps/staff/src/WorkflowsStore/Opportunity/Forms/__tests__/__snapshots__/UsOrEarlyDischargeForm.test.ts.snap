@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`prefilledDataTransformer transform multiple sentences 1`] = `
-Object {
+exports[`prefilledDataTransformer > transform multiple sentences 1`] = `
+{
   "clientId": "pei1",
   "countyAddress": "(Your County Address}",
   "countyFax": "(   )",
@@ -10,8 +10,8 @@ Object {
   "givenNames": "Joe",
   "middleNames": "Quimby",
   "officerName": "8675309 8675309",
-  "sentences": Object {
-    "123": Object {
+  "sentences": {
+    "123": {
       "county": "COUNTY",
       "docket": "cc1",
       "judgeName": "Judge Reinhold",
@@ -20,7 +20,7 @@ Object {
       "sentenceStartDate": "Jan 5, 2020",
       "sentenceType": "subtype",
     },
-    "456": Object {
+    "456": {
       "county": "COUNTY",
       "docket": "cc2",
       "judgeName": "Judge Judge",
@@ -29,7 +29,7 @@ Object {
       "sentenceStartDate": "Apr 5, 2020",
       "sentenceType": "subtype2",
     },
-    "789": Object {
+    "789": {
       "county": "COUNTY",
       "docket": "cc3",
       "judgeName": "Judge Jury",

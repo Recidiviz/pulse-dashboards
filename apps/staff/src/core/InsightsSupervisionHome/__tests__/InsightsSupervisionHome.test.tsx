@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import { configure, runInAction } from "mobx";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { InsightsStore } from "../../../InsightsStore/InsightsStore";
@@ -27,9 +28,9 @@ import { RootStore } from "../../../RootStore";
 import { INSIGHTS_PATHS, insightsUrl } from "../../views";
 import { InsightsSupervisionHome } from "../InsightsSupervisionHome";
 
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
 
 let insightsStore: InsightsStore;
 let supervisionStore: InsightsSupervisionStore;
@@ -69,12 +70,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 
 test("homepage redirects supervisors without the list permission to their own report", () => {
-  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
+  vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
     displayName: "",
     fullName: {},
     externalId: "abc123",
@@ -83,9 +83,11 @@ test("homepage redirects supervisors without the list permission to their own re
     email: "mock-email",
     hasOutliers: true,
   });
-  jest
-    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
-    .mockReturnValue(false);
+  vi.spyOn(
+    supervisionStore,
+    "userCanAccessAllSupervisors",
+    "get",
+  ).mockReturnValue(false);
 
   const router = addPathToRouter(INSIGHTS_PATHS.supervisionSupervisor);
 
@@ -97,7 +99,7 @@ test("homepage redirects supervisors without the list permission to their own re
 });
 
 test("homepage redirects non-supervisors to the supervisors list page", () => {
-  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
+  vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
     displayName: "",
     fullName: {},
     externalId: "abc123",
@@ -106,9 +108,11 @@ test("homepage redirects non-supervisors to the supervisors list page", () => {
     email: null,
     hasOutliers: true,
   });
-  jest
-    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
-    .mockReturnValue(true);
+  vi.spyOn(
+    supervisionStore,
+    "userCanAccessAllSupervisors",
+    "get",
+  ).mockReturnValue(true);
 
   const router = addPathToRouter(INSIGHTS_PATHS.supervisionSupervisorsList);
 
@@ -118,9 +122,11 @@ test("homepage redirects non-supervisors to the supervisors list page", () => {
 });
 
 test("homepage redirects non-supervisors to the supervisors list page if they have the list permission", () => {
-  jest
-    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
-    .mockReturnValue(true);
+  vi.spyOn(
+    supervisionStore,
+    "userCanAccessAllSupervisors",
+    "get",
+  ).mockReturnValue(true);
   const router = addPathToRouter(insightsUrl("supervisionSupervisorsList"));
 
   expect(router.state.location.pathname).toBe(
@@ -129,9 +135,11 @@ test("homepage redirects non-supervisors to the supervisors list page if they ha
 });
 
 test("homepage errors for non-supervisors without the list permission", () => {
-  jest
-    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
-    .mockReturnValue(false);
+  vi.spyOn(
+    supervisionStore,
+    "userCanAccessAllSupervisors",
+    "get",
+  ).mockReturnValue(false);
 
   addPathToRouter(INSIGHTS_PATHS.supervision);
 
@@ -141,10 +149,12 @@ test("homepage errors for non-supervisors without the list permission", () => {
 });
 
 test("redirect waits for supervision store to be hydrated", async () => {
-  jest
-    .spyOn(supervisionStore, "userCanAccessAllSupervisors", "get")
-    .mockReturnValue(false);
-  jest.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
+  vi.spyOn(
+    supervisionStore,
+    "userCanAccessAllSupervisors",
+    "get",
+  ).mockReturnValue(false);
+  vi.spyOn(supervisionStore, "currentSupervisorUser", "get").mockReturnValue({
     displayName: "",
     fullName: {},
     externalId: "abc123",

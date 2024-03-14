@@ -42,18 +42,18 @@ import {
   SUPERVISION_TYPE,
 } from "../utils/constants";
 
-const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
+const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
-jest.mock("../FiltersBar/SelectFilter");
-jest.mock("../FiltersBar/DistrictFilter");
-jest.mock("../FiltersBar/AdmissionTypeFilter");
-jest.mock("../FiltersBar/ViolationFilter");
-jest.mock("../RevocationsOverTime");
-jest.mock("../Matrix");
-jest.mock("../RevocationCharts");
-jest.mock("../CaseTable/CaseTable");
-jest.mock("../../RootStore/TenantStore/filterOptions");
-jest.mock("../LanternStoreProvider");
+vi.mock("../FiltersBar/SelectFilter");
+vi.mock("../FiltersBar/DistrictFilter");
+vi.mock("../FiltersBar/AdmissionTypeFilter");
+vi.mock("../FiltersBar/ViolationFilter");
+vi.mock("../RevocationsOverTime");
+vi.mock("../Matrix");
+vi.mock("../RevocationCharts");
+vi.mock("../CaseTable/CaseTable");
+vi.mock("../../RootStore/TenantStore/filterOptions");
+vi.mock("../LanternStoreProvider");
 
 describe("Revocations component tests", () => {
   const metadataField = `${METADATA_NAMESPACE}app_metadata`;
@@ -77,43 +77,41 @@ describe("Revocations component tests", () => {
   const ViolationFilterMock = ViolationFilter.type;
   const RevocationChartsMock = RevocationCharts.type;
 
-  SelectFilterMock.mockImplementation(({ label }) =>
-    mockWithTestId(`${filtersBarIdPrefix}${label}`),
-  );
-  DistrictFilterMock.mockReturnValue(mockWithTestId(DistrictFilterId));
-  AdmissionTypeFilterMock.mockReturnValue(
-    mockWithTestId(admissionTypeFilterId),
-  );
-  ViolationFilterMock.mockReturnValue(mockWithTestId(violationFilterId));
-  RevocationsOverTimeMock.mockReturnValue(
-    mockWithTestId(revocationsOverTimeId),
-  );
-  MatrixMock.mockReturnValue(mockWithTestId(revocationMatrixId));
-  RevocationChartsMock.mockReturnValue(mockWithTestId(revocationChartsId));
-  CaseTableMock.mockReturnValue(mockWithTestId(caseTableId));
-  setTranslateLocale(US_MO);
-
-  useLanternStore.mockReturnValue({
-    userStore: { user: mockUser, isAuthorized: true },
-    currentTenantId: US_MO,
-    userRestrictionsStore: { allowedSupervisionLocationIds: [] },
-    filtersStore: {
-      filters: observable.map({
-        metricPeriodMonths: "",
-        chargeCategory: "",
-        reportedViolation: "",
-        violationtype: "",
-        supervisionLevel: "",
-        supervisionType: "",
-        admissionType: "",
-        district: "",
-      }),
-      filterOptions: filterOptionsMap[mockTenantId],
-    },
-  });
-
   beforeEach(() => {
-    jest.clearAllMocks();
+    SelectFilterMock.mockImplementation(({ label }) =>
+      mockWithTestId(`${filtersBarIdPrefix}${label}`),
+    );
+    DistrictFilterMock.mockReturnValue(mockWithTestId(DistrictFilterId));
+    AdmissionTypeFilterMock.mockReturnValue(
+      mockWithTestId(admissionTypeFilterId),
+    );
+    ViolationFilterMock.mockReturnValue(mockWithTestId(violationFilterId));
+    RevocationsOverTimeMock.mockReturnValue(
+      mockWithTestId(revocationsOverTimeId),
+    );
+    MatrixMock.mockReturnValue(mockWithTestId(revocationMatrixId));
+    RevocationChartsMock.mockReturnValue(mockWithTestId(revocationChartsId));
+    CaseTableMock.mockReturnValue(mockWithTestId(caseTableId));
+    setTranslateLocale(US_MO);
+
+    useLanternStore.mockReturnValue({
+      userStore: { user: mockUser, isAuthorized: true },
+      currentTenantId: US_MO,
+      userRestrictionsStore: { allowedSupervisionLocationIds: [] },
+      filtersStore: {
+        filters: observable.map({
+          metricPeriodMonths: "",
+          chargeCategory: "",
+          reportedViolation: "",
+          violationtype: "",
+          supervisionLevel: "",
+          supervisionType: "",
+          admissionType: "",
+          district: "",
+        }),
+        filterOptions: filterOptionsMap[mockTenantId],
+      },
+    });
   });
 
   it("should render Revocations component with proper filters and charts", () => {

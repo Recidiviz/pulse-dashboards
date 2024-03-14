@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import selectEvent from "react-select-event";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { render, screen } from "../../../testUtils";
@@ -27,26 +27,22 @@ import { useCoreStore } from "../../CoreStoreProvider";
 import filterOptions from "../../utils/filterOptions";
 import PathwaysFilterBar from "..";
 
-const mockSetFilters = jest.fn();
+const mockSetFilters = vi.fn();
 
-jest.mock("../../CoreStoreProvider");
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../CoreStoreProvider");
+vi.mock("../../../components/StoreProvider");
 
 const mockCoreStore = { currentTenantId: "US_ID" } as CoreStore;
 const filtersStore = new FiltersStore({ rootStore: mockCoreStore });
 
 beforeEach(() => {
-  (useCoreStore as jest.Mock).mockReturnValue({
+  (useCoreStore as Mock).mockReturnValue({
     filtersStore,
   });
-  (useRootStore as jest.Mock).mockReturnValue({
+  (useRootStore as Mock).mockReturnValue({
     userStore: { userAllowedNavigation: {} },
   });
   filtersStore.setFilters = mockSetFilters;
-});
-
-afterEach(() => {
-  jest.resetAllMocks();
 });
 
 test("selecting from menu sets the filters", async () => {
@@ -54,7 +50,7 @@ test("selecting from menu sets the filters", async () => {
     <Router>
       <PathwaysFilterBar
         filterOptions={filterOptions.US_ID}
-        handleDownload={jest.fn()}
+        handleDownload={vi.fn()}
         enabledFilters={["timePeriod", "gender"]}
       />
     </Router>,

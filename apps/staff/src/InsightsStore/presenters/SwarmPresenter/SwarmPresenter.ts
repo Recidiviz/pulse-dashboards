@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import * as Comlink from "comlink";
 import { makeAutoObservable, toJS } from "mobx";
 
 import { FlowMethod } from "../../types";
@@ -25,8 +24,8 @@ import {
   SWARM_AREA_BOTTOM_OFFSET,
   SWARM_AREA_TOP_OFFSET,
 } from "./constants";
-import { getSwarmLayoutWorker } from "./getSwarmLayoutWorker";
-import { PreparedChartData, SwarmLayout } from "./types";
+import { getSwarmLayoutWorker, SwarmWorker } from "./getSwarmLayoutWorker";
+import { PreparedChartData } from "./types";
 
 export class SwarmPresenter {
   width = 0;
@@ -57,7 +56,7 @@ export class SwarmPresenter {
 
   *prepareChartData(
     width: number,
-  ): FlowMethod<Comlink.Remote<SwarmLayout>["prepareChartData"], void> {
+  ): FlowMethod<SwarmWorker["prepareChartData"], void> {
     if (width === 0) return;
     // NOTE: we don't reset loading state on every recalculation.
     // this presenter will only be loading when it is first constructed,

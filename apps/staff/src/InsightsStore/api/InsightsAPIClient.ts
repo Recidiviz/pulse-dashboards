@@ -48,7 +48,7 @@ export class InsightsAPIClient implements InsightsAPI {
   }
 
   private get baseUrl() {
-    return `${process.env.REACT_APP_NEW_BACKEND_API_URL}/outliers/${this.tenantId}`;
+    return `${import.meta.env.VITE_NEW_BACKEND_API_URL}/outliers/${this.tenantId}`;
   }
 
   get tenantId(): string {

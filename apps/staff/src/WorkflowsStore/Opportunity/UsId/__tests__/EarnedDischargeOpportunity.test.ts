@@ -29,7 +29,7 @@ import {
 } from "../__fixtures__";
 import { EarnedDischargeOpportunity } from "../EarnedDischargeOpportunity";
 
-jest.mock("../../../subscriptions");
+vi.mock("../../../subscriptions");
 
 let opp: EarnedDischargeOpportunity;
 let client: Client;
@@ -41,9 +41,9 @@ function createTestUnit(
   clientRecord: typeof EarnedDischargeEligibleClientRecord,
 ) {
   root = new RootStore();
-  jest
-    .spyOn(root.workflowsStore, "opportunityTypes", "get")
-    .mockReturnValue(["earnedDischarge"]);
+  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
+    "earnedDischarge",
+  ]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.potentialOpportunities.earnedDischarge;
@@ -62,7 +62,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.reset();
   configure({ safeDescriptors: true });
 });

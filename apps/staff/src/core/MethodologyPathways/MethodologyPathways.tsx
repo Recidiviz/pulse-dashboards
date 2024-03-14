@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { configureAnchors } from "react-scrollable-anchor";
 import { Container } from "reactstrap";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -57,6 +56,7 @@ const MethodologyPathways: React.FC = () => {
   // @ts-ignore
   const Methodology = getMethodologyCopy(currentTenantId)[view];
   const { pageCopy, metricCopy } = Methodology;
+
   if (!pageCopy || !metricCopy) return <div />;
 
   const navigationLayout = userStore.userAllowedNavigation;
@@ -66,8 +66,6 @@ const MethodologyPathways: React.FC = () => {
     view === DASHBOARD_VIEWS.system
       ? navigationLayout.system
       : ["vitalsPercentMethodology", "vitalsOverTimeMethodology"];
-
-  configureAnchors({ offset: -75 });
 
   return (
     <PageTemplate mobileNavigation={<MobileNavigation />}>

@@ -1,75 +1,75 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transform record, old + new format, eligible 1`] = `
-Object {
-  "caseNotes": Object {},
+{
+  "caseNotes": {},
   "clientFirstName": "LINDA",
   "clientLastName": "SMITH",
   "dateToday": "2022-03-25",
   "eligibilityCategory": "c3",
-  "eligibleCriteria": Object {
-    "hasActiveSentence": Object {
+  "eligibleCriteria": {
+    "hasActiveSentence": {
       "hasActiveSentence": true,
     },
-    "legacyLifetimeOffensesExpired": Array [],
+    "legacyLifetimeOffensesExpired": [],
     "legacyPastOffenses": undefined,
-    "usTnFinesFeesEligible": Object {
-      "hasFinesFeesBalanceBelow500": Object {
+    "usTnFinesFeesEligible": {
+      "hasFinesFeesBalanceBelow500": {
         "amountOwed": 400,
       },
-      "hasPayments3ConsecutiveMonths": Object {
+      "hasPayments3ConsecutiveMonths": {
         "amountOwed": 400,
         "consecutiveMonthlyPayments": null,
       },
     },
     "usTnIneligibleOffensesExpired": null,
-    "usTnNoArrestsInPastYear": Object {},
-    "usTnNoHighSanctionsInPastYear": Object {},
+    "usTnNoArrestsInPastYear": {},
+    "usTnNoHighSanctionsInPastYear": {},
     "usTnNoPriorRecordWithIneligibleCrOffense": null,
-    "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNoRecentCompliantReportingRejections": {},
     "usTnNoZeroToleranceCodesSpans": null,
-    "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnNotServingIneligibleCrOffense": {},
     "usTnNotServingUnknownCrOffense": null,
-    "usTnOnEligibleLevelForSufficientTime": Object {
+    "usTnOnEligibleLevelForSufficientTime": {
       "eligibleDate": 2020-08-01T00:00:00.000Z,
       "eligibleLevel": "MINIMUM",
       "startDateOnEligibleLevel": 2019-08-01T00:00:00.000Z,
     },
-    "usTnPassedDrugScreenCheck": Object {
-      "hasAtLeast1NegativeDrugTestPastYear": Array [
-        Object {
+    "usTnPassedDrugScreenCheck": {
+      "hasAtLeast1NegativeDrugTestPastYear": [
+        {
           "negativeScreenDate": 2023-02-28T00:00:00.000Z,
           "negativeScreenResult": "DRUN",
         },
-        Object {
+        {
           "negativeScreenDate": 2023-01-28T00:00:00.000Z,
           "negativeScreenResult": "DRUN",
         },
       ],
-      "latestDrugTestIsNegative": Object {
+      "latestDrugTestIsNegative": {
         "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
         "latestDrugScreenResult": "DRUN",
       },
     },
-    "usTnSpecialConditionsAreCurrent": Object {
+    "usTnSpecialConditionsAreCurrent": {
       "speNoteDue": null,
     },
   },
   "externalId": "202",
-  "formInformation": Object {
-    "currentOffenses": Array [
+  "formInformation": {
+    "currentOffenses": [
       "STOLEN PROPERTY",
     ],
-    "docketNumbers": Array [
+    "docketNumbers": [
       "10000",
     ],
     "expirationDate": 2030-02-12T00:00:00.000Z,
-    "judicialDistrict": Array [
+    "judicialDistrict": [
       "1",
     ],
     "restitutionAmt": 100,
     "restitutionMonthlyPayment": 0,
-    "restitutionMonthlyPaymentTo": Array [
+    "restitutionMonthlyPaymentTo": [
       "PAYMENT TO",
     ],
     "sentenceLengthDays": 3629,
@@ -79,17 +79,17 @@ Object {
     "supervisionFeeAssessed": 700,
     "supervisionFeeWaived": false,
   },
-  "ineligibleCriteria": Object {},
-  "metadata": Object {
-    "convictionCounties": Array [
+  "ineligibleCriteria": {},
+  "metadata": {
+    "convictionCounties": [
       "123ABC",
     ],
-    "ineligibleOffensesExpired": Array [],
-    "mostRecentArrestCheck": Object {
+    "ineligibleOffensesExpired": [],
+    "mostRecentArrestCheck": {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
     },
-    "mostRecentSpeNote": Object {
+    "mostRecentSpeNote": {
       "contactDate": 2019-08-15T00:00:00.000Z,
       "contactType": "SPET",
     },
@@ -121,93 +121,93 @@ Object {
 `;
 
 exports[`transform record, old format 1`] = `
-Object {
-  "caseNotes": Object {},
+{
+  "caseNotes": {},
   "clientFirstName": "LINDA",
   "clientLastName": "SMITH",
   "dateToday": "2022-03-25",
   "eligibilityCategory": "c3",
-  "eligibleCriteria": Object {
-    "hasActiveSentence": Object {
+  "eligibleCriteria": {
+    "hasActiveSentence": {
       "hasActiveSentence": true,
     },
-    "legacyLifetimeOffensesExpired": Array [],
+    "legacyLifetimeOffensesExpired": [],
     "legacyPastOffenses": undefined,
-    "usTnFinesFeesEligible": Object {
-      "hasFinesFeesBalanceBelow500": Object {
+    "usTnFinesFeesEligible": {
+      "hasFinesFeesBalanceBelow500": {
         "amountOwed": 600,
       },
-      "hasPayments3ConsecutiveMonths": Object {
+      "hasPayments3ConsecutiveMonths": {
         "amountOwed": 0,
         "consecutiveMonthlyPayments": 0,
       },
-      "hasPermanentFinesFeesExemption": Object {
-        "currentExemptions": Array [
+      "hasPermanentFinesFeesExemption": {
+        "currentExemptions": [
           "SSDB",
           "SSDB",
         ],
       },
     },
     "usTnIneligibleOffensesExpired": undefined,
-    "usTnNoArrestsInPastYear": Object {},
-    "usTnNoHighSanctionsInPastYear": Object {},
+    "usTnNoArrestsInPastYear": {},
+    "usTnNoHighSanctionsInPastYear": {},
     "usTnNoPriorRecordWithIneligibleCrOffense": undefined,
-    "usTnNoRecentCompliantReportingRejections": Object {},
+    "usTnNoRecentCompliantReportingRejections": {},
     "usTnNoZeroToleranceCodesSpans": null,
-    "usTnNotServingIneligibleCrOffense": Object {},
+    "usTnNotServingIneligibleCrOffense": {},
     "usTnNotServingUnknownCrOffense": undefined,
-    "usTnOnEligibleLevelForSufficientTime": Object {
+    "usTnOnEligibleLevelForSufficientTime": {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
       "eligibleLevel": "UNKNOWN",
       "startDateOnEligibleLevel": 2019-09-01T00:00:00.000Z,
     },
-    "usTnPassedDrugScreenCheck": Object {
-      "hasAtLeast1NegativeDrugTestPastYear": Array [
-        Object {
+    "usTnPassedDrugScreenCheck": {
+      "hasAtLeast1NegativeDrugTestPastYear": [
+        {
           "negativeScreenDate": 2023-02-28T00:00:00.000Z,
           "negativeScreenResult": "DRUN",
         },
-        Object {
+        {
           "negativeScreenDate": 2023-01-28T00:00:00.000Z,
           "negativeScreenResult": "DRUN",
         },
       ],
-      "latestDrugTestIsNegative": Object {
+      "latestDrugTestIsNegative": {
         "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
         "latestDrugScreenResult": "DRUN",
       },
     },
-    "usTnSpecialConditionsAreCurrent": Object {
+    "usTnSpecialConditionsAreCurrent": {
       "speNoteDue": 2022-09-10T00:00:00.000Z,
     },
   },
   "externalId": "202",
-  "formInformation": Object {
+  "formInformation": {
     "courtCostsPaid": false,
-    "currentExemptionsAndExpiration": Array [
-      Object {
+    "currentExemptionsAndExpiration": [
+      {
         "endDate": null,
         "exemptionReason": "SSDB",
       },
-      Object {
+      {
         "endDate": null,
         "exemptionReason": "SSDB",
       },
     ],
-    "currentOffenses": Array [
+    "currentOffenses": [
       "FAILURE TO APPEAR (FELONY)",
     ],
-    "docketNumbers": Array [
+    "docketNumbers": [
       "10000",
     ],
     "driversLicense": "ABC123",
     "expirationDate": 2030-02-12T00:00:00.000Z,
-    "judicialDistrict": Array [
+    "judicialDistrict": [
       "1",
     ],
     "restitutionAmt": 100,
     "restitutionMonthlyPayment": 0,
-    "restitutionMonthlyPaymentTo": Array [
+    "restitutionMonthlyPaymentTo": [
       "PAYMENT TO",
     ],
     "sentenceLengthDays": 3629,
@@ -217,17 +217,17 @@ Object {
     "supervisionFeeAssessed": 700,
     "supervisionFeeWaived": false,
   },
-  "ineligibleCriteria": Object {},
-  "metadata": Object {
-    "convictionCounties": Array [
+  "ineligibleCriteria": {},
+  "metadata": {
+    "convictionCounties": [
       "123ABC",
     ],
-    "ineligibleOffensesExpired": Array [],
-    "mostRecentArrestCheck": Object {
+    "ineligibleOffensesExpired": [],
+    "mostRecentArrestCheck": {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
     },
-    "mostRecentSpeNote": Object {
+    "mostRecentSpeNote": {
       "contactDate": 2022-01-10T00:00:00.000Z,
       "contactType": "SPEC",
     },

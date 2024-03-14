@@ -16,26 +16,27 @@
 // =============================================================================
 import { doc, DocumentReference, getDoc } from "firebase/firestore";
 import tk from "timekeeper";
+import { Mock } from "vitest";
 
 import FirestoreStore, { MilestonesMessage } from "../../../FirestoreStore";
 import RootStore from "../../../RootStore";
 import { MilestonesMessageUpdateSubscription } from "../MilestonesMessageUpdateSubscription";
 
-jest.mock("firebase/firestore");
+vi.mock("firebase/firestore");
 
-const docMock = doc as jest.MockedFunction<typeof doc>;
-const mockRef = jest.fn() as unknown as DocumentReference;
+const docMock = vi.mocked(doc);
+const mockRef = vi.fn() as unknown as DocumentReference;
 const firestoreStoreMock = new FirestoreStore({
   rootStore: {
     isImpersonating: false,
   } as unknown as typeof RootStore,
 });
-const getDocMock = getDoc as jest.Mock;
+const getDocMock = getDoc as Mock;
 
 let sub: MilestonesMessageUpdateSubscription<MilestonesMessage>;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   tk.freeze(new Date("2022-01-01"));
 });
 
@@ -46,7 +47,7 @@ afterAll(() => {
 test("dataSource", () => {
   docMock.mockReturnValue(mockRef);
   // simulates the migration already being complete
-  getDocMock.mockResolvedValue({ exists: jest.fn().mockReturnValue(true) });
+  getDocMock.mockResolvedValue({ exists: vi.fn().mockReturnValue(true) });
 
   sub = new MilestonesMessageUpdateSubscription(
     firestoreStoreMock,

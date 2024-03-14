@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const APP_ID = process.env.REACT_APP_INTERCOM_APP_ID;
+const APP_ID = import.meta.env.VITE_INTERCOM_APP_ID;
 
 function initIntercomSettings() {
   window.intercomSettings = {

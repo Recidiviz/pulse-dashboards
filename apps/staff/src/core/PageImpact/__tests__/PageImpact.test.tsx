@@ -15,30 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { render, screen } from "@testing-library/react";
+import { noop } from "lodash";
 import { BrowserRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import PageImpact from "..";
 
-jest.mock("../../../components/StoreProvider");
+vi.mock("../../../components/StoreProvider");
 
-const useRootStoreMock = useRootStore as jest.Mock;
+const useRootStoreMock = useRootStore as Mock;
 
 describe("Impact Page", () => {
   beforeEach(() => {
-    jest.resetAllMocks();
     // Quiet errors during test runs
-    jest.spyOn(console, "error").mockImplementation();
+    vi.spyOn(console, "error").mockImplementation(noop);
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   test("renders loading indicator", () => {
     useRootStoreMock.mockReturnValue({
       impactStore: {
-        hydrate: jest.fn(),
+        hydrate: vi.fn(),
         hydrationState: { status: "needs hydration" },
       },
     });

@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-nested-ternary
-export default process.env.REACT_APP_DEPLOY_ENV === "production"
+export default import.meta.env.VITE_DEPLOY_ENV === "production"
   ? {
       enableTepeAdditionalFields: false,
       // TODO(395): Set to true when we have debugged the issues with the exit rate calculations
@@ -14,7 +14,7 @@ export default process.env.REACT_APP_DEPLOY_ENV === "production"
         projectedSupervisionPopulationOverTime: "OLD",
       },
     }
-  : process.env.REACT_APP_DEPLOY_ENV === "staging"
+  : import.meta.env.VITE_DEPLOY_ENV === "staging"
     ? {
         enableTepeAdditionalFields: true,
         enableRevocationRateByExit: false,

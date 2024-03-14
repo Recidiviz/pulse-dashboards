@@ -21,12 +21,12 @@ import { reactImmediately } from "../../../testUtils";
 import LanternStore from "..";
 import DistrictsStore from "../DistrictsStore";
 
-jest.mock("@sentry/react");
-jest.mock("..");
-jest.mock("../../../api/metrics/metricsClient");
+vi.mock("@sentry/react");
+vi.mock("..");
+vi.mock("../../../api/metrics/metricsClient");
 
 const tenantId = "US_MO";
-const mockGetTokenSilently = jest.fn();
+const mockGetTokenSilently = vi.fn();
 
 const mockLanternStore = {
   currentTenantId: tenantId,
@@ -48,10 +48,6 @@ const mockLanternStore = {
 
 describe("DistrictsStore", () => {
   let store;
-
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
 
   describe("fetching districts", () => {
     const file = "revocations_matrix_supervision_location_ids_to_names";
@@ -90,10 +86,6 @@ describe("DistrictsStore", () => {
       });
     });
 
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-
     it("has a reference to the rootStore", () => {
       expect(store.rootStore).toBeDefined();
     });
@@ -101,10 +93,12 @@ describe("DistrictsStore", () => {
     it("makes a request to the correct endpoint for the data", () => {
       const endpoint = `${tenantId}/newRevocations/${file}`;
       expect(callMetricsApi).toHaveBeenCalledTimes(1);
-      expect(callMetricsApi).toHaveBeenCalledWith(
-        endpoint,
-        mockGetTokenSilently,
-      );
+      expect(callMetricsApi.mock.calls[0][0]).toBe(endpoint);
+      // mobx has annotated the function so we can't access the original directly to verify its identity
+      expect(mockGetTokenSilently).toHaveBeenCalledTimes(0);
+      const passedFn = callMetricsApi.mock.calls[0][1];
+      passedFn();
+      expect(mockGetTokenSilently).toHaveBeenCalledTimes(1);
     });
 
     it("sets isLoading to false and isError stays false ", () => {
@@ -136,14 +130,10 @@ describe("DistrictsStore", () => {
   describe("when there's an API error", () => {
     const apiError = new Error("API Error");
     beforeEach(() => {
-      jest.spyOn(console, "error").mockImplementation(() => undefined);
+      vi.spyOn(console, "error").mockImplementation(() => undefined);
       LanternStore.mockImplementation(() => mockLanternStore);
       callMetricsApi.mockRejectedValueOnce(apiError);
       store = new DistrictsStore({ rootStore: new LanternStore() });
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
     });
 
     it("does not set apiData", () => {
@@ -178,10 +168,6 @@ describe("DistrictsStore", () => {
           rootStore: new LanternStore(),
         });
       });
-    });
-
-    afterEach(() => {
-      jest.resetAllMocks();
     });
 
     it("does not fetch districts", () => {

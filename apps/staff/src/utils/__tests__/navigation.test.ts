@@ -44,12 +44,12 @@ describe("getPathWithoutParams", () => {
     expect(getPathWithoutParams(path)).toEqual(path);
   });
 
-  it("returns the path without params when given a path with params", () => {
+  it("returns the path without params when given a path with params (Vitals)", () => {
     const basePath = "/operations";
     expect(getPathWithoutParams(`${basePath}/office-a`)).toEqual(basePath);
   });
 
-  it("returns the path without params when given a path with params", () => {
+  it("returns the path without params when given a path with params (Pathways)", () => {
     const basePath = "/system/prison";
     expect(getPathWithoutParams(`${basePath}/anythingElse`)).toEqual(basePath);
   });

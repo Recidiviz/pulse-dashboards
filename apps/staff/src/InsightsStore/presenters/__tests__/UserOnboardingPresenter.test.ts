@@ -29,13 +29,13 @@ let presenter: UserOnboardingPresenter;
 const userPseudoId = "hashed-mdavis123";
 
 beforeEach(() => {
-  jest
-    .spyOn(UserStore.prototype, "userPseudoId", "get")
-    .mockImplementation(() => userPseudoId);
-  jest
-    .spyOn(UserStore.prototype, "isRecidivizUser", "get")
-    .mockImplementation(() => false);
-  jest.spyOn(UserStore.prototype, "userAppMetadata", "get").mockReturnValue({
+  vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
+    () => userPseudoId,
+  );
+  vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
+    () => false,
+  );
+  vi.spyOn(UserStore.prototype, "userAppMetadata", "get").mockReturnValue({
     externalId: "abc123",
     pseudonymizedId: "hashed-mdavis123",
     district: "District One",
@@ -55,7 +55,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe("with user data already hydrated", () => {
@@ -68,7 +68,7 @@ describe("with user data already hydrated", () => {
   });
 
   test("makes no additional API calls", async () => {
-    jest.spyOn(InsightsOfflineAPIClient.prototype, "userInfo");
+    vi.spyOn(InsightsOfflineAPIClient.prototype, "userInfo");
 
     await presenter.hydrate();
 
@@ -82,7 +82,7 @@ describe("with user data already hydrated", () => {
 });
 
 test("hydration", async () => {
-  jest.spyOn(InsightsOfflineAPIClient.prototype, "userInfo");
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "userInfo");
 
   expect(presenter.hydrationState.status).toBe("needs hydration");
 

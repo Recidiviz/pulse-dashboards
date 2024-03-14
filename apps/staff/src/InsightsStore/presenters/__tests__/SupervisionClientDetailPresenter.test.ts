@@ -33,20 +33,13 @@ const pseudoId = "hashed-mdavis123";
 const clientPseudoId = "hashed-985771";
 const endDate = "2023-05-01";
 
-jest.mock("../utils", () => {
-  const original = jest.requireActual("../utils").getOutlierOfficerData;
-  return {
-    getOutlierOfficerData: jest.fn().mockImplementation(original),
-  };
-});
-
 beforeEach(() => {
-  jest
-    .spyOn(UserStore.prototype, "userPseudoId", "get")
-    .mockImplementation(() => pseudoId);
-  jest
-    .spyOn(UserStore.prototype, "isRecidivizUser", "get")
-    .mockImplementation(() => false);
+  vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
+    () => pseudoId,
+  );
+  vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
+    () => false,
+  );
 
   store = new InsightsSupervisionStore(
     new RootStore().insightsStore,
@@ -67,7 +60,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 const testOfficer = supervisionOfficerFixture[0];
@@ -89,8 +82,8 @@ describe("with client data already hydrated", () => {
   });
 
   test("makes no additional API calls", async () => {
-    jest.spyOn(InsightsOfflineAPIClient.prototype, "clientEvents");
-    jest.spyOn(InsightsOfflineAPIClient.prototype, "clientInfo");
+    vi.spyOn(InsightsOfflineAPIClient.prototype, "clientEvents");
+    vi.spyOn(InsightsOfflineAPIClient.prototype, "clientInfo");
 
     await presenter.hydrate();
 
@@ -110,8 +103,8 @@ describe("with client data already hydrated", () => {
 });
 
 test("hydration", async () => {
-  jest.spyOn(InsightsOfflineAPIClient.prototype, "clientEvents");
-  jest.spyOn(InsightsOfflineAPIClient.prototype, "clientInfo");
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "clientEvents");
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "clientInfo");
 
   expect(presenter.hydrationState.status).toBe("needs hydration");
 
@@ -171,18 +164,19 @@ test("supervisionDetails is undefined if metric event date does not match outcom
 
 test("hydration error in dependency", async () => {
   const err = new Error("fake error");
-  jest
-    .spyOn(InsightsSupervisionStore.prototype, "populateClientInfoForClient")
-    .mockImplementation(() => {
-      throw err;
-    });
+  vi.spyOn(
+    InsightsSupervisionStore.prototype,
+    "populateClientInfoForClient",
+  ).mockImplementation(() => {
+    throw err;
+  });
 
   await presenter.hydrate();
   expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
 });
 
 test("tracks events", async () => {
-  jest.spyOn(AnalyticsStore.prototype, "trackInsightsClientPageViewed");
+  vi.spyOn(AnalyticsStore.prototype, "trackInsightsClientPageViewed");
 
   await presenter.hydrate();
   presenter.trackViewed();

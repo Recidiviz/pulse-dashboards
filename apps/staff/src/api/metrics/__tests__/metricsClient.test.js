@@ -14,44 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
 import { callMetricsApi, callNewMetricsApi } from "../metricsClient";
-
-const OLD_ENV = process.env;
-
-global.fetch = jest.fn().mockResolvedValue({
-  ok: true,
-  json: jest.fn().mockResolvedValue({ data: [] }),
-});
 
 describe("metricsClient", () => {
   let output;
   const mockToken = "auth0-token";
   const endpoint =
     "newRevocations/revocations_matrix_events_by_month?violationType=All";
-  const getTokenSilently = jest.fn().mockResolvedValue(mockToken);
+
   const expectedUrl = `test-url/api/${endpoint}`;
   const expectedNewBEUrl = `test-be-url/${endpoint}`;
 
-  beforeAll(() => {
+  const getTokenSilently = vi.fn();
+
+  beforeEach(() => {
     // do not log the expected error - keep tests less verbose
-    jest.spyOn(console, "error").mockImplementation(() => undefined);
-  });
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-  afterAll(() => {
-    jest.resetModules();
-    jest.restoreAllMocks();
-    jest.resetAllMocks();
-  });
+    getTokenSilently.mockResolvedValue(mockToken);
 
-  afterEach(() => {
-    process.env = OLD_ENV;
+    fetchMock.mockResponse(
+      JSON.stringify({
+        data: [],
+      }),
+    );
   });
 
   describe("when callMetricsApi succeeds", () => {
     beforeEach(async () => {
-      process.env = Object.assign(process.env, {
-        REACT_APP_API_URL: "test-url",
-      });
+      vi.stubEnv("VITE_API_URL", "test-url");
       output = await callMetricsApi(endpoint, getTokenSilently);
     });
 
@@ -70,9 +62,7 @@ describe("metricsClient", () => {
 
   describe("when callNewMetricsApi succeeds", () => {
     beforeEach(async () => {
-      process.env = Object.assign(process.env, {
-        REACT_APP_NEW_BACKEND_API_URL: "test-be-url",
-      });
+      vi.stubEnv("VITE_NEW_BACKEND_API_URL", "test-be-url");
       output = await callNewMetricsApi(endpoint, getTokenSilently);
     });
 
@@ -91,17 +81,9 @@ describe("metricsClient", () => {
 
   describe("when callMetricsApi fails from old backend", () => {
     beforeEach(async () => {
-      process.env = Object.assign(process.env, {
-        REACT_APP_API_URL: "test-url",
-      });
-      global.fetch.mockClear();
-      global.fetch.mockResolvedValue({
-        ok: false,
+      vi.stubEnv("VITE_API_URL", "test-url");
+      fetchMock.mockResponse(JSON.stringify({ errors: ["API error"] }), {
         status: 400,
-        statusText: "Bad Request",
-        json: jest
-          .fn()
-          .mockResolvedValue({ status: 400, errors: ["API error"] }),
       });
     });
 
@@ -110,7 +92,7 @@ describe("metricsClient", () => {
       try {
         await callMetricsApi(endpoint, getTokenSilently);
       } catch (error) {
-        expect(global.fetch.mock.calls.length).toEqual(3);
+        expect(fetchMock.mock.calls.length).toEqual(3);
         expect(error).toEqual(
           new Error(
             `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: ["API error"]`,
@@ -135,15 +117,9 @@ describe("metricsClient", () => {
 
   describe("when callMetricsApi fails from new backend", () => {
     beforeEach(async () => {
-      process.env = Object.assign(process.env, {
-        REACT_APP_API_URL: "test-url",
-      });
-      global.fetch.mockClear();
-      global.fetch.mockResolvedValue({
-        ok: false,
+      vi.stubEnv("VITE_API_URL", "test-url");
+      fetchMock.mockResponse(JSON.stringify({ message: "API error" }), {
         status: 400,
-        statusText: "Bad Request",
-        json: jest.fn().mockResolvedValue({ message: "API error" }),
       });
     });
 
@@ -152,7 +128,7 @@ describe("metricsClient", () => {
       try {
         await callMetricsApi(endpoint, getTokenSilently);
       } catch (error) {
-        expect(global.fetch.mock.calls.length).toEqual(3);
+        expect(fetchMock.mock.calls.length).toEqual(3);
         expect(error).toEqual(
           new Error(
             `Fetching data from API failed.\nStatus: 400 - Bad Request\nErrors: "API error"`,

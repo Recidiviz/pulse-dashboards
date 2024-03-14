@@ -20,7 +20,7 @@ import "./MobileNavigation.scss";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import { ReactComponent as MenuIcon } from "../../assets/static/images/menu.svg";
+import MenuIcon from "../../assets/static/images/menu.svg?react";
 import Drawer from "../../components/Drawer";
 import useIsMobile from "../../hooks/useIsMobile";
 import PageNavigation from "../PageNavigation";

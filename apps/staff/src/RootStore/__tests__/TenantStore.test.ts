@@ -21,11 +21,11 @@ import TenantStore, {
 } from "../TenantStore/TenantStore";
 import UserStore from "../UserStore";
 
-jest.mock("@auth0/auth0-spa-js");
-jest.mock("../../api/metrics/metricsClient");
-jest.mock("../../components/StoreProvider");
+vi.mock("@auth0/auth0-spa-js");
+vi.mock("../../api/metrics/metricsClient");
+vi.mock("../../components/StoreProvider");
 
-const METADATA_NAMESPACE = process.env.REACT_APP_METADATA_NAMESPACE;
+const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
 const user = { [metadataField]: { stateCode: US_MO }, email_verified: true };
@@ -41,13 +41,13 @@ describe("TenantStore", () => {
     }) as typeof RootStore;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    jest.resetAllMocks();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   describe("enableUserRestrictions", () => {
@@ -132,13 +132,13 @@ describe("TenantStore", () => {
   describe("when there is a CURRENT_TENANT_IN_SESSION", () => {
     beforeEach(() => {
       sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantIdFromStorage);
-      jest.clearAllMocks();
-      jest.resetAllMocks();
+      vi.clearAllMocks();
+      vi.resetAllMocks();
     });
 
     afterEach(() => {
-      jest.clearAllMocks();
-      jest.resetAllMocks();
+      vi.clearAllMocks();
+      vi.resetAllMocks();
     });
 
     it("currentTenantId is set to CURRENT_TENANT_IN_SESSION if there is not a user", async () => {

@@ -1,41 +1,41 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`transform record with null pending violation criteria 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "noConvictionWithin6Months": Object {},
-    "supervisionLevelIsMediumOrLower": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
       "supervisionLevel": "MEDIUM",
     },
-    "usMeNoPendingViolationsWhileSupervised": Object {},
-    "usMePaidAllOwedRestitution": Object {},
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+    "usMeNoPendingViolationsWhileSupervised": {},
+    "usMePaidAllOwedRestitution": {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_ME",
 }
 `;
 
 exports[`transform record with pending violation ineligibleCriteria 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "noConvictionWithin6Months": Object {},
-    "supervisionLevelIsMediumOrLower": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
       "supervisionLevel": "MEDIUM",
     },
-    "usMePaidAllOwedRestitution": Object {},
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+    "usMePaidAllOwedRestitution": {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {
-    "usMeNoPendingViolationsWhileSupervised": Object {
+  "ineligibleCriteria": {
+    "usMeNoPendingViolationsWhileSupervised": {
       "currentStatus": "Pending Violation",
       "violationDate": 2022-07-13T00:00:00.000Z,
     },
@@ -45,41 +45,41 @@ Object {
 `;
 
 exports[`transform record with restitution case 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "noConvictionWithin6Months": Object {},
-    "supervisionLevelIsMediumOrLower": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
       "supervisionLevel": "MEDIUM",
     },
-    "usMePaidAllOwedRestitution": Object {
+    "usMePaidAllOwedRestitution": {
       "amountOwed": 0,
     },
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_ME",
 }
 `;
 
 exports[`transform record with restitution ineligibleCriteria 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "noConvictionWithin6Months": Object {},
-    "supervisionLevelIsMediumOrLower": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
       "supervisionLevel": "MEDIUM",
     },
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {
-    "usMePaidAllOwedRestitution": Object {
+  "ineligibleCriteria": {
+    "usMePaidAllOwedRestitution": {
       "amountOwed": 500,
     },
   },
@@ -88,20 +88,20 @@ Object {
 `;
 
 exports[`transform record without restitution case 1`] = `
-Object {
-  "caseNotes": Object {},
-  "eligibleCriteria": Object {
-    "noConvictionWithin6Months": Object {},
-    "supervisionLevelIsMediumOrLower": Object {
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "noConvictionWithin6Months": {},
+    "supervisionLevelIsMediumOrLower": {
       "supervisionLevel": "MEDIUM",
     },
-    "usMePaidAllOwedRestitution": Object {},
-    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": Object {
+    "usMePaidAllOwedRestitution": {},
+    "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
   },
   "externalId": "abc123",
-  "ineligibleCriteria": Object {},
+  "ineligibleCriteria": {},
   "stateCode": "US_ME",
 }
 `;

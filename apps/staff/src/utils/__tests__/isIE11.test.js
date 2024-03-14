@@ -22,7 +22,7 @@ describe("isIE11", () => {
   let userAgentGetter;
 
   beforeEach(() => {
-    userAgentGetter = jest.spyOn(window.navigator, "userAgent", "get");
+    userAgentGetter = vi.spyOn(window.navigator, "userAgent", "get");
   });
 
   it("returns true if the user agent is IE11", () => {
