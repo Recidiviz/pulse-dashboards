@@ -18,13 +18,11 @@
  */
 
 import * as Sentry from "@sentry/react";
-import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
-import { OpportunityRequirement } from "../../types";
 import {
   UsCaSupervisionLevelDowngradeReferralRecord,
   usCaSupervisionLevelDowngradeSchema,
@@ -52,14 +50,6 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     this.client = client;
 
     this.form = new UsCaSupervisionLevelDowngradeForm(this, client.rootStore);
-
-    makeObservable(this, { requirementsMet: override });
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-
-    return [];
   }
 
   get eligibilityDate(): Date | undefined {

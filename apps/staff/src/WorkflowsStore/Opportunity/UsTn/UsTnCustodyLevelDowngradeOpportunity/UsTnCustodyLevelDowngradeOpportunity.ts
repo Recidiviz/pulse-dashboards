@@ -15,61 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable, override } from "mobx";
-
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
 import { UsTnCustodyLevelDowngradeForm } from "../../Forms/usTnCustodyLevelDowngradeForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityRequirement } from "../../types";
-import {
-  CriteriaCopy,
-  CriteriaFormatters,
-  hydrateCriteria,
-} from "../../utils/criteriaUtils";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
   UsTnCustodyLevelDowngradeReferralRecord,
   usTnCustodyLevelDowngradeSchema,
 } from "./UsTnCustodyLevelDowngradeReferralRecord";
 
-const CRITERIA_FORMATTERS: CriteriaFormatters<UsTnCustodyLevelDowngradeReferralRecord> =
-  {} as const;
-
-const CRITERIA_COPY: CriteriaCopy<UsTnCustodyLevelDowngradeReferralRecord> = {
-  eligibleCriteria: [
-    [
-      "custodyLevelHigherThanRecommended",
-      {
-        text: "Custody level is higher than latest CAF score suggests",
-      },
-    ],
-    ["custodyLevelIsNotMax", { text: "Custody level is not maximum" }],
-    [
-      "usTnIneligibleForAnnualReclassification",
-      { text: "Not eligible for annual reclassification" },
-    ],
-    [
-      "usTnLatestCafAssessmentNotOverride",
-      { text: "Last assessment did not include an override" },
-    ],
-  ],
-  ineligibleCriteria: [],
-};
-
 export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
   Resident,
   UsTnCustodyLevelDowngradeReferralRecord,
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
-  resident: Resident;
-
   form: UsTnCustodyLevelDowngradeForm;
-
-  // TODO(#4087): Set policyOrMethodologyUrl once we know what to set it to.
-
-  almostEligibleRecommendedNote = undefined;
 
   readonly caseNotesTitle = "Disciplinaries";
 
@@ -80,14 +42,9 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       resident.rootStore,
       usTnCustodyLevelDowngradeSchema.parse,
     );
-    this.resident = resident;
-
-    makeObservable(this, {
-      requirementsMet: override,
-    });
 
     if (
-      this.resident.rootStore.workflowsStore.featureVariants
+      resident.rootStore.workflowsStore.featureVariants
         .usTnAnnualReclassification
     ) {
       this.form = new UsTnAnnualReclassificationReviewForm(
@@ -97,14 +54,5 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
     } else {
       this.form = new UsTnCustodyLevelDowngradeForm(this, resident.rootStore);
     }
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    return hydrateCriteria(
-      this.record,
-      "eligibleCriteria",
-      CRITERIA_COPY,
-      CRITERIA_FORMATTERS,
-    );
   }
 }

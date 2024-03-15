@@ -47,4 +47,14 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
     CUSTODY: "Client is currently in custody",
     Other: "Other: please specify a reason",
   },
+  eligibleCriteriaCopy: {
+    supervisionPastFullTermCompletionDate: {
+      text: "{{daysPast eligibleDate}} days past FTRD ({{date eligibleDate}})",
+    },
+  },
+  ineligibleCriteriaCopy: {
+    supervisionPastFullTermCompletionDate: {
+      text: "{{daysUntil eligibleDate}} days until FTRD ({{date eligibleDate}})",
+    },
+  },
 };

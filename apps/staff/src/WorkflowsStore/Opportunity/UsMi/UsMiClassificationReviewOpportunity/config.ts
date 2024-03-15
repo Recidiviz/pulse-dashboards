@@ -59,4 +59,26 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
       ABSCONSION: "Chronic missing of reporting dates",
       Other: "Other: please specify a reason",
     },
+    eligibleCriteriaCopy: {
+      usMiClassificationReviewPastDueDate: {
+        text: "Recommended classification review date, based on supervision start date and last classification review date, is {{date eligibleDate}}",
+        tooltip:
+          "Classification reviews shall be completed after six months of active supervision […] " +
+          "Subsequent classification reviews shall be scheduled at six-month intervals.",
+      },
+      usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+        text: "Currently eligible based on offense type and supervision level",
+        tooltip:
+          "The supervising Agent shall ensure that a Correctional Offender " +
+          "Management Profiling for Alternative Sanctions (COMPAS) has been completed " +
+          "for each offender on their active caseload as outlined in OP 06.01.145 " +
+          "“Administration and Use of COMPAS and TAP.” Unless mandated by statute or " +
+          "other criteria as directed in this operating procedure, the COMPAS shall be " +
+          "used to determine the initial supervision level of each offender.\n" +
+          "Unless an offender’s supervision level is mandated by policy or statute, " +
+          "the supervising Agent shall reduce an offender’s supervision level if " +
+          "the offender has satisfactorily completed six continuous months at the " +
+          "current assigned supervision level.",
+      },
+    },
   };

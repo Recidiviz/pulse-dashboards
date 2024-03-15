@@ -15,57 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays } from "date-fns";
-import { makeObservable, override } from "mobx";
-
-import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
 import { OpportunityBase } from "./OpportunityBase";
 import { OpportunityType } from "./OpportunityType/types";
 import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
-import { OpportunityRequirement } from "./types";
-import {
-  CriteriaCopy,
-  CriteriaFormatters,
-  hydrateCriteria,
-} from "./utils/criteriaUtils";
-
-const CRITERIA_FORMATTERS: CriteriaFormatters<BasePastFTRDReferralRecord> = {
-  eligibleCriteria: {
-    supervisionPastFullTermCompletionDate: {
-      DAYS_PAST_ELIGIBLE_DATE: ({ eligibleDate }) =>
-        Math.abs(differenceInDays(new Date(), eligibleDate)).toString(),
-      ELIGIBILITY_DATE: ({ eligibleDate }) => formatWorkflowsDate(eligibleDate),
-    },
-  },
-  ineligibleCriteria: {
-    supervisionPastFullTermCompletionDate: {
-      DAYS_UNTIL_ELIGIBLE_DATE: ({ eligibleDate }) =>
-        differenceInDays(eligibleDate, new Date()).toString(),
-      ELIGIBILITY_DATE: ({ eligibleDate }) => formatWorkflowsDate(eligibleDate),
-    },
-  },
-};
-
-const CRITERIA_COPY: CriteriaCopy<BasePastFTRDReferralRecord> = {
-  eligibleCriteria: [
-    [
-      "supervisionPastFullTermCompletionDate",
-      {
-        text: "$DAYS_PAST_ELIGIBLE_DATE days past FTRD ($ELIGIBILITY_DATE)",
-      },
-    ],
-  ],
-  ineligibleCriteria: [
-    [
-      "supervisionPastFullTermCompletionDate",
-      {
-        text: "$DAYS_UNTIL_ELIGIBLE_DATE days until FTRD ($ELIGIBILITY_DATE)",
-      },
-    ],
-  ],
-};
 
 export abstract class PastFTRDOpportunityBase<
   ReferralRecord extends BasePastFTRDReferralRecord,
@@ -77,27 +31,6 @@ export abstract class PastFTRDOpportunityBase<
     validateRecord?: ValidateFunction<ReferralRecord>,
   ) {
     super(client, type, client.rootStore, transformReferral, validateRecord);
-    makeObservable(this, {
-      requirementsMet: override,
-    });
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    return hydrateCriteria(
-      this.record,
-      "eligibleCriteria",
-      CRITERIA_COPY,
-      CRITERIA_FORMATTERS,
-    );
-  }
-
-  get requirementsAlmostMet(): OpportunityRequirement[] {
-    return hydrateCriteria(
-      this.record,
-      "ineligibleCriteria",
-      CRITERIA_COPY,
-      CRITERIA_FORMATTERS,
-    );
   }
 
   get eligibilityDate(): Date | undefined {

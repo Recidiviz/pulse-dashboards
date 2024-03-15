@@ -15,76 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable, override } from "mobx";
-
-import { toTitleCase } from "../../../../utils";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityRequirement } from "../../types";
-import {
-  CriteriaCopy,
-  CriteriaFormatters,
-  hydrateCriteria,
-} from "../../utils/criteriaUtils";
 import {
   UsMiMinimumTelephoneReportingReferralRecord,
   usMiMinimumTelephoneReportingSchema,
 } from "./UsMiMinimumTelephoneReportingReferralRecord";
-
-const CRITERIA_FORMATTERS: CriteriaFormatters<UsMiMinimumTelephoneReportingReferralRecord> =
-  {
-    eligibleCriteria: {
-      usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-        COMPAS_SCORE: ({ initialAssessmentLevel }) =>
-          toTitleCase(initialAssessmentLevel),
-      },
-    },
-  } as const;
-
-const CRITERIA_COPY: CriteriaCopy<UsMiMinimumTelephoneReportingReferralRecord> =
-  {
-    eligibleCriteria: [
-      [
-        "onMinimumSupervisionAtLeastSixMonths",
-        {
-          text: "Served at least six months on Minimum In-Person or Minimum Low Risk supervision",
-          tooltip:
-            "Offenders assigned to minimum in person or minimum low-risk supervision shall be evaluated for assignment to minimum TRS after they have completed six months of active supervision.",
-        },
-      ],
-      [
-        "usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting",
-        {
-          text: "Original COMPAS score was $COMPAS_SCORE",
-          tooltip:
-            "Original COMPAS score was minimum or medium and current supervision level is minimum in person or current supervision level is minimum low risk.",
-        },
-      ],
-      [
-        "usMiNotRequiredToRegisterUnderSora",
-        {
-          text: "Not required to register per SORA",
-          tooltip:
-            "Not currently required to register pursuant to to the Sex Offender Registration Act.",
-        },
-      ],
-      [
-        "usMiNotServingIneligibleOffensesForTelephoneReporting",
-        {
-          text: "Not on supervision for an offense excluded from eligibility for telephone reporting",
-          tooltip:
-            "Not currently serving for an offense listed in WS 01.06.115 Attachment A “Michigan Sex Offender Registry Offenses” or any any similar offense from another state. Not currently serving for an offense included in OP 06.04.130K Attachment A “TRS Exclusion List” including Attempts, Solicitation and Conspiracy. Agents should reference the PACC code on the list when determining eligibility. Not serving for Operating Under the Influence of Liquor (OUIL) or Operating While Impaired (OWI) (any level), unless the offender has successfully completed twelve months of active supervision. A probationer currently serving for OUIL/OWI may only be placed on TRS if authorized by the sentencing court and documented by a court order. Not serving a life or commuted sentence. Not serving a probation term with a delay of sentence.",
-        },
-      ],
-      [
-        "supervisionNotPastFullTermCompletionDateOrUpcoming90Days",
-        {
-          text: "More than 90 days remaining until full-term discharge.",
-        },
-      ],
-    ],
-    ineligibleCriteria: [],
-  };
 
 export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
   Client,
@@ -96,20 +32,6 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
       "usMiMinimumTelephoneReporting",
       client.rootStore,
       usMiMinimumTelephoneReportingSchema.parse,
-    );
-
-    makeObservable(this, {
-      requirementsMet: override,
-      requirementsAlmostMet: override,
-    });
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    return hydrateCriteria(
-      this.record,
-      "eligibleCriteria",
-      CRITERIA_COPY,
-      CRITERIA_FORMATTERS,
     );
   }
 

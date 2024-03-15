@@ -51,4 +51,32 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
       "SA DECLINE": "State's Attorney permanently declined consideration",
       Other: "Other, please specify a reason",
     },
+    eligibleCriteriaCopy: {
+      supervisionPastEarlyDischargeDate: {
+        text: "Early termination date is {{date eligibleDate}}",
+        tooltip:
+          "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+      },
+      usNdImpliedValidEarlyTerminationSupervisionLevel: {
+        text: "Currently on {{lowerCase supervisionLevel}} supervision",
+        tooltip:
+          "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
+      },
+      usNdImpliedValidEarlyTerminationSentenceType: {
+        text: "Serving {{lowerCase supervisionType}} sentence",
+        tooltip:
+          "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
+      },
+      usNdNotInActiveRevocationStatus: {
+        text: "Not on active revocation status",
+        tooltip: "Policy requirement: Not on active revocation status.",
+      },
+    },
+    ineligibleCriteriaCopy: {
+      supervisionPastEarlyDischargeDate: {
+        text: "Early termination date (as calculated by DOCSTARS) is within 60 days",
+        tooltip:
+          "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+      },
+    },
   };

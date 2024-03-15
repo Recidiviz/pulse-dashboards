@@ -14,51 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { makeObservable, override } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatDate } from "../../../../utils/formatStrings";
 import { Resident } from "../../../Resident";
-import { OpportunityRequirement } from "../..";
 import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import {
-  CriteriaCopy,
-  CriteriaFormatters,
-  hydrateCriteria,
-} from "../../utils/criteriaUtils";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
   UsTnAnnualReclassificationReviewReferralRecord,
   usTnAnnualReclassificationReviewSchema,
 } from "./UsTnAnnualReclassificationReviewReferralRecord";
 
-const CRITERIA_FORMATTERS: CriteriaFormatters<UsTnAnnualReclassificationReviewReferralRecord> =
-  {} as const;
-
-const CRITERIA_COPY: CriteriaCopy<UsTnAnnualReclassificationReviewReferralRecord> =
-  {
-    eligibleCriteria: [
-      [
-        "usTnAtLeast12MonthsSinceLatestAssessment",
-        {
-          text: "At least 12 months since last reclassification date",
-        },
-      ],
-      ["custodyLevelIsNotMax", { text: "Custody level is not maximum" }],
-    ],
-    ineligibleCriteria: [],
-  };
-
 export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase<
   Resident,
   UsTnAnnualReclassificationReviewReferralRecord,
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
-  resident: Resident;
-
-  almostEligibleRecommendedNote = undefined;
-
   readonly caseNotesTitle = "Disciplinaries";
 
   form: UsTnAnnualReclassificationReviewForm;
@@ -71,24 +43,9 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
       usTnAnnualReclassificationReviewSchema.parse,
     );
 
-    this.resident = resident;
-
-    makeObservable(this, {
-      requirementsMet: override,
-    });
-
     this.form = new UsTnAnnualReclassificationReviewForm(
       this,
       resident.rootStore,
-    );
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    return hydrateCriteria(
-      this.record,
-      "eligibleCriteria",
-      CRITERIA_COPY,
-      CRITERIA_FORMATTERS,
     );
   }
 

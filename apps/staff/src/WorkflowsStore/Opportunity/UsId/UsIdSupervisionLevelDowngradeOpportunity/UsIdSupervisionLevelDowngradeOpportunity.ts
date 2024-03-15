@@ -16,18 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-
-import { makeObservable, override } from "mobx";
-
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
-  formatBaseSLDRequirements,
   getBaseSLDValidator,
   SupervisionLevelDowngradeReferralRecord,
   supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,
 } from "../../SupervisionLevelDowngradeReferralRecord";
-import { OpportunityRequirement } from "../../types";
 
 export type UsIdSupervisionLevelDowngradeReferralRecord =
   SupervisionLevelDowngradeReferralRecord;
@@ -47,14 +42,6 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       ).parse,
       getBaseSLDValidator(client),
     );
-
-    makeObservable(this, { requirementsMet: override });
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-
-    return formatBaseSLDRequirements(this.record);
   }
 
   get eligibilityDate(): Date | undefined {

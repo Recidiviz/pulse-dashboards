@@ -47,4 +47,9 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig<UsIdSupervis
     sidebarComponents: ["ClientProfileDetails"],
     isAlert: true,
     tooltipEligibilityText: "Eligible for supervision downgrade",
+    eligibleCriteriaCopy: {
+      supervisionLevelHigherThanAssessmentLevel: {
+        text: "Current supervision level: {{supervisionLevel}}; Last risk score: {{assessmentLevel}} {{#if latestAssessmentDate}}(as of {{date latestAssessmentDate}}){{else}}(assessment date unknown){{/if}}",
+      },
+    },
   };

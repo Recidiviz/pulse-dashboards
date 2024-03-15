@@ -16,10 +16,7 @@
 // =============================================================================
 import React from "react";
 
-import {
-  INTERSTATE_COPY,
-  UsMiEarlyDischargeReferralRecord,
-} from "../../../../WorkflowsStore/Opportunity/UsMi";
+import { UsMiEarlyDischargeReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMi";
 import {
   DetailsBorderedSection,
   DetailsHeading,
@@ -27,6 +24,20 @@ import {
   SecureDetailsContent,
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
+
+const INTERSTATE_COPY = {
+  "IC-IN": {
+    text: "This client appears to be eligible for early discharge. Please review the client's eligibility status and send an early discharge request to the sending state via ICOTS.",
+  },
+  "IC-OUT": {
+    Parole: {
+      text: "This client appears to be eligible for early discharge. Request a progress report from state in which this client is being supervised and provide to the parole board.",
+    },
+    Probation: {
+      text: "This client appears to be eligible for early discharge. Request a progress report from state in which this client is being supervised and submit to the judge.",
+    },
+  },
+} as const;
 
 export function UsMiEarlyDischargeIcDetails({
   opportunity,

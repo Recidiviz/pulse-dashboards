@@ -68,4 +68,59 @@ export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOppor
       JUDGE: "JUDGE: County Judge declined client for consideration",
       Other: "Other: please specify a reason",
     },
+    eligibleCriteriaCopy: {
+      supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+        text: 'Completed at least half of {{#if eq record.metadata.supervisionType "Parole"}}parole{{else}}probation{{/if}} term',
+        tooltip:
+          '{{#if eq record.metadata.supervisionType "Parole"}}A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more{{else}}An offender may be considered for discharge prior to the expiration of the original term of probation if they have completed at least one-half of the probation term{{/if}}',
+      },
+      servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
+        text: "Serving a parole term of 12 months or more",
+        tooltip:
+          "A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more",
+      },
+      usMiParoleDualSupervisionPastEarlyDischargeDate: {
+        text: "Served mandatory period of parole",
+        tooltip:
+          "The parolee has served any mandatory period of parole as set forth in Paragraph F. ",
+      },
+      usMiNoActivePpo: {
+        text: 'No active PPO ordered during the {{#if eq record.metadata.supervisionType "Parole"}}parole{{else}}probation{{/if}} term',
+        tooltip:
+          'The {{#if eq record.metadata.supervisionType "Parole"}}parolee{{else}}offender{{/if}} does not have an active PPO […] that was ordered against him/her during the {{#if eq record.metadata.supervisionType "Parole"}}parole{{else}}probation{{/if}} term.',
+      },
+      usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        text: 'Not involved in a felony, assaultive misdemeanor, or offense requiring SORA registration while on {{#if eq record.metadata.supervisionType "Parole"}}parole{{else}}probation{{/if}}',
+        tooltip:
+          '{{#if eq record.metadata.supervisionType "Parole"}}The parolee is not known to have been involved in […] felonious behavior, assaultive misdemeanor behavior (as set forth in Attachment A) […] or an offense that requires registration under the Sex Offender Registration Act while on parole.{{else}}The offender is not known to have been involved in […] felonious behavior or assaultive misdemeanor behavior as set forth in Attachment A “OP 06.01.145B Assaultive Misdemeanor List” which occurred while on probation or any offense that requires registration under the Sex Offender Registration Act (SORA), which occurred while on probation.{{/if}}',
+      },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
+        {
+          text: "Not serving for an offense excluded from early discharge eligibility by policy.",
+          tooltip:
+            "The parolee is not serving for an offense […] required to be registered under the Sex Offender Registration Act.",
+        },
+      usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
+        {
+          text: "Not serving for an offense excluded from early discharge eligibility by policy.",
+          tooltip:
+            "The offender is not currently serving for an offense that requires a mandatory term of probation as identified in Paragraph H. The offender is not currently serving for MCL 750.81 or MCL 750.84 (Assault with Intent to commit Great Bodily Harm Less than Murder).",
+        },
+      usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
+        text: "Not paroled from SAI on current term",
+        tooltip:
+          "The parolee was not paroled from the Special Alternative Incarceration (SAI) program on the current term (see definition).",
+      },
+      supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
+        text: "Not on intensive supervision",
+      },
+      usMiNoOwiViolationOnParoleDualSupervision: {
+        text: "Not involved in an OWI offense while on parole.",
+        tooltip:
+          "The parolee is not known to have been involved in […] a violation of MCL 257.625 (OWI) […] while on parole.",
+      },
+      usMiNoPendingDetainer: {
+        text: "No pending detainers",
+      },
+    },
   };

@@ -66,7 +66,10 @@ import {
   OpportunityStatus,
   OpportunityTab,
 } from "./types";
-import { hydrateUntypedCriteria } from "./utils/criteriaUtils";
+import {
+  hydrateUntypedCriteria,
+  UntypedCriteriaFormatters,
+} from "./utils/criteriaUtils";
 
 export function updateOpportunityEligibility(
   opportunityType: OpportunityType,
@@ -534,6 +537,8 @@ export abstract class OpportunityBase<
     return !this.config.isAlert || this.reviewStatus === "DENIED";
   }
 
+  criteriaFormatters?: UntypedCriteriaFormatters;
+
   get requirementsMet(): OpportunityRequirement[] {
     const {
       record,
@@ -543,6 +548,8 @@ export abstract class OpportunityBase<
     return hydrateUntypedCriteria(
       record.eligibleCriteria,
       eligibleCriteriaCopy,
+      this.criteriaFormatters,
+      record,
     );
   }
 
@@ -555,6 +562,8 @@ export abstract class OpportunityBase<
     return hydrateUntypedCriteria(
       record.ineligibleCriteria,
       ineligibleCriteriaCopy,
+      this.criteriaFormatters,
+      record,
     );
   }
 

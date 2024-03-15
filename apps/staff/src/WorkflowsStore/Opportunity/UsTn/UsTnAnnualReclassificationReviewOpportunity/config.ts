@@ -50,4 +50,10 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
       "UsTnCommonlyUsedOverrideCodes",
     ],
     methodologyUrl: "",
+    eligibleCriteriaCopy: {
+      usTnAtLeast12MonthsSinceLatestAssessment: {
+        text: "At least 12 months since last reclassification date",
+      },
+      custodyLevelIsNotMax: { text: "Custody level is not maximum" },
+    },
   };

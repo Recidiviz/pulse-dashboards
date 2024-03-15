@@ -15,41 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable, override } from "mobx";
+import { computed, makeObservable } from "mobx";
 
 import { DocstarsDenialModal } from "../../../../core/OpportunityDenial/UsNd/DocstarsDenialModal";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
-import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
 import { EarlyTerminationForm } from "../../Forms/EarlyTerminationForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { FormVariant, OpportunityRequirement } from "../../types";
+import { FormVariant } from "../../types";
 import {
   UsNdEarlyTerminationDraftData,
   UsNdEarlyTerminationReferralRecord,
   usNdEarlyTerminationSchema,
 } from "./UsNdEarlyTerminationReferralRecord";
-
-// This could be configured externally once it's fleshed out
-// to include all copy and other static data
-const CRITERIA: Record<
-  keyof UsNdEarlyTerminationReferralRecord["eligibleCriteria"],
-  Partial<OpportunityRequirement>
-> = {
-  supervisionPastEarlyDischargeDate: {
-    tooltip:
-      "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
-  },
-  usNdImpliedValidEarlyTerminationSupervisionLevel: {
-    tooltip: `Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.`,
-  },
-  usNdImpliedValidEarlyTerminationSentenceType: {
-    tooltip: `Policy requirement: Serving a suspended, deferred, or IC-probation sentence.`,
-  },
-  usNdNotInActiveRevocationStatus: {
-    tooltip: `Policy requirement: Not on active revocation status.`,
-  },
-};
 
 export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
   Client,
@@ -70,8 +48,6 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
 
     makeObservable(this, {
       almostEligible: computed,
-      requirementsMet: override,
-      requirementsAlmostMet: override,
       almostEligibleStatusMessage: computed,
     });
 
@@ -89,58 +65,6 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
     if (ineligibleCriteria.supervisionPastEarlyDischargeDate?.eligibleDate) {
       return `Early termination date (as calculated by DOCSTARS) is within 60 days`;
     }
-  }
-
-  get requirementsAlmostMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-    const requirementsAlmostMet: OpportunityRequirement[] = [];
-
-    const { ineligibleCriteria } = this.record;
-
-    if (ineligibleCriteria.supervisionPastEarlyDischargeDate?.eligibleDate) {
-      requirementsAlmostMet.push({
-        text: `Early termination date (as calculated by DOCSTARS) is within 60 days`,
-        tooltip: CRITERIA.supervisionPastEarlyDischargeDate.tooltip,
-      });
-    }
-    return requirementsAlmostMet;
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-    const {
-      eligibleCriteria: {
-        supervisionPastEarlyDischargeDate,
-        usNdImpliedValidEarlyTerminationSupervisionLevel,
-        usNdImpliedValidEarlyTerminationSentenceType,
-      },
-    } = this.record;
-    const requirements = [];
-    if (supervisionPastEarlyDischargeDate?.eligibleDate) {
-      requirements.push({
-        text: `Early termination date is ${formatWorkflowsDate(
-          supervisionPastEarlyDischargeDate.eligibleDate,
-        )}`,
-        tooltip: CRITERIA.supervisionPastEarlyDischargeDate.tooltip,
-      });
-    }
-    return [
-      ...requirements,
-      {
-        text: `Currently on ${usNdImpliedValidEarlyTerminationSupervisionLevel.supervisionLevel.toLowerCase()} supervision`,
-        tooltip:
-          CRITERIA.usNdImpliedValidEarlyTerminationSupervisionLevel.tooltip,
-      },
-      {
-        text: `Serving ${usNdImpliedValidEarlyTerminationSentenceType.supervisionType.toLowerCase()} sentence`,
-        tooltip: CRITERIA.usNdImpliedValidEarlyTerminationSentenceType.tooltip,
-      },
-
-      {
-        text: `Not on active revocation status`,
-        tooltip: CRITERIA.usNdNotInActiveRevocationStatus.tooltip,
-      },
-    ];
   }
 
   get formVariant(): FormVariant | undefined {

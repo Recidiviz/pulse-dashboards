@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays, differenceInMonths } from "date-fns";
-import { snakeCase } from "lodash";
+import { captureException } from "@sentry/react";
+import { differenceInDays, differenceInMonths, parseISO } from "date-fns";
+import { get, snakeCase } from "lodash";
 import simplur from "simplur";
 
+import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { AllPossibleKeys } from "../../../utils/typeUtils";
 import { OpportunityRequirement } from "../types";
 
@@ -96,11 +98,155 @@ export function hydrateCriteria<
     });
 }
 
+function dateify(d: Date | string) {
+  return d instanceof Date ? d : parseISO(d);
+}
+
+const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
+  lowerCase: (s) => s.toLowerCase(),
+  upperCase: (s) => s.toUpperCase(),
+  titleCase: toTitleCase,
+  date: (date) => formatWorkflowsDate(dateify(date)),
+  daysPast: (date) => differenceInDays(new Date(), dateify(date)).toString(),
+  daysUntil: (date) => differenceInDays(dateify(date), new Date()).toString(),
+  eq: (a, b) => a === b,
+};
+
+type Reason = Record<string, any>;
+
+export type UntypedCriteriaFormatters = Record<
+  string,
+  (criteria: Reason, record: any) => string
+>;
+
+type HydrationContext = {
+  criteria: Reason;
+  formatters: UntypedCriteriaFormatters;
+  record: any;
+};
+
+type BlockState = { isLive: boolean; seenElse: boolean };
+
+const UNKNOWN = Symbol("UNKNOWN");
+
+function lookupExpr(
+  expr: string,
+  { criteria, formatters, record }: HydrationContext,
+) {
+  const literalMatch = expr.match(/^"(.*)"$/);
+  if (literalMatch) return literalMatch[1];
+
+  if (expr in formatters) return formatters[expr](criteria, record);
+
+  const value = get({ ...criteria, record }, expr, UNKNOWN);
+
+  if (value === UNKNOWN) {
+    throw new Error(`Couldn't find ${expr}`);
+  }
+  return value;
+}
+
+function hydrateTag(params: string[], context: HydrationContext) {
+  let variables: string[], helper: string | undefined;
+  if (params.length === 1) {
+    variables = params;
+  } else if (params.length > 1) {
+    [helper, ...variables] = params;
+  } else {
+    throw new Error("empty tag");
+  }
+
+  variables = variables.map((v) => lookupExpr(v, context));
+
+  if (helper) {
+    return formatterHelperFunctions[helper](...variables);
+  }
+  return variables[0];
+}
+
+function handleBlockTag(
+  params: string[],
+  isLive: boolean,
+  blockStack: BlockState[],
+  context: HydrationContext,
+) {
+  const tag = params[0];
+  if (tag === "#if") {
+    blockStack.push({ isLive, seenElse: false });
+    if (isLive) isLive = !!hydrateTag(params.slice(1), context);
+  } else if (tag === "else") {
+    const topBlock = blockStack.length && blockStack[blockStack.length - 1];
+    if (topBlock && !topBlock.seenElse) {
+      blockStack[blockStack.length - 1].seenElse = true;
+      if (topBlock.isLive) isLive = !isLive;
+    } else {
+      throw new Error("unexpected else");
+    }
+  } else if (tag === "/if") {
+    const topBlock = blockStack.pop();
+    if (topBlock) {
+      if (topBlock.isLive) isLive = true;
+    } else {
+      throw new Error("unexpected /if");
+    }
+  }
+  return { blockStack, isLive };
+}
+
+/** Only exported for testing purposes */
+export function hydrateStr(raw: string, context: HydrationContext) {
+  let pos = 0;
+  const outSegments = [];
+  let isLive = true; // false when we're in the inoperative arm of an if block
+  let blockStack: BlockState[] = [];
+  for (const match of raw.matchAll(/\{\{\s*(.*?)\s*\}\}/g)) {
+    if (match.index === undefined) continue; // Will never happen: see https://github.com/microsoft/TypeScript/issues/36788
+    const params = match[1].split(/\s+/);
+    if (isLive) outSegments.push(raw.slice(pos, match.index));
+    pos = match.index + match[0].length;
+    if (["#if", "else", "/if"].includes(params[0])) {
+      ({ isLive, blockStack } = handleBlockTag(
+        params,
+        isLive,
+        blockStack,
+        context,
+      ));
+    } else if (isLive) {
+      try {
+        outSegments.push(hydrateTag(params, context));
+      } catch (e) {
+        captureException(e);
+        outSegments.push("UNKNOWN");
+      }
+    }
+  }
+  if (blockStack.length) throw new Error("Unclosed #if block");
+  outSegments.push(raw.slice(pos));
+  return outSegments.join("");
+}
+
 export function hydrateUntypedCriteria(
-  recordCriteria: Record<string, object | null>,
+  recordCriteria: Record<string, Reason | null>,
   criteriaCopy: Record<string, OpportunityRequirement>,
+  formatters: UntypedCriteriaFormatters = {},
+  record: any = {},
 ): OpportunityRequirement[] {
+  function hydrateReq(raw: OpportunityRequirement, criteria: Reason) {
+    const context: HydrationContext = {
+      criteria,
+      formatters,
+      record,
+    };
+    const out = {
+      ...raw,
+      text: hydrateStr(raw.text, context),
+    };
+    if (raw.tooltip) out.tooltip = hydrateStr(raw.tooltip, context);
+    return out;
+  }
   return Object.entries(criteriaCopy).flatMap(([criteria, copy]) =>
-    criteria in recordCriteria ? [copy] : [],
+    criteria in recordCriteria
+      ? [hydrateReq(copy, recordCriteria[criteria] ?? {})]
+      : [],
   );
 }

@@ -49,4 +49,14 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
   sidebarComponents: ["ClientProfileDetails"],
   tooltipEligibilityText: "Eligible for discharge",
   isAlert: true,
+  eligibleCriteriaCopy: {
+    supervisionPastFullTermCompletionDate: {
+      text: "{{daysPast eligibleDate}} days past FTRD ({{date eligibleDate}})",
+    },
+  },
+  ineligibleCriteriaCopy: {
+    supervisionPastFullTermCompletionDate: {
+      text: "{{daysUntil eligibleDate}} days until FTRD ({{date eligibleDate}})",
+    },
+  },
 };

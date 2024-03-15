@@ -44,4 +44,16 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevel
       Other: "Please specify a reason",
     },
     methodologyUrl: "",
+    eligibleCriteriaCopy: {
+      custodyLevelHigherThanRecommended: {
+        text: "Custody level is higher than latest CAF score suggests",
+      },
+      custodyLevelIsNotMax: { text: "Custody level is not maximum" },
+      usTnIneligibleForAnnualReclassification: {
+        text: "Not eligible for annual reclassification",
+      },
+      usTnLatestCafAssessmentNotOverride: {
+        text: "Last assessment did not include an override",
+      },
+    },
   };

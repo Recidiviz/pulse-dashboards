@@ -18,11 +18,10 @@
 import { z } from "zod";
 
 import { OpportunityValidationError } from "../../errors";
-import { formatWorkflowsDate, toTitleCase } from "../../utils";
+import { toTitleCase } from "../../utils";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
 import { caseNotesSchema, dateStringSchema } from "./schemaHelpers";
-import { OpportunityRequirement } from "./types";
 
 export const supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter =
   (fmt: (raw: string) => string = (s) => s) =>
@@ -70,23 +69,4 @@ export function getBaseSLDValidator(
   };
 
   return validator;
-}
-
-export function formatBaseSLDRequirements(
-  transformedRecord: SupervisionLevelDowngradeReferralRecord,
-): OpportunityRequirement[] {
-  const { assessmentLevel, latestAssessmentDate, supervisionLevel } =
-    transformedRecord.eligibleCriteria
-      .supervisionLevelHigherThanAssessmentLevel;
-
-  let text = `Current supervision level: ${supervisionLevel}; Last risk score: ${assessmentLevel}`;
-  text += latestAssessmentDate
-    ? ` (as of ${formatWorkflowsDate(latestAssessmentDate)})`
-    : " (assessment date unknown)";
-
-  return [
-    {
-      text,
-    },
-  ];
 }

@@ -45,4 +45,18 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
         "Client is currently being supervised for an ineligible felony drug offense",
       Other: "Other, please specify a reason",
     },
+    eligibleCriteriaCopy: {
+      usPaNoHighSanctionsInPastYear: {
+        text: "Client has not incurred high sanctions within the last year",
+      },
+      usPaFulfilledRequirements: {
+        text: "Has fulfilled treatment and special condition requirements",
+      },
+      usPaNotServingIneligibleAsOffense: {
+        text: "Not serving for an ineligible offense",
+      },
+      usPaSupervisionLevelIsNotLimited: {
+        text: "Currently on {{supervisionLevel}} supervision",
+      },
+    },
   };

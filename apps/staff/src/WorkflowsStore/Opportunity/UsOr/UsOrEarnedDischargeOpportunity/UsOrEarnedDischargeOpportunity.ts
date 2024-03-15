@@ -22,73 +22,26 @@ import { makeObservable, override } from "mobx";
 import { Client } from "../../../Client";
 import { UsOrEarnedDischargeForm } from "../../Forms/UsOrEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { SupervisionOpportunityType } from "../../OpportunityConfigs";
 import { OpportunityRequirement } from "../../types";
-import { CriteriaCopy, hydrateCriteria } from "../../utils";
+import { hydrateUntypedCriteria } from "../../utils";
 import {
   UsOrEarnedDischargeReferralRecord,
   usOrEarnedDischargeSchema,
-  UsOrEarnedDischargeSubOpportunity,
 } from "./UsOrEarnedDischargeReferralRecord";
-
-const OPPORTUNITY_TYPE: SupervisionOpportunityType = "usOrEarnedDischarge";
-
-const CRITERIA_COPY: CriteriaCopy<UsOrEarnedDischargeSubOpportunity> = {
-  eligibleCriteria: [
-    [
-      "eligibleStatute",
-      {
-        text: "Currently serving for a felony or misdemeanor that is eligible for EDIS",
-        tooltip:
-          "Felony and/or designated drug-related or person misdemeanor convictions sentenced to Probation, Local Control Post-Prison Supervision or Board Post-Prison Supervision",
-      },
-    ],
-
-    [
-      "pastHalfCompletionOrSixMonths",
-      {
-        text: "Has served at least 6 months or half the supervision period",
-        tooltip:
-          "Served the minimum period of active supervision on the case under consideration (minimum of 6 months or half of the supervision period whichever is greater)",
-      },
-    ],
-    [
-      "noAdministrativeSanction",
-      {
-        text: "No administrative sanctions and has not been found in violation of the court in the past 6 months",
-        tooltip:
-          "Has not been administratively sanctioned or found in violation by the court in the immediate six months prior to review",
-      },
-    ],
-    [
-      "noConvictionDuringSentence",
-      {
-        text: "Not convicted of a crime that occurred while on supervision for the case under review",
-        tooltip:
-          "Has not been convicted of a crime (felony or misdemeanor) that occurred while on supervision for the case(s) under review.",
-      },
-    ],
-  ],
-  ineligibleCriteria: [],
-};
 
 export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
   Client,
   UsOrEarnedDischargeReferralRecord
 > {
-  client: Client;
-
   form: UsOrEarnedDischargeForm;
 
   constructor(client: Client) {
     super(
       client,
-      OPPORTUNITY_TYPE,
+      "usOrEarnedDischarge",
       client.rootStore,
       usOrEarnedDischargeSchema.parse,
     );
-
-    this.client = client;
 
     this.form = new UsOrEarnedDischargeForm(this, client.rootStore);
 
@@ -96,6 +49,10 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
+    const {
+      record,
+      config: { eligibleCriteriaCopy },
+    } = this;
     if (!this.record) return [];
     let out: OpportunityRequirement[] = [];
     this.record.subOpportunities.forEach((subOpp) => {
@@ -105,9 +62,12 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
           isHeading: true,
           text: `${subOpp.metadata.courtCaseNumber}: ${subOpp.metadata.sentenceStatute}`,
         },
-        ...hydrateCriteria(subOpp, "eligibleCriteria", CRITERIA_COPY).map(
-          (oppReq) => ({ ...oppReq, key: `${subOpp.id}-${oppReq.text}` }),
-        ),
+        ...hydrateUntypedCriteria(
+          subOpp.eligibleCriteria,
+          eligibleCriteriaCopy,
+          this.criteriaFormatters,
+          record,
+        ).map((oppReq) => ({ ...oppReq, key: `${subOpp.id}-${oppReq.text}` })),
       ];
     });
     return out;

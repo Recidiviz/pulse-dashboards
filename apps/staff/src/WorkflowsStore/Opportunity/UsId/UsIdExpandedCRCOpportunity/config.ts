@@ -55,4 +55,43 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
     sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],
+    eligibleCriteriaCopy: {
+      custodyLevelIsMinimum: {
+        text: "Currently on Minimum custody",
+        tooltip:
+          "Shall be institutionally classified as minimum custody and cannot receive a classification override",
+      },
+
+      notServingForSexualOffense: {
+        text: "Not serving for a sexual offense",
+      },
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
+        text: "No escape attempts in the last 10 years",
+        tooltip:
+          "No escape, eluding police, or absconsion offense(s) in the last 10 years",
+      },
+      usIdNoDetainersForXcrcAndCrc: {
+        text: "No active felony detainers or holds",
+        tooltip: "Cannot have any felony detainers or holds",
+      },
+
+      usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
+        text: "Is within 6 months of release",
+        tooltip:
+          "Shall be within six months of release (generally calculated from the parole eligibility date, " +
+          "full-term release, or tentative parole date). Those who are past their parole eligibility date " +
+          "or within six months of a tentative parole date may also be considered, on a case by case basis",
+      },
+
+      usIdInCrcFacilityOrPwccUnit1For60Days: {
+        text: "Served at least 60 days at current facility",
+        tooltip:
+          "Shall have resided in a CRC or minimum custody employment release program " +
+          "(such as PWCC’s Unit 1) for a minimum of 60 days",
+      },
+
+      usIdInCrcFacilityOrPwccUnit1: {
+        text: "Resident in {{facilityName}} since {{date crcStartDate}}",
+      },
+    },
   };

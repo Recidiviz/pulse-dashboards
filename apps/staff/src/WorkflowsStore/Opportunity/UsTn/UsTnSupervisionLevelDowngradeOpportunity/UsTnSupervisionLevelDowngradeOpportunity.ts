@@ -15,12 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable, override } from "mobx";
-
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
-import { formatBaseSLDRequirements } from "../../SupervisionLevelDowngradeReferralRecord";
-import { OpportunityRequirement } from "../../types";
 import {
   getSLDValidator,
   UsTnSupervisionLevelDowngradeReferralRecord,
@@ -43,13 +39,5 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       ).parse,
       getSLDValidator(client),
     );
-
-    makeObservable(this, { requirementsMet: override });
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-
-    return formatBaseSLDRequirements(this.record);
   }
 }

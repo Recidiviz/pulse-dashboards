@@ -51,4 +51,21 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervis
         "Client is required to be supervised at a higher level of supervision by policy",
       Other: "Other: please specify a reason",
     },
+    eligibleCriteriaCopy: {
+      supervisionLevelHigherThanAssessmentLevel: {
+        text: "Currently supervised at {{supervisionLevel}}; Latest COMPAS score is {{assessmentLevel}}",
+        tooltip:
+          "The supervising Agent shall ensure that a Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) has been completed for each offender on their active caseload as outlined in OP 06.01.145 “Administration and Use of COMPAS and TAP.”  Unless mandated by statute or other criteria as directed in this operating procedure, the COMPAS shall be used to determine the initial supervision level of each offender.  Any offender placed on active supervision without a completed COMPAS shall be supervised at a Medium level of supervision until a COMPAS can be completed (unless a higher level of supervision is mandated as outlined in this operating procedure).",
+      },
+
+      usMiNotPastInitialClassificationReviewDate: {
+        text: "Not past initial classification review date",
+        tooltip:
+          "Classification reviews shall be completed after six months of active supervision.  Unless an offender’s supervision level is mandated by policy or statute, the supervising Agent shall reduce an offender’s supervision level if the offender has satisfactorily completed six continuous months at the current assigned supervision level.",
+      },
+
+      usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel: {
+        text: "Not serving for an offense ineligible for a lower supervision level",
+      },
+    },
   };
