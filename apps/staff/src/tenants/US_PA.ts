@@ -19,6 +19,7 @@
  */
 
 import { TenantConfig } from "../core/models/types";
+import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboards from "../RootStore/TenantStore/dashboardTenants";
 import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 
@@ -39,6 +40,7 @@ const US_PA_CONFIG: TenantConfig = {
   },
   enableUserRestrictions: false,
   navigation: {
+    insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients", ...WORKFLOWS_OPPORTUNITY_TYPES],
     // TODO remove once LANTERN is deprecated
     // @ts-ignore
