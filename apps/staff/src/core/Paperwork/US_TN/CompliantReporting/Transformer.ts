@@ -23,7 +23,7 @@ import {
 } from "../../../../utils";
 import type {
   Client,
-  CompliantReportingReferralRecordFull,
+  CompliantReportingReferralRecord,
   CompliantReportingTransformedETLFormInput,
 } from "../../../../WorkflowsStore";
 
@@ -42,7 +42,7 @@ function formatSentenceLength(
 
 export const transform = (
   client: Client,
-  record: CompliantReportingReferralRecordFull,
+  record: CompliantReportingReferralRecord,
 ): CompliantReportingTransformedETLFormInput => {
   const { formInformation } = record;
 

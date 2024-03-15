@@ -24,7 +24,7 @@ import {
 import { dateToTimestamp } from "../../../utils";
 import { UsTnCustodyLevelDowngradeReferralRecord } from "../..";
 import { SupervisionOpportunityType } from "../../OpportunityConfigs";
-import { CompliantReportingReferralRecordFull } from "../CompliantReportingOpportunity";
+import { CompliantReportingReferralRecord } from "../CompliantReportingOpportunity";
 import { UsTnAnnualReclassificationReviewReferralRecord } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationOpportunity";
 
@@ -106,9 +106,8 @@ export const usTnUserRecord: CombinedUserRecord = {
   },
 };
 
-export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecordFull> =
+export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> =
   {
-    remainingCriteriaNeeded: 0,
     eligibleCriteria: {
       usTnOnEligibleLevelForSufficientTime: {
         eligibleDate: parseISO("2021-12-20"),
@@ -171,7 +170,7 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     },
   };
 
-export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecordFull> =
+export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecord> =
   {
     eligibleCriteria: {
       usTnOnEligibleLevelForSufficientTime: {
@@ -255,7 +254,7 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
   };
 
 export const compliantReportingIneligibleCriteria: Required<
-  NonNullable<CompliantReportingReferralRecordFull["ineligibleCriteria"]>
+  NonNullable<CompliantReportingReferralRecord["ineligibleCriteria"]>
 > = {
   usTnOnEligibleLevelForSufficientTime: {
     eligibleDate: parseISO("2022-08-15"),
@@ -279,9 +278,8 @@ export const compliantReportingIneligibleCriteria: Required<
   },
 };
 
-export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecordFull> =
+export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecord> =
   {
-    remainingCriteriaNeeded: 1,
     eligibleCriteria: {
       usTnNoArrestsInPastYear: {},
       usTnSpecialConditionsAreCurrent: {

@@ -40,8 +40,8 @@ import {
 } from "../__fixtures__";
 import type { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
 import {
-  CompliantReportingReferralRecordFull,
-  transformCompliantReportingReferral,
+  CompliantReportingReferralRecord,
+  compliantReportingSchema,
 } from "../CompliantReportingOpportunity";
 
 vi.mock("firebase/firestore");
@@ -124,7 +124,6 @@ describe("fully eligible", () => {
 describe.each([
   [
     "usTnFinesFeesEligible",
-    0,
     "Needs balance <$500 or a payment three months in a row",
     undefined,
     /Fee balance/,
@@ -132,14 +131,12 @@ describe.each([
   ],
   [
     "usTnNoRecentCompliantReportingRejections",
-    2,
     "Double check TEST1 contact note",
     /Has reported as instructed/,
     /DECF, DEDF, DEDU,/,
   ],
   [
     "usTnNoHighSanctionsInPastYear",
-    3,
     "Needs 14 more days without sanction higher than level 1",
     /sanctions/,
     /Sanctions/,
@@ -147,15 +144,13 @@ describe.each([
   ],
   [
     "usTnOnEligibleLevelForSufficientTime",
-    4,
     "Needs 14 more days on medium",
     /minimum supervision level for 1 year /,
     /on medium supervision for /,
     /stay on your current supervision level/,
   ],
 ] as [
-  criterionKey: keyof CompliantReportingReferralRecordFull["ineligibleCriteria"],
-  expectedRank: number,
+  criterionKey: keyof CompliantReportingReferralRecord["ineligibleCriteria"],
   expectedListText: string,
   expectedToolip: RegExp | undefined,
   expectedMissingText: RegExp,
@@ -164,7 +159,6 @@ describe.each([
   "almost eligible but for %s",
   (
     criterionKey,
-    expectedRank,
     expectedListText,
     expectedTooltip,
     expectedMissingText,
@@ -256,7 +250,7 @@ test("fetch CompliantReportingReferral uses recordId", async () => {
     root.firestoreStore,
     { raw: "compliantReportingReferrals" },
     compliantReportingEligibleClientRecord.recordId,
-    transformCompliantReportingReferral,
+    compliantReportingSchema.parse,
     expect.any(Function),
   );
 });

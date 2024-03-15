@@ -30,18 +30,9 @@ import { OpportunityRequirement, OpportunityStatus } from "../../types";
 import { formatNoteDate } from "../../utils/caseNotesUtils";
 import {
   CompliantReportingDraftData,
-  CompliantReportingReferralRecordFull,
-  transformCompliantReportingReferral,
+  CompliantReportingReferralRecord,
+  compliantReportingSchema,
 } from "./CompliantReportingReferralRecord";
-
-// ranked roughly by actionability
-export const COMPLIANT_REPORTING_ALMOST_CRITERIA_RANKED: (keyof CompliantReportingReferralRecordFull["ineligibleCriteria"])[] =
-  [
-    "usTnFinesFeesEligible",
-    "usTnNoRecentCompliantReportingRejections",
-    "usTnNoHighSanctionsInPastYear",
-    "usTnOnEligibleLevelForSufficientTime",
-  ];
 
 // This could be configured externally once it's fleshed out
 // to include all copy and other static data
@@ -103,7 +94,7 @@ type CompliantReportingUpdateRecord =
 
 const getRecordValidator =
   (client: Client) =>
-  (record?: CompliantReportingReferralRecordFull): void => {
+  (record?: CompliantReportingReferralRecord): void => {
     if (!record) {
       throw new OpportunityValidationError("No opportunity record found");
     }
@@ -142,7 +133,7 @@ const sanctionsAlmostEligibleText = (latestHighSanctionDate: Date) => {
 
 export class CompliantReportingOpportunity extends OpportunityBase<
   Client,
-  CompliantReportingReferralRecordFull,
+  CompliantReportingReferralRecord,
   CompliantReportingUpdateRecord
 > {
   readonly type: OpportunityType = "compliantReporting";
@@ -154,7 +145,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       client,
       "compliantReporting",
       client.rootStore,
-      transformCompliantReportingReferral,
+      compliantReportingSchema.parse,
       getRecordValidator(client),
     );
 
@@ -395,34 +386,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
           .join("; ")}`,
         tooltip: CRITERIA.pastOffenses.tooltip,
       });
-    }
-
-    if (
-      usTnIneligibleOffensesExpired === undefined &&
-      usTnNotServingUnknownCrOffense === undefined &&
-      usTnNoPriorRecordWithIneligibleCrOffense === undefined
-    ) {
-      // If these are unset, then use the legacy text
-      let lifetimeOffensesText = "No lifetime offenses";
-      const { legacyLifetimeOffensesExpired, legacyPastOffenses } =
-        eligibleCriteria;
-      if (legacyLifetimeOffensesExpired?.length) {
-        lifetimeOffensesText = `Lifetime offense${
-          legacyLifetimeOffensesExpired.length !== 1 ? "s" : ""
-        } expired 10+ years ago: ${legacyLifetimeOffensesExpired.join("; ")}`;
-      }
-      requirements.push({
-        text: lifetimeOffensesText,
-        tooltip: CRITERIA.lifetimeOffenses.tooltip,
-      });
-
-      if (legacyPastOffenses?.length) {
-        requirements.push({
-          text: `Eligible with discretion: Prior offenses and lifetime offenses
-          expired less than 10 years ago: ${legacyPastOffenses.join("; ")}`,
-          tooltip: CRITERIA.pastOffenses.tooltip,
-        });
-      }
     }
 
     const zeroToleranceCodeDates =

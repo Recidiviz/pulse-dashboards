@@ -1,18 +1,103 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`transform record, old + new format, eligible 1`] = `
+exports[`parse almost eligible 1`] = `
 {
-  "caseNotes": {},
-  "clientFirstName": "LINDA",
-  "clientLastName": "SMITH",
-  "dateToday": "2022-03-25",
-  "eligibilityCategory": "c3",
   "eligibleCriteria": {
     "hasActiveSentence": {
       "hasActiveSentence": true,
     },
-    "legacyLifetimeOffensesExpired": [],
-    "legacyPastOffenses": undefined,
+    "usTnIneligibleOffensesExpired": null,
+    "usTnNoArrestsInPastYear": {},
+    "usTnNoHighSanctionsInPastYear": {},
+    "usTnNoPriorRecordWithIneligibleCrOffense": null,
+    "usTnNoRecentCompliantReportingRejections": {},
+    "usTnNoZeroToleranceCodesSpans": null,
+    "usTnNotServingIneligibleCrOffense": {},
+    "usTnNotServingUnknownCrOffense": null,
+    "usTnOnEligibleLevelForSufficientTime": {
+      "eligibleDate": 2020-08-01T00:00:00.000Z,
+      "eligibleLevel": "MINIMUM",
+      "startDateOnEligibleLevel": 2019-08-01T00:00:00.000Z,
+    },
+    "usTnPassedDrugScreenCheck": {
+      "hasAtLeast1NegativeDrugTestPastYear": [
+        {
+          "negativeScreenDate": 2023-02-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+        {
+          "negativeScreenDate": 2023-01-28T00:00:00.000Z,
+          "negativeScreenResult": "DRUN",
+        },
+      ],
+      "latestDrugTestIsNegative": {
+        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
+        "latestDrugScreenResult": "DRUN",
+      },
+    },
+    "usTnSpecialConditionsAreCurrent": {
+      "speNoteDue": null,
+    },
+  },
+  "externalId": "101",
+  "formInformation": {
+    "currentOffenses": [
+      "STOLEN PROPERTY",
+    ],
+    "docketNumbers": [
+      "10000",
+    ],
+    "expirationDate": 2030-02-12T00:00:00.000Z,
+    "judicialDistrict": [
+      "1",
+    ],
+    "restitutionAmt": 100,
+    "restitutionMonthlyPayment": 0,
+    "restitutionMonthlyPaymentTo": [
+      "PAYMENT TO",
+    ],
+    "sentenceLengthDays": 3629,
+    "sentenceStartDate": 2020-03-07T00:00:00.000Z,
+    "supervisionFeeArrearaged": true,
+    "supervisionFeeArrearagedAmount": 700,
+    "supervisionFeeAssessed": 700,
+    "supervisionFeeWaived": false,
+  },
+  "ineligibleCriteria": {
+    "usTnFinesFeesEligible": {
+      "hasFinesFeesBalanceBelow500": {
+        "amountOwed": 700,
+      },
+      "hasPayments3ConsecutiveMonths": {
+        "amountOwed": 700,
+        "consecutiveMonthlyPayments": 0,
+      },
+    },
+  },
+  "metadata": {
+    "convictionCounties": [
+      "123ABC",
+    ],
+    "ineligibleOffensesExpired": [],
+    "mostRecentArrestCheck": {
+      "contactDate": 2023-04-01T00:00:00.000Z,
+      "contactType": "ARRN",
+    },
+    "mostRecentSpeNote": {
+      "contactDate": 2019-08-15T00:00:00.000Z,
+      "contactType": "SPET",
+    },
+  },
+  "stateCode": "US_TN",
+}
+`;
+
+exports[`parse eligible 1`] = `
+{
+  "eligibleCriteria": {
+    "hasActiveSentence": {
+      "hasActiveSentence": true,
+    },
     "usTnFinesFeesEligible": {
       "hasFinesFeesBalanceBelow500": {
         "amountOwed": 400,
@@ -55,7 +140,7 @@ exports[`transform record, old + new format, eligible 1`] = `
       "speNoteDue": null,
     },
   },
-  "externalId": "202",
+  "externalId": "101",
   "formInformation": {
     "currentOffenses": [
       "STOLEN PROPERTY",
@@ -94,166 +179,6 @@ exports[`transform record, old + new format, eligible 1`] = `
       "contactType": "SPET",
     },
   },
-  "poFirstName": "TEST",
-  "poLastName": "OFFICER1",
-  "remainingCriteriaNeeded": 0,
-  "specialConditionsAlcDrugAssessmentComplete": false,
-  "specialConditionsAlcDrugScreen": false,
-  "specialConditionsAlcDrugTreatment": false,
-  "specialConditionsAlcDrugTreatmentCurrent": false,
-  "specialConditionsCommunityService": false,
-  "specialConditionsCommunityServiceCurrent": false,
-  "specialConditionsCounseling": false,
-  "specialConditionsCounselingAngerManagementCurrent": false,
-  "specialConditionsProgramming": false,
-  "specialConditionsProgrammingCognitiveBehavior": false,
-  "specialConditionsProgrammingCognitiveBehaviorCurrent": false,
-  "specialConditionsProgrammingFsw": false,
-  "specialConditionsProgrammingFswCurrent": false,
-  "specialConditionsProgrammingSafe": false,
-  "specialConditionsProgrammingSafeCurrent": false,
-  "specialConditionsProgrammingVictimImpact": false,
-  "specialConditionsProgrammingVictimImpactCurrent": false,
   "stateCode": "US_TN",
-  "supervisionType": "TN PROBATIONER",
-  "tdocId": "202",
-}
-`;
-
-exports[`transform record, old format 1`] = `
-{
-  "caseNotes": {},
-  "clientFirstName": "LINDA",
-  "clientLastName": "SMITH",
-  "dateToday": "2022-03-25",
-  "eligibilityCategory": "c3",
-  "eligibleCriteria": {
-    "hasActiveSentence": {
-      "hasActiveSentence": true,
-    },
-    "legacyLifetimeOffensesExpired": [],
-    "legacyPastOffenses": undefined,
-    "usTnFinesFeesEligible": {
-      "hasFinesFeesBalanceBelow500": {
-        "amountOwed": 600,
-      },
-      "hasPayments3ConsecutiveMonths": {
-        "amountOwed": 0,
-        "consecutiveMonthlyPayments": 0,
-      },
-      "hasPermanentFinesFeesExemption": {
-        "currentExemptions": [
-          "SSDB",
-          "SSDB",
-        ],
-      },
-    },
-    "usTnIneligibleOffensesExpired": undefined,
-    "usTnNoArrestsInPastYear": {},
-    "usTnNoHighSanctionsInPastYear": {},
-    "usTnNoPriorRecordWithIneligibleCrOffense": undefined,
-    "usTnNoRecentCompliantReportingRejections": {},
-    "usTnNoZeroToleranceCodesSpans": null,
-    "usTnNotServingIneligibleCrOffense": {},
-    "usTnNotServingUnknownCrOffense": undefined,
-    "usTnOnEligibleLevelForSufficientTime": {
-      "eligibleDate": 2023-12-01T00:00:00.000Z,
-      "eligibleLevel": "UNKNOWN",
-      "startDateOnEligibleLevel": 2019-09-01T00:00:00.000Z,
-    },
-    "usTnPassedDrugScreenCheck": {
-      "hasAtLeast1NegativeDrugTestPastYear": [
-        {
-          "negativeScreenDate": 2023-02-28T00:00:00.000Z,
-          "negativeScreenResult": "DRUN",
-        },
-        {
-          "negativeScreenDate": 2023-01-28T00:00:00.000Z,
-          "negativeScreenResult": "DRUN",
-        },
-      ],
-      "latestDrugTestIsNegative": {
-        "latestDrugScreenDate": 2023-02-28T00:00:00.000Z,
-        "latestDrugScreenResult": "DRUN",
-      },
-    },
-    "usTnSpecialConditionsAreCurrent": {
-      "speNoteDue": 2022-09-10T00:00:00.000Z,
-    },
-  },
-  "externalId": "202",
-  "formInformation": {
-    "courtCostsPaid": false,
-    "currentExemptionsAndExpiration": [
-      {
-        "endDate": null,
-        "exemptionReason": "SSDB",
-      },
-      {
-        "endDate": null,
-        "exemptionReason": "SSDB",
-      },
-    ],
-    "currentOffenses": [
-      "FAILURE TO APPEAR (FELONY)",
-    ],
-    "docketNumbers": [
-      "10000",
-    ],
-    "driversLicense": "ABC123",
-    "expirationDate": 2030-02-12T00:00:00.000Z,
-    "judicialDistrict": [
-      "1",
-    ],
-    "restitutionAmt": 100,
-    "restitutionMonthlyPayment": 0,
-    "restitutionMonthlyPaymentTo": [
-      "PAYMENT TO",
-    ],
-    "sentenceLengthDays": 3629,
-    "sentenceStartDate": 2020-03-07T00:00:00.000Z,
-    "supervisionFeeArrearaged": false,
-    "supervisionFeeArrearagedAmount": 700,
-    "supervisionFeeAssessed": 700,
-    "supervisionFeeWaived": false,
-  },
-  "ineligibleCriteria": {},
-  "metadata": {
-    "convictionCounties": [
-      "123ABC",
-    ],
-    "ineligibleOffensesExpired": [],
-    "mostRecentArrestCheck": {
-      "contactDate": 2023-04-01T00:00:00.000Z,
-      "contactType": "ARRN",
-    },
-    "mostRecentSpeNote": {
-      "contactDate": 2022-01-10T00:00:00.000Z,
-      "contactType": "SPEC",
-    },
-  },
-  "poFirstName": "TEST",
-  "poLastName": "OFFICER1",
-  "remainingCriteriaNeeded": 0,
-  "specialConditionsAlcDrugAssessmentComplete": false,
-  "specialConditionsAlcDrugScreen": false,
-  "specialConditionsAlcDrugTreatment": false,
-  "specialConditionsAlcDrugTreatmentCurrent": false,
-  "specialConditionsCommunityService": false,
-  "specialConditionsCommunityServiceCurrent": false,
-  "specialConditionsCounseling": false,
-  "specialConditionsCounselingAngerManagementCurrent": false,
-  "specialConditionsProgramming": false,
-  "specialConditionsProgrammingCognitiveBehavior": false,
-  "specialConditionsProgrammingCognitiveBehaviorCurrent": false,
-  "specialConditionsProgrammingFsw": false,
-  "specialConditionsProgrammingFswCurrent": false,
-  "specialConditionsProgrammingSafe": false,
-  "specialConditionsProgrammingSafeCurrent": false,
-  "specialConditionsProgrammingVictimImpact": false,
-  "specialConditionsProgrammingVictimImpactCurrent": false,
-  "stateCode": "US_TN",
-  "supervisionType": "TN PROBATIONER",
-  "tdocId": "202",
 }
 `;
