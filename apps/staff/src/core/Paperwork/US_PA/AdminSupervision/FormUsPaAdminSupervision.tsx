@@ -25,6 +25,7 @@ import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
+import FormClientDetails from "./FormClientDetails";
 import FormHeading from "./FormHeading";
 
 const FormPage = styled.div`
@@ -67,7 +68,8 @@ export const FormUsPaAdminSupervision = observer(function FormSCCP() {
           <PrintablePage>
             <FormPage>
               <FormHeading />
-              There will be a form here soon!
+              <FormClientDetails />
+              There will be a checklist here soon!
             </FormPage>
           </PrintablePage>
         </PrintablePageMargin>

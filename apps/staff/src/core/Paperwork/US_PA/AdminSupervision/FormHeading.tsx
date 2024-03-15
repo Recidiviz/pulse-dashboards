@@ -32,7 +32,7 @@ const Logo = styled.img`
 const ContentContainer = styled.div`
   display: flex;
   align-items: flex-end;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 `;
 
 const HeadingText = styled.div`
