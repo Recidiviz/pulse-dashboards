@@ -37,7 +37,6 @@ import {
 import CoreStoreProvider from "./CoreStoreProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
-import PageImpact from "./PageImpact";
 import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
 import PageSystem from "./PageSystem";
@@ -47,7 +46,6 @@ import PathwaysNavigation from "./PathwaysNavigation";
 import {
   DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
-  IMPACT_PATHS,
   INSIGHTS_PATHS,
   WORKFLOWS_PATHS,
 } from "./views";
@@ -121,10 +119,6 @@ const DashboardLayout: React.FC = () => {
               <Route
                 path={`${WORKFLOWS_PATHS.workflows}/*`}
                 element={<PageWorkflows />}
-              />
-              <Route
-                path={`${IMPACT_PATHS.impact}/*`}
-                element={<PageImpact />}
               />
               {/* TODO(#4601): Remove redirect after confirming no longer in use */}
               <Route

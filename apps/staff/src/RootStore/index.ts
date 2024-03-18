@@ -21,7 +21,6 @@ import { computed, configure, makeObservable, onReactionError } from "mobx";
 import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
-import ImpactStore from "../core/ImpactStore";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
 import { WorkflowsStore } from "../WorkflowsStore";
@@ -94,8 +93,6 @@ export class RootStore {
 
   firestoreStore: FirestoreStore;
 
-  impactStore: ImpactStore;
-
   insightsStore: InsightsStore;
 
   constructor() {
@@ -121,8 +118,6 @@ export class RootStore {
     this.analyticsStore = new AnalyticsStore({ rootStore: this });
 
     this.firestoreStore = new FirestoreStore({ rootStore: this });
-
-    this.impactStore = new ImpactStore({ rootStore: this });
 
     this.insightsStore = new InsightsStore(this);
   }

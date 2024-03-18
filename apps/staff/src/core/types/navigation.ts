@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  ImpactPageRootPath,
-  ImpactSection,
-  PathwaysPageRootPath,
-  PathwaysSection,
-  ViewRootPath,
-} from "../views";
+import { PathwaysPageRootPath, PathwaysSection, ViewRootPath } from "../views";
 
 export type RoutePermission = (string | any)[];
 
@@ -29,6 +23,5 @@ export type NavigationSection = keyof Navigation;
 
 export type Navigation = Partial<
   Record<ViewRootPath, string[]> &
-    Record<PathwaysPageRootPath, PathwaysSection[]> &
-    Record<ImpactPageRootPath, ImpactSection[]>
+    Record<PathwaysPageRootPath, PathwaysSection[]>
 >;

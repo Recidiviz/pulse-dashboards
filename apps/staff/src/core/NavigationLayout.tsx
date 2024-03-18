@@ -30,7 +30,6 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import { MdStackedLineChart } from "react-icons/md";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -320,18 +319,6 @@ const PathwaysLink = observer(function PathwaysLink({
   );
 });
 
-function ImpactLink({ enabled }: OptionalLinkProps) {
-  const { isMobile } = useIsMobile(true);
-
-  if (!enabled) return null;
-  return (
-    <NavLink to={`/${DASHBOARD_VIEWS.impact}`}>
-      {isMobile && <MdStackedLineChart size={20} />}
-      Go to Impact
-    </NavLink>
-  );
-}
-
 function InsightsLink({ enabled }: OptionalLinkProps) {
   const { isMobile } = useIsMobile(true);
 
@@ -401,8 +388,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       (userAllowedNavigation.system || []).length > 0;
     const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
     const enableOperations = !!userAllowedNavigation.operations;
-    const enabledImpact =
-      !!userAllowedNavigation.impact && userStore.isRecidivizUser;
     const enabledInsights = !!userAllowedNavigation.insights;
 
     const isInsightsView = view === DASHBOARD_VIEWS.insights;
@@ -420,7 +405,6 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <PathwaysLink enabled={enabledPathwaysPages} />
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} />
-        <ImpactLink enabled={enabledImpact} />
         <InsightsLink enabled={enabledInsights} />
         <LogoutLink enabled={!isOfflineMode()} />
       </>

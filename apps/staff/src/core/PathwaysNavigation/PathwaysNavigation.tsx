@@ -31,11 +31,7 @@ const PathwaysNavigation: React.FC = () => {
   const view = pathname.split("/")[1];
   if (
     !currentTenantId ||
-    ![
-      DASHBOARD_VIEWS.system,
-      DASHBOARD_VIEWS.methodology,
-      DASHBOARD_VIEWS.impact,
-    ].includes(view as any)
+    ![DASHBOARD_VIEWS.system, DASHBOARD_VIEWS.methodology].includes(view as any)
   )
     return null;
 

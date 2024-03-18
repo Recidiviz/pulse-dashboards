@@ -22,8 +22,6 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import {
   DASHBOARD_VIEWS,
-  IMPACT_PAGES,
-  IMPACT_SECTIONS,
   INSIGHTS_PAGES,
   PATHWAYS_PAGES,
   PATHWAYS_SECTIONS,
@@ -106,11 +104,6 @@ const US_TN_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     methodology: [DASHBOARD_VIEWS.system],
-    impact: [IMPACT_PAGES.compliantReportingWorkflows],
-    compliantReportingWorkflows: [
-      IMPACT_SECTIONS.avgPopulationCompliantReporting,
-      IMPACT_SECTIONS.avgDailyPopulation,
-    ],
   },
   tableColumns: enabledTableColumns[pathways.US_TN],
 };

@@ -24,7 +24,6 @@ import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { UserAvatar } from "../Avatar";
 import DashboardLayout from "../DashboardLayout";
-import PageImpact from "../PageImpact";
 import PageInsights from "../PageInsights";
 import PageMethodology from "../PageMethodology";
 import PageSystem from "../PageSystem";
@@ -51,7 +50,6 @@ vi.mock("../PageInsights", () => {
     default: vi.fn(),
   };
 });
-vi.mock("../PageImpact");
 vi.mock("../PageMethodology");
 vi.mock("../../components/NotFound");
 
@@ -62,7 +60,6 @@ describe("DashboardLayout", () => {
     (UserAvatar as Mock).mockReturnValue(null);
     (IE11Banner as Mock).mockReturnValue(null);
     (PageSystem as Mock).mockReturnValue(mockWithTestId("page-system-id"));
-    (PageImpact as Mock).mockReturnValue(mockWithTestId("page-impact-id"));
     (PageWorkflows as Mock).mockReturnValue(
       mockWithTestId("page-workflows-id"),
     );
@@ -93,31 +90,6 @@ describe("DashboardLayout", () => {
       renderLayout(DASHBOARD_PATHS.system);
 
       expect(screen.getByTestId("page-system-id")).toBeInTheDocument();
-    });
-  });
-
-  describe("PageImpact", () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-    it("should render Impact page when currentTenantId is authorized", () => {
-      mockUseRootStore.mockReturnValue({
-        userStore: { userAllowedNavigation: { impact: [] } },
-        currentTenantId: "US_TN",
-      });
-      renderLayout(`/${DASHBOARD_VIEWS.impact}`);
-
-      expect(screen.getByTestId("page-impact-id")).toBeInTheDocument();
-    });
-
-    it("should not render Impact when currentTenantId is not authorized", () => {
-      mockUseRootStore.mockReturnValue({
-        userStore: { userAllowedNavigation: { revocations: [] } },
-        currentTenantId: "US_PA",
-      });
-      renderLayout(`/${DASHBOARD_VIEWS.impact}`);
-
-      expect(screen.getByTestId("not-found-id")).toBeInTheDocument();
     });
   });
 
