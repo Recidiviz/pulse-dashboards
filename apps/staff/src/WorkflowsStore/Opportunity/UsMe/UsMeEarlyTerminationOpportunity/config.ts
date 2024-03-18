@@ -44,7 +44,7 @@ export const usMeEarlyTerminationConfig: OpportunityConfig<UsMeEarlyTerminationO
         "Continuation on probation would benefit the community or the client",
       COMPLETION: "Has not completed conditions of probation",
       CONDUCT: "Has engaged in prohibited conduct",
-      Other: "Other, please specify a reason",
+      OTHER_CORIS: "Other, please add a case note in CORIS",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ME,
     sidebarComponents: ["ClientProfileDetails", "CaseNotes"],

@@ -16,7 +16,6 @@
 // =============================================================================
 import simplur from "simplur";
 
-import { OTHER_KEY } from "../../../utils";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMeSCCPOpportunity } from "./UsMeSCCPOpportunity";
 
@@ -45,7 +44,7 @@ export const usMeSCCPConfig: OpportunityConfig<UsMeSCCPOpportunity> = {
     PROGRAM: "Has not completed required core programming",
     DISCIPLINE: "Has a Class A or B disciplinary violation pending",
     DECLINE: "Resident declined opportunity to apply for SCCP",
-    [OTHER_KEY]: "Other, please specify a reason",
+    OTHER_CORIS: "Other, please add a case note in CORIS",
   },
   methodologyUrl: "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx",
   sidebarComponents: ["Incarceration", "CaseNotes"],
