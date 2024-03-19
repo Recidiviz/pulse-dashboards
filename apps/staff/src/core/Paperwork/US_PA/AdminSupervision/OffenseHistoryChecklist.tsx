@@ -82,7 +82,7 @@ const ChecklistColumn = ({ columnStart, header, infoList }: ColumnProps) => {
       {infoList.map((info, index) => {
         const row = (
           <CheckListRow
-            key={info.label ?? index}
+            key={info.label ? info.label : index}
             columnStart={columnStart}
             row={index + rowOffset}
             label={info.label}

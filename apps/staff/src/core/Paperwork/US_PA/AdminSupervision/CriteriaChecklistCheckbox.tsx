@@ -19,27 +19,37 @@
 import * as React from "react";
 import styled from "styled-components/macro";
 
-const ContentContainer = styled.div`
+import { BLUE_BACKGROUND } from "./constants";
+import { Checkbox } from "./OffenseHistoryCheckbox";
+
+const ContentContainer = styled.div<CriteriaCheckboxProps>`
+  grid-area: ${({ row }) => row} / ${({ column }) => column} /
+    ${({ span }) => (span ? `span 2 / span 2` : `span 1 / span 1`)};
   display: flex;
+  padding-top: ${({ span }) => (span ? "7px" : "1px")};
   justify-content: center;
   width: 100%;
+  height: 100%;
+  border-bottom: 0.5px solid black;
+  border-right: 0.5px solid black;
+  ${({ span }) => span && `background-color: ${BLUE_BACKGROUND}`}
 `;
 
-export const Checkbox = styled.div`
-  border: 0.5px solid black;
-  width: 7px;
-  height: 7px;
-  margin-top: 1px;
-  margin-right: 4px;
-`;
+type CriteriaCheckboxProps = {
+  row: number;
+  column: number;
+  span?: number;
+};
 
-const OffenseHistoryCheckbox: React.FC = () => {
+const CriteriaChecklistCheckbox = (props: CriteriaCheckboxProps) => {
   return (
-    <ContentContainer>
+    <ContentContainer {...props}>
       <Checkbox />
       YES
+      <Checkbox style={{ marginLeft: "7px" }} />
+      NO
     </ContentContainer>
   );
 };
 
-export default OffenseHistoryCheckbox;
+export default CriteriaChecklistCheckbox;

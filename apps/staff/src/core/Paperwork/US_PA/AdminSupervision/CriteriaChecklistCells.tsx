@@ -15,31 +15,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
+ *
+ * Various cell components for use in the form criteria checklist.
  */
-import * as React from "react";
 import styled from "styled-components/macro";
 
-const ContentContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-`;
+import { BLUE_BACKGROUND, GRAY_BACKGROUND } from "./constants";
 
-export const Checkbox = styled.div`
+export const GreyCell = styled.div`
+  grid-area: 1 / 1 / span 1 / end;
   border: 0.5px solid black;
-  width: 7px;
-  height: 7px;
-  margin-top: 1px;
-  margin-right: 4px;
+  border-top: 0;
+  font-weight: bold;
+  display: flex;
+  background-color: ${GRAY_BACKGROUND};
+  color: white;
+  justify-content: center;
+  padding-top: 1px;
 `;
 
-const OffenseHistoryCheckbox: React.FC = () => {
-  return (
-    <ContentContainer>
-      <Checkbox />
-      YES
-    </ContentContainer>
-  );
-};
+export const BlueCell = styled.div`
+  grid-area: 2 / 1 / span 2 / span 5;
+  border: 0.5px solid black;
+  border-top: 0;
+  display: flex;
+  background-color: ${BLUE_BACKGROUND};
+  padding-left: 6px;
+  padding-top: 1px;
+`;
 
-export default OffenseHistoryCheckbox;
+export const WhiteCell = styled.div<{ column: number; row: number }>`
+  grid-area: ${({ row }) => row} / ${({ column }) => column} / span 1 / span 2;
+  border: 0.5px solid black;
+  border-top: 0;
+  display: flex;
+  padding-left: 6px;
+  padding-top: 1px;
+`;

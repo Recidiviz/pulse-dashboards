@@ -25,6 +25,7 @@ import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
+import CriteriaChecklist from "./CriteriaChecklist";
 import FormClientDetails from "./FormClientDetails";
 import FormHeading from "./FormHeading";
 import OffenseHistoryChecklist from "./OffenseHistoryChecklist";
@@ -71,7 +72,8 @@ export const FormUsPaAdminSupervision = observer(function FormSCCP() {
               <FormHeading />
               <FormClientDetails />
               <OffenseHistoryChecklist />
-              There will be MORE checklist here soon!
+              <CriteriaChecklist />
+              There will be a sign-off section here soon!
             </FormPage>
           </PrintablePage>
         </PrintablePageMargin>

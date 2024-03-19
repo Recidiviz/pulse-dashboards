@@ -25,9 +25,8 @@ import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opport
 import DOCXFormInput from "../../DOCXFormInput";
 import {
   FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY,
-  INSTRUCTIONS,
-  INSTRUCTIONS_RED,
   ROW_INFO,
+  strings,
 } from "./constants";
 
 const ContentContainer = styled.div`
@@ -98,8 +97,8 @@ const FormClientDetails: React.FC = () => {
         <Row key={info.name} title={info.label} row={n + 1} name={info.name} />
       ))}
       <InstructionsCell>
-        {INSTRUCTIONS}
-        <RedText>{INSTRUCTIONS_RED}</RedText>
+        {strings.instructions}
+        <RedText>{strings.instructionsRed}</RedText>
       </InstructionsCell>
     </ContentContainer>
   );

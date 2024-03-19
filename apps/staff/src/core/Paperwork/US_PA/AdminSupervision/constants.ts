@@ -23,9 +23,6 @@ import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opport
 export const FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY =
   "Calibri, Arial, sans-serif";
 
-export const INSTRUCTIONS = `Instructions: Review current offenses and criminal history for crimes which would disqualify reentrant for administrative parole. `;
-export const INSTRUCTIONS_RED = `Any conviction (and/or delinquent adjudication for offenses designated with an asterisk *) will preclude assignment to Administrative Parole.`;
-
 /**
  * Labels and field names for the client details section.
  */
@@ -120,4 +117,21 @@ export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
   { label: "", rowSpan: 1 },
 ];
 
+export const CRITERIA_LABELS = [
+  "Incurred a high sanction within the past year",
+  "Fulfilled treatment requirements",
+  "Fulfilled special conditions",
+  "Making efforts to reduce financial obligations",
+];
+
 export const GRID_ROW_COUNT = 27;
+
+export const GRAY_BACKGROUND = "#353535";
+export const BLUE_BACKGROUND = "#d8e6fc";
+
+export const strings = {
+  instructions: `Instructions: Review current offenses and criminal history for crimes which would disqualify reentrant for administrative parole. `,
+  instructionsRed: `Any conviction (and/or delinquent adjudication for offenses designated with an asterisk *) will preclude assignment to Administrative Parole.`,
+  continueHeader: `If any "YES" is checked above, then the reentrant is not eligible for Administrative Parole. If "NONE", continue with the below questionnaire.`,
+  dispositionHeader: `Are there any unreported dispositions in the reentrant's criminal history for any of the above listed personal injury crimes/other offenses? (Note date/offense below)`,
+} as const;
