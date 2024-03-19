@@ -20,39 +20,16 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import pdocLogo from "./assets/pdocLogo.png";
-import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
-
-const Logo = styled.img`
-  width: 175px;
-  height: auto;
-`;
+import { strings } from "./constants";
 
 const ContentContainer = styled.div`
   display: flex;
-  align-items: flex-end;
-  margin-bottom: 10px;
+  font-size: ${rem(7)};
+  margin-bottom: 20px;
 `;
 
-const HeadingText = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 800px;
-  font-size: ${rem(15)};
-  font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
-  letter-spacing: -0.01em;
-  border: 0.5px solid black;
-  margin-bottom: 5px;
-`;
+const Footer: React.FC = () => (
+  <ContentContainer>{strings.footer}</ContentContainer>
+);
 
-const FormHeading: React.FC = () => {
-  return (
-    <ContentContainer>
-      <Logo src={pdocLogo} alt="PDOC Logo" />
-      <HeadingText>Administrative Parole Eligibility</HeadingText>
-    </ContentContainer>
-  );
-};
-
-export default FormHeading;
+export default Footer;

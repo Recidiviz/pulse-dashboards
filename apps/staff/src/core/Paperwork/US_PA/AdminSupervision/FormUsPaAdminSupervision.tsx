@@ -26,18 +26,27 @@ import FormViewer from "../../FormViewer";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
 import CriteriaChecklist from "./CriteriaChecklist";
+import Footer from "./Footer";
 import FormClientDetails from "./FormClientDetails";
 import FormHeading from "./FormHeading";
 import OffenseHistoryChecklist from "./OffenseHistoryChecklist";
+import SignOffSection from "./SignOffSection";
 
 const FormPage = styled.div`
   font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
   display: flex;
+  height: 100%;
+  justify-content: space-between;
   flex-direction: column;
   font-size: ${rem(9)};
   color: black;
   background-color: white;
   padding: 0 ${rem(18)};
+`;
+
+const FormContent = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const formDownloader = async (client: Client): Promise<void> => {
@@ -69,11 +78,14 @@ export const FormUsPaAdminSupervision = observer(function FormSCCP() {
         <PrintablePageMargin>
           <PrintablePage>
             <FormPage>
-              <FormHeading />
-              <FormClientDetails />
-              <OffenseHistoryChecklist />
-              <CriteriaChecklist />
-              There will be a sign-off section here soon!
+              <FormContent>
+                <FormHeading />
+                <FormClientDetails />
+                <OffenseHistoryChecklist />
+                <CriteriaChecklist />
+                <SignOffSection />
+              </FormContent>
+              <Footer />
             </FormPage>
           </PrintablePage>
         </PrintablePageMargin>

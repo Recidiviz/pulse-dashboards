@@ -134,4 +134,9 @@ export const strings = {
   instructionsRed: `Any conviction (and/or delinquent adjudication for offenses designated with an asterisk *) will preclude assignment to Administrative Parole.`,
   continueHeader: `If any "YES" is checked above, then the reentrant is not eligible for Administrative Parole. If "NONE", continue with the below questionnaire.`,
   dispositionHeader: `Are there any unreported dispositions in the reentrant's criminal history for any of the above listed personal injury crimes/other offenses? (Note date/offense below)`,
+  eligibilityHeader: `Eligible for Administrative Parole?`,
+  dispositionNotes: `List unreported disposition information:`,
+  agentSignature: `Agent Signature`,
+  agentName: `Agent Name (Printed)`,
+  footer: `DC-P 402 | rvsd. 08.2021`,
 } as const;

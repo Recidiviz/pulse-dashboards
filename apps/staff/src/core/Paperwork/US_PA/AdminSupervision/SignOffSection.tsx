@@ -20,39 +20,46 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import pdocLogo from "./assets/pdocLogo.png";
-import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
-
-const Logo = styled.img`
-  width: 175px;
-  height: auto;
-`;
+import { strings } from "./constants";
+import { Checkbox } from "./OffenseHistoryCheckbox";
+import {
+  DispositionCell,
+  EligibilityCell,
+  SignOffCell,
+} from "./SignOffSectionCells";
 
 const ContentContainer = styled.div`
-  display: flex;
-  align-items: flex-end;
-  margin-bottom: 10px;
+  display: grid;
+  grid-template: repeat(7, 1fr) / 49% 3% 48%;
+  height: 75px;
+  font-size: ${rem(9)};
 `;
 
-const HeadingText = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 800px;
-  font-size: ${rem(15)};
-  font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
-  letter-spacing: -0.01em;
-  border: 0.5px solid black;
-  margin-bottom: 5px;
+const SeparatorColumn = styled.div`
+  grid-area: 3 / 2 / span 3 / span 1;
+  background-color: #353535;
 `;
 
-const FormHeading: React.FC = () => {
+const SignOffSection: React.FC = () => {
   return (
     <ContentContainer>
-      <Logo src={pdocLogo} alt="PDOC Logo" />
-      <HeadingText>Administrative Parole Eligibility</HeadingText>
+      <EligibilityCell>
+        {strings.eligibilityHeader}
+        <Checkbox
+          style={{ marginBottom: "1px", marginLeft: "6px", borderWidth: "1px" }}
+        />
+        YES
+        <Checkbox
+          style={{ marginBottom: "1px", marginLeft: "6px", borderWidth: "1px" }}
+        />
+        NO
+      </EligibilityCell>
+      <SignOffCell column={1} label={strings.agentName} />
+      <SignOffCell column={3} label={strings.agentSignature} />
+      <DispositionCell>{strings.dispositionNotes}</DispositionCell>
+      <SeparatorColumn />
     </ContentContainer>
   );
 };
 
-export default FormHeading;
+export default SignOffSection;

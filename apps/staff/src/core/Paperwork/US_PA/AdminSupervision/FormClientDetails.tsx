@@ -16,7 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
@@ -104,4 +103,4 @@ const FormClientDetails: React.FC = () => {
   );
 };
 
-export default observer(FormClientDetails);
+export default FormClientDetails;
