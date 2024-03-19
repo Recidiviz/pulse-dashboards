@@ -15,24 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const formatCommand = (files) => `nx format:write --files=${files.join(",")}`;
+import { StrictMode } from "react";
+import * as ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 
-const lintCommand = (files) =>
-  `nx affected -t lint-files --files=${files.join(",")} --fix ${files
-    .map((path) => {
-      // assuming a relative path, the first two path segments are [project type]/[project name];
-      // these should be removed to make the path relative to the project root
-      return path.split("/").slice(2).join("/");
-    })
-    .join(" ")}`;
+import { App } from "./components/App/App";
 
-module.exports = {
-  // for linting and typechecking refer to (or create) per-project config file;
-  "**/*.{ts,tsx}": [
-    (files) => `nx affected -t typecheck --files=${files.join(",")}`,
-    lintCommand,
-    formatCommand,
-  ],
-  "**/*.{js,jsx,mjs}": [lintCommand, formatCommand],
-  "**/*.{!ts,tsx,js,jsx,mjs}": [formatCommand],
-};
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement,
+);
+root.render(
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
+);

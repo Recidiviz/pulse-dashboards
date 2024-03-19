@@ -19,7 +19,7 @@
       "path": "./tsconfig.app.json"
     },
     {
-      "path": "./tsconfig.test.json"
+      "path": "./tsconfig.spec.json"
     }
   ],
   "ts-node": {

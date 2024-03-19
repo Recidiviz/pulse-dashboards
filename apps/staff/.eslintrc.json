@@ -59,17 +59,6 @@
         "message": "Do not use Firestore's setDoc directly, use the FirestoreStore.updateDocument method instead.",
         "selector": "CallExpression[callee.name='setDoc']"
       }
-    ],
-    "no-restricted-imports": [
-      "error",
-      {
-        "paths": [
-          {
-            "name": "styled-components",
-            "message": "Please import from styled-components/macro."
-          }
-        ]
-      }
     ]
   },
   "settings": {

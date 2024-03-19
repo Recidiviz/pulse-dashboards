@@ -15,24 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const formatCommand = (files) => `nx format:write --files=${files.join(",")}`;
+import { AuthStore } from "@recidiviz/auth";
 
-const lintCommand = (files) =>
-  `nx affected -t lint-files --files=${files.join(",")} --fix ${files
-    .map((path) => {
-      // assuming a relative path, the first two path segments are [project type]/[project name];
-      // these should be removed to make the path relative to the project root
-      return path.split("/").slice(2).join("/");
-    })
-    .join(" ")}`;
+export class RootStore {
+  authStore: AuthStore;
 
-module.exports = {
-  // for linting and typechecking refer to (or create) per-project config file;
-  "**/*.{ts,tsx}": [
-    (files) => `nx affected -t typecheck --files=${files.join(",")}`,
-    lintCommand,
-    formatCommand,
-  ],
-  "**/*.{js,jsx,mjs}": [lintCommand, formatCommand],
-  "**/*.{!ts,tsx,js,jsx,mjs}": [formatCommand],
-};
+  constructor() {
+    this.authStore = new AuthStore({
+      // TODO(#5021): define and include real settings
+      authSettings: undefined,
+    });
+  }
+}

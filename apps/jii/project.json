@@ -1,0 +1,50 @@
+{
+  "name": "jii",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/jii/src",
+  "projectType": "application",
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json --noEmit",
+          "tsc -p ./tsconfig.spec.json --noEmit"
+        ],
+        "cwd": "{projectRoot}",
+        "forwardAllArgs": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["vite dev"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "offline": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["vite dev"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/apps/staff"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}

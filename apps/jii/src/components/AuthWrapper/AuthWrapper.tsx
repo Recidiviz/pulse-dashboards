@@ -15,24 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const formatCommand = (files) => `nx format:write --files=${files.join(",")}`;
+import { AuthWall } from "@recidiviz/auth";
+import { Loading } from "@recidiviz/design-system";
+import { FC, ReactNode } from "react";
 
-const lintCommand = (files) =>
-  `nx affected -t lint-files --files=${files.join(",")} --fix ${files
-    .map((path) => {
-      // assuming a relative path, the first two path segments are [project type]/[project name];
-      // these should be removed to make the path relative to the project root
-      return path.split("/").slice(2).join("/");
-    })
-    .join(" ")}`;
+import { isOfflineMode } from "../../utils/isOfflineMode";
+import { isTestMode } from "../../utils/isTestMode";
+import { useRootStore } from "../StoreProvider/useRootStore";
 
-module.exports = {
-  // for linting and typechecking refer to (or create) per-project config file;
-  "**/*.{ts,tsx}": [
-    (files) => `nx affected -t typecheck --files=${files.join(",")}`,
-    lintCommand,
-    formatCommand,
-  ],
-  "**/*.{js,jsx,mjs}": [lintCommand, formatCommand],
-  "**/*.{!ts,tsx,js,jsx,mjs}": [formatCommand],
+export const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
+  const { authStore } = useRootStore();
+
+  if (isOfflineMode() || isTestMode()) return children;
+
+  return (
+    <AuthWall
+      authStore={authStore}
+      loading={<Loading />}
+      unauthorizedPage={null}
+      emailVerificationPage={null}
+    >
+      {children}
+    </AuthWall>
+  );
 };

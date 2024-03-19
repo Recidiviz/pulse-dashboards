@@ -21,7 +21,18 @@
         ],
         "array-callback-return": ["warn", { "allowImplicit": true }],
         "simple-import-sort/imports": "error",
-        "simple-import-sort/exports": "error"
+        "simple-import-sort/exports": "error",
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "styled-components",
+                "message": "Please import from styled-components/macro."
+              }
+            ]
+          }
+        ]
       }
     },
     {
