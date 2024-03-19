@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -21,6 +22,8 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Client } from "../../../../WorkflowsStore";
+import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
+import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
@@ -50,46 +53,65 @@ const FormContent = styled.div`
 `;
 
 const formDownloader = async (client: Client): Promise<void> => {
-  return;
+  let contents: Partial<UsPaAdminSupervisionDraftData> = {};
+  // we are not mutating any observables here, just telling Mobx not to track this access
+  runInAction(() => {
+    contents = {
+      ...toJS(
+        client.verifiedOpportunities.usPaAdminSupervision?.form?.formData,
+      ),
+    };
+  });
+
+  await downloadSingle(
+    `${client?.displayName} - Form DC-P 402.docx`,
+    client.stateCode,
+    "admin_supervision_template.docx",
+    contents,
+    client.rootStore.getTokenSilently,
+  );
 };
 
-export const FormUsPaAdminSupervision = observer(function FormSCCP() {
-  const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+export const FormUsPaAdminSupervision = observer(
+  function FormUsPaAdminSupervision() {
+    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
-  const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedPerson?.verifiedOpportunities?.usPaAdminSupervision;
+    const { workflowsStore } = useRootStore();
+    const opportunity =
+      workflowsStore?.selectedPerson?.verifiedOpportunities
+        ?.usPaAdminSupervision;
 
-  if (!opportunity) {
-    return null;
-  }
+    if (!opportunity) {
+      return null;
+    }
 
-  const client = opportunity.person;
+    const client = opportunity.person;
 
-  return (
-    <FormContainer
-      heading="DC-P 402"
-      agencyName="PDOC"
-      onClickDownload={() => formDownloader(client)}
-      opportunity={opportunity}
-      downloadButtonLabel="Download DOCX"
-    >
-      <FormViewer formRef={formRef}>
-        <PrintablePageMargin>
-          <PrintablePage>
-            <FormPage>
-              <FormContent>
-                <FormHeading />
-                <FormClientDetails />
-                <OffenseHistoryChecklist />
-                <CriteriaChecklist />
-                <SignOffSection />
-              </FormContent>
-              <Footer />
-            </FormPage>
-          </PrintablePage>
-        </PrintablePageMargin>
-      </FormViewer>
-    </FormContainer>
-  );
-});
+    return (
+      <FormContainer
+        heading="DC-P 402"
+        agencyName="PDOC"
+        onClickDownload={() => formDownloader(client)}
+        opportunity={opportunity}
+        downloadButtonLabel="Download DOCX"
+      >
+        <FormViewer formRef={formRef}>
+          <PrintablePageMargin>
+            <PrintablePage>
+              <FormPage>
+                <FormContent>
+                  <FormHeading />
+                  <FormClientDetails />
+                  <OffenseHistoryChecklist />
+                  <CriteriaChecklist />
+                  <SignOffSection />
+                </FormContent>
+                <Footer />
+              </FormPage>
+            </PrintablePage>
+          </PrintablePageMargin>
+        </FormViewer>
+      </FormContainer>
+    );
+  },
+);
