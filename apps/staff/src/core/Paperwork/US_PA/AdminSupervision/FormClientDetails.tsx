@@ -95,7 +95,7 @@ const FormClientDetails: React.FC = () => {
   return (
     <ContentContainer>
       {ROW_INFO.map((info, n) => (
-        <Row title={info.label} row={n + 1} name={info.name} />
+        <Row key={info.name} title={info.label} row={n + 1} name={info.name} />
       ))}
       <InstructionsCell>
         {INSTRUCTIONS}

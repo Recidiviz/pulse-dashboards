@@ -27,6 +27,7 @@ import { PrintablePage, PrintablePageMargin } from "../../styles";
 import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
 import FormClientDetails from "./FormClientDetails";
 import FormHeading from "./FormHeading";
+import OffenseHistoryChecklist from "./OffenseHistoryChecklist";
 
 const FormPage = styled.div`
   font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
@@ -69,7 +70,8 @@ export const FormUsPaAdminSupervision = observer(function FormSCCP() {
             <FormPage>
               <FormHeading />
               <FormClientDetails />
-              There will be a checklist here soon!
+              <OffenseHistoryChecklist />
+              There will be MORE checklist here soon!
             </FormPage>
           </PrintablePage>
         </PrintablePageMargin>
