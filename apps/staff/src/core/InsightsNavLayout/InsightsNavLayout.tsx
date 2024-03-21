@@ -22,7 +22,10 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout } from "../NavigationLayout";
 
@@ -64,10 +67,11 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
   const {
     insightsStore: { supervisionStore },
   } = useRootStore();
+  const { insightsOnboarding } = useFeatureVariants();
 
   const isOnboardingView = pathname.split("/")[3] === "onboarding";
   const isHideNavLayout =
-    !supervisionStore?.userHasSeenOnboarding ||
+    (insightsOnboarding && !supervisionStore?.userHasSeenOnboarding) ||
     (supervisionStore?.insightsStore.rootStore.userStore.isRecidivizUser &&
       isOnboardingView);
 
