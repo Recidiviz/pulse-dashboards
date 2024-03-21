@@ -38,7 +38,7 @@ function MultiSelect({
   const ref = useRef();
   useEffect(() => {
     if (ref.current && ref.current.state.menuIsOpen) {
-      ref.current.select.focus();
+      ref.current.select?.focus();
     }
   }, [value]);
 
