@@ -60,8 +60,13 @@ export default defineConfig({
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
+      include: [/shared-filters/, /node_modules/],
     },
     emptyOutDir: true,
+  },
+
+  optimizeDeps: {
+    include: ["shared-filters"],
   },
 
   test: {

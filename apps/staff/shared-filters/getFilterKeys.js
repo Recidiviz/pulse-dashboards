@@ -41,13 +41,13 @@ const FILTER_KEYS = {
   },
 };
 
-const isServer = typeof "process" !== "undefined";
+const isBrowser = typeof window !== "undefined";
 
 function getFilterKeys() {
-  if (isServer) {
-    return FILTER_KEYS.SERVER;
+  if (isBrowser) {
+    return FILTER_KEYS.APP;
   }
-  return FILTER_KEYS.APP;
+  return FILTER_KEYS.SERVER;
 }
 
 module.exports = { getFilterKeys };

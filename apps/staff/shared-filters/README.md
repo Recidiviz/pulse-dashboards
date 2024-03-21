@@ -13,21 +13,10 @@ Here's a short description for the some of the main exports:
 
 ## Environment
 
-There is a dependency between the `getFilterKeys` function and the environment of the package that is using the shared-filters. `getFilterKeys` selects the format of the filter keys (camelcase vs snake-case) by checking the environment variable `REACT_APP_API_URL` to see if we are in a React environment.
+There is a dependency between the `getFilterKeys` function and the environment of the package that is using the shared-filters. `getFilterKeys` selects the format of the filter keys (camelcase vs snake-case) by detecting whether or not it is running in a browser environment (based on the existence of `window`).
 
 ## Development
 
-If you need your dev server to watch source changes in this package, you can use [`yarn link`](https://classic.yarnpkg.com/en/docs/cli/link/) to symlink the package during development.
+If you need your dev server to watch source changes in this package, run `nx link-shared-filters staff` in the root of this repo. This will use [`yarn link`](https://classic.yarnpkg.com/en/docs/cli/link/) to symlink the package during development. (This is also run before bundling the frontend for deployment, to prevent Vite from using an old cached version of the package.)
 
-You must first run `yarn link` within the `shared-filters` directory, and then run `yarn link shared-filters` in each of the dependent directories to use the linked package.
-
-```bash
-# From the `shared-filters/` directory
-[shared-filters]:> yarn link
-
-# From the dependent frontend directory
-[pulse-dashboards/src]:> yarn link shared-filters
-
-# From the dependent backend directory
-[pulse-dashboards/server]:> yarn link shared-filters
-```
+Changes to this package will not be hot-reloaded by Vite on the frontend; you need to restart the Vite dev server, either by killing and restarting `nx dev staff` or by saving `vite.config.mts` unchanged to trigger a Vite restart.

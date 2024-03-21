@@ -52,7 +52,7 @@
       "dependsOn": ["load-config-files", "env-dev"],
       "options": {
         "commands": [
-          "vite dev",
+          "vite dev --force",
           "nodemon server.js",
           "redis-server --port 6380"
         ],
@@ -91,6 +91,13 @@
         "cwd": "{projectRoot}"
       }
     },
+    "link-shared-filters": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": ". ./link_shared_filters.sh"
+      }
+    },
     "env-prod": {
       "executor": "nx:run-commands",
       "options": {
@@ -102,8 +109,7 @@
     },
     "build": {
       "executor": "@nx/vite:build",
-      "cache": true,
-      "dependsOn": ["load-config-files", "env-prod"],
+      "dependsOn": ["load-config-files", "env-prod", "link-shared-filters"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -119,8 +125,7 @@
     },
     "build-staging": {
       "executor": "@nx/vite:build",
-      "cache": true,
-      "dependsOn": ["load-config-files", "env-staging"],
+      "dependsOn": ["load-config-files", "env-staging", "link-shared-filters"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -136,7 +141,6 @@
     },
     "build-preview-ci": {
       "executor": "@nx/vite:build",
-      "cache": true,
       "dependsOn": ["env-preview-ci"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
@@ -153,8 +157,7 @@
     },
     "build-demo": {
       "executor": "@nx/vite:build",
-      "cache": true,
-      "dependsOn": ["load-config-files", "env-demo"],
+      "dependsOn": ["load-config-files", "env-demo", "link-shared-filters"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -168,7 +171,6 @@
     },
     "build-e2e": {
       "executor": "@nx/vite:build",
-      "cache": true,
       "dependsOn": ["env-e2e"],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
