@@ -587,7 +587,7 @@ export class WorkflowsStore implements Hydratable {
         .map((c) => c[opportunityStatus][opportunityType])
         .filter((opp) => opp !== undefined)
         .map((opp) => opp as Opportunity)
-        .sort((a: Opportunity, b: Opportunity) => a.compare(b));
+        .sort((a, b) => a.compare(b));
 
       mapping[opportunityType] = opportunities as Opportunity[];
     });

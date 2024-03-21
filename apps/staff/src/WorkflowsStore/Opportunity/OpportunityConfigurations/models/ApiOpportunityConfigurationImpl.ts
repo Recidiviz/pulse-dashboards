@@ -119,6 +119,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.ineligibleCriteriaCopy;
   }
 
+  get compareBy() {
+    return this.configurationObject.compareBy;
+  }
+
   get isEnabled(): boolean {
     const { featureVariants } = this.workflowsStore;
     const { featureVariant, inverseFeatureVariant } = this;

@@ -17,7 +17,7 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import WindowScroller from "react-virtualized/dist/commonjs/WindowScroller";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as List } from "react-window";

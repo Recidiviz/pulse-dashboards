@@ -18,13 +18,13 @@
 import { nextSunday } from "date-fns";
 import simplur from "simplur";
 
-import { FeatureVariant, TenantId } from "../../../RootStore/types";
-import { JusticeInvolvedPerson } from "../../types";
-import { OTHER_KEY } from "../../utils";
-import { WorkflowsStore } from "../../WorkflowsStore";
-import { OpportunityType } from "..";
-import { OpportunityBase } from "../OpportunityBase";
-import { ILocalOpportunityConfiguration } from "./interfaces/LocalOpportunityConfiguration";
+import { FeatureVariant, TenantId } from "../../../../RootStore/types";
+import { JusticeInvolvedPerson } from "../../../types";
+import { OTHER_KEY } from "../../../utils";
+import { WorkflowsStore } from "../../../WorkflowsStore";
+import { OpportunityType } from "../..";
+import { OpportunityBase } from "../../OpportunityBase";
+import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
 
 export const mockUsXxOpp: OpportunityType = "mockUsXxOpp" as OpportunityType;
 export const mockUsXxTwoOpp: OpportunityType =

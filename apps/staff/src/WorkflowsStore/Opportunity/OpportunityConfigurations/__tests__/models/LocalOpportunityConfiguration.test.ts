@@ -16,11 +16,11 @@
 // =============================================================================
 
 import { WorkflowsStore } from "../../../../WorkflowsStore";
-import { LocalOpportunityConfiguration } from "../../models/LocalOpportunityConfigurationImpl";
 import {
   mockLocalOpportunityConfigurationObject,
   mockWorkflowsStore,
-} from "../../utils";
+} from "../../__mocks__/utils";
+import { LocalOpportunityConfiguration } from "../../models/LocalOpportunityConfigurationImpl";
 
 describe("Local configuration class", () => {
   it("should be correctly initialized", () => {

@@ -45,4 +45,5 @@ export interface OpportunityConfiguration {
   tooltipEligibilityText?: string;
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;
+  compareBy: string[] | undefined;
 }

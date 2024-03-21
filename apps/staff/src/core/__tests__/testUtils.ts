@@ -75,6 +75,7 @@ export const mockOpportunity: Opportunity<Client> = {
       callToAction:
         "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
     }),
+    compareBy: ["reviewStatus"],
     firestoreCollection: "US_ID-pastFTRDReferrals",
     snooze: {
       defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),

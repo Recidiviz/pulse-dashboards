@@ -17,7 +17,6 @@
 
 import { add, format, parseISO, sub } from "date-fns";
 import { DocumentData } from "firebase/firestore";
-import { shuffle } from "lodash";
 import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 import { MockInstance } from "vitest";
@@ -44,7 +43,7 @@ import {
   INCOMPLETE_FORM_UPDATE,
   VIEWED_UPDATE,
 } from "../testUtils";
-import { Opportunity, OpportunityStatus } from "../types";
+import { Opportunity } from "../types";
 
 vi.mock("../../subscriptions");
 vi.mock("firebase/firestore");
@@ -780,119 +779,5 @@ describe("updateOpportunityEligibility", () => {
     expect(
       root.firestoreStore.deleteOpportunityDenialAndSnooze,
     ).toHaveBeenCalledWith("LSU", "us_id_123");
-  });
-});
-
-export const orderedReviewStatuses: OpportunityStatus[] = [
-  "PENDING",
-  "IN_PROGRESS",
-  "DENIED",
-  "DENIED",
-  "COMPLETED",
-  "ALMOST",
-  "ALMOST",
-  "ALMOST",
-];
-
-export const orderedDates: (Date | undefined)[] = [
-  new Date(2016, 1, 1),
-  new Date(2016, 2, 1),
-  new Date(2016, 3, 1),
-  new Date(2016, 4, 1),
-  new Date(2016, 4, 1),
-  new Date(2019, 1, 1),
-  new Date(2019, 1, 2),
-  new Date(2020, 1, 2),
-];
-
-function initOpportunitiesList(
-  reviewStatuses: OpportunityStatus[],
-  eligibilityDates: (Date | undefined)[],
-): TestOpportunity[] {
-  const opportunities: TestOpportunity[] = reviewStatuses.map((status, i) => {
-    const currentOpp = createTestUnit();
-
-    vi.spyOn(currentOpp, "eligibilityDate", "get").mockReturnValue(
-      eligibilityDates[i],
-    );
-    vi.spyOn(currentOpp, "reviewStatus", "get").mockReturnValue(status);
-
-    return currentOpp;
-  });
-
-  return opportunities;
-}
-
-const getDatesWithUndefinedMembers = (datesList: (Date | undefined)[]) =>
-  datesList.map((a, idx) => (idx % 2 === 1 ? undefined : a));
-describe("Sorting functions should work", () => {
-  beforeAll(() => {
-    vi.useFakeTimers().setSystemTime(new Date(2021, 1, 1));
-  });
-  afterAll(() => {
-    vi.useRealTimers();
-  });
-
-  test("when list is shuffled and sorting by review status", () => {
-    const opportunities = initOpportunitiesList(
-      orderedReviewStatuses,
-      orderedDates,
-    );
-    expect(
-      shuffle(opportunities)
-        .sort((a, b) => a.sortByReviewStatus(b))
-        .map((a) => a.reviewStatus),
-    ).toEqual(orderedReviewStatuses);
-  });
-
-  test("when list is shuffled and sorting by eligibility date", () => {
-    const opportunities = initOpportunitiesList(
-      orderedReviewStatuses,
-      orderedDates,
-    );
-    expect(
-      shuffle(opportunities)
-        .sort((a, b) => a.sortByEligibilityDate(b))
-        .map((a) => a.eligibilityDate),
-    ).toEqual(orderedDates);
-  });
-
-  test("when list is shuffled and there are undefined eligibility dates", () => {
-    const datesWithUndefinedMembers =
-      getDatesWithUndefinedMembers(orderedDates);
-    const opportunities = initOpportunitiesList(
-      orderedReviewStatuses,
-      datesWithUndefinedMembers,
-    );
-    const sortedReviewStatuses = shuffle(opportunities)
-      .sort((a, b) => a.compare(b))
-      .map((a) => a.reviewStatus);
-    expect(sortedReviewStatuses).toEqual(sortedReviewStatuses);
-  });
-
-  test("when list is shuffled and sorting by review status and eligibility date", () => {
-    const opportunities = initOpportunitiesList(
-      orderedReviewStatuses,
-      orderedDates,
-    );
-    expect(
-      shuffle(opportunities)
-        .sort((a, b) => a.compare(b))
-        .map((a) => [a.reviewStatus, a.eligibilityDate]),
-    ).toMatchSnapshot();
-  });
-
-  test("when list is shuffled, some eligibilityDates are undefined, and sorting by review status and eligibility date", () => {
-    const datesWithUndefinedMembers =
-      getDatesWithUndefinedMembers(orderedDates);
-    const opportunities = initOpportunitiesList(
-      orderedReviewStatuses,
-      datesWithUndefinedMembers,
-    );
-    expect(
-      shuffle(opportunities)
-        .sort((a, b) => a.compare(b))
-        .map((a) => a.reviewStatus),
-    ).toEqual(orderedReviewStatuses);
   });
 });

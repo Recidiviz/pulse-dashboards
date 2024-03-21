@@ -61,11 +61,11 @@ import {
   DefaultEligibility,
   FormVariant,
   Opportunity,
-  OPPORTUNITY_STATUS_RANKED,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityTab,
 } from "./types";
+import { buildOpportunityCompareFunction } from "./utils/compareUtils";
 import {
   hydrateUntypedCriteria,
   UntypedCriteriaFormatters,
@@ -418,31 +418,20 @@ export abstract class OpportunityBase<
     );
   }
 
-  sortByReviewStatus(other: Opportunity): number {
-    return ascending(
-      OPPORTUNITY_STATUS_RANKED.indexOf(this.reviewStatus),
-      OPPORTUNITY_STATUS_RANKED.indexOf(other.reviewStatus),
-    );
-  }
-
   sortByEligibilityDate(other: Opportunity): number {
     return ascending(this.eligibilityDate, other.eligibilityDate);
   }
 
-  sortByReviewStatusThenEligibilityDate(other: Opportunity): number {
-    const reviewStatusRanking = this.sortByReviewStatus(other);
-
-    if (
-      reviewStatusRanking === 0 &&
-      this.eligibilityDate &&
-      other.eligibilityDate
-    )
-      return this.sortByEligibilityDate(other);
-    return reviewStatusRanking;
-  }
-
   compare(other: Opportunity): number {
-    return this.sortByReviewStatusThenEligibilityDate(other);
+    const { compareBy, systemType } = this.config;
+    let sortParams;
+
+    if (compareBy) sortParams = compareBy;
+    else if (systemType === "INCARCERATION")
+      sortParams = ["reviewStatus", "eligibilityDate"];
+    else sortParams = ["reviewStatus"];
+
+    return buildOpportunityCompareFunction(sortParams)(this, other);
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {

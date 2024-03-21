@@ -68,4 +68,5 @@ export interface ILocalOpportunityConfiguration {
   tooltipEligibilityText?: string;
   eligibleCriteriaCopy?: CriteriaCopy;
   ineligibleCriteriaCopy?: CriteriaCopy;
+  compareBy?: string[];
 }
