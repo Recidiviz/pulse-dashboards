@@ -31,7 +31,7 @@ import {
 import {
   EarnedDischargeDraftData,
   EarnedDischargeReferralRecord,
-  transformEarnedDischargeReferral as transformReferral,
+  usIdEarnedDischargeSchema,
 } from "./EarnedDischargeReferralRecord";
 
 // This could be configured externally once it's fleshed out
@@ -61,10 +61,6 @@ export const INELIGIBLE_CRITERIA_COPY: Record<
   keyof EarnedDischargeReferralRecord["ineligibleCriteria"],
   OpportunityRequirement
 > = {
-  onSupervisionAtLeastOneYear: {
-    text: "Needs $TIME_REMAINING on supervision",
-    tooltip: "Policy requirement: Has been on supervision for at least 1 year",
-  },
   pastEarnedDischargeEligibleDate: {
     text: "Needs $TIME_REMAINING on supervision",
     tooltip:
@@ -88,7 +84,12 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
   form?: UsIdEarnedDischargeForm;
 
   constructor(client: Client) {
-    super(client, "earnedDischarge", client.rootStore, transformReferral);
+    super(
+      client,
+      "earnedDischarge",
+      client.rootStore,
+      usIdEarnedDischargeSchema.parse,
+    );
 
     makeObservable(this, {
       almostEligible: computed,

@@ -8,12 +8,9 @@ exports[`formInformation parses 1`] = `
       "latestUaDates": [],
       "latestUaResults": [],
     },
-    "noFelonyWithin24Months": {
-      "latestFelonyConvictions": [],
-    },
+    "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
     },
     "usIdIncomeVerifiedWithin3Months": {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
@@ -41,8 +38,6 @@ exports[`formInformation parses 1`] = `
       "Duane",
       "Moraga",
     ],
-    "currentFinesBalance": 12.18,
-    "currentRestitutionBalance": 0,
     "dateImposed": [
       2022-08-13T00:00:00.000Z,
       2022-09-30T00:00:00.000Z,
@@ -55,8 +50,6 @@ exports[`formInformation parses 1`] = `
       2023-07-30T00:00:00.000Z,
       2023-06-10T00:00:00.000Z,
     ],
-    "initialFines": 98.25,
-    "initialRestitution": 4289.63,
     "judgeNames": [
       {
         "givenNames": "Starla",
@@ -71,8 +64,6 @@ exports[`formInformation parses 1`] = `
         "surname": "Blake",
       },
     ],
-    "lastFinesPaymentDate": 2022-09-08T00:00:00.000Z,
-    "lastRestitutionPaymentDate": 2022-08-09T00:00:00.000Z,
     "latestAssessmentDate": 2022-10-24T00:00:00.000Z,
     "latestAssessmentScore": 19,
     "ncicCheckDate": 2022-11-10T00:00:00.000Z,
@@ -100,12 +91,9 @@ exports[`optional criteria have sane fallbacks 1`] = `
       "latestUaDates": [],
       "latestUaResults": [],
     },
-    "noFelonyWithin24Months": {
-      "latestFelonyConvictions": [],
-    },
+    "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
     },
     "usIdIncomeVerifiedWithin3Months": {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
@@ -143,12 +131,7 @@ exports[`transform dual/parole record 1`] = `
         false,
       ],
     },
-    "noFelonyWithin24Months": {
-      "latestFelonyConvictions": [
-        2022-01-05T00:00:00.000Z,
-        2022-05-28T00:00:00.000Z,
-      ],
-    },
+    "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
       "sentenceType": "DUAL",
@@ -189,15 +172,9 @@ exports[`transform probation record 1`] = `
         false,
       ],
     },
-    "noFelonyWithin24Months": {
-      "latestFelonyConvictions": [
-        2022-01-05T00:00:00.000Z,
-        2022-05-28T00:00:00.000Z,
-      ],
-    },
+    "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
     },
     "usIdIncomeVerifiedWithin3Months": {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
@@ -223,12 +200,9 @@ exports[`transforms records with eligible and ineligible criteria 1`] = `
       "latestUaDates": [],
       "latestUaResults": [],
     },
-    "noFelonyWithin24Months": {
-      "latestFelonyConvictions": [],
-    },
+    "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
-      "sentenceType": "DUAL",
     },
     "usIdIncomeVerifiedWithin3Months": {
       "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,

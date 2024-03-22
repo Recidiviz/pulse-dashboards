@@ -15,60 +15,109 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { camelCase, cloneDeep } from "lodash";
+import { camelCase, mapKeys } from "lodash";
+import { z } from "zod";
 
-import { TransformFunction } from "../../../subscriptions";
-import { fieldToDate } from "../../../utils";
-import { WithCaseNotes } from "../../types";
-import { transformCaseNotes } from "../../utils/caseNotesUtils";
 import {
-  LSUEarnedDischargeEligibleCriteria,
-  LSUEarnedDischargeIneligibleCriteria,
-  transformLSUEarnedDischargeCriteria,
-} from "../LSUOpportunity/LSUReferralRecord";
+  caseNotesSchema,
+  dateStringSchema,
+  opportunitySchemaBase,
+  stringToIntSchema,
+} from "../../schemaHelpers";
+import {
+  eligibleCriteriaLsuED,
+  ineligibleCriteriaLsuED,
+  sentenceTypeSchema,
+} from "../UsIdSharedCriteria";
 
-export type EarnedDischargeReferralRecord = {
-  stateCode: string;
-  externalId: string;
-  formInformation: {
-    ncicCheckDate?: Date;
-    fullTermReleaseDates?: Date[];
-    chargeDescriptions?: string[];
-    judgeNames?: {
-      givenNames: string;
-      middleNames: string;
-      nameSuffix: string;
-      surname: string;
-    }[];
-    countyNames?: string[];
-    sentenceMax?: number[];
-    sentenceMin?: number[];
-    caseNumbers?: string[];
-    dateImposed?: Date[];
-    initialRestitution?: number;
-    lastRestitutionPaymentDate?: Date;
-    currentRestitutionBalance?: number;
-    initialFines?: number;
-    lastFinesPaymentDate?: Date;
-    currentFinesBalance?: number;
-    firstAssessmentScore?: number;
-    firstAssessmentDate?: Date;
-    latestAssessmentScore?: number;
-    latestAssessmentDate?: Date;
-  };
-  ineligibleCriteria: Partial<LSUEarnedDischargeIneligibleCriteria>;
-  eligibleCriteria: LSUEarnedDischargeEligibleCriteria & {
-    usIdLsirLevelLowModerateForXDays: {
-      eligibleDate: Date;
-      riskLevel: "LOW" | "MODERATE";
-    };
-    pastEarnedDischargeEligibleDate?: {
-      eligibleDate?: Date;
-      sentenceType?: "PROBATION" | "PAROLE" | "DUAL";
-    };
-  };
-  eligibleStartDate: Date;
-} & WithCaseNotes;
+const collapsedCriteriaSchema = z
+  .object({
+    usIdParoleDualSupervisionPastEarlyDischargeDate: z.object({
+      eligibleDate: dateStringSchema,
+      sentenceType: sentenceTypeSchema,
+    }),
+    onProbationAtLeastOneYear: z.object({
+      eligibleDate: dateStringSchema,
+    }),
+  })
+  .partial()
+  .transform(
+    ({
+      usIdParoleDualSupervisionPastEarlyDischargeDate,
+      onProbationAtLeastOneYear,
+    }) => {
+      if (onProbationAtLeastOneYear) {
+        const { eligibleDate } = onProbationAtLeastOneYear;
+        return {
+          pastEarnedDischargeEligibleDate: { eligibleDate },
+        };
+      }
+
+      if (usIdParoleDualSupervisionPastEarlyDischargeDate) {
+        const { eligibleDate, sentenceType } =
+          usIdParoleDualSupervisionPastEarlyDischargeDate;
+        return {
+          pastEarnedDischargeEligibleDate: { eligibleDate, sentenceType },
+        };
+      }
+
+      return {};
+    },
+  );
+
+export const usIdEarnedDischargeSchema = opportunitySchemaBase
+  .extend({
+    formInformation: z
+      .object({
+        ncicCheckDate: dateStringSchema,
+        fullTermReleaseDates: z.array(dateStringSchema),
+        chargeDescriptions: z.array(z.string()),
+        judgeNames: z.array(
+          z
+            .string()
+            .transform((content) => {
+              const parsedJSON = JSON.parse(content);
+              return mapKeys(parsedJSON, (_v, k) => camelCase(k));
+            })
+            .pipe(
+              z.object({
+                givenNames: z.string(),
+                middleNames: z.string().optional(),
+                nameSuffix: z.string().optional(),
+                surname: z.string(),
+              }),
+            ),
+        ),
+        countyNames: z.array(z.string()),
+        sentenceMax: z.array(stringToIntSchema),
+        sentenceMin: z.array(stringToIntSchema),
+        caseNumbers: z.array(z.string()),
+        dateImposed: z.array(dateStringSchema),
+        firstAssessmentScore: stringToIntSchema,
+        firstAssessmentDate: dateStringSchema,
+        latestAssessmentScore: stringToIntSchema,
+        latestAssessmentDate: dateStringSchema,
+      })
+      .partial(),
+    ineligibleCriteria: ineligibleCriteriaLsuED.and(collapsedCriteriaSchema),
+    eligibleCriteria: eligibleCriteriaLsuED
+      .extend({
+        usIdLsirLevelLowModerateForXDays: z.object({
+          eligibleDate: dateStringSchema,
+          riskLevel: z.enum(["LOW", "MODERATE"]),
+        }),
+      })
+      .and(collapsedCriteriaSchema),
+    eligibleStartDate: dateStringSchema,
+  })
+  .merge(caseNotesSchema);
+
+export type EarnedDischargeReferralRecord = z.infer<
+  typeof usIdEarnedDischargeSchema
+>;
+export type EarnedDischargeReferralRecordRaw = z.input<
+  typeof usIdEarnedDischargeSchema
+>;
 
 export type EarnedDischargeCrimeTableKeys =
   | "judgeNames"
@@ -80,7 +129,7 @@ export type EarnedDischargeCrimeTableKeys =
   | "sentenceMax"
   | "fullTermReleaseDates";
 
-export type EarnedDischargeDraftData = {
+export type EarnedDischargeTransformedETLFormInput = {
   clientName: string;
   supervisionType: string;
   idocNumber: string;
@@ -90,12 +139,6 @@ export type EarnedDischargeDraftData = {
   meetsIdocRequirements: string;
   ncicCheck: string;
   ncicCheckDate: string;
-  initialRestitution: string;
-  lastRestitutionPaymentDate: string;
-  currentRestitutionBalance: string;
-  initialFines: string;
-  lastFinesPaymentDate: string;
-  currentFinesBalance: string;
   firstAssessmentScore: string;
   firstAssessmentDate: string;
   latestAssessmentScore: string;
@@ -103,159 +146,12 @@ export type EarnedDischargeDraftData = {
   numCrimeEntries: number;
 } & Record<`${EarnedDischargeCrimeTableKeys}${number}`, string>;
 
-export const transformEarnedDischargeReferral: TransformFunction<
-  EarnedDischargeReferralRecord
-> = (record) => {
-  if (!record) {
-    throw new Error("Record not found");
-  }
-
-  const transformedRecord = cloneDeep(record) as EarnedDischargeReferralRecord;
-  const { eligibleCriteria, ineligibleCriteria } = record;
-
-  const transformedCommonCriteria = transformLSUEarnedDischargeCriteria(record);
-
-  transformedRecord.eligibleCriteria = {
-    ...transformedRecord.eligibleCriteria,
-    ...transformedCommonCriteria?.eligibleCriteria,
+export type EarnedDischargeDraftData =
+  EarnedDischargeTransformedETLFormInput & {
+    initialRestitution: string;
+    lastRestitutionPaymentDate: string;
+    currentRestitutionBalance: string;
+    initialFines: string;
+    lastFinesPaymentDate: string;
+    currentFinesBalance: string;
   };
-
-  transformedRecord.ineligibleCriteria = {
-    ...transformedRecord.ineligibleCriteria,
-    ...transformedCommonCriteria?.ineligibleCriteria,
-  };
-
-  /* usIdLsirLevelLowModerateForXDays */
-  transformedRecord.eligibleCriteria.usIdLsirLevelLowModerateForXDays = {
-    riskLevel: eligibleCriteria.usIdLsirLevelLowModerateForXDays.riskLevel,
-    eligibleDate: fieldToDate(
-      eligibleCriteria.usIdLsirLevelLowModerateForXDays.eligibleDate,
-    ),
-  };
-
-  /* Collapse `usIdParoleDualSupervisionPastEarlyDischargeDate` and `onProbationAtLeastOneYear` 
-     into `pastEarnedDischargeEligibleDate`. */
-  /* eligibleCriteria */
-  if (
-    eligibleCriteria?.usIdParoleDualSupervisionPastEarlyDischargeDate ||
-    eligibleCriteria?.onProbationAtLeastOneYear
-  ) {
-    transformedRecord.eligibleCriteria.pastEarnedDischargeEligibleDate = {
-      eligibleDate: fieldToDate(
-        eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-          ?.eligibleDate ??
-          eligibleCriteria.onProbationAtLeastOneYear?.eligibleDate,
-      ),
-      sentenceType:
-        eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-          ?.sentenceType ??
-        eligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
-    };
-  }
-
-  /* ineligibleCriteria */
-  if (
-    ineligibleCriteria?.usIdParoleDualSupervisionPastEarlyDischargeDate ||
-    ineligibleCriteria?.onProbationAtLeastOneYear
-  ) {
-    transformedRecord.ineligibleCriteria.pastEarnedDischargeEligibleDate = {
-      eligibleDate: fieldToDate(
-        ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-          ?.eligibleDate ??
-          ineligibleCriteria.onProbationAtLeastOneYear?.eligibleDate,
-      ),
-      sentenceType:
-        ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-          ?.sentenceType ??
-        ineligibleCriteria.onProbationAtLeastOneYear?.sentenceType,
-    };
-  }
-
-  // delete vestigial criterion left over from TES we don't use in the front end
-  delete (
-    // @ts-expect-error
-    // prettier-ignore
-    transformedRecord.eligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-  );
-  delete (
-    // @ts-expect-error
-    // prettier-ignore
-    transformedRecord.ineligibleCriteria.usIdParoleDualSupervisionPastEarlyDischargeDate
-  );
-  // @ts-expect-error
-  delete transformedRecord.eligibleCriteria.onProbationAtLeastOneYear;
-  // @ts-expect-error
-  delete transformedRecord.ineligibleCriteria.onProbationAtLeastOneYear;
-
-  delete (
-    // @ts-expect-error
-    transformedRecord.eligibleCriteria.supervisionNotPastFullTermCompletionDate
-  );
-
-  transformedRecord.eligibleStartDate = fieldToDate(record.eligibleStartDate);
-
-  transformedRecord.caseNotes = transformCaseNotes(record.caseNotes);
-
-  const {
-    ncicCheckDate,
-    dateImposed,
-    fullTermReleaseDates,
-    lastRestitutionPaymentDate,
-    lastFinesPaymentDate,
-    firstAssessmentDate,
-    latestAssessmentDate,
-    judgeNames,
-  } = record.formInformation;
-
-  if (ncicCheckDate) {
-    transformedRecord.formInformation.ncicCheckDate =
-      fieldToDate(ncicCheckDate);
-  }
-
-  if (lastRestitutionPaymentDate) {
-    transformedRecord.formInformation.lastRestitutionPaymentDate = fieldToDate(
-      lastRestitutionPaymentDate,
-    );
-  }
-
-  if (lastFinesPaymentDate) {
-    transformedRecord.formInformation.lastFinesPaymentDate =
-      fieldToDate(lastFinesPaymentDate);
-  }
-
-  if (firstAssessmentDate) {
-    transformedRecord.formInformation.firstAssessmentDate =
-      fieldToDate(firstAssessmentDate);
-  }
-
-  if (latestAssessmentDate) {
-    transformedRecord.formInformation.latestAssessmentDate =
-      fieldToDate(latestAssessmentDate);
-  }
-
-  if (dateImposed) {
-    transformedRecord.formInformation.dateImposed = dateImposed.map(
-      (d: string) => fieldToDate(d),
-    );
-  }
-
-  if (fullTermReleaseDates) {
-    transformedRecord.formInformation.fullTermReleaseDates =
-      fullTermReleaseDates.map((d: string) => fieldToDate(d));
-  }
-
-  if (judgeNames) {
-    transformedRecord.formInformation.judgeNames = judgeNames.map(
-      (blob: string) => {
-        try {
-          return Object.fromEntries(
-            Object.entries(JSON.parse(blob)).map(([k, v]) => [camelCase(k), v]),
-          );
-        } catch (e) {
-          return {};
-        }
-      },
-    );
-  }
-  return transformedRecord;
-};

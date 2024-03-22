@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { transformLSUReferral as transformReferral } from "../LSUOpportunity";
+import { usIdLsuSchema } from "../LSUOpportunity";
 
 test("transform record", () => {
   const rawRecord = {
     stateCode: "US_ID",
     externalId: "001",
     formInformation: {
-      clientName: "Betty Rubble",
+      employerName: "Betty Rubble",
     },
     eligibleCriteria: {
       usIdLsirLevelLowFor90Days: {
@@ -33,12 +33,11 @@ test("transform record", () => {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
-      },
+      noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
+      // extra property that may exist but should be removed
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
@@ -74,7 +73,7 @@ test("transform record", () => {
     eligibleStartDate: "2022-10-05",
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdLsuSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("optional criteria have sane fallbacks", () => {
@@ -86,8 +85,8 @@ test("optional criteria have sane fallbacks", () => {
     },
     ineligibleCriteria: {},
     eligibleCriteria: {
-      usIdLsirLevelLowModerateForXDays: {
-        riskLevel: "MODERATE",
+      usIdLsirLevelLowFor90Days: {
+        riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
       negativeUaWithin90Days: null,
@@ -106,67 +105,7 @@ test("optional criteria have sane fallbacks", () => {
     eligibleStartDate: "2022-10-05",
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
-});
-
-test("can transform record with old criteria", () => {
-  const rawRecord = {
-    stateCode: "US_ID",
-    externalId: "001",
-    formInformation: {
-      clientName: "Betty Rubble",
-    },
-    eligibleCriteria: {
-      usIdLsirLevelLowModerateForXDays: {
-        riskLevel: "MODERATE",
-        eligibleDate: "2022-01-03",
-      },
-      negativeUaWithin90Days: {
-        latestUaDates: ["2022-01-03"],
-        latestUaResults: [false],
-      },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
-      },
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: "2022-06-03",
-      },
-      supervisionNotPastFullTermCompletionDate: {
-        eligibleDate: "2025-06-19",
-      },
-      usIdNoActiveNco: {
-        activeNco: true,
-      },
-      onSupervisionAtLeastOneYear: {
-        eligibleDate: "2022-05-28",
-      },
-    },
-    ineligibleCriteria: {},
-    caseNotes: {
-      foo: [
-        {
-          eventDate: "2022-04-06",
-          noteBody: "Body1",
-          noteTitle: "Title1",
-        },
-        {
-          eventDate: "2022-06-06",
-          noteBody: "Body2",
-          noteTitle: "Title2",
-        },
-      ],
-      "ba bar": [
-        {
-          eventDate: "2022-09-06",
-          noteBody: "Body3",
-          noteTitle: "Title3",
-        },
-      ],
-    },
-    eligibleStartDate: "2022-10-05",
-  };
-
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdLsuSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("can transform record with eligible and ineligible criteria", () => {
@@ -177,17 +116,15 @@ test("can transform record with eligible and ineligible criteria", () => {
       clientName: "Betty Rubble",
     },
     eligibleCriteria: {
-      usIdLsirLevelLowModerateForXDays: {
-        riskLevel: "MODERATE",
+      usIdLsirLevelLowFor90Days: {
+        riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
       negativeUaWithin90Days: {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
-      },
+      noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2024-06-03",
       },
@@ -202,9 +139,7 @@ test("can transform record with eligible and ineligible criteria", () => {
       },
     },
     ineligibleCriteria: {
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: "2024-06-03",
-      },
+      usIdIncomeVerifiedWithin3Months: null,
     },
     caseNotes: {
       foo: [
@@ -230,5 +165,5 @@ test("can transform record with eligible and ineligible criteria", () => {
     eligibleStartDate: "2022-10-05",
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdLsuSchema.parse(rawRecord)).toMatchSnapshot();
 });

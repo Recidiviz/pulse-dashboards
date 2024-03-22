@@ -17,11 +17,13 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, stringToIntSchema } from "../../schemaHelpers";
+import {
+  dateStringSchema,
+  opportunitySchemaBase,
+  stringToIntSchema,
+} from "../../schemaHelpers";
 
-export const usNdEarlyTerminationSchema = z.object({
-  stateCode: z.string(),
-  externalId: z.string(),
+export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
   formInformation: z
     .object({
       clientName: z.string(),

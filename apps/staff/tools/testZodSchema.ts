@@ -24,6 +24,8 @@ import { OpportunityType } from "../src/WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
+import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity";
+import { usIdLsuSchema } from "../src/WorkflowsStore/Opportunity/UsId/LSUOpportunity";
 import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
 import { usIdCRCWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
 import { usIdExpandedCRCSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdExpandedCRCOpportunity/UsIdExpandedCRCReferralRecord";
@@ -73,6 +75,8 @@ const db = getDb();
 
 const SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   compliantReporting: compliantReportingSchema,
+  earnedDischarge: usIdEarnedDischargeSchema,
+  LSU: usIdLsuSchema,
   earlyTermination: usNdEarlyTerminationSchema,
   pastFTRD: usIdPastFTRDSchema,
   usMiPastFTRD: usMiPastFTRDSchema,

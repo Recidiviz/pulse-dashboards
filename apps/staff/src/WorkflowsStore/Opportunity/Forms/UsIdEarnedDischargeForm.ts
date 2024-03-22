@@ -24,7 +24,10 @@ import {
   formatWorkflowsDate,
   toTitleCase,
 } from "../../../utils";
-import { EarnedDischargeDraftData, EarnedDischargeOpportunity } from "../UsId";
+import {
+  EarnedDischargeOpportunity,
+  EarnedDischargeTransformedETLFormInput,
+} from "../UsId";
 import { FormBase } from "./FormBase";
 import {
   transformPossibleDateFields,
@@ -32,7 +35,7 @@ import {
 } from "./utils";
 
 export class UsIdEarnedDischargeForm extends FormBase<
-  EarnedDischargeDraftData,
+  EarnedDischargeTransformedETLFormInput,
   EarnedDischargeOpportunity
 > {
   navigateToFormText = "Generate paperwork";
@@ -42,7 +45,7 @@ export class UsIdEarnedDischargeForm extends FormBase<
     return "FormEarnedDischarge";
   }
 
-  prefilledDataTransformer(): Partial<EarnedDischargeDraftData> {
+  prefilledDataTransformer(): Partial<EarnedDischargeTransformedETLFormInput> {
     if (!this.opportunity.record || !this.person) return {};
 
     const { assignedStaff } = this.person;
@@ -61,7 +64,7 @@ export class UsIdEarnedDischargeForm extends FormBase<
       fullTermReleaseDates,
     } = formInformation;
 
-    const initialData: Partial<EarnedDischargeDraftData> = {
+    const initialData: Partial<EarnedDischargeTransformedETLFormInput> = {
       clientName: this.person.displayName,
       supervisionType: toTitleCase(this.person.supervisionType),
       probationOfficerFullName: assignedStaff
@@ -76,15 +79,9 @@ export class UsIdEarnedDischargeForm extends FormBase<
         "ncicCheckDate",
         "firstAssessmentDate",
         "latestAssessmentDate",
-        "lastFinesPaymentDate",
-        "lastRestitutionPaymentDate",
       ]),
       ...transformPossibleNumberFields(formInformation, [
-        "initialFines",
-        "initialRestitution",
         "firstAssessmentScore",
-        "currentFinesBalance",
-        "currentRestitutionBalance",
         "latestAssessmentScore",
       ]),
     };
@@ -166,12 +163,6 @@ export class UsIdEarnedDischargeForm extends FormBase<
       meetsIdocRequirements: formData.meetsIdocRequirements,
       ncicCheck: formData.ncicCheck,
       ncicCheckDate: formData.ncicCheckDate,
-      initialRestitution: formData.initialRestitution,
-      lastRestitutionPaymentDate: formData.lastRestitutionPaymentDate,
-      currentRestitutionBalance: formData.currentRestitutionBalance,
-      initialFines: formData.initialFines,
-      lastFinesPaymentDate: formData.lastFinesPaymentDate,
-      currentFinesBalance: formData.currentFinesBalance,
       firstAssessmentScore: formData.firstAssessmentScore,
       firstAssessmentDate: formData.firstAssessmentDate,
       latestAssessmentScore: formData.latestAssessmentScore,

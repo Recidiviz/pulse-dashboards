@@ -69,9 +69,7 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
       latestUaDates: [parseISO("2022-05-28")],
       latestUaResults: [false],
     },
-    noFelonyWithin24Months: {
-      latestFelonyConvictions: [],
-    },
+    noFelonyWithin24Months: true,
     usIdIncomeVerifiedWithin3Months: {
       incomeVerifiedDate: parseISO("2022-06-03"),
     },
@@ -133,9 +131,7 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecord = {
       latestUaDates: [parseISO("2022-05-28")],
       latestUaResults: [false],
     },
-    noFelonyWithin24Months: {
-      latestFelonyConvictions: [],
-    },
+    noFelonyWithin24Months: true,
     onSupervisionAtLeastOneYear: {
       eligibleDate: parseISO("2022-06-01"),
     },
@@ -144,7 +140,7 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecord = {
     },
   },
   ineligibleCriteria: {
-    usIdIncomeVerifiedWithin3Months: {},
+    usIdIncomeVerifiedWithin3Months: true,
   },
   eligibleStartDate: new Date(2022, 10, 5),
   caseNotes: {
@@ -184,9 +180,7 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
         latestUaDates: [parseISO("2022-05-28")],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: [],
-      },
+      noFelonyWithin24Months: true,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: parseISO("2022-06-03"),
       },
@@ -234,9 +228,7 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
         latestUaDates: [parseISO("2022-05-28")],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: [],
-      },
+      noFelonyWithin24Months: true,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: parseISO("2022-06-03"),
       },
@@ -284,18 +276,14 @@ export const earnedDischargeAlmostEligibleVerifiedIncome: EarnedDischargeReferra
         latestUaDates: [parseISO("2022-05-28")],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: [],
-      },
+      noFelonyWithin24Months: true,
       pastEarnedDischargeEligibleDate: {
         eligibleDate: parseISO("2022-03-17"),
         sentenceType: "PAROLE",
       },
     },
     ineligibleCriteria: {
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: undefined,
-      },
+      usIdIncomeVerifiedWithin3Months: true,
     },
     eligibleStartDate: new Date(2022, 10, 5),
     caseNotes: {

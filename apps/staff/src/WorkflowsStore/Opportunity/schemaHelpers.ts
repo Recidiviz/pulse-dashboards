@@ -36,6 +36,15 @@ export function NullCoalesce<T extends z.ZodTypeAny>(
   >;
 }
 
+export function defaultOnNull<T extends z.ZodTypeAny>(
+  schema: T,
+  defaultValue: z.infer<T>,
+) {
+  return schema.nullable().transform((output) => {
+    return output === null ? defaultValue : output;
+  });
+}
+
 export const opportunitySchemaBase = z.object({
   stateCode: z.string(),
   externalId: z.string(),

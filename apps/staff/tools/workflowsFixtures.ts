@@ -18,7 +18,6 @@
 // =============================================================================
 
 import { Firestore } from "@google-cloud/firestore";
-import fs from "fs";
 
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../src/FirestoreStore/constants";
 import {
@@ -31,7 +30,9 @@ import { getMonthYearFromDate } from "../src/WorkflowsStore/utils";
 import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
 import { clientUpdatesV2Data } from "./fixtures/clientUpdatesV2";
+import { earnedDischargeReferralsFixture } from "./fixtures/earnedDischargeReferrals";
 import { locationsData } from "./fixtures/locations";
+import { LSUReferralsFixture } from "./fixtures/LSUReferrals";
 import { residentsData } from "./fixtures/residents";
 import { staffData } from "./fixtures/staff";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
@@ -90,11 +91,6 @@ const OPPORTUNITIES_MAP = Object.fromEntries(
   ]),
 ) as Record<`${keyof typeof OPPORTUNITY_CONFIGS}Referrals`, string>;
 
-const OPPORTUNITIES_WITH_JSON_FIXTURES: (keyof typeof OPPORTUNITIES_MAP)[] = [
-  "LSUReferrals",
-  "earnedDischargeReferrals",
-];
-
 export type FixtureData<T> = {
   data: T[];
   idFunc: (arg0: T) => string;
@@ -120,6 +116,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
 > = {
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
   pastFTRDReferrals: usIdPastFtrdFixture,
+  earnedDischargeReferrals: earnedDischargeReferralsFixture,
+  LSUReferrals: LSUReferralsFixture,
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
   usCaSupervisionLevelDowngradeReferrals,
   usIdCRCResidentWorkerReferrals,
@@ -204,41 +202,6 @@ export async function loadFixtures(logger: Logger): Promise<void> {
   }
 }
 
-export async function loadOpportunityReferralFixtures(
-  logger: Logger,
-): Promise<void> {
-  for await (const opportunity of OPPORTUNITIES_WITH_JSON_FIXTURES) {
-    logger(`wiping existing ${opportunity} referral data ...`);
-    const collectionName = generateCollectionName({
-      raw: OPPORTUNITIES_MAP[opportunity],
-    });
-    await deleteCollection(db, collectionName);
-
-    logger(`loading new ${opportunity} referral data...`);
-    const bulkWriter = db.bulkWriter();
-
-    const rawRecords = JSON.parse(
-      fs.readFileSync(`tools/fixtures/${opportunity}.json`).toString(),
-    );
-
-    rawRecords.forEach((rawReferral: any) => {
-      // TN data still in a legacy format, so fall back to alternate field
-      const externalId = rawReferral.externalId ?? rawReferral.tdocId;
-      bulkWriter.create(
-        db
-          .collection(collectionName)
-          .doc(`${rawReferral.stateCode.toLowerCase()}_${externalId}`),
-        rawReferral,
-      );
-    });
-
-    await bulkWriter.flush();
-    await bulkWriter.close();
-
-    logger(`new ${opportunity} referral data loaded successfully`);
-  }
-}
-
 async function loadClientUpdatesV2(logger: Logger): Promise<void> {
   logger(`wiping existing clientUpdatesV2 data ...`);
   await deleteCollection(
@@ -278,9 +241,5 @@ export async function loadWorkflowsFixtures({
       return null;
     };
   }
-  await Promise.all([
-    loadFixtures(logger),
-    loadOpportunityReferralFixtures(logger),
-    loadClientUpdatesV2(logger),
-  ]);
+  await Promise.all([loadFixtures(logger), loadClientUpdatesV2(logger)]);
 }

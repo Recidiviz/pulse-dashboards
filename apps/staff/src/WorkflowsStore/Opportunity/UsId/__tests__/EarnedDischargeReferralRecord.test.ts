@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { transformEarnedDischargeReferral as transformReferral } from "../EarnedDischargeOpportunity";
+import { usIdEarnedDischargeSchema } from "../EarnedDischargeOpportunity";
 
 test("transform dual/parole record", () => {
   const rawRecord = {
@@ -32,9 +32,7 @@ test("transform dual/parole record", () => {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
-      },
+      noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -58,7 +56,7 @@ test("transform dual/parole record", () => {
     },
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("transform probation record", () => {
@@ -76,9 +74,7 @@ test("transform probation record", () => {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: {
-        latestFelonyConvictions: ["2022-01-05", "2022-05-28"],
-      },
+      noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -102,7 +98,7 @@ test("transform probation record", () => {
     },
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("optional criteria have sane fallbacks", () => {
@@ -132,7 +128,7 @@ test("optional criteria have sane fallbacks", () => {
     eligibleStartDate: "2022-10-05",
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("transforms records with eligible and ineligible criteria", () => {
@@ -167,7 +163,7 @@ test("transforms records with eligible and ineligible criteria", () => {
     eligibleStartDate: "2022-10-05",
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("formInformation parses", () => {
@@ -184,19 +180,13 @@ test("formInformation parses", () => {
         '{"givenNames": "Ahmud", "surname": "Blake"}',
       ],
       countyNames: ["Duane", "Duane", "Moraga"],
-      sentenceMax: [365, 334, 60],
-      sentenceMin: [92, 61, 15],
+      sentenceMax: ["365", "334", "60"],
+      sentenceMin: ["92", "61", "15"],
       caseNumbers: ["12858", "13085", "14558"],
       dateImposed: ["2022-08-13", "2022-09-30", "2022-10-03"],
-      initialRestitution: 4289.63,
-      lastRestitutionPaymentDate: "2022-08-09",
-      currentRestitutionBalance: 0,
-      initialFines: 98.25,
-      lastFinesPaymentDate: "2022-09-08",
-      currentFinesBalance: 12.18,
-      firstAssessmentScore: 27,
+      firstAssessmentScore: "27",
       firstAssessmentDate: "2020-03-28",
-      latestAssessmentScore: 19,
+      latestAssessmentScore: "19",
       latestAssessmentDate: "2022-10-24",
     },
     ineligibleCriteria: {},
@@ -221,5 +211,5 @@ test("formInformation parses", () => {
     eligibleStartDate: "2022-10-05",
   };
 
-  expect(transformReferral(rawRecord)).toMatchSnapshot();
+  expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
 });

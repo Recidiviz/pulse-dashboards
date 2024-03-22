@@ -24,12 +24,11 @@ import { LSUForm } from "../../Forms/LSUForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { monthsOrDaysRemainingFromToday } from "../../utils/criteriaUtils";
-import { INELIGIBLE_CRITERIA_COPY } from "../EarnedDischargeOpportunity";
+import { LSUEarnedDischargeEligibleCriteria } from "../UsIdSharedCriteria";
 import {
   LSUDraftData,
-  LSUEarnedDischargeEligibleCriteria,
   LSUReferralRecord,
-  transformLSUReferral as transformReferral,
+  usIdLsuSchema,
 } from "./LSUReferralRecord";
 
 // This could be configured externally once it's fleshed out
@@ -76,6 +75,22 @@ export const LSU_CRITERIA: Record<
   },
 };
 
+const INELIGIBLE_CRITERIA_COPY: Record<
+  keyof LSUReferralRecord["ineligibleCriteria"],
+  OpportunityRequirement
+> = {
+  onSupervisionAtLeastOneYear: {
+    text: "Needs $TIME_REMAINING on supervision",
+    tooltip: "Policy requirement: Has been on supervision for at least 1 year",
+  },
+  usIdIncomeVerifiedWithin3Months: {
+    text: "Needs employment verification",
+    tooltip:
+      "Policy requirement: Verified employment status, full-time student, or adequate lawful " +
+      "income from non-employment sources have been confirmed within past 3 months.",
+  },
+};
+
 export const LSUEarnedDischargeCommonRequirementsMet = (
   eligibleCriteria: LSUEarnedDischargeEligibleCriteria,
 ): OpportunityRequirement[] => {
@@ -98,7 +113,7 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
     }
   }
 
-  if (noFelonyWithin24Months?.latestFelonyConvictions.length === 0) {
+  if (noFelonyWithin24Months) {
     requirements.push(LSU_CRITERIA.noFelonyWithin24Months);
   }
 
@@ -117,7 +132,7 @@ export class LSUOpportunity extends OpportunityBase<
   form: LSUForm;
 
   constructor(client: Client) {
-    super(client, "LSU", client.rootStore, transformReferral);
+    super(client, "LSU", client.rootStore, usIdLsuSchema.parse);
     makeObservable(this, {
       requirementsMet: override,
       almostEligible: computed,

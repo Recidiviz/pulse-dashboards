@@ -226,7 +226,7 @@ describe("almost eligible income verified within 3 months", () => {
   const almostEligibleIncomeVerified = cloneDeep(LSUReferralRecordFixture);
 
   almostEligibleIncomeVerified.ineligibleCriteria.usIdIncomeVerifiedWithin3Months =
-    almostEligibleIncomeVerified.eligibleCriteria.usIdIncomeVerifiedWithin3Months;
+    true;
 
   delete almostEligibleIncomeVerified.eligibleCriteria
     .usIdIncomeVerifiedWithin3Months;
