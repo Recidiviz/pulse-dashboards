@@ -43,14 +43,10 @@ import {
 import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable, when } from "mobx";
 
-import {
-  fetchFirebaseToken,
-  fetchImpersonatedFirebaseToken,
-} from "../api/fetchFirebaseToken";
+import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import { isHydrated } from "../core/models/utils";
 import type RootStore from "../RootStore";
 import { UserAppMetadata } from "../RootStore/types";
-import UserStore from "../RootStore/UserStore";
 import { isDemoMode } from "../utils/isDemoMode";
 import { isOfflineMode } from "../utils/isOfflineMode";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
@@ -121,37 +117,25 @@ export default class FirestoreStore {
   /* Authenticate with Firebase for users with access to workflows */
   async authenticate(
     auth0Token: string,
-    appMetadata?: UserAppMetadata,
+    appMetadata: UserAppMetadata,
+    impersonatedEmail?: string,
   ): Promise<ReturnType<typeof signInWithCustomToken> | undefined> {
     const shouldGenerateToken =
-      appMetadata?.stateCode === "recidiviz" ||
+      appMetadata.stateCode === "recidiviz" ||
       isOfflineMode() ||
-      appMetadata?.routes?.workflowsSupervision ||
-      appMetadata?.routes?.workflowsFacilities;
+      appMetadata.routes?.workflowsSupervision ||
+      appMetadata.routes?.workflowsFacilities;
 
     if (shouldGenerateToken) {
-      const firebaseToken = await fetchFirebaseToken(auth0Token);
-      const auth = getAuth(this.app);
-      if (this.useOfflineFirestore) {
-        connectAuthEmulator(auth, "http://localhost:9099");
-      }
-      return signInWithCustomToken(auth, firebaseToken);
-    }
-  }
-
-  /* Fetch impersonated Firebase token */
-  async authenticateImpersonatedUser(
-    impersonatedEmail: string,
-    impersonatedStateCode: string,
-    getTokenSilently: UserStore["getTokenSilently"],
-    appMetadata?: UserAppMetadata,
-  ): Promise<ReturnType<typeof signInWithCustomToken> | undefined> {
-    const shouldGenerateToken = appMetadata?.stateCode === "recidiviz";
-    if (shouldGenerateToken) {
-      const firebaseToken = await fetchImpersonatedFirebaseToken(
-        impersonatedEmail,
-        impersonatedStateCode,
-        getTokenSilently,
+      const impersonationParams = impersonatedEmail
+        ? {
+            impersonatedEmail,
+            impersonatedStateCode: appMetadata.stateCode,
+          }
+        : undefined;
+      const firebaseToken = await fetchFirebaseToken(
+        auth0Token,
+        impersonationParams,
       );
       const auth = getAuth(this.app);
       if (this.useOfflineFirestore) {

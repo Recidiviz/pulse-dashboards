@@ -110,6 +110,16 @@ function respondWithForbidden(res) {
   );
 }
 
+function respondWithBadRequest(res, errors) {
+  responder(res)(
+    {
+      status: BAD_REQUEST,
+      errors,
+    },
+    null,
+  );
+}
+
 function workflowsTemplates(req, res, next) {
   const { stateCode } = req.params;
   const { filename } = req.query;
@@ -144,7 +154,7 @@ function newRevocationFile(req, res) {
   const validations = validationResult(req);
   const hasErrors = !validations.isEmpty();
   if (hasErrors) {
-    responder(res)({ status: BAD_REQUEST, errors: validations.array() }, null);
+    respondWithBadRequest(res, validations.array());
   } else {
     const { stateCode, file: metricName } = req.params;
     const appMetadata = getAppMetadata(req);

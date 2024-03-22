@@ -217,11 +217,7 @@ app.get("/health", (req, res) => {
 });
 
 // authenticates the user to Firestore with Auth0 credential
-app.get("/token", getFirebaseToken());
-
-// authenticates the impersonated user to Firestore with Auth0 credential
-const impersonateUser = true;
-app.get("/api/impersonateToken", getFirebaseToken(impersonateUser));
+app.get("/token", getFirebaseToken);
 
 app.get("/api/impersonateAuth0User", api.getImpersonatedUserRestrictions);
 

@@ -219,19 +219,30 @@ export default class UserStore {
     this.rootStore?.workflowsStore.disposeUserProfileSubscriptions();
 
     try {
-      // Firestore authentication
-      await this.rootStore?.firestoreStore.authenticateImpersonatedUser(
-        impersonatedEmail,
-        impersonatedStateCode,
-        this.getTokenSilently,
-        this.userAppMetadata,
-      );
+      if (!this.isRecidivizUser) {
+        throw new Error("Impersonation is only allowed for Recidiviz users");
+      }
+
+      const auth0Token = await this.getTokenSilently();
+      if (!auth0Token) {
+        throw new Error(
+          "Missing required auth0 authentication for impersonation.",
+        );
+      }
 
       // Fetch dashboard userAppMetadata to build mocked auth0 user
-      const userRestrictions = await fetchImpersonatedUserAppMetadata(
+      const impersonatedUserAppMetadata =
+        await fetchImpersonatedUserAppMetadata(
+          impersonatedEmail,
+          impersonatedStateCode,
+          auth0Token,
+        );
+
+      // Firestore authentication
+      await this.rootStore?.firestoreStore.authenticate(
+        auth0Token,
+        impersonatedUserAppMetadata,
         impersonatedEmail,
-        impersonatedStateCode,
-        this.getTokenSilently,
       );
 
       runInAction(() => {
@@ -240,7 +251,7 @@ export default class UserStore {
           email_verified: true,
           given_name: "Impersonated User",
           [`${METADATA_NAMESPACE}app_metadata`]: {
-            ...userRestrictions,
+            ...impersonatedUserAppMetadata,
             allowedStates: [impersonatedStateCode],
             stateCode: impersonatedStateCode,
           },

@@ -26,10 +26,7 @@ import {
 import tk from "timekeeper";
 import { Mock } from "vitest";
 
-import {
-  fetchFirebaseToken,
-  fetchImpersonatedFirebaseToken,
-} from "../../api/fetchFirebaseToken";
+import { fetchFirebaseToken } from "../../api/fetchFirebaseToken";
 import { RootStore } from "../../RootStore";
 import { UserAppMetadata } from "../../RootStore/types";
 import { isOfflineMode } from "../../utils/isOfflineMode";
@@ -53,13 +50,10 @@ const { VITE_TEST_ENV } = vi.hoisted(() => {
 });
 
 const mockFetchFirebaseToken = fetchFirebaseToken as Mock;
-const mockFetchImpersonatedFirebaseToken =
-  fetchImpersonatedFirebaseToken as Mock;
 const mockConnectAuthEmulator = connectAuthEmulator as Mock;
 const mockSetDoc = setDoc as Mock;
 const mockDoc = doc as Mock;
 const mockDeleteField = deleteField as Mock;
-const mockGetTokenSilently = vi.fn();
 
 vi.mock("../../api/fetchFirebaseToken", () => {
   return {
@@ -143,7 +137,10 @@ describe("FirestoreStore", () => {
       const isOfflineModeMock = isOfflineMode as Mock;
       isOfflineModeMock.mockReturnValue(true);
       const auth0Token = "token123";
-      await store.authenticate(auth0Token);
+      const appMetadata: UserAppMetadata = {
+        stateCode: "us_ca",
+      };
+      await store.authenticate(auth0Token, appMetadata);
       expect(mockFetchFirebaseToken).toBeCalled();
     });
 
@@ -151,45 +148,34 @@ describe("FirestoreStore", () => {
       const isOfflineModeMock = isOfflineMode as Mock;
       isOfflineModeMock.mockReturnValue(true);
       const auth0Token = "token123";
-      await store.authenticate(auth0Token);
+      const appMetadata: UserAppMetadata = {
+        stateCode: "us_ca",
+      };
+      await store.authenticate(auth0Token, appMetadata);
       expect(mockConnectAuthEmulator).toBeCalled();
     });
   });
 
   describe("authenticateImpersonatedUser", () => {
     const impersonatedEmail = "test@email.com";
-    const impersonatedStateCode = "US_TN";
+    const impersonatedAppMetadata: UserAppMetadata = {
+      stateCode: "us_tn",
+      routes: {
+        workflowsFacilities: true,
+      },
+    };
+    const auth0Token = "token123";
 
-    test("Should fetch impersonated token if recidiviz user", async () => {
-      const appMetadata: UserAppMetadata = {
-        stateCode: "recidiviz",
-        routes: {
-          workflowsSupervision: true,
-        },
-      };
-      await store.authenticateImpersonatedUser(
+    test("Should fetch impersonated token", async () => {
+      await store.authenticate(
+        auth0Token,
+        impersonatedAppMetadata,
         impersonatedEmail,
-        impersonatedStateCode,
-        mockGetTokenSilently,
-        appMetadata,
       );
-      expect(mockFetchImpersonatedFirebaseToken).toBeCalled();
-    });
-
-    test("Should not fetch impersonated if user is not recidiviz", async () => {
-      const appMetadata: UserAppMetadata = {
-        stateCode: "us_nd",
-        routes: {
-          workflowsSupervision: false,
-        },
-      };
-      await store.authenticateImpersonatedUser(
+      expect(mockFetchFirebaseToken).toBeCalledWith(auth0Token, {
         impersonatedEmail,
-        impersonatedStateCode,
-        mockGetTokenSilently,
-        appMetadata,
-      );
-      expect(mockFetchImpersonatedFirebaseToken).not.toBeCalled();
+        impersonatedStateCode: "us_tn",
+      });
     });
   });
 

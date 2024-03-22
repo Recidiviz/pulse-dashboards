@@ -20,6 +20,7 @@ import { add } from "date-fns";
 import { runInAction } from "mobx";
 import { Mock } from "vitest";
 
+import { fetchImpersonatedUserAppMetadata } from "../../api/fetchImpersonatedUserAppMetadata";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import {
   DASHBOARD_VIEWS,
@@ -39,6 +40,7 @@ vi.mock("@sentry/react");
 vi.mock("firebase/firestore");
 vi.mock("../../utils/isIE11");
 vi.mock("../../utils/isDemoMode");
+vi.mock("../../api/fetchImpersonatedUserAppMetadata");
 
 const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
@@ -51,6 +53,9 @@ const mockGetTokenSilently = vi.fn();
 
 const mockHandleUrl = vi.fn();
 const mockIsIE11 = isIE11 as Mock<any[], boolean>;
+const mockFetchImpersonatedUserAppMetadata = vi.mocked(
+  fetchImpersonatedUserAppMetadata,
+);
 
 const mockRootStore = {
   analyticsStore: {
@@ -58,7 +63,12 @@ const mockRootStore = {
   },
   firestoreStore: {
     authenticate: vi.fn(),
-    authenticateImpersonatedUser: vi.fn(),
+  },
+  workflowsStore: {
+    disposeUserProfileSubscriptions: vi.fn(),
+  },
+  tenantStore: {
+    setCurrentTenantId: vi.fn(),
   },
 } as unknown as typeof RootStore;
 
@@ -1081,5 +1091,64 @@ describe("feature variants", () => {
     });
 
     expect(store.activeFeatureVariants).toEqual({});
+  });
+});
+
+describe("impersonateUser", () => {
+  let store: UserStore;
+  beforeEach(() => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    store = new UserStore({
+      authSettings: testAuthSettings,
+      rootStore: mockRootStore,
+    });
+  });
+
+  test("authenticates recidiviz user", async () => {
+    const allowedStates = ["US_TN", "US_CA"];
+    const impersonatedState = "us_tn";
+    const impersonatedEmail = "impersonatedEmail@doc.gov";
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: { stateCode: "recidiviz", allowedStates },
+    });
+    mockGetTokenSilently.mockReturnValue("token123");
+    mockFetchImpersonatedUserAppMetadata.mockResolvedValue({
+      stateCode: impersonatedState,
+    });
+
+    await store.authorize(mockHandleUrl);
+    await store.impersonateUser(impersonatedEmail, impersonatedState);
+
+    expect(store.impersonationError).toBeUndefined();
+    expect(store.rootStore?.firestoreStore.authenticate).toHaveBeenCalled();
+    expect(store.user).toEqual({
+      email: impersonatedEmail,
+      email_verified: true,
+      given_name: "Impersonated User",
+      [metadataField]: {
+        stateCode: impersonatedState,
+        allowedStates: [impersonatedState],
+      },
+      impersonator: true,
+      name: "Impersonated User",
+      stateCode: impersonatedState,
+    });
+  });
+
+  test("does not authenticate non-recidiviz user", async () => {
+    const user: User = {
+      email_verified: true,
+      [metadataField]: { stateCode: "csg" },
+    };
+    mockGetUser.mockResolvedValue(user);
+
+    await store.authorize(mockHandleUrl);
+    await store.impersonateUser("impersonatedEmail@doc.gov", "us_tn");
+
+    expect(store.impersonationError).toEqual(
+      new Error("Impersonation is only allowed for Recidiviz users"),
+    );
+    expect(store.user).toEqual(user);
   });
 });

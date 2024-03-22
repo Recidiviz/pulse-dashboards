@@ -49,7 +49,7 @@ test("requests Firebase auth token", async () => {
     json: jest.fn(),
   };
 
-  await getFirebaseToken()(mockReq, mockRes);
+  await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
@@ -81,7 +81,7 @@ test("Firebase token with allowedStates", async () => {
     json: jest.fn(),
   };
 
-  await getFirebaseToken()(mockReq, mockRes);
+  await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
@@ -114,7 +114,7 @@ test("Firebase token for offline mode allows all states", async () => {
     json: jest.fn(),
   };
 
-  await getFirebaseToken()(mockReq, mockRes);
+  await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
@@ -130,7 +130,6 @@ test("requests Firebase auth token for impersonated user", async () => {
   const userId = "impersonatedEmail@somewhere.com";
   const stateCode = "us_yy";
   const mockFirebaseToken = "tokenabc123";
-  const impersonateUser = true;
 
   createCustomTokenMock.mockResolvedValue(mockFirebaseToken);
   const mockReq = {
@@ -138,15 +137,17 @@ test("requests Firebase auth token for impersonated user", async () => {
       undefinedapp_metadata: { stateCode: "recidiviz" },
     },
     query: {
-      impersonatedEmail: userId,
-      impersonatedStateCode: stateCode,
+      impersonationParams: JSON.stringify({
+        impersonatedEmail: userId,
+        impersonatedStateCode: stateCode,
+      }),
     },
   };
   const mockRes = {
     json: jest.fn(),
   };
 
-  await getFirebaseToken(impersonateUser)(mockReq, mockRes);
+  await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
     stateCode: stateCode.toUpperCase(),
@@ -161,15 +162,16 @@ test("requests Firebase auth token for impersonated user", async () => {
 test("responds with 403 forbidden when requested by a non-recidiviz user", async () => {
   const userId = "impersonatedEmail@somewhere.com";
   const stateCode = "us_yy";
-  const impersonateUser = true;
 
   const mockReq = {
     user: {
       undefinedapp_metadata: { stateCode },
     },
     query: {
-      impersonatedEmail: userId,
-      impersonatedStateCode: stateCode,
+      impersonationParams: JSON.stringify({
+        impersonatedEmail: userId,
+        impersonatedStateCode: stateCode,
+      }),
     },
   };
 
@@ -180,7 +182,7 @@ test("responds with 403 forbidden when requested by a non-recidiviz user", async
     }),
   };
 
-  await getFirebaseToken(impersonateUser)(mockReq, mockRes);
+  await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).not.toHaveBeenCalled();
   expect(send).toHaveBeenCalledWith({

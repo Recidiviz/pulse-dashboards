@@ -16,21 +16,13 @@
 // =============================================================================
 
 import { UserAppMetadata } from "../RootStore/types";
-import UserStore from "../RootStore/UserStore";
 
 // Fetch dashboard user restrictions used for building the mocked auth0 user
 export async function fetchImpersonatedUserAppMetadata(
   impersonatedEmail: string,
   impersonatedStateCode: string,
-  getTokenSilently?: UserStore["getTokenSilently"],
+  auth0Token: string,
 ): Promise<UserAppMetadata> {
-  if (!getTokenSilently) {
-    throw new Error(
-      "Missing required auth0 authentication to request Firebase token for impersonation.",
-    );
-  }
-  const token = await getTokenSilently();
-
   const response = await fetch(
     `${
       import.meta.env.VITE_API_URL
@@ -40,7 +32,7 @@ export async function fetchImpersonatedUserAppMetadata(
     })}`,
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${auth0Token}`,
       },
     },
   );

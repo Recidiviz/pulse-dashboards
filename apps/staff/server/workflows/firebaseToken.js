@@ -21,7 +21,10 @@ const { fetchOfflineUser } = require("../core");
 const { getAppMetadata } = require("../utils/getAppMetadata");
 const { isOfflineMode } = require("../utils/isOfflineMode");
 const { stateCodes } = require("../constants/stateCodes");
-const { respondWithForbidden } = require("../routes/api");
+const {
+  respondWithForbidden,
+  respondWithBadRequest,
+} = require("../routes/api");
 
 const { METADATA_NAMESPACE } = process.env;
 
@@ -37,51 +40,57 @@ if (!isOfflineMode() && credentialFile) {
 
 firebaseAdmin.initializeApp(appOptions);
 
-function getFirebaseToken(impersonateUser = false) {
-  return async function (req, res) {
-    let uid;
-    let stateCode;
-    let recidivizAllowedStates = [];
-    const appMetadata = getAppMetadata(req);
+async function getFirebaseToken(req, res) {
+  let uid;
+  let stateCode;
+  let recidivizAllowedStates = [];
+  const appMetadata = getAppMetadata(req);
 
-    if (isOfflineMode()) {
-      const user = fetchOfflineUser({});
-      stateCode = getAppMetadata({ user }).stateCode;
-      uid = user.email;
-      recidivizAllowedStates = Object.values(stateCodes);
-    } else if (impersonateUser) {
-      if (appMetadata.stateCode.toLowerCase() !== "recidiviz") {
-        respondWithForbidden(res);
-        return;
-      }
-      const { impersonatedEmail, impersonatedStateCode } = req.query;
+  const { impersonationParams } = req.query ?? {};
+  const impersonateUser = !!impersonationParams;
+  if (isOfflineMode()) {
+    const user = fetchOfflineUser({});
+    stateCode = getAppMetadata({ user }).stateCode;
+    uid = user.email;
+    recidivizAllowedStates = Object.values(stateCodes);
+  } else if (impersonateUser) {
+    if (appMetadata.stateCode.toLowerCase() !== "recidiviz") {
+      respondWithForbidden(res);
+      return;
+    }
+    try {
+      const { impersonatedEmail, impersonatedStateCode } =
+        JSON.parse(impersonationParams);
       uid = impersonatedEmail;
       stateCode = impersonatedStateCode;
-    } else {
-      uid = req.user[`${METADATA_NAMESPACE}email_address`];
-      stateCode = appMetadata.stateCode;
-      recidivizAllowedStates = (appMetadata.allowedStates ?? []).map((sc) =>
-        sc.toUpperCase(),
-      );
+    } catch (e) {
+      respondWithBadRequest(res, [e.message]);
+      return;
     }
+  } else {
+    uid = req.user[`${METADATA_NAMESPACE}email_address`];
+    stateCode = appMetadata.stateCode;
+    recidivizAllowedStates = (appMetadata.allowedStates ?? []).map((sc) =>
+      sc.toUpperCase(),
+    );
+  }
 
-    if (!uid) {
-      throw new Error("Missing user email address");
-    }
+  if (!uid) {
+    throw new Error("Missing user email address");
+  }
 
-    if (!stateCode) {
-      throw new Error("Missing state code");
-    }
+  if (!stateCode) {
+    throw new Error("Missing state code");
+  }
 
-    stateCode = stateCode.toUpperCase();
-    const firebaseToken = await firebaseAdmin.auth().createCustomToken(uid, {
-      stateCode,
-      recidivizAllowedStates,
-      impersonator: impersonateUser,
-    });
+  stateCode = stateCode.toUpperCase();
+  const firebaseToken = await firebaseAdmin.auth().createCustomToken(uid, {
+    stateCode,
+    recidivizAllowedStates,
+    impersonator: impersonateUser,
+  });
 
-    res.json({ firebaseToken });
-  };
+  res.json({ firebaseToken });
 }
 
 module.exports = {

@@ -15,53 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import UserStore from "../RootStore/UserStore";
-
-export async function fetchImpersonatedFirebaseToken(
-  impersonatedEmail: string,
-  impersonatedStateCode: string,
-  getTokenSilently?: UserStore["getTokenSilently"],
+export async function fetchFirebaseToken(
+  auth0Token: string,
+  impersonationParams?: {
+    impersonatedEmail: string;
+    impersonatedStateCode: string;
+  },
 ): Promise<string> {
-  if (!getTokenSilently) {
-    throw new Error(
-      "Missing required auth0 authentication to request Firebase token for impersonation.",
-    );
-  }
-  const token = await getTokenSilently();
-  const url = `${
-    import.meta.env.VITE_API_URL
-  }/api/impersonateToken?${new URLSearchParams({
-    impersonatedEmail,
-    impersonatedStateCode,
-  })}`;
+  const queryParams = impersonationParams
+    ? `?${new URLSearchParams({
+        impersonationParams: JSON.stringify(impersonationParams),
+      })}`
+    : "";
+  const url = `${import.meta.env.VITE_API_URL}/token${queryParams}`;
 
   const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${auth0Token}`,
     },
   });
 
   if (!response.ok) {
     throw new Error(
-      `Fetching impersonated Firebase token failed.\nStatus: ${response.status} - ${response.statusText}`,
-    );
-  }
-  const { firebaseToken } = await response.json();
-  return firebaseToken;
-}
-
-export async function fetchFirebaseToken(token: string): Promise<string> {
-  const url = `${import.meta.env.VITE_API_URL}/token`;
-
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Fetching Firebase token failed.\nStatus: ${response.status} - ${response.statusText}`,
+      `Fetching ${impersonationParams ? "impersonated " : ""}Firebase token failed.\nStatus: ${response.status} - ${response.statusText}`,
     );
   }
   const { firebaseToken } = await response.json();
