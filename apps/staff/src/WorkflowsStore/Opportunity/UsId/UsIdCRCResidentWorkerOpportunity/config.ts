@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdCRCResidentWorkerOpportunity } from "./UsIdCRCResidentWorkerOpportunity";
@@ -27,13 +25,10 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
     urlSection: "CRCResidentWorker",
     label: "Resident worker at Community Reentry Centers",
     featureVariant: "usIdCRC",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} resident[|s] may be `,
-      opportunityText:
-        "eligible to be a resident worker at a Community Reentry Center",
-      callToAction:
-        "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
-    }),
+    dynamicEligibilityText:
+      "resident[|s] may be eligible to be a resident worker at a Community Reentry Center",
+    callToAction:
+      "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
     firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
     snooze: {
       defaultSnoozeDays: 30,

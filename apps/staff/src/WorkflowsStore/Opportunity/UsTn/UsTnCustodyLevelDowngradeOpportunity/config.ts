@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./UsTnCustodyLevelDowngradeOpportunity";
 
@@ -25,11 +23,9 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevel
     stateCode: "US_TN",
     urlSection: "custodyLevelDowngrade",
     label: "Custody Level Downgrade",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} resident[|s] may be eligible for a`,
-      opportunityText: "custody level downgrade",
-      callToAction: "Review and update custody levels.",
-    }),
+    dynamicEligibilityText:
+      "resident[|s] may be eligible for a custody level downgrade",
+    callToAction: "Review and update custody levels.",
     firestoreCollection: "US_TN-custodyLevelDowngradeReferrals",
     snooze: {
       defaultSnoozeDays: 30,

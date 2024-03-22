@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
 import { UsTnSupervisionLevelDowngradeOpportunity } from "./UsTnSupervisionLevelDowngradeOpportunity";
@@ -27,12 +25,9 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervis
 
     urlSection: "supervisionLevelDowngrade",
     label: "Supervision Level Downgrade",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText:
-        "supervised at a higher level than their latest risk score",
-      callToAction: "Change their supervision level in TOMIS.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be supervised at a higher level than their latest risk score",
+    callToAction: "Change their supervision level in TOMIS.",
     firestoreCollection: "US_TN-supervisionLevelDowngrade",
     snooze: {
       defaultSnoozeDays: 30,

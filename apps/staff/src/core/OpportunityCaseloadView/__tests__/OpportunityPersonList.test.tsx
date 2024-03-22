@@ -23,13 +23,15 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
-import { OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { OpportunityType } from "../../../WorkflowsStore/Opportunity/OpportunityType/types";
 import {
   Opportunity,
   OpportunityTab,
 } from "../../../WorkflowsStore/Opportunity/types";
-import { mockOpportunity } from "../../__tests__/testUtils";
+import {
+  mockOpportunity,
+  mockOpportunityConfigs,
+} from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
 
 vi.mock("../../../components/StoreProvider");
@@ -54,7 +56,7 @@ const baseWorkflowsStoreMock = {
 };
 beforeEach(() => {
   vi.resetAllMocks();
-  useOpportunityConfigurationsMock.mockReturnValue(OPPORTUNITY_CONFIGS);
+  useOpportunityConfigurationsMock.mockReturnValue(mockOpportunityConfigs);
 });
 
 test("initial", () => {

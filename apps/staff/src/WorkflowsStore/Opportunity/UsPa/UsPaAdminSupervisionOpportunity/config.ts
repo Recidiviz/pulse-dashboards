@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsPaAdminSupervisionOpportunity } from "./UsPaAdminSupervisionOpportunity";
@@ -27,12 +24,10 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
     stateCode: "US_PA",
     urlSection: "adminSupervision",
     label: "Administrative Supervision",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText: "eligible for transfer to Adminstrative Supervision",
-      callToAction:
-        "Review clients who may be eligible for Adminstrative Supervision and complete the DC-P 402 checklist",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be eligible for transfer to Adminstrative Supervision",
+    callToAction:
+      "Review clients who may be eligible for Adminstrative Supervision and complete the DC-P 402 checklist",
     firestoreCollection: "US_PA-adminSupervisionReferrals",
     snooze: {
       defaultSnoozeDays: 30,

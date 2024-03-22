@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMeWorkReleaseOpportunity } from "./UsMeWorkReleaseOpportunity";
@@ -27,14 +25,11 @@ export const usMeWorkReleaseConfig: OpportunityConfig<UsMeWorkReleaseOpportunity
     urlSection: "workRelease",
     label: "Work Release",
     featureVariant: "usMeWorkRelease",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText:
-        "eligible for the Community Transition Program (Work Release)",
-      callToAction:
-        "Search for case managers above to review residents on their caseload who are approaching " +
-        "Work Release eligibility and complete application paperwork.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be eligible for the Community Transition Program (Work Release)",
+    callToAction:
+      "Search for case managers above to review residents on their caseload who are approaching " +
+      "Work Release eligibility and complete application paperwork.",
     firestoreCollection: "US_ME-workReleaseReferrals",
     snooze: {
       defaultSnoozeDays: 30,

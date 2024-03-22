@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { add } from "date-fns";
-import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
@@ -32,12 +31,10 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
       // or when they are marked ineligible, whichever is earliest.
       defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 180 }),
     },
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText: "eligible for a supervision level downgrade",
-      callToAction:
-        "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be eligible for a supervision level downgrade",
+    callToAction:
+      "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
     firestoreCollection: "US_MI-classificationReviewReferrals",
     eligibilityDateText: "Next Classification Due Date",
     sidebarComponents: [

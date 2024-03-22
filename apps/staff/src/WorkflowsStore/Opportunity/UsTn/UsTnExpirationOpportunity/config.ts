@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { add } from "date-fns";
-import simplur from "simplur";
 
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnExpirationOpportunity } from "./UsTnExpirationOpportunity";
@@ -29,12 +28,10 @@ export const usTnExpirationConfig: OpportunityConfig<UsTnExpirationOpportunity> 
     featureVariant: "usTnExpiration",
     initialHeader:
       "Search for officers above to review clients who may be on or past their supervision expiration date.",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText: "on or past their expiration date",
-      callToAction:
-        "Review these clients and complete their auto-generated TEPE Note.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be on or past their expiration date",
+    callToAction:
+      "Review these clients and complete their auto-generated TEPE Note.",
     firestoreCollection: "US_TN-expirationReferrals",
     snooze: {
       defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),

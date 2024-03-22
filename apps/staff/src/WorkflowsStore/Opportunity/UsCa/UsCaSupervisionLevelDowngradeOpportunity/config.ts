@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsCaSupervisionLevelDowngradeOpportunity } from "./UsCaSupervisionLevelDowngradeOpportunity";
 
@@ -26,12 +23,10 @@ export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig<UsCaSupervis
     stateCode: "US_CA",
     urlSection: "supervisionLevelDowngrade",
     label: "Supervision Level Downgrade",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText: "eligible for a supervision level downgrade",
-      callToAction:
-        "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be eligible for a supervision level downgrade",
+    callToAction:
+      "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
     firestoreCollection: "US_CA-supervisionLevelDowngrade",
     methodologyUrl: "TBD",
     denialReasons: {

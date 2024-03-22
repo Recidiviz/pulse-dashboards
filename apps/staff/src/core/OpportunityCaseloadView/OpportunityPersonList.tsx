@@ -30,7 +30,6 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
   countOpportunities,
-  generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
   OpportunityTab,
 } from "../../WorkflowsStore";
@@ -149,6 +148,9 @@ const HydratedOpportunityPersonList = observer(
     )
       return null;
 
+    const { eligibilityTextForCount, callToAction } =
+      opportunityConfigs[opportunityType];
+
     const opportunityCount = oppsFromOpportunitiesByOppType
       ? countOpportunities(oppsFromOpportunitiesByOppType, opportunityType)
       : 0;
@@ -157,24 +159,16 @@ const HydratedOpportunityPersonList = observer(
       analyticsStore.trackOpportunityTabClicked({ tab });
       setActiveTab(tab);
     };
-    const hydratedHeader = generateOpportunityHydratedHeader(
-      opportunityConfigs[opportunityType],
-      opportunityCount,
-    );
 
     return !oppsFromOpportunitiesByOppType.length ? (
       <Empty />
     ) : (
       <>
         <Heading isMobile={isMobile} className="PersonList__Heading">
-          {hydratedHeader.fullText ?? (
-            <>
-              {hydratedHeader.eligibilityText} {hydratedHeader.opportunityText}
-            </>
-          )}
+          {eligibilityTextForCount(opportunityCount)}
         </Heading>
         <SubHeading className="PersonList__Subheading">
-          {hydratedHeader.callToAction}
+          {callToAction}
         </SubHeading>
         <WorkflowsTabbedPersonList<OpportunityTab>
           tabs={[...displayTabs]}
@@ -205,18 +199,20 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
 
   if (!opportunityType) return null;
 
-  const { label } = opportunityConfigs[opportunityType];
+  const { label, initialHeader } = opportunityConfigs[opportunityType];
 
-  const initialHeader = generateOpportunityInitialHeader(
-    opportunityType,
-    justiceInvolvedPersonTitle,
-    workflowsSearchFieldTitle,
-  );
+  const cta =
+    initialHeader ||
+    generateOpportunityInitialHeader(
+      label,
+      justiceInvolvedPersonTitle,
+      workflowsSearchFieldTitle,
+    );
 
   const empty = <Empty />;
 
   const initial = (
-    <WorkflowsResults headerText={label} callToActionText={initialHeader} />
+    <WorkflowsResults headerText={label} callToActionText={cta} />
   );
 
   const hydrated = <HydratedOpportunityPersonList />;

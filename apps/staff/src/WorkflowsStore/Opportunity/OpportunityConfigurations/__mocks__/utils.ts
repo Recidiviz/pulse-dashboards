@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { nextSunday } from "date-fns";
-import simplur from "simplur";
 
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { JusticeInvolvedPerson } from "../../../types";
@@ -49,12 +48,10 @@ export const mockLocalOpportunityConfigurationObject: ILocalOpportunityConfigura
     snooze: {
       defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
     },
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be `,
-      opportunityText: "on or past their expiration date",
-      callToAction:
-        "Review these clients and complete their auto-generated TEPE Note.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be on or past their expiration date",
+    callToAction:
+      "Review these clients and complete their auto-generated TEPE Note.",
     firestoreCollection: "US_XX_mockOpportunity",
     methodologyUrl: "methodologyUrl",
     isAlert: true,

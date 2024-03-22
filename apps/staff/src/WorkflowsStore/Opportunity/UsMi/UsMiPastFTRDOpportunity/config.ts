@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { add } from "date-fns";
-import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
@@ -27,12 +26,10 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
   stateCode: "US_MI",
   urlSection: "pastFTRD",
   label: "Overdue for Discharge",
-  hydratedHeader: (formattedCount) => ({
-    eligibilityText: simplur`${formattedCount} client[|s] [is|are] nearing or `,
-    opportunityText: "past their full-term release date",
-    callToAction:
-      "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
-  }),
+  dynamicEligibilityText:
+    "client[|s] [is|are] nearing or past their full-term release date",
+  callToAction:
+    "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
   firestoreCollection: "US_MI-pastFTRDReferrals",
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),

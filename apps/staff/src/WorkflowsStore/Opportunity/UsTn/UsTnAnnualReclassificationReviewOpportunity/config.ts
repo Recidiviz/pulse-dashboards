@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTnAnnualReclassificationReviewOpportunity";
 
@@ -27,13 +25,11 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
     urlSection: "annualReclassification",
     label: "Annual Reclassification",
     featureVariant: "usTnAnnualReclassification",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} resident[|s] [is|are] eligible `,
-      opportunityText: "for their annual reclassification",
-      callToAction:
-        "Review residents due for their annual reclassification " +
-        "and update their custody level in TOMIS.",
-    }),
+    dynamicEligibilityText:
+      "resident[|s] [is|are] eligible for their annual reclassification",
+    callToAction:
+      "Review residents due for their annual reclassification " +
+      "and update their custody level in TOMIS.",
     firestoreCollection: "US_TN-annualReclassificationReferrals",
     snooze: {
       maxSnoozeDays: 90,

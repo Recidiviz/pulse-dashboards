@@ -22,7 +22,6 @@ import {
   OpportunityRequirement,
   OpportunityTab,
 } from "../../types";
-import { CountFormatter } from "../../utils/generateHeadersUtils";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
 export type OpportunityHeadersBaseType = {
@@ -57,7 +56,8 @@ export interface ILocalOpportunityConfiguration {
   snooze?: SnoozeConfiguration;
   tabOrder?: ReadonlyArray<OpportunityTab>;
   initialHeader?: string;
-  hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
+  callToAction: string;
+  dynamicEligibilityText: string;
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;

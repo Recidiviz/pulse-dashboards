@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
@@ -27,13 +25,10 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervis
     stateCode: "US_MI",
     urlSection: "supervisionLevelMismatch",
     label: "Supervision Level Mismatch",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] within their first 6 months of supervision [is|are] being `,
-      opportunityText:
-        "supervised at a level that does not match their latest risk score",
-      callToAction:
-        "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] within their first 6 months of supervision [is|are] being supervised at a level that does not match their latest risk score",
+    callToAction:
+      "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
     firestoreCollection: "US_MI-supervisionLevelDowngrade",
     snooze: {
       defaultSnoozeDays: 30,

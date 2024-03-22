@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { LSUOpportunity } from "./LSUOpportunity";
 
@@ -24,11 +22,9 @@ export const usIdLSUConfig: OpportunityConfig<LSUOpportunity> = {
   stateCode: "US_ID",
   urlSection: "LSU",
   label: "Limited Supervision Unit",
-  hydratedHeader: (formattedCount) => ({
-    eligibilityText: simplur`${formattedCount} client[|s] may be eligible for the `,
-    opportunityText: `Limited Supervision Unit`,
-    callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
-  }),
+  dynamicEligibilityText:
+    "client[|s] may be eligible for the Limited Supervision Unit",
+  callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
   firestoreCollection: "US_ID-LSUReferrals",
   snooze: {
     defaultSnoozeDays: 30,

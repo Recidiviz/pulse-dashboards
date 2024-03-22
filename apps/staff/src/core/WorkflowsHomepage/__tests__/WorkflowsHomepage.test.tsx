@@ -23,8 +23,11 @@ import {
   useOpportunityConfigurations,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { OPPORTUNITY_CONFIGS, OpportunityType } from "../../../WorkflowsStore";
-import { mockOpportunity } from "../../__tests__/testUtils";
+import { OpportunityType } from "../../../WorkflowsStore";
+import {
+  mockOpportunity,
+  mockOpportunityConfigs,
+} from "../../__tests__/testUtils";
 import WorkflowsHomepage from "..";
 
 vi.mock("../../../components/StoreProvider");
@@ -58,7 +61,7 @@ describe("WorkflowsHomepage", () => {
     // @ts-expect-error
     mockOpportunity.person.recordId = "1";
     vi.resetAllMocks();
-    useOpportunityConfigurationsMock.mockReturnValue(OPPORTUNITY_CONFIGS);
+    useOpportunityConfigurationsMock.mockReturnValue(mockOpportunityConfigs);
   });
 
   afterEach(() => {

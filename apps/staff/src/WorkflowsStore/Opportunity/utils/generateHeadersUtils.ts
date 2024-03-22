@@ -16,37 +16,18 @@
 // =============================================================================
 
 import { pluralizeWord } from "../../../utils";
-import {
-  Opportunity,
-  OPPORTUNITY_CONFIGS,
-  OpportunityHydratedHeader,
-  OpportunityType,
-} from "..";
-import { OpportunityConfiguration } from "../OpportunityConfigurations/interfaces/OpportunityConfiguration";
+import { Opportunity, OPPORTUNITY_CONFIGS, OpportunityType } from "..";
 
 export const generateOpportunityInitialHeader = (
-  opportunityType: OpportunityType,
+  label: string,
   justiceInvolvedPersonTitle: string,
   workflowsSearchFieldTitle: string,
 ): string => {
-  const { label, initialHeader } = OPPORTUNITY_CONFIGS[opportunityType];
-  return (
-    initialHeader ||
-    `Search for ${pluralizeWord(
-      workflowsSearchFieldTitle,
-    )} above to review and refer eligible ${pluralizeWord(
-      justiceInvolvedPersonTitle,
-    )} for ${label.toLowerCase()}.`
-  );
-};
-
-export type CountFormatter = [
-  count: number,
-  formatter: (quantity: number) => string | number,
-];
-/** Formatter for opportunity headers */
-const hydratedHeaderFormatter = (quantity: number): string | number => {
-  return quantity === 0 ? "Some" : quantity;
+  return `Search for ${pluralizeWord(
+    workflowsSearchFieldTitle,
+  )} above to review and refer eligible ${pluralizeWord(
+    justiceInvolvedPersonTitle,
+  )} for ${label.toLowerCase()}.`;
 };
 
 /**
@@ -76,11 +57,4 @@ export const countOpportunities = (
         (opp) => opp.reviewStatus !== "DENIED" && !opp.denial,
       ).length;
   return count;
-};
-
-export const generateOpportunityHydratedHeader = (
-  config: OpportunityConfiguration,
-  count: number,
-): OpportunityHydratedHeader => {
-  return config.hydratedHeader([count, hydratedHeaderFormatter]);
 };

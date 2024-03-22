@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiMinimumTelephoneReportingOpportunity } from "./UsMiMinimumTelephoneReportingOpportunity";
@@ -26,12 +24,10 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumT
     stateCode: "US_MI",
     urlSection: "minimumTelephoneReporting",
     label: "Minimum Telephone Reporting",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be eligible for downgrade to a `,
-      opportunityText: "minimum telephone reporting",
-      callToAction:
-        "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in OMNI.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be eligible for downgrade to a minimum telephone reporting",
+    callToAction:
+      "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in OMNI.",
     firestoreCollection: "US_MI-minimumTelephoneReporting",
     snooze: {
       defaultSnoozeDays: 30,

@@ -18,9 +18,7 @@
 import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { DenialReasonsMap, OpportunityTab } from "../../types";
-import { CountFormatter } from "../../utils";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
-import { OpportunityHydratedHeader } from "./LocalOpportunityConfiguration";
 import { CriteriaCopy } from "./shared";
 export interface OpportunityConfiguration {
   systemType: SystemId;
@@ -33,7 +31,8 @@ export interface OpportunityConfiguration {
   snooze?: SnoozeConfiguration;
   tabOrder?: ReadonlyArray<OpportunityTab>;
   initialHeader?: string;
-  hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
+  callToAction: string;
+  eligibilityTextForCount: (count: number) => string;
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;

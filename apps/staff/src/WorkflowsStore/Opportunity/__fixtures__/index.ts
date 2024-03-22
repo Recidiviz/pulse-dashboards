@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import nextSunday from "date-fns/nextSunday";
-import simplur from "simplur";
 
 import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
@@ -71,12 +70,9 @@ export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
   snooze: {
     defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
   },
-  hydratedHeader: (formattedCount) => ({
-    eligibilityText: simplur`${formattedCount} client[|s] may be `,
-    opportunityText: "on or past their expiration date",
-    callToAction:
-      "Review these clients and complete their auto-generated TEPE Note.",
-  }),
+  dynamicEligibilityText: "client[|s] may be on or past their expiration date",
+  callToAction:
+    "Review these clients and complete their auto-generated TEPE Note.",
   firestoreCollection: "US_XX_mockOpportunity",
   sidebarComponents: [],
   denialReasons: {},
@@ -88,12 +84,6 @@ export const mockUsXxTwoOppConfig: OpportunityConfig<
 > = {
   ...mockUsXxOppConfig,
   systemType: "INCARCERATION",
-  hydratedHeader: (formattedCount) => ({
-    fullText: simplur`${formattedCount} client[|s] may be `,
-    opportunityText: "on or past their expiration date",
-    callToAction:
-      "Review these clients and complete their auto-generated TEPE Note.",
-  }),
   countByFunction: (opportunities: Opportunity[]) =>
     opportunities.filter((opp) => opp.isSnoozed).length,
 };

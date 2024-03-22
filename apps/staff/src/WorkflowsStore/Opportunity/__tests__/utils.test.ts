@@ -16,17 +16,11 @@
 // =============================================================================
 import tk from "timekeeper";
 
-import { MOCK_OPPORTUNITY_CONFIGS, mockUsXxOpp } from "../__fixtures__";
-import {
-  OPPORTUNITY_CONFIGS,
-  OpportunityHydratedHeader,
-} from "../OpportunityConfigs";
 import { OpportunityType } from "../OpportunityType/types";
 import { Opportunity } from "../types";
 import { monthsOrDaysRemainingFromToday } from "../utils/criteriaUtils";
 import {
   countOpportunities,
-  generateOpportunityHydratedHeader,
   generateOpportunityInitialHeader,
 } from "../utils/generateHeadersUtils";
 
@@ -67,59 +61,13 @@ describe("monthsOrDaysRemainingFromToday", () => {
   });
 });
 
-describe("Generate header", () => {
-  const TEST_FIELD = "TEST_FIELD";
-  const TEST_TITLE = "TEST_PERSON";
-
-  test("when initialHeader is provided in config", () => {
-    const header = generateOpportunityInitialHeader(
-      mockUsXxOpp,
-      TEST_TITLE,
-      TEST_FIELD,
-    );
-    expect(header).toMatchSnapshot();
-  });
-
-  test("when initialHeader is not provided in config", () => {
-    OPPORTUNITY_CONFIGS[mockUsXxOpp].initialHeader = undefined;
-    const header = generateOpportunityInitialHeader(
-      mockUsXxOpp,
-      TEST_TITLE,
-      TEST_FIELD,
-    );
-    expect(header).toMatchSnapshot();
-  });
-});
-
-describe("Generate hydrated header", () => {
-  const hydratedHeaders: OpportunityHydratedHeader[] = Object.entries(
-    OPPORTUNITY_CONFIGS,
-  ).map(([key, value], index) => {
-    return generateOpportunityHydratedHeader(value as any, index);
-  });
-
-  test("to generate correctly", () => {
-    expect(hydratedHeaders).toBeDefined();
-    expect(hydratedHeaders.length).toEqual(
-      Object.keys(MOCK_OPPORTUNITY_CONFIGS).length,
-    );
-  });
-
-  test("to match snapshot", () => {
-    expect(hydratedHeaders).toMatchSnapshot();
-  });
-
-  test("to match expected contents", () => {
-    hydratedHeaders.forEach((hydratedHeader, index) => {
-      const eligibilityOrFullText =
-        hydratedHeader.eligibilityText || hydratedHeader.fullText;
-      if (index === 0) {
-        expect(eligibilityOrFullText?.startsWith("Some")).toBeTrue();
-      } else {
-        expect(eligibilityOrFullText?.startsWith(index.toString())).toBeTrue();
-      }
-    });
-  });
+test("Generate header", () => {
+  const header = generateOpportunityInitialHeader(
+    "Mock Opportunity",
+    "TEST_PERSON",
+    "TEST_FIELD",
+  );
+  expect(header).toMatchSnapshot();
 });
 
 describe("Generate counts for opportunities", () => {

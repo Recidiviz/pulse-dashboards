@@ -18,6 +18,7 @@
 import { WorkflowsStore } from "../../../WorkflowsStore";
 import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
+import { formatEligibilityText } from "./ApiOpportunityConfigurationImpl";
 
 export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   configurationObject: ILocalOpportunityConfiguration;
@@ -61,9 +62,14 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   get initialHeader() {
     return this.configurationObject.initialHeader;
   }
-  get hydratedHeader() {
-    return this.configurationObject.hydratedHeader;
+  get callToAction() {
+    return this.configurationObject.callToAction;
   }
+  eligibilityTextForCount = (count: number) =>
+    formatEligibilityText(
+      this.configurationObject.dynamicEligibilityText,
+      count,
+    );
   get denialButtonText() {
     return this.configurationObject.denialButtonText;
   }

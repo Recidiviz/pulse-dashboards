@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { EarnedDischargeOpportunity } from "./EarnedDischargeOpportunity";
 
@@ -25,11 +23,8 @@ export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportu
     stateCode: "US_ID",
     urlSection: "earnedDischarge",
     label: "Earned Discharge",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be eligible for `,
-      opportunityText: `earned discharge`,
-      callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
-    }),
+    dynamicEligibilityText: "client[|s] may be eligible for earned discharge",
+    callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
     firestoreCollection: "US_ID-earnedDischargeReferrals",
     snooze: {
       defaultSnoozeDays: 30,

@@ -16,13 +16,11 @@
 // =============================================================================
 import { nextSunday, startOfWeek } from "date-fns";
 import { countBy } from "lodash";
-import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import {
-  CountFormatter,
   DenialReasonsMap,
   Opportunity,
   OpportunityConfig,
@@ -54,11 +52,8 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
     snooze: {
       defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
     },
-    hydratedHeader: (formattedCount: CountFormatter) => ({
-      fullText: simplur`${formattedCount} resident[|s] ${fullTextPartial}`,
-      opportunityText: `${segregationTypeMapping[usMoOverdueRHOppVariant]}`,
-      callToAction,
-    }),
+    dynamicEligibilityText: `resident[|s] ${fullTextPartial}`,
+    callToAction,
     countByFunction: (opportunities: Opportunity[]) => {
       const counts = countBy(opportunities, "tabTitle") as Record<
         OpportunityTab,

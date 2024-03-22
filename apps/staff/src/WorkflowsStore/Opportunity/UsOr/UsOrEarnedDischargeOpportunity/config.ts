@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsOrEarnedDischargeOpportunity } from "./UsOrEarnedDischargeOpportunity";
@@ -27,12 +24,10 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
     stateCode: "US_OR",
     urlSection: "earnedDischarge",
     label: "Earned Discharge",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] on [a|] funded sentence[|s] may be `,
-      opportunityText: "eligible for Earned Discharge from Supervision",
-      callToAction:
-        "Review clients who may be eligible for ED and complete the EDIS checklist.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] on [a|] funded sentence[|s] may be eligible for Earned Discharge from Supervision",
+    callToAction:
+      "Review clients who may be eligible for ED and complete the EDIS checklist.",
     firestoreCollection: "US_OR-earnedDischarge",
     denialButtonText: "Additional Eligibility",
     snooze: {

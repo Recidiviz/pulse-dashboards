@@ -52,7 +52,7 @@ import { UsTnAnnualReclassificationReviewConfig as usTnAnnualReclassification } 
 import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./UsTn/UsTnCustodyLevelDowngradeOpportunity/config";
 import { usTnExpirationConfig as usTnExpiration } from "./UsTn/UsTnExpirationOpportunity/config";
 import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from "./UsTn/UsTnSupervisionLevelDowngradeOpportunity/config";
-import { CountFormatter } from "./utils/generateHeadersUtils";
+
 /** Auto refers to users who have a default snooze until set.
  * defaultSnoozeUntilFn is used to calculate the default snooze until,
  * e.g. weekly on Mondays or 90 days.
@@ -122,7 +122,8 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   snooze?: SnoozeConfig;
   tabOrder?: ReadonlyArray<OpportunityTab>;
   initialHeader?: string;
-  hydratedHeader: (formattedCount: CountFormatter) => OpportunityHydratedHeader;
+  callToAction: string;
+  dynamicEligibilityText: string;
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;

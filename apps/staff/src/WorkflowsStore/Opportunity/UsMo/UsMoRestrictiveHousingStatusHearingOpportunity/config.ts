@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { nextMonday } from "date-fns";
-import simplur from "simplur";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
@@ -32,11 +31,9 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
     snooze: {
       defaultSnoozeUntilFn: (snoozedOn: Date) => nextMonday(snoozedOn),
     },
-    hydratedHeader: (formattedCount) => ({
-      fullText: simplur`${formattedCount} resident[|s] [is|are] currently in Restrictive Housing`,
-      opportunityText: "Restrictive Housing Status Hearing",
-      callToAction: "Conduct a Restrictive Housing Status Hearing",
-    }),
+    dynamicEligibilityText:
+      "resident[|s] [is|are] currently in Restrictive Housing",
+    callToAction: "Conduct a Restrictive Housing Status Hearing",
     firestoreCollection: "US_MO-restrictiveHousingStatusHearingReferrals",
     tabOrder: generateTabs({
       isAlert: true,

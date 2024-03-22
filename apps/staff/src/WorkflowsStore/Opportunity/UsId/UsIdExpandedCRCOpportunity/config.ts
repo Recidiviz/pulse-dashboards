@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdExpandedCRCOpportunity } from "./UsIdExpandedCRCOpportunity";
@@ -27,13 +25,10 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
     urlSection: "expandedCRC",
     label: "Expanded CRC Program",
     featureVariant: "usIdExpandedCRC",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} resident[|s] [is|are] `,
-      opportunityText:
-        "eligible for transfer to Expanded Community Reentry Centers.",
-      callToAction:
-        "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
-    }),
+    dynamicEligibilityText:
+      "resident[|s] [is|are] eligible for transfer to Expanded Community Reentry Centers.",
+    callToAction:
+      "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
     firestoreCollection: "US_ID-expandedCRCReferrals",
     snooze: {
       defaultSnoozeDays: 30,

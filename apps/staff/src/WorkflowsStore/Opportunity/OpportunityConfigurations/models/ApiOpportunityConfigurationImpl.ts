@@ -22,9 +22,15 @@ import {
   FeatureVariant,
 } from "../../../../RootStore/types";
 import { WorkflowsStore } from "../../../WorkflowsStore";
-import { CountFormatter } from "../../utils";
 import { IApiOpportunityConfiguration } from "../interfaces";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
+
+export function formatEligibilityText(dynamicText: string, count: number) {
+  return simplur(
+    ["", " " + dynamicText],
+    [count, (c: number) => (c === 0 ? "Some" : c)],
+  );
+}
 
 export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   configurationObject: IApiOpportunityConfiguration;
@@ -70,17 +76,16 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get initialHeader() {
     return "INITIAL HEADER";
   }
-  get hydratedHeader() {
-    // todooo actually hydrate
-    return (formattedCount: CountFormatter) => ({
-      callToAction: this.configurationObject.callToAction,
-      opportunityText: "",
-      eligibilityText: simplur(
-        ["", " " + this.configurationObject.dynamicEligibilityText],
-        formattedCount,
-      ),
-    });
+  get callToAction() {
+    return this.configurationObject.callToAction;
   }
+
+  eligibilityTextForCount = (count: number) =>
+    formatEligibilityText(
+      this.configurationObject.dynamicEligibilityText,
+      count,
+    );
+
   get denialButtonText() {
     return undefined;
   }

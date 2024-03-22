@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsNdEarlyTerminationOpportunity } from "./UsNdEarlyTerminationOpportunity";
@@ -26,12 +24,9 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
     stateCode: "US_ND",
     urlSection: "earlyTermination",
     label: "Early Termination",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be eligible for `,
-      opportunityText: "early termination",
-      callToAction:
-        "Review clients eligible for early termination and download the paperwork to file with the Court.",
-    }),
+    dynamicEligibilityText: "client[|s] may be eligible for early termination",
+    callToAction:
+      "Review clients eligible for early termination and download the paperwork to file with the Court.",
     firestoreCollection: "earlyTerminationReferrals",
     snooze: {
       defaultSnoozeDays: 30,

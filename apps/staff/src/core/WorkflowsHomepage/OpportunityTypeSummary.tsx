@@ -31,7 +31,6 @@ import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   countOpportunities,
-  generateOpportunityHydratedHeader,
   Opportunity,
   OpportunityType,
 } from "../../WorkflowsStore";
@@ -130,7 +129,8 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunityType: OpportunityType;
 }): React.ReactElement | null {
   const { isMobile } = useIsMobile(true);
-  const config = useOpportunityConfigurations()[opportunityType];
+  const { eligibilityTextForCount, urlSection } =
+    useOpportunityConfigurations()[opportunityType];
 
   const defaultAvatarsShown = 4;
   const sliceIndex =
@@ -146,13 +146,6 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     (opp) => opp.reviewStatus === "DENIED",
   ).length;
 
-  const header = generateOpportunityHydratedHeader(
-    config,
-    countOpportunities(opportunities, opportunityType),
-  );
-
-  const { urlSection } = useOpportunityConfigurations()[opportunityType];
-
   return (
     <OpportunityTypeSummaryWrapper
       isMobile={isMobile}
@@ -160,10 +153,8 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     >
       <OpportunityHeaderWrapper isMobile={isMobile}>
         <OpportunityHeader isMobile={isMobile}>
-          {header.fullText ?? (
-            <>
-              {header.eligibilityText} {header.opportunityText}
-            </>
+          {eligibilityTextForCount(
+            countOpportunities(opportunities, opportunityType),
           )}
         </OpportunityHeader>
         <ReviewStatusWrapper>

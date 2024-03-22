@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { CompliantReportingOpportunity } from "./CompliantReportingOpportunity";
 
@@ -25,12 +23,9 @@ export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingO
     stateCode: "US_TN",
     urlSection: "compliantReporting",
     label: "Compliant Reporting",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] may be eligible for `,
-      opportunityText: "Compliant Reporting",
-      callToAction:
-        "Review and refer eligible clients for Compliant Reporting.",
-    }),
+    dynamicEligibilityText:
+      "client[|s] may be eligible for Compliant Reporting",
+    callToAction: "Review and refer eligible clients for Compliant Reporting.",
     firestoreCollection: "compliantReportingReferrals",
     snooze: {
       defaultSnoozeDays: 30,

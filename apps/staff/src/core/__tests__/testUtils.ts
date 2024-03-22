@@ -16,11 +16,22 @@
 // =============================================================================
 
 import { add } from "date-fns";
-import simplur from "simplur";
+import { mapValues } from "lodash";
 
 import { AutoSnoozeUpdate, ManualSnoozeUpdate } from "../../FirestoreStore";
 import { Client, Opportunity } from "../../WorkflowsStore";
+import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import { formatEligibilityText } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
+import { LocalOpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/LocalOpportunityConfigurationImpl";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
+
+export const mockOpportunityConfigs = mapValues(
+  OPPORTUNITY_CONFIGS,
+  (rawConfig) =>
+    new LocalOpportunityConfiguration(rawConfig, {
+      featureVariants: {},
+    } as any),
+);
 
 export const mockOpportunity: Opportunity<Client> = {
   record: {},
@@ -69,12 +80,14 @@ export const mockOpportunity: Opportunity<Client> = {
     label: "Past FTRD",
     initialHeader:
       "Search for officers above to review clients whose full-term release date is near or has passed.",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] [is|are] nearing or `,
-      opportunityText: "past their full-term release date",
-      callToAction:
-        "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
-    }),
+    eligibilityTextForCount(count) {
+      return formatEligibilityText(
+        "client[|s] [is|are] nearing or past their full-term release date",
+        count,
+      );
+    },
+    callToAction:
+      "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
     compareBy: ["reviewStatus"],
     firestoreCollection: "US_ID-pastFTRDReferrals",
     snooze: {

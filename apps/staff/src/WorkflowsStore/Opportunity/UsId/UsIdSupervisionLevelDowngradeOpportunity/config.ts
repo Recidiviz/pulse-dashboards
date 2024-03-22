@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import simplur from "simplur";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsIdSupervisionLevelDowngradeOpportunity } from "./UsIdSupervisionLevelDowngradeOpportunity";
 
@@ -25,12 +23,9 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig<UsIdSupervis
     stateCode: "US_ID",
     urlSection: "supervisionLevelMismatch",
     label: "Supervision Level Mismatch",
-    hydratedHeader: (formattedCount) => ({
-      eligibilityText: simplur`${formattedCount} client[|s] [is|are] being `,
-      opportunityText:
-        "supervised at a level that does not match their latest risk score",
-      callToAction: "Change their supervision level in Atlas",
-    }),
+    dynamicEligibilityText:
+      "client[|s] [is|are] being supervised at a level that does not match their latest risk score",
+    callToAction: "Change their supervision level in Atlas",
     firestoreCollection: "US_ID-supervisionLevelDowngrade",
     snooze: {
       defaultSnoozeDays: 30,
