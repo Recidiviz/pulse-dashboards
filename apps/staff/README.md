@@ -275,7 +275,11 @@ Frontend production deploys should occur at least every 2 weeks, and backend pro
 
 ### Running E2E tests
 
-E2E feature specs are found in the `src/cucumber` directory. The tests are run using [WebDriverIO and Cucumber](https://webdriver.io/docs/frameworks#using-cucumber) and can be configured to run in a headless browser mode.
+We currently use two frameworks for our e2e tests. The users, login, Workflows, and Lantern e2e tests use Cucumber. Insights e2e tests use Playwright. We may try to eventually port all tests over to Playwright, but for now they are split across the two frameworks and are run using different scripts.
+
+#### Cucumber specs
+
+The Cucumber E2E feature specs are found in the `src/cucumber` directory. The tests are run using [WebDriverIO and Cucumber](https://webdriver.io/docs/frameworks#using-cucumber) and can be configured to run in a headless browser mode.
 
 Configure HEADLESS mode by setting this variable in your shell environment before running the tests: `RUN_TESTS_HEADLESS=true`.
 
@@ -292,6 +296,30 @@ To run E2E tests that involve logging in:
 
 1. Start your dev server: `nx dev staff`
 2. Run the test suites: `nx test-e2e-lantern staff` or `nx test-e2e-login staff` or `nx test-e2e-users staff`
+
+To run E2E tests that do not involve logging in:
+
+1. Start the offline server `nx offline staff`
+2. Run the test suites: `nx test-e2e-workflows staff`
+
+#### Playwright specs
+
+The Playwright feature specs are found in the `/e2e` directory. The tests are run using [Playwright](https://playwright.dev/), and can be run from the command line, or using a plugin installed on your IDE.
+
+These tests run on the offline server.
+
+First install the Playwright tools
+`npx install playwright`
+
+To run the Playwright E2E tests from your command line:
+
+1. Start the offline server `nx offline staff`
+1. Run the tests: (headless) `nx e2e staff` or (headed) `nx e2e staff --headed`
+
+To run the Playwright E2e tests from your IDE:
+
+1. Start the offline server `nx offline staff`
+1. Follow the instructions [here](https://playwright.dev/docs/getting-started-vscode) to run, debug, or record new tests.
 
 ## Tooling
 

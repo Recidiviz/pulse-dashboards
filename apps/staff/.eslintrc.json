@@ -15,10 +15,18 @@
         // TODO TS re-enable this after repo is ported to TS
         "@typescript-eslint/ban-ts-comment": "off",
         // common workaround for strict return types
-        "react/jsx-no-useless-fragment": ["error", { "allowExpressions": true }]
+        "react/jsx-no-useless-fragment": [
+          "error",
+          {
+            "allowExpressions": true
+          }
+        ]
       }
     },
-    { "files": ["*.js", "*.jsx"], "rules": {} },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    },
     {
       "files": ["src/cucumber/**/*", "wdio.conf.js"],
       "extends": ["plugin:wdio/recommended"],
@@ -46,10 +54,19 @@
       "rules": {
         "no-restricted-globals": ["error", "jest"]
       }
+    },
+    {
+      "files": ["e2e/**/*.{ts,js,tsx,jsx}"],
+      "rules": {}
     }
   ],
   "rules": {
-    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
     "react/display-name": ["error"],
     "react/react-in-jsx-scope": "off",
 

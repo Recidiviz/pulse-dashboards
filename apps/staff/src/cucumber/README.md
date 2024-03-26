@@ -60,11 +60,15 @@ When you run tests locally, you can choose to run them within a browser or headl
 
 **Run each E2E suite individually**
 
+Tests that require a dev mode server to be running:
+
 - Lantern tests: `nx test-e2e-lantern staff`
 
 - Lantern user permissions tests: `nx test-e2e-users staff`
 
 - Auth0 login tests: `nx test-e2e-login staff`
+
+Tests that require an offline mode server to be running:
 
 - Workflows tests: `nx test-e2e-workflows staff`
 
