@@ -66,7 +66,7 @@
     "env-cmd": "^9.0.3",
     "escape-html": "^1.0.3",
     "eslint-config-google": "^0.14.0",
-    "express": "^4.17.3",
+    "express": "^4.19.2",
     "express-jwt": "^6.1.2",
     "express-rate-limit": "^6.4.0",
     "express-unless": "^1.0.0",
