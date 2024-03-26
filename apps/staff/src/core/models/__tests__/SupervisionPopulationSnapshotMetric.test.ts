@@ -43,8 +43,6 @@ describe("SupervisionPopulationSnapshotMetric", () => {
   let metric: SupervisionPopulationSnapshotMetric;
 
   beforeEach(async () => {
-    vi.stubEnv("REACT_APP_API_URL", "test-url");
-
     vi.mocked(RootStore).getTokenSilently.mockResolvedValue("auth token");
     vi.mocked(callMetricsApi).mockResolvedValue({
       supervision_to_prison_population_snapshot_by_dimension: [

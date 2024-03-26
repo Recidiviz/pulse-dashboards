@@ -274,7 +274,7 @@ describe("formatStrings", () => {
   describe("encrypting and decrypting strings", () => {
     beforeEach(() => {
       process.env = Object.assign(process.env, {
-        REACT_APP_CRYPTO_PASSPHRASE: "secret passphrase",
+        VITE_CRYPTO_PASSPHRASE: "secret passphrase",
       });
     });
 

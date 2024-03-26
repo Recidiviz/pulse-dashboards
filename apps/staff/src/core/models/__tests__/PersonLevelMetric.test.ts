@@ -40,9 +40,6 @@ describe("PersonLevelMetric", () => {
   let metric: PersonLevelMetric;
 
   beforeEach(() => {
-    vi.stubEnv("REACT_APP_DEPLOY_ENV", "dev");
-    vi.stubEnv("REACT_APP_NEW_BACKEND_API_URL", "http://localhost:5000");
-
     vi.mocked(RootStore).getTokenSilently.mockResolvedValue("auth token");
 
     vi.mocked(callNewMetricsApi).mockResolvedValue({

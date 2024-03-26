@@ -38,9 +38,6 @@ describe("OverTimeMetric", () => {
   let metric: OverTimeMetric;
 
   beforeEach(() => {
-    vi.stubEnv("REACT_APP_DEPLOY_ENV", "dev");
-    vi.stubEnv("REACT_APP_NEW_BACKEND_API_URL", "http://localhost:5000");
-
     vi.mocked(callNewMetricsApi).mockResolvedValue({
       data: [
         {

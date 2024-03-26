@@ -66,22 +66,22 @@ For anyone trying to set this up independently, construct environment variables 
 
 Expected frontend environment variables include:
 
-- `REACT_APP_API_URL` - the base URL of the backend API server.
-- `REACT_APP_AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the backend `AUTH_ENV` variable.
-- `REACT_APP_FEEDBACK_URL` - the URL of the Recidiviz Dashboard Feedback form.
-- `REACT_APP_IS_OFFLINE (OPTIONAL)` - whether or not to run the frontend in offline mode, which will run the app without requiring authentication. This should only be set when running locally and should be provided through the command line, along with the backend sibling below. To run the app in offline mode, run `yarn offline`
-- `REACT_APP_INTERCOM_APP_ID` - the APP_ID for Intercom, the customer engagement and support tool. Should be included in local, development, and production environments. The local and development environments point at the 'Recidiviz - [TEST]' Intercom workspace, and production environment points at the live 'Recidiviz' Intercom workspace.
-- `REACT_APP_SENTRY_ENV` - The environment for reporting Sentry errors
-- `REACT_APP_SENTRY_DSN` - The public DSN URL to use for sending Sentry errors, can be found on the Sentry project page.
-- `REACT_APP_DEPLOY_ENV` - The current deploy environment: `production`, `staging`, or `dev`
-- `REACT_APP_NEW_BACKEND_API_URL` - URL of the new Pathways backend
-- `REACT_APP_CRYPTO_PASSPHRASE` - Used to encrypt/decrypt salted hash ids
-- `REACT_APP_FIREBASE_BACKEND_PROJECT` - Name of the GCP project where Firebase is hosted
-- `REACT_APP_FIREBASE_API_KEY` - API Key to access Firebase
+- `VITE_API_URL` - the base URL of the backend API server.
+- `VITE_AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the backend `AUTH_ENV` variable.
+- `VITE_FEEDBACK_URL` - the URL of the Recidiviz Dashboard Feedback form.
+- `VITE_IS_OFFLINE (OPTIONAL)` - whether or not to run the frontend in offline mode, which will run the app without requiring authentication. This should only be set when running locally and should be provided through the command line, along with the backend sibling below. To run the app in offline mode, run `yarn offline`
+- `VITE_INTERCOM_APP_ID` - the APP_ID for Intercom, the customer engagement and support tool. Should be included in local, development, and production environments. The local and development environments point at the 'Recidiviz - [TEST]' Intercom workspace, and production environment points at the live 'Recidiviz' Intercom workspace.
+- `VITE_SENTRY_ENV` - The environment for reporting Sentry errors
+- `VITE_SENTRY_DSN` - The public DSN URL to use for sending Sentry errors, can be found on the Sentry project page.
+- `VITE_DEPLOY_ENV` - The current deploy environment: `production`, `staging`, or `dev`
+- `VITE_NEW_BACKEND_API_URL` - URL of the new Pathways backend
+- `VITE_CRYPTO_PASSPHRASE` - Used to encrypt/decrypt salted hash ids
+- `VITE_FIREBASE_BACKEND_PROJECT` - Name of the GCP project where Firebase is hosted
+- `VITE_FIREBASE_API_KEY` - API Key to access Firebase
 
 Expected backend environment variables include:
 
-- `AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the frontend `REACT_APP_AUTH_ENV` variable.
+- `AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the frontend `VITE_AUTH_ENV` variable.
 - `GOOGLE_APPLICATION_CREDENTIALS` - a relative path pointing to the JSON file containing the credentials of the service account used to communicate with Google Cloud Storage, for metric retrieval.
 - `METRIC_BUCKET` - the name of the Google Cloud Storage bucket where the metrics reside.
 - `IS_OFFLINE` (OPTIONAL) - whether or not to run the backend in offline mode, which will retrieve static fixture data from the `server/core/demo_data` directory instead of pulling data from dynamic, live sources. This should only be set when running locally and should be provided through the command line, along with the frontend sibling above. To run the app in offline mode, use the following command: `yarn offline`
@@ -98,7 +98,7 @@ The build process, as described below, ensures that the proper values are compil
 
 The backend API server and most frontend views in the app are authenticated via [Auth0](https://auth0.com/). You can control which views are authenticated by specifying the allowed paths in `ProtectedLayout.tsx`. If you are setting this app up completely fresh, you will need to create your own Auth0 account.
 
-This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. The development and staging environments should be configured in `auth_config_dev.json`, demo environment in `auth_config_demo.json` and production in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `REACT_APP_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
+This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. The development and staging environments should be configured in `auth_config_dev.json`, demo environment in `auth_config_demo.json` and production in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `VITE_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
 
 ### Nx
 

@@ -32,7 +32,7 @@ export class OpportunityConfigurationAPIClient
   }
 
   private get baseUrl() {
-    return `${process.env.REACT_APP_NEW_BACKEND_API_URL}/workflows/${this.tenantId}`;
+    return `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/${this.tenantId}`;
   }
 
   get tenantId(): string {
