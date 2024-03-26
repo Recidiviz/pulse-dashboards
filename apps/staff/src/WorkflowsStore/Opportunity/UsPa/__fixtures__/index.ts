@@ -30,11 +30,11 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
       usPaNoHighSanctionsInPastYear: {
         latestHighSanctionDate: new Date("2021-01-01"),
       },
-      usPaNotServingIneligibleAsOffense: {
+      usPaNotServingIneligibleOffenseForAdminSupervision: {
         ineligibleOffenses: ["EXAMPLE"],
         ineligibleSentencesExpirationDate: [new Date("2021-06-01")],
       },
-      usPaSupervisionLevelIsNotLimited: {
+      supervisionLevelIsNotLimited: {
         limitedStartDate: null,
         supervisionLevel: "EXAMPLE",
       },

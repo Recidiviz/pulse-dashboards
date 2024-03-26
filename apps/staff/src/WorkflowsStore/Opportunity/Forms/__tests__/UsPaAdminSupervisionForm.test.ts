@@ -53,8 +53,8 @@ function createTestUnit() {
     eligibleCriteria: {
       usPaFulfilledRequirements: null,
       usPaNoHighSanctionsInPastYear: null,
-      usPaNotServingIneligibleAsOffense: null,
-      usPaSupervisionLevelIsNotLimited: {
+      usPaNotServingIneligibleOffenseForAdminSupervision: null,
+      supervisionLevelIsNotLimited: {
         supervisionLevel: "MEDIUM",
         limitedStartDate: null,
       },

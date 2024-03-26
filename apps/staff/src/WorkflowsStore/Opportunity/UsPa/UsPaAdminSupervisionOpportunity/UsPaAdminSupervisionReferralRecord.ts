@@ -31,16 +31,18 @@ export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
       })
       .nullable(),
     usPaFulfilledRequirements: eligibleDateSchema.nullable(),
-    usPaNotServingIneligibleAsOffense: z
+    usPaNotServingIneligibleOffenseForAdminSupervision: z
       .object({
         ineligibleOffenses: z.array(z.string()),
         ineligibleSentencesExpirationDate: z.array(dateStringSchema),
       })
       .nullable(),
-    usPaSupervisionLevelIsNotLimited: z.object({
-      limitedStartDate: dateStringSchema.nullable(),
-      supervisionLevel: z.string(),
-    }),
+    supervisionLevelIsNotLimited: z
+      .object({
+        limitedStartDate: dateStringSchema.nullable(),
+        supervisionLevel: z.string(),
+      })
+      .nullable(),
   }),
   ineligibleCriteria: z.object({}),
 });

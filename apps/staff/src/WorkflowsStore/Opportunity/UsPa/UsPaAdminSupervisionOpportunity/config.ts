@@ -47,10 +47,10 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
       usPaFulfilledRequirements: {
         text: "Has fulfilled treatment and special condition requirements",
       },
-      usPaNotServingIneligibleAsOffense: {
+      usPaNotServingIneligibleOffenseForAdminSupervision: {
         text: "Not serving for an ineligible offense",
       },
-      usPaSupervisionLevelIsNotLimited: {
+      supervisionLevelIsNotLimited: {
         text: "Currently on {{supervisionLevel}} supervision",
       },
     },

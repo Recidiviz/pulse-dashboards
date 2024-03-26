@@ -3,19 +3,19 @@
 exports[`parses empty ineligible offenses array 1`] = `
 {
   "eligibleCriteria": {
+    "supervisionLevelIsNotLimited": {
+      "limitedStartDate": null,
+      "supervisionLevel": "EXAMPLE",
+    },
     "usPaFulfilledRequirements": {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
     },
     "usPaNoHighSanctionsInPastYear": {
       "latestHighSanctionDate": 2022-02-02T00:00:00.000Z,
     },
-    "usPaNotServingIneligibleAsOffense": {
+    "usPaNotServingIneligibleOffenseForAdminSupervision": {
       "ineligibleOffenses": [],
       "ineligibleSentencesExpirationDate": [],
-    },
-    "usPaSupervisionLevelIsNotLimited": {
-      "limitedStartDate": null,
-      "supervisionLevel": "EXAMPLE",
     },
   },
   "externalId": "abc123",
@@ -27,13 +27,13 @@ exports[`parses empty ineligible offenses array 1`] = `
 exports[`parses null reason fields 1`] = `
 {
   "eligibleCriteria": {
-    "usPaFulfilledRequirements": null,
-    "usPaNoHighSanctionsInPastYear": null,
-    "usPaNotServingIneligibleAsOffense": null,
-    "usPaSupervisionLevelIsNotLimited": {
+    "supervisionLevelIsNotLimited": {
       "limitedStartDate": null,
       "supervisionLevel": "EXAMPLE",
     },
+    "usPaFulfilledRequirements": null,
+    "usPaNoHighSanctionsInPastYear": null,
+    "usPaNotServingIneligibleOffenseForAdminSupervision": null,
   },
   "externalId": "abc123",
   "ineligibleCriteria": {},
@@ -44,13 +44,17 @@ exports[`parses null reason fields 1`] = `
 exports[`record parses as expected 1`] = `
 {
   "eligibleCriteria": {
+    "supervisionLevelIsNotLimited": {
+      "limitedStartDate": null,
+      "supervisionLevel": "EXAMPLE",
+    },
     "usPaFulfilledRequirements": {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
     },
     "usPaNoHighSanctionsInPastYear": {
       "latestHighSanctionDate": 2022-02-02T00:00:00.000Z,
     },
-    "usPaNotServingIneligibleAsOffense": {
+    "usPaNotServingIneligibleOffenseForAdminSupervision": {
       "ineligibleOffenses": [
         "ABC",
         "DEF",
@@ -59,10 +63,6 @@ exports[`record parses as expected 1`] = `
         2023-06-01T00:00:00.000Z,
         2022-01-01T00:00:00.000Z,
       ],
-    },
-    "usPaSupervisionLevelIsNotLimited": {
-      "limitedStartDate": null,
-      "supervisionLevel": "EXAMPLE",
     },
   },
   "externalId": "abc123",
