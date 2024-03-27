@@ -23,9 +23,9 @@ import { DeepWriteable } from "./types";
 export const OPPORTUNITY_TYPES_BY_STATE = {
   US_CA: ["usCaSupervisionLevelDowngrade"],
   US_ID: [
+    "pastFTRD",
     "earnedDischarge",
     "LSU",
-    "pastFTRD",
     "usIdExpandedCRC",
     "usIdCRCResidentWorker",
     "usIdCRCWorkRelease",
