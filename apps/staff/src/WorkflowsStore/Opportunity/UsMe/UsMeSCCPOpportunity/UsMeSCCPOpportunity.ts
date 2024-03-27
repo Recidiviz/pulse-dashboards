@@ -109,16 +109,18 @@ function hydrateServedXPortionOfSentence(
   const { xPortionServed, eligibleDate } = criterion;
   const lengthCondition =
     xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
-  const monthsRemaining = differenceInMonths(eligibleDate, new Date());
-  const daysRemaining = differenceInDays(eligibleDate, new Date());
+  const monthsDifference = differenceInMonths(new Date(), eligibleDate);
+  const daysDifference = differenceInDays(new Date(), eligibleDate);
 
-  const isDays = monthsRemaining === 0;
-  const timeRemaining = isDays ? daysRemaining : monthsRemaining;
+  const isDays = monthsDifference === 0;
+  // the difference will be negative if the eligible date is in the future;
+  // flip the sign to get the time remaining for display purposes
+  const timeRemaining = -(isDays ? daysDifference : monthsDifference);
   const timeUnit = pluralizeWord(isDays ? "day" : "month", timeRemaining);
 
   const servedCondition =
-    monthsRemaining >= -3 && monthsRemaining < 0
-      ? `Within ${-daysRemaining} days of having served`
+    monthsDifference >= -3 && monthsDifference < 0
+      ? `Within ${-daysDifference} days of having served`
       : "Served at least";
 
   const text =
