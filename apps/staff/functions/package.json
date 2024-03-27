@@ -1,22 +1,23 @@
 {
   "name": "functions",
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint --ext .js,.ts src",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "serve": "yarn run build && firebase emulators:start --only functions",
     "shell": "yarn run build && firebase functions:shell",
     "start": "yarn run shell",
-    "deploy:staging": "firebase deploy -P recidiviz-dashboard-staging --only functions:scheduledFirestoreExport",
-    "deploy:production": "firebase deploy -P recidiviz-dashboard-production --only functions:scheduledFirestoreExport",
+    "deploy:staging": "firebase deploy -P recidiviz-dashboard-staging --only functions",
+    "deploy:production": "firebase deploy -P recidiviz-dashboard-production --only functions",
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "20"
+    "node": "18"
   },
   "main": "lib/index.js",
   "dependencies": {
     "@google-cloud/logging": "^11.0.0",
+    "date-fns": "^2.23.0",
     "firebase-admin": "^11.8.0",
     "firebase-functions": "^4.3.1"
   },

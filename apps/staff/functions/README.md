@@ -19,7 +19,7 @@ To create a new firebase function for a new environment (1️⃣) or in an alrea
 
 _This assumes that your machine already has firebase-tools set up. If not, navigate to the root of the directory to read the README.md file on how to set that up._
 
-Run the initialization command, `firebase init function`, in the **apps/staff PROJECT FOLDER**, and follow the prompts as follows:
+Run the initialization command, `firebase init functions`, in the **apps/staff PROJECT FOLDER**, and follow the prompts as follows:
 
 1. Select `initialize` to **NOT** overwrite the previous functions.
 2. Name the new environment configuration using a key in `.firebaserc` file.
@@ -98,9 +98,20 @@ This function is scheduled to run every Friday at 11:59 PM PDT. It exports speci
 
 - Trigger: Pub/Sub Schedule (`every friday 23:59`).
 - Environment Variables:
-  - `GCLOUD_PROJECT`: The project ID.
-- To Deploy: Execute `nvm use FIREBASE_ENVIRONMENT` then `yarn deploy`
+  - `PROJECT_ID`: The project ID.
+  - `OUTPUT_BUCKET`: The GCS bucket to write to.
+- To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
 - To Run: Can force run in the Google Cloud Scheduler.
+
+### `exportSnoozeStates`
+
+This function is scheduled to run every day at 8:00 AM UTC (Midnight PST.) It exports currently active snoozes into a Google Cloud Storage bucket.
+
+- Trigger: Cloud Scheduler (`0 8 * * *`).
+- Environment Variables:
+  - `SNOOZE_OUTPUT_BUCKET`: The GCS bucket to write to.
+- To Deploy: Execute `nvm use 18` then `yarn deploy:staging` or `yarn deploy:production`
+- To Run: `curl -X POST "https://us-central1-<PROJECT_ID>.cloudfunctions.net/exportSnoozeStates?=" -H "Authorization: bearer $(gcloud auth print-identity-token)"`
 
 ## ESLint Configuration
 
