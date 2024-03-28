@@ -15,57 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { differenceInDays } from "date-fns";
-import { makeObservable, override } from "mobx";
-import simplur from "simplur";
-
 import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,
   UsTnContactNote,
   UsTnExpirationOpportunityUpdate,
 } from "../../../../FirestoreStore";
-import { formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
 import { UsTnExpirationForm } from "../../Forms/UsTnExpirationForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityRequirement } from "../../types";
 import {
   getUsTnExpirationValidator,
   UsTnExpirationReferralRecord,
   usTnExpirationSchema,
 } from "./UsTnExpirationReferralRecord";
-
-const CRITERIA: Record<
-  keyof Required<UsTnExpirationReferralRecord>["eligibleCriteria"],
-  OpportunityRequirement
-> = {
-  supervisionPastFullTermCompletionDateOrUpcoming1Day: {
-    text: "Expiration date is $EXPIRATION_DATE",
-  },
-  usTnNoZeroToleranceCodesSpans: {
-    text: "No zero tolerance codes since most recent sentence imposed date",
-  },
-  usTnNotOnLifeSentenceOrLifetimeSupervision: {
-    text: "Not on lifetime supervision or lifetime sentence",
-  },
-};
-
-export function hydrateExpirationDateRequirementText(
-  criterion: Required<UsTnExpirationReferralRecord>["eligibleCriteria"]["supervisionPastFullTermCompletionDateOrUpcoming1Day"],
-) {
-  const eligibleDate = criterion?.eligibleDate;
-  const today = new Date();
-
-  // .toDateString() returns only the date part of the Date() as a string
-  if (eligibleDate.toDateString() === today.toDateString()) {
-    return `Expiration date is today (${formatWorkflowsDate(eligibleDate)})`;
-  }
-  const daysPast = differenceInDays(today, eligibleDate);
-  return simplur`${daysPast} day[|s] past expiration date (${formatWorkflowsDate(
-    eligibleDate,
-  )})`;
-}
 
 export class UsTnExpirationOpportunity extends OpportunityBase<
   Client,
@@ -87,33 +50,7 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
       getUsTnExpirationValidator(client),
     );
 
-    makeObservable(this, { requirementsMet: override });
     this.form = new UsTnExpirationForm(this, client.rootStore);
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-
-    const { eligibleCriteria } = this.record;
-    const requirements: OpportunityRequirement[] = [];
-
-    if (eligibleCriteria?.supervisionPastFullTermCompletionDateOrUpcoming1Day) {
-      requirements.push({
-        text: hydrateExpirationDateRequirementText(
-          eligibleCriteria.supervisionPastFullTermCompletionDateOrUpcoming1Day,
-        ),
-        tooltip:
-          CRITERIA.supervisionPastFullTermCompletionDateOrUpcoming1Day.tooltip,
-      });
-    }
-    if (eligibleCriteria?.usTnNoZeroToleranceCodesSpans) {
-      requirements.push(CRITERIA.usTnNoZeroToleranceCodesSpans);
-    }
-    if (eligibleCriteria?.usTnNotOnLifeSentenceOrLifetimeSupervision) {
-      requirements.push(CRITERIA.usTnNotOnLifeSentenceOrLifetimeSupervision);
-    }
-
-    return requirements;
   }
 
   get eligibilityDate(): Date | undefined {

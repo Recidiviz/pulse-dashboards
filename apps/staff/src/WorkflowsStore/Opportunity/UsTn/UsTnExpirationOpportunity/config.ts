@@ -43,4 +43,15 @@ export const usTnExpirationConfig: OpportunityConfig<UsTnExpirationOpportunity> 
     methodologyUrl:
       "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing",
     sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+    eligibleCriteriaCopy: {
+      supervisionPastFullTermCompletionDateOrUpcoming1Day: {
+        text: `{{#if (eq 0 (daysPast eligibleDate))}}Expiration date is today{{else}}{{#if (eq 1 (daysPast eligibleDate))}}1 day{{else}}{{daysPast eligibleDate}} days{{/if}} past expiration date{{/if}} ({{date eligibleDate}})`,
+      },
+      usTnNoZeroToleranceCodesSpans: {
+        text: "No zero tolerance codes since most recent sentence imposed date",
+      },
+      usTnNotOnLifeSentenceOrLifetimeSupervision: {
+        text: "Not on lifetime supervision or lifetime sentence",
+      },
+    },
   };

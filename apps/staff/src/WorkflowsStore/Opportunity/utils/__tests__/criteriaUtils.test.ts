@@ -168,17 +168,6 @@ describe("hydrateStr", () => {
     expect(result).toEqual("All I do is matchmatch*breathe*match all day.");
   });
 
-  it("doesn't match unclosed tags", () => {
-    const template = "My favorite noise metal band is {{verb";
-    const criteria = { verb: "match", pause: "breathe" };
-    const formatters = {};
-    const record = {};
-
-    const result = hydrateStr(template, { criteria, formatters, record });
-
-    expect(result).toEqual("My favorite noise metal band is {{verb");
-  });
-
   it("reads the record", () => {
     const template = "Our hero is {{record.metadata.status}}!";
     const criteria = {};
@@ -272,17 +261,6 @@ describe("hydrateStr", () => {
     expect(captureExceptionMock).toHaveBeenCalledOnce();
   });
 
-  it("reports and falls back when a tag is empty", () => {
-    const template = "My favorite cheese is {{}}!";
-    const criteria = { cheese: "gruyere" };
-    const formatters = {};
-    const record = {};
-
-    const result = hydrateStr(template, { criteria, formatters, record });
-    expect(result).toEqual("My favorite cheese is UNKNOWN!");
-    expect(captureExceptionMock).toHaveBeenCalledOnce();
-  });
-
   it("reports and falls back when a tag has more than two elements", () => {
     const template = "My favorite cheese is {{i love cheese}}!";
     const criteria = { cheese: "gruyere" };
@@ -309,7 +287,9 @@ describe("hydrateStr", () => {
     it("can read the record", () => {
       const template = "Our hero is {{status}}!";
       const criteria = {};
-      const formatters = { status: (c: any, r: any) => r.metadata.status };
+      const formatters = {
+        status: ({ record }: any) => record.metadata.status,
+      };
       const record = { metadata: { status: "trapped in a template" } };
 
       const result = hydrateStr(template, { criteria, formatters, record });
@@ -385,7 +365,7 @@ describe("hydrateStr", () => {
     describe("eq helper", () => {
       it("is true with two equal fields", () => {
         const template =
-          "{{a}} {{#if eq a b}}is{{else}}isn't{{/if}} the same as {{b}}";
+          "{{a}} {{#if (eq a b)}}is{{else}}isn't{{/if}} the same as {{b}}";
         const criteria = { a: "foo", b: "foo" };
         const formatters = {};
         const record = {};
@@ -397,7 +377,7 @@ describe("hydrateStr", () => {
 
       it("is false with two unequal fields", () => {
         const template =
-          "{{a}} {{#if eq a b}}is{{else}}isn't{{/if}} the same as {{b}}";
+          "{{a}} {{#if (eq a b)}}is{{else}}isn't{{/if}} the same as {{b}}";
         const criteria = { a: "foo", b: "bar" };
         const formatters = {};
         const record = {};
@@ -412,7 +392,7 @@ describe("hydrateStr", () => {
       });
 
       it("matches a field to a literal", () => {
-        const template = `{{a}} {{#if eq a "foo"}}is{{else}}isn't{{/if}} the same as "foo"`;
+        const template = `{{a}} {{#if (eq a "foo")}}is{{else}}isn't{{/if}} the same as "foo"`;
         const criteria = { a: "foo" };
         const formatters = {};
         const record = {};

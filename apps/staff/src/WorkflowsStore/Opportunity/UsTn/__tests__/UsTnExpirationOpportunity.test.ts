@@ -25,10 +25,7 @@ import {
   UsTnExpirationEligibleClientRecord,
   UsTnExpirationReferralRecordFixture,
 } from "../__fixtures__";
-import {
-  hydrateExpirationDateRequirementText,
-  UsTnExpirationOpportunity,
-} from "../UsTnExpirationOpportunity";
+import { UsTnExpirationOpportunity } from "../UsTnExpirationOpportunity";
 
 vi.mock("../../../subscriptions");
 
@@ -92,10 +89,7 @@ describe("fully eligible", () => {
     tk.reset();
     tk.freeze(new Date(2022, 1, 2, 16, 30));
 
-    const actual = hydrateExpirationDateRequirementText(
-      UsTnExpirationReferralRecordFixture.eligibleCriteria
-        .supervisionPastFullTermCompletionDateOrUpcoming1Day,
-    );
+    const actual = opp.requirementsMet[0].text;
 
     expect(actual).toEqual("Expiration date is today (Feb 2, 2022)");
   });
@@ -104,10 +98,7 @@ describe("fully eligible", () => {
     tk.reset();
     tk.freeze(new Date(2022, 1, 3, 16, 30));
 
-    const actual = hydrateExpirationDateRequirementText(
-      UsTnExpirationReferralRecordFixture.eligibleCriteria
-        .supervisionPastFullTermCompletionDateOrUpcoming1Day,
-    );
+    const actual = opp.requirementsMet[0].text;
 
     expect(actual).toEqual("1 day past expiration date (Feb 2, 2022)");
   });
