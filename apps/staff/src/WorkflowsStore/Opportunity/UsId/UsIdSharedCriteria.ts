@@ -17,7 +17,9 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, defaultOnNull } from "../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
+
+import { defaultOnNull } from "../schemaHelpers";
 import { CopyTuple } from "../utils/criteriaUtils";
 
 export const sentenceTypeSchema = z.enum(["PROBATION", "PAROLE", "DUAL"]);

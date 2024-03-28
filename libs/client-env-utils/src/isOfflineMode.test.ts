@@ -15,6 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export function isOfflineMode(): boolean {
-  return import.meta.env.VITE_IS_OFFLINE === "true";
-}
+import { isOfflineMode } from "./isOfflineMode";
+
+test("offline", () => {
+  vi.stubEnv("VITE_IS_OFFLINE", "true");
+  expect(isOfflineMode()).toBe(true);
+});
+
+test("online", () => {
+  expect(isOfflineMode()).toBe(false);
+});

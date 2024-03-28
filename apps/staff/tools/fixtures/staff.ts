@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { StaffRecord } from "../../src/FirestoreStore";
-import { FixtureData } from "../workflowsFixtures";
+import { FirestoreFixture } from "./utils";
 
 const data: StaffRecord[] = [
   // US_CA - CALIFORNIA
@@ -205,7 +205,7 @@ const data: StaffRecord[] = [
   },
 ];
 
-export const staffData: FixtureData<StaffRecord> = {
+export const staffData: FirestoreFixture<StaffRecord> = {
   data,
   idFunc: (r) => r.id,
 };

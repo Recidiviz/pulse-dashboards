@@ -19,14 +19,14 @@ import { AuthWall } from "@recidiviz/auth";
 import { Loading } from "@recidiviz/design-system";
 import { FC, ReactNode } from "react";
 
-import { isOfflineMode } from "../../utils/isOfflineMode";
-import { isTestMode } from "../../utils/isTestMode";
+import { isOfflineMode, isTestEnv } from "~client-env-utils";
+
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const { authStore } = useRootStore();
 
-  if (isOfflineMode() || isTestMode()) return children;
+  if (isOfflineMode() || isTestEnv()) return children;
 
   return (
     <AuthWall

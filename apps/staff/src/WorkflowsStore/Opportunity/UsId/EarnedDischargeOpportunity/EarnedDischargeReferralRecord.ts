@@ -18,12 +18,9 @@
 import { camelCase, mapKeys } from "lodash";
 import { z } from "zod";
 
-import {
-  caseNotesSchema,
-  dateStringSchema,
-  opportunitySchemaBase,
-  stringToIntSchema,
-} from "../../schemaHelpers";
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
+import { opportunitySchemaBase, stringToIntSchema } from "../../schemaHelpers";
 import {
   eligibleCriteriaLsuED,
   ineligibleCriteriaLsuED,

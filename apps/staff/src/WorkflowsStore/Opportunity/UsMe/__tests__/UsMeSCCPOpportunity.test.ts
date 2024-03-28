@@ -19,6 +19,12 @@ import { parseISO } from "date-fns";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import {
+  CURRENT_DATE_FIXTURE,
+  relativeFixtureDate,
+  usMeSccpFixtures,
+} from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
 import { DocumentSubscription } from "../../../subscriptions";
@@ -26,11 +32,6 @@ import { UsMeSCCPOpportunity } from "..";
 import {
   usMePersonRecord,
   usMePersonRecordShorterSentence,
-  usMeSCCPAlmostEligibleViolationRecordFixture,
-  usMeSCCPAlmostEligibleXMonthsRecordFixture,
-  usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture,
-  usMeSCCPEligibleRecordFixture,
-  usMeSCCPEligibleRecordHalfPortionFixture,
 } from "../__fixtures__";
 
 let opp: UsMeSCCPOpportunity;
@@ -59,7 +60,7 @@ function createTestUnit(residentRecord: typeof usMePersonRecord) {
 beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
-  tk.freeze(new Date(2022, 12, 1));
+  tk.freeze(CURRENT_DATE_FIXTURE);
 });
 
 afterEach(() => {
@@ -73,7 +74,7 @@ describe("fully eligible", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSCCPEligibleRecordFixture;
+    referralSub.data = usMeSccpFixtures.fullyEligibleTwoThirdsPortion.output;
   });
 
   test("requirements met", () => {
@@ -91,9 +92,23 @@ test("requirements for half sentence served", () => {
 
   referralSub = opp.referralSubscription;
   referralSub.hydrationState = { status: "hydrated" };
-  referralSub.data = usMeSCCPEligibleRecordHalfPortionFixture;
+  referralSub.data = usMeSccpFixtures.fullyEligibleHalfPortion.output;
 
   expect(opp.requirementsMet[1]).toMatchSnapshot();
+});
+
+test("eligible with future x portion date", () => {
+  createTestUnit(usMePersonRecord);
+
+  referralSub = opp.referralSubscription;
+  referralSub.hydrationState = { status: "hydrated" };
+  referralSub.data =
+    usMeSccpFixtures.eligibleWithinMonthsRemainingWindow.output;
+
+  expect(opp.requirementsMet[1]).toMatchSnapshot();
+
+  expect(opp.almostEligible).toBeFalse();
+  expect(opp.requirementsAlmostMet).toHaveLength(0);
 });
 
 describe("almost eligible but for months remaining", () => {
@@ -102,7 +117,7 @@ describe("almost eligible but for months remaining", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSCCPAlmostEligibleXMonthsRecordFixture;
+    referralSub.data = usMeSccpFixtures.almostEligibleMonthsRemaining.output;
   });
 
   test("requirements met", () => {
@@ -120,10 +135,10 @@ describe("almost eligible but for months remaining", () => {
 
   test("almostEligibleStatusMessage with days", () => {
     const almostEligibleInDays = {
-      ...usMeSCCPAlmostEligibleXMonthsRecordFixture,
+      ...usMeSccpFixtures.almostEligibleMonthsRemaining.output,
       ineligibleCriteria: {
         usMeXMonthsRemainingOnSentence: {
-          eligibleDate: parseISO("2023-01-14"),
+          eligibleDate: parseISO(relativeFixtureDate({ days: 13 })),
         },
       },
     };
@@ -143,14 +158,14 @@ describe("ensure requirements text updates when source changes", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSCCPEligibleRecordFixture;
+    referralSub.data = usMeSccpFixtures.fullyEligibleTwoThirdsPortion.output;
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textEligible = opp.requirementsMet.find(({ text }) =>
       text.includes("months remaining on sentence"),
     )!.text;
 
-    referralSub.data = usMeSCCPAlmostEligibleXMonthsRecordFixture;
+    referralSub.data = usMeSccpFixtures.almostEligibleMonthsRemaining.output;
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textAlmostEligible = opp.requirementsAlmostMet.find(({ text }) =>
@@ -167,7 +182,7 @@ describe("almost eligible but for class A/B discipline", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSCCPAlmostEligibleViolationRecordFixture;
+    referralSub.data = usMeSccpFixtures.almostEligibleViolation.output;
   });
 
   test("requirements met", () => {
@@ -181,7 +196,7 @@ describe("almost eligible but for class A/B discipline", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
-      `"Needs 45 more days without a Class A or B discipline"`,
+      `"Needs 76 more days without a Class A or B discipline"`,
     );
   });
 });
@@ -192,7 +207,7 @@ describe("almost eligible but for fraction of sentence served", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSCCPAlmostEligibleXPortionOfSentenceRecordFixture;
+    referralSub.data = usMeSccpFixtures.almostEligibleXPortion.output;
   });
 
   test("requirements met", () => {
@@ -206,7 +221,7 @@ describe("almost eligible but for fraction of sentence served", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
-      `"Needs to serve 3 more months on sentence."`,
+      `"Needs to serve 5 more months on sentence."`,
     );
   });
 });

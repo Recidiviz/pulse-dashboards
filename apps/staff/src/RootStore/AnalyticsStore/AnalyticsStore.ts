@@ -19,11 +19,12 @@ import { clone } from "lodash";
 import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
+import { isDemoMode } from "~client-env-utils";
+
 import { SearchType } from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { DeclineReason } from "../../FirestoreStore";
-import { isDemoMode } from "../../utils/isDemoMode";
 import {
   OpportunityStatus,
   OpportunityTab,

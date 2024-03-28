@@ -17,11 +17,12 @@
 
 import { z } from "zod";
 
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
 import { OpportunityValidationError } from "../../errors";
 import { toTitleCase } from "../../utils";
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
-import { caseNotesSchema, dateStringSchema } from "./schemaHelpers";
 
 export const supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter =
   (fmt: (raw: string) => string = (s) => s) =>

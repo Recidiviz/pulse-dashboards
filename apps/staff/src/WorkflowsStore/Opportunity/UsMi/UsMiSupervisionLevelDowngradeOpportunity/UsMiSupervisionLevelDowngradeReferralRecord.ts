@@ -19,7 +19,8 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "../../schemaHelpers";
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
 import {
   getBaseSLDValidator,
   supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter,

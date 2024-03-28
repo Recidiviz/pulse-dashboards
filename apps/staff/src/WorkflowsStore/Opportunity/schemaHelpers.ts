@@ -17,9 +17,7 @@
 import { mapKeys } from "lodash";
 import { z } from "zod";
 
-import { fieldToDate } from "../utils";
-
-export const dateStringSchema = z.string().transform(fieldToDate);
+import { dateStringSchema } from "~datatypes";
 
 export const eligibleDateSchema = z.object({ eligibleDate: dateStringSchema });
 
@@ -50,28 +48,6 @@ export const opportunitySchemaBase = z.object({
   externalId: z.string(),
 });
 
-const caseNoteSchema = z
-  .object({
-    noteTitle: z.string().nullable(),
-    noteBody: z.string().nullable(),
-    eventDate: dateStringSchema.nullable(),
-  })
-  .partial();
-
-export const caseNotesSchema = z.object({
-  caseNotes: z.record(z.array(caseNoteSchema)).default({}),
-});
-
-/**
- * Criteria are overlapping objects; keyof Ineligible is presumed to be a subset of
- * keyof Eligible, but the value of overlapping keys may differ, in which case
- * they will be unioned.
- */
-export type MergedCriteria<Eligible, Ineligible> = {
-  [EK in keyof Eligible]:
-    | Eligible[EK]
-    | (EK extends keyof Ineligible ? Ineligible[EK] : never);
-};
 /**
  * Renames all occurrences of the keys in `obj` that are present as a key in `oldToNewKeyMapping`.
  * @param obj The object to be renamed.

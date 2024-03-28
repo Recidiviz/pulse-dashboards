@@ -18,11 +18,9 @@
 import { ascending } from "d3-array";
 import { z } from "zod";
 
-import {
-  dateStringSchema,
-  targetStatusSchema,
-  uppercaseSchemaKeys,
-} from "./schemaHelpers";
+import { dateStringSchemaWithoutTimeShift } from "~datatypes";
+
+import { targetStatusSchema, uppercaseSchemaKeys } from "./schemaHelpers";
 
 export const metricBenchmarkSchema = z.object({
   metricId: z.string(),
@@ -31,7 +29,7 @@ export const metricBenchmarkSchema = z.object({
     .array(
       z.object({
         target: z.number(),
-        endDate: dateStringSchema,
+        endDate: dateStringSchemaWithoutTimeShift,
       }),
     )
     .transform((benchmarks) =>

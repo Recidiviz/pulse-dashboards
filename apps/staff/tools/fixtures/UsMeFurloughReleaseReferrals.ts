@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { UsMeFurloughReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMe";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usMeFurloughReleaseFixture: FixtureData<UsMeFurloughReleaseReferralRecordRaw> =
+export const usMeFurloughReleaseFixture: FirestoreFixture<UsMeFurloughReleaseReferralRecordRaw> =
   {
     data: [
       {

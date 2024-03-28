@@ -20,7 +20,9 @@
 import { cloneDeep } from "lodash";
 import { z } from "zod";
 
-import { caseNotesSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { caseNotesSchema } from "~datatypes";
+
+import { opportunitySchemaBase } from "../../schemaHelpers";
 import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
 export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase

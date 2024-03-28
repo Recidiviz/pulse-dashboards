@@ -16,31 +16,31 @@
 // =============================================================================
 
 import { UsIdPastFTRDReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usIdPastFtrdFixture: FixtureData<UsIdPastFTRDReferralRecordRaw> = {
-  data: [
-    {
-      stateCode: "US_ID",
-      externalId: "002",
-      eligibleCriteria: {
-        supervisionPastFullTermCompletionDate: {
-          eligibleDate: "2022-07-10",
+export const usIdPastFtrdFixture: FirestoreFixture<UsIdPastFTRDReferralRecordRaw> =
+  {
+    data: [
+      {
+        stateCode: "US_ID",
+        externalId: "002",
+        eligibleCriteria: {
+          supervisionPastFullTermCompletionDate: {
+            eligibleDate: "2022-07-10",
+          },
+        },
+        ineligibleCriteria: {},
+      },
+      {
+        stateCode: "US_ID",
+        externalId: "010",
+        eligibleCriteria: {},
+        ineligibleCriteria: {
+          supervisionPastFullTermCompletionDate: {
+            eligibleDate: "2025-06-09",
+          },
         },
       },
-      ineligibleCriteria: {},
-    },
-    {
-      stateCode: "US_ID",
-      externalId: "010",
-      eligibleCriteria: {},
-      ineligibleCriteria: {
-        supervisionPastFullTermCompletionDate: {
-          eligibleDate: "2025-06-09",
-        },
-      },
-    },
-  ],
-  idFunc: externalIdFunc,
-};
+    ],
+    idFunc: externalIdFunc,
+  };

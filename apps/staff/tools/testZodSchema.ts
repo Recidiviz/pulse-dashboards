@@ -20,6 +20,8 @@ import { ArgumentParser } from "argparse";
 import prompts from "prompts";
 import { z } from "zod";
 
+import { usMeSCCPSchema } from "~datatypes";
+
 import { OpportunityType } from "../src/WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
@@ -32,7 +34,6 @@ import { usIdExpandedCRCSchema } from "../src/WorkflowsStore/Opportunity/UsId/Us
 import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeEarlyTerminationOpportunity/UsMeEarlyTerminationReferralRecord";
 import { usMeFurloughReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeFurloughReleaseOpportunity/UsMeFurloughReleaseReferralRecord";
-import { usMeSCCPSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeSCCPOpportunity/UsMeSCCPReferralRecord";
 import { usMeWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeWorkReleaseOpportunity/UsMeWorkReleaseReferralRecord";
 import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity/UsMiClassificationReviewReferralRecord";
 import { usMiEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiEarlyDischargeOpportunity/UsMiEarlyDischargeReferralRecord";
@@ -149,7 +150,7 @@ async function automatic() {
     );
     // don't print failures so we don't leave PII in the github logs
     console.log(oppType, result);
-    if (result.failed > 0) process.exit(1);
+    if (result.failed > 0) process.exitCode = 1;
   });
 }
 
@@ -187,7 +188,10 @@ async function manual(args: Args) {
     limit,
   );
 
-  if (result.failed) console.log(JSON.stringify(failures, null, 2));
+  if (result.failed > 0) {
+    console.log(JSON.stringify(failures, null, 2));
+    process.exitCode = 1;
+  }
   console.log(result);
 }
 

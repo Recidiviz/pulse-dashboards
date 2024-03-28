@@ -15,6 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export function isTestMode(): boolean {
-  return import.meta.env.MODE === "test";
-}
+import type { z } from "zod";
+
+/**
+ * Standard format for bundling together a raw fixture with its parsed version.
+ * Schema is ZodTypeAny by default, which is convenient for using this type in other generics
+ * but should be overridden when creating actual fixture objects.
+ */
+export type ParsedRecord<Schema extends z.ZodTypeAny = z.ZodTypeAny> = {
+  input: z.input<Schema>;
+  output: z.output<Schema>;
+};

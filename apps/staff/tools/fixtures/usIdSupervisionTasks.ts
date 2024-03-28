@@ -17,7 +17,7 @@
 import { addDays, endOfToday, formatISO, subDays } from "date-fns";
 
 import { SupervisionTasksRecord } from "../../src/WorkflowsStore/Task/types";
-import { FixtureData } from "../workflowsFixtures";
+import { FirestoreFixture } from "./utils";
 
 const data: SupervisionTasksRecord[] = [
   {
@@ -57,7 +57,8 @@ const data: SupervisionTasksRecord[] = [
   },
 ];
 
-export const usIdSupervisionTasksData: FixtureData<SupervisionTasksRecord> = {
-  data,
-  idFunc: (r) => r.externalId,
-};
+export const usIdSupervisionTasksData: FirestoreFixture<SupervisionTasksRecord> =
+  {
+    data,
+    idFunc: (r) => r.externalId,
+  };

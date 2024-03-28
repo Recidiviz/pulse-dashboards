@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { ResidentRecord } from "../../src/FirestoreStore/types";
-import { FixtureData } from "../workflowsFixtures";
+import { FirestoreFixture } from "./utils";
 
 const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
   {
@@ -88,6 +90,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     admissionDate: "2021-07-12",
     releaseDate: "2027-06-06",
   },
+
   {
     allEligibleOpportunities: [
       "usMeSCCP",
@@ -106,9 +109,9 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     facilityId: "FACILITY NAME",
     unitId: "UNIT A",
     custodyLevel: "MINIMUM",
-    admissionDate: "2019-08-12",
-    releaseDate: "2025-10-22",
-    sccpEligibilityDate: "2022-01-01",
+    admissionDate: relativeFixtureDate({ years: -8, months: -1 }),
+    releaseDate: relativeFixtureDate({ months: 35 }),
+    sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
     portionServedNeeded: "2/3",
   },
   {
@@ -130,10 +133,10 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     facilityId: "FACILITY NAME",
     unitId: "UNIT B",
     custodyLevel: "MINIMUM",
-    admissionDate: "2020-08-12",
-    releaseDate: "2024-11-27",
-    sccpEligibilityDate: "2022-01-01",
-    portionServedNeeded: "1/2",
+    admissionDate: relativeFixtureDate({ months: -46, days: 1 }),
+    releaseDate: relativeFixtureDate({ months: 26 }),
+    sccpEligibilityDate: relativeFixtureDate({ months: 2 }),
+    portionServedNeeded: "2/3",
   },
   {
     allEligibleOpportunities: [
@@ -153,10 +156,53 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
     facilityId: "FACILITY NAME",
     unitId: "UNIT B",
     custodyLevel: "MINIMUM",
-    admissionDate: "2020-09-12",
-    releaseDate: "2024-10-27",
-    sccpEligibilityDate: "2022-01-01",
-    portionServedNeeded: "2/3",
+    admissionDate: relativeFixtureDate({ years: -2, months: -6, days: 2 }),
+    releaseDate: relativeFixtureDate({ years: 2 }),
+    sccpEligibilityDate: relativeFixtureDate({
+      months: -3,
+    }),
+    portionServedNeeded: "1/2",
+  },
+  {
+    allEligibleOpportunities: ["usMeSCCP"],
+    officerId: "OFFICER5",
+    stateCode: "US_ME",
+    personExternalId: "RES004",
+    displayId: "dRES004",
+    personName: {
+      givenNames: "Fourth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres004",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT A",
+    custodyLevel: "MINIMUM",
+    admissionDate: relativeFixtureDate({ months: -31, days: 2 }),
+    releaseDate: relativeFixtureDate({ months: 25 }),
+    sccpEligibilityDate: relativeFixtureDate({
+      months: -3,
+    }),
+    portionServedNeeded: "1/2",
+  },
+  {
+    allEligibleOpportunities: ["usMeSCCP"],
+
+    officerId: "OFFICER5",
+    stateCode: "US_ME",
+    personExternalId: "RES005",
+    displayId: "dRES005",
+    personName: {
+      givenNames: "Fifth",
+      surname: "Resident",
+    },
+    pseudonymizedId: "anonres005",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT B",
+    custodyLevel: "MINIMUM",
+    admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
+    releaseDate: relativeFixtureDate({ years: 2, months: 5 }),
+    sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
+    portionServedNeeded: "1/2",
   },
 
   {
@@ -473,7 +519,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
   },
 ];
 
-export const residentsData: FixtureData<
+export const residentsData: FirestoreFixture<
   Omit<ResidentRecord, "personType" | "recordId">
 > = {
   data,

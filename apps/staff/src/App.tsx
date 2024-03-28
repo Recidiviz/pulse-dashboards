@@ -25,6 +25,8 @@ import tk from "timekeeper";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 
+import { isDemoMode } from "~client-env-utils";
+
 import NotFound from "./components/NotFound";
 import SentryErrorBoundary from "./components/SentryErrorBoundary";
 import StoreProvider from "./components/StoreProvider";
@@ -33,7 +35,6 @@ import VerificationNeeded from "./components/VerificationNeeded";
 import ProtectedLayout from "./ProtectedLayout";
 import { initI18n } from "./utils/i18nSettings";
 import initIntercomSettings from "./utils/initIntercomSettings";
-import { isDemoMode } from "./utils/isDemoMode";
 
 if (!isDemoMode()) {
   initIntercomSettings();

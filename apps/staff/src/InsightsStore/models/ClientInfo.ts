@@ -17,11 +17,9 @@
 
 import { z } from "zod";
 
-import {
-  addDisplayName,
-  dateStringSchema,
-  fullNameSchema,
-} from "./schemaHelpers";
+import { dateStringSchemaWithoutTimeShift } from "~datatypes";
+
+import { addDisplayName, fullNameSchema } from "./schemaHelpers";
 
 export const clientInfoSchema = z
   .object({
@@ -30,7 +28,7 @@ export const clientInfoSchema = z
     pseudonymizedClientId: z.string(),
     raceOrEthnicity: z.string().nullable(),
     gender: z.string().nullable(),
-    birthdate: dateStringSchema.nullable(),
+    birthdate: dateStringSchemaWithoutTimeShift.nullable(),
   })
   .transform(({ clientName, ...rest }) => {
     return {

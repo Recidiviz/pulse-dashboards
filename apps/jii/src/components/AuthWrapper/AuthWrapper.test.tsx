@@ -17,22 +17,21 @@
 
 import { render, screen } from "@testing-library/react";
 
+import { isOfflineMode, isTestEnv } from "~client-env-utils";
+
 import { RootStore } from "../../datastores/RootStore";
-import { isOfflineMode } from "../../utils/isOfflineMode";
-import { isTestMode } from "../../utils/isTestMode";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { AuthWrapper } from "./AuthWrapper";
 
 // we don't want to invoke any real auth functionality here
 vi.mock("@recidiviz/auth");
-vi.mock("../../utils/isOfflineMode");
-vi.mock("../../utils/isTestMode");
+vi.mock("~client-env-utils");
 vi.mock("../StoreProvider/useRootStore");
 
 beforeEach(() => {
   vi.mocked(useRootStore).mockReturnValue(new RootStore());
   // prevents the component from operating in test mode so we can test its real functionality
-  vi.mocked(isTestMode).mockReturnValue(false);
+  vi.mocked(isTestEnv).mockReturnValue(false);
 });
 
 it("renders content in offline mode", () => {

@@ -17,7 +17,8 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
+
 import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 
 const usMoInitialHearingPastDueDate = z

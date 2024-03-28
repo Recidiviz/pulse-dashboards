@@ -17,7 +17,8 @@
 import { addDays } from "date-fns";
 import { z } from "zod";
 
-import { dateStringSchema } from "../../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
+
 import { baseUsMoOverdueRestrictiveHousingSchema } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 
 const usMoPastLatestScheduledReviewDate = z

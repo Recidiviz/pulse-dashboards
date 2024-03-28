@@ -17,8 +17,15 @@
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatFacilityHousingUnit } from "../../utils";
-import { UsMeSCCPDraftData, UsMeSCCPOpportunity } from "../UsMe";
+import { UsMeSCCPOpportunity } from "../UsMe";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
+
+type UsMeSCCPDraftData = {
+  residentName: string;
+  mdocNo: string;
+  facilityHousingUnit: string;
+  caseManager: string;
+};
 
 export class UsMeSCCPForm extends FormBase<
   UsMeSCCPDraftData,

@@ -19,13 +19,14 @@ import { limit, onSnapshot, query, where } from "firebase/firestore";
 import { configure } from "mobx";
 import { Mock } from "vitest";
 
+import { isOfflineMode } from "~client-env-utils";
+
 import { RootStore } from "../../../RootStore";
-import { isOfflineMode } from "../../../utils/isOfflineMode";
 import { UserSubscription } from "../UserSubscription";
 import { getMockQuerySnapshotHandler } from "./testUtils";
 
 vi.mock("firebase/firestore");
-vi.mock("../../../utils/isOfflineMode");
+vi.mock("~client-env-utils");
 
 const onSnapshotMock = onSnapshot as Mock;
 const isOfflineModeMock = isOfflineMode as Mock;

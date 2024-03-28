@@ -19,11 +19,9 @@
 
 import { z } from "zod";
 
-import {
-  caseNotesSchema,
-  eligibleDateSchema,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { caseNotesSchema } from "~datatypes";
+
+import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
 export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
   formatter: (raw: string) => string = (s) => s,

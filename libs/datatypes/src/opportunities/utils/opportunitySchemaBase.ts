@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-export function isOfflineMode(): boolean {
-  return import.meta.env.VITE_IS_OFFLINE === "true";
-}
+
+import { z } from "zod";
+
+export const opportunitySchemaBase = z.object({
+  stateCode: z.string(),
+  externalId: z.string(),
+});

@@ -18,12 +18,11 @@
 import { mapValues } from "lodash";
 import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 
+import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
+
 import { HydratesFromSource } from "../../../core/models/HydratesFromSource";
 import { Hydratable } from "../../../core/models/types";
 import { FlowMethod } from "../../../InsightsStore/types";
-import { isDemoMode } from "../../../utils/isDemoMode";
-import { isOfflineMode } from "../../../utils/isOfflineMode";
-import { isTestEnv } from "../../../utils/isTestEnv";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "..";
 import { OpportunityType } from "../OpportunityType/types";

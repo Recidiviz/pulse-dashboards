@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { LocationRecord } from "../../src/FirestoreStore/types";
-import { FixtureData } from "../workflowsFixtures";
+import { FirestoreFixture } from "./utils";
 
 const data: LocationRecord[] = [
   //
@@ -90,7 +90,7 @@ const data: LocationRecord[] = [
   },
 ];
 
-export const locationsData: FixtureData<LocationRecord> = {
+export const locationsData: FirestoreFixture<LocationRecord> = {
   data,
   idFunc: (r) => r.id,
 };

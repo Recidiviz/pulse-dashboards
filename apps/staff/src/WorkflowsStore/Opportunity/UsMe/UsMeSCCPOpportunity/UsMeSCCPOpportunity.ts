@@ -19,16 +19,14 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
 import { computed, makeObservable, observable, override } from "mobx";
 
+import { UsMeSCCPCriteria, UsMeSCCPRecord } from "~datatypes";
+
 import { pluralizeWord } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { UsMeSCCPForm } from "../../Forms/UsMeSCCPForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import {
-  transformReferral,
-  UsMeSCCPCriteria,
-  UsMeSCCPReferralRecord,
-} from "./UsMeSCCPReferralRecord";
+import { transformReferral } from "./transformReferral";
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeSCCPCriteria,
@@ -247,7 +245,7 @@ const requirementsForIneligibleCriteria = (
 
 export class UsMeSCCPOpportunity extends OpportunityBase<
   Resident,
-  UsMeSCCPReferralRecord
+  UsMeSCCPRecord["output"]
 > {
   resident: Resident;
 

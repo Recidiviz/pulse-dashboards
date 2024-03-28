@@ -22,10 +22,11 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link } from "react-router-dom";
 
+import { isOfflineMode } from "~client-env-utils";
+
 import StateSelection from "../../components/StateSelection";
 import { useUserStore } from "../../components/StoreProvider";
 import useLogout from "../../hooks/useLogout";
-import { isOfflineMode } from "../../utils/isOfflineMode";
 import CoreStoreProvider from "../CoreStoreProvider";
 import MobileNavigation from "../MobileNavigation";
 import PageTemplate from "../PageTemplate";

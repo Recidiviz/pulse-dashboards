@@ -17,11 +17,9 @@
 
 import { z } from "zod";
 
-import {
-  caseNotesSchema,
-  dateStringSchema,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
+import { opportunitySchemaBase } from "../../schemaHelpers";
 import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
 export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase

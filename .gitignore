@@ -7,6 +7,9 @@
 .env-cmdrc
 .nx
 
+# long-running vite bug, https://github.com/vitejs/vite/issues/13267
+vite.config.*.timestamp-*
+
 # Production build directory
 build/
 dist/

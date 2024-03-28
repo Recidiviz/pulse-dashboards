@@ -33,12 +33,13 @@ import React from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { isOfflineMode } from "~client-env-utils";
+
 import Drawer from "../components/Drawer/Drawer";
 import { useRootStore } from "../components/StoreProvider";
 import useIsMobile from "../hooks/useIsMobile";
 import useLogout from "../hooks/useLogout";
 import { TenantId } from "../RootStore/types";
-import { isOfflineMode } from "../utils/isOfflineMode";
 import { UserAvatar } from "./Avatar";
 import { useCoreStore } from "./CoreStoreProvider";
 import LanternLogo from "./LanternLogo";

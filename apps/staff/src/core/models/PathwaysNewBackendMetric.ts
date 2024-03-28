@@ -26,12 +26,12 @@ import {
   toJS,
 } from "mobx";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { callNewMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
 import { castToError } from "../../utils/castToError";
-import { isDemoMode } from "../../utils/isDemoMode";
-import { isOfflineMode } from "../../utils/isOfflineMode";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";

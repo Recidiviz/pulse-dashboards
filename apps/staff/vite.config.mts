@@ -71,9 +71,6 @@ export default defineConfig({
 
   test: {
     globals: true,
-    cache: {
-      dir: "../../node_modules/.vitest",
-    },
     environment: "jsdom",
     setupFiles: ["src/setupTests.tsx"],
     globalSetup: ["src/setupTestsGlobal.ts"],
@@ -86,7 +83,6 @@ export default defineConfig({
     coverage: {
       reportsDirectory: "../../coverage/apps/staff",
       provider: "v8",
-      reporter: "lcov",
     },
     mockReset: true,
     unstubEnvs: true,

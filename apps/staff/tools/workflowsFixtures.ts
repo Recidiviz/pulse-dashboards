@@ -18,6 +18,9 @@
 // =============================================================================
 
 import { Firestore } from "@google-cloud/firestore";
+import { mapValues } from "lodash";
+
+import { usMeSccpFixtures } from "~datatypes";
 
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../src/FirestoreStore/constants";
 import {
@@ -45,7 +48,6 @@ import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisi
 import { usIdSupervisionTasksData } from "./fixtures/usIdSupervisionTasks";
 import { usMeEarlyTerminationReferralsFixture } from "./fixtures/usMeEarlyTerminationReferrals";
 import { usMeFurloughReleaseFixture } from "./fixtures/UsMeFurloughReleaseReferrals";
-import { usMeSCCPFixture } from "./fixtures/usMeSCCPReferrals";
 import { usMeWorkReleaseReferrals } from "./fixtures/usMeWorkReleaseReferrals";
 import { UsMiClassificationReviewReferralsFixture } from "./fixtures/usMiClassificationReviewReferrals";
 import { usMiEarlyDischargeReferralsFixture } from "./fixtures/usMiEarlyDischargeReferrals";
@@ -63,6 +65,7 @@ import { usTnAnnualReclassificationReviewFixture } from "./fixtures/usTnAnnualRe
 import { usTnCompliantReportingReferrals } from "./fixtures/usTnCompliantReportingReferrals";
 import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
+import { FirestoreFixture, fixtureFromParsedRecords } from "./fixtures/utils";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 
@@ -91,17 +94,12 @@ const OPPORTUNITIES_MAP = Object.fromEntries(
   ]),
 ) as Record<`${keyof typeof OPPORTUNITY_CONFIGS}Referrals`, string>;
 
-export type FixtureData<T> = {
-  data: T[];
-  idFunc: (arg0: T) => string;
-};
-
 type Logger = {
   (...data: any[]): void;
 };
 
 const GENERAL_FIXTURES_TO_LOAD: Partial<
-  Record<FirestoreCollectionKey["key"] & string, FixtureData<any>>
+  Record<FirestoreCollectionKey["key"] & string, FirestoreFixture<any>>
 > = {
   clients: clientsData,
   residents: residentsData,
@@ -112,8 +110,14 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
 
 const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   keyof typeof OPPORTUNITIES_MAP,
-  FixtureData<any>
+  FirestoreFixture<any>
 > = {
+  ...mapValues(
+    {
+      usMeSCCPReferrals: usMeSccpFixtures,
+    },
+    (fixtures) => fixtureFromParsedRecords("externalId", fixtures),
+  ),
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
   pastFTRDReferrals: usIdPastFtrdFixture,
   earnedDischargeReferrals: earnedDischargeReferralsFixture,
@@ -125,7 +129,6 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usIdExpandedCRCReferrals,
   usMoOverdueRestrictiveHousingReleaseReferrals,
   usIdSupervisionLevelDowngradeReferrals,
-  usMeSCCPReferrals: usMeSCCPFixture,
   usMeWorkReleaseReferrals,
   usMiEarlyDischargeReferrals: usMiEarlyDischargeReferralsFixture,
   usMiClassificationReviewReferrals: UsMiClassificationReviewReferralsFixture,
@@ -149,7 +152,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
 
 const FIXTURES_TO_LOAD = [
   ...Object.entries(GENERAL_FIXTURES_TO_LOAD).map(
-    ([k, v]) => [{ key: k }, v] as [FirestoreCollectionKey, FixtureData<any>],
+    ([k, v]) =>
+      [{ key: k }, v] as [FirestoreCollectionKey, FirestoreFixture<any>],
   ),
   ...Object.entries(OPPORTUNITY_FIXTURES_TO_LOAD).map(
     ([k, v]) =>
@@ -160,7 +164,7 @@ const FIXTURES_TO_LOAD = [
           ],
         },
         v,
-      ] as [FirestoreCollectionKey, FixtureData<any>],
+      ] as [FirestoreCollectionKey, FirestoreFixture<any>],
   ),
 ];
 

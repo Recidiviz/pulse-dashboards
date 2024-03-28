@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { LSUReferralRecordRaw } from "../../src/WorkflowsStore";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const LSUReferralsFixture: FixtureData<LSUReferralRecordRaw> = {
+export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
   data: [
     {
       externalId: "001",

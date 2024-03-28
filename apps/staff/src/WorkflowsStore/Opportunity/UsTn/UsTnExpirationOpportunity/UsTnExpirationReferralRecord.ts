@@ -17,15 +17,12 @@
 
 import { z } from "zod";
 
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
 import { OpportunityValidationError } from "../../../../errors";
 import { Client } from "../../..";
 import { ValidateFunction } from "../../../subscriptions";
-import {
-  caseNotesSchema,
-  dateStringSchema,
-  NullCoalesce,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { NullCoalesce, opportunitySchemaBase } from "../../schemaHelpers";
 
 const contactSchema = z.object({
   contactDate: dateStringSchema,

@@ -25,10 +25,11 @@ import {
 } from "firebase/firestore";
 import { computed, makeObservable, override } from "mobx";
 
+import { isOfflineMode } from "~client-env-utils";
+
 import { isUserRecord, StaffRecord, UserRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { splitAuth0UserName } from "../../utils/formatStrings";
-import { isOfflineMode } from "../../utils/isOfflineMode";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 import { ValidateFunction } from "./types";
 

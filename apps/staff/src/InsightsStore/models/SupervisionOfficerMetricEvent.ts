@@ -17,18 +17,20 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, fullNameSchema } from "./schemaHelpers";
+import { dateStringSchemaWithoutTimeShift } from "~datatypes";
+
+import { fullNameSchema } from "./schemaHelpers";
 
 export const supervisionOfficerMetricEventSchema = z.object({
   metricId: z.string(),
-  eventDate: dateStringSchema,
+  eventDate: dateStringSchemaWithoutTimeShift,
   clientId: z.string(),
   clientName: fullNameSchema,
   pseudonymizedClientId: z.string(),
-  officerAssignmentDate: dateStringSchema,
-  officerAssignmentEndDate: dateStringSchema.nullable(),
-  supervisionStartDate: dateStringSchema,
-  supervisionEndDate: dateStringSchema.nullable(),
+  officerAssignmentDate: dateStringSchemaWithoutTimeShift,
+  officerAssignmentEndDate: dateStringSchemaWithoutTimeShift.nullable(),
+  supervisionStartDate: dateStringSchemaWithoutTimeShift,
+  supervisionEndDate: dateStringSchemaWithoutTimeShift.nullable(),
   supervisionType: z.string(),
 });
 

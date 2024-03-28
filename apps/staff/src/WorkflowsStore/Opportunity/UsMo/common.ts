@@ -18,7 +18,9 @@
 import { mapValues } from "lodash";
 import { z } from "zod";
 
-import { dateStringSchema, stringToIntSchema } from "../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
+
+import { stringToIntSchema } from "../schemaHelpers";
 
 const classesSchema = z.object({
   startDate: dateStringSchema,

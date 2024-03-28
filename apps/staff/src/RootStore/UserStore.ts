@@ -29,6 +29,8 @@ import { action, entries, makeAutoObservable, runInAction, when } from "mobx";
 import { now } from "mobx-utils";
 import qs from "qs";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { fetchImpersonatedUserAppMetadata } from "../api/fetchImpersonatedUserAppMetadata";
 import { fetchOfflineUser } from "../api/fetchOfflineUser";
 import { ERROR_MESSAGES } from "../constants/errorMessages";
@@ -45,9 +47,7 @@ import {
 } from "../core/views";
 import tenants from "../tenants";
 import { castToError } from "../utils/castToError";
-import { isDemoMode } from "../utils/isDemoMode";
 import isIE11 from "../utils/isIE11";
-import { isOfflineMode } from "../utils/isOfflineMode";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
 import {

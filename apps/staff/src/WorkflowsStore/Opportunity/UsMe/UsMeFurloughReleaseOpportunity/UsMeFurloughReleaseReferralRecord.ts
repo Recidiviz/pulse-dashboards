@@ -19,12 +19,9 @@
 
 import { z } from "zod";
 
-import {
-  caseNotesSchema,
-  dateStringSchema,
-  eligibleDateSchema,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
+import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
 export const usMeFurloughReleaseSchema = opportunitySchemaBase
   .extend({

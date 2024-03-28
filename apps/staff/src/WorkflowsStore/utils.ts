@@ -16,17 +16,12 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import {
-  add,
-  addDays,
-  differenceInDays,
-  endOfToday,
-  getMonth,
-  getYear,
-  parseISO,
-} from "date-fns";
+import { add, endOfToday, getMonth, getYear, parseISO } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
+
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { shiftFixtureDate } from "~datatypes";
 
 import { SystemId } from "../core/models/types";
 import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
@@ -37,7 +32,6 @@ import {
   StaffRecord,
 } from "../FirestoreStore/types";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
-import { isDemoMode } from "../utils/isDemoMode";
 import { StaffFilterFunction } from "./types";
 
 /**
@@ -88,22 +82,9 @@ export function formatFacilityHousingUnit(
   return formattedFacilityHousingUnit;
 }
 
-// dates in demo fixtures will be shifted relative to this date
-const DEMO_TIMESTAMP = parseISO("2021-12-16");
-
-/**
- * Shifts a given date forward by the difference between the current date
- * and the static "demo date" used for fixture data, bringing the dates
- * in demo fixtures up to date relative to today.
- */
-export function shiftDemoDate(storedDate: Date): Date {
-  const offsetDays = differenceInDays(new Date(), DEMO_TIMESTAMP);
-  return addDays(storedDate, offsetDays);
-}
-
 /**
  * Given a raw field from Firestore, converts it to a Date.
- * When Demo Mode is active, it also applies a time shift so that
+ * When Demo or Offline Mode is active, it also applies a time shift so that
  * the date from demo fixture data is relevant to the current date.
  */
 export function fieldToDate(field: Timestamp | string): Date {
@@ -113,8 +94,8 @@ export function fieldToDate(field: Timestamp | string): Date {
   } else {
     result = field.toDate();
   }
-  if (isDemoMode()) {
-    result = shiftDemoDate(result);
+  if (isDemoMode() || isOfflineMode()) {
+    result = shiftFixtureDate(result);
   }
 
   return result;

@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { UsIdCRCResidentWorkerReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usIdCRCResidentWorkerReferrals: FixtureData<UsIdCRCResidentWorkerReferralRecordRaw> =
+export const usIdCRCResidentWorkerReferrals: FirestoreFixture<UsIdCRCResidentWorkerReferralRecordRaw> =
   {
     data: [
       {

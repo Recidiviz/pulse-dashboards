@@ -18,7 +18,8 @@
 import { maxBy } from "lodash";
 import { z } from "zod";
 
-import { dateStringSchema } from "../../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
+
 import {
   baseUsMoOverdueRestrictiveHousingSchema,
   usMoNoActiveD1Sanctions,

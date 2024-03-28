@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { EarnedDischargeReferralRecordRaw } from "../../src/WorkflowsStore";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const earnedDischargeReferralsFixture: FixtureData<EarnedDischargeReferralRecordRaw> =
+export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeReferralRecordRaw> =
   {
     data: [
       {

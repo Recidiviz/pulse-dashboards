@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { UsTnAnnualReclassificationReviewReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
 const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
   {
@@ -135,7 +134,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
   },
 ];
 
-export const usTnAnnualReclassificationReviewFixture: FixtureData<UsTnAnnualReclassificationReviewReferralRecordRaw> =
+export const usTnAnnualReclassificationReviewFixture: FirestoreFixture<UsTnAnnualReclassificationReviewReferralRecordRaw> =
   {
     data,
     idFunc: externalIdFunc,

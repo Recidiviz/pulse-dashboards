@@ -19,11 +19,9 @@
 
 import { z } from "zod";
 
-import {
-  dateStringSchema,
-  eligibleDateSchema,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
+
+import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
 const objectOrNull = z.object({}).nullable();
 

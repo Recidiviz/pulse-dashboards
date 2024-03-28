@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isValid, parseISO } from "date-fns";
 import { Dictionary, mapKeys, toUpper } from "lodash";
 import { z } from "zod";
 
@@ -23,23 +22,6 @@ import { FullName } from "../../core/types/personMetadata";
 
 export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
 export type TargetStatus = z.infer<typeof targetStatusSchema>;
-
-// zod has a built-in datetime validator but it does not yet support date-only strings
-// (see https://github.com/colinhacks/zod/issues/1676)
-export const dateStringSchema = z.string().transform((value, ctx) => {
-  const transformedDate = parseISO(value);
-  if (isValid(transformedDate)) {
-    return transformedDate;
-  }
-
-  ctx.addIssue({
-    code: z.ZodIssueCode.invalid_string,
-    message: "Invalid ISO date string",
-    validation: "datetime",
-  });
-
-  return z.NEVER;
-});
 
 export const fullNameSchema = z.object({
   givenNames: z.string().optional(),

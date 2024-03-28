@@ -19,14 +19,16 @@ import { ascending } from "d3-array";
 import { ValuesType } from "utility-types";
 import { z } from "zod";
 
-import { dateStringSchema, targetStatusSchema } from "./schemaHelpers";
+import { dateStringSchemaWithoutTimeShift } from "~datatypes";
+
+import { targetStatusSchema } from "./schemaHelpers";
 
 export const supervisionOfficerMetricOutlierSchema = z.object({
   metricId: z.string(),
   statusesOverTime: z
     .array(
       z.object({
-        endDate: dateStringSchema,
+        endDate: dateStringSchemaWithoutTimeShift,
         metricRate: z.number(),
         status: targetStatusSchema,
       }),

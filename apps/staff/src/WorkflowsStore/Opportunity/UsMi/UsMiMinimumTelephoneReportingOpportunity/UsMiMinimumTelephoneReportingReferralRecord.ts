@@ -17,11 +17,9 @@
 
 import { z } from "zod";
 
-import {
-  caseNotesSchema,
-  dateStringSchema,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
+import { opportunitySchemaBase } from "../../schemaHelpers";
 
 // TODO: tighten this up once we see some real records (i.e. what's actually nullable?)
 const criteria = z.object({

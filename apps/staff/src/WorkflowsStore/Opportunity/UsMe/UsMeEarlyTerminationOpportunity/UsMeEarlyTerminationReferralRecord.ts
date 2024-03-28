@@ -17,12 +17,9 @@
 
 import { z } from "zod";
 
-import {
-  caseNotesSchema,
-  dateStringSchema,
-  NullCoalesce,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
+import { NullCoalesce, opportunitySchemaBase } from "../../schemaHelpers";
 
 const usMePaidAllOwedRestitution = NullCoalesce(
   {},

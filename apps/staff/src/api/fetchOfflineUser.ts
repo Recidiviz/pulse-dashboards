@@ -17,7 +17,7 @@
 import { User } from "@auth0/auth0-spa-js";
 import qs from "qs";
 
-import { isOfflineMode } from "../utils/isOfflineMode";
+import { isOfflineMode } from "~client-env-utils";
 
 type OfflineUserOptions = {
   email?: string;

@@ -27,10 +27,10 @@ import {
 } from "mobx";
 import { QueryParamConfigMap } from "use-query-params";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { US_DEMO } from "../../RootStore/TenantStore/pathwaysTenants";
 import { isPathwaysTenantId, PathwaysTenants } from "../../RootStore/types";
-import { isDemoMode } from "../../utils/isDemoMode";
-import { isOfflineMode } from "../../utils/isOfflineMode";
 import { MonthOptions } from "../PopulationTimeSeriesChart/helpers";
 import {
   EnabledFilter,

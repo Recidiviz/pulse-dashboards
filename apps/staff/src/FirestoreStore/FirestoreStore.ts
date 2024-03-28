@@ -43,12 +43,12 @@ import {
 import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable, when } from "mobx";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
+
 import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import { isHydrated } from "../core/models/utils";
 import type RootStore from "../RootStore";
 import { UserAppMetadata } from "../RootStore/types";
-import { isDemoMode } from "../utils/isDemoMode";
-import { isOfflineMode } from "../utils/isOfflineMode";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/types";

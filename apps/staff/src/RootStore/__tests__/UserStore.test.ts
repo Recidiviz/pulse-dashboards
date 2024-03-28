@@ -20,6 +20,8 @@ import { add } from "date-fns";
 import { runInAction } from "mobx";
 import { Mock } from "vitest";
 
+import { isDemoMode } from "~client-env-utils";
+
 import { fetchImpersonatedUserAppMetadata } from "../../api/fetchImpersonatedUserAppMetadata";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import {
@@ -29,7 +31,6 @@ import {
   UNRESTRICTED_PAGES,
 } from "../../core/views";
 import tenants from "../../tenants";
-import { isDemoMode } from "../../utils/isDemoMode";
 import isIE11 from "../../utils/isIE11";
 import RootStore from "..";
 import { FeatureVariant, TenantId } from "../types";
@@ -39,8 +40,8 @@ vi.mock("@auth0/auth0-spa-js");
 vi.mock("@sentry/react");
 vi.mock("firebase/firestore");
 vi.mock("../../utils/isIE11");
-vi.mock("../../utils/isDemoMode");
 vi.mock("../../api/fetchImpersonatedUserAppMetadata");
+vi.mock("~client-env-utils");
 
 const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 

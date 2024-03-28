@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ClientRecord } from "../../src/FirestoreStore";
-import { FixtureData } from "../workflowsFixtures";
+import { FirestoreFixture } from "./utils";
 
 const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
@@ -1366,7 +1366,7 @@ const data: Omit<ClientRecord, "personType" | "recordId">[] = [
   ...US_PA_CLIENTS,
 ];
 
-export const clientsData: FixtureData<
+export const clientsData: FirestoreFixture<
   Omit<ClientRecord, "personType" | "recordId">
 > = {
   data,

@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
 
 export const usCaSupervisionLevelDowngradeSchema = z.object({
   stateCode: z.string(),

@@ -17,10 +17,9 @@
 
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
+import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
+
 import { RootStore } from "../RootStore";
-import { isDemoMode } from "../utils/isDemoMode";
-import { isOfflineMode } from "../utils/isOfflineMode";
-import { isTestEnv } from "../utils/isTestEnv";
 import { InsightsAPIClient } from "./api/InsightsAPIClient";
 import { InsightsOfflineAPIClient } from "./api/InsightsOfflineAPIClient";
 import { InsightsAPI } from "./api/interface";

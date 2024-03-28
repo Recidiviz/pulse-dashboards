@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
+import { caseNotesSchema, dateStringSchema } from "~datatypes";
+
 import {
-  caseNotesSchema,
-  dateStringSchema,
   defaultOnNull,
   opportunitySchemaBase,
   stringToIntSchema,

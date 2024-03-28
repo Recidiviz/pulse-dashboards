@@ -16,8 +16,7 @@
 // =============================================================================
 
 import { UsTnExpirationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
 const data: UsTnExpirationReferralRecordRaw[] = [
   {
@@ -97,7 +96,7 @@ const data: UsTnExpirationReferralRecordRaw[] = [
   },
 ];
 
-export const usTnExpirationFixture: FixtureData<UsTnExpirationReferralRecordRaw> =
+export const usTnExpirationFixture: FirestoreFixture<UsTnExpirationReferralRecordRaw> =
   {
     data,
     idFunc: externalIdFunc,

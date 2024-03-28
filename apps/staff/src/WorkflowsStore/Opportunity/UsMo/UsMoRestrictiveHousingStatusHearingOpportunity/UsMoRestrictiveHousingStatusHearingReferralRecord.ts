@@ -18,9 +18,11 @@
 import { isAfter, startOfToday } from "date-fns";
 import { z } from "zod";
 
+import { dateStringSchema } from "~datatypes";
+
 import { OpportunityValidationError } from "../../../../errors";
 import { ValidateFunction } from "../../../subscriptions";
-import { dateStringSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { opportunitySchemaBase } from "../../schemaHelpers";
 import { usMoMetadataSchema as metadata } from "../common";
 
 export const usMoRestrictiveHousingStatusHearingSchema = opportunitySchemaBase

@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { UsMoRestrictiveHousingStatusHearingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usMoRestrictiveHousingStatusHearingFixture: FixtureData<UsMoRestrictiveHousingStatusHearingReferralRecordRaw> =
+export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRestrictiveHousingStatusHearingReferralRecordRaw> =
   {
     data: [
       // Overdue

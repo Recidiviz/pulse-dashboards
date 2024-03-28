@@ -20,11 +20,12 @@ import { Button, palette } from "@recidiviz/design-system";
 import React, { MutableRefObject, useRef, useState } from "react";
 import styled from "styled-components/macro";
 
+import { isOfflineMode } from "~client-env-utils";
+
 import StateSelector from "../../components/StateSelector";
 import { TenantId } from "../../RootStore/types";
 import TENANTS from "../../tenants";
 import { getEmailDomain, stopImpersonating } from "../../utils/impersonation";
-import { isOfflineMode } from "../../utils/isOfflineMode";
 import ImpersonationErrorModal from "./ImpersonationErrorModal";
 
 const EmailInput = styled.input`

@@ -17,11 +17,9 @@
 
 import { z } from "zod";
 
-import {
-  dateStringSchema,
-  eligibleDateSchema,
-  opportunitySchemaBase,
-} from "../../schemaHelpers";
+import { dateStringSchema } from "~datatypes";
+
+import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
 export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z.object({

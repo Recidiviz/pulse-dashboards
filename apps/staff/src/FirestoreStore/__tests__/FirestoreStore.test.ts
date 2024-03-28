@@ -26,10 +26,11 @@ import {
 import tk from "timekeeper";
 import { Mock } from "vitest";
 
+import { isOfflineMode } from "~client-env-utils";
+
 import { fetchFirebaseToken } from "../../api/fetchFirebaseToken";
 import { RootStore } from "../../RootStore";
 import { UserAppMetadata } from "../../RootStore/types";
-import { isOfflineMode } from "../../utils/isOfflineMode";
 import FirestoreStore from "../FirestoreStore";
 import {
   MilestonesMessage,
@@ -39,7 +40,7 @@ import {
 
 vi.mock("firebase/auth");
 vi.mock("firebase/firestore");
-vi.mock("../../utils/isOfflineMode");
+vi.mock("~client-env-utils");
 
 const { VITE_TEST_ENV } = vi.hoisted(() => {
   const VITE_TEST_ENV = import.meta.env.VITE_TEST_ENV;

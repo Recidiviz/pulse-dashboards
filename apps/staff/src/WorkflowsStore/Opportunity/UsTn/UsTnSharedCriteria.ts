@@ -17,8 +17,9 @@
 
 import { z } from "zod";
 
+import { dateStringSchema } from "~datatypes";
+
 import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
-import { dateStringSchema } from "../schemaHelpers";
 
 export const formInformationSchema = z.object({
   activeRecommendations: z.array(

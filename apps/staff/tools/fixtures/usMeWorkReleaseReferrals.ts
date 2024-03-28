@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { UsMeWorkReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMe";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usMeWorkReleaseReferrals: FixtureData<UsMeWorkReleaseReferralRecordRaw> =
+export const usMeWorkReleaseReferrals: FirestoreFixture<UsMeWorkReleaseReferralRecordRaw> =
   {
     data: [
       {

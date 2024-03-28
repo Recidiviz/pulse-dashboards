@@ -16,8 +16,7 @@
 // =============================================================================
 
 import { UsNdEarlyTerminationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsNd";
-import { FixtureData } from "../workflowsFixtures";
-import { externalIdFunc } from "./utils";
+import { externalIdFunc, FirestoreFixture } from "./utils";
 
 const data: UsNdEarlyTerminationReferralRecordRaw[] = [
   {
@@ -101,7 +100,7 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
   },
 ];
 
-export const usNdEarlyTerminationFixture: FixtureData<UsNdEarlyTerminationReferralRecordRaw> =
+export const usNdEarlyTerminationFixture: FirestoreFixture<UsNdEarlyTerminationReferralRecordRaw> =
   {
     data,
     idFunc: externalIdFunc,
