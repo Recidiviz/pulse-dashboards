@@ -25,18 +25,18 @@ import { eligibleDateSchema } from "../../schemaHelpers";
 
 const eligibleCriteria = z
   .object({
-    supervisionOneDayPastFullTermCompletionDate: eligibleDateSchema,
+    supervisionTwoDaysPastFullTermCompletionDate: eligibleDateSchema.nullable(),
   })
   .transform((data) => {
     const {
-      supervisionOneDayPastFullTermCompletionDate,
+      supervisionTwoDaysPastFullTermCompletionDate,
       ...restEligibleCriteria
     } = data;
 
     return {
       ...restEligibleCriteria,
       supervisionPastFullTermCompletionDate:
-        supervisionOneDayPastFullTermCompletionDate,
+        supervisionTwoDaysPastFullTermCompletionDate,
     };
   });
 

@@ -19,7 +19,7 @@ import { z } from "zod";
 
 import { eligibleDateSchema, opportunitySchemaBase } from "./schemaHelpers";
 
-const supervisionPastFullTermCompletionDate = eligibleDateSchema.optional();
+const supervisionPastFullTermCompletionDate = eligibleDateSchema.nullish();
 
 const ineligibleAndEligibleCriteria = z.object({
   supervisionPastFullTermCompletionDate,

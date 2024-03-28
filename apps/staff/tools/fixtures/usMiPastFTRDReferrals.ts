@@ -24,7 +24,7 @@ export const usMiPastFTRDReferralsFixture =
       stateCode: "US_MI",
       externalId: "010",
       eligibleCriteria: {
-        supervisionOneDayPastFullTermCompletionDate: {
+        supervisionTwoDaysPastFullTermCompletionDate: {
           eligibleDate: "2022-02-02",
         },
       },
