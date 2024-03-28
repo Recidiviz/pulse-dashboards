@@ -36,6 +36,7 @@ const US_PA_CONFIG: TenantConfig = {
     SUPERVISION: {
       searchType: "OFFICER",
       searchField: "officerId",
+      searchTitleOverride: "agent",
     },
   },
   enableUserRestrictions: false,
