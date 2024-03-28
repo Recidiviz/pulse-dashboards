@@ -44,11 +44,12 @@ import {
   lsuAlmostEligibleClient,
   milestonesClient,
   mockClients,
+  mockIncarcerationOfficers,
   mockLocations,
   mockOfficer,
   mockOfficer2,
-  mockOfficers,
   mockResidents,
+  mockSupervisionOfficers,
   mockSupervisor,
 } from "../__fixtures__";
 import { Client } from "../Client";
@@ -495,12 +496,62 @@ test("caseload syncs with stored value changes", async () => {
   expect(workflowsStore.selectedSearchIds).toEqual(mockStoredOfficers);
 });
 
-test("officers from subscription", async () => {
-  await waitForHydration();
-  runInAction(() => {
-    workflowsStore.officersSubscription.data = mockOfficers;
+describe("staffSubscription", () => {
+  describe("activeSystem is ALL", () => {
+    beforeEach(() => {
+      workflowsStore.updateActiveSystem("ALL");
+    });
+
+    test("staffSubscription has both supervision and incarceration officers", async () => {
+      await waitForHydration();
+      runInAction(() => {
+        workflowsStore.incarcerationStaffSubscription.data =
+          mockIncarcerationOfficers;
+        workflowsStore.supervisionStaffSubscription.data =
+          mockSupervisionOfficers;
+      });
+      expect(
+        workflowsStore.staffSubscription?.map((s) => s.data).flat()
+      ).toEqual([...mockSupervisionOfficers, ...mockIncarcerationOfficers]);
+    });
   });
-  expect(workflowsStore.availableOfficers).toEqual(mockOfficers);
+
+  describe("activeSystem is INCARCERATION", () => {
+    beforeEach(() => {
+      workflowsStore.updateActiveSystem("INCARCERATION");
+    });
+
+    test("staffSubscription has incarceration officers", async () => {
+      await waitForHydration();
+      runInAction(() => {
+        workflowsStore.incarcerationStaffSubscription.data =
+          mockIncarcerationOfficers;
+        workflowsStore.supervisionStaffSubscription.data =
+          mockSupervisionOfficers;
+      });
+      expect(workflowsStore.staffSubscription?.map((s) => s.data)).toEqual([
+        mockIncarcerationOfficers,
+      ]);
+    });
+  });
+  describe("activeSystem is SUPERVISION", () => {
+    beforeEach(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+    });
+
+    test("staffSubscription has supervision officers", async () => {
+      await waitForHydration();
+      runInAction(() => {
+        workflowsStore.incarcerationStaffSubscription.data =
+          mockIncarcerationOfficers;
+        workflowsStore.supervisionStaffSubscription.data =
+          mockSupervisionOfficers;
+      });
+      expect(workflowsStore.staffSubscription?.map((s) => s.data)).toEqual([
+        mockSupervisionOfficers,
+      ]);
+    });
+  });
 });
 
 test("locations from subscription", async () => {
@@ -515,7 +566,9 @@ test("available searchables for search by officer", async () => {
   await waitForHydration();
   runInAction(() => {
     workflowsStore.updateActiveSystem("SUPERVISION");
-    workflowsStore.officersSubscription.data = mockOfficers;
+    workflowsStore.incarcerationStaffSubscription.data =
+      mockIncarcerationOfficers;
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
     workflowsStore.locationsSubscription.data = mockLocations;
   });
 
@@ -544,7 +597,9 @@ test("available searchables for search by location", async () => {
   runInAction(() => {
     workflowsStore.updateActiveSystem("INCARCERATION");
     rootStore.tenantStore.currentTenantId = "US_MO";
-    workflowsStore.officersSubscription.data = mockOfficers;
+    workflowsStore.incarcerationStaffSubscription.data =
+      mockIncarcerationOfficers;
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
     workflowsStore.locationsSubscription.data = mockLocations;
   });
 

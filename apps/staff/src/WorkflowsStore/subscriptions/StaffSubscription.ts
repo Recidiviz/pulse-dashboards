@@ -17,38 +17,31 @@
  * =============================================================================
  */
 
+import { DocumentData } from "@google-cloud/firestore";
 import { Query, query, where } from "firebase/firestore";
 
-import { StaffRecord, SYSTEM_ID_TO_CASELOAD_FIELD } from "../../FirestoreStore";
+import { FirestoreCollectionKey } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
-export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
+export class StaffSubscription<
+  RecordType extends DocumentData,
+> extends FirestoreQuerySubscription<RecordType> {
   private rootStore: RootStore;
 
-  constructor(rootStore: RootStore) {
+  collectionKey: FirestoreCollectionKey;
+
+  constructor(rootStore: RootStore, collectionId: FirestoreCollectionKey) {
     super();
     this.rootStore = rootStore;
+    this.collectionKey = collectionId;
   }
 
   get dataSource(): Query {
-    const { user, workflowsSupportedSystems, activeSystem } =
-      this.rootStore.workflowsStore;
+    const { user } = this.rootStore.workflowsStore;
 
     const stateCode = this.rootStore.currentTenantId;
     const constraints = [where("stateCode", "==", stateCode)];
-
-    // If there's more than 1 supported system, then we query for all staff within the state.
-    if (
-      workflowsSupportedSystems &&
-      activeSystem &&
-      activeSystem !== "ALL" &&
-      workflowsSupportedSystems.length === 1
-    ) {
-      constraints.push(
-        where(SYSTEM_ID_TO_CASELOAD_FIELD[activeSystem], "==", true),
-      );
-    }
 
     if (user) {
       const staffFilter = this.rootStore.tenantStore.workflowsStaffFilterFn(
@@ -62,9 +55,20 @@ export class StaffSubscription extends FirestoreQuerySubscription<StaffRecord> {
       }
     }
 
+    const { collectionKey } = this;
+
     return query(
-      this.rootStore.firestoreStore.collection({ key: "staff" }),
+      this.rootStore.firestoreStore.collection(this.collectionKey),
       ...constraints,
-    );
+    ).withConverter({
+      fromFirestore(snapshot, options) {
+        const doc = snapshot.data(options);
+        return { ...doc, recordId: snapshot.id, recordType: collectionKey.key };
+      },
+      // these collections are read-only, so this should never be used, but it is required by Firestore
+      toFirestore(record: any) {
+        throw new Error(`Writing to ${collectionKey} is not allowed`);
+      },
+    });
   }
 }

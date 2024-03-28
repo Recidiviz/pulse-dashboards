@@ -16,6 +16,8 @@
 
 export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   staff: "staff",
+  supervisionStaff: "supervisionStaff",
+  incarcerationStaff: "incarcerationStaff",
   userUpdates: "userUpdates",
   clients: "clients",
   residents: "residents",

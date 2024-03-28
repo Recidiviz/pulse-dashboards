@@ -102,8 +102,6 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         externalId ?? `${stateCode.toLowerCase()}_${user?.email.toLowerCase()}`,
       email: user.email.toLowerCase(),
       stateCode,
-      hasCaseload: false,
-      hasFacilityCaseload: false,
       givenNames: (user.given_name || formattedUserName?.firstName) ?? "",
       surname: (user.family_name || formattedUserName?.lastName) ?? "",
       district,
@@ -128,8 +126,6 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         id: `${stateCode.toLowerCase()}_${user?.email}`,
         email: user?.email || "",
         stateCode,
-        hasCaseload: false,
-        hasFacilityCaseload: false,
         givenNames: user?.name || "Demo",
         surname: "",
       };
@@ -146,8 +142,6 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         email: user?.email ?? "",
         // should not be undefined if we've gotten this far
         stateCode: currentTenantId as string,
-        hasCaseload: false,
-        hasFacilityCaseload: false,
         givenNames: (user?.given_name || formattedUserName?.firstName) ?? "",
         surname: (user?.family_name || formattedUserName?.lastName) ?? "",
       };

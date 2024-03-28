@@ -80,8 +80,6 @@ function createTestUnit() {
     stateCode: "US_OZ",
     givenNames: "8675309",
     surname: "8675309",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     email: null,
   };
   const person = new Client(personRecord, rootStore);

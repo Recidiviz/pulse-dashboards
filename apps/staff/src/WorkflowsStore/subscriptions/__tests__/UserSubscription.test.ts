@@ -86,8 +86,6 @@ test("inject record for Recidiviz users", () => {
       {
         "email": "test@example.com",
         "givenNames": "Geri",
-        "hasCaseload": false,
-        "hasFacilityCaseload": false,
         "id": "RECIDIVIZ",
         "stateCode": "US_XX",
         "surname": "Halliwell",
@@ -102,8 +100,6 @@ test("inject record for Recidiviz users", () => {
       {
         "email": "test@example.com",
         "givenNames": "Geri",
-        "hasCaseload": false,
-        "hasFacilityCaseload": false,
         "id": "RECIDIVIZ",
         "stateCode": "US_XX",
         "surname": "Halliwell",
@@ -126,8 +122,6 @@ test("inject record in offline mode", () => {
       {
         "email": "test@example.com",
         "givenNames": "Demo",
-        "hasCaseload": false,
-        "hasFacilityCaseload": false,
         "id": "us_xx_test@example.com",
         "stateCode": "US_XX",
         "surname": "",
@@ -142,8 +136,6 @@ test("inject record in offline mode", () => {
       {
         "email": "test@example.com",
         "givenNames": "Demo",
-        "hasCaseload": false,
-        "hasFacilityCaseload": false,
         "id": "us_xx_test@example.com",
         "stateCode": "US_XX",
         "surname": "",
@@ -170,8 +162,6 @@ test("supplement record for staff user without caseload", () => {
         "district": "D5",
         "email": "test@example.com",
         "givenNames": "Geri",
-        "hasCaseload": false,
-        "hasFacilityCaseload": false,
         "id": "us_xx_test@example.com",
         "stateCode": "US_XX",
         "surname": "Halliwell",
@@ -203,8 +193,6 @@ test("supplement record for staff user without caseload but with id", () => {
         "district": "D5",
         "email": "test@example.com",
         "givenNames": "Geri",
-        "hasCaseload": false,
-        "hasFacilityCaseload": false,
         "id": "12345",
         "stateCode": "US_XX",
         "surname": "Halliwell",

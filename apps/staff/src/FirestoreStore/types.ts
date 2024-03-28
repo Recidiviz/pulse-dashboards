@@ -37,12 +37,12 @@ export type RoleSubtype =
   | "SUPERVISION_REGIONAL_MANAGER"
   | "SUPERVISION_STATE_LEADERSHIP";
 
+export type StaffRecord = SupervisionStaffRecord | IncarcerationStaffRecord;
 /**
- * Staff-level data exported from the Recidiviz data platform.
- * Staff may be identified independently as users and as officers with active caseloads
- * based on the properties of this object.
+ * Supervision staff-level data exported from the Recidiviz data platform.
  */
-export type StaffRecord = {
+export type SupervisionStaffRecord = {
+  recordType?: "supervisionStaff";
   district?: string;
   id: string;
   stateCode: string;
@@ -50,23 +50,29 @@ export type StaffRecord = {
    * If they have an email address they are a known user
    */
   email: string | null;
-  /**
-   * Only staff with caseloads need to be included in filters
-   */
-  hasCaseload: boolean;
-  hasFacilityCaseload: boolean;
   // TODO(#2458): Move towards using the fullName type like for ClientRecord to standardize name formatting. May require BE changes.
   givenNames: string;
   surname: string;
   roleSubtype?: RoleSubtype;
 };
 
-export const SYSTEM_ID_TO_CASELOAD_FIELD = {
-  SUPERVISION: "hasCaseload",
-  INCARCERATION: "hasFacilityCaseload",
-} as const;
-// This should be `satisfies Record<Exclude<SystemId, "ALL">, keyof StaffRecord>;`
-// but we can't use that yet: TODO(#3499)
+/**
+ * Incarceration staff-level data exported from the Recidiviz data platform.
+ */
+export type IncarcerationStaffRecord = {
+  recordType?: "incarcerationStaff";
+  district?: string;
+  id: string;
+  stateCode: string;
+  /**
+   * If they have an email address they are a known user
+   */
+  email: string | null;
+  // TODO(#2458): Move towards using the fullName type like for ClientRecord to standardize name formatting. May require BE changes.
+  givenNames: string;
+  surname: string;
+  roleSubtype?: RoleSubtype;
+};
 
 export type UserRecord = StaffRecord & { email: string };
 export function isUserRecord(

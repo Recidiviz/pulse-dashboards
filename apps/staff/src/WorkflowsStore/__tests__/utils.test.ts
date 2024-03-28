@@ -31,46 +31,41 @@ test("staffNameComparator", () => {
   const sortableStaff: StaffRecord[] = [
     {
       id: "1",
+      recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
-      hasCaseload: true,
-      hasFacilityCaseload: false,
       givenNames: "John",
       surname: "Doe",
     },
     {
       id: "2",
+      recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
-      hasCaseload: true,
-      hasFacilityCaseload: false,
       givenNames: "Jane",
       surname: "Doe",
     },
     {
       id: "3",
+      recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
-      hasCaseload: true,
-      hasFacilityCaseload: false,
       givenNames: "Chad",
       surname: "Doe-Adams",
     },
     {
       id: "4",
+      recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
-      hasCaseload: true,
-      hasFacilityCaseload: false,
       givenNames: "Bob",
       surname: "Adams-Doe",
     },
     {
       id: "4",
+      recordType: "supervisionStaff",
       stateCode: "us_xx",
       email: null,
-      hasCaseload: true,
-      hasFacilityCaseload: false,
       givenNames: "Brad",
       surname: "Collins (Doe)",
     },
@@ -140,11 +135,10 @@ describe("filterByUserDistrict", () => {
     info: {
       email: "test",
       givenNames: "test",
-      hasCaseload: true,
-      hasFacilityCaseload: false,
       id: "test",
       stateCode: "US_XX",
       surname: "test",
+      recordType: "supervisionStaff",
     },
   };
 
@@ -209,8 +203,6 @@ describe("usCaFilterByRoleSubtype", () => {
     info: {
       email: "test",
       givenNames: "test",
-      hasCaseload: true,
-      hasFacilityCaseload: false,
       id: "test",
       stateCode: "US_XX",
       surname: "test",
@@ -253,6 +245,7 @@ describe("usCaFilterByRoleSubtype", () => {
         ...userWithoutDistrictOrRole.info,
         district: "district 1",
         roleSubtype: "SUPERVISION_OFFICER",
+        recordType: "supervisionStaff",
       },
     };
 

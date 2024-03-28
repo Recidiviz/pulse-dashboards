@@ -34,11 +34,12 @@ import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
 import { clientUpdatesV2Data } from "./fixtures/clientUpdatesV2";
 import { earnedDischargeReferralsFixture } from "./fixtures/earnedDischargeReferrals";
+import { incarcerationStaffData } from "./fixtures/incarcerationStaff";
 import { locationsData } from "./fixtures/locations";
 import { LSUReferralsFixture } from "./fixtures/LSUReferrals";
 import { residentsData } from "./fixtures/residents";
-import { staffData } from "./fixtures/staff";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
+import { supervisionStaffData } from "./fixtures/supervisionStaff";
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
 import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
 import { usIdCRCWorkReleaseReferrals } from "./fixtures/UsIdCRCWorkReleaseReferrals";
@@ -103,7 +104,8 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
 > = {
   clients: clientsData,
   residents: residentsData,
-  staff: staffData,
+  incarcerationStaff: incarcerationStaffData,
+  supervisionStaff: supervisionStaffData,
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
 } as const;

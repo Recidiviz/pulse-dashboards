@@ -99,8 +99,6 @@ export const usTnUserRecord: CombinedUserRecord = {
     district: "DISTRICT 50",
     id: "OFFICER1",
     stateCode: "US_TN",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer1",
   },

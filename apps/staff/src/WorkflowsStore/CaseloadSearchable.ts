@@ -15,20 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Searchable, SystemId } from "../core/models/types";
-import { StaffRecord, SYSTEM_ID_TO_CASELOAD_FIELD } from "../FirestoreStore";
+import { Searchable } from "../core/models/types";
+import { StaffRecord } from "../FirestoreStore";
 
 export class CaseloadSearchable implements Searchable {
   record: StaffRecord;
 
   constructor(record: StaffRecord) {
     this.record = record;
-  }
-
-  hasCaseloadForSystemId(system: SystemId | undefined): boolean {
-    if (!system) return false;
-    if (system === "ALL") return true;
-    return this.record[SYSTEM_ID_TO_CASELOAD_FIELD[system]];
   }
 
   get searchLabel(): string {

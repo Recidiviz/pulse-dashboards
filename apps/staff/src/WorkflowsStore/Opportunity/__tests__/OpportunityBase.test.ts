@@ -75,8 +75,6 @@ function createTestUnit() {
       stateCode: ineligibleClientRecord.stateCode,
       email: "test@email.gov",
       givenNames: "",
-      hasCaseload: false,
-      hasFacilityCaseload: false,
       id: "abc123",
       surname: "",
     },

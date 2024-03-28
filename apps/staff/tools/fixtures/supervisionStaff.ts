@@ -14,18 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { StaffRecord } from "../../src/FirestoreStore";
+import { StaffRecord, SupervisionStaffRecord } from "../../src/FirestoreStore";
 import { FirestoreFixture } from "./utils";
 
-const data: StaffRecord[] = [
+const data: SupervisionStaffRecord[] = [
   // US_CA - CALIFORNIA
   {
     email: "test-officer-1@example.com",
     district: "DISTRICT 1",
     id: "OFFICER1",
     stateCode: "US_CA",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Agent1",
   },
@@ -34,8 +32,6 @@ const data: StaffRecord[] = [
     district: "DISTRICT 1",
     id: "OFFICER2",
     stateCode: "US_CA",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Agent2",
   },
@@ -45,37 +41,15 @@ const data: StaffRecord[] = [
     district: "DISTRICT 1",
     id: "OFFICER4",
     stateCode: "US_ID",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer4",
-  },
-  {
-    email: "test-officer-6@example.com",
-    id: "OFFICER6",
-    stateCode: "US_ID",
-    hasCaseload: true,
-    hasFacilityCaseload: true,
-    givenNames: "Test",
-    surname: "Officer6",
   },
 
   // US_ME - MAINE
   {
-    email: "test-officer-5@example.com",
-    id: "OFFICER5",
-    stateCode: "US_ME",
-    hasCaseload: false,
-    hasFacilityCaseload: true,
-    givenNames: "Test",
-    surname: "Officer5",
-  },
-  {
     email: "test-officer-8@example.com",
     id: "OFFICER8",
     stateCode: "US_ME",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer8",
   },
@@ -85,30 +59,8 @@ const data: StaffRecord[] = [
     email: "test-officer-8@example.com",
     id: "OFFICER8",
     stateCode: "US_MI",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer8",
-  },
-
-  // US_MO - MISSOURI
-  {
-    email: null,
-    id: "FACILITY1",
-    stateCode: "US_MO",
-    hasCaseload: false,
-    hasFacilityCaseload: true,
-    givenNames: "Facility 1",
-    surname: "",
-  },
-  {
-    email: "test-officer-7@example.com",
-    id: "OFFICER7",
-    stateCode: "US_MO",
-    hasCaseload: false,
-    hasFacilityCaseload: true,
-    givenNames: "Test",
-    surname: "Officer7",
   },
 
   // US_ND - NORTH DAKOTA
@@ -117,8 +69,6 @@ const data: StaffRecord[] = [
     district: "DISTRICT 1",
     id: "OFFICER3",
     stateCode: "US_ND",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer3",
   },
@@ -128,8 +78,6 @@ const data: StaffRecord[] = [
     email: null,
     id: "271828",
     stateCode: "US_OR",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "271828",
     surname: "271828",
   },
@@ -137,8 +85,6 @@ const data: StaffRecord[] = [
     email: null,
     id: "314159",
     stateCode: "US_OR",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "314159",
     surname: "314159",
   },
@@ -148,8 +94,6 @@ const data: StaffRecord[] = [
     email: "test-officer@example.com",
     id: "OFFICER1",
     stateCode: "US_PA",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "TEST",
     surname: "OFFICER1",
   },
@@ -157,8 +101,6 @@ const data: StaffRecord[] = [
     email: "test-officer@example.com",
     id: "OFFICER2",
     stateCode: "US_PA",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "TEST",
     surname: "OFFICER2",
   },
@@ -169,8 +111,6 @@ const data: StaffRecord[] = [
     district: "DISTRICT 50",
     id: "OFFICER1",
     stateCode: "US_TN",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer1",
   },
@@ -179,33 +119,20 @@ const data: StaffRecord[] = [
     district: "DISTRICT 50",
     id: "OFFICER2",
     stateCode: "US_TN",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer2",
-  },
-  {
-    email: "test-officer-5@example.com",
-    id: "OFFICER5",
-    stateCode: "US_TN",
-    hasCaseload: false,
-    hasFacilityCaseload: true,
-    givenNames: "Test",
-    surname: "Officer5",
   },
   {
     email: "test-supervisor@example.com",
     district: "DISTRICT 50",
     id: "SUPERVISOR1",
     stateCode: "US_TN",
-    hasCaseload: false,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Supervisor",
   },
 ];
 
-export const staffData: FirestoreFixture<StaffRecord> = {
+export const supervisionStaffData: FirestoreFixture<StaffRecord> = {
   data,
   idFunc: (r) => r.id,
 };

@@ -61,10 +61,12 @@ import { WorkflowsPage } from "../core/views";
 import {
   ClientRecord,
   CombinedUserRecord,
+  IncarcerationStaffRecord,
   LocationRecord,
   MilestonesMessage,
   ResidentRecord,
   StaffRecord,
+  SupervisionStaffRecord,
   UserMetadata,
   UserUpdateRecord,
 } from "../FirestoreStore";
@@ -122,7 +124,9 @@ export class WorkflowsStore implements Hydratable {
 
   justiceInvolvedPersons: Record<string, JusticeInvolvedPerson> = {};
 
-  officersSubscription: StaffSubscription;
+  incarcerationStaffSubscription: StaffSubscription<IncarcerationStaffRecord>;
+
+  supervisionStaffSubscription: StaffSubscription<SupervisionStaffRecord>;
 
   clientsSubscription: CaseloadSubscription<ClientRecord>;
 
@@ -152,7 +156,14 @@ export class WorkflowsStore implements Hydratable {
       this,
     );
 
-    this.officersSubscription = new StaffSubscription(rootStore);
+    this.supervisionStaffSubscription =
+      new StaffSubscription<SupervisionStaffRecord>(rootStore, {
+        key: "supervisionStaff",
+      });
+    this.incarcerationStaffSubscription =
+      new StaffSubscription<IncarcerationStaffRecord>(rootStore, {
+        key: "incarcerationStaff",
+      });
     this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
       this,
       { key: "clients" },
@@ -289,7 +300,7 @@ export class WorkflowsStore implements Hydratable {
     // set default caseload to the user's own, when applicable
     if (
       !updates.selectedSearchIds &&
-      info.hasCaseload &&
+      info.recordType &&
       this.searchType === "OFFICER"
     ) {
       updates.selectedSearchIds = [info.id];
@@ -496,6 +507,30 @@ export class WorkflowsStore implements Hydratable {
     return "officerId";
   }
 
+  get staffSubscription():
+    | StaffSubscription<StaffRecord>[]
+    | (
+        | StaffSubscription<SupervisionStaffRecord>
+        | StaffSubscription<IncarcerationStaffRecord>
+      )[]
+    | undefined {
+    switch (this.activeSystem) {
+      case "INCARCERATION":
+        return [this.incarcerationStaffSubscription];
+      case "SUPERVISION":
+        return [this.supervisionStaffSubscription];
+      case "ALL":
+        return [
+          this.supervisionStaffSubscription,
+          this.incarcerationStaffSubscription,
+        ];
+      case undefined:
+        return;
+      default:
+        assertNever(this.activeSystem);
+    }
+  }
+
   get caseloadSubscription():
     | CaseloadSubscription<ClientRecord>[]
     | CaseloadSubscription<ResidentRecord>[]
@@ -667,7 +702,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get availableOfficers(): StaffRecord[] {
-    const officers = [...this.officersSubscription.data];
+    const officers = (this.staffSubscription ?? []).map((s) => s.data).flat();
     officers.sort(staffNameComparator);
     return officers;
   }
@@ -685,18 +720,12 @@ export class WorkflowsStore implements Hydratable {
         );
       }
       case "OFFICER": {
-        return this.availableOfficers
-          .map((officer) => new Officer(officer))
-          .filter((officer) =>
-            officer.hasCaseloadForSystemId(this.activeSystem),
-          );
+        return this.availableOfficers.map((officer) => new Officer(officer));
       }
       case "CASELOAD": {
-        return this.availableOfficers
-          .map((officer) => new CaseloadSearchable(officer))
-          .filter((officer) =>
-            officer.hasCaseloadForSystemId(this.activeSystem),
-          );
+        return this.availableOfficers.map(
+          (officer) => new CaseloadSearchable(officer),
+        );
       }
       case "ALL": {
         const locations = this.availableLocations.map(

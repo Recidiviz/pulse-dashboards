@@ -18,9 +18,10 @@
 import {
   ClientRecord,
   CombinedUserRecord,
+  IncarcerationStaffRecord,
   LocationRecord,
   ResidentRecord,
-  StaffRecord,
+  SupervisionStaffRecord,
 } from "../../FirestoreStore";
 import { SupervisionOpportunityType } from "../Opportunity/OpportunityConfigs";
 import { dateToTimestamp } from "../utils";
@@ -30,9 +31,8 @@ export const mockOfficer: CombinedUserRecord = {
     id: "OFFICER1",
     district: "DISTRICT 1",
     stateCode: "US_XX",
+    recordType: "supervisionStaff",
     email: "test-officer@example.com",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Officer",
   },
@@ -41,10 +41,9 @@ export const mockOfficer: CombinedUserRecord = {
 export const mockOfficer2: CombinedUserRecord = {
   info: {
     id: "OFFICER2",
+    recordType: "supervisionStaff",
     stateCode: mockOfficer.info.stateCode,
     district: "1",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     email: "test-officer2@example.com",
     givenNames: "Foo",
     surname: "Fakename",
@@ -57,8 +56,6 @@ export const mockSupervisor: CombinedUserRecord = {
     district: "DISTRICT 1",
     stateCode: "US_XX",
     email: "test-supervisor@example.com",
-    hasCaseload: false,
-    hasFacilityCaseload: false,
     givenNames: "Test",
     surname: "Supervisor",
   },
@@ -289,23 +286,42 @@ export const mockResidents: ResidentRecord[] = [
   },
 ];
 
-export const mockOfficers: StaffRecord[] = [
+export const mockSupervisionOfficers: SupervisionStaffRecord[] = [
   {
     id: "OFFICER2",
+    recordType: "supervisionStaff",
     stateCode: mockOfficer.info.stateCode,
     district: "1",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
     email: null,
     givenNames: "Foo",
     surname: "Fakename",
   },
   {
     id: "OFFICER3",
+    recordType: "supervisionStaff",
     stateCode: mockOfficer.info.stateCode,
     district: "1",
-    hasCaseload: true,
-    hasFacilityCaseload: false,
+    email: null,
+    givenNames: "Bar",
+    surname: "Realname",
+  },
+];
+
+export const mockIncarcerationOfficers: IncarcerationStaffRecord[] = [
+  {
+    id: "OFFICER2",
+    recordType: "incarcerationStaff",
+    stateCode: mockOfficer.info.stateCode,
+    district: "1",
+    email: null,
+    givenNames: "Foo",
+    surname: "Fakename",
+  },
+  {
+    id: "OFFICER3",
+    recordType: "incarcerationStaff",
+    stateCode: mockOfficer.info.stateCode,
+    district: "1",
     email: null,
     givenNames: "Bar",
     surname: "Realname",

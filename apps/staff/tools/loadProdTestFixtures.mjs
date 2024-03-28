@@ -53,8 +53,6 @@ const testStaff = {
   __loadedAt: loadedAt,
   email: "recidiviz-test-email",
   givenNames: "RECIDIVIZ",
-  hasCaseload: true,
-  hasFacilityCaseload: false,
   id: "RECIDIVIZ_STAFF_ID",
   name: "Recidiviz Staff",
   stateCode: "US_CA",
