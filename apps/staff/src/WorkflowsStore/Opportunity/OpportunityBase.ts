@@ -537,8 +537,8 @@ export abstract class OpportunityBase<
     return hydrateUntypedCriteria(
       record.eligibleCriteria,
       eligibleCriteriaCopy,
+      this,
       this.criteriaFormatters,
-      record,
     );
   }
 
@@ -551,8 +551,8 @@ export abstract class OpportunityBase<
     return hydrateUntypedCriteria(
       record.ineligibleCriteria,
       ineligibleCriteriaCopy,
+      this,
       this.criteriaFormatters,
-      record,
     );
   }
 

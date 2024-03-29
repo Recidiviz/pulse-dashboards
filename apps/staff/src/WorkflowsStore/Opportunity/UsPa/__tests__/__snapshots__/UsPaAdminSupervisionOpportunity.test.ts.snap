@@ -12,7 +12,7 @@ exports[`fully eligible > requirements met 1`] = `
     "text": "Not serving for an ineligible offense",
   },
   {
-    "text": "Currently on EXAMPLE supervision",
+    "text": "Currently on Medium supervision",
   },
 ]
 `;

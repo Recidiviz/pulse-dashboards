@@ -23,7 +23,8 @@ import simplur from "simplur";
 
 import { formatWorkflowsDate, toTitleCase } from "../../../utils";
 import { AllPossibleKeys } from "../../../utils/typeUtils";
-import { OpportunityRequirement } from "../types";
+import { JusticeInvolvedPerson } from "../../types";
+import { Opportunity, OpportunityRequirement } from "../types";
 
 export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
   const months = differenceInMonths(eligibleDate, new Date());
@@ -123,7 +124,7 @@ export type UntypedCriteriaFormatters = Record<
 type HydrationContext = {
   criteria: Reason;
   formatters: UntypedCriteriaFormatters;
-  record: any;
+  opportunity: Opportunity;
 };
 
 // Handlebars helpers take the context as `this`, but these
@@ -136,7 +137,7 @@ function makeThisFirstArg(f: (...args: any) => any) {
 
 export function hydrateStr(
   raw: string,
-  { criteria, formatters, record }: HydrationContext,
+  { criteria, formatters, opportunity }: HydrationContext,
 ) {
   const template = Handlebars.compile(raw);
 
@@ -161,20 +162,23 @@ export function hydrateStr(
     trapException,
   );
 
-  return template({ ...criteria, record }, { helpers });
+  return template(
+    { ...criteria, record: opportunity.record, opportunity },
+    { helpers },
+  );
 }
 
 export function hydrateUntypedCriteria(
   recordCriteria: Record<string, Reason | null>,
   criteriaCopy: Record<string, OpportunityRequirement>,
+  opportunity: Opportunity<JusticeInvolvedPerson>,
   formatters: UntypedCriteriaFormatters = {},
-  record: any = {},
 ): OpportunityRequirement[] {
   function hydrateReq(raw: OpportunityRequirement, criteria: Reason) {
     const context: HydrationContext = {
       criteria,
       formatters,
-      record,
+      opportunity,
     };
     const out = {
       ...raw,

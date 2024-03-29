@@ -19,6 +19,8 @@ import { captureException } from "@sentry/react";
 import { parseISO } from "date-fns";
 import timekeeper from "timekeeper";
 
+import { mockOpportunity } from "../../../../core/__tests__/testUtils";
+import { Client } from "../../../Client";
 import { hydrateStr, hydrateUntypedCriteria } from "../criteriaUtils";
 vi.mock("@sentry/react");
 
@@ -45,7 +47,11 @@ describe("hydrateUntypedCriteria", () => {
       second: {},
     };
 
-    const hydrated = hydrateUntypedCriteria(recordCriteria, criteriaCopy);
+    const hydrated = hydrateUntypedCriteria(
+      recordCriteria,
+      criteriaCopy,
+      mockOpportunity,
+    );
     expect(hydrated).toEqual([
       { text: "FIRST" },
       { text: "SECOND" },
@@ -67,7 +73,11 @@ describe("hydrateUntypedCriteria", () => {
       fourth: {},
     };
 
-    const hydrated = hydrateUntypedCriteria(recordCriteria, criteriaCopy);
+    const hydrated = hydrateUntypedCriteria(
+      recordCriteria,
+      criteriaCopy,
+      mockOpportunity,
+    );
     expect(hydrated).toEqual([{ text: "FIRST" }, { text: "FOURTH" }]);
   });
 
@@ -85,7 +95,11 @@ describe("hydrateUntypedCriteria", () => {
       second: {},
     };
 
-    const hydrated = hydrateUntypedCriteria(recordCriteria, criteriaCopy);
+    const hydrated = hydrateUntypedCriteria(
+      recordCriteria,
+      criteriaCopy,
+      mockOpportunity,
+    );
     expect(hydrated).toEqual([{ text: "FIRST" }, { text: "FOURTH" }]);
   });
 
@@ -103,7 +117,11 @@ describe("hydrateUntypedCriteria", () => {
       second: { field: "value" },
     };
 
-    const hydrated = hydrateUntypedCriteria(recordCriteria, criteriaCopy);
+    const hydrated = hydrateUntypedCriteria(
+      recordCriteria,
+      criteriaCopy,
+      mockOpportunity,
+    );
     expect(hydrated).toEqual([
       { text: "FIRST" },
       { text: "SECOND" },
@@ -117,9 +135,12 @@ describe("hydrateStr", () => {
     const template = "{{verb}} at the beginning.";
     const criteria = { verb: "Matches" };
     const formatters = {};
-    const record = {};
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
 
     expect(result).toEqual("Matches at the beginning.");
   });
@@ -128,9 +149,12 @@ describe("hydrateStr", () => {
     const template = "At the end, it {{verb}}";
     const criteria = { verb: "matches" };
     const formatters = {};
-    const record = {};
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
 
     expect(result).toEqual("At the end, it matches");
   });
@@ -139,9 +163,12 @@ describe("hydrateStr", () => {
     const template = "All I do is {{verb}} all day.";
     const criteria = { verb: "match" };
     const formatters = {};
-    const record = {};
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
 
     expect(result).toEqual("All I do is match all day.");
   });
@@ -150,9 +177,12 @@ describe("hydrateStr", () => {
     const template = "All I do is {{verb}}{{verb}}*{{pause}}*{{verb}} all day.";
     const criteria = { verb: "match", pause: "breathe" };
     const formatters = {};
-    const record = {};
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
 
     expect(result).toEqual("All I do is matchmatch*breathe*match all day.");
   });
@@ -161,9 +191,12 @@ describe("hydrateStr", () => {
     const template = "All I do is {{verb}}{{verb}}*{{pause}}*{{verb}} all day.";
     const criteria = { verb: "match", pause: "breathe" };
     const formatters = {};
-    const record = {};
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
 
     expect(result).toEqual("All I do is matchmatch*breathe*match all day.");
   });
@@ -173,8 +206,13 @@ describe("hydrateStr", () => {
     const criteria = {};
     const formatters = {};
     const record = { metadata: { status: "trapped in a template" } };
+    const opportunity = { ...mockOpportunity, record };
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity,
+    });
 
     expect(result).toEqual("Our hero is trapped in a template!");
   });
@@ -188,9 +226,12 @@ describe("hydrateStr", () => {
       const template = `{{${helper} input}}`;
       const criteria = { input: "tWo WoRdS" };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual(expected);
     });
@@ -204,9 +245,12 @@ describe("hydrateStr", () => {
       const template = `{{${helper} input}}`;
       const criteria = { input };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual(expected);
     });
@@ -220,9 +264,12 @@ describe("hydrateStr", () => {
       const template = `{{${helper} input}}`;
       const criteria = { input };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual(expected);
     });
@@ -231,9 +278,12 @@ describe("hydrateStr", () => {
       const template = "My favorite fondue is {{melt cheese}}!";
       const criteria = { cheese: "gruyere" };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
       expect(result).toEqual("My favorite fondue is UNKNOWN!");
       expect(captureExceptionMock).toHaveBeenCalledOnce();
     });
@@ -242,9 +292,12 @@ describe("hydrateStr", () => {
       const template = "the loudest number is {{upperCase number}}";
       const criteria = { number: 5 };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
       expect(result).toEqual("the loudest number is UNKNOWN");
       expect(captureExceptionMock).toHaveBeenCalledOnce();
     });
@@ -254,9 +307,12 @@ describe("hydrateStr", () => {
     const template = "My favorite cheese is {{cheeze}}!";
     const criteria = { cheese: "gruyere" };
     const formatters = {};
-    const record = {};
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
     expect(result).toEqual("My favorite cheese is UNKNOWN!");
     expect(captureExceptionMock).toHaveBeenCalledOnce();
   });
@@ -265,9 +321,12 @@ describe("hydrateStr", () => {
     const template = "My favorite cheese is {{i love cheese}}!";
     const criteria = { cheese: "gruyere" };
     const formatters = {};
-    const record = {};
 
-    const result = hydrateStr(template, { criteria, formatters, record });
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
     expect(result).toEqual("My favorite cheese is UNKNOWN!");
     expect(captureExceptionMock).toHaveBeenCalledOnce();
   });
@@ -277,9 +336,12 @@ describe("hydrateStr", () => {
       const template = 'Let me hear you say "{{cheer}}"';
       const criteria = { shout: "Hooray!", cheerCount: 3 };
       const formatters = { cheer: (c: any) => c.shout.repeat(c.cheerCount) };
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual('Let me hear you say "Hooray!Hooray!Hooray!"');
     });
@@ -291,10 +353,34 @@ describe("hydrateStr", () => {
         status: ({ record }: any) => record.metadata.status,
       };
       const record = { metadata: { status: "trapped in a template" } };
+      const opportunity = { ...mockOpportunity, record };
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity,
+      });
 
       expect(result).toEqual("Our hero is trapped in a template!");
+    });
+
+    it("can read the person off the opportunity class", () => {
+      const template =
+        "The goat is named {{opportunity.person.displayPreferredName}}!";
+      const criteria = {};
+      const formatters = {};
+      const opportunity = {
+        ...mockOpportunity,
+        person: { displayPreferredName: "Marigoat" } as Client,
+      };
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity,
+      });
+
+      expect(result).toEqual("The goat is named Marigoat!");
     });
 
     it("reports and falls back when a formatter throws", () => {
@@ -305,9 +391,12 @@ describe("hydrateStr", () => {
           throw new Error("You asked too much");
         },
       };
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
       expect(result).toEqual("The meaning of life is UNKNOWN!");
       expect(captureExceptionMock).toHaveBeenCalledOnce();
     });
@@ -318,9 +407,12 @@ describe("hydrateStr", () => {
       const template = "The block is {{#if true}}included{{/if}}!";
       const criteria = { true: "true", false: null };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual("The block is included!");
     });
@@ -329,9 +421,12 @@ describe("hydrateStr", () => {
       const template = "The block is {{#if false}}included{{/if}}!";
       const criteria = { true: "true", false: null };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual("The block is !");
     });
@@ -341,9 +436,12 @@ describe("hydrateStr", () => {
         "The block is {{#if false}}included{{else}}*crickets*{{/if}}!";
       const criteria = { true: "true", false: null };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual("The block is *crickets*!");
     });
@@ -353,9 +451,12 @@ describe("hydrateStr", () => {
         "The outer block is {{#if true}}true but the inner block is {{#if false}}also true{{else}}false{{/if}}!{{else}}none{{#if true}}of this{{else}}matters{{/if}}{{/if}}!";
       const criteria = { true: "true", false: null };
       const formatters = {};
-      const record = {};
 
-      const result = hydrateStr(template, { criteria, formatters, record });
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
 
       expect(result).toEqual(
         "The outer block is true but the inner block is false!!",
@@ -368,9 +469,12 @@ describe("hydrateStr", () => {
           "{{a}} {{#if (eq a b)}}is{{else}}isn't{{/if}} the same as {{b}}";
         const criteria = { a: "foo", b: "foo" };
         const formatters = {};
-        const record = {};
 
-        const result = hydrateStr(template, { criteria, formatters, record });
+        const result = hydrateStr(template, {
+          criteria,
+          formatters,
+          opportunity: mockOpportunity,
+        });
 
         expect(result).toEqual("foo is the same as foo");
       });
@@ -380,12 +484,11 @@ describe("hydrateStr", () => {
           "{{a}} {{#if (eq a b)}}is{{else}}isn't{{/if}} the same as {{b}}";
         const criteria = { a: "foo", b: "bar" };
         const formatters = {};
-        const record = {};
 
         const result = hydrateStr(template, {
           criteria,
           formatters,
-          record,
+          opportunity: mockOpportunity,
         });
 
         expect(result).toEqual("foo isn't the same as bar");
@@ -395,12 +498,11 @@ describe("hydrateStr", () => {
         const template = `{{a}} {{#if (eq a "foo")}}is{{else}}isn't{{/if}} the same as "foo"`;
         const criteria = { a: "foo" };
         const formatters = {};
-        const record = {};
 
         const result = hydrateStr(template, {
           criteria,
           formatters,
-          record,
+          opportunity: mockOpportunity,
         });
 
         expect(result).toEqual(`foo is the same as "foo"`);

@@ -53,9 +53,9 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
       record,
       config: { eligibleCriteriaCopy },
     } = this;
-    if (!this.record) return [];
+    if (!record) return [];
     let out: OpportunityRequirement[] = [];
-    this.record.subOpportunities.forEach((subOpp) => {
+    record.subOpportunities.forEach((subOpp) => {
       out = [
         ...out,
         {
@@ -65,8 +65,8 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
         ...hydrateUntypedCriteria(
           subOpp.eligibleCriteria,
           eligibleCriteriaCopy,
+          this,
           this.criteriaFormatters,
-          record,
         ).map((oppReq) => ({ ...oppReq, key: `${subOpp.id}-${oppReq.text}` })),
       ];
     });

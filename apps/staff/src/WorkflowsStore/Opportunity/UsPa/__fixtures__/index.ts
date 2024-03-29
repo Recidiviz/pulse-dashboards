@@ -34,10 +34,7 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
         ineligibleOffenses: ["EXAMPLE"],
         ineligibleSentencesExpirationDate: [new Date("2021-06-01")],
       },
-      supervisionLevelIsNotLimited: {
-        limitedStartDate: null,
-        supervisionLevel: "EXAMPLE",
-      },
+      supervisionLevelIsNotLimited: null,
     },
     ineligibleCriteria: {},
   };
