@@ -19,6 +19,7 @@ import { RawSupervisionOfficerMetricOutlier } from "../SupervisionOfficerMetricO
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_TYPE_IDS,
+  FAVORABLE_METRIC_IDS,
   LOOKBACK_END_DATE_STRINGS,
 } from "./constants";
 
@@ -89,6 +90,60 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
         ).map((data, index) => ({
           ...data,
           endDate: LOOKBACK_END_DATE_STRINGS.slice(-2)[index],
+        })),
+      },
+    ],
+  },
+  [FAVORABLE_METRIC_IDS.enum.program_starts]: {
+    [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER]: [
+      {
+        metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+        statusesOverTime: (
+          [
+            { metricRate: 0.022968597032909103, status: "FAR" },
+            { metricRate: 0, status: "FAR" },
+            { metricRate: 0.027919749790220463, status: "FAR" },
+            { metricRate: 0.032353114502917085, status: "FAR" },
+            { metricRate: 0.03232644409114997, status: "NEAR" },
+            { metricRate: 0.028747594548953384, status: "FAR" },
+          ] as const
+        ).map((data, index) => ({
+          ...data,
+          endDate: LOOKBACK_END_DATE_STRINGS[index],
+        })),
+      },
+      {
+        metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+        statusesOverTime: (
+          [
+            { metricRate: 0.022968597032909103, status: "FAR" },
+            { metricRate: 0, status: "FAR" },
+            { metricRate: 0.027919749790220463, status: "FAR" },
+            { metricRate: 0.032353114502917085, status: "FAR" },
+            { metricRate: 0.03232644409114997, status: "NEAR" },
+            { metricRate: 0.028747594548953384, status: "FAR" },
+          ] as const
+        ).map((data, index) => ({
+          ...data,
+          endDate: LOOKBACK_END_DATE_STRINGS[index],
+        })),
+      },
+    ],
+    [CASELOAD_TYPE_IDS.enum.SEX_OFFENSE]: [
+      {
+        metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+        statusesOverTime: (
+          [
+            { metricRate: 0.022968597032909103, status: "FAR" },
+            { metricRate: 0, status: "FAR" },
+            { metricRate: 0.027919749790220463, status: "FAR" },
+            { metricRate: 0.032353114502917085, status: "FAR" },
+            { metricRate: 0.03232644409114997, status: "NEAR" },
+            { metricRate: 0.028747594548953384, status: "FAR" },
+          ] as const
+        ).map((data, index) => ({
+          ...data,
+          endDate: LOOKBACK_END_DATE_STRINGS[index],
         })),
       },
     ],

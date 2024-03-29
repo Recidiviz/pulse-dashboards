@@ -23,6 +23,7 @@ import {
   LOOKBACK_END_DATE_STRINGS,
   LOOKBACK_END_DATES,
 } from "../offlineFixtures/constants";
+import { InsightsConfigFixture } from "../offlineFixtures/InsightsConfigFixture";
 import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "../offlineFixtures/SupervisionOfficerMetricOutlierFixture";
 import {
@@ -86,19 +87,34 @@ test("fixture lookback values should correspond to benchmark ranges", () => {
       const targetValue = benchmarkData.benchmarks.find(
         (b) => b.endDate === d.endDate,
       )?.target as number;
+      const outcomeType = InsightsConfigFixture.metrics.find(
+        (c) => metric.metricId === c.name,
+      )?.outcomeType;
       expect(targetValue).toBeDefined();
-
       switch (d.status) {
         case "FAR":
-          expect(d.metricRate).toBeGreaterThan(
-            Math.max(...benchmarkData.latestPeriodValues.near),
-          );
+          if (outcomeType === "ADVERSE")
+            expect(d.metricRate).toBeGreaterThan(
+              Math.max(...benchmarkData.latestPeriodValues.near),
+            );
+          else
+            expect(d.metricRate).toBeLessThan(
+              Math.max(...benchmarkData.latestPeriodValues.near),
+            );
           break;
         case "NEAR":
-          expect(d.metricRate).toBeGreaterThan(targetValue);
-          expect(d.metricRate).toBeLessThan(
-            Math.min(...benchmarkData.latestPeriodValues.far),
-          );
+          if (outcomeType === "ADVERSE") {
+            expect(d.metricRate).toBeGreaterThan(targetValue);
+            expect(d.metricRate).toBeLessThan(
+              Math.min(...benchmarkData.latestPeriodValues.far),
+            );
+          } else {
+            expect(d.metricRate).toBeLessThan(targetValue);
+            expect(d.metricRate).toBeGreaterThan(
+              Math.min(...benchmarkData.latestPeriodValues.far),
+            );
+          }
+
           break;
         case "MET":
           expect(d.metricRate).toBeLessThanOrEqual(targetValue);

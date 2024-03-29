@@ -32,10 +32,7 @@ export class InsightsStore {
   apiClient: InsightsAPI;
 
   constructor(public rootStore: RootStore) {
-    this.apiClient =
-      isOfflineMode() || isTestEnv() || isDemoMode()
-        ? new InsightsOfflineAPIClient(this)
-        : new InsightsAPIClient(this);
+    this.apiClient = this.getApiClient();
 
     makeAutoObservable(this);
 
@@ -55,6 +52,18 @@ export class InsightsStore {
 
   reset() {
     this.supervisionStore = undefined;
+    // TODO #5198 Do not reset apiClient once CA uses real InsightsAPIClient
+    this.apiClient = this.getApiClient();
+  }
+
+  getApiClient(): InsightsAPI {
+    return isOfflineMode() ||
+      isTestEnv() ||
+      isDemoMode() ||
+      // TODO #5198 Remove this check once CA uses real InsightsAPIClient
+      this.rootStore.currentTenantId === "US_CA"
+      ? new InsightsOfflineAPIClient(this)
+      : new InsightsAPIClient(this);
   }
 
   /**

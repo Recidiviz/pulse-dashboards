@@ -131,8 +131,8 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
 
   get metricInfo(): MetricConfig | undefined {
     const metricId = this.metricId || this.defaultMetricId;
-    if (!metricId || !this.supervisionStore.adverseMetricConfigsById) return;
-    return this.supervisionStore.adverseMetricConfigsById.get(metricId);
+    if (!metricId || !this.supervisionStore.metricConfigsById) return;
+    return this.supervisionStore.metricConfigsById.get(metricId);
   }
 
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {

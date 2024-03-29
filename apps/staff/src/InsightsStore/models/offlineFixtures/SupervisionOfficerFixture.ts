@@ -39,6 +39,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
         .SEX_OFFENSE[0],
       rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
         .SEX_OFFENSE[0],
+      rawSupervisionOfficerMetricOutlierFixtures.program_starts.SEX_OFFENSE[0],
     ],
   },
   {
@@ -66,6 +67,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .GENERAL_OR_OTHER[1],
+      rawSupervisionOfficerMetricOutlierFixtures.program_starts
+        .GENERAL_OR_OTHER[0],
     ],
   },
   {
@@ -81,6 +84,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     supervisorExternalId: supervisionOfficerSupervisorsFixture[1].externalId,
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+        .GENERAL_OR_OTHER[0],
+      rawSupervisionOfficerMetricOutlierFixtures.program_starts
         .GENERAL_OR_OTHER[0],
     ],
   },

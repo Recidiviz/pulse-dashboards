@@ -4214,6 +4214,809 @@ exports[`transformations 4`] = `
   "benchmarks": [
     {
       "endDate": 2023-04-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-05-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-06-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-07-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-08-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-09-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+  ],
+  "caseloadType": "GENERAL_OR_OTHER",
+  "latestPeriodValues": [
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.012540688709953743,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.013397856342985123,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.013401193658232946,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.01840490797546012,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.021582733812949638,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.022968597032909103,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.027919749790220463,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.028747594548953384,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.029858051884483604,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.03232644409114997,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.032353114502917085,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.03562217139520171,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.03830856185890726,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.040196221994435496,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.040656126189506425,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04155942467827403,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04267558008472929,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04280451435588562,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04356278516167427,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.043909900722833746,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04404862197617041,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04522985664854177,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04631445745017399,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.047520124642949885,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.049763758115503584,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05060607457252155,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05063991698374265,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05072765072765073,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05209222886421861,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05323055666654547,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.053587115666178624,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05451701794890892,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05479246977806056,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05494395516413131,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.055087296809151115,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05536506655909641,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.055415922236017316,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.057556219531372854,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0575707050051908,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06254272043745727,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06522436468617457,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06738470035901685,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06762999371743228,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06772581881625207,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06880345897170788,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06899151743638078,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06902621487395487,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06957733983904696,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07046863568100428,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07085013711889014,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07098525989138867,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0721710470717485,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07217511338986393,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07449623447995116,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07478850790796518,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07479309287830796,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07562608480039673,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07678858661444855,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0771744860305746,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07887445354350102,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07923793028794111,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07999708571636735,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08030424925034739,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0814358822220574,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08173291648057168,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0835515650330465,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08379943087037582,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08472549095258304,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08585790884718499,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08643433082554569,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08956538762725137,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09034062859963797,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09062770830753994,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09131085608382636,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09223015539689207,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09246093327077844,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09355296790684466,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09378363142520371,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09523809523809523,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09573633272299242,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09597482627507539,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0959916072911658,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09630734146127533,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09731454400425418,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09757398027192749,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09802871223484037,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09901704391739562,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0992206031853609,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.1000957199507726,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10065314541079409,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10069329811819082,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10265999719508205,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10340930495385195,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10533889768311987,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10709359194081011,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10783382983599046,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10846854856634809,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10866983372921614,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10886017383257875,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10950297318523504,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11150766016713091,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11201224177505739,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11291765649585044,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11307347716389475,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.1157291922847205,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11852331606217616,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.12166036481489176,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12184656358659467,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12301142729105984,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12360688956433638,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12546523016650343,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1255703846021889,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1272305909617613,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12726561481288304,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12841604615804453,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1290420066485343,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1292829388908513,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1296998476203976,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12998543878964378,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1310351882160393,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.13281868566904195,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1343338363035765,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.13835275282397938,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.13917408167921516,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14000556405619694,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14062049755066758,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14112203585887795,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1432261094153557,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14393393196565513,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1454946996466431,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.147356177865259,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1482889733840304,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15067929188966653,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15351633499557255,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15392703185784878,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1544253675635325,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15505189578479137,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15620998719590268,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1591304347826087,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16063199473337722,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16215318159162653,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16497102382485512,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16537567776917117,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16719963453631795,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16804407713498623,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16817276765201408,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17179513925106915,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17542738456622464,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17557465520687587,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1757607555089192,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17753524329240564,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17818270334179503,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1821378806980293,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1830823870741834,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1849107443583698,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1857800659874551,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.18775357925663388,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.18973561430793157,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1912770809578107,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19590287577246848,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1969860064585576,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19779201729329113,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19796624837732582,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19834090624869732,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2048380075865929,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.20492721164613661,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2102964835669961,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21258470474346564,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21297278795139485,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21354517301736906,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21562707121290228,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2205350686912509,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.22343348013779268,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.23615950445218736,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.23691237155109635,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.23740540540540542,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.24765986241118756,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.25544388609715246,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2604287111980788,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.30487296959600174,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.31207747122236434,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.3153303537773949,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.3340069095886839,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.3403972630040523,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.5475159436264861,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.7990394061783648,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.8694877505567928,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.872309692329915,
+    },
+  ],
+  "metricId": "program_starts",
+}
+`;
+
+exports[`transformations 5`] = `
+{
+  "benchmarks": [
+    {
+      "endDate": 2023-04-01T00:00:00.000Z,
       "target": 0.028739974981108838,
     },
     {
@@ -4392,7 +5195,7 @@ exports[`transformations 4`] = `
 }
 `;
 
-exports[`transformations 5`] = `
+exports[`transformations 6`] = `
 {
   "benchmarks": [
     {
@@ -4579,7 +5382,7 @@ exports[`transformations 5`] = `
 }
 `;
 
-exports[`transformations 6`] = `
+exports[`transformations 7`] = `
 {
   "benchmarks": [
     {
@@ -4759,5 +5562,808 @@ exports[`transformations 6`] = `
     },
   ],
   "metricId": "incarceration_starts_technical_violation",
+}
+`;
+
+exports[`transformations 8`] = `
+{
+  "benchmarks": [
+    {
+      "endDate": 2023-04-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-05-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-06-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-07-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-08-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+    {
+      "endDate": 2023-09-01T00:00:00.000Z,
+      "target": 0.12170399045971189,
+    },
+  ],
+  "caseloadType": "SEX_OFFENSE",
+  "latestPeriodValues": [
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.012540688709953743,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.013397856342985123,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.013401193658232946,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.01840490797546012,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.021582733812949638,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.022968597032909103,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.027919749790220463,
+    },
+    {
+      "targetStatus": "FAR",
+      "value": 0.028747594548953384,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.029858051884483604,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.03232644409114997,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.032353114502917085,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.03562217139520171,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.03830856185890726,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.040196221994435496,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.040656126189506425,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04155942467827403,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04267558008472929,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04280451435588562,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04356278516167427,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.043909900722833746,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04404862197617041,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04522985664854177,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.04631445745017399,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.047520124642949885,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.049763758115503584,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05060607457252155,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05063991698374265,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05072765072765073,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05209222886421861,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05323055666654547,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.053587115666178624,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05451701794890892,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05479246977806056,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05494395516413131,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.055087296809151115,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.05536506655909641,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.055415922236017316,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.057556219531372854,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0575707050051908,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06254272043745727,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06522436468617457,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06738470035901685,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06762999371743228,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06772581881625207,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06880345897170788,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06899151743638078,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06902621487395487,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.06957733983904696,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07046863568100428,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07085013711889014,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07098525989138867,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0721710470717485,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07217511338986393,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07449623447995116,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07478850790796518,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07479309287830796,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07562608480039673,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07678858661444855,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0771744860305746,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07887445354350102,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07923793028794111,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.07999708571636735,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08030424925034739,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0814358822220574,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08173291648057168,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0835515650330465,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08379943087037582,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08472549095258304,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08585790884718499,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08643433082554569,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.08956538762725137,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09034062859963797,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09062770830753994,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09131085608382636,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09223015539689207,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09246093327077844,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09355296790684466,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09378363142520371,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09523809523809523,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09573633272299242,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09597482627507539,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0959916072911658,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09630734146127533,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09731454400425418,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09757398027192749,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09802871223484037,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.09901704391739562,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.0992206031853609,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.1000957199507726,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10065314541079409,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10069329811819082,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10265999719508205,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10340930495385195,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10533889768311987,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10709359194081011,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10783382983599046,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10846854856634809,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10866983372921614,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10886017383257875,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.10950297318523504,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11150766016713091,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11201224177505739,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11291765649585044,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11307347716389475,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.1157291922847205,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.11852331606217616,
+    },
+    {
+      "targetStatus": "NEAR",
+      "value": 0.12166036481489176,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12184656358659467,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12301142729105984,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12360688956433638,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12546523016650343,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1255703846021889,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1272305909617613,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12726561481288304,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12841604615804453,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1290420066485343,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1292829388908513,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1296998476203976,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.12998543878964378,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1310351882160393,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.13281868566904195,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1343338363035765,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.13835275282397938,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.13917408167921516,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14000556405619694,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14062049755066758,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14112203585887795,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1432261094153557,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.14393393196565513,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1454946996466431,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.147356177865259,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1482889733840304,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15067929188966653,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15351633499557255,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15392703185784878,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1544253675635325,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15505189578479137,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.15620998719590268,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1591304347826087,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16063199473337722,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16215318159162653,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16497102382485512,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16537567776917117,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16719963453631795,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16804407713498623,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.16817276765201408,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17179513925106915,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17542738456622464,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17557465520687587,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1757607555089192,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17753524329240564,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.17818270334179503,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1821378806980293,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1830823870741834,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1849107443583698,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1857800659874551,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.18775357925663388,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.18973561430793157,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1912770809578107,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19590287577246848,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.1969860064585576,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19779201729329113,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19796624837732582,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.19834090624869732,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2048380075865929,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.20492721164613661,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2102964835669961,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21258470474346564,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21297278795139485,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21354517301736906,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.21562707121290228,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2205350686912509,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.22343348013779268,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.23615950445218736,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.23691237155109635,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.23740540540540542,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.24765986241118756,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.25544388609715246,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.2604287111980788,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.30487296959600174,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.31207747122236434,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.3153303537773949,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.3340069095886839,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.3403972630040523,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.5475159436264861,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.7990394061783648,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.8694877505567928,
+    },
+    {
+      "targetStatus": "MET",
+      "value": 0.872309692329915,
+    },
+  ],
+  "metricId": "program_starts",
 }
 `;

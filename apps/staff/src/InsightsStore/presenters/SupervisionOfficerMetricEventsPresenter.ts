@@ -86,7 +86,10 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
       ...(this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId
         .get(this.officerPseudoId)
         ?.get(this.metricId) ?? []),
-    ].sort((a, b) => descending(a.eventDate, b.eventDate));
+      // TODO #5196 update model and/or API client to handle undefined eventDate for program_starts
+    ].sort((a, b) =>
+      descending(a.eventDate ?? undefined, b.eventDate ?? undefined),
+    );
   }
 
   get eventsLabel() {
@@ -103,14 +106,20 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
   get clientDetailLinks(): Array<string> | undefined {
     const { insightsLanternState } =
       this.supervisionStore.insightsStore.rootStore.tenantStore;
+    const hasUndefinedEventDates = this.officerMetricEvents.some(
+      (e) => !e.eventDate,
+    );
 
-    if (!insightsLanternState) return;
+    if (!insightsLanternState || hasUndefinedEventDates) return;
 
     return Array.from(this.officerMetricEvents, (d) =>
       insightsUrl("supervisionClientDetail", {
         officerPseudoId: this.officerPseudoId,
         metricId: this.metricId,
         clientPseudoId: d.pseudonymizedClientId,
+        // TODO 5196 update model and/or API client to handle undefined eventDate for program_starts
+        // The undefined event date was handled above so this is safe for now
+        // @ts-ignore
         outcomeDate: formatDateToISO(d.eventDate),
       }),
     );

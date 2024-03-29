@@ -23,7 +23,7 @@ import { fullNameSchema } from "./schemaHelpers";
 
 export const supervisionOfficerMetricEventSchema = z.object({
   metricId: z.string(),
-  eventDate: dateStringSchemaWithoutTimeShift,
+  eventDate: dateStringSchemaWithoutTimeShift.nullable(),
   clientId: z.string(),
   clientName: fullNameSchema,
   pseudonymizedClientId: z.string(),

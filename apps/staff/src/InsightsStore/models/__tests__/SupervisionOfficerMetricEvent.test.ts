@@ -17,7 +17,10 @@
 
 import { subYears } from "date-fns";
 
-import { LATEST_END_DATE } from "../offlineFixtures/constants";
+import {
+  FAVORABLE_METRIC_IDS,
+  LATEST_END_DATE,
+} from "../offlineFixtures/constants";
 import { InsightsConfigFixture } from "../offlineFixtures/InsightsConfigFixture";
 import {
   rawSupervisionOfficerMetricEventFixture,
@@ -43,11 +46,25 @@ test("all metrics should have events", () => {
     });
 });
 
-test("event dates should correspond to latest metric period", () => {
-  const eventPeriodEnd = LATEST_END_DATE;
-  const eventPeriodStart = subYears(LATEST_END_DATE, 1);
-  supervisionOfficerMetricEventFixture.forEach(({ eventDate }) => {
-    expect(eventDate).toBeAfterOrEqualTo(eventPeriodStart);
-    expect(eventDate).toBeBefore(eventPeriodEnd);
+describe("event dates", () => {
+  test("for program_starts metric events, event date is null", () => {
+    const programStartsEvents = supervisionOfficerMetricEventFixture.filter(
+      (e) => e.metricId === FAVORABLE_METRIC_IDS.enum.program_starts,
+    );
+    programStartsEvents.forEach(({ eventDate }) => {
+      expect(eventDate).toBeNull();
+    });
+  });
+
+  test("for non-program_starts metric events, event dates should correspond to latest metric period", () => {
+    const eventPeriodEnd = LATEST_END_DATE;
+    const eventPeriodStart = subYears(LATEST_END_DATE, 1);
+    const nonProgramStartsEvents = supervisionOfficerMetricEventFixture.filter(
+      (e) => e.metricId !== FAVORABLE_METRIC_IDS.enum.program_starts,
+    );
+    nonProgramStartsEvents.forEach(({ eventDate }) => {
+      expect(eventDate).toBeAfterOrEqualTo(eventPeriodStart);
+      expect(eventDate).toBeBefore(eventPeriodEnd);
+    });
   });
 });

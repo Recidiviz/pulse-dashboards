@@ -104,7 +104,7 @@ test("configs include benchmarks", async () => {
 test("hydrated benchmarks can be missing caseload types", async () => {
   vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
     // this should be missing the SEX_OFFENSE caseload type for all metrics
-    .mockResolvedValue(metricBenchmarksFixture.slice(0, 3));
+    .mockResolvedValue(metricBenchmarksFixture.slice(0, 4));
 
   await expect(flowResult(store.populateMetricConfigs())).toResolve();
 
@@ -179,11 +179,10 @@ test("adverse metric configs", async () => {
   additionalConfigsFixture.metrics.forEach((m) => {
     expect(store.metricConfigsById?.get(m.name)).toBeDefined();
   });
-
-  // adverse config mapping should not include the additional one we injected
   InsightsConfigFixture.metrics.forEach((m) => {
-    expect(store.adverseMetricConfigsById?.get(m.name)).toBeDefined();
+    expect(store.metricConfigsById?.get(m.name)).toBeDefined();
   });
+  // adverse config mapping should not include the additional one we injected
   expect(
     store.adverseMetricConfigsById?.get(favorableMetricConfig.name),
   ).toBeUndefined();

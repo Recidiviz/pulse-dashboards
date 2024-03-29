@@ -61,6 +61,41 @@ exports[`transformations 1`] = `
         },
       ],
     },
+    {
+      "metricId": "program_starts",
+      "statusesOverTime": [
+        {
+          "endDate": 2023-04-01T00:00:00.000Z,
+          "metricRate": 0.022968597032909103,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-05-01T00:00:00.000Z,
+          "metricRate": 0,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-06-01T00:00:00.000Z,
+          "metricRate": 0.027919749790220463,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-07-01T00:00:00.000Z,
+          "metricRate": 0.032353114502917085,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-08-01T00:00:00.000Z,
+          "metricRate": 0.03232644409114997,
+          "status": "NEAR",
+        },
+        {
+          "endDate": 2023-09-01T00:00:00.000Z,
+          "metricRate": 0.028747594548953384,
+          "status": "FAR",
+        },
+      ],
+    },
   ],
   "pseudonymizedId": "hashed-so1",
   "supervisorExternalId": "mdavis123",
@@ -129,6 +164,41 @@ exports[`transformations 3`] = `
         },
       ],
     },
+    {
+      "metricId": "program_starts",
+      "statusesOverTime": [
+        {
+          "endDate": 2023-04-01T00:00:00.000Z,
+          "metricRate": 0.022968597032909103,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-05-01T00:00:00.000Z,
+          "metricRate": 0,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-06-01T00:00:00.000Z,
+          "metricRate": 0.027919749790220463,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-07-01T00:00:00.000Z,
+          "metricRate": 0.032353114502917085,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-08-01T00:00:00.000Z,
+          "metricRate": 0.03232644409114997,
+          "status": "NEAR",
+        },
+        {
+          "endDate": 2023-09-01T00:00:00.000Z,
+          "metricRate": 0.028747594548953384,
+          "status": "FAR",
+        },
+      ],
+    },
   ],
   "pseudonymizedId": "hashed-so3",
   "supervisorExternalId": "mdavis123",
@@ -178,6 +248,41 @@ exports[`transformations 4`] = `
         {
           "endDate": 2023-09-01T00:00:00.000Z,
           "metricRate": 0.1604677745537677,
+          "status": "FAR",
+        },
+      ],
+    },
+    {
+      "metricId": "program_starts",
+      "statusesOverTime": [
+        {
+          "endDate": 2023-04-01T00:00:00.000Z,
+          "metricRate": 0.022968597032909103,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-05-01T00:00:00.000Z,
+          "metricRate": 0,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-06-01T00:00:00.000Z,
+          "metricRate": 0.027919749790220463,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-07-01T00:00:00.000Z,
+          "metricRate": 0.032353114502917085,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2023-08-01T00:00:00.000Z,
+          "metricRate": 0.03232644409114997,
+          "status": "NEAR",
+        },
+        {
+          "endDate": 2023-09-01T00:00:00.000Z,
+          "metricRate": 0.028747594548953384,
           "status": "FAR",
         },
       ],

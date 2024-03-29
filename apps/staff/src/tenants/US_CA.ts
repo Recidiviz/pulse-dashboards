@@ -19,6 +19,7 @@
  */
 
 import { TenantConfig } from "../core/models/types";
+import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import { usCaFilterByRoleSubtype } from "../WorkflowsStore/utils";
@@ -46,6 +47,7 @@ const US_CA_CONFIG: TenantConfig = {
   },
   navigation: {
     workflows: ["milestones", "clients"],
+    insights: [INSIGHTS_PAGES.supervision],
   },
   milestoneTypes: [
     "HOUSING_TYPE_IS_NOT_TRANSIENT",

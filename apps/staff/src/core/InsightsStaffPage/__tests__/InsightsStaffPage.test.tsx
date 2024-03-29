@@ -86,7 +86,7 @@ describe("Hydrated Staff Page", () => {
     expect(
       store.insightsStore.rootStore.analyticsStore.trackInsightsStaffPageViewed,
     ).toHaveBeenCalledWith({
-      numOutlierMetrics: 2,
+      numOutlierMetrics: 3,
       staffPseudonymizedId: officerPseudoId,
       supervisorPseudonymizedId: supervisorPseudoId,
       viewedBy: supervisorPseudoId,

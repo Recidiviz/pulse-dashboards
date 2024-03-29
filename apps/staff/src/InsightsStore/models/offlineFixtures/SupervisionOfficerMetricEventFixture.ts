@@ -20,7 +20,7 @@ import {
   supervisionOfficerMetricEventSchema,
 } from "../SupervisionOfficerMetricEvent";
 import { rawClientInfoFixture } from "./ClientInfoFixture";
-import { ADVERSE_METRIC_IDS } from "./constants";
+import { ADVERSE_METRIC_IDS, FAVORABLE_METRIC_IDS } from "./constants";
 
 export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetricEvent[] =
   [
@@ -435,6 +435,98 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       metricId:
         ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
       eventDate: "2023-03-20",
+      clientId: "504894",
+      clientName: rawClientInfoFixture["hashed-504894"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["hashed-504894"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "COMMUNITY_CONFINEMENT",
+    },
+
+    {
+      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      eventDate: null,
+      clientId: "803013",
+      clientName: rawClientInfoFixture["hashed-803013"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["hashed-803013"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "COMMUNITY_CONFINEMENT",
+    },
+    {
+      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      eventDate: null,
+      clientId: "470308",
+      clientName: rawClientInfoFixture["hashed-470308"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["hashed-470308"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "COMMUNITY_CONFINEMENT",
+    },
+    {
+      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      eventDate: null,
+      clientId: "582059",
+      clientName: rawClientInfoFixture["hashed-582059"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["hashed-582059"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "COMMUNITY_CONFINEMENT",
+    },
+    {
+      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      eventDate: null,
+      clientId: "374673",
+      clientName: rawClientInfoFixture["hashed-374673"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["hashed-374673"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "COMMUNITY_CONFINEMENT",
+    },
+    {
+      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      eventDate: null,
+      clientId: "128785",
+      clientName: rawClientInfoFixture["hashed-128785"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["hashed-128785"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "COMMUNITY_CONFINEMENT",
+    },
+    {
+      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      eventDate: null,
+      clientId: "914408",
+      clientName: rawClientInfoFixture["hashed-914408"].clientName,
+      pseudonymizedClientId:
+        rawClientInfoFixture["hashed-914408"].pseudonymizedClientId,
+      officerAssignmentDate: "2021-01-08",
+      officerAssignmentEndDate: "2022-02-05",
+      supervisionStartDate: "2021-01-08",
+      supervisionEndDate: "2022-02-05",
+      supervisionType: "COMMUNITY_CONFINEMENT",
+    },
+    {
+      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      eventDate: null,
       clientId: "504894",
       clientName: rawClientInfoFixture["hashed-504894"].clientName,
       pseudonymizedClientId:

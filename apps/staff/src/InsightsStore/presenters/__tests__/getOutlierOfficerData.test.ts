@@ -82,7 +82,7 @@ test("excludes current officer from the benchmark data points", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(
-    supervisionStore.adverseMetricConfigsById
+    supervisionStore.metricConfigsById
       ?.get(matchingBenchmarkForOfficer.metricId)
       ?.metricBenchmarksByCaseloadType?.get(
         matchingBenchmarkForOfficer.caseloadType,

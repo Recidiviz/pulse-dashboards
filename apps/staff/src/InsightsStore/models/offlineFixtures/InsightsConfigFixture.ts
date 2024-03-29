@@ -18,7 +18,7 @@
 import dedent from "dedent";
 
 import { InsightsConfig } from "../InsightsConfig";
-import { ADVERSE_METRIC_IDS } from "./constants";
+import { ADVERSE_METRIC_IDS, FAVORABLE_METRIC_IDS } from "./constants";
 
 export const InsightsConfigFixture: InsightsConfig = {
   supervisionOfficerLabel: "officer",
@@ -80,6 +80,16 @@ export const InsightsConfigFixture: InsightsConfig = {
       
       <br />
       Note: There are situations where we are unable to associate an incarceration with a violation type, especially if the revocation leads to time in county jail. We may also associate an incorrect violation type, if for example, there are no violations due to poor data entry.`,
+    },
+    {
+      name: FAVORABLE_METRIC_IDS.enum.program_starts,
+      bodyDisplayName: "program/treatment start rate",
+      titleDisplayName: "Program/Treament Start Rate",
+      eventName: "program/treatment starts",
+      eventNameSingular: "program start",
+      eventNamePastTense: "program started",
+      outcomeType: "FAVORABLE",
+      descriptionMarkdown: dedent`**Description place holder.`,
     },
   ],
   clientEvents: [

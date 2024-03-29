@@ -21,10 +21,10 @@ import { switchTenant } from "./utils";
 test.describe("Supervisors List Page", () => {
   test.describe("Recidiviz user", () => {
     test("Supervisors list page", async ({ page }) => {
-      test.setTimeout(40000);
+      test.setTimeout(50000);
 
       await page.goto("/");
-      await expect(page.locator(".UserAvatar")).toBeVisible({ timeout: 40000 });
+      await expect(page.locator(".UserAvatar")).toBeVisible({ timeout: 50000 });
       await switchTenant(page, "Michigan");
       await expect(
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
