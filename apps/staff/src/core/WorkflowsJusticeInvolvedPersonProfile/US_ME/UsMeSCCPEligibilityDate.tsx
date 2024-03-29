@@ -26,6 +26,10 @@ export const UsMeSCCPEligibilityDate = observer(
   function UsMeSCCPEligibilityDate({ person }: { person: Resident }) {
     const sccpDate = person.sccpEligibilityDate;
 
+    // TODO(#5206): Remove once sccpDate is fixed for medium-trustee candidates
+    // @ts-expect-error
+    if (isNaN(sccpDate)) return;
+
     return !sccpDate ? null : (
       <>
         <DetailsSubheading>SCCP Eligibility Date</DetailsSubheading>

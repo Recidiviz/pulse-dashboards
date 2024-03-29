@@ -15,13 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
-export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
-export * from "./opportunities/UsMe/UsMeSCCP/schema";
-export * from "./opportunities/utils/caseNotesSchema";
-export * from "./opportunities/utils/types";
-export * from "./opportunities/utils/types";
-export * from "./utils/dateStringSchema";
-export * from "./utils/fixtureDates";
-export * from "./utils/types";
+export * from "./config";
+export * from "./UsMeMediumTrusteeOpportunity";

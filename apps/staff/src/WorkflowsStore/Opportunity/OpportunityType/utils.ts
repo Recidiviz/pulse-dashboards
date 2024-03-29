@@ -32,10 +32,11 @@ export const OPPORTUNITY_TYPES_BY_STATE = {
     "usIdSupervisionLevelDowngrade",
   ],
   US_ME: [
+    "usMeSCCP",
+    "usMeMediumTrustee",
+    "usMeWorkRelease",
     "usMeEarlyTermination",
     "usMeFurloughRelease",
-    "usMeSCCP",
-    "usMeWorkRelease",
   ],
   US_MI: [
     "usMiClassificationReview",

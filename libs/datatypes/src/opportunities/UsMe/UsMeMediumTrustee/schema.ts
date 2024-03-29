@@ -15,13 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
-export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
-export * from "./opportunities/UsMe/UsMeSCCP/schema";
-export * from "./opportunities/utils/caseNotesSchema";
-export * from "./opportunities/utils/types";
-export * from "./opportunities/utils/types";
-export * from "./utils/dateStringSchema";
-export * from "./utils/fixtureDates";
-export * from "./utils/types";
+import { z } from "zod";
+
+import { ParsedRecord } from "../../../utils/types";
+import { caseNotesSchema } from "../../utils/caseNotesSchema";
+import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+
+export const usMeMediumTrusteeSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: z.object({
+      usMeCustodyLevelIsMedium: z.object({}),
+      usMeFiveOrMoreYearsRemainingOnSentence: z.object({}),
+      usMeNoViolationFor5Years: z.null(),
+    }),
+    ineligibleCriteria: z.object({}),
+  })
+  .merge(caseNotesSchema);
+
+export type UsMeMediumTrusteeRecord = ParsedRecord<
+  typeof usMeMediumTrusteeSchema
+>;

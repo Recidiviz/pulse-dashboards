@@ -33,6 +33,7 @@ import { usIdPastFTRDConfig as pastFTRD } from "./UsId/UsIdPastFTRDOpportunity/c
 import { usIdSupervisionLevelDowngradeConfig as usIdSupervisionLevelDowngrade } from "./UsId/UsIdSupervisionLevelDowngradeOpportunity/config";
 import { usMeEarlyTerminationConfig as usMeEarlyTermination } from "./UsMe/UsMeEarlyTerminationOpportunity/config";
 import { usMeFurloughReleaseConfig as usMeFurloughRelease } from "./UsMe/UsMeFurloughReleaseOpportunity/config";
+import { usMeMediumTrusteeConfig as usMeMediumTrustee } from "./UsMe/UsMeMediumTrusteeOpportunity/config";
 import { usMeSCCPConfig as usMeSCCP } from "./UsMe/UsMeSCCPOpportunity/config";
 import { usMeWorkReleaseConfig as usMeWorkRelease } from "./UsMe/UsMeWorkReleaseOpportunity/config";
 import { usMiClassificationReviewConfig as usMiClassificationReview } from "./UsMi/UsMiClassificationReviewOpportunity/config";
@@ -153,6 +154,7 @@ export const OPPORTUNITY_CONFIGS = {
   /* US_ME */
   usMeEarlyTermination,
   usMeFurloughRelease,
+  usMeMediumTrustee,
   usMeSCCP,
   usMeWorkRelease,
 

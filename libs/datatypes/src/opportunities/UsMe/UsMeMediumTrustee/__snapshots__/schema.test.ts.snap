@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {
+    "Case Plan Goals": [
+      {
+        "eventDate": null,
+        "noteBody": "Maintain good health",
+        "noteTitle": "In progress",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMedium": {},
+    "usMeFiveOrMoreYearsRemainingOnSentence": {},
+    "usMeNoViolationFor5Years": null,
+  },
+  "externalId": "RES002",
+  "ineligibleCriteria": {},
+  "stateCode": "US_ME",
+}
+`;

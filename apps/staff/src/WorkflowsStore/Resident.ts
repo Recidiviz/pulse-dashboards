@@ -34,6 +34,7 @@ import {
   UsMeFurloughReleaseOpportunity,
   UsMeWorkReleaseOpportunity,
 } from "./Opportunity/UsMe";
+import { UsMeMediumTrusteeOpportunity } from "./Opportunity/UsMe/UsMeMediumTrusteeOpportunity";
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
@@ -50,6 +51,7 @@ const residentialOpportunityConstructors: Record<
   usIdCRCWorkRelease: UsIdCRCWorkReleaseOpportunity,
   usIdExpandedCRC: UsIdExpandedCRCOpportunity,
   usMeFurloughRelease: UsMeFurloughReleaseOpportunity,
+  usMeMediumTrustee: UsMeMediumTrusteeOpportunity,
   usMeSCCP: UsMeSCCPOpportunity,
   usMeWorkRelease: UsMeWorkReleaseOpportunity,
   usMoRestrictiveHousingStatusHearing:

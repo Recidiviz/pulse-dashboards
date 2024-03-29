@@ -18,8 +18,6 @@
  *
  */
 
-import { ascending } from "d3-array";
-
 import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
@@ -28,21 +26,8 @@ import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/t
 import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const PREFERRED_SORT_ORDER: OpportunityType[] = [
-  // The order of this list determines the order of the opportunites that are displayed in the
-  // Shortcuts navigation. Leadership users should see SCCP before ET (see #3233).
-  "usMeSCCP",
-  "usMeWorkRelease",
-];
-
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] = getStateOpportunityTypes(
-  "US_ME",
-).sort((a, b) => {
-  const indexA = PREFERRED_SORT_ORDER.indexOf(a);
-  const indexB = PREFERRED_SORT_ORDER.indexOf(b);
-
-  return ascending(indexA, indexB);
-});
+const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
+  getStateOpportunityTypes("US_ME");
 
 const US_ME_CONFIG: TenantConfig = {
   name: "Maine",

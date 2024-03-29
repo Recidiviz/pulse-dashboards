@@ -81,6 +81,7 @@ export type FeatureVariant =
   | "usCaEnableSMS"
   | "usTnAnnualReclassification"
   | "usNdWriteToDocstars"
+  | "usMeCustodyLevelReview"
   | "usMoOverdueRHPilot"
   | "formRevertButton"
   | "insightsLeadershipPageAllDistricts"
@@ -119,6 +120,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsOnboarding: {},
   hideDenialRevert: {},
   opportunityConfigurationAPI: {},
+  usMeCustodyLevelReview: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   import.meta.env.VITE_DEPLOY_ENV === "production"

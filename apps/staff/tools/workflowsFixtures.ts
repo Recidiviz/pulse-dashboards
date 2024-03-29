@@ -20,7 +20,7 @@
 import { Firestore } from "@google-cloud/firestore";
 import { mapValues } from "lodash";
 
-import { usMeSccpFixtures } from "~datatypes";
+import { usMeMediumTrusteeFixtures, usMeSccpFixtures } from "~datatypes";
 
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../src/FirestoreStore/constants";
 import {
@@ -117,7 +117,9 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   ...mapValues(
     {
       usMeSCCPReferrals: usMeSccpFixtures,
+      usMeMediumTrusteeReferrals: usMeMediumTrusteeFixtures,
     },
+    // @ts-ignore
     (fixtures) => fixtureFromParsedRecords("externalId", fixtures),
   ),
   earlyTerminationReferrals: usNdEarlyTerminationFixture,

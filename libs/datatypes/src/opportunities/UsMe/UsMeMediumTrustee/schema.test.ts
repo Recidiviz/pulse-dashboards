@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
-export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
-export * from "./opportunities/UsMe/UsMeSCCP/schema";
-export * from "./opportunities/utils/caseNotesSchema";
-export * from "./opportunities/utils/types";
-export * from "./opportunities/utils/types";
-export * from "./utils/dateStringSchema";
-export * from "./utils/fixtureDates";
-export * from "./utils/types";
+import { usMeMediumTrusteeFixtures } from "./fixtures";
+import { usMeMediumTrusteeSchema } from "./schema";
+
+test.each(
+  Object.keys(usMeMediumTrusteeFixtures) as Array<
+    keyof typeof usMeMediumTrusteeFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usMeMediumTrusteeSchema.parse(usMeMediumTrusteeFixtures[key].input),
+  ).toMatchSnapshot();
+});

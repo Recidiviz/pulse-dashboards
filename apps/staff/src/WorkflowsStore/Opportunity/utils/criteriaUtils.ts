@@ -111,6 +111,7 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   date: (date) => formatWorkflowsDate(dateify(date)),
   daysPast: (date) => differenceInDays(new Date(), dateify(date)),
   daysUntil: (date) => differenceInDays(dateify(date), new Date()),
+  monthsUntil: (date) => differenceInMonths(dateify(date), new Date()),
   eq: (a, b) => a === b,
 };
 
@@ -164,7 +165,7 @@ export function hydrateStr(
 
   return template(
     { ...criteria, record: opportunity.record, opportunity },
-    { helpers },
+    { helpers, allowProtoPropertiesByDefault: true },
   );
 }
 

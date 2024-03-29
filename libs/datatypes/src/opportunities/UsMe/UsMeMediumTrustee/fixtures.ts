@@ -15,13 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
-export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
-export * from "./opportunities/UsMe/UsMeSCCP/schema";
-export * from "./opportunities/utils/caseNotesSchema";
-export * from "./opportunities/utils/types";
-export * from "./opportunities/utils/types";
-export * from "./utils/dateStringSchema";
-export * from "./utils/fixtureDates";
-export * from "./utils/types";
+import { makeRecordFixture } from "../../utils/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
+import { UsMeMediumTrusteeRecord, usMeMediumTrusteeSchema } from "./schema";
+
+export const usMeMediumTrusteeFixtures = {
+  fullyEligible: makeRecordFixture(usMeMediumTrusteeSchema, {
+    stateCode: "US_ME",
+    externalId: "RES002",
+    eligibleCriteria: {
+      usMeCustodyLevelIsMedium: {
+        supervisionLevel: "MEDIUM",
+      },
+      usMeFiveOrMoreYearsRemainingOnSentence: {},
+      usMeNoViolationFor5Years: null,
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      "Case Plan Goals": [
+        {
+          eventDate: null,
+          noteBody: "Maintain good health",
+          noteTitle: "In progress",
+        },
+      ],
+    },
+  }),
+} satisfies FixtureMapping<UsMeMediumTrusteeRecord>;

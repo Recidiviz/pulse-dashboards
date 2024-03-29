@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { relativeFixtureDate } from "../../utils/fixtureDates";
-import { makeRecordFixture } from "../utils/makeRecordFixture";
-import { FixtureMapping } from "../utils/types";
+import { relativeFixtureDate } from "../../../utils/fixtureDates";
+import { makeRecordFixture } from "../../utils/makeRecordFixture";
+import { FixtureMapping } from "../../utils/types";
 import { UsMeSCCPRecord, usMeSCCPSchema } from "./schema";
 
 export const usMeSccpFixtures = {
