@@ -183,7 +183,7 @@ describe("Hydrated Supervisor Page", () => {
     );
   });
 
-  test("analytics trackInsightsSupervisorPageViewed", () => {
+  test("analytics trackInsightsSupervisorPageViewed", async () => {
     vi.spyOn(AnalyticsStore.prototype, "trackInsightsSupervisorPageViewed");
     vi.spyOn(rootStore.userStore, "userPseudoId", "get").mockReturnValue(
       supervisorPseudoId,
@@ -191,6 +191,8 @@ describe("Hydrated Supervisor Page", () => {
     vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
       supervisorUser,
     );
+
+    await presenter?.hydrate();
 
     render(
       <BrowserRouter>

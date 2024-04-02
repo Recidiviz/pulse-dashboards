@@ -120,6 +120,7 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
 }: InsightsClientDetailsPanelProps) {
   const { isMobile } = useIsMobile(true);
   const { tenantStore } = useRootStore();
+  const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   const isInsightsLanternState =
     tenantStore && tenantStore.insightsLanternState;
@@ -141,10 +142,6 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
   const scrollElementRef = useRef(null);
 
   useEffect(() => {
-    presenter.trackViewed();
-  }, [presenter]);
-
-  useEffect(() => {
     setModalIsOpen(Boolean(clientPseudoId));
   }, [clientPseudoId]);
 
@@ -160,6 +157,12 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
   }
 
   if (!clientInfo || !clientEvents) return <NotFound />;
+
+  if (initialPageLoad) {
+    presenter.trackViewed();
+    setInitialPageLoad(false);
+  }
+
   return (
     <StyledDrawerModal
       isOpen={modalIsOpen}

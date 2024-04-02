@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useState } from "react";
 import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -43,6 +43,7 @@ export const SupervisorPage = observer(function SupervisorPage({
   presenter: SupervisionOfficersPresenter;
 }) {
   const { isLaptop } = useIsMobile(true);
+  const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   const {
     supervisorInfo,
@@ -53,10 +54,6 @@ export const SupervisorPage = observer(function SupervisorPage({
     timePeriod,
     labels,
   } = presenter;
-
-  useEffect(() => {
-    presenter.trackViewed();
-  }, [presenter]);
 
   const emptyPageHeaderText = `${getWelcomeText(
     supervisorInfo?.fullName.givenNames,
@@ -103,6 +100,11 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
   } ${
     labels.supervisionUnitLabel
   } [is an|are] outlier[|s] on one or more metrics`;
+
+  if (initialPageLoad) {
+    presenter.trackViewed();
+    setInitialPageLoad(false);
+  }
 
   return (
     <InsightsPageLayout

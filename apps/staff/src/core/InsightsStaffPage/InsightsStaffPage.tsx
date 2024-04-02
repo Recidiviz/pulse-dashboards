@@ -145,6 +145,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   const { isMobile, isTablet } = useIsMobile(true);
   const [tabListEl, setTabListEl] = useState<HTMLElement | null>(null);
   const isTabListOverflown = useIsOverflown(tabListEl);
+  const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   const {
     outlierOfficerData,
@@ -159,10 +160,6 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   } = presenter;
 
   useEffect(() => {
-    presenter.trackViewed();
-  }, [presenter]);
-
-  useEffect(() => {
     setTabListEl(document.getElementById("insightsStaffTabList"));
   }, []);
 
@@ -174,6 +171,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       supervisorPseudoId: supervisorInfo.pseudonymizedId,
     }),
   };
+
   // empty page where the staff member is not an outlier on any metrics
   if (outlierOfficerData && !outlierOfficerData.outlierMetrics.length) {
     return (
@@ -251,6 +249,11 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       info: timePeriod,
     },
   ];
+
+  if (initialPageLoad) {
+    presenter.trackViewed();
+    setInitialPageLoad(false);
+  }
 
   return (
     <InsightsPageLayout

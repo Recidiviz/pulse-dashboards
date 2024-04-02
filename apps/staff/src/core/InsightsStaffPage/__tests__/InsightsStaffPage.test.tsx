@@ -56,26 +56,35 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-describe("Hydrated Staff Page", () => {
-  let presenter: SupervisionOfficerDetailPresenter;
+describe("Insights Staff Page", () => {
   let store: InsightsSupervisionStore;
+  let presenter: SupervisionOfficerDetailPresenter;
+  let rootStore: RootStore;
 
   beforeEach(async () => {
-    vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
-      () => supervisorPseudoId,
-    );
-
+    rootStore = new RootStore();
     store = new InsightsSupervisionStore(
-      new RootStore().insightsStore,
+      rootStore.insightsStore,
       InsightsConfigFixture,
     );
+    rootStore.insightsStore.supervisionStore = store;
+    useRootStoreMock.mockReturnValue(rootStore);
+    useFeatureVariantsMock.mockReturnValue({});
+
     vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
+    store.setOfficerPseudoId(officerPseudoId);
+    store.setMetricId(testMetric);
+
     presenter = new SupervisionOfficerDetailPresenter(store, officerPseudoId);
     await presenter?.hydrate();
   });
 
-  test("analytics trackInsightsStaffPageViewed", () => {
+  test("analytics trackInsightsStaffPageViewed", async () => {
+    store.setMetricId(testMetric);
     vi.spyOn(AnalyticsStore.prototype, "trackInsightsStaffPageViewed");
+    vi.spyOn(rootStore.userStore, "userPseudoId", "get").mockImplementation(
+      () => supervisorPseudoId,
+    );
 
     render(
       <BrowserRouter>
@@ -91,26 +100,6 @@ describe("Hydrated Staff Page", () => {
       supervisorPseudonymizedId: supervisorPseudoId,
       viewedBy: supervisorPseudoId,
     });
-  });
-});
-
-describe("Insights Staff Page", () => {
-  let store: InsightsSupervisionStore;
-
-  beforeEach(async () => {
-    const rootStore = new RootStore();
-    store = new InsightsSupervisionStore(
-      rootStore.insightsStore,
-      InsightsConfigFixture,
-    );
-    rootStore.insightsStore.supervisionStore = store;
-    useRootStoreMock.mockReturnValue(rootStore);
-    useFeatureVariantsMock.mockReturnValue({});
-
-    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
-
-    store.setOfficerPseudoId(officerPseudoId);
-    store.setMetricId(testMetric);
   });
 
   test("renders loading indicator", () => {
