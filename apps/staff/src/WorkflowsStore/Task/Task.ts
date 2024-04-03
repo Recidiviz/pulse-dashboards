@@ -84,7 +84,7 @@ export abstract class Task<TaskType extends SupervisionTaskType>
   }
 
   get isOverdue(): boolean {
-    return isPast(this.dueDate);
+    return isPast(addDays(this.dueDate, 2));
   }
 
   get dueDateFromToday(): string {

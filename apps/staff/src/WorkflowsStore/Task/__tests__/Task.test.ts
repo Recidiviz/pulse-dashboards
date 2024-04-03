@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { parseISO } from "date-fns";
+import { addDays, parseISO } from "date-fns";
 import { deleteField } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
@@ -79,6 +79,26 @@ describe("Task", () => {
     });
 
     test("isOverdue", () => {
+      expect(task.isOverdue).toBeTrue();
+    });
+
+    test("isOverdue is false before due date", () => {
+      tk.freeze(addDays(task.dueDate, -1));
+      expect(task.isOverdue).toBeFalse();
+    });
+
+    test("isOverdue is false on due date", () => {
+      tk.freeze(task.dueDate);
+      expect(task.isOverdue).toBeFalse();
+    });
+
+    test("isOverdue is false two days after due date", () => {
+      tk.freeze(addDays(task.dueDate, 2));
+      expect(task.isOverdue).toBeFalse();
+    });
+
+    test("isOverdue three days after due date", () => {
+      tk.freeze(addDays(task.dueDate, 3));
       expect(task.isOverdue).toBeTrue();
     });
 
