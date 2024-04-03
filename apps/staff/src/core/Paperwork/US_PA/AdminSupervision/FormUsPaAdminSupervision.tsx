@@ -22,7 +22,6 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Client } from "../../../../WorkflowsStore";
-import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
@@ -53,7 +52,7 @@ const FormContent = styled.div`
 `;
 
 const formDownloader = async (client: Client): Promise<void> => {
-  let contents: Partial<UsPaAdminSupervisionDraftData> = {};
+  let contents: Record<string, unknown> = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
@@ -62,6 +61,18 @@ const formDownloader = async (client: Client): Promise<void> => {
       ),
     };
   });
+
+  // Extra fields to distingish a checked `NO` from no check
+  contents.criteriaHighSanctionNo = contents.criteriaHighSanction === false;
+  contents.criteriaFulfilledTreatmentRequirementsNo =
+    contents.criteriaFulfilledTreatmentRequirements === false;
+  contents.criteriaFulfilledSpecialConditionsNo =
+    contents.criteriaFulfilledSpecialConditions === false;
+  contents.criteriaFinancialEffortsNo =
+    contents.criteriaFinancialEfforts === false;
+  contents.unreportedDispositionsNo = contents.unreportedDispositions === false;
+  contents.eligibleForAdministrativeParoleNo =
+    contents.eligibleForAdministrativeParole === false;
 
   await downloadSingle(
     `${client?.displayName} - Form DC-P 402.docx`,

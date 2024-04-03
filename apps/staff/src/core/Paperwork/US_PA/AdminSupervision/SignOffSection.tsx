@@ -21,7 +21,7 @@ import * as React from "react";
 import styled from "styled-components/macro";
 
 import { strings } from "./constants";
-import { Checkbox } from "./OffenseHistoryCheckbox";
+import FormCheckbox from "./FormCheckbox";
 import {
   DispositionCell,
   EligibilityCell,
@@ -45,11 +45,16 @@ const SignOffSection: React.FC = () => {
     <ContentContainer>
       <EligibilityCell>
         {strings.eligibilityHeader}
-        <Checkbox
+        <FormCheckbox
+          toggleable
+          name="eligibleForAdministrativeParole"
           style={{ marginBottom: "1px", marginLeft: "6px", borderWidth: "1px" }}
         />
         YES
-        <Checkbox
+        <FormCheckbox
+          toggleable
+          invert
+          name="eligibleForAdministrativeParole"
           style={{ marginBottom: "1px", marginLeft: "6px", borderWidth: "1px" }}
         />
         NO

@@ -20,18 +20,25 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
+import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import {
   GRID_ROW_COUNT,
   INJURY_OFFENSE_LABEL_INFO,
   LabelInfo,
   OTHER_OFFENSE_LABEL_INFO,
 } from "./constants";
-import OffenseHistoryCheckbox from "./OffenseHistoryCheckbox";
+import FormCheckbox from "./FormCheckbox";
 import {
   BasicCell,
   ColumnSubheaders,
   HeaderCell,
 } from "./OffenseHistoryChecklistCell";
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;
 
 const ContentContainer = styled.div`
   display: grid;
@@ -45,9 +52,16 @@ type RowProps = {
   label: string;
   labelSpan: number;
   columnStart: number;
+  field?: keyof UsPaAdminSupervisionDraftData;
 };
 
-const CheckListRow = ({ row, columnStart, label, labelSpan }: RowProps) => {
+const CheckListRow = ({
+  row,
+  columnStart,
+  label,
+  labelSpan,
+  field,
+}: RowProps) => {
   return (
     <>
       <BasicCell
@@ -56,10 +70,16 @@ const CheckListRow = ({ row, columnStart, label, labelSpan }: RowProps) => {
         leftBorder={true}
         rowSpan={labelSpan}
       >
-        {label}
+        <label htmlFor={field} style={{ marginBottom: "0" }}>
+          {label}
+        </label>
       </BasicCell>
       <BasicCell column={columnStart + 1} row={row} rowSpan={labelSpan}>
-        {label && <OffenseHistoryCheckbox />}
+        {field && (
+          <CheckboxContainer>
+            <FormCheckbox name={field} />
+          </CheckboxContainer>
+        )}
       </BasicCell>
     </>
   );
@@ -87,6 +107,7 @@ const ChecklistColumn = ({ columnStart, header, infoList }: ColumnProps) => {
             row={index + rowOffset}
             label={info.label}
             labelSpan={info.rowSpan}
+            field={info.field}
           />
         );
         rowOffset += info.rowSpan - 1;

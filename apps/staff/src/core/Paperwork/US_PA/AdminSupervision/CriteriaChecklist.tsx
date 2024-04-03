@@ -41,19 +41,25 @@ const CriteriaChecklist: React.FC = () => {
     <ContentContainer>
       <GreyCell>{strings.continueHeader}</GreyCell>
       <BlueCell>{strings.dispositionHeader}</BlueCell>
-      <CriteriaChecklistCheckbox row={2} column={6} span={2} />
-      {CRITERIA_LABELS.map((label, index) => {
+      <CriteriaChecklistCheckbox
+        row={2}
+        column={6}
+        span={2}
+        field={"unreportedDispositions"}
+      />
+      {CRITERIA_LABELS.map(({ label, field }, index) => {
         const row = index < 2 ? 4 : 5;
         const column = index % 2 === 0 ? 1 : 5;
+        if (!field) return null;
         return (
           <React.Fragment key={label}>
             <WhiteCell key={`cell ${label}`} row={row} column={column}>
               {label}
             </WhiteCell>
             <CriteriaChecklistCheckbox
-              key={`checkbox ${label}`}
               row={row}
               column={column + 2}
+              field={field}
             />
           </React.Fragment>
         );

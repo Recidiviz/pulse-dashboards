@@ -19,8 +19,8 @@
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import { BLUE_BACKGROUND } from "./constants";
-import { Checkbox } from "./OffenseHistoryCheckbox";
+import { BLUE_BACKGROUND, FormDataType } from "./constants";
+import FormCheckbox from "./FormCheckbox";
 
 const ContentContainer = styled.div<CriteriaCheckboxProps>`
   grid-area: ${({ row }) => row} / ${({ column }) => column} /
@@ -39,14 +39,20 @@ type CriteriaCheckboxProps = {
   row: number;
   column: number;
   span?: number;
+  field: keyof FormDataType;
 };
 
 const CriteriaChecklistCheckbox = (props: CriteriaCheckboxProps) => {
   return (
     <ContentContainer {...props}>
-      <Checkbox />
+      <FormCheckbox toggleable name={props.field} />
       YES
-      <Checkbox style={{ marginLeft: "7px" }} />
+      <FormCheckbox
+        toggleable
+        invert
+        name={props.field}
+        style={{ marginLeft: "7px" }}
+      />
       NO
     </ContentContainer>
   );
