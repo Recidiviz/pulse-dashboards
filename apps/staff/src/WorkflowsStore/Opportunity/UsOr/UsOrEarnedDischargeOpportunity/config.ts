@@ -42,6 +42,7 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
         "Compensatory fines and restitution have not been paid in full or not current on payment plan",
       PROGRAMS: "Incomplete specialty court programs or treatment programs",
       "CASE PLAN": "Not in compliance with supervision case plan",
+      "COURT RESTRICTION": "ORS 137.633",
       Other: "Other: please specify a reason",
     },
     eligibleCriteriaCopy: {
