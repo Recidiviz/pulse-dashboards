@@ -218,44 +218,32 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   updateRecord(record: ClientRecord): void {
     super.updateRecord(record);
     this.supervisionLevelStart = optionalFieldToDate(
-      record.supervisionLevelStartNew ?? record.supervisionLevelStart,
+      record.supervisionLevelStart,
     );
-    this.address = record.addressNew ?? record.address;
-    this.rawPhoneNumber = record.phoneNumberNew ?? record.phoneNumber;
-    this.expirationDate = optionalFieldToDate(
-      record.expirationDateNew ?? record.expirationDate,
-    );
-    this.currentBalance = record.currentBalanceNew ?? record.currentBalance;
-    this.lastPaymentDate = optionalFieldToDate(
-      record.lastPaymentDateNew ?? record.lastPaymentDate,
-    );
-    this.lastPaymentAmount =
-      record.lastPaymentAmountNew ?? record.lastPaymentAmount;
-    this.probationSpecialConditions =
-      record.specialConditionsNew ?? record.specialConditions;
-    this.paroleSpecialConditions =
-      record.boardConditionsNew ?? record.boardConditions ?? [];
+    this.address = record.address;
+    this.rawPhoneNumber = record.phoneNumber;
+    this.expirationDate = optionalFieldToDate(record.expirationDate);
+    this.currentBalance = record.currentBalance;
+    this.lastPaymentDate = optionalFieldToDate(record.lastPaymentDate);
+    this.lastPaymentAmount = record.lastPaymentAmount;
+    this.probationSpecialConditions = record.specialConditions;
+    this.paroleSpecialConditions = record.boardConditions ?? [];
     this.supervisionStartDate = optionalFieldToDate(
-      record.supervisionStartDateNew ?? record.supervisionStartDate,
+      record.supervisionStartDate,
     );
-    this.currentEmployers =
-      record.currentEmployersNew ?? record.currentEmployers;
-    this.emailAddress = record.emailAddressNew ?? record.emailAddress;
+    this.currentEmployers = record.currentEmployers;
+    this.emailAddress = record.emailAddress;
 
     const tenantMilestoneTypes =
       this.rootStore.currentTenantId &&
       tenants[this.rootStore.currentTenantId]?.milestoneTypes;
     this.tenantMilestones = tenantMilestoneTypes
-      ? filteredMilestoneTypes(
-          record.milestonesNew ?? record.milestones,
-          tenantMilestoneTypes,
-        )
-      : record.milestonesNew ?? record.milestones;
+      ? filteredMilestoneTypes(record.milestones, tenantMilestoneTypes)
+      : record.milestones;
   }
 
   get supervisionType(): string {
-    const supervisionType =
-      this.record.supervisionTypeNew ?? this.record.supervisionType;
+    const supervisionType = this.record.supervisionType;
 
     return !supervisionType || supervisionType === "INTERNAL_UNKNOWN"
       ? "Unknown"
@@ -264,7 +252,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get supervisionLevel(): string {
     return this.rootStore.workflowsStore.formatSupervisionLevel(
-      this.record.supervisionLevelNew ?? this.record.supervisionLevel,
+      this.record.supervisionLevel,
     );
   }
 
@@ -281,16 +269,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   get district() {
     // For some reason typescript doesn't like super.district
     // eslint-disable-next-line dot-notation
-    return this.record.districtNew ?? this.record.district ?? super["district"];
+    return this.record.district ?? super["district"];
   }
 
   get portionServedDates(): PortionServedDates {
-    const startDate = optionalFieldToDate(
-      this.record.supervisionStartDateNew ?? this.record.supervisionStartDate,
-    );
-    const endDate = optionalFieldToDate(
-      this.record.expirationDateNew ?? this.record.expirationDate,
-    );
+    const startDate = optionalFieldToDate(this.record.supervisionStartDate);
+    const endDate = optionalFieldToDate(this.record.expirationDate);
 
     const opportunityDates: PortionServedDates = [];
 
@@ -366,9 +350,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       tenants[currentTenantId]?.workflowsSystemConfigs?.SUPERVISION
         ?.searchField;
 
-    return searchField
-      ? this.record[`${searchField}New`] ?? this.record[searchField]
-      : this.assignedStaffId;
+    return searchField ? this.record[searchField] : this.assignedStaffId;
   }
 
   get profileMilestones(): Milestone[] {

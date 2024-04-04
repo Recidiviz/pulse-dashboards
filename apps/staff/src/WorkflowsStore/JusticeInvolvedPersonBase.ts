@@ -116,8 +116,7 @@ export class JusticeInvolvedPersonBase<
     // Create and destroy opportunity objects as needed
     autorun(() => {
       const incomingOpps = intersection(
-        this.record.allEligibleOpportunitiesNew ??
-          this.record.allEligibleOpportunities,
+        this.record.allEligibleOpportunities,
         rootStore.workflowsStore.opportunityTypes,
       ) as OpportunityTypeForRecord<RecordType>[];
       incomingOpps.forEach((opportunityType) => {
@@ -150,7 +149,7 @@ export class JusticeInvolvedPersonBase<
   }
 
   get externalId(): string {
-    return this.record.personExternalIdNew ?? this.record.personExternalId;
+    return this.record.personExternalId;
   }
 
   get pseudonymizedId(): string {
@@ -158,19 +157,19 @@ export class JusticeInvolvedPersonBase<
   }
 
   get displayId(): string {
-    return this.record.displayIdNew ?? this.record.displayId;
+    return this.record.displayId;
   }
 
   get stateCode(): string {
-    return (this.record.stateCodeNew ?? this.record.stateCode).toUpperCase();
+    return this.record.stateCode.toUpperCase();
   }
 
   get fullName(): FullName {
-    return this.record.personNameNew ?? this.record.personName;
+    return this.record.personName;
   }
 
   get assignedStaffId(): string {
-    return this.record.officerIdNew ?? this.record.officerId;
+    return this.record.officerId;
   }
 
   get assignedStaff(): StaffRecord | undefined {
