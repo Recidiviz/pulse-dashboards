@@ -180,16 +180,7 @@ if (deployEnv === "production") {
     releaseType = "patch";
   } else {
     versionToIncrement = latestReleaseVersion;
-    // Determine what to increase the version by
-    const releaseTypePrompt = await inquirer.prompt({
-      type: "list",
-      name: "releaseType",
-      message: "What type of release is this?",
-      choices: ["major", "minor", "patch"],
-      default: "minor",
-    });
-
-    releaseType = releaseTypePrompt.releaseType;
+    releaseType = "minor";
   }
 
   // Increment the version
