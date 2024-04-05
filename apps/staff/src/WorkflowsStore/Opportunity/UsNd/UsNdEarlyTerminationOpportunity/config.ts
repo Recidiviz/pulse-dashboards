@@ -30,7 +30,7 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
     firestoreCollection: "earlyTerminationReferrals",
     snooze: {
       defaultSnoozeDays: 30,
-      maxSnoozeDays: 90,
+      maxSnoozeDays: 180,
     },
     hideDenialRevert: true,
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ND,
