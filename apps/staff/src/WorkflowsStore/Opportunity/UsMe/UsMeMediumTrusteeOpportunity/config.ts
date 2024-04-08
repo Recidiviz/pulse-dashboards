@@ -44,7 +44,8 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
       DECLINE: "Resident declined Medium Trustee Status",
       OTHER_CORIS: "Other, please add a case note in CORIS",
     },
-    methodologyUrl: "",
+    methodologyUrl:
+      "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view?usp=drive_link",
     sidebarComponents: ["Incarceration", "CaseNotes"],
     eligibleCriteriaCopy: {
       usMeCustodyLevelIsMedium: {

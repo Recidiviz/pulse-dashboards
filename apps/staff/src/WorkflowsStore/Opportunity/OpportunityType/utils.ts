@@ -33,6 +33,7 @@ export const OPPORTUNITY_TYPES_BY_STATE = {
   ],
   US_ME: [
     "usMeSCCP",
+    "usMeReclassificationReview",
     "usMeMediumTrustee",
     "usMeWorkRelease",
     "usMeEarlyTermination",

@@ -15,15 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./opportunities/UsMe/UsMeAnnualReclassification/fixtures";
-export * from "./opportunities/UsMe/UsMeAnnualReclassification/schema";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
-export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
-export * from "./opportunities/UsMe/UsMeSCCP/schema";
-export * from "./opportunities/utils/caseNotesSchema";
-export * from "./opportunities/utils/types";
-export * from "./opportunities/utils/types";
-export * from "./utils/dateStringSchema";
-export * from "./utils/fixtureDates";
-export * from "./utils/types";
+import {
+  UsMeAnnualReclassificationRecord,
+  usMeAnnualReclassificationSchema,
+} from "~datatypes";
+
+import { Resident } from "../../../Resident";
+import { OpportunityBase } from "../../OpportunityBase";
+
+export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
+  Resident,
+  UsMeAnnualReclassificationRecord["output"]
+> {
+  resident: Resident;
+
+  constructor(resident: Resident) {
+    super(
+      resident,
+      "usMeReclassificationReview",
+      resident.rootStore,
+      usMeAnnualReclassificationSchema.parse,
+    );
+
+    this.resident = resident;
+  }
+}

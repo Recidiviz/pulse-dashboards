@@ -15,15 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./opportunities/UsMe/UsMeAnnualReclassification/fixtures";
-export * from "./opportunities/UsMe/UsMeAnnualReclassification/schema";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
-export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
-export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
-export * from "./opportunities/UsMe/UsMeSCCP/schema";
-export * from "./opportunities/utils/caseNotesSchema";
-export * from "./opportunities/utils/types";
-export * from "./opportunities/utils/types";
-export * from "./utils/dateStringSchema";
-export * from "./utils/fixtureDates";
-export * from "./utils/types";
+import { usMeAnnualReclassificationFixtures } from "./fixtures";
+import { usMeAnnualReclassificationSchema } from "./schema";
+
+test.each(
+  Object.keys(usMeAnnualReclassificationFixtures) as Array<
+    keyof typeof usMeAnnualReclassificationFixtures
+  >,
+)("schema for %s", (key) => {
+  expect(
+    usMeAnnualReclassificationSchema.parse(
+      usMeAnnualReclassificationFixtures[key].input,
+    ),
+  ).toMatchSnapshot();
+});

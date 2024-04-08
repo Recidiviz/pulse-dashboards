@@ -34,6 +34,7 @@ import {
   UsMeFurloughReleaseOpportunity,
   UsMeWorkReleaseOpportunity,
 } from "./Opportunity/UsMe";
+import { UsMeAnnualReclassificationOpportunity } from "./Opportunity/UsMe/UsMeAnnualReclassificationOpportunity";
 import { UsMeMediumTrusteeOpportunity } from "./Opportunity/UsMe/UsMeMediumTrusteeOpportunity";
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
@@ -64,6 +65,7 @@ const residentialOpportunityConstructors: Record<
     UsMoOverdueRestrictiveHousingInitialHearingOpportunity,
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingReviewHearingOpportunity,
+  usMeReclassificationReview: UsMeAnnualReclassificationOpportunity,
 };
 
 const createResidentOpportunity: OpportunityFactory<

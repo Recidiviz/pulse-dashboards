@@ -20,7 +20,11 @@
 import { Firestore } from "@google-cloud/firestore";
 import { mapValues } from "lodash";
 
-import { usMeMediumTrusteeFixtures, usMeSccpFixtures } from "~datatypes";
+import {
+  usMeAnnualReclassificationFixtures,
+  usMeMediumTrusteeFixtures,
+  usMeSccpFixtures,
+} from "~datatypes";
 
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../src/FirestoreStore/constants";
 import {
@@ -114,10 +118,12 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   keyof typeof OPPORTUNITIES_MAP,
   FirestoreFixture<any>
 > = {
+  // TODO: Fix typing for spreading operator by specifying the generic for `mapValues`
   ...mapValues(
     {
       usMeSCCPReferrals: usMeSccpFixtures,
       usMeMediumTrusteeReferrals: usMeMediumTrusteeFixtures,
+      usMeReclassificationReviewReferrals: usMeAnnualReclassificationFixtures,
     },
     // @ts-ignore
     (fixtures) => fixtureFromParsedRecords("externalId", fixtures),

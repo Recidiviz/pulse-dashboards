@@ -31,6 +31,7 @@ import { usIdCRCWorkReleaseConfig as usIdCRCWorkRelease } from "./UsId/UsIdCRCWo
 import { usIdExpandedCRCConfig as usIdExpandedCRC } from "./UsId/UsIdExpandedCRCOpportunity/config";
 import { usIdPastFTRDConfig as pastFTRD } from "./UsId/UsIdPastFTRDOpportunity/config";
 import { usIdSupervisionLevelDowngradeConfig as usIdSupervisionLevelDowngrade } from "./UsId/UsIdSupervisionLevelDowngradeOpportunity/config";
+import { usMeAnnualReclassificationConfig as usMeReclassificationReview } from "./UsMe/UsMeAnnualReclassificationOpportunity/config";
 import { usMeEarlyTerminationConfig as usMeEarlyTermination } from "./UsMe/UsMeEarlyTerminationOpportunity/config";
 import { usMeFurloughReleaseConfig as usMeFurloughRelease } from "./UsMe/UsMeFurloughReleaseOpportunity/config";
 import { usMeMediumTrusteeConfig as usMeMediumTrustee } from "./UsMe/UsMeMediumTrusteeOpportunity/config";
@@ -53,7 +54,6 @@ import { UsTnAnnualReclassificationReviewConfig as usTnAnnualReclassification } 
 import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./UsTn/UsTnCustodyLevelDowngradeOpportunity/config";
 import { usTnExpirationConfig as usTnExpiration } from "./UsTn/UsTnExpirationOpportunity/config";
 import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from "./UsTn/UsTnSupervisionLevelDowngradeOpportunity/config";
-
 /** Auto refers to users who have a default snooze until set.
  * defaultSnoozeUntilFn is used to calculate the default snooze until,
  * e.g. weekly on Mondays or 90 days.
@@ -155,6 +155,7 @@ export const OPPORTUNITY_CONFIGS = {
   usMeEarlyTermination,
   usMeFurloughRelease,
   usMeMediumTrustee,
+  usMeReclassificationReview,
   usMeSCCP,
   usMeWorkRelease,
 
