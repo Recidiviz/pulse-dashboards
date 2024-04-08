@@ -28,6 +28,18 @@
         "cwd": "{projectRoot}"
       }
     },
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/jii"
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "options": {
+        "buildTarget": "jii:build"
+      }
+    },
     "offline": {
       "executor": "nx:run-commands",
       "options": {
