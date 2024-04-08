@@ -2,6 +2,7 @@
 node_modules/
 build/
 public/
+server/core/demo_data
 
 src/auth0/**/*.js
 

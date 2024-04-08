@@ -18,10 +18,10 @@
 import { isTestEnv } from "./isTestEnv";
 
 test("test mode", () => {
-  expect(isTestEnv()).toBe(true);
+  expect(isTestEnv()).toBeTrue();
 });
 
 test.each(["development", "production"])("%s mode", (modeValue) => {
   vi.stubEnv("MODE", modeValue);
-  expect(isTestEnv()).toBe(false);
+  expect(isTestEnv()).toBeFalse();
 });

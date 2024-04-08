@@ -23,9 +23,11 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["tsc -p ./tsconfig.spec.json --noEmit"],
-        "cwd": "{projectRoot}",
-        "forwardAllArgs": false
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
       }
     }
   },

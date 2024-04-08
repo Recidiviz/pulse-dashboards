@@ -19,10 +19,10 @@ import { isDemoMode } from "./isDemoMode";
 
 test("auth env demo", () => {
   vi.stubEnv("VITE_AUTH_ENV", "demo");
-  expect(isDemoMode()).toBe(true);
+  expect(isDemoMode()).toBeTrue();
 });
 
 test.each(["production", "development"])("auth env %s", (envValue) => {
   vi.stubEnv("VITE_AUTH_ENV", envValue);
-  expect(isDemoMode()).toBe(false);
+  expect(isDemoMode()).toBeFalse();
 });

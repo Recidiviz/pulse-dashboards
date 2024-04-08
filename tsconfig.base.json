@@ -1,26 +1,37 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "declaration": false,
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
+    "isolatedModules": true,
     "lib": ["esnext"],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
     "paths": {
       "~client-env-utils": ["libs/client-env-utils/src/index.ts"],
-      "~datatypes": ["libs/datatypes/src/index.ts"]
+      "~datatypes": ["libs/datatypes/src/index.ts"],
+      "~repo": ["plugins/repo/src/index.ts"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es2015"
+    "strict": true,
+    "target": "ES6",
+    "useDefineForClassFields": true
   },
   "exclude": ["node_modules", "tmp"]
 }

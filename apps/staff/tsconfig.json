@@ -2,15 +2,13 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": false,
-    "isolatedModules": true,
     "jsx": "react-jsx",
     "lib": ["esnext", "dom"],
+    "noImplicitOverride": false, // overriding for legacy code
+    "noImplicitReturns": false, // overriding for legacy code
+    "noPropertyAccessFromIndexSignature": false, // overriding for legacy code
     "resolveJsonModule": true,
-    "strict": true,
-    "types": ["vite/client", "vitest"],
-    "useDefineForClassFields": true
+    "types": ["vite/client", "vitest"]
   },
   "files": [],
   "include": [],

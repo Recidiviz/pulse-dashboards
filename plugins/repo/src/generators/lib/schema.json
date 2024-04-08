@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Lib",
+  "title": "Recidiviz Library",
+  "description": "Generates an Nx library using Recidiviz standard configuration.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "x-prompt": "What should the library be named?",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
+    "libType": {
+      "type": "string",
+      "description": "Provide the library type",
+      "x-prompt": {
+        "message": "What type of library should it be?",
+        "type": "list",
+        "items": [
+          { "value": "vanilla", "label": "Vanilla Typescript" },
+          { "value": "react", "label": "Typescript with React Components" }
+        ]
+      }
+    }
+  },
+  "required": ["name", "libType"]
+}

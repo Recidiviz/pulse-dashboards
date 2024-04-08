@@ -10,7 +10,8 @@
   "author": "Recidiviz <team@recidiviz.org>",
   "license": "GNU General Public License v3",
   "workspaces": [
-    "apps/staff"
+    "apps/staff",
+    "plugins/repo"
   ],
   "dependencies": {
     "@artsy/to-title-case": "^1.1.0",
@@ -19,6 +20,7 @@
     "@google-cloud/storage": "^5.0.0",
     "@material/select": "^14.0.0",
     "@material/textfield": "^14.0.0",
+    "@nx/devkit": "18.0.5",
     "@recidiviz/auth": "^1.0.1",
     "@recidiviz/design-system": "^5.1.0",
     "@rmwc/select": "^14.0.11",
@@ -147,6 +149,7 @@
     "styled-components": "5.3.6",
     "supertest": "^6.0.1",
     "timekeeper": "^2.2.0",
+    "tslib": "^2.3.0",
     "use-onclickoutside": "^0.4.0",
     "use-query-params": "^2.2.1",
     "uuid": "^8.3.2",
@@ -164,8 +167,10 @@
     "@juggle/resize-observer": "^3.4.0",
     "@nx/eslint": "18.0.5",
     "@nx/eslint-plugin": "18.0.5",
+    "@nx/jest": "18.0.5",
     "@nx/js": "18.0.5",
     "@nx/playwright": "18.0.2",
+    "@nx/plugin": "18.0.5",
     "@nx/react": "18.0.5",
     "@nx/vite": "18.0.5",
     "@nx/web": "18.0.5",
@@ -219,9 +224,9 @@
     "enzyme": "^3.11.0",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-playwright": "^0.15.3",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
-    "eslint-plugin-playwright": "^0.15.3",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-vitest-globals": "^1.4.0",
     "eslint-plugin-wdio": "^7.0.0",

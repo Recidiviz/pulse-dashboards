@@ -15,18 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AuthStore } from "@recidiviz/auth";
+import jestExtendedMatchers from "jest-extended";
 
-export class RootStore {
-  authStore: AuthStore;
-
-  constructor() {
-    this.authStore = new AuthStore({
-      authSettings: {
-        client_id: import.meta.env["VITE_AUTH0_CLIENT_ID"],
-        domain: import.meta.env["VITE_AUTH0_DOMAIN"],
-        redirect_uri: `${window.location.origin}`,
-      },
-    });
-  }
-}
+expect.extend(jestExtendedMatchers);

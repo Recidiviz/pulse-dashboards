@@ -19,9 +19,9 @@ import { isOfflineMode } from "./isOfflineMode";
 
 test("offline", () => {
   vi.stubEnv("VITE_IS_OFFLINE", "true");
-  expect(isOfflineMode()).toBe(true);
+  expect(isOfflineMode()).toBeTrue();
 });
 
 test("online", () => {
-  expect(isOfflineMode()).toBe(false);
+  expect(isOfflineMode()).toBeFalse();
 });

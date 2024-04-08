@@ -1,0 +1,24 @@
+{
+  "name": "repo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "plugins/repo/src",
+  "projectType": "library",
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p ./tsconfig.lib.json --noEmit"],
+        "cwd": "{projectRoot}",
+        "forwardAllArgs": false
+      }
+    }
+  },
+  "tags": []
+}

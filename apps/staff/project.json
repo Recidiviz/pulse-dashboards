@@ -15,11 +15,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "tsc -p ./tsconfig.app.json --noEmit",
-          "tsc -p ./tsconfig.spec.json --noEmit"
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
         ],
-        "cwd": "{projectRoot}",
-        "forwardAllArgs": false
+        "cwd": "{projectRoot}"
       }
     },
     "test": {
