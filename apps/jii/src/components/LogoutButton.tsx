@@ -15,18 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AuthStore } from "@recidiviz/auth";
+import React from "react";
 
-export class RootStore {
-  authStore: AuthStore;
+import { useRootStore } from "./StoreProvider/useRootStore";
 
-  constructor() {
-    this.authStore = new AuthStore({
-      authSettings: {
-        client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
-        domain: import.meta.env.VITE_AUTH0_DOMAIN,
-        redirect_uri: `${window.location.origin}`,
-      },
-    });
-  }
-}
+export const LogoutButton: React.FC = () => {
+  const { authStore } = useRootStore();
+  return <button onClick={() => authStore.logout()}>Logout</button>;
+};

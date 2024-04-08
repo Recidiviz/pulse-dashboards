@@ -17,10 +17,17 @@
 
 import React from "react";
 
+import { useRootStore } from "../StoreProvider/useRootStore";
+
 export const PageSearch: React.FC = () => {
+  const { authStore } = useRootStore();
+  const userName = authStore.user?.given_name;
   return (
     <div>
-      <p>only internal users should have access to this page.</p>
+      <p>
+        {userName ? `Hello, ${userName}. ` : ""}only internal users should have
+        access to this page.
+      </p>
     </div>
   );
 };

@@ -19,6 +19,7 @@ import { Link, Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { AuthWrapper } from "../AuthWrapper/AuthWrapper";
+import { LogoutButton } from "../LogoutButton";
 import { PageSearch } from "../PageSearch/PageSearch";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
@@ -42,6 +43,9 @@ export function App() {
               </li>
               <li>
                 <Link to="/eligibility/sccp">SCCP</Link>
+              </li>
+              <li>
+                <LogoutButton />
               </li>
             </ul>
           </div>

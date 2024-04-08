@@ -4,6 +4,7 @@
 .env
 .env.*
 !.env.offline
+!apps/jii/.env.*
 .env-cmdrc
 .nx
 
