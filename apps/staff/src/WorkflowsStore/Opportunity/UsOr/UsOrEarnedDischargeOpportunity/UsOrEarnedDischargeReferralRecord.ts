@@ -23,7 +23,9 @@ import { opportunitySchemaBase } from "../../schemaHelpers";
 
 export const usOrEarnedDischargeSchema = opportunitySchemaBase
   .extend({
-    formInformation: z.object({}),
+    formInformation: z.object({
+      birthdate: dateStringSchema,
+    }),
     eligibleCriteria: z.object({
       usOrSentenceEligible: z.object({
         eligibleSentences: z.array(
@@ -78,6 +80,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
     ({
       stateCode,
       externalId,
+      formInformation,
       eligibleCriteria,
       metadata: { eligibleSentences, ...personLevelMetadata },
     }) => {
@@ -87,6 +90,7 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
       return {
         stateCode,
         externalId,
+        formInformation,
         metadata: personLevelMetadata,
         subOpportunities:
           eligibleCriteria.usOrSentenceEligible.eligibleSentences.map((s) => ({
@@ -132,6 +136,7 @@ export type UsOrEarnedDischargeDraftData = {
   clientId: string;
   officerName: string;
   offenses: string;
+  birthdate: string;
   sentenceStartDate: string;
   todaysDate: string;
   countyName: string;

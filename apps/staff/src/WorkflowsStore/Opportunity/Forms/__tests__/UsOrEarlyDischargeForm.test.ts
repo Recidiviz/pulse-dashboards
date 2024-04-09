@@ -49,6 +49,9 @@ function createTestUnit() {
     metadata: {
       programs: [],
     },
+    formInformation: {
+      birthdate: parseISO("1970-01-01"),
+    },
     subOpportunities: [
       {
         eligibleCriteria: {
@@ -105,6 +108,7 @@ describe("prefilledDataTransformer", () => {
   test("basic transformation", () => {
     expect(form.prefilledDataTransformer()).toMatchInlineSnapshot(`
       {
+        "birthdate": "Jan 1, 1970",
         "clientId": "pei1",
         "countyAddress": "(Your County Address}",
         "countyFax": "(   )",
@@ -145,6 +149,9 @@ describe("prefilledDataTransformer", () => {
       externalId: "pei1",
       metadata: {
         programs: [],
+      },
+      formInformation: {
+        birthdate: parseISO("1990-01-01"),
       },
       subOpportunities: [
         {

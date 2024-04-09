@@ -2,6 +2,7 @@
 
 exports[`prefilledDataTransformer > transform multiple sentences 1`] = `
 {
+  "birthdate": "Jan 1, 1990",
   "clientId": "pei1",
   "countyAddress": "(Your County Address}",
   "countyFax": "(   )",

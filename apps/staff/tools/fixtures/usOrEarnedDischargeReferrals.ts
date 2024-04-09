@@ -23,7 +23,9 @@ export const usOrEarnedDischargeReferrals =
     {
       stateCode: "US_OR",
       externalId: "001",
-      formInformation: {},
+      formInformation: {
+        birthdate: "1990-01-01",
+      },
       eligibleCriteria: {
         usOrSentenceEligible: {
           eligibleSentences: [
@@ -83,7 +85,9 @@ export const usOrEarnedDischargeReferrals =
     {
       stateCode: "US_OR",
       externalId: "002",
-      formInformation: {},
+      formInformation: {
+        birthdate: "1960-01-01",
+      },
       eligibleCriteria: {
         usOrSentenceEligible: {
           eligibleSentences: [

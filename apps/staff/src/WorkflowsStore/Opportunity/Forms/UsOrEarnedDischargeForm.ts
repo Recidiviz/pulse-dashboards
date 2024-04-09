@@ -74,6 +74,10 @@ export class UsOrEarnedDischargeForm extends FormBase<
         district,
       } = this.person;
 
+      const {
+        formInformation: { birthdate },
+      } = this.opportunity.record;
+
       const officerName =
         !assignedStaff || assignedStaff.id === assignedStaff.surname
           ? `(Your Name)`
@@ -96,6 +100,7 @@ export class UsOrEarnedDischargeForm extends FormBase<
         surname,
         clientId,
         officerName,
+        birthdate: formatWorkflowsDate(birthdate),
         todaysDate,
         sentences,
         countyName: countyInfo?.name ?? "(Your County}",
