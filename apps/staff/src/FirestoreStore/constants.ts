@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export const FIRESTORE_GENERAL_COLLECTION_MAP = {
-  staff: "staff",
   supervisionStaff: "supervisionStaff",
   incarcerationStaff: "incarcerationStaff",
   userUpdates: "userUpdates",

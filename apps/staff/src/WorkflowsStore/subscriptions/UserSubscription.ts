@@ -74,12 +74,48 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     // only RECIDIVIZ users can cross state boundaries
     if (stateCode !== currentTenantId && stateCode !== "RECIDIVIZ") return;
 
+    const collectionName = this.staffRecordCollectionName;
+
+    if (collectionName === undefined) return;
+
     return query(
-      firestoreStore.collection({ key: "staff" }),
+      firestoreStore.collection({ key: collectionName }),
       where("email", "==", email.toLowerCase()),
       where("stateCode", "==", currentTenantId),
       limit(1),
     );
+  }
+
+  get staffRecordCollectionName():
+    | "supervisionStaff"
+    | "incarcerationStaff"
+    | undefined {
+    const {
+      userStore,
+      workflowsStore: { activeSystem },
+    } = this.rootStore;
+
+    const canAccessSupervision = userStore.getRoutePermission(
+      "workflowsSupervision",
+    );
+    const canAccessFacilities = userStore.getRoutePermission(
+      "workflowsFacilities",
+    );
+
+    // In the case that someone is able to view both, use the active system to choose which to query
+    // It should not make a difference, but there is a chance their IDs are different between systems
+    if (canAccessSupervision && canAccessFacilities) {
+      switch (activeSystem) {
+        case "INCARCERATION":
+          return "incarcerationStaff";
+        case "SUPERVISION":
+        case "ALL":
+          return "supervisionStaff";
+      }
+    }
+    if (canAccessSupervision) return "supervisionStaff";
+
+    if (canAccessFacilities) return "incarcerationStaff";
   }
 
   /**

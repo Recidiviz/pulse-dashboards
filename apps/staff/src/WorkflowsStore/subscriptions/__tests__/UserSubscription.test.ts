@@ -31,6 +31,7 @@ vi.mock("~client-env-utils");
 const onSnapshotMock = onSnapshot as Mock;
 const isOfflineModeMock = isOfflineMode as Mock;
 const collectionMock = vi.fn();
+const routePermissionMock = vi.fn();
 
 let rootStoreMock: RootStore;
 let sub: UserSubscription;
@@ -40,11 +41,14 @@ beforeEach(() => {
 
   configure({ safeDescriptors: false });
 
+  routePermissionMock.mockReturnValue(true);
+
   rootStoreMock = {
     currentTenantId: "US_XX",
     userStore: {
       stateCode: "US_XX",
       district: "D5",
+      getRoutePermission: routePermissionMock,
     },
     user: {
       email: "test@example.com",
@@ -53,6 +57,9 @@ beforeEach(() => {
     },
     firestoreStore: {
       collection: collectionMock,
+    },
+    workflowsStore: {
+      activeSystem: "SUPERVISION",
     },
   } as unknown as RootStore;
   sub = new UserSubscription(rootStoreMock);
@@ -65,11 +72,36 @@ afterEach(() => {
 test("dataSource reflects user auth data", () => {
   sub.subscribe();
 
-  expect(collectionMock).toHaveBeenCalledWith({ key: "staff" });
+  expect(collectionMock).toHaveBeenCalledWith({ key: "supervisionStaff" });
   expect(where).toHaveBeenCalledWith("stateCode", "==", "US_XX");
   expect(where).toHaveBeenCalledWith("email", "==", "test@example.com");
   expect(limit).toHaveBeenCalledWith(1);
   expect(query).toHaveBeenCalled();
+});
+
+test("dataSource reflects active system", () => {
+  rootStoreMock.workflowsStore.activeSystem = "INCARCERATION";
+  sub.subscribe();
+
+  expect(collectionMock).toHaveBeenCalledWith({ key: "incarcerationStaff" });
+});
+
+test("dataSource reflects route permissions, supervision", () => {
+  routePermissionMock.mockImplementation(
+    (route) => route === "workflowsSupervision",
+  );
+  sub.subscribe();
+
+  expect(collectionMock).toHaveBeenCalledWith({ key: "supervisionStaff" });
+});
+
+test("dataSource reflects route permissions, facilities", () => {
+  routePermissionMock.mockImplementation(
+    (route) => route === "workflowsFacilities",
+  );
+  sub.subscribe();
+
+  expect(collectionMock).toHaveBeenCalledWith({ key: "incarcerationStaff" });
 });
 
 test("inject record for Recidiviz users", () => {
