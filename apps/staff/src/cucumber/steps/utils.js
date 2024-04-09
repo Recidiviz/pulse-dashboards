@@ -147,9 +147,20 @@ async function switchUserStateCode(stateCode) {
   await stateSelection.click();
 }
 
+async function switchToWorkflows() {
+  const avatarDropdown = await $(".UserAvatar");
+  await avatarDropdown.waitForExist();
+  await avatarDropdown.click();
+  const workflowsLink = await $(".WorkflowsLink");
+  await workflowsLink.waitForExist();
+  await browser.pause(500);
+  await waitForNavigation(workflowsLink.click());
+}
+
 export {
   allowHeadlessDownloads,
   clickOutsideElement,
+  switchToWorkflows,
   switchUserStateCode,
   waitForElementsToExist,
   waitForFileToExist,

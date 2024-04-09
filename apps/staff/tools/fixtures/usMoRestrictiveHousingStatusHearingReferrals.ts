@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { relativeFixtureDate } from "~datatypes";
+
 import { UsMoRestrictiveHousingStatusHearingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity";
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
@@ -26,7 +28,9 @@ export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRe
         externalId: "RES004",
         eligibleCriteria: {
           usMoOverdueForHearing: {
-            nextReviewDate: "2023-06-01",
+            nextReviewDate: relativeFixtureDate({
+              months: -1,
+            }),
           },
           usMoInRestrictiveHousing: {
             confinementType: "confinement type",
@@ -34,12 +38,15 @@ export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRe
         },
         ineligibleCriteria: {},
         metadata: {
-          mostRecentHearingDate: "2022-09-03",
+          mostRecentHearingDate: relativeFixtureDate({ months: -1, days: -5 }),
           mostRecentHearingType: "hearing type",
           mostRecentHearingFacility: "FACILITY NAME",
           mostRecentHearingComments: "Reason for Hearing: 30 day review",
           currentFacility: "FACILITY 01",
-          restrictiveHousingStartDate: "2022-10-01",
+          restrictiveHousingStartDate: relativeFixtureDate({
+            years: -1,
+            months: -2,
+          }),
           bedNumber: "03",
           roomNumber: "05",
           complexNumber: "2",
@@ -47,7 +54,7 @@ export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRe
           housingUseCode: "HOS",
           majorCdvs: [
             {
-              cdvDate: "2022-02-20",
+              cdvDate: relativeFixtureDate({ months: -6 }),
               cdvRule: "Rule 7.2",
             },
           ],
@@ -70,13 +77,16 @@ export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRe
           },
         },
         metadata: {
-          mostRecentHearingDate: "2022-12-04",
+          mostRecentHearingDate: relativeFixtureDate({ months: -4 }),
           mostRecentHearingType: "hearing type 2",
           mostRecentHearingFacility: "FACILITY NAME",
           mostRecentHearingComments:
             "Reason for Hearing: Protective custody investigation",
           currentFacility: "FACILITY 02",
-          restrictiveHousingStartDate: "2022-10-15",
+          restrictiveHousingStartDate: relativeFixtureDate({
+            years: -1,
+            months: -1,
+          }),
           bedNumber: "04",
           roomNumber: "06",
           complexNumber: "3",
@@ -84,21 +94,21 @@ export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRe
           housingUseCode: "HOS",
           majorCdvs: [
             {
-              cdvDate: "2022-02-20",
+              cdvDate: relativeFixtureDate({ months: -6, days: -3 }),
               cdvRule: "Rule 7.2",
             },
             {
-              cdvDate: "2022-03-30",
+              cdvDate: relativeFixtureDate({ months: -5, days: -3 }),
               cdvRule: "Rule 8.1",
             },
           ],
           cdvsSinceLastHearing: [
             {
-              cdvDate: "2022-03-15",
+              cdvDate: relativeFixtureDate({ months: -3, days: -10 }),
               cdvRule: "Rule 10.3",
             },
             {
-              cdvDate: "2022-04-10",
+              cdvDate: relativeFixtureDate({ months: -2, days: -4 }),
               cdvRule: "Rule 11.4",
             },
           ],
@@ -116,17 +126,21 @@ export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRe
         },
         ineligibleCriteria: {
           usMoOverdueForHearing: {
-            nextReviewDate: "3000-01-01", // very far in the future so it doesn't accidentally become in the past
+            nextReviewDate: relativeFixtureDate({ months: 1 }),
           },
         },
         metadata: {
-          mostRecentHearingDate: "2022-12-04",
+          mostRecentHearingDate: relativeFixtureDate({ months: -3 }),
           mostRecentHearingType: "hearing type 2",
           mostRecentHearingFacility: "FACILITY NAME",
           mostRecentHearingComments:
             "Reason for Hearing: Protective custody investigation",
           currentFacility: "FACILITY 02",
-          restrictiveHousingStartDate: "2022-10-15",
+          restrictiveHousingStartDate: relativeFixtureDate({
+            years: -1,
+            months: -6,
+            days: -14,
+          }),
           bedNumber: "04",
           roomNumber: "06",
           complexNumber: "3",
@@ -134,21 +148,21 @@ export const usMoRestrictiveHousingStatusHearingFixture: FirestoreFixture<UsMoRe
           housingUseCode: "HOS",
           majorCdvs: [
             {
-              cdvDate: "2022-02-20",
+              cdvDate: relativeFixtureDate({ years: -1, months: -3 }),
               cdvRule: "Rule 7.2",
             },
             {
-              cdvDate: "2022-03-30",
+              cdvDate: relativeFixtureDate({ months: -10, days: -1 }),
               cdvRule: "Rule 8.1",
             },
           ],
           cdvsSinceLastHearing: [
             {
-              cdvDate: "2022-03-15",
+              cdvDate: relativeFixtureDate({ months: -2, days: -10 }),
               cdvRule: "Rule 10.3",
             },
             {
-              cdvDate: "2022-04-10",
+              cdvDate: relativeFixtureDate({ months: -1, days: -20 }),
               cdvRule: "Rule 11.4",
             },
           ],

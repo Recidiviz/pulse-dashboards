@@ -277,7 +277,7 @@ function WorkflowsLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
   return (
-    <NavLink to={`/${DASHBOARD_VIEWS.workflows}`}>
+    <NavLink className="WorkflowsLink" to={`/${DASHBOARD_VIEWS.workflows}`}>
       {isMobile && <Icon kind={IconSVG.Workflows} width={20} />}
       Go to Workflows
     </NavLink>
