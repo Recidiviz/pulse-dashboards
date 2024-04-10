@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * =============================================================================
  */
+import * as Sentry from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
@@ -102,29 +103,36 @@ export abstract class TasksBase<
 
   get tasks(): SupervisionTask<SupervisionTaskType>[] {
     if (!isHydrated(this)) return [];
-    return (this.record?.tasks || []).map(
-      <T extends SupervisionTaskType>(task: SupervisionTaskRecord<T>) => {
-        if (
-          !this.rootStore.currentTenantId ||
-          !tenants[this.rootStore.currentTenantId].tasks
-        )
-          return;
+    const tenantId = this.rootStore.currentTenantId;
+    if (!tenantId || !tenants[tenantId].tasks) return [];
 
-        const TaskConstructor =
-          tenants[this.rootStore.currentTenantId].tasks?.[task.type];
+    return (this.record?.tasks || []).flatMap(
+      <T extends SupervisionTaskType>(
+        task: SupervisionTaskRecord<T>,
+      ): SupervisionTask<T>[] => {
+        const TaskConstructor = tenants[tenantId].tasks?.[task.type];
 
         if (TaskConstructor === undefined) {
-          throw new TaskValidationError(
+          // TODO(#5622): Add a test to ensure a new name does not prevent
+          // accessing defined tasks
+          const error = new TaskValidationError(
             `Missing a class constructor for task with type: ${task.type}`,
           );
+          Sentry.captureException(error, (scope) => {
+            scope.setTag("currentTenantId", tenantId);
+            return scope;
+          });
+          return [];
         }
 
-        return new TaskConstructor(
-          this.rootStore,
-          task,
-          this.person,
-          this.updates?.[task.type],
-        );
+        return [
+          new TaskConstructor(
+            this.rootStore,
+            task,
+            this.person,
+            this.updates?.[task.type],
+          ),
+        ];
       },
     );
   }
