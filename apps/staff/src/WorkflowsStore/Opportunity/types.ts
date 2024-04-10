@@ -111,7 +111,7 @@ export interface Opportunity<
   externalRequestData?: ExternalRequestUpdate<any>;
   readonly externalRequestStatusMessage?: string;
   setAutoSnooze: (
-    defaultSnoozeUntilFn: AutoSnoozeUntil["defaultSnoozeUntilFn"],
+    autoSnoozeParams: AutoSnoozeUntil["autoSnoozeParams"],
     reasons: string[],
   ) => Promise<void>;
   setManualSnooze: (days: number, reasons: string[]) => Promise<void>;

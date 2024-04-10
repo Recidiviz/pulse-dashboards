@@ -15,6 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  add,
+  nextFriday,
+  nextMonday,
+  nextSaturday,
+  nextSunday,
+  nextThursday,
+  nextTuesday,
+  nextWednesday,
+} from "date-fns";
+
 import { WorkflowsStore } from "../../../WorkflowsStore";
 import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
@@ -54,7 +65,32 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.firestoreCollection;
   }
   get snooze() {
-    return this.configurationObject.snooze;
+    const { snooze } = this.configurationObject;
+    if (snooze && snooze.autoSnoozeParams) {
+      const { autoSnoozeParams } = snooze;
+      const repeatFn = {
+        Monday: nextMonday,
+        Tuesday: nextTuesday,
+        Wednesday: nextWednesday,
+        Thursday: nextThursday,
+        Friday: nextFriday,
+        Saturday: nextSaturday,
+        Sunday: nextSunday,
+      };
+
+      return {
+        autoSnoozeParams: (snoozedOn: Date) => {
+          switch (autoSnoozeParams.type) {
+            case "snoozeDays":
+              return add(snoozedOn, { days: autoSnoozeParams.params.days });
+            case "snoozeUntil":
+              return repeatFn[autoSnoozeParams.params.weekday](snoozedOn);
+          }
+        },
+      };
+    } else {
+      return snooze;
+    }
   }
   get tabOrder() {
     return this.configurationObject.tabOrder;

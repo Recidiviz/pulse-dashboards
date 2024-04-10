@@ -17,12 +17,35 @@
 
 import { Opportunity } from "../../../../types";
 
+type snoozeDays = {
+  type: "snoozeDays";
+  params: {
+    days: number;
+  };
+};
+
+type snoozeUntil = {
+  type: "snoozeUntil";
+  params: {
+    weekday:
+      | "Monday"
+      | "Tuesday"
+      | "Wednesday"
+      | "Thursday"
+      | "Friday"
+      | "Saturday"
+      | "Sunday";
+  };
+};
+
+type AutoSnoozeFn = snoozeDays | snoozeUntil;
+
 /** Auto refers to users who have a default snooze until set.
- * defaultSnoozeUntilFn is used to calculate the default snooze until,
+ * autoSnoozeParams is used to calculate the default snooze until,
  * e.g. weekly on Mondays or 90 days.
  * */
 export type AutoSnoozeUntil = {
-  defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
+  autoSnoozeParams: AutoSnoozeFn;
   maxSnoozeDays?: never;
   defaultSnoozeDays?: never;
 };
@@ -33,7 +56,12 @@ export type AutoSnoozeUntil = {
 type ManualSnoozeUntil = {
   defaultSnoozeDays: number;
   maxSnoozeDays: number;
-  defaultSnoozeUntilFn?: never;
+  autoSnoozeParams?: never;
 };
 
-export type SnoozeConfiguration = AutoSnoozeUntil | ManualSnoozeUntil;
+export type SnoozeConfiguration =
+  | (Omit<AutoSnoozeUntil, "autoSnoozeParams"> & {
+      autoSnoozeParams: (snoozedOn: Date, opportunity?: Opportunity) => Date;
+    })
+  | ManualSnoozeUntil;
+export type SnoozeConfigurationInput = AutoSnoozeUntil | ManualSnoozeUntil;

@@ -21,6 +21,7 @@ import { PartialRecord } from "../../utils/typeUtils";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { OpportunityBase } from "./OpportunityBase";
+import { SnoozeConfigurationInput } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import { OpportunityType } from "./OpportunityType/types";
 import { DenialReasonsMap, Opportunity, OpportunityTab } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
@@ -55,26 +56,14 @@ import { usTnCustodyLevelDowngradeConfig as usTnCustodyLevelDowngrade } from "./
 import { usTnExpirationConfig as usTnExpiration } from "./UsTn/UsTnExpirationOpportunity/config";
 import { usTnSupervisionLevelDowngradeConfig as supervisionLevelDowngrade } from "./UsTn/UsTnSupervisionLevelDowngradeOpportunity/config";
 /** Auto refers to users who have a default snooze until set.
- * defaultSnoozeUntilFn is used to calculate the default snooze until,
+ * autoSnoozeParams is used to calculate the default snooze until,
  * e.g. weekly on Mondays or 90 days.
  * */
 export type AutoSnoozeUntil = {
-  defaultSnoozeUntilFn: (snoozedOn: Date, opportunity?: Opportunity) => Date;
+  autoSnoozeParams: (snoozedOn: Date, opportunity?: Opportunity) => Date;
   maxSnoozeDays?: never;
   defaultSnoozeDays?: never;
 };
-
-/** Manual refers to users who are able to set the number of days to snooze until.
- * maxSnoozeDays sets the max number of days on the slider.
- */
-type ManualSnoozeUntil = {
-  defaultSnoozeDays: number;
-  maxSnoozeDays: number;
-  defaultSnoozeUntilFn?: never;
-};
-
-/* An opportunity will either have auto or manual set, but not both */
-type SnoozeConfig = AutoSnoozeUntil | ManualSnoozeUntil;
 
 export type OpportunityHeadersBaseType = {
   opportunityText: string;
@@ -120,7 +109,8 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   inverseFeatureVariant?: FeatureVariant;
   label: string;
   firestoreCollection: string;
-  snooze?: SnoozeConfig;
+  /* An opportunity will either have auto or manual set, but not both */
+  snooze?: SnoozeConfigurationInput;
   tabOrder?: ReadonlyArray<OpportunityTab>;
   initialHeader?: string;
   callToAction: string;

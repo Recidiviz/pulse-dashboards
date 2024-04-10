@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { nextSunday, startOfWeek } from "date-fns";
+import { startOfWeek } from "date-fns";
 import { countBy } from "lodash";
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
@@ -50,7 +50,12 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
     urlSection: `overdueRestrictiveHousing${usMoOverdueRHOppVariant}`,
     label: `${segregationTypeMapping[usMoOverdueRHOppVariant]}`,
     snooze: {
-      defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
+      autoSnoozeParams: {
+        type: "snoozeUntil",
+        params: {
+          weekday: "Sunday",
+        },
+      },
     },
     dynamicEligibilityText: `resident[|s] ${fullTextPartial}`,
     callToAction,

@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import nextSunday from "date-fns/nextSunday";
-
 import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { Client } from "../../Client";
@@ -68,7 +66,12 @@ export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
   featureVariant: "usXxMockOpportunity" as FeatureVariant,
   initialHeader: "Mock initial header to search for something",
   snooze: {
-    defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
+    autoSnoozeParams: {
+      type: "snoozeUntil",
+      params: {
+        weekday: "Sunday",
+      },
+    },
   },
   dynamicEligibilityText: "client[|s] may be on or past their expiration date",
   callToAction:

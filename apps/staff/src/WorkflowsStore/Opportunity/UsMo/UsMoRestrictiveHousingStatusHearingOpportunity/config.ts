@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { nextMonday } from "date-fns";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
@@ -29,7 +27,12 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
     inverseFeatureVariant: "usMoOverdueRHPilot",
     label: "Restrictive Housing Status Hearing",
     snooze: {
-      defaultSnoozeUntilFn: (snoozedOn: Date) => nextMonday(snoozedOn),
+      autoSnoozeParams: {
+        type: "snoozeUntil",
+        params: {
+          weekday: "Monday",
+        },
+      },
     },
     dynamicEligibilityText:
       "resident[|s] [is|are] currently in Restrictive Housing",

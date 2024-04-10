@@ -386,7 +386,7 @@ export abstract class OpportunityBase<
   }
 
   async setAutoSnooze(
-    defaultSnoozeUntilFn: AutoSnoozeUntil["defaultSnoozeUntilFn"],
+    autoSnoozeParams: AutoSnoozeUntil["autoSnoozeParams"],
     reasons: string[],
   ): Promise<void> {
     const { currentUserEmail } = this.rootStore.workflowsStore;
@@ -396,7 +396,7 @@ export abstract class OpportunityBase<
     // If there are no denial reasons selected, clear the snooze values
     const deleteSnoozeField = reasons.length === 0;
 
-    const snoozeUntil = defaultSnoozeUntilFn(startOfToday(), this);
+    const snoozeUntil = autoSnoozeParams(startOfToday(), this);
 
     this.rootStore.analyticsStore.trackOpportunitySnoozed({
       opportunityType: this.type,

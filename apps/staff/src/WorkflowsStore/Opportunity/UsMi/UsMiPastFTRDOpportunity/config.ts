@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { add } from "date-fns";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { generateTabs } from "../../utils/tabUtils";
@@ -32,7 +30,12 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
     "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
   firestoreCollection: "US_MI-pastFTRDReferrals",
   snooze: {
-    defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+    autoSnoozeParams: {
+      type: "snoozeDays",
+      params: {
+        days: 30,
+      },
+    },
   },
   tabOrder: generateTabs({ isAlert: true }),
   isAlert: true,

@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { add } from "date-fns";
-
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsTnExpirationOpportunity } from "./UsTnExpirationOpportunity";
 
@@ -34,7 +32,12 @@ export const usTnExpirationConfig: OpportunityConfig<UsTnExpirationOpportunity> 
       "Review these clients and complete their auto-generated TEPE Note.",
     firestoreCollection: "US_TN-expirationReferrals",
     snooze: {
-      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+      autoSnoozeParams: {
+        type: "snoozeDays",
+        params: {
+          days: 30,
+        },
+      },
     },
     denialReasons: {
       DATE: "DATE: Expiration date is incorrect or missing",

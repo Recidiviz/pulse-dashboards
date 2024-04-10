@@ -22,7 +22,7 @@ import {
   OpportunityRequirement,
   OpportunityTab,
 } from "../../types";
-import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
+import { SnoozeConfigurationInput } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
 export type OpportunityHeadersBaseType = {
   opportunityText: string;
@@ -53,7 +53,7 @@ export interface ILocalOpportunityConfiguration {
   inverseFeatureVariant?: FeatureVariant;
   label: string;
   firestoreCollection: string;
-  snooze?: SnoozeConfiguration;
+  snooze?: SnoozeConfigurationInput;
   tabOrder?: ReadonlyArray<OpportunityTab>;
   initialHeader?: string;
   callToAction: string;

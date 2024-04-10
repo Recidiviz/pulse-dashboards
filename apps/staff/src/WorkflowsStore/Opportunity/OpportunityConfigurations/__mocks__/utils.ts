@@ -14,9 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import { nextSunday } from "date-fns";
-
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { JusticeInvolvedPerson } from "../../../types";
 import { OTHER_KEY } from "../../../utils";
@@ -46,7 +43,12 @@ export const mockLocalOpportunityConfigurationObject: ILocalOpportunityConfigura
     featureVariant: "usXxMockOpportunity" as FeatureVariant,
     initialHeader: "Mock initial header to search for something",
     snooze: {
-      defaultSnoozeUntilFn: (snoozedOn: Date) => nextSunday(snoozedOn),
+      autoSnoozeParams: {
+        type: "snoozeUntil",
+        params: {
+          weekday: "Sunday",
+        },
+      },
     },
     dynamicEligibilityText:
       "client[|s] may be on or past their expiration date",

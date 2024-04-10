@@ -144,7 +144,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       ? Math.min(daysToRelease, snoozeConfig?.defaultSnoozeDays)
       : undefined;
 
-  const defaultAutoSnoozeFn = snoozeConfig?.defaultSnoozeUntilFn;
+  const defaultAutoSnoozeFn = snoozeConfig?.autoSnoozeParams;
 
   const sliderDays = (snoozeForDays || defaultManualSnoozeDays) ?? 0;
 

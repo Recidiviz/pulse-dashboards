@@ -91,7 +91,7 @@ export const mockOpportunity: Opportunity<Client> = {
     compareBy: ["reviewStatus"],
     firestoreCollection: "US_ID-pastFTRDReferrals",
     snooze: {
-      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
+      autoSnoozeParams: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
     },
     tabOrder: [],
     isEnabled: true,

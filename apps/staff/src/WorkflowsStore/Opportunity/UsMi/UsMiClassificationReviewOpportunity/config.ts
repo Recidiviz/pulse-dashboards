@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { add } from "date-fns";
-
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
 import { UsMiClassificationReviewOpportunity } from "./UsMiClassificationReviewOpportunity";
@@ -29,7 +27,12 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
     snooze: {
       // Ideal behavior is to calculate snooze until based on the date of the last classification review
       // or when they are marked ineligible, whichever is earliest.
-      defaultSnoozeUntilFn: (snoozedOn: Date) => add(snoozedOn, { days: 180 }),
+      autoSnoozeParams: {
+        type: "snoozeDays",
+        params: {
+          days: 180,
+        },
+      },
     },
     dynamicEligibilityText:
       "client[|s] may be eligible for a supervision level downgrade",

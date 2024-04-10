@@ -588,7 +588,7 @@ describe("tracking", () => {
 });
 
 describe("setAutoSnooze", () => {
-  const defaultSnoozeUntilFn = (date: Date, o?: Opportunity) =>
+  const autoSnoozeParams = (date: Date, o?: Opportunity) =>
     add(date, { days: 5 });
 
   beforeEach(() => {
@@ -597,7 +597,7 @@ describe("setAutoSnooze", () => {
   });
 
   test("when denial reasons are deleted", async () => {
-    await opp.setAutoSnooze(defaultSnoozeUntilFn, []);
+    await opp.setAutoSnooze(autoSnoozeParams, []);
     expect(
       root.firestoreStore.updateOpportunityAutoSnooze,
     ).toHaveBeenCalledWith(
@@ -613,7 +613,7 @@ describe("setAutoSnooze", () => {
   });
 
   test("when there are denial reasons", async () => {
-    await opp.setAutoSnooze(defaultSnoozeUntilFn, ["REASON"]);
+    await opp.setAutoSnooze(autoSnoozeParams, ["REASON"]);
     expect(
       root.firestoreStore.updateOpportunityAutoSnooze,
     ).toHaveBeenCalledWith(
@@ -629,7 +629,7 @@ describe("setAutoSnooze", () => {
   });
 
   test("tracks event", async () => {
-    await opp.setAutoSnooze(defaultSnoozeUntilFn, ["REASON"]);
+    await opp.setAutoSnooze(autoSnoozeParams, ["REASON"]);
     expect(root.analyticsStore.trackOpportunitySnoozed).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityStatus: "PENDING",
