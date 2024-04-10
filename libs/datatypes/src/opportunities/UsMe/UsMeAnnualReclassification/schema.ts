@@ -34,9 +34,12 @@ export const usMeAnnualReclassificationSchema = opportunitySchemaBase
     ineligibleCriteria: z.object({}),
     formInformation: z.object({
       arrivalDate: dateStringSchema,
-      casePlanGoals: z.string(),
-      currentOffenses: z.string(),
-      programEnrollment: z.string(),
+      casePlanGoals: z.string().optional(),
+      currentOffenses: z.string().optional(),
+      programEnrollment: z.string().optional(),
+      disciplinaryReports: z.string().optional(),
+      furloughs: z.string().optional(),
+      workAssignments: z.string().optional(),
     }),
   })
   .merge(caseNotesSchema);

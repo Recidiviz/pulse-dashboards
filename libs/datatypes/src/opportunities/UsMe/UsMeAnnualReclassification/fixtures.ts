@@ -40,6 +40,8 @@ export const usMeAnnualReclassificationFixtures = {
       currentOffenses: "MURDER (M) {99999}",
       programEnrollment:
         "Completed Successfully - edu College- Bachelor's Degree - AA Liberal Studies, UMA - 2022-01-06",
+      furloughs: "2024-01-13, 2023-11-08",
+      workAssignments: "Argo Labs, Lab Technician; 2023-10-03: Present",
     },
     ineligibleCriteria: {},
   }),

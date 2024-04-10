@@ -20,7 +20,12 @@ import { ArgumentParser } from "argparse";
 import prompts from "prompts";
 import { z } from "zod";
 
-import { residentRecordSchema, usMeSCCPSchema } from "~datatypes";
+import {
+  residentRecordSchema,
+  usMeAnnualReclassificationSchema,
+  usMeMediumTrusteeSchema,
+  usMeSCCPSchema,
+} from "~datatypes";
 
 import { OpportunityType } from "../src/WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
@@ -113,6 +118,8 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usMoOverdueRestrictiveHousingReviewHearing:
     usMoOverdueRestrictiveHousingReviewHearingSchema,
   usOrEarnedDischarge: usOrEarnedDischargeSchema,
+  usMeReclassificationReview: usMeAnnualReclassificationSchema,
+  usMeMediumTrustee: usMeMediumTrusteeSchema,
 };
 
 const OTHER_SCHEMAS = {
