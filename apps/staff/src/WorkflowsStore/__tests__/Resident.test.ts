@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "../../FirestoreStore";
+import { WorkflowsResidentRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Resident } from "../Resident";
 
@@ -23,7 +23,7 @@ vi.mock("../subscriptions");
 
 let rootStore: RootStore;
 let testResident: Resident;
-let record: ResidentRecord;
+let record: WorkflowsResidentRecord;
 
 function createTestUnit() {
   testResident = new Resident(record, rootStore);
@@ -51,7 +51,10 @@ beforeEach(() => {
   };
 });
 
-const PROPERTIES_FROM_RECORD: [keyof Resident, keyof ResidentRecord][] = [
+const PROPERTIES_FROM_RECORD: [
+  keyof Resident,
+  keyof WorkflowsResidentRecord,
+][] = [
   ["custodyLevel", "custodyLevel"],
   ["facilityId", "facilityId"],
   ["unitId", "unitId"],

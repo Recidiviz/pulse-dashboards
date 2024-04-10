@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,20 @@
 
 import { z } from "zod";
 
-import { fullNameSchema } from "~datatypes";
+import { fullNameSchema } from "../utils/fullNameSchema";
 
-import { addDisplayName } from "./schemaHelpers";
-import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
+export const justiceInvolvedPersonRecordSchema = z.object({
+  personExternalId: z.string(),
+  pseudonymizedId: z.string(),
+  displayId: z.string(),
+  stateCode: z.string(),
+  personName: fullNameSchema,
+  officerId: z.string(),
+});
 
-export const supervisionOfficerSchema = z
-  .object({
-    fullName: fullNameSchema,
-    externalId: z.string(),
-    district: z.string().nullable(),
-    caseloadType: z.string().nullable(),
-    pseudonymizedId: z.string(),
-    supervisorExternalId: z.string(),
-    outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
-  })
-  .transform(addDisplayName);
-
-export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
-export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;
+/**
+ * Data from the Recidiviz data platform about an incarcerated person
+ */
+export type JusticeInvolvedPersonRecord = z.infer<
+  typeof justiceInvolvedPersonRecordSchema
+>;

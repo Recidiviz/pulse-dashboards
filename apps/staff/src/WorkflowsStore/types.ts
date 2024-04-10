@@ -15,14 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FullName } from "~datatypes";
+
 import { StaffFilter } from "../core/models/types";
-import { FullName } from "../core/types/personMetadata";
 import {
   ClientRecord,
   CombinedUserRecord,
-  JusticeInvolvedPersonRecord,
   PersonUpdateRecord,
-  ResidentRecord,
+  WorkflowsJusticeInvolvedPersonRecord,
+  WorkflowsResidentRecord,
 } from "../FirestoreStore";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { Client } from "./Client";
@@ -106,12 +107,12 @@ export type JusticeInvolvedPerson = {
 };
 
 export type PersonRecordType =
-  | JusticeInvolvedPersonRecord
+  | WorkflowsJusticeInvolvedPersonRecord
   | ClientRecord
-  | ResidentRecord;
+  | WorkflowsResidentRecord;
 
 export type PersonClassForRecord<RecordType extends PersonRecordType> =
-  RecordType extends ResidentRecord
+  RecordType extends WorkflowsResidentRecord
     ? Resident
     : RecordType extends ClientRecord
       ? Client
@@ -120,7 +121,7 @@ export type PersonClassForRecord<RecordType extends PersonRecordType> =
 export type OpportunityTypeForRecord<PersonRecord extends PersonRecordType> =
   PersonRecord extends ClientRecord
     ? SupervisionOpportunityType
-    : PersonRecord extends ResidentRecord
+    : PersonRecord extends WorkflowsResidentRecord
       ? IncarcerationOpportunityType
       : never;
 

@@ -27,8 +27,9 @@ import numeral from "numeral";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Pluralize from "pluralize";
 
+import { FullName } from "~datatypes";
+
 import { Dimension } from "../core/types/dimensions";
-import { FullName } from "../core/types/personMetadata";
 import { translate } from "./i18nSettings";
 
 const CRYPTO_PASSPHRASE = import.meta.env.VITE_CRYPTO_PASSPHRASE || "";

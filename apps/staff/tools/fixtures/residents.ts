@@ -17,10 +17,10 @@
 
 import { relativeFixtureDate } from "~datatypes";
 
-import { ResidentRecord } from "../../src/FirestoreStore/types";
+import { WorkflowsResidentRecord } from "../../src/FirestoreStore/types";
 import { FirestoreFixture } from "./utils";
 
-const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
+const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   {
     allEligibleOpportunities: ["usIdExpandedCRC"],
     officerId: "ID_CASE_MANAGER_1",
@@ -520,7 +520,7 @@ const data: Omit<ResidentRecord, "personType" | "recordId">[] = [
 ];
 
 export const residentsData: FirestoreFixture<
-  Omit<ResidentRecord, "personType" | "recordId">
+  Omit<WorkflowsResidentRecord, "personType" | "recordId">
 > = {
   data,
   idFunc: (r) => r.personExternalId,

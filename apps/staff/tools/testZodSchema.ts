@@ -20,7 +20,7 @@ import { ArgumentParser } from "argparse";
 import prompts from "prompts";
 import { z } from "zod";
 
-import { usMeSCCPSchema } from "~datatypes";
+import { residentRecordSchema, usMeSCCPSchema } from "~datatypes";
 
 import { OpportunityType } from "../src/WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
@@ -74,7 +74,7 @@ function getDb() {
 
 const db = getDb();
 
-const SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
+const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   compliantReporting: compliantReportingSchema,
   earnedDischarge: usIdEarnedDischargeSchema,
   LSU: usIdLsuSchema,
@@ -115,17 +115,38 @@ const SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usOrEarnedDischarge: usOrEarnedDischargeSchema,
 };
 
-async function testCollection(
-  opportunityType: OpportunityType,
-  limit?: number,
-) {
-  const schema = SCHEMAS[opportunityType];
-  if (!schema) {
-    throw new Error(`No schema found for ${opportunityType}`);
+const OTHER_SCHEMAS = {
+  residents: {
+    schema: residentRecordSchema,
+    firestoreCollection: "residents",
+  },
+};
+
+type SchemaKey = keyof typeof OPPORTUNITY_SCHEMAS | keyof typeof OTHER_SCHEMAS;
+
+function getTestParams(key: SchemaKey): {
+  schema: z.ZodTypeAny;
+  firestoreCollection: string;
+} {
+  if (key in OPPORTUNITY_SCHEMAS) {
+    const schema = OPPORTUNITY_SCHEMAS[key as OpportunityType];
+    if (!schema) {
+      throw new Error(`No schema found for ${key}`);
+    }
+    const { firestoreCollection } = OPPORTUNITY_CONFIGS[key as OpportunityType];
+    return { schema, firestoreCollection };
   }
-  const coll = db.collection(
-    OPPORTUNITY_CONFIGS[opportunityType].firestoreCollection,
-  );
+  if (key in OTHER_SCHEMAS) {
+    return OTHER_SCHEMAS[key as keyof typeof OTHER_SCHEMAS];
+  }
+  throw new Error(`No schema found for ${key}`);
+}
+
+const ALL_SCHEMAS = { ...OTHER_SCHEMAS, ...OPPORTUNITY_SCHEMAS };
+
+async function testCollection(opportunityType: SchemaKey, limit?: number) {
+  const { schema, firestoreCollection } = getTestParams(opportunityType);
+  const coll = db.collection(firestoreCollection);
   const query = limit ? coll.limit(limit) : coll;
 
   let succeeded = 0;
@@ -144,28 +165,28 @@ async function testCollection(
 }
 
 async function automatic() {
-  Object.keys(SCHEMAS).forEach(async (oppType) => {
+  Object.keys(ALL_SCHEMAS).forEach(async (schemaKey) => {
     const { failures, ...result } = await testCollection(
-      oppType as OpportunityType,
+      schemaKey as SchemaKey,
     );
     // don't print failures so we don't leave PII in the github logs
-    console.log(oppType, result);
+    console.log(schemaKey, result);
     if (result.failed > 0) process.exitCode = 1;
   });
 }
 
 async function manual(args: Args) {
-  let opportunity;
+  let schemaKey;
   let limit;
-  if (args.opportunity) {
-    ({ opportunity, limit } = args);
+  if (args.schemaKey) {
+    ({ schemaKey, limit } = args);
   } else {
-    ({ opportunity, limit } = await prompts([
+    ({ schemaKey, limit } = await prompts([
       {
         type: "select",
-        name: "opportunity",
+        name: "schemaKey",
         message: `schema you want to test against ${FIREBASE_PROJECT}`,
-        choices: Object.keys(SCHEMAS).map((k) => ({
+        choices: Object.keys(ALL_SCHEMAS).map((k) => ({
           title: k,
           value: k,
         })),
@@ -179,16 +200,16 @@ async function manual(args: Args) {
     ]));
   }
 
-  if (!(opportunity in SCHEMAS)) {
+  if (!(schemaKey in ALL_SCHEMAS)) {
     console.error("Unrecognized collection name");
   }
 
   const { failures, ...result } = await testCollection(
-    opportunity as OpportunityType,
+    schemaKey as SchemaKey,
     limit,
   );
 
-  if (result.failed > 0) {
+  if (result.failed) {
     console.log(JSON.stringify(failures, null, 2));
     process.exitCode = 1;
   }
@@ -202,13 +223,13 @@ const parser = new ArgumentParser({
 parser.add_argument("-a", "--all", {
   dest: "all",
   action: "store_true",
-  help: "Test all opportunities",
+  help: "Test all schemas",
 });
 
-parser.add_argument("-o", "--opportunity", {
-  dest: "opportunity",
+parser.add_argument("-s", "--schema", {
+  dest: "schemaKey",
   default: null,
-  help: "Test OPPORTUNITY",
+  help: "Test SCHEMA",
 });
 
 parser.add_argument("-l", "--limit", {
@@ -220,7 +241,7 @@ parser.add_argument("-l", "--limit", {
 
 type Args = {
   all: boolean;
-  opportunity?: string;
+  schemaKey?: string;
   limit?: number;
 };
 

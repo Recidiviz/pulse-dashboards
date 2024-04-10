@@ -17,7 +17,10 @@
 import { parseISO } from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord, ResidentRecord } from "../../../../FirestoreStore";
+import {
+  ClientRecord,
+  WorkflowsResidentRecord,
+} from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
 import {
   UsMeEarlyTerminationReferralRecord,
@@ -25,7 +28,7 @@ import {
   UsMeWorkReleaseReferralRecord,
 } from "..";
 
-export const usMePersonRecord: ResidentRecord = {
+export const usMePersonRecord: WorkflowsResidentRecord = {
   recordId: "us_me_111",
   personType: "RESIDENT",
   stateCode: "US_ME",
@@ -47,7 +50,7 @@ export const usMePersonRecord: ResidentRecord = {
   ],
 };
 
-export const usMePersonRecordShorterSentence: ResidentRecord = {
+export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
   recordId: "us_me_112",
   personType: "RESIDENT",
   stateCode: "US_ME",

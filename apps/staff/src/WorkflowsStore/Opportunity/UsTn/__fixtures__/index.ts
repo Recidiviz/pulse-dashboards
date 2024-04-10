@@ -19,7 +19,7 @@ import { parseISO } from "date-fns";
 import {
   ClientRecord,
   CombinedUserRecord,
-  ResidentRecord,
+  WorkflowsResidentRecord,
 } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
 import { UsTnCustodyLevelDowngradeReferralRecord } from "../..";
@@ -76,7 +76,7 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const residentRecordBase: ResidentRecord = {
+export const residentRecordBase: WorkflowsResidentRecord = {
   recordId: "us_tn_002",
   personName: {
     givenNames: "BARNEY",
@@ -88,7 +88,7 @@ export const residentRecordBase: ResidentRecord = {
   stateCode: "US_TN",
   officerId: "CASEMANAGER1",
   custodyLevel: "MEDIUM",
-  releaseDate: dateToTimestamp("2024-12-31"),
+  releaseDate: "2024-12-31",
   allEligibleOpportunities: [],
   personType: "RESIDENT",
 };
@@ -411,10 +411,11 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
     },
   };
 
-export const UsTnCustodyLevelDowngradeEligibleResidentRecord: ResidentRecord = {
-  ...residentRecordBase,
-  allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
-};
+export const UsTnCustodyLevelDowngradeEligibleResidentRecord: WorkflowsResidentRecord =
+  {
+    ...residentRecordBase,
+    allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
+  };
 
 export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDowngradeReferralRecord =
   {
@@ -465,7 +466,7 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
     caseNotes: {},
   };
 
-export const UsTnAnnualReclassificationEligibleResidentRecord: ResidentRecord =
+export const UsTnAnnualReclassificationEligibleResidentRecord: WorkflowsResidentRecord =
   {
     ...residentRecordBase,
     allEligibleOpportunities: ["usTnAnnualReclassification"],

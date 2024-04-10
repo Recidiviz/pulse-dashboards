@@ -17,7 +17,7 @@
 
 import { uniqBy } from "lodash";
 
-import { PortionServedDates, ResidentRecord } from "../FirestoreStore";
+import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
@@ -75,21 +75,21 @@ const createResidentOpportunity: OpportunityFactory<
   return new residentialOpportunityConstructors[type](person);
 };
 
-export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
-  constructor(record: ResidentRecord, rootStore: RootStore) {
+export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord> {
+  constructor(record: WorkflowsResidentRecord, rootStore: RootStore) {
     super(record, rootStore, createResidentOpportunity);
   }
 
   get facilityId(): string | undefined {
-    return this.record.facilityId;
+    return this.record.facilityId ?? undefined;
   }
 
   get unitId(): string | undefined {
-    return this.record.unitId;
+    return this.record.unitId ?? undefined;
   }
 
   get custodyLevel(): string | undefined {
-    return this.record.custodyLevel;
+    return this.record.custodyLevel ?? undefined;
   }
 
   get admissionDate(): Date | undefined {

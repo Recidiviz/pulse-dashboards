@@ -26,9 +26,9 @@ import FirestoreStore, {
   ClientRecord,
   CombinedUserRecord,
   MilestonesMessage,
-  ResidentRecord,
   TextMessageStatus,
   UserUpdateRecord,
+  WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -206,7 +206,7 @@ function populateClients(clients: ClientRecord[]): void {
   });
 }
 
-function populateResidents(residents: ResidentRecord[]): void {
+function populateResidents(residents: WorkflowsResidentRecord[]): void {
   runInAction(() => {
     workflowsStore.residentsSubscription.data = residents;
     workflowsStore.residentsSubscription.hydrationState = {
@@ -511,7 +511,7 @@ describe("staffSubscription", () => {
           mockSupervisionOfficers;
       });
       expect(
-        workflowsStore.staffSubscription?.map((s) => s.data).flat()
+        workflowsStore.staffSubscription?.map((s) => s.data).flat(),
       ).toEqual([...mockSupervisionOfficers, ...mockIncarcerationOfficers]);
     });
   });

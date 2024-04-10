@@ -17,7 +17,9 @@
 
 import { z } from "zod";
 
-import { addDisplayName, fullNameSchema } from "./schemaHelpers";
+import { fullNameSchema } from "~datatypes";
+
+import { addDisplayName } from "./schemaHelpers";
 
 export const supervisionOfficerSupervisorSchema = z
   .object({

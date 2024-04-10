@@ -18,16 +18,10 @@
 import { Dictionary, mapKeys, toUpper } from "lodash";
 import { z } from "zod";
 
-import { FullName } from "../../core/types/personMetadata";
+import { FullName } from "~datatypes";
 
 export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
 export type TargetStatus = z.infer<typeof targetStatusSchema>;
-
-export const fullNameSchema = z.object({
-  givenNames: z.string().optional(),
-  middleNames: z.string().optional(),
-  surname: z.string().optional(),
-});
 
 export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
   schema: Schema,

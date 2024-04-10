@@ -20,8 +20,8 @@ import {
   CombinedUserRecord,
   IncarcerationStaffRecord,
   LocationRecord,
-  ResidentRecord,
   SupervisionStaffRecord,
+  WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { SupervisionOpportunityType } from "../Opportunity/OpportunityConfigs";
 import { dateToTimestamp } from "../utils";
@@ -264,7 +264,7 @@ export const mockClients = [
   lsuEligibleClient,
 ];
 
-export const mockResidents: ResidentRecord[] = [
+export const mockResidents: WorkflowsResidentRecord[] = [
   {
     recordId: "999",
     personType: "RESIDENT",

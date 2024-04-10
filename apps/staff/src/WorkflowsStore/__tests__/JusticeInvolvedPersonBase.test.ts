@@ -25,9 +25,9 @@ import {
 import { MockedFunction } from "vitest";
 
 import {
-  JusticeInvolvedPersonRecord,
   PersonUpdateRecord,
   StaffRecord,
+  WorkflowsJusticeInvolvedPersonRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
@@ -41,7 +41,7 @@ vi.mock("../subscriptions");
 
 let rootStoreMock: RootStore;
 let testPerson: JusticeInvolvedPersonBase;
-let record: JusticeInvolvedPersonRecord;
+let record: WorkflowsJusticeInvolvedPersonRecord;
 let mockOpportunityTypes: IObservableValue<OpportunityType[]>;
 
 function createTestUnit(
@@ -96,7 +96,7 @@ afterEach(() => {
 
 const PROPERTIES_FROM_RECORD: [
   keyof JusticeInvolvedPersonBase,
-  keyof JusticeInvolvedPersonRecord,
+  keyof WorkflowsJusticeInvolvedPersonRecord,
 ][] = [
   ["externalId", "personExternalId"],
   ["assignedStaffId", "officerId"],

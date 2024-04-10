@@ -18,9 +18,9 @@
 import {
   ClientRecord,
   MilestoneType,
-  ResidentRecord,
   StaffRecord,
   SupervisionTaskUpdate,
+  WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
@@ -108,7 +108,7 @@ export type SnoozeTaskConfig = {
 };
 
 export type ResidentSearchFields = Pick<
-  ResidentRecord,
+  WorkflowsResidentRecord,
   "officerId" | "facilityId" | "facilityUnitId"
 >;
 

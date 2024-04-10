@@ -102,7 +102,7 @@ export function fieldToDate(field: Timestamp | string): Date {
 }
 
 export function optionalFieldToDate(
-  field?: Timestamp | string,
+  field?: Timestamp | string | null,
 ): Date | undefined {
   if (field) return fieldToDate(field);
 }

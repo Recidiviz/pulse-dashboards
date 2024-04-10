@@ -30,15 +30,16 @@ import {
   values,
 } from "mobx";
 
+import { FullName } from "~datatypes";
+
 import { isHydrated, isHydrationFinished } from "../core/models/utils";
-import { FullName } from "../core/types/personMetadata";
 import {
   ContactMethodType,
-  JusticeInvolvedPersonRecord,
   MilestonesMessage,
   PersonUpdateRecord,
   PersonUpdateType,
   StaffRecord,
+  WorkflowsJusticeInvolvedPersonRecord,
 } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
 import { humanReadableTitleCase } from "../utils";
@@ -56,7 +57,7 @@ import {
 } from "./types";
 
 export class JusticeInvolvedPersonBase<
-  RecordType extends PersonRecordType = JusticeInvolvedPersonRecord,
+  RecordType extends PersonRecordType = WorkflowsJusticeInvolvedPersonRecord,
 > implements JusticeInvolvedPerson
 {
   rootStore: RootStore;

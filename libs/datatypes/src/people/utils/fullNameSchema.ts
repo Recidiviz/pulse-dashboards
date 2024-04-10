@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,13 @@
 
 import { z } from "zod";
 
-import { fullNameSchema } from "~datatypes";
+export const fullNameSchema = z.object({
+  givenNames: z.string().optional(),
+  middleNames: z.string().optional(),
+  surname: z.string().optional(),
+});
 
-import { addDisplayName } from "./schemaHelpers";
-import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
-
-export const supervisionOfficerSchema = z
-  .object({
-    fullName: fullNameSchema,
-    externalId: z.string(),
-    district: z.string().nullable(),
-    caseloadType: z.string().nullable(),
-    pseudonymizedId: z.string(),
-    supervisorExternalId: z.string(),
-    outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
-  })
-  .transform(addDisplayName);
-
-export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
-export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;
+/**
+ * Recidiviz standard format for storing names as separate parts
+ */
+export type FullName = z.infer<typeof fullNameSchema>;

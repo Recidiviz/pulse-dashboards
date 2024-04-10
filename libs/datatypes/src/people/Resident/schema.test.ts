@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type FullName = {
-  givenNames?: string;
-  middleNames?: string;
-  surname?: string;
-};
+import { allResidents } from "./fixture";
+import { residentRecordSchema } from "./schema";
+
+test.each(allResidents.map((f) => f.input))(
+  "schema for $stateCode $personExternalId",
+  (input) => {
+    expect(residentRecordSchema.parse(input)).toMatchSnapshot();
+  },
+);

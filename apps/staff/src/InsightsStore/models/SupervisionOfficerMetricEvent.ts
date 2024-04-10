@@ -17,9 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchemaWithoutTimeShift } from "~datatypes";
-
-import { fullNameSchema } from "./schemaHelpers";
+import { dateStringSchemaWithoutTimeShift, fullNameSchema } from "~datatypes";
 
 export const supervisionOfficerMetricEventSchema = z.object({
   metricId: z.string(),

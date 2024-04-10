@@ -64,9 +64,9 @@ import {
   MilestonesMessage,
   OpportunityUpdateWithForm,
   PersonUpdateType,
-  ResidentRecord,
   SupervisionTaskUpdate,
   UsTnExpirationOpportunityUpdate,
+  WorkflowsResidentRecord,
 } from "./types";
 
 function getFirestoreProjectId() {
@@ -187,7 +187,7 @@ export default class FirestoreStore {
   async getResident(
     residentId: string,
     stateCode: string,
-  ): Promise<ResidentRecord | undefined> {
+  ): Promise<WorkflowsResidentRecord | undefined> {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
       query(
@@ -201,7 +201,10 @@ export default class FirestoreStore {
     const result = results.docs[0];
     if (result.exists())
       return {
-        ...(result.data() as Omit<ResidentRecord, "recordId" | "personType">),
+        ...(result.data() as Omit<
+          WorkflowsResidentRecord,
+          "recordId" | "personType"
+        >),
         recordId: result.id,
         personType: "RESIDENT",
       };

@@ -19,8 +19,9 @@
 import { FieldValue } from "@google-cloud/firestore";
 import type { Timestamp } from "firebase/firestore";
 
+import { JusticeInvolvedPersonRecord, ResidentRecord } from "~datatypes";
+
 import { SystemId } from "../core/models/types";
-import { FullName } from "../core/types/personMetadata";
 import {
   IncarcerationOpportunityType,
   SupervisionOpportunityType,
@@ -156,18 +157,13 @@ export type Milestone = {
   text: string;
 };
 
-export type JusticeInvolvedPersonRecord = {
-  recordId: string;
-  personExternalId: string;
-  pseudonymizedId: string;
-  displayId: string;
-  stateCode: string;
-  personName: FullName;
-  allEligibleOpportunities:
-    | SupervisionOpportunityType[]
-    | IncarcerationOpportunityType[];
-  officerId: string;
-};
+export type WorkflowsJusticeInvolvedPersonRecord =
+  JusticeInvolvedPersonRecord & {
+    recordId: string;
+    allEligibleOpportunities:
+      | SupervisionOpportunityType[]
+      | IncarcerationOpportunityType[];
+  };
 
 export type ClientEmployer = {
   name: string;
@@ -177,7 +173,7 @@ export type ClientEmployer = {
 /**
  * Data from the Recidiviz data platform about a person on supervision
  */
-export type ClientRecord = JusticeInvolvedPersonRecord & {
+export type ClientRecord = WorkflowsJusticeInvolvedPersonRecord & {
   personType: "CLIENT";
   district?: string;
   supervisionType?: string;
@@ -201,23 +197,17 @@ export type ClientRecord = JusticeInvolvedPersonRecord & {
 /**
  * Data from the Recidiviz data platform about an incarcerated person
  */
-export type ResidentRecord = JusticeInvolvedPersonRecord & {
-  personType: "RESIDENT";
-  facilityId?: string;
-  unitId?: string;
-  facilityUnitId?: string;
-  custodyLevel?: string;
-  admissionDate?: Timestamp | string;
-  releaseDate?: Timestamp | string;
-  allEligibleOpportunities: IncarcerationOpportunityType[];
-  portionServedNeeded?: "1/2" | "2/3";
-  sccpEligibilityDate?: Timestamp | string;
-};
+export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
+  ResidentRecord & {
+    allEligibleOpportunities: IncarcerationOpportunityType[];
+    portionServedNeeded?: "1/2" | "2/3";
+    sccpEligibilityDate?: Timestamp | string;
+  };
 
 export type LocationRecord = {
   stateCode: string;
   system: SystemId;
-  idType: keyof ClientRecord | keyof ResidentRecord;
+  idType: keyof ClientRecord | keyof WorkflowsResidentRecord;
   id: string;
   name: string;
 };

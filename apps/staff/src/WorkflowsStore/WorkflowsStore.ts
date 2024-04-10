@@ -64,11 +64,11 @@ import {
   IncarcerationStaffRecord,
   LocationRecord,
   MilestonesMessage,
-  ResidentRecord,
   StaffRecord,
   SupervisionStaffRecord,
   UserMetadata,
   UserUpdateRecord,
+  WorkflowsResidentRecord,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
@@ -130,7 +130,7 @@ export class WorkflowsStore implements Hydratable {
 
   clientsSubscription: CaseloadSubscription<ClientRecord>;
 
-  residentsSubscription: CaseloadSubscription<ResidentRecord>;
+  residentsSubscription: CaseloadSubscription<WorkflowsResidentRecord>;
 
   locationsSubscription: LocationSubscription;
 
@@ -169,11 +169,12 @@ export class WorkflowsStore implements Hydratable {
       { key: "clients" },
       "CLIENT",
     );
-    this.residentsSubscription = new CaseloadSubscription<ResidentRecord>(
-      this,
-      { key: "residents" },
-      "RESIDENT",
-    );
+    this.residentsSubscription =
+      new CaseloadSubscription<WorkflowsResidentRecord>(
+        this,
+        { key: "residents" },
+        "RESIDENT",
+      );
     this.userSubscription = new UserSubscription(rootStore);
     this.locationsSubscription = new LocationSubscription(rootStore);
     // persistent storage for justice-involved persons across subscription changes
@@ -359,7 +360,10 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
-  updatePerson(record: ResidentRecord, PersonClass: typeof Resident): void;
+  updatePerson(
+    record: WorkflowsResidentRecord,
+    PersonClass: typeof Resident,
+  ): void;
 
   updatePerson(record: ClientRecord, PersonClass: typeof Client): void;
 
@@ -380,7 +384,9 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
-  updateCaseload(newPersons: (ClientRecord | ResidentRecord)[] = []): void {
+  updateCaseload(
+    newPersons: (ClientRecord | WorkflowsResidentRecord)[] = [],
+  ): void {
     newPersons.forEach((newRecord) => {
       if (newRecord.personType === "CLIENT") {
         this.updatePerson(newRecord, Client);
@@ -495,7 +501,7 @@ export class WorkflowsStore implements Hydratable {
     return this.activeSystemConfig?.searchType;
   }
 
-  get searchField(): keyof ClientRecord | keyof ResidentRecord {
+  get searchField(): keyof ClientRecord | keyof WorkflowsResidentRecord {
     const searchField = this.activeSystemConfig?.searchField;
     if (searchField) {
       return searchField;
@@ -533,10 +539,10 @@ export class WorkflowsStore implements Hydratable {
 
   get caseloadSubscription():
     | CaseloadSubscription<ClientRecord>[]
-    | CaseloadSubscription<ResidentRecord>[]
+    | CaseloadSubscription<WorkflowsResidentRecord>[]
     | (
         | CaseloadSubscription<ClientRecord>
-        | CaseloadSubscription<ResidentRecord>
+        | CaseloadSubscription<WorkflowsResidentRecord>
       )[]
     | undefined {
     switch (this.activeSystem) {
@@ -882,7 +888,7 @@ export class WorkflowsStore implements Hydratable {
 
   get activeSystemConfig():
     | WorkflowsSystemConfig<ClientRecord>
-    | WorkflowsSystemConfig<ResidentRecord>
+    | WorkflowsSystemConfig<WorkflowsResidentRecord>
     | undefined {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId || !this.activeSystem || this.activeSystem === "ALL") {

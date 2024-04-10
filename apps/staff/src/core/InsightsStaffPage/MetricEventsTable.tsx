@@ -20,6 +20,8 @@ import { ComponentType, useEffect, useRef, useState } from "react";
 import { Column } from "react-table";
 import styled from "styled-components/macro";
 
+import { FullName } from "~datatypes";
+
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerMetricEvent } from "../../InsightsStore/models/SupervisionOfficerMetricEvent";
@@ -28,7 +30,6 @@ import { formatDate } from "../../utils";
 import InsightsClientDetailsPanel from "../InsightsClientDetailsPanel";
 import InsightsTable from "../InsightsTable";
 import ModelHydrator from "../ModelHydrator";
-import { FullName } from "../types/personMetadata";
 
 const Wrapper = styled.div`
   max-height: 555px;

@@ -1,0 +1,101 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for 'US_ME' 'RES001' 1`] = `
+{
+  "admissionDate": "2013-11-16",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES001",
+  "facilityId": "FACILITY NAME",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES001",
+  "personName": {
+    "givenNames": "First",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres001",
+  "releaseDate": "2024-11-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_ME' 'RES002' 1`] = `
+{
+  "admissionDate": "2018-02-17",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES002",
+  "facilityId": "FACILITY NAME",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES002",
+  "personName": {
+    "givenNames": "Second",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "releaseDate": "2024-02-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_ME' 'RES003' 1`] = `
+{
+  "admissionDate": "2019-06-18",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES003",
+  "facilityId": "FACILITY NAME",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES003",
+  "personName": {
+    "givenNames": "Third",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres003",
+  "releaseDate": "2023-12-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_ME' 'RES004' 1`] = `
+{
+  "admissionDate": "2019-05-18",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES004",
+  "facilityId": "FACILITY NAME",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES004",
+  "personName": {
+    "givenNames": "Fourth",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres004",
+  "releaseDate": "2024-01-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_ME' 'RES005' 1`] = `
+{
+  "admissionDate": "2020-05-16",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES005",
+  "facilityId": "FACILITY NAME",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES005",
+  "personName": {
+    "givenNames": "Fifth",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres005",
+  "releaseDate": "2024-05-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT B",
+}
+`;
