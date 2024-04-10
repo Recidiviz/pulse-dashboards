@@ -139,7 +139,6 @@ export const FormEarlyTermination: React.FC = () => {
         <FormHeading
           title={`MOTION TO \n TERMINATE PROBATION`}
           saNumberTitle="SA No."
-          sfnNumber={9281}
         />
         <br />
         <section>
@@ -255,7 +254,10 @@ export const FormEarlyTermination: React.FC = () => {
           <FormParagraph>I concur,</FormParagraph>
           <Spacer size={176} />
           <section>
-            <FormManualEntry size={30} />
+            <DOCXFormInput
+              name="probationOfficerFullName"
+              placeholder="Probation officer name"
+            />
             <br />
             Probation Officer
           </section>

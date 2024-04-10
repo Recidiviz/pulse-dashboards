@@ -61,14 +61,9 @@ const LineItemLeft = styled(LineItem).attrs({
 type FormHeadingProps = {
   title: string;
   saNumberTitle: string;
-  sfnNumber: number;
 };
 
-const FormHeading: React.FC<FormHeadingProps> = ({
-  title,
-  saNumberTitle,
-  sfnNumber,
-}) => {
+const FormHeading: React.FC<FormHeadingProps> = ({ title, saNumberTitle }) => {
   return (
     <FormHeadingContainer>
       <FormHeadingSection>
@@ -135,7 +130,6 @@ const FormHeading: React.FC<FormHeadingProps> = ({
           <LineItem>
             <Title style={{ color: "gray" }}>{title.toUpperCase()}</Title>
           </LineItem>
-          <LineItem>SFN {sfnNumber}</LineItem>
         </FormHeadingMotionSection>
       </FormHeadingSection>
     </FormHeadingContainer>

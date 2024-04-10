@@ -36,7 +36,6 @@ export const FormEarlyTerminationDeferred: React.FC = () => {
         <FormHeading
           title="Petition to withdraw plea of guilty"
           saNumberTitle="SA File No."
-          sfnNumber={9278}
         />
         <br />
         <section>
@@ -143,7 +142,6 @@ export const FormEarlyTerminationDeferred: React.FC = () => {
         <FormHeading
           title="Order to withdraw plea of guilty"
           saNumberTitle="SA File No."
-          sfnNumber={9278}
         />
         <br />
         <SectionHeading>ORDER OF THE COURT</SectionHeading>
