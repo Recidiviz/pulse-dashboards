@@ -36,6 +36,8 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
     sidebarComponents: ["ClientProfileDetails"],
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_PA,
     denialReasons: {
+      "FINES & FEES":
+        "Client is not making efforts to reduce financial obligations",
       "FELONY DRUG":
         "Client is currently being supervised for an ineligible felony drug offense",
       Other: "Other, please specify a reason",
