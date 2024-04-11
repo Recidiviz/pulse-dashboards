@@ -3,7 +3,7 @@
 exports[`fully eligible > requirements met 1`] = `
 [
   {
-    "text": "Client has not incurred high sanctions within the last year",
+    "text": "Has not incurred high sanctions within the last year",
   },
   {
     "text": "Has fulfilled treatment and special condition requirements",

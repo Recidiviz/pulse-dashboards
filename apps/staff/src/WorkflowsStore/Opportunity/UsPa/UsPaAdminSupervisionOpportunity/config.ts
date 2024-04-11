@@ -26,8 +26,7 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
     label: "Administrative Supervision",
     dynamicEligibilityText:
       "client[|s] may be eligible for transfer to Adminstrative Supervision",
-    callToAction:
-      "Review clients who may be eligible for Adminstrative Supervision and complete the DC-P 402 checklist",
+    callToAction: "Review clients and complete the DC-P 402 checklist",
     firestoreCollection: "US_PA-adminSupervisionReferrals",
     snooze: {
       defaultSnoozeDays: 30,
@@ -44,7 +43,7 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
     },
     eligibleCriteriaCopy: {
       usPaNoHighSanctionsInPastYear: {
-        text: "Client has not incurred high sanctions within the last year",
+        text: "Has not incurred high sanctions within the last year",
       },
       usPaFulfilledRequirements: {
         text: "Has fulfilled treatment and special condition requirements",
