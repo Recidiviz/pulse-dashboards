@@ -18,44 +18,82 @@
  */
 // Contact compliance rules taken from:
 // https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/pipeline/utils/state_utils/us_id/us_id_supervision_compliance.py
+import { SupervisionTasksCaseType } from "./types";
+
 export const US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE: Record<
-  string,
-  { contacts: number; days: number }
+  SupervisionTasksCaseType,
+  Record<string, { contacts: number; days: number }>
 > = {
-  MINIMUM: {
-    contacts: 1,
-    days: 180,
+  GENERAL: {
+    MINIMUM: {
+      contacts: 1,
+      days: 180,
+    },
+    MEDIUM: {
+      contacts: 1,
+      days: 45,
+    },
+    HIGH: {
+      contacts: 1,
+      days: 15,
+    },
+    MAXIMUM: {
+      contacts: 1,
+      days: 15,
+    },
   },
-  MEDIUM: {
-    contacts: 2,
-    days: 90,
-  },
-  HIGH: {
-    contacts: 2,
-    days: 30,
-  },
-  MAXIMUM: {
-    contacts: 2,
-    days: 30,
+  SEX_OFFENSE: {
+    MINIMUM: {
+      contacts: 1,
+      days: 90,
+    },
+    MEDIUM: {
+      contacts: 1,
+      days: 30,
+    },
+    HIGH: {
+      contacts: 2,
+      days: 30,
+    },
+    MAXIMUM: {
+      contacts: 2,
+      days: 30,
+    },
   },
 };
 
 // Home visit compliance rules taken from:
 // https://drive.google.com/file/d/1qx1S0Z8zfNe53YBImW4As-LoeKH0-YEl/view
 export const US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE: Record<
-  string,
-  { contacts: number; days: number }
+  SupervisionTasksCaseType,
+  Record<string, { contacts: number; days: number }>
 > = {
-  MINIMUM: {
-    contacts: 1,
-    days: 365,
+  GENERAL: {
+    MINIMUM: {
+      contacts: 1,
+      days: 365,
+    },
+    MEDIUM: {
+      contacts: 1,
+      days: 365,
+    },
+    HIGH: {
+      contacts: 1,
+      days: 180,
+    },
   },
-  MEDIUM: {
-    contacts: 1,
-    days: 180,
-  },
-  HIGH: {
-    contacts: 1,
-    days: 90,
+  SEX_OFFENSE: {
+    MINIMUM: {
+      contacts: 1,
+      days: 90,
+    },
+    MEDIUM: {
+      contacts: 1,
+      days: 60,
+    },
+    HIGH: {
+      contacts: 1,
+      days: 30,
+    },
   },
 };

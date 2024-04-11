@@ -21,6 +21,7 @@ import simplur from "simplur";
 import { formatDate } from "../../utils";
 import { fieldToDate } from "../utils";
 import { Task } from "./Task";
+import { SupervisionTasksCaseType } from "./types";
 import { US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE } from "./utils";
 
 class UsIdContactTask extends Task<"contact"> {
@@ -39,10 +40,16 @@ class UsIdContactTask extends Task<"contact"> {
     return this.details.supervisionLevel;
   }
 
+  get caseType(): SupervisionTasksCaseType {
+    return this.details.caseType;
+  }
+
   get additionalDetails(): string | undefined {
     if (!this.supervisionLevel) return;
     const complianceLevel =
-      US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.supervisionLevel];
+      US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE[this.caseType][
+        this.supervisionLevel
+      ];
     let details = "";
     if (this.lastContacted) {
       details += `Last contact was on: ${this.lastContacted}; `;

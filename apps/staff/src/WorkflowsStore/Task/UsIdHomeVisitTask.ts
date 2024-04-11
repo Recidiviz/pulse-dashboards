@@ -21,6 +21,7 @@ import simplur from "simplur";
 import { formatDate } from "../../utils";
 import { fieldToDate } from "../utils";
 import { Task } from "./Task";
+import { SupervisionTasksCaseType } from "./types";
 import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "./utils";
 
 class UsIdHomeVisitTask extends Task<"homeVisit"> {
@@ -38,6 +39,10 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
     return this.details.supervisionLevel;
   }
 
+  get caseType(): SupervisionTasksCaseType {
+    return this.details.caseType;
+  }
+
   get lastHomeVisit(): string | undefined {
     if (!this.details.lastHomeVisit) return;
     return formatDate(fieldToDate(this.details.lastHomeVisit));
@@ -46,7 +51,9 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
   get additionalDetails(): string {
     let details = "";
     const complianceLevel =
-      US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.supervisionLevel];
+      US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE[this.caseType][
+        this.supervisionLevel
+      ];
 
     if (this.lastHomeVisit) {
       details += `Last home contact on: ${this.lastHomeVisit}; `;

@@ -23,8 +23,11 @@ export const SUPERVISION_TASKS_TYPES = ["usIdSupervisionTasks"] as const;
 
 export type SupervisionTasksType = (typeof SUPERVISION_TASKS_TYPES)[number];
 
+export type SupervisionTasksCaseType = "GENERAL" | "SEX_OFFENSE";
+
 // TODO: Remove optional lastHomeVisit and lastContacted once it's available in the data
 type HomeVisitDetails = {
+  caseType: SupervisionTasksCaseType;
   supervisionLevel: string;
   currentAddress: string;
   lastHomeVisit?: string;
@@ -36,6 +39,7 @@ type AssessmentDetails = {
 };
 
 type ContactDetails = {
+  caseType: SupervisionTasksCaseType;
   supervisionLevel: string;
   lastContacted?: string;
 };

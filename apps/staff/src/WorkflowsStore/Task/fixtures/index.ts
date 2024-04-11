@@ -57,6 +57,7 @@ export const supervisionTaskClientRecord: ClientRecord = {
 export const homeVisitTaskRecord: SupervisionTaskRecord<"homeVisit"> = {
   type: "homeVisit",
   details: {
+    caseType: "GENERAL",
     supervisionLevel: "MEDIUM",
     currentAddress: "123 Aloha rd.",
     lastHomeVisit: "2023-01-02",
