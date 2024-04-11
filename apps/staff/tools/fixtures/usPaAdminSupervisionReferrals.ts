@@ -31,10 +31,6 @@ export const usPaAdminSupervisionReferrals =
           latestHighSanctionDate: "2021-02-02",
         },
         usPaNotServingIneligibleOffenseForAdminSupervision: null,
-        supervisionLevelIsNotLimited: {
-          supervisionLevel: "MEDIUM",
-          limitedStartDate: null,
-        },
       },
       ineligibleCriteria: {},
     },
@@ -52,10 +48,6 @@ export const usPaAdminSupervisionReferrals =
           ineligibleOffenses: ["EXAMPLE"],
           ineligibleSentencesExpirationDate: ["2021-01-01"],
         },
-        supervisionLevelIsNotLimited: {
-          supervisionLevel: "MEDIUM",
-          limitedStartDate: null,
-        },
       },
       ineligibleCriteria: {},
     },
@@ -66,10 +58,6 @@ export const usPaAdminSupervisionReferrals =
         usPaFulfilledRequirements: null,
         usPaNoHighSanctionsInPastYear: null,
         usPaNotServingIneligibleOffenseForAdminSupervision: null,
-        supervisionLevelIsNotLimited: {
-          supervisionLevel: "MEDIUM",
-          limitedStartDate: null,
-        },
       },
       ineligibleCriteria: {},
     },

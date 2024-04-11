@@ -52,8 +52,5 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
       usPaNotServingIneligibleOffenseForAdminSupervision: {
         text: "Not serving for an ineligible offense",
       },
-      supervisionLevelIsNotLimited: {
-        text: "Currently on {{opportunity.person.supervisionLevel}} supervision",
-      },
     },
   };

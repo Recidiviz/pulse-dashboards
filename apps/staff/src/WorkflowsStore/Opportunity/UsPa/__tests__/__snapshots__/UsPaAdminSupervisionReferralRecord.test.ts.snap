@@ -3,10 +3,6 @@
 exports[`parses empty ineligible offenses array 1`] = `
 {
   "eligibleCriteria": {
-    "supervisionLevelIsNotLimited": {
-      "limitedStartDate": null,
-      "supervisionLevel": "EXAMPLE",
-    },
     "usPaFulfilledRequirements": {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
     },
@@ -27,10 +23,6 @@ exports[`parses empty ineligible offenses array 1`] = `
 exports[`parses null reason fields 1`] = `
 {
   "eligibleCriteria": {
-    "supervisionLevelIsNotLimited": {
-      "limitedStartDate": null,
-      "supervisionLevel": "EXAMPLE",
-    },
     "usPaFulfilledRequirements": null,
     "usPaNoHighSanctionsInPastYear": null,
     "usPaNotServingIneligibleOffenseForAdminSupervision": null,
@@ -44,10 +36,6 @@ exports[`parses null reason fields 1`] = `
 exports[`record parses as expected 1`] = `
 {
   "eligibleCriteria": {
-    "supervisionLevelIsNotLimited": {
-      "limitedStartDate": null,
-      "supervisionLevel": "EXAMPLE",
-    },
     "usPaFulfilledRequirements": {
       "eligibleDate": 2023-12-01T00:00:00.000Z,
     },
