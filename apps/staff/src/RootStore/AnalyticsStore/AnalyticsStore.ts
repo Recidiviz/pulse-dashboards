@@ -51,6 +51,13 @@ type StaffPageTrackingMetadata = {
   numOutlierMetrics?: number;
 };
 
+type StaffMetricTrackingMetadata = {
+  staffPseudonymizedId: string;
+  supervisorPseudonymizedId?: string;
+  viewedBy?: string;
+  metricId: string;
+};
+
 type ClientPageTrackingMetadata = {
   clientPseudonymizedId: string;
   outcomeDate: Date;
@@ -157,6 +164,10 @@ export default class AnalyticsStore {
 
   trackInsightsStaffPageViewed(metadata: StaffPageTrackingMetadata): void {
     this.track("frontend.outliers_staff_page_viewed", metadata);
+  }
+
+  trackInsightsStaffMetricViewed(metadata: StaffMetricTrackingMetadata): void {
+    this.track("frontend.outliers_staff_metric_viewed", metadata);
   }
 
   trackInsightsClientPageViewed(metadata: ClientPageTrackingMetadata): void {

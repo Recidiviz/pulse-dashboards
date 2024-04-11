@@ -216,11 +216,11 @@ test("error assembling metrics data", async () => {
   expect(presenter.outlierOfficerData).toBeUndefined();
 });
 
-test("tracks events", async () => {
+test("track staff page viewed events", async () => {
   vi.spyOn(AnalyticsStore.prototype, "trackInsightsStaffPageViewed");
 
   await presenter.hydrate();
-  presenter.trackViewed();
+  presenter.trackStaffPageViewed();
 
   expect(
     store.insightsStore.rootStore.analyticsStore.trackInsightsStaffPageViewed,
@@ -230,5 +230,22 @@ test("tracks events", async () => {
       supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
     viewedBy: pseudoId,
     numOutlierMetrics: presenter.outlierOfficerData?.outlierMetrics.length,
+  });
+});
+
+test("track metric tab viewed events", async () => {
+  vi.spyOn(AnalyticsStore.prototype, "trackInsightsStaffMetricViewed");
+
+  await presenter.hydrate();
+  presenter.trackMetricTabViewed(testMetric.metricId);
+
+  expect(
+    store.insightsStore.rootStore.analyticsStore.trackInsightsStaffMetricViewed,
+  ).toHaveBeenCalledWith({
+    staffPseudonymizedId: testOfficer.pseudonymizedId,
+    supervisorPseudonymizedId:
+      supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
+    viewedBy: pseudoId,
+    metricId: testMetric.metricId,
   });
 });

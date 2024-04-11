@@ -61,7 +61,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     });
   }
 
-  trackViewed(): void {
+  trackStaffPageViewed(): void {
     const { userPseudoId } =
       this.supervisionStore.insightsStore.rootStore.userStore;
 
@@ -71,6 +71,20 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
         supervisorPseudonymizedId: this.supervisorInfo?.pseudonymizedId,
         viewedBy: userPseudoId,
         numOutlierMetrics: this.outlierOfficerData?.outlierMetrics.length,
+      },
+    );
+  }
+
+  trackMetricTabViewed(metricId: string): void {
+    const { userPseudoId } =
+      this.supervisionStore.insightsStore.rootStore.userStore;
+
+    this.supervisionStore.insightsStore.rootStore.analyticsStore.trackInsightsStaffMetricViewed(
+      {
+        staffPseudonymizedId: this.officerPseudoId,
+        supervisorPseudonymizedId: this.supervisorInfo?.pseudonymizedId,
+        viewedBy: userPseudoId,
+        metricId,
       },
     );
   }

@@ -157,11 +157,16 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     timePeriod,
     labels,
     methodologyUrl,
+    trackMetricTabViewed,
   } = presenter;
 
   useEffect(() => {
     setTabListEl(document.getElementById("insightsStaffTabList"));
   }, []);
+
+  useEffect(() => {
+    if (metricId) trackMetricTabViewed(metricId);
+  }, [metricId, trackMetricTabViewed]);
 
   const supervisorLinkProps = supervisorInfo && {
     linkText: `Go to ${
@@ -251,7 +256,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   ];
 
   if (initialPageLoad) {
-    presenter.trackViewed();
+    presenter.trackStaffPageViewed();
     setInitialPageLoad(false);
   }
 

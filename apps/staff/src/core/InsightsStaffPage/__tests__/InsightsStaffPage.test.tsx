@@ -102,6 +102,30 @@ describe("Insights Staff Page", () => {
     });
   });
 
+  test("analytics trackInsightsStaffMetricViewed", async () => {
+    store.setMetricId(testMetric);
+    vi.spyOn(AnalyticsStore.prototype, "trackInsightsStaffMetricViewed");
+    vi.spyOn(rootStore.userStore, "userPseudoId", "get").mockImplementation(
+      () => supervisorPseudoId,
+    );
+
+    render(
+      <BrowserRouter>
+        <StaffPageWithPresenter presenter={presenter} />
+      </BrowserRouter>,
+    );
+
+    expect(
+      store.insightsStore.rootStore.analyticsStore
+        .trackInsightsStaffMetricViewed,
+    ).toHaveBeenCalledWith({
+      staffPseudonymizedId: officerPseudoId,
+      supervisorPseudonymizedId: supervisorPseudoId,
+      viewedBy: supervisorPseudoId,
+      metricId: testMetric,
+    });
+  });
+
   test("renders loading indicator", () => {
     render(
       <BrowserRouter>
