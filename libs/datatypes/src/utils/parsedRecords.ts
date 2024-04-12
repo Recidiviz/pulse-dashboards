@@ -15,19 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { ParsedRecord } from "./types";
 
-import { ParsedRecord } from "../../utils/types";
+export function inputFixture<PR extends ParsedRecord>(
+  fixture: PR,
+): PR["input"] {
+  return fixture.input;
+}
 
-/**
- * Given a schema and raw data, produces an object of raw and parsed data.
- */
-export function makeRecordFixture<S extends z.ZodTypeAny>(
-  schema: S,
-  input: ParsedRecord<S>["input"],
-): ParsedRecord<S> {
-  return {
-    input,
-    output: schema.parse(input),
-  };
+export function inputFixtureArray<PR extends ParsedRecord>(
+  fixtures: Array<PR>,
+): Array<PR["input"]> {
+  return fixtures.map(inputFixture);
+}
+
+export function outputFixture<PR extends ParsedRecord>(
+  fixture: PR,
+): PR["output"] {
+  return fixture.output;
+}
+
+export function outputFixtureArray<PR extends ParsedRecord>(
+  fixtures: Array<PR>,
+): Array<PR["output"]> {
+  return fixtures.map(outputFixture);
 }

@@ -20,6 +20,7 @@ import { configure } from "mobx";
 import { Mock } from "vitest";
 
 import { isOfflineMode } from "~client-env-utils";
+import { inputFixture, supervisionStaffFixtures } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { UserSubscription } from "../UserSubscription";
@@ -30,14 +31,16 @@ vi.mock("~client-env-utils");
 
 const onSnapshotMock = onSnapshot as Mock;
 const isOfflineModeMock = isOfflineMode as Mock;
+const queryMock = query as Mock;
 const collectionMock = vi.fn();
 const routePermissionMock = vi.fn();
+const withConverterMock = vi.fn();
 
 let rootStoreMock: RootStore;
 let sub: UserSubscription;
 
 beforeEach(() => {
-  vi.resetAllMocks();
+  queryMock.mockReturnValue({ withConverter: withConverterMock });
 
   configure({ safeDescriptors: false });
 
@@ -118,7 +121,9 @@ test("inject record for Recidiviz users", () => {
       {
         "email": "test@example.com",
         "givenNames": "Geri",
+        "hasCaseload": false,
         "id": "RECIDIVIZ",
+        "recordType": "supervisionStaff",
         "stateCode": "US_XX",
         "surname": "Halliwell",
       },
@@ -132,7 +137,9 @@ test("inject record for Recidiviz users", () => {
       {
         "email": "test@example.com",
         "givenNames": "Geri",
+        "hasCaseload": false,
         "id": "RECIDIVIZ",
+        "recordType": "supervisionStaff",
         "stateCode": "US_XX",
         "surname": "Halliwell",
       },
@@ -154,7 +161,9 @@ test("inject record in offline mode", () => {
       {
         "email": "test@example.com",
         "givenNames": "Demo",
+        "hasCaseload": false,
         "id": "us_xx_test@example.com",
+        "recordType": "supervisionStaff",
         "stateCode": "US_XX",
         "surname": "",
       },
@@ -168,7 +177,9 @@ test("inject record in offline mode", () => {
       {
         "email": "test@example.com",
         "givenNames": "Demo",
+        "hasCaseload": false,
         "id": "us_xx_test@example.com",
+        "recordType": "supervisionStaff",
         "stateCode": "US_XX",
         "surname": "",
       },
@@ -194,7 +205,9 @@ test("supplement record for staff user without caseload", () => {
         "district": "D5",
         "email": "test@example.com",
         "givenNames": "Geri",
+        "hasCaseload": false,
         "id": "us_xx_test@example.com",
+        "recordType": "supervisionStaff",
         "stateCode": "US_XX",
         "surname": "Halliwell",
       },
@@ -225,7 +238,9 @@ test("supplement record for staff user without caseload but with id", () => {
         "district": "D5",
         "email": "test@example.com",
         "givenNames": "Geri",
+        "hasCaseload": false,
         "id": "12345",
+        "recordType": "supervisionStaff",
         "stateCode": "US_XX",
         "surname": "Halliwell",
       },
@@ -248,4 +263,45 @@ test("reject empty result", () => {
     error: expect.any(Error),
   });
   expect(sub.data).toEqual([]);
+});
+
+describe("Firestore converter", () => {
+  test("infers hasCaseload", () => {
+    const mockInput = { ...inputFixture(supervisionStaffFixtures[0]) };
+    // sanity check
+    expect(mockInput.hasCaseload).toBeUndefined();
+
+    const mockDocumentSnapshot = {
+      id: "test123",
+      data: () => mockInput,
+    };
+
+    sub.subscribe();
+
+    const converter = withConverterMock.mock.calls[0][0];
+
+    expect(
+      converter.fromFirestore(mockDocumentSnapshot).hasCaseload,
+    ).toBeTrue();
+  });
+
+  test("does not override hasCaseload if it exists", () => {
+    const mockInput = {
+      ...inputFixture(supervisionStaffFixtures[0]),
+      hasCaseload: false,
+    };
+
+    const mockDocumentSnapshot = {
+      id: "test123",
+      data: () => mockInput,
+    };
+
+    sub.subscribe();
+
+    const converter = withConverterMock.mock.calls[0][0];
+
+    expect(
+      converter.fromFirestore(mockDocumentSnapshot).hasCaseload,
+    ).toBeFalse();
+  });
 });

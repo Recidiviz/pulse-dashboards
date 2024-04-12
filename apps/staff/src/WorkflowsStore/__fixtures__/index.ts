@@ -16,48 +16,50 @@
 // =============================================================================
 
 import {
+  incarcerationStaffFixtures,
+  IncarcerationStaffRecord,
+  outputFixtureArray,
+  supervisionStaffFixtures,
+  SupervisionStaffRecord,
+} from "~datatypes";
+
+import {
   ClientRecord,
   CombinedUserRecord,
-  IncarcerationStaffRecord,
+  isUserRecord,
   LocationRecord,
-  SupervisionStaffRecord,
+  UserRecord,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { SupervisionOpportunityType } from "../Opportunity/OpportunityConfigs";
 import { dateToTimestamp } from "../utils";
 
+const userInfoFixtures = outputFixtureArray(supervisionStaffFixtures).filter(
+  isUserRecord,
+  // asserting because despite the typeguard, TS can't seem to figure this one out
+) as Array<UserRecord>;
+
 export const mockOfficer: CombinedUserRecord = {
   info: {
-    id: "OFFICER1",
-    district: "DISTRICT 1",
+    ...userInfoFixtures[0],
     stateCode: "US_XX",
-    recordType: "supervisionStaff",
-    email: "test-officer@example.com",
-    givenNames: "Test",
-    surname: "Officer",
+    hasCaseload: true,
   },
 };
 
 export const mockOfficer2: CombinedUserRecord = {
   info: {
-    id: "OFFICER2",
-    recordType: "supervisionStaff",
-    stateCode: mockOfficer.info.stateCode,
-    district: "1",
-    email: "test-officer2@example.com",
-    givenNames: "Foo",
-    surname: "Fakename",
+    ...userInfoFixtures[1],
+    stateCode: "US_XX",
+    hasCaseload: true,
   },
 };
 
 export const mockSupervisor: CombinedUserRecord = {
   info: {
-    id: "SUPERVISOR1",
-    district: "DISTRICT 1",
+    ...userInfoFixtures[2],
     stateCode: "US_XX",
-    email: "test-supervisor@example.com",
-    givenNames: "Test",
-    surname: "Supervisor",
+    hasCaseload: false,
   },
 };
 
@@ -286,47 +288,12 @@ export const mockResidents: WorkflowsResidentRecord[] = [
   },
 ];
 
-export const mockSupervisionOfficers: SupervisionStaffRecord[] = [
-  {
-    id: "OFFICER2",
-    recordType: "supervisionStaff",
-    stateCode: mockOfficer.info.stateCode,
-    district: "1",
-    email: null,
-    givenNames: "Foo",
-    surname: "Fakename",
-  },
-  {
-    id: "OFFICER3",
-    recordType: "supervisionStaff",
-    stateCode: mockOfficer.info.stateCode,
-    district: "1",
-    email: null,
-    givenNames: "Bar",
-    surname: "Realname",
-  },
-];
+export const mockSupervisionOfficers: Array<SupervisionStaffRecord["output"]> =
+  outputFixtureArray(supervisionStaffFixtures.slice(0, 2));
 
-export const mockIncarcerationOfficers: IncarcerationStaffRecord[] = [
-  {
-    id: "OFFICER2",
-    recordType: "incarcerationStaff",
-    stateCode: mockOfficer.info.stateCode,
-    district: "1",
-    email: null,
-    givenNames: "Foo",
-    surname: "Fakename",
-  },
-  {
-    id: "OFFICER3",
-    recordType: "incarcerationStaff",
-    stateCode: mockOfficer.info.stateCode,
-    district: "1",
-    email: null,
-    givenNames: "Bar",
-    surname: "Realname",
-  },
-];
+export const mockIncarcerationOfficers: Array<
+  IncarcerationStaffRecord["output"]
+> = outputFixtureArray(incarcerationStaffFixtures.slice(0, 2));
 
 export const mockLocations: LocationRecord[] = [
   {

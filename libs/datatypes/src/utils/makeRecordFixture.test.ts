@@ -15,30 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeRecordFixture } from "../../../utils/makeRecordFixture";
-import { FixtureMapping } from "../../utils/types";
-import { UsMeMediumTrusteeRecord, usMeMediumTrusteeSchema } from "./schema";
+import { z } from "zod";
 
-export const usMeMediumTrusteeFixtures = {
-  fullyEligible: makeRecordFixture(usMeMediumTrusteeSchema, {
-    stateCode: "US_ME",
-    externalId: "RES002",
-    eligibleCriteria: {
-      usMeCustodyLevelIsMedium: {
-        supervisionLevel: "MEDIUM",
+import { makeRecordFixture } from "./makeRecordFixture";
+
+test("makeRecordFixture", () => {
+  const testSchema = z.object({ foo: z.string().toUpperCase() });
+
+  expect(makeRecordFixture(testSchema, { foo: "bar" })).toMatchInlineSnapshot(`
+    {
+      "input": {
+        "foo": "bar",
       },
-      usMeFiveOrMoreYearsRemainingOnSentence: {},
-      usMeNoViolationFor5Years: null,
-    },
-    ineligibleCriteria: {},
-    caseNotes: {
-      "Case Plan Goals": [
-        {
-          eventDate: null,
-          noteBody: "Maintain good health",
-          noteTitle: "In progress",
-        },
-      ],
-    },
-  }),
-} satisfies FixtureMapping<UsMeMediumTrusteeRecord>;
+      "output": {
+        "foo": "BAR",
+      },
+    }
+  `);
+});

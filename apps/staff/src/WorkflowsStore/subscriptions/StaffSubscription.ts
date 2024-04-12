@@ -19,6 +19,7 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 import { Query, query, where } from "firebase/firestore";
+import { z } from "zod";
 
 import { FirestoreCollectionKey } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -27,14 +28,12 @@ import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 export class StaffSubscription<
   RecordType extends DocumentData,
 > extends FirestoreQuerySubscription<RecordType> {
-  private rootStore: RootStore;
-
-  collectionKey: FirestoreCollectionKey;
-
-  constructor(rootStore: RootStore, collectionId: FirestoreCollectionKey) {
-    super();
-    this.rootStore = rootStore;
-    this.collectionKey = collectionId;
+  constructor(
+    private rootStore: RootStore,
+    private collectionKey: FirestoreCollectionKey,
+    parser: z.ZodType<RecordType, any, any>,
+  ) {
+    super(parser.parse);
   }
 
   get dataSource(): Query {
@@ -63,7 +62,7 @@ export class StaffSubscription<
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);
-        return { ...doc, recordId: snapshot.id, recordType: collectionKey.key };
+        return { ...doc, recordId: snapshot.id };
       },
       // these collections are read-only, so this should never be used, but it is required by Firestore
       toFirestore(record: any) {

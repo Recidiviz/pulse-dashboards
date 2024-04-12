@@ -17,7 +17,7 @@
 
 import { ValuesType } from "utility-types";
 
-import { FixtureMapping, ParsedRecord } from "~datatypes";
+import { FixtureMapping, inputFixtureArray, ParsedRecord } from "~datatypes";
 
 /**
  * Includes documents to import and a function for generating document IDs for them
@@ -56,7 +56,7 @@ export const externalIdFunc: FirestoreFixture<{
 function allInputFixtures<FM extends FixtureMapping>(
   mapping: FM,
 ): Array<ValuesType<FM>["input"]> {
-  return Object.values(mapping).map((f) => f.input);
+  return inputFixtureArray(Object.values(mapping));
 }
 
 /**

@@ -101,6 +101,7 @@ export const usTnUserRecord: CombinedUserRecord = {
     stateCode: "US_TN",
     givenNames: "Test",
     surname: "Officer1",
+    recordType: "supervisionStaff",
   },
 };
 

@@ -19,7 +19,11 @@
 import { FieldValue } from "@google-cloud/firestore";
 import type { Timestamp } from "firebase/firestore";
 
-import { JusticeInvolvedPersonRecord, ResidentRecord } from "~datatypes";
+import {
+  JusticeInvolvedPersonRecord,
+  ResidentRecord,
+  StaffRecord,
+} from "~datatypes";
 
 import { SystemId } from "../core/models/types";
 import {
@@ -30,56 +34,11 @@ import {
 import { UsTnExpirationDraftData } from "../WorkflowsStore/Opportunity/UsTn";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
 
-// TODO(#4618): Consider getting rid of this and replacing the relevant logic with a feature variant
-export type RoleSubtype =
-  | "SUPERVISION_OFFICER"
-  | "SUPERVISION_OFFICER_SUPERVISOR"
-  | "SUPERVISION_DISTRICT_MANAGER"
-  | "SUPERVISION_REGIONAL_MANAGER"
-  | "SUPERVISION_STATE_LEADERSHIP";
-
-export type StaffRecord = SupervisionStaffRecord | IncarcerationStaffRecord;
-/**
- * Supervision staff-level data exported from the Recidiviz data platform.
- */
-export type SupervisionStaffRecord = {
-  recordType?: "supervisionStaff";
-  district?: string;
-  id: string;
-  stateCode: string;
-  /**
-   * If they have an email address they are a known user
-   */
-  email: string | null;
-  // TODO(#2458): Move towards using the fullName type like for ClientRecord to standardize name formatting. May require BE changes.
-  givenNames: string;
-  surname: string;
-  roleSubtype?: RoleSubtype;
-};
-
-/**
- * Incarceration staff-level data exported from the Recidiviz data platform.
- */
-export type IncarcerationStaffRecord = {
-  recordType?: "incarcerationStaff";
-  district?: string;
-  id: string;
-  stateCode: string;
-  /**
-   * If they have an email address they are a known user
-   */
-  email: string | null;
-  // TODO(#2458): Move towards using the fullName type like for ClientRecord to standardize name formatting. May require BE changes.
-  givenNames: string;
-  surname: string;
-  roleSubtype?: RoleSubtype;
-};
-
-export type UserRecord = StaffRecord & { email: string };
+export type UserRecord = Omit<StaffRecord, "email"> & { email: string };
 export function isUserRecord(
   staffRecord: StaffRecord,
 ): staffRecord is UserRecord {
-  return staffRecord.email !== null;
+  return typeof staffRecord.email === "string";
 }
 
 /**

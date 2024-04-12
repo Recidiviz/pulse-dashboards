@@ -84,6 +84,7 @@ function createTestUnit() {
     givenNames: "8675309",
     surname: "8675309",
     email: null,
+    recordType: "supervisionStaff",
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsOrEarnedDischargeOpportunity(person);

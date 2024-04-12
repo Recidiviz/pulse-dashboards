@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StaffRecord } from "~datatypes";
+
 import {
   ClientRecord,
   MilestoneType,
-  StaffRecord,
   SupervisionTaskUpdate,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";

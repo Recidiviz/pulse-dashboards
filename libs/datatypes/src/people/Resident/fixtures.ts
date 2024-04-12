@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeRecordFixture } from "../../opportunities/utils/makeRecordFixture";
 import { relativeFixtureDate } from "../../utils/fixtureDates";
+import { makeRecordFixture } from "../../utils/makeRecordFixture";
 import { ParsedRecord } from "../../utils/types";
 import { residentRecordSchema } from "./schema";
 

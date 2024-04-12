@@ -24,9 +24,10 @@ import {
 } from "mobx";
 import { MockedFunction } from "vitest";
 
+import { StaffRecord } from "~datatypes";
+
 import {
   PersonUpdateRecord,
-  StaffRecord,
   WorkflowsJusticeInvolvedPersonRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";

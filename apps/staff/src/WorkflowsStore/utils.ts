@@ -21,7 +21,7 @@ import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import { shiftFixtureDate } from "~datatypes";
+import { shiftFixtureDate, StaffRecord } from "~datatypes";
 
 import { SystemId } from "../core/models/types";
 import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
@@ -29,7 +29,6 @@ import {
   AutoSnoozeUpdate,
   CombinedUserRecord,
   ManualSnoozeUpdate,
-  StaffRecord,
 } from "../FirestoreStore/types";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { StaffFilterFunction } from "./types";

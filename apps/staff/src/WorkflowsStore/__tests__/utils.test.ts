@@ -16,8 +16,10 @@
 // =============================================================================
 import { add, parseISO, sub } from "date-fns";
 
+import { StaffRecord } from "~datatypes";
+
 import { StaffFilter } from "../../core/models/types";
-import { CombinedUserRecord, StaffRecord } from "../../FirestoreStore/types";
+import { CombinedUserRecord } from "../../FirestoreStore/types";
 import {
   filterByUserDistrict,
   fractionalDateBetweenTwoDates,
@@ -206,6 +208,7 @@ describe("usCaFilterByRoleSubtype", () => {
       id: "test",
       stateCode: "US_XX",
       surname: "test",
+      recordType: "supervisionStaff" as const,
     },
   };
 

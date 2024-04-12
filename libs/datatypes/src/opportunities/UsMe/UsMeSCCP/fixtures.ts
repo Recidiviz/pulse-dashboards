@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { relativeFixtureDate } from "../../../utils/fixtureDates";
-import { makeRecordFixture } from "../../utils/makeRecordFixture";
+import { makeRecordFixture } from "../../../utils/makeRecordFixture";
 import { FixtureMapping } from "../../utils/types";
 import { UsMeSCCPRecord, usMeSCCPSchema } from "./schema";
 

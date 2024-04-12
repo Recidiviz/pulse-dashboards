@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { allResidents } from "./fixture";
+import { allResidents } from "./fixtures";
 import { residentRecordSchema } from "./schema";
 
 test.each(allResidents.map((f) => f.input))(

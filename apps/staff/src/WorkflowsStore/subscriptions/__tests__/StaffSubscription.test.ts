@@ -22,10 +22,13 @@ import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
 import {
-  CombinedUserRecord,
   IncarcerationStaffRecord,
+  incarcerationStaffRecordSchema,
   SupervisionStaffRecord,
-} from "../../../FirestoreStore";
+  supervisionStaffRecordSchema,
+} from "~datatypes";
+
+import { CombinedUserRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { filterByUserDistrict } from "../../utils";
 import { StaffSubscription } from "../StaffSubscription";
@@ -39,12 +42,11 @@ const withConverterMock = vi.fn();
 
 let rootStoreMock: RootStore;
 let sub:
-  | StaffSubscription<SupervisionStaffRecord>
-  | StaffSubscription<IncarcerationStaffRecord>;
+  | StaffSubscription<SupervisionStaffRecord["output"]>
+  | StaffSubscription<IncarcerationStaffRecord["output"]>;
 
 describe("StaffSubscription tests", () => {
   beforeEach(() => {
-    vi.resetAllMocks();
     queryMock.mockReturnValue({ withConverter: withConverterMock });
   });
 
@@ -75,9 +77,13 @@ describe("StaffSubscription tests", () => {
       }) as unknown as RootStore;
     });
     test("dataSource uses incarcerationStaff collection ID", () => {
-      sub = new StaffSubscription<IncarcerationStaffRecord>(rootStoreMock, {
-        key: "incarcerationStaff",
-      });
+      sub = new StaffSubscription(
+        rootStoreMock,
+        {
+          key: "incarcerationStaff",
+        },
+        incarcerationStaffRecordSchema,
+      );
 
       sub.subscribe();
 
@@ -87,9 +93,13 @@ describe("StaffSubscription tests", () => {
     });
 
     test("dataSource uses supervisionStaff collection ID", () => {
-      sub = new StaffSubscription<SupervisionStaffRecord>(rootStoreMock, {
-        key: "supervisionStaff",
-      });
+      sub = new StaffSubscription(
+        rootStoreMock,
+        {
+          key: "supervisionStaff",
+        },
+        supervisionStaffRecordSchema,
+      );
 
       sub.subscribe();
 
@@ -124,9 +134,13 @@ describe("StaffSubscription tests", () => {
           activeFeatureVariants: {},
         },
       }) as unknown as RootStore;
-      sub = new StaffSubscription<SupervisionStaffRecord>(rootStoreMock, {
-        key: "supervisionStaff",
-      });
+      sub = new StaffSubscription(
+        rootStoreMock,
+        {
+          key: "supervisionStaff",
+        },
+        supervisionStaffRecordSchema,
+      );
     });
 
     test("dataSource reflects observables", () => {
@@ -207,7 +221,6 @@ describe("StaffSubscription tests", () => {
       expect(converter.fromFirestore(mockDocumentSnapshot)).toEqual({
         foo: "bar",
         recordId: "test123",
-        recordType: "supervisionStaff",
       });
     });
   });

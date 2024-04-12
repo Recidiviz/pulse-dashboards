@@ -21,7 +21,9 @@ import prompts from "prompts";
 import { z } from "zod";
 
 import {
+  incarcerationStaffRecordSchema,
   residentRecordSchema,
+  supervisionStaffRecordSchema,
   usMeAnnualReclassificationSchema,
   usMeMediumTrusteeSchema,
   usMeSCCPSchema,
@@ -126,6 +128,14 @@ const OTHER_SCHEMAS = {
   residents: {
     schema: residentRecordSchema,
     firestoreCollection: "residents",
+  },
+  incarcerationStaff: {
+    schema: incarcerationStaffRecordSchema,
+    firestoreCollection: "incarcerationStaff",
+  },
+  supervisionStaff: {
+    schema: supervisionStaffRecordSchema,
+    firestoreCollection: "supervisionStaff",
   },
 };
 

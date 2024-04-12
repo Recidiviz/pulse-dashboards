@@ -21,6 +21,8 @@ import { Firestore } from "@google-cloud/firestore";
 import { mapValues } from "lodash";
 
 import {
+  incarcerationStaffFixtures,
+  supervisionStaffFixtures,
   usMeAnnualReclassificationFixtures,
   usMeMediumTrusteeFixtures,
   usMeSccpFixtures,
@@ -38,12 +40,10 @@ import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
 import { clientUpdatesV2Data } from "./fixtures/clientUpdatesV2";
 import { earnedDischargeReferralsFixture } from "./fixtures/earnedDischargeReferrals";
-import { incarcerationStaffData } from "./fixtures/incarcerationStaff";
 import { locationsData } from "./fixtures/locations";
 import { LSUReferralsFixture } from "./fixtures/LSUReferrals";
 import { residentsData } from "./fixtures/residents";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
-import { supervisionStaffData } from "./fixtures/supervisionStaff";
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
 import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
 import { usIdCRCWorkReleaseReferrals } from "./fixtures/UsIdCRCWorkReleaseReferrals";
@@ -106,10 +106,17 @@ type Logger = {
 const GENERAL_FIXTURES_TO_LOAD: Partial<
   Record<FirestoreCollectionKey["key"] & string, FirestoreFixture<any>>
 > = {
+  // TODO(#5285): Fix typing for spreading operator by specifying the generic for `mapValues`
+  ...mapValues(
+    {
+      incarcerationStaff: incarcerationStaffFixtures,
+      supervisionStaff: supervisionStaffFixtures,
+    },
+    // @ts-ignore
+    (fixtures) => fixtureFromParsedRecords("id", fixtures),
+  ),
   clients: clientsData,
   residents: residentsData,
-  incarcerationStaff: incarcerationStaffData,
-  supervisionStaff: supervisionStaffData,
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
 } as const;
@@ -118,7 +125,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   keyof typeof OPPORTUNITIES_MAP,
   FirestoreFixture<any>
 > = {
-  // TODO: Fix typing for spreading operator by specifying the generic for `mapValues`
+  // TODO(#5285): Fix typing for spreading operator by specifying the generic for `mapValues`
   ...mapValues(
     {
       usMeSCCPReferrals: usMeSccpFixtures,

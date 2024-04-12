@@ -21,12 +21,16 @@ import { difference, noop } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
+import { incarcerationStaffFixtures, outputFixture } from "~datatypes";
+
 import { HydrationState, SystemId } from "../../core/models/types";
 import FirestoreStore, {
   ClientRecord,
   CombinedUserRecord,
+  isUserRecord,
   MilestonesMessage,
   TextMessageStatus,
+  UserRecord,
   UserUpdateRecord,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
@@ -160,6 +164,7 @@ vi.mock("../../tenants", async (importOriginal) => ({
 let rootStore: RootStore;
 let workflowsStore: WorkflowsStore;
 let testObserver: IDisposer;
+let testUserData: UserRecord;
 
 function mockAuthedUser() {
   // mock successful authentication from Auth0
@@ -228,6 +233,13 @@ beforeEach(() => {
   runInAction(() => {
     workflowsStore.updateActiveSystem("SUPERVISION");
   });
+
+  const staffFixture = outputFixture(incarcerationStaffFixtures[0]);
+  if (isUserRecord(staffFixture)) {
+    testUserData = { ...staffFixture };
+  } else {
+    throw new Error("Invalid user data fixture");
+  }
 });
 
 afterEach(() => {
@@ -281,8 +293,7 @@ test("hydration reflects subscriptions", async () => {
   expect(workflowsStore.hydrationState.status).toBe("needs hydration");
 
   runInAction(() => {
-    // @ts-expect-error
-    workflowsStore.userSubscription.data = [{ stateCode: "US_XX" }];
+    workflowsStore.userSubscription.data = [testUserData];
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     workflowsStore.userUpdatesSubscription!.hydrationState = {
       status: "hydrated",
@@ -578,18 +589,19 @@ test("available searchables for search by officer", async () => {
       searchId: searchable.searchId,
     };
   });
-  const expected = [
-    {
-      searchLabel: "Foo Fakename",
-      searchId: "OFFICER2",
-    },
-    {
-      searchLabel: "Bar Realname",
-      searchId: "OFFICER3",
-    },
-  ];
 
-  expect(actual).toEqual(expected);
+  expect(actual).toMatchInlineSnapshot(`
+    [
+      {
+        "searchId": "OFFICER1",
+        "searchLabel": "Test Agent1",
+      },
+      {
+        "searchId": "OFFICER2",
+        "searchLabel": "Test Agent2",
+      },
+    ]
+  `);
 });
 
 test("available searchables for search by location", async () => {

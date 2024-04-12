@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StaffRecord } from "~datatypes";
+
 import { Searchable } from "../core/models/types";
-import { StaffRecord } from "../FirestoreStore";
 
 export class CaseloadSearchable implements Searchable {
   record: StaffRecord;

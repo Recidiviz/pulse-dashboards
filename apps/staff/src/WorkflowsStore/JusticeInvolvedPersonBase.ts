@@ -30,7 +30,7 @@ import {
   values,
 } from "mobx";
 
-import { FullName } from "~datatypes";
+import { FullName, StaffRecord } from "~datatypes";
 
 import { isHydrated, isHydrationFinished } from "../core/models/utils";
 import {
@@ -38,7 +38,6 @@ import {
   MilestonesMessage,
   PersonUpdateRecord,
   PersonUpdateType,
-  StaffRecord,
   WorkflowsJusticeInvolvedPersonRecord,
 } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
@@ -180,7 +179,7 @@ export class JusticeInvolvedPersonBase<
   }
 
   get district(): string | undefined {
-    return this.assignedStaff?.district;
+    return this.assignedStaff?.district ?? undefined;
   }
 
   get assignedStaffFullName(): string {

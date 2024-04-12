@@ -26,8 +26,13 @@ import {
 import { computed, makeObservable, override } from "mobx";
 
 import { isOfflineMode } from "~client-env-utils";
+import {
+  incarcerationStaffRecordSchema,
+  StaffRecord,
+  supervisionStaffRecordSchema,
+} from "~datatypes";
 
-import { isUserRecord, StaffRecord, UserRecord } from "../../FirestoreStore";
+import { isUserRecord, UserRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { splitAuth0UserName } from "../../utils/formatStrings";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
@@ -78,12 +83,31 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
 
     if (collectionName === undefined) return;
 
+    const recordSchema =
+      collectionName === "incarcerationStaff"
+        ? incarcerationStaffRecordSchema
+        : supervisionStaffRecordSchema;
+
     return query(
       firestoreStore.collection({ key: collectionName }),
       where("email", "==", email.toLowerCase()),
       where("stateCode", "==", currentTenantId),
       limit(1),
-    );
+    ).withConverter({
+      fromFirestore: (snapshot, options) => {
+        const doc = snapshot.data(options);
+        const parsed = recordSchema.parse(doc);
+        // this is generally inferred based on the data source, not expected to be
+        // in the document itself. If we fetched it from one of the staff collections,
+        // we assume the staff member has a caseload unless told otherwise.
+        const hasCaseload = parsed.hasCaseload ?? true;
+        return { ...parsed, hasCaseload };
+      },
+      // these collections are read-only, so this should never be used, but it is required by Firestore
+      toFirestore(record: any) {
+        throw new Error(`Writing to ${collectionName} is not allowed`);
+      },
+    });
   }
 
   get staffRecordCollectionName():
@@ -121,13 +145,15 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   /**
    * For external users who do not have a caseload, we supplement the user record with additional properties.
    */
-  get userWithoutCaseload(): StaffRecord | undefined {
+  private get userWithoutCaseload(): StaffRecord | undefined {
     const {
       user,
       userStore: { stateCode, district, externalId },
     } = this.rootStore;
 
-    if (!user || !user.email) return;
+    const { staffRecordCollectionName } = this;
+
+    if (!user || !user.email || !staffRecordCollectionName) return;
 
     let formattedUserName;
 
@@ -141,6 +167,8 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       givenNames: (user.given_name || formattedUserName?.firstName) ?? "",
       surname: (user.family_name || formattedUserName?.lastName) ?? "",
       district,
+      hasCaseload: false,
+      recordType: staffRecordCollectionName,
     };
   }
 
@@ -154,6 +182,10 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       userStore: { stateCode },
     } = this.rootStore;
 
+    const { staffRecordCollectionName } = this;
+
+    if (!staffRecordCollectionName) return;
+
     let injectedUserData: StaffRecord | undefined;
 
     // inject dynamic fixture data in offline mode
@@ -164,6 +196,8 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         stateCode,
         givenNames: user?.name || "Demo",
         surname: "",
+        hasCaseload: false,
+        recordType: staffRecordCollectionName,
       };
     }
     // there are no records in Firestore for Recidiviz users;
@@ -180,6 +214,8 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         stateCode: currentTenantId as string,
         givenNames: (user?.given_name || formattedUserName?.firstName) ?? "",
         surname: (user?.family_name || formattedUserName?.lastName) ?? "",
+        hasCaseload: false,
+        recordType: staffRecordCollectionName,
       };
     }
     return injectedUserData;
@@ -201,7 +237,6 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   protected updateData(
     snapshot: QuerySnapshot<DocumentData> | undefined,
   ): void {
-    const { user } = this.rootStore;
     // Prioritize overrides
     if (this.dataOverride) {
       return super.updateData(mockOverrideSnapshot(this.dataOverride));
@@ -209,7 +244,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
     if (snapshot?.size) {
       return super.updateData(snapshot);
     }
-    if (user && this.userWithoutCaseload) {
+    if (this.userWithoutCaseload) {
       return super.updateData(mockOverrideSnapshot(this.userWithoutCaseload));
     }
     this.hydrationState = {

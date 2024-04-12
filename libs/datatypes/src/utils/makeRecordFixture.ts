@@ -15,30 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeRecordFixture } from "../../../utils/makeRecordFixture";
-import { FixtureMapping } from "../../utils/types";
-import { UsMeMediumTrusteeRecord, usMeMediumTrusteeSchema } from "./schema";
+import { z } from "zod";
 
-export const usMeMediumTrusteeFixtures = {
-  fullyEligible: makeRecordFixture(usMeMediumTrusteeSchema, {
-    stateCode: "US_ME",
-    externalId: "RES002",
-    eligibleCriteria: {
-      usMeCustodyLevelIsMedium: {
-        supervisionLevel: "MEDIUM",
-      },
-      usMeFiveOrMoreYearsRemainingOnSentence: {},
-      usMeNoViolationFor5Years: null,
-    },
-    ineligibleCriteria: {},
-    caseNotes: {
-      "Case Plan Goals": [
-        {
-          eventDate: null,
-          noteBody: "Maintain good health",
-          noteTitle: "In progress",
-        },
-      ],
-    },
-  }),
-} satisfies FixtureMapping<UsMeMediumTrusteeRecord>;
+import { ParsedRecord } from "./types";
+
+/**
+ * Given a schema and raw data, produces an object of raw and parsed data.
+ */
+export function makeRecordFixture<S extends z.ZodTypeAny>(
+  schema: S,
+  input: ParsedRecord<S>["input"],
+): ParsedRecord<S> {
+  return {
+    input,
+    output: schema.parse(input),
+  };
+}

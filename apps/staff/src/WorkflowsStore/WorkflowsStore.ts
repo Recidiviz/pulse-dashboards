@@ -40,6 +40,14 @@ import {
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
+  IncarcerationStaffRecord,
+  incarcerationStaffRecordSchema,
+  StaffRecord,
+  SupervisionStaffRecord,
+  supervisionStaffRecordSchema,
+} from "~datatypes";
+
+import {
   Hydratable,
   HydrationState,
   Searchable,
@@ -61,11 +69,8 @@ import { WorkflowsPage } from "../core/views";
 import {
   ClientRecord,
   CombinedUserRecord,
-  IncarcerationStaffRecord,
   LocationRecord,
   MilestonesMessage,
-  StaffRecord,
-  SupervisionStaffRecord,
   UserMetadata,
   UserUpdateRecord,
   WorkflowsResidentRecord,
@@ -124,9 +129,13 @@ export class WorkflowsStore implements Hydratable {
 
   justiceInvolvedPersons: Record<string, JusticeInvolvedPerson> = {};
 
-  incarcerationStaffSubscription: StaffSubscription<IncarcerationStaffRecord>;
+  incarcerationStaffSubscription: StaffSubscription<
+    IncarcerationStaffRecord["output"]
+  >;
 
-  supervisionStaffSubscription: StaffSubscription<SupervisionStaffRecord>;
+  supervisionStaffSubscription: StaffSubscription<
+    SupervisionStaffRecord["output"]
+  >;
 
   clientsSubscription: CaseloadSubscription<ClientRecord>;
 
@@ -156,14 +165,20 @@ export class WorkflowsStore implements Hydratable {
       this,
     );
 
-    this.supervisionStaffSubscription =
-      new StaffSubscription<SupervisionStaffRecord>(rootStore, {
+    this.supervisionStaffSubscription = new StaffSubscription(
+      rootStore,
+      {
         key: "supervisionStaff",
-      });
-    this.incarcerationStaffSubscription =
-      new StaffSubscription<IncarcerationStaffRecord>(rootStore, {
+      },
+      supervisionStaffRecordSchema,
+    );
+    this.incarcerationStaffSubscription = new StaffSubscription(
+      rootStore,
+      {
         key: "incarcerationStaff",
-      });
+      },
+      incarcerationStaffRecordSchema,
+    );
     this.clientsSubscription = new CaseloadSubscription<ClientRecord>(
       this,
       { key: "clients" },
@@ -301,7 +316,7 @@ export class WorkflowsStore implements Hydratable {
     // set default caseload to the user's own, when applicable
     if (
       !updates.selectedSearchIds &&
-      info.recordType &&
+      info.hasCaseload &&
       this.searchType === "OFFICER"
     ) {
       updates.selectedSearchIds = [info.id];
@@ -516,8 +531,8 @@ export class WorkflowsStore implements Hydratable {
   get staffSubscription():
     | StaffSubscription<StaffRecord>[]
     | (
-        | StaffSubscription<SupervisionStaffRecord>
-        | StaffSubscription<IncarcerationStaffRecord>
+        | StaffSubscription<SupervisionStaffRecord["output"]>
+        | StaffSubscription<IncarcerationStaffRecord["output"]>
       )[]
     | undefined {
     switch (this.activeSystem) {
