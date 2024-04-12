@@ -74,7 +74,7 @@
     "express-unless": "^1.0.0",
     "express-validator": "^6.8.1",
     "file-saver": "^2.0.5",
-    "firebase": "^9.6.8",
+    "firebase": "^9.18.0",
     "firebase-admin": "^10.0.2",
     "handlebars": "^4.7.8",
     "helmet": "^5.1.0",

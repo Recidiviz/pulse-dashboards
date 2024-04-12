@@ -63,6 +63,7 @@ exports[`supervision staff schema for 'US_CA' 'OFFICER1' 1`] = `
   "id": "OFFICER1",
   "recordType": "supervisionStaff",
   "stateCode": "US_CA",
+  "supervisorExternalId": null,
   "surname": "Agent1",
 }
 `;
@@ -75,6 +76,7 @@ exports[`supervision staff schema for 'US_CA' 'OFFICER2' 1`] = `
   "id": "OFFICER2",
   "recordType": "supervisionStaff",
   "stateCode": "US_CA",
+  "supervisorExternalId": null,
   "surname": "Agent2",
 }
 `;
@@ -87,6 +89,7 @@ exports[`supervision staff schema for 'US_ID' 'OFFICER4' 1`] = `
   "id": "OFFICER4",
   "recordType": "supervisionStaff",
   "stateCode": "US_ID",
+  "supervisorExternalId": "SUPER847",
   "surname": "Officer4",
 }
 `;
@@ -98,6 +101,7 @@ exports[`supervision staff schema for 'US_ME' 'OFFICER8' 1`] = `
   "id": "OFFICER8",
   "recordType": "supervisionStaff",
   "stateCode": "US_ME",
+  "supervisorExternalId": null,
   "surname": "Officer8",
 }
 `;
@@ -109,6 +113,7 @@ exports[`supervision staff schema for 'US_MI' 'OFFICER8' 1`] = `
   "id": "OFFICER8",
   "recordType": "supervisionStaff",
   "stateCode": "US_MI",
+  "supervisorExternalId": "1290831",
   "surname": "Officer8",
 }
 `;
@@ -121,6 +126,7 @@ exports[`supervision staff schema for 'US_ND' 'OFFICER3' 1`] = `
   "id": "OFFICER3",
   "recordType": "supervisionStaff",
   "stateCode": "US_ND",
+  "supervisorExternalId": null,
   "surname": "Officer3",
 }
 `;
@@ -132,6 +138,7 @@ exports[`supervision staff schema for 'US_OR' '271828' 1`] = `
   "id": "271828",
   "recordType": "supervisionStaff",
   "stateCode": "US_OR",
+  "supervisorExternalId": null,
   "surname": "271828",
 }
 `;
@@ -143,6 +150,7 @@ exports[`supervision staff schema for 'US_OR' '314159' 1`] = `
   "id": "314159",
   "recordType": "supervisionStaff",
   "stateCode": "US_OR",
+  "supervisorExternalId": "SUPER221",
   "surname": "314159",
 }
 `;
@@ -154,6 +162,7 @@ exports[`supervision staff schema for 'US_PA' 'OFFICER1' 1`] = `
   "id": "OFFICER1",
   "recordType": "supervisionStaff",
   "stateCode": "US_PA",
+  "supervisorExternalId": "25-1239123A",
   "surname": "OFFICER1",
 }
 `;
@@ -165,6 +174,7 @@ exports[`supervision staff schema for 'US_PA' 'OFFICER2' 1`] = `
   "id": "OFFICER2",
   "recordType": "supervisionStaff",
   "stateCode": "US_PA",
+  "supervisorExternalId": null,
   "surname": "OFFICER2",
 }
 `;
@@ -177,6 +187,7 @@ exports[`supervision staff schema for 'US_TN' 'OFFICER1' 1`] = `
   "id": "OFFICER1",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
+  "supervisorExternalId": "SUPERVISOR1",
   "surname": "Officer1",
 }
 `;
@@ -189,6 +200,7 @@ exports[`supervision staff schema for 'US_TN' 'OFFICER2' 1`] = `
   "id": "OFFICER2",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
+  "supervisorExternalId": "SUPERVISOR1",
   "surname": "Officer2",
 }
 `;
@@ -201,6 +213,7 @@ exports[`supervision staff schema for 'US_TN' 'SUPERVISOR1' 1`] = `
   "id": "SUPERVISOR1",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
+  "supervisorExternalId": null,
   "surname": "Supervisor",
 }
 `;

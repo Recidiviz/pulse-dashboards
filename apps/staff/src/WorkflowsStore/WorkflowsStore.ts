@@ -843,6 +843,18 @@ export class WorkflowsStore implements Hydratable {
   }
 
   /**
+   * A list of staff supervised by the current user
+   */
+  get staffSupervisedByCurrentUser(): StaffRecord[] {
+    const filteredOfficers = this.availableOfficers.filter(
+      (officer) =>
+        "supervisorExternalId" in officer &&
+        officer.supervisorExternalId === this.user?.info.id,
+    );
+    return filteredOfficers.sort(staffNameComparator);
+  }
+
+  /**
    * Mapping of known supervision levels for the current tenant
    */
   get supervisionLevels(): FilterOption[] {

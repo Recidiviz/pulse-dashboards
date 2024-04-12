@@ -52,7 +52,7 @@ import { pluralizeWord } from "../../utils";
 import { Searchable } from "../models/types";
 
 // This is a query limitation imposed by Firestore
-const SELECTED_SEARCH_LIMIT = 10;
+const SELECTED_SEARCH_LIMIT = 30;
 
 const ValuePill = styled(Pill).attrs({ color: palette.slate20, filled: false })`
   align-self: flex-start;

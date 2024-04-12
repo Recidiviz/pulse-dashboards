@@ -291,6 +291,13 @@ export const mockResidents: WorkflowsResidentRecord[] = [
 export const mockSupervisionOfficers: Array<SupervisionStaffRecord["output"]> =
   outputFixtureArray(supervisionStaffFixtures.slice(0, 2));
 
+const mockSelectSupervisionOfficerFixtures: Array<SupervisionStaffRecord> =
+  supervisionStaffFixtures.filter(
+    (staff) => staff.output.stateCode === "US_TN",
+  );
+export const mockSupervisionOfficers2: Array<SupervisionStaffRecord["output"]> =
+  outputFixtureArray(mockSelectSupervisionOfficerFixtures);
+
 export const mockIncarcerationOfficers: Array<
   IncarcerationStaffRecord["output"]
 > = outputFixtureArray(incarcerationStaffFixtures.slice(0, 2));

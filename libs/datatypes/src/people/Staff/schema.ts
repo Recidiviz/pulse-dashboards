@@ -42,6 +42,7 @@ const staffRecordBaseSchema = z.object({
 
 export const supervisionStaffRecordSchema = staffRecordBaseSchema.extend({
   recordType: z.literal("supervisionStaff").default("supervisionStaff"),
+  supervisorExternalId: z.string().nullish(),
 });
 /**
  * Supervision staff-level data exported from the Recidiviz data platform.

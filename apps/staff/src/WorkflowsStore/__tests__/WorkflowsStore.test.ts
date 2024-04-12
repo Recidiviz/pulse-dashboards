@@ -21,7 +21,11 @@ import { difference, noop } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
-import { incarcerationStaffFixtures, outputFixture } from "~datatypes";
+import {
+  incarcerationStaffFixtures,
+  outputFixture,
+  SupervisionStaffRecord,
+} from "~datatypes";
 
 import { HydrationState, SystemId } from "../../core/models/types";
 import FirestoreStore, {
@@ -54,6 +58,7 @@ import {
   mockOfficer2,
   mockResidents,
   mockSupervisionOfficers,
+  mockSupervisionOfficers2,
   mockSupervisor,
 } from "../__fixtures__";
 import { Client } from "../Client";
@@ -1402,4 +1407,26 @@ describe("user data observer", () => {
     // @ts-expect-error
     expect(workflowsStore.userKeepAliveDisposer).toBeUndefined();
   });
+});
+
+test("staffSupervisedByCurrentUser provides a list of users supervised by currently logged in user", async () => {
+  const mockSupervisorID = "SUPERVISOR1";
+  const customMockSupervisor = {
+    info: { ...mockSupervisor.info, id: mockSupervisorID },
+  };
+  await waitForHydration({ ...customMockSupervisor });
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers2;
+  });
+
+  const staffSupervisedByCurrentUser =
+    workflowsStore.staffSupervisedByCurrentUser;
+  const staffSupervisorExternalIds = staffSupervisedByCurrentUser.map(
+    (staff) => (staff as SupervisionStaffRecord["output"]).supervisorExternalId,
+  );
+
+  expect(staffSupervisedByCurrentUser.length).toEqual(2);
+  expect(staffSupervisorExternalIds[0]).toEqual(mockSupervisorID);
+  expect(staffSupervisorExternalIds[1]).toEqual(mockSupervisorID);
 });

@@ -38,6 +38,7 @@ test("staffNameComparator", () => {
       email: null,
       givenNames: "John",
       surname: "Doe",
+      supervisorExternalId: null,
     },
     {
       id: "2",
@@ -46,6 +47,7 @@ test("staffNameComparator", () => {
       email: null,
       givenNames: "Jane",
       surname: "Doe",
+      supervisorExternalId: null,
     },
     {
       id: "3",
@@ -54,6 +56,7 @@ test("staffNameComparator", () => {
       email: null,
       givenNames: "Chad",
       surname: "Doe-Adams",
+      supervisorExternalId: null,
     },
     {
       id: "4",
@@ -62,6 +65,7 @@ test("staffNameComparator", () => {
       email: null,
       givenNames: "Bob",
       surname: "Adams-Doe",
+      supervisorExternalId: "ABC201",
     },
     {
       id: "4",
@@ -70,6 +74,7 @@ test("staffNameComparator", () => {
       email: null,
       givenNames: "Brad",
       surname: "Collins (Doe)",
+      supervisorExternalId: null,
     },
   ];
 
