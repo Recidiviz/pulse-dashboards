@@ -54,7 +54,7 @@ describe("snoozedByText", () => {
   test("marked ineligible", () => {
     const testOpp = {
       ...mockOpportunity,
-      deniedTabTitle: "Marked ineligible",
+      deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 15),
       snoozedBy: "test-email",
     };
@@ -78,7 +78,7 @@ describe("snoozedByText", () => {
   test("no snoozed on date supplied", () => {
     const testOpp = {
       ...mockOpportunity,
-      deniedTabTitle: "Marked ineligible",
+      deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(buildSnoozedByText(testOpp)).toBeUndefined();
@@ -87,7 +87,7 @@ describe("snoozedByText", () => {
   test("no snoozed by supplied", () => {
     const testOpp = {
       ...mockOpportunity,
-      deniedTabTitle: "Marked ineligible",
+      deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(buildSnoozedByText(testOpp)).toBeUndefined();
@@ -98,7 +98,7 @@ describe("buildResurfaceText", () => {
   test("resurface text", () => {
     const testOpp = {
       ...mockOpportunity,
-      deniedTabTitle: "Marked ineligible",
+      deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(buildResurfaceText(testOpp, new Date(2023, 9, 15))).toEqual(
@@ -109,7 +109,7 @@ describe("buildResurfaceText", () => {
   test("no snoozeUntil supplied", () => {
     const testOpp = {
       ...mockOpportunity,
-      deniedTabTitle: "Marked ineligible",
+      deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(buildResurfaceText(testOpp, undefined)).toBeUndefined();
@@ -118,7 +118,7 @@ describe("buildResurfaceText", () => {
   test("end of supervision term", () => {
     const testOpp = {
       ...mockOpportunity,
-      deniedTabTitle: "Marked ineligible",
+      deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(buildResurfaceText(testOpp, new Date(2025, 1, 1))).toEqual(

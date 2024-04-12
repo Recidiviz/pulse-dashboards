@@ -510,7 +510,7 @@ export abstract class OpportunityBase<
   }
 
   get deniedTabTitle(): OpportunityTab {
-    return this.config.isAlert ? "Overridden" : "Marked ineligible";
+    return this.config.isAlert ? "Overridden" : "Marked Ineligible";
   }
 
   get tabTitle(): OpportunityTab {

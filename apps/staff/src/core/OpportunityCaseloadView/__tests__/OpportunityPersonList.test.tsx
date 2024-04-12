@@ -198,7 +198,7 @@ test("hydrated with one tab", () => {
 
 test("hydrated with a tab that is not listed as the first tab in the order", () => {
   const firstTabText = "Eligible Now";
-  const overriddenTabText = "Marked ineligible";
+  const overriddenTabText = "Marked Ineligible";
 
   const opp = {
     ...mockOpportunity,

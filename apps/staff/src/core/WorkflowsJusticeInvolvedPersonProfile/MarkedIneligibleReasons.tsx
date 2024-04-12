@@ -49,7 +49,7 @@ export function buildSnoozedByText({
   snoozedBy?: string;
 }): string | undefined {
   if (!snoozedOnDate || !snoozedBy) return;
-  return `${deniedTabTitle} by ${snoozedBy} on ${format(
+  return `${deniedTabTitle.charAt(0).toUpperCase() + deniedTabTitle.slice(1).toLowerCase()} by ${snoozedBy} on ${format(
     snoozedOnDate,
     "LLLL d, yyyy",
   )}.`;

@@ -28,7 +28,7 @@ export const generateTabs = ({
     customTabOrder ?? [
       "Eligible Now",
       "Almost Eligible",
-      isAlert ? "Overridden" : "Marked ineligible",
+      isAlert ? "Overridden" : "Marked Ineligible",
     ]
   );
 };
