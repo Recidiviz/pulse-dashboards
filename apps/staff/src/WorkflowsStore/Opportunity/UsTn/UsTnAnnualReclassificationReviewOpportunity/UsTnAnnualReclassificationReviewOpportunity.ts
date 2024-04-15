@@ -53,8 +53,6 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
     return this.record?.formReclassificationDueDate;
   }
 
-  compare = this.sortByEligibilityDate;
-
   // eslint-disable-next-line class-methods-use-this
   showEligibilityStatus(): boolean {
     return true;

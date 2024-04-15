@@ -428,8 +428,8 @@ export abstract class OpportunityBase<
 
     if (compareBy) sortParams = compareBy;
     else if (systemType === "INCARCERATION")
-      sortParams = ["reviewStatus", "eligibilityDate"];
-    else sortParams = ["reviewStatus"];
+      sortParams = [{ field: "reviewStatus" }, { field: "eligibilityDate" }];
+    else sortParams = [{ field: "reviewStatus" }];
 
     return buildOpportunityCompareFunction(sortParams)(this, other);
   }

@@ -17,6 +17,7 @@
 
 import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
+import { SortParamObject } from "../../OpportunityConfigs";
 import { DenialReasonsMap, OpportunityTab } from "../../types";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import { CriteriaCopy } from "./shared";
@@ -44,5 +45,5 @@ export interface OpportunityConfiguration {
   tooltipEligibilityText?: string;
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;
-  compareBy: string[] | undefined;
+  compareBy: SortParamObject<string>[] | undefined;
 }

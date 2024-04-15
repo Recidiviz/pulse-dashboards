@@ -17,13 +17,14 @@
 
 import { ascending, descending } from "d3-array";
 
+import { SortParamObject } from "../OpportunityConfigs";
 import { Opportunity, OPPORTUNITY_STATUS_RANKED } from "../types";
 
 const RANKING_OVERRIDES = {
   reviewStatus: OPPORTUNITY_STATUS_RANKED,
 } as const;
 
-type SortParam = `${string} asc` | `${string} desc` | string;
+type SortParam = SortParamObject<string>;
 
 /**
  * Creates a sort function that sorts two opportunities by the provided sort fields. If the sort direction is not provided, it defaults to ascending.
@@ -32,30 +33,51 @@ type SortParam = `${string} asc` | `${string} desc` | string;
  */
 export function buildOpportunityCompareFunction(sortFields: SortParam[]) {
   return (a: Opportunity, b: Opportunity) => {
-    return sortFields.reduce((result, field) => {
+    return sortFields.reduce((result, sortParam) => {
       if (result === 0) {
-        const parsedSortFields = field.split(" ") as
-          | [string, string]
-          | [string];
-        const [sortField, sortDirection] = parsedSortFields;
-        const rankingOverride =
-          RANKING_OVERRIDES[sortField as keyof typeof RANKING_OVERRIDES];
-
-        const getProperty = (f: any, o: Opportunity) => {
-          if (Object.hasOwn(o, f)) return o[f as keyof typeof o];
-          if (Object.hasOwn(o.person, f))
-            return o.person[f as keyof typeof o.person];
+        const {
+          field,
+          sortDirection = "asc",
+          undefinedBehavior = "undefinedLast",
+        } = sortParam;
+        /**
+         * Explicitly check for membership in `Opportunity` and `JusticeInvolvedPerson` classes.
+         * @param o OpportunityBase instance
+         * @param f sorting field to check for
+         * @returns value at the `f` if it exists, otherwise `undefined`
+         */
+        const getProperty = (o: Opportunity, f: string) => {
+          if (f in o) return o[f as keyof typeof o];
+          if (f in o.person) return o.person[f as keyof typeof o.person];
           return undefined;
         };
 
-        const getRank = (o: Opportunity) =>
-          getProperty(sortField, o) && rankingOverride
-            ? rankingOverride.indexOf(getProperty(sortField, o))
-            : getProperty(sortField, o);
+        /**
+         * Calculates the rank of the given opportunity given `f`.
+         * @param opportunity OpportunityBase instance
+         * @returns rank of the given opportunity. However, if an undefined behavior is provided, it will return -Infinity or Infinity based on the behavior.
+         */
+        const getRank = (opportunity: Opportunity) => {
+          const propertyValue = getProperty(opportunity, field);
+          if (propertyValue === undefined && undefinedBehavior) {
+            if (undefinedBehavior === "undefinedFirst")
+              return sortDirection === "desc" ? Infinity : -Infinity;
+            if (undefinedBehavior === "undefinedLast")
+              return sortDirection === "asc" ? Infinity : -Infinity;
+          }
+          return (
+            RANKING_OVERRIDES[field as keyof typeof RANKING_OVERRIDES]?.indexOf(
+              propertyValue,
+            ) ?? propertyValue
+          );
+        };
 
-        return !sortDirection || sortDirection === "asc"
-          ? ascending(getRank(a), getRank(b))
-          : descending(getRank(a), getRank(b));
+        const aRank = getRank(a);
+        const bRank = getRank(b);
+
+        return sortDirection === "desc"
+          ? descending(aRank, bRank)
+          : ascending(aRank, bRank);
       }
       return result;
     }, 0);

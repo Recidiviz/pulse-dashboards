@@ -54,4 +54,11 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
       COMP: "Hearing Completed",
       Other: "Other, please specify a reason",
     },
+    compareBy: [
+      {
+        field: "eligibilityDate",
+        sortDirection: "asc",
+        undefinedBehavior: "undefinedFirst",
+      },
+    ],
   };

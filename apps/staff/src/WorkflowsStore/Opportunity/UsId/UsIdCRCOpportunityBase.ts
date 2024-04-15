@@ -15,21 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ascending } from "d3-array";
 import { DocumentData } from "firebase/firestore";
 
 import { Resident } from "../../Resident";
-import { JusticeInvolvedPerson } from "../../types";
 import { OpportunityBase } from "../OpportunityBase";
-import { Opportunity } from "../types";
 
 export abstract class UsIdCRCOpportunityBase<
   ReferralRecord extends DocumentData,
-> extends OpportunityBase<Resident, ReferralRecord> {
-  compare(other: Opportunity<JusticeInvolvedPerson>): number {
-    const { releaseDate } = this.person;
-    const { releaseDate: otherReleaseDate } = (other as Opportunity<Resident>)
-      .person;
-    return ascending(releaseDate, otherReleaseDate);
-  }
-}
+> extends OpportunityBase<Resident, ReferralRecord> {}

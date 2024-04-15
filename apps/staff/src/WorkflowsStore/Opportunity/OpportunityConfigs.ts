@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { Primitive } from "d3-array";
+
 import { SystemId } from "../../core/models/types";
 import { OpportunityProfileModuleName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
@@ -101,6 +103,27 @@ export type OpportunityCountByFunction = (
   opportunities: Array<Opportunity>,
 ) => number;
 
+/*
+ * Union type of class properties of type `Primitive`, as defined by the `d3-array` library.
+ */
+type PrimitiveClassProperties<C> = {
+  [K in keyof C]: C[K] extends Primitive | undefined | null ? K : never;
+}[keyof C];
+
+type SortField = NonNullable<
+  | PrimitiveClassProperties<OpportunityBase<any, any, any>>
+  | PrimitiveClassProperties<Resident>
+  | PrimitiveClassProperties<Client>
+>;
+
+export type SortParamObject<T extends string> = {
+  field: T;
+  sortDirection?: "asc" | "desc";
+  undefinedBehavior?: "undefinedFirst" | "undefinedLast";
+};
+
+export type SortParam = SortParamObject<SortField>;
+
 export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   systemType: SystemType<ExtractPersonType<OpportunityVariant>>;
   stateCode: TenantId;
@@ -126,6 +149,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   tooltipEligibilityText?: string;
   eligibleCriteriaCopy?: Record<string, { text: string; tooltip?: string }>;
   ineligibleCriteriaCopy?: Record<string, { text: string; tooltip?: string }>;
+  compareBy?: SortParam[];
 };
 
 export const OPPORTUNITY_CONFIGS = {

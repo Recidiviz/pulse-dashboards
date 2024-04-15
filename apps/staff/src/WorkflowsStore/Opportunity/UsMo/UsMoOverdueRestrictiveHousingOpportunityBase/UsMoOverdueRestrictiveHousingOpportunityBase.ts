@@ -28,7 +28,7 @@ import { Resident } from "../../../Resident";
 import { TransformFunction, ValidateFunction } from "../../../subscriptions";
 import { CopyTuple, OpportunityType } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
-import { Component, Opportunity, OpportunityTab } from "../../types";
+import { Component, OpportunityTab } from "../../types";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "./UsMoOverdueRestrictiveHousingReferralRecord";
 
 export const usMoNoActiveD1Sanctions: CopyTuple<"usMoNoActiveD1Sanctions"> = [
@@ -101,12 +101,6 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
       return "Coming up";
     }
     return "Other";
-  }
-
-  compare(other: Opportunity): number {
-    if (!this.eligibilityDate) return -1;
-    if (!other.eligibilityDate) return 1;
-    return this.sortByEligibilityDate(other);
   }
 
   showEligibilityStatus(component: Component): boolean {

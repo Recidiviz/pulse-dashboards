@@ -40,7 +40,13 @@ export const apiOpportunityConfigurationSchema = z.object({
   eligibleCriteriaCopy: criteriaCopySchema,
   ineligibleCriteriaCopy: criteriaCopySchema,
   sidebarComponents: z.array(z.string()),
-  compareBy: z.array(z.string()),
+  compareBy: z.array(
+    z.object({
+      field: z.string(),
+      sortDirection: z.enum(["asc", "desc"]).optional(),
+      undefinedBehavior: z.enum(["undefinedFirst", "undefinedLast"]).optional(),
+    }),
+  ),
   methodologyUrl: z.string().refine(
     (str) => str.startsWith("https://"),
     (str) => ({

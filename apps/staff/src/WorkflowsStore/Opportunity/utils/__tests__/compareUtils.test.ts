@@ -130,7 +130,7 @@ describe("Created sort functions should work", () => {
       orderedDates,
     );
     const opps = shuffle(opportunities)
-      .sort(buildOpportunityCompareFunction(["stuff"]))
+      .sort(buildOpportunityCompareFunction([{ field: "stuff" }]))
       .map((a) => ({
         eligibilityDate: a.eligibilityDate,
         reviewStatus: a.reviewStatus,
@@ -145,7 +145,7 @@ describe("Created sort functions should work", () => {
     );
     expect(
       shuffle(opportunities)
-        .sort(buildOpportunityCompareFunction(["reviewStatus"]))
+        .sort(buildOpportunityCompareFunction([{ field: "reviewStatus" }]))
         .map((a) => a.reviewStatus),
     ).toEqual(orderedReviewStatuses);
   });
@@ -157,7 +157,7 @@ describe("Created sort functions should work", () => {
     );
     expect(
       shuffle(opportunities)
-        .sort(buildOpportunityCompareFunction(["eligibilityDate"]))
+        .sort(buildOpportunityCompareFunction([{ field: "eligibilityDate" }]))
         .map((a) => a.eligibilityDate),
     ).toEqual(orderedDates);
   });
@@ -170,7 +170,7 @@ describe("Created sort functions should work", () => {
       datesWithUndefinedMembers,
     );
     const sortedReviewStatuses = shuffle(opportunities)
-      .sort(buildOpportunityCompareFunction(["reviewStatus"]))
+      .sort(buildOpportunityCompareFunction([{ field: "reviewStatus" }]))
       .map((a) => a.reviewStatus);
     expect(sortedReviewStatuses).toEqual(sortedReviewStatuses);
   });
@@ -183,7 +183,10 @@ describe("Created sort functions should work", () => {
     expect(
       shuffle(opportunities)
         .sort(
-          buildOpportunityCompareFunction(["reviewStatus", "eligibilityDate"]),
+          buildOpportunityCompareFunction([
+            { field: "reviewStatus" },
+            { field: "eligibilityDate" },
+          ]),
         )
         .map((a) => [a.reviewStatus, a.eligibilityDate]),
     ).toMatchInlineSnapshot(`
@@ -234,7 +237,10 @@ describe("Created sort functions should work", () => {
     expect(
       shuffle(opportunities)
         .sort(
-          buildOpportunityCompareFunction(["reviewStatus", "eligibilityDate"]),
+          buildOpportunityCompareFunction([
+            { field: "reviewStatus" },
+            { field: "eligibilityDate" },
+          ]),
         )
         .map((a) => a.reviewStatus),
     ).toEqual(orderedReviewStatuses);
@@ -327,7 +333,9 @@ describe("Created sort functions should work", () => {
       );
 
       const sorted = opportunities.sort(
-        buildOpportunityCompareFunction(["reviewStatus asc"]),
+        buildOpportunityCompareFunction([
+          { field: "reviewStatus", sortDirection: "asc" },
+        ]),
       );
 
       expect(sorted.map((o) => o.reviewStatus)).toEqual(orderedReviewStatuses);
@@ -340,7 +348,9 @@ describe("Created sort functions should work", () => {
       );
 
       const sorted = opportunities.sort(
-        buildOpportunityCompareFunction(["reviewStatus desc"]),
+        buildOpportunityCompareFunction([
+          { field: "reviewStatus", sortDirection: "desc" },
+        ]),
       );
 
       expect(sorted.map((o) => o.reviewStatus)).toEqual(

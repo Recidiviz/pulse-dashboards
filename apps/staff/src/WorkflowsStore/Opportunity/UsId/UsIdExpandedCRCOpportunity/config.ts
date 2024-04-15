@@ -89,4 +89,5 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
         text: "Resident in {{facilityName}} since {{date crcStartDate}}",
       },
     },
+    compareBy: [{ field: "releaseDate" }],
   };

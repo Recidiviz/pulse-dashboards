@@ -23,7 +23,7 @@ import { freeze } from "timekeeper";
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
 import { DocumentSubscription } from "../../../subscriptions";
-import { OpportunityStatus } from "../..";
+import { OpportunityStatus, SortParamObject } from "../..";
 import {
   usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
   usMoPersonRecord,
@@ -277,6 +277,7 @@ class TestOpportunity extends UsMoOverdueRestrictiveHousingInitialHearingOpportu
 const createOpportunityInstance = (
   reviewStatus: OpportunityStatus,
   eligibilityDate: Date | undefined,
+  compareBy?: SortParamObject<string>[],
 ) => {
   const mockRoot = new RootStore();
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
@@ -284,16 +285,22 @@ const createOpportunityInstance = (
 
   vi.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
   vi.spyOn(mockOpp, "eligibilityDate", "get").mockReturnValue(eligibilityDate);
-
+  if (compareBy)
+    vi.spyOn(mockOpp.config, "compareBy", "get").mockReturnValue(compareBy);
   return mockOpp;
 };
 
 const initOpportunitiesList = (
   reviewStatuses: OpportunityStatus[],
   eligibilityDates: (Date | undefined)[],
+  compareBy?: SortParamObject<string>[],
 ) => {
   return reviewStatuses.map((reviewStatus, index) => {
-    return createOpportunityInstance(reviewStatus, eligibilityDates[index]);
+    return createOpportunityInstance(
+      reviewStatus,
+      eligibilityDates[index],
+      compareBy,
+    );
   });
 };
 
@@ -342,6 +349,30 @@ describe("Test custom compare function", () => {
     opportunities = initOpportunitiesList(
       shuffle(orderedReviewStatuses),
       shuffledDates,
+    );
+    opportunities.sort((a, b) => a.compare(b));
+    expect(
+      evaluateForUndefinedDatesFirstOnly(
+        opportunities.map((mockOpp) => mockOpp.eligibilityDate),
+      ),
+    ).toBeTruthy();
+  });
+
+  it("should sort undefined opportunities to the front of the array regardless of param ordering", () => {
+    const shuffledDates = shuffle(orderedDates).map(
+      (date: Date | undefined, idx) => (idx % 2 === 1 ? undefined : date),
+    );
+
+    opportunities = initOpportunitiesList(
+      shuffle(orderedReviewStatuses),
+      shuffledDates,
+      [
+        {
+          field: "eligibilityDate",
+          undefinedBehavior: "undefinedFirst",
+          sortDirection: "asc",
+        },
+      ],
     );
     opportunities.sort((a, b) => a.compare(b));
     expect(

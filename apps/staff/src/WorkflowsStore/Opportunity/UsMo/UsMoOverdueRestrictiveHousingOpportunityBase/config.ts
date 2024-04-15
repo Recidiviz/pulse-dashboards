@@ -88,5 +88,11 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
     isAlert: true,
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MO,
     denialReasons,
+    compareBy: [
+      {
+        field: "eligibilityDate",
+        undefinedBehavior: "undefinedFirst",
+      },
+    ],
   };
 };
