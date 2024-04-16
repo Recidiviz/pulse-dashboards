@@ -928,6 +928,7 @@ describe("feature variants", () => {
         "usTnAnnualReclassification": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "workflowsSupervisorSearch": {},
       }
     `);
   });
@@ -962,6 +963,7 @@ describe("feature variants", () => {
         "usTnAnnualReclassification": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "workflowsSupervisorSearch": {},
       }
     `);
   });
@@ -994,6 +996,7 @@ describe("feature variants", () => {
         "usTnAnnualReclassification": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "workflowsSupervisorSearch": {},
       }
     `);
   });

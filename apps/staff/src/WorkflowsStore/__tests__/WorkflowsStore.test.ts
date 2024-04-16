@@ -60,6 +60,7 @@ import {
   mockSupervisionOfficers,
   mockSupervisionOfficers2,
   mockSupervisor,
+  mockSupervisor2,
 } from "../__fixtures__";
 import { Client } from "../Client";
 import {
@@ -443,7 +444,6 @@ test("caseload defaults to no selected search if the user has no saved search an
     rootStore.tenantStore.currentTenantId = "US_MO";
     workflowsStore.updateActiveSystem("INCARCERATION");
   });
-
   await waitForHydration();
   expect(workflowsStore.selectedSearchIds).toEqual([]);
 });
@@ -1429,4 +1429,59 @@ test("staffSupervisedByCurrentUser provides a list of users supervised by curren
   expect(staffSupervisedByCurrentUser.length).toEqual(2);
   expect(staffSupervisorExternalIds[0]).toEqual(mockSupervisorID);
   expect(staffSupervisorExternalIds[1]).toEqual(mockSupervisorID);
+});
+
+test("caseload (`selectedSearchIds`) default to current user's supervised staff (if user is supervisor with at least one staff) after login", async () => {
+  setUser({ workflowsSupervisorSearch: {} });
+  await waitForHydration({
+    ...mockSupervisor2,
+    updates: { stateCode: "US_TN" },
+  });
+
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers2;
+  });
+
+  expect(workflowsStore.selectedSearchIds).toEqual([
+    "SUPERVISOR1",
+    "OFFICER1",
+    "OFFICER2",
+  ]);
+});
+
+test("caseload (`selectedSearchIds`) reflects updated list after user with supervised staff makes new search updates", async () => {
+  setUser({ workflowsSupervisorSearch: {} });
+  await waitForHydration({
+    ...mockSupervisor2,
+    updates: { stateCode: "US_TN" },
+  });
+
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers2;
+  });
+
+  expect(workflowsStore.selectedSearchIds).toEqual([
+    "SUPERVISOR1",
+    "OFFICER1",
+    "OFFICER2",
+  ]);
+
+  runInAction(() => {
+    // user deselects OFFICER1 and OFFICER2
+    workflowsStore.updateSelectedSearch([workflowsStore.selectedSearchIds[0]]);
+  });
+
+  expect(workflowsStore.selectedSearchIds).toEqual(["SUPERVISOR1"]);
+
+  runInAction(() => {
+    // user reselects OFFICER1
+    workflowsStore.updateSelectedSearch([
+      ...workflowsStore.selectedSearchIds,
+      "OFFICER1",
+    ]);
+  });
+
+  expect(workflowsStore.selectedSearchIds).toEqual(["SUPERVISOR1", "OFFICER1"]);
 });

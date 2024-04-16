@@ -151,6 +151,12 @@ export class WorkflowsStore implements Hydratable {
 
   activePage: WorkflowsRouteParams = {};
 
+  /**
+   * Local state to keep track of the selected search ids for a user with supervised staff,
+   * after the default behavior or auto-setting their search ids (to their own + supervised staff) upon login
+   */
+  selectedSearchIdsForSupervisorsWithStaff: string[] | undefined = undefined;
+
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
     makeAutoObservable<this, "userKeepAliveDisposer">(this, {
@@ -213,12 +219,11 @@ export class WorkflowsStore implements Hydratable {
     when(
       () => !!this.user,
       () => {
-        const { selectedSearchIds } = this.user?.updates ?? {};
         const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
 
-        if (selectedSearchIds && isDefaultOfficerSelection) {
+        if (this.selectedSearchIds && isDefaultOfficerSelection) {
           this.rootStore.analyticsStore.trackCaseloadSearch({
-            searchCount: selectedSearchIds.length,
+            searchCount: this.selectedSearchIds.length,
             isDefault: true,
             searchType: "OFFICER",
           });
@@ -352,7 +357,26 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get selectedSearchIds(): string[] {
-    return this.user?.updates?.selectedSearchIds ?? [];
+    if (!this.user) return [];
+
+    const { info } = this.user;
+
+    // return the current user's caseload and staff if current user
+    // has at least one staff member they supervise upon login, otherwise
+    // use the list updated in `selectedSearchIdsForSupervisorsWithStaff`
+    if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
+      if (this.selectedSearchIdsForSupervisorsWithStaff) {
+        return this.selectedSearchIdsForSupervisorsWithStaff;
+      }
+      const supervisedStaffIds = this.staffSupervisedByCurrentUser.map(
+        (staff) => staff.id,
+      );
+      const staffAndCurrentUserIds = [info.id, ...supervisedStaffIds];
+      return staffAndCurrentUserIds;
+    }
+
+    const previousSearchIds = this.user.updates?.selectedSearchIds;
+    return previousSearchIds ?? [];
   }
 
   async fetchPerson(personId: string): Promise<void> {
@@ -419,6 +443,11 @@ export class WorkflowsStore implements Hydratable {
       this.rootStore.currentTenantId,
       searchIds,
     );
+
+    // update the `selectedSearchIdsForSupervisorsWithStaff` for users with staff they supervise
+    if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
+      this.selectedSearchIdsForSupervisorsWithStaff = searchIds;
+    }
   }
 
   async updateSelectedPerson(personId?: string): Promise<void> {
@@ -956,6 +985,13 @@ export class WorkflowsStore implements Hydratable {
       userStore: { userHash },
     } = this.rootStore;
     return userHash;
+  }
+
+  get hasSupervisedStaffAndRequiredFeatureVariant(): boolean {
+    return Boolean(
+      this.featureVariants.workflowsSupervisorSearch &&
+        this.staffSupervisedByCurrentUser.length > 0,
+    );
   }
 
   setActivePage(params: WorkflowsRouteParams): void {

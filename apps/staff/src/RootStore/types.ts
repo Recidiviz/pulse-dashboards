@@ -87,7 +87,8 @@ export type FeatureVariant =
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
   | "hideDenialRevert"
-  | "opportunityConfigurationAPI";
+  | "opportunityConfigurationAPI"
+  | "workflowsSupervisorSearch";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -121,6 +122,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   hideDenialRevert: {},
   opportunityConfigurationAPI: {},
   usMeCustodyLevelReview: {},
+  workflowsSupervisorSearch: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   import.meta.env.VITE_DEPLOY_ENV === "production"
