@@ -33,10 +33,9 @@ const NavigateToFormButtonStyle = styled(Button)`
   background: ${OPPORTUNITY_STATUS_COLORS.eligible.buttonFill};
   border-radius: 4px;
   border: 1px solid ${OPPORTUNITY_STATUS_COLORS.eligible.buttonFill};
-  max-height: 32px;
-  min-height: 32px;
-  max-width: ${rem(175)};
-  padding: ${rem(spacing.md)} 0;
+  height: 40px;
+  max-width: ${rem(200)};
+  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
 
   &:hover,
   &:focus {

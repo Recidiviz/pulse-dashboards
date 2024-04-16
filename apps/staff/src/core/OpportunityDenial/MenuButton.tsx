@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button } from "@recidiviz/design-system";
+import { Button, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { Opportunity } from "../../WorkflowsStore";
@@ -25,7 +26,9 @@ const StatusAwareButton = styled(Button).attrs({
   kind: "secondary",
   shape: "block",
 })`
-  max-width: 10rem;
+  max-width: 11rem;
+  height: 40px;
+  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
 `;
 
 export const MenuButton = observer(function MenuButton({

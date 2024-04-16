@@ -69,6 +69,8 @@ const FormActionButton = styled(Button).attrs({
 }>`
   background: ${(props) => props.buttonFill};
   margin-right: ${rem(spacing.sm)};
+  height: 40px;
+  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
 
   &:hover,
   &:focus {
