@@ -38,12 +38,17 @@ const US_MI_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_MI],
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
-  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",
       searchField: "officerId",
       searchTitleOverride: "agent",
+    },
+    INCARCERATION: {
+      searchType: "LOCATION",
+      searchField: "facilityId",
+      searchTitleOverride: "facility",
     },
   },
   opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
