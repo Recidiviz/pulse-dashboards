@@ -1,0 +1,20 @@
+# .github/release.yml
+
+changelog:
+  categories:
+    - title: New Features 🎉
+      labels:
+        - "Type: Feature"
+    - title: Bug Fixes 🪲
+      labels:
+        - "Type: Bug"
+    - title: Breaking Changes 🧨
+      labels:
+        - "Type: Breaking Change"
+    - title: Refactors + Config Changes 📐
+      labels:
+        - "Type: Non-breaking refactor"
+        - "Type: Configuration Change"
+    - title: Dependency Upgrades ⬆️
+      labels:
+        - "Type: Dependency Upgrade"
