@@ -55,7 +55,7 @@ class UsIdContactTask extends Task<"contact"> {
       details += `Last contact was on: ${this.lastContacted}; `;
     }
     if (complianceLevel) {
-      details += simplur`${complianceLevel.contacts} contact[|s] needed every ${complianceLevel.days} days, for current supervision level`;
+      details += simplur`${complianceLevel.contacts} contact[|s] needed every ${complianceLevel.days} days, for current supervision level and case type`;
     }
 
     return details;
