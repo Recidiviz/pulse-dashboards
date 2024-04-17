@@ -194,4 +194,13 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Supervisor",
     supervisorExternalId: null,
   },
+  {
+    email: null,
+    district: "DISTRICT 50",
+    id: "OFFICER3",
+    stateCode: "US_TN",
+    givenNames: "Test",
+    surname: "Officer3",
+    supervisorExternalId: null,
+  },
 ].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));

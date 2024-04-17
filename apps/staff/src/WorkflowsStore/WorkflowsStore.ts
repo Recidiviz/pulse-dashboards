@@ -51,6 +51,7 @@ import {
   Hydratable,
   HydrationState,
   Searchable,
+  SearchableGroup,
   SearchType,
   SystemId,
   WorkflowsSystemConfig,
@@ -473,7 +474,10 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get selectedSearchables(): Searchable[] {
-    return this.availableSearchables.filter((searchable) =>
+    const allSearchables = this.availableSearchables.flatMap(
+      (searchableGroup) => searchableGroup.searchables,
+    );
+    return allSearchables.filter((searchable) =>
       this.selectedSearchIds.includes(searchable.searchId),
     );
   }
@@ -762,20 +766,70 @@ export class WorkflowsStore implements Hydratable {
     return sortBy(locations, ["name"]);
   }
 
-  get availableSearchables(): Searchable[] {
+  get availableSearchables(): SearchableGroup[] {
     switch (this.searchType) {
       case "LOCATION": {
-        return this.availableLocations.map(
-          (location) => new Location(location),
-        );
+        return [
+          {
+            groupLabel: "All Locations",
+            searchables: this.availableLocations.map(
+              (location) => new Location(location),
+            ),
+          },
+        ];
       }
       case "OFFICER": {
-        return this.availableOfficers.map((officer) => new Officer(officer));
+        if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
+          const currentUserStaffRecord = this.availableOfficers.filter(
+            (officer) => officer.id === this.user?.info.id,
+          )[0];
+          const currentSupervisor = currentUserStaffRecord
+            ? [new Officer(currentUserStaffRecord)]
+            : [];
+          const supervisedStaff = this.staffSupervisedByCurrentUser.map(
+            (officer) => new Officer(officer),
+          );
+          const supervisedStaffIdsSet = new Set(
+            supervisedStaff.map((officer) => officer.searchId),
+          );
+          const groupedOfficers = [
+            {
+              groupLabel: "Your Team",
+              searchables: [...currentSupervisor, ...supervisedStaff],
+            },
+            {
+              groupLabel: "All Staff",
+              searchables: this.availableOfficers
+                .filter(
+                  (officer) =>
+                    !supervisedStaffIdsSet.has(officer.id) &&
+                    officer.id !== this.user?.info.id,
+                )
+                .map((officer) => new Officer(officer)),
+            },
+          ];
+
+          return groupedOfficers;
+        }
+
+        return [
+          {
+            groupLabel: "All Officers",
+            searchables: this.availableOfficers.map(
+              (officer) => new Officer(officer),
+            ),
+          },
+        ];
       }
       case "CASELOAD": {
-        return this.availableOfficers.map(
-          (officer) => new CaseloadSearchable(officer),
-        );
+        return [
+          {
+            groupLabel: "All Caseloads",
+            searchables: this.availableOfficers.map(
+              (officer) => new CaseloadSearchable(officer),
+            ),
+          },
+        ];
       }
       case "ALL": {
         const locations = this.availableLocations.map(
@@ -784,7 +838,11 @@ export class WorkflowsStore implements Hydratable {
         const officers = this.availableOfficers.map(
           (officer) => new Officer(officer),
         );
-        return [...officers, ...locations];
+
+        return [
+          { groupLabel: "All Locations", searchables: locations },
+          { groupLabel: "All Officers", searchables: officers },
+        ].filter((group) => group.searchables.length); // exclude groups with 0 searchables
       }
       case undefined:
         return [];

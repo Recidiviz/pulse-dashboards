@@ -588,13 +588,19 @@ test("available searchables for search by officer", async () => {
     workflowsStore.locationsSubscription.data = mockLocations;
   });
 
-  const actual = workflowsStore.availableSearchables.map((searchable) => {
-    return {
-      searchLabel: searchable.searchLabel,
-      searchId: searchable.searchId,
-    };
-  });
+  const actual = workflowsStore.availableSearchables[0].searchables.map(
+    (searchable) => {
+      return {
+        searchLabel: searchable.searchLabel,
+        searchId: searchable.searchId,
+      };
+    },
+  );
 
+  expect(workflowsStore.availableSearchables.length).toBe(1);
+  expect(workflowsStore.availableSearchables[0].groupLabel).toBe(
+    "All Officers",
+  );
   expect(actual).toMatchInlineSnapshot(`
     [
       {
@@ -609,6 +615,38 @@ test("available searchables for search by officer", async () => {
   `);
 });
 
+test("available searchables for search by officer when user has staff they supervise", async () => {
+  setUser({ workflowsSupervisorSearch: {} });
+  await waitForHydration(mockSupervisor2);
+
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+    workflowsStore.incarcerationStaffSubscription.data =
+      mockIncarcerationOfficers;
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers2;
+    workflowsStore.locationsSubscription.data = mockLocations;
+  });
+
+  const yourTeamSearchableIds =
+    workflowsStore.availableSearchables[0].searchables.map(
+      (officer) => officer.searchId,
+    );
+  const allStaffSearchableIds =
+    workflowsStore.availableSearchables[1].searchables.map(
+      (officer) => officer.searchId,
+    );
+
+  expect(workflowsStore.availableSearchables.length).toBe(2);
+  expect(workflowsStore.availableSearchables[0].groupLabel).toBe("Your Team");
+  expect(workflowsStore.availableSearchables[1].groupLabel).toBe("All Staff");
+  expect(yourTeamSearchableIds).toEqual([
+    "SUPERVISOR1",
+    "OFFICER1",
+    "OFFICER2",
+  ]);
+  expect(allStaffSearchableIds).toEqual(["OFFICER3"]);
+});
+
 test("available searchables for search by location", async () => {
   await waitForHydration();
   runInAction(() => {
@@ -620,12 +658,14 @@ test("available searchables for search by location", async () => {
     workflowsStore.locationsSubscription.data = mockLocations;
   });
 
-  const actual = workflowsStore.availableSearchables.map((searchable) => {
-    return {
-      searchLabel: searchable.searchLabel,
-      searchId: searchable.searchId,
-    };
-  });
+  const actual = workflowsStore.availableSearchables[0].searchables.map(
+    (searchable) => {
+      return {
+        searchLabel: searchable.searchLabel,
+        searchId: searchable.searchId,
+      };
+    },
+  );
   const expected = [
     {
       searchLabel: "Facility 1",

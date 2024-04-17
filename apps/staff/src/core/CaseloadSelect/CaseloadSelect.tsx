@@ -49,7 +49,7 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
-import { Searchable } from "../models/types";
+import { Searchable, SearchableGroup } from "../models/types";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_SEARCH_LIMIT = 30;
@@ -69,8 +69,28 @@ const DisabledMessage = styled.div`
 
 type SelectOption = { label: string; value: string };
 
-const buildSelectOption = (record: Searchable): SelectOption => {
-  return { label: record.searchLabel, value: record.searchId };
+type SelectGroupedOptions = { label: string; options: SelectOption[] };
+
+const buildSelectOptionsFromSearchableGroup = (
+  searchableGroup: SearchableGroup[],
+): SelectGroupedOptions[] | SelectOption[] => {
+  if (searchableGroup.length === 1) {
+    return buildSelectOptionsFromSearchables(searchableGroup[0].searchables);
+  }
+
+  return searchableGroup.map((group) => ({
+    label: group.groupLabel,
+    options: buildSelectOptionsFromSearchables(group.searchables),
+  }));
+};
+
+const buildSelectOptionsFromSearchables = (
+  searchables: Searchable[],
+): SelectOption[] => {
+  return searchables.map((searchable) => ({
+    label: searchable.searchLabel,
+    value: searchable.searchId,
+  }));
 };
 
 const DistrictIndicatorsWrapper = styled.div`
@@ -391,6 +411,25 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         backgroundColor: palette.slate10,
       },
     }),
+    group: (base) => ({
+      ...base,
+      paddingTop: `${rem(spacing.sm)}`,
+      borderBottom: `1px solid ${palette.slate10}`,
+
+      "&:nth-last-child(2)": {
+        paddingTop: `${rem(spacing.md)}`,
+        borderBottom: "none",
+      },
+    }),
+    groupHeading: (base) => ({
+      ...base,
+      padding: `${rem(2)} ${rem(spacing.md)}`,
+      marginBottom: `${rem(8)}`,
+      color: palette.slate60,
+      fontSize: `${rem(12)}`,
+      lineHeight: `${rem(14.4)}`,
+      textTransform: "capitalize",
+    }),
   };
 
   const defaultOptions = {
@@ -409,10 +448,10 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         searchType,
       });
     },
-    options: availableSearchables.map(buildSelectOption),
+    options: buildSelectOptionsFromSearchableGroup(availableSearchables),
     placeholder: `Search for one or more ${pluralizeWord(searchTitle)} …`,
     styles,
-    value: selectedSearchables.map(buildSelectOption),
+    value: buildSelectOptionsFromSearchables(selectedSearchables),
     // use of satisfies narrows isMulti from boolean to true,
     // which the custom components defined here will require
   } satisfies { isMulti: true; [key: string]: unknown };

@@ -126,6 +126,11 @@ export type Searchable = {
   searchId: string;
 };
 
+export type SearchableGroup = {
+  groupLabel: string;
+  searchables: Searchable[];
+};
+
 export type SystemId = "INCARCERATION" | "SUPERVISION" | "ALL";
 export type SearchType = "OFFICER" | "CASELOAD" | "LOCATION" | "ALL";
 
