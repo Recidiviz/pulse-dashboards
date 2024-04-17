@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { query, where } from "firebase/firestore";
+import { and, or, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
@@ -37,6 +37,8 @@ vi.mock("firebase/firestore");
 
 const queryMock = query as Mock;
 const whereMock = where as Mock;
+const andMock = and as Mock;
+const orMock = or as Mock;
 const collectionMock = vi.fn();
 const withConverterMock = vi.fn();
 
@@ -118,6 +120,7 @@ describe("StaffSubscription tests", () => {
           user: {
             info: {
               district: "TEST_USER_DISTRICT",
+              id: "2222",
             },
           },
         },
@@ -204,6 +207,67 @@ describe("StaffSubscription tests", () => {
         "TEST2",
         "TEST3",
       ]);
+    });
+
+    test("dataSource filters by state code and district", () => {
+      sub.subscribe();
+
+      runInAction(() => {
+        // @ts-ignore
+        rootStoreMock.currentTenantId = "US_TN";
+        // @ts-ignore
+        rootStoreMock.tenantStore.workflowsStaffFilterFn = (
+          user: CombinedUserRecord,
+        ) => ({
+          filterField: "district",
+          filterValues: ["DISTRICT1", "DISTRICT2"],
+        });
+      });
+
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
+      expect(whereMock).toHaveBeenCalledWith("district", "in", [
+        "DISTRICT1",
+        "DISTRICT2",
+      ]);
+      expect(whereMock).not.toHaveBeenCalledWith(
+        "supervisorExternalId",
+        "==",
+        "2222",
+      );
+      expect(whereMock).toHaveBeenCalled();
+      expect(queryMock).toHaveBeenCalled();
+
+      expect(orMock).not.toHaveBeenCalled();
+    });
+
+    test("dataSource filters by state code and supervisor external id for users with workflowsSupervisorSearch feature variant", () => {
+      sub.subscribe();
+
+      runInAction(() => {
+        // @ts-ignore
+        rootStoreMock.currentTenantId = "US_TN";
+        // @ts-ignore
+        rootStoreMock.tenantStore.workflowsStaffFilterFn = (
+          user: CombinedUserRecord,
+        ) => ({
+          filterField: "district",
+          filterValues: ["DISTRICT1", "DISTRICT2"],
+        });
+        // @ts-ignore
+        rootStoreMock.userStore.activeFeatureVariants = {
+          workflowsSupervisorSearch: {},
+        };
+      });
+
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
+      expect(whereMock).toHaveBeenCalledWith(
+        "supervisorExternalId",
+        "==",
+        "2222",
+      );
+      expect(queryMock).toHaveBeenCalled();
+      expect(orMock).toHaveBeenCalled();
+      expect(andMock).toHaveBeenCalled();
     });
 
     test("FirestoreConverter inserts inferred properties when reading snapshot", () => {

@@ -18,7 +18,7 @@
  */
 
 import { DocumentData } from "@google-cloud/firestore";
-import { Query, query, where } from "firebase/firestore";
+import { and, or, Query, query, where } from "firebase/firestore";
 import { z } from "zod";
 
 import { FirestoreCollectionKey } from "../../FirestoreStore";
@@ -39,27 +39,52 @@ export class StaffSubscription<
   get dataSource(): Query {
     const { user } = this.rootStore.workflowsStore;
 
+    const activeFeatureVariants =
+      this.rootStore.userStore.activeFeatureVariants;
     const stateCode = this.rootStore.currentTenantId;
-    const constraints = [where("stateCode", "==", stateCode)];
+    const stateCodeConstraint = [where("stateCode", "==", stateCode)];
+    const compositeConstraint = [];
 
     if (user) {
       const staffFilter = this.rootStore.tenantStore.workflowsStaffFilterFn(
         user,
-        this.rootStore.userStore.activeFeatureVariants,
+        activeFeatureVariants,
       );
       if (staffFilter) {
-        constraints.push(
-          where(staffFilter.filterField, "in", staffFilter.filterValues),
+        const staffFilterConstraint = where(
+          staffFilter.filterField,
+          "in",
+          staffFilter.filterValues,
         );
+        const constraint = activeFeatureVariants.workflowsSupervisorSearch
+          ? or(
+              where("supervisorExternalId", "==", user.info.id), // allows user to also see staff they supervise outside of their district
+              staffFilterConstraint,
+            )
+          : staffFilterConstraint;
+        compositeConstraint.push(constraint);
       }
     }
 
     const { collectionKey } = this;
+    const firestoreCollection = this.rootStore.firestoreStore.collection(
+      this.collectionKey,
+    );
 
-    return query(
-      this.rootStore.firestoreStore.collection(this.collectionKey),
-      ...constraints,
-    ).withConverter({
+    const stateCodeConstraintQuery = query(
+      firestoreCollection,
+      ...stateCodeConstraint,
+    );
+    const compositeQuery = query(
+      firestoreCollection,
+      and(...stateCodeConstraint, ...compositeConstraint),
+    );
+    const finalQuery =
+      compositeConstraint.length > 0
+        ? compositeQuery
+        : stateCodeConstraintQuery;
+
+    return finalQuery.withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);
         return { ...doc, recordId: snapshot.id };
