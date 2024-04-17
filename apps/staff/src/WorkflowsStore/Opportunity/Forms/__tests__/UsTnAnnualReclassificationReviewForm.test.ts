@@ -44,6 +44,7 @@ function createTestUnit() {
     recordId: "US_OZ1",
     pseudonymizedId: "pseudo1",
     displayId: "d1",
+    gender: "MALE",
     personExternalId: "pei1",
     personName: { givenNames: "Joe", middleNames: "Quimby", surname: "Test" },
     officerId: "zzz",

@@ -82,6 +82,7 @@ export const residentRecordBase: WorkflowsResidentRecord = {
     givenNames: "BARNEY",
     surname: "RUBBLE",
   },
+  gender: "MALE",
   personExternalId: "002",
   displayId: "d002",
   pseudonymizedId: "p002",

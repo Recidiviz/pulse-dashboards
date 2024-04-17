@@ -26,6 +26,7 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     stateCode: "US_ME",
     personExternalId: "RES001",
     displayId: "dRES001",
+    gender: "MALE",
     personName: {
       givenNames: "First",
       surname: "Resident",
@@ -46,6 +47,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
       givenNames: "Second",
       surname: "Resident",
     },
+    gender: "FEMALE",
+
     pseudonymizedId: "anonres002",
     facilityId: "FACILITY NAME",
     unitId: "UNIT B",
@@ -62,6 +65,7 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
       givenNames: "Third",
       surname: "Resident",
     },
+    gender: "TRANS_FEMALE",
     pseudonymizedId: "anonres003",
     facilityId: "FACILITY NAME",
     unitId: "UNIT B",
@@ -73,6 +77,7 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     officerId: "OFFICER5",
     stateCode: "US_ME",
     personExternalId: "RES004",
+    gender: "INTERNAL_UNKNOWN",
     displayId: "dRES004",
     personName: {
       givenNames: "Fourth",
@@ -94,6 +99,7 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
       givenNames: "Fifth",
       surname: "Resident",
     },
+    gender: "TRANS",
     pseudonymizedId: "anonres005",
     facilityId: "FACILITY NAME",
     unitId: "UNIT B",

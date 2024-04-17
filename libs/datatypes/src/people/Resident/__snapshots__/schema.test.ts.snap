@@ -6,6 +6,7 @@ exports[`schema for 'US_ME' 'RES001' 1`] = `
   "custodyLevel": "MINIMUM",
   "displayId": "dRES001",
   "facilityId": "FACILITY NAME",
+  "gender": "MALE",
   "officerId": "OFFICER5",
   "personExternalId": "RES001",
   "personName": {
@@ -26,6 +27,7 @@ exports[`schema for 'US_ME' 'RES002' 1`] = `
   "custodyLevel": "MINIMUM",
   "displayId": "dRES002",
   "facilityId": "FACILITY NAME",
+  "gender": "FEMALE",
   "officerId": "OFFICER5",
   "personExternalId": "RES002",
   "personName": {
@@ -46,6 +48,7 @@ exports[`schema for 'US_ME' 'RES003' 1`] = `
   "custodyLevel": "MINIMUM",
   "displayId": "dRES003",
   "facilityId": "FACILITY NAME",
+  "gender": "TRANS_FEMALE",
   "officerId": "OFFICER5",
   "personExternalId": "RES003",
   "personName": {
@@ -66,6 +69,7 @@ exports[`schema for 'US_ME' 'RES004' 1`] = `
   "custodyLevel": "MINIMUM",
   "displayId": "dRES004",
   "facilityId": "FACILITY NAME",
+  "gender": "INTERNAL_UNKNOWN",
   "officerId": "OFFICER5",
   "personExternalId": "RES004",
   "personName": {
@@ -86,6 +90,7 @@ exports[`schema for 'US_ME' 'RES005' 1`] = `
   "custodyLevel": "MINIMUM",
   "displayId": "dRES005",
   "facilityId": "FACILITY NAME",
+  "gender": "TRANS",
   "officerId": "OFFICER5",
   "personExternalId": "RES005",
   "personName": {

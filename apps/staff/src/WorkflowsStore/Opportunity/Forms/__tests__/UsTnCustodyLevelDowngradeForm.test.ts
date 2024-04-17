@@ -43,6 +43,7 @@ function createTestUnit() {
     stateCode: "US_OZ",
     recordId: "US_OZ1",
     pseudonymizedId: "pseudo1",
+    gender: "MALE",
     displayId: "d1",
     personExternalId: "pei1",
     personName: { givenNames: "Joe", middleNames: "Quimby", surname: "Test" },

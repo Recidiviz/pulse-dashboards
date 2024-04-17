@@ -39,6 +39,7 @@ beforeEach(() => {
     displayId: "dPERSON1",
     personName: { givenNames: "Real", surname: "Person" },
     pseudonymizedId: "anon1",
+    gender: "MALE",
     recordId: "us_xx_PERSON1",
     stateCode: "US_XX",
     custodyLevel: "LEVEL1",

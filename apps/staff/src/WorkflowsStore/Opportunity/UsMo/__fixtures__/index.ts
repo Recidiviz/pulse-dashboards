@@ -31,6 +31,7 @@ export const usMoPersonRecord: WorkflowsResidentRecord = {
     givenNames: "Jessica",
     surname: "Hyde",
   },
+  gender: "INTERNAL_UNKNOWN",
   personExternalId: "111",
   displayId: "d111",
   pseudonymizedId: "p111",

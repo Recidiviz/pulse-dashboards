@@ -282,6 +282,7 @@ export const mockResidents: WorkflowsResidentRecord[] = [
     facilityId: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
     officerId: "1",
     stateCode: "US_ME",
+    gender: "MALE",
     personName: {
       givenNames: "Bernie",
       surname: "Sanders",

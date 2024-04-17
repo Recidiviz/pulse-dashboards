@@ -32,6 +32,7 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     releaseDate: z.string().nullish(),
     portionServedNeeded: z.enum(["1/2", "2/3"]).nullish(),
     sccpEligibilityDate: z.string().nullish(),
+    gender: z.string(),
   })
   .transform((input) => ({
     ...input,
