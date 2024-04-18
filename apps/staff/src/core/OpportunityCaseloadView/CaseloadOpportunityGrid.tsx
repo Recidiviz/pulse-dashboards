@@ -51,16 +51,34 @@ const CaseloadOpportunityGrid = ({
       const fromIndex = index * itemsPerRow;
       const toIndex = Math.min(fromIndex + itemsPerRow, items.length);
 
-      const opportunityCells = items.slice(fromIndex, toIndex).map((item) => (
-        <CaseloadOpportunityCell
-          key={item.person.externalId}
-          opportunity={item}
-          style={{
-            width: DEFAULT_ITEM_WIDTH,
-            flex: `${DEFAULT_ITEM_WIDTH} 0 auto`,
-          }}
-        />
-      ));
+      // When there is an odd number of opportunity candidates AND we are displaying
+      // the caseload in two columns, we need to align the final candidate cell's width
+      // with the first column, rather than having it take up the full final row width.
+      const halfWidthItem =
+        items.length % 2 === 1 &&
+        itemsPerRow === 2 &&
+        toIndex === items.length &&
+        items.length > 1;
+
+      const halfWidthStyle = {
+        width: "50%",
+        flex: "none",
+      };
+
+      const defaultStyle = {
+        width: DEFAULT_ITEM_WIDTH,
+        flex: `${DEFAULT_ITEM_WIDTH} 0 auto`,
+      };
+
+      const opportunityCells = items
+        .slice(fromIndex, toIndex)
+        .map((item) => (
+          <CaseloadOpportunityCell
+            key={item.person.externalId}
+            opportunity={item}
+            style={halfWidthItem ? halfWidthStyle : defaultStyle}
+          />
+        ));
 
       return (
         <CaseloadOpportunityRow style={{ display: "flex", ...style }}>
