@@ -14,11 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { AuthStore } from "@recidiviz/auth";
 
+import { isOfflineMode, isTestEnv } from "~client-env-utils";
+
+import { DataAPI } from "../api/interface";
+import { OfflineAPIClient } from "../api/OfflineAPIClient";
+import { ResidentsStore } from "./ResidentsStore";
+
 export class RootStore {
+  /**
+   * Will be an offline client in offline and test modes,
+   * and an external API client otherwise.
+   */
+  apiClient: DataAPI;
+
   authStore: AuthStore;
+
+  residentsStore: ResidentsStore;
+
+  // for convenience, this is a constant while we only have one state onboarded
+  readonly stateCode = "US_ME";
 
   constructor() {
     this.authStore = new AuthStore({
@@ -28,5 +44,24 @@ export class RootStore {
         redirect_uri: `${window.location.origin}`,
       },
     });
+
+    this.apiClient = this.createApiClient();
+
+    this.residentsStore = new ResidentsStore(this);
+  }
+
+  /**
+   * Constructs and returns an appropriate API client based on the environment
+   * (e.g. one that returns fixture data in offline mode). Not intended to be
+   * MobX-reactive, since it creates a brand-new instance and discards any state
+   * the previous instance might have held.
+   */
+  private createApiClient(): DataAPI {
+    if (isOfflineMode() || isTestEnv()) {
+      return new OfflineAPIClient(this);
+    } else {
+      // TODO(#5116): implement online mode
+      return new OfflineAPIClient(this);
+    }
   }
 }

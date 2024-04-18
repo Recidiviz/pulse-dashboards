@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { ParsedRecord } from "../../utils/types";
 import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 
 /**
@@ -39,5 +40,4 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     personType: "RESIDENT" as const,
   }));
 
-export type ResidentRecord = z.infer<typeof residentRecordSchema>;
-export type ResidentRecordRaw = z.input<typeof residentRecordSchema>;
+export type ResidentRecord = ParsedRecord<typeof residentRecordSchema>;

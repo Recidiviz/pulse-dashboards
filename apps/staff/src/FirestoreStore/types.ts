@@ -157,7 +157,7 @@ export type ClientRecord = WorkflowsJusticeInvolvedPersonRecord & {
  * Data from the Recidiviz data platform about an incarcerated person
  */
 export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
-  ResidentRecord & {
+  ResidentRecord["output"] & {
     allEligibleOpportunities: IncarcerationOpportunityType[];
     portionServedNeeded?: "1/2" | "2/3";
     sccpEligibilityDate?: Timestamp | string;
