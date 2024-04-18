@@ -1,0 +1,64 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for almostEligible 1`] = `
+{
+  "eligibleCriteria": {},
+  "externalId": "RES021",
+  "formInformation": {},
+  "ineligibleCriteria": {
+    "eligibleForReclassificationToGeneralPopulation": {
+      "detentionSanctionHasExpired": null,
+      "overdueInTemporary": true,
+      "overdueInTemporaryDate": 2021-12-19T00:00:00.000Z,
+      "sanctionExpirationDate": null,
+    },
+  },
+  "metadata": {
+    "daysInSolitary": 27,
+    "solitaryConfinementType": "TEMPORARY_SOLITARY_CONFINEMENT",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for fullyEligible1 1`] = `
+{
+  "eligibleCriteria": {
+    "eligibleForReclassificationToGeneralPopulation": {
+      "detentionSanctionHasExpired": true,
+      "overdueInTemporary": null,
+      "overdueInTemporaryDate": null,
+      "sanctionExpirationDate": 2021-12-11T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES019",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "metadata": {
+    "daysInSolitary": 15,
+    "solitaryConfinementType": "DISCIPLINARY_SOLITARY_CONFINEMENT",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for fullyEligible2 1`] = `
+{
+  "eligibleCriteria": {
+    "eligibleForReclassificationToGeneralPopulation": {
+      "detentionSanctionHasExpired": null,
+      "overdueInTemporary": true,
+      "overdueInTemporaryDate": 2021-12-13T00:00:00.000Z,
+      "sanctionExpirationDate": null,
+    },
+  },
+  "externalId": "RES020",
+  "formInformation": {},
+  "ineligibleCriteria": {},
+  "metadata": {
+    "daysInSolitary": 31,
+    "solitaryConfinementType": "TEMPORARY_SOLITARY_CONFINEMENT",
+  },
+  "stateCode": "US_MI",
+}
+`;

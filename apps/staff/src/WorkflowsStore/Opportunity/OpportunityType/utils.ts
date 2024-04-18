@@ -45,6 +45,7 @@ export const OPPORTUNITY_TYPES_BY_STATE = {
     "usMiMinimumTelephoneReporting",
     "usMiPastFTRD",
     "usMiSupervisionLevelDowngrade",
+    "usMiReclassificationRequest",
   ],
   US_MO: [
     "usMoRestrictiveHousingStatusHearing",

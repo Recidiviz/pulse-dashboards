@@ -21,6 +21,8 @@ export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
 export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
 export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
 export * from "./opportunities/UsMe/UsMeSCCP/schema";
+export * from "./opportunities/UsMi/UsMiReclassificationRequest/fixtures";
+export * from "./opportunities/UsMi/UsMiReclassificationRequest/schema";
 export * from "./opportunities/utils/caseNotesSchema";
 export * from "./opportunities/utils/types";
 export * from "./opportunities/utils/types";
