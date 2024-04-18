@@ -22,6 +22,7 @@ import { RootStore } from "../../../../RootStore";
 import { TenantId } from "../../../../RootStore/types";
 import { Client } from "../../../Client";
 import { Resident } from "../../../Resident";
+import { OPPORTUNITY_CONFIGS } from "../../OpportunityConfigs";
 import {
   UsTnExpirationEligibleClientRecord,
   usTnVerifiedOpportunities,
@@ -337,5 +338,17 @@ describe("client on EarlyTermination", () => {
 
   test("portionServedDates has one element", () => {
     expect(client.portionServedDates.length).toEqual(1);
+  });
+});
+
+describe("opportunity config denial reasons uses OTHER_CORIS", () => {
+  test("denial reasons doesn't include the standard Other reason", () => {
+    const testConfigs = Object.values(OPPORTUNITY_CONFIGS).filter(
+      (config) => config.stateCode === "US_ME",
+    );
+    testConfigs.forEach((config) => {
+      const denialReasonKeys = Object.keys(config.denialReasons);
+      expect(denialReasonKeys).not.toContain("Other");
+    });
   });
 });

@@ -40,7 +40,7 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     denialReasons: {
       COMPLETE: "Reclassification is already completed",
       ERROR: "Reclassification date is incorrect",
-      OTHER: "Other, please specify a reason.",
+      OTHER_CORIS: "Other, please add a case note in CORIS",
     },
     methodologyUrl:
       "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view?usp=drive_link",
