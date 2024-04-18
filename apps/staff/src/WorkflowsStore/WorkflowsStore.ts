@@ -372,7 +372,8 @@ export class WorkflowsStore implements Hydratable {
       const supervisedStaffIds = this.staffSupervisedByCurrentUser.map(
         (staff) => staff.id,
       );
-      const staffAndCurrentUserIds = [info.id, ...supervisedStaffIds];
+      const currentUserId = info.hasCaseload ? [info.id] : [];
+      const staffAndCurrentUserIds = [...currentUserId, ...supervisedStaffIds];
       return staffAndCurrentUserIds;
     }
 
@@ -780,29 +781,32 @@ export class WorkflowsStore implements Hydratable {
       }
       case "OFFICER": {
         if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
-          const currentUserStaffRecord = this.availableOfficers.filter(
-            (officer) => officer.id === this.user?.info.id,
-          )[0];
-          const currentSupervisor = currentUserStaffRecord
-            ? [new Officer(currentUserStaffRecord)]
-            : [];
-          const supervisedStaff = this.staffSupervisedByCurrentUser.map(
+          const staffWithCaseload = this.staffSupervisedByCurrentUser.map(
             (officer) => new Officer(officer),
           );
-          const supervisedStaffIdsSet = new Set(
-            supervisedStaff.map((officer) => officer.searchId),
+          // include user's own caseload if they have one
+          if (this.user?.info.hasCaseload) {
+            const currentUserStaffRecord = this.availableOfficers.find(
+              (officer) => officer.id === this.user?.info.id,
+            );
+            if (currentUserStaffRecord) {
+              staffWithCaseload.push(new Officer(currentUserStaffRecord));
+            }
+          }
+          const staffWithCaseloadIdsSet = new Set(
+            staffWithCaseload.map((officer) => officer.searchId),
           );
           const groupedOfficers = [
             {
               groupLabel: "Your Team",
-              searchables: [...currentSupervisor, ...supervisedStaff],
+              searchables: staffWithCaseload,
             },
             {
               groupLabel: "All Staff",
               searchables: this.availableOfficers
                 .filter(
                   (officer) =>
-                    !supervisedStaffIdsSet.has(officer.id) &&
+                    !staffWithCaseloadIdsSet.has(officer.id) &&
                     officer.id !== this.user?.info.id,
                 )
                 .map((officer) => new Officer(officer)),

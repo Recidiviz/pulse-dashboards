@@ -66,6 +66,7 @@ export const mockSupervisor: CombinedUserRecord = {
 export const mockSupervisor2: CombinedUserRecord = {
   info: {
     ...userInfoFixtures.filter((user) => user.id === "SUPERVISOR1")[0],
+    hasCaseload: false,
   },
 };
 

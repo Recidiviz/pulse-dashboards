@@ -639,11 +639,7 @@ test("available searchables for search by officer when user has staff they super
   expect(workflowsStore.availableSearchables.length).toBe(2);
   expect(workflowsStore.availableSearchables[0].groupLabel).toBe("Your Team");
   expect(workflowsStore.availableSearchables[1].groupLabel).toBe("All Staff");
-  expect(yourTeamSearchableIds).toEqual([
-    "SUPERVISOR1",
-    "OFFICER1",
-    "OFFICER2",
-  ]);
+  expect(yourTeamSearchableIds).toEqual(["OFFICER1", "OFFICER2"]);
   expect(allStaffSearchableIds).toEqual(["OFFICER3"]);
 });
 
@@ -1474,7 +1470,7 @@ test("staffSupervisedByCurrentUser provides a list of users supervised by curren
 test("caseload (`selectedSearchIds`) default to current user's supervised staff (if user is supervisor with at least one staff) after login", async () => {
   setUser({ workflowsSupervisorSearch: {} });
   await waitForHydration({
-    ...mockSupervisor2,
+    ...mockSupervisor2, // this supervisor does not have a caseload
     updates: { stateCode: "US_TN" },
   });
 
@@ -1483,11 +1479,7 @@ test("caseload (`selectedSearchIds`) default to current user's supervised staff 
     workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers2;
   });
 
-  expect(workflowsStore.selectedSearchIds).toEqual([
-    "SUPERVISOR1",
-    "OFFICER1",
-    "OFFICER2",
-  ]);
+  expect(workflowsStore.selectedSearchIds).toEqual(["OFFICER1", "OFFICER2"]);
 });
 
 test("caseload (`selectedSearchIds`) reflects updated list after user with supervised staff makes new search updates", async () => {
@@ -1495,6 +1487,10 @@ test("caseload (`selectedSearchIds`) reflects updated list after user with super
   await waitForHydration({
     ...mockSupervisor2,
     updates: { stateCode: "US_TN" },
+    info: {
+      ...mockSupervisor2.info,
+      hasCaseload: true,
+    },
   });
 
   runInAction(() => {
@@ -1524,4 +1520,27 @@ test("caseload (`selectedSearchIds`) reflects updated list after user with super
   });
 
   expect(workflowsStore.selectedSearchIds).toEqual(["SUPERVISOR1", "OFFICER1"]);
+});
+
+test("caseload (`selectedSearchIds`) include current user's caseload if current user has caseloads", async () => {
+  setUser({ workflowsSupervisorSearch: {} });
+  await waitForHydration({
+    ...mockSupervisor2,
+    updates: { stateCode: "US_TN" },
+    info: {
+      ...mockSupervisor2.info,
+      hasCaseload: true,
+    },
+  });
+
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers2;
+  });
+
+  expect(workflowsStore.selectedSearchIds).toEqual([
+    "SUPERVISOR1",
+    "OFFICER1",
+    "OFFICER2",
+  ]);
 });
