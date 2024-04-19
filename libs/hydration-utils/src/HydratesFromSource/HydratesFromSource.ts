@@ -18,9 +18,9 @@
 import * as Sentry from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 
-import { castToError } from "../../utils/castToError";
-import { Hydratable, HydrationState } from "./types";
-import { isHydrated, isHydrationInProgress } from "./utils";
+import { Hydratable, HydrationState } from "../Hydratable/types";
+import { isHydrated, isHydrationInProgress } from "../Hydratable/utils";
+import { castToError } from "../utils/castToError";
 
 type HydrationSource = {
   /**

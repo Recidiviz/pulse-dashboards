@@ -27,11 +27,12 @@ import {
 } from "mobx";
 import { Annotation } from "mobx/dist/internal";
 
-import { Hydratable, HydrationState } from "../../core/models/types";
 import {
+  Hydratable,
+  HydrationState,
   isHydrationInProgress,
   isHydrationUntouched,
-} from "../../core/models/utils";
+} from "~hydration-utils";
 
 /**
  * Base class that includes common behavior for integrating with Firestore

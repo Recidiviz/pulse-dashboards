@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`hydration > hydrate 1`] = `
+[
+  {
+    "label": "First Resident (RES001)",
+    "value": "RES001",
+  },
+  {
+    "label": "Second Resident (RES002)",
+    "value": "RES002",
+  },
+  {
+    "label": "Third Resident (RES003)",
+    "value": "RES003",
+  },
+  {
+    "label": "Fourth Resident (RES004)",
+    "value": "RES004",
+  },
+  {
+    "label": "Fifth Resident (RES005)",
+    "value": "RES005",
+  },
+]
+`;

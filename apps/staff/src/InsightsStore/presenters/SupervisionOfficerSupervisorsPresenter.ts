@@ -21,8 +21,8 @@ import pipe from "lodash/fp/pipe";
 import values from "lodash/fp/values";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { Hydratable } from "../../core/models/types";
+import { Hydratable, HydratesFromSource } from "~hydration-utils";
+
 import { FeatureVariantValue } from "../../RootStore/types";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";

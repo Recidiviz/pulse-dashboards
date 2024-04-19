@@ -15,19 +15,43 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
+import { Sans16, Serif34 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import React, { memo } from "react";
+import { useNavigate } from "react-router-dom";
+import ReactSelect from "react-select";
 
+import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { PageSearchPresenter } from "./PageSearchPresenter";
 
-export const PageSearch: React.FC = () => {
-  const { authStore } = useRootStore();
-  const userName = authStore.user?.given_name;
-  return (
-    <div>
-      <p>
-        {userName ? `Hello, ${userName}. ` : ""}only internal users should have
-        access to this page.
-      </p>
-    </div>
-  );
-};
+const Search: React.FC<{ presenter: PageSearchPresenter }> = observer(
+  function Search({ presenter }) {
+    const navigate = useNavigate();
+
+    return (
+      <PageHydrator hydratable={presenter}>
+        <div>
+          <Serif34 as="h1">Select a resident</Serif34>
+          <Sans16>
+            <ReactSelect
+              options={presenter.selectOptions}
+              defaultValue={presenter.defaultOption}
+              onChange={(o) => {
+                presenter.setActiveResident(o?.value);
+                if (o) {
+                  // this should land you on the selected resident's homepage
+                  navigate("/");
+                }
+              }}
+            />
+          </Sans16>
+        </div>
+      </PageHydrator>
+    );
+  },
+);
+
+export const PageSearch = memo(function PageSearch() {
+  return <Search presenter={new PageSearchPresenter(useRootStore())} />;
+});

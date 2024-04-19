@@ -18,9 +18,10 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { isHydrated } from "~hydration-utils";
+
 import { formatDate } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
-import { isHydrated } from "../models/utils";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 
 type OpportunityWorkflowStatusProps = {

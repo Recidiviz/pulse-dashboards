@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Hydratable, SnoozeTaskConfig } from "../../core/models/types";
+import { Hydratable } from "~hydration-utils";
+
+import { SnoozeTaskConfig } from "../../core/models/types";
 import { RootStore } from "../../RootStore";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";

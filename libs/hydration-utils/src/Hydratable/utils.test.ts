@@ -17,8 +17,8 @@
 
 import { noop } from "lodash";
 
-import { Hydratable, HydrationState } from "../types";
-import { compositeHydrationState } from "../utils";
+import { Hydratable, HydrationState } from "./types";
+import { compositeHydrationState } from "./utils";
 
 describe("compositeHydrationState", () => {
   const statuses = {

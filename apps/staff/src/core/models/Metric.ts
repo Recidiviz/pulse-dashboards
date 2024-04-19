@@ -17,10 +17,11 @@
 
 import { autorun, makeObservable, observable, runInAction } from "mobx";
 
+import { castToError } from "~hydration-utils";
+
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
-import { castToError } from "../../utils/castToError";
 import CoreStore from "../CoreStore";
 import { MetricRecord, RawMetricData } from "./types";
 

@@ -25,8 +25,9 @@ import {
 } from "firebase/firestore";
 import { action, makeObservable, observable, runInAction } from "mobx";
 
+import { castToError } from "~hydration-utils";
+
 import { FeatureGateError } from "../../errors";
-import { castToError } from "../../utils/castToError";
 import { FirestoreSubscription } from "./FirestoreSubscription";
 import {
   DocumentSubscription,

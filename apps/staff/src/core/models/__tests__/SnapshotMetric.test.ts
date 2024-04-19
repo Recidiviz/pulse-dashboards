@@ -18,13 +18,14 @@
 import { waitFor } from "@testing-library/dom";
 import { runInAction, when } from "mobx";
 
+import { isHydrated } from "~hydration-utils";
+
 import TenantStore from "../../../RootStore/TenantStore";
 import UserStore from "../../../RootStore/UserStore";
 import CoreStore from "../../CoreStore";
 import { FILTER_TYPES } from "../../utils/constants";
 import { isAbortException } from "../../utils/exceptions";
 import SnapshotMetric from "../SnapshotMetric";
-import { isHydrated } from "../utils";
 
 const mockTenantId = "US_TN";
 const BASE_URL = `http://localhost:5000/pathways/${mockTenantId}/LibertyToPrisonTransitionsCount`;

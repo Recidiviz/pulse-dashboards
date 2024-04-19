@@ -17,7 +17,8 @@
 
 import { makeObservable, observable } from "mobx";
 
-import { HydrationState } from "../../../core/models/types";
+import { HydrationState } from "~hydration-utils";
+
 import { constructorSpy } from "../../Opportunity/__tests__/testUtils";
 import { QuerySubscription } from "../types";
 

@@ -17,9 +17,10 @@
 
 import { observer } from "mobx-react-lite";
 
+import { isHydrated } from "~hydration-utils";
+
 import { Opportunity } from "../../WorkflowsStore";
 import { usePersonTracking } from "../hooks/usePersonTracking";
-import { isHydrated } from "../models/utils";
 import { EligibilityStatus, WorkflowProgress } from "../OpportunityStatus";
 import {
   JusticeInvolvedPersonCapsule,

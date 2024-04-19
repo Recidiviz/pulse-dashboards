@@ -18,13 +18,13 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
+import { FlowMethod } from "~hydration-utils";
 
 import { RootStore } from "../RootStore";
 import { InsightsAPIClient } from "./api/InsightsAPIClient";
 import { InsightsOfflineAPIClient } from "./api/InsightsOfflineAPIClient";
 import { InsightsAPI } from "./api/interface";
 import { InsightsSupervisionStore } from "./stores/InsightsSupervisionStore";
-import { FlowMethod } from "./types";
 
 export class InsightsStore {
   supervisionStore?: InsightsSupervisionStore;

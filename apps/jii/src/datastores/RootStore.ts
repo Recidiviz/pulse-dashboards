@@ -21,6 +21,7 @@ import { isOfflineMode, isTestEnv } from "~client-env-utils";
 import { DataAPI } from "../api/interface";
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { ResidentsStore } from "./ResidentsStore";
+import { UserStore } from "./UserStore";
 
 export class RootStore {
   /**
@@ -32,6 +33,8 @@ export class RootStore {
   authStore: AuthStore;
 
   residentsStore: ResidentsStore;
+
+  userStore: UserStore;
 
   // for convenience, this is a constant while we only have one state onboarded
   readonly stateCode = "US_ME";
@@ -48,6 +51,8 @@ export class RootStore {
     this.apiClient = this.createApiClient();
 
     this.residentsStore = new ResidentsStore(this);
+
+    this.userStore = new UserStore();
   }
 
   /**

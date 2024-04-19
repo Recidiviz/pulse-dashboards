@@ -17,7 +17,8 @@
 
 import { makeAutoObservable, toJS } from "mobx";
 
-import { FlowMethod } from "../../types";
+import { FlowMethod } from "~hydration-utils";
+
 import { MetricWithConfig } from "../types";
 import {
   CHART_ASPECT_RATIO,

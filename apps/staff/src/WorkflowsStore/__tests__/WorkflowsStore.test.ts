@@ -26,8 +26,9 @@ import {
   outputFixture,
   SupervisionStaffRecord,
 } from "~datatypes";
+import { HydrationState } from "~hydration-utils";
 
-import { HydrationState, SystemId } from "../../core/models/types";
+import { SystemId } from "../../core/models/types";
 import FirestoreStore, {
   ClientRecord,
   CombinedUserRecord,

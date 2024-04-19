@@ -17,9 +17,13 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { Hydratable, HydrationState } from "../../core/models/types";
-import { castToError } from "../../utils/castToError";
+import {
+  castToError,
+  Hydratable,
+  HydratesFromSource,
+  HydrationState,
+} from "~hydration-utils";
+
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";

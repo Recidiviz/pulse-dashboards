@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { unpackAggregatedErrors } from "../../../testUtils";
-import { HydratesFromSource } from "../HydratesFromSource";
+import { unpackAggregatedErrors } from "../utils/unpackAggregatedErrors";
+import { HydratesFromSource } from "./HydratesFromSource";
 
 const mockExpectation = vi.fn();
 const source = {

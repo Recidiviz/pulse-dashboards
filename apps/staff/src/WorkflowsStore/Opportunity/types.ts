@@ -17,7 +17,8 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { Hydratable } from "../../core/models/types";
+import { Hydratable } from "~hydration-utils";
+
 import {
   AutoSnoozeUpdate,
   Denial,

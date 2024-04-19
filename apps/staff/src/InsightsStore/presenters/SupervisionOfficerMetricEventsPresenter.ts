@@ -18,8 +18,8 @@
 import { descending } from "d3-array";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { Hydratable } from "../../core/models/types";
+import { Hydratable, HydratesFromSource } from "~hydration-utils";
+
 import { insightsUrl } from "../../core/views";
 import { formatDateToISO } from "../../utils";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";

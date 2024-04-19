@@ -21,6 +21,8 @@ import { uniq } from "lodash";
 import { makeAutoObservable, observable } from "mobx";
 import moment from "moment";
 
+import { FlowMethod } from "~hydration-utils";
+
 import { formatDate } from "../../utils";
 import { InsightsAPI, PatchUserInfoProps } from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
@@ -34,7 +36,7 @@ import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetri
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
 import { ConfigLabels } from "../presenters/types";
-import { FlowMethod, StringMap2D } from "../types";
+import { StringMap2D } from "../types";
 
 export class InsightsSupervisionStore {
   private benchmarksByMetricAndCaseloadType?: StringMap2D<MetricBenchmark>;

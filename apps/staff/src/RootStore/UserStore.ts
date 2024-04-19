@@ -30,6 +30,7 @@ import { now } from "mobx-utils";
 import qs from "qs";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { castToError } from "~hydration-utils";
 
 import { fetchImpersonatedUserAppMetadata } from "../api/fetchImpersonatedUserAppMetadata";
 import { fetchOfflineUser } from "../api/fetchOfflineUser";
@@ -46,7 +47,6 @@ import {
   UNRESTRICTED_PAGES,
 } from "../core/views";
 import tenants from "../tenants";
-import { castToError } from "../utils/castToError";
 import isIE11 from "../utils/isIE11";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";

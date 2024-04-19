@@ -21,7 +21,8 @@ import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 import { MockInstance } from "vitest";
 
-import { HydrationState } from "../../../core/models/types";
+import { HydrationState } from "~hydration-utils";
+
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";

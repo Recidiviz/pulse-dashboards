@@ -26,8 +26,12 @@ import {
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
-import { HydrationState } from "../../core/models/types";
-import { compositeHydrationState, isHydrated } from "../../core/models/utils";
+import {
+  compositeHydrationState,
+  HydrationState,
+  isHydrated,
+} from "~hydration-utils";
+
 import {
   AutoSnoozeUpdate,
   Denial,

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,10 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export type HydrationState =
+  | { status: "needs hydration" }
+  | { status: "loading" }
+  | { status: "failed"; error: Error }
+  | { status: "hydrated" };
+
 /**
- * Exceptions caught by try/catch are always unknown;
- * this ensures that value is converted to an error if it isn't one already
+ * Describes the hydration state and mechanism,
+ * but not what the hydrated object will look like
+ * (because it may vary by model)
  */
-export function castToError(caught: unknown): Error {
-  return caught instanceof Error ? caught : new Error(`${caught}`);
+export interface Hydratable {
+  hydrate: () => void;
+  hydrationState: HydrationState;
 }

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { StaffRecord } from "~datatypes";
+import { Hydratable } from "~hydration-utils";
 
 import {
   ClientRecord,
@@ -363,22 +364,6 @@ export type ViewMethodology = {
 export interface HydratablePathwaysMetric extends Hydratable {
   dataSeries?: PathwaysMetricRecords;
   isEmpty?: boolean;
-}
-
-export type HydrationState =
-  | { status: "needs hydration" }
-  | { status: "loading" }
-  | { status: "failed"; error: Error }
-  | { status: "hydrated" };
-
-/**
- * Describes the hydration state and mechanism,
- * but not what the hydrated object will look like
- * (because it may vary by model)
- */
-export interface Hydratable {
-  hydrate: () => void;
-  hydrationState: HydrationState;
 }
 
 export type PathwaysMetricRecords =

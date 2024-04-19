@@ -24,13 +24,14 @@ import {
   runInAction,
 } from "mobx";
 
+import { castToError, HydrationState } from "~hydration-utils";
+
 import { parseResponseByFileFormat } from "../../api/metrics";
 import { callMetricsApi } from "../../api/metrics/metricsClient";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 import flags from "../../flags";
 import RootStore from "../../RootStore";
 import { TenantId } from "../../RootStore/types";
-import { castToError } from "../../utils/castToError";
 import { getMethodologyCopy, getMetricCopy } from "../content";
 import { MetricContent, PageContent } from "../content/types";
 import CoreStore from "../CoreStore";
@@ -43,7 +44,6 @@ import { dimensionsByMetricType } from "./dimensions";
 import PathwaysNewBackendMetric from "./PathwaysNewBackendMetric";
 import {
   HydratablePathwaysMetric,
-  HydrationState,
   MetricId,
   MetricRecord,
   PathwaysMetricRecords,

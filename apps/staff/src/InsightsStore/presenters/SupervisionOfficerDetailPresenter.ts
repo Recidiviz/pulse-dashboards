@@ -17,15 +17,18 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { Hydratable } from "../../core/models/types";
-import { castToError } from "../../utils/castToError";
+import {
+  castToError,
+  FlowMethod,
+  Hydratable,
+  HydratesFromSource,
+} from "~hydration-utils";
+
 import { InsightsAPI } from "../api/interface";
 import { MetricConfig } from "../models/MetricConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { FlowMethod } from "../types";
 import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 

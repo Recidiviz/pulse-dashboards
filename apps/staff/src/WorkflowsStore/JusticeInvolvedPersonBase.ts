@@ -31,8 +31,8 @@ import {
 } from "mobx";
 
 import { FullName, StaffRecord } from "~datatypes";
+import { isHydrated, isHydrationFinished } from "~hydration-utils";
 
-import { isHydrated, isHydrationFinished } from "../core/models/utils";
 import {
   ContactMethodType,
   MilestonesMessage,

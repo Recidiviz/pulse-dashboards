@@ -15,46 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Loading } from "@recidiviz/design-system";
-import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import React, { useEffect } from "react";
-import { animated, useTransition } from "react-spring/web.cjs";
-import styled from "styled-components/macro";
+import React from "react";
+
+import { Hydratable, Hydrator } from "~hydration-utils";
 
 import { ErrorMessage } from "../components/StatusMessage";
-import { Hydratable } from "./models/types";
-import { isHydrationUntouched } from "./models/utils";
-
-const Wrapper = styled.div`
-  position: relative;
-`;
-
-const StatusWrapper = styled(animated.div)`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  padding: ${rem(32)};
-  width: 100%;
-
-  & > div {
-    width: 100%;
-  }
-`;
-
-const ContentWrapper = styled(animated.div)`
-  height: 100%;
-`;
-
-const crossFade = {
-  initial: { opacity: 1, top: 0 },
-  from: { opacity: 0 },
-  enter: { opacity: 1 },
-  leave: { opacity: 0, position: "absolute" },
-  config: { friction: 40, tension: 280 },
-} as const;
 
 type ModelHydratorProps = {
   children: React.ReactElement;
@@ -69,48 +35,14 @@ type ModelHydratorProps = {
  */
 function ModelHydrator({
   children,
-  model,
+  model: hydratable,
   className,
 }: ModelHydratorProps): React.ReactElement {
-  const hydrationStatus = model.hydrationState.status;
-  const needsHydration = isHydrationUntouched(model);
-
-  useEffect(() => {
-    if (needsHydration) {
-      model.hydrate();
-    }
-  }, [model, needsHydration]);
-
-  const transitions = useTransition(hydrationStatus, null, crossFade);
-
   return (
-    <Wrapper className={className}>
-      {transitions.map(({ item, key, props }) => {
-        switch (item) {
-          case "needs hydration":
-          case "loading":
-            return (
-              <StatusWrapper key={key} style={props}>
-                <Loading />
-              </StatusWrapper>
-            );
-          case "failed":
-            return (
-              <StatusWrapper key={key} style={props}>
-                <ErrorMessage />
-              </StatusWrapper>
-            );
-          case "hydrated":
-            return (
-              <ContentWrapper key={key} style={props}>
-                {children}
-              </ContentWrapper>
-            );
-          default:
-            return assertNever(item);
-        }
-      })}
-    </Wrapper>
+    <Hydrator
+      {...{ children, hydratable, className }}
+      failed={<ErrorMessage />}
+    />
   );
 }
 

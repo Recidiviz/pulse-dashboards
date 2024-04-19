@@ -46,22 +46,23 @@ import {
   SupervisionStaffRecord,
   supervisionStaffRecordSchema,
 } from "~datatypes";
+import {
+  castToError,
+  compositeHydrationState,
+  Hydratable,
+  hydrationFailure,
+  HydrationState,
+  isHydrated,
+  isHydrationFinished,
+} from "~hydration-utils";
 
 import {
-  Hydratable,
-  HydrationState,
   Searchable,
   SearchableGroup,
   SearchType,
   SystemId,
   WorkflowsSystemConfig,
 } from "../core/models/types";
-import {
-  compositeHydrationState,
-  hydrationFailure,
-  isHydrated,
-  isHydrationFinished,
-} from "../core/models/utils";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
@@ -78,7 +79,6 @@ import {
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
-import { castToError } from "../utils/castToError";
 import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";

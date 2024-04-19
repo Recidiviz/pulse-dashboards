@@ -19,10 +19,10 @@ import keyBy from "lodash/keyBy";
 import { makeAutoObservable, set } from "mobx";
 
 import { IncarcerationStaffRecord, ResidentRecord } from "~datatypes";
+import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../api/interface";
 import type { RootStore } from "./RootStore";
-import { FlowMethod } from "./types";
 
 export class ResidentsStore {
   assignedStaffByExternalId: Map<string, IncarcerationStaffRecord["output"]> =

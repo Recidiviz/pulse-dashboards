@@ -17,8 +17,12 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { HydratesFromSource } from "../../core/models/HydratesFromSource";
-import { Hydratable, HydrationState } from "../../core/models/types";
+import {
+  Hydratable,
+  HydratesFromSource,
+  HydrationState,
+} from "~hydration-utils";
+
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 
 export class UserOnboardingPresenter implements Hydratable {

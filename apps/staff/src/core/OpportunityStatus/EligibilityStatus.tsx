@@ -17,8 +17,9 @@
 
 import { observer } from "mobx-react-lite";
 
+import { isHydrated } from "~hydration-utils";
+
 import { Opportunity } from "../../WorkflowsStore";
-import { isHydrated } from "../models/utils";
 
 type EligibilityStatusProps = {
   opportunity: Opportunity;

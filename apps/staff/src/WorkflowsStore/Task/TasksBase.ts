@@ -20,8 +20,13 @@ import * as Sentry from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
-import { HydrationState, SnoozeTaskConfig } from "../../core/models/types";
-import { compositeHydrationState, isHydrated } from "../../core/models/utils";
+import {
+  compositeHydrationState,
+  HydrationState,
+  isHydrated,
+} from "~hydration-utils";
+
+import { SnoozeTaskConfig } from "../../core/models/types";
 import { TaskValidationError } from "../../errors";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { FirestoreCollectionKey } from "../../FirestoreStore/types";

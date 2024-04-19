@@ -21,7 +21,7 @@ import { RootStore } from "../../datastores/RootStore";
 import { StoreContext } from "./StoreContext";
 
 export const StoreProvider: FC<{ children: ReactNode }> = memo(
-  ({ children }) => {
+  function StoreProvider({ children }) {
     return (
       <StoreContext.Provider value={{ store: new RootStore() }}>
         {children}

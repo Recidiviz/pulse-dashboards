@@ -40,7 +40,8 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
   await createLibrary();
   extendProjectConfig();
   updateTsconfig();
-  updateVitestConfig();
+  updateEslintConfig();
+  updateViteConfig();
   makeFilesFromTemplates();
   addLicenseHeaders();
   await formatFiles(tree);
@@ -142,7 +143,20 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
     });
   }
 
-  function updateVitestConfig() {
+  function updateEslintConfig() {
+    if (options.libType === "react") {
+      updateJson(tree, `${PROJECT_ROOT}/.eslintrc.json`, (config) => {
+        // these settings together let the linter recognize components wrapped in Mobx observers
+        // and require they be named functions (which is helpful for debugging)
+        config.rules = { "react/display-name": ["error"] };
+        config.settings = { componentWrapperFunctions: ["observer"] };
+
+        return config;
+      });
+    }
+  }
+
+  function updateViteConfig() {
     const configPath = `${PROJECT_ROOT}/vite.config.ts`;
     let configSource = tree.read(configPath)?.toString();
 
@@ -162,6 +176,14 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
         globalSetup: ["src/setupTestsGlobal.ts"],
         setupFiles: ["src/setupTests.ts"],`,
     );
+
+    // react requires a babel plugin
+    if (options.libType === "react") {
+      configSource = configSource.replace(
+        /react\(\)/,
+        `react({ babel: { plugins: ["babel-plugin-macros"] } })`,
+      );
+    }
 
     // renaming to mts clears warnings while sourcetype is not set to "module" in package.json
     tree.delete(configPath);

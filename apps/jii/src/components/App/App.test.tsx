@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
 import { App } from "./App";
@@ -27,18 +27,18 @@ describe("App", () => {
         <App />
       </MemoryRouter>,
     );
-    expect(baseElement).toBeTruthy();
+    expect(baseElement).toBeInTheDocument();
   });
 
-  it("should render the search page", () => {
+  it("should render the search page", async () => {
     render(
       <MemoryRouter initialEntries={["/search"]}>
         <App />
       </MemoryRouter>,
     );
-    expect(
-      screen.getByText("only internal users should have access to this page."),
-    ).toBeTruthy();
+    await waitFor(() =>
+      expect(screen.getByText("Select a resident")).toBeInTheDocument(),
+    );
   });
 
   it("should render the sccp page", () => {
@@ -47,7 +47,7 @@ describe("App", () => {
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByText("opportunity page")).toBeTruthy();
+    expect(screen.getByText("opportunity page")).toBeInTheDocument();
   });
 
   it("should render the sccp about page", () => {
@@ -56,15 +56,15 @@ describe("App", () => {
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByText("about opportunity")).toBeTruthy();
+    expect(screen.getByText("about opportunity")).toBeInTheDocument();
   });
 
-  it("should render the sccp about page", () => {
+  it("should render the sccp requirements page", () => {
     render(
       <MemoryRouter initialEntries={["/eligibility/sccp/requirements"]}>
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByText("opportunity requirements")).toBeTruthy();
+    expect(screen.getByText("opportunity requirements")).toBeInTheDocument();
   });
 });

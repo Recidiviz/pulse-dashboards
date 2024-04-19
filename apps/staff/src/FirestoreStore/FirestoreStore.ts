@@ -44,9 +44,9 @@ import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable, when } from "mobx";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { isHydrated } from "~hydration-utils";
 
 import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
-import { isHydrated } from "../core/models/utils";
 import type RootStore from "../RootStore";
 import { UserAppMetadata } from "../RootStore/types";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";

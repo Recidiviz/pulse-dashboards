@@ -18,8 +18,9 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { hydrationFailure, isHydrationInProgress } from "~hydration-utils";
+
 import PopulationProjectionOverTimeMetric from "../models/PopulationProjectionOverTimeMetric";
-import { hydrationFailure, isHydrationInProgress } from "../models/utils";
 import PopulationSummaryMetrics from "../PopulationSummaryMetrics";
 import { PopulationProjectionTimeSeriesChart } from "../PopulationTimeSeriesChart";
 

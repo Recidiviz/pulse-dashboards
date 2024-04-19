@@ -16,6 +16,8 @@
 // =============================================================================
 import { runInAction, when } from "mobx";
 
+import { isHydrated } from "~hydration-utils";
+
 import { callMetricsApi } from "../../../api/metrics/metricsClient";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore";
@@ -26,7 +28,6 @@ import SupervisionPopulationSnapshotMetric from "../SupervisionPopulationSnapsho
 import {
   createSupervisionPopulationSnapshot,
   formatDateString,
-  isHydrated,
 } from "../utils";
 
 vi.mock("../../../RootStore");
