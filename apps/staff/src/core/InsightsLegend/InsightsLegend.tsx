@@ -21,6 +21,7 @@ import {
   spacing,
   TooltipTrigger,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
@@ -95,10 +96,12 @@ export const defaultLegendItems = (
 type InsightsLegendType = {
   items?: { label: string; icon: JSX.Element; tooltip?: string }[];
   direction?: "row" | "column";
+  outcomeType?: "FAVORABLE" | "ADVERSE";
 };
 
 const InsightsLegend: React.FC<InsightsLegendType> = ({
   direction = "column",
+  outcomeType = "ADVERSE",
 }) => {
   const {
     insightsStore: { supervisionStore },
@@ -108,13 +111,18 @@ const InsightsLegend: React.FC<InsightsLegendType> = ({
 
   const {
     atOrBelowRateLabel,
+    atOrAboveRateLabel,
     slightlyWorseThanRateLabel,
     worseThanRateLabel,
     supervisionOfficerLabel,
   } = supervisionStore.labels;
 
+  const goalMetLabel =
+    outcomeType === "ADVERSE"
+      ? atOrBelowRateLabel
+      : atOrAboveRateLabel ?? atOrBelowRateLabel;
   const items = defaultLegendItems(
-    atOrBelowRateLabel,
+    goalMetLabel,
     slightlyWorseThanRateLabel,
     worseThanRateLabel,
     supervisionOfficerLabel,
@@ -147,4 +155,4 @@ const InsightsLegend: React.FC<InsightsLegendType> = ({
   );
 };
 
-export default InsightsLegend;
+export default observer(InsightsLegend);

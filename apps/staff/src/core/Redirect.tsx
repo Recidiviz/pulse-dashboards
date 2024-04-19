@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,7 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import React from "react";
+import { useParams } from "react-router";
+import { Navigate, Params } from "react-router-dom";
 
-export { default as InsightsLegend } from "./InsightsLegend";
-export { defaultLegendItems } from "./InsightsLegend";
-export { default as InsightsSidebarLegend } from "./InsightsSidebarLegend";
+export const updateTo = (to: string, params: Readonly<Params<string>>) => {
+  const entries = Object.entries(params);
+  let path = `${to}`;
+
+  entries.forEach(([key, value]) => {
+    path = path.replace(`:${key}`, `${value}`);
+  });
+
+  return path;
+};
+
+export interface RedirectProps {
+  to: string;
+  state?: any;
+}
+
+/**
+ * Wraps the <Navigate> component and replaces "/:<paramName>" with "/<paramValue>"
+ */
+export const Redirect: React.FC<RedirectProps> = ({ to, ...rest }) => {
+  const params = useParams();
+  return <Navigate to={updateTo(to, params)} {...rest} replace />;
+};

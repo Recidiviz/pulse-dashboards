@@ -43,6 +43,7 @@ import PageSystem from "./PageSystem";
 import PageVitals from "./PageVitals";
 import PageWorkflows from "./PageWorkflows";
 import PathwaysNavigation from "./PathwaysNavigation";
+import { Redirect } from "./Redirect";
 import {
   DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
@@ -115,6 +116,12 @@ const DashboardLayout: React.FC = () => {
               <Route
                 path={`${DASHBOARD_PATHS.insights}`}
                 element={<Navigate replace to={INSIGHTS_PATHS.supervision} />}
+              />
+              <Route
+                path={`${DASHBOARD_PATHS.insights}/supervision/staff/:officerPseudoId/adverse-outcome/:metricId`}
+                element={
+                  <Redirect to={`${INSIGHTS_PATHS.supervisionStaffMetric}`} />
+                }
               />
               <Route
                 path={`${WORKFLOWS_PATHS.workflows}/*`}

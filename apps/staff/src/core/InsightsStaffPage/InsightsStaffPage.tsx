@@ -343,6 +343,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                       />
                     }
                     hasLegend={false}
+                    outcomeType={metric.config.outcomeType}
                   >
                     <MetricEventsTable
                       officerPseudoId={presenter.officerPseudoId}
@@ -362,6 +363,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                         methodologyLink={methodologyUrl}
                       />
                     }
+                    outcomeType={metric.config.outcomeType}
                   >
                     <InsightsSwarmPlot metric={metric} />
                   </InsightsChartCard>
@@ -379,6 +381,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                         methodologyLink={methodologyUrl}
                       />
                     }
+                    outcomeType={metric.config.outcomeType}
                     subtitle={`${formatDate(
                       firstDate,
                       "MMMM yyyy",

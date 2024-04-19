@@ -54,6 +54,7 @@ type InsightsChartCardType = {
   subtitle?: string;
   hasLegend?: boolean;
   infoModal?: React.ReactElement;
+  outcomeType?: "FAVORABLE" | "ADVERSE";
   children?: React.ReactNode;
 };
 
@@ -62,6 +63,7 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
   subtitle,
   infoModal,
   hasLegend = true,
+  outcomeType = "ADVERSE",
   children,
 }) => {
   return (
@@ -74,7 +76,9 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
         {subtitle && <Subtitle>{subtitle}</Subtitle>}
       </Header>
       <Content>{children}</Content>
-      {hasLegend && <InsightsLegend direction="row" />}
+      {hasLegend && (
+        <InsightsLegend direction="row" outcomeType={outcomeType} />
+      )}
     </Wrapper>
   );
 };

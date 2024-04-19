@@ -21,6 +21,7 @@ import {
   TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { ReactNode } from "react";
 import styled from "styled-components/macro";
@@ -186,4 +187,4 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   );
 };
 
-export default InsightsPageLayout;
+export default observer(InsightsPageLayout);

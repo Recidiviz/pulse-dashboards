@@ -27,6 +27,7 @@ export const insightsConfigSchema = z.object({
   worseThanRateLabel: z.string(),
   slightlyWorseThanRateLabel: z.string(),
   atOrBelowRateLabel: z.string(),
+  atOrAboveRateLabel: z.string(),
   noneAreOutliersLabel: z.string(),
   learnMoreUrl: z.string(),
   exclusionReasonDescription: z.string(),

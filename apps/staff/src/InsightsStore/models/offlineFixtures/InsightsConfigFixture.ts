@@ -28,6 +28,7 @@ export const InsightsConfigFixture: InsightsConfig = {
   supervisionSupervisorLabel: "supervisor",
   supervisionUnitLabel: "team",
   atOrBelowRateLabel: "At or below statewide rate",
+  atOrAboveRateLabel: "At or above statewide rate",
   slightlyWorseThanRateLabel: "Slightly worse than statewide rate",
   worseThanRateLabel: "Far worse than statewide rate",
   noneAreOutliersLabel: "are outliers",

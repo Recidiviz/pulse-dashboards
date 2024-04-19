@@ -45,11 +45,15 @@ const MethodologyLinkContainer = styled.div`
   }
 `;
 
-type InsightsStaffLegendType = {
+type InsightsSidebarLegendType = {
+  outcomeType: "FAVORABLE" | "ADVERSE";
   note?: string;
 };
 
-const InsightsStaffLegend: React.FC<InsightsStaffLegendType> = ({ note }) => {
+const InsightsSidebarLegend: React.FC<InsightsSidebarLegendType> = ({
+  outcomeType,
+  note,
+}) => {
   const { isLaptop } = useIsMobile(true);
 
   const {
@@ -63,7 +67,7 @@ const InsightsStaffLegend: React.FC<InsightsStaffLegendType> = ({ note }) => {
       <CardHeader hasBorder={false}>
         <CardTitle>Legend</CardTitle>
         <CardContent noFlex={!note && !methodologyUrl}>
-          <InsightsLegend />
+          <InsightsLegend outcomeType={outcomeType} />
           {note && <LegendNote>Note: {note}</LegendNote>}
           {methodologyUrl && (
             <MethodologyLinkContainer>
@@ -83,4 +87,4 @@ const InsightsStaffLegend: React.FC<InsightsStaffLegendType> = ({ note }) => {
   );
 };
 
-export default InsightsStaffLegend;
+export default InsightsSidebarLegend;

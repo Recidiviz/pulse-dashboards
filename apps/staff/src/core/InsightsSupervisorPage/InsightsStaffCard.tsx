@@ -32,6 +32,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsInfoModal from "../InsightsInfoModal";
+import { InsightsLegend } from "../InsightsLegend";
 import { InsightsSwarmPlot } from "../InsightsSwarmPlot";
 import { insightsUrl } from "../views";
 
@@ -61,8 +62,13 @@ const CardSubtitle = styled.div`
   margin-top: ${rem(spacing.xs)};
 `;
 
-export const CardContent = styled.div<{ noFlex: boolean }>`
+export const CardContent = styled.div<{
+  $hasLegend?: boolean;
+  noFlex: boolean;
+}>`
   padding-top: ${rem(spacing.md)};
+  ${({ $hasLegend }) =>
+    $hasLegend ? `padding-bottom: ${rem(spacing.sm)}` : "none"};
   ${({ noFlex }) =>
     !noFlex &&
     `display: flex;
@@ -124,6 +130,7 @@ type InsightsStaffCardType = {
   officerIndex: number;
   title?: string;
   subtitle?: string;
+  hasLegend?: boolean;
 };
 
 const InsightsStaffCard: React.FC<InsightsStaffCardType> = ({
@@ -131,6 +138,7 @@ const InsightsStaffCard: React.FC<InsightsStaffCardType> = ({
   officerIndex,
   title,
   subtitle,
+  hasLegend = false,
 }) => {
   const { isTablet } = useIsMobile(true);
 
@@ -179,9 +187,15 @@ const InsightsStaffCard: React.FC<InsightsStaffCardType> = ({
                   />
                 </MetricHint>
               </MetricHeader>
-              <CardContent noFlex>
+              <CardContent $hasLegend={hasLegend} noFlex>
                 <InsightsSwarmPlot metric={metric} />
               </CardContent>
+              {hasLegend && (
+                <InsightsLegend
+                  direction="row"
+                  outcomeType={metric.config.outcomeType}
+                />
+              )}
             </MetricSection>
           );
         })}

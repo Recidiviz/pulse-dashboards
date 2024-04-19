@@ -45,6 +45,7 @@ export type ConfigLabels = Pick<
   | "supervisionSupervisorLabel"
   | "supervisionUnitLabel"
   | "atOrBelowRateLabel"
+  | "atOrAboveRateLabel"
   | "slightlyWorseThanRateLabel"
   | "worseThanRateLabel"
   | "noneAreOutliersLabel"

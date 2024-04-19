@@ -25,7 +25,7 @@ import { SupervisionOfficersPresenter } from "../../InsightsStore/presenters/Sup
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
 import { getWelcomeText } from "../../utils";
 import InsightsEmptyPage from "../InsightsEmptyPage";
-import { InsightsStaffLegend } from "../InsightsLegend";
+import { InsightsSidebarLegend } from "../InsightsLegend";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
   Body,
@@ -53,6 +53,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     userCanAccessAllSupervisors,
     timePeriod,
     labels,
+    outcomeTypes,
   } = presenter;
 
   const emptyPageHeaderText = `${getWelcomeText(
@@ -122,15 +123,19 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
       }
     >
       <Wrapper isLaptop={isLaptop}>
-        <Sidebar isLaptop={isLaptop}>
-          <InsightsStaffLegend
-            note={
-              presenter.areCaseloadTypeBreakdownsEnabled
-                ? `Correctional ${labels.supervisionOfficerLabel}s are only compared with other ${labels.supervisionOfficerLabel}s with similar caseloads. An ${labels.supervisionOfficerLabel} with a specialized caseload will not be compared to one with a general caseload.`
-                : undefined
-            }
-          />
-        </Sidebar>
+        {/* Only render Sidebar if a single outcome type appears on the page */}
+        {outcomeTypes.length === 1 && (
+          <Sidebar isLaptop={isLaptop}>
+            <InsightsSidebarLegend
+              note={
+                presenter.areCaseloadTypeBreakdownsEnabled
+                  ? `Correctional ${labels.supervisionOfficerLabel}s are only compared with other ${labels.supervisionOfficerLabel}s with similar caseloads. An ${labels.supervisionOfficerLabel} with a specialized caseload will not be compared to one with a general caseload.`
+                  : undefined
+              }
+              outcomeType={outcomeTypes[0]}
+            />
+          </Sidebar>
+        )}
         <Body>
           {outlierOfficersData.map((officer, officerIndex) => {
             return (
@@ -143,6 +148,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
                     officer.caseloadType) ||
                   undefined
                 }
+                hasLegend={outcomeTypes.length > 1}
               />
             );
           })}

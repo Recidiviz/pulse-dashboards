@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { uniq } from "lodash/fp";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import {
@@ -166,6 +167,21 @@ export class SupervisionOfficersPresenter implements Hydratable {
       !!this.supervisorPseudoId &&
       this.supervisorPseudoId ===
         this.supervisionStore.currentSupervisorUser?.pseudonymizedId
+    );
+  }
+
+  /**
+   * Provides a list of outcome types are present on the page for the supervisor.
+   */
+  get outcomeTypes(): ("FAVORABLE" | "ADVERSE")[] {
+    return (
+      uniq(
+        this.outlierOfficersData
+          ?.map((d) => {
+            return d.outlierMetrics.map((m) => m.config.outcomeType);
+          })
+          .flat(),
+      ) || []
     );
   }
 

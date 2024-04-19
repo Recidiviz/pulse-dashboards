@@ -249,6 +249,7 @@ export class InsightsSupervisionStore {
       supervisionSupervisorLabel: this.config.supervisionSupervisorLabel,
       supervisionUnitLabel: this.config.supervisionUnitLabel,
       atOrBelowRateLabel: this.config.atOrBelowRateLabel,
+      atOrAboveRateLabel: this.config.atOrAboveRateLabel,
       slightlyWorseThanRateLabel: this.config.slightlyWorseThanRateLabel,
       worseThanRateLabel: this.config.worseThanRateLabel,
       noneAreOutliersLabel: this.config.noneAreOutliersLabel,
