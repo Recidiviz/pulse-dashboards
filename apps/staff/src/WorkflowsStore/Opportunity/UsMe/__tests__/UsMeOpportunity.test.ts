@@ -195,8 +195,8 @@ describe("resident has 2/3 date; eligible for Work Release", () => {
     createResidentTestUnit(usMePersonRecord, testOpportunities, "2/3");
   });
 
-  test("portionServedDates has one entry", () => {
-    expect(resident.portionServedDates.length).toEqual(1);
+  test("portionServedDates has two entries", () => {
+    expect(resident.portionServedDates.length).toEqual(2);
   });
 });
 
@@ -294,10 +294,15 @@ describe("resident does not have any opps, and none are active. The resident sho
   });
 
   test("portionServedDates has half-time date if user tenantId is US_ME", () => {
-    expect(resident.portionServedDates.length).toEqual(1);
+    expect(resident.portionServedDates.length).toEqual(2);
     expect(
       resident.portionServedDates.some(
         (entry) => entry.heading === "Half Time",
+      ),
+    ).toBeTruthy();
+    expect(
+      resident.portionServedDates.some(
+        (entry) => entry.heading === "Two Thirds Time",
       ),
     ).toBeTruthy();
   });

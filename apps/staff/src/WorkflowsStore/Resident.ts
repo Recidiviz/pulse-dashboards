@@ -137,31 +137,16 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
         heading: "Half Time",
         date: halfTimeDate,
       });
+
+      if (
+        this.rootStore.workflowsStore.selectedResident?.portionServedNeeded ===
+        "2/3"
+      )
+        opportunityDates.push({
+          heading: "Two Thirds Time",
+          date: twoThirdsTimeDate,
+        });
     }
-
-    const opportunities = Object.values(
-      this.rootStore.workflowsStore.selectedPerson?.verifiedOpportunities || {},
-    );
-
-    opportunities.forEach((opp) => {
-      if ("portionServedRequirement" in opp) {
-        const onProfilePageOrOppIsSelected =
-          this.rootStore.workflowsStore.selectedOpportunityType === undefined ||
-          this.rootStore.workflowsStore.selectedOpportunityType === opp.type;
-        if (onProfilePageOrOppIsSelected) {
-          if (opp.type === "usMeSCCP") {
-            if (
-              this.rootStore.workflowsStore.selectedResident
-                ?.portionServedNeeded === "2/3"
-            )
-              opportunityDates.push({
-                heading: "Two Thirds Time",
-                date: twoThirdsTimeDate,
-              });
-          }
-        }
-      }
-    });
 
     return uniqBy(opportunityDates, "heading");
   }
