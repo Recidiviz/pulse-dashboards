@@ -443,13 +443,18 @@ export default class UserStore {
    */
   get userAllowedNavigation(): Navigation | undefined {
     if (!this.rootStore?.currentTenantId) return {};
-    const { navigation } = tenants[this.rootStore.currentTenantId];
+    const { navigation, insightsLanternState } =
+      tenants[this.rootStore.currentTenantId];
 
     const allowed = navigation;
     if (!allowed) return {};
 
     if (this.isCSGUser) {
       delete allowed.workflows;
+
+      if (!insightsLanternState) {
+        delete allowed.insights;
+      }
     }
 
     /* Remove pages that may be allowed for the tenant but restricted for the user */
