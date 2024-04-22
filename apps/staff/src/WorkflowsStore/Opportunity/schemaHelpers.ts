@@ -34,6 +34,12 @@ export function NullCoalesce<T extends z.ZodTypeAny>(
   >;
 }
 
+export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
+  return schema.nullish().transform((output) => {
+    return output === null ? undefined : output;
+  });
+}
+
 export function defaultOnNull<T extends z.ZodTypeAny>(
   schema: T,
   defaultValue: z.infer<T>,

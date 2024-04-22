@@ -18,6 +18,7 @@
 import { z } from "zod";
 
 import { TenantIds } from "../../../../RootStore/types";
+import { nullishAsUndefined } from "../../schemaHelpers";
 import { snoozeConfigurationSchema } from "../modules/SnoozeConfiguration/dtos/SnoozeConfigurationSchema";
 
 // CRITERIA COPY SCHEMA
@@ -31,26 +32,28 @@ export const apiOpportunityConfigurationSchema = z.object({
   stateCode: z.enum(TenantIds),
   urlSection: z.string(),
   displayName: z.string(),
-  featureVariant: z.string(),
+  featureVariant: nullishAsUndefined(z.string()),
   dynamicEligibilityText: z.string(),
   callToAction: z.string(),
   firestoreCollection: z.string(),
-  snooze: snoozeConfigurationSchema,
+  snooze: z.preprocess(
+    (r: any) => (r && r.defaultSnoozeDays ? r : undefined),
+    nullishAsUndefined(snoozeConfigurationSchema),
+  ),
   denialReasons: z.record(z.string()),
   eligibleCriteriaCopy: criteriaCopySchema,
   ineligibleCriteriaCopy: criteriaCopySchema,
   sidebarComponents: z.array(z.string()),
-  compareBy: z.array(
-    z.object({
-      field: z.string(),
-      sortDirection: z.enum(["asc", "desc"]).optional(),
-      undefinedBehavior: z.enum(["undefinedFirst", "undefinedLast"]).optional(),
-    }),
+  compareBy: nullishAsUndefined(
+    z.array(
+      z.object({
+        field: z.string(),
+        sortDirection: z.enum(["asc", "desc"]).optional(),
+        undefinedBehavior: z
+          .enum(["undefinedFirst", "undefinedLast"])
+          .optional(),
+      }),
+    ),
   ),
-  methodologyUrl: z.string().refine(
-    (str) => str.startsWith("https://"),
-    (str) => ({
-      message: `${str.startsWith("http://") ? 'The url is not secure at "http...". Please include an \'s\' at the end of "http"' : 'This url does not begin with "https://"'}`,
-    }),
-  ),
+  methodologyUrl: z.string(),
 });

@@ -28,7 +28,7 @@ import { OpportunityConfigurationAPI } from "./api/interface";
 import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfigurationAPIClient";
 import { OpportunityConfigurationOfflineAPIClient } from "./api/OpportunityConfigurationOfflineAPIClient";
 import {
-  IApiOpportunityConfigurationRaw,
+  IApiOpportunityConfiguration,
   OpportunityConfiguration,
 } from "./interfaces";
 import { LocalOpportunityConfiguration } from "./models";
@@ -116,7 +116,7 @@ export class OpportunityConfigurationStore implements Hydratable {
       rawConfigs,
       (rawConfig) =>
         new ApiOpportunityConfiguration(
-          rawConfig as IApiOpportunityConfigurationRaw,
+          rawConfig as IApiOpportunityConfiguration,
           this.workflowsStore,
         ),
     );

@@ -31,12 +31,4 @@ describe("ApiOpportunityConfiguration schema", () => {
     const doc = mockGetDoc("usIdCRCWorkRelease");
     expect(apiOpportunityConfigurationSchema.parse(doc)).toBeDefined();
   });
-
-  describe("methodologyURL", () => {
-    it("rejects incorrect url", async () => {
-      const doc = await mockGetDoc("usIdCRCWorkRelease");
-      doc!.methodologyUrl = "www.google.com";
-      expect(() => apiOpportunityConfigurationSchema.parse(doc)).toThrow();
-    });
-  });
 });

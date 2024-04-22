@@ -905,7 +905,7 @@ export class WorkflowsStore implements Hydratable {
       if (!isInSystem) return false;
 
       return this.opportunityConfigurationStore.opportunities[oppType]
-        .isEnabled;
+        ?.isEnabled;
     });
   }
 

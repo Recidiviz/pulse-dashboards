@@ -55,7 +55,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
   get featureVariant() {
     const { featureVariant } = this.configurationObject;
-    if (featureVariant in allFeatureVariants) {
+    if (featureVariant && featureVariant in allFeatureVariants) {
       return featureVariant as FeatureVariant;
     }
     return undefined;
@@ -131,7 +131,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get isEnabled(): boolean {
     const { featureVariants } = this.workflowsStore;
     const { featureVariant, inverseFeatureVariant } = this;
-    if (!featureVariant) return false;
+    if (!featureVariant) return true;
 
     const featureVariantEnabled = !!featureVariants[featureVariant];
     const inverseFeatureVariantDisabled = inverseFeatureVariant
