@@ -29,6 +29,7 @@ import {
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import UsIdContactTask from "../WorkflowsStore/Task/UsIdContactTask";
+import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/UsIdEmploymentVerificationTask";
 import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
@@ -56,11 +57,16 @@ const US_ID_CONFIG: TenantConfig = {
       enabled: true,
       snoozeForOptionsInDays: [7, 30, 90],
     },
+    employment: {
+      enabled: true,
+      snoozeForOptionsInDays: [7, 30, 90],
+    },
   },
   tasks: {
     homeVisit: UsIdHomeVisitTask,
     contact: UsIdContactTask,
     assessment: UsIdRiskAssessmentTask,
+    employment: UsIdEmploymentVerificationTask,
   },
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemsGatedByFeatureVariant: {

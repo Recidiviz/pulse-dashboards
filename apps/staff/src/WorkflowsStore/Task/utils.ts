@@ -20,9 +20,11 @@
 // https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/pipeline/utils/state_utils/us_id/us_id_supervision_compliance.py
 import { SupervisionTasksCaseType } from "./types";
 
+type ContactStandard = { contacts: number; days: number };
+
 export const US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE: Record<
   SupervisionTasksCaseType,
-  Record<string, { contacts: number; days: number }>
+  Record<string, ContactStandard>
 > = {
   GENERAL: {
     MINIMUM: {
@@ -66,7 +68,7 @@ export const US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE: Record<
 // https://drive.google.com/file/d/1qx1S0Z8zfNe53YBImW4As-LoeKH0-YEl/view
 export const US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE: Record<
   SupervisionTasksCaseType,
-  Record<string, { contacts: number; days: number }>
+  Record<string, ContactStandard>
 > = {
   GENERAL: {
     MINIMUM: {
@@ -95,5 +97,24 @@ export const US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE: Record<
       contacts: 1,
       days: 30,
     },
+  },
+};
+
+// Employment Verification standards
+export const US_ID_SUPERVISION_EMPLOYMENT_VERIFICATION_COMPLIANCE: Record<
+  string,
+  ContactStandard
+> = {
+  MINIMUM: {
+    contacts: 1,
+    days: 60,
+  },
+  MEDIUM: {
+    contacts: 1,
+    days: 60,
+  },
+  HIGH: {
+    contacts: 1,
+    days: 30,
   },
 };

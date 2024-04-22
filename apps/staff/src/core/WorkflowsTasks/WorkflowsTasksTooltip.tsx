@@ -61,7 +61,7 @@ const TasksSection: React.FC<{
 };
 
 const NEED_TEXT = {
-  employment: "Unemployed",
+  employmentNeed: "Unemployed",
 };
 
 const NeedsSection: React.FC<{ person: JusticeInvolvedPerson }> = observer(

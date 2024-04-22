@@ -36,7 +36,7 @@ export class UsIdSupervisionTasks extends TasksBase<
 
   get needsEmployment(): boolean {
     return (
-      this.record?.needs?.map((need) => need.type).includes("employment") ??
+      this.record?.needs?.map((need) => need.type).includes("employmentNeed") ??
       false
     );
   }

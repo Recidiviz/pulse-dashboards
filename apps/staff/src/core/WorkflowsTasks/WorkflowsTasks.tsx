@@ -305,6 +305,9 @@ type NeedsViewProps = {
   type: SupervisionNeedType;
 };
 
+// This component is not currently in use since we aren't showing any needs,
+// but I do not want to delete it since we may add new ones
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AllNeedsView: React.FC<NeedsViewProps> = observer(
   function AllNeedsViewComponent({ type }) {
     const {
@@ -327,7 +330,7 @@ const LIST_VIEWS_BY_CATEGORY = {
   assessment: <TasksCalendarView type="assessment" />,
   contact: <TasksCalendarView type="contact" />,
   homeVisit: <TasksCalendarView type="homeVisit" />,
-  employment: <AllNeedsView type="employment" />,
+  employment: <TasksCalendarView type="employment" />,
 } as Record<SupervisionTaskCategory, JSX.Element>;
 
 const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
@@ -348,7 +351,7 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
     assessment: (s) => s.orderedTasksByCategory.assessment.length,
     contact: (s) => s.orderedTasksByCategory.contact.length,
     homeVisit: (s) => s.orderedTasksByCategory.homeVisit.length,
-    employment: (s) => s.orderedPersonsByNeed.employment.length,
+    employment: (s) => s.orderedTasksByCategory.employment.length,
   } as Record<SupervisionTaskCategory, (s: WorkflowsTasksStore) => number>;
 
   const empty = (

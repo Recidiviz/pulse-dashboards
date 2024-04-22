@@ -54,8 +54,16 @@ const data: SupervisionTasksRecord[] = [
           riskLevel: "MEDIUM",
         },
       },
+      {
+        type: "employment",
+        dueDate: formatISO(subDays(endOfToday(), 4)),
+        details: {
+          lastAssessedOn: formatISO(subDays(endOfToday(), 176)),
+          riskLevel: "MEDIUM",
+        },
+      },
     ],
-    needs: [{ type: "employment" }],
+    needs: [],
   },
 ];
 

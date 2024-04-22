@@ -46,6 +46,12 @@ type ContactDetails = {
   lastContacted?: string;
 };
 
+type EmploymentDetails = {
+  caseType: SupervisionTasksCaseType;
+  supervisionLevel: string;
+  lastContacted?: string;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type CheckSupervisionTaskDetailsMappingType = Expect<
   Extends<
@@ -54,7 +60,7 @@ type CheckSupervisionTaskDetailsMappingType = Expect<
   >
 >;
 
-export const SUPERVISION_NEED_TYPES = ["employment"] as const;
+export const SUPERVISION_NEED_TYPES = ["employmentNeed"] as const;
 
 export type SupervisionNeedType = (typeof SUPERVISION_NEED_TYPES)[number];
 
@@ -62,17 +68,20 @@ export const SUPERVISION_TASK_TYPES = [
   "homeVisit",
   "assessment",
   "contact",
+  "employment",
 ] as const;
 export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
 export type SupervisionDetails =
   | HomeVisitDetails
   | AssessmentDetails
-  | ContactDetails;
+  | ContactDetails
+  | EmploymentDetails;
 
 export type SupervisionDetailsForTask = {
   homeVisit: HomeVisitDetails;
   assessment: AssessmentDetails;
   contact: ContactDetails;
+  employment: EmploymentDetails;
 };
 
 export type SupervisionTask<T extends SupervisionTaskType> = {

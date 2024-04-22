@@ -17,9 +17,10 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   assessment: "Risk Assessments",
   contact: "Contacts",
   homeVisit: "Home Contacts",
-  employment: "Unemployed",
+  employment: "Employment Verification",
+  employmentNeed: "Unemployed",
 };
 
 export const NEED_DISPLAY_NAME: Record<SupervisionNeedType, string> = {
-  employment: "Unemployed",
+  employmentNeed: "Unemployed",
 } as const;
