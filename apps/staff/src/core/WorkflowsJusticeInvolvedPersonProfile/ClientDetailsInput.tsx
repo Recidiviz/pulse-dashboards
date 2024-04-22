@@ -134,6 +134,7 @@ const ClientDetailsInput: React.FC<ClientDetailsInputProps> = ({
       onChange={onChange}
       onBlur={onBlur}
       className="fs-exclude"
+      autoComplete="off"
     />
   );
 };

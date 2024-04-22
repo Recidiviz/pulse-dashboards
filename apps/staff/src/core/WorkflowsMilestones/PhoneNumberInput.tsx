@@ -135,6 +135,7 @@ const PhoneNumberInput = ({
         value={formatPhoneNumber(phoneNumber)}
         onBlur={handleInputBlur}
         onChange={handleInputChange}
+        autoComplete="off"
       />
     </PhoneNumber>
   );

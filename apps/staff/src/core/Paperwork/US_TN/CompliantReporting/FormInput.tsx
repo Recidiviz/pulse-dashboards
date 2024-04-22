@@ -56,6 +56,7 @@ const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
       type="text"
       onChange={onChange}
       className="fs-exclude"
+      autoComplete="off"
     />
   );
 };
