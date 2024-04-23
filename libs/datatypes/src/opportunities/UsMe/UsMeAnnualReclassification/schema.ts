@@ -40,6 +40,8 @@ export const usMeAnnualReclassificationSchema = opportunitySchemaBase
       disciplinaryReports: z.string().optional(),
       furloughs: z.string().optional(),
       workAssignments: z.string().optional(),
+      escapeHistory10Years: z.string().optional(),
+      sentenceIncludesProbation: z.string().optional(),
     }),
   })
   .merge(caseNotesSchema);

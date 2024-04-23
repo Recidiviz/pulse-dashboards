@@ -21,6 +21,7 @@ import {
 } from "~datatypes";
 
 import { Resident } from "../../../Resident";
+import { UsMeAnnualReclassificationReviewForm } from "../../Forms/UsMeAnnualReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 
 export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
@@ -28,6 +29,8 @@ export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
   UsMeAnnualReclassificationRecord["output"]
 > {
   resident: Resident;
+
+  form: UsMeAnnualReclassificationReviewForm;
 
   constructor(resident: Resident) {
     super(
@@ -38,5 +41,10 @@ export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
     );
 
     this.resident = resident;
+
+    this.form = new UsMeAnnualReclassificationReviewForm(
+      this,
+      this.resident.rootStore,
+    );
   }
 }

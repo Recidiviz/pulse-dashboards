@@ -29,6 +29,7 @@ import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
+import AnnualClassificationReview from "../Paperwork/US_ME/AnnualReclassificationReview/AnnualReclassificationReview";
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
@@ -95,6 +96,7 @@ const FormComponents = {
   FormFurloughRelease,
   FormUsOrEarnedDischarge,
   FormUsPaAdminSupervision,
+  AnnualClassificationReview,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;
