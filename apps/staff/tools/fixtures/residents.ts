@@ -215,7 +215,10 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
 
   {
-    allEligibleOpportunities: ["usMiReclassificationRequest"],
+    allEligibleOpportunities: [
+      "usMiReclassificationRequest",
+      "usMiSecurityClassificationCommitteeReview",
+    ],
     officerId: "OFFICER8",
     stateCode: "US_MI",
     personExternalId: "RES019",
@@ -233,7 +236,10 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     releaseDate: relativeFixtureDate({ months: 35 }),
   },
   {
-    allEligibleOpportunities: ["usMiReclassificationRequest"],
+    allEligibleOpportunities: [
+      "usMiReclassificationRequest",
+      "usMiSecurityClassificationCommitteeReview",
+    ],
     officerId: "OFFICER8",
     stateCode: "US_MI",
     personExternalId: "RES020",
@@ -251,7 +257,10 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     releaseDate: relativeFixtureDate({ months: 26 }),
   },
   {
-    allEligibleOpportunities: ["usMiReclassificationRequest"],
+    allEligibleOpportunities: [
+      "usMiReclassificationRequest",
+      "usMiSecurityClassificationCommitteeReview",
+    ],
     officerId: "OFFICER8",
     stateCode: "US_MI",
     personExternalId: "RES021",

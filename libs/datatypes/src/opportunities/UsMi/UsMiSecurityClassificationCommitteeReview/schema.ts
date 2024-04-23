@@ -23,25 +23,32 @@ import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 const possiblyIneligibleCriteria = z
   .object({
-    usMiEligibleForReclassificationFromSolitaryToGeneral: z.object({
-      detentionSanctionHasExpired: z.boolean().nullable(),
-      sanctionExpirationDate: dateStringSchema.nullable(),
-      overdueInTemporary: z.boolean().nullable(),
-      overdueInTemporaryDate: dateStringSchema.nullable(),
+    usMiPastSecurityClassificationCommitteeReviewDate: z.object({
+      facilitySolitaryStartDate: dateStringSchema.nullable(),
+      latestSccReviewDate: dateStringSchema.nullable(),
+      nextSccDate: dateStringSchema.nullable(),
+      numberOfExpectedReviews: z.number().nullable(),
+      numberOfReviews: z.number().nullable(),
     }),
   })
   .partial();
 
-export const usMiReclassificationRequestSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: possiblyIneligibleCriteria,
-  ineligibleCriteria: possiblyIneligibleCriteria,
-  formInformation: z.object({}),
-  metadata: z.object({
-    solitaryConfinementType: z.string(),
-    daysInSolitary: z.coerce.number(),
-  }),
-});
+export const usMiSecurityClassificationCommitteeReviewSchema =
+  opportunitySchemaBase.extend({
+    eligibleCriteria: possiblyIneligibleCriteria.extend({
+      housingUnitTypeIsSolitaryConfinement: z.object({
+        solitaryStartDate: dateStringSchema,
+      }),
+    }),
+    ineligibleCriteria: possiblyIneligibleCriteria,
+    formInformation: z.object({
+      segregationType: z.string(),
+    }),
+    metadata: z.object({
+      daysInCollapsedSolitarySession: z.coerce.number(),
+    }),
+  });
 
-export type usMiReclassificationRequestRecord = ParsedRecord<
-  typeof usMiReclassificationRequestSchema
+export type usMiSecurityClassificationCommitteeReviewRecord = ParsedRecord<
+  typeof usMiSecurityClassificationCommitteeReviewSchema
 >;

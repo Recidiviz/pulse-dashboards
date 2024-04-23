@@ -27,6 +27,7 @@ import {
   usMeMediumTrusteeFixtures,
   usMeSccpFixtures,
   usMiReclassificationRequestFixtures,
+  usMiSecurityClassificationCommitteeReviewFixtures,
 } from "~datatypes";
 
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../src/FirestoreStore/constants";
@@ -133,6 +134,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
       usMeMediumTrusteeReferrals: usMeMediumTrusteeFixtures,
       usMeReclassificationReviewReferrals: usMeAnnualReclassificationFixtures,
       usMiReclassificationRequestReferrals: usMiReclassificationRequestFixtures,
+      usMiSecurityClassificationCommitteeReviewReferrals:
+        usMiSecurityClassificationCommitteeReviewFixtures,
     },
     // @ts-ignore
     (fixtures) => fixtureFromParsedRecords("externalId", fixtures),

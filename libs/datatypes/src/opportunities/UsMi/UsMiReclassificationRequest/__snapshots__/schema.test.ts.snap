@@ -6,7 +6,7 @@ exports[`schema for almostEligible 1`] = `
   "externalId": "RES021",
   "formInformation": {},
   "ineligibleCriteria": {
-    "eligibleForReclassificationToGeneralPopulation": {
+    "usMiEligibleForReclassificationFromSolitaryToGeneral": {
       "detentionSanctionHasExpired": null,
       "overdueInTemporary": true,
       "overdueInTemporaryDate": 2021-12-19T00:00:00.000Z,
@@ -24,7 +24,7 @@ exports[`schema for almostEligible 1`] = `
 exports[`schema for fullyEligible1 1`] = `
 {
   "eligibleCriteria": {
-    "eligibleForReclassificationToGeneralPopulation": {
+    "usMiEligibleForReclassificationFromSolitaryToGeneral": {
       "detentionSanctionHasExpired": true,
       "overdueInTemporary": null,
       "overdueInTemporaryDate": null,
@@ -45,7 +45,7 @@ exports[`schema for fullyEligible1 1`] = `
 exports[`schema for fullyEligible2 1`] = `
 {
   "eligibleCriteria": {
-    "eligibleForReclassificationToGeneralPopulation": {
+    "usMiEligibleForReclassificationFromSolitaryToGeneral": {
       "detentionSanctionHasExpired": null,
       "overdueInTemporary": true,
       "overdueInTemporaryDate": 2021-12-13T00:00:00.000Z,

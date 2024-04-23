@@ -30,7 +30,7 @@ export const usMiReclassificationRequestConfig: OpportunityConfig<usMiReclassifi
     dynamicEligibilityText:
       "resident[|s] in temporary segregation or detention [is|are] eligible for reclassification to general population",
     callToAction:
-      "Search for case manager(s) below to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
+      "Return residents eligible for reclassification to general population",
     firestoreCollection: "US_MI-reclassificationRequest",
     denialReasons: {
       ALJ: "Administrative Law Judge found reasonable cause for delay at a hearing conducted on a Class I misconduct violation or on proposed placement in administrative segregation",
@@ -48,13 +48,13 @@ export const usMiReclassificationRequestConfig: OpportunityConfig<usMiReclassifi
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
     sidebarComponents: ["Incarceration"],
     eligibleCriteriaCopy: {
-      eligibleForReclassificationToGeneralPopulation: {
+      usMiEligibleForReclassificationFromSolitaryToGeneral: {
         text: `{{#if (eq record.metadata.solitaryConfinementType "DISCIPLINARY_SOLITARY_CONFINEMENT")}}Length of stay in detention {{record.metadata.daysInSolitary}} days, {{daysPast sanctionExpirationDate}} days beyond original detention sanction{{else}}Length of stay in temporary segregation {{record.metadata.daysInSolitary}} days, exceeding 30-day policy requirement{{/if}}`,
         tooltip: `{{#if (eq record.metadata.solitaryConfinementType "DISCIPLINARY_SOLITARY_CONFINEMENT")}}A prisoner shall not remain on detention status for longer than the period of time ordered by the ALJ{{else}}Wardens shall ensure that prisoners are not confined in temporary segregation for more than seven business days except under the circumstances listed in 1-7 below{{/if}}`,
       },
     },
     ineligibleCriteriaCopy: {
-      eligibleForReclassificationToGeneralPopulation: {
+      usMiEligibleForReclassificationFromSolitaryToGeneral: {
         text: "Length of stay in temporary segregation {{record.metadata.daysInSolitary}} days, exceeding 7-day policy requirement",
         tooltip:
           "Wardens shall ensure that prisoners are not confined in temporary segregation for more than seven business days except under the circumstances listed in 1-7 below",

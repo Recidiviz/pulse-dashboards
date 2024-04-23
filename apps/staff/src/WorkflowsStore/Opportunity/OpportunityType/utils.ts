@@ -46,6 +46,7 @@ export const OPPORTUNITY_TYPES_BY_STATE = {
     "usMiPastFTRD",
     "usMiSupervisionLevelDowngrade",
     "usMiReclassificationRequest",
+    "usMiSecurityClassificationCommitteeReview",
   ],
   US_MO: [
     "usMoRestrictiveHousingStatusHearing",

@@ -28,7 +28,7 @@ export const usMiReclassificationRequestFixtures = {
     stateCode: "US_MI",
     externalId: "RES019",
     eligibleCriteria: {
-      eligibleForReclassificationToGeneralPopulation: {
+      usMiEligibleForReclassificationFromSolitaryToGeneral: {
         detentionSanctionHasExpired: true,
         sanctionExpirationDate: relativeFixtureDate({ days: -5 }),
         overdueInTemporary: null,
@@ -46,7 +46,7 @@ export const usMiReclassificationRequestFixtures = {
     stateCode: "US_MI",
     externalId: "RES020",
     eligibleCriteria: {
-      eligibleForReclassificationToGeneralPopulation: {
+      usMiEligibleForReclassificationFromSolitaryToGeneral: {
         detentionSanctionHasExpired: null,
         sanctionExpirationDate: null,
         overdueInTemporary: true,
@@ -66,7 +66,7 @@ export const usMiReclassificationRequestFixtures = {
     eligibleCriteria: {},
     formInformation: {},
     ineligibleCriteria: {
-      eligibleForReclassificationToGeneralPopulation: {
+      usMiEligibleForReclassificationFromSolitaryToGeneral: {
         detentionSanctionHasExpired: null,
         sanctionExpirationDate: null,
         overdueInTemporary: true,
