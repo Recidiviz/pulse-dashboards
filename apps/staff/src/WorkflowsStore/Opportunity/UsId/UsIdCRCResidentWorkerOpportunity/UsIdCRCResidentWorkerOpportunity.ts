@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Resident } from "../../../Resident";
-import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase";
+import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase/UsIdCRCOpportunityBase";
 import {
   UsIdCRCResidentWorkerReferralRecord,
   usIdCRCResidentWorkerSchema,

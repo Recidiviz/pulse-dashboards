@@ -89,6 +89,10 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return this.record.facilityId ?? undefined;
   }
 
+  get gender(): string | undefined {
+    return this.record.gender;
+  }
+
   get unitId(): string | undefined {
     return this.record.unitId ?? undefined;
   }

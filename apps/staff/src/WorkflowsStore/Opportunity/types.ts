@@ -153,7 +153,10 @@ export type OpportunityTab =
   | `Overdue as of ${string}`
   | "Coming up";
 
-export type OpportunityTabGroup = "ELIGIBILITY STATUS" | "GENDER";
+export type OpportunityTabGroup =
+  | "ELIGIBILITY STATUS"
+  | "GENDER"
+  | "GENDER - Transgender Only";
 // NOTE: Consider changing the key type to string, because the source of truth is what is set in the configs as opposed to the code.
 export type OpportunityTabGroups = Record<
   OpportunityTabGroup,

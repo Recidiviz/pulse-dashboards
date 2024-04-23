@@ -18,11 +18,12 @@ import { SystemId } from "../../../../core/models/types";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { SortParam } from "../../OpportunityConfigs";
-import {
-  DenialReasonsMap,
-  OpportunityRequirement,
-  OpportunityTabGroups,
-} from "../../types";
+import
+  {
+    DenialReasonsMap,
+    OpportunityRequirement,
+    OpportunityTabGroups
+  } from "../../types";
 import { SnoozeConfigurationInput } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
 export type OpportunityHeadersBaseType = {

@@ -18,20 +18,23 @@
 import { render, screen } from "@testing-library/react";
 import { Mock } from "vitest";
 
-import {
-  useOpportunityConfigurations,
-  useRootStore,
-} from "../../../components/StoreProvider";
+import
+  {
+    useOpportunityConfigurations,
+    useRootStore,
+  } from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
 import { OpportunityType } from "../../../WorkflowsStore/Opportunity/OpportunityType/types";
-import {
-  Opportunity,
-  OpportunityTab,
-} from "../../../WorkflowsStore/Opportunity/types";
-import {
-  mockOpportunity,
-  mockOpportunityConfigs,
-} from "../../__tests__/testUtils";
+import
+  {
+    Opportunity,
+    OpportunityTab,
+  } from "../../../WorkflowsStore/Opportunity/types";
+import
+  {
+    mockOpportunity,
+    mockOpportunityConfigs,
+  } from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
 
 vi.mock("../../../components/StoreProvider");
@@ -47,9 +50,9 @@ const baseWorkflowsStoreMock = {
   selectedOpportunityType: "earlyTermination",
   justiceInvolvedPersonTitle: "client",
   workflowsSearchFieldTitle: "officer",
-  opportunitiesByTab: {
+  opportunitiesByTab: () => ({
     earlyTermination: [],
-  },
+  }),
   allOpportunitiesByType: { earlyTermination: [] },
   potentialOpportunities: () => [],
   hasOpportunities: () => false,
@@ -123,15 +126,15 @@ test("hydrated", () => {
     type: "earlyTermination",
   };
 
-  const opportunitiesByTab: Partial<
-    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
-  > = {
+  const opportunitiesByTab = (): Partial<
+  Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
+> => ({
     earlyTermination: {
       [firstTabText]: [opp1 as Opportunity],
       [otherTabText]: [opp2 as Opportunity],
       [emptyTabText]: [],
     },
-  };
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -179,11 +182,11 @@ test("hydrated with one tab", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
-      opportunitiesByTab: {
+      opportunitiesByTab: () => ({
         earlyTermination: {
           [firstTabText]: [opp],
         },
-      },
+      }),
     },
   });
 
@@ -209,13 +212,13 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
     type: "earlyTermination",
   };
 
-  const opportunitiesByTab: Partial<
-    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
-  > = {
+  const opportunitiesByTab = (): Partial<
+  Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
+> => ({
     earlyTermination: {
       [overriddenTabText]: [opp as Opportunity],
     },
-  };
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -265,11 +268,11 @@ test("hydrated with eligible and ineligible opps", () => {
           { ...ineligibleOpp, type: "earlyTermination" },
         ],
       },
-      opportunitiesByTab: {
+      opportunitiesByTab: () => ({
         earlyTermination: {
           [firstTabText]: [opp],
         },
-      },
+      }),
     },
   });
 
@@ -299,11 +302,11 @@ test("when `allOpportunitiesByType` is undefined", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: undefined,
-      opportunitiesByTab: {
+      opportunitiesByTab: () => ({
         earlyTermination: {
           [firstTabText]: [{ ...opp, type: "earlyTermination" }],
         },
-      },
+      }),
     },
   });
 
@@ -330,43 +333,11 @@ test("when `allOpportunitiesByType` is an empty object", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: {},
-      opportunitiesByTab: {
+      opportunitiesByTab: () => ({
         earlyTermination: {
           [firstTabText]: [opp],
         },
-      },
-    },
-  });
-
-  const { container } = render(<OpportunityPersonList />);
-
-  expect(container).toContainHTML("<div></div>");
-});
-
-test("when `opportunitiesByTab` is undefined", () => {
-  const firstTabText = "Eligible Now";
-
-  const opp = {
-    ...mockOpportunity,
-    tabOrder: [firstTabText],
-    person: {
-      recordId: "4",
-    } as Client,
-  };
-
-  const almostOpp = { ...opp, reviewStatus: "ALMOST" };
-
-  const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
-  useRootStoreMock.mockReturnValue({
-    workflowsStore: {
-      ...baseWorkflowsStoreMock,
-      selectedSearchIds: ["123"],
-      opportunitiesLoaded: () => true,
-      hasOpportunities: () => true,
-      allOpportunitiesByType: {
-        earlyTermination: [opp, almostOpp, ineligibleOpp],
-      },
-      opportunitiesByTab: undefined,
+      }),
     },
   });
 
@@ -398,7 +369,7 @@ test("when `opportunitiesByTab` is an empty object", () => {
       allOpportunitiesByType: {
         earlyTermination: [opp, almostOpp, ineligibleOpp],
       },
-      opportunitiesByTab: {},
+      opportunitiesByTab: () => ({}),
     },
   });
 
@@ -427,11 +398,11 @@ test("when `earlyTermination` in `allOpportunitiesByType` is an empty list", () 
       allOpportunitiesByType: {
         earlyTermination: [],
       },
-      opportunitiesByTab: {
+      opportunitiesByTab: () => ({
         earlyTermination: {
           [firstTabText]: [opp],
         },
-      },
+      }),
     },
   });
   render(<OpportunityPersonList />);
@@ -462,11 +433,11 @@ test("when `earlyTermination` in `opportunitiesByTab` is undefined", () => {
       allOpportunitiesByType: {
         earlyTermination: undefined,
       },
-      opportunitiesByTab: {
+      opportunitiesByTab: () => ({
         earlyTermination: {
           [firstTabText]: [opp],
         },
-      },
+      }),
     },
   });
   const { container } = render(<OpportunityPersonList />);
@@ -497,9 +468,9 @@ test("an opp is undefined in `opportunitiesByTab`", () => {
       allOpportunitiesByType: {
         earlyTermination: [opp, almostOpp, ineligibleOpp],
       },
-      opportunitiesByTab: {
+      opportunitiesByTab: () => ({
         earlyTermination: undefined,
-      },
+      }),
     },
   });
 

@@ -87,6 +87,7 @@ import {
   INCARCERATION_OPPORTUNITY_TYPES,
   Opportunity,
   OpportunityTab,
+  OpportunityTabGroup,
   SUPERVISION_OPPORTUNITY_TYPES,
 } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
@@ -696,14 +697,14 @@ export class WorkflowsStore implements Hydratable {
     return this.opportunitiesByEligibilityStatus("opportunitiesDenied");
   }
 
-  get opportunitiesByTab(): Partial<
-    Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>
-  > {
-    return mapValues(this.allOpportunitiesByType, (opps) => {
-      return groupBy(opps, (opp) => opp.tabTitle()) as Record<
-        OpportunityTab,
-        Opportunity[]
-      >;
+  opportunitiesByTab(
+    allOpportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>,
+    category?: OpportunityTabGroup,
+  ): Partial<Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>> {
+    return mapValues(allOpportunitiesByType, (opps) => {
+      return groupBy(opps, (opp) =>
+        opp.tabTitle((category || Object.keys(opp.config.tabGroups)[0]) as any),
+      ) as Record<OpportunityTab, Opportunity[]>;
     });
   }
 

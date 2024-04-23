@@ -56,7 +56,7 @@ const HeaderText = styled.div<{
     centered ? `text-align: center;` : `margin-right: ${isMobile ? 0 : 20}%;`}
 `;
 
-const CallToActionText = styled(Sans18)`
+export const CallToActionText = styled(Sans18)`
   color: ${palette.slate70};
   text-wrap: balance;
 `;

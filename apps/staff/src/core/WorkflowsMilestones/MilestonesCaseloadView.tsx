@@ -29,8 +29,8 @@ import { Client } from "../../WorkflowsStore";
 import { optionalFieldToDate } from "../../WorkflowsStore/utils";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { MilestonesCapsule } from "../PersonCapsules/MilestonesCapsule";
+import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import WorkflowsResults from "../WorkflowsResults";
-import WorkflowsTabbedPersonList from "../WorkflowsTabbedPersonList/WorkflowsTabbedPersonList";
 import { TasksOpportunitiesSection } from "../WorkflowsTasks/TasksOpportunitiesSection";
 import { TooltipDetails, WorkflowsTooltip } from "../WorkflowsTooltip";
 import { MilestonesSidePanel } from "./MilestonesSidePanel";
@@ -231,21 +231,22 @@ const MilestonesCaseloadView: React.FC = observer(
       <CaseloadHydrator
         initial={null}
         hydrated={
-          <WorkflowsTabbedPersonList<MilestonesTab>
-            tabs={
-              hasErrors
-                ? [...MILESTONES_TABS]
-                : MILESTONES_TABS.filter((t) => t !== "Errors")
-            }
-            activeTab={activeTab}
-            onClick={handleTabClick}
-          >
+          <>
+            <WorkflowsCaseloadControlBar
+              tabs={
+                hasErrors
+                  ? [...MILESTONES_TABS]
+                  : MILESTONES_TABS.filter((t) => t !== "Errors")
+              }
+              activeTab={activeTab}
+              setActiveTab={handleTabClick}
+            />
             <MilestonesCaseload
               clients={clients(activeTab)}
               handleRowOnClick={handleRowOnClick}
             />
             <MilestonesSidePanel activeTab={activeTab} />
-          </WorkflowsTabbedPersonList>
+          </>
         }
         empty={empty}
       />

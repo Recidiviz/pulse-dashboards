@@ -19,10 +19,11 @@ import { add } from "date-fns";
 import { mapValues } from "lodash";
 
 import { AutoSnoozeUpdate, ManualSnoozeUpdate } from "../../FirestoreStore";
-import { Client, Opportunity } from "../../WorkflowsStore";
+import { Client, Opportunity, OpportunityTab } from "../../WorkflowsStore";
 import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { formatEligibilityText } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
 import { LocalOpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/LocalOpportunityConfigurationImpl";
+import { generateTabs } from "../../WorkflowsStore/Opportunity/utils/tabUtils";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
 export const mockOpportunityConfigs = mapValues(
@@ -94,11 +95,9 @@ export const mockOpportunity: Opportunity<Client> = {
       autoSnoozeParams: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
     },
     tabGroups: {
-      "ELIGIBILITY STATUS": [
-        "Eligible Now",
-        "Almost Eligible",
-        "Marked Ineligible",
-      ],
+      "ELIGIBILITY STATUS": generateTabs({
+        isAlert: false,
+      }) as OpportunityTab[],
     },
     isEnabled: true,
     denialReasons: { CODE: "Denial Code", [OTHER_KEY]: "Other" },

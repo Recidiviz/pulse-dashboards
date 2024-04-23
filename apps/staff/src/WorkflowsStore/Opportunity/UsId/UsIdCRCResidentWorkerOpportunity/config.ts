@@ -16,10 +16,12 @@
 // =============================================================================
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
+import { baseUsIdCRCConfig } from "../UsIdCRCOpportunityBase/config";
 import { UsIdCRCResidentWorkerOpportunity } from "./UsIdCRCResidentWorkerOpportunity";
 
 export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorkerOpportunity> =
   {
+    ...baseUsIdCRCConfig(),
     systemType: "INCARCERATION",
     stateCode: "US_ID",
     urlSection: "CRCResidentWorker",
