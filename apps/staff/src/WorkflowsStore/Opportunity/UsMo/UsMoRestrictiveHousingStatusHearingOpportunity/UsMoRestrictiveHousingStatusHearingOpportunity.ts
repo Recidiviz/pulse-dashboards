@@ -21,7 +21,12 @@ import { makeObservable, override } from "mobx";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OpportunityBase } from "../../OpportunityBase";
-import { Component, OpportunityRequirement, OpportunityTab } from "../../types";
+import {
+  Component,
+  OpportunityRequirement,
+  OpportunityTab,
+  OpportunityTabGroup,
+} from "../../types";
 import {
   CriteriaCopy,
   CriteriaFormatters,
@@ -181,7 +186,7 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
     );
   }
 
-  get tabTitle(): OpportunityTab {
+  tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (!this.record) return "Other";
     if (this.denied) return this.deniedTabTitle;
     if (this.record.eligibleCriteria.usMoOverdueForHearing)

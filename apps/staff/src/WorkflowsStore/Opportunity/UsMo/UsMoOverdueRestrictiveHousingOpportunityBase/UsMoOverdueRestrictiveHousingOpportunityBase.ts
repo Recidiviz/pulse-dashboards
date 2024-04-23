@@ -28,7 +28,7 @@ import { Resident } from "../../../Resident";
 import { TransformFunction, ValidateFunction } from "../../../subscriptions";
 import { CopyTuple, OpportunityType } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
-import { Component, OpportunityTab } from "../../types";
+import { Component, OpportunityTab, OpportunityTabGroup } from "../../types";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "./UsMoOverdueRestrictiveHousingReferralRecord";
 
 export const usMoNoActiveD1Sanctions: CopyTuple<"usMoNoActiveD1Sanctions"> = [
@@ -88,7 +88,7 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
    * @type {OpportunityTab}
    * @memberof UsMoOverdueRestrictiveHousingBase
    */
-  get tabTitle(): OpportunityTab {
+  tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     const { eligibilityDate } = this;
     if (!eligibilityDate) return "Missing Review Date";
     if (this.denied) return this.deniedTabTitle;

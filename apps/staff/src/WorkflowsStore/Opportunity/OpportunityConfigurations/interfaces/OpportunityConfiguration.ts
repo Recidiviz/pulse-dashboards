@@ -18,7 +18,7 @@
 import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { SortParamObject } from "../../OpportunityConfigs";
-import { DenialReasonsMap, OpportunityTab } from "../../types";
+import { DenialReasonsMap, OpportunityTabGroups } from "../../types";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import { CriteriaCopy } from "./shared";
 export interface OpportunityConfiguration {
@@ -30,7 +30,7 @@ export interface OpportunityConfiguration {
   label: string;
   firestoreCollection: string;
   snooze?: SnoozeConfiguration;
-  tabOrder?: ReadonlyArray<OpportunityTab>;
+  tabGroups: Readonly<Partial<OpportunityTabGroups>>;
   initialHeader?: string;
   callToAction: string;
   eligibilityTextForCount: (count: number) => string;

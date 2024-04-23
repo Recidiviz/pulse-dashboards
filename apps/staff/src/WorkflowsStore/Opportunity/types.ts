@@ -124,7 +124,7 @@ export interface Opportunity<
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
   readonly eligibilityCallToActionText?: string;
-  tabTitle?: OpportunityTab;
+  tabTitle: (category?: OpportunityTabGroup) => OpportunityTab;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
   readonly portionServedRequirement?: string[];
@@ -152,6 +152,13 @@ export type OpportunityTab =
   | "Due this week"
   | `Overdue as of ${string}`
   | "Coming up";
+
+export type OpportunityTabGroup = "ELIGIBILITY STATUS" | "GENDER";
+// NOTE: Consider changing the key type to string, because the source of truth is what is set in the configs as opposed to the code.
+export type OpportunityTabGroups = Record<
+  OpportunityTabGroup,
+  OpportunityTab[]
+>;
 
 export type DenialConfirmationModalProps = {
   opportunity: Opportunity;

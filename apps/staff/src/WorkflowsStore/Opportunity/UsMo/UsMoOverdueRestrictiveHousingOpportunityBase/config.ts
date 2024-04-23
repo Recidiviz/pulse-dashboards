@@ -27,7 +27,6 @@ import {
   OpportunityTab,
 } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
-import { generateTabs } from "../../utils/tabUtils";
 
 export const baseUsMoOverdueRestrictiveHousingConfig = (
   usMoOverdueRHOppVariant: "Release" | "InitialHearing" | "ReviewHearing",
@@ -60,7 +59,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
     dynamicEligibilityText: `resident[|s] ${fullTextPartial}`,
     callToAction,
     countByFunction: (opportunities: Opportunity[]) => {
-      const counts = countBy(opportunities, "tabTitle") as Record<
+      const counts = countBy(opportunities, (opp) => opp.tabTitle()) as Record<
         OpportunityTab,
         number
       >;
@@ -72,9 +71,8 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
       return count;
     },
     firestoreCollection: `US_MO-overdueRestrictiveHousing${usMoOverdueRHOppVariant}Referrals`,
-    tabOrder: generateTabs({
-      isAlert: true,
-      customTabOrder: [
+    tabOrder: {
+      "ELIGIBILITY STATUS": [
         `Overdue as of ${formatWorkflowsDate(
           startOfWeek(new Date(), { weekStartsOn: 1 }),
         )}`,
@@ -83,7 +81,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
         "Overridden",
         "Missing Review Date",
       ],
-    }),
+    },
     sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
     isAlert: true,
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MO,

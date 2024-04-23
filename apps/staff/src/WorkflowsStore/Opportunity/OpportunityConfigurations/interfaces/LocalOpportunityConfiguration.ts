@@ -21,7 +21,7 @@ import { SortParam } from "../../OpportunityConfigs";
 import {
   DenialReasonsMap,
   OpportunityRequirement,
-  OpportunityTab,
+  OpportunityTabGroups,
 } from "../../types";
 import { SnoozeConfigurationInput } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
@@ -55,7 +55,7 @@ export interface ILocalOpportunityConfiguration {
   label: string;
   firestoreCollection: string;
   snooze?: SnoozeConfigurationInput;
-  tabOrder?: ReadonlyArray<OpportunityTab>;
+  tabOrder?: Readonly<Partial<OpportunityTabGroups>>;
   initialHeader?: string;
   callToAction: string;
   dynamicEligibilityText: string;

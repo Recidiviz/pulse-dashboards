@@ -22,7 +22,6 @@ import {
   useRootStore,
 } from "../components/StoreProvider";
 import { OpportunityTab } from "../WorkflowsStore";
-import { determineTabsFromConfigTabs } from "../WorkflowsStore/Opportunity/utils/tabUtils";
 
 type OrderedActiveTab = {
   displayTabs: OpportunityTab[];
@@ -49,9 +48,7 @@ export const useOrderedActiveTab: () => OrderedActiveTab =
       if (opportunityType) {
         const opportunityTabs = opportunitiesByTab[opportunityType];
 
-        const tabOrder = determineTabsFromConfigTabs(
-          opportunityConfigs[opportunityType].tabOrder,
-        );
+        const tabOrder = opportunityConfigs[opportunityType].tabGroups["ELIGIBILITY STATUS"];
 
         const tabsForDisplay: OpportunityTab[] = intersection(
           tabOrder,

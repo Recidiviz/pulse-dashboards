@@ -27,6 +27,8 @@ import {
 } from "date-fns";
 
 import { WorkflowsStore } from "../../../WorkflowsStore";
+import { OpportunityTabGroups } from "../../types";
+import { generateTabs } from "../../utils/tabUtils";
 import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
 import { formatEligibilityText } from "./ApiOpportunityConfigurationImpl";
@@ -92,9 +94,16 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
       return snooze;
     }
   }
-  get tabOrder() {
-    return this.configurationObject.tabOrder;
+  get tabGroups() {
+    const tabs = this.configurationObject.tabOrder;
+    if (Array.isArray(tabs)) return { "ELIGIBILITY STATUS": tabs };
+    else if (tabs && typeof tabs === "object")
+      return tabs as OpportunityTabGroups;
+    return {
+      "ELIGIBILITY STATUS": generateTabs({ isAlert: this.isAlert }),
+    } as OpportunityTabGroups;
   }
+
   get initialHeader() {
     return this.configurationObject.initialHeader;
   }

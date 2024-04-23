@@ -41,6 +41,7 @@ export const apiOpportunityConfigurationSchema = z.object({
     nullishAsUndefined(snoozeConfigurationSchema),
   ),
   denialReasons: z.record(z.string()),
+  tabGroups: z.record(z.string(), z.array(z.string())).optional(),
   eligibleCriteriaCopy: criteriaCopySchema,
   ineligibleCriteriaCopy: criteriaCopySchema,
   sidebarComponents: z.array(z.string()),

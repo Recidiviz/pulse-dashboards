@@ -700,7 +700,10 @@ export class WorkflowsStore implements Hydratable {
     Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>
   > {
     return mapValues(this.allOpportunitiesByType, (opps) => {
-      return groupBy(opps, "tabTitle") as Record<OpportunityTab, Opportunity[]>;
+      return groupBy(opps, (opp) => opp.tabTitle()) as Record<
+        OpportunityTab,
+        Opportunity[]
+      >;
     });
   }
 

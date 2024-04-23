@@ -16,7 +16,6 @@
 // =============================================================================
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { generateTabs } from "../../utils/tabUtils";
 import { UsMiSupervisionLevelDowngradeOpportunity } from "./UsMiSupervisionLevelDowngradeOpportunity";
 
 export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervisionLevelDowngradeOpportunity> =
@@ -34,7 +33,6 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervis
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
-    tabOrder: generateTabs({ isAlert: true }),
     eligibilityDateText: "Initial Classification Due Date",
     isAlert: true,
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,

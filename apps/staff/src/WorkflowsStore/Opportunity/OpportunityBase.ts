@@ -68,6 +68,7 @@ import {
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityTab,
+  OpportunityTabGroup,
 } from "./types";
 import { buildOpportunityCompareFunction } from "./utils/compareUtils";
 import {
@@ -517,7 +518,7 @@ export abstract class OpportunityBase<
     return this.config.isAlert ? "Overridden" : "Marked Ineligible";
   }
 
-  get tabTitle(): OpportunityTab {
+  tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
     return "Eligible Now";

@@ -22,6 +22,8 @@ import {
   FeatureVariant,
 } from "../../../../RootStore/types";
 import { WorkflowsStore } from "../../../WorkflowsStore";
+import { OpportunityTabGroups } from "../../types";
+import { generateTabs } from "../../utils/tabUtils";
 import { IApiOpportunityConfiguration } from "../interfaces";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
 
@@ -94,6 +96,14 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
   get hideDenialRevert() {
     return false;
+  }
+
+  get tabGroups() {
+    const tabs = this.configurationObject.tabGroups as OpportunityTabGroups;
+    if (tabs) return tabs;
+    return {
+      "ELIGIBILITY STATUS": generateTabs({ isAlert: this.isAlert }),
+    } as OpportunityTabGroups;
   }
 
   get methodologyUrl() {

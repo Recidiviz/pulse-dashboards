@@ -33,7 +33,6 @@ import {
   generateOpportunityInitialHeader,
   OpportunityTab,
 } from "../../WorkflowsStore";
-import { determineTabsFromConfigTabs } from "../../WorkflowsStore/Opportunity/utils/tabUtils";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { Heading, SubHeading } from "../sharedComponents";
@@ -117,9 +116,7 @@ const HydratedOpportunityPersonList = observer(
     const displayTabs = useMemo(() => {
       return oppsFromOpportunitiesByTab && opportunityType
         ? intersection(
-            determineTabsFromConfigTabs(
-              opportunityConfigs[opportunityType].tabOrder,
-            ),
+            opportunityConfigs[opportunityType].tabGroups["ELIGIBILITY STATUS"],
             Object.keys(oppsFromOpportunitiesByTab),
           )
         : [];

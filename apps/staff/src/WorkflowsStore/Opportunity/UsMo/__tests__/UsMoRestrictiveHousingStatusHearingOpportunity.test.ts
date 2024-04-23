@@ -180,7 +180,7 @@ describe("fully eligible", () => {
   describe("tabs", () => {
     test("overridden", () => {
       updatesSub.data = { denial: { reasons: ["test-reason"] } };
-      expect(opp.tabTitle).toEqual("Overridden");
+      expect(opp.tabTitle()).toEqual("Overridden");
     });
 
     test("Overdue for hearing", () => {
@@ -188,7 +188,7 @@ describe("fully eligible", () => {
         ...UsMoRestrictiveHousingStatusHearingRecordFixture,
         eligibleCriteria: { usMoOverdueForHearing: true },
       };
-      expect(opp.tabTitle).toEqual("Overdue For Hearing");
+      expect(opp.tabTitle()).toEqual("Overdue For Hearing");
     });
 
     test("Missing Review Date", () => {
@@ -199,7 +199,7 @@ describe("fully eligible", () => {
           usMoOverdueForHearing: { nextReviewDate: null },
         },
       };
-      expect(opp.tabTitle).toEqual("Missing Review Date");
+      expect(opp.tabTitle()).toEqual("Missing Review Date");
     });
 
     test("Upcoming hearing", () => {
@@ -214,7 +214,7 @@ describe("fully eligible", () => {
           usMoOverdueForHearing: { nextReviewDate: new Date() },
         },
       };
-      expect(opp.tabTitle).toEqual("Upcoming Hearings");
+      expect(opp.tabTitle()).toEqual("Upcoming Hearings");
     });
   });
 });

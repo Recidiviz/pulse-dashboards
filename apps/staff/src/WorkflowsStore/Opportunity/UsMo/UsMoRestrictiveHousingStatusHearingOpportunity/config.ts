@@ -16,7 +16,6 @@
 // =============================================================================
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { generateTabs } from "../../utils/tabUtils";
 import { UsMoRestrictiveHousingStatusHearingOpportunity } from "./UsMoRestrictiveHousingStatusHearingOpportunity";
 
 export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRestrictiveHousingStatusHearingOpportunity> =
@@ -38,15 +37,14 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
       "resident[|s] [is|are] currently in Restrictive Housing",
     callToAction: "Conduct a Restrictive Housing Status Hearing",
     firestoreCollection: "US_MO-restrictiveHousingStatusHearingReferrals",
-    tabOrder: generateTabs({
-      isAlert: true,
-      customTabOrder: [
+    tabOrder: {
+      "ELIGIBILITY STATUS": [
         "Overdue For Hearing",
         "Missing Review Date",
         "Upcoming Hearings",
         "Overridden",
       ],
-    }),
+    },
     sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
     isAlert: true,
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MO,

@@ -17,7 +17,6 @@
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { generateTabs } from "../../utils/tabUtils";
 import { UsIdPastFTRDOpportunity } from "./UsIdPastFTRDOpportunity";
 
 export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
@@ -40,7 +39,6 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
       },
     },
   },
-  tabOrder: generateTabs({ isAlert: true }),
   methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
   denialReasons: {
     ABSCONDING: "Client is in absconder status",

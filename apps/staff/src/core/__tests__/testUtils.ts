@@ -70,7 +70,7 @@ export const mockOpportunity: Opportunity<Client> = {
   trackPreviewed: () => undefined,
   supportsExternalRequest: false,
   deniedTabTitle: "Marked Ineligible",
-  tabTitle: "Eligible Now",
+  tabTitle: () => "Eligible Now",
   compare: () => 1,
   showEligibilityStatus: () => true,
   config: {
@@ -93,7 +93,13 @@ export const mockOpportunity: Opportunity<Client> = {
     snooze: {
       autoSnoozeParams: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
     },
-    tabOrder: [],
+    tabGroups: {
+      "ELIGIBILITY STATUS": [
+        "Eligible Now",
+        "Almost Eligible",
+        "Marked Ineligible",
+      ],
+    },
     isEnabled: true,
     denialReasons: { CODE: "Denial Code", [OTHER_KEY]: "Other" },
     methodologyUrl: "https://example.com",

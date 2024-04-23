@@ -16,7 +16,6 @@
 // =============================================================================
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { generateTabs } from "../../utils/tabUtils";
 import { UsMiPastFTRDOpportunity } from "./UsMiPastFTRDOpportunity";
 
 export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
@@ -37,7 +36,6 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
       },
     },
   },
-  tabOrder: generateTabs({ isAlert: true }),
   isAlert: true,
   sidebarComponents: ["ClientProfileDetails"],
   tooltipEligibilityText: "Eligible for discharge",

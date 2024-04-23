@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { generateTabs } from "../../utils/tabUtils";
 import { UsTnSupervisionLevelDowngradeOpportunity } from "./UsTnSupervisionLevelDowngradeOpportunity";
 
 export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervisionLevelDowngradeOpportunity> =
@@ -33,7 +32,6 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervis
       defaultSnoozeDays: 30,
       maxSnoozeDays: 90,
     },
-    tabOrder: generateTabs({ isAlert: true }),
     methodologyUrl:
       "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
     sidebarComponents: ["ClientProfileDetails", "CaseNotes"],

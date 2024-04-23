@@ -184,7 +184,7 @@ describe("fully eligible", () => {
   describe("tabs", () => {
     test("overridden", () => {
       updatesSub.data = { denial: { reasons: ["test-reason"] } };
-      expect(opp.tabTitle).toEqual("Overridden");
+      expect(opp.tabTitle()).toEqual("Overridden");
     });
 
     test("Due this week", () => {
@@ -192,7 +192,7 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           today;
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
+      expect(opp.tabTitle()).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due this week, on day of reset", () => {
@@ -200,7 +200,7 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           startOfWeek(today, { weekStartsOn: 1 });
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Due this week)/gm);
+      expect(opp.tabTitle()).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due last week", () => {
@@ -208,7 +208,7 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           subWeeks(today, 1);
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
+      expect(opp.tabTitle()).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
     });
 
     test("Due next week", () => {
@@ -216,7 +216,7 @@ describe("fully eligible", () => {
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
           addWeeks(new Date(), 1);
       referralSub.data = fixtureData;
-      expect(opp.tabTitle).toMatch(/\b(Coming up)/gm);
+      expect(opp.tabTitle()).toMatch(/\b(Coming up)/gm);
     });
   });
 

@@ -205,7 +205,7 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
     person: {
       recordId: "3",
     } as Client,
-    tabTitle: overriddenTabText,
+    tabTitle: () => overriddenTabText,
     type: "earlyTermination",
   };
 

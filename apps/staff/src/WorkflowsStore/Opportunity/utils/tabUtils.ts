@@ -32,12 +32,3 @@ export const generateTabs = ({
     ]
   );
 };
-
-/**
- *
- * @param tabs
- * @returns the default tab order if the provided tabs from the config are undefined.
- */
-export const determineTabsFromConfigTabs = (
-  opportunityTabs?: readonly OpportunityTab[],
-): ReturnType<typeof generateTabs> => opportunityTabs ?? generateTabs({});
