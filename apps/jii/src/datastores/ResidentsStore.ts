@@ -22,6 +22,7 @@ import { IncarcerationStaffRecord, ResidentRecord } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../api/interface";
+import { ResidentsConfig } from "../configs/types";
 import type { RootStore } from "./RootStore";
 
 export class ResidentsStore {
@@ -30,12 +31,19 @@ export class ResidentsStore {
 
   residentsByExternalId: Map<string, ResidentRecord["output"]> = new Map();
 
-  constructor(private readonly rootStore: RootStore) {
+  constructor(
+    private readonly rootStore: RootStore,
+    public readonly config: ResidentsConfig,
+  ) {
     makeAutoObservable(this);
   }
 
   private get apiClient() {
     return this.rootStore.apiClient;
+  }
+
+  get userStore() {
+    return this.rootStore.userStore;
   }
 
   /**

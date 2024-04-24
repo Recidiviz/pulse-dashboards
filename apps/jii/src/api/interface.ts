@@ -17,7 +17,10 @@
 
 import { IncarcerationStaffRecord, ResidentRecord } from "~datatypes";
 
+import { ResidentsConfig } from "../configs/types";
+
 export interface DataAPI {
+  residentsConfig(): Promise<ResidentsConfig>;
   residents(): Promise<Array<ResidentRecord["output"]>>;
   residentById(residentExternalId: string): Promise<ResidentRecord["output"]>;
   incarcerationStaffById(

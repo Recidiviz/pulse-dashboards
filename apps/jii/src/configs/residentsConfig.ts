@@ -15,25 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult } from "mobx";
+import { ResidentsConfig } from "./types";
+import { config } from "./usMeSCCP/config";
 
-import { OfflineAPIClient } from "../api/OfflineAPIClient";
-import { residentsConfigByState } from "../configs/residentsConfig";
-import { RootStore } from "./RootStore";
-
-let store: RootStore;
-
-beforeEach(() => {
-  store = new RootStore();
-});
-
-test("initialize residents datastore", async () => {
-  vi.spyOn(OfflineAPIClient.prototype, "residentsConfig");
-  expect(store.residentsStore).toBeUndefined();
-
-  await flowResult(store.populateResidentsStore());
-
-  expect(store.residentsStore).toBeDefined();
-  expect(store.apiClient.residentsConfig).toHaveBeenCalled();
-  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
-});
+export const residentsConfigByState = {
+  US_ME: {
+    incarcerationOpportunities: {
+      usMeSCCP: config,
+    },
+  },
+} satisfies Record<string, ResidentsConfig>;

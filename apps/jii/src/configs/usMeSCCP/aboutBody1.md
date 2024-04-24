@@ -1,0 +1,3 @@
+- Sometimes called “home confinement” or “supervised release”
+- Spend the last 30 months of your sentence in the community, while still under MDOC custody
+- Get used to being back in the community with the support of a structured plan

@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { AuthStore } from "@recidiviz/auth";
+import { makeObservable } from "mobx";
 
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
+import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../api/interface";
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
+import { StateCode } from "../configs/types";
 import { ResidentsStore } from "./ResidentsStore";
 import { UserStore } from "./UserStore";
 
@@ -32,14 +35,19 @@ export class RootStore {
 
   authStore: AuthStore;
 
-  residentsStore: ResidentsStore;
+  residentsStore?: ResidentsStore;
 
   userStore: UserStore;
 
   // for convenience, this is a constant while we only have one state onboarded
-  readonly stateCode = "US_ME";
+  readonly stateCode: StateCode = "US_ME";
 
   constructor() {
+    makeObservable(this, {
+      populateResidentsStore: true,
+      residentsStore: true,
+    });
+
     this.authStore = new AuthStore({
       authSettings: {
         client_id: import.meta.env["VITE_AUTH0_CLIENT_ID"],
@@ -49,8 +57,6 @@ export class RootStore {
     });
 
     this.apiClient = this.createApiClient();
-
-    this.residentsStore = new ResidentsStore(this);
 
     this.userStore = new UserStore();
   }
@@ -68,5 +74,11 @@ export class RootStore {
       // TODO(#5116): implement online mode
       return new OfflineAPIClient(this);
     }
+  }
+
+  *populateResidentsStore(): FlowMethod<DataAPI["residentsConfig"], void> {
+    const config = yield this.apiClient.residentsConfig();
+
+    this.residentsStore = new ResidentsStore(this, config);
   }
 }

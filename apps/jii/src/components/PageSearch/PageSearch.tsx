@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import ReactSelect from "react-select";
 
 import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useResidentsStore } from "../StoreProvider/useResidentsStore";
 import { PageSearchPresenter } from "./PageSearchPresenter";
 
 const Search: React.FC<{ presenter: PageSearchPresenter }> = observer(
@@ -53,5 +53,5 @@ const Search: React.FC<{ presenter: PageSearchPresenter }> = observer(
 );
 
 export const PageSearch = memo(function PageSearch() {
-  return <Search presenter={new PageSearchPresenter(useRootStore())} />;
+  return <Search presenter={new PageSearchPresenter(useResidentsStore())} />;
 });

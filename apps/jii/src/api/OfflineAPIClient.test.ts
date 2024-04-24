@@ -20,6 +20,7 @@ import {
   usMeResidents,
 } from "~datatypes";
 
+import { residentsConfigByState } from "../configs/residentsConfig";
 import { RootStore } from "../datastores/RootStore";
 import { OfflineAPIClient } from "./OfflineAPIClient";
 
@@ -96,4 +97,12 @@ test("missing related staff with resident", async () => {
   await expect(
     api.residentAndAssignedStaffById(expectedRes.personExternalId),
   ).rejects.toThrowErrorMatchingInlineSnapshot(`"officer does not exist"`);
+});
+
+test("local config object", async () => {
+  const expectedConfig = residentsConfigByState.US_ME;
+
+  const fetched = await api.residentsConfig();
+
+  expect(fetched).toEqual(expectedConfig);
 });

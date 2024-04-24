@@ -25,13 +25,14 @@ import {
 } from "~datatypes";
 
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
+import { residentsConfigByState } from "../configs/residentsConfig";
 import { ResidentsStore } from "./ResidentsStore";
 import { RootStore } from "./RootStore";
 
 let store: ResidentsStore;
 
 beforeEach(() => {
-  store = new ResidentsStore(new RootStore());
+  store = new ResidentsStore(new RootStore(), residentsConfigByState.US_ME);
 });
 
 test("populate all residents", async () => {

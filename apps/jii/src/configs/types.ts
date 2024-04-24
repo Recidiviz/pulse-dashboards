@@ -15,25 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult } from "mobx";
+import { residentsConfigByState } from "./residentsConfig";
 
-import { OfflineAPIClient } from "../api/OfflineAPIClient";
-import { residentsConfigByState } from "../configs/residentsConfig";
-import { RootStore } from "./RootStore";
+type AboutSection = {
+  heading: string;
+  body: string;
+};
 
-let store: RootStore;
+export type OpportunityConfig = {
+  copy: {
+    eligibilityHeadingPhrase: string;
+    about: {
+      sections: [AboutSection, ...AboutSection[]];
+      linkText: string;
+    };
+    eligibility: {
+      untrackedCriteria: Array<string>;
+      linkText: string;
+    };
+    nextSteps: {
+      body: string;
+      linkText: string;
+    };
+  };
+};
 
-beforeEach(() => {
-  store = new RootStore();
-});
+export type IncarcerationOpportunityId = "usMeSCCP";
 
-test("initialize residents datastore", async () => {
-  vi.spyOn(OfflineAPIClient.prototype, "residentsConfig");
-  expect(store.residentsStore).toBeUndefined();
+export type ResidentsConfig = {
+  incarcerationOpportunities: Partial<
+    Record<IncarcerationOpportunityId, OpportunityConfig>
+  >;
+};
 
-  await flowResult(store.populateResidentsStore());
-
-  expect(store.residentsStore).toBeDefined();
-  expect(store.apiClient.residentsConfig).toHaveBeenCalled();
-  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
-});
+export type StateCode = keyof typeof residentsConfigByState;

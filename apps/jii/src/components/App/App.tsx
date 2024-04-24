@@ -27,6 +27,7 @@ import styled from "styled-components/macro";
 import { AuthWrapper } from "../AuthWrapper/AuthWrapper";
 import { LogoutButton } from "../LogoutButton";
 import { PageSearch } from "../PageSearch/PageSearch";
+import { ResidentsRoot } from "../ResidentsRoot/ResidentsRoot";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div``;
@@ -56,28 +57,30 @@ export function App() {
             </ul>
           </div>
           <Routes>
-            <Route path="/" element={<div>home page</div>} />
-            <Route path="/search" element={<PageSearch />} />
-            <Route path="/eligibility/:opportunityId/*">
-              <Route
-                index
-                element={
-                  <div>
-                    <p>opportunity page</p>
-                    <p>
-                      <Link to="./about">about</Link>
-                    </p>
-                    <p>
-                      <Link to="./requirements">requirements</Link>
-                    </p>
-                  </div>
-                }
-              />
-              <Route path="about" element={<div>about opportunity</div>} />
-              <Route
-                path="requirements"
-                element={<div>opportunity requirements</div>}
-              />
+            <Route path="/" element={<ResidentsRoot />}>
+              <Route index element={<div>home page</div>} />
+              <Route path="search" element={<PageSearch />} />
+              <Route path="eligibility/:opportunityId/*">
+                <Route
+                  index
+                  element={
+                    <div>
+                      <p>opportunity page</p>
+                      <p>
+                        <Link to="./about">about</Link>
+                      </p>
+                      <p>
+                        <Link to="./requirements">requirements</Link>
+                      </p>
+                    </div>
+                  }
+                />
+                <Route path="about" element={<div>about opportunity</div>} />
+                <Route
+                  path="requirements"
+                  element={<div>opportunity requirements</div>}
+                />
+              </Route>
             </Route>
           </Routes>
         </StyledApp>

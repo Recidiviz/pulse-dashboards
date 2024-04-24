@@ -35,7 +35,17 @@ export class OfflineAPIClient implements DataAPI {
   }
 
   /**
-   * Fetches fixture data for all residents matching `this.stateCode`
+   * Fetches residents config object matching {@link stateCode}
+   */
+  async residentsConfig() {
+    const { residentsConfigByState } = await import(
+      "../configs/residentsConfig"
+    );
+    return residentsConfigByState[this.stateCode];
+  }
+
+  /**
+   * Fetches fixture data for all residents matching {@link stateCode}
    */
   async residents() {
     return outputFixtureArray(allResidents).filter(
@@ -45,7 +55,7 @@ export class OfflineAPIClient implements DataAPI {
 
   /**
    * Fetches fixture data for the resident with personExternalId matching `residentExternalId`
-   * and `this.stateCode`. Throws if a match cannot be found.
+   * and {@link stateCode}. Throws if a match cannot be found.
    */
   async residentById(residentExternalId: string) {
     const residentFixture = allResidents.find(
@@ -64,7 +74,7 @@ export class OfflineAPIClient implements DataAPI {
 
   /**
    * Fetches fixture data for the incarceration staff member matching `staffId`
-   * and `this.stateCode`. Throws if a match cannot be found.
+   * and {@link stateCode}. Throws if a match cannot be found.
    */
   async incarcerationStaffById(staffId: string) {
     const staffFixture = incarcerationStaffFixtures.find((f) =>

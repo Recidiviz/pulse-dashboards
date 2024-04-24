@@ -15,7 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const setup = () => {
-  // prevents silly timezone issues when testing dates
-  process.env.TZ = "UTC";
-};
+import { useContext } from "react";
+
+import type { ResidentsStore } from "../../datastores/ResidentsStore";
+import { StoreContext } from "./StoreContext";
+
+export function useResidentsStore(): ResidentsStore {
+  const context = useContext(StoreContext);
+  if (context === undefined) {
+    throw new Error("useResidentsStore must be used within a StoreProvider");
+  }
+  const store = context.store.residentsStore;
+
+  if (!store) {
+    throw new Error(
+      "a ResidentsStore must be initialized before calling useResidentsStore",
+    );
+  }
+  return store;
+}

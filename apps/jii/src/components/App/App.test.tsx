@@ -41,30 +41,36 @@ describe("App", () => {
     );
   });
 
-  it("should render the sccp page", () => {
+  it("should render the sccp page", async () => {
     render(
       <MemoryRouter initialEntries={["/eligibility/sccp"]}>
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByText("opportunity page")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("opportunity page")).toBeInTheDocument(),
+    );
   });
 
-  it("should render the sccp about page", () => {
+  it("should render the sccp about page", async () => {
     render(
       <MemoryRouter initialEntries={["/eligibility/sccp/about"]}>
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByText("about opportunity")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("about opportunity")).toBeInTheDocument(),
+    );
   });
 
-  it("should render the sccp requirements page", () => {
+  it("should render the sccp requirements page", async () => {
     render(
       <MemoryRouter initialEntries={["/eligibility/sccp/requirements"]}>
         <App />
       </MemoryRouter>,
     );
-    expect(screen.getByText("opportunity requirements")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("opportunity requirements")).toBeInTheDocument(),
+    );
   });
 });

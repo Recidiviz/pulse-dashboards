@@ -15,7 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "@testing-library/jest-dom";
-import jestExtendedMatchers from "jest-extended";
+import { observer } from "mobx-react-lite";
+import { FC, memo } from "react";
+import { Outlet } from "react-router-dom";
 
-expect.extend(jestExtendedMatchers);
+import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { useRootStore } from "../StoreProvider/useRootStore";
+import { ResidentsPresenter } from "./ResidentsPresenter";
+
+const ResidentsHydrator: FC<{ presenter: ResidentsPresenter }> = observer(
+  function ResidentsHydrator({ presenter }) {
+    return (
+      <PageHydrator hydratable={presenter}>
+        <Outlet />
+      </PageHydrator>
+    );
+  },
+);
+
+export const ResidentsRoot = memo(function ResidentsRoot() {
+  return (
+    <ResidentsHydrator presenter={new ResidentsPresenter(useRootStore())} />
+  );
+});

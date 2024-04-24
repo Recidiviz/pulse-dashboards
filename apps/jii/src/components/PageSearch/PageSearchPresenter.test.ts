@@ -21,15 +21,20 @@ import { set } from "mobx";
 
 import { outputFixture, outputFixtureArray, usMeResidents } from "~datatypes";
 
+import { residentsConfigByState } from "../../configs/residentsConfig";
+import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { PageSearchPresenter } from "./PageSearchPresenter";
 
-let rootStore: RootStore;
+let residentsStore: ResidentsStore;
 let presenter: PageSearchPresenter;
 
 beforeEach(() => {
-  rootStore = new RootStore();
-  presenter = new PageSearchPresenter(rootStore);
+  residentsStore = new ResidentsStore(
+    new RootStore(),
+    residentsConfigByState.US_ME,
+  );
+  presenter = new PageSearchPresenter(residentsStore);
 });
 
 describe("hydration", () => {
@@ -40,7 +45,7 @@ describe("hydration", () => {
 
   test("already hydrated", () => {
     set(
-      rootStore.residentsStore.residentsByExternalId,
+      residentsStore.residentsByExternalId,
       keyBy(outputFixtureArray(usMeResidents), "personExternalId"),
     );
 

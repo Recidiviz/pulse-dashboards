@@ -24,17 +24,17 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { RootStore } from "../../datastores/RootStore";
+import { ResidentsStore } from "../../datastores/ResidentsStore";
 
 export class PageSearchPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;
 
-  constructor(private rootStore: RootStore) {
+  constructor(private residentsStore: ResidentsStore) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
     this.hydrationSource = new HydratesFromSource({
       populate: async () => {
-        await flowResult(this.rootStore.residentsStore.populateAllResidents());
+        await flowResult(this.residentsStore.populateAllResidents());
       },
       expectPopulated: [this.expectResidentsPopulated],
     });
@@ -43,7 +43,7 @@ export class PageSearchPresenter implements Hydratable {
   private expectResidentsPopulated() {
     // if we started the session on a single resident's page, we might have had one
     // populated already. Seems a safe assumption that the total will always be > 1
-    if (this.rootStore.residentsStore.residentsByExternalId.size < 2) {
+    if (this.residentsStore.residentsByExternalId.size < 2) {
       throw new Error("Residents data is not populated");
     }
   }
@@ -57,16 +57,14 @@ export class PageSearchPresenter implements Hydratable {
   }
 
   private get residents(): Array<ResidentRecord["output"]> {
-    return Array.from(
-      this.rootStore.residentsStore.residentsByExternalId.values(),
-    );
+    return Array.from(this.residentsStore.residentsByExternalId.values());
   }
 
   /**
    * Setting a resident "active" allows the user to simulate that resident's view of the app
    */
   setActiveResident(externalId: string | undefined): void {
-    this.rootStore.userStore.overrideExternalId(externalId);
+    this.residentsStore.userStore.overrideExternalId(externalId);
   }
 
   get selectOptions() {
@@ -78,7 +76,7 @@ export class PageSearchPresenter implements Hydratable {
 
   get defaultOption() {
     return this.selectOptions.find(
-      (o) => o.value === this.rootStore.userStore.externalId,
+      (o) => o.value === this.residentsStore.userStore.externalId,
     );
   }
 }
