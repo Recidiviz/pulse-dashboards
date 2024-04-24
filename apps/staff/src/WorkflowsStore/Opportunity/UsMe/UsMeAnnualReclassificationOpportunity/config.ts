@@ -24,7 +24,7 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     stateCode: "US_ME",
     urlSection: "annualReclassification",
     label: "Annual / Semi-Annual Reclassification",
-    featureVariant: "usMeCustodyLevelReview",
+    featureVariant: "usMeAnnualReclassificationReview",
     initialHeader:
       "Search for case manager(s) below to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
     dynamicEligibilityText:

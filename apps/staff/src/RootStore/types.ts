@@ -82,6 +82,7 @@ export type FeatureVariant =
   | "usTnAnnualReclassification"
   | "usNdWriteToDocstars"
   | "usMeCustodyLevelReview"
+  | "usMeAnnualReclassificationReview"
   | "usMoOverdueRHPilot"
   | "formRevertButton"
   | "insightsLeadershipPageAllDistricts"
@@ -122,6 +123,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   hideDenialRevert: {},
   opportunityConfigurationAPI: {},
   usMeCustodyLevelReview: {},
+  usMeAnnualReclassificationReview: {},
   workflowsSupervisorSearch: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
