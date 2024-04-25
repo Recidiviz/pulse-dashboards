@@ -5008,7 +5008,7 @@ exports[`transformations 4`] = `
       "value": 0.872309692329915,
     },
   ],
-  "metricId": "program_starts",
+  "metricId": "treatment_starts",
 }
 `;
 
@@ -6364,6 +6364,6 @@ exports[`transformations 8`] = `
       "value": 0.872309692329915,
     },
   ],
-  "metricId": "program_starts",
+  "metricId": "treatment_starts",
 }
 `;

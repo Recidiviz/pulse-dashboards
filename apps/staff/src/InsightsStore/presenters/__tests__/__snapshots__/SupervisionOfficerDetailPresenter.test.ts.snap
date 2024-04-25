@@ -1257,7 +1257,7 @@ exports[`has outlierOfficerData 1`] = `
             "value": 0.872309692329915,
           },
         ],
-        "metricId": "program_starts",
+        "metricId": "treatment_starts",
       },
       "config": {
         "bodyDisplayName": "program/treatment start rate",
@@ -1265,7 +1265,7 @@ exports[`has outlierOfficerData 1`] = `
         "eventName": "program/treatment start",
         "eventNamePastTense": "program started",
         "eventNameSingular": "program start",
-        "name": "program_starts",
+        "name": "treatment_starts",
         "outcomeType": "FAVORABLE",
         "titleDisplayName": "Program/Treament Start Rate",
         "topXPct": 10,
@@ -1275,7 +1275,7 @@ exports[`has outlierOfficerData 1`] = `
         "metricRate": 0.028747594548953384,
         "status": "FAR",
       },
-      "metricId": "program_starts",
+      "metricId": "treatment_starts",
       "statusesOverTime": [
         {
           "endDate": 2023-04-01T00:00:00.000Z,
@@ -2573,7 +2573,7 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
             "value": 0.872309692329915,
           },
         ],
-        "metricId": "program_starts",
+        "metricId": "treatment_starts",
       },
       "config": {
         "bodyDisplayName": "program/treatment start rate",
@@ -2581,7 +2581,7 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
         "eventName": "program/treatment start",
         "eventNamePastTense": "program started",
         "eventNameSingular": "program start",
-        "name": "program_starts",
+        "name": "treatment_starts",
         "outcomeType": "FAVORABLE",
         "titleDisplayName": "Program/Treament Start Rate",
         "topXPct": 10,
@@ -2591,7 +2591,7 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
         "metricRate": 0.028747594548953384,
         "status": "FAR",
       },
-      "metricId": "program_starts",
+      "metricId": "treatment_starts",
       "statusesOverTime": [
         {
           "endDate": 2023-04-01T00:00:00.000Z,

@@ -39,7 +39,8 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
         .SEX_OFFENSE[0],
       rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
         .SEX_OFFENSE[0],
-      rawSupervisionOfficerMetricOutlierFixtures.program_starts.SEX_OFFENSE[0],
+      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
+        .SEX_OFFENSE[0],
     ],
     topXPctMetrics: [],
   },
@@ -54,7 +55,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     outlierMetrics: [],
-    topXPctMetrics: [FAVORABLE_METRIC_IDS.enum.program_starts],
+    topXPctMetrics: [FAVORABLE_METRIC_IDS.enum.treatment_starts],
   },
   {
     externalId: "so3",
@@ -69,7 +70,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .GENERAL_OR_OTHER[1],
-      rawSupervisionOfficerMetricOutlierFixtures.program_starts
+      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
         .GENERAL_OR_OTHER[0],
     ],
     topXPctMetrics: [],
@@ -88,7 +89,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .GENERAL_OR_OTHER[0],
-      rawSupervisionOfficerMetricOutlierFixtures.program_starts
+      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
         .GENERAL_OR_OTHER[0],
     ],
     topXPctMetrics: [],

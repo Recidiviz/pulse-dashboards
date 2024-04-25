@@ -62,7 +62,7 @@ exports[`transformations 1`] = `
       ],
     },
     {
-      "metricId": "program_starts",
+      "metricId": "treatment_starts",
       "statusesOverTime": [
         {
           "endDate": 2023-04-01T00:00:00.000Z,
@@ -117,7 +117,7 @@ exports[`transformations 2`] = `
   "pseudonymizedId": "hashed-so2",
   "supervisorExternalId": "mdavis123",
   "topXPctMetrics": [
-    "program_starts",
+    "treatment_starts",
   ],
 }
 `;
@@ -169,7 +169,7 @@ exports[`transformations 3`] = `
       ],
     },
     {
-      "metricId": "program_starts",
+      "metricId": "treatment_starts",
       "statusesOverTime": [
         {
           "endDate": 2023-04-01T00:00:00.000Z,
@@ -258,7 +258,7 @@ exports[`transformations 4`] = `
       ],
     },
     {
-      "metricId": "program_starts",
+      "metricId": "treatment_starts",
       "statusesOverTime": [
         {
           "endDate": 2023-04-01T00:00:00.000Z,

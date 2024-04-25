@@ -447,7 +447,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
     },
 
     {
-      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       eventDate: null,
       clientId: "803013",
       clientName: rawClientInfoFixture["hashed-803013"].clientName,
@@ -460,7 +460,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
-      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       eventDate: null,
       clientId: "470308",
       clientName: rawClientInfoFixture["hashed-470308"].clientName,
@@ -473,7 +473,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
-      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       eventDate: null,
       clientId: "582059",
       clientName: rawClientInfoFixture["hashed-582059"].clientName,
@@ -486,7 +486,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
-      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       eventDate: null,
       clientId: "374673",
       clientName: rawClientInfoFixture["hashed-374673"].clientName,
@@ -499,7 +499,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
-      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       eventDate: null,
       clientId: "128785",
       clientName: rawClientInfoFixture["hashed-128785"].clientName,
@@ -512,7 +512,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
-      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       eventDate: null,
       clientId: "914408",
       clientName: rawClientInfoFixture["hashed-914408"].clientName,
@@ -525,7 +525,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
       supervisionType: "COMMUNITY_CONFINEMENT",
     },
     {
-      metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+      metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       eventDate: null,
       clientId: "504894",
       clientName: rawClientInfoFixture["hashed-504894"].clientName,

@@ -94,10 +94,10 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
       },
     ],
   },
-  [FAVORABLE_METRIC_IDS.enum.program_starts]: {
+  [FAVORABLE_METRIC_IDS.enum.treatment_starts]: {
     [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER]: [
       {
-        metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+        metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
         statusesOverTime: (
           [
             { metricRate: 0.022968597032909103, status: "FAR" },
@@ -113,7 +113,7 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
         })),
       },
       {
-        metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+        metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
         statusesOverTime: (
           [
             { metricRate: 0.022968597032909103, status: "FAR" },
@@ -131,7 +131,7 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
     ],
     [CASELOAD_TYPE_IDS.enum.SEX_OFFENSE]: [
       {
-        metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+        metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
         statusesOverTime: (
           [
             { metricRate: 0.022968597032909103, status: "FAR" },

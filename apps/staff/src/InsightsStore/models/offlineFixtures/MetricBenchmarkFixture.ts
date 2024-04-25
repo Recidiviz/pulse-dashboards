@@ -378,7 +378,7 @@ export const rawMetricBenchmarksFixture = [
       target: 0.12170399045971189,
       endDate,
     })),
-    metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+    metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     latestPeriodValues: {
       far: [
@@ -539,7 +539,7 @@ export const rawMetricBenchmarksFixture = [
       target: 0.12170399045971189,
       endDate,
     })),
-    metricId: FAVORABLE_METRIC_IDS.enum.program_starts,
+    metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
     latestPeriodValues: {
       far: [

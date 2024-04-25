@@ -86,7 +86,7 @@ export const InsightsConfigFixture: InsightsConfig = {
       topXPct: null,
     },
     {
-      name: FAVORABLE_METRIC_IDS.enum.program_starts,
+      name: FAVORABLE_METRIC_IDS.enum.treatment_starts,
       bodyDisplayName: "program/treatment start rate",
       titleDisplayName: "Program/Treament Start Rate",
       eventName: "program/treatment start",

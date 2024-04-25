@@ -47,22 +47,23 @@ test("all metrics should have events", () => {
 });
 
 describe("event dates", () => {
-  test("for program_starts metric events, event date is null", () => {
-    const programStartsEvents = supervisionOfficerMetricEventFixture.filter(
-      (e) => e.metricId === FAVORABLE_METRIC_IDS.enum.program_starts,
+  test("for treatment_starts metric events, event date is null", () => {
+    const treatmentStartsEvents = supervisionOfficerMetricEventFixture.filter(
+      (e) => e.metricId === FAVORABLE_METRIC_IDS.enum.treatment_starts,
     );
-    programStartsEvents.forEach(({ eventDate }) => {
+    treatmentStartsEvents.forEach(({ eventDate }) => {
       expect(eventDate).toBeNull();
     });
   });
 
-  test("for non-program_starts metric events, event dates should correspond to latest metric period", () => {
+  test("for non-treatment_starts metric events, event dates should correspond to latest metric period", () => {
     const eventPeriodEnd = LATEST_END_DATE;
     const eventPeriodStart = subYears(LATEST_END_DATE, 1);
-    const nonProgramStartsEvents = supervisionOfficerMetricEventFixture.filter(
-      (e) => e.metricId !== FAVORABLE_METRIC_IDS.enum.program_starts,
-    );
-    nonProgramStartsEvents.forEach(({ eventDate }) => {
+    const nontreatmentStartsEvents =
+      supervisionOfficerMetricEventFixture.filter(
+        (e) => e.metricId !== FAVORABLE_METRIC_IDS.enum.treatment_starts,
+      );
+    nontreatmentStartsEvents.forEach(({ eventDate }) => {
       expect(eventDate).toBeAfterOrEqualTo(eventPeriodStart);
       expect(eventDate).toBeBefore(eventPeriodEnd);
     });
