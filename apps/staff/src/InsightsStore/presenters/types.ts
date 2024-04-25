@@ -54,3 +54,9 @@ export type SupervisionDetails = Pick<
   SupervisionOfficerMetricEvent,
   "supervisionStartDate" | "supervisionType" | "officerAssignmentDate"
 >;
+export type HighlightedOfficersDetail = {
+  metricName: string;
+  officerNames: string[];
+  topXPct: number | null;
+  numOfficers: number;
+};

@@ -41,6 +41,7 @@ export const insightsConfigSchema = z.object({
       eventNameSingular: z.string(),
       eventNamePastTense: z.string(),
       descriptionMarkdown: z.string(),
+      topXPct: z.number().nullable(),
     }),
   ),
   clientEvents: z.array(

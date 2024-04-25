@@ -19,7 +19,7 @@ import {
   RawSupervisionOfficer,
   supervisionOfficerSchema,
 } from "../SupervisionOfficer";
-import { CASELOAD_TYPE_IDS } from "./constants";
+import { CASELOAD_TYPE_IDS, FAVORABLE_METRIC_IDS } from "./constants";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "./SupervisionOfficerMetricOutlierFixture";
 import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSupervisor";
 
@@ -41,6 +41,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
         .SEX_OFFENSE[0],
       rawSupervisionOfficerMetricOutlierFixtures.program_starts.SEX_OFFENSE[0],
     ],
+    topXPctMetrics: [],
   },
   {
     externalId: "so2",
@@ -53,6 +54,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     outlierMetrics: [],
+    topXPctMetrics: [FAVORABLE_METRIC_IDS.enum.program_starts],
   },
   {
     externalId: "so3",
@@ -70,6 +72,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       rawSupervisionOfficerMetricOutlierFixtures.program_starts
         .GENERAL_OR_OTHER[0],
     ],
+    topXPctMetrics: [],
   },
   {
     externalId: "so4",
@@ -88,6 +91,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       rawSupervisionOfficerMetricOutlierFixtures.program_starts
         .GENERAL_OR_OTHER[0],
     ],
+    topXPctMetrics: [],
   },
   {
     externalId: "so5",
@@ -100,6 +104,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalId: supervisionOfficerSupervisorsFixture[2].externalId,
     outlierMetrics: [],
+    topXPctMetrics: [],
   },
 ];
 

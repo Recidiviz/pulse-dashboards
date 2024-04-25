@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { useState } from "react";
 import simplur from "simplur";
+import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -36,6 +39,14 @@ import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { insightsUrl } from "../views";
 import InsightsStaffCard from "./InsightsStaffCard";
+import { highlightedOfficerText } from "./utils";
+
+const HighlightedOfficers = styled.div`
+  background: #f9fafa;
+  border: 1px solid ${palette.slate30};
+  padding: ${rem(spacing.lg)};
+  color: ${palette.pine2};
+`;
 
 export const SupervisorPage = observer(function SupervisorPage({
   presenter,
@@ -54,6 +65,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     timePeriod,
     labels,
     outcomeTypes,
+    highlightedOfficersByMetric,
   } = presenter;
 
   const emptyPageHeaderText = `${getWelcomeText(
@@ -137,6 +149,13 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
           </Sidebar>
         )}
         <Body>
+          {highlightedOfficersByMetric.map((detail) => {
+            return (
+              <HighlightedOfficers>
+                {highlightedOfficerText(detail, labels.supervisionOfficerLabel)}
+              </HighlightedOfficers>
+            );
+          })}
           {outlierOfficersData.map((officer, officerIndex) => {
             return (
               <InsightsStaffCard

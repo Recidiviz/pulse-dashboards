@@ -99,6 +99,7 @@ exports[`transformations 1`] = `
   ],
   "pseudonymizedId": "hashed-so1",
   "supervisorExternalId": "mdavis123",
+  "topXPctMetrics": [],
 }
 `;
 
@@ -115,6 +116,9 @@ exports[`transformations 2`] = `
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so2",
   "supervisorExternalId": "mdavis123",
+  "topXPctMetrics": [
+    "program_starts",
+  ],
 }
 `;
 
@@ -202,6 +206,7 @@ exports[`transformations 3`] = `
   ],
   "pseudonymizedId": "hashed-so3",
   "supervisorExternalId": "mdavis123",
+  "topXPctMetrics": [],
 }
 `;
 
@@ -290,6 +295,7 @@ exports[`transformations 4`] = `
   ],
   "pseudonymizedId": "hashed-so4",
   "supervisorExternalId": "bholiday456",
+  "topXPctMetrics": [],
 }
 `;
 
@@ -306,5 +312,6 @@ exports[`transformations 5`] = `
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so5",
   "supervisorExternalId": "efitzgerald789",
+  "topXPctMetrics": [],
 }
 `;

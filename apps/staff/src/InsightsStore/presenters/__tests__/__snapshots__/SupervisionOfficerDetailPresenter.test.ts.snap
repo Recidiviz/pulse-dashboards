@@ -201,6 +201,7 @@ exports[`has outlierOfficerData 1`] = `
         "name": "absconsions_bench_warrants",
         "outcomeType": "ADVERSE",
         "titleDisplayName": "Absconsion Rate",
+        "topXPct": null,
       },
       "currentPeriodData": {
         "endDate": 2023-09-01T00:00:00.000Z,
@@ -439,6 +440,7 @@ exports[`has outlierOfficerData 1`] = `
         "name": "incarceration_starts",
         "outcomeType": "ADVERSE",
         "titleDisplayName": "Incarceration Rate",
+        "topXPct": null,
       },
       "currentPeriodData": {
         "endDate": 2023-09-01T00:00:00.000Z,
@@ -1260,12 +1262,13 @@ exports[`has outlierOfficerData 1`] = `
       "config": {
         "bodyDisplayName": "program/treatment start rate",
         "descriptionMarkdown": "**Description place holder.",
-        "eventName": "program/treatment starts",
+        "eventName": "program/treatment start",
         "eventNamePastTense": "program started",
         "eventNameSingular": "program start",
         "name": "program_starts",
         "outcomeType": "FAVORABLE",
         "titleDisplayName": "Program/Treament Start Rate",
+        "topXPct": 10,
       },
       "currentPeriodData": {
         "endDate": 2023-09-01T00:00:00.000Z,
@@ -1309,6 +1312,7 @@ exports[`has outlierOfficerData 1`] = `
   ],
   "pseudonymizedId": "hashed-so1",
   "supervisorExternalId": "mdavis123",
+  "topXPctMetrics": [],
 }
 `;
 
@@ -1513,6 +1517,7 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
         "name": "absconsions_bench_warrants",
         "outcomeType": "ADVERSE",
         "titleDisplayName": "Absconsion Rate",
+        "topXPct": null,
       },
       "currentPeriodData": {
         "endDate": 2023-09-01T00:00:00.000Z,
@@ -1751,6 +1756,7 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
         "name": "incarceration_starts",
         "outcomeType": "ADVERSE",
         "titleDisplayName": "Incarceration Rate",
+        "topXPct": null,
       },
       "currentPeriodData": {
         "endDate": 2023-09-01T00:00:00.000Z,
@@ -2572,12 +2578,13 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
       "config": {
         "bodyDisplayName": "program/treatment start rate",
         "descriptionMarkdown": "**Description place holder.",
-        "eventName": "program/treatment starts",
+        "eventName": "program/treatment start",
         "eventNamePastTense": "program started",
         "eventNameSingular": "program start",
         "name": "program_starts",
         "outcomeType": "FAVORABLE",
         "titleDisplayName": "Program/Treament Start Rate",
+        "topXPct": 10,
       },
       "currentPeriodData": {
         "endDate": 2023-09-01T00:00:00.000Z,
@@ -2621,5 +2628,6 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
   ],
   "pseudonymizedId": "hashed-so1",
   "supervisorExternalId": "mdavis123",
+  "topXPctMetrics": [],
 }
 `;

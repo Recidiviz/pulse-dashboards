@@ -48,6 +48,7 @@ export const InsightsConfigFixture: InsightsConfig = {
      
       <br />
       **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.`,
+      topXPct: null,
     },
     {
       name: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -65,6 +66,7 @@ export const InsightsConfigFixture: InsightsConfig = {
       <br />
       “Incarcerations” does not include:
       * Absconsions and bench warrants`,
+      topXPct: null,
     },
     {
       name: ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
@@ -81,16 +83,18 @@ export const InsightsConfigFixture: InsightsConfig = {
       
       <br />
       Note: There are situations where we are unable to associate an incarceration with a violation type, especially if the revocation leads to time in county jail. We may also associate an incorrect violation type, if for example, there are no violations due to poor data entry.`,
+      topXPct: null,
     },
     {
       name: FAVORABLE_METRIC_IDS.enum.program_starts,
       bodyDisplayName: "program/treatment start rate",
       titleDisplayName: "Program/Treament Start Rate",
-      eventName: "program/treatment starts",
+      eventName: "program/treatment start",
       eventNameSingular: "program start",
       eventNamePastTense: "program started",
       outcomeType: "FAVORABLE",
       descriptionMarkdown: dedent`**Description place holder.`,
+      topXPct: 10,
     },
   ],
   clientEvents: [

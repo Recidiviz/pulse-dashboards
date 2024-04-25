@@ -154,6 +154,7 @@ test("adverse metric configs", async () => {
     eventNamePastTense: "successfully discharged",
     outcomeType: "FAVORABLE",
     descriptionMarkdown: "rate description",
+    topXPct: null,
   };
   additionalConfigsFixture.metrics.push(favorableMetricConfig);
 

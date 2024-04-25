@@ -23,6 +23,7 @@ import { useRootStore } from "../../../components/StoreProvider";
 import { InsightsConfigFixture } from "../../../InsightsStore/models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../../InsightsStore/models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionOfficersPresenter } from "../../../InsightsStore/presenters/SupervisionOfficersPresenter";
+import { HighlightedOfficersDetail } from "../../../InsightsStore/presenters/types";
 import { InsightsSupervisionStore } from "../../../InsightsStore/stores/InsightsSupervisionStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
@@ -30,6 +31,7 @@ import UserStore from "../../../RootStore/UserStore";
 import InsightsSupervisorPage, {
   SupervisorPage,
 } from "../InsightsSupervisorPage";
+import { highlightedOfficerText } from "../utils";
 
 vi.mock("../../../components/StoreProvider");
 vi.mock(
@@ -274,5 +276,29 @@ describe("Insights Supervisor Page", () => {
     expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
     const results = await axe(container);
     expect(results).toHaveNoViolations();
+  });
+
+  test("highlighted officer text singular", () => {
+    const detail = {
+      metricName: "program/treatment start",
+      officerNames: ["Chet Baker"],
+      numOfficers: 1,
+      topXPct: 10,
+    } as HighlightedOfficersDetail;
+    const expected =
+      "Chet Baker is in the top 10% of officers in the state for highest program/treatment start rate this year.";
+    expect(highlightedOfficerText(detail, "officer")).toBe(expected);
+  });
+
+  test("highlighted officer text plural", () => {
+    const detail = {
+      metricName: "program/treatment start",
+      officerNames: ["Chet Baker", "Louis Armstrong", "William James"],
+      numOfficers: 2,
+      topXPct: 10,
+    } as HighlightedOfficersDetail;
+    const expected =
+      "Chet Baker, Louis Armstrong, and William James are in the top 10% of officers in the state for highest program/treatment start rate this year.";
+    expect(highlightedOfficerText(detail, "officer")).toBe(expected);
   });
 });
