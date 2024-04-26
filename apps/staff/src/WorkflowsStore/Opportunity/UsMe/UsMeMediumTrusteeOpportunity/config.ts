@@ -26,12 +26,12 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
     label: "Medium Trustee",
     featureVariant: "usMeCustodyLevelReview",
     initialHeader:
-      "Search for case managers below to review residents on their caseload " +
+      "Search for case managers above to review residents on their caseload " +
       "who may be eligible for Medium Trustee Status.",
     dynamicEligibilityText:
       "resident[|s] may be eligible for Medium Trustee Status",
     callToAction:
-      "Search for case managers below to review residents on their caseload " +
+      "Search for case managers above to review residents on their caseload " +
       "who may be eligible for Medium Trustee Status.",
     firestoreCollection: "US_ME-mediumTrusteeReferrals",
     snooze: {
@@ -39,7 +39,7 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
       maxSnoozeDays: 180,
     },
     denialReasons: {
-      BEHAVIOR: "Had not demonstrated prosocial behavior",
+      BEHAVIOR: "Has not demonstrated prosocial behavior",
       PROGRAM: "Has not completed required core programming",
       DECLINE: "Resident declined Medium Trustee Status",
       OTHER_CORIS: "Other, please add a case note in CORIS",
@@ -51,7 +51,7 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
       usMeCustodyLevelIsMedium: {
         text: "Currently on medium custody",
         tooltip:
-          "The resident must be classified medium custody to be " +
+          "The resident must be classified as medium custody to be " +
           "approved for trustee status",
       },
       usMeFiveOrMoreYearsRemainingOnSentence: {

@@ -26,11 +26,11 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     label: "Annual / Semi-Annual Reclassification",
     featureVariant: "usMeAnnualReclassificationReview",
     initialHeader:
-      "Search for case manager(s) below to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
+      "Search for case manager(s) above to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
     dynamicEligibilityText:
       "resident[|s] may be due for an annual or semi-annual reclassification",
     callToAction:
-      "Search for case manager(s) below to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
+      "Search for case manager(s) above to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
     //TODO: Fix this in `recidiviz-data`
     firestoreCollection: "US_ME-reclassificatinonReviewReferrals",
     snooze: {
@@ -47,9 +47,9 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     sidebarComponents: ["Incarceration"],
     eligibleCriteriaCopy: {
       usMeIncarcerationPastRelevantClassificationDate: {
-        text: `At least {{#if (eq record.usMeIncarcerationPastRelevantClassificationDate.reclassType "ANNUAL")}}6{{else}}12{{/if}} months since last reclassification.`,
+        text: `At least {{#if (eq record.usMeIncarcerationPastRelevantClassificationDate.reclassType "ANNUAL")}}6{{else}}12{{/if}} months since last reclassification`,
         tooltip:
-          "a. with more than six (6) years remaining to serve based on current custody release date shall be reviewed annually; and\nb. with six (6) years or less remaining to serve based on current custody release date shall be reviewed every six (6) months.",
+          "Residents:\na. with more than six (6) years remaining to serve based on current custody release date shall be reviewed annually; and\nb. with six (6) years or less remaining to serve based on current custody release date shall be reviewed every six (6) months.",
       },
     },
   };
