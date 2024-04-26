@@ -36,6 +36,7 @@ import {
 } from "./Opportunity/UsMe";
 import { UsMeAnnualReclassificationOpportunity } from "./Opportunity/UsMe/UsMeAnnualReclassificationOpportunity";
 import { UsMeMediumTrusteeOpportunity } from "./Opportunity/UsMe/UsMeMediumTrusteeOpportunity";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "./Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { usMiReclassificationRequestOpportunity } from "./Opportunity/UsMi/UsMiReclassificationRequestOpportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "./Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "./Opportunity/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
@@ -74,6 +75,8 @@ const residentialOpportunityConstructors: Record<
     usMiSecurityClassificationCommitteeReviewOpportunity,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity,
+  usMiAddInPersonSecurityClassificationCommitteeReview:
+    usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity,
 };
 
 const createResidentOpportunity: OpportunityFactory<

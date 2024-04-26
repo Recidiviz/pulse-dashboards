@@ -40,6 +40,7 @@ import { usMeFurloughReleaseConfig as usMeFurloughRelease } from "./UsMe/UsMeFur
 import { usMeMediumTrusteeConfig as usMeMediumTrustee } from "./UsMe/UsMeMediumTrusteeOpportunity/config";
 import { usMeSCCPConfig as usMeSCCP } from "./UsMe/UsMeSCCPOpportunity/config";
 import { usMeWorkReleaseConfig as usMeWorkRelease } from "./UsMe/UsMeWorkReleaseOpportunity/config";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewConfig as usMiAddInPersonSecurityClassificationCommitteeReview } from "./UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { usMiClassificationReviewConfig as usMiClassificationReview } from "./UsMi/UsMiClassificationReviewOpportunity/config";
 import { usMiEarlyDischargeConfig as usMiEarlyDischarge } from "./UsMi/UsMiEarlyDischargeOpportunity/config";
 import { usMiMinimumTelephoneReportingConfig as usMiMinimumTelephoneReporting } from "./UsMi/UsMiMinimumTelephoneReportingOpportunity/config";
@@ -185,6 +186,7 @@ export const OPPORTUNITY_CONFIGS = {
   usMiReclassificationRequest,
   usMiSecurityClassificationCommitteeReview,
   usMiWardenInPersonSecurityClassificationCommitteeReview,
+  usMiAddInPersonSecurityClassificationCommitteeReview,
 
   /* US_MO */
   usMoRestrictiveHousingStatusHearing,

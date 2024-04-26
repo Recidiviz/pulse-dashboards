@@ -26,6 +26,7 @@ import {
   usMeAnnualReclassificationFixtures,
   usMeMediumTrusteeFixtures,
   usMeSccpFixtures,
+  usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
   usMiReclassificationRequestFixtures,
   usMiSecurityClassificationCommitteeReviewFixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
@@ -139,6 +140,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
         usMiSecurityClassificationCommitteeReviewFixtures,
       usMiWardenInPersonSecurityClassificationCommitteeReviewReferrals:
         usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
+      usMiAddInPersonSecurityClassificationCommitteeReviewReferrals:
+        usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
     },
     // @ts-ignore
     (fixtures) => fixtureFromParsedRecords("externalId", fixtures),

@@ -48,6 +48,7 @@ export const OPPORTUNITY_TYPES_BY_STATE = {
     "usMiReclassificationRequest",
     "usMiSecurityClassificationCommitteeReview",
     "usMiWardenInPersonSecurityClassificationCommitteeReview",
+    "usMiAddInPersonSecurityClassificationCommitteeReview",
   ],
   US_MO: [
     "usMoRestrictiveHousingStatusHearing",
