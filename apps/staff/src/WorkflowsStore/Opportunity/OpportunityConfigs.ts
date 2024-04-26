@@ -47,6 +47,7 @@ import { usMiPastFTRDConfig as usMiPastFTRD } from "./UsMi/UsMiPastFTRDOpportuni
 import { usMiReclassificationRequestConfig as usMiReclassificationRequest } from "./UsMi/UsMiReclassificationRequestOpportunity";
 import { usMiSecurityClassificationCommitteeReviewConfig as usMiSecurityClassificationCommitteeReview } from "./UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import { usMiSupervisionLevelDowngradeConfig as usMiSupervisionLevelDowngrade } from "./UsMi/UsMiSupervisionLevelDowngradeOpportunity/config";
+import { usMiWardenInPersonSecurityClassificationCommitteeReviewConfig as usMiWardenInPersonSecurityClassificationCommitteeReview } from "./UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { usMoOverdueRestrictiveHousingInitialHearingConfig as usMoOverdueRestrictiveHousingInitialHearing } from "./UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity/config";
 import { usMoOverdueRestrictiveHousingReleaseConfig as usMoOverdueRestrictiveHousingRelease } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity/config";
 import { usMoOverdueRestrictiveHousingReviewHearingConfig as usMoOverdueRestrictiveHousingReviewHearing } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/config";
@@ -183,6 +184,7 @@ export const OPPORTUNITY_CONFIGS = {
   usMiSupervisionLevelDowngrade,
   usMiReclassificationRequest,
   usMiSecurityClassificationCommitteeReview,
+  usMiWardenInPersonSecurityClassificationCommitteeReview,
 
   /* US_MO */
   usMoRestrictiveHousingStatusHearing,

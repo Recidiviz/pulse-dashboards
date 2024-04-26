@@ -25,6 +25,8 @@ export * from "./opportunities/UsMi/UsMiReclassificationRequest/fixtures";
 export * from "./opportunities/UsMi/UsMiReclassificationRequest/schema";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/fixtures";
 export * from "./opportunities/UsMi/UsMiSecurityClassificationCommitteeReview/schema";
+export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/fixtures";
+export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReview/schema";
 export * from "./opportunities/utils/caseNotesSchema";
 export * from "./opportunities/utils/types";
 export * from "./opportunities/utils/types";

@@ -218,6 +218,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     allEligibleOpportunities: [
       "usMiReclassificationRequest",
       "usMiSecurityClassificationCommitteeReview",
+      "usMiWardenInPersonSecurityClassificationCommitteeReview",
     ],
     officerId: "OFFICER8",
     stateCode: "US_MI",
@@ -239,6 +240,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     allEligibleOpportunities: [
       "usMiReclassificationRequest",
       "usMiSecurityClassificationCommitteeReview",
+      "usMiWardenInPersonSecurityClassificationCommitteeReview",
     ],
     officerId: "OFFICER8",
     stateCode: "US_MI",
@@ -260,6 +262,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     allEligibleOpportunities: [
       "usMiReclassificationRequest",
       "usMiSecurityClassificationCommitteeReview",
+      "usMiWardenInPersonSecurityClassificationCommitteeReview",
     ],
     officerId: "OFFICER8",
     stateCode: "US_MI",

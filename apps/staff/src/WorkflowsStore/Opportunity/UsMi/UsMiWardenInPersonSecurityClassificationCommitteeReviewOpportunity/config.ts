@@ -17,21 +17,20 @@
 
 import { WORKFLOWS_METHODOLOGY_URL } from "../../../../core/utils/constants";
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { usMiSecurityClassificationCommitteeReviewOpportunity } from "./UsMiSecurityClassificationCommitteeReviewOpportunity";
+import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "./UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
 
-export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<usMiSecurityClassificationCommitteeReviewOpportunity> =
+export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: OpportunityConfig<usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity> =
   {
     systemType: "INCARCERATION",
     stateCode: "US_MI",
-    urlSection: "securityClassificationCommitteeReview",
-    label: "Security Classification Committee Review",
-    initialHeader:
-      "Complete SCC review and fill out 283 form for eligible residents.",
+    urlSection: "wardenInPersonSecurityClassificationCommitteeReview",
+    label: "Warden In-Person Review",
     dynamicEligibilityText:
-      "resident[|s] [is|are] eligible for SCC review to potentially return to general population",
+      "resident[|s] [is|are] eligible for in-person review by the Warden at SCC to potentially return to general population",
     callToAction:
-      "Complete SCC review and fill out 283 form for eligible residents",
-    firestoreCollection: "US_MI-securityClassificationCommitteeReview",
+      "Complete SCC review and fill out 283 form for eligible residents, inclusive of Warden signature.",
+    firestoreCollection:
+      "US_MI-wardenInPersonSecurityClassificationCommitteeReview",
     denialReasons: {
       "PRIOR RH":
         "Prior restrictive housing history requires management at more restrictive level",
@@ -48,20 +47,20 @@ export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
     sidebarComponents: ["Incarceration"],
     eligibleCriteriaCopy: {
-      usMiPastSecurityClassificationCommitteeReviewDate: {
-        text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestSccReviewDate}} last SCC review recorded on {{date latestSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDate}}`,
-        tooltip: `A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.`,
+      usMiPastWardenInPersonReviewForSccDate: {
+        text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDate}}`,
+        tooltip: `Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.`,
       },
-      housingUnitTypeIsSolitaryConfinement: {
+      usMiInSolitaryConfinementAtLeastSixMonths: {
         text: `Currently in {{record.formInformation.segregationType}}`,
         tooltip: `{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}`,
       },
     },
     ineligibleCriteriaCopy: {
-      usMiPastSecurityClassificationCommitteeReviewDate: {
-        text: "Next SCC review due next week, on or before {{date nextSccDate}}",
+      usMiPastWardenInPersonReviewForSccDate: {
+        text: "Next Warden in-person review due next month, on or before {{date nextSccDate}}",
         tooltip:
-          "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
+          "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
       },
     },
   };
