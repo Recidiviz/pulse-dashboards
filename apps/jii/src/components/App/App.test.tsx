@@ -16,8 +16,13 @@
 // =============================================================================
 
 import { render, screen, waitFor } from "@testing-library/react";
+import { runInAction } from "mobx";
 import { MemoryRouter } from "react-router-dom";
 
+import { outputFixture, usMeResidents } from "~datatypes";
+
+import { RootStore } from "../../datastores/RootStore";
+import * as hooks from "../StoreProvider/useRootStore";
 import { App } from "./App";
 
 describe("App", () => {
@@ -41,14 +46,43 @@ describe("App", () => {
     );
   });
 
+  it("should render the sccp page as the user's homepage", async () => {
+    const rootStore = new RootStore();
+    vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    runInAction(() =>
+      rootStore.userStore.overrideExternalId(
+        outputFixture(usMeResidents[0]).personExternalId,
+      ),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByText("SCCP", { exact: false })).toBeInTheDocument(),
+    );
+  });
+
   it("should render the sccp page", async () => {
+    const rootStore = new RootStore();
+    vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
     render(
       <MemoryRouter initialEntries={["/eligibility/sccp"]}>
         <App />
       </MemoryRouter>,
     );
+
+    runInAction(() =>
+      rootStore.userStore.overrideExternalId(
+        outputFixture(usMeResidents[0]).personExternalId,
+      ),
+    );
+
     await waitFor(() =>
-      expect(screen.getByText("opportunity page")).toBeInTheDocument(),
+      expect(screen.getByText("SCCP", { exact: false })).toBeInTheDocument(),
     );
   });
 

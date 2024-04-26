@@ -18,10 +18,10 @@
 import { flowResult } from "mobx";
 
 import {
-  incarcerationStaffFixtures,
   outputFixture,
   outputFixtureArray,
   usMeResidents,
+  usMeSccpFixtures,
 } from "~datatypes";
 
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
@@ -32,89 +32,163 @@ import { RootStore } from "./RootStore";
 let store: ResidentsStore;
 
 beforeEach(() => {
+  vi.restoreAllMocks();
   store = new ResidentsStore(new RootStore(), residentsConfigByState.US_ME);
 });
 
-test("populate all residents", async () => {
-  expect(store.residentsByExternalId.size).toBe(0);
+describe("populate all residents", () => {
+  test("succeeds", async () => {
+    expect(store.residentsByExternalId.size).toBe(0);
 
-  await flowResult(store.populateAllResidents());
+    await flowResult(store.populateAllResidents());
 
-  outputFixtureArray(usMeResidents).forEach((r) => {
-    expect(store.residentsByExternalId.get(r.personExternalId)).toEqual(r);
+    outputFixtureArray(usMeResidents).forEach((r) => {
+      expect(store.residentsByExternalId.get(r.personExternalId)).toEqual(r);
+    });
+  });
+
+  test("fails", async () => {
+    vi.spyOn(OfflineAPIClient.prototype, "residents").mockRejectedValue(
+      new Error("api request failed"),
+    );
+
+    await expect(async () =>
+      flowResult(store.populateAllResidents()),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: api request failed]`);
+  });
+
+  test("does not refetch if already populated", async () => {
+    vi.spyOn(OfflineAPIClient.prototype, "residents");
+
+    await flowResult(store.populateAllResidents());
+
+    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
+
+    await flowResult(store.populateAllResidents());
+    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
   });
 });
 
-test("populate single resident", async () => {
-  const expectedRes = outputFixture(usMeResidents[1]);
+describe("populate single resident", () => {
+  test("succeeds", async () => {
+    const expectedRes = outputFixture(usMeResidents[1]);
 
-  expect(
-    store.residentsByExternalId.get(expectedRes.personExternalId),
-  ).toBeUndefined();
+    expect(
+      store.residentsByExternalId.get(expectedRes.personExternalId),
+    ).toBeUndefined();
 
-  await flowResult(store.populateResidentById(expectedRes.personExternalId));
+    await flowResult(store.populateResidentById(expectedRes.personExternalId));
 
-  expect(store.residentsByExternalId.get(expectedRes.personExternalId)).toEqual(
-    expectedRes,
-  );
+    expect(
+      store.residentsByExternalId.get(expectedRes.personExternalId),
+    ).toEqual(expectedRes);
+  });
+
+  test("fails", async () => {
+    await expect(
+      flowResult(store.populateResidentById("does-not-exist")),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Missing data for resident does-not-exist in US_ME]`,
+    );
+  });
+
+  test("does not refetch if already populated", async () => {
+    const expectedRes = outputFixture(usMeResidents[1]);
+
+    vi.spyOn(OfflineAPIClient.prototype, "residentById");
+
+    await flowResult(store.populateResidentById(expectedRes.personExternalId));
+
+    expect(OfflineAPIClient.prototype.residentById).toHaveBeenCalledTimes(1);
+
+    await flowResult(store.populateResidentById(expectedRes.personExternalId));
+    expect(OfflineAPIClient.prototype.residentById).toHaveBeenCalledTimes(1);
+  });
 });
 
-test("unable to populate single resident", async () => {
-  await expect(
-    flowResult(store.populateResidentById("does-not-exist")),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Missing data for resident does-not-exist in US_ME]`,
-  );
-});
+describe("populate resident eligibility", () => {
+  test("succeeds", async () => {
+    const expectedRes = outputFixture(usMeResidents[1]);
+    const expectedEligiblity = outputFixture(
+      usMeSccpFixtures.eligibleWithinMonthsRemainingWindow,
+    );
 
-test("populate single staff member", async () => {
-  const expectedStaff = outputFixture(incarcerationStaffFixtures[1]);
+    expect(
+      store.residentEligibilityRecordsByExternalId.get(
+        expectedRes.personExternalId,
+      ),
+    ).toBeUndefined();
 
-  expect(store.assignedStaffByExternalId.get(expectedStaff.id)).toBeUndefined();
+    await flowResult(
+      store.populateEligibilityRecordByResidentId(
+        expectedRes.personExternalId,
+        "usMeSCCP",
+      ),
+    );
 
-  await flowResult(store.populateAssignedStaffById(expectedStaff.id));
+    expect(
+      store.residentEligibilityRecordsByExternalId.get(
+        expectedRes.personExternalId,
+      ),
+    ).toEqual({ usMeSCCP: expectedEligiblity });
+  });
 
-  expect(store.assignedStaffByExternalId.get(expectedStaff.id)).toEqual(
-    expectedStaff,
-  );
-});
+  test("succeeds for ineligible resident", async () => {
+    expect(
+      store.residentEligibilityRecordsByExternalId.get("not-eligible"),
+    ).toBeUndefined();
 
-test("unable to populate single staff member", async () => {
-  await expect(
-    flowResult(store.populateAssignedStaffById("does-not-exist")),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Missing data for incarceration staff does-not-exist in US_ME]`,
-  );
-});
+    await flowResult(
+      store.populateEligibilityRecordByResidentId("not-eligible", "usMeSCCP"),
+    );
 
-test("populate single staff member and related staff", async () => {
-  const expectedRes = outputFixture(usMeResidents[1]);
-  const expectedStaff = outputFixture(incarcerationStaffFixtures[1]);
+    expect(
+      store.residentEligibilityRecordsByExternalId.get("not-eligible"),
+    ).toEqual(expect.objectContaining({ usMeSCCP: undefined }));
+  });
 
-  expect(
-    store.residentsByExternalId.get(expectedRes.personExternalId),
-  ).toBeUndefined();
-  expect(store.assignedStaffByExternalId.get(expectedStaff.id)).toBeUndefined();
+  test("fails", async () => {
+    const expectedRes = outputFixture(usMeResidents[1]);
 
-  await flowResult(
-    store.populateResidentAndAssignedStaffById(expectedRes.personExternalId),
-  );
+    vi.spyOn(
+      OfflineAPIClient.prototype,
+      "residentEligibility",
+    ).mockRejectedValue(new Error("api request failed"));
 
-  expect(store.residentsByExternalId.get(expectedRes.personExternalId)).toEqual(
-    expectedRes,
-  );
-  expect(store.assignedStaffByExternalId.get(expectedStaff.id)).toEqual(
-    expectedStaff,
-  );
-});
+    await expect(async () =>
+      flowResult(
+        store.populateEligibilityRecordByResidentId(
+          expectedRes.personExternalId,
+          "usMeSCCP",
+        ),
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: api request failed]`);
+  });
 
-test("unable to populate staff member and related staff", async () => {
-  vi.spyOn(
-    OfflineAPIClient.prototype,
-    "residentAndAssignedStaffById",
-  ).mockRejectedValue("API FAILURE");
+  test("does not refetch if already populated", async () => {
+    const expectedRes = outputFixture(usMeResidents[1]);
 
-  await expect(
-    flowResult(store.populateResidentAndAssignedStaffById("whatever")),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(`"API FAILURE"`);
+    vi.spyOn(OfflineAPIClient.prototype, "residentEligibility");
+
+    await flowResult(
+      store.populateEligibilityRecordByResidentId(
+        expectedRes.personExternalId,
+        "usMeSCCP",
+      ),
+    );
+
+    expect(
+      OfflineAPIClient.prototype.residentEligibility,
+    ).toHaveBeenCalledTimes(1);
+
+    await flowResult(
+      store.populateEligibilityRecordByResidentId(
+        expectedRes.personExternalId,
+        "usMeSCCP",
+      ),
+    );
+    expect(
+      OfflineAPIClient.prototype.residentEligibility,
+    ).toHaveBeenCalledTimes(1);
+  });
 });

@@ -60,7 +60,7 @@ export default defineConfig({
     environment: "jsdom",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     setupFiles: ["./src/setupTests.ts"],
-    mockReset: true,
+    restoreMocks: true,
     reporters: ["default"],
     coverage: {
       reportsDirectory: "../../coverage/apps/jii",

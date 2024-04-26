@@ -26,6 +26,8 @@ import styled from "styled-components/macro";
 
 import { AuthWrapper } from "../AuthWrapper/AuthWrapper";
 import { LogoutButton } from "../LogoutButton";
+import { PageOpportunityEligibility } from "../PageOpportunityEligibility/PageOpportunityEligibility";
+import { PageResidentsHome } from "../PageResidentsHome/PageResidentsHome";
 import { PageSearch } from "../PageSearch/PageSearch";
 import { ResidentsRoot } from "../ResidentsRoot/ResidentsRoot";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
@@ -58,28 +60,16 @@ export function App() {
           </div>
           <Routes>
             <Route path="/" element={<ResidentsRoot />}>
-              <Route index element={<div>home page</div>} />
+              <Route index element={<PageResidentsHome />} />
               <Route path="search" element={<PageSearch />} />
-              <Route path="eligibility/:opportunityId/*">
-                <Route
-                  index
-                  element={
-                    <div>
-                      <p>opportunity page</p>
-                      <p>
-                        <Link to="./about">about</Link>
-                      </p>
-                      <p>
-                        <Link to="./requirements">requirements</Link>
-                      </p>
-                    </div>
-                  }
-                />
+              <Route path="eligibility/:opportunityUrl/*">
+                <Route index element={<PageOpportunityEligibility />} />
                 <Route path="about" element={<div>about opportunity</div>} />
                 <Route
                   path="requirements"
                   element={<div>opportunity requirements</div>}
                 />
+                <Route path="nextSteps" element={<div>next steps</div>} />
               </Route>
             </Route>
           </Routes>

@@ -15,12 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "@testing-library/jest-dom";
-import "jest-styled-components";
+import { observer } from "mobx-react-lite";
+import { FC } from "react";
 
-import { toHaveNoViolations } from "jest-axe";
-import jestExtendedMatchers from "jest-extended";
+import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
+import { useRootStore } from "../StoreProvider/useRootStore";
 
-expect.extend(jestExtendedMatchers);
+export const PageResidentsHome: FC = observer(function PageResidentsHome() {
+  const { residentsStore } = useRootStore();
+  if (!residentsStore) return null;
 
-expect.extend(toHaveNoViolations);
+  const { externalId } = residentsStore.userStore;
+  if (externalId) {
+    // for convenience, while there is only one opp configured we skip the lookup step
+    return (
+      <OpportunityEligibility
+        residentExternalId={externalId}
+        opportunityId="usMeSCCP"
+      />
+    );
+  }
+
+  return null;
+});

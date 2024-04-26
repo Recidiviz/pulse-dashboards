@@ -14,11 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import {
-  incarcerationStaffFixtures,
-  outputFixture,
-  usMeResidents,
-} from "~datatypes";
+import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
 import { residentsConfigByState } from "../configs/residentsConfig";
 import { RootStore } from "../datastores/RootStore";
@@ -53,56 +49,28 @@ test("missing single resident", async () => {
   );
 });
 
-test("fetch single incarceration staff", async () => {
-  const expectedStaff = outputFixture(incarcerationStaffFixtures[1]);
-
-  const fetched = await api.incarcerationStaffById(expectedStaff.id);
-
-  expect(fetched).toEqual(expectedStaff);
-});
-
-test("missing incarceration staff", async () => {
-  await expect(
-    api.incarcerationStaffById("does-not-exist"),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Missing data for incarceration staff does-not-exist in US_ME]`,
-  );
-});
-
-test("fetch resident and related staff", async () => {
-  const expectedRes = outputFixture(usMeResidents[0]);
-  const expectedStaff = outputFixture(incarcerationStaffFixtures[1]);
-
-  const fetched = await api.residentAndAssignedStaffById(
-    expectedRes.personExternalId,
-  );
-
-  expect(fetched).toEqual({ resident: expectedRes, staff: expectedStaff });
-});
-
-test("missing resident with related staff", async () => {
-  await expect(
-    api.residentAndAssignedStaffById("does-not-exist"),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `[Error: Missing data for resident does-not-exist in US_ME]`,
-  );
-});
-
-test("missing related staff with resident", async () => {
-  const expectedRes = outputFixture(usMeResidents[0]);
-  vi.spyOn(api, "incarcerationStaffById").mockRejectedValue(
-    "officer does not exist",
-  );
-
-  await expect(
-    api.residentAndAssignedStaffById(expectedRes.personExternalId),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(`"officer does not exist"`);
-});
-
 test("local config object", async () => {
   const expectedConfig = residentsConfigByState.US_ME;
 
   const fetched = await api.residentsConfig();
 
   expect(fetched).toEqual(expectedConfig);
+});
+
+test("eligibility record", async () => {
+  const expectedRecord = outputFixture(
+    usMeSccpFixtures.fullyEligibleHalfPortion,
+  );
+
+  const fetched = await api.residentEligibility(
+    outputFixture(usMeResidents[3]).personExternalId,
+    "usMeSCCP",
+  );
+
+  expect(fetched).toEqual(expectedRecord);
+});
+
+test("missing eligibility record", async () => {
+  const fetched = await api.residentEligibility("does-not-exist", "usMeSCCP");
+  expect(fetched).toBeUndefined();
 });

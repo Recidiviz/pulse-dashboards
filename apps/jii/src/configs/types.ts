@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ParsedRecord } from "~datatypes";
+
 import { residentsConfigByState } from "./residentsConfig";
+import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 
 type AboutSection = {
   heading: string;
@@ -23,6 +26,7 @@ type AboutSection = {
 };
 
 export type OpportunityConfig = {
+  urlSection: string;
   copy: {
     eligibilityHeadingPhrase: string;
     about: {
@@ -49,3 +53,12 @@ export type ResidentsConfig = {
 };
 
 export type StateCode = keyof typeof residentsConfigByState;
+
+export type ResidentOpportunitySchemaMapping =
+  typeof residentOpportunitySchemas;
+
+/**
+ * Maps opportunity ID to its successfully parsed record format
+ */
+export type OpportunityRecord<O extends IncarcerationOpportunityId> =
+  ParsedRecord<ResidentOpportunitySchemaMapping[O]>["output"];

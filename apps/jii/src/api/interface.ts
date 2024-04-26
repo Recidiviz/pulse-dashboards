@@ -15,19 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { IncarcerationStaffRecord, ResidentRecord } from "~datatypes";
+import { ResidentRecord } from "~datatypes";
 
-import { ResidentsConfig } from "../configs/types";
+import {
+  IncarcerationOpportunityId,
+  OpportunityRecord,
+  ResidentsConfig,
+} from "../configs/types";
 
 export interface DataAPI {
+  /**
+   * Fetches residents application config object for the active StateCode.
+   */
   residentsConfig(): Promise<ResidentsConfig>;
+  /**
+   * Fetches data for all available residents for the active StateCode.
+   */
   residents(): Promise<Array<ResidentRecord["output"]>>;
+  /**
+   * Fetches data for the resident with personExternalId matching `residentExternalId`
+   * for the active StateCode. Throws if a match cannot be found.
+   */
   residentById(residentExternalId: string): Promise<ResidentRecord["output"]>;
-  incarcerationStaffById(
-    staffId: string,
-  ): Promise<IncarcerationStaffRecord["output"]>;
-  residentAndAssignedStaffById(residentExternalId: string): Promise<{
-    resident: ResidentRecord["output"];
-    staff: IncarcerationStaffRecord["output"];
-  }>;
+  /**
+   * Fetches the opportunity eligibility record for the specified resident
+   * and opportunity type for the active StateCode. Will not throw if a record cannot be found;
+   * the lack of a record should indicate that the resident is not currently eligible.
+   */
+  residentEligibility<O extends IncarcerationOpportunityId>(
+    residentExternalId: string,
+    opportunity: IncarcerationOpportunityId,
+  ): Promise<OpportunityRecord<O> | undefined>;
 }

@@ -15,22 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useContext } from "react";
+import { ZodTypeAny } from "zod";
 
-import type { ResidentsStore } from "../../datastores/ResidentsStore";
-import { StoreContext } from "./StoreContext";
+import { usMeSCCPSchema } from "~datatypes";
 
-export function useResidentsStore(): ResidentsStore {
-  const context = useContext(StoreContext);
-  if (context === undefined) {
-    throw new Error("useResidentsStore must be used within a StoreProvider");
-  }
-  const store = context.store.residentsStore;
+import { IncarcerationOpportunityId } from "./types";
 
-  if (!store) {
-    throw new Error(
-      "a ResidentsStore must be initialized before calling useResidentsStore",
-    );
-  }
-  return store;
-}
+export const residentOpportunitySchemas = {
+  usMeSCCP: usMeSCCPSchema,
+} satisfies Record<IncarcerationOpportunityId, ZodTypeAny>;

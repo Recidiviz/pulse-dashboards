@@ -30,7 +30,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
 });
 

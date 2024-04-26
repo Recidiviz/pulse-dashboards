@@ -22,6 +22,7 @@ import aboutBody3 from "./aboutBody3.md?raw";
 import nextStepsBody from "./nextStepsBody.md?raw";
 
 export const config: OpportunityConfig = {
+  urlSection: "sccp",
   copy: {
     eligibilityHeadingPhrase:
       "you could be eligible to apply for the Supervised Community Confinement Program",

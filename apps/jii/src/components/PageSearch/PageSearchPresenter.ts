@@ -41,9 +41,7 @@ export class PageSearchPresenter implements Hydratable {
   }
 
   private expectResidentsPopulated() {
-    // if we started the session on a single resident's page, we might have had one
-    // populated already. Seems a safe assumption that the total will always be > 1
-    if (this.residentsStore.residentsByExternalId.size < 2) {
+    if (!this.residentsStore.areAllResidentsPopulated()) {
       throw new Error("Residents data is not populated");
     }
   }

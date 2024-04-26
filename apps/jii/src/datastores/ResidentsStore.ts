@@ -18,18 +18,33 @@
 import keyBy from "lodash/keyBy";
 import { makeAutoObservable, set } from "mobx";
 
-import { IncarcerationStaffRecord, ResidentRecord } from "~datatypes";
+import { ResidentRecord } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../api/interface";
-import { ResidentsConfig } from "../configs/types";
+import {
+  IncarcerationOpportunityId,
+  OpportunityRecord,
+  ResidentsConfig,
+} from "../configs/types";
 import type { RootStore } from "./RootStore";
 
-export class ResidentsStore {
-  assignedStaffByExternalId: Map<string, IncarcerationStaffRecord["output"]> =
-    new Map();
+// because we use a mapped type to ensure key-value agreement, this can't be an ES6 Map
+type EligibilityMap = {
+  [O in IncarcerationOpportunityId]?: OpportunityRecord<O>;
+};
 
+export class ResidentsStore {
+  /**
+   * Holds all resident records that have been fetched
+   */
   residentsByExternalId: Map<string, ResidentRecord["output"]> = new Map();
+
+  /**
+   * Holds all opportunity eligibility records that have been fetched
+   */
+  residentEligibilityRecordsByExternalId: Map<string, EligibilityMap> =
+    new Map();
 
   constructor(
     private readonly rootStore: RootStore,
@@ -46,48 +61,89 @@ export class ResidentsStore {
     return this.rootStore.userStore;
   }
 
+  get opportunityIdsByUrl(): Map<string, IncarcerationOpportunityId> {
+    return new Map(
+      Object.entries(this.config.incarcerationOpportunities).map(
+        ([id, config]) => {
+          return [
+            config.urlSection,
+            id as keyof typeof this.config.incarcerationOpportunities,
+          ];
+        },
+      ),
+    );
+  }
+
+  areAllResidentsPopulated(): boolean {
+    // if we started the session on a single resident's page, we might have had one
+    // populated already. Seems a safe assumption that the total will always be > 1
+    return this.residentsByExternalId.size > 1;
+  }
   /**
-   * Populates `this.residentsByExternalId` with the API response for all available residents.
+   * Populates {@link residentsByExternalId} with the API response for all available residents.
+   * Will not refetch if data is already populated.
    */
   *populateAllResidents(): FlowMethod<DataAPI["residents"], void> {
+    if (this.areAllResidentsPopulated()) return;
+
     const residents = yield this.apiClient.residents();
     set(this.residentsByExternalId, keyBy(residents, "personExternalId"));
   }
 
+  isResidentPopulated(residentExternalId: string): boolean {
+    return this.residentsByExternalId.has(residentExternalId);
+  }
   /**
-   * Populates `this.residentsByExternalId` with the API response for the resident
+   * Populates {@link residentsByExternalId} with the API response for the resident
    * with personExternalId matching `residentExternalId`. Throws if the API request fails.
+   * Will not refetch if data is already populated.
    */
   *populateResidentById(
     residentExternalId: string,
   ): FlowMethod<DataAPI["residentById"], void> {
+    if (this.isResidentPopulated(residentExternalId)) return;
+
     const resident = yield this.apiClient.residentById(residentExternalId);
     this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 
-  /**
-   * Populates `this.assignedStaffByExternalId` with the API response for the staff
-   * matching `staffId`. Throws if the API request fails.
-   */
-  *populateAssignedStaffById(
-    staffId: string,
-  ): FlowMethod<DataAPI["incarcerationStaffById"], void> {
-    const staff = yield this.apiClient.incarcerationStaffById(staffId);
-    this.assignedStaffByExternalId.set(staffId, staff);
+  isResidentEligibilityPopulated(
+    residentExternalId: string,
+    opportunityId: IncarcerationOpportunityId,
+  ): boolean {
+    return (
+      opportunityId in
+      (this.residentEligibilityRecordsByExternalId.get(residentExternalId) ??
+        {})
+    );
   }
 
   /**
-   * Populates `this.residentsByExternalId` with the API response for the resident
-   * with personExternalId matching `residentExternalId`, and `this.assignedStaffByExternalId`
-   * with the API response for the staff matching that resident's `officerId`. Throws if the
-   * API request fails.
+   * Populates {@link residentEligibilityRecordsByExternalId} with the API response for
+   * the provided resident and opportunity IDs. Will populate with `undefined` if no record is found
+   * (indicating the resident is ineligible). Will not refetch if data is already populated.
    */
-  *populateResidentAndAssignedStaffById(
+  *populateEligibilityRecordByResidentId(
     residentExternalId: string,
-  ): FlowMethod<DataAPI["residentAndAssignedStaffById"], void> {
-    const { resident, staff } =
-      yield this.apiClient.residentAndAssignedStaffById(residentExternalId);
-    this.residentsByExternalId.set(resident.personExternalId, resident);
-    this.assignedStaffByExternalId.set(staff.id, staff);
+    opportunityId: IncarcerationOpportunityId,
+  ): FlowMethod<DataAPI["residentEligibility"], void> {
+    if (this.isResidentEligibilityPopulated(residentExternalId, opportunityId))
+      return;
+
+    const eligibilityRecord = yield this.apiClient.residentEligibility(
+      residentExternalId,
+      opportunityId,
+    );
+    const opportunityMap: EligibilityMap =
+      this.residentEligibilityRecordsByExternalId.get(residentExternalId) ?? {};
+
+    opportunityMap[opportunityId] = eligibilityRecord;
+
+    if (!this.residentEligibilityRecordsByExternalId.has(residentExternalId)) {
+      this.residentEligibilityRecordsByExternalId.set(
+        residentExternalId,
+        opportunityMap,
+      );
+    }
   }
 }

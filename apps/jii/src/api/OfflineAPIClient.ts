@@ -19,11 +19,15 @@ import isMatch from "lodash/isMatch";
 
 import {
   allResidents,
-  incarcerationStaffFixtures,
   outputFixture,
   outputFixtureArray,
+  usMeSccpFixtures,
 } from "~datatypes";
 
+import {
+  IncarcerationOpportunityId,
+  OpportunityRecord,
+} from "../configs/types";
 import type { RootStore } from "../datastores/RootStore";
 import { DataAPI } from "./interface";
 
@@ -73,31 +77,26 @@ export class OfflineAPIClient implements DataAPI {
   }
 
   /**
-   * Fetches fixture data for the incarceration staff member matching `staffId`
-   * and {@link stateCode}. Throws if a match cannot be found.
+   * Fetches the opportunity eligibility record fixture for the specified resident
+   * and opportunity type, returning `undefined` if a record is not found (indicating
+   * the resident is not currently eligible).
    */
-  async incarcerationStaffById(staffId: string) {
-    const staffFixture = incarcerationStaffFixtures.find((f) =>
-      isMatch(outputFixture(f), { stateCode: this.stateCode, id: staffId }),
+  async residentEligibility<O extends IncarcerationOpportunityId>(
+    residentExternalId: string,
+    opportunityId: O,
+  ): Promise<OpportunityRecord<O> | undefined> {
+    // for convenience, while there is only one opportunity configured we skip the ID lookup step
+    const fixture = Object.values(usMeSccpFixtures).find((f) =>
+      isMatch(outputFixture(f), {
+        stateCode: this.stateCode,
+        externalId: residentExternalId,
+      }),
     );
 
-    if (staffFixture) {
-      return outputFixture(staffFixture);
+    if (!fixture) {
+      return;
     }
-    throw new Error(
-      `Missing data for incarceration staff ${staffId} in ${this.stateCode}`,
-    );
-  }
 
-  /**
-   * Convenience method to fetch fixture data for both a resident and their assigned
-   * incarceration staff member, since the latter depends on the former. Throws if
-   * either record cannot be found.
-   */
-  async residentAndAssignedStaffById(residentExternalId: string) {
-    const resident = await this.residentById(residentExternalId);
-    const staff = await this.incarcerationStaffById(resident.officerId);
-
-    return { resident, staff };
+    return outputFixture(fixture);
   }
 }

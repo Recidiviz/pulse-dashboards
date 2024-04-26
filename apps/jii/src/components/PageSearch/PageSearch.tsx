@@ -17,12 +17,12 @@
 
 import { Sans16, Serif34 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import React, { memo } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import ReactSelect from "react-select";
 
 import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { useResidentsStore } from "../StoreProvider/useResidentsStore";
+import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageSearchPresenter } from "./PageSearchPresenter";
 
 const Search: React.FC<{ presenter: PageSearchPresenter }> = observer(
@@ -52,6 +52,9 @@ const Search: React.FC<{ presenter: PageSearchPresenter }> = observer(
   },
 );
 
-export const PageSearch = memo(function PageSearch() {
-  return <Search presenter={new PageSearchPresenter(useResidentsStore())} />;
+export const PageSearch = observer(function PageSearch() {
+  const { residentsStore } = useRootStore();
+  if (!residentsStore) return null;
+
+  return <Search presenter={new PageSearchPresenter(residentsStore)} />;
 });
