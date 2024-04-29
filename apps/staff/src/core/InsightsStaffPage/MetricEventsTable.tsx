@@ -96,7 +96,8 @@ const createTableColumn = (column: Column): Column => {
 export const MetricEventsTable = withPresenter(
   observer(function MetricEventsTable({ presenter }: MetricEventsTableProps) {
     const { isMobile } = useIsMobile(true);
-    const { officerMetricEvents, clientDetailLinks } = presenter;
+    const { officerMetricEvents, clientDetailLinks, hideEventDateColumn } =
+      presenter;
     const scrollElementRef = useRef(null);
     const [scrollElement, setScrollElement] = useState(null);
 
@@ -121,6 +122,8 @@ export const MetricEventsTable = withPresenter(
         width: isMobile ? 40 : 60,
       },
     ];
+
+    if (hideEventDateColumn) columns.splice(-1);
 
     return (
       <>

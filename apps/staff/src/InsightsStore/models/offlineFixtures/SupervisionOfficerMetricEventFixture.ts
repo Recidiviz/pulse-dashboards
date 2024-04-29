@@ -448,7 +448,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
 
     {
       metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      eventDate: null,
+      eventDate: "2023-03-20",
       clientId: "803013",
       clientName: rawClientInfoFixture["hashed-803013"].clientName,
       pseudonymizedClientId:
@@ -461,7 +461,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
     },
     {
       metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      eventDate: null,
+      eventDate: "2023-03-20",
       clientId: "470308",
       clientName: rawClientInfoFixture["hashed-470308"].clientName,
       pseudonymizedClientId:
@@ -474,7 +474,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
     },
     {
       metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      eventDate: null,
+      eventDate: "2023-03-20",
       clientId: "582059",
       clientName: rawClientInfoFixture["hashed-582059"].clientName,
       pseudonymizedClientId:
@@ -487,7 +487,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
     },
     {
       metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      eventDate: null,
+      eventDate: "2023-03-20",
       clientId: "374673",
       clientName: rawClientInfoFixture["hashed-374673"].clientName,
       pseudonymizedClientId:
@@ -500,7 +500,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
     },
     {
       metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      eventDate: null,
+      eventDate: "2023-03-20",
       clientId: "128785",
       clientName: rawClientInfoFixture["hashed-128785"].clientName,
       pseudonymizedClientId:
@@ -513,7 +513,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
     },
     {
       metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      eventDate: null,
+      eventDate: "2023-03-20",
       clientId: "914408",
       clientName: rawClientInfoFixture["hashed-914408"].clientName,
       pseudonymizedClientId:
@@ -526,7 +526,7 @@ export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetri
     },
     {
       metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      eventDate: null,
+      eventDate: "2023-03-20",
       clientId: "504894",
       clientName: rawClientInfoFixture["hashed-504894"].clientName,
       pseudonymizedClientId:

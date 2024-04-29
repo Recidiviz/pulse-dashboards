@@ -1262,7 +1262,7 @@ exports[`has outlierOfficerData 1`] = `
       "config": {
         "bodyDisplayName": "program/treatment start rate",
         "descriptionMarkdown": "**Description place holder.",
-        "eventName": "program/treatment start",
+        "eventName": "program/treatment starts",
         "eventNamePastTense": "program started",
         "eventNameSingular": "program start",
         "name": "treatment_starts",
@@ -2578,7 +2578,7 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
       "config": {
         "bodyDisplayName": "program/treatment start rate",
         "descriptionMarkdown": "**Description place holder.",
-        "eventName": "program/treatment start",
+        "eventName": "program/treatment starts",
         "eventNamePastTense": "program started",
         "eventNameSingular": "program start",
         "name": "treatment_starts",

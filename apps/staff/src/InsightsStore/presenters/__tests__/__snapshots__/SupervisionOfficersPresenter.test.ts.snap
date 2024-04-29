@@ -1263,7 +1263,7 @@ exports[`outlierOfficersData 1`] = `
         "config": {
           "bodyDisplayName": "program/treatment start rate",
           "descriptionMarkdown": "**Description place holder.",
-          "eventName": "program/treatment start",
+          "eventName": "program/treatment starts",
           "eventNamePastTense": "program started",
           "eventNameSingular": "program start",
           "name": "treatment_starts",
@@ -3577,7 +3577,7 @@ exports[`outlierOfficersData 1`] = `
         "config": {
           "bodyDisplayName": "program/treatment start rate",
           "descriptionMarkdown": "**Description place holder.",
-          "eventName": "program/treatment start",
+          "eventName": "program/treatment starts",
           "eventNamePastTense": "program started",
           "eventNameSingular": "program start",
           "name": "treatment_starts",

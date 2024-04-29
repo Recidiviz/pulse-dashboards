@@ -17,10 +17,7 @@
 
 import { subYears } from "date-fns";
 
-import {
-  FAVORABLE_METRIC_IDS,
-  LATEST_END_DATE,
-} from "../offlineFixtures/constants";
+import { LATEST_END_DATE } from "../offlineFixtures/constants";
 import { InsightsConfigFixture } from "../offlineFixtures/InsightsConfigFixture";
 import {
   rawSupervisionOfficerMetricEventFixture,
@@ -46,26 +43,12 @@ test("all metrics should have events", () => {
     });
 });
 
-describe("event dates", () => {
-  test("for treatment_starts metric events, event date is null", () => {
-    const treatmentStartsEvents = supervisionOfficerMetricEventFixture.filter(
-      (e) => e.metricId === FAVORABLE_METRIC_IDS.enum.treatment_starts,
-    );
-    treatmentStartsEvents.forEach(({ eventDate }) => {
-      expect(eventDate).toBeNull();
-    });
-  });
+test("event dates should correspond to latest metric period", () => {
+  const eventPeriodEnd = LATEST_END_DATE;
+  const eventPeriodStart = subYears(LATEST_END_DATE, 1);
 
-  test("for non-treatment_starts metric events, event dates should correspond to latest metric period", () => {
-    const eventPeriodEnd = LATEST_END_DATE;
-    const eventPeriodStart = subYears(LATEST_END_DATE, 1);
-    const nontreatmentStartsEvents =
-      supervisionOfficerMetricEventFixture.filter(
-        (e) => e.metricId !== FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      );
-    nontreatmentStartsEvents.forEach(({ eventDate }) => {
-      expect(eventDate).toBeAfterOrEqualTo(eventPeriodStart);
-      expect(eventDate).toBeBefore(eventPeriodEnd);
-    });
+  supervisionOfficerMetricEventFixture.forEach(({ eventDate }) => {
+    expect(eventDate).toBeAfterOrEqualTo(eventPeriodStart);
+    expect(eventDate).toBeBefore(eventPeriodEnd);
   });
 });

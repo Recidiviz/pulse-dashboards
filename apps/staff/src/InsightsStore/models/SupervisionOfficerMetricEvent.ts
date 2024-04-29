@@ -21,7 +21,7 @@ import { dateStringSchemaWithoutTimeShift, fullNameSchema } from "~datatypes";
 
 export const supervisionOfficerMetricEventSchema = z.object({
   metricId: z.string(),
-  eventDate: dateStringSchemaWithoutTimeShift.nullable(),
+  eventDate: dateStringSchemaWithoutTimeShift,
   clientId: z.string(),
   clientName: fullNameSchema,
   pseudonymizedClientId: z.string(),

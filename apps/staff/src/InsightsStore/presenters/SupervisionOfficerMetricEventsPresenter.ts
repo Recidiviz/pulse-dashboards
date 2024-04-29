@@ -22,6 +22,7 @@ import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { insightsUrl } from "../../core/views";
 import { formatDateToISO } from "../../utils";
+import { FAVORABLE_METRIC_IDS } from "../models/offlineFixtures/constants";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 
@@ -123,5 +124,9 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
         outcomeDate: formatDateToISO(d.eventDate),
       }),
     );
+  }
+
+  get hideEventDateColumn(): boolean {
+    return this.metricId === FAVORABLE_METRIC_IDS.enum.treatment_starts;
   }
 }
