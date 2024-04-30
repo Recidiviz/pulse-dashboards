@@ -167,13 +167,13 @@ const CoverSheet: React.FC = () => {
           Override Type: <FormInput name="recommendationOverrideType" />
         </Label>
       </Row>
-      <Row indented>
+      <Row indented grouped>
         <Label htmlFor="recommendationJustification">
           Justification, Program Recommendations, and Summary:
         </Label>
       </Row>
       <FormTextarea name="recommendationJustification" minRows={4} />
-      <Row>
+      <Row grouped>
         <Item>
           Updated Photo Needed:
           <FormRadioButton name="updatedPhotoNeeded" targetValue label="Yes" />
@@ -182,6 +182,24 @@ const CoverSheet: React.FC = () => {
             targetValue={false}
             label="No"
           />
+        </Item>
+      </Row>
+      <Row>
+        <Item>
+          Emergency contact updated:
+          <FormRadioButton
+            name="emergencyContactUpdated"
+            targetValue
+            label="Yes"
+          />
+          <FormRadioButton
+            name="emergencyContactUpdated"
+            targetValue={false}
+            label="No"
+          />
+          <Label>
+            Date Updated: <FormInput name="emergencyContactUpdatedDate" />
+          </Label>
         </Item>
       </Row>
       <Row>
@@ -209,7 +227,7 @@ const CoverSheet: React.FC = () => {
         </Label>
       </Row>
       <FormTextarea name="disagreementReasons" minRows={4} />
-      <Row style={{ marginTop: "1em" }}>Approving Authority:</Row>
+      <Row>Approving Authority:</Row>
       <Row>
         <SigBlock>Signature</SigBlock>
         <SigBlock>Date</SigBlock>

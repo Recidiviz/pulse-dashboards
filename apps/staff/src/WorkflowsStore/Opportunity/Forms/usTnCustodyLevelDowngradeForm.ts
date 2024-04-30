@@ -82,7 +82,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
           eligibleCriteria.custodyLevelComparedToRecommended.custodyLevel;
       }
 
-      const justifications: string[] = [];
+      const justifications: string[] = ["Justification for classification: "];
       if (formInformation.sentenceExpirationDate) {
         justifications.push(
           `Release Date: ${formatDate(formInformation.sentenceExpirationDate)}`,
@@ -127,6 +127,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
           ).join(", ")}`,
         );
       }
+
       out.recommendationJustification = justifications.join("\n");
 
       assessmentQuestionNumbers.forEach((q) => {

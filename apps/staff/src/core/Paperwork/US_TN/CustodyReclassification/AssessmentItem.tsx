@@ -21,7 +21,6 @@ const Item = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 0.5rem;
 `;
 
 const LeftColumn = styled.div`

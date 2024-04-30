@@ -69,6 +69,7 @@ export function templateValuesForFormData(
   expandMultipleChoice("hasIncompatibles", [true, false]);
   expandMultipleChoice("recommendationTransfer", [true, false]);
   expandMultipleChoice("updatedPhotoNeeded", [true, false]);
+  expandMultipleChoice("emergencyContactUpdated", [true, false]);
   expandMultipleChoice("inmateAppeal", [true, false]);
 
   // This scoring logic is pretty convoluted. Here's what it should do:

@@ -131,7 +131,7 @@ const baseResult: PartialFormData = {
   incompatiblesList: "1, 2, 3",
   statusAtHearing: "GEN",
   recommendationJustification:
-    "Level of Care: LOC\nLatest Vantage Risk Assessment Date: 2/23/22",
+    "Justification for classification: \nLevel of Care: LOC\nLatest Vantage Risk Assessment Date: 2/23/22",
 };
 
 beforeEach(() => {

@@ -131,6 +131,8 @@ export type UsTnSharedReclassificationDraftData = {
   recommendationOverrideType: string;
   recommendationJustification: string;
   updatedPhotoNeeded: boolean;
+  emergencyContactUpdated: boolean;
+  emergencyContactUpdatedDate: string;
   inmateAppeal: boolean;
   disagreementReasons: string;
   denialReasons: string;

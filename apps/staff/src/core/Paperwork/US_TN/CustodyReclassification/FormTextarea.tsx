@@ -32,6 +32,7 @@ export const Textarea = styled(TextareaAutosize)`
   color: black;
   position: relative;
   width: 99%;
+  margin-bottom: 1em;
 `;
 
 // TODO(#3584): Generalize this wrt the form type
