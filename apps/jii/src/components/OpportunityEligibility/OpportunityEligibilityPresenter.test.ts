@@ -23,6 +23,7 @@ import { residentsConfigByState } from "../../configs/residentsConfig";
 import { IncarcerationOpportunityId } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
+import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 
 let residentsStore: ResidentsStore;
@@ -54,9 +55,27 @@ describe("hydration", () => {
       resident,
     );
     set(
-      residentsStore.residentEligibilityRecordsByExternalId,
+      residentsStore.residentOpportunityRecordsByExternalId,
       resident.personExternalId,
-      { [opportunityId]: usMeSccpFixtures.fullyEligibleHalfPortion },
+      {
+        [opportunityId]: outputFixture(
+          usMeSccpFixtures.fullyEligibleHalfPortion,
+        ),
+      },
+    );
+    set(
+      residentsStore.residentEligibilityReportsByExternalId,
+      resident.personExternalId,
+      new Map([
+        [
+          opportunityId,
+          new UsMeSCCPEligibilityReport(
+            resident,
+            oppConfig,
+            outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion),
+          ),
+        ],
+      ]),
     );
 
     expect(presenter.hydrationState.status).toBe("hydrated");
@@ -81,4 +100,36 @@ test("about content", () => {
 
 test("next steps content", () => {
   expect(presenter.nextStepsContent).toMatchSnapshot();
+});
+
+describe("after hydration", () => {
+  beforeEach(async () => {
+    await presenter.hydrate();
+  });
+
+  test("requirements content", () => {
+    expect(presenter.requirementsContent).toMatchInlineSnapshot(`
+      {
+        "linkText": "Get details about each requirement",
+        "linkUrl": "/eligibility/sccp/requirements",
+        "requirementsMet": [
+          "Served 2/3 of your sentence",
+          "No Class A or B discipline in past 90 days",
+          "Current custody level is Community",
+          "No unresolved detainers, warrants or pending charges",
+        ],
+        "requirementsNotMet": [
+          {
+            "criterion": "Fewer than 30 months remaining on your sentence",
+            "ineligibleReason": "You'll meet this requirement on May 16, 2022",
+          },
+        ],
+        "untrackedCriteria": [
+          "Have a safe and healthy place to live for the entire time you are on SCCP",
+          "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+          "Completed required programs, following your case plan, and showing positive change",
+        ],
+      }
+    `);
+  });
 });

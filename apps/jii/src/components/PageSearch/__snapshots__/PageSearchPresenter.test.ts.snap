@@ -22,5 +22,21 @@ exports[`hydration > hydrate 1`] = `
     "label": "Fifth Resident (RES005)",
     "value": "RES005",
   },
+  {
+    "label": "Sixth Resident (RES006)",
+    "value": "RES006",
+  },
+  {
+    "label": "Seventh Resident (RES007)",
+    "value": "RES007",
+  },
+  {
+    "label": "Eighth Resident (RES008)",
+    "value": "RES008",
+  },
+  {
+    "label": "Ineligible Resident (RES999)",
+    "value": "RES999",
+  },
 ]
 `;

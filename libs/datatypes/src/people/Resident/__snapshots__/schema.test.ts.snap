@@ -104,3 +104,87 @@ exports[`schema for 'US_ME' 'RES005' 1`] = `
   "unitId": "UNIT B",
 }
 `;
+
+exports[`schema for 'US_ME' 'RES006' 1`] = `
+{
+  "admissionDate": "2015-02-16",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES006",
+  "facilityId": "FACILITY NAME",
+  "gender": "TRANS",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES006",
+  "personName": {
+    "givenNames": "Sixth",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres006",
+  "releaseDate": "2024-02-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_ME' 'RES007' 1`] = `
+{
+  "admissionDate": "2019-06-16",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES007",
+  "facilityId": "FACILITY NAME",
+  "gender": "FEMALE",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES007",
+  "personName": {
+    "givenNames": "Seventh",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres007",
+  "releaseDate": "2023-12-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT B",
+}
+`;
+
+exports[`schema for 'US_ME' 'RES008' 1`] = `
+{
+  "admissionDate": "2015-08-16",
+  "custodyLevel": "MINIMUM",
+  "displayId": "dRES008",
+  "facilityId": "FACILITY NAME",
+  "gender": "TRANS",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES008",
+  "personName": {
+    "givenNames": "Eighth",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres008",
+  "releaseDate": "2024-08-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT A",
+}
+`;
+
+exports[`schema for 'US_ME' 'RES999' 1`] = `
+{
+  "admissionDate": "2020-05-16",
+  "custodyLevel": "MEDIUM",
+  "displayId": "dRES999",
+  "facilityId": "FACILITY NAME",
+  "gender": "MALE",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES999",
+  "personName": {
+    "givenNames": "Ineligible",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres999",
+  "releaseDate": "2024-05-16",
+  "stateCode": "US_ME",
+  "unitId": "UNIT B",
+}
+`;

@@ -21,7 +21,7 @@ import { FixtureMapping } from "../../utils/types";
 import { UsMeSCCPRecord, usMeSCCPSchema } from "./schema";
 
 export const usMeSccpFixtures = {
-  eligibleWithinMonthsRemainingWindow: makeRecordFixture(usMeSCCPSchema, {
+  eligibleToApplyBeforeXPortionServed: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES002",
     eligibleCriteria: {
@@ -36,6 +36,34 @@ export const usMeSccpFixtures = {
       },
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: relativeFixtureDate({ months: -4 }),
+      },
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      "Employment Training": [
+        {
+          eventDate: relativeFixtureDate({ days: -14 }),
+          noteTitle: "Graduated",
+          noteBody: "Completed course",
+        },
+      ],
+    },
+  }),
+  eligibleToApplyBeforeXMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
+    stateCode: "US_ME",
+    externalId: "RES008",
+    eligibleCriteria: {
+      usMeCustodyLevelIsMinimumOrCommunity: {
+        custodyLevel: "MINIMUM",
+      },
+      usMeNoClassAOrBViolationFor90Days: null,
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeServedXPortionOfSentence: {
+        eligibleDate: relativeFixtureDate({ months: -4 }),
+        xPortionServed: "2/3",
+      },
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: 2 }),
       },
     },
     ineligibleCriteria: {},
@@ -103,7 +131,7 @@ export const usMeSccpFixtures = {
       ],
     },
   }),
-  almostEligibleViolation: makeRecordFixture(usMeSCCPSchema, {
+  almostEligibleRecentViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES003",
     eligibleCriteria: {
@@ -124,6 +152,39 @@ export const usMeSccpFixtures = {
         eligibleDate: relativeFixtureDate({ months: 2, days: 14 }),
         highestClassViol: "B",
         violType: "More than 1",
+      },
+    },
+    caseNotes: {
+      Education: [
+        {
+          eventDate: relativeFixtureDate({ months: -6, days: -14 }),
+          noteTitle: "Graduated",
+          noteBody: "Completed coding course",
+        },
+      ],
+    },
+  }),
+  almostEligiblePendingViolation: makeRecordFixture(usMeSCCPSchema, {
+    stateCode: "US_ME",
+    externalId: "RES007",
+    eligibleCriteria: {
+      usMeCustodyLevelIsMinimumOrCommunity: {
+        custodyLevel: "MINIMUM",
+      },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeServedXPortionOfSentence: {
+        eligibleDate: relativeFixtureDate({ months: -3 }),
+        xPortionServed: "1/2",
+      },
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: -6 }),
+      },
+    },
+    ineligibleCriteria: {
+      usMeNoClassAOrBViolationFor90Days: {
+        eligibleDate: null,
+        highestClassViol: "B",
+        violType: `Pending since ${relativeFixtureDate({ months: -3, days: -10 })}`,
       },
     },
     caseNotes: {

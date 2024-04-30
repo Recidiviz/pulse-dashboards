@@ -29,28 +29,80 @@ const OpportunityEligibilityWithPresenter: FC<{
   presenter: OpportunityEligibilityPresenter;
 }> = observer(function OpportunityEligibilityWithPresenter({ presenter }) {
   return (
-    <PageHydrator hydratable={presenter}>
-      <article>
-        <section>
-          {presenter.aboutContent.sections.map((s, i) => (
-            <div key={s.heading}>
-              {i ? <h2>{s.heading}</h2> : <h1>{s.heading}</h1>}
-              <Markdown>{s.body}</Markdown>
-            </div>
-          ))}
-          <Link to={presenter.aboutContent.linkUrl}>
-            {presenter.aboutContent.linkText}
+    <article>
+      <h1>{presenter.headline}</h1>
+      <h2>{presenter.subheading}</h2>
+      <section>
+        {presenter.aboutContent.sections.map((s, i) => (
+          <div key={s.heading}>
+            {i ? <h2>{s.heading}</h2> : <h1>{s.heading}</h1>}
+            <Markdown>{s.body}</Markdown>
+          </div>
+        ))}
+        <Link to={presenter.aboutContent.linkUrl}>
+          {presenter.aboutContent.linkText}
+        </Link>
+      </section>
+      <section>
+        <h1>Requirements</h1>
+        <dl>
+          {!!presenter.requirementsContent.requirementsMet.length && (
+            <>
+              <dt>Requirements you've met</dt>
+              <dd>
+                <ul>
+                  {presenter.requirementsContent.requirementsMet.map((r) => (
+                    <li key={r}>{r}</li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+          {!!presenter.requirementsContent.requirementsNotMet.length && (
+            <>
+              <dt>Requirements you haven't met yet</dt>
+              <dd>
+                <ul>
+                  {presenter.requirementsContent.requirementsNotMet.map((r) => (
+                    <li key={r.criterion}>
+                      {r.criterion}
+                      {r.ineligibleReason && (
+                        <>
+                          <br />
+                          {r.ineligibleReason}
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </>
+          )}
+          <dt>
+            Check with your case manager to see if you’ve met these requirements
+          </dt>
+          <dd>
+            <ul>
+              {presenter.requirementsContent.untrackedCriteria.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </dd>
+        </dl>
+        {presenter.requirementsContent && (
+          <Link to={presenter.requirementsContent.linkUrl}>
+            {presenter.requirementsContent.linkText}
           </Link>
-        </section>
-        <section>
-          <h1>Next steps</h1>
-          <Markdown>{presenter.nextStepsContent.body}</Markdown>
-          <Link to={presenter.nextStepsContent.linkUrl}>
-            {presenter.nextStepsContent.linkText}
-          </Link>
-        </section>
-      </article>
-    </PageHydrator>
+        )}
+      </section>
+      <section>
+        <h1>Next steps</h1>
+        <Markdown>{presenter.nextStepsContent.body}</Markdown>
+        <Link to={presenter.nextStepsContent.linkUrl}>
+          {presenter.nextStepsContent.linkText}
+        </Link>
+      </section>
+    </article>
   );
 });
 
@@ -70,16 +122,15 @@ export const OpportunityEligibility: FC<{
     throw new Error(`Missing configuration for ${opportunityId}`);
   }
 
+  const presenter = new OpportunityEligibilityPresenter(
+    residentsStore,
+    residentExternalId,
+    opportunityId,
+    config,
+  );
   return (
-    <OpportunityEligibilityWithPresenter
-      presenter={
-        new OpportunityEligibilityPresenter(
-          residentsStore,
-          residentExternalId,
-          opportunityId,
-          config,
-        )
-      }
-    />
+    <PageHydrator hydratable={presenter}>
+      <OpportunityEligibilityWithPresenter presenter={presenter} />
+    </PageHydrator>
   );
 });

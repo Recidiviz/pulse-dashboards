@@ -16,21 +16,24 @@
 // =============================================================================
 
 import keyBy from "lodash/keyBy";
-import { makeAutoObservable, set } from "mobx";
+import { flowResult, makeAutoObservable, runInAction, set } from "mobx";
 
 import { ResidentRecord } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../api/interface";
+import { residentEligibilityReportConstructors } from "../configs/residentEligibilityReportConstructors";
 import {
   IncarcerationOpportunityId,
+  OpportunityConfig,
   OpportunityRecord,
   ResidentsConfig,
 } from "../configs/types";
+import { EligibilityReport } from "../models/EligibilityReport/interface";
 import type { RootStore } from "./RootStore";
 
 // because we use a mapped type to ensure key-value agreement, this can't be an ES6 Map
-type EligibilityMap = {
+type OpportunityRecordMapping = {
   [O in IncarcerationOpportunityId]?: OpportunityRecord<O>;
 };
 
@@ -43,8 +46,15 @@ export class ResidentsStore {
   /**
    * Holds all opportunity eligibility records that have been fetched
    */
-  residentEligibilityRecordsByExternalId: Map<string, EligibilityMap> =
-    new Map();
+  residentOpportunityRecordsByExternalId: Map<
+    string,
+    OpportunityRecordMapping
+  > = new Map();
+
+  residentEligibilityReportsByExternalId: Map<
+    string,
+    Map<IncarcerationOpportunityId, EligibilityReport>
+  > = new Map();
 
   constructor(
     private readonly rootStore: RootStore,
@@ -107,43 +117,116 @@ export class ResidentsStore {
     this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 
-  isResidentEligibilityPopulated(
+  isResidentEligibilityRecordPopulated(
     residentExternalId: string,
     opportunityId: IncarcerationOpportunityId,
   ): boolean {
     return (
       opportunityId in
-      (this.residentEligibilityRecordsByExternalId.get(residentExternalId) ??
+      (this.residentOpportunityRecordsByExternalId.get(residentExternalId) ??
         {})
     );
   }
 
   /**
-   * Populates {@link residentEligibilityRecordsByExternalId} with the API response for
+   * Populates {@link residentOpportunityRecordsByExternalId} with the API response for
    * the provided resident and opportunity IDs. Will populate with `undefined` if no record is found
    * (indicating the resident is ineligible). Will not refetch if data is already populated.
    */
-  *populateEligibilityRecordByResidentId(
+  *populateOpportunityRecordByResidentId(
     residentExternalId: string,
     opportunityId: IncarcerationOpportunityId,
   ): FlowMethod<DataAPI["residentEligibility"], void> {
-    if (this.isResidentEligibilityPopulated(residentExternalId, opportunityId))
+    if (
+      this.isResidentEligibilityRecordPopulated(
+        residentExternalId,
+        opportunityId,
+      )
+    )
       return;
 
     const eligibilityRecord = yield this.apiClient.residentEligibility(
       residentExternalId,
       opportunityId,
     );
-    const opportunityMap: EligibilityMap =
-      this.residentEligibilityRecordsByExternalId.get(residentExternalId) ?? {};
+    const opportunityMap: OpportunityRecordMapping =
+      this.residentOpportunityRecordsByExternalId.get(residentExternalId) ?? {};
 
     opportunityMap[opportunityId] = eligibilityRecord;
 
-    if (!this.residentEligibilityRecordsByExternalId.has(residentExternalId)) {
-      this.residentEligibilityRecordsByExternalId.set(
+    if (!this.residentOpportunityRecordsByExternalId.has(residentExternalId)) {
+      this.residentOpportunityRecordsByExternalId.set(
         residentExternalId,
         opportunityMap,
       );
     }
+  }
+
+  isResidentEligibilityReportPopulated(
+    residentExternalId: string,
+    opportunityId: IncarcerationOpportunityId,
+  ): boolean {
+    return !!this.residentEligibilityReportsByExternalId
+      .get(residentExternalId)
+      ?.has(opportunityId);
+  }
+
+  /**
+   * Populates {@link residentEligibilityReportsByExternalId} with a report object for
+   * the provided resident and opportunity IDs. Will call other populate methods as needed
+   * to fetch any needed data. Will not overwrite object if it already exists.
+   */
+  async populateEligibilityReportByResidentId(
+    residentExternalId: string,
+    opportunityId: IncarcerationOpportunityId,
+    config: OpportunityConfig,
+  ): Promise<void> {
+    if (
+      this.isResidentEligibilityReportPopulated(
+        residentExternalId,
+        opportunityId,
+      )
+    )
+      return;
+
+    // make sure the report data is populated; these should be no-ops if the data already exists
+    await Promise.all([
+      flowResult(this.populateResidentById(residentExternalId)),
+      flowResult(
+        this.populateOpportunityRecordByResidentId(
+          residentExternalId,
+          opportunityId,
+        ),
+      ),
+    ]);
+
+    const resident = this.residentsByExternalId.get(
+      residentExternalId,
+    ) as ResidentRecord["output"]; // we just populated this
+    const residentEligibility =
+      this.residentOpportunityRecordsByExternalId.get(residentExternalId)?.[
+        opportunityId
+      ]; // we also just populated this but it's fine for it to be undefined
+    const ReportConstructor =
+      residentEligibilityReportConstructors[opportunityId];
+
+    // create and store the report object
+    runInAction(() => {
+      const mapping =
+        this.residentEligibilityReportsByExternalId.get(residentExternalId) ??
+        new Map();
+      mapping.set(
+        opportunityId,
+        new ReportConstructor(resident, config, residentEligibility),
+      );
+      if (
+        !this.residentEligibilityReportsByExternalId.has(residentExternalId)
+      ) {
+        this.residentEligibilityReportsByExternalId.set(
+          residentExternalId,
+          mapping,
+        );
+      }
+    });
   }
 }

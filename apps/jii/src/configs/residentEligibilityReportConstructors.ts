@@ -15,20 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig } from "./types";
-import { config } from "./usMeSCCP/config";
+import { UsMeSCCPEligibilityReport } from "../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
+import { ResidentEligibilityReportMapping } from "./types";
 
-/**
- * All configuration objects for the residents application are locally defined.
- * This object is the source of truth for which state codes are supported, both
- * statically and at runtime.
- */
-export const residentsConfigByState = {
-  US_ME: {
-    incarcerationOpportunities: {
-      usMeSCCP: config,
-    },
-  },
-  // using satisfies here lets us derive StateCode as keyof this object
-  // instead of having to maintain it as a separate type
-} satisfies Record<string, ResidentsConfig>;
+export const residentEligibilityReportConstructors: ResidentEligibilityReportMapping =
+  {
+    usMeSCCP: UsMeSCCPEligibilityReport,
+  };

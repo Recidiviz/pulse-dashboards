@@ -20,7 +20,14 @@ import "jest-styled-components";
 
 import { toHaveNoViolations } from "jest-axe";
 import jestExtendedMatchers from "jest-extended";
+import { freeze } from "timekeeper";
+
+import { CURRENT_DATE_FIXTURE } from "~datatypes";
 
 expect.extend(jestExtendedMatchers);
 
 expect.extend(toHaveNoViolations);
+
+beforeEach(() => {
+  freeze(CURRENT_DATE_FIXTURE);
+});

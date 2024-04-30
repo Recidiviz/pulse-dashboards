@@ -24,6 +24,7 @@ import {
   OpportunityConfig,
 } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
+import { EligibilityReport } from "../../models/EligibilityReport/interface";
 
 export class OpportunityEligibilityPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;
@@ -37,43 +38,27 @@ export class OpportunityEligibilityPresenter implements Hydratable {
     makeAutoObservable(this, undefined, { autoBind: true });
 
     this.hydrationSource = new HydratesFromSource({
-      populate: async () => {
-        await Promise.all([
-          flowResult(
-            this.residentsStore.populateResidentById(this.residentExternalId),
+      populate: () =>
+        flowResult(
+          this.residentsStore.populateEligibilityReportByResidentId(
+            this.residentExternalId,
+            this.opportunityId,
+            this.config,
           ),
-          flowResult(
-            this.residentsStore.populateEligibilityRecordByResidentId(
-              this.residentExternalId,
-              this.opportunityId,
-            ),
-          ),
-        ]);
-      },
-      expectPopulated: [
-        this.expectResidentPopulated,
-        this.expectResidentEligibilityPopulated,
-      ],
+        ),
+      expectPopulated: [this.expectReportPopulated],
     });
   }
 
-  private expectResidentPopulated() {
-    if (!this.residentsStore.isResidentPopulated(this.residentExternalId)) {
-      throw new Error(
-        `Failed to populate resident data for ${this.residentExternalId}`,
-      );
-    }
-  }
-
-  private expectResidentEligibilityPopulated() {
+  private expectReportPopulated() {
     if (
-      !this.residentsStore.isResidentEligibilityPopulated(
+      !this.residentsStore.isResidentEligibilityReportPopulated(
         this.residentExternalId,
         this.opportunityId,
       )
     ) {
       throw new Error(
-        `Failed to populate ${this.opportunityId} eligibility for resident ${this.residentExternalId}`,
+        `Failed to populate ${this.opportunityId} eligibility report for ${this.residentExternalId}`,
       );
     }
   }
@@ -84,6 +69,32 @@ export class OpportunityEligibilityPresenter implements Hydratable {
 
   hydrate() {
     return this.hydrationSource.hydrate();
+  }
+
+  /**
+   * This will throw an error if it is accessed before the presenter is hydrated;
+   * for convenient type safety downstream it will require that the report actually exist
+   */
+  private get eligibilityReport(): EligibilityReport {
+    const report = this.residentsStore.residentEligibilityReportsByExternalId
+      .get(this.residentExternalId)
+      ?.get(this.opportunityId);
+
+    if (!report) {
+      throw new Error(
+        `${this.opportunityId} EligibilityReport is missing for resident ${this.residentExternalId}`,
+      );
+    }
+
+    return report;
+  }
+
+  get headline() {
+    return this.eligibilityReport.headline;
+  }
+
+  get subheading() {
+    return this.eligibilityReport.subheading;
   }
 
   get aboutContent() {
@@ -97,6 +108,17 @@ export class OpportunityEligibilityPresenter implements Hydratable {
     return {
       ...this.config.copy.nextSteps,
       linkUrl: `/eligibility/${this.config.urlSection}/nextSteps`,
+    };
+  }
+
+  get requirementsContent() {
+    const { requirements } = this.eligibilityReport;
+    const { untrackedCriteria, linkText } = this.config.copy.requirements;
+    return {
+      ...requirements,
+      untrackedCriteria,
+      linkText,
+      linkUrl: `/eligibility/${this.config.urlSection}/requirements`,
     };
   }
 }

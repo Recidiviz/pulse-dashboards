@@ -14,21 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { toTitleCase } from "@artsy/to-title-case";
+import { isFuture } from "date-fns";
+import Handlebars from "handlebars";
 
-import { ResidentsConfig } from "./types";
-import { config } from "./usMeSCCP/config";
+import { formatFullDate } from "../utils/date";
+
+Handlebars.registerHelper("titleCase", (s: string) => toTitleCase(s));
+Handlebars.registerHelper("lowerCase", (s: string) => s.toLowerCase());
+Handlebars.registerHelper("formatFullDate", (d: Date) => formatFullDate(d));
+Handlebars.registerHelper("isFutureDate", (d: Date) => isFuture(d));
 
 /**
- * All configuration objects for the residents application are locally defined.
- * This object is the source of truth for which state codes are supported, both
- * statically and at runtime.
+ * Hydrates the Handlebars template in `template` with the values in `context`.
  */
-export const residentsConfigByState = {
-  US_ME: {
-    incarcerationOpportunities: {
-      usMeSCCP: config,
-    },
-  },
-  // using satisfies here lets us derive StateCode as keyof this object
-  // instead of having to maintain it as a separate type
-} satisfies Record<string, ResidentsConfig>;
+export function hydrateTemplate(
+  template: string,
+  context: Record<string, unknown>,
+) {
+  return Handlebars.compile(template)(context);
+}

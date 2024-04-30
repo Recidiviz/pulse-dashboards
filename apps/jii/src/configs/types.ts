@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParsedRecord } from "~datatypes";
+import { ParsedRecord, ResidentRecord } from "~datatypes";
 
+import { EligibilityReport } from "../models/EligibilityReport/interface";
 import { residentsConfigByState } from "./residentsConfig";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 
@@ -25,15 +26,19 @@ type AboutSection = {
   body: string;
 };
 
+export type RequirementCopy = { criterion: string; ineligibleReason?: string };
+
 export type OpportunityConfig = {
   urlSection: string;
   copy: {
-    eligibilityHeadingPhrase: string;
+    headline: string;
+    subheading: string;
     about: {
       sections: [AboutSection, ...AboutSection[]];
       linkText: string;
     };
-    eligibility: {
+    requirements: {
+      trackedCriteria: Record<string, RequirementCopy>;
       untrackedCriteria: Array<string>;
       linkText: string;
     };
@@ -62,3 +67,16 @@ export type ResidentOpportunitySchemaMapping =
  */
 export type OpportunityRecord<O extends IncarcerationOpportunityId> =
   ParsedRecord<ResidentOpportunitySchemaMapping[O]>["output"];
+
+/**
+ * Mapping of opportunity IDs to their compatible EligibilityReport constructors
+ */
+export type ResidentEligibilityReportMapping = {
+  [Id in IncarcerationOpportunityId]: new (
+    ...args: [
+      ResidentRecord["output"],
+      OpportunityConfig,
+      OpportunityRecord<Id> | undefined,
+    ]
+  ) => EligibilityReport;
+};

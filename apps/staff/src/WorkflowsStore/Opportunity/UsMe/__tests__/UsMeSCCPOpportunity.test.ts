@@ -103,7 +103,7 @@ test("eligible with future x portion date", () => {
   referralSub = opp.referralSubscription;
   referralSub.hydrationState = { status: "hydrated" };
   referralSub.data =
-    usMeSccpFixtures.eligibleWithinMonthsRemainingWindow.output;
+    usMeSccpFixtures.eligibleToApplyBeforeXPortionServed.output;
 
   expect(opp.requirementsMet[1]).toMatchSnapshot();
 
@@ -182,7 +182,7 @@ describe("almost eligible but for class A/B discipline", () => {
 
     referralSub = opp.referralSubscription;
     referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSccpFixtures.almostEligibleViolation.output;
+    referralSub.data = usMeSccpFixtures.almostEligibleRecentViolation.output;
   });
 
   test("requirements met", () => {
