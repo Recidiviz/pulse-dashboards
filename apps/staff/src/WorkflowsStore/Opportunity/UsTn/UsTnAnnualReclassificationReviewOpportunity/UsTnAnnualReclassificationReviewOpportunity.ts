@@ -31,7 +31,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
   UsTnAnnualReclassificationReviewReferralRecord,
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
-  readonly caseNotesTitle = "Disciplinaries";
+  readonly caseNotesTitle = "Relevant Information For Classification";
 
   form: UsTnAnnualReclassificationReviewForm;
 

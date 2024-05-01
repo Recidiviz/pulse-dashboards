@@ -33,7 +33,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
 > {
   form: UsTnCustodyLevelDowngradeForm;
 
-  readonly caseNotesTitle = "Disciplinaries";
+  readonly caseNotesTitle = "Relevant Information For Classification";
 
   constructor(resident: Resident) {
     super(

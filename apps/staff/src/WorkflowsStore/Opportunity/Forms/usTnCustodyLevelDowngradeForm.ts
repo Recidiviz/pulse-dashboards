@@ -105,7 +105,7 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       }
       if (formInformation.latestVantageRiskLevel) {
         justifications.push(
-          `Latest Vantage Risk Level: ${formInformation.latestVantageRiskLevel}`,
+          `Latest Vantage Risk Assessment: ${formInformation.latestVantageRiskLevel}`,
         );
       }
       if (formInformation.latestVantageCompletedDate) {
