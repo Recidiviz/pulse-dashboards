@@ -55,7 +55,9 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
     outlierMetrics: [],
-    topXPctMetrics: [FAVORABLE_METRIC_IDS.enum.treatment_starts],
+    topXPctMetrics: [
+      { metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts, topXPct: 10 },
+    ],
   },
   {
     externalId: "so3",

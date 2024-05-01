@@ -205,8 +205,9 @@ export class SupervisionOfficersPresenter implements Hydratable {
     return compact(
       metricsToHighlight.map((m) => {
         const highlightedOfficers =
-          this.allOfficers?.filter((o) => o.topXPctMetrics.includes(m.name)) ||
-          [];
+          this.allOfficers?.filter((o) =>
+            o.topXPctMetrics.map((t) => t.metricId).includes(m.name),
+          ) || [];
         if (highlightedOfficers.length > 0) {
           return {
             metricName: m.eventName,

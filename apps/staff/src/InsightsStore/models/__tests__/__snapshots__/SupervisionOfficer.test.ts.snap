@@ -117,7 +117,10 @@ exports[`transformations 2`] = `
   "pseudonymizedId": "hashed-so2",
   "supervisorExternalId": "mdavis123",
   "topXPctMetrics": [
-    "treatment_starts",
+    {
+      "metricId": "treatment_starts",
+      "topXPct": 10,
+    },
   ],
 }
 `;

@@ -31,7 +31,12 @@ export const supervisionOfficerSchema = z
     pseudonymizedId: z.string(),
     supervisorExternalId: z.string(),
     outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
-    topXPctMetrics: z.array(z.string()),
+    topXPctMetrics: z.array(
+      z.object({
+        metricId: z.string(),
+        topXPct: z.number(),
+      }),
+    ),
   })
   .transform(addDisplayName);
 
