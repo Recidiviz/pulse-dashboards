@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "@firebase/firestore";
+import {
+  assertFails,
+  assertSucceeds,
+  RulesTestEnvironment,
+} from "@firebase/rules-unit-testing";
 
 import {
   ETL_COLLECTION_NAMES,
@@ -30,13 +34,14 @@ import {
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
 } from "./testUtils";
+import { AssertFn, FirestoreInstance } from "./types";
 
-let testEnv;
+let testEnv: RulesTestEnvironment;
 
 function testWriteToCollectionsWithoutStateCodePrefix(
-  collectionNames,
-  db,
-  assertFn,
+  collectionNames: Array<string>,
+  db: FirestoreInstance,
+  assertFn: AssertFn,
 ) {
   return Promise.all(
     collectionNames.map((collectionName) =>
@@ -47,10 +52,10 @@ function testWriteToCollectionsWithoutStateCodePrefix(
 }
 
 function testWriteToCollectionsForStateWithStateCodePrefix(
-  collectionNames,
-  db,
-  assertFn,
-  stateCode,
+  collectionNames: Array<string>,
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
 ) {
   return Promise.all(
     collectionNames.map((collectionName) =>
@@ -266,6 +271,5 @@ test("impersonating user cannot write to personal update collection", async () =
     [PERSONAL_UPDATE_COLLECTION_NAME],
     getImpersonatedUser(testEnv).firestore(),
     assertFails,
-    "US_TN",
   );
 });

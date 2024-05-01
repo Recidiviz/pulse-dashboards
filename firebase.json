@@ -1,6 +1,6 @@
 {
   "firestore": {
-    "rules": "apps/staff/firestore-config/firestore.rules"
+    "rules": "libs/firestore-config/src/firestore.rules"
   },
   "hosting": {
     "public": "dist/apps/staff",

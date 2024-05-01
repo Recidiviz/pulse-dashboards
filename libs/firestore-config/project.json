@@ -1,0 +1,55 @@
+{
+  "name": "firestore-config",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/firestore-config/src",
+  "projectType": "library",
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test-in-firestore-emulator": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/firestore-config"],
+      "cache": true,
+      "options": {
+        "command": "vitest run",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/firestore-config"],
+      "cache": true,
+      "options": {
+        "command": "firebase emulators:exec --only firestore 'yarn nx test-in-firestore-emulator firestore-config'"
+      }
+    },
+    "update-rules-staging": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "firebase --project=staging-backend deploy --only firestore:rules"
+      }
+    },
+    "update-rules-production": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "firebase --project=production-backend deploy --only firestore:rules"
+      }
+    }
+  },
+  "tags": []
+}

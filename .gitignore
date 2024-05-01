@@ -54,7 +54,7 @@ dump.rdb
 # Typescript build artifacts
 *.tsbuildinfo
 
-# fixtures for offline mode
+# fixtures for offline mode (legacy)
 emulator-fixtures
 
 # ignore vim swap files

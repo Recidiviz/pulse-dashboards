@@ -61,20 +61,28 @@
     "update-workflows-fixture": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["{projectRoot}/tools/**/*"],
-      "outputs": ["{projectRoot}/firestore-config/emulator-fixtures"],
+      "inputs": [
+        "{projectRoot}/tools/**/*",
+        "{workspaceRoot}/libs/datatypes/**/*"
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/firestore-emulator-fixtures/apps/staff"
+      ],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit firestore-config/emulator-fixtures 'NODE_OPTIONS=\"--unhandled-rejections=strict\" vite-node tools/loadWorkflowsFixtures.ts'"
-        ]
+          "mkdir -p ../../dist/firestore-emulator-fixtures/apps/staff",
+          "firebase emulators:exec --project=demo-dev --only firestore --export-on-exit ../../dist/firestore-emulator-fixtures/apps/staff 'NODE_OPTIONS=\"--unhandled-rejections=strict\" vite-node tools/loadWorkflowsFixtures.ts'"
+        ],
+
+        "parallel": false
       }
     },
     "firebase-offline": {
       "executor": "nx:run-commands",
       "dependsOn": ["update-workflows-fixture"],
       "options": {
-        "command": "firebase --project=demo-dev emulators:start --import firestore-config/emulator-fixtures",
+        "command": "firebase --project=demo-dev emulators:start --import ../../dist/firestore-emulator-fixtures/apps/staff",
         "cwd": "{projectRoot}"
       }
     },

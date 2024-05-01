@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,7 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
+import {
+  initializeTestEnvironment,
+  RulesTestEnvironment,
+} from "@firebase/rules-unit-testing";
 import fs from "fs";
 import path from "path";
 
@@ -47,15 +50,15 @@ export function startTestEnv() {
   });
 }
 
-export function getAnonUser(testEnv) {
+export function getAnonUser(testEnv: RulesTestEnvironment) {
   return testEnv.unauthenticatedContext();
 }
 
-export function getStatelessUser(testEnv) {
+export function getStatelessUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@stateless.com");
 }
 
-export function getTNUser(testEnv) {
+export function getTNUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
     stateCode: "US_TN",
     impersonator: false,
@@ -63,7 +66,7 @@ export function getTNUser(testEnv) {
   });
 }
 
-export function getNDUser(testEnv) {
+export function getNDUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@us_nd.gov", {
     stateCode: "US_ND",
     impersonator: false,
@@ -71,7 +74,7 @@ export function getNDUser(testEnv) {
   });
 }
 
-export function getRecidivizUser(testEnv) {
+export function getRecidivizUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("admin", {
     stateCode: "RECIDIVIZ",
     impersonator: false,
@@ -79,7 +82,7 @@ export function getRecidivizUser(testEnv) {
   });
 }
 
-export function getImpersonatedUser(testEnv) {
+export function getImpersonatedUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
     stateCode: "US_TN",
     impersonator: true,

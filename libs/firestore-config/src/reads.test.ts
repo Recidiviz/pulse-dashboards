@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2022 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
 import {
   collection,
   doc,
@@ -23,7 +22,12 @@ import {
   getDocs,
   query,
   where,
-} from "firebase/firestore";
+} from "@firebase/firestore";
+import {
+  assertFails,
+  assertSucceeds,
+  RulesTestEnvironment,
+} from "@firebase/rules-unit-testing";
 
 import {
   ETL_COLLECTION_NAMES,
@@ -36,8 +40,9 @@ import {
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
 } from "./testUtils";
+import { AssertFn, FirestoreInstance } from "./types";
 
-let testEnv;
+let testEnv: RulesTestEnvironment;
 
 beforeAll(async () => {
   testEnv = await startTestEnv();
@@ -52,7 +57,10 @@ afterEach(async () => {
   await testEnv.clearFirestore();
 });
 
-async function testAllReadsUnrestricted(db, assertFn) {
+async function testAllReadsUnrestricted(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+) {
   return Promise.all([
     ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(getDocs(db.collection(collectionName)));
@@ -63,7 +71,11 @@ async function testAllReadsUnrestricted(db, assertFn) {
   ]);
 }
 
-async function testAllReadsForState(db, assertFn, stateCode) {
+async function testAllReadsForState(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
+) {
   return Promise.all([
     ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
