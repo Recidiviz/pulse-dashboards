@@ -27,9 +27,9 @@ import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 // import FormFooter from "./FormFooter";
-// import FormGeneralInfo from "./FormGeneralInfo";
-// import FormHeading from "./FormHeading";
-// import FormHistory from "./FormHistory";
+import FormGeneralInfo from "./FormGeneralInfo";
+import FormHeading from "./FormHeading";
+import FormHistory from "./FormHistory";
 // import FormInterviews from "./FormInterviews";
 // import FormReview from "./FormReview";
 // import FormSCCAction from "./FormSCCAction";
@@ -90,11 +90,10 @@ export const FormUsMiSCCReview = observer(function FormUsMiSCCReview() {
         <PrintablePageMargin>
           <PrintablePage>
             <FormPage>
-              Form coming soon!
-              {/* <FormHeading />
+              <FormHeading />
               <FormGeneralInfo />
               <FormHistory />
-              <FormTeamEvaluation />
+              {/* <FormTeamEvaluation />
               <FormSCCAction />
               <FormReview />
               <FormInterviews />
