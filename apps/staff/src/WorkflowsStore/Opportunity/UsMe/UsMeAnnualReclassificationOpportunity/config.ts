@@ -26,11 +26,13 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     label: "Annual / Semi-Annual Reclassification",
     featureVariant: "usMeAnnualReclassificationReview",
     initialHeader:
-      "Search for case manager(s) above to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
+      "Search for caseloads to review residents who are up for " +
+      "an annual or semi-annual reclassification meeting.",
     dynamicEligibilityText:
       "resident[|s] may be due for an annual or semi-annual reclassification",
     callToAction:
-      "Search for case manager(s) above to review residents on their caseload who are up for an annual or semi-annual reclassification meeting.",
+      "Search for caseloads to review residents who are up for " +
+      "an annual or semi-annual reclassification meeting.",
     //TODO: Fix this in `recidiviz-data`
     firestoreCollection: "US_ME-reclassificatinonReviewReferrals",
     hideDenialRevert: true,

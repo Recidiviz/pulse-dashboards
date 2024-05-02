@@ -26,12 +26,12 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
     label: "Medium Trustee",
     featureVariant: "usMeCustodyLevelReview",
     initialHeader:
-      "Search for case managers above to review residents on their caseload " +
+      "Search for caseloads to review residents " +
       "who may be eligible for Medium Trustee Status.",
     dynamicEligibilityText:
       "resident[|s] may be eligible for Medium Trustee Status",
     callToAction:
-      "Search for case managers above to review residents on their caseload " +
+      "Search for caseloads to review residents " +
       "who may be eligible for Medium Trustee Status.",
     firestoreCollection: "US_ME-mediumTrusteeReferrals",
     snooze: {
