@@ -33,6 +33,7 @@ import AnnualClassificationReview from "../Paperwork/US_ME/AnnualReclassificatio
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
+import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCReview";
 import { FormUsOrEarnedDischarge } from "../Paperwork/US_OR/EarnedDischarge/FormUsOrEarnedDischarge";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
@@ -97,6 +98,7 @@ const FormComponents = {
   FormUsOrEarnedDischarge,
   FormUsPaAdminSupervision,
   AnnualClassificationReview,
+  FormUsMiSCCReview,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;

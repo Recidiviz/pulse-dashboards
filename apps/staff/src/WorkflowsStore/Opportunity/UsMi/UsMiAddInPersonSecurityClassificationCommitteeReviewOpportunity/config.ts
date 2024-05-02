@@ -28,7 +28,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
     dynamicEligibilityText:
       "resident[|s] [is|are] eligible for in-person review by the ADD at SCC to potentially return to general population",
     callToAction:
-      "Complete SCC review and fill out 283 form for eligible residents, inclusive of ADD signature.",
+      "Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
     firestoreCollection:
       "US_MI-addInPersonSecurityClassificationCommitteeReview",
     denialReasons: {

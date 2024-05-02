@@ -28,7 +28,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
     dynamicEligibilityText:
       "resident[|s] [is|are] eligible for in-person review by the Warden at SCC to potentially return to general population",
     callToAction:
-      "Complete SCC review and fill out 283 form for eligible residents, inclusive of Warden signature.",
+      "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
     firestoreCollection:
       "US_MI-wardenInPersonSecurityClassificationCommitteeReview",
     denialReasons: {

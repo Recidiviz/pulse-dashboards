@@ -26,11 +26,11 @@ export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<
     urlSection: "securityClassificationCommitteeReview",
     label: "Security Classification Committee Review",
     initialHeader:
-      "Complete SCC review and fill out 283 form for eligible residents.",
+      "Complete SCC review and fill out 283 Form for eligible residents.",
     dynamicEligibilityText:
       "resident[|s] [is|are] eligible for SCC review to potentially return to general population",
     callToAction:
-      "Complete SCC review and fill out 283 form for eligible residents",
+      "Complete SCC review and fill out 283 Form for eligible residents",
     firestoreCollection: "US_MI-securityClassificationCommitteeReview",
     denialReasons: {
       "PRIOR RH":

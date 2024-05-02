@@ -43,6 +43,18 @@ export const usMiSecurityClassificationCommitteeReviewSchema =
     ineligibleCriteria: possiblyIneligibleCriteria,
     formInformation: z.object({
       segregationType: z.string(),
+      segregationClassificationDate: dateStringSchema.nullable(),
+      prisonerNumber: z.string(),
+      prisonerName: z.string(),
+      maxReleaseDate: dateStringSchema.nullish(),
+      minReleaseDate: dateStringSchema.nullish(),
+      facility: z.string(),
+      lock: z.string(),
+      OPT: z.boolean(),
+      STG: z.string(),
+      bondableOffensesWithin6Months: z.string().nullish(),
+      nonbondableOffensesWithin1Year: z.string().optional(),
+      adSegStaysAndReasonsWithin3Years: z.array(z.string()).optional(),
     }),
     metadata: z.object({
       daysInCollapsedSolitarySession: z.coerce.number(),
