@@ -25,7 +25,14 @@ import createAuth0Client, {
 } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 import { intersection } from "lodash";
-import { action, entries, makeAutoObservable, runInAction, when } from "mobx";
+import {
+  action,
+  computed,
+  entries,
+  makeAutoObservable,
+  runInAction,
+  when,
+} from "mobx";
 import { now } from "mobx-utils";
 import qs from "qs";
 
@@ -111,6 +118,7 @@ export default class UserStore {
       userHasAccess: action.bound,
       getTokenSilently: action.bound,
       loginWithRedirect: action.bound,
+      activeFeatureVariants: computed.struct,
     });
 
     this.authSettings = authSettings;

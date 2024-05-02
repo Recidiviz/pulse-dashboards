@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { reaction } from "mobx";
 import { observer } from "mobx-react-lite";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext } from "react";
 
 import { InsightsStore } from "../../InsightsStore/InsightsStore";
 import store, { RootStore } from "../../RootStore";
@@ -30,7 +29,6 @@ import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityTyp
 
 type StoreContextType = {
   store: RootStore;
-  featureVariants: FeatureVariantRecord;
 };
 
 const StoreContext = React.createContext<undefined | StoreContextType>(
@@ -39,27 +37,8 @@ const StoreContext = React.createContext<undefined | StoreContextType>(
 
 const StoreProvider: React.FC<{ children: React.ReactNode }> = observer(
   function StoreProvider({ children }) {
-    const { userStore } = store;
-    const [featureVariants, setFeatureVariants] =
-      useState<FeatureVariantRecord>(userStore.activeFeatureVariants);
-
-    useEffect(() => {
-      const disposer = reaction(
-        () => userStore.activeFeatureVariants,
-        (activeFeatureVariants: FeatureVariantRecord) => {
-          setFeatureVariants(activeFeatureVariants);
-        },
-      );
-
-      return () => disposer();
-    }, [userStore]);
-
-    const contextValue = useMemo(() => {
-      return { store, featureVariants };
-    }, [featureVariants]);
-
     return (
-      <StoreContext.Provider value={contextValue}>
+      <StoreContext.Provider value={{ store }}>
         {children}
       </StoreContext.Provider>
     );
@@ -92,11 +71,8 @@ export function useUserStore(): UserStore {
 }
 
 export function useFeatureVariants(): FeatureVariantRecord {
-  const context = useContext(StoreContext);
-  if (!context) {
-    throw new Error("useFeatureVariants must be used within a StoreProvider");
-  }
-  return context.featureVariants;
+  const { activeFeatureVariants } = useUserStore();
+  return activeFeatureVariants;
 }
 
 export function useOpportunityConfigurations(): Record<
