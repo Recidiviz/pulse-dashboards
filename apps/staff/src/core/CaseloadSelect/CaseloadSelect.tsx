@@ -125,7 +125,7 @@ const IndicatorsWrapper = styled.div<{
 }>`
   display: flex;
   flex-basis: ${({ isMobile, hasDistricts }) =>
-    isMobile || !hasDistricts ? "initial" : "60%"};
+    isMobile || !hasDistricts ? "initial" : "30%"};
   flex-wrap: wrap;
   align-items: center;
   justify-content: end;
