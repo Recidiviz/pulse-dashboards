@@ -17,6 +17,7 @@
 import tk from "timekeeper";
 
 import * as utils from "../formatStrings";
+import { formatYearsMonthsFromNow } from "../formatStrings";
 
 describe("formatStrings", () => {
   it("get gender from array genderValuetoLabel", () => {
@@ -372,6 +373,46 @@ describe("formatStrings", () => {
         firstName: "First Middle",
         lastName: "Last",
       });
+    });
+  });
+
+  describe("formatYearsMonthsFromNow", () => {
+    const TEST_DATE = new Date(2022, 2, 2);
+
+    beforeEach(() => {
+      tk.freeze(TEST_DATE);
+    });
+
+    it("rounds to years, months", () => {
+      let res = formatYearsMonthsFromNow(new Date(2023, 3, 2));
+      expect(res).toEqual("1 year, 1 month");
+
+      res = formatYearsMonthsFromNow(new Date(2023, 3, 17));
+      expect(res).toEqual("1 year, 1 month");
+    });
+
+    it("deals with dates in the past", () => {
+      const res = formatYearsMonthsFromNow(new Date(2021, 1, 1));
+      expect(res).toEqual("1 year, 1 month");
+    });
+
+    it("just shows years when no month offset", () => {
+      let res = formatYearsMonthsFromNow(new Date(2023, 2, 2));
+      expect(res).toEqual("1 year");
+
+      res = formatYearsMonthsFromNow(new Date(2037, 2, 28));
+      expect(res).toEqual("15 years");
+    });
+
+    it("just shows months when under a year remaining", () => {
+      let res = formatYearsMonthsFromNow(new Date(2022, 5, 2));
+      expect(res).toEqual("3 months");
+
+      res = formatYearsMonthsFromNow(new Date(2022, 3, 2));
+      expect(res).toEqual("1 month");
+
+      res = formatYearsMonthsFromNow(new Date(2023, 2, 1));
+      expect(res).toEqual("11 months");
     });
   });
 });

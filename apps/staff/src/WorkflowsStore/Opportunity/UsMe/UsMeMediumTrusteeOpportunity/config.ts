@@ -55,7 +55,7 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
           "approved for trustee status",
       },
       usMeFiveOrMoreYearsRemainingOnSentence: {
-        text: "{{monthsUntil opportunity.person.releaseDate}} months remaining on sentence",
+        text: "{{yearsMonthsUntil opportunity.person.releaseDate}} remaining on sentence",
         tooltip:
           "Residents at medium custody level approved for trustee status are " +
           "residents who have at least five (5) years remaining on their sentence",

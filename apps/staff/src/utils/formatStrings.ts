@@ -17,7 +17,13 @@
 import CryptoJS from "crypto-js";
 import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
-import { format, isToday, parseISO } from "date-fns";
+import {
+  format,
+  formatDuration,
+  intervalToDuration,
+  isToday,
+  parseISO,
+} from "date-fns";
 import ceil from "lodash/ceil";
 import lowerCase from "lodash/fp/lowerCase";
 import pipe from "lodash/fp/pipe";
@@ -235,6 +241,20 @@ function formatDurationFromDays(days: number): string {
   return moment.duration(days, "days").humanize();
 }
 
+/*
+  Given a date, returns the duration from now in the form "X years, Y months"
+  If either value is zero, that unit is omitted
+ */
+function formatYearsMonthsFromNow(date: Date): string {
+  return formatDuration(
+    intervalToDuration({
+      start: date,
+      end: new Date(),
+    }),
+    { format: ["years", "months"], delimiter: ", " },
+  );
+}
+
 function getFirstName(fullName: string): string {
   return fullName.split(" ")[0];
 }
@@ -408,6 +428,7 @@ export {
   formatOfficerLabel,
   formatPercent,
   formatWorkflowsDate,
+  formatYearsMonthsFromNow,
   genderValueToHumanReadable,
   genderValueToLabel,
   generateEmailAddress,

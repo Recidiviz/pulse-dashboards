@@ -21,7 +21,11 @@ import Handlebars from "handlebars";
 import { mapValues, snakeCase } from "lodash";
 import simplur from "simplur";
 
-import { formatWorkflowsDate, toTitleCase } from "../../../utils";
+import {
+  formatWorkflowsDate,
+  formatYearsMonthsFromNow,
+  toTitleCase,
+} from "../../../utils";
 import { AllPossibleKeys } from "../../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../../types";
 import { Opportunity, OpportunityRequirement } from "../types";
@@ -112,6 +116,7 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   daysPast: (date) => differenceInDays(new Date(), dateify(date)),
   daysUntil: (date) => differenceInDays(dateify(date), new Date()),
   monthsUntil: (date) => differenceInMonths(dateify(date), new Date()),
+  yearsMonthsUntil: (date) => formatYearsMonthsFromNow(dateify(date)),
   eq: (a, b) => a === b,
 };
 
