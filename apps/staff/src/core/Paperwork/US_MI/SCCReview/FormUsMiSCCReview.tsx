@@ -32,8 +32,8 @@ import FormHeading from "./FormHeading";
 import FormHistory from "./FormHistory";
 // import FormInterviews from "./FormInterviews";
 // import FormReview from "./FormReview";
-// import FormSCCAction from "./FormSCCAction";
-// import FormTeamEvaluation from "./FormTeamEvaluation";
+import FormSCCAction from "./FormSCCAction";
+import FormTeamEvaluation from "./FormTeamEvaluation";
 
 const FormPage = styled.div`
   font-family: "Arial";
@@ -93,9 +93,9 @@ export const FormUsMiSCCReview = observer(function FormUsMiSCCReview() {
               <FormHeading />
               <FormGeneralInfo />
               <FormHistory />
-              {/* <FormTeamEvaluation />
+              <FormTeamEvaluation />
               <FormSCCAction />
-              <FormReview />
+              {/* <FormReview />
               <FormInterviews />
               <FormFooter /> */}
             </FormPage>
