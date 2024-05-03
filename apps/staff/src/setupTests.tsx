@@ -69,6 +69,7 @@ process.env = {
 // mock analytics configuration
 window.analytics = {
   track: vi.fn(),
+  page: vi.fn(),
 };
 
 // @ts-expect-error

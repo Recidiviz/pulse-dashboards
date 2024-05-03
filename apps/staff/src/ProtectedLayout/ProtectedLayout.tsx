@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import Loading from "../components/Loading";
 import { useUserStore } from "../components/StoreProvider";
@@ -26,9 +27,17 @@ import useAuth from "../hooks/useAuth";
 import LanternLayout from "../lantern/LanternLayout";
 import RedirectHome from "../RedirectHome";
 
+function usePageViews() {
+  const location = useLocation();
+  useEffect(() => {
+    window.analytics.page(location.pathname);
+  }, [location.pathname]);
+}
+
 const ProtectedLayout = observer(function ProtectedLayout() {
   const { userIsLoading } = useUserStore();
   useAuth();
+  usePageViews();
 
   if (userIsLoading) {
     return <Loading />;
