@@ -31,11 +31,14 @@ type InputProps = {
 /**
  * A wrapper for the DOCX input for the MI SCC review form.
  */
-export const FormInput: React.FC<InputProps> = (props: InputProps) => {
+export const FormInput: React.FC<InputProps> = ({
+  maxWidth,
+  ...props
+}: InputProps) => {
   return (
     <DOCXFormInput<UsMiSCCReviewDraftData>
       {...props}
-      style={{ maxWidth: props.maxWidth ?? "90px", minWidth: "50px" }}
+      style={{ maxWidth: maxWidth ?? "90px", minWidth: "50px" }}
     />
   );
 };
@@ -44,11 +47,20 @@ type CheckboxProps = {
   name: Extract<keyof UsMiSCCReviewDraftData, string>;
   invert?: boolean;
   toggleable?: boolean;
+  label?: string;
 };
 
 /**
  * A wrapper for the DOCX checkbox for the MI SCC review form.
  */
 export const FormCheckbox: React.FC<CheckboxProps> = (props: CheckboxProps) => {
-  return <DOCXFormCheckbox<UsMiSCCReviewDraftData> {...props} />;
+  const checkbox = <DOCXFormCheckbox<UsMiSCCReviewDraftData> {...props} />;
+  return props.label ? (
+    <label style={{ marginBottom: 0 }}>
+      {checkbox}
+      {props.label}
+    </label>
+  ) : (
+    checkbox
+  );
 };

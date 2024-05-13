@@ -37,12 +37,6 @@ export interface DOCXFormCheckboxProps<DraftData> {
   toggleable?: boolean;
 }
 
-export type FormCheckboxProps<DraftData> = {
-  name: Extract<keyof DraftData, string>;
-  invert?: boolean;
-  toggleable?: boolean;
-};
-
 const DOCXFormCheckbox = observer(function FormInput<DraftData>({
   name,
   invert,

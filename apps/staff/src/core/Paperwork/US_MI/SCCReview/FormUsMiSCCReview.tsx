@@ -26,12 +26,12 @@ import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
-// import FormFooter from "./FormFooter";
+import FormFooter from "./FormFooter";
 import FormGeneralInfo from "./FormGeneralInfo";
 import FormHeading from "./FormHeading";
 import FormHistory from "./FormHistory";
-// import FormInterviews from "./FormInterviews";
-// import FormReview from "./FormReview";
+import FormInterviews from "./FormInterviews";
+import FormReview from "./FormReview";
 import FormSCCAction from "./FormSCCAction";
 import FormTeamEvaluation from "./FormTeamEvaluation";
 
@@ -56,6 +56,11 @@ const formDownloader = async (resident: Resident): Promise<void> => {
       ),
     };
   });
+
+  // Extra fields to distingish a checked `NO` from no check
+  contents.participatedNo = contents.participated === false;
+  contents.sccStopNo = contents.sccStop === false;
+  contents.wardenApprovalNo = contents.wardenApproval === false;
 
   await downloadSingle(
     `${resident?.displayName} - Form 283.docx`,
@@ -95,9 +100,9 @@ export const FormUsMiSCCReview = observer(function FormUsMiSCCReview() {
               <FormHistory />
               <FormTeamEvaluation />
               <FormSCCAction />
-              {/* <FormReview />
+              <FormReview />
               <FormInterviews />
-              <FormFooter /> */}
+              <FormFooter />
             </FormPage>
           </PrintablePage>
         </PrintablePageMargin>

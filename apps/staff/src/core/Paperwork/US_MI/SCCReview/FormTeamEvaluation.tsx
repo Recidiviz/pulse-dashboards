@@ -79,29 +79,23 @@ const IISPCell = () => {
       <Cell row={3} col={1} colSpan={2}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div>
-            <FormCheckbox name="IISP1" />
+            <FormCheckbox name="IISP1" label="I" />
           </div>
-          I
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP2" />
+            <FormCheckbox name="IISP2" label="II" />
           </div>
-          II
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP3" />
+            <FormCheckbox name="IISP3" label="III" />
           </div>
-          III
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP4" />
+            <FormCheckbox name="IISP4" label="IV" />
           </div>
-          IV
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP5" />
+            <FormCheckbox name="IISP5" label="V" />
           </div>
-          V
           <div style={{ paddingLeft: "8px" }}>
-            <FormCheckbox name="IISP6" />
+            <FormCheckbox name="IISP6" label="VI" />
           </div>
-          VI
         </div>
       </Cell>
     </>
@@ -117,17 +111,14 @@ const GAPCell = ({ suffix, ...props }: GAPCellProps) => {
     <Cell {...props}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <div>
-          <FormCheckbox name={`good${suffix}`} />
+          <FormCheckbox name={`good${suffix}`} label="Good" />
         </div>
-        Good
         <div style={{ paddingLeft: "6px" }}>
-          <FormCheckbox name={`adequate${suffix}`} />
+          <FormCheckbox name={`adequate${suffix}`} label="Adequate" />
         </div>
-        Adequate
         <div style={{ paddingLeft: "6px" }}>
-          <FormCheckbox name={`poor${suffix}`} />
+          <FormCheckbox name={`poor${suffix}`} label="Poor" />
         </div>
-        Poor
       </div>
     </Cell>
   );
@@ -142,21 +133,18 @@ const NRSRCell = ({ suffix, ...props }: NRSRCellProps) => {
     <Cell {...props}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <div>
-          <FormCheckbox name={`never${suffix}`} />
+          <FormCheckbox name={`never${suffix}`} label="Never" />
         </div>
-        Never
         <div style={{ paddingLeft: "6px" }}>
-          <FormCheckbox name={`rarely${suffix}`} />
+          <FormCheckbox name={`rarely${suffix}`} label="Rarely" />
         </div>
-        Rarely
         <div style={{ paddingLeft: "6px" }}>
-          <FormCheckbox name={`sometimes${suffix}`} />
+          <FormCheckbox name={`sometimes${suffix}`} label="Sometimes" />
         </div>
-        Sometimes
+
         <div style={{ paddingLeft: "6px" }}>
-          <FormCheckbox name={`regularly${suffix}`} />
+          <FormCheckbox name={`regularly${suffix}`} label="Regularly" />
         </div>
-        Regularly
       </div>
     </Cell>
   );
@@ -176,13 +164,13 @@ const FormTeamEvaluation: React.FC = () => {
       <Cell row={3} col={3} colSpan={2}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <b>AM </b> (print name):
-          <FormInput name="amOfficer" />
+          <FormInput name="amOfficer" maxWidth="120px" />
         </div>
       </Cell>
       <Cell row={3} col={5} colSpan={2}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <b>PM</b> (print name):
-          <FormInput name="pmOfficer" />
+          <FormInput name="pmOfficer" maxWidth="120px" />
         </div>
       </Cell>
       <Cell row={4} col={1} rowSpan={6}>
@@ -215,7 +203,7 @@ const FormTeamEvaluation: React.FC = () => {
       <Cell row={11} col={1} colSpan={3}>
         <div style={{ display: "flex", alignItems: "center" }}>
           ARUS/PC Name & Title:
-          <FormInput name="pcName" />
+          <FormInput name="pcName" maxWidth="150px" />
         </div>
       </Cell>
       <Cell row={11} col={4} colSpan={2}>

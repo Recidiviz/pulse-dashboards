@@ -156,28 +156,38 @@ const FormGeneralInfo: React.FC = () => {
       <OPTCell>
         <div>OPT:</div>
         <div>
-          <FormCheckbox name="OPT" />
-          YES
+          <FormCheckbox name="OPT" label="YES" />
         </div>
         <div>
-          <FormCheckbox name="OPT" invert />
-          NO
+          <FormCheckbox name="OPT" label="NO" invert />
         </div>
       </OPTCell>
       <SegTypeCell>
-        <div>
-          <FormCheckbox name="adminSeg" />
-          Administrative&emsp;Date Classified To:
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: "8px" }}>
+            <FormCheckbox name="adminSeg" label="Administrative" />
+          </div>
+          Date Classified To:
           <FormInput name="adminSegDate" />
         </div>
-        <div>
-          <FormCheckbox name="punSeg" />
-          Punitive&emsp;Date Placed In:
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: "8px" }}>
+            <FormCheckbox name="punSeg" label="Punitive" />
+          </div>
+          Date Placed In:
           <FormInput name="punSegDate" />
         </div>
-        <div>
-          <FormCheckbox name="tempSeg" />
-          Temporary&emsp;Date Placed In:
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ marginRight: "8px" }}>
+            <FormCheckbox name="tempSeg" label="Temporary" />
+          </div>
+          Date Placed In:
           <FormInput name="tempSegDate" />
         </div>
       </SegTypeCell>

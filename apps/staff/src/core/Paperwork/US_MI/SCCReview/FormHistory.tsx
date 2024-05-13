@@ -83,8 +83,7 @@ type InputProps = CellProps & {
   title: string;
   name: Extract<keyof UsMiSCCReviewDraftData, string>;
   placeholder?: string;
-  width: string;
-  colSpan?: number | string;
+  maxWidth: string;
 };
 
 const InputField = (props: InputProps) => {
@@ -94,7 +93,7 @@ const InputField = (props: InputProps) => {
         {props.title}
       </Cell>
       <Cell {...props} row={props.row + 1}>
-        <FormInput {...props} maxWidth={props.width} />
+        <FormInput {...props} />
       </Cell>
     </>
   );
@@ -110,7 +109,7 @@ const FormHistory: React.FC = () => {
       <Cell row={2} col={1} colSpan={"end"}>
         <div style={{ display: "flex", alignItems: "center" }}>
           Misconduct Reports Since Last Review:
-          <FormInput name="reportsSinceReview" />
+          <FormInput name="reportsSinceReview" maxWidth="360px" />
         </div>
       </Cell>
       <Cell row={3} col={1} rowSpan={2}>
@@ -122,7 +121,7 @@ const FormHistory: React.FC = () => {
         colSpan={4}
         title="Bondable Misconducts (Last 6 Months):"
         name="bondableOffensesWithin6Months"
-        width="160px"
+        maxWidth="160px"
       />
       <InputField
         row={3}
@@ -130,7 +129,7 @@ const FormHistory: React.FC = () => {
         colSpan={"end"}
         title="Non-Bondable Misconducts (Past Year):"
         name="nonbondableOffensesWithin1Year"
-        width="160px"
+        maxWidth="160px"
       />
       <Cell row={5} col={1} rowSpan={2} style={{ lineHeight: "-1em" }}>
         Previously Classified to Segregation (Last 3 Years):
@@ -171,37 +170,31 @@ const FormHistory: React.FC = () => {
       </Cell>
       <Cell row={7} col={2} rowSpan={3} colSpan={"end"}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <FormInput name="segNature" />
+          <FormInput name="segNature" maxWidth="450px" />
         </div>
       </Cell>
       <STGCell>
-        <div>STG:&emsp;</div>
-        <div>
-          <FormCheckbox name="STG1" />
-          I&emsp;
+        <div style={{ marginRight: "8px" }}>STG:</div>
+        <div style={{ marginRight: "8px" }}>
+          <FormCheckbox name="STG1" label="I" />
         </div>
         <div>
-          <FormCheckbox name="STG2" />
-          II
+          <FormCheckbox name="STG2" label="II" />
         </div>
       </STGCell>
       <ApprovalCell>
-        <div>Approval Required for Release?&emsp;</div>
-        <div>
-          <FormCheckbox name="DD" />
-          DD&emsp;
+        <div style={{ marginRight: "8px" }}>Approval Required for Release?</div>
+        <div style={{ marginRight: "8px" }}>
+          <FormCheckbox name="DD" label="DD" />
+        </div>
+        <div style={{ marginRight: "8px" }}>
+          <FormCheckbox name="CMO" label="CMO" />
+        </div>
+        <div style={{ marginRight: "8px" }}>
+          <FormCheckbox name="ADD" label="ADD" />
         </div>
         <div>
-          <FormCheckbox name="CMO" />
-          CMO&emsp;
-        </div>
-        <div>
-          <FormCheckbox name="ADD" />
-          ADD&emsp;
-        </div>
-        <div>
-          <FormCheckbox name="NA" />
-          N/A
+          <FormCheckbox name="NA" label="N/A" />
         </div>
       </ApprovalCell>
       <Cell row={11} col={1} colSpan={4}>

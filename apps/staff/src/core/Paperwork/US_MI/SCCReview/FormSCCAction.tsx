@@ -82,12 +82,10 @@ const FormSCCAction: React.FC = () => {
           >
             Prisoner Participated in Interview:
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="participated" />
-              Yes
+              <FormCheckbox name="participated" label="Yes" toggleable />
             </div>
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="participated" invert />
-              No
+              <FormCheckbox name="participated" label="No" invert toggleable />
             </div>
           </div>
           <div
@@ -98,12 +96,11 @@ const FormSCCAction: React.FC = () => {
           >
             SCC Stop at Cell if Prisoner Refused?
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="sccStop" />
+              <FormCheckbox name="sccStop" toggleable />
               Yes
             </div>
             <div style={{ paddingLeft: "10px" }}>
-              <FormCheckbox name="sccStop" invert />
-              No
+              <FormCheckbox name="sccStop" label="No" invert toggleable />
             </div>
           </div>
         </div>
@@ -119,21 +116,18 @@ const FormSCCAction: React.FC = () => {
       </Cell>
       <Cell row={5} col={2}>
         <div>
-          <FormCheckbox name="misconductFree" />
-          Remain Misconduct Free
+          <FormCheckbox name="misconductFree" label="Remain Misconduct Free" />
         </div>
       </Cell>
       <Cell row={5} col={3}>
         <div>
-          <FormCheckbox name="IISP" />
-          Participate/Advance in IISP
+          <FormCheckbox name="IISP" label="Participate/Advance in IISP" />
         </div>
       </Cell>
       <Cell row={5} col={4}>
         <div>
-          <FormCheckbox name="other" />
-          Other:
-          <FormInput name="otherText" maxWidth="90px" />
+          <FormCheckbox name="other" label="Other:" />
+          <FormInput name="otherText" />
         </div>
       </Cell>
 
@@ -144,34 +138,33 @@ const FormSCCAction: React.FC = () => {
       <Cell row={6} col={3} colSpan={"end"}>
         <div>
           Evaluation:
-          <FormInput name="potential" maxWidth="90px" />
+          <FormInput name="potential" />
         </div>
       </Cell>
       <Cell row={7} col={1} colSpan={"end"}>
         <div style={{ display: "flex", justifyContent: "space-around" }}>
           Recommendation:
           <div>
-            <FormCheckbox name="continue" />
-            Continue Segregation
+            <FormCheckbox name="continue" label="Continue Segregation" />
           </div>
           <div>
-            <FormCheckbox name="reclassify" />
-            Reclassify to General Population
+            <FormCheckbox
+              name="reclassify"
+              label="Reclassify to General Population"
+            />
           </div>
           <div>
-            <FormCheckbox name="transfer" />
-            Transfer
+            <FormCheckbox name="transfer" label="Transfer" />
           </div>
           <div>
-            <FormCheckbox name="protection" />
-            Protection
+            <FormCheckbox name="protection" label="Protection" />
           </div>
         </div>
       </Cell>
       <Cell row={8} col={1} colSpan={"end"}>
         <div>
           Reason for Continued Segregation:
-          <FormInput name="reason" maxWidth="450px" />
+          <FormInput name="reason" maxWidth="400px" />
         </div>
       </Cell>
       <Cell row={9} col={1} colSpan={3}>
@@ -184,19 +177,19 @@ const FormSCCAction: React.FC = () => {
       <Cell row={10} col={1} colSpan={2}>
         <div>
           Staff Name & Title:
-          <FormInput name="staffName1" maxWidth="90px" />
+          <FormInput name="staffName1" maxWidth="150px" />
         </div>
       </Cell>
       <Cell row={11} col={1} colSpan={2}>
         <div>
           Staff Name & Title:
-          <FormInput name="staffName2" maxWidth="90px" />
+          <FormInput name="staffName2" maxWidth="150px" />
         </div>
       </Cell>
       <Cell row={12} col={1} colSpan={2}>
         <div>
           QMHP Name & Title:
-          <FormInput name="QMHP" maxWidth="90px" />
+          <FormInput name="QMHP" maxWidth="150px" />
         </div>
       </Cell>
       <Cell row={10} col={3}>
