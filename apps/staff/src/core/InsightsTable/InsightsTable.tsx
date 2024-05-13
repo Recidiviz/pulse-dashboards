@@ -142,6 +142,10 @@ const InsightsTable = <T extends object>({
     useFlexLayout,
   );
 
+  useEffect(() => {
+    toggleHideColumn(hiddenColumnId, isColumnHidden || isMobile);
+  }, [hiddenColumnId, isColumnHidden, isMobile, toggleHideColumn]);
+
   const handleHideColumnWidth = useCallback(
     (ref: WindowScroller | null, width: number) => {
       if (ref) {
@@ -155,7 +159,6 @@ const InsightsTable = <T extends object>({
     ({ index, style }) => {
       const row = rows[index];
       prepareRow(row);
-      toggleHideColumn(hiddenColumnId, isColumnHidden || isMobile);
 
       const rowViz = (
         <TR
@@ -200,10 +203,6 @@ const InsightsTable = <T extends object>({
       transformToMobile,
       location.pathname,
       intercomTargetOnFirstRow,
-      isColumnHidden,
-      isMobile,
-      toggleHideColumn,
-      hiddenColumnId,
     ],
   );
 
