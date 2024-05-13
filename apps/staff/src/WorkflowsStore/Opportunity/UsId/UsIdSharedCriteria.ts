@@ -35,21 +35,9 @@ export const eligibleCriteriaLsuED = z.object({
   noFelonyWithin24Months: z
     .null()
     .transform((output) => (output === null ? true : output)),
-  // optional because it could be in the ineligible criteria; it shouldn't just be randomly missing
-  usIdIncomeVerifiedWithin3Months: z
-    .object({
-      incomeVerifiedDate: dateStringSchema,
-    })
-    .optional(),
 });
 
-export const ineligibleCriteriaLsuED = z
-  .object({
-    // this will only be here if the verification is missing, which is why it can only be null;
-    // however, it's easier to reason about downstream if it's a truthy value
-    usIdIncomeVerifiedWithin3Months: z.null().transform(() => true),
-  })
-  .partial();
+export const ineligibleCriteriaLsuED = z.object({}).partial();
 
 export type LSUEarnedDischargeEligibleCriteria = z.infer<
   typeof eligibleCriteriaLsuED

@@ -47,11 +47,6 @@ export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
     tooltip:
       "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
   },
-  usIdIncomeVerifiedWithin3Months: {
-    text: "Verified compliant employment",
-    tooltip:
-      "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
-  },
 };
 
 export const LSU_CRITERIA: Record<
@@ -72,6 +67,11 @@ export const LSU_CRITERIA: Record<
   onSupervisionAtLeastOneYear: {
     text: "On supervision at least 1 year",
     tooltip: "Has been on supervision for at least 1 year",
+  },
+  usIdIncomeVerifiedWithin3Months: {
+    text: "Verified compliant employment",
+    tooltip:
+      "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
   },
 };
 
@@ -95,11 +95,7 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   eligibleCriteria: LSUEarnedDischargeEligibleCriteria,
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
-  const {
-    negativeUaWithin90Days,
-    noFelonyWithin24Months,
-    usIdIncomeVerifiedWithin3Months,
-  } = eligibleCriteria;
+  const { negativeUaWithin90Days, noFelonyWithin24Months } = eligibleCriteria;
 
   if (!some(negativeUaWithin90Days?.latestUaResults)) {
     // TODO(#2468): Reassess how to indicate no UA required
@@ -115,10 +111,6 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
 
   if (noFelonyWithin24Months) {
     requirements.push(LSU_CRITERIA.noFelonyWithin24Months);
-  }
-
-  if (usIdIncomeVerifiedWithin3Months?.incomeVerifiedDate) {
-    requirements.push(LSU_CRITERIA.usIdIncomeVerifiedWithin3Months);
   }
 
   return requirements;
@@ -201,6 +193,10 @@ export class LSUOpportunity extends OpportunityBase<
     const { eligibleCriteria } = this.record;
     const requirements =
       LSUEarnedDischargeCommonRequirementsMet(eligibleCriteria);
+
+    if (eligibleCriteria.usIdIncomeVerifiedWithin3Months?.incomeVerifiedDate) {
+      requirements.push(LSU_CRITERIA.usIdIncomeVerifiedWithin3Months);
+    }
 
     if (!eligibleCriteria.usIdNoActiveNco?.activeNco) {
       requirements.push(LSU_CRITERIA.usIdNoActiveNco);

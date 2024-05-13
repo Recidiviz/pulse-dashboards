@@ -23,7 +23,6 @@ import { Client } from "../../../Client";
 import { DocumentSubscription } from "../../../subscriptions";
 import {
   earnedDischargeAlmostEligibleSupervisionLength,
-  earnedDischargeAlmostEligibleVerifiedIncome,
   EarnedDischargeEligibleClientRecord,
   EarnedDischargeReferralRecordFixture,
 } from "../__fixtures__";
@@ -86,42 +85,6 @@ describe("fully eligible", () => {
 
   test("requirements met", () => {
     expect(opp.requirementsMet).toMatchSnapshot();
-  });
-});
-
-describe("almost eligible income verified within 3 months", () => {
-  beforeEach(() => {
-    createTestUnit(EarnedDischargeEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = earnedDischargeAlmostEligibleVerifiedIncome;
-
-    updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
-  });
-
-  test("requirements met", () => {
-    expect(opp.requirementsMet).toMatchSnapshot();
-    expect(opp.requirementsAlmostMet).toMatchSnapshot();
-  });
-
-  test("requirements almost met", () => {
-    expect(opp.almostEligible).toBeTrue();
-    expect(opp.requirementsAlmostMet).toEqual([
-      {
-        text: "Needs employment verification",
-        tooltip:
-          "Policy requirement: Verified employment status, full-time student, or adequate lawful " +
-          "income from non-employment sources have been confirmed within past 3 months.",
-      },
-    ]);
-  });
-
-  test("almostEligibleStatusMessage", () => {
-    expect(opp.almostEligibleStatusMessage).toEqual(
-      "Needs employment verification",
-    );
   });
 });
 

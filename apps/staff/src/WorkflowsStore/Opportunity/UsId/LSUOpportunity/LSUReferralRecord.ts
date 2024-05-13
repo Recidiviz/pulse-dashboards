@@ -70,6 +70,11 @@ export const usIdLsuSchema = opportunitySchemaBase
         })
         .partial()
         .optional(),
+      usIdIncomeVerifiedWithin3Months: z
+        .object({
+          incomeVerifiedDate: dateStringSchema,
+        })
+        .optional(),
     }),
     ineligibleCriteria: ineligibleCriteriaLsuED
       .extend({
@@ -78,6 +83,9 @@ export const usIdLsuSchema = opportunitySchemaBase
             eligibleDate: dateStringSchema,
           })
           .partial(),
+        // this will only be here if the verification is missing, which is why it can only be null;
+        // however, it's easier to reason about downstream if it's a truthy value
+        usIdIncomeVerifiedWithin3Months: z.null().transform(() => true),
       })
       .partial(),
     eligibleStartDate: dateStringSchema,

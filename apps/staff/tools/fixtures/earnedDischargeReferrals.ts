@@ -29,9 +29,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
         eligibleCriteria: {
           negativeUaWithin90Days: null,
           noFelonyWithin24Months: null,
-          usIdIncomeVerifiedWithin3Months: {
-            incomeVerifiedDate: "2022-10-12",
-          },
           usIdLsirLevelLowModerateForXDays: {
             eligibleDate: "2022-10-10",
             riskLevel: "MODERATE",
@@ -87,9 +84,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
         eligibleCriteria: {
           negativeUaWithin90Days: null,
           noFelonyWithin24Months: null,
-          usIdIncomeVerifiedWithin3Months: {
-            incomeVerifiedDate: "2022-08-12",
-          },
           usIdLsirLevelLowModerateForXDays: {
             eligibleDate: "2022-08-10",
             riskLevel: "MODERATE",
@@ -154,9 +148,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
           onProbationAtLeastOneYear: {
             eligibleDate: "2022-05-11",
           },
-          usIdIncomeVerifiedWithin3Months: {
-            incomeVerifiedDate: "2022-08-12",
-          },
           usIdLsirLevelLowModerateForXDays: {
             eligibleDate: "2022-08-10",
             riskLevel: "MODERATE",
@@ -204,9 +195,7 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
           latestAssessmentScore: "19",
           latestAssessmentDate: "2022-10-24",
         },
-        ineligibleCriteria: {
-          usIdIncomeVerifiedWithin3Months: null,
-        },
+        ineligibleCriteria: {},
         eligibleCriteria: {
           negativeUaWithin90Days: null,
           noFelonyWithin24Months: null,
@@ -272,9 +261,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
         eligibleCriteria: {
           negativeUaWithin90Days: null,
           noFelonyWithin24Months: null,
-          usIdIncomeVerifiedWithin3Months: {
-            incomeVerifiedDate: "2022-08-12",
-          },
           usIdLsirLevelLowModerateForXDays: {
             eligibleDate: "2022-08-10",
             riskLevel: "MODERATE",

@@ -68,12 +68,6 @@ export const INELIGIBLE_CRITERIA_COPY: Record<
       "for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at " +
       "least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
   },
-  usIdIncomeVerifiedWithin3Months: {
-    text: "Needs employment verification",
-    tooltip:
-      "Policy requirement: Verified employment status, full-time student, or adequate lawful " +
-      "income from non-employment sources have been confirmed within past 3 months.",
-  },
 };
 
 export class EarnedDischargeOpportunity extends OpportunityBase<
@@ -109,12 +103,9 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { ineligibleCriteria } = this.record;
     const requirements: OpportunityRequirement[] = [];
-    const { usIdIncomeVerifiedWithin3Months, pastEarnedDischargeEligibleDate } =
-      cloneDeep(INELIGIBLE_CRITERIA_COPY);
-
-    if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
-      requirements.push(usIdIncomeVerifiedWithin3Months);
-    }
+    const { pastEarnedDischargeEligibleDate } = cloneDeep(
+      INELIGIBLE_CRITERIA_COPY,
+    );
 
     if (
       ineligibleCriteria.pastEarnedDischargeEligibleDate &&
@@ -136,11 +127,8 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
 
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.almostEligible) return;
-    const { usIdIncomeVerifiedWithin3Months, pastEarnedDischargeEligibleDate } =
+    const { pastEarnedDischargeEligibleDate } =
       this.record?.ineligibleCriteria ?? {};
-    if (usIdIncomeVerifiedWithin3Months) {
-      return INELIGIBLE_CRITERIA_COPY.usIdIncomeVerifiedWithin3Months.text;
-    }
     if (
       pastEarnedDischargeEligibleDate &&
       pastEarnedDischargeEligibleDate.eligibleDate

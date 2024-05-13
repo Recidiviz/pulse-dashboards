@@ -33,9 +33,6 @@ test("transform dual/parole record", () => {
         latestUaResults: [false],
       },
       noFelonyWithin24Months: null,
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: "2022-06-03",
-      },
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
@@ -75,9 +72,6 @@ test("transform probation record", () => {
         latestUaResults: [false],
       },
       noFelonyWithin24Months: null,
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: "2022-06-03",
-      },
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
@@ -114,9 +108,6 @@ test("optional criteria have sane fallbacks", () => {
       },
       negativeUaWithin90Days: null,
       noFelonyWithin24Months: null,
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: "2022-06-03",
-      },
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
@@ -149,9 +140,6 @@ test("transforms records with eligible and ineligible criteria", () => {
       },
       negativeUaWithin90Days: null,
       noFelonyWithin24Months: null,
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: "2022-06-03",
-      },
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },
@@ -197,9 +185,6 @@ test("formInformation parses", () => {
       },
       negativeUaWithin90Days: null,
       noFelonyWithin24Months: null,
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: "2022-06-03",
-      },
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
       },

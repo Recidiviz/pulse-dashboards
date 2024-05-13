@@ -181,9 +181,6 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
         latestUaResults: [false],
       },
       noFelonyWithin24Months: true,
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: parseISO("2022-06-03"),
-      },
       pastEarnedDischargeEligibleDate: {
         eligibleDate: parseISO("2022-03-17"),
         sentenceType: "DUAL",
@@ -229,61 +226,11 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
         latestUaResults: [false],
       },
       noFelonyWithin24Months: true,
-      usIdIncomeVerifiedWithin3Months: {
-        incomeVerifiedDate: parseISO("2022-06-03"),
-      },
     },
     ineligibleCriteria: {
       pastEarnedDischargeEligibleDate: {
         eligibleDate: parseISO("2023-12-10"),
       },
-    },
-    eligibleStartDate: new Date(2022, 10, 5),
-    caseNotes: {
-      "Special Conditions": [
-        {
-          noteTitle: "MUST JOURNAL",
-          noteBody: "Client must journal at least once a week",
-          eventDate: parseISO("2022-08-22"),
-        },
-      ],
-      Treatment: [
-        {
-          noteTitle: "STARTED",
-          noteBody: "Treatment started",
-          eventDate: parseISO("2022-06-17"),
-        },
-        {
-          noteTitle: "COMPLETED",
-          noteBody: "Treatment successfully completed",
-          eventDate: parseISO("2022-09-22"),
-        },
-      ],
-    },
-  };
-
-export const earnedDischargeAlmostEligibleVerifiedIncome: EarnedDischargeReferralRecord =
-  {
-    stateCode: "US_ID",
-    externalId: "001",
-    formInformation: {},
-    eligibleCriteria: {
-      usIdLsirLevelLowModerateForXDays: {
-        riskLevel: "MODERATE",
-        eligibleDate: parseISO("2022-01-03"),
-      },
-      negativeUaWithin90Days: {
-        latestUaDates: [parseISO("2022-05-28")],
-        latestUaResults: [false],
-      },
-      noFelonyWithin24Months: true,
-      pastEarnedDischargeEligibleDate: {
-        eligibleDate: parseISO("2022-03-17"),
-        sentenceType: "PAROLE",
-      },
-    },
-    ineligibleCriteria: {
-      usIdIncomeVerifiedWithin3Months: true,
     },
     eligibleStartDate: new Date(2022, 10, 5),
     caseNotes: {

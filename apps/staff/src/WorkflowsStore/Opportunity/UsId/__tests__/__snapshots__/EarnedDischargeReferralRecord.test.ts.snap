@@ -12,9 +12,6 @@ exports[`formInformation parses 1`] = `
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
     },
-    "usIdIncomeVerifiedWithin3Months": {
-      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
-    },
     "usIdLsirLevelLowModerateForXDays": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
       "riskLevel": "MODERATE",
@@ -95,9 +92,6 @@ exports[`optional criteria have sane fallbacks 1`] = `
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
     },
-    "usIdIncomeVerifiedWithin3Months": {
-      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
-    },
     "usIdLsirLevelLowModerateForXDays": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
       "riskLevel": "MODERATE",
@@ -136,9 +130,6 @@ exports[`transform dual/parole record 1`] = `
       "eligibleDate": 2022-05-22T00:00:00.000Z,
       "sentenceType": "DUAL",
     },
-    "usIdIncomeVerifiedWithin3Months": {
-      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
-    },
     "usIdLsirLevelLowModerateForXDays": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
       "riskLevel": "MODERATE",
@@ -176,9 +167,6 @@ exports[`transform probation record 1`] = `
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
     },
-    "usIdIncomeVerifiedWithin3Months": {
-      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
-    },
     "usIdLsirLevelLowModerateForXDays": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
       "riskLevel": "MODERATE",
@@ -203,9 +191,6 @@ exports[`transforms records with eligible and ineligible criteria 1`] = `
     "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
-    },
-    "usIdIncomeVerifiedWithin3Months": {
-      "incomeVerifiedDate": 2022-06-03T00:00:00.000Z,
     },
     "usIdLsirLevelLowModerateForXDays": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
