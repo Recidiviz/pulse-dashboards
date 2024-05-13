@@ -35,7 +35,7 @@
       "outputs": ["{workspaceRoot}/coverage/libs/firestore-config"],
       "cache": true,
       "options": {
-        "command": "firebase emulators:exec --only firestore 'yarn nx test-in-firestore-emulator firestore-config'"
+        "command": "firebase emulators:exec --only firestore --project demo-test 'yarn nx test-in-firestore-emulator firestore-config'"
       }
     },
     "update-rules-staging": {

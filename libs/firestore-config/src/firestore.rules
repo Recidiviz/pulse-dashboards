@@ -4,6 +4,14 @@ service cloud.firestore {
     return request.auth.token.stateCode.upper() == "RECIDIVIZ";
   }
 
+  function appIsStaff() {
+    return request.auth.token.app == "staff"
+  }
+
+  function appIsJii() {
+    return request.auth.token.app == "jii"
+  }
+
   function stateCodeMatchesTarget() {
     // check if resource exists before checking the state code
     // if the resource does not yet exist, allow the operation
@@ -11,10 +19,14 @@ service cloud.firestore {
   }
 
   function recidivizAllowedStatesIncludesTarget() {
-    // check if resource exists before checking the state code
-    // if the resource does not yet exist, allow the operation
-    return resource == null || 
-      isRecidiviz() && (resource.data.stateCode.upper() in request.auth.token.recidivizAllowedStates);
+    return isRecidiviz() && 
+      (
+        // check if resource exists before checking the state code
+        // if the resource does not yet exist, allow the operation
+        resource == null ||
+        resource.data.stateCode.upper() in request.auth.token.recidivizAllowedStates
+      )
+    
   }
 
   function usernameMatches(id) {
@@ -53,6 +65,33 @@ service cloud.firestore {
     return isRecidiviz() && stateCodeIncludedInRecidivizAllowedStates(clientId);
   }
 
+  function userDocIdRegexFromToken() {
+    return ((request.auth.token.stateCode.lower() + "_" + request.auth.token.externalId))
+  }
+
+  function notAStaffCollection(collectionName) {
+    return !(collectionName.lower().matches(".*staff.*"));
+  }
+
+  function allowStaffGeneralRead() {
+    return appIsStaff() &&
+      (
+        recidivizAllowedStatesIncludesTarget() || 
+        stateCodeMatchesTarget()
+      )
+  }
+
+  function allowJiiGeneralRead(collection, document) {
+    return appIsJii() &&
+      (
+        recidivizAllowedStatesIncludesTarget() ||
+        (
+          notAStaffCollection(collection) && 
+          document == path(userDocIdRegexFromToken())
+        )
+      )
+  }
+
   match /databases/{database}/documents {
 
     match /featureVariants/{record} {
@@ -63,44 +102,54 @@ service cloud.firestore {
       // there are a different set of read rules for Update collections
       // firestore will allow an operation if ANY rules match it,
       // so we specifically filter out update collections here
-      allow read: if notAnUpdateCollection(collection)
-        && (recidivizAllowedStatesIncludesTarget() || stateCodeMatchesTarget());
+      allow read: if notAnUpdateCollection(collection) &&
+        (
+          allowStaffGeneralRead() || 
+          allowJiiGeneralRead(collection, document)
+        )
+        ;
     }
 
     match /userUpdates/{path=**}/{document} {
-      allow read: if usernameMatches(document)
-      allow write: if allowUserUpdates(document);
+      allow read: if appIsStaff() && usernameMatches(document)
+      allow write: if appIsStaff() && allowUserUpdates(document);
     }
 
     match /clientUpdatesV2/{clientId}/{document=**} {
       // documentIDs for the client updates are of the form us_xx_${client_id}
       // check to make sure the user's state code matches the prefix on the record
-      allow read: if recidivizUserHasAccess(clientId) || stateCodeMatchesClientId(clientId);
-      allow write: if allowPersonUpdates(clientId);
+      allow read: if 
+        (
+          appIsStaff() && (recidivizUserHasAccess(clientId) || stateCodeMatchesClientId(clientId))
+        ) ||
+        (
+          appIsJii() && recidivizUserHasAccess(clientId)
+        )
+      allow write: if appIsStaff() && allowPersonUpdates(clientId);
     }
 
     match /DEMO_userUpdates/{path=**}/{document} {
-      allow read: if usernameMatches(document);
-      allow write: if allowUserUpdates(document);
+      allow read: if appIsStaff() && usernameMatches(document);
+      allow write: if appIsStaff() && allowUserUpdates(document);
     }
     
     match /DEMO_clientUpdatesV2/{clientId}/{document=**} {
-      allow read: if isRecidiviz() || stateCodeMatchesClientId(clientId);
-      allow write: if allowPersonUpdates(clientId);
+      allow read: if appIsStaff() && (isRecidiviz() || stateCodeMatchesClientId(clientId));
+      allow write: if appIsStaff() && allowPersonUpdates(clientId);
     }
 
     match /DEMO2_featureVariants/{record} {
-      allow read: if usernameMatches(record);
+      allow read: if appIsStaff() && usernameMatches(record);
     }
 
     match /DEMO2_userUpdates/{path=**}/{document} {
-      allow read: if usernameMatches(document);
-      allow write: if allowUserUpdates(document);
+      allow read: if appIsStaff() && usernameMatches(document);
+      allow write: if appIsStaff() && allowUserUpdates(document);
     }
 
     match /DEMO2_clientUpdatesV2/{clientId}/{document=**} {
-      allow read: if isRecidiviz() || stateCodeMatchesClientId(clientId);
-      allow write: if allowPersonUpdates(clientId);
+      allow read: if appIsStaff() && (isRecidiviz() || stateCodeMatchesClientId(clientId));
+      allow write: if appIsStaff() && allowPersonUpdates(clientId);
     }
   }
 }

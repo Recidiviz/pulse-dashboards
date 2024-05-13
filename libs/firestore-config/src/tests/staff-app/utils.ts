@@ -14,52 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import {
-  initializeTestEnvironment,
-  RulesTestEnvironment,
-} from "@firebase/rules-unit-testing";
-import fs from "fs";
-import path from "path";
-
-/**
- * ETL collections are read-only
- */
-export const ETL_COLLECTION_NAMES = [
-  "staff",
-  "clients",
-  "compliantReportingReferrals",
-];
-/**
- * Update collections are readable and writeable by all users within a state
- */
-export const SHARED_UPDATE_COLLECTION_NAMES = ["clientUpdatesV2"];
-/**
- * User update collections are readable and writable only to the user
- */
-export const PERSONAL_UPDATE_COLLECTION_NAME = "userUpdates";
-
-export function startTestEnv() {
-  return initializeTestEnvironment({
-    projectId: "demo-test",
-    firestore: {
-      rules: fs.readFileSync(
-        `${path.basename(__dirname)}/firestore.rules`,
-        "utf8",
-      ),
-    },
-  });
-}
-
-export function getAnonUser(testEnv: RulesTestEnvironment) {
-  return testEnv.unauthenticatedContext();
-}
+import { RulesTestEnvironment } from "@firebase/rules-unit-testing";
 
 export function getStatelessUser(testEnv: RulesTestEnvironment) {
-  return testEnv.authenticatedContext("user@stateless.com");
+  return testEnv.authenticatedContext("user@stateless.com", { app: "staff" });
 }
 
 export function getTNUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
+    app: "staff",
     stateCode: "US_TN",
     impersonator: false,
     recidivizAllowedStates: [],
@@ -68,6 +31,7 @@ export function getTNUser(testEnv: RulesTestEnvironment) {
 
 export function getNDUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@us_nd.gov", {
+    app: "staff",
     stateCode: "US_ND",
     impersonator: false,
     recidivizAllowedStates: [],
@@ -76,6 +40,7 @@ export function getNDUser(testEnv: RulesTestEnvironment) {
 
 export function getRecidivizUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("admin", {
+    app: "staff",
     stateCode: "RECIDIVIZ",
     impersonator: false,
     recidivizAllowedStates: ["US_TN", "US_ND"],
@@ -84,6 +49,7 @@ export function getRecidivizUser(testEnv: RulesTestEnvironment) {
 
 export function getImpersonatedUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("user@us_tn.gov", {
+    app: "staff",
     stateCode: "US_TN",
     impersonator: true,
     recidivizAllowedStates: [],

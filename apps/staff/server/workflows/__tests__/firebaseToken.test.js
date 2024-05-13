@@ -52,6 +52,7 @@ test("requests Firebase auth token", async () => {
   await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    app: "staff",
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
     recidivizAllowedStates: [],
@@ -84,6 +85,7 @@ test("Firebase token with allowedStates", async () => {
   await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    app: "staff",
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
     recidivizAllowedStates: ["US_XX"],
@@ -117,6 +119,7 @@ test("Firebase token for offline mode allows all states", async () => {
   await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    app: "staff",
     stateCode: stateCode.toUpperCase(),
     impersonator: false,
     recidivizAllowedStates: Object.values(stateCodes),
@@ -150,6 +153,7 @@ test("requests Firebase auth token for impersonated user", async () => {
   await getFirebaseToken(mockReq, mockRes);
 
   expect(createCustomTokenMock).toHaveBeenCalledWith(userId, {
+    app: "staff",
     stateCode: stateCode.toUpperCase(),
     impersonator: true,
     recidivizAllowedStates: [],
