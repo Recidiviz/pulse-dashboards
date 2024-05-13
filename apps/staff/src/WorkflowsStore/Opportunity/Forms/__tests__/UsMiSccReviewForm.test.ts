@@ -48,6 +48,7 @@ function createTestUnit() {
     gender: "female",
   };
   oppRecord = {
+    isOverdue: true,
     stateCode: "US_OZ",
     externalId: "pei1",
     eligibleCriteria: {
@@ -64,7 +65,7 @@ function createTestUnit() {
     },
     ineligibleCriteria: {},
     formInformation: {
-      adSegStaysAndReasonsWithin3Years: [
+      adSegStaysAndReasonsWithin3Yrs: [
         "(2023-12-01,040,011,),",
         "(2022-12-01,040,011,)",
         "(2023-06-01,040,)",
@@ -87,6 +88,20 @@ function createTestUnit() {
     },
     metadata: {
       daysInCollapsedSolitarySession: 35,
+      OPT: false,
+      lessThan3MonthsFromErd: false,
+      recentBondableOffenses: "(423, 2023-12-27)",
+      recentNonbondableOffenses: "(008, 2023-05-31)",
+      adSegStaysAndReasonsWithin3Yrs: [
+        "(2021-11-03,014,)",
+        "(2022-03-02,014,)",
+        "(2021-08-02,030,)",
+        "(2023-10-12,003,014,029,)",
+        "(2022-05-16,014,)",
+        "(2022-04-30,012,)",
+      ],
+      neededProgramming: "101",
+      completedProgramming: "105",
     },
   };
   const person = new Resident(personRecord, rootStore);

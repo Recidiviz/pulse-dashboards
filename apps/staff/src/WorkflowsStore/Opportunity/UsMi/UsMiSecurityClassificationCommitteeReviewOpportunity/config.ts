@@ -46,7 +46,15 @@ export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<
       Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
-    sidebarComponents: ["Incarceration"],
+    tabOrder: {
+      "ELIGIBILITY STATUS": [
+        "Upcoming",
+        "Due now",
+        "Overdue",
+        "Marked Ineligible",
+      ],
+    },
+    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing"],
     eligibleCriteriaCopy: {
       usMiPastSecurityClassificationCommitteeReviewDate: {
         text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestSccReviewDate}} last SCC review recorded on {{date latestSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDate}}`,

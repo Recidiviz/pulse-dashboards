@@ -151,7 +151,10 @@ export type OpportunityTab =
   | "Upcoming Hearings"
   | "Due this week"
   | `Overdue as of ${string}`
-  | "Coming up";
+  | "Coming up"
+  | "Overdue"
+  | "Upcoming"
+  | "Due now";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

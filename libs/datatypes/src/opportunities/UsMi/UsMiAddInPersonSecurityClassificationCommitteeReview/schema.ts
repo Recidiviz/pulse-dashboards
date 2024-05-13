@@ -47,6 +47,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewSchema =
     metadata: z.object({
       daysInCollapsedSolitarySession: z.coerce.number(),
     }),
+    isOverdue: z.boolean(),
   });
 
 export type usMiAddInPersonSecurityClassificationCommitteeReviewRecord =

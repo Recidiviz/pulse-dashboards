@@ -28,6 +28,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
     {
       stateCode: "US_MI",
+      isOverdue: true,
       externalId: "RES019",
       eligibleCriteria: {
         usMiPastWardenInPersonReviewForSccDate: {
@@ -54,6 +55,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
     {
       stateCode: "US_MI",
+      isOverdue: false,
       externalId: "RES020",
       eligibleCriteria: {
         usMiPastWardenInPersonReviewForSccDate: {
@@ -80,6 +82,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
     {
       stateCode: "US_MI",
+      isOverdue: false,
       externalId: "RES021",
       eligibleCriteria: {
         usMiInSolitaryConfinementAtLeastSixMonths: {

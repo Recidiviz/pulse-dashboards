@@ -20,6 +20,7 @@ exports[`schema for almostEligible 1`] = `
       "solitaryStartDate": 2021-11-16T00:00:00.000Z,
     },
   },
+  "isOverdue": false,
   "metadata": {
     "daysInCollapsedSolitarySession": 30,
   },
@@ -46,6 +47,7 @@ exports[`schema for fullyEligible1 1`] = `
     "segregationType": "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isOverdue": true,
   "metadata": {
     "daysInCollapsedSolitarySession": 25,
   },
@@ -72,6 +74,7 @@ exports[`schema for fullyEligible2 1`] = `
     "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isOverdue": false,
   "metadata": {
     "daysInCollapsedSolitarySession": 50,
   },

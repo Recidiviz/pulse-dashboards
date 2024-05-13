@@ -48,6 +48,7 @@ import {
   UsTnCommonlyUsedOverrideCodes,
 } from "./ResidentDetailSidebarComponents";
 import { UsIdPastTwoYearsAlert } from "./ResidentDetailSidebarComponents/US_ID/UsIdPastTwoYearsAlert";
+import { UsMiRestrictiveHousing } from "./ResidentDetailSidebarComponents/US_MI/UsMiRestrictiveHousingDetails";
 import { Divider } from "./styles";
 
 type OpportunitySidebarProfileProps = {
@@ -77,6 +78,7 @@ export const OpportunityDetailSidebarComponents = {
   UsMiRecommendedSupervisionLevel,
   UsMoRestrictiveHousing,
   UsTnCommonlyUsedOverrideCodes,
+  UsMiRestrictiveHousing,
 };
 
 export const ResidentDetailSidebarComponents = {

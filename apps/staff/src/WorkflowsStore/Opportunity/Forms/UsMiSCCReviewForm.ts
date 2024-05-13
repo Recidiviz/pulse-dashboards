@@ -155,14 +155,14 @@ export class UsMiSCCReviewForm extends FormBase<
       segregationClassificationDate,
       bondableOffensesWithin6Months,
       nonbondableOffensesWithin1Year,
-      adSegStaysAndReasonsWithin3Years,
+      adSegStaysAndReasonsWithin3Yrs,
       prisonerName,
     } = this.opportunity.record.formInformation;
 
     // Parse the string array representing prior RH stays - each entry has the format:
     // "(startDate,reason1,reason2,etc,)"
-    adSegStaysAndReasonsWithin3Years?.sort().reverse();
-    const adSegStays = adSegStaysAndReasonsWithin3Years?.map((segStr) => {
+    adSegStaysAndReasonsWithin3Yrs?.sort().reverse();
+    const adSegStays = adSegStaysAndReasonsWithin3Yrs?.map((segStr) => {
       segStr = segStr.replace("(", "").replace(")", "");
       const splitVals = segStr.split(/,(.*)/, 2);
       return { date: splitVals[0], reasons: splitVals[1] };

@@ -23,6 +23,7 @@ import {
 import { Resident } from "../../../Resident";
 import { UsMiSCCReviewForm } from "../../Forms/UsMiSCCReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityTab, OpportunityTabGroup } from "../../types";
 
 export class usMiSecurityClassificationCommitteeReviewOpportunity extends OpportunityBase<
   Resident,
@@ -45,5 +46,13 @@ export class usMiSecurityClassificationCommitteeReviewOpportunity extends Opport
 
   get almostEligible(): boolean {
     return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
+
+  tabTitle(category?: OpportunityTabGroup): OpportunityTab {
+    if (!this.record) return "Other";
+    if (this.denied) return this.deniedTabTitle;
+    if (this.record.isOverdue) return "Overdue";
+    if (this.almostEligible) return "Upcoming";
+    return "Due now";
   }
 }

@@ -11,7 +11,7 @@ exports[`schema for almostEligible 1`] = `
   "formInformation": {
     "OPT": true,
     "STG": "2",
-    "adSegStaysAndReasonsWithin3Years": [
+    "adSegStaysAndReasonsWithin3Yrs": [
       "(2022-11-07,003,)",
     ],
     "bondableOffensesWithin6Months": "(020, 2024-02-26)",
@@ -34,8 +34,17 @@ exports[`schema for almostEligible 1`] = `
       "numberOfReviews": null,
     },
   },
+  "isOverdue": false,
   "metadata": {
+    "OPT": false,
+    "adSegStaysAndReasonsWithin3Yrs": [
+      "(2022-11-07,003,)",
+    ],
     "daysInCollapsedSolitarySession": 30,
+    "lessThan3MonthsFromErd": false,
+    "neededProgramming": "105",
+    "recentBondableOffenses": "(020, 2024-02-26)",
+    "recentNonbondableOffenses": "(008, 2023-05-31)",
   },
   "stateCode": "US_MI",
 }
@@ -59,7 +68,7 @@ exports[`schema for fullyEligible1 1`] = `
   "formInformation": {
     "OPT": true,
     "STG": "1",
-    "adSegStaysAndReasonsWithin3Years": [
+    "adSegStaysAndReasonsWithin3Yrs": [
       "(2021-11-03,014,)",
       "(2022-03-02,014,)",
       "(2021-08-02,030,)",
@@ -79,8 +88,22 @@ exports[`schema for fullyEligible1 1`] = `
     "segregationType": "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isOverdue": true,
   "metadata": {
+    "OPT": false,
+    "adSegStaysAndReasonsWithin3Yrs": [
+      "(2021-11-03,014,)",
+      "(2022-03-02,014,)",
+      "(2021-08-02,030,)",
+      "(2023-10-12,003,014,029,)",
+      "(2022-05-16,014,)",
+      "(2022-04-30,012,)",
+    ],
+    "completedProgramming": "105",
     "daysInCollapsedSolitarySession": 25,
+    "neededProgramming": "101",
+    "recentBondableOffenses": "(423, 2023-12-27)",
+    "recentNonbondableOffenses": "(008, 2023-05-31)",
   },
   "stateCode": "US_MI",
 }
@@ -104,7 +127,7 @@ exports[`schema for fullyEligible2 1`] = `
   "formInformation": {
     "OPT": false,
     "STG": "2",
-    "adSegStaysAndReasonsWithin3Years": [],
+    "adSegStaysAndReasonsWithin3Yrs": [],
     "bondableOffensesWithin6Months": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
     "facility": "FACILITY2",
     "lock": "LOCKID2",
@@ -117,8 +140,15 @@ exports[`schema for fullyEligible2 1`] = `
     "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isOverdue": true,
   "metadata": {
+    "OPT": true,
+    "adSegStaysAndReasonsWithin3Yrs": [],
     "daysInCollapsedSolitarySession": 50,
+    "lessThan3MonthsFromErd": true,
+    "neededProgramming": "101",
+    "recentBondableOffenses": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
+    "recentNonbondableOffenses": "(008, 2023-05-31)",
   },
   "stateCode": "US_MI",
 }

@@ -48,12 +48,14 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
       metadata: {
         daysInCollapsedSolitarySession: 25,
       },
+      isOverdue: true,
     },
   ),
   fullyEligible2: makeRecordFixture(
     usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
     {
       stateCode: "US_MI",
+      isOverdue: false,
       externalId: "RES020",
       eligibleCriteria: {
         usMiPastAddInPersonReviewForSccDate: {
@@ -80,6 +82,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
     usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
     {
       stateCode: "US_MI",
+      isOverdue: false,
       externalId: "RES021",
       eligibleCriteria: {
         usMiInSolitaryConfinementAtLeastOneYear: {

@@ -45,6 +45,14 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
       Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
+    tabOrder: {
+      "ELIGIBILITY STATUS": [
+        "Upcoming",
+        "Due now",
+        "Overdue",
+        "Marked Ineligible",
+      ],
+    },
     sidebarComponents: ["Incarceration"],
     eligibleCriteriaCopy: {
       usMiPastAddInPersonReviewForSccDate: {

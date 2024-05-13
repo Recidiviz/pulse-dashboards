@@ -54,11 +54,19 @@ export const usMiSecurityClassificationCommitteeReviewSchema =
       STG: z.string(),
       bondableOffensesWithin6Months: z.string().nullish(),
       nonbondableOffensesWithin1Year: z.string().optional(),
-      adSegStaysAndReasonsWithin3Years: z.array(z.string()).optional(),
+      adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
     }),
     metadata: z.object({
       daysInCollapsedSolitarySession: z.coerce.number(),
+      recentBondableOffenses: z.string().nullish(),
+      recentNonbondableOffenses: z.string().optional(),
+      adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
+      OPT: z.boolean(),
+      lessThan3MonthsFromErd: z.boolean().optional(),
+      neededProgramming: z.string().optional(),
+      completedProgramming: z.string().optional(),
     }),
+    isOverdue: z.boolean(),
   });
 
 export type usMiSecurityClassificationCommitteeReviewRecord = ParsedRecord<
