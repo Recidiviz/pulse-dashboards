@@ -283,6 +283,27 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     admissionDate: relativeFixtureDate({ months: -46, days: 1 }),
     releaseDate: relativeFixtureDate({ months: 26 }),
   },
+  {
+    allEligibleOpportunities: [
+      "usMiWardenInPersonSecurityClassificationCommitteeReview",
+      "usMiAddInPersonSecurityClassificationCommitteeReview",
+    ],
+    officerId: "OFFICER8",
+    stateCode: "US_MI",
+    personExternalId: "RES022",
+    displayId: "dRES022",
+    personName: {
+      givenNames: "Fourth",
+      surname: "Resident",
+    },
+    gender: "MALE",
+    pseudonymizedId: "anonres022",
+    facilityId: "FACILITY2",
+    unitId: "UNIT B",
+    custodyLevel: "MINIMUM",
+    admissionDate: relativeFixtureDate({ months: -20, days: 1 }),
+    releaseDate: relativeFixtureDate({ months: 3 }),
+  },
 
   {
     allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],

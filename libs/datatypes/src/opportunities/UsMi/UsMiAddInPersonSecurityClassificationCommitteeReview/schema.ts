@@ -30,16 +30,15 @@ const possiblyIneligibleCriteria = z
       numberOfExpectedReviews: z.number().nullable(),
       numberOfReviews: z.number().nullable(),
     }),
+    usMiInSolitaryConfinementAtLeastOneYear: z.object({
+      eligibleDate: dateStringSchema,
+    }),
   })
   .partial();
 
 export const usMiAddInPersonSecurityClassificationCommitteeReviewSchema =
   opportunitySchemaBase.extend({
-    eligibleCriteria: possiblyIneligibleCriteria.extend({
-      usMiInSolitaryConfinementAtLeastOneYear: z.object({
-        eligibleDate: dateStringSchema,
-      }),
-    }),
+    eligibleCriteria: possiblyIneligibleCriteria,
     ineligibleCriteria: possiblyIneligibleCriteria,
     formInformation: z.object({
       segregationType: z.string(),

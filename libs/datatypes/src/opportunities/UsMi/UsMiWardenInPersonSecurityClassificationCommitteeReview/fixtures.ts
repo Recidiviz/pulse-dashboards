@@ -78,7 +78,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       },
     },
   ),
-  almostEligible: makeRecordFixture(
+  almostEligible1: makeRecordFixture(
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
     {
       stateCode: "US_MI",
@@ -99,6 +99,34 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
           nextSccDate: relativeFixtureDate({ days: 2 }),
           numberOfExpectedReviews: null,
           numberOfReviews: null,
+        },
+      },
+      metadata: {
+        daysInCollapsedSolitarySession: 30,
+      },
+    },
+  ),
+  almostEligible2: makeRecordFixture(
+    usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
+    {
+      stateCode: "US_MI",
+      isOverdue: false,
+      externalId: "RES022",
+      eligibleCriteria: {
+        usMiPastWardenInPersonReviewForSccDate: {
+          solitaryStartDate: relativeFixtureDate({ days: -30 }),
+          latestWardenInPersonSccReviewDate: null,
+          nextSccDate: relativeFixtureDate({ days: 2 }),
+          numberOfExpectedReviews: 2,
+          numberOfReviews: 1,
+        },
+      },
+      formInformation: {
+        segregationType: "TEMPORARY_SOLITARY_CONFINEMENT",
+      },
+      ineligibleCriteria: {
+        usMiInSolitaryConfinementAtLeastSixMonths: {
+          eligibleDate: relativeFixtureDate({ days: 6 }),
         },
       },
       metadata: {

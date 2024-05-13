@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`schema for almostEligible 1`] = `
+exports[`schema for almostEligible1 1`] = `
 {
   "eligibleCriteria": {
     "usMiInSolitaryConfinementAtLeastSixMonths": {
@@ -18,6 +18,34 @@ exports[`schema for almostEligible 1`] = `
       "numberOfExpectedReviews": null,
       "numberOfReviews": null,
       "solitaryStartDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "isOverdue": false,
+  "metadata": {
+    "daysInCollapsedSolitarySession": 30,
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`schema for almostEligible2 1`] = `
+{
+  "eligibleCriteria": {
+    "usMiPastWardenInPersonReviewForSccDate": {
+      "latestWardenInPersonSccReviewDate": null,
+      "nextSccDate": 2021-12-18T00:00:00.000Z,
+      "numberOfExpectedReviews": 2,
+      "numberOfReviews": 1,
+      "solitaryStartDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES022",
+  "formInformation": {
+    "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
+  },
+  "ineligibleCriteria": {
+    "usMiInSolitaryConfinementAtLeastSixMonths": {
+      "eligibleDate": 2021-12-22T00:00:00.000Z,
     },
   },
   "isOverdue": false,
