@@ -33,7 +33,7 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
     denialButtonText: "Additional Eligibility",
     snooze: {
       defaultSnoozeDays: 30,
-      maxSnoozeDays: 180,
+      maxSnoozeDays: 365,
     },
     sidebarComponents: ["ClientProfileDetails"],
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_OR,
