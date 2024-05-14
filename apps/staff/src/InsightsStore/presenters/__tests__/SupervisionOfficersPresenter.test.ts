@@ -31,7 +31,7 @@ import * as utils from "../utils";
 
 let store: InsightsSupervisionStore;
 let presenter: SupervisionOfficersPresenter;
-const pseudoId = "hashed-mdavis123";
+const pseudoId = "hashed-agonzalez123";
 
 beforeEach(() => {
   configure({ safeDescriptors: false });

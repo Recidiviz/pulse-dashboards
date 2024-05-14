@@ -266,7 +266,7 @@ test("current user record for supervisor", async () => {
     "get",
   ).mockReturnValue({
     externalId: "abc123",
-    pseudonymizedId: "hashed-mdavis123",
+    pseudonymizedId: "hashed-agonzalez123",
     district: "District One",
     stateCode: "us_mi",
   });
@@ -275,16 +275,16 @@ test("current user record for supervisor", async () => {
   expect(store.currentSupervisorUser).toBeDefined();
   expect(store.currentSupervisorUser).toMatchInlineSnapshot(`
     {
-      "displayName": "Miles D Davis",
+      "displayName": "Alejandro D Gonzalez",
       "email": "mock-email",
-      "externalId": "mdavis123",
+      "externalId": "agonzalez123",
       "fullName": {
-        "givenNames": "Miles",
+        "givenNames": "Alejandro",
         "middleNames": "D",
-        "surname": "Davis",
+        "surname": "Gonzalez",
       },
       "hasOutliers": true,
-      "pseudonymizedId": "hashed-mdavis123",
+      "pseudonymizedId": "hashed-agonzalez123",
       "supervisionDistrict": "Region D1",
     }
   `);
@@ -312,7 +312,7 @@ test("hydrate supervisors list with current user", async () => {
     "get",
   ).mockReturnValue({
     externalId: "abc123",
-    pseudonymizedId: "hashed-mdavis123",
+    pseudonymizedId: "hashed-agonzalez123",
     district: "District One",
     stateCode: "us_mi",
     routes: observable({
@@ -326,16 +326,16 @@ test("hydrate supervisors list with current user", async () => {
   expect(store.supervisionOfficerSupervisors).toMatchInlineSnapshot(`
     [
       {
-        "displayName": "Miles D Davis",
+        "displayName": "Alejandro D Gonzalez",
         "email": "mock-email",
-        "externalId": "mdavis123",
+        "externalId": "agonzalez123",
         "fullName": {
-          "givenNames": "Miles",
+          "givenNames": "Alejandro",
           "middleNames": "D",
-          "surname": "Davis",
+          "surname": "Gonzalez",
         },
         "hasOutliers": true,
-        "pseudonymizedId": "hashed-mdavis123",
+        "pseudonymizedId": "hashed-agonzalez123",
         "supervisionDistrict": "Region D1",
       },
     ]
@@ -349,7 +349,7 @@ test("current supervisor user without supervisors list permission does not hydra
     "get",
   ).mockReturnValue({
     externalId: "abc123",
-    pseudonymizedId: "hashed-mdavis123",
+    pseudonymizedId: "hashed-agonzalez123",
     district: "District One",
     stateCode: "us_mi",
     routes: observable({
@@ -376,7 +376,7 @@ test("current supervisor user with supervisors list permission does hydrate via 
     "get",
   ).mockReturnValue({
     externalId: "abc123",
-    pseudonymizedId: "hashed-mdavis123",
+    pseudonymizedId: "hashed-agonzalez123",
     district: "District One",
     stateCode: "us_mi",
     routes: observable({
@@ -430,7 +430,7 @@ test("patch user info: set hasSeenOnboarding", async () => {
     "get",
   ).mockReturnValue({
     externalId: "abc123",
-    pseudonymizedId: "hashed-mdavis123",
+    pseudonymizedId: "hashed-agonzalez123",
     district: "District One",
     stateCode: "us_mi",
     routes: observable({

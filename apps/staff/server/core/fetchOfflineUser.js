@@ -36,8 +36,8 @@ function fetchOfflineUser({
     email,
     [`${process.env.METADATA_NAMESPACE}app_metadata`]: {
       role: "leadership_role",
-      externalId: "mdavis123",
-      pseudonymizedId: "hashed-mdavis123",
+      externalId: "agonzalez123",
+      pseudonymizedId: "hashed-agonzalez123",
       stateCode,
       allowedSupervisionLocationIds,
       allowedSupervisionLocationLevel,

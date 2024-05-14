@@ -29,7 +29,7 @@ import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore"
 import { SupervisionClientDetailPresenter } from "../SupervisionClientDetailPresenter";
 
 let store: InsightsSupervisionStore;
-const pseudoId = "hashed-mdavis123";
+const pseudoId = "hashed-agonzalez123";
 const clientPseudoId = "hashed-985771";
 const endDate = "2023-05-01";
 

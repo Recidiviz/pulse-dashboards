@@ -41,10 +41,10 @@ exports[`has clientInfo 1`] = `
 {
   "birthdate": 1971-03-15T00:00:00.000Z,
   "clientId": "985771",
-  "displayName": "Nicholas Rhodes",
+  "displayName": "Kevin Baker",
   "fullName": {
-    "givenNames": "Nicholas",
-    "surname": "Rhodes",
+    "givenNames": "Kevin",
+    "surname": "Baker",
   },
   "gender": "MALE",
   "pseudonymizedClientId": "hashed-985771",
@@ -101,10 +101,10 @@ exports[`with client data already hydrated > has clientInfo 1`] = `
 {
   "birthdate": 1971-03-15T00:00:00.000Z,
   "clientId": "985771",
-  "displayName": "Nicholas Rhodes",
+  "displayName": "Kevin Baker",
   "fullName": {
-    "givenNames": "Nicholas",
-    "surname": "Rhodes",
+    "givenNames": "Kevin",
+    "surname": "Baker",
   },
   "gender": "MALE",
   "pseudonymizedClientId": "hashed-985771",

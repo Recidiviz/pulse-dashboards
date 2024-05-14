@@ -13,16 +13,16 @@ exports[`leadership transformation 1`] = `
 exports[`supervisor transformation 1`] = `
 {
   "entity": {
-    "displayName": "Miles D Davis",
+    "displayName": "Alejandro D Gonzalez",
     "email": "mock-email",
-    "externalId": "mdavis123",
+    "externalId": "agonzalez123",
     "fullName": {
-      "givenNames": "Miles",
+      "givenNames": "Alejandro",
       "middleNames": "D",
-      "surname": "Davis",
+      "surname": "Gonzalez",
     },
     "hasOutliers": true,
-    "pseudonymizedId": "hashed-mdavis123",
+    "pseudonymizedId": "hashed-agonzalez123",
     "supervisionDistrict": "Region D1",
   },
   "metadata": {

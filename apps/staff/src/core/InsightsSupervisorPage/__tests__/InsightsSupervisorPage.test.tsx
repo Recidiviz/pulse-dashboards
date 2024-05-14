@@ -82,7 +82,7 @@ describe("Hydrated Supervisor Page", () => {
     );
 
     [
-      "2 of the 3 officers in Miles D Davis's team are",
+      "2 of the 3 officers in Alejandro D Gonzalez's team are",
       "outliers",
       "on one or more metrics",
     ].forEach((text) => {
@@ -103,8 +103,8 @@ describe("Hydrated Supervisor Page", () => {
     await Promise.all(
       [
         "D1",
-        "Miles D Davis",
-        "Duke Ellington, Chet Baker, Louis Armstrong",
+        "Alejandro D Gonzalez",
+        "Walter Harris, Jack Hernandez, Jason Nelson",
       ].map((text) =>
         waitFor(() => expect(screen.getByText(text)).toBeInTheDocument()),
       ),
@@ -225,7 +225,7 @@ describe("Insights Supervisor Page", () => {
     useRootStoreMock.mockReturnValue(rootStore);
 
     vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
-    store.setSupervisorPseudoId("hashed-mdavis123");
+    store.setSupervisorPseudoId("hashed-agonzalez123");
   });
 
   test("renders loading indicator", () => {
@@ -262,7 +262,7 @@ describe("Insights Supervisor Page", () => {
       </BrowserRouter>,
     );
 
-    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
+    expect(await screen.findByText("Alejandro D Gonzalez")).toBeInTheDocument();
   });
 
   test("has no axe violations", async () => {
@@ -273,7 +273,7 @@ describe("Insights Supervisor Page", () => {
     );
 
     // Make sure the hydrated page actually loaded
-    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
+    expect(await screen.findByText("Alejandro D Gonzalez")).toBeInTheDocument();
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
@@ -281,24 +281,24 @@ describe("Insights Supervisor Page", () => {
   test("highlighted officer text singular", () => {
     const detail = {
       metricName: "program/treatment start",
-      officerNames: ["Chet Baker"],
+      officerNames: ["Jack Hernandez"],
       numOfficers: 1,
       topXPct: 10,
     } as HighlightedOfficersDetail;
     const expected =
-      "Chet Baker is in the top 10% of officers in the state for highest program/treatment start rate this year.";
+      "Jack Hernandez is in the top 10% of officers in the state for highest program/treatment start rate this year.";
     expect(highlightedOfficerText(detail, "officer")).toBe(expected);
   });
 
   test("highlighted officer text plural", () => {
     const detail = {
       metricName: "program/treatment start",
-      officerNames: ["Chet Baker", "Louis Armstrong", "William James"],
+      officerNames: ["Jack Hernandez", "Jason Nelson", "William James"],
       numOfficers: 2,
       topXPct: 10,
     } as HighlightedOfficersDetail;
     const expected =
-      "Chet Baker, Louis Armstrong, and William James are in the top 10% of officers in the state for highest program/treatment start rate this year.";
+      "Jack Hernandez, Jason Nelson, and William James are in the top 10% of officers in the state for highest program/treatment start rate this year.";
     expect(highlightedOfficerText(detail, "officer")).toBe(expected);
   });
 });

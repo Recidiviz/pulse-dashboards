@@ -2,61 +2,61 @@
 
 exports[`transformations 1`] = `
 {
-  "displayName": "Miles D Davis",
+  "displayName": "Alejandro D Gonzalez",
   "email": "mock-email",
-  "externalId": "mdavis123",
+  "externalId": "agonzalez123",
   "fullName": {
-    "givenNames": "Miles",
+    "givenNames": "Alejandro",
     "middleNames": "D",
-    "surname": "Davis",
+    "surname": "Gonzalez",
   },
   "hasOutliers": true,
-  "pseudonymizedId": "hashed-mdavis123",
+  "pseudonymizedId": "hashed-agonzalez123",
   "supervisionDistrict": "Region D1",
 }
 `;
 
 exports[`transformations 2`] = `
 {
-  "displayName": "Billie Holiday",
+  "displayName": "David Lee",
   "email": null,
-  "externalId": "bholiday456",
+  "externalId": "dlee456",
   "fullName": {
-    "givenNames": "Billie",
-    "surname": "Holiday",
+    "givenNames": "David",
+    "surname": "Lee",
   },
   "hasOutliers": true,
-  "pseudonymizedId": "hashed-bholiday456",
+  "pseudonymizedId": "hashed-dlee456",
   "supervisionDistrict": null,
 }
 `;
 
 exports[`transformations 3`] = `
 {
-  "displayName": "Ella Fitzgerald",
+  "displayName": "Rosa Smith",
   "email": "mock-email",
-  "externalId": "efitzgerald789",
+  "externalId": "rsmith789",
   "fullName": {
-    "givenNames": "Ella",
-    "surname": "Fitzgerald",
+    "givenNames": "Rosa",
+    "surname": "Smith",
   },
   "hasOutliers": false,
-  "pseudonymizedId": "hashed-efitzgerald789",
+  "pseudonymizedId": "hashed-rsmith789",
   "supervisionDistrict": "D1",
 }
 `;
 
 exports[`transformations 4`] = `
 {
-  "displayName": "John Coltrane",
+  "displayName": "Charles Thomas",
   "email": null,
-  "externalId": "jColtrane321",
+  "externalId": "cthomas321",
   "fullName": {
-    "givenNames": "John",
-    "surname": "Coltrane",
+    "givenNames": "Charles",
+    "surname": "Thomas",
   },
   "hasOutliers": false,
-  "pseudonymizedId": "hashed-jColtrane321",
+  "pseudonymizedId": "hashed-cthomas321",
   "supervisionDistrict": null,
 }
 `;

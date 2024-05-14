@@ -41,7 +41,7 @@ vi.mock(
 
 const useRootStoreMock = vi.mocked(useRootStore);
 const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
-const supervisorPseudoId = "hashed-mdavis123";
+const supervisorPseudoId = "hashed-agonzalez123";
 const officerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
 const testMetric = supervisionOfficerFixture[0].outlierMetrics[0].metricId;
 

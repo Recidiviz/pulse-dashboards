@@ -33,7 +33,7 @@ vi.mock("../../../components/StoreProvider");
 
 const useRootStoreMock = vi.mocked(useRootStore);
 const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
-const supervisorPseudoId = "hashed-mdavis123";
+const supervisorPseudoId = "hashed-agonzalez123";
 
 beforeEach(() => {
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
@@ -82,7 +82,7 @@ describe("Insights Supervisors List Page", () => {
       </BrowserRouter>,
     );
 
-    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
+    expect(await screen.findByText("Alejandro D Gonzalez")).toBeInTheDocument();
   });
 
   test("has no axe violations", async () => {
@@ -93,7 +93,7 @@ describe("Insights Supervisors List Page", () => {
     );
 
     // Make sure the hydrated page actually loaded
-    expect(await screen.findByText("Miles D Davis")).toBeInTheDocument();
+    expect(await screen.findByText("Alejandro D Gonzalez")).toBeInTheDocument();
     const results = await axe(container, { elementRef: true });
 
     const idDuplicatesViolation = results.violations.find(

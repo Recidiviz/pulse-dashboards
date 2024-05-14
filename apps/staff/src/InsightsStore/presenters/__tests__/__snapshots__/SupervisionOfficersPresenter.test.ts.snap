@@ -4,12 +4,12 @@ exports[`outlierOfficersData 1`] = `
 [
   {
     "caseloadType": "SEX_OFFENSE",
-    "displayName": "Duke Ellington",
+    "displayName": "Walter Harris",
     "district": "Region D1",
     "externalId": "so1",
     "fullName": {
-      "givenNames": "Duke",
-      "surname": "Ellington",
+      "givenNames": "Walter",
+      "surname": "Harris",
     },
     "outlierMetrics": [
       {
@@ -1312,17 +1312,17 @@ exports[`outlierOfficersData 1`] = `
       },
     ],
     "pseudonymizedId": "hashed-so1",
-    "supervisorExternalId": "mdavis123",
+    "supervisorExternalId": "agonzalez123",
     "topXPctMetrics": [],
   },
   {
     "caseloadType": "GENERAL_OR_OTHER",
-    "displayName": "Louis Armstrong",
+    "displayName": "Jason Nelson",
     "district": "Region D1",
     "externalId": "so3",
     "fullName": {
-      "givenNames": "Louis",
-      "surname": "Armstrong",
+      "givenNames": "Jason",
+      "surname": "Nelson",
     },
     "outlierMetrics": [
       {
@@ -3626,7 +3626,7 @@ exports[`outlierOfficersData 1`] = `
       },
     ],
     "pseudonymizedId": "hashed-so3",
-    "supervisorExternalId": "mdavis123",
+    "supervisorExternalId": "agonzalez123",
     "topXPctMetrics": [],
   },
 ]
@@ -3634,16 +3634,16 @@ exports[`outlierOfficersData 1`] = `
 
 exports[`supervisorInfo 1`] = `
 {
-  "displayName": "Miles D Davis",
+  "displayName": "Alejandro D Gonzalez",
   "email": "mock-email",
-  "externalId": "mdavis123",
+  "externalId": "agonzalez123",
   "fullName": {
-    "givenNames": "Miles",
+    "givenNames": "Alejandro",
     "middleNames": "D",
-    "surname": "Davis",
+    "surname": "Gonzalez",
   },
   "hasOutliers": true,
-  "pseudonymizedId": "hashed-mdavis123",
+  "pseudonymizedId": "hashed-agonzalez123",
   "supervisionDistrict": "Region D1",
 }
 `;

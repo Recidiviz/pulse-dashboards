@@ -3,12 +3,12 @@
 exports[`has outlierOfficerData 1`] = `
 {
   "caseloadType": "SEX_OFFENSE",
-  "displayName": "Duke Ellington",
+  "displayName": "Walter Harris",
   "district": "Region D1",
   "externalId": "so1",
   "fullName": {
-    "givenNames": "Duke",
-    "surname": "Ellington",
+    "givenNames": "Walter",
+    "surname": "Harris",
   },
   "outlierMetrics": [
     {
@@ -1311,7 +1311,7 @@ exports[`has outlierOfficerData 1`] = `
     },
   ],
   "pseudonymizedId": "hashed-so1",
-  "supervisorExternalId": "mdavis123",
+  "supervisorExternalId": "agonzalez123",
   "topXPctMetrics": [],
 }
 `;
@@ -1319,12 +1319,12 @@ exports[`has outlierOfficerData 1`] = `
 exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
 {
   "caseloadType": "SEX_OFFENSE",
-  "displayName": "Duke Ellington",
+  "displayName": "Walter Harris",
   "district": "Region D1",
   "externalId": "so1",
   "fullName": {
-    "givenNames": "Duke",
-    "surname": "Ellington",
+    "givenNames": "Walter",
+    "surname": "Harris",
   },
   "outlierMetrics": [
     {
@@ -2627,7 +2627,7 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
     },
   ],
   "pseudonymizedId": "hashed-so1",
-  "supervisorExternalId": "mdavis123",
+  "supervisorExternalId": "agonzalez123",
   "topXPctMetrics": [],
 }
 `;

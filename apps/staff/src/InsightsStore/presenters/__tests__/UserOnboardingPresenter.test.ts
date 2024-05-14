@@ -26,7 +26,7 @@ import { UserOnboardingPresenter } from "../UserOnboardingPresenter";
 
 let store: InsightsSupervisionStore;
 let presenter: UserOnboardingPresenter;
-const userPseudoId = "hashed-mdavis123";
+const userPseudoId = "hashed-agonzalez123";
 
 beforeEach(() => {
   vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
@@ -37,7 +37,7 @@ beforeEach(() => {
   );
   vi.spyOn(UserStore.prototype, "userAppMetadata", "get").mockReturnValue({
     externalId: "abc123",
-    pseudonymizedId: "hashed-mdavis123",
+    pseudonymizedId: "hashed-agonzalez123",
     district: "District One",
     stateCode: "us_mi",
     routes: observable({

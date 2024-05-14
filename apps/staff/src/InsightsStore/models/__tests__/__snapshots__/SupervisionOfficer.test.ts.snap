@@ -3,12 +3,12 @@
 exports[`transformations 1`] = `
 {
   "caseloadType": "SEX_OFFENSE",
-  "displayName": "Duke Ellington",
+  "displayName": "Walter Harris",
   "district": "Region D1",
   "externalId": "so1",
   "fullName": {
-    "givenNames": "Duke",
-    "surname": "Ellington",
+    "givenNames": "Walter",
+    "surname": "Harris",
   },
   "outlierMetrics": [
     {
@@ -98,7 +98,7 @@ exports[`transformations 1`] = `
     },
   ],
   "pseudonymizedId": "hashed-so1",
-  "supervisorExternalId": "mdavis123",
+  "supervisorExternalId": "agonzalez123",
   "topXPctMetrics": [],
 }
 `;
@@ -106,16 +106,16 @@ exports[`transformations 1`] = `
 exports[`transformations 2`] = `
 {
   "caseloadType": "GENERAL_OR_OTHER",
-  "displayName": "Chet Baker",
+  "displayName": "Jack Hernandez",
   "district": "Region D1",
   "externalId": "so2",
   "fullName": {
-    "givenNames": "Chet",
-    "surname": "Baker",
+    "givenNames": "Jack",
+    "surname": "Hernandez",
   },
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so2",
-  "supervisorExternalId": "mdavis123",
+  "supervisorExternalId": "agonzalez123",
   "topXPctMetrics": [
     {
       "metricId": "treatment_starts",
@@ -128,12 +128,12 @@ exports[`transformations 2`] = `
 exports[`transformations 3`] = `
 {
   "caseloadType": "GENERAL_OR_OTHER",
-  "displayName": "Louis Armstrong",
+  "displayName": "Jason Nelson",
   "district": "Region D1",
   "externalId": "so3",
   "fullName": {
-    "givenNames": "Louis",
-    "surname": "Armstrong",
+    "givenNames": "Jason",
+    "surname": "Nelson",
   },
   "outlierMetrics": [
     {
@@ -208,7 +208,7 @@ exports[`transformations 3`] = `
     },
   ],
   "pseudonymizedId": "hashed-so3",
-  "supervisorExternalId": "mdavis123",
+  "supervisorExternalId": "agonzalez123",
   "topXPctMetrics": [],
 }
 `;
@@ -216,13 +216,13 @@ exports[`transformations 3`] = `
 exports[`transformations 4`] = `
 {
   "caseloadType": "GENERAL_OR_OTHER",
-  "displayName": "William James "Count" Basie",
+  "displayName": "Carl Mark Campbell",
   "district": null,
   "externalId": "so4",
   "fullName": {
-    "givenNames": "William James",
-    "middleNames": ""Count"",
-    "surname": "Basie",
+    "givenNames": "Carl",
+    "middleNames": "Mark",
+    "surname": "Campbell",
   },
   "outlierMetrics": [
     {
@@ -297,7 +297,7 @@ exports[`transformations 4`] = `
     },
   ],
   "pseudonymizedId": "hashed-so4",
-  "supervisorExternalId": "bholiday456",
+  "supervisorExternalId": "dlee456",
   "topXPctMetrics": [],
 }
 `;
@@ -305,16 +305,16 @@ exports[`transformations 4`] = `
 exports[`transformations 5`] = `
 {
   "caseloadType": "GENERAL_OR_OTHER",
-  "displayName": "Mary Lou Williams",
+  "displayName": "Casey Ramirez",
   "district": null,
   "externalId": "so5",
   "fullName": {
-    "givenNames": "Mary Lou",
-    "surname": "Williams",
+    "givenNames": "Casey",
+    "surname": "Ramirez",
   },
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so5",
-  "supervisorExternalId": "efitzgerald789",
+  "supervisorExternalId": "rsmith789",
   "topXPctMetrics": [],
 }
 `;

@@ -34,7 +34,7 @@ test.describe("Supervisors List Page", () => {
       );
       await expect(page.getByRole("main")).toContainText("Region D1");
       await expect(
-        page.getByRole("link", { name: "MD MD Miles D Davis" }),
+        page.getByRole("link", { name: "Alejandro D Gonzalez" }),
       ).toBeVisible();
       await switchTenant(page, "Tennessee");
       await expect(
@@ -73,7 +73,7 @@ test.describe("Supervisors List Page", () => {
       );
       await expect(page.getByRole("main")).toContainText("Region D1");
       await expect(
-        page.getByRole("link", { name: "MD MD Miles D Davis" }),
+        page.getByRole("link", { name: "Alejandro D Gonzalez" }),
       ).toBeVisible();
     });
   });
@@ -110,10 +110,10 @@ test.describe("Supervisors List Page", () => {
       );
       await expect(page.getByRole("main")).toContainText("Region: D1");
       await expect(page.getByRole("main")).toContainText(
-        "Team Supervisor: Miles D Davis",
+        "Team Supervisor: Alejandro D Gonzalez",
       );
       await expect(page.getByRole("main")).toContainText(
-        "Staff: Duke Ellington, Chet Baker, Louis Armstrong",
+        "Staff: Walter Harris, Jack Hernandez, Jason Nelson",
       );
     });
   });

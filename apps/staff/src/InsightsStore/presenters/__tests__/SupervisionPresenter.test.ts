@@ -39,7 +39,7 @@ test("hydrate", async () => {
   vi.spyOn(store.rootStore.userStore, "userAppMetadata", "get").mockReturnValue(
     {
       externalId: "abc123",
-      pseudonymizedId: "hashed-mdavis123",
+      pseudonymizedId: "hashed-agonzalez123",
       district: "District One",
       stateCode: "us_mi",
     },
@@ -91,7 +91,7 @@ test("don't hydrate if already hydrated", async () => {
   vi.spyOn(store.rootStore.userStore, "userAppMetadata", "get").mockReturnValue(
     {
       externalId: "abc123",
-      pseudonymizedId: "hashed-mdavis123",
+      pseudonymizedId: "hashed-agonzalez123",
       district: "District One",
       stateCode: "us_mi",
     },

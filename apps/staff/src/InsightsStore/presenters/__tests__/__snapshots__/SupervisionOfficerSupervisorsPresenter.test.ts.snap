@@ -6,16 +6,16 @@ exports[`supervisors with outliers data 1`] = `
     "district": "Region D1",
     "supervisors": [
       {
-        "displayName": "Miles D Davis",
+        "displayName": "Alejandro D Gonzalez",
         "email": "mock-email",
-        "externalId": "mdavis123",
+        "externalId": "agonzalez123",
         "fullName": {
-          "givenNames": "Miles",
+          "givenNames": "Alejandro",
           "middleNames": "D",
-          "surname": "Davis",
+          "surname": "Gonzalez",
         },
         "hasOutliers": true,
-        "pseudonymizedId": "hashed-mdavis123",
+        "pseudonymizedId": "hashed-agonzalez123",
         "supervisionDistrict": "Region D1",
       },
     ],
@@ -24,15 +24,15 @@ exports[`supervisors with outliers data 1`] = `
     "district": null,
     "supervisors": [
       {
-        "displayName": "Billie Holiday",
+        "displayName": "David Lee",
         "email": null,
-        "externalId": "bholiday456",
+        "externalId": "dlee456",
         "fullName": {
-          "givenNames": "Billie",
-          "surname": "Holiday",
+          "givenNames": "David",
+          "surname": "Lee",
         },
         "hasOutliers": true,
-        "pseudonymizedId": "hashed-bholiday456",
+        "pseudonymizedId": "hashed-dlee456",
         "supervisionDistrict": null,
       },
     ],

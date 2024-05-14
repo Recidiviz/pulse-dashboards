@@ -5,8 +5,8 @@ exports[`events data 1`] = `
   {
     "clientId": "339710",
     "clientName": {
-      "givenNames": "Bertha",
-      "surname": "Figueroa",
+      "givenNames": "Terry",
+      "surname": "Clark",
     },
     "eventDate": 2023-05-14T00:00:00.000Z,
     "metricId": "absconsions_bench_warrants",
@@ -20,8 +20,8 @@ exports[`events data 1`] = `
   {
     "clientId": "235261",
     "clientName": {
-      "givenNames": "Rosie",
-      "surname": "Luna",
+      "givenNames": "Jacob",
+      "surname": "Allen",
     },
     "eventDate": 2023-05-06T00:00:00.000Z,
     "metricId": "absconsions_bench_warrants",
@@ -35,8 +35,8 @@ exports[`events data 1`] = `
   {
     "clientId": "531407",
     "clientName": {
-      "givenNames": "Glenn",
-      "surname": "Francis",
+      "givenNames": "Bryan",
+      "surname": "Johnson",
     },
     "eventDate": 2023-04-07T00:00:00.000Z,
     "metricId": "absconsions_bench_warrants",
@@ -50,8 +50,8 @@ exports[`events data 1`] = `
   {
     "clientId": "436502",
     "clientName": {
-      "givenNames": "Steve",
-      "surname": "Schwartz",
+      "givenNames": "Arthur",
+      "surname": "Gonzalez",
     },
     "eventDate": 2023-02-15T00:00:00.000Z,
     "metricId": "absconsions_bench_warrants",
@@ -65,8 +65,8 @@ exports[`events data 1`] = `
   {
     "clientId": "985771",
     "clientName": {
-      "givenNames": "Nicholas",
-      "surname": "Rhodes",
+      "givenNames": "Kevin",
+      "surname": "Baker",
     },
     "eventDate": 2022-12-24T00:00:00.000Z,
     "metricId": "absconsions_bench_warrants",
@@ -95,8 +95,8 @@ exports[`events data 1`] = `
   {
     "clientId": "326160",
     "clientName": {
-      "givenNames": "Ethel",
-      "surname": "Leonard",
+      "givenNames": "Ana",
+      "surname": "Hernandez",
     },
     "eventDate": 2022-12-21T00:00:00.000Z,
     "metricId": "absconsions_bench_warrants",
@@ -125,8 +125,8 @@ exports[`events data 1`] = `
   {
     "clientId": "564940",
     "clientName": {
-      "givenNames": "Miguel",
-      "surname": "Haynes",
+      "givenNames": "Walter",
+      "surname": "King",
     },
     "eventDate": 2022-09-05T00:00:00.000Z,
     "metricId": "absconsions_bench_warrants",
