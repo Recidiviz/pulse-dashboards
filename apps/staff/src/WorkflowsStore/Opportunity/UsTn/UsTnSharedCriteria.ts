@@ -21,6 +21,11 @@ import { dateStringSchema } from "~datatypes";
 
 import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
 
+const eventNote = z.object({
+  eventDate: dateStringSchema,
+  noteBody: z.string(),
+});
+
 export const formInformationSchema = z.object({
   activeRecommendations: z.array(
     z.object({
@@ -60,22 +65,8 @@ export const formInformationSchema = z.object({
   q7Score: z.coerce.number(),
   q8Score: z.coerce.number(),
   q9Score: z.coerce.number(),
-  q6Notes: z.optional(
-    z.array(
-      z.object({
-        eventDate: dateStringSchema,
-        noteBody: z.string(),
-      }),
-    ),
-  ),
-  q7Notes: z.optional(
-    z.array(
-      z.object({
-        eventDate: dateStringSchema,
-        noteBody: z.string(),
-      }),
-    ),
-  ),
+  q6Notes: z.optional(z.array(eventNote)),
+  q7Notes: z.optional(z.array(eventNote).or(eventNote.transform((n) => [n]))),
   q8Notes: z.optional(
     z.array(
       z.object({

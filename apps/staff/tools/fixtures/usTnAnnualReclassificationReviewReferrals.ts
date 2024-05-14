@@ -60,16 +60,10 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
       q5Score: -2,
       q6Score: -2,
       q7Score: 5,
-      q7Notes: [
-        {
-          noteBody: "Class C Incident Details: Some details",
-          eventDate: "2019-02-01",
-        },
-        {
-          noteBody: "Class A Incident Details: Some other details",
-          eventDate: "2020-02-01",
-        },
-      ],
+      q7Notes: {
+        noteBody: "Class C Incident Details: Some details",
+        eventDate: "2019-02-01",
+      },
       q8Score: 0,
       q9Score: 0,
     },
@@ -122,7 +116,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
       q8Score: 5,
       q9Score: 4,
       q6Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
-      q7Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
+      q7Notes: { eventDate: "2022-08-22", noteBody: "Some note" },
       q8Notes: [
         {
           detainerReceivedDate: "2022-08-22",
