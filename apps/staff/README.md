@@ -100,6 +100,8 @@ The backend API server and most frontend views in the app are authenticated via 
 
 This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. The development and staging environments should be configured in `auth_config_dev.json`, demo environment in `auth_config_demo.json` and production in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `VITE_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
 
+In order to load these configs, run `./apps/staff/load_config_files.sh`.
+
 ### Nx
 
 This application is an [Nx project](https://nx.dev/concepts/mental-model#the-project-graph) with the name "staff"; all scripts referred to in this document should be run from the root of the repository, and they assume you have Nx globally installed (this is not a requirement; just sub `yarn nx` for `nx` to run them with the local Nx installation)
@@ -155,6 +157,8 @@ This script also may need to be rerun periodically when new secrets are added to
 Then, to run the new backend locally, run (also from your `recidiviz-data` repository):
 
 `docker-compose -f docker-compose.yaml -f docker-compose.case-triage.yaml up --remove-orphans`
+
+If you get errors about not having access to containers, you may need to run `gcloud auth login` and `gcloud auth configure-docker` first to authenticate with the Google Cloud registry.
 
 If you use a Mac, you may need to turn off AirPlay Receiver in System Preferences --> Sharing in order to make port 5000 available.
 

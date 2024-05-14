@@ -18,6 +18,10 @@ echo "${production_service_account}" > ./recidiviz-production-service-account.js
 
 # update auth configs
 echo "Updating auth configs..."
+
+# Create the files if they don't exist already
+touch ./src/auth_config_dev.json ./src/auth_config_demo.json ./src/auth_config_production.json
+
 auth_config_dev=$(gcloud secrets versions access latest --secret=env_auth_config_dev --project recidiviz-dashboard-staging)
 echo "${auth_config_dev}" > ./src/auth_config_dev.json
 auth_config_demo=$(gcloud secrets versions access latest --secret=env_auth_config_demo --project recidiviz-dashboard-staging)

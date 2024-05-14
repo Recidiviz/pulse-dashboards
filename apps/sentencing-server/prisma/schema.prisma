@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["tracing", "omitApi"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StateCode {
+  AL
+  AK
+  AZ
+  AR
+  CA
+  CO
+  CT
+  DE
+  FL
+  GA
+  HI
+  ID
+  IL
+  IN
+  IA
+  KS
+  KY
+  LA
+  ME
+  MD
+  MA
+  MI
+  MN
+  MS
+  MO
+  MT
+  NE
+  NV
+  NH
+  NJ
+  NM
+  NY
+  NC
+  ND
+  OH
+  OK
+  OR
+  PA
+  RI
+  SC
+  SD
+  TN
+  TX
+  UT
+  VT
+  VA
+  WA
+  WV
+  WI
+  WY
+}
+
+model Staff {
+  id         String @id @default(cuid())
+  externalId String @unique
+  fullName   String
+  email      String
+  Case       Case[]
+}
+
+model Client {
+  id         String    @id @default(cuid())
+  externalId String    @unique
+  stateCode  StateCode
+  fullName   String
+  gender     String
+  county     String
+  birthDate  DateTime
+  Case       Case[]
+}
+
+enum Charge {
+  Misdemeanor
+  Felony
+}
+
+enum Pronouns {
+  HeHim
+  SheHer
+  TheyThem
+}
+
+enum VeteranStatus {
+  Veteran
+  NonVeteran
+}
+
+model Case {
+  id         String    @id @default(cuid())
+  externalId String    @unique
+  stateCode  StateCode
+
+  Staff   Staff  @relation(fields: [staffId], references: [id])
+  staffId String
+
+  Client   Client @relation(fields: [clientId], references: [id])
+  clientId String
+
+  dueDate        DateTime
+  completionDate DateTime
+  sentenceDate   DateTime
+  assignedDate   DateTime
+  countyName     String
+  lsirScore      String
+  lsirLevel      String
+  reportType     String
+
+  // Mutable Attributes
+  charge                              Charge
+  pronouns                            Pronouns
+  veteranStatus                       VeteranStatus
+  previouslyIncarcerated              Boolean
+  previouslyUnderSupervision          Boolean
+  hasPreviousFelonyConviction         Boolean
+  hasPreviousViolentOffenseConviction Boolean
+  hasPreviousSexOffenseConviction     Boolean
+  previousTreatmentCourtParticipation Boolean
+  hasSubstanceAbuseDisorderDiagnosis  Boolean
+  isOpenChildProtectiveServicesCase   Boolean
+}

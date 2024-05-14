@@ -24,7 +24,8 @@
       "~datatypes": ["libs/datatypes/src/index.ts"],
       "~firestore-config": ["libs/firestore-config/src/index.ts"],
       "~hydration-utils": ["libs/hydration-utils/src/index.ts"],
-      "~repo": ["plugins/repo/src/index.ts"]
+      "~repo": ["plugins/repo/src/index.ts"],
+      "~sentencing-server/*": ["apps/sentencing-server/src/*"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",
