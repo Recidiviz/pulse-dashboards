@@ -23,6 +23,7 @@ import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
+import { PSIStore } from "../PSIStore/PSIStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import AnalyticsStore from "./AnalyticsStore";
 import { APIStore } from "./APIStore";
@@ -95,6 +96,8 @@ export class RootStore {
 
   insightsStore: InsightsStore;
 
+  psiStore: PSIStore;
+
   constructor() {
     makeObservable(this, {
       currentTenantId: computed,
@@ -120,6 +123,8 @@ export class RootStore {
     this.firestoreStore = new FirestoreStore({ rootStore: this });
 
     this.insightsStore = new InsightsStore(this);
+
+    this.psiStore = new PSIStore(this);
   }
 
   get currentTenantId(): TenantId | undefined {

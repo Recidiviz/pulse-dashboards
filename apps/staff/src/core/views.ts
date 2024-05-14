@@ -30,6 +30,7 @@ export const DASHBOARD_VIEWS = {
   profile: "profile",
   workflows: "workflows",
   insights: "insights",
+  psi: "psi",
 } as const;
 export type DashboardViewRootPath = (typeof DASHBOARD_VIEWS)[DashboardView];
 
@@ -47,6 +48,7 @@ export const DASHBOARD_PATHS: Record<string, string> = {
   methodologyOperations: `/${DASHBOARD_VIEWS.methodology}/operations`,
   insights: `/${DASHBOARD_VIEWS.insights}`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
+  psi: `/${DASHBOARD_VIEWS.psi}`,
 };
 
 export type PathwaysPage = keyof typeof PATHWAYS_PAGES;
@@ -361,6 +363,42 @@ export function insightsUrl(
     return path;
   }
   return INSIGHTS_PATHS[routeName];
+}
+
+export const PSI_PATHS: Record<PSIPage, string> = {
+  psi: `/${DASHBOARD_VIEWS.psi}`,
+  dashboard: `/${DASHBOARD_VIEWS.psi}/dashboard/:staffPseudoId`,
+  caseDetails: `/${DASHBOARD_VIEWS.psi}/dashboard/:staffPseudoId/case/:caseId`,
+};
+
+export type PSIPage = keyof typeof PSI_PAGES;
+
+export const PSI_PAGES = {
+  psi: "psi",
+  dashboard: "dashboard",
+  caseDetails: "caseDetails",
+} as const;
+
+/**
+ * @returns the relative route template string for a PSI page
+ */
+export function psiRoute({ routeName }: { routeName: PSIPage }): string {
+  return getRelativePath(PSI_PATHS[routeName]);
+}
+
+export type PSIRouteParams = {
+  staffPseudoId: string;
+};
+
+export function psiUrl(routeName: PSIPage, params: PSIRouteParams): string {
+  if (params) {
+    let path = PSI_PATHS[routeName];
+    Object.entries(params).forEach(([key, value]) => {
+      path = path.replace(`:${key}`, value);
+    });
+    return path;
+  }
+  return PSI_PATHS[routeName];
 }
 
 export function getRelativePath(absolutePath: string): string {

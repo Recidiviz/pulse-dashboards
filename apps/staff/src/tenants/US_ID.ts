@@ -137,6 +137,7 @@ const US_ID_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
+    psi: [],
     methodology: ["system", "operations"],
   },
   tableColumns: enabledTableColumns[pathways.US_ID],

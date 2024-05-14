@@ -39,6 +39,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import { NavigationLayout } from "./NavigationLayout";
 import PageInsights from "./PageInsights";
 import PageMethodology from "./PageMethodology";
+import PagePSI from "./PagePSI";
 import PageSystem from "./PageSystem";
 import PageVitals from "./PageVitals";
 import PageWorkflows from "./PageWorkflows";
@@ -48,6 +49,7 @@ import {
   DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
   INSIGHTS_PATHS,
+  PSI_PATHS,
   WORKFLOWS_PATHS,
 } from "./views";
 
@@ -91,6 +93,7 @@ const DashboardLayout: React.FC = () => {
           className={cn("DashboardLayout", {
             Workflows: currentView === DASHBOARD_VIEWS.workflows,
             Insights: currentView === DASHBOARD_VIEWS.insights,
+            PSI: currentView === DASHBOARD_VIEWS.psi,
           })}
         >
           {currentView === DASHBOARD_VIEWS.operations && !isMobile ? (
@@ -127,6 +130,7 @@ const DashboardLayout: React.FC = () => {
                 path={`${WORKFLOWS_PATHS.workflows}/*`}
                 element={<PageWorkflows />}
               />
+              <Route path={`${PSI_PATHS.psi}/*`} element={<PagePSI />} />
               {/* TODO(#4601): Remove redirect after confirming no longer in use */}
               <Route
                 path="/id-methodology/:dashboard"

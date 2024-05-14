@@ -332,6 +332,18 @@ function InsightsLink({ enabled }: OptionalLinkProps) {
   );
 }
 
+function PSILink({ enabled }: OptionalLinkProps) {
+  const { isMobile } = useIsMobile(true);
+
+  if (!enabled) return null;
+  return (
+    <NavLink to={`/${DASHBOARD_VIEWS.psi}`}>
+      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+      Go to PSI
+    </NavLink>
+  );
+}
+
 function LogoutLink({ enabled }: OptionalLinkProps) {
   const logout = useLogout();
   const { isMobile } = useIsMobile(true);
@@ -390,6 +402,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
     const enableOperations = !!userAllowedNavigation.operations;
     const enabledInsights = !!userAllowedNavigation.insights;
+    const enabledPSI = !!userAllowedNavigation.psi;
 
     const isInsightsView = view === DASHBOARD_VIEWS.insights;
     const isInsightsLanternState =
@@ -407,6 +420,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} />
         <InsightsLink enabled={enabledInsights} />
+        <PSILink enabled={enabledPSI} />
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );
