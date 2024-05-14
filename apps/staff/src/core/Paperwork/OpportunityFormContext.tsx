@@ -1,11 +1,6 @@
-import { memoize } from "lodash";
-import { observer } from "mobx-react-lite";
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { OpportunityType } from "../../WorkflowsStore";
 import { FormBase } from "../../WorkflowsStore/Opportunity/Forms/FormBase";
-import { usePersonTracking } from "../hooks/usePersonTracking";
 
 /**
  * A helper to create a Context and Provider with no upfront default value, and
@@ -24,29 +19,3 @@ function createOmnipresentContext<A extends unknown | null>() {
 
 export const [useOpportunityFormContext, OpportunityFormProvider] =
   createOmnipresentContext<FormBase<any>>(); // specify type, but no need to specify value upfront!
-
-export const connectComponentToOpportunityForm = memoize(
-  (FormComponent: React.FC, opportunityType: OpportunityType): React.FC => {
-    return observer(function ConnectComponentToOpportunityForm() {
-      const {
-        workflowsStore: { selectedPerson },
-      } = useRootStore();
-      const opportunity =
-        selectedPerson?.verifiedOpportunities[opportunityType];
-
-      usePersonTracking(selectedPerson, () => {
-        opportunity?.form?.trackViewed();
-      });
-
-      if (!opportunity) {
-        return null;
-      }
-
-      return (
-        <OpportunityFormProvider value={opportunity.form}>
-          <FormComponent />
-        </OpportunityFormProvider>
-      );
-    });
-  },
-);

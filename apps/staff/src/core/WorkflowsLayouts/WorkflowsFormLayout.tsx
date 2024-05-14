@@ -23,11 +23,12 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import cssVars from "../CoreConstants.module.scss";
+import { usePersonTracking } from "../hooks/usePersonTracking";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityDenialView } from "../OpportunityDenial";
-import { connectComponentToOpportunityForm } from "../Paperwork/OpportunityFormContext";
+import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import AnnualClassificationReview from "../Paperwork/US_ME/AnnualReclassificationReview/AnnualReclassificationReview";
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
@@ -117,18 +118,18 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
   const [currentView, setCurrentView] =
     useState<FormSidebarView>("OPPORTUNITY");
 
-  if (!opportunityType || !selectedPerson) return null;
+  const opportunity =
+    opportunityType && selectedPerson?.verifiedOpportunities[opportunityType];
 
-  const opportunity = selectedPerson.verifiedOpportunities[opportunityType];
+  usePersonTracking(selectedPerson, () => {
+    opportunity?.form?.trackViewed();
+  });
+
+  if (!opportunityType || !selectedPerson) return null;
 
   const formContents = opportunity?.form?.formContents;
 
-  const FormComponent = formContents
-    ? connectComponentToOpportunityForm(
-        FormComponents[formContents],
-        opportunityType,
-      )
-    : null;
+  const FormComponent = formContents && FormComponents[formContents];
 
   const sidebarContents =
     currentView === "DENIAL" ? (
@@ -171,7 +172,13 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
         </SidebarSection>
       </Sidebar>
 
-      <FormWrapper>{FormComponent && <FormComponent />}</FormWrapper>
+      <FormWrapper>
+        {FormComponent && (
+          <OpportunityFormProvider value={opportunity.form}>
+            <FormComponent />
+          </OpportunityFormProvider>
+        )}
+      </FormWrapper>
     </Wrapper>
   );
 
