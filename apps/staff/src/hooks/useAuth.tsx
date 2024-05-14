@@ -19,7 +19,12 @@ import { useEffect } from "react";
 import { useIdleTimer } from "react-idle-timer";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { isDemoMode } from "~client-env-utils";
+
 import { useRootStore } from "../components/StoreProvider";
+
+const THREE_HOURS = 3 * 60 * 60 * 1000;
+const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
 const useAuth = () => {
   const { search } = useLocation();
@@ -47,10 +52,10 @@ const useAuth = () => {
 
   useIdleTimer({
     onIdle: () => userStore.logout?.({ returnTo: window.location.origin }),
-    // 900 seconds = 15 minutes. Certain state policies require that users reauthenticate after 15
+    // Certain state policies require that users reauthenticate after 15
     // minutes of inactivity. More details at:
     // https://github.com/Recidiviz/pulse-dashboards/issues/3403#issuecomment-1569096723
-    timeout: 900_000,
+    timeout: isDemoMode() ? THREE_HOURS : FIFTEEN_MINUTES,
     crossTab: true,
     syncTimers: 200,
   });
