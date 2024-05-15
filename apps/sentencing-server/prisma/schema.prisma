@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["tracing", "omitApi"]
 }
 
@@ -62,22 +62,35 @@ enum StateCode {
 }
 
 model Staff {
-  id         String @id @default(cuid())
-  externalId String @unique
-  fullName   String
-  email      String
-  Case       Case[]
+  id         String    @id @default(cuid())
+  stateCode  StateCode
+  externalId String    @unique
+
+  // Name
+  givenNames  String
+  surname     String
+  middleNames String?
+  nameSuffix  String?
+
+  email String
+  Case  Case[]
 }
 
 model Client {
   id         String    @id @default(cuid())
   externalId String    @unique
   stateCode  StateCode
-  fullName   String
-  gender     String
-  county     String
-  birthDate  DateTime
-  Case       Case[]
+
+  // Name
+  givenNames  String
+  surname     String
+  middleNames String?
+  nameSuffix  String?
+
+  gender    String
+  county    String
+  birthDate DateTime
+  Case      Case[]
 }
 
 enum Charge {
@@ -96,6 +109,59 @@ enum VeteranStatus {
   NonVeteran
 }
 
+enum SubstanceUseDiagnosis {
+  None
+  Mild
+  Moderate
+  Severe
+}
+
+enum AsamCareRecommendation {
+  LongTermRemissionMonitoring
+  OutpatientTherapy
+  MedicallyManagedOutpatient
+  IntensiveOutpatient
+  HighIntensityOutpatient
+  MedicallyManagedIntensiveOutpatient
+  ClinicallyManagedLowIntensityResidential
+  ClinicallyManagedHighIntensityResidential
+  MedicallyManagedResidential
+  MedicallyManagedInpatient
+  None
+}
+
+enum MentalHealthDiagnosis {
+  BipolarDisorder
+  BorderlinePersonalityDisorder
+  DelusionalDisorder
+  MajorDepressiveDisorder
+  PsychoticDisorder
+  Schizophrenia
+  SchizoaffectiveDisorder
+  Other
+  None
+}
+
+enum Plea {
+  Guilty
+  NotGuilty
+  Alford
+}
+
+enum NeedToBeAddressed {
+  AngerManagement
+  CaseManagement
+  DomesticViolenceIssues
+  Education
+  FamilyServices
+  FoodInsecurity
+  GeneralReEntrySupport
+  HousingOpportunities
+  JobTrainingOrOpportunities
+  MentalHealth
+  SubstanceUse
+}
+
 model Case {
   id         String    @id @default(cuid())
   externalId String    @unique
@@ -111,21 +177,30 @@ model Case {
   completionDate DateTime
   sentenceDate   DateTime
   assignedDate   DateTime
-  countyName     String
+  county         String
   lsirScore      String
   lsirLevel      String
   reportType     String
 
   // Mutable Attributes
-  charge                              Charge
-  pronouns                            Pronouns
-  veteranStatus                       VeteranStatus
+  primaryCharge    Charge
+  secondaryCharges Charge[]
+
   previouslyIncarcerated              Boolean
   previouslyUnderSupervision          Boolean
   hasPreviousFelonyConviction         Boolean
   hasPreviousViolentOffenseConviction Boolean
   hasPreviousSexOffenseConviction     Boolean
-  previousTreatmentCourtParticipation Boolean
-  hasSubstanceAbuseDisorderDiagnosis  Boolean
-  isOpenChildProtectiveServicesCase   Boolean
+  previousTreatmentCourt              String?
+
+  substanceUseDisorderDiagnosis SubstanceUseDiagnosis
+  asamCareRecommendation AsamCareRecommendation?
+
+  mentalHealthDiagnoses MentalHealthDiagnosis[]
+
+  hasDevelopmentalDisability         Boolean
+  veteranStatus                      VeteranStatus
+  plea                               Plea
+  hasOpenChildProtectiveServicesCase Boolean
+  needsToBeAddressed                 NeedToBeAddressed[]
 }

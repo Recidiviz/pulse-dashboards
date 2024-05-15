@@ -15,7 +15,8 @@ If you haven't already, follow the setup instructions in the root README to inst
 2. Run `nx prisma-generate sentencing-server` to generate the Prisma client.
 3. Spin up the development database with `cd apps/sentencing-server && docker-compose up`.
 4. Update the database tables with `cd apps/sentencing-server && npx prisma migrate dev`
-5. Start the server with `nx dev sentencing-server`.
+5. Seed the database with `nx prisma-seed sentencing-server`.
+6. Start the server with `nx dev sentencing-server`.
 
 ## Importing types into your client
 
