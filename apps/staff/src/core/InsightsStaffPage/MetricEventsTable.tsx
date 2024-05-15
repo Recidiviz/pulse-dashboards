@@ -30,6 +30,7 @@ import { formatDate } from "../../utils";
 import InsightsClientDetailsPanel from "../InsightsClientDetailsPanel";
 import InsightsTable from "../InsightsTable";
 import ModelHydrator from "../ModelHydrator";
+import PersonId from "../PersonId";
 
 const Wrapper = styled.div`
   max-height: 555px;
@@ -70,7 +71,10 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
   });
 }
 
-const createTableColumn = (column: Column): Column => {
+const createTableColumn = (
+  column: Column,
+  clientDetailLinks: string[] | undefined,
+): Column => {
   const { accessor } = column;
 
   switch (accessor) {
@@ -88,6 +92,17 @@ const createTableColumn = (column: Column): Column => {
         ...column,
         Cell: ({ value }: { value: Date }) => <>{formatDate(value)}</>,
       };
+    case "clientId":
+      return clientDetailLinks
+        ? column
+        : {
+            ...column,
+            Cell: ({ value }: { value: string }) => (
+              <PersonId personId={value} shiftIcon>
+                {value}
+              </PersonId>
+            ),
+          };
     default:
       return column;
   }
@@ -130,7 +145,9 @@ export const MetricEventsTable = withPresenter(
         <Wrapper ref={scrollElementRef}>
           <InsightsTable<SupervisionOfficerMetricEvent>
             data={officerMetricEvents}
-            columns={columns.map((c) => createTableColumn(c))}
+            columns={columns.map((c) =>
+              createTableColumn(c, clientDetailLinks),
+            )}
             rowLinks={clientDetailLinks}
             scrollElement={scrollElement}
             intercomTargetOnFirstRow="First client"

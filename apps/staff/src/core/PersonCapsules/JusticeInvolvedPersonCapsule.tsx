@@ -25,15 +25,13 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React, { useEffect } from "react";
-import toast from "react-hot-toast";
+import React from "react";
 import { Link } from "react-router-dom";
-import useClipboard from "react-use-clipboard";
 import styled, { css } from "styled-components/macro";
 
-import copyIcon from "../../assets/static/images/copy.svg";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
+import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 export type JusticeInvolvedPersonCapsuleProps = {
@@ -48,26 +46,6 @@ export type JusticeInvolvedPersonCapsuleProps = {
 
 const PersonName = styled.span`
   color: ${palette.pine2};
-`;
-
-const PersonId = styled.span`
-  color: ${palette.data.teal1};
-  padding: 0 ${rem(spacing.xs)};
-  border-radius: ${rem(spacing.xs / 2)};
-  transition: all 0.3s ease;
-
-  &::after {
-    content: url(${copyIcon});
-    margin-left: ${rem(spacing.sm)};
-  }
-  &:hover {
-    background: rgba(53, 83, 98, 0.05);
-    cursor: pointer;
-  }
-  &:active {
-    background: ${palette.slate20};
-    cursor: pointer;
-  }
 `;
 
 const Wrapper = styled.div<{ nameHoverState: boolean }>`
@@ -147,14 +125,6 @@ export const JusticeInvolvedPersonCapsule = observer(
     hideId = false,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
-    const [isCopied, copyToClipboard] = useClipboard(person.displayId, {
-      successDuration: 5000,
-    });
-
-    useEffect(() => {
-      if (isCopied) toast("DOC ID copied!", { duration: 5000 });
-    }, [isCopied]);
-
     const IdentityEl = SIZES.identity[textSize];
     const StatusEl = SIZES.status[textSize];
 
@@ -189,11 +159,7 @@ export const JusticeInvolvedPersonCapsule = observer(
             {!hideId && (
               <>
                 <Separator> </Separator>
-                <PersonId
-                  title="Copy DOC ID to clipboard"
-                  className="fs-exclude"
-                  onClick={() => copyToClipboard()}
-                >
+                <PersonId personId={person.displayId}>
                   {person.displayId}
                 </PersonId>
               </>

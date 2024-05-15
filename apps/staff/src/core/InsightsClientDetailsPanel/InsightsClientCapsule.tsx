@@ -21,6 +21,7 @@ import styled from "styled-components/macro";
 
 import { ClientInfo } from "../../InsightsStore/models/ClientInfo";
 import { PersonInitialsAvatar } from "../Avatar";
+import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const Wrapper = styled.div`
@@ -55,7 +56,9 @@ export const InsightsClientCapsule = observer(function InsightsClientCapsule({
       <ClientDetail>
         <ClientName>{clientInfo.displayName}</ClientName>
         <Separator> • </Separator>
-        <ClientId>{clientInfo.clientId}</ClientId>
+        <PersonId personId={clientInfo.clientId}>
+          <ClientId>{clientInfo.clientId}</ClientId>
+        </PersonId>
       </ClientDetail>
     </Wrapper>
   );
