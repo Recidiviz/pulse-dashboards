@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startCase } from "lodash";
 import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
@@ -22,13 +23,15 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../../../components/StoreProvider";
 import { UsMeAnnualReclassificationReviewData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMeAnnualReclassificationReviewForm";
 import { Resident } from "../../../../WorkflowsStore/Resident";
-import { downloadSingle } from "../../DOCXFormGenerator";
+import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
+import { downloadZipFile } from "../../utils";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
 import p3 from "./assets/p3.png";
 import p4 from "./assets/p4.png";
-const previewImages = [p1, p2, p3, p4];
+import p5 from "./assets/p5.png";
+const previewImages = [p1, p2, p3, p4, p5];
 const FormPreviewPage = styled.img`
   height: auto;
   width: 100%;
@@ -37,22 +40,29 @@ const FormPreviewPage = styled.img`
 const formDownloader = async (resident: Resident): Promise<void> => {
   let contents: Partial<UsMeAnnualReclassificationReviewData> = {};
 
+  const { displayName, stateCode, rootStore, verifiedOpportunities } = resident;
+
   runInAction(() => {
     contents = {
-      ...toJS(
-        resident.verifiedOpportunities.usMeReclassificationReview?.form
-          ?.formData,
-      ),
+      ...toJS(verifiedOpportunities.usMeReclassificationReview?.form?.formData),
     };
   });
 
-  downloadSingle(
-    `${resident.displayName} - Classification Review Form`,
-    resident.stateCode,
-    "classification_review_form.docx",
-    contents,
-    resident.rootStore.getTokenSilently,
-  );
+  const fileInputs: FileGeneratorArgs[] = [
+    "classification_review_form",
+    "48_hour_notice_of_classification_review",
+  ].map((filename) => {
+    return [
+      `${displayName} - ${startCase(filename)}.docx`,
+      stateCode,
+      `${filename}.docx`,
+      contents,
+    ];
+  });
+
+  downloadZipFile(`${displayName} Classification Review Packet.zip`, [
+    ...(await renderMultipleDocx(fileInputs, rootStore.getTokenSilently)),
+  ]);
 };
 
 function AnnualClassificationReview() {
@@ -69,9 +79,9 @@ function AnnualClassificationReview() {
 
   return (
     <FormContainer
-      heading="Classification Review Form"
+      heading="Classification Review Packet"
       agencyName="MDOC"
-      downloadButtonLabel="Download DOCX"
+      downloadButtonLabel="Download ZIP"
       onClickDownload={() => formDownloader(resident)}
       opportunity={opportunity}
     >

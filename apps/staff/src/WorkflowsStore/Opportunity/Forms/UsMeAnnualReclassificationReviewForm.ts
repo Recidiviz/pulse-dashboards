@@ -126,6 +126,7 @@ export class UsMeAnnualReclassificationReviewForm extends FormBase<
   UsMeAnnualReclassificationOpportunity
 > {
   navigateToFormText = "Generate paperwork";
+  allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {
     return "AnnualClassificationReview";
