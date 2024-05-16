@@ -80,12 +80,16 @@ export function ClientMilestones({
   client: Client;
   showAll?: boolean;
 }): JSX.Element {
-  const numMilestonesLeft = (client.congratulationsMilestones?.length || 0) - 2;
+  const numOfMilestones = client.congratulationsMilestones?.length || 0;
+  let maxMilestonesShown = 2;
 
+  const numOfRemainingMilestones = numOfMilestones - maxMilestonesShown;
+  maxMilestonesShown =
+    numOfRemainingMilestones === 1 ? numOfMilestones : maxMilestonesShown;
   return (
     <MilestonesList>
       {client.congratulationsMilestones?.map((milestone, index) => {
-        if (index < 2 || showAll) {
+        if (index < maxMilestonesShown || showAll) {
           return (
             <MilestonesItem key={`${client.pseudonymizedId}-${milestone.type}`}>
               <TealStar />
@@ -93,10 +97,10 @@ export function ClientMilestones({
             </MilestonesItem>
           );
         }
-        if (index === 2 && !showAll) {
+        if (numOfRemainingMilestones > 1 && !showAll) {
           return (
             <SeeMoreText key={`${client.pseudonymizedId}-See more`}>
-              +{numMilestonesLeft} more
+              +{numOfRemainingMilestones} more
             </SeeMoreText>
           );
         }
