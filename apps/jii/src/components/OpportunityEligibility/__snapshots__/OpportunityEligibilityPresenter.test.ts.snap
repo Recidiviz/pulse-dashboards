@@ -45,7 +45,7 @@ You’ll also have to write an essay describing the path you’re on, the first 
 }
 `;
 
-exports[`next steps content 1`] = `
+exports[`after hydration > next steps content 1`] = `
 {
   "body": "If you’re interested in SCCP, talk to your case manager first to see if you’ve met the three requirements above.
 

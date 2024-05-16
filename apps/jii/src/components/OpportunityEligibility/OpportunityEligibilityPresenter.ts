@@ -105,6 +105,9 @@ export class OpportunityEligibilityPresenter implements Hydratable {
   }
 
   get nextStepsContent() {
+    // this content is not relevant for ineligible residents and should be suppressed
+    if (!this.eligibilityReport.hasEligibilityData) return;
+
     return {
       ...this.config.copy.nextSteps,
       linkUrl: `/eligibility/${this.config.urlSection}/nextSteps`,
@@ -112,13 +115,19 @@ export class OpportunityEligibilityPresenter implements Hydratable {
   }
 
   get requirementsContent() {
-    const { requirements } = this.eligibilityReport;
-    const { untrackedCriteria, linkText } = this.config.copy.requirements;
+    const { requirements: sections } = this.eligibilityReport;
+
+    const {
+      urlSection,
+      copy: {
+        requirements: { linkText },
+      },
+    } = this.config;
+
     return {
-      ...requirements,
-      untrackedCriteria,
+      sections,
       linkText,
-      linkUrl: `/eligibility/${this.config.urlSection}/requirements`,
+      linkUrl: `/eligibility/${urlSection}/requirements`,
     };
   }
 }

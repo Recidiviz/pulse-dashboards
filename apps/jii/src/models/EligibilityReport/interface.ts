@@ -17,11 +17,14 @@
 
 import { RequirementCopy } from "../../configs/types";
 
+export type RequirementsSection = {
+  label: string;
+  requirements: Array<RequirementCopy>;
+};
+
 export interface EligibilityReport {
+  hasEligibilityData: boolean;
   headline: string;
   subheading: string;
-  requirements: {
-    requirementsMet: Array<string>;
-    requirementsNotMet: Array<RequirementCopy>;
-  };
+  requirements: Array<RequirementsSection>;
 }

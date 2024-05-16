@@ -24,15 +24,25 @@ import nextStepsBody from "./nextStepsBody.md?raw";
 export const config: OpportunityConfig = {
   urlSection: "sccp",
   copy: {
-    headline: `{{#if resident.personName.givenNames}}{{ resident.personName.givenNames }}, you{{ else }}You{{/if}} 
-      {{#if eligibilityData}}could be eligible to apply for the Supervised Community Confinement Program
-      {{#if (isFutureDate custom.applicationDate)}} on {{ formatFullDate custom.applicationDate }}{{/if}}
-      {{else}}are not currently eligible to apply for the Supervised Community Confinement Program{{/if}}`,
-    subheading: `{{#if eligibilityData}}
-    You {{#if (isFutureDate custom.eligibilityDate)}} could be {{else}} became {{/if}} eligible for release onto SCCP 
-    on {{formatFullDate custom.eligibilityDate}}. You can apply 
-    {{#if (isFutureDate custom.applicationDate )}} up to 3 months prior to that date — as soon as 
-    {{formatFullDate custom.applicationDate}}.{{else}} as soon as you meet all the requirements.{{/if}}
+    headline: `{{#if eligibilityData}}
+        {{#if resident.personName.givenNames}}{{ resident.personName.givenNames }}, you{{ else }}You{{/if}} 
+        could be eligible to apply for the Supervised Community Confinement Program
+        {{#if (isFutureDate custom.applicationDate)}} on {{ formatFullDate custom.applicationDate }}{{/if}}
+      {{else}}Learn about the Supervised Community Confinement Program
+      {{/if}}`,
+    // if no eligibility data, or if resident is fully eligible, this will be blank;
+    // otherwise the copy responds to various data conditions
+    subheading: `{{#if eligibilityData}} 
+      {{#if custom.ineligibleViolation}}You have remaining requirements. Talk to your case manager to understand if and when you can apply.
+      {{else}}
+        {{#if (isFutureDate custom.eligibilityDate)}}
+        You could be eligible for release onto SCCP on {{formatFullDate custom.eligibilityDate}}. 
+        You can apply up to 3 months prior to that date —
+          {{#if (isFutureDate custom.applicationDate )}} as soon as {{formatFullDate custom.applicationDate}}.
+          {{else}} which means that you may be eligible to apply now.
+          {{/if}}
+        {{/if}}
+      {{/if}} 
     {{/if}}`,
     about: {
       sections: [
@@ -51,8 +61,10 @@ export const config: OpportunityConfig = {
     requirements: {
       trackedCriteria: {
         usMeServedXPortionOfSentence: {
-          criterion:
-            "Served {{currentCriterion.xPortionServed}} of your sentence",
+          criterion: `{{#if currentCriterion}}Served {{currentCriterion.xPortionServed}} of your sentence
+            {{else}}Served 1/2 of your sentence if your sentence is 5 years or fewer; 
+              served 2/3 of your sentence if your sentence is 5 or more years
+            {{/if}}`,
           ineligibleReason:
             "You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}",
         },
@@ -67,18 +79,31 @@ export const config: OpportunityConfig = {
             "{{#if currentCriterion.eligibleDate}}You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}{{else}}You have a Class {{currentCriterion.highestClassViol}} violation: {{currentCriterion.violType}}{{/if}}",
         },
         usMeCustodyLevelIsMinimumOrCommunity: {
-          criterion:
-            "Current custody level is {{titleCase (lowerCase currentCriterion.custodyLevel) }}",
+          criterion: `Current custody level is {{#if currentCriterion}} 
+              {{titleCase (lowerCase currentCriterion.custodyLevel) }}
+              {{else}} Minimum or Community
+            {{/if}}`,
         },
         usMeNoDetainersWarrantsOrOther: {
           criterion: "No unresolved detainers, warrants or pending charges",
         },
       },
       untrackedCriteria: [
-        "Have a safe and healthy place to live for the entire time you are on SCCP",
-        "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
-        "Completed required programs, following your case plan, and showing positive change",
+        {
+          criterion:
+            "Have a safe and healthy place to live for the entire time you are on SCCP",
+        },
+        {
+          criterion:
+            "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+        },
+        {
+          criterion:
+            "Completed required programs, following your case plan, and showing positive change",
+        },
       ],
+      staticRequirementsLabel:
+        "In order to be eligible for SCCP, you must have met the following requirements:",
       linkText: "Get details about each requirement",
     },
     nextSteps: {

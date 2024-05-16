@@ -23,7 +23,7 @@ import { ResidentRecord, UsMeSCCPRecord } from "~datatypes";
 
 import { hydrateTemplate } from "../../../configs/hydrateTemplate";
 import { OpportunityConfig } from "../../../configs/types";
-import { EligibilityReport } from "../interface";
+import { EligibilityReport, RequirementsSection } from "../interface";
 
 const APPLICATION_DATE_OFFSET_MONTHS = 3;
 
@@ -66,6 +66,13 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     return;
   }
 
+  private get ineligibleViolation(): boolean {
+    return (
+      this.eligibilityData?.ineligibleCriteria
+        .usMeNoClassAOrBViolationFor90Days !== undefined
+    );
+  }
+
   /**
    * Generic preparation of report data for template rendering. Opportunity-specific
    * properties should be added to an object called "custom" on this context
@@ -77,6 +84,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       eligibilityData,
       applicationDate,
       eligibilityDate,
+      ineligibleViolation,
     } = this;
     return {
       resident,
@@ -85,8 +93,13 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       custom: {
         eligibilityDate,
         applicationDate,
+        ineligibleViolation,
       },
     };
+  }
+
+  get hasEligibilityData(): boolean {
+    return this.eligibilityData !== undefined;
   }
 
   get headline(): string {
@@ -108,14 +121,37 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     return isFuture(reason.eligibleDate);
   }
 
-  get requirements(): EligibilityReport["requirements"] {
-    if (!this.eligibilityData) {
-      return { requirementsMet: [], requirementsNotMet: [] };
-    }
+  /**
+   * For use when eligibility data is not present; should return a single section
+   * of all tracked and untracked requirements without any personalization
+   */
+  private get staticRequirements(): [RequirementsSection] {
+    const trackedRequirements = Object.values(
+      this.config.copy.requirements.trackedCriteria,
+    ).map((r) => ({
+      // ineligible reasons are dropped since we don't know eligibility info
+      criterion: hydrateTemplate(r.criterion, {}),
+    }));
 
-    // step 1: separate eligible and ineligible (only an extra step for SCCP because of the application date issue)
-    const met = { ...this.eligibilityData.eligibleCriteria };
-    const notMet = { ...this.eligibilityData.ineligibleCriteria };
+    return [
+      {
+        label: this.config.copy.requirements.staticRequirementsLabel,
+        requirements: [
+          ...trackedRequirements,
+          ...this.config.copy.requirements.untrackedCriteria,
+        ],
+      },
+    ];
+  }
+
+  /**
+   * Groups tracked requirements by their eligibility status. For many opportunities
+   * this would be trivial, but for SCCP the groupings are different for staff vs JII
+   * due to the way that the application process is handled.
+   */
+  private getRequirementsByStatus(eligibilityData: UsMeSCCPRecord["output"]) {
+    const met = { ...eligibilityData.eligibleCriteria };
+    const notMet = { ...eligibilityData.ineligibleCriteria };
     // these criteria will be "met" if the resident is within the pre-eligibility application window,
     // but we want to display them based on the actual eligibility date here
     (
@@ -131,38 +167,66 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       }
     });
 
-    // step 2: separate formatting pipeline for each category that runs the configs through handlebars or whatever
+    return { met, notMet };
+  }
+
+  get requirements(): EligibilityReport["requirements"] {
+    if (!this.eligibilityData) return this.staticRequirements;
+
+    const sections: Array<RequirementsSection> = [];
+
     const { trackedCriteria } = this.config.copy.requirements;
     const orderedCriteria = Object.keys(trackedCriteria);
 
-    const requirementsMet: EligibilityReport["requirements"]["requirementsMet"] =
-      orderedCriteria
-        .filter((key) => key in met)
-        .map((key) =>
-          cleanupInlineTemplate(
-            hydrateTemplate(trackedCriteria[key].criterion, {
-              // this assertion is safe because we just filtered it above
-              currentCriterion: met[key as keyof typeof met] ?? {},
-            }),
-          ),
-        );
+    // run a separate formatting pipeline for each grouping
+    // since they are processed a little differently
+    const { met, notMet } = this.getRequirementsByStatus(this.eligibilityData);
 
-    const requirementsNotMet: EligibilityReport["requirements"]["requirementsNotMet"] =
-      orderedCriteria
-        .filter((key) => key in notMet)
-        .map((key) =>
-          mapValues(trackedCriteria[key], (template) =>
-            template
-              ? cleanupInlineTemplate(
-                  hydrateTemplate(template, {
-                    // this assertion is safe because we just filtered it above
-                    currentCriterion: notMet[key as keyof typeof notMet] ?? {},
-                  }),
-                )
-              : "",
-          ),
-        );
+    if (Object.keys(met).length) {
+      sections.push({
+        label: "Requirements you've met",
+        requirements: orderedCriteria
+          .filter((key): key is keyof typeof met => key in met)
+          .map((key) => ({
+            // ineligible reason is excluded, since these criteria are met
+            criterion: cleanupInlineTemplate(
+              hydrateTemplate(trackedCriteria[key].criterion, {
+                currentCriterion: met[key],
+              }),
+            ),
+          })),
+      });
+    }
 
-    return { requirementsMet, requirementsNotMet };
+    if (Object.keys(notMet).length) {
+      sections.push({
+        label: "Requirements you haven't met yet",
+        requirements: orderedCriteria
+          .filter((key): key is keyof typeof notMet => key in notMet)
+          .map((key) =>
+            // here, by mapping over both values in the copy object,
+            // we are including criterion and ineligible reason, when it is present
+            mapValues(trackedCriteria[key], (template) =>
+              template
+                ? cleanupInlineTemplate(
+                    hydrateTemplate(template, {
+                      currentCriterion: notMet[key],
+                    }),
+                  )
+                : "",
+            ),
+          ),
+      });
+    }
+
+    if (this.config.copy.requirements.untrackedCriteria.length) {
+      sections.push({
+        label:
+          "Check with your case manager to see if you’ve met these requirements",
+        requirements: this.config.copy.requirements.untrackedCriteria,
+      });
+    }
+
+    return sections;
   }
 }

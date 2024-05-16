@@ -39,7 +39,8 @@ export type OpportunityConfig = {
     };
     requirements: {
       trackedCriteria: Record<string, RequirementCopy>;
-      untrackedCriteria: Array<string>;
+      untrackedCriteria: Array<RequirementCopy>;
+      staticRequirementsLabel: string;
       linkText: string;
     };
     nextSteps: {

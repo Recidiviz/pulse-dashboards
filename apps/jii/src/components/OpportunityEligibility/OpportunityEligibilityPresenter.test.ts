@@ -98,10 +98,6 @@ test("about content", () => {
   expect(presenter.aboutContent).toMatchSnapshot();
 });
 
-test("next steps content", () => {
-  expect(presenter.nextStepsContent).toMatchSnapshot();
-});
-
 describe("after hydration", () => {
   beforeEach(async () => {
     await presenter.hydrate();
@@ -112,24 +108,53 @@ describe("after hydration", () => {
       {
         "linkText": "Get details about each requirement",
         "linkUrl": "/eligibility/sccp/requirements",
-        "requirementsMet": [
-          "Served 2/3 of your sentence",
-          "No Class A or B discipline in past 90 days",
-          "Current custody level is Community",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [
+        "sections": [
           {
-            "criterion": "Fewer than 30 months remaining on your sentence",
-            "ineligibleReason": "You'll meet this requirement on May 16, 2022",
+            "label": "Requirements you've met",
+            "requirements": [
+              {
+                "criterion": "Served 2/3 of your sentence",
+              },
+              {
+                "criterion": "No Class A or B discipline in past 90 days",
+              },
+              {
+                "criterion": "Current custody level is Community",
+              },
+              {
+                "criterion": "No unresolved detainers, warrants or pending charges",
+              },
+            ],
           },
-        ],
-        "untrackedCriteria": [
-          "Have a safe and healthy place to live for the entire time you are on SCCP",
-          "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
-          "Completed required programs, following your case plan, and showing positive change",
+          {
+            "label": "Requirements you haven't met yet",
+            "requirements": [
+              {
+                "criterion": "Fewer than 30 months remaining on your sentence",
+                "ineligibleReason": "You'll meet this requirement on May 16, 2022",
+              },
+            ],
+          },
+          {
+            "label": "Check with your case manager to see if you’ve met these requirements",
+            "requirements": [
+              {
+                "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+              },
+              {
+                "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              },
+              {
+                "criterion": "Completed required programs, following your case plan, and showing positive change",
+              },
+            ],
+          },
         ],
       }
     `);
+  });
+
+  test("next steps content", () => {
+    expect(presenter.nextStepsContent).toMatchSnapshot();
   });
 });

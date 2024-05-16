@@ -38,23 +38,47 @@ describe("fully eligible, needs to serve half", () => {
   });
 
   test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You became eligible for release onto SCCP on September 16, 2021. You can apply as soon as you meet all the requirements."`,
-    );
+    expect(report.subheading).toMatchInlineSnapshot(`""`);
   });
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [
-          "Served 1/2 of your sentence",
-          "Fewer than 30 months remaining on your sentence",
-          "No Class A or B discipline in past 90 days",
-          "Current custody level is Community",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [],
-      }
+      [
+        {
+          "label": "Requirements you've met",
+          "requirements": [
+            {
+              "criterion": "Served 1/2 of your sentence",
+            },
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+            },
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+            },
+            {
+              "criterion": "Current custody level is Community",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+          ],
+        },
+        {
+          "label": "Check with your case manager to see if you’ve met these requirements",
+          "requirements": [
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });
@@ -76,26 +100,54 @@ describe("eligible to apply before X portion served", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on February 16, 2022. You can apply as soon as you meet all the requirements."`,
+      `"You could be eligible for release onto SCCP on February 16, 2022. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
     );
   });
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [
-          "Fewer than 30 months remaining on your sentence",
-          "No Class A or B discipline in past 90 days",
-          "Current custody level is Minimum",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [
-          {
-            "criterion": "Served 2/3 of your sentence",
-            "ineligibleReason": "You'll meet this requirement on February 16, 2022",
-          },
-        ],
-      }
+      [
+        {
+          "label": "Requirements you've met",
+          "requirements": [
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+            },
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+            },
+            {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+          ],
+        },
+        {
+          "label": "Requirements you haven't met yet",
+          "requirements": [
+            {
+              "criterion": "Served 2/3 of your sentence",
+              "ineligibleReason": "You'll meet this requirement on February 16, 2022",
+            },
+          ],
+        },
+        {
+          "label": "Check with your case manager to see if you’ve met these requirements",
+          "requirements": [
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });
@@ -117,26 +169,54 @@ describe("eligible to apply before X months remaining", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on February 16, 2022. You can apply as soon as you meet all the requirements."`,
+      `"You could be eligible for release onto SCCP on February 16, 2022. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
     );
   });
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [
-          "Served 2/3 of your sentence",
-          "No Class A or B discipline in past 90 days",
-          "Current custody level is Minimum",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [
-          {
-            "criterion": "Fewer than 30 months remaining on your sentence",
-            "ineligibleReason": "You'll meet this requirement on February 16, 2022",
-          },
-        ],
-      }
+      [
+        {
+          "label": "Requirements you've met",
+          "requirements": [
+            {
+              "criterion": "Served 2/3 of your sentence",
+            },
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+            },
+            {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+          ],
+        },
+        {
+          "label": "Requirements you haven't met yet",
+          "requirements": [
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+              "ineligibleReason": "You'll meet this requirement on February 16, 2022",
+            },
+          ],
+        },
+        {
+          "label": "Check with your case manager to see if you’ve met these requirements",
+          "requirements": [
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });
@@ -164,20 +244,48 @@ describe("almost eligible, portion served", () => {
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [
-          "Fewer than 30 months remaining on your sentence",
-          "No Class A or B discipline in past 90 days",
-          "Current custody level is Community",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [
-          {
-            "criterion": "Served 1/2 of your sentence",
-            "ineligibleReason": "You'll meet this requirement on May 16, 2022",
-          },
-        ],
-      }
+      [
+        {
+          "label": "Requirements you've met",
+          "requirements": [
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+            },
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+            },
+            {
+              "criterion": "Current custody level is Community",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+          ],
+        },
+        {
+          "label": "Requirements you haven't met yet",
+          "requirements": [
+            {
+              "criterion": "Served 1/2 of your sentence",
+              "ineligibleReason": "You'll meet this requirement on May 16, 2022",
+            },
+          ],
+        },
+        {
+          "label": "Check with your case manager to see if you’ve met these requirements",
+          "requirements": [
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });
@@ -199,26 +307,54 @@ describe("almost eligible, recent violation", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You became eligible for release onto SCCP on September 16, 2021. You can apply as soon as you meet all the requirements."`,
+      `"You have remaining requirements. Talk to your case manager to understand if and when you can apply."`,
     );
   });
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [
-          "Served 1/2 of your sentence",
-          "Fewer than 30 months remaining on your sentence",
-          "Current custody level is Minimum",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [
-          {
-            "criterion": "No Class A or B discipline in past 90 days",
-            "ineligibleReason": "You'll meet this requirement on March 2, 2022",
-          },
-        ],
-      }
+      [
+        {
+          "label": "Requirements you've met",
+          "requirements": [
+            {
+              "criterion": "Served 1/2 of your sentence",
+            },
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+            },
+            {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+          ],
+        },
+        {
+          "label": "Requirements you haven't met yet",
+          "requirements": [
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+              "ineligibleReason": "You'll meet this requirement on March 2, 2022",
+            },
+          ],
+        },
+        {
+          "label": "Check with your case manager to see if you’ve met these requirements",
+          "requirements": [
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });
@@ -240,26 +376,54 @@ describe("almost eligible, pending violation", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You became eligible for release onto SCCP on September 16, 2021. You can apply as soon as you meet all the requirements."`,
+      `"You have remaining requirements. Talk to your case manager to understand if and when you can apply."`,
     );
   });
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [
-          "Served 1/2 of your sentence",
-          "Fewer than 30 months remaining on your sentence",
-          "Current custody level is Minimum",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [
-          {
-            "criterion": "No Class A or B discipline in past 90 days",
-            "ineligibleReason": "You have a Class B violation: Pending since 2021-09-06",
-          },
-        ],
-      }
+      [
+        {
+          "label": "Requirements you've met",
+          "requirements": [
+            {
+              "criterion": "Served 1/2 of your sentence",
+            },
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+            },
+            {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+          ],
+        },
+        {
+          "label": "Requirements you haven't met yet",
+          "requirements": [
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+              "ineligibleReason": "You have a Class B violation: Pending since 2021-09-06",
+            },
+          ],
+        },
+        {
+          "label": "Check with your case manager to see if you’ve met these requirements",
+          "requirements": [
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });
@@ -287,20 +451,48 @@ describe("almost eligible, months remaining", () => {
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [
-          "Served 2/3 of your sentence",
-          "No Class A or B discipline in past 90 days",
-          "Current custody level is Community",
-          "No unresolved detainers, warrants or pending charges",
-        ],
-        "requirementsNotMet": [
-          {
-            "criterion": "Fewer than 30 months remaining on your sentence",
-            "ineligibleReason": "You'll meet this requirement on May 16, 2022",
-          },
-        ],
-      }
+      [
+        {
+          "label": "Requirements you've met",
+          "requirements": [
+            {
+              "criterion": "Served 2/3 of your sentence",
+            },
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+            },
+            {
+              "criterion": "Current custody level is Community",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+          ],
+        },
+        {
+          "label": "Requirements you haven't met yet",
+          "requirements": [
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+              "ineligibleReason": "You'll meet this requirement on May 16, 2022",
+            },
+          ],
+        },
+        {
+          "label": "Check with your case manager to see if you’ve met these requirements",
+          "requirements": [
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });
@@ -316,7 +508,7 @@ describe("not eligible", () => {
 
   test("headline", () => {
     expect(report.headline).toMatchInlineSnapshot(
-      `"First, you are not currently eligible to apply for the Supervised Community Confinement Program"`,
+      `"Learn about the Supervised Community Confinement Program"`,
     );
   });
 
@@ -326,10 +518,40 @@ describe("not eligible", () => {
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
-      {
-        "requirementsMet": [],
-        "requirementsNotMet": [],
-      }
+      [
+        {
+          "label": "In order to be eligible for SCCP, you must have met the following requirements:",
+          "requirements": [
+            {
+              "criterion": "Served 1/2 of your sentence if your sentence is 5 years or fewer; 
+                    served 2/3 of your sentence if your sentence is 5 or more years
+      ",
+            },
+            {
+              "criterion": "Fewer than 30 months remaining on your sentence",
+            },
+            {
+              "criterion": "No Class A or B discipline in past 90 days",
+            },
+            {
+              "criterion": "Current custody level is  Minimum or Community
+      ",
+            },
+            {
+              "criterion": "No unresolved detainers, warrants or pending charges",
+            },
+            {
+              "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+            },
+            {
+              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            },
+            {
+              "criterion": "Completed required programs, following your case plan, and showing positive change",
+            },
+          ],
+        },
+      ]
     `);
   });
 });

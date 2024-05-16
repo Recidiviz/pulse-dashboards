@@ -17,7 +17,7 @@
 
 import Markdown from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { Link } from "react-router-dom";
 
 import { IncarcerationOpportunityId } from "../../configs/types";
@@ -31,7 +31,7 @@ const OpportunityEligibilityWithPresenter: FC<{
   return (
     <article>
       <h1>{presenter.headline}</h1>
-      <h2>{presenter.subheading}</h2>
+      {presenter.subheading && <h2>{presenter.subheading}</h2>}
       <section>
         {presenter.aboutContent.sections.map((s, i) => (
           <div key={s.heading}>
@@ -46,24 +46,12 @@ const OpportunityEligibilityWithPresenter: FC<{
       <section>
         <h1>Requirements</h1>
         <dl>
-          {!!presenter.requirementsContent.requirementsMet.length && (
-            <>
-              <dt>Requirements you've met</dt>
+          {presenter.requirementsContent.sections.map((section) => (
+            <Fragment key={section.label}>
+              <dt>{section.label}</dt>
               <dd>
                 <ul>
-                  {presenter.requirementsContent.requirementsMet.map((r) => (
-                    <li key={r}>{r}</li>
-                  ))}
-                </ul>
-              </dd>
-            </>
-          )}
-          {!!presenter.requirementsContent.requirementsNotMet.length && (
-            <>
-              <dt>Requirements you haven't met yet</dt>
-              <dd>
-                <ul>
-                  {presenter.requirementsContent.requirementsNotMet.map((r) => (
+                  {section.requirements.map((r) => (
                     <li key={r.criterion}>
                       {r.criterion}
                       {r.ineligibleReason && (
@@ -76,18 +64,8 @@ const OpportunityEligibilityWithPresenter: FC<{
                   ))}
                 </ul>
               </dd>
-            </>
-          )}
-          <dt>
-            Check with your case manager to see if you’ve met these requirements
-          </dt>
-          <dd>
-            <ul>
-              {presenter.requirementsContent.untrackedCriteria.map((c) => (
-                <li key={c}>{c}</li>
-              ))}
-            </ul>
-          </dd>
+            </Fragment>
+          ))}
         </dl>
         {presenter.requirementsContent && (
           <Link to={presenter.requirementsContent.linkUrl}>
@@ -95,13 +73,15 @@ const OpportunityEligibilityWithPresenter: FC<{
           </Link>
         )}
       </section>
-      <section>
-        <h1>Next steps</h1>
-        <Markdown>{presenter.nextStepsContent.body}</Markdown>
-        <Link to={presenter.nextStepsContent.linkUrl}>
-          {presenter.nextStepsContent.linkText}
-        </Link>
-      </section>
+      {presenter.nextStepsContent && (
+        <section>
+          <h1>Next steps</h1>
+          <Markdown>{presenter.nextStepsContent.body}</Markdown>
+          <Link to={presenter.nextStepsContent.linkUrl}>
+            {presenter.nextStepsContent.linkText}
+          </Link>
+        </section>
+      )}
     </article>
   );
 });
