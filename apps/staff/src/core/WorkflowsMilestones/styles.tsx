@@ -97,6 +97,7 @@ export const PhoneNumber = styled.span`
 export const ButtonsContainer = styled.div`
   ${typography.Sans14}
 
+  margin-top: ${rem(spacing.md)};
   flex: 1;
   display: flex;
   flex-flow: column nowrap;
