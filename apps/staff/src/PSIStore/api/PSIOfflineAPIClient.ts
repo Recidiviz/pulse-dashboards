@@ -20,4 +20,18 @@ import { PSIStore } from "../PSIStore";
 export class PSIOfflineAPIClient {
   // eslint-disable-next-line no-useless-constructor
   constructor(public readonly psiStore: PSIStore) {}
+
+  async getStaffInfo() {
+    const { PSIStaffInfoFixture } = await import(
+      "../offlineFixtures/PSIStaffInfoFixture"
+    );
+    return PSIStaffInfoFixture;
+  }
+
+  async getCaseDetails() {
+    const { PSICaseDetailsFixture } = await import(
+      "../offlineFixtures/PSICaseDetailsFixture"
+    );
+    return PSICaseDetailsFixture;
+  }
 }

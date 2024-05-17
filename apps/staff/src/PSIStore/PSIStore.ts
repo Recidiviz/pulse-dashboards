@@ -35,8 +35,8 @@ export class PSIStore {
   constructor(public rootStore: RootStore) {
     makeAutoObservable(this);
     this.apiClient = isOfflineMode()
-      ? new PSIAPIClient(this)
-      : new PSIOfflineAPIClient(this);
+      ? new PSIOfflineAPIClient(this)
+      : new PSIAPIClient(this);
   }
 
   get staffPseudoId(): string | undefined {

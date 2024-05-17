@@ -18,7 +18,10 @@
     },
     {
       "path": "./tsconfig.spec.json"
-    }
+    },
+    { 
+      "path": "../sentencing-server/tsconfig.types.json" 
+    },
   ],
   "ts-node": {
     // these options are overrides used only by ts-node

@@ -15,9 +15,72 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { when } from "mobx";
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import type { AppRouter } from "~sentencing-server/trpc/router";
+
 import { PSIStore } from "../PSIStore";
 
+export type tRPCClient = ReturnType<typeof createTRPCProxyClient<AppRouter>>;
+
+export type Staff = Awaited<ReturnType<tRPCClient["getStaff"]["query"]>>;
+
+export type Case = Awaited<ReturnType<tRPCClient["getCase"]["query"]>>;
+
 export class PSIAPIClient {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(public readonly psiStore: PSIStore) {}
+  client: tRPCClient;
+
+  constructor(public readonly psiStore: PSIStore) {
+    this.client = this.initTRPCClient();
+  }
+
+  private get baseUrl(): string {
+    return "http://localhost:3002";
+  }
+
+  async getRequestHeaders(): Promise<{ [key: string]: string }> {
+    const userStore = this.psiStore.rootStore.userStore;
+    await when(() => !!userStore.getToken);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const token = await userStore.getToken!();
+
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  }
+
+  initTRPCClient(): tRPCClient {
+    if (this.client) return this.client;
+    const requestHeaders = this.getRequestHeaders();
+    return createTRPCProxyClient<AppRouter>({
+      links: [
+        httpBatchLink({
+          url: this.baseUrl,
+          async headers() {
+            return {
+              authorization: JSON.stringify(requestHeaders),
+            };
+          },
+        }),
+      ],
+    });
+  }
+
+  async getStaffInfo(): Promise<Staff> {
+    if (!this.psiStore.staffPseudoId)
+      return Promise.reject({ message: "No staff pseudo id found" });
+
+    const fetchedData = await this.client.getStaff.query({
+      externalId: this.psiStore.staffPseudoId,
+    });
+    return fetchedData;
+  }
+
+  async getCaseDetails(caseId: string): Promise<Case> {
+    const fetchedData = await this.client.getCase.query({ externalId: caseId });
+    return fetchedData;
+  }
 }
