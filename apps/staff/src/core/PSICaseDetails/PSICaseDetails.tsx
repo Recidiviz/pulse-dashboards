@@ -15,6 +15,38 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const PSICaseDetails = () => {
-  return <div>Hello, I'm going to be a case details page soon!</div>;
-};
+import { observer } from "mobx-react-lite";
+import { useParams } from "react-router-dom";
+
+import { useRootStore } from "../../components/StoreProvider";
+import { PSICaseDetailsPresenter } from "../../PSIStore/presenters/PSICaseDetailsPresenter";
+import ModelHydrator from "../ModelHydrator";
+
+const PSICaseDetailsWithPresenter = observer(function PSICaseDetails({
+  presenter,
+}: {
+  presenter: PSICaseDetailsPresenter;
+}) {
+  const { caseAttributes } = presenter;
+
+  return <>{JSON.stringify(caseAttributes)}</>;
+});
+
+export const PSICaseDetails: React.FC = observer(function PSICaseDetails() {
+  const {
+    psiStore: { psiCaseStore },
+  } = useRootStore();
+  const params = useParams();
+
+  if (!params.caseId) {
+    return <>No case ID found.</>;
+  }
+
+  const presenter = new PSICaseDetailsPresenter(psiCaseStore, params.caseId);
+
+  return (
+    <ModelHydrator model={presenter}>
+      <PSICaseDetailsWithPresenter presenter={presenter} />
+    </ModelHydrator>
+  );
+});

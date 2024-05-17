@@ -16,22 +16,25 @@
 // =============================================================================
 
 import { PSIStore } from "../PSIStore";
+import { Case, Staff } from "./PSIAPIClient";
+
+// TODO(#29901): Remove `as unknown as` once the final Staff/Case response shape is solidified.
 
 export class PSIOfflineAPIClient {
   // eslint-disable-next-line no-useless-constructor
   constructor(public readonly psiStore: PSIStore) {}
 
-  async getStaffInfo() {
+  async getStaffInfo(): Promise<Staff> {
     const { PSIStaffInfoFixture } = await import(
       "../offlineFixtures/PSIStaffInfoFixture"
     );
-    return PSIStaffInfoFixture;
+    return PSIStaffInfoFixture as unknown as Promise<Staff>;
   }
 
-  async getCaseDetails() {
+  async getCaseDetails(): Promise<Case> {
     const { PSICaseDetailsFixture } = await import(
       "../offlineFixtures/PSICaseDetailsFixture"
     );
-    return PSICaseDetailsFixture;
+    return PSICaseDetailsFixture as unknown as Promise<Case>;
   }
 }

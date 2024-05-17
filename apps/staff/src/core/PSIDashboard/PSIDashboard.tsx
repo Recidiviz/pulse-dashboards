@@ -15,6 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const PSIDashboard = () => {
-  return <div>Hello, I'm going to be a dashboard soon!</div>;
-};
+import { observer } from "mobx-react-lite";
+
+import { useRootStore } from "../../components/StoreProvider";
+import { PSIStaffPresenter } from "../../PSIStore/presenters/PSIStaffPresenter";
+import ModelHydrator from "../ModelHydrator";
+
+const PSIDashboardWithPresenter = observer(function PSIDashboard({
+  presenter,
+}: {
+  presenter: PSIStaffPresenter;
+}) {
+  const { staffInfo } = presenter;
+  return <>{JSON.stringify(staffInfo)}</>;
+});
+
+export const PSIDashboard: React.FC = observer(function PSIDashboard() {
+  const {
+    psiStore: { psiStaffStore },
+  } = useRootStore();
+
+  const presenter = new PSIStaffPresenter(psiStaffStore);
+
+  return (
+    <ModelHydrator model={presenter}>
+      <PSIDashboardWithPresenter presenter={presenter} />
+    </ModelHydrator>
+  );
+});

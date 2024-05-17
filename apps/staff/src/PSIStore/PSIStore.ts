@@ -37,6 +37,8 @@ export class PSIStore {
     this.apiClient = isOfflineMode()
       ? new PSIOfflineAPIClient(this)
       : new PSIAPIClient(this);
+    this.psiStaffStore = new PSIStaffStore(this);
+    this.psiCaseStore = new PSICaseStore(this);
   }
 
   get staffPseudoId(): string | undefined {

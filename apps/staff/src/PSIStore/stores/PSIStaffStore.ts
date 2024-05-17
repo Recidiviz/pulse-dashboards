@@ -15,4 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export class PSIStaffStore {}
+import { makeAutoObservable } from "mobx";
+
+import { FlowMethod } from "~hydration-utils";
+
+import { PSIAPIClient, Staff } from "../api/PSIAPIClient";
+import { PSIStore } from "../PSIStore";
+
+export class PSIStaffStore {
+  staffInfo?: Staff;
+
+  constructor(public readonly psiStore: PSIStore) {
+    makeAutoObservable(this);
+  }
+
+  /** This is a MobX flow method and should be called with mobx.flowResult */
+  *loadStaffInfo(): FlowMethod<PSIAPIClient["getStaffInfo"], void> {
+    if (this.staffInfo) return;
+    this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
+  }
+}
