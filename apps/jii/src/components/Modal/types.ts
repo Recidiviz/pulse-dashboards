@@ -15,11 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-
-import { useRootStore } from "./StoreProvider/useRootStore";
-
-export const LogoutButton: React.FC = () => {
-  const { authStore } = useRootStore();
-  return <button onClick={() => authStore.logout()}>Logout</button>;
+export type ModalProps = {
+  isOpen: boolean;
+  hideModal: () => void;
 };

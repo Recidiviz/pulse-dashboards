@@ -35,6 +35,10 @@ exports[`hydration > hydrate 1`] = `
     "value": "RES008",
   },
   {
+    "label": "NoRelease Resident (RES998)",
+    "value": "RES998",
+  },
+  {
     "label": "Ineligible Resident (RES999)",
     "value": "RES999",
   },

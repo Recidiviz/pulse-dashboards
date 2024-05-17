@@ -26,6 +26,12 @@ type AboutSection = {
   body: string;
 };
 
+export type ProfileField = {
+  label: string;
+  value: string;
+  moreInfo?: string;
+};
+
 export type RequirementCopy = { criterion: string; ineligibleReason?: string };
 
 export type OpportunityConfig = {
@@ -47,12 +53,14 @@ export type OpportunityConfig = {
       body: string;
       linkText: string;
     };
+    menuLabel: string;
   };
 };
 
 export type IncarcerationOpportunityId = "usMeSCCP";
 
 export type ResidentsConfig = {
+  headerProfileFields: Array<ProfileField>;
   incarcerationOpportunities: Partial<
     Record<IncarcerationOpportunityId, OpportunityConfig>
   >;

@@ -15,16 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig } from "./types";
-import { usMeResidentsConfig } from "./US_ME/residents/residentsConfig";
+import { useState } from "react";
+
+import { ModalProps } from "./types";
 
 /**
- * All configuration objects for the residents application are locally defined.
- * This object is the source of truth for which state codes are supported, both
- * statically and at runtime.
+ * Convenience method for simple default modal state management.
+ * Returns:
+ * - showModal: function that reveals modal
+ * - modalProps: pass these to the {@link [Modal](./Modal.tsx)} component
  */
-export const residentsConfigByState = {
-  US_ME: usMeResidentsConfig,
-  // using satisfies here lets us derive StateCode as keyof this object
-  // instead of having to maintain it as a separate type
-} satisfies Record<string, ResidentsConfig>;
+export function useModal(): { showModal: () => void; modalProps: ModalProps } {
+  const [isShown, setIsShown] = useState(false);
+
+  const showModal = () => setIsShown(true);
+
+  const hideModal = () => setIsShown(false);
+
+  const modalProps = {
+    isOpen: isShown,
+    hideModal,
+  };
+
+  return { showModal, modalProps };
+}

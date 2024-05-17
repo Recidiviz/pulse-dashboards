@@ -18,15 +18,19 @@
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
 import { residentsConfigByState } from "../../../configs/residentsConfig";
+import { OpportunityConfig } from "../../../configs/types";
 import { UsMeSCCPEligibilityReport } from "./UsMeSCCPEligibilityReport";
 
 let report: UsMeSCCPEligibilityReport;
+
+const config = residentsConfigByState.US_ME.incarcerationOpportunities
+  .usMeSCCP as OpportunityConfig;
 
 describe("fully eligible, needs to serve half", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion),
     );
   });
@@ -87,7 +91,7 @@ describe("eligible to apply before X portion served", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       outputFixture(usMeSccpFixtures.eligibleToApplyBeforeXPortionServed),
     );
   });
@@ -156,7 +160,7 @@ describe("eligible to apply before X months remaining", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       outputFixture(usMeSccpFixtures.eligibleToApplyBeforeXMonthsRemaining),
     );
   });
@@ -225,7 +229,7 @@ describe("almost eligible, portion served", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       outputFixture(usMeSccpFixtures.almostEligibleXPortion),
     );
   });
@@ -294,7 +298,7 @@ describe("almost eligible, recent violation", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       outputFixture(usMeSccpFixtures.almostEligibleRecentViolation),
     );
   });
@@ -363,7 +367,7 @@ describe("almost eligible, pending violation", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       outputFixture(usMeSccpFixtures.almostEligiblePendingViolation),
     );
   });
@@ -432,7 +436,7 @@ describe("almost eligible, months remaining", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
     );
   });
@@ -501,7 +505,7 @@ describe("not eligible", () => {
   beforeEach(() => {
     report = new UsMeSCCPEligibilityReport(
       outputFixture(usMeResidents[0]),
-      residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP,
+      config,
       undefined,
     );
   });

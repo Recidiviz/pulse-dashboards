@@ -37,6 +37,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -8, months: -1 }),
     releaseDate: relativeFixtureDate({ months: 35 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: -1 }),
+    portionServedNeeded: "2/3" as const,
   },
   {
     officerId: "OFFICER5",
@@ -55,6 +57,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -46, days: 1 }),
     releaseDate: relativeFixtureDate({ months: 26 }),
+    portionServedNeeded: "2/3" as const,
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: 2 }),
   },
   {
     officerId: "OFFICER5",
@@ -72,6 +76,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -2, months: -6, days: 2 }),
     releaseDate: relativeFixtureDate({ years: 2 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: -3 }),
+    portionServedNeeded: "1/2" as const,
   },
   {
     officerId: "OFFICER5",
@@ -89,6 +95,10 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -31, days: 2 }),
     releaseDate: relativeFixtureDate({ months: 25 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({
+      months: -3,
+    }),
+    portionServedNeeded: "1/2" as const,
   },
   {
     officerId: "OFFICER5",
@@ -106,6 +116,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
     releaseDate: relativeFixtureDate({ years: 2, months: 5 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: 5 }),
+    portionServedNeeded: "1/2" as const,
   },
   {
     officerId: "OFFICER5",
@@ -123,6 +135,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -9, months: 26 }),
     releaseDate: relativeFixtureDate({ months: 26 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: -10 }),
+    portionServedNeeded: "2/3" as const,
   },
   {
     officerId: "OFFICER5",
@@ -140,6 +154,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -30 }),
     releaseDate: relativeFixtureDate({ months: 24 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: -3 }),
+    portionServedNeeded: "1/2" as const,
   },
   {
     officerId: "OFFICER5",
@@ -157,6 +173,24 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -9, months: 32 }),
     releaseDate: relativeFixtureDate({ months: 32 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: -4 }),
+    portionServedNeeded: "2/3" as const,
+  },
+  {
+    officerId: "OFFICER5",
+    stateCode: "US_ME",
+    personExternalId: "RES998",
+    displayId: "dRES998",
+    personName: {
+      givenNames: "NoRelease",
+      surname: "Resident",
+    },
+    gender: "MALE",
+    pseudonymizedId: "anonres998",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT B",
+    custodyLevel: "MEDIUM",
+    admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
   },
   {
     officerId: "OFFICER5",
@@ -174,6 +208,8 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
     releaseDate: relativeFixtureDate({ years: 2, months: 5 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: 5 }),
+    portionServedNeeded: "1/2" as const,
   },
 ].map((r) => makeRecordFixture(residentRecordSchema, r));
 

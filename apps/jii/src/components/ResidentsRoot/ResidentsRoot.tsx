@@ -15,19 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { FC, memo } from "react";
 import { Outlet } from "react-router-dom";
+import styled from "styled-components/macro";
 
+import { PAGE_WIDTH } from "../../utils/constants";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { ResidentsHeader } from "../ResidentsHeader/ResidentsHeader";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsPresenter } from "./ResidentsPresenter";
+
+const BaseLayout = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  max-width: ${rem(PAGE_WIDTH)};
+
+  & > * {
+    padding: ${rem(spacing.md)} ${rem(spacing.lg)};
+  }
+`;
 
 const ResidentsHydrator: FC<{ presenter: ResidentsPresenter }> = observer(
   function ResidentsHydrator({ presenter }) {
     return (
       <PageHydrator hydratable={presenter}>
-        <Outlet />
+        <BaseLayout>
+          <ResidentsHeader />
+          <main>
+            <Outlet />
+          </main>
+        </BaseLayout>
       </PageHydrator>
     );
   },

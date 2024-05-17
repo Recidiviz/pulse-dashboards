@@ -43,4 +43,15 @@ export class UserStore {
     // TODO(#5021): get this from auth0 for real users
     return this.externalIdOverride;
   }
+
+  /**
+   * In the absence of true role-based access control, there is just one
+   * "enhanced" permission that can see additional features
+   */
+  get hasEnhancedPermission() {
+    if (isOfflineMode()) return true;
+
+    // eventually recidiviz users only should be able to do this in the live app
+    return false;
+  }
 }

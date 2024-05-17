@@ -21,15 +21,14 @@ import { makeAutoObservable } from "mobx";
 
 import { ResidentRecord, UsMeSCCPRecord } from "~datatypes";
 
-import { hydrateTemplate } from "../../../configs/hydrateTemplate";
+import {
+  cleanupInlineTemplate,
+  hydrateTemplate,
+} from "../../../configs/hydrateTemplate";
 import { OpportunityConfig } from "../../../configs/types";
 import { EligibilityReport, RequirementsSection } from "../interface";
 
 const APPLICATION_DATE_OFFSET_MONTHS = 3;
-
-function cleanupInlineTemplate(s: string) {
-  return s.trim().replaceAll(/\s+/g, " ");
-}
 
 export class UsMeSCCPEligibilityReport implements EligibilityReport {
   constructor(

@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { dateStringSchema } from "../../utils/dateStringSchema";
 import { ParsedRecord } from "../../utils/types";
 import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 
@@ -33,6 +34,7 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     releaseDate: z.string().nullish(),
     portionServedNeeded: z.enum(["1/2", "2/3"]).nullish(),
     sccpEligibilityDate: z.string().nullish(),
+    usMePortionNeededEligibleDate: dateStringSchema.nullish(),
     gender: z.string(),
   })
   .transform((input) => ({

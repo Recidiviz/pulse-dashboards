@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityConfig } from "../types";
+import { OpportunityConfig } from "../../types";
 import aboutBody1 from "./aboutBody1.md?raw";
 import aboutBody2 from "./aboutBody2.md?raw";
 import aboutBody3 from "./aboutBody3.md?raw";
@@ -110,5 +110,6 @@ export const config: OpportunityConfig = {
       body: nextStepsBody,
       linkText: "How to put together a strong application",
     },
+    menuLabel: "SCCP",
   },
 } satisfies OpportunityConfig;

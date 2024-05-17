@@ -19,7 +19,7 @@ import { parseISO } from "date-fns";
 
 import { relativeFixtureDate } from "~datatypes";
 
-import { hydrateTemplate } from "./hydrateTemplate";
+import { cleanupInlineTemplate, hydrateTemplate } from "./hydrateTemplate";
 
 test("hydrate template supports Handlebars syntax", () => {
   expect(
@@ -51,10 +51,18 @@ describe("helpers", () => {
     });
   });
 
-  test("formatFullDate", () => {
+  test("formatFullDate with date", () => {
     expect(
       hydrateTemplate("{{formatFullDate input}}", {
         input: new Date(2025, 0, 17),
+      }),
+    ).toBe("January 17, 2025");
+  });
+
+  test("formatFullDate with string", () => {
+    expect(
+      hydrateTemplate("{{formatFullDate input}}", {
+        input: "2025-01-17",
       }),
     ).toBe("January 17, 2025");
   });
@@ -67,4 +75,55 @@ describe("helpers", () => {
     expect(hydrateTemplate(template, { date: futureDate })).toBe("future");
     expect(hydrateTemplate(template, { date: pastDate })).toBe("past");
   });
+
+  test("and", () => {
+    expect(
+      hydrateTemplate("{{#if (and a b)}}yes{{else}}no{{/if}}", {
+        a: false,
+        b: true,
+      }),
+    ).toBe("no");
+    expect(
+      hydrateTemplate("{{#if (and a b)}}yes{{else}}no{{/if}}", {
+        a: true,
+        b: false,
+      }),
+    ).toBe("no");
+    expect(
+      hydrateTemplate("{{#if (and a b)}}yes{{else}}no{{/if}}", {
+        a: false,
+        b: false,
+      }),
+    ).toBe("no");
+    expect(
+      hydrateTemplate("{{#if (and a b)}}yes{{else}}no{{/if}}", {
+        a: true,
+        b: true,
+      }),
+    ).toBe("yes");
+  });
+
+  test("equals", () => {
+    expect(
+      hydrateTemplate("{{#if (equals a b)}}yes{{else}}no{{/if}}", {
+        a: "foo",
+        b: "bar",
+      }),
+    ).toBe("no");
+    expect(
+      hydrateTemplate("{{#if (equals a b)}}yes{{else}}no{{/if}}", {
+        a: "foo",
+        b: "foo",
+      }),
+    ).toBe("yes");
+  });
+});
+
+test("cleanupInlineTemplate", () => {
+  expect(
+    cleanupInlineTemplate(`
+    hello    world
+    
+    `),
+  ).toBe("hello world");
 });

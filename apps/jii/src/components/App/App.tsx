@@ -15,17 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import "./global.css";
 import "@fontsource/public-sans/400.css";
 import "@fontsource/public-sans/500.css";
 import "@fontsource/public-sans/600.css";
 import "@fontsource/public-sans/700.css";
 import "@fontsource/libre-baskerville";
 
-import { Link, Route, Routes } from "react-router-dom";
-import styled from "styled-components/macro";
+import {
+  GlobalStyle as GlobalStyleBase,
+  palette,
+} from "@recidiviz/design-system";
+import { Route, Routes } from "react-router-dom";
+import styled, { createGlobalStyle } from "styled-components/macro";
 
 import { AuthWrapper } from "../AuthWrapper/AuthWrapper";
-import { LogoutButton } from "../LogoutButton";
 import { PageOpportunityEligibility } from "../PageOpportunityEligibility/PageOpportunityEligibility";
 import { PageResidentsHome } from "../PageResidentsHome/PageResidentsHome";
 import { PageSearch } from "../PageSearch/PageSearch";
@@ -34,30 +38,19 @@ import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div``;
 
+const GlobalStyle = createGlobalStyle`
+  body {
+    background: ${palette.white};
+  }
+`;
+
 export function App() {
   return (
     <StoreProvider>
+      <GlobalStyleBase />
+      <GlobalStyle />
       <AuthWrapper>
         <StyledApp>
-          <br />
-          <hr />
-          <br />
-          <div role="navigation">
-            <ul>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                <Link to="/search">search</Link>
-              </li>
-              <li>
-                <Link to="/eligibility/sccp">SCCP</Link>
-              </li>
-              <li>
-                <LogoutButton />
-              </li>
-            </ul>
-          </div>
           <Routes>
             <Route path="/" element={<ResidentsRoot />}>
               <Route index element={<PageResidentsHome />} />

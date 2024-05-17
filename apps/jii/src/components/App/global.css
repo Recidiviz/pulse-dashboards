@@ -1,0 +1,2 @@
+/* styled-components discourages @import for global styles so this is separate */
+@import "modern-normalize"

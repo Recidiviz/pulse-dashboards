@@ -17,17 +17,20 @@
 
 import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
+import ReactModal from "react-modal";
 import { BrowserRouter } from "react-router-dom";
 
 import { App } from "./components/App/App";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
-);
-root.render(
+// safe to assert that this exists, see index.html
+const container = document.getElementById("root") as HTMLElement;
+
+ReactDOM.createRoot(container).render(
   <StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
   </StrictMode>,
 );
+
+ReactModal.setAppElement(container);

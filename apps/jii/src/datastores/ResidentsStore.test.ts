@@ -26,6 +26,7 @@ import {
 
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { residentsConfigByState } from "../configs/residentsConfig";
+import { OpportunityConfig } from "../configs/types";
 import { UsMeSCCPEligibilityReport } from "../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
 import { ResidentsStore } from "./ResidentsStore";
 import { RootStore } from "./RootStore";
@@ -197,7 +198,9 @@ describe("populate resident eligibility", () => {
 describe("populate resident eligibility report", () => {
   const expectedRes = outputFixture(usMeResidents[1]);
   const oppId = "usMeSCCP";
-  const config = residentsConfigByState.US_ME.incarcerationOpportunities[oppId];
+  const config = residentsConfigByState.US_ME.incarcerationOpportunities[
+    oppId
+  ] as OpportunityConfig;
 
   test("succeeds", async () => {
     await store.populateEligibilityReportByResidentId(

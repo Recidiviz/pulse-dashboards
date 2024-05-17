@@ -14,10 +14,12 @@ exports[`schema for 'US_ME' 'RES001' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres001",
   "releaseDate": "2024-11-16",
   "stateCode": "US_ME",
   "unitId": "UNIT A",
+  "usMePortionNeededEligibleDate": 2021-11-16T00:00:00.000Z,
 }
 `;
 
@@ -35,10 +37,12 @@ exports[`schema for 'US_ME' 'RES002' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres002",
   "releaseDate": "2024-02-16",
   "stateCode": "US_ME",
   "unitId": "UNIT B",
+  "usMePortionNeededEligibleDate": 2022-02-16T00:00:00.000Z,
 }
 `;
 
@@ -56,10 +60,12 @@ exports[`schema for 'US_ME' 'RES003' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres003",
   "releaseDate": "2023-12-16",
   "stateCode": "US_ME",
   "unitId": "UNIT B",
+  "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
 }
 `;
 
@@ -77,10 +83,12 @@ exports[`schema for 'US_ME' 'RES004' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres004",
   "releaseDate": "2024-01-16",
   "stateCode": "US_ME",
   "unitId": "UNIT A",
+  "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
 }
 `;
 
@@ -98,10 +106,12 @@ exports[`schema for 'US_ME' 'RES005' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres005",
   "releaseDate": "2024-05-16",
   "stateCode": "US_ME",
   "unitId": "UNIT B",
+  "usMePortionNeededEligibleDate": 2022-05-16T00:00:00.000Z,
 }
 `;
 
@@ -119,10 +129,12 @@ exports[`schema for 'US_ME' 'RES006' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres006",
   "releaseDate": "2024-02-16",
   "stateCode": "US_ME",
   "unitId": "UNIT B",
+  "usMePortionNeededEligibleDate": 2021-02-16T00:00:00.000Z,
 }
 `;
 
@@ -140,10 +152,12 @@ exports[`schema for 'US_ME' 'RES007' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres007",
   "releaseDate": "2023-12-16",
   "stateCode": "US_ME",
   "unitId": "UNIT B",
+  "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
 }
 `;
 
@@ -161,10 +175,32 @@ exports[`schema for 'US_ME' 'RES008' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres008",
   "releaseDate": "2024-08-16",
   "stateCode": "US_ME",
   "unitId": "UNIT A",
+  "usMePortionNeededEligibleDate": 2021-08-16T00:00:00.000Z,
+}
+`;
+
+exports[`schema for 'US_ME' 'RES998' 1`] = `
+{
+  "admissionDate": "2020-05-16",
+  "custodyLevel": "MEDIUM",
+  "displayId": "dRES998",
+  "facilityId": "FACILITY NAME",
+  "gender": "MALE",
+  "officerId": "OFFICER5",
+  "personExternalId": "RES998",
+  "personName": {
+    "givenNames": "NoRelease",
+    "surname": "Resident",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres998",
+  "stateCode": "US_ME",
+  "unitId": "UNIT B",
 }
 `;
 
@@ -182,9 +218,11 @@ exports[`schema for 'US_ME' 'RES999' 1`] = `
     "surname": "Resident",
   },
   "personType": "RESIDENT",
+  "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres999",
   "releaseDate": "2024-05-16",
   "stateCode": "US_ME",
   "unitId": "UNIT B",
+  "usMePortionNeededEligibleDate": 2022-05-16T00:00:00.000Z,
 }
 `;

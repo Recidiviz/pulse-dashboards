@@ -15,16 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig } from "./types";
-import { usMeResidentsConfig } from "./US_ME/residents/residentsConfig";
+import { makeAutoObservable } from "mobx";
 
-/**
- * All configuration objects for the residents application are locally defined.
- * This object is the source of truth for which state codes are supported, both
- * statically and at runtime.
- */
-export const residentsConfigByState = {
-  US_ME: usMeResidentsConfig,
-  // using satisfies here lets us derive StateCode as keyof this object
-  // instead of having to maintain it as a separate type
-} satisfies Record<string, ResidentsConfig>;
+import { ResidentsConfig } from "../../configs/types";
+import { RootStore } from "../../datastores/RootStore";
+
+export class NavigationMenuPresenter {
+  constructor(
+    private config: ResidentsConfig,
+    private rootStore: RootStore,
+  ) {
+    makeAutoObservable(this);
+  }
+
+  get links() {
+    const links = [{ text: "Home", url: "/" }];
+
+    if (this.rootStore.userStore.hasEnhancedPermission) {
+      links.push({ text: "Search for Residents", url: "/search" });
+    }
+
+    links.push(
+      ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
+        text: c.copy.menuLabel,
+        url: `/eligibility/${c.urlSection}`,
+      })),
+    );
+
+    return links;
+  }
+
+  logout() {
+    this.rootStore.authStore.logout();
+  }
+}

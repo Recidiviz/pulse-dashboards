@@ -20,7 +20,10 @@ import { set } from "mobx";
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
-import { IncarcerationOpportunityId } from "../../configs/types";
+import {
+  IncarcerationOpportunityId,
+  OpportunityConfig,
+} from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
@@ -31,7 +34,9 @@ let presenter: OpportunityEligibilityPresenter;
 const opportunityId: IncarcerationOpportunityId = "usMeSCCP";
 const resident = outputFixture(usMeResidents[0]);
 const stateConfig = residentsConfigByState.US_ME;
-const oppConfig = stateConfig.incarcerationOpportunities[opportunityId];
+const oppConfig = stateConfig.incarcerationOpportunities[
+  opportunityId
+] as OpportunityConfig;
 
 beforeEach(() => {
   residentsStore = new ResidentsStore(new RootStore(), stateConfig);

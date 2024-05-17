@@ -15,16 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig } from "./types";
-import { usMeResidentsConfig } from "./US_ME/residents/residentsConfig";
+import { palette, spacing, typography } from "@recidiviz/design-system";
+import Markdown from "markdown-to-jsx";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
 /**
- * All configuration objects for the residents application are locally defined.
- * This object is the source of truth for which state codes are supported, both
- * statically and at runtime.
+ * Renders Markdown children (via {@link https://www.npmjs.com/package/markdown-to-jsx|markdown-to-jsx})
+ * and applies a standard stylesheet to the result
  */
-export const residentsConfigByState = {
-  US_ME: usMeResidentsConfig,
-  // using satisfies here lets us derive StateCode as keyof this object
-  // instead of having to maintain it as a separate type
-} satisfies Record<string, ResidentsConfig>;
+export const CopyWrapper = styled(Markdown)`
+  h2 {
+    ${typography.Sans18}
+
+    color: ${palette.text.normal};
+    margin: 0 0 ${rem(spacing.lg)};
+  }
+
+  p {
+    ${typography.Body14}
+
+    color: ${palette.text.normal};
+  }
+`;
