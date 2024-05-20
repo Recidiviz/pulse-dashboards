@@ -36,6 +36,7 @@ const collectionIds = [
   "configs",
   "clientOpportunityUpdates",
   "clientUpdatesV2",
+  "formUpdates",
   "taskUpdates",
   "userUpdates",
 ];

@@ -115,6 +115,8 @@ service cloud.firestore {
       allow write: if appIsStaff() && allowUserUpdates(document);
     }
 
+    // We may want to get more granular with JII app permissions and subcollections
+    // once the app is external-facing.
     match /clientUpdatesV2/{clientId}/{document=**} {
       // documentIDs for the client updates are of the form us_xx_${client_id}
       // check to make sure the user's state code matches the prefix on the record
