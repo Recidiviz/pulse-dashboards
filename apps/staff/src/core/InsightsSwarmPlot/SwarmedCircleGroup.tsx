@@ -20,6 +20,7 @@ import { GOAL_COLORS } from "./constants";
 
 type SwarmedCircleGroupProps = JSX.IntrinsicElements["g"] & {
   swarmPoints: SwarmPoint[];
+  pointColor?: string;
 };
 
 /**
@@ -27,6 +28,7 @@ type SwarmedCircleGroupProps = JSX.IntrinsicElements["g"] & {
  */
 export function SwarmedCircleGroup({
   swarmPoints,
+  pointColor,
   ...gProps
 }: SwarmedCircleGroupProps) {
   return (
@@ -39,7 +41,7 @@ export function SwarmedCircleGroup({
             r={radius}
             cx={position}
             cy={spreadOffset}
-            fill={GOAL_COLORS[targetStatus]}
+            fill={pointColor ?? GOAL_COLORS[targetStatus]}
             fillOpacity={opacity}
           />
         ),

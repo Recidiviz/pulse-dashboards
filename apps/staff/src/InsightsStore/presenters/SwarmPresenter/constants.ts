@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export const HIGHLIGHTED_DOT_COLOR_V2 = "#E00E00";
+export const SWARM_DOT_RADIUS_V2 = 5;
+
 export const SWARM_SIZE_BREAKPOINT = 400;
 export const SWARM_DOT_RADIUS_LG = 6;
 export const SWARM_DOT_RADIUS_SM = 4;

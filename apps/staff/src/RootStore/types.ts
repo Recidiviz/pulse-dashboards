@@ -90,7 +90,8 @@ export type FeatureVariant =
   | "hideDenialRevert"
   | "opportunityConfigurationAPI"
   | "workflowsSupervisorSearch"
-  | "isolateFormUpdates";
+  | "isolateFormUpdates"
+  | "supervisorHomepage";
 export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 /**
  * For each feature, an optional activeDate can control when the user gets access.
@@ -127,6 +128,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMeAnnualReclassificationReview: {},
   workflowsSupervisorSearch: {},
   isolateFormUpdates: {},
+  supervisorHomepage: {},
 };
 export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
   import.meta.env.VITE_DEPLOY_ENV === "production"

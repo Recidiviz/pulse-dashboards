@@ -47,3 +47,10 @@ export type PrepareFn = (
   width: number,
   height: number,
 ) => PreparedChartData;
+
+export type HighlightedDot = {
+  label?: string;
+  value: number;
+  labelHidden?: boolean;
+  onMouseOver?: React.MouseEventHandler;
+};

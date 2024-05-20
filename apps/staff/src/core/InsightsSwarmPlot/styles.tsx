@@ -14,11 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { palette, typography } from "@recidiviz/design-system";
+import { palette, Sans16, typography } from "@recidiviz/design-system";
 import { Text } from "@visx/text";
 import styled from "styled-components/macro";
 
-import { HIGHLIGHT_MARK_STROKE_WIDTH } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import { TARGET_LINE_WIDTH } from "./constants";
 
 export const PlotWrapper = styled.div`
@@ -34,15 +33,18 @@ export const AxisLabel = styled(Text)`
   ${typography.Sans12}
   fill: ${palette.slate60};
 `;
-export const TargetLabel = styled(Text)`
-  ${typography.Sans12}
-  fill: ${palette.slate85};
+export const TargetLabel = styled(Text)<{ supervisorHomepage?: boolean }>`
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage ? typography.Sans14 : typography.Sans12}
+  fill: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? palette.pine1 : palette.slate85};
 `;
 
 export const HighlightLabel = styled.div<{ $size: "sm" | "lg" }>`
   ${(props) => (props.$size === "lg" ? typography.Sans18 : typography.Sans14)}
   color: ${palette.slate85};
   pointer-events: none;
+  display: inline-flex;
 `;
 
 export const AxisSpine = styled.line`
@@ -50,8 +52,9 @@ export const AxisSpine = styled.line`
   stroke-width: 1px;
 `;
 
-export const TargetLine = styled.line`
-  stroke: ${palette.slate60};
+export const TargetLine = styled.line<{ supervisorHomepage?: boolean }>`
+  stroke: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? palette.pine1 : palette.slate60};
   stroke-width: ${TARGET_LINE_WIDTH}px;
   stroke-dasharray: 6 6;
 `;
@@ -61,7 +64,13 @@ export const TickLine = styled.line`
   stroke-width: 1px;
 `;
 
-export const RateHighlightMark = styled.circle`
-  stroke: ${palette.white};
-  stroke-width: ${HIGHLIGHT_MARK_STROKE_WIDTH}px;
+export const RateHighlightMark = styled.circle``;
+
+export const LabelName = styled(Sans16)`
+  color: ${palette.pine1};
+`;
+
+export const LabelPercent = styled(Sans16)`
+  color: ${palette.signal.error};
+  font-weight: bold;
 `;

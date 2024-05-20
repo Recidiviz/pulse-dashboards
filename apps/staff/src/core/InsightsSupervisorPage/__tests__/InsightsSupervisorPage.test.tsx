@@ -19,7 +19,10 @@ import { axe } from "jest-axe";
 import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { InsightsConfigFixture } from "../../../InsightsStore/models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../../InsightsStore/models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionOfficersPresenter } from "../../../InsightsStore/presenters/SupervisionOfficersPresenter";
@@ -39,8 +42,10 @@ vi.mock(
 );
 
 const useRootStoreMock = vi.mocked(useRootStore);
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 
 beforeEach(() => {
+  useFeatureVariantsMock.mockReturnValue({ supervisorHomepage: undefined });
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
     () => false,
   );
