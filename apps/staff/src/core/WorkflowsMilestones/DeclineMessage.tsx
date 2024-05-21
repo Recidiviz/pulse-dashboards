@@ -34,9 +34,9 @@ import {
 } from "./styles";
 
 export const DECLINED_REASONS_MAP: Record<DeclineReason, string> = {
-  MILESTONE_NOT_MET: "Client has not met these milestones.",
-  CLIENT_DECLINED_TEXTS: "Client asked me not to text them.",
-  MISSING_CONTACT_INFO: "Client contact information is missing.",
+  MILESTONE_NOT_MET: "Client has not met one or more milestones",
+  CLIENT_DECLINED_TEXTS: "Client asked me not to text them",
+  MISSING_CONTACT_INFO: "Client contact information is missing",
   [OTHER_KEY]: "Other reason",
 };
 

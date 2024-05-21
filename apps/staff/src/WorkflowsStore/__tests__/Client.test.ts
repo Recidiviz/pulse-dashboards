@@ -44,8 +44,14 @@ let testClient: Client;
 let record: ClientRecord;
 const mockDeleteField = deleteField as Mock;
 
-function createTestUnit() {
-  testClient = new Client(record, mockRootStore);
+function createTestUnit(milestones?: ClientRecord["milestones"]) {
+  testClient = new Client(
+    {
+      ...record,
+      ...(milestones || record.milestones),
+    },
+    mockRootStore,
+  );
 }
 
 describe("Client", () => {
@@ -118,7 +124,7 @@ describe("Client", () => {
         },
         message: dedent`Message from Agent Smith at CDCR:
 
-          Hey Real! Congratulations on reaching these milestones:
+          Hey Real! Congratulations on reaching this milestone:
 
           - 6 months violation-free
 
@@ -141,7 +147,7 @@ describe("Client", () => {
         },
         message: dedent`Message from Agent Smith at CDCR:
 
-          Hey Real! Congratulations on reaching these milestones:
+          Hey Real! Congratulations on reaching this milestone:
 
           - 6 months violation-free`,
         stateCode: "US_XX",
@@ -162,9 +168,40 @@ describe("Client", () => {
         },
         message: dedent`Message from Agent Smith at CDCR:
 
-          Hey Real! Congratulations on reaching these milestones:
+          Hey Real! Congratulations on reaching this milestone:
 
           - 6 months violation-free`,
+        stateCode: "US_XX",
+        status: "PENDING",
+        userHash: "123-hash",
+      });
+    });
+    test("correct copy when more than one milestone", () => {
+      createTestUnit();
+      testClient.tenantMilestones = [
+        {
+          type: "NO_VIOLATION_WITHIN_6_MONTHS",
+          text: "6 months violation-free",
+        },
+        {
+          type: "HOUSING_TYPE_IS_NOT_TRANSIENT",
+          text: "Housing type is not transient",
+        },
+      ];
+      testClient.updateMilestonesTextMessage();
+      expect(
+        mockRootStore.firestoreStore.updateMilestonesMessages,
+      ).toHaveBeenCalledWith("us_xx_PERSON1", {
+        updated: {
+          by: "staff@email.com",
+          date: "2023-06-12",
+        },
+        message: dedent`Message from Agent Smith at CDCR:
+
+          Hey Real! Congratulations on reaching these milestones:
+
+          - 6 months violation-free
+          - Housing type is not transient`,
         stateCode: "US_XX",
         status: "PENDING",
         userHash: "123-hash",

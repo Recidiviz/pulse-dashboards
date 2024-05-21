@@ -558,8 +558,11 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   get defaultMilestonesMessage(): string {
     const {
-      userStore: { userSurname },
-    } = this.rootStore;
+      rootStore: {
+        userStore: { userSurname },
+      },
+      congratulationsMilestones,
+    } = this;
 
     const clientName = this.preferredName ?? this.fullName.givenNames;
     const salutation = clientName
@@ -573,9 +576,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         : tenants[this.rootStore.currentTenantId].DOCName
     }:
 
-    ${salutation} Congratulations on reaching these milestones:
+    ${salutation} Congratulations on reaching ${
+      congratulationsMilestones.length > 1
+        ? "these milestones"
+        : "this milestone"
+    }:
 
-    ${this.congratulationsMilestones.map((m) => `- ${m.text}`).join("\n")}
+    ${congratulationsMilestones.map((m) => `- ${m.text}`).join("\n")}
   `;
   }
 }
