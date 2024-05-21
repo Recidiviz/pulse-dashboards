@@ -35,6 +35,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
+import AcknowledgementCheckbox from "../../../../src/components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatDateToISO, formatWorkflowsDate } from "../../../utils";
 import {
@@ -43,6 +44,13 @@ import {
   Opportunity,
 } from "../../../WorkflowsStore";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
+
+const Acknowledgement = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${rem(spacing.lg)};
+`;
 
 const StyledModal = styled(Modal)`
   .ReactModal__Content {
@@ -173,6 +181,13 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
     "REVIEWING" | "SUBMITTED" | "FAILED" | "SUCCEEDED"
   >("REVIEWING");
 
+  const [isAcknowledgementChecked, setIsAcknowledgementChecked] =
+    useState(false);
+
+  const handleAcknowledgementCheckboxChange = () => {
+    setIsAcknowledgementChecked(!isAcknowledgementChecked);
+  };
+
   // Whenever the modal opens, reset to REVIEWING
   useEffect(() => {
     if (showModal) setPhase("REVIEWING");
@@ -277,11 +292,25 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
           <ConfirmationLabel>Staff ID</ConfirmationLabel>{" "}
           <ConfirmationField>{currentUserEmail}</ConfirmationField>
         </dl>
+        <Acknowledgement>
+          <AcknowledgementCheckbox
+            name={"acknowledgement-checkbox"}
+            checked={isAcknowledgementChecked}
+            value={"acknowledgement-checkbox"}
+            onChange={handleAcknowledgementCheckboxChange}
+          />
+          <Sans16>
+            By clicking this box, I confirm that I have consulted with my direct
+            supervisor regarding this case within 30 days of this client's
+            current Early Termination date.
+          </Sans16>
+        </Acknowledgement>
         <ActionButton
           data-testid="docstars-submit-button"
           onClick={onSubmitButtonClick}
+          disabled={!isAcknowledgementChecked}
         >
-          Sync note to DOCSTARS
+          Acknowledge and Save to DOCSTARS
         </ActionButton>
       </ConfirmationContainer>
     </div>

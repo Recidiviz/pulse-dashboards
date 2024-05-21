@@ -151,6 +151,7 @@ describe("DocstarsDenialModal", () => {
       />,
     );
 
+    fireEvent.click(screen.getByTestId("checkbox-acknowledgement-checkbox"));
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
 
     rerender(
@@ -210,6 +211,7 @@ describe("DocstarsDenialModal", () => {
       />,
     );
 
+    fireEvent.click(screen.getByTestId("checkbox-acknowledgement-checkbox"));
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
 
     rerender(
@@ -257,6 +259,7 @@ describe("DocstarsDenialModal", () => {
       />,
     );
 
+    fireEvent.click(screen.getByTestId("checkbox-acknowledgement-checkbox"));
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
 
     rerender(
@@ -311,6 +314,7 @@ describe("DocstarsDenialModal", () => {
       />,
     );
 
+    fireEvent.click(screen.getByTestId("checkbox-acknowledgement-checkbox"));
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
 
     rerender(
@@ -388,6 +392,7 @@ describe("DocstarsDenialModal", () => {
       />,
     );
 
+    fireEvent.click(screen.getByTestId("checkbox-acknowledgement-checkbox"));
     fireEvent.click(screen.getByTestId("docstars-submit-button"));
 
     await waitFor(() => {

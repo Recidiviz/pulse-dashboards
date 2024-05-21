@@ -52,6 +52,7 @@ const Checkbox: React.FC<Props> = ({
     <label className="Checkbox__container">
       <span className="Checkbox__label">{children}</span>
       <input
+        data-testid={`checkbox-${name}`}
         className="Checkbox__input"
         type="checkbox"
         name={name}
