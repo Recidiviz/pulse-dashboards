@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -73,7 +72,6 @@ const RecommendationRow = styled.div`
 `;
 
 const FormRecommendations = observer(function FormRecommendations() {
-  const { firestoreStore } = useRootStore();
   const opportunityForm =
     useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
 
@@ -82,8 +80,7 @@ const FormRecommendations = observer(function FormRecommendations() {
   const onCheckField =
     (field: keyof UsCaSupervisionLevelDowngradeDraftData, invert = false) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      firestoreStore.updateFormDraftData(
-        opportunityForm,
+      opportunityForm.updateDraftData(
         field,
         invert ? !event.target.checked : event.target.checked,
       );

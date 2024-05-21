@@ -1,7 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -28,15 +27,13 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
   disabled,
   ...props
 }) => {
-  const { firestoreStore } = useRootStore();
   const opportunityForm =
     useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
 
   const { formData } = opportunityForm;
 
   const onCheckField = (event: React.ChangeEvent<HTMLInputElement>) => {
-    firestoreStore.updateFormDraftData(
-      opportunityForm,
+    opportunityForm.updateDraftData(
       name,
       value || event.target.checked !== !!invert,
     );

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FieldValue } from "@google-cloud/firestore";
+import { deleteField, serverTimestamp } from "firebase/firestore";
 import { action, computed, makeObservable, toJS } from "mobx";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
@@ -117,6 +119,28 @@ export class FormBase<
     });
   }
 
+  recordEdit(): void {
+    this.rootStore.analyticsStore.trackReferralFormEdited({
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      opportunityType: this.type,
+    });
+  }
+
+  recordFirstEdit(): void {
+    this.rootStore.analyticsStore.trackReferralFormFirstEdited({
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      opportunityType: this.type,
+    });
+  }
+
+  recordStatusInProgress(): void {
+    this.rootStore.analyticsStore.trackSetOpportunityStatus({
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      opportunityType: this.type,
+      status: "IN_PROGRESS",
+    });
+  }
+
   // ==========================
   // properties below this line are stubs and should usually be replaced by the subclass.
   // as such they are not annotated with MobX so subclasses can use standard annotations
@@ -140,5 +164,55 @@ export class FormBase<
 
   prefilledDataTransformer(): Partial<FormDisplayType> {
     return this.opportunity.record?.formInformation ?? {};
+  }
+
+  /**
+   * Clear all drafted data from the form.
+   */
+  async clearDraftData() {
+    const { person } = this.opportunity;
+
+    await this.rootStore.firestoreStore.updateOpportunity(
+      this.type,
+      person.recordId,
+      {
+        referralForm: deleteField(),
+      },
+    );
+  }
+
+  /**
+   * Update drafted data for the form.
+   */
+  async updateDraftData(
+    name: string,
+    value: FieldValue | string | number | boolean,
+  ) {
+    const { person } = this.opportunity;
+
+    const update = {
+      referralForm: {
+        updated: {
+          by: this.currentUserEmail,
+          date: serverTimestamp(),
+        },
+        data: { [name]: value },
+      },
+    };
+    const isFirstEdit = !this.formLastUpdated;
+
+    await this.rootStore.firestoreStore.updateOpportunity(
+      this.type,
+      person.recordId,
+      update,
+    );
+
+    this.recordEdit();
+    if (isFirstEdit) {
+      this.recordFirstEdit();
+    }
+    if (this.opportunity.reviewStatus === "PENDING") {
+      this.recordStatusInProgress();
+    }
   }
 }

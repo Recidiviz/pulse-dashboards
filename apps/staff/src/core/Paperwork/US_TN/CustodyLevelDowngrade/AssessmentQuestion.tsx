@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React, { ChangeEventHandler } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import AssessmentItem, { SubItem } from "./AssessmentItem";
 import {
@@ -73,15 +72,10 @@ const AssessmentQuestion: React.FC<AssessmentQuestionProps> = ({
   disabled,
 }) => {
   const selectionKey = `q${questionNumber}Selection`;
-  const { firestoreStore } = useRootStore();
   const opportunityForm = useOpportunityFormContext();
   const selection = opportunityForm.formData[selectionKey];
   const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    firestoreStore.updateFormDraftData(
-      opportunityForm,
-      selectionKey,
-      parseInt(event.target.value),
-    );
+    opportunityForm.updateDraftData(selectionKey, parseInt(event.target.value));
   };
 
   const score = selection === -1 ? 0 : questionSpec.options[selection].score;

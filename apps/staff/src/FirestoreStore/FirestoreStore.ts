@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { FieldValue } from "@google-cloud/firestore";
 import { startOfToday } from "date-fns";
 import { FirebaseApp, initializeApp } from "firebase/app";
 import {
@@ -41,16 +40,14 @@ import {
   where,
 } from "firebase/firestore";
 import { mapValues, pickBy } from "lodash";
-import { makeAutoObservable, when } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import { isHydrated } from "~hydration-utils";
 
 import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import type RootStore from "../RootStore";
 import { UserAppMetadata } from "../RootStore/types";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
-import { FormBase } from "../WorkflowsStore/Opportunity/Forms/FormBase";
 import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/types";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
@@ -409,59 +406,6 @@ export default class FirestoreStore {
       stateCode,
       selectedSearchIds,
     });
-  }
-
-  async clearFormDraftData(form: FormBase<any>) {
-    const { opportunity, type } = form;
-    const { person } = opportunity;
-
-    await this.updateOpportunity(type, person.recordId, {
-      referralForm: deleteField(),
-    });
-  }
-
-  async updateFormDraftData(
-    form: FormBase<any>,
-    name: string,
-    value: FieldValue | string | number | boolean,
-  ): Promise<void> {
-    const { opportunity, currentUserEmail, formLastUpdated, type } = form;
-    const { person } = opportunity;
-
-    await when(() => isHydrated(opportunity));
-
-    const update = {
-      referralForm: {
-        updated: {
-          by: currentUserEmail,
-          date: serverTimestamp(),
-        },
-        data: { [name]: value },
-      },
-    };
-    const isFirstEdit = !formLastUpdated;
-
-    await this.updateOpportunity(type, person.recordId, update);
-
-    this.rootStore.analyticsStore.trackReferralFormEdited({
-      justiceInvolvedPersonId: person.pseudonymizedId,
-      opportunityType: type,
-    });
-
-    if (isFirstEdit) {
-      this.rootStore.analyticsStore.trackReferralFormFirstEdited({
-        justiceInvolvedPersonId: person.pseudonymizedId,
-        opportunityType: type,
-      });
-    }
-
-    if (opportunity.reviewStatus === "PENDING") {
-      this.rootStore.analyticsStore.trackSetOpportunityStatus({
-        justiceInvolvedPersonId: person.pseudonymizedId,
-        status: "IN_PROGRESS",
-        opportunityType: type,
-      });
-    }
   }
 
   async updateUsTnExpirationContactNoteStatus(

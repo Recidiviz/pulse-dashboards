@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -53,7 +52,6 @@ const SupervisorRow = styled.div`
 `;
 
 const FormSupervisorSection = observer(function FormSupervisorSection() {
-  const { firestoreStore } = useRootStore();
   const opportunityForm =
     useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
 
@@ -62,11 +60,7 @@ const FormSupervisorSection = observer(function FormSupervisorSection() {
   const onChange =
     (field: keyof UsCaSupervisionLevelDowngradeDraftData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      firestoreStore.updateFormDraftData(
-        opportunityForm,
-        field,
-        event.target.value,
-      );
+      opportunityForm.updateDraftData(field, event.target.value);
     };
 
   return (

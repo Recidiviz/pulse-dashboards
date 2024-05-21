@@ -21,7 +21,6 @@ import styled, {
   StyledComponentProps,
 } from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsTnCustodyLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/usTnCustodyLevelDowngradeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { FormDataType } from "./types";
@@ -49,7 +48,6 @@ const FormRadioButton: React.FC<FormRadioButtonProps> =
     label,
     ...props
   }: FormRadioButtonProps) {
-    const { firestoreStore } = useRootStore();
     const opportunityForm =
       useOpportunityFormContext() as UsTnCustodyLevelDowngradeForm;
 
@@ -58,7 +56,7 @@ const FormRadioButton: React.FC<FormRadioButtonProps> =
     const onChange =
       (field: keyof FormDataType) =>
       (event: React.ChangeEvent<HTMLInputElement>) => {
-        firestoreStore.updateFormDraftData(opportunityForm, field, targetValue);
+        opportunityForm.updateDraftData(field, targetValue);
       };
 
     return (

@@ -188,13 +188,12 @@ function useReactiveInput<
     When the MobX value is updated (via a Firestore subscription or its onChange handler),
     we update the controlled input's state value.
    */
-  const { firestoreStore } = useRootStore();
   const fetchFromStore = () => (form.formData[name] as string) || "";
   const [value, setValue] = useState<ReactiveInputValue>(fetchFromStore());
 
   const updateFirestoreRef = useRef(
     debounce((valueToStore: string) => {
-      firestoreStore.updateFormDraftData(form, name, valueToStore);
+      form.updateDraftData(name, valueToStore);
     }, REACTIVE_INPUT_UPDATE_DELAY),
   );
 

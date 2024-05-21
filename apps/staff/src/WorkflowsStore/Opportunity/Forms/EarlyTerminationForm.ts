@@ -100,10 +100,10 @@ export class EarlyTerminationForm extends FormBase<
 
   addDepositionLine(): void {
     const key = `${ADDITIONAL_DEPOSITION_LINES_PREFIX}${+new Date()}`;
-    this.rootStore.firestoreStore.updateFormDraftData(this, key, "");
+    this.updateDraftData(key, "");
   }
 
   removeDepositionLine(key: string): void {
-    this.rootStore.firestoreStore.updateFormDraftData(this, key, deleteField());
+    this.updateDraftData(key, deleteField());
   }
 }

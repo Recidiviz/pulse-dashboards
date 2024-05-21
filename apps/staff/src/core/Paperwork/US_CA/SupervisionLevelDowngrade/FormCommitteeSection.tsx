@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -81,7 +80,6 @@ const CommitteeCol = styled.div`
 `;
 
 const FormCommitteeSection = observer(function FormCommitteeSection() {
-  const { firestoreStore } = useRootStore();
   const opportunityForm =
     useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
 
@@ -90,11 +88,7 @@ const FormCommitteeSection = observer(function FormCommitteeSection() {
   const onChange =
     (field: keyof UsCaSupervisionLevelDowngradeDraftData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      firestoreStore.updateFormDraftData(
-        opportunityForm,
-        field,
-        event.target.value,
-      );
+      opportunityForm.updateDraftData(field, event.target.value);
     };
 
   return (

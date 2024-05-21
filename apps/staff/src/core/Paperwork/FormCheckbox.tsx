@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { useOpportunityFormContext } from "./OpportunityFormContext";
 
 const Checkbox = styled.input.attrs({
@@ -43,12 +42,11 @@ const DOCXFormCheckbox = observer(function FormInput<DraftData>({
   toggleable,
   ...props
 }: DOCXFormCheckboxProps<DraftData>) {
-  const { firestoreStore } = useRootStore();
   const opportunityForm = useOpportunityFormContext();
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let newVal: boolean | FieldValue = event.target.checked !== !!invert;
     if (toggleable && !event.target.checked) newVal = deleteField();
-    firestoreStore.updateFormDraftData(opportunityForm, name, newVal);
+    opportunityForm.updateDraftData(name, newVal);
   };
 
   const value = opportunityForm.formData[name];

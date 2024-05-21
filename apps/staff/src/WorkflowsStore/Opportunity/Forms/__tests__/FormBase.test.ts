@@ -26,6 +26,7 @@ import { OpportunityBase } from "../../OpportunityBase";
 import { FormBase } from "../FormBase";
 
 vi.mock("../../../subscriptions");
+vi.mock("firebase/firestore");
 
 let rootStore: RootStore;
 let opp: OpportunityBase<any, any>;
@@ -101,6 +102,116 @@ describe("record form download", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
     });
+  });
+});
+
+describe("form update analytics functions", () => {
+  test("recordEdit sends edit tracking event", () => {
+    vi.spyOn(AnalyticsStore.prototype, "trackReferralFormEdited");
+    form.recordEdit();
+    expect(
+      rootStore.analyticsStore.trackReferralFormEdited,
+    ).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: form.type,
+    });
+  });
+
+  test("recordFirstEdit sends first edit tracking event", () => {
+    vi.spyOn(AnalyticsStore.prototype, "trackReferralFormFirstEdited");
+    form.recordFirstEdit();
+    expect(
+      rootStore.analyticsStore.trackReferralFormFirstEdited,
+    ).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: form.type,
+    });
+  });
+
+  test("recordStatusInProgress sends status change tracking event", () => {
+    vi.spyOn(AnalyticsStore.prototype, "trackSetOpportunityStatus");
+    form.recordStatusInProgress();
+    expect(
+      rootStore.analyticsStore.trackSetOpportunityStatus,
+    ).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: form.type,
+      status: "IN_PROGRESS",
+    });
+  });
+});
+
+describe("form update", () => {
+  test("updates in firestore", async () => {
+    vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
+    const testField = "testField";
+    const testValue = "testValue";
+    await form.updateDraftData(testField, testValue);
+    expect(rootStore.firestoreStore.updateOpportunity).toHaveBeenCalledWith(
+      opp.type,
+      client.recordId,
+      {
+        referralForm: expect.objectContaining({
+          data: { testField: testValue },
+        }),
+      },
+    );
+  });
+
+  test("tracks first edit", async () => {
+    vi.spyOn(form, "recordEdit");
+    vi.spyOn(form, "recordFirstEdit");
+    const testField = "testField";
+    const testValue = "testValue";
+    await form.updateDraftData(testField, testValue);
+    expect(form.recordEdit).toBeCalled();
+    expect(form.recordFirstEdit).toBeCalled();
+  });
+
+  test("doesn't track first edit for repeated edit", async () => {
+    vi.spyOn(form, "formLastUpdated", "get").mockReturnValue({
+      date: vi.fn() as any,
+      by: "user",
+    });
+    vi.spyOn(form, "recordEdit");
+    vi.spyOn(form, "recordFirstEdit");
+    const testField = "testField";
+    const testValue = "testValue";
+    await form.updateDraftData(testField, testValue);
+    expect(form.recordEdit).toBeCalled();
+    expect(form.recordFirstEdit).not.toBeCalled();
+  });
+
+  test("tracks in progress status for pending status", async () => {
+    vi.spyOn(opp, "reviewStatus", "get").mockReturnValue("PENDING");
+    vi.spyOn(form, "recordStatusInProgress");
+    const testField = "testField";
+    const testValue = "testValue";
+    await form.updateDraftData(testField, testValue);
+    expect(form.recordStatusInProgress).toBeCalled();
+  });
+
+  test("skips status tracking for other status", async () => {
+    vi.spyOn(opp, "reviewStatus", "get").mockReturnValue("COMPLETED");
+    vi.spyOn(form, "recordStatusInProgress");
+    const testField = "testField";
+    const testValue = "testValue";
+    await form.updateDraftData(testField, testValue);
+    expect(form.recordStatusInProgress).not.toBeCalled();
+  });
+});
+
+describe("form clear data", () => {
+  test("clears referralForm field", async () => {
+    vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
+    await form.clearDraftData();
+    expect(rootStore.firestoreStore.updateOpportunity).toHaveBeenCalledWith(
+      opp.type,
+      client.recordId,
+      {
+        referralForm: undefined,
+      },
+    );
   });
 });
 

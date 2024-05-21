@@ -20,7 +20,6 @@ import React from "react";
 import styled from "styled-components/macro";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 
@@ -50,12 +49,11 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
   toggleable,
   ...props
 }) => {
-  const { firestoreStore } = useRootStore();
   const opportunityForm = useOpportunityFormContext();
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let newVal: boolean | FieldValue = event.target.checked !== !!invert;
     if (toggleable && !event.target.checked) newVal = deleteField();
-    firestoreStore.updateFormDraftData(opportunityForm, name, newVal);
+    opportunityForm.updateDraftData(name, newVal);
   };
 
   const value = opportunityForm.formData[name];

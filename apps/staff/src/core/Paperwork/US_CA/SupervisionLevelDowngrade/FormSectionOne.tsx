@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
 import { UsCaSupervisionLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsCaSupervisionLevelDowngradeForm";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../../../WorkflowsStore/Opportunity/UsCa";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
@@ -71,15 +70,10 @@ const ReviewTypeCheckboxContainer = styled.div`
 `;
 
 const ReviewTypeCheckbox = observer(function ReviewTypeCheckbox() {
-  const { firestoreStore } = useRootStore();
   const opportunityForm =
     useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    firestoreStore.updateFormDraftData(
-      opportunityForm,
-      "reviewType",
-      event.target.value,
-    );
+    opportunityForm.updateDraftData("reviewType", event.target.value);
   };
 
   const { formData } = opportunityForm;

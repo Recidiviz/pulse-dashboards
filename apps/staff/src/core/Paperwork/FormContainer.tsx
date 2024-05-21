@@ -111,10 +111,7 @@ export const FormContainer = observer(function FormContainer({
   opportunity,
   children,
 }: FormHeaderProps): React.ReactElement {
-  const {
-    form,
-    rootStore: { firestoreStore },
-  } = opportunity;
+  const { form } = opportunity;
   const isDownloadButtonDisabled = isMissingContent || false;
   const { formRevertButton } = useFeatureVariants();
 
@@ -169,7 +166,7 @@ export const FormContainer = observer(function FormContainer({
             <RevertButton
               disabled={!form.formLastUpdated}
               className="WorkflowsFormRevertButton"
-              onClick={() => firestoreStore.clearFormDraftData(form)}
+              onClick={() => form.clearDraftData()}
             >
               Revert All Edits
             </RevertButton>
