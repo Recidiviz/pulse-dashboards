@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
-import { find } from "lodash";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -39,17 +38,8 @@ type AssessmentScoreProps = {
   score?: number;
   title: string;
   levels: Level[];
-  scoreText?: string;
+  scoreText: string;
 };
-
-const isInRange =
-  (score?: number) =>
-  ({ min, max }: Level) => {
-    if (score === undefined) return false;
-    if (min !== undefined && score < min) return false;
-    if (max !== undefined && score > max) return false;
-    return true;
-  };
 
 const AssessmentScore: React.FC<AssessmentScoreProps> = ({
   score,
@@ -57,11 +47,7 @@ const AssessmentScore: React.FC<AssessmentScoreProps> = ({
   levels,
   scoreText,
 }) => (
-  <AssessmentItem
-    title={title}
-    score={score}
-    scoreText={scoreText || find(levels, isInRange(score))?.text || ""}
-  >
+  <AssessmentItem title={title} score={score} scoreText={scoreText}>
     {levels.map((l) => (
       <SubItem key={l.text}>
         <TextWithLeader>{l.text}</TextWithLeader>

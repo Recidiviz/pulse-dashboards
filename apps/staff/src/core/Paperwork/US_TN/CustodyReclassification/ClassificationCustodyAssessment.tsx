@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
-import { some, sum, zip } from "lodash";
+import { zip } from "lodash";
 import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import styled from "styled-components/macro";
 
-import { UsTnSharedReclassificationDraftData } from "../../../../WorkflowsStore/Opportunity/UsTn";
+import { UsTnAnnualReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnAnnualReclassificationReviewForm";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
@@ -54,25 +54,10 @@ const Seal = styled.img.attrs({ src: SealPng, alt: "TN Seal" })`
   margin-right: 1rem;
 `;
 
-const totalScoreForQuestions = (
-  numberedQuestions: [AssessmentQuestionSpec, AssessmentQuestionNumber][],
-  formData: UsTnSharedReclassificationDraftData,
-) => {
-  const scores = numberedQuestions.map(([{ options }, n]) => {
-    const selection = formData[`q${n}Selection`];
-    if (selection === undefined) return undefined;
-    return selection === -1 ? 0 : options[selection].score;
-  });
-  if (some(scores, (s) => s === undefined)) {
-    return undefined;
-  }
-  return sum(scores);
-};
-
 const ClassificationCustodyAssessment: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
-  const formData = useOpportunityFormContext()
-    .formData as UsTnSharedReclassificationDraftData;
+  const form =
+    useOpportunityFormContext() as UsTnAnnualReclassificationReviewForm;
 
   const numberedQuestions = zip(
     assessmentQuestions,
@@ -82,9 +67,13 @@ const ClassificationCustodyAssessment: React.FC = () => {
   const scheduleA = numberedQuestions.slice(0, 4);
   const scheduleB = numberedQuestions.slice(4);
 
-  const scheduleAScore = totalScoreForQuestions(scheduleA, formData);
-  const totalScore = totalScoreForQuestions(numberedQuestions, formData);
-  const scheduleBDisabled = scheduleAScore !== undefined && scheduleAScore > 9;
+  const {
+    scheduleAScore,
+    scheduleAText,
+    totalScore,
+    totalText,
+    scheduleBSkipped,
+  } = form.derivedData;
 
   return (
     <>
@@ -124,6 +113,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
             </div>
             <AssessmentScore
               score={scheduleAScore}
+              scoreText={scheduleAText}
               title="SCHEDULE A SCALE (SUM OF ITEMS 1 THROUGH 4)"
               levels={[
                 { text: "Close", min: 10, max: 14 },
@@ -143,14 +133,14 @@ const ClassificationCustodyAssessment: React.FC = () => {
                   questionSpec={q}
                   questionNumber={i}
                   key={i}
-                  disabled={scheduleBDisabled}
+                  disabled={scheduleBSkipped}
                 />
               ))}
             </div>
             <AssessmentScore
               title="CUSTODY LEVEL SCALE FOR TOTAL A+B (CAF SCORE)"
-              score={scheduleBDisabled ? undefined : totalScore}
-              scoreText={scheduleBDisabled ? "See Schedule A" : undefined}
+              score={totalScore}
+              scoreText={totalText}
               levels={[
                 { text: "Close", min: 17 },
                 { text: "Medium", min: 7, max: 16 },

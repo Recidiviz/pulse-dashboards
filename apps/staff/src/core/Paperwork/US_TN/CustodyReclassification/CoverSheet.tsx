@@ -18,7 +18,7 @@
 import React from "react";
 import styled from "styled-components/macro";
 
-import { templateValuesForFormData } from "../../../WorkflowsUsTnReclassForm";
+import { UsTnAnnualReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnAnnualReclassificationReviewForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import FormRadioButton from "./FormRadioButton";
@@ -62,7 +62,8 @@ const SigBlock = styled.div`
 `;
 
 const CoverSheet: React.FC = () => {
-  const { formData } = useOpportunityFormContext();
+  const { formData, derivedData } =
+    useOpportunityFormContext() as UsTnAnnualReclassificationReviewForm;
 
   return (
     <Container>
@@ -103,7 +104,9 @@ const CoverSheet: React.FC = () => {
             Other:{" "}
             <FormInput
               name="statusAtHearing"
-              hideValue={["GEN", "AS", "PC"].includes(formData.statusAtHearing)}
+              hideValue={(
+                ["GEN", "AS", "PC"] as (typeof formData)["statusAtHearing"][]
+              ).includes(formData.statusAtHearing)}
             />
           </Label>
         </Item>
@@ -130,7 +133,7 @@ const CoverSheet: React.FC = () => {
       <Row>
         <Label>
           Scored CAF Range:
-          {templateValuesForFormData(formData).totalText.toUpperCase()}
+          {derivedData.totalText}
         </Label>
         <Label>
           Current Custody Level: <FormInput name="currentCustodyLevel" />

@@ -33,6 +33,9 @@ let form: UsTnAnnualReclassificationReviewForm;
 let opp: (typeof form)["opportunity"];
 let personRecord: (typeof opp)["person"]["record"];
 let oppRecord: (typeof opp)["record"] & object;
+let formUpdates: ((typeof opp)["updates"] & {
+  referralForm: object;
+})["referralForm"]["data"];
 
 type PartialFormData = ReturnType<(typeof form)["prefilledDataTransformer"]>;
 
@@ -100,9 +103,14 @@ function createTestUnit() {
     caseNotes: {},
   };
 
+  formUpdates = {};
+
   const person = new Resident(personRecord, rootStore);
   opp = new UsTnAnnualReclassificationReviewOpportunity(person);
   vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord as any);
+  vi.spyOn(opp, "updates", "get").mockImplementation(
+    () => ({ referralForm: { data: formUpdates } }) as any,
+  );
   form = opp.form;
 }
 
@@ -347,6 +355,122 @@ describe("prefilledDataTransformer", () => {
       ...baseResult,
       recommendationJustification:
         "Justification for classification: \nLevel of Care: LOC\nActive Recommendations: RECA, RECB",
+    });
+  });
+});
+
+describe("derivedData", () => {
+  test("Passes through fields by default", () => {
+    formUpdates = {
+      omsId: "foo",
+      q6Note: "bar",
+    };
+    expect(form.derivedData.omsId).toBe("foo");
+    expect(form.derivedData.q6Note).toBe("bar");
+  });
+
+  test("Expands multiple choice", () => {
+    formUpdates = {
+      statusAtHearing: "GEN",
+    };
+    expect(form.derivedData.statusAtHearingSelectedGEN).toBe(true);
+    expect(form.derivedData).not.toHaveProperty("statusAtHearingOther");
+  });
+
+  test("Expands multiple choice (other)", () => {
+    formUpdates = {
+      statusAtHearing: "SEG",
+    };
+    expect(form.derivedData.statusAtHearingOther).toBe("SEG");
+  });
+
+  describe("CAF", () => {
+    test("Full form", () => {
+      formUpdates = {
+        q1Selection: 0,
+        q2Selection: 0,
+        q3Selection: 0,
+        q4Selection: 0,
+        q5Selection: 0,
+        q6Selection: 0,
+        q7Selection: 0,
+        q8Selection: 0,
+        q9Selection: 0,
+      };
+      expect(form.derivedData.q1Selected0).toBe(true);
+      expect(form.derivedData.q1Score).toBe(3);
+      expect(form.derivedData.scheduleAText).toBe("Complete Schedule B");
+      expect(form.derivedData.scheduleAScore).toBe(3);
+      expect(form.derivedData.q5Selected0).toBe(true);
+      expect(form.derivedData.q5Score).toBe(-2);
+      expect(form.derivedData.totalText).toBe("MINIMUM");
+      expect(form.derivedData.totalScore).toBe(4);
+    });
+
+    test("Blank in Schedule A", () => {
+      oppRecord.formInformation = {};
+      formUpdates = {
+        // q1 is missing
+        q2Selection: 1,
+        q3Selection: 3,
+        q4Selection: 3,
+        q5Selection: 0,
+        q6Selection: 0,
+        q7Selection: 0,
+        q8Selection: 0,
+        q9Selection: 0,
+      };
+      expect(form.derivedData).not.toHaveProperty("q1Selected0");
+      expect(form.derivedData).not.toHaveProperty("q1Score");
+      expect(form.derivedData.scheduleAText).toBe("");
+      expect(form.derivedData.scheduleAScore).toBe("");
+      expect(form.derivedData.q5Selected0).toBe(true); // Schedule B questions are still filled out
+      expect(form.derivedData.q5Score).toBe(-2);
+      expect(form.derivedData.totalText).toBe("");
+      expect(form.derivedData.totalScore).toBe("");
+    });
+
+    test("Blank in Schedule B", () => {
+      oppRecord.formInformation = {};
+      formUpdates = {
+        q1Selection: 0,
+        q2Selection: 0,
+        q3Selection: 0,
+        q4Selection: 0,
+        // q5 is missing
+        q6Selection: 0,
+        q7Selection: 0,
+        q8Selection: 0,
+        q9Selection: 0,
+      };
+      expect(form.derivedData.q1Selected0).toBe(true);
+      expect(form.derivedData.q1Score).toBe(3);
+      expect(form.derivedData.scheduleAText).toBe("Complete Schedule B");
+      expect(form.derivedData.scheduleAScore).toBe(3);
+      expect(form.derivedData).not.toHaveProperty("q5Selected0");
+      expect(form.derivedData).not.toHaveProperty("q5Score");
+      expect(form.derivedData.totalText).toBe("");
+      expect(form.derivedData.totalScore).toBe("");
+    });
+
+    test("High Schedule A Score", () => {
+      formUpdates = {
+        q1Selection: 2,
+        q2Selection: 1,
+        q3Selection: 3,
+        q4Selection: 3,
+        q5Selection: 0,
+        q6Selection: 0,
+        q7Selection: 0,
+        q8Selection: 0,
+        q9Selection: 0,
+      };
+      expect(form.derivedData.scheduleAText).toBe("MAXIMUM");
+      expect(form.derivedData.scheduleAScore).toBe(18);
+      expect(form.derivedData).not.toHaveProperty("q5Selected0"); // Schedule B is skipped
+      expect(form.derivedData).not.toHaveProperty("q5Score");
+      expect(form.derivedData.totalText).toBe("MAXIMUM");
+      expect(form.derivedData.totalScore).toBe(18);
     });
   });
 });
