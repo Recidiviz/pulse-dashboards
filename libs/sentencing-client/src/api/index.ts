@@ -15,30 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
-
-import { FlowMethod } from "~hydration-utils";
-
-import { Case, PSIAPIClient } from "../api/PSIAPIClient";
-import { PSIStore } from "../PSIStore";
-
-export class PSICaseStore {
-  caseDetailsById: { [id: string]: Case };
-
-  constructor(public readonly psiStore: PSIStore) {
-    makeAutoObservable(this);
-    this.caseDetailsById = {};
-  }
-
-  /** This is a MobX flow method and should be called with mobx.flowResult */
-  *loadCaseDetails(
-    caseId: string,
-  ): FlowMethod<PSIAPIClient["getCaseDetails"], void> {
-    const caseDetails = yield this.psiStore.apiClient.getCaseDetails(caseId);
-
-    this.caseDetailsById = {
-      ...this.caseDetailsById,
-      [caseId]: caseDetails,
-    };
-  }
-}
+export * from "./APIClient";
+export * from "./OfflineAPIClient";

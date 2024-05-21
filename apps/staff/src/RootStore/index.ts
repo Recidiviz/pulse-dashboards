@@ -18,12 +18,13 @@ import { Auth0ClientOptions, User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
+import { PSIStore } from "~sentencing-client";
+
 import demoAuthConfig from "../auth_config_demo.json";
 import devAuthConfig from "../auth_config_dev.json";
 import productionAuthConfig from "../auth_config_production.json";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
-import { PSIStore } from "../PSIStore/PSIStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import AnalyticsStore from "./AnalyticsStore";
 import { APIStore } from "./APIStore";

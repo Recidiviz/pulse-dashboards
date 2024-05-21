@@ -16,37 +16,32 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useParams } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { PSICaseDetailsPresenter } from "../../PSIStore/presenters/PSICaseDetailsPresenter";
-import ModelHydrator from "../ModelHydrator";
+import { Hydrator } from "~hydration-utils";
 
-const PSICaseDetailsWithPresenter = observer(function PSICaseDetails({
+import { PSIStore } from "../../datastores/PSIStore";
+import { PSIStaffPresenter } from "../../presenters/StaffPresenter";
+import { ErrorMessage } from "../Error";
+
+const DashboardWithPresenter = observer(function DashboardWithPresenter({
   presenter,
 }: {
-  presenter: PSICaseDetailsPresenter;
+  presenter: PSIStaffPresenter;
 }) {
-  const { caseAttributes } = presenter;
-
-  return <>{JSON.stringify(caseAttributes)}</>;
+  const { staffInfo } = presenter;
+  return <>{JSON.stringify(staffInfo)}</>;
 });
 
-export const PSICaseDetails: React.FC = observer(function PSICaseDetails() {
-  const {
-    psiStore: { psiCaseStore },
-  } = useRootStore();
-  const params = useParams();
+export const Dashboard: React.FC<{
+  psiStore: PSIStore;
+}> = observer(function Dashboard({ psiStore }) {
+  const { psiStaffStore } = psiStore;
 
-  if (!params.caseId) {
-    return <>No case ID found.</>;
-  }
-
-  const presenter = new PSICaseDetailsPresenter(psiCaseStore, params.caseId);
+  const presenter = new PSIStaffPresenter(psiStaffStore);
 
   return (
-    <ModelHydrator model={presenter}>
-      <PSICaseDetailsWithPresenter presenter={presenter} />
-    </ModelHydrator>
+    <Hydrator hydratable={presenter} failed={<ErrorMessage />}>
+      <DashboardWithPresenter presenter={presenter} />
+    </Hydrator>
   );
 });

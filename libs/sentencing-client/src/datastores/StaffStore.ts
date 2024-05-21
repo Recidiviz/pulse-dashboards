@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,31 +17,21 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { isOfflineMode } from "~client-env-utils";
+import { FlowMethod } from "~hydration-utils";
+import { PSIStore } from "~sentencing-client";
 
-import { RootStore } from "../RootStore";
-import { PSIAPIClient } from "./api/PSIAPIClient";
-import { PSIOfflineAPIClient } from "./api/PSIOfflineAPIClient";
-import { PSICaseStore } from "./stores/PSICaseStore";
-import { PSIStaffStore } from "./stores/PSIStaffStore";
+import { APIClient, Staff } from "../api/APIClient";
 
-export class PSIStore {
-  psiStaffStore?: PSIStaffStore;
+export class StaffStore {
+  staffInfo?: Staff;
 
-  psiCaseStore?: PSICaseStore;
-
-  apiClient: PSIAPIClient | PSIOfflineAPIClient;
-
-  constructor(public rootStore: RootStore) {
+  constructor(public readonly psiStore: PSIStore) {
     makeAutoObservable(this);
-    this.apiClient = isOfflineMode()
-      ? new PSIOfflineAPIClient(this)
-      : new PSIAPIClient(this);
-    this.psiStaffStore = new PSIStaffStore(this);
-    this.psiCaseStore = new PSICaseStore(this);
   }
 
-  get staffPseudoId(): string | undefined {
-    return this.rootStore.userStore.userPseudoId;
+  /** This is a MobX flow method and should be called with mobx.flowResult */
+  *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
+    if (this.staffInfo) return;
+    this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
   }
 }

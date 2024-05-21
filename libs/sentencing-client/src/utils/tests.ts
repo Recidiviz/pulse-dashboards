@@ -15,31 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
+import { PSIStore } from "../datastores/PSIStore";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { PSIStaffPresenter } from "../../PSIStore/presenters/PSIStaffPresenter";
-import ModelHydrator from "../ModelHydrator";
+export const createMockPSIStore = (userPseudoIdOverride?: string) => {
+  const mockRootStore = {
+    userStore: {
+      userPseudoId: userPseudoIdOverride ?? "TestID-123",
+      getToken: () => Promise.resolve("token"),
+    },
+  };
 
-const PSIDashboardWithPresenter = observer(function PSIDashboard({
-  presenter,
-}: {
-  presenter: PSIStaffPresenter;
-}) {
-  const { staffInfo } = presenter;
-  return <>{JSON.stringify(staffInfo)}</>;
-});
+  const psiStore = new PSIStore(mockRootStore);
 
-export const PSIDashboard: React.FC = observer(function PSIDashboard() {
-  const {
-    psiStore: { psiStaffStore },
-  } = useRootStore();
-
-  const presenter = new PSIStaffPresenter(psiStaffStore);
-
-  return (
-    <ModelHydrator model={presenter}>
-      <PSIDashboardWithPresenter presenter={presenter} />
-    </ModelHydrator>
-  );
-});
+  return psiStore;
+};

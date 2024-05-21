@@ -15,23 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { PSIStore } from "../datastores/PSIStore";
+import { Case, Staff } from "./APIClient";
 
-import { FlowMethod } from "~hydration-utils";
+// TODO(#29901): Remove `as unknown as` once the final Staff/Case response shape is solidified.
 
-import { PSIAPIClient, Staff } from "../api/PSIAPIClient";
-import { PSIStore } from "../PSIStore";
+export class OfflineAPIClient {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(public readonly psiStore: PSIStore) {}
 
-export class PSIStaffStore {
-  staffInfo?: Staff;
-
-  constructor(public readonly psiStore: PSIStore) {
-    makeAutoObservable(this);
+  async getStaffInfo(): Promise<Staff> {
+    const { StaffInfoFixture: PSIStaffInfoFixture } = await import(
+      "../offlineFixtures/StaffInfoFixture"
+    );
+    return PSIStaffInfoFixture as unknown as Promise<Staff>;
   }
 
-  /** This is a MobX flow method and should be called with mobx.flowResult */
-  *loadStaffInfo(): FlowMethod<PSIAPIClient["getStaffInfo"], void> {
-    if (this.staffInfo) return;
-    this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
+  async getCaseDetails(): Promise<Case> {
+    const { CaseDetailsFixture: PSICaseDetailsFixture } = await import(
+      "../offlineFixtures/CaseDetailsFixture"
+    );
+    return PSICaseDetailsFixture as unknown as Promise<Case>;
   }
 }

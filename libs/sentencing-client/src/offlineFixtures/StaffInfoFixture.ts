@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const PSIStaffInfoFixture = {
+export const StaffInfoFixture = {
   id: "ABC123",
   externalId: "12312311",
   fullName: {

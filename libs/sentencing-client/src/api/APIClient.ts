@@ -21,7 +21,7 @@ import { when } from "mobx";
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { AppRouter } from "~sentencing-server/trpc/router";
 
-import { PSIStore } from "../PSIStore";
+import { PSIStore } from "../datastores/PSIStore";
 
 export type tRPCClient = ReturnType<typeof createTRPCProxyClient<AppRouter>>;
 
@@ -29,7 +29,7 @@ export type Staff = Awaited<ReturnType<tRPCClient["getStaff"]["query"]>>;
 
 export type Case = Awaited<ReturnType<tRPCClient["getCase"]["query"]>>;
 
-export class PSIAPIClient {
+export class APIClient {
   client: tRPCClient;
 
   constructor(public readonly psiStore: PSIStore) {

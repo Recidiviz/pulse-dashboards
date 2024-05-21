@@ -15,4 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./PSIDashboard";
+export * from "./components/CaseDetails";
+export * from "./components/Dashboard";
+export * from "./datastores/PSIStore";

@@ -23,25 +23,22 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { PSICaseStore } from "../stores/PSICaseStore";
+import { StaffStore } from "../datastores/StaffStore";
 
-export class PSICaseDetailsPresenter implements Hydratable {
+export class PSIStaffPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
-  constructor(
-    public readonly psiCaseStore: PSICaseStore,
-    public caseId: string,
-  ) {
+  constructor(public readonly psiStaffStore: StaffStore) {
     makeAutoObservable(this);
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          if (this.psiCaseStore.caseDetailsById[this.caseId] === undefined)
-            throw new Error("Failed to load case details");
+          if (this.psiStaffStore.staffInfo === undefined)
+            throw new Error("Failed to load staff info");
         },
       ],
       populate: async () => {
-        await flowResult(this.psiCaseStore.loadCaseDetails(this.caseId));
+        await flowResult(this.psiStaffStore.loadStaffInfo());
       },
     });
   }
@@ -50,8 +47,8 @@ export class PSICaseDetailsPresenter implements Hydratable {
     return this.hydrator.hydrationState;
   }
 
-  get caseAttributes() {
-    return this.psiCaseStore.caseDetailsById[this.caseId];
+  get staffInfo() {
+    return this.psiStaffStore.staffInfo;
   }
 
   async hydrate(): Promise<void> {

@@ -22,12 +22,12 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { CaseDetails, Dashboard } from "~sentencing-client";
+
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout } from "../NavigationLayout";
-import { PSICaseDetails } from "../PSICaseDetails";
-import { PSIDashboard } from "../PSIDashboard";
 import { psiRoute, psiUrl } from "../views";
 
 const Wrapper = styled.div`
@@ -77,11 +77,11 @@ const PagePSI: React.FC = function PagePSI() {
           />
           <Route
             path={psiRoute({ routeName: "dashboard" })}
-            element={<PSIDashboard />}
+            element={<Dashboard psiStore={psiStore} />}
           />
           <Route
             path={psiRoute({ routeName: "caseDetails" })}
-            element={<PSICaseDetails />}
+            element={<CaseDetails psiStore={psiStore} />}
           />
           <Route path="*" element={<NotFound />} />
         </Routes>

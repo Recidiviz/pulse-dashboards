@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const PSICaseDetailsFixture = {
+export const CaseDetailsFixture = {
   externalId: "12345",
   fullName: {
     givenNames: "Jon",

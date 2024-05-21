@@ -1,0 +1,41 @@
+{
+  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "extends": ["plugin:vitest-globals/recommended"],
+      "files": [
+        "**/__tests__/**/*",
+        "**/__mocks__/**/*",
+        "*.test.ts",
+        "*.test.tsx",
+        "*.test.js",
+        "*.test.jsx"
+      ],
+      "env": {
+        "vitest-globals/env": true
+      },
+      "globals": {
+        "fetchMock": true
+      }
+    }
+  ],
+  "rules": {
+    "react/display-name": ["error"]
+  },
+  "settings": {
+    "componentWrapperFunctions": ["observer"]
+  }
+}
