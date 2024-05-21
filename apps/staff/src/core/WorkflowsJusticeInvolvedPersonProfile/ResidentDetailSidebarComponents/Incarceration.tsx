@@ -28,6 +28,7 @@ import {
   SecureDetailsContent,
 } from "../styles";
 import { ResidentProfileProps } from "../types";
+import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissionDateSubsection";
 
 export function Incarceration({
   resident,
@@ -54,6 +55,7 @@ export function Incarceration({
           <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
           <DetailsSubheading>Unit</DetailsSubheading>
           <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+          <UsTnFacilityAdmissionDateSubsection resident={resident} />
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>

@@ -133,6 +133,10 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return optionalFieldToDate(this.record.sccpEligibilityDate);
   }
 
+  get usTnFacilityAdmissionDate(): Date | undefined {
+    return optionalFieldToDate(this.record.usTnFacilityAdmissionDate);
+  }
+
   get portionServedDates(): PortionServedDates {
     const startDate = optionalFieldToDate(this.record.admissionDate);
     const endDate = optionalFieldToDate(this.record.releaseDate);

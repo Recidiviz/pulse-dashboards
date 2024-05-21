@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,31 +17,23 @@
 
 import React from "react";
 
-import {
-  DetailsHeading,
-  DetailsList,
-  DetailsSection,
-  DetailsSubheading,
-  SecureDetailsContent,
-} from "../styles";
-import { ResidentProfileProps } from "../types";
-import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissionDateSubsection";
+import { formatWorkflowsDate } from "../../../../utils";
+import { DetailsSubheading, SecureDetailsContent } from "../../styles";
+import { ResidentProfileProps } from "../../types";
 
-export function ResidentHousing({
+export function UsTnFacilityAdmissionDateSubsection({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+}: ResidentProfileProps): React.ReactElement | null {
+  if (!resident.usTnFacilityAdmissionDate) {
+    return null;
+  }
+
   return (
-    <DetailsSection>
-      <DetailsHeading>Housing</DetailsHeading>
+    <>
+      <DetailsSubheading>TDOC Facility Admission Date</DetailsSubheading>
       <SecureDetailsContent>
-        <DetailsList>
-          <DetailsSubheading>Facility</DetailsSubheading>
-          <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
-          <DetailsSubheading>Unit</DetailsSubheading>
-          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
-          <UsTnFacilityAdmissionDateSubsection resident={resident} />
-        </DetailsList>
+        {formatWorkflowsDate(resident.usTnFacilityAdmissionDate)}
       </SecureDetailsContent>
-    </DetailsSection>
+    </>
   );
 }
