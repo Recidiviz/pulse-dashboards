@@ -63,7 +63,7 @@ exports[`supervision staff schema for 'US_CA' 'OFFICER1' 1`] = `
   "id": "OFFICER1",
   "recordType": "supervisionStaff",
   "stateCode": "US_CA",
-  "supervisorExternalId": null,
+  "supervisorExternalId": "SUPERVISOR1",
   "surname": "Agent1",
 }
 `;

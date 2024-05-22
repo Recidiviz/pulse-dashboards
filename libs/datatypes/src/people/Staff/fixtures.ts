@@ -77,7 +77,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     stateCode: "US_CA",
     givenNames: "Test",
     surname: "Agent1",
-    supervisorExternalId: null,
+    supervisorExternalId: "SUPERVISOR1",
   },
   {
     email: "test-officer-1@example.com",
