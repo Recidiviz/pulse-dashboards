@@ -47,6 +47,8 @@ export class InsightsSupervisionStore {
 
   supervisorPseudoId?: string;
 
+  mostRecentSupervisorPseudoId?: string;
+
   officerPseudoId?: string;
 
   metricId?: string;
@@ -312,6 +314,14 @@ export class InsightsSupervisionStore {
 
   setSupervisorPseudoId(supervisorPseudoId: string | undefined): void {
     this.supervisorPseudoId = supervisorPseudoId;
+    if (supervisorPseudoId)
+      this.setMostRecentlySelectedSupervisorPseudoId(supervisorPseudoId);
+  }
+
+  setMostRecentlySelectedSupervisorPseudoId(
+    supervisorPseudoId: string | undefined,
+  ): void {
+    this.mostRecentSupervisorPseudoId = supervisorPseudoId;
   }
 
   setOfficerPseudoId(officerPseudoId: string | undefined): void {

@@ -119,9 +119,28 @@ describe("with unit data already hydrated", () => {
     expect(presenter.metricInfo).toBeDefined();
   });
 
-  test("has supervisorInfo", () => {
-    expect(presenter.supervisorInfo).toBeDefined();
-    expect(presenter.supervisorInfo).toEqual(
+  test("has supervisorsInfo", () => {
+    expect(presenter.supervisorsInfo).toBeDefined();
+    expect(presenter.supervisorsInfo).toEqual([
+      supervisionOfficerSupervisorsFixture[0],
+      supervisionOfficerSupervisorsFixture[1],
+    ]);
+  });
+
+  test("has goToSupervisorInfo for mostRecentSupervisor", () => {
+    store.setMostRecentlySelectedSupervisorPseudoId(
+      supervisionOfficerSupervisorsFixture[1].pseudonymizedId,
+    );
+    expect(presenter.goToSupervisorInfo).toBeDefined();
+    expect(presenter.goToSupervisorInfo).toEqual(
+      supervisionOfficerSupervisorsFixture[1],
+    );
+  });
+
+  test("has goToSupervisorInfo without mostRecentSupervisor", () => {
+    store.setMostRecentlySelectedSupervisorPseudoId(undefined);
+    expect(presenter.goToSupervisorInfo).toBeDefined();
+    expect(presenter.goToSupervisorInfo).toEqual(
       supervisionOfficerSupervisorsFixture[0],
     );
   });
@@ -166,13 +185,14 @@ test("has metricInfo", async () => {
   expect(presenter.metricInfo?.name).toEqual(testMetric.metricId);
 });
 
-test("has supervisorInfo", async () => {
+test("has supervisorsInfo", async () => {
   await presenter.hydrate();
 
-  expect(presenter.supervisorInfo).toBeDefined();
-  expect(presenter.supervisorInfo).toEqual(
+  expect(presenter.supervisorsInfo).toBeDefined();
+  expect(presenter.supervisorsInfo).toEqual([
     supervisionOfficerSupervisorsFixture[0],
-  );
+    supervisionOfficerSupervisorsFixture[1],
+  ]);
 });
 
 test("has timePeriod", async () => {

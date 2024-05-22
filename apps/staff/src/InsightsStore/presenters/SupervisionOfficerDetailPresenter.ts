@@ -71,7 +71,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     this.supervisionStore.insightsStore.rootStore.analyticsStore.trackInsightsStaffPageViewed(
       {
         staffPseudonymizedId: this.officerPseudoId,
-        supervisorPseudonymizedId: this.supervisorInfo?.pseudonymizedId,
+        supervisorPseudonymizedId: this.goToSupervisorInfo?.pseudonymizedId,
         viewedBy: userPseudoId,
         numOutlierMetrics: this.outlierOfficerData?.outlierMetrics.length,
       },
@@ -85,7 +85,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     this.supervisionStore.insightsStore.rootStore.analyticsStore.trackInsightsStaffMetricViewed(
       {
         staffPseudonymizedId: this.officerPseudoId,
-        supervisorPseudonymizedId: this.supervisorInfo?.pseudonymizedId,
+        supervisorPseudonymizedId: this.goToSupervisorInfo?.pseudonymizedId,
         viewedBy: userPseudoId,
         metricId,
       },
@@ -152,12 +152,31 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return this.supervisionStore.metricConfigsById.get(metricId);
   }
 
-  get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    const supervisorExternalId = this.officerRecord?.supervisorExternalId;
-    if (!supervisorExternalId) return;
-    return this.supervisionStore.supervisionOfficerSupervisorByExternalId(
-      supervisorExternalId,
-    );
+  get supervisorsInfo(): SupervisionOfficerSupervisor[] | undefined {
+    const supervisorExternalIds = this.officerRecord?.supervisorExternalIds;
+    if (!supervisorExternalIds) return;
+    const supervisors = supervisorExternalIds
+      .map((id) =>
+        this.supervisionStore.supervisionOfficerSupervisorByExternalId(id),
+      )
+      .filter((s): s is SupervisionOfficerSupervisor => !!s);
+    return supervisors.length > 0 ? supervisors : undefined;
+  }
+
+  // supervisorInfo for the "Go to" link on the staff page. If the staff page
+  // was navigated to from a supervisor page, use that supervisor.
+  // Otherwise use the first of the officer's supervisors
+  get goToSupervisorInfo(): SupervisionOfficerSupervisor | undefined {
+    if (this.supervisionStore.mostRecentSupervisorPseudoId)
+      return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
+        this.supervisionStore.mostRecentSupervisorPseudoId,
+      );
+
+    return this.officerRecord?.supervisorExternalIds[0]
+      ? this.supervisionStore.supervisionOfficerSupervisorByExternalId(
+          this.officerRecord?.supervisorExternalIds[0],
+        )
+      : undefined;
   }
 
   get methodologyUrl(): string {
@@ -181,7 +200,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
   }
 
   private expectSupervisorPopulated() {
-    if (!this.supervisorInfo)
+    if (!this.supervisorsInfo)
       throw new Error("Failed to populate supervisor info");
   }
 

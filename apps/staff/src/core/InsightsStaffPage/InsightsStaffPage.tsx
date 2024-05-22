@@ -153,11 +153,12 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     officerPseudoId,
     metricId,
     metricInfo,
-    supervisorInfo,
+    supervisorsInfo,
     timePeriod,
     labels,
     methodologyUrl,
     trackMetricTabViewed,
+    goToSupervisorInfo,
   } = presenter;
 
   useEffect(() => {
@@ -167,13 +168,12 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   useEffect(() => {
     if (metricId) trackMetricTabViewed(metricId);
   }, [metricId, trackMetricTabViewed]);
-
-  const supervisorLinkProps = supervisorInfo && {
+  const supervisorLinkProps = goToSupervisorInfo && {
     linkText: `Go to ${
-      supervisorInfo.displayName || labels.supervisionSupervisorLabel
+      goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel
     }'s ${labels.supervisionUnitLabel}`,
     link: insightsUrl("supervisionSupervisor", {
-      supervisorPseudoId: supervisorInfo.pseudonymizedId,
+      supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
     }),
   };
 
@@ -230,6 +230,8 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   }
 
   const pageTitle = simplur`${outlierOfficerData.displayName} is an outlier on ${outlierOfficerData.outlierMetrics.length} metric[|s]`;
+  const supervisorNames = supervisorsInfo?.map((s) => s.displayName).join(", ");
+
   const infoItems = [
     {
       title: "caseload types",
@@ -246,8 +248,8 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       ),
     },
     {
-      title: `${labels.supervisionUnitLabel} ${labels.supervisionSupervisorLabel}`,
-      info: supervisorInfo?.displayName,
+      title: simplur`${labels.supervisionUnitLabel} ${[supervisorsInfo?.length]}${labels.supervisionSupervisorLabel}[|s]`,
+      info: supervisorNames,
     },
     {
       title: "time period",

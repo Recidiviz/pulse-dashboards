@@ -21,12 +21,10 @@ import { FC, useLayoutEffect, useRef } from "react";
 import { AspectRatio } from "react-aspect-ratio";
 import useMeasure from "react-use-measure";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { SwarmPresenter } from "../../InsightsStore/presenters/SwarmPresenter";
 import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
 import { InsightsSwarmPlot } from "./InsightsSwarmPlot";
-import { InsightsSwarmPlotV2 } from "./InsightsSwarmPlotV2";
 import { InsightsSwarmPlotWrappedProps } from "./types";
 
 type InsightsSwarmPlotProps = {
@@ -35,7 +33,6 @@ type InsightsSwarmPlotProps = {
 
 const InsightsSwarmPlotContainer = observer(
   function InsightsSwarmPlotContainer({ metric }: InsightsSwarmPlotProps) {
-    const { supervisorHomepage } = useFeatureVariants();
     const presenter = new SwarmPresenter(metric);
 
     return (
@@ -44,11 +41,7 @@ const InsightsSwarmPlotContainer = observer(
           {/* because aspectRatio sets styles on its direct children,
           don't pass it another component directly to avoid unexpected results */}
           <div>
-            {supervisorHomepage ? (
-              <InsightsSwarmPlotV2 presenter={presenter} />
-            ) : (
-              <InsightsSwarmPlot presenter={presenter} />
-            )}
+            <InsightsSwarmPlot presenter={presenter} />
           </div>
         </AspectRatio>
       </PlotMeasurer>

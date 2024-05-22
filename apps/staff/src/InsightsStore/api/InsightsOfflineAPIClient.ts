@@ -108,8 +108,10 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       "../models/offlineFixtures/SupervisionOfficerFixture"
     );
 
-    return supervisionOfficerFixture.filter(
-      (o) => `hashed-${o.supervisorExternalId}` === supervisorPseudoId,
+    return supervisionOfficerFixture.filter((o) =>
+      o.supervisorExternalIds
+        .map((i) => `hashed-${i}`)
+        .includes(supervisorPseudoId),
     );
   }
 

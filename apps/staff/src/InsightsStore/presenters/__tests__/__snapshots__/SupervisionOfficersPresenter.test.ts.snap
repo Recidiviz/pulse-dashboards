@@ -1312,7 +1312,10 @@ exports[`outlierOfficersData 1`] = `
       },
     ],
     "pseudonymizedId": "hashed-so1",
-    "supervisorExternalId": "agonzalez123",
+    "supervisorExternalIds": [
+      "agonzalez123",
+      "dlee456",
+    ],
     "topXPctMetrics": [],
   },
   {
@@ -3626,7 +3629,9 @@ exports[`outlierOfficersData 1`] = `
       },
     ],
     "pseudonymizedId": "hashed-so3",
-    "supervisorExternalId": "agonzalez123",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
     "topXPctMetrics": [],
   },
 ]

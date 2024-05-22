@@ -97,12 +97,15 @@ export class SupervisionOfficerPresenter implements Hydratable {
   /**
    * Provide supervisor data for the current officer.
    */
-  get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    const supervisorExternalId = this.officerRecord?.supervisorExternalId;
-    if (!supervisorExternalId) return;
-    return this.supervisionStore.supervisionOfficerSupervisorByExternalId(
-      supervisorExternalId,
-    );
+  get supervisorsInfo(): SupervisionOfficerSupervisor[] | undefined {
+    const supervisorExternalIds = this.officerRecord?.supervisorExternalIds;
+    if (!supervisorExternalIds) return;
+    const supervisors = supervisorExternalIds
+      .map((id) =>
+        this.supervisionStore.supervisionOfficerSupervisorByExternalId(id),
+      )
+      .filter((s): s is SupervisionOfficerSupervisor => !!s);
+    return supervisors.length > 0 ? supervisors : undefined;
   }
 
   /**
@@ -134,8 +137,8 @@ export class SupervisionOfficerPresenter implements Hydratable {
   }
 
   private expectSupervisorPopulated() {
-    if (!this.supervisorInfo)
-      throw new Error("Failed to populate supervisor info");
+    if (!this.supervisorsInfo)
+      throw new Error("Failed to populate supervisor(s) info");
   }
 
   private expectOutlierDataPopulated() {

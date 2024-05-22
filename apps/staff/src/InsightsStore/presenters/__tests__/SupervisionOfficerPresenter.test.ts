@@ -114,11 +114,12 @@ describe("with unit data already hydrated", () => {
     expect(presenter.metricConfigsById).toBeDefined();
   });
 
-  test("has supervisorInfo", () => {
-    expect(presenter.supervisorInfo).toBeDefined();
-    expect(presenter.supervisorInfo).toEqual(
+  test("has supervisorsInfo", () => {
+    expect(presenter.supervisorsInfo).toBeDefined();
+    expect(presenter.supervisorsInfo).toEqual([
       supervisionOfficerSupervisorsFixture[0],
-    );
+      supervisionOfficerSupervisorsFixture[1],
+    ]);
   });
 });
 
@@ -154,13 +155,14 @@ test("has metricConfigs", async () => {
   expect(presenter.metricConfigsById).toBeDefined();
 });
 
-test("has supervisorInfo", async () => {
+test("has supervisorsInfo", async () => {
   await presenter.hydrate();
 
-  expect(presenter.supervisorInfo).toBeDefined();
-  expect(presenter.supervisorInfo).toEqual(
+  expect(presenter.supervisorsInfo).toBeDefined();
+  expect(presenter.supervisorsInfo).toEqual([
     supervisionOfficerSupervisorsFixture[0],
-  );
+    supervisionOfficerSupervisorsFixture[1],
+  ]);
 });
 
 test("has timePeriod", async () => {

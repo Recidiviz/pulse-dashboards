@@ -33,7 +33,10 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
+    supervisorExternalIds: [
+      supervisionOfficerSupervisorsFixture[0].externalId,
+      supervisionOfficerSupervisorsFixture[1].externalId,
+    ],
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .SEX_OFFENSE[0],
@@ -53,7 +56,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [],
     topXPctMetrics: [
       { metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts, topXPct: 10 },
@@ -68,7 +71,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[0].externalId,
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .GENERAL_OR_OTHER[1],
@@ -87,7 +90,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[1].externalId,
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[1].externalId],
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
         .GENERAL_OR_OTHER[0],
@@ -105,7 +108,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     },
     district: null,
     caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
-    supervisorExternalId: supervisionOfficerSupervisorsFixture[2].externalId,
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
     outlierMetrics: [],
     topXPctMetrics: [],
   },

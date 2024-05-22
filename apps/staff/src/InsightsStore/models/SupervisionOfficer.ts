@@ -29,7 +29,7 @@ export const supervisionOfficerSchema = z
     district: z.string().nullable(),
     caseloadType: z.string().nullable(),
     pseudonymizedId: z.string(),
-    supervisorExternalId: z.string(),
+    supervisorExternalIds: z.array(z.string()),
     outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
     topXPctMetrics: z.array(
       z.object({
