@@ -20,8 +20,13 @@ import { deleteField, serverTimestamp } from "firebase/firestore";
 import { action, computed, makeObservable, toJS } from "mobx";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { OpportunityUpdateWithForm, UpdateLog } from "../../../FirestoreStore";
+import {
+  FormUpdate,
+  OpportunityUpdateWithForm,
+  UpdateLog,
+} from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
+import { DocumentSubscription } from "../../subscriptions";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityType } from "../OpportunityType/types";
 
@@ -43,10 +48,11 @@ export class FormBase<
   > = OpportunityBase<any, any, OpportunityUpdateWithForm<any>>,
 > {
   protected rootStore: RootStore;
-
   person: OpportunityModel["person"];
 
   opportunity: OpportunityModel;
+
+  updatesSubscription?: DocumentSubscription<FormUpdate<FormDisplayType>>;
 
   constructor(opportunity: OpportunityModel, rootStore: RootStore) {
     this.opportunity = opportunity;
@@ -141,31 +147,6 @@ export class FormBase<
     });
   }
 
-  // ==========================
-  // properties below this line are stubs and should usually be replaced by the subclass.
-  // as such they are not annotated with MobX so subclasses can use standard annotations
-  // instead of "override"
-  // ==========================
-
-  navigateToFormText = "Navigate to form";
-
-  allowRevert = true;
-
-  // eslint-disable-next-line class-methods-use-this
-  get downloadText(): string {
-    return "";
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get formContents(): OpportunityFormComponentName {
-    // @ts-ignore
-    return undefined;
-  }
-
-  prefilledDataTransformer(): Partial<FormDisplayType> {
-    return this.opportunity.record?.formInformation ?? {};
-  }
-
   /**
    * Clear all drafted data from the form.
    */
@@ -214,5 +195,37 @@ export class FormBase<
     if (this.opportunity.reviewStatus === "PENDING") {
       this.recordStatusInProgress();
     }
+  }
+
+  // ==========================
+  // properties below this line are stubs and should usually be replaced by the subclass.
+  // as such they are not annotated with MobX so subclasses can use standard annotations
+  // instead of "override"
+  // ==========================
+
+  /**
+   * Used to distinguish form update documents in Firestore. Typically formatted as
+   * {formName}-{formInstance}, with formInstance varying between "common" (for shared
+   * forms) or the opportunity type (for distinct forms).
+   */
+  formId = "";
+
+  navigateToFormText = "Navigate to form";
+
+  allowRevert = true;
+
+  // eslint-disable-next-line class-methods-use-this
+  get downloadText(): string {
+    return "";
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get formContents(): OpportunityFormComponentName {
+    // @ts-ignore
+    return undefined;
+  }
+
+  prefilledDataTransformer(): Partial<FormDisplayType> {
+    return this.opportunity.record?.formInformation ?? {};
   }
 }

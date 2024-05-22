@@ -251,6 +251,11 @@ export type OpportunityUpdateWithForm<FormType> = OpportunityUpdate & {
   referralForm?: { updated: UpdateLog; data?: Partial<FormType> };
 };
 
+export type FormUpdate<FormDataType> = {
+  updated: UpdateLog;
+  data?: Partial<FormDataType>;
+};
+
 export type SupervisionTaskUpdate = {
   [key in SupervisionTaskType]?: {
     snoozeForDays: number;
