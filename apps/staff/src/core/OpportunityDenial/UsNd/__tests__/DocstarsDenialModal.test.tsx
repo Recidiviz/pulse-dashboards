@@ -35,7 +35,10 @@ vi.mock("../../../../components/StoreProvider");
 vi.mock("react-hot-toast");
 
 const mockRootStore = ({
-  featureVariants = { usNdWriteToDocstars: {} } as object,
+  featureVariants = {
+    usNdWriteToDocstars: {},
+    usNdCheckboxDocstars: {},
+  } as object,
 } = {}) => {
   const apiPost = vi.fn();
   const updateOmsSnoozeStatus = vi.fn();

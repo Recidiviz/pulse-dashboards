@@ -81,6 +81,7 @@ export type FeatureVariant =
   | "usCaEnableSMS"
   | "usTnAnnualReclassification"
   | "usNdWriteToDocstars"
+  | "usNdCheckboxDocstars"
   | "usMeCustodyLevelReview"
   | "usMeAnnualReclassificationReview"
   | "usMoOverdueRHPilot"
@@ -117,6 +118,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnAnnualReclassification: {},
   enableSnooze: {},
   usNdWriteToDocstars: {},
+  usNdCheckboxDocstars: {},
   supervisionUnrestrictedSearch: {},
   formRevertButton: {},
   usMoOverdueRHPilot: {},

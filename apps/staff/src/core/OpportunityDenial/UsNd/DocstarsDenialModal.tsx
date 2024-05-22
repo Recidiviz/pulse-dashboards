@@ -292,23 +292,29 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
           <ConfirmationLabel>Staff ID</ConfirmationLabel>{" "}
           <ConfirmationField>{currentUserEmail}</ConfirmationField>
         </dl>
-        <Acknowledgement>
-          <AcknowledgementCheckbox
-            name={"acknowledgement-checkbox"}
-            checked={isAcknowledgementChecked}
-            value={"acknowledgement-checkbox"}
-            onChange={handleAcknowledgementCheckboxChange}
-          />
-          <Sans16>
-            By clicking this box, I confirm that I have consulted with my direct
-            supervisor regarding this case within 30 days of this client's
-            current Early Termination date.
-          </Sans16>
-        </Acknowledgement>
+        {featureVariants.usNdCheckboxDocstars && (
+          <Acknowledgement>
+            <AcknowledgementCheckbox
+              name={"acknowledgement-checkbox"}
+              checked={isAcknowledgementChecked}
+              value={"acknowledgement-checkbox"}
+              onChange={handleAcknowledgementCheckboxChange}
+            />
+            <Sans16>
+              By clicking this box, I confirm that I have consulted with my
+              direct supervisor regarding this case within 30 days of this
+              client's current Early Termination date.
+            </Sans16>
+          </Acknowledgement>
+        )}
         <ActionButton
           data-testid="docstars-submit-button"
           onClick={onSubmitButtonClick}
-          disabled={!isAcknowledgementChecked}
+          disabled={
+            featureVariants.usNdCheckboxDocstars
+              ? !isAcknowledgementChecked
+              : false
+          }
         >
           Acknowledge and Save to DOCSTARS
         </ActionButton>
