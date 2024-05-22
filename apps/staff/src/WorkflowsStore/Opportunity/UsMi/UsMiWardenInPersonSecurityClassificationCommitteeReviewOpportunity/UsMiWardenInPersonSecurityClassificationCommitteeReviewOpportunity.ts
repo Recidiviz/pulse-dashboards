@@ -21,6 +21,7 @@ import {
 } from "~datatypes";
 
 import { Resident } from "../../../Resident";
+import { UsMiSCCReviewForm } from "../../Forms/UsMiSCCReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab, OpportunityTabGroup } from "../../types";
 
@@ -29,6 +30,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
   usMiWardenInPersonSecurityClassificationCommitteeReviewRecord["output"]
 > {
   resident: Resident;
+  form: UsMiSCCReviewForm;
 
   constructor(resident: Resident) {
     super(
@@ -39,6 +41,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
     );
 
     this.resident = resident;
+    this.form = new UsMiSCCReviewForm(this, resident.rootStore);
   }
 
   get almostEligible(): boolean {

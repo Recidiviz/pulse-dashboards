@@ -20,7 +20,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { Resident } from "../../../../WorkflowsStore/Resident";
+import { FormBase } from "../../../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
@@ -45,15 +45,14 @@ const FormPage = styled.div`
   background-color: white;
 `;
 
-const formDownloader = async (resident: Resident): Promise<void> => {
+const formDownloader = async (
+  form: FormBase<Record<string, any>>,
+): Promise<void> => {
   let contents: Record<string, unknown> = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
-      ...toJS(
-        resident.verifiedOpportunities.usMiSecurityClassificationCommitteeReview
-          ?.form?.formData,
-      ),
+      ...toJS(form.formData),
     };
   });
 
@@ -63,11 +62,11 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   contents.wardenApprovalNo = contents.wardenApproval === false;
 
   await downloadSingle(
-    `${resident?.displayName} - Form 283.docx`,
-    resident.stateCode,
+    `${form.person?.displayName} - Form 283.docx`,
+    form.person.stateCode,
     "scc_review_template.docx",
     contents,
-    resident.rootStore.getTokenSilently,
+    form.person.rootStore.getTokenSilently,
   );
   return;
 };
@@ -77,7 +76,7 @@ export const FormUsMiSCCReview = observer(function FormUsMiSCCReview() {
 
   const opportunityForm = useOpportunityFormContext();
 
-  const { opportunity, person: resident } = opportunityForm;
+  const { opportunity } = opportunityForm;
 
   if (!opportunity) {
     return null;
@@ -87,7 +86,7 @@ export const FormUsMiSCCReview = observer(function FormUsMiSCCReview() {
     <FormContainer
       heading="283 Form"
       agencyName="MDOC"
-      onClickDownload={() => formDownloader(resident)}
+      onClickDownload={() => formDownloader(opportunityForm)}
       opportunity={opportunity}
       downloadButtonLabel="Download as .DOCX"
     >

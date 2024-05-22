@@ -18,6 +18,8 @@
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { usMiSecurityClassificationCommitteeReviewRecord } from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
 import UserStore from "../../../../RootStore/UserStore";
 import { Resident } from "../../../Resident";
@@ -32,7 +34,6 @@ import { UsMiSCCReviewForm } from "../UsMiSCCReviewForm";
 let form: UsMiSCCReviewForm;
 let opp: (typeof form)["opportunity"];
 let personRecord: (typeof opp)["person"]["record"];
-let oppRecord: (typeof opp)["record"] & object;
 let rootStore: RootStore;
 
 function createTestUnit() {
@@ -52,7 +53,8 @@ function createTestUnit() {
     allEligibleOpportunities: ["usMiSecurityClassificationCommitteeReview"],
     gender: "female",
   };
-  oppRecord = {
+
+  const oppRecord: usMiSecurityClassificationCommitteeReviewRecord["output"] = {
     isOverdue: true,
     stateCode: "US_OZ",
     externalId: "pei1",
