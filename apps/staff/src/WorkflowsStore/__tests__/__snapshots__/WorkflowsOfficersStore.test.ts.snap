@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`hydrate supervisionOfficers for supervisor 1`] = `
+[
+  {
+    "district": "DISTRICT 50",
+    "email": "test-officer@example.com",
+    "givenNames": "Test",
+    "id": "OFFICER1",
+    "recordType": "supervisionStaff",
+    "stateCode": "US_TN",
+    "supervisorExternalId": "SUPERVISOR1",
+    "surname": "Officer1",
+  },
+  {
+    "district": "DISTRICT 50",
+    "email": null,
+    "givenNames": "Test",
+    "id": "OFFICER2",
+    "recordType": "supervisionStaff",
+    "stateCode": "US_TN",
+    "supervisorExternalId": "SUPERVISOR1",
+    "surname": "Officer2",
+  },
+]
+`;
