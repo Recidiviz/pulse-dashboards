@@ -19,6 +19,7 @@ import { configure } from "mobx";
 import tk from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
+import UserStore from "../../../../RootStore/UserStore";
 import { Resident } from "../../../Resident";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../../UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import { UsMiSCCReviewForm } from "../UsMiSCCReviewForm";
@@ -32,9 +33,13 @@ let form: UsMiSCCReviewForm;
 let opp: (typeof form)["opportunity"];
 let personRecord: (typeof opp)["person"]["record"];
 let oppRecord: (typeof opp)["record"] & object;
+let rootStore: RootStore;
 
 function createTestUnit() {
-  const rootStore = new RootStore();
+  rootStore = new RootStore();
+  rootStore.userStore = {
+    activeFeatureVariants: {},
+  } as UserStore;
   personRecord = {
     personType: "RESIDENT",
     stateCode: "US_OZ",
@@ -111,6 +116,7 @@ function createTestUnit() {
 }
 
 beforeEach(() => {
+  vi.resetAllMocks();
   configure({ safeDescriptors: false });
   createTestUnit();
   tk.freeze(new Date("2024-04-12"));
@@ -152,5 +158,22 @@ describe("prefilledDataTransformer", () => {
         "tempSegDate": "Apr 1, 2019",
       }
     `);
+  });
+});
+
+describe("shouldUseFormUpdates", () => {
+  test("is true when FV is set", () => {
+    vi.spyOn(
+      rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue({
+      isolateFormUpdates: {},
+    });
+    expect(form.shouldUseFormUpdates).toBeTrue();
+  });
+
+  test("is false when FV is not set", () => {
+    expect(form.shouldUseFormUpdates).toBeFalse();
   });
 });

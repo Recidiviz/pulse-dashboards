@@ -33,6 +33,7 @@ import { RootStore } from "../../RootStore";
 import { UserAppMetadata } from "../../RootStore/types";
 import FirestoreStore from "../FirestoreStore";
 import {
+  FormUpdate,
   MilestonesMessage,
   OpportunityUpdateWithForm,
   SupervisionTaskUpdate,
@@ -463,6 +464,43 @@ describe("FirestoreStore", () => {
         [
           "test-doc-ref",
           { ...milestonesMessagesUpdate },
+          {
+            merge: true,
+          },
+        ],
+      ]);
+    });
+
+    test("updateForm", async () => {
+      const update = { testField: "testValue" };
+      const formUpdate: PartialWithFieldValue<FormUpdate<Record<string, any>>> =
+        {
+          data: {
+            update,
+          },
+        };
+
+      await store.updateForm("us_mi_123", formUpdate, "testForm-common");
+      expect(mockDoc.mock.calls).toEqual([
+        [
+          undefined,
+          "clientUpdatesV2",
+          "us_mi_123/clientFormUpdates/testForm-common",
+        ],
+        [undefined, "clientUpdatesV2", "us_mi_123"],
+      ]);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { stateCode: "us_mi" },
+          {
+            merge: true,
+          },
+        ],
+        [
+          "test-doc-ref",
+          { ...formUpdate },
           {
             merge: true,
           },

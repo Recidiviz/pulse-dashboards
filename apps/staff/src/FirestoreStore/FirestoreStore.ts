@@ -57,6 +57,7 @@ import {
   ContactMethodType,
   ExternalSystemRequestStatus,
   FirestoreCollectionKey,
+  FormUpdate,
   ManualSnoozeUpdate,
   MilestonesMessage,
   OpportunityUpdateWithForm,
@@ -286,6 +287,19 @@ export default class FirestoreStore {
     const taskDocRef = this.doc(
       { key: "clientUpdatesV2" },
       `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.milestonesMessages}/${dateKey}`,
+    );
+
+    return this.updateClientUpdatesV2Document(recordId, taskDocRef, update);
+  }
+
+  async updateForm(
+    recordId: string,
+    update: PartialWithFieldValue<FormUpdate<Record<string, any>>>,
+    formId: string,
+  ) {
+    const taskDocRef = this.doc(
+      { key: "clientUpdatesV2" },
+      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.clientFormUpdates}/${formId}`,
     );
 
     return this.updateClientUpdatesV2Document(recordId, taskDocRef, update);

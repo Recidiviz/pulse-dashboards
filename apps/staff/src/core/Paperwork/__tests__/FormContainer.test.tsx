@@ -46,6 +46,7 @@ function setup(props: Partial<FormHeaderProps> = {}) {
   });
   rootStore.userStore = {
     isRecidivizUser: false,
+    activeFeatureVariants: { formRevertButton: {} },
   } as UserStore;
   client = {
     pseudonymizedId: "TEST123",

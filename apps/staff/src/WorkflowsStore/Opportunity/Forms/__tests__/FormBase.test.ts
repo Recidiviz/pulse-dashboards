@@ -39,6 +39,7 @@ function createTestUnit() {
   rootStore = new RootStore();
   rootStore.userStore = {
     isRecidivizUser: false,
+    activeFeatureVariants: {},
   } as UserStore;
   client = {
     pseudonymizedId: "TEST123",
@@ -105,6 +106,17 @@ describe("record form download", () => {
   });
 });
 
+describe("draft data", () => {
+  test("uses form updates subscription when shouldUseFormUpdates is true", async () => {
+    vi.spyOn(form, "updates", "get").mockReturnValue({
+      updated: { by: "user", date: vi.fn() as any },
+      data: { foo: "bar" },
+    });
+    vi.spyOn(form, "shouldUseFormUpdates", "get").mockReturnValue(true);
+    expect(form.draftData).toEqual({ foo: "bar" });
+  });
+});
+
 describe("form update analytics functions", () => {
   test("recordEdit sends edit tracking event", () => {
     vi.spyOn(AnalyticsStore.prototype, "trackReferralFormEdited");
@@ -156,6 +168,23 @@ describe("form update", () => {
         }),
       },
     );
+  });
+
+  test("uses updateForm if shouldUseFormUpdates is true", async () => {
+    vi.spyOn(rootStore.firestoreStore, "updateForm");
+    vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
+    vi.spyOn(form, "shouldUseFormUpdates", "get").mockReturnValue(true);
+    const testField = "testField";
+    const testValue = "testValue";
+    await form.updateDraftData(testField, testValue);
+    expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
+      client.recordId,
+      expect.objectContaining({
+        data: { testField: testValue },
+      }),
+      form.formId,
+    );
+    expect(rootStore.firestoreStore.updateOpportunity).not.toHaveBeenCalled();
   });
 
   test("tracks first edit", async () => {
@@ -212,6 +241,19 @@ describe("form clear data", () => {
         referralForm: undefined,
       },
     );
+  });
+
+  test("calls updateForm if shouldUseFormUpdates is true", async () => {
+    vi.spyOn(rootStore.firestoreStore, "updateForm");
+    vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
+    vi.spyOn(form, "shouldUseFormUpdates", "get").mockReturnValue(true);
+    await form.clearDraftData();
+    expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
+      client.recordId,
+      { data: undefined },
+      form.formId,
+    );
+    expect(rootStore.firestoreStore.updateOpportunity).not.toHaveBeenCalled();
   });
 });
 

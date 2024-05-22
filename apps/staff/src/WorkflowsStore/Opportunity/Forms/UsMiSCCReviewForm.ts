@@ -134,11 +134,17 @@ export class UsMiSCCReviewForm extends FormBase<
 > {
   navigateToFormText = "Automate 283 Form";
 
-  formId = `UsMiSCCReviewForm-common`;
-
   // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "FormUsMiSCCReview";
+  }
+
+  get shouldUseFormUpdates(): boolean {
+    return !!this.rootStore.userStore.activeFeatureVariants.isolateFormUpdates;
+  }
+
+  get formId(): string {
+    return `UsMiSCCReviewForm-common`;
   }
 
   prefilledDataTransformer(): Partial<UsMiSCCReviewDraftData> {

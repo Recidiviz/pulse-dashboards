@@ -28,6 +28,7 @@ import { action, computed, makeObservable, when } from "mobx";
 
 import {
   compositeHydrationState,
+  Hydratable,
   HydrationState,
   isHydrated,
 } from "~hydration-utils";
@@ -341,10 +342,15 @@ export abstract class OpportunityBase<
    * An Opportunity is only as hydrated as its least-hydrated Subscription.
    */
   get hydrationState(): HydrationState {
-    return compositeHydrationState([
+    const opportunitySubscriptions: Hydratable[] = [
       this.referralSubscription,
       this.updatesSubscription,
-    ]);
+    ];
+    // Also evaluate form subscription hydration state if applicable.
+    if (this.form) {
+      opportunitySubscriptions.push(this.form);
+    }
+    return compositeHydrationState([...opportunitySubscriptions]);
   }
 
   /**
@@ -353,6 +359,9 @@ export abstract class OpportunityBase<
   hydrate(): void {
     this.referralSubscription.hydrate();
     this.updatesSubscription.hydrate();
+    if (this.form && this.form.shouldUseFormUpdates) {
+      this.form.hydrate();
+    }
   }
 
   async deleteOpportunityDenialAndSnooze(): Promise<void> {

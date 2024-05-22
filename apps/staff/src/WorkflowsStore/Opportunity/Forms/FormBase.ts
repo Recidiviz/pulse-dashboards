@@ -19,6 +19,8 @@ import { FieldValue } from "@google-cloud/firestore";
 import { deleteField, serverTimestamp } from "firebase/firestore";
 import { action, computed, makeObservable, toJS } from "mobx";
 
+import { HydrationState } from "~hydration-utils";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import {
   FormUpdate,
@@ -27,6 +29,7 @@ import {
 } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { DocumentSubscription } from "../../subscriptions";
+import { FormUpdateSubscription } from "../../subscriptions/FormUpdateSubscription";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityType } from "../OpportunityType/types";
 
@@ -67,7 +70,15 @@ export class FormBase<
       currentUserEmail: computed,
       formIsDownloading: computed,
       markDownloading: action,
+      hydrate: action,
+      hydrationState: computed,
     });
+
+    if (this.shouldUseFormUpdates) {
+      this.updatesSubscription = new FormUpdateSubscription<
+        FormUpdate<FormDisplayType>
+      >(this.rootStore.firestoreStore, this.person.recordId, this.formId);
+    }
   }
 
   get currentUserEmail(): string | undefined {
@@ -78,11 +89,24 @@ export class FormBase<
     return this.opportunity.type;
   }
 
+  get updates(): FormUpdate<FormDisplayType> | undefined {
+    if (!this.shouldUseFormUpdates) {
+      return undefined;
+    }
+    return this.updatesSubscription?.data;
+  }
+
   get formLastUpdated(): UpdateLog | undefined {
+    if (this.shouldUseFormUpdates) {
+      return this.updates?.updated;
+    }
     return this.opportunity.updates?.referralForm?.updated;
   }
 
   get draftData(): Partial<FormDisplayType> {
+    if (this.shouldUseFormUpdates) {
+      return this.updates?.data ?? {};
+    }
     return this.opportunity.updates?.referralForm?.data ?? {};
   }
 
@@ -152,14 +176,21 @@ export class FormBase<
    */
   async clearDraftData() {
     const { person } = this.opportunity;
-
-    await this.rootStore.firestoreStore.updateOpportunity(
-      this.type,
-      person.recordId,
-      {
-        referralForm: deleteField(),
-      },
-    );
+    if (this.shouldUseFormUpdates) {
+      await this.rootStore.firestoreStore.updateForm(
+        person.recordId,
+        { data: deleteField() },
+        this.formId,
+      );
+    } else {
+      await this.rootStore.firestoreStore.updateOpportunity(
+        this.type,
+        person.recordId,
+        {
+          referralForm: deleteField(),
+        },
+      );
+    }
   }
 
   /**
@@ -182,11 +213,19 @@ export class FormBase<
     };
     const isFirstEdit = !this.formLastUpdated;
 
-    await this.rootStore.firestoreStore.updateOpportunity(
-      this.type,
-      person.recordId,
-      update,
-    );
+    if (this.shouldUseFormUpdates) {
+      await this.rootStore.firestoreStore.updateForm(
+        person.recordId,
+        update.referralForm,
+        this.formId,
+      );
+    } else {
+      await this.rootStore.firestoreStore.updateOpportunity(
+        this.type,
+        person.recordId,
+        update,
+      );
+    }
 
     this.recordEdit();
     if (isFirstEdit) {
@@ -197,18 +236,37 @@ export class FormBase<
     }
   }
 
+  /**
+   * Returns the evaluated hydration state.
+   */
+  get hydrationState(): HydrationState {
+    if (this.shouldUseFormUpdates && this.updatesSubscription) {
+      return this.updatesSubscription.hydrationState;
+    } else {
+      return this.opportunity.updatesSubscription.hydrationState;
+    }
+  }
+
+  /**
+   * Initiates hydration for subscriptions.
+   */
+  hydrate(): void {
+    if (this.shouldUseFormUpdates && this.updatesSubscription) {
+      this.updatesSubscription.hydrate();
+    }
+  }
+
+  get hydratableSubscription():
+    | DocumentSubscription<FormUpdate<FormDisplayType>>
+    | undefined {
+    return this.updatesSubscription;
+  }
+
   // ==========================
   // properties below this line are stubs and should usually be replaced by the subclass.
   // as such they are not annotated with MobX so subclasses can use standard annotations
   // instead of "override"
   // ==========================
-
-  /**
-   * Used to distinguish form update documents in Firestore. Typically formatted as
-   * {formName}-{formInstance}, with formInstance varying between "common" (for shared
-   * forms) or the opportunity type (for distinct forms).
-   */
-  formId = "";
 
   navigateToFormText = "Navigate to form";
 
@@ -217,6 +275,22 @@ export class FormBase<
   // eslint-disable-next-line class-methods-use-this
   get downloadText(): string {
     return "";
+  }
+
+  /**
+   * Used to distinguish form update documents in Firestore. Typically formatted as
+   * {formName}-{formInstance}, with formInstance varying between "common" (for shared
+   * forms) or the opportunity type (for distinct forms).
+   */
+  get formId(): string {
+    return "";
+  }
+
+  /**
+   * Only use form updates implementation for FV users and MI RH workflows.
+   */
+  get shouldUseFormUpdates(): boolean {
+    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this
