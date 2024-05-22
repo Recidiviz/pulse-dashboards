@@ -60,3 +60,11 @@ export type HighlightedOfficersDetail = {
   topXPct: number | null;
   numOfficers: number;
 };
+
+/**
+ * All outlier officers for a given metric, grouped by the outlier metricId.
+ */
+export type OutlierMetricOfficerGroup = {
+  metricId: string;
+  officersForMetric: OutlierOfficerData[];
+};
