@@ -67,7 +67,7 @@ describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
     `);
   });
 
-  it("should have a valid schema when usMoInitialHearingPastDueDate is undefined ", () => {
+  it("should have a valid schema when usMoInitialHearingPastDueDate is undefined", () => {
     const record =
       usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture;
     const { usMoInitialHearingPastDueDate } = record.eligibleCriteria;

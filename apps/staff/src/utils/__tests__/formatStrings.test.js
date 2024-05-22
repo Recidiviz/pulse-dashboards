@@ -244,7 +244,7 @@ describe("formatStrings", () => {
         expect(result).toEqual("Barney Rubble - 04");
       });
 
-      it("formats a district name without a - ", () => {
+      it("formats a district name without a -", () => {
         const name = "BBDFLT";
         const result = utils.formatDistrictLabel(name);
         expect(result).toEqual(name);

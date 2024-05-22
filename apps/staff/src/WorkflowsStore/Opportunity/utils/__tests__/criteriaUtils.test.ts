@@ -187,20 +187,6 @@ describe("hydrateStr", () => {
     expect(result).toEqual("All I do is matchmatch*breathe*match all day.");
   });
 
-  it("matches adjacent tags", () => {
-    const template = "All I do is {{verb}}{{verb}}*{{pause}}*{{verb}} all day.";
-    const criteria = { verb: "match", pause: "breathe" };
-    const formatters = {};
-
-    const result = hydrateStr(template, {
-      criteria,
-      formatters,
-      opportunity: mockOpportunity,
-    });
-
-    expect(result).toEqual("All I do is matchmatch*breathe*match all day.");
-  });
-
   it("reads the record", () => {
     const template = "Our hero is {{record.metadata.status}}!";
     const criteria = {};

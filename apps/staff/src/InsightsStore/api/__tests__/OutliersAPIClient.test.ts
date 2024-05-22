@@ -140,7 +140,7 @@ describe("InsightsAPIClient", () => {
       currentTenantId: undefined,
     } as RootStore;
     const badClient = new InsightsAPIClient(new InsightsStore(mockRootStore));
-    expect(badClient.supervisionOfficerSupervisors()).rejects.toThrow(
+    await expect(badClient.supervisionOfficerSupervisors()).rejects.toThrow(
       "Attempted to fetch data with undefined tenantId",
     );
   });

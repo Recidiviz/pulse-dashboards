@@ -90,7 +90,7 @@ describe("VitalsSummaryTable", () => {
             <VitalsSummaryTable />
           </Router>,
         );
-        expect(getAllByText(metric));
+        expect(getAllByText(metric)).not.toBeEmpty();
       });
     });
   });

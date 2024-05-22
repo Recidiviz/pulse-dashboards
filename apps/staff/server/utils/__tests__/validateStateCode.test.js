@@ -68,32 +68,38 @@ describe("validateStateCode", () => {
     jest.resetModules();
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("should call next() if stateCode in request matches state code in app_metadata", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "us_xx");
     expectSuccess(req);
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("should call next() if uppercase stateCode in request matches state code in app_metadata", () => {
     const req = makeReq("/api/us_xx/foo", "US_XX", "us_xx");
     expectSuccess(req);
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("should call next() if stateCode in request matches uppercase state code in app_metadata", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "US_XX");
     expectSuccess(req);
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("should return 401 if stateCode in request does not match state code in app_metadata", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "us_yy");
     expectStatus(req, 401);
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("should return 401 if user data not set in request", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "");
     delete req.user;
     expectStatus(req, 401);
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("should call next() if stateCode is recidiviz", () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "recidiviz");
     expectSuccess(req);
@@ -105,6 +111,7 @@ describe("validateStateCode with csgStateCodes", () => {
     jest.resetModules();
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each(csgStateCodes)(
     `to ensure it calls next() if stateCode is csg and stateCode in request is a csgStateCode %s`,
     (reqStateCode) => {
@@ -113,6 +120,7 @@ describe("validateStateCode with csgStateCodes", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   it(`should return 401 if stateCode is csg and stateCode in request is not a csgStateCode: ${csgStateCodes}`, () => {
     const req = makeReq("/api/us_xx/foo", "us_xx", "csg");
     expectStatus(req, 401);

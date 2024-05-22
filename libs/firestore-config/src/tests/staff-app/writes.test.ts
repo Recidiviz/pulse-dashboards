@@ -54,6 +54,7 @@ afterEach(async () => {
 });
 
 describe("app = staff", () => {
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["stateless user", getStatelessUser],
     ["state user", getTNUser],
@@ -71,6 +72,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([["stateless", getStatelessUser]])(
     "%s user cannot write",
     async (userType, getUserContext) => {
@@ -82,6 +84,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["ND", getNDUser],
     ["TN", getTNUser],
@@ -97,6 +100,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["Recidiviz", getRecidivizUser],
     ["TN", getTNUser],
@@ -109,6 +113,7 @@ describe("app = staff", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["Recidiviz", getRecidivizUser],
     ["ND", getNDUser],
@@ -121,6 +126,7 @@ describe("app = staff", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["TN", getTNUser, "ND"],
     ["ND", getNDUser, "TN"],
@@ -136,6 +142,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["TN", getTNUser, "ND", getNDUser],
     ["ND", getNDUser, "TN", getTNUser],
@@ -158,6 +165,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["TN", getTNUser],
     ["ND", getNDUser],
@@ -180,6 +188,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([["PA"], ["CA"]])(
     "Recidiviz user cannot write to %s data if it is not in recidivizAllowedStates",
     async (userState) => {
@@ -192,6 +201,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["us_tn", getTNUser],
     ["us_nd", getNDUser],
@@ -206,6 +216,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["us_tn", getTNUser],
     ["us_nd", getNDUser],
@@ -220,6 +231,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test("impersonating user cannot write to collections", async () => {
     await testWriteToCollectionsForStateWithStateCodePrefix(
       SHARED_UPDATE_COLLECTION_NAMES,
@@ -229,6 +241,7 @@ describe("app = staff", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("impersonating user cannot write to personal update collection", async () => {
     await testWriteToCollectionsWithoutStateCodePrefix(
       [PERSONAL_UPDATE_COLLECTION_NAME],

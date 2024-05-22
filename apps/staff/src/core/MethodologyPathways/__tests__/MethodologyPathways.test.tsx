@@ -73,7 +73,9 @@ describe("MethodologyPathways", () => {
         "renders the TOC link for %s",
         (pageId) => {
           const { getByRole } = render(<MethodologyPathways />);
-          expect(getByRole("link", { name: pageCopy[pageId].title }));
+          expect(
+            getByRole("link", { name: pageCopy[pageId].title }),
+          ).toBeInTheDocument();
         },
       );
 
@@ -99,7 +101,9 @@ describe("MethodologyPathways", () => {
         const { metricCopy, pageCopy } = getMethodologyCopy("US_ID").system;
         it("renders the methodology block", () => {
           const { getByRole } = render(<MethodologyPathways />);
-          expect(getByRole("heading", { name: pageCopy[pageId].title }));
+          expect(
+            getByRole("heading", { name: pageCopy[pageId].title }),
+          ).toBeInTheDocument();
         });
 
         const allowedSections = allowedNavigation[pageId];
@@ -117,7 +121,9 @@ describe("MethodologyPathways", () => {
           "renders the methodology block for %s",
           (metricId) => {
             const { getByRole } = render(<MethodologyPathways />);
-            expect(getByRole("heading", { name: metricCopy[metricId].title }));
+            expect(
+              getByRole("heading", { name: metricCopy[metricId].title }),
+            ).toBeInTheDocument();
           },
         );
 

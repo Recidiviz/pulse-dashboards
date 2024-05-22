@@ -159,6 +159,7 @@ describe("API GET tests", () => {
       jest.resetModules();
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     test.each(metricControllers)(
       "%p fetches metrics only if data is not cached in store",
       async (controllerFn) => {
@@ -272,6 +273,7 @@ describe("API GET tests", () => {
       });
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("newRevocationFile - calls fetchAndFilterNewRevocationFile if data is not cached", async () => {
       await requestAndExpectFetchMetricsCalled(
         newRevocationFile,

@@ -1,5 +1,5 @@
 // Make sure to import the sentry module first to ensure that it is initialized before any other modules.
-import "./sentry";
+import "~sentencing-server/sentry";
 
 import cors from "@fastify/cors";
 import { captureException } from "@sentry/node";

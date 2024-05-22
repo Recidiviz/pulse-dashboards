@@ -220,7 +220,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
       pdf = await metric.fetchMethodologyPDF();
     });
 
-    it("successfully fetches the methodology PDF", () => {
+    it("successfully fetches the methodology PDF", async () => {
       expect(fetchMock).toHaveBeenCalledWith(
         `test-url/api/${mockTenantId.toLowerCase()}/projections/methodology.pdf`,
         {
@@ -236,7 +236,7 @@ describe("PopulationProjectionOverTimeMetric", () => {
           type: "binary",
         }),
       );
-      expect(pdf.data.text()).resolves.toBe("blob");
+      await expect(pdf.data.text()).resolves.toBe("blob");
     });
   });
 });

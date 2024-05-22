@@ -55,22 +55,27 @@ describe("Tests for helpers", () => {
   };
 
   describe("Tests for getChartTop()", () => {
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable upper bound for values under 200", () => {
       checkExpectedBound(getChartTop, [70, 82, 85], 120);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable upper bound for values under 1000", () => {
       checkExpectedBound(getChartTop, [320, 280, 490], 600);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable upper bound for values under 2000", () => {
       checkExpectedBound(getChartTop, [1288, 1588, 1788], 2000);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable upper bound for values under 10000", () => {
       checkExpectedBound(getChartTop, [6800, 2800, 800], 8000);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable upper bound for large values", () => {
       checkExpectedBound(getChartTop, [21000, 18000, 12490], 24000);
     });
@@ -84,28 +89,37 @@ describe("Tests for helpers", () => {
   });
 
   describe("Tests for getChartBottom()", () => {
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable lower bound for values under 200", () => {
       checkExpectedBound(getChartBottom, [70, 82, 85], 40);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable lower bound for values under 1000", () => {
       checkExpectedBound(getChartBottom, [320, 280, 490], 100);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable lower bound for values under 2000", () => {
       checkExpectedBound(getChartBottom, [1288, 1588, 1788], 1000);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable lower bound for values under 10000", () => {
       checkExpectedBound(getChartBottom, [6800, 2800, 800], 700);
     });
 
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a reasonable lower bound for large values", () => {
       checkExpectedBound(getChartBottom, [21000, 18000, 12490], 10000);
     });
+
+    // eslint-disable-next-line vitest/expect-expect
     it("returns a non-negaitive lower bound for small values", () => {
       checkExpectedBound(getChartBottom, [4, 4, 4], 0);
     });
+    
+    // eslint-disable-next-line vitest/expect-expect
     it("takes into account the lower bound if it is set", () => {
       const data = generateDataWithUncertainty([
         [1000, 5000, 900],

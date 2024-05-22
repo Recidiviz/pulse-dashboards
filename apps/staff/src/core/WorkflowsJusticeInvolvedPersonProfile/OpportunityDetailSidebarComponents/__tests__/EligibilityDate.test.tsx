@@ -53,7 +53,7 @@ describe("EligibilityDate sidebar component tests", () => {
 
     expect(
       screen.queryByText("First Day of Eligibility", { exact: false }),
-    ).not.toBeNull();
+    ).toBeInTheDocument();
   });
 
   it("displays eligibilityDateText when set on config", () => {
@@ -69,6 +69,6 @@ describe("EligibilityDate sidebar component tests", () => {
 
     expect(
       screen.queryByText("The cow goes oink", { exact: false }),
-    ).not.toBeNull();
+    ).toBeInTheDocument();
   });
 });

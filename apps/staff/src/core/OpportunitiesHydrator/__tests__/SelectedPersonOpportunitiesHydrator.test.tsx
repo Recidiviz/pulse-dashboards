@@ -132,6 +132,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
     expect(pastFTRDHydrateMock).not.toHaveBeenCalled();
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("renders loading state if loading is not complete", () => {
     setUp({
       lsuHydrationState: { status: "loading" },
@@ -149,6 +150,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
     expectStateToBe("LOADING");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("renders loading state if one is loaded and the other is not", () => {
     setUp({ lsuHydrationState: { status: "loading" } });
 
@@ -163,6 +165,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
     expectStateToBe("LOADING");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("renders hydrated state when all opportunities are hydrated", () => {
     setUp({});
 
@@ -177,6 +180,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
     expectStateToBe("HYDRATED");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("renders hydrated state only based on specified opportunities", () => {
     setUp({ lsuHydrationState: { status: "loading" } });
 
@@ -191,6 +195,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
     expectStateToBe("HYDRATED");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("renders empty state if no results", () => {
     setUp({
       lsuVerified: false,
@@ -208,6 +213,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
     expectStateToBe("EMPTY");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("only renders empty state based on specified opportunities", () => {
     setUp({
       lsuVerified: false,
@@ -225,6 +231,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
     expectStateToBe("EMPTY");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("exits loading state even if hydration fails", () => {
     setUp({
       lsuHydrationState: { status: "failed" },

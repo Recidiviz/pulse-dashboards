@@ -101,7 +101,7 @@ describe("DistrictsStore", () => {
       expect(mockGetTokenSilently).toHaveBeenCalledTimes(1);
     });
 
-    it("sets isLoading to false and isError stays false ", () => {
+    it("sets isLoading to false and isError stays false", () => {
       expect(store.isLoading).toEqual(false);
       expect(store.isError).toEqual(false);
     });
@@ -174,7 +174,7 @@ describe("DistrictsStore", () => {
       expect(callMetricsApi).toHaveBeenCalledTimes(0);
     });
 
-    it("sets isLoading to false and isError stays false ", () => {
+    it("sets isLoading to false and isError stays false", () => {
       expect(store.isLoading).toEqual(false);
       expect(store.isError).toEqual(false);
     });

@@ -44,6 +44,7 @@ afterEach(async () => {
 });
 
 describe("no app specified", () => {
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["anon", getAnonUser, "user@us_tn.gov"],
     ["TN", getTNUser, "user@us_tn.gov"],

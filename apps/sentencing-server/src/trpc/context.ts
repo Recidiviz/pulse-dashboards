@@ -1,6 +1,6 @@
 import { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
-import { client } from "../prisma";
+import { client } from "~sentencing-server/prisma";
 
 export function createContext({ req, res }: CreateFastifyContextOptions) {
   return { req, res, prisma: client };

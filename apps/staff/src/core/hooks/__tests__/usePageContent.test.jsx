@@ -47,10 +47,12 @@ const setTestTenant = (tenantId) => {
 };
 
 describe("Tests for usePageContent()", () => {
+  // eslint-disable-next-line vitest/expect-expect
   it("uses the default prison copy.", () => {
     testPageContent("prison", "Prison", "Default prison summary");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("uses the default supervision to liberty copy.", () => {
     testPageContent(
       "supervisionToLiberty",
@@ -59,11 +61,13 @@ describe("Tests for usePageContent()", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("uses state-specific overrides when present", () => {
     setTestTenant("US_ID");
     testPageContent("prison", "Prison", "ID-specific prison summary");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   it("falls back to defaults if page not in state-specific file", () => {
     setTestTenant("US_ID");
     testPageContent(

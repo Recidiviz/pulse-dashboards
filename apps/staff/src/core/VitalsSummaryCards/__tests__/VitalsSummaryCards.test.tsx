@@ -112,12 +112,12 @@ describe("VitalsSummaryCards", () => {
             <VitalsSummaryCards />
           </Router>,
         );
-        expect(screen.getByText(metric));
+        expect(screen.getByText(metric)).not.toBeNull();
       });
     });
   });
 
-  test("selecting from menu sets the selectedMetricId", async () => {
+  test("selecting from menu sets the selectedMetricId", () => {
     render(
       <Router>
         <VitalsSummaryCards />

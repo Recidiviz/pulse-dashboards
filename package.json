@@ -242,6 +242,7 @@
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-vitest": "^0.5.4",
     "eslint-plugin-vitest-globals": "^1.4.0",
     "eslint-plugin-wdio": "^7.0.0",
     "google-auth-library": "^8.7.0",

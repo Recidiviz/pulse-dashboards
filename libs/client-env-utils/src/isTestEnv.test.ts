@@ -17,7 +17,7 @@
 
 import { isTestEnv } from "./isTestEnv";
 
-test("test mode", () => {
+test("testing mode", () => {
   expect(isTestEnv()).toBeTrue();
 });
 

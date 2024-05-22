@@ -203,7 +203,7 @@ describe("test mostRecentHearingComments parser", () => {
     `);
   });
 
-  test("when there are no sections ", () => {
+  test("when there are no sections", () => {
     expect(
       createMostRecentHearingCommentsTestCase("Test without any sections"),
     ).toMatchInlineSnapshot(`"Test without any sections"`);

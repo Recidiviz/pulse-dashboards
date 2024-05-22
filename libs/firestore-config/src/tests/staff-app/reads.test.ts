@@ -50,6 +50,7 @@ afterEach(async () => {
 });
 
 describe("app = staff", () => {
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["stateless", getStatelessUser],
     ["ND", getNDUser],
@@ -61,6 +62,7 @@ describe("app = staff", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([["stateless", getStatelessUser]])(
     "%s user cannot read state data",
     async (userType, getUserContext) => {
@@ -72,6 +74,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([["TN"], ["ND"]])(
     "Recidiviz user can read %s state data from recidivizAllowedStates",
     async (userState) => {
@@ -83,6 +86,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([["CA"], ["PA"]])(
     "Recidiviz user cannot read %s state data if it is not in recidivizAllowedStates",
     async (userState) => {
@@ -94,6 +98,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["TN", getTNUser],
     ["ND", getNDUser],
@@ -108,6 +113,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["TN", getTNUser, "ND"],
     ["ND", getNDUser, "TN"],
@@ -122,6 +128,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
     "%s can read their own userUpdates",
     async (userState, getUserContext) => {
@@ -133,6 +140,7 @@ describe("app = staff", () => {
     },
   );
 
+  // eslint-disable-next-line vitest/expect-expect
   test.each([["us_nd", getNDUser, "us_tn", getTNUser]])(
     "%s cannot read other users' userUpdates",
     async (userState, getUserContext) => {

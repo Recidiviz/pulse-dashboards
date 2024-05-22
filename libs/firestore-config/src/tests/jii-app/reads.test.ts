@@ -61,6 +61,7 @@ function testGet(
 }
 
 describe("app = jii", () => {
+  // eslint-disable-next-line vitest/expect-expect
   test("user can read their own ETL documents", () => {
     return testGet(
       getMEUser(testEnv).firestore(),
@@ -70,6 +71,7 @@ describe("app = jii", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("user cannot read anyone else's ETL documents", () => {
     return testGet(
       getMEUser(testEnv).firestore(),
@@ -79,6 +81,7 @@ describe("app = jii", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("user cannot read documents outside their state", () => {
     return testGet(
       getMEUser(testEnv).firestore(),
@@ -88,6 +91,7 @@ describe("app = jii", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("user cannot read staff collections if their IDs collide", () => {
     return testGet(
       getMEUser(testEnv).firestore(),
@@ -97,6 +101,7 @@ describe("app = jii", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("user cannot read any updates, even those associated with their IDs", () => {
     return testGet(
       getMEUser(testEnv).firestore(),
@@ -106,17 +111,20 @@ describe("app = jii", () => {
     );
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("user cannot query any collections", async () => {
     const db = getMEUser(testEnv).firestore();
     await testAllReadsUnrestricted(db, assertFails);
     await testAllReadsForState(db, assertFails, "US_ME");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("Recidiviz user can query collections and read updates", async () => {
     const db = getRecidivizUser(testEnv).firestore();
     await testAllReadsForState(db, assertSucceeds, "US_ME");
   });
 
+  // eslint-disable-next-line vitest/expect-expect
   test("Recidiviz user can read anyone's ETL documents", async () => {
     const db = getRecidivizUser(testEnv).firestore();
 
