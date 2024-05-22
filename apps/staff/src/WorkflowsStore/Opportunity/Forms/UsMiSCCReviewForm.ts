@@ -19,6 +19,7 @@
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatWorkflowsDate } from "../../../utils";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "../UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { FormBase } from "./FormBase";
@@ -133,6 +134,7 @@ export class UsMiSCCReviewForm extends FormBase<
   UsMiSCCReviewDraftData,
   | usMiSecurityClassificationCommitteeReviewOpportunity
   | usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity
+  | usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity
 > {
   navigateToFormText = "Automate 283 Form";
 
