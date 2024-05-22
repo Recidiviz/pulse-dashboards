@@ -160,9 +160,11 @@ export const ProgressTimeline = ({
             {formatTimeToGo(endDate)})
           </Sans14>
         </div>
-        <OfficerAssignment>
-          Assigned to <WorkflowsOfficerName officerId={officerId} />
-        </OfficerAssignment>
+        {officerId && (
+          <OfficerAssignment>
+            Assigned to <WorkflowsOfficerName officerId={officerId} />
+          </OfficerAssignment>
+        )}
       </VizHeader>
 
       <TimelineChart>

@@ -151,6 +151,7 @@ export type ClientRecord = WorkflowsJusticeInvolvedPersonRecord & {
   currentEmployers?: ClientEmployer[];
   milestones?: Milestone[];
   emailAddress?: string;
+  officerId: string;
 };
 
 /**

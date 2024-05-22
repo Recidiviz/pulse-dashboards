@@ -89,7 +89,7 @@ export type CopyCTAMetadata = {
   almostEligibleCriteria: string;
   justiceInvolvedPersonId: string;
   justiceInvolvedPersonName: string;
-  staffId: string;
+  staffId?: string;
   staffName: string;
   date: Date;
 };

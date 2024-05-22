@@ -68,7 +68,7 @@ export type JusticeInvolvedPerson = {
   fullName: FullName;
   displayName: string;
   displayPreferredName: string;
-  assignedStaffId: string;
+  assignedStaffId?: string;
   assignedStaffFullName: string;
   supervisionTasks?: SupervisionTaskInterface;
   /**

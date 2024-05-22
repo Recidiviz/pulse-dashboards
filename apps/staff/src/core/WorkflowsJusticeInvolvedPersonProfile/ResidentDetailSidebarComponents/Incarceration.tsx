@@ -47,10 +47,14 @@ export function Incarceration({
           <SecureDetailsContent>
             {formatWorkflowsDate(resident.releaseDate)}
           </SecureDetailsContent>
-          <DetailsSubheading>Case Manager</DetailsSubheading>
-          <SecureDetailsContent>
-            <WorkflowsOfficerName officerId={resident.assignedStaffId} />
-          </SecureDetailsContent>
+          {resident.assignedStaffId && (
+            <>
+              <DetailsSubheading>Case Manager</DetailsSubheading>
+              <SecureDetailsContent>
+                <WorkflowsOfficerName officerId={resident.assignedStaffId} />
+              </SecureDetailsContent>
+            </>
+          )}
           <DetailsSubheading>Facility</DetailsSubheading>
           <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
           <DetailsSubheading>Unit</DetailsSubheading>

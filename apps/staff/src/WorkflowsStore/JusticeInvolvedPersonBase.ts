@@ -168,8 +168,8 @@ export class JusticeInvolvedPersonBase<
     return this.record.personName;
   }
 
-  get assignedStaffId(): string {
-    return this.record.officerId;
+  get assignedStaffId(): string | undefined {
+    return this.record.officerId ?? undefined;
   }
 
   get assignedStaff(): StaffRecord | undefined {

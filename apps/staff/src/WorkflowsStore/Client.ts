@@ -242,6 +242,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       : record.milestones;
   }
 
+  get assignedStaffId(): string {
+    return this.record.officerId;
+  }
+
   get supervisionType(): string {
     const supervisionType = this.record.supervisionType;
 

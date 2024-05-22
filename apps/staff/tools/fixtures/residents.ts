@@ -23,7 +23,6 @@ import { FirestoreFixture } from "./utils";
 const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   {
     allEligibleOpportunities: ["usIdExpandedCRC"],
-    officerId: "ID_CASE_MANAGER_1",
     stateCode: "US_ID",
     personExternalId: "ID_RES001",
     displayId: "RES001",
@@ -42,7 +41,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usIdCRCWorkRelease"],
-    officerId: "ID_CASE_MANAGER_1",
     stateCode: "US_ID",
     personExternalId: "ID_RES002",
     displayId: "RES002",
@@ -60,7 +58,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usIdCRCWorkRelease", "usIdCRCResidentWorker"],
-    officerId: "ID_CASE_MANAGER_1",
     stateCode: "US_ID",
     personExternalId: "ID_RES003",
     displayId: "RES003",
@@ -78,7 +75,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usIdCRCResidentWorker"],
-    officerId: "ID_CASE_MANAGER_1",
     stateCode: "US_ID",
     personExternalId: "ID_RES004",
     displayId: "RES004",
@@ -221,7 +217,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
       "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiAddInPersonSecurityClassificationCommitteeReview",
     ],
-    officerId: "OFFICER8",
     stateCode: "US_MI",
     personExternalId: "RES019",
     displayId: "dRES019",
@@ -244,7 +239,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
       "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiAddInPersonSecurityClassificationCommitteeReview",
     ],
-    officerId: "OFFICER8",
     stateCode: "US_MI",
     personExternalId: "RES020",
     displayId: "dRES020",
@@ -267,7 +261,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
       "usMiWardenInPersonSecurityClassificationCommitteeReview",
       "usMiAddInPersonSecurityClassificationCommitteeReview",
     ],
-    officerId: "OFFICER8",
     stateCode: "US_MI",
     personExternalId: "RES021",
     displayId: "dRES021",
@@ -307,7 +300,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
 
   {
     allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES004",
     displayId: "dRES004",
@@ -324,7 +316,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES005",
     displayId: "dRES005",
@@ -341,7 +332,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES006",
     displayId: "dRES006",
@@ -358,7 +348,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES007",
     displayId: "dRES007",
@@ -375,7 +364,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES008",
     displayId: "dRES008",
@@ -392,7 +380,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES009",
     displayId: "dRES009",
@@ -409,7 +396,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES010",
     displayId: "dRES010",
@@ -426,7 +412,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES011",
     displayId: "dRES011",
@@ -443,7 +428,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES012",
     displayId: "dRES008",
@@ -460,7 +444,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES013",
     displayId: "dRES013",
@@ -477,7 +460,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES014",
     displayId: "dRES014",
@@ -494,7 +476,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES015",
     displayId: "dRES015",
@@ -511,7 +492,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES016",
     displayId: "dRES016",
@@ -528,7 +508,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES017",
     displayId: "dRES017",
@@ -545,7 +524,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
-    officerId: "OFFICER1",
     stateCode: "US_MO",
     personExternalId: "RES018",
     displayId: "dRES018",
@@ -562,7 +540,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
-    officerId: "OFFICER5",
     stateCode: "US_TN",
     personExternalId: "RES001",
     displayId: "dRES001",
@@ -581,7 +558,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
-    officerId: "OFFICER5",
     stateCode: "US_TN",
     personExternalId: "RES002",
     displayId: "dRES002",
@@ -600,7 +576,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usTnAnnualReclassification"],
-    officerId: "OFFICER5",
     stateCode: "US_TN",
     personExternalId: "RES003",
     displayId: "dRES003",
@@ -619,7 +594,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   },
   {
     allEligibleOpportunities: ["usTnAnnualReclassification"],
-    officerId: "OFFICER5",
     stateCode: "US_TN",
     personExternalId: "RES004",
     displayId: "dRES004",

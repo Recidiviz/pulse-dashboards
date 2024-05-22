@@ -20,10 +20,15 @@ import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 
-type WorkflowsOfficerNameProps = {
-  officerId?: string;
-  officerEmail?: string;
-};
+type WorkflowsOfficerNameProps =
+  | {
+      officerId: string;
+      officerEmail?: never;
+    }
+  | {
+      officerId?: never;
+      officerEmail: string;
+    };
 
 const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   officerId,
