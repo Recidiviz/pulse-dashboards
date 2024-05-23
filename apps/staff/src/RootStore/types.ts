@@ -151,6 +151,7 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
     : {
         ...allFeatureVariants,
         opportunityConfigurationAPI: undefined,
+        supervisorHomepage: undefined,
       };
 
 export type LanternMethodologyByTenant = {
