@@ -49,7 +49,7 @@ export const usMiClassificationReviewIneligibleClientRecord: ClientRecord = {
   recordId: "us_mi_001",
   personName: {
     givenNames: "PATRICK",
-    surname: "STAR",
+    surname: "KING",
   },
   personExternalId: "001",
   displayId: "d001",

@@ -22,7 +22,7 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "PETER",
-      surname: "FRENCH FRY",
+      surname: "GREEN",
       middleNames: "JR",
     },
     personExternalId: "001",
@@ -59,8 +59,8 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "PANDA",
-      surname: "BEAR",
+      givenNames: "KEITH",
+      surname: "GARCIA",
       middleNames: "JR",
     },
     personExternalId: "002",
@@ -97,9 +97,8 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "MISTER",
-      surname: "LION",
-      middleNames: "JR",
+      givenNames: "MARY",
+      surname: "DAVIS",
     },
     personExternalId: "003",
     displayId: "d003",
@@ -126,9 +125,8 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "MINNIE",
-      surname: "MOUSE",
-      middleNames: "HUMMUS",
+      givenNames: "JONATHAN",
+      surname: "MITCHELL",
     },
     personExternalId: "005",
     displayId: "d005",
@@ -164,7 +162,7 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "FURBY",
+      givenNames: "KYLE",
       surname: "JOURNEY",
       middleNames: "W.",
     },
@@ -206,8 +204,8 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "Olive",
-      surname: "Oyle",
+      givenNames: "OLIVER",
+      surname: "BAKER",
     },
     personExternalId: "007",
     displayId: "d007",
@@ -245,8 +243,8 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
 const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
-      givenNames: "BETTY",
-      surname: "RUBBLE",
+      givenNames: "CASEY",
+      surname: "MARTINEZ",
       middleNames: "JANE",
     },
     personExternalId: "001",
@@ -288,9 +286,9 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "DINO",
-      surname: "SAUR",
-      middleNames: "DEE",
+      givenNames: "LARRY",
+      surname: "GREEN",
+      middleNames: "JEREMY",
     },
     personExternalId: "002",
     displayId: "d002",
@@ -325,12 +323,12 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         type: "MONTHS_ON_SUPERVISION",
       },
     ],
-    emailAddress: "dino@saur.net",
+    emailAddress: "dino@makerspace.net",
   },
   {
     personName: {
       givenNames: "SYLVESTER",
-      surname: "SLATE",
+      surname: "ALLEN",
     },
     personExternalId: "003",
     displayId: "d003",
@@ -356,7 +354,7 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     currentEmployers: [
       {
         name: "Cameraworks",
-        address: "456 Shutterfly Lane",
+        address: "456 Jessup Lane",
       },
     ],
     milestones: [
@@ -369,12 +367,12 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         type: "MONTHS_ON_SUPERVISION",
       },
     ],
-    emailAddress: "sylvester@slate.net",
+    emailAddress: "sylvester@cameraworks.net",
   },
   {
     personName: {
-      givenNames: "FRAN",
-      surname: "DRESCHER",
+      givenNames: "FRANCINE",
+      surname: "ADAMS",
     },
     personExternalId: "005",
     displayId: "d005",
@@ -409,12 +407,12 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         type: "MONTHS_ON_SUPERVISION",
       },
     ],
-    emailAddress: "fran@drescher.net",
+    emailAddress: "fran@bluebeancoffee.net",
   },
   {
     personName: {
-      givenNames: "ASH",
-      surname: "KETCHUM",
+      givenNames: "JESSICA",
+      surname: "RIVERA",
     },
     personExternalId: "006",
     displayId: "d006",
@@ -435,8 +433,8 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     allEligibleOpportunities: ["LSU"],
     currentEmployers: [
       {
-        name: "NASA",
-        address: "456 Shuttle St",
+        name: "NARA CORP.",
+        address: "456 Windsor St",
       },
     ],
     milestones: [
@@ -445,7 +443,7 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         type: "MONTHS_ON_SUPERVISION",
       },
     ],
-    emailAddress: "ash@ketchum.net",
+    emailAddress: "jessica@nara-corp.net",
   },
   {
     personName: {
@@ -489,8 +487,8 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "CARRIE",
-      surname: "UNDERWOOD",
+      givenNames: "CAROLYN",
+      surname: "SCOTT",
     },
     personExternalId: "007",
     displayId: "d007",
@@ -532,7 +530,7 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "LARRY",
-      surname: "DAVID",
+      surname: "ROBERTS",
     },
     personExternalId: "008",
     displayId: "d008",
@@ -553,8 +551,8 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     allEligibleOpportunities: ["earnedDischarge"],
     currentEmployers: [
       {
-        name: "Comedy Central",
-        address: "493 Laugh St",
+        name: "ABC Inc.",
+        address: "493 ABC St",
       },
     ],
     emailAddress: "larry@david.net",
@@ -562,8 +560,7 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "ALFRED",
-      surname: "PENNYWORTH",
-      middleNames: "THADDEUS CRANE",
+      surname: "HILL",
     },
     personExternalId: "010",
     displayId: "d010",
@@ -584,8 +581,8 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     allEligibleOpportunities: ["pastFTRD"],
     currentEmployers: [
       {
-        name: "Bruce Wayne",
-        address: "1007 Mountain Drive, Gotham",
+        name: "Sports and Drive Warehouse",
+        address: "1007 Mountain Drive, Utah",
       },
     ],
     milestones: [
@@ -598,7 +595,7 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         type: "MONTHS_ON_SUPERVISION",
       },
     ],
-    emailAddress: "alfred@wayne.net",
+    emailAddress: "alfred@sportsanddrive.net",
   },
 ];
 
@@ -606,7 +603,7 @@ const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "LAURA",
-      surname: "PALMER",
+      surname: "WILSON",
     },
     personExternalId: "009",
     displayId: "d009",
@@ -647,7 +644,7 @@ const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "JENNIFER",
-      surname: "LOPEZ",
+      surname: "PEREZ",
     },
     personExternalId: "010",
     displayId: "d010",
@@ -688,7 +685,7 @@ const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "MARIAH",
-      surname: "CAREY",
+      surname: "WRIGHT",
     },
     personExternalId: "011",
     displayId: "d011",
@@ -729,7 +726,7 @@ const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "DALE",
-      surname: "COOPER",
+      surname: "MOORE",
     },
     personExternalId: "012",
     displayId: "d012",
@@ -773,7 +770,7 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "PATRICK",
-      surname: "STAR",
+      surname: "KING",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -791,7 +788,7 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "EUGENE",
-      surname: "KRABS",
+      surname: "ANDERSON",
     },
     personExternalId: "cr-eligible-1",
     displayId: "dcr-eligible-1",
@@ -807,8 +804,8 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "SAGE",
-      surname: "THE SAGE",
+      givenNames: "SAMANTHA",
+      surname: "HERNANDEZ",
     },
     personExternalId: "cr-eligible-2",
     displayId: "dcr-eligible-2",
@@ -824,8 +821,8 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "SQUIDWARD",
-      surname: "TENTACLES",
+      givenNames: "AARON",
+      surname: "KING",
     },
     personExternalId: "ed-eligible-1",
     displayId: "ded-eligible-1",
@@ -841,8 +838,8 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "NOT",
-      surname: "SQUIDWARD",
+      givenNames: "NATHANIEL",
+      surname: "SACKMAN",
     },
     personExternalId: "ed-eligible-2",
     displayId: "ded-eligible-2",
@@ -858,8 +855,8 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "GORAN",
-      surname: "IVANISEVIC",
+      givenNames: "FAUSTO",
+      surname: "CARTER",
     },
     personExternalId: "010",
     displayId: "d010",
@@ -878,7 +875,7 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
 const US_ND_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
-      givenNames: "JAMIE",
+      givenNames: "JAMILYN",
       surname: "JONES",
       middleNames: "JANE",
     },
@@ -915,7 +912,7 @@ const US_ND_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "JUSTIN",
-      surname: "TIMBERLAKE",
+      surname: "JACOBS",
       middleNames: "JANE",
     },
     personExternalId: "111",
@@ -954,7 +951,7 @@ const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "PETER",
-      surname: "PIPER",
+      surname: "RIVINGTON",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -976,7 +973,7 @@ const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "EDWARD",
-      surname: "ESTLIN",
+      surname: "YU",
     },
     personExternalId: "002",
     displayId: "d002",
@@ -1001,7 +998,7 @@ const US_PA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "BENJAMIN",
-      surname: "FRANKLIN",
+      surname: "HILL",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -1022,8 +1019,7 @@ const US_PA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "LOUISA",
-      surname: "ALCOTT",
-      middleNames: "MAY",
+      surname: "DAVIDSON",
     },
     personExternalId: "002",
     displayId: "d002",
@@ -1047,7 +1043,7 @@ const US_PA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "KEVIN",
-      surname: "BACON",
+      surname: "ITO",
     },
     personExternalId: "003",
     displayId: "d003",
@@ -1071,8 +1067,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   {
     personName: {
       givenNames: "TONYE",
-      surname: "THOMPSON",
-      middleNames: "BARBY",
+      surname: "BARLEY",
     },
     personExternalId: "100",
     displayId: "d100",
@@ -1113,8 +1108,8 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "LINET",
-      surname: "HANSEN",
+      givenNames: "VIVIAN",
+      surname: "HANSKILL",
     },
     personExternalId: "101",
     displayId: "d101",
@@ -1138,7 +1133,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     allEligibleOpportunities: ["compliantReporting", "usTnExpiration"],
     currentEmployers: [
       {
-        name: "Photography Studio",
+        name: "Photo Stop Photography Studio",
         address: "41048 Creekside Road",
       },
     ],
@@ -1152,13 +1147,13 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         type: "MONTHS_ON_SUPERVISION",
       },
     ],
-    emailAddress: "linet@hansen.net",
+    emailAddress: "vivian@photo-stop.net",
   },
   {
     personName: {
       givenNames: "REBEKAH",
-      surname: "CORTES",
-      middleNames: "HATTI",
+      surname: "KARINER",
+      middleNames: "H.",
     },
     personExternalId: "102",
     displayId: "d102",
@@ -1186,11 +1181,11 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         address: "2948 Telegraph Road",
       },
     ],
-    emailAddress: "rebekah@cortes.net",
+    emailAddress: "rebekah@ceramics-r-us.net",
   },
   {
     personName: {
-      givenNames: "RAMONDA",
+      givenNames: "JACOB",
       surname: "UNDERWOOD",
     },
     personExternalId: "104",
@@ -1219,7 +1214,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "CLARIBEL",
+      givenNames: "SARAH",
       surname: "VELAZQUEZ",
       middleNames: "M",
     },
@@ -1246,9 +1241,8 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
   {
     personName: {
-      givenNames: "SHERRI",
+      givenNames: "JACQUELINE",
       surname: "WRIGHT",
-      middleNames: "RENELLE",
     },
     personExternalId: "109",
     displayId: "d109",
@@ -1272,7 +1266,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
         name: "Tire store",
       },
     ],
-    emailAddress: "sherri@renelle.net",
+    emailAddress: "jackie@mechanic-supply.net",
   },
   {
     personName: {
@@ -1313,8 +1307,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
     stateCode: "US_TN",
     personName: {
       givenNames: "Harry",
-      middleNames: "Henry",
-      surname: "Houdini IV",
+      surname: "Amira",
     },
     officerId: "OFFICER1",
     currentBalance: 282,
