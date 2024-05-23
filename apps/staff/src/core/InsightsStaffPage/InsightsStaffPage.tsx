@@ -334,7 +334,11 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               <Wrapper isLaptop={isTablet}>
                 <Sidebar>
                   <InsightsChartCard
-                    title={`List of ${toTitleCase(eventName)}`}
+                    title={
+                      eventName === "program starts"
+                        ? "List of clients with no Program Starts"
+                        : `List of ${toTitleCase(eventName)}`
+                    }
                     infoModal={
                       <InsightsInfoModal
                         title={`List of ${toTitleCase(eventName)}`}

@@ -179,6 +179,7 @@ const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
+                  target="_blank"
                 >
                   See Methodology for more.
                 </StyledLink>

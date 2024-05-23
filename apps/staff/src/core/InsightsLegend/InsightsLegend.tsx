@@ -26,6 +26,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { toTitleCase } from "../../utils/formatStrings";
 import { GOAL_COLORS } from "../InsightsSwarmPlot/constants";
 
 const LegendWrapper = styled.div<{ direction: "row" | "column" }>`
@@ -89,7 +90,7 @@ export const defaultLegendItems = (
   {
     label: farWorseLabel,
     icon: circleLegendIcon(GOAL_COLORS.FAR),
-    tooltip: `${supervisionOfficerLabel} has a rate over 1 Interquartile Range above the statewide rate`,
+    tooltip: `${toTitleCase(supervisionOfficerLabel)} has a rate over 1 Interquartile Range above the statewide rate.`,
   },
 ];
 
