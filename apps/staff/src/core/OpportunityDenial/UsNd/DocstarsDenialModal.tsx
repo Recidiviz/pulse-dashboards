@@ -302,8 +302,8 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
             />
             <Sans16>
               By clicking this box, I confirm that I have consulted with my
-              direct supervisor regarding this case within 30 days of this
-              client's current Early Termination date.
+              direct supervisor regarding the client's ineligibility for early
+              termination due to the reasons indicated on the previous screen.
             </Sans16>
           </Acknowledgement>
         )}
