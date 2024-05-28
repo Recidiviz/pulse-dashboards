@@ -17,17 +17,20 @@
 
 import { flowResult } from "mobx";
 
-import { Case } from "../../api/APIClient";
-import { createMockPSIStore } from "../../utils/tests";
+import { CaseDetailsFixture } from "../../api/offlineFixtures";
+import { createMockPSIStore } from "../../utils/test";
 
 const psiStore = createMockPSIStore();
-const { psiCaseStore } = psiStore;
+const { caseStore } = psiStore;
 
 test("loads case info", async () => {
-  const mockCaseId = "123";
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue({} as Case);
+  const caseId = Object.keys(CaseDetailsFixture)[0];
+  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
+    CaseDetailsFixture[caseId],
+  );
 
-  expect(psiCaseStore.caseDetailsById[mockCaseId]).toBeUndefined();
-  await flowResult(psiCaseStore.loadCaseDetails(mockCaseId));
-  expect(psiCaseStore.caseDetailsById[mockCaseId]).toBeDefined();
+  expect(caseStore.caseDetailsById[caseId]).toBeUndefined();
+  await flowResult(caseStore.loadCaseDetails(caseId));
+  expect(caseStore.caseDetailsById[caseId]).toBeDefined();
+  expect(caseStore.caseDetailsById[caseId]).toEqual(CaseDetailsFixture[caseId]);
 });

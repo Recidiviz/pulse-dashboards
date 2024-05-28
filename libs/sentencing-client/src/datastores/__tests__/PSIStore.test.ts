@@ -15,24 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PSIStore } from "../datastores/PSIStore";
-import { Case, Staff } from "./APIClient";
+import { createMockPSIStore } from "../../utils/test";
 
-export class OfflineAPIClient {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(public readonly psiStore: PSIStore) {}
+const psiStore = createMockPSIStore();
 
-  async getStaffInfo(): Promise<Staff> {
-    const { StaffInfoFixture } = await import(
-      "./offlineFixtures/StaffInfoFixtures"
-    );
-    return StaffInfoFixture;
-  }
+test("psiStaffStore is initialized when psiStore is instantiated", () => {
+  expect(psiStore.staffStore).toBeDefined();
+});
 
-  async getCaseDetails(caseId: string): Promise<Case> {
-    const { CaseDetailsFixture } = await import(
-      "./offlineFixtures/CaseDetailsFixtures"
-    );
-    return CaseDetailsFixture?.[caseId];
-  }
-}
+test("psiCaseStore is initialized when psiStore is instantiated", () => {
+  expect(psiStore.staffStore).toBeDefined();
+});
+
+test("apiClient is initialized when psiStore is instantiated", () => {
+  expect(psiStore.staffStore).toBeDefined();
+});

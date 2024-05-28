@@ -17,16 +17,19 @@
 
 import { flowResult } from "mobx";
 
-import { Staff } from "../../api/APIClient";
-import { createMockPSIStore } from "../../utils/tests";
+import { StaffInfoFixture } from "../../api/offlineFixtures";
+import { createMockPSIStore } from "../../utils/test";
 
 const psiStore = createMockPSIStore();
-const { psiStaffStore } = psiStore;
+const { staffStore } = psiStore;
 
 test("loads staff info", async () => {
-  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue({} as Staff);
+  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+    StaffInfoFixture,
+  );
 
-  expect(psiStaffStore.staffInfo).toBeUndefined();
-  await flowResult(psiStaffStore.loadStaffInfo());
-  expect(psiStaffStore.staffInfo).toBeDefined();
+  expect(staffStore.staffInfo).toBeUndefined();
+  await flowResult(staffStore.loadStaffInfo());
+  expect(staffStore.staffInfo).toBeDefined();
+  expect(staffStore.staffInfo).toEqual(StaffInfoFixture);
 });

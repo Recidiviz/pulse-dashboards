@@ -25,20 +25,20 @@ import {
 
 import { StaffStore } from "../datastores/StaffStore";
 
-export class PSIStaffPresenter implements Hydratable {
+export class StaffPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
-  constructor(public readonly psiStaffStore: StaffStore) {
+  constructor(public readonly staffStore: StaffStore) {
     makeAutoObservable(this);
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          if (this.psiStaffStore.staffInfo === undefined)
+          if (this.staffStore.staffInfo === undefined)
             throw new Error("Failed to load staff info");
         },
       ],
       populate: async () => {
-        await flowResult(this.psiStaffStore.loadStaffInfo());
+        await flowResult(this.staffStore.loadStaffInfo());
       },
     });
   }
@@ -48,7 +48,7 @@ export class PSIStaffPresenter implements Hydratable {
   }
 
   get staffInfo() {
-    return this.psiStaffStore.staffInfo;
+    return this.staffStore.staffInfo;
   }
 
   async hydrate(): Promise<void> {

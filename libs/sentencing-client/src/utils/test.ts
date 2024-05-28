@@ -16,23 +16,22 @@
 // =============================================================================
 
 import { PSIStore } from "../datastores/PSIStore";
-import { Case, Staff } from "./APIClient";
 
-export class OfflineAPIClient {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(public readonly psiStore: PSIStore) {}
+export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
+  const mockRootStore = {
+    userStore: {
+      userPseudoId:
+        userPseudoIdOverride === null
+          ? undefined
+          : userPseudoIdOverride ?? "TestID-123",
+      getToken: () => Promise.resolve("auth0-token"),
+    },
+  };
+  return mockRootStore;
+};
 
-  async getStaffInfo(): Promise<Staff> {
-    const { StaffInfoFixture } = await import(
-      "./offlineFixtures/StaffInfoFixtures"
-    );
-    return StaffInfoFixture;
-  }
-
-  async getCaseDetails(caseId: string): Promise<Case> {
-    const { CaseDetailsFixture } = await import(
-      "./offlineFixtures/CaseDetailsFixtures"
-    );
-    return CaseDetailsFixture?.[caseId];
-  }
-}
+export const createMockPSIStore = (userPseudoIdOverride?: string | null) => {
+  const mockRootStore = createMockRootStore(userPseudoIdOverride);
+  const psiStore = new PSIStore(mockRootStore);
+  return psiStore;
+};

@@ -40,16 +40,8 @@ export class APIClient {
     return "http://localhost:3002";
   }
 
-  async getRequestHeaders(): Promise<{ [key: string]: string }> {
-    const userStore = this.psiStore.rootStore.userStore;
-    await when(() => !!userStore.getToken);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const token = await userStore.getToken!();
-
-    return {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
+  get trpcClient() {
+    return this.client;
   }
 
   initTRPCClient(): tRPCClient {
@@ -69,18 +61,32 @@ export class APIClient {
     });
   }
 
+  async getRequestHeaders(): Promise<{ [key: string]: string }> {
+    const userStore = this.psiStore.rootStore.userStore;
+    await when(() => !!userStore.getToken);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const token = await userStore.getToken!();
+
+    return {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  }
+
   async getStaffInfo(): Promise<Staff> {
     if (!this.psiStore.staffPseudoId)
       return Promise.reject({ message: "No staff pseudo id found" });
 
-    const fetchedData = await this.client.getStaff.query({
+    const fetchedData = await this.trpcClient.getStaff.query({
       externalId: this.psiStore.staffPseudoId,
     });
     return fetchedData;
   }
 
   async getCaseDetails(caseId: string): Promise<Case> {
-    const fetchedData = await this.client.getCase.query({ externalId: caseId });
+    const fetchedData = await this.trpcClient.getCase.query({
+      externalId: caseId,
+    });
     return fetchedData;
   }
 }

@@ -14,10 +14,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "prisma generate",
-          "tsc -p ./tsconfig.app.json"
-        ],
+        "commands": ["prisma generate", "tsc -p ./tsconfig.app.json"],
         "cwd": "{projectRoot}"
       }
     },

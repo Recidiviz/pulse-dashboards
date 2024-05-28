@@ -29,19 +29,19 @@ export class CaseDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
   constructor(
-    public readonly psiCaseStore: CaseStore,
+    public readonly caseStore: CaseStore,
     public caseId: string,
   ) {
     makeAutoObservable(this);
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          if (this.psiCaseStore.caseDetailsById[this.caseId] === undefined)
+          if (this.caseStore.caseDetailsById[this.caseId] === undefined)
             throw new Error("Failed to load case details");
         },
       ],
       populate: async () => {
-        await flowResult(this.psiCaseStore.loadCaseDetails(this.caseId));
+        await flowResult(this.caseStore.loadCaseDetails(this.caseId));
       },
     });
   }
@@ -51,7 +51,7 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   get caseAttributes() {
-    return this.psiCaseStore.caseDetailsById[this.caseId];
+    return this.caseStore.caseDetailsById[this.caseId];
   }
 
   async hydrate(): Promise<void> {

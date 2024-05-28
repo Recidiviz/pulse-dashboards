@@ -15,17 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PSIStore } from "../datastores/PSIStore";
+import { createMockPSIStore } from "../../utils/test";
+import { OfflineAPIClient } from "../OfflineAPIClient";
+import { CaseDetailsFixture, StaffInfoFixture } from "../offlineFixtures";
 
-export const createMockPSIStore = (userPseudoIdOverride?: string) => {
-  const mockRootStore = {
-    userStore: {
-      userPseudoId: userPseudoIdOverride ?? "TestID-123",
-      getToken: () => Promise.resolve("token"),
-    },
-  };
+const psiStore = createMockPSIStore();
+const offlineAPIClient = new OfflineAPIClient(psiStore);
 
-  const psiStore = new PSIStore(mockRootStore);
+test("getStaffInfo returns fixture data", async () => {
+  const data = await offlineAPIClient.getStaffInfo();
+  expect(data).toEqual(StaffInfoFixture);
+});
 
-  return psiStore;
-};
+test("getCaseDetails returns fixture data", async () => {
+  const caseId = Object.keys(CaseDetailsFixture)[0];
+  const data = await offlineAPIClient.getCaseDetails(caseId);
+  expect(data).toEqual(CaseDetailsFixture[caseId]);
+});

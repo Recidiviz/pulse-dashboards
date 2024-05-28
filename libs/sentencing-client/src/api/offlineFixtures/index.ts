@@ -15,24 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PSIStore } from "../datastores/PSIStore";
-import { Case, Staff } from "./APIClient";
-
-export class OfflineAPIClient {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(public readonly psiStore: PSIStore) {}
-
-  async getStaffInfo(): Promise<Staff> {
-    const { StaffInfoFixture } = await import(
-      "./offlineFixtures/StaffInfoFixtures"
-    );
-    return StaffInfoFixture;
-  }
-
-  async getCaseDetails(caseId: string): Promise<Case> {
-    const { CaseDetailsFixture } = await import(
-      "./offlineFixtures/CaseDetailsFixtures"
-    );
-    return CaseDetailsFixture?.[caseId];
-  }
-}
+export * from "./CaseDetailsFixtures";
+export * from "./StaffInfoFixtures";

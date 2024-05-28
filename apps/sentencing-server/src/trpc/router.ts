@@ -21,6 +21,20 @@ export const appRouter = router({
         omit: {
           id: true,
         },
+        include: {
+          Case: {
+            omit: {
+              externalId: true,
+            },
+            include: {
+              Client: {
+                omit: {
+                  externalId: true,
+                },
+              },
+            },
+          },
+        },
       });
     }),
   getCase: sentryProcedure
@@ -31,14 +45,7 @@ export const appRouter = router({
           externalId,
         },
         omit: {
-          id: true,
-        },
-        include: {
-          Client: {
-            omit: {
-              id: true,
-            },
-          },
+          externalId: true,
         },
       });
     }),

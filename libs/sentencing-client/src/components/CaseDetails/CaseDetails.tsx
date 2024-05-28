@@ -37,14 +37,14 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
 export const CaseDetails: React.FC<{
   psiStore: PSIStore;
 }> = observer(function CaseDetails({ psiStore }) {
-  const { psiCaseStore } = psiStore;
+  const { caseStore } = psiStore;
   const params = useParams();
 
   if (!params["caseId"]) {
     return <>No case ID found.</>;
   }
 
-  const presenter = new CaseDetailsPresenter(psiCaseStore, params["caseId"]);
+  const presenter = new CaseDetailsPresenter(caseStore, params["caseId"]);
 
   return (
     <Hydrator hydratable={presenter} failed={<ErrorMessage />}>

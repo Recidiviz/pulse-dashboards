@@ -35,9 +35,9 @@ export interface RootStore {
 }
 
 export class PSIStore {
-  psiStaffStore: StaffStore;
+  staffStore: StaffStore;
 
-  psiCaseStore: CaseStore;
+  caseStore: CaseStore;
 
   apiClient: APIClient | OfflineAPIClient;
 
@@ -46,8 +46,8 @@ export class PSIStore {
     this.apiClient = isOfflineMode()
       ? new OfflineAPIClient(this)
       : new APIClient(this);
-    this.psiStaffStore = new StaffStore(this);
-    this.psiCaseStore = new CaseStore(this);
+    this.staffStore = new StaffStore(this);
+    this.caseStore = new CaseStore(this);
   }
 
   get staffPseudoId(): string | undefined {

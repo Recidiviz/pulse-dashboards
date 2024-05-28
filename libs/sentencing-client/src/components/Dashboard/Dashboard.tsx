@@ -20,13 +20,13 @@ import { observer } from "mobx-react-lite";
 import { Hydrator } from "~hydration-utils";
 
 import { PSIStore } from "../../datastores/PSIStore";
-import { PSIStaffPresenter } from "../../presenters/StaffPresenter";
+import { StaffPresenter } from "../../presenters/StaffPresenter";
 import { ErrorMessage } from "../Error";
 
 const DashboardWithPresenter = observer(function DashboardWithPresenter({
   presenter,
 }: {
-  presenter: PSIStaffPresenter;
+  presenter: StaffPresenter;
 }) {
   const { staffInfo } = presenter;
   return <>{JSON.stringify(staffInfo)}</>;
@@ -35,9 +35,9 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
 export const Dashboard: React.FC<{
   psiStore: PSIStore;
 }> = observer(function Dashboard({ psiStore }) {
-  const { psiStaffStore } = psiStore;
+  const { staffStore } = psiStore;
 
-  const presenter = new PSIStaffPresenter(psiStaffStore);
+  const presenter = new StaffPresenter(staffStore);
 
   return (
     <Hydrator hydratable={presenter} failed={<ErrorMessage />}>
