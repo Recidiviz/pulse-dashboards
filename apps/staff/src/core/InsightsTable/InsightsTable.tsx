@@ -36,7 +36,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 
 const DEFAULT_TABLE_ROW_SIZE = 50;
 const TABLE_MIN_WIDTH = 200;
-const TABLE_HIDE_COLUMN_WIDTH = 350;
+const TABLE_HIDE_COLUMN_WIDTH = 375;
 
 const Table = styled.div`
   ${typography.Sans14};

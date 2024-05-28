@@ -49,6 +49,7 @@ export type ConfigLabels = Pick<
   | "slightlyWorseThanRateLabel"
   | "worseThanRateLabel"
   | "noneAreOutliersLabel"
+  | "docLabel"
 >;
 export type SupervisionDetails = Pick<
   SupervisionOfficerMetricEvent,

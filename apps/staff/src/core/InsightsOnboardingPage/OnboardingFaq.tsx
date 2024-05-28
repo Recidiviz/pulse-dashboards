@@ -80,7 +80,8 @@ const OnboardingFaq: React.FC<{
   labels: ConfigLabels;
   eventLabels: string[];
 }> = ({ labels, eventLabels }) => {
-  const { supervisionOfficerLabel, supervisionSupervisorLabel } = labels;
+  const { supervisionOfficerLabel, supervisionSupervisorLabel, docLabel } =
+    labels;
 
   const faqs = [
     {
@@ -97,7 +98,7 @@ const OnboardingFaq: React.FC<{
     },
     {
       question: "Who has access to this tool?",
-      answer: `${toTitleCase(supervisionSupervisorLabel)}s, district and regional management, FOA and DOC administrators have access to this tool. 
+      answer: `${toTitleCase(supervisionSupervisorLabel)}s, district and regional management, FOA and ${docLabel} administrators have access to this tool. 
       ${toTitleCase(supervisionOfficerLabel)}s do not have access.`,
     },
     {

@@ -25,6 +25,7 @@ import { formatDateToISO } from "../../utils";
 import { FAVORABLE_METRIC_IDS } from "../models/offlineFixtures/constants";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
+import { ConfigLabels } from "./types";
 
 export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
   constructor(
@@ -98,6 +99,10 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
       this.supervisionStore.metricConfigsById?.get(this.metricId)?.eventName ??
       ""
     );
+  }
+
+  get labels(): ConfigLabels {
+    return this.supervisionStore.labels;
   }
 
   get clientPseudoId() {

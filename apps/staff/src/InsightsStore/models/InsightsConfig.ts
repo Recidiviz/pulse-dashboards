@@ -50,6 +50,7 @@ export const insightsConfigSchema = z.object({
       name: z.string(),
     }),
   ),
+  docLabel: z.string(),
 });
 
 export type InsightsConfig = z.infer<typeof insightsConfigSchema>;

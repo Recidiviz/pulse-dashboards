@@ -49,18 +49,19 @@ const PersonId: React.FC<{
   children: React.ReactNode;
   personId: string;
   shiftIcon?: boolean;
-}> = ({ children, personId, shiftIcon = false }) => {
+  docLabel?: string;
+}> = ({ children, personId, shiftIcon = false, docLabel = "DOC" }) => {
   const [isCopied, copyToClipboard] = useClipboard(personId, {
     successDuration: 5000,
   });
 
   useEffect(() => {
-    if (isCopied) toast("DOC ID copied!", { duration: 5000 });
-  }, [isCopied]);
+    if (isCopied) toast(`${docLabel} ID copied!`, { duration: 5000 });
+  }, [isCopied, docLabel]);
 
   return (
     <PersonIdWithCopyIcon
-      title="Copy DOC ID to clipboard"
+      title={`Copy ${docLabel} ID to clipboard`}
       className="fs-exclude"
       onClick={() => copyToClipboard()}
       shiftIcon={shiftIcon}

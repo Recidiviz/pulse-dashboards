@@ -134,6 +134,7 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
     metricId,
     eventsLabelSingular,
     outcomeDate,
+    labels,
   } = presenter;
   const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientPseudoId));
   const navigate = useNavigate();
@@ -197,7 +198,10 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
       isMobile={isMobile}
     >
       <ModalHeader>
-        <InsightsClientCapsule clientInfo={clientInfo} />
+        <InsightsClientCapsule
+          clientInfo={clientInfo}
+          docLabel={labels.docLabel}
+        />
         <Button kind="link" onClick={() => setModalIsOpen(false)}>
           <Icon kind="Close" size="14" color={palette.pine2} />
         </Button>

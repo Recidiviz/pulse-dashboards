@@ -74,6 +74,7 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
 const createTableColumn = (
   column: Column,
   clientDetailLinks: string[] | undefined,
+  docLabel: string,
 ): Column => {
   const { accessor } = column;
 
@@ -98,7 +99,7 @@ const createTableColumn = (
         : {
             ...column,
             Cell: ({ value }: { value: string }) => (
-              <PersonId personId={value} shiftIcon>
+              <PersonId personId={value} docLabel={docLabel} shiftIcon>
                 {value}
               </PersonId>
             ),
@@ -111,8 +112,12 @@ const createTableColumn = (
 export const MetricEventsTable = withPresenter(
   observer(function MetricEventsTable({ presenter }: MetricEventsTableProps) {
     const { isMobile } = useIsMobile(true);
-    const { officerMetricEvents, clientDetailLinks, hideEventDateColumn } =
-      presenter;
+    const {
+      officerMetricEvents,
+      clientDetailLinks,
+      hideEventDateColumn,
+      labels,
+    } = presenter;
     const scrollElementRef = useRef(null);
     const [scrollElement, setScrollElement] = useState(null);
 
@@ -129,7 +134,7 @@ export const MetricEventsTable = withPresenter(
       {
         title: "ID",
         accessor: "clientId",
-        width: isMobile ? 40 : 60,
+        width: isMobile ? 40 : 70,
       },
       {
         title: "Date",
@@ -146,7 +151,7 @@ export const MetricEventsTable = withPresenter(
           <InsightsTable<SupervisionOfficerMetricEvent>
             data={officerMetricEvents}
             columns={columns.map((c) =>
-              createTableColumn(c, clientDetailLinks),
+              createTableColumn(c, clientDetailLinks, labels.docLabel),
             )}
             rowLinks={clientDetailLinks}
             scrollElement={scrollElement}

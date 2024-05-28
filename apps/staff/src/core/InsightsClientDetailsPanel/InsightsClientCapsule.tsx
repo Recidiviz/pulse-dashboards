@@ -45,10 +45,12 @@ const ClientId = styled.span`
 
 type InsightsClientCapsuleProps = {
   clientInfo: ClientInfo;
+  docLabel: string;
 };
 
 export const InsightsClientCapsule = observer(function InsightsClientCapsule({
   clientInfo,
+  docLabel,
 }: InsightsClientCapsuleProps): JSX.Element {
   return (
     <Wrapper>
@@ -56,7 +58,7 @@ export const InsightsClientCapsule = observer(function InsightsClientCapsule({
       <ClientDetail>
         <ClientName>{clientInfo.displayName}</ClientName>
         <Separator> • </Separator>
-        <PersonId personId={clientInfo.clientId}>
+        <PersonId personId={clientInfo.clientId} docLabel={docLabel}>
           <ClientId>{clientInfo.clientId}</ClientId>
         </PersonId>
       </ClientDetail>

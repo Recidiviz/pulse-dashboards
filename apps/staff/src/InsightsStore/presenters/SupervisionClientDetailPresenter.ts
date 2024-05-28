@@ -26,7 +26,7 @@ import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { SupervisionDetails } from "./types";
+import { ConfigLabels, SupervisionDetails } from "./types";
 
 export class SupervisionClientDetailPresenter implements Hydratable {
   constructor(
@@ -117,6 +117,10 @@ export class SupervisionClientDetailPresenter implements Hydratable {
       this.supervisionStore.metricConfigsById?.get(this.metricId)
         ?.eventNameSingular ?? ""
     );
+  }
+
+  get labels(): ConfigLabels {
+    return this.supervisionStore.labels;
   }
 
   get supervisionDetails(): SupervisionDetails | undefined {
