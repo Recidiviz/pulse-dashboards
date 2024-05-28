@@ -18,15 +18,15 @@
 import { configure } from "mobx";
 
 import { RootStore } from "../../datastores/RootStore";
-import { ResidentsPresenter } from "./ResidentsPresenter";
+import { ResidentsLayoutPresenter } from "./ResidentsLayoutPresenter";
 
 let store: RootStore;
-let presenter: ResidentsPresenter;
+let presenter: ResidentsLayoutPresenter;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
   store = new RootStore();
-  presenter = new ResidentsPresenter(store);
+  presenter = new ResidentsLayoutPresenter(store);
 });
 
 afterEach(() => {

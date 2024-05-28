@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { AuthStore } from "@recidiviz/auth";
 import { makeObservable } from "mobx";
 
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
@@ -33,8 +32,6 @@ export class RootStore {
    */
   apiClient: DataAPI;
 
-  authStore: AuthStore;
-
   residentsStore?: ResidentsStore;
 
   userStore: UserStore;
@@ -46,14 +43,6 @@ export class RootStore {
     makeObservable(this, {
       populateResidentsStore: true,
       residentsStore: true,
-    });
-
-    this.authStore = new AuthStore({
-      authSettings: {
-        client_id: import.meta.env["VITE_AUTH0_CLIENT_ID"],
-        domain: import.meta.env["VITE_AUTH0_DOMAIN"],
-        redirect_uri: `${window.location.origin}`,
-      },
     });
 
     this.apiClient = this.createApiClient();

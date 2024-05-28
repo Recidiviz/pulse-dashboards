@@ -15,13 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ErrorPage as EP, Sans24 } from "@recidiviz/design-system";
-import { FC } from "react";
+import { makeAutoObservable } from "mobx";
 
-export const ErrorPage: FC = () => {
-  return (
-    <EP headerText="An error occurred">
-      <Sans24>This page cannot be loaded.</Sans24>
-    </EP>
-  );
-};
+import { ResidentsConfig } from "../../../configs/types";
+import { UserStore } from "../../../datastores/UserStore";
+
+export class NavigationMenuPresenter {
+  constructor(
+    private config: ResidentsConfig,
+    private userStore: UserStore,
+  ) {
+    makeAutoObservable(this);
+  }
+
+  get links() {
+    const links = [{ text: "Home", url: "/" }];
+
+    if (this.userStore.hasEnhancedPermission) {
+      links.push({ text: "Search for Residents", url: "/eligibility/search" });
+    }
+
+    links.push(
+      ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
+        text: c.copy.menuLabel,
+        url: `/eligibility/${c.urlSection}`,
+      })),
+    );
+
+    return links;
+  }
+
+  logout() {
+    this.userStore.authClient.logout();
+  }
+}

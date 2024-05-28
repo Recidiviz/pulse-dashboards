@@ -27,10 +27,10 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { ProfileField } from "../../configs/types";
-import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
-import { Modal } from "../Modal/Modal";
-import { useModal } from "../Modal/useModal";
+import { ProfileField } from "../../../configs/types";
+import { CopyWrapper } from "../../CopyWrapper/CopyWrapper";
+import { Modal } from "../../Modal/Modal";
+import { useModal } from "../../Modal/useModal";
 import { ResidentMiniProfilePresenter } from "./ResidentMiniProfilePresenter";
 
 const ProfileWrapper = styled.div`

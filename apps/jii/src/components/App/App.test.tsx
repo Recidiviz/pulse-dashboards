@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { render, screen, waitFor } from "@testing-library/react";
-import { runInAction } from "mobx";
+import { configure, runInAction } from "mobx";
 import { MemoryRouter } from "react-router-dom";
 
 import { outputFixture, usMeResidents } from "~datatypes";
@@ -35,15 +35,41 @@ describe("App", () => {
     expect(baseElement).toBeInTheDocument();
   });
 
-  it("should render the search page", async () => {
+  it("should not render the search page", async () => {
     render(
-      <MemoryRouter initialEntries={["/search"]}>
+      <MemoryRouter initialEntries={["/eligibility/search"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("This page cannot be loaded."),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("should render the search page", async () => {
+    configure({ safeDescriptors: false });
+
+    const rootStore = new RootStore();
+    vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
+    vi.spyOn(
+      rootStore.userStore,
+      "hasEnhancedPermission",
+      "get",
+    ).mockReturnValue(true);
+
+    render(
+      <MemoryRouter initialEntries={["/eligibility/search"]}>
         <App />
       </MemoryRouter>,
     );
     await waitFor(() =>
       expect(screen.getByText("Select a resident")).toBeInTheDocument(),
     );
+
+    configure({ safeDescriptors: true });
   });
 
   it("should render the sccp page as the user's homepage", async () => {
@@ -55,11 +81,12 @@ describe("App", () => {
       </MemoryRouter>,
     );
 
-    runInAction(() =>
-      rootStore.userStore.overrideExternalId(
-        outputFixture(usMeResidents[0]).personExternalId,
-      ),
-    );
+    runInAction(() => {
+      // @ts-expect-error hacking this since the real feature is not implemented yet
+      rootStore.userStore.externalIdOverride = outputFixture(
+        usMeResidents[0],
+      ).personExternalId;
+    });
 
     await waitFor(() =>
       expect(screen.getByText("SCCP", { exact: false })).toBeInTheDocument(),
@@ -75,11 +102,12 @@ describe("App", () => {
       </MemoryRouter>,
     );
 
-    runInAction(() =>
-      rootStore.userStore.overrideExternalId(
-        outputFixture(usMeResidents[0]).personExternalId,
-      ),
-    );
+    runInAction(() => {
+      // @ts-expect-error hacking this since the real feature is not implemented yet
+      rootStore.userStore.externalIdOverride = outputFixture(
+        usMeResidents[0],
+      ).personExternalId;
+    });
 
     await waitFor(() =>
       expect(screen.getByText("SCCP", { exact: false })).toBeInTheDocument(),

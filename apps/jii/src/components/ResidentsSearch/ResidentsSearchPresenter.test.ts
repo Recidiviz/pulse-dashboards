@@ -17,24 +17,29 @@
 
 import { waitFor } from "@testing-library/react";
 import { keyBy } from "lodash";
-import { set } from "mobx";
+import { configure, set } from "mobx";
 
 import { outputFixture, outputFixtureArray, usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
-import { PageSearchPresenter } from "./PageSearchPresenter";
+import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
 let residentsStore: ResidentsStore;
-let presenter: PageSearchPresenter;
+let presenter: ResidentsSearchPresenter;
 
 beforeEach(() => {
+  configure({ safeDescriptors: false });
   residentsStore = new ResidentsStore(
     new RootStore(),
     residentsConfigByState.US_ME,
   );
-  presenter = new PageSearchPresenter(residentsStore);
+  presenter = new ResidentsSearchPresenter(residentsStore);
+});
+
+afterEach(() => {
+  configure({ safeDescriptors: true });
 });
 
 describe("hydration", () => {
@@ -68,6 +73,11 @@ describe("hydration", () => {
 });
 
 test("set active resident", async () => {
+  vi.spyOn(
+    residentsStore.userStore,
+    "hasEnhancedPermission",
+    "get",
+  ).mockReturnValue(true);
   await presenter.hydrate();
 
   expect(presenter.defaultOption).toBeUndefined();

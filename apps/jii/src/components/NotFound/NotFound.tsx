@@ -15,19 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, ReactNode } from "react";
+import { Body19, Header34 } from "@recidiviz/design-system";
+import { FC } from "react";
 
-import { Hydratable, Hydrator } from "~hydration-utils";
-
-import { NotFound } from "../NotFound/NotFound";
-
-export const PageHydrator: FC<{
-  children: ReactNode;
-  hydratable: Hydratable;
-}> = ({ children, hydratable }) => {
+export const NotFound: FC = () => {
   return (
-    <Hydrator hydratable={hydratable} failed={<NotFound />}>
-      {children}
-    </Hydrator>
+    <div>
+      <Header34>An error occurred</Header34>
+      <Body19>This page cannot be loaded.</Body19>
+    </div>
   );
 };

@@ -15,27 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AuthWall } from "@recidiviz/auth";
-import { Loading } from "@recidiviz/design-system";
-import { FC, ReactNode } from "react";
+import { observer } from "mobx-react-lite";
 
-import { isOfflineMode, isTestEnv } from "~client-env-utils";
+import { LoginImmediatelyIfLoggedOut } from "~auth";
 
+import { ResidentsLayout } from "../ResidentsLayout/ResidentsLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const AuthWrapper: FC<{ children: ReactNode }> = ({ children }) => {
-  const { authStore } = useRootStore();
-
-  if (isOfflineMode() || isTestEnv()) return children;
-
+export const PageEligibility = observer(function ResidentsRoot() {
+  const rootStore = useRootStore();
   return (
-    <AuthWall
-      authStore={authStore}
-      loading={<Loading />}
-      unauthorizedPage={null}
-      emailVerificationPage={null}
-    >
-      {children}
-    </AuthWall>
+    <LoginImmediatelyIfLoggedOut authClient={rootStore.userStore.authClient}>
+      <ResidentsLayout />
+    </LoginImmediatelyIfLoggedOut>
   );
-};
+});

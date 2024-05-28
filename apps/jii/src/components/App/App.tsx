@@ -29,11 +29,17 @@ import {
 import { Route, Routes } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components/macro";
 
-import { AuthWrapper } from "../AuthWrapper/AuthWrapper";
-import { PageOpportunityEligibility } from "../PageOpportunityEligibility/PageOpportunityEligibility";
-import { PageResidentsHome } from "../PageResidentsHome/PageResidentsHome";
-import { PageSearch } from "../PageSearch/PageSearch";
-import { ResidentsRoot } from "../ResidentsRoot/ResidentsRoot";
+import { EmailVerificationRequired } from "~auth";
+
+import { NotFound } from "../NotFound/NotFound";
+import { PageAfterLogin } from "../pages/PageAfterLogin";
+import { PageEligibility } from "../pages/PageEligibility";
+import { PageEligibilityHome } from "../pages/PageEligibilityHome";
+import { PageHome } from "../pages/PageHome";
+import { PageLanding } from "../pages/PageLanding";
+import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
+import { PageRoot } from "../pages/PageRoot";
+import { PageSearch } from "../pages/PageSearch";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div``;
@@ -49,13 +55,18 @@ export function App() {
     <StoreProvider>
       <GlobalStyleBase />
       <GlobalStyle />
-      <AuthWrapper>
-        <StyledApp>
-          <Routes>
-            <Route path="/" element={<ResidentsRoot />}>
-              <Route index element={<PageResidentsHome />} />
+
+      <StyledApp>
+        <Routes>
+          <Route path="/" element={<PageRoot />}>
+            <Route index element={<PageHome />} />
+            <Route path="welcome" element={<PageLanding />} />
+            <Route path="verify" element={<EmailVerificationRequired />} />
+            <Route path="after-login" element={<PageAfterLogin />} />
+            <Route path="eligibility" element={<PageEligibility />}>
+              <Route index element={<PageEligibilityHome />} />
               <Route path="search" element={<PageSearch />} />
-              <Route path="eligibility/:opportunityUrl/*">
+              <Route path=":opportunityUrl">
                 <Route index element={<PageOpportunityEligibility />} />
                 <Route path="about" element={<div>about opportunity</div>} />
                 <Route
@@ -65,9 +76,10 @@ export function App() {
                 <Route path="nextSteps" element={<div>next steps</div>} />
               </Route>
             </Route>
-          </Routes>
-        </StyledApp>
-      </AuthWrapper>
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </StyledApp>
     </StoreProvider>
   );
 }

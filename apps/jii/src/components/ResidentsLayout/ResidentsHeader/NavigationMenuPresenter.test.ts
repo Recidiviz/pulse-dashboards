@@ -17,20 +17,20 @@
 
 import { configure } from "mobx";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
-import { RootStore } from "../../datastores/RootStore";
+import { residentsConfigByState } from "../../../configs/residentsConfig";
+import { UserStore } from "../../../datastores/UserStore";
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 
 let presenter: NavigationMenuPresenter;
-let rootStore: RootStore;
+let userStore: UserStore;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
-  rootStore = new RootStore();
+  userStore = new UserStore();
   presenter = new NavigationMenuPresenter(
     residentsConfigByState.US_ME,
-    rootStore,
+    userStore,
   );
 });
 
@@ -54,25 +54,23 @@ test("links", () => {
 });
 
 test("links exclude search", () => {
-  vi.spyOn(rootStore.userStore, "hasEnhancedPermission", "get").mockReturnValue(
-    false,
-  );
+  vi.spyOn(userStore, "hasEnhancedPermission", "get").mockReturnValue(false);
 
   expect(presenter.links.find((l) => l.url === "/search")).toBeUndefined();
 });
 
 test("links include search", () => {
-  vi.spyOn(rootStore.userStore, "hasEnhancedPermission", "get").mockReturnValue(
-    true,
-  );
+  vi.spyOn(userStore, "hasEnhancedPermission", "get").mockReturnValue(true);
 
-  expect(presenter.links.find((l) => l.url === "/search")).toBeDefined();
+  expect(
+    presenter.links.find((l) => l.url === "/eligibility/search"),
+  ).toBeDefined();
 });
 
 test("logout", () => {
-  vi.spyOn(rootStore.authStore, "logout");
+  vi.spyOn(userStore.authClient, "logout");
 
   presenter.logout();
 
-  expect(rootStore.authStore.logout).toHaveBeenCalled();
+  expect(userStore.authClient.logout).toHaveBeenCalled();
 });

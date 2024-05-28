@@ -17,7 +17,7 @@
 
 import { outputFixture, usMeResidents } from "~datatypes";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
+import { residentsConfigByState } from "../../../configs/residentsConfig";
 import { ResidentMiniProfilePresenter } from "./ResidentMiniProfilePresenter";
 
 const config = residentsConfigByState.US_ME;

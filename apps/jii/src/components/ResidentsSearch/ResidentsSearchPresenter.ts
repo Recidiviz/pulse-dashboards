@@ -26,7 +26,7 @@ import {
 
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 
-export class PageSearchPresenter implements Hydratable {
+export class ResidentsSearchPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;
 
   constructor(private residentsStore: ResidentsStore) {

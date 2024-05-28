@@ -16,33 +16,17 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { useParams } from "react-router-dom";
 
-import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
+import { NotFound } from "../NotFound/NotFound";
+import { ResidentsSearch } from "../ResidentsSearch/ResidentsSearch";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const PageOpportunityEligibility: FC = observer(
-  function PageOpportunityEligibility() {
-    const { opportunityUrl } = useParams();
+export const PageSearch = observer(function PageSearch() {
+  const { userStore } = useRootStore();
 
-    const { residentsStore } = useRootStore();
-    if (!residentsStore) return null;
+  if (userStore.hasEnhancedPermission) {
+    return <ResidentsSearch />;
+  }
 
-    const { externalId } = residentsStore.userStore;
-    const opportunityId = residentsStore.opportunityIdsByUrl.get(
-      opportunityUrl ?? "",
-    );
-
-    if (externalId && opportunityId) {
-      return (
-        <OpportunityEligibility
-          residentExternalId={externalId}
-          opportunityId={opportunityId}
-        />
-      );
-    }
-
-    return null;
-  },
-);
+  return <NotFound />;
+});

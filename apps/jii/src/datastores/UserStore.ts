@@ -17,20 +17,26 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { isOfflineMode, isTestEnv } from "~client-env-utils";
+import { AuthClient } from "~auth";
+import { isOfflineMode } from "~client-env-utils";
 
 export class UserStore {
+  authClient: AuthClient;
+
   constructor() {
     makeAutoObservable(this);
+
+    this.authClient = new AuthClient({
+      client_id: import.meta.env["VITE_AUTH0_CLIENT_ID"],
+      domain: import.meta.env["VITE_AUTH0_DOMAIN"],
+      redirect_uri: `${window.location.origin}/after-login`,
+    });
   }
 
   private externalIdOverride?: string;
 
   private get canOverrideExternalId() {
-    if (isTestEnv() || isOfflineMode()) return true;
-
-    // eventually recidiviz users only should be able to do this in the live app
-    return false;
+    return this.hasEnhancedPermission;
   }
 
   overrideExternalId(newId: string | undefined) {
@@ -40,7 +46,7 @@ export class UserStore {
   }
 
   get externalId(): string | undefined {
-    // TODO(#5021): get this from auth0 for real users
+    // TODO(#5510): get this from auth0 for real users
     return this.externalIdOverride;
   }
 
@@ -51,7 +57,7 @@ export class UserStore {
   get hasEnhancedPermission() {
     if (isOfflineMode()) return true;
 
-    // eventually recidiviz users only should be able to do this in the live app
+    // TODO(#5510): internal users should receive this in the live app
     return false;
   }
 }

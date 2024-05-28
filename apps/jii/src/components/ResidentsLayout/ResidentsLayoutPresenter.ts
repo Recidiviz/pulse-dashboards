@@ -25,7 +25,7 @@ import {
 
 import { RootStore } from "../../datastores/RootStore";
 
-export class ResidentsPresenter implements Hydratable {
+export class ResidentsLayoutPresenter implements Hydratable {
   constructor(private rootStore: RootStore) {
     makeAutoObservable(this);
 

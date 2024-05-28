@@ -17,24 +17,33 @@
 
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
+import { useParams } from "react-router-dom";
 
+import { NotFound } from "../NotFound/NotFound";
 import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const PageResidentsHome: FC = observer(function PageResidentsHome() {
-  const { residentsStore } = useRootStore();
-  if (!residentsStore) return null;
+export const PageOpportunityEligibility: FC = observer(
+  function PageOpportunityEligibility() {
+    const { opportunityUrl } = useParams();
 
-  const { externalId } = residentsStore.userStore;
-  if (externalId) {
-    // for convenience, while there is only one opp configured we skip the lookup step
-    return (
-      <OpportunityEligibility
-        residentExternalId={externalId}
-        opportunityId="usMeSCCP"
-      />
+    const { residentsStore } = useRootStore();
+    if (!residentsStore) return null;
+
+    const { externalId } = residentsStore.userStore;
+    const opportunityId = residentsStore.opportunityIdsByUrl.get(
+      opportunityUrl ?? "",
     );
-  }
 
-  return null;
-});
+    if (externalId && opportunityId) {
+      return (
+        <OpportunityEligibility
+          residentExternalId={externalId}
+          opportunityId={opportunityId}
+        />
+      );
+    }
+
+    return <NotFound />;
+  },
+);

@@ -21,7 +21,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useRootStore } from "../../StoreProvider/useRootStore";
 import { NavigationMenu } from "./NavigationMenu";
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 import { ResidentMiniProfile } from "./ResidentMiniProfile";
@@ -36,7 +36,6 @@ const Header = styled.header`
 `;
 
 export const ResidentsHeader: FC = observer(function ResidentsHeader() {
-  const rootStore = useRootStore();
   const { residentsStore, userStore } = useRootStore();
 
   if (!residentsStore) return null;
@@ -58,7 +57,7 @@ export const ResidentsHeader: FC = observer(function ResidentsHeader() {
       </div>
       <NavigationMenu
         presenter={
-          new NavigationMenuPresenter(residentsStore.config, rootStore)
+          new NavigationMenuPresenter(residentsStore.config, userStore)
         }
       />
     </Header>

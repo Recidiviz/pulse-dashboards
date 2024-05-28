@@ -15,19 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, ReactNode } from "react";
+import { observer } from "mobx-react-lite";
+import { Navigate } from "react-router-dom";
 
-import { Hydratable, Hydrator } from "~hydration-utils";
+import { useRootStore } from "../StoreProvider/useRootStore";
+import { PageLanding } from "./PageLanding";
 
-import { NotFound } from "../NotFound/NotFound";
+export const PageHome = observer(function AppRoot() {
+  const {
+    userStore: { authClient },
+  } = useRootStore();
 
-export const PageHydrator: FC<{
-  children: ReactNode;
-  hydratable: Hydratable;
-}> = ({ children, hydratable }) => {
-  return (
-    <Hydrator hydratable={hydratable} failed={<NotFound />}>
-      {children}
-    </Hydrator>
-  );
-};
+  if (authClient.isAuthorized) return <Navigate to="/eligibility" />;
+
+  if (authClient.isEmailVerificationRequired) return <Navigate to="/verify" />;
+
+  return <PageLanding />;
+});

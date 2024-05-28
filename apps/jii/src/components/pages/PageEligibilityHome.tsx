@@ -15,37 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { observer } from "mobx-react-lite";
+import { FC } from "react";
+import { Navigate } from "react-router-dom";
 
-import { ResidentsConfig } from "../../configs/types";
-import { RootStore } from "../../datastores/RootStore";
+import { NotFound } from "../NotFound/NotFound";
+import { useRootStore } from "../StoreProvider/useRootStore";
 
-export class NavigationMenuPresenter {
-  constructor(
-    private config: ResidentsConfig,
-    private rootStore: RootStore,
-  ) {
-    makeAutoObservable(this);
+export const PageEligibilityHome: FC = observer(function PageEligibilityHome() {
+  const { residentsStore } = useRootStore();
+  if (!residentsStore) return null;
+
+  const { externalId, hasEnhancedPermission } = residentsStore.userStore;
+  if (externalId) {
+    // for convenience, while there is only one opp configured we skip the lookup step
+    return <Navigate to="sccp" />;
   }
 
-  get links() {
-    const links = [{ text: "Home", url: "/" }];
+  if (hasEnhancedPermission) return <Navigate to="search" />;
 
-    if (this.rootStore.userStore.hasEnhancedPermission) {
-      links.push({ text: "Search for Residents", url: "/search" });
-    }
-
-    links.push(
-      ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
-        text: c.copy.menuLabel,
-        url: `/eligibility/${c.urlSection}`,
-      })),
-    );
-
-    return links;
-  }
-
-  logout() {
-    this.rootStore.authStore.logout();
-  }
-}
+  return <NotFound />;
+});

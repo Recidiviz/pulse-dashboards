@@ -23,38 +23,42 @@ import ReactSelect from "react-select";
 
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageSearchPresenter } from "./PageSearchPresenter";
+import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
-const Search: React.FC<{ presenter: PageSearchPresenter }> = observer(
-  function Search({ presenter }) {
-    const navigate = useNavigate();
+const ResidentsSearchWithPresenter: React.FC<{
+  presenter: ResidentsSearchPresenter;
+}> = observer(function ResidentsSearchWithPresenter({ presenter }) {
+  const navigate = useNavigate();
 
-    return (
-      <PageHydrator hydratable={presenter}>
-        <div>
-          <Serif34 as="h1">Select a resident</Serif34>
-          <Sans16>
-            <ReactSelect
-              options={presenter.selectOptions}
-              defaultValue={presenter.defaultOption}
-              onChange={(o) => {
-                presenter.setActiveResident(o?.value);
-                if (o) {
-                  // this should land you on the selected resident's homepage
-                  navigate("/");
-                }
-              }}
-            />
-          </Sans16>
-        </div>
-      </PageHydrator>
-    );
-  },
-);
+  return (
+    <PageHydrator hydratable={presenter}>
+      <div>
+        <Serif34 as="h1">Select a resident</Serif34>
+        <Sans16>
+          <ReactSelect
+            options={presenter.selectOptions}
+            defaultValue={presenter.defaultOption}
+            onChange={(o) => {
+              presenter.setActiveResident(o?.value);
+              if (o) {
+                // this should land you on the selected resident's homepage
+                navigate("/");
+              }
+            }}
+          />
+        </Sans16>
+      </div>
+    </PageHydrator>
+  );
+});
 
-export const PageSearch = observer(function PageSearch() {
+export const ResidentsSearch = observer(function ResidentsSearch() {
   const { residentsStore } = useRootStore();
   if (!residentsStore) return null;
 
-  return <Search presenter={new PageSearchPresenter(residentsStore)} />;
+  return (
+    <ResidentsSearchWithPresenter
+      presenter={new ResidentsSearchPresenter(residentsStore)}
+    />
+  );
 });

@@ -15,19 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, ReactNode } from "react";
+import { Loading } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { FC, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { Hydratable, Hydrator } from "~hydration-utils";
+import { useRootStore } from "../StoreProvider/useRootStore";
 
-import { NotFound } from "../NotFound/NotFound";
+export const PageAfterLogin: FC = observer(function PageAfterLogin() {
+  const {
+    userStore: { authClient },
+  } = useRootStore();
+  const navigate = useNavigate();
 
-export const PageHydrator: FC<{
-  children: ReactNode;
-  hydratable: Hydratable;
-}> = ({ children, hydratable }) => {
-  return (
-    <Hydrator hydratable={hydratable} failed={<NotFound />}>
-      {children}
-    </Hydrator>
-  );
-};
+  useEffect(() => {
+    authClient.handleRedirectFromLogin(navigate);
+  });
+
+  return <Loading />;
+});

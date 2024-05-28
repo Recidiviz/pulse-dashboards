@@ -16,17 +16,15 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, memo } from "react";
+import { memo } from "react";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { AuthClientHydrator } from "~auth";
+
 import { PAGE_WIDTH } from "../../utils/constants";
-import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { ResidentsHeader } from "../ResidentsHeader/ResidentsHeader";
 import { useRootStore } from "../StoreProvider/useRootStore";
-import { ResidentsPresenter } from "./ResidentsPresenter";
 
 const BaseLayout = styled.div`
   margin-left: auto;
@@ -38,23 +36,16 @@ const BaseLayout = styled.div`
   }
 `;
 
-const ResidentsHydrator: FC<{ presenter: ResidentsPresenter }> = observer(
-  function ResidentsHydrator({ presenter }) {
-    return (
-      <PageHydrator hydratable={presenter}>
-        <BaseLayout>
-          <ResidentsHeader />
-          <main>
-            <Outlet />
-          </main>
-        </BaseLayout>
-      </PageHydrator>
-    );
-  },
-);
+export const PageRoot = memo(function AppRoot() {
+  const {
+    userStore: { authClient },
+  } = useRootStore();
 
-export const ResidentsRoot = memo(function ResidentsRoot() {
   return (
-    <ResidentsHydrator presenter={new ResidentsPresenter(useRootStore())} />
+    <AuthClientHydrator authClient={authClient}>
+      <BaseLayout>
+        <Outlet />
+      </BaseLayout>
+    </AuthClientHydrator>
   );
 });

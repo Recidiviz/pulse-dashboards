@@ -22,8 +22,8 @@ import { ResidentRecord } from "~datatypes";
 import {
   cleanupInlineTemplate,
   hydrateTemplate,
-} from "../../configs/hydrateTemplate";
-import { ProfileField, ResidentsConfig } from "../../configs/types";
+} from "../../../configs/hydrateTemplate";
+import { ProfileField, ResidentsConfig } from "../../../configs/types";
 
 /**
  * To avoid redundant fetching, this presenter requires a hydrated Resident object
