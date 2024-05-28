@@ -20,6 +20,7 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
+      "~auth": ["libs/auth/src/index.ts"],
       "~client-env-utils": ["libs/client-env-utils/src/index.ts"],
       "~datatypes": ["libs/datatypes/src/index.ts"],
       "~firestore-api": ["libs/firestore-api/src/index.ts"],
