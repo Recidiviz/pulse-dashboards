@@ -144,7 +144,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
             {pageTitleStart}
             {hasHighlightedSubstring && (
               <TooltipTrigger
-                contents={`Outliers means the ${labels.supervisionOfficerLabel} has a rate over 1 Interquartile Range above the statewide rate.`}
+                contents={`${labels.outliersHover}`}
                 maxWidth={310}
               >
                 <HighlightedText>{outlierSubstring}</HighlightedText>

@@ -51,6 +51,7 @@ export const insightsConfigSchema = z.object({
     }),
   ),
   docLabel: z.string(),
+  outliersHover: z.string(),
 });
 
 export type InsightsConfig = z.infer<typeof insightsConfigSchema>;

@@ -108,4 +108,6 @@ export const InsightsConfigFixture: InsightsConfig = {
       name: "violation_responses",
     },
   ],
+  outliersHover:
+    "Has a rate on any metric significantly higher than peers - over 1 Interquartile Range above the statewide rate.",
 };

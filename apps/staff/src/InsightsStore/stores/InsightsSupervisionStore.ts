@@ -256,6 +256,7 @@ export class InsightsSupervisionStore {
       worseThanRateLabel: this.config.worseThanRateLabel,
       noneAreOutliersLabel: this.config.noneAreOutliersLabel,
       docLabel: this.config.docLabel,
+      outliersHover: this.config.outliersHover,
     };
   }
 
