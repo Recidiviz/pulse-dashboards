@@ -26,6 +26,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { workflowsUrl } from "../views";
 
@@ -80,7 +81,18 @@ const InsightsEmptyPage: React.FC<InsightsEmptyPageProps> = ({
   link,
   linkText,
 }) => {
+  const rootStore = useRootStore();
   const { isMobile } = useIsMobile(true);
+
+  const stateCode = rootStore?.currentTenantId ?? "";
+
+  const defaultLink =
+    stateCode === "US_CA" ? workflowsUrl("milestones") : workflowsUrl("home");
+
+  const defaultLinkText =
+    stateCode === "US_CA"
+      ? "Investigate agent's client milestones"
+      : "Investigate staff caseloads in Workflows";
 
   return (
     <Wrapper>
@@ -88,8 +100,8 @@ const InsightsEmptyPage: React.FC<InsightsEmptyPageProps> = ({
       {callToActionText && (
         <CallToActionText>{callToActionText}</CallToActionText>
       )}
-      <StyledLink to={link ?? workflowsUrl("home")}>
-        {linkText ?? "Investigate staff caseloads in Workflows"}
+      <StyledLink to={link ?? defaultLink}>
+        {linkText ?? defaultLinkText}
         <Icon kind={IconSVG.Arrow} width={14} />
       </StyledLink>
     </Wrapper>
