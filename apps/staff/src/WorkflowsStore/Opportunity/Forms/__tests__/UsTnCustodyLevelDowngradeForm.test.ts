@@ -70,6 +70,11 @@ function createTestUnit() {
       lastCafDate: new Date("2019-04-02T12:00"),
       lastCafTotal: "20",
       latestClassificationDate: new Date("2019-04-03T12:00"),
+      latestPreaScreeningResults: {
+        latestPreaScreeningDate: new Date("2022-02-23"),
+        aggressorFindingLevel: "NA",
+        victimFindingLevel: "NA",
+      },
       levelOfCare: "LOC",
       activeRecommendations: [],
       classificationType: "SPECIAL",
@@ -131,7 +136,7 @@ const baseResult: PartialFormData = {
   incompatiblesList: "1, 2, 3",
   statusAtHearing: "GEN",
   recommendationJustification:
-    "Justification for classification: \nLevel of Care: LOC\nLatest Vantage Risk Assessment Date: 2/23/22",
+    "Justification for classification: \nLevel of Care: LOC\nLatest Vantage Risk Assessment Date: 2/23/22\nLatest PREA screening date: 2/23/22, Victim Finding NA, Aggressor Finding NA",
 };
 
 beforeEach(() => {

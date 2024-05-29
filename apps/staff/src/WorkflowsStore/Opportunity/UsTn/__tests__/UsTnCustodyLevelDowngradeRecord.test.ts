@@ -65,6 +65,11 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
           detainerMisdemeanorFlag: "X",
         },
       ],
+      latestPreaScreeningResults: {
+        latestPreaScreeningDate: "2022-02-23",
+        aggressorFindingLevel: "NA",
+        victimFindingLevel: "NA",
+      },
     },
   };
 

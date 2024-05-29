@@ -115,6 +115,16 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
           )}`,
         );
       }
+      if (formInformation.latestPreaScreeningResults) {
+        const {
+          latestPreaScreeningDate,
+          aggressorFindingLevel,
+          victimFindingLevel,
+        } = formInformation.latestPreaScreeningResults;
+        justifications.push(
+          `Latest PREA screening date: ${formatDate(latestPreaScreeningDate)}, Victim Finding ${victimFindingLevel}, Aggressor Finding ${aggressorFindingLevel}`,
+        );
+      }
       if (
         formInformation.activeRecommendations &&
         formInformation.activeRecommendations.length

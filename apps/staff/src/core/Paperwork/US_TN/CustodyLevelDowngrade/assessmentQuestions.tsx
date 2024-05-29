@@ -151,7 +151,7 @@ export const assessmentQuestions: TupleWithArity<
     canBeNone: true,
     options: [
       { text: "One", score: 2 },
-      { text: "Two of More", score: 4 },
+      { text: "Two or More", score: 4 },
     ],
   },
 ];

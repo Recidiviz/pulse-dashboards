@@ -50,6 +50,11 @@ export const formInformationSchema = z.object({
   latestClassificationDate: dateStringSchema.optional(),
   latestVantageCompletedDate: dateStringSchema.optional(),
   latestVantageRiskLevel: z.string().optional(),
+  latestPreaScreeningResults: z.object({
+    aggressorFindingLevel: z.string(),
+    latestPreaScreeningDate: dateStringSchema,
+    victimFindingLevel: z.string(),
+  }),
   levelOfCare: z.string().optional(),
   sentenceEffectiveDate: dateStringSchema.optional(),
   sentenceReleaseEligibilityDate: dateStringSchema.optional(),

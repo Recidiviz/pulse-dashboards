@@ -43,6 +43,11 @@ export const usTnCustodyLevelDowngradeFixture =
         hasIncompatibles: false,
         incompatibleArray: [],
         statusAtHearingSeg: "GEN",
+        latestPreaScreeningResults: {
+          latestPreaScreeningDate: "2022-02-23",
+          aggressorFindingLevel: "NA",
+          victimFindingLevel: "NA",
+        },
         q1Score: 0,
         q2Score: 0,
         q3Score: 4,
@@ -84,6 +89,11 @@ export const usTnCustodyLevelDowngradeFixture =
         statusAtHearingSeg: "GEN",
         currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
         lastCafDate: "2022-08-22",
+        latestPreaScreeningResults: {
+          latestPreaScreeningDate: "2022-02-23",
+          aggressorFindingLevel: "NA",
+          victimFindingLevel: "NA",
+        },
         lastCafTotal: "8",
         q1Score: 5,
         q2Score: 3,
