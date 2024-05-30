@@ -23,8 +23,13 @@ import styled from "styled-components/macro";
 import { PAGE_WIDTH } from "../../utils/constants";
 import { ModalProps } from "./types";
 
+export const MAX_MODAL_HEIGHT = "90vh";
+export const MODAL_PADDING = spacing.xl;
+
 const StyledModal = styled(ModalBase)`
   .ReactModal__Content {
+    max-height: ${MAX_MODAL_HEIGHT};
+    padding: ${rem(MODAL_PADDING)};
     width: ${rem(PAGE_WIDTH * 0.9)};
   }
 `;
@@ -40,13 +45,15 @@ const CloseButton = styled(Button).attrs({
   top: ${rem(spacing.sm)};
 `;
 
-export const Modal: FC<{ children: ReactNode } & ModalProps> = ({
-  children,
-  isOpen,
-  hideModal,
-}) => {
+export const Modal: FC<
+  { children: ReactNode; className?: string } & ModalProps
+> = ({ children, className, isOpen, hideModal }) => {
   return (
-    <StyledModal isOpen={isOpen} onRequestClose={hideModal}>
+    <StyledModal
+      className={className}
+      isOpen={isOpen}
+      onRequestClose={hideModal}
+    >
       <CloseButton onClick={hideModal} />
       {children}
     </StyledModal>

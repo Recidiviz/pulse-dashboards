@@ -18,6 +18,17 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
+import p1 from "~shared-assets/images/form-previews/US_ME/SCCP/p1.png";
+import p2 from "~shared-assets/images/form-previews/US_ME/SCCP/p2.png";
+import p3 from "~shared-assets/images/form-previews/US_ME/SCCP/p3.png";
+import p4 from "~shared-assets/images/form-previews/US_ME/SCCP/p4.png";
+import p5 from "~shared-assets/images/form-previews/US_ME/SCCP/p5.png";
+import p6 from "~shared-assets/images/form-previews/US_ME/SCCP/p6.png";
+import p7 from "~shared-assets/images/form-previews/US_ME/SCCP/p7.png";
+import p8 from "~shared-assets/images/form-previews/US_ME/SCCP/p8.png";
+import p9 from "~shared-assets/images/form-previews/US_ME/SCCP/p9.png";
+import p10 from "~shared-assets/images/form-previews/US_ME/SCCP/p10.png";
+
 import { useRootStore } from "../../../../components/StoreProvider";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
@@ -27,16 +38,6 @@ import {
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { downloadZipFile } from "../../utils";
-import p1 from "./assets/p1.png";
-import p2 from "./assets/p2.png";
-import p3 from "./assets/p3.png";
-import p4 from "./assets/p4.png";
-import p5 from "./assets/p5.png";
-import p6 from "./assets/p6.png";
-import p7 from "./assets/p7.png";
-import p8 from "./assets/p8.png";
-import p9 from "./assets/p9.png";
-import p10 from "./assets/p10.png";
 
 const FormPreviewPage = styled.img`
   height: auto;

@@ -111,5 +111,6 @@ export const config: OpportunityConfig = {
       linkText: "How to put together a strong application",
     },
     menuLabel: "SCCP",
+    formPreview: { title: "SCCP Application" },
   },
 } satisfies OpportunityConfig;

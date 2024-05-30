@@ -21,6 +21,7 @@ import { FC, Fragment } from "react";
 import { Link } from "react-router-dom";
 
 import { IncarcerationOpportunityId } from "../../configs/types";
+import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
@@ -36,7 +37,7 @@ const OpportunityEligibilityWithPresenter: FC<{
         {presenter.aboutContent.sections.map((s, i) => (
           <div key={s.heading}>
             {i ? <h2>{s.heading}</h2> : <h1>{s.heading}</h1>}
-            <Markdown>{s.body}</Markdown>
+            <CopyWrapper>{s.body}</CopyWrapper>
           </div>
         ))}
         <Link to={presenter.aboutContent.linkUrl}>

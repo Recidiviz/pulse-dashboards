@@ -54,6 +54,9 @@ export type OpportunityConfig = {
       linkText: string;
     };
     menuLabel: string;
+    formPreview: {
+      title: string;
+    };
   };
 };
 

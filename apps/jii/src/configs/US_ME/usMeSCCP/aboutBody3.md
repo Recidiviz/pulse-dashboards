@@ -5,6 +5,6 @@ If you meet the requirements for SCCP, you’ll need to fill out an SCCP applica
 - treatment programs (if applicable)
 - support systems you have in the community
 
-[Preview a blank SCCP application]()
+<p><FormPreview linkText="Preview a blank SCCP application"/></p>
 
 You’ll also have to write an essay describing the path you’re on, the first steps you’ll take when released, and how you plan to do well on SCCP.

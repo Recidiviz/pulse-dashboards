@@ -18,13 +18,13 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
+import { FC } from "react";
 import styled from "styled-components/macro";
 
-/**
- * Renders Markdown children (via {@link https://www.npmjs.com/package/markdown-to-jsx|markdown-to-jsx})
- * and applies a standard stylesheet to the result
- */
-export const CopyWrapper = styled(Markdown)`
+import { FormPreview } from "../FormPreview/FormPreview";
+import { clickableText } from "../styles/clickableText";
+
+const StyledMarkdown = styled(Markdown)`
   h2 {
     ${typography.Sans18}
 
@@ -37,4 +37,28 @@ export const CopyWrapper = styled(Markdown)`
 
     color: ${palette.text.normal};
   }
+
+  a {
+    ${clickableText}
+  }
 `;
+
+/**
+ * Renders Markdown children (via {@link https://www.npmjs.com/package/markdown-to-jsx|markdown-to-jsx})
+ * and applies a standard stylesheet to the result
+ */
+export const CopyWrapper: FC<{ children: string }> = ({ children }) => {
+  return (
+    <StyledMarkdown
+      options={{
+        overrides: {
+          FormPreview: {
+            component: FormPreview,
+          },
+        },
+      }}
+    >
+      {children}
+    </StyledMarkdown>
+  );
+};
