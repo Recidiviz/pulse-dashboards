@@ -61,6 +61,10 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
     return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
+  get almostEligibleStatusMessage(): string | undefined {
+    return "Upcoming";
+  }
+
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (!this.record) return "Other";
     if (this.denied) return this.deniedTabTitle;

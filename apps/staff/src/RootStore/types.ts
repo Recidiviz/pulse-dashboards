@@ -147,6 +147,7 @@ export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
         usMoOverdueRHPilot: {},
         enableSnooze: {},
         insightsOnboarding: {},
+        isolateFormUpdates: {},
       }
     : {
         ...allFeatureVariants,

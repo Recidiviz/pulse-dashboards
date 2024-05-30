@@ -47,9 +47,9 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
     tabOrder: {
       "ELIGIBILITY STATUS": [
-        "Upcoming",
-        "Due now",
         "Overdue",
+        "Due now",
+        "Upcoming",
         "Marked Ineligible",
       ],
     },
