@@ -53,7 +53,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
         "Marked Ineligible",
       ],
     },
-    sidebarComponents: ["Incarceration"],
+    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing"],
     eligibleCriteriaCopy: {
       usMiPastWardenInPersonReviewForSccDate: {
         text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDate}}`,
@@ -71,7 +71,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
           "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
       },
       usMiInSolitaryConfinementAtLeastSixMonths: {
-        text: `Next Warden in-person review due next month, on or before {{date eligibleDate}}`,
+        text: `In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}`,
       },
     },
   };

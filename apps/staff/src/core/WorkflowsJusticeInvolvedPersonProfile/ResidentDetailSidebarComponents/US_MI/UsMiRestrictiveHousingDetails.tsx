@@ -39,8 +39,6 @@ export function UsMiRestrictiveHousing({
     daysInCollapsedSolitarySession,
     OPT,
     lessThan3MonthsFromErd,
-    neededProgramming,
-    completedProgramming,
     recentNonbondableOffenses,
     recentBondableOffenses,
     adSegStaysAndReasonsWithin3Yrs,
@@ -50,7 +48,7 @@ export function UsMiRestrictiveHousing({
     ? `${recentBondableOffenses}${recentNonbondableOffenses ? ", " + recentNonbondableOffenses : ""}`
     : recentNonbondableOffenses ?? "N/A";
 
-  // TODO(#5399): Add SMI designation once the data's available
+  // TODO(#5399): Add SMI designation and programming once the data's available
   return (
     <DetailsSection>
       <DetailsHeading>Additional Details</DetailsHeading>
@@ -65,22 +63,13 @@ export function UsMiRestrictiveHousing({
 
           <DetailsSubheading>Misconduct History</DetailsSubheading>
           <SecureDetailsContent>{misconductHistory}</SecureDetailsContent>
-          <DetailsSubheading>Needed Programming</DetailsSubheading>
-          <SecureDetailsContent>
-            {neededProgramming ?? "N/A"}
-          </SecureDetailsContent>
-          <DetailsSubheading>Completed Programming</DetailsSubheading>
-          <SecureDetailsContent>
-            {completedProgramming ?? "N/A"}
-          </SecureDetailsContent>
-
           <DetailsSubheading>Less than 3 months from ERD?</DetailsSubheading>
           <SecureDetailsContent>
             {lessThan3MonthsFromErd ? "Yes" : "No"}
           </SecureDetailsContent>
           <DetailsSubheading>Mental health needs?</DetailsSubheading>
           <SecureDetailsContent>{OPT ? "Yes" : "No"}</SecureDetailsContent>
-          <DetailsSubheading>{"Length of stay >30 days?"}</DetailsSubheading>
+          <DetailsSubheading>{"Length of stay > 30 days?"}</DetailsSubheading>
           <SecureDetailsContent>
             {daysInCollapsedSolitarySession > 30 ? "Yes" : "No"}
           </SecureDetailsContent>

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addDays, differenceInMonths } from "date-fns";
+
 import {
   usMiWardenInPersonSecurityClassificationCommitteeReviewRecord,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
@@ -31,6 +33,17 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
 > {
   resident: Resident;
   form: UsMiSCCReviewForm;
+
+  criteriaFormatters = {
+    monthsInRH: ({ record }: Record<string, any>) => {
+      const now = new Date();
+      const startDate = addDays(
+        now,
+        -record.metadata.daysInCollapsedSolitarySession,
+      );
+      return differenceInMonths(now, startDate).toString();
+    },
+  };
 
   constructor(resident: Resident) {
     super(

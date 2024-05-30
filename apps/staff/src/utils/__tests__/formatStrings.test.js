@@ -415,4 +415,28 @@ describe("formatStrings", () => {
       expect(res).toEqual("11 months");
     });
   });
+
+  describe("formatDaysToYearsMonthsPast", () => {
+    const TEST_DATE = new Date(2022, 2, 2);
+
+    beforeEach(() => {
+      tk.freeze(TEST_DATE);
+    });
+
+    it("rounds to years, months", () => {
+      let res = utils.formatDaysToYearsMonthsPast(385);
+      expect(res).toEqual("1 year");
+
+      res = utils.formatDaysToYearsMonthsPast(412);
+      expect(res).toEqual("1 year, 1 month");
+    });
+
+    it("uses just months for less than a year", () => {
+      let res = utils.formatDaysToYearsMonthsPast(100);
+      expect(res).toEqual("3 months");
+
+      res = utils.formatDaysToYearsMonthsPast(102);
+      expect(res).toEqual("3 months");
+    });
+  });
 });

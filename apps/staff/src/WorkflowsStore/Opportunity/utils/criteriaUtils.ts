@@ -22,6 +22,7 @@ import { mapValues, snakeCase } from "lodash";
 import simplur from "simplur";
 
 import {
+  formatDaysToYearsMonthsPast,
   formatWorkflowsDate,
   formatYearsMonthsFromNow,
   toTitleCase,
@@ -117,6 +118,7 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   daysUntil: (date) => differenceInDays(dateify(date), new Date()),
   monthsUntil: (date) => differenceInMonths(dateify(date), new Date()),
   yearsMonthsUntil: (date) => formatYearsMonthsFromNow(dateify(date)),
+  daysToYearsMonthsPast: (days) => formatDaysToYearsMonthsPast(days),
   eq: (a, b) => a === b,
 };
 

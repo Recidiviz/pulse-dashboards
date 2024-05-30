@@ -18,6 +18,7 @@ import CryptoJS from "crypto-js";
 import Base64 from "crypto-js/enc-base64";
 import SHA256 from "crypto-js/sha256";
 import {
+  addDays,
   format,
   formatDuration,
   intervalToDuration,
@@ -255,6 +256,15 @@ function formatYearsMonthsFromNow(date: Date): string {
   );
 }
 
+/*
+  Given a number of days (assumed to originate in the past), returns duration in the 
+  form "X years, Y months".
+ */
+function formatDaysToYearsMonthsPast(days: number): string {
+  const startDate = addDays(new Date(), -days);
+  return formatYearsMonthsFromNow(startDate);
+}
+
 function getFirstName(fullName: string): string {
   return fullName.split(" ")[0];
 }
@@ -418,6 +428,7 @@ export {
   formatCurrentAddress,
   formatDate,
   formatDateToISO,
+  formatDaysToYearsMonthsPast,
   formatDistrictLabel,
   formatDueDateFromToday,
   formatDurationFromDays,

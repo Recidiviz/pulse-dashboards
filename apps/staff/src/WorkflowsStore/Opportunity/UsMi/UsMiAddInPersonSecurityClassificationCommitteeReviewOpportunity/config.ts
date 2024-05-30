@@ -53,7 +53,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
         "Marked Ineligible",
       ],
     },
-    sidebarComponents: ["Incarceration"],
+    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing"],
     eligibleCriteriaCopy: {
       usMiPastAddInPersonReviewForSccDate: {
         text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestADDInPersonSccReviewDate}} last ADD in-person review recorded on {{date latestADDInPersonSccReviewDate}};{{/if}} ADD in-person review due on or before {{date nextSccDate}}`,
@@ -71,7 +71,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
           "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
       },
       usMiInSolitaryConfinementAtLeastOneYear: {
-        text: "Next ADD in-person review due next month, on or before {{date eligibleDate}}",
+        text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
       },
     },
   };
