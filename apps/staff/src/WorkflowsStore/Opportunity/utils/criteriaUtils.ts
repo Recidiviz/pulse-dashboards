@@ -30,6 +30,7 @@ import {
 import { AllPossibleKeys } from "../../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../../types";
 import { Opportunity, OpportunityRequirement } from "../types";
+import { usMiSegregationDisplayName } from "./usMi/usMiCriteriaUtils";
 
 export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
   const months = differenceInMonths(eligibleDate, new Date());
@@ -120,6 +121,9 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   yearsMonthsUntil: (date) => formatYearsMonthsFromNow(dateify(date)),
   daysToYearsMonthsPast: (days) => formatDaysToYearsMonthsPast(days),
   eq: (a, b) => a === b,
+
+  // US_MI helpers
+  usMiSegregationDisplayName,
 };
 
 type Reason = Record<string, any>;

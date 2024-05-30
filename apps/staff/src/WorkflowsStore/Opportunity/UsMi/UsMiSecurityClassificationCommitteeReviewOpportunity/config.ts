@@ -61,7 +61,7 @@ export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<
         tooltip: `A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.`,
       },
       housingUnitTypeIsSolitaryConfinement: {
-        text: `Currently in {{record.formInformation.segregationType}}`,
+        text: `Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}`,
         tooltip: `{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}`,
       },
     },
