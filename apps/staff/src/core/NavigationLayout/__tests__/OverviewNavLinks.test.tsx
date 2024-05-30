@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2021 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mount } from "enzyme";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 import { Mock } from "vitest";
@@ -32,7 +32,7 @@ import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import VitalsStore from "../../CoreStore/VitalsStore";
 import { useCoreStore } from "../../CoreStoreProvider";
-import PageNavigation from "..";
+import { OverviewNavLinks } from "..";
 
 vi.mock("use-query-params");
 vi.mock("../../CoreStoreProvider");
@@ -55,11 +55,11 @@ const useCoreStoreMock = useCoreStore as Mock;
 const useUserStoreMock = useUserStore as Mock;
 const useQueryParamsMock = useQueryParams as Mock;
 
-describe("CoreLayout tests", () => {
-  const renderPageNavigation = () => {
-    return mount(
+describe("OverviewNavLinks tests", () => {
+  const renderLinks = () => {
+    return render(
       <MemoryRouter>
-        <PageNavigation />
+        <OverviewNavLinks />
       </MemoryRouter>,
     );
   };
@@ -67,11 +67,11 @@ describe("CoreLayout tests", () => {
   beforeEach(() => {
     // @ts-expect-error
     vi.mocked(useLocation).mockReturnValue({
-      pathname: "/system",
+      pathname: "/insights",
     });
     vi.mocked(useIsMobile).mockReturnValue(false);
     vi.mocked(useFeatureVariants).mockReturnValue({
-      supervisorHomepage: undefined,
+      supervisorHomepage: {},
     });
 
     coreStore = new CoreStore(RootStore);
@@ -81,9 +81,11 @@ describe("CoreLayout tests", () => {
     rootStoreMock = {
       userStore: {
         userAllowedNavigation: {
-          system: ["page1", "page2", "page3"],
+          insights: [],
+          workflows: ["page1"],
         },
       },
+      workflowsStore: { allowSupervisionTasks: false },
       currentTenantId: "US_ID",
     };
 
@@ -106,39 +108,49 @@ describe("CoreLayout tests", () => {
     useQueryParamsMock.mockReturnValue(["query", vi.fn()]);
   });
 
-  it("Should render a link for each page option", () => {
-    const selector = renderPageNavigation();
-    expect(selector.find("Link.PageNavigation__option")).toHaveLength(3);
+  it("Should render a link for each page option", async () => {
+    renderLinks();
+
+    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
   });
 
-  it("Add bar above current page", () => {
-    coreStoreMock.page = "page1";
+  it("Should render a link for Tasks page if enabled", async () => {
+    rootStoreMock.workflowsStore.allowSupervisionTasks = true;
+    renderLinks();
 
-    const selector = renderPageNavigation();
-    expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
-      1,
+    await waitFor(() =>
+      expect(screen.getByRole("link", { name: "Tasks" })).toBeInTheDocument(),
     );
   });
 
-  it("Don't add bars above any page selectors if not in one", () => {
-    coreStoreMock.page = "disabledPage";
+  it("Should render a link for Clients page if enabled", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = ["SUPERVISION"];
+    renderLinks();
 
-    const selector = renderPageNavigation();
-    expect(selector.find("Link.PageNavigation__option--selected")).toHaveLength(
-      0,
+    await waitFor(() =>
+      expect(screen.getByRole("link", { name: "Clients" })).toBeInTheDocument(),
     );
   });
 
-  describe("Insights link", () => {
-    it("Hides if not enabled", () => {
-      const selector = renderPageNavigation();
-      expect(selector.find("InsightsLink>NavLink")).toHaveLength(0);
-    });
+  it("Should render a link for Residents page if enabled", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = ["INCARCERATION"];
+    renderLinks();
 
-    it("Shows if enabled", () => {
-      rootStoreMock.userStore.userAllowedNavigation.insights = [];
-      const selector = renderPageNavigation();
-      expect(selector.find("InsightsLink>NavLink")).toHaveLength(1);
-    });
+    await waitFor(() =>
+      expect(
+        screen.getByRole("link", { name: "Residents" }),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("Should not render a link for Residents or Clients page if supportsMultipleSystems enabled", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = [
+      "INCARCERATION",
+      "SUPERVISION",
+    ];
+    rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+    renderLinks();
+
+    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
   });
 });

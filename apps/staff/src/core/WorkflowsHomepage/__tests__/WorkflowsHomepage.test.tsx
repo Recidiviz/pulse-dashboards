@@ -20,6 +20,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
 import {
+  useFeatureVariants,
   useOpportunityConfigurations,
   useRootStore,
 } from "../../../components/StoreProvider";
@@ -62,6 +63,9 @@ describe("WorkflowsHomepage", () => {
     mockOpportunity.person.recordId = "1";
     vi.resetAllMocks();
     useOpportunityConfigurationsMock.mockReturnValue(mockOpportunityConfigs);
+    vi.mocked(useFeatureVariants).mockReturnValue({
+      supervisorHomepage: undefined,
+    });
   });
 
   afterEach(() => {

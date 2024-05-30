@@ -118,7 +118,7 @@ describe("Tests for helpers", () => {
     it("returns a non-negaitive lower bound for small values", () => {
       checkExpectedBound(getChartBottom, [4, 4, 4], 0);
     });
-    
+
     // eslint-disable-next-line vitest/expect-expect
     it("takes into account the lower bound if it is set", () => {
       const data = generateDataWithUncertainty([

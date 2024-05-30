@@ -20,7 +20,10 @@ import { noop } from "lodash";
 import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import {
   eligibleClient,
@@ -64,6 +67,9 @@ describe("WorkflowsMilestones", () => {
     vi.resetAllMocks();
     // Quiet errors during test runs
     vi.spyOn(console, "error").mockImplementation(noop);
+    vi.mocked(useFeatureVariants).mockReturnValue({
+      supervisorHomepage: undefined,
+    });
   });
 
   afterEach(() => {

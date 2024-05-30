@@ -35,17 +35,23 @@ import styled from "styled-components/macro";
 
 import { isOfflineMode } from "~client-env-utils";
 
-import Drawer from "../components/Drawer/Drawer";
-import { useRootStore } from "../components/StoreProvider";
-import useIsMobile from "../hooks/useIsMobile";
-import useLogout from "../hooks/useLogout";
-import { TenantId } from "../RootStore/types";
-import { UserAvatar } from "./Avatar";
-import { useCoreStore } from "./CoreStoreProvider";
-import LanternLogo from "./LanternLogo";
-import RecidivizLogo from "./RecidivizLogo";
-import { DASHBOARD_VIEWS } from "./views";
-import { Separator } from "./WorkflowsJusticeInvolvedPersonProfile/styles";
+import Drawer from "../../components/Drawer/Drawer";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
+import useLogout from "../../hooks/useLogout";
+import { TenantId } from "../../RootStore/types";
+import { toTitleCase } from "../../utils";
+import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
+import { UserAvatar } from "../Avatar";
+import { useCoreStore } from "../CoreStoreProvider";
+import LanternLogo from "../LanternLogo";
+import RecidivizLogo from "../RecidivizLogo";
+import { DASHBOARD_VIEWS, workflowsUrl } from "../views";
+import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
+import { SYSTEM_ID_TO_PATH } from "./OverviewNavLinks";
 
 export const NAV_BAR_HEIGHT = 64;
 
@@ -352,7 +358,7 @@ function LogoutLink({ enabled }: OptionalLinkProps) {
 
   return (
     <NavLink to="/" onClick={logout}>
-      {isMobile && <Icon kind={IconSVG.Return} width={20} />}
+      {isMobile && <Icon kind={IconSVG.Leave} width={20} />}
       Log Out
     </NavLink>
   );
@@ -369,6 +375,27 @@ function AccountLink({ enabled }: OptionalLinkProps) {
       Profile
     </NavLink>
   );
+}
+
+function WorkflowsSystemLinks({ enabled }: OptionalLinkProps) {
+  const { isMobile } = useIsMobile(true);
+
+  const { workflowsStore } = useRootStore();
+
+  if (!enabled || !workflowsStore.supportsMultipleSystems) return null;
+
+  return workflowsStore.workflowsSupportedSystems?.map((systemId) => {
+    return (
+      <NavLink
+        key={systemId}
+        to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
+        onClick={() => workflowsStore.updateActiveSystem(systemId)}
+      >
+        {isMobile && <Icon kind={IconSVG.Users} width={20} />}
+        {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
+      </NavLink>
+    );
+  });
 }
 
 type NavigationLayoutProps = {
@@ -389,6 +416,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
   }) {
     const { pathname } = useLocation();
     const { isMobile } = useIsMobile(true);
+    const { supervisorHomepage } = useFeatureVariants();
     const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
 
     const view = pathname.split("/")[1];
@@ -399,9 +427,11 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
 
     const enabledPathwaysPages =
       (userAllowedNavigation.system || []).length > 0;
-    const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
+    const enableWorkflows =
+      (userAllowedNavigation.workflows || []).length > 0 && !supervisorHomepage;
     const enableOperations = !!userAllowedNavigation.operations;
-    const enabledInsights = !!userAllowedNavigation.insights;
+    const enabledInsights =
+      !!userAllowedNavigation.insights && !supervisorHomepage;
     const enabledPSI = !!userAllowedNavigation.psi;
 
     const isInsightsView = view === DASHBOARD_VIEWS.insights;
@@ -419,6 +449,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <PathwaysLink enabled={enabledPathwaysPages} />
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} />
+        <WorkflowsSystemLinks enabled={!!supervisorHomepage} />
         <InsightsLink enabled={enabledInsights} />
         <PSILink enabled={enabledPSI} />
         <LogoutLink enabled={!isOfflineMode()} />

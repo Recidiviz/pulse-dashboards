@@ -27,7 +27,7 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { NavigationLayout } from "../NavigationLayout";
+import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
 
 export const INTERCOM_HEIGHT = 64;
 
@@ -67,7 +67,7 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
   const {
     insightsStore: { supervisionStore },
   } = useRootStore();
-  const { insightsOnboarding } = useFeatureVariants();
+  const { insightsOnboarding, supervisorHomepage } = useFeatureVariants();
 
   const isOnboardingView = pathname.split("/")[3] === "onboarding";
   const isHideNavLayout =
@@ -80,7 +80,9 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
       {!isHideNavLayout && (
         <NavigationLayout
           externalMethodologyUrl={supervisionStore?.methodologyUrl}
-        />
+        >
+          {supervisorHomepage && <OverviewNavLinks />}
+        </NavigationLayout>
       )}
       <Main isMobile={isMobile} hasPadding={!isHideNavLayout}>
         {children}

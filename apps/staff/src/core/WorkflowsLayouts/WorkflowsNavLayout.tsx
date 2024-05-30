@@ -15,23 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography, zindex } from "@recidiviz/design-system";
+import { palette, spacing, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import { NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { toTitleCase } from "../../utils";
-import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
 import cssVars from "../CoreConstants.module.scss";
-import { SystemId } from "../models/types";
 import { NavigationBackButton } from "../NavigationBackButton";
-import { NavigationLayout } from "../NavigationLayout";
+import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
-import { WorkflowsPage, workflowsUrl } from "../views";
+import { workflowsUrl } from "../views";
 
 const Wrapper = styled.div`
   background-color: ${palette.marble1};
@@ -65,22 +61,6 @@ const Main = styled.main<{
   }
 `;
 
-const BrandedNavLink = styled(NavLink).attrs({ exact: "true" })`
-  ${typography.Sans14}
-
-  color: ${palette.slate80};
-
-  &:hover,
-  &:focus {
-    color: ${palette.pine4};
-    text-decoration: underline;
-  }
-
-  &.active {
-    color: ${palette.pine4};
-  }
-`;
-
 const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
   padding: ${rem(spacing.lg)};
   padding-bottom: 0;
@@ -95,23 +75,11 @@ const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
       : ""}
 `;
 
-const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
-  SUPERVISION: "caseloadClients",
-  INCARCERATION: "caseloadResidents",
-  ALL: "home",
-} as const;
-
 export const WorkflowsNavLayout: React.FC<{ children?: React.ReactNode }> =
   observer(function WorkflowsNavLayout({ children }) {
     const {
       currentTenantId,
-      workflowsStore,
-      workflowsStore: {
-        allowSupervisionTasks,
-        workflowsSupportedSystems,
-        homepage: workflowsHomepage,
-        activePageIsHomepage,
-      },
+      workflowsStore: { homepage: workflowsHomepage, activePageIsHomepage },
     } = useRootStore();
     const { isMobile, isLaptop } = useIsMobile(true);
 
@@ -120,34 +88,7 @@ export const WorkflowsNavLayout: React.FC<{ children?: React.ReactNode }> =
         <NavigationLayout
           externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
         >
-          <li>
-            <BrandedNavLink to={workflowsUrl(workflowsHomepage)}>
-              Home
-            </BrandedNavLink>
-          </li>
-          {allowSupervisionTasks && (
-            <li>
-              <BrandedNavLink
-                to={workflowsUrl("tasks")}
-                onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
-              >
-                Tasks
-              </BrandedNavLink>
-            </li>
-          )}
-
-          {workflowsSupportedSystems?.map((systemId: SystemId) => {
-            return (
-              <li key={systemId}>
-                <BrandedNavLink
-                  to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
-                  onClick={() => workflowsStore.updateActiveSystem(systemId)}
-                >
-                  {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
-                </BrandedNavLink>
-              </li>
-            );
-          })}
+          <OverviewNavLinks />
         </NavigationLayout>
         {!activePageIsHomepage && (
           <BackButtonWrapper $fixed={!isLaptop}>
