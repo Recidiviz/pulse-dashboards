@@ -46,6 +46,10 @@ export const usMiReclassificationRequestConfig: OpportunityConfig<usMiReclassifi
       Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 30,
+    },
     sidebarComponents: ["Incarceration"],
     eligibleCriteriaCopy: {
       usMiEligibleForReclassificationFromSolitaryToGeneral: {

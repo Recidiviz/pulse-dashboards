@@ -64,6 +64,10 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
         tooltip: `{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}`,
       },
     },
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 30,
+    },
     ineligibleCriteriaCopy: {
       usMiPastWardenInPersonReviewForSccDate: {
         text: "Next Warden in-person review due next month, on or before {{date nextSccDate}}",

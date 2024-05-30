@@ -158,7 +158,10 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
               ];
             return (
               <DetailsSection key={componentName}>
-                <Component resident={selectedResident} />
+                <Component
+                  resident={selectedResident}
+                  opportunity={opportunity}
+                />
               </DetailsSection>
             );
           }

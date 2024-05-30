@@ -45,6 +45,10 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
       Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_MI,
+    snooze: {
+      defaultSnoozeDays: 30,
+      maxSnoozeDays: 30,
+    },
     tabOrder: {
       "ELIGIBILITY STATUS": [
         "Overdue",

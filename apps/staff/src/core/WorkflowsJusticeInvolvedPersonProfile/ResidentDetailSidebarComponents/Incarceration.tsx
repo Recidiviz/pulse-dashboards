@@ -27,12 +27,21 @@ import {
   DetailsSubheading,
   SecureDetailsContent,
 } from "../styles";
-import { ResidentProfileProps } from "../types";
+import { ResidentWithOptionalOpportunityProps } from "../types";
+import { UsMiMinMaxReleaseDates } from "./US_MI/UsMiMinMaxReleaseDates";
 import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissionDateSubsection";
 
 export function Incarceration({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+  opportunity,
+}: ResidentWithOptionalOpportunityProps): React.ReactElement {
+  const showUsMiMinMaxReleaseDates =
+    opportunity &&
+    [
+      "usMiSecurityClassificationCommitteeReview",
+      "usMiAddInPersonSecurityClassificationCommitteeReview",
+      "usMiWardenInPersonSecurityClassificationCommitteeReview",
+    ].includes(opportunity.type);
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>
@@ -43,10 +52,17 @@ export function Incarceration({
             {formatWorkflowsDate(resident.admissionDate)}
           </SecureDetailsContent>
           <PartialTime person={resident} />
-          <DetailsSubheading>Release</DetailsSubheading>
-          <SecureDetailsContent>
-            {formatWorkflowsDate(resident.releaseDate)}
-          </SecureDetailsContent>
+          {showUsMiMinMaxReleaseDates ? (
+            <UsMiMinMaxReleaseDates opportunity={opportunity} />
+          ) : (
+            <>
+              <DetailsSubheading>Release</DetailsSubheading>
+              <SecureDetailsContent>
+                {formatWorkflowsDate(resident.releaseDate)}
+              </SecureDetailsContent>
+            </>
+          )}
+
           {resident.assignedStaffId && (
             <>
               <DetailsSubheading>Case Manager</DetailsSubheading>

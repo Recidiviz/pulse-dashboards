@@ -37,3 +37,6 @@ export type OpportunityProfileProps = {
 
 export type ClientWithOpportunityProps = ClientProfileProps &
   OpportunityProfileProps;
+
+export type ResidentWithOptionalOpportunityProps = ResidentProfileProps &
+  Partial<OpportunityProfileProps>;
