@@ -49,6 +49,7 @@ beforeEach(() => {
   useRootStoreMock.mockReturnValue(rootStore);
   useFeatureVariantsMock.mockReturnValue({
     insightsLeadershipPageAllDistricts: true,
+    supervisorHomepage: undefined,
   });
   vi.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
     externalId: "user",

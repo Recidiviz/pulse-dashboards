@@ -204,4 +204,15 @@ export class SupervisionSupervisorPresenter implements Hydratable {
   get hydrationState(): HydrationState {
     return this.hydrator.hydrationState;
   }
+
+  trackViewed(): void {
+    const { userPseudoId } =
+      this.supervisionStore.insightsStore.rootStore.userStore;
+    this.supervisionStore.insightsStore.rootStore.analyticsStore.trackInsightsSupervisorPageViewed(
+      {
+        supervisorPseudonymizedId: this.supervisorPseudoId,
+        viewedBy: userPseudoId,
+      },
+    );
+  }
 }

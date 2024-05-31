@@ -38,9 +38,9 @@ import ModelHydrator from "../ModelHydrator";
 import { SectionLabelText } from "../sharedComponents";
 import { insightsUrl } from "../views";
 
-const Wrapper = styled.div<{ isLaptop: boolean }>`
-  max-width: ${({ isLaptop }) => (isLaptop ? "unset" : "50vw")};
-  padding-top: ${rem(spacing.xl)};
+const Wrapper = styled.div<{ isLaptop: boolean; isTablet: boolean }>`
+  max-width: ${({ isLaptop }) => (isLaptop ? "unset" : rem(1200))};
+  padding: ${rem(spacing.xl)} ${({ isTablet }) => (isTablet ? 0 : rem(56))} 0;
   margin: 0 auto;
 `;
 
@@ -90,7 +90,7 @@ const SupervisorsList = observer(function SupervisorsList({
 }: {
   presenter: SupervisionOfficerSupervisorsPresenter;
 }) {
-  const { isMobile, isLaptop } = useIsMobile(true);
+  const { isMobile, isTablet, isLaptop } = useIsMobile(true);
   const {
     supervisorsWithOutliersByDistrict,
     supervisorsWithOutliersCount,
@@ -132,7 +132,7 @@ const SupervisorsList = observer(function SupervisorsList({
   const pageTitle = simplur`${supervisorsWithOutliersCount} ${labels.supervisionSupervisorLabel}[|s] across the state have one or more outlier ${labels.supervisionOfficerLabel}s in their ${labels.supervisionUnitLabel}`;
 
   return (
-    <Wrapper isLaptop={isLaptop}>
+    <Wrapper isLaptop={isLaptop} isTablet={isTablet}>
       <Title isMobile={isMobile}>{pageTitle}</Title>
       {districtViz}
     </Wrapper>

@@ -26,21 +26,37 @@ import { rem } from "polished";
 import { ReactNode } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { humanReadableTitleCase, pluralizeWord } from "../../utils";
 import InsightsInfoModal from "../InsightsInfoModal";
 
-const PageWrapper = styled.div`
+const PageWrapper = styled.div<{
+  isMobile: boolean;
+  supervisorHomepage: boolean;
+}>`
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.lg)};
+  gap: ${rem(spacing.md)};
+  padding: 0
+    ${({ isMobile, supervisorHomepage }) =>
+      !isMobile && supervisorHomepage ? "56px" : "0"};
+
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage &&
+    `max-width: ${rem(1200)};
+    margin: 0 auto;`}
 `;
 
 export const Wrapper = styled.div<{
   isLaptop: boolean;
+  supervisorHomepage?: boolean;
 }>`
-  display: flex;
+  display: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? "block" : "flex"};
   flex-direction: ${({ isLaptop }) => (isLaptop ? "column" : "row")};
   gap: ${rem(spacing.md)};
 `;
@@ -51,9 +67,15 @@ const Header = styled.div`
 
 const Title = styled.div<{
   isMobile: boolean;
+  supervisorHomepage: boolean;
 }>`
-  ${({ isMobile }) => (isMobile ? typography.Serif24 : typography.Serif34)}
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage ? typography.Sans24 : typography.Serif34}
+  font-size: ${({ isMobile }) => (isMobile ? 24 : 34)}px;
+  font-weight: ${({ supervisorHomepage }) => (supervisorHomepage ? 600 : 400)};
   color: ${palette.pine2};
+  margin-top: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? rem(spacing.lg) : 0};
   margin-bottom: ${rem(spacing.md)};
 `;
 
@@ -66,21 +88,36 @@ const HighlightedText = styled.span`
 
 const InfoSection = styled.div<{
   isMobile: boolean;
+  supervisorHomepage: boolean;
 }>`
   display: flex;
   flex-wrap: wrap;
   column-gap: ${rem(spacing.xl)};
   row-gap: ${rem(spacing.sm)};
   margin-bottom: ${rem(spacing.md)};
-  margin-right: ${({ isMobile }) => (isMobile ? 0 : 20)}%;
+  margin-right: ${({ isMobile, supervisorHomepage }) =>
+    isMobile || supervisorHomepage ? 0 : 20}%;
 `;
 
 const InfoItem = styled.div`
   color: ${palette.pine2};
 
   & span {
-    color: ${palette.slate70};
+    color: ${palette.slate85};
   }
+`;
+
+const Description = styled.div`
+  ${typography.Sans14};
+  color: ${palette.slate85};
+  margin-top: ${rem(spacing.md)};
+`;
+
+const Subtitle = styled.div`
+  ${typography.Sans24};
+  color: ${palette.pine2};
+  font-weight: 600;
+  margin-top: 40px;
 `;
 
 export const Body = styled.div`
@@ -100,9 +137,40 @@ export const Sidebar = styled.div<{
   gap: ${rem(spacing.md)};
 `;
 
+const TooltipWrapper = styled.div`
+  padding: ${rem(spacing.sm)};
+`;
+
+export const InsightsTooltip = ({
+  contents,
+  maxWidth,
+  children,
+}: {
+  children: React.ReactElement;
+  contents: ReactNode;
+  maxWidth?: number;
+}) => {
+  return (
+    <TooltipTrigger
+      contents={contents && <TooltipWrapper>{contents}</TooltipWrapper>}
+      maxWidth={maxWidth ?? 200}
+      backgroundColor={palette.pine2}
+    >
+      {children}
+    </TooltipTrigger>
+  );
+};
+
 type InsightsPageLayoutProps = {
   pageTitle: string;
-  infoItems: { title: string; info: string | undefined | null }[];
+  infoItems: {
+    title: string;
+    info: string | number | undefined | null;
+    tooltip?: ReactNode;
+  }[];
+  pageSubtitle?: string;
+  pageDescription?: ReactNode | string;
+  descriptionHighlight?: string;
   contentsAboveTitle?: ReactNode;
   textToHighlight?: string;
   hasSupervisionInfoModal?: boolean;
@@ -111,13 +179,16 @@ type InsightsPageLayoutProps = {
 
 const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   pageTitle,
+  pageSubtitle,
   infoItems,
+  pageDescription,
   contentsAboveTitle,
   hasSupervisionInfoModal,
   textToHighlight = "outlier",
   children,
 }) => {
-  const { isMobile, isLaptop } = useIsMobile(true);
+  const { isMobile, isTablet, isLaptop } = useIsMobile(true);
+  const { supervisorHomepage } = useFeatureVariants();
 
   const {
     insightsStore: { supervisionStore },
@@ -136,39 +207,56 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   const [pageTitleStart, pageTitleEnd] = pageTitle.split(outlierSubstring);
 
   return (
-    <PageWrapper>
+    <PageWrapper isMobile={isTablet} supervisorHomepage={!!supervisorHomepage}>
       {contentsAboveTitle}
-      <Wrapper isLaptop={isLaptop}>
+      <Wrapper isLaptop={isLaptop} supervisorHomepage={!!supervisorHomepage}>
         <Header>
-          <Title isMobile={isMobile}>
-            {pageTitleStart}
-            {hasHighlightedSubstring && (
-              <TooltipTrigger
-                contents={`${labels.outliersHover}`}
-                maxWidth={310}
-              >
-                <HighlightedText>{outlierSubstring}</HighlightedText>
-              </TooltipTrigger>
+          <Title isMobile={isMobile} supervisorHomepage={!!supervisorHomepage}>
+            {supervisorHomepage ? (
+              pageTitle
+            ) : (
+              <>
+                {pageTitleStart}
+                {hasHighlightedSubstring && (
+                  <TooltipTrigger
+                    contents={`${labels.outliersHover}`}
+                    maxWidth={310}
+                  >
+                    <HighlightedText>{outlierSubstring}</HighlightedText>
+                  </TooltipTrigger>
+                )}
+                {pageTitleEnd}
+              </>
             )}
-            {pageTitleEnd}
           </Title>
           {infoItems.length > 0 && (
-            <InfoSection isMobile={isMobile}>
+            <InfoSection
+              isMobile={isMobile}
+              supervisorHomepage={!!supervisorHomepage}
+            >
               {infoItems.map(
                 (item) =>
                   item.info && (
-                    <InfoItem
-                      key={item.title}
-                      data-intercom-target={
-                        item.title === "staff" ? "Roster" : undefined
-                      }
-                    >
-                      <span>{humanReadableTitleCase(item.title)}: </span>
-                      {item.info}
-                    </InfoItem>
+                    <InsightsTooltip contents={item.tooltip}>
+                      <InfoItem
+                        key={item.title}
+                        data-intercom-target={
+                          item.title === "staff" ? "Roster" : undefined
+                        }
+                      >
+                        <span>{humanReadableTitleCase(item.title)}: </span>
+                        {item.info}
+                      </InfoItem>
+                    </InsightsTooltip>
                   ),
               )}
             </InfoSection>
+          )}
+          {supervisorHomepage && pageSubtitle && (
+            <Subtitle>{pageSubtitle}</Subtitle>
+          )}
+          {supervisorHomepage && pageDescription && (
+            <Description>{pageDescription}</Description>
           )}
           {hasSupervisionInfoModal && (
             <InsightsInfoModal

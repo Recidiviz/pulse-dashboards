@@ -57,7 +57,7 @@ describe("Insights Supervisors List Page", () => {
     );
     rootStore.insightsStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
-    useFeatureVariantsMock.mockReturnValue({});
+    useFeatureVariantsMock.mockReturnValue({ supervisorHomepage: undefined });
 
     vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
 

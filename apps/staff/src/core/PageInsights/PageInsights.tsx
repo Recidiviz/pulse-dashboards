@@ -19,7 +19,10 @@ import React, { memo } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { SupervisionPresenter } from "../../InsightsStore/presenters/SupervisionPresenter";
 import InsightsNavLayout from "../InsightsNavLayout";
 import InsightsOnboardingPage from "../InsightsOnboardingPage";
@@ -27,6 +30,7 @@ import { InsightsRoute } from "../InsightsRoute";
 import InsightsStaffPage from "../InsightsStaffPage";
 import { InsightsSupervisionHome } from "../InsightsSupervisionHome";
 import InsightsSupervisorPage from "../InsightsSupervisorPage";
+import InsightsSupervisorPageV2 from "../InsightsSupervisorPage/InsightsSupervisorPageV2";
 import InsightsSupervisorsListPage from "../InsightsSupervisorsListPage";
 import ModelHydrator from "../ModelHydrator";
 import { insightsRoute } from "../views";
@@ -36,6 +40,7 @@ const PageInsights: React.FC = memo(function PageInsights() {
   window.scrollTo({
     top: 0,
   });
+  const { supervisorHomepage } = useFeatureVariants();
   const { insightsStore } = useRootStore();
 
   return (
@@ -54,7 +59,13 @@ const PageInsights: React.FC = memo(function PageInsights() {
 
             <Route
               path={insightsRoute({ routeName: "supervisionSupervisor" })}
-              element={<InsightsSupervisorPage />}
+              element={
+                supervisorHomepage ? (
+                  <InsightsSupervisorPageV2 />
+                ) : (
+                  <InsightsSupervisorPage />
+                )
+              }
             />
 
             {[

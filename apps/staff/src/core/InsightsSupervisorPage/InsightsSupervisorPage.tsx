@@ -22,10 +22,7 @@ import { useState } from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../InsightsStore/presenters/SupervisionOfficersPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
@@ -57,7 +54,6 @@ export const SupervisorPage = observer(function SupervisorPage({
   presenter: SupervisionOfficersPresenter;
 }) {
   const { isLaptop } = useIsMobile(true);
-  const { supervisorHomepage } = useFeatureVariants();
   const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   const {
@@ -171,7 +167,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
                     officer.caseloadType) ||
                   undefined
                 }
-                hasLegend={supervisorHomepage ? false : outcomeTypes.length > 1}
+                hasLegend={outcomeTypes.length > 1}
               />
             );
           })}
