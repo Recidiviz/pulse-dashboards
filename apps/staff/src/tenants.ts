@@ -19,6 +19,7 @@ import { uniq } from "lodash";
 import { TenantConfig } from "./core/models/types";
 import {
   DASHBOARD_TENANTS,
+  US_AR,
   US_CA,
   US_OR,
 } from "./RootStore/TenantStore/dashboardTenants";
@@ -27,6 +28,7 @@ import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
 import * as pathways from "./RootStore/TenantStore/pathwaysTenants";
 import { TenantConfigId } from "./RootStore/types";
 import { CSG_CONFIG } from "./tenants/CSG";
+import US_AR_CONFIG from "./tenants/US_AR";
 import US_CA_CONFIG from "./tenants/US_CA";
 import US_CO_CONFIG from "./tenants/US_CO";
 import US_ID_CONFIG from "./tenants/US_ID";
@@ -50,6 +52,7 @@ type Tenants = {
 const ALL_TENANTS = uniq([...DASHBOARD_TENANTS, ...LANTERN_TENANTS]);
 
 const TENANTS: Tenants = {
+  [US_AR]: US_AR_CONFIG,
   [US_CA]: US_CA_CONFIG,
   [pathways.US_CO]: US_CO_CONFIG,
   [pathways.US_ID]: US_ID_CONFIG,

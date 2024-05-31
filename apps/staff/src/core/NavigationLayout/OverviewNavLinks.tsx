@@ -29,8 +29,8 @@ import { SystemId } from "../models/types";
 import { DASHBOARD_VIEWS, WorkflowsPage, workflowsUrl } from "../views";
 
 export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
-  SUPERVISION: "caseloadClients",
-  INCARCERATION: "caseloadResidents",
+  SUPERVISION: "clients",
+  INCARCERATION: "residents",
   ALL: "home",
 } as const;
 

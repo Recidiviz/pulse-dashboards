@@ -33,6 +33,7 @@ const InternalTenantIds = [RECIDIVIZ_TENANT, CSG] as const;
 
 export const TenantIds = [
   lantern.US_MO,
+  workflows.US_AR,
   workflows.US_PA,
   workflows.US_CA,
   pathways.US_CO,

@@ -219,7 +219,7 @@ describe("PageWorkflows", () => {
       (FullProfile as unknown as Mock).mockReturnValue(
         <div>Client FullProfile</div>,
       );
-      renderRouter(`${WORKFLOWS_PATHS.caseloadClients}/101`);
+      renderRouter(`${WORKFLOWS_PATHS.clients}/101`);
 
       expect(screen.getByText("Client FullProfile")).toBeInTheDocument();
     });
@@ -232,7 +232,7 @@ describe("PageWorkflows", () => {
       (FullProfile as unknown as Mock).mockReturnValue(
         <div>Resident FullProfile</div>,
       );
-      renderRouter(`${WORKFLOWS_PATHS.caseloadResidents}/101`);
+      renderRouter(`${WORKFLOWS_PATHS.residents}/101`);
 
       expect(screen.getByText("Resident FullProfile")).toBeInTheDocument();
     });
@@ -240,12 +240,12 @@ describe("PageWorkflows", () => {
     it("renders the caseload route /clients", () => {
       mockWorkflowsStore({
         ...baseMockWorkflowsStore,
-        activePage: "caseloadClients",
+        activePage: "clients",
       });
       (CaseloadView as unknown as Mock).mockReturnValue(
         <div>Client CaseloadView</div>,
       );
-      renderRouter(WORKFLOWS_PATHS.caseloadClients);
+      renderRouter(WORKFLOWS_PATHS.clients);
 
       expect(screen.getByText("Client CaseloadView")).toBeInTheDocument();
     });
@@ -253,12 +253,12 @@ describe("PageWorkflows", () => {
     it("renders the caseload route /residents", () => {
       mockWorkflowsStore({
         ...baseMockWorkflowsStore,
-        activePage: "caseloadResidents",
+        activePage: "residents",
       });
       (CaseloadView as unknown as Mock).mockReturnValue(
         <div>Resident CaseloadView</div>,
       );
-      renderRouter(WORKFLOWS_PATHS.caseloadResidents);
+      renderRouter(WORKFLOWS_PATHS.residents);
 
       expect(screen.getByText("Resident CaseloadView")).toBeInTheDocument();
     });

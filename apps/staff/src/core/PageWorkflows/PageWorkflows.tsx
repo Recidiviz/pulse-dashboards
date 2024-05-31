@@ -100,9 +100,9 @@ const PageWorkflows: React.FC = () => {
           })}
           {[
             workflowsRoute({
-              routeName: "caseloadClients",
+              routeName: "clients",
             }),
-            workflowsRoute({ routeName: "caseloadResidents" }),
+            workflowsRoute({ routeName: "residents" }),
           ].map((path) => {
             return <Route key={path} path={path} element={<CaseloadView />} />;
           })}

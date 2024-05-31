@@ -1,4 +1,5 @@
 const stateCodes = {
+  US_AR: "US_AR",
   US_CA: "US_CA",
   US_CO: "US_CO",
   US_ID: "US_ID",

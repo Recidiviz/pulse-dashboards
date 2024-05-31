@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,20 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { TenantConfig } from "../core/models/types";
+import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-import { PATHWAYS_TENANTS } from "./pathwaysTenants";
+const US_AR_CONFIG: TenantConfig = {
+  name: "Arkansas",
+  stateCode: "AR",
+  domain: "doc.arkansas.gov",
+  availableStateCodes: [dashboard.US_AR],
+  enableUserRestrictions: false,
+  workflowsSupportedSystems: ["INCARCERATION"],
+  opportunityTypes: [],
+  workflowsHomepage: "residents",
+  workflowsSystemConfigs: {
+    INCARCERATION: {
+      searchType: "LOCATION",
+      searchField: "facilityId",
+      searchTitleOverride: "facility",
+    },
+  },
+  navigation: {
+    workflows: ["residents"],
+  },
+};
 
-export const US_AR = "US_AR";
-export const US_CA = "US_CA";
-export const US_OR = "US_OR";
-export const US_PA = "US_PA";
-
-export const WORKFLOWS_ONLY_TENANTS = [US_AR, US_CA, US_OR, US_PA] as const;
-
-/**
- * Tenants that have access to the Recidiviz Dashboard, including Pathways, Operations, and Workflows.
- */
-export const DASHBOARD_TENANTS = [
-  ...WORKFLOWS_ONLY_TENANTS,
-  ...PATHWAYS_TENANTS,
-];
+export default US_AR_CONFIG;

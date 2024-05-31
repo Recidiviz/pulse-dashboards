@@ -209,8 +209,8 @@ export const WORKFLOWS_PATHS = {
   home: `/${DASHBOARD_VIEWS.workflows}/home`,
   tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
   milestones: `/${DASHBOARD_VIEWS.workflows}/milestones`,
-  caseloadClients: `/${DASHBOARD_VIEWS.workflows}/clients`,
-  caseloadResidents: `/${DASHBOARD_VIEWS.workflows}/residents`,
+  clients: `/${DASHBOARD_VIEWS.workflows}/clients`,
+  residents: `/${DASHBOARD_VIEWS.workflows}/residents`,
   clientProfile: `/${DASHBOARD_VIEWS.workflows}/clients/:justiceInvolvedPersonId`,
   residentProfile: `/${DASHBOARD_VIEWS.workflows}/residents/:justiceInvolvedPersonId`,
 };
@@ -224,8 +224,8 @@ export const WORKFLOWS_SYSTEM_ID_TO_PAGE: Record<SystemId, string[]> = {
 };
 
 export const WorkflowsPageIdList = [
-  "caseloadClients",
-  "caseloadResidents",
+  "clients",
+  "residents",
   "clientProfile",
   "residentProfile",
   "home",
@@ -240,9 +240,9 @@ export type WorkflowsPage = (typeof WorkflowsPageIdList)[number];
 
 export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   home: "home",
-  caseloadClients: "caseloadClients",
+  clients: "clients",
   clientProfile: "clientProfile",
-  caseloadResidents: "caseloadResidents",
+  residents: "residents",
   residentProfile: "residentProfile",
   opportunityClients: "opportunityClients",
   opportunityAction: "opportunityAction",

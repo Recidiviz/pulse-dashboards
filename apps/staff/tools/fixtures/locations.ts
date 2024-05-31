@@ -20,6 +20,24 @@ import { FirestoreFixture } from "./utils";
 
 const data: LocationRecord[] = [
   //
+  // Arkansas
+  //
+  {
+    stateCode: "US_AR",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY1",
+    name: "Central Prison",
+  },
+  {
+    stateCode: "US_AR",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "FACILITY2",
+    name: "Upstate Facility",
+  },
+
+  //
   // Idaho
   //
   {

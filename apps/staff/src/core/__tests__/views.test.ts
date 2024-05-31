@@ -31,8 +31,8 @@ describe("getRelativePath", () => {
     tasks: `/tasks`,
     workflows: "",
     milestones: `/milestones`,
-    caseloadClients: `/clients`,
-    caseloadResidents: `/residents`,
+    clients: `/clients`,
+    residents: `/residents`,
     clientProfile: `/clients/:justiceInvolvedPersonId`,
     residentProfile: `/residents/:justiceInvolvedPersonId`,
   };
