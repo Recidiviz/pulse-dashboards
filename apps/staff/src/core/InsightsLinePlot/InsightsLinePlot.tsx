@@ -26,6 +26,7 @@ import useMeasure from "react-use-measure";
 import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { TargetStatus } from "../../InsightsStore/models/schemaHelpers";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
@@ -36,7 +37,7 @@ import {
 } from "../InsightsLegend/InsightsLegend";
 import { GOAL_COLORS } from "../InsightsSwarmPlot/constants";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ supervisorHomepage: boolean }>`
   .data-visualization {
     .axis-baseline {
       stroke: none;
@@ -67,7 +68,8 @@ const Wrapper = styled.div`
     }
 
     .y.tick-line {
-      stroke: ${palette.slate20};
+      stroke: ${({ supervisorHomepage }) =>
+        supervisorHomepage ? "none" : palette.slate20};
     }
   }
 
@@ -78,37 +80,34 @@ const Wrapper = styled.div`
   }
 `;
 
-const StyledTooltip = styled(Tooltip)`
-  min-width: ${rem(110)};
+const StyledTooltip = styled(Tooltip).attrs({
+  backgroundColor: palette.pine2,
+})<{ supervisorHomepage: boolean }>`
+  min-width: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? rem(190) : rem(110)};
   position: relative;
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.xs)};
   padding: ${rem(spacing.md)};
   transform: translateX(-50%) translateY(-115%);
+  border-radius: 8px;
+
+  div:first-child {
+    margin-bottom: ${rem(spacing.xs)};
+  }
 
   div {
     display: flex;
     align-items: center;
-    gap: ${rem(spacing.xs)};
+    gap: ${rem(spacing.sm)};
+
+    span {
+      font-weight: 700;
+      margin-left: auto;
+    }
   }
 `;
-
-const usersLineStyles = {
-  stroke: palette.slate60,
-  strokeWidth: 2,
-};
-
-const statewideLineStyles = {
-  ...usersLineStyles,
-  strokeDasharray: "5 7",
-};
-
-const pointStyles = {
-  r: 8,
-  stroke: palette.white,
-  strokeWidth: 2,
-};
 
 const getDateRange = (
   firstDate: Date,
@@ -130,8 +129,14 @@ const getDateRange = (
   return { beginDate, endDate };
 };
 
-const formatDateToYearRange = (date: Date): string => {
-  const previousYear = Number(formatDate(date, "yy")) - 1;
+const formatDateToYearRange = (date: Date, isExpanded?: boolean): string => {
+  const previousYear = Number(formatDate(date, isExpanded ? "yyyy" : "yy")) - 1;
+
+  if (isExpanded)
+    return `${formatDate(date, "MMMM")} ${previousYear} – ${formatDate(
+      date,
+      "yyyy",
+    )}`;
 
   return `${formatDate(date, "MMM")} '${previousYear} - '${formatDate(
     date,
@@ -151,6 +156,7 @@ const reduceBottomTicks = (ticks: Date[], isMobile: boolean) => {
 
 type InsightsLinePlotType = {
   metric: MetricWithConfig;
+  officerName?: string;
 };
 
 type Point = {
@@ -159,8 +165,12 @@ type Point = {
   status?: TargetStatus;
 };
 
-const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({ metric }) => {
+const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
+  metric,
+  officerName,
+}) => {
   const { isMobile, isLaptop } = useIsMobile(true);
+  const { supervisorHomepage } = useFeatureVariants();
   const [ref, bounds] = useMeasure();
 
   const usersPoints: Point[] = metric.statusesOverTime.map((d) => ({
@@ -172,6 +182,22 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({ metric }) => {
     date: d.endDate,
     value: d.target * 100,
   }));
+
+  const usersLineStyles = {
+    stroke: palette.data.teal1,
+    strokeWidth: 2,
+  };
+
+  const statewideLineStyles = {
+    ...usersLineStyles,
+    strokeDasharray: "5 7",
+  };
+
+  const pointStyles = {
+    r: supervisorHomepage ? 6 : 8,
+    stroke: palette.white,
+    strokeWidth: 2,
+  };
 
   const usersLine = {
     lineStyles: usersLineStyles,
@@ -198,7 +224,7 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({ metric }) => {
   const yRange = [0, maxTickValue];
 
   return (
-    <Wrapper ref={ref}>
+    <Wrapper ref={ref} supervisorHomepage={!!supervisorHomepage}>
       <ResponsiveXYFrame
         responsiveWidth={!bounds.width}
         hoverAnnotation
@@ -210,13 +236,22 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({ metric }) => {
 
           return (
             d.parentLine.key === 0 && (
-              <StyledTooltip>
-                {formatDateToYearRange(d.date)}
+              <StyledTooltip supervisorHomepage={!!supervisorHomepage}>
+                <div>{formatDateToYearRange(d.date, !!supervisorHomepage)}</div>
                 {/* eslint-disable-next-line react/no-unused-prop-types */}
                 {pickedPoints.map(({ data }: { data: Point }) => {
                   const icon = data.status
                     ? circleLegendIcon(GOAL_COLORS[data.status])
                     : lineLegendIcon(palette.white80);
+
+                  if (supervisorHomepage) {
+                    return (
+                      <div key={`${data.value}_${data.date}`}>
+                        {data.status ? officerName : "State-wide Average"}
+                        <span>{data.value.toFixed(1)}%</span>
+                      </div>
+                    );
+                  }
 
                   return (
                     <div key={`${data.value}_${data.date}`}>

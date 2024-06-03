@@ -31,10 +31,14 @@ import { InsightsSwarmPlotWrappedProps } from "./types";
 
 type InsightsSwarmPlotProps = {
   metric: MetricWithConfig;
+  isMinimized?: boolean;
 };
 
 const InsightsSwarmPlotContainer = observer(
-  function InsightsSwarmPlotContainer({ metric }: InsightsSwarmPlotProps) {
+  function InsightsSwarmPlotContainer({
+    metric,
+    isMinimized,
+  }: InsightsSwarmPlotProps) {
     const { supervisorHomepage } = useFeatureVariants();
     const presenter = new SwarmPresenter(metric);
 
@@ -45,7 +49,10 @@ const InsightsSwarmPlotContainer = observer(
           don't pass it another component directly to avoid unexpected results */}
           <div>
             {supervisorHomepage ? (
-              <InsightsSwarmPlotV2 presenter={presenter} />
+              <InsightsSwarmPlotV2
+                presenter={presenter}
+                isMinimized={isMinimized}
+              />
             ) : (
               <InsightsSwarmPlot presenter={presenter} />
             )}

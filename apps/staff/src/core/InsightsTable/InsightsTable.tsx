@@ -32,18 +32,19 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 
 const DEFAULT_TABLE_ROW_SIZE = 50;
 const TABLE_MIN_WIDTH = 200;
 const TABLE_HIDE_COLUMN_WIDTH = 375;
 
-const Table = styled.div`
+const Table = styled.div<{ hasBorder: boolean }>`
   ${typography.Sans14};
   width: 100%;
   text-align: left;
   color: ${palette.slate85};
-  border: 1px solid ${palette.slate10};
+  border: ${({ hasBorder }) => (hasBorder ? 1 : 0)}px solid ${palette.slate10};
   border-bottom: 0;
 `;
 
@@ -58,9 +59,16 @@ const TH = styled.div`
   padding: ${rem(spacing.md)};
 `;
 
-const TR = styled.div<{ transformToMobile?: boolean }>`
+const TR = styled.div<{
+  supervisorHomepage?: boolean;
+  transformToMobile?: boolean;
+}>`
   display: flex;
   border-bottom: 1px solid ${palette.slate10};
+
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage &&
+    `border-bottom: 0; border-top: 1px solid ${palette.slate20};`}
 
   ${({ transformToMobile }) =>
     transformToMobile &&
@@ -116,6 +124,7 @@ const InsightsTable = <T extends object>({
   intercomTargetOnFirstRow,
 }: OutlierTableProps<T>) => {
   const { isMobile } = useIsMobile(true);
+  const { supervisorHomepage } = useFeatureVariants();
   const [isColumnHidden, hideColumn] = useState(false);
   const [scrollIndex, setScrollIndex] = useState(0);
   const location = useLocation();
@@ -162,6 +171,7 @@ const InsightsTable = <T extends object>({
 
       const rowViz = (
         <TR
+          supervisorHomepage={!!supervisorHomepage && !transformToMobile}
           transformToMobile={transformToMobile}
           data-intercom-target={
             intercomTargetOnFirstRow && index === 0
@@ -203,11 +213,15 @@ const InsightsTable = <T extends object>({
       transformToMobile,
       location.pathname,
       intercomTargetOnFirstRow,
+      supervisorHomepage,
     ],
   );
 
   return (
-    <Table {...getTableProps({ style: { minWidth: TABLE_MIN_WIDTH } })}>
+    <Table
+      hasBorder={!supervisorHomepage || transformToMobile}
+      {...getTableProps({ style: { minWidth: TABLE_MIN_WIDTH } })}
+    >
       {!transformToMobile && (
         <TableHeader>
           {headerGroups.map((headerGroup) => (
@@ -236,9 +250,10 @@ const InsightsTable = <T extends object>({
                 // If there is a scroll element, find the height of the element
                 // minus the height of the header, minus the border for the listHeight.
                 // Otherwise the list height is the number of rows * height of each row.
-                const listHeight = scrollElement
-                  ? height - rowSize - 1
-                  : rows.length * rowSize;
+                const listHeight =
+                  scrollElement && !supervisorHomepage
+                    ? height - rowSize - 1
+                    : rows.length * rowSize;
                 return (
                   <List
                     ref={listRef}

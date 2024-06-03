@@ -49,6 +49,7 @@ type HighlightedPointProps = {
   cx: number;
   cy: number;
   plotWidth: number;
+  isHoverable?: boolean;
 };
 
 function useHoverProps() {
@@ -84,11 +85,13 @@ export const SwarmPlotHighlightedDot = function SwarmPlotHighlightedDot({
   cx,
   cy,
   plotWidth,
+  isHoverable,
 }: HighlightedPointProps) {
   const { floatingStyles, getReferenceProps, getFloatingProps, isOpen, refs } =
     useHoverProps();
 
-  const isHovered = !data.labelHidden && isOpen;
+  const showLabel = !data.labelHidden && isHoverable;
+  const isHovered = showLabel && isOpen;
 
   return (
     <>
@@ -110,7 +113,7 @@ export const SwarmPlotHighlightedDot = function SwarmPlotHighlightedDot({
           $size={plotWidth > SWARM_SIZE_BREAKPOINT ? "lg" : "sm"}
           {...getFloatingProps()}
         >
-          {!data.labelHidden && (
+          {showLabel && (
             <>
               {data.label && <LabelName>{data.label}:</LabelName>}
               &nbsp;

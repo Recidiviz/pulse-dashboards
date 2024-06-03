@@ -108,6 +108,7 @@ const InfoItem = styled.div`
 `;
 
 const Description = styled.div`
+  max-width: ${rem(700)};
   ${typography.Sans14};
   color: ${palette.slate85};
   margin-top: ${rem(spacing.md)};
@@ -163,7 +164,7 @@ export const InsightsTooltip = ({
 
 type InsightsPageLayoutProps = {
   pageTitle: string;
-  infoItems: {
+  infoItems?: {
     title: string;
     info: string | number | undefined | null;
     tooltip?: ReactNode;
@@ -218,18 +219,18 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               <>
                 {pageTitleStart}
                 {hasHighlightedSubstring && (
-                  <TooltipTrigger
+                  <InsightsTooltip
                     contents={`${labels.outliersHover}`}
                     maxWidth={310}
                   >
                     <HighlightedText>{outlierSubstring}</HighlightedText>
-                  </TooltipTrigger>
+                  </InsightsTooltip>
                 )}
                 {pageTitleEnd}
               </>
             )}
           </Title>
-          {infoItems.length > 0 && (
+          {infoItems && infoItems.length > 0 && (
             <InfoSection
               isMobile={isMobile}
               supervisorHomepage={!!supervisorHomepage}
@@ -237,9 +238,8 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               {infoItems.map(
                 (item) =>
                   item.info && (
-                    <InsightsTooltip contents={item.tooltip}>
+                    <InsightsTooltip key={item.title} contents={item.tooltip}>
                       <InfoItem
-                        key={item.title}
                         data-intercom-target={
                           item.title === "staff" ? "Roster" : undefined
                         }

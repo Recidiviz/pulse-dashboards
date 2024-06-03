@@ -24,10 +24,12 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { SupervisionPresenter } from "../../InsightsStore/presenters/SupervisionPresenter";
+import InsightsMetricPage from "../InsightsMetricPage";
 import InsightsNavLayout from "../InsightsNavLayout";
 import InsightsOnboardingPage from "../InsightsOnboardingPage";
 import { InsightsRoute } from "../InsightsRoute";
 import InsightsStaffPage from "../InsightsStaffPage";
+import InsightsStaffPageV2 from "../InsightsStaffPage/InsightsStaffPageV2";
 import { InsightsSupervisionHome } from "../InsightsSupervisionHome";
 import InsightsSupervisorPage from "../InsightsSupervisorPage";
 import InsightsSupervisorPageV2 from "../InsightsSupervisorPage/InsightsSupervisorPageV2";
@@ -68,12 +70,29 @@ const PageInsights: React.FC = memo(function PageInsights() {
               }
             />
 
+            {!!supervisorHomepage && (
+              <Route
+                path={insightsRoute({ routeName: "supervisionStaff" })}
+                element={<InsightsStaffPageV2 />}
+              />
+            )}
+
             {[
               insightsRoute({ routeName: "supervisionStaff" }),
               insightsRoute({ routeName: "supervisionStaffMetric" }),
               insightsRoute({ routeName: "supervisionClientDetail" }),
             ].map((path) => (
-              <Route key={path} path={path} element={<InsightsStaffPage />} />
+              <Route
+                key={path}
+                path={path}
+                element={
+                  supervisorHomepage ? (
+                    <InsightsMetricPage />
+                  ) : (
+                    <InsightsStaffPage />
+                  )
+                }
+              />
             ))}
           </Route>
           <Route

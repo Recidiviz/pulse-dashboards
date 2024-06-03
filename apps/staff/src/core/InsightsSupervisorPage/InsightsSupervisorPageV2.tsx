@@ -73,7 +73,9 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     {
       title: "team",
       info: allOfficers?.length,
-      tooltip: allOfficers?.map((officer) => <div>{officer.displayName}</div>),
+      tooltip: allOfficers?.map((officer) => (
+        <div key={officer.pseudonymizedId}>{officer.displayName}</div>
+      )),
     },
   ];
 

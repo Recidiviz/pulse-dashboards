@@ -44,6 +44,7 @@ import InsightsChartCard from "../InsightsChartCard";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import InsightsInfoModal from "../InsightsInfoModal";
 import InsightsLinePlot from "../InsightsLinePlot";
+import { MetricEventsTable } from "../InsightsMetricPage/MetricEventsTable";
 import { INTERCOM_HEIGHT } from "../InsightsNavLayout/InsightsNavLayout";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
@@ -55,7 +56,6 @@ import { InsightsSwarmPlot } from "../InsightsSwarmPlot";
 import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { insightsUrl } from "../views";
-import { MetricEventsTable } from "./MetricEventsTable";
 
 const StyledTabs = styled(Tabs)<{ $isMobile: boolean }>`
   margin: 0 -1.5rem;

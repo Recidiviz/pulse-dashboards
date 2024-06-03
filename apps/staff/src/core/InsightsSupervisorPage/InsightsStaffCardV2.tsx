@@ -99,7 +99,7 @@ const CardBody = styled.div`
 `;
 
 const PlotSection = styled.div`
-  padding: ${rem(spacing.lg)};
+  padding: ${rem(spacing.md)};
   display: block;
 
   & + div {
@@ -122,12 +122,7 @@ const PlotTitle = styled.div`
   gap: ${rem(spacing.xs)};
 `;
 
-const PlotHint = styled.div`
-  button {
-    color: ${palette.slate85};
-    text-decoration: none !important;
-  }
-`;
+const PlotHint = styled.div``;
 
 const EmptyWrapper = styled.div`
   display: flex;
@@ -137,6 +132,17 @@ const EmptyWrapper = styled.div`
   padding: 40px 16px;
   color: ${palette.slate85};
 `;
+
+export const EmptyCard = ({ message }: { message: string }) => {
+  return (
+    <CardWrapper noFlex={false}>
+      <EmptyWrapper>
+        <GreenCheckmark width={16} />
+        {message}
+      </EmptyWrapper>
+    </CardWrapper>
+  );
+};
 
 type InsightsStaffCardType = {
   outlierOfficersByMetric: {
@@ -163,14 +169,7 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
   const { metricConfigsById, methodologyUrl } = supervisionStore;
 
   if (!officers || officers.length === 0) {
-    return (
-      <CardWrapper noFlex={isTablet}>
-        <EmptyWrapper>
-          <GreenCheckmark width={16} />
-          No officer outcomes to review this month.
-        </EmptyWrapper>
-      </CardWrapper>
-    );
+    return <EmptyCard message="No officer outcomes to review this month." />;
   }
 
   return (
@@ -180,9 +179,8 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
           {officers.map((officer) => (
             <CardHeaderItem key={officer.externalId}>
               <CardTitle
-                to={insightsUrl("supervisionStaffMetric", {
+                to={insightsUrl("supervisionStaff", {
                   officerPseudoId: officer.pseudonymizedId,
-                  metricId: officer.outlierMetrics[0].metricId,
                 })}
               >
                 {title || officer.displayName}
@@ -216,7 +214,7 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
           if (!swarmPlotMetric) return null;
 
           return (
-            <>
+            <React.Fragment key={metricId}>
               {isTablet &&
                 officersForMetric.map((officer) => {
                   const currentMetric = officer.outlierMetrics.find(
@@ -268,7 +266,7 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                   <InsightsSwarmPlot metric={swarmPlotMetric} />
                 </CardContent>
               </PlotSection>
-            </>
+            </React.Fragment>
           );
         })}
       </CardBody>

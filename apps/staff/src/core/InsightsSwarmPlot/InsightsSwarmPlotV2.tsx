@@ -33,6 +33,7 @@ import { formatTargetAndHighlight } from "./utils";
 
 export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
   presenter,
+  isMinimized,
 }: InsightsSwarmPlotWrappedProps) {
   const { supervisorHomepage } = useFeatureVariants();
 
@@ -74,17 +75,17 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
     <PlotWrapper role="img" aria-label={chartLabel}>
       <Plot height={chartHeight}>
         {/* target */}
-        {targetRate && (
+        {!isMinimized && targetRate && (
           <>
             <TargetLine
-              supervisorHomepage={!!supervisorHomepage}
+              $supervisorHomepage={!!supervisorHomepage}
               x1={axisPositions.target}
               x2={axisPositions.target}
               y1={axisPositions.targetStart}
               y2={axisPositions.tickEnd}
             />
             <TargetLabel
-              supervisorHomepage={!!supervisorHomepage}
+              $supervisorHomepage={!!supervisorHomepage}
               dx={TARGET_LINE_WIDTH + spacing.sm}
               x={axisPositions.target}
               y={axisPositions.targetStart}
@@ -111,6 +112,7 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
               cx={xScale(dot.value)}
               cy={yScale(index * centerOfContentArea)}
               plotWidth={width}
+              isHoverable={!isMinimized}
             />
           );
         })}

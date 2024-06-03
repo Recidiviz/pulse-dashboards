@@ -15,38 +15,78 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import {
+  Icon,
+  IconSVG,
+  palette,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { InsightsLegend } from "../InsightsLegend";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{
+  isClickable?: boolean;
+  supervisorHomepage?: boolean;
+}>`
   background: ${palette.marble1};
-  padding: ${rem(spacing.lg)};
-  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.35) inset;
+  padding: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? rem(spacing.md) : rem(spacing.lg)};
+  box-shadow: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? "unset" : "0px 0px 2px 0px rgba(0, 0, 0, 0.35) inset"};
+  border: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? `1px solid ${palette.slate30}` : "unset"};
   border-radius: ${rem(spacing.xs)};
+
+  ${({ isClickable }) =>
+    isClickable && `&:hover { border-color: ${palette.signal.links} }`}
 `;
 
-const Header = styled.div`
+const Header = styled.div<{ supervisorHomepage?: boolean }>`
   display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.sm)};
+  align-items: start;
+  justify-content: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? "space-between" : "unset"};
+  gap: ${rem(spacing.xs)};
 `;
 
 const Title = styled.div`
-  display: flex;
-  gap: ${rem(spacing.xs)};
   ${typography.Sans16}
   color: ${palette.pine1};
 `;
 
 const Subtitle = styled.div`
+  ${typography.Sans14}
   color: ${palette.slate85};
+  padding-top: ${rem(spacing.xs)};
 `;
 
-const Content = styled.div`
-  padding: ${rem(spacing.lg)} 0 ${rem(spacing.md)};
+const Hint = styled.div<{ isClickable?: boolean }>`
+  display: flex;
+  align-items: center;
+  color: ${({ isClickable }) =>
+    isClickable ? palette.signal.links : palette.slate85};
+
+  &:not(:first-child) > svg {
+    margin-left: ${rem(spacing.sm)};
+  }
+`;
+
+const Rate = styled.span`
+  color: ${palette.signal.error};
+  font-weight: 700;
+`;
+
+const Content = styled.div<{ supervisorHomepage?: boolean }>`
+  padding: ${rem(spacing.lg)} 0
+    ${({ supervisorHomepage }) => (supervisorHomepage ? 0 : rem(spacing.md))};
 `;
 
 type InsightsChartCardType = {
@@ -54,6 +94,8 @@ type InsightsChartCardType = {
   subtitle?: string;
   hasLegend?: boolean;
   infoModal?: React.ReactElement;
+  url?: string;
+  rate?: string;
   outcomeType?: "FAVORABLE" | "ADVERSE";
   children?: React.ReactNode;
 };
@@ -64,23 +106,57 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
   infoModal,
   hasLegend = true,
   outcomeType = "ADVERSE",
+  url,
+  rate,
   children,
 }) => {
-  return (
-    <Wrapper>
-      <Header>
+  const { isMobile } = useIsMobile(true);
+  const [ref, bounds] = useMeasure();
+  const { supervisorHomepage } = useFeatureVariants();
+  const [isHovered, setHovered] = useState(false);
+
+  const showHint = url && isHovered && !isMobile && bounds.width > 400;
+
+  const cardViz = (
+    <Wrapper
+      ref={ref}
+      isClickable={!!url}
+      supervisorHomepage={!!supervisorHomepage}
+      onMouseOver={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <Header supervisorHomepage={!!supervisorHomepage}>
         <Title>
           {title}
-          {infoModal}
+          {rate && (
+            <>
+              : <Rate>{rate}</Rate>
+            </>
+          )}
+          {subtitle && <Subtitle>{subtitle}</Subtitle>}
         </Title>
-        {subtitle && <Subtitle>{subtitle}</Subtitle>}
+        {infoModal && <Hint>{infoModal}</Hint>}
+        {showHint && (
+          <Hint isClickable={!!url}>
+            See more
+            <Icon
+              kind={IconSVG.Arrow}
+              fill={palette.signal.links}
+              height={16}
+              width={16}
+            />
+          </Hint>
+        )}
       </Header>
-      <Content>{children}</Content>
-      {hasLegend && (
+
+      <Content supervisorHomepage={!!supervisorHomepage}>{children}</Content>
+      {!supervisorHomepage && hasLegend && (
         <InsightsLegend direction="row" outcomeType={outcomeType} />
       )}
     </Wrapper>
   );
+
+  return url ? <Link to={url}>{cardViz}</Link> : cardViz;
 };
 
 export default InsightsChartCard;

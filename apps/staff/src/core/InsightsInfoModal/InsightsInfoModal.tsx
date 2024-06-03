@@ -21,7 +21,6 @@ import {
   Modal,
   palette,
   spacing,
-  TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
@@ -29,6 +28,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
+
+import { useFeatureVariants } from "../../components/StoreProvider";
+import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 
 export const StyledModal = styled(Modal)`
   .ReactModal__Overlay {
@@ -98,6 +100,15 @@ const InfoButton = styled(Button)`
   }
 `;
 
+const StyledButton = styled(Button).attrs({ kind: "link" })<{
+  supervisorHomepage: boolean;
+}>`
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage &&
+    `color: ${palette.slate85};
+      text-decoration: none !important;`}
+`;
+
 type InsightsInfoModalType = {
   title: string;
   copy: string;
@@ -113,20 +124,21 @@ const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
   buttonText,
   onClick,
 }) => {
+  const { supervisorHomepage } = useFeatureVariants();
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
   return (
     <>
       {buttonText ? (
-        <Button
+        <StyledButton
           aria-label={title}
-          kind="link"
+          supervisorHomepage={!!supervisorHomepage}
           onClick={() => setModalIsOpen(true)}
         >
           {buttonText}
-        </Button>
+        </StyledButton>
       ) : (
-        <TooltipTrigger contents="Click to learn more" maxWidth={300}>
+        <InsightsTooltip contents="Click to learn more" maxWidth={300}>
           <InfoButton
             aria-label={title || "Info modal button"}
             icon="Info"
@@ -140,7 +152,7 @@ const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
               if (onClick) onClick();
             }}
           />
-        </TooltipTrigger>
+        </InsightsTooltip>
       )}
 
       <ModalWrapper
