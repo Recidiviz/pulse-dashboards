@@ -55,6 +55,7 @@ const baseWorkflowsStoreMock = {
     currentTenantId: "US_XX",
   },
   homepage: "home",
+  activeSystem: "SUPERVISION",
 };
 
 describe("WorkflowsHomepage", () => {
@@ -187,6 +188,149 @@ describe("WorkflowsHomepage", () => {
     expect(
       screen.getByText(
         "None of the clients on the selected unicorn's caseloads are eligible for opportunities. Search for another unicorn.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("hydrated cta uses 'caseload' for supervision opps", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [mockOpportunity],
+        },
+        workflowsSearchFieldTitle: "agent",
+        hasOpportunities: () => true,
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.getByText(
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("hydrated cta uses overridden term for facility opps", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [mockOpportunity],
+        },
+        workflowsSearchFieldTitle: "facility",
+        hasOpportunities: () => true,
+        activeSystem: "INCARCERATION",
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.getByText(
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 facility",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("hydrated cta uses 'caseload' for facility opps when searching by case manager", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [mockOpportunity],
+        },
+        workflowsSearchFieldTitle: "case manager",
+        hasOpportunities: () => true,
+        activeSystem: "INCARCERATION",
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.getByText(
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("hydrated cta uses combined search terms when searching supervision and facility opps", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [mockOpportunity],
+        },
+        hasOpportunities: () => true,
+        activeSystem: "ALL",
+        rootStore: {
+          currentTenantId: "US_MI",
+        },
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.getByText(
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload and/or facility",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("hydrated cta uses 'caseload' for when searching supervision and facility opps where 'case manager' is the facility search term", () => {
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        opportunitiesLoaded: () => true,
+        opportunityTypes: ["pastFTRD"],
+        allOpportunitiesByType: {
+          pastFTRD: [mockOpportunity],
+        },
+        hasOpportunities: () => true,
+        activeSystem: "ALL",
+        rootStore: {
+          currentTenantId: "US_ME",
+        },
+      },
+    });
+
+    render(
+      <BrowserRouter>
+        <WorkflowsHomepage />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.getByText(
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload",
       ),
     ).toBeInTheDocument();
   });

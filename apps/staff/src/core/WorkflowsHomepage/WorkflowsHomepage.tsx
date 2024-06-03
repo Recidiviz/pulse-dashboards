@@ -22,11 +22,14 @@ import {
   useOpportunityConfigurations,
   useRootStore,
 } from "../../components/StoreProvider";
+import { TenantId } from "../../RootStore/types";
+import TENANTS from "../../tenants";
 import { getWelcomeText, pluralizeWord } from "../../utils";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
+import { SystemId } from "../models/types";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
@@ -40,6 +43,33 @@ function getSelectOpportunitiesText(
     .slice(0, 2)
     .map((ot) => opportunityConfigs[ot].label);
   return labels.join(" and ");
+}
+
+/**
+ * Depending on system type and the search field title, return the correct pluralized
+ * form of the searchable options.
+ *
+ * e.g "caseloads", "facilities", "caseload and/or facility"
+ */
+function getHydratedCallToActionPluralizedText(
+  numSearchIds: number,
+  searchFieldTitle: string,
+  tenantId?: TenantId,
+  activeSystem?: SystemId,
+): string {
+  if (activeSystem === "INCARCERATION" && searchFieldTitle !== "case manager") {
+    return `${pluralizeWord(searchFieldTitle, numSearchIds)}`;
+  } else if (activeSystem === "ALL" && tenantId) {
+    const facilitiesSearchOverride =
+      TENANTS[tenantId].workflowsSystemConfigs?.INCARCERATION
+        ?.searchTitleOverride ?? "location";
+    if (facilitiesSearchOverride !== "case manager") {
+      return `${pluralizeWord("caseload", numSearchIds)} and/or ${pluralizeWord(facilitiesSearchOverride, numSearchIds)}`;
+    }
+  }
+
+  // We default to using "caseload" in most situations.
+  return `${pluralizeWord("caseload", numSearchIds)}`;
 }
 
 const OpportunitySummaries = observer(function OpportunitySummaries() {
@@ -76,6 +106,8 @@ const WorkflowsHomepage = observer(
       workflowsSearchFieldTitle,
       supportsMultipleSystems,
       justiceInvolvedPersonTitle,
+      activeSystem,
+      rootStore: { currentTenantId },
     } = workflowsStore;
 
     const opportunityConfigs = useOpportunityConfigurations();
@@ -104,7 +136,7 @@ const WorkflowsHomepage = observer(
       user?.info.givenNames
     }. We’ve found some outstanding items across ${
       selectedSearchIds.length
-    } ${pluralizeWord("caseload", selectedSearchIds.length)}`;
+    } ${getHydratedCallToActionPluralizedText(selectedSearchIds.length, workflowsSearchFieldTitle, currentTenantId, activeSystem)}`;
 
     const initial = (
       <WorkflowsResults

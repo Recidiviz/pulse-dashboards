@@ -44,7 +44,7 @@ import US_TN_CONFIG from "./tenants/US_TN";
 export const RECIDIVIZ_TENANT = "RECIDIVIZ";
 export const CSG = "CSG";
 
-type Tenants = {
+export type Tenants = {
   [key in TenantConfigId]: TenantConfig;
 };
 
