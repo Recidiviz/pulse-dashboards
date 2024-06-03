@@ -124,6 +124,8 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
         justifications.push(
           `Latest PREA screening date: ${formatDate(latestPreaScreeningDate)}, Victim Finding ${victimFindingLevel}, Aggressor Finding ${aggressorFindingLevel}`,
         );
+      } else {
+        justifications.push("Latest PREA screening: Unavailable");
       }
       if (
         formInformation.activeRecommendations &&
