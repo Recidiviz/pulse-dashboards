@@ -41,7 +41,7 @@ const US_MO_CONFIG: TenantConfig = {
     },
   },
   navigation: {
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
+    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "residents"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

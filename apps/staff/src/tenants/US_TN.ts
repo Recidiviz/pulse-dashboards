@@ -52,7 +52,7 @@ const US_TN_CONFIG: TenantConfig = {
   insightsLanternState: true,
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
+    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "residents"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

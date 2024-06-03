@@ -52,7 +52,7 @@ const US_ME_CONFIG: TenantConfig = {
     },
   },
   navigation: {
-    workflows: ["home", "clients", ...WORKFLOWS_OPPORTUNITY_TYPES],
+    workflows: ["home", "clients", "residents", ...WORKFLOWS_OPPORTUNITY_TYPES],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

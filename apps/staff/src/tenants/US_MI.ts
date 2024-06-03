@@ -55,7 +55,7 @@ const US_MI_CONFIG: TenantConfig = {
   insightsLanternState: true,
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients"],
+    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "residents"],
     system: [PATHWAYS_PAGES.prison],
     libertyToPrison: [
       PATHWAYS_SECTIONS.countOverTime,

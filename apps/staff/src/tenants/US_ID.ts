@@ -82,7 +82,13 @@ const US_ID_CONFIG: TenantConfig = {
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`
     insights: [INSIGHTS_PAGES.supervision],
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "tasks"],
+    workflows: [
+      "home",
+      ...WORKFLOWS_OPPORTUNITY_TYPES,
+      "clients",
+      "tasks",
+      "residents",
+    ],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
