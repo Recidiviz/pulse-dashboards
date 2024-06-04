@@ -23,6 +23,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import { Case, Client } from "../api";
 import { StaffStore } from "../datastores/StaffStore";
 
 export class StaffPresenter implements Hydratable {
@@ -43,12 +44,20 @@ export class StaffPresenter implements Hydratable {
     });
   }
 
-  get hydrationState(): HydrationState {
-    return this.hydrator.hydrationState;
+  get staffPseudoId() {
+    return this.staffStore.psiStore.staffPseudoId;
   }
 
   get staffInfo() {
     return this.staffStore.staffInfo;
+  }
+
+  get listOfCaseBriefs(): (Case & { Client: Client })[] | undefined {
+    return this.staffInfo?.Cases;
+  }
+
+  get hydrationState(): HydrationState {
+    return this.hydrator.hydrationState;
   }
 
   async hydrate(): Promise<void> {

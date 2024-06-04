@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { psiRootPath } from "~sentencing-client";
+
 import { MetricId, SystemId } from "./models/types";
 
 export const UNRESTRICTED_PAGES = ["revocations", "profile", "methodology", ""];
@@ -30,7 +32,7 @@ export const DASHBOARD_VIEWS = {
   profile: "profile",
   workflows: "workflows",
   insights: "insights",
-  psi: "psi",
+  psi: psiRootPath,
 } as const;
 export type DashboardViewRootPath = (typeof DASHBOARD_VIEWS)[DashboardView];
 
@@ -363,42 +365,6 @@ export function insightsUrl(
     return path;
   }
   return INSIGHTS_PATHS[routeName];
-}
-
-export const PSI_PATHS: Record<PSIPage, string> = {
-  psi: `/${DASHBOARD_VIEWS.psi}`,
-  dashboard: `/${DASHBOARD_VIEWS.psi}/dashboard/:staffPseudoId`,
-  caseDetails: `/${DASHBOARD_VIEWS.psi}/dashboard/:staffPseudoId/case/:caseId`,
-};
-
-export type PSIPage = keyof typeof PSI_PAGES;
-
-export const PSI_PAGES = {
-  psi: "psi",
-  dashboard: "dashboard",
-  caseDetails: "caseDetails",
-} as const;
-
-/**
- * @returns the relative route template string for a PSI page
- */
-export function psiRoute({ routeName }: { routeName: PSIPage }): string {
-  return getRelativePath(PSI_PATHS[routeName]);
-}
-
-export type PSIRouteParams = {
-  staffPseudoId: string;
-};
-
-export function psiUrl(routeName: PSIPage, params: PSIRouteParams): string {
-  if (params) {
-    let path = PSI_PATHS[routeName];
-    Object.entries(params).forEach(([key, value]) => {
-      path = path.replace(`:${key}`, value);
-    });
-    return path;
-  }
-  return PSI_PATHS[routeName];
 }
 
 export function getRelativePath(absolutePath: string): string {

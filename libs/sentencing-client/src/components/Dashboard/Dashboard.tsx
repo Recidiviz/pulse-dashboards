@@ -16,20 +16,94 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 import { Hydrator } from "~hydration-utils";
 
 import { PSIStore } from "../../datastores/PSIStore";
 import { StaffPresenter } from "../../presenters/StaffPresenter";
+import { psiUrl } from "../../utils/routing";
 import { ErrorMessage } from "../Error";
+import * as Styled from "./Dashboard.styles";
 
 const DashboardWithPresenter = observer(function DashboardWithPresenter({
   presenter,
 }: {
   presenter: StaffPresenter;
 }) {
-  const { staffInfo } = presenter;
-  return <>{JSON.stringify(staffInfo)}</>;
+  const navigate = useNavigate();
+  const { staffPseudoId, listOfCaseBriefs } = presenter;
+
+  if (!staffPseudoId || !listOfCaseBriefs) return null;
+
+  const numberOfCasesDisplay = `${listOfCaseBriefs.length} ${listOfCaseBriefs.length === 1 ? "case" : "cases"}`;
+
+  return (
+    <Styled.PageContainer>
+      {/* Welcome Message */}
+      <Styled.WelcomeMessage>
+        <Styled.WelcomeTitle>
+          Welcome to your case dashboard
+        </Styled.WelcomeTitle>
+        <Styled.WelcomeDescription>
+          Generate informed case recommendations based on historical outcomes
+          customized for each case. Find and suggest customized treatment
+          opportunities for detendants that will aid in their healing and
+          integrating back into the community.
+        </Styled.WelcomeDescription>
+      </Styled.WelcomeMessage>
+
+      {/* List of Cases */}
+      <Styled.Cases>
+        <Styled.SectionTitle>My Cases</Styled.SectionTitle>
+        <Styled.SectionSubtitle>{numberOfCasesDisplay}</Styled.SectionSubtitle>
+        <Styled.CaseListContainer>
+          {listOfCaseBriefs.length > 0 ? (
+            <Styled.CaseOverviewWrapper isHeader>
+              <Styled.Cell>Name</Styled.Cell>
+              <Styled.Cell>Report Type</Styled.Cell>
+              <Styled.Cell>Offense</Styled.Cell>
+              <Styled.Cell>Status</Styled.Cell>
+              <Styled.Cell>Due Date</Styled.Cell>
+              <Styled.Cell />
+            </Styled.CaseOverviewWrapper>
+          ) : (
+            `No cases to review`
+          )}
+          {listOfCaseBriefs?.map((caseBrief) => (
+            <Styled.CaseOverviewItem>
+              <Styled.CaseOverviewWrapper>
+                <Styled.Cell>{caseBrief.Client?.fullName}</Styled.Cell>
+                <Styled.Cell>{caseBrief.reportType}</Styled.Cell>
+                <Styled.Cell>
+                  {caseBrief.primaryCharge}{" "}
+                  {caseBrief.secondaryCharges.length > 0 &&
+                    `(+${caseBrief.secondaryCharges.length} more)`}
+                </Styled.Cell>
+                <Styled.Cell>Not yet started</Styled.Cell>
+                <Styled.Cell>
+                  {moment(caseBrief.dueDate).format("MM-DD-YYYY")}
+                </Styled.Cell>
+                <Styled.Button
+                  onClick={() =>
+                    navigate(
+                      psiUrl("caseDetails", {
+                        staffPseudoId: staffPseudoId,
+                        caseId: caseBrief.id,
+                      }),
+                    )
+                  }
+                >
+                  Get Started
+                </Styled.Button>
+              </Styled.CaseOverviewWrapper>
+            </Styled.CaseOverviewItem>
+          ))}
+        </Styled.CaseListContainer>
+      </Styled.Cases>
+    </Styled.PageContainer>
+  );
 });
 
 export const Dashboard: React.FC<{

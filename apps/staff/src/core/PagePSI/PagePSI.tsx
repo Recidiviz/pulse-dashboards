@@ -22,13 +22,12 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { CaseDetails, Dashboard } from "~sentencing-client";
+import { CaseDetails, Dashboard, psiRoute, psiUrl } from "~sentencing-client";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout } from "../NavigationLayout";
-import { psiRoute, psiUrl } from "../views";
 
 const Wrapper = styled.div`
   min-height: 100vh;

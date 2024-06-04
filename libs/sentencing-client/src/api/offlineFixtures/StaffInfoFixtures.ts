@@ -29,7 +29,7 @@ export const StaffInfoFixture: Staff = {
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
         stateCode: "ID",
-        fullName: "",
+        fullName: "Blanda Furman",
         gender: "FTM",
         county: "Gwynedd County",
         birthDate: new Date("1990-11-13T21:37:16.551Z"),

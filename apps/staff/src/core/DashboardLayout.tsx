@@ -23,6 +23,8 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
+import { PSI_PATHS } from "~sentencing-client";
+
 import IE11Banner from "../components/IE11Banner";
 import NotFound from "../components/NotFound";
 import { useRootStore } from "../components/StoreProvider";
@@ -49,7 +51,6 @@ import {
   DASHBOARD_PATHS,
   DASHBOARD_VIEWS,
   INSIGHTS_PATHS,
-  PSI_PATHS,
   WORKFLOWS_PATHS,
 } from "./views";
 

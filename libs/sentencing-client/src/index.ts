@@ -18,3 +18,4 @@
 export * from "./components/CaseDetails";
 export * from "./components/Dashboard";
 export * from "./datastores/PSIStore";
+export * from "./utils/routing";

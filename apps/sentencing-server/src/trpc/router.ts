@@ -51,12 +51,8 @@ export const appRouter = router({
       // TODO: figure out why prisma omit typechecking is not working (this doesn't actually do anything but fix the return type)
       return {
         ...staff,
-        Cases: staff.Cases.map(
-          (c: {
-            externalId: string;
-            staffId: string | null;
-            clientId: string | null;
-          }) => _.omit(c, ["externalId", "staffId", "clientId"]),
+        Cases: staff.Cases.map((c: (typeof staff.Cases)[number]) =>
+          _.omit(c, ["externalId", "staffId", "clientId"]),
         ),
       };
     }),
