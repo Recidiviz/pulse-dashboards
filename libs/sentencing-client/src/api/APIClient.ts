@@ -18,8 +18,10 @@
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import { when } from "mobx";
 
+// Don't import this via type alias, otherwise it will make the whole app a dependency
+// rather than just the types
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import type { AppRouter } from "~sentencing-server/trpc/router";
+import type { AppRouter } from "~sentencing-server/shared/types";
 
 import { PSIStore } from "../datastores/PSIStore";
 
