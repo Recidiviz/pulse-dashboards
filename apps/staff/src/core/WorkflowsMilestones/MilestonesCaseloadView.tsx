@@ -16,14 +16,16 @@
 // =============================================================================
 
 import { palette, typography } from "@recidiviz/design-system";
+import { reduce } from "lodash";
 import { uniq } from "lodash/fp";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 
 import TealStarBase from "../../assets/static/images/tealStar.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
+import { TextMessageStatus } from "../../FirestoreStore";
 import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";
 import { optionalFieldToDate } from "../../WorkflowsStore/utils";
@@ -138,7 +140,7 @@ function CongratulationStatus({ client }: { client: Client }): JSX.Element {
   }
 }
 
-function MilestonesCaseload({
+const MilestonesCaseload = observer(function MilestonesCaseload({
   clients,
   handleRowOnClick,
 }: {
@@ -170,89 +172,115 @@ function MilestonesCaseload({
   ));
 
   return <MilestonesClientWrapper>{items}</MilestonesClientWrapper>;
-}
+});
 
-const MILESTONES_TABS = [
-  "New Milestones",
-  "Congratulated",
-  "Declined to Send",
-  "Errors",
-] as const;
+const MILESTONES_TAB_STATUS_MAPPING = {
+  "New Milestones": ["PENDING"], // and `undefined`
+  Congratulated: ["CONGRATULATED_ANOTHER_WAY", "IN_PROGRESS", "SUCCESS"],
+  "Declined to Send": ["DECLINED"],
+  Errors: ["FAILURE"],
+} as const;
 
-export type MilestonesTab = (typeof MILESTONES_TABS)[number];
+export type MilestonesTab = keyof typeof MILESTONES_TAB_STATUS_MAPPING;
+
+const MILESTONES_TABS = Object.keys(
+  MILESTONES_TAB_STATUS_MAPPING,
+) as MilestonesTab[];
 
 const MilestonesCaseloadView: React.FC = observer(
   function MilestonesCaseloadView() {
     const { workflowsStore, analyticsStore } = useRootStore();
-    const [activeTab, setActiveTab] = useState<MilestonesTab>(
-      MILESTONES_TABS[0],
+
+    const milestonesClients = reduce(
+      MILESTONES_TAB_STATUS_MAPPING,
+      (acc, statuses, tab) => {
+        if (tab === "New Milestones")
+          acc[tab] = uniq([
+            ...workflowsStore.getMilestonesClientsByStatus(
+              statuses as unknown as TextMessageStatus[],
+            ),
+            ...workflowsStore.getMilestonesClientsByStatus(),
+          ]);
+        else {
+          acc[tab as MilestonesTab] =
+            workflowsStore.getMilestonesClientsByStatus(
+              statuses as unknown as TextMessageStatus[],
+            );
+        }
+
+        return acc;
+      },
+      {} as {
+        [tab in MilestonesTab]: Client[];
+      },
+    ) satisfies Record<MilestonesTab, Client[]>;
+
+    const tabs = MILESTONES_TABS.filter((tab) =>
+      tab !== "New Milestones" ? milestonesClients[tab].length > 0 : tab,
     );
+
+    const [activeTab, setActiveTab] = useState<MilestonesTab>(tabs[0]);
+    const numOfNewMilestones = milestonesClients["New Milestones"].length;
 
     const handleTabClick = (tab: MilestonesTab) => {
       analyticsStore.trackMilestonesTabClick({ tab });
       setActiveTab(tab);
     };
 
-    const handleRowOnClick = (client: Client) => {
-      workflowsStore.updateSelectedPerson(client.pseudonymizedId);
-      analyticsStore.trackMilestonesSidePanel({
-        tab: activeTab,
-        justiceInvolvedPersonId: client.pseudonymizedId,
-      });
-    };
-
-    const empty = (
-      <WorkflowsResults callToActionText="None of the selected caseloads have milestones to display. Search for another caseload." />
+    const handleRowOnClick = useCallback(
+      (client: Client) => {
+        workflowsStore.updateSelectedPerson(client.pseudonymizedId);
+        analyticsStore.trackMilestonesSidePanel({
+          tab: activeTab,
+          justiceInvolvedPersonId: client.pseudonymizedId,
+        });
+      },
+      [activeTab, workflowsStore, analyticsStore],
     );
 
-    const erroredMilestonesClients =
-      workflowsStore.getMilestonesClientsByStatus(["FAILURE"]);
-    const hasErrors = erroredMilestonesClients.length > 0;
-
-    const clients = (tab: MilestonesTab): Client[] => {
-      switch (tab) {
-        case "New Milestones":
-          return uniq([
-            ...workflowsStore.getMilestonesClientsByStatus(["PENDING"]),
-            ...workflowsStore.getMilestonesClientsByStatus(),
-          ]);
-        case "Congratulated":
-          return workflowsStore.getMilestonesClientsByStatus([
-            "CONGRATULATED_ANOTHER_WAY",
-            "IN_PROGRESS",
-            "SUCCESS",
-          ]);
-        case "Declined to Send":
-          return workflowsStore.getMilestonesClientsByStatus(["DECLINED"]);
-        case "Errors":
-          return erroredMilestonesClients;
-        default:
-          return [];
+    useEffect(() => {
+      if (!milestonesClients?.[activeTab]?.length) {
+        setActiveTab(tabs?.[0] || (undefined as unknown as MilestonesTab));
       }
-    };
+    }, [milestonesClients, activeTab, tabs]);
 
     return (
       <CaseloadHydrator
         initial={null}
         hydrated={
-          <>
-            <WorkflowsCaseloadControlBar
-              tabs={
-                hasErrors
-                  ? [...MILESTONES_TABS]
-                  : MILESTONES_TABS.filter((t) => t !== "Errors")
-              }
-              activeTab={activeTab}
-              setActiveTab={handleTabClick}
-            />
-            <MilestonesCaseload
-              clients={clients(activeTab)}
-              handleRowOnClick={handleRowOnClick}
-            />
-            <MilestonesSidePanel activeTab={activeTab} />
-          </>
+          activeTab && (
+            <>
+              <WorkflowsCaseloadControlBar
+                tabs={tabs}
+                activeTab={activeTab}
+                setActiveTab={handleTabClick}
+              />
+              {numOfNewMilestones === 0 && activeTab === "New Milestones" ? (
+                <WorkflowsResults
+                  callToActionText={
+                    "You've reached out to everyone for now. Check back next month."
+                  }
+                />
+              ) : (
+                <>
+                  <MilestonesCaseload
+                    clients={milestonesClients[activeTab] || []}
+                    handleRowOnClick={handleRowOnClick}
+                  />
+                  <MilestonesSidePanel activeTab={activeTab} />
+                </>
+              )}
+            </>
+          )
         }
-        empty={empty}
+        empty={
+          <WorkflowsResults
+            callToActionText={
+              "None of the selected caseloads have" +
+              " milestones to display. Search for another caseload."
+            }
+          />
+        }
       />
     );
   },
