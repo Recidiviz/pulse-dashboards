@@ -70,7 +70,7 @@ test("getStaffInfo and return data", async () => {
   expect(result).toBe(StaffInfoFixture);
   expect(mockTRPCClient.getStaff.query).toHaveBeenCalledTimes(1);
   expect(mockTRPCClient.getStaff.query).toHaveBeenCalledWith({
-    externalId: "TestID-123",
+    pseudonymizedId: "TestID-123",
   });
 });
 
@@ -80,6 +80,6 @@ test("getCaseDetails returns data", async () => {
   expect(result).toBe(CaseDetailsFixture);
   expect(mockTRPCClient.getCase.query).toHaveBeenCalledTimes(1);
   expect(mockTRPCClient.getCase.query).toHaveBeenCalledWith({
-    externalId: caseId,
+    id: caseId,
   });
 });

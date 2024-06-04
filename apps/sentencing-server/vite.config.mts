@@ -9,6 +9,8 @@ export default defineConfig({
   plugins: [nxViteTsPaths()],
 
   test: {
+    // TODO(https://github.com/Recidiviz/recidiviz-data/issues/30276): Renable once we have a way to run tests in the CI.
+    // setupFiles: ["src/test/setup/index.ts"],
     globals: true,
     cache: { dir: "../../node_modules/.vitest" },
     environment: "node",

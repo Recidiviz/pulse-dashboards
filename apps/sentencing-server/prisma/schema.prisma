@@ -62,35 +62,25 @@ enum StateCode {
 }
 
 model Staff {
-  id         String    @id @default(cuid())
-  stateCode  StateCode
-  externalId String    @unique
-
-  // Name
-  givenNames  String
-  surname     String
-  middleNames String?
-  nameSuffix  String?
+  externalId      String    @id
+  pseudonymizedId String    @unique
+  stateCode       StateCode
+  fullName        String
 
   email String
-  Case  Case[]
+  Cases Case[]
 }
 
 model Client {
-  id         String    @id @default(cuid())
-  externalId String    @unique
-  stateCode  StateCode
-
-  // Name
-  givenNames  String
-  surname     String
-  middleNames String?
-  nameSuffix  String?
+  externalId      String    @id
+  pseudonymizedId String    @unique
+  stateCode       StateCode
+  fullName        String
 
   gender    String
   county    String
   birthDate DateTime
-  Case      Case[]
+  Cases     Case[]
 }
 
 enum Charge {
@@ -163,15 +153,17 @@ enum NeedToBeAddressed {
 }
 
 model Case {
-  id         String    @id @default(cuid())
-  externalId String    @unique
+  externalId String    @id
+  id         String    @unique @default(cuid())
   stateCode  StateCode
 
-  Staff   Staff  @relation(fields: [staffId], references: [id])
-  staffId String
-
-  Client   Client @relation(fields: [clientId], references: [id])
-  clientId String
+  // These relationships are only optional because data loading for staff, client,
+  // and cases happens independently and in random order, so the referenced staff
+  // or client may not exist yet
+  Staff    Staff?  @relation(fields: [staffId], references: [externalId])
+  staffId  String?
+  Client   Client? @relation(fields: [clientId], references: [externalId])
+  clientId String?
 
   dueDate        DateTime
   completionDate DateTime
@@ -183,24 +175,24 @@ model Case {
   reportType     String
 
   // Mutable Attributes
-  primaryCharge    Charge
+  primaryCharge    Charge?
   secondaryCharges Charge[]
 
-  previouslyIncarcerated              Boolean
-  previouslyUnderSupervision          Boolean
-  hasPreviousFelonyConviction         Boolean
-  hasPreviousViolentOffenseConviction Boolean
-  hasPreviousSexOffenseConviction     Boolean
+  previouslyIncarcerated              Boolean?
+  previouslyUnderSupervision          Boolean?
+  hasPreviousFelonyConviction         Boolean?
+  hasPreviousViolentOffenseConviction Boolean?
+  hasPreviousSexOffenseConviction     Boolean?
   previousTreatmentCourt              String?
 
-  substanceUseDisorderDiagnosis SubstanceUseDiagnosis
-  asamCareRecommendation AsamCareRecommendation?
+  substanceUseDisorderDiagnosis SubstanceUseDiagnosis?
+  asamCareRecommendation        AsamCareRecommendation?
 
   mentalHealthDiagnoses MentalHealthDiagnosis[]
 
-  hasDevelopmentalDisability         Boolean
-  veteranStatus                      VeteranStatus
-  plea                               Plea
-  hasOpenChildProtectiveServicesCase Boolean
+  hasDevelopmentalDisability         Boolean?
+  veteranStatus                      VeteranStatus?
+  plea                               Plea?
+  hasOpenChildProtectiveServicesCase Boolean?
   needsToBeAddressed                 NeedToBeAddressed[]
 }

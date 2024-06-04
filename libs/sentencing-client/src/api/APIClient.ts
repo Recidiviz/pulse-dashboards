@@ -17,6 +17,7 @@
 
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import { when } from "mobx";
+import superjson from "superjson";
 
 // Don't import this via type alias, otherwise it will make the whole app a dependency
 // rather than just the types
@@ -60,6 +61,8 @@ export class APIClient {
           },
         }),
       ],
+      // Required to get Date objects to serialize correctly.
+      transformer: superjson,
     });
   }
 
@@ -80,14 +83,14 @@ export class APIClient {
       return Promise.reject({ message: "No staff pseudo id found" });
 
     const fetchedData = await this.trpcClient.getStaff.query({
-      externalId: this.psiStore.staffPseudoId,
+      pseudonymizedId: this.psiStore.staffPseudoId,
     });
     return fetchedData;
   }
 
   async getCaseDetails(caseId: string): Promise<Case> {
     const fetchedData = await this.trpcClient.getCase.query({
-      externalId: caseId,
+      id: caseId,
     });
     return fetchedData;
   }

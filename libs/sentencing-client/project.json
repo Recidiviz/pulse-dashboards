@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/sentencing-client/src",
   "projectType": "library",
+  "implicitDependencies": ["!sentencing-server"],
   "tags": [],
   "targets": {
     "lint-files": {

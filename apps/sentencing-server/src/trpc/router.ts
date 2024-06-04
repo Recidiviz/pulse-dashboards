@@ -1,30 +1,34 @@
+import { TRPCError } from "@trpc/server";
+import _ from "lodash";
 import { z } from "zod";
 
 import { router, sentryProcedure } from "~sentencing-server/trpc/init";
 
 const getStaffInputSchema = z.object({
-  externalId: z.string(),
+  pseudonymizedId: z.string(),
 });
 
 const getCaseInputSchema = z.object({
-  externalId: z.string(),
+  id: z.string(),
 });
 
 export const appRouter = router({
   getStaff: sentryProcedure
     .input(getStaffInputSchema)
-    .query(({ input: { externalId }, ctx: { prisma } }) => {
-      return prisma.staff.findUnique({
+    .query(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
+      const staff = await prisma.staff.findUnique({
         where: {
-          externalId,
+          pseudonymizedId,
         },
         omit: {
-          id: true,
+          externalId: true,
         },
         include: {
-          Case: {
+          Cases: {
             omit: {
               externalId: true,
+              staffId: true,
+              clientId: true,
             },
             include: {
               Client: {
@@ -36,18 +40,48 @@ export const appRouter = router({
           },
         },
       });
+
+      if (!staff) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Staff with that id was not found",
+        });
+      }
+
+      // TODO: figure out why prisma omit typechecking is not working (this doesn't actually do anything but fix the return type)
+      return {
+        ...staff,
+        Cases: staff.Cases.map(
+          (c: {
+            externalId: string;
+            staffId: string | null;
+            clientId: string | null;
+          }) => _.omit(c, ["externalId", "staffId", "clientId"]),
+        ),
+      };
     }),
   getCase: sentryProcedure
     .input(getCaseInputSchema)
-    .query(({ input: { externalId }, ctx: { prisma } }) => {
-      return prisma.case.findUnique({
+    .query(async ({ input: { id }, ctx: { prisma } }) => {
+      const caseData = await prisma.case.findUnique({
         where: {
-          externalId,
+          id,
         },
         omit: {
           externalId: true,
+          staffId: true,
+          clientId: true,
         },
       });
+
+      if (!caseData) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Case with that id was not found",
+        });
+      }
+
+      return caseData;
     }),
 });
 

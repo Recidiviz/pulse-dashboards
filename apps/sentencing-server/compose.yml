@@ -1,6 +1,5 @@
 services:
-  postgres:
-    container_name: postgres
+  db:
     image: postgres
     environment:
       - POSTGRES_USER=postgres
@@ -10,6 +9,16 @@ services:
       - 6500:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+  test-db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sentencing-test
+    ports:
+      - 6501:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/test-data/
 
 volumes:
   postgres_data:
