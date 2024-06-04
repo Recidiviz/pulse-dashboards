@@ -26,7 +26,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
-import InsightsInfoModal from "../InsightsInfoModal";
+import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";
 import { InsightsSwarmPlot } from "../InsightsSwarmPlot";
 import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import { insightsUrl } from "../views";
@@ -122,7 +122,12 @@ const PlotTitle = styled.div`
   gap: ${rem(spacing.xs)};
 `;
 
-const PlotHint = styled.div``;
+const PlotHint = styled.div`
+  button {
+    color: ${palette.slate85};
+    text-decoration: none !important;
+  }
+`;
 
 const EmptyWrapper = styled.div`
   display: flex;
@@ -252,10 +257,16 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                     {toTitleCase(generalMetricConfig.eventName)}
                   </PlotTitle>
                   <PlotHint>
-                    {/* TODO (#5489): "Learn more" should be a panel instead of a modal  */}
-                    <InsightsInfoModal
+                    <InsightsInfoModalV2
                       title={toTitleCase(generalMetricConfig.eventName)}
                       copy={generalMetricConfig.descriptionMarkdown}
+                      description={`${officersForMetric
+                        .map((officer) => officer.fullName.givenNames)
+                        .join(", ")
+                        .replace(
+                          /, ([^,]*)$/,
+                          " and $1",
+                        )} ${officersForMetric.length > 1 ? "have" : "has"} a **significantly higher rate of ${toTitleCase(generalMetricConfig.eventName)} compared to the statewide rate.**`}
                       methodologyLink={methodologyUrl}
                       buttonText="Learn More"
                     />

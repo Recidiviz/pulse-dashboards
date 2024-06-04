@@ -29,7 +29,7 @@ import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenter
 import { formatDate, toTitleCase } from "../../utils";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsEmptyPage from "../InsightsEmptyPage";
-import InsightsInfoModal from "../InsightsInfoModal";
+import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";
 import InsightsLinePlot from "../InsightsLinePlot";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
@@ -197,7 +197,7 @@ export const MetricPageWithPresenter = observer(
                   : `List of ${toTitleCase(eventName)}`
               }
               infoModal={
-                <InsightsInfoModal
+                <InsightsInfoModalV2
                   title={`List of ${toTitleCase(eventName)}`}
                   copy={`${modalText}`}
                   methodologyLink={methodologyUrl}
@@ -216,7 +216,7 @@ export const MetricPageWithPresenter = observer(
             <InsightsChartCard
               title={`${toTitleCase(bodyDisplayName)} Compared to State`}
               infoModal={
-                <InsightsInfoModal
+                <InsightsInfoModalV2
                   title="Rate Compared to State"
                   copy={`This plot shows the selected ${labels.supervisionOfficerLabel} and all other ${labels.supervisionOfficerLabel}s in the state based on their rate for this metric. <br><br>
                         This rate is calculated by taking the total number of ${eventName} on this ${labels.supervisionOfficerLabel}'s caseload in the past 12 months and dividing it by the ${labels.supervisionOfficerLabel}'s average daily caseload. <br><br>
@@ -231,7 +231,7 @@ export const MetricPageWithPresenter = observer(
             <InsightsChartCard
               title={`Historical ${toTitleCase(metric.config.bodyDisplayName)}`}
               infoModal={
-                <InsightsInfoModal
+                <InsightsInfoModalV2
                   title="Historical Rate"
                   copy={`This chart shows a “yearly rolling window,” which means that each dot on the line represents the ${labels.supervisionOfficerLabel}’s ${metric.config.bodyDisplayName} for a full year. 
                         The most recent dot on the line chart matches up with the rate that is shown in the chart above and represents the ${bodyDisplayName} over the past 12 months. 

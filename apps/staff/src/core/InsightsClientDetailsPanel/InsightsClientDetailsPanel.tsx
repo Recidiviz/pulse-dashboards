@@ -34,11 +34,16 @@ import {
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionClientDetailPresenter } from "../../InsightsStore/presenters/SupervisionClientDetailPresenter";
+import { StyledDrawerModalV2 } from "../InsightsInfoModal/InsightsInfoModalV2";
 import LanternLogo from "../LanternLogo";
 import ModelHydrator from "../ModelHydrator";
+import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { insightsUrl } from "../views";
 import { InsightsClientCapsule } from "./InsightsClientCapsule";
 import InsightsClientDetails from "./InsightsClientDetails";
@@ -60,6 +65,15 @@ export const StyledDrawerModal = styled(DrawerModal)<{
     right: 0 !important;
     border-radius: 0 !important;`}
   }
+`;
+
+const CloseButtonWrapper = styled.div`
+  height: ${rem(NAV_BAR_HEIGHT)};
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 ${rem(spacing.lg)};
+  border-bottom: 1px solid ${palette.slate10};
 `;
 
 const ModalHeader = styled.div`
@@ -118,6 +132,7 @@ function withPresenter(
 const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
   presenter,
 }: InsightsClientDetailsPanelProps) {
+  const { supervisorHomepage } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
   const { tenantStore } = useRootStore();
   const [initialPageLoad, setInitialPageLoad] = useState(true);
@@ -164,8 +179,12 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
     setInitialPageLoad(false);
   }
 
+  const DrawerComponent = supervisorHomepage
+    ? StyledDrawerModalV2
+    : StyledDrawerModal;
+
   return (
-    <StyledDrawerModal
+    <DrawerComponent
       isOpen={modalIsOpen}
       onRequestClose={() => {
         setModalIsOpen(false);
@@ -197,14 +216,23 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
       width={650}
       isMobile={isMobile}
     >
+      {supervisorHomepage && (
+        <CloseButtonWrapper>
+          <Button kind="link" onClick={() => setModalIsOpen(false)}>
+            <Icon kind="Close" size="16" color={palette.pine1} />
+          </Button>
+        </CloseButtonWrapper>
+      )}
       <ModalHeader>
         <InsightsClientCapsule
           clientInfo={clientInfo}
           docLabel={labels.docLabel}
         />
-        <Button kind="link" onClick={() => setModalIsOpen(false)}>
-          <Icon kind="Close" size="14" color={palette.pine2} />
-        </Button>
+        {!supervisorHomepage && (
+          <Button kind="link" onClick={() => setModalIsOpen(false)}>
+            <Icon kind="Close" size="14" color={palette.pine2} />
+          </Button>
+        )}
       </ModalHeader>
       <Content ref={scrollElementRef}>
         <InsightsClientDetails
@@ -218,7 +246,7 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
       <ModalFooter>
         <LanternLogo />
       </ModalFooter>
-    </StyledDrawerModal>
+    </DrawerComponent>
   );
 });
 
