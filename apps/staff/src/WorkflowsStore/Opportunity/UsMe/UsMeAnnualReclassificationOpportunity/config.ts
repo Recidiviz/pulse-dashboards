@@ -33,8 +33,7 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     callToAction:
       "Search for caseloads to review residents who are up for " +
       "an annual or semi-annual reclassification meeting.",
-    //TODO: Fix this in `recidiviz-data`
-    firestoreCollection: "US_ME-reclassificatinonReviewReferrals",
+    firestoreCollection: "US_ME-reclassificationReviewReferrals",
     snooze: {
       defaultSnoozeDays: 30,
       maxSnoozeDays: 180,
