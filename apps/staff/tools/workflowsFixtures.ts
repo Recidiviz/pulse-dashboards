@@ -249,7 +249,7 @@ async function loadClientUpdatesV2(logger: Logger): Promise<void> {
   milestonesMessages.forEach(
     (record: MilestonesMessage & { externalId: string }) => {
       const { externalId } = record;
-      bulkWriter.create(
+      bulkWriter.set(
         db
           .collection(generateCollectionName({ key: "clientUpdatesV2" }))
           .doc(externalId)
