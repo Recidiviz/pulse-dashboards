@@ -45,9 +45,8 @@
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/apps/staff"],
       "cache": true,
-      "dependsOn": ["prisma-generate"],
       "options": {
-        "command": "vitest",
+        "command": "prisma db push && vitest",
         "cwd": "{projectRoot}"
       }
     },
