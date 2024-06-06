@@ -73,6 +73,14 @@ exports.onExecutePostLogin = async (event, api) => {
   /** Set stateCode in appMetadata for everyone. */
   api.user.setAppMetadata("stateCode", stateCode);
 
+  /** Set featureVariants to allow CSG access to insights (permission is still required) */
+  if (stateCode === "csg") {
+    api.user.setAppMetadata("featureVariants", {
+      insightsLeadershipPageAllDistricts: true,
+    });
+    return;
+  }
+
   /**
    * Set allowedStateCodes from Recidiviz users and skip adding
    * restrictions for Recidiviz and CSG users
