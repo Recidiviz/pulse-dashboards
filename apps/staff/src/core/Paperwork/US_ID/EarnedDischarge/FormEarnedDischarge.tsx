@@ -73,8 +73,7 @@ const formDownloader = async (client: Client): Promise<void> => {
 
   await downloadSingle(
     `${client.displayName} Earned Discharge Application.docx`,
-    // TODO(#5152): Remove hardcode when newStateCode fixed/removed
-    "US_ID",
+    client.stateCode,
     "earned_discharge_template.docx",
     contents,
     client.rootStore.getTokenSilently,
