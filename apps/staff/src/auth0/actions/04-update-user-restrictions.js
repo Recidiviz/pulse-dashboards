@@ -73,12 +73,6 @@ exports.onExecutePostLogin = async (event, api) => {
   /** Set stateCode in appMetadata for everyone. */
   api.user.setAppMetadata("stateCode", stateCode);
 
-  /** If state code is us_pa, return without making a request to the auth endpoint
-   *  since those user's aren't in the admin panel roster
-   */
-  // TODO (#4639) Remove PA specific logic once PA users are in Admin Panel roster
-  if (stateCode === "us_pa") return;
-
   /**
    * Set allowedStateCodes from Recidiviz users and skip adding
    * restrictions for Recidiviz and CSG users
@@ -95,7 +89,17 @@ exports.onExecutePostLogin = async (event, api) => {
       const allowedStates = (contents.allowedStates ?? []).map((sc) =>
         sc.toUpperCase(),
       );
-      api.user.setAppMetadata("allowedStates", allowedStates);
+      if (
+        allowedStates.length === 0 ||
+        (allowedStates.length === 1 && allowedStates[0] === "US_OZ")
+      ) {
+        api.access.deny(
+          "No access granted to state data. " +
+            "Please contact the security team at security@recidiviz.org to make sure your permissions are up-to-date.",
+        );
+      } else {
+        api.user.setAppMetadata("allowedStates", allowedStates);
+      }
     }
     return;
   }
