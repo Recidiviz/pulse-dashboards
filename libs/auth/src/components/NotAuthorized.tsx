@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/AuthClientHydrator";
-export * from "./components/EmailVerificationRequired";
-export * from "./components/HandleRedirectAfterLogin";
-export * from "./components/LoginImmediatelyIfLoggedOut";
-export * from "./components/NotAuthorized";
-export * from "./models/AuthClient";
+import { Body19, Header34 } from "@recidiviz/design-system";
+import { FC } from "react";
+
+export const NotAuthorized: FC = () => {
+  return (
+    <div>
+      <Header34 as="h1">Authorization required</Header34>
+      <Body19>You are not authorized to access this content.</Body19>
+    </div>
+  );
+};

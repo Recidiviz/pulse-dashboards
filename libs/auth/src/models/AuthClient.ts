@@ -24,6 +24,7 @@ import createAuth0Client, {
 import { makeAutoObservable, runInAction, when } from "mobx";
 import qs from "qs";
 import { NavigateFunction } from "react-router-dom";
+import { z } from "zod";
 
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
 import {
@@ -34,12 +35,19 @@ import {
   isHydrationUntouched,
 } from "~hydration-utils";
 
+type Settings<AppMetadata extends z.ZodTypeAny> = {
+  metadataNamespace: string;
+  metadataSchema: AppMetadata;
+};
+
 /**
  * Provides a Mobx-observable integration with the Auth0 SDK, translating async interactions
  * with Auth0 into synchronously observable properties.
  *
  */
-export class AuthClient implements Hydratable {
+export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
+  implements Hydratable
+{
   /**
    * Only one client should be initialized per session
    */
@@ -68,7 +76,10 @@ export class AuthClient implements Hydratable {
    */
   private user?: User;
 
-  constructor(private readonly authSettings: Auth0ClientOptions) {
+  constructor(
+    private readonly authSettings: Auth0ClientOptions,
+    private clientSettings: Settings<AppMetadata>,
+  ) {
     makeAutoObservable(this);
   }
 
@@ -225,7 +236,7 @@ export class AuthClient implements Hydratable {
    * @param returnToPath By default Auth0 will return users to the site root after logout.
    * Pass an alternate path to override
    */
-  async logout(returnToPath = "/"): Promise<void> {
+  async logOut(returnToPath = "/"): Promise<void> {
     const auth0 = await this.authClient();
 
     auth0.logout({
@@ -264,7 +275,7 @@ export class AuthClient implements Hydratable {
    * or a wrapper around it. The Auth0 query parameters must be cleared, and the user should
    * be redirected to their intended path, and this function will use `navigate` to accomplish this.
    * @param defaultRedirectPath We expect to receive a target path from Auth0 after handling
-   * the redirect; if for some reason that is missing the user will be redirected to this path instead.
+   * the redirect; if that is missing or the login has failed the user will be redirected to this path instead.
    */
   async handleRedirectFromLogin(
     navigate: NavigateFunction,
@@ -277,6 +288,13 @@ export class AuthClient implements Hydratable {
     const urlQuery = qs.parse(window.location.search, {
       ignoreQueryPrefix: true,
     });
+
+    if (urlQuery["error"]) {
+      console.error(urlQuery);
+      await this.updateAuthStatus();
+      throw new Error(`Auth0 error: ${urlQuery["error"]}`);
+    }
+
     // these are the magic query params we expect to get from Auth0;
     // the callback will fail if they are missing
     if (!(urlQuery["code"] && urlQuery["state"])) {
@@ -292,5 +310,11 @@ export class AuthClient implements Hydratable {
 
     const replacementPath = appState?.targetPath ?? defaultRedirectPath;
     navigate(replacementPath, { replace: true });
+  }
+
+  get appMetadata(): z.infer<AppMetadata> {
+    return this.clientSettings.metadataSchema.parse(
+      this.user?.[`${this.clientSettings.metadataNamespace}/app_metadata`],
+    );
   }
 }

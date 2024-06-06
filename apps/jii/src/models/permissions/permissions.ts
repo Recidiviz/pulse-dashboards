@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/AuthClientHydrator";
-export * from "./components/EmailVerificationRequired";
-export * from "./components/HandleRedirectAfterLogin";
-export * from "./components/LoginImmediatelyIfLoggedOut";
-export * from "./components/NotAuthorized";
-export * from "./models/AuthClient";
+import { z } from "zod";
+
+export const permissionSchema = z.enum(["enhanced"]);
+
+export type Permission = z.infer<typeof permissionSchema>;

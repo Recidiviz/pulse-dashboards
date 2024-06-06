@@ -1,0 +1,16 @@
+{
+  "name": "auth0-jii",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth0-jii/src",
+  "projectType": "library",
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint",
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}

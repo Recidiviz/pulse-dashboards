@@ -19,47 +19,70 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { configure, runInAction } from "mobx";
 import { MemoryRouter } from "react-router-dom";
 
+import { AuthClient } from "~auth";
 import { outputFixture, usMeResidents } from "~datatypes";
 
 import { RootStore } from "../../datastores/RootStore";
 import * as hooks from "../StoreProvider/useRootStore";
 import { App } from "./App";
 
-describe("App", () => {
-  it("should render successfully", () => {
-    const { baseElement } = render(
-      <MemoryRouter>
+describe("public routes", () => {
+  test("landing page", () => {
+    render(
+      <MemoryRouter initialEntries={["/welcome"]}>
         <App />
       </MemoryRouter>,
     );
-    expect(baseElement).toBeInTheDocument();
+
+    expect(screen.getByRole("button", { name: "Log in" })).toBeInTheDocument();
   });
 
-  it("should not render the search page", async () => {
+  test("email verification page", () => {
     render(
-      <MemoryRouter initialEntries={["/eligibility/search"]}>
+      <MemoryRouter initialEntries={["/verify"]}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByRole("heading", { name: "Please verify your email" }),
+    ).toBeInTheDocument();
+  });
+
+  test("after login page", () => {
+    const spy = vi
+      .spyOn(AuthClient.prototype, "handleRedirectFromLogin")
+      .mockResolvedValue(undefined);
+
+    render(
+      <MemoryRouter initialEntries={["/after-login"]}>
         <App />
       </MemoryRouter>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByText("This page cannot be loaded."),
-      ).toBeInTheDocument(),
-    );
+    expect(screen.getByText("Loading data...")).toBeInTheDocument();
+    expect(spy).toHaveBeenCalled();
+  });
+});
+
+describe("protected routes", () => {
+  let rootStore: RootStore;
+
+  beforeEach(() => {
+    configure({ safeDescriptors: false });
+    rootStore = new RootStore();
+    vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
+    vi.spyOn(
+      rootStore.userStore.authClient,
+      "appMetadata",
+      "get",
+    ).mockReturnValue({ stateCode: "US_ME", permissions: ["enhanced"] });
+  });
+
+  afterEach(() => {
+    configure({ safeDescriptors: true });
   });
 
   it("should render the search page", async () => {
-    configure({ safeDescriptors: false });
-
-    const rootStore = new RootStore();
-    vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
-    vi.spyOn(
-      rootStore.userStore,
-      "hasEnhancedPermission",
-      "get",
-    ).mockReturnValue(true);
-
     render(
       <MemoryRouter initialEntries={["/eligibility/search"]}>
         <App />
@@ -68,13 +91,9 @@ describe("App", () => {
     await waitFor(() =>
       expect(screen.getByText("Select a resident")).toBeInTheDocument(),
     );
-
-    configure({ safeDescriptors: true });
   });
 
   it("should render the sccp page as the user's homepage", async () => {
-    const rootStore = new RootStore();
-    vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
     render(
       <MemoryRouter initialEntries={["/"]}>
         <App />
@@ -94,8 +113,6 @@ describe("App", () => {
   });
 
   it("should render the sccp page", async () => {
-    const rootStore = new RootStore();
-    vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
     render(
       <MemoryRouter initialEntries={["/eligibility/sccp"]}>
         <App />

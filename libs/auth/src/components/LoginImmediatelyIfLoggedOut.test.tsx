@@ -17,6 +17,7 @@
 
 import { render, screen } from "@testing-library/react";
 import { configure } from "mobx";
+import { z } from "zod";
 
 import { AuthClient } from "../models/AuthClient";
 import { LoginImmediatelyIfLoggedOut } from "./LoginImmediatelyIfLoggedOut";
@@ -26,7 +27,10 @@ let client: AuthClient;
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
-  client = new AuthClient({ client_id: "test", domain: "test" });
+  client = new AuthClient(
+    { client_id: "test", domain: "test" },
+    { metadataNamespace: "Foo", metadataSchema: z.any() },
+  );
   vi.spyOn(client, "logInIfLoggedOut").mockImplementation(vi.fn());
 });
 

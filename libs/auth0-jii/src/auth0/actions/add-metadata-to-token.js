@@ -15,9 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/AuthClientHydrator";
-export * from "./components/EmailVerificationRequired";
-export * from "./components/HandleRedirectAfterLogin";
-export * from "./components/LoginImmediatelyIfLoggedOut";
-export * from "./components/NotAuthorized";
-export * from "./models/AuthClient";
+/**
+ * Handler that will be called during the execution of a PostLogin flow.
+ *
+ * @param {Event} event - Details about the user and the context in which they are logging in.
+ * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
+ */
+exports.onExecutePostLogin = async (event, api) => {
+  // this is not a real URL but that doesn't matter;
+  // what DOES matter is that this matches the namespace used on the frontend
+  const namespace = "https://jii.recidiviz.org";
+  api.idToken.setCustomClaim(`${namespace}/app_metadata`, {
+    ...event.user.app_metadata,
+  });
+};

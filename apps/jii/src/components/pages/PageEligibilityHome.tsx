@@ -23,16 +23,17 @@ import { NotFound } from "../NotFound/NotFound";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageEligibilityHome: FC = observer(function PageEligibilityHome() {
-  const { residentsStore } = useRootStore();
+  const { residentsStore, userStore } = useRootStore();
   if (!residentsStore) return null;
 
-  const { externalId, hasEnhancedPermission } = residentsStore.userStore;
+  const { externalId } = residentsStore.userStore;
   if (externalId) {
     // for convenience, while there is only one opp configured we skip the lookup step
     return <Navigate to="sccp" replace />;
   }
 
-  if (hasEnhancedPermission) return <Navigate to="search" replace />;
+  if (userStore.hasPermission("enhanced"))
+    return <Navigate to="search" replace />;
 
   return <NotFound />;
 });

@@ -15,17 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { HandleRedirectAfterLogin } from "~auth";
+import { castToError } from "~hydration-utils";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { AuthClient } from "../models/AuthClient";
+import { NotAuthorized } from "./NotAuthorized";
 
-export const PageAfterLogin: FC = observer(function PageAfterLogin() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
+export const HandleRedirectAfterLogin: FC<{
+  authClient: AuthClient;
+  defaultRedirectPath?: string;
+}> = observer(function HandleRedirectAfterLogin({
+  authClient,
+  defaultRedirectPath,
+}) {
+  const navigate = useNavigate();
+  const [error, setError] = useState<Error | undefined>();
 
-  return <HandleRedirectAfterLogin authClient={authClient} />;
+  useEffect(() => {
+    authClient
+      .handleRedirectFromLogin(navigate, defaultRedirectPath)
+      .catch((r) => {
+        setError(castToError(r));
+      });
+  });
+
+  if (error) return <NotAuthorized />;
+
+  return <Loading />;
 });

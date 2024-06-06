@@ -15,9 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./components/AuthClientHydrator";
-export * from "./components/EmailVerificationRequired";
-export * from "./components/HandleRedirectAfterLogin";
-export * from "./components/LoginImmediatelyIfLoggedOut";
-export * from "./components/NotAuthorized";
-export * from "./models/AuthClient";
+import { observer } from "mobx-react-lite";
+import { FC, ReactNode } from "react";
+
+import { NotAuthorized } from "~auth";
+
+import { Permission } from "../../models/permissions/permissions";
+import { useRootStore } from "../StoreProvider/useRootStore";
+
+export const RequiresPermission: FC<{
+  children: ReactNode;
+  permissionId: Permission;
+}> = observer(function RequiresPermission({ children, permissionId }) {
+  const { userStore } = useRootStore();
+
+  if (userStore.hasPermission(permissionId)) return children;
+
+  return <NotAuthorized />;
+});

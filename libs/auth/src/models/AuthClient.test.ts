@@ -16,6 +16,7 @@
 // =============================================================================
 
 import createAuth0Client from "@auth0/auth0-spa-js";
+import { z } from "zod";
 
 import { isTestEnv } from "~client-env-utils";
 
@@ -32,6 +33,9 @@ const logoutMock = vi.fn();
 const getTokenSilentlyMock = vi.fn();
 const handleRedirectCallbackMock = vi.fn();
 
+const testSchema = z.object({ foo: z.string() });
+const testNamespace = "https://foo";
+
 beforeEach(() => {
   // for convenience, auth is bypassed in test mode. Override the env here to test the real functionality
   vi.mocked(isTestEnv).mockReturnValue(false);
@@ -47,7 +51,10 @@ beforeEach(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   vi.mocked(createAuth0Client).mockResolvedValue(mockClient as any);
 
-  client = new AuthClient({ client_id: "test", domain: "test" });
+  client = new AuthClient(
+    { client_id: "test", domain: "test" },
+    { metadataNamespace: testNamespace, metadataSchema: testSchema },
+  );
 });
 
 describe("hydration", () => {
@@ -148,7 +155,10 @@ describe("after hydration", () => {
   describe("authenticated", () => {
     beforeEach(async () => {
       isAuthenticatedMock.mockResolvedValue(true);
-      getUserMock.mockResolvedValue({ email_verified: true });
+      getUserMock.mockResolvedValue({
+        email_verified: true,
+        [`${testNamespace}/app_metadata`]: { foo: "test" },
+      });
       getTokenSilentlyMock.mockResolvedValue("test-token");
 
       await client.hydrate();
@@ -169,15 +179,23 @@ describe("after hydration", () => {
       );
     });
 
+    test("app metadata", () => {
+      expect(client.appMetadata).toMatchInlineSnapshot(`
+        {
+          "foo": "test",
+        }
+      `);
+    });
+
     test("log out", async () => {
       vi.stubGlobal("location", { origin: "https://example.com" });
 
-      await client.logout();
+      await client.logOut();
       expect(logoutMock).toHaveBeenCalledExactlyOnceWith({
         returnTo: "https://example.com/",
       });
 
-      await client.logout("/logged-out");
+      await client.logOut("/logged-out");
       expect(logoutMock).toHaveBeenLastCalledWith({
         returnTo: "https://example.com/logged-out",
       });
@@ -271,6 +289,39 @@ describe("after hydration", () => {
     test("no automatic redirect to login", async () => {
       await client.logInIfLoggedOut();
       expect(loginWithRedirectMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("authorized with invalid metadata", () => {
+    beforeEach(async () => {
+      isAuthenticatedMock.mockResolvedValue(true);
+      getUserMock.mockResolvedValue({
+        email_verified: true,
+        [`${testNamespace}/app_metadata`]: { bar: "test" },
+      });
+      getTokenSilentlyMock.mockResolvedValue("test-token");
+
+      await client.hydrate();
+    });
+
+    test("authorized", () => {
+      expect(client.isAuthorized).toBeTrue();
+    });
+
+    test("error accessing metadata", () => {
+      expect(() => client.appMetadata).toThrowErrorMatchingInlineSnapshot(`
+        [ZodError: [
+          {
+            "code": "invalid_type",
+            "expected": "string",
+            "received": "undefined",
+            "path": [
+              "foo"
+            ],
+            "message": "Required"
+          }
+        ]]
+      `);
     });
   });
 });

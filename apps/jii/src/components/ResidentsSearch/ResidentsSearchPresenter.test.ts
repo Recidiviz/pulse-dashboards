@@ -73,11 +73,7 @@ describe("hydration", () => {
 });
 
 test("set active resident", async () => {
-  vi.spyOn(
-    residentsStore.userStore,
-    "hasEnhancedPermission",
-    "get",
-  ).mockReturnValue(true);
+  vi.spyOn(residentsStore.userStore, "hasPermission").mockReturnValue(true);
   await presenter.hydrate();
 
   expect(presenter.defaultOption).toBeUndefined();

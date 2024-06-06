@@ -31,7 +31,7 @@ export class NavigationMenuPresenter {
   get links() {
     const links = [{ text: "Home", url: "/" }];
 
-    if (this.userStore.hasEnhancedPermission) {
+    if (this.userStore.hasPermission("enhanced")) {
       links.push({ text: "Search for Residents", url: "/eligibility/search" });
     }
 
@@ -46,6 +46,6 @@ export class NavigationMenuPresenter {
   }
 
   logout() {
-    this.userStore.authClient.logout();
+    this.userStore.authClient.logOut();
   }
 }

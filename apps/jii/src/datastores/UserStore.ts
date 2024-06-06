@@ -16,27 +16,45 @@
 // =============================================================================
 
 import { makeAutoObservable } from "mobx";
+import { z } from "zod";
 
 import { AuthClient } from "~auth";
 import { isOfflineMode } from "~client-env-utils";
 
-export class UserStore {
-  authClient: AuthClient;
+import { StateCode } from "../configs/types";
+import {
+  Permission,
+  permissionSchema,
+} from "../models/permissions/permissions";
 
-  constructor() {
+const metadataSchema = z.object({
+  stateCode: z.string(),
+  allowedStates: z.array(z.string()).optional(),
+  permissions: z.array(permissionSchema).optional(),
+});
+
+type Metadata = typeof metadataSchema;
+
+export class UserStore {
+  authClient: AuthClient<Metadata>;
+
+  constructor(private externals: { stateCode: StateCode }) {
     makeAutoObservable(this);
 
-    this.authClient = new AuthClient({
-      client_id: import.meta.env["VITE_AUTH0_CLIENT_ID"],
-      domain: import.meta.env["VITE_AUTH0_DOMAIN"],
-      redirect_uri: `${window.location.origin}/after-login`,
-    });
+    this.authClient = new AuthClient(
+      {
+        client_id: import.meta.env["VITE_AUTH0_CLIENT_ID"],
+        domain: import.meta.env["VITE_AUTH0_DOMAIN"],
+        redirect_uri: `${window.location.origin}/after-login`,
+      },
+      { metadataNamespace: "https://jii.recidiviz.org", metadataSchema },
+    );
   }
 
   private externalIdOverride?: string;
 
   private get canOverrideExternalId() {
-    return this.hasEnhancedPermission;
+    return this.hasPermission("enhanced");
   }
 
   overrideExternalId(newId: string | undefined) {
@@ -45,19 +63,28 @@ export class UserStore {
     this.externalIdOverride = newId;
   }
 
+  get isAuthorizedForCurrentState(): boolean {
+    if (isOfflineMode()) return true;
+
+    const { stateCode, allowedStates } = this.authClient.appMetadata;
+    return (
+      (stateCode === this.externals.stateCode ||
+        (stateCode === "RECIDIVIZ" &&
+          allowedStates?.includes(this.externals.stateCode))) ??
+      false
+    );
+  }
+
   get externalId(): string | undefined {
     // TODO(#5510): get this from auth0 for real users
     return this.externalIdOverride;
   }
 
-  /**
-   * In the absence of true role-based access control, there is just one
-   * "enhanced" permission that can see additional features
-   */
-  get hasEnhancedPermission() {
+  hasPermission(permission: Permission): boolean {
     if (isOfflineMode()) return true;
 
-    // TODO(#5510): internal users should receive this in the live app
-    return false;
+    return (
+      this.authClient.appMetadata.permissions?.includes(permission) ?? false
+    );
   }
 }

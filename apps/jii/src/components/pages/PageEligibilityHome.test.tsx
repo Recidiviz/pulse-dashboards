@@ -48,6 +48,9 @@ beforeEach(async () => {
 
   const rootStore = new RootStore();
   userStore = rootStore.userStore;
+  vi.spyOn(userStore.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "US_ME",
+  });
 
   vi.mocked(useRootStore).mockReturnValue(rootStore);
 
@@ -67,7 +70,7 @@ test("SCCP page", () => {
 });
 
 test("search page", () => {
-  vi.spyOn(userStore, "hasEnhancedPermission", "get").mockReturnValue(true);
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
 
   renderPage();
 

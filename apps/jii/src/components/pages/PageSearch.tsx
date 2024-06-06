@@ -17,16 +17,13 @@
 
 import { observer } from "mobx-react-lite";
 
-import { NotFound } from "../NotFound/NotFound";
+import { RequiresPermission } from "../RequiresPermission/RequiresPermission";
 import { ResidentsSearch } from "../ResidentsSearch/ResidentsSearch";
-import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageSearch = observer(function PageSearch() {
-  const { userStore } = useRootStore();
-
-  if (userStore.hasEnhancedPermission) {
-    return <ResidentsSearch />;
-  }
-
-  return <NotFound />;
+  return (
+    <RequiresPermission permissionId="enhanced">
+      <ResidentsSearch />
+    </RequiresPermission>
+  );
 });

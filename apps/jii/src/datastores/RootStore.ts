@@ -47,7 +47,7 @@ export class RootStore {
 
     this.apiClient = this.createApiClient();
 
-    this.userStore = new UserStore();
+    this.userStore = new UserStore(this);
   }
 
   /**

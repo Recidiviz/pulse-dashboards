@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 
 import { LoginImmediatelyIfLoggedOut } from "~auth";
 
+import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
 import { ResidentsLayout } from "../ResidentsLayout/ResidentsLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
@@ -26,7 +27,9 @@ export const PageEligibility = observer(function ResidentsRoot() {
   const rootStore = useRootStore();
   return (
     <LoginImmediatelyIfLoggedOut authClient={rootStore.userStore.authClient}>
-      <ResidentsLayout />
+      <RequiresStateAuth>
+        <ResidentsLayout />
+      </RequiresStateAuth>
     </LoginImmediatelyIfLoggedOut>
   );
 });

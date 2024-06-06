@@ -14,21 +14,73 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { configure } from "mobx";
+
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
 
 import { UserStore } from "./UserStore";
 
 vi.mock("~client-env-utils");
 
+const externalsStub = { stateCode: "US_ME" } as const;
+
+let store: UserStore;
+
 beforeEach(() => {
+  configure({ safeDescriptors: false });
+
   vi.mocked(isOfflineMode).mockReturnValue(false);
   // make sure we are verifying the non-test behavior
   vi.mocked(isTestEnv).mockReturnValue(false);
+
+  store = new UserStore(externalsStub);
+
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "US_ME",
+  });
+});
+
+afterEach(() => {
+  configure({ safeDescriptors: true });
+});
+
+test("state authorization for external user", () => {
+  expect(store.isAuthorizedForCurrentState).toBeTrue();
+
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "US_XX",
+  });
+
+  expect(store.isAuthorizedForCurrentState).toBeFalse();
+});
+
+test("state authorization for internal user", () => {
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "RECIDIVIZ",
+    allowedStates: ["US_ME"],
+  });
+
+  expect(store.isAuthorizedForCurrentState).toBeTrue();
+
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "RECIDIVIZ",
+    allowedStates: ["US_XX"],
+  });
+  expect(store.isAuthorizedForCurrentState).toBeFalse();
+});
+
+test("has permission", () => {
+  expect(store.hasPermission("enhanced")).toBeFalse();
+
+  // note that this is irrespective of state code
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "US_ME",
+    permissions: ["enhanced"],
+  });
+  expect(store.hasPermission("enhanced")).toBeTrue();
 });
 
 test("cannot override externalId without permission", () => {
-  const store = new UserStore();
-
   expect(() =>
     store.overrideExternalId("foo"),
   ).toThrowErrorMatchingInlineSnapshot(
@@ -38,8 +90,6 @@ test("cannot override externalId without permission", () => {
 
 test("can override externalId in offline mode", () => {
   vi.mocked(isOfflineMode).mockReturnValue(true);
-
-  const store = new UserStore();
 
   expect(store.externalId).toBeUndefined();
 

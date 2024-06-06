@@ -27,7 +27,7 @@ let userStore: UserStore;
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
-  userStore = new UserStore();
+  userStore = new UserStore({ stateCode: "US_ME" });
   presenter = new NavigationMenuPresenter(
     residentsConfigByState.US_ME,
     userStore,
@@ -39,6 +39,7 @@ afterEach(() => {
 });
 
 test("links", () => {
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
   expect(presenter.links).toMatchInlineSnapshot(`
     [
       {
@@ -54,13 +55,13 @@ test("links", () => {
 });
 
 test("links exclude search", () => {
-  vi.spyOn(userStore, "hasEnhancedPermission", "get").mockReturnValue(false);
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
 
   expect(presenter.links.find((l) => l.url === "/search")).toBeUndefined();
 });
 
 test("links include search", () => {
-  vi.spyOn(userStore, "hasEnhancedPermission", "get").mockReturnValue(true);
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
 
   expect(
     presenter.links.find((l) => l.url === "/eligibility/search"),
@@ -68,9 +69,9 @@ test("links include search", () => {
 });
 
 test("logout", () => {
-  vi.spyOn(userStore.authClient, "logout");
+  vi.spyOn(userStore.authClient, "logOut");
 
   presenter.logout();
 
-  expect(userStore.authClient.logout).toHaveBeenCalled();
+  expect(userStore.authClient.logOut).toHaveBeenCalled();
 });

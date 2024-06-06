@@ -21,6 +21,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
       "~auth": ["libs/auth/src/index.ts"],
+      "~auth0-jii": ["libs/auth0-jii/src/index.ts"],
       "~client-env-utils": ["libs/client-env-utils/src/index.ts"],
       "~datatypes": ["libs/datatypes/src/index.ts"],
       "~firestore-api": ["libs/firestore-api/src/index.ts"],
