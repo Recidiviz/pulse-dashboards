@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 import { AuthClientHydrator } from "~auth";
 
 import { PAGE_WIDTH } from "../../utils/constants";
+import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 const BaseLayout = styled.div`
@@ -46,6 +47,7 @@ export const PageRoot = memo(function AppRoot() {
       <BaseLayout>
         <Outlet />
       </BaseLayout>
+      <ScrollToTop />
     </AuthClientHydrator>
   );
 });

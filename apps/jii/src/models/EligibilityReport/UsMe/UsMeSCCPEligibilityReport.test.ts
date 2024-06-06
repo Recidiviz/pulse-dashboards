@@ -49,6 +49,7 @@ describe("fully eligible, needs to serve half", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "Success",
           "label": "Requirements you've met",
           "requirements": [
             {
@@ -69,6 +70,7 @@ describe("fully eligible, needs to serve half", () => {
           ],
         },
         {
+          "icon": "ArrowCircled",
           "label": "Check with your case manager to see if you’ve met these requirements",
           "requirements": [
             {
@@ -112,6 +114,7 @@ describe("eligible to apply before X portion served", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "Success",
           "label": "Requirements you've met",
           "requirements": [
             {
@@ -129,6 +132,7 @@ describe("eligible to apply before X portion served", () => {
           ],
         },
         {
+          "icon": "CloseOutlined",
           "label": "Requirements you haven't met yet",
           "requirements": [
             {
@@ -138,6 +142,7 @@ describe("eligible to apply before X portion served", () => {
           ],
         },
         {
+          "icon": "ArrowCircled",
           "label": "Check with your case manager to see if you’ve met these requirements",
           "requirements": [
             {
@@ -181,6 +186,7 @@ describe("eligible to apply before X months remaining", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "Success",
           "label": "Requirements you've met",
           "requirements": [
             {
@@ -198,6 +204,7 @@ describe("eligible to apply before X months remaining", () => {
           ],
         },
         {
+          "icon": "CloseOutlined",
           "label": "Requirements you haven't met yet",
           "requirements": [
             {
@@ -207,6 +214,7 @@ describe("eligible to apply before X months remaining", () => {
           ],
         },
         {
+          "icon": "ArrowCircled",
           "label": "Check with your case manager to see if you’ve met these requirements",
           "requirements": [
             {
@@ -250,6 +258,7 @@ describe("almost eligible, portion served", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "Success",
           "label": "Requirements you've met",
           "requirements": [
             {
@@ -267,6 +276,7 @@ describe("almost eligible, portion served", () => {
           ],
         },
         {
+          "icon": "CloseOutlined",
           "label": "Requirements you haven't met yet",
           "requirements": [
             {
@@ -276,6 +286,7 @@ describe("almost eligible, portion served", () => {
           ],
         },
         {
+          "icon": "ArrowCircled",
           "label": "Check with your case manager to see if you’ve met these requirements",
           "requirements": [
             {
@@ -319,6 +330,7 @@ describe("almost eligible, recent violation", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "Success",
           "label": "Requirements you've met",
           "requirements": [
             {
@@ -336,6 +348,7 @@ describe("almost eligible, recent violation", () => {
           ],
         },
         {
+          "icon": "CloseOutlined",
           "label": "Requirements you haven't met yet",
           "requirements": [
             {
@@ -345,6 +358,7 @@ describe("almost eligible, recent violation", () => {
           ],
         },
         {
+          "icon": "ArrowCircled",
           "label": "Check with your case manager to see if you’ve met these requirements",
           "requirements": [
             {
@@ -388,6 +402,7 @@ describe("almost eligible, pending violation", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "Success",
           "label": "Requirements you've met",
           "requirements": [
             {
@@ -405,6 +420,7 @@ describe("almost eligible, pending violation", () => {
           ],
         },
         {
+          "icon": "CloseOutlined",
           "label": "Requirements you haven't met yet",
           "requirements": [
             {
@@ -414,6 +430,7 @@ describe("almost eligible, pending violation", () => {
           ],
         },
         {
+          "icon": "ArrowCircled",
           "label": "Check with your case manager to see if you’ve met these requirements",
           "requirements": [
             {
@@ -457,6 +474,7 @@ describe("almost eligible, months remaining", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "Success",
           "label": "Requirements you've met",
           "requirements": [
             {
@@ -474,6 +492,7 @@ describe("almost eligible, months remaining", () => {
           ],
         },
         {
+          "icon": "CloseOutlined",
           "label": "Requirements you haven't met yet",
           "requirements": [
             {
@@ -483,6 +502,7 @@ describe("almost eligible, months remaining", () => {
           ],
         },
         {
+          "icon": "ArrowCircled",
           "label": "Check with your case manager to see if you’ve met these requirements",
           "requirements": [
             {
@@ -524,6 +544,7 @@ describe("not eligible", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
+          "icon": "ArrowCircled",
           "label": "In order to be eligible for SCCP, you must have met the following requirements:",
           "requirements": [
             {

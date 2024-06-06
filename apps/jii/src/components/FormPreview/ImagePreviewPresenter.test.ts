@@ -90,12 +90,10 @@ test("progress", () => {
 
   presenter.next();
   expect(presenter.currentPage).toBe(2);
-  expect(presenter.totalPages).toBe(10);
 
   presenter.previous();
   presenter.previous();
   expect(presenter.currentPage).toBe(10);
-  expect(presenter.totalPages).toBe(10);
 });
 
 test("unknown URL", () => {

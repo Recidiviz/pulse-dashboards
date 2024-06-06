@@ -110,7 +110,7 @@ export class OpportunityEligibilityPresenter implements Hydratable {
 
     return {
       ...this.config.copy.nextSteps,
-      linkUrl: `/eligibility/${this.config.urlSection}/nextSteps`,
+      linkUrl: `/eligibility/${this.config.urlSection}/next-steps`,
     };
   }
 
@@ -118,7 +118,6 @@ export class OpportunityEligibilityPresenter implements Hydratable {
     const { requirements: sections } = this.eligibilityReport;
 
     const {
-      urlSection,
       copy: {
         requirements: { linkText },
       },
@@ -127,7 +126,7 @@ export class OpportunityEligibilityPresenter implements Hydratable {
     return {
       sections,
       linkText,
-      linkUrl: `/eligibility/${urlSection}/requirements`,
+      linkUrl: `requirements`,
     };
   }
 }

@@ -20,13 +20,15 @@ import { makeAutoObservable } from "mobx";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { opportunityConfigFromId } from "../utils/opportunityConfigFromId";
 import { opportunityIdFromUrl } from "../utils/opportunityIdFromUrl";
-import { formImageUrlsByOpportunity } from "./formImageUrlsByOpportunity";
+import { PageId } from "./types";
 
-export class ImagePreviewPresenter {
-  private index = 0;
-
+/**
+ * Reads the specified static page content out of the opportunity config
+ */
+export class StaticPagePresenter {
   constructor(
     private url: string,
+    private pageId: PageId,
     private residentsStore: ResidentsStore,
   ) {
     makeAutoObservable(this);
@@ -36,45 +38,14 @@ export class ImagePreviewPresenter {
     return opportunityIdFromUrl(this.url, this.residentsStore);
   }
 
-  private get opportunityConfig() {
+  private get config() {
     return opportunityConfigFromId(this.id, this.residentsStore);
   }
 
-  get title() {
-    return this.opportunityConfig.copy.formPreview.title;
-  }
-
-  private get imageUrls() {
-    const urls = formImageUrlsByOpportunity[this.id];
-    if (!urls) {
-      throw new Error(
-        `No form image previews found for opportunity ${this.id}`,
-      );
-    }
-    return urls;
-  }
-
-  get totalPages() {
-    return this.imageUrls.length;
-  }
-
-  get currentUrl() {
-    return this.imageUrls[this.index];
-  }
-
-  get currentPage() {
-    return this.index + 1;
-  }
-
-  next() {
-    this.index = (this.index + 1) % this.totalPages;
-  }
-
-  previous() {
-    let newIndex = (this.index - 1) % this.totalPages;
-    if (newIndex < 0) {
-      newIndex = newIndex + this.totalPages;
-    }
-    this.index = newIndex;
+  /**
+   * Full page contents as a single string (presumably Markdown to be rendered to HTML)
+   */
+  get contents() {
+    return this.config.copy[this.pageId].fullPage;
   }
 }

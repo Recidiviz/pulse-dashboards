@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, spacing, typography } from "@recidiviz/design-system";
+import { Button, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
@@ -25,7 +25,6 @@ import { useRootStore } from "../StoreProvider/useRootStore";
 import pageLandingCopy from "./pageLandingCopy.md?raw";
 
 const Wrapper = styled.div`
-  color: ${palette.slate85};
   margin ${rem(spacing.xxl)} 12%;
   padding: 0;
 `;
@@ -45,7 +44,6 @@ const LandingPageCopyWrapper = styled(CopyWrapper)`
   p,
   li {
     ${typography.Body19}
-    color: ${palette.slate85};
   }
 
   li {

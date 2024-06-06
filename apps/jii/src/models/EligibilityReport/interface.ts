@@ -17,8 +17,12 @@
 
 import { RequirementCopy } from "../../configs/types";
 
-export type RequirementsSection = {
+/**
+ * `icon` property should correspond to design system Icon name
+ */
+export type RequirementsSectionContent = {
   label: string;
+  icon: string;
   requirements: Array<RequirementCopy>;
 };
 
@@ -26,5 +30,5 @@ export interface EligibilityReport {
   hasEligibilityData: boolean;
   headline: string;
   subheading: string;
-  requirements: Array<RequirementsSection>;
+  requirements: Array<RequirementsSectionContent>;
 }

@@ -26,7 +26,7 @@ import {
   hydrateTemplate,
 } from "../../../configs/hydrateTemplate";
 import { OpportunityConfig } from "../../../configs/types";
-import { EligibilityReport, RequirementsSection } from "../interface";
+import { EligibilityReport, RequirementsSectionContent } from "../interface";
 
 const APPLICATION_DATE_OFFSET_MONTHS = 3;
 
@@ -124,7 +124,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
    * For use when eligibility data is not present; should return a single section
    * of all tracked and untracked requirements without any personalization
    */
-  private get staticRequirements(): [RequirementsSection] {
+  private get staticRequirements(): [RequirementsSectionContent] {
     const trackedRequirements = Object.values(
       this.config.copy.requirements.trackedCriteria,
     ).map((r) => ({
@@ -135,6 +135,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     return [
       {
         label: this.config.copy.requirements.staticRequirementsLabel,
+        icon: "ArrowCircled",
         requirements: [
           ...trackedRequirements,
           ...this.config.copy.requirements.untrackedCriteria,
@@ -172,7 +173,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
   get requirements(): EligibilityReport["requirements"] {
     if (!this.eligibilityData) return this.staticRequirements;
 
-    const sections: Array<RequirementsSection> = [];
+    const sections: Array<RequirementsSectionContent> = [];
 
     const { trackedCriteria } = this.config.copy.requirements;
     const orderedCriteria = Object.keys(trackedCriteria);
@@ -184,6 +185,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     if (Object.keys(met).length) {
       sections.push({
         label: "Requirements you've met",
+        icon: "Success",
         requirements: orderedCriteria
           .filter((key): key is keyof typeof met => key in met)
           .map((key) => ({
@@ -200,6 +202,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     if (Object.keys(notMet).length) {
       sections.push({
         label: "Requirements you haven't met yet",
+        icon: "CloseOutlined",
         requirements: orderedCriteria
           .filter((key): key is keyof typeof notMet => key in notMet)
           .map((key) =>
@@ -222,6 +225,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       sections.push({
         label:
           "Check with your case manager to see if you’ve met these requirements",
+        icon: "ArrowCircled",
         requirements: this.config.copy.requirements.untrackedCriteria,
       });
     }

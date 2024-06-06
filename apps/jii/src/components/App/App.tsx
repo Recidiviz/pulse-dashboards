@@ -25,6 +25,7 @@ import "@fontsource/libre-baskerville";
 import {
   GlobalStyle as GlobalStyleBase,
   palette,
+  typography,
 } from "@recidiviz/design-system";
 import { Route, Routes } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components/macro";
@@ -40,13 +41,17 @@ import { PageLanding } from "../pages/PageLanding";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
+import { StaticPage } from "../StaticPage/StaticPage";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div``;
 
 const GlobalStyle = createGlobalStyle`
   body {
+    ${typography.Sans14}
+    
     background: ${palette.white};
+    color: ${palette.text.normal};
   }
 `;
 
@@ -68,12 +73,15 @@ export function App() {
               <Route path="search" element={<PageSearch />} />
               <Route path=":opportunityUrl">
                 <Route index element={<PageOpportunityEligibility />} />
-                <Route path="about" element={<div>about opportunity</div>} />
+                <Route path="about" element={<StaticPage pageId="about" />} />
                 <Route
                   path="requirements"
-                  element={<div>opportunity requirements</div>}
+                  element={<StaticPage pageId="requirements" />}
                 />
-                <Route path="nextSteps" element={<div>next steps</div>} />
+                <Route
+                  path="next-steps"
+                  element={<StaticPage pageId="nextSteps" />}
+                />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />

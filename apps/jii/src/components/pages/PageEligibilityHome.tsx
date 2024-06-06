@@ -29,10 +29,10 @@ export const PageEligibilityHome: FC = observer(function PageEligibilityHome() {
   const { externalId, hasEnhancedPermission } = residentsStore.userStore;
   if (externalId) {
     // for convenience, while there is only one opp configured we skip the lookup step
-    return <Navigate to="sccp" />;
+    return <Navigate to="sccp" replace />;
   }
 
-  if (hasEnhancedPermission) return <Navigate to="search" />;
+  if (hasEnhancedPermission) return <Navigate to="search" replace />;
 
   return <NotFound />;
 });

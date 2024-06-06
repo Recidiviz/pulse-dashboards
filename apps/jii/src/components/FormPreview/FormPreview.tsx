@@ -30,17 +30,17 @@ const ModalTrigger = styled.span.attrs({ role: "button", tabIndex: 0 })`
   ${clickableText}
 `;
 
-const InlineIcon = styled(Icon).attrs({ size: 12 })`
+const InlineIcon = styled(Icon).attrs({ size: 12, kind: "Open" })`
   display: inline-block;
   margin-left: 0.6em;
 `;
 
 export const FormPreview: FC<{
+  icon?: boolean;
   linkText?: string;
-}> = ({ linkText }) => {
+}> = ({ icon, linkText }) => {
   const { showModal, modalProps } = useModal();
   const { opportunityUrl } = useParams();
-
   return (
     <>
       <ModalTrigger
@@ -57,7 +57,7 @@ export const FormPreview: FC<{
         }}
       >
         {linkText}
-        <InlineIcon kind="Open" />
+        {icon && <InlineIcon />}
       </ModalTrigger>
       <Modal {...modalProps}>
         <ImagePreview opportunityUrl={opportunityUrl} />

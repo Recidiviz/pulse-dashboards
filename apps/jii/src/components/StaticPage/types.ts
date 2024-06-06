@@ -15,21 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
-
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageLanding } from "./PageLanding";
-
-export const PageHome = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
-
-  if (authClient.isAuthorized) return <Navigate to="/eligibility" replace />;
-
-  if (authClient.isEmailVerificationRequired)
-    return <Navigate to="/verify" replace />;
-
-  return <PageLanding />;
-});
+export type PageId = "about" | "requirements" | "nextSteps";

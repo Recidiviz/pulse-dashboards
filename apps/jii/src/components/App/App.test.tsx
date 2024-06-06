@@ -121,7 +121,11 @@ describe("App", () => {
       </MemoryRouter>,
     );
     await waitFor(() =>
-      expect(screen.getByText("about opportunity")).toBeInTheDocument(),
+      expect(
+        screen.getByRole("heading", {
+          name: "About the Supervised Community Confinement Program (SCCP)",
+        }),
+      ).toBeInTheDocument(),
     );
   });
 
@@ -132,7 +136,26 @@ describe("App", () => {
       </MemoryRouter>,
     );
     await waitFor(() =>
-      expect(screen.getByText("opportunity requirements")).toBeInTheDocument(),
+      expect(
+        screen.getByRole("heading", {
+          name: "Eligibility Requirements for the Supervised Community Confinement Program (SCCP)",
+        }),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("should render the SCCP next steps page", async () => {
+    render(
+      <MemoryRouter initialEntries={["/eligibility/sccp/next-steps"]}>
+        <App />
+      </MemoryRouter>,
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", {
+          name: "SCCP Application and Essay Tips",
+        }),
+      ).toBeInTheDocument(),
     );
   });
 });

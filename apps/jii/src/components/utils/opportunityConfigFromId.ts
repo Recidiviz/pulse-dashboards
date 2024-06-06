@@ -15,21 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
+import { IncarcerationOpportunityId } from "../../configs/types";
+import { ResidentsStore } from "../../datastores/ResidentsStore";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageLanding } from "./PageLanding";
-
-export const PageHome = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
-
-  if (authClient.isAuthorized) return <Navigate to="/eligibility" replace />;
-
-  if (authClient.isEmailVerificationRequired)
-    return <Navigate to="/verify" replace />;
-
-  return <PageLanding />;
-});
+/**
+ * Looks up opportunity config from residents config given its ID. Will throw if not found.
+ */
+export function opportunityConfigFromId(
+  id: IncarcerationOpportunityId,
+  residentsStore: ResidentsStore,
+) {
+  const config = residentsStore.config.incarcerationOpportunities[id];
+  if (!config) {
+    throw new Error(`Missing config for ${id}`);
+  }
+  return config;
+}

@@ -42,16 +42,19 @@ export type OpportunityConfig = {
     about: {
       sections: [AboutSection, ...AboutSection[]];
       linkText: string;
+      fullPage: string;
     };
     requirements: {
       trackedCriteria: Record<string, RequirementCopy>;
       untrackedCriteria: Array<RequirementCopy>;
       staticRequirementsLabel: string;
       linkText: string;
+      fullPage: string;
     };
     nextSteps: {
       body: string;
       linkText: string;
+      fullPage: string;
     };
     menuLabel: string;
     formPreview: {

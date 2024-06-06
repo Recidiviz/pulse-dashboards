@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans16, Serif34 } from "@recidiviz/design-system";
+import { Body32, Sans16 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ const ResidentsSearchWithPresenter: React.FC<{
   return (
     <PageHydrator hydratable={presenter}>
       <div>
-        <Serif34 as="h1">Select a resident</Serif34>
+        <Body32 as="h1">Select a resident</Body32>
         <Sans16>
           <ReactSelect
             options={presenter.selectOptions}

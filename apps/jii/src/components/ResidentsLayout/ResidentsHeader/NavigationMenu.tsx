@@ -21,35 +21,35 @@ import {
   DropdownMenuItem,
   DropdownToggle,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 
-export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> = ({
-  presenter,
-}) => {
-  const navigate = useNavigate();
-  return (
-    <nav>
-      <Dropdown>
-        <DropdownToggle icon="Hamburger" iconSize={16} kind="borderless" />
-        <DropdownMenu alignment="right">
-          <>
-            {presenter.links.map((link) => (
-              <DropdownMenuItem
-                key={link.url}
-                onClick={() => navigate(link.url)}
-              >
-                {link.text}
+export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> =
+  observer(function NavigationMenu({ presenter }) {
+    const navigate = useNavigate();
+    return (
+      <nav>
+        <Dropdown>
+          <DropdownToggle icon="Hamburger" iconSize={16} kind="borderless" />
+          <DropdownMenu alignment="right">
+            <>
+              {presenter.links.map((link) => (
+                <DropdownMenuItem
+                  key={link.url}
+                  onClick={() => navigate(link.url)}
+                >
+                  {link.text}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuItem onClick={() => presenter.logout()}>
+                Log out
               </DropdownMenuItem>
-            ))}
-            <DropdownMenuItem onClick={() => presenter.logout()}>
-              Log out
-            </DropdownMenuItem>
-          </>
-        </DropdownMenu>
-      </Dropdown>
-    </nav>
-  );
-};
+            </>
+          </DropdownMenu>
+        </Dropdown>
+      </nav>
+    );
+  });

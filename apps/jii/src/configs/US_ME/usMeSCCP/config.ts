@@ -19,7 +19,10 @@ import { OpportunityConfig } from "../../types";
 import aboutBody1 from "./aboutBody1.md?raw";
 import aboutBody2 from "./aboutBody2.md?raw";
 import aboutBody3 from "./aboutBody3.md?raw";
+import aboutPage from "./aboutPage.md?raw";
 import nextStepsBody from "./nextStepsBody.md?raw";
+import nextStepsPage from "./nextStepsPage.md?raw";
+import requirementsPage from "./requirementsPage.md?raw";
 
 export const config: OpportunityConfig = {
   urlSection: "sccp",
@@ -57,6 +60,7 @@ export const config: OpportunityConfig = {
         { heading: "How to apply", body: aboutBody3 },
       ],
       linkText: "Learn more about how the program works",
+      fullPage: aboutPage,
     },
     requirements: {
       trackedCriteria: {
@@ -105,10 +109,12 @@ export const config: OpportunityConfig = {
       staticRequirementsLabel:
         "In order to be eligible for SCCP, you must have met the following requirements:",
       linkText: "Get details about each requirement",
+      fullPage: requirementsPage,
     },
     nextSteps: {
       body: nextStepsBody,
-      linkText: "How to put together a strong application",
+      linkText: "How to put together a strong application and essay",
+      fullPage: nextStepsPage,
     },
     menuLabel: "SCCP",
     formPreview: { title: "SCCP Application" },

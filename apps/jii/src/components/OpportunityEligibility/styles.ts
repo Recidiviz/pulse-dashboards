@@ -15,21 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
+import { palette, spacing, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageLanding } from "./PageLanding";
+export const Section = styled.section`
+  border: 1px solid ${palette.slate20};
+  border-radius: ${rem(5)};
+  margin: ${rem(spacing.lg)} 0;
+  padding: ${rem(spacing.xl)};
+  text-wrap: pretty;
+`;
 
-export const PageHome = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
+export const SectionHeading = styled.h2`
+  ${typography.Sans24}
 
-  if (authClient.isAuthorized) return <Navigate to="/eligibility" replace />;
-
-  if (authClient.isEmailVerificationRequired)
-    return <Navigate to="/verify" replace />;
-
-  return <PageLanding />;
-});
+  color: ${palette.pine1};
+  margin-bottom: ${rem(spacing.xl)};
+`;

@@ -19,27 +19,83 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
 import { FC } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { FormPreview } from "../FormPreview/FormPreview";
 import { clickableText } from "../styles/clickableText";
+import { InternalOrExternalLink } from "./InternalOrExternalLink";
 
-const StyledMarkdown = styled(Markdown)`
+const MarkdownWrapper = styled(Markdown)`
+  ${typography.Body14}
+
+  h1 {
+    ${typography.Sans24}
+
+    color: ${palette.pine2};
+    font-size: ${rem(34)};
+    margin: ${rem(spacing.xxl)} 0 ${rem(spacing.xxl)};
+  }
+
   h2 {
     ${typography.Sans18}
 
-    color: ${palette.text.normal};
-    margin: 0 0 ${rem(spacing.lg)};
+    color: ${palette.pine2};
+    margin: ${rem(spacing.xl)} 0 ${rem(spacing.lg)};
   }
 
-  p {
-    ${typography.Body14}
+  ul {
+    padding-left: ${rem(spacing.md)};
+    list-style-type: none;
+    position: relative;
 
-    color: ${palette.text.normal};
+    li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+    }
+  }
+
+  ol {
+    padding-left: ${rem(spacing.md)};
+  }
+
+  dl {
+    column-gap: ${rem(spacing.lg)};
+    display: grid;
+    grid-template-columns: 1fr 4.5fr;
+    margin: 2em 0;
+    row-gap: ${rem(spacing.lg)};
+  }
+
+  dt {
+    color: ${palette.text.caption};
+    padding-top: ${rem(spacing.lg)};
+    text-wrap: balance;
+
+    &:first-of-type {
+      padding: 0;
+    }
+  }
+
+  dd {
+    border-top: 1px solid ${palette.slate20};
+    padding-top: ${rem(spacing.lg)};
+
+    &:first-of-type {
+      border: none;
+      padding: 0;
+    }
   }
 
   a {
     ${clickableText}
+  }
+
+  hr {
+    margin: ${rem(spacing.xxl)} 0;
+    border-color: ${palette.slate20};
+    border-style: solid;
   }
 `;
 
@@ -47,18 +103,24 @@ const StyledMarkdown = styled(Markdown)`
  * Renders Markdown children (via {@link https://www.npmjs.com/package/markdown-to-jsx|markdown-to-jsx})
  * and applies a standard stylesheet to the result
  */
-export const CopyWrapper: FC<{ children: string }> = ({ children }) => {
+export const CopyWrapper: FC<{ children: string; className?: string }> = ({
+  children,
+  className,
+}) => {
   return (
-    <StyledMarkdown
+    <MarkdownWrapper
+      className={className}
       options={{
+        // ensures the styles defined above cascade correctly if there is only one block element in children
+        forceWrapper: true,
         overrides: {
-          FormPreview: {
-            component: FormPreview,
-          },
+          FormPreview: FormPreview,
+          a: InternalOrExternalLink,
+          InternalLink: Link,
         },
       }}
     >
       {children}
-    </StyledMarkdown>
+    </MarkdownWrapper>
   );
 };

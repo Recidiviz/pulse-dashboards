@@ -1,3 +1,3 @@
-If you’re interested in SCCP, talk to your case manager first to see if you’ve met the three requirements above.
-
-Here’s a [blank application form]() that you can look at and begin filling out
+- If you’re interested in SCCP, talk to your case manager about your home plan, employment plan, and any programs you’re required to complete in the facility.
+- Ask your case manager for a blank application form that you can begin filling out
+- Start writing your SCCP application essay

@@ -15,21 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
+import { ResidentsStore } from "../../datastores/ResidentsStore";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageLanding } from "./PageLanding";
-
-export const PageHome = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
-
-  if (authClient.isAuthorized) return <Navigate to="/eligibility" replace />;
-
-  if (authClient.isEmailVerificationRequired)
-    return <Navigate to="/verify" replace />;
-
-  return <PageLanding />;
-});
+/**
+ * Looks up opportunity ID from residents config given its URL segment. Will throw if not found.
+ */
+export function opportunityIdFromUrl(
+  url: string,
+  residentsStore: ResidentsStore,
+) {
+  const id = residentsStore.opportunityIdsByUrl.get(url);
+  if (!id) {
+    throw new Error(`No opportunity ID matches url ${url}`);
+  }
+  return id;
+}

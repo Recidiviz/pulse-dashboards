@@ -63,6 +63,10 @@ const Controls = styled.div`
   color: ${palette.slate85};
   display: flex;
   justify-content: space-between;
+
+  button {
+    gap: ${rem(spacing.sm)};
+  }
 `;
 
 /**

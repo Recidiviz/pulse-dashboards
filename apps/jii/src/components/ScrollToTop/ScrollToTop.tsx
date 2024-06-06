@@ -15,21 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageLanding } from "./PageLanding";
+export function ScrollToTop() {
+  const { pathname } = useLocation();
 
-export const PageHome = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-  if (authClient.isAuthorized) return <Navigate to="/eligibility" replace />;
-
-  if (authClient.isEmailVerificationRequired)
-    return <Navigate to="/verify" replace />;
-
-  return <PageLanding />;
-});
+  return null;
+}

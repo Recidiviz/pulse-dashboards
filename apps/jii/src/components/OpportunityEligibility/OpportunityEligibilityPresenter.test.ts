@@ -112,9 +112,10 @@ describe("after hydration", () => {
     expect(presenter.requirementsContent).toMatchInlineSnapshot(`
       {
         "linkText": "Get details about each requirement",
-        "linkUrl": "/eligibility/sccp/requirements",
+        "linkUrl": "requirements",
         "sections": [
           {
+            "icon": "Success",
             "label": "Requirements you've met",
             "requirements": [
               {
@@ -132,6 +133,7 @@ describe("after hydration", () => {
             ],
           },
           {
+            "icon": "CloseOutlined",
             "label": "Requirements you haven't met yet",
             "requirements": [
               {
@@ -141,6 +143,7 @@ describe("after hydration", () => {
             ],
           },
           {
+            "icon": "ArrowCircled",
             "label": "Check with your case manager to see if you’ve met these requirements",
             "requirements": [
               {

@@ -15,73 +15,64 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Markdown from "markdown-to-jsx";
+import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { FC, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { rem } from "polished";
+import { FC } from "react";
+import styled from "styled-components/macro";
 
 import { IncarcerationOpportunityId } from "../../configs/types";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { AboutSection } from "./AboutSection";
+import { ButtonLink } from "./ButtonLink";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
+import { RequirementsSection } from "./RequirementsSection";
+import { Section, SectionHeading } from "./styles";
+
+const Header = styled.header`
+  margin: ${rem(spacing.xl)} 0;
+`;
+
+const Headline = styled.h1`
+  ${typography.Sans24}
+
+  color: ${palette.pine2};
+  font-size: ${rem(34)};
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
+const Subheading = styled.h2`
+  ${typography.Sans18}
+
+  color: ${palette.slate85};
+`;
 
 const OpportunityEligibilityWithPresenter: FC<{
   presenter: OpportunityEligibilityPresenter;
 }> = observer(function OpportunityEligibilityWithPresenter({ presenter }) {
   return (
     <article>
-      <h1>{presenter.headline}</h1>
-      {presenter.subheading && <h2>{presenter.subheading}</h2>}
-      <section>
-        {presenter.aboutContent.sections.map((s, i) => (
-          <div key={s.heading}>
-            {i ? <h2>{s.heading}</h2> : <h1>{s.heading}</h1>}
-            <CopyWrapper>{s.body}</CopyWrapper>
-          </div>
-        ))}
-        <Link to={presenter.aboutContent.linkUrl}>
-          {presenter.aboutContent.linkText}
-        </Link>
-      </section>
-      <section>
-        <h1>Requirements</h1>
-        <dl>
-          {presenter.requirementsContent.sections.map((section) => (
-            <Fragment key={section.label}>
-              <dt>{section.label}</dt>
-              <dd>
-                <ul>
-                  {section.requirements.map((r) => (
-                    <li key={r.criterion}>
-                      {r.criterion}
-                      {r.ineligibleReason && (
-                        <>
-                          <br />
-                          {r.ineligibleReason}
-                        </>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </dd>
-            </Fragment>
-          ))}
-        </dl>
-        {presenter.requirementsContent && (
-          <Link to={presenter.requirementsContent.linkUrl}>
-            {presenter.requirementsContent.linkText}
-          </Link>
+      <Header>
+        <Headline>{presenter.headline}</Headline>
+        {presenter.subheading && (
+          <Subheading>{presenter.subheading}</Subheading>
         )}
-      </section>
+      </Header>
+
+      <AboutSection presenter={presenter} />
+
+      <RequirementsSection presenter={presenter} />
+
       {presenter.nextStepsContent && (
-        <section>
-          <h1>Next steps</h1>
-          <Markdown>{presenter.nextStepsContent.body}</Markdown>
-          <Link to={presenter.nextStepsContent.linkUrl}>
+        <Section>
+          <SectionHeading>Next steps</SectionHeading>
+          <CopyWrapper>{presenter.nextStepsContent.body}</CopyWrapper>
+          <ButtonLink to={presenter.nextStepsContent.linkUrl}>
             {presenter.nextStepsContent.linkText}
-          </Link>
-        </section>
+          </ButtonLink>
+        </Section>
       )}
     </article>
   );
