@@ -49,6 +49,8 @@ export const usMePersonRecord: WorkflowsResidentRecord = {
     "usMeFurloughRelease",
     "usMeWorkRelease",
   ],
+
+  metadata: {},
 };
 
 export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
@@ -68,6 +70,8 @@ export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
   admissionDate: "2020-03-10",
   releaseDate: "2024-05-20",
   allEligibleOpportunities: ["usMeSCCP"],
+
+  metadata: {},
 };
 
 export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferralRecord =

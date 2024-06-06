@@ -50,6 +50,7 @@ function createTestUnit() {
     officerId: "zzz",
     allEligibleOpportunities: [],
     facilityId: "facility1",
+    metadata: {},
   };
 
   oppRecord = {

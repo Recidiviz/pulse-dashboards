@@ -18,6 +18,7 @@
 import { uniqBy } from "lodash";
 
 import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
+import { StateMetadata } from "../FirestoreStore/types";
 import { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
@@ -135,6 +136,10 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
 
   get usTnFacilityAdmissionDate(): Date | undefined {
     return optionalFieldToDate(this.record.usTnFacilityAdmissionDate);
+  }
+
+  get metadata(): StateMetadata {
+    return this.record.metadata;
   }
 
   get portionServedDates(): PortionServedDates {

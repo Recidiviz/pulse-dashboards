@@ -52,6 +52,7 @@ function createTestUnit() {
     officerId: "OFFICER1",
     allEligibleOpportunities: ["usMiSecurityClassificationCommitteeReview"],
     gender: "female",
+    metadata: {},
   };
 
   const oppRecord: usMiSecurityClassificationCommitteeReviewRecord["output"] = {

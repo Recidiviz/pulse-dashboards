@@ -38,6 +38,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
     releaseDate: "2025-10-22",
+    metadata: {},
   },
   {
     allEligibleOpportunities: [],
@@ -56,6 +57,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
     releaseDate: "2026-01-07",
+    metadata: {},
   },
   {
     allEligibleOpportunities: [],
@@ -74,6 +76,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2020-05-17",
     releaseDate: "2025-07-24",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usIdExpandedCRC"],
@@ -92,6 +95,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
     releaseDate: "2025-10-22",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usIdCRCWorkRelease"],
@@ -109,6 +113,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2020-01-12",
     releaseDate: "2026-07-06",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usIdCRCWorkRelease", "usIdCRCResidentWorker"],
@@ -126,6 +131,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2017-07-12",
     releaseDate: "2027-06-06",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usIdCRCResidentWorker"],
@@ -143,6 +149,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2021-07-12",
     releaseDate: "2027-06-06",
+    metadata: {},
   },
 
   {
@@ -168,6 +175,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     releaseDate: relativeFixtureDate({ months: 35 }),
     sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
     portionServedNeeded: "2/3",
+    metadata: {},
   },
   {
     allEligibleOpportunities: [
@@ -193,6 +201,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     releaseDate: relativeFixtureDate({ months: 26 }),
     sccpEligibilityDate: relativeFixtureDate({ months: 2 }),
     portionServedNeeded: "2/3",
+    metadata: {},
   },
   {
     allEligibleOpportunities: [
@@ -219,6 +228,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
       months: -3,
     }),
     portionServedNeeded: "1/2",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMeSCCP"],
@@ -241,6 +251,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
       months: -3,
     }),
     portionServedNeeded: "1/2",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMeSCCP"],
@@ -262,6 +273,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     releaseDate: relativeFixtureDate({ years: 2, months: 5 }),
     sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
     portionServedNeeded: "1/2",
+    metadata: {},
   },
 
   {
@@ -285,6 +297,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -8, months: -1 }),
     releaseDate: relativeFixtureDate({ months: 35 }),
+    metadata: {},
   },
   {
     allEligibleOpportunities: [
@@ -307,6 +320,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -46, days: 1 }),
     releaseDate: relativeFixtureDate({ months: 26 }),
+    metadata: {},
   },
   {
     allEligibleOpportunities: [
@@ -329,6 +343,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -46, days: 1 }),
     releaseDate: relativeFixtureDate({ months: 26 }),
+    metadata: {},
   },
   {
     allEligibleOpportunities: [
@@ -350,6 +365,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -20, days: 1 }),
     releaseDate: relativeFixtureDate({ months: 3 }),
+    metadata: {},
   },
 
   {
@@ -367,6 +383,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT B",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
@@ -382,7 +399,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     facilityId: "FACILITY2",
     unitId: "UNIT C",
     custodyLevel: "MINIMUM",
-    // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
@@ -399,6 +416,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT D",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
@@ -415,6 +433,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT E",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
@@ -431,6 +450,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT F",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
@@ -447,6 +467,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT G",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
@@ -463,6 +484,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT H",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
@@ -479,6 +501,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT E",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
@@ -495,6 +518,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT F",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
@@ -511,6 +535,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT G",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingInitialHearing"],
@@ -527,6 +552,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT H",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
@@ -543,6 +569,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT E",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
@@ -559,6 +586,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT F",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
@@ -575,6 +603,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT G",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingReviewHearing"],
@@ -591,6 +620,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     unitId: "UNIT H",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
@@ -609,6 +639,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
     releaseDate: "2025-10-22",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
@@ -627,6 +658,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2020-08-12",
     releaseDate: "2024-11-27",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usTnAnnualReclassification"],
@@ -645,6 +677,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2020-08-12",
     releaseDate: "2025-01-01",
+    metadata: {},
   },
   {
     allEligibleOpportunities: ["usTnAnnualReclassification"],
@@ -663,6 +696,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2021-08-12",
     releaseDate: "2025-12-01",
+    metadata: {},
   },
 ];
 

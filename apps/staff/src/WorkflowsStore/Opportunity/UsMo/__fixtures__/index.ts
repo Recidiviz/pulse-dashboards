@@ -44,6 +44,7 @@ export const usMoPersonRecord: WorkflowsResidentRecord = {
     "usMoOverdueRestrictiveHousingRelease",
     "usMoOverdueRestrictiveHousingInitialHearing",
   ],
+  metadata: {},
 };
 
 export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHousingStatusHearingReferralRecord =

@@ -20,6 +20,7 @@ import React from "react";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
+import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
   CaseNoteDate,
   DetailsHeading,
@@ -33,6 +34,7 @@ import { UsMoClasses } from "./UsMoClasses";
 import { UsMoConductViolations } from "./UsMoConductViolations";
 import { UsMoMostRecentHearingComments } from "./UsMoMostRecentHearingComments";
 import { UsMoSanctions } from "./UsMoSanctions";
+import { UsMoSolitary } from "./UsMoSolitary";
 import { UsMoUnwaivedEnemies } from "./UsMoUnwaivedEnemies";
 
 export function UsMoRestrictiveHousing({
@@ -123,6 +125,7 @@ export function UsMoRestrictiveHousing({
       <UsMoUnwaivedEnemies unwaivedEnemies={unwaivedEnemies} />
 
       <UsMoSanctions sanctions={allSanctions} />
+      <UsMoSolitary person={opportunity.person as Resident} />
 
       <UsMoConductViolations
         majorCdvs={majorCdvs}

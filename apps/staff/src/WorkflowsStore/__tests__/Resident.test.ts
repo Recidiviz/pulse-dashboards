@@ -49,6 +49,7 @@ beforeEach(() => {
     releaseDate: "2029-06-01",
     sccpEligibilityDate: "2026-01-01",
     personType: "RESIDENT",
+    metadata: {},
   };
 });
 

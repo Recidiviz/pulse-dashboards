@@ -293,6 +293,7 @@ export const mockResidents: WorkflowsResidentRecord[] = [
     unitId: "UNIT E",
     personExternalId: "999",
     displayId: "d999",
+    metadata: {},
   },
 ];
 

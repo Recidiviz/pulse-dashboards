@@ -92,6 +92,8 @@ export const residentRecordBase: WorkflowsResidentRecord = {
   releaseDate: "2024-12-31",
   allEligibleOpportunities: [],
   personType: "RESIDENT",
+
+  metadata: {},
 };
 
 export const usTnUserRecord: CombinedUserRecord = {
