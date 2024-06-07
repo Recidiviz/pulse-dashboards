@@ -9,7 +9,6 @@ import {
   fakeStaff,
 } from "~sentencing-server/test/setup/seed";
 
-// TODO(https://github.com/Recidiviz/recidiviz-data/issues/30276): re-enable once the integration test db is set up
 describe("router", () => {
   describe("getStaff", () => {
     test("should return staff if staff exists", async () => {

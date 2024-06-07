@@ -13,16 +13,17 @@ import { AppRouter } from "~sentencing-server/trpc/router";
 const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3003;
 
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
+export let testServer: ReturnType<typeof buildServer>;
 
 beforeAll(async () => {
   const host = process.env["HOST"] ?? "localhost";
 
-  const server = buildServer();
+  testServer = buildServer();
 
   // Start listening.
-  server.listen({ port, host }, (err) => {
+  testServer.listen({ port, host }, (err) => {
     if (err) {
-      server.log.error(err);
+      testServer.log.error(err);
       process.exit(1);
     } else {
       console.log(`[ ready ] http://${host}:${port}`);
