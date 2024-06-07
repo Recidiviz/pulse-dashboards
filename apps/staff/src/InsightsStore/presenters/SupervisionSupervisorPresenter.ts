@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { uniq } from "lodash/fp";
+import { captureException } from "@sentry/react";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import {
@@ -28,7 +28,11 @@ import {
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { ConfigLabels, OutlierOfficerData } from "./types";
+import {
+  ConfigLabels,
+  OutlierMetricOfficerGroup,
+  OutlierOfficerData,
+} from "./types";
 import { getOutlierOfficerData } from "./utils";
 
 export class SupervisionSupervisorPresenter implements Hydratable {
@@ -147,29 +151,60 @@ export class SupervisionSupervisorPresenter implements Hydratable {
     return this.supervisionStore.labels;
   }
 
-  /**
-   * Return all outlier officers of this supervisor, grouped by metricId
-   */
-  get outlierOfficersByMetric(): {
-    metricId: string;
-    officersForMetric: OutlierOfficerData[];
-  }[] {
-    const metricsWithOutliers = uniq(
-      this.outlierOfficersData?.flatMap((o) =>
-        o.outlierMetrics.map((om) => om.metricId),
-      ),
-    );
+  private get outlierOfficersByMetricOrError():
+    | OutlierMetricOfficerGroup[]
+    | Error {
+    try {
+      const officersByMetric:
+        | Map<string, OutlierMetricOfficerGroup>
+        | undefined = this.outlierOfficersData?.reduce(
+        (officersByMetric, officer) => {
+          for (const outlierMetric of officer.outlierMetrics) {
+            const metricOfficerGroup = officersByMetric.get(
+              outlierMetric.metricId,
+            );
+            if (metricOfficerGroup) {
+              metricOfficerGroup.officersForMetric.push(officer);
+            } else {
+              const {
+                statusesOverTime,
+                metricId,
+                currentPeriodData,
+                ...metricConfigWithBenchmark
+              } = outlierMetric;
+              officersByMetric.set(outlierMetric.metricId, {
+                metricId: outlierMetric.metricId,
+                officersForMetric: [officer],
+                metricConfigWithBenchmark,
+              });
+            }
+          }
+          return officersByMetric;
+        },
+        new Map<string, OutlierMetricOfficerGroup>(),
+      );
 
-    return metricsWithOutliers.map((m) => {
-      const officersForMetric =
-        this.outlierOfficersData?.filter((o) =>
-          o.outlierMetrics.map((om) => om.metricId).includes(m),
-        ) || []; // Empty array should never happen but makes for simpler typing.
-      return {
-        metricId: m,
-        officersForMetric,
-      };
-    });
+      if (officersByMetric === undefined) {
+        throw new Error(
+          "Missing expected data for grouping officers by metric",
+        );
+      }
+      return Array.from(officersByMetric.values());
+    } catch (e) {
+      return castToError(e);
+    }
+  }
+
+  /**
+   * Return all outlier officers of this supervisor, grouped by metricId. Includes
+   * officer-agnostic metric info (see metricConfigWithBenchmark field).
+   */
+  get outlierOfficersByMetric(): OutlierMetricOfficerGroup[] | undefined {
+    if (this.outlierOfficersByMetricOrError instanceof Error) {
+      captureException(this.outlierOfficersByMetricOrError);
+      return undefined;
+    }
+    return this.outlierOfficersByMetricOrError;
   }
 
   private expectMetricsPopulated() {

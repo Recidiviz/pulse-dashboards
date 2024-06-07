@@ -24,7 +24,10 @@ import styled from "styled-components/macro";
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
+import {
+  OutlierMetricOfficerGroup,
+  OutlierOfficerData,
+} from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";
 import { InsightsSwarmPlot } from "../InsightsSwarmPlot";
@@ -150,10 +153,7 @@ export const EmptyCard = ({ message }: { message: string }) => {
 };
 
 type InsightsStaffCardType = {
-  outlierOfficersByMetric: {
-    metricId: string;
-    officersForMetric: OutlierOfficerData[];
-  }[];
+  outlierOfficersByMetric: OutlierMetricOfficerGroup[] | undefined;
   officers: OutlierOfficerData[] | undefined;
   title?: string;
 };
@@ -173,8 +173,15 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
 
   const { metricConfigsById, methodologyUrl } = supervisionStore;
 
-  if (!officers || officers.length === 0) {
-    return <EmptyCard message="No officer outcomes to review this month." />;
+  if (
+    !officers ||
+    officers.length === 0 ||
+    !outlierOfficersByMetric ||
+    outlierOfficersByMetric.length === 0
+  ) {
+    return (
+      <EmptyCard message="Nice! No officers are outliers on any metrics this month." />
+    );
   }
 
   return (

@@ -36,6 +36,13 @@ export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   config: Omit<MetricConfig, "metricBenchmarksByCaseloadType">;
   benchmark: MetricBenchmark & { currentPeriodTarget: number };
 };
+
+// A officer-agnostic type that combines a metric config with the associated metric benchmark info
+export type MetricConfigWithBenchmark = {
+  config: ValuesType<InsightsConfig["metrics"]>;
+  benchmark: MetricBenchmark & { currentPeriodTarget: number };
+};
+
 export type ConfigLabels = Pick<
   InsightsConfig,
   | "supervisionOfficerLabel"
@@ -65,8 +72,11 @@ export type HighlightedOfficersDetail = {
 
 /**
  * All outlier officers for a given metric, grouped by the outlier metricId.
+ *
+ * TODO(#5615): Pare down obsolete data being presented.
  */
 export type OutlierMetricOfficerGroup = {
   metricId: string;
+  metricConfigWithBenchmark: MetricConfigWithBenchmark;
   officersForMetric: OutlierOfficerData[];
 };
