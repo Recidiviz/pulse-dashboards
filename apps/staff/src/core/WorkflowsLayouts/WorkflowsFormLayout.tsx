@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -38,7 +40,6 @@ import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCRevie
 import { FormUsOrEarnedDischarge } from "../Paperwork/US_OR/EarnedDischarge/FormUsOrEarnedDischarge";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
-import { workflowsUrl } from "../views";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -112,11 +113,11 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
     workflowsStore: {
       selectedOpportunityType: opportunityType,
       selectedPerson,
-      homepage,
     },
   } = useRootStore();
   const [currentView, setCurrentView] =
     useState<FormSidebarView>("OPPORTUNITY");
+  const navigate = useNavigate();
 
   const opportunity =
     opportunityType && selectedPerson?.verifiedOpportunities[opportunityType];
@@ -146,6 +147,16 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
       />
     );
 
+  const handleBack = () => {
+    if (currentView === "DENIAL") {
+      setCurrentView("OPPORTUNITY");
+    } else if (currentView === "OPPORTUNITY") {
+      navigate(-1);
+    } else {
+      assertNever(currentView);
+    }
+  };
+
   const hydrated = (
     <Wrapper>
       <Sidebar>
@@ -155,18 +166,9 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
         />
         <SidebarSection>
           <BackButtonWrapper>
-            {currentView === "OPPORTUNITY" && (
-              <NavigationBackButton action={{ url: workflowsUrl(homepage) }}>
-                Home
-              </NavigationBackButton>
-            )}
-            {currentView === "DENIAL" && (
-              <NavigationBackButton
-                action={{ onClick: () => setCurrentView("OPPORTUNITY") }}
-              >
-                Back
-              </NavigationBackButton>
-            )}
+            <NavigationBackButton action={{ onClick: handleBack }}>
+              Back
+            </NavigationBackButton>
           </BackButtonWrapper>
           {sidebarContents}
         </SidebarSection>
