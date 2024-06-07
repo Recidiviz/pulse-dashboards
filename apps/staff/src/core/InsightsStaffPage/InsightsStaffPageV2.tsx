@@ -25,7 +25,7 @@ import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenters/SupervisionOfficerDetailPresenter";
-import { formatDate, toTitleCase } from "../../utils";
+import { toTitleCase } from "../../utils";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import InsightsPageLayout from "../InsightsPageLayout";
@@ -62,6 +62,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     goToSupervisorInfo,
     labels,
     trackMetricTabViewed,
+    timePeriod,
   } = presenter;
 
   useEffect(() => {
@@ -129,9 +130,6 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     >
       <Wrapper isTablet={isTablet}>
         {outlierOfficerData.outlierMetrics.map((metric) => {
-          const firstDate = metric.benchmark.benchmarks[0]?.endDate;
-          const lastDate = metric.benchmark.benchmarks.at(-1)?.endDate;
-
           const { bodyDisplayName } = metric.config;
 
           return (
@@ -142,10 +140,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                 metricId: metric.metricId,
               })}
               title={toTitleCase(bodyDisplayName)}
-              subtitle={`${formatDate(
-                firstDate,
-                "MMMM yyyy",
-              )} - ${formatDate(lastDate, "MMMM yyyy")}`}
+              subtitle={timePeriod}
               rate={formatTargetAndHighlight(
                 metric.currentPeriodData.metricRate,
               )}
