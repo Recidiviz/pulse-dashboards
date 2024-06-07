@@ -18,9 +18,16 @@
 import { Remote } from "comlink";
 
 export type SwarmWorker = Remote<typeof import("./swarmWorker")>;
+export type SwarmWorkerV2 = Remote<typeof import("./swarmWorkerV2")>;
 
 export function getSwarmLayoutWorker(): SwarmWorker {
   return new ComlinkWorker<typeof import("./swarmWorker")>(
     new URL("./swarmWorker", import.meta.url),
+  );
+}
+
+export function getSwarmLayoutWorkerV2(): SwarmWorkerV2 {
+  return new ComlinkWorker<typeof import("./swarmWorkerV2")>(
+    new URL("./swarmWorkerV2", import.meta.url),
   );
 }

@@ -16,3 +16,4 @@
 // =============================================================================
 
 export * from "./SwarmPresenter";
+export * from "./SwarmPresenterV2";

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2023 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MetricConfigWithBenchmark, MetricWithConfig } from "../../types";
-import { prepareChartData, prepareChartDataV2 } from "../prepareChartData";
-import { HighlightedDot } from "../types";
-
-export function getSwarmLayoutWorker() {
-  return {
-    prepareChartData: async (
-      metric: MetricWithConfig,
-      width: number,
-      height: number,
-    ) => prepareChartData(metric, width, height),
-  };
-}
-
-export function getSwarmLayoutWorkerV2() {
-  return {
-    prepareChartDataV2: async (
-      metric: MetricConfigWithBenchmark,
-      highlightedDots: HighlightedDot[],
-      width: number,
-      height: number,
-    ) => prepareChartDataV2(metric, highlightedDots, width, height),
-  };
-}
+export { prepareChartDataV2 } from "./prepareChartData";

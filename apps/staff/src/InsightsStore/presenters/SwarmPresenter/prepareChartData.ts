@@ -19,7 +19,7 @@ import { ascending } from "d3-array";
 import { format } from "d3-format";
 import { scaleLinear } from "d3-scale";
 
-import { MetricWithConfig } from "../types";
+import { MetricConfigWithBenchmark, MetricWithConfig } from "../types";
 import { calculateSwarm } from "./calculateSwarm";
 import {
   HIGHLIGHT_DOT_RADIUS_LG,
@@ -31,23 +31,32 @@ import {
   SWARM_DOT_RADIUS_SM,
   SWARM_SIZE_BREAKPOINT,
 } from "./constants";
-import { InputPoint, PrepareFn, ScaleParameter } from "./types";
+import {
+  HighlightedDot,
+  InputPoint,
+  PrepareFn,
+  PrepareFnV2,
+  ScaleParameter,
+} from "./types";
 
 const formatTickLabel = format(".0%");
 const formatTargetAndHighlight = format(".1%");
-
-export const prepareChartData: PrepareFn = (
-  metric: MetricWithConfig,
+const getHighlightInfoForChartLabel = (
+  highlightedDots: HighlightedDot[],
+): string => {
+  const formattedHighlightValues = highlightedDots.map((dot) =>
+    formatTargetAndHighlight(dot.value),
+  );
+  return formattedHighlightValues.join(", ");
+};
+/**
+ * Shared plot calculations
+ */
+const calculateSwarmPlotConstants = (
+  allValues: number[],
   width: number,
   height: number,
 ) => {
-  const currentMetricData = metric.currentPeriodData;
-
-  const allValues = [
-    ...metric.benchmark.latestPeriodValues.map((o) => o.value),
-    currentMetricData.metricRate,
-  ].sort(ascending);
-
   // round extrema to the nearest whole percentage point
   const min = Math.floor(allValues[0] * 100) / 100;
   const max = Math.ceil(allValues.slice(-1)[0] * 100) / 100;
@@ -65,6 +74,43 @@ export const prepareChartData: PrepareFn = (
       : HIGHLIGHT_DOT_RADIUS_SM;
   const backgroundRadius =
     width > SWARM_SIZE_BREAKPOINT ? SWARM_DOT_RADIUS_LG : SWARM_DOT_RADIUS_SM;
+
+  // swarm positions are relative to vertical center, so the layout will need this
+  const centerOfContentArea = SWARM_AREA_TOP_OFFSET + height / 2;
+  return {
+    min,
+    max,
+    xScale,
+    highlightRadius,
+    backgroundRadius,
+    centerOfContentArea,
+    scaleRange,
+    scaleDomain,
+  };
+};
+
+export const prepareChartData: PrepareFn = (
+  metric: MetricWithConfig,
+  width: number,
+  height: number,
+) => {
+  const currentMetricData = metric.currentPeriodData;
+
+  const allValues = [
+    ...metric.benchmark.latestPeriodValues.map((o) => o.value),
+    currentMetricData.metricRate,
+  ].sort(ascending);
+
+  const {
+    min,
+    max,
+    xScale,
+    scaleRange,
+    scaleDomain,
+    highlightRadius,
+    backgroundRadius,
+    centerOfContentArea,
+  } = calculateSwarmPlotConstants(allValues, width, height);
 
   const { swarmPoints } = calculateSwarm(
     [
@@ -88,9 +134,6 @@ export const prepareChartData: PrepareFn = (
     height,
   );
 
-  // swarm positions are relative to vertical center, so the layout will need this
-  const centerOfContentArea = SWARM_AREA_TOP_OFFSET + height / 2;
-
   // screen reader label, for accessibility
   const chartLabel = `Swarm plot of all ${
     metric.config.bodyDisplayName
@@ -99,6 +142,74 @@ export const prepareChartData: PrepareFn = (
   } caseloads, highlighting a value of ${formatTargetAndHighlight(
     currentMetricData.metricRate,
   )}, which is far worse than the statewide rate of ${formatTargetAndHighlight(
+    metric.benchmark.currentPeriodTarget,
+  )}. Other values in the chart range from ${formatTickLabel(
+    min,
+  )} to ${formatTickLabel(max)}.`;
+
+  return {
+    centerOfContentArea,
+    chartLabel,
+    swarmPoints,
+    scaleDomain,
+    scaleRange,
+    highlightRadius,
+    backgroundRadius,
+  };
+};
+
+export const prepareChartDataV2: PrepareFnV2 = (
+  metric: MetricConfigWithBenchmark,
+  highlightedDots: HighlightedDot[],
+  width: number,
+  height: number,
+) => {
+  const allValues = [
+    ...metric.benchmark.latestPeriodValues.map((o) => o.value),
+    ...highlightedDots.map((dot) => dot.value),
+  ].sort(ascending);
+
+  const {
+    min,
+    max,
+    xScale,
+    scaleRange,
+    scaleDomain,
+    highlightRadius,
+    backgroundRadius,
+    centerOfContentArea,
+  } = calculateSwarmPlotConstants(allValues, width, height);
+
+  const { swarmPoints } = calculateSwarm(
+    [
+      ...metric.benchmark.latestPeriodValues.map(
+        ({ value, targetStatus }): InputPoint => ({
+          position: xScale(value),
+          targetStatus,
+          radius: backgroundRadius,
+          opacity: 0.15,
+        }),
+      ),
+      ...highlightedDots.map(
+        ({ value }): InputPoint => ({
+          position: xScale(value),
+          targetStatus: "FAR",
+          // when calculating the swarm positions, give these points some extra breathing room
+          radius: highlightRadius + HIGHLIGHT_MARK_STROKE_WIDTH,
+          opacity: 1,
+          highlight: true,
+        }),
+      ),
+    ],
+    height,
+  );
+
+  // screen reader label, for accessibility
+  const chartLabel = `Swarm plot of all ${
+    metric.config.bodyDisplayName
+  }s in the state for ${
+    metric.benchmark.caseloadType
+  } caseloads, highlighting values of ${getHighlightInfoForChartLabel(highlightedDots)}, which are far worse than the statewide rate of ${formatTargetAndHighlight(
     metric.benchmark.currentPeriodTarget,
   )}. Other values in the chart range from ${formatTickLabel(
     min,

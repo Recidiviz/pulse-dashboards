@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { TargetStatus } from "../../models/schemaHelpers";
-import { MetricWithConfig } from "../types";
+import { MetricConfigWithBenchmark, MetricWithConfig } from "../types";
 
 export type ScaleParameter = [number, number];
 
@@ -48,9 +48,17 @@ export type PrepareFn = (
   height: number,
 ) => PreparedChartData;
 
+export type PrepareFnV2 = (
+  metric: MetricConfigWithBenchmark,
+  highlightedDots: HighlightedDot[],
+  width: number,
+  height: number,
+) => PreparedChartData;
+
 export type HighlightedDot = {
   label?: string;
   value: number;
+  officerId: string;
   labelHidden?: boolean;
   onMouseOver?: React.MouseEventHandler;
 };
