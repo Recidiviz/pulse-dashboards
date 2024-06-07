@@ -157,6 +157,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
       "usMeSCCP",
       "usMeWorkRelease",
       "usMeFurloughRelease",
+      "usMeReclassificationReview",
     ],
     officerId: "OFFICER5",
     stateCode: "US_ME",
@@ -182,6 +183,8 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
       "usMeSCCP",
       "usMeWorkRelease",
       "usMeFurloughRelease",
+      "usMeReclassificationReview",
+      "usMeMediumTrustee",
     ],
 
     officerId: "OFFICER5",

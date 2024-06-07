@@ -1,5 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "RES002",
+  "formInformation": {
+    "arrivalDate": 2012-11-03T00:00:00.000Z,
+    "casePlanGoals": "Education / Employment - In Progress - Other - I want to pursue further education. @@@ Accommodations - In Progress - Other - I want to maintain my current housing. @@@ Education / Employment - In Progress - Other - I want to maintain my current employment at the company. @@@ Leisure / Recreation - In Progress - Other - I want to continue to improve my community by contributing to its development.",
+    "currentOffenses": "LARCENY (M) {99999}",
+    "furloughs": "2024-01-13, 2023-11-08",
+    "programEnrollment": "Completed Successfully - edu College- Bachelor's Degree - AA Liberal Studies, UMA - 2022-01-06",
+    "workAssignments": "Argo Labs, Lab Technician; 2023-10-03: Present",
+  },
+  "ineligibleCriteria": {
+    "usMeIncarcerationPastRelevantClassificationDate": {
+      "latestClassificationDate": null,
+      "reclassType": "SEMIANNUAL",
+      "reclassesNeeded": 0,
+    },
+  },
+  "stateCode": "US_ME",
+}
+`;
+
 exports[`schema for fullyEligible 1`] = `
 {
   "caseNotes": {},

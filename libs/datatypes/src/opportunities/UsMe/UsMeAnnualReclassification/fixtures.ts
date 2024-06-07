@@ -45,4 +45,26 @@ export const usMeAnnualReclassificationFixtures = {
     },
     ineligibleCriteria: {},
   }),
+  almostEligible: makeRecordFixture(usMeAnnualReclassificationSchema, {
+    stateCode: "US_ME",
+    externalId: "RES002",
+    eligibleCriteria: {},
+    ineligibleCriteria: {
+      usMeIncarcerationPastRelevantClassificationDate: {
+        latestClassificationDate: null,
+        reclassType: "SEMIANNUAL",
+        reclassesNeeded: 0,
+      },
+    },
+    formInformation: {
+      arrivalDate: "2012-11-03",
+      casePlanGoals:
+        "Education / Employment - In Progress - Other - I want to pursue further education. @@@ Accommodations - In Progress - Other - I want to maintain my current housing. @@@ Education / Employment - In Progress - Other - I want to maintain my current employment at the company. @@@ Leisure / Recreation - In Progress - Other - I want to continue to improve my community by contributing to its development.",
+      currentOffenses: "LARCENY (M) {99999}",
+      programEnrollment:
+        "Completed Successfully - edu College- Bachelor's Degree - AA Liberal Studies, UMA - 2022-01-06",
+      furloughs: "2024-01-13, 2023-11-08",
+      workAssignments: "Argo Labs, Lab Technician; 2023-10-03: Present",
+    },
+  }),
 } satisfies FixtureMapping<UsMeAnnualReclassificationRecord>;

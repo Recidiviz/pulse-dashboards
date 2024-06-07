@@ -134,7 +134,12 @@ export class UsMeAnnualReclassificationReviewForm extends FormBase<
 
   prefilledDataTransformer(): Partial<UsMeAnnualReclassificationReviewData> {
     if (!this.opportunity.record) return {};
-    const { formInformation, eligibleCriteria } = this.opportunity.record;
+    const { formInformation, eligibleCriteria, ineligibleCriteria } =
+      this.opportunity.record;
+
+    const usMeIncarcerationPastRelevantClassificationDate =
+      eligibleCriteria.usMeIncarcerationPastRelevantClassificationDate ??
+      ineligibleCriteria.usMeIncarcerationPastRelevantClassificationDate;
 
     const {
       admissionDate,
@@ -159,8 +164,7 @@ export class UsMeAnnualReclassificationReviewForm extends FormBase<
         todaysDate: new Date(),
         sccpEligibilityDate,
         latestClassificationDate:
-          eligibleCriteria.usMeIncarcerationPastRelevantClassificationDate
-            .latestClassificationDate,
+          usMeIncarcerationPastRelevantClassificationDate?.latestClassificationDate,
       },
       (date) =>
         date && date instanceof Date
@@ -217,8 +221,8 @@ export class UsMeAnnualReclassificationReviewForm extends FormBase<
       parsedFormInformation.programEnrollment?.length?.toString() ?? "N/A";
 
     // CHECKBOXES
-    const { reclassType } =
-      eligibleCriteria.usMeIncarcerationPastRelevantClassificationDate;
+    const reclassType =
+      usMeIncarcerationPastRelevantClassificationDate?.reclassType;
     const isAnnualReclass = reclassType === "ANNUAL";
     const isWithProbation = formInformation.sentenceIncludesProbation === "YES";
 

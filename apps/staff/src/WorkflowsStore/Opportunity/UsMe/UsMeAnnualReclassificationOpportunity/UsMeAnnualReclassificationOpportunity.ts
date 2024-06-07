@@ -47,4 +47,8 @@ export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
       this.resident.rootStore,
     );
   }
+
+  get almostEligible(): boolean {
+    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
+  }
 }

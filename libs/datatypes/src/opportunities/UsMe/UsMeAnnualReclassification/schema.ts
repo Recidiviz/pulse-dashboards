@@ -22,16 +22,24 @@ import { ParsedRecord } from "../../../utils/types";
 import { caseNotesSchema } from "../../utils/caseNotesSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
+const usMeIncarcerationPastRelevantClassificationDate = z.object({
+  latestClassificationDate: dateStringSchema.nullable(),
+  reclassType: z.string(),
+  reclassesNeeded: z.number(),
+});
+
 export const usMeAnnualReclassificationSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: z.object({
-      usMeIncarcerationPastRelevantClassificationDate: z.object({
-        latestClassificationDate: dateStringSchema.nullable(),
-        reclassType: z.string(),
-        reclassesNeeded: z.number(),
-      }),
-    }),
-    ineligibleCriteria: z.object({}),
+    eligibleCriteria: z
+      .object({
+        usMeIncarcerationPastRelevantClassificationDate,
+      })
+      .partial(),
+    ineligibleCriteria: z
+      .object({
+        usMeIncarcerationPastRelevantClassificationDate,
+      })
+      .partial(),
     formInformation: z.object({
       arrivalDate: dateStringSchema,
       casePlanGoals: z.string().optional(),
