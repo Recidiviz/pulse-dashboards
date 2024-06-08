@@ -76,7 +76,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
           {supervisorHomepage ? "Opportunities" : "Home"}
         </NavLink>
       )}
-      {allowSupervisionTasks && (
+      {allowSupervisionTasks && enableWorkflows && (
         <NavLink
           to={workflowsUrl("tasks")}
           onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}

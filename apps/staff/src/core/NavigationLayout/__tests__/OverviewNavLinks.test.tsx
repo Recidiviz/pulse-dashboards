@@ -123,6 +123,13 @@ describe("OverviewNavLinks tests", () => {
     );
   });
 
+  it("Should not render a link for Tasks page if user doesn't have workflows permissions", () => {
+    rootStoreMock.workflowsStore.allowSupervisionTasks = true;
+    delete rootStoreMock.userStore.userAllowedNavigation.workflows;
+    renderLinks();
+    expect(screen.queryByText("Tasks")).not.toBeInTheDocument();
+  });
+
   it("Should render a link for Clients page if enabled", async () => {
     rootStoreMock.workflowsStore.workflowsSupportedSystems = ["SUPERVISION"];
     renderLinks();
