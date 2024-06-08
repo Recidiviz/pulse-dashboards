@@ -143,7 +143,8 @@ describe("OverviewNavLinks tests", () => {
     );
   });
 
-  it("Should not render a link for Residents or Clients page if supportsMultipleSystems enabled", async () => {
+  it("Should not render a link for Residents or Clients page if supportsMultipleSystems enabled on mobile", async () => {
+    vi.mocked(useIsMobile).mockReturnValue({ isMobile: true });
     rootStoreMock.workflowsStore.workflowsSupportedSystems = [
       "INCARCERATION",
       "SUPERVISION",
@@ -152,5 +153,21 @@ describe("OverviewNavLinks tests", () => {
     renderLinks();
 
     await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
+  });
+
+  it("Should render a link for Residents and Clients page if not on mobile", async () => {
+    rootStoreMock.workflowsStore.workflowsSupportedSystems = [
+      "INCARCERATION",
+      "SUPERVISION",
+    ];
+    rootStoreMock.workflowsStore.supportsMultipleSystems = true;
+    renderLinks();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("link", { name: "Residents" }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Clients" })).toBeInTheDocument();
+    });
   });
 });

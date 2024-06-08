@@ -382,7 +382,8 @@ function WorkflowsSystemLinks({ enabled }: OptionalLinkProps) {
 
   const { workflowsStore } = useRootStore();
 
-  if (!enabled || !workflowsStore.supportsMultipleSystems) return null;
+  if (!enabled || !workflowsStore.supportsMultipleSystems || !isMobile)
+    return null;
 
   return workflowsStore.workflowsSupportedSystems?.map((systemId) => {
     return (
