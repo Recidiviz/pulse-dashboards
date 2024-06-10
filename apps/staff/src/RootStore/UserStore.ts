@@ -426,10 +426,19 @@ export default class UserStore {
       (activeVariants, [variantName, variantInfo]) => {
         if (!variantInfo) return activeVariants;
 
-        const { variant, activeDate } = variantInfo;
+        const { variant, activeDate, activeTenants } = variantInfo;
         // check date once a minute so there isn't too much lag when we cross the threshold
         if (activeDate && new Date(activeDate).getTime() > now(1000 * 60))
           return activeVariants;
+
+        const currentTenantId = this.rootStore?.currentTenantId;
+        if (
+          activeTenants &&
+          currentTenantId &&
+          !activeTenants.includes(currentTenantId)
+        )
+          return activeVariants;
+
         return {
           ...activeVariants,
           [variantName]: { ...(variant && { variant }) },

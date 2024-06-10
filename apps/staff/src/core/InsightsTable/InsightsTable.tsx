@@ -32,7 +32,6 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 
 const DEFAULT_TABLE_ROW_SIZE = 50;
@@ -111,6 +110,7 @@ type OutlierTableProps<T extends object> = {
   transformToMobile?: boolean;
   scrollElement?: any;
   intercomTargetOnFirstRow?: string;
+  supervisorHomepage: boolean;
 };
 
 const InsightsTable = <T extends object>({
@@ -122,9 +122,9 @@ const InsightsTable = <T extends object>({
   rowSize = DEFAULT_TABLE_ROW_SIZE,
   transformToMobile = false,
   intercomTargetOnFirstRow,
+  supervisorHomepage,
 }: OutlierTableProps<T>) => {
   const { isMobile } = useIsMobile(true);
-  const { supervisorHomepage } = useFeatureVariants();
   const [isColumnHidden, hideColumn] = useState(false);
   const [scrollIndex, setScrollIndex] = useState(0);
   const location = useLocation();
@@ -171,7 +171,7 @@ const InsightsTable = <T extends object>({
 
       const rowViz = (
         <TR
-          supervisorHomepage={!!supervisorHomepage && !transformToMobile}
+          supervisorHomepage={supervisorHomepage && !transformToMobile}
           transformToMobile={transformToMobile}
           data-intercom-target={
             intercomTargetOnFirstRow && index === 0

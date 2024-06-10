@@ -85,6 +85,9 @@ describe("CoreLayout tests", () => {
         },
       },
       currentTenantId: "US_ID",
+      insightsStore: {
+        shouldUseSupervisorHomepageUI: false,
+      },
     };
 
     useRootStoreMock.mockReturnValue(rootStoreMock);

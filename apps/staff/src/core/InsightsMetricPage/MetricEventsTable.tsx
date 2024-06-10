@@ -117,6 +117,7 @@ export const MetricEventsTable = withPresenter(
       clientDetailLinks,
       hideEventDateColumn,
       labels,
+      supervisorHomepage,
     } = presenter;
     const scrollElementRef = useRef(null);
     const [scrollElement, setScrollElement] = useState(null);
@@ -156,6 +157,7 @@ export const MetricEventsTable = withPresenter(
             rowLinks={clientDetailLinks}
             scrollElement={scrollElement}
             intercomTargetOnFirstRow="First client"
+            supervisorHomepage={supervisorHomepage}
           />
         </Wrapper>
 

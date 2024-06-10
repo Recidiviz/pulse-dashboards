@@ -134,4 +134,8 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
   get hideEventDateColumn(): boolean {
     return this.metricId === FAVORABLE_METRIC_IDS.enum.treatment_starts;
   }
+
+  get supervisorHomepage(): boolean {
+    return this.supervisionStore.insightsStore.shouldUseSupervisorHomepageUI;
+  }
 }

@@ -21,7 +21,6 @@ import { FC, useLayoutEffect, useRef } from "react";
 import { AspectRatio } from "react-aspect-ratio";
 import useMeasure from "react-use-measure";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { SwarmPresenter } from "../../InsightsStore/presenters/SwarmPresenter";
 import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
@@ -32,14 +31,15 @@ import { InsightsSwarmPlotWrappedProps } from "./types";
 type InsightsSwarmPlotProps = {
   metric: MetricWithConfig;
   isMinimized?: boolean;
+  supervisorHomepage: boolean;
 };
 
 const InsightsSwarmPlotContainer = observer(
   function InsightsSwarmPlotContainer({
     metric,
     isMinimized,
+    supervisorHomepage,
   }: InsightsSwarmPlotProps) {
-    const { supervisorHomepage } = useFeatureVariants();
     const presenter = new SwarmPresenter(metric);
 
     return (

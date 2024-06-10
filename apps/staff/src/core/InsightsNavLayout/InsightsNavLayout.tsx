@@ -65,9 +65,12 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
   const { isMobile } = useIsMobile(true);
 
   const {
-    insightsStore: { supervisionStore },
+    insightsStore: {
+      supervisionStore,
+      shouldUseSupervisorHomepageUI: supervisorHomepage,
+    },
   } = useRootStore();
-  const { insightsOnboarding, supervisorHomepage } = useFeatureVariants();
+  const { insightsOnboarding } = useFeatureVariants();
 
   const isOnboardingView = pathname.split("/")[3] === "onboarding";
   const isHideNavLayout =

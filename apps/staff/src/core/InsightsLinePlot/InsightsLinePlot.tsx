@@ -26,7 +26,6 @@ import useMeasure from "react-use-measure";
 import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { TargetStatus } from "../../InsightsStore/models/schemaHelpers";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
@@ -157,6 +156,7 @@ const reduceBottomTicks = (ticks: Date[], isMobile: boolean) => {
 type InsightsLinePlotType = {
   metric: MetricWithConfig;
   officerName?: string;
+  supervisorHomepage: boolean;
 };
 
 type Point = {
@@ -168,9 +168,9 @@ type Point = {
 const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
   metric,
   officerName,
+  supervisorHomepage,
 }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
-  const { supervisorHomepage } = useFeatureVariants();
   const [ref, bounds] = useMeasure();
 
   const usersPoints: Point[] = metric.statusesOverTime.map((d) => ({
@@ -224,7 +224,7 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
   const yRange = [0, maxTickValue];
 
   return (
-    <Wrapper ref={ref} supervisorHomepage={!!supervisorHomepage}>
+    <Wrapper ref={ref} supervisorHomepage={supervisorHomepage}>
       <ResponsiveXYFrame
         responsiveWidth={!bounds.width}
         hoverAnnotation
@@ -236,8 +236,8 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
 
           return (
             d.parentLine.key === 0 && (
-              <StyledTooltip supervisorHomepage={!!supervisorHomepage}>
-                <div>{formatDateToYearRange(d.date, !!supervisorHomepage)}</div>
+              <StyledTooltip supervisorHomepage={supervisorHomepage}>
+                <div>{formatDateToYearRange(d.date, supervisorHomepage)}</div>
                 {/* eslint-disable-next-line react/no-unused-prop-types */}
                 {pickedPoints.map(({ data }: { data: Point }) => {
                   const icon = data.status

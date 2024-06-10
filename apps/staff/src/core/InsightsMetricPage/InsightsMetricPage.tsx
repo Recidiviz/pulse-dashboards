@@ -205,6 +205,7 @@ export const MetricPageWithPresenter = observer(
               }
               hasLegend={false}
               outcomeType={metric.config.outcomeType}
+              supervisorHomepage
             >
               <MetricEventsTable
                 officerPseudoId={presenter.officerPseudoId}
@@ -225,8 +226,9 @@ export const MetricPageWithPresenter = observer(
                 />
               }
               outcomeType={metric.config.outcomeType}
+              supervisorHomepage
             >
-              <InsightsSwarmPlot metric={metric} />
+              <InsightsSwarmPlot metric={metric} supervisorHomepage />
             </InsightsChartCard>
             <InsightsChartCard
               title={`Historical ${toTitleCase(metric.config.bodyDisplayName)}`}
@@ -241,10 +243,12 @@ export const MetricPageWithPresenter = observer(
                 />
               }
               outcomeType={metric.config.outcomeType}
+              supervisorHomepage
             >
               <InsightsLinePlot
                 metric={metric}
                 officerName={outlierOfficerData.displayName}
+                supervisorHomepage
               />
             </InsightsChartCard>
           </Body>

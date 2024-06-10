@@ -56,8 +56,8 @@ export type UserAppMetadata = {
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
   routes?: Record<string, boolean>;
-  featureVariants?: Record<string, Record<string, string>>;
-  demoModeFeatureVariants?: Record<string, Record<string, string>>;
+  featureVariants?: FeatureVariantRecord;
+  demoModeFeatureVariants?: FeatureVariantRecord;
   userHash?: string;
   pseudonymizedId?: string;
   segmentId?: string;
@@ -94,7 +94,11 @@ export type FeatureVariant =
   | "workflowsSupervisorSearch"
   | "isolateFormUpdates"
   | "supervisorHomepage";
-export type FeatureVariantValue = { activeDate?: Date; variant?: string };
+export type FeatureVariantValue = {
+  activeDate?: Date;
+  variant?: string;
+  activeTenants?: TenantId[];
+};
 /**
  * For each feature, an optional activeDate can control when the user gets access.
  * If this is missing, access will be granted immediately.
@@ -104,7 +108,10 @@ export type FeatureVariantValue = { activeDate?: Date; variant?: string };
 export type FeatureVariantMapping = Record<FeatureVariant, FeatureVariantValue>;
 export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
 export type ActiveFeatureVariantRecord = Partial<
-  Record<FeatureVariant, Omit<FeatureVariantValue, "activeDate">>
+  Record<
+    FeatureVariant,
+    Omit<FeatureVariantValue, "activeDate" | "activeTenants">
+  >
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
@@ -133,7 +140,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   isolateFormUpdates: {},
   supervisorHomepage: {},
 };
-export const defaultFeatureVariantsActive: ActiveFeatureVariantRecord =
+export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
         CompliantReportingAlmostEligible: {},

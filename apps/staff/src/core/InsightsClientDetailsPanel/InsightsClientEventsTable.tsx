@@ -20,7 +20,6 @@ import { rem } from "polished";
 import { Column } from "react-table";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
   ClientEvent,
@@ -114,13 +113,14 @@ const createTableColumn = (column: Column): Column => {
 
 type InsightsClientEventsTableType = {
   events: ClientEvent[];
+  supervisorHomepage: boolean;
 };
 
 const InsightsClientEventsTable: React.FC<InsightsClientEventsTableType> = ({
   events,
+  supervisorHomepage,
 }) => {
   const { isMobile } = useIsMobile(true);
-  const { supervisorHomepage } = useFeatureVariants();
   if (!events) return null;
 
   return (
@@ -129,8 +129,9 @@ const InsightsClientEventsTable: React.FC<InsightsClientEventsTableType> = ({
       <InsightsTable
         data={events}
         columns={columns.map((c) => createTableColumn(c))}
-        rowSize={isMobile || !!supervisorHomepage ? 110 : 76}
-        transformToMobile={isMobile || !!supervisorHomepage}
+        rowSize={isMobile || supervisorHomepage ? 110 : 76}
+        transformToMobile={isMobile || supervisorHomepage}
+        supervisorHomepage={supervisorHomepage}
       />
     </Wrapper>
   );

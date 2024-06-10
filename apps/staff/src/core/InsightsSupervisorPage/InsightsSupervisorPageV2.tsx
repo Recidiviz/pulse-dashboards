@@ -20,10 +20,7 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
@@ -49,7 +46,6 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   presenter: SupervisionSupervisorPresenter;
 }) {
   const { isLaptop } = useIsMobile(true);
-  const { supervisorHomepage } = useFeatureVariants();
   const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   const {
@@ -123,7 +119,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         )
       }
     >
-      <Wrapper isLaptop={isLaptop} supervisorHomepage={!!supervisorHomepage}>
+      <Wrapper isLaptop={isLaptop} supervisorHomepage>
         <Body>
           <InsightsStaffCardV2
             outlierOfficersByMetric={outlierOfficersByMetric}

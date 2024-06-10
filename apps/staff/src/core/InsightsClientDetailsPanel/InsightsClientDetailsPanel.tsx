@@ -34,10 +34,7 @@ import {
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionClientDetailPresenter } from "../../InsightsStore/presenters/SupervisionClientDetailPresenter";
 import { StyledDrawerModalV2 } from "../InsightsInfoModal/InsightsInfoModalV2";
@@ -132,9 +129,11 @@ function withPresenter(
 const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
   presenter,
 }: InsightsClientDetailsPanelProps) {
-  const { supervisorHomepage } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
-  const { tenantStore } = useRootStore();
+  const {
+    tenantStore,
+    insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
+  } = useRootStore();
   const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   const isInsightsLanternState =
@@ -241,7 +240,10 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
           eventsLabel={eventsLabelSingular}
           outcomeDate={outcomeDate}
         />
-        <InsightsClientEventsTable events={clientEvents} />
+        <InsightsClientEventsTable
+          events={clientEvents}
+          supervisorHomepage={supervisorHomepage}
+        />
       </Content>
       <ModalFooter>
         <LanternLogo />

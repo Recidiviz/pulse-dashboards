@@ -175,6 +175,7 @@ const InsightsStaffCard: React.FC<InsightsStaffCardType> = ({
                     title={toTitleCase(metric.config.eventName)}
                     copy={metric.config.descriptionMarkdown}
                     methodologyLink={supervisionStore?.methodologyUrl}
+                    supervisorHomepage={false}
                   />
                 </MetricTitle>
                 <MetricHint>
@@ -188,7 +189,7 @@ const InsightsStaffCard: React.FC<InsightsStaffCardType> = ({
                 </MetricHint>
               </MetricHeader>
               <CardContent $hasLegend={hasLegend} noFlex>
-                <InsightsSwarmPlot metric={metric} />
+                <InsightsSwarmPlot metric={metric} supervisorHomepage={false} />
               </CardContent>
               {hasLegend && (
                 <InsightsLegend

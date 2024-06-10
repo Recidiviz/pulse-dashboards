@@ -19,7 +19,6 @@ import { Loading, palette, spacing } from "@recidiviz/design-system";
 import { scaleLinear } from "d3-scale";
 import { observer } from "mobx-react-lite";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import {
   MARGIN,
   SWARM_AREA_BOTTOM_OFFSET,
@@ -35,8 +34,6 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
   presenter,
   isMinimized,
 }: InsightsSwarmPlotWrappedProps) {
-  const { supervisorHomepage } = useFeatureVariants();
-
   const {
     width,
     chartHeight,
@@ -78,14 +75,14 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
         {!isMinimized && targetRate && (
           <>
             <TargetLine
-              $supervisorHomepage={!!supervisorHomepage}
+              $supervisorHomepage
               x1={axisPositions.target}
               x2={axisPositions.target}
               y1={axisPositions.targetStart}
               y2={axisPositions.tickEnd}
             />
             <TargetLabel
-              $supervisorHomepage={!!supervisorHomepage}
+              $supervisorHomepage
               dx={TARGET_LINE_WIDTH + spacing.sm}
               x={axisPositions.target}
               y={axisPositions.targetStart}

@@ -19,10 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
@@ -37,7 +34,6 @@ export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {
 
 export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const { pathname } = useLocation();
-  const { supervisorHomepage } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
 
   const {
@@ -48,13 +44,14 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       supportsMultipleSystems,
     },
     userStore: { userAllowedNavigation },
+    insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
   } = useRootStore();
 
   const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
   const enabledInsights =
     !!userAllowedNavigation.insights && supervisorHomepage;
   const enableSystems =
-    (!!supervisorHomepage && (!supportsMultipleSystems || !isMobile)) ||
+    (supervisorHomepage && (!supportsMultipleSystems || !isMobile)) ||
     !supervisorHomepage;
 
   return (

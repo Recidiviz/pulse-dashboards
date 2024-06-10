@@ -857,6 +857,7 @@ describe("feature variants", () => {
       {
         activeDate?: string;
         variant?: string;
+        activeTenants?: string[];
       }
     >
   >;
@@ -882,7 +883,9 @@ describe("feature variants", () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    store = new UserStore({});
+    store = new UserStore({
+      rootStore: { currentTenantId: tenantId } as unknown as typeof RootStore,
+    });
     runInAction(() => {
       store.isAuthorized = true;
       store.userIsLoading = false;
@@ -1066,6 +1069,36 @@ describe("feature variants", () => {
     expect(store.activeFeatureVariants).toEqual({
       TEST: {},
     });
+  });
+
+  test("variant with active tenant equal to current tenant", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: {
+          TEST: {
+            activeTenants: [tenantId],
+          },
+        },
+      });
+    });
+
+    expect(store.activeFeatureVariants).toEqual({
+      TEST: {},
+    });
+  });
+
+  test("variant with active tenant not equal to current tenant", async () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        featureVariants: {
+          TEST: {
+            activeTenants: ["US_XX"],
+          },
+        },
+      });
+    });
+
+    expect(store.activeFeatureVariants).toEqual({});
   });
 
   test("demo mode with demo variant defined", () => {

@@ -29,7 +29,6 @@ import { Link } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 
 export const StyledModal = styled(Modal)`
@@ -115,6 +114,7 @@ type InsightsInfoModalType = {
   methodologyLink?: string;
   buttonText?: string;
   onClick?: () => void;
+  supervisorHomepage: boolean;
 };
 
 const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
@@ -123,8 +123,8 @@ const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
   methodologyLink,
   buttonText,
   onClick,
+  supervisorHomepage,
 }) => {
-  const { supervisorHomepage } = useFeatureVariants();
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
   return (
@@ -132,7 +132,7 @@ const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
       {buttonText ? (
         <StyledButton
           aria-label={title}
-          supervisorHomepage={!!supervisorHomepage}
+          supervisorHomepage={supervisorHomepage}
           onClick={() => setModalIsOpen(true)}
         >
           {buttonText}

@@ -51,6 +51,9 @@ const baseRootStoreMock = {
     doc: vi.fn(),
     collection: vi.fn(),
   },
+  insightsStore: {
+    shouldUseSupervisorHomepageUI: vi.fn(),
+  },
 };
 const baseWorkflowsStoreMock = {
   caseloadLoaded: () => false,

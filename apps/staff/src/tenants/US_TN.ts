@@ -50,6 +50,7 @@ const US_TN_CONFIG: TenantConfig = {
     },
   },
   insightsLanternState: true,
+  insightsLegacyUI: true,
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "residents"],

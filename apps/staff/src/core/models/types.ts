@@ -89,6 +89,7 @@ export type TenantConfig = {
   workflowsStaffFilterFn?: StaffFilterFunction;
   insightsLaunchedDistricts?: string[];
   insightsLanternState?: boolean;
+  insightsLegacyUI?: boolean;
 };
 
 /**

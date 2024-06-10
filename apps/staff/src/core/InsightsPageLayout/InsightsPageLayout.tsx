@@ -26,10 +26,7 @@ import { rem } from "polished";
 import { ReactNode } from "react";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { humanReadableTitleCase, pluralizeWord } from "../../utils";
 import InsightsInfoModal from "../InsightsInfoModal";
@@ -189,10 +186,12 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   children,
 }) => {
   const { isMobile, isTablet, isLaptop } = useIsMobile(true);
-  const { supervisorHomepage } = useFeatureVariants();
 
   const {
-    insightsStore: { supervisionStore },
+    insightsStore: {
+      supervisionStore,
+      shouldUseSupervisorHomepageUI: supervisorHomepage,
+    },
   } = useRootStore();
 
   if (!supervisionStore) return null;
@@ -208,11 +207,11 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   const [pageTitleStart, pageTitleEnd] = pageTitle.split(outlierSubstring);
 
   return (
-    <PageWrapper isMobile={isTablet} supervisorHomepage={!!supervisorHomepage}>
+    <PageWrapper isMobile={isTablet} supervisorHomepage={supervisorHomepage}>
       {contentsAboveTitle}
-      <Wrapper isLaptop={isLaptop} supervisorHomepage={!!supervisorHomepage}>
+      <Wrapper isLaptop={isLaptop} supervisorHomepage={supervisorHomepage}>
         <Header>
-          <Title isMobile={isMobile} supervisorHomepage={!!supervisorHomepage}>
+          <Title isMobile={isMobile} supervisorHomepage={supervisorHomepage}>
             {supervisorHomepage ? (
               pageTitle
             ) : (
@@ -233,7 +232,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
           {infoItems && infoItems.length > 0 && (
             <InfoSection
               isMobile={isMobile}
-              supervisorHomepage={!!supervisorHomepage}
+              supervisorHomepage={supervisorHomepage}
             >
               {infoItems.map(
                 (item) =>
@@ -266,6 +265,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               copy={`We're listing all ${labels.supervisionOfficerLabel}s that we know to currently be reporting to this ${labels.supervisionSupervisorLabel} and that have caseload sizes within the ranges listed below.<br><br> 
               ${exclusionReasonDescription} <br><br>
               If an ${labels.supervisionOfficerLabel} is missing from this list or is incorrectly assigned to a ${labels.supervisionSupervisorLabel}, please let us know by messaging us via the support icon in the bottom right or by emailing **feedback@recidiviz.org.**`}
+              supervisorHomepage={supervisorHomepage}
             />
           )}
         </Header>

@@ -352,10 +352,12 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                         title={`List of ${toTitleCase(eventName)}`}
                         copy={`${modalText}`}
                         methodologyLink={methodologyUrl}
+                        supervisorHomepage={false}
                       />
                     }
                     hasLegend={false}
                     outcomeType={metric.config.outcomeType}
+                    supervisorHomepage={false}
                   >
                     <MetricEventsTable
                       officerPseudoId={presenter.officerPseudoId}
@@ -374,11 +376,16 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                         For example, if 25 ${labels.supervisionJiiLabel}s on an ${labels.supervisionOfficerLabel}'s caseload ${eventNamePastTense} in the past 12 months, and the ${labels.supervisionOfficerLabel} had an average daily caseload of 50 ${labels.supervisionJiiLabel}s, their ${bodyDisplayName} would appear as 50% in this tool. <br><br>
                         As a result, this rate can be over 100%. For example, if 60 ${labels.supervisionJiiLabel}s on an ${labels.supervisionOfficerLabel}'s caseload ${eventNamePastTense} in the past 12 months, and their average daily caseload was 50 ${labels.supervisionJiiLabel}s, their rate would be 120%.`}
                         methodologyLink={methodologyUrl}
+                        supervisorHomepage={false}
                       />
                     }
                     outcomeType={metric.config.outcomeType}
+                    supervisorHomepage={false}
                   >
-                    <InsightsSwarmPlot metric={metric} />
+                    <InsightsSwarmPlot
+                      metric={metric}
+                      supervisorHomepage={false}
+                    />
                   </InsightsChartCard>
                   <InsightsChartCard
                     title={`Historical ${toTitleCase(
@@ -392,6 +399,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                         ${secondToLastDateHint} <br><br>
                         12-month rates are used in order to ensure this line plot is less affected by seasonal spikes or dips.`}
                         methodologyLink={methodologyUrl}
+                        supervisorHomepage={false}
                       />
                     }
                     outcomeType={metric.config.outcomeType}
@@ -399,8 +407,12 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                       firstDate,
                       "MMMM yyyy",
                     )} - ${formatDate(lastDate, "MMMM yyyy")}`}
+                    supervisorHomepage={false}
                   >
-                    <InsightsLinePlot metric={metric} />
+                    <InsightsLinePlot
+                      metric={metric}
+                      supervisorHomepage={false}
+                    />
                   </InsightsChartCard>
                 </Body>
               </Wrapper>

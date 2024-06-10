@@ -36,10 +36,7 @@ import styled from "styled-components/macro";
 import { isOfflineMode } from "~client-env-utils";
 
 import Drawer from "../../components/Drawer/Drawer";
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import useLogout from "../../hooks/useLogout";
 import { TenantId } from "../../RootStore/types";
@@ -417,11 +414,15 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
   }) {
     const { pathname } = useLocation();
     const { isMobile } = useIsMobile(true);
-    const { supervisorHomepage } = useFeatureVariants();
     const [drawerIsOpen, setDrawerIsOpen] = React.useState(false);
 
     const view = pathname.split("/")[1];
-    const { currentTenantId, userStore, tenantStore } = useRootStore();
+    const {
+      currentTenantId,
+      userStore,
+      tenantStore,
+      insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
+    } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
 
     if (!userAllowedNavigation || !currentTenantId) return null;
@@ -450,7 +451,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <PathwaysLink enabled={enabledPathwaysPages} />
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} />
-        <WorkflowsSystemLinks enabled={!!supervisorHomepage} />
+        <WorkflowsSystemLinks enabled={supervisorHomepage} />
         <InsightsLink enabled={enabledInsights} />
         <PSILink enabled={enabledPSI} />
         <LogoutLink enabled={!isOfflineMode()} />

@@ -28,7 +28,6 @@ import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { InsightsLegend } from "../InsightsLegend";
 
@@ -97,6 +96,7 @@ type InsightsChartCardType = {
   url?: string;
   rate?: string;
   outcomeType?: "FAVORABLE" | "ADVERSE";
+  supervisorHomepage: boolean;
   children?: React.ReactNode;
 };
 
@@ -108,11 +108,11 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
   outcomeType = "ADVERSE",
   url,
   rate,
+  supervisorHomepage,
   children,
 }) => {
   const { isMobile } = useIsMobile(true);
   const [ref, bounds] = useMeasure();
-  const { supervisorHomepage } = useFeatureVariants();
   const [isHovered, setHovered] = useState(false);
 
   const showHint = url && isHovered && !isMobile && bounds.width > 400;
@@ -121,11 +121,11 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
     <Wrapper
       ref={ref}
       isClickable={!!url}
-      supervisorHomepage={!!supervisorHomepage}
+      supervisorHomepage={supervisorHomepage}
       onMouseOver={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Header supervisorHomepage={!!supervisorHomepage}>
+      <Header supervisorHomepage={supervisorHomepage}>
         <Title>
           {title}
           {rate && (
@@ -149,7 +149,7 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
         )}
       </Header>
 
-      <Content supervisorHomepage={!!supervisorHomepage}>{children}</Content>
+      <Content supervisorHomepage={supervisorHomepage}>{children}</Content>
       {!supervisorHomepage && hasLegend && (
         <InsightsLegend direction="row" outcomeType={outcomeType} />
       )}

@@ -87,6 +87,7 @@ describe("OverviewNavLinks tests", () => {
       },
       workflowsStore: { allowSupervisionTasks: false },
       currentTenantId: "US_ID",
+      insightsStore: { shouldUseSupervisorHomepageUI: true },
     };
 
     useRootStoreMock.mockReturnValue(rootStoreMock);

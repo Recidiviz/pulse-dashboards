@@ -41,6 +41,12 @@ vi.mock("../../CaseloadSelect", () => ({
 const useRootStoreMock = useRootStore as Mock;
 const useOpportunityConfigurationsMock = useOpportunityConfigurations as Mock;
 
+const baseRootStoreMock = {
+  insightsStore: {
+    shouldUseSupervisorHomepageUI: vi.fn(),
+  },
+};
+
 const baseWorkflowsStoreMock = {
   opportunitiesLoaded: () => false,
   potentialOpportunities: () => [],
@@ -75,6 +81,7 @@ describe("WorkflowsHomepage", () => {
 
   test("renders Welcome page on initial state", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         selectedSearchIds: [],
@@ -92,6 +99,7 @@ describe("WorkflowsHomepage", () => {
 
   test("renders loading indicator", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         hasOpportunities: () => true,
@@ -109,6 +117,7 @@ describe("WorkflowsHomepage", () => {
 
   test("renders loading indicator when some but not all have loaded", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: (opp: OpportunityType) => opp === "LSU",
@@ -129,6 +138,7 @@ describe("WorkflowsHomepage", () => {
 
   test("render no results", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -150,6 +160,7 @@ describe("WorkflowsHomepage", () => {
 
   test("render no results from multiple officers", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -172,6 +183,7 @@ describe("WorkflowsHomepage", () => {
 
   test("render no results respects officer title override", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -194,6 +206,7 @@ describe("WorkflowsHomepage", () => {
 
   test("hydrated cta uses 'caseload' for supervision opps", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -221,6 +234,7 @@ describe("WorkflowsHomepage", () => {
 
   test("hydrated cta uses overridden term for facility opps", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -249,6 +263,7 @@ describe("WorkflowsHomepage", () => {
 
   test("hydrated cta uses 'caseload' for facility opps when searching by case manager", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -277,6 +292,7 @@ describe("WorkflowsHomepage", () => {
 
   test("hydrated cta uses combined search terms when searching supervision and facility opps", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -307,6 +323,7 @@ describe("WorkflowsHomepage", () => {
 
   test("hydrated cta uses 'caseload' for when searching supervision and facility opps where 'case manager' is the facility search term", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -337,6 +354,7 @@ describe("WorkflowsHomepage", () => {
 
   test("render opportunities", () => {
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -364,6 +382,7 @@ describe("WorkflowsHomepage", () => {
   test("render opportunities where all clients are marked ineligible", () => {
     const opp = { ...mockOpportunity, reviewStatus: "DENIED" };
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -403,6 +422,7 @@ describe("WorkflowsHomepage", () => {
       person: { recordId: "3" },
     };
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
@@ -448,6 +468,7 @@ describe("WorkflowsHomepage", () => {
       person: { recordId: "3" },
     };
     useRootStoreMock.mockReturnValue({
+      ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,

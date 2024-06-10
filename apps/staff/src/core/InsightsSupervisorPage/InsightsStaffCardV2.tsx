@@ -281,7 +281,10 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                 </PlotHeader>
                 <CardContent>
                   {/* TODO (#5325): Add new swarm presenter, container, and data-preparer */}
-                  <InsightsSwarmPlot metric={swarmPlotMetric} />
+                  <InsightsSwarmPlot
+                    metric={swarmPlotMetric}
+                    supervisorHomepage
+                  />
                 </CardContent>
               </PlotSection>
             </React.Fragment>

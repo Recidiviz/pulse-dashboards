@@ -19,10 +19,7 @@ import React, { memo } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionPresenter } from "../../InsightsStore/presenters/SupervisionPresenter";
 import InsightsMetricPage from "../InsightsMetricPage";
 import InsightsNavLayout from "../InsightsNavLayout";
@@ -42,8 +39,8 @@ const PageInsights: React.FC = memo(function PageInsights() {
   window.scrollTo({
     top: 0,
   });
-  const { supervisorHomepage } = useFeatureVariants();
   const { insightsStore } = useRootStore();
+  const { shouldUseSupervisorHomepageUI: supervisorHomepage } = insightsStore;
 
   return (
     <InsightsNavLayout>
@@ -70,7 +67,7 @@ const PageInsights: React.FC = memo(function PageInsights() {
               }
             />
 
-            {!!supervisorHomepage && (
+            {supervisorHomepage && (
               <Route
                 path={insightsRoute({ routeName: "supervisionStaff" })}
                 element={<InsightsStaffPageV2 />}

@@ -144,8 +144,13 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               rate={formatTargetAndHighlight(
                 metric.currentPeriodData.metricRate,
               )}
+              supervisorHomepage
             >
-              <InsightsSwarmPlot metric={metric} isMinimized />
+              <InsightsSwarmPlot
+                metric={metric}
+                isMinimized
+                supervisorHomepage
+              />
             </InsightsChartCard>
           );
         })}
