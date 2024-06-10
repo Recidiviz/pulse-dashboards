@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import _ from "lodash";
 import { flowResult, makeAutoObservable } from "mobx";
+import moment from "moment";
 
 import {
   Hydratable,
@@ -24,6 +26,8 @@ import {
 } from "~hydration-utils";
 
 import { Case, Client } from "../api";
+import { HeaderCell } from "../components/Dashboard/CaseListTable";
+import { CaseStatus } from "../components/Dashboard/constants";
 import { StaffStore } from "../datastores/StaffStore";
 
 export class StaffPresenter implements Hydratable {
@@ -53,7 +57,71 @@ export class StaffPresenter implements Hydratable {
   }
 
   get listOfCaseBriefs(): (Case & { Client: Client })[] | undefined {
-    return this.staffInfo?.Cases;
+    return !this.staffInfo
+      ? undefined
+      : [...this.staffInfo.Cases].sort((a, b) => {
+          if (a.Client && b.Client) {
+            return a.Client.fullName.localeCompare(b.Client.fullName);
+          }
+          return 0;
+        });
+  }
+
+  get caseBriefsTableRows() {
+    const normalizeRowValue = (caseBrief: Case, key: string, value: string) => {
+      if (key === "status") {
+        return CaseStatus[value as keyof typeof CaseStatus];
+      }
+      if (key === "dueDate") {
+        return moment(caseBrief.dueDate).format("MM/DD/YYYY");
+      }
+      return value;
+    };
+
+    const headerRow: HeaderCell[] = [
+      {
+        key: "Client.fullName",
+        name: "Name",
+      },
+      {
+        key: "reportType",
+        name: "Report Type",
+      },
+      {
+        key: "primaryCharge",
+        name: "Offense",
+      },
+      {
+        key: "status",
+        name: "Status",
+      },
+      {
+        key: "dueDate",
+        name: "Due Date",
+      },
+      {
+        key: "emptyCell",
+        name: "",
+      },
+    ];
+
+    const rows =
+      this.listOfCaseBriefs?.map((caseBrief) => {
+        const caseId = caseBrief.id;
+        const row = headerRow
+          .filter((cell) => cell.key !== "emptyCell")
+          .map(({ key }) => {
+            const value = _.get(caseBrief, key.split("."));
+            return {
+              key,
+              caseId,
+              value: normalizeRowValue(caseBrief, key, value),
+            };
+          });
+        return { caseId, row };
+      }) ?? [];
+
+    return { headerRow, rows };
   }
 
   get hydrationState(): HydrationState {

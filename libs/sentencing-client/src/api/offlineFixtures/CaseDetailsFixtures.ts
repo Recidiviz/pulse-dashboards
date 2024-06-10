@@ -45,5 +45,6 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     plea: "NotGuilty",
     hasOpenChildProtectiveServicesCase: false,
     needsToBeAddressed: [],
+    status: "InProgress",
   },
 };

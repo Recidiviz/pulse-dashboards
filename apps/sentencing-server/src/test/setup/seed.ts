@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import {
   Case,
+  CaseStatus,
   Charge,
   Client,
   Plea,
@@ -58,6 +59,7 @@ export const fakeCase: Omit<Case, "staffId" | "clientId"> = {
   asamCareRecommendation: null,
   mentalHealthDiagnoses: [],
   needsToBeAddressed: [],
+  status: faker.helpers.enumValue(CaseStatus),
 };
 
 export async function seed() {

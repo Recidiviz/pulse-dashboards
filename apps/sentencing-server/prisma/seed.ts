@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import {
+  CaseStatus,
   Charge,
   Client,
   Plea,
@@ -100,6 +101,7 @@ async function main() {
         hasOpenChildProtectiveServicesCase: faker.datatype.boolean(),
         hasDevelopmentalDisability: faker.datatype.boolean(),
         plea: faker.helpers.enumValue(Plea),
+        status: faker.helpers.enumValue(CaseStatus),
       },
     });
   }

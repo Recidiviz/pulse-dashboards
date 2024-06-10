@@ -152,6 +152,12 @@ enum NeedToBeAddressed {
   SubstanceUse
 }
 
+enum CaseStatus {
+  NotYetStarted
+  InProgress
+  Complete
+}
+
 model Case {
   externalId String    @id
   id         String    @unique @default(cuid())
@@ -195,4 +201,6 @@ model Case {
   plea                               Plea?
   hasOpenChildProtectiveServicesCase Boolean?
   needsToBeAddressed                 NeedToBeAddressed[]
+
+  status CaseStatus @default(NotYetStarted)
 }
