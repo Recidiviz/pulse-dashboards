@@ -15,5 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./api/FirestoreAPIClient";
 export * from "./api/FirestoreOfflineAPIClient";
 export * from "./api/interface";

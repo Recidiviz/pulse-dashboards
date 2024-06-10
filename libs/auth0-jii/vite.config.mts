@@ -15,28 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  outputFixtureArray,
-  StaffRecord,
-  supervisionStaffFixtures,
-} from "~datatypes";
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import { defineConfig } from "vite";
 
-import { FirestoreAPI } from "./interface";
+export default defineConfig({
+  root: __dirname,
+  cacheDir: "../../node_modules/.vite/libs/auth0-jii",
 
-export class FirestoreOfflineAPIClient implements FirestoreAPI {
-  constructor(private stateCode: string) {}
+  plugins: [nxViteTsPaths()],
 
-  async authenticate(): Promise<void> {
-    return;
-  }
-
-  async staffRecordsWithSupervisor(
-    supervisorExternalId: string,
-  ): Promise<StaffRecord[]> {
-    return outputFixtureArray(supervisionStaffFixtures).filter(
-      (staffRecord) =>
-        staffRecord.stateCode === this.stateCode &&
-        staffRecord.supervisorExternalId === supervisorExternalId,
-    );
-  }
-}
+  test: {
+    globals: true,
+    environment: "node",
+    setupFiles: ["src/setupTests.ts"],
+    globalSetup: ["src/setupTestsGlobal.ts"],
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    mockReset: true,
+    coverage: {
+      reportsDirectory: "../../coverage/libs/auth0-jii",
+      provider: "v8",
+    },
+  },
+});

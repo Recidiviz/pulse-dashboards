@@ -5,6 +5,7 @@
 .env.*
 !.env.offline
 !apps/jii/.env.*
+!apps/jii-functions/.env*
 .env-cmdrc
 .nx
 
@@ -15,6 +16,7 @@ vite.config.*.timestamp-*
 build/
 dist/
 .firebase/
+tmp/
 
 # Dependency directory
 node_modules/

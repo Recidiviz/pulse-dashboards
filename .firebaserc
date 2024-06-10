@@ -5,6 +5,8 @@
     "staging": "recidiviz-dashboard-stag-e1108",
     "staging-backend": "recidiviz-dashboard-staging",
     "demo": "recidiviz-dashboard-demo",
-    "default": "recidiviz-dashboard-stag-e1108"
+    "default": "recidiviz-dashboard-stag-e1108",
+    "jii-staging": "recidiviz-jii-staging",
+    "jii-production": "recidiviz-jii-production"
   }
 }

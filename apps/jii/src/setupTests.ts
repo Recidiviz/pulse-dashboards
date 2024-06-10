@@ -21,6 +21,7 @@ import "jest-styled-components";
 import { toHaveNoViolations } from "jest-axe";
 import jestExtendedMatchers from "jest-extended";
 import { freeze } from "timekeeper";
+import createFetchMock from "vitest-fetch-mock";
 
 import { CURRENT_DATE_FIXTURE } from "~datatypes";
 
@@ -28,6 +29,15 @@ expect.extend(jestExtendedMatchers);
 
 expect.extend(toHaveNoViolations);
 
+const fetchMocker = createFetchMock(vi);
+
+beforeAll(() => {
+  fetchMocker.enableMocks();
+});
+
 beforeEach(() => {
   freeze(CURRENT_DATE_FIXTURE);
+
+  // because mocks are reset globally between tests we do have to re-enable
+  fetchMock.doMock();
 });

@@ -19,8 +19,8 @@ import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 
 import { NotAuthorized } from "~auth";
+import { Permission } from "~auth0-jii";
 
-import { Permission } from "../../models/permissions/permissions";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const RequiresPermission: FC<{

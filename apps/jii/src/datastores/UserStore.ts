@@ -16,38 +16,30 @@
 // =============================================================================
 
 import { makeAutoObservable } from "mobx";
-import { z } from "zod";
 
 import { AuthClient } from "~auth";
+import {
+  getAuth0Config,
+  metadataNamespace,
+  metadataSchema,
+  Permission,
+} from "~auth0-jii";
 import { isOfflineMode } from "~client-env-utils";
 
 import { StateCode } from "../configs/types";
-import {
-  Permission,
-  permissionSchema,
-} from "../models/permissions/permissions";
-
-const metadataSchema = z.object({
-  stateCode: z.string(),
-  allowedStates: z.array(z.string()).optional(),
-  permissions: z.array(permissionSchema).optional(),
-});
-
-type Metadata = typeof metadataSchema;
 
 export class UserStore {
-  authClient: AuthClient<Metadata>;
+  authClient: AuthClient<typeof metadataSchema>;
 
   constructor(private externals: { stateCode: StateCode }) {
     makeAutoObservable(this);
 
     this.authClient = new AuthClient(
       {
-        client_id: import.meta.env["VITE_AUTH0_CLIENT_ID"],
-        domain: import.meta.env["VITE_AUTH0_DOMAIN"],
+        ...getAuth0Config(import.meta.env["VITE_AUTH0_TENANT_KEY"]),
         redirect_uri: `${window.location.origin}/after-login`,
       },
-      { metadataNamespace: "https://jii.recidiviz.org", metadataSchema },
+      { metadataNamespace, metadataSchema },
     );
   }
 

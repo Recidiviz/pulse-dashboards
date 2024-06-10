@@ -19,6 +19,7 @@ import { makeObservable } from "mobx";
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
 import { FlowMethod } from "~hydration-utils";
 
+import { ApiClient } from "../api/ApiClient";
 import { DataAPI } from "../api/interface";
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { StateCode } from "../configs/types";
@@ -45,9 +46,9 @@ export class RootStore {
       residentsStore: true,
     });
 
-    this.apiClient = this.createApiClient();
-
     this.userStore = new UserStore(this);
+
+    this.apiClient = this.createApiClient();
   }
 
   /**
@@ -60,8 +61,10 @@ export class RootStore {
     if (isOfflineMode() || isTestEnv()) {
       return new OfflineAPIClient(this);
     } else {
-      // TODO(#5116): implement online mode
-      return new OfflineAPIClient(this);
+      return new ApiClient({
+        stateCode: this.stateCode,
+        authClient: this.userStore.authClient,
+      });
     }
   }
 

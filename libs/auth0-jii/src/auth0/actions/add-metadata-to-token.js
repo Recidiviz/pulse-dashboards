@@ -22,10 +22,17 @@
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  // this is not a real URL but that doesn't matter;
-  // what DOES matter is that this matches the namespace used on the frontend
+  // this should match the namespace string exported by the auth0-jii library.
+  // URL format is recommended for collision avoidance but it will not be accessed
   const namespace = "https://jii.recidiviz.org";
+
+  // this is the token consumed by the frontend
   api.idToken.setCustomClaim(`${namespace}/app_metadata`, {
+    ...event.user.app_metadata,
+  });
+
+  // this is the token the frontend sends with API requests
+  api.accessToken.setCustomClaim(`${namespace}/app_metadata`, {
     ...event.user.app_metadata,
   });
 };

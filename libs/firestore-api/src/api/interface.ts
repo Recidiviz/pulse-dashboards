@@ -17,6 +17,7 @@
 import { StaffRecord } from "~datatypes";
 
 export interface FirestoreAPI {
+  authenticate(firebaseToken: string): Promise<void>;
   staffRecordsWithSupervisor(
     supervisorExternalId: string,
   ): Promise<StaffRecord[]>;

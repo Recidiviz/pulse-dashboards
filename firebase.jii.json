@@ -1,0 +1,27 @@
+{
+  "hosting": {
+    "public": "dist/apps/jii",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          }
+        ]
+      }
+    ]
+  },
+  "functions": {
+    "source": "dist/apps/jii-functions",
+    "runtime": "nodejs20"
+  }
+}

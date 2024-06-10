@@ -15,28 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  outputFixtureArray,
-  StaffRecord,
-  supervisionStaffFixtures,
-} from "~datatypes";
+import jestExtendedMatchers from "jest-extended";
 
-import { FirestoreAPI } from "./interface";
-
-export class FirestoreOfflineAPIClient implements FirestoreAPI {
-  constructor(private stateCode: string) {}
-
-  async authenticate(): Promise<void> {
-    return;
-  }
-
-  async staffRecordsWithSupervisor(
-    supervisorExternalId: string,
-  ): Promise<StaffRecord[]> {
-    return outputFixtureArray(supervisionStaffFixtures).filter(
-      (staffRecord) =>
-        staffRecord.stateCode === this.stateCode &&
-        staffRecord.supervisorExternalId === supervisorExternalId,
-    );
-  }
-}
+expect.extend(jestExtendedMatchers);

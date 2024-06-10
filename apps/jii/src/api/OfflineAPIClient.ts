@@ -27,15 +27,15 @@ import {
 import {
   IncarcerationOpportunityId,
   OpportunityRecord,
+  StateCode,
 } from "../configs/types";
-import type { RootStore } from "../datastores/RootStore";
 import { DataAPI } from "./interface";
 
 export class OfflineAPIClient implements DataAPI {
-  constructor(private readonly rootStore: RootStore) {}
+  constructor(private externals: { stateCode: StateCode }) {}
 
   private get stateCode() {
-    return this.rootStore.stateCode;
+    return this.externals.stateCode;
   }
 
   /**

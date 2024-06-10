@@ -21,11 +21,17 @@
         "cwd": "{projectRoot}"
       }
     },
-    "dev": {
+    "dev-spa": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["vite dev"],
         "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nx dev jii-functions", "nx dev-spa jii"]
       }
     },
     "build": {
