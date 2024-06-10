@@ -43,8 +43,20 @@ export class OpportunityConfigurationAPIClient
     return currentTenantId;
   }
 
+  get featureVariantsParam(): string {
+    return Object.keys(
+      this.opportunityConfigurationStore.rootStore.userStore
+        .activeFeatureVariants,
+    ).join(",");
+  }
+
   async opportunities() {
-    const endpoint = `${this.baseUrl}/opportunities`;
+    let endpoint = `${this.baseUrl}/opportunities`;
+    const { isImpersonating, isRecidivizUser } =
+      this.opportunityConfigurationStore.rootStore.userStore;
+    if (isRecidivizUser || isImpersonating) {
+      endpoint += `?featureVariants = ${this.featureVariantsParam}`;
+    }
     const fetchedData = await this.apiStore.get(endpoint);
     return apiOpportunityConfigurationResponseSchema.parse(fetchedData)
       .enabledConfigs;
