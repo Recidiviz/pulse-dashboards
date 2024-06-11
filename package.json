@@ -277,6 +277,7 @@
     "vite-node": "^1.6.0",
     "vite-plugin-babel-macros": "^1.0.6",
     "vite-plugin-comlink": "^4.0.2",
+    "vite-plugin-node": "^3.1.0",
     "vite-plugin-svgr": "^4.2.0",
     "vitest": "^1.6.0",
     "vitest-canvas-mock": "^0.3.3",

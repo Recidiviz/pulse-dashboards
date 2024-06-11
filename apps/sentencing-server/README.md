@@ -22,20 +22,6 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 If you make changes to the prisma schema, you will need to run `nx prisma-migrate sentencing-server --name="{YOUR_CHANGE_NAME}"` to create a database migration file. In order for this to work, the database must be running in the docker container.
 
-## Importing types into your client
-
-In order to access the TRPC types, include the `tsconfig.types.json` in your project's `tsconfig.json` file. This will allow you to import JUST the types from the server into your client code without leaking server-side code.
-
-```json
-{
-  "compilerOptions": {
-    "references": [
-        { "path": "path/to/tsconfig.types.json" }
-    ]
-  }
-}
-```
-
 ## Testing
 
 We have integration tests for the server + database.

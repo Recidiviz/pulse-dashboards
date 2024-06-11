@@ -23,9 +23,4 @@
     "src/setupTestsGlobal.ts"
   ],
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
-  "references": [
-    {
-      "path": "../../apps/sentencing-server/tsconfig.types.json"
-    }
-  ]
 }

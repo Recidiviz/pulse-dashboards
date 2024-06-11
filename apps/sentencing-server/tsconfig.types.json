@@ -1,7 +1,0 @@
-{
-  "files": ["src/common/types.d.ts"],
-  "compilerOptions": {
-    "composite": true,
-    "emitDeclarationOnly": true,
-  }
-}

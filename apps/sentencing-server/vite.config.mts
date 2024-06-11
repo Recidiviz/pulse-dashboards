@@ -1,13 +1,29 @@
 /// <reference types='vitest' />
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { defineConfig } from "vite";
+import { VitePluginNode } from "vite-plugin-node";
 
 export default defineConfig({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/sentencing-server",
 
-  plugins: [nxViteTsPaths()],
+  plugins: [
+    nxViteTsPaths(),
+    ...VitePluginNode({
+      adapter: "fastify",
+      appPath: "./src/main.ts",
+    }),
+  ],
 
+  build: {
+    outDir: "../../dist/apps/sentencing-server",
+    sourcemap: true,
+    reportCompressedSize: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+    emptyOutDir: true,
+  },
   test: {
     // TODO(https://github.com/Recidiviz/recidiviz-data/issues/30276): Renable once we have a way to run tests in the CI.
     // setupFiles: ["src/test/setup/index.ts"],
