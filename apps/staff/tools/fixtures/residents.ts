@@ -278,6 +278,28 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     portionServedNeeded: "1/2",
     metadata: {},
   },
+  {
+    allEligibleOpportunities: ["usMeMediumTrustee"],
+
+    officerId: "OFFICER5",
+    stateCode: "US_ME",
+    personExternalId: "RES006",
+    displayId: "dRES006",
+    personName: {
+      givenNames: "MARILEE",
+      surname: "POSDALE",
+    },
+    gender: "FEMALE",
+    pseudonymizedId: "anonres006",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT B",
+    custodyLevel: "MINIMUM",
+    admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
+    releaseDate: "9999-12-01",
+    sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
+    portionServedNeeded: "1/2",
+    metadata: {},
+  },
 
   {
     allEligibleOpportunities: [

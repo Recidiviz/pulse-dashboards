@@ -41,4 +41,25 @@ export const usMeMediumTrusteeFixtures = {
       ],
     },
   }),
+  fullyEligibleWithLifeSentence: makeRecordFixture(usMeMediumTrusteeSchema, {
+    stateCode: "US_ME",
+    externalId: "RES006",
+    eligibleCriteria: {
+      usMeCustodyLevelIsMedium: {
+        supervisionLevel: "MEDIUM",
+      },
+      usMeFiveOrMoreYearsRemainingOnSentence: {},
+      usMeNoViolationFor5Years: null,
+    },
+    ineligibleCriteria: {},
+    caseNotes: {
+      "Case Plan Goals": [
+        {
+          eventDate: null,
+          noteBody: "Maintain good health",
+          noteTitle: "In progress",
+        },
+      ],
+    },
+  }),
 } satisfies FixtureMapping<UsMeMediumTrusteeRecord>;

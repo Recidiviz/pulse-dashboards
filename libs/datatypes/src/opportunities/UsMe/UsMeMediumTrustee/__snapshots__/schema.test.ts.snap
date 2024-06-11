@@ -21,3 +21,25 @@ exports[`schema for fullyEligible 1`] = `
   "stateCode": "US_ME",
 }
 `;
+
+exports[`schema for fullyEligibleWithLifeSentence 1`] = `
+{
+  "caseNotes": {
+    "Case Plan Goals": [
+      {
+        "eventDate": null,
+        "noteBody": "Maintain good health",
+        "noteTitle": "In progress",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMedium": {},
+    "usMeFiveOrMoreYearsRemainingOnSentence": {},
+    "usMeNoViolationFor5Years": null,
+  },
+  "externalId": "RES006",
+  "ineligibleCriteria": {},
+  "stateCode": "US_ME",
+}
+`;

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { addYears } from "date-fns";
 import { uniqBy } from "lodash";
 
 import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
@@ -48,6 +49,8 @@ import { UsMoRestrictiveHousingStatusHearingOpportunity } from "./Opportunity/Us
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
+
+const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
 
 const residentialOpportunityConstructors: Record<
   IncarcerationOpportunityType,
@@ -114,6 +117,14 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
 
   get releaseDate(): Date | undefined {
     return optionalFieldToDate(this.record.releaseDate);
+  }
+
+  get onLifeSentence(): boolean | undefined {
+    const { releaseDate } = this.record;
+
+    if (!releaseDate) return;
+
+    return new Date(releaseDate) > LIFE_SENTENCE_THRESHOLD;
   }
 
   get searchIdValue(): any {

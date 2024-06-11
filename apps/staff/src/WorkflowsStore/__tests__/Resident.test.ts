@@ -82,3 +82,12 @@ test("SCCP eligibility date", () => {
   createTestUnit();
   expect(testResident.sccpEligibilityDate).toEqual(new Date(2026, 0, 1));
 });
+
+test("life sentence", () => {
+  createTestUnit();
+  expect(testResident.onLifeSentence).toBeFalse();
+
+  record.releaseDate = "2525-05-25";
+  createTestUnit();
+  expect(testResident.onLifeSentence).toBeTrue();
+});
