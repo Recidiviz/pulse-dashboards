@@ -99,6 +99,19 @@ describe("app = staff", () => {
   );
 
   // eslint-disable-next-line vitest/expect-expect
+  test.each([["CA"], ["PA"]])(
+    "Recidiviz user can read demo %s state data even if it is not in recidivizAllowedStates",
+    async (userState) => {
+      await testAllReadsForState(
+        getRecidivizUser(testEnv).firestore(),
+        assertSucceeds,
+        `US_${userState}`,
+        "DEMO_",
+      );
+    },
+  );
+
+  // eslint-disable-next-line vitest/expect-expect
   test.each([
     ["TN", getTNUser],
     ["ND", getNDUser],

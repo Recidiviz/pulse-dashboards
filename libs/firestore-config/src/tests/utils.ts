@@ -79,13 +79,14 @@ export async function testAllReadsForState(
   db: FirestoreInstance,
   assertFn: AssertFn,
   stateCode: string,
+  collectionsPrefix = "",
 ) {
   return Promise.all([
     ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
         getDocs(
           query(
-            collection(db, collectionName),
+            collection(db, `${collectionsPrefix}${collectionName}`),
             where("stateCode", "==", stateCode),
           ),
         ),
@@ -93,7 +94,12 @@ export async function testAllReadsForState(
     }),
     ...SHARED_UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
-        getDoc(doc(collection(db, collectionName), `${stateCode}_12345`)),
+        getDoc(
+          doc(
+            collection(db, `${collectionsPrefix}${collectionName}`),
+            `${stateCode}_12345`,
+          ),
+        ),
       );
     }),
   ]);

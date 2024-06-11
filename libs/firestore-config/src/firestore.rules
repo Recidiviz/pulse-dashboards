@@ -18,15 +18,15 @@ service cloud.firestore {
     return resource == null || (request.auth.token.stateCode.upper() == resource.data.stateCode.upper());
   }
 
-  function recidivizAllowedStatesIncludesTarget() {
+  function recidivizAllowedStatesIncludesTarget(collection) {
     return isRecidiviz() && 
       (
         // check if resource exists before checking the state code
-        // if the resource does not yet exist, allow the operation
+        // if the resource does not yet exist or is demo data, allow the operation
         resource == null ||
+        isDemoCollection(collection) ||
         resource.data.stateCode.upper() in request.auth.token.recidivizAllowedStates
       )
-    
   }
 
   function usernameMatches(id) {
@@ -41,6 +41,10 @@ service cloud.firestore {
 
   function notAnUpdateCollection(collectionName) {
     return !collectionName.matches(".*Updates.*");
+  }
+
+  function isDemoCollection(collectionName) {
+    return collectionName.matches("^DEMO_.*");
   }
 
   function stateCodeMatchesClientId(clientId) {
@@ -73,10 +77,10 @@ service cloud.firestore {
     return !(collectionName.lower().matches(".*staff.*"));
   }
 
-  function allowStaffGeneralRead() {
+  function allowStaffGeneralRead(collection) {
     return appIsStaff() &&
       (
-        recidivizAllowedStatesIncludesTarget() || 
+        recidivizAllowedStatesIncludesTarget(collection) || 
         stateCodeMatchesTarget()
       )
   }
@@ -84,7 +88,7 @@ service cloud.firestore {
   function allowJiiGeneralRead(collection, document) {
     return appIsJii() &&
       (
-        recidivizAllowedStatesIncludesTarget() ||
+        recidivizAllowedStatesIncludesTarget(collection) ||
         (
           notAStaffCollection(collection) && 
           document == path(userDocIdRegexFromToken())
@@ -104,7 +108,7 @@ service cloud.firestore {
       // so we specifically filter out update collections here
       allow read: if notAnUpdateCollection(collection) &&
         (
-          allowStaffGeneralRead() || 
+          allowStaffGeneralRead(collection) || 
           allowJiiGeneralRead(collection, document)
         )
         ;
