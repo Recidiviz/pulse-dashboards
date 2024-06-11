@@ -30,7 +30,7 @@ import InsightsChartCard from "../InsightsChartCard";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
-import { InsightsSwarmPlot } from "../InsightsSwarmPlot";
+import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
 import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
@@ -131,7 +131,6 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       <Wrapper isTablet={isTablet}>
         {outlierOfficerData.outlierMetrics.map((metric) => {
           const { bodyDisplayName } = metric.config;
-
           return (
             <InsightsChartCard
               key={metric.metricId}
@@ -146,10 +145,10 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               )}
               supervisorHomepage
             >
-              <InsightsSwarmPlot
+              <InsightsSwarmPlotContainerV2
                 metric={metric}
+                officersForMetric={[outlierOfficerData]}
                 isMinimized
-                supervisorHomepage
               />
             </InsightsChartCard>
           );

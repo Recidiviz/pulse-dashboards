@@ -16,3 +16,4 @@
 // =============================================================================
 
 export { InsightsSwarmPlotContainer as InsightsSwarmPlot } from "./InsightsSwarmPlotContainer";
+export { InsightsSwarmPlotContainerV2 } from "./InsightsSwarmPlotContainerV2";

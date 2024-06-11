@@ -17,7 +17,7 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -30,7 +30,7 @@ import {
 } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";
-import { InsightsSwarmPlot } from "../InsightsSwarmPlot";
+import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
 import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import { insightsUrl } from "../views";
 
@@ -56,9 +56,10 @@ const CardHeader = styled.div<{
   min-width: ${rem(264)};
 `;
 
-const CardHeaderItem = styled.div`
+const CardHeaderItem = styled.div<{ hovered?: boolean }>`
   padding: ${rem(spacing.md)};
   min-width: ${rem(200)};
+  ${({ hovered }) => hovered && `background-color: ${palette.slate10};`}
 
   &:not(:last-child) {
     border-bottom: 1px solid ${palette.slate30};
@@ -165,6 +166,17 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
 }) => {
   const { isTablet } = useIsMobile(true);
 
+  const [hoveredOfficer, setHoveredOfficer] = useState<string>("");
+
+  /**
+   * Highlight the officer in the side panel when the user hovers over the officer's
+   * highlighted dot in the swarm plot.
+   */
+  const onDotHover = useCallback(
+    (officerId: string) => setHoveredOfficer(officerId),
+    [setHoveredOfficer],
+  );
+
   const {
     insightsStore: { supervisionStore },
   } = useRootStore();
@@ -189,7 +201,10 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
       {!isTablet && (
         <CardHeader hasBorder={!isTablet}>
           {officers.map((officer) => (
-            <CardHeaderItem key={officer.externalId}>
+            <CardHeaderItem
+              key={officer.externalId}
+              hovered={officer.externalId === hoveredOfficer}
+            >
               <CardTitle
                 to={insightsUrl("supervisionStaff", {
                   officerPseudoId: officer.pseudonymizedId,
@@ -213,83 +228,78 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
       )}
 
       <CardBody>
-        {outlierOfficersByMetric.map(({ metricId, officersForMetric }) => {
-          const generalMetricConfig = metricConfigsById?.get(metricId);
+        {outlierOfficersByMetric.map(
+          ({ metricId, officersForMetric, metricConfigWithBenchmark }) => {
+            const generalMetricConfig = metricConfigsById?.get(metricId);
 
-          if (!generalMetricConfig) return null;
+            if (!generalMetricConfig) return null;
 
-          /* TODO (#5325): Add new swarm presenter, container, and data-preparer */
-          const swarmPlotMetric = officersForMetric[0].outlierMetrics.find(
-            (m) => m.metricId === metricId,
-          );
+            return (
+              <React.Fragment key={metricId}>
+                {isTablet &&
+                  officersForMetric.map((officer) => {
+                    const currentMetric = officer.outlierMetrics.find(
+                      (officerMetric) => officerMetric.metricId === metricId,
+                    );
 
-          if (!swarmPlotMetric) return null;
+                    if (!currentMetric) return null;
 
-          return (
-            <React.Fragment key={metricId}>
-              {isTablet &&
-                officersForMetric.map((officer) => {
-                  const currentMetric = officer.outlierMetrics.find(
-                    (officerMetric) => officerMetric.metricId === metricId,
-                  );
+                    return (
+                      <CardHeaderItem key={officer.externalId}>
+                        <CardTitle
+                          to={insightsUrl("supervisionStaffMetric", {
+                            officerPseudoId: officer.pseudonymizedId,
+                            metricId: currentMetric.metricId,
+                          })}
+                        >
+                          {title || officer.displayName}
+                        </CardTitle>
 
-                  if (!currentMetric) return null;
+                        <CardSubtitle key={currentMetric.metricId}>
+                          {currentMetric.config.titleDisplayName}
+                          <span>
+                            {formatTargetAndHighlight(
+                              currentMetric.currentPeriodData.metricRate,
+                            )}
+                          </span>
+                        </CardSubtitle>
+                      </CardHeaderItem>
+                    );
+                  })}
 
-                  return (
-                    <CardHeaderItem key={officer.externalId}>
-                      <CardTitle
-                        to={insightsUrl("supervisionStaffMetric", {
-                          officerPseudoId: officer.pseudonymizedId,
-                          metricId: currentMetric.metricId,
-                        })}
-                      >
-                        {title || officer.displayName}
-                      </CardTitle>
-
-                      <CardSubtitle key={currentMetric.metricId}>
-                        {currentMetric.config.titleDisplayName}
-                        <span>
-                          {formatTargetAndHighlight(
-                            currentMetric.currentPeriodData.metricRate,
-                          )}
-                        </span>
-                      </CardSubtitle>
-                    </CardHeaderItem>
-                  );
-                })}
-
-              <PlotSection key={metricId}>
-                <PlotHeader>
-                  <PlotTitle>
-                    {toTitleCase(generalMetricConfig.eventName)}
-                  </PlotTitle>
-                  <PlotHint>
-                    <InsightsInfoModalV2
-                      title={toTitleCase(generalMetricConfig.eventName)}
-                      copy={generalMetricConfig.descriptionMarkdown}
-                      description={`${officersForMetric
-                        .map((officer) => officer.fullName.givenNames)
-                        .join(", ")
-                        .replace(
-                          /, ([^,]*)$/,
-                          " and $1",
-                        )} ${officersForMetric.length > 1 ? "have" : "has"} a **significantly higher rate of ${toTitleCase(generalMetricConfig.eventName)} compared to the statewide rate.**`}
-                      methodologyLink={methodologyUrl}
-                      buttonText="Learn More"
+                <PlotSection key={metricId}>
+                  <PlotHeader>
+                    <PlotTitle>
+                      {toTitleCase(generalMetricConfig.eventName)}
+                    </PlotTitle>
+                    <PlotHint>
+                      <InsightsInfoModalV2
+                        title={toTitleCase(generalMetricConfig.eventName)}
+                        copy={generalMetricConfig.descriptionMarkdown}
+                        description={`${officersForMetric
+                          .map((officer) => officer.fullName.givenNames)
+                          .join(", ")
+                          .replace(
+                            /, ([^,]*)$/,
+                            " and $1",
+                          )} ${officersForMetric.length > 1 ? "have" : "has"} a **significantly higher rate of ${toTitleCase(generalMetricConfig.eventName)} compared to the statewide rate.**`}
+                        methodologyLink={methodologyUrl}
+                        buttonText="Learn More"
+                      />
+                    </PlotHint>
+                  </PlotHeader>
+                  <CardContent>
+                    <InsightsSwarmPlotContainerV2
+                      metric={metricConfigWithBenchmark}
+                      officersForMetric={officersForMetric}
+                      onDotHover={onDotHover}
                     />
-                  </PlotHint>
-                </PlotHeader>
-                <CardContent>
-                  {/* TODO (#5325): Add new swarm presenter, container, and data-preparer */}
-                  <InsightsSwarmPlot
-                    metric={swarmPlotMetric}
-                    supervisorHomepage
-                  />
-                </CardContent>
-              </PlotSection>
-            </React.Fragment>
-          );
-        })}
+                  </CardContent>
+                </PlotSection>
+              </React.Fragment>
+            );
+          },
+        )}
       </CardBody>
     </CardWrapper>
   );

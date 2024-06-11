@@ -17,10 +17,19 @@
 
 import { ReactNode } from "react";
 
-import { SwarmPresenter } from "../../InsightsStore/presenters/SwarmPresenter";
+import {
+  SwarmPresenter,
+  SwarmPresenterV2,
+} from "../../InsightsStore/presenters/SwarmPresenter";
 
 export type InsightsSwarmPlotWrappedProps = {
   presenter: SwarmPresenter;
+  children?: ReactNode;
+};
+
+export type InsightsSwarmPlotWrappedPropsV2 = {
+  presenter: SwarmPresenterV2;
   isMinimized?: boolean;
+  onDotHover?: (officerId: string) => void;
   children?: ReactNode;
 };

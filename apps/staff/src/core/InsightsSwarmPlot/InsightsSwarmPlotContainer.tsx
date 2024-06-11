@@ -21,25 +21,24 @@ import { FC, useLayoutEffect, useRef } from "react";
 import { AspectRatio } from "react-aspect-ratio";
 import useMeasure from "react-use-measure";
 
-import { SwarmPresenter } from "../../InsightsStore/presenters/SwarmPresenter";
+import {
+  SwarmPresenter,
+  SwarmPresenterV2,
+} from "../../InsightsStore/presenters/SwarmPresenter";
 import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
 import { InsightsSwarmPlot } from "./InsightsSwarmPlot";
-import { InsightsSwarmPlotV2 } from "./InsightsSwarmPlotV2";
-import { InsightsSwarmPlotWrappedProps } from "./types";
+import {
+  InsightsSwarmPlotWrappedProps,
+  InsightsSwarmPlotWrappedPropsV2,
+} from "./types";
 
 type InsightsSwarmPlotProps = {
   metric: MetricWithConfig;
-  isMinimized?: boolean;
-  supervisorHomepage: boolean;
 };
 
 const InsightsSwarmPlotContainer = observer(
-  function InsightsSwarmPlotContainer({
-    metric,
-    isMinimized,
-    supervisorHomepage,
-  }: InsightsSwarmPlotProps) {
+  function InsightsSwarmPlotContainer({ metric }: InsightsSwarmPlotProps) {
     const presenter = new SwarmPresenter(metric);
 
     return (
@@ -48,14 +47,7 @@ const InsightsSwarmPlotContainer = observer(
           {/* because aspectRatio sets styles on its direct children,
           don't pass it another component directly to avoid unexpected results */}
           <div>
-            {supervisorHomepage ? (
-              <InsightsSwarmPlotV2
-                presenter={presenter}
-                isMinimized={isMinimized}
-              />
-            ) : (
-              <InsightsSwarmPlot presenter={presenter} />
-            )}
+            <InsightsSwarmPlot presenter={presenter} />
           </div>
         </AspectRatio>
       </PlotMeasurer>
@@ -63,9 +55,13 @@ const InsightsSwarmPlotContainer = observer(
   },
 );
 
-function getThrottledUpdater() {
+export function getThrottledUpdater() {
   return throttle(
-    (measuredWidth: number, lastWidth: number, presenter: SwarmPresenter) => {
+    (
+      measuredWidth: number,
+      lastWidth: number,
+      presenter: SwarmPresenter | SwarmPresenterV2,
+    ) => {
       if (measuredWidth !== lastWidth) {
         presenter.prepareChartData(measuredWidth);
       }
@@ -74,20 +70,20 @@ function getThrottledUpdater() {
   );
 }
 
-const PlotMeasurer: FC<InsightsSwarmPlotWrappedProps> = observer(
-  function PlotMeasurer({ children, presenter }) {
-    const [ref, bounds] = useMeasure();
-    const throttledUpdate = useRef(getThrottledUpdater());
+export const PlotMeasurer: FC<
+  InsightsSwarmPlotWrappedProps | InsightsSwarmPlotWrappedPropsV2
+> = observer(function PlotMeasurer({ children, presenter }) {
+  const [ref, bounds] = useMeasure();
+  const throttledUpdate = useRef(getThrottledUpdater());
 
-    const measuredWidth = bounds.width;
-    const lastWidth = presenter.width;
+  const measuredWidth = bounds.width;
+  const lastWidth = presenter.width;
 
-    useLayoutEffect(() => {
-      throttledUpdate.current(measuredWidth, lastWidth, presenter);
-    }, [lastWidth, measuredWidth, presenter]);
+  useLayoutEffect(() => {
+    throttledUpdate.current(measuredWidth, lastWidth, presenter);
+  }, [lastWidth, measuredWidth, presenter]);
 
-    return <div ref={ref}>{children}</div>;
-  },
-);
+  return <div ref={ref}>{children}</div>;
+});
 
 export { InsightsSwarmPlotContainer };

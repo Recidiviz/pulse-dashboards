@@ -38,7 +38,7 @@ import {
   Wrapper,
 } from "../InsightsPageLayout/InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
-import { InsightsSwarmPlot } from "../InsightsSwarmPlot";
+import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { MetricEventsTable } from "./MetricEventsTable";
@@ -228,7 +228,10 @@ export const MetricPageWithPresenter = observer(
               outcomeType={metric.config.outcomeType}
               supervisorHomepage
             >
-              <InsightsSwarmPlot metric={metric} supervisorHomepage />
+              <InsightsSwarmPlotContainerV2
+                metric={metric}
+                officersForMetric={[outlierOfficerData]}
+              />
             </InsightsChartCard>
             <InsightsChartCard
               title={`Historical ${toTitleCase(metric.config.bodyDisplayName)}`}

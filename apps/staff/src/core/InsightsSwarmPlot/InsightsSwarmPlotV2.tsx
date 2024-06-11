@@ -27,13 +27,14 @@ import { TARGET_LINE_WIDTH } from "./constants";
 import { Plot, PlotWrapper, TargetLabel, TargetLine } from "./styles";
 import { SwarmedCircleGroup } from "./SwarmedCircleGroup";
 import { SwarmPlotHighlightedDot } from "./SwarmPlotHighlightedDot";
-import { InsightsSwarmPlotWrappedProps } from "./types";
+import { InsightsSwarmPlotWrappedPropsV2 } from "./types";
 import { formatTargetAndHighlight } from "./utils";
 
 export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
   presenter,
   isMinimized,
-}: InsightsSwarmPlotWrappedProps) {
+  onDotHover,
+}: InsightsSwarmPlotWrappedPropsV2) {
   const {
     width,
     chartHeight,
@@ -109,6 +110,7 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
               cx={xScale(dot.value)}
               cy={yScale(index * centerOfContentArea)}
               plotWidth={width}
+              onDotHover={onDotHover}
               isHoverable={!isMinimized}
             />
           );

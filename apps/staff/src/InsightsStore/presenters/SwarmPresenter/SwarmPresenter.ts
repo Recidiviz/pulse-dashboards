@@ -26,7 +26,7 @@ import {
   SWARM_AREA_TOP_OFFSET,
 } from "./constants";
 import { getSwarmLayoutWorker, SwarmWorker } from "./getSwarmLayoutWorker";
-import { HighlightedDot, PreparedChartData } from "./types";
+import { PreparedChartData } from "./types";
 
 export class SwarmPresenter {
   width = 0;
@@ -35,10 +35,7 @@ export class SwarmPresenter {
 
   chartData?: PreparedChartData;
 
-  highlightedDots: HighlightedDot[];
-
   constructor(public readonly metric: MetricWithConfig) {
-    this.highlightedDots = [];
     makeAutoObservable(this);
   }
 
@@ -76,12 +73,7 @@ export class SwarmPresenter {
       this.swarmHeight,
     );
 
-    const prepareHighlightedDots = [
-      { value: this.metric.currentPeriodData.metricRate, officerId: "" },
-    ];
-
     this.chartData = preparedData;
-    this.highlightedDots = prepareHighlightedDots;
     this.isLoading = false;
   }
 }

@@ -26,7 +26,7 @@ import {
   useInteractions,
 } from "@floating-ui/react";
 import { spacing } from "@recidiviz/design-system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   HIGHLIGHT_MARK_STROKE_WIDTH,
@@ -50,6 +50,7 @@ type HighlightedPointProps = {
   cy: number;
   plotWidth: number;
   isHoverable?: boolean;
+  onDotHover?: (officerId: string) => void;
 };
 
 function useHoverProps() {
@@ -86,12 +87,24 @@ export const SwarmPlotHighlightedDot = function SwarmPlotHighlightedDot({
   cy,
   plotWidth,
   isHoverable,
+  onDotHover,
 }: HighlightedPointProps) {
   const { floatingStyles, getReferenceProps, getFloatingProps, isOpen, refs } =
     useHoverProps();
 
   const showLabel = !data.labelHidden && isHoverable;
   const isHovered = showLabel && isOpen;
+
+  /**
+   * When a highlighted dot is hovered, select the relevant officer to be highlighted
+   * in the side panel.
+   */
+  useEffect(() => {
+    if (!onDotHover) {
+      return;
+    }
+    isHovered ? onDotHover(data.officerId) : onDotHover("");
+  }, [isHovered, onDotHover, data.officerId]);
 
   return (
     <>

@@ -189,7 +189,7 @@ const InsightsStaffCard: React.FC<InsightsStaffCardType> = ({
                 </MetricHint>
               </MetricHeader>
               <CardContent $hasLegend={hasLegend} noFlex>
-                <InsightsSwarmPlot metric={metric} supervisorHomepage={false} />
+                <InsightsSwarmPlot metric={metric} />
               </CardContent>
               {hasLegend && (
                 <InsightsLegend

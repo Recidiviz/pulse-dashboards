@@ -382,10 +382,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                     outcomeType={metric.config.outcomeType}
                     supervisorHomepage={false}
                   >
-                    <InsightsSwarmPlot
-                      metric={metric}
-                      supervisorHomepage={false}
-                    />
+                    <InsightsSwarmPlot metric={metric} />
                   </InsightsChartCard>
                   <InsightsChartCard
                     title={`Historical ${toTitleCase(
