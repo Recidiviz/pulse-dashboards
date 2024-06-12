@@ -20,6 +20,6 @@ export * from "./metadata";
 export * from "./milestones";
 export * from "./opportunity";
 export * from "./person";
-export * from "./stateMetadata";
+export * from "./residentMetadata";
 export * from "./task";
 export * from "./user";

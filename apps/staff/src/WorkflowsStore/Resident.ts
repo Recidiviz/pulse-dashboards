@@ -19,7 +19,7 @@ import { addYears } from "date-fns";
 import { uniqBy } from "lodash";
 
 import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
-import { StateMetadata } from "../FirestoreStore/types";
+import { ResidentMetadata } from "../FirestoreStore/types";
 import { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
@@ -149,7 +149,7 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return optionalFieldToDate(this.record.usTnFacilityAdmissionDate);
   }
 
-  get metadata(): StateMetadata {
+  get metadata(): ResidentMetadata {
     return this.record.metadata;
   }
 

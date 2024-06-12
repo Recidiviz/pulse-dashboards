@@ -23,7 +23,37 @@ import {
   UsMoSolitaryAssignmentInfoPastYear,
 } from "../../WorkflowsStore/Opportunity/UsMo/common";
 
-export type UsMoStateMetadata = {
+type UsArProgramAchievement = {
+  programLocation: string;
+  programEvaluationScore: string | null;
+  programAchievementDate: string;
+  programType: string;
+};
+
+type UsArCurrentSentences = {
+  sentenceId: number;
+  startDate: string;
+  endDate: string;
+  personId: number;
+  initialTimeServedDays: number;
+};
+
+export type UsArResidentMetadata = {
+  stateCode: "US_AR";
+  currentCustodyClassification: string;
+  currentGtEarningClass: string;
+  currentLocation: string;
+  currentSentences: UsArCurrentSentences[];
+  gedCompletionDate: string | null;
+  maxFlatReleaseDate: string;
+  noIncarcerationSanctionsWithin6Months: boolean;
+  noIncarcerationSanctionsWithin12Months: boolean;
+  paroleEligibilityDate: string;
+  programAchievement: UsArProgramAchievement[];
+  projectedReleaseDate: string;
+};
+
+export type UsMoResidentMetadata = {
   stateCode: "US_MO";
   d1SanctionInfoInPastYear: UsMoSanctionInfo[];
   solitaryAssignmentInfoPastYear: UsMoSolitaryAssignmentInfoPastYear[];
@@ -31,14 +61,15 @@ export type UsMoStateMetadata = {
   numD1SanctionsPastYear: number;
 };
 
-type DefinedStateMetadata = {
-  US_MO: UsMoStateMetadata;
+type DefinedResidentMetadata = {
+  US_MO: UsMoResidentMetadata;
+  US_AR: UsArResidentMetadata;
 };
 
-export type StateMetadataMap = {
-  [K in TenantId]: K extends keyof DefinedStateMetadata
-    ? DefinedStateMetadata[K]
+export type ResidentMetadataMap = {
+  [K in TenantId]: K extends keyof DefinedResidentMetadata
+    ? DefinedResidentMetadata[K]
     : Record<string, never>;
 };
 
-export type StateMetadata = StateMetadataMap[TenantId];
+export type ResidentMetadata = ResidentMetadataMap[TenantId];

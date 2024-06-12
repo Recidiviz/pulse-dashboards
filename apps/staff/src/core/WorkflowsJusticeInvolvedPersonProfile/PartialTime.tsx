@@ -22,7 +22,7 @@ import { formatWorkflowsDate } from "../../utils";
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { DetailsSubheading, SecureDetailsContent } from "./styles";
-import { UsMeSCCPEligibilityDate } from "./US_ME/UsMeSCCPEligibilityDate";
+import { UsMeSCCPEligibilityDate } from "./UsMe/UsMeSCCPEligibilityDate";
 
 export const PartialTime = observer(function PartialTime({
   person,

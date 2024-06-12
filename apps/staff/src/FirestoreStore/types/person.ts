@@ -24,7 +24,7 @@ import {
   IncarcerationOpportunityType,
   SupervisionOpportunityType,
 } from "../../WorkflowsStore";
-import { StateMetadata } from ".";
+import { ResidentMetadata } from ".";
 import { Milestone } from "./milestones";
 
 export type PersonUpdateType = "preferredName" | "preferredContactMethod";
@@ -94,5 +94,5 @@ export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
     allEligibleOpportunities: IncarcerationOpportunityType[];
     portionServedNeeded?: "1/2" | "2/3";
     sccpEligibilityDate?: Timestamp | string;
-    metadata: StateMetadata;
+    metadata: ResidentMetadata;
   };

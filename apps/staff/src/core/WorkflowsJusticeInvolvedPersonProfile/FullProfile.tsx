@@ -50,6 +50,7 @@ import {
   PersonProfileProps,
   ResidentProfileProps,
 } from "./types";
+import { UsArResidentInformation } from "./UsAr/UsArResidentInformation";
 
 const COLUMNS = "1fr 1.2fr";
 
@@ -211,10 +212,22 @@ const ResidentDetails = observer(function ResidentDetails({
       <PartialTime person={resident} />
       {resident.portionServedDates.length > 0 && <Divider />}
       <ResidentHousing resident={resident} />
+      <StateSpecificResidentInformation resident={resident} />
       <Divider />
     </>
   );
 });
+
+function StateSpecificResidentInformation({
+  resident,
+}: ResidentProfileProps): React.ReactElement | null {
+  switch (resident.stateCode) {
+    case "US_AR":
+      return <UsArResidentInformation resident={resident} />;
+    default:
+      return null;
+  }
+}
 
 const PreferredName: React.FC<ClientProfileProps> = observer(
   function PreferredName({ client }): React.ReactElement {
