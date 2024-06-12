@@ -1545,3 +1545,25 @@ test("caseload (`selectedSearchIds`) include current user's caseload if current 
     "OFFICER2",
   ]);
 });
+
+test("caseload (`selectedSearchIds`) reflects updated list after impersonated user makes new search updates", async () => {
+  // simulate an impersonated user
+  runInAction(() => {
+    rootStore.userStore.user = {
+      ...rootStore.userStore.user,
+      impersonator: true,
+    };
+
+    // impersonated users do not have write access to firebase
+    // so we patch the firebase write to a no-op
+    rootStore.firestoreStore.updateSelectedSearchIds = () => undefined;
+  });
+
+  await waitForHydration({ ...mockOfficer });
+
+  runInAction(() => {
+    workflowsStore.updateSelectedSearch(["OFFICER2"]);
+  });
+
+  expect(workflowsStore.selectedSearchIds).toEqual(["OFFICER2"]);
+});

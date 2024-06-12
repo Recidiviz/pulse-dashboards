@@ -159,6 +159,12 @@ export class WorkflowsStore implements Hydratable {
    */
   selectedSearchIdsForSupervisorsWithStaff: string[] | undefined = undefined;
 
+  /**
+   * Local state to keep track of the selected search ids during impersonation mode, since
+   * in impersonation mode the user cannot write to firebase
+   */
+  selectedSearchIdsForImpersonation: string[] | undefined = undefined;
+
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
     makeAutoObservable<this, "userKeepAliveDisposer">(this, {
@@ -215,6 +221,13 @@ export class WorkflowsStore implements Hydratable {
         this.updateSelectedSearch([]);
         this.justiceInvolvedPersons = {};
       },
+    );
+
+    // mirror impersonation selected search with firestore
+    reaction(
+      () => this.user?.updates?.selectedSearchIds,
+      (searchIds?) =>
+        (this.selectedSearchIdsForImpersonation = searchIds ?? []),
     );
 
     // log default caseload search injection, when applicable
@@ -378,6 +391,10 @@ export class WorkflowsStore implements Hydratable {
       return staffAndCurrentUserIds;
     }
 
+    if (this.rootStore.isImpersonating) {
+      return this.selectedSearchIdsForImpersonation ?? [];
+    }
+
     const previousSearchIds = this.user.updates?.selectedSearchIds;
     return previousSearchIds ?? [];
   }
@@ -451,6 +468,8 @@ export class WorkflowsStore implements Hydratable {
     if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
       this.selectedSearchIdsForSupervisorsWithStaff = searchIds;
     }
+
+    this.selectedSearchIdsForImpersonation = searchIds;
   }
 
   async updateSelectedPerson(personId?: string): Promise<void> {
