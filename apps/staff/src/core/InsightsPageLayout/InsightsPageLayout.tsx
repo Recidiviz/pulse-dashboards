@@ -118,19 +118,22 @@ const Subtitle = styled.div`
   margin-top: 40px;
 `;
 
-export const Body = styled.div`
+export const Body = styled.div<{ supervisorHomepage?: boolean }>`
   display: flex;
   flex-direction: column;
-  flex-basis: 66%;
+  flex-basis: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? `60%;` : "66%;"};
   gap: ${rem(spacing.md)};
 `;
 
 export const Sidebar = styled.div<{
   isLaptop?: boolean;
+  supervisorHomepage?: boolean;
 }>`
   display: flex;
   flex-direction: column;
-  flex-basis: 33%;
+  flex-basis: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? "40%;" : "33%;"};
   order: ${({ isLaptop }) => (isLaptop ? 0 : 1)};
   gap: ${rem(spacing.md)};
 `;

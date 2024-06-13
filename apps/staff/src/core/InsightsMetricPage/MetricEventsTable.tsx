@@ -130,7 +130,7 @@ export const MetricEventsTable = withPresenter(
       {
         title: "Name",
         accessor: "clientName",
-        width: isMobile ? 40 : 150,
+        width: isMobile ? 40 : supervisorHomepage ? 120 : 150,
       },
       {
         title: "ID",

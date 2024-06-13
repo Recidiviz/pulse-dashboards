@@ -189,7 +189,7 @@ export const MetricPageWithPresenter = observer(
         }
       >
         <Wrapper isLaptop={isLaptop}>
-          <Sidebar>
+          <Sidebar supervisorHomepage>
             <InsightsChartCard
               title={
                 eventName === "program starts"
@@ -213,7 +213,7 @@ export const MetricPageWithPresenter = observer(
               />
             </InsightsChartCard>
           </Sidebar>
-          <Body>
+          <Body supervisorHomepage>
             <InsightsChartCard
               title={`${toTitleCase(bodyDisplayName)} Compared to State`}
               infoModal={
