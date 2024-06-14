@@ -34,6 +34,8 @@ export type Case = Awaited<ReturnType<tRPCClient["getCase"]["query"]>>;
 
 export type Client = Staff["Cases"][number]["Client"];
 
+export type CaseWithClient = Case & { Client: Client };
+
 export class APIClient {
   client: tRPCClient;
 

@@ -16,22 +16,78 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Hydrator } from "~hydration-utils";
 
 import { PSIStore } from "../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../presenters/CaseDetailsPresenter";
+import { psiUrl } from "../../utils/routing";
 import { ErrorMessage } from "../Error";
+import { CaseAttributes } from "./CaseAttributes";
+import * as Styled from "./CaseDetails.styles";
+import { Insights } from "./Insights";
+import { Opportunities } from "./Opportunities";
+import { Recommendations } from "./Recommendations";
+import { RecommendationType } from "./types";
 
 const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter,
 }: {
   presenter: CaseDetailsPresenter;
 }) {
-  const { caseAttributes } = presenter;
+  const navigate = useNavigate();
+  const { staffPseudoId } = presenter;
 
-  return <>{JSON.stringify(caseAttributes)}</>;
+  const [selectedRecommendation, setSelectedRecommendation] =
+    useState<RecommendationType>();
+
+  const updateRecommendation = (recommendation: RecommendationType) => {
+    setSelectedRecommendation((prev) => {
+      if (prev === recommendation) {
+        return undefined;
+      }
+      return recommendation;
+    });
+  };
+
+  if (!staffPseudoId) {
+    return <Styled.PageContainer>No staff ID found.</Styled.PageContainer>;
+  }
+
+  return (
+    <Styled.PageContainer>
+      <Styled.BackLink
+        onClick={() =>
+          navigate(
+            psiUrl("dashboard", {
+              staffPseudoId,
+            }),
+          )
+        }
+      >{`Back to Dashboard`}</Styled.BackLink>
+      {/* Case Attributes */}
+      <CaseAttributes />
+      <Styled.Body>
+        {/* Recommendations */}
+        <Recommendations
+          selectedRecommendation={selectedRecommendation}
+          updateRecommendation={updateRecommendation}
+        />
+        <Styled.InsightsOpportunitiesWrapper>
+          {/* Insights */}
+          <Insights />
+          {/* Opportunities */}
+          <Opportunities
+            isTermRecommendation={
+              selectedRecommendation === RecommendationType.Term
+            }
+          />
+        </Styled.InsightsOpportunitiesWrapper>
+      </Styled.Body>
+    </Styled.PageContainer>
+  );
 });
 
 export const CaseDetails: React.FC<{
@@ -41,7 +97,7 @@ export const CaseDetails: React.FC<{
   const params = useParams();
 
   if (!params["caseId"]) {
-    return <>No case ID found.</>;
+    return <Styled.PageContainer>No case ID found.</Styled.PageContainer>;
   }
 
   const presenter = new CaseDetailsPresenter(caseStore, params["caseId"]);

@@ -15,21 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CaseWithClient, Client } from "../../api";
+export enum RecommendationType {
+  Probation = "Probation",
+  Rider = "Rider",
+  Term = "Term",
+  None = "None",
+}
 
-// TODO(Recidiviz/recidiviz-data#30653): Find a better way to more strongly type these keys
-
-export const DUE_DATE_KEY = "dueDate";
-
-const CLIENT_KEY: keyof CaseWithClient = "Client";
-
-const FULL_NAME_KEY: keyof Exclude<Client, null> = "fullName";
-
-export const CLIENT_FULL_NAME_KEY = [CLIENT_KEY, FULL_NAME_KEY].join(".");
-
-export const NO_CASES_MESSAGE = "No cases to review";
-
-export const SortKeys = {
-  ClientFullName: CLIENT_FULL_NAME_KEY,
-  DueDate: DUE_DATE_KEY,
-};
+export enum ProfileStrength {
+  High = "High",
+  Medium = "Medium",
+  Low = "Low",
+}

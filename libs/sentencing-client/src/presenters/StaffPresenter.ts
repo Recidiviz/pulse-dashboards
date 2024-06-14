@@ -25,9 +25,8 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { Case, Client } from "../api";
-import { HeaderCell } from "../components/Dashboard/CaseListTable";
-import { CaseStatus } from "../components/Dashboard/constants";
+import { Case, CaseWithClient } from "../api";
+import { CaseStatus, HeaderCell } from "../components/Dashboard/types";
 import { StaffStore } from "../datastores/StaffStore";
 
 export class StaffPresenter implements Hydratable {
@@ -56,7 +55,7 @@ export class StaffPresenter implements Hydratable {
     return this.staffStore.staffInfo;
   }
 
-  get listOfCaseBriefs(): (Case & { Client: Client })[] | undefined {
+  get listOfCaseBriefs(): CaseWithClient[] | undefined {
     return !this.staffInfo
       ? undefined
       : [...this.staffInfo.Cases].sort((a, b) => {
@@ -67,6 +66,7 @@ export class StaffPresenter implements Hydratable {
         });
   }
 
+  // TODO(Recidiviz/recidiviz-data#30653) Dashboard followups: Refactor to strongly type the caseBriefsTableRows
   get caseBriefsTableRows() {
     const normalizeRowValue = (caseBrief: Case, key: string, value: string) => {
       if (key === "status") {

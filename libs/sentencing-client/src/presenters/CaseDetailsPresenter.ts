@@ -46,12 +46,16 @@ export class CaseDetailsPresenter implements Hydratable {
     });
   }
 
-  get hydrationState(): HydrationState {
-    return this.hydrator.hydrationState;
+  get staffPseudoId() {
+    return this.caseStore.psiStore.staffPseudoId;
   }
 
   get caseAttributes() {
     return this.caseStore.caseDetailsById[this.caseId];
+  }
+
+  get hydrationState(): HydrationState {
+    return this.hydrator.hydrationState;
   }
 
   async hydrate(): Promise<void> {

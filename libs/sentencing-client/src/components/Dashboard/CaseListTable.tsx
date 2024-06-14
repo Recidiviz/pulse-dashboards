@@ -15,29 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { psiUrl } from "../../utils/routing";
 import {
-  CaseStatus,
+  CLIENT_FULL_NAME_KEY,
   DUE_DATE_KEY,
-  FULL_NAME_KEY,
   NO_CASES_MESSAGE,
 } from "./constants";
 import * as Styled from "./Dashboard.styles";
 import { useDetectOutsideClick } from "./hooks";
-
-export type HeaderCell = { key: string; name: string };
-
-export type ContentCell = {
-  key: string;
-  caseId: string;
-  value: string;
-};
-
-type ContentRow = { caseId: string; row: ContentCell[] };
+import { CaseStatus, ContentRow, HeaderCell } from "./types";
+import { DIFF_FUNCTIONS } from "./utils";
 
 type CaseListTableProps = {
   headerRow: HeaderCell[];
@@ -53,16 +43,16 @@ export const CaseListTable = ({
   const navigate = useNavigate();
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
-  const [activeSortFilterKey, setActiveSortFilterKey] = useState(DUE_DATE_KEY);
+  const [activeSortKey, setActiveSortKey] = useState(DUE_DATE_KEY);
   const [orderByAscending, setOrderByAscending] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const [includedStatusFilter, setIncludedStatusFilter] = useState(
-    Object.values(CaseStatus),
-  );
+  const [includedStatusFilter, setIncludedStatusFilter] = useState<
+    CaseStatus[]
+  >(Object.values(CaseStatus));
 
   const numberOfCasesDisplay = `${rows.length} ${rows.length === 1 ? "case" : "cases"}`;
 
-  const filterOptions = [
+  const filterOptions: { key: CaseStatus | "Active" }[] = [
     { key: "Active" },
     ...Object.values(CaseStatus).map((status) => ({
       key: status,
@@ -73,39 +63,20 @@ export const CaseListTable = ({
     () =>
       rows
         .filter((rowContent) => {
-          const statusValue =
-            rowContent.row.find((cell) => cell.key === "status")?.value ?? "";
+          const statusValue = rowContent.row.find(
+            (cell) => cell.key === "status",
+          )?.value as CaseStatus;
           return includedStatusFilter.includes(statusValue);
         })
         .sort((a, b) => {
-          if (activeSortFilterKey === DUE_DATE_KEY) {
-            const valueA = a.row.find(
-              (cell) => cell.key === DUE_DATE_KEY,
-            )?.value;
-            const valueB = b.row.find(
-              (cell) => cell.key === DUE_DATE_KEY,
-            )?.value;
-            const diff = moment(valueA).diff(moment(valueB));
-            return orderByAscending ? diff : diff * -1;
-          }
-
-          if (activeSortFilterKey === FULL_NAME_KEY) {
-            const valueA = a.row.find(
-              (cell) => cell.key === FULL_NAME_KEY,
-            )?.value;
-            const valueB = b.row.find(
-              (cell) => cell.key === FULL_NAME_KEY,
-            )?.value;
-            const diff = valueA && valueB ? valueA.localeCompare(valueB) : 0;
-            return orderByAscending ? diff : diff * -1;
-          }
-
-          return 0;
+          const diffFunction = DIFF_FUNCTIONS[activeSortKey];
+          const diff = diffFunction(a, b);
+          return diff * (orderByAscending ? 1 : -1);
         }),
-    [rows, includedStatusFilter, orderByAscending, activeSortFilterKey],
+    [rows, includedStatusFilter, orderByAscending, activeSortKey],
   );
 
-  const handleFilterChange = (key: string) => {
+  const handleFilterChange = (key: CaseStatus | "Active") => {
     setIncludedStatusFilter((prev) => {
       if (key === "Active") {
         return prev.length > 0 ? [] : Object.values(CaseStatus);
@@ -142,10 +113,7 @@ export const CaseListTable = ({
                 </Styled.ClearButton>
               </Styled.DropdownHeader>
               {filterOptions.map(({ key }) => (
-                <Styled.DropdownOption
-                  key={key}
-                  isNested={key !== "Active" && key !== "Archived"}
-                >
+                <Styled.DropdownOption key={key} isNested={key !== "Active"}>
                   <input
                     id={`${key}-checkbox-status-filter-option`}
                     type="checkbox"
@@ -171,16 +139,14 @@ export const CaseListTable = ({
           {headerRow.map((cell) => (
             <Styled.Cell
               key={cell.key}
-              sortable={cell.key === DUE_DATE_KEY || cell.key === FULL_NAME_KEY}
+              sortable={
+                cell.key === DUE_DATE_KEY || cell.key === CLIENT_FULL_NAME_KEY
+              }
               isAscending={orderByAscending}
-              isActiveSort={cell.key === activeSortFilterKey}
+              isActiveSort={cell.key === activeSortKey}
               onClick={() => {
-                if (cell.key === DUE_DATE_KEY) {
-                  setActiveSortFilterKey(DUE_DATE_KEY);
-                  setOrderByAscending(!orderByAscending);
-                }
-                if (cell.key === FULL_NAME_KEY) {
-                  setActiveSortFilterKey(FULL_NAME_KEY);
+                if (cell.key in [DUE_DATE_KEY, CLIENT_FULL_NAME_KEY]) {
+                  setActiveSortKey(cell.key);
                   setOrderByAscending(!orderByAscending);
                 }
               }}

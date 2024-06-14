@@ -15,21 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CaseWithClient, Client } from "../../api";
+import moment from "moment";
 
-// TODO(Recidiviz/recidiviz-data#30653): Find a better way to more strongly type these keys
+import { Case } from "../../api";
+import { CLIENT_FULL_NAME_KEY, DUE_DATE_KEY, SortKeys } from "./constants";
+import { ContentRow } from "./types";
 
-export const DUE_DATE_KEY = "dueDate";
+const sortDiffByKey =
+  (key: string | keyof Case) => (a: ContentRow, b: ContentRow) => {
+    const valueA = a.row.find((cell) => cell.key === key)?.value;
+    const valueB = b.row.find((cell) => cell.key === key)?.value;
 
-const CLIENT_KEY: keyof CaseWithClient = "Client";
+    if (key === DUE_DATE_KEY) {
+      return moment(valueA).diff(moment(valueB));
+    }
+    return valueA && valueB ? valueA.localeCompare(valueB) : 0;
+  };
 
-const FULL_NAME_KEY: keyof Exclude<Client, null> = "fullName";
-
-export const CLIENT_FULL_NAME_KEY = [CLIENT_KEY, FULL_NAME_KEY].join(".");
-
-export const NO_CASES_MESSAGE = "No cases to review";
-
-export const SortKeys = {
-  ClientFullName: CLIENT_FULL_NAME_KEY,
-  DueDate: DUE_DATE_KEY,
+export const DIFF_FUNCTIONS = {
+  [SortKeys.ClientFullName]: sortDiffByKey(CLIENT_FULL_NAME_KEY),
+  [SortKeys.DueDate]: sortDiffByKey(DUE_DATE_KEY),
 };
