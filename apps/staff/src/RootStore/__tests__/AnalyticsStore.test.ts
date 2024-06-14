@@ -69,6 +69,11 @@ describe("AnalyticsStore", () => {
       });
       expect(window.analytics.track).not.toHaveBeenCalled();
     });
+
+    it("does not call page", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).not.toHaveBeenCalled();
+    });
   });
 
   describe("Recidiviz user in production", () => {
@@ -96,6 +101,11 @@ describe("AnalyticsStore", () => {
         opportunityType: "LSU",
       });
       expect(window.analytics.track).not.toHaveBeenCalled();
+    });
+
+    it("does not call page", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).not.toHaveBeenCalled();
     });
   });
 
@@ -125,6 +135,11 @@ describe("AnalyticsStore", () => {
       });
       expect(window.analytics.track).not.toHaveBeenCalled();
     });
+
+    it("does not call page", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).not.toHaveBeenCalled();
+    });
   });
 
   describe("Demo mode", () => {
@@ -142,6 +157,11 @@ describe("AnalyticsStore", () => {
         opportunityType: "LSU",
       });
       expect(window.analytics.track).not.toHaveBeenCalled();
+    });
+
+    it("does not call page", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).not.toHaveBeenCalled();
     });
   });
 
@@ -164,6 +184,11 @@ describe("AnalyticsStore", () => {
       });
       expect(window.analytics.track).not.toHaveBeenCalled();
     });
+
+    it("does not call page", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).not.toHaveBeenCalled();
+    });
   });
 
   describe("Test environment", () => {
@@ -182,6 +207,11 @@ describe("AnalyticsStore", () => {
       });
       expect(window.analytics.track).not.toHaveBeenCalled();
     });
+
+    it("does not call page", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).not.toHaveBeenCalled();
+    });
   });
 
   describe("Staging environment", () => {
@@ -199,6 +229,11 @@ describe("AnalyticsStore", () => {
         opportunityType: "LSU",
       });
       expect(window.analytics.track).toHaveBeenCalled();
+    });
+
+    it("does call analytics for pageview", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).toHaveBeenCalledWith("/foo");
     });
   });
 
@@ -220,6 +255,11 @@ describe("AnalyticsStore", () => {
         opportunityType: "LSU",
       });
       expect(window.analytics.track).toHaveBeenCalled();
+    });
+
+    it("does call analytics for pageview", () => {
+      analyticsStore.page("/foo");
+      expect(window.analytics.page).toHaveBeenCalledWith("/foo");
     });
   });
 });

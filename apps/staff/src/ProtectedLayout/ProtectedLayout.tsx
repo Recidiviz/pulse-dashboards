@@ -20,7 +20,7 @@ import { useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import Loading from "../components/Loading";
-import { useUserStore } from "../components/StoreProvider";
+import { useRootStore, useUserStore } from "../components/StoreProvider";
 import DashboardLayout from "../core/DashboardLayout";
 import Profile from "../core/Profile";
 import useAuth from "../hooks/useAuth";
@@ -29,9 +29,16 @@ import RedirectHome from "../RedirectHome";
 
 function usePageViews() {
   const location = useLocation();
+  const { analyticsStore } = useRootStore();
+  const { userIsLoading } = useUserStore();
+
   useEffect(() => {
-    window.analytics.page(location.pathname);
-  }, [location.pathname]);
+    // the store cannot be accessed before user data is loaded or it will blow up;
+    // certain analytics behaviors depend on the user's identity
+    if (userIsLoading) return;
+
+    analyticsStore.page(location.pathname);
+  }, [analyticsStore, location.pathname, userIsLoading]);
 }
 
 const ProtectedLayout = observer(function ProtectedLayout() {

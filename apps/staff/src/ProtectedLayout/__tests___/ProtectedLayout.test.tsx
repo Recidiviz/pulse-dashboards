@@ -18,7 +18,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { useUserStore } from "../../components/StoreProvider";
+import { useRootStore, useUserStore } from "../../components/StoreProvider";
 import DashboardLayout from "../../core/DashboardLayout";
 import LanternLayout from "../../lantern/LanternLayout";
 import ProtectedLayout from "../ProtectedLayout";
@@ -41,6 +41,7 @@ vi.mock("../../lantern/LanternLayout", () => {
 vi.mock("../../hooks/useAuth");
 
 const mockUseUserStore = useUserStore as Mock;
+const mockUseRootStore = vi.mocked(useRootStore);
 
 describe("ProtectedLayout", () => {
   beforeEach(() => {
@@ -48,6 +49,9 @@ describe("ProtectedLayout", () => {
     mockUseUserStore.mockReturnValue({ userIsLoading: false });
     (DashboardLayout as Mock).mockReturnValue(<div>DashboardLayout</div>);
     (LanternLayout as Mock).mockReturnValue(<div>LanternLayout</div>);
+    mockUseRootStore.mockReturnValue({
+      analyticsStore: { page: vi.fn() },
+    } as any);
   });
 
   it("renders Loading component when use is still loading", () => {

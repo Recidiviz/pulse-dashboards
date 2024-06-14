@@ -52,7 +52,27 @@
     {
       "files": ["src/**/*"],
       "rules": {
-        "no-restricted-globals": ["error", "jest"]
+        "no-restricted-globals": ["error", "jest"],
+        "no-restricted-properties": [
+          "error",
+          {
+            "object": "window",
+            "property": "analytics",
+            "message": "Do not use Segment analytics directly, use the AnalyticsStore instead."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/**/AnalyticsStore.*"],
+      "rules": {
+        "no-restricted-properties": [
+          "off",
+          {
+            "object": "window",
+            "property": "analytics"
+          }
+        ]
       }
     },
     {

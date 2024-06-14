@@ -67,6 +67,7 @@ process.env = {
 };
 
 // mock analytics configuration
+// eslint-disable-next-line no-restricted-properties
 window.analytics = {
   track: vi.fn(),
   page: vi.fn(),

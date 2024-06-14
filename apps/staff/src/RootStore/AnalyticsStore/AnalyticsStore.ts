@@ -156,6 +156,21 @@ export default class AnalyticsStore {
     window.analytics.track(eventName, fullMetadata);
   }
 
+  page(pagePath: string) {
+    const { isImpersonating } = this.rootStore;
+
+    const log = `${
+      isImpersonating ? "[Impersonation]" : ""
+    }[Analytics] Tracking pageview: ${pagePath}`;
+
+    if (this.disableAnalytics) {
+      // eslint-disable-next-line
+      console.log(log);
+      return;
+    }
+    window.analytics.page(pagePath);
+  }
+
   trackInsightsSupervisorPageViewed(
     metadata: SupervisorPageTrackingMetadata,
   ): void {
