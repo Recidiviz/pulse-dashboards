@@ -29,7 +29,9 @@
     "build": {
       "executor": "@nx/vite:build",
       "options": {
-        "outputPath": "{workspaceRoot}/dist/apps/sentencing-server"
+        "outputPath": "{workspaceRoot}/dist/apps/sentencing-server",
+        "generatePackageJson": true,
+        "skipTypeCheck": true
       }
     },
     "preview": {
@@ -37,9 +39,6 @@
       "options": {
         "buildTarget": "sentencing-server:build"
       }
-    },
-    "docker": {
-      "executor": "@nx-tools/nx-container:build"
     },
     "test": {
       "executor": "nx:run-commands",
@@ -49,6 +48,56 @@
         "command": "prisma db push && vitest",
         "cwd": "{projectRoot}"
       }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "cache": true,
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"],
+        "build-args": ["-t"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "deploy-migrate-db": {
+      "executor": "nx:run-commands",
+      "dependsOn": [{ "target": "container", "params": "forward" }],
+      "configurations": {
+        "staging": {
+          "command": "gcloud run jobs deploy sentencing-server-migrate-db --project recidiviz-dashboard-staging --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest --set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db --region us-central1 --execute-now --command yarn --args prisma,migrate,deploy"
+        }
+      },
+      "defaultConfiguration": "staging"
+    },
+    "deploy-app": {
+      "executor": "@nx-extend/gcp-cloud-run:deploy",
+      "dependsOn": [
+        { "target": "container", "params": "forward" },
+        { "target": "deploy-migrate-db", "params": "forward" }
+      ],
+      "options": {
+        "region": "us-central1"
+      },
+      "configurations": {
+        "staging": {
+          "project": "recidiviz-dashboard-staging",
+          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest",
+          "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:sentencing-db"
+        }
+      },
+      "defaultConfiguration": "staging"
     },
     "prisma-generate": {
       "executor": "@nx-tools/nx-prisma:generate",

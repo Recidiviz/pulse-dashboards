@@ -9,7 +9,7 @@ import {
 } from "@trpc/server/adapters/fastify";
 import type { FastifyRequest } from "fastify";
 import Fastify from "fastify";
-import { fastifyAuth0Verify } from "fastify-auth0-verify";
+import fastifyAuth0Verify from "fastify-auth0-verify";
 
 import { handleImport } from "~sentencing-server/import";
 import { createContext } from "~sentencing-server/trpc/context";

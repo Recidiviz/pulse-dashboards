@@ -2,6 +2,7 @@
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { defineConfig } from "vite";
 import { VitePluginNode } from "vite-plugin-node";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
   root: __dirname,
@@ -9,6 +10,15 @@ export default defineConfig({
 
   plugins: [
     nxViteTsPaths(),
+    // Manually copy the prisma schema and migrations
+    viteStaticCopy({
+      targets: [
+        {
+          src: "prisma",
+          dest: ".",
+        },
+      ],
+    }),
     ...VitePluginNode({
       adapter: "fastify",
       appPath: "./src/main.ts",
@@ -17,7 +27,6 @@ export default defineConfig({
 
   build: {
     outDir: "../../dist/apps/sentencing-server",
-    sourcemap: true,
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
