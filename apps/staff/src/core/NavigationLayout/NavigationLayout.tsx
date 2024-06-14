@@ -427,13 +427,21 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
 
     if (!userAllowedNavigation || !currentTenantId) return null;
 
+    // We should include the insights and workflows links on views that don't use the
+    // sitewide nav bar, or when the supervisor homepage UI is not enabled.
+    const includeInsightsWorkflowsLinks =
+      (
+        [DASHBOARD_VIEWS.operations, DASHBOARD_VIEWS.system] as string[]
+      ).includes(view) || !supervisorHomepage;
+
     const enabledPathwaysPages =
       (userAllowedNavigation.system || []).length > 0;
     const enableWorkflows =
-      (userAllowedNavigation.workflows || []).length > 0 && !supervisorHomepage;
+      (userAllowedNavigation.workflows || []).length > 0 &&
+      includeInsightsWorkflowsLinks;
     const enableOperations = !!userAllowedNavigation.operations;
     const enabledInsights =
-      !!userAllowedNavigation.insights && !supervisorHomepage;
+      !!userAllowedNavigation.insights && includeInsightsWorkflowsLinks;
     const enabledPSI = !!userAllowedNavigation.psi;
 
     const isInsightsView = view === DASHBOARD_VIEWS.insights;
