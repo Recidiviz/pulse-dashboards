@@ -52,9 +52,9 @@ export const formInformationSchema = z.object({
   latestVantageRiskLevel: z.string().optional(),
   latestPreaScreeningResults: z
     .object({
-      aggressorFindingLevel: z.string(),
       latestPreaScreeningDate: dateStringSchema,
-      victimFindingLevel: z.string(),
+      aggressorFindingLevelChanged: z.boolean().optional(),
+      victimFindingLevelChanged: z.boolean().optional(),
     })
     .optional(),
   levelOfCare: z.string().optional(),

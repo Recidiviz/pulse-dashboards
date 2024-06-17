@@ -67,8 +67,8 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
       ],
       latestPreaScreeningResults: {
         latestPreaScreeningDate: "2022-02-23",
-        aggressorFindingLevel: "NA",
-        victimFindingLevel: "NA",
+        aggressorFindingLevelChanged: false,
+        victimFindingLevelChanged: true,
       },
     },
   };

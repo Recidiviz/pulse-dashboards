@@ -45,8 +45,8 @@ export const usTnCustodyLevelDowngradeFixture =
         statusAtHearingSeg: "GEN",
         latestPreaScreeningResults: {
           latestPreaScreeningDate: "2022-02-23",
-          aggressorFindingLevel: "NA",
-          victimFindingLevel: "NA",
+          aggressorFindingLevelChanged: true,
+          victimFindingLevelChanged: false,
         },
         q1Score: 0,
         q2Score: 0,
@@ -91,8 +91,8 @@ export const usTnCustodyLevelDowngradeFixture =
         lastCafDate: "2022-08-22",
         latestPreaScreeningResults: {
           latestPreaScreeningDate: "2022-02-23",
-          aggressorFindingLevel: "NA",
-          victimFindingLevel: "NA",
+          aggressorFindingLevelChanged: true,
+          victimFindingLevelChanged: false,
         },
         lastCafTotal: "8",
         q1Score: 5,

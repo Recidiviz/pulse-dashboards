@@ -449,8 +449,8 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       lastCafDate: new Date("2022-08-22"),
       latestPreaScreeningResults: {
         latestPreaScreeningDate: new Date("2022-02-23"),
-        aggressorFindingLevel: "NA",
-        victimFindingLevel: "NA",
+        aggressorFindingLevelChanged: true,
+        victimFindingLevelChanged: false,
       },
       lastCafTotal: "8",
       q1Score: -3,
@@ -522,8 +522,8 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
       lastCafDate: new Date("2022-08-22"),
       latestPreaScreeningResults: {
         latestPreaScreeningDate: new Date("2022-02-23"),
-        aggressorFindingLevel: "NA",
-        victimFindingLevel: "NA",
+        aggressorFindingLevelChanged: false,
+        victimFindingLevelChanged: true,
       },
       lastCafTotal: "8",
       q1Score: -3,

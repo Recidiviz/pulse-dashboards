@@ -118,12 +118,25 @@ export class UsTnCustodyLevelDowngradeForm extends FormBase<
       if (formInformation.latestPreaScreeningResults) {
         const {
           latestPreaScreeningDate,
-          aggressorFindingLevel,
-          victimFindingLevel,
+          aggressorFindingLevelChanged,
+          victimFindingLevelChanged,
         } = formInformation.latestPreaScreeningResults;
-        justifications.push(
-          `Latest PREA screening date: ${formatDate(latestPreaScreeningDate)}, Victim Finding ${victimFindingLevel}, Aggressor Finding ${aggressorFindingLevel}`,
-        );
+        const preaClauses = [
+          `Latest PREA screening date: ${formatDate(latestPreaScreeningDate)}`,
+        ];
+        if (aggressorFindingLevelChanged !== undefined) {
+          preaClauses.push(
+            aggressorFindingLevelChanged
+              ? "Aggressor Finding has changed"
+              : "Aggressor finding same as previous screening",
+          );
+          preaClauses.push(
+            victimFindingLevelChanged
+              ? "Victim Finding has changed"
+              : "Victim finding same as previous screening",
+          );
+        }
+        justifications.push(preaClauses.join(", "));
       } else {
         justifications.push("Latest PREA screening: Unavailable");
       }
