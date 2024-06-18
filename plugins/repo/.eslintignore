@@ -1,1 +1,2 @@
 src/generators/lib/files
+node_modules/**
