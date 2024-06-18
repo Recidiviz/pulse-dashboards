@@ -37,7 +37,6 @@ import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRel
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCReview";
-import { FormUsOrEarnedDischarge } from "../Paperwork/US_OR/EarnedDischarge/FormUsOrEarnedDischarge";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
@@ -97,7 +96,6 @@ const FormComponents = {
   WorkflowsUsTnReclassForm,
   WorkflowsUsCaSupervisionLevelDowngradeForm,
   FormFurloughRelease,
-  FormUsOrEarnedDischarge,
   FormUsPaAdminSupervision,
   AnnualClassificationReview,
   FormUsMiSCCReview,

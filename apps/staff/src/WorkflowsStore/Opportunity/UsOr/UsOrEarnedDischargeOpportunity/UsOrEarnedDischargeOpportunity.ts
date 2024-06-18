@@ -20,7 +20,6 @@
 import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
-import { UsOrEarnedDischargeForm } from "../../Forms/UsOrEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { hydrateUntypedCriteria } from "../../utils";
@@ -33,8 +32,6 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
   Client,
   UsOrEarnedDischargeReferralRecord
 > {
-  form: UsOrEarnedDischargeForm;
-
   constructor(client: Client) {
     super(
       client,
@@ -42,8 +39,6 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
       client.rootStore,
       usOrEarnedDischargeSchema.parse,
     );
-
-    this.form = new UsOrEarnedDischargeForm(this, client.rootStore);
 
     makeObservable(this, { requirementsMet: override });
   }

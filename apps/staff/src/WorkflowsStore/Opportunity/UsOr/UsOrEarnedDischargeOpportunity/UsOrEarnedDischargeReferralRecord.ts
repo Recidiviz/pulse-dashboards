@@ -23,9 +23,6 @@ import { opportunitySchemaBase } from "../../schemaHelpers";
 
 export const usOrEarnedDischargeSchema = opportunitySchemaBase
   .extend({
-    formInformation: z.object({
-      birthdate: dateStringSchema,
-    }),
     eligibleCriteria: z.object({
       usOrSentenceEligible: z.object({
         eligibleSentences: z.array(
@@ -80,7 +77,6 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
     ({
       stateCode,
       externalId,
-      formInformation,
       eligibleCriteria,
       metadata: { eligibleSentences, ...personLevelMetadata },
     }) => {
@@ -90,7 +86,6 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
       return {
         stateCode,
         externalId,
-        formInformation,
         metadata: personLevelMetadata,
         subOpportunities:
           eligibleCriteria.usOrSentenceEligible.eligibleSentences.map((s) => ({
@@ -118,32 +113,3 @@ export type UsOrEarnedDischargeReferralRecord = z.infer<
 
 export type UsOrEarnedDischargeSubOpportunity =
   UsOrEarnedDischargeReferralRecord["subOpportunities"][number];
-
-export type UsOrEarnedDischargeSentenceDraftData = {
-  offenses: string;
-  sentenceType: string;
-  sentenceStartDate: string;
-  county: string;
-  docket: string;
-  judgeName: string;
-  sentenceExpirationDate: string;
-};
-
-export type UsOrEarnedDischargeDraftData = {
-  givenNames: string;
-  middleNames: string;
-  surname: string;
-  clientId: string;
-  officerName: string;
-  offenses: string;
-  birthdate: string;
-  sentenceStartDate: string;
-  todaysDate: string;
-  countyName: string;
-  countyAddress: string;
-  countyPhone: string;
-  countyFax: string;
-  // Note that if we want to edit this form in the frontend, we will need to flatten this out
-  // This will also require changing to a stable id for each sentence
-  sentences: Record<string, UsOrEarnedDischargeSentenceDraftData>;
-};
