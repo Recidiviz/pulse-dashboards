@@ -51,6 +51,7 @@ import {
   ResidentProfileProps,
 } from "./types";
 import { UsArResidentInformation } from "./UsAr/UsArResidentInformation";
+import { UsMoResidentInformation } from "./UsMo/UsMoResidentInformation";
 
 const COLUMNS = "1fr 1.2fr";
 
@@ -224,6 +225,8 @@ function StateSpecificResidentInformation({
   switch (resident.stateCode) {
     case "US_AR":
       return <UsArResidentInformation resident={resident} />;
+    case "US_MO":
+      return <UsMoResidentInformation resident={resident} />;
     default:
       return null;
   }
