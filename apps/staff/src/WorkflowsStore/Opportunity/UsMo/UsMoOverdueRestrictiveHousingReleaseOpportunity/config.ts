@@ -25,6 +25,7 @@ export const usMoOverdueRestrictiveHousingReleaseConfig: OpportunityConfig<UsMoO
     "Review residents for release and prepare necessary paperwork for their return to general population.",
     {
       BEDS: "Released early due to a need for Restrictive Housing beds",
+      SPACE: "Completed time but pending bed space",
       RELEASED: "Released this week",
       EXTENDED:
         "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",

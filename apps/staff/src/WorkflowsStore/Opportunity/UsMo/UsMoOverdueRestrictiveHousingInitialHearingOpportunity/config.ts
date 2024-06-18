@@ -25,6 +25,7 @@ export const usMoOverdueRestrictiveHousingInitialHearingConfig: OpportunityConfi
     "Review residents and prepare necessary paperwork for their hearing.",
     {
       BEDS: "Released early due to a need for Restrictive Housing beds",
+      SPACE: "Completed time but pending bed space",
       RELEASED: "Released this week",
       OUTDATED: "Hearing occurred this week",
       EXTENDED:
