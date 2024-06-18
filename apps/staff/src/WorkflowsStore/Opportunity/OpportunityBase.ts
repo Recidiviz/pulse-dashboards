@@ -136,6 +136,8 @@ export abstract class OpportunityBase<
    */
   readonly supportsExternalRequest: boolean = false;
 
+  readonly compareFunction: (a: Opportunity, b: Opportunity) => number;
+
   /**
    * Updates an ineligible opportunity to be eligible when
    * the overridden/denied time period has expired.
@@ -194,6 +196,8 @@ export abstract class OpportunityBase<
       type,
       this.updateOpportunityEligibility,
     );
+
+    this.compareFunction = this.buildCompareFunction();
   }
 
   get config() {
@@ -437,15 +441,19 @@ export abstract class OpportunityBase<
   }
 
   compare(other: Opportunity): number {
+    return this.compareFunction(this, other);
+  }
+
+  buildCompareFunction(): (a: Opportunity, b: Opportunity) => number {
     const { compareBy, systemType } = this.config;
-    let sortParams;
+    if (compareBy) return buildOpportunityCompareFunction(compareBy);
+    const sortParams = [{ field: "eligibilityDate" }];
 
-    if (compareBy) sortParams = compareBy;
-    else if (systemType === "INCARCERATION")
-      sortParams = [{ field: "reviewStatus" }, { field: "eligibilityDate" }];
-    else sortParams = [{ field: "reviewStatus" }];
+    if (systemType === "INCARCERATION")
+      sortParams.push({ field: "releaseDate" });
+    else sortParams.push({ field: "expirationDate" });
 
-    return buildOpportunityCompareFunction(sortParams)(this, other);
+    return buildOpportunityCompareFunction(sortParams);
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {

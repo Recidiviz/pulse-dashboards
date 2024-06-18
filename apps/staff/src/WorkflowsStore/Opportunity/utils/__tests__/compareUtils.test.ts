@@ -89,7 +89,7 @@ export const orderedDates: (Date | undefined)[] = [
   new Date(2016, 2, 1),
   new Date(2016, 3, 1),
   new Date(2016, 4, 1),
-  new Date(2016, 4, 1),
+  new Date(2016, 4, 2),
   new Date(2019, 1, 1),
   new Date(2019, 1, 2),
   new Date(2020, 1, 2),
@@ -209,7 +209,7 @@ describe("Created sort functions should work", () => {
         ],
         [
           "COMPLETED",
-          2016-05-01T00:00:00.000Z,
+          2016-05-02T00:00:00.000Z,
         ],
         [
           "ALMOST",
@@ -261,7 +261,7 @@ describe("Created sort functions should work", () => {
       expect(sortedReviewStatuses).toEqual(sortedReviewStatuses);
     });
 
-    test("when list is shuffled and sorting by review status and eligibility date", () => {
+    test("when list is shuffled and sorting by eligibility date", () => {
       const opportunities = initOpportunitiesList(
         orderedReviewStatuses,
         orderedDates,
@@ -272,44 +272,44 @@ describe("Created sort functions should work", () => {
           .sort((a, b) => a.compare(b))
           .map((a) => [a.reviewStatus, a.eligibilityDate]),
       ).toMatchInlineSnapshot(`
-      [
         [
-          "PENDING",
-          2016-02-01T00:00:00.000Z,
-        ],
-        [
-          "IN_PROGRESS",
-          2016-03-01T00:00:00.000Z,
-        ],
-        [
-          "DENIED",
-          2016-04-01T00:00:00.000Z,
-        ],
-        [
-          "DENIED",
-          2016-05-01T00:00:00.000Z,
-        ],
-        [
-          "COMPLETED",
-          2016-05-01T00:00:00.000Z,
-        ],
-        [
-          "ALMOST",
-          2019-02-01T00:00:00.000Z,
-        ],
-        [
-          "ALMOST",
-          2019-02-02T00:00:00.000Z,
-        ],
-        [
-          "ALMOST",
-          2020-02-02T00:00:00.000Z,
-        ],
-      ]
-    `);
+          [
+            "PENDING",
+            2016-02-01T00:00:00.000Z,
+          ],
+          [
+            "IN_PROGRESS",
+            2016-03-01T00:00:00.000Z,
+          ],
+          [
+            "DENIED",
+            2016-04-01T00:00:00.000Z,
+          ],
+          [
+            "DENIED",
+            2016-05-01T00:00:00.000Z,
+          ],
+          [
+            "COMPLETED",
+            2016-05-02T00:00:00.000Z,
+          ],
+          [
+            "ALMOST",
+            2019-02-01T00:00:00.000Z,
+          ],
+          [
+            "ALMOST",
+            2019-02-02T00:00:00.000Z,
+          ],
+          [
+            "ALMOST",
+            2020-02-02T00:00:00.000Z,
+          ],
+        ]
+      `);
     });
 
-    test("when list is shuffled, some eligibilityDates are undefined, and sorting by review status and eligibility date", () => {
+    test("when list is shuffled, some eligibilityDates are undefined, and sorting by eligibility date", () => {
       const datesWithUndefinedMembers =
         getDatesWithUndefinedMembers(orderedDates);
       const opportunities = initOpportunitiesList(
@@ -320,8 +320,12 @@ describe("Created sort functions should work", () => {
       expect(
         shuffle(opportunities)
           .sort((a, b) => a.compare(b))
-          .map((a) => a.reviewStatus),
-      ).toEqual(orderedReviewStatuses);
+          .map((a) => a.eligibilityDate),
+      ).toEqual(
+        datesWithUndefinedMembers
+          .filter((d) => d !== undefined)
+          .concat(datesWithUndefinedMembers.filter((d) => d === undefined)),
+      );
     });
   });
 
