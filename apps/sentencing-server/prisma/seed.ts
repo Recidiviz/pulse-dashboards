@@ -25,13 +25,10 @@ async function main() {
 
   for (let i = 0; i < numberOfStaff; i++) {
     staff.push({
-      id: faker.string.uuid(),
-      givenNames: faker.person.firstName(),
-      surname: faker.person.lastName(),
-      email: faker.internet.email(),
       externalId: faker.string.uuid(),
-      middleNames: null,
-      nameSuffix: null,
+      pseudonymizedId: faker.string.uuid(),
+      fullName: faker.person.fullName(),
+      email: faker.internet.email(),
       stateCode: StateCode.ID,
     });
   }
@@ -45,12 +42,9 @@ async function main() {
 
   for (let i = 0; i < numberOfClients; i++) {
     clients.push({
-      id: faker.string.uuid(),
-      givenNames: faker.person.firstName(),
-      surname: faker.person.lastName(),
       externalId: faker.string.uuid(),
-      middleNames: null,
-      nameSuffix: null,
+      pseudonymizedId: faker.string.uuid(),
+      fullName: faker.person.fullName(),
       stateCode: StateCode.ID,
       gender: faker.person.gender(),
       county: faker.location.county(),
@@ -69,12 +63,14 @@ async function main() {
         externalId: faker.string.uuid(),
         Client: {
           connect: {
-            id: clients[faker.number.int({ max: clients.length - 1 })].id,
+            externalId:
+              clients[faker.number.int({ max: clients.length - 1 })].externalId,
           },
         },
         Staff: {
           connect: {
-            id: staff[faker.number.int({ max: staff.length - 1 })].id,
+            externalId:
+              staff[faker.number.int({ max: staff.length - 1 })].externalId,
           },
         },
         stateCode: StateCode.ID,

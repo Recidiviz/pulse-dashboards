@@ -19,10 +19,27 @@
         "cwd": "{projectRoot}"
       }
     },
+    "docker": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "docker-compose up --wait"
+        },
+        "ci": {
+          "command": "echo 'No docker for CI'"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
     "dev": {
       "executor": "nx:run-commands",
+      "dependsOn": ["docker", "prisma-seed"],
       "options": {
-        "commands": ["vite-node --watch src/main.ts"],
+        "command": "vite-node --watch src/main.ts",
         "cwd": "{projectRoot}"
       }
     },
@@ -36,13 +53,15 @@
     },
     "preview": {
       "executor": "@nx/vite:preview-server",
+      "dependsOn": ["docker", "prisma-seed"],
       "options": {
         "buildTarget": "sentencing-server:build"
       }
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/apps/staff"],
+      "dependsOn": ["docker", "prisma-generate"],
+      "outputs": ["{workspaceRoot}/coverage/apps/sentencing-server"],
       "cache": true,
       "options": {
         "command": "prisma db push && vitest",
@@ -101,6 +120,7 @@
     },
     "prisma-generate": {
       "executor": "@nx-tools/nx-prisma:generate",
+      "cache": true,
       "options": {
         "schema": "apps/sentencing-server/prisma/schema.prisma"
       }
@@ -125,6 +145,7 @@
     },
     "prisma-push": {
       "executor": "@nx-tools/nx-prisma:push",
+      "dependsOn": ["docker"],
       "options": {
         "schema": "apps/sentencing-server/prisma/schema.prisma"
       }
@@ -161,6 +182,7 @@
     },
     "prisma-seed": {
       "executor": "@nx-tools/nx-prisma:seed",
+      "dependsOn": ["docker", "prisma-push", "prisma-generate"],
       "options": {
         "schema": "apps/sentencing-server/prisma/schema.prisma",
         "script": "apps/sentencing-server/prisma/seed.ts"
