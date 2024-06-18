@@ -1,0 +1,57 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for fullyEligible 1`] = `
+{
+  "caseNotes": {
+    "Case Plan Goals": [
+      {
+        "eventDate": null,
+        "noteBody": "Maintain good health",
+        "noteTitle": "In progress",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usPaFulfilledRequirements": {},
+    "usPaMeetsSpecialCircumstancesCriteriaForSanctions": {
+      "caseType": "GENERAL",
+    },
+    "usPaMeetsSpecialCircumstancesCriteriaForTimeServed": {
+      "caseType": "GENERAL",
+      "yearsRequiredToServe": 10,
+    },
+    "usPaNotEligibleOrMarkedIneligibleForAdminSupervision": {},
+  },
+  "externalId": "CLIENT001",
+  "ineligibleCriteria": {},
+  "stateCode": "US_PA",
+}
+`;
+
+exports[`schema for fullyEligibleWithLifeSentence 1`] = `
+{
+  "caseNotes": {
+    "Case Plan Goals": [
+      {
+        "eventDate": null,
+        "noteBody": "Maintain good health",
+        "noteTitle": "In progress",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usPaFulfilledRequirements": {},
+    "usPaMeetsSpecialCircumstancesCriteriaForSanctions": {
+      "caseType": "GENERAL",
+    },
+    "usPaMeetsSpecialCircumstancesCriteriaForTimeServed": {
+      "caseType": "GENERAL",
+      "yearsRequiredToServe": 30,
+    },
+    "usPaNotEligibleOrMarkedIneligibleForAdminSupervision": {},
+  },
+  "externalId": "CLIENT002",
+  "ineligibleCriteria": {},
+  "stateCode": "US_PA",
+}
+`;
