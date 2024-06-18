@@ -17,12 +17,8 @@
 
 import isMatch from "lodash/isMatch";
 
-import {
-  allResidents,
-  outputFixture,
-  outputFixtureArray,
-  usMeSccpFixtures,
-} from "~datatypes";
+import { outputFixture, usMeSccpFixtures } from "~datatypes";
+import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 
 import {
   IncarcerationOpportunityId,
@@ -32,7 +28,11 @@ import {
 import { DataAPI } from "./interface";
 
 export class OfflineAPIClient implements DataAPI {
-  constructor(private externals: { stateCode: StateCode }) {}
+  private firestoreClient: FirestoreAPI;
+
+  constructor(private externals: { stateCode: StateCode }) {
+    this.firestoreClient = new FirestoreOfflineAPIClient(externals.stateCode);
+  }
 
   private get stateCode() {
     return this.externals.stateCode;
@@ -52,9 +52,7 @@ export class OfflineAPIClient implements DataAPI {
    * Fetches fixture data for all residents matching {@link stateCode}
    */
   async residents() {
-    return outputFixtureArray(allResidents).filter(
-      (r) => r.stateCode === this.stateCode,
-    );
+    return this.firestoreClient.residents();
   }
 
   /**
@@ -62,18 +60,16 @@ export class OfflineAPIClient implements DataAPI {
    * and {@link stateCode}. Throws if a match cannot be found.
    */
   async residentById(residentExternalId: string) {
-    const residentFixture = allResidents.find(
-      (r) =>
-        r.output.stateCode === this.stateCode &&
-        r.output.personExternalId === residentExternalId,
-    );
+    const residentFixture =
+      await this.firestoreClient.resident(residentExternalId);
 
-    if (residentFixture) {
-      return outputFixture(residentFixture);
+    if (!residentFixture) {
+      throw new Error(
+        `Missing data for resident ${residentExternalId} in ${this.stateCode}`,
+      );
     }
-    throw new Error(
-      `Missing data for resident ${residentExternalId} in ${this.stateCode}`,
-    );
+
+    return residentFixture;
   }
 
   /**

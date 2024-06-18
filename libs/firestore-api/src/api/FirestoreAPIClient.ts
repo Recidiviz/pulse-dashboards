@@ -17,12 +17,23 @@
 
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
-import { Firestore, getFirestore } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  Firestore,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  where,
+} from "firebase/firestore";
+import { z } from "zod";
 
-import { StaffRecord } from "~datatypes";
+import { ResidentRecord, residentRecordSchema, StaffRecord } from "~datatypes";
 
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../constants";
 import { FirestoreOfflineAPIClient } from "./FirestoreOfflineAPIClient";
-import { FirestoreAPI } from "./interface";
+import { FilterParams, FirestoreAPI } from "./interface";
 
 export class FirestoreAPIClient implements FirestoreAPI {
   // TODO(#5322): remove reference to this when endpoints are live
@@ -53,5 +64,51 @@ export class FirestoreAPIClient implements FirestoreAPI {
     supervisorExternalId: string,
   ): Promise<StaffRecord[]> {
     return this.offlineClient.staffRecordsWithSupervisor(supervisorExternalId);
+  }
+
+  async residents(filters: Array<FilterParams> = []) {
+    const snapshot = await getDocs(
+      query(
+        collection(this.db, FIRESTORE_GENERAL_COLLECTION_MAP.residents),
+        where("stateCode", "==", this.stateCode),
+        ...filters.map((params) => where(...params)),
+      ),
+    );
+    return snapshot.docs
+      .map((d) => {
+        try {
+          return residentRecordSchema.parse(d.data());
+        } catch (e) {
+          console.error(e);
+          return;
+        }
+      })
+      .filter((r): r is ResidentRecord["output"] => !!r);
+  }
+
+  resident(externalId: string) {
+    return this.recordForExternalId(
+      FIRESTORE_GENERAL_COLLECTION_MAP.residents,
+      externalId,
+      residentRecordSchema,
+    );
+  }
+
+  async recordForExternalId<Schema extends z.ZodTypeAny>(
+    collectionName: string,
+    externalId: string,
+    recordSchema: Schema,
+  ): Promise<z.infer<Schema> | undefined> {
+    const snapshot = await getDoc(
+      doc(
+        this.db,
+        collectionName,
+        `${this.stateCode.toLowerCase()}_${externalId}`,
+      ),
+    );
+
+    if (!snapshot.exists()) return;
+
+    return recordSchema.parse(snapshot.data());
   }
 }

@@ -15,7 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./api/FirestoreAPIClient";
-export * from "./api/FirestoreOfflineAPIClient";
-export * from "./api/interface";
-export * from "./constants";
+export const FIRESTORE_GENERAL_COLLECTION_MAP = {
+  supervisionStaff: "supervisionStaff",
+  incarcerationStaff: "incarcerationStaff",
+  userUpdates: "userUpdates",
+  clients: "clients",
+  residents: "residents",
+  clientUpdates: "clientUpdates",
+  clientUpdatesV2: "clientUpdatesV2",
+  clientOpportunityUpdates: "clientOpportunityUpdates",
+  locations: "locations",
+  milestonesMessages: "milestonesMessages",
+  taskUpdates: "taskUpdates",
+  usIdSupervisionTasks: "US_ID-supervisionTasks",
+  clientFormUpdates: "clientFormUpdates",
+} as const;

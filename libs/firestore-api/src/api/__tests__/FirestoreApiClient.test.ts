@@ -15,9 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initializeApp } from "firebase/app";
-import { getAuth, signInWithCustomToken } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { FirebaseApp, initializeApp } from "firebase/app";
+import { Auth, getAuth, signInWithCustomToken } from "firebase/auth";
+import {
+  collection,
+  CollectionReference,
+  Firestore,
+  getDocs,
+  getFirestore,
+  Query,
+  query,
+  QueryFieldFilterConstraint,
+  QuerySnapshot,
+  where,
+} from "firebase/firestore";
+
+import {
+  allResidents,
+  inputFixtureArray,
+  outputFixtureArray,
+} from "~datatypes";
 
 import { FirestoreAPIClient } from "../FirestoreAPIClient";
 
@@ -27,7 +44,28 @@ vi.mock("firebase/firestore");
 
 let client: FirestoreAPIClient;
 
+const appMock = "FIREBASE APP MOCK";
+const dbMock = "FIRESTORE MOCK";
+const authMock = "AUTH MOCK";
+const collectionMock = "COLLECTION MOCK";
+const whereMock = "WHERE MOCK";
+const queryMock = "QUERY MOCK";
+
 beforeEach(() => {
+  // these mocks all get passed around to one another for the SDK to use internally;
+  // we generally don't care about their return values and can verify behavior by inspecting their arguments.
+  // the mock return values are only useful to verify which function was called
+  vi.mocked(initializeApp).mockReturnValue(appMock as unknown as FirebaseApp);
+  vi.mocked(getFirestore).mockReturnValue(dbMock as unknown as Firestore);
+  vi.mocked(getAuth).mockReturnValue(authMock as unknown as Auth);
+  vi.mocked(collection).mockReturnValue(
+    collectionMock as unknown as CollectionReference,
+  );
+  vi.mocked(where).mockReturnValue(
+    whereMock as unknown as QueryFieldFilterConstraint,
+  );
+  vi.mocked(query).mockReturnValue(queryMock as unknown as Query);
+
   client = new FirestoreAPIClient("US_XX", "project-xx", "api-xx");
 });
 
@@ -36,16 +74,59 @@ test("initialize", () => {
     projectId: "project-xx",
     apiKey: "api-xx",
   });
-  expect(getFirestore).toHaveBeenCalledOnce();
+  expect(getFirestore).toHaveBeenCalledExactlyOnceWith(appMock);
 });
 
 test("authenticate", async () => {
-  vi.mocked(getAuth);
-
   client.authenticate("token-xx");
-  expect(getAuth).toHaveBeenCalledOnce();
+  expect(getAuth).toHaveBeenCalledExactlyOnceWith(appMock);
   expect(signInWithCustomToken).toHaveBeenCalledExactlyOnceWith(
-    undefined, // this is the auth object, which we are not mocking explicitly
+    authMock,
     "token-xx",
   );
+});
+
+describe("residents", () => {
+  const expectedFixture = allResidents.slice(0, 2);
+
+  const mockSnapshot = {
+    docs: inputFixtureArray(expectedFixture).map((f) => ({
+      data() {
+        return f;
+      },
+    })),
+  } as unknown as QuerySnapshot;
+
+  beforeEach(() => {
+    vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
+  });
+
+  test("parsed result", async () => {
+    const result = await client.residents();
+    expect(result).toEqual(outputFixtureArray(expectedFixture));
+  });
+
+  test("no filters", async () => {
+    await client.residents();
+
+    expect(collection).toHaveBeenCalledExactlyOnceWith(dbMock, "residents");
+    expect(where).toHaveBeenCalledExactlyOnceWith("stateCode", "==", "US_XX");
+    expect(query).toHaveBeenCalledExactlyOnceWith(collectionMock, whereMock);
+    expect(getDocs).toHaveBeenCalledExactlyOnceWith(queryMock);
+  });
+
+  test("with filters", async () => {
+    await client.residents([["facilityId", "==", "foo"]]);
+
+    expect(collection).toHaveBeenCalledExactlyOnceWith(dbMock, "residents");
+    expect(where).toHaveBeenCalledWith("stateCode", "==", "US_XX");
+    expect(where).toHaveBeenCalledWith("facilityId", "==", "foo");
+    expect(where).toHaveBeenCalledTimes(2);
+    expect(query).toHaveBeenCalledExactlyOnceWith(
+      collectionMock,
+      whereMock,
+      whereMock,
+    );
+    expect(getDocs).toHaveBeenCalledExactlyOnceWith(queryMock);
+  });
 });

@@ -43,6 +43,7 @@ import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
 
 import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import type RootStore from "../RootStore";
@@ -50,7 +51,6 @@ import { UserAppMetadata } from "../RootStore/types";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
 import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/types";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
 import {
   AutoSnoozeUpdate,
   ClientRecord,

@@ -26,6 +26,7 @@ import requirementsPage from "./requirementsPage.md?raw";
 
 export const config: OpportunityConfig = {
   urlSection: "sccp",
+  firestoreCollection: "US_ME-SCCPReferrals",
   copy: {
     headline: `{{#if eligibilityData}}
         {{#if resident.personName.givenNames}}{{ resident.personName.givenNames }}, you{{ else }}You{{/if}} 

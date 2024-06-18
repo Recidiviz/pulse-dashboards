@@ -31,8 +31,8 @@ import {
   usMiSecurityClassificationCommitteeReviewFixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
 } from "~datatypes";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
 
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../src/FirestoreStore/constants";
 import {
   FirestoreCollectionKey,
   MilestonesMessage,

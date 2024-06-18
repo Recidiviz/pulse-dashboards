@@ -14,11 +14,28 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { StaffRecord } from "~datatypes";
+import { where } from "firebase/firestore";
+import { z } from "zod";
+
+import { ResidentRecord, StaffRecord } from "~datatypes";
+
+export type FilterParams = Parameters<typeof where>;
 
 export interface FirestoreAPI {
   authenticate(firebaseToken: string): Promise<void>;
   staffRecordsWithSupervisor(
     supervisorExternalId: string,
   ): Promise<StaffRecord[]>;
+
+  residents(
+    filters?: Array<FilterParams>,
+  ): Promise<Array<ResidentRecord["output"]>>;
+
+  resident(externalId: string): Promise<ResidentRecord["output"] | undefined>;
+
+  recordForExternalId<Schema extends z.ZodTypeAny>(
+    collectionName: string,
+    externalId: string,
+    recordSchema: Schema,
+  ): Promise<z.infer<Schema> | undefined>;
 }

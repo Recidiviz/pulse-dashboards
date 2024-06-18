@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ResidentRecord } from "~datatypes";
+import { FilterParams } from "~firestore-api";
 
 import {
   IncarcerationOpportunityId,
@@ -29,9 +30,12 @@ export interface DataAPI {
    */
   residentsConfig(): Promise<ResidentsConfig>;
   /**
-   * Fetches data for all available residents for the active StateCode.
+   * Fetches data for available residents for the active StateCode, applying
+   * additional filters as specified.
    */
-  residents(): Promise<Array<ResidentRecord["output"]>>;
+  residents(
+    filters?: Array<FilterParams>,
+  ): Promise<Array<ResidentRecord["output"]>>;
   /**
    * Fetches data for the resident with personExternalId matching `residentExternalId`
    * for the active StateCode. Throws if a match cannot be found.

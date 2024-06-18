@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Body32, Sans16 } from "@recidiviz/design-system";
+import { Body32, Sans14, Sans16, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ReactSelect from "react-select";
@@ -34,6 +35,21 @@ const ResidentsSearchWithPresenter: React.FC<{
     <PageHydrator hydratable={presenter}>
       <div>
         <Body32 as="h1">Select a resident</Body32>
+
+        <Sans14 style={{ marginBottom: rem(spacing.lg) }}>
+          Filter by facility:
+          <ReactSelect
+            options={presenter.facilityFilterOptions}
+            defaultValue={presenter.facilityFilterDefaultOption}
+            onChange={(o) => {
+              if (o) {
+                presenter.setFacilityFilter(o.value);
+              }
+            }}
+            isClearable={false}
+          />
+        </Sans14>
+
         <Sans16>
           <ReactSelect
             options={presenter.selectOptions}
@@ -53,12 +69,12 @@ const ResidentsSearchWithPresenter: React.FC<{
 });
 
 export const ResidentsSearch = observer(function ResidentsSearch() {
-  const { residentsStore } = useRootStore();
+  const { residentsStore, uiStore } = useRootStore();
   if (!residentsStore) return null;
 
   return (
     <ResidentsSearchWithPresenter
-      presenter={new ResidentsSearchPresenter(residentsStore)}
+      presenter={new ResidentsSearchPresenter(residentsStore, uiStore)}
     />
   );
 });

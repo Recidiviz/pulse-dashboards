@@ -23,6 +23,7 @@ import {
   usMeResidents,
   usMeSccpFixtures,
 } from "~datatypes";
+import { FilterParams } from "~firestore-api";
 
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { residentsConfigByState } from "../configs/residentsConfig";
@@ -38,11 +39,11 @@ beforeEach(() => {
   store = new ResidentsStore(new RootStore(), residentsConfigByState.US_ME);
 });
 
-describe("populate all residents", () => {
+describe("populate residents", () => {
   test("succeeds", async () => {
     expect(store.residentsByExternalId.size).toBe(0);
 
-    await flowResult(store.populateAllResidents());
+    await flowResult(store.populateResidents());
 
     outputFixtureArray(usMeResidents).forEach((r) => {
       expect(store.residentsByExternalId.get(r.personExternalId)).toEqual(r);
@@ -55,19 +56,39 @@ describe("populate all residents", () => {
     );
 
     await expect(async () =>
-      flowResult(store.populateAllResidents()),
+      flowResult(store.populateResidents()),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: api request failed]`);
   });
 
   test("does not refetch if already populated", async () => {
     vi.spyOn(OfflineAPIClient.prototype, "residents");
 
-    await flowResult(store.populateAllResidents());
+    await flowResult(store.populateResidents());
 
     expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
 
-    await flowResult(store.populateAllResidents());
+    await flowResult(store.populateResidents());
     expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
+  });
+
+  test("with filters", async () => {
+    vi.spyOn(OfflineAPIClient.prototype, "residents");
+
+    const filter: FilterParams = ["foo", "==", "bar"];
+    await flowResult(store.populateResidents([filter]));
+
+    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledWith([filter]);
+  });
+
+  test("refetches with force refresh", async () => {
+    vi.spyOn(OfflineAPIClient.prototype, "residents");
+
+    await flowResult(store.populateResidents());
+
+    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(1);
+
+    await flowResult(store.populateResidents(undefined, true));
+    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledTimes(2);
   });
 });
 

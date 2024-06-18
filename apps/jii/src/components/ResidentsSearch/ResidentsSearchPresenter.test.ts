@@ -31,11 +31,9 @@ let presenter: ResidentsSearchPresenter;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  residentsStore = new ResidentsStore(
-    new RootStore(),
-    residentsConfigByState.US_ME,
-  );
-  presenter = new ResidentsSearchPresenter(residentsStore);
+  const rootStore = new RootStore();
+  residentsStore = new ResidentsStore(rootStore, residentsConfigByState.US_ME);
+  presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
 });
 
 afterEach(() => {
@@ -58,6 +56,7 @@ describe("hydration", () => {
   });
 
   test("hydrate", async () => {
+    vi.spyOn(residentsStore, "populateResidents");
     expect(presenter.hydrationState.status).toBe("needs hydration");
 
     presenter.hydrate();
@@ -69,6 +68,9 @@ describe("hydration", () => {
     );
 
     expect(presenter.selectOptions).toMatchSnapshot();
+    expect(residentsStore.populateResidents).toHaveBeenLastCalledWith([
+      ["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"],
+    ]);
   });
 });
 
@@ -85,4 +87,46 @@ test("set active resident", async () => {
   expect(presenter.defaultOption?.value).toBe(
     expectedResident.personExternalId,
   );
+});
+
+describe("facility filter", () => {
+  test("default value", () => {
+    expect(presenter.facilityFilterDefaultOption).toMatchInlineSnapshot(`
+      {
+        "label": "Mountain View Correctional Facility",
+        "value": "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+      }
+    `);
+  });
+
+  test("set value", async () => {
+    vi.spyOn(residentsStore, "populateResidents");
+
+    presenter.setFacilityFilter("__ALL__");
+    expect(presenter.facilityFilterDefaultOption).toMatchInlineSnapshot(`
+      {
+        "label": "All",
+        "value": "__ALL__",
+      }
+    `);
+
+    expect(residentsStore.populateResidents).toHaveBeenLastCalledWith(
+      undefined,
+      true,
+    );
+
+    presenter.setFacilityFilter("MOUNTAIN VIEW CORRECTIONAL FACILITY");
+
+    expect(presenter.facilityFilterDefaultOption).toMatchInlineSnapshot(`
+      {
+        "label": "Mountain View Correctional Facility",
+        "value": "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+      }
+    `);
+
+    expect(residentsStore.populateResidents).toHaveBeenLastCalledWith(
+      [["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"]],
+      true,
+    );
+  });
 });

@@ -19,28 +19,31 @@ import { makeObservable, when } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
 import { AuthClient } from "~auth";
-import { FirestoreAPIClient } from "~firestore-api";
+import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
-import { IncarcerationOpportunityId, StateCode } from "../configs/types";
+import { residentOpportunitySchemas } from "../configs/residentsOpportunitySchemas";
+import {
+  IncarcerationOpportunityId,
+  ResidentsConfig,
+  StateCode,
+} from "../configs/types";
 import { DataAPI } from "./interface";
-import { OfflineAPIClient } from "./OfflineAPIClient";
 
 const API_URL_BASE = import.meta.env["VITE_API_URL_BASE"];
 
 export class ApiClient implements DataAPI {
-  private offlineClient: OfflineAPIClient;
-
   private firestoreClient: FirestoreAPIClient;
 
   private authentication: ILazyObservable<boolean>;
 
   constructor(
-    private externals: { stateCode: StateCode; authClient: AuthClient },
+    private externals: {
+      stateCode: StateCode;
+      authClient: AuthClient;
+      config?: ResidentsConfig;
+    },
   ) {
     makeObservable<this, "isAuthenticated">(this, { isAuthenticated: true });
-
-    // TODO(#5116): eliminate this when all endpoints are live
-    this.offlineClient = new OfflineAPIClient(externals);
 
     this.firestoreClient = new FirestoreAPIClient(
       externals.stateCode,
@@ -70,20 +73,32 @@ export class ApiClient implements DataAPI {
     return this.authentication.current();
   }
 
+  /**
+   * Fetches residents config object matching state code from {@link externals}.
+   * This comes from a local static file, not an API backend
+   */
   async residentsConfig() {
-    return this.offlineClient.residentsConfig();
+    const { residentsConfigByState } = await import(
+      "../configs/residentsConfig"
+    );
+    return residentsConfigByState[this.externals.stateCode];
   }
 
-  async residents() {
+  async residents(filters?: Array<FilterParams>) {
     await when(() => this.isAuthenticated);
 
-    return this.offlineClient.residents();
+    return await this.firestoreClient.residents(filters);
   }
 
   async residentById(residentExternalId: string) {
     await when(() => this.isAuthenticated);
 
-    return this.offlineClient.residentById(residentExternalId);
+    const record = await this.firestoreClient.resident(residentExternalId);
+    if (!record) {
+      throw new Error(`No data found for resident ${residentExternalId}`);
+    }
+
+    return record;
   }
 
   async residentEligibility<O extends IncarcerationOpportunityId>(
@@ -91,10 +106,27 @@ export class ApiClient implements DataAPI {
     opportunityId: O,
   ) {
     await when(() => this.isAuthenticated);
+    try {
+      const collectionName =
+        this.externals.config?.incarcerationOpportunities[opportunityId]
+          ?.firestoreCollection;
 
-    return this.offlineClient.residentEligibility(
-      residentExternalId,
-      opportunityId,
-    );
+      if (!collectionName) {
+        throw new Error(
+          `Unable to resolve collection name for ${opportunityId}`,
+        );
+      }
+
+      const schema = residentOpportunitySchemas[opportunityId];
+
+      return this.firestoreClient.recordForExternalId(
+        collectionName,
+        residentExternalId,
+        schema,
+      );
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 }

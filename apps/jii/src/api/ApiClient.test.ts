@@ -16,10 +16,18 @@
 // =============================================================================
 
 import { waitFor } from "@testing-library/react";
+import { z } from "zod";
 
 import type { AuthClient } from "~auth";
-import { FirestoreAPIClient } from "~firestore-api";
+import {
+  outputFixture,
+  outputFixtureArray,
+  usMeResidents,
+  usMeSccpFixtures,
+} from "~datatypes";
+import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
+import { residentsConfigByState } from "../configs/residentsConfig";
 import { ApiClient } from "./ApiClient";
 
 vi.hoisted(() => {
@@ -42,6 +50,7 @@ beforeEach(() => {
   client = new ApiClient({
     stateCode: "US_ME",
     authClient: { getTokenSilently: getTokenMock } as unknown as AuthClient,
+    config: residentsConfigByState.US_ME,
   });
 });
 
@@ -75,4 +84,109 @@ test("authenticate", async () => {
   expect(FirestoreAPIClient.prototype.authenticate).toHaveBeenCalledWith(
     "test-firebase-token",
   );
+});
+
+describe("after authentication", () => {
+  beforeEach(async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ firebaseToken: "test-firebase-token" }),
+    );
+    await waitFor(() => expect(client.isAuthenticated).toBeTrue());
+  });
+
+  describe("resident", () => {
+    const record = outputFixture(usMeResidents[0]);
+
+    test("exists", async () => {
+      vi.mocked(FirestoreAPIClient.prototype.resident).mockResolvedValue(
+        record,
+      );
+
+      const fetched = await client.residentById(record.personExternalId);
+
+      expect(
+        FirestoreAPIClient.prototype.resident,
+      ).toHaveBeenCalledExactlyOnceWith(record.personExternalId);
+      expect(fetched).toEqual(record);
+    });
+
+    test("does not exist", async () => {
+      vi.mocked(FirestoreAPIClient.prototype.resident).mockResolvedValue(
+        undefined,
+      );
+
+      await expect(
+        client.residentById(record.personExternalId),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[Error: No data found for resident RES001]`,
+      );
+    });
+  });
+
+  describe("eligibility", () => {
+    const record = usMeSccpFixtures.fullyEligibleHalfPortion.output;
+
+    test("exists", async () => {
+      vi.mocked(
+        FirestoreAPIClient.prototype.recordForExternalId,
+      ).mockResolvedValue(record);
+
+      const fetched = await client.residentEligibility("abc123", "usMeSCCP");
+
+      expect(
+        vi.mocked(FirestoreAPIClient.prototype.recordForExternalId).mock
+          .calls[0],
+      ).toEqual(["US_ME-SCCPReferrals", "abc123", expect.any(z.ZodType)]);
+
+      expect(fetched).toEqual(record);
+    });
+
+    test("does not exist", async () => {
+      vi.mocked(
+        FirestoreAPIClient.prototype.recordForExternalId,
+      ).mockResolvedValue(undefined);
+
+      const fetched = await client.residentEligibility("abc123", "usMeSCCP");
+
+      expect(fetched).toBeUndefined();
+    });
+  });
+
+  describe("residents", () => {
+    const records = outputFixtureArray(usMeResidents);
+
+    test("exists", async () => {
+      vi.mocked(FirestoreAPIClient.prototype.residents).mockResolvedValue([
+        ...records,
+      ]);
+
+      const fetched = await client.residents();
+
+      expect(FirestoreAPIClient.prototype.residents).toHaveBeenCalled();
+      expect(fetched).toEqual(records);
+    });
+
+    test("no filters", async () => {
+      await client.residents();
+      expect(
+        FirestoreAPIClient.prototype.residents,
+      ).toHaveBeenCalledExactlyOnceWith(undefined);
+    });
+
+    test("filtered", async () => {
+      const filter: FilterParams = ["foo", "==", "bar"];
+      await client.residents([filter]);
+      expect(
+        FirestoreAPIClient.prototype.residents,
+      ).toHaveBeenCalledExactlyOnceWith([filter]);
+    });
+
+    test("does not exist", async () => {
+      vi.mocked(FirestoreAPIClient.prototype.residents).mockResolvedValue([]);
+
+      const fetched = await client.residents();
+
+      expect(fetched).toEqual([]);
+    });
+  });
 });

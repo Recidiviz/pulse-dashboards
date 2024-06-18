@@ -18,8 +18,9 @@
 import { startOfToday } from "date-fns";
 import { DocumentReference } from "firebase/firestore";
 
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
+
 import FirestoreStore, { MilestonesMessage } from "../../FirestoreStore";
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../../FirestoreStore/constants";
 import { getMonthYearFromDate } from "../utils";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 

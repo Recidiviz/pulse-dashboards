@@ -17,7 +17,9 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { isOfflineMode } from "~client-env-utils";
 import { ResidentRecord } from "~datatypes";
+import { FilterParams } from "~firestore-api";
 import {
   Hydratable,
   HydratesFromSource,
@@ -25,16 +27,26 @@ import {
 } from "~hydration-utils";
 
 import { ResidentsStore } from "../../datastores/ResidentsStore";
+import { UiStore } from "../../datastores/UiStore";
+
+const ALL_FACILITIES_VALUE = "__ALL__";
+
+type SelectOption = { label: string; value: string };
 
 export class ResidentsSearchPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;
 
-  constructor(private residentsStore: ResidentsStore) {
+  constructor(
+    private residentsStore: ResidentsStore,
+    private uiStore: UiStore,
+  ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
     this.hydrationSource = new HydratesFromSource({
       populate: async () => {
-        await flowResult(this.residentsStore.populateAllResidents());
+        await flowResult(
+          this.residentsStore.populateResidents(this.residentsFilterParams),
+        );
       },
       expectPopulated: [this.expectResidentsPopulated],
     });
@@ -55,7 +67,16 @@ export class ResidentsSearchPresenter implements Hydratable {
   }
 
   private get residents(): Array<ResidentRecord["output"]> {
-    return Array.from(this.residentsStore.residentsByExternalId.values());
+    const { selectedFacilityFilterOptionValue } = this.uiStore;
+
+    return Array.from(
+      this.residentsStore.residentsByExternalId.values(),
+    ).filter(
+      (r) =>
+        !selectedFacilityFilterOptionValue ||
+        selectedFacilityFilterOptionValue === ALL_FACILITIES_VALUE ||
+        r.facilityId === selectedFacilityFilterOptionValue,
+    );
   }
 
   /**
@@ -72,9 +93,60 @@ export class ResidentsSearchPresenter implements Hydratable {
     }));
   }
 
+  /**
+   * The resident select component is uncontrolled, but this can be used preserve state when navigating
+   * away from the page (passing a default only affects which option is selected when the component mounts)
+   */
   get defaultOption() {
     return this.selectOptions.find(
       (o) => o.value === this.residentsStore.userStore.externalId,
     );
+  }
+
+  get facilityFilterOptions(): [SelectOption, ...Array<SelectOption>] {
+    const options: [SelectOption, ...Array<SelectOption>] = [
+      { label: "All", value: ALL_FACILITIES_VALUE },
+    ];
+
+    // for convenience this is just hardcoded for the pilot
+    if (!isOfflineMode()) {
+      options.push({
+        label: "Mountain View Correctional Facility",
+        value: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+      });
+    }
+
+    return options;
+  }
+
+  /**
+   * The facility select component is uncontrolled, but this can be used preserve state when navigating
+   * away from the page (passing a default only affects which option is selected when the component mounts)
+   */
+  get facilityFilterDefaultOption() {
+    const { selectedFacilityFilterOptionValue } = this.uiStore;
+    if (selectedFacilityFilterOptionValue) {
+      return this.facilityFilterOptions.find(
+        (o) => o.value === selectedFacilityFilterOptionValue,
+      );
+    }
+
+    return this.facilityFilterOptions.at(-1);
+  }
+
+  private get residentsFilterParams(): Array<FilterParams> | undefined {
+    const { facilityFilterDefaultOption } = this;
+    if (!facilityFilterDefaultOption) return;
+
+    if (facilityFilterDefaultOption.value === ALL_FACILITIES_VALUE) return;
+
+    return [["facilityId", "==", facilityFilterDefaultOption.value]];
+  }
+
+  setFacilityFilter(value: string) {
+    if (value !== this.uiStore.selectedFacilityFilterOptionValue) {
+      this.uiStore.selectedFacilityFilterOptionValue = value;
+      this.residentsStore.populateResidents(this.residentsFilterParams, true);
+    }
   }
 }

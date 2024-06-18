@@ -24,6 +24,7 @@ import { DataAPI } from "../api/interface";
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { StateCode } from "../configs/types";
 import { ResidentsStore } from "./ResidentsStore";
+import { UiStore } from "./UiStore";
 import { UserStore } from "./UserStore";
 
 export class RootStore {
@@ -37,6 +38,8 @@ export class RootStore {
 
   userStore: UserStore;
 
+  uiStore: UiStore;
+
   // for convenience, this is a constant while we only have one state onboarded
   readonly stateCode: StateCode = "US_ME";
 
@@ -47,6 +50,8 @@ export class RootStore {
     });
 
     this.userStore = new UserStore(this);
+
+    this.uiStore = new UiStore();
 
     this.apiClient = this.createApiClient();
   }
@@ -61,10 +66,23 @@ export class RootStore {
     if (isOfflineMode() || isTestEnv()) {
       return new OfflineAPIClient(this);
     } else {
-      return new ApiClient({
-        stateCode: this.stateCode,
-        authClient: this.userStore.authClient,
-      });
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const store = this;
+      const externals = {
+        // these are getters rather than static properties so that the API client
+        // can can observe changes to these values rather than getting a one-time snapshot
+        get stateCode() {
+          return store.stateCode;
+        },
+        get authClient() {
+          return store.userStore.authClient;
+        },
+        get config() {
+          return store.residentsStore?.config;
+        },
+      };
+
+      return new ApiClient(externals);
     }
   }
 

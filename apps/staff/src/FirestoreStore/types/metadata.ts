@@ -18,7 +18,7 @@
  */
 import type { Timestamp } from "firebase/firestore";
 
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../constants";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
 
 export type UpdateLog = {
   date: Timestamp;

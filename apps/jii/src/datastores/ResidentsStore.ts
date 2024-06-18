@@ -19,6 +19,7 @@ import keyBy from "lodash/keyBy";
 import { flowResult, makeAutoObservable, runInAction, set } from "mobx";
 
 import { ResidentRecord } from "~datatypes";
+import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../api/interface";
@@ -91,12 +92,15 @@ export class ResidentsStore {
   }
   /**
    * Populates {@link residentsByExternalId} with the API response for all available residents.
-   * Will not refetch if data is already populated.
+   * Will not refetch if data is already populated, unless `forceRefresh` is true
    */
-  *populateAllResidents(): FlowMethod<DataAPI["residents"], void> {
-    if (this.areAllResidentsPopulated()) return;
+  *populateResidents(
+    filters?: Array<FilterParams>,
+    forceRefresh = false,
+  ): FlowMethod<DataAPI["residents"], void> {
+    if (!forceRefresh && this.areAllResidentsPopulated()) return;
 
-    const residents = yield this.apiClient.residents();
+    const residents = yield this.apiClient.residents(filters);
     set(this.residentsByExternalId, keyBy(residents, "personExternalId"));
   }
 

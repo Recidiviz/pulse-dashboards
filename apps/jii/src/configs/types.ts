@@ -36,6 +36,7 @@ export type RequirementCopy = { criterion: string; ineligibleReason?: string };
 
 export type OpportunityConfig = {
   urlSection: string;
+  firestoreCollection: string;
   copy: {
     headline: string;
     subheading: string;

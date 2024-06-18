@@ -17,8 +17,9 @@
 
 import { DocumentData, DocumentReference } from "firebase/firestore";
 
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
+
 import FirestoreStore, { OpportunityUpdate } from "../../FirestoreStore";
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../../FirestoreStore/constants";
 import { OpportunityType } from "../Opportunity/OpportunityType/types";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 import { UpdateFunction } from "./types";
