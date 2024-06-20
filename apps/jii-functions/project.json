@@ -44,8 +44,21 @@
       "options": {
         "commands": [
           "nx build jii-functions -c development --watch",
-          "firebase -c firebase.jii.json -P recidiviz-jii-staging emulators:start"
+          "firebase --config firebase.jii.json --project recidiviz-jii-staging emulators:start"
         ]
+      }
+    },
+    "deploy": {
+      "dependsOn": [{ "target": "build", "params": "forward" }],
+      "command": "firebase deploy --only functions --config firebase.jii.json",
+      "defaultConfiguration": "staging",
+      "configurations": {
+        "staging": {
+          "args": "--project jii-staging"
+        },
+        "production": {
+          "args": "--project jii-production"
+        }
       }
     }
   },

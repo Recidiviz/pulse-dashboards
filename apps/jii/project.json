@@ -37,14 +37,39 @@
     "build": {
       "executor": "@nx/vite:build",
       "options": {
-        "outputPath": "{workspaceRoot}/dist/apps/jii"
-      }
+        "outputPath": "{workspaceRoot}/dist/apps/jii",
+        "emptyOutDir": true
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      },
+      "defaultConfiguration": "staging"
     },
     "preview": {
       "executor": "@nx/vite:preview-server",
-      "options": {
-        "buildTarget": "jii:build"
-      }
+      "configurations": {
+        "staging": {
+          "buildTarget": "jii:build:staging"
+        },
+        "production": {
+          "buildTarget": "jii:build:production"
+        }
+      },
+      "defaultConfiguration": "staging"
+    },
+    "deploy": {
+      "dependsOn": [{ "target": "build", "params": "forward" }],
+      "command": "firebase deploy --only hosting --config firebase.jii.json",
+      "configurations": {
+        "staging": {
+          "args": "--project jii-staging"
+        },
+        "production": {
+          "args": "--project jii-production"
+        }
+      },
+      "defaultConfiguration": "staging"
     },
     "offline": {
       "executor": "nx:run-commands",
