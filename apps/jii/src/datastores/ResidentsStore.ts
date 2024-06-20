@@ -22,7 +22,7 @@ import { ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
-import { DataAPI } from "../api/interface";
+import { DataAPI } from "../apis/data/interface";
 import { residentEligibilityReportConstructors } from "../configs/residentEligibilityReportConstructors";
 import {
   IncarcerationOpportunityId,

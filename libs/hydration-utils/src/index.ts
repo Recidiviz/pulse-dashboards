@@ -19,6 +19,7 @@ export type * from "./Hydratable/types";
 export * from "./Hydratable/utils";
 export * from "./HydratesFromSource/HydratesFromSource";
 export * from "./Hydrator/Hydrator";
+export * from "./Hydrator/HydratorWithErrorLogging";
 export type * from "./types";
 export * from "./utils/castToError";
 export * from "./utils/unpackAggregatedErrors";

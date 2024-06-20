@@ -27,7 +27,7 @@ import {
 } from "~datatypes";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
-import { residentsConfigByState } from "../configs/residentsConfig";
+import { residentsConfigByState } from "../../configs/residentsConfig";
 import { ApiClient } from "./ApiClient";
 
 vi.hoisted(() => {

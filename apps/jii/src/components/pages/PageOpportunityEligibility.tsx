@@ -15,35 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useParams } from "react-router-dom";
 
-import { NotFound } from "../NotFound/NotFound";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { opportunityIdFromUrl } from "../utils/opportunityIdFromUrl";
 
-export const PageOpportunityEligibility: FC = observer(
-  function PageOpportunityEligibility() {
+export const PageOpportunityEligibility: FC = withErrorBoundary(
+  observer(function PageOpportunityEligibility() {
     const { opportunityUrl } = useParams();
 
     const { residentsStore } = useRootStore();
     if (!residentsStore) return null;
 
     const { externalId } = residentsStore.userStore;
-    const opportunityId = residentsStore.opportunityIdsByUrl.get(
-      opportunityUrl ?? "",
-    );
-
-    if (externalId && opportunityId) {
-      return (
-        <OpportunityEligibility
-          residentExternalId={externalId}
-          opportunityId={opportunityId}
-        />
-      );
+    if (!externalId) {
+      throw new Error("missing Resident ID");
     }
 
-    return <NotFound />;
-  },
+    const opportunityId = opportunityIdFromUrl(
+      opportunityUrl ?? "",
+      residentsStore,
+    );
+
+    return (
+      <OpportunityEligibility
+        residentExternalId={externalId}
+        opportunityId={opportunityId}
+      />
+    );
+  }),
+  { fallback: ErrorPage },
 );

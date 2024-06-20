@@ -24,7 +24,7 @@ import {
   IncarcerationOpportunityId,
   OpportunityRecord,
   StateCode,
-} from "../configs/types";
+} from "../../configs/types";
 import { DataAPI } from "./interface";
 
 export class OfflineAPIClient implements DataAPI {
@@ -43,7 +43,7 @@ export class OfflineAPIClient implements DataAPI {
    */
   async residentsConfig() {
     const { residentsConfigByState } = await import(
-      "../configs/residentsConfig"
+      "../../configs/residentsConfig"
     );
     return residentsConfigByState[this.stateCode];
   }

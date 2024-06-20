@@ -15,25 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { Navigate } from "react-router-dom";
 
-import { NotFound } from "../NotFound/NotFound";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const PageEligibilityHome: FC = observer(function PageEligibilityHome() {
-  const { residentsStore, userStore } = useRootStore();
-  if (!residentsStore) return null;
+export const PageEligibilityHome: FC = withErrorBoundary(
+  observer(function PageEligibilityHome() {
+    const { residentsStore, userStore } = useRootStore();
+    if (!residentsStore) return null;
 
-  const { externalId } = residentsStore.userStore;
-  if (externalId) {
-    // for convenience, while there is only one opp configured we skip the lookup step
-    return <Navigate to="sccp" replace />;
-  }
+    const { externalId } = residentsStore.userStore;
+    if (externalId) {
+      // for convenience, while there is only one opp configured we skip the lookup step
+      return <Navigate to="sccp" replace />;
+    }
 
-  if (userStore.hasPermission("enhanced"))
-    return <Navigate to="search" replace />;
+    if (userStore.hasPermission("enhanced"))
+      return <Navigate to="search" replace />;
 
-  return <NotFound />;
-});
+    throw new Error("No user ID specified for eligibility page");
+  }),
+  { fallback: ErrorPage },
+);

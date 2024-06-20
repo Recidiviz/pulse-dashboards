@@ -80,5 +80,5 @@ test("search page", () => {
 test("error", () => {
   renderPage();
 
-  expect(screen.getByText("This page cannot be loaded.")).toBeInTheDocument();
+  expect(screen.getByText("Something went wrong")).toBeInTheDocument();
 });

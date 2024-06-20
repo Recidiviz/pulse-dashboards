@@ -15,25 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult } from "mobx";
+import { ReactNode } from "react";
 
-import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
-import { residentsConfigByState } from "../configs/residentsConfig";
-import { RootStore } from "./RootStore";
+import { Hydratable } from "../Hydratable/types";
 
-let store: RootStore;
-
-beforeEach(() => {
-  store = new RootStore();
-});
-
-test("initialize residents datastore", async () => {
-  vi.spyOn(OfflineAPIClient.prototype, "residentsConfig");
-  expect(store.residentsStore).toBeUndefined();
-
-  await flowResult(store.populateResidentsStore());
-
-  expect(store.residentsStore).toBeDefined();
-  expect(store.apiClient.residentsConfig).toHaveBeenCalled();
-  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
-});
+export type HydratorProps = {
+  children: ReactNode;
+  hydratable: Hydratable;
+  failed: ReactNode;
+  className?: string;
+};

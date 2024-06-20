@@ -15,25 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult } from "mobx";
+import { Body16, Body19, Header34 } from "@recidiviz/design-system";
+import { ReactElement } from "react";
+import { Link } from "react-router-dom";
 
-import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
-import { residentsConfigByState } from "../configs/residentsConfig";
-import { RootStore } from "./RootStore";
+import { BaseLayout } from "../BaseLayout/BaseLayout";
 
-let store: RootStore;
-
-beforeEach(() => {
-  store = new RootStore();
-});
-
-test("initialize residents datastore", async () => {
-  vi.spyOn(OfflineAPIClient.prototype, "residentsConfig");
-  expect(store.residentsStore).toBeUndefined();
-
-  await flowResult(store.populateResidentsStore());
-
-  expect(store.residentsStore).toBeDefined();
-  expect(store.apiClient.residentsConfig).toHaveBeenCalled();
-  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
-});
+export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
+  return (
+    <BaseLayout>
+      <Header34>Something went wrong</Header34>
+      <Body19>
+        An error occurred that prevented this page from loading. Please try
+        reloading the page, or <Link to="/">return to your homepage</Link>.
+      </Body19>
+      <Body16>
+        <em>
+          [{error.name}] {error.message}
+        </em>
+      </Body16>
+    </BaseLayout>
+  );
+};

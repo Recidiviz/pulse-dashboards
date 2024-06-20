@@ -15,27 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
 import { memo } from "react";
 import { Outlet } from "react-router-dom";
-import styled from "styled-components/macro";
 
 import { AuthClientHydrator } from "~auth";
 
-import { PAGE_WIDTH } from "../../utils/constants";
+import { BaseLayout } from "../BaseLayout/BaseLayout";
 import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
 import { useRootStore } from "../StoreProvider/useRootStore";
-
-const BaseLayout = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  max-width: ${rem(PAGE_WIDTH)};
-
-  & > * {
-    padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-  }
-`;
 
 export const PageRoot = memo(function AppRoot() {
   const {

@@ -25,7 +25,7 @@ import {
 } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
-import { OfflineAPIClient } from "../api/OfflineAPIClient";
+import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { residentsConfigByState } from "../configs/residentsConfig";
 import { OpportunityConfig } from "../configs/types";
 import { UsMeSCCPEligibilityReport } from "../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";

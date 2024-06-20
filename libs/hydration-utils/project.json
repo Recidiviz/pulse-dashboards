@@ -27,7 +27,7 @@
       "outputs": ["{workspaceRoot}/coverage/libs/hydration-utils"],
       "cache": true,
       "options": {
-        "command": "prisma generate && vitest",
+        "command": "vitest",
         "cwd": "{projectRoot}"
       }
     }

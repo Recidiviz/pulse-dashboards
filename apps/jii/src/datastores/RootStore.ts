@@ -14,18 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { makeObservable } from "mobx";
+import { captureException } from "@sentry/react";
+import { makeObservable, onReactionError } from "mobx";
 
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
 import { FlowMethod } from "~hydration-utils";
 
-import { ApiClient } from "../api/ApiClient";
-import { DataAPI } from "../api/interface";
-import { OfflineAPIClient } from "../api/OfflineAPIClient";
+import { ApiClient } from "../apis/data/ApiClient";
+import { DataAPI } from "../apis/data/interface";
+import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { StateCode } from "../configs/types";
 import { ResidentsStore } from "./ResidentsStore";
 import { UiStore } from "./UiStore";
 import { UserStore } from "./UserStore";
+
+// global error handling for Mobx reactions
+onReactionError((error) => {
+  captureException(error);
+});
 
 export class RootStore {
   /**

@@ -23,6 +23,7 @@ import {
   spacing,
   typography,
 } from "@recidiviz/design-system";
+import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
@@ -115,16 +116,24 @@ const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
   });
 
 export const ImagePreview: FC<{ opportunityUrl: string | undefined }> =
-  observer(function ImagePreview({ opportunityUrl }) {
-    const { residentsStore } = useRootStore();
-    if (!residentsStore) return;
+  withErrorBoundary(
+    observer(function ImagePreview({ opportunityUrl }) {
+      const { residentsStore } = useRootStore();
+      if (!residentsStore) return;
 
-    if (opportunityUrl) {
+      // in practice we don't expect this, something further up the component tree
+      // should have already failed to render before we reach this point
+      if (!opportunityUrl) {
+        throw new Error(
+          "URL does not contain a valid opportunity for image preview",
+        );
+      }
+
       return (
         <ImagePreviewWithPresenter
           presenter={new ImagePreviewPresenter(opportunityUrl, residentsStore)}
         />
       );
-    }
-    return <NotFound />;
-  });
+    }),
+    { fallback: <NotFound /> },
+  );

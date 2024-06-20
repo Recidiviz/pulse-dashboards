@@ -27,11 +27,14 @@ import {
   palette,
   typography,
 } from "@recidiviz/design-system";
+import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Route, Routes } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components/macro";
 
 import { EmailVerificationRequired } from "~auth";
 
+import { initializeSentry } from "../../apis/Sentry/initializeSentry";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { NotFound } from "../NotFound/NotFound";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEligibility } from "../pages/PageEligibility";
@@ -55,39 +58,46 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+initializeSentry();
+
+// doing this once (at the root off all <Routes>) allows Sentry to trace client-side URLs
+const SentryRoutes = withSentryReactRouterV6Routing(Routes);
+
 export function App() {
   return (
-    <StoreProvider>
-      <GlobalStyleBase />
-      <GlobalStyle />
+    <ErrorBoundary showDialog fallback={ErrorPage}>
+      <StoreProvider>
+        <GlobalStyleBase />
+        <GlobalStyle />
 
-      <StyledApp>
-        <Routes>
-          <Route path="/" element={<PageRoot />}>
-            <Route index element={<PageHome />} />
-            <Route path="welcome" element={<PageLanding />} />
-            <Route path="verify" element={<EmailVerificationRequired />} />
-            <Route path="after-login" element={<PageAfterLogin />} />
-            <Route path="eligibility" element={<PageEligibility />}>
-              <Route index element={<PageEligibilityHome />} />
-              <Route path="search" element={<PageSearch />} />
-              <Route path=":opportunityUrl">
-                <Route index element={<PageOpportunityEligibility />} />
-                <Route path="about" element={<StaticPage pageId="about" />} />
-                <Route
-                  path="requirements"
-                  element={<StaticPage pageId="requirements" />}
-                />
-                <Route
-                  path="next-steps"
-                  element={<StaticPage pageId="nextSteps" />}
-                />
+        <StyledApp>
+          <SentryRoutes>
+            <Route path="/" element={<PageRoot />}>
+              <Route index element={<PageHome />} />
+              <Route path="welcome" element={<PageLanding />} />
+              <Route path="verify" element={<EmailVerificationRequired />} />
+              <Route path="after-login" element={<PageAfterLogin />} />
+              <Route path="eligibility" element={<PageEligibility />}>
+                <Route index element={<PageEligibilityHome />} />
+                <Route path="search" element={<PageSearch />} />
+                <Route path=":opportunityUrl">
+                  <Route index element={<PageOpportunityEligibility />} />
+                  <Route path="about" element={<StaticPage pageId="about" />} />
+                  <Route
+                    path="requirements"
+                    element={<StaticPage pageId="requirements" />}
+                  />
+                  <Route
+                    path="next-steps"
+                    element={<StaticPage pageId="nextSteps" />}
+                  />
+                </Route>
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Route>
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </StyledApp>
-    </StoreProvider>
+          </SentryRoutes>
+        </StyledApp>
+      </StoreProvider>
+    </ErrorBoundary>
   );
 }

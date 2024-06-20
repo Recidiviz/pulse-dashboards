@@ -22,7 +22,7 @@ import {
   IncarcerationOpportunityId,
   OpportunityRecord,
   ResidentsConfig,
-} from "../configs/types";
+} from "../../configs/types";
 
 export interface DataAPI {
   /**

@@ -16,8 +16,8 @@
 // =============================================================================
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
-import { residentsConfigByState } from "../configs/residentsConfig";
-import { RootStore } from "../datastores/RootStore";
+import { residentsConfigByState } from "../../configs/residentsConfig";
+import { RootStore } from "../../datastores/RootStore";
 import { OfflineAPIClient } from "./OfflineAPIClient";
 
 let api: OfflineAPIClient;

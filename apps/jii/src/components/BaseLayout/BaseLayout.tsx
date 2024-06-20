@@ -15,25 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult } from "mobx";
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
-import { residentsConfigByState } from "../configs/residentsConfig";
-import { RootStore } from "./RootStore";
+import { PAGE_WIDTH } from "../../utils/constants";
 
-let store: RootStore;
+export const BaseLayout = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  max-width: ${rem(PAGE_WIDTH)};
 
-beforeEach(() => {
-  store = new RootStore();
-});
-
-test("initialize residents datastore", async () => {
-  vi.spyOn(OfflineAPIClient.prototype, "residentsConfig");
-  expect(store.residentsStore).toBeUndefined();
-
-  await flowResult(store.populateResidentsStore());
-
-  expect(store.residentsStore).toBeDefined();
-  expect(store.apiClient.residentsConfig).toHaveBeenCalled();
-  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
-});
+  & > * {
+    padding: ${rem(spacing.md)} ${rem(spacing.lg)};
+  }
+`;

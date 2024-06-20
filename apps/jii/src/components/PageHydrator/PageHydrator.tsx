@@ -17,17 +17,17 @@
 
 import { FC, ReactNode } from "react";
 
-import { Hydratable, Hydrator } from "~hydration-utils";
+import { Hydratable, HydratorWithErrorLogging } from "~hydration-utils";
 
-import { NotFound } from "../NotFound/NotFound";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
 
 export const PageHydrator: FC<{
   children: ReactNode;
   hydratable: Hydratable;
 }> = ({ children, hydratable }) => {
   return (
-    <Hydrator hydratable={hydratable} failed={<NotFound />}>
+    <HydratorWithErrorLogging hydratable={hydratable} fallback={ErrorPage}>
       {children}
-    </Hydrator>
+    </HydratorWithErrorLogging>
   );
 };

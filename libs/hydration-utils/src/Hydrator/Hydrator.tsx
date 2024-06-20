@@ -23,8 +23,8 @@ import React, { useEffect } from "react";
 import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
-import { Hydratable } from "../Hydratable/types";
 import { isHydrationUntouched } from "../Hydratable/utils";
+import { HydratorProps } from "./types";
 
 const Wrapper = styled.div`
   position: relative;
@@ -54,13 +54,6 @@ const crossFade = {
   leave: { opacity: 0, position: "absolute" },
   config: { friction: 40, tension: 280 },
 } as const;
-
-export type HydratorProps = {
-  children: React.ReactNode;
-  hydratable: Hydratable;
-  failed: React.ReactNode;
-  className?: string;
-};
 
 /**
  * Observes the provided `hydratable` and only renders `children` if it is hydrated;

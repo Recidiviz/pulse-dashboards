@@ -21,12 +21,12 @@ import { ILazyObservable, lazyObservable } from "mobx-utils";
 import { AuthClient } from "~auth";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
-import { residentOpportunitySchemas } from "../configs/residentsOpportunitySchemas";
+import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
 import {
   IncarcerationOpportunityId,
   ResidentsConfig,
   StateCode,
-} from "../configs/types";
+} from "../../configs/types";
 import { DataAPI } from "./interface";
 
 const API_URL_BASE = import.meta.env["VITE_API_URL_BASE"];
@@ -79,7 +79,7 @@ export class ApiClient implements DataAPI {
    */
   async residentsConfig() {
     const { residentsConfigByState } = await import(
-      "../configs/residentsConfig"
+      "../../configs/residentsConfig"
     );
     return residentsConfigByState[this.externals.stateCode];
   }
