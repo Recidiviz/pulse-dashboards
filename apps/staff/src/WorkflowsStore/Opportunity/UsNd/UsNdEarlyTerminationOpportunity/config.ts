@@ -38,13 +38,16 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
     denialReasons: {
       "INT MEASURE":
         "Under active intermediate measure as a result of 1+ violations",
+      "PENDING CHARGE": "Has a pending felony or misdemeanor charge",
       "CASE PLAN NC": "Has not completed case plan goals",
-      SO: "Being supervised for sex offense",
+      "MIN PERIOD NE": "Minimum mandatory supervision period not expired",
       DOP: "Being supervised for an offense resulting in the death of a person",
-      "FINES/FEES": "Willfull nonpayment of fines/fees despite ability to pay",
+      "FINES/FEES": "Willful nonpayment of fines / fees despite ability to pay",
       INC: "Incarcerated on another offense",
-      "SA DECLINE": "State's Attorney permanently declined consideration",
-      Other: "Other, please specify a reason",
+      "PROS PERM DENIED": "Prosecutor permanently denied early termination",
+      "PROS TEMP DENIED":
+        "Prosecutor temporarily denied early termination and will reconsider",
+      "SENDING STATE DENIED": "Sending state denied early termination",
     },
     eligibleCriteriaCopy: {
       supervisionPastEarlyDischargeDate: {
