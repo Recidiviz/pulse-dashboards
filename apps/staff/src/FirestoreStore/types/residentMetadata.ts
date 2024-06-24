@@ -61,9 +61,16 @@ export type UsMoResidentMetadata = {
   numD1SanctionsPastYear: number;
 };
 
+export type UsMeResidentMetadata = {
+  stateCode: "US_ME";
+  portionServedNeeded: "1/2" | "2/3";
+  sccpEligibilityDate: string;
+};
+
 type DefinedResidentMetadata = {
   US_MO: UsMoResidentMetadata;
   US_AR: UsArResidentMetadata;
+  US_ME: UsMeResidentMetadata;
 };
 
 export type ResidentMetadataMap = {

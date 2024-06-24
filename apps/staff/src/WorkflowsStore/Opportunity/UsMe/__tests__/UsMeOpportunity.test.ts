@@ -18,6 +18,7 @@
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { UsMeResidentMetadata } from "../../../../FirestoreStore";
 import { RootStore } from "../../../../RootStore";
 import { TenantId } from "../../../../RootStore/types";
 import { Client } from "../../../Client";
@@ -43,7 +44,7 @@ vi.mock("../../../subscriptions");
 function createResidentTestUnit(
   residentRecord: typeof usMePersonRecord,
   verifiedOpps: Record<string, any>,
-  portionServedNeeded: string,
+  portionServedNeeded: "1/2" | "2/3",
 ) {
   root = new RootStore();
   // @ts-ignore
@@ -51,16 +52,20 @@ function createResidentTestUnit(
     verifiedOpportunities: verifiedOpps,
   });
   // @ts-ignore
-  vi.spyOn(root.workflowsStore, "selectedResident", "get").mockReturnValue({
+  const residentRecordWithMetadata: typeof usMePersonRecord = {
     ...usMePersonRecord,
-    portionServedNeeded,
-  });
+    metadata: {
+      ...(usMePersonRecord.metadata as UsMeResidentMetadata),
+      stateCode: "US_ME",
+      portionServedNeeded,
+    },
+  };
 
   vi.spyOn(root, "currentTenantId", "get").mockReturnValue(
     residentRecord.stateCode as TenantId,
   );
 
-  resident = new Resident(residentRecord, root);
+  resident = new Resident(residentRecordWithMetadata, root);
 }
 
 type clientType =

@@ -92,7 +92,5 @@ export type ClientRecord = WorkflowsJusticeInvolvedPersonRecord & {
 export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
   ResidentRecord["output"] & {
     allEligibleOpportunities: IncarcerationOpportunityType[];
-    portionServedNeeded?: "1/2" | "2/3";
-    sccpEligibilityDate?: Timestamp | string;
     metadata: ResidentMetadata;
   };

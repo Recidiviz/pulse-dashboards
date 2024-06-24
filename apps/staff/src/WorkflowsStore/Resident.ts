@@ -137,12 +137,12 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return searchField ? this.record[searchField] : this.assignedStaffId;
   }
 
-  get portionServedNeeded(): string | undefined {
-    return this.record.portionServedNeeded;
-  }
-
   get sccpEligibilityDate(): Date | undefined {
-    return optionalFieldToDate(this.record.sccpEligibilityDate);
+    if (this.record.metadata.stateCode !== "US_ME") {
+      return;
+    }
+
+    return optionalFieldToDate(this.record.metadata.sccpEligibilityDate);
   }
 
   get usTnFacilityAdmissionDate(): Date | undefined {
@@ -165,16 +165,13 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
 
     const opportunityDates: PortionServedDates = [];
 
-    if (this.rootStore.currentTenantId === "US_ME") {
+    if (this.metadata.stateCode === "US_ME") {
       opportunityDates.push({
         heading: "Half Time",
         date: halfTimeDate,
       });
 
-      if (
-        this.rootStore.workflowsStore.selectedResident?.portionServedNeeded ===
-        "2/3"
-      )
+      if (this.metadata.portionServedNeeded === "2/3")
         opportunityDates.push({
           heading: "Two Thirds Time",
           date: twoThirdsTimeDate,

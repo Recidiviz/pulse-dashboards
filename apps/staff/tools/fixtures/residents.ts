@@ -297,9 +297,11 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -8, months: -1 }),
     releaseDate: relativeFixtureDate({ months: 35 }),
-    sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
-    portionServedNeeded: "2/3",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
+      portionServedNeeded: "2/3",
+    },
   },
   {
     allEligibleOpportunities: [
@@ -325,9 +327,11 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -46, days: 1 }),
     releaseDate: relativeFixtureDate({ months: 26 }),
-    sccpEligibilityDate: relativeFixtureDate({ months: 2 }),
-    portionServedNeeded: "2/3",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      sccpEligibilityDate: relativeFixtureDate({ months: 2 }),
+      portionServedNeeded: "2/3",
+    },
   },
   {
     allEligibleOpportunities: [
@@ -350,11 +354,11 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -2, months: -6, days: 2 }),
     releaseDate: relativeFixtureDate({ years: 2 }),
-    sccpEligibilityDate: relativeFixtureDate({
-      months: -3,
-    }),
-    portionServedNeeded: "1/2",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      sccpEligibilityDate: relativeFixtureDate({ months: -3 }),
+      portionServedNeeded: "1/2",
+    },
   },
   {
     allEligibleOpportunities: ["usMeSCCP"],
@@ -373,11 +377,11 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ months: -31, days: 2 }),
     releaseDate: relativeFixtureDate({ months: 25 }),
-    sccpEligibilityDate: relativeFixtureDate({
-      months: -3,
-    }),
-    portionServedNeeded: "1/2",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      sccpEligibilityDate: relativeFixtureDate({ months: -3 }),
+      portionServedNeeded: "1/2",
+    },
   },
   {
     allEligibleOpportunities: ["usMeSCCP"],
@@ -397,9 +401,11 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
     releaseDate: relativeFixtureDate({ years: 2, months: 5 }),
-    sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
-    portionServedNeeded: "1/2",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
+      portionServedNeeded: "1/2",
+    },
   },
   {
     allEligibleOpportunities: ["usMeMediumTrustee"],
@@ -419,9 +425,11 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
     releaseDate: "9999-12-01",
-    sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
-    portionServedNeeded: "1/2",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ME",
+      sccpEligibilityDate: relativeFixtureDate({ months: 5 }),
+      portionServedNeeded: "1/2",
+    },
   },
 
   {
