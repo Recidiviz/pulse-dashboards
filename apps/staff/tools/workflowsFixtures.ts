@@ -30,6 +30,7 @@ import {
   usMiReclassificationRequestFixtures,
   usMiSecurityClassificationCommitteeReviewFixtures,
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
+  usPaSpecialCircumstancesSupervisionFixtures,
 } from "~datatypes";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
 
@@ -142,6 +143,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
         usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
       usMiAddInPersonSecurityClassificationCommitteeReviewReferrals:
         usMiAddInPersonSecurityClassificationCommitteeReviewFixtures,
+      usPaSpecialCircumstancesSupervisionReferrals:
+        usPaSpecialCircumstancesSupervisionFixtures,
     },
     // @ts-ignore
     (fixtures) => fixtureFromParsedRecords("externalId", fixtures),

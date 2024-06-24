@@ -93,7 +93,8 @@ export type FeatureVariant =
   | "opportunityConfigurationAPI"
   | "workflowsSupervisorSearch"
   | "isolateFormUpdates"
-  | "supervisorHomepage";
+  | "supervisorHomepage"
+  | "usPaSpecialCircumstances";
 export type FeatureVariantValue = {
   activeDate?: Date;
   variant?: string;
@@ -139,6 +140,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   workflowsSupervisorSearch: {},
   isolateFormUpdates: {},
   supervisorHomepage: {},
+  usPaSpecialCircumstances: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

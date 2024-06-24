@@ -58,7 +58,7 @@ export const OPPORTUNITY_TYPES_BY_STATE = {
   ],
   US_ND: ["earlyTermination"],
   US_OR: ["usOrEarnedDischarge"],
-  US_PA: ["usPaAdminSupervision"],
+  US_PA: ["usPaAdminSupervision", "usPaSpecialCircumstancesSupervision"],
   US_TN: [
     "compliantReporting",
     "usTnCustodyLevelDowngrade",

@@ -17,24 +17,36 @@
 
 import { z } from "zod";
 
+import { dateStringSchema } from "../../../utils/dateStringSchema";
 import { ParsedRecord } from "../../../utils/types";
 import { caseNotesSchema } from "../../utils/caseNotesSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
+const possiblyIneligibleCriteria = z
+  .object({
+    usPaMeetsSpecialCircumstancesCriteriaForTimeServed: z.object({
+      caseType: z.string(),
+      yearsRequiredToServe: z.number(),
+      eligibleDate: dateStringSchema,
+    }),
+  })
+  .partial();
+
 export const usPaSpecialCircumstancesSupervisionSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: z.object({
-      usPaMeetsSpecialCircumstancesCriteriaForTimeServed: z.object({
-        caseType: z.string(),
-        yearsRequiredToServe: z.number(),
-      }),
-      usPaMeetsSpecialCircumstancesCriteriaForSanctions: z.object({
-        caseType: z.string(),
-      }),
-      usPaFulfilledRequirements: z.object({}),
-      usPaNotEligibleOrMarkedIneligibleForAdminSupervision: z.object({}),
+    eligibleCriteria: possiblyIneligibleCriteria.extend({
+      usPaMeetsSpecialCircumstancesCriteriaForSanctions: z
+        .object({
+          caseType: z.string().nullable(),
+          sanctionType: z.string().nullable(),
+        })
+        .nullable(),
+      usPaFulfilledRequirements: z.object({}).nullable(),
+      usPaNotEligibleOrMarkedIneligibleForAdminSupervision: z
+        .object({})
+        .nullable(),
     }),
-    ineligibleCriteria: z.object({}),
+    ineligibleCriteria: possiblyIneligibleCriteria,
   })
   .merge(caseNotesSchema);
 

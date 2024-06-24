@@ -1,5 +1,36 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`schema for almostEligible 1`] = `
+{
+  "caseNotes": {
+    "Case Plan Goals": [
+      {
+        "eventDate": null,
+        "noteBody": "Maintain good health",
+        "noteTitle": "In progress",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usPaFulfilledRequirements": {},
+    "usPaMeetsSpecialCircumstancesCriteriaForSanctions": {
+      "caseType": "special probation or parole case",
+      "sanctionType": "high or medium",
+    },
+    "usPaNotEligibleOrMarkedIneligibleForAdminSupervision": {},
+  },
+  "externalId": "CLIENT005",
+  "ineligibleCriteria": {
+    "usPaMeetsSpecialCircumstancesCriteriaForTimeServed": {
+      "caseType": "special probation or parole case",
+      "eligibleDate": 2021-12-26T00:00:00.000Z,
+      "yearsRequiredToServe": 10,
+    },
+  },
+  "stateCode": "US_PA",
+}
+`;
+
 exports[`schema for fullyEligible 1`] = `
 {
   "caseNotes": {
@@ -14,43 +45,17 @@ exports[`schema for fullyEligible 1`] = `
   "eligibleCriteria": {
     "usPaFulfilledRequirements": {},
     "usPaMeetsSpecialCircumstancesCriteriaForSanctions": {
-      "caseType": "GENERAL",
+      "caseType": "special probation or parole case",
+      "sanctionType": "high",
     },
     "usPaMeetsSpecialCircumstancesCriteriaForTimeServed": {
-      "caseType": "GENERAL",
+      "caseType": "special probation or parole case",
+      "eligibleDate": 2021-12-06T00:00:00.000Z,
       "yearsRequiredToServe": 10,
     },
     "usPaNotEligibleOrMarkedIneligibleForAdminSupervision": {},
   },
-  "externalId": "CLIENT001",
-  "ineligibleCriteria": {},
-  "stateCode": "US_PA",
-}
-`;
-
-exports[`schema for fullyEligibleWithLifeSentence 1`] = `
-{
-  "caseNotes": {
-    "Case Plan Goals": [
-      {
-        "eventDate": null,
-        "noteBody": "Maintain good health",
-        "noteTitle": "In progress",
-      },
-    ],
-  },
-  "eligibleCriteria": {
-    "usPaFulfilledRequirements": {},
-    "usPaMeetsSpecialCircumstancesCriteriaForSanctions": {
-      "caseType": "GENERAL",
-    },
-    "usPaMeetsSpecialCircumstancesCriteriaForTimeServed": {
-      "caseType": "GENERAL",
-      "yearsRequiredToServe": 30,
-    },
-    "usPaNotEligibleOrMarkedIneligibleForAdminSupervision": {},
-  },
-  "externalId": "CLIENT002",
+  "externalId": "CLIENT004",
   "ineligibleCriteria": {},
   "stateCode": "US_PA",
 }

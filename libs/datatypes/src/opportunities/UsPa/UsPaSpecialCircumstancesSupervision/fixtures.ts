@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "../../../utils/fixtureDates";
 import { makeRecordFixture } from "../../../utils/makeRecordFixture";
 import { FixtureMapping } from "../../utils/types";
 import {
@@ -25,14 +26,16 @@ import {
 export const usPaSpecialCircumstancesSupervisionFixtures = {
   fullyEligible: makeRecordFixture(usPaSpecialCircumstancesSupervisionSchema, {
     stateCode: "US_PA",
-    externalId: "CLIENT001",
+    externalId: "CLIENT004",
     eligibleCriteria: {
       usPaMeetsSpecialCircumstancesCriteriaForTimeServed: {
-        caseType: "GENERAL",
+        caseType: "special probation or parole case",
         yearsRequiredToServe: 10,
+        eligibleDate: relativeFixtureDate({ days: -10 }),
       },
       usPaMeetsSpecialCircumstancesCriteriaForSanctions: {
-        caseType: "GENERAL",
+        caseType: "special probation or parole case",
+        sanctionType: "high",
       },
       usPaFulfilledRequirements: {},
       usPaNotEligibleOrMarkedIneligibleForAdminSupervision: {},
@@ -48,32 +51,32 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
       ],
     },
   }),
-  fullyEligibleWithLifeSentence: makeRecordFixture(
-    usPaSpecialCircumstancesSupervisionSchema,
-    {
-      stateCode: "US_PA",
-      externalId: "CLIENT002",
-      eligibleCriteria: {
-        usPaMeetsSpecialCircumstancesCriteriaForTimeServed: {
-          caseType: "GENERAL",
-          yearsRequiredToServe: 30,
-        },
-        usPaMeetsSpecialCircumstancesCriteriaForSanctions: {
-          caseType: "GENERAL",
-        },
-        usPaFulfilledRequirements: {},
-        usPaNotEligibleOrMarkedIneligibleForAdminSupervision: {},
+  almostEligible: makeRecordFixture(usPaSpecialCircumstancesSupervisionSchema, {
+    stateCode: "US_PA",
+    externalId: "CLIENT005",
+    eligibleCriteria: {
+      usPaMeetsSpecialCircumstancesCriteriaForSanctions: {
+        caseType: "special probation or parole case",
+        sanctionType: "high or medium",
       },
-      ineligibleCriteria: {},
-      caseNotes: {
-        "Case Plan Goals": [
-          {
-            eventDate: null,
-            noteBody: "Maintain good health",
-            noteTitle: "In progress",
-          },
-        ],
+      usPaFulfilledRequirements: {},
+      usPaNotEligibleOrMarkedIneligibleForAdminSupervision: {},
+    },
+    ineligibleCriteria: {
+      usPaMeetsSpecialCircumstancesCriteriaForTimeServed: {
+        caseType: "special probation or parole case",
+        yearsRequiredToServe: 10,
+        eligibleDate: relativeFixtureDate({ days: 10 }),
       },
     },
-  ),
+    caseNotes: {
+      "Case Plan Goals": [
+        {
+          eventDate: null,
+          noteBody: "Maintain good health",
+          noteTitle: "In progress",
+        },
+      ],
+    },
+  }),
 } satisfies FixtureMapping<UsPaSpecialCircumstancesSupervisionRecord>;

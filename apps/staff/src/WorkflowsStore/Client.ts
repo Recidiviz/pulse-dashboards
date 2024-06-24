@@ -56,6 +56,7 @@ import {
   UsMiPastFTRDOpportunity,
   UsMiSupervisionLevelDowngradeOpportunity,
   UsNdEarlyTerminationOpportunity,
+  UsPaSpecialCircumstancesSupervisionOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from "./Opportunity";
@@ -111,6 +112,8 @@ const supervisionOpportunityConstructors: Record<
   usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,
   usOrEarnedDischarge: UsOrEarnedDischargeOpportunity,
   usPaAdminSupervision: UsPaAdminSupervisionOpportunity,
+  usPaSpecialCircumstancesSupervision:
+    UsPaSpecialCircumstancesSupervisionOpportunity,
 };
 
 export const createClientOpportunity: OpportunityFactory<
