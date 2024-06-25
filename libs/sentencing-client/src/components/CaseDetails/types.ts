@@ -27,3 +27,15 @@ export enum ProfileStrength {
   Medium = "Medium",
   Low = "Low",
 }
+
+export type Attributes = {
+  id: string;
+  dueDate: string;
+  reportType: string;
+  county: string;
+  primaryCharge: string | null;
+  lsirScore: string;
+  fullName: string | undefined;
+  gender: string | undefined;
+  age: number;
+};

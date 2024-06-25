@@ -18,6 +18,7 @@
 import { palette, typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
+import { customPalette } from "../styles/palette";
 import { ProfileStrength } from "./types";
 
 export const PageContainer = styled.div`
@@ -86,11 +87,11 @@ export const ID = styled.div`
 `;
 
 export const DueDate = styled.div`
-  color: ${palette.white};
-  background-color: #939393;
+  color: ${palette.pine1};
+  background-color: ${customPalette.blue1};
   border-radius: 10px;
   padding: 4px 10px;
-  font-size: 11px;
+  font-size: 13px;
   margin-bottom: 5px;
 `;
 
@@ -103,6 +104,7 @@ export const AttributeValueWrapper = styled.div`
   ${typography.Body14}
   display: flex;
   gap: 4px;
+  margin-bottom: 24px;
 `;
 
 export const Attribute = styled.div`
@@ -110,6 +112,9 @@ export const Attribute = styled.div`
 `;
 
 export const Value = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: ${palette.pine2};
 `;
 
@@ -214,11 +219,14 @@ export const EditCaseDetailsButton = styled.div`
   height: 40px;
   display: flex;
   align-items: center;
+  align-self: flex-end;
   border: 1px solid ${palette.slate20};
-  border-radius: 4px;
+  border-radius: 32px;
   color: ${palette.slate85};
   padding: 8px 16px;
   font-size: 13px;
+  font-weight: 500;
+  margin-left: auto;
 `;
 
 /** Recommendations */

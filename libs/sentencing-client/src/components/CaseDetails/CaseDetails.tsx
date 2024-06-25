@@ -38,7 +38,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter: CaseDetailsPresenter;
 }) {
   const navigate = useNavigate();
-  const { staffPseudoId } = presenter;
+  const { staffPseudoId, caseAttributes } = presenter;
 
   const [selectedRecommendation, setSelectedRecommendation] =
     useState<RecommendationType>();
@@ -68,7 +68,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
         }
       >{`Back to Dashboard`}</Styled.BackLink>
       {/* Case Attributes */}
-      <CaseAttributes />
+      <CaseAttributes caseAttributes={caseAttributes} />
       <Styled.Body>
         {/* Recommendations */}
         <Recommendations

@@ -15,31 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { keyBy } from "lodash";
-import { makeAutoObservable } from "mobx";
-
-import { FlowMethod } from "~hydration-utils";
-import { PSIStore } from "~sentencing-client";
-
-import { APIClient, CaseWithClient, Staff } from "../api/APIClient";
-
-type CaseBriefsById = {
-  [key: string]: CaseWithClient;
+export const customPalette = {
+  blue1: "rgba(200, 229, 255, 1)",
 };
-
-export class StaffStore {
-  staffInfo?: Staff;
-
-  caseBriefsById?: CaseBriefsById;
-
-  constructor(public readonly psiStore: PSIStore) {
-    makeAutoObservable(this);
-  }
-
-  /** This is a MobX flow method and should be called with mobx.flowResult */
-  *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
-    if (this.staffInfo) return;
-    this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
-    this.caseBriefsById = keyBy(this.staffInfo.Cases, "id");
-  }
-}

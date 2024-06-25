@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { flowResult, makeAutoObservable } from "mobx";
+import moment from "moment";
 
 import {
   Hydratable,
@@ -23,6 +24,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import { Attributes } from "../components/CaseDetails/types";
 import { CaseStore } from "../datastores/CaseStore";
 
 export class CaseDetailsPresenter implements Hydratable {
@@ -36,11 +38,18 @@ export class CaseDetailsPresenter implements Hydratable {
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
+          if (this.caseStore.psiStore.staffStore.staffInfo === undefined)
+            throw new Error("Failed to load staff details");
+        },
+        () => {
           if (this.caseStore.caseDetailsById[this.caseId] === undefined)
             throw new Error("Failed to load case details");
         },
       ],
       populate: async () => {
+        if (!this.caseStore.psiStore.staffStore.staffInfo) {
+          await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
+        }
         await flowResult(this.caseStore.loadCaseDetails(this.caseId));
       },
     });
@@ -50,8 +59,28 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.caseStore.psiStore.staffPseudoId;
   }
 
-  get caseAttributes() {
-    return this.caseStore.caseDetailsById[this.caseId];
+  get clientInfo() {
+    return this.caseStore.psiStore.staffStore.caseBriefsById?.[this.caseId]
+      .Client;
+  }
+
+  get caseAttributes(): Attributes {
+    const currentCase = this.caseStore.caseDetailsById[this.caseId];
+    const { id, dueDate, reportType, county, primaryCharge, lsirScore } =
+      currentCase;
+    const { fullName, gender, birthDate } = this.clientInfo ?? {};
+
+    return {
+      id,
+      dueDate: moment(dueDate).format("MM/DD/YYYY"),
+      reportType,
+      county,
+      primaryCharge,
+      lsirScore,
+      fullName,
+      gender,
+      age: moment().diff(birthDate, "years"),
+    };
   }
 
   get hydrationState(): HydrationState {

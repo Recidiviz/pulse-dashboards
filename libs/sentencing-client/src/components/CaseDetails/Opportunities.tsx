@@ -31,7 +31,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 }) => {
   const firstName = "Joshua";
   const tempNeedsList = ["Need 1", "Need 2", "Need 3"].map((need) => (
-    <div>{need}</div>
+    <div key={need}>{need}</div>
   ));
 
   return (

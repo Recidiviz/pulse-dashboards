@@ -145,7 +145,7 @@ export const CaseListTable = ({
               isAscending={orderByAscending}
               isActiveSort={cell.key === activeSortKey}
               onClick={() => {
-                if (cell.key in [DUE_DATE_KEY, CLIENT_FULL_NAME_KEY]) {
+                if ([DUE_DATE_KEY, CLIENT_FULL_NAME_KEY].includes(cell.key)) {
                   setActiveSortKey(cell.key);
                   setOrderByAscending(!orderByAscending);
                 }

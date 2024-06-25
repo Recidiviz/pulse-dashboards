@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CaseDetailsFixture } from "../../api/offlineFixtures";
+import {
+  CaseDetailsFixture,
+  StaffInfoFixture,
+} from "../../api/offlineFixtures";
 import { CaseStore } from "../../datastores/CaseStore";
 import { PSIStore } from "../../datastores/PSIStore";
 import { createMockPSIStore } from "../../utils/test";
@@ -28,6 +31,14 @@ let presenter: CaseDetailsPresenter;
 beforeEach(() => {
   psiStore = createMockPSIStore();
   presenter = new CaseDetailsPresenter(psiStore.caseStore, caseId);
+
+  vi.spyOn(psiStore.staffStore, "loadStaffInfo");
+  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
+    CaseDetailsFixture[caseId],
+  );
+  vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
+    StaffInfoFixture,
+  );
 });
 
 afterEach(() => {
@@ -36,16 +47,13 @@ afterEach(() => {
 
 test("hydration states", async () => {
   vi.spyOn(psiStore.caseStore, "loadCaseDetails");
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
-    CaseDetailsFixture[caseId],
-  );
-
   expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
 
   const hydrationPromise = presenter.hydrate();
   expect(presenter.hydrationState).toEqual({ status: "loading" });
 
   await hydrationPromise;
+
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });
   expect(psiStore.caseStore.loadCaseDetails).toHaveBeenCalled();
   expect(psiStore.caseStore.caseDetailsById[caseId]).toBeDefined();
@@ -73,9 +81,6 @@ test("no redundant hydration while in progress", async () => {
 
 test("no hydration if already hydrated", async () => {
   vi.spyOn(psiStore.caseStore, "loadCaseDetails");
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
-    CaseDetailsFixture[caseId],
-  );
 
   await presenter.hydrate();
   expect(presenter.hydrationState).toEqual({ status: "hydrated" });

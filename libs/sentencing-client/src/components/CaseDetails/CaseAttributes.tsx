@@ -16,69 +16,65 @@
 // =============================================================================
 
 import * as Styled from "./CaseDetails.styles";
-import { ProfileStrength } from "./types";
+import { Attributes } from "./types";
 
-const ProfileStrengthIndicator = ({
-  profileStrength,
-}: {
-  profileStrength: ProfileStrength;
-}) => {
-  return (
-    <Styled.Indicator profileStrength={profileStrength}>
-      <Styled.Carot profileStrength={profileStrength} />
-    </Styled.Indicator>
-  );
+type CaseAttributesProps = {
+  caseAttributes: Attributes;
+};
+
+type AttributeLabelValue = {
+  label: string;
+  value: string | number;
 };
 
 // TODO(Recidiviz/recidiviz-data#30649) Implement Case Attributes flow
-export const CaseAttributes = () => {
+export const CaseAttributes: React.FC<CaseAttributesProps> = ({
+  caseAttributes,
+}) => {
+  const {
+    id,
+    dueDate,
+    reportType,
+    county,
+    primaryCharge,
+    lsirScore,
+    age,
+    fullName,
+    gender,
+  } = caseAttributes;
+
+  const attributesRow: AttributeLabelValue[] = [
+    { label: "Report Type", value: reportType },
+    { label: "County", value: county },
+    { label: "Gender", value: gender },
+    { label: "Age", value: age },
+    { label: "Offense", value: primaryCharge, isEditable: true },
+    { label: "LSI-R Score", value: lsirScore, isEditable: true },
+  ].map((attribute) => {
+    return { ...attribute, value: attribute.value ?? "-" };
+  });
+
   return (
     <Styled.CaseAttributes>
       {/* Name, ID, Due Date */}
       <Styled.HeaderWrapper>
-        <Styled.Name>Joshua Abraham</Styled.Name>
-        <Styled.ID>AB123456</Styled.ID>
-        <Styled.DueDate>Due 5/27/24</Styled.DueDate>
+        <Styled.Name>{fullName}</Styled.Name>
+        <Styled.ID>{id}</Styled.ID>
+        <Styled.DueDate>Due {dueDate}</Styled.DueDate>
+        <Styled.EditCaseDetailsButton>
+          Edit Case Details
+        </Styled.EditCaseDetailsButton>
       </Styled.HeaderWrapper>
 
-      {/* Case Details (Report Type, County, Gender, Age) */}
+      {/* Case Details Subheader (Report Type, County, Gender, Age, Offense, LSI-R Score) */}
       <Styled.CaseAttributesWrapper>
-        <Styled.AttributeValueWrapper>
-          <Styled.Attribute>Report Type:</Styled.Attribute>
-          <Styled.Value>Full PSI</Styled.Value>
-        </Styled.AttributeValueWrapper>
-        <Styled.AttributeValueWrapper>
-          <Styled.Attribute>County:</Styled.Attribute>
-          <Styled.Value>Caribou</Styled.Value>
-        </Styled.AttributeValueWrapper>
-        <Styled.AttributeValueWrapper>
-          <Styled.Attribute>Gender:</Styled.Attribute>
-          <Styled.Value>Male</Styled.Value>
-        </Styled.AttributeValueWrapper>
-        <Styled.AttributeValueWrapper>
-          <Styled.Attribute>Age:</Styled.Attribute>
-          <Styled.Value>37</Styled.Value>
-        </Styled.AttributeValueWrapper>
+        {attributesRow.map((attribute) => (
+          <Styled.AttributeValueWrapper key={attribute.label}>
+            <Styled.Attribute>{attribute.label}:</Styled.Attribute>
+            <Styled.Value>{attribute.value}</Styled.Value>
+          </Styled.AttributeValueWrapper>
+        ))}
       </Styled.CaseAttributesWrapper>
-
-      {/* Profile Strength, Edit Case Details */}
-      <Styled.EditCaseDetails>
-        <Styled.ProfileStrengthWrapper>
-          <ProfileStrengthIndicator profileStrength={ProfileStrength.High} />
-          <Styled.Content>
-            <Styled.Text>
-              Profile Strength: <span>High</span>
-            </Styled.Text>
-            <Styled.Caption>
-              Adding case details will help enhance the accuracy of the insights
-              and opportunities
-            </Styled.Caption>
-          </Styled.Content>
-        </Styled.ProfileStrengthWrapper>
-        <Styled.EditCaseDetailsButton>
-          Edit case details
-        </Styled.EditCaseDetailsButton>
-      </Styled.EditCaseDetails>
     </Styled.CaseAttributes>
   );
 };
