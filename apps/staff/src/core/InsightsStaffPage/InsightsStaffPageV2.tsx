@@ -27,9 +27,9 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenters/SupervisionOfficerDetailPresenter";
 import { toTitleCase } from "../../utils";
 import InsightsChartCard from "../InsightsChartCard";
-import InsightsEmptyPage from "../InsightsEmptyPage";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
+import { EmptyCard } from "../InsightsSupervisorPage/InsightsStaffCardV2";
 import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
 import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import ModelHydrator from "../ModelHydrator";
@@ -69,38 +69,46 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     if (metricId) trackMetricTabViewed(metricId);
   }, [metricId, trackMetricTabViewed]);
 
-  const supervisorLinkProps = goToSupervisorInfo && {
-    linkText: `Go to ${
-      goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel
-    }'s ${labels.supervisionUnitLabel}`,
-    link: insightsUrl("supervisionSupervisor", {
-      supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
-    }),
-  };
+  const infoItems = [
+    {
+      title: "caseload types",
+      info:
+        (presenter.areCaseloadTypeBreakdownsEnabled &&
+          outlierOfficerData?.caseloadType) ||
+        null,
+    },
+  ];
 
-  // empty page where the staff member is not an outlier on any metrics
   if (outlierOfficerData && !outlierOfficerData.outlierMetrics.length) {
     return (
-      <InsightsEmptyPage
-        headerText={`${outlierOfficerData.displayName} is not currently an outlier on any metrics.`}
-        {...supervisorLinkProps}
-      />
+      <InsightsPageLayout
+        pageTitle={outlierOfficerData.displayName}
+        pageSubtitle="Outcomes"
+        infoItems={infoItems}
+        contentsAboveTitle={
+          supervisorsInfo &&
+          goToSupervisorInfo && (
+            <InsightsBreadcrumbs
+              previousPage={{
+                title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
+                url: insightsUrl("supervisionSupervisor", {
+                  supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
+                }),
+              }}
+            >
+              {toTitleCase(labels.supervisionOfficerLabel)} Profile
+            </InsightsBreadcrumbs>
+          )
+        }
+      >
+        <EmptyCard message="Nice! No officer outcomes to review this month." />
+      </InsightsPageLayout>
     );
   }
 
   // if the presenter is hydrated, this stuff should never be missing in practice
   if (!outlierOfficerData || !defaultMetricId || !metricInfo)
     return <NotFound />;
-
-  const infoItems = [
-    {
-      title: "caseload types",
-      info:
-        (presenter.areCaseloadTypeBreakdownsEnabled &&
-          outlierOfficerData.caseloadType) ||
-        null,
-    },
-  ];
 
   if (initialPageLoad) {
     presenter.trackStaffPageViewed();
