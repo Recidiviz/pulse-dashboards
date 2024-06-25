@@ -24,6 +24,7 @@ import {
   DetailsList,
   DetailsSection,
   DetailsSubheading,
+  Divider,
   SecureDetailsContent,
 } from "../styles";
 import { ResidentProfileProps } from "../types";
@@ -37,9 +38,13 @@ export function UsArResidentInformation({
 
   return (
     <>
+      <Divider />
       <UsArCurrentStatus metadata={metadata} />
+      <Divider />
       <UsArReleaseDates metadata={metadata} />
+      <Divider />
       <UsArGoodTimeClassification metadata={metadata} />
+      <Divider />
       <UsArProgramming metadata={metadata} />
     </>
   );
@@ -99,15 +104,19 @@ function UsArCurrentStatus({
         <DetailsSubheading>Current Location</DetailsSubheading>
         <SecureDetailsContent>{currentLocation}</SecureDetailsContent>
         <DetailsSubheading>Current Sentences</DetailsSubheading>
-        {currentSentences.map(
-          ({ sentenceId, startDate, endDate, initialTimeServedDays }) => (
-            <SecureDetailsContent key={`${sentenceId}-${startDate}`}>
-              Served sentence {sentenceId} from{" "}
-              {formatWorkflowsDate(new Date(startDate))} to{" "}
-              {formatWorkflowsDate(new Date(endDate))} with{" "}
-              {initialTimeServedDays} initial days served
-            </SecureDetailsContent>
-          ),
+        {currentSentences.length === 0 ? (
+          <SecureDetailsContent>None</SecureDetailsContent>
+        ) : (
+          currentSentences.map(
+            ({ sentenceId, startDate, endDate, initialTimeServedDays }) => (
+              <SecureDetailsContent key={`${sentenceId}-${startDate}`}>
+                Served sentence {sentenceId} from{" "}
+                {formatWorkflowsDate(new Date(startDate))} to{" "}
+                {formatWorkflowsDate(new Date(endDate))} with{" "}
+                {initialTimeServedDays} initial days served
+              </SecureDetailsContent>
+            ),
+          )
         )}
       </DetailsList>
     </DetailsSection>
@@ -149,26 +158,32 @@ function UsArProgramming({
     <DetailsSection>
       <DetailsHeading>Programming</DetailsHeading>
       <SecureDetailsContent>
-        <DetailsList>
-          {programAchievement.map(
-            ({
-              programAchievementDate,
-              programType,
-              programEvaluationScore,
-              programLocation,
-            }) => (
-              <React.Fragment key={`${programType}-${programAchievementDate}`}>
-                <DetailsSubheading>Program: {programType}</DetailsSubheading>
-                <SecureDetailsContent>
-                  Completed at {programLocation} on{" "}
-                  {formatWorkflowsDate(new Date(programAchievementDate))}
-                  {programEvaluationScore &&
-                    ` with an evaluation score of ${programEvaluationScore}`}
-                </SecureDetailsContent>
-              </React.Fragment>
-            ),
-          )}
-        </DetailsList>
+        {programAchievement.length === 0 ? (
+          "None"
+        ) : (
+          <DetailsList>
+            {programAchievement.map(
+              ({
+                programAchievementDate,
+                programType,
+                programEvaluationScore,
+                programLocation,
+              }) => (
+                <React.Fragment
+                  key={`${programType}-${programAchievementDate}`}
+                >
+                  <DetailsSubheading>Program: {programType}</DetailsSubheading>
+                  <SecureDetailsContent>
+                    Completed at {programLocation} on{" "}
+                    {formatWorkflowsDate(new Date(programAchievementDate))}
+                    {programEvaluationScore &&
+                      ` with an evaluation score of ${programEvaluationScore}`}
+                  </SecureDetailsContent>
+                </React.Fragment>
+              ),
+            )}
+          </DetailsList>
+        )}
       </SecureDetailsContent>
     </DetailsSection>
   );
