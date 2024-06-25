@@ -83,14 +83,12 @@ const US_TN_CONFIG: TenantConfig = {
     ],
     supervisionToPrison: [
       PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLengthOfStay,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByRace,
     ],
     supervisionToLiberty: [
       PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLengthOfStay,
       PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByAgeGroup,

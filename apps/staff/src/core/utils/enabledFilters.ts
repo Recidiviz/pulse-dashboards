@@ -453,6 +453,90 @@ export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
 
 export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
+  // LIBERTY TO PRISON
+  libertyToPrisonPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByDistrict: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByPriorLengthOfIncarceration: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByGender: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByAgeGroup: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  libertyToPrisonPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  // PRISON
+  prisonPopulationOverTime: {
+    enabledFilters: [
+      FILTER_TYPES.TIME_PERIOD,
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonFacilityPopulation: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonPopulationByRace: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  prisonPopulationPersonLevel: {
+    enabledFilters: [
+      FILTER_TYPES.FACILITY,
+      FILTER_TYPES.GENDER,
+      FILTER_TYPES.RACE,
+      FILTER_TYPES.AGE_GROUP,
+    ],
+  },
+  // SUPERVISION TO PRISON
   supervisionToPrisonOverTime: {
     enabledFilters: [
       FILTER_TYPES.TIME_PERIOD,
