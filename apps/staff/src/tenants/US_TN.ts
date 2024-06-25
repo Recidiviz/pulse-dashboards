@@ -64,18 +64,12 @@ const US_TN_CONFIG: TenantConfig = {
     ],
     libertyToPrison: [
       PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
       PATHWAYS_SECTIONS.countByGender,
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
-    prison: [
-      PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByRace,
-      PATHWAYS_SECTIONS.personLevelDetail,
-    ],
+    prison: [PATHWAYS_SECTIONS.countOverTime, PATHWAYS_SECTIONS.countByRace],
     supervision: [
       PATHWAYS_SECTIONS.countOverTime,
       PATHWAYS_SECTIONS.countByLocation,
@@ -84,10 +78,8 @@ const US_TN_CONFIG: TenantConfig = {
     ],
     prisonToSupervision: [
       PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLocation,
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
-      PATHWAYS_SECTIONS.personLevelDetail,
     ],
     supervisionToPrison: [
       PATHWAYS_SECTIONS.countOverTime,
