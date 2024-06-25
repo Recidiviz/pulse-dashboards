@@ -81,6 +81,8 @@ export class SwarmPresenterV2 {
           value,
           label,
           officerId: officer.externalId,
+          officerPseudoId: officer.pseudonymizedId,
+          metricId: this.metricId,
         };
       });
     } catch (e) {

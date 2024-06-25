@@ -26,7 +26,8 @@ import {
   useInteractions,
 } from "@floating-ui/react";
 import { spacing } from "@recidiviz/design-system";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { Link, LinkProps, useMatch } from "react-router-dom";
 
 import {
   HIGHLIGHT_MARK_STROKE_WIDTH,
@@ -35,6 +36,7 @@ import {
   SWARM_SIZE_BREAKPOINT,
 } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import { HighlightedDot } from "../../InsightsStore/presenters/SwarmPresenter/types";
+import { insightsUrl } from "../views";
 import {
   HighlightLabel,
   LabelName,
@@ -79,6 +81,18 @@ function useHoverProps() {
     getFloatingProps,
   };
 }
+/**
+ * Wraps given children component(s) in Link if the condition is true.
+ * @returns Given children component wrapped in Link component if condition is met. Otherwise, only returns children.
+ */
+const ConditionalLinkWrapper: React.FC<
+  LinkProps & {
+    children: ReactNode;
+    condition: boolean;
+  }
+> = ({ children, condition, ...linkProps }) => {
+  return condition ? <Link {...linkProps}>{children}</Link> : <>{children}</>;
+};
 
 export const SwarmPlotHighlightedDot = function SwarmPlotHighlightedDot({
   data,
@@ -106,19 +120,34 @@ export const SwarmPlotHighlightedDot = function SwarmPlotHighlightedDot({
     isHovered ? onDotHover(data.officerId) : onDotHover("");
   }, [isHovered, onDotHover, data.officerId]);
 
+  const isMetricPage = useMatch(
+    insightsUrl("supervisionStaffMetric", {
+      officerPseudoId: data.officerPseudoId,
+      metricId: data.metricId,
+    }),
+  );
+
   return (
     <>
-      <RateHighlightMark
-        tabIndex={0}
-        r={r ?? SWARM_DOT_RADIUS_V2}
-        cx={cx}
-        cy={cy}
-        fill={HIGHLIGHTED_DOT_COLOR_V2}
-        stroke={isHovered ? `${HIGHLIGHTED_DOT_COLOR_V2}1A` : "transparent"}
-        strokeWidth={`${isHovered ? 20 : HIGHLIGHT_MARK_STROKE_WIDTH}px`}
-        ref={refs.setReference}
-        {...getReferenceProps()}
-      />
+      <ConditionalLinkWrapper
+        condition={!isMetricPage}
+        to={insightsUrl("supervisionStaffMetric", {
+          officerPseudoId: data.officerPseudoId,
+          metricId: data.metricId,
+        })}
+      >
+        <RateHighlightMark
+          tabIndex={0}
+          r={r ?? SWARM_DOT_RADIUS_V2}
+          cx={cx}
+          cy={cy}
+          fill={HIGHLIGHTED_DOT_COLOR_V2}
+          stroke={isHovered ? `${HIGHLIGHTED_DOT_COLOR_V2}1A` : "transparent"}
+          strokeWidth={`${isHovered ? 20 : HIGHLIGHT_MARK_STROKE_WIDTH}px`}
+          ref={refs.setReference}
+          {...getReferenceProps()}
+        />
+      </ConditionalLinkWrapper>
       <FloatingPortal>
         <HighlightLabel
           ref={refs.setFloating}

@@ -56,36 +56,49 @@ const CardHeader = styled.div<{
   min-width: ${rem(264)};
 `;
 
-const CardHeaderItem = styled.div<{ hovered?: boolean }>`
+const CardTitle = styled.h1`
+  display: inline-block;
+  font-size: 16px;
+  ${typography.Sans16};
+  color: ${palette.pine1} !important;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  margin-bottom: ${rem(10)};
+`;
+
+const CardHeaderItem = styled(Link)<{ hovered?: boolean }>`
+  display: block;
   padding: ${rem(spacing.md)};
   min-width: ${rem(200)};
-  ${({ hovered }) => hovered && `background-color: ${palette.slate10};`}
+  ${({ hovered }) =>
+    hovered &&
+    `background-color: ${palette.slate10};
+  
+  ${CardTitle} {
+      border-bottom: 1px solid ${palette.pine1};
+    }`}
+
+  &:hover {
+    background-color: ${palette.slate10};
+
+    ${CardTitle} {
+      border-bottom: 1px solid ${palette.pine1};
+    }
+  }
 
   &:not(:last-child) {
     border-bottom: 1px solid ${palette.slate30};
   }
 `;
 
-const CardTitle = styled(Link)`
-  display: inline-block;
-  font-size: 16px;
-  color: ${palette.pine1} !important;
-  font-weight: 600;
-  border-bottom: 1px solid transparent;
-  margin-bottom: ${rem(10)};
-
-  &:hover {
-    border-bottom: 1px solid ${palette.pine1};
-  }
-`;
-
-const CardSubtitle = styled.div`
+const CardSubtitle = styled.h2`
   display: flex;
   justify-content: space-between;
   align-items: end;
   ${typography.Sans14}
   color: ${palette.pine1};
   margin-top: ${rem(spacing.xs)};
+  margin-bottom: 0;
   gap: ${rem(spacing.sm)};
 
   span {
@@ -204,18 +217,20 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
             <CardHeaderItem
               key={officer.externalId}
               hovered={officer.externalId === hoveredOfficer}
+              to={insightsUrl("supervisionStaff", {
+                officerPseudoId: officer.pseudonymizedId,
+              })}
             >
-              <CardTitle
-                to={insightsUrl("supervisionStaff", {
-                  officerPseudoId: officer.pseudonymizedId,
-                })}
-              >
-                {title || officer.displayName}
-              </CardTitle>
+              <CardTitle>{title || officer.displayName}</CardTitle>
               {officer.outlierMetrics.map((metric) => (
-                <CardSubtitle key={metric.metricId}>
+                <CardSubtitle
+                  key={metric.metricId}
+                  id={`subtitle-${metric.config.titleDisplayName}`}
+                >
                   {metric.config.titleDisplayName}
-                  <span>
+                  <span
+                    aria-describedby={`subtitle-${metric.config.titleDisplayName}`}
+                  >
                     {formatTargetAndHighlight(
                       metric.currentPeriodData.metricRate,
                     )}
@@ -245,19 +260,23 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                     if (!currentMetric) return null;
 
                     return (
-                      <CardHeaderItem key={officer.externalId}>
-                        <CardTitle
-                          to={insightsUrl("supervisionStaffMetric", {
-                            officerPseudoId: officer.pseudonymizedId,
-                            metricId: currentMetric.metricId,
-                          })}
-                        >
-                          {title || officer.displayName}
-                        </CardTitle>
+                      <CardHeaderItem
+                        key={officer.externalId}
+                        to={insightsUrl("supervisionStaffMetric", {
+                          officerPseudoId: officer.pseudonymizedId,
+                          metricId: currentMetric.metricId,
+                        })}
+                      >
+                        <CardTitle>{title || officer.displayName}</CardTitle>
 
-                        <CardSubtitle key={currentMetric.metricId}>
+                        <CardSubtitle
+                          key={currentMetric.metricId}
+                          id={`subtitle-${currentMetric.metricId}`}
+                        >
                           {currentMetric.config.titleDisplayName}
-                          <span>
+                          <span
+                            aria-describedby={`subtitle-${currentMetric.metricId}`}
+                          >
                             {formatTargetAndHighlight(
                               currentMetric.currentPeriodData.metricRate,
                             )}

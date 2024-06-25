@@ -59,6 +59,8 @@ export type HighlightedDot = {
   label?: string;
   value: number;
   officerId: string;
+  officerPseudoId: string;
+  metricId: string;
   labelHidden?: boolean;
   onMouseOver?: React.MouseEventHandler;
 };
