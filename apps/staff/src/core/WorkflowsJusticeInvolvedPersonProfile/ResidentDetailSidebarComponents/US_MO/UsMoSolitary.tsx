@@ -44,16 +44,17 @@ export function UsMoSolitary({
     const startDateText = solitaryStartDate
       ? formatWorkflowsDate(new Date(solitaryStartDate))
       : "START DATE UNAVAILABLE";
-    const endDateText = solitaryEndDate
-      ? formatWorkflowsDate(new Date(solitaryEndDate))
-      : "END DATE UNAVAILABLE";
+    const endDateText =
+      solitaryEndDate !== null
+        ? formatWorkflowsDate(new Date(solitaryEndDate))
+        : "Present";
     return `${startDateText} - ${endDateText}`;
   };
 
   return (
     <SecureDetailsList>
-      <DetailsHeading> Solitary Assignments</DetailsHeading>
-      <DetailsSubheading>Solitary Assignments in Past Year</DetailsSubheading>
+      <DetailsHeading>Restrictive Housing assignments</DetailsHeading>
+      <DetailsSubheading>Restrictive Housing assignments in past year</DetailsSubheading>
       {solitaryAssignmentInfoPastYear &&
       solitaryAssignmentInfoPastYear.length > 0 ? (
         solitaryAssignmentInfoPastYear.map(
@@ -69,7 +70,7 @@ export function UsMoSolitary({
         <SecureDetailsContent>None</SecureDetailsContent>
       )}
       <DetailsSubheading>
-        Number of Solitary Confinements in Past Year
+        Number of Restrictive Housing assignments in past year
       </DetailsSubheading>
       <SecureDetailsContent>
         {numSolitaryAssignmentsPastYear}
