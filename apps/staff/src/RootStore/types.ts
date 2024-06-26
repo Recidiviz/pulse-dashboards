@@ -158,6 +158,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         enableSnooze: {},
         insightsOnboarding: {},
         isolateFormUpdates: {},
+        usNdCheckboxDocstars: {},
       }
     : {
         ...allFeatureVariants,
