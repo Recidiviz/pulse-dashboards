@@ -96,7 +96,7 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
         "lint-files": {
           executor: "nx:run-commands",
           options: {
-            command: "eslint",
+            command: "eslint --max-warnings 0",
             cwd: "{projectRoot}",
           },
         },
