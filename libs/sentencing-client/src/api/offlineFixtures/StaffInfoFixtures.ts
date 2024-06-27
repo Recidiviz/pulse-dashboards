@@ -22,6 +22,7 @@ export const StaffInfoFixture: Staff = {
   fullName: "",
   email: "firstlast@test.com",
   stateCode: "ID",
+  hasLoggedIn: true,
   Cases: [
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f913",

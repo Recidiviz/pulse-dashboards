@@ -15,19 +15,21 @@
       "executor": "nx:run-commands",
       "dependsOn": ["prisma-generate"],
       "options": {
-        "command": "tsc -p ./tsconfig.app.json",
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
         "cwd": "{projectRoot}"
       }
     },
     "docker": {
       "executor": "nx:run-commands",
-      "cache": true,
       "options": {
         "cwd": "{projectRoot}"
       },
       "configurations": {
         "dev": {
-          "command": "docker-compose up --wait"
+          "command": "docker compose up --wait"
         },
         "ci": {
           "command": "echo 'No docker for CI'"

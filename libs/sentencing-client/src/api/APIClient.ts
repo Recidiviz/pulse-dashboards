@@ -28,9 +28,11 @@ import { PSIStore } from "../datastores/PSIStore";
 
 export type tRPCClient = ReturnType<typeof createTRPCProxyClient<AppRouter>>;
 
-export type Staff = Awaited<ReturnType<tRPCClient["getStaff"]["query"]>>;
+export type Staff = Awaited<
+  ReturnType<tRPCClient["staff"]["getStaff"]["query"]>
+>;
 
-export type Case = Awaited<ReturnType<tRPCClient["getCase"]["query"]>>;
+export type Case = Awaited<ReturnType<tRPCClient["case"]["getCase"]["query"]>>;
 
 export type Client = Staff["Cases"][number]["Client"];
 
@@ -86,14 +88,14 @@ export class APIClient {
     if (!this.psiStore.staffPseudoId)
       return Promise.reject({ message: "No staff pseudo id found" });
 
-    const fetchedData = await this.trpcClient.getStaff.query({
+    const fetchedData = await this.trpcClient.staff.getStaff.query({
       pseudonymizedId: this.psiStore.staffPseudoId,
     });
     return fetchedData;
   }
 
   async getCaseDetails(caseId: string): Promise<Case> {
-    const fetchedData = await this.trpcClient.getCase.query({
+    const fetchedData = await this.trpcClient.case.getCase.query({
       id: caseId,
     });
     return fetchedData;

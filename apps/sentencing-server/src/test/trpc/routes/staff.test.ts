@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
+import { prismaClient } from "~sentencing-server/prisma";
 import { testTRPCClient } from "~sentencing-server/test/setup";
 import {
   fakeCase,
@@ -9,10 +10,10 @@ import {
   fakeStaff,
 } from "~sentencing-server/test/setup/seed";
 
-describe("router", () => {
+describe("staff router", () => {
   describe("getStaff", () => {
     test("should return staff if staff exists", async () => {
-      const returnedStaff = await testTRPCClient.getStaff.query({
+      const returnedStaff = await testTRPCClient.staff.getStaff.query({
         pseudonymizedId: fakeStaff.pseudonymizedId,
       });
 
@@ -29,8 +30,8 @@ describe("router", () => {
 
     test("should throw error if staff does not exist", async () => {
       await expect(() =>
-        testTRPCClient.getStaff.query({
-          pseudonymizedId: "not-a-real-id",
+        testTRPCClient.staff.getStaff.query({
+          pseudonymizedId: "not-a-staff-id",
         }),
       ).rejects.toThrowError(
         new TRPCError({
@@ -41,24 +42,30 @@ describe("router", () => {
     });
   });
 
-  describe("getCase", () => {
-    test("should return case if case exists", async () => {
-      const returnedCase = await testTRPCClient.getCase.query({
-        id: fakeCase.id,
+  describe("updateStaff", () => {
+    test("should update isFirstLogin", async () => {
+      await testTRPCClient.staff.updateStaff.mutate({
+        pseudonymizedId: fakeStaff.pseudonymizedId,
+        hasLoggedIn: true,
       });
 
-      expect(returnedCase).toEqual(_.omit(fakeCase, "externalId"));
+      const dbStaff = await prismaClient.staff.findUnique({
+        where: { pseudonymizedId: fakeStaff.pseudonymizedId },
+      });
+
+      expect(dbStaff?.hasLoggedIn).toBeTruthy();
     });
 
-    test("should throw error if case does not exist", async () => {
+    test("should throw error if staff does not exist", async () => {
       await expect(() =>
-        testTRPCClient.getCase.query({
-          id: "not-a-real-id",
+        testTRPCClient.staff.updateStaff.mutate({
+          pseudonymizedId: "not-a-staff-id",
+          hasLoggedIn: true,
         }),
       ).rejects.toThrowError(
         new TRPCError({
           code: "NOT_FOUND",
-          message: "Case with that id was not found",
+          message: "Staff with that id was not found",
         }),
       );
     });

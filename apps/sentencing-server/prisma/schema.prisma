@@ -67,6 +67,8 @@ model Staff {
   stateCode       StateCode
   fullName        String
 
+  hasLoggedIn Boolean @default(false)
+
   email String
   Cases Case[]
 }

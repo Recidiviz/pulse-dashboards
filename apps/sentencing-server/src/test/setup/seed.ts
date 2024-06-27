@@ -19,6 +19,7 @@ export const fakeStaff: Staff = {
   fullName: faker.person.fullName(),
   email: faker.internet.email(),
   stateCode: StateCode.ID,
+  hasLoggedIn: faker.datatype.boolean(),
 };
 
 export const fakeClient: Client = {

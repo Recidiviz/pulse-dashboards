@@ -33,11 +33,18 @@ let apiClient: APIClient;
 
 beforeEach(() => {
   mockTRPCClient = {
-    getStaff: {
-      query: vi.fn().mockResolvedValue(StaffInfoFixture),
+    staff: {
+      getStaff: {
+        query: vi.fn().mockResolvedValue(StaffInfoFixture),
+      },
+      updateStaff: {
+        mutate: vi.fn(),
+      },
     },
-    getCase: {
-      query: vi.fn().mockResolvedValue(CaseDetailsFixture),
+    case: {
+      getCase: {
+        query: vi.fn().mockResolvedValue(CaseDetailsFixture),
+      },
     },
   };
   (createTRPCProxyClient as Mock).mockReturnValue(mockTRPCClient);
@@ -68,8 +75,8 @@ test("should throw an error if staffPseudoId is undefined", async () => {
 test("getStaffInfo and return data", async () => {
   const result = await apiClient.getStaffInfo();
   expect(result).toBe(StaffInfoFixture);
-  expect(mockTRPCClient.getStaff.query).toHaveBeenCalledTimes(1);
-  expect(mockTRPCClient.getStaff.query).toHaveBeenCalledWith({
+  expect(mockTRPCClient.staff.getStaff.query).toHaveBeenCalledTimes(1);
+  expect(mockTRPCClient.staff.getStaff.query).toHaveBeenCalledWith({
     pseudonymizedId: "TestID-123",
   });
 });
@@ -78,8 +85,8 @@ test("getCaseDetails returns data", async () => {
   const caseId = Object.keys(CaseDetailsFixture)[0];
   const result = await apiClient.getCaseDetails(caseId);
   expect(result).toBe(CaseDetailsFixture);
-  expect(mockTRPCClient.getCase.query).toHaveBeenCalledTimes(1);
-  expect(mockTRPCClient.getCase.query).toHaveBeenCalledWith({
+  expect(mockTRPCClient.case.getCase.query).toHaveBeenCalledTimes(1);
+  expect(mockTRPCClient.case.getCase.query).toHaveBeenCalledWith({
     id: caseId,
   });
 });
