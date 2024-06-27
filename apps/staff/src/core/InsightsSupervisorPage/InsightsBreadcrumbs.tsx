@@ -17,7 +17,7 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -43,19 +43,28 @@ const Separator = styled.span`
 const CurrentPage = styled.span`
   color: ${palette.slate85};
 `;
+type Page = {
+  title: string;
+  url: string;
+};
 
 type InsightsBreadcrumbsProps = {
-  previousPage: { title: string; url: string };
+  previousPages: Page[];
   children?: ReactNode;
 };
 
 export const InsightsBreadcrumbs: React.FC<InsightsBreadcrumbsProps> = ({
-  previousPage,
+  previousPages,
   children,
 }) => {
   return (
     <Wrapper>
-      <PreviousPage to={previousPage.url}>{previousPage.title}</PreviousPage>
+      {previousPages.map((page, index) => (
+        <React.Fragment key={index}>
+          <PreviousPage to={page.url}>{page.title}</PreviousPage>
+          {index < previousPages.length - 1 && <Separator>/</Separator>}
+        </React.Fragment>
+      ))}
       <Separator>/</Separator>
       <CurrentPage>{children}</CurrentPage>
     </Wrapper>

@@ -109,10 +109,16 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       contentsAboveTitle={
         userCanAccessAllSupervisors && (
           <InsightsBreadcrumbs
-            previousPage={{
-              title: "All Supervisors",
-              url: insightsUrl("supervisionSupervisorsList"),
-            }}
+            previousPages={
+              userCanAccessAllSupervisors
+                ? [
+                    {
+                      title: "All Supervisors",
+                      url: insightsUrl("supervisionSupervisorsList"),
+                    },
+                  ]
+                : []
+            }
           >
             {supervisorInfo?.displayName}
           </InsightsBreadcrumbs>

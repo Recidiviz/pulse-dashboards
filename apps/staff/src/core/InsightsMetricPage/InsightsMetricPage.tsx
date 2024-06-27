@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toTitleCase } from "@artsy/to-title-case";
 import { palette } from "@recidiviz/design-system";
 import { sub } from "date-fns";
 import { observer } from "mobx-react-lite";
@@ -26,7 +27,7 @@ import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenters/SupervisionOfficerDetailPresenter";
-import { formatDate, toTitleCase } from "../../utils";
+import { formatDate } from "../../utils";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";
@@ -68,6 +69,7 @@ export const MetricPageWithPresenter = observer(
       labels,
       methodologyUrl,
       trackMetricTabViewed,
+      userCanAccessAllSupervisors,
     } = presenter;
 
     useEffect(() => {
@@ -177,14 +179,34 @@ export const MetricPageWithPresenter = observer(
         pageDescription={pageDescription}
         contentsAboveTitle={
           <InsightsBreadcrumbs
-            previousPage={{
-              title: outlierOfficerData.displayName,
-              url: insightsUrl("supervisionStaff", {
-                officerPseudoId: outlierOfficerData.pseudonymizedId,
-              }),
-            }}
+            previousPages={[
+              ...(userCanAccessAllSupervisors
+                ? [
+                    {
+                      title: "All Supervisors",
+                      url: insightsUrl("supervisionSupervisorsList"),
+                    },
+                  ]
+                : []),
+              ...(goToSupervisorInfo
+                ? [
+                    {
+                      title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
+                      url: insightsUrl("supervisionSupervisor", {
+                        supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
+                      }),
+                    },
+                  ]
+                : []),
+              {
+                title: `${outlierOfficerData.displayName} Profile`,
+                url: insightsUrl("supervisionStaff", {
+                  officerPseudoId: outlierOfficerData.pseudonymizedId,
+                }),
+              },
+            ]}
           >
-            Outcomes Metric
+            {toTitleCase(eventName)} Metric
           </InsightsBreadcrumbs>
         }
       >

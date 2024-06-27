@@ -63,6 +63,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     labels,
     trackMetricTabViewed,
     timePeriod,
+    userCanAccessAllSupervisors,
   } = presenter;
 
   useEffect(() => {
@@ -89,14 +90,24 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           supervisorsInfo &&
           goToSupervisorInfo && (
             <InsightsBreadcrumbs
-              previousPage={{
-                title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
-                url: insightsUrl("supervisionSupervisor", {
-                  supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
-                }),
-              }}
+              previousPages={[
+                ...(userCanAccessAllSupervisors
+                  ? [
+                      {
+                        title: "All Supervisors",
+                        url: insightsUrl("supervisionSupervisorsList"),
+                      },
+                    ]
+                  : []),
+                {
+                  title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
+                  url: insightsUrl("supervisionSupervisor", {
+                    supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
+                  }),
+                },
+              ]}
             >
-              {toTitleCase(labels.supervisionOfficerLabel)} Profile
+              {outlierOfficerData.displayName} Profile
             </InsightsBreadcrumbs>
           )
         }
@@ -124,14 +135,24 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         supervisorsInfo &&
         goToSupervisorInfo && (
           <InsightsBreadcrumbs
-            previousPage={{
-              title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
-              url: insightsUrl("supervisionSupervisor", {
-                supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
-              }),
-            }}
+            previousPages={[
+              ...(userCanAccessAllSupervisors
+                ? [
+                    {
+                      title: "All Supervisors",
+                      url: insightsUrl("supervisionSupervisorsList"),
+                    },
+                  ]
+                : []),
+              {
+                title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
+                url: insightsUrl("supervisionSupervisor", {
+                  supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
+                }),
+              },
+            ]}
           >
-            {toTitleCase(labels.supervisionOfficerLabel)} Profile
+            {outlierOfficerData.displayName} Profile
           </InsightsBreadcrumbs>
         )
       }

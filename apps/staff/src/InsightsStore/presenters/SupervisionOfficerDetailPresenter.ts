@@ -163,6 +163,10 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return supervisors.length > 0 ? supervisors : undefined;
   }
 
+  get userCanAccessAllSupervisors(): boolean {
+    return this.supervisionStore.userCanAccessAllSupervisors;
+  }
+
   // supervisorInfo for the "Go to" link on the staff page. If the staff page
   // was navigated to from a supervisor page, use that supervisor.
   // Otherwise use the first of the officer's supervisors
