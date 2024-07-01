@@ -63,7 +63,10 @@ const PersonId: React.FC<{
     <PersonIdWithCopyIcon
       title={`Copy ${docLabel} ID to clipboard`}
       className="fs-exclude"
-      onClick={() => copyToClipboard()}
+      onClick={(e) => {
+        e.preventDefault(); // if PersonId is in a link, prevent the link from being followed
+        copyToClipboard();
+      }}
       shiftIcon={shiftIcon}
     >
       {children}
