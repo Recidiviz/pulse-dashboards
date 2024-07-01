@@ -54,6 +54,10 @@ const OfficerAssignment = styled(Sans14)`
   flex: 0 0 auto;
 `;
 
+const LifeSentenceAdmissionDate = styled.span`
+  color: ${palette.signal.links};
+`;
+
 const TimelineDates = styled(Sans14)`
   display: flex;
   flex-wrap: wrap;
@@ -118,6 +122,18 @@ type TimelineLabels = {
   end: string;
 };
 
+const OfficerAssignmentDisplay = ({ officerId }: { officerId?: string }) => {
+  if (!officerId) {
+    return null;
+  }
+
+  return (
+    <OfficerAssignment>
+      Assigned to <WorkflowsOfficerName officerId={officerId} />
+    </OfficerAssignment>
+  );
+};
+
 export const ProgressTimeline = ({
   header,
   startDate,
@@ -160,11 +176,7 @@ export const ProgressTimeline = ({
             {formatTimeToGo(endDate)})
           </Sans14>
         </div>
-        {officerId && (
-          <OfficerAssignment>
-            Assigned to <WorkflowsOfficerName officerId={officerId} />
-          </OfficerAssignment>
-        )}
+        <OfficerAssignmentDisplay officerId={officerId} />
       </VizHeader>
 
       <TimelineChart>
@@ -244,7 +256,29 @@ export function SupervisionProgress({
 export function IncarcerationProgress({
   resident,
 }: ResidentProfileProps): React.ReactElement {
-  const { admissionDate, releaseDate, assignedStaffId: officerId } = resident;
+  const {
+    admissionDate,
+    releaseDate,
+    assignedStaffId: officerId,
+    onLifeSentence,
+  } = resident;
+
+  if (onLifeSentence) {
+    return (
+      <VizHeader>
+        <div>
+          <Title>Incarceration</Title>
+          <Sans14>
+            Serving a life sentence since{" "}
+            <LifeSentenceAdmissionDate>
+              {formatWorkflowsDate(admissionDate)}
+            </LifeSentenceAdmissionDate>
+          </Sans14>
+        </div>
+        <OfficerAssignmentDisplay officerId={officerId} />
+      </VizHeader>
+    );
+  }
 
   return (
     <ProgressTimeline
