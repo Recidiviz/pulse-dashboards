@@ -100,6 +100,7 @@ const StyledTooltip = styled(Tooltip).attrs({
     display: flex;
     align-items: center;
     gap: ${rem(spacing.sm)};
+    white-space: nowrap;
 
     span {
       font-weight: 700;
