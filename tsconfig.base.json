@@ -29,6 +29,7 @@
       "~hydration-utils": ["libs/hydration-utils/src/index.ts"],
       "~repo": ["plugins/repo/src/index.ts"],
       "~sentencing-client": ["libs/sentencing-client/src/index.ts"],
+      "~sentencing-server-types/*": ["libs/sentencing-server-types/src/*"],
       "~sentencing-server/*": ["apps/sentencing-server/src/*"],
       "~shared-assets/*": ["libs/shared-assets/src/*"]
     },

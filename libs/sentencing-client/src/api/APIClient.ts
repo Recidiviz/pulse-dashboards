@@ -21,8 +21,7 @@ import superjson from "superjson";
 
 // Don't import this via type alias, otherwise it will make the whole app a dependency
 // rather than just the types
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import type { AppRouter } from "~sentencing-server/shared/types";
+import type { AppRouter } from "~sentencing-server-types/shared/types";
 
 import { PSIStore } from "../datastores/PSIStore";
 
