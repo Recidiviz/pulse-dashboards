@@ -47,5 +47,6 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     needsToBeAddressed: [],
     otherNeedToBeAddressed: null,
     status: "InProgress",
+    selectedRecommendation: null,
   },
 };

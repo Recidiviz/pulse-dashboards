@@ -134,6 +134,7 @@
       }
     },
     "prisma-migrate": {
+      "dependsOn": ["docker"],
       "executor": "@nx-tools/nx-prisma:migrate",
       "options": {
         "schema": "apps/sentencing-server/prisma/schema.prisma"

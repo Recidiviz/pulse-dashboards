@@ -161,6 +161,13 @@ enum CaseStatus {
   Complete
 }
 
+enum CaseRecommendation {
+  Probation
+  Rider
+  Term
+  None
+}
+
 model Case {
   externalId String    @id
   id         String    @unique @default(cuid())
@@ -207,5 +214,6 @@ model Case {
   needsToBeAddressed                 NeedToBeAddressed[]
   otherNeedToBeAddressed             String?
 
-  status CaseStatus @default(NotYetStarted)
+  status                 CaseStatus          @default(NotYetStarted)
+  selectedRecommendation CaseRecommendation?
 }

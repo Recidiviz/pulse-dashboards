@@ -27,6 +27,7 @@ type MutableCaseAttributes = Partial<
     | "needsToBeAddressed"
     | "otherNeedToBeAddressed"
     | "status"
+    | "selectedRecommendation"
   >
 >;
 
@@ -86,6 +87,8 @@ const NeedsToBeAddressedEnum = z.enum([
 
 const CaseStatusEnum = z.enum(["NotYetStarted", "InProgress", "Complete"]);
 
+const CaseRecommendationEnum = z.enum(["Probation", "Rider", "Term", "None"]);
+
 export const updateCaseSchema = z.object({
   id: z.string(),
   attributes: z.object({
@@ -109,5 +112,6 @@ export const updateCaseSchema = z.object({
     needsToBeAddressed: z.array(NeedsToBeAddressedEnum).optional(),
     otherNeedToBeAddressed: z.string().nullable().optional(),
     status: CaseStatusEnum.optional(),
+    selectedRecommendation: CaseRecommendationEnum.optional(),
   }) satisfies z.ZodType<MutableCaseAttributes>,
 });
