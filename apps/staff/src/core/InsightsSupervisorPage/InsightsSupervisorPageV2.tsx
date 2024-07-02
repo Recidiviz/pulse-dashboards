@@ -24,6 +24,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
+import { pluralize } from "../../utils";
 import { toTitleCase } from "../../utils";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
@@ -68,7 +69,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     },
     {
       title: "team",
-      info: allOfficers?.length,
+      info: `${pluralize(allOfficers?.length ?? 0, toTitleCase(labels.supervisionOfficerLabel))}`,
       tooltip: allOfficers?.map((officer) => (
         <div key={officer.pseudonymizedId}>{officer.displayName}</div>
       )),
