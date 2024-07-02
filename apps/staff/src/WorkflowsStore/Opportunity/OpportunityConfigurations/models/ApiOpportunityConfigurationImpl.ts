@@ -21,7 +21,7 @@ import {
   allFeatureVariants,
   FeatureVariant,
 } from "../../../../RootStore/types";
-import { WorkflowsStore } from "../../../WorkflowsStore";
+import UserStore from "../../../../RootStore/UserStore";
 import { OpportunityTabGroups } from "../../types";
 import { generateTabs } from "../../utils/tabUtils";
 import { IApiOpportunityConfiguration } from "../interfaces";
@@ -35,16 +35,10 @@ export function formatEligibilityText(dynamicText: string, count: number) {
 }
 
 export class ApiOpportunityConfiguration implements OpportunityConfiguration {
-  configurationObject: IApiOpportunityConfiguration;
-  workflowsStore: WorkflowsStore;
-
   constructor(
-    configurationObject: IApiOpportunityConfiguration,
-    workflowsStore: WorkflowsStore,
-  ) {
-    this.configurationObject = configurationObject;
-    this.workflowsStore = workflowsStore;
-  }
+    private configurationObject: IApiOpportunityConfiguration,
+    private userStore: UserStore,
+  ) {}
 
   get systemType() {
     return "INCARCERATION" as const; // TODO FIX
@@ -139,13 +133,13 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get isEnabled(): boolean {
-    const { featureVariants } = this.workflowsStore;
+    const { activeFeatureVariants } = this.userStore;
     const { featureVariant, inverseFeatureVariant } = this;
     if (!featureVariant) return true;
 
-    const featureVariantEnabled = !!featureVariants[featureVariant];
+    const featureVariantEnabled = !!activeFeatureVariants[featureVariant];
     const inverseFeatureVariantDisabled = inverseFeatureVariant
-      ? !featureVariants[inverseFeatureVariant]
+      ? !activeFeatureVariants[inverseFeatureVariant]
       : true;
 
     return featureVariantEnabled && inverseFeatureVariantDisabled;

@@ -83,7 +83,7 @@ function createTestUnit() {
   };
   root = new RootStore();
   mockUserStateCode = vi.spyOn(root.userStore, "stateCode", "get");
-  vi.spyOn(root.workflowsStore, "currentUserEmail", "get").mockReturnValue(
+  vi.spyOn(root.userStore, "userEmail", "get").mockReturnValue(
     mockUser.info.email,
   );
 

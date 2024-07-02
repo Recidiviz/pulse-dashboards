@@ -39,9 +39,11 @@ function createTestUnit(
   clientRecord: typeof UsTnExpirationEligibleClientRecord,
 ) {
   root = new RootStore();
-  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
-    "usTnExpiration",
-  ]);
+  vi.spyOn(
+    root.workflowsRootStore.opportunityConfigurationStore,
+    "enabledOpportunityTypes",
+    "get",
+  ).mockReturnValue(["usTnExpiration"]);
   client = new Client(clientRecord, root);
 
   const maybeOpportunity = client.potentialOpportunities.usTnExpiration;

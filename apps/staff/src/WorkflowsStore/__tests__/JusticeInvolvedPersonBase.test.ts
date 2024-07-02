@@ -40,7 +40,7 @@ import { CollectionDocumentSubscription } from "../subscriptions";
 vi.mock("firebase/firestore");
 vi.mock("../subscriptions");
 
-let rootStoreMock: RootStore;
+let rootStore: RootStore;
 let testPerson: JusticeInvolvedPersonBase;
 let record: WorkflowsJusticeInvolvedPersonRecord;
 let mockOpportunityTypes: IObservableValue<OpportunityType[]>;
@@ -50,7 +50,7 @@ function createTestUnit(
 ) {
   testPerson = new JusticeInvolvedPersonBase(
     record,
-    rootStoreMock,
+    rootStore,
     opportunityFactory,
   );
 }
@@ -58,27 +58,27 @@ function createTestUnit(
 beforeEach(() => {
   configure({ safeDescriptors: false });
   mockOpportunityTypes = observable.box([]);
-  rootStoreMock = {
-    workflowsStore: {
-      get opportunityTypes() {
-        return computed(() => mockOpportunityTypes.get()).get();
-      },
 
-      get availableOfficers() {
-        return [
-          {
-            id: "OFFICER1",
-            givenNames: "FirstName",
-            surname: "LastName",
-          },
-        ];
-      },
-    },
-    firestoreStore: {
-      doc: vi.fn(),
-      collection: vi.fn(),
-    },
-  } as unknown as RootStore;
+  rootStore = new RootStore();
+  vi.spyOn(
+    rootStore.workflowsStore,
+    "availableOfficers",
+    "get",
+  ).mockReturnValue([
+    {
+      id: "OFFICER1",
+      givenNames: "FirstName",
+      surname: "LastName",
+    } as StaffRecord,
+  ]);
+  vi.spyOn(rootStore.userStore, "stateCode", "get").mockReturnValue("US_TN");
+  vi.spyOn(
+    rootStore.workflowsRootStore.opportunityConfigurationStore,
+    "enabledOpportunityTypes",
+    "get",
+  ).mockImplementation(() => {
+    return computed(() => mockOpportunityTypes.get()).get();
+  });
   record = {
     allEligibleOpportunities: [],
     officerId: "OFFICER1",
@@ -141,7 +141,7 @@ describe("opportunities", () => {
       .fn()
       .mockImplementation(
         (opportunityType, person) =>
-          new TestOpportunity(person, opportunityType, rootStoreMock),
+          new TestOpportunity(person, opportunityType, rootStore),
       );
     mockOpportunityTypes.set(["LSU"]);
     record.allEligibleOpportunities = ["LSU"];
@@ -166,39 +166,31 @@ describe("opportunities", () => {
     });
 
     test("with only first name", () => {
-      rootStoreMock = {
-        ...rootStoreMock,
-        workflowsStore: {
-          ...rootStoreMock.workflowsStore,
-          get availableOfficers() {
-            return [
-              {
-                id: "OFFICER1",
-                givenNames: "FirstName",
-              } as StaffRecord,
-            ];
-          },
-        },
-      } as unknown as RootStore;
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "availableOfficers",
+        "get",
+      ).mockReturnValue([
+        {
+          id: "OFFICER1",
+          givenNames: "FirstName",
+        } as StaffRecord,
+      ]);
       createTestUnit();
       expect(testPerson.assignedStaffFullName).toEqual("FirstName");
     });
 
     test("with only last name", () => {
-      rootStoreMock = {
-        ...rootStoreMock,
-        workflowsStore: {
-          ...rootStoreMock.workflowsStore,
-          get availableOfficers() {
-            return [
-              {
-                id: "OFFICER1",
-                surname: "LastName",
-              } as StaffRecord,
-            ];
-          },
-        },
-      } as unknown as RootStore;
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "availableOfficers",
+        "get",
+      ).mockReturnValue([
+        {
+          id: "OFFICER1",
+          surname: "LastName",
+        } as unknown as StaffRecord,
+      ]);
       createTestUnit();
       expect(testPerson.assignedStaffFullName).toEqual("LastName");
     });

@@ -26,6 +26,7 @@ import type UserStore from "../../RootStore/UserStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
+import { WorkflowsRootStore } from "../../WorkflowsStore/WorkflowsRootStore";
 
 type StoreContextType = {
   store: RootStore;
@@ -53,6 +54,7 @@ export default StoreProvider;
 interface PartiallyTypedRootStore {
   insightsStore: InsightsStore;
   workflowsStore: WorkflowsStore;
+  workflowsRootStore: WorkflowsRootStore;
   analyticsStore: AnalyticsStore;
   [key: string]: any;
 }

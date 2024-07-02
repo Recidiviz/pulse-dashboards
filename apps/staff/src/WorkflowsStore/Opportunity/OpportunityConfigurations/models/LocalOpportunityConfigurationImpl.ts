@@ -26,7 +26,7 @@ import {
   nextWednesday,
 } from "date-fns";
 
-import { WorkflowsStore } from "../../../WorkflowsStore";
+import UserStore from "../../../../RootStore/UserStore";
 import { OpportunityTabGroups } from "../../types";
 import { generateTabs } from "../../utils/tabUtils";
 import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
@@ -34,16 +34,10 @@ import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration
 import { formatEligibilityText } from "./ApiOpportunityConfigurationImpl";
 
 export class LocalOpportunityConfiguration implements OpportunityConfiguration {
-  configurationObject: ILocalOpportunityConfiguration;
-  workflowsStore: WorkflowsStore;
-
   constructor(
-    configurationObject: ILocalOpportunityConfiguration,
-    workflowsStore: WorkflowsStore,
-  ) {
-    this.configurationObject = configurationObject;
-    this.workflowsStore = workflowsStore;
-  }
+    private configurationObject: ILocalOpportunityConfiguration,
+    private userStore: UserStore,
+  ) {}
 
   get systemType() {
     return this.configurationObject.systemType;
@@ -153,13 +147,13 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get isEnabled(): boolean {
-    const { featureVariants } = this.workflowsStore;
+    const { activeFeatureVariants } = this.userStore;
     const { featureVariant, inverseFeatureVariant } = this;
 
     const featureVariantEnabled =
-      !featureVariant || !!featureVariants[featureVariant];
+      !featureVariant || !!activeFeatureVariants[featureVariant];
     const inverseFeatureVariantDisabled =
-      !!inverseFeatureVariant && !!featureVariants[inverseFeatureVariant];
+      !!inverseFeatureVariant && !!activeFeatureVariants[inverseFeatureVariant];
 
     return featureVariantEnabled && !inverseFeatureVariantDisabled;
   }

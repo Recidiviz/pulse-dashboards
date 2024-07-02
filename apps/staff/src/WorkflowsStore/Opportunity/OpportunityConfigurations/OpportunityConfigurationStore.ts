@@ -21,7 +21,7 @@ import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 
-import { WorkflowsStore } from "../../WorkflowsStore";
+import { RootStore } from "../../../RootStore";
 import { OPPORTUNITY_CONFIGS } from "..";
 import { OpportunityType } from "../OpportunityType/types";
 import { OpportunityConfigurationAPI } from "./api/interface";
@@ -44,7 +44,7 @@ export class OpportunityConfigurationStore implements Hydratable {
   >;
   hydrator: HydratesFromSource;
 
-  constructor(public workflowsStore: WorkflowsStore) {
+  constructor(public rootStore: RootStore) {
     this.apiClient =
       isOfflineMode() || isTestEnv() || isDemoMode()
         ? new OpportunityConfigurationOfflineAPIClient(this)
@@ -65,7 +65,7 @@ export class OpportunityConfigurationStore implements Hydratable {
     this.localOpportunityConfigurations = mapValues(
       OPPORTUNITY_CONFIGS,
       (rawConfig) =>
-        new LocalOpportunityConfiguration(rawConfig, this.workflowsStore),
+        new LocalOpportunityConfiguration(rawConfig, this.rootStore.userStore),
     );
 
     makeAutoObservable(this);
@@ -74,8 +74,8 @@ export class OpportunityConfigurationStore implements Hydratable {
     reaction(
       () => {
         return {
-          tenant: this.workflowsStore.rootStore.currentTenantId,
-          user: this.workflowsStore.rootStore.userStore.user,
+          tenant: this.rootStore.currentTenantId,
+          user: this.rootStore.userStore.user,
         };
       },
       () => {
@@ -97,15 +97,14 @@ export class OpportunityConfigurationStore implements Hydratable {
     this.hydrator.setHydrationStateOverride({ status: "needs hydration" });
   }
 
-  get rootStore() {
-    return this.workflowsStore.rootStore;
-  }
-
   *populateApiOpportunityConfigurations(): FlowMethod<
     OpportunityConfigurationAPI["opportunities"],
     void
   > {
-    if (!this.workflowsStore.featureVariants.opportunityConfigurationAPI) {
+    if (
+      !this.rootStore.userStore.activeFeatureVariants
+        .opportunityConfigurationAPI
+    ) {
       this.apiOpportunityConfigurations = {};
       return;
     }
@@ -117,7 +116,7 @@ export class OpportunityConfigurationStore implements Hydratable {
       (rawConfig) =>
         new ApiOpportunityConfiguration(
           rawConfig as IApiOpportunityConfiguration,
-          this.workflowsStore,
+          this.rootStore.userStore,
         ),
     );
   }
@@ -127,6 +126,14 @@ export class OpportunityConfigurationStore implements Hydratable {
       ...this.localOpportunityConfigurations,
       ...this.apiOpportunityConfigurations,
     };
+  }
+
+  get enabledOpportunityTypes() {
+    return Object.entries(this.opportunities)
+      .filter(([opportunityType, opportunity]) => opportunity.isEnabled)
+      .map(
+        ([opportunityType, opportunity]) => opportunityType as OpportunityType,
+      );
   }
 
   mockHydrated(apiConfigs: typeof this.apiOpportunityConfigurations = {}) {

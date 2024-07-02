@@ -201,7 +201,7 @@ export abstract class OpportunityBase<
   }
 
   get config() {
-    return this.rootStore.workflowsStore.opportunityConfigurationStore
+    return this.rootStore.workflowsRootStore.opportunityConfigurationStore
       .opportunities[this.type];
   }
 
@@ -279,10 +279,6 @@ export abstract class OpportunityBase<
     when(
       () => isHydrated(this),
       () => {
-        const { currentUserEmail } = this.rootStore.workflowsStore;
-        // should not happen in practice
-        if (!currentUserEmail) return;
-
         // ignore recidiviz admins and other non-state actors in prod
         if (
           import.meta.env.VITE_DEPLOY_ENV === "production" &&
@@ -291,7 +287,7 @@ export abstract class OpportunityBase<
           return;
 
         this.rootStore.firestoreStore.updateOpportunityLastViewed(
-          currentUserEmail,
+          this.currentUserEmail,
           this.person.recordId,
           this.type,
         );
@@ -321,14 +317,12 @@ export abstract class OpportunityBase<
     when(
       () => isHydrated(this),
       () => {
-        const { currentUserEmail } = this.rootStore.workflowsStore;
-        if (!currentUserEmail) return;
         const { recordId, pseudonymizedId } = this.person;
         const { reviewStatus } = this;
         if (reviewStatus === "DENIED" || reviewStatus === "COMPLETED") return;
 
         this.rootStore.firestoreStore.updateOpportunityCompleted(
-          currentUserEmail,
+          this.currentUserEmail,
           recordId,
           this.type,
         );
@@ -340,6 +334,11 @@ export abstract class OpportunityBase<
         });
       },
     );
+  }
+
+  get currentUserEmail(): string {
+    // use || instead of ?? so if userEmail is "", we fall back to "user"
+    return this.rootStore.userStore.userEmail || "user";
   }
 
   /**
@@ -376,9 +375,7 @@ export abstract class OpportunityBase<
   }
 
   async setManualSnooze(days: number, reasons: string[]): Promise<void> {
-    const { currentUserEmail } = this.rootStore.workflowsStore;
     const { recordId } = this.person;
-    if (!currentUserEmail) return;
 
     // If there are no denial reasons selected, clear the snooze values
     const deleteSnoozeField = reasons.length === 0;
@@ -395,7 +392,7 @@ export abstract class OpportunityBase<
       this.type,
       recordId,
       {
-        snoozedBy: currentUserEmail,
+        snoozedBy: this.currentUserEmail,
         snoozedOn: format(new Date(), "yyyy-MM-dd"),
         snoozeForDays: days,
       },
@@ -407,9 +404,7 @@ export abstract class OpportunityBase<
     autoSnoozeParams: AutoSnoozeUntil["autoSnoozeParams"],
     reasons: string[],
   ): Promise<void> {
-    const { currentUserEmail } = this.rootStore.workflowsStore;
     const { recordId } = this.person;
-    if (!currentUserEmail) return;
 
     // If there are no denial reasons selected, clear the snooze values
     const deleteSnoozeField = reasons.length === 0;
@@ -428,7 +423,7 @@ export abstract class OpportunityBase<
       this.type,
       recordId,
       {
-        snoozedBy: currentUserEmail,
+        snoozedBy: this.currentUserEmail,
         snoozedOn: format(new Date(), "yyyy-MM-dd"),
         snoozeUntil: formatDateToISO(snoozeUntil),
       },
@@ -457,8 +452,6 @@ export abstract class OpportunityBase<
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {
-    const { currentUserEmail } = this.rootStore.workflowsStore;
-    if (!currentUserEmail) return;
     const { recordId, pseudonymizedId } = this.person;
 
     // clear irrelevant "other" text if necessary
@@ -467,7 +460,7 @@ export abstract class OpportunityBase<
       : { otherReason: true };
 
     await this.rootStore.firestoreStore.updateOpportunityDenial(
-      currentUserEmail,
+      this.currentUserEmail,
       recordId,
       { reasons },
       this.type,
@@ -475,7 +468,7 @@ export abstract class OpportunityBase<
     );
 
     await this.rootStore.firestoreStore.updateOpportunityCompleted(
-      currentUserEmail,
+      this.currentUserEmail,
       recordId,
       this.type,
       true,
@@ -504,17 +497,14 @@ export abstract class OpportunityBase<
   }
 
   async setOtherReasonText(otherReason?: string): Promise<void> {
-    const { currentUserEmail } = this.rootStore.workflowsStore;
-    if (currentUserEmail) {
-      await this.rootStore.firestoreStore.updateOpportunityDenial(
-        currentUserEmail,
-        this.person.recordId,
-        {
-          otherReason,
-        },
-        this.type,
-      );
-    }
+    await this.rootStore.firestoreStore.updateOpportunityDenial(
+      this.currentUserEmail,
+      this.person.recordId,
+      {
+        otherReason,
+      },
+      this.type,
+    );
   }
 
   trackListViewed(): void {

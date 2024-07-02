@@ -115,9 +115,11 @@ export class JusticeInvolvedPersonBase<
 
     // Create and destroy opportunity objects as needed
     autorun(() => {
+      const { enabledOpportunityTypes } =
+        this.rootStore.workflowsRootStore.opportunityConfigurationStore;
       const incomingOpps = intersection(
         this.record.allEligibleOpportunities,
-        rootStore.workflowsStore.opportunityTypes,
+        enabledOpportunityTypes,
       ) as OpportunityTypeForRecord<RecordType>[];
       incomingOpps.forEach((opportunityType) => {
         runInAction(() => {

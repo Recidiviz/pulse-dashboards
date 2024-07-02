@@ -175,9 +175,8 @@ export class WorkflowsStore implements Hydratable {
       userKeepAliveDisposer: false,
     });
 
-    this.opportunityConfigurationStore = new OpportunityConfigurationStore(
-      this,
-    );
+    this.opportunityConfigurationStore =
+      this.rootStore.workflowsRootStore.opportunityConfigurationStore;
 
     this.supervisionStaffSubscription = new StaffSubscription(
       rootStore,

@@ -39,9 +39,11 @@ function createTestUnit(
   residentRecord: typeof UsTnAnnualReclassificationEligibleResidentRecord,
 ) {
   root = new RootStore();
-  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
-    "usTnAnnualReclassification",
-  ]);
+  vi.spyOn(
+    root.workflowsRootStore.opportunityConfigurationStore,
+    "enabledOpportunityTypes",
+    "get",
+  ).mockReturnValue(["usTnAnnualReclassification"]);
   resident = new Resident(residentRecord, root);
 
   const maybeOpportunity =

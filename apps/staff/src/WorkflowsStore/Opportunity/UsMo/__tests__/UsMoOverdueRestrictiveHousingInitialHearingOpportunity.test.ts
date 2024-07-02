@@ -85,12 +85,11 @@ describe("fully eligible", () => {
     );
 
     root = new RootStore();
-    vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
-      "usMoOverdueRestrictiveHousingInitialHearing",
-    ]);
-    vi.spyOn(root.workflowsStore, "featureVariants", "get").mockReturnValue({
-      usMoOverdueRHPilot: {},
-    });
+    vi.spyOn(
+      root.workflowsRootStore.opportunityConfigurationStore,
+      "enabledOpportunityTypes",
+      "get",
+    ).mockReturnValue(["usMoOverdueRestrictiveHousingInitialHearing"]);
     createTestUnit(usMoPersonRecord);
 
     referralSub = opp.referralSubscription;

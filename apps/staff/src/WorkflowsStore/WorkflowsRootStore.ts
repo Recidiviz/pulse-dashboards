@@ -17,22 +17,20 @@
 
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
-import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
-
 import { RootStore } from "../RootStore";
-import { WorkflowsOfficersStore } from "./WorkflowsOfficersStore";
+import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 
 /**
  * Modular version of a store for Workflows, which contains references to stores for more
  * fine-grained types of data in Workflows.
  */
 export class WorkflowsRootStore {
-  apiClient: FirestoreAPI;
-
-  workflowsOfficersStore?: WorkflowsOfficersStore;
+  opportunityConfigurationStore: OpportunityConfigurationStore;
 
   constructor(public rootStore: RootStore) {
-    this.apiClient = this.getApiClient();
+    this.opportunityConfigurationStore = new OpportunityConfigurationStore(
+      rootStore,
+    );
 
     makeAutoObservable(this);
 
@@ -51,26 +49,6 @@ export class WorkflowsRootStore {
   }
 
   private reset() {
-    this.workflowsOfficersStore = undefined;
-  }
-
-  private getApiClient(): FirestoreAPI {
-    if (!this.rootStore.currentTenantId) {
-      throw new Error("Tenant must be set");
-    }
-    // TODO(#5322): Uncomment
-    // return isOfflineMode() || isTestEnv() || isDemoMode()
-    //   ? new FirestoreOfflineAPIClient(this.rootStore.currentTenantId)
-    //   : new FirestoreAPIClient(this.rootStore.currentTenantId);
-    return new FirestoreOfflineAPIClient(this.rootStore.currentTenantId);
-  }
-
-  /**
-   * Creates this.workflowsOfficersStore for the current tenant, if it does not already exist.
-   */
-  populateWorkflowsOfficersStore(): void {
-    if (this.workflowsOfficersStore) return;
-
-    this.workflowsOfficersStore = new WorkflowsOfficersStore(this);
+    this.opportunityConfigurationStore.reset();
   }
 }

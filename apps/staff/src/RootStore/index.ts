@@ -26,6 +26,7 @@ import productionAuthConfig from "../auth_config_production.json";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
 import { WorkflowsStore } from "../WorkflowsStore";
+import { WorkflowsRootStore } from "../WorkflowsStore/WorkflowsRootStore";
 import AnalyticsStore from "./AnalyticsStore";
 import { APIStore } from "./APIStore";
 import PageStore from "./PageStore";
@@ -89,6 +90,8 @@ export class RootStore {
 
   workflowsStore: WorkflowsStore;
 
+  workflowsRootStore: WorkflowsRootStore;
+
   apiStore: APIStore;
 
   analyticsStore: AnalyticsStore;
@@ -114,6 +117,8 @@ export class RootStore {
     this.tenantStore = new TenantStore({ rootStore: this });
 
     this.pageStore = new PageStore({ rootStore: this });
+
+    this.workflowsRootStore = new WorkflowsRootStore(this);
 
     this.workflowsStore = new WorkflowsStore({ rootStore: this });
 

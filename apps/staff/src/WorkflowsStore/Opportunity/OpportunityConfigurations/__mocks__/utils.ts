@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
+import UserStore from "../../../../RootStore/UserStore";
 import { JusticeInvolvedPerson } from "../../../types";
 import { OTHER_KEY } from "../../../utils";
-import { WorkflowsStore } from "../../../WorkflowsStore";
 import { OpportunityType } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
 import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
@@ -102,9 +102,9 @@ export const mockApiOpportunityConfigurationResponse = {
   },
 };
 
-export const mockWorkflowsStore: Partial<WorkflowsStore> = {
-  featureVariants: { mockFv: {} } as unknown as Pick<
-    WorkflowsStore,
-    "featureVariants"
+export const mockUserStore: Partial<UserStore> = {
+  activeFeatureVariants: { mockFv: {} } as unknown as Pick<
+    UserStore,
+    "activeFeatureVariants"
   >,
-} as unknown as Partial<WorkflowsStore>;
+} as unknown as Partial<UserStore>;

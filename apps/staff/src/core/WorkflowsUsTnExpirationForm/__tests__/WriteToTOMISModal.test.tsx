@@ -50,9 +50,11 @@ function createTestUnit(
   userRecord: CombinedUserRecord,
 ) {
   root = new RootStore();
-  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
-    "usTnExpiration",
-  ]);
+  vi.spyOn(
+    root.workflowsRootStore.opportunityConfigurationStore,
+    "enabledOpportunityTypes",
+    "get",
+  ).mockReturnValue(["usTnExpiration"]);
   vi.spyOn(root.workflowsStore, "currentUserEmail", "get").mockReturnValue(
     "test-officer@example.com",
   );

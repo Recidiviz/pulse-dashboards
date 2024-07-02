@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsStore } from "../../../../WorkflowsStore";
+import UserStore from "../../../../../RootStore/UserStore";
 import {
   mockLocalOpportunityConfigurationObject,
-  mockWorkflowsStore,
+  mockUserStore,
 } from "../../__mocks__/utils";
 import { LocalOpportunityConfiguration } from "../../models/LocalOpportunityConfigurationImpl";
 
@@ -26,7 +26,7 @@ describe("Local configuration class", () => {
   it("should be correctly initialized", () => {
     const oppConfig = new LocalOpportunityConfiguration(
       mockLocalOpportunityConfigurationObject,
-      mockWorkflowsStore as WorkflowsStore,
+      mockUserStore as UserStore,
     );
 
     expect(oppConfig.systemType).toEqual(

@@ -36,9 +36,11 @@ vi.mock("../../../subscriptions");
 
 function createTestUnit(residentRecord: typeof usMePersonRecord) {
   root = new RootStore();
-  vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
-    "usMeFurloughRelease",
-  ]);
+  vi.spyOn(
+    root.workflowsRootStore.opportunityConfigurationStore,
+    "enabledOpportunityTypes",
+    "get",
+  ).mockReturnValue(["usMeFurloughRelease"]);
   resident = new Resident(residentRecord, root);
 
   const maybeOpportunity = resident.potentialOpportunities.usMeFurloughRelease;

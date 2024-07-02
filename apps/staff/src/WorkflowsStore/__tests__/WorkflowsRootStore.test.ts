@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { waitFor } from "@testing-library/react";
+
 import { RootStore } from "../../RootStore";
-import { WorkflowsOfficersStore } from "../WorkflowsOfficersStore";
+import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { WorkflowsRootStore } from "../WorkflowsRootStore";
 
 const rootStore = new RootStore();
@@ -27,16 +29,21 @@ beforeEach(() => {
   store = new WorkflowsRootStore(rootStore);
 });
 
-test("initialize workflows officers store", async () => {
-  expect(store.workflowsOfficersStore).toBeUndefined();
-
-  store.populateWorkflowsOfficersStore();
-
-  expect(store.workflowsOfficersStore).toBeDefined();
-});
-
 test("changing tenant ID resets store", async () => {
-  store.workflowsOfficersStore = new WorkflowsOfficersStore(store);
+  store.opportunityConfigurationStore = new OpportunityConfigurationStore(
+    rootStore,
+  );
+  store.opportunityConfigurationStore.hydrate();
+
+  await waitFor(() =>
+    expect(store.opportunityConfigurationStore.hydrationState.status).toEqual(
+      "hydrated",
+    ),
+  );
+
   rootStore.tenantStore.setCurrentTenantId("US_ID");
-  expect(store.workflowsOfficersStore).toBeUndefined();
+
+  expect(store.opportunityConfigurationStore.hydrationState.status).toEqual(
+    "needs hydration",
+  );
 });
