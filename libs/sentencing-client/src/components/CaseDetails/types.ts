@@ -34,7 +34,7 @@ export type Attributes = {
   reportType: string;
   county: string;
   primaryCharge: string | null;
-  lsirScore: string;
+  lsirScore: number | null;
   fullName: string | undefined;
   gender: string | undefined;
   age: number;

@@ -72,7 +72,7 @@ export const caseImportSchema = z.array(
     sentence_date: z.coerce.date(),
     assigned_date: z.coerce.date(),
     county_name: z.string(),
-    lsir_score: z.string(),
+    lsir_score: z.number(),
     lsir_level: z.string(),
     report_type: z.string(),
   }),

@@ -13,6 +13,9 @@
     },
     "typecheck": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        { "projects": ["sentencing-server"], "target": "prisma-generate" }
+      ],
       "options": {
         "commands": [
           "tsc -p ./tsconfig.app.json",
@@ -116,7 +119,12 @@
     },
     "build": {
       "executor": "@nx/vite:build",
-      "dependsOn": ["load-config-files", "env-prod", "link-shared-filters"],
+      "dependsOn": [
+        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        "load-config-files",
+        "env-prod",
+        "link-shared-filters"
+      ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -132,7 +140,12 @@
     },
     "build-staging": {
       "executor": "@nx/vite:build",
-      "dependsOn": ["load-config-files", "env-staging", "link-shared-filters"],
+      "dependsOn": [
+        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        "load-config-files",
+        "env-staging",
+        "link-shared-filters"
+      ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -148,7 +161,10 @@
     },
     "build-preview-ci": {
       "executor": "@nx/vite:build",
-      "dependsOn": ["env-preview-ci"],
+      "dependsOn": [
+        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        "env-preview-ci"
+      ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -164,7 +180,12 @@
     },
     "build-demo": {
       "executor": "@nx/vite:build",
-      "dependsOn": ["load-config-files", "env-demo", "link-shared-filters"],
+      "dependsOn": [
+        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        "load-config-files",
+        "env-demo",
+        "link-shared-filters"
+      ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
@@ -178,7 +199,10 @@
     },
     "build-e2e": {
       "executor": "@nx/vite:build",
-      "dependsOn": ["env-e2e"],
+      "dependsOn": [
+        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        "env-e2e"
+      ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }

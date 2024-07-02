@@ -47,7 +47,7 @@ describe("import", () => {
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
-              lsir_score: faker.number.int().toString(),
+              lsir_score: faker.number.int({ max: 100 }),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
@@ -94,7 +94,7 @@ describe("import", () => {
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
               // Set the LSIR score to a new value
-              lsir_score: "1000",
+              lsir_score: 1000,
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
@@ -109,7 +109,7 @@ describe("import", () => {
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
-              lsir_score: faker.number.int().toString(),
+              lsir_score: faker.number.int({ max: 100 }),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
@@ -127,7 +127,7 @@ describe("import", () => {
       expect(dbCases).toEqual([
         expect.objectContaining({
           externalId: fakeCase.externalId,
-          lsirScore: "1000",
+          lsirScore: 1000,
         }),
         expect.objectContaining({ externalId: "new-case-ext-id" }),
       ]);
@@ -150,7 +150,7 @@ describe("import", () => {
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
-              lsir_score: faker.number.int().toString(),
+              lsir_score: faker.number.int({ max: 100 }),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
@@ -416,15 +416,17 @@ describe("import", () => {
       // There should only be two staff in the database - the new one and the updated existing one
       expect(dbStaff).toHaveLength(2);
 
-      expect(dbStaff).toEqual([
-        expect.objectContaining({
-          externalId: "new-staff-ext-id",
-        }),
-        expect.objectContaining({
-          externalId: "staff-ext-1",
-          email: "existing_staff@gmail.com",
-        }),
-      ]);
+      expect(dbStaff).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            externalId: "new-staff-ext-id",
+          }),
+          expect.objectContaining({
+            externalId: "staff-ext-1",
+            email: "existing_staff@gmail.com",
+          }),
+        ]),
+      );
     });
   });
 });

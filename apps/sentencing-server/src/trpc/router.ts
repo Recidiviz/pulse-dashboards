@@ -1,5 +1,5 @@
 import { router } from "~sentencing-server/trpc/init";
-import { caseRouter } from "~sentencing-server/trpc/routes/case";
+import { caseRouter } from "~sentencing-server/trpc/routes/case/case.router";
 import { staffRouter } from "~sentencing-server/trpc/routes/staff";
 
 export const appRouter = router({

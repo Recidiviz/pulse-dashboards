@@ -30,6 +30,7 @@ async function main() {
       fullName: faker.person.fullName(),
       email: faker.internet.email(),
       stateCode: StateCode.ID,
+      hasLoggedIn: faker.datatype.boolean(),
     });
   }
 
@@ -79,14 +80,13 @@ async function main() {
         sentenceDate: faker.date.past(),
         assignedDate: faker.date.past(),
         county: faker.location.county(),
-        lsirScore: faker.number.int().toString(),
+        lsirScore: faker.number.int(100),
         lsirLevel: faker.number.int().toString(),
         reportType: faker.string.alpha(),
         primaryCharge: faker.helpers.enumValue(Charge),
         secondaryCharges: [],
         veteranStatus: faker.helpers.enumValue(VeteranStatus),
-        previouslyIncarcerated: faker.datatype.boolean(),
-        previouslyUnderSupervision: faker.datatype.boolean(),
+        previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
         hasPreviousFelonyConviction: faker.datatype.boolean(),
         hasPreviousViolentOffenseConviction: faker.datatype.boolean(),
         hasPreviousSexOffenseConviction: faker.datatype.boolean(),

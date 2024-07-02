@@ -45,6 +45,9 @@ beforeEach(() => {
       getCase: {
         query: vi.fn().mockResolvedValue(CaseDetailsFixture),
       },
+      updateCase: {
+        mutate: vi.fn(),
+      },
     },
   };
   (createTRPCProxyClient as Mock).mockReturnValue(mockTRPCClient);

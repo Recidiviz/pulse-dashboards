@@ -64,6 +64,14 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^prisma-generate", "prisma-generate"]
+    },
+    "typecheck": {
+      "cache": true,
+      "dependsOn": ["^prisma-generate", "prisma-generate"]
     }
   }
 }

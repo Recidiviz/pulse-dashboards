@@ -152,6 +152,7 @@ enum NeedToBeAddressed {
   JobTrainingOrOpportunities
   MentalHealth
   SubstanceUse
+  Other
 }
 
 enum CaseStatus {
@@ -178,31 +179,33 @@ model Case {
   sentenceDate   DateTime
   assignedDate   DateTime
   county         String
-  lsirScore      String
   lsirLevel      String
   reportType     String
 
   // Mutable Attributes
+  lsirScore Int?
+
   primaryCharge    Charge?
   secondaryCharges Charge[]
 
-  previouslyIncarcerated              Boolean?
-  previouslyUnderSupervision          Boolean?
-  hasPreviousFelonyConviction         Boolean?
-  hasPreviousViolentOffenseConviction Boolean?
-  hasPreviousSexOffenseConviction     Boolean?
-  previousTreatmentCourt              String?
+  previouslyIncarceratedOrUnderSupervision Boolean?
+  hasPreviousFelonyConviction              Boolean?
+  hasPreviousViolentOffenseConviction      Boolean?
+  hasPreviousSexOffenseConviction          Boolean?
+  previousTreatmentCourt                   String?
 
   substanceUseDisorderDiagnosis SubstanceUseDiagnosis?
   asamCareRecommendation        AsamCareRecommendation?
 
-  mentalHealthDiagnoses MentalHealthDiagnosis[]
+  mentalHealthDiagnoses      MentalHealthDiagnosis[]
+  otherMentalHealthDiagnosis String?
 
   hasDevelopmentalDisability         Boolean?
   veteranStatus                      VeteranStatus?
   plea                               Plea?
   hasOpenChildProtectiveServicesCase Boolean?
   needsToBeAddressed                 NeedToBeAddressed[]
+  otherNeedToBeAddressed             String?
 
   status CaseStatus @default(NotYetStarted)
 }
