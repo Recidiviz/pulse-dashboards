@@ -163,7 +163,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
       </Styled.RecommendationsWrapper>
       {/* Continue */}
       <Styled.ActionButtons>
-        <Styled.ContinueButton>Continue</Styled.ContinueButton>
+        <Styled.ActionButton>Continue</Styled.ActionButton>
       </Styled.ActionButtons>
     </Styled.Recommendations>
   );

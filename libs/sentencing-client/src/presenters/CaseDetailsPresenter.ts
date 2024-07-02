@@ -15,20 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable } from "mobx";
-import moment from "moment";
+import { flowResult, makeAutoObservable, when } from "mobx";
 
 import {
   Hydratable,
   HydratesFromSource,
   HydrationState,
+  isHydrated,
 } from "~hydration-utils";
 
+import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
 import { Attributes } from "../components/CaseDetails/types";
 import { CaseStore } from "../datastores/CaseStore";
 
 export class CaseDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
+
+  private caseDetailsForm?: CaseDetailsForm;
 
   constructor(
     public readonly caseStore: CaseStore,
@@ -53,6 +56,13 @@ export class CaseDetailsPresenter implements Hydratable {
         await flowResult(this.caseStore.loadCaseDetails(this.caseId));
       },
     });
+
+    when(
+      () => isHydrated(this),
+      () => {
+        this.caseDetailsForm = new CaseDetailsForm(this.caseAttributes);
+      },
+    );
   }
 
   get staffPseudoId() {
@@ -66,21 +76,15 @@ export class CaseDetailsPresenter implements Hydratable {
 
   get caseAttributes(): Attributes {
     const currentCase = this.caseStore.caseDetailsById[this.caseId];
-    const { id, dueDate, reportType, county, primaryCharge, lsirScore } =
-      currentCase;
-    const { fullName, gender, birthDate } = this.clientInfo ?? {};
 
     return {
-      id,
-      dueDate: moment(dueDate).format("MM/DD/YYYY"),
-      reportType,
-      county,
-      primaryCharge,
-      lsirScore,
-      fullName,
-      gender,
-      age: moment().diff(birthDate, "years"),
+      ...currentCase,
+      ...this.clientInfo,
     };
+  }
+
+  get form() {
+    return this.caseDetailsForm;
   }
 
   get hydrationState(): HydrationState {

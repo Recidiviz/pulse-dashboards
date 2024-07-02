@@ -15,12 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const customPalette = {
-  blue1: "rgba(200, 229, 255, 1)",
-  green: {
-    light1: "rgba(43, 105, 105, 0.03)",
-    light2: "rgba(43, 84, 105, 0.1)",
-    light3: "rgba(193, 227, 216, 0.24)",
-    light4: "rgba(0, 102, 95, 0.4)",
-  },
+import { Attributes, FormFieldWithNestedList } from "../types";
+
+export type InputFieldProps = {
+  element: FormFieldWithNestedList;
+  parentKey?: keyof Attributes;
+  prevValue?: string | string[] | null;
+  updateForm: (
+    key: keyof Attributes,
+    value?: string | string[] | null,
+    parentKey?: keyof Attributes,
+    isOtherContext?: boolean,
+  ) => void;
+  placeholder?: string;
+  isTextArea?: boolean;
+};
+
+export type SelectOption = {
+  label?: string | string[] | null;
+  value?: string | string[] | null;
 };

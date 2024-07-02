@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Case, Client } from "../../api";
+
 export enum RecommendationType {
   Probation = "Probation",
   Rider = "Rider",
@@ -28,14 +30,35 @@ export enum ProfileStrength {
   Low = "Low",
 }
 
-export type Attributes = {
-  id: string;
-  dueDate: string;
-  reportType: string;
-  county: string;
-  primaryCharge: string | null;
-  lsirScore: number | null;
-  fullName: string | undefined;
-  gender: string | undefined;
-  age: number;
+export type Attributes = Partial<Case & Client>;
+
+export type FormFieldBase = {
+  key: keyof Attributes;
+  label: string;
+  value: string | string[] | null;
+  inputType:
+    | "text"
+    | "multi-select"
+    | "dropdown"
+    | "dropdown-multi-select"
+    | "radio";
+  description?: string;
+  placeholder?: string;
+  options?: string[];
+  showOtherContextValueMatch?: string;
+  otherContext?: {
+    placeholder?: string;
+    value: string | string[] | null;
+  };
+  showNestedValueMatch?: string;
 };
+
+export type FormField = FormFieldBase & {
+  nested?: { [key: string]: FormFieldBase };
+};
+
+export type FormFieldWithNestedList = FormFieldBase & {
+  nested?: FormFieldBase[];
+};
+
+export type FormFieldList = FormFieldWithNestedList[];

@@ -38,19 +38,15 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter: CaseDetailsPresenter;
 }) {
   const navigate = useNavigate();
-  const { staffPseudoId, caseAttributes } = presenter;
+  const { staffPseudoId, caseAttributes, form } = presenter;
 
   const [selectedRecommendation, setSelectedRecommendation] =
     useState<RecommendationType>();
 
-  const updateRecommendation = (recommendation: RecommendationType) => {
-    setSelectedRecommendation((prev) => {
-      if (prev === recommendation) {
-        return undefined;
-      }
-      return recommendation;
-    });
-  };
+  const updateRecommendation = (recommendation: RecommendationType) =>
+    setSelectedRecommendation((prev) =>
+      prev !== recommendation ? recommendation : undefined,
+    );
 
   if (!staffPseudoId) {
     return <Styled.PageContainer>No staff ID found.</Styled.PageContainer>;
@@ -68,7 +64,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
         }
       >{`Back to Dashboard`}</Styled.BackLink>
       {/* Case Attributes */}
-      <CaseAttributes caseAttributes={caseAttributes} />
+      <CaseAttributes caseAttributes={caseAttributes} form={form} />
       <Styled.Body>
         {/* Recommendations */}
         <Recommendations

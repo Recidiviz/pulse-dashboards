@@ -14,13 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+/// <reference types="vite-plugin-svgr/client" />
 
-export const customPalette = {
-  blue1: "rgba(200, 229, 255, 1)",
-  green: {
-    light1: "rgba(43, 105, 105, 0.03)",
-    light2: "rgba(43, 84, 105, 0.1)",
-    light3: "rgba(193, 227, 216, 0.24)",
-    light4: "rgba(0, 102, 95, 0.4)",
-  },
+import { InputFieldProps } from "../types";
+import { TextInputField } from "./TextInputField";
+
+export const OtherContextInputField: React.FC<InputFieldProps> = ({
+  ...fieldProps
+}) => {
+  const { element } = fieldProps;
+  return (
+    element.showOtherContextValueMatch &&
+    element.value?.includes(element.showOtherContextValueMatch) && (
+      <TextInputField
+        {...fieldProps}
+        isTextArea
+        placeholder={element.otherContext?.placeholder}
+        prevValue={element.otherContext?.value}
+      />
+    )
+  );
 };

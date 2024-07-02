@@ -15,11 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import moment from "moment";
+import { useState } from "react";
+
 import * as Styled from "./CaseDetails.styles";
+import EditCaseDetailsModal from "./EditCaseDetailsModal";
+import { CaseDetailsForm } from "./Form/CaseDetailsForm";
 import { Attributes } from "./types";
 
 type CaseAttributesProps = {
   caseAttributes: Attributes;
+  form?: CaseDetailsForm;
 };
 
 type AttributeLabelValue = {
@@ -30,7 +36,14 @@ type AttributeLabelValue = {
 // TODO(Recidiviz/recidiviz-data#30649) Implement Case Attributes flow
 export const CaseAttributes: React.FC<CaseAttributesProps> = ({
   caseAttributes,
+  form,
 }) => {
+  const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
+    useState(false);
+
+  const showModal = () => setShowEditCaseDetailsModal(true);
+  const hideModal = () => setShowEditCaseDetailsModal(false);
+
   const {
     id,
     dueDate,
@@ -38,7 +51,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = ({
     county,
     primaryCharge,
     lsirScore,
-    age,
+    birthDate,
     fullName,
     gender,
   } = caseAttributes;
@@ -47,12 +60,14 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = ({
     { label: "Report Type", value: reportType },
     { label: "County", value: county },
     { label: "Gender", value: gender },
-    { label: "Age", value: age },
+    { label: "Age", value: moment().diff(birthDate, "years") },
     { label: "Offense", value: primaryCharge, isEditable: true },
     { label: "LSI-R Score", value: lsirScore, isEditable: true },
   ].map((attribute) => {
     return { ...attribute, value: attribute.value ?? "-" };
   });
+
+  const firstName = fullName?.split(" ")[0];
 
   return (
     <Styled.CaseAttributes>
@@ -60,8 +75,10 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = ({
       <Styled.HeaderWrapper>
         <Styled.Name>{fullName}</Styled.Name>
         <Styled.ID>{id}</Styled.ID>
-        <Styled.DueDate>Due {dueDate}</Styled.DueDate>
-        <Styled.EditCaseDetailsButton>
+        <Styled.DueDate>
+          Due {moment(dueDate).format("MM/DD/YYYY")}
+        </Styled.DueDate>
+        <Styled.EditCaseDetailsButton onClick={showModal}>
           Edit Case Details
         </Styled.EditCaseDetailsButton>
       </Styled.HeaderWrapper>
@@ -75,6 +92,16 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = ({
           </Styled.AttributeValueWrapper>
         ))}
       </Styled.CaseAttributesWrapper>
+
+      {/* Modals */}
+      {form && (
+        <EditCaseDetailsModal
+          firstName={firstName}
+          form={form}
+          hideModal={hideModal}
+          isOpen={showEditCaseDetailsModal}
+        />
+      )}
     </Styled.CaseAttributes>
   );
 };

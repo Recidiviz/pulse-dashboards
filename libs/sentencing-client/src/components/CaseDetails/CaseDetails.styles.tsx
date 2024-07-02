@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette, typography } from "@recidiviz/design-system";
+import { StylesConfig } from "react-select";
 import styled from "styled-components/macro";
 
 import { customPalette } from "../styles/palette";
@@ -38,6 +39,7 @@ export const Body = styled.div`
 `;
 
 export const BackLink = styled.div`
+  width: fit-content;
   display: flex;
   align-items: center;
   padding: 0 24px;
@@ -61,6 +63,8 @@ export const BackLink = styled.div`
     left: 10px;
   }
 `;
+
+export const IconWrapper = styled.div``;
 
 /** Case Attributes */
 
@@ -227,6 +231,10 @@ export const EditCaseDetailsButton = styled.div`
   font-size: 13px;
   font-weight: 500;
   margin-left: auto;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 /** Recommendations */
@@ -354,13 +362,14 @@ export const ActionButtons = styled.div`
   border-top: 1px solid ${palette.marble5};
 `;
 
-export const ContinueButton = styled.button`
+export const ActionButton = styled.button<{ kind?: "link" }>`
   display: flex;
   padding: 12px 32px;
   justify-content: center;
   align-items: center;
-  background-color: ${palette.pine4};
-  color: ${palette.white};
+  background-color: ${({ kind }) =>
+    kind === "link" ? "transparent" : palette.pine4};
+  color: ${({ kind }) => (kind === "link" ? palette.slate85 : palette.white)};
   border: none;
   border-radius: 4px;
 `;
@@ -603,3 +612,162 @@ export const Chip = styled.div`
   ${typography.Sans12}
   font-size: 10px;
 `;
+
+/** Edit Case Details Modal */
+
+export const ModalHeader = styled.div`
+  ${typography.Sans24}
+  color: ${palette.pine2};
+  margin-bottom: 4px;
+`;
+
+export const ModalDescription = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate70};
+  margin-bottom: 32px;
+`;
+
+export const Form = styled.form``;
+
+export const InputWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+`;
+
+export const Input = styled.input`
+  padding: 12px 16px;
+  border: 1px solid ${palette.slate20};
+  border-radius: 8px;
+  color: ${palette.pine3};
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+`;
+
+export const TextArea = styled.textarea`
+  min-height: 117px;
+  padding: 12px 16px;
+  border: 1px solid ${customPalette.green.light4};
+  border-radius: 8px;
+  color: ${palette.pine3};
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: ${customPalette.green.light1};
+`;
+
+export const InputLabel = styled.label`
+  ${typography.Sans16}
+  color: ${palette.pine1};
+  margin-bottom: 8px;
+`;
+
+export const InputDescription = styled.div`
+  color: ${palette.slate60};
+  ${typography.Sans14}
+`;
+
+export const MultiSelectContainer = styled.div<{ selected?: boolean }>`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  gap: 4px;
+`;
+
+export const MultiSelectChip = styled.div<{
+  selected?: boolean;
+  isNotSureYetOption: boolean;
+}>`
+  width: fit-content;
+  display: flex;
+  padding: 9px 12px;
+  align-items: center;
+  gap: 6px;
+  background-color: ${({ selected }) =>
+    selected ? customPalette.green.light3 : "none"};
+  color: ${({ selected }) => (selected ? palette.pine3 : palette.slate85)};
+  border: 1px solid
+    ${({ selected }) => (selected ? palette.pine4 : palette.slate20)};
+  border-radius: 32px;
+  ${typography.Sans14}
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  ${({ selected, isNotSureYetOption }) =>
+    selected &&
+    isNotSureYetOption &&
+    `
+      background-color: ${customPalette.green.light2};
+      border: none;
+      path {
+        fill: ${palette.slate60};
+      }
+  `}
+`;
+
+export const NestedWrapper = styled.div`
+  margin-top: 24px;
+  margin-left: 40px;
+`;
+
+export const ActionButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  border-top: 1px solid ${palette.slate20};
+  padding: 10px 40px;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  margin-top: 16px;
+`;
+
+export const dropdownStyles: StylesConfig<unknown, true> = {
+  multiValue: (styles) => {
+    return {
+      ...styles,
+      backgroundColor: customPalette.green.light3,
+      borderRadius: "35px",
+      border: `1px solid ${palette.pine4}`,
+      color: palette.pine3,
+      padding: "0px 4px",
+      display: "flex",
+      alignItems: "center",
+    };
+  },
+  multiValueLabel: (styles) => {
+    return {
+      ...styles,
+      color: palette.pine3,
+      marginRight: "3px",
+    };
+  },
+  multiValueRemove: (styles) => ({
+    ...styles,
+    color: palette.white,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    ":hover": {
+      backgroundColor: "none",
+      color: "white",
+    },
+    "::before": {
+      content: `""`,
+      position: "absolute",
+      width: "16px",
+      height: "16px",
+      backgroundColor: palette.pine3,
+      borderRadius: "100%",
+    },
+    "> svg": {
+      zIndex: 0,
+    },
+  }),
+};
