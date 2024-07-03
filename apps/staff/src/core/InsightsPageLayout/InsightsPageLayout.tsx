@@ -22,12 +22,14 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { now } from "mobx-utils";
 import { rem } from "polished";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { THIRTY_SECONDS } from "../../InsightsStore/presenters/utils";
 import { humanReadableTitleCase, pluralizeWord } from "../../utils";
 import InsightsInfoModal from "../InsightsInfoModal";
 
@@ -189,6 +191,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   children,
 }) => {
   const { isMobile, isTablet, isLaptop } = useIsMobile(true);
+  const [pageOpenedAt, setPageOpenedAt] = useState<Date>(new Date());
 
   const {
     insightsStore: {
@@ -197,7 +200,16 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
     },
   } = useRootStore();
 
+  useEffect(() => {
+    setPageOpenedAt(new Date());
+  }, []);
+
   if (!supervisionStore) return null;
+
+  // trackPageViewed30Seconds every 30 seconds after the location updates
+  if (pageOpenedAt.getTime() < now(THIRTY_SECONDS)) {
+    supervisionStore.trackPageViewed30Seconds(location.pathname);
+  }
 
   const { labels, methodologyUrl, exclusionReasonDescription } =
     supervisionStore;

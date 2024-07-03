@@ -54,7 +54,7 @@ export const SupervisorPage = observer(function SupervisorPage({
   presenter: SupervisionOfficersPresenter;
 }) {
   const { isLaptop } = useIsMobile(true);
-  const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
     supervisorInfo,

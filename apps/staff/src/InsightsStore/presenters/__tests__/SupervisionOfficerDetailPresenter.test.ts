@@ -258,7 +258,7 @@ test("track metric tab viewed events", async () => {
   vi.spyOn(AnalyticsStore.prototype, "trackInsightsStaffMetricViewed");
 
   await presenter.hydrate();
-  presenter.trackMetricTabViewed(testMetric.metricId);
+  presenter.trackMetricViewed(testMetric.metricId);
 
   expect(
     store.insightsStore.rootStore.analyticsStore.trackInsightsStaffMetricViewed,

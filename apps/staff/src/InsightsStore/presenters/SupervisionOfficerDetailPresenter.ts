@@ -78,7 +78,7 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     );
   }
 
-  trackMetricTabViewed(metricId: string): void {
+  trackMetricViewed(metricId: string): void {
     const { userPseudoId } =
       this.supervisionStore.insightsStore.rootStore.userStore;
 

@@ -342,6 +342,17 @@ export class InsightsSupervisionStore {
     this.outcomeDate = dateString ? parseISO(dateString) : undefined;
   }
 
+  trackPageViewed30Seconds(path: string): void {
+    const { userPseudoId } = this.insightsStore.rootStore.userStore;
+
+    this.insightsStore.rootStore.analyticsStore.trackInsightsPageViewed30Seconds(
+      {
+        path,
+        viewedBy: userPseudoId,
+      },
+    );
+  }
+
   /*
    * Fetches events data for the specified officer and metric.
    */

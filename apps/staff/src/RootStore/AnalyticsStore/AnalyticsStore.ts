@@ -39,6 +39,10 @@ import type RootStore from "..";
 const isAnalyticsDisabled =
   isDemoMode() || !["staging", "production"].includes(import.meta.env.MODE);
 
+type SupervisorsListPageTrackingMetadata = {
+  viewedBy?: string;
+};
+
 type SupervisorPageTrackingMetadata = {
   supervisorPseudonymizedId: string;
   viewedBy?: string;
@@ -61,6 +65,11 @@ type StaffMetricTrackingMetadata = {
 type ClientPageTrackingMetadata = {
   clientPseudonymizedId: string;
   outcomeDate: Date;
+  viewedBy?: string;
+};
+
+type PageViewed30SecondsTrackingMetadata = {
+  path: string;
   viewedBy?: string;
 };
 
@@ -171,6 +180,12 @@ export default class AnalyticsStore {
     window.analytics.page(pagePath);
   }
 
+  trackInsightsSupervisorsListPageViewed(
+    metadata: SupervisorsListPageTrackingMetadata,
+  ): void {
+    this.track("frontend.outliers_supervisors_list_page_viewed", metadata);
+  }
+
   trackInsightsSupervisorPageViewed(
     metadata: SupervisorPageTrackingMetadata,
   ): void {
@@ -187,6 +202,12 @@ export default class AnalyticsStore {
 
   trackInsightsClientPageViewed(metadata: ClientPageTrackingMetadata): void {
     this.track("frontend.outliers_client_page_viewed", metadata);
+  }
+
+  trackInsightsPageViewed30Seconds(
+    metadata: PageViewed30SecondsTrackingMetadata,
+  ): void {
+    this.track("frontend.outliers_page_viewed_30_seconds", metadata);
   }
 
   trackReferralFormViewed(metadata: OpportunityTrackingMetadata): void {

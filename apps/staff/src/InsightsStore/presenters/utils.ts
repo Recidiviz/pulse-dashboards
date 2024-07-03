@@ -22,6 +22,8 @@ import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { OutlierOfficerData } from "./types";
 
+export const THIRTY_SECONDS = 1000 * 30;
+
 /**
  * Collects all of the officer data, modeling relationships between them with nested objects,
  * and verifies that all of the related objects actually exist. It throws an error rather than

@@ -120,4 +120,18 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   get labels(): ConfigLabels {
     return this.supervisionStore.labels;
   }
+
+  trackViewed(): void {
+    const { userPseudoId } =
+      this.supervisionStore.insightsStore.rootStore.userStore;
+    this.supervisionStore.insightsStore.rootStore.analyticsStore.trackInsightsSupervisorsListPageViewed(
+      {
+        viewedBy: userPseudoId,
+      },
+    );
+  }
+
+  trackPageViewed30Seconds(path: string): void {
+    this.supervisionStore.trackPageViewed30Seconds(path);
+  }
 }

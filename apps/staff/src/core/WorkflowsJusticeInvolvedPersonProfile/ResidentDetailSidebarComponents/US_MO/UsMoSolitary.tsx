@@ -54,7 +54,9 @@ export function UsMoSolitary({
   return (
     <SecureDetailsList>
       <DetailsHeading>Restrictive Housing assignments</DetailsHeading>
-      <DetailsSubheading>Restrictive Housing assignments in past year</DetailsSubheading>
+      <DetailsSubheading>
+        Restrictive Housing assignments in past year
+      </DetailsSubheading>
       {solitaryAssignmentInfoPastYear &&
       solitaryAssignmentInfoPastYear.length > 0 ? (
         solitaryAssignmentInfoPastYear.map(

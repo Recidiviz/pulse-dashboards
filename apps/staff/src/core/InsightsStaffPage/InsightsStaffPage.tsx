@@ -145,7 +145,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   const { isMobile, isTablet } = useIsMobile(true);
   const [tabListEl, setTabListEl] = useState<HTMLElement | null>(null);
   const isTabListOverflown = useIsOverflown(tabListEl);
-  const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
     outlierOfficerData,
@@ -157,7 +157,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     timePeriod,
     labels,
     methodologyUrl,
-    trackMetricTabViewed,
+    trackMetricViewed,
     goToSupervisorInfo,
   } = presenter;
 
@@ -166,8 +166,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   }, []);
 
   useEffect(() => {
-    if (metricId) trackMetricTabViewed(metricId);
-  }, [metricId, trackMetricTabViewed]);
+    if (metricId) trackMetricViewed(metricId);
+  }, [metricId, trackMetricViewed]);
+
   const supervisorLinkProps = goToSupervisorInfo && {
     linkText: `Go to ${
       goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel

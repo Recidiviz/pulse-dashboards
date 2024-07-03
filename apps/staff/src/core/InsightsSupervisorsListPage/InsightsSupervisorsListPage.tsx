@@ -22,7 +22,9 @@ import {
   typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { now } from "mobx-utils";
 import { rem } from "polished";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled from "styled-components/macro";
@@ -33,6 +35,7 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerSupervisorsPresenter } from "../../InsightsStore/presenters/SupervisionOfficerSupervisorsPresenter";
+import { THIRTY_SECONDS } from "../../InsightsStore/presenters/utils";
 import { PersonInitialsAvatar } from "../Avatar";
 import ModelHydrator from "../ModelHydrator";
 import { SectionLabelText } from "../sharedComponents";
@@ -91,11 +94,28 @@ const SupervisorsList = observer(function SupervisorsList({
   presenter: SupervisionOfficerSupervisorsPresenter;
 }) {
   const { isMobile, isTablet, isLaptop } = useIsMobile(true);
+  const [initialPageLoad, setInitialPageLoad] = useState<Date | undefined>(
+    undefined,
+  );
+
   const {
     supervisorsWithOutliersByDistrict,
     supervisorsWithOutliersCount,
     labels,
   } = presenter;
+
+  // trackPageViewed30Seconds every 30 seconds after the initial page load
+  if (
+    initialPageLoad &&
+    initialPageLoad.getTime() < now(THIRTY_SECONDS) - THIRTY_SECONDS
+  ) {
+    presenter.trackPageViewed30Seconds(location.pathname);
+  }
+
+  if (!initialPageLoad) {
+    presenter.trackViewed();
+    setInitialPageLoad(new Date());
+  }
 
   const districtViz = supervisorsWithOutliersByDistrict.map(
     ({ district, supervisors }, districtIndex) => (

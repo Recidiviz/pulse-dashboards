@@ -134,7 +134,7 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
     tenantStore,
     insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
   } = useRootStore();
-  const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const isInsightsLanternState =
     tenantStore && tenantStore.insightsLanternState;

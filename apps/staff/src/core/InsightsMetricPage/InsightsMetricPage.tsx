@@ -19,7 +19,7 @@ import { toTitleCase } from "@artsy/to-title-case";
 import { palette } from "@recidiviz/design-system";
 import { sub } from "date-fns";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -56,7 +56,7 @@ export const MetricPageWithPresenter = observer(
     presenter: SupervisionOfficerDetailPresenter;
   }) {
     const { isLaptop } = useIsMobile(true);
-    const [initialPageLoad, setInitialPageLoad] = useState(true);
+    const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
     const {
       outlierOfficerData,
@@ -68,13 +68,8 @@ export const MetricPageWithPresenter = observer(
       timePeriod,
       labels,
       methodologyUrl,
-      trackMetricTabViewed,
       userCanAccessAllSupervisors,
     } = presenter;
-
-    useEffect(() => {
-      if (metricId) trackMetricTabViewed(metricId);
-    }, [metricId, trackMetricTabViewed]);
 
     const supervisorLinkProps = goToSupervisorInfo && {
       linkText: `Go to ${
@@ -124,8 +119,8 @@ export const MetricPageWithPresenter = observer(
       );
     }
 
-    if (initialPageLoad) {
-      presenter.trackStaffPageViewed();
+    if (initialPageLoad && metricId) {
+      presenter.trackMetricViewed(metricId);
       setInitialPageLoad(false);
     }
 

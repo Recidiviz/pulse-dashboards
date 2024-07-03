@@ -18,7 +18,7 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
@@ -50,25 +50,19 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   presenter: SupervisionOfficerDetailPresenter;
 }) {
   const { isTablet } = useIsMobile(true);
-  const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
     outlierOfficerData,
     defaultMetricId,
     officerPseudoId,
-    metricId,
     metricInfo,
     supervisorsInfo,
     goToSupervisorInfo,
     labels,
-    trackMetricTabViewed,
     timePeriod,
     userCanAccessAllSupervisors,
   } = presenter;
-
-  useEffect(() => {
-    if (metricId) trackMetricTabViewed(metricId);
-  }, [metricId, trackMetricTabViewed]);
 
   const infoItems = [
     {
@@ -160,6 +154,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       <Wrapper isTablet={isTablet}>
         {outlierOfficerData.outlierMetrics.map((metric) => {
           const { bodyDisplayName } = metric.config;
+
           return (
             <InsightsChartCard
               key={metric.metricId}

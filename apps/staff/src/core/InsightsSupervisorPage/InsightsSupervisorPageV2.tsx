@@ -47,7 +47,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   presenter: SupervisionSupervisorPresenter;
 }) {
   const { isLaptop } = useIsMobile(true);
-  const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
     supervisorInfo,
