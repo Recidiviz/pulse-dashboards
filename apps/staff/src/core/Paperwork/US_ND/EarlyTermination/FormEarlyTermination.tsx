@@ -265,7 +265,11 @@ export const FormEarlyTermination: React.FC = () => {
         <br />
         <SectionOfficerDate>
           <section>
-            <FormManualEntry size={39} />
+            <DOCXFormInput
+              name="statesAttorneyName"
+              placeholder="States Attorney"
+              style={{ width: "210px" }}
+            />
             <br />
             States Attorney
           </section>

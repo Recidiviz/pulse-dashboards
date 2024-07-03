@@ -36,6 +36,7 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
       statesAttorneyEmailAddress: "state.attny.837@state.gov",
       statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
       statesAttorneyPhoneNumber: "888-867-5309",
+      statesAttorneyName: "Sally Lawyer",
     },
     eligibleCriteria: {
       supervisionPastEarlyDischargeDate: {
@@ -75,6 +76,7 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
       statesAttorneyEmailAddress: "state.attny.837@state.gov",
       statesAttorneyMailingAddress: "9234 Maine St., Ohiotown, ND",
       statesAttorneyPhoneNumber: "888-867-5309",
+      statesAttorneyName: "Susan Attorney",
     },
     eligibleCriteria: {
       usNdImpliedValidEarlyTerminationSentenceType: {

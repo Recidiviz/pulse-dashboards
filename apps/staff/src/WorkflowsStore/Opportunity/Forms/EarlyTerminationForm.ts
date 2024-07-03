@@ -46,6 +46,7 @@ export class EarlyTerminationForm extends FormBase<
         statesAttorneyPhoneNumber,
         statesAttorneyEmailAddress,
         statesAttorneyMailingAddress,
+        statesAttorneyName,
       },
     } = this.opportunity.record;
 
@@ -70,6 +71,7 @@ export class EarlyTerminationForm extends FormBase<
       statesAttorneyPhoneNumber,
       statesAttorneyEmailAddress,
       statesAttorneyMailingAddress,
+      statesAttorneyName,
       priorCourtDay: moment(priorCourtDate).format("Do"),
       priorCourtMonth: moment(priorCourtDate).format("MMMM"),
       priorCourtYear: moment(priorCourtDate).format("YYYY"),

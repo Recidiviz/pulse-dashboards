@@ -37,6 +37,7 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
       statesAttorneyPhoneNumber: z.string(),
       statesAttorneyEmailAddress: z.string(),
       statesAttorneyMailingAddress: z.string(),
+      statesAttorneyName: z.string(),
     })
     .partial(),
   eligibleCriteria: z.object({
@@ -94,6 +95,7 @@ export type UsNdEarlyTerminationDraftData = {
   statesAttorneyPhoneNumber: string;
   statesAttorneyEmailAddress: string;
   statesAttorneyMailingAddress: string;
+  statesAttorneyName: string;
   priorCourtDay: string;
   priorCourtMonth: string;
   priorCourtYear: string;

@@ -109,7 +109,11 @@ export const FormEarlyTerminationDeferred: React.FC = () => {
         <FormParagraph>I concur,</FormParagraph>
         <SectionOfficerDate>
           <section>
-            <FormManualEntry size={40} />
+            <DOCXFormInput
+              name="statesAttorneyName"
+              placeholder="States Attorney"
+              style={{ width: "210px" }}
+            />
             <br />
             Asst&emsp;&emsp;County States Attorney
           </section>
