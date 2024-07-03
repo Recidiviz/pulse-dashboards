@@ -15,76 +15,192 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useMemo, useState } from "react";
+import {
+  CellContext,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  Row,
+  useReactTable,
+} from "@tanstack/react-table";
+import moment from "moment";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { CaseWithClient } from "../../api";
 import { psiUrl } from "../../utils/routing";
+import { sortFullNameByLastName } from "../../utils/sorting";
+import SortIcon from "../assets/sort-icon.svg?react";
 import {
   CLIENT_FULL_NAME_KEY,
   DUE_DATE_KEY,
-  NO_CASES_MESSAGE,
+  ID_KEY,
+  PRIMARY_CHARGE_KEY,
+  REPORT_TYPE_KEY,
+  STATUS_KEY,
 } from "./constants";
 import * as Styled from "./Dashboard.styles";
 import { useDetectOutsideClick } from "./hooks";
-import { CaseStatus, ContentRow, HeaderCell } from "./types";
-import { DIFF_FUNCTIONS } from "./utils";
+import { CaseStatus } from "./types";
 
 type CaseListTableProps = {
-  headerRow: HeaderCell[];
-  rows: ContentRow[];
+  caseTableData: Partial<CaseWithClient>[];
   staffPseudoId: string;
 };
 
+type StatusFilter = CaseStatus | "Active" | "Archived";
+
+const columns = [
+  {
+    header: "First Name",
+    accessorKey: CLIENT_FULL_NAME_KEY,
+    sortingFn: (
+      rowA: Row<Partial<CaseWithClient>>,
+      rowB: Row<Partial<CaseWithClient>>,
+    ) =>
+      sortFullNameByLastName(
+        rowA.original.Client?.fullName,
+        rowB.original.Client?.fullName,
+      ),
+  },
+
+  {
+    header: "ID",
+    accessorKey: ID_KEY,
+    enableSorting: false,
+  },
+  {
+    header: "Due Date",
+    accessorKey: DUE_DATE_KEY,
+    cell: (dueDate: CellContext<Partial<CaseWithClient>, Date>) =>
+      moment(dueDate.getValue()).format("MM/DD/YYYY"),
+  },
+  {
+    header: "Report Type",
+    accessorKey: REPORT_TYPE_KEY,
+  },
+  {
+    header: "Offense",
+    accessorKey: PRIMARY_CHARGE_KEY,
+    cell: (
+      primaryCharge: CellContext<
+        Partial<CaseWithClient>,
+        CaseWithClient["primaryCharge"]
+      >,
+    ) => {
+      const displayValue = primaryCharge.getValue() ?? "None Yet";
+      return (
+        <Styled.PrimaryCharge isNotSpecified={displayValue === "None Yet"}>
+          {displayValue}
+        </Styled.PrimaryCharge>
+      );
+    },
+  },
+  {
+    header: "Recommendation Status",
+    accessorKey: STATUS_KEY,
+    cell: (
+      status: CellContext<Partial<CaseWithClient>, keyof typeof CaseStatus>,
+    ) => {
+      const statusValue = status.getValue();
+      const statusToDisplay =
+        moment() < moment(status.cell.row.original.dueDate)
+          ? CaseStatus[statusValue]
+          : "Archived";
+
+      return (
+        <Styled.StatusChip status={statusToDisplay}>
+          {statusToDisplay}
+        </Styled.StatusChip>
+      );
+    },
+  },
+];
+
+const getUpdatedStatusFilters = (
+  status: StatusFilter,
+  currentFilters: StatusFilter[],
+): StatusFilter[] => {
+  if (status === "Active") {
+    const includesArchived = currentFilters.includes("Archived");
+    const emptyOrArchived: StatusFilter[] = includesArchived
+      ? ["Archived"]
+      : [];
+
+    if (includesArchived && currentFilters.length === 1) {
+      return [...Object.values(CaseStatus), "Archived"];
+    }
+    return currentFilters.length > 0
+      ? emptyOrArchived
+      : Object.values(CaseStatus);
+  }
+
+  if (currentFilters.includes(status)) {
+    return currentFilters.filter((currStatus) => currStatus !== status);
+  }
+
+  return [...currentFilters, status];
+};
+
 export const CaseListTable = ({
-  headerRow,
-  rows,
+  caseTableData,
   staffPseudoId,
 }: CaseListTableProps) => {
   const navigate = useNavigate();
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
-  const [activeSortKey, setActiveSortKey] = useState(DUE_DATE_KEY);
-  const [orderByAscending, setOrderByAscending] = useState(false);
+  const [data, setData] = useState<Partial<CaseWithClient>[]>(caseTableData);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const [includedStatusFilter, setIncludedStatusFilter] = useState<
-    CaseStatus[]
-  >(Object.values(CaseStatus));
+  const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
+    ...Object.values(CaseStatus),
+    "Archived",
+  ]);
 
-  const numberOfCasesDisplay = `${rows.length} ${rows.length === 1 ? "case" : "cases"}`;
+  const table = useReactTable({
+    data,
+    columns,
+    getSortedRowModel: getSortedRowModel(),
+    getCoreRowModel: getCoreRowModel(),
+  });
 
-  const filterOptions: { key: CaseStatus | "Active" }[] = [
+  const filterOptions: { key: StatusFilter }[] = [
     { key: "Active" },
     ...Object.values(CaseStatus).map((status) => ({
       key: status,
     })),
+    { key: "Archived" },
   ];
 
-  const filteredAndSortedRows = useMemo(
-    () =>
-      rows
-        .filter((rowContent) => {
-          const statusValue = rowContent.row.find(
-            (cell) => cell.key === "status",
-          )?.value as CaseStatus;
-          return includedStatusFilter.includes(statusValue);
-        })
-        .sort((a, b) => {
-          const diffFunction = DIFF_FUNCTIONS[activeSortKey];
-          const diff = diffFunction(a, b);
-          return diff * (orderByAscending ? 1 : -1);
-        }),
-    [rows, includedStatusFilter, orderByAscending, activeSortKey],
-  );
+  const isFilterChecked = (status: StatusFilter) =>
+    status === "Active"
+      ? statusFilters.length > 0 &&
+        Object.values(CaseStatus).some((filter) =>
+          statusFilters.includes(filter),
+        )
+      : statusFilters.includes(status);
 
-  const handleFilterChange = (key: CaseStatus | "Active") => {
-    setIncludedStatusFilter((prev) => {
-      if (key === "Active") {
-        return prev.length > 0 ? [] : Object.values(CaseStatus);
-      }
-      if (prev.includes(key)) {
-        return prev.filter((status) => status !== key);
-      }
-      return [...prev, key];
+  const handleFilterChange = (status: StatusFilter) => {
+    const filters = getUpdatedStatusFilters(status, statusFilters);
+    setStatusFilters(filters);
+    setData(() => {
+      return caseTableData.filter((datapoint) => {
+        const includesArchived = filters.includes("Archived");
+        const isBeforeDueDate = moment() < moment(datapoint.dueDate);
+
+        if (datapoint.status) {
+          const hasMatchingStatus = filters.includes(
+            CaseStatus[datapoint.status],
+          );
+          if (!includesArchived) {
+            return hasMatchingStatus && isBeforeDueDate;
+          }
+          if (!hasMatchingStatus && !isBeforeDueDate) {
+            return true;
+          }
+          return hasMatchingStatus;
+        }
+        return true;
+      });
     });
   };
 
@@ -92,36 +208,27 @@ export const CaseListTable = ({
     <Styled.CaseListContainer>
       <Styled.Header>
         <Styled.TitleWrapper>
-          <Styled.SectionTitle>My Cases</Styled.SectionTitle>
-          <Styled.SectionSubtitle>
-            {numberOfCasesDisplay}
-          </Styled.SectionSubtitle>
+          <Styled.TableTitle>My Cases</Styled.TableTitle>
         </Styled.TitleWrapper>
         <Styled.DropdownContainer ref={dropdownRef}>
+          <Styled.DropdownTitle>Recommendation Status</Styled.DropdownTitle>
           <Styled.DropdownButton
             onClick={() => setShowFilterDropdown((prev) => !prev)}
             isOpen={showFilterDropdown}
           >
-            Active
+            Status {statusFilters.length > 0 && `(${statusFilters.length})`}
           </Styled.DropdownButton>
           {showFilterDropdown && (
             <Styled.Dropdown>
-              <Styled.DropdownHeader>
-                <span>Status</span>
-                <Styled.ClearButton onClick={() => setIncludedStatusFilter([])}>
-                  Clear
-                </Styled.ClearButton>
-              </Styled.DropdownHeader>
               {filterOptions.map(({ key }) => (
-                <Styled.DropdownOption key={key} isNested={key !== "Active"}>
+                <Styled.DropdownOption
+                  key={key}
+                  isNested={!["Active", "Archived"].includes(key)}
+                >
                   <input
                     id={`${key}-checkbox-status-filter-option`}
                     type="checkbox"
-                    checked={
-                      key === "Active"
-                        ? includedStatusFilter.length > 0
-                        : includedStatusFilter.includes(key)
-                    }
+                    checked={isFilterChecked(key)}
                     onChange={() => handleFilterChange(key)}
                   />
                   <label htmlFor={`${key}-checkbox-status-filter-option`}>
@@ -134,62 +241,61 @@ export const CaseListTable = ({
         </Styled.DropdownContainer>
       </Styled.Header>
 
-      {filteredAndSortedRows.length > 0 ? (
-        <Styled.CaseOverviewWrapper isHeader>
-          {headerRow.map((cell) => (
-            <Styled.Cell
-              key={cell.key}
-              sortable={
-                cell.key === DUE_DATE_KEY || cell.key === CLIENT_FULL_NAME_KEY
-              }
-              isAscending={orderByAscending}
-              isActiveSort={cell.key === activeSortKey}
-              onClick={() => {
-                if ([DUE_DATE_KEY, CLIENT_FULL_NAME_KEY].includes(cell.key)) {
-                  setActiveSortKey(cell.key);
-                  setOrderByAscending(!orderByAscending);
-                }
-              }}
-            >
-              {cell.name}
-            </Styled.Cell>
-          ))}
-        </Styled.CaseOverviewWrapper>
-      ) : (
-        NO_CASES_MESSAGE
-      )}
-
-      {filteredAndSortedRows.map((rowContent) => {
-        const caseStatus = rowContent.row.find(
-          (cell) => cell.key === "status",
-        )?.value;
-        const buttonDisplayName =
-          !caseStatus || caseStatus === CaseStatus.NotYetStarted
-            ? "Get Started"
-            : "View Case";
-
-        return (
-          <Styled.CaseOverviewItem key={rowContent.caseId}>
-            <Styled.CaseOverviewWrapper>
-              {rowContent.row.map((cell) => (
-                <Styled.Cell key={cell.key}>{cell.value}</Styled.Cell>
+      <Styled.Table>
+        <Styled.TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Styled.Row key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <Styled.HeaderCell key={header.id} colSpan={header.colSpan}>
+                  <Styled.SortableHeader
+                    sortable={header.column.getCanSort()}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                    {header.column.getCanSort() && (
+                      <Styled.SortIconWrapper
+                        sortDirection={header.column.getIsSorted()}
+                      >
+                        <SortIcon />
+                      </Styled.SortIconWrapper>
+                    )}
+                  </Styled.SortableHeader>
+                </Styled.HeaderCell>
               ))}
-              <Styled.Button
-                onClick={() =>
-                  navigate(
-                    psiUrl("caseDetails", {
-                      staffPseudoId,
-                      caseId: rowContent.caseId,
-                    }),
-                  )
-                }
-              >
-                {buttonDisplayName}
-              </Styled.Button>
-            </Styled.CaseOverviewWrapper>
-          </Styled.CaseOverviewItem>
-        );
-      })}
+            </Styled.Row>
+          ))}
+        </Styled.TableHeader>
+        <Styled.TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <Styled.Row key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <Styled.Cell
+                  key={cell.id}
+                  onClick={() =>
+                    cell.getValue() === cell.row.original.Client?.fullName &&
+                    navigate(
+                      psiUrl("caseDetails", {
+                        staffPseudoId,
+                        caseId: cell.row.original.id,
+                      }),
+                    )
+                  }
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Styled.Cell>
+              ))}
+            </Styled.Row>
+          ))}
+          {data.length === 0 && (
+            <Styled.Row>
+              <Styled.Cell>No cases to display</Styled.Cell>
+            </Styled.Row>
+          )}
+        </Styled.TableBody>
+      </Styled.Table>
     </Styled.CaseListContainer>
   );
 };

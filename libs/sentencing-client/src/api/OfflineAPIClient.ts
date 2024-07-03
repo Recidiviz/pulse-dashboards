@@ -19,6 +19,8 @@ import { PSIStore } from "../datastores/PSIStore";
 import { Case, Staff } from "./APIClient";
 
 export class OfflineAPIClient {
+  private editableInfo: Map<string, string | string[] | boolean> = new Map();
+
   // eslint-disable-next-line no-useless-constructor
   constructor(public readonly psiStore: PSIStore) {}
 
@@ -26,7 +28,15 @@ export class OfflineAPIClient {
     const { StaffInfoFixture } = await import(
       "./offlineFixtures/StaffInfoFixtures"
     );
-    return StaffInfoFixture;
+    return {
+      ...StaffInfoFixture,
+      hasLoggedIn:
+        this.editableInfo.has("hasLoggedIn") ?? StaffInfoFixture.hasLoggedIn,
+    };
+  }
+
+  async setIsFirstLogin() {
+    this.editableInfo.set("hasLoggedIn", true);
   }
 
   async getCaseDetails(caseId: string): Promise<Case> {

@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import _ from "lodash";
 import { flowResult, makeAutoObservable } from "mobx";
-import moment from "moment";
 
 import {
   Hydratable,
@@ -25,15 +23,15 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { Case, CaseWithClient } from "../api";
-import { CaseStatus, HeaderCell } from "../components/Dashboard/types";
+import { CaseWithClient } from "../api";
 import { StaffStore } from "../datastores/StaffStore";
+import { sortFullNameByLastName } from "../utils/sorting";
 
 export class StaffPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
 
   constructor(public readonly staffStore: StaffStore) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, undefined, { autoBind: true });
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
@@ -58,70 +56,22 @@ export class StaffPresenter implements Hydratable {
   get listOfCaseBriefs(): CaseWithClient[] | undefined {
     return !this.staffInfo
       ? undefined
-      : [...this.staffInfo.Cases].sort((a, b) => {
-          if (a.Client && b.Client) {
-            return a.Client.fullName.localeCompare(b.Client.fullName);
-          }
-          return 0;
-        });
+      : [...this.staffInfo.Cases].sort((a, b) =>
+          sortFullNameByLastName(a.Client?.fullName, b.Client?.fullName),
+        );
   }
 
-  // TODO(Recidiviz/recidiviz-data#30653) Dashboard followups: Refactor to strongly type the caseBriefsTableRows
-  get caseBriefsTableRows() {
-    const normalizeRowValue = (caseBrief: Case, key: string, value: string) => {
-      if (key === "status") {
-        return CaseStatus[value as keyof typeof CaseStatus];
-      }
-      if (key === "dueDate") {
-        return moment(caseBrief.dueDate).format("MM/DD/YYYY");
-      }
-      return value;
-    };
-
-    const headerRow: HeaderCell[] = [
-      {
-        key: "Client.fullName",
-        name: "Name",
-      },
-      {
-        key: "reportType",
-        name: "Report Type",
-      },
-      {
-        key: "primaryCharge",
-        name: "Offense",
-      },
-      {
-        key: "status",
-        name: "Status",
-      },
-      {
-        key: "dueDate",
-        name: "Due Date",
-      },
-      {
-        key: "emptyCell",
-        name: "",
-      },
-    ];
-
-    const rows =
-      this.listOfCaseBriefs?.map((caseBrief) => {
-        const caseId = caseBrief.id;
-        const row = headerRow
-          .filter((cell) => cell.key !== "emptyCell")
-          .map(({ key }) => {
-            const value = _.get(caseBrief, key.split("."));
-            return {
-              key,
-              caseId,
-              value: normalizeRowValue(caseBrief, key, value),
-            };
-          });
-        return { caseId, row };
-      }) ?? [];
-
-    return { headerRow, rows };
+  get caseTableData(): Partial<CaseWithClient>[] | undefined {
+    return this.listOfCaseBriefs?.map((caseBrief: CaseWithClient) => ({
+      Client: {
+        fullName: caseBrief.Client?.fullName,
+      } as CaseWithClient["Client"],
+      id: caseBrief.id,
+      dueDate: caseBrief.dueDate,
+      reportType: caseBrief.reportType,
+      primaryCharge: caseBrief.primaryCharge,
+      status: caseBrief.status,
+    }));
   }
 
   get hydrationState(): HydrationState {
@@ -130,5 +80,12 @@ export class StaffPresenter implements Hydratable {
 
   async hydrate(): Promise<void> {
     return this.hydrator.hydrate();
+  }
+
+  async setIsFirstLogin() {
+    if (!this.staffPseudoId) return;
+    return this.staffStore.psiStore.apiClient.setIsFirstLogin(
+      this.staffPseudoId,
+    );
   }
 }

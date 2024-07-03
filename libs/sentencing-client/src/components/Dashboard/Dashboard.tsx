@@ -22,6 +22,7 @@ import { Hydrator } from "~hydration-utils";
 
 import { PSIStore } from "../../datastores/PSIStore";
 import { StaffPresenter } from "../../presenters/StaffPresenter";
+import CloseIcon from "../assets/close-icon.svg?react";
 import { ErrorMessage } from "../Error";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
@@ -31,35 +32,53 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
 }: {
   presenter: StaffPresenter;
 }) {
-  const { staffPseudoId, listOfCaseBriefs, caseBriefsTableRows } = presenter;
+  const {
+    staffInfo,
+    staffPseudoId,
+    listOfCaseBriefs,
+    caseTableData,
+    setIsFirstLogin,
+  } = presenter;
 
-  const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(
+    !staffInfo?.hasLoggedIn,
+  );
 
-  if (!staffPseudoId || !listOfCaseBriefs) return null;
+  if (!staffPseudoId || !listOfCaseBriefs || !caseTableData) return null;
 
   return (
     <Styled.PageContainer>
       {/* Welcome Message */}
       {showWelcomeMessage && (
         <Styled.WelcomeMessage>
-          <Styled.CloseButton onClick={() => setShowWelcomeMessage(false)} />
-          <Styled.WelcomeTitle>
-            Welcome to your case dashboard
-          </Styled.WelcomeTitle>
-          <Styled.WelcomeDescription>
-            Generate informed case recommendations based on historical outcomes
-            customized for each case. Find and suggest customized treatment
-            opportunities for detendants that will aid in their healing and
-            integrating back into the community.
-          </Styled.WelcomeDescription>
+          <Styled.TitleDescriptionWrapper>
+            <Styled.WelcomeTitle>
+              Welcome to your case dashboard!
+            </Styled.WelcomeTitle>
+            <Styled.WelcomeDescription>
+              Generate informed case recommendations based on historical
+              outcomes customized for each case. Find and suggest customized
+              treatment and diversion opportunities for clients that will aid in
+              their healing and set them up for success in the community.
+            </Styled.WelcomeDescription>
+          </Styled.TitleDescriptionWrapper>
+          <Styled.CloseButton
+            onClick={() => {
+              if (!staffInfo?.hasLoggedIn) {
+                setIsFirstLogin();
+                setShowWelcomeMessage(false);
+              }
+            }}
+          >
+            <CloseIcon />
+          </Styled.CloseButton>
         </Styled.WelcomeMessage>
       )}
 
       {/* List of Cases */}
       <Styled.Cases>
         <CaseListTable
-          headerRow={caseBriefsTableRows.headerRow}
-          rows={caseBriefsTableRows.rows}
+          caseTableData={caseTableData}
           staffPseudoId={staffPseudoId}
         />
       </Styled.Cases>

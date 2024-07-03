@@ -15,24 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import moment from "moment";
+export const sortFullNameByLastName = (a?: string, b?: string) => {
+  if (!a || !b) return 0;
+  const lastNameASplit = a.split(" ");
+  const lastNameBSplit = b.split(" ");
+  const lastNameA = lastNameASplit[lastNameASplit.length - 1];
+  const lastNameB = lastNameBSplit[lastNameBSplit.length - 1];
 
-import { Case } from "../../api";
-import { CLIENT_FULL_NAME_KEY, DUE_DATE_KEY, SortKeys } from "./constants";
-import { ContentRow } from "./types";
-
-const sortDiffByKey =
-  (key: string | keyof Case) => (a: ContentRow, b: ContentRow) => {
-    const valueA = a.row.find((cell) => cell.key === key)?.value;
-    const valueB = b.row.find((cell) => cell.key === key)?.value;
-
-    if (key === DUE_DATE_KEY) {
-      return moment(valueA).diff(moment(valueB));
-    }
-    return valueA && valueB ? valueA.localeCompare(valueB) : 0;
-  };
-
-export const DIFF_FUNCTIONS = {
-  [SortKeys.ClientFullName]: sortDiffByKey(CLIENT_FULL_NAME_KEY),
-  [SortKeys.DueDate]: sortDiffByKey(DUE_DATE_KEY),
+  return lastNameA.localeCompare(lastNameB);
 };

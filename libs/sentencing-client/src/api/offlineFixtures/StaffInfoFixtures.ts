@@ -22,7 +22,7 @@ export const StaffInfoFixture: Staff = {
   fullName: "",
   email: "firstlast@test.com",
   stateCode: "ID",
-  hasLoggedIn: true,
+  hasLoggedIn: false,
   Cases: [
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f913",
@@ -108,12 +108,12 @@ export const StaffInfoFixture: Staff = {
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
         stateCode: "ID",
-        fullName: "Test User 3",
+        fullName: "Anne Teak",
         gender: "FTM",
         county: "Gwynedd County",
         birthDate: new Date("1990-11-13T21:37:16.551Z"),
       },
-      dueDate: new Date("2025-01-11T13:52:20.338Z"),
+      dueDate: new Date("2023-01-11T13:52:20.338Z"),
       completionDate: new Date("2025-02-22T08:00:12.071Z"),
       sentenceDate: new Date("2023-12-16T04:52:18.339Z"),
       assignedDate: new Date("2023-10-20T20:19:13.149Z"),
@@ -121,7 +121,7 @@ export const StaffInfoFixture: Staff = {
       lsirScore: 100,
       lsirLevel: "6584455049248768",
       reportType: "File Review +  Update LSI-R",
-      primaryCharge: "Misdemeanor",
+      primaryCharge: null,
       secondaryCharges: [],
       previouslyIncarceratedOrUnderSupervision: false,
       hasPreviousFelonyConviction: true,

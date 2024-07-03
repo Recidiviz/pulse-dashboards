@@ -93,6 +93,13 @@ export class APIClient {
     return fetchedData;
   }
 
+  async setIsFirstLogin(pseudonymizedId: string) {
+    return await this.trpcClient.staff.updateStaff.mutate({
+      pseudonymizedId,
+      hasLoggedIn: true,
+    });
+  }
+
   async getCaseDetails(caseId: string): Promise<Case> {
     const fetchedData = await this.trpcClient.case.getCase.query({
       id: caseId,

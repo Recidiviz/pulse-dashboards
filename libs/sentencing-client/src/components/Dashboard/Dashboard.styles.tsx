@@ -15,13 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, typography } from "@recidiviz/design-system";
+import { palette, spacing, typography } from "@recidiviz/design-system";
+import { SortDirection } from "@tanstack/react-table";
+import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { customPalette } from "../styles/palette";
+import { CaseStatus } from "./types";
+
+const TABLE_COLUMN_WIDTH = 400;
 
 export const PageContainer = styled.div`
   width: 100%;
   height: 100%;
-  padding: 50px 100px;
+  padding: 16px 24px;
 
   a {
     color: ${palette.text.normal};
@@ -29,51 +36,36 @@ export const PageContainer = styled.div`
 `;
 
 export const WelcomeMessage = styled.div`
+  display: flex;
+  align-items: flex-start;
   background-color: ${palette.marble3};
-  padding: 13px 30px 30px 30px;
-  margin-bottom: 50px;
+  padding: 20px;
+  margin-bottom: 8px;
+  color: ${palette.pine4};
 `;
 
 export const CloseButton = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  height: 20px;
-  position: relative;
-
-  &::before {
-    content: "";
-    width: 1px;
-    height: 14px;
-    background: ${palette.slate70};
-    position: absolute;
-    rotate: 45deg;
-  }
-
-  &::after {
-    content: "";
-    width: 1px;
-    height: 14px;
-    background: ${palette.slate70};
-    position: absolute;
-    rotate: -45deg;
-  }
-
   &:hover {
     cursor: pointer;
   }
 `;
 
+export const TitleDescriptionWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
 export const WelcomeTitle = styled.div`
-  ${typography.Body14}
+  ${typography.Sans16}
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 `;
 
 export const WelcomeDescription = styled.div`
-  ${typography.Body14}
+  ${typography.Sans14}
   margin-bottom: 0;
-  max-width: 80%;
+  max-width: 929px;
 `;
 
 export const Cases = styled.div``;
@@ -87,6 +79,8 @@ export const CaseListContainer = styled.div`
 export const Header = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-bottom: 16px;
+  align-items: flex-end;
 `;
 
 export const TitleWrapper = styled.div`
@@ -114,67 +108,17 @@ export const CaseOverviewItem = styled.div`
   }
 `;
 
-export const Cell = styled.div<{
-  sortable?: boolean;
-  isAscending?: boolean;
-  isActiveSort?: boolean;
-}>`
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding-right: 10px;
-
-  ${({ sortable, isAscending, isActiveSort }) =>
-    sortable &&
-    `
-      &::after {
-        content: "";
-        display: ${isActiveSort ? "block" : "none"};
-        width: 0; 
-        height: 0; 
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        border-${isAscending ? "bottom" : "top"}: 6px solid ${palette.pine2};
-        margin-left: 5px;
-      }
-      
-      &:hover {
-        cursor: pointer;
-      }
-
-      &:hover::after {
-        display: block;
-      }
-    `}
-`;
-
 export const CaseOverviewWrapper = styled.div<{ isHeader?: boolean }>`
   padding: ${({ isHeader }) => (isHeader ? "0" : "18px")} 24px;
   display: grid;
   grid-template-columns: 2fr repeat(4, 1fr) 2fr;
   column-gap: 20px;
-
-  & > ${Cell} {
-    &:first-child {
-      ${({ isHeader }) => !isHeader && `color: ${palette.pine2};`}
-    }
-    align-self: center;
-  }
-
-  & > ${Cell}:last-child {
-    justify-self: flex-end;
-  }
 `;
 
-export const SectionTitle = styled.div`
-  ${typography.Body32}
-  color: ${palette.slate85};
+export const TableTitle = styled.div`
+  ${typography.Serif34}
+  color: ${palette.pine2};
   margin-bottom: 0;
-`;
-
-export const SectionSubtitle = styled.div`
-  ${typography.Body19}
-  margin-bottom: 35px;
 `;
 
 export const Button = styled.button`
@@ -199,14 +143,23 @@ export const DropdownContainer = styled.div`
   position: relative;
 `;
 
+export const DropdownTitle = styled.div`
+  color: ${palette.slate60};
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 8px;
+`;
+
 export const DropdownButton = styled.button<{ isOpen?: boolean }>`
   display: flex;
   align-items: center;
-  width: fit-content;
+  justify-content: space-between;
+  min-width: 160px;
   padding: 12px 16px;
   background-color: transparent;
   border: 1px solid ${palette.slate30};
-  border-radius: 40px;
+  border-radius: 8px;
   color: ${palette.pine3};
   margin-bottom: 1px;
 
@@ -234,7 +187,7 @@ export const Dropdown = styled.div`
   border: 1px solid ${palette.slate30};
   border-radius: 10px;
   position: absolute;
-  top: 44px;
+  top: 67px;
   z-index: 100;
 `;
 
@@ -245,8 +198,6 @@ export const DropdownHeader = styled.div`
 `;
 
 export const ClearButton = styled.div`
-  color: ${palette.text.links};
-
   &:hover {
     cursor: pointer;
   }
@@ -256,13 +207,119 @@ export const DropdownOption = styled.div<{ isNested?: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
+  color: ${palette.pine3};
   ${({ isNested }) => isNested && `margin-left: 20px;`}
 
   input[type="checkbox"] {
-    accent-color: rgba(98, 98, 98, 1);
+    accent-color: ${palette.pine4};
   }
 
   label {
     margin-bottom: unset;
   }
+`;
+
+/** Table */
+
+export const Table = styled.table`
+  width: 100%;
+  text-align: left;
+  border-spacing: 0;
+  border: 1px solid ${customPalette.white.white2};
+`;
+
+export const SortableHeader = styled.div<{ sortable?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: ${rem(spacing.sm)};
+  cursor: ${({ sortable }) => (sortable ? "pointer" : "default")};
+`;
+
+export const TableHeader = styled.thead`
+  background-color: ${customPalette.white.white1};
+`;
+
+export const TableBody = styled.tbody``;
+
+export const Row = styled.tr`
+  color: ${palette.slate80};
+  border-bottom: 1px solid ${customPalette.white.white2};
+
+  & > td:first-child {
+    color: ${palette.pine4};
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+`;
+
+export const HeaderCell = styled.th`
+  padding: 16px;
+  color: ${customPalette.grey.grey3};
+`;
+
+export const Cell = styled.td`
+  width: ${rem(TABLE_COLUMN_WIDTH)};
+  padding: 16px;
+`;
+
+export const PrimaryCharge = styled.div<{ isNotSpecified: boolean }>`
+  ${({ isNotSpecified }) => isNotSpecified && `color: ${palette.slate60};`}
+`;
+
+const statusToCSS = {
+  "Not yet started": `
+    color: rgba(58, 80, 90, 1);
+    background-color: ${palette.slate20};
+  `,
+  "In Progress": `
+    color: rgba(107, 80, 39, 1);
+    background-color: rgba(253, 236, 210, 1);
+  `,
+  Complete: `
+    color: rgba(42, 73, 67, 1);
+    background-color: rgba(204, 242, 235, 1)
+  `,
+  Archived: `
+    color: rgba(20, 28, 65, 1);
+    background-color: rgba(200, 229, 255, 1);
+  `,
+};
+
+export const StatusChip = styled.div<{ status: CaseStatus | "Archived" }>`
+  width: fit-content;
+  border-radius: 100px;
+  padding: 2px 8px;
+  text-transform: capitalize;
+  ${({ status }) => statusToCSS[status]}
+`;
+
+const svgPathFillCSS = `
+  fill-rule: none;
+  fill-opacity: 1 !important;
+  fill: rgb(0, 108, 103, 1);
+`;
+
+export const SortIconWrapper = styled.div<{
+  sortDirection: false | SortDirection;
+}>`
+  ${({ sortDirection }) => {
+    if (sortDirection === "asc") {
+      return `
+          svg > path:first-child {
+            ${svgPathFillCSS}
+          }
+        `;
+    }
+    if (sortDirection === "desc") {
+      return `
+          svg > path:last-child {
+            ${svgPathFillCSS}
+          }
+        `;
+    }
+    return "";
+  }};
 `;
