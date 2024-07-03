@@ -26,7 +26,8 @@ export const usPaSpecialCircumstancesSupervisionConfig: OpportunityConfig<UsPaSp
     label: "Special Circumstances Supervision",
     dynamicEligibilityText:
       "client[|s] may be eligible for transfer to Special Circumstances Supervision",
-    callToAction: "TODO!! (copy not written yet)",
+    callToAction:
+      "Review clients and transfer to administrative supervision caseload",
     firestoreCollection: "US_PA-specialCircumstancesSupervision",
     snooze: {
       defaultSnoozeDays: 30,
