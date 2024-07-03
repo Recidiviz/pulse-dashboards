@@ -42,7 +42,7 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
       },
       ineligibleCriteria: {},
       eligibleCriteria: {
-        negativeUaWithin90Days: {
+        negativeDaWithin90Days: {
           latestUaDates: ["2022-09-08"],
           latestUaResults: [false],
         },
@@ -89,7 +89,7 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
         },
       },
       eligibleCriteria: {
-        negativeUaWithin90Days: {
+        negativeDaWithin90Days: {
           latestUaDates: ["2022-09-08"],
           latestUaResults: [false],
         },
@@ -130,7 +130,7 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
         usIdIncomeVerifiedWithin3Months: null,
       },
       eligibleCriteria: {
-        negativeUaWithin90Days: {
+        negativeDaWithin90Days: {
           latestUaDates: ["2022-09-08"],
           latestUaResults: [false],
         },

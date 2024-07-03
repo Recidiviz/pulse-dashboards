@@ -37,7 +37,7 @@ export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
   keyof LSUEarnedDischargeEligibleCriteria,
   OpportunityRequirement
 > = {
-  negativeUaWithin90Days: {
+  negativeDaWithin90Days: {
     text: "Negative UA within past 90 days",
     tooltip:
       "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
@@ -95,17 +95,17 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   eligibleCriteria: LSUEarnedDischargeEligibleCriteria,
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
-  const { negativeUaWithin90Days, noFelonyWithin24Months } = eligibleCriteria;
+  const { negativeDaWithin90Days, noFelonyWithin24Months } = eligibleCriteria;
 
-  if (!some(negativeUaWithin90Days?.latestUaResults)) {
+  if (!some(negativeDaWithin90Days?.latestUaResults)) {
     // TODO(#2468): Reassess how to indicate no UA required
-    if (negativeUaWithin90Days.latestUaDates.length === 0) {
+    if (negativeDaWithin90Days.latestUaDates.length === 0) {
       requirements.push({
         text: "No UA needed",
-        tooltip: LSU_CRITERIA.negativeUaWithin90Days.tooltip,
+        tooltip: LSU_CRITERIA.negativeDaWithin90Days.tooltip,
       });
     } else {
-      requirements.push(LSU_CRITERIA.negativeUaWithin90Days);
+      requirements.push(LSU_CRITERIA.negativeDaWithin90Days);
     }
   }
 

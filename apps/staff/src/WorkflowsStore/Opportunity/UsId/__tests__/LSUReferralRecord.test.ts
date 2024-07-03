@@ -29,7 +29,7 @@ test("transform record", () => {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: {
+      negativeDaWithin90Days: {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
@@ -89,7 +89,7 @@ test("optional criteria have sane fallbacks", () => {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: null,
+      negativeDaWithin90Days: null,
       noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
@@ -120,7 +120,7 @@ test("can transform record with eligible and ineligible criteria", () => {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: {
+      negativeDaWithin90Days: {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },

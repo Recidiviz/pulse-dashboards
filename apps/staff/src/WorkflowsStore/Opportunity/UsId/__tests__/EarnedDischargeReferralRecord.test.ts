@@ -28,7 +28,7 @@ test("transform dual/parole record", () => {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: {
+      negativeDaWithin90Days: {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
@@ -67,7 +67,7 @@ test("transform probation record", () => {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: {
+      negativeDaWithin90Days: {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
@@ -106,7 +106,7 @@ test("optional criteria have sane fallbacks", () => {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: null,
+      negativeDaWithin90Days: null,
       noFelonyWithin24Months: null,
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
@@ -138,7 +138,7 @@ test("transforms records with eligible and ineligible criteria", () => {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: null,
+      negativeDaWithin90Days: null,
       noFelonyWithin24Months: null,
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",
@@ -183,7 +183,7 @@ test("formInformation parses", () => {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
       },
-      negativeUaWithin90Days: null,
+      negativeDaWithin90Days: null,
       noFelonyWithin24Months: null,
       supervisionNotPastFullTermCompletionDate: {
         eligibleDate: "2025-06-19",

@@ -25,7 +25,7 @@ import { CopyTuple } from "../utils/criteriaUtils";
 export const sentenceTypeSchema = z.enum(["PROBATION", "PAROLE", "DUAL"]);
 
 export const eligibleCriteriaLsuED = z.object({
-  negativeUaWithin90Days: defaultOnNull(
+  negativeDaWithin90Days: defaultOnNull(
     z.object({
       latestUaDates: z.array(dateStringSchema),
       latestUaResults: z.array(z.boolean()),

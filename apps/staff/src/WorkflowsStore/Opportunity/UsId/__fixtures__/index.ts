@@ -65,7 +65,7 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
       riskLevel: "LOW",
       eligibleDate: parseISO("2022-01-03"),
     },
-    negativeUaWithin90Days: {
+    negativeDaWithin90Days: {
       latestUaDates: [parseISO("2022-05-28")],
       latestUaResults: [false],
     },
@@ -127,7 +127,7 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecord = {
       riskLevel: "LOW",
       eligibleDate: parseISO("2022-01-03"),
     },
-    negativeUaWithin90Days: {
+    negativeDaWithin90Days: {
       latestUaDates: [parseISO("2022-05-28")],
       latestUaResults: [false],
     },
@@ -176,7 +176,7 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
         riskLevel: "MODERATE",
         eligibleDate: parseISO("2022-01-03"),
       },
-      negativeUaWithin90Days: {
+      negativeDaWithin90Days: {
         latestUaDates: [parseISO("2022-05-28")],
         latestUaResults: [false],
       },
@@ -221,7 +221,7 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
         riskLevel: "MODERATE",
         eligibleDate: parseISO("2022-01-03"),
       },
-      negativeUaWithin90Days: {
+      negativeDaWithin90Days: {
         latestUaDates: [parseISO("2022-05-28")],
         latestUaResults: [false],
       },

@@ -203,7 +203,7 @@ describe("no UA required", () => {
     referralSub = opp.referralSubscription;
     referralSub.hydrationState = { status: "hydrated" };
     const record = LSUReferralRecordFixture;
-    record.eligibleCriteria.negativeUaWithin90Days = {
+    record.eligibleCriteria.negativeDaWithin90Days = {
       latestUaDates: [],
       latestUaResults: [],
     };
