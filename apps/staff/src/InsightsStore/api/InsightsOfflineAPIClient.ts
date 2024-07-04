@@ -24,7 +24,10 @@ import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { LATEST_END_DATE } from "../models/offlineFixtures/constants";
 import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
@@ -109,6 +112,20 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     );
 
     return supervisionOfficerFixture.filter((o) =>
+      o.supervisorExternalIds
+        .map((i) => `hashed-${i}`)
+        .includes(supervisorPseudoId),
+    );
+  }
+
+  async excludedOfficersForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<ExcludedSupervisionOfficer>> {
+    const { excludedSupervisionOfficerFixture } = await import(
+      "../models/offlineFixtures/ExcludedSupervisionOfficerFixture"
+    );
+
+    return excludedSupervisionOfficerFixture.filter((o) =>
       o.supervisorExternalIds
         .map((i) => `hashed-${i}`)
         .includes(supervisorPseudoId),

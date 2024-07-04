@@ -19,7 +19,10 @@ import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { InsightsConfig } from "../models/InsightsConfig";
 import { MetricBenchmark } from "../models/MetricBenchmark";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
@@ -37,6 +40,9 @@ export interface InsightsAPI {
   officersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>>;
+  excludedOfficersForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<ExcludedSupervisionOfficer>>;
   supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer>;
   supervisionOfficerMetricEvents(
     officerPseudoId: string,

@@ -252,7 +252,11 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               {infoItems.map(
                 (item) =>
                   item.info && (
-                    <InsightsTooltip key={item.title} contents={item.tooltip}>
+                    <InsightsTooltip
+                      key={item.title}
+                      contents={item.tooltip}
+                      maxWidth={235}
+                    >
                       <InfoItem
                         data-intercom-target={
                           item.title === "staff" ? "Roster" : undefined

@@ -31,7 +31,10 @@ import { ClientInfo } from "../models/ClientInfo";
 import { InsightsConfig } from "../models/InsightsConfig";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
@@ -44,6 +47,11 @@ export class InsightsSupervisionStore {
   userInfo?: UserInfo;
 
   officersBySupervisorPseudoId: Map<string, SupervisionOfficer[]> = new Map();
+
+  excludedOfficersBySupervisorPseudoId: Map<
+    string,
+    ExcludedSupervisionOfficer[]
+  > = new Map();
 
   supervisorPseudoId?: string;
 
@@ -312,6 +320,26 @@ export class InsightsSupervisionStore {
 
     if (officersData.length > 0)
       this.officersBySupervisorPseudoId.set(supervisorPseudoId, officersData);
+  }
+
+  /**
+   * Fetches excluded officer data for the specified supervisor
+   */
+  *populateExcludedOfficersForSupervisor(
+    supervisorPseudoId: string,
+  ): FlowMethod<InsightsAPI["excludedOfficersForSupervisor"], void> {
+    if (this.excludedOfficersBySupervisorPseudoId.has(supervisorPseudoId))
+      return;
+
+    const excludedOfficersData =
+      yield this.insightsStore.apiClient.excludedOfficersForSupervisor(
+        supervisorPseudoId,
+      );
+
+    this.excludedOfficersBySupervisorPseudoId.set(
+      supervisorPseudoId,
+      excludedOfficersData,
+    );
   }
 
   setSupervisorPseudoId(supervisorPseudoId: string | undefined): void {

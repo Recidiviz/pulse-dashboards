@@ -25,6 +25,8 @@ import {
   metricBenchmarkSchema,
 } from "../models/MetricBenchmark";
 import {
+  ExcludedSupervisionOfficer,
+  excludedSupervisionOfficerSchema,
   SupervisionOfficer,
   supervisionOfficerSchema,
 } from "../models/SupervisionOfficer";
@@ -107,6 +109,15 @@ export class InsightsAPIClient implements InsightsAPI {
     const fetchedData = await this.apiStore.get(endpoint);
     const officerData = fetchedData.officers as Array<unknown>;
     return officerData.map((b) => supervisionOfficerSchema.parse(b));
+  }
+
+  async excludedOfficersForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<ExcludedSupervisionOfficer>> {
+    const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/excluded_officers`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const officerData = fetchedData.officers as Array<unknown>;
+    return officerData.map((b) => excludedSupervisionOfficerSchema.parse(b));
   }
 
   async supervisionOfficer(

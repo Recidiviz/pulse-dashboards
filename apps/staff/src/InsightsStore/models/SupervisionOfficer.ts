@@ -22,14 +22,17 @@ import { fullNameSchema } from "~datatypes";
 import { addDisplayName } from "./schemaHelpers";
 import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
 
-export const supervisionOfficerSchema = z
-  .object({
-    fullName: fullNameSchema,
-    externalId: z.string(),
-    district: z.string().nullable(),
-    caseloadType: z.string().nullable(),
-    pseudonymizedId: z.string(),
-    supervisorExternalIds: z.array(z.string()),
+const supervisionOfficerBaseSchema = z.object({
+  fullName: fullNameSchema,
+  externalId: z.string(),
+  district: z.string().nullable(),
+  caseloadType: z.string().nullable(),
+  pseudonymizedId: z.string(),
+  supervisorExternalIds: z.array(z.string()),
+});
+
+export const supervisionOfficerSchema = supervisionOfficerBaseSchema
+  .extend({
     outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
     topXPctMetrics: z.array(
       z.object({
@@ -40,5 +43,14 @@ export const supervisionOfficerSchema = z
   })
   .transform(addDisplayName);
 
+export const excludedSupervisionOfficerSchema =
+  supervisionOfficerBaseSchema.transform(addDisplayName);
+
 export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
 export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;
+export type ExcludedSupervisionOfficer = z.infer<
+  typeof excludedSupervisionOfficerSchema
+>;
+export type RawExcludedSupervisionOfficer = z.input<
+  typeof excludedSupervisionOfficerSchema
+>;

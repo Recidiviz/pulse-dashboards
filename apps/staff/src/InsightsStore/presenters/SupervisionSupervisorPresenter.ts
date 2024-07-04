@@ -25,7 +25,10 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
@@ -56,11 +59,17 @@ export class SupervisionSupervisorPresenter implements Hydratable {
           flowResult(
             this.supervisionStore.populateSupervisionOfficerSupervisors(),
           ),
+          flowResult(
+            this.supervisionStore.populateExcludedOfficersForSupervisor(
+              this.supervisorPseudoId,
+            ),
+          ),
         ]);
       },
       expectPopulated: [
         this.expectMetricsPopulated,
         this.expectOfficersPopulated,
+        this.expectExcludedOfficersPopulated,
         this.expectSupervisorPopulated,
         this.expectOutlierDataPopulated,
       ],
@@ -120,10 +129,20 @@ export class SupervisionSupervisorPresenter implements Hydratable {
   }
 
   /**
-   * Provides a list of all officers that are in this supervisor's unit
+   * Provides a list of all officers in this supervisor's unit that were not
+   * explicitly excluded from outcomes
    */
   get allOfficers(): SupervisionOfficer[] | undefined {
     return this.supervisionStore.officersBySupervisorPseudoId.get(
+      this.supervisorPseudoId,
+    );
+  }
+
+  /**
+   * Provides a list of all officers excluded from outcomes in this supervisor's unit
+   */
+  get excludedOfficers(): ExcludedSupervisionOfficer[] | undefined {
+    return this.supervisionStore.excludedOfficersBySupervisorPseudoId.get(
       this.supervisorPseudoId,
     );
   }
@@ -219,6 +238,15 @@ export class SupervisionSupervisorPresenter implements Hydratable {
       )
     )
       throw new Error("failed to populate officers");
+  }
+
+  private expectExcludedOfficersPopulated() {
+    if (
+      !this.supervisionStore.excludedOfficersBySupervisorPseudoId.has(
+        this.supervisorPseudoId,
+      )
+    )
+      throw new Error("failed to populate excluded officers");
   }
 
   private expectSupervisorPopulated() {

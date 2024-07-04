@@ -29,6 +29,7 @@ import {
   CASELOAD_TYPE_IDS,
   LATEST_END_DATE,
 } from "../../models/offlineFixtures/constants";
+import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
 import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
@@ -215,6 +216,26 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   expect(
     store.officersBySupervisorPseudoId.get(testSupervisorPseudoId),
   ).toEqual(expect.arrayContaining(supervisionOfficerFixture.slice(0, 2)));
+});
+
+test("hydrate excludedSupervisionOfficers for supervisor", async () => {
+  const testSupervisorPseudoId =
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
+  expect(
+    store.excludedOfficersBySupervisorPseudoId.has(testSupervisorPseudoId),
+  ).toBeFalse();
+
+  await expect(
+    flowResult(
+      store.populateExcludedOfficersForSupervisor(testSupervisorPseudoId),
+    ),
+  ).resolves.not.toThrow();
+
+  expect(
+    store.excludedOfficersBySupervisorPseudoId.get(testSupervisorPseudoId),
+  ).toEqual(
+    expect.arrayContaining(excludedSupervisionOfficerFixture.slice(0, 2)),
+  );
 });
 
 test("userCanAccessAllSupervisors with missing route", () => {

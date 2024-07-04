@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
+import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
@@ -41,6 +42,17 @@ const HighlightedDescription = styled.span`
   border-bottom: 1px dashed ${palette.slate85};
 `;
 
+const OfficersTooltipHeading = styled.div`
+  color: ${palette.white80};
+  font-size: 12px;
+  margin-bottom: ${rem(spacing.sm)};
+  letter-spacing: 0.05em;
+`;
+
+const ExcludedOfficersTooltipHeading = styled(OfficersTooltipHeading)`
+  margin-top: ${rem(spacing.md)};
+`;
+
 const SupervisorPageV2 = observer(function SupervisorPageV2({
   presenter,
 }: {
@@ -53,11 +65,42 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     supervisorInfo,
     outlierOfficersData,
     allOfficers,
+    excludedOfficers,
     userCanAccessAllSupervisors,
     timePeriod,
     labels,
     outlierOfficersByMetric,
   } = presenter;
+
+  const tooltipContents = (
+    <>
+      {allOfficers && (
+        <>
+          <OfficersTooltipHeading>INCLUDED IN OUTCOMES</OfficersTooltipHeading>
+          <div>
+            {allOfficers.map((officer) => (
+              <div key={officer.pseudonymizedId}>{officer.displayName}</div>
+            ))}
+          </div>
+        </>
+      )}
+      {!!excludedOfficers?.length && (
+        <>
+          <ExcludedOfficersTooltipHeading>
+            EXCLUDED FROM OUTCOMES
+          </ExcludedOfficersTooltipHeading>
+          <div>
+            {excludedOfficers.map((officer) => (
+              <div key={officer.pseudonymizedId}>{officer.displayName}</div>
+            ))}
+          </div>
+        </>
+      )}
+    </>
+  );
+
+  const numOfficers =
+    (excludedOfficers?.length || 0) + (allOfficers?.length || 0);
 
   const infoItems = [
     {
@@ -69,10 +112,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     },
     {
       title: "team",
-      info: `${pluralize(allOfficers?.length ?? 0, toTitleCase(labels.supervisionOfficerLabel))}`,
-      tooltip: allOfficers?.map((officer) => (
-        <div key={officer.pseudonymizedId}>{officer.displayName}</div>
-      )),
+      info: `${pluralize(numOfficers, toTitleCase(labels.supervisionOfficerLabel))}`,
+      tooltip: tooltipContents,
     },
   ];
 
