@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { z } from "zod";
 
-import { router, sentryProcedure } from "~sentencing-server/trpc/init";
+import { baseProcedure, router } from "~sentencing-server/trpc/init";
 
 const getStaffInputSchema = z.object({
   pseudonymizedId: z.string(),
@@ -15,7 +15,7 @@ const updateStaffSchema = z.object({
 });
 
 export const staffRouter = router({
-  getStaff: sentryProcedure
+  getStaff: baseProcedure
     .input(getStaffInputSchema)
     .query(async ({ input: { pseudonymizedId }, ctx: { prisma } }) => {
       const staff = await prisma.staff.findUnique({
@@ -58,7 +58,7 @@ export const staffRouter = router({
         ),
       };
     }),
-  updateStaff: sentryProcedure
+  updateStaff: baseProcedure
     .input(updateStaffSchema)
     .mutation(
       async ({ input: { pseudonymizedId, hasLoggedIn }, ctx: { prisma } }) => {

@@ -1,14 +1,14 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 
-import { router, sentryProcedure } from "~sentencing-server/trpc/init";
+import { baseProcedure, router } from "~sentencing-server/trpc/init";
 import {
   getCaseInputSchema,
   updateCaseSchema,
 } from "~sentencing-server/trpc/routes/case/case.schema";
 
 export const caseRouter = router({
-  getCase: sentryProcedure
+  getCase: baseProcedure
     .input(getCaseInputSchema)
     .query(async ({ input: { id }, ctx: { prisma } }) => {
       const caseData = await prisma.case.findUnique({
@@ -31,7 +31,7 @@ export const caseRouter = router({
 
       return caseData;
     }),
-  updateCase: sentryProcedure
+  updateCase: baseProcedure
     .input(updateCaseSchema)
     .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
       try {

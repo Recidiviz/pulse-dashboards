@@ -73,14 +73,5 @@ export function buildServer() {
     },
   );
 
-  // TODO(#29827) - implement Auth0 token validation
-  // server.addHook("onRequest", async (request, reply) => {
-  //   try {
-  //     await request.jwtVerify();
-  //   } catch (err) {
-  //     reply.send(err);
-  //   }
-  // });
-
   return server;
 }

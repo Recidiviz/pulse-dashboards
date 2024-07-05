@@ -4,36 +4,50 @@ import {
   httpBatchLink,
 } from "@trpc/client";
 import superjson from "superjson";
-import { beforeAll, beforeEach } from "vitest";
+import { beforeAll, beforeEach, vi } from "vitest";
 
 import { buildServer } from "~sentencing-server/server";
 import { seed } from "~sentencing-server/test/setup/seed";
 import { AppRouter } from "~sentencing-server/trpc/router";
 
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3003;
+export const testPort = process.env["PORT"]
+  ? Number(process.env["PORT"])
+  : 3003;
+export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
 export let testServer: ReturnType<typeof buildServer>;
 
 beforeAll(async () => {
-  const host = process.env["HOST"] ?? "localhost";
-
   testServer = buildServer();
 
+  // Override he jwtVerify function to always pass
+  testServer.addHook("preHandler", (req, reply, done) => {
+    req.jwtVerify = vi.fn(async () => {
+      return "";
+    });
+    done();
+  });
+
   // Start listening.
-  testServer.listen({ port, host }, (err) => {
+  testServer.listen({ port: testPort, host: testHost }, (err) => {
     if (err) {
       testServer.log.error(err);
       process.exit(1);
     } else {
-      console.log(`[ ready ] http://${host}:${port}`);
+      console.log(`[ ready ] http://${testHost}:${testPort}`);
     }
   });
 
   testTRPCClient = createTRPCProxyClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: "http://localhost:3003",
+        url: `http://${testHost}:${testPort}`,
+        headers() {
+          return {
+            Authorization: "Bearer test-token",
+          };
+        },
       }),
     ],
     // Required to get Date objects to serialize correctly.
