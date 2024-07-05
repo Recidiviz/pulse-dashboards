@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import { when } from "mobx";
+import { runInAction, when } from "mobx";
 import superjson from "superjson";
 
 // Don't import this via type alias, otherwise it will make the whole app a dependency
@@ -38,10 +38,18 @@ export type Client = Staff["Cases"][number]["Client"];
 export type CaseWithClient = Case & { Client: Client };
 
 export class APIClient {
-  client: tRPCClient;
+  client?: tRPCClient;
 
   constructor(public readonly psiStore: PSIStore) {
-    this.client = this.initTRPCClient();
+    when(
+      () => !!this.psiStore.rootStore.userStore.getToken,
+      async () => {
+        const client = await this.initTRPCClient();
+        runInAction(() => {
+          this.client = client;
+        });
+      },
+    );
   }
 
   private get baseUrl(): string {
@@ -52,17 +60,16 @@ export class APIClient {
     return this.client;
   }
 
-  initTRPCClient(): tRPCClient {
+  async initTRPCClient(): Promise<tRPCClient> {
     if (this.client) return this.client;
-    const requestHeaders = this.getRequestHeaders();
+    const requestHeaders = await this.getRequestHeaders();
+
     return createTRPCProxyClient<AppRouter>({
       links: [
         httpBatchLink({
           url: this.baseUrl,
           async headers() {
-            return {
-              authorization: JSON.stringify(requestHeaders),
-            };
+            return requestHeaders;
           },
         }),
       ],
@@ -73,7 +80,6 @@ export class APIClient {
 
   async getRequestHeaders(): Promise<{ [key: string]: string }> {
     const userStore = this.psiStore.rootStore.userStore;
-    await when(() => !!userStore.getToken);
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const token = await userStore.getToken!();
 
@@ -84,6 +90,8 @@ export class APIClient {
   }
 
   async getStaffInfo(): Promise<Staff> {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
     if (!this.psiStore.staffPseudoId)
       return Promise.reject({ message: "No staff pseudo id found" });
 
@@ -94,6 +102,8 @@ export class APIClient {
   }
 
   async setIsFirstLogin(pseudonymizedId: string) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
     return await this.trpcClient.staff.updateStaff.mutate({
       pseudonymizedId,
       hasLoggedIn: true,
@@ -101,6 +111,9 @@ export class APIClient {
   }
 
   async getCaseDetails(caseId: string): Promise<Case> {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
     const fetchedData = await this.trpcClient.case.getCase.query({
       id: caseId,
     });

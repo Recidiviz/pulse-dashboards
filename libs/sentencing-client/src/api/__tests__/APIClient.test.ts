@@ -66,9 +66,19 @@ test("getRequestHeaders returns expected request headers with Auth0 token", asyn
   });
 });
 
+test("should throw an error if tRPC client is undefined", async () => {
+  const psiStore = createMockPSIStore(null);
+  const apiClient = new APIClient(psiStore);
+
+  await expect(apiClient.getStaffInfo()).rejects.toEqual({
+    message: "No tRPC client initialized",
+  });
+});
+
 test("should throw an error if staffPseudoId is undefined", async () => {
   const psiStore = createMockPSIStore(null);
   const apiClient = new APIClient(psiStore);
+  await apiClient.initTRPCClient();
 
   await expect(apiClient.getStaffInfo()).rejects.toEqual({
     message: "No staff pseudo id found",
