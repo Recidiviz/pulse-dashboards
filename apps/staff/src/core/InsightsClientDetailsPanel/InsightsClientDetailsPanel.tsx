@@ -131,13 +131,9 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
 }: InsightsClientDetailsPanelProps) {
   const { isMobile } = useIsMobile(true);
   const {
-    tenantStore,
     insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
   } = useRootStore();
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
-
-  const isInsightsLanternState =
-    tenantStore && tenantStore.insightsLanternState;
 
   const {
     clientInfo,
@@ -149,7 +145,9 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
     eventsLabelSingular,
     outcomeDate,
     labels,
+    isInsightsLanternState,
   } = presenter;
+
   const [modalIsOpen, setModalIsOpen] = useState(Boolean(clientPseudoId));
   const navigate = useNavigate();
   const location = useLocation();

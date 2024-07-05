@@ -191,12 +191,23 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return this.supervisionStore.labels;
   }
 
+  get ctaText() {
+    const { labels, isInsightsLanternState } = this;
+    return {
+      insightsLanternStateCaseLearnMore: `${isInsightsLanternState ? `Click on a ${labels.supervisionJiiLabel} to see more information about this case, such as how long they had been with this ${labels.supervisionOfficerLabel} and more.` : ``}`,
+    };
+  }
+
   get timePeriod(): string | undefined {
     return this.supervisionStore?.benchmarksTimePeriod;
   }
 
   get areCaseloadTypeBreakdownsEnabled() {
     return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
+  }
+
+  get isInsightsLanternState(): boolean {
+    return this.supervisionStore.isInsightsLanternState;
   }
 
   private expectOfficerPopulated() {

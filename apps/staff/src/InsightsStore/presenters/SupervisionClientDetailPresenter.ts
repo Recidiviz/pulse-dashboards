@@ -123,6 +123,10 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     return this.supervisionStore.labels;
   }
 
+  get isInsightsLanternState(): boolean {
+    return this.supervisionStore.isInsightsLanternState;
+  }
+
   get supervisionDetails(): SupervisionDetails | undefined {
     const metricEvents =
       this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId

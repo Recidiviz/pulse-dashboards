@@ -69,6 +69,7 @@ export const MetricPageWithPresenter = observer(
       labels,
       methodologyUrl,
       userCanAccessAllSupervisors,
+      ctaText,
     } = presenter;
 
     const supervisorLinkProps = goToSupervisorInfo && {
@@ -143,6 +144,7 @@ export const MetricPageWithPresenter = observer(
       eventNameSingular,
       eventNamePastTense,
       bodyDisplayName,
+      descriptionMarkdown,
     } = metric.config;
 
     const secondToLastDateHint = secondToLastDate
@@ -159,13 +161,20 @@ export const MetricPageWithPresenter = observer(
         }’s rate for a full year, but starting a month earlier.`
       : "";
 
-    const modalText =
+    const listLearnMoreText =
       eventName === "program starts"
         ? `This is the list of clients on this agents caseload who have had no program start and are therefore being counted in this metric.<br><br>
-               The name of the client and their CDCR ID is included as well.`
+               The name of the client and their CDCR ID is included as well.
+          ${ctaText.insightsLanternStateCaseLearnMore}`
         : `This is the list of ${eventNameSingular} events which are being counted in the numerator of this metric.<br><br>
-              The name of the ${labels.supervisionJiiLabel}, their ${labels.docLabel} ID, and the date of the ${eventNameSingular} are listed within this table. <br><br>
-              Click on a ${labels.supervisionJiiLabel} to see more information about this case, such as how long they had been with this ${labels.supervisionOfficerLabel} and more.`;
+              The name of the ${labels.supervisionJiiLabel}, their ${labels.docLabel} ID, and the date of the ${eventNameSingular} are listed within this table.<br><br>
+              ${ctaText.insightsLanternStateCaseLearnMore}`;
+
+    const dotPlotLearnMoreText = `This plot shows the selected ${labels.supervisionOfficerLabel} and all other ${labels.supervisionOfficerLabel}s in the state based on their rate for this metric.<br><br>
+        This rate is calculated by taking the total number of ${eventName} on this ${labels.supervisionOfficerLabel}'s caseload in the past 12 months and dividing it by the ${labels.supervisionOfficerLabel}'s average daily caseload.<br><br>
+        ${descriptionMarkdown}<br><br>
+        As a result, this rate can be over 100%. For example, if 60 ${labels.supervisionJiiLabel}s on an ${labels.supervisionOfficerLabel}’s caseload ${eventNamePastTense} in the past 12 months, and their average daily caseload was 50 ${eventName}, the rate would be 120%.
+            `;
 
     return (
       <InsightsPageLayout
@@ -216,7 +225,7 @@ export const MetricPageWithPresenter = observer(
               infoModal={
                 <InsightsInfoModalV2
                   title={`List of ${toTitleCase(eventName)}`}
-                  copy={`${modalText}`}
+                  copy={`${listLearnMoreText}`}
                   methodologyLink={methodologyUrl}
                 />
               }
@@ -236,9 +245,7 @@ export const MetricPageWithPresenter = observer(
               infoModal={
                 <InsightsInfoModalV2
                   title="Rate Compared to State"
-                  copy={`This plot shows the selected ${labels.supervisionOfficerLabel} and all other ${labels.supervisionOfficerLabel}s in the state based on their rate for this metric. <br><br>
-                        This rate is calculated by taking the total number of ${eventName} on this ${labels.supervisionOfficerLabel}'s caseload in the past 12 months and dividing it by the ${labels.supervisionOfficerLabel}'s average daily caseload. <br><br>
-                        For example, if 25 ${labels.supervisionJiiLabel}s on an ${labels.supervisionOfficerLabel}'s caseload ${eventNamePastTense} in the past 12 months, and the ${labels.supervisionOfficerLabel} had an average daily caseload of 50 ${labels.supervisionJiiLabel}s, their ${bodyDisplayName} would appear as 50% in this tool. As a result, this rate can be over 100%.`}
+                  copy={dotPlotLearnMoreText}
                   methodologyLink={methodologyUrl}
                 />
               }

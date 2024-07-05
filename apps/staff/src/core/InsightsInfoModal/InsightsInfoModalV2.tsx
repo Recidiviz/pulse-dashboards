@@ -84,12 +84,6 @@ const ModalTitle = styled.div`
   color: ${palette.pine1};
 `;
 
-const ModalSubtitle = styled.div`
-  ${typography.Sans16}
-  color: ${palette.pine1};
-  margin-top: ${rem(spacing.lg)};
-`;
-
 const StyledMarkdownView = styled(MarkdownView)`
   p {
     ${typography.Sans14}
@@ -210,7 +204,6 @@ const InsightsInfoModalV2: React.FC<InsightsInfoModalType> = ({
           <ModalBody>
             <ModalTitle>{title}</ModalTitle>
             {description && <StyledMarkdownView markdown={description} />}
-            <ModalSubtitle>Methodology</ModalSubtitle>
             <StyledMarkdownView markdown={copy} />
             {methodologyLink && (
               <div>

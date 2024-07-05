@@ -295,13 +295,6 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                       <InsightsInfoModalV2
                         title={toTitleCase(generalMetricConfig.eventName)}
                         copy={generalMetricConfig.descriptionMarkdown}
-                        description={`${officersForMetric
-                          .map((officer) => officer.fullName.givenNames)
-                          .join(", ")
-                          .replace(
-                            /, ([^,]*)$/,
-                            " and $1",
-                          )} ${officersForMetric.length > 1 ? "have" : "has"} a **significantly higher rate of ${toTitleCase(generalMetricConfig.eventName)} compared to the statewide rate.**`}
                         methodologyLink={methodologyUrl}
                         buttonText="Learn More"
                       />

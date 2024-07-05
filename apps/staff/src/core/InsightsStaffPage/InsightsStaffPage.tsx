@@ -159,6 +159,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     methodologyUrl,
     trackMetricViewed,
     goToSupervisorInfo,
+    ctaText,
   } = presenter;
 
   useEffect(() => {
@@ -333,10 +334,11 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           const modalText =
             eventName === "program starts"
               ? `This is the list of clients on this agents caseload who have had no program start and are therefore being counted in this metric.<br><br>
-               The name of the client and their CDCR ID is included as well.`
+               The name of the client and their CDCR ID is included as well.
+              ${ctaText.insightsLanternStateCaseLearnMore}`
               : `This is the list of ${eventNameSingular} events which are being counted in the numerator of this metric.<br><br>
               The name of the ${labels.supervisionJiiLabel}, their ${labels.docLabel} ID, and the date of the ${eventNameSingular} are listed within this table. <br><br>
-              Click on a ${labels.supervisionJiiLabel} to see more information about this case, such as how long they had been with this ${labels.supervisionOfficerLabel} and more.`;
+              ${ctaText.insightsLanternStateCaseLearnMore}`;
 
           return (
             <StyledTabPanel key={metric.metricId}>

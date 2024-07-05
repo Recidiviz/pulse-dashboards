@@ -268,6 +268,11 @@ export class InsightsSupervisionStore {
     };
   }
 
+  get isInsightsLanternState(): boolean {
+    const { tenantStore } = this.insightsStore.rootStore;
+    return tenantStore && tenantStore.insightsLanternState;
+  }
+
   get eventLabels(): string[] {
     return this.config.metrics.map((metric) => metric.eventNameSingular);
   }

@@ -94,7 +94,10 @@ export const InsightsConfigFixture: InsightsConfig = {
       eventNameSingular: "program start",
       eventNamePastTense: "program started",
       outcomeType: "FAVORABLE",
-      descriptionMarkdown: dedent`**Description place holder.`,
+      descriptionMarkdown: dedent`**All reported program starts that exist in PVDTS**, as captured in the data we receive for all supervision levels except for CATEGORY D, DEPORTED and PENDING DEPORT, in a given time period.
+      
+      <br />
+      **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.`,
       topXPct: 10,
     },
   ],
