@@ -1,5 +1,6 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
+import _ from "lodash";
 
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
 import {
@@ -20,6 +21,14 @@ export const caseRouter = router({
           staffId: true,
           clientId: true,
         },
+        include: {
+          recommendedOpportunities: {
+            select: {
+              opportunityName: true,
+              providerPhoneNumber: true,
+            },
+          },
+        },
       });
 
       if (!caseData) {
@@ -39,7 +48,16 @@ export const caseRouter = router({
           where: {
             id,
           },
-          data: attributes,
+          data: {
+            ..._.omit(attributes, ["recommendedOpportunities"]),
+            recommendedOpportunities: {
+              connect: attributes.recommendedOpportunities?.map(
+                (opportunity) => ({
+                  opportunityName_providerPhoneNumber: opportunity,
+                }),
+              ),
+            },
+          },
         });
       } catch (e) {
         if (e instanceof PrismaClientKnownRequestError && e.code === "P2025") {

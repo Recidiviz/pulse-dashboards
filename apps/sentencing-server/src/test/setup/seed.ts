@@ -1,29 +1,31 @@
 import { faker } from "@faker-js/faker";
 import {
-  Case,
   CaseRecommendation,
   CaseStatus,
   Charge,
-  Client,
   Plea,
-  Staff,
   StateCode,
   SubstanceUseDiagnosis,
   VeteranStatus,
 } from "@prisma/client";
 
 import { prismaClient } from "~sentencing-server/prisma";
+import {
+  CaseCreateInput,
+  ClientCreateInput,
+  StaffCreateInput,
+} from "~sentencing-server/test/setup/types";
 
-export const fakeStaff: Staff = {
+export const fakeStaff = {
   externalId: "staff-ext-1",
   pseudonymizedId: "staff-pid-1",
   fullName: faker.person.fullName(),
   email: faker.internet.email(),
   stateCode: StateCode.ID,
   hasLoggedIn: faker.datatype.boolean(),
-};
+} satisfies StaffCreateInput;
 
-export const fakeClient: Client = {
+export const fakeClient = {
   externalId: "client-ext-1",
   pseudonymizedId: "client-pid-1",
   fullName: faker.person.fullName(),
@@ -31,9 +33,9 @@ export const fakeClient: Client = {
   gender: faker.person.gender(),
   county: faker.location.county(),
   birthDate: faker.date.birthdate(),
-};
+} satisfies ClientCreateInput;
 
-export const fakeCase: Omit<Case, "staffId" | "clientId"> = {
+export const fakeCase = {
   externalId: "case-ext-1",
   id: "case-1",
   stateCode: StateCode.ID,
@@ -64,7 +66,7 @@ export const fakeCase: Omit<Case, "staffId" | "clientId"> = {
   otherNeedToBeAddressed: null,
   status: faker.helpers.enumValue(CaseStatus),
   selectedRecommendation: faker.helpers.enumValue(CaseRecommendation),
-};
+} satisfies CaseCreateInput;
 
 export async function seed() {
   console.log("Seeding database");

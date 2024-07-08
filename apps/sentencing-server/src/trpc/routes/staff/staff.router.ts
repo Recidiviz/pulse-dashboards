@@ -1,18 +1,12 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
-import { z } from "zod";
 
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
-
-const getStaffInputSchema = z.object({
-  pseudonymizedId: z.string(),
-});
-
-const updateStaffSchema = z.object({
-  pseudonymizedId: z.string(),
-  hasLoggedIn: z.boolean(),
-});
+import {
+  getStaffInputSchema,
+  updateStaffSchema,
+} from "~sentencing-server/trpc/routes/staff/staff.schema";
 
 export const staffRouter = router({
   getStaff: baseProcedure
@@ -36,6 +30,12 @@ export const staffRouter = router({
               Client: {
                 omit: {
                   externalId: true,
+                },
+              },
+              recommendedOpportunities: {
+                select: {
+                  opportunityName: true,
+                  providerPhoneNumber: true,
                 },
               },
             },

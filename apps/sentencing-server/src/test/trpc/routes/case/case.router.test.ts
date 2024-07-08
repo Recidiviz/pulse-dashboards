@@ -12,7 +12,9 @@ describe("case router", () => {
         id: fakeCase.id,
       });
 
-      expect(returnedCase).toEqual(_.omit(fakeCase, "externalId"));
+      expect(returnedCase).toEqual(
+        _.omit({ ...fakeCase, recommendedOpportunities: [] }, "externalId"),
+      );
     });
 
     test("should throw error if case does not exist", async () => {

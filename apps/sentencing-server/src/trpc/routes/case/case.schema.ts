@@ -1,93 +1,50 @@
-import type { Case } from "@prisma/client";
+import {
+  AsamCareRecommendation,
+  CaseRecommendation,
+  CaseStatus,
+  Charge,
+  MentalHealthDiagnosis,
+  NeedToBeAddressed,
+  Plea,
+  SubstanceUseDiagnosis,
+  VeteranStatus,
+} from "@prisma/client";
 import { z } from "zod";
+
+import {
+  GetCaseInput,
+  OpportunityIdentifier,
+  UpdateCaseInput,
+} from "~sentencing-server/trpc/routes/case/types";
 
 export const getCaseInputSchema = z.object({
   id: z.string(),
-});
+}) satisfies z.ZodType<GetCaseInput>;
 
-type MutableCaseAttributes = Partial<
-  Pick<
-    Case,
-    | "lsirScore"
-    | "primaryCharge"
-    | "secondaryCharges"
-    | "previouslyIncarceratedOrUnderSupervision"
-    | "hasPreviousFelonyConviction"
-    | "hasPreviousViolentOffenseConviction"
-    | "hasPreviousSexOffenseConviction"
-    | "previousTreatmentCourt"
-    | "substanceUseDisorderDiagnosis"
-    | "asamCareRecommendation"
-    | "mentalHealthDiagnoses"
-    | "otherMentalHealthDiagnosis"
-    | "hasDevelopmentalDisability"
-    | "veteranStatus"
-    | "plea"
-    | "hasOpenChildProtectiveServicesCase"
-    | "needsToBeAddressed"
-    | "otherNeedToBeAddressed"
-    | "status"
-    | "selectedRecommendation"
-  >
->;
+const ChargeEnum = z.nativeEnum(Charge);
 
-const ChargeEnum = z.enum(["Felony", "Misdemeanor"]);
+const SubstanceUseDiagnosisEnum = z.nativeEnum(SubstanceUseDiagnosis);
 
-const SubstanceUseDiagnosisEnum = z.enum([
-  "None",
-  "Mild",
-  "Moderate",
-  "Severe",
-]);
+const AsamCareRecommendationEnum = z.nativeEnum(AsamCareRecommendation);
 
-const AsamCareRecommendationEnum = z.enum([
-  "LongTermRemissionMonitoring",
-  "OutpatientTherapy",
-  "MedicallyManagedOutpatient",
-  "IntensiveOutpatient",
-  "HighIntensityOutpatient",
-  "MedicallyManagedIntensiveOutpatient",
-  "ClinicallyManagedLowIntensityResidential",
-  "ClinicallyManagedHighIntensityResidential",
-  "MedicallyManagedResidential",
-  "MedicallyManagedInpatient",
-  "None",
-]);
+const MentalHealthDiagnosisEnum = z.nativeEnum(MentalHealthDiagnosis);
 
-const MentalHealthDiagnosisEnum = z.enum([
-  "BipolarDisorder",
-  "BorderlinePersonalityDisorder",
-  "DelusionalDisorder",
-  "MajorDepressiveDisorder",
-  "PsychoticDisorder",
-  "Schizophrenia",
-  "SchizoaffectiveDisorder",
-  "Other",
-  "None",
-]);
+const VeteranStatusEnum = z.nativeEnum(VeteranStatus);
 
-const VeteranStatusEnum = z.enum(["Veteran", "NonVeteran"]);
+const PleaEnum = z.nativeEnum(Plea);
 
-const PleaEnum = z.enum(["Guilty", "NotGuilty", "Alford"]);
+const NeedsToBeAddressedEnum = z.nativeEnum(NeedToBeAddressed);
 
-const NeedsToBeAddressedEnum = z.enum([
-  "AngerManagement",
-  "CaseManagement",
-  "DomesticViolenceIssues",
-  "Education",
-  "FamilyServices",
-  "FoodInsecurity",
-  "GeneralReEntrySupport",
-  "HousingOpportunities",
-  "JobTrainingOrOpportunities",
-  "MentalHealth",
-  "SubstanceUse",
-  "Other",
-]);
+const CaseStatusEnum = z.nativeEnum(CaseStatus);
 
-const CaseStatusEnum = z.enum(["NotYetStarted", "InProgress", "Complete"]);
+const CaseRecommendationEnum = z.nativeEnum(CaseRecommendation);
 
-const CaseRecommendationEnum = z.enum(["Probation", "Rider", "Term", "None"]);
+const OpportunitiesSchema = z.array(
+  z.object({
+    opportunityName: z.string(),
+    providerPhoneNumber: z.string(),
+  }),
+) satisfies z.ZodType<OpportunityIdentifier[]>;
 
 export const updateCaseSchema = z.object({
   id: z.string(),
@@ -113,5 +70,6 @@ export const updateCaseSchema = z.object({
     otherNeedToBeAddressed: z.string().nullable().optional(),
     status: CaseStatusEnum.optional(),
     selectedRecommendation: CaseRecommendationEnum.optional(),
-  }) satisfies z.ZodType<MutableCaseAttributes>,
+    recommendedOpportunities: OpportunitiesSchema.optional(),
+  }) satisfies z.ZodType<UpdateCaseInput>,
 });

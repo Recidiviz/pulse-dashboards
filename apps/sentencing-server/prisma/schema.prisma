@@ -168,6 +168,25 @@ enum CaseRecommendation {
   None
 }
 
+model Opportunity {
+  id                  String              @id @default(cuid())
+  opportunityName     String
+  description         String
+  providerName        String
+  providerPhoneNumber String
+  providerWebsite     String
+  providerAddress     String
+  totalCapacity       Int
+  availableCapacity   Int
+  needsAddressed      NeedToBeAddressed[]
+  // TODO: Add fields for the eligibility criteria
+
+  cases Case[]
+
+  // This is the best way to identify unique opportunities
+  @@unique([opportunityName, providerPhoneNumber])
+}
+
 model Case {
   externalId String    @id
   id         String    @unique @default(cuid())
@@ -214,6 +233,8 @@ model Case {
   needsToBeAddressed                 NeedToBeAddressed[]
   otherNeedToBeAddressed             String?
 
-  status                 CaseStatus          @default(NotYetStarted)
-  selectedRecommendation CaseRecommendation?
+  // Case Recommendation Fields
+  status                   CaseStatus          @default(NotYetStarted)
+  selectedRecommendation   CaseRecommendation?
+  recommendedOpportunities Opportunity[]
 }

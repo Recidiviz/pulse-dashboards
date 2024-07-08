@@ -62,6 +62,7 @@ export const StaffInfoFixture: Staff = {
       needsToBeAddressed: [],
       otherNeedToBeAddressed: null,
       selectedRecommendation: null,
+      recommendedOpportunities: [],
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132",
@@ -101,6 +102,7 @@ export const StaffInfoFixture: Staff = {
       needsToBeAddressed: [],
       otherNeedToBeAddressed: null,
       selectedRecommendation: null,
+      recommendedOpportunities: [],
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x2",
@@ -140,6 +142,7 @@ export const StaffInfoFixture: Staff = {
       needsToBeAddressed: [],
       otherNeedToBeAddressed: null,
       selectedRecommendation: null,
+      recommendedOpportunities: [],
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x",
@@ -179,6 +182,7 @@ export const StaffInfoFixture: Staff = {
       needsToBeAddressed: [],
       otherNeedToBeAddressed: null,
       selectedRecommendation: null,
+      recommendedOpportunities: [],
     },
   ],
 };
