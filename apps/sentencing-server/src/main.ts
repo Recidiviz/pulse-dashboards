@@ -1,6 +1,3 @@
-// Make sure to import the sentry module first to ensure that it is initialized before any other modules.
-import "~sentencing-server/sentry";
-
 import { buildServer } from "~sentencing-server/server";
 
 const host = process.env["HOST"] ?? "localhost";

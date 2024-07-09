@@ -51,7 +51,12 @@
         "outputPath": "{workspaceRoot}/dist/apps/sentencing-server",
         "generatePackageJson": true,
         "skipTypeCheck": true
-      }
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {}
+      },
+      "defaultConfiguration": "dev"
     },
     "preview": {
       "executor": "@nx/vite:preview-server",
@@ -115,7 +120,7 @@
         "staging": {
           "project": "recidiviz-dashboard-staging",
           "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest",
-          "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:sentencing-db"
+          "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:sentencing-db",
         }
       },
       "defaultConfiguration": "staging"

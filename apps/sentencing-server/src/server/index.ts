@@ -2,7 +2,7 @@
 import "~sentencing-server/sentry";
 
 import cors from "@fastify/cors";
-import { captureException } from "@sentry/node";
+import { setupFastifyErrorHandler } from "@sentry/node";
 import {
   fastifyTRPCPlugin,
   FastifyTRPCPluginOptions,
@@ -26,12 +26,7 @@ export function buildServer() {
     logger: true,
   });
 
-  // TODO(#29653): Use new fastify error handler once Sentry v8 is released
-  // Send errors to Sentry
-  server.addHook("onError", (_request, _reply, error, done) => {
-    captureException(error);
-    done();
-  });
+  setupFastifyErrorHandler(server);
 
   server.register(fastifyTRPCPlugin, {
     prefix: "",

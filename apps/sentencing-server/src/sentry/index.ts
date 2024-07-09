@@ -1,9 +1,10 @@
-import { init } from "@sentry/node";
+import { init, prismaIntegration } from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 init({
   dsn: import.meta.env["VITE_SENTRY_DSN"],
   environment: import.meta.env["VITE_SENTRY_ENV"],
-  tracesSampleRate: 1.0,
-  // Prisma disabled until https://github.com/getsentry/sentry-javascript/issues/11216 is fixed
-  // integrations: [prismaIntegration()],
+  tracesSampleRate: 0.25,
+  profilesSampleRate: 0.25,
+  integrations: [nodeProfilingIntegration(), prismaIntegration()],
 });

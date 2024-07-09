@@ -28,9 +28,6 @@ export default defineConfig({
   build: {
     outDir: "../../dist/apps/sentencing-server",
     reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
     emptyOutDir: true,
   },
   test: {
