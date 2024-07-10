@@ -11886,6 +11886,11 @@ eslint-plugin-jsx-a11y@6.7.1:
     object.fromentries "^2.0.6"
     semver "^6.3.0"
 
+eslint-plugin-mobx@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-mobx/-/eslint-plugin-mobx-0.0.10.tgz#84b5a00b6d6f7cc1164f3cf59d4ff377eccc5627"
+  integrity sha512-Y9/7cYgcUJ9qXUOOz+aAI+XfPZsT48G6E1Y7eOXmyfvTWSBv48efEguiIw8PYcujRe27EGKHUza258O4eC/hDQ==
+
 eslint-plugin-playwright@^0.15.3:
   version "0.15.3"
   resolved "https://registry.npmjs.org/eslint-plugin-playwright/-/eslint-plugin-playwright-0.15.3.tgz"

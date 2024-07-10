@@ -85,12 +85,12 @@ exports[`supervision staff schema for 'US_ID' 'OFFICER4' 1`] = `
 {
   "district": "DISTRICT 1",
   "email": "test-officer-4@example.com",
-  "givenNames": "Test",
+  "givenNames": "Walter",
   "id": "OFFICER4",
   "recordType": "supervisionStaff",
   "stateCode": "US_ID",
   "supervisorExternalId": "SUPER847",
-  "surname": "Officer4",
+  "surname": "Harris",
 }
 `;
 

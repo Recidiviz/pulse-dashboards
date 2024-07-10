@@ -39,12 +39,14 @@ const PageInsights: React.FC = memo(function PageInsights() {
   window.scrollTo({
     top: 0,
   });
-  const { insightsStore } = useRootStore();
+  const { insightsStore, workflowsRootStore } = useRootStore();
   const { shouldUseSupervisorHomepageUI: supervisorHomepage } = insightsStore;
 
   return (
     <InsightsNavLayout>
-      <ModelHydrator model={new SupervisionPresenter(insightsStore)}>
+      <ModelHydrator
+        model={new SupervisionPresenter(insightsStore, workflowsRootStore)}
+      >
         <Routes>
           <Route element={<InsightsRoute />}>
             <Route

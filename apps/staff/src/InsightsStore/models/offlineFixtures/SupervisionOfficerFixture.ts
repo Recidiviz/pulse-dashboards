@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { usIdSupervisionStaffFixtures } from "~datatypes";
+
 import {
   RawSupervisionOfficer,
   supervisionOfficerSchema,
@@ -25,11 +27,11 @@ import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSuperv
 
 export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
   {
-    externalId: "so1",
+    externalId: usIdSupervisionStaffFixtures[0].id,
     pseudonymizedId: "hashed-so1",
     fullName: {
-      givenNames: "Walter",
-      surname: "Harris",
+      givenNames: usIdSupervisionStaffFixtures[0].givenNames,
+      surname: usIdSupervisionStaffFixtures[0].surname,
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,

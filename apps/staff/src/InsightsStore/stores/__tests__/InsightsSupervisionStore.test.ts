@@ -42,8 +42,12 @@ let store: InsightsSupervisionStore;
 
 beforeEach(async () => {
   configure({ safeDescriptors: false });
-  const insightsStore = new InsightsStore(new RootStore());
-  const presenter = new SupervisionPresenter(insightsStore);
+  const rootStore = new RootStore();
+  const insightsStore = new InsightsStore(rootStore);
+  const presenter = new SupervisionPresenter(
+    insightsStore,
+    rootStore.workflowsRootStore,
+  );
   await presenter.hydrate();
   if (insightsStore.supervisionStore) {
     store = insightsStore.supervisionStore;

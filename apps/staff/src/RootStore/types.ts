@@ -94,6 +94,7 @@ export type FeatureVariant =
   | "workflowsSupervisorSearch"
   | "isolateFormUpdates"
   | "supervisorHomepage"
+  | "supervisorHomepageWorkflows"
   | "usPaSpecialCircumstances";
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -140,6 +141,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   workflowsSupervisorSearch: {},
   isolateFormUpdates: {},
   supervisorHomepage: {},
+  supervisorHomepageWorkflows: {},
   usPaSpecialCircumstances: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
@@ -164,6 +166,9 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         ...allFeatureVariants,
         opportunityConfigurationAPI: undefined,
         supervisorHomepage: undefined,
+        // Currently disabled even in staging because the data isn't formatted nicely yet. When
+        // the features are properly added, this can be enabled.
+        supervisorHomepageWorkflows: undefined,
       };
 
 export type LanternMethodologyByTenant = {

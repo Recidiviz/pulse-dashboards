@@ -26,8 +26,9 @@ let presenter: SupervisionPresenter;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  store = new RootStore().insightsStore;
-  presenter = new SupervisionPresenter(store);
+  const rootStore = new RootStore();
+  store = rootStore.insightsStore;
+  presenter = new SupervisionPresenter(store, rootStore.workflowsRootStore);
 });
 
 afterEach(() => {

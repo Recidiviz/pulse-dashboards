@@ -18,6 +18,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { RootStore } from "../RootStore";
+import { JusticeInvolvedPersonsStore } from "./JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 
 /**
@@ -25,6 +26,7 @@ import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigur
  * fine-grained types of data in Workflows.
  */
 export class WorkflowsRootStore {
+  justiceInvolvedPersonsStore?: JusticeInvolvedPersonsStore;
   opportunityConfigurationStore: OpportunityConfigurationStore;
 
   constructor(public rootStore: RootStore) {
@@ -49,6 +51,18 @@ export class WorkflowsRootStore {
   }
 
   private reset() {
+    this.justiceInvolvedPersonsStore = undefined;
     this.opportunityConfigurationStore.reset();
+  }
+
+  /**
+   * Creates this.justiceInvolvedPersonsStore for the current tenant, if it does not already exist.
+   */
+  populateJusticeInvolvedPersonsStore(): void {
+    if (this.justiceInvolvedPersonsStore) return;
+
+    this.justiceInvolvedPersonsStore = new JusticeInvolvedPersonsStore(
+      this.rootStore.firestoreStore,
+    );
   }
 }

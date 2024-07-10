@@ -182,6 +182,25 @@ export default class FirestoreStore {
       };
   }
 
+  async getClientsForOfficerId(
+    stateCode: string,
+    officerExternalId: string,
+  ): Promise<ClientRecord[]> {
+    const results = await getDocs(
+      query(
+        this.collection({ key: "clients" }),
+        where("stateCode", "==", stateCode),
+        where("officerId", "==", officerExternalId),
+      ),
+    );
+
+    return results.docs.map((result) => ({
+      ...(result.data() as Omit<ClientRecord, "recordId" | "personType">),
+      recordId: result.id,
+      personType: "CLIENT",
+    }));
+  }
+
   async getResident(
     residentId: string,
     stateCode: string,

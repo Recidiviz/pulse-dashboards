@@ -15,97 +15,76 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable } from "mobx";
+import { flowResult, makeObservable } from "mobx";
 
-import {
-  castToError,
-  FlowMethod,
-  Hydratable,
-  HydratesFromSource,
-} from "~hydration-utils";
+import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
+import UserStore from "../../RootStore/UserStore";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsAPI } from "../api/interface";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { ConfigLabels, OutlierOfficerData } from "./types";
-import { getOutlierOfficerData } from "./utils";
+import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 
-export class SupervisionOfficerPresenter implements Hydratable {
-  private fetchedOfficerRecord?: SupervisionOfficer;
-
-  private hydrator: HydratesFromSource;
-
+export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase {
   constructor(
-    private supervisionStore: InsightsSupervisionStore,
-    public officerPseudoId: string,
+    supervisionStore: InsightsSupervisionStore,
+    private justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
+    private userStore: UserStore,
+    officerPseudoId: string,
   ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+    super(supervisionStore, officerPseudoId);
+
+    makeObservable<
+      SupervisionOfficerPresenter,
+      | "populateSupervisionOfficer"
+      | "expectClientsPopulated"
+      | "populateCaseload"
+      | "expectMetricsPopulated"
+      | "expectOfficerPopulated"
+      | "expectSupervisorPopulated"
+      | "expectOutlierDataPopulated"
+    >(
+      this,
+      {
+        populateMethods: true,
+        expectPopulated: true,
+        trackStaffPageViewed: true,
+        officerExternalId: true,
+        outlierOfficerData: true,
+        supervisorsInfo: true,
+        userCanAccessAllSupervisors: true,
+        goToSupervisorInfo: true,
+        methodologyUrl: true,
+        labels: true,
+        timePeriod: true,
+        areCaseloadTypeBreakdownsEnabled: true,
+        populateSupervisionOfficer: true,
+        hydrate: true,
+        hydrationState: true,
+        officerPseudoId: true,
+        expectClientsPopulated: true,
+        populateCaseload: true,
+        clients: true,
+        expectMetricsPopulated: true,
+        expectOfficerPopulated: true,
+        expectSupervisorPopulated: true,
+        expectOutlierDataPopulated: true,
+        metricConfigsById: true,
+        isWorkflowsEnabled: true,
+      },
+      { autoBind: true },
+    );
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: [
-        this.expectMetricsPopulated,
-        this.expectOfficerPopulated,
-        this.expectSupervisorPopulated,
-        this.expectOutlierDataPopulated,
-      ],
+      expectPopulated: [...super.expectPopulated, this.expectClientsPopulated],
       populate: async () => {
-        await Promise.all([
-          flowResult(this.supervisionStore.populateMetricConfigs()),
-          flowResult(
-            this.supervisionStore.populateSupervisionOfficerSupervisors(),
-          ),
-          flowResult(this.populateSupervisionOfficer()),
-        ]);
+        await Promise.all(super.populateMethods);
+        // this needs to happen after the above calls so that the officer record is hydrated, since
+        // we need its external ID
+        await this.populateCaseload();
       },
     });
-  }
-
-  private get officerRecordFromStore(): SupervisionOfficer | undefined {
-    return Array.from(
-      this.supervisionStore.officersBySupervisorPseudoId.values(),
-    )
-      .flat()
-      .find((o) => o.pseudonymizedId === this.officerPseudoId);
-  }
-
-  private get officerRecord() {
-    return this.officerRecordFromStore ?? this.fetchedOfficerRecord;
-  }
-
-  /**
-   * Augments officer data with all necessary relationships fully hydrated.
-   * If this fails for any reason, the value will instead reflect the error that was encountered.
-   */
-  private get outlierDataOrError(): OutlierOfficerData | Error {
-    try {
-      if (!this.officerRecord) throw new Error("Missing officer record");
-      return getOutlierOfficerData(this.officerRecord, this.supervisionStore);
-    } catch (e) {
-      return castToError(e);
-    }
-  }
-
-  /**
-   * Augments officer data with all necessary relationships fully hydrated.
-   */
-  get outlierOfficerData(): OutlierOfficerData | undefined {
-    if (this.outlierDataOrError instanceof Error) return;
-    return this.outlierDataOrError;
-  }
-
-  /**
-   * Provide supervisor data for the current officer.
-   */
-  get supervisorsInfo(): SupervisionOfficerSupervisor[] | undefined {
-    const supervisorExternalIds = this.officerRecord?.supervisorExternalIds;
-    if (!supervisorExternalIds) return;
-    const supervisors = supervisorExternalIds
-      .map((id) =>
-        this.supervisionStore.supervisionOfficerSupervisorByExternalId(id),
-      )
-      .filter((s): s is SupervisionOfficerSupervisor => !!s);
-    return supervisors.length > 0 ? supervisors : undefined;
   }
 
   /**
@@ -115,44 +94,10 @@ export class SupervisionOfficerPresenter implements Hydratable {
     return this.supervisionStore.metricConfigsById;
   }
 
-  get labels(): ConfigLabels {
-    return this.supervisionStore.labels;
-  }
-
-  get timePeriod(): string | undefined {
-    return this.supervisionStore?.benchmarksTimePeriod;
-  }
-
-  get areCaseloadTypeBreakdownsEnabled() {
-    return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
-  }
-
-  private expectMetricsPopulated() {
-    if (!this.supervisionStore.metricConfigsById)
-      throw new Error("Failed to populate metric configs");
-  }
-
-  private expectOfficerPopulated() {
-    if (!this.officerRecord) throw new Error("Failed to populate officer data");
-  }
-
-  private expectSupervisorPopulated() {
-    if (!this.supervisorsInfo)
-      throw new Error("Failed to populate supervisor(s) info");
-  }
-
-  private expectOutlierDataPopulated() {
-    if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
-  }
-
-  private get isOfficerPopulated() {
-    return !(this.outlierDataOrError instanceof Error);
-  }
-
   /**
    * Fetch record for current officer.
    */
-  private *populateSupervisionOfficer(): FlowMethod<
+  protected *populateSupervisionOfficer(): FlowMethod<
     InsightsAPI["supervisionOfficer"],
     void
   > {
@@ -161,6 +106,43 @@ export class SupervisionOfficerPresenter implements Hydratable {
       yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
         this.officerPseudoId,
       );
+  }
+
+  get isWorkflowsEnabled() {
+    return (
+      this.userStore.userAllowedNavigation?.workflows?.length &&
+      !!this.userStore.activeFeatureVariants.supervisorHomepageWorkflows
+    );
+  }
+
+  private expectClientsPopulated() {
+    if (this.isWorkflowsEnabled && !this.clients)
+      throw new Error("Failed to populate clients");
+  }
+
+  private async populateCaseload() {
+    if (!this.isWorkflowsEnabled || !this.officerExternalId) return;
+    await flowResult(
+      this.justiceInvolvedPersonsStore.populateCaseloadForSupervisionOfficer(
+        this.officerExternalId,
+      ),
+    );
+
+    this.justiceInvolvedPersonsStore.caseloadByOfficerExternalId
+      .get(this.officerExternalId)
+      ?.forEach((client) =>
+        Object.values(client.potentialOpportunities).forEach((opp) =>
+          opp.hydrate(),
+        ),
+      );
+  }
+
+  // TODO(#5312): add actual presenter methods. this one is just here as a proof of concept for now
+  get clients(): JusticeInvolvedPerson[] | undefined {
+    if (!this.officerExternalId) return;
+    return this.justiceInvolvedPersonsStore.caseloadByOfficerExternalId.get(
+      this.officerExternalId,
+    );
   }
 
   /**

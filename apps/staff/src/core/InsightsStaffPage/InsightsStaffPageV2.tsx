@@ -24,7 +24,7 @@ import styled from "styled-components/macro";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenters/SupervisionOfficerDetailPresenter";
+import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
 import { toTitleCase } from "../../utils";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsPageLayout from "../InsightsPageLayout";
@@ -47,21 +47,20 @@ const Wrapper = styled.div<{ isTablet: boolean }>`
 export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   presenter,
 }: {
-  presenter: SupervisionOfficerDetailPresenter;
+  presenter: SupervisionOfficerPresenter;
 }) {
   const { isTablet } = useIsMobile(true);
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
     outlierOfficerData,
-    defaultMetricId,
     officerPseudoId,
-    metricInfo,
     supervisorsInfo,
     goToSupervisorInfo,
     labels,
     timePeriod,
     userCanAccessAllSupervisors,
+    clients,
   } = presenter;
 
   const infoItems = [
@@ -112,8 +111,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   }
 
   // if the presenter is hydrated, this stuff should never be missing in practice
-  if (!outlierOfficerData || !defaultMetricId || !metricInfo)
-    return <NotFound />;
+  if (!outlierOfficerData) return <NotFound />;
 
   if (initialPageLoad) {
     presenter.trackStaffPageViewed();
@@ -178,6 +176,21 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           );
         })}
       </Wrapper>
+      {/* TODO(#5318): Make this the actual layout */}
+      {clients && (
+        <Wrapper isTablet={isTablet}>
+          {clients
+            .filter((c) => Object.keys(c.verifiedOpportunities).length > 0)
+            .map((c) => (
+              <div>
+                {c.displayName}:{" "}
+                {Object.values(c.verifiedOpportunities)
+                  .map((opp) => opp.config.label)
+                  .join(", ")}
+              </div>
+            ))}
+        </Wrapper>
+      )}
     </InsightsPageLayout>
   );
 });
@@ -185,14 +198,18 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
   const {
     insightsStore: { supervisionStore },
+    workflowsRootStore: { justiceInvolvedPersonsStore },
+    userStore,
   } = useRootStore();
-
   const officerPseudoId = supervisionStore?.officerPseudoId;
 
   if (!officerPseudoId) return null;
+  if (!justiceInvolvedPersonsStore) return null;
 
-  const presenter = new SupervisionOfficerDetailPresenter(
+  const presenter = new SupervisionOfficerPresenter(
     supervisionStore,
+    justiceInvolvedPersonsStore,
+    userStore,
     officerPseudoId,
   );
 

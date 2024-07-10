@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nx", "simple-import-sort", "vitest"],
+  "plugins": ["@nx", "simple-import-sort", "vitest", "mobx"],
   "overrides": [
     {
       "files": "*.json",
@@ -10,6 +10,7 @@
     },
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "extends": ["plugin:mobx/recommended"],
       "rules": {
         "@nx/enforce-module-boundaries": [
           "error",
@@ -44,7 +45,10 @@
               }
             ]
           }
-        ]
+        ],
+        // TODO(#5767): Enable these checks
+        "mobx/missing-observer": "off",
+        "mobx/exhaustive-make-observable": "off"
       }
     },
     {

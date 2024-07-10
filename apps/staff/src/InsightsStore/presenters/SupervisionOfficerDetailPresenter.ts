@@ -15,67 +15,67 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable } from "mobx";
+import { makeObservable } from "mobx";
 
-import {
-  castToError,
-  FlowMethod,
-  Hydratable,
-  HydratesFromSource,
-} from "~hydration-utils";
+import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
 import { MetricConfig } from "../models/MetricConfig";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { ConfigLabels, OutlierOfficerData } from "./types";
-import { getOutlierOfficerData } from "./utils";
+import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 
-export class SupervisionOfficerDetailPresenter implements Hydratable {
-  // rather than dealing with a partially hydrated unit in the supervisionStore,
-  // we will just put the API response here (when applicable)
-  private fetchedOfficerRecord?: SupervisionOfficer;
-
-  private hydrator: HydratesFromSource;
-
+export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresenterBase {
   constructor(
-    private supervisionStore: InsightsSupervisionStore,
-    public officerPseudoId: string,
+    supervisionStore: InsightsSupervisionStore,
+    officerPseudoId: string,
   ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+    super(supervisionStore, officerPseudoId);
+
+    makeObservable<
+      SupervisionOfficerDetailPresenter,
+      | "populateSupervisionOfficer"
+      | "expectMetricsPopulated"
+      | "expectOfficerPopulated"
+      | "expectSupervisorPopulated"
+      | "expectOutlierDataPopulated"
+    >(
+      this,
+      {
+        populateMethods: true,
+        expectPopulated: true,
+        trackStaffPageViewed: true,
+        trackMetricViewed: true,
+        officerExternalId: true,
+        outlierOfficerData: true,
+        defaultMetricId: true,
+        metricId: true,
+        currentMetricIndex: true,
+        metricInfo: true,
+        supervisorsInfo: true,
+        userCanAccessAllSupervisors: true,
+        goToSupervisorInfo: true,
+        methodologyUrl: true,
+        labels: true,
+        timePeriod: true,
+        areCaseloadTypeBreakdownsEnabled: true,
+        populateSupervisionOfficer: true,
+        hydrate: true,
+        hydrationState: true,
+        officerPseudoId: true,
+        expectMetricsPopulated: true,
+        expectOfficerPopulated: true,
+        expectSupervisorPopulated: true,
+        expectOutlierDataPopulated: true,
+      },
+      { autoBind: true },
+    );
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: [
-        this.expectMetricsPopulated,
-        this.expectOfficerPopulated,
-        this.expectSupervisorPopulated,
-        this.expectOutlierDataPopulated,
-      ],
+      expectPopulated: this.expectPopulated,
       populate: async () => {
-        await Promise.all([
-          flowResult(this.supervisionStore.populateMetricConfigs()),
-          flowResult(
-            this.supervisionStore.populateSupervisionOfficerSupervisors(),
-          ),
-          flowResult(this.populateSupervisionOfficer()),
-        ]);
+        await Promise.all(this.populateMethods);
       },
     });
-  }
-
-  trackStaffPageViewed(): void {
-    const { userPseudoId } =
-      this.supervisionStore.insightsStore.rootStore.userStore;
-
-    this.supervisionStore.insightsStore.rootStore.analyticsStore.trackInsightsStaffPageViewed(
-      {
-        staffPseudonymizedId: this.officerPseudoId,
-        supervisorPseudonymizedId: this.goToSupervisorInfo?.pseudonymizedId,
-        viewedBy: userPseudoId,
-        numOutlierMetrics: this.outlierOfficerData?.outlierMetrics.length,
-      },
-    );
   }
 
   trackMetricViewed(metricId: string): void {
@@ -90,44 +90,6 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
         metricId,
       },
     );
-  }
-
-  private expectMetricsPopulated() {
-    if (!this.supervisionStore.metricConfigsById)
-      throw new Error("Failed to populate metric configs");
-  }
-
-  private get officerRecordFromStore(): SupervisionOfficer | undefined {
-    return Array.from(
-      this.supervisionStore.officersBySupervisorPseudoId.values(),
-    )
-      .flat()
-      .find((o) => o.pseudonymizedId === this.officerPseudoId);
-  }
-
-  private get officerRecord() {
-    return this.officerRecordFromStore ?? this.fetchedOfficerRecord;
-  }
-
-  /**
-   * Augments officer data with all necessary relationships fully hydrated.
-   * If this fails for any reason, the value will instead reflect the error that was encountered.
-   */
-  private get outlierDataOrError(): OutlierOfficerData | Error {
-    try {
-      if (!this.officerRecord) throw new Error("Missing officer record");
-      return getOutlierOfficerData(this.officerRecord, this.supervisionStore);
-    } catch (e) {
-      return castToError(e);
-    }
-  }
-
-  /**
-   * Augments officer data with all necessary relationships fully hydrated.
-   */
-  get outlierOfficerData(): OutlierOfficerData | undefined {
-    if (this.outlierDataOrError instanceof Error) return;
-    return this.outlierDataOrError;
   }
 
   get defaultMetricId() {
@@ -152,45 +114,6 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     return this.supervisionStore.metricConfigsById.get(metricId);
   }
 
-  get supervisorsInfo(): SupervisionOfficerSupervisor[] | undefined {
-    const supervisorExternalIds = this.officerRecord?.supervisorExternalIds;
-    if (!supervisorExternalIds) return;
-    const supervisors = supervisorExternalIds
-      .map((id) =>
-        this.supervisionStore.supervisionOfficerSupervisorByExternalId(id),
-      )
-      .filter((s): s is SupervisionOfficerSupervisor => !!s);
-    return supervisors.length > 0 ? supervisors : undefined;
-  }
-
-  get userCanAccessAllSupervisors(): boolean {
-    return this.supervisionStore.userCanAccessAllSupervisors;
-  }
-
-  // supervisorInfo for the "Go to" link on the staff page. If the staff page
-  // was navigated to from a supervisor page, use that supervisor.
-  // Otherwise use the first of the officer's supervisors
-  get goToSupervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    if (this.supervisionStore.mostRecentSupervisorPseudoId)
-      return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
-        this.supervisionStore.mostRecentSupervisorPseudoId,
-      );
-
-    return this.officerRecord?.supervisorExternalIds[0]
-      ? this.supervisionStore.supervisionOfficerSupervisorByExternalId(
-          this.officerRecord?.supervisorExternalIds[0],
-        )
-      : undefined;
-  }
-
-  get methodologyUrl(): string {
-    return this.supervisionStore.methodologyUrl;
-  }
-
-  get labels(): ConfigLabels {
-    return this.supervisionStore.labels;
-  }
-
   get ctaText() {
     const { labels, isInsightsLanternState } = this;
     return {
@@ -198,36 +121,11 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
     };
   }
 
-  get timePeriod(): string | undefined {
-    return this.supervisionStore?.benchmarksTimePeriod;
-  }
-
-  get areCaseloadTypeBreakdownsEnabled() {
-    return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
-  }
-
   get isInsightsLanternState(): boolean {
     return this.supervisionStore.isInsightsLanternState;
   }
 
-  private expectOfficerPopulated() {
-    if (!this.officerRecord) throw new Error("Failed to populate officer data");
-  }
-
-  private expectSupervisorPopulated() {
-    if (!this.supervisorsInfo)
-      throw new Error("Failed to populate supervisor info");
-  }
-
-  private expectOutlierDataPopulated() {
-    if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
-  }
-
-  private get isOfficerPopulated() {
-    return !(this.outlierDataOrError instanceof Error);
-  }
-
-  private *populateSupervisionOfficer(): FlowMethod<
+  protected *populateSupervisionOfficer(): FlowMethod<
     InsightsAPI["supervisionOfficer"],
     void
   > {
@@ -246,16 +144,5 @@ export class SupervisionOfficerDetailPresenter implements Hydratable {
       yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
         this.officerPseudoId,
       );
-  }
-
-  /**
-   * Initiates hydration for all data needed within this presenter class
-   */
-  async hydrate(): Promise<void> {
-    return this.hydrator.hydrate();
-  }
-
-  get hydrationState() {
-    return this.hydrator.hydrationState;
   }
 }

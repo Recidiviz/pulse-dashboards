@@ -5,7 +5,7 @@ exports[`transformations 1`] = `
   "caseloadType": "SEX_OFFENSE",
   "displayName": "Walter Harris",
   "district": "Region D1",
-  "externalId": "so1",
+  "externalId": "OFFICER4",
   "fullName": {
     "givenNames": "Walter",
     "surname": "Harris",

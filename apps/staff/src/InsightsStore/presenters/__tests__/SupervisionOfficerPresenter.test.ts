@@ -21,6 +21,8 @@ import { unpackAggregatedErrors } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
+import { lsuEligibleClient } from "../../../WorkflowsStore/__fixtures__";
+import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
@@ -30,7 +32,9 @@ import { SupervisionOfficerPresenter } from "../SupervisionOfficerPresenter";
 import * as utils from "../utils";
 
 let store: InsightsSupervisionStore;
-const pseudoId = "hashed-mdavis123";
+let jiiStore: JusticeInvolvedPersonsStore;
+const stateCode = "US_ID";
+const pseudoId = "hashed-mavis123";
 const testOfficer = supervisionOfficerFixture[0];
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 let presenter: SupervisionOfficerPresenter;
@@ -44,17 +48,27 @@ beforeEach(() => {
     () => false,
   );
 
+  const rootStore = new RootStore();
+  rootStore.tenantStore.currentTenantId = stateCode;
   store = new InsightsSupervisionStore(
-    new RootStore().insightsStore,
+    rootStore.insightsStore,
     InsightsConfigFixture,
   );
+  jiiStore = new JusticeInvolvedPersonsStore(rootStore.firestoreStore);
   vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
+  vi.spyOn(
+    rootStore.firestoreStore,
+    "getClientsForOfficerId",
+  ).mockResolvedValue([lsuEligibleClient]);
 
   presenter = new SupervisionOfficerPresenter(
     store,
+    jiiStore,
+    rootStore.userStore,
     testOfficer.pseudonymizedId,
   );
+  vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
 });
 
 afterEach(() => {
@@ -70,6 +84,9 @@ describe("with unit data already hydrated", () => {
       ),
       flowResult(store.populateSupervisionOfficerSupervisors()),
       flowResult(store.populateMetricConfigs()),
+      flowResult(
+        jiiStore.populateCaseloadForSupervisionOfficer(testOfficer.externalId),
+      ),
     ]);
   });
 
@@ -89,6 +106,11 @@ describe("with unit data already hydrated", () => {
       "supervisionOfficerMetricEvents",
     );
 
+    // add this expect in so that we can call the same one later in this test to ensure it didn't
+    // get another call at that time
+    expect(
+      store.insightsStore.rootStore.firestoreStore.getClientsForOfficerId,
+    ).toHaveBeenCalledTimes(1);
     await presenter.hydrate();
 
     expect(
@@ -103,6 +125,10 @@ describe("with unit data already hydrated", () => {
     expect(
       store.insightsStore.apiClient.supervisionOfficerMetricEvents,
     ).not.toHaveBeenCalled();
+    // This 1 time is from the beforeEach, since we set up this spy earlier
+    expect(
+      store.insightsStore.rootStore.firestoreStore.getClientsForOfficerId,
+    ).toHaveBeenCalledTimes(1);
   });
 
   test("has outlierOfficerData", async () => {
@@ -172,6 +198,19 @@ test("has timePeriod", async () => {
 
   expect(timePeriod).toBeDefined();
   expect(timePeriod).toMatch("9/1/22 - 9/1/23");
+});
+
+test("has clients", async () => {
+  await presenter.hydrate();
+  expect(presenter.clients).toBeDefined();
+  expect(presenter.clients).toHaveLength(1);
+});
+
+test("does not have clients if workflows is disabled", async () => {
+  vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
+  await presenter.hydrate();
+  expect(presenter.hydrationState).toEqual({ status: "hydrated" });
+  expect(presenter.clients).toBeUndefined();
 });
 
 test("hydration error in dependency", async () => {

@@ -68,6 +68,20 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   },
 ].map((r) => makeRecordFixture(incarcerationStaffRecordSchema, r));
 
+export const usIdSupervisionStaffFixtures: Array<
+  SupervisionStaffRecord["input"]
+> = [
+  {
+    email: "test-officer-4@example.com",
+    district: "DISTRICT 1",
+    id: "OFFICER4",
+    stateCode: "US_ID",
+    givenNames: "Walter",
+    surname: "Harris",
+    supervisorExternalId: "SUPER847",
+  },
+];
+
 export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_CA - CALIFORNIA
   {
@@ -89,15 +103,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     supervisorExternalId: null,
   },
   // US_ID - IDAHO
-  {
-    email: "test-officer-4@example.com",
-    district: "DISTRICT 1",
-    id: "OFFICER4",
-    stateCode: "US_ID",
-    givenNames: "Test",
-    surname: "Officer4",
-    supervisorExternalId: "SUPER847",
-  },
+  ...usIdSupervisionStaffFixtures,
 
   // US_ME - MAINE
   {

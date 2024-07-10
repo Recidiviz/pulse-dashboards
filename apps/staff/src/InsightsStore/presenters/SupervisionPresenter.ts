@@ -23,13 +23,17 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import { WorkflowsRootStore } from "../../WorkflowsStore/WorkflowsRootStore";
 import { InsightsStore } from "../InsightsStore";
 
 /**
  * Sits above all of the Insights supervision pages and ensures the supervisionStore is hydrated
  */
 export class SupervisionPresenter implements Hydratable {
-  constructor(private insightsStore: InsightsStore) {
+  constructor(
+    private insightsStore: InsightsStore,
+    private workflowsRootStore: WorkflowsRootStore,
+  ) {
     makeAutoObservable(this);
 
     this.hydrator = new HydratesFromSource({
@@ -44,6 +48,9 @@ export class SupervisionPresenter implements Hydratable {
         await flowResult(
           this.insightsStore.supervisionStore?.populateUserInfo(),
         );
+        this.workflowsRootStore.populateJusticeInvolvedPersonsStore();
+        // maybe move this to workflows presenters once they exist
+        this.workflowsRootStore.opportunityConfigurationStore?.hydrate();
       },
     });
   }
