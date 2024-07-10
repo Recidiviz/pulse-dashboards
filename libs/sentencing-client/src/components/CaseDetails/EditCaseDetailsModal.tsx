@@ -27,14 +27,25 @@ const EditCaseDetailsModal = ({
   form,
   isOpen,
   hideModal,
+  saveAttributes,
 }: {
   firstName?: string;
   form: CaseDetailsForm;
   isOpen: boolean;
   hideModal: () => void;
+  saveAttributes: () => void;
 }) => {
+  const closeModal = () => {
+    hideModal();
+    form.resetUpdates();
+  };
+  const saveAndCloseModal = () => {
+    saveAttributes();
+    hideModal();
+  };
+
   return (
-    <Modal isOpen={isOpen} hideModal={hideModal}>
+    <Modal isOpen={isOpen} hideModal={closeModal}>
       <Styled.ModalHeader>Edit Case Details</Styled.ModalHeader>
       <Styled.ModalDescription>
         We will use this data to generate opportunities for {firstName}. If you
@@ -42,34 +53,43 @@ const EditCaseDetailsModal = ({
       </Styled.ModalDescription>
 
       {/* Form */}
-      {form.contentList.map((element) => {
-        const showNestedFields = Array.isArray(element.value)
-          ? element.value.includes(element.showNestedValueMatch ?? "")
-          : element.value === element.showNestedValueMatch;
-        return (
-          <Styled.InputWrapper key={element.key}>
-            <FormField element={element} form={form} />
+      <Styled.Form>
+        {form.contentList.map((element) => {
+          const showNestedFields = Array.isArray(element.value)
+            ? element.value.some((val) =>
+                element.showNestedValuesMatch?.includes(val),
+              )
+            : element.showNestedValuesMatch?.includes(String(element.value));
+          return (
+            <Styled.InputWrapper key={element.key}>
+              <FormField element={element} form={form} />
 
-            {element.nested &&
-              showNestedFields &&
-              element.nested.map((nestedElement) => (
-                <Styled.NestedWrapper key={nestedElement.key}>
-                  <FormField
-                    element={nestedElement}
-                    form={form}
-                    parentKey={element.key}
-                  />
-                </Styled.NestedWrapper>
-              ))}
-          </Styled.InputWrapper>
-        );
-      })}
+              {element.nested &&
+                showNestedFields &&
+                element.nested.map((nestedElement) => (
+                  <Styled.NestedWrapper key={nestedElement.key}>
+                    <FormField
+                      element={nestedElement}
+                      form={form}
+                      parentKey={element.key}
+                    />
+                  </Styled.NestedWrapper>
+                ))}
+            </Styled.InputWrapper>
+          );
+        })}
+      </Styled.Form>
 
       <Styled.ActionButtonWrapper>
-        <Styled.ActionButton kind="link" onClick={hideModal}>
+        <Styled.ActionButton kind="link" onClick={closeModal}>
           Cancel
         </Styled.ActionButton>
-        <Styled.ActionButton>Save</Styled.ActionButton>
+        <Styled.ActionButton
+          onClick={saveAndCloseModal}
+          disabled={form.hasError}
+        >
+          Save
+        </Styled.ActionButton>
       </Styled.ActionButtonWrapper>
     </Modal>
   );

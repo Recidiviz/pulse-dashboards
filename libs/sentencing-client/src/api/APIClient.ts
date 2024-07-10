@@ -23,6 +23,7 @@ import superjson from "superjson";
 // rather than just the types
 import type { AppRouter } from "~sentencing-server-types/shared/types";
 
+import { TransformedFormUpdates } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";
 
 export type tRPCClient = ReturnType<typeof createTRPCProxyClient<AppRouter>>;
@@ -85,7 +86,6 @@ export class APIClient {
 
     return {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     };
   }
 
@@ -118,5 +118,15 @@ export class APIClient {
       id: caseId,
     });
     return fetchedData;
+  }
+
+  async updateCaseDetails(caseId: string, updates: TransformedFormUpdates) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    return await this.trpcClient.case.updateCase.mutate({
+      id: caseId,
+      attributes: updates,
+    });
   }
 }

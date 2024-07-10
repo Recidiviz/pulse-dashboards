@@ -18,15 +18,30 @@
 import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
-import { Attributes, FormField, FormFieldList } from "../types";
+import { LSIR_SCORE_KEY } from "../constants";
+import {
+  Attributes,
+  FormField,
+  FormFieldList,
+  FormUpdates,
+  FormValue,
+  TransformedFormUpdates,
+} from "../types";
 import { caseDetailsFormTemplate } from "./CaseDetailsFormTemplate";
+import { parseFormValue, transformUpdates } from "./utils";
 
 export class CaseDetailsForm {
   content: { [key: string]: FormField };
 
-  constructor(caseAttributes: Attributes) {
+  updates: FormUpdates;
+
+  hasError: boolean;
+
+  constructor(private readonly caseAttributes: Attributes) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.content = this.createForm(caseAttributes);
+    this.updates = {} as FormUpdates;
+    this.hasError = false;
   }
 
   get contentList() {
@@ -36,26 +51,46 @@ export class CaseDetailsForm {
     }) as FormFieldList;
   }
 
+  get transformedUpdates(): TransformedFormUpdates {
+    return transformUpdates(this.updates);
+  }
+
   createForm(caseAttributes: Attributes) {
-    const previousUpdates = caseDetailsFormTemplate.map((field) => {
-      if (caseAttributes[field.key]) {
-        const prevValue = caseAttributes[field.key];
-        return {
-          ...field,
-          value: prevValue,
-          nested: field.nested?.map((nestedField) => {
-            const prevNestedValue = caseAttributes[nestedField.key];
-            return prevNestedValue
-              ? { ...nestedField, value: prevNestedValue }
-              : nestedField;
-          }),
-        };
+    const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
+      const attributeValue = caseAttributes[field.key];
+      if (attributeValue === undefined) {
+        return field;
       }
-      return field;
+      return {
+        ...field,
+        value: parseFormValue(field.key, attributeValue),
+        nested: field.nested?.map((nestedField) => {
+          const nestedAttributeValue = caseAttributes[nestedField.key];
+          if (nestedAttributeValue === undefined) {
+            return nestedField;
+          }
+          return {
+            ...nestedField,
+            value: parseFormValue(nestedField.key, nestedAttributeValue),
+          };
+        }),
+        otherContext: {
+          ...field.otherContext,
+          value: field.otherContext?.key
+            ? parseFormValue(
+                field.otherContext.key,
+                caseAttributes[field.otherContext.key],
+              )
+            : field.otherContext?.value,
+        },
+        isDisabled:
+          // TODO(Recidiviz/recidiviz-data#31228) Determine this from the new to-be-added `lsirScoreLocked` field
+          field.key === LSIR_SCORE_KEY && caseAttributes.lsirScore !== null,
+      };
     });
 
     return keyBy(
-      previousUpdates.map((field) => {
+      withPreviousUpdates.map((field) => {
         if (!field.nested) return field;
         return { ...field, nested: keyBy(field.nested, "key") };
       }) as FormField[],
@@ -65,10 +100,17 @@ export class CaseDetailsForm {
 
   updateForm(
     key: keyof Attributes,
-    value?: string | string[] | null,
+    value?: FormValue,
     parentKey?: string,
     isOtherContext?: boolean,
   ) {
+    const otherContextKey = this.content[key]?.otherContext?.key;
+    const keyOrContextKey =
+      isOtherContext && otherContextKey ? otherContextKey : key;
+
+    this.updates[keyOrContextKey] =
+      key === "lsirScore" && value ? Number(value) : value;
+
     if (parentKey && this.content[parentKey].nested?.[key]) {
       if (
         isOtherContext &&
@@ -92,10 +134,18 @@ export class CaseDetailsForm {
     this.content[key].value = value ?? null;
   }
 
+  updateFormError(hasError: boolean) {
+    this.hasError = hasError;
+  }
+
   getFormValue(key: keyof Attributes, parentKey?: string) {
     if (parentKey) {
       return this.content[parentKey].nested?.[key]?.value;
     }
     return this.content[key]?.value;
+  }
+
+  resetUpdates() {
+    this.content = this.createForm(this.caseAttributes);
   }
 }

@@ -372,6 +372,10 @@ export const ActionButton = styled.button<{ kind?: "link" }>`
   color: ${({ kind }) => (kind === "link" ? palette.slate85 : palette.white)};
   border: none;
   border-radius: 4px;
+
+  &:disabled {
+    opacity: 0.6;
+  }
 `;
 
 /** Insights */
@@ -627,7 +631,10 @@ export const ModalDescription = styled.div`
   margin-bottom: 32px;
 `;
 
-export const Form = styled.form``;
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
 
 export const InputWrapper = styled.div`
   width: 100%;
@@ -641,9 +648,25 @@ export const Input = styled.input`
   border: 1px solid ${palette.slate20};
   border-radius: 8px;
   color: ${palette.pine3};
-  margin-bottom: 8px;
   font-size: 13px;
   font-weight: 500;
+
+  /* Chrome, Safari, Edge, Opera */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  &[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  &:disabled {
+    color: ${palette.slate60};
+  }
 `;
 
 export const TextArea = styled.textarea`
@@ -666,7 +689,12 @@ export const InputLabel = styled.label`
 
 export const InputDescription = styled.div`
   color: ${palette.slate60};
+  margin-top: 4px;
   ${typography.Sans14}
+`;
+
+export const ErrorMessage = styled.div`
+  color: ${palette.signal.error};
 `;
 
 export const MultiSelectContainer = styled.div<{ selected?: boolean }>`
@@ -703,7 +731,7 @@ export const MultiSelectChip = styled.div<{
     isNotSureYetOption &&
     `
       background-color: ${customPalette.green.light2};
-      border: none;
+      border: 1px solid ${palette.slate20};
       path {
         fill: ${palette.slate60};
       }

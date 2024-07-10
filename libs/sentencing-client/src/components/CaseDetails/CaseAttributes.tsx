@@ -26,6 +26,7 @@ import { Attributes } from "./types";
 type CaseAttributesProps = {
   caseAttributes: Attributes;
   form?: CaseDetailsForm;
+  saveAttributes: () => void;
 };
 
 type AttributeLabelValue = {
@@ -37,6 +38,7 @@ type AttributeLabelValue = {
 export const CaseAttributes: React.FC<CaseAttributesProps> = ({
   caseAttributes,
   form,
+  saveAttributes,
 }) => {
   const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
     useState(false);
@@ -93,13 +95,14 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = ({
         ))}
       </Styled.CaseAttributesWrapper>
 
-      {/* Modals */}
+      {/* Edit Case Details Modal */}
       {form && (
         <EditCaseDetailsModal
           firstName={firstName}
           form={form}
           hideModal={hideModal}
           isOpen={showEditCaseDetailsModal}
+          saveAttributes={saveAttributes}
         />
       )}
     </Styled.CaseAttributes>

@@ -20,7 +20,7 @@ export type UpdateCaseInput = Pick<
   | "mentalHealthDiagnoses"
   | "otherMentalHealthDiagnosis"
   | "hasDevelopmentalDisability"
-  | "veteranStatus"
+  | "isVeteran"
   | "plea"
   | "hasOpenChildProtectiveServicesCase"
   | "needsToBeAddressed"

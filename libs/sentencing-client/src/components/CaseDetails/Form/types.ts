@@ -15,23 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Attributes, FormFieldWithNestedList } from "../types";
+import { Attributes, FormFieldWithNestedList, FormValue } from "../types";
 
 export type InputFieldProps = {
   element: FormFieldWithNestedList;
   parentKey?: keyof Attributes;
-  prevValue?: string | string[] | null;
+  prevValue?: FormValue;
   updateForm: (
     key: keyof Attributes,
-    value?: string | string[] | null,
+    value?: FormValue,
     parentKey?: keyof Attributes,
     isOtherContext?: boolean,
   ) => void;
+  updateFormError?: (hasError: boolean) => void;
   placeholder?: string;
-  isTextArea?: boolean;
+  isOtherContext?: boolean;
 };
 
 export type SelectOption = {
-  label?: string | string[] | null;
-  value?: string | string[] | null;
+  label?: FormValue;
+  value?: FormValue;
 };

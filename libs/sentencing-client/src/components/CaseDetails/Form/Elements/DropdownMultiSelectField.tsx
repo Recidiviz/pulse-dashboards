@@ -19,7 +19,7 @@ import { useState } from "react";
 import Select, { MultiValue } from "react-select";
 
 import * as Styled from "../../CaseDetails.styles";
-import { InputFieldProps } from "../types";
+import { InputFieldProps, SelectOption } from "../types";
 import { OtherContextInputField } from "./OtherContextField";
 
 export const DropdownMultiSelectField: React.FC<InputFieldProps> = ({
@@ -28,20 +28,30 @@ export const DropdownMultiSelectField: React.FC<InputFieldProps> = ({
   prevValue,
   updateForm,
 }) => {
-  const [, setCurrentValue] = useState<MultiValue<unknown>>(
+  const [currentValue, setCurrentValue] = useState<MultiValue<unknown>>(
     (prevValue as string[])?.map((selection) => ({
       label: selection,
       value: selection,
     })),
   );
 
-  const updateDropdownInput = (option: MultiValue<unknown>) => {
-    if (!option) return;
+  const updateDropdownInput = (options: MultiValue<SelectOption>) => {
+    if (!options) return;
 
-    setCurrentValue(option);
+    const hasNoneOption = options.find(
+      (option: SelectOption) => option.value === "None",
+    );
+
+    if (hasNoneOption) {
+      setCurrentValue([{ label: "None", value: "None" }]);
+      updateForm(element.key, ["None"], parentKey);
+      return;
+    }
+
+    setCurrentValue(options);
     updateForm(
       element.key,
-      (option as { label: string; value: string }[]).map(
+      (options as { label: string; value: string }[]).map(
         (selection) => selection.value,
       ),
       parentKey,
@@ -51,13 +61,16 @@ export const DropdownMultiSelectField: React.FC<InputFieldProps> = ({
   return (
     <>
       <Select
+        value={currentValue}
         options={element.options?.map((selection) => ({
           label: selection,
           value: selection,
         }))}
         isMulti
         styles={Styled.dropdownStyles}
-        onChange={(value) => updateDropdownInput(value)}
+        onChange={(value) =>
+          updateDropdownInput(value as MultiValue<SelectOption>)
+        }
       />
       <OtherContextInputField
         {...{ element, parentKey, prevValue, updateForm }}

@@ -62,7 +62,6 @@ test("getRequestHeaders returns expected request headers with Auth0 token", asyn
   const requestHeaders = await apiClient.getRequestHeaders();
   expect(requestHeaders).toEqual({
     Authorization: "Bearer auth0-token",
-    "Content-Type": "application/json",
   });
 });
 

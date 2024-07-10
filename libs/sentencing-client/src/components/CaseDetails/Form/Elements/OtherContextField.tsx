@@ -23,12 +23,18 @@ export const OtherContextInputField: React.FC<InputFieldProps> = ({
   ...fieldProps
 }) => {
   const { element } = fieldProps;
+
+  const showOtherContextField = Array.isArray(element.value)
+    ? element.value.some((val) =>
+        element.showOtherContextValuesMatch?.includes(val),
+      )
+    : element.showOtherContextValuesMatch?.includes(String(element.value));
+
   return (
-    element.showOtherContextValueMatch &&
-    element.value?.includes(element.showOtherContextValueMatch) && (
+    showOtherContextField && (
       <TextInputField
         {...fieldProps}
-        isTextArea
+        isOtherContext
         placeholder={element.otherContext?.placeholder}
         prevValue={element.otherContext?.value}
       />

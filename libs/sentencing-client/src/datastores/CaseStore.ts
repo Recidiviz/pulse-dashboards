@@ -20,6 +20,7 @@ import { makeAutoObservable } from "mobx";
 import { FlowMethod } from "~hydration-utils";
 
 import { APIClient, Case } from "../api/APIClient";
+import { TransformedFormUpdates } from "../components/CaseDetails/types";
 import { PSIStore } from "./PSIStore";
 
 export class CaseStore {
@@ -40,5 +41,10 @@ export class CaseStore {
       ...this.caseDetailsById,
       [caseId]: caseDetails,
     };
+  }
+
+  *updateCaseDetails(caseId: string, updates?: TransformedFormUpdates) {
+    if (!updates) return;
+    yield this.psiStore.apiClient.updateCaseDetails(caseId, updates);
   }
 }

@@ -18,33 +18,67 @@
 import { useState } from "react";
 
 import * as Styled from "../../CaseDetails.styles";
+import { LSIR_SCORE_KEY } from "../../constants";
 import { InputFieldProps } from "../types";
+import { isValidLsirScore } from "../utils";
 
 export const TextInputField: React.FC<InputFieldProps> = ({
   element,
   parentKey,
   prevValue,
   updateForm,
+  updateFormError,
   placeholder,
-  isTextArea,
+  isOtherContext,
 }) => {
-  const [currentValue, setCurrentValue] = useState(prevValue);
+  const initialValue = prevValue === null ? "" : String(prevValue);
+  const prevLsirScoreValidation =
+    element.key === LSIR_SCORE_KEY &&
+    isValidLsirScore(initialValue) &&
+    initialValue !== "";
+
+  const [currentValue, setCurrentValue] = useState(initialValue);
+  const [hasValidationError, setHasValidationError] = useState<boolean>(
+    prevLsirScoreValidation,
+  );
+
+  const handleValidationError = (hasError: boolean) => {
+    setHasValidationError(hasError);
+    if (updateFormError) updateFormError(hasError);
+  };
 
   const updateTextInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setCurrentValue(e.target.value);
-    updateForm(element.key, e.target.value, parentKey, isTextArea);
+
+    if (element.key === LSIR_SCORE_KEY && updateFormError) {
+      if (!isValidLsirScore(e.target.value) && e.target.value !== "") {
+        handleValidationError(true);
+        return;
+      }
+      handleValidationError(false);
+    }
+
+    updateForm(element.key, e.target.value, parentKey, isOtherContext);
   };
 
-  return !isTextArea ? (
-    <Styled.Input
-      id={element.key}
-      name={element.key}
-      type="text"
-      value={currentValue ?? ""}
-      onChange={updateTextInput}
-    />
+  return !isOtherContext ? (
+    <>
+      <Styled.Input
+        id={element.key}
+        name={element.key}
+        type={element.inputType}
+        value={currentValue ?? ""}
+        onChange={updateTextInput}
+        disabled={element.isDisabled}
+      />
+      {hasValidationError && (
+        <Styled.ErrorMessage>
+          {element.validationErrorMessage}
+        </Styled.ErrorMessage>
+      )}
+    </>
   ) : (
     <Styled.TextArea
       placeholder={placeholder}

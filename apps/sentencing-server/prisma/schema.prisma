@@ -96,11 +96,6 @@ enum Pronouns {
   TheyThem
 }
 
-enum VeteranStatus {
-  Veteran
-  NonVeteran
-}
-
 enum SubstanceUseDiagnosis {
   None
   Mild
@@ -137,21 +132,25 @@ enum MentalHealthDiagnosis {
 enum Plea {
   Guilty
   NotGuilty
-  Alford
+  AlfordPlea
 }
 
 enum NeedToBeAddressed {
   AngerManagement
   CaseManagement
   DomesticViolenceIssues
+  ClothingAndToiletries
   Education
   FamilyServices
   FoodInsecurity
+  FinancialAssistance
+  Healthcare
   GeneralReEntrySupport
   HousingOpportunities
   JobTrainingOrOpportunities
   MentalHealth
   SubstanceUse
+  Transportation
   Other
 }
 
@@ -219,6 +218,7 @@ model Case {
   hasPreviousViolentOffenseConviction      Boolean?
   hasPreviousSexOffenseConviction          Boolean?
   previousTreatmentCourt                   String?
+  hasPreviousTreatmentCourt                Boolean?
 
   substanceUseDisorderDiagnosis SubstanceUseDiagnosis?
   asamCareRecommendation        AsamCareRecommendation?
@@ -227,7 +227,7 @@ model Case {
   otherMentalHealthDiagnosis String?
 
   hasDevelopmentalDisability         Boolean?
-  veteranStatus                      VeteranStatus?
+  isVeteran                          Boolean?
   plea                               Plea?
   hasOpenChildProtectiveServicesCase Boolean?
   needsToBeAddressed                 NeedToBeAddressed[]

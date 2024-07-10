@@ -7,7 +7,6 @@ import {
   NeedToBeAddressed,
   Plea,
   SubstanceUseDiagnosis,
-  VeteranStatus,
 } from "@prisma/client";
 import { z } from "zod";
 
@@ -28,8 +27,6 @@ const SubstanceUseDiagnosisEnum = z.nativeEnum(SubstanceUseDiagnosis);
 const AsamCareRecommendationEnum = z.nativeEnum(AsamCareRecommendation);
 
 const MentalHealthDiagnosisEnum = z.nativeEnum(MentalHealthDiagnosis);
-
-const VeteranStatusEnum = z.nativeEnum(VeteranStatus);
 
 const PleaEnum = z.nativeEnum(Plea);
 
@@ -56,6 +53,7 @@ export const updateCaseSchema = z.object({
     hasPreviousFelonyConviction: z.boolean().nullable().optional(),
     hasPreviousViolentOffenseConviction: z.boolean().nullable().optional(),
     hasPreviousSexOffenseConviction: z.boolean().nullable().optional(),
+    hasPreviousTreatmentCourt: z.boolean().nullable().optional(),
     previousTreatmentCourt: z.string().nullable().optional(),
     substanceUseDisorderDiagnosis:
       SubstanceUseDiagnosisEnum.nullable().optional(),
@@ -63,7 +61,7 @@ export const updateCaseSchema = z.object({
     mentalHealthDiagnoses: z.array(MentalHealthDiagnosisEnum).optional(),
     otherMentalHealthDiagnosis: z.string().nullable().optional(),
     hasDevelopmentalDisability: z.boolean().nullable().optional(),
-    veteranStatus: VeteranStatusEnum.nullable().optional(),
+    isVeteran: z.boolean().nullable().optional(),
     plea: PleaEnum.nullable().optional(),
     hasOpenChildProtectiveServicesCase: z.boolean().nullable().optional(),
     needsToBeAddressed: z.array(NeedsToBeAddressedEnum).optional(),

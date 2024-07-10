@@ -6,7 +6,6 @@ import {
   Plea,
   StateCode,
   SubstanceUseDiagnosis,
-  VeteranStatus,
 } from "@prisma/client";
 
 import { prismaClient } from "~sentencing-server/prisma";
@@ -49,12 +48,13 @@ export const fakeCase = {
   reportType: faker.string.alpha(),
   primaryCharge: faker.helpers.enumValue(Charge),
   secondaryCharges: [],
-  veteranStatus: faker.helpers.enumValue(VeteranStatus),
+  isVeteran: faker.datatype.boolean(),
   previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
   hasPreviousFelonyConviction: faker.datatype.boolean(),
   hasPreviousViolentOffenseConviction: faker.datatype.boolean(),
   hasPreviousSexOffenseConviction: faker.datatype.boolean(),
   previousTreatmentCourt: null,
+  hasPreviousTreatmentCourt: null,
   substanceUseDisorderDiagnosis: faker.helpers.enumValue(SubstanceUseDiagnosis),
   hasOpenChildProtectiveServicesCase: faker.datatype.boolean(),
   hasDevelopmentalDisability: faker.datatype.boolean(),

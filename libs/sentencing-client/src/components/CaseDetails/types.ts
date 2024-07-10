@@ -30,27 +30,39 @@ export enum ProfileStrength {
   Low = "Low",
 }
 
-export type Attributes = Partial<Case & Client>;
+export type Attributes = Omit<
+  Partial<Case & Client>,
+  "recommendedOpportunities"
+>;
+
+export type FormValue = number | string | string[] | boolean | null | undefined;
 
 export type FormFieldBase = {
   key: keyof Attributes;
   label: string;
-  value: string | string[] | null;
+  value: FormValue;
   inputType:
     | "text"
+    | "number"
     | "multi-select"
     | "dropdown"
     | "dropdown-multi-select"
     | "radio";
   description?: string;
   placeholder?: string;
+  minMaxRange?: { min: number; max: number };
   options?: string[];
-  showOtherContextValueMatch?: string;
+  showOtherContextValuesMatch?: string[];
   otherContext?: {
+    key: keyof Attributes;
     placeholder?: string;
-    value: string | string[] | null;
+    value: FormValue;
   };
-  showNestedValueMatch?: string;
+  showNestedValuesMatch?: string[];
+  isRequired?: boolean;
+  isDisabled?: boolean;
+  disabledMessage?: string;
+  validationErrorMessage?: string;
 };
 
 export type FormField = FormFieldBase & {
@@ -62,3 +74,42 @@ export type FormFieldWithNestedList = FormFieldBase & {
 };
 
 export type FormFieldList = FormFieldWithNestedList[];
+
+export type FormUpdates = Record<keyof Attributes, FormValue>;
+
+export type MutableCaseAttributes = Partial<
+  Pick<
+    Case,
+    | "lsirScore"
+    | "primaryCharge"
+    | "secondaryCharges"
+    | "previouslyIncarceratedOrUnderSupervision"
+    | "hasPreviousFelonyConviction"
+    | "hasPreviousViolentOffenseConviction"
+    | "hasPreviousSexOffenseConviction"
+    | "previousTreatmentCourt"
+    | "substanceUseDisorderDiagnosis"
+    | "asamCareRecommendation"
+    | "mentalHealthDiagnoses"
+    | "otherMentalHealthDiagnosis"
+    | "hasDevelopmentalDisability"
+    | "isVeteran"
+    | "plea"
+    | "hasOpenChildProtectiveServicesCase"
+    | "needsToBeAddressed"
+    | "otherNeedToBeAddressed"
+    | "status"
+    | "selectedRecommendation"
+  >
+>;
+
+export type TransformedFormUpdates = Omit<
+  MutableCaseAttributes,
+  "selectedRecommendation"
+> & {
+  selectedRecommendation: NonNullable<Case["selectedRecommendation"]>;
+};
+
+export type NonNullableKey<T> = T extends null ? never : T;
+
+export type NonArrayType<T> = T extends (infer U)[] ? U : T;

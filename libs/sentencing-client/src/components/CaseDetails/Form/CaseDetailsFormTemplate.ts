@@ -15,63 +15,98 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FormFieldList } from "../types";
+import { Case } from "../../../api/APIClient";
+import { NO_OPTION, NOT_SURE_YET_OPTION, YES_OPTION } from "../constants";
+import { FormFieldList, NonArrayType, NonNullableKey } from "../types";
 
-export const needsToBeAddressedOptions = [
-  "Anger management",
-  "Case management",
-  "Clothing and toiletries",
-  "Domestic violence issues",
-  "Education",
-  "Family services",
-  "Financial assistance",
-  "Food insecurity",
-  "General re-entry support",
-  "Healthcare",
-  "Housing opportunities",
-  "Job training or opportunities",
-  "Mental health",
-  "Substance use",
-  "Transportation",
-  "Other",
-  "Not sure yet",
+// TODO(Recidiviz/recidiviz-data#): Handle displaying the list of charges coming from the backend
+const offenseOptions = ["Felony", "Misdemeanor"];
+
+export const needsToBeAddressed: Record<
+  NonArrayType<Case["needsToBeAddressed"]>,
+  string
+> = {
+  AngerManagement: "Anger management",
+  CaseManagement: "Case management",
+  ClothingAndToiletries: "Clothing and toiletries",
+  DomesticViolenceIssues: "Domestic violence issues",
+  Education: "Education",
+  FamilyServices: "Family services",
+  FinancialAssistance: "Financial assistance",
+  FoodInsecurity: "Food insecurity",
+  GeneralReEntrySupport: "General re-entry support",
+  Healthcare: "Healthcare",
+  HousingOpportunities: "Housing opportunities",
+  JobTrainingOrOpportunities: "Job training or opportunities",
+  MentalHealth: "Mental health",
+  SubstanceUse: "Substance use",
+  Transportation: "Transportation",
+  Other: "Other",
+};
+
+const needsToBeAddressedOptions = [
+  ...Object.values(needsToBeAddressed),
+  NOT_SURE_YET_OPTION,
 ];
 
-export const substanceUseDisorderDiagnosisOptions = [
+const substanceUseDisorderDiagnosisOptions = [
   "None",
   "Mild",
   "Moderate",
   "Severe",
-  "Not sure yet",
+  NOT_SURE_YET_OPTION,
 ];
 
-export const asamLevelOfCareRecommendationOptions = [
-  "1.0 Long-Term Remission Monitoring",
-  "1.5 Outpatient Therapy",
-  "1.7 Medically Managed Outpatient",
-  "2.1 Intensive Outpatient (IOP)",
-  "2.5 High-Intensity Outpatient (HIOP)",
-  "2.7 Medically Managed Intensive Outpatient",
-  "3.1 Clinically Managed Low-Intensity Residential",
-  "3.5 Clinically Managed High-Intensity Residential",
-  "3.7 Medically Managed Residential",
-  "4 Medically Managed Inpatient",
-  "None",
-];
+export const asamLevelOfCareRecommendation: Record<
+  NonNullableKey<Case["asamCareRecommendation"]>,
+  string
+> = {
+  LongTermRemissionMonitoring: "1.0 Long-Term Remission Monitoring",
+  OutpatientTherapy: "1.5 Outpatient Therapy",
+  MedicallyManagedOutpatient: "1.7 Medically Managed Outpatient",
+  IntensiveOutpatient: "2.1 Intensive Outpatient (IOP)",
+  HighIntensityOutpatient: "2.5 High-Intensity Outpatient (HIOP)",
+  MedicallyManagedIntensiveOutpatient:
+    "2.7 Medically Managed Intensive Outpatient",
+  ClinicallyManagedLowIntensityResidential:
+    "3.1 Clinically Managed Low-Intensity Residential",
+  ClinicallyManagedHighIntensityResidential:
+    "3.5 Clinically Managed High-Intensity Residential",
+  MedicallyManagedResidential: "3.7 Medically Managed Residential",
+  MedicallyManagedInpatient: "4 Medically Managed Inpatient",
+  None: "None",
+};
 
-export const mentalHealthDiagnosesOptions = [
-  "Bipolar Disorder",
-  "Borderline Personality Disorder",
-  "Delusional Disorder",
-  "Major Depressive Disorder (severe and recurrent)",
-  "Psychotic Disorder",
-  "Schizophrenia",
-  "Schizoaffective Disorder",
-  "Other",
-  "None",
-];
+const asamLevelOfCareRecommendationOptions = Object.values(
+  asamLevelOfCareRecommendation,
+);
 
-export const yesNoUnsureOptions = ["Yes", "No", "Not sure yet"];
+export const mentalHealthDiagnoses: Record<
+  NonArrayType<Case["mentalHealthDiagnoses"]>,
+  string
+> = {
+  BipolarDisorder: "Bipolar Disorder",
+  BorderlinePersonalityDisorder: "Borderline Personality Disorder",
+  DelusionalDisorder: "Delusional Disorder",
+  MajorDepressiveDisorder: "Major Depressive Disorder (severe and recurrent)",
+  PsychoticDisorder: "Psychotic Disorder",
+  Schizophrenia: "Schizophrenia",
+  SchizoaffectiveDisorder: "Schizoaffective Disorder",
+  Other: "Other",
+  None: "None",
+};
+
+const mentalHealthDiagnosesOptions = Object.values(mentalHealthDiagnoses);
+
+export const pleas = {
+  Guilty: "Guilty",
+  NotGuilty: "Not Guilty",
+  AlfordPlea: "Alford Plea",
+};
+
+const pleaOptions = [...Object.values(pleas), NOT_SURE_YET_OPTION];
+
+const yesNoUnsureOptions = [YES_OPTION, NO_OPTION, NOT_SURE_YET_OPTION];
 
 export const caseDetailsFormTemplate: FormFieldList = [
   {
@@ -80,22 +115,28 @@ export const caseDetailsFormTemplate: FormFieldList = [
     value: null,
     description:
       "If there are multiple charges for this case, choose the most severe",
-    inputType: "text",
+    inputType: "dropdown",
+    options: offenseOptions,
+    isRequired: true,
   },
   {
     key: "lsirScore",
-    label: "LSI-R Score",
+    label: "Draft LSI-R Score",
     value: null,
     inputType: "text",
+    disabledMessage:
+      "This score has been pulled in from Atlas and is unable to be edited.",
+    validationErrorMessage: "Please enter a number between 0 and 54.",
   },
   {
     key: "needsToBeAddressed",
-    label: `What are X's primary needs`,
+    label: `What are their primary needs?`,
     value: null,
     inputType: "multi-select",
     options: needsToBeAddressedOptions,
-    showOtherContextValueMatch: "Other Need",
+    showOtherContextValuesMatch: ["Other"],
     otherContext: {
+      key: "otherNeedToBeAddressed",
       placeholder: "Please specify other need",
       value: null,
     },
@@ -106,7 +147,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
     value: null,
     inputType: "radio",
     options: substanceUseDisorderDiagnosisOptions,
-    showNestedValueMatch: "Moderate",
+    showNestedValuesMatch: ["Mild", "Moderate", "Severe"],
     nested: [
       {
         key: "asamCareRecommendation",
@@ -123,14 +164,15 @@ export const caseDetailsFormTemplate: FormFieldList = [
     value: null,
     inputType: "dropdown-multi-select",
     options: mentalHealthDiagnosesOptions,
-    showOtherContextValueMatch: "Other",
+    showOtherContextValuesMatch: ["Other"],
     otherContext: {
+      key: "otherMentalHealthDiagnosis",
       placeholder: "Please specify other need",
       value: null,
     },
   },
   {
-    key: "veteranStatus",
+    key: "isVeteran",
     label: "Is a veteran",
     value: null,
     inputType: "radio",
@@ -142,7 +184,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
     value: null,
     inputType: "radio",
     options: yesNoUnsureOptions,
-    showNestedValueMatch: "Yes",
+    showNestedValuesMatch: [YES_OPTION],
     nested: [
       {
         key: "hasPreviousFelonyConviction",
@@ -166,7 +208,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
         options: yesNoUnsureOptions,
       },
       {
-        key: "previousTreatmentCourt",
+        key: "hasPreviousTreatmentCourt",
         label: "Has previously participated in a treatment court",
         value: null,
         inputType: "radio",
@@ -187,5 +229,12 @@ export const caseDetailsFormTemplate: FormFieldList = [
     value: null,
     inputType: "radio",
     options: yesNoUnsureOptions,
+  },
+  {
+    key: "plea",
+    label: "Plea",
+    value: null,
+    inputType: "radio",
+    options: pleaOptions,
   },
 ];

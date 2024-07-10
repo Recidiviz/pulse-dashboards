@@ -37,7 +37,7 @@ export class CaseDetailsPresenter implements Hydratable {
     public readonly caseStore: CaseStore,
     public caseId: string,
   ) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
@@ -93,5 +93,12 @@ export class CaseDetailsPresenter implements Hydratable {
 
   async hydrate(): Promise<void> {
     return this.hydrator.hydrate();
+  }
+
+  async updateAttributes(caseId: string) {
+    await flowResult(
+      this.caseStore.updateCaseDetails(caseId, this.form?.transformedUpdates),
+    );
+    await this.caseStore.loadCaseDetails(this.caseId);
   }
 }

@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Attributes } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";
 import { Case, Staff } from "./APIClient";
 
 export class OfflineAPIClient {
-  private editableInfo: Map<string, string | string[] | boolean> = new Map();
+  private editableInfo: Map<string, unknown> = new Map();
 
   // eslint-disable-next-line no-useless-constructor
   constructor(public readonly psiStore: PSIStore) {}
@@ -35,7 +36,7 @@ export class OfflineAPIClient {
     };
   }
 
-  async setIsFirstLogin() {
+  setIsFirstLogin() {
     this.editableInfo.set("hasLoggedIn", true);
   }
 
@@ -44,5 +45,11 @@ export class OfflineAPIClient {
       "./offlineFixtures/CaseDetailsFixtures"
     );
     return CaseDetailsFixture?.[caseId];
+  }
+
+  updateCaseDetails(caseId: string, updates: Partial<Attributes>) {
+    Object.entries(updates).forEach(([key, value]) => {
+      this.editableInfo.set(caseId, { key, value });
+    });
   }
 }

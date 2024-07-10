@@ -17,8 +17,8 @@
 
 import { useState } from "react";
 
-import CheckIcon from "../../../assets/green-check-icon.svg?react";
 import * as Styled from "../../CaseDetails.styles";
+import { NOT_SURE_YET_OPTION } from "../../constants";
 import { InputFieldProps } from "../types";
 
 export const RadioSelectField: React.FC<InputFieldProps> = ({
@@ -29,8 +29,7 @@ export const RadioSelectField: React.FC<InputFieldProps> = ({
 }) => {
   const [currentValue, setCurrentValue] = useState(prevValue);
 
-  const updateRadioSelect = (option: string | null) => {
-    if (option === null) return;
+  const updateRadioSelect = (option: string) => {
     setCurrentValue(option);
     updateForm(element.key, option, parentKey);
   };
@@ -39,17 +38,16 @@ export const RadioSelectField: React.FC<InputFieldProps> = ({
     <Styled.MultiSelectContainer>
       {element.options?.map((option) => {
         const isDefaultNotSureYetSelected =
-          option === "Not sure yet" && currentValue === null;
+          option === NOT_SURE_YET_OPTION && currentValue === null;
         return (
           <Styled.MultiSelectChip
             key={option}
             selected={isDefaultNotSureYetSelected || currentValue === option}
             onClick={() => updateRadioSelect(option)}
-            isNotSureYetOption={option === "Not sure yet"}
+            isNotSureYetOption={
+              currentValue === NOT_SURE_YET_OPTION || currentValue === null
+            }
           >
-            {(isDefaultNotSureYetSelected || currentValue === option) && (
-              <CheckIcon />
-            )}
             {option}
           </Styled.MultiSelectChip>
         );

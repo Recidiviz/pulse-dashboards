@@ -39,16 +39,17 @@ export const FormField = ({
     parentKey,
     prevValue,
     updateForm: form.updateForm,
+    updateFormError: form.updateFormError,
   };
 
   return (
-    <Styled.Form>
+    <>
       <Styled.InputLabel htmlFor={element.key}>
         {element.label}
       </Styled.InputLabel>
-      {element.inputType === "text" && <TextInputField {...fieldProps} />}
-      {element.description && (
-        <Styled.InputDescription>{element.description}</Styled.InputDescription>
+
+      {(element.inputType === "text" || element.inputType === "number") && (
+        <TextInputField {...fieldProps} />
       )}
       {element.inputType === "multi-select" && (
         <MultiSelectField {...fieldProps} />
@@ -58,6 +59,15 @@ export const FormField = ({
       {element.inputType === "dropdown-multi-select" && (
         <DropdownMultiSelectField {...fieldProps} />
       )}
-    </Styled.Form>
+
+      {element.description && (
+        <Styled.InputDescription>{element.description}</Styled.InputDescription>
+      )}
+      {element.isDisabled && (
+        <Styled.InputDescription>
+          {element.disabledMessage}
+        </Styled.InputDescription>
+      )}
+    </>
   );
 };

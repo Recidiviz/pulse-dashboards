@@ -17,6 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { Hydrator } from "~hydration-utils";
@@ -38,7 +39,8 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter: CaseDetailsPresenter;
 }) {
   const navigate = useNavigate();
-  const { staffPseudoId, caseAttributes, form } = presenter;
+  const { staffPseudoId, caseId, caseAttributes, form, updateAttributes } =
+    presenter;
 
   const [selectedRecommendation, setSelectedRecommendation] =
     useState<RecommendationType>();
@@ -47,6 +49,13 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     setSelectedRecommendation((prev) =>
       prev !== recommendation ? recommendation : undefined,
     );
+
+  const saveAttributes = () => {
+    updateAttributes(caseId);
+    toast(() => <span>Case details updated</span>, {
+      duration: 3000,
+    });
+  };
 
   if (!staffPseudoId) {
     return <Styled.PageContainer>No staff ID found.</Styled.PageContainer>;
@@ -64,7 +73,11 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
         }
       >{`Back to Dashboard`}</Styled.BackLink>
       {/* Case Attributes */}
-      <CaseAttributes caseAttributes={caseAttributes} form={form} />
+      <CaseAttributes
+        caseAttributes={caseAttributes}
+        form={form}
+        saveAttributes={saveAttributes}
+      />
       <Styled.Body>
         {/* Recommendations */}
         <Recommendations

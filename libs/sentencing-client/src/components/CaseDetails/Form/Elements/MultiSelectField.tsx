@@ -19,6 +19,7 @@ import { useState } from "react";
 
 import CheckIcon from "../../../assets/green-check-icon.svg?react";
 import * as Styled from "../../CaseDetails.styles";
+import { NOT_SURE_YET_OPTION } from "../../constants";
 import { InputFieldProps } from "../types";
 import { OtherContextInputField } from "./OtherContextField";
 
@@ -32,6 +33,11 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
 
   const updateMultiSelect = (option: string | null) => {
     if (option === null) return;
+    if (option === NOT_SURE_YET_OPTION) {
+      setCurrentValue([]);
+      updateForm(element.key, null, parentKey);
+      return;
+    }
 
     const updatedValue = currentValue?.includes(option)
       ? currentValue.filter((val) => val !== option)
@@ -46,7 +52,7 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
       <Styled.MultiSelectContainer>
         {element.options?.map((option) => {
           const isDefaultNotSureYetSelected =
-            option === "Not sure yet" && currentValue.length === 0;
+            option === NOT_SURE_YET_OPTION && currentValue?.length === 0;
           return (
             <Styled.MultiSelectChip
               key={option}
@@ -54,9 +60,10 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
                 isDefaultNotSureYetSelected || currentValue?.includes(option)
               }
               onClick={() => updateMultiSelect(option)}
-              isNotSureYetOption={option === "Not sure yet"}
+              isNotSureYetOption={option === NOT_SURE_YET_OPTION}
             >
-              {((option === "Not sure yet" && currentValue.length === 0) ||
+              {((option === NOT_SURE_YET_OPTION &&
+                currentValue?.length === 0) ||
                 currentValue?.includes(option)) && <CheckIcon />}
               {option}
             </Styled.MultiSelectChip>

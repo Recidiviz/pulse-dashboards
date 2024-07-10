@@ -17,8 +17,6 @@
 
 import { CaseWithClient, Client } from "../../api";
 
-// TODO(Recidiviz/recidiviz-data#30653): Find a better way to more strongly type these keys
-
 export const DUE_DATE_KEY: keyof CaseWithClient = "dueDate";
 
 export const CLIENT_KEY: keyof CaseWithClient = "Client";

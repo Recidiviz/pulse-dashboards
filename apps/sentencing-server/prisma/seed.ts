@@ -8,7 +8,6 @@ import {
   Staff,
   StateCode,
   SubstanceUseDiagnosis,
-  VeteranStatus,
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -85,7 +84,7 @@ async function main() {
         reportType: faker.string.alpha(),
         primaryCharge: faker.helpers.enumValue(Charge),
         secondaryCharges: [],
-        veteranStatus: faker.helpers.enumValue(VeteranStatus),
+        isVeteran: faker.datatype.boolean(),
         previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
         hasPreviousFelonyConviction: faker.datatype.boolean(),
         hasPreviousViolentOffenseConviction: faker.datatype.boolean(),
