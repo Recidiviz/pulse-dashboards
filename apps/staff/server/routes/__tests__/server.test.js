@@ -14,7 +14,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const Sentry = require("@sentry/node");
 const request = require("supertest");
 const { server } = require("../../../server");
 const { clearCache } = require("../../core/cacheManager");
@@ -22,21 +21,6 @@ const { clearCache } = require("../../core/cacheManager");
 const OLD_ENV = process.env;
 
 jest.mock("firebase-admin");
-jest.mock("@sentry/node", () => ({
-  Handlers: {
-    errorHandler: jest.fn(() => {
-      return (error, _req, _res, next) => {
-        next(error);
-      };
-    }),
-    requestHandler: jest.fn(() => {
-      return (error, _req, _res, next) => {
-        next(error);
-      };
-    }),
-  },
-  init: () => undefined,
-}));
 jest.mock("express-jwt", () => {
   return () => {
     const jwt = (req, res, next) => {
@@ -359,7 +343,7 @@ describe("Server tests", () => {
             "Cannot read properties of undefined (reading 'flattenedValueMatrix')",
           ]);
           expect(response.body.status).toEqual(500);
-          expect(Sentry.Handlers.errorHandler).toHaveBeenCalledTimes(1);
+          // TODO(https://github.com/Recidiviz/pulse-dashboards/issues/5784): Add a test to check that error is reported to Sentry
         });
     });
   });

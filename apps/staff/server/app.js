@@ -55,10 +55,11 @@ app.use(limiter);
 Sentry.init({
   environment: process.env.SENTRY_ENV,
   dsn: process.env.SENTRY_DNS,
+  tracesSampleRate: 0.25,
 });
 
 // The Sentry request handler must be the first middleware on the app
-app.use(Sentry.Handlers.requestHandler());
+Sentry.setupExpressErrorHandler(app);
 
 app.use(cors());
 
@@ -220,9 +221,6 @@ app.get("/health", (req, res) => {
 app.get("/token", getFirebaseToken);
 
 app.get("/api/impersonateAuth0User", api.getImpersonatedUserRestrictions);
-
-// The Sentry error handler must be before any other error middleware and after all controllers
-app.use(Sentry.Handlers.errorHandler());
 
 app.use(errorHandler);
 
