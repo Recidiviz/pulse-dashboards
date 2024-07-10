@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
+import { round } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
@@ -63,6 +64,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     clients,
   } = presenter;
 
+  // TODO(#5780): move infoItems to presenter
   const infoItems = [
     {
       title: "caseload types",
@@ -70,6 +72,12 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         (presenter.areCaseloadTypeBreakdownsEnabled &&
           outlierOfficerData?.caseloadType) ||
         null,
+    },
+    {
+      title: "avg daily caseload",
+      info: outlierOfficerData
+        ? round(outlierOfficerData.avgDailyPopulation)
+        : undefined,
     },
   ];
 

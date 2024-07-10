@@ -147,6 +147,13 @@ export const MetricPageWithPresenter = observer(
       descriptionMarkdown,
     } = metric.config;
 
+    const infoItems = [
+      {
+        title: "avg daily caseload",
+        info: outlierOfficerData.avgDailyPopulation,
+      },
+    ];
+
     const secondToLastDateHint = secondToLastDate
       ? `The dot before the most recent one shows the ${
           labels.supervisionOfficerLabel
@@ -181,6 +188,7 @@ export const MetricPageWithPresenter = observer(
         pageTitle={metricInfo.titleDisplayName}
         pageSubtitle={outlierOfficerData.displayName}
         pageDescription={pageDescription}
+        infoItems={infoItems}
         contentsAboveTitle={
           <InsightsBreadcrumbs
             previousPages={[

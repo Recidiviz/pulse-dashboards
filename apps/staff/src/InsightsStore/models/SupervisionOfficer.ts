@@ -40,6 +40,7 @@ export const supervisionOfficerSchema = supervisionOfficerBaseSchema
         topXPct: z.number(),
       }),
     ),
+    avgDailyPopulation: z.number(),
   })
   .transform(addDisplayName);
 

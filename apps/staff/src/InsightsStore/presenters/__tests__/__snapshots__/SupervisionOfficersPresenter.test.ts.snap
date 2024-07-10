@@ -3,6 +3,7 @@
 exports[`outlierOfficersData 1`] = `
 [
   {
+    "avgDailyPopulation": 54.321,
     "caseloadType": "SEX_OFFENSE",
     "displayName": "Walter Harris",
     "district": "Region D1",
@@ -1322,6 +1323,7 @@ exports[`outlierOfficersData 1`] = `
     "topXPctMetrics": [],
   },
   {
+    "avgDailyPopulation": 32.1,
     "caseloadType": "GENERAL_OR_OTHER",
     "displayName": "Jason Nelson",
     "district": "Region D1",

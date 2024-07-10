@@ -48,6 +48,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
         .SEX_OFFENSE[0],
     ],
     topXPctMetrics: [],
+    avgDailyPopulation: 54.321,
   },
   {
     externalId: "so2",
@@ -63,6 +64,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     topXPctMetrics: [
       { metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts, topXPct: 10 },
     ],
+    avgDailyPopulation: 12.345,
   },
   {
     externalId: "so3",
@@ -81,6 +83,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
         .GENERAL_OR_OTHER[0],
     ],
     topXPctMetrics: [],
+    avgDailyPopulation: 32.1,
   },
   {
     externalId: "so4",
@@ -100,6 +103,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
         .GENERAL_OR_OTHER[0],
     ],
     topXPctMetrics: [],
+    avgDailyPopulation: 43.21,
   },
   {
     externalId: "so5",
@@ -113,6 +117,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
     outlierMetrics: [],
     topXPctMetrics: [],
+    avgDailyPopulation: 5.43,
   },
 ];
 
