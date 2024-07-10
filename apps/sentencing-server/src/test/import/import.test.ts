@@ -5,6 +5,7 @@ import { describe, expect, test, vi } from "vitest";
 
 import { prismaClient } from "~sentencing-server/prisma";
 import {
+  arrayToJsonLines,
   callImportCaseData,
   callImportClientData,
   callImportStaffData,
@@ -35,11 +36,11 @@ describe("import", () => {
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_case_record.json")
         .save(
-          JSON.stringify([
+          arrayToJsonLines([
             // New case
             {
               external_id: "new-case-ext-id",
-              state_code: StateCode.ID,
+              state_code: StateCode.US_ID,
               staff_id: fakeStaff.externalId,
               client_id: fakeClient.externalId,
               due_date: faker.date.future(),
@@ -47,7 +48,7 @@ describe("import", () => {
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
-              lsir_score: faker.number.int({ max: 100 }),
+              lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
@@ -81,11 +82,11 @@ describe("import", () => {
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_case_record.json")
         .save(
-          JSON.stringify([
+          arrayToJsonLines([
             // Existing case
             {
               external_id: fakeCase.externalId,
-              state_code: StateCode.ID,
+              state_code: StateCode.US_ID,
               staff_id: fakeStaff.externalId,
               client_id: fakeClient.externalId,
               due_date: faker.date.future(),
@@ -94,14 +95,14 @@ describe("import", () => {
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
               // Set the LSIR score to a new value
-              lsir_score: 1000,
+              lsir_score: (1000).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
             // New case
             {
               external_id: "new-case-ext-id",
-              state_code: StateCode.ID,
+              state_code: StateCode.US_ID,
               staff_id: fakeStaff.externalId,
               client_id: fakeClient.externalId,
               due_date: faker.date.future(),
@@ -109,7 +110,7 @@ describe("import", () => {
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
-              lsir_score: faker.number.int({ max: 100 }),
+              lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
@@ -138,11 +139,11 @@ describe("import", () => {
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_case_record.json")
         .save(
-          JSON.stringify([
+          arrayToJsonLines([
             // New case with nonexistent staff and client
             {
               external_id: "new-case-ext-id",
-              state_code: StateCode.ID,
+              state_code: StateCode.US_ID,
               staff_id: "non-existent-staff-id",
               client_id: "non-existent-client-id",
               due_date: faker.date.future(),
@@ -150,7 +151,7 @@ describe("import", () => {
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
               county_name: faker.location.county(),
-              lsir_score: faker.number.int({ max: 100 }),
+              lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
             },
@@ -186,19 +187,19 @@ describe("import", () => {
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_client_record.json")
         .save(
-          JSON.stringify([
+          arrayToJsonLines([
             // New client
             {
               external_id: "new-client-ext-id",
               pseudonymized_id: "new-client-pid",
-              case_ids: ["new-case-ext-id"],
-              state_code: StateCode.ID,
-              full_name: {
+              caseIds: JSON.stringify(["new-case-ext-id"]),
+              state_code: StateCode.US_ID,
+              full_name: JSON.stringify({
                 given_names: "Given",
                 middle_names: "Middle",
                 surname: "Last",
                 name_suffix: "Sr.",
-              },
+              }),
               gender: faker.person.gender(),
               county: faker.location.county(),
               birth_date: faker.date.birthdate(),
@@ -248,19 +249,19 @@ describe("import", () => {
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_client_record.json")
         .save(
-          JSON.stringify([
+          arrayToJsonLines([
             // New client
             {
               external_id: "new-client-ext-id",
               pseudonymized_id: "new-client-pid",
-              case_ids: [],
-              state_code: StateCode.ID,
-              full_name: {
+              caseIds: JSON.stringify([]),
+              state_code: StateCode.US_ID,
+              full_name: JSON.stringify({
                 given_names: faker.person.firstName(),
                 middle_names: faker.person.firstName(),
                 surname: faker.person.lastName(),
                 name_suffix: faker.person.suffix(),
-              },
+              }),
               gender: faker.person.gender(),
               county: faker.location.county(),
               birth_date: faker.date.birthdate(),
@@ -269,14 +270,14 @@ describe("import", () => {
             {
               external_id: "client-ext-1",
               pseudonymized_id: "client-pid-1",
-              case_ids: [fakeCase.externalId],
-              state_code: StateCode.ID,
-              full_name: {
+              caseIds: JSON.stringify([fakeCase.externalId]),
+              state_code: StateCode.US_ID,
+              full_name: JSON.stringify({
                 given_names: faker.person.firstName(),
                 middle_names: faker.person.firstName(),
                 surname: faker.person.lastName(),
                 name_suffix: faker.person.suffix(),
-              },
+              }),
               gender: faker.person.gender(),
               // Set a new county
               county: "my fake county",
@@ -313,19 +314,19 @@ describe("import", () => {
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_staff_record.json")
         .save(
-          JSON.stringify([
+          arrayToJsonLines([
             // New staff
             {
               external_id: "new-staff-ext-id",
               pseudonymized_id: "new-staff-pid",
-              case_ids: ["new-case-ext-id"],
-              state_code: StateCode.ID,
-              full_name: {
+              caseIds: JSON.stringify(["new-case-ext-id"]),
+              state_code: StateCode.US_ID,
+              full_name: JSON.stringify({
                 given_names: "Given",
                 middle_names: "Middle",
                 surname: "Last",
                 name_suffix: "Sr.",
-              },
+              }),
               email: faker.internet.email(),
             },
           ]),
@@ -373,33 +374,33 @@ describe("import", () => {
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_staff_record.json")
         .save(
-          JSON.stringify([
+          arrayToJsonLines([
             // new staff
             {
               external_id: "new-staff-ext-id",
               pseudonymized_id: "new-staff-pid",
-              case_ids: ["new-case-ext-id"],
-              state_code: StateCode.ID,
-              full_name: {
+              caseIds: JSON.stringify(["new-case-ext-id"]),
+              state_code: StateCode.US_ID,
+              full_name: JSON.stringify({
                 given_names: faker.person.firstName(),
                 middle_names: faker.person.firstName(),
                 surname: faker.person.lastName(),
                 name_suffix: faker.person.suffix(),
-              },
+              }),
               email: faker.internet.email(),
             },
             // existing staff
             {
               external_id: "staff-ext-1",
               pseudonymized_id: "staff-pid-1",
-              case_ids: [fakeCase.externalId],
-              state_code: StateCode.ID,
-              full_name: {
+              caseIds: JSON.stringify([fakeCase.externalId]),
+              state_code: StateCode.US_ID,
+              full_name: JSON.stringify({
                 given_names: faker.person.firstName(),
                 middle_names: faker.person.firstName(),
                 surname: faker.person.lastName(),
                 name_suffix: faker.person.suffix(),
-              },
+              }),
               // Set the email
               email: "existing_staff@gmail.com",
             },

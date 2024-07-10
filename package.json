@@ -18,7 +18,6 @@
     "@auth0/auth0-spa-js": "^1.12.1",
     "@fastify/cors": "^9.0.1",
     "@floating-ui/react": "^0.26.1",
-    "@google-cloud/pubsub": "^4.4.1",
     "@google-cloud/storage": "^7.11.1",
     "@material/select": "^14.0.0",
     "@material/textfield": "^14.0.0",
@@ -167,7 +166,8 @@
     "use-query-params": "^2.2.1",
     "uuid": "^8.3.2",
     "word-wrap": "^1.2.4",
-    "zod": "^3.23.6"
+    "zod": "^3.23.6",
+    "zod_utilz": "^0.8.3"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",

@@ -1,15 +1,11 @@
-import { protos } from "@google-cloud/pubsub";
 import { Storage } from "@google-cloud/storage";
+import _ from "lodash";
 
 import {
   transformAndLoadCaseData,
   transformAndLoadClientData,
   transformAndLoadStaffData,
 } from "~sentencing-server/import/utils";
-
-// https://cloud.google.com/storage/docs/pubsub-notifications
-const BUCKET_ID = "bucketId";
-const OBJECT_ID = "objectId";
 
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_record.py
 const CASES_FILE_NAME = "sentencing_case_record.json";
@@ -18,22 +14,25 @@ const STAFF_FILE_NAME = "sentencing_staff_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/client_record.py
 const CLIENTS_FILE_NAME = "sentencing_client_record.json";
 
-export async function handleImport(encodedMessage: string) {
-  const decoded = JSON.parse(Buffer.from(encodedMessage, "base64").toString());
-  const message = protos.google.pubsub.v1.PubsubMessage.fromObject(decoded);
-
-  const bucketId = message.attributes[BUCKET_ID];
-  const objectId = message.attributes[OBJECT_ID];
-
+export async function handleImport(bucketId: string, objectId: string) {
   const storage = new Storage();
-  const contents = (
-    await storage.bucket(bucketId).file(objectId).download()
-  ).toString();
+
+  // The files are newline-delimited JSON, so we need to split them
+  const contents = (await storage.bucket(bucketId).file(objectId).download())
+    .toString()
+    .split("\n");
 
   // The object id looks like <state_code>/<file_name>
   // For now, the state code is always Idaho, so we can ignore that
   const fileName = objectId.split("/").pop();
-  const data = JSON.parse(contents);
+  const data = _.map(contents, (row) => {
+    try {
+      return JSON.parse(row);
+    } catch (e) {
+      console.error(`Error parsing JSON ${row}: ${e}`);
+      return undefined;
+    }
+  }).filter((row) => row !== undefined);
 
   if (fileName === CASES_FILE_NAME) {
     await transformAndLoadCaseData(data);

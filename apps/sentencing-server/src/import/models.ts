@@ -1,65 +1,21 @@
+import { StateCode } from "@prisma/client";
 import z from "zod";
+import zu from "zod_utilz";
 
 import { fullNameObjectToString } from "~sentencing-server/import/utils";
 
-const stateCode = z.enum([
-  "AL",
-  "AK",
-  "AZ",
-  "AR",
-  "CA",
-  "CO",
-  "CT",
-  "DE",
-  "FL",
-  "GA",
-  "HI",
-  "ID",
-  "IL",
-  "IN",
-  "IA",
-  "KS",
-  "KY",
-  "LA",
-  "ME",
-  "MD",
-  "MA",
-  "MI",
-  "MN",
-  "MS",
-  "MO",
-  "MT",
-  "NE",
-  "NV",
-  "NH",
-  "NJ",
-  "NM",
-  "NY",
-  "NC",
-  "ND",
-  "OH",
-  "OK",
-  "OR",
-  "PA",
-  "RI",
-  "SC",
-  "SD",
-  "TN",
-  "TX",
-  "UT",
-  "VT",
-  "VA",
-  "WA",
-  "WV",
-  "WI",
-  "WY",
-]);
-export const nameSchema = z.object({
-  given_names: z.string(),
-  middle_names: z.string(),
-  name_suffix: z.string(),
-  surname: z.string(),
-});
+const stateCode = z.nativeEnum(StateCode);
+
+export const nameSchema = zu.stringToJSON().pipe(
+  z.object({
+    given_names: z.string(),
+    middle_names: z.string(),
+    name_suffix: z.string(),
+    surname: z.string(),
+  }),
+);
+
+const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.coerce.string()));
 
 export const caseImportSchema = z.array(
   z.object({
@@ -72,8 +28,8 @@ export const caseImportSchema = z.array(
     sentence_date: z.coerce.date(),
     assigned_date: z.coerce.date(),
     county_name: z.string(),
-    lsir_score: z.number(),
-    lsir_level: z.string(),
+    lsir_score: z.coerce.number().optional(),
+    lsir_level: z.string().optional(),
     report_type: z.string(),
   }),
 );
@@ -83,11 +39,11 @@ export const clientImportSchema = z.array(
     .object({
       external_id: z.string(),
       pseudonymized_id: z.string(),
-      case_ids: z.array(z.string()),
+      caseIds: caseIdsSchema,
       state_code: stateCode,
       full_name: nameSchema,
       gender: z.string(),
-      county: z.string(),
+      county: z.string().optional(),
       birth_date: z.coerce.date(),
     })
     .transform((data) => {
@@ -104,7 +60,7 @@ export const staffImportSchema = z.array(
     .object({
       external_id: z.string(),
       pseudonymized_id: z.string(),
-      case_ids: z.array(z.string()),
+      caseIds: caseIdsSchema,
       state_code: stateCode,
       full_name: nameSchema,
       email: z.string(),

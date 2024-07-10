@@ -17,7 +17,10 @@ import { AppRouter, appRouter } from "~sentencing-server/trpc/router";
 
 interface PubsubBodyType {
   message?: {
-    data?: string;
+    attributes: {
+      bucketId: string;
+      objectId: string;
+    };
   };
 }
 
@@ -54,7 +57,11 @@ export function buildServer() {
   server.post(
     "/trigger_import",
     async (req: FastifyRequest<{ Body: PubsubBodyType }>, res) => {
-      if (!req.body.message?.data) {
+      if (
+        !req.body.message?.attributes ||
+        !req.body.message.attributes.bucketId ||
+        !req.body.message.attributes.objectId
+      ) {
         const msg = "invalid Pub/Sub message format";
         console.error(`error: ${msg}`);
         res.status(400).send(`Bad Request: ${msg}`);
@@ -62,7 +69,8 @@ export function buildServer() {
       }
 
       // TODO(https://github.com/Recidiviz/recidiviz-data/issues/30480): report errors correctly to Sentry
-      await handleImport(req.body.message.data);
+      const { bucketId, objectId } = req.body.message.attributes;
+      await handleImport(bucketId, objectId);
 
       res.status(200).send("Import complete");
     },

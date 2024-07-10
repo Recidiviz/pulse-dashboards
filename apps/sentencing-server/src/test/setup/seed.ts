@@ -21,7 +21,7 @@ export const fakeStaff = {
   pseudonymizedId: "staff-pid-1",
   fullName: faker.person.fullName(),
   email: faker.internet.email(),
-  stateCode: StateCode.ID,
+  stateCode: StateCode.US_ID,
   hasLoggedIn: faker.datatype.boolean(),
 } satisfies StaffCreateInput;
 
@@ -29,7 +29,7 @@ export const fakeClient = {
   externalId: "client-ext-1",
   pseudonymizedId: "client-pid-1",
   fullName: faker.person.fullName(),
-  stateCode: StateCode.ID,
+  stateCode: StateCode.US_ID,
   gender: faker.person.gender(),
   county: faker.location.county(),
   birthDate: faker.date.birthdate(),
@@ -38,7 +38,7 @@ export const fakeClient = {
 export const fakeCase = {
   externalId: "case-ext-1",
   id: "case-1",
-  stateCode: StateCode.ID,
+  stateCode: StateCode.US_ID,
   dueDate: faker.date.future(),
   completionDate: faker.date.future(),
   sentenceDate: faker.date.past(),

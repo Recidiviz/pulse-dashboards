@@ -29,7 +29,7 @@ async function main() {
       pseudonymizedId: faker.string.uuid(),
       fullName: faker.person.fullName(),
       email: faker.internet.email(),
-      stateCode: StateCode.ID,
+      stateCode: StateCode.US_ID,
       hasLoggedIn: faker.datatype.boolean(),
     });
   }
@@ -46,7 +46,7 @@ async function main() {
       externalId: faker.string.uuid(),
       pseudonymizedId: faker.string.uuid(),
       fullName: faker.person.fullName(),
-      stateCode: StateCode.ID,
+      stateCode: StateCode.US_ID,
       gender: faker.person.gender(),
       county: faker.location.county(),
       birthDate: faker.date.birthdate(),
@@ -74,7 +74,7 @@ async function main() {
               staff[faker.number.int({ max: staff.length - 1 })].externalId,
           },
         },
-        stateCode: StateCode.ID,
+        stateCode: StateCode.US_ID,
         dueDate: faker.date.future(),
         completionDate: faker.date.future(),
         sentenceDate: faker.date.past(),

@@ -20,7 +20,7 @@ import { Case } from "../APIClient";
 export const CaseDetailsFixture: { [caseId: string]: Case } = {
   "f9c7ad42-949c-4f11-9ece-caf66df9f913": {
     id: "f9c7ad42-949c-4f11-9ece-caf66df9f913",
-    stateCode: "ID",
+    stateCode: "US_ID",
     dueDate: new Date("2025-01-19T13:52:20.338Z"),
     completionDate: new Date("2025-02-22T08:00:12.071Z"),
     sentenceDate: new Date("2023-12-16T04:52:18.339Z"),

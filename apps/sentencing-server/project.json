@@ -121,6 +121,7 @@
           "project": "recidiviz-dashboard-staging",
           "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest",
           "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:sentencing-db",
+          "memory": "512Mi"
         }
       },
       "defaultConfiguration": "staging"

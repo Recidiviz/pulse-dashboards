@@ -22,7 +22,7 @@ export async function transformAndLoadClientData(data: unknown) {
   const cleanedData = parsedData.map((clientData) => {
     // Just get the cases which are already in the database (if a case hasn't been uploaded yet, it will be linked to this client during the case upload process)
     const existingCasesForClient = existingCases.filter(({ externalId }) =>
-      clientData.case_ids.includes(externalId),
+      clientData.caseIds.includes(externalId),
     );
 
     return {
@@ -31,7 +31,7 @@ export async function transformAndLoadClientData(data: unknown) {
       stateCode: clientData.state_code,
       fullName: clientData.full_name,
       gender: clientData.gender,
-      county: clientData.county,
+      county: clientData.county ?? "UNKNOWN",
       birthDate: clientData.birth_date,
       Cases: {
         connect: existingCasesForClient,
@@ -74,7 +74,7 @@ export async function transformAndLoadStaffData(data: unknown) {
   const cleanedData = parsedData.map((staffData) => {
     // Just get the cases which are already in the database (if a case hasn't been uploaded yet, it will be linked to this client during the case upload process)
     const existingCasesForStaff = existingCases.filter(({ externalId }) =>
-      staffData.case_ids.includes(externalId),
+      staffData.caseIds.includes(externalId),
     );
 
     return {

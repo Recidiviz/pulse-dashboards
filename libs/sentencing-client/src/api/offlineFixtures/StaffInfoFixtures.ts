@@ -21,15 +21,15 @@ export const StaffInfoFixture: Staff = {
   pseudonymizedId: "ABC123",
   fullName: "",
   email: "firstlast@test.com",
-  stateCode: "ID",
+  stateCode: "US_ID",
   hasLoggedIn: false,
   Cases: [
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f913",
-      stateCode: "ID",
+      stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
-        stateCode: "ID",
+        stateCode: "US_ID",
         fullName: "Blanda Furman",
         gender: "FTM",
         county: "Gwynedd County",
@@ -66,10 +66,10 @@ export const StaffInfoFixture: Staff = {
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132",
-      stateCode: "ID",
+      stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
-        stateCode: "ID",
+        stateCode: "US_ID",
         fullName: "Test User 1",
         gender: "FTM",
         county: "Gwynedd County",
@@ -106,10 +106,10 @@ export const StaffInfoFixture: Staff = {
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x2",
-      stateCode: "ID",
+      stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
-        stateCode: "ID",
+        stateCode: "US_ID",
         fullName: "Anne Teak",
         gender: "FTM",
         county: "Gwynedd County",
@@ -146,10 +146,10 @@ export const StaffInfoFixture: Staff = {
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x",
-      stateCode: "ID",
+      stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
-        stateCode: "ID",
+        stateCode: "US_ID",
         fullName: "Test User 2",
         gender: "FTM",
         county: "Gwynedd County",
