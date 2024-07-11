@@ -61,6 +61,12 @@ const Title = styled.div`
   color: ${palette.pine1};
 `;
 
+const TitleWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  gap: ${rem(spacing.xs)};
+`;
+
 const Subtitle = styled.div`
   ${typography.Sans14}
   color: ${palette.slate85};
@@ -126,16 +132,18 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
       onMouseLeave={() => setHovered(false)}
     >
       <Header supervisorHomepage={supervisorHomepage}>
-        <Title>
-          {title}
-          {rate && (
-            <>
-              : <Rate>{rate}</Rate>
-            </>
-          )}
-          {subtitle && <Subtitle>{subtitle}</Subtitle>}
-        </Title>
-        {infoModal && <Hint>{infoModal}</Hint>}
+        <TitleWrapper>
+          <Title>
+            {title}
+            {rate && (
+              <>
+                : <Rate>{rate}</Rate>
+              </>
+            )}
+            {subtitle && <Subtitle>{subtitle}</Subtitle>}
+          </Title>
+          {infoModal && <Hint>{infoModal}</Hint>}
+        </TitleWrapper>
         {showHint && (
           <Hint isClickable={!!url}>
             See more

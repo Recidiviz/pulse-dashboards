@@ -127,7 +127,7 @@ const PlotSection = styled.div`
 
 const PlotHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   flex-wrap: wrap;
   gap: ${rem(spacing.xs)};
 `;
@@ -296,7 +296,6 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                         title={toTitleCase(generalMetricConfig.eventName)}
                         copy={generalMetricConfig.descriptionMarkdown}
                         methodologyLink={methodologyUrl}
-                        buttonText="Learn More"
                       />
                     </PlotHint>
                   </PlotHeader>
