@@ -40,17 +40,16 @@ export async function transformAndLoadClientData(data: unknown) {
   });
 
   // Load new client data
-  await Promise.all(
-    cleanedData.map(async (newClient) => {
-      await prismaClient.client.upsert({
-        where: {
-          externalId: newClient.externalId,
-        },
-        create: newClient,
-        update: newClient,
-      });
-    }),
-  );
+  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
+  for (const newClient of cleanedData) {
+    await prismaClient.client.upsert({
+      where: {
+        externalId: newClient.externalId,
+      },
+      create: newClient,
+      update: newClient,
+    });
+  }
 
   // Delete all of the old clients that weren't just loaded
   await prismaClient.client.deleteMany({
@@ -89,18 +88,17 @@ export async function transformAndLoadStaffData(data: unknown) {
     };
   });
 
-  // Load new data
-  await Promise.all(
-    cleanedData.map(async (newStaff) => {
-      await prismaClient.staff.upsert({
-        where: {
-          externalId: newStaff.externalId,
-        },
-        create: newStaff,
-        update: newStaff,
-      });
-    }),
-  );
+  // Load new staff data
+  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
+  for (const newStaff of cleanedData) {
+    await prismaClient.staff.upsert({
+      where: {
+        externalId: newStaff.externalId,
+      },
+      create: newStaff,
+      update: newStaff,
+    });
+  }
 
   // Delete all of the old staff that weren't just loaded
   await prismaClient.staff.deleteMany({
@@ -151,18 +149,17 @@ export async function transformAndLoadCaseData(data: unknown) {
     }),
   );
 
-  // Load new data
-  await Promise.all(
-    cleanedData.map(async (newCase) => {
-      await prismaClient.case.upsert({
-        where: {
-          externalId: newCase.externalId,
-        },
-        create: newCase,
-        update: newCase,
-      });
-    }),
-  );
+  // Load new case data
+  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
+  for (const newCase of cleanedData) {
+    await prismaClient.case.upsert({
+      where: {
+        externalId: newCase.externalId,
+      },
+      create: newCase,
+      update: newCase,
+    });
+  }
 
   // Delete all of the old cases that weren't just loaded
   await prismaClient.case.deleteMany({
