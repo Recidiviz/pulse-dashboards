@@ -53,8 +53,8 @@ export class APIClient {
     );
   }
 
-  private get baseUrl(): string {
-    return "http://localhost:3002";
+  get baseUrl(): string {
+    return import.meta.env["VITE_SENTENCING_API_URL"];
   }
 
   get trpcClient() {

@@ -31,6 +31,8 @@ export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
 };
 
 export const createMockPSIStore = (userPseudoIdOverride?: string | null) => {
+  import.meta.env["VITE_SENTENCING_API_URL"] = "";
+
   const mockRootStore = createMockRootStore(userPseudoIdOverride);
   const psiStore = new PSIStore(mockRootStore);
   return psiStore;

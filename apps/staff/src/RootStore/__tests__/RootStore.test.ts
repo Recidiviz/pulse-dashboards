@@ -20,6 +20,7 @@ import { Mock } from "vitest";
 
 import RootStore from "..";
 
+import.meta.env["VITE_SENTENCING_API_URL"] = ""; // For tRPC mock in `libs/sentencing-client`
 const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
 vi.mock("@auth0/auth0-spa-js");
