@@ -103,13 +103,6 @@ export type MutableCaseAttributes = Partial<
   >
 >;
 
-export type TransformedFormUpdates = Omit<
-  MutableCaseAttributes,
-  "selectedRecommendation"
-> & {
-  selectedRecommendation: NonNullable<Case["selectedRecommendation"]>;
-};
-
 export type NonNullableKey<T> = T extends null ? never : T;
 
 export type NonArrayType<T> = T extends (infer U)[] ? U : T;

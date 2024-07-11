@@ -67,7 +67,7 @@ export const updateCaseSchema = z.object({
     needsToBeAddressed: z.array(NeedsToBeAddressedEnum).optional(),
     otherNeedToBeAddressed: z.string().nullable().optional(),
     status: CaseStatusEnum.optional(),
-    selectedRecommendation: CaseRecommendationEnum.optional(),
+    selectedRecommendation: CaseRecommendationEnum.nullable().optional(),
     recommendedOpportunities: OpportunitiesSchema.optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });

@@ -30,8 +30,8 @@ import { CaseAttributes } from "./CaseAttributes";
 import * as Styled from "./CaseDetails.styles";
 import { Insights } from "./Insights";
 import { Opportunities } from "./Opportunities";
-import { Recommendations } from "./Recommendations";
-import { RecommendationType } from "./types";
+import { Recommendations } from "./Recommendations/Recommendations";
+import { MutableCaseAttributes, RecommendationType } from "./types";
 
 const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter,
@@ -39,16 +39,32 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter: CaseDetailsPresenter;
 }) {
   const navigate = useNavigate();
-  const { staffPseudoId, caseId, caseAttributes, form, updateAttributes } =
-    presenter;
+  const {
+    staffPseudoId,
+    caseId,
+    caseAttributes,
+    form,
+    updateAttributes,
+    updateRecommendation,
+  } = presenter;
 
-  const [selectedRecommendation, setSelectedRecommendation] =
-    useState<RecommendationType>();
+  const firstName = caseAttributes.fullName?.split(" ")[0];
 
-  const updateRecommendation = (recommendation: RecommendationType) =>
+  const [selectedRecommendation, setSelectedRecommendation] = useState<
+    MutableCaseAttributes["selectedRecommendation"] | undefined
+  >(caseAttributes.selectedRecommendation ?? RecommendationType.Probation);
+
+  const handleRecommendationUpdate = (recommendation: RecommendationType) => {
     setSelectedRecommendation((prev) =>
       prev !== recommendation ? recommendation : undefined,
     );
+  };
+
+  const saveRecommendation = () => {
+    if (selectedRecommendation) {
+      updateRecommendation(caseId, selectedRecommendation);
+    }
+  };
 
   const saveAttributes = () => {
     updateAttributes(caseId);
@@ -74,16 +90,12 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
       >{`Back to Dashboard`}</Styled.BackLink>
       {/* Case Attributes */}
       <CaseAttributes
+        firstName={firstName}
         caseAttributes={caseAttributes}
         form={form}
         saveAttributes={saveAttributes}
       />
       <Styled.Body>
-        {/* Recommendations */}
-        <Recommendations
-          selectedRecommendation={selectedRecommendation}
-          updateRecommendation={updateRecommendation}
-        />
         <Styled.InsightsOpportunitiesWrapper>
           {/* Insights */}
           <Insights />
@@ -94,6 +106,14 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             }
           />
         </Styled.InsightsOpportunitiesWrapper>
+        {/* Recommendations */}
+        <Recommendations
+          firstName={firstName}
+          selectedRecommendation={selectedRecommendation}
+          handleRecommendationUpdate={handleRecommendationUpdate}
+          saveRecommendation={saveRecommendation}
+          lastSavedRecommendation={caseAttributes.selectedRecommendation}
+        />
       </Styled.Body>
     </Styled.PageContainer>
   );

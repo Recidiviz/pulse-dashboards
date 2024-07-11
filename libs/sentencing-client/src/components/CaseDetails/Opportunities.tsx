@@ -38,7 +38,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     <Styled.Opportunities>
       <Styled.Title>
         Opportunities for {firstName} <Styled.InfoIcon />{" "}
-        <Styled.Chip>1 Added to Recommendation</Styled.Chip>
+        <Styled.Chip color="green">1 Added to Recommendation</Styled.Chip>
       </Styled.Title>
       <Styled.Description>
         The following opportunities are available to Joshua based on the details

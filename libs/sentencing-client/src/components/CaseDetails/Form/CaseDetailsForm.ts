@@ -25,7 +25,7 @@ import {
   FormFieldList,
   FormUpdates,
   FormValue,
-  TransformedFormUpdates,
+  MutableCaseAttributes,
 } from "../types";
 import { caseDetailsFormTemplate } from "./CaseDetailsFormTemplate";
 import { parseFormValue, transformUpdates } from "./utils";
@@ -51,7 +51,7 @@ export class CaseDetailsForm {
     }) as FormFieldList;
   }
 
-  get transformedUpdates(): TransformedFormUpdates {
+  get transformedUpdates(): MutableCaseAttributes {
     return transformUpdates(this.updates);
   }
 

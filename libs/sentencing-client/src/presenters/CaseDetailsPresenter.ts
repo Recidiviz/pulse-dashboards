@@ -25,7 +25,10 @@ import {
 } from "~hydration-utils";
 
 import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
-import { Attributes } from "../components/CaseDetails/types";
+import {
+  Attributes,
+  MutableCaseAttributes,
+} from "../components/CaseDetails/types";
 import { CaseStore } from "../datastores/CaseStore";
 
 export class CaseDetailsPresenter implements Hydratable {
@@ -98,6 +101,18 @@ export class CaseDetailsPresenter implements Hydratable {
   async updateAttributes(caseId: string) {
     await flowResult(
       this.caseStore.updateCaseDetails(caseId, this.form?.transformedUpdates),
+    );
+    await this.caseStore.loadCaseDetails(this.caseId);
+  }
+
+  async updateRecommendation(
+    caseId: string,
+    recommendation: MutableCaseAttributes["selectedRecommendation"],
+  ) {
+    await flowResult(
+      this.caseStore.updateCaseDetails(caseId, {
+        selectedRecommendation: recommendation,
+      }),
     );
     await this.caseStore.loadCaseDetails(this.caseId);
   }

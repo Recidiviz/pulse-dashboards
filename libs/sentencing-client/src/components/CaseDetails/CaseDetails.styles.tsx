@@ -255,10 +255,14 @@ export const RecommendationsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 24px 26px;
+  padding: 24px;
 `;
 
-export const Header = styled.div``;
+export const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
 
 export const Title = styled.div`
   display: flex;
@@ -271,6 +275,12 @@ export const Title = styled.div`
 
 export const Description = styled.div`
   color: ${palette.slate85};
+`;
+
+export const RecommendationOptionsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 export const RecommendationOption = styled.div<{ selected?: boolean }>`
@@ -295,9 +305,13 @@ export const RecommendationDetails = styled.div`
   gap: 16px;
 `;
 
-export const RecommendationOptionLabel = styled.div`
-  ${typography.Sans18}
-  color: ${palette.pine2};
+export const RecommendationOptionLabel = styled.div<{ smallFont: boolean }>`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: ${({ smallFont }) => (smallFont ? palette.slate85 : palette.pine2)};
+
+  ${({ smallFont }) => (smallFont ? typography.Sans14 : typography.Sans18)}
 `;
 
 export const OpportunitiesSelections = styled.div`
@@ -309,11 +323,11 @@ export const OpportunitiesSelections = styled.div`
 export const OpportunitiesWrapper = styled.div`
   display: flex;
   align-items: center;
+  gap: 6px;
 `;
 
 export const OpportunitiesText = styled.div`
-  color: ${palette.pine2};
-  margin-right: 4px;
+  color: ${palette.pine3};
 `;
 
 export const OpportunitiesCount = styled.div`
@@ -329,40 +343,47 @@ export const OpportunitiesCount = styled.div`
 `;
 
 export const NoOpportunitiesSelectedText = styled.div`
-  color: ${palette.slate85};
+  color: ${palette.slate60};
   margin-right: 4px;
 `;
 
 export const RecommendationOutcome = styled.div`
   display: flex;
-  justify-content: space-between;
+  gap: 64px;
 `;
 
 export const PercentageWrapper = styled.div``;
 
 export const Percentage = styled.div`
-  ${typography.Sans24}
-  font-weight: 600;
-  color: ${palette.pine2};
+  ${typography.Serif24}
+  color: ${palette.pine3};
+  margin-bottom: 4px;
 `;
 
 export const PercentageLabel = styled.div`
   color: ${palette.slate85};
 `;
 
-export const Checkbox = styled.input`
+export const InputSelection = styled.input`
   width: 16px;
   height: 16px;
   margin-top: 2px;
   accent-color: ${palette.pine4};
 `;
 
-export const ActionButtons = styled.div`
+export const RecommendationActionButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 10px 24px;
   border-top: 1px solid ${palette.marble5};
 `;
 
-export const ActionButton = styled.button<{ kind?: "link" }>`
+export const ActionButton = styled.button<{
+  kind?: "link";
+  fullWidth?: boolean;
+}>`
+  height: 48px;
   display: flex;
   padding: 12px 32px;
   justify-content: center;
@@ -372,6 +393,7 @@ export const ActionButton = styled.button<{ kind?: "link" }>`
   color: ${({ kind }) => (kind === "link" ? palette.slate85 : palette.white)};
   border: none;
   border-radius: 4px;
+  ${({ fullWidth }) => fullWidth && `width: 100%;`}
 
   &:disabled {
     opacity: 0.6;
@@ -608,13 +630,17 @@ export const AddRecommendationButton = styled(EditCaseDetailsButton)<{
   ${({ isAdded }) => isAdded && `background-color: ${palette.slate10};`}
 `;
 
-export const Chip = styled.div`
-  background-color: ${palette.pine4};
-  color: ${palette.white};
+const ChipColors = {
+  green: `color: ${palette.white}; background-color: ${palette.pine4}; `,
+  teal: `color: ${palette.pine2}; background-color: ${customPalette.teal};`,
+};
+
+export const Chip = styled.div<{ color?: keyof typeof ChipColors }>`
+  ${({ color }) => (color ? ChipColors[color] : ChipColors["green"])};
+  width: fit-content;
   border-radius: 10px;
   padding: 4px 8px;
   ${typography.Sans12}
-  font-size: 10px;
 `;
 
 /** Edit Case Details Modal */

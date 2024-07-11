@@ -25,6 +25,7 @@ import { Attributes } from "./types";
 
 type CaseAttributesProps = {
   caseAttributes: Attributes;
+  firstName?: string;
   form?: CaseDetailsForm;
   saveAttributes: () => void;
 };
@@ -36,6 +37,7 @@ type AttributeLabelValue = {
 
 // TODO(Recidiviz/recidiviz-data#30649) Implement Case Attributes flow
 export const CaseAttributes: React.FC<CaseAttributesProps> = ({
+  firstName,
   caseAttributes,
   form,
   saveAttributes,
@@ -68,8 +70,6 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = ({
   ].map((attribute) => {
     return { ...attribute, value: attribute.value ?? "-" };
   });
-
-  const firstName = fullName?.split(" ")[0];
 
   return (
     <Styled.CaseAttributes>

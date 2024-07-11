@@ -280,7 +280,7 @@ const statusToCSS = {
   `,
   Complete: `
     color: rgba(42, 73, 67, 1);
-    background-color: rgba(204, 242, 235, 1)
+    background-color: ${customPalette.teal}
   `,
   Archived: `
     color: rgba(20, 28, 65, 1);
