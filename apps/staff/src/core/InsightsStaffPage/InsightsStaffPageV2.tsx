@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
-import { round } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
@@ -75,9 +74,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     },
     {
       title: "avg daily caseload",
-      info: outlierOfficerData
-        ? round(outlierOfficerData.avgDailyPopulation)
-        : undefined,
+      info: outlierOfficerData?.avgDailyPopulation,
     },
   ];
 

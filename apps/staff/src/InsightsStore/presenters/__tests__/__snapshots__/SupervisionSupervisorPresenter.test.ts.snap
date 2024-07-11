@@ -199,7 +199,7 @@ exports[`outlierOfficersByMetric 1`] = `
     "metricId": "absconsions_bench_warrants",
     "officersForMetric": [
       {
-        "avgDailyPopulation": 54.321,
+        "avgDailyPopulation": 54,
         "caseloadType": "SEX_OFFENSE",
         "displayName": "Walter Harris",
         "district": "Region D1",
@@ -1519,7 +1519,7 @@ exports[`outlierOfficersByMetric 1`] = `
         "topXPctMetrics": [],
       },
       {
-        "avgDailyPopulation": 32.1,
+        "avgDailyPopulation": 32,
         "caseloadType": "GENERAL_OR_OTHER",
         "displayName": "Jason Nelson",
         "district": "Region D1",
@@ -4045,7 +4045,7 @@ exports[`outlierOfficersByMetric 1`] = `
     "metricId": "incarceration_starts",
     "officersForMetric": [
       {
-        "avgDailyPopulation": 54.321,
+        "avgDailyPopulation": 54,
         "caseloadType": "SEX_OFFENSE",
         "displayName": "Walter Harris",
         "district": "Region D1",
@@ -6183,7 +6183,7 @@ exports[`outlierOfficersByMetric 1`] = `
     "metricId": "treatment_starts",
     "officersForMetric": [
       {
-        "avgDailyPopulation": 54.321,
+        "avgDailyPopulation": 54,
         "caseloadType": "SEX_OFFENSE",
         "displayName": "Walter Harris",
         "district": "Region D1",
@@ -7503,7 +7503,7 @@ exports[`outlierOfficersByMetric 1`] = `
         "topXPctMetrics": [],
       },
       {
-        "avgDailyPopulation": 32.1,
+        "avgDailyPopulation": 32,
         "caseloadType": "GENERAL_OR_OTHER",
         "displayName": "Jason Nelson",
         "district": "Region D1",
@@ -9830,7 +9830,7 @@ exports[`outlierOfficersByMetric 1`] = `
 exports[`outlierOfficersData 1`] = `
 [
   {
-    "avgDailyPopulation": 54.321,
+    "avgDailyPopulation": 54,
     "caseloadType": "SEX_OFFENSE",
     "displayName": "Walter Harris",
     "district": "Region D1",
@@ -11150,7 +11150,7 @@ exports[`outlierOfficersData 1`] = `
     "topXPctMetrics": [],
   },
   {
-    "avgDailyPopulation": 32.1,
+    "avgDailyPopulation": 32,
     "caseloadType": "GENERAL_OR_OTHER",
     "displayName": "Jason Nelson",
     "district": "Region D1",

@@ -2,7 +2,7 @@
 
 exports[`combines related data 1`] = `
 {
-  "avgDailyPopulation": 32.1,
+  "avgDailyPopulation": 32,
   "caseloadType": "GENERAL_OR_OTHER",
   "displayName": "Jason Nelson",
   "district": "Region D1",
