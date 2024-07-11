@@ -1,9 +1,10 @@
 import { faker } from "@faker-js/faker";
 import { StateCode } from "@prisma/client";
 import { MockStorage } from "mock-gcs";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { prismaClient } from "~sentencing-server/prisma";
+import { casePayloadMessage } from "~sentencing-server/test/import/constants";
 import {
   arrayToJsonLines,
   callImportCaseData,
@@ -17,19 +18,181 @@ import {
   fakeStaff,
 } from "~sentencing-server/test/setup/seed";
 
-const mockStorageSingleton = new MockStorage();
-
-vi.mock("@google-cloud/storage", () => {
-  return {
-    Storage: vi.fn().mockImplementation(() => {
-      return mockStorageSingleton;
-    }),
-  };
-});
-
 const TEST_BUCKET_ID = "bucket-id";
 
+const mockStorageSingleton = new MockStorage();
+let getPayloadImp = vi.fn().mockReturnValue({
+  email_verified: true,
+  email: "test-csn@fake.com",
+});
+
+vi.mock("@google-cloud/storage", () => ({
+  Storage: vi.fn().mockImplementation(() => {
+    return mockStorageSingleton;
+  }),
+}));
+
+vi.mock("google-auth-library", () => ({
+  OAuth2Client: vi.fn().mockImplementation(() => {
+    return {
+      verifyIdToken: vi.fn().mockResolvedValue({
+        getPayload: getPayloadImp,
+      }),
+    };
+  }),
+}));
+
+beforeEach(() => {
+  getPayloadImp = vi.fn().mockReturnValue({
+    email_verified: true,
+    email: "test-csn@fake.com",
+  });
+});
+
 describe("import", () => {
+  describe("auth", () => {
+    test("should throw error if there is no token", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/trigger_import",
+        payload: { message: casePayloadMessage },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+      });
+    });
+
+    test("should throw error if there is no payload", async () => {
+      getPayloadImp = vi.fn().mockReturnValue(undefined);
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/trigger_import",
+        payload: { message: casePayloadMessage },
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+      });
+    });
+
+    test("should throw error if email is not verified", async () => {
+      getPayloadImp = vi.fn().mockReturnValue({
+        email_verified: false,
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/trigger_import",
+        payload: { message: casePayloadMessage },
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+      });
+    });
+
+    test("should throw error if there is no email", async () => {
+      getPayloadImp = vi.fn().mockReturnValue({
+        email_verified: true,
+        email: undefined,
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/trigger_import",
+        payload: { message: casePayloadMessage },
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+      });
+    });
+
+    test("should throw error if email doesn't match expected", async () => {
+      getPayloadImp = vi.fn().mockReturnValue({
+        email_verified: true,
+        email: "not-the-right-email@gmail.com",
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/trigger_import",
+        payload: { message: casePayloadMessage },
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+      });
+    });
+
+    test("should work if email is correct", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("ID/sentencing_case_record.json")
+        .save(
+          arrayToJsonLines([
+            // New case
+            {
+              external_id: "new-case-ext-id",
+              state_code: StateCode.US_ID,
+              staff_id: fakeStaff.externalId,
+              client_id: fakeClient.externalId,
+              due_date: faker.date.future(),
+              completion_date: faker.date.future(),
+              sentence_date: faker.date.past(),
+              assigned_date: faker.date.past(),
+              county_name: faker.location.county(),
+              lsir_score: faker.number.int({ max: 100 }).toString(),
+              lsir_level: faker.number.int().toString(),
+              report_type: faker.string.alpha(),
+            },
+          ]),
+        );
+
+      getPayloadImp = vi.fn().mockReturnValue({
+        email_verified: true,
+        email: "test-csn@fake.com",
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/trigger_import",
+        payload: { message: casePayloadMessage },
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await prismaClient.case.findMany({});
+
+      // There should only be one case in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbCases).toHaveLength(1);
+
+      const newCase = dbCases[0];
+      expect(newCase).toEqual(
+        expect.objectContaining({
+          externalId: "new-case-ext-id",
+          // The new one should have also been linked to the existing client and cases
+          clientId: fakeClient.externalId,
+          staffId: fakeStaff.externalId,
+        }),
+      );
+    });
+  });
+
   describe("import case data", () => {
     test("should import new case data and delete old data", async () => {
       await mockStorageSingleton
@@ -309,7 +472,7 @@ describe("import", () => {
   });
 
   describe("import staff data", () => {
-    test("should import new s dattaffa and delete old data", async () => {
+    test("should import new staff data and delete old data", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
         .file("ID/sentencing_staff_record.json")

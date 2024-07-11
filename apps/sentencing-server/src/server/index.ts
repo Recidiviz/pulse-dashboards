@@ -12,6 +12,7 @@ import Fastify from "fastify";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 
 import { handleImport } from "~sentencing-server/import";
+import { verifyGoogleIdToken } from "~sentencing-server/server/utils";
 import { createContext } from "~sentencing-server/trpc/context";
 import { AppRouter, appRouter } from "~sentencing-server/trpc/router";
 
@@ -57,6 +58,22 @@ export function buildServer() {
   server.post(
     "/trigger_import",
     async (req: FastifyRequest<{ Body: PubsubBodyType }>, res) => {
+      const bearerToken = req.headers.authorization?.split(" ")[1];
+
+      if (!bearerToken) {
+        console.error(`No bearer token was provided`);
+        res.status(401);
+        return;
+      }
+
+      try {
+        await verifyGoogleIdToken(bearerToken);
+      } catch (e) {
+        console.error(`error verifying auth token for trigger_import: ${e}`);
+        res.status(401);
+        return;
+      }
+
       if (
         !req.body.message?.attributes ||
         !req.body.message.attributes.bucketId ||
@@ -68,7 +85,6 @@ export function buildServer() {
         return;
       }
 
-      // TODO(https://github.com/Recidiviz/recidiviz-data/issues/30480): report errors correctly to Sentry
       const { bucketId, objectId } = req.body.message.attributes;
       await handleImport(bucketId, objectId);
 

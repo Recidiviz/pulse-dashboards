@@ -13,6 +13,7 @@ async function callTriggerImport(
     method: "POST",
     url: "/trigger_import",
     payload: { message: data },
+    headers: { authorization: `Bearer token` },
   });
 }
 
