@@ -45,8 +45,8 @@ export function buildServer() {
   });
 
   server.register(fastifyAuth0Verify, {
-    domain: import.meta.env["VITE_AUTH0_DOMAIN"],
-    audience: import.meta.env["VITE_AUTH0_AUDIENCE"],
+    domain: process.env["AUTH0_DOMAIN"],
+    audience: process.env["AUTH0_AUDIENCE"],
   });
 
   server.register(cors, {

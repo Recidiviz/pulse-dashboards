@@ -46,11 +46,21 @@
       }
     },
     "build": {
-      "executor": "@nx/vite:build",
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "{workspaceRoot}/dist/apps/sentencing-server",
+        "platform": "node",
+        "outputPath": "dist/apps/sentencing-server",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
-        "skipTypeCheck": true
+        "target": "node20",
+        "minify": true,
+        "assets": [
+          "{projectRoot}/prisma/schema.prisma",
+          "{projectRoot}/prisma/migrations/**/*"
+        ]
       },
       "configurations": {
         "dev": {},

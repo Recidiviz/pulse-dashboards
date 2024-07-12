@@ -15,10 +15,7 @@ export async function verifyGoogleIdToken(idToken: string) {
     throw new Error("Email not verified");
   }
 
-  if (
-    payload.email !==
-    import.meta.env["VITE_CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL"]
-  ) {
+  if (payload.email !== process.env["CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL"]) {
     throw new Error("Invalid email address");
   }
 

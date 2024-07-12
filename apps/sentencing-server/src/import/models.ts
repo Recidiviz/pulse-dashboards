@@ -1,6 +1,6 @@
 import { StateCode } from "@prisma/client";
 import z from "zod";
-import zu from "zod_utilz";
+import { zu } from "zod_utilz";
 
 import { fullNameObjectToString } from "~sentencing-server/import/utils";
 
