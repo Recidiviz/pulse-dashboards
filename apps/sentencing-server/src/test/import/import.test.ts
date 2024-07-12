@@ -9,12 +9,14 @@ import {
   arrayToJsonLines,
   callImportCaseData,
   callImportClientData,
+  callImportOpportunityData,
   callImportStaffData,
 } from "~sentencing-server/test/import/utils";
 import { testServer } from "~sentencing-server/test/setup";
 import {
   fakeCase,
   fakeClient,
+  fakeOpportunity,
   fakeStaff,
 } from "~sentencing-server/test/setup/seed";
 
@@ -431,8 +433,8 @@ describe("import", () => {
             },
             // existing client
             {
-              external_id: "client-ext-1",
-              pseudonymized_id: "client-pid-1",
+              external_id: fakeClient.externalId,
+              pseudonymized_id: fakeClient.pseudonymizedId,
               caseIds: JSON.stringify([fakeCase.externalId]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
@@ -554,8 +556,8 @@ describe("import", () => {
             },
             // existing staff
             {
-              external_id: "staff-ext-1",
-              pseudonymized_id: "staff-pid-1",
+              external_id: fakeStaff.externalId,
+              pseudonymized_id: fakeStaff.pseudonymizedId,
               caseIds: JSON.stringify([fakeCase.externalId]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
@@ -590,6 +592,216 @@ describe("import", () => {
             email: "existing_staff@gmail.com",
           }),
         ]),
+      );
+    });
+  });
+
+  describe("import opportunity data", () => {
+    test("should import new opportunity and delete old data", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("ID/sentencing_community_opportunity_record.json")
+        .save(
+          arrayToJsonLines([
+            // New opportunity
+            {
+              OpportunityName: "new-opportunity-name",
+              Description: "new-opportunity-description",
+              ProviderName: "provider-name",
+              CleanedProviderPhoneNumber: "9256400137",
+              ProviderWebsite: "fake.com",
+              ProviderAddress: "123 Main Street",
+              CapacityTotal: 10,
+              CapacityAvailable: 5,
+              eighteenOrOlderCriterion: false,
+              developmentalDisabilityDiagnosisCriterion: false,
+              minorCriterion: false,
+              noCurrentOrPriorSexOffenseCriterion: false,
+              noCurrentOrPriorViolentOffenseCriterion: false,
+              noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+              entryOfGuiltyPleaCriterion: false,
+              veteranStatusCriterion: false,
+            },
+          ]),
+        );
+
+      const response = await callImportOpportunityData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new opportunity was created
+      const dbOpportunities = await prismaClient.opportunity.findMany({});
+
+      // There should only be one opportunity in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbOpportunities).toHaveLength(1);
+
+      const newOpportunity = dbOpportunities[0];
+      expect(newOpportunity).toEqual(
+        expect.objectContaining({
+          opportunityName: "new-opportunity-name",
+          description: "new-opportunity-description",
+        }),
+      );
+    });
+
+    test("should upsert existing opportunity", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("ID/sentencing_community_opportunity_record.json")
+        .save(
+          arrayToJsonLines([
+            // existing opportunity
+            {
+              OpportunityName: fakeOpportunity.opportunityName,
+              Description: fakeOpportunity.description,
+              ProviderName: "provider-name",
+              CleanedProviderPhoneNumber: fakeOpportunity.providerPhoneNumber,
+              ProviderWebsite: "fake.com",
+              ProviderAddress: "123 Main Street",
+              CapacityTotal: 10,
+              CapacityAvailable: 5,
+              eighteenOrOlderCriterion: false,
+              developmentalDisabilityDiagnosisCriterion: false,
+              minorCriterion: false,
+              noCurrentOrPriorSexOffenseCriterion: false,
+              noCurrentOrPriorViolentOffenseCriterion: false,
+              noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+              entryOfGuiltyPleaCriterion: false,
+              veteranStatusCriterion: false,
+            },
+            // New opportunity
+            {
+              OpportunityName: "new-opportunity-name",
+              Description: "new-opportunity-description",
+              ProviderName: "provider-name",
+              CleanedProviderPhoneNumber: "1234567890",
+              ProviderWebsite: "fake.com",
+              ProviderAddress: "123 Main Street",
+              CapacityTotal: 10,
+              CapacityAvailable: 5,
+              eighteenOrOlderCriterion: false,
+              developmentalDisabilityDiagnosisCriterion: false,
+              minorCriterion: false,
+              noCurrentOrPriorSexOffenseCriterion: false,
+              noCurrentOrPriorViolentOffenseCriterion: false,
+              noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+              entryOfGuiltyPleaCriterion: false,
+              veteranStatusCriterion: false,
+            },
+          ]),
+        );
+
+      const response = await callImportOpportunityData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new opportunity was created
+      const dbOpportunities = await prismaClient.opportunity.findMany({});
+
+      // There should only be two opportunites in the database - the new one and the updated existing one
+      expect(dbOpportunities).toHaveLength(2);
+
+      expect(dbOpportunities).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            opportunityName: "opportunity-name",
+          }),
+          expect.objectContaining({
+            opportunityName: "new-opportunity-name",
+          }),
+        ]),
+      );
+    });
+
+    test("should only delete opportunities that don't match composite id", async () => {
+      // Create two new opportunities, one with the same name but with the provider phone number changed, and another one with vice versa
+      // These two should be deleted after import since they don't match the composite id of the existing opportunity
+      await prismaClient.opportunity.createMany({
+        data: [
+          {
+            opportunityName: fakeOpportunity.opportunityName,
+            description: "new-opportunity-description-1",
+            providerName: "new-provider-name-1",
+            providerPhoneNumber: "1234567890",
+            providerWebsite: faker.internet.url(),
+            providerAddress: faker.location.streetAddress(),
+            totalCapacity: faker.number.int({ max: 100 }),
+            availableCapacity: faker.number.int({ max: 100 }),
+            eighteenOrOlderCriterion: false,
+            developmentalDisabilityDiagnosisCriterion: false,
+            minorCriterion: false,
+            noCurrentOrPriorSexOffenseCriterion: false,
+            noCurrentOrPriorViolentOffenseCriterion: false,
+            noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+            entryOfGuiltyPleaCriterion: false,
+            veteranStatusCriterion: false,
+          },
+          {
+            opportunityName: "new-opportunity-name",
+            description: "new-opportunity-description-2",
+            providerName: "new-provider-name-2",
+            providerPhoneNumber: fakeOpportunity.providerPhoneNumber,
+            providerWebsite: faker.internet.url(),
+            providerAddress: faker.location.streetAddress(),
+            totalCapacity: faker.number.int({ max: 100 }),
+            availableCapacity: faker.number.int({ max: 100 }),
+            eighteenOrOlderCriterion: false,
+            developmentalDisabilityDiagnosisCriterion: false,
+            minorCriterion: false,
+            noCurrentOrPriorSexOffenseCriterion: false,
+            noCurrentOrPriorViolentOffenseCriterion: false,
+            noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+            entryOfGuiltyPleaCriterion: false,
+            veteranStatusCriterion: false,
+          },
+        ],
+      });
+
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("ID/sentencing_community_opportunity_record.json")
+        .save(
+          arrayToJsonLines([
+            // original existing opportunity
+            {
+              OpportunityName: fakeOpportunity.opportunityName,
+              Description: fakeOpportunity.description,
+              ProviderName: "provider-name",
+              CleanedProviderPhoneNumber: fakeOpportunity.providerPhoneNumber,
+              ProviderWebsite: "fake.com",
+              ProviderAddress: "123 Main Street",
+              CapacityTotal: 10,
+              CapacityAvailable: 5,
+              eighteenOrOlderCriterion: false,
+              developmentalDisabilityDiagnosisCriterion: false,
+              minorCriterion: false,
+              noCurrentOrPriorSexOffenseCriterion: false,
+              noCurrentOrPriorViolentOffenseCriterion: false,
+              noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+              entryOfGuiltyPleaCriterion: false,
+              veteranStatusCriterion: false,
+            },
+          ]),
+        );
+
+      const response = await callImportOpportunityData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new opportunity was created
+      const dbOpportunities = await prismaClient.opportunity.findMany({});
+
+      // There should only be one opportunity in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbOpportunities).toHaveLength(1);
+
+      const newOpportunity = dbOpportunities[0];
+      expect(newOpportunity).toEqual(
+        expect.objectContaining({
+          opportunityName: "opportunity-name",
+          providerPhoneNumber: fakeOpportunity.providerPhoneNumber,
+        }),
       );
     });
   });

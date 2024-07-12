@@ -2,10 +2,9 @@ import { faker } from "@faker-js/faker";
 import {
   CaseStatus,
   Charge,
-  Client,
   Plea,
+  Prisma,
   PrismaClient,
-  Staff,
   StateCode,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
@@ -14,13 +13,14 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Staff
-  await prisma.case.deleteMany({}); // use with caution.
-  await prisma.staff.deleteMany({}); // use with caution.
-  await prisma.client.deleteMany({}); // use with caution.
+  await prisma.case.deleteMany({});
+  await prisma.opportunity.deleteMany({});
+  await prisma.staff.deleteMany({});
+  await prisma.client.deleteMany({});
 
   const numberOfStaff = 10;
 
-  const staff: Staff[] = [];
+  const staff: Prisma.StaffCreateInput[] = [];
 
   for (let i = 0; i < numberOfStaff; i++) {
     staff.push({
@@ -38,7 +38,7 @@ async function main() {
   // Clients
   const numberOfClients = 10;
 
-  const clients: Client[] = [];
+  const clients: Prisma.ClientCreateInput[] = [];
 
   for (let i = 0; i < numberOfClients; i++) {
     clients.push({
@@ -98,6 +98,33 @@ async function main() {
         plea: faker.helpers.enumValue(Plea),
         status: faker.helpers.enumValue(CaseStatus),
       },
+    });
+  }
+
+  // Opportunities
+  const numberOfOpportunities = 10;
+
+  const opportunities: Prisma.OpportunityCreateInput[] = [];
+
+  for (let i = 0; i < numberOfOpportunities; i++) {
+    opportunities.push({
+      opportunityName: faker.company.name(),
+      description: faker.commerce.productDescription(),
+      providerName: faker.company.name(),
+      providerPhoneNumber: faker.phone.number(),
+      providerWebsite: faker.internet.url(),
+      providerAddress: faker.location.streetAddress(),
+      totalCapacity: faker.number.int({ max: 100 }),
+      availableCapacity: faker.number.int({ max: 100 }),
+      eighteenOrOlderCriterion: faker.datatype.boolean(),
+      developmentalDisabilityDiagnosisCriterion: faker.datatype.boolean(),
+      minorCriterion: faker.datatype.boolean(),
+      noCurrentOrPriorSexOffenseCriterion: faker.datatype.boolean(),
+      noCurrentOrPriorViolentOffenseCriterion: faker.datatype.boolean(),
+      noPendingFelonyChargesInAnotherCountyOrStateCriterion:
+        faker.datatype.boolean(),
+      entryOfGuiltyPleaCriterion: faker.datatype.boolean(),
+      veteranStatusCriterion: faker.datatype.boolean(),
     });
   }
 }

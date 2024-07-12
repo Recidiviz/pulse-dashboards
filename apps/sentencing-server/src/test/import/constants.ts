@@ -18,3 +18,10 @@ export const staffPayloadMessage = {
     objectId: "ID/sentencing_staff_record.json",
   },
 };
+
+export const opportunityPayloadMessage = {
+  attributes: {
+    bucketId: "bucket-id",
+    objectId: "ID/sentencing_community_opportunity_record.json",
+  },
+};

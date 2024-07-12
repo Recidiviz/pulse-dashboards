@@ -1,9 +1,11 @@
+import _ from "lodash";
 import z from "zod";
 
 import {
   caseImportSchema,
   clientImportSchema,
   nameSchema,
+  opportunityImportSchema,
   staffImportSchema,
 } from "~sentencing-server/import/models";
 import { prismaClient } from "~sentencing-server/prisma";
@@ -168,6 +170,75 @@ export async function transformAndLoadCaseData(data: unknown) {
         externalId: {
           in: cleanedData.map((caseData) => caseData.externalId),
         },
+      },
+    },
+  });
+}
+
+export async function transformAndLoadOpportunityData(data: unknown) {
+  const parsedData = opportunityImportSchema.parse(data);
+
+  const cleanedData = parsedData.map((opportunityData) => {
+    return {
+      ..._.pick(opportunityData, [
+        "eighteenOrOlderCriterion",
+        "developmentalDisabilityDiagnosisCriterion",
+        "minorCriterion",
+        "noCurrentOrPriorSexOffenseCriterion",
+        "noCurrentOrPriorViolentOffenseCriterion",
+        "noPendingFelonyChargesInAnotherCountyOrStateCriterion",
+        "entryOfGuiltyPleaCriterion",
+        "veteranStatusCriterion",
+        "priorCriminalHistoryCriterion",
+        "diagnosedMentalHealthDiagnosisCriterion",
+        "asamLevelOfCareRecommendationCriterion",
+        "diagnosedSubstanceUseDisorderCriterion",
+        "minLsirScoreCriterion",
+        "maxLsirScoreCriterion",
+      ]),
+      opportunityName: opportunityData.OpportunityName,
+      description: opportunityData.Description,
+      providerName: opportunityData.ProviderName,
+      providerPhoneNumber: opportunityData.CleanedProviderPhoneNumber,
+      providerWebsite: opportunityData.ProviderWebsite,
+      providerAddress: opportunityData.ProviderAddress,
+      totalCapacity: opportunityData.CapacityTotal,
+      availableCapacity: opportunityData.CapacityAvailable,
+      needsAddressed: opportunityData.NeedsAddressed,
+    };
+  });
+
+  // Load new opportunity data
+  // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
+  for (const newOpportunity of cleanedData) {
+    await prismaClient.opportunity.upsert({
+      where: {
+        opportunityName_providerPhoneNumber: _.pick(newOpportunity, [
+          "opportunityName",
+          "providerPhoneNumber",
+        ]),
+      },
+      create: newOpportunity,
+      update: newOpportunity,
+    });
+  }
+
+  // Delete all of the old opportunities that weren't just loaded
+  await prismaClient.opportunity.deleteMany({
+    where: {
+      NOT: {
+        AND: [
+          {
+            opportunityName: {
+              in: _.map(cleanedData, "opportunityName"),
+            },
+          },
+          {
+            providerPhoneNumber: {
+              in: _.map(cleanedData, "providerPhoneNumber"),
+            },
+          },
+        ],
       },
     },
   });

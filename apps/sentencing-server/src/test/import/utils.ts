@@ -2,6 +2,7 @@ import { buildServer } from "~sentencing-server/server";
 import {
   casePayloadMessage,
   clientPayloadMessage,
+  opportunityPayloadMessage,
   staffPayloadMessage,
 } from "~sentencing-server/test/import/constants";
 
@@ -33,6 +34,12 @@ export async function callImportStaffData(
   server: ReturnType<typeof buildServer>,
 ) {
   return await callTriggerImport(server, staffPayloadMessage);
+}
+
+export async function callImportOpportunityData(
+  server: ReturnType<typeof buildServer>,
+) {
+  return await callTriggerImport(server, opportunityPayloadMessage);
 }
 
 export function arrayToJsonLines(arr: object[]) {

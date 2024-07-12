@@ -167,6 +167,44 @@ enum CaseRecommendation {
   None
 }
 
+enum PriorCriminalHistoryCriterion {
+  None
+  Significant
+}
+
+enum DiagnosedMentalHealthDiagnosisCriterion {
+  BipolarDisorder
+  BorderlinePersonalityDisorder
+  DelusionalDisorder
+  MajorDepressiveDisorder
+  PsychoticDisorder
+  Schizophrenia
+  SchizoaffectiveDisorder
+  Other
+  Any
+}
+
+enum AsamLevelOfCareRecommendationCriterion {
+  LongTermRemissionMonitoring
+  OutpatientTherapy
+  MedicallyManagedOutpatient
+  IntensiveOutpatient
+  HighIntensityOutpatient
+  MedicallyManagedIntensiveOutpatient
+  ClinicallyManagedLowIntensityResidential
+  ClinicallyManagedHighIntensityResidential
+  MedicallyManagedResidential
+  MedicallyManagedInpatient
+  Any
+}
+
+enum DiagnosedSubstanceUseDisorderCriterion {
+  Mild
+  Moderate
+  Severe
+  Any
+}
+
 model Opportunity {
   id                  String              @id @default(cuid())
   opportunityName     String
@@ -178,7 +216,22 @@ model Opportunity {
   totalCapacity       Int
   availableCapacity   Int
   needsAddressed      NeedToBeAddressed[]
-  // TODO: Add fields for the eligibility criteria
+
+  // Eligibility Criteria
+  eighteenOrOlderCriterion                              Boolean
+  developmentalDisabilityDiagnosisCriterion             Boolean
+  minorCriterion                                        Boolean
+  noCurrentOrPriorSexOffenseCriterion                   Boolean
+  noCurrentOrPriorViolentOffenseCriterion               Boolean
+  noPendingFelonyChargesInAnotherCountyOrStateCriterion Boolean
+  entryOfGuiltyPleaCriterion                            Boolean
+  veteranStatusCriterion                                Boolean
+  PriorCriminalHistoryCriterion                         PriorCriminalHistoryCriterion[]
+  diagnosedMentalHealthDiagnosisCriterion               DiagnosedMentalHealthDiagnosisCriterion[]
+  asamLevelOfCareRecommendationCriterion                AsamLevelOfCareRecommendationCriterion[]
+  diagnosedSubstanceUseDisorderCriterion                DiagnosedSubstanceUseDisorderCriterion[]
+  minLsirScoreCriterion                                 Int?
+  maxLsirScoreCriterion                                 Int?
 
   cases Case[]
 

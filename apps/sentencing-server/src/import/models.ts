@@ -1,10 +1,32 @@
-import { StateCode } from "@prisma/client";
+import {
+  AsamLevelOfCareRecommendationCriterion,
+  DiagnosedMentalHealthDiagnosisCriterion,
+  DiagnosedSubstanceUseDisorderCriterion,
+  NeedToBeAddressed,
+  PriorCriminalHistoryCriterion,
+  StateCode,
+} from "@prisma/client";
 import z from "zod";
 import { zu } from "zod_utilz";
 
 import { fullNameObjectToString } from "~sentencing-server/import/utils";
 
 const stateCode = z.nativeEnum(StateCode);
+
+const needToBeAddressed = z.array(z.nativeEnum(NeedToBeAddressed));
+
+const priorCriminalHistoryCriterion = z.array(
+  z.nativeEnum(PriorCriminalHistoryCriterion),
+);
+const diagnosedMentalHealthDiagnosisCriterion = z.array(
+  z.nativeEnum(DiagnosedMentalHealthDiagnosisCriterion),
+);
+const asamLevelOfCareRecommendationCriterion = z.array(
+  z.nativeEnum(AsamLevelOfCareRecommendationCriterion),
+);
+const diagnosedSubstanceUseDisorderCriterion = z.array(
+  z.nativeEnum(DiagnosedSubstanceUseDisorderCriterion),
+);
 
 export const nameSchema = zu.stringToJSON().pipe(
   z.object({
@@ -72,4 +94,35 @@ export const staffImportSchema = z.array(
         full_name: fullNameObjectToString(data.full_name),
       };
     }),
+);
+
+export const opportunityImportSchema = z.array(
+  z.object({
+    OpportunityName: z.string(),
+    Description: z.string(),
+    ProviderName: z.string(),
+    CleanedProviderPhoneNumber: z.string(),
+    ProviderWebsite: z.string(),
+    ProviderAddress: z.string(),
+    CapacityTotal: z.number(),
+    CapacityAvailable: z.number(),
+    NeedsAddressed: needToBeAddressed.optional(),
+    eighteenOrOlderCriterion: z.boolean(),
+    developmentalDisabilityDiagnosisCriterion: z.boolean(),
+    minorCriterion: z.boolean(),
+    noCurrentOrPriorSexOffenseCriterion: z.boolean(),
+    noCurrentOrPriorViolentOffenseCriterion: z.boolean(),
+    noPendingFelonyChargesInAnotherCountyOrStateCriterion: z.boolean(),
+    entryOfGuiltyPleaCriterion: z.boolean(),
+    veteranStatusCriterion: z.boolean(),
+    priorCriminalHistoryCriterion: priorCriminalHistoryCriterion.optional(),
+    diagnosedMentalHealthDiagnosisCriterion:
+      diagnosedMentalHealthDiagnosisCriterion.optional(),
+    asamLevelOfCareRecommendationCriterion:
+      asamLevelOfCareRecommendationCriterion.optional(),
+    diagnosedSubstanceUseDisorderCriterion:
+      diagnosedSubstanceUseDisorderCriterion.optional(),
+    minLsirScoreCriterion: z.number().optional(),
+    maxLsirScoreCriterion: z.number().optional(),
+  }),
 );
