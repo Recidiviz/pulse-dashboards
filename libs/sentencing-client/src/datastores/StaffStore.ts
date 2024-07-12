@@ -38,7 +38,6 @@ export class StaffStore {
 
   /** This is a MobX flow method and should be called with mobx.flowResult */
   *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
-    if (this.staffInfo) return;
     this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
     this.caseBriefsById = keyBy(this.staffInfo.Cases, "id");
   }

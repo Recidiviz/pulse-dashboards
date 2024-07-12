@@ -19,10 +19,12 @@ import { MutableCaseAttributes, RecommendationType } from "../types";
 
 export type RecommendationsProps = {
   firstName?: string;
+  fullName?: string;
   selectedRecommendation?: MutableCaseAttributes["selectedRecommendation"];
   lastSavedRecommendation?: MutableCaseAttributes["selectedRecommendation"];
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
+  setCaseStatusCompleted: () => void;
 };
 
 export type RecommendationsOptionProps = {

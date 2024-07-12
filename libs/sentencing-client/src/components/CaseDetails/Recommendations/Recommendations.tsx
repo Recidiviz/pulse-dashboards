@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
+import React, { Fragment, useState } from "react";
 
 import * as Styled from "../CaseDetails.styles";
 import { RecommendationType } from "../types";
@@ -24,16 +24,23 @@ import {
   ProbationOption,
   TermOrRiderOption,
 } from "./RecommendationOptions";
+import { SummaryReport } from "./SummaryReport";
 import { RecommendationOption, RecommendationsProps } from "./types";
 
 // TODO(Recidiviz/recidiviz-data#30651) Implement Recommendations flow
 export const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
+  fullName,
   selectedRecommendation,
   lastSavedRecommendation,
   handleRecommendationUpdate,
   saveRecommendation,
+  setCaseStatusCompleted,
 }) => {
+  const [showSummaryReport, setShowSummaryReport] = useState(false);
+
+  const hideSummaryReport = () => setShowSummaryReport(false);
+
   const recommendationOptions: RecommendationOption[] = [
     {
       key: RecommendationType.Probation,
@@ -61,64 +68,82 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   ];
 
   return (
-    <Styled.Recommendations>
-      <Styled.RecommendationsWrapper>
-        <Styled.Header>
-          <Styled.Title>Create Recommendations</Styled.Title>
+    <>
+      {showSummaryReport && (
+        <SummaryReport
+          fullName={fullName}
+          firstName={firstName}
+          hideSummaryReport={hideSummaryReport}
+          setCaseStatusCompleted={setCaseStatusCompleted}
+        />
+      )}
+
+      <Styled.Recommendations>
+        <Styled.RecommendationsWrapper>
+          <Styled.Header>
+            <Styled.Title>Create Recommendations</Styled.Title>
+            <Styled.Description>
+              Select the disposition below that you plan to recommend for{" "}
+              {firstName}.
+            </Styled.Description>
+          </Styled.Header>
+
+          <Styled.RecommendationOptionsWrapper>
+            {recommendationOptions.map((option) => {
+              const isSelectedRecommendation =
+                selectedRecommendation === option.key;
+              const isRecorded = lastSavedRecommendation === option.key;
+              const isNoneOption = option.key === RecommendationType.None;
+              const isProbationOption =
+                option.key === RecommendationType.Probation;
+              const isTermOrRiderOption =
+                option.key === RecommendationType.Term ||
+                option.key === RecommendationType.Rider;
+              const baseProps = {
+                option,
+                isSelectedRecommendation,
+                handleRecommendationUpdate,
+                smallFont: isNoneOption,
+                isRecorded,
+              };
+
+              return (
+                <Fragment key={option.key}>
+                  {/* None Option */}
+                  {isNoneOption && <NoneOption optionProps={baseProps} />}
+
+                  {/* Probation Option */}
+                  {isProbationOption && (
+                    <ProbationOption optionProps={baseProps} />
+                  )}
+
+                  {/* Term or Rider Option */}
+                  {isTermOrRiderOption && (
+                    <TermOrRiderOption optionProps={baseProps} />
+                  )}
+                </Fragment>
+              );
+            })}
+          </Styled.RecommendationOptionsWrapper>
+        </Styled.RecommendationsWrapper>
+
+        {/* Continue */}
+        <Styled.RecommendationActionButtonWrapper>
+          <Styled.ActionButton
+            fullWidth
+            onClick={() => {
+              setShowSummaryReport(true);
+              saveRecommendation();
+            }}
+          >
+            {lastSavedRecommendation ? "Update" : "Create"}
+          </Styled.ActionButton>
           <Styled.Description>
-            Select the disposition below that you plan to recommend for{" "}
-            {firstName}.
+            Clicking “Create” or "Update" will generate a downloadable report
+            for the judge.
           </Styled.Description>
-        </Styled.Header>
-
-        <Styled.RecommendationOptionsWrapper>
-          {recommendationOptions.map((option) => {
-            const isSelectedRecommendation =
-              selectedRecommendation === option.key;
-            const isRecorded = lastSavedRecommendation === option.key;
-            const isNoneOption = option.key === RecommendationType.None;
-            const isProbationOption =
-              option.key === RecommendationType.Probation;
-            const isTermOrRiderOption =
-              option.key === RecommendationType.Term ||
-              option.key === RecommendationType.Rider;
-            const baseProps = {
-              option,
-              isSelectedRecommendation,
-              handleRecommendationUpdate,
-              smallFont: isNoneOption,
-              isRecorded,
-            };
-
-            return (
-              <>
-                {/* None Option */}
-                {isNoneOption && <NoneOption optionProps={baseProps} />}
-
-                {/* Probation Option */}
-                {isProbationOption && (
-                  <ProbationOption optionProps={baseProps} />
-                )}
-
-                {/* Term or Rider Option */}
-                {isTermOrRiderOption && (
-                  <TermOrRiderOption optionProps={baseProps} />
-                )}
-              </>
-            );
-          })}
-        </Styled.RecommendationOptionsWrapper>
-      </Styled.RecommendationsWrapper>
-
-      {/* Continue */}
-      <Styled.RecommendationActionButtonWrapper>
-        <Styled.ActionButton fullWidth onClick={saveRecommendation}>
-          {lastSavedRecommendation ? "Update" : "Create"}
-        </Styled.ActionButton>
-        <Styled.Description>
-          Clicking “Create” will generate a downloadable report for the judge.
-        </Styled.Description>
-      </Styled.RecommendationActionButtonWrapper>
-    </Styled.Recommendations>
+        </Styled.RecommendationActionButtonWrapper>
+      </Styled.Recommendations>
+    </>
   );
 };

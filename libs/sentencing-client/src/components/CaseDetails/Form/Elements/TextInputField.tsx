@@ -32,14 +32,14 @@ export const TextInputField: React.FC<InputFieldProps> = ({
   isOtherContext,
 }) => {
   const initialValue = prevValue === null ? "" : String(prevValue);
-  const prevLsirScoreValidation =
+  const prevLsirScoreHasError =
     element.key === LSIR_SCORE_KEY &&
-    isValidLsirScore(initialValue) &&
+    !isValidLsirScore(initialValue) &&
     initialValue !== "";
 
   const [currentValue, setCurrentValue] = useState(initialValue);
   const [hasValidationError, setHasValidationError] = useState<boolean>(
-    prevLsirScoreValidation,
+    prevLsirScoreHasError,
   );
 
   const handleValidationError = (hasError: boolean) => {
@@ -52,7 +52,7 @@ export const TextInputField: React.FC<InputFieldProps> = ({
   ) => {
     setCurrentValue(e.target.value);
 
-    if (element.key === LSIR_SCORE_KEY && updateFormError) {
+    if (element.key === LSIR_SCORE_KEY) {
       if (!isValidLsirScore(e.target.value) && e.target.value !== "") {
         handleValidationError(true);
         return;

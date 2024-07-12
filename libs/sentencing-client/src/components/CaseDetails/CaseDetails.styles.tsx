@@ -38,13 +38,13 @@ export const Body = styled.div`
   flex-grow: 1;
 `;
 
-export const BackLink = styled.div`
+export const BackLink = styled.div<{ leftMargin?: number }>`
   width: fit-content;
   display: flex;
   align-items: center;
   padding: 0 24px;
   margin-bottom: 16px;
-  margin-left: 16px;
+  margin-left: ${({ leftMargin }) => leftMargin ?? -7}px;
   color: ${palette.slate85};
   position: relative;
 
@@ -380,24 +380,88 @@ export const RecommendationActionButtonWrapper = styled.div`
 `;
 
 export const ActionButton = styled.button<{
-  kind?: "link";
+  kind?: "link" | "bordered";
   fullWidth?: boolean;
 }>`
   height: 48px;
   display: flex;
+  gap: 8px;
   padding: 12px 32px;
   justify-content: center;
   align-items: center;
   background-color: ${({ kind }) =>
-    kind === "link" ? "transparent" : palette.pine4};
-  color: ${({ kind }) => (kind === "link" ? palette.slate85 : palette.white)};
-  border: none;
+    kind === "link" || kind === "bordered" ? "transparent" : palette.pine4};
+  color: ${({ kind }) =>
+    kind === "link" || kind === "bordered" ? palette.slate85 : palette.white};
+  border: ${({ kind }) =>
+    kind === "bordered" ? `1px solid ${palette.slate20}` : `none`};
   border-radius: 4px;
   ${({ fullWidth }) => fullWidth && `width: 100%;`}
 
   &:disabled {
     opacity: 0.6;
   }
+`;
+
+/** Recommendation: Summary and Report */
+export const RecommendationSummaryReport = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: ${palette.white};
+  padding: 24px 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+export const SummaryReportWrapper = styled.div`
+  width: 568px;
+  display: flex;
+  flex-direction: column;
+  color: ${palette.slate85};
+`;
+
+export const SummaryReportTitle = styled(Title)`
+  ${typography.Sans24}
+  color: ${palette.pine2};
+  margin-bottom: 24px;
+`;
+
+export const SummaryReportSectionTitle = styled.div`
+  ${typography.Sans18}
+  color: ${palette.pine2};
+  margin-top: 4px;
+  margin-bottom: 8px;
+`;
+
+export const SectionWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 32px;
+`;
+
+export const SummaryTextAreaWrapper = styled.div`
+  margin-bottom: 8px;
+
+  textarea {
+    width: 100%;
+    height: 185px;
+    ${typography.Sans16}
+    color: ${palette.slate85};
+  }
+`;
+
+export const PlaceholderPdfPreview = styled.div`
+  background-color: ${palette.slate30};
+  height: 346px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+`;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 8px;
 `;
 
 /** Insights */

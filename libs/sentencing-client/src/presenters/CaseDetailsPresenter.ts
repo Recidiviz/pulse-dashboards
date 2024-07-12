@@ -98,11 +98,14 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.hydrator.hydrate();
   }
 
-  async updateAttributes(caseId: string) {
+  async updateAttributes(caseId: string, attributes?: MutableCaseAttributes) {
     await flowResult(
-      this.caseStore.updateCaseDetails(caseId, this.form?.transformedUpdates),
+      this.caseStore.updateCaseDetails(
+        caseId,
+        attributes ?? this.form?.transformedUpdates,
+      ),
     );
-    await this.caseStore.loadCaseDetails(this.caseId);
+    await flowResult(this.caseStore.loadCaseDetails(this.caseId));
   }
 
   async updateRecommendation(
@@ -114,6 +117,11 @@ export class CaseDetailsPresenter implements Hydratable {
         selectedRecommendation: recommendation,
       }),
     );
-    await this.caseStore.loadCaseDetails(this.caseId);
+    await flowResult(this.caseStore.loadCaseDetails(this.caseId));
+  }
+
+  async updateCaseStatusToCompleted() {
+    await this.updateAttributes(this.caseId, { status: "Complete" });
+    await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
   }
 }

@@ -46,6 +46,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     form,
     updateAttributes,
     updateRecommendation,
+    updateCaseStatusToCompleted,
   } = presenter;
 
   const firstName = caseAttributes.fullName?.split(" ")[0];
@@ -80,6 +81,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   return (
     <Styled.PageContainer>
       <Styled.BackLink
+        leftMargin={16}
         onClick={() =>
           navigate(
             psiUrl("dashboard", {
@@ -88,6 +90,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           )
         }
       >{`Back to Dashboard`}</Styled.BackLink>
+
       {/* Case Attributes */}
       <CaseAttributes
         firstName={firstName}
@@ -109,10 +112,12 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
         {/* Recommendations */}
         <Recommendations
           firstName={firstName}
+          fullName={caseAttributes.fullName}
           selectedRecommendation={selectedRecommendation}
           handleRecommendationUpdate={handleRecommendationUpdate}
           saveRecommendation={saveRecommendation}
           lastSavedRecommendation={caseAttributes.selectedRecommendation}
+          setCaseStatusCompleted={updateCaseStatusToCompleted}
         />
       </Styled.Body>
     </Styled.PageContainer>
