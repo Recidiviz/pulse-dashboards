@@ -48,6 +48,7 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": ["prisma-generate"],
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/sentencing-server",
