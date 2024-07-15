@@ -1,4 +1,4 @@
-import { unzip } from "lodash";
+import { isObject, snakeCase, unzip } from "lodash";
 
 import {
   OPPORTUNITY_CONFIGS_BY_STATE,
@@ -9,19 +9,28 @@ type Fields = Record<string, string>;
 
 const updated_by = "Initial Import";
 
+const deepMapKeys = (raw: object | undefined, f: (k: string) => string): any =>
+  raw &&
+  Object.fromEntries(
+    Object.entries(raw).map(([k, v]) => [
+      f(k),
+      isObject(v) ? deepMapKeys(v, f) : v,
+    ]),
+  );
+
 function sqlstring(raw: string): string {
   return `'${raw.replaceAll("'", "''")}'`;
 }
 
-function sqlify(raw?: any): string {
+function sqlify(raw?: any, nativeArrays = false): string {
   if (raw === null || raw === undefined) {
     return "NULL";
   } else if (typeof raw === "boolean") {
     return raw ? "TRUE" : "FALSE";
   } else if (typeof raw === "string") {
     return sqlstring(raw);
-  } else if (Array.isArray(raw)) {
-    return `ARRAY [${raw.map(sqlify).join(", ")}]`;
+  } else if (Array.isArray(raw) && nativeArrays) {
+    return `ARRAY [${raw.map((r) => sqlify(r)).join(", ")}]`;
   }
   return sqlstring(JSON.stringify(raw));
 }
@@ -58,15 +67,24 @@ function buildOpportunityConfigFields(
     display_name: sqlify(config.label),
     methodology_url: sqlify(config.methodologyUrl),
     is_alert: sqlify(!!config.isAlert),
-    initial_header: sqlify(config.initialHeader ?? ""),
-    dynamic_eligibility_text: sqlify(config.dynamicEligibilityText),
-    call_to_action: sqlify(config.callToAction),
-    denial_text: sqlify(config.denialButtonText),
-    snooze: sqlify(config.snooze),
+    initial_header: sqlify(config.initialHeader),
     denial_reasons: sqlify(config.denialReasons),
     eligible_criteria_copy: sqlify(config.eligibleCriteriaCopy ?? {}),
     ineligible_criteria_copy: sqlify(config.ineligibleCriteriaCopy ?? {}),
-    sidebar_components: sqlify(config.sidebarComponents),
+    dynamic_eligibility_text: sqlify(config.dynamicEligibilityText),
+    eligibility_date_text: sqlify(config.eligibilityDateText),
+    hide_denial_revert: sqlify(!!config.hideDenialRevert),
+    tooltip_eligibility_text: sqlify(config.tooltipEligibilityText),
+    call_to_action: sqlify(config.callToAction),
+    denial_text: sqlify(config.denialButtonText),
+    snooze: sqlify(deepMapKeys(config.snooze, snakeCase)),
+    sidebar_components: sqlify(config.sidebarComponents, true),
+    tab_groups: sqlify(config.tabOrder),
+    compare_by: sqlify(
+      config.compareBy
+        ? config.compareBy.map((sp) => deepMapKeys(sp, snakeCase))
+        : undefined,
+    ),
   };
 }
 
@@ -78,6 +96,9 @@ export function dumpToSql(): string {
       statements.push(`\\c ${state_code.toLowerCase()}`);
       Object.entries(configs).forEach(([opportunity_type, config]) => {
         statements.push(
+          `DELETE FROM opportunity_configuration WHERE state_code=${sqlify(state_code)} AND opportunity_type=${sqlify(opportunity_type)} AND created_by=${sqlify(updated_by)};`,
+        );
+        statements.push(
           `DELETE FROM opportunity WHERE state_code=${sqlify(state_code)} AND opportunity_type=${sqlify(opportunity_type)} AND updated_by=${sqlify(updated_by)};`,
         );
         statements.push(
@@ -85,9 +106,6 @@ export function dumpToSql(): string {
             "opportunity",
             buildOpportunityFields(opportunity_type, config),
           ),
-        );
-        statements.push(
-          `DELETE FROM opportunity_configuration WHERE state_code=${sqlify(state_code)} AND opportunity_type=${sqlify(opportunity_type)} AND created_by=${sqlify(updated_by)};`,
         );
         statements.push(
           formatInsertStatement(

@@ -55,9 +55,18 @@ export class OpportunityConfigurationAPIClient
     const { isImpersonating, isRecidivizUser } =
       this.opportunityConfigurationStore.rootStore.userStore;
     if (isRecidivizUser || isImpersonating) {
-      endpoint += `?featureVariants = ${this.featureVariantsParam}`;
+      endpoint += `?featureVariants=${this.featureVariantsParam}`;
     }
-    const fetchedData = await this.apiStore.get(endpoint);
+    let fetchedData;
+    try {
+      fetchedData = await this.apiStore.get(endpoint);
+    } catch (e) {
+      // This isn't optimal error handling, but the backend sends a 401
+      // for non-workflows enabled states, and apiStore doesn't throw a
+      // machine-readable exception
+      console.error(e);
+      return {};
+    }
     return apiOpportunityConfigurationResponseSchema.parse(fetchedData)
       .enabledConfigs;
   }

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
+import { add, nextDay } from "date-fns";
 import simplur from "simplur";
 
 import {
@@ -34,6 +36,40 @@ export function formatEligibilityText(dynamicText: string, count: number) {
   );
 }
 
+const WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+] as const;
+
+export function hydrateSnooze(
+  snooze: IApiOpportunityConfiguration["snooze"],
+): OpportunityConfiguration["snooze"] {
+  if (snooze && snooze.autoSnoozeParams) {
+    const { type, params } = snooze.autoSnoozeParams;
+    return {
+      autoSnoozeParams: (snoozedOn: Date) => {
+        switch (type) {
+          case "snoozeDays":
+            return add(snoozedOn, {
+              days: params.days,
+            });
+          case "snoozeUntil":
+            return nextDay(snoozedOn, WEEKDAYS.indexOf(params.weekday) as Day);
+          default:
+            assertNever(type);
+        }
+      },
+    };
+  } else {
+    return snooze;
+  }
+}
+
 export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   constructor(
     private configurationObject: IApiOpportunityConfiguration,
@@ -41,7 +77,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   ) {}
 
   get systemType() {
-    return "INCARCERATION" as const; // TODO FIX
+    return this.configurationObject.systemType;
   }
   get stateCode() {
     return this.configurationObject.stateCode;
@@ -57,6 +93,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return undefined;
   }
   get inverseFeatureVariant() {
+    const { inverseFeatureVariant } = this.configurationObject;
+    if (inverseFeatureVariant && inverseFeatureVariant in allFeatureVariants) {
+      return inverseFeatureVariant as FeatureVariant;
+    }
     return undefined;
   }
   get label() {
@@ -66,14 +106,22 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.firestoreCollection;
   }
   get snooze() {
-    return this.configurationObject.snooze;
+    return hydrateSnooze(this.configurationObject.snooze);
   }
 
   get initialHeader() {
-    return "INITIAL HEADER";
+    return this.configurationObject.initialHeader;
   }
   get callToAction() {
     return this.configurationObject.callToAction;
+  }
+
+  get subheading() {
+    return this.configurationObject.subheading;
+  }
+
+  get notifications() {
+    return this.configurationObject.notifications;
   }
 
   eligibilityTextForCount = (count: number) =>
@@ -83,13 +131,13 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     );
 
   get denialButtonText() {
-    return undefined;
+    return this.configurationObject.denialText;
   }
   get eligibilityDateText() {
-    return "ELIGIBILITY DATE TEXT";
+    return this.configurationObject.eligibilityDateText;
   }
   get hideDenialRevert() {
-    return false;
+    return this.configurationObject.hideDenialRevert;
   }
 
   get tabGroups() {
@@ -113,11 +161,11 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get isAlert() {
-    return undefined;
+    return this.configurationObject.isAlert;
   }
 
   get tooltipEligibilityText() {
-    return undefined;
+    return this.configurationObject.tooltipEligibilityText;
   }
 
   get eligibleCriteriaCopy() {
@@ -135,13 +183,12 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get isEnabled(): boolean {
     const { activeFeatureVariants } = this.userStore;
     const { featureVariant, inverseFeatureVariant } = this;
-    if (!featureVariant) return true;
 
-    const featureVariantEnabled = !!activeFeatureVariants[featureVariant];
-    const inverseFeatureVariantDisabled = inverseFeatureVariant
-      ? !activeFeatureVariants[inverseFeatureVariant]
-      : true;
+    const featureVariantEnabled =
+      !featureVariant || !!activeFeatureVariants[featureVariant];
+    const inverseFeatureVariantDisabled =
+      !!inverseFeatureVariant && !!activeFeatureVariants[inverseFeatureVariant];
 
-    return featureVariantEnabled && inverseFeatureVariantDisabled;
+    return featureVariantEnabled && !inverseFeatureVariantDisabled;
   }
 }

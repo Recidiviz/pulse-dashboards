@@ -17,7 +17,38 @@
 
 import { z } from "zod";
 
-export const snoozeConfigurationSchema = z.object({
-  defaultSnoozeDays: z.number(),
-  maxSnoozeDays: z.number(),
+const snoozeUntil = z.object({
+  type: z.literal("snoozeUntil"),
+  params: z.object({
+    weekday: z.enum([
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ]),
+  }),
 });
+
+const snoozeDays = z.object({
+  type: z.literal("snoozeDays"),
+  params: z.object({
+    days: z.number(),
+  }),
+});
+
+export const snoozeConfigurationSchema = z
+  .object({
+    defaultSnoozeDays: z.number(),
+    maxSnoozeDays: z.number(),
+    autoSnoozeParams: z.undefined(),
+  })
+  .or(
+    z.object({
+      autoSnoozeParams: z.union([snoozeUntil, snoozeDays]),
+      defaultSnoozeDays: z.undefined(),
+      maxSnoozeDays: z.undefined(),
+    }),
+  );

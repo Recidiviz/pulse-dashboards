@@ -18,7 +18,7 @@
 import { z } from "zod";
 
 import { TenantIds } from "../../../../RootStore/types";
-import { nullishAsUndefined } from "../../schemaHelpers";
+import { NullCoalesce, nullishAsUndefined } from "../../schemaHelpers";
 import { snoozeConfigurationSchema } from "../modules/SnoozeConfiguration/dtos/SnoozeConfigurationSchema";
 
 // CRITERIA COPY SCHEMA
@@ -30,21 +30,41 @@ const criteriaCopySchema = z.record(copySchema);
 
 export const apiOpportunityConfigurationSchema = z.object({
   stateCode: z.enum(TenantIds),
+  systemType: z.enum(["SUPERVISION", "INCARCERATION"]),
   urlSection: z.string(),
   displayName: z.string(),
   featureVariant: nullishAsUndefined(z.string()),
+  inverseFeatureVariant: nullishAsUndefined(z.string()),
   dynamicEligibilityText: z.string(),
   callToAction: z.string(),
+  subheading: z.string().optional(),
+  notifications: NullCoalesce(
+    [],
+    z.array(
+      z.object({
+        id: z.string(),
+        title: z.string().optional(),
+        body: z.string(),
+        cta: z.string().optional(),
+      }),
+    ),
+  ),
   firestoreCollection: z.string(),
   snooze: z.preprocess(
     (r: any) => (r && r.defaultSnoozeDays ? r : undefined),
     nullishAsUndefined(snoozeConfigurationSchema),
   ),
   denialReasons: z.record(z.string()),
-  tabGroups: z.record(z.string(), z.array(z.string())).optional(),
+  tabGroups: nullishAsUndefined(z.record(z.string(), z.array(z.string()))),
+  initialHeader: nullishAsUndefined(z.string()),
+  denialText: nullishAsUndefined(z.string()),
+  eligibilityDateText: nullishAsUndefined(z.string()),
+  tooltipEligibilityText: nullishAsUndefined(z.string()),
+  hideDenialRevert: z.boolean().optional(),
   eligibleCriteriaCopy: criteriaCopySchema,
   ineligibleCriteriaCopy: criteriaCopySchema,
   sidebarComponents: z.array(z.string()),
+  isAlert: z.boolean(),
   compareBy: nullishAsUndefined(
     z.array(
       z.object({

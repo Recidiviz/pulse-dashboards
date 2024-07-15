@@ -33,6 +33,7 @@ import {
 } from "./interfaces";
 import { LocalOpportunityConfiguration } from "./models";
 import { ApiOpportunityConfiguration } from "./models/ApiOpportunityConfigurationImpl";
+
 export class OpportunityConfigurationStore implements Hydratable {
   apiClient: OpportunityConfigurationAPI;
   apiOpportunityConfigurations?: Partial<
@@ -122,10 +123,19 @@ export class OpportunityConfigurationStore implements Hydratable {
   }
 
   get opportunities() {
-    return {
-      ...this.localOpportunityConfigurations,
-      ...this.apiOpportunityConfigurations,
-    };
+    if (
+      this.rootStore.userStore.activeFeatureVariants.opportunityConfigurationAPI
+    ) {
+      // This assertion is temporary: we'll never instantiate an opportunity
+      // that doesn't have a config, but there are a lot of places which assume
+      // the existance of a config for all OpportunityTypes
+      return (this.apiOpportunityConfigurations ?? {}) as Record<
+        OpportunityType,
+        OpportunityConfiguration
+      >;
+    } else {
+      return this.localOpportunityConfigurations;
+    }
   }
 
   get enabledOpportunityTypes() {
