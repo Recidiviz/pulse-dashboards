@@ -37,7 +37,7 @@ export const nameSchema = zu.stringToJSON().pipe(
   }),
 );
 
-const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.coerce.string()));
+const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.string()));
 
 export const caseImportSchema = z.array(
   z.object({
@@ -49,7 +49,7 @@ export const caseImportSchema = z.array(
     completion_date: z.coerce.date(),
     sentence_date: z.coerce.date(),
     assigned_date: z.coerce.date(),
-    county_name: z.string(),
+    county: z.string(),
     lsir_score: z.coerce.number().optional(),
     lsir_level: z.string().optional(),
     report_type: z.string(),
@@ -61,7 +61,7 @@ export const clientImportSchema = z.array(
     .object({
       external_id: z.string(),
       pseudonymized_id: z.string(),
-      caseIds: caseIdsSchema,
+      case_ids: caseIdsSchema,
       state_code: stateCode,
       full_name: nameSchema,
       gender: z.string(),
@@ -82,7 +82,7 @@ export const staffImportSchema = z.array(
     .object({
       external_id: z.string(),
       pseudonymized_id: z.string(),
-      caseIds: caseIdsSchema,
+      case_ids: caseIdsSchema,
       state_code: stateCode,
       full_name: nameSchema,
       email: z.string(),
