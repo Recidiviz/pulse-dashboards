@@ -82,6 +82,7 @@ describe("prefilledDataTransformer", () => {
   test("basic transformation", () => {
     expect(form.prefilledDataTransformer()).toMatchInlineSnapshot(`
       {
+        "criteriaHighSanction": false,
         "currentGradeOfSupervisionLevel": "Medium",
         "dateOfReview": "Dec 12, 2023",
         "paroleNumber": "pei1",

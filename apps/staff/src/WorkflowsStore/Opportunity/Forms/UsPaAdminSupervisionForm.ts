@@ -43,11 +43,18 @@ export class UsPaAdminSupervisionForm extends FormBase<
       supervisionLevel: currentGradeOfSupervisionLevel,
     } = this.person;
 
+    const { eligibleCriteria } = this.opportunity.record;
+
     const reentrantName = `${surname}, ${givenNames}`;
 
     const dateOfReview = formatWorkflowsDate(new Date());
 
+    const criteriaHighSanction = !(
+      "usPaNoHighSanctionsInPastYear" in eligibleCriteria
+    );
+
     return {
+      criteriaHighSanction,
       reentrantName,
       paroleNumber,
       currentGradeOfSupervisionLevel,
