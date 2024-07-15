@@ -110,10 +110,10 @@ function UsArCurrentStatus({
           currentSentences.map(
             ({ sentenceId, startDate, endDate, initialTimeServedDays }) => (
               <SecureDetailsContent key={`${sentenceId}-${startDate}`}>
-                Served sentence {sentenceId} from{" "}
-                {formatWorkflowsDate(new Date(startDate))} to{" "}
+                {new Date(endDate) > new Date() ? "Serving" : "Served"} sentence{" "}
+                {sentenceId} from {formatWorkflowsDate(new Date(startDate))} to{" "}
                 {formatWorkflowsDate(new Date(endDate))} with{" "}
-                {initialTimeServedDays} initial days served
+                {initialTimeServedDays || "no"} initial days served
               </SecureDetailsContent>
             ),
           )
