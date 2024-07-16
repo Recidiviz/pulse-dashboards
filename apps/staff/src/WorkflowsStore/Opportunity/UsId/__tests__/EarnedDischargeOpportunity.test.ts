@@ -110,10 +110,10 @@ describe("almost eligible on probation at least a year", () => {
       {
         text: "Needs 16 more months on supervision",
         tooltip:
-          "Policy requirement: If on probation, served minimum sentence according to the court; " +
+          "If on probation, served minimum sentence according to the court; " +
           "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
           "offense, served at least one-third of remaining sentence; if on parole for a life sentence, served " +
-          "at least five years on parole.",
+          "at least five years on parole",
       },
     ]);
   });
@@ -149,10 +149,10 @@ describe("almost eligible days remaining on length of stay", () => {
       {
         text: "Needs 1 more day on supervision",
         tooltip:
-          "Policy requirement: If on probation, served minimum sentence according to the court; " +
+          "If on probation, served minimum sentence according to the court; " +
           "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
           "offense, served at least one-third of remaining sentence; if on parole for a life sentence, served " +
-          "at least five years on parole.",
+          "at least five years on parole",
       },
     ]);
   });

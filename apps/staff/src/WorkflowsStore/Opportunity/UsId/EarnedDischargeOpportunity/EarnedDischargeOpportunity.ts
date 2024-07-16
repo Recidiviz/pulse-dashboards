@@ -15,60 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
 import { computed, makeObservable, override } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsIdEarnedDischargeForm } from "../../Forms/UsIdEarnedDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityRequirement } from "../../types";
-import { monthsOrDaysRemainingFromToday } from "../../utils/criteriaUtils";
-import {
-  LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
-  LSUEarnedDischargeCommonRequirementsMet,
-} from "../LSUOpportunity/LSUOpportunity";
 import {
   EarnedDischargeDraftData,
   EarnedDischargeReferralRecord,
   usIdEarnedDischargeSchema,
 } from "./EarnedDischargeReferralRecord";
-
-// This could be configured externally once it's fleshed out
-// to include all copy and other static data
-const ELIGIBLE_CRITERIA_COPY: Record<
-  keyof EarnedDischargeReferralRecord["eligibleCriteria"],
-  OpportunityRequirement
-> = {
-  ...LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
-  pastEarnedDischargeEligibleDate: {
-    text: "Minimum time has been served for eligibility",
-    tooltip:
-      "Policy requirement: If on probation, served minimum sentence according to the court; " +
-      "if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent " +
-      "offense, served at least one-third of remaining sentence; if on parole for a life sentence, " +
-      "served at least five years on parole.",
-  },
-  usIdLsirLevelLowModerateForXDays: {
-    // The risk level text is an empty string but is always overwritten with a custom string based on actual risk level in requirementsMet
-    text: "",
-    tooltip:
-      "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
-  },
-};
-
-export const INELIGIBLE_CRITERIA_COPY: Record<
-  keyof EarnedDischargeReferralRecord["ineligibleCriteria"],
-  OpportunityRequirement
-> = {
-  pastEarnedDischargeEligibleDate: {
-    text: "Needs $TIME_REMAINING on supervision",
-    tooltip:
-      "Policy requirement: If on probation, served minimum sentence according to the court; if on parole " +
-      "for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at " +
-      "least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole.",
-  },
-};
 
 export class EarnedDischargeOpportunity extends OpportunityBase<
   Client,
@@ -99,74 +56,10 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
-  get requirementsAlmostMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-    const { ineligibleCriteria } = this.record;
-    const requirements: OpportunityRequirement[] = [];
-    const { pastEarnedDischargeEligibleDate } = cloneDeep(
-      INELIGIBLE_CRITERIA_COPY,
-    );
-
-    if (
-      ineligibleCriteria.pastEarnedDischargeEligibleDate &&
-      ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate
-    ) {
-      const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        ineligibleCriteria.pastEarnedDischargeEligibleDate.eligibleDate,
-      );
-      pastEarnedDischargeEligibleDate.text =
-        pastEarnedDischargeEligibleDate.text.replace(
-          "$TIME_REMAINING",
-          `${monthsOrDaysRemaining}`,
-        );
-      requirements.push(pastEarnedDischargeEligibleDate);
-    }
-
-    return requirements;
-  }
-
   get almostEligibleStatusMessage(): string | undefined {
-    if (!this.almostEligible) return;
-    const { pastEarnedDischargeEligibleDate } =
-      this.record?.ineligibleCriteria ?? {};
-    if (
-      pastEarnedDischargeEligibleDate &&
-      pastEarnedDischargeEligibleDate.eligibleDate
-    ) {
-      const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        pastEarnedDischargeEligibleDate.eligibleDate,
-      );
-
-      return INELIGIBLE_CRITERIA_COPY.pastEarnedDischargeEligibleDate.text.replace(
-        "$TIME_REMAINING",
-        `${monthsOrDaysRemaining}`,
-      );
-    }
-  }
-
-  get requirementsMet(): OpportunityRequirement[] {
-    if (!this.record) return [];
-    const { eligibleCriteria } = this.record;
-    const requirements =
-      LSUEarnedDischargeCommonRequirementsMet(eligibleCriteria);
-
-    // TODO(#2415): Update this to be dynamic once sex offense info is in FE
-    if (eligibleCriteria.pastEarnedDischargeEligibleDate) {
-      requirements.push(ELIGIBLE_CRITERIA_COPY.pastEarnedDischargeEligibleDate);
-    }
-    if (eligibleCriteria.usIdLsirLevelLowModerateForXDays?.riskLevel) {
-      const text =
-        eligibleCriteria.usIdLsirLevelLowModerateForXDays.riskLevel === "LOW"
-          ? "Currently low risk with no increase in risk level in past 90 days"
-          : "Currently moderate risk with no increase in risk level in past 360 days";
-      requirements.push({
-        text,
-        tooltip:
-          ELIGIBLE_CRITERIA_COPY.usIdLsirLevelLowModerateForXDays.tooltip,
-      });
-    }
-
-    return requirements;
+    const { requirementsAlmostMet } = this;
+    if (requirementsAlmostMet.length === 0) return;
+    return requirementsAlmostMet[0].text;
   }
 
   get eligibilityDate(): Date | undefined {

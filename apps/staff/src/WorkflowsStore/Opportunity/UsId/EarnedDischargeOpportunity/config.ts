@@ -44,4 +44,43 @@ export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportu
     },
     sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
     tooltipEligibilityText: "Eligible for Earned Discharge",
+    eligibleCriteriaCopy: {
+      usIdLsirLevelLowModerateForXDays: {
+        text: '{{#if (eq "LOW" riskLevel)}}Currently low risk with no increase in risk level in past 90 days{{else}}Currently moderate risk with no increase in risk level in past 360 days{{/if}}',
+        tooltip:
+          "Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
+      },
+      negativeDaWithin90Days: {
+        text: "Negative UA within past 90 days",
+        tooltip:
+          "Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
+      },
+      usIdIncomeVerifiedWithin3Months: {
+        text: "Verified compliant employment",
+        tooltip:
+          "Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
+      },
+      noFelonyWithin24Months: {
+        text: "No felony convictions in past 24 months",
+        tooltip:
+          "Has not committed a felony while on probation or parole in past 24 months",
+      },
+      noViolentMisdemeanorWithin12Months: {
+        text: "No violent misdemeanor convictions in past 12 months",
+        tooltip:
+          "Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
+      },
+      pastEarnedDischargeEligibleDate: {
+        text: "Served {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
+        tooltip:
+          "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
+      },
+    },
+    ineligibleCriteriaCopy: {
+      pastEarnedDischargeEligibleDate: {
+        text: "Needs {{monthsOrDaysRemainingFromToday eligibleDate}} on supervision",
+        tooltip:
+          "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
+      },
+    },
   };

@@ -121,6 +121,9 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   yearsMonthsUntil: (date) => formatYearsMonthsFromNow(dateify(date)),
   daysToYearsMonthsPast: (days) => formatDaysToYearsMonthsPast(days),
   eq: (a, b) => a === b,
+  length: (xs) => xs && xs.length,
+  monthsOrDaysRemainingFromToday: (date) =>
+    monthsOrDaysRemainingFromToday(dateify(date)),
 
   // US_MI helpers
   usMiSegregationDisplayName,
