@@ -478,3 +478,72 @@ test("an opp is undefined in `opportunitiesByTab`", () => {
 
   expect(container).toContainHTML("<div></div>");
 });
+
+describe("opportunityPolicyCopy feature variant", () => {
+  beforeEach(() => {
+    useFeatureVariantsMock.mockReturnValue({ opportunityPolicyCopy: {} });
+  });
+
+  test("displays simplified title", () => {
+    const opp1 = {
+      ...mockOpportunity,
+      person: {
+        recordId: "1",
+      } as Client,
+      type: "earlyTermination",
+    };
+    const opp2 = {
+      ...opp1,
+      person: {
+        recordId: "2",
+      } as Client,
+      type: "earlyTermination",
+    };
+
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        selectedSearchIds: ["123"],
+        opportunitiesLoaded: () => true,
+        hasOpportunities: () => true,
+        allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
+      },
+    });
+
+    render(<OpportunityPersonList />);
+
+    expect(screen.getByText("Early Termination")).toBeInTheDocument();
+
+    expect(
+      screen.queryByText("2 clients may be eligible for early termination"),
+    ).not.toBeInTheDocument();
+  });
+
+  test("displays subheading", () => {
+    const opp = {
+      ...mockOpportunity,
+      person: {
+        recordId: "1",
+      } as Client,
+      type: "earlyTermination",
+    };
+
+    useRootStoreMock.mockReturnValue({
+      workflowsStore: {
+        ...baseWorkflowsStoreMock,
+        selectedSearchIds: ["123"],
+        opportunitiesLoaded: () => true,
+        hasOpportunities: () => true,
+        allOpportunitiesByType: { earlyTermination: [opp] },
+      },
+    });
+
+    render(<OpportunityPersonList />);
+
+    expect(
+      screen.getByText(
+        "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork. Review clients eligible for early termination and complete the auto-filled paperwork to file with the Court.",
+      ),
+    ).toBeInTheDocument();
+  });
+});

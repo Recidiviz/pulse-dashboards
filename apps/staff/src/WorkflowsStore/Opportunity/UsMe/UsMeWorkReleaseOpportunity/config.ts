@@ -27,6 +27,8 @@ export const usMeWorkReleaseConfig: OpportunityConfig<UsMeWorkReleaseOpportunity
     featureVariant: "usMeWorkRelease",
     dynamicEligibilityText:
       "client[|s] may be eligible for the Community Transition Program (Work Release)",
+    subheading:
+      "Work Release provides residents with the opportunity to prepare for successful reentry into the community by allowing approved residents to participate in work, education, or public service outside of the facility. Review residents approaching Work Release eligibility and complete application paperwork.",
     callToAction:
       "Search for case managers above to review residents on their caseload who are approaching " +
       "Work Release eligibility and complete application paperwork.",

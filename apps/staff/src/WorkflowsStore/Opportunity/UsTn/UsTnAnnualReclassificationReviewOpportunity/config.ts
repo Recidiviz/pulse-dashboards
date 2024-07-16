@@ -30,6 +30,8 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
     callToAction:
       "Review residents due for their annual reclassification " +
       "and update their custody level in TOMIS.",
+    subheading:
+      "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork.",
     firestoreCollection: "US_TN-annualReclassificationReferrals",
     snooze: {
       maxSnoozeDays: 90,

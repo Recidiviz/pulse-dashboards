@@ -27,6 +27,14 @@ export const usTnSupervisionLevelDowngradeConfig: OpportunityConfig<UsTnSupervis
     dynamicEligibilityText:
       "client[|s] may be supervised at a higher level than their latest risk score",
     callToAction: "Change their supervision level in TOMIS.",
+    subheading: `This alert helps staff identify people who may be supervised at a higher level than their latest risk score and directs staff to update their supervision level in eTOMIS.
+  
+Clients are surfaced if their latest risk score does not map to the corresponding supervision level as detailed below:
+
+* Low - Minimum or lower
+* Moderate - Medium or lower
+* High Property - Max or lower
+    `,
     firestoreCollection: "US_TN-supervisionLevelDowngrade",
     snooze: {
       defaultSnoozeDays: 30,

@@ -38,6 +38,8 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
       "client[|s] may be eligible for a supervision level downgrade",
     callToAction:
       "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
+    subheading:
+      "This alert helps staff identify clients due or overdue for a classification review, which are generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior. Review clients who meet the time threshold for classification review and downgrade their supervision level in OMNI.",
     firestoreCollection: "US_MI-classificationReviewReferrals",
     eligibilityDateText: "Next Classification Due Date",
     sidebarComponents: [

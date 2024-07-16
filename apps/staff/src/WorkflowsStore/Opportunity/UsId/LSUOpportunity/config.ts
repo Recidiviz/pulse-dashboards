@@ -25,6 +25,8 @@ export const usIdLSUConfig: OpportunityConfig<LSUOpportunity> = {
   dynamicEligibilityText:
     "client[|s] may be eligible for the Limited Supervision Unit",
   callToAction: `Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.`,
+  subheading:
+    "The Limited Supervision Unit is the lowest level of supervision available in Idaho. LSU offers web-based reporting to low-risk clients.",
   firestoreCollection: "US_ID-LSUReferrals",
   snooze: {
     defaultSnoozeDays: 30,

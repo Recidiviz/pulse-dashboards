@@ -23,6 +23,7 @@ export const usMoOverdueRestrictiveHousingInitialHearingConfig: OpportunityConfi
     "InitialHearing",
     "on Temporary Assignment to review for their initial meaningful hearing",
     "Review residents and prepare necessary paperwork for their hearing.",
+    "This alert helps staff identify residents in Temporary Assignment who are overdue or due for an initial meaningful hearing.",
     {
       BEDS: "Released early due to a need for Restrictive Housing beds",
       SPACE: "Completed time but pending bed space",

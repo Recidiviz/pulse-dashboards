@@ -23,6 +23,7 @@ export const usMoOverdueRestrictiveHousingReviewHearingConfig: OpportunityConfig
     "ReviewHearing",
     "in Extended Restrictive Housing to review for their next hearing",
     "Review residents and prepare necessary paperwork for their next hearing",
+    "This alert helps staff identify residents in Extended Restrictive Housing  who are overdue or due for a hearing. Review residents and prepare necessary paperwork for their next hearing.",
     {
       BEDS: "Released early due to a need for Extended Restrictive Housing beds",
       SPACE: "Completed time but pending bed space",

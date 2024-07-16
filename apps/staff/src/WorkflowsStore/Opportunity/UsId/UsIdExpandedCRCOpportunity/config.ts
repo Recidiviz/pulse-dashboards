@@ -26,11 +26,14 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
     stateCode: "US_ID",
     urlSection: "expandedCRC",
     label: "Expanded CRC Program",
+    newPolicyCopyLabel: "Expanded Community Reentry Centers",
     featureVariant: "usIdExpandedCRC",
     dynamicEligibilityText:
       "resident[|s] [is|are] eligible for transfer to Expanded Community Reentry Centers.",
     callToAction:
       "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
+    subheading:
+      "This alert helps staff identify people who may be eligible for transfer to an Expanded CRC and directs staff to start their paperwork in ATLAS",
     firestoreCollection: "US_ID-expandedCRCReferrals",
     snooze: {
       defaultSnoozeDays: 30,

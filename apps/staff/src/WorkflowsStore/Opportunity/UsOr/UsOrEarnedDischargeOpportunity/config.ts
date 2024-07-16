@@ -24,11 +24,14 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
     stateCode: "US_OR",
     urlSection: "earnedDischarge",
     label: "Earned Discharge",
+    newPolicyCopyLabel: "Early Discharge",
     dynamicEligibilityText:
       "client[|s] on [a|] funded sentence[|s] may be eligible" +
       " for Earned Discharge from Supervision",
     callToAction:
       "Review clients who may be eligible for ED and complete the EDIS checklist.",
+    subheading:
+      "Early Discharge is the ability to end probation or parole early for clients once they have completed 50% of their sentence length and have met all of the criteria outlined in the ODOC's official policy. Review eligible clients and complete the EDIS check-list.",
     firestoreCollection: "US_OR-earnedDischarge",
     denialButtonText: "Additional Eligibility",
     snooze: {

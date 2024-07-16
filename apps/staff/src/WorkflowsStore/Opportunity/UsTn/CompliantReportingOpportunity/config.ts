@@ -26,6 +26,7 @@ export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingO
     dynamicEligibilityText:
       "client[|s] may be eligible for Compliant Reporting",
     callToAction: "Review and refer eligible clients for Compliant Reporting.",
+    subheading: `Compliant Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts. Review and refer eligible clients for Compliant Reporting using the autofilled paperwork.`,
     firestoreCollection: "compliantReportingReferrals",
     snooze: {
       defaultSnoozeDays: 30,

@@ -25,6 +25,8 @@ export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportu
     label: "Earned Discharge",
     dynamicEligibilityText: "client[|s] may be eligible for earned discharge",
     callToAction: `Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.`,
+    subheading:
+      "This alert helps staff identify people who may be eligible for earned discharge and directs staff to complete the pre-filled request form.",
     firestoreCollection: "US_ID-earnedDischargeReferrals",
     snooze: {
       defaultSnoozeDays: 30,

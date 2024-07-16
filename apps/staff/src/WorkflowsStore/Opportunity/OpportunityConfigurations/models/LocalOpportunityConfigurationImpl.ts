@@ -47,6 +47,12 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.inverseFeatureVariant;
   }
   get label() {
+    if (
+      this.configurationObject.newPolicyCopyLabel &&
+      this.userStore.activeFeatureVariants?.opportunityPolicyCopy
+    ) {
+      return this.configurationObject.newPolicyCopyLabel;
+    }
     return this.configurationObject.label;
   }
   get firestoreCollection() {
@@ -70,6 +76,9 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   }
   get callToAction() {
     return this.configurationObject.callToAction;
+  }
+  get subheading() {
+    return this.configurationObject.subheading;
   }
   eligibilityTextForCount = (count: number) =>
     formatEligibilityText(

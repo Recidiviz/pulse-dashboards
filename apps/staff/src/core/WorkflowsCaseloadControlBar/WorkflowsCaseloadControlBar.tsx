@@ -49,29 +49,32 @@ const TabControls = styled.div`
   ${TabControlsMobileView}
 `;
 
-type WorkflowsCaseloadControlBarPropsWithoutTabControls<T> = Parameters<
-  typeof WorkflowsCaseloadTabs<T>
->[0];
+type WorkflowsCaseloadControlBarPropsWithoutTabControls<T extends string> =
+  Parameters<typeof WorkflowsCaseloadTabs<T>>[0];
 
-type WorkflowsCaseloadControlBarProps<T> =
+type WorkflowsCaseloadControlBarProps<T extends string> =
   WorkflowsCaseloadControlBarPropsWithoutTabControls<T> &
     Parameters<typeof WorkflowsTabGroupSelector>[0];
 
-export function WorkflowsCaseloadControlBar<T>(
+export function WorkflowsCaseloadControlBar<T extends string>(
   props: WorkflowsCaseloadControlBarPropsWithoutTabControls<T>,
 ): JSX.Element;
-export function WorkflowsCaseloadControlBar<T>(
+export function WorkflowsCaseloadControlBar<T extends string>(
   props: WorkflowsCaseloadControlBarProps<T>,
 ): JSX.Element;
-export function WorkflowsCaseloadControlBar<T>(
+export function WorkflowsCaseloadControlBar<T extends string>(
   props:
     | WorkflowsCaseloadControlBarProps<T>
     | WorkflowsCaseloadControlBarPropsWithoutTabControls<T>,
 ) {
-  const { tabs, activeTab, setActiveTab, ...rest } = props;
+  const { tabs, tabBadges, activeTab, setActiveTab, ...rest } = props;
   return (
     <TabControls>
-      {tabs && <WorkflowsCaseloadTabs {...{ tabs, setActiveTab, activeTab }} />}
+      {tabs && (
+        <WorkflowsCaseloadTabs
+          {...{ tabs, tabBadges, setActiveTab, activeTab }}
+        />
+      )}
       {Object.keys(rest).length > 0 && (
         <WorkflowsTabGroupSelector
           {...(rest as Parameters<typeof WorkflowsTabGroupSelector>[0])}

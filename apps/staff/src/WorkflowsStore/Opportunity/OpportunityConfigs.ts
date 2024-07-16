@@ -136,6 +136,8 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   featureVariant?: FeatureVariant;
   inverseFeatureVariant?: FeatureVariant;
   label: string;
+  newPolicyCopyLabel?: string;
+  subheading?: string;
   firestoreCollection: string;
   /* An opportunity will either have auto or manual set, but not both */
   snooze?: SnoozeConfigurationInput;

@@ -23,6 +23,7 @@ export const usMoOverdueRestrictiveHousingReleaseConfig: OpportunityConfig<UsMoO
     "Release",
     "to review for release from Restrictive Housing",
     "Review residents for release and prepare necessary paperwork for their return to general population.",
+    "This alert helps staff identify residents in Restrictive Housing who have already reached or are about to reach the total number of days they were assigned to serve in restrictive housing before returning to the General Population. Review residents for release and prepare necessary paperwork for their return to the General Population.",
     {
       BEDS: "Released early due to a need for Restrictive Housing beds",
       SPACE: "Completed time but pending bed space",

@@ -18,12 +18,11 @@ import { SystemId } from "../../../../core/models/types";
 import { OpportunityProfileModuleName } from "../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { SortParam } from "../../OpportunityConfigs";
-import
-  {
-    DenialReasonsMap,
-    OpportunityRequirement,
-    OpportunityTabGroups
-  } from "../../types";
+import {
+  DenialReasonsMap,
+  OpportunityRequirement,
+  OpportunityTabGroups,
+} from "../../types";
 import { SnoozeConfigurationInput } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 
 export type OpportunityHeadersBaseType = {
@@ -54,11 +53,13 @@ export interface ILocalOpportunityConfiguration {
   featureVariant?: FeatureVariant;
   inverseFeatureVariant?: FeatureVariant;
   label: string;
+  newPolicyCopyLabel?: string;
   firestoreCollection: string;
   snooze?: SnoozeConfigurationInput;
   tabOrder?: Readonly<Partial<OpportunityTabGroups>>;
   initialHeader?: string;
   callToAction: string;
+  subheading?: string;
   dynamicEligibilityText: string;
   denialButtonText?: string;
   eligibilityDateText?: string;

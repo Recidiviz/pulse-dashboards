@@ -33,6 +33,7 @@ export interface OpportunityConfiguration {
   tabGroups: Readonly<Partial<OpportunityTabGroups>>;
   initialHeader?: string;
   callToAction: string;
+  subheading?: string;
   eligibilityTextForCount: (count: number) => string;
   denialButtonText?: string;
   eligibilityDateText?: string;

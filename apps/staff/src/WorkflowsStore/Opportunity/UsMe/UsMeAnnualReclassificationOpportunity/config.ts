@@ -23,7 +23,7 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     systemType: "INCARCERATION",
     stateCode: "US_ME",
     urlSection: "annualReclassification",
-    label: "Annual / Semi-Annual Reclassification",
+    label: "Annual or Semi-Annual Reclassification",
     featureVariant: "usMeAnnualReclassificationReview",
     initialHeader:
       "Search for caseloads to review residents who are up for " +
@@ -33,6 +33,8 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
     callToAction:
       "Search for caseloads to review residents who are up for " +
       "an annual or semi-annual reclassification meeting.",
+    subheading:
+      "This alert helps staff identify residents who are due or overdue for their Annual or Semi-annual Reclassification and directs staff to schedule an annual or semi-annual reclassification meeting.",
     firestoreCollection: "US_ME-reclassificationReviewReferrals",
     snooze: {
       defaultSnoozeDays: 30,

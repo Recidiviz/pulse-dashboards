@@ -31,6 +31,8 @@ export const usMiReclassificationRequestConfig: OpportunityConfig<usMiReclassifi
       "resident[|s] in temporary segregation or detention [is|are] eligible for reclassification to general population",
     callToAction:
       "Return residents eligible for reclassification to general population",
+    subheading:
+      "This alert helps staff identify residents in temporary segregation or detention who are eligible for Reclassification to the General Population and directs staff to complete their reclassification.",
     firestoreCollection: "US_MI-reclassificationRequest",
     denialReasons: {
       ALJ: "Administrative Law Judge found reasonable cause for delay at a hearing conducted on a Class I misconduct violation or on proposed placement in administrative segregation",

@@ -31,6 +31,8 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
       "resident[|s] may be eligible to be a resident worker at a Community Reentry Center",
     callToAction:
       "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
+    subheading:
+      "This alert helps staff identify people who may be eligible for resident worker transfer to a Community Reentry Center (CRC) and directs staff to start their paperwork in ATLAS.",
     firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
     snooze: {
       defaultSnoozeDays: 30,

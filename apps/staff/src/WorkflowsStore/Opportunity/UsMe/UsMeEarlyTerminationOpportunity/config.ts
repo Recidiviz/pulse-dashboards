@@ -30,6 +30,8 @@ export const usMeEarlyTerminationConfig: OpportunityConfig<UsMeEarlyTerminationO
       "client[|s] may be [a|] good candidate[|s] for Early Termination",
     callToAction:
       "Search for officers above to review clients who may be good candidates for early termination from probation.",
+    subheading:
+      "Early termination is when a probation officer, or the client themselves, files a motion with the court for termination of a period of probation and discharge of the client at a time earlier than that provided in their sentence, if warranted by the conduct of the client. Review clients who may be good candidates for early termination from probation.",
     firestoreCollection: "US_ME-earlyTerminationReferrals",
     snooze: {
       defaultSnoozeDays: 30,

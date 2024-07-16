@@ -32,6 +32,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
   usMoOverdueRHOppVariant: "Release" | "InitialHearing" | "ReviewHearing",
   fullTextPartial: string,
   callToAction: string,
+  subheading: string,
   denialReasons: DenialReasonsMap = {
     Other: "Other",
   },
@@ -42,12 +43,19 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
     ReviewHearing: "Upcoming Hearing",
   } as const;
 
+  const segregationTypeMappingNewPolicyCopy = {
+    Release: "Release from Restrictive Housing",
+    InitialHearing: "Temporary Assignment",
+    ReviewHearing: "Extended Restrictive Housing Review",
+  };
+
   return {
     systemType: "INCARCERATION",
     stateCode: "US_MO",
     featureVariant: "usMoOverdueRHPilot",
     urlSection: `overdueRestrictiveHousing${usMoOverdueRHOppVariant}`,
     label: `${segregationTypeMapping[usMoOverdueRHOppVariant]}`,
+    newPolicyCopyLabel: `${segregationTypeMappingNewPolicyCopy[usMoOverdueRHOppVariant]}`,
     snooze: {
       autoSnoozeParams: {
         type: "snoozeUntil",
@@ -58,6 +66,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
     },
     dynamicEligibilityText: `resident[|s] ${fullTextPartial}`,
     callToAction,
+    subheading,
     countByFunction: (opportunities: Opportunity[]) => {
       const counts = countBy(opportunities, (opp) => opp.tabTitle()) as Record<
         OpportunityTab,

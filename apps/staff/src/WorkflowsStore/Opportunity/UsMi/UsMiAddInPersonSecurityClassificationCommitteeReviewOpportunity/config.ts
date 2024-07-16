@@ -29,6 +29,8 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
       "resident[|s] [is|are] eligible for in-person review by the ADD at SCC to potentially return to general population",
     callToAction:
       "Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
+    subheading:
+      "This alert helps staff identify residents in restrictive housing who are due for an ADD In-person Review. Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
     firestoreCollection:
       "US_MI-addInPersonSecurityClassificationCommitteeReview",
     denialReasons: {

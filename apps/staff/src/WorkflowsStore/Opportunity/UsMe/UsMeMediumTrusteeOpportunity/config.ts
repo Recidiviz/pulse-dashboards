@@ -24,6 +24,7 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
     stateCode: "US_ME",
     urlSection: "mediumTrustee",
     label: "Medium Trustee",
+    newPolicyCopyLabel: "Medium Trustee Status",
     featureVariant: "usMeCustodyLevelReview",
     initialHeader:
       "Search for caseloads to review residents " +
@@ -33,6 +34,8 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
     callToAction:
       "Search for caseloads to review residents " +
       "who may be eligible for Medium Trustee Status.",
+    subheading:
+      "This alert helps staff identify residents who may be eligible for Medium Trustee Status and directs staff to contact the Director of Classification to change the resident's status. Medium Custody Trustee status is not a separate custody level and it is not determined by the classification instrument. It is a status that is approved by the Department's Director of Classification, or designee, which allows certain medium custody residents to have extra privileges.",
     firestoreCollection: "US_ME-mediumTrusteeReferrals",
     snooze: {
       defaultSnoozeDays: 30,

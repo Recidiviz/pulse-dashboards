@@ -96,6 +96,7 @@ export type FeatureVariant =
   | "supervisorHomepage"
   | "supervisorHomepageWorkflows"
   | "usPaSpecialCircumstances"
+  | "opportunityPolicyCopy"
   | "interCandidateNavigation";
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -144,6 +145,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepage: {},
   supervisorHomepageWorkflows: {},
   usPaSpecialCircumstances: {},
+  opportunityPolicyCopy: {},
   interCandidateNavigation: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =

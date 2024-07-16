@@ -29,7 +29,8 @@ export const usMeFurloughReleaseConfig: OpportunityConfig<UsMeFurloughReleaseOpp
       "resident[|s] may be eligible for the Furlough Program",
     callToAction:
       "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
-
+    subheading:
+      "The furlough program provides residents with the opportunity to prepare for successful reentry into the community by allowing authorized absences from a facility for reasons like arranging for housing, participating in an external education program, maintaining family ties, and more. Review residents approaching furlough release eligibility and complete application paperwork.",
     firestoreCollection: "US_ME-furloughReleaseReferrals",
     snooze: {
       defaultSnoozeDays: 30,

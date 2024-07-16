@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 
 // TODO: Gut this entire document, so it uses the new caseload presenter.
 import {
+  useFeatureVariants,
   useOpportunityConfigurations,
   useRootStore,
 } from "../../components/StoreProvider";
@@ -45,6 +46,7 @@ import WorkflowsResults from "../WorkflowsResults";
 import { CallToActionText } from "../WorkflowsResults/WorkflowsResults";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
+import OpportunitySubheading from "./OpportunitySubheading";
 
 export const PersonList = styled.ul`
   column-gap: ${rem(spacing.md)};
@@ -111,6 +113,7 @@ const HydratedOpportunityPersonList = observer(
     } = useRootStore();
 
     const opportunityConfigs = useOpportunityConfigurations();
+    const { opportunityPolicyCopy } = useFeatureVariants();
 
     const { isMobile } = useIsMobile(true);
 
@@ -166,6 +169,15 @@ const HydratedOpportunityPersonList = observer(
       }
     }, [oppsFromOpportunitiesByTab, activeTab, displayTabs]);
 
+    // Calculate map of the tabs to the value to display on that tab's badge
+    const tabBadges: Partial<Record<OpportunityTab, number>> = useMemo(() => {
+      const badges: Partial<Record<OpportunityTab, number>> = {};
+      for (const tab of displayTabs) {
+        badges[tab] = oppsFromOpportunitiesByTab?.[tab]?.length ?? 0;
+      }
+      return badges;
+    }, [displayTabs, oppsFromOpportunitiesByTab]);
+
     if (
       !opportunityType ||
       !oppsFromOpportunitiesByOppType ||
@@ -173,7 +185,7 @@ const HydratedOpportunityPersonList = observer(
     )
       return null;
 
-    const { eligibilityTextForCount, callToAction } =
+    const { label, eligibilityTextForCount, callToAction, subheading } =
       opportunityConfigs[opportunityType];
 
     const opportunityCount = oppsFromOpportunitiesByOppType
@@ -204,13 +216,20 @@ const HydratedOpportunityPersonList = observer(
     ) : (
       <>
         <Heading isMobile={isMobile} className="PersonList__Heading">
-          {eligibilityTextForCount(opportunityCount)}
+          {opportunityPolicyCopy
+            ? label
+            : eligibilityTextForCount(opportunityCount)}
         </Heading>
-        <SubHeading className="PersonList__Subheading">
-          {callToAction}
-        </SubHeading>
+        {opportunityPolicyCopy && subheading ? (
+          <OpportunitySubheading subheading={subheading} />
+        ) : (
+          <SubHeading className="PersonList__Subheading">
+            {callToAction}
+          </SubHeading>
+        )}
         <WorkflowsCaseloadControlBar
           title={"Group by"}
+          tabBadges={opportunityPolicyCopy && tabBadges}
           tabs={displayTabs}
           activeTab={activeTab}
           setActiveTab={handleTabClick}

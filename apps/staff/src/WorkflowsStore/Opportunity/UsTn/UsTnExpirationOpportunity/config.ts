@@ -30,6 +30,8 @@ export const usTnExpirationConfig: OpportunityConfig<UsTnExpirationOpportunity> 
       "client[|s] may be on or past their expiration date",
     callToAction:
       "Review these clients and complete their auto-generated TEPE Note.",
+    subheading:
+      "This alert helps staff identify clients whose expiration dates are today or in the past. Complete a pre-populated discharge note (TEPE) and copy note to eTOMIS.",
     firestoreCollection: "US_TN-expirationReferrals",
     snooze: {
       autoSnoozeParams: {

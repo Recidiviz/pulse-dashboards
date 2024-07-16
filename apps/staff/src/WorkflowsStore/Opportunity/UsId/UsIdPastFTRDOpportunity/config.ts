@@ -24,12 +24,15 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
   stateCode: "US_ID",
   urlSection: "pastFTRD",
   label: "Past FTRD",
+  newPolicyCopyLabel: "Release from Supervision",
   initialHeader:
     "Search for officers above to review clients whose full-term release date is near or has passed.",
   dynamicEligibilityText:
     "client[|s] [is|are] nearing or past their full-term release date",
   callToAction:
     "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
+  subheading:
+    "This alert helps staff identify people whose full-term release date has passed so that they can be moved to history in order to right-size caseloads.",
   firestoreCollection: "US_ID-pastFTRDReferrals",
   snooze: {
     autoSnoozeParams: {

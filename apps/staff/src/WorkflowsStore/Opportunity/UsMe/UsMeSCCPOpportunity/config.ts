@@ -30,6 +30,8 @@ export const usMeSCCPConfig: OpportunityConfig<UsMeSCCPOpportunity> = {
   callToAction:
     "Search for case managers above to review residents in their unit who are approaching " +
     "SCCP eligibility and complete application paperwork.",
+  subheading:
+    "SCCP provides a means of successful reentry of residents into the community. The program allows eligible residents to complete their sentence in the community rather than a facility, while remaining under the legal custody of the Department of Corrections. Review residents who are approaching SCCP eligibility and complete application paperwork.",
   firestoreCollection: "US_ME-SCCPReferrals",
   snooze: {
     defaultSnoozeDays: 30,

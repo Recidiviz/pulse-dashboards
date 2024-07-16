@@ -26,6 +26,8 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevel
     dynamicEligibilityText:
       "resident[|s] may be eligible for a custody level downgrade",
     callToAction: "Review and update custody levels.",
+    subheading:
+      "This alert helps staff identify residents who may be at a higher custody level than recommended and directs staff to complete & submit new classification paperwork based on the resident's latest CAF score.",
     firestoreCollection: "US_TN-custodyLevelDowngradeReferrals",
     snooze: {
       defaultSnoozeDays: 30,
