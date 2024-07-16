@@ -67,6 +67,7 @@ export const fakeCase = {
   otherNeedToBeAddressed: null,
   status: faker.helpers.enumValue(CaseStatus),
   selectedRecommendation: faker.helpers.enumValue(CaseRecommendation),
+  isLsirScoreLocked: false,
 } satisfies CaseCreateInput;
 
 export const fakeOpportunity = {

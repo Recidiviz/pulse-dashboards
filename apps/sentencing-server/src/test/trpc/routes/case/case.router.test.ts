@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
+import { prismaClient } from "~sentencing-server/prisma";
 import { testTRPCClient } from "~sentencing-server/test/setup";
 import { fakeCase } from "~sentencing-server/test/setup/seed";
 
@@ -91,6 +92,27 @@ describe("case router", () => {
         new TRPCError({
           code: "NOT_FOUND",
           message: "Case with that id was not found",
+        }),
+      );
+    });
+
+    test("should throw error if lsir score is locked and lsirScore is provided", async () => {
+      await prismaClient.case.update({
+        where: { id: fakeCase.id },
+        data: { isLsirScoreLocked: true },
+      });
+
+      await expect(() =>
+        testTRPCClient.case.updateCase.mutate({
+          id: fakeCase.id,
+          attributes: {
+            lsirScore: 10,
+          },
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "BAD_REQUEST",
+          message: "LSIR score is locked and cannot be updated",
         }),
       );
     });

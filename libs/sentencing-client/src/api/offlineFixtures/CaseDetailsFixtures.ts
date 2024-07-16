@@ -50,5 +50,6 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     status: "InProgress",
     selectedRecommendation: null,
     recommendedOpportunities: [],
+    isLsirScoreLocked: false,
   },
 };

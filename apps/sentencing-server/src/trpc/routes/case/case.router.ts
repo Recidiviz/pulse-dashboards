@@ -44,6 +44,35 @@ export const caseRouter = router({
     .input(updateCaseSchema)
     .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
       try {
+        if (attributes.lsirScore) {
+          const { isLsirScoreLocked } = await prisma.case.findUniqueOrThrow({
+            where: {
+              id,
+            },
+            select: {
+              isLsirScoreLocked: true,
+            },
+          });
+
+          if (isLsirScoreLocked) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "LSIR score is locked and cannot be updated",
+            });
+          }
+        }
+      } catch (e) {
+        if (e instanceof PrismaClientKnownRequestError && e.code === "P2025") {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Case with that id was not found",
+          });
+        }
+
+        throw e;
+      }
+
+      try {
         await prisma.case.update({
           where: {
             id,

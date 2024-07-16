@@ -147,6 +147,7 @@ export async function transformAndLoadCaseData(data: unknown) {
         lsirScore: caseData.lsir_score,
         lsirLevel: caseData.lsir_level,
         reportType: caseData.report_type,
+        isLsirScoreLocked: caseData.lsir_score !== undefined,
       };
     }),
   );
