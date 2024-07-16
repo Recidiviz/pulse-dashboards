@@ -15,25 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { OpportunityProfileFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 
 type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
+  navigableOpportunities?: Opportunity[];
 };
 
 type OPPORTUNITY_SIDE_PANEL_VIEW = "OPPORTUNITY_PREVIEW" | "MARK_INELIGIBLE";
 
 export function OpportunityPreviewModal({
   opportunity,
+  navigableOpportunities,
 }: OpportunityCaseloadProps): JSX.Element | null {
   const [currentView, setCurrentView] = useState<OPPORTUNITY_SIDE_PANEL_VIEW>(
     "OPPORTUNITY_PREVIEW",
   );
+
+  const { interCandidateNavigation } = useFeatureVariants();
+
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
   if (!opportunity) return null;
 
@@ -48,12 +56,22 @@ export function OpportunityPreviewModal({
           isOpen={!!opportunity}
           onAfterOpen={() => opportunity?.trackPreviewed()}
           onClose={() => resetPreviewView()}
+          contentRef={modalRef}
           pageContent={
             <OpportunityProfile
               opportunity={opportunity}
               formLinkButton={!!opportunity?.form}
               onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
             />
+          }
+          footerContent={
+            interCandidateNavigation && (
+              <OpportunityProfileFooter
+                currentOpportunity={opportunity}
+                navigiableOpportunities={navigableOpportunities}
+                modalRef={modalRef}
+              />
+            )
           }
         />
       );
@@ -63,6 +81,7 @@ export function OpportunityPreviewModal({
           isOpen={!!opportunity}
           onClose={() => resetPreviewView()}
           onBackClick={() => resetPreviewView()}
+          contentRef={modalRef}
           pageContent={
             <OpportunityDenialView
               onSubmit={() => resetPreviewView()}

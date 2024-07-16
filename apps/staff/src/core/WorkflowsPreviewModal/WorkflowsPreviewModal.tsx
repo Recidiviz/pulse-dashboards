@@ -34,6 +34,9 @@ export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
 }>`
   .ReactModal__Content {
+    display: flex;
+    flex-direction: column;
+
     ${({ isMobile }) =>
       isMobile &&
       `max-width: unset !important;
@@ -46,10 +49,14 @@ export const StyledDrawerModal = styled(DrawerModal)<{
 `;
 
 const ModalControls = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-content: space-between;
   border-bottom: 1px solid ${palette.slate10};
+  background: white;
   padding: 1rem;
 
   .WorkflowsPreviewModal__close {
@@ -65,28 +72,38 @@ const ModalControls = styled.div`
 
 const Wrapper = styled.div`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
+  flex: 1; // expand as much as possible, which pushes the footer down
 
   hr + hr {
     display: none;
   }
 `;
 
+const Footer = styled.div`
+  position: sticky;
+  bottom: 0;
+`;
+
 type PreviewModalProps = {
   isOpen: boolean;
   pageContent: JSX.Element;
+  footerContent?: JSX.Element;
   onAfterOpen?: () => void;
   onClose?: () => void;
   onBackClick?: () => void;
   clearSelectedPersonOnClose?: boolean;
+  contentRef?: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export function WorkflowsPreviewModal({
   isOpen,
   pageContent,
+  footerContent,
   onAfterOpen,
   onBackClick,
   onClose = () => null,
   clearSelectedPersonOnClose = true,
+  contentRef,
 }: PreviewModalProps): JSX.Element {
   const { workflowsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
@@ -125,6 +142,11 @@ export function WorkflowsPreviewModal({
       closeTimeoutMS={CLOSE_TIMEOUT_MS}
       width={MODAL_WIDTH}
       isMobile={isMobile}
+      contentRef={(node) => {
+        if (contentRef) {
+          contentRef.current = node;
+        }
+      }}
     >
       <ModalControls>
         {onBackClick && (
@@ -147,6 +169,7 @@ export function WorkflowsPreviewModal({
       <WorkflowsPreviewModalContext.Provider value={contextValue}>
         <Wrapper className="WorkflowsPreviewModal">{pageContent}</Wrapper>
       </WorkflowsPreviewModalContext.Provider>
+      {footerContent && <Footer>{footerContent}</Footer>}
     </StyledDrawerModal>
   );
 }

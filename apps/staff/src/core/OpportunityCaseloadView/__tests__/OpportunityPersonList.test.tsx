@@ -18,23 +18,21 @@
 import { render, screen } from "@testing-library/react";
 import { Mock } from "vitest";
 
-import
-  {
-    useOpportunityConfigurations,
-    useRootStore,
-  } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
 import { OpportunityType } from "../../../WorkflowsStore/Opportunity/OpportunityType/types";
-import
-  {
-    Opportunity,
-    OpportunityTab,
-  } from "../../../WorkflowsStore/Opportunity/types";
-import
-  {
-    mockOpportunity,
-    mockOpportunityConfigs,
-  } from "../../__tests__/testUtils";
+import {
+  Opportunity,
+  OpportunityTab,
+} from "../../../WorkflowsStore/Opportunity/types";
+import {
+  mockOpportunity,
+  mockOpportunityConfigs,
+} from "../../__tests__/testUtils";
 import { OpportunityPersonList } from "../OpportunityPersonList";
 
 vi.mock("../../../components/StoreProvider");
@@ -42,6 +40,7 @@ vi.mock("../../../hooks/useHydrateOpportunities");
 
 const useRootStoreMock = useRootStore as Mock;
 const useOpportunityConfigurationsMock = useOpportunityConfigurations as Mock;
+const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 const baseWorkflowsStoreMock = {
   opportunityTypes: ["earlyTermination"],
@@ -60,6 +59,7 @@ const baseWorkflowsStoreMock = {
 beforeEach(() => {
   vi.resetAllMocks();
   useOpportunityConfigurationsMock.mockReturnValue(mockOpportunityConfigs);
+  useFeatureVariantsMock.mockReturnValue({});
 });
 
 test("initial", () => {
@@ -127,8 +127,8 @@ test("hydrated", () => {
   };
 
   const opportunitiesByTab = (): Partial<
-  Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
-> => ({
+    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
+  > => ({
     earlyTermination: {
       [firstTabText]: [opp1 as Opportunity],
       [otherTabText]: [opp2 as Opportunity],
@@ -213,8 +213,8 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
   };
 
   const opportunitiesByTab = (): Partial<
-  Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
-> => ({
+    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
+  > => ({
     earlyTermination: {
       [overriddenTabText]: [opp as Opportunity],
     },

@@ -195,7 +195,10 @@ const HydratedOpportunityPersonList = observer(
       setActiveTab(currentTabs[0] || displayTabs[0]);
     };
 
-    const items = oppsFromOpportunitiesByTab?.[activeTab];
+    const items = oppsFromOpportunitiesByTab[activeTab];
+    const currentOpportunity =
+      selectedPerson?.verifiedOpportunities[opportunityType];
+
     return !oppsFromOpportunitiesByOppType.length ? (
       <Empty />
     ) : (
@@ -225,7 +228,8 @@ const HydratedOpportunityPersonList = observer(
           </EmptyTabGroupWrapper>
         )}
         <OpportunityPreviewModal
-          opportunity={selectedPerson?.verifiedOpportunities[opportunityType]}
+          opportunity={currentOpportunity}
+          navigableOpportunities={items}
         />
       </>
     );

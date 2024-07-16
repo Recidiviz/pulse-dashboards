@@ -95,7 +95,8 @@ export type FeatureVariant =
   | "isolateFormUpdates"
   | "supervisorHomepage"
   | "supervisorHomepageWorkflows"
-  | "usPaSpecialCircumstances";
+  | "usPaSpecialCircumstances"
+  | "interCandidateNavigation";
 export type FeatureVariantValue = {
   activeDate?: Date;
   variant?: string;
@@ -143,6 +144,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepage: {},
   supervisorHomepageWorkflows: {},
   usPaSpecialCircumstances: {},
+  interCandidateNavigation: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
