@@ -89,14 +89,6 @@ export const fakeOpportunity = {
 } satisfies OpportunityCreateInput;
 
 export async function seed() {
-  console.log("Seeding database");
-
-  // Staff
-  await prismaClient.case.deleteMany({});
-  await prismaClient.opportunity.deleteMany({});
-  await prismaClient.staff.deleteMany({});
-  await prismaClient.client.deleteMany({});
-
   // Seed Data
   await prismaClient.staff.create({ data: fakeStaff });
   await prismaClient.client.create({ data: fakeClient });

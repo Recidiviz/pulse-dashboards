@@ -8,6 +8,7 @@ import { beforeAll, beforeEach, vi } from "vitest";
 
 import { buildServer } from "~sentencing-server/server";
 import { seed } from "~sentencing-server/test/setup/seed";
+import { resetDb } from "~sentencing-server/test/setup/utils";
 import { AppRouter } from "~sentencing-server/trpc/router";
 
 export const testPort = process.env["PORT"]
@@ -56,5 +57,6 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  await resetDb();
   await seed();
 });

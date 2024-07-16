@@ -53,7 +53,7 @@ const mockLoginWithRedirect = vi.fn();
 const mockGetTokenSilently = vi.fn();
 
 const mockHandleUrl = vi.fn();
-const mockIsIE11 = isIE11 as Mock<any[], boolean>;
+const mockIsIE11 = isIE11 as Mock;
 const mockFetchImpersonatedUserAppMetadata = vi.mocked(
   fetchImpersonatedUserAppMetadata,
 );

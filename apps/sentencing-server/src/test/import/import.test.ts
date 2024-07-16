@@ -154,7 +154,7 @@ describe("import", () => {
               completion_date: faker.date.future(),
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
-              county_name: faker.location.county(),
+              county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
@@ -212,7 +212,7 @@ describe("import", () => {
               completion_date: faker.date.future(),
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
-              county_name: faker.location.county(),
+              county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
@@ -258,7 +258,7 @@ describe("import", () => {
               completion_date: faker.date.future(),
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
-              county_name: faker.location.county(),
+              county: faker.location.county(),
               // Set the LSIR score to a new value
               lsir_score: (1000).toString(),
               lsir_level: faker.number.int().toString(),
@@ -274,7 +274,7 @@ describe("import", () => {
               completion_date: faker.date.future(),
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
-              county_name: faker.location.county(),
+              county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
@@ -315,7 +315,7 @@ describe("import", () => {
               completion_date: faker.date.future(),
               sentence_date: faker.date.past(),
               assigned_date: faker.date.past(),
-              county_name: faker.location.county(),
+              county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
               report_type: faker.string.alpha(),
@@ -357,7 +357,7 @@ describe("import", () => {
             {
               external_id: "new-client-ext-id",
               pseudonymized_id: "new-client-pid",
-              caseIds: JSON.stringify(["new-case-ext-id"]),
+              case_ids: JSON.stringify(["new-case-ext-id"]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
                 given_names: "Given",
@@ -419,7 +419,7 @@ describe("import", () => {
             {
               external_id: "new-client-ext-id",
               pseudonymized_id: "new-client-pid",
-              caseIds: JSON.stringify([]),
+              case_ids: JSON.stringify([]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
                 given_names: faker.person.firstName(),
@@ -435,7 +435,7 @@ describe("import", () => {
             {
               external_id: fakeClient.externalId,
               pseudonymized_id: fakeClient.pseudonymizedId,
-              caseIds: JSON.stringify([fakeCase.externalId]),
+              case_ids: JSON.stringify([fakeCase.externalId]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
                 given_names: faker.person.firstName(),
@@ -484,7 +484,7 @@ describe("import", () => {
             {
               external_id: "new-staff-ext-id",
               pseudonymized_id: "new-staff-pid",
-              caseIds: JSON.stringify(["new-case-ext-id"]),
+              case_ids: JSON.stringify(["new-case-ext-id"]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
                 given_names: "Given",
@@ -544,7 +544,7 @@ describe("import", () => {
             {
               external_id: "new-staff-ext-id",
               pseudonymized_id: "new-staff-pid",
-              caseIds: JSON.stringify(["new-case-ext-id"]),
+              case_ids: JSON.stringify(["new-case-ext-id"]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
                 given_names: faker.person.firstName(),
@@ -558,7 +558,7 @@ describe("import", () => {
             {
               external_id: fakeStaff.externalId,
               pseudonymized_id: fakeStaff.pseudonymizedId,
-              caseIds: JSON.stringify([fakeCase.externalId]),
+              case_ids: JSON.stringify([fakeCase.externalId]),
               state_code: StateCode.US_ID,
               full_name: JSON.stringify({
                 given_names: faker.person.firstName(),

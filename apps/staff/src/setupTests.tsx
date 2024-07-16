@@ -73,7 +73,6 @@ window.analytics = {
   page: vi.fn(),
 };
 
-// @ts-expect-error
 window.scrollTo = vi.fn();
 
 window.prompt = vi.fn();
