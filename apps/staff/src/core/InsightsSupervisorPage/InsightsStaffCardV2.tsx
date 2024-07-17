@@ -70,6 +70,7 @@ const CardHeaderItem = styled(Link)<{ hovered?: boolean }>`
   display: block;
   padding: ${rem(spacing.md)};
   min-width: ${rem(200)};
+  border-bottom: 1px solid ${palette.slate30};
   ${({ hovered }) =>
     hovered &&
     `background-color: ${palette.slate10};
