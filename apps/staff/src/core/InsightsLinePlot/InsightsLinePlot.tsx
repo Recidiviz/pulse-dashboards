@@ -248,7 +248,7 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
                   if (supervisorHomepage) {
                     return (
                       <div key={`${data.value}_${data.date}`}>
-                        {data.status ? officerName : "State-wide Average"}
+                        {data.status ? officerName : "Statewide Rate"}
                         <span>{data.value.toFixed(1)}%</span>
                       </div>
                     );

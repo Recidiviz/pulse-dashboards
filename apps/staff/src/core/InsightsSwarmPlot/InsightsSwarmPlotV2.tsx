@@ -89,7 +89,7 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
               y={axisPositions.targetStart}
               verticalAnchor="start"
             >
-              {`State-wide Rate: ${formatTargetAndHighlight(targetRate)}`}
+              {`Statewide Rate: ${formatTargetAndHighlight(targetRate)}`}
             </TargetLabel>
           </>
         )}
