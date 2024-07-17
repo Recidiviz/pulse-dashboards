@@ -61,7 +61,8 @@ export class APIClient {
     return this.client;
   }
 
-  async initTRPCClient(): Promise<tRPCClient> {
+  async initTRPCClient(): Promise<tRPCClient | undefined> {
+    if (!this.baseUrl) return;
     if (this.client) return this.client;
     const requestHeaders = await this.getRequestHeaders();
 
