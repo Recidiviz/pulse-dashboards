@@ -9,8 +9,10 @@ import {
   arrayToJsonLines,
   callImportCaseData,
   callImportClientData,
+  callImportInsightData,
   callImportOpportunityData,
   callImportStaffData,
+  createFakeRecidivismSeries,
 } from "~sentencing-server/test/import/utils";
 import { testServer } from "~sentencing-server/test/setup";
 import {
@@ -935,6 +937,100 @@ describe("import", () => {
           providerPhoneNumber: fakeOpportunity.providerPhoneNumber,
         }),
       );
+    });
+
+    describe("import insight data", () => {
+      test("should import new insights and delete old data", async () => {
+        await mockStorageSingleton
+          .bucket(TEST_BUCKET_ID)
+          .file("ID/case_insights_record.json")
+          .save(
+            arrayToJsonLines([
+              // New insight
+              {
+                state_code: StateCode.US_ID,
+                // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
+                gender: "MALE",
+                assessment_score_bucket_start: faker.number.int({ max: 100 }),
+                assessment_score_bucket_end: faker.number.int({ max: 100 }),
+                most_severe_description: faker.string.alpha(),
+                recidivism_rollup: faker.string.alpha(),
+                recidivism_num_records: faker.number.int({ max: 100 }),
+                recidivism_probation_series: JSON.stringify(
+                  createFakeRecidivismSeries(),
+                ),
+                recidivism_rider_series: JSON.stringify(
+                  createFakeRecidivismSeries(),
+                ),
+                recidivism_term_series: JSON.stringify(
+                  createFakeRecidivismSeries(),
+                ),
+                disposition_num_records: faker.number.int({ max: 100 }),
+                disposition_probation_pc: faker.number.float(),
+                disposition_rider_pc: faker.number.float(),
+                disposition_term_pc: faker.number.float(),
+              },
+            ]),
+          );
+
+        const response = await callImportInsightData(testServer);
+
+        expect(response.statusCode).toBe(200);
+
+        // Check that the new Insight was created
+        const dbInsights = await prismaClient.insight.findMany({
+          include: {
+            recidivismSeries: {
+              select: {
+                recommendationType: true,
+                dataPoints: true,
+              },
+            },
+            dispositionData: true,
+          },
+        });
+
+        // There should only be one insight in the database - the new one should have been created
+        // and the old one should have been deleted
+        expect(dbInsights).toHaveLength(1);
+
+        const newInsight = dbInsights[0];
+        expect(newInsight).toEqual(
+          expect.objectContaining({
+            gender: "MALE",
+            recidivismSeries: expect.arrayContaining([
+              // There should be two data points for each series
+              expect.objectContaining({
+                recommendationType: "Probation",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Rider",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Term",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                ]),
+              }),
+            ]),
+            dispositionData: expect.arrayContaining([
+              // There should be one of each type of disposition
+              expect.objectContaining({ recommendationType: "Probation" }),
+              expect.objectContaining({ recommendationType: "Rider" }),
+              expect.objectContaining({ recommendationType: "Term" }),
+            ]),
+          }),
+        );
+      });
     });
   });
 });

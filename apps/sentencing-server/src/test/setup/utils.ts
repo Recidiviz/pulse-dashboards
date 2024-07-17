@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import { Prisma } from "@prisma/client";
 
 import { prismaClient } from "~sentencing-server/prisma";
@@ -12,4 +13,42 @@ export async function resetDb() {
       prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
     ),
   );
+}
+
+export function createFakeRecidivismSeriesForPrisma(): Prisma.RecidivismSeriesCreateWithoutInsightInput[] {
+  return [
+    {
+      recommendationType: "Probation",
+      dataPoints: {
+        create: {
+          cohortMonths: faker.number.int({ max: 100 }),
+          eventRate: faker.number.float(),
+          lowerCI: faker.number.float(),
+          upperCI: faker.number.float(),
+        },
+      },
+    },
+    {
+      recommendationType: "Rider",
+      dataPoints: {
+        create: {
+          cohortMonths: faker.number.int({ max: 100 }),
+          eventRate: faker.number.float(),
+          lowerCI: faker.number.float(),
+          upperCI: faker.number.float(),
+        },
+      },
+    },
+    {
+      recommendationType: "Term",
+      dataPoints: {
+        create: {
+          cohortMonths: faker.number.int({ max: 100 }),
+          eventRate: faker.number.float(),
+          lowerCI: faker.number.float(),
+          upperCI: faker.number.float(),
+        },
+      },
+    },
+  ];
 }

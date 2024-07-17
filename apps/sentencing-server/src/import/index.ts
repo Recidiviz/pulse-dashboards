@@ -4,12 +4,14 @@ import _ from "lodash";
 import {
   CASES_FILE_NAME,
   CLIENTS_FILE_NAME,
+  INSIGHTS_FILE_NAME,
   OPPORTUNITIES_FILE_NAME,
   STAFF_FILE_NAME,
 } from "~sentencing-server/import/constants";
 import {
   transformAndLoadCaseData,
   transformAndLoadClientData,
+  transformAndLoadInsightData,
   transformAndLoadOpportunityData,
   transformAndLoadStaffData,
 } from "~sentencing-server/import/utils";
@@ -42,6 +44,8 @@ export async function handleImport(bucketId: string, objectId: string) {
     await transformAndLoadClientData(data);
   } else if (fileName === OPPORTUNITIES_FILE_NAME) {
     await transformAndLoadOpportunityData(data);
+  } else if (fileName === INSIGHTS_FILE_NAME) {
+    await transformAndLoadInsightData(data);
   } else {
     throw Error(`Unknown file name: ${fileName}`);
   }

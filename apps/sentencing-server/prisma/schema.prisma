@@ -302,3 +302,69 @@ model Case {
   selectedRecommendation   CaseRecommendation?
   recommendedOpportunities Opportunity[]
 }
+
+enum InsightsGender {
+  MALE
+  FEMALE
+}
+
+model Insight {
+  id                         String         @id @default(cuid())
+  stateCode                  StateCode
+  gender                     InsightsGender
+  offense                    String
+  assessmentScoreBucketStart Int
+  assessmentScoreBucketEnd   Int
+
+  // Recidivism Data
+  recidivismRollupOffense String
+  recidivismNumRecords    Int
+  recidivismSeries        RecidivismSeries[]
+
+  // Disposition Data
+  dispositionNumRecords Int
+  dispositionData       Disposition[]
+
+  @@unique([gender, offense, assessmentScoreBucketStart, assessmentScoreBucketEnd])
+}
+
+model RecidivismSeries {
+  id                 String                     @id @default(cuid())
+  recommendationType CaseRecommendation
+  dataPoints         RecidvismSeriesDataPoint[]
+
+  // These should always be linked to an insight and deleted when the insight is deleted
+  insight   Insight @relation(fields: [insightId], references: [id], onDelete: Cascade)
+  insightId String
+
+  // There should only be one series per recommendation type for each insight
+  @@unique([insightId, recommendationType])
+}
+
+model RecidvismSeriesDataPoint {
+  id           String @id @default(cuid())
+  cohortMonths Int
+  eventRate    Float
+  lowerCI      Float
+  upperCI      Float
+
+  // These should always be linked to a series and deleted when the series is deleted
+  recidivismSeries   RecidivismSeries @relation(fields: [recidivismSeriesId], references: [id], onDelete: Cascade)
+  recidivismSeriesId String
+
+  // There should only be one data point per cohort month for each series
+  @@unique([recidivismSeriesId, cohortMonths])
+}
+
+model Disposition {
+  id                 String             @id @default(cuid())
+  recommendationType CaseRecommendation
+  percentage         Float
+
+  // These should always be linked to an insight and deleted when the insight is deleted
+  insight   Insight @relation(fields: [insightId], references: [id], onDelete: Cascade)
+  insightId String
+
+  // There should only be one disposition percentage per recommendation type for each insight
+  @@unique([insightId, recommendationType])
+}

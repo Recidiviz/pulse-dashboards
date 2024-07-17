@@ -7,3 +7,5 @@ export const CLIENTS_FILE_NAME = "sentencing_client_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/community_opportunity_record.py
 export const OPPORTUNITIES_FILE_NAME =
   "sentencing_community_opportunity_record.json";
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_insights.py
+export const INSIGHTS_FILE_NAME = "case_insights_record.json";

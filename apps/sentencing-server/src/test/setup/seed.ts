@@ -12,9 +12,11 @@ import { prismaClient } from "~sentencing-server/prisma";
 import {
   CaseCreateInput,
   ClientCreateInput,
+  InsightCreateInput,
   OpportunityCreateInput,
   StaffCreateInput,
 } from "~sentencing-server/test/setup/types";
+import { createFakeRecidivismSeriesForPrisma } from "~sentencing-server/test/setup/utils";
 
 export const fakeStaff = {
   externalId: "staff-ext-1",
@@ -90,6 +92,39 @@ export const fakeOpportunity = {
   veteranStatusCriterion: false,
 } satisfies OpportunityCreateInput;
 
+export const fakeInsight = {
+  stateCode: StateCode.US_ID,
+  gender: "FEMALE",
+  assessmentScoreBucketStart: faker.number.int({ max: 100 }),
+  assessmentScoreBucketEnd: faker.number.int({ max: 100 }),
+  offense: faker.string.alpha(),
+  recidivismRollupOffense: faker.string.alpha(),
+  recidivismNumRecords: faker.number.int({ max: 100 }),
+  recidivismSeries: {
+    // Can't use createMany because of nested writes
+    create: createFakeRecidivismSeriesForPrisma(),
+  },
+  dispositionNumRecords: faker.number.int({ max: 100 }),
+  dispositionData: {
+    createMany: {
+      data: [
+        {
+          recommendationType: "Probation",
+          percentage: faker.number.float(),
+        },
+        {
+          recommendationType: "Rider",
+          percentage: faker.number.float(),
+        },
+        {
+          recommendationType: "Term",
+          percentage: faker.number.float(),
+        },
+      ],
+    },
+  },
+} satisfies InsightCreateInput;
+
 export async function seed() {
   // Seed Data
   await prismaClient.staff.create({ data: fakeStaff });
@@ -110,4 +145,5 @@ export async function seed() {
       },
     },
   });
+  await prismaClient.insight.create({ data: fakeInsight });
 }

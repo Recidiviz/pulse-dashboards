@@ -1,11 +1,14 @@
+import { CaseRecommendation, Prisma } from "@prisma/client";
 import _ from "lodash";
 import z from "zod";
 
 import {
   caseImportSchema,
   clientImportSchema,
+  insightImportSchema,
   nameSchema,
   opportunityImportSchema,
+  recidivismSeriesSchema,
   staffImportSchema,
 } from "~sentencing-server/import/models";
 import { prismaClient } from "~sentencing-server/prisma";
@@ -243,4 +246,107 @@ export async function transformAndLoadOpportunityData(data: unknown) {
       },
     },
   });
+}
+
+function transformRecidivismSeries(
+  recommendationType: CaseRecommendation,
+  dataPoints: z.infer<typeof recidivismSeriesSchema>,
+) {
+  return {
+    recommendationType,
+    dataPoints: {
+      createMany: {
+        data: dataPoints.map((s) => ({
+          cohortMonths: s.cohort_months,
+          eventRate: s.event_rate,
+          lowerCI: s.lower_ci,
+          upperCI: s.upper_ci,
+        })),
+      },
+    },
+  };
+}
+
+function transformAllRecidivismSeries(
+  data: z.infer<typeof insightImportSchema>[number],
+): Prisma.RecidivismSeriesCreateWithoutInsightInput[] {
+  const {
+    recidivism_probation_series,
+    recidivism_rider_series,
+    recidivism_term_series,
+  } = data;
+
+  return [
+    transformRecidivismSeries("Probation", recidivism_probation_series),
+    transformRecidivismSeries("Rider", recidivism_rider_series),
+    transformRecidivismSeries("Term", recidivism_term_series),
+  ];
+}
+
+function transformDispositions(
+  data: z.infer<typeof insightImportSchema>[number],
+): Prisma.DispositionCreateManyInsightInput[] {
+  return [
+    {
+      recommendationType: "Probation",
+      percentage: data.disposition_probation_pc,
+    },
+    {
+      recommendationType: "Rider",
+      percentage: data.disposition_rider_pc,
+    },
+    {
+      recommendationType: "Term",
+      percentage: data.disposition_term_pc,
+    },
+  ];
+}
+
+export async function transformAndLoadInsightData(data: unknown) {
+  const parsedData = insightImportSchema.parse(data);
+
+  const cleanedData = parsedData.map((insightData) => {
+    return {
+      stateCode: insightData.state_code,
+      gender: insightData.gender,
+      offense: insightData.most_severe_description,
+      assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
+      assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
+      recidivismRollupOffense: insightData.recidivism_rollup,
+      recidivismNumRecords: insightData.recidivism_num_records,
+      recidivismSeries: transformAllRecidivismSeries(insightData),
+      dispositionNumRecords: insightData.disposition_num_records,
+      dispositionData: transformDispositions(insightData),
+    };
+  }) satisfies Prisma.InsightCreateManyInput[];
+
+  // Insights aren't linked to any other models and don't have any frontend-mutable attributes, so we can just delete all of them and re-add them
+  await prismaClient.insight.deleteMany();
+
+  for (const newInsight of cleanedData) {
+    const { recidivismSeries, dispositionData } = newInsight;
+    await prismaClient.insight.create({
+      data: {
+        ..._.pick(newInsight, [
+          "stateCode",
+          "gender",
+          "offense",
+          "assessmentScoreBucketStart",
+          "assessmentScoreBucketEnd",
+          "recidivismRollupOffense",
+          "recidivismNumRecords",
+          "dispositionNumRecords",
+        ]),
+        recidivismSeries: {
+          // Can't use createMany because it doesn't support nested writes
+          create: recidivismSeries,
+        },
+        dispositionData: {
+          createMany: {
+            data: dispositionData,
+          },
+        },
+      },
+    });
+  }
 }

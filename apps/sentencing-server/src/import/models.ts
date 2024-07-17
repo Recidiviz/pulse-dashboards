@@ -126,3 +126,35 @@ export const opportunityImportSchema = z.array(
     maxLsirScoreCriterion: z.number().optional(),
   }),
 );
+
+const insightGenderEnum = z.enum(["FEMALE", "MALE"]);
+
+export const recidivismSeriesSchema = zu.stringToJSON().pipe(
+  z.array(
+    z.object({
+      cohort_months: z.number(),
+      event_rate: z.number(),
+      lower_ci: z.number(),
+      upper_ci: z.number(),
+    }),
+  ),
+);
+
+export const insightImportSchema = z.array(
+  z.object({
+    state_code: stateCode,
+    gender: insightGenderEnum,
+    assessment_score_bucket_start: z.number(),
+    assessment_score_bucket_end: z.number(),
+    most_severe_description: z.string(),
+    recidivism_rollup: z.string(),
+    recidivism_num_records: z.number(),
+    recidivism_probation_series: recidivismSeriesSchema,
+    recidivism_rider_series: recidivismSeriesSchema,
+    recidivism_term_series: recidivismSeriesSchema,
+    disposition_num_records: z.number(),
+    disposition_probation_pc: z.number(),
+    disposition_rider_pc: z.number(),
+    disposition_term_pc: z.number(),
+  }),
+);

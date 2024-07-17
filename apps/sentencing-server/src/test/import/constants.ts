@@ -25,3 +25,10 @@ export const opportunityPayloadMessage = {
     objectId: "ID/sentencing_community_opportunity_record.json",
   },
 };
+
+export const insightPayloadMessage = {
+  attributes: {
+    bucketId: "bucket-id",
+    objectId: "ID/case_insights_record.json",
+  },
+};
