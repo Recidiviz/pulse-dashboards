@@ -205,6 +205,13 @@ enum DiagnosedSubstanceUseDisorderCriterion {
   Any
 }
 
+enum OnboardingTopic {
+  OffenseLsirScore
+  PrimaryNeeds
+  AdditionalNeeds
+  Done
+}
+
 model Opportunity {
   id                  String              @id @default(cuid())
   opportunityName     String
@@ -287,6 +294,8 @@ model Case {
   hasOpenChildProtectiveServicesCase Boolean?
   needsToBeAddressed                 NeedToBeAddressed[]
   otherNeedToBeAddressed             String?
+
+  currentOnboardingTopic OnboardingTopic @default(OffenseLsirScore)
 
   // Case Recommendation Fields
   status                   CaseStatus          @default(NotYetStarted)

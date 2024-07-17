@@ -34,13 +34,34 @@ export type MentalHealthDiagnosesKey = "mentalHealthDiagnoses";
 export const PLEA_KEY: keyof Attributes = "plea";
 export type PleaKey = "plea";
 
-export const OTHER_NEED_TO_BE_ADDRESED_KEY: keyof Attributes =
+export const IS_VETERAN_KEY: keyof Attributes = "isVeteran";
+export type IsVeteran = "isVeteran";
+
+export const OTHER_NEED_TO_BE_ADDRESSED_KEY: keyof Attributes =
   "otherNeedToBeAddressed";
 export type OtherNeedToBeAddressed = "otherNeedToBeAddressed";
 
 export const OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY: keyof Attributes =
   "otherMentalHealthDiagnosis";
 export type OtherMentalHealthDiagnosis = "otherMentalHealthDiagnosis";
+
+export const SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY: keyof Attributes =
+  "substanceUseDisorderDiagnosis";
+export type SubstanceUseDisorderDiagnosis = "substanceUseDisorderDiagnosis";
+
+export const PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY: keyof Attributes =
+  "previouslyIncarceratedOrUnderSupervision";
+export type PreviouslyIncarceratedOrUnderSupervision =
+  "previouslyIncarceratedOrUnderSupervision";
+
+export const HAS_DEVELOPMENTAL_DISABILITY_KEY: keyof Attributes =
+  "hasDevelopmentalDisability";
+export type HasDevelopmentalDisability = "hasDevelopmentalDisability";
+
+export const HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY: keyof Attributes =
+  "hasOpenChildProtectiveServicesCase";
+export type HasOpenChildProtectiveServicesCase =
+  "hasOpenChildProtectiveServicesCase";
 
 export const NO_OPTION = "No";
 export const YES_OPTION = "Yes";

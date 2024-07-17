@@ -33,14 +33,14 @@ const EditCaseDetailsModal = ({
   form: CaseDetailsForm;
   isOpen: boolean;
   hideModal: () => void;
-  saveAttributes: () => void;
+  saveAttributes: (options?: { showToast: boolean }) => void;
 }) => {
   const closeModal = () => {
     hideModal();
     form.resetUpdates();
   };
   const saveAndCloseModal = () => {
-    saveAttributes();
+    saveAttributes({ showToast: true });
     hideModal();
   };
 

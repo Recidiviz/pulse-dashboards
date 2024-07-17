@@ -18,7 +18,19 @@
 import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
-import { LSIR_SCORE_KEY } from "../constants";
+import { PRIMARY_CHARGE_KEY } from "../../Dashboard/constants";
+import { OnboardingFields } from "../CaseOnboarding/types";
+import {
+  HAS_DEVELOPMENTAL_DISABILITY_KEY,
+  HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
+  IS_VETERAN_KEY,
+  LSIR_SCORE_KEY,
+  MENTAL_HEALTH_DIAGNOSES_KEY,
+  NEEDS_TO_BE_ADDRESSED_KEY,
+  PLEA_KEY,
+  PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
+  SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
+} from "../constants";
 import {
   Attributes,
   FormField,
@@ -49,6 +61,40 @@ export class CaseDetailsForm {
       if (!field.nested) return field;
       return { ...field, nested: Object.values(field.nested) };
     }) as FormFieldList;
+  }
+
+  get onboardingFields() {
+    const fields = this.contentList.reduce(
+      (acc, field) => {
+        if ([PRIMARY_CHARGE_KEY, LSIR_SCORE_KEY].includes(field.key)) {
+          acc.OFFENSE_LSIR_SCORE_FIELDS.push(field);
+        }
+        if (field.key === NEEDS_TO_BE_ADDRESSED_KEY) {
+          acc.PRIMARY_NEEDS_FIELD.push(field);
+        }
+        if (
+          [
+            SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
+            MENTAL_HEALTH_DIAGNOSES_KEY,
+            IS_VETERAN_KEY,
+            PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
+            HAS_DEVELOPMENTAL_DISABILITY_KEY,
+            HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
+            PLEA_KEY,
+          ].includes(field.key)
+        ) {
+          acc.ADDITIONAL_NEEDS_FIELDS.push(field);
+        }
+
+        return acc;
+      },
+      {
+        OFFENSE_LSIR_SCORE_FIELDS: [],
+        PRIMARY_NEEDS_FIELD: [],
+        ADDITIONAL_NEEDS_FIELDS: [],
+      } as OnboardingFields,
+    );
+    return fields;
   }
 
   get transformedUpdates(): MutableCaseAttributes {

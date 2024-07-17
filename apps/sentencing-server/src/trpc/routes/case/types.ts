@@ -27,6 +27,7 @@ export type UpdateCaseInput = Pick<
   | "otherNeedToBeAddressed"
   | "status"
   | "selectedRecommendation"
+  | "currentOnboardingTopic"
 > & {
   recommendedOpportunities?: OpportunityIdentifier[];
 };

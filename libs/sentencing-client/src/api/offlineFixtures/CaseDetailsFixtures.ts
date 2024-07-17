@@ -51,5 +51,6 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     selectedRecommendation: null,
     recommendedOpportunities: [],
     isLsirScoreLocked: false,
+    currentOnboardingTopic: "OffenseLsirScore",
   },
 };

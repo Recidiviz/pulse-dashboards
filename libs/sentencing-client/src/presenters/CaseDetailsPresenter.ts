@@ -99,6 +99,8 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   async updateAttributes(caseId: string, attributes?: MutableCaseAttributes) {
+    if (!attributes && JSON.stringify(this.form?.transformedUpdates) === "{}")
+      return;
     await flowResult(
       this.caseStore.updateCaseDetails(
         caseId,
@@ -109,19 +111,23 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   async updateRecommendation(
-    caseId: string,
     recommendation: MutableCaseAttributes["selectedRecommendation"],
   ) {
-    await flowResult(
-      this.caseStore.updateCaseDetails(caseId, {
-        selectedRecommendation: recommendation,
-      }),
-    );
-    await flowResult(this.caseStore.loadCaseDetails(this.caseId));
+    await this.updateAttributes(this.caseId, {
+      selectedRecommendation: recommendation,
+    });
   }
 
   async updateCaseStatusToCompleted() {
     await this.updateAttributes(this.caseId, { status: "Complete" });
     await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
+  }
+
+  async updateOnboardingTopicStatus(
+    currentTopic: MutableCaseAttributes["currentOnboardingTopic"],
+  ) {
+    await this.updateAttributes(this.caseId, {
+      currentOnboardingTopic: currentTopic,
+    });
   }
 }

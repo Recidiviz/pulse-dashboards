@@ -5,6 +5,7 @@ import {
   Charge,
   MentalHealthDiagnosis,
   NeedToBeAddressed,
+  OnboardingTopic,
   Plea,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
@@ -35,6 +36,8 @@ const NeedsToBeAddressedEnum = z.nativeEnum(NeedToBeAddressed);
 const CaseStatusEnum = z.nativeEnum(CaseStatus);
 
 const CaseRecommendationEnum = z.nativeEnum(CaseRecommendation);
+
+const OnboardingTopicEnum = z.nativeEnum(OnboardingTopic);
 
 const OpportunitiesSchema = z.array(
   z.object({
@@ -69,5 +72,6 @@ export const updateCaseSchema = z.object({
     status: CaseStatusEnum.optional(),
     selectedRecommendation: CaseRecommendationEnum.nullable().optional(),
     recommendedOpportunities: OpportunitiesSchema.optional(),
+    currentOnboardingTopic: OnboardingTopicEnum.optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });

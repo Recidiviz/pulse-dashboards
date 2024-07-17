@@ -53,6 +53,7 @@ describe("case router", () => {
           hasOpenChildProtectiveServicesCase: false,
           needsToBeAddressed: ["FamilyServices", "JobTrainingOrOpportunities"],
           status: "InProgress",
+          currentOnboardingTopic: "OffenseLsirScore",
         },
       });
 

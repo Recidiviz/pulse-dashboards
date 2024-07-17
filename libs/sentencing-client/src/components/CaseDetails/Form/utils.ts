@@ -28,7 +28,7 @@ import {
   NO_OPTION,
   NOT_SURE_YET_OPTION,
   OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
-  OTHER_NEED_TO_BE_ADDRESED_KEY,
+  OTHER_NEED_TO_BE_ADDRESSED_KEY,
   PLEA_KEY,
   PleaKey,
   YES_OPTION,
@@ -139,7 +139,7 @@ export const transformUpdates = (
       isNull ||
       isBoolean ||
       isNumber ||
-      key === OTHER_NEED_TO_BE_ADDRESED_KEY ||
+      key === OTHER_NEED_TO_BE_ADDRESSED_KEY ||
       key === OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY
     ) {
       transformedUpdates[key] = value;

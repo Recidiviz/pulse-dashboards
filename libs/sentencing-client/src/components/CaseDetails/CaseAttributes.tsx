@@ -27,7 +27,7 @@ type CaseAttributesProps = {
   caseAttributes: Attributes;
   firstName?: string;
   form?: CaseDetailsForm;
-  saveAttributes: () => void;
+  saveAttributes: (options?: { showToast: boolean }) => void;
 };
 
 type AttributeLabelValue = {

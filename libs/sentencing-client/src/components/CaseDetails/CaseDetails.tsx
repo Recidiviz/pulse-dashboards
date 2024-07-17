@@ -28,6 +28,8 @@ import { psiUrl } from "../../utils/routing";
 import { ErrorMessage } from "../Error";
 import { CaseAttributes } from "./CaseAttributes";
 import * as Styled from "./CaseDetails.styles";
+import { CaseOnboarding } from "./CaseOnboarding/CaseOnboarding";
+import { OnboardingTopic } from "./CaseOnboarding/types";
 import { Insights } from "./Insights";
 import { Opportunities } from "./Opportunities";
 import { Recommendations } from "./Recommendations/Recommendations";
@@ -47,6 +49,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     updateAttributes,
     updateRecommendation,
     updateCaseStatusToCompleted,
+    updateOnboardingTopicStatus,
   } = presenter;
 
   const firstName = caseAttributes.fullName?.split(" ")[0];
@@ -63,16 +66,26 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
 
   const saveRecommendation = () => {
     if (selectedRecommendation) {
-      updateRecommendation(caseId, selectedRecommendation);
+      updateRecommendation(selectedRecommendation);
     }
   };
 
-  const saveAttributes = () => {
+  const saveAttributes = (options?: { showToast?: boolean }) => {
     updateAttributes(caseId);
-    toast(() => <span>Case details updated</span>, {
-      duration: 3000,
-    });
+    if (options?.showToast) {
+      toast(() => <span>Case details updated</span>, {
+        duration: 3000,
+      });
+    }
   };
+
+  const navigateToDashboard = () =>
+    staffPseudoId &&
+    navigate(
+      psiUrl("dashboard", {
+        staffPseudoId,
+      }),
+    );
 
   if (!staffPseudoId) {
     return <Styled.PageContainer>No staff ID found.</Styled.PageContainer>;
@@ -80,46 +93,54 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
 
   return (
     <Styled.PageContainer>
-      <Styled.BackLink
-        leftMargin={16}
-        onClick={() =>
-          navigate(
-            psiUrl("dashboard", {
-              staffPseudoId,
-            }),
-          )
-        }
-      >{`Back to Dashboard`}</Styled.BackLink>
-
-      {/* Case Attributes */}
-      <CaseAttributes
-        firstName={firstName}
-        caseAttributes={caseAttributes}
-        form={form}
-        saveAttributes={saveAttributes}
-      />
-      <Styled.Body>
-        <Styled.InsightsOpportunitiesWrapper>
-          {/* Insights */}
-          <Insights />
-          {/* Opportunities */}
-          <Opportunities
-            isTermRecommendation={
-              selectedRecommendation === RecommendationType.Term
-            }
-          />
-        </Styled.InsightsOpportunitiesWrapper>
-        {/* Recommendations */}
-        <Recommendations
+      {/* Case Onboarding */}
+      {caseAttributes.currentOnboardingTopic !== OnboardingTopic.Done ? (
+        <CaseOnboarding
+          form={form}
           firstName={firstName}
-          fullName={caseAttributes.fullName}
-          selectedRecommendation={selectedRecommendation}
-          handleRecommendationUpdate={handleRecommendationUpdate}
-          saveRecommendation={saveRecommendation}
-          lastSavedRecommendation={caseAttributes.selectedRecommendation}
-          setCaseStatusCompleted={updateCaseStatusToCompleted}
+          lastTopic={caseAttributes.currentOnboardingTopic}
+          saveAttributes={saveAttributes}
+          navigateToDashboard={navigateToDashboard}
+          updateOnboardingTopicStatus={updateOnboardingTopicStatus}
         />
-      </Styled.Body>
+      ) : (
+        <>
+          <Styled.BackLink
+            leftMargin={16}
+            onClick={navigateToDashboard}
+          >{`Back to Dashboard`}</Styled.BackLink>
+
+          {/* Case Attributes */}
+          <CaseAttributes
+            firstName={firstName}
+            caseAttributes={caseAttributes}
+            form={form}
+            saveAttributes={saveAttributes}
+          />
+          <Styled.Body>
+            <Styled.InsightsOpportunitiesWrapper>
+              {/* Insights */}
+              <Insights />
+              {/* Opportunities */}
+              <Opportunities
+                isTermRecommendation={
+                  selectedRecommendation === RecommendationType.Term
+                }
+              />
+            </Styled.InsightsOpportunitiesWrapper>
+            {/* Recommendations */}
+            <Recommendations
+              firstName={firstName}
+              fullName={caseAttributes.fullName}
+              selectedRecommendation={selectedRecommendation}
+              handleRecommendationUpdate={handleRecommendationUpdate}
+              saveRecommendation={saveRecommendation}
+              lastSavedRecommendation={caseAttributes.selectedRecommendation}
+              setCaseStatusCompleted={updateCaseStatusToCompleted}
+            />
+          </Styled.Body>
+        </>
+      )}
     </Styled.PageContainer>
   );
 });

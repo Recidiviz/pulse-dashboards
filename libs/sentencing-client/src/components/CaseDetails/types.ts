@@ -100,6 +100,7 @@ export type MutableCaseAttributes = Partial<
     | "otherNeedToBeAddressed"
     | "status"
     | "selectedRecommendation"
+    | "currentOnboardingTopic"
   >
 >;
 

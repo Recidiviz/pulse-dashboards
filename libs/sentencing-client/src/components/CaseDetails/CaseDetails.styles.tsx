@@ -20,7 +20,8 @@ import { StylesConfig } from "react-select";
 import styled from "styled-components/macro";
 
 import { customPalette } from "../styles/palette";
-import { ProfileStrength } from "./types";
+import { OnboardingTopic } from "./CaseOnboarding/types";
+import { MutableCaseAttributes, ProfileStrength } from "./types";
 
 export const PageContainer = styled.div`
   width: 100%;
@@ -28,6 +29,19 @@ export const PageContainer = styled.div`
   padding: 24px 0;
   display: flex;
   flex-direction: column;
+`;
+
+export const FullPageContainer = styled.div`
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: ${palette.white};
+  padding: 24px 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
 `;
 
 export const Body = styled.div`
@@ -414,6 +428,7 @@ export const RecommendationSummaryReport = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 10;
 `;
 
 export const SummaryReportWrapper = styled.div`
@@ -556,6 +571,7 @@ export const OpportunitiesNotAvailable = styled.div`
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  z-index: 3;
 `;
 
 export const SearchFilter = styled.div`
@@ -889,3 +905,75 @@ export const dropdownStyles: StylesConfig<unknown, true> = {
     },
   }),
 };
+
+/** Onboarding */
+
+export const OnboardingContainer = styled.div`
+  width: 567px;
+  padding: 48px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+export const OnboardingHeaderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+export const OnboardingHeader = styled(ModalHeader)`
+  font-weight: 500;
+`;
+
+export const OnboardingDescription = styled(Description)``;
+
+export const OnboardingCompleteLoading = styled.div`
+  width: 443px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+
+  span {
+    ${typography.Sans24}
+    color: ${palette.slate60};
+  }
+`;
+
+export const OnboardingCompleteMessage = styled.div`
+  ${typography.Sans24}
+  color: ${palette.slate85};
+  text-align: center;
+`;
+
+const onboardingTopicToBarWidthPercentage = {
+  [OnboardingTopic.OffenseLsirScore]: 25,
+  [OnboardingTopic.PrimaryNeeds]: 50,
+  [OnboardingTopic.AdditionalNeeds]: 75,
+  [OnboardingTopic.Done]: 100,
+};
+
+export const OnboardingProgressBar = styled.div<{
+  topic: MutableCaseAttributes["currentOnboardingTopic"];
+}>`
+  height: 16px;
+  width: 100%;
+  background-color: ${palette.slate10};
+  position: absolute;
+  top: 0;
+
+  &::after {
+    content: "";
+    width: ${({ topic }) =>
+      topic
+        ? onboardingTopicToBarWidthPercentage[topic]
+        : onboardingTopicToBarWidthPercentage[OnboardingTopic.Done]}%;
+    height: 16px;
+    position: absolute;
+    top: 0;
+    background-color: ${palette.signal.highlight};
+  }
+`;
