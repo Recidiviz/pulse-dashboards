@@ -20,7 +20,6 @@ import { UserAppMetadata } from "../RootStore/types";
 // Fetch dashboard user restrictions used for building the mocked auth0 user
 export async function fetchImpersonatedUserAppMetadata(
   impersonatedEmail: string,
-  impersonatedStateCode: string,
   auth0Token: string,
 ): Promise<UserAppMetadata> {
   const response = await fetch(
@@ -28,7 +27,6 @@ export async function fetchImpersonatedUserAppMetadata(
       import.meta.env.VITE_API_URL
     }/api/impersonateAuth0User?${new URLSearchParams({
       impersonatedEmail,
-      impersonatedStateCode,
     })}`,
     {
       headers: {
@@ -38,7 +36,7 @@ export async function fetchImpersonatedUserAppMetadata(
   );
   if (!response.ok) {
     throw Error(
-      `There was a problem fetching user app metdata for the user: ${impersonatedEmail} and state ${impersonatedStateCode}`,
+      `There was a problem fetching user app metdata for the user: ${impersonatedEmail}`,
     );
   }
   const userAppMetadata = await response.json();

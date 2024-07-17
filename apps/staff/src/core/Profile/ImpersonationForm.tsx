@@ -22,10 +22,7 @@ import styled from "styled-components/macro";
 
 import { isOfflineMode } from "~client-env-utils";
 
-import StateSelector from "../../components/StateSelector";
-import { TenantId } from "../../RootStore/types";
-import TENANTS from "../../tenants";
-import { getEmailDomain, stopImpersonating } from "../../utils/impersonation";
+import { stopImpersonating } from "../../utils/impersonation";
 import ImpersonationErrorModal from "./ImpersonationErrorModal";
 
 const EmailInput = styled.input`
@@ -48,17 +45,9 @@ const ErrorMessage = styled.div`
 
 export const ImpersonationForm: React.FC<{
   isImpersonating: boolean;
-  defaultStateCode: string;
-  onSubmit: ({
-    email,
-    stateCode,
-  }: {
-    email: string;
-    stateCode: string;
-  }) => void;
+  onSubmit: ({ email }: { email: string }) => void;
   impersonationError?: Error;
-}> = ({ defaultStateCode, isImpersonating, onSubmit, impersonationError }) => {
-  const [stateCode, setStateCode] = useState(defaultStateCode);
+}> = ({ isImpersonating, onSubmit, impersonationError }) => {
   const [formValidationError, setFormValidationError] = useState<
     string | null
   >();
@@ -83,31 +72,15 @@ export const ImpersonationForm: React.FC<{
     }
 
     const formattedEmail = email.trim().toLowerCase();
-    if (
-      getEmailDomain(formattedEmail) !== TENANTS[stateCode as TenantId].domain
-    ) {
-      setFormValidationError(
-        "The entered email address does not match this state's expected domain.",
-      );
-      return;
-    }
 
     setFormValidationError(null);
-    onSubmit({ email: formattedEmail, stateCode });
+    onSubmit({ email: formattedEmail });
   }
 
   return (
     <div className="Profile__impersonation">
       <div className="Profile__impersonation__title">
-        Select state and enter e-mail address to impersonate:
-      </div>
-      <div className="Profile__impersonation__StateSelector">
-        <StateSelector
-          onChange={(option) => {
-            setFormValidationError(null);
-            setStateCode(option.value);
-          }}
-        />
+        Enter e-mail address to impersonate:
       </div>
       <div className="Profile__impersonation__email">
         <EmailInput

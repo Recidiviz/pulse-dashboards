@@ -20,7 +20,7 @@ import "./Profile.scss";
 import { Button, TooltipTrigger } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { isOfflineMode } from "~client-env-utils";
 
@@ -37,6 +37,7 @@ function Profile() {
   const userStore = useUserStore();
   const { user } = userStore;
   const logout = useLogout();
+  const navigate = useNavigate();
 
   const showImpersonationForm =
     userStore.isImpersonating || userStore.isRecidivizUser;
@@ -46,14 +47,11 @@ function Profile() {
     userStore.isRecidivizUser ||
     userStore.isCSGUser;
 
-  const handleImpersonation = async ({
-    email,
-    stateCode,
-  }: {
-    email: string;
-    stateCode: string;
-  }) => {
-    await userStore.impersonateUser(email, stateCode);
+  const handleImpersonation = async ({ email }: { email: string }) => {
+    const impersonated = await userStore.impersonateUser(email);
+    if (impersonated) {
+      navigate("/");
+    }
   };
 
   const copyright = <span>© {new Date().getFullYear()}</span>;
@@ -69,9 +67,6 @@ function Profile() {
             </div>
             {showImpersonationForm && (
               <ImpersonationForm
-                defaultStateCode={
-                  userStore.rootStore?.tenantStore.currentTenantId ?? ""
-                }
                 onSubmit={handleImpersonation}
                 isImpersonating={userStore.isImpersonating}
                 impersonationError={userStore.impersonationError}

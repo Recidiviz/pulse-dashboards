@@ -1179,7 +1179,7 @@ describe("impersonateUser", () => {
     });
 
     await store.authorize(mockHandleUrl);
-    await store.impersonateUser(impersonatedEmail, impersonatedState);
+    await store.impersonateUser(impersonatedEmail);
 
     expect(store.impersonationError).toBeUndefined();
     expect(store.rootStore?.firestoreStore.authenticate).toHaveBeenCalled();
@@ -1205,7 +1205,7 @@ describe("impersonateUser", () => {
     mockGetUser.mockResolvedValue(user);
 
     await store.authorize(mockHandleUrl);
-    await store.impersonateUser("impersonatedEmail@doc.gov", "us_tn");
+    await store.impersonateUser("impersonatedEmail@doc.gov");
 
     expect(store.impersonationError).toEqual(
       new Error("Impersonation is only allowed for Recidiviz users"),

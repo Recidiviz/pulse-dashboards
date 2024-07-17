@@ -219,10 +219,10 @@ export default class UserStore {
     }
   }
 
-  async impersonateUser(
-    impersonatedEmail: string,
-    impersonatedStateCode: string,
-  ): Promise<void> {
+  /**
+   * Impersonates a user, returns true if the impersonation was successful
+   */
+  async impersonateUser(impersonatedEmail: string): Promise<boolean> {
     this.userIsLoading = true;
     this.rootStore?.workflowsStore.disposeUserProfileSubscriptions();
 
@@ -240,11 +240,9 @@ export default class UserStore {
 
       // Fetch dashboard userAppMetadata to build mocked auth0 user
       const impersonatedUserAppMetadata =
-        await fetchImpersonatedUserAppMetadata(
-          impersonatedEmail,
-          impersonatedStateCode,
-          auth0Token,
-        );
+        await fetchImpersonatedUserAppMetadata(impersonatedEmail, auth0Token);
+
+      const { stateCode } = impersonatedUserAppMetadata;
 
       // Firestore authentication
       await this.rootStore?.firestoreStore.authenticate(
@@ -260,23 +258,22 @@ export default class UserStore {
           given_name: "Impersonated User",
           [`${METADATA_NAMESPACE}app_metadata`]: {
             ...impersonatedUserAppMetadata,
-            allowedStates: [impersonatedStateCode],
-            stateCode: impersonatedStateCode,
+            allowedStates: [stateCode],
           },
           impersonator: true,
           name: "Impersonated User",
-          stateCode: impersonatedStateCode,
+          stateCode,
         };
-        this.rootStore?.tenantStore.setCurrentTenantId(
-          impersonatedStateCode as TenantId,
-        );
+        this.rootStore?.tenantStore.setCurrentTenantId(stateCode as TenantId);
         this.userIsLoading = false;
       });
+      return true;
     } catch (error) {
       runInAction(() => {
         this.setImpersonationError(error as Error);
         this.userIsLoading = false;
       });
+      return false;
     }
   }
 
