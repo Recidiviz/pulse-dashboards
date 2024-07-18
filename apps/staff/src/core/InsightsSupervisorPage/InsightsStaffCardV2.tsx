@@ -86,10 +86,6 @@ const CardHeaderItem = styled(Link)<{ hovered?: boolean }>`
       border-bottom: 1px solid ${palette.pine1};
     }
   }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${palette.slate30};
-  }
 `;
 
 const CardSubtitle = styled.h2`
@@ -119,9 +115,9 @@ const CardBody = styled.div`
 const PlotSection = styled.div`
   padding: ${rem(spacing.md)};
   display: block;
+  border-bottom: 1px solid ${palette.slate30};
 
   & + div {
-    border-top: 1px solid ${palette.slate30};
     width: 100%;
   }
 `;
