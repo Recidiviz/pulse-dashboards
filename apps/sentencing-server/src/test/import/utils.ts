@@ -55,7 +55,7 @@ export function arrayToJsonLines(arr: object[]) {
   return arr.map((obj) => JSON.stringify(obj)).join("\n");
 }
 
-export function createFakeRecidivismSeries() {
+export function createFakeRecidivismSeriesForImport() {
   // Need to make sure the months are unique
   const months = faker.helpers.uniqueArray(
     () => faker.number.int({ max: 100 }),

@@ -2,6 +2,7 @@ import {
   AsamLevelOfCareRecommendationCriterion,
   DiagnosedMentalHealthDiagnosisCriterion,
   DiagnosedSubstanceUseDisorderCriterion,
+  Gender,
   NeedToBeAddressed,
   PriorCriminalHistoryCriterion,
   StateCode,
@@ -12,6 +13,8 @@ import { zu } from "zod_utilz";
 import { fullNameObjectToString } from "~sentencing-server/import/utils";
 
 const stateCode = z.nativeEnum(StateCode);
+
+const gender = z.nativeEnum(Gender);
 
 const needToBeAddressed = z.array(z.nativeEnum(NeedToBeAddressed));
 
@@ -64,7 +67,7 @@ export const clientImportSchema = z.array(
       case_ids: caseIdsSchema,
       state_code: stateCode,
       full_name: nameSchema,
-      gender: z.string(),
+      gender: gender,
       county: z.string().optional(),
       birth_date: z.coerce.date(),
     })
@@ -127,8 +130,6 @@ export const opportunityImportSchema = z.array(
   }),
 );
 
-const insightGenderEnum = z.enum(["FEMALE", "MALE"]);
-
 export const recidivismSeriesSchema = zu.stringToJSON().pipe(
   z.array(
     z.object({
@@ -143,7 +144,7 @@ export const recidivismSeriesSchema = zu.stringToJSON().pipe(
 export const insightImportSchema = z.array(
   z.object({
     state_code: stateCode,
-    gender: insightGenderEnum,
+    gender: gender,
     assessment_score_bucket_start: z.number(),
     assessment_score_bucket_end: z.number(),
     most_severe_description: z.string(),

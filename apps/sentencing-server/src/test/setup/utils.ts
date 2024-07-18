@@ -15,40 +15,52 @@ export async function resetDb() {
   );
 }
 
-export function createFakeRecidivismSeriesForPrisma(): Prisma.RecidivismSeriesCreateWithoutInsightInput[] {
+export function createFakeRecidivismSeriesForPrisma() {
   return [
     {
       recommendationType: "Probation",
       dataPoints: {
-        create: {
-          cohortMonths: faker.number.int({ max: 100 }),
-          eventRate: faker.number.float(),
-          lowerCI: faker.number.float(),
-          upperCI: faker.number.float(),
+        createMany: {
+          data: [
+            {
+              cohortMonths: faker.number.int({ max: 100 }),
+              eventRate: faker.number.float(),
+              lowerCI: faker.number.float(),
+              upperCI: faker.number.float(),
+            },
+          ],
         },
       },
     },
     {
       recommendationType: "Rider",
       dataPoints: {
-        create: {
-          cohortMonths: faker.number.int({ max: 100 }),
-          eventRate: faker.number.float(),
-          lowerCI: faker.number.float(),
-          upperCI: faker.number.float(),
+        createMany: {
+          data: [
+            {
+              cohortMonths: faker.number.int({ max: 100 }),
+              eventRate: faker.number.float(),
+              lowerCI: faker.number.float(),
+              upperCI: faker.number.float(),
+            },
+          ],
         },
       },
     },
     {
       recommendationType: "Term",
       dataPoints: {
-        create: {
-          cohortMonths: faker.number.int({ max: 100 }),
-          eventRate: faker.number.float(),
-          lowerCI: faker.number.float(),
-          upperCI: faker.number.float(),
+        createMany: {
+          data: [
+            {
+              cohortMonths: faker.number.int({ max: 100 }),
+              eventRate: faker.number.float(),
+              lowerCI: faker.number.float(),
+              upperCI: faker.number.float(),
+            },
+          ],
         },
       },
     },
-  ];
+  ] satisfies Prisma.RecidivismSeriesCreateWithoutInsightInput[];
 }

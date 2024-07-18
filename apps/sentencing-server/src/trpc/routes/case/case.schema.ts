@@ -75,3 +75,5 @@ export const updateCaseSchema = z.object({
     currentOnboardingTopic: OnboardingTopicEnum.optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });
+
+export const getInsightForCaseSchema = getCaseInputSchema;

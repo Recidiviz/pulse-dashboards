@@ -3,6 +3,7 @@ import {
   CaseRecommendation,
   CaseStatus,
   Charge,
+  Gender,
   Plea,
   StateCode,
   SubstanceUseDiagnosis,
@@ -12,11 +13,20 @@ import { prismaClient } from "~sentencing-server/prisma";
 import {
   CaseCreateInput,
   ClientCreateInput,
+  DispositionCreateManyInsightInput,
   InsightCreateInput,
   OpportunityCreateInput,
+  RecidivismSeriesCreateWithoutInsightInput,
   StaffCreateInput,
 } from "~sentencing-server/test/setup/types";
 import { createFakeRecidivismSeriesForPrisma } from "~sentencing-server/test/setup/utils";
+
+const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_START = 0;
+const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END = 20;
+// Make sure fake case LSIR score falls within the range of the fake insight
+const FAKE_CASE_LSIR_SCORE = 10;
+const FAKE_CASE_PRIMARY_CHARGE = Charge.Felony;
+const FAKE_CLIENT_GENDER = Gender.FEMALE;
 
 export const fakeStaff = {
   externalId: "staff-ext-1",
@@ -32,7 +42,7 @@ export const fakeClient = {
   pseudonymizedId: "client-pid-1",
   fullName: faker.person.fullName(),
   stateCode: StateCode.US_ID,
-  gender: faker.person.gender(),
+  gender: FAKE_CLIENT_GENDER,
   county: faker.location.county(),
   birthDate: faker.date.birthdate(),
 } satisfies ClientCreateInput;
@@ -46,10 +56,10 @@ export const fakeCase = {
   sentenceDate: faker.date.past(),
   assignedDate: faker.date.past(),
   county: faker.location.county(),
-  lsirScore: faker.number.int({ max: 100 }),
+  lsirScore: FAKE_CASE_LSIR_SCORE,
   lsirLevel: faker.number.int().toString(),
   reportType: faker.string.alpha(),
-  primaryCharge: faker.helpers.enumValue(Charge),
+  primaryCharge: FAKE_CASE_PRIMARY_CHARGE,
   secondaryCharges: [],
   isVeteran: faker.datatype.boolean(),
   previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
@@ -92,35 +102,40 @@ export const fakeOpportunity = {
   veteranStatusCriterion: false,
 } satisfies OpportunityCreateInput;
 
+export const fakeRecidivismSeries =
+  createFakeRecidivismSeriesForPrisma() satisfies RecidivismSeriesCreateWithoutInsightInput[];
+
+export const fakeDispositions = [
+  {
+    recommendationType: "Probation",
+    percentage: faker.number.float(),
+  },
+  {
+    recommendationType: "Rider",
+    percentage: faker.number.float(),
+  },
+  {
+    recommendationType: "Term",
+    percentage: faker.number.float(),
+  },
+] satisfies DispositionCreateManyInsightInput[];
+
 export const fakeInsight = {
   stateCode: StateCode.US_ID,
-  gender: "FEMALE",
-  assessmentScoreBucketStart: faker.number.int({ max: 100 }),
-  assessmentScoreBucketEnd: faker.number.int({ max: 100 }),
-  offense: faker.string.alpha(),
+  gender: FAKE_CLIENT_GENDER,
+  assessmentScoreBucketStart: FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_START,
+  assessmentScoreBucketEnd: FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END,
+  offense: FAKE_CASE_PRIMARY_CHARGE,
   recidivismRollupOffense: faker.string.alpha(),
   recidivismNumRecords: faker.number.int({ max: 100 }),
   recidivismSeries: {
     // Can't use createMany because of nested writes
-    create: createFakeRecidivismSeriesForPrisma(),
+    create: fakeRecidivismSeries,
   },
   dispositionNumRecords: faker.number.int({ max: 100 }),
   dispositionData: {
     createMany: {
-      data: [
-        {
-          recommendationType: "Probation",
-          percentage: faker.number.float(),
-        },
-        {
-          recommendationType: "Rider",
-          percentage: faker.number.float(),
-        },
-        {
-          recommendationType: "Term",
-          percentage: faker.number.float(),
-        },
-      ],
+      data: fakeDispositions,
     },
   },
 } satisfies InsightCreateInput;

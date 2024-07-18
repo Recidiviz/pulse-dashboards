@@ -48,6 +48,9 @@ beforeEach(() => {
       updateCase: {
         mutate: vi.fn(),
       },
+      getInsightForCase: {
+        query: vi.fn(),
+      },
     },
     opportunity: {
       getOpportunities: {

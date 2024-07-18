@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { StateCode } from "@prisma/client";
+import { Gender, StateCode } from "@prisma/client";
 import { MockStorage } from "mock-gcs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -12,7 +12,7 @@ import {
   callImportInsightData,
   callImportOpportunityData,
   callImportStaffData,
-  createFakeRecidivismSeries,
+  createFakeRecidivismSeriesForImport,
 } from "~sentencing-server/test/import/utils";
 import { testServer } from "~sentencing-server/test/setup";
 import {
@@ -499,7 +499,7 @@ describe("import", () => {
                 surname: "Last",
                 name_suffix: "Sr.",
               }),
-              gender: faker.person.gender(),
+              gender: faker.helpers.enumValue(Gender),
               county: faker.location.county(),
               birth_date: faker.date.birthdate(),
             },
@@ -561,7 +561,7 @@ describe("import", () => {
                 surname: faker.person.lastName(),
                 name_suffix: faker.person.suffix(),
               }),
-              gender: faker.person.gender(),
+              gender: faker.helpers.enumValue(Gender),
               county: faker.location.county(),
               birth_date: faker.date.birthdate(),
             },
@@ -577,7 +577,7 @@ describe("import", () => {
                 surname: faker.person.lastName(),
                 name_suffix: faker.person.suffix(),
               }),
-              gender: faker.person.gender(),
+              gender: faker.helpers.enumValue(Gender),
               // Set a new county
               county: "my fake county",
               birth_date: faker.date.birthdate(),
@@ -957,13 +957,13 @@ describe("import", () => {
                 recidivism_rollup: faker.string.alpha(),
                 recidivism_num_records: faker.number.int({ max: 100 }),
                 recidivism_probation_series: JSON.stringify(
-                  createFakeRecidivismSeries(),
+                  createFakeRecidivismSeriesForImport(),
                 ),
                 recidivism_rider_series: JSON.stringify(
-                  createFakeRecidivismSeries(),
+                  createFakeRecidivismSeriesForImport(),
                 ),
                 recidivism_term_series: JSON.stringify(
-                  createFakeRecidivismSeries(),
+                  createFakeRecidivismSeriesForImport(),
                 ),
                 disposition_num_records: faker.number.int({ max: 100 }),
                 disposition_probation_pc: faker.number.float(),

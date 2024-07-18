@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import {
   CaseStatus,
   Charge,
+  Gender,
   Plea,
   Prisma,
   PrismaClient,
@@ -46,7 +47,7 @@ async function main() {
       pseudonymizedId: faker.string.uuid(),
       fullName: faker.person.fullName(),
       stateCode: StateCode.US_ID,
-      gender: faker.person.gender(),
+      gender: faker.helpers.enumValue(Gender),
       county: faker.location.county(),
       birthDate: faker.date.birthdate(),
     });

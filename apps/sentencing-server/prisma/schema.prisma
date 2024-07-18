@@ -61,6 +61,12 @@ enum StateCode {
   US_WY
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  EXTERNAL_UNKNOWN
+}
+
 model Staff {
   externalId      String    @id
   pseudonymizedId String    @unique
@@ -79,7 +85,7 @@ model Client {
   stateCode       StateCode
   fullName        String
 
-  gender    String
+  gender    Gender
   county    String
   birthDate DateTime
   Cases     Case[]
@@ -303,15 +309,10 @@ model Case {
   recommendedOpportunities Opportunity[]
 }
 
-enum InsightsGender {
-  MALE
-  FEMALE
-}
-
 model Insight {
-  id                         String         @id @default(cuid())
+  id                         String    @id @default(cuid())
   stateCode                  StateCode
-  gender                     InsightsGender
+  gender                     Gender
   offense                    String
   assessmentScoreBucketStart Int
   assessmentScoreBucketEnd   Int

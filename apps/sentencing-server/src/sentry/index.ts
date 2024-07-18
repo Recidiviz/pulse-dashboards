@@ -1,4 +1,8 @@
-import { init, prismaIntegration } from "@sentry/node";
+import {
+  captureConsoleIntegration,
+  init,
+  prismaIntegration,
+} from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 init({
@@ -6,5 +10,11 @@ init({
   environment: process.env["SENTRY_ENV"],
   tracesSampleRate: 0.25,
   profilesSampleRate: 0.25,
-  integrations: [nodeProfilingIntegration(), prismaIntegration()],
+  integrations: [
+    nodeProfilingIntegration(),
+    prismaIntegration(),
+    captureConsoleIntegration({
+      levels: ["error", "warn"],
+    }),
+  ],
 });
