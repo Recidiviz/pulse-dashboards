@@ -1085,4 +1085,17 @@ export class WorkflowsStore implements Hydratable {
   get activePageIsHomepage(): boolean {
     return this.activePage.page === this.homepage;
   }
+
+  getOpportunityTypeFromUrl(url: string) {
+    const { currentTenantId } = this.rootStore;
+    const opportunityEntry = Object.entries(
+      this.opportunityConfigurationStore.opportunities,
+    ).find(
+      ([, opportunity]) =>
+        opportunity.urlSection === url &&
+        opportunity.stateCode === currentTenantId,
+    );
+
+    return opportunityEntry?.[0] as OpportunityType;
+  }
 }

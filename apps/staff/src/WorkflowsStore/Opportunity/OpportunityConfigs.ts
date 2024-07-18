@@ -286,35 +286,3 @@ export const OPPORTUNITY_CONFIGS_BY_STATE: ConfigsByStateMapping =
     }),
     {},
   ) as ConfigsByStateMapping;
-
-type OppTypeForUrlByStateMapping = Record<
-  TenantId,
-  Record<OpportunityConfig<Opportunity>["urlSection"], OpportunityType>
->;
-
-export const OPPORTUNITY_TYPE_FOR_URL_BY_STATE: Record<
-  TenantId,
-  Record<string, OpportunityType>
-> = Object.entries(OPPORTUNITY_CONFIGS).reduce(
-  (acc: Partial<OppTypeForUrlByStateMapping>, [oppType, config]) => ({
-    ...acc,
-    [config.stateCode]: {
-      ...acc[config.stateCode as TenantId],
-      [config.urlSection]: oppType,
-    },
-  }),
-  {},
-) as OppTypeForUrlByStateMapping;
-
-export function isOpportunityTypeUrlForState(
-  stateCode: TenantId,
-  s: string,
-): boolean {
-  return s in (OPPORTUNITY_TYPE_FOR_URL_BY_STATE[stateCode] ?? {});
-}
-
-export function getSystemIdFromOpportunityType(
-  opportunityType: OpportunityType,
-): SystemId {
-  return OPPORTUNITY_CONFIGS[opportunityType].systemType;
-}

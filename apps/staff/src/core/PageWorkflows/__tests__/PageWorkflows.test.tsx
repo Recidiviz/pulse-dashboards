@@ -333,6 +333,7 @@ describe("PageWorkflows", () => {
       it("updates activeSystem based on page", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
+          getOpportunityTypeFromUrl: vi.fn(() => null),
         });
         renderRouter(WORKFLOWS_PATHS.tasks);
 
@@ -346,9 +347,18 @@ describe("PageWorkflows", () => {
       it("updates activeSystem based on page for SUPERVISION", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
+          getOpportunityTypeFromUrl: vi.fn(() => "usTnCompliantReporting"),
+        });
+        mockUseOpportunityConfigurations.mockReturnValue({
+          usTnCompliantReporting: {
+            systemType: "SUPERVISION",
+          },
         });
         renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
 
+        expect(
+          useRootStore().workflowsStore.getOpportunityTypeFromUrl,
+        ).toHaveBeenCalledWith("compliantReporting");
         expect(
           useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("SUPERVISION");
@@ -357,9 +367,18 @@ describe("PageWorkflows", () => {
       it("updates activeSystem based on page for INCARCERATION", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
+          getOpportunityTypeFromUrl: vi.fn(() => "usTnCustodyLevelDowngrade"),
+        });
+        mockUseOpportunityConfigurations.mockReturnValue({
+          usTnCustodyLevelDowngrade: {
+            systemType: "INCARCERATION",
+          },
         });
         renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
 
+        expect(
+          useRootStore().workflowsStore.getOpportunityTypeFromUrl,
+        ).toHaveBeenCalledWith("custodyLevelDowngrade");
         expect(
           useRootStore().workflowsStore.updateActiveSystem,
         ).toHaveBeenCalledWith("INCARCERATION");
@@ -368,9 +387,16 @@ describe("PageWorkflows", () => {
       it("updates selectedOpportunityType based on page", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
+          getOpportunityTypeFromUrl: vi.fn(() => "usTnCustodyLevelDowngrade"),
+        });
+        mockUseOpportunityConfigurations.mockReturnValue({
+          usTnCustodyLevelDowngrade: {},
         });
         renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
 
+        expect(
+          useRootStore().workflowsStore.getOpportunityTypeFromUrl,
+        ).toHaveBeenCalledWith("custodyLevelDowngrade");
         expect(
           useRootStore().workflowsStore.updateSelectedOpportunityType,
         ).toHaveBeenCalledWith("usTnCustodyLevelDowngrade");
@@ -430,6 +456,7 @@ describe("PageWorkflows", () => {
       it("updates the selected person", () => {
         mockWorkflowsStore({
           ...baseMockWorkflowsStore,
+          getOpportunityTypeFromUrl: () => null,
           opportunityTypes: ["compliantReporting"],
         });
         renderRouter(`${WORKFLOWS_PATHS.workflows}/clients/p101`);

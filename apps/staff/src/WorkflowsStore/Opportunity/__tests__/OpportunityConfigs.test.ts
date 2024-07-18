@@ -16,13 +16,17 @@
 // =============================================================================
 
 import {
-  getSystemIdFromOpportunityType,
   INCARCERATION_OPPORTUNITY_TYPES,
   IncarcerationOpportunityType,
   OPPORTUNITY_CONFIGS,
   SUPERVISION_OPPORTUNITY_TYPES,
   SupervisionOpportunityType,
 } from "../OpportunityConfigs";
+import { OpportunityType } from "../OpportunityType";
+
+function getSystemIdFromOpportunityType(opportunityType: OpportunityType) {
+  return OPPORTUNITY_CONFIGS[opportunityType].systemType;
+}
 
 describe("can detect supervision vs. incarceration type", () => {
   const listOfTypes = Object.keys(OPPORTUNITY_CONFIGS);

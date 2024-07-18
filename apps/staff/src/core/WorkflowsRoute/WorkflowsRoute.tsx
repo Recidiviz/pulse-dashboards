@@ -25,13 +25,7 @@ import {
   useOpportunityConfigurations,
   useRootStore,
 } from "../../components/StoreProvider";
-import { TenantId } from "../../RootStore/types";
 import { WorkflowsRouteParams } from "../../WorkflowsStore";
-import {
-  getSystemIdFromOpportunityType,
-  isOpportunityTypeUrlForState,
-  OPPORTUNITY_TYPE_FOR_URL_BY_STATE,
-} from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
 import { getSystemIdFromPage } from "../../WorkflowsStore/utils";
 import { SystemId } from "../models/types";
 import { WorkflowsPage, workflowsUrl } from "../views";
@@ -72,17 +66,13 @@ const RouteSync = observer(function RouteSync({
         setRedirectPath(undefined);
         workflowsStore.setActivePage({ page, personId });
 
-        const isOpportunityPage =
-          page && isOpportunityTypeUrlForState(currentTenantId, page);
+        const opportunityType =
+          page && workflowsStore.getOpportunityTypeFromUrl(page);
 
         /* 1. Update activeSystem and selectedOpportunityType */
-        if (isOpportunityPage) {
-          const opportunityType =
-            OPPORTUNITY_TYPE_FOR_URL_BY_STATE[currentTenantId as TenantId][
-              page
-            ];
+        if (opportunityType) {
           workflowsStore.updateActiveSystem(
-            getSystemIdFromOpportunityType(opportunityType),
+            OPPORTUNITY_CONFIGS[opportunityType].systemType,
           );
           workflowsStore.updateSelectedOpportunityType(opportunityType);
         } else {
@@ -100,7 +90,7 @@ const RouteSync = observer(function RouteSync({
         // updateSelectedPerson relies on the active system, so set it after the above
         if (personId || previousLocContainedPersonId) {
           workflowsStore.updateSelectedPerson(personId).catch(() => {
-            if (isOpportunityPage) {
+            if (opportunityType) {
               // Redirect home if person is no long eligible for opportunity
               setRedirectPath(workflowsUrl(homepage));
             } else {

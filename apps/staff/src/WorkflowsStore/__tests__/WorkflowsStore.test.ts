@@ -988,6 +988,7 @@ const setUser = (
   };
   rootStore.userStore.isAuthorized = true;
   rootStore.userStore.userIsLoading = false;
+  rootStore.tenantStore.setCurrentTenantId(stateCode as any);
 };
 
 describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByFeatureVariants testing", () => {
@@ -1566,4 +1567,18 @@ test("caseload (`selectedSearchIds`) reflects updated list after impersonated us
   });
 
   expect(workflowsStore.selectedSearchIds).toEqual(["OFFICER2"]);
+});
+
+test("getOpportunityTypeFromUrl for existing opportunity url", async () => {
+  setUser({}, "US_OR");
+  await waitForHydration();
+  expect(workflowsStore.getOpportunityTypeFromUrl("earnedDischarge")).toBe(
+    "usOrEarnedDischarge",
+  );
+});
+
+test("getOpportunityTypeFromUrl for nonexistent opportunity url", async () => {
+  setUser({}, "US_OR");
+  await waitForHydration();
+  expect(workflowsStore.getOpportunityTypeFromUrl("fakeUrl")).toBe(undefined);
 });
