@@ -250,7 +250,7 @@ describe("opportunities", () => {
     });
 
     test("verified", () => {
-      expect(testPerson.potentialOpportunities).toStrictEqual({
+      expect(testPerson.verifiedOpportunities).toStrictEqual({
         LSU: opportunityInstances[0],
       });
     });

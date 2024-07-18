@@ -21,7 +21,10 @@ import { unpackAggregatedErrors } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
-import { lsuEligibleClient } from "../../../WorkflowsStore/__fixtures__";
+import {
+  eligibleClient,
+  lsuEligibleClient,
+} from "../../../WorkflowsStore/__fixtures__";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
@@ -48,6 +51,11 @@ beforeEach(() => {
     () => false,
   );
 
+  const testClient1 = lsuEligibleClient;
+  testClient1.allEligibleOpportunities.push("pastFTRD");
+  const testClient2 = eligibleClient;
+  testClient2.allEligibleOpportunities.push("LSU");
+
   const rootStore = new RootStore();
   rootStore.tenantStore.currentTenantId = stateCode;
   store = new InsightsSupervisionStore(
@@ -60,7 +68,7 @@ beforeEach(() => {
   vi.spyOn(
     rootStore.firestoreStore,
     "getClientsForOfficerId",
-  ).mockResolvedValue([lsuEligibleClient]);
+  ).mockResolvedValue([testClient1, testClient2]);
 
   presenter = new SupervisionOfficerPresenter(
     store,
@@ -203,14 +211,80 @@ test("has timePeriod", async () => {
 test("has clients", async () => {
   await presenter.hydrate();
   expect(presenter.clients).toBeDefined();
-  expect(presenter.clients).toHaveLength(1);
+  expect(presenter.clients).toHaveLength(2);
 });
 
-test("does not have clients if workflows is disabled", async () => {
-  vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
+describe("has opportunity dependent fields", () => {
+  beforeEach(async () => {
+    await presenter.hydrate();
+
+    // Mock opportunity hydration so that client functions populate.
+    for (const client of presenter.clients ?? []) {
+      for (const opp of Object.values(client.potentialOpportunities)) {
+        vi.spyOn(opp, "hydrationState", "get").mockReturnValue({
+          status: "hydrated",
+        });
+      }
+    }
+  });
+
+  test("has opportunitiesByType", async () => {
+    const { opportunitiesByType } = presenter;
+
+    expect(opportunitiesByType).toBeDefined();
+    expect(opportunitiesByType?.pastFTRD.length).toEqual(1);
+    expect(opportunitiesByType?.compliantReporting.length).toEqual(1);
+    expect(opportunitiesByType?.LSU.length).toEqual(2);
+  });
+
+  test("has numEligibleOpportunities", async () => {
+    const { numEligibleOpportunities } = presenter;
+
+    expect(numEligibleOpportunities).toBeDefined();
+    expect(numEligibleOpportunities).toEqual(4);
+  });
+});
+
+test("has numClientsOnCaseload", async () => {
   await presenter.hydrate();
-  expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-  expect(presenter.clients).toBeUndefined();
+
+  const { numClientsOnCaseload } = presenter;
+
+  expect(numClientsOnCaseload).toBeDefined();
+  expect(numClientsOnCaseload).toEqual(2);
+});
+
+describe("does not have client-dependent fields if workflows is disabled", () => {
+  beforeEach(async () => {
+    vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
+    await presenter.hydrate();
+    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
+
+    // Mock opportunity hydration so that client functions populate.
+    for (const client of presenter.clients ?? []) {
+      for (const opp of Object.values(client.potentialOpportunities)) {
+        vi.spyOn(opp, "hydrationState", "get").mockReturnValue({
+          status: "hydrated",
+        });
+      }
+    }
+  });
+
+  test("does not have clients", async () => {
+    expect(presenter.clients).toBeUndefined();
+  });
+
+  test("does not have numClientsOnCaseload", async () => {
+    expect(presenter.numClientsOnCaseload).toBeUndefined();
+  });
+
+  test("does not have opportunitiesByType", async () => {
+    expect(presenter.opportunitiesByType).toBeUndefined();
+  });
+
+  test("does not have numEligibleOpportunities", async () => {
+    expect(presenter.numEligibleOpportunities).toBeUndefined();
+  });
 });
 
 test("hydration error in dependency", async () => {

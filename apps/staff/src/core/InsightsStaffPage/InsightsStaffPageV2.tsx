@@ -28,6 +28,7 @@ import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/Supe
 import { toTitleCase } from "../../utils";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsPageLayout from "../InsightsPageLayout";
+import { Subtitle } from "../InsightsPageLayout/InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import { EmptyCard } from "../InsightsSupervisorPage/InsightsStaffCardV2";
 import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
@@ -61,20 +62,26 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     timePeriod,
     userCanAccessAllSupervisors,
     clients,
+    numClientsOnCaseload,
+    numEligibleOpportunities,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
   const infoItems = [
+    {
+      title: "current clients",
+      info: numClientsOnCaseload,
+    },
+    {
+      title: "avg daily caseload",
+      info: outlierOfficerData?.avgDailyPopulation,
+    },
     {
       title: "caseload types",
       info:
         (presenter.areCaseloadTypeBreakdownsEnabled &&
           outlierOfficerData?.caseloadType) ||
         null,
-    },
-    {
-      title: "avg daily caseload",
-      info: outlierOfficerData?.avgDailyPopulation,
     },
   ];
 
@@ -184,6 +191,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       {/* TODO(#5318): Make this the actual layout */}
       {clients && (
         <Wrapper isTablet={isTablet}>
+          <Subtitle>{`Opportunities (${numEligibleOpportunities ?? 0})`}</Subtitle>
           {clients
             .filter((c) => Object.keys(c.verifiedOpportunities).length > 0)
             .map((c) => (

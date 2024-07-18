@@ -20,7 +20,11 @@ import { flowResult, makeObservable } from "mobx";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import UserStore from "../../RootStore/UserStore";
-import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import {
+  JusticeInvolvedPerson,
+  Opportunity,
+  OpportunityType,
+} from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
@@ -66,6 +70,9 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
         expectClientsPopulated: true,
         populateCaseload: true,
         clients: true,
+        numClientsOnCaseload: true,
+        numEligibleOpportunities: true,
+        opportunitiesByType: true,
         expectMetricsPopulated: true,
         expectOfficerPopulated: true,
         expectSupervisorPopulated: true,
@@ -137,11 +144,41 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       );
   }
 
-  // TODO(#5312): add actual presenter methods. this one is just here as a proof of concept for now
   get clients(): JusticeInvolvedPerson[] | undefined {
     if (!this.officerExternalId) return;
     return this.justiceInvolvedPersonsStore.caseloadByOfficerExternalId.get(
       this.officerExternalId,
+    );
+  }
+
+  get numClientsOnCaseload(): number | undefined {
+    return this.clients?.length;
+  }
+
+  get numEligibleOpportunities(): number | undefined {
+    return this.clients?.reduce(
+      (totalNum, client) =>
+        Object.keys(client.opportunitiesEligible).length + totalNum,
+      0,
+    );
+  }
+
+  get opportunitiesByType():
+    | Record<OpportunityType, Opportunity[]>
+    | undefined {
+    return this.clients?.reduce(
+      (oppsByType, client) => {
+        Object.entries(client.opportunitiesEligible).forEach(([key, opp]) => {
+          const oppList = oppsByType[key as OpportunityType];
+          if (oppList) {
+            oppList.push(opp);
+          } else {
+            oppsByType[key as OpportunityType] = [opp];
+          }
+        });
+        return oppsByType;
+      },
+      {} as Record<OpportunityType, Opportunity[]>,
     );
   }
 

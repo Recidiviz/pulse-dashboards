@@ -113,7 +113,7 @@ const Description = styled.div`
   margin-top: ${rem(spacing.md)};
 `;
 
-const Subtitle = styled.div`
+export const Subtitle = styled.div`
   ${typography.Sans24};
   color: ${palette.pine2};
   font-weight: 600;
@@ -251,7 +251,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
             >
               {infoItems.map(
                 (item) =>
-                  item.info && (
+                  !!item.info && (
                     <InsightsTooltip
                       key={item.title}
                       contents={item.tooltip}
