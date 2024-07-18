@@ -227,7 +227,7 @@ export default class UserStore {
     this.rootStore?.workflowsStore.disposeUserProfileSubscriptions();
 
     try {
-      if (!this.isRecidivizUser) {
+      if (!this.isRecidivizUser && !this.isImpersonating) {
         throw new Error("Impersonation is only allowed for Recidiviz users");
       }
 

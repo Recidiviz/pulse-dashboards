@@ -1212,4 +1212,38 @@ describe("impersonateUser", () => {
     );
     expect(store.user).toEqual(user);
   });
+
+  test("authenticates recidiviz user who is already impersonating another user", async () => {
+    const allowedStates = ["US_TN", "US_CA"];
+    const impersonatedState = "us_tn";
+    const impersonatedEmail = "impersonatedEmail@doc.gov";
+    const secondImpersonatedEmail = "secondImpersonatedEmail@doc.gov";
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      [metadataField]: { stateCode: "recidiviz", allowedStates },
+    });
+    mockGetTokenSilently.mockReturnValue("token123");
+    mockFetchImpersonatedUserAppMetadata.mockResolvedValue({
+      stateCode: impersonatedState,
+    });
+
+    await store.authorize(mockHandleUrl);
+    await store.impersonateUser(impersonatedEmail);
+    await store.impersonateUser(secondImpersonatedEmail);
+
+    expect(store.impersonationError).toBeUndefined();
+    expect(store.rootStore?.firestoreStore.authenticate).toHaveBeenCalled();
+    expect(store.user).toEqual({
+      email: secondImpersonatedEmail,
+      email_verified: true,
+      given_name: "Impersonated User",
+      [metadataField]: {
+        stateCode: impersonatedState,
+        allowedStates: [impersonatedState],
+      },
+      impersonator: true,
+      name: "Impersonated User",
+      stateCode: impersonatedState,
+    });
+  });
 });
