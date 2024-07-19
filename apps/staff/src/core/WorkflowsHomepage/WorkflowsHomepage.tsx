@@ -33,7 +33,7 @@ import { SystemId } from "../models/types";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
-import OpportunityTypeSummary from "./OpportunityTypeSummary";
+import { OpportunitySummaries } from "./OpportunitySummaries";
 
 function getSelectOpportunitiesText(
   opportunityTypes: OpportunityType[],
@@ -72,29 +72,6 @@ function getHydratedCallToActionPluralizedText(
   return `${pluralizeWord("caseload", numSearchIds)}`;
 }
 
-const OpportunitySummaries = observer(function OpportunitySummaries() {
-  const { workflowsStore } = useRootStore();
-  const { opportunityTypes, allOpportunitiesByType } = workflowsStore;
-  return (
-    <>
-      {opportunityTypes.map((opportunityType) => {
-        const opportunities = allOpportunitiesByType[opportunityType] || [];
-
-        if (opportunities.length) {
-          return (
-            <OpportunityTypeSummary
-              key={opportunityType}
-              opportunities={opportunities}
-              opportunityType={opportunityType}
-            />
-          );
-        }
-        return null;
-      })}
-    </>
-  );
-});
-
 const WorkflowsHomepage = observer(
   function WorkflowsHomepage(): React.ReactElement | null {
     const { workflowsStore } = useRootStore();
@@ -108,6 +85,7 @@ const WorkflowsHomepage = observer(
       justiceInvolvedPersonTitle,
       activeSystem,
       rootStore: { currentTenantId },
+      allOpportunitiesByType,
     } = workflowsStore;
 
     const opportunityConfigs = useOpportunityConfigurations();
@@ -149,7 +127,10 @@ const WorkflowsHomepage = observer(
 
     const hydrated = (
       <WorkflowsResults headerText={hydratedCallToAction}>
-        <OpportunitySummaries />
+        <OpportunitySummaries
+          opportunityTypes={opportunityTypes}
+          opportunitiesByType={allOpportunitiesByType}
+        />
       </WorkflowsResults>
     );
 

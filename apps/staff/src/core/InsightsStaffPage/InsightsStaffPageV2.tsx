@@ -26,6 +26,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
 import { toTitleCase } from "../../utils";
+import { OpportunityType } from "../../WorkflowsStore";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { Subtitle } from "../InsightsPageLayout/InsightsPageLayout";
@@ -35,6 +36,7 @@ import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
 import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
+import { OpportunitySummaries } from "../WorkflowsHomepage/OpportunitySummaries";
 
 const Wrapper = styled.div<{ isTablet: boolean }>`
   display: grid;
@@ -42,6 +44,12 @@ const Wrapper = styled.div<{ isTablet: boolean }>`
     2,
     minmax(${({ isTablet }) => (isTablet ? "unset" : rem(300))}, 1fr)
   );
+  gap: ${rem(spacing.md)};
+`;
+
+const OpportunitiesWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: ${rem(spacing.md)};
 `;
 
@@ -61,9 +69,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     labels,
     timePeriod,
     userCanAccessAllSupervisors,
-    clients,
     numClientsOnCaseload,
     numEligibleOpportunities,
+    opportunitiesByType,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -188,21 +196,23 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           );
         })}
       </Wrapper>
-      {/* TODO(#5318): Make this the actual layout */}
-      {clients && (
-        <Wrapper isTablet={isTablet}>
+      {opportunitiesByType && (
+        <OpportunitiesWrapper>
           <Subtitle>{`Opportunities (${numEligibleOpportunities ?? 0})`}</Subtitle>
-          {clients
-            .filter((c) => Object.keys(c.verifiedOpportunities).length > 0)
-            .map((c) => (
-              <div>
-                {c.displayName}:{" "}
-                {Object.values(c.verifiedOpportunities)
-                  .map((opp) => opp.config.label)
-                  .join(", ")}
-              </div>
-            ))}
-        </Wrapper>
+          {numEligibleOpportunities ? (
+            <OpportunitySummaries
+              opportunitiesByType={opportunitiesByType}
+              opportunityTypes={
+                Object.keys(opportunitiesByType) as OpportunityType[]
+              }
+            />
+          ) : (
+            <EmptyCard
+              message="No outstanding opportunities for now"
+              height={200}
+            />
+          )}
+        </OpportunitiesWrapper>
       )}
     </InsightsPageLayout>
   );

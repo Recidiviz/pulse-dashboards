@@ -43,9 +43,11 @@ const OpportunityTypeSummaryWrapper = styled.div<{
   display: flex;
   flex-flow: row ${({ isMobile }) => !isMobile && "no"}wrap;
   justify-content: space-between;
-  margin-top: ${rem(spacing.xxl)};
-  padding-top: ${rem(spacing.md)};   
-  border-top: 1px solid ${palette.slate20};}
+  padding-top: ${rem(spacing.md)};
+  border-top: 1px solid ${palette.slate20};
+  &:not(:first-child) {
+    margin-top: ${rem(spacing.xxl)};
+  }
 `;
 
 const OpportunityHeaderWrapper = styled.div<{
@@ -164,6 +166,8 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
             </ReviewStatusCount>
           )}
         </ReviewStatusWrapper>
+        {/* TODO(#5320): add url parameter to specify where the View All
+        link should navigate to when coming from insights */}
         <ViewAllLink
           $isMobile={isMobile}
           className={`ViewAllLink__${opportunityType}`}

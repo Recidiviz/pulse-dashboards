@@ -37,6 +37,7 @@ import { insightsUrl } from "../views";
 const CardWrapper = styled.div<{
   noFlex: boolean;
   isSticky?: boolean;
+  height?: number;
 }>`
   border: 1px solid ${palette.slate30};
   display: ${({ noFlex }) => (noFlex ? "block" : "flex")};
@@ -44,6 +45,7 @@ const CardWrapper = styled.div<{
   border-radius: 4px;
 
   ${({ isSticky }) => isSticky && `position: sticky; top: 5rem;`}
+  ${({ height }) => height && `height: ${height}px;`}
 `;
 
 const CardHeader = styled.div<{
@@ -152,9 +154,15 @@ const EmptyWrapper = styled.div`
   color: ${palette.slate85};
 `;
 
-export const EmptyCard = ({ message }: { message: string }) => {
+export const EmptyCard = ({
+  message,
+  height,
+}: {
+  message: string;
+  height?: number;
+}) => {
   return (
-    <CardWrapper noFlex={false}>
+    <CardWrapper noFlex={false} height={height}>
       <EmptyWrapper>
         <GreenCheckmark width={16} />
         {message}

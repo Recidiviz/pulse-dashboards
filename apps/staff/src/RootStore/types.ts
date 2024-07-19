@@ -169,9 +169,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
     : {
         ...allFeatureVariants,
         supervisorHomepage: undefined,
-        // Currently disabled even in staging because the data isn't formatted nicely yet. When
-        // the features are properly added, this can be enabled.
-        supervisorHomepageWorkflows: undefined,
       };
 
 export type LanternMethodologyByTenant = {
