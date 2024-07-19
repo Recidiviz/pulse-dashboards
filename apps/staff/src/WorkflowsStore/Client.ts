@@ -91,9 +91,8 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
   },
 };
 
-const supervisionOpportunityConstructors: Record<
-  SupervisionOpportunityType,
-  new (c: Client) => Opportunity<Client>
+const supervisionOpportunityConstructors: Partial<
+  Record<SupervisionOpportunityType, new (c: Client) => Opportunity<Client>>
 > = {
   compliantReporting: CompliantReportingOpportunity,
   earlyTermination: UsNdEarlyTerminationOpportunity,
@@ -119,11 +118,9 @@ const supervisionOpportunityConstructors: Record<
 export const createClientOpportunity: OpportunityFactory<
   SupervisionOpportunityType,
   Client
-> = (type, person): Opportunity => {
-  if (person instanceof Client) {
-    return new supervisionOpportunityConstructors[type](person);
-  }
-  throw new Error("Unsupported opportunity");
+> = (type, person) => {
+  const constructor = supervisionOpportunityConstructors[type];
+  if (constructor) return new constructor(person);
 };
 
 export type TaskFactory<PersonType extends JusticeInvolvedPerson> = (

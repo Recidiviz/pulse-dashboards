@@ -136,7 +136,7 @@ export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
 export type OpportunityFactory<
   OpportunitySubtype extends OpportunityType,
   PersonType extends JusticeInvolvedPerson,
-> = (type: OpportunitySubtype, person: PersonType) => Opportunity;
+> = (type: OpportunitySubtype, person: PersonType) => Opportunity | undefined;
 
 export type OpportunityTab =
   | "Eligible Now"

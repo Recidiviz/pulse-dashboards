@@ -113,7 +113,7 @@ export function updateOpportunityEligibility(
  * While this is an abstract class, it provides stubs rather than abstract properties, whenever possible,
  * to facilitate incremental development of new opportunities.
  */
-export abstract class OpportunityBase<
+export class OpportunityBase<
   PersonType extends JusticeInvolvedPerson,
   ReferralRecord extends DocumentData,
   UpdateRecord extends OpportunityUpdateWithForm<any> = OpportunityUpdate,

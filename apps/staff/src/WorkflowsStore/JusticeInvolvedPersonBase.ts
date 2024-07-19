@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { intersection, xor } from "lodash";
 import {
   action,
@@ -44,6 +45,7 @@ import { RootStore } from "../RootStore";
 import { humanReadableTitleCase } from "../utils";
 import { TaskFactory } from "./Client";
 import { OpportunityFactory, OpportunityType } from "./Opportunity";
+import { OpportunityBase } from "./Opportunity/OpportunityBase";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -130,7 +132,12 @@ export class JusticeInvolvedPersonBase<
               opportunityFactory(
                 opportunityType,
                 this as unknown as PersonClassForRecord<RecordType>,
-              ),
+              ) ??
+                new OpportunityBase<JusticeInvolvedPerson, DocumentData>(
+                  this,
+                  opportunityType,
+                  rootStore,
+                ),
             );
           }
         });

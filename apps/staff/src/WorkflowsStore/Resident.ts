@@ -52,9 +52,11 @@ import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
 
-const residentialOpportunityConstructors: Record<
-  IncarcerationOpportunityType,
-  new (c: Resident) => Opportunity<Resident>
+const residentialOpportunityConstructors: Partial<
+  Record<
+    IncarcerationOpportunityType,
+    new (c: Resident) => Opportunity<Resident>
+  >
 > = {
   usIdCRCResidentWorker: UsIdCRCResidentWorkerOpportunity,
   usIdCRCWorkRelease: UsIdCRCWorkReleaseOpportunity,
@@ -87,7 +89,8 @@ const createResidentOpportunity: OpportunityFactory<
   IncarcerationOpportunityType,
   Resident
 > = (type, person) => {
-  return new residentialOpportunityConstructors[type](person);
+  const constructor = residentialOpportunityConstructors[type];
+  if (constructor) return new constructor(person);
 };
 
 export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord> {
