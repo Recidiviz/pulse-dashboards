@@ -88,6 +88,9 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   get denialButtonText() {
     return this.configurationObject.denialButtonText;
   }
+  get priority() {
+    return this.configurationObject.priority ?? "NORMAL";
+  }
   get eligibilityDateText() {
     return this.configurationObject.eligibilityDateText;
   }

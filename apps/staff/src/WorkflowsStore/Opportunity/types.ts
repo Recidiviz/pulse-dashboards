@@ -50,6 +50,7 @@ export const OPPORTUNITY_STATUS_RANKED = [
   "ALMOST",
 ] as const;
 export type OpportunityStatus = (typeof OPPORTUNITY_STATUS_RANKED)[number];
+export const PRIORITY_STATUS_RANKED = ["HIGH", "NORMAL"] as const;
 
 export type DenialReasonsMap = Record<string, string>;
 

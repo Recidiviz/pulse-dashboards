@@ -53,6 +53,7 @@ export interface ILocalOpportunityConfiguration {
   featureVariant?: FeatureVariant;
   inverseFeatureVariant?: FeatureVariant;
   label: string;
+  priority?: string;
   newPolicyCopyLabel?: string;
   firestoreCollection: string;
   snooze?: SnoozeConfigurationInput;

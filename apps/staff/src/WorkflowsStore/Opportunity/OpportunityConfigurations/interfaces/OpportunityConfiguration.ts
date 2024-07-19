@@ -25,6 +25,7 @@ export interface OpportunityConfiguration {
   systemType: SystemId;
   stateCode: TenantId;
   urlSection: string;
+  priority: string;
   featureVariant?: FeatureVariant;
   inverseFeatureVariant?: FeatureVariant;
   label: string;

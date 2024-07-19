@@ -35,6 +35,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   displayName: z.string(),
   featureVariant: nullishAsUndefined(z.string()),
   inverseFeatureVariant: nullishAsUndefined(z.string()),
+  priority: nullishAsUndefined(z.enum(["HIGH", "NORMAL"])).default("NORMAL"),
   dynamicEligibilityText: z.string(),
   callToAction: z.string(),
   subheading: z.string().optional(),

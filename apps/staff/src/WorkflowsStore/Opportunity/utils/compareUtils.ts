@@ -18,11 +18,16 @@
 import { ascending, descending } from "d3-array";
 
 import { SortParamObject } from "../OpportunityConfigs";
-import { Opportunity, OPPORTUNITY_STATUS_RANKED } from "../types";
+import {
+  Opportunity,
+  OPPORTUNITY_STATUS_RANKED,
+  PRIORITY_STATUS_RANKED,
+} from "../types";
 
 const RANKING_OVERRIDES = {
   reviewStatus: OPPORTUNITY_STATUS_RANKED,
-} as const;
+  priority: PRIORITY_STATUS_RANKED,
+};
 
 type SortParam = SortParamObject<string>;
 
@@ -66,9 +71,11 @@ export function buildOpportunityCompareFunction(sortFields: SortParam[]) {
               return sortDirection === "asc" ? Infinity : -Infinity;
           }
           return (
-            RANKING_OVERRIDES[field as keyof typeof RANKING_OVERRIDES]?.indexOf(
-              propertyValue,
-            ) ?? propertyValue
+            (
+              RANKING_OVERRIDES[field as keyof typeof RANKING_OVERRIDES] as
+                | Readonly<Array<string>>
+                | undefined
+            )?.indexOf(propertyValue) ?? propertyValue
           );
         };
 

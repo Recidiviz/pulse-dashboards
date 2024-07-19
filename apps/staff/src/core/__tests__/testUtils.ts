@@ -79,6 +79,7 @@ export const mockOpportunity: Opportunity<Client> = {
     stateCode: "US_ID",
     urlSection: "pastFTRD",
     label: "Past FTRD",
+    priority: "NORMAL",
     initialHeader:
       "Search for officers above to review clients whose full-term release date is near or has passed.",
     eligibilityTextForCount(count) {

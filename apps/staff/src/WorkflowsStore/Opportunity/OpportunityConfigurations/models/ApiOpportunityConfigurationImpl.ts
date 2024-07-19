@@ -109,6 +109,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return hydrateSnooze(this.configurationObject.snooze);
   }
 
+  get priority() {
+    return this.configurationObject.priority;
+  }
+
   get initialHeader() {
     return this.configurationObject.initialHeader;
   }
