@@ -123,6 +123,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               <Insights />
               {/* Opportunities */}
               <Opportunities
+                firstName={firstName}
                 isTermRecommendation={
                   selectedRecommendation === RecommendationType.Term
                 }

@@ -22,14 +22,15 @@ import { DropdownButton } from "../Dashboard/Dashboard.styles";
 import * as Styled from "./CaseDetails.styles";
 
 type OpportunitiesProps = {
+  firstName?: string;
   isTermRecommendation: boolean;
 };
 
 // TODO(Recidiviz/recidiviz-data#30650) Implement Opportunities flow
 export const Opportunities: React.FC<OpportunitiesProps> = ({
+  firstName,
   isTermRecommendation,
 }) => {
-  const firstName = "Joshua";
   const tempNeedsList = ["Need 1", "Need 2", "Need 3"].map((need) => (
     <div key={need}>{need}</div>
   ));

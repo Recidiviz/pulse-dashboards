@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useState } from "react";
 
@@ -35,76 +36,72 @@ type AttributeLabelValue = {
   value: string | number;
 };
 
-// TODO(Recidiviz/recidiviz-data#30649) Implement Case Attributes flow
-export const CaseAttributes: React.FC<CaseAttributesProps> = ({
-  firstName,
-  caseAttributes,
-  form,
-  saveAttributes,
-}) => {
-  const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
-    useState(false);
+export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
+  function CaseAttributes({ firstName, caseAttributes, form, saveAttributes }) {
+    const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
+      useState(false);
 
-  const showModal = () => setShowEditCaseDetailsModal(true);
-  const hideModal = () => setShowEditCaseDetailsModal(false);
+    const showModal = () => setShowEditCaseDetailsModal(true);
+    const hideModal = () => setShowEditCaseDetailsModal(false);
 
-  const {
-    id,
-    dueDate,
-    reportType,
-    county,
-    primaryCharge,
-    lsirScore,
-    birthDate,
-    fullName,
-    gender,
-  } = caseAttributes;
+    const {
+      id,
+      dueDate,
+      reportType,
+      county,
+      primaryCharge,
+      lsirScore,
+      birthDate,
+      fullName,
+      gender,
+    } = caseAttributes;
 
-  const attributesRow: AttributeLabelValue[] = [
-    { label: "Report Type", value: reportType },
-    { label: "County", value: county },
-    { label: "Gender", value: gender },
-    { label: "Age", value: moment().diff(birthDate, "years") },
-    { label: "Offense", value: primaryCharge, isEditable: true },
-    { label: "LSI-R Score", value: lsirScore, isEditable: true },
-  ].map((attribute) => {
-    return { ...attribute, value: attribute.value ?? "-" };
-  });
+    const attributesRow: AttributeLabelValue[] = [
+      { label: "Report Type", value: reportType },
+      { label: "County", value: county },
+      { label: "Gender", value: gender },
+      { label: "Age", value: moment().diff(birthDate, "years") },
+      { label: "Offense", value: primaryCharge, isEditable: true },
+      { label: "LSI-R Score", value: lsirScore, isEditable: true },
+    ].map((attribute) => {
+      return { ...attribute, value: attribute.value ?? "-" };
+    });
 
-  return (
-    <Styled.CaseAttributes>
-      {/* Name, ID, Due Date */}
-      <Styled.HeaderWrapper>
-        <Styled.Name>{fullName}</Styled.Name>
-        <Styled.ID>{id}</Styled.ID>
-        <Styled.DueDate>
-          Due {moment(dueDate).format("MM/DD/YYYY")}
-        </Styled.DueDate>
-        <Styled.EditCaseDetailsButton onClick={showModal}>
-          Edit Case Details
-        </Styled.EditCaseDetailsButton>
-      </Styled.HeaderWrapper>
+    return (
+      <Styled.CaseAttributes>
+        {/* Name, ID, Due Date */}
+        <Styled.HeaderWrapper>
+          <Styled.Name>{fullName}</Styled.Name>
+          <Styled.ID>{id}</Styled.ID>
+          <Styled.DueDate>
+            Due {moment(dueDate).format("MM/DD/YYYY")}
+          </Styled.DueDate>
+          <Styled.EditCaseDetailsButton onClick={showModal}>
+            Edit Case Details
+          </Styled.EditCaseDetailsButton>
+        </Styled.HeaderWrapper>
 
-      {/* Case Details Subheader (Report Type, County, Gender, Age, Offense, LSI-R Score) */}
-      <Styled.CaseAttributesWrapper>
-        {attributesRow.map((attribute) => (
-          <Styled.AttributeValueWrapper key={attribute.label}>
-            <Styled.Attribute>{attribute.label}:</Styled.Attribute>
-            <Styled.Value>{attribute.value}</Styled.Value>
-          </Styled.AttributeValueWrapper>
-        ))}
-      </Styled.CaseAttributesWrapper>
+        {/* Case Details Subheader (Report Type, County, Gender, Age, Offense, LSI-R Score) */}
+        <Styled.CaseAttributesWrapper>
+          {attributesRow.map((attribute) => (
+            <Styled.AttributeValueWrapper key={attribute.label}>
+              <Styled.Attribute>{attribute.label}:</Styled.Attribute>
+              <Styled.Value>{attribute.value}</Styled.Value>
+            </Styled.AttributeValueWrapper>
+          ))}
+        </Styled.CaseAttributesWrapper>
 
-      {/* Edit Case Details Modal */}
-      {form && (
-        <EditCaseDetailsModal
-          firstName={firstName}
-          form={form}
-          hideModal={hideModal}
-          isOpen={showEditCaseDetailsModal}
-          saveAttributes={saveAttributes}
-        />
-      )}
-    </Styled.CaseAttributes>
-  );
-};
+        {/* Edit Case Details Modal */}
+        {form && (
+          <EditCaseDetailsModal
+            firstName={firstName}
+            form={form}
+            hideModal={hideModal}
+            isOpen={showEditCaseDetailsModal}
+            saveAttributes={saveAttributes}
+          />
+        )}
+      </Styled.CaseAttributes>
+    );
+  },
+);

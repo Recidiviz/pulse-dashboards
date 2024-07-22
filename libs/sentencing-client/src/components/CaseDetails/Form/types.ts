@@ -30,6 +30,7 @@ export type InputFieldProps = {
   updateFormError?: (hasError: boolean) => void;
   placeholder?: string;
   isOtherContext?: boolean;
+  hasError?: boolean;
 };
 
 export type SelectOption = {

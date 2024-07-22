@@ -19,6 +19,7 @@ import { palette, typography } from "@recidiviz/design-system";
 import { StylesConfig } from "react-select";
 import styled from "styled-components/macro";
 
+import { MAX_MODAL_HEIGHT } from "../Modal/Modal";
 import { customPalette } from "../styles/palette";
 import { OnboardingTopic } from "./CaseOnboarding/types";
 import { MutableCaseAttributes, ProfileStrength } from "./types";
@@ -319,10 +320,11 @@ export const RecommendationDetails = styled.div`
   gap: 16px;
 `;
 
-export const RecommendationOptionLabel = styled.div<{ smallFont: boolean }>`
+export const RecommendationOptionLabel = styled.label<{ smallFont: boolean }>`
   display: flex;
   gap: 8px;
   align-items: center;
+  margin-bottom: 0;
   color: ${({ smallFont }) => (smallFont ? palette.slate85 : palette.pine2)};
 
   ${({ smallFont }) => (smallFont ? typography.Sans14 : typography.Sans18)}
@@ -725,6 +727,11 @@ export const Chip = styled.div<{ color?: keyof typeof ChipColors }>`
 
 /** Edit Case Details Modal */
 
+export const ModalHeaderWrapper = styled.div`
+  width: 100%;
+  background: ${palette.white};
+`;
+
 export const ModalHeader = styled.div`
   ${typography.Sans24}
   color: ${palette.pine2};
@@ -740,6 +747,13 @@ export const ModalDescription = styled.div`
 export const Form = styled.form`
   display: flex;
   flex-direction: column;
+  margin-right: 11px;
+`;
+
+export const FormScrollWrapper = styled.div`
+  height: calc(${MAX_MODAL_HEIGHT} - 35vh);
+  overflow-y: auto;
+  margin-bottom: 28px;
 `;
 
 export const InputWrapper = styled.div`
@@ -800,6 +814,7 @@ export const InputDescription = styled.div`
 `;
 
 export const ErrorMessage = styled.div`
+  margin-top: 4px;
   color: ${palette.signal.error};
 `;
 
@@ -859,6 +874,22 @@ export const ActionButtonWrapper = styled.div`
   width: 100%;
   left: 0;
   margin-top: 16px;
+`;
+
+export const StickyActionButtonWrapper = styled.div`
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  background: ${palette.white};
+  border-top: 1px solid ${palette.slate20};
+  padding: 10px 40px;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  margin-top: 16px;
+  z-index: 99;
 `;
 
 export const dropdownStyles: StylesConfig<unknown, true> = {

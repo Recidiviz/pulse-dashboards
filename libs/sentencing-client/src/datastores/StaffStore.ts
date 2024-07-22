@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
 import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
+import toast from "react-hot-toast";
 
 import { FlowMethod } from "~hydration-utils";
 import { PSIStore } from "~sentencing-client";
 
 import { APIClient, CaseWithClient, Staff } from "../api/APIClient";
+import { ERROR_TOAST_DURATION } from "./constants";
 
 type CaseBriefsById = {
   [key: string]: CaseWithClient;
@@ -38,7 +41,17 @@ export class StaffStore {
 
   /** This is a MobX flow method and should be called with mobx.flowResult */
   *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
-    this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
-    this.caseBriefsById = keyBy(this.staffInfo.Cases, "id");
+    try {
+      this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
+      this.caseBriefsById = keyBy(this.staffInfo.Cases, "id");
+    } catch (error) {
+      toast(
+        "Something went wrong loading your cases. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
   }
 }

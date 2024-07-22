@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
 import { makeAutoObservable } from "mobx";
+import toast from "react-hot-toast";
 
 import { FlowMethod } from "~hydration-utils";
 
 import { APIClient, Case } from "../api/APIClient";
 import { MutableCaseAttributes } from "../components/CaseDetails/types";
+import { ERROR_TOAST_DURATION } from "./constants";
 import { PSIStore } from "./PSIStore";
 
 export class CaseStore {
@@ -35,16 +38,35 @@ export class CaseStore {
   *loadCaseDetails(
     caseId: string,
   ): FlowMethod<APIClient["getCaseDetails"], void> {
-    const caseDetails = yield this.psiStore.apiClient.getCaseDetails(caseId);
-
-    this.caseDetailsById = {
-      ...this.caseDetailsById,
-      [caseId]: caseDetails,
-    };
+    try {
+      const caseDetails = yield this.psiStore.apiClient.getCaseDetails(caseId);
+      this.caseDetailsById = {
+        ...this.caseDetailsById,
+        [caseId]: caseDetails,
+      };
+    } catch (error) {
+      toast(
+        "Something went wrong loading the case details. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
   }
 
   *updateCaseDetails(caseId: string, updates?: MutableCaseAttributes) {
-    if (!updates) return;
-    yield this.psiStore.apiClient.updateCaseDetails(caseId, updates);
+    try {
+      if (!updates) return;
+      yield this.psiStore.apiClient.updateCaseDetails(caseId, updates);
+    } catch (error) {
+      toast(
+        "Something went wrong updating the case details. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
   }
 }

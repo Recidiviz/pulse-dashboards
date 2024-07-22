@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { Modal } from "../Modal/Modal";
 import * as Styled from "./CaseDetails.styles";
 import { CaseDetailsForm } from "./Form/CaseDetailsForm";
-import { FormField } from "./Form/Elements/FormField";
+import { Form } from "./Form/Elements/Form";
 
 const EditCaseDetailsModal = ({
   firstName,
@@ -46,41 +46,20 @@ const EditCaseDetailsModal = ({
 
   return (
     <Modal isOpen={isOpen} hideModal={closeModal}>
-      <Styled.ModalHeader>Edit Case Details</Styled.ModalHeader>
-      <Styled.ModalDescription>
-        We will use this data to generate opportunities for {firstName}. If you
-        don&apos;t have this information yet, you can add it in later.
-      </Styled.ModalDescription>
+      <Styled.ModalHeaderWrapper>
+        <Styled.ModalHeader>Edit Case Details</Styled.ModalHeader>
+        <Styled.ModalDescription>
+          We will use this data to generate opportunities for {firstName}. If
+          you don&apos;t have this information yet, you can add it in later.
+        </Styled.ModalDescription>
+      </Styled.ModalHeaderWrapper>
 
       {/* Form */}
-      <Styled.Form>
-        {form.contentList.map((element) => {
-          const showNestedFields = Array.isArray(element.value)
-            ? element.value.some((val) =>
-                element.showNestedValuesMatch?.includes(val),
-              )
-            : element.showNestedValuesMatch?.includes(String(element.value));
-          return (
-            <Styled.InputWrapper key={element.key}>
-              <FormField element={element} form={form} />
+      <Styled.FormScrollWrapper>
+        <Form form={form} formFields={form.contentList} />
+      </Styled.FormScrollWrapper>
 
-              {element.nested &&
-                showNestedFields &&
-                element.nested.map((nestedElement) => (
-                  <Styled.NestedWrapper key={nestedElement.key}>
-                    <FormField
-                      element={nestedElement}
-                      form={form}
-                      parentKey={element.key}
-                    />
-                  </Styled.NestedWrapper>
-                ))}
-            </Styled.InputWrapper>
-          );
-        })}
-      </Styled.Form>
-
-      <Styled.ActionButtonWrapper>
+      <Styled.StickyActionButtonWrapper>
         <Styled.ActionButton kind="link" onClick={closeModal}>
           Cancel
         </Styled.ActionButton>
@@ -90,7 +69,7 @@ const EditCaseDetailsModal = ({
         >
           Save
         </Styled.ActionButton>
-      </Styled.ActionButtonWrapper>
+      </Styled.StickyActionButtonWrapper>
     </Modal>
   );
 };

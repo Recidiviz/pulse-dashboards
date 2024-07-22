@@ -54,6 +54,11 @@ export const PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY: keyof Attributes 
 export type PreviouslyIncarceratedOrUnderSupervision =
   "previouslyIncarceratedOrUnderSupervision";
 
+export const HAS_PREVIOUS_VIOLENT_OFFENSE_KEY: keyof Attributes =
+  "hasPreviousViolentOffenseConviction";
+export type HasPreviousViolentOffenseConviction =
+  "hasPreviousViolentOffenseConviction";
+
 export const HAS_DEVELOPMENTAL_DISABILITY_KEY: keyof Attributes =
   "hasDevelopmentalDisability";
 export type HasDevelopmentalDisability = "hasDevelopmentalDisability";

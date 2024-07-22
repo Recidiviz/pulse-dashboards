@@ -87,9 +87,11 @@ export const parseFormValue = (
   }
 
   if (key === ASAM_CARE_RECOMMENDATION_KEY) {
-    return asamLevelOfCareRecommendation[
-      value as NonNullable<Case[AsamCareRecommendationKey]>
-    ];
+    return (
+      asamLevelOfCareRecommendation[
+        value as NonNullable<Case[AsamCareRecommendationKey]>
+      ] ?? null
+    );
   }
 
   if (key === PLEA_KEY) {

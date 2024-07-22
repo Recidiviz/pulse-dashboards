@@ -41,7 +41,7 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
 
     const updatedValue = currentValue?.includes(option)
       ? currentValue.filter((val) => val !== option)
-      : [...currentValue, option];
+      : [...(currentValue ?? []), option];
 
     setCurrentValue(updatedValue);
     updateForm(element.key, updatedValue, parentKey);

@@ -15,28 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CaseWithClient, Client } from "../../api";
-import { Attributes } from "../CaseDetails/types";
-
-export const DUE_DATE_KEY: keyof CaseWithClient = "dueDate";
-
-export const CLIENT_KEY: keyof CaseWithClient = "Client";
-
-export const REPORT_TYPE_KEY: keyof CaseWithClient = "reportType";
-
-export const ID_KEY: keyof CaseWithClient = "id";
-
-export const PRIMARY_CHARGE_KEY: keyof Attributes = "primaryCharge";
-
-export const STATUS_KEY: keyof CaseWithClient = "status";
-
-const FULL_NAME_KEY: keyof Exclude<Client, null> = "fullName";
-
-export const CLIENT_FULL_NAME_KEY = [CLIENT_KEY, FULL_NAME_KEY].join(".");
-
-export const NO_CASES_MESSAGE = "No cases to review";
-
-export const SortKeys = {
-  ClientFullName: CLIENT_FULL_NAME_KEY,
-  DueDate: DUE_DATE_KEY,
-};
+export const ERROR_TOAST_DURATION = 3000;

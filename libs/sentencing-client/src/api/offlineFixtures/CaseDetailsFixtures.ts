@@ -26,7 +26,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     sentenceDate: new Date("2023-12-16T04:52:18.339Z"),
     assignedDate: new Date("2023-10-20T20:19:13.149Z"),
     county: "Borders",
-    lsirScore: 100,
+    lsirScore: null,
     lsirLevel: "6584455049248768",
     reportType: "Full PSI",
     primaryCharge: "Felony",

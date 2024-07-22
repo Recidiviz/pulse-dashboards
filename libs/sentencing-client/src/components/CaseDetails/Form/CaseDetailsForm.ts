@@ -40,7 +40,7 @@ import {
   MutableCaseAttributes,
 } from "../types";
 import { caseDetailsFormTemplate } from "./CaseDetailsFormTemplate";
-import { parseFormValue, transformUpdates } from "./utils";
+import { isValidLsirScore, parseFormValue, transformUpdates } from "./utils";
 
 export class CaseDetailsForm {
   content: { [key: string]: FormField };
@@ -51,9 +51,9 @@ export class CaseDetailsForm {
 
   constructor(private readonly caseAttributes: Attributes) {
     makeAutoObservable(this, {}, { autoBind: true });
+    this.hasError = false;
     this.content = this.createForm(caseAttributes);
     this.updates = {} as FormUpdates;
-    this.hasError = false;
   }
 
   get contentList() {
@@ -104,9 +104,18 @@ export class CaseDetailsForm {
   createForm(caseAttributes: Attributes) {
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
       const attributeValue = caseAttributes[field.key];
+      const invalidLsirScore =
+        field.key === LSIR_SCORE_KEY &&
+        attributeValue &&
+        !isValidLsirScore(String(attributeValue));
       if (attributeValue === undefined) {
         return field;
       }
+
+      if (invalidLsirScore) {
+        this.updateFormError(true);
+      }
+
       return {
         ...field,
         value: parseFormValue(field.key, attributeValue),
@@ -130,8 +139,7 @@ export class CaseDetailsForm {
             : field.otherContext?.value,
         },
         isDisabled:
-          // TODO(Recidiviz/recidiviz-data#31228) Determine this from the new to-be-added `lsirScoreLocked` field
-          field.key === LSIR_SCORE_KEY && caseAttributes.lsirScore !== null,
+          field.key === LSIR_SCORE_KEY && caseAttributes.isLsirScoreLocked,
       };
     });
 

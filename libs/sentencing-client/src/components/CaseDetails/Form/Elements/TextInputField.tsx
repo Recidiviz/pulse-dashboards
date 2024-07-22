@@ -53,7 +53,7 @@ export const TextInputField: React.FC<InputFieldProps> = ({
     setCurrentValue(e.target.value);
 
     if (element.key === LSIR_SCORE_KEY) {
-      if (!isValidLsirScore(e.target.value) && e.target.value !== "") {
+      if (!isValidLsirScore(e.target.value) || e.target.value.trim() === "") {
         handleValidationError(true);
         return;
       }

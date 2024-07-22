@@ -74,12 +74,16 @@ export const RecommendationOptionBase: React.FC<RecommendationsOptionProps> = ({
       key={option.key}
     >
       <Styled.InputSelection
+        id={option.key}
         type="radio"
         checked={isSelectedRecommendation}
         onChange={() => handleRecommendationUpdate(option.key)}
       />
       <Styled.RecommendationDetails>
-        <Styled.RecommendationOptionLabel smallFont={smallFont}>
+        <Styled.RecommendationOptionLabel
+          htmlFor={option.key}
+          smallFont={smallFont}
+        >
           {option.label}{" "}
           {isRecorded && <Styled.Chip color={"teal"}>Recorded</Styled.Chip>}
         </Styled.RecommendationOptionLabel>
