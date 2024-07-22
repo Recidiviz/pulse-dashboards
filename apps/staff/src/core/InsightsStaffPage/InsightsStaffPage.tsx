@@ -412,6 +412,8 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                     <InsightsLinePlot
                       metric={metric}
                       supervisorHomepage={false}
+                      supervisionOfficerLabel={labels.supervisionOfficerLabel}
+                      methodologyUrl={methodologyUrl}
                     />
                   </InsightsChartCard>
                 </Body>

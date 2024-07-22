@@ -283,7 +283,9 @@ export const MetricPageWithPresenter = observer(
               <InsightsLinePlot
                 metric={metric}
                 officerName={outlierOfficerData.displayName}
+                supervisionOfficerLabel={labels.supervisionOfficerLabel}
                 supervisorHomepage
+                methodologyUrl={methodologyUrl}
               />
             </InsightsChartCard>
           </Body>

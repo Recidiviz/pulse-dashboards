@@ -16,12 +16,14 @@
 // =============================================================================
 
 import {
+  Icon,
   palette,
   spacing,
   Tooltip,
   typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
 import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components/macro";
@@ -35,7 +37,6 @@ import {
   lineLegendIcon,
 } from "../InsightsLegend/InsightsLegend";
 import { GOAL_COLORS } from "../InsightsSwarmPlot/constants";
-
 const Wrapper = styled.div<{ supervisorHomepage: boolean }>`
   .data-visualization {
     .axis-baseline {
@@ -77,6 +78,42 @@ const Wrapper = styled.div<{ supervisorHomepage: boolean }>`
       stroke: none;
     }
   }
+`;
+
+const StyledLink = styled(Link)`
+  color: ${palette.signal.links} !important;
+  border-bottom: 1px solid ${palette.signal.links};
+`;
+
+const NoteContainer = styled.div<{
+  supervisorHomepage: boolean;
+}>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: ${({ supervisorHomepage }) =>
+    supervisorHomepage ? "#ECF1F0" : "#FDF9DD"};
+  padding: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.md)};
+  border-radius: 4px;
+`;
+
+const NoteLabelContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const NoteLabel = styled.div`
+  color: ${palette.pine1};
+  ${typography.Sans16};
+`;
+
+const NoteText = styled.div`
+  ${typography.Sans14};
+  color: ${palette.slate85};
+  margin-top: ${rem(spacing.sm)};
+  line-height: 1.5;
 `;
 
 const StyledTooltip = styled(Tooltip).attrs({
@@ -157,7 +194,9 @@ const reduceBottomTicks = (ticks: Date[], isMobile: boolean) => {
 type InsightsLinePlotType = {
   metric: MetricWithConfig;
   officerName?: string;
+  supervisionOfficerLabel: string;
   supervisorHomepage: boolean;
+  methodologyUrl: string;
 };
 
 type Point = {
@@ -169,7 +208,9 @@ type Point = {
 const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
   metric,
   officerName,
+  supervisionOfficerLabel,
   supervisorHomepage,
+  methodologyUrl,
 }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
   const [ref, bounds] = useMeasure();
@@ -224,8 +265,34 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
 
   const yRange = [0, maxTickValue];
 
+  const DataUnavailableNoteComponent: React.FC = () => {
+    return (
+      <NoteContainer supervisorHomepage={supervisorHomepage}>
+        <NoteLabelContainer>
+          {supervisorHomepage ? null : (
+            <Icon
+              kind="Alert"
+              color="#E0A852"
+              size={14}
+              style={{ marginRight: rem(spacing.xs) }}
+            />
+          )}
+          <NoteLabel>Data is unavailable</NoteLabel>
+        </NoteLabelContainer>
+        <NoteText>
+          {supervisionOfficerLabel[0].toUpperCase() +
+            supervisionOfficerLabel.slice(1)}{" "}
+          was excluded from some portion of this chart due to unusual patterns
+          in their caseload. For more, see{" "}
+          <StyledLink to={methodologyUrl}>methodology</StyledLink>.
+        </NoteText>
+      </NoteContainer>
+    );
+  };
+
   return (
     <Wrapper ref={ref} supervisorHomepage={supervisorHomepage}>
+      {metric.statusesOverTime.length < 6 && <DataUnavailableNoteComponent />}
       <ResponsiveXYFrame
         responsiveWidth={!bounds.width}
         hoverAnnotation
