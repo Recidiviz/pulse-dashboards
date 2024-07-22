@@ -24,9 +24,9 @@ test("psiStaffStore is initialized when psiStore is instantiated", () => {
 });
 
 test("psiCaseStore is initialized when psiStore is instantiated", () => {
-  expect(psiStore.staffStore).toBeDefined();
+  expect(psiStore.caseStore).toBeDefined();
 });
 
 test("apiClient is initialized when psiStore is instantiated", () => {
-  expect(psiStore.staffStore).toBeDefined();
+  expect(psiStore.apiClient).toBeDefined();
 });

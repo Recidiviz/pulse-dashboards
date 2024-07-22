@@ -44,7 +44,9 @@ export const WelcomeMessage = styled.div`
   color: ${palette.pine4};
 `;
 
-export const CloseButton = styled.div`
+export const CloseButton = styled.button`
+  border: none;
+  background-color: transparent;
   &:hover {
     cursor: pointer;
   }

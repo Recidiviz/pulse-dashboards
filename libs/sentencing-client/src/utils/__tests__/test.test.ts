@@ -59,7 +59,8 @@ test("mock psiStore references default userPseudoId", () => {
 });
 
 test("mock psiStore references overridden userPseudoId", () => {
-  expect(createMockPSIStore(overrideId).rootStore.userStore.userPseudoId).toBe(
-    overrideId,
-  );
+  expect(
+    createMockPSIStore({ userPseudoIdOverride: overrideId }).rootStore.userStore
+      .userPseudoId,
+  ).toBe(overrideId);
 });

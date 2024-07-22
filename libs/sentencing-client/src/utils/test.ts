@@ -30,10 +30,15 @@ export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
   return mockRootStore;
 };
 
-export const createMockPSIStore = (userPseudoIdOverride?: string | null) => {
-  import.meta.env["VITE_SENTENCING_API_URL"] = "";
+export const createMockPSIStore = (options?: {
+  userPseudoIdOverride?: string | null;
+  hideApiUrl?: boolean;
+}) => {
+  import.meta.env["VITE_SENTENCING_API_URL"] = options?.hideApiUrl
+    ? undefined
+    : "mockUrl";
 
-  const mockRootStore = createMockRootStore(userPseudoIdOverride);
+  const mockRootStore = createMockRootStore(options?.userPseudoIdOverride);
   const psiStore = new PSIStore(mockRootStore);
   return psiStore;
 };

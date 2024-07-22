@@ -30,6 +30,7 @@ vi.mock("@trpc/client", () => ({
 const psiStore = createMockPSIStore();
 let mockTRPCClient: tRPCClient;
 let apiClient: APIClient;
+const caseId = Object.keys(CaseDetailsFixture)[0];
 
 beforeEach(() => {
   mockTRPCClient = {
@@ -62,9 +63,7 @@ beforeEach(() => {
   apiClient = new APIClient(psiStore);
 });
 
-// TODO(#Recidiviz/recidiviz-data#31365) Revisit the below broken tests
-
-test.skip("client is initialized after instantiation of the PSIStore and APIClient", () => {
+test("client is initialized after instantiation of the PSIStore and APIClient", () => {
   expect(apiClient.client).not.toBeUndefined();
 });
 
@@ -75,8 +74,15 @@ test("getRequestHeaders returns expected request headers with Auth0 token", asyn
   });
 });
 
+test("client should not be initialized if there is no baseUrl", () => {
+  const psiStore = createMockPSIStore({ hideApiUrl: true });
+  const apiClient = new APIClient(psiStore);
+
+  expect(apiClient.client).toBeUndefined();
+});
+
 test("should throw an error if tRPC client is undefined", async () => {
-  const psiStore = createMockPSIStore(null);
+  const psiStore = createMockPSIStore();
   const apiClient = new APIClient(psiStore);
 
   await expect(apiClient.getStaffInfo()).rejects.toEqual({
@@ -84,8 +90,8 @@ test("should throw an error if tRPC client is undefined", async () => {
   });
 });
 
-test.skip("should throw an error if staffPseudoId is undefined", async () => {
-  const psiStore = createMockPSIStore(null);
+test("should throw an error if staffPseudoId is undefined", async () => {
+  const psiStore = createMockPSIStore({ userPseudoIdOverride: null });
   const apiClient = new APIClient(psiStore);
   await apiClient.initTRPCClient();
 
@@ -94,7 +100,7 @@ test.skip("should throw an error if staffPseudoId is undefined", async () => {
   });
 });
 
-test.skip("getStaffInfo and return data", async () => {
+test("getStaffInfo and return data", async () => {
   const result = await apiClient.getStaffInfo();
   expect(result).toBe(StaffInfoFixture);
   expect(mockTRPCClient.staff.getStaff.query).toHaveBeenCalledTimes(1);
@@ -103,12 +109,31 @@ test.skip("getStaffInfo and return data", async () => {
   });
 });
 
-test.skip("getCaseDetails returns data", async () => {
-  const caseId = Object.keys(CaseDetailsFixture)[0];
+test("setIsFirstLogin calls the updateStaff endpoint with the correct arguments", async () => {
+  const pseudoId = StaffInfoFixture.pseudonymizedId;
+  await apiClient.setIsFirstLogin(pseudoId);
+  expect(mockTRPCClient.staff.updateStaff.mutate).toHaveBeenCalledTimes(1);
+  expect(mockTRPCClient.staff.updateStaff.mutate).toHaveBeenCalledWith({
+    pseudonymizedId: pseudoId,
+    hasLoggedIn: true,
+  });
+});
+
+test("getCaseDetails returns data", async () => {
   const result = await apiClient.getCaseDetails(caseId);
   expect(result).toBe(CaseDetailsFixture);
   expect(mockTRPCClient.case.getCase.query).toHaveBeenCalledTimes(1);
   expect(mockTRPCClient.case.getCase.query).toHaveBeenCalledWith({
     id: caseId,
+  });
+});
+
+test("updateCaseDetails calls the updateCase endpoint with the correct arguments", async () => {
+  const updates = { lsirScore: 45 };
+  await apiClient.updateCaseDetails(caseId, updates);
+  expect(mockTRPCClient.case.updateCase.mutate).toHaveBeenCalledTimes(1);
+  expect(mockTRPCClient.case.updateCase.mutate).toHaveBeenCalledWith({
+    id: caseId,
+    attributes: updates,
   });
 });

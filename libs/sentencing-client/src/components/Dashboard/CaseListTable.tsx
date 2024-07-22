@@ -29,7 +29,7 @@ import { useNavigate } from "react-router-dom";
 
 import { CaseWithClient } from "../../api";
 import { psiUrl } from "../../utils/routing";
-import { sortFullNameByLastName } from "../../utils/sorting";
+import { sortFullNameByLastNameDescending } from "../../utils/sorting";
 import SortIcon from "../assets/sort-icon.svg?react";
 import {
   CLIENT_FULL_NAME_KEY,
@@ -52,18 +52,22 @@ type StatusFilter = CaseStatus | "Active" | "Archived";
 
 const columns = [
   {
-    header: "First Name",
+    header: "Name",
     accessorKey: CLIENT_FULL_NAME_KEY,
     sortingFn: (
       rowA: Row<Partial<CaseWithClient>>,
       rowB: Row<Partial<CaseWithClient>>,
     ) =>
-      sortFullNameByLastName(
+      sortFullNameByLastNameDescending(
         rowA.original.Client?.fullName,
         rowB.original.Client?.fullName,
       ),
+    cell: (name: CellContext<Partial<CaseWithClient>, string>) => (
+      <div style={{ textTransform: "capitalize" }}>
+        {name.getValue().toLocaleLowerCase()}
+      </div>
+    ),
   },
-
   {
     header: "ID",
     accessorKey: ID_KEY,
@@ -149,11 +153,12 @@ export const CaseListTable = ({
   const navigate = useNavigate();
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
-  const [data, setData] = useState<Partial<CaseWithClient>[]>(caseTableData);
+  const [data, setData] = useState<Partial<CaseWithClient>[]>(
+    caseTableData.filter((dp) => moment() < moment(dp.dueDate)), // Hide archived cases on initial load
+  );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
     ...Object.values(CaseStatus),
-    "Archived",
   ]);
 
   const table = useReactTable({

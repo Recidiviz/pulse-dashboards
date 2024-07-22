@@ -25,7 +25,7 @@ import {
 
 import { CaseWithClient } from "../api";
 import { StaffStore } from "../datastores/StaffStore";
-import { sortFullNameByLastName } from "../utils/sorting";
+import { sortFullNameByLastNameDescending } from "../utils/sorting";
 
 export class StaffPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
@@ -57,7 +57,10 @@ export class StaffPresenter implements Hydratable {
     return !this.staffInfo
       ? undefined
       : [...this.staffInfo.Cases].sort((a, b) =>
-          sortFullNameByLastName(a.Client?.fullName, b.Client?.fullName),
+          sortFullNameByLastNameDescending(
+            a.Client?.fullName,
+            b.Client?.fullName,
+          ),
         );
   }
 

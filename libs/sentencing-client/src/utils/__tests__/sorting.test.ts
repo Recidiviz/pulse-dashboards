@@ -15,12 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const sortFullNameByLastNameDescending = (a?: string, b?: string) => {
-  if (!a || !b) return 0;
-  const lastNameASplit = a.trim().split(" ");
-  const lastNameBSplit = b.trim().split(" ");
-  const lastNameA = lastNameASplit[lastNameASplit.length - 1];
-  const lastNameB = lastNameBSplit[lastNameBSplit.length - 1];
+import { sortFullNameByLastNameDescending } from "../sorting";
 
-  return lastNameA.localeCompare(lastNameB);
-};
+const names = [
+  "Ida Mitchell",
+  "Toney Simonis",
+  "Adell Lowe",
+  "Tad Ankunding ",
+  "Rebeka Lemke",
+  "Ruben Heller II",
+  "Curtis Ernser",
+];
+
+test("sorts full name (including those with trailing spaces) by last name in descending order", () => {
+  const sortedNames = names.sort(sortFullNameByLastNameDescending);
+
+  expect(sortedNames[0]).toBe("Tad Ankunding ");
+  expect(sortedNames[names.length - 1]).toBe("Toney Simonis");
+});

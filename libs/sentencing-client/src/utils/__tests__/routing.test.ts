@@ -15,12 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const sortFullNameByLastNameDescending = (a?: string, b?: string) => {
-  if (!a || !b) return 0;
-  const lastNameASplit = a.trim().split(" ");
-  const lastNameBSplit = b.trim().split(" ");
-  const lastNameA = lastNameASplit[lastNameASplit.length - 1];
-  const lastNameB = lastNameBSplit[lastNameBSplit.length - 1];
+import { psiRoute, psiUrl } from "../routing";
 
-  return lastNameA.localeCompare(lastNameB);
-};
+test("psiRoute returns the relative route template string for a PSI page", () => {
+  expect(psiRoute({ routeName: "psi" })).toBe("");
+  expect(psiRoute({ routeName: "dashboard" })).toBe(
+    "/dashboard/:staffPseudoId",
+  );
+  expect(psiRoute({ routeName: "caseDetails" })).toBe(
+    "/dashboard/:staffPseudoId/case/:caseId",
+  );
+});
+
+test("psiUrl returns the url route string for a PSI page", () => {
+  expect(
+    psiUrl("psi", {
+      staffPseudoId: "123",
+    }),
+  ).toBe("/psi");
+  expect(
+    psiUrl("dashboard", {
+      staffPseudoId: "123",
+    }),
+  ).toBe("/psi/dashboard/123");
+  expect(
+    psiUrl("caseDetails", {
+      staffPseudoId: "123",
+      caseId: "456",
+    }),
+  ).toBe("/psi/dashboard/123/case/456");
+});

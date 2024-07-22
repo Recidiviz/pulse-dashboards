@@ -73,7 +73,7 @@ export const StaffInfoFixture: Staff = {
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
         stateCode: "US_ID",
-        fullName: "Test User 1",
+        fullName: "Xavier Smith",
         gender: "EXTERNAL_UNKNOWN",
         county: "Gwynedd County",
         birthDate: new Date("1990-11-13T21:37:16.551Z"),
@@ -159,8 +159,8 @@ export const StaffInfoFixture: Staff = {
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
         stateCode: "US_ID",
-        fullName: "Test User 2",
-        gender: "EXTERNAL_UNKNOWN",
+        fullName: "Bob Thornburg",
+        gender: "MALE",
         county: "Gwynedd County",
         birthDate: new Date("1990-11-13T21:37:16.551Z"),
       },
