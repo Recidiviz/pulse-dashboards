@@ -69,8 +69,20 @@ export const metadataNamespace = "https://jii.recidiviz.org";
 /**
  * This should match the fields added to app_metadata in the Auth0 actions in `../auth0/actions`
  */
-export const metadataSchema = z.object({
-  stateCode: z.string(),
-  allowedStates: z.array(z.string()).optional(),
-  permissions: z.array(permissionSchema).optional(),
-});
+export const metadataSchema = z
+  .object({
+    stateCode: z.string(),
+    externalId: z.string().optional(),
+    pseudonymizedId: z.string().optional(),
+    allowedStates: z.array(z.string()).optional(),
+    permissions: z.array(permissionSchema).optional(),
+  })
+  .refine(
+    (d) => {
+      if (d.externalId || d.pseudonymizedId) {
+        return !!(d.externalId && d.pseudonymizedId);
+      }
+      return true;
+    },
+    { message: "externalId and pseudonymizedId must both be present" },
+  );

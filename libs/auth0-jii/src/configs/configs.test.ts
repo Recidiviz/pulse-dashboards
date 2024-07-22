@@ -51,10 +51,47 @@ describe("auth0 client config", () => {
 
 describe("user metadata schema", () => {
   test("for JII users", () => {
-    expect(metadataSchema.parse({ stateCode: "US_ME" })).toMatchInlineSnapshot(`
+    expect(
+      metadataSchema.parse({
+        stateCode: "US_ME",
+        externalId: "123456",
+        pseudonymizedId: "asnvawepeawhfeuawoghuil",
+      }),
+    ).toMatchInlineSnapshot(`
       {
+        "externalId": "123456",
+        "pseudonymizedId": "asnvawepeawhfeuawoghuil",
         "stateCode": "US_ME",
       }
+    `);
+  });
+
+  test("both IDs must be present", () => {
+    expect(() =>
+      metadataSchema.parse({ stateCode: "US_ME", externalId: "123456" }),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "code": "custom",
+          "message": "externalId and pseudonymizedId must both be present",
+          "path": []
+        }
+      ]]
+    `);
+
+    expect(() =>
+      metadataSchema.parse({
+        stateCode: "US_ME",
+        pseudonymizedId: "adfasdfasdfase",
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "code": "custom",
+          "message": "externalId and pseudonymizedId must both be present",
+          "path": []
+        }
+      ]]
     `);
   });
 

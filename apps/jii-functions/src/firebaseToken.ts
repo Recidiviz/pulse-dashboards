@@ -96,6 +96,7 @@ app.get("/", async (request, response): Promise<void> => {
     );
 
     const stateCode = metadata.stateCode;
+    const externalId = metadata.externalId;
     const recidivizAllowedStates = (metadata.allowedStates ?? []).map(toUpper);
 
     const firebaseCredential = {
@@ -118,6 +119,7 @@ app.get("/", async (request, response): Promise<void> => {
       .createCustomToken(uid, {
         app: "jii",
         stateCode,
+        externalId,
         recidivizAllowedStates,
       });
 

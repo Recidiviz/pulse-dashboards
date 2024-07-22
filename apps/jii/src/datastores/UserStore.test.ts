@@ -37,6 +37,8 @@ beforeEach(() => {
 
   vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
     stateCode: "US_ME",
+    externalId: "123456",
+    pseudonymizedId: "ahflvneuilehf",
   });
 });
 
@@ -49,6 +51,7 @@ test("state authorization for external user", () => {
 
   vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
     stateCode: "US_XX",
+    externalId: "123456",
   });
 
   expect(store.isAuthorizedForCurrentState).toBeFalse();
@@ -80,6 +83,14 @@ test("has permission", () => {
   expect(store.hasPermission("enhanced")).toBeTrue();
 });
 
+test("reads externalId from app metadata", () => {
+  expect(store.externalId).toBe("123456");
+});
+
+test("reads pseudonymizedId from app metadata", () => {
+  expect(store.pseudonymizedId).toBe("ahflvneuilehf");
+});
+
 test("cannot override externalId without permission", () => {
   expect(() =>
     store.overrideExternalId("foo"),
@@ -91,7 +102,7 @@ test("cannot override externalId without permission", () => {
 test("can override externalId in offline mode", () => {
   vi.mocked(isOfflineMode).mockReturnValue(true);
 
-  expect(store.externalId).toBeUndefined();
+  expect(store.externalId).not.toBe("foo");
 
   store.overrideExternalId("foo");
   expect(store.externalId).toBe("foo");

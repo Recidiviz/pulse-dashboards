@@ -68,8 +68,11 @@ export class UserStore {
   }
 
   get externalId(): string | undefined {
-    // TODO(#5510): get this from auth0 for real users
-    return this.externalIdOverride;
+    return this.externalIdOverride ?? this.authClient.appMetadata.externalId;
+  }
+
+  get pseudonymizedId(): string | undefined {
+    return this.authClient.appMetadata.pseudonymizedId;
   }
 
   hasPermission(permission: Permission): boolean {

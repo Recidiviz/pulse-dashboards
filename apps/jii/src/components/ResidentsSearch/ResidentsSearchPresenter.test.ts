@@ -32,6 +32,14 @@ let presenter: ResidentsSearchPresenter;
 beforeEach(() => {
   configure({ safeDescriptors: false });
   const rootStore = new RootStore();
+  vi.spyOn(
+    rootStore.userStore.authClient,
+    "appMetadata",
+    "get",
+  ).mockReturnValue({
+    stateCode: "US_ME",
+  });
+
   residentsStore = new ResidentsStore(rootStore, residentsConfigByState.US_ME);
   presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
 });
