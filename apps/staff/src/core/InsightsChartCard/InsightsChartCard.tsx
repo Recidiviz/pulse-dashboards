@@ -87,6 +87,7 @@ const Hint = styled.div<{ isClickable?: boolean }>`
 const Rate = styled.span`
   color: ${palette.signal.error};
   font-weight: 700;
+  margin-left: ${rem(spacing.xs)};
 `;
 
 const Content = styled.div<{ supervisorHomepage?: boolean }>`
@@ -134,15 +135,17 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
       <Header supervisorHomepage={supervisorHomepage}>
         <TitleWrapper>
           <Title>
-            {title}
-            {rate && (
-              <>
-                : <Rate>{rate}</Rate>
-              </>
-            )}
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              {title}
+              {infoModal && <Hint>{infoModal}</Hint>}
+              {rate && (
+                <>
+                  : <Rate>{rate}</Rate>
+                </>
+              )}
+            </div>
             {subtitle && <Subtitle>{subtitle}</Subtitle>}
           </Title>
-          {infoModal && <Hint>{infoModal}</Hint>}
         </TitleWrapper>
         {showHint && (
           <Hint isClickable={!!url}>
