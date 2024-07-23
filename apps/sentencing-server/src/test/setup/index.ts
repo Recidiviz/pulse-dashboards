@@ -1,8 +1,10 @@
+import { init } from "@sentry/node";
 import {
   CreateTRPCProxyClient,
   createTRPCProxyClient,
   httpBatchLink,
 } from "@trpc/client";
+import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach, vi } from "vitest";
 
@@ -19,7 +21,16 @@ export const testHost = process.env["HOST"] ?? "localhost";
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
 export let testServer: ReturnType<typeof buildServer>;
 
+const { testkit, sentryTransport } = sentryTestkit();
+
+export { testkit };
+
 beforeAll(async () => {
+  init({
+    dsn: process.env["SENTRY_DSN"],
+    transport: sentryTransport,
+  });
+
   testServer = buildServer();
 
   // Override he jwtVerify function to always pass
@@ -59,4 +70,6 @@ beforeAll(async () => {
 beforeEach(async () => {
   await resetDb();
   await seed();
+
+  testkit.reset();
 });

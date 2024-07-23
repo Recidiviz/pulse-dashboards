@@ -1,8 +1,5 @@
-// Make sure to import the sentry module first to ensure that it is initialized before any other modules.
-import "~sentencing-server/sentry";
-
 import cors from "@fastify/cors";
-import { setupFastifyErrorHandler } from "@sentry/node";
+import { captureException, setupFastifyErrorHandler } from "@sentry/node";
 import {
   fastifyTRPCPlugin,
   FastifyTRPCPluginOptions,
@@ -11,7 +8,9 @@ import type { FastifyRequest } from "fastify";
 import Fastify from "fastify";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 
-import { handleImport } from "~sentencing-server/import";
+import { getFileType } from "~sentencing-server/import/common/utils";
+import { handleImport } from "~sentencing-server/import/handle-import";
+import { scheduleHandleImportCloudTask } from "~sentencing-server/import/trigger-import";
 import { verifyGoogleIdToken } from "~sentencing-server/server/utils";
 import { createContext } from "~sentencing-server/trpc/context";
 import { AppRouter, appRouter } from "~sentencing-server/trpc/router";
@@ -23,6 +22,11 @@ interface PubsubBodyType {
       objectId: string;
     };
   };
+}
+
+interface TaskBodyType {
+  bucketId: string;
+  objectId: string;
 }
 
 export function buildServer() {
@@ -55,22 +59,35 @@ export function buildServer() {
     credentials: true,
   });
 
+  /**
+   * Handles Pub/Sub messages that trigger an import of a file from GCS.
+   *
+   * While we log the errors with Sentry, we always return a response of
+   * 200 when there is an internal error, otherwise Pub/Sub will retry
+   * the message repeatedly.
+   */
   server.post(
     "/trigger_import",
     async (req: FastifyRequest<{ Body: PubsubBodyType }>, res) => {
       const bearerToken = req.headers.authorization?.split(" ")[1];
 
       if (!bearerToken) {
-        console.error(`No bearer token was provided`);
-        res.status(401);
+        captureException("No bearer token was provided");
+        return;
+      }
+
+      if (!process.env["CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL"]) {
+        captureException("No IAM email env variable was provided");
         return;
       }
 
       try {
-        await verifyGoogleIdToken(bearerToken);
+        await verifyGoogleIdToken(
+          bearerToken,
+          process.env["CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL"],
+        );
       } catch (e) {
-        console.error(`error verifying auth token for trigger_import: ${e}`);
-        res.status(401);
+        captureException(`error verifying auth token: ${e}`);
         return;
       }
 
@@ -79,16 +96,89 @@ export function buildServer() {
         !req.body.message.attributes.bucketId ||
         !req.body.message.attributes.objectId
       ) {
-        const msg = "invalid Pub/Sub message format";
-        console.error(`error: ${msg}`);
-        res.status(400).send(`Bad Request: ${msg}`);
+        captureException(`invalid Pub/Sub message format`);
         return;
       }
 
       const { bucketId, objectId } = req.body.message.attributes;
-      await handleImport(bucketId, objectId);
 
-      res.status(200).send("Import complete");
+      // Make sure the file type is valid before proceeding
+      try {
+        getFileType(objectId);
+      } catch (e) {
+        captureException(e);
+        return;
+      }
+
+      console.log(
+        `Received valid notification for the update of object ${objectId} from bucket ${bucketId}. Scheduling import task.`,
+      );
+
+      try {
+        await scheduleHandleImportCloudTask(bucketId, objectId);
+      } catch (e) {
+        captureException(`error scheduling import task: ${e}`);
+        return;
+      }
+
+      res.status(200).send("File update acknowledged and import is scheduled.");
+    },
+  );
+
+  /**
+   * Handles the import of data from a file from GCS.
+   */
+  server.post(
+    "/handle_import",
+    async (req: FastifyRequest<{ Body: TaskBodyType }>, res) => {
+      const bearerToken = req.headers.authorization?.split(" ")[1];
+
+      if (!bearerToken) {
+        return res.status(401).send("No bearer token was provided");
+      }
+
+      if (!process.env["IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL"]) {
+        captureException("No IAM email env variable was provided");
+        return res.status(500);
+      }
+
+      try {
+        await verifyGoogleIdToken(
+          bearerToken,
+          process.env["IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL"],
+        );
+      } catch (e) {
+        return res
+          .status(401)
+          .send(`error verifying auth token for handle_import: ${e}`);
+      }
+
+      const { bucketId, objectId } = req.body;
+      console.log(
+        `Received notification for import of object ${objectId} from bucket ${bucketId}`,
+      );
+
+      try {
+        getFileType(objectId);
+      } catch (e) {
+        return res.status(401).send(`Invalid object ID: ${e}`);
+      }
+
+      try {
+        await handleImport(bucketId, objectId);
+      } catch (e) {
+        return res.status(500).send(`error handling import: ${e}`);
+      }
+
+      console.log(
+        `Import of object ${objectId} from bucket ${bucketId} completed.`,
+      );
+
+      res
+        .status(200)
+        .send(
+          `Import of object ${objectId} from bucket ${bucketId} completed.`,
+        );
     },
   );
 

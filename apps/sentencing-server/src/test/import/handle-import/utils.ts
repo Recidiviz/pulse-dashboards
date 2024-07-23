@@ -2,53 +2,53 @@ import { faker } from "@faker-js/faker";
 
 import { buildServer } from "~sentencing-server/server";
 import {
-  casePayloadMessage,
-  clientPayloadMessage,
-  insightPayloadMessage,
-  opportunityPayloadMessage,
-  staffPayloadMessage,
-} from "~sentencing-server/test/import/constants";
+  caseBody,
+  clientBody,
+  insightBody,
+  opportunityBody,
+  staffBody,
+} from "~sentencing-server/test/import/handle-import/constants";
 
-async function callTriggerImport(
+async function callHandleImport(
   server: ReturnType<typeof buildServer>,
   data: object,
 ) {
   return await server.inject({
     method: "POST",
-    url: "/trigger_import",
-    payload: { message: data },
+    url: "/handle_import",
+    payload: data,
     headers: { authorization: `Bearer token` },
   });
 }
 
-export async function callImportCaseData(
+export async function callHandleImportCaseData(
   server: ReturnType<typeof buildServer>,
 ) {
-  return await callTriggerImport(server, casePayloadMessage);
+  return await callHandleImport(server, caseBody);
 }
 
-export async function callImportClientData(
+export async function callHandleImportClientData(
   server: ReturnType<typeof buildServer>,
 ) {
-  return await callTriggerImport(server, clientPayloadMessage);
+  return await callHandleImport(server, clientBody);
 }
 
-export async function callImportStaffData(
+export async function callHandleImportStaffData(
   server: ReturnType<typeof buildServer>,
 ) {
-  return await callTriggerImport(server, staffPayloadMessage);
+  return await callHandleImport(server, staffBody);
 }
 
-export async function callImportOpportunityData(
+export async function callHandleImportOpportunityData(
   server: ReturnType<typeof buildServer>,
 ) {
-  return await callTriggerImport(server, opportunityPayloadMessage);
+  return await callHandleImport(server, opportunityBody);
 }
 
-export async function callImportInsightData(
+export async function callHandleImportInsightData(
   server: ReturnType<typeof buildServer>,
 ) {
-  return await callTriggerImport(server, insightPayloadMessage);
+  return await callHandleImport(server, insightBody);
 }
 
 export function arrayToJsonLines(arr: object[]) {

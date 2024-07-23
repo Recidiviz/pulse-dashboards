@@ -4,16 +4,16 @@ import { MockStorage } from "mock-gcs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { prismaClient } from "~sentencing-server/prisma";
-import { casePayloadMessage } from "~sentencing-server/test/import/constants";
+import { caseBody } from "~sentencing-server/test/import/handle-import/constants";
 import {
   arrayToJsonLines,
-  callImportCaseData,
-  callImportClientData,
-  callImportInsightData,
-  callImportOpportunityData,
-  callImportStaffData,
+  callHandleImportCaseData,
+  callHandleImportClientData,
+  callHandleImportInsightData,
+  callHandleImportOpportunityData,
+  callHandleImportStaffData,
   createFakeRecidivismSeriesForImport,
-} from "~sentencing-server/test/import/utils";
+} from "~sentencing-server/test/import/handle-import/utils";
 import { testServer } from "~sentencing-server/test/setup";
 import {
   fakeCase,
@@ -25,10 +25,7 @@ import {
 const TEST_BUCKET_ID = "bucket-id";
 
 const mockStorageSingleton = new MockStorage();
-let getPayloadImp = vi.fn().mockReturnValue({
-  email_verified: true,
-  email: "test-csn@fake.com",
-});
+let getPayloadImp = vi.fn();
 
 vi.mock("@google-cloud/storage", () => ({
   Storage: vi.fn().mockImplementation(() => {
@@ -49,17 +46,17 @@ vi.mock("google-auth-library", () => ({
 beforeEach(() => {
   getPayloadImp = vi.fn().mockReturnValue({
     email_verified: true,
-    email: "test-csn@fake.com",
+    email: "test-task@fake.com",
   });
 });
 
-describe("import", () => {
+describe("handle_import", () => {
   describe("auth", () => {
     test("should throw error if there is no token", async () => {
       const response = await testServer.inject({
         method: "POST",
-        url: "/trigger_import",
-        payload: { message: casePayloadMessage },
+        url: "/handle_import",
+        payload: caseBody,
       });
 
       expect(response).toMatchObject({
@@ -68,13 +65,13 @@ describe("import", () => {
       });
     });
 
-    test("should throw error if there is no payload", async () => {
+    test("should throw error if there is no token payload", async () => {
       getPayloadImp = vi.fn().mockReturnValue(undefined);
 
       const response = await testServer.inject({
         method: "POST",
-        url: "/trigger_import",
-        payload: { message: casePayloadMessage },
+        url: "/handle_import",
+        payload: caseBody,
         headers: { authorization: `Bearer token` },
       });
 
@@ -91,8 +88,8 @@ describe("import", () => {
 
       const response = await testServer.inject({
         method: "POST",
-        url: "/trigger_import",
-        payload: { message: casePayloadMessage },
+        url: "/handle_import",
+        payload: caseBody,
         headers: { authorization: `Bearer token` },
       });
 
@@ -110,8 +107,8 @@ describe("import", () => {
 
       const response = await testServer.inject({
         method: "POST",
-        url: "/trigger_import",
-        payload: { message: casePayloadMessage },
+        url: "/handle_import",
+        payload: caseBody,
         headers: { authorization: `Bearer token` },
       });
 
@@ -129,8 +126,30 @@ describe("import", () => {
 
       const response = await testServer.inject({
         method: "POST",
-        url: "/trigger_import",
-        payload: { message: casePayloadMessage },
+        url: "/handle_import",
+        payload: caseBody,
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 401,
+        statusMessage: "Unauthorized",
+      });
+    });
+
+    test("should throw error if file type is invalid", async () => {
+      getPayloadImp = vi.fn().mockReturnValue({
+        email_verified: true,
+        email: "test-task@fake.com",
+      });
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/handle_import",
+        payload: {
+          bucketId: "bucket-id",
+          objectId: "US_ID/not-a-valid-file.json",
+        },
         headers: { authorization: `Bearer token` },
       });
 
@@ -143,7 +162,7 @@ describe("import", () => {
     test("should work if email is correct", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_case_record.json")
+        .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
             // New case
@@ -166,13 +185,13 @@ describe("import", () => {
 
       getPayloadImp = vi.fn().mockReturnValue({
         email_verified: true,
-        email: "test-csn@fake.com",
+        email: "test-task@fake.com",
       });
 
       const response = await testServer.inject({
         method: "POST",
-        url: "/trigger_import",
-        payload: { message: casePayloadMessage },
+        url: "/handle_import",
+        payload: caseBody,
         headers: { authorization: `Bearer token` },
       });
 
@@ -201,7 +220,7 @@ describe("import", () => {
     test("should import new case data and delete old data", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_case_record.json")
+        .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
             // New case
@@ -222,7 +241,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportCaseData(testServer);
+      const response = await callHandleImportCaseData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -247,7 +266,7 @@ describe("import", () => {
     test("should upsert existing cases", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_case_record.json")
+        .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
             // Existing case
@@ -284,7 +303,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportCaseData(testServer);
+      const response = await callHandleImportCaseData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -304,7 +323,7 @@ describe("import", () => {
     test("should not override lsirScore if provided data is undefined", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_case_record.json")
+        .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
             // Existing case with no lsirScore
@@ -324,7 +343,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportCaseData(testServer);
+      const response = await callHandleImportCaseData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -343,7 +362,7 @@ describe("import", () => {
     test("should allow new cases to be uploaded even if their staff or client doesn't exist yet", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_case_record.json")
+        .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
             // New case with nonexistent staff and client
@@ -364,7 +383,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportCaseData(testServer);
+      const response = await callHandleImportCaseData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -389,7 +408,7 @@ describe("import", () => {
     test("should set lsirScoreLocked if lsir score is provided", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_case_record.json")
+        .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
             // New case
@@ -410,7 +429,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportCaseData(testServer);
+      const response = await callHandleImportCaseData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -436,7 +455,7 @@ describe("import", () => {
     test("should not set lsirScoreLocked if lsir score is not provided", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_case_record.json")
+        .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
             // New case
@@ -456,7 +475,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportCaseData(testServer);
+      const response = await callHandleImportCaseData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -484,7 +503,7 @@ describe("import", () => {
     test("should import new client data and delete old data", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_client_record.json")
+        .file("US_ID/sentencing_client_record.json")
         .save(
           arrayToJsonLines([
             // New client
@@ -511,7 +530,7 @@ describe("import", () => {
         data: { ...fakeCase, externalId: "new-case-ext-id", id: "new-case-id" },
       });
 
-      const response = await callImportClientData(testServer);
+      const response = await callHandleImportClientData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -546,7 +565,7 @@ describe("import", () => {
     test("should upsert existing clients", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_client_record.json")
+        .file("US_ID/sentencing_client_record.json")
         .save(
           arrayToJsonLines([
             // New client
@@ -585,7 +604,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportClientData(testServer);
+      const response = await callHandleImportClientData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -611,7 +630,7 @@ describe("import", () => {
     test("should import new staff data and delete old data", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_staff_record.json")
+        .file("US_ID/sentencing_staff_record.json")
         .save(
           arrayToJsonLines([
             // New staff
@@ -636,7 +655,7 @@ describe("import", () => {
         data: { ...fakeCase, externalId: "new-case-ext-id", id: "new-case-id" },
       });
 
-      const response = await callImportStaffData(testServer);
+      const response = await callHandleImportStaffData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -671,7 +690,7 @@ describe("import", () => {
     test("should upsert existing staff", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_staff_record.json")
+        .file("US_ID/sentencing_staff_record.json")
         .save(
           arrayToJsonLines([
             // new staff
@@ -706,7 +725,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportStaffData(testServer);
+      const response = await callHandleImportStaffData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -734,7 +753,7 @@ describe("import", () => {
     test("should import new opportunity and delete old data", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_community_opportunity_record.json")
+        .file("US_ID/sentencing_community_opportunity_record.json")
         .save(
           arrayToJsonLines([
             // New opportunity
@@ -759,7 +778,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportOpportunityData(testServer);
+      const response = await callHandleImportOpportunityData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -782,7 +801,7 @@ describe("import", () => {
     test("should upsert existing opportunity", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_community_opportunity_record.json")
+        .file("US_ID/sentencing_community_opportunity_record.json")
         .save(
           arrayToJsonLines([
             // existing opportunity
@@ -826,7 +845,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportOpportunityData(testServer);
+      const response = await callHandleImportOpportunityData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -894,7 +913,7 @@ describe("import", () => {
 
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
-        .file("ID/sentencing_community_opportunity_record.json")
+        .file("US_ID/sentencing_community_opportunity_record.json")
         .save(
           arrayToJsonLines([
             // original existing opportunity
@@ -919,7 +938,7 @@ describe("import", () => {
           ]),
         );
 
-      const response = await callImportOpportunityData(testServer);
+      const response = await callHandleImportOpportunityData(testServer);
 
       expect(response.statusCode).toBe(200);
 
@@ -943,7 +962,7 @@ describe("import", () => {
       test("should import new insights and delete old data", async () => {
         await mockStorageSingleton
           .bucket(TEST_BUCKET_ID)
-          .file("ID/case_insights_record.json")
+          .file("US_ID/case_insights_record.json")
           .save(
             arrayToJsonLines([
               // New insight
@@ -973,7 +992,7 @@ describe("import", () => {
             ]),
           );
 
-        const response = await callImportInsightData(testServer);
+        const response = await callHandleImportInsightData(testServer);
 
         expect(response.statusCode).toBe(200);
 

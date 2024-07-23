@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 
-export async function verifyGoogleIdToken(idToken: string) {
+export async function verifyGoogleIdToken(idToken: string, email: string) {
   const oAuth2Client = new OAuth2Client();
 
   const result = await oAuth2Client.verifyIdToken({
@@ -15,7 +15,7 @@ export async function verifyGoogleIdToken(idToken: string) {
     throw new Error("Email not verified");
   }
 
-  if (payload.email !== process.env["CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL"]) {
+  if (payload.email !== email) {
     throw new Error("Invalid email address");
   }
 

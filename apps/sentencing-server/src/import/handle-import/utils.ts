@@ -6,16 +6,12 @@ import {
   caseImportSchema,
   clientImportSchema,
   insightImportSchema,
-  nameSchema,
   opportunityImportSchema,
   recidivismSeriesSchema,
   staffImportSchema,
-} from "~sentencing-server/import/models";
+} from "~sentencing-server/import/handle-import/models";
 import { prismaClient } from "~sentencing-server/prisma";
 
-export function fullNameObjectToString(nameObject: z.infer<typeof nameSchema>) {
-  return `${nameObject.given_names} ${nameObject.middle_names} ${nameObject.surname} ${nameObject.name_suffix}`;
-}
 export async function transformAndLoadClientData(data: unknown) {
   const parsedData = clientImportSchema.parse(data);
 

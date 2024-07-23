@@ -10,7 +10,9 @@ import {
 import z from "zod";
 import { zu } from "zod_utilz";
 
-import { fullNameObjectToString } from "~sentencing-server/import/utils";
+export function fullNameObjectToString(nameObject: z.infer<typeof nameSchema>) {
+  return `${nameObject.given_names} ${nameObject.middle_names} ${nameObject.surname} ${nameObject.name_suffix}`;
+}
 
 const stateCode = z.nativeEnum(StateCode);
 
