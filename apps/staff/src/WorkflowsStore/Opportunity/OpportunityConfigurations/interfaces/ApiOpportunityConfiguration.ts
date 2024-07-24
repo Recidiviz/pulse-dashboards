@@ -18,8 +18,10 @@ import { z } from "zod";
 
 import { PartialRecord } from "../../../../utils/typeUtils";
 import { OpportunityType } from "../..";
-import { apiOpportunityConfigurationResponseSchema } from "../dtos/ApiOpportunityConfigurationResponseSchema";
-import { apiOpportunityConfigurationSchema } from "../dtos/ApiOpportunityConfigurationSchema";
+import {
+  apiOpportunityConfigurationResponseSchema,
+  apiOpportunityConfigurationSchema,
+} from "../dtos/ApiOpportunityConfigurationSchema";
 
 export type IApiOpportunityConfiguration = z.infer<
   typeof apiOpportunityConfigurationSchema

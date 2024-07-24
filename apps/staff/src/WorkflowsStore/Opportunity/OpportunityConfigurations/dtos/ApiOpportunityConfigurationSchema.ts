@@ -18,7 +18,7 @@
 import { z } from "zod";
 
 import { TenantIds } from "../../../../RootStore/types";
-import { NullCoalesce, nullishAsUndefined } from "../../schemaHelpers";
+import { nullishAsUndefined } from "../../schemaHelpers";
 import { snoozeConfigurationSchema } from "../modules/SnoozeConfiguration/dtos/SnoozeConfigurationSchema";
 
 // CRITERIA COPY SCHEMA
@@ -39,17 +39,17 @@ export const apiOpportunityConfigurationSchema = z.object({
   dynamicEligibilityText: z.string(),
   callToAction: z.string(),
   subheading: z.string().optional(),
-  notifications: NullCoalesce(
-    [],
-    z.array(
+  notifications: z
+    .array(
       z.object({
         id: z.string(),
         title: z.string().optional(),
         body: z.string(),
         cta: z.string().optional(),
       }),
-    ),
-  ),
+    )
+    .nullish()
+    .transform((r) => r ?? []),
   firestoreCollection: z.string(),
   snooze: z.preprocess(
     (r: any) => (r && r.defaultSnoozeDays ? r : undefined),
@@ -78,4 +78,8 @@ export const apiOpportunityConfigurationSchema = z.object({
     ),
   ),
   methodologyUrl: z.string(),
+});
+
+export const apiOpportunityConfigurationResponseSchema = z.object({
+  enabledConfigs: z.record(apiOpportunityConfigurationSchema),
 });

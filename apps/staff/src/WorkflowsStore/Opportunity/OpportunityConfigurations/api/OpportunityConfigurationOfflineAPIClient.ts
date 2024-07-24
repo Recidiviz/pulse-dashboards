@@ -16,7 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { apiOpportunityConfigurationResponseSchema } from "../dtos/ApiOpportunityConfigurationResponseSchema";
+import { apiOpportunityConfigurationResponseSchema } from "../dtos/ApiOpportunityConfigurationSchema";
 import { OpportunityConfigurationStore } from "../OpportunityConfigurationStore";
 import { OpportunityConfigurationAPI } from "./interface";
 
