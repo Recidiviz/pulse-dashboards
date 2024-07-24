@@ -9,3 +9,4 @@ export type DispositionCreateManyInsightInput =
   Prisma.DispositionCreateManyInsightInput;
 export type RecidivismSeriesCreateWithoutInsightInput =
   Prisma.RecidivismSeriesCreateWithoutInsightInput;
+export type OffenseCreateInput = Prisma.OffenseCreateInput;

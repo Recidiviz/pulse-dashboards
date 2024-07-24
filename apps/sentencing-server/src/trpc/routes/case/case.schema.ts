@@ -2,7 +2,6 @@ import {
   AsamCareRecommendation,
   CaseRecommendation,
   CaseStatus,
-  Charge,
   MentalHealthDiagnosis,
   NeedToBeAddressed,
   OnboardingTopic,
@@ -20,8 +19,6 @@ import {
 export const getCaseInputSchema = z.object({
   id: z.string(),
 }) satisfies z.ZodType<GetCaseInput>;
-
-const ChargeEnum = z.nativeEnum(Charge);
 
 const SubstanceUseDiagnosisEnum = z.nativeEnum(SubstanceUseDiagnosis);
 
@@ -50,8 +47,7 @@ export const updateCaseSchema = z.object({
   id: z.string(),
   attributes: z.object({
     lsirScore: z.number().nullable().optional(),
-    primaryCharge: ChargeEnum.nullable().optional(),
-    secondaryCharges: z.array(ChargeEnum).optional(),
+    offense: z.string().nullable().optional(),
     previouslyIncarceratedOrUnderSupervision: z.boolean().nullable().optional(),
     hasPreviousFelonyConviction: z.boolean().nullable().optional(),
     hasPreviousViolentOffenseConviction: z.boolean().nullable().optional(),

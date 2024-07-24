@@ -5,6 +5,7 @@ import {
   caseBody,
   clientBody,
   insightBody,
+  offenseBody,
   opportunityBody,
   staffBody,
 } from "~sentencing-server/test/import/handle-import/constants";
@@ -49,6 +50,12 @@ export async function callHandleImportInsightData(
   server: ReturnType<typeof buildServer>,
 ) {
   return await callHandleImport(server, insightBody);
+}
+
+export async function callHandleImportOffenseData(
+  server: ReturnType<typeof buildServer>,
+) {
+  return await callHandleImport(server, offenseBody);
 }
 
 export function arrayToJsonLines(arr: object[]) {

@@ -161,3 +161,10 @@ export const insightImportSchema = z.array(
     disposition_term_pc: z.number(),
   }),
 );
+
+export const offenseImportSchema = z.array(
+  z.object({
+    state_code: stateCode,
+    charge: z.string(),
+  }),
+);

@@ -72,7 +72,7 @@ export class StaffPresenter implements Hydratable {
       id: caseBrief.id,
       dueDate: caseBrief.dueDate,
       reportType: caseBrief.reportType,
-      primaryCharge: caseBrief.primaryCharge,
+      offense: caseBrief.offense,
       status: caseBrief.status,
     }));
   }

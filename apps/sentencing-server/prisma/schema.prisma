@@ -252,6 +252,15 @@ model Opportunity {
   @@unique([opportunityName, providerPhoneNumber])
 }
 
+model Offense {
+  id        String    @id @default(cuid())
+  stateCode StateCode
+  name      String    @unique
+
+  Case    Case[]
+  Insight Insight[]
+}
+
 model Case {
   externalId String    @id
   id         String    @unique @default(cuid())
@@ -278,8 +287,8 @@ model Case {
   // Mutable Attributes
   lsirScore Int?
 
-  primaryCharge    Charge?
-  secondaryCharges Charge[]
+  offense   Offense? @relation(fields: [offenseId], references: [id])
+  offenseId String?
 
   previouslyIncarceratedOrUnderSupervision Boolean?
   hasPreviousFelonyConviction              Boolean?
@@ -313,7 +322,8 @@ model Insight {
   id                         String    @id @default(cuid())
   stateCode                  StateCode
   gender                     Gender
-  offense                    String
+  Offense                    Offense   @relation(fields: [offenseId], references: [id])
+  offenseId                  String
   assessmentScoreBucketStart Int
   assessmentScoreBucketEnd   Int
 
@@ -326,7 +336,7 @@ model Insight {
   dispositionNumRecords Int
   dispositionData       Disposition[]
 
-  @@unique([gender, offense, assessmentScoreBucketStart, assessmentScoreBucketEnd])
+  @@unique([gender, offenseId, assessmentScoreBucketStart, assessmentScoreBucketEnd])
 }
 
 model RecidivismSeries {

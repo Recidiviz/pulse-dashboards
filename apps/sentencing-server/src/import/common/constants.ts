@@ -9,6 +9,8 @@ export const OPPORTUNITIES_FILE_NAME =
   "sentencing_community_opportunity_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_insights.py
 export const INSIGHTS_FILE_NAME = "case_insights_record.json";
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/charge_record.py
+export const OFFENSES_FILE_NAME = "sentencing_charge_record.json";
 
 export enum FileType {
   Cases,
@@ -16,6 +18,7 @@ export enum FileType {
   Clients,
   Opportunities,
   Insights,
+  Offenses,
 }
 
 export const FILE_NAME_TO_FILE_TYPE: Record<string, FileType> = {
@@ -24,4 +27,5 @@ export const FILE_NAME_TO_FILE_TYPE: Record<string, FileType> = {
   [CLIENTS_FILE_NAME]: FileType.Clients,
   [OPPORTUNITIES_FILE_NAME]: FileType.Opportunities,
   [INSIGHTS_FILE_NAME]: FileType.Insights,
+  [OFFENSES_FILE_NAME]: FileType.Offenses,
 };

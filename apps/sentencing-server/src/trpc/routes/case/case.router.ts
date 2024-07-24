@@ -1,6 +1,5 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
-import _ from "lodash";
 
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
 import {
@@ -21,12 +20,18 @@ export const caseRouter = router({
           externalId: true,
           staffId: true,
           clientId: true,
+          offenseId: true,
         },
         include: {
           recommendedOpportunities: {
             select: {
               opportunityName: true,
               providerPhoneNumber: true,
+            },
+          },
+          offense: {
+            select: {
+              name: true,
             },
           },
         },
@@ -39,7 +44,7 @@ export const caseRouter = router({
         });
       }
 
-      return caseData;
+      return { ...caseData, offense: caseData.offense?.name };
     }),
   updateCase: baseProcedure
     .input(updateCaseSchema)
@@ -79,13 +84,20 @@ export const caseRouter = router({
             id,
           },
           data: {
-            ..._.omit(attributes, ["recommendedOpportunities"]),
+            ...attributes,
             recommendedOpportunities: {
               connect: attributes.recommendedOpportunities?.map(
                 (opportunity) => ({
                   opportunityName_providerPhoneNumber: opportunity,
                 }),
               ),
+            },
+            offense: {
+              connect: attributes.offense
+                ? {
+                    name: attributes.offense,
+                  }
+                : undefined,
             },
           },
         });
@@ -107,7 +119,7 @@ export const caseRouter = router({
         },
         select: {
           lsirScore: true,
-          primaryCharge: true,
+          offense: true,
           Client: {
             select: {
               gender: true,
@@ -131,7 +143,7 @@ export const caseRouter = router({
         });
       }
 
-      if (!caseData.primaryCharge) {
+      if (!caseData.offense) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message:
@@ -147,10 +159,15 @@ export const caseRouter = router({
           assessmentScoreBucketEnd: {
             gte: caseData.lsirScore,
           },
-          offense: caseData.primaryCharge,
+          offenseId: caseData.offense.id,
           gender: caseData.Client.gender,
         },
         include: {
+          Offense: {
+            select: {
+              name: true,
+            },
+          },
           recidivismSeries: {
             select: {
               recommendationType: true,
@@ -171,6 +188,7 @@ export const caseRouter = router({
         },
         omit: {
           id: true,
+          offenseId: true,
         },
       });
 
@@ -187,6 +205,12 @@ export const caseRouter = router({
         );
       }
 
-      return insights[0];
+      const insightToReturn = insights[0];
+
+      return {
+        ...insightToReturn,
+        // Move offense name to top level
+        offense: insightToReturn.Offense.name,
+      };
     }),
 });

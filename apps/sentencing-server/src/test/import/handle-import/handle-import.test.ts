@@ -4,12 +4,14 @@ import { MockStorage } from "mock-gcs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { prismaClient } from "~sentencing-server/prisma";
+import { testAndGetSentryReport } from "~sentencing-server/test/import/common/utils";
 import { caseBody } from "~sentencing-server/test/import/handle-import/constants";
 import {
   arrayToJsonLines,
   callHandleImportCaseData,
   callHandleImportClientData,
   callHandleImportInsightData,
+  callHandleImportOffenseData,
   callHandleImportOpportunityData,
   callHandleImportStaffData,
   createFakeRecidivismSeriesForImport,
@@ -17,7 +19,9 @@ import {
 import { testServer } from "~sentencing-server/test/setup";
 import {
   fakeCase,
+  fakeCasePrismaInput,
   fakeClient,
+  fakeOffense,
   fakeOpportunity,
   fakeStaff,
 } from "~sentencing-server/test/setup/seed";
@@ -527,7 +531,11 @@ describe("handle_import", () => {
 
       // Create a new case to link to the new client
       await prismaClient.case.create({
-        data: { ...fakeCase, externalId: "new-case-ext-id", id: "new-case-id" },
+        data: {
+          ...fakeCasePrismaInput,
+          externalId: "new-case-ext-id",
+          id: "new-case-id",
+        },
       });
 
       const response = await callHandleImportClientData(testServer);
@@ -652,7 +660,11 @@ describe("handle_import", () => {
 
       // Create a new case to link to the new client
       await prismaClient.case.create({
-        data: { ...fakeCase, externalId: "new-case-ext-id", id: "new-case-id" },
+        data: {
+          ...fakeCasePrismaInput,
+          externalId: "new-case-ext-id",
+          id: "new-case-id",
+        },
       });
 
       const response = await callHandleImportStaffData(testServer);
@@ -957,99 +969,163 @@ describe("handle_import", () => {
         }),
       );
     });
+  });
 
-    describe("import insight data", () => {
-      test("should import new insights and delete old data", async () => {
-        await mockStorageSingleton
-          .bucket(TEST_BUCKET_ID)
-          .file("US_ID/case_insights_record.json")
-          .save(
-            arrayToJsonLines([
-              // New insight
-              {
-                state_code: StateCode.US_ID,
-                // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
-                gender: "MALE",
-                assessment_score_bucket_start: faker.number.int({ max: 100 }),
-                assessment_score_bucket_end: faker.number.int({ max: 100 }),
-                most_severe_description: faker.string.alpha(),
-                recidivism_rollup: faker.string.alpha(),
-                recidivism_num_records: faker.number.int({ max: 100 }),
-                recidivism_probation_series: JSON.stringify(
-                  createFakeRecidivismSeriesForImport(),
-                ),
-                recidivism_rider_series: JSON.stringify(
-                  createFakeRecidivismSeriesForImport(),
-                ),
-                recidivism_term_series: JSON.stringify(
-                  createFakeRecidivismSeriesForImport(),
-                ),
-                disposition_num_records: faker.number.int({ max: 100 }),
-                disposition_probation_pc: faker.number.float(),
-                disposition_rider_pc: faker.number.float(),
-                disposition_term_pc: faker.number.float(),
-              },
-            ]),
-          );
-
-        const response = await callHandleImportInsightData(testServer);
-
-        expect(response.statusCode).toBe(200);
-
-        // Check that the new Insight was created
-        const dbInsights = await prismaClient.insight.findMany({
-          include: {
-            recidivismSeries: {
-              select: {
-                recommendationType: true,
-                dataPoints: true,
-              },
+  describe("import insight data", () => {
+    test("should import new insights and delete old data", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("US_ID/case_insights_record.json")
+        .save(
+          arrayToJsonLines([
+            // New insight
+            {
+              state_code: StateCode.US_ID,
+              // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
+              gender: "MALE",
+              assessment_score_bucket_start: faker.number.int({ max: 100 }),
+              assessment_score_bucket_end: faker.number.int({ max: 100 }),
+              most_severe_description: fakeOffense.name,
+              recidivism_rollup: faker.string.alpha(),
+              recidivism_num_records: faker.number.int({ max: 100 }),
+              recidivism_probation_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              recidivism_rider_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              recidivism_term_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              disposition_num_records: faker.number.int({ max: 100 }),
+              disposition_probation_pc: faker.number.float(),
+              disposition_rider_pc: faker.number.float(),
+              disposition_term_pc: faker.number.float(),
             },
-            dispositionData: true,
-          },
-        });
-
-        // There should only be one insight in the database - the new one should have been created
-        // and the old one should have been deleted
-        expect(dbInsights).toHaveLength(1);
-
-        const newInsight = dbInsights[0];
-        expect(newInsight).toEqual(
-          expect.objectContaining({
-            gender: "MALE",
-            recidivismSeries: expect.arrayContaining([
-              // There should be two data points for each series
-              expect.objectContaining({
-                recommendationType: "Probation",
-                dataPoints: expect.arrayContaining([
-                  expect.objectContaining({}),
-                  expect.objectContaining({}),
-                ]),
-              }),
-              expect.objectContaining({
-                recommendationType: "Rider",
-                dataPoints: expect.arrayContaining([
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                ]),
-              }),
-              expect.objectContaining({
-                recommendationType: "Term",
-                dataPoints: expect.arrayContaining([
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                ]),
-              }),
-            ]),
-            dispositionData: expect.arrayContaining([
-              // There should be one of each type of disposition
-              expect.objectContaining({ recommendationType: "Probation" }),
-              expect.objectContaining({ recommendationType: "Rider" }),
-              expect.objectContaining({ recommendationType: "Term" }),
-            ]),
-          }),
+          ]),
         );
+
+      const response = await callHandleImportInsightData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new Insight was created
+      const dbInsights = await prismaClient.insight.findMany({
+        include: {
+          recidivismSeries: {
+            select: {
+              recommendationType: true,
+              dataPoints: true,
+            },
+          },
+          dispositionData: true,
+        },
       });
+
+      // There should only be one insight in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbInsights).toHaveLength(1);
+
+      const newInsight = dbInsights[0];
+      expect(newInsight).toEqual(
+        expect.objectContaining({
+          gender: "MALE",
+          recidivismSeries: expect.arrayContaining([
+            // There should be two data points for each series
+            expect.objectContaining({
+              recommendationType: "Probation",
+              dataPoints: expect.arrayContaining([
+                expect.objectContaining({}),
+                expect.objectContaining({}),
+              ]),
+            }),
+            expect.objectContaining({
+              recommendationType: "Rider",
+              dataPoints: expect.arrayContaining([
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+              ]),
+            }),
+            expect.objectContaining({
+              recommendationType: "Term",
+              dataPoints: expect.arrayContaining([
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+              ]),
+            }),
+          ]),
+          dispositionData: expect.arrayContaining([
+            // There should be one of each type of disposition
+            expect.objectContaining({ recommendationType: "Probation" }),
+            expect.objectContaining({ recommendationType: "Rider" }),
+            expect.objectContaining({ recommendationType: "Term" }),
+          ]),
+        }),
+      );
+    });
+  });
+
+  describe("import offense data", () => {
+    test("should import new offenses", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("US_ID/sentencing_charge_record.json")
+        .save(
+          arrayToJsonLines([
+            // Old offense
+            {
+              state_code: StateCode.US_ID,
+              charge: fakeOffense.name,
+            },
+            // New offense
+            {
+              state_code: StateCode.US_ID,
+              charge: "new-offense",
+            },
+          ]),
+        );
+
+      const response = await callHandleImportOffenseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new offense was created
+      const dbOffenses = await prismaClient.offense.findMany();
+
+      // There should only be two offenses in the database - the old one should have been preserved and the new one created
+      expect(dbOffenses).toHaveLength(2);
+
+      expect(dbOffenses).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: fakeOffense.name }),
+          expect.objectContaining({ name: "new-offense" }),
+        ]),
+      );
+    });
+
+    test("should capture exception if existing offense is missing", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("US_ID/sentencing_charge_record.json")
+        .save(
+          // Data with old offense missing
+          arrayToJsonLines([
+            // New offense
+            {
+              state_code: StateCode.US_ID,
+              charge: "new-offense",
+            },
+          ]),
+        );
+
+      const response = await callHandleImportOffenseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toBe(
+        "Error when importing offenses! These offenses exist in the database but are missing from the data import: offense-name",
+      );
     });
   });
 });

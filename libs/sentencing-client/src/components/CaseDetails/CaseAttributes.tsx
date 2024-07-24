@@ -49,7 +49,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       dueDate,
       reportType,
       county,
-      primaryCharge,
+      offense,
       lsirScore,
       birthDate,
       fullName,
@@ -61,7 +61,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       { label: "County", value: county },
       { label: "Gender", value: gender },
       { label: "Age", value: moment().diff(birthDate, "years") },
-      { label: "Offense", value: primaryCharge, isEditable: true },
+      { label: "Offense", value: offense, isEditable: true },
       { label: "LSI-R Score", value: lsirScore, isEditable: true },
     ].map((attribute) => {
       return { ...attribute, value: attribute.value ?? "-" };

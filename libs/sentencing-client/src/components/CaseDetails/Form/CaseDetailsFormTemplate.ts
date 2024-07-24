@@ -110,7 +110,7 @@ const yesNoUnsureOptions = [YES_OPTION, NO_OPTION, NOT_SURE_YET_OPTION];
 
 export const caseDetailsFormTemplate: FormFieldList = [
   {
-    key: "primaryCharge",
+    key: "offense",
     label: "Offense",
     value: null,
     description:

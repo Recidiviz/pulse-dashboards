@@ -8,6 +8,7 @@ import {
   fakeCase,
   fakeDispositions,
   fakeInsight,
+  fakeOffense,
   fakeRecidivismSeries,
 } from "~sentencing-server/test/setup/seed";
 
@@ -42,8 +43,7 @@ describe("case router", () => {
       await testTRPCClient.case.updateCase.mutate({
         id: fakeCase.id,
         attributes: {
-          primaryCharge: "Misdemeanor",
-          secondaryCharges: ["Felony"],
+          offense: fakeOffense.name,
           previouslyIncarceratedOrUnderSupervision: true,
           hasPreviousFelonyConviction: true,
           hasPreviousViolentOffenseConviction: true,
@@ -68,8 +68,7 @@ describe("case router", () => {
 
       expect(updatedCase).toEqual(
         expect.objectContaining({
-          primaryCharge: "Misdemeanor",
-          secondaryCharges: ["Felony"],
+          offense: fakeOffense.name,
           previouslyIncarceratedOrUnderSupervision: true,
           hasPreviousFelonyConviction: true,
           hasPreviousViolentOffenseConviction: true,
@@ -138,7 +137,6 @@ describe("case router", () => {
             "gender",
             "assessmentScoreBucketStart",
             "assessmentScoreBucketEnd",
-            "offense",
             "recidivismRollupOffense",
             "recidivismNumRecords",
             "stateCode",
@@ -149,7 +147,7 @@ describe("case router", () => {
               expect.objectContaining({
                 recommendationType: series.recommendationType,
                 dataPoints: expect.arrayContaining(
-                  series.dataPoints.createMany.data.map((dataPoint) =>
+                  series.dataPoints.map((dataPoint) =>
                     expect.objectContaining({
                       cohortMonths: dataPoint.cohortMonths,
                       eventRate: expect.closeTo(dataPoint.eventRate),
@@ -169,6 +167,7 @@ describe("case router", () => {
               }),
             ),
           ),
+          offense: fakeInsight.offense,
         }),
       );
     });
@@ -207,10 +206,10 @@ describe("case router", () => {
     });
 
     test("should throw error if there is no offense for case", async () => {
-      // Set primary charge to null to trigger error
+      // Set offense to null to trigger error
       await prismaClient.case.update({
         where: { id: fakeCase.id },
-        data: { primaryCharge: null },
+        data: { offenseId: null },
       });
 
       await expect(() =>

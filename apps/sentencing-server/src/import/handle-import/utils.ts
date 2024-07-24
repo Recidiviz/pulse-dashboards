@@ -1,4 +1,5 @@
 import { CaseRecommendation, Prisma } from "@prisma/client";
+import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";
 
@@ -6,6 +7,7 @@ import {
   caseImportSchema,
   clientImportSchema,
   insightImportSchema,
+  offenseImportSchema,
   opportunityImportSchema,
   recidivismSeriesSchema,
   staffImportSchema,
@@ -265,7 +267,7 @@ function transformRecidivismSeries(
 
 function transformAllRecidivismSeries(
   data: z.infer<typeof insightImportSchema>[number],
-): Prisma.RecidivismSeriesCreateWithoutInsightInput[] {
+) {
   const {
     recidivism_probation_series,
     recidivism_rider_series,
@@ -276,12 +278,12 @@ function transformAllRecidivismSeries(
     transformRecidivismSeries("Probation", recidivism_probation_series),
     transformRecidivismSeries("Rider", recidivism_rider_series),
     transformRecidivismSeries("Term", recidivism_term_series),
-  ];
+  ] satisfies Prisma.RecidivismSeriesCreateWithoutInsightInput[];
 }
 
 function transformDispositions(
   data: z.infer<typeof insightImportSchema>[number],
-): Prisma.DispositionCreateManyInsightInput[] {
+) {
   return [
     {
       recommendationType: "Probation",
@@ -295,7 +297,7 @@ function transformDispositions(
       recommendationType: "Term",
       percentage: data.disposition_term_pc,
     },
-  ];
+  ] satisfies Prisma.DispositionCreateManyInsightInput[];
 }
 
 export async function transformAndLoadInsightData(data: unknown) {
@@ -305,44 +307,66 @@ export async function transformAndLoadInsightData(data: unknown) {
     return {
       stateCode: insightData.state_code,
       gender: insightData.gender,
-      offense: insightData.most_severe_description,
+      Offense: {
+        connect: {
+          name: insightData.most_severe_description,
+        },
+      },
       assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
       assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
       recidivismRollupOffense: insightData.recidivism_rollup,
       recidivismNumRecords: insightData.recidivism_num_records,
-      recidivismSeries: transformAllRecidivismSeries(insightData),
+      recidivismSeries: {
+        create: transformAllRecidivismSeries(insightData),
+      },
       dispositionNumRecords: insightData.disposition_num_records,
-      dispositionData: transformDispositions(insightData),
+      dispositionData: {
+        create: transformDispositions(insightData),
+      },
     };
-  }) satisfies Prisma.InsightCreateManyInput[];
+  });
 
   // Insights aren't linked to any other models and don't have any frontend-mutable attributes, so we can just delete all of them and re-add them
   await prismaClient.insight.deleteMany();
 
   for (const newInsight of cleanedData) {
-    const { recidivismSeries, dispositionData } = newInsight;
     await prismaClient.insight.create({
-      data: {
-        ..._.pick(newInsight, [
-          "stateCode",
-          "gender",
-          "offense",
-          "assessmentScoreBucketStart",
-          "assessmentScoreBucketEnd",
-          "recidivismRollupOffense",
-          "recidivismNumRecords",
-          "dispositionNumRecords",
-        ]),
-        recidivismSeries: {
-          // Can't use createMany because it doesn't support nested writes
-          create: recidivismSeries,
-        },
-        dispositionData: {
-          createMany: {
-            data: dispositionData,
-          },
-        },
-      },
+      data: newInsight,
     });
   }
+}
+
+export async function transformAndLoadOffenseData(data: unknown) {
+  const parsedData = offenseImportSchema.parse(data);
+
+  const cleanedData = parsedData.map((offenseData) => {
+    return {
+      stateCode: offenseData.state_code,
+      name: offenseData.charge,
+    };
+  });
+
+  const missingExistingOffenses = await prismaClient.offense.findMany({
+    where: {
+      NOT: {
+        name: {
+          in: cleanedData.map((offenseData) => offenseData.name),
+        },
+      },
+    },
+  });
+
+  // If there are any offenses in the database that aren't in the data import, log an error, but don't fail the task or it will be retried
+  if (missingExistingOffenses.length > 0) {
+    captureException(
+      `Error when importing offenses! These offenses exist in the database but are missing from the data import: ${missingExistingOffenses.map((offense) => offense.name).join(", ")}`,
+    );
+    return;
+  }
+
+  await prismaClient.offense.createMany({
+    // If an offense already exists, skip it because its just a name and there's no other data to update
+    skipDuplicates: true,
+    data: cleanedData,
+  });
 }

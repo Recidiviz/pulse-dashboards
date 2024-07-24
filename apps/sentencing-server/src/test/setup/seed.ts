@@ -2,12 +2,13 @@ import { faker } from "@faker-js/faker";
 import {
   CaseRecommendation,
   CaseStatus,
-  Charge,
   Gender,
+  OnboardingTopic,
   Plea,
   StateCode,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
+import _ from "lodash";
 
 import { prismaClient } from "~sentencing-server/prisma";
 import {
@@ -15,18 +16,22 @@ import {
   ClientCreateInput,
   DispositionCreateManyInsightInput,
   InsightCreateInput,
+  OffenseCreateInput,
   OpportunityCreateInput,
-  RecidivismSeriesCreateWithoutInsightInput,
   StaffCreateInput,
 } from "~sentencing-server/test/setup/types";
-import { createFakeRecidivismSeriesForPrisma } from "~sentencing-server/test/setup/utils";
+import { createFakeRecidivismSeries } from "~sentencing-server/test/setup/utils";
 
 const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_START = 0;
 const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END = 20;
 // Make sure fake case LSIR score falls within the range of the fake insight
 const FAKE_CASE_LSIR_SCORE = 10;
-const FAKE_CASE_PRIMARY_CHARGE = Charge.Felony;
 const FAKE_CLIENT_GENDER = Gender.FEMALE;
+
+export const fakeOffense = {
+  stateCode: StateCode.US_ID,
+  name: "offense-name",
+} satisfies OffenseCreateInput;
 
 export const fakeStaff = {
   externalId: "staff-ext-1",
@@ -59,8 +64,7 @@ export const fakeCase = {
   lsirScore: FAKE_CASE_LSIR_SCORE,
   lsirLevel: faker.number.int().toString(),
   reportType: faker.string.alpha(),
-  primaryCharge: FAKE_CASE_PRIMARY_CHARGE,
-  secondaryCharges: [],
+  offense: fakeOffense.name,
   isVeteran: faker.datatype.boolean(),
   previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
   hasPreviousFelonyConviction: faker.datatype.boolean(),
@@ -80,7 +84,16 @@ export const fakeCase = {
   status: faker.helpers.enumValue(CaseStatus),
   selectedRecommendation: faker.helpers.enumValue(CaseRecommendation),
   isLsirScoreLocked: false,
-  currentOnboardingTopic: "OffenseLsirScore",
+  currentOnboardingTopic: faker.helpers.enumValue(OnboardingTopic),
+};
+
+export const fakeCasePrismaInput = {
+  ...fakeCase,
+  offense: {
+    connect: {
+      name: fakeOffense.name,
+    },
+  },
 } satisfies CaseCreateInput;
 
 export const fakeOpportunity = {
@@ -102,8 +115,7 @@ export const fakeOpportunity = {
   veteranStatusCriterion: false,
 } satisfies OpportunityCreateInput;
 
-export const fakeRecidivismSeries =
-  createFakeRecidivismSeriesForPrisma() satisfies RecidivismSeriesCreateWithoutInsightInput[];
+export const fakeRecidivismSeries = createFakeRecidivismSeries();
 
 export const fakeDispositions = [
   {
@@ -125,14 +137,33 @@ export const fakeInsight = {
   gender: FAKE_CLIENT_GENDER,
   assessmentScoreBucketStart: FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_START,
   assessmentScoreBucketEnd: FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END,
-  offense: FAKE_CASE_PRIMARY_CHARGE,
+  offense: fakeOffense.name,
   recidivismRollupOffense: faker.string.alpha(),
   recidivismNumRecords: faker.number.int({ max: 100 }),
+  recidivismSeries: fakeRecidivismSeries,
+  dispositionNumRecords: faker.number.int({ max: 100 }),
+  dispositionData: fakeDispositions,
+};
+
+export const fakeInsightPrismaInput = {
+  ..._.omit(fakeInsight, "offense"),
+  Offense: {
+    connect: {
+      stateCode: fakeOffense.stateCode,
+      name: fakeOffense.name,
+    },
+  },
   recidivismSeries: {
     // Can't use createMany because of nested writes
-    create: fakeRecidivismSeries,
+    create: fakeRecidivismSeries.map((series) => ({
+      recommendationType: series.recommendationType as CaseRecommendation,
+      dataPoints: {
+        createMany: {
+          data: series.dataPoints,
+        },
+      },
+    })),
   },
-  dispositionNumRecords: faker.number.int({ max: 100 }),
   dispositionData: {
     createMany: {
       data: fakeDispositions,
@@ -142,12 +173,13 @@ export const fakeInsight = {
 
 export async function seed() {
   // Seed Data
+  await prismaClient.offense.create({ data: fakeOffense });
   await prismaClient.staff.create({ data: fakeStaff });
   await prismaClient.client.create({ data: fakeClient });
   await prismaClient.opportunity.create({ data: fakeOpportunity });
   await prismaClient.case.create({
     data: {
-      ...fakeCase,
+      ...fakeCasePrismaInput,
       Client: {
         connect: {
           externalId: fakeClient.externalId,
@@ -160,5 +192,5 @@ export async function seed() {
       },
     },
   });
-  await prismaClient.insight.create({ data: fakeInsight });
+  await prismaClient.insight.create({ data: fakeInsightPrismaInput });
 }

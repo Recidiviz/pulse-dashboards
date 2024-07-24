@@ -267,7 +267,7 @@ export const Cell = styled.td`
   padding: 16px;
 `;
 
-export const PrimaryCharge = styled.div<{ isNotSpecified: boolean }>`
+export const Offense = styled.div<{ isNotSpecified: boolean }>`
   ${({ isNotSpecified }) => isNotSpecified && `color: ${palette.slate60};`}
 `;
 

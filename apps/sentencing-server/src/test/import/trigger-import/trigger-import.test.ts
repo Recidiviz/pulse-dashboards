@@ -2,8 +2,8 @@ import { CloudTasksClient } from "@google-cloud/tasks";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 
+import { testAndGetSentryReport } from "~sentencing-server/test/import/common/utils";
 import { samplePayloadMessage } from "~sentencing-server/test/import/trigger-import/constants";
-import { testAndGetSentryReport } from "~sentencing-server/test/import/trigger-import/utils";
 import { testServer } from "~sentencing-server/test/setup";
 
 let getPayloadImp = vi.fn();

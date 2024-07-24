@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { CaseDetailsFixture } from "../../../../api/offlineFixtures";
-import { PRIMARY_CHARGE_KEY } from "../../../Dashboard/constants";
+import { OFFENSE_KEY } from "../../../Dashboard/constants";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -41,9 +41,7 @@ const form = new CaseDetailsForm(caseAttributes);
 
 test("form is initialized with case attribute values", () => {
   expect(Object.keys(form.content).length).toBe(caseDetailsFormTemplate.length);
-  expect(form.content[PRIMARY_CHARGE_KEY].value).toBe(
-    caseAttributes[PRIMARY_CHARGE_KEY],
-  );
+  expect(form.content[OFFENSE_KEY].value).toBe(caseAttributes[OFFENSE_KEY]);
   expect(form.content[LSIR_SCORE_KEY].value).toBe(
     caseAttributes[LSIR_SCORE_KEY],
   );
@@ -58,8 +56,8 @@ test("form is initialized with case attribute values", () => {
 });
 
 test("getFormValue returns the latest value for a field", () => {
-  expect(form.getFormValue(PRIMARY_CHARGE_KEY)).toBe(
-    parseFormValue(PRIMARY_CHARGE_KEY, caseAttributes[PRIMARY_CHARGE_KEY]),
+  expect(form.getFormValue(OFFENSE_KEY)).toBe(
+    parseFormValue(OFFENSE_KEY, caseAttributes[OFFENSE_KEY]),
   );
   expect(form.getFormValue(LSIR_SCORE_KEY)).toBe(
     parseFormValue(LSIR_SCORE_KEY, caseAttributes[LSIR_SCORE_KEY]),
@@ -130,7 +128,7 @@ test("onboardingFields returns the expected onboarding fields", () => {
 
   expect(form.onboardingFields["OFFENSE_LSIR_SCORE_FIELDS"].length).toBe(2);
   expect(form.onboardingFields["OFFENSE_LSIR_SCORE_FIELDS"][0].key).toBe(
-    PRIMARY_CHARGE_KEY,
+    OFFENSE_KEY,
   );
   expect(form.onboardingFields["OFFENSE_LSIR_SCORE_FIELDS"][1].key).toBe(
     LSIR_SCORE_KEY,

@@ -1,7 +1,6 @@
 import { faker } from "@faker-js/faker";
 import {
   CaseStatus,
-  Charge,
   Gender,
   Plea,
   Prisma,
@@ -83,8 +82,12 @@ async function main() {
         lsirScore: faker.number.int(100),
         lsirLevel: faker.number.int().toString(),
         reportType: faker.string.alpha(),
-        primaryCharge: faker.helpers.enumValue(Charge),
-        secondaryCharges: [],
+        offense: {
+          create: {
+            stateCode: StateCode.US_ID,
+            name: faker.string.alpha(),
+          },
+        },
         isVeteran: faker.datatype.boolean(),
         previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
         hasPreviousFelonyConviction: faker.datatype.boolean(),

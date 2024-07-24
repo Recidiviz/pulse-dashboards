@@ -8,8 +8,6 @@ export type OpportunityIdentifier =
 export type UpdateCaseInput = Pick<
   Prisma.CaseUpdateInput,
   | "lsirScore"
-  | "primaryCharge"
-  | "secondaryCharges"
   | "previouslyIncarceratedOrUnderSupervision"
   | "hasPreviousFelonyConviction"
   | "hasPreviousViolentOffenseConviction"
@@ -30,4 +28,5 @@ export type UpdateCaseInput = Pick<
   | "currentOnboardingTopic"
 > & {
   recommendedOpportunities?: OpportunityIdentifier[];
+  offense?: string | null;
 };

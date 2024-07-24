@@ -53,7 +53,7 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
       currentTopic === OnboardingTopic.OffenseLsirScore &&
       (form.hasError ||
         !form.getFormValue("lsirScore") ||
-        !form.getFormValue("primaryCharge"));
+        !form.getFormValue("offense"));
 
     const goToPrevTopic = () => {
       if (currentTopicIndex === 0) {

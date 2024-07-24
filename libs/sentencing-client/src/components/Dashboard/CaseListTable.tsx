@@ -35,7 +35,7 @@ import {
   CLIENT_FULL_NAME_KEY,
   DUE_DATE_KEY,
   ID_KEY,
-  PRIMARY_CHARGE_KEY,
+  OFFENSE_KEY,
   REPORT_TYPE_KEY,
   STATUS_KEY,
 } from "./constants";
@@ -85,18 +85,15 @@ const columns = [
   },
   {
     header: "Offense",
-    accessorKey: PRIMARY_CHARGE_KEY,
+    accessorKey: OFFENSE_KEY,
     cell: (
-      primaryCharge: CellContext<
-        Partial<CaseWithClient>,
-        CaseWithClient["primaryCharge"]
-      >,
+      offense: CellContext<Partial<CaseWithClient>, CaseWithClient["offense"]>,
     ) => {
-      const displayValue = primaryCharge.getValue() ?? "None Yet";
+      const displayValue = offense.getValue() ?? "None Yet";
       return (
-        <Styled.PrimaryCharge isNotSpecified={displayValue === "None Yet"}>
+        <Styled.Offense isNotSpecified={displayValue === "None Yet"}>
           {displayValue}
-        </Styled.PrimaryCharge>
+        </Styled.Offense>
       );
     },
   },

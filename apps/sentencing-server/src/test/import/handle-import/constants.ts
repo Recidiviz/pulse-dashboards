@@ -22,3 +22,8 @@ export const insightBody = {
   bucketId: "bucket-id",
   objectId: "US_ID/case_insights_record.json",
 };
+
+export const offenseBody = {
+  bucketId: "bucket-id",
+  objectId: "US_ID/sentencing_charge_record.json",
+};

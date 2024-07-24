@@ -3,6 +3,7 @@ import {
   transformAndLoadCaseData,
   transformAndLoadClientData,
   transformAndLoadInsightData,
+  transformAndLoadOffenseData,
   transformAndLoadOpportunityData,
   transformAndLoadStaffData,
 } from "~sentencing-server/import/handle-import/utils";
@@ -13,4 +14,5 @@ export const FILE_TYPE_TO_ETL_HELPER = {
   [FileType.Clients]: transformAndLoadClientData,
   [FileType.Opportunities]: transformAndLoadOpportunityData,
   [FileType.Insights]: transformAndLoadInsightData,
+  [FileType.Offenses]: transformAndLoadOffenseData,
 };

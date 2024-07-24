@@ -25,6 +25,7 @@ export const staffRouter = router({
               externalId: true,
               staffId: true,
               clientId: true,
+              offenseId: true,
             },
             include: {
               Client: {
@@ -36,6 +37,11 @@ export const staffRouter = router({
                 select: {
                   opportunityName: true,
                   providerPhoneNumber: true,
+                },
+              },
+              offense: {
+                select: {
+                  name: true,
                 },
               },
             },
@@ -50,12 +56,23 @@ export const staffRouter = router({
         });
       }
 
-      // TODO: figure out why prisma omit typechecking is not working (this doesn't actually do anything but fix the return type)
       return {
         ...staff,
-        Cases: staff.Cases.map((c: (typeof staff.Cases)[number]) =>
-          _.omit(c, ["externalId", "staffId", "clientId"]),
-        ),
+        Cases: staff.Cases.map((c: (typeof staff.Cases)[number]) => {
+          // Move offense name to top level
+          const renamedOffenseCase = {
+            ...c,
+            offense: c.offense?.name,
+          };
+
+          // TODO: figure out why prisma omit typechecking is not working (this doesn't actually do anything but fix the return type)
+          return _.omit(renamedOffenseCase, [
+            "externalId",
+            "staffId",
+            "clientId",
+            "offenseId",
+          ]);
+        }),
       };
     }),
   updateStaff: baseProcedure

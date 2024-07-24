@@ -18,7 +18,7 @@
 import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
-import { PRIMARY_CHARGE_KEY } from "../../Dashboard/constants";
+import { OFFENSE_KEY } from "../../Dashboard/constants";
 import { OnboardingFields } from "../CaseOnboarding/types";
 import {
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -66,7 +66,7 @@ export class CaseDetailsForm {
   get onboardingFields() {
     const fields = this.contentList.reduce(
       (acc, field) => {
-        if ([PRIMARY_CHARGE_KEY, LSIR_SCORE_KEY].includes(field.key)) {
+        if ([OFFENSE_KEY, LSIR_SCORE_KEY].includes(field.key)) {
           acc.OFFENSE_LSIR_SCORE_FIELDS.push(field);
         }
         if (field.key === NEEDS_TO_BE_ADDRESSED_KEY) {

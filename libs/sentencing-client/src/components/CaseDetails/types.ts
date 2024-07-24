@@ -81,8 +81,7 @@ export type MutableCaseAttributes = Partial<
   Pick<
     Case,
     | "lsirScore"
-    | "primaryCharge"
-    | "secondaryCharges"
+    | "offense"
     | "previouslyIncarceratedOrUnderSupervision"
     | "hasPreviousFelonyConviction"
     | "hasPreviousViolentOffenseConviction"
