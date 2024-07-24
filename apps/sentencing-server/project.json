@@ -54,6 +54,7 @@
         "outputPath": "dist/apps/sentencing-server",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node20",

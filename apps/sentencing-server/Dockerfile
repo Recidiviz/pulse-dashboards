@@ -22,4 +22,5 @@ RUN chown -R node:node .
 USER node
 EXPOSE ${PORT}
 
-CMD ["dumb-init", "node", "main.js"]
+# Make sure to import the sentry module before the main.js file in order for packages to be instrumented
+CMD ["dumb-init", "node", "--import", "./sentry/index.js", "main.js"]
