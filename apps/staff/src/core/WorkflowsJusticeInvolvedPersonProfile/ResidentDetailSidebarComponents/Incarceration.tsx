@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import { useRootStore } from "../../../components/StoreProvider/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
 import WorkflowsOfficerName from "../../WorkflowsOfficerName";
 import { PartialTime } from "../PartialTime";
@@ -35,6 +36,9 @@ function ReleaseDate({
   resident,
   opportunity,
 }: ResidentWithOptionalOpportunityProps): React.ReactElement {
+  const {
+    tenantStore: { releaseDateCopy },
+  } = useRootStore();
   if (
     opportunity &&
     [
@@ -48,7 +52,7 @@ function ReleaseDate({
 
   return (
     <>
-      <DetailsSubheading>Release</DetailsSubheading>
+      <DetailsSubheading>{releaseDateCopy}</DetailsSubheading>
       <SecureDetailsContent>
         {resident.onLifeSentence
           ? "Life sentence"

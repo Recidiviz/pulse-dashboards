@@ -162,4 +162,9 @@ export default class TenantStore {
       defaultStaffFilterFunction
     );
   }
+
+  get releaseDateCopy(): string {
+    if (!this.currentTenantId) return "";
+    return tenants[this.currentTenantId].releaseDateCopyOverride ?? "Release";
+  }
 }

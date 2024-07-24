@@ -173,6 +173,7 @@ const US_ID_CONFIG: TenantConfig = {
       accessor: "timelyDowngrade",
     },
   ],
+  releaseDateCopyOverride: "Full Term Release Date",
 };
 
 export default US_ID_CONFIG;
