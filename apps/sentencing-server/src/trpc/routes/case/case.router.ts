@@ -1,4 +1,5 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
@@ -167,12 +168,17 @@ export const caseRouter = router({
           gender: caseData.Client.gender,
         },
         include: {
-          Offense: {
+          offense: {
             select: {
               name: true,
             },
           },
-          recidivismSeries: {
+          rollupOffense: {
+            select: {
+              name: true,
+            },
+          },
+          rollupRecidivismSeries: {
             select: {
               recommendationType: true,
               dataPoints: {
@@ -193,6 +199,7 @@ export const caseRouter = router({
         omit: {
           id: true,
           offenseId: true,
+          rollupOffenseId: true,
         },
       });
 
@@ -204,7 +211,7 @@ export const caseRouter = router({
       }
 
       if (insights.length > 1) {
-        console.warn(
+        captureException(
           `Multiple insights found for case ${id}: ${JSON.stringify(insights)}. Returning first one.`,
         );
       }
@@ -213,8 +220,9 @@ export const caseRouter = router({
 
       return {
         ...insightToReturn,
-        // Move offense name to top level
-        offense: insightToReturn.Offense.name,
+        // Move offenses names to top level
+        offense: insightToReturn.offense.name,
+        rollupOffense: insightToReturn.rollupOffense?.name,
       };
     }),
 });

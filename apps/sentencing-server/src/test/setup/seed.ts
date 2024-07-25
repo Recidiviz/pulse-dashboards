@@ -140,22 +140,30 @@ export const fakeInsight = {
   assessmentScoreBucketStart: FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_START,
   assessmentScoreBucketEnd: FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END,
   offense: fakeOffense.name,
-  recidivismRollupOffense: faker.string.alpha(),
-  recidivismNumRecords: faker.number.int({ max: 100 }),
-  recidivismSeries: fakeRecidivismSeries,
+  rollupStateCode: StateCode.US_ID,
+  rollupGender: FAKE_CLIENT_GENDER,
+  rollupOffense: fakeOffense.name,
+  rollupRecidivismNumRecords: faker.number.int({ max: 100 }),
+  rollupRecidivismSeries: fakeRecidivismSeries,
   dispositionNumRecords: faker.number.int({ max: 100 }),
   dispositionData: fakeDispositions,
 };
 
 export const fakeInsightPrismaInput = {
-  ..._.omit(fakeInsight, "offense"),
-  Offense: {
+  ..._.omit(fakeInsight, ["offense", "rollupOffense"]),
+  offense: {
     connect: {
       stateCode: fakeOffense.stateCode,
-      name: fakeOffense.name,
+      name: fakeInsight.offense,
     },
   },
-  recidivismSeries: {
+  rollupOffense: {
+    connect: {
+      stateCode: fakeInsight.stateCode,
+      name: fakeInsight.rollupOffense,
+    },
+  },
+  rollupRecidivismSeries: {
     // Can't use createMany because of nested writes
     create: fakeRecidivismSeries.map((series) => ({
       recommendationType: series.recommendationType as CaseRecommendation,

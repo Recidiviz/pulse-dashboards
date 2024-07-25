@@ -252,8 +252,9 @@ model Offense {
   stateCode StateCode
   name      String    @unique
 
-  Case    Case[]
-  Insight Insight[]
+  Case                  Case[]
+  insightOffenses       Insight[] @relation("InsightOffenses")
+  insightRollupOffenses Insight[] @relation("InsightRollupOffenses")
 }
 
 model Case {
@@ -317,15 +318,23 @@ model Insight {
   id                         String    @id @default(cuid())
   stateCode                  StateCode
   gender                     Gender
-  Offense                    Offense   @relation(fields: [offenseId], references: [id])
+  offense                    Offense   @relation(name: "InsightOffenses", fields: [offenseId], references: [id])
   offenseId                  String
   assessmentScoreBucketStart Int
   assessmentScoreBucketEnd   Int
 
-  // Recidivism Data
-  recidivismRollupOffense String
-  recidivismNumRecords    Int
-  recidivismSeries        RecidivismSeries[]
+  // Rollup Recidivism Data
+  rollupStateCode                  StateCode
+  rollupGender                     Gender?
+  rollupAssessmentScoreBucketStart Int?
+  rollupAssessmentScoreBucketEnd   Int?
+  rollupOffense                    Offense?           @relation(name: "InsightRollupOffenses", fields: [rollupOffenseId], references: [id])
+  rollupOffenseId                  String?
+  rollupNcicCategory               String?
+  rollupCombinedOffenseCategory    String?
+  rollupViolentOffense             Boolean?
+  rollupRecidivismNumRecords       Int
+  rollupRecidivismSeries           RecidivismSeries[]
 
   // Disposition Data
   dispositionNumRecords Int

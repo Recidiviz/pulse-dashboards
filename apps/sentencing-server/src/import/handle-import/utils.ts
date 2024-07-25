@@ -309,16 +309,33 @@ export async function transformAndLoadInsightData(data: unknown) {
     return {
       stateCode: insightData.state_code,
       gender: insightData.gender,
-      Offense: {
+      offense: {
         connect: {
           name: insightData.most_severe_description,
         },
       },
       assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
       assessmentScoreBucketEnd: insightData.assessment_score_bucket_end,
-      recidivismRollupOffense: insightData.recidivism_rollup,
-      recidivismNumRecords: insightData.recidivism_num_records,
-      recidivismSeries: {
+      rollupStateCode: insightData.recidivism_rollup.state_code,
+      rollupGender: insightData.recidivism_rollup.gender,
+      rollupAssessmentScoreBucketStart:
+        insightData.recidivism_rollup.assessment_score_bucket_start,
+      rollupAssessmentScoreBucketEnd:
+        insightData.recidivism_rollup.assessment_score_bucket_end,
+      rollupOffense: {
+        connect: insightData.recidivism_rollup.most_severe_description
+          ? {
+              name: insightData.recidivism_rollup.most_severe_description,
+            }
+          : undefined,
+      },
+      rollupNcicCategory:
+        insightData.recidivism_rollup.most_severe_ncic_category_uniform,
+      rollupCombinedOffenseCategory:
+        insightData.recidivism_rollup.combined_offense_category,
+      rollupViolentOffense: insightData.recidivism_rollup.violent_offense,
+      rollupRecidivismNumRecords: insightData.recidivism_num_records,
+      rollupRecidivismSeries: {
         create: transformAllRecidivismSeries(insightData),
       },
       dispositionNumRecords: insightData.disposition_num_records,
@@ -326,7 +343,7 @@ export async function transformAndLoadInsightData(data: unknown) {
         create: transformDispositions(insightData),
       },
     };
-  });
+  }) satisfies Prisma.InsightCreateInput[];
 
   // Insights aren't linked to any other models and don't have any frontend-mutable attributes, so we can just delete all of them and re-add them
   await prismaClient.insight.deleteMany();

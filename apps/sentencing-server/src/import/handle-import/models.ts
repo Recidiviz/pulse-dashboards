@@ -149,6 +149,19 @@ export const recidivismSeriesSchema = zu.stringToJSON().pipe(
   ),
 );
 
+export const recidivismRollupSchema = zu.stringToJSON().pipe(
+  z.object({
+    state_code: stateCode,
+    gender: gender,
+    assessment_score_bucket_start: z.number().optional(),
+    assessment_score_bucket_end: z.number().optional(),
+    most_severe_description: z.string().optional(),
+    most_severe_ncic_category_uniform: z.string().optional(),
+    combined_offense_category: z.string().optional(),
+    violent_offense: z.boolean().optional(),
+  }),
+);
+
 export const insightImportSchema = z.array(
   z.object({
     state_code: stateCode,
@@ -156,7 +169,7 @@ export const insightImportSchema = z.array(
     assessment_score_bucket_start: z.number(),
     assessment_score_bucket_end: z.number(),
     most_severe_description: z.string(),
-    recidivism_rollup: z.string(),
+    recidivism_rollup: recidivismRollupSchema,
     recidivism_num_records: z.number(),
     recidivism_probation_series: recidivismSeriesSchema,
     recidivism_rider_series: recidivismSeriesSchema,

@@ -1041,11 +1041,17 @@ describe("handle_import", () => {
             {
               state_code: StateCode.US_ID,
               // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
-              gender: "MALE",
+              gender: Gender.MALE,
               assessment_score_bucket_start: faker.number.int({ max: 100 }),
               assessment_score_bucket_end: faker.number.int({ max: 100 }),
               most_severe_description: fakeOffense.name,
-              recidivism_rollup: faker.string.alpha(),
+              recidivism_rollup: JSON.stringify({
+                state_code: StateCode.US_ID,
+                gender: Gender.MALE,
+                assessment_score_bucket_start: faker.number.int({ max: 100 }),
+                assessment_score_bucket_end: faker.number.int({ max: 100 }),
+                most_severe_ncic_category_uniform: faker.string.alpha(),
+              }),
               recidivism_num_records: faker.number.int({ max: 100 }),
               recidivism_probation_series: JSON.stringify(
                 createFakeRecidivismSeriesForImport(),
@@ -1071,7 +1077,7 @@ describe("handle_import", () => {
       // Check that the new Insight was created
       const dbInsights = await prismaClient.insight.findMany({
         include: {
-          recidivismSeries: {
+          rollupRecidivismSeries: {
             select: {
               recommendationType: true,
               dataPoints: true,
@@ -1089,7 +1095,13 @@ describe("handle_import", () => {
       expect(newInsight).toEqual(
         expect.objectContaining({
           gender: "MALE",
-          recidivismSeries: expect.arrayContaining([
+          rollupStateCode: StateCode.US_ID,
+          rollupGender: Gender.MALE,
+          rollupAssessmentScoreBucketStart: expect.any(Number),
+          rollupAssessmentScoreBucketEnd: expect.any(Number),
+          rollupNcicCategory: expect.any(String),
+          rollupRecidivismNumRecords: expect.any(Number),
+          rollupRecidivismSeries: expect.arrayContaining([
             // There should be two data points for each series
             expect.objectContaining({
               recommendationType: "Probation",

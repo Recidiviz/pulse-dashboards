@@ -135,15 +135,23 @@ describe("case router", () => {
       expect(returnedInsight).toEqual(
         expect.objectContaining({
           ..._.pick(fakeInsight, [
+            "offense",
+            "stateCode",
             "gender",
             "assessmentScoreBucketStart",
             "assessmentScoreBucketEnd",
-            "recidivismRollupOffense",
-            "recidivismNumRecords",
-            "stateCode",
+            "rollupStateCode",
+            "rollupGender",
+            "rollupAssessmentScoreBucketStart",
+            "rollupAssessmentScoreBucketEnd",
+            "rollupOffense",
+            "rollupNcicCategory",
+            "rollupCombinedOffenseCategory",
+            "rollupViolentOffense",
+            "rollupRecidivismNumRecords",
             "dispositionNumRecords",
           ]),
-          recidivismSeries: expect.arrayContaining(
+          rollupRecidivismSeries: expect.arrayContaining(
             fakeRecidivismSeries.map((series) =>
               expect.objectContaining({
                 recommendationType: series.recommendationType,
@@ -168,7 +176,6 @@ describe("case router", () => {
               }),
             ),
           ),
-          offense: fakeInsight.offense,
         }),
       );
     });
