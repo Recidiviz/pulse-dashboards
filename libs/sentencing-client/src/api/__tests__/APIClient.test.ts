@@ -58,6 +58,11 @@ beforeEach(() => {
         query: vi.fn(),
       },
     },
+    offense: {
+      getOffenses: {
+        query: vi.fn(),
+      },
+    },
   };
   (createTRPCProxyClient as Mock).mockReturnValue(mockTRPCClient);
   apiClient = new APIClient(psiStore);
