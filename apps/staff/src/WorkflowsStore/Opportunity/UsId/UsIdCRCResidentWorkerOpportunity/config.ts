@@ -44,6 +44,8 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
         "There are pending felony charges or felony investigations in which the resident is a suspect",
       BEHAVIOR: "Resident has had poor institutional behavior",
       PROGRAM: "Missing required facility programming",
+      DENIED: "Was denied a transfer to a CRC",
+      IN_PROGRESS: "Was approved and is waiting to be transferred to a CRC",
       Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
