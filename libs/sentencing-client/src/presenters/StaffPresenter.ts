@@ -69,7 +69,7 @@ export class StaffPresenter implements Hydratable {
       Client: {
         fullName: caseBrief.Client?.fullName,
       } as CaseWithClient["Client"],
-      id: caseBrief.id,
+      id: caseBrief.externalId,
       dueDate: caseBrief.dueDate,
       reportType: caseBrief.reportType,
       offense: caseBrief.offense,

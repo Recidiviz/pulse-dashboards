@@ -45,7 +45,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
     const hideModal = () => setShowEditCaseDetailsModal(false);
 
     const {
-      id,
+      externalId,
       dueDate,
       reportType,
       county,
@@ -72,7 +72,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
         {/* Name, ID, Due Date */}
         <Styled.HeaderWrapper>
           <Styled.Name>{fullName}</Styled.Name>
-          <Styled.ID>{id}</Styled.ID>
+          <Styled.ID>{externalId}</Styled.ID>
           <Styled.DueDate>
             Due {moment(dueDate).format("MM/DD/YYYY")}
           </Styled.DueDate>

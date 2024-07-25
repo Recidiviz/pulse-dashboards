@@ -23,7 +23,6 @@ export const staffRouter = router({
         include: {
           Cases: {
             omit: {
-              externalId: true,
               staffId: true,
               clientId: true,
               offenseId: true,
@@ -69,7 +68,6 @@ export const staffRouter = router({
 
           // TODO: figure out why prisma omit typechecking is not working (this doesn't actually do anything but fix the return type)
           return _.omit(renamedOffenseCase, [
-            "externalId",
             "staffId",
             "clientId",
             "offenseId",

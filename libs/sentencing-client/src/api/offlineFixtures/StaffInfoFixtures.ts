@@ -26,6 +26,7 @@ export const StaffInfoFixture: Staff = {
   Cases: [
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f913",
+      externalId: "198374019",
       stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
@@ -68,6 +69,7 @@ export const StaffInfoFixture: Staff = {
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132",
+      externalId: "198374019",
       stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
@@ -110,6 +112,7 @@ export const StaffInfoFixture: Staff = {
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x2",
+      externalId: "198374019",
       stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",
@@ -152,6 +155,7 @@ export const StaffInfoFixture: Staff = {
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x",
+      externalId: "198374019",
       stateCode: "US_ID",
       Client: {
         pseudonymizedId: "87fb5f22-b92a-4443-a413-f0c36c3033bd",

@@ -18,7 +18,6 @@ export const caseRouter = router({
           id,
         },
         omit: {
-          externalId: true,
           staffId: true,
           clientId: true,
           offenseId: true,

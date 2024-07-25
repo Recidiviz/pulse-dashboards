@@ -24,7 +24,7 @@ export const CLIENT_KEY: keyof CaseWithClient = "Client";
 
 export const REPORT_TYPE_KEY: keyof CaseWithClient = "reportType";
 
-export const ID_KEY: keyof CaseWithClient = "id";
+export const ID_KEY: keyof CaseWithClient = "externalId";
 
 export const OFFENSE_KEY: keyof Attributes = "offense";
 

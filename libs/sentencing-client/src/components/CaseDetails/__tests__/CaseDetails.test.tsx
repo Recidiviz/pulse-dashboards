@@ -32,6 +32,7 @@ let psiStore: PSIStore;
 let presenter: CaseDetailsPresenter;
 const mockCase = Object.values(CaseDetailsFixture)[0];
 const caseId = mockCase.id;
+const caseExternalId = mockCase.externalId;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -112,7 +113,7 @@ test("display case details page", async () => {
   const opportunities = await screen.getByText(
     `Opportunities for ${fullName.split(" ")[0]}`,
   );
-  const caseIdNode = await screen.getByText(caseId);
+  const caseIdNode = await screen.getByText(caseExternalId);
 
   expect(backToDashboard).toBeInTheDocument();
   expect(clientName).toBeInTheDocument();
