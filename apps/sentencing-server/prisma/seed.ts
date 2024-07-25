@@ -5,6 +5,7 @@ import {
   Plea,
   Prisma,
   PrismaClient,
+  ReportType,
   StateCode,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
@@ -81,7 +82,7 @@ async function main() {
         county: faker.location.county(),
         lsirScore: faker.number.int(100),
         lsirLevel: faker.number.int().toString(),
-        reportType: faker.string.alpha(),
+        reportType: faker.helpers.enumValue(ReportType),
         offense: {
           create: {
             stateCode: StateCode.US_ID,

@@ -5,6 +5,7 @@ import {
   Gender,
   OnboardingTopic,
   Plea,
+  ReportType,
   StateCode,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
@@ -63,7 +64,7 @@ export const fakeCase = {
   county: faker.location.county(),
   lsirScore: FAKE_CASE_LSIR_SCORE,
   lsirLevel: faker.number.int().toString(),
-  reportType: faker.string.alpha(),
+  reportType: "Full PSI",
   offense: fakeOffense.name,
   isVeteran: faker.datatype.boolean(),
   previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
@@ -94,6 +95,7 @@ export const fakeCasePrismaInput = {
       name: fakeOffense.name,
     },
   },
+  reportType: ReportType.FullPSI,
 } satisfies CaseCreateInput;
 
 export const fakeOpportunity = {

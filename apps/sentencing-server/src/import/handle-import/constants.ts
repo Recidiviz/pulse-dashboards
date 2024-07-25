@@ -1,3 +1,5 @@
+import { ReportType } from "@prisma/client";
+
 import { FileType } from "~sentencing-server/import/common/constants";
 import {
   transformAndLoadCaseData,
@@ -15,4 +17,10 @@ export const FILE_TYPE_TO_ETL_HELPER = {
   [FileType.Opportunities]: transformAndLoadOpportunityData,
   [FileType.Insights]: transformAndLoadInsightData,
   [FileType.Offenses]: transformAndLoadOffenseData,
+};
+
+export const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE = {
+  "PSI Assigned Full": ReportType.FullPSI,
+  "PSI File Review Assigned": ReportType.FileReview,
+  "PSI File Review w/LSI Assigned": ReportType.FileReviewWithUpdatedLSIRScore,
 };

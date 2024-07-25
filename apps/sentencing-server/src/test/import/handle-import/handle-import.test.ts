@@ -212,7 +212,7 @@ describe("handle_import", () => {
               county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
           ]),
         );
@@ -299,7 +299,7 @@ describe("handle_import", () => {
               county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
           ]),
         );
@@ -346,7 +346,7 @@ describe("handle_import", () => {
               // Set the LSIR score to a new value
               lsir_score: (1000).toString(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
             // New case
             {
@@ -361,7 +361,7 @@ describe("handle_import", () => {
               county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
           ]),
         );
@@ -401,7 +401,7 @@ describe("handle_import", () => {
               assigned_date: faker.date.past(),
               county: faker.location.county(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
           ]),
         );
@@ -441,7 +441,7 @@ describe("handle_import", () => {
               county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
           ]),
         );
@@ -487,7 +487,7 @@ describe("handle_import", () => {
               county: faker.location.county(),
               lsir_score: faker.number.int({ max: 100 }).toString(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
           ]),
         );
@@ -533,7 +533,7 @@ describe("handle_import", () => {
               assigned_date: faker.date.past(),
               county: faker.location.county(),
               lsir_level: faker.number.int().toString(),
-              report_type: faker.string.alpha(),
+              report_type: "PSI Assigned Full",
             },
           ]),
         );

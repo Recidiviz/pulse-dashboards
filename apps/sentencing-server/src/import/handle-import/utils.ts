@@ -3,6 +3,7 @@ import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";
 
+import { EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE } from "~sentencing-server/import/handle-import/constants";
 import {
   caseImportSchema,
   clientImportSchema,
@@ -147,7 +148,8 @@ export async function transformAndLoadCaseData(data: unknown) {
         county: caseData.county,
         lsirScore: caseData.lsir_score,
         lsirLevel: caseData.lsir_level,
-        reportType: caseData.report_type,
+        reportType:
+          EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[caseData.report_type],
         isLsirScoreLocked: caseData.lsir_score !== undefined,
       };
     }),

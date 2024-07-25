@@ -7,6 +7,7 @@ import {
   getInsightForCaseSchema,
   updateCaseSchema,
 } from "~sentencing-server/trpc/routes/case/case.schema";
+import { REPORT_TYPE_ENUM_TO_STRING } from "~sentencing-server/trpc/routes/common/constants";
 
 export const caseRouter = router({
   getCase: baseProcedure
@@ -44,7 +45,11 @@ export const caseRouter = router({
         });
       }
 
-      return { ...caseData, offense: caseData.offense?.name };
+      return {
+        ...caseData,
+        reportType: REPORT_TYPE_ENUM_TO_STRING[caseData.reportType],
+        offense: caseData.offense?.name,
+      };
     }),
   updateCase: baseProcedure
     .input(updateCaseSchema)

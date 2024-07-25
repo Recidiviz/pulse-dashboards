@@ -44,6 +44,12 @@ export const nameSchema = zu.stringToJSON().pipe(
 
 const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.string()));
 
+const reportType = z.enum([
+  "PSI Assigned Full",
+  "PSI File Review Assigned",
+  "PSI File Review w/LSI Assigned",
+]);
+
 export const caseImportSchema = z.array(
   z.object({
     external_id: z.string(),
@@ -57,7 +63,7 @@ export const caseImportSchema = z.array(
     county: z.string(),
     lsir_score: z.coerce.number().optional(),
     lsir_level: z.string().optional(),
-    report_type: z.string(),
+    report_type: reportType,
   }),
 );
 

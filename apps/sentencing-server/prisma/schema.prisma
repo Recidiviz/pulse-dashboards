@@ -91,15 +91,10 @@ model Client {
   Cases     Case[]
 }
 
-enum Charge {
-  Misdemeanor
-  Felony
-}
-
-enum Pronouns {
-  HeHim
-  SheHer
-  TheyThem
+enum ReportType {
+  FullPSI
+  FileReview
+  FileReviewWithUpdatedLSIRScore
 }
 
 enum SubstanceUseDiagnosis {
@@ -280,9 +275,9 @@ model Case {
   assignedDate      DateTime
   county            String
   lsirLevel         String?
-  reportType        String
+  reportType        ReportType
   // Whether the LSIR score is locked and cannot be changed
-  isLsirScoreLocked Boolean  @default(false)
+  isLsirScoreLocked Boolean    @default(false)
 
   // Mutable Attributes
   lsirScore Int?

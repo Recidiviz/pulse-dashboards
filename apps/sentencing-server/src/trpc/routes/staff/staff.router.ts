@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
+import { REPORT_TYPE_ENUM_TO_STRING } from "~sentencing-server/trpc/routes/common/constants";
 import {
   getStaffInputSchema,
   updateStaffSchema,
@@ -62,6 +63,7 @@ export const staffRouter = router({
           // Move offense name to top level
           const renamedOffenseCase = {
             ...c,
+            reportType: REPORT_TYPE_ENUM_TO_STRING[c.reportType],
             offense: c.offense?.name,
           };
 
