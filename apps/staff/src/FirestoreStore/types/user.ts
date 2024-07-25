@@ -28,6 +28,7 @@ export type UserUpdateRecord = {
   selectedSearchIds?: string[];
   // TODO(#3522): [Workflows][Auth] Rethink district overrides
   overrideDistrictIds?: string[];
+  dismissedOpportunityNotificationIds?: string[];
 };
 export type UserRecord = Omit<StaffRecord, "email"> & { email: string };
 export function isUserRecord(

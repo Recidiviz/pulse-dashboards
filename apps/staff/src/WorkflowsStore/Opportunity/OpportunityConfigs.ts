@@ -25,7 +25,12 @@ import { Resident } from "../Resident";
 import { OpportunityBase } from "./OpportunityBase";
 import { SnoozeConfigurationInput } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import { OpportunityType } from "./OpportunityType/types";
-import { DenialReasonsMap, Opportunity, OpportunityTabGroups } from "./types";
+import {
+  DenialReasonsMap,
+  Opportunity,
+  OpportunityNotification,
+  OpportunityTabGroups,
+} from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
 import { usIdEarnedDischargeConfig as earnedDischarge } from "./UsId/EarnedDischargeOpportunity/config";
 import { usIdLSUConfig as LSU } from "./UsId/LSUOpportunity/config";
@@ -137,6 +142,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   inverseFeatureVariant?: FeatureVariant;
   label: string;
   newPolicyCopyLabel?: string;
+  notifications?: OpportunityNotification[];
   subheading?: string;
   firestoreCollection: string;
   /* An opportunity will either have auto or manual set, but not both */

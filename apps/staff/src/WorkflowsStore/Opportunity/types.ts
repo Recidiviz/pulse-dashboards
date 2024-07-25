@@ -62,6 +62,13 @@ export type OpportunityCaseNote = {
   eventDate?: Date;
 };
 
+export type OpportunityNotification = {
+  id: string;
+  title?: string;
+  body: string;
+  cta?: string; // if the CTA is omitted, an "x" button will be shown instead.
+};
+
 export type WithCaseNotes = {
   caseNotes: Record<string, OpportunityCaseNote[]>;
 };

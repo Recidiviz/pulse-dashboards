@@ -119,11 +119,9 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get callToAction() {
     return this.configurationObject.callToAction;
   }
-
   get subheading() {
     return this.configurationObject.subheading;
   }
-
   get notifications() {
     return this.configurationObject.notifications;
   }

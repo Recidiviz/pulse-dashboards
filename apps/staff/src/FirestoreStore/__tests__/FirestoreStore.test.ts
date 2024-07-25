@@ -567,5 +567,30 @@ describe("FirestoreStore", () => {
         ],
       ]);
     });
+
+    test("updateDismissedOpportunityNotificationIds", () => {
+      const dismissedOpportunityNotificationIds = [
+        "july_2024_update",
+        "june_2023_tip",
+      ];
+      const userEmail = "user@domain.gov";
+      store.updateDismissedOpportunityNotificationIds(
+        userEmail,
+        dismissedOpportunityNotificationIds,
+      );
+      expect(mockDoc.mock.calls).toEqual([
+        [undefined, "userUpdates", userEmail],
+      ]);
+
+      expect(mockSetDoc.mock.calls).toEqual([
+        [
+          "test-doc-ref",
+          { dismissedOpportunityNotificationIds },
+          {
+            merge: true,
+          },
+        ],
+      ]);
+    });
   });
 });

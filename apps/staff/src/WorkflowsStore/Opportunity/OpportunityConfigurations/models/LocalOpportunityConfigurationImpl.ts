@@ -80,6 +80,9 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   get subheading() {
     return this.configurationObject.subheading;
   }
+  get notifications() {
+    return this.configurationObject.notifications;
+  }
   eligibilityTextForCount = (count: number) =>
     formatEligibilityText(
       this.configurationObject.dynamicEligibilityText,

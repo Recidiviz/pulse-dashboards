@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Pill, typography } from "@recidiviz/design-system";
+import { animation, palette, Pill, typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
 const TabWrapper = styled.div`
@@ -36,9 +36,14 @@ const TabButton = styled.div<{ $active: boolean }>`
   display: flex;
   align-items: center;
   gap: 10px;
+  transition: all ${animation.defaultDurationMs}ms;
 
   &:not(:last-child) {
     margin-right: 2rem;
+  }
+
+  &:hover {
+    color: ${({ $active }) => !$active && palette.slate80};
   }
 `;
 

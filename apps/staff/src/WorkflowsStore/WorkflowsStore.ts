@@ -86,6 +86,7 @@ import { Officer } from "./Officer";
 import {
   INCARCERATION_OPPORTUNITY_TYPES,
   Opportunity,
+  OpportunityNotification,
   OpportunityTab,
   OpportunityTabGroup,
   SUPERVISION_OPPORTUNITY_TYPES,
@@ -398,6 +399,24 @@ export class WorkflowsStore implements Hydratable {
     return previousSearchIds ?? [];
   }
 
+  private get dismissedOpportunityNotificationIds() {
+    return this.user?.updates?.dismissedOpportunityNotificationIds ?? [];
+  }
+
+  get activeOpportunityNotification(): OpportunityNotification[] | undefined {
+    if (!this.selectedOpportunityType) {
+      return;
+    }
+
+    const { notifications } =
+      this.opportunityConfigurationStore.opportunities[
+        this.selectedOpportunityType
+      ];
+    const dismissedIds = this.dismissedOpportunityNotificationIds;
+
+    return notifications?.filter(({ id }) => !dismissedIds.includes(id));
+  }
+
   async fetchPerson(personId: string): Promise<void> {
     if (!this.rootStore.currentTenantId) return;
 
@@ -469,6 +488,15 @@ export class WorkflowsStore implements Hydratable {
     }
 
     this.selectedSearchIdsForImpersonation = searchIds;
+  }
+
+  dismissOpportunityNotification(notificationId: string): void {
+    if (!this.user) return;
+
+    this.rootStore.firestoreStore.updateDismissedOpportunityNotificationIds(
+      this.user.info.email,
+      [...this.dismissedOpportunityNotificationIds, notificationId],
+    );
   }
 
   async updateSelectedPerson(personId?: string): Promise<void> {

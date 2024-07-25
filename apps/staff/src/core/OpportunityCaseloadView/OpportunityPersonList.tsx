@@ -45,6 +45,7 @@ import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/Work
 import WorkflowsResults from "../WorkflowsResults";
 import { CallToActionText } from "../WorkflowsResults/WorkflowsResults";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
+import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
 
@@ -108,9 +109,12 @@ const HydratedOpportunityPersonList = observer(
         allOpportunitiesByType,
         selectedPerson,
         justiceInvolvedPersonTitle,
+        activeOpportunityNotification,
       },
       analyticsStore,
     } = useRootStore();
+
+    const { workflowsStore } = useRootStore();
 
     const opportunityConfigs = useOpportunityConfigurations();
     const { opportunityPolicyCopy } = useFeatureVariants();
@@ -207,7 +211,10 @@ const HydratedOpportunityPersonList = observer(
       setActiveTab(currentTabs[0] || displayTabs[0]);
     };
 
-    const items = oppsFromOpportunitiesByTab[activeTab];
+    const handleNotificationDismiss = (id: string) =>
+      workflowsStore.dismissOpportunityNotification(id);
+
+    const items = oppsFromOpportunitiesByTab?.[activeTab];
     const currentOpportunity =
       selectedPerson?.verifiedOpportunities[opportunityType];
 
@@ -226,6 +233,12 @@ const HydratedOpportunityPersonList = observer(
           <SubHeading className="PersonList__Subheading">
             {callToAction}
           </SubHeading>
+        )}
+        {opportunityPolicyCopy && activeOpportunityNotification && (
+          <OpportunityNotifications
+            notifications={activeOpportunityNotification}
+            handleDismiss={handleNotificationDismiss}
+          />
         )}
         <WorkflowsCaseloadControlBar
           title={"Group by"}

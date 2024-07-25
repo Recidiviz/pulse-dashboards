@@ -20,6 +20,7 @@ import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { SortParam } from "../../OpportunityConfigs";
 import {
   DenialReasonsMap,
+  OpportunityNotification,
   OpportunityRequirement,
   OpportunityTabGroups,
 } from "../../types";
@@ -61,6 +62,7 @@ export interface ILocalOpportunityConfiguration {
   initialHeader?: string;
   callToAction: string;
   subheading?: string;
+  notifications?: OpportunityNotification[];
   dynamicEligibilityText: string;
   denialButtonText?: string;
   eligibilityDateText?: string;

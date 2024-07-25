@@ -18,7 +18,11 @@
 import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { SortParamObject } from "../../OpportunityConfigs";
-import { DenialReasonsMap, OpportunityTabGroups } from "../../types";
+import {
+  DenialReasonsMap,
+  OpportunityNotification,
+  OpportunityTabGroups,
+} from "../../types";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import { CriteriaCopy } from "./shared";
 export interface OpportunityConfiguration {
@@ -44,6 +48,7 @@ export interface OpportunityConfiguration {
   denialReasons: DenialReasonsMap;
   sidebarComponents: string[];
   isAlert?: boolean;
+  notifications?: OpportunityNotification[];
   tooltipEligibilityText?: string;
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;

@@ -441,6 +441,15 @@ export default class FirestoreStore {
     });
   }
 
+  updateDismissedOpportunityNotificationIds(
+    userEmail: string,
+    dismissedOpportunityNotificationIds: string[],
+  ) {
+    return this.updateDocument(this.doc({ key: "userUpdates" }, userEmail), {
+      dismissedOpportunityNotificationIds,
+    });
+  }
+
   async updateUsTnExpirationContactNoteStatus(
     opportunity: UsTnExpirationOpportunity,
     currentUserEmail: string,
