@@ -97,7 +97,9 @@ export type FeatureVariant =
   | "supervisorHomepageWorkflows"
   | "usPaSpecialCircumstances"
   | "opportunityPolicyCopy"
-  | "interCandidateNavigation";
+  | "interCandidateNavigation"
+  | "interCandidateNavigation"
+  | "lastSyncedDate";
 export type FeatureVariantValue = {
   activeDate?: Date;
   variant?: string;
@@ -147,6 +149,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usPaSpecialCircumstances: {},
   opportunityPolicyCopy: {},
   interCandidateNavigation: {},
+  lastSyncedDate: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -169,6 +172,8 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
     : {
         ...allFeatureVariants,
         supervisorHomepage: undefined,
+        // Currently disabled because the last synced date doesn't exist on the backend yet.
+        lastSyncedDate: undefined,
       };
 
 export type LanternMethodologyByTenant = {

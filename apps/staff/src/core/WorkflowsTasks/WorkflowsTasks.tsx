@@ -45,6 +45,7 @@ import { getEntries } from "../../WorkflowsStore/utils";
 import { PersonInitialsAvatar } from "../Avatar";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
+import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
@@ -265,17 +266,26 @@ const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
       previous = task;
     }
 
-    return <>{calendar}</>;
+    return (
+      <>
+        {calendar}
+        <WorkflowsLastSynced date={tasks[0].person.lastDataFromState} />
+      </>
+    );
   },
 );
 
 const AllTasksView = observer(function AllTasksViewComponent() {
   const {
-    workflowsStore: { workflowsTasksStore: store },
+    workflowsStore: {
+      workflowsTasksStore: { clientsPartitionedByStatus },
+    },
   } = useRootStore();
 
   const [personsWithOverdueTasks, personsWithUpcomingTasks] =
-    store.clientsPartitionedByStatus;
+    clientsPartitionedByStatus;
+
+  const lastSynced = clientsPartitionedByStatus.flat()[0].lastDataFromState;
 
   return (
     <>
@@ -297,6 +307,7 @@ const AllTasksView = observer(function AllTasksViewComponent() {
           ))}
         </>
       ) : null}
+      <WorkflowsLastSynced date={lastSynced} />
     </>
   );
 });

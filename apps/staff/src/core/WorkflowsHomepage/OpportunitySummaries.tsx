@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import { Opportunity, OpportunityType } from "../../WorkflowsStore";
+import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
 
 /**
@@ -31,6 +32,12 @@ export const OpportunitySummaries = observer(function OpportunitySummaries({
   opportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>;
   opportunityTypes: OpportunityType[];
 }) {
+  // take the last synced date from an arbitrary person's record
+  const firstOpportunityPerson = Object.values(opportunitiesByType).find(
+    (opp) => opp.length,
+  )?.[0]?.person;
+  const lastSyncedDate = firstOpportunityPerson?.lastDataFromState;
+
   return (
     <div>
       {opportunityTypes.map((opportunityType, index) => {
@@ -46,6 +53,7 @@ export const OpportunitySummaries = observer(function OpportunitySummaries({
         }
         return null;
       })}
+      <WorkflowsLastSynced date={lastSyncedDate} />
     </div>
   );
 });

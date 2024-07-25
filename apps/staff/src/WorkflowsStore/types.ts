@@ -104,6 +104,10 @@ export type JusticeInvolvedPerson = {
    * the person's assigned staff ID.
    */
   searchIdValue: any;
+  /**
+   * The date when the data about this person was most recently synced from the state
+   */
+  lastDataFromState: Date;
 };
 
 export type PersonRecordType =

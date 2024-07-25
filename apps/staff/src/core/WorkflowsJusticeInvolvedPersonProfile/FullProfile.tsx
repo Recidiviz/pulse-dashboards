@@ -29,6 +29,7 @@ import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
+import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
 import {
@@ -317,6 +318,7 @@ export const FullProfile = observer(
             </div>
           </Content>
         </Wrapper>
+        <WorkflowsLastSynced date={person.lastDataFromState} />
       </WorkflowsNavLayout>
     );
   },

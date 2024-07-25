@@ -42,6 +42,7 @@ import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
+import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import WorkflowsResults from "../WorkflowsResults";
 import { CallToActionText } from "../WorkflowsResults/WorkflowsResults";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
@@ -263,6 +264,7 @@ const HydratedOpportunityPersonList = observer(
           opportunity={currentOpportunity}
           navigableOpportunities={items}
         />
+        <WorkflowsLastSynced date={items?.[0].person?.lastDataFromState} />
       </>
     );
   },
