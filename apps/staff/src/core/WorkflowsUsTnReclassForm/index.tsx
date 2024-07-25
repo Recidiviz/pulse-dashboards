@@ -14,15 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { UsTnAnnualReclassificationReviewForm } from "../../WorkflowsStore/Opportunity/Forms/UsTnAnnualReclassificationReviewForm";
-import { downloadSingle } from "../Paperwork/DOCXFormGenerator";
+import {
+  DocxTemplateFormContents,
+  FileGeneratorArgs,
+  renderMultipleDocx,
+} from "../Paperwork/DOCXFormGenerator";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassification/ClassificationCustodyAssessment";
+import { downloadZipFile } from "../Paperwork/utils";
 
 const WorkflowsUsTnReclassForm: React.FC = () => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -31,16 +37,40 @@ const WorkflowsUsTnReclassForm: React.FC = () => {
   const resident = form.opportunity.person;
 
   const onClickDownload = async () => {
+    let contents: DocxTemplateFormContents;
+
     const { derivedData } = form;
 
-    const userExternalId = resident.rootStore.userStore.externalId;
+    // we are not mutating any observables here, just telling Mobx not to track this access
+    runInAction(() => {
+      contents = {
+        ...toJS(derivedData),
+      };
+    });
 
-    return downloadSingle(
-      `${resident.displayName} - Reclassification Packet.docx`,
-      resident.stateCode,
-      "custody_reclassification_template.docx",
-      { ...derivedData, userExternalId },
+    const fileInputs: FileGeneratorArgs[] = [
+      ["custody_reclassification_template", "Offender Classification Summary"],
+      [
+        "classification_pilot_verification_template",
+        "Classification Pilot Verification",
+      ],
+    ].map(([filename, outputName]) => {
+      return [
+        `${resident.displayName} - ${outputName}.docx`,
+        resident.stateCode,
+        `${filename}.docx`,
+        contents,
+      ];
+    });
+
+    const documents = await renderMultipleDocx(
+      fileInputs,
       resident.rootStore.getTokenSilently,
+    );
+
+    downloadZipFile(
+      `${resident.displayName} - Reclassification Packet.zip`,
+      documents,
     );
   };
 
