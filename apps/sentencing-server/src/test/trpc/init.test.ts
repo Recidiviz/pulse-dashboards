@@ -8,76 +8,81 @@ import { testHost, testPort } from "~sentencing-server/test/setup";
 import { fakeCase } from "~sentencing-server/test/setup/seed";
 import { AppRouter } from "~sentencing-server/trpc/router";
 
-describe("auth", () => {
-  test("should throw error there is no authorization header", async () => {
-    // Don't pass authorization headers
-    const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
-      links: [
-        httpBatchLink({
-          url: `http://${testHost}:${testPort}`,
-        }),
-      ],
-      // Required to get Date objects to serialize correctly.
-      transformer: superjson,
-    });
-
-    await expect(() =>
-      customTestTRPCClient.case.getCase.query({
-        id: fakeCase.id,
-      }),
-    ).rejects.toThrowError(
-      new TRPCError({
-        code: "UNAUTHORIZED",
-      }),
-    );
-  });
-
-  test("should throw error if not authorized", async () => {
-    // Create a new server for this test that fails on auth
-    const customTestServer = buildServer();
-
-    customTestServer.addHook("preHandler", (req, reply, done) => {
-      req.jwtVerify = vi.fn(async () => {
-        throw new Error("Unauthorized");
+describe("init trpc", () => {
+  describe("auth", () => {
+    test("should throw error there is no authorization header", async () => {
+      // Don't pass authorization headers
+      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+        links: [
+          httpBatchLink({
+            url: `http://${testHost}:${testPort}`,
+          }),
+        ],
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
       });
-      done();
-    });
 
-    const customTestPort = testPort + 1;
-
-    // Start listening.
-    customTestServer.listen({ port: customTestPort, host: testHost }, (err) => {
-      if (err) {
-        customTestServer.log.error(err);
-        process.exit(1);
-      } else {
-        console.log(`[ ready ] http://${testHost}:${testPort}`);
-      }
-    });
-
-    const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
-      links: [
-        httpBatchLink({
-          url: `http://${testHost}:${customTestPort}`,
-          headers() {
-            return {
-              Authorization: "Bearer test-token",
-            };
-          },
+      await expect(() =>
+        customTestTRPCClient.case.getCase.query({
+          id: fakeCase.id,
         }),
-      ],
-      // Required to get Date objects to serialize correctly.
-      transformer: superjson,
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "UNAUTHORIZED",
+        }),
+      );
     });
 
-    await expect(() =>
-      customTestTRPCClient.case.getCase.query({
-        id: fakeCase.id,
-      }),
-    ).rejects.toThrowError(
-      new TRPCError({
-        code: "UNAUTHORIZED",
-      }),
-    );
+    test("should throw error if not authorized", async () => {
+      // Create a new server for this test that fails on auth
+      const customTestServer = buildServer();
+
+      customTestServer.addHook("preHandler", (req, reply, done) => {
+        req.jwtVerify = vi.fn(async () => {
+          throw new Error("Unauthorized");
+        });
+        done();
+      });
+
+      const customTestPort = testPort + 1;
+
+      // Start listening.
+      customTestServer.listen(
+        { port: customTestPort, host: testHost },
+        (err) => {
+          if (err) {
+            customTestServer.log.error(err);
+            process.exit(1);
+          } else {
+            console.log(`[ ready ] http://${testHost}:${testPort}`);
+          }
+        },
+      );
+
+      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+        links: [
+          httpBatchLink({
+            url: `http://${testHost}:${customTestPort}`,
+            headers() {
+              return {
+                Authorization: "Bearer test-token",
+              };
+            },
+          }),
+        ],
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
+      });
+
+      await expect(() =>
+        customTestTRPCClient.case.getCase.query({
+          id: fakeCase.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "UNAUTHORIZED",
+        }),
+      );
+    });
   });
 });

@@ -134,12 +134,13 @@ export function buildServer() {
       const bearerToken = req.headers.authorization?.split(" ")[1];
 
       if (!bearerToken) {
-        return res.status(401).send("No bearer token was provided");
+        res.status(401);
+        throw new Error("No bearer token was provided");
       }
 
       if (!process.env["IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL"]) {
-        captureException("No IAM email env variable was provided");
-        return res.status(500);
+        res.status(500);
+        throw new Error("No IAM email env variable was provided");
       }
 
       try {
@@ -148,9 +149,8 @@ export function buildServer() {
           process.env["IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL"],
         );
       } catch (e) {
-        return res
-          .status(401)
-          .send(`error verifying auth token for handle_import: ${e}`);
+        res.status(401);
+        throw new Error(`error verifying auth token for handle_import: ${e}`);
       }
 
       const { bucketId, objectId } = req.body;
@@ -161,13 +161,18 @@ export function buildServer() {
       try {
         getFileType(objectId);
       } catch (e) {
-        return res.status(401).send(`Invalid object ID: ${e}`);
+        res.status(401);
+        throw new Error(`Invalid object ID: ${e}`);
       }
 
       try {
         await handleImport(bucketId, objectId);
       } catch (e) {
-        return res.status(500).send(`error handling import: ${e}`);
+        res.status(500);
+
+        throw new Error(
+          `Error importing object ${objectId} from bucket ${bucketId}: ${e}`,
+        );
       }
 
       console.log(

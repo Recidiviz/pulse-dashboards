@@ -67,6 +67,11 @@ describe("handle_import", () => {
         statusCode: 401,
         statusMessage: "Unauthorized",
       });
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toEqual(
+        "No bearer token was provided",
+      );
     });
 
     test("should throw error if there is no token payload", async () => {
@@ -83,6 +88,11 @@ describe("handle_import", () => {
         statusCode: 401,
         statusMessage: "Unauthorized",
       });
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toEqual(
+        "error verifying auth token for handle_import: Error: Email not verified",
+      );
     });
 
     test("should throw error if email is not verified", async () => {
@@ -101,6 +111,11 @@ describe("handle_import", () => {
         statusCode: 401,
         statusMessage: "Unauthorized",
       });
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toEqual(
+        "error verifying auth token for handle_import: Error: Email not verified",
+      );
     });
 
     test("should throw error if there is no email", async () => {
@@ -120,6 +135,11 @@ describe("handle_import", () => {
         statusCode: 401,
         statusMessage: "Unauthorized",
       });
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toEqual(
+        "error verifying auth token for handle_import: Error: Email not verified",
+      );
     });
 
     test("should throw error if email doesn't match expected", async () => {
@@ -139,6 +159,11 @@ describe("handle_import", () => {
         statusCode: 401,
         statusMessage: "Unauthorized",
       });
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toEqual(
+        "error verifying auth token for handle_import: Error: Invalid email address",
+      );
     });
 
     test("should throw error if file type is invalid", async () => {
@@ -161,6 +186,11 @@ describe("handle_import", () => {
         statusCode: 401,
         statusMessage: "Unauthorized",
       });
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toEqual(
+        "Invalid object ID: Error: Invalid object id: US_ID/not-a-valid-file.json",
+      );
     });
 
     test("should work if email is correct", async () => {
@@ -218,6 +248,35 @@ describe("handle_import", () => {
         }),
       );
     });
+  });
+
+  test("should return 500 if there is an issue with data import", async () => {
+    await mockStorageSingleton
+      .bucket(TEST_BUCKET_ID)
+      .file("US_ID/sentencing_charge_record.json")
+      .save(
+        arrayToJsonLines([
+          // Old offense
+          {
+            state_code: StateCode.US_ID,
+            charge: fakeOffense.name,
+          },
+          // New offense with invalid schema
+          {
+            stateCode: StateCode.US_ID,
+            charge: "new-offense",
+          },
+        ]),
+      );
+
+    const response = await callHandleImportOffenseData(testServer);
+
+    expect(response.statusCode).toBe(500);
+
+    const sentryReport = await testAndGetSentryReport();
+    expect(sentryReport.error?.message).toContain(
+      "Error importing object US_ID/sentencing_charge_record.json from bucket bucket-id:",
+    );
   });
 
   describe("import case data", () => {
