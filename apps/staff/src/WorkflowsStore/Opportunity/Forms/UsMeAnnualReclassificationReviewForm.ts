@@ -41,6 +41,7 @@ export type UsMeAnnualReclassificationReviewData = UnionOverrideKeys<
   > & {
     // Checkboxes
     isAnnualReclass: boolean;
+    isSemiannualReclass: boolean;
     isWithProbation: boolean;
     // formInformation.currentOffense (formatted)
     currentOffenses1: string;
@@ -224,6 +225,7 @@ export class UsMeAnnualReclassificationReviewForm extends FormBase<
     const reclassType =
       usMeIncarcerationPastRelevantClassificationDate?.reclassType;
     const isAnnualReclass = reclassType === "ANNUAL";
+    const isSemiannualReclass = reclassType === "SEMIANNUAL";
     const isWithProbation = formInformation.sentenceIncludesProbation === "YES";
 
     return {
@@ -239,6 +241,7 @@ export class UsMeAnnualReclassificationReviewForm extends FormBase<
 
       // FORM INFORMATION
       isAnnualReclass,
+      isSemiannualReclass,
       isWithProbation,
 
       ...generateLines(
