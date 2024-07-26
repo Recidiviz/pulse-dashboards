@@ -85,13 +85,20 @@ service cloud.firestore {
       )
   }
 
+  function hasPermission(permission) {
+    return permission in request.auth.token.permissions;
+  }
+
   function allowJiiGeneralRead(collection, document) {
     return appIsJii() &&
       (
-        recidivizAllowedStatesIncludesTarget(collection) ||
+        (recidivizAllowedStatesIncludesTarget(collection) && hasPermission("enhanced")) ||
         (
           notAStaffCollection(collection) && 
-          document == path(userDocIdRegexFromToken())
+          (
+            (hasPermission("enhanced") && stateCodeMatchesTarget()) || 
+            document == path(userDocIdRegexFromToken())
+          )
         )
       )
   }

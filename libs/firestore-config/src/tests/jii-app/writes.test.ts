@@ -30,6 +30,7 @@ import {
   testWriteToPersonalUpdateCollection,
 } from "../utils";
 import {
+  getEnhancedMEUser,
   getMEUser,
   getRecidivizUser,
   getStatelessUser,
@@ -57,6 +58,7 @@ describe("app = jii", () => {
     ["stateless", getStatelessUser, "user@stateless.com"],
     ["Recidiviz", getRecidivizUser, "user@recidiviz.org"],
     ["ME", getMEUser, "user@us_me.gov"],
+    ["ME enhanced", getEnhancedMEUser, "enhanceduser@us_me.gov"],
     ["XX", getXXUser, "user@us_xx.gov"],
   ])(
     "%s user cannot write anything",

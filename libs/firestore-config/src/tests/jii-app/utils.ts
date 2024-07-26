@@ -26,6 +26,16 @@ export function getMEUser(testEnv: RulesTestEnvironment) {
     stateCode: "US_ME",
     externalId: "user",
     recidivizAllowedStates: [],
+    permissions: [],
+  });
+}
+
+export function getEnhancedMEUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("enhanceduser@us_me.gov", {
+    app: "jii",
+    stateCode: "US_ME",
+    recidivizAllowedStates: [],
+    permissions: ["enhanced"],
   });
 }
 
@@ -34,6 +44,7 @@ export function getRecidivizUser(testEnv: RulesTestEnvironment) {
     app: "jii",
     stateCode: "RECIDIVIZ",
     recidivizAllowedStates: ["US_ME"],
+    permissions: ["enhanced"],
   });
 }
 
@@ -43,5 +54,6 @@ export function getXXUser(testEnv: RulesTestEnvironment) {
     stateCode: "US_XX",
     externalId: "user",
     recidivizAllowedStates: [],
+    permissions: [],
   });
 }

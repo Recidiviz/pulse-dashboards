@@ -98,6 +98,7 @@ app.get("/", async (request, response): Promise<void> => {
     const stateCode = metadata.stateCode;
     const externalId = metadata.externalId;
     const recidivizAllowedStates = (metadata.allowedStates ?? []).map(toUpper);
+    const permissions = metadata.permissions ?? [];
 
     const firebaseCredential = {
       ...JSON.parse(dataSourceCredential.value()),
@@ -121,6 +122,7 @@ app.get("/", async (request, response): Promise<void> => {
         stateCode,
         externalId,
         recidivizAllowedStates,
+        permissions,
       });
 
     response.json({ firebaseToken });
