@@ -15,23 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { when } from "mobx";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
-import { LoginImmediatelyIfLoggedOut } from "~auth";
-
-import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
-import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
-import { ResidentsLayout } from "../ResidentsLayout/ResidentsLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const PageEligibility = observer(function ResidentsRoot() {
-  const rootStore = useRootStore();
-  return (
-    <LoginImmediatelyIfLoggedOut authClient={rootStore.userStore.authClient}>
-      <RequiresStateAuth>
-        <IdentityTracker />
-        <ResidentsLayout />
-      </RequiresStateAuth>
-    </LoginImmediatelyIfLoggedOut>
+/**
+ * Triggers a one-time side effect, when an authorized user is detected, that identifies
+ * the user to third-party tracking services (e.g. Intercom). NOTE that this component
+ * should only be rendered in auth-protected contexts because it requires some Auth0 metadata,
+ * which may cause errors if it is accessed for unauthenticated users.
+ */
+export const IdentityTracker = observer(function IdentityTracker() {
+  const { userStore } = useRootStore();
+  useEffect(
+    () =>
+      when(
+        () => userStore.isAuthorizedForCurrentState,
+        () => {
+          userStore.identifyToTrackers();
+        },
+      ),
+    [userStore],
   );
+
+  return null;
 });

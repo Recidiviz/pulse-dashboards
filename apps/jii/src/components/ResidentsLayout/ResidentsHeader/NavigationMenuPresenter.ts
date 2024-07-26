@@ -46,6 +46,6 @@ export class NavigationMenuPresenter {
   }
 
   logout() {
-    this.userStore.authClient.logOut();
+    this.userStore.logOut();
   }
 }

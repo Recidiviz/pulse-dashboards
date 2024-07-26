@@ -69,9 +69,9 @@ test("links include search", () => {
 });
 
 test("logout", () => {
-  vi.spyOn(userStore.authClient, "logOut");
+  vi.spyOn(userStore, "logOut");
 
   presenter.logout();
 
-  expect(userStore.authClient.logOut).toHaveBeenCalled();
+  expect(userStore.logOut).toHaveBeenCalled();
 });

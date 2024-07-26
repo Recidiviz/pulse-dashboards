@@ -20,6 +20,7 @@
     "@floating-ui/react": "^0.26.1",
     "@google-cloud/storage": "^7.11.1",
     "@google-cloud/tasks": "^5.4.0",
+    "@intercom/messenger-js-sdk": "^0.0.11",
     "@material/select": "^14.0.0",
     "@material/textfield": "^14.0.0",
     "@nx/devkit": "18.3.3",

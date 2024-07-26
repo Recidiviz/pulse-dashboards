@@ -18,6 +18,7 @@ import { configure } from "mobx";
 
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
 
+import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import { UserStore } from "./UserStore";
 
 vi.mock("~client-env-utils");
@@ -38,7 +39,8 @@ beforeEach(() => {
   vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
     stateCode: "US_ME",
     externalId: "123456",
-    pseudonymizedId: "ahflvneuilehf",
+    pseudonymizedId: "test-pid",
+    intercomUserHash: "test-hash",
   });
 });
 
@@ -52,6 +54,8 @@ test("state authorization for external user", () => {
   vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
     stateCode: "US_XX",
     externalId: "123456",
+    pseudonymizedId: "test-pid",
+    intercomUserHash: "test-hash",
   });
 
   expect(store.isAuthorizedForCurrentState).toBeFalse();
@@ -88,7 +92,7 @@ test("reads externalId from app metadata", () => {
 });
 
 test("reads pseudonymizedId from app metadata", () => {
-  expect(store.pseudonymizedId).toBe("ahflvneuilehf");
+  expect(store.pseudonymizedId).toBe("test-pid");
 });
 
 test("cannot override externalId without permission", () => {
@@ -106,4 +110,38 @@ test("can override externalId in offline mode", () => {
 
   store.overrideExternalId("foo");
   expect(store.externalId).toBe("foo");
+});
+
+test("log out", () => {
+  vi.spyOn(store.authClient, "logOut");
+  vi.spyOn(store.intercomClient, "logOut");
+
+  store.logOut();
+  expect(store.authClient.logOut).toHaveBeenCalled();
+  expect(store.intercomClient.logOut).toHaveBeenCalled();
+});
+
+test("identify to trackers", () => {
+  vi.spyOn(IntercomClient.prototype, "updateUser");
+
+  store.identifyToTrackers();
+
+  expect(store.intercomClient.updateUser).toHaveBeenCalledWith({
+    state_code: "US_ME",
+    user_id: "test-pid",
+    user_hash: "test-hash",
+    external_id: "123456",
+  });
+});
+
+test("do not identify to trackers when user has no external ID", () => {
+  vi.spyOn(IntercomClient.prototype, "updateUser");
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "RECIDIVIZ",
+    allowedStates: ["US_ME"],
+  });
+
+  store.identifyToTrackers();
+
+  expect(store.intercomClient.updateUser).not.toHaveBeenCalled();
 });

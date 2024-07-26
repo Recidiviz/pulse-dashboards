@@ -317,4 +317,8 @@ export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
       this.user?.[`${this.clientSettings.metadataNamespace}/app_metadata`],
     );
   }
+
+  get userProperties() {
+    return this.user;
+  }
 }

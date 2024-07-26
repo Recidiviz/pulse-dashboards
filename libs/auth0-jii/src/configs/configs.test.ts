@@ -56,24 +56,26 @@ describe("user metadata schema", () => {
         stateCode: "US_ME",
         externalId: "123456",
         pseudonymizedId: "asnvawepeawhfeuawoghuil",
+        intercomUserHash: "eryiweyrwroywerowy",
       }),
     ).toMatchInlineSnapshot(`
       {
         "externalId": "123456",
+        "intercomUserHash": "eryiweyrwroywerowy",
         "pseudonymizedId": "asnvawepeawhfeuawoghuil",
         "stateCode": "US_ME",
       }
     `);
   });
 
-  test("both IDs must be present", () => {
+  test("all IDs must be present", () => {
     expect(() =>
       metadataSchema.parse({ stateCode: "US_ME", externalId: "123456" }),
     ).toThrowErrorMatchingInlineSnapshot(`
       [ZodError: [
         {
           "code": "custom",
-          "message": "externalId and pseudonymizedId must both be present",
+          "message": "externalId, pseudonymizedId, and intercomUserHash must all be present",
           "path": []
         }
       ]]
@@ -88,10 +90,40 @@ describe("user metadata schema", () => {
       [ZodError: [
         {
           "code": "custom",
-          "message": "externalId and pseudonymizedId must both be present",
+          "message": "externalId, pseudonymizedId, and intercomUserHash must all be present",
           "path": []
         }
       ]]
+    `);
+
+    expect(() =>
+      metadataSchema.parse({
+        stateCode: "US_ME",
+        pseudonymizedId: "adfasdfasdfase",
+        intercomUserHash: "klafhaeliuuiea",
+      }),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "code": "custom",
+          "message": "externalId, pseudonymizedId, and intercomUserHash must all be present",
+          "path": []
+        }
+      ]]
+    `);
+  });
+
+  test("intercomUserHash may be present without IDs", () => {
+    expect(
+      metadataSchema.parse({
+        stateCode: "US_ME",
+        intercomUserHash: "klafhaeliuuiea",
+      }),
+    ).toMatchInlineSnapshot(`
+      {
+        "intercomUserHash": "klafhaeliuuiea",
+        "stateCode": "US_ME",
+      }
     `);
   });
 

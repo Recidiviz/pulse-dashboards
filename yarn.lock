@@ -3787,6 +3787,11 @@
     gud "^1.0.0"
     warning "^4.0.3"
 
+"@intercom/messenger-js-sdk@^0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@intercom/messenger-js-sdk/-/messenger-js-sdk-0.0.11.tgz#ffdf37891826296d514a496e13a8d07e3d101c7e"
+  integrity sha512-jBHXO2+cGoBHYQMPaLP8eUm4AREcTWXlfd9shlBLSyEkFuW8+So/ynUDlftvWYz81KvGohRWYauw6vLRH/AlfA==
+
 "@ioredis/as-callback@^3.0.0":
   version "3.0.0"
   resolved "https://registry.npmjs.org/@ioredis/as-callback/-/as-callback-3.0.0.tgz"

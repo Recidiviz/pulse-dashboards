@@ -26,10 +26,13 @@ import {
 } from "~auth0-jii";
 import { isOfflineMode } from "~client-env-utils";
 
+import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import { StateCode } from "../configs/types";
 
 export class UserStore {
   authClient: AuthClient<typeof metadataSchema>;
+
+  intercomClient: IntercomClient;
 
   constructor(private externals: { stateCode: StateCode }) {
     makeAutoObservable(this);
@@ -41,6 +44,8 @@ export class UserStore {
       },
       { metadataNamespace, metadataSchema },
     );
+
+    this.intercomClient = new IntercomClient();
   }
 
   private externalIdOverride?: string;
@@ -81,5 +86,36 @@ export class UserStore {
     return (
       this.authClient.appMetadata.permissions?.includes(permission) ?? false
     );
+  }
+
+  logOut() {
+    this.intercomClient.logOut();
+    this.authClient.logOut();
+  }
+
+  identifyToTrackers() {
+    // non-JII users (e.g. Recidiviz employees) will not have this property
+    if (this.pseudonymizedId) {
+      this.intercomClient.updateUser({
+        state_code: this.authClient.appMetadata.stateCode,
+        user_id: this.pseudonymizedId,
+        // schema requires that these fields will also exist
+        user_hash: this.authClient.appMetadata.intercomUserHash as string,
+        // referring directly to auth data in case this.externalId was locally overridden somehow
+        external_id: this.authClient.appMetadata.externalId,
+      });
+    }
+    // may be present in absence of external ID; use alternative identifiers if so
+    else if (
+      this.authClient.appMetadata.intercomUserHash &&
+      this.authClient.userProperties?.sub
+    ) {
+      this.intercomClient.updateUser({
+        state_code: this.authClient.appMetadata.stateCode,
+        user_hash: this.authClient.appMetadata.intercomUserHash,
+        user_id: this.authClient.userProperties.sub,
+        email: this.authClient.userProperties.email,
+      });
+    }
   }
 }
