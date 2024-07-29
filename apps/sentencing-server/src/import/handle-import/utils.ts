@@ -119,22 +119,44 @@ export async function transformAndLoadStaffData(data: unknown) {
 export async function transformAndLoadCaseData(data: unknown) {
   const parsedData = caseImportSchema.parse(data);
 
+  const existingCaseExternalIds = (
+    await prismaClient.case.findMany({
+      select: { externalId: true },
+    })
+  ).map(({ externalId }) => externalId);
+
+  const newCaseExternalIds = parsedData.map(({ external_id }) => external_id);
+
+  const missingCases = existingCaseExternalIds.filter(
+    (id) => !newCaseExternalIds.includes(id),
+  );
+
+  if (!_.isEmpty(missingCases)) {
+    throw new Error(
+      `Error when importing cases! These cases exist in the database but are missing from the data import: ${JSON.stringify(missingCases)}`,
+    );
+  }
+
+  const staffExternalIds = (
+    await prismaClient.staff.findMany({
+      select: { externalId: true },
+    })
+  ).map(({ externalId }) => externalId);
+
+  const clientExternalIds = (
+    await prismaClient.client.findMany({
+      select: { externalId: true },
+    })
+  ).map(({ externalId }) => externalId);
+
   const cleanedData = await Promise.all(
     parsedData.map(async (caseData) => {
       // Check if the staff and clients exist in the db - if not, we'll link
       // them later
-      const staffId = (
-        await prismaClient.staff.findUnique({
-          where: { externalId: caseData.staff_id },
-          select: { externalId: true },
-        })
-      )?.externalId;
-      const clientId = (
-        await prismaClient.client.findUnique({
-          where: { externalId: caseData.client_id },
-          select: { externalId: true },
-        })
-      )?.externalId;
+      const staffId = staffExternalIds.find((id) => id === caseData.staff_id);
+      const clientId = clientExternalIds.find(
+        (id) => id === caseData.client_id,
+      );
 
       return {
         externalId: caseData.external_id,
@@ -166,17 +188,6 @@ export async function transformAndLoadCaseData(data: unknown) {
       update: newCase,
     });
   }
-
-  // Delete all of the old cases that weren't just loaded
-  await prismaClient.case.deleteMany({
-    where: {
-      NOT: {
-        externalId: {
-          in: cleanedData.map((caseData) => caseData.externalId),
-        },
-      },
-    },
-  });
 }
 
 export async function transformAndLoadOpportunityData(data: unknown) {

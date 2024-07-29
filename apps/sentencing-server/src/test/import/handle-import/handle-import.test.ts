@@ -199,6 +199,22 @@ describe("handle_import", () => {
         .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
+            // Existing case
+            {
+              external_id: fakeCase.externalId,
+              state_code: StateCode.US_ID,
+              staff_id: fakeStaff.externalId,
+              client_id: fakeClient.externalId,
+              due_date: faker.date.future(),
+              completion_date: faker.date.future(),
+              sentence_date: faker.date.past(),
+              assigned_date: faker.date.past(),
+              county: faker.location.county(),
+              // Set the LSIR score to a new value
+              lsir_score: (1000).toString(),
+              lsir_level: faker.number.int().toString(),
+              report_type: "PSI Assigned Full",
+            },
             // New case
             {
               external_id: "new-case-ext-id",
@@ -234,23 +250,18 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbCases = await prismaClient.case.findMany({});
 
-      // There should only be one case in the database - the new one should have been created
-      // and the old one should have been deleted
-      expect(dbCases).toHaveLength(1);
-
-      const newCase = dbCases[0];
-      expect(newCase).toEqual(
+      // The old case should have been updated and the new one should have been inserted
+      expect(dbCases).toEqual([
         expect.objectContaining({
-          externalId: "new-case-ext-id",
-          // The new one should have also been linked to the existing client and cases
-          clientId: fakeClient.externalId,
-          staffId: fakeStaff.externalId,
+          externalId: fakeCase.externalId,
+          lsirScore: 1000,
         }),
-      );
+        expect.objectContaining({ externalId: "new-case-ext-id" }),
+      ]);
     });
   });
 
-  test("should return 500 if there is an issue with data import", async () => {
+  test("should return 500 if data is malformed", async () => {
     await mockStorageSingleton
       .bucket(TEST_BUCKET_ID)
       .file("US_ID/sentencing_charge_record.json")
@@ -280,53 +291,7 @@ describe("handle_import", () => {
   });
 
   describe("import case data", () => {
-    test("should import new case data and delete old data", async () => {
-      await mockStorageSingleton
-        .bucket(TEST_BUCKET_ID)
-        .file("US_ID/sentencing_case_record.json")
-        .save(
-          arrayToJsonLines([
-            // New case
-            {
-              external_id: "new-case-ext-id",
-              state_code: StateCode.US_ID,
-              staff_id: fakeStaff.externalId,
-              client_id: fakeClient.externalId,
-              due_date: faker.date.future(),
-              completion_date: faker.date.future(),
-              sentence_date: faker.date.past(),
-              assigned_date: faker.date.past(),
-              county: faker.location.county(),
-              lsir_score: faker.number.int({ max: 100 }).toString(),
-              lsir_level: faker.number.int().toString(),
-              report_type: "PSI Assigned Full",
-            },
-          ]),
-        );
-
-      const response = await callHandleImportCaseData(testServer);
-
-      expect(response.statusCode).toBe(200);
-
-      // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
-
-      // There should only be one case in the database - the new one should have been created
-      // and the old one should have been deleted
-      expect(dbCases).toHaveLength(1);
-
-      const newCase = dbCases[0];
-      expect(newCase).toEqual(
-        expect.objectContaining({
-          externalId: "new-case-ext-id",
-          // The new one should have also been linked to the existing client and cases
-          clientId: fakeClient.externalId,
-          staffId: fakeStaff.externalId,
-        }),
-      );
-    });
-
-    test("should upsert existing cases", async () => {
+    test("should upsert existing cases and add new cases", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
         .file("US_ID/sentencing_case_record.json")
@@ -383,6 +348,53 @@ describe("handle_import", () => {
       ]);
     });
 
+    test("should throw an error if old cases aren't listed and abort update", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("US_ID/sentencing_case_record.json")
+        .save(
+          // Old case is missing
+          arrayToJsonLines([
+            // New case
+            {
+              external_id: "new-case-ext-id",
+              state_code: StateCode.US_ID,
+              staff_id: fakeStaff.externalId,
+              client_id: fakeClient.externalId,
+              due_date: faker.date.future(),
+              completion_date: faker.date.future(),
+              sentence_date: faker.date.past(),
+              assigned_date: faker.date.past(),
+              county: faker.location.county(),
+              lsir_score: faker.number.int({ max: 100 }).toString(),
+              lsir_level: faker.number.int().toString(),
+              report_type: "PSI Assigned Full",
+            },
+          ]),
+        );
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(500);
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toContain(
+        "Error importing object US_ID/sentencing_case_record.json from bucket bucket-id: Error: Error when importing cases! These cases exist in the database but are missing from the data import:",
+      );
+
+      // Check that the new case was created
+      const dbCases = await prismaClient.case.findMany();
+
+      // Only the old case should be there
+      expect(dbCases).toHaveLength(1);
+
+      const oldCase = dbCases[0];
+      expect(oldCase).toEqual(
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+        }),
+      );
+    });
+
     test("should not override lsirScore if provided data is undefined", async () => {
       await mockStorageSingleton
         .bucket(TEST_BUCKET_ID)
@@ -428,6 +440,21 @@ describe("handle_import", () => {
         .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
+            // Existing case
+            {
+              external_id: fakeCase.externalId,
+              state_code: StateCode.US_ID,
+              staff_id: fakeStaff.externalId,
+              client_id: fakeClient.externalId,
+              due_date: faker.date.future(),
+              completion_date: faker.date.future(),
+              sentence_date: faker.date.past(),
+              assigned_date: faker.date.past(),
+              county: faker.location.county(),
+              lsir_score: (1000).toString(),
+              lsir_level: faker.number.int().toString(),
+              report_type: "PSI Assigned Full",
+            },
             // New case with nonexistent staff and client
             {
               external_id: "new-case-ext-id",
@@ -453,19 +480,17 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbCases = await prismaClient.case.findMany({});
 
-      // There should only be one case in the database - the new one should have been created
-      // and the old one should have been deleted
-      expect(dbCases).toHaveLength(1);
-
-      const newCase = dbCases[0];
-      expect(newCase).toEqual(
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+        }),
         expect.objectContaining({
           externalId: "new-case-ext-id",
           // The new one should have been allowed to have been uploaded with no client or case
           clientId: null,
           staffId: null,
         }),
-      );
+      ]);
     });
 
     test("should set lsirScoreLocked if lsir score is provided", async () => {
@@ -474,6 +499,21 @@ describe("handle_import", () => {
         .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
+            // Existing case
+            {
+              external_id: fakeCase.externalId,
+              state_code: StateCode.US_ID,
+              staff_id: fakeStaff.externalId,
+              client_id: fakeClient.externalId,
+              due_date: faker.date.future(),
+              completion_date: faker.date.future(),
+              sentence_date: faker.date.past(),
+              assigned_date: faker.date.past(),
+              county: faker.location.county(),
+              lsir_score: (1000).toString(),
+              lsir_level: faker.number.int().toString(),
+              report_type: "PSI Assigned Full",
+            },
             // New case
             {
               external_id: "new-case-ext-id",
@@ -499,12 +539,10 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbCases = await prismaClient.case.findMany({});
 
-      // There should only be one case in the database - the new one should have been created
-      // and the old one should have been deleted
-      expect(dbCases).toHaveLength(1);
-
-      const newCase = dbCases[0];
-      expect(newCase).toEqual(
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+        }),
         expect.objectContaining({
           externalId: "new-case-ext-id",
           // The new one should have also been linked to the existing client and cases
@@ -512,7 +550,7 @@ describe("handle_import", () => {
           staffId: fakeStaff.externalId,
           isLsirScoreLocked: true,
         }),
-      );
+      ]);
     });
 
     test("should not set lsirScoreLocked if lsir score is not provided", async () => {
@@ -521,6 +559,22 @@ describe("handle_import", () => {
         .file("US_ID/sentencing_case_record.json")
         .save(
           arrayToJsonLines([
+            // Existing case
+            {
+              external_id: fakeCase.externalId,
+              state_code: StateCode.US_ID,
+              staff_id: fakeStaff.externalId,
+              client_id: fakeClient.externalId,
+              due_date: faker.date.future(),
+              completion_date: faker.date.future(),
+              sentence_date: faker.date.past(),
+              assigned_date: faker.date.past(),
+              county: faker.location.county(),
+              // Set the LSIR score to a new value
+              lsir_score: (1000).toString(),
+              lsir_level: faker.number.int().toString(),
+              report_type: "PSI Assigned Full",
+            },
             // New case
             {
               external_id: "new-case-ext-id",
@@ -545,12 +599,10 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbCases = await prismaClient.case.findMany({});
 
-      // There should only be one case in the database - the new one should have been created
-      // and the old one should have been deleted
-      expect(dbCases).toHaveLength(1);
-
-      const newCase = dbCases[0];
-      expect(newCase).toEqual(
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+        }),
         expect.objectContaining({
           externalId: "new-case-ext-id",
           // The new one should have also been linked to the existing client and cases
@@ -558,7 +610,7 @@ describe("handle_import", () => {
           staffId: fakeStaff.externalId,
           isLsirScoreLocked: false,
         }),
-      );
+      ]);
     });
   });
 
