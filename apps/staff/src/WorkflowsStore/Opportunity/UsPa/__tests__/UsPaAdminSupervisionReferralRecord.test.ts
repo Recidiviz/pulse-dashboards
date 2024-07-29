@@ -24,9 +24,7 @@ const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
   stateCode: "US_PA",
   externalId: "abc123",
   eligibleCriteria: {
-    usPaNoHighSanctionsInPastYear: {
-      latestHighSanctionDate: "2022-02-02",
-    },
+    usPaNoHighSanctionsInPastYear: {},
     usPaFulfilledRequirements: {
       eligibleDate: "2023-12-01",
     },

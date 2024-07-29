@@ -27,9 +27,7 @@ export const usPaAdminSupervisionReferrals =
         usPaFulfilledRequirements: {
           eligibleDate: "2022-01-01",
         },
-        usPaNoHighSanctionsInPastYear: {
-          latestHighSanctionDate: "2021-02-02",
-        },
+        usPaNoHighSanctionsInPastYear: {},
         usPaNotServingIneligibleOffenseForAdminSupervision: null,
       },
       ineligibleCriteria: {},
@@ -41,9 +39,7 @@ export const usPaAdminSupervisionReferrals =
         usPaFulfilledRequirements: {
           eligibleDate: "2023-01-15",
         },
-        usPaNoHighSanctionsInPastYear: {
-          latestHighSanctionDate: "2021-02-02",
-        },
+        usPaNoHighSanctionsInPastYear: {},
         usPaNotServingIneligibleOffenseForAdminSupervision: {
           ineligibleOffenses: ["EXAMPLE"],
           ineligibleSentencesExpirationDate: ["2021-01-01"],

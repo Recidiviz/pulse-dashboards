@@ -23,11 +23,7 @@ import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
 
 export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z.object({
-    usPaNoHighSanctionsInPastYear: z
-      .object({
-        latestHighSanctionDate: dateStringSchema,
-      })
-      .nullable(),
+    usPaNoHighSanctionsInPastYear: z.object({}).nullable(),
     usPaFulfilledRequirements: eligibleDateSchema.nullable(),
     usPaNotServingIneligibleOffenseForAdminSupervision: z
       .object({

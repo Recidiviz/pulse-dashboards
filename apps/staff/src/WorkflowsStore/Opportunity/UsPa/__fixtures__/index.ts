@@ -27,9 +27,7 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
       usPaFulfilledRequirements: {
         eligibleDate: new Date("2022-01-03"),
       },
-      usPaNoHighSanctionsInPastYear: {
-        latestHighSanctionDate: new Date("2021-01-01"),
-      },
+      usPaNoHighSanctionsInPastYear: {},
       usPaNotServingIneligibleOffenseForAdminSupervision: {
         ineligibleOffenses: ["EXAMPLE"],
         ineligibleSentencesExpirationDate: [new Date("2021-06-01")],
