@@ -83,4 +83,5 @@ export const usMiClassificationReviewConfig: OpportunityConfig<UsMiClassificatio
           "current assigned supervision level.",
       },
     },
+    homepagePosition: 1,
   };

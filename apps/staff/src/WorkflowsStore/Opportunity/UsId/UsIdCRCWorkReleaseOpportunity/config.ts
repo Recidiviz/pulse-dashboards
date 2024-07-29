@@ -83,4 +83,5 @@ export const usIdCRCWorkReleaseConfig: OpportunityConfig<UsIdCRCWorkReleaseOppor
       },
     },
     compareBy: [{ field: "releaseDate" }],
+    homepagePosition: 6,
   };

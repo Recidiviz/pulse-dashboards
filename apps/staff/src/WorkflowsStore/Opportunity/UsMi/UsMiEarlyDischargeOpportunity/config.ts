@@ -120,4 +120,5 @@ export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOppor
         text: "No pending detainers",
       },
     },
+    homepagePosition: 2,
   };

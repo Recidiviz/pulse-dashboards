@@ -59,4 +59,5 @@ export const usMoRestrictiveHousingStatusHearingConfig: OpportunityConfig<UsMoRe
         undefinedBehavior: "undefinedFirst",
       },
     ],
+    homepagePosition: 1,
   };

@@ -80,4 +80,5 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
         text: `In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}`,
       },
     },
+    homepagePosition: 7,
   };

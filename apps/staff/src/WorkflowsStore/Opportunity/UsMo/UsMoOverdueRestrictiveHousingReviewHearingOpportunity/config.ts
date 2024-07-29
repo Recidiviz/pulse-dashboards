@@ -31,4 +31,5 @@ export const usMoOverdueRestrictiveHousingReviewHearingConfig: OpportunityConfig
       OUTDATED: "Hearing occurred this week",
       Other: "Other",
     },
+    4,
   );

@@ -49,4 +49,5 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig<UsIdSupervis
         text: "Current supervision level: {{supervisionLevel}}; Last risk score: {{assessmentLevel}} {{#if latestAssessmentDate}}(as of {{date latestAssessmentDate}}){{else}}(assessment date unknown){{/if}}",
       },
     },
+    homepagePosition: 7,
   };

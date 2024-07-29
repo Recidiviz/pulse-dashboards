@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DeepWriteable } from "./types";
-
 /**
  * The states with their own OpportunityTypes. NOTE: This is not the same as all {@link TenantConfigId} states.
  */
@@ -67,17 +65,3 @@ export const OPPORTUNITY_TYPES_BY_STATE = {
     "usTnAnnualReclassification",
   ],
 } as const;
-
-/**
- *
- * @param stateCode The states with their own OpportunityTypes
- * @returns This returns the list of OpportunityTypes for a state.
- */
-export function getStateOpportunityTypes<
-  T extends keyof typeof OPPORTUNITY_TYPES_BY_STATE,
-  // The type is narrowed to the `stateCode`'s OpportunityTypes.
->(stateCode: T): DeepWriteable<(typeof OPPORTUNITY_TYPES_BY_STATE)[T]> {
-  return OPPORTUNITY_TYPES_BY_STATE[stateCode] as DeepWriteable<
-    (typeof OPPORTUNITY_TYPES_BY_STATE)[T]
-  >;
-}

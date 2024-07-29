@@ -80,4 +80,5 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
         text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
       },
     },
+    homepagePosition: 8,
   };

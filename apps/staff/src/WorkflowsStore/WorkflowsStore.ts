@@ -84,12 +84,10 @@ import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
 import {
-  INCARCERATION_OPPORTUNITY_TYPES,
   Opportunity,
   OpportunityNotification,
   OpportunityTab,
   OpportunityTabGroup,
-  SUPERVISION_OPPORTUNITY_TYPES,
 } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { OpportunityType } from "./Opportunity/OpportunityType/types";
@@ -941,22 +939,20 @@ export class WorkflowsStore implements Hydratable {
     } = this;
     if (!isHydrated(this) || !currentTenantId || !activeSystem) return [];
 
-    const opportunityTypes = tenants[currentTenantId]?.opportunityTypes ?? [];
-    const activeSystemFilters: Record<SystemId, Partial<OpportunityType>[]> = {
-      SUPERVISION: SUPERVISION_OPPORTUNITY_TYPES,
-      INCARCERATION: INCARCERATION_OPPORTUNITY_TYPES,
-      ALL: [], // ALL is a special case where we don't want to filter anything
-    };
+    const { opportunities } = this.opportunityConfigurationStore;
 
-    return opportunityTypes.filter((oppType: OpportunityType) => {
-      const isInSystem =
-        activeSystem === "ALL" ||
-        activeSystemFilters[activeSystem].includes(oppType);
-      if (!isInSystem) return false;
+    return Object.entries(opportunities)
+      .filter(([, opportunity]) => {
+        const isInState = opportunity.stateCode === currentTenantId;
+        const isInSystem =
+          activeSystem === "ALL" || opportunity?.systemType === activeSystem;
 
-      return this.opportunityConfigurationStore.opportunities[oppType]
-        ?.isEnabled;
-    });
+        return isInState && isInSystem && opportunity?.isEnabled;
+      })
+      .sort(
+        ([, a], [, b]) => a.homepagePosition - b.homepagePosition, // sort in ascending order
+      )
+      .map(([type]) => type as OpportunityType);
   }
 
   /**

@@ -107,5 +107,6 @@ export const mockOpportunity: Opportunity<Client> = {
     isAlert: false,
     eligibleCriteriaCopy: {},
     ineligibleCriteriaCopy: {},
+    homepagePosition: 1,
   },
 };

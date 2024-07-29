@@ -35,4 +35,5 @@ export const usCaSupervisionLevelDowngradeConfig: OpportunityConfig<UsCaSupervis
     isAlert: false,
     tooltipEligibilityText: "Eligible for supervision downgrade",
     sidebarComponents: ["ClientProfileDetails"],
+    homepagePosition: 1,
   };

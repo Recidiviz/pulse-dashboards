@@ -83,4 +83,5 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
       },
     },
     compareBy: [{ field: "releaseDate" }],
+    homepagePosition: 5,
   };

@@ -77,4 +77,5 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumT
         text: "More than 90 days remaining until full-term discharge.",
       },
     },
+    homepagePosition: 3,
   };

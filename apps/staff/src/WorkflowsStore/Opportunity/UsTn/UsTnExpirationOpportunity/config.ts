@@ -59,4 +59,5 @@ export const usTnExpirationConfig: OpportunityConfig<UsTnExpirationOpportunity> 
         text: "Not on lifetime supervision or lifetime sentence",
       },
     },
+    homepagePosition: 3,
   };

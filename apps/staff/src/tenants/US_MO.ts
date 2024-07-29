@@ -22,16 +22,13 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 
-const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_MO");
 const US_MO_CONFIG: TenantConfig = {
   name: "Missouri",
   stateCode: "MO",
   domain: "doc.mo.gov",
   availableStateCodes: [pathways.US_MO],
   enableUserRestrictions: true,
-  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
@@ -41,7 +38,7 @@ const US_MO_CONFIG: TenantConfig = {
     },
   },
   navigation: {
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "residents"],
+    workflows: ["home", "clients", "residents"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

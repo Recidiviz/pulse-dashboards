@@ -61,4 +61,5 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
       text: "{{daysUntil eligibleDate}} days until FTRD ({{date eligibleDate}})",
     },
   },
+  homepagePosition: 1,
 };

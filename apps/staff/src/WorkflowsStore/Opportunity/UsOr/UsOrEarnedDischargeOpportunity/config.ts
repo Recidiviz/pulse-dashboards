@@ -90,4 +90,5 @@ export const usOrEarnedDischargeConfig: OpportunityConfig<UsOrEarnedDischargeOpp
           " while on supervision for the case(s) under review.",
       },
     },
+    homepagePosition: 1,
   };

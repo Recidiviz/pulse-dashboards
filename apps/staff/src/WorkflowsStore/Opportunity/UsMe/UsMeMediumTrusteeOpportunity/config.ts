@@ -70,4 +70,5 @@ export const usMeMediumTrusteeConfig: OpportunityConfig<UsMeMediumTrusteeOpportu
           "residents who have been discipline free for at least five (5) years",
       },
     },
+    homepagePosition: 3,
   };

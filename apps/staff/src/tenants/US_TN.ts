@@ -27,10 +27,7 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
-
-const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_TN");
 
 const US_TN_CONFIG: TenantConfig = {
   name: "Tennessee",
@@ -40,7 +37,6 @@ const US_TN_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
-  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
@@ -53,7 +49,7 @@ const US_TN_CONFIG: TenantConfig = {
   insightsLegacyUI: true,
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
-    workflows: ["home", ...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "residents"],
+    workflows: ["home", "clients", "residents"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

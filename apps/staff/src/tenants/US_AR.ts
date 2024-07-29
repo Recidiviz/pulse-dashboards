@@ -24,7 +24,6 @@ const US_AR_CONFIG: TenantConfig = {
   availableStateCodes: [dashboard.US_AR],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["INCARCERATION"],
-  opportunityTypes: [],
   workflowsHomepage: "residents",
   workflowsSystemConfigs: {
     INCARCERATION: {

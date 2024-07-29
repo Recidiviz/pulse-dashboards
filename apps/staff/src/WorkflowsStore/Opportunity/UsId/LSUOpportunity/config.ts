@@ -44,4 +44,5 @@ export const usIdLSUConfig: OpportunityConfig<LSUOpportunity> = {
   },
   sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
   tooltipEligibilityText: "Eligible for transfer to LSU",
+  homepagePosition: 3,
 };

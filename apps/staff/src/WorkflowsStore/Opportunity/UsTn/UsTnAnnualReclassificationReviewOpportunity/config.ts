@@ -55,4 +55,5 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
       custodyLevelIsNotMax: { text: "Custody level is not maximum" },
     },
     compareBy: [{ field: "releaseDate" }],
+    homepagePosition: 4,
   };

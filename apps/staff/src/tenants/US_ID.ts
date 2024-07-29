@@ -27,14 +27,11 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import UsIdContactTask from "../WorkflowsStore/Task/UsIdContactTask";
 import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/UsIdEmploymentVerificationTask";
 import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
-
-const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_ID");
 
 const US_ID_CONFIG: TenantConfig = {
   name: "Idaho",
@@ -43,7 +40,6 @@ const US_ID_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
-  opportunityTypes: [...WORKFLOWS_OPPORTUNITY_TYPES],
   workflowsTasksConfig: {
     homeVisit: {
       enabled: true,
@@ -82,13 +78,7 @@ const US_ID_CONFIG: TenantConfig = {
   navigation: {
     // The order of pages here determines where the user will land first when navigating from `/`
     insights: [INSIGHTS_PAGES.supervision],
-    workflows: [
-      "home",
-      ...WORKFLOWS_OPPORTUNITY_TYPES,
-      "clients",
-      "tasks",
-      "residents",
-    ],
+    workflows: ["home", "clients", "tasks", "residents"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

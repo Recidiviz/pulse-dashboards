@@ -53,4 +53,5 @@ export interface OpportunityConfiguration {
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;
   compareBy: SortParamObject<string>[] | undefined;
+  homepagePosition: number;
 }

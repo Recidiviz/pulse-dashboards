@@ -79,4 +79,5 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
           "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
       },
     },
+    homepagePosition: 1,
   };

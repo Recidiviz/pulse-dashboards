@@ -35,4 +35,5 @@ export const usMoOverdueRestrictiveHousingInitialHearingConfig: OpportunityConfi
         "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
       Other: "Other",
     },
+    3,
   );

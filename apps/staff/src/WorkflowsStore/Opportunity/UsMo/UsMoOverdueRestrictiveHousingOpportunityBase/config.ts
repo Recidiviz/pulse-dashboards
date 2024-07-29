@@ -36,6 +36,7 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
   denialReasons: DenialReasonsMap = {
     Other: "Other",
   },
+  homepagePosition: number,
 ): OpportunityConfig<OpportunityBase<Resident, any, any>> => {
   const segregationTypeMapping = {
     Release: "Due for Release",
@@ -101,5 +102,6 @@ export const baseUsMoOverdueRestrictiveHousingConfig = (
         undefinedBehavior: "undefinedFirst",
       },
     ],
+    homepagePosition,
   };
 };

@@ -75,4 +75,5 @@ export interface ILocalOpportunityConfiguration {
   eligibleCriteriaCopy?: CriteriaCopy;
   ineligibleCriteriaCopy?: CriteriaCopy;
   compareBy?: SortParam[];
+  homepagePosition: number;
 }

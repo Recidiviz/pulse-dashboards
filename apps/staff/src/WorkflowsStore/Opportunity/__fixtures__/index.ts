@@ -80,6 +80,7 @@ export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
   sidebarComponents: [],
   denialReasons: {},
   methodologyUrl: "",
+  homepagePosition: 1,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfig<

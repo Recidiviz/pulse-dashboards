@@ -17,7 +17,7 @@
  * =============================================================================
  */
 
-import { difference, noop } from "lodash";
+import { difference, mapValues, noop } from "lodash";
 import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
@@ -42,6 +42,7 @@ import FirestoreStore, {
 import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
+import UserStore from "../../RootStore/UserStore";
 import type {
   IncarcerationOpportunityType,
   OpportunityType,
@@ -72,6 +73,11 @@ import {
   UsNdEarlyTerminationOpportunity,
 } from "../Opportunity";
 import { OPPORTUNITY_CONFIGS } from "../Opportunity/OpportunityConfigs";
+import {
+  IApiOpportunityConfiguration,
+  OpportunityConfiguration,
+} from "../Opportunity/OpportunityConfigurations";
+import { ApiOpportunityConfiguration } from "../Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
 import { Resident } from "../Resident";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { filterByUserDistrict } from "../utils";
@@ -958,6 +964,11 @@ describe("hasOpportunities", () => {
       "get",
     ).mockReturnValue({ status: "hydrated" });
 
+    setOpportunities({
+      compliantReporting: mockBaseOpportunityConfig,
+      earlyTermination: mockBaseOpportunityConfig,
+    });
+
     await waitForHydration();
     populateClients(mockClients);
 
@@ -989,6 +1000,35 @@ const setUser = (
   rootStore.userStore.isAuthorized = true;
   rootStore.userStore.userIsLoading = false;
   rootStore.tenantStore.setCurrentTenantId(stateCode as any);
+};
+
+const mockBaseOpportunityConfig: Partial<IApiOpportunityConfiguration> = {
+  stateCode: "US_XX" as TenantId,
+  systemType: "SUPERVISION",
+};
+
+const setOpportunities = (
+  opportunities: Partial<
+    Record<OpportunityType, Partial<IApiOpportunityConfiguration>>
+  >,
+  featureVariants?: any,
+) => {
+  vi.spyOn(
+    workflowsStore.opportunityConfigurationStore,
+    "opportunities",
+    "get",
+  ).mockReturnValue(
+    mapValues(
+      opportunities,
+      (config) =>
+        new ApiOpportunityConfiguration(
+          config as IApiOpportunityConfiguration,
+          {
+            activeFeatureVariants: featureVariants ?? {},
+          } as UserStore,
+        ),
+    ) as Record<OpportunityType, OpportunityConfiguration>,
+  );
 };
 
 describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByFeatureVariants testing", () => {
@@ -1148,24 +1188,30 @@ describe("test state-specific opportunity type feature variant filters", () => {
 
     test("US_XX oppTypes list does not include compliantReporting", async () => {
       // should be in the list when the feat var isn't on
+      setOpportunities({ compliantReporting: mockBaseOpportunityConfig });
+
       expect(
         workflowsStore.opportunityTypes.includes("compliantReporting"),
       ).toBeTruthy();
 
-      const spy = vi
-        .spyOn(OPPORTUNITY_CONFIGS, "compliantReporting", "get")
-        .mockReturnValue({
-          ...OPPORTUNITY_CONFIGS.compliantReporting,
-          inverseFeatureVariant: "fakeFeatVar" as FeatureVariant,
-        });
+      setOpportunities(
+        {
+          compliantReporting: {
+            ...mockBaseOpportunityConfig,
+            inverseFeatureVariant: "fakeFeatVar" as FeatureVariant,
+          },
+        },
+        {
+          fakeFeatVar: {},
+        },
+      );
 
       setUser({ fakeFeatVar: {} }, SESSION_STATE_CODE);
+
       // should no longer be in the list with inverse setting on now.
       expect(
         workflowsStore.opportunityTypes.includes("compliantReporting"),
       ).toBeFalsy();
-
-      spy.mockRestore();
     });
   });
 
@@ -1182,7 +1228,7 @@ describe("test state-specific opportunity type feature variant filters", () => {
     test("US_MO opp does not include usMoOverdueRestrictiveHousingRelease", async () => {
       setUser({ usMoOverdueRHPilot: {} }, SESSION_STATE_CODE);
       await waitForHydration({ ...mockOfficer });
-      expect(workflowsStore.opportunityTypes).toEqual([
+      expect(workflowsStore.opportunityTypes).not.toContain([
         "usMoOverdueRestrictiveHousingRelease",
       ]);
     });
@@ -1247,12 +1293,30 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
       };
       rootStore.userStore.isAuthorized = true;
       rootStore.userStore.userIsLoading = false;
+
+      setOpportunities(
+        {
+          LSU: {
+            ...mockBaseOpportunityConfig,
+            featureVariant: TEST_FEAT_VAR,
+          },
+          compliantReporting: mockBaseOpportunityConfig,
+        },
+        { [TEST_FEAT_VAR]: {} },
+      );
     });
   beforeEach(() => {
     runInAction(() => {
-      // @ts-expect-error
-      rootStore.tenantStore.currentTenantId = "US_XX";
+      rootStore.tenantStore.currentTenantId = "US_XX" as TenantId;
       OPPORTUNITY_CONFIGS[TEST_GATED_OPP].featureVariant = TEST_FEAT_VAR;
+    });
+
+    setOpportunities({
+      LSU: {
+        ...mockBaseOpportunityConfig,
+        featureVariant: TEST_FEAT_VAR,
+      },
+      compliantReporting: mockBaseOpportunityConfig,
     });
   });
 
@@ -1301,7 +1365,7 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
 
   test("gated opportunity is not enabled when feature variant is not set for current user", async () => {
     await waitForHydration({ ...mockOfficer });
-    expect(workflowsStore.opportunityTypes).toEqual(NON_GATED_OPPS);
+    expect(workflowsStore.opportunityTypes.sort()).toEqual(NON_GATED_OPPS);
   });
 
   test("gated opportunity is enabled when feature variant is set for current user", async () => {

@@ -67,4 +67,5 @@ export const usPaSpecialCircumstancesSupervisionConfig: OpportunityConfig<UsPaSp
         text: "Needs {{daysUntil eligibleDate}} more months on supervision",
       },
     },
+    homepagePosition: 2,
   };

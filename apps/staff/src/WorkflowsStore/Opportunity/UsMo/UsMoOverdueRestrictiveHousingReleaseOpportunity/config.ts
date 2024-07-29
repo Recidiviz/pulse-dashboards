@@ -34,4 +34,5 @@ export const usMoOverdueRestrictiveHousingReleaseConfig: OpportunityConfig<UsMoO
         "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
       Other: "Other",
     },
+    2,
   );

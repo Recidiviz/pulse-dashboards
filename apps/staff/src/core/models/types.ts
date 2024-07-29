@@ -28,7 +28,6 @@ import { RootStore } from "../../RootStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
 import {
   JusticeInvolvedPerson,
-  OpportunityType,
   StaffFilterFunction,
 } from "../../WorkflowsStore";
 import { Task } from "../../WorkflowsStore/Task/Task";
@@ -65,7 +64,6 @@ export type TenantConfig = {
   navigation?: Navigation;
   vitalsMetrics?: VitalsMetric[];
   tableColumns?: TableColumns;
-  opportunityTypes?: OpportunityType[];
   workflowsSupportedSystems?: SystemId[];
   workflowsSystemsGatedByFeatureVariant?: Partial<
     Record<SystemId, FeatureVariant[]>

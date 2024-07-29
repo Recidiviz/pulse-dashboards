@@ -63,4 +63,5 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervis
         text: "Not serving for an offense ineligible for a lower supervision level",
       },
     },
+    homepagePosition: 5,
   };

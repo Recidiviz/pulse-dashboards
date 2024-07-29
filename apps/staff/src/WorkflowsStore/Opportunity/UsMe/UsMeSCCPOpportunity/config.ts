@@ -46,4 +46,5 @@ export const usMeSCCPConfig: OpportunityConfig<UsMeSCCPOpportunity> = {
   },
   methodologyUrl: "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx",
   sidebarComponents: ["Incarceration", "CaseNotes"],
+  homepagePosition: 1,
 };

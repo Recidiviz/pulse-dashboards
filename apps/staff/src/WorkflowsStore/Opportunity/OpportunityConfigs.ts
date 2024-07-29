@@ -163,6 +163,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   eligibleCriteriaCopy?: Record<string, { text: string; tooltip?: string }>;
   ineligibleCriteriaCopy?: Record<string, { text: string; tooltip?: string }>;
   compareBy?: SortParam[];
+  homepagePosition: number;
 };
 
 export const OPPORTUNITY_CONFIGS = {

@@ -77,6 +77,7 @@ export const apiOpportunityConfigurationSchema = z.object({
       }),
     ),
   ),
+  homepagePosition: z.number(),
   methodologyUrl: z.string(),
 });
 

@@ -66,4 +66,5 @@ export const usMiReclassificationRequestConfig: OpportunityConfig<usMiReclassifi
           "Wardens shall ensure that prisoners are not confined in temporary segregation for more than seven business days except under the circumstances listed in 1-7 below",
       },
     },
+    homepagePosition: 6,
   };

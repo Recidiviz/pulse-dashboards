@@ -46,4 +46,5 @@ export const usMeWorkReleaseConfig: OpportunityConfig<UsMeWorkReleaseOpportunity
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ME,
     sidebarComponents: ["Incarceration", "CaseNotes"],
+    homepagePosition: 4,
   };

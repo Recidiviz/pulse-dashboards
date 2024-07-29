@@ -49,4 +49,5 @@ export const usTnCompliantReportingConfig: OpportunityConfig<CompliantReportingO
       "ClientProfileDetails",
       "FinesAndFees",
     ],
+    homepagePosition: 1,
   };

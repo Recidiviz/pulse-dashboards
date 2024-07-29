@@ -22,12 +22,7 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/types";
-import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
-
-const WORKFLOWS_OPPORTUNITY_TYPES: OpportunityType[] =
-  getStateOpportunityTypes("US_ME");
 
 const US_ME_CONFIG: TenantConfig = {
   name: "Maine",
@@ -36,7 +31,6 @@ const US_ME_CONFIG: TenantConfig = {
   pathwaysNameOverride: "Pathways",
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
-  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
   workflowsSystemConfigs: {
@@ -52,7 +46,7 @@ const US_ME_CONFIG: TenantConfig = {
     },
   },
   navigation: {
-    workflows: ["home", "clients", "residents", ...WORKFLOWS_OPPORTUNITY_TYPES],
+    workflows: ["home", "clients", "residents"],
     system: [
       PATHWAYS_PAGES.libertyToPrison,
       PATHWAYS_PAGES.prison,

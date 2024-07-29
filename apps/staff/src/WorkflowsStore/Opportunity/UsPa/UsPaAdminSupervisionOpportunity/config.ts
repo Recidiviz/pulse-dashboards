@@ -52,4 +52,5 @@ export const usPaAdminSupervisionConfig: OpportunityConfig<UsPaAdminSupervisionO
         text: "Not serving for an ineligible offense",
       },
     },
+    homepagePosition: 1,
   };

@@ -95,4 +95,5 @@ export const usMeFurloughReleaseConfig: OpportunityConfig<UsMeFurloughReleaseOpp
           "may become eligible for a furlough to visit with family during any of the sentences.",
       },
     },
+    homepagePosition: 6,
   };

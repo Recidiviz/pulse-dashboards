@@ -182,6 +182,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.compareBy;
   }
 
+  get homepagePosition() {
+    return this.configurationObject.homepagePosition;
+  }
+
   get isEnabled(): boolean {
     const { activeFeatureVariants } = this.userStore;
     const { featureVariant, inverseFeatureVariant } = this;

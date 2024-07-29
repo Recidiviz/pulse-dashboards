@@ -62,4 +62,5 @@ export const usMeAnnualReclassificationConfig: OpportunityConfig<UsMeAnnualRecla
           "Residents:\na. with more than six (6) years remaining to serve based on current custody release date shall be reviewed annually; and\nb. with six (6) years or less remaining to serve based on current custody release date shall be reviewed every six (6) months.",
       },
     },
+    homepagePosition: 2,
   };

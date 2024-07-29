@@ -54,4 +54,5 @@ export const usTnCustodyLevelDowngradeConfig: OpportunityConfig<UsTnCustodyLevel
         text: "Last assessment did not include an override",
       },
     },
+    homepagePosition: 2,
   };

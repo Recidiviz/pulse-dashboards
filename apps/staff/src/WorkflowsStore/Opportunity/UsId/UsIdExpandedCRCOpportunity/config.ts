@@ -95,4 +95,5 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
       },
     },
     compareBy: [{ field: "releaseDate" }],
+    homepagePosition: 4,
   };

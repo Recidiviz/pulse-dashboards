@@ -20,9 +20,6 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
-
-const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_OR");
 
 const US_OR_CONFIG: TenantConfig = {
   name: "Oregon",
@@ -31,7 +28,6 @@ const US_OR_CONFIG: TenantConfig = {
   availableStateCodes: [dashboard.US_OR],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
-  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "CASELOAD",
@@ -40,7 +36,7 @@ const US_OR_CONFIG: TenantConfig = {
     },
   },
   navigation: {
-    workflows: ["home", "clients", ...WORKFLOWS_OPPORTUNITY_TYPES],
+    workflows: ["home", "clients"],
   },
 };
 

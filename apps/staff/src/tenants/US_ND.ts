@@ -23,9 +23,6 @@ import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { getStateOpportunityTypes } from "../WorkflowsStore/Opportunity/OpportunityType/utils";
-
-const WORKFLOWS_OPPORTUNITY_TYPES = getStateOpportunityTypes("US_ND");
 
 const US_ND_CONFIG: TenantConfig = {
   name: "North Dakota",
@@ -33,10 +30,9 @@ const US_ND_CONFIG: TenantConfig = {
   domain: "nd.gov",
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
-  opportunityTypes: WORKFLOWS_OPPORTUNITY_TYPES,
   workflowsSupportedSystems: ["SUPERVISION"],
   navigation: {
-    workflows: [...WORKFLOWS_OPPORTUNITY_TYPES, "clients", "home"],
+    workflows: ["earlyTermination", "clients", "home"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

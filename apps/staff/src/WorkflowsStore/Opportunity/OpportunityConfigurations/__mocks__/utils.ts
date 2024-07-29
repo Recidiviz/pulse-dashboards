@@ -62,6 +62,7 @@ export const mockLocalOpportunityConfigurationObject: ILocalOpportunityConfigura
       [OTHER_KEY]: "Other",
     },
     sidebarComponents: [],
+    homepagePosition: 1,
   };
 
 export const mockApiOpportunityConfigurationResponse = {

@@ -78,4 +78,5 @@ export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<
           "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
       },
     },
+    homepagePosition: 7,
   };

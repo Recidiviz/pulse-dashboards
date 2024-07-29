@@ -46,4 +46,5 @@ export const usMeEarlyTerminationConfig: OpportunityConfig<UsMeEarlyTerminationO
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ME,
     sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
+    homepagePosition: 5,
   };

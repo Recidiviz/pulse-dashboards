@@ -57,4 +57,5 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
       text: "{{daysUntil eligibleDate}} days until FTRD ({{date eligibleDate}})",
     },
   },
+  homepagePosition: 4,
 };

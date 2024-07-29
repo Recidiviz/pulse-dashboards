@@ -85,4 +85,5 @@ export const usIdEarnedDischargeConfig: OpportunityConfig<EarnedDischargeOpportu
           "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
       },
     },
+    homepagePosition: 2,
   };
