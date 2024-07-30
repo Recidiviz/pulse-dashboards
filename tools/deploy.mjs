@@ -26,6 +26,7 @@ import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { Octokit } from "@octokit/rest";
 import inquirer from "inquirer";
 import { inc } from "semver";
+import { WebClient as SlackClient } from "@slack/web-api";
 
 // The default is true, but we explicitely set it here because it needs to be set to true
 // in order for the gcloud stderr to display (used for the backend deploy)
@@ -38,6 +39,9 @@ const secretClient = new SecretManagerServiceClient({
 });
 const [deployScriptPat] = await secretClient.accessSecretVersion({
   name: "projects/recidiviz-123/secrets/github_deploy_script_pat/versions/latest",
+});
+const [slackToken] = await secretClient.accessSecretVersion({
+  name: "projects/recidiviz-123/secrets/deploy_slack_bot_authorization_token/versions/latest",
 });
 
 // Determine which environment to deploy
@@ -79,6 +83,7 @@ const currentRevisionFull = (await $`git rev-parse HEAD`).stdout.trim();
 const octokit = new Octokit({
   auth: deployScriptPat.payload.data.toString(),
 });
+const slack = new SlackClient(slackToken.payload.data.toString());
 let latestRelease;
 let latestReleaseVersion;
 let generatedReleaseNotes;
@@ -345,6 +350,54 @@ if (publishReleaseNotes) {
     await $`git push --set-upstream origin ${releaseBranchName}`.pipe(
       process.stdout,
     );
+  }
+}
+
+// Slack deployment bot
+
+const polarisChannelId = "C026UPMAX4G";
+const polarisEngChannelId = "C04LC0VH78B";
+
+let slackChannel = null;
+let slackMessage = null;
+
+if (deployEnv === "staging") {
+  slackChannel = polarisEngChannelId;
+  slackMessage = `\`${currentRevision}\` on staging`;
+}
+
+if (deployEnv === "production") {
+  let message = `${nextVersion} is on production!`;
+
+  if (publishReleaseNotes) {
+    const releaseNotesMessage = releaseNotes
+      .split("\n")
+      .slice(1, -1)
+      .join("\n")
+      .trim(); // remove header and footer lines
+    message += ` \`\`\`${releaseNotesMessage}\`\`\``;
+  }
+
+  slackChannel = polarisChannelId;
+  slackMessage = message;
+}
+
+if (slackChannel !== null && slackMessage !== null) {
+  try {
+    const slackMessageResponse = await slack.chat.postMessage({
+      channel: slackChannel,
+      text: slackMessage,
+    });
+    if (slackMessageResponse.ok) {
+      console.log("Succesfully posted to Slack");
+    } else {
+      throw slackMessageResponse;
+    }
+  } catch (error) {
+    console.log(
+      "There was a problem posting to Slack, please post the message manually.",
+    );
+    console.error(error);
   }
 }
 
