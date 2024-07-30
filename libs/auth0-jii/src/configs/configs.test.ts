@@ -23,7 +23,7 @@ describe("auth0 client config", () => {
       {
         "audience": "https://jii-api-staging.recidiviz.org",
         "client_id": "9SXcwNaSRiRv6zGuYY2pgPUFH8zMZF2O",
-        "domain": "recidiviz-jii-staging.us.auth0.com",
+        "domain": "login-staging.opportunities.app",
       }
     `);
   });
@@ -33,7 +33,7 @@ describe("auth0 client config", () => {
       {
         "audience": "https://jii-api.recidiviz.org",
         "client_id": "zODqQ6NV9NHwfbrr8vHmK2pwF9c4GSPU",
-        "domain": "recidiviz-jii.us.auth0.com",
+        "domain": "login.opportunities.app",
       }
     `);
   });

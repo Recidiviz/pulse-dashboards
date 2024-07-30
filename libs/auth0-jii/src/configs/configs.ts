@@ -39,14 +39,14 @@ export function getAuth0Config(tenantKey: string): {
 
   switch (tenantKey) {
     case "staging":
-      domain = "recidiviz-jii-staging.us.auth0.com";
+      domain = "login-staging.opportunities.app";
       clientId = "9SXcwNaSRiRv6zGuYY2pgPUFH8zMZF2O";
       // this is not a real URL and won't be used for requests, this is just our naming convention
       // for Auth0 API identifiers (Auth0 recommends using a URL but does not actually call it)
       audience = "https://jii-api-staging.recidiviz.org";
       break;
     case "production":
-      domain = "recidiviz-jii.us.auth0.com";
+      domain = "login.opportunities.app";
       clientId = "zODqQ6NV9NHwfbrr8vHmK2pwF9c4GSPU";
       // similar to above, this is not a real URL either and that's fine
       audience = "https://jii-api.recidiviz.org";
