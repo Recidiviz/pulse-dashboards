@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { boot, shutdown, update } from "@intercom/messenger-js-sdk";
+import Intercom, { shutdown, update } from "@intercom/messenger-js-sdk";
 
 import { isTestEnv } from "~client-env-utils";
 
@@ -34,7 +34,7 @@ export class IntercomClient {
   constructor() {
     const appId = import.meta.env["VITE_INTERCOM_APP_ID"];
     if (appId) {
-      boot({ app_id: appId, hide_default_launcher: true });
+      Intercom({ app_id: appId, hide_default_launcher: true });
       this.isOffline = false;
     }
   }

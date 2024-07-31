@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { boot, shutdown, update } from "@intercom/messenger-js-sdk";
+import Intercom, { shutdown, update } from "@intercom/messenger-js-sdk";
 
 import { IntercomClient } from "./IntercomClient";
 
@@ -29,7 +29,7 @@ describe("without app ID in env", () => {
   });
 
   it("does not call boot", () => {
-    expect(boot).not.toHaveBeenCalled();
+    expect(Intercom).not.toHaveBeenCalled();
   });
 
   it("does not call update", () => {
@@ -55,7 +55,7 @@ describe("with app ID in env", () => {
   });
 
   it("calls boot", () => {
-    expect(boot).toHaveBeenCalledWith({
+    expect(Intercom).toHaveBeenCalledWith({
       app_id: "intercom-id-test",
       hide_default_launcher: true,
     });
