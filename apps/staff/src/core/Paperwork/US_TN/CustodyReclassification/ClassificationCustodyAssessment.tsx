@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import styled from "styled-components/macro";
 
-import { UsTnAnnualReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnAnnualReclassificationReviewForm";
+import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { FormViewerContext } from "../../FormViewer";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
@@ -56,8 +56,7 @@ const Seal = styled.img.attrs({ src: SealPng, alt: "TN Seal" })`
 
 const ClassificationCustodyAssessment: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
-  const form =
-    useOpportunityFormContext() as UsTnAnnualReclassificationReviewForm;
+  const form = useOpportunityFormContext() as UsTnReclassificationReviewForm;
 
   const numberedQuestions = zip(
     assessmentQuestions,

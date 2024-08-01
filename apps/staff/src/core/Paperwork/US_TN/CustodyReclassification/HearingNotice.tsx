@@ -18,7 +18,7 @@
 import React from "react";
 import styled from "styled-components/macro";
 
-import { UsTnAnnualReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnAnnualReclassificationReviewForm";
+import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 
@@ -50,7 +50,7 @@ const SigBlock = styled.div`
 
 const HearingNotice: React.FC = () => {
   const { formData } =
-    useOpportunityFormContext() as UsTnAnnualReclassificationReviewForm;
+    useOpportunityFormContext() as UsTnReclassificationReviewForm;
 
   return (
     <Container>

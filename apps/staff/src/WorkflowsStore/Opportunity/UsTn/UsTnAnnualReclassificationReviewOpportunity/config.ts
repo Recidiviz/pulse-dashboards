@@ -24,7 +24,6 @@ export const UsTnAnnualReclassificationReviewConfig: OpportunityConfig<UsTnAnnua
     stateCode: "US_TN",
     urlSection: "annualReclassification",
     label: "Annual Reclassification",
-    featureVariant: "usTnAnnualReclassification",
     dynamicEligibilityText:
       "resident[|s] [is|are] eligible for their annual reclassification",
     callToAction:

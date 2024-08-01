@@ -18,7 +18,7 @@
 import React from "react";
 import styled from "styled-components/macro";
 
-import { UsTnAnnualReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnAnnualReclassificationReviewForm";
+import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import FormInput from "./FormInput";
 import FormRadioButton from "./FormRadioButton";
@@ -63,7 +63,7 @@ const SigBlock = styled.div`
 
 const CoverSheet: React.FC = () => {
   const { formData, derivedData } =
-    useOpportunityFormContext() as UsTnAnnualReclassificationReviewForm;
+    useOpportunityFormContext() as UsTnReclassificationReviewForm;
 
   return (
     <Container>

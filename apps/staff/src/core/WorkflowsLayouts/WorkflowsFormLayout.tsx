@@ -45,7 +45,6 @@ import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/Work
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
-import WorkflowsUsTnCustodyLevelDowngradeForm from "../WorkflowsUsTnCustodyLevelDowngradeForm";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 import WorkflowsUsTnReclassForm from "../WorkflowsUsTnReclassForm";
 
@@ -92,7 +91,6 @@ const FormComponents = {
   FormSCCP,
   FormWorkRelease,
   WorkflowsUsTnExpirationForm,
-  WorkflowsUsTnCustodyLevelDowngradeForm,
   WorkflowsUsTnReclassForm,
   WorkflowsUsCaSupervisionLevelDowngradeForm,
   FormFurloughRelease,

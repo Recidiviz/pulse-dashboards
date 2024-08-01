@@ -21,7 +21,7 @@ import styled, {
   StyledComponentProps,
 } from "styled-components/macro";
 
-import { UsTnCustodyLevelDowngradeForm } from "../../../../WorkflowsStore/Opportunity/Forms/usTnCustodyLevelDowngradeForm";
+import { UsTnReclassificationReviewForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { FormDataType } from "./types";
 
@@ -49,7 +49,7 @@ const FormRadioButton: React.FC<FormRadioButtonProps> =
     ...props
   }: FormRadioButtonProps) {
     const opportunityForm =
-      useOpportunityFormContext() as UsTnCustodyLevelDowngradeForm;
+      useOpportunityFormContext() as UsTnReclassificationReviewForm;
 
     const { formData } = opportunityForm;
 

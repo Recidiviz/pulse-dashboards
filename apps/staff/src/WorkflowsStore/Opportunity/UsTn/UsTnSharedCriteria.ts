@@ -19,7 +19,7 @@ import { z } from "zod";
 
 import { dateStringSchema } from "~datatypes";
 
-import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyLevelDowngrade/assessmentQuestions";
+import { AssessmentQuestionNumber } from "../../../core/Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
 
 const eventNote = z.object({
   eventDate: dateStringSchema,

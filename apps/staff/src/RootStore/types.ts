@@ -80,7 +80,6 @@ export type FeatureVariant =
   | "usIdCRC"
   | "usIdExpandedCRC"
   | "usCaEnableSMS"
-  | "usTnAnnualReclassification"
   | "usNdWriteToDocstars"
   | "usNdCheckboxDocstars"
   | "usMeCustodyLevelReview"
@@ -129,7 +128,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdCRC: {},
   usIdExpandedCRC: {},
   usCaEnableSMS: {},
-  usTnAnnualReclassification: {},
   enableSnooze: {},
   usNdWriteToDocstars: {},
   usNdCheckboxDocstars: {},
@@ -161,7 +159,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usTnExpirationSubmitToTomis: {},
         usMeFurloughRelease: {},
         usMeWorkRelease: {},
-        usTnAnnualReclassification: {},
         supervisionUnrestrictedSearch: {},
         usMoOverdueRHPilot: {},
         enableSnooze: {},

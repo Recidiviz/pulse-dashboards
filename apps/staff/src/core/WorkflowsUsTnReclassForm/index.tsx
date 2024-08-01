@@ -18,7 +18,7 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { UsTnAnnualReclassificationReviewForm } from "../../WorkflowsStore/Opportunity/Forms/UsTnAnnualReclassificationReviewForm";
+import { UsTnReclassificationReviewForm } from "../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import {
   DocxTemplateFormContents,
   FileGeneratorArgs,
@@ -32,8 +32,7 @@ import { downloadZipFile } from "../Paperwork/utils";
 
 const WorkflowsUsTnReclassForm: React.FC = () => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
-  const form =
-    useOpportunityFormContext() as UsTnAnnualReclassificationReviewForm;
+  const form = useOpportunityFormContext() as UsTnReclassificationReviewForm;
   const resident = form.opportunity.person;
 
   const onClickDownload = async () => {

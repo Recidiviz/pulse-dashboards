@@ -22,14 +22,14 @@ import { assessmentQuestionNumbers } from "../../../../core/Paperwork/US_TN/Cust
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
 import { UsTnAnnualReclassificationReviewOpportunity } from "../../UsTn";
-import { UsTnAnnualReclassificationReviewForm } from "../UsTnAnnualReclassificationReviewForm";
+import { UsTnReclassificationReviewForm } from "../UsTnReclassificationReviewForm";
 
 // To adapt this to a new form/opportunity, change the type of `form` and update the opp and
 // person constructors if needed. Individual tests can modify personRecord and oppRecord, but
 // for supervision opportunities be sure to call `opp.person.updateRecord(personRecord)` after
 // changing the personRecord.
 
-let form: UsTnAnnualReclassificationReviewForm;
+let form: UsTnReclassificationReviewForm;
 let opp: (typeof form)["opportunity"];
 let personRecord: (typeof opp)["person"]["record"];
 let oppRecord: (typeof opp)["record"] & object;

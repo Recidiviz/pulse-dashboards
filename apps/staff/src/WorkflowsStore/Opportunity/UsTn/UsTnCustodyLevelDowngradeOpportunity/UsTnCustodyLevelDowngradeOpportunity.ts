@@ -17,8 +17,7 @@
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
-import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
-import { UsTnCustodyLevelDowngradeForm } from "../../Forms/usTnCustodyLevelDowngradeForm";
+import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
@@ -31,7 +30,7 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
   UsTnCustodyLevelDowngradeReferralRecord,
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
-  form: UsTnCustodyLevelDowngradeForm;
+  form: UsTnReclassificationReviewForm;
 
   readonly caseNotesTitle = "Relevant Information For Classification";
 
@@ -43,16 +42,6 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
       usTnCustodyLevelDowngradeSchema.parse,
     );
 
-    if (
-      resident.rootStore.workflowsStore.featureVariants
-        .usTnAnnualReclassification
-    ) {
-      this.form = new UsTnAnnualReclassificationReviewForm(
-        this,
-        resident.rootStore,
-      );
-    } else {
-      this.form = new UsTnCustodyLevelDowngradeForm(this, resident.rootStore);
-    }
+    this.form = new UsTnReclassificationReviewForm(this, resident.rootStore);
   }
 }

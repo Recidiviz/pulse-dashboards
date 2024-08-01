@@ -18,7 +18,7 @@
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatDate } from "../../../../utils/formatStrings";
 import { Resident } from "../../../Resident";
-import { UsTnAnnualReclassificationReviewForm } from "../../Forms/UsTnAnnualReclassificationReviewForm";
+import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
@@ -33,7 +33,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
 > {
   readonly caseNotesTitle = "Relevant Information For Classification";
 
-  form: UsTnAnnualReclassificationReviewForm;
+  form: UsTnReclassificationReviewForm;
 
   constructor(resident: Resident) {
     super(
@@ -43,10 +43,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
       usTnAnnualReclassificationReviewSchema.parse,
     );
 
-    this.form = new UsTnAnnualReclassificationReviewForm(
-      this,
-      resident.rootStore,
-    );
+    this.form = new UsTnReclassificationReviewForm(this, resident.rootStore);
   }
 
   get eligibilityDate() {
