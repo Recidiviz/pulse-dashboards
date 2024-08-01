@@ -257,6 +257,20 @@ describe("form clear data", () => {
   });
 });
 
+describe("form id", () => {
+  test("uses opp type when updates aren't shared across opps", async () => {
+    vi.spyOn(form, "shareFormUpdates", "get").mockReturnValue(false);
+    vi.spyOn(form, "formType", "get").mockReturnValue("testForm");
+    expect(form.formId).toEqual(`testForm-LSU`);
+  });
+
+  test("uses 'common' when updates are shared across opps", async () => {
+    vi.spyOn(form, "shareFormUpdates", "get").mockReturnValue(true);
+    vi.spyOn(form, "formType", "get").mockReturnValue("testForm");
+    expect(form.formId).toEqual(`testForm-common`);
+  });
+});
+
 describe("Test Furlough form", () => {
   test("facility/housing unit are defined", () => {
     const facilityId = "FAKE FACILITY";

@@ -40,6 +40,10 @@ export class UsMeSCCPForm extends FormBase<
     return "FormSCCP";
   }
 
+  get formType(): string {
+    return "UsMeSCCPForm";
+  }
+
   prefilledDataTransformer: PrefilledDataTransformer<UsMeSCCPDraftData> =
     () => {
       if (!this.opportunity.record) return {};

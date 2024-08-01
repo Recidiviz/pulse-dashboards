@@ -34,6 +34,10 @@ export class UsPaAdminSupervisionForm extends FormBase<
     return "FormUsPaAdminSupervision";
   }
 
+  get formType(): string {
+    return "UsPaAdminSupervisionForm";
+  }
+
   prefilledDataTransformer(): Partial<UsPaAdminSupervisionDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 

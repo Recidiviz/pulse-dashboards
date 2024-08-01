@@ -34,6 +34,10 @@ export class UsCaSupervisionLevelDowngradeForm extends FormBase<
     return "WorkflowsUsCaSupervisionLevelDowngradeForm";
   }
 
+  get formType(): string {
+    return "UsCaSupervisionLevelDowngradeForm";
+  }
+
   prefilledDataTransformer: PrefilledDataTransformer<UsCaSupervisionLevelDowngradeDraftData> =
     () => {
       if (!this.opportunity.record) return {};

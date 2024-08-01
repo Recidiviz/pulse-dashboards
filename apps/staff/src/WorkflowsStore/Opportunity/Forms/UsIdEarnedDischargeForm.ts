@@ -45,6 +45,10 @@ export class UsIdEarnedDischargeForm extends FormBase<
     return "FormEarnedDischarge";
   }
 
+  get formType(): string {
+    return "UsIdEarnedDischargeForm";
+  }
+
   prefilledDataTransformer(): Partial<EarnedDischargeTransformedETLFormInput> {
     if (!this.opportunity.record || !this.person) return {};
 

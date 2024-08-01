@@ -125,6 +125,10 @@ export class UsTnExpirationForm extends FormBase<
     return "WorkflowsUsTnExpirationForm";
   }
 
+  get formType(): string {
+    return "UsTnExpirationForm";
+  }
+
   prefilledDataTransformer: PrefilledDataTransformer<UsTnExpirationDraftData> =
     () => {
       if (!this.opportunity.record) return {};

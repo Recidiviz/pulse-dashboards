@@ -29,6 +29,10 @@ export class CompliantReportingForm extends FormBase<
     return "Download PDF";
   }
 
+  get formType(): string {
+    return "CompliantReportingForm";
+  }
+
   prefilledDataTransformer(): Partial<CompliantReportingDraftData> {
     if (!this.opportunity.record) return {};
     return transform(this.person, this.opportunity.record);

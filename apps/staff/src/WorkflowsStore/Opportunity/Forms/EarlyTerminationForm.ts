@@ -27,6 +27,10 @@ export class EarlyTerminationForm extends FormBase<
     return "WorkflowsEarlyTerminationForm";
   }
 
+  get formType(): string {
+    return "EarlyTerminationForm";
+  }
+
   prefilledDataTransformer(): Partial<UsNdEarlyTerminationDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 

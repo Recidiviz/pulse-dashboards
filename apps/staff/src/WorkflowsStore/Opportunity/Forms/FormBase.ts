@@ -262,6 +262,31 @@ export class FormBase<
     return this.updatesSubscription;
   }
 
+  /**
+   * Used to distinguish form update documents in Firestore. Typically formatted as
+   * {formName}-{formInstance}, with formInstance varying between "common" (for shared
+   * forms) or the opportunity type (for distinct forms).
+   */
+  get formId(): string {
+    const formInstance = this.shareFormUpdates ? "common" : this.type;
+    return `${this.formType}-${formInstance}`;
+  }
+
+  /**
+   * Only use form updates implementation for FV users.
+   */
+  get shouldUseFormUpdates(): boolean {
+    return !!this.rootStore.userStore.activeFeatureVariants.isolateFormUpdates;
+  }
+
+  /**
+   * Whether the form updates should be shared across opportunities that use this
+   * form type.
+   */
+  get shareFormUpdates(): boolean {
+    return false;
+  }
+
   // ==========================
   // properties below this line are stubs and should usually be replaced by the subclass.
   // as such they are not annotated with MobX so subclasses can use standard annotations
@@ -277,20 +302,8 @@ export class FormBase<
     return "";
   }
 
-  /**
-   * Used to distinguish form update documents in Firestore. Typically formatted as
-   * {formName}-{formInstance}, with formInstance varying between "common" (for shared
-   * forms) or the opportunity type (for distinct forms).
-   */
-  get formId(): string {
+  get formType(): string {
     return "";
-  }
-
-  /**
-   * Only use form updates implementation for FV users and MI RH workflows.
-   */
-  get shouldUseFormUpdates(): boolean {
-    return false;
   }
 
   // eslint-disable-next-line class-methods-use-this

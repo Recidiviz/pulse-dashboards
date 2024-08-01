@@ -143,12 +143,12 @@ export class UsMiSCCReviewForm extends FormBase<
     return "FormUsMiSCCReview";
   }
 
-  get shouldUseFormUpdates(): boolean {
-    return !!this.rootStore.userStore.activeFeatureVariants.isolateFormUpdates;
+  get shareFormUpdates(): boolean {
+    return true;
   }
 
-  get formId(): string {
-    return `UsMiSCCReviewForm-common`;
+  get formType(): string {
+    return "UsMiSCCReviewForm";
   }
 
   prefilledDataTransformer(): Partial<UsMiSCCReviewDraftData> {

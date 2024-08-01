@@ -34,6 +34,10 @@ export class UsMeFurloughReleaseForm extends FormBase<
     return "FormFurloughRelease";
   }
 
+  get formType(): string {
+    return "UsMeFurloughReleaseForm";
+  }
+
   prefilledDataTransformer: PrefilledDataTransformer<UsMeFurloughReleaseDraftData> =
     () => {
       if (!this.opportunity.record) return {};

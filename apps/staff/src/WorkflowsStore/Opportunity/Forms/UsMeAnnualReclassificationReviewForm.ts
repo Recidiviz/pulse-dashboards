@@ -133,6 +133,10 @@ export class UsMeAnnualReclassificationReviewForm extends FormBase<
     return "AnnualClassificationReview";
   }
 
+  get formType(): string {
+    return "UsMeAnnualReclassificationReviewForm";
+  }
+
   prefilledDataTransformer(): Partial<UsMeAnnualReclassificationReviewData> {
     if (!this.opportunity.record) return {};
     const { formInformation, eligibleCriteria, ineligibleCriteria } =

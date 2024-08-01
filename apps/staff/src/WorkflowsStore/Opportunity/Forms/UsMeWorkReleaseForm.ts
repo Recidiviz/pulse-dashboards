@@ -31,6 +31,10 @@ export class UsMeWorkReleaseForm extends FormBase<
     return "FormWorkRelease";
   }
 
+  get formType(): string {
+    return "UsMeWorkReleaseForm";
+  }
+
   prefilledDataTransformer: PrefilledDataTransformer<UsMeWorkReleaseDraftData> =
     () => {
       if (!this.opportunity.record) return {};

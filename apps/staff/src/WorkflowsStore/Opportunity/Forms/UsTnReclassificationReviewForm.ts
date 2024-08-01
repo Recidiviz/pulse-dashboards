@@ -51,6 +51,10 @@ export class UsTnReclassificationReviewForm extends FormBase<
     return "WorkflowsUsTnReclassForm";
   }
 
+  get formType(): string {
+    return "UsTnReclassificationReviewForm";
+  }
+
   get downloadText(): string {
     if (this.formIsDownloading) {
       return "Downloading DOCX...";

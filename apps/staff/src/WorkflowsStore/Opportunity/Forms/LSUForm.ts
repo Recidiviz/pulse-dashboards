@@ -17,6 +17,10 @@ export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
     return "WorkflowsLSUForm";
   }
 
+  get formType(): string {
+    return "LSUForm";
+  }
+
   prefilledDataTransformer: PrefilledDataTransformer<LSUDraftData> = () => {
     if (!this.opportunity.record) return {};
 
