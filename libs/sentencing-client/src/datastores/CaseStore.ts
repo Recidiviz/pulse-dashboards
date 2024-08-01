@@ -21,7 +21,7 @@ import toast from "react-hot-toast";
 
 import { FlowMethod } from "~hydration-utils";
 
-import { APIClient, Case } from "../api/APIClient";
+import { APIClient, Case, Opportunities } from "../api/APIClient";
 import { MutableCaseAttributes } from "../components/CaseDetails/types";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { PSIStore } from "./PSIStore";
@@ -29,9 +29,12 @@ import { PSIStore } from "./PSIStore";
 export class CaseStore {
   caseDetailsById: { [id: string]: Case };
 
+  communityOpportunities: Opportunities;
+
   constructor(public readonly psiStore: PSIStore) {
     makeAutoObservable(this);
     this.caseDetailsById = {};
+    this.communityOpportunities = [];
   }
 
   /** This is a MobX flow method and should be called with mobx.flowResult */
@@ -62,6 +65,21 @@ export class CaseStore {
     } catch (error) {
       toast(
         "Something went wrong updating the case details. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
+  }
+
+  *loadCommunityOpportunities() {
+    try {
+      this.communityOpportunities =
+        yield this.psiStore.apiClient.getCommunityOpportunities();
+    } catch (error) {
+      toast(
+        "Something went wrong loading the community opportunities. Please try again or contact us for support.",
         {
           duration: ERROR_TOAST_DURATION,
           style: { backgroundColor: palette.signal.error },

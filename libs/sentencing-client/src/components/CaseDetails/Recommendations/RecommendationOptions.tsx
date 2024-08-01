@@ -72,12 +72,12 @@ export const RecommendationOptionBase: React.FC<RecommendationsOptionProps> = ({
     <Styled.RecommendationOption
       selected={isSelectedRecommendation}
       key={option.key}
+      onClick={() => handleRecommendationUpdate(option.key)}
     >
       <Styled.InputSelection
         id={option.key}
         type="radio"
         checked={isSelectedRecommendation}
-        onChange={() => handleRecommendationUpdate(option.key)}
       />
       <Styled.RecommendationDetails>
         <Styled.RecommendationOptionLabel
@@ -101,8 +101,9 @@ export const ProbationOption: React.FC<{
   optionProps: RecommendationsOptionProps;
 }> = ({ optionProps }) => {
   const { isSelectedRecommendation, option } = optionProps;
-  const showOpportunities =
-    isSelectedRecommendation && option.opportunities?.length;
+  const showOpportunities = Boolean(
+    isSelectedRecommendation && option.opportunities?.length,
+  );
 
   return (
     <RecommendationOptionBase {...optionProps}>

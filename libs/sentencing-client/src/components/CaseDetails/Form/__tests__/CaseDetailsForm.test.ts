@@ -30,13 +30,14 @@ import {
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../../constants";
-import { Attributes, FormUpdates } from "../../types";
+import { FormUpdates } from "../../types";
 import { CaseDetailsForm } from "../CaseDetailsForm";
 import { caseDetailsFormTemplate } from "../CaseDetailsFormTemplate";
-import { parseFormValue } from "../utils";
+import { parseAttributeValue } from "../utils";
 
 const caseId = Object.keys(CaseDetailsFixture)[0];
-const caseAttributes = CaseDetailsFixture[caseId] as Attributes;
+const { recommendedOpportunities, ...caseAttributes } =
+  CaseDetailsFixture[caseId];
 const form = new CaseDetailsForm(caseAttributes);
 
 test("form is initialized with case attribute values", () => {
@@ -57,10 +58,10 @@ test("form is initialized with case attribute values", () => {
 
 test("getFormValue returns the latest value for a field", () => {
   expect(form.getFormValue(OFFENSE_KEY)).toBe(
-    parseFormValue(OFFENSE_KEY, caseAttributes[OFFENSE_KEY]),
+    parseAttributeValue(OFFENSE_KEY, caseAttributes[OFFENSE_KEY]),
   );
   expect(form.getFormValue(LSIR_SCORE_KEY)).toBe(
-    parseFormValue(LSIR_SCORE_KEY, caseAttributes[LSIR_SCORE_KEY]),
+    parseAttributeValue(LSIR_SCORE_KEY, caseAttributes[LSIR_SCORE_KEY]),
   );
   expect(
     form.getFormValue(
@@ -68,7 +69,7 @@ test("getFormValue returns the latest value for a field", () => {
       PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
     ),
   ).toBe(
-    parseFormValue(
+    parseAttributeValue(
       HAS_PREVIOUS_VIOLENT_OFFENSE_KEY,
       caseAttributes[HAS_PREVIOUS_VIOLENT_OFFENSE_KEY],
     ),
@@ -80,7 +81,7 @@ test("getFormValue returns the latest value for a field", () => {
       SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
     ),
   ).toBe(
-    parseFormValue(
+    parseAttributeValue(
       ASAM_CARE_RECOMMENDATION_KEY,
       caseAttributes[ASAM_CARE_RECOMMENDATION_KEY],
     ),

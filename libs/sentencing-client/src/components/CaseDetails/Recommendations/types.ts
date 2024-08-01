@@ -22,6 +22,7 @@ export type RecommendationsProps = {
   fullName?: string;
   selectedRecommendation?: MutableCaseAttributes["selectedRecommendation"];
   lastSavedRecommendation?: MutableCaseAttributes["selectedRecommendation"];
+  recommendedOpportunities?: MutableCaseAttributes["recommendedOpportunities"];
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => void;

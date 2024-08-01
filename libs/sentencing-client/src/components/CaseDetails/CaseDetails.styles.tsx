@@ -19,6 +19,11 @@ import { palette, typography } from "@recidiviz/design-system";
 import { StylesConfig } from "react-select";
 import styled from "styled-components/macro";
 
+import {
+  HeaderCell as DashboardHeaderCell,
+  Row,
+  Table as DashboardTable,
+} from "../Dashboard/Dashboard.styles";
 import { MAX_MODAL_HEIGHT } from "../Modal/Modal";
 import { customPalette } from "../styles/palette";
 import { OnboardingTopic } from "./CaseOnboarding/types";
@@ -235,7 +240,6 @@ export const Caption = styled.div``;
 
 export const EditCaseDetailsButton = styled.div`
   width: fit-content;
-  height: 40px;
   display: flex;
   align-items: center;
   align-self: flex-end;
@@ -249,6 +253,7 @@ export const EditCaseDetailsButton = styled.div`
 
   &:hover {
     cursor: pointer;
+    border: 1px solid ${palette.slate30};
   }
 `;
 
@@ -262,7 +267,7 @@ export const Recommendations = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 16px;
-  border-right: 1px solid ${palette.marble5};
+  border-left: 1px solid ${palette.marble5};
   background-color: ${palette.white};
 `;
 
@@ -290,6 +295,8 @@ export const Title = styled.div`
 
 export const Description = styled.div`
   color: ${palette.slate85};
+  display: flex;
+  flex-direction: column;
 `;
 
 export const RecommendationOptionsWrapper = styled.div`
@@ -484,10 +491,10 @@ export const ButtonWrapper = styled.div`
 /** Insights */
 
 export const InsightsOpportunitiesWrapper = styled.div`
-  max-height: calc(100vh - 64px - 250px);
+  max-height: calc(100vh - 64px - 180px);
   display: flex;
   flex-direction: column;
-  padding: 18px 22px;
+  padding: 18px 0 18px 22px;
   overflow-x: hidden;
   overflow-y: auto;
 `;
@@ -539,6 +546,7 @@ export const Charts = styled.div`
 export const Opportunities = styled.div`
   display: flex;
   flex-direction: column;
+  margin-right: 22px;
 `;
 
 export const OpportunitiesTableWrapper = styled.div`
@@ -555,8 +563,8 @@ export const OpportunitiesTable = styled.div`
   position: relative;
 `;
 
-export const TableWrapper = styled.div<{ disabled?: boolean }>`
-  ${({ disabled }) => disabled && `opacity: 0.5;`}
+export const TableWrapper = styled.div`
+  position: relative;
 `;
 
 export const OpportunitiesNotAvailable = styled.div`
@@ -569,10 +577,9 @@ export const OpportunitiesNotAvailable = styled.div`
   padding: 7px 16px;
   color: ${palette.slate85};
   position: absolute;
-  z-index: 99;
+  top: 80px;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   z-index: 3;
 `;
 
@@ -583,13 +590,26 @@ export const SearchFilter = styled.div`
 `;
 
 export const Search = styled.div`
+  position: relative;
+
+  svg {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 16px;
+  }
+`;
+
+export const SearchInput = styled.input`
+  ${typography.Sans14};
   display: flex;
-  width: 373px;
-  padding: 12px 8px;
   align-items: center;
+  width: 100%;
+  padding: 12px 16px 12px 34px;
   gap: 6px;
   border-radius: 5px;
   border: 1px solid ${palette.slate20};
+  color: ${palette.slate70};
 `;
 
 export const Filter = styled.div`
@@ -597,67 +617,40 @@ export const Filter = styled.div`
   gap: 8px;
 `;
 
-export const Table = styled.table`
-  border-spacing: 0px;
-  border-collapse: collapse;
+export const Table = styled(DashboardTable)<{ disabled?: boolean }>`
+  ${({ disabled }) => disabled && `opacity: 0.5; pointer-events: none;`}
+`;
+
+export const TableRow = styled(Row)`
+  &:hover {
+    background: ${customPalette.grey.light1};
+  }
+`;
+
+export const HeaderCell = styled(DashboardHeaderCell)`
+  font-weight: 500;
+`;
+
+export const CaseDetailsApplied = styled.div`
   width: 100%;
-  max-width: 100%;
-  margin-bottom: 15px;
-  background-color: transparent;
-  text-align: left;
-
-  &,
-  tr {
-    border: 1px solid ${palette.marble5};
-  }
-
-  tr:nth-child(2) {
-    background-color: ${palette.slate10};
-  }
-
-  thead {
-    background-color: ${palette.marble2};
-    border-bottom: 1px solid ${palette.marble5};
-  }
-
-  th,
-  td {
-    border: none;
-    padding: 16px;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid ${customPalette.white.white2};
+  border-radius: 10px;
+  background-color: ${customPalette.grey.light1};
+  margin-bottom: 16px;
 `;
 
-export const HeaderCell = styled.th`
-  font-weight: bold;
-  border: 1px solid #cccccc;
-  padding: 8px;
-  color: ${palette.pine1};
-
-  &:first-child {
-    width: 25%;
-  }
+export const CaseDetailsAppliedTitle = styled.div`
+  font-size: 13px;
+  color: ${palette.slate60};
 `;
 
-export const Cell = styled.td`
-  border: 1px solid #cccccc;
-  padding: 8px;
-  color: ${palette.slate80};
-
-  &:first-child {
-    color: ${palette.signal.notification};
-  }
-
-  &:last-child {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  div {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+export const CaseDetailsAppliedList = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate85};
 `;
 
 export const ViewMore = styled.div`
@@ -705,11 +698,20 @@ export const AddRecommendationButton = styled(EditCaseDetailsButton)<{
 }>`
   display: flex;
   justify-content: center;
-  min-width: 180px;
+  gap: 8px;
+  min-width: 200px;
+  height: 32px;
   text-align: center;
-  border-radius: 32px;
-  padding: 8px 16px;
-  ${({ isAdded }) => isAdded && `background-color: ${palette.slate10};`}
+  ${({ isAdded }) =>
+    isAdded &&
+    `
+      background-color: ${palette.slate10}; 
+      border: 1px solid transparent;
+      &:hover {
+        background-color: ${palette.white};
+        border: 1px solid ${palette.slate30};
+      }
+    `}
 `;
 
 const ChipColors = {
@@ -748,6 +750,7 @@ export const Form = styled.form`
   display: flex;
   flex-direction: column;
   margin-right: 11px;
+  margin-left: 1px;
 `;
 
 export const FormScrollWrapper = styled.div`

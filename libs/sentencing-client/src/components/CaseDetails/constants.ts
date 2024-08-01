@@ -15,55 +15,57 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Attributes } from "./types";
-
-export const LSIR_SCORE_KEY: keyof Attributes = "lsirScore";
+export const LSIR_SCORE_KEY = "lsirScore";
 export type LsirScoreKey = "lsirScore";
 
-export const NEEDS_TO_BE_ADDRESSED_KEY: keyof Attributes = "needsToBeAddressed";
+export const NEEDS_TO_BE_ADDRESSED_KEY = "needsToBeAddressed";
 export type NeedsToBeAddressedKey = "needsToBeAddressed";
 
-export const ASAM_CARE_RECOMMENDATION_KEY: keyof Attributes =
-  "asamCareRecommendation";
+export const ASAM_CARE_RECOMMENDATION_KEY = "asamCareRecommendation";
 export type AsamCareRecommendationKey = "asamCareRecommendation";
 
-export const MENTAL_HEALTH_DIAGNOSES_KEY: keyof Attributes =
-  "mentalHealthDiagnoses";
+export const MENTAL_HEALTH_DIAGNOSES_KEY = "mentalHealthDiagnoses";
 export type MentalHealthDiagnosesKey = "mentalHealthDiagnoses";
 
-export const PLEA_KEY: keyof Attributes = "plea";
+export const PLEA_KEY = "plea";
 export type PleaKey = "plea";
 
-export const IS_VETERAN_KEY: keyof Attributes = "isVeteran";
+export const IS_VETERAN_KEY = "isVeteran";
 export type IsVeteran = "isVeteran";
 
-export const OTHER_NEED_TO_BE_ADDRESSED_KEY: keyof Attributes =
-  "otherNeedToBeAddressed";
+export const OTHER_NEED_TO_BE_ADDRESSED_KEY = "otherNeedToBeAddressed";
 export type OtherNeedToBeAddressed = "otherNeedToBeAddressed";
 
-export const OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY: keyof Attributes =
-  "otherMentalHealthDiagnosis";
+export const OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY = "otherMentalHealthDiagnosis";
 export type OtherMentalHealthDiagnosis = "otherMentalHealthDiagnosis";
 
-export const SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY: keyof Attributes =
+export const SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY =
   "substanceUseDisorderDiagnosis";
 export type SubstanceUseDisorderDiagnosis = "substanceUseDisorderDiagnosis";
 
-export const PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY: keyof Attributes =
+export const PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY =
   "previouslyIncarceratedOrUnderSupervision";
 export type PreviouslyIncarceratedOrUnderSupervision =
   "previouslyIncarceratedOrUnderSupervision";
 
-export const HAS_PREVIOUS_VIOLENT_OFFENSE_KEY: keyof Attributes =
+export const HAS_PREVIOUS_FELONY_KEY = "hasPreviousFelonyConviction";
+export type HasPreviousFelonyConviction = "hasPreviousFelonyConviction";
+
+export const HAS_PREVIOUS_VIOLENT_OFFENSE_KEY =
   "hasPreviousViolentOffenseConviction";
 export type HasPreviousViolentOffenseConviction =
   "hasPreviousViolentOffenseConviction";
 
-export const HAS_DEVELOPMENTAL_DISABILITY_KEY: keyof Attributes =
-  "hasDevelopmentalDisability";
+export const HAS_PREVIOUS_SEX_OFFENSE_KEY = "hasPreviousSexOffenseConviction";
+export type HasPreviousSexOffenseConviction = "hasPreviousSexOffenseConviction";
+
+export const HAS_PREVIOUS_TREATMENT_COURT_KEY = "hasPreviousTreatmentCourt";
+export type HasPreviousTreatmentCourt = "hasPreviousTreatmentCourt";
+
+export const HAS_DEVELOPMENTAL_DISABILITY_KEY = "hasDevelopmentalDisability";
 export type HasDevelopmentalDisability = "hasDevelopmentalDisability";
 
-export const HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY: keyof Attributes =
+export const HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY =
   "hasOpenChildProtectiveServicesCase";
 export type HasOpenChildProtectiveServicesCase =
   "hasOpenChildProtectiveServicesCase";

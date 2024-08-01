@@ -132,6 +132,8 @@ async function main() {
       veteranStatusCriterion: faker.datatype.boolean(),
     });
   }
+
+  await prisma.opportunity.createMany({ data: opportunities });
 }
 
 main()

@@ -33,6 +33,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   fullName,
   selectedRecommendation,
   lastSavedRecommendation,
+  recommendedOpportunities,
   handleRecommendationUpdate,
   saveRecommendation,
   setCaseStatusCompleted,
@@ -45,7 +46,9 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
     {
       key: RecommendationType.Probation,
       label: RecommendationType.Probation,
-      opportunities: ["District 2 Connection & Intervention Station - IDOC"], // Placeholder until opportunities data is connected
+      opportunities: recommendedOpportunities?.map(
+        (opp) => opp.opportunityName,
+      ),
       recidivismRate: 22, // Placeholder until insights data is connected
       historicalSentencingRate: 23, // Placeholder until insights data is connected
     },

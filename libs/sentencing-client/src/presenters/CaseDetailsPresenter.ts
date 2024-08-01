@@ -24,10 +24,12 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
+import { Opportunities } from "../api";
 import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
 import {
   Attributes,
   MutableCaseAttributes,
+  OpportunityIdentifier,
 } from "../components/CaseDetails/types";
 import { CaseStore } from "../datastores/CaseStore";
 
@@ -36,11 +38,17 @@ export class CaseDetailsPresenter implements Hydratable {
 
   private caseDetailsForm?: CaseDetailsForm;
 
+  recommendedOpportunities: {
+    opportunityName: string;
+    providerPhoneNumber: string;
+  }[];
+
   constructor(
     public readonly caseStore: CaseStore,
     public caseId: string,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
+    this.recommendedOpportunities = [];
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
@@ -57,6 +65,7 @@ export class CaseDetailsPresenter implements Hydratable {
           await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
         }
         await flowResult(this.caseStore.loadCaseDetails(this.caseId));
+        await flowResult(this.caseStore.loadCommunityOpportunities());
       },
     });
 
@@ -64,6 +73,8 @@ export class CaseDetailsPresenter implements Hydratable {
       () => isHydrated(this),
       () => {
         this.caseDetailsForm = new CaseDetailsForm(this.caseAttributes);
+        this.recommendedOpportunities =
+          this.caseAttributes.recommendedOpportunities ?? [];
       },
     );
   }
@@ -86,6 +97,10 @@ export class CaseDetailsPresenter implements Hydratable {
     };
   }
 
+  get communityOpportunities(): Opportunities {
+    return this.caseStore.communityOpportunities;
+  }
+
   get form() {
     return this.caseDetailsForm;
   }
@@ -101,6 +116,7 @@ export class CaseDetailsPresenter implements Hydratable {
   async updateAttributes(caseId: string, attributes?: MutableCaseAttributes) {
     if (!attributes && JSON.stringify(this.form?.transformedUpdates) === "{}")
       return;
+
     await flowResult(
       this.caseStore.updateCaseDetails(
         caseId,
@@ -128,6 +144,23 @@ export class CaseDetailsPresenter implements Hydratable {
   ) {
     await this.updateAttributes(this.caseId, {
       currentOnboardingTopic: currentTopic,
+    });
+  }
+
+  async updateRecommendedOpportunities(
+    toggledOpportunity: OpportunityIdentifier[number],
+  ) {
+    const shouldRemoveOpportunity = this.recommendedOpportunities.find(
+      (opp) => opp.opportunityName === toggledOpportunity.opportunityName,
+    );
+    const updatedOpportunitiesList = shouldRemoveOpportunity
+      ? this.recommendedOpportunities.filter(
+          (opp) => opp.opportunityName !== toggledOpportunity.opportunityName,
+        )
+      : [...this.recommendedOpportunities, toggledOpportunity];
+    this.recommendedOpportunities = updatedOpportunitiesList;
+    await this.updateAttributes(this.caseId, {
+      recommendedOpportunities: updatedOpportunitiesList,
     });
   }
 }

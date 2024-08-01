@@ -59,7 +59,10 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
     const attributesRow: AttributeLabelValue[] = [
       { label: "Report Type", value: reportType },
       { label: "County", value: county },
-      { label: "Gender", value: gender },
+      {
+        label: "Gender",
+        value: gender === "EXTERNAL_UNKNOWN" ? "Unknown" : gender,
+      },
       { label: "Age", value: moment().diff(birthDate, "years") },
       { label: "Offense", value: offense, isEditable: true },
       { label: "LSI-R Score", value: lsirScore, isEditable: true },

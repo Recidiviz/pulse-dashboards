@@ -22,7 +22,7 @@ describe("staff router", () => {
         Cases: [
           {
             ...fakeCase,
-            recommendedOpportunities: [],
+            recommendedOpportunities: fakeCase.recommendedOpportunities,
             Client: { ..._.omit(fakeClient, "externalId") },
           },
         ],

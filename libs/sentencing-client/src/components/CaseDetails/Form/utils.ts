@@ -52,8 +52,8 @@ export const formatFormEnumValue = (value: string) => {
     .join("");
 };
 
-/** Parses stored values and enums into form values */
-export const parseFormValue = (
+/** Parses stored values and enums into form/attribute values */
+export const parseAttributeValue = (
   key: string,
   value?: boolean | number | string | string[] | Date | null,
 ) => {

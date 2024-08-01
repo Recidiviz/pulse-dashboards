@@ -21,7 +21,7 @@ describe("case router", () => {
 
       expect(returnedCase).toEqual({
         ...fakeCase,
-        recommendedOpportunities: [],
+        recommendedOpportunities: fakeCase.recommendedOpportunities,
       });
     });
 
@@ -84,6 +84,73 @@ describe("case router", () => {
           hasOpenChildProtectiveServicesCase: false,
           needsToBeAddressed: ["FamilyServices", "JobTrainingOrOpportunities"],
           status: "InProgress",
+        }),
+      );
+    });
+
+    test("should update recommendedOpportunities", async () => {
+      await testTRPCClient.case.updateCase.mutate({
+        id: fakeCase.id,
+        attributes: {
+          recommendedOpportunities: [
+            {
+              opportunityName: "opportunity-name",
+              providerPhoneNumber: "800-212-3942",
+            },
+            {
+              opportunityName: "opportunity-name-2",
+              providerPhoneNumber: "800-212-1111",
+            },
+          ],
+        },
+      });
+
+      let updatedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(updatedCase.recommendedOpportunities.length).toBe(2);
+      expect(updatedCase).toEqual(
+        expect.objectContaining({
+          recommendedOpportunities: [
+            {
+              opportunityName: "opportunity-name",
+              providerPhoneNumber: "800-212-3942",
+            },
+            {
+              opportunityName: "opportunity-name-2",
+              providerPhoneNumber: "800-212-1111",
+            },
+          ],
+        }),
+      );
+
+      // Should also properly update when we send a smaller list
+      await testTRPCClient.case.updateCase.mutate({
+        id: fakeCase.id,
+        attributes: {
+          recommendedOpportunities: [
+            {
+              opportunityName: "opportunity-name-2",
+              providerPhoneNumber: "800-212-1111",
+            },
+          ],
+        },
+      });
+
+      updatedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(updatedCase.recommendedOpportunities.length).toBe(1);
+      expect(updatedCase).toEqual(
+        expect.objectContaining({
+          recommendedOpportunities: [
+            {
+              opportunityName: "opportunity-name-2",
+              providerPhoneNumber: "800-212-1111",
+            },
+          ],
         }),
       );
     });

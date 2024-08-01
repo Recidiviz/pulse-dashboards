@@ -38,6 +38,9 @@ export type Client = Staff["Cases"][number]["Client"];
 
 export type CaseWithClient = Case & { Client: Client };
 
+export type Opportunities = Awaited<
+  ReturnType<tRPCClient["opportunity"]["getOpportunities"]["query"]>
+>;
 export class APIClient {
   client?: tRPCClient;
 
@@ -129,5 +132,15 @@ export class APIClient {
       id: caseId,
       attributes: updates,
     });
+  }
+
+  async getCommunityOpportunities(): Promise<Opportunities> {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    const fetchedData =
+      await this.trpcClient.opportunity.getOpportunities.query();
+
+    return fetchedData;
   }
 }

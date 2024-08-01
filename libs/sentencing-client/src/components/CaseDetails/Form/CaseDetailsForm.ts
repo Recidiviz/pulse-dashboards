@@ -33,6 +33,7 @@ import {
 } from "../constants";
 import {
   Attributes,
+  AttributesWithoutOpportunities,
   FormField,
   FormFieldList,
   FormUpdates,
@@ -40,7 +41,11 @@ import {
   MutableCaseAttributes,
 } from "../types";
 import { caseDetailsFormTemplate } from "./CaseDetailsFormTemplate";
-import { isValidLsirScore, parseFormValue, transformUpdates } from "./utils";
+import {
+  isValidLsirScore,
+  parseAttributeValue,
+  transformUpdates,
+} from "./utils";
 
 export class CaseDetailsForm {
   content: { [key: string]: FormField };
@@ -101,7 +106,7 @@ export class CaseDetailsForm {
     return transformUpdates(this.updates);
   }
 
-  createForm(caseAttributes: Attributes) {
+  createForm(caseAttributes: AttributesWithoutOpportunities) {
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
       const attributeValue = caseAttributes[field.key];
       const invalidLsirScore =
@@ -118,21 +123,23 @@ export class CaseDetailsForm {
 
       return {
         ...field,
-        value: parseFormValue(field.key, attributeValue),
+        value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {
-          const nestedAttributeValue = caseAttributes[nestedField.key];
+          const nestedAttributeValue = caseAttributes[
+            nestedField.key
+          ] as FormValue;
           if (nestedAttributeValue === undefined) {
             return nestedField;
           }
           return {
             ...nestedField,
-            value: parseFormValue(nestedField.key, nestedAttributeValue),
+            value: parseAttributeValue(nestedField.key, nestedAttributeValue),
           };
         }),
         otherContext: {
           ...field.otherContext,
           value: field.otherContext?.key
-            ? parseFormValue(
+            ? parseAttributeValue(
                 field.otherContext.key,
                 caseAttributes[field.otherContext.key],
               )

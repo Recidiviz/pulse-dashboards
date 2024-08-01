@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { CaseWithClient, Client } from "../../api";
-import { Attributes } from "../CaseDetails/types";
 
 export const DUE_DATE_KEY: keyof CaseWithClient = "dueDate";
 
@@ -26,7 +25,7 @@ export const REPORT_TYPE_KEY: keyof CaseWithClient = "reportType";
 
 export const ID_KEY: keyof CaseWithClient = "externalId";
 
-export const OFFENSE_KEY: keyof Attributes = "offense";
+export const OFFENSE_KEY = "offense";
 
 export const STATUS_KEY: keyof CaseWithClient = "status";
 

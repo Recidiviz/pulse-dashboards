@@ -30,15 +30,17 @@ export enum ProfileStrength {
   Low = "Low",
 }
 
-export type Attributes = Omit<
-  Partial<Case & Client>,
+export type Attributes = Partial<Case & Client>;
+
+export type AttributesWithoutOpportunities = Omit<
+  Attributes,
   "recommendedOpportunities"
 >;
 
 export type FormValue = number | string | string[] | boolean | null | undefined;
 
 export type FormFieldBase = {
-  key: keyof Attributes;
+  key: keyof AttributesWithoutOpportunities;
   label: string;
   value: FormValue;
   inputType:
@@ -54,7 +56,7 @@ export type FormFieldBase = {
   options?: string[];
   showOtherContextValuesMatch?: string[];
   otherContext?: {
-    key: keyof Attributes;
+    key: keyof AttributesWithoutOpportunities;
     placeholder?: string;
     value: FormValue;
   };
@@ -100,8 +102,11 @@ export type MutableCaseAttributes = Partial<
     | "status"
     | "selectedRecommendation"
     | "currentOnboardingTopic"
+    | "recommendedOpportunities"
   >
 >;
+
+export type OpportunityIdentifier = Case["recommendedOpportunities"];
 
 export type NonNullableKey<T> = T extends null ? never : T;
 

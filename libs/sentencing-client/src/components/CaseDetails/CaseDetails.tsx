@@ -31,7 +31,7 @@ import * as Styled from "./CaseDetails.styles";
 import { CaseOnboarding } from "./CaseOnboarding/CaseOnboarding";
 import { OnboardingTopic } from "./CaseOnboarding/types";
 import { Insights } from "./Insights";
-import { Opportunities } from "./Opportunities";
+import { Opportunities } from "./Opportunities/Opportunities";
 import { Recommendations } from "./Recommendations/Recommendations";
 import { MutableCaseAttributes, RecommendationType } from "./types";
 
@@ -46,10 +46,13 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     caseId,
     caseAttributes,
     form,
+    communityOpportunities,
+    recommendedOpportunities,
     updateAttributes,
     updateRecommendation,
     updateCaseStatusToCompleted,
     updateOnboardingTopicStatus,
+    updateRecommendedOpportunities,
   } = presenter;
 
   const firstName = caseAttributes.fullName?.split(" ")[0];
@@ -58,11 +61,8 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     MutableCaseAttributes["selectedRecommendation"] | undefined
   >(caseAttributes.selectedRecommendation ?? RecommendationType.Probation);
 
-  const handleRecommendationUpdate = (recommendation: RecommendationType) => {
-    setSelectedRecommendation((prev) =>
-      prev !== recommendation ? recommendation : undefined,
-    );
-  };
+  const handleRecommendationUpdate = (recommendation: RecommendationType) =>
+    setSelectedRecommendation(recommendation);
 
   const saveRecommendation = () => {
     if (selectedRecommendation) {
@@ -124,9 +124,11 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               {/* Opportunities */}
               <Opportunities
                 firstName={firstName}
-                isTermRecommendation={
-                  selectedRecommendation === RecommendationType.Term
-                }
+                selectedRecommendation={selectedRecommendation}
+                communityOpportunities={communityOpportunities}
+                recommendedOpportunities={recommendedOpportunities}
+                updateRecommendedOpportunities={updateRecommendedOpportunities}
+                caseAttributes={caseAttributes}
               />
             </Styled.InsightsOpportunitiesWrapper>
             {/* Recommendations */}
@@ -136,6 +138,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               selectedRecommendation={selectedRecommendation}
               handleRecommendationUpdate={handleRecommendationUpdate}
               saveRecommendation={saveRecommendation}
+              recommendedOpportunities={recommendedOpportunities}
               lastSavedRecommendation={caseAttributes.selectedRecommendation}
               setCaseStatusCompleted={updateCaseStatusToCompleted}
             />

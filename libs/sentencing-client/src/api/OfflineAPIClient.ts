@@ -17,7 +17,7 @@
 
 import { Attributes } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";
-import { Case, Staff } from "./APIClient";
+import { Case, Opportunities, Staff } from "./APIClient";
 
 export class OfflineAPIClient {
   private editableInfo: Map<string, unknown> = new Map();
@@ -51,5 +51,9 @@ export class OfflineAPIClient {
     Object.entries(updates).forEach(([key, value]) => {
       this.editableInfo.set(caseId, { key, value });
     });
+  }
+
+  async getCommunityOpportunities(): Promise<Opportunities> {
+    return [];
   }
 }

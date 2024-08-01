@@ -53,6 +53,44 @@ export const fakeClient = {
   birthDate: faker.date.birthdate(),
 } satisfies ClientCreateInput;
 
+export const fakeOpportunity = {
+  opportunityName: "opportunity-name",
+  description: "opportunity-description",
+  providerName: "provider-name",
+  providerPhoneNumber: "800-212-3942",
+  providerWebsite: faker.internet.url(),
+  providerAddress: faker.location.streetAddress(),
+  totalCapacity: faker.number.int({ max: 100 }),
+  availableCapacity: faker.number.int({ max: 100 }),
+  eighteenOrOlderCriterion: false,
+  developmentalDisabilityDiagnosisCriterion: false,
+  minorCriterion: false,
+  noCurrentOrPriorSexOffenseCriterion: false,
+  noCurrentOrPriorViolentOffenseCriterion: false,
+  noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+  entryOfGuiltyPleaCriterion: false,
+  veteranStatusCriterion: false,
+} satisfies OpportunityCreateInput;
+
+export const fakeOpportunity2 = {
+  opportunityName: "opportunity-name-2",
+  description: "opportunity-description-2",
+  providerName: "provider-name-2",
+  providerPhoneNumber: "800-212-1111",
+  providerWebsite: faker.internet.url(),
+  providerAddress: faker.location.streetAddress(),
+  totalCapacity: faker.number.int({ max: 100 }),
+  availableCapacity: faker.number.int({ max: 100 }),
+  eighteenOrOlderCriterion: false,
+  developmentalDisabilityDiagnosisCriterion: false,
+  minorCriterion: false,
+  noCurrentOrPriorSexOffenseCriterion: false,
+  noCurrentOrPriorViolentOffenseCriterion: false,
+  noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+  entryOfGuiltyPleaCriterion: false,
+  veteranStatusCriterion: false,
+} satisfies OpportunityCreateInput;
+
 export const fakeCase = {
   externalId: "case-ext-1",
   id: "case-1",
@@ -86,10 +124,25 @@ export const fakeCase = {
   selectedRecommendation: faker.helpers.enumValue(CaseRecommendation),
   isLsirScoreLocked: false,
   currentOnboardingTopic: faker.helpers.enumValue(OnboardingTopic),
+  recommendedOpportunities: [
+    {
+      opportunityName: fakeOpportunity.opportunityName,
+      providerPhoneNumber: fakeOpportunity.providerPhoneNumber,
+    },
+    {
+      opportunityName: fakeOpportunity2.opportunityName,
+      providerPhoneNumber: fakeOpportunity2.providerPhoneNumber,
+    },
+  ],
 };
 
 export const fakeCasePrismaInput = {
   ...fakeCase,
+  recommendedOpportunities: {
+    connect: fakeCase.recommendedOpportunities.map((opportunity) => ({
+      opportunityName_providerPhoneNumber: opportunity,
+    })),
+  },
   offense: {
     connect: {
       name: fakeOffense.name,
@@ -97,25 +150,6 @@ export const fakeCasePrismaInput = {
   },
   reportType: ReportType.FullPSI,
 } satisfies CaseCreateInput;
-
-export const fakeOpportunity = {
-  opportunityName: "opportunity-name",
-  description: "opportunity-description",
-  providerName: "provider-name",
-  providerPhoneNumber: faker.phone.number(),
-  providerWebsite: faker.internet.url(),
-  providerAddress: faker.location.streetAddress(),
-  totalCapacity: faker.number.int({ max: 100 }),
-  availableCapacity: faker.number.int({ max: 100 }),
-  eighteenOrOlderCriterion: false,
-  developmentalDisabilityDiagnosisCriterion: false,
-  minorCriterion: false,
-  noCurrentOrPriorSexOffenseCriterion: false,
-  noCurrentOrPriorViolentOffenseCriterion: false,
-  noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
-  entryOfGuiltyPleaCriterion: false,
-  veteranStatusCriterion: false,
-} satisfies OpportunityCreateInput;
 
 export const fakeRecidivismSeries = createFakeRecidivismSeries();
 
@@ -186,7 +220,9 @@ export async function seed() {
   await prismaClient.offense.create({ data: fakeOffense });
   await prismaClient.staff.create({ data: fakeStaff });
   await prismaClient.client.create({ data: fakeClient });
-  await prismaClient.opportunity.create({ data: fakeOpportunity });
+  await prismaClient.opportunity.createMany({
+    data: [fakeOpportunity, fakeOpportunity2],
+  });
   await prismaClient.case.create({
     data: {
       ...fakeCasePrismaInput,
