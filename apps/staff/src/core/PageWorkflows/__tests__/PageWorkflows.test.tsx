@@ -118,6 +118,7 @@ describe("PageWorkflows", () => {
       hydrationState: { status: "needs hydration" },
       keepUserObserved: vi.fn(),
       stopKeepingUserObserved: vi.fn(),
+      getOpportunityTypeFromUrl: vi.fn(() => "usTnCompliantReporting"),
     });
   });
 
@@ -143,6 +144,7 @@ describe("PageWorkflows", () => {
         hydrationState: { status: "needs hydration" },
         keepUserObserved: vi.fn(),
         stopKeepingUserObserved: vi.fn(),
+        getOpportunityTypeFromUrl: vi.fn(() => "usTnCompliantReporting"),
       };
       mockWorkflowsStore(baseMockWorkflowsStore);
     });
@@ -178,6 +180,7 @@ describe("PageWorkflows", () => {
         activeSystem: "SUPERVISION",
         keepUserObserved: vi.fn(),
         stopKeepingUserObserved: vi.fn(),
+        getOpportunityTypeFromUrl: vi.fn(() => null),
       };
       (WorkflowsHomepage as unknown as Mock).mockReturnValue(
         <div>Workflows Homepage</div>,
@@ -316,6 +319,7 @@ describe("PageWorkflows", () => {
           .mockImplementation(() => ({ catch: vi.fn() })),
         keepUserObserved: vi.fn(),
         stopKeepingUserObserved: vi.fn(),
+        getOpportunityTypeFromUrl: vi.fn(() => null),
       };
       (WorkflowsTasks as unknown as Mock).mockReturnValue(
         <div>Tasks Page</div>,

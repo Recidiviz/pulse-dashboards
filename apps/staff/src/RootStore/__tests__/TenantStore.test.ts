@@ -182,4 +182,46 @@ describe("TenantStore", () => {
       expect(tenantStore.currentTenantId).toEqual(availableStateCodes[0]);
     });
   });
+
+  describe("when there is a tenantId in the url query", () => {
+    beforeEach(() => {
+      // Prevents jsdom from throwing an error that it hasn't implemented navigation
+      // since we don't care about actually navigating, only reading from the current
+      // location, this works.
+      // @ts-expect-error
+      delete window.location;
+      window.location = { search: "?tenantId=US_CO" } as Location;
+      sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantIdFromStorage);
+    });
+
+    it("currentTenantId is set to the tenantId in the url query", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: [tenantIdFromUser],
+        userHasAccess: () => true,
+        user,
+        isRecidivizUser: true,
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+      });
+
+      expect(tenantStore.currentTenantId).toEqual("US_CO");
+    });
+
+    it("currentTenantId is not set to the tenantId in the url query for non-Recidiviz users", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        availableStateCodes: [tenantIdFromUser],
+        userHasAccess: () => true,
+        user,
+        isRecidivizUser: false,
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+      });
+
+      expect(tenantStore.currentTenantId).toEqual(tenantIdFromStorage);
+    });
+  });
 });

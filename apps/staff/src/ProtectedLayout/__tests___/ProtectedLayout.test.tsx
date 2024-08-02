@@ -41,6 +41,7 @@ vi.mock("../../lantern/LanternLayout", () => {
 vi.mock("../../hooks/useAuth");
 
 const mockUseUserStore = useUserStore as Mock;
+const mockSaveTenantIdToQuery = vi.fn();
 const mockUseRootStore = vi.mocked(useRootStore);
 
 describe("ProtectedLayout", () => {
@@ -51,6 +52,7 @@ describe("ProtectedLayout", () => {
     (LanternLayout as Mock).mockReturnValue(<div>LanternLayout</div>);
     mockUseRootStore.mockReturnValue({
       analyticsStore: { page: vi.fn() },
+      tenantStore: { saveTenantIdToQuery: mockSaveTenantIdToQuery },
     } as any);
   });
 
@@ -162,6 +164,20 @@ describe("ProtectedLayout", () => {
         </MemoryRouter>,
       );
       expect(screen.queryByText("DashboardLayout")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("Save Tenant ID Query", () => {
+    it("calls tenantStore.saveTenantIdToQuery", () => {
+      render(
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route path="/*" element={<ProtectedLayout />} />
+          </Routes>
+        </MemoryRouter>,
+      );
+
+      expect(mockSaveTenantIdToQuery).toHaveBeenCalled();
     });
   });
 });

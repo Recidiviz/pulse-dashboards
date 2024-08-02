@@ -42,9 +42,16 @@ function usePageViews() {
 }
 
 const ProtectedLayout = observer(function ProtectedLayout() {
+  const { tenantStore } = useRootStore();
   const { userIsLoading } = useUserStore();
+  const location = useLocation();
+
   useAuth();
   usePageViews();
+
+  useEffect(() => {
+    tenantStore.saveTenantIdToQuery();
+  }, [location, tenantStore]);
 
   if (userIsLoading) {
     return <Loading />;

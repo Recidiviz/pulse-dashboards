@@ -15,31 +15,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 import { makeAutoObservable, when } from "mobx";
+import qs from "query-string";
 
 import { StaffFilter } from "../../core/models/types";
 import { CombinedUserRecord } from "../../FirestoreStore";
 import tenants from "../../tenants";
 import { StaffFilterFunction } from "../../WorkflowsStore";
 import type RootStore from "..";
-import { LanternMethodology, LanternTenants, TenantId } from "../types";
+import {
+  isTenantId,
+  LanternMethodology,
+  LanternTenants,
+  TenantId,
+} from "../types";
 import UserStore from "../UserStore";
 import getDistrictKeyMap, { DistrictKeyMap } from "./districtKeyMappings";
 import { LANTERN_TENANTS } from "./lanternTenants";
 import methodology from "./methodology";
 
 export const CURRENT_TENANT_IN_SESSION = "adminUserCurrentTenantInSession";
+const TENANT_ID_QUERY_PARAM = "tenantId";
 
 /*
- * Returns the current state that should be viewed. This is retrieved from
- * the sessionStorage cache if already set. Otherwise, picks the first available
- * state in alphabetical order.
+ * Returns the current state that should be viewed, in priority of:
+ *  1. The tenantId query param, if set (Recidiviz users only)
+ *  2. The sessionStorage cache if already set
+ *  3. The first available state in alphabetical order.
  */
 function getTenantIdFromUser(userStore: UserStore): TenantId | undefined {
   const storageStateCode = sessionStorage.getItem(CURRENT_TENANT_IN_SESSION) as
     | TenantId
     | undefined;
+
   if (userStore.user) {
-    const { availableStateCodes, userHasAccess } = userStore;
+    const { availableStateCodes, userHasAccess, isRecidivizUser } = userStore;
+
+    if (isRecidivizUser) {
+      const queryTenantId = getTenantIdFromQuery();
+      if (queryTenantId) {
+        return queryTenantId;
+      }
+    }
+
     if (storageStateCode && userHasAccess(storageStateCode)) {
       return storageStateCode;
     }
@@ -47,6 +64,15 @@ function getTenantIdFromUser(userStore: UserStore): TenantId | undefined {
   }
 
   return storageStateCode;
+}
+
+function getTenantIdFromQuery(): TenantId | undefined {
+  const query = qs.parse(window.location.search);
+  const queryTenantId = query[TENANT_ID_QUERY_PARAM] as string;
+
+  if (isTenantId(queryTenantId)) {
+    return queryTenantId;
+  }
 }
 
 const defaultStaffFilterFunction: StaffFilterFunction = (
@@ -77,10 +103,37 @@ export default class TenantStore {
     );
   }
 
+  /**
+   * Saves the tenant ID in the query, if it isn't already (Recidiviz users only)
+   * Gets called every navigation change by {@link ProtectedLayout}
+   */
+  saveTenantIdToQuery() {
+    when(
+      () => !this.rootStore.userStore.userIsLoading,
+      () => {
+        if (!this.rootStore.userStore.isRecidivizUser) {
+          return;
+        }
+
+        const tenantId = getTenantIdFromUser(this.rootStore.userStore);
+        const queryTenenant = getTenantIdFromQuery();
+
+        // Since the tenant ID query get/set system is outside the rest of the routing,
+        // we directly manipulate the page's query string
+        if (tenantId && queryTenenant !== tenantId) {
+          const url = new URL(location.href);
+          url.searchParams.set(TENANT_ID_QUERY_PARAM, tenantId);
+          window.history.replaceState(null, "", url.toString());
+        }
+      },
+    );
+  }
+
   setCurrentTenantId(tenantId: TenantId | undefined): void {
     this.currentTenantId = tenantId;
     if (tenantId) {
       sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantId);
+      this.saveTenantIdToQuery();
     }
   }
 

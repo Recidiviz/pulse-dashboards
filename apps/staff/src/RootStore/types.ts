@@ -29,6 +29,10 @@ export function isPathwaysTenantId(
   return pathways.PATHWAYS_TENANTS.includes(tenantId as PathwaysTenants);
 }
 
+export function isTenantId(tenantId: string): tenantId is TenantId {
+  return TenantIds.includes(tenantId as TenantId);
+}
+
 const InternalTenantIds = [RECIDIVIZ_TENANT, CSG] as const;
 
 export const TenantIds = [
