@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import type { inferRouterInputs } from "@trpc/server";
 
-import { Case, Client } from "../../api";
+import type { AppRouter } from "~sentencing-server-types/shared/types";
 
 export enum RecommendationType {
   Probation = "Probation",
@@ -30,17 +31,24 @@ export enum ProfileStrength {
   Low = "Low",
 }
 
-export type Attributes = Partial<Case & Client>;
+export type MutableCaseAttributes =
+  inferRouterInputs<AppRouter>["case"]["updateCase"]["attributes"];
 
-export type AttributesWithoutOpportunities = Omit<
-  Attributes,
+export type OpportunitiesIdentifier = NonNullable<
+  MutableCaseAttributes["recommendedOpportunities"]
+>;
+
+export type FormAttributes = Omit<
+  MutableCaseAttributes,
   "recommendedOpportunities"
 >;
+
+export type SelectedRecommendation = FormAttributes["selectedRecommendation"];
 
 export type FormValue = number | string | string[] | boolean | null | undefined;
 
 export type FormFieldBase = {
-  key: keyof AttributesWithoutOpportunities;
+  key: keyof FormAttributes;
   label: string;
   value: FormValue;
   inputType:
@@ -56,7 +64,7 @@ export type FormFieldBase = {
   options?: string[];
   showOtherContextValuesMatch?: string[];
   otherContext?: {
-    key: keyof AttributesWithoutOpportunities;
+    key: keyof FormAttributes;
     placeholder?: string;
     value: FormValue;
   };
@@ -77,36 +85,7 @@ export type FormFieldWithNestedList = FormFieldBase & {
 
 export type FormFieldList = FormFieldWithNestedList[];
 
-export type FormUpdates = Record<keyof Attributes, FormValue>;
-
-export type MutableCaseAttributes = Partial<
-  Pick<
-    Case,
-    | "lsirScore"
-    | "offense"
-    | "previouslyIncarceratedOrUnderSupervision"
-    | "hasPreviousFelonyConviction"
-    | "hasPreviousViolentOffenseConviction"
-    | "hasPreviousSexOffenseConviction"
-    | "previousTreatmentCourt"
-    | "substanceUseDisorderDiagnosis"
-    | "asamCareRecommendation"
-    | "mentalHealthDiagnoses"
-    | "otherMentalHealthDiagnosis"
-    | "hasDevelopmentalDisability"
-    | "isVeteran"
-    | "plea"
-    | "hasOpenChildProtectiveServicesCase"
-    | "needsToBeAddressed"
-    | "otherNeedToBeAddressed"
-    | "status"
-    | "selectedRecommendation"
-    | "currentOnboardingTopic"
-    | "recommendedOpportunities"
-  >
->;
-
-export type OpportunityIdentifier = Case["recommendedOpportunities"];
+export type FormUpdates = Record<keyof FormAttributes, FormValue>;
 
 export type NonNullableKey<T> = T extends null ? never : T;
 

@@ -18,7 +18,7 @@
 import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
-import { OFFENSE_KEY } from "../../Dashboard/constants";
+import { Case } from "../../../api/APIClient";
 import { OnboardingFields } from "../CaseOnboarding/types";
 import {
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -27,18 +27,17 @@ import {
   LSIR_SCORE_KEY,
   MENTAL_HEALTH_DIAGNOSES_KEY,
   NEEDS_TO_BE_ADDRESSED_KEY,
+  OFFENSE_KEY,
   PLEA_KEY,
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
 import {
-  Attributes,
-  AttributesWithoutOpportunities,
+  FormAttributes,
   FormField,
   FormFieldList,
   FormUpdates,
   FormValue,
-  MutableCaseAttributes,
 } from "../types";
 import { caseDetailsFormTemplate } from "./CaseDetailsFormTemplate";
 import {
@@ -54,7 +53,7 @@ export class CaseDetailsForm {
 
   hasError: boolean;
 
-  constructor(private readonly caseAttributes: Attributes) {
+  constructor(private readonly caseAttributes: Case) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.hasError = false;
     this.content = this.createForm(caseAttributes);
@@ -102,11 +101,11 @@ export class CaseDetailsForm {
     return fields;
   }
 
-  get transformedUpdates(): MutableCaseAttributes {
+  get transformedUpdates(): FormAttributes {
     return transformUpdates(this.updates);
   }
 
-  createForm(caseAttributes: AttributesWithoutOpportunities) {
+  createForm(caseAttributes: Case) {
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
       const attributeValue = caseAttributes[field.key];
       const invalidLsirScore =
@@ -160,7 +159,7 @@ export class CaseDetailsForm {
   }
 
   updateForm(
-    key: keyof Attributes,
+    key: keyof FormAttributes,
     value?: FormValue,
     parentKey?: string,
     isOtherContext?: boolean,
@@ -199,7 +198,7 @@ export class CaseDetailsForm {
     this.hasError = hasError;
   }
 
-  getFormValue(key: keyof Attributes, parentKey?: string) {
+  getFormValue(key: keyof Case, parentKey?: string) {
     if (parentKey) {
       return this.content[parentKey].nested?.[key]?.value;
     }

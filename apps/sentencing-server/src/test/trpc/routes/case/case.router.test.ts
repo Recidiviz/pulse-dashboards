@@ -3,11 +3,14 @@ import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
 import { prismaClient } from "~sentencing-server/prisma";
+import { testAndGetSentryReport } from "~sentencing-server/test/common/utils";
 import { testTRPCClient } from "~sentencing-server/test/setup";
 import {
   fakeCase,
+  fakeClient,
   fakeDispositions,
   fakeInsight,
+  fakeInsightPrismaInput,
   fakeOffense,
   fakeRecidivismSeries,
 } from "~sentencing-server/test/setup/seed";
@@ -19,10 +22,46 @@ describe("case router", () => {
         id: fakeCase.id,
       });
 
-      expect(returnedCase).toEqual({
-        ...fakeCase,
-        recommendedOpportunities: fakeCase.recommendedOpportunities,
-      });
+      expect(returnedCase).toEqual(
+        expect.objectContaining({
+          ...fakeCase,
+          Client: _.pick(fakeClient, [
+            "fullName",
+            "gender",
+            "county",
+            "birthDate",
+          ]),
+          // Should return an insight object
+          insight: expect.objectContaining({
+            ...fakeInsight,
+            rollupRecidivismSeries: expect.arrayContaining(
+              fakeRecidivismSeries.map((series) =>
+                expect.objectContaining({
+                  recommendationType: series.recommendationType,
+                  dataPoints: expect.arrayContaining(
+                    series.dataPoints.map((dataPoint) =>
+                      expect.objectContaining({
+                        cohortMonths: dataPoint.cohortMonths,
+                        eventRate: expect.closeTo(dataPoint.eventRate),
+                        lowerCI: expect.closeTo(dataPoint.lowerCI),
+                        upperCI: expect.closeTo(dataPoint.upperCI),
+                      }),
+                    ),
+                  ),
+                }),
+              ),
+            ),
+            dispositionData: expect.arrayContaining(
+              fakeDispositions.map((disposition) =>
+                expect.objectContaining({
+                  ...disposition,
+                  percentage: expect.closeTo(disposition.percentage),
+                }),
+              ),
+            ),
+          }),
+        }),
+      );
     });
 
     test("should throw error if case does not exist", async () => {
@@ -35,6 +74,80 @@ describe("case router", () => {
           code: "NOT_FOUND",
           message: "Case with that id was not found",
         }),
+      );
+    });
+
+    test("should return undefined insight if lsir score is missing", async () => {
+      // Set lsir score to null
+      await prismaClient.case.update({
+        where: { id: fakeCase.id },
+        data: { lsirScore: null },
+      });
+
+      const returnedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(returnedCase).toEqual(
+        expect.objectContaining({ insight: undefined }),
+      );
+    });
+
+    test("should return undefined insight if there is no offense for case", async () => {
+      // Set offense to null
+      await prismaClient.case.update({
+        where: { id: fakeCase.id },
+        data: { offenseId: null },
+      });
+
+      const returnedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(returnedCase).toEqual(
+        expect.objectContaining({ insight: undefined }),
+      );
+    });
+
+    test("should capture exception if there is no insight matching case", async () => {
+      // Delete all insights so nothing matches
+      await prismaClient.insight.deleteMany({});
+
+      const returnedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(returnedCase).toEqual(
+        expect.objectContaining({ insight: undefined }),
+      );
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toContain(
+        "No corresponding insight found for provided case with id",
+      );
+    });
+
+    test("should capture exception if there are multiple insights for a single case", async () => {
+      // Create a new insight that the fake case still applies to (this one just has a very large assessment bucket range)
+      await prismaClient.insight.create({
+        data: {
+          ...fakeInsightPrismaInput,
+          assessmentScoreBucketStart: 0,
+          assessmentScoreBucketEnd: 100,
+        },
+      });
+
+      const returnedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(returnedCase).toEqual(
+        expect.objectContaining({ insight: expect.objectContaining({}) }),
+      );
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toContain(
+        "Multiple insights found for case with id",
       );
     });
   });
@@ -186,131 +299,6 @@ describe("case router", () => {
         new TRPCError({
           code: "BAD_REQUEST",
           message: "LSIR score is locked and cannot be updated",
-        }),
-      );
-    });
-  });
-
-  describe("getInsightForCase", () => {
-    test("should return insight if case has necessary information", async () => {
-      const returnedInsight = await testTRPCClient.case.getInsightForCase.query(
-        {
-          id: fakeCase.id,
-        },
-      );
-
-      expect(returnedInsight).toEqual(
-        expect.objectContaining({
-          ..._.pick(fakeInsight, [
-            "offense",
-            "stateCode",
-            "gender",
-            "assessmentScoreBucketStart",
-            "assessmentScoreBucketEnd",
-            "rollupStateCode",
-            "rollupGender",
-            "rollupAssessmentScoreBucketStart",
-            "rollupAssessmentScoreBucketEnd",
-            "rollupOffense",
-            "rollupNcicCategory",
-            "rollupCombinedOffenseCategory",
-            "rollupViolentOffense",
-            "rollupRecidivismNumRecords",
-            "dispositionNumRecords",
-          ]),
-          rollupRecidivismSeries: expect.arrayContaining(
-            fakeRecidivismSeries.map((series) =>
-              expect.objectContaining({
-                recommendationType: series.recommendationType,
-                dataPoints: expect.arrayContaining(
-                  series.dataPoints.map((dataPoint) =>
-                    expect.objectContaining({
-                      cohortMonths: dataPoint.cohortMonths,
-                      eventRate: expect.closeTo(dataPoint.eventRate),
-                      lowerCI: expect.closeTo(dataPoint.lowerCI),
-                      upperCI: expect.closeTo(dataPoint.upperCI),
-                    }),
-                  ),
-                ),
-              }),
-            ),
-          ),
-          dispositionData: expect.arrayContaining(
-            fakeDispositions.map((disposition) =>
-              expect.objectContaining({
-                ...disposition,
-                percentage: expect.closeTo(disposition.percentage),
-              }),
-            ),
-          ),
-        }),
-      );
-    });
-
-    test("should throw error if case does not exist", async () => {
-      await expect(() =>
-        testTRPCClient.case.getCase.query({
-          id: "not-a-real-id",
-        }),
-      ).rejects.toThrowError(
-        new TRPCError({
-          code: "NOT_FOUND",
-          message: "Case with that id was not found",
-        }),
-      );
-    });
-
-    test("should throw error if there is no lsir score for case", async () => {
-      // Set lsir score to null to trigger error
-      await prismaClient.case.update({
-        where: { id: fakeCase.id },
-        data: { lsirScore: null },
-      });
-
-      await expect(() =>
-        testTRPCClient.case.getInsightForCase.query({
-          id: fakeCase.id,
-        }),
-      ).rejects.toThrowError(
-        new TRPCError({
-          code: "NOT_FOUND",
-          message:
-            "Case with that id is missing an lsir score. Cannot retrieve an insight without an lsir score.",
-        }),
-      );
-    });
-
-    test("should throw error if there is no offense for case", async () => {
-      // Set offense to null to trigger error
-      await prismaClient.case.update({
-        where: { id: fakeCase.id },
-        data: { offenseId: null },
-      });
-
-      await expect(() =>
-        testTRPCClient.case.getInsightForCase.query({
-          id: fakeCase.id,
-        }),
-      ).rejects.toThrowError(
-        new TRPCError({
-          code: "NOT_FOUND",
-          message:
-            "Case with that id is missing an offense. Cannot retrieve an insight without an offense.",
-        }),
-      );
-    });
-
-    test("should throw error if there is no insight matching case", async () => {
-      await prismaClient.insight.deleteMany({});
-
-      await expect(() =>
-        testTRPCClient.case.getInsightForCase.query({
-          id: fakeCase.id,
-        }),
-      ).rejects.toThrowError(
-        new TRPCError({
-          code: "NOT_FOUND",
-          message: "No corresponding insight found for provided case.",
         }),
       );
     });

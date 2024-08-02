@@ -23,11 +23,11 @@ import toast from "react-hot-toast";
 import { FlowMethod } from "~hydration-utils";
 import { PSIStore } from "~sentencing-client";
 
-import { APIClient, CaseWithClient, Staff } from "../api/APIClient";
+import { APIClient, Staff, StaffCase } from "../api/APIClient";
 import { ERROR_TOAST_DURATION } from "./constants";
 
 type CaseBriefsById = {
-  [key: string]: CaseWithClient;
+  [key: string]: StaffCase;
 };
 
 export class StaffStore {

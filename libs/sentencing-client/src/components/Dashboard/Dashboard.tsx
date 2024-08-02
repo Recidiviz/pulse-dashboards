@@ -32,19 +32,14 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
 }: {
   presenter: StaffPresenter;
 }) {
-  const {
-    staffInfo,
-    staffPseudoId,
-    listOfCaseBriefs,
-    caseTableData,
-    setIsFirstLogin,
-  } = presenter;
+  const { staffInfo, staffPseudoId, caseTableData, setIsFirstLogin } =
+    presenter;
 
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(
     !staffInfo?.hasLoggedIn,
   );
 
-  if (!staffPseudoId || !listOfCaseBriefs || !caseTableData) return null;
+  if (!staffPseudoId || !caseTableData) return null;
 
   return (
     <Styled.PageContainer>

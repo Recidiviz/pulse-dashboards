@@ -19,13 +19,13 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
 import * as Styled from "../CaseDetails.styles";
-import { MutableCaseAttributes } from "../types";
+import { FormAttributes } from "../types";
 import { OnboardingAdditionalNeeds } from "./OnboardingAdditionalNeeds";
 import { OnboardingOffenseLsirScore } from "./OnboardingOffenseLsirScore";
 import { OnboardingPrimaryNeeds } from "./OnboardingPrimaryNeeds";
 import { CaseOnboardingProps, OnboardingTopic } from "./types";
 
-const onboardingTopics: MutableCaseAttributes["currentOnboardingTopic"][] = [
+const onboardingTopics: FormAttributes["currentOnboardingTopic"][] = [
   OnboardingTopic.OffenseLsirScore,
   OnboardingTopic.PrimaryNeeds,
   OnboardingTopic.AdditionalNeeds,

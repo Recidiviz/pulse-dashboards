@@ -15,14 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { MutableCaseAttributes, RecommendationType } from "../types";
+import {
+  OpportunitiesIdentifier,
+  RecommendationType,
+  SelectedRecommendation,
+} from "../types";
 
 export type RecommendationsProps = {
   firstName?: string;
   fullName?: string;
-  selectedRecommendation?: MutableCaseAttributes["selectedRecommendation"];
-  lastSavedRecommendation?: MutableCaseAttributes["selectedRecommendation"];
-  recommendedOpportunities?: MutableCaseAttributes["recommendedOpportunities"];
+  selectedRecommendation?: SelectedRecommendation;
+  lastSavedRecommendation?: SelectedRecommendation;
+  recommendedOpportunities?: OpportunitiesIdentifier;
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => void;

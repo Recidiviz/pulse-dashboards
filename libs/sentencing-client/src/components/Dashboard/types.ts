@@ -15,6 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StaffCase, StaffCases } from "../../api";
+
+export type CaseListTableCases = StaffCases;
+
+export type CaseListTableCase = StaffCase;
+
 export enum CaseStatus {
   NotYetStarted = "Not yet started",
   InProgress = "In Progress",

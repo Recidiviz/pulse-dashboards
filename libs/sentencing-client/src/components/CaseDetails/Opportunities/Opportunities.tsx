@@ -26,7 +26,7 @@ import moment from "moment";
 import { Fragment, useState } from "react";
 import toast from "react-hot-toast";
 
-import { Opportunities as OpportunitiesType } from "../../../api";
+import { Case, Opportunities as OpportunitiesType } from "../../../api";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import MagnifyingGlassIcon from "../../assets/magnifying-class-icon.svg?react";
 import PlusIcon from "../../assets/plus-icon.svg?react";
@@ -52,20 +52,19 @@ import {
 } from "../constants";
 import { parseAttributeValue } from "../Form/utils";
 import {
-  Attributes,
-  MutableCaseAttributes,
-  OpportunityIdentifier,
+  OpportunitiesIdentifier,
   RecommendationType,
+  SelectedRecommendation,
 } from "../types";
 
 type OpportunitiesProps = {
   firstName?: string;
-  selectedRecommendation: MutableCaseAttributes["selectedRecommendation"];
+  selectedRecommendation: SelectedRecommendation;
   communityOpportunities: OpportunitiesType;
-  recommendedOpportunities: OpportunityIdentifier;
-  caseAttributes: Attributes;
+  recommendedOpportunities: OpportunitiesIdentifier;
+  caseAttributes: Case;
   updateRecommendedOpportunities: (
-    opportunity: OpportunityIdentifier[number],
+    opportunity: OpportunitiesIdentifier[number],
   ) => void;
 };
 
@@ -150,7 +149,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
       key: "Age",
       label: "Age",
       value:
-        moment().diff(caseAttributes.birthDate, "years") >= 18
+        moment().diff(caseAttributes.Client?.birthDate, "years") >= 18
           ? "Adult 18+"
           : "Minor",
     },

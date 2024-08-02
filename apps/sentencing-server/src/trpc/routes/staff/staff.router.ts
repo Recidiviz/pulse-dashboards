@@ -1,6 +1,5 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
-import _ from "lodash";
 
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
 import { REPORT_TYPE_ENUM_TO_STRING } from "~sentencing-server/trpc/routes/common/constants";
@@ -22,21 +21,15 @@ export const staffRouter = router({
         },
         include: {
           Cases: {
-            omit: {
-              staffId: true,
-              clientId: true,
-              offenseId: true,
-            },
-            include: {
+            select: {
+              id: true,
+              externalId: true,
+              dueDate: true,
+              reportType: true,
+              status: true,
               Client: {
-                omit: {
-                  externalId: true,
-                },
-              },
-              recommendedOpportunities: {
                 select: {
-                  opportunityName: true,
-                  providerPhoneNumber: true,
+                  fullName: true,
                 },
               },
               offense: {
@@ -58,21 +51,11 @@ export const staffRouter = router({
 
       return {
         ...staff,
-        Cases: staff.Cases.map((c: (typeof staff.Cases)[number]) => {
-          // Move offense name to top level
-          const renamedOffenseCase = {
-            ...c,
-            reportType: REPORT_TYPE_ENUM_TO_STRING[c.reportType],
-            offense: c.offense?.name,
-          };
-
-          // TODO: figure out why prisma omit typechecking is not working (this doesn't actually do anything but fix the return type)
-          return _.omit(renamedOffenseCase, [
-            "staffId",
-            "clientId",
-            "offenseId",
-          ]);
-        }),
+        Cases: staff.Cases.map((c: (typeof staff.Cases)[number]) => ({
+          ...c,
+          reportType: REPORT_TYPE_ENUM_TO_STRING[c.reportType],
+          offense: c.offense?.name,
+        })),
       };
     }),
   updateStaff: baseProcedure

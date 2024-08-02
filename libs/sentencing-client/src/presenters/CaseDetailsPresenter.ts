@@ -27,9 +27,10 @@ import {
 import { Opportunities } from "../api";
 import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
 import {
-  Attributes,
+  FormAttributes,
   MutableCaseAttributes,
-  OpportunityIdentifier,
+  OpportunitiesIdentifier,
+  SelectedRecommendation,
 } from "../components/CaseDetails/types";
 import { CaseStore } from "../datastores/CaseStore";
 
@@ -83,18 +84,8 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.caseStore.psiStore.staffPseudoId;
   }
 
-  get clientInfo() {
-    return this.caseStore.psiStore.staffStore.caseBriefsById?.[this.caseId]
-      .Client;
-  }
-
-  get caseAttributes(): Attributes {
-    const currentCase = this.caseStore.caseDetailsById[this.caseId];
-
-    return {
-      ...currentCase,
-      ...this.clientInfo,
-    };
+  get caseAttributes() {
+    return this.caseStore.caseDetailsById[this.caseId];
   }
 
   get communityOpportunities(): Opportunities {
@@ -126,9 +117,7 @@ export class CaseDetailsPresenter implements Hydratable {
     await flowResult(this.caseStore.loadCaseDetails(this.caseId));
   }
 
-  async updateRecommendation(
-    recommendation: MutableCaseAttributes["selectedRecommendation"],
-  ) {
+  async updateRecommendation(recommendation: SelectedRecommendation) {
     await this.updateAttributes(this.caseId, {
       selectedRecommendation: recommendation,
     });
@@ -140,7 +129,7 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   async updateOnboardingTopicStatus(
-    currentTopic: MutableCaseAttributes["currentOnboardingTopic"],
+    currentTopic: FormAttributes["currentOnboardingTopic"],
   ) {
     await this.updateAttributes(this.caseId, {
       currentOnboardingTopic: currentTopic,
@@ -148,7 +137,7 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   async updateRecommendedOpportunities(
-    toggledOpportunity: OpportunityIdentifier[number],
+    toggledOpportunity: OpportunitiesIdentifier[number],
   ) {
     const shouldRemoveOpportunity = this.recommendedOpportunities.find(
       (opp) => opp.opportunityName === toggledOpportunity.opportunityName,

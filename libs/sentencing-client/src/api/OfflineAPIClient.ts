@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Attributes } from "../components/CaseDetails/types";
+import { FormAttributes } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";
 import { Case, Opportunities, Staff } from "./APIClient";
 
@@ -47,7 +47,7 @@ export class OfflineAPIClient {
     return CaseDetailsFixture?.[caseId];
   }
 
-  updateCaseDetails(caseId: string, updates: Partial<Attributes>) {
+  updateCaseDetails(caseId: string, updates: FormAttributes) {
     Object.entries(updates).forEach(([key, value]) => {
       this.editableInfo.set(caseId, { key, value });
     });

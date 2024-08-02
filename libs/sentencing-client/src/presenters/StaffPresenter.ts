@@ -23,7 +23,6 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { CaseWithClient } from "../api";
 import { StaffStore } from "../datastores/StaffStore";
 import { sortFullNameByLastNameDescending } from "../utils/sorting";
 
@@ -53,7 +52,7 @@ export class StaffPresenter implements Hydratable {
     return this.staffStore.staffInfo;
   }
 
-  get listOfCaseBriefs(): CaseWithClient[] | undefined {
+  get caseTableData() {
     return !this.staffInfo
       ? undefined
       : [...this.staffInfo.Cases].sort((a, b) =>
@@ -62,19 +61,6 @@ export class StaffPresenter implements Hydratable {
             b.Client?.fullName,
           ),
         );
-  }
-
-  get caseTableData(): Partial<CaseWithClient>[] | undefined {
-    return this.listOfCaseBriefs?.map((caseBrief: CaseWithClient) => ({
-      Client: {
-        fullName: caseBrief.Client?.fullName,
-      } as CaseWithClient["Client"],
-      id: caseBrief.externalId,
-      dueDate: caseBrief.dueDate,
-      reportType: caseBrief.reportType,
-      offense: caseBrief.offense,
-      status: caseBrief.status,
-    }));
   }
 
   get hydrationState(): HydrationState {

@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 import { FlowMethod } from "~hydration-utils";
 
 import { APIClient, Case, Opportunities } from "../api/APIClient";
-import { MutableCaseAttributes } from "../components/CaseDetails/types";
+import { FormAttributes } from "../components/CaseDetails/types";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { PSIStore } from "./PSIStore";
 
@@ -58,7 +58,7 @@ export class CaseStore {
     }
   }
 
-  *updateCaseDetails(caseId: string, updates?: MutableCaseAttributes) {
+  *updateCaseDetails(caseId: string, updates?: FormAttributes) {
     try {
       if (!updates) return;
       yield this.psiStore.apiClient.updateCaseDetails(caseId, updates);

@@ -15,21 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CaseWithClient, Client } from "../../api";
+import { Case, Client } from "../../api";
 
-export const DUE_DATE_KEY: keyof CaseWithClient = "dueDate";
+export const DUE_DATE_KEY: keyof Case = "dueDate";
 
-export const CLIENT_KEY: keyof CaseWithClient = "Client";
+export const CLIENT_KEY: keyof Case = "Client";
 
-export const REPORT_TYPE_KEY: keyof CaseWithClient = "reportType";
+export const REPORT_TYPE_KEY: keyof Case = "reportType";
 
-export const ID_KEY: keyof CaseWithClient = "externalId";
+export const ID_KEY: keyof Case = "externalId";
 
-export const OFFENSE_KEY = "offense";
+export const OFFENSE_KEY: keyof Case = "offense";
 
-export const STATUS_KEY: keyof CaseWithClient = "status";
+export const STATUS_KEY: keyof Case = "status";
 
-const FULL_NAME_KEY: keyof Exclude<Client, null> = "fullName";
+const FULL_NAME_KEY: keyof NonNullable<Client> = "fullName";
 
 export const CLIENT_FULL_NAME_KEY = [CLIENT_KEY, FULL_NAME_KEY].join(".");
 

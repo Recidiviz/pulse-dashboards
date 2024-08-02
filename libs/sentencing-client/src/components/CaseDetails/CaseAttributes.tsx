@@ -19,13 +19,12 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useState } from "react";
 
+import { Case } from "../../api";
 import * as Styled from "./CaseDetails.styles";
 import EditCaseDetailsModal from "./EditCaseDetailsModal";
 import { CaseDetailsForm } from "./Form/CaseDetailsForm";
-import { Attributes } from "./types";
-
 type CaseAttributesProps = {
-  caseAttributes: Attributes;
+  caseAttributes: Case;
   firstName?: string;
   form?: CaseDetailsForm;
   saveAttributes: (options?: { showToast: boolean }) => void;
@@ -51,10 +50,10 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       county,
       offense,
       lsirScore,
-      birthDate,
-      fullName,
-      gender,
+      Client,
     } = caseAttributes;
+
+    const { birthDate, fullName, gender } = Client || {};
 
     const attributesRow: AttributeLabelValue[] = [
       { label: "Report Type", value: reportType },

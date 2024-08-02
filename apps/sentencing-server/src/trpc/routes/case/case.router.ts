@@ -5,9 +5,10 @@ import { TRPCError } from "@trpc/server";
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
 import {
   getCaseInputSchema,
-  getInsightForCaseSchema,
   updateCaseSchema,
 } from "~sentencing-server/trpc/routes/case/case.schema";
+import { PRISMA_CASE_GET_ARGS } from "~sentencing-server/trpc/routes/case/constants";
+import { getInsightForCase } from "~sentencing-server/trpc/routes/case/utils";
 import { REPORT_TYPE_ENUM_TO_STRING } from "~sentencing-server/trpc/routes/common/constants";
 
 export const caseRouter = router({
@@ -18,24 +19,7 @@ export const caseRouter = router({
         where: {
           id,
         },
-        omit: {
-          staffId: true,
-          clientId: true,
-          offenseId: true,
-        },
-        include: {
-          recommendedOpportunities: {
-            select: {
-              opportunityName: true,
-              providerPhoneNumber: true,
-            },
-          },
-          offense: {
-            select: {
-              name: true,
-            },
-          },
-        },
+        ...PRISMA_CASE_GET_ARGS,
       });
 
       if (!caseData) {
@@ -45,10 +29,20 @@ export const caseRouter = router({
         });
       }
 
+      let insight = undefined;
+      try {
+        insight = await getInsightForCase(caseData, prisma);
+      } catch (e) {
+        // Log any errors but still return the case data
+        captureException(e);
+      }
+
+      // move offense to top level and include insight
       return {
         ...caseData,
         reportType: REPORT_TYPE_ENUM_TO_STRING[caseData.reportType],
         offense: caseData.offense?.name,
+        insight,
       };
     }),
   updateCase: baseProcedure
@@ -112,115 +106,5 @@ export const caseRouter = router({
           });
         }
       }
-    }),
-  getInsightForCase: baseProcedure
-    .input(getInsightForCaseSchema)
-    .query(async ({ input: { id }, ctx: { prisma } }) => {
-      const caseData = await prisma.case.findUnique({
-        where: {
-          id,
-        },
-        select: {
-          lsirScore: true,
-          offense: true,
-          Client: {
-            select: {
-              gender: true,
-            },
-          },
-        },
-      });
-
-      if (!caseData || !caseData.Client) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Case with that id was not found",
-        });
-      }
-
-      if (!caseData.lsirScore) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message:
-            "Case with that id is missing an lsir score. Cannot retrieve an insight without an lsir score.",
-        });
-      }
-
-      if (!caseData.offense) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message:
-            "Case with that id is missing an offense. Cannot retrieve an insight without an offense.",
-        });
-      }
-
-      const insights = await prisma.insight.findMany({
-        where: {
-          assessmentScoreBucketStart: {
-            lte: caseData.lsirScore,
-          },
-          assessmentScoreBucketEnd: {
-            gte: caseData.lsirScore,
-          },
-          offenseId: caseData.offense.id,
-          gender: caseData.Client.gender,
-        },
-        include: {
-          offense: {
-            select: {
-              name: true,
-            },
-          },
-          rollupOffense: {
-            select: {
-              name: true,
-            },
-          },
-          rollupRecidivismSeries: {
-            select: {
-              recommendationType: true,
-              dataPoints: {
-                omit: {
-                  id: true,
-                  recidivismSeriesId: true,
-                },
-              },
-            },
-          },
-          dispositionData: {
-            omit: {
-              id: true,
-              insightId: true,
-            },
-          },
-        },
-        omit: {
-          id: true,
-          offenseId: true,
-          rollupOffenseId: true,
-        },
-      });
-
-      if (!insights.length) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "No corresponding insight found for provided case.",
-        });
-      }
-
-      if (insights.length > 1) {
-        captureException(
-          `Multiple insights found for case ${id}: ${JSON.stringify(insights)}. Returning first one.`,
-        );
-      }
-
-      const insightToReturn = insights[0];
-
-      return {
-        ...insightToReturn,
-        // Move offenses names to top level
-        offense: insightToReturn.offense.name,
-        rollupOffense: insightToReturn.rollupOffense?.name,
-      };
     }),
 });

@@ -9,7 +9,6 @@ import {
   StateCode,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
-import _ from "lodash";
 
 import { prismaClient } from "~sentencing-server/prisma";
 import {
@@ -184,7 +183,7 @@ export const fakeInsight = {
 };
 
 export const fakeInsightPrismaInput = {
-  ..._.omit(fakeInsight, ["offense", "rollupOffense"]),
+  ...fakeInsight,
   offense: {
     connect: {
       stateCode: fakeOffense.stateCode,

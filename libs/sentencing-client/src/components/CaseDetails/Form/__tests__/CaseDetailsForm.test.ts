@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { CaseDetailsFixture } from "../../../../api/offlineFixtures";
-import { OFFENSE_KEY } from "../../../Dashboard/constants";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -26,6 +25,7 @@ import {
   LSIR_SCORE_KEY,
   MENTAL_HEALTH_DIAGNOSES_KEY,
   NEEDS_TO_BE_ADDRESSED_KEY,
+  OFFENSE_KEY,
   PLEA_KEY,
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
@@ -36,8 +36,7 @@ import { caseDetailsFormTemplate } from "../CaseDetailsFormTemplate";
 import { parseAttributeValue } from "../utils";
 
 const caseId = Object.keys(CaseDetailsFixture)[0];
-const { recommendedOpportunities, ...caseAttributes } =
-  CaseDetailsFixture[caseId];
+const caseAttributes = CaseDetailsFixture[caseId];
 const form = new CaseDetailsForm(caseAttributes);
 
 test("form is initialized with case attribute values", () => {

@@ -21,9 +21,15 @@ describe("staff router", () => {
         ..._.omit(fakeStaff, "externalId"),
         Cases: [
           {
-            ...fakeCase,
-            recommendedOpportunities: fakeCase.recommendedOpportunities,
-            Client: { ..._.omit(fakeClient, "externalId") },
+            ..._.pick(fakeCase, [
+              "id",
+              "externalId",
+              "dueDate",
+              "reportType",
+              "status",
+              "offense",
+            ]),
+            Client: _.pick(fakeClient, ["fullName"]),
           },
         ],
       });

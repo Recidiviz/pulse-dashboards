@@ -4,7 +4,7 @@ import { MockStorage } from "mock-gcs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { prismaClient } from "~sentencing-server/prisma";
-import { testAndGetSentryReport } from "~sentencing-server/test/import/common/utils";
+import { testAndGetSentryReport } from "~sentencing-server/test/common/utils";
 import { caseBody } from "~sentencing-server/test/import/handle-import/constants";
 import {
   arrayToJsonLines,

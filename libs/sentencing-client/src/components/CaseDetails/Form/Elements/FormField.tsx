@@ -16,7 +16,7 @@
 // =============================================================================
 
 import * as Styled from "../../CaseDetails.styles";
-import { Attributes, FormFieldWithNestedList } from "../../types";
+import { FormAttributes, FormFieldWithNestedList } from "../../types";
 import { CaseDetailsForm } from "../CaseDetailsForm";
 import { DropdownField } from "./DropdownField";
 import { DropdownMultiSelectField } from "./DropdownMultiSelectField";
@@ -30,7 +30,7 @@ export const FormField = ({
   form,
 }: {
   element: FormFieldWithNestedList;
-  parentKey?: keyof Attributes;
+  parentKey?: keyof FormAttributes;
   form: CaseDetailsForm;
 }) => {
   const prevValue = form.getFormValue(element.key, parentKey);

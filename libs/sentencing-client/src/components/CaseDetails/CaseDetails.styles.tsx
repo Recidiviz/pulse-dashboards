@@ -27,7 +27,7 @@ import {
 import { MAX_MODAL_HEIGHT } from "../Modal/Modal";
 import { customPalette } from "../styles/palette";
 import { OnboardingTopic } from "./CaseOnboarding/types";
-import { MutableCaseAttributes, ProfileStrength } from "./types";
+import { FormAttributes, ProfileStrength } from "./types";
 
 export const PageContainer = styled.div`
   width: 100%;
@@ -991,7 +991,7 @@ const onboardingTopicToBarWidthPercentage = {
 };
 
 export const OnboardingProgressBar = styled.div<{
-  topic: MutableCaseAttributes["currentOnboardingTopic"];
+  topic: FormAttributes["currentOnboardingTopic"];
 }>`
   height: 16px;
   width: 100%;

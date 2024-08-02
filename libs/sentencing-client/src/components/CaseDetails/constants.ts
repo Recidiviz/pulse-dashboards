@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export const OFFENSE_KEY = "offense";
+
 export const LSIR_SCORE_KEY = "lsirScore";
 export type LsirScoreKey = "lsirScore";
 

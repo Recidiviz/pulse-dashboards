@@ -15,28 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import {
+  CreateTRPCProxyClient,
+  createTRPCProxyClient,
+  httpBatchLink,
+} from "@trpc/client";
 import { runInAction, when } from "mobx";
 import superjson from "superjson";
 
-// Don't import this via type alias, otherwise it will make the whole app a dependency
-// rather than just the types
 import type { AppRouter } from "~sentencing-server-types/shared/types";
 
-import { MutableCaseAttributes } from "../components/CaseDetails/types";
+import { FormAttributes } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";
 
-export type tRPCClient = ReturnType<typeof createTRPCProxyClient<AppRouter>>;
+export type tRPCClient = CreateTRPCProxyClient<AppRouter>;
 
-export type Staff = Awaited<
-  ReturnType<tRPCClient["staff"]["getStaff"]["query"]>
->;
+export type Staff = Awaited<ReturnType<APIClient["getStaffInfo"]>>;
 
-export type Case = Awaited<ReturnType<tRPCClient["case"]["getCase"]["query"]>>;
+export type StaffCases = Staff["Cases"];
 
-export type Client = Staff["Cases"][number]["Client"];
+export type StaffCase = StaffCases[number];
 
-export type CaseWithClient = Case & { Client: Client };
+export type Case = Awaited<ReturnType<APIClient["getCaseDetails"]>>;
+
+export type Insight = Case["insight"];
+
+export type Client = Case["Client"];
 
 export type Opportunities = Awaited<
   ReturnType<tRPCClient["opportunity"]["getOpportunities"]["query"]>
@@ -93,7 +97,7 @@ export class APIClient {
     };
   }
 
-  async getStaffInfo(): Promise<Staff> {
+  async getStaffInfo() {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
     if (!this.psiStore.staffPseudoId)
@@ -114,7 +118,7 @@ export class APIClient {
     });
   }
 
-  async getCaseDetails(caseId: string): Promise<Case> {
+  async getCaseDetails(caseId: string) {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
 
@@ -124,13 +128,13 @@ export class APIClient {
     return fetchedData;
   }
 
-  async updateCaseDetails(caseId: string, updates: MutableCaseAttributes) {
+  async updateCaseDetails(caseId: string, attributes: FormAttributes) {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
 
     return await this.trpcClient.case.updateCase.mutate({
       id: caseId,
-      attributes: updates,
+      attributes,
     });
   }
 

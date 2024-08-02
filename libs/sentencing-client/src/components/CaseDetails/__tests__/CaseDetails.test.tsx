@@ -68,7 +68,7 @@ test("loads onboarding screen when user first accesses the case", async () => {
     </MemoryRouter>,
   );
 
-  const firstName = presenter.clientInfo?.fullName.split(" ")[0];
+  const firstName = presenter.caseAttributes?.Client?.fullName.split(" ")[0];
   const onboardingCaption = await screen.getByText(
     `Let's get some details about ${firstName} case to enhance the historical insights`,
   );
@@ -102,7 +102,7 @@ test("display case details page", async () => {
       </Routes>
     </MemoryRouter>,
   );
-  const fullName = presenter.clientInfo?.fullName ?? "";
+  const fullName = presenter.caseAttributes?.Client?.fullName ?? "";
   const backToDashboard = await screen.getByText(`Back to Dashboard`);
   const clientName = await screen.getByText(fullName);
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");

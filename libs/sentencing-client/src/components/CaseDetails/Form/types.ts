@@ -15,16 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Attributes, FormFieldWithNestedList, FormValue } from "../types";
+import { FormAttributes, FormFieldWithNestedList, FormValue } from "../types";
 
 export type InputFieldProps = {
   element: FormFieldWithNestedList;
-  parentKey?: keyof Attributes;
+  parentKey?: keyof FormAttributes;
   prevValue?: FormValue;
   updateForm: (
-    key: keyof Attributes,
+    key: keyof FormAttributes,
     value?: FormValue,
-    parentKey?: keyof Attributes,
+    parentKey?: keyof FormAttributes,
     isOtherContext?: boolean,
   ) => void;
   updateFormError?: (hasError: boolean) => void;

@@ -30,10 +30,10 @@ import { CaseAttributes } from "./CaseAttributes";
 import * as Styled from "./CaseDetails.styles";
 import { CaseOnboarding } from "./CaseOnboarding/CaseOnboarding";
 import { OnboardingTopic } from "./CaseOnboarding/types";
-import { Insights } from "./Insights";
+import { Insights } from "./Insights/Insights";
 import { Opportunities } from "./Opportunities/Opportunities";
 import { Recommendations } from "./Recommendations/Recommendations";
-import { MutableCaseAttributes, RecommendationType } from "./types";
+import { RecommendationType } from "./types";
 
 const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter,
@@ -55,11 +55,11 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     updateRecommendedOpportunities,
   } = presenter;
 
-  const firstName = caseAttributes.fullName?.split(" ")[0];
+  const firstName = caseAttributes.Client?.fullName?.split(" ")[0];
 
-  const [selectedRecommendation, setSelectedRecommendation] = useState<
-    MutableCaseAttributes["selectedRecommendation"] | undefined
-  >(caseAttributes.selectedRecommendation ?? RecommendationType.Probation);
+  const [selectedRecommendation, setSelectedRecommendation] = useState(
+    caseAttributes.selectedRecommendation ?? RecommendationType.Probation,
+  );
 
   const handleRecommendationUpdate = (recommendation: RecommendationType) =>
     setSelectedRecommendation(recommendation);
@@ -120,7 +120,10 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           <Styled.Body>
             <Styled.InsightsOpportunitiesWrapper>
               {/* Insights */}
-              <Insights />
+              <Insights
+                insight={caseAttributes.insight}
+                selectedRecommendation={selectedRecommendation}
+              />
               {/* Opportunities */}
               <Opportunities
                 firstName={firstName}
@@ -134,7 +137,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             {/* Recommendations */}
             <Recommendations
               firstName={firstName}
-              fullName={caseAttributes.fullName}
+              fullName={caseAttributes.Client?.fullName}
               selectedRecommendation={selectedRecommendation}
               handleRecommendationUpdate={handleRecommendationUpdate}
               saveRecommendation={saveRecommendation}

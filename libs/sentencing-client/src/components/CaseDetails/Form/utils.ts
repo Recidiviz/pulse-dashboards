@@ -33,7 +33,7 @@ import {
   PleaKey,
   YES_OPTION,
 } from "../constants";
-import { FormUpdates, FormValue, MutableCaseAttributes } from "../types";
+import { FormAttributes, FormUpdates, FormValue } from "../types";
 import {
   asamLevelOfCareRecommendation,
   mentalHealthDiagnoses,
@@ -109,9 +109,7 @@ export const parseAttributeValue = (
 };
 
 /** Converts form update inputs into enums or other backend-compatible data types. */
-export const transformUpdates = (
-  updates: FormUpdates,
-): MutableCaseAttributes => {
+export const transformUpdates = (updates: FormUpdates): FormAttributes => {
   const transformedUpdates = {} as { [key: string]: FormValue };
 
   Object.entries(updates).forEach(([key, value]) => {
@@ -155,7 +153,7 @@ export const transformUpdates = (
     return;
   });
 
-  return transformedUpdates as MutableCaseAttributes;
+  return transformedUpdates;
 };
 
 /**

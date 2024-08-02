@@ -15,19 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import chevronIcon from "../assets/chevron-down.svg";
-import tempCharts from "../assets/temp-insights-charts.png";
-import * as Styled from "./CaseDetails.styles";
+import { Insight } from "../../../api/APIClient";
+import chevronIcon from "../../assets/chevron-down.svg";
+import * as Styled from "../CaseDetails.styles";
+import { SelectedRecommendation } from "../types";
+import { getPlot } from "./utils";
 
-// TODO(Recidiviz/recidiviz-data#30652) Implement Insights flow
-export const Insights = () => {
+export interface InsightsProps {
+  insight?: Insight;
+  selectedRecommendation: SelectedRecommendation;
+}
+
+export const Insights = ({
+  insight,
+  selectedRecommendation,
+}: InsightsProps) => {
+  if (!insight) {
+    return null;
+  }
+
+  const plot = getPlot(insight, selectedRecommendation);
+
   return (
     <Styled.Insights>
       <Styled.Title>Insights</Styled.Title>
       <Styled.ChartControls>
-        <Styled.Notification>
-          Awaiting LSI-R score from Atlas to provide the most accurate data
-        </Styled.Notification>
         <Styled.CarouselButtons>
           <Styled.CarouselButton>
             <img src={chevronIcon} alt="" />
@@ -37,8 +49,19 @@ export const Insights = () => {
           </Styled.CarouselButton>
         </Styled.CarouselButtons>
       </Styled.ChartControls>
+      {
+        // // TOOD(https://github.com/Recidiviz/recidiviz-data/issues/30951): Add titles and legends to plot
+      }
       <Styled.Charts>
-        <img src={tempCharts} alt="" width="1200px" />
+        <div
+          ref={(ref) => {
+            if (!ref) {
+              return;
+            }
+            ref.replaceChildren();
+            ref.appendChild(plot);
+          }}
+        />
       </Styled.Charts>
     </Styled.Insights>
   );

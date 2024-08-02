@@ -27,7 +27,6 @@ import moment from "moment";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { CaseWithClient } from "../../api";
 import { psiUrl } from "../../utils/routing";
 import { sortFullNameByLastNameDescending } from "../../utils/sorting";
 import SortIcon from "../assets/sort-icon.svg?react";
@@ -41,10 +40,10 @@ import {
 } from "./constants";
 import * as Styled from "./Dashboard.styles";
 import { useDetectOutsideClick } from "./hooks";
-import { CaseStatus } from "./types";
+import { CaseListTableCase, CaseListTableCases, CaseStatus } from "./types";
 
 type CaseListTableProps = {
-  caseTableData: Partial<CaseWithClient>[];
+  caseTableData: CaseListTableCases;
   staffPseudoId: string;
 };
 
@@ -54,15 +53,12 @@ const columns = [
   {
     header: "Name",
     accessorKey: CLIENT_FULL_NAME_KEY,
-    sortingFn: (
-      rowA: Row<Partial<CaseWithClient>>,
-      rowB: Row<Partial<CaseWithClient>>,
-    ) =>
+    sortingFn: (rowA: Row<CaseListTableCase>, rowB: Row<CaseListTableCase>) =>
       sortFullNameByLastNameDescending(
         rowA.original.Client?.fullName,
         rowB.original.Client?.fullName,
       ),
-    cell: (name: CellContext<Partial<CaseWithClient>, string>) => (
+    cell: (name: CellContext<CaseListTableCase, string>) => (
       <div style={{ textTransform: "capitalize" }}>
         {name.getValue().toLocaleLowerCase()}
       </div>
@@ -76,7 +72,7 @@ const columns = [
   {
     header: "Due Date",
     accessorKey: DUE_DATE_KEY,
-    cell: (dueDate: CellContext<Partial<CaseWithClient>, Date>) =>
+    cell: (dueDate: CellContext<CaseListTableCase, Date>) =>
       moment(dueDate.getValue()).format("MM/DD/YYYY"),
   },
   {
@@ -87,7 +83,7 @@ const columns = [
     header: "Offense",
     accessorKey: OFFENSE_KEY,
     cell: (
-      offense: CellContext<Partial<CaseWithClient>, CaseWithClient["offense"]>,
+      offense: CellContext<CaseListTableCase, CaseListTableCase["offense"]>,
     ) => {
       const displayValue = offense.getValue() ?? "None Yet";
       return (
@@ -100,9 +96,7 @@ const columns = [
   {
     header: "Recommendation Status",
     accessorKey: STATUS_KEY,
-    cell: (
-      status: CellContext<Partial<CaseWithClient>, keyof typeof CaseStatus>,
-    ) => {
+    cell: (status: CellContext<CaseListTableCase, keyof typeof CaseStatus>) => {
       const statusValue = status.getValue();
       const statusToDisplay =
         moment() < moment(status.cell.row.original.dueDate)
@@ -150,7 +144,7 @@ export const CaseListTable = ({
   const navigate = useNavigate();
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
-  const [data, setData] = useState<Partial<CaseWithClient>[]>(
+  const [data, setData] = useState(
     caseTableData.filter((dp) => moment() < moment(dp.dueDate)), // Hide archived cases on initial load
   );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
