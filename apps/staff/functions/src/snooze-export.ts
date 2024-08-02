@@ -21,18 +21,10 @@
  */
 import { add, isBefore, parseISO, startOfToday } from "date-fns";
 import * as admin from "firebase-admin";
-import { QueryDocumentSnapshot } from "firebase-admin/firestore";
-import { defineString } from "firebase-functions/params";
-import { onSchedule } from "firebase-functions/v2/scheduler";
+import { Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
-const schedule = "0 8 * * *"; // 0800 UTC is Midnight PST
-
-admin.initializeApp();
-
-const outputBucketParam = defineString("SNOOZE_OUTPUT_BUCKET");
-
-const db = admin.firestore();
-const storage = admin.storage();
+import { FirestoreExporter } from "./FirestoreExporter";
+import { formatDate } from "./utils";
 
 type SnoozeState = {
   state_code: string;
@@ -46,69 +38,58 @@ type SnoozeState = {
   as_of: string;
 };
 
-function formatDate(d: Date) {
-  return d.toISOString().split("T")[0];
-}
+class SnoozeExporter extends FirestoreExporter<SnoozeState> {
+  outputBucketEnvVar = "SNOOZE_OUTPUT_BUCKET";
 
-function snoozeStateForDocSnapshot(
-  docSnapshot: QueryDocumentSnapshot,
-): SnoozeState | undefined {
-  // Path is of the form "clientUpdatesV2/client_id/clientOpportunityUpdates/usXxOpportunityType"
-  const [, client_id, , opportunity_type] = docSnapshot.ref.path.split("/");
-  const [country, state, person_external_id] = client_id.split("_");
-  const state_code = `${country}_${state}`.toUpperCase();
-
-  const { denial, manualSnooze, autoSnooze } = docSnapshot.data();
-
-  if (!denial) return; // We searched for it, but double-check
-
-  if (denial.reasons.length === 0) return; // No reasons means the denial isn't active anymore
-
-  const snooze_start_date = denial.updated.date.toDate();
-
-  const snoozeState: SnoozeState = {
-    state_code,
-    person_external_id,
-    opportunity_type,
-    snoozed_by: denial.updated.by,
-    snooze_start_date: formatDate(snooze_start_date),
-    denial_reasons: denial.reasons,
-    other_reason: denial.otherReason,
-    as_of: formatDate(startOfToday()),
-  };
-
-  if (manualSnooze) {
-    snoozeState.snooze_end_date = formatDate(
-      add(snooze_start_date, { days: manualSnooze.snoozeForDays }),
-    );
-  } else if (autoSnooze) {
-    snoozeState.snooze_end_date = autoSnooze.snoozeUntil;
+  docsQuery(db: Firestore) {
+    return db
+      .collectionGroup("clientOpportunityUpdates")
+      .where("denial", "!=", null);
   }
 
-  if (
-    snoozeState.snooze_end_date &&
-    isBefore(parseISO(snoozeState.snooze_end_date), startOfToday())
-  ) {
-    return; // Drop snoozes that have ended
-  }
+  firestoreDocToExportData(doc: QueryDocumentSnapshot) {
+    // Path is of the form "clientUpdatesV2/client_id/clientOpportunityUpdates/usXxOpportunityType"
+    const [, client_id, , opportunity_type] = doc.ref.path.split("/");
+    const [country, state, person_external_id] = client_id.split("_");
+    const state_code = `${country}_${state}`.toUpperCase();
 
-  return snoozeState;
+    const { denial, manualSnooze, autoSnooze } = doc.data();
+
+    if (!denial) return; // We searched for it, but double-check
+
+    if (denial.reasons.length === 0) return; // No reasons means the denial isn't active anymore
+
+    const snooze_start_date = denial.updated.date.toDate();
+
+    const snoozeState: SnoozeState = {
+      state_code,
+      person_external_id,
+      opportunity_type,
+      snoozed_by: denial.updated.by,
+      snooze_start_date: formatDate(snooze_start_date),
+      denial_reasons: denial.reasons,
+      other_reason: denial.otherReason,
+      as_of: formatDate(startOfToday()),
+    };
+
+    if (manualSnooze) {
+      snoozeState.snooze_end_date = formatDate(
+        add(snooze_start_date, { days: manualSnooze.snoozeForDays }),
+      );
+    } else if (autoSnooze) {
+      snoozeState.snooze_end_date = autoSnooze.snoozeUntil;
+    }
+
+    if (
+      snoozeState.snooze_end_date &&
+      isBefore(parseISO(snoozeState.snooze_end_date), startOfToday())
+    ) {
+      return; // Drop snoozes that have ended
+    }
+
+    return snoozeState;
+  }
 }
 
-// EXPORTING FUNCTION
-exports.exportSnoozeStates = onSchedule(schedule, async () => {
-  const denialDocs = await db
-    .collectionGroup("clientOpportunityUpdates")
-    .where("denial", "!=", null)
-    .get();
-
-  const newlineJson = denialDocs.docs
-    .map((snapshot) => JSON.stringify(snoozeStateForDocSnapshot(snapshot)))
-    .filter(Boolean)
-    .join("\n");
-
-  return storage
-    .bucket(outputBucketParam.value())
-    .file(`${formatDate(new Date())}.json`)
-    .save(newlineJson);
-});
+const exporter = new SnoozeExporter();
+exports.exportSnoozeStates = exporter.createScheduledFunction();

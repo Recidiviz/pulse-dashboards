@@ -21,3 +21,7 @@ export const throwErrorCustom = (errorMessage: string) => {
   error(errorMessage);
   throw new Error(errorMessage);
 };
+
+export function formatDate(d: Date) {
+  return d.toISOString().split("T")[0];
+}
