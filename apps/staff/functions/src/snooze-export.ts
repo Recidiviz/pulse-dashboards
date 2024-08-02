@@ -20,7 +20,6 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 import { add, isBefore, parseISO, startOfToday } from "date-fns";
-import * as admin from "firebase-admin";
 import { Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 import { FirestoreExporter } from "./FirestoreExporter";
