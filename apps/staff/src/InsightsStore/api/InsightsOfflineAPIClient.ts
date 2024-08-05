@@ -18,11 +18,16 @@
 
 import { differenceInDays, subDays } from "date-fns";
 
+import { isDemoMode } from "~client-env-utils";
+
 import type { InsightsStore } from "../InsightsStore";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
-import { LATEST_END_DATE } from "../models/offlineFixtures/constants";
+import {
+  FAVORABLE_METRIC_IDS,
+  LATEST_END_DATE,
+} from "../models/offlineFixtures/constants";
 import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
 import {
   ExcludedSupervisionOfficer,
@@ -104,6 +109,20 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     return supervisionOfficerSupervisorsFixture;
   }
 
+  // TODO(#4625): Add state-specific fixtures, which will remove the need for this logic
+  removeCaSpecificDataFromFixture(
+    officerData: SupervisionOfficer,
+  ): SupervisionOfficer {
+    return {
+      ...officerData,
+      outlierMetrics: officerData.outlierMetrics.filter(
+        (metric) =>
+          metric.metricId !== FAVORABLE_METRIC_IDS.enum.treatment_starts,
+      ),
+      topXPctMetrics: [],
+    };
+  }
+
   async officersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
@@ -111,7 +130,13 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       "../models/offlineFixtures/SupervisionOfficerFixture"
     );
 
-    return supervisionOfficerFixture.filter((o) =>
+    const transformedFixture = isDemoMode()
+      ? supervisionOfficerFixture.map((officer) =>
+          this.removeCaSpecificDataFromFixture(officer),
+        )
+      : supervisionOfficerFixture;
+
+    return transformedFixture.filter((o) =>
       o.supervisorExternalIds
         .map((i) => `hashed-${i}`)
         .includes(supervisorPseudoId),
@@ -146,7 +171,9 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     if (!officerFixture)
       throw new Error(`Officer ${officerPseudoId} not present in fixture data`);
 
-    return officerFixture;
+    return isDemoMode()
+      ? this.removeCaSpecificDataFromFixture(officerFixture)
+      : officerFixture;
   }
 
   async supervisionOfficerMetricEvents(
