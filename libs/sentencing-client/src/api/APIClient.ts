@@ -38,7 +38,7 @@ export type StaffCase = StaffCases[number];
 
 export type Case = Awaited<ReturnType<APIClient["getCaseDetails"]>>;
 
-export type Insight = Case["insight"];
+export type Insight = NonNullable<Case["insight"]>;
 
 export type Client = Case["Client"];
 

@@ -136,7 +136,20 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
         },
       ],
       dispositionNumRecords: 100,
-      dispositionData: [],
+      dispositionData: [
+        {
+          recommendationType: "Probation",
+          percentage: 0.2,
+        },
+        {
+          recommendationType: "Rider",
+          percentage: 0.5,
+        },
+        {
+          recommendationType: "Term",
+          percentage: 0.3,
+        },
+      ],
     },
   },
 };

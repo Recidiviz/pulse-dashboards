@@ -12,13 +12,12 @@ import {
 
 import { Insight } from "../../../api/APIClient";
 import { SelectedRecommendation } from "../types";
+import { RECOMMENDATION_TYPE_TO_COLOR } from "./constants";
 
-const PLOT_WIDTH = 734;
-const PLOT_HEIGHT = 313;
 const PLOT_MARGIN_RIGHT = 30;
 
-export function getPlot(
-  insight: NonNullable<Insight>,
+export function getRecidivismPlot(
+  insight: Insight,
   selectedRecommendation: SelectedRecommendation,
 ) {
   const series = insight.rollupRecidivismSeries;
@@ -28,16 +27,14 @@ export function getPlot(
   );
 
   return plot({
-    width: PLOT_WIDTH,
-    height: PLOT_HEIGHT,
     marginRight: PLOT_MARGIN_RIGHT,
     y: {
       percent: true,
     },
+    // The "white" fill is so that non-selected dots have a white fill
     color: {
-      // The "white" fill is so that non-selected dots have a white fill
-      domain: ["Probation", "Rider", "Term", "white"],
-      range: ["#25636F", "#D9A95F", "#BA4F4F", "#FFFFFF"],
+      domain: [...Object.keys(RECOMMENDATION_TYPE_TO_COLOR), "white"],
+      range: [...Object.values(RECOMMENDATION_TYPE_TO_COLOR), "#FFFFFF"],
     },
     marks: [
       lineY(data, {
@@ -89,4 +86,48 @@ export function getPlot(
       ruleY([0]),
     ],
   });
+}
+
+export function getRecidivismPlotSubtitle(insight: Insight) {
+  const {
+    rollupStateCode,
+    rollupGender,
+    rollupAssessmentScoreBucketStart,
+    rollupAssessmentScoreBucketEnd,
+    rollupOffense,
+    rollupNcicCategory,
+    rollupCombinedOffenseCategory,
+    rollupViolentOffense,
+  } = insight;
+
+  const genderString = rollupGender ? `${rollupGender}s` : undefined;
+  const lsirScoreString =
+    rollupAssessmentScoreBucketStart !== null &&
+    rollupAssessmentScoreBucketEnd !== null
+      ? `LSI-R = ${rollupAssessmentScoreBucketStart}-${rollupAssessmentScoreBucketEnd}`
+      : undefined;
+
+  const offenseString = rollupOffense ? `${rollupOffense} offenses` : undefined;
+  const combinedOffenseString = rollupCombinedOffenseCategory
+    ? `${rollupCombinedOffenseCategory} offenses`
+    : undefined;
+  const rollupNcicCategoryString = rollupNcicCategory
+    ? `${rollupNcicCategory} offenses`
+    : undefined;
+  const rollupViolentOffenseString = rollupViolentOffense
+    ? "Violent Offenses"
+    : undefined;
+
+  const recidivismSubtitleStrings = [
+    genderString,
+    lsirScoreString,
+    offenseString,
+    combinedOffenseString,
+    rollupNcicCategoryString,
+    rollupViolentOffenseString,
+  ].filter((v) => v);
+
+  return recidivismSubtitleStrings.length > 0
+    ? recidivismSubtitleStrings.join(", ")
+    : `All cases in ${rollupStateCode}`;
 }

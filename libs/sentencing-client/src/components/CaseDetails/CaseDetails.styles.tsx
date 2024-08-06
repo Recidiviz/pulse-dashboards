@@ -539,6 +539,86 @@ export const CarouselButton = styled.div`
 
 export const Charts = styled.div`
   overflow-x: hidden;
+  display: flex;
+`;
+
+export const Chart = styled.div<{
+  $marginRight?: number;
+  $width: number;
+}>`
+  background: ${(props) => props.$width};
+  height: 473px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 24px;
+  border: 1px solid #2b54691a;
+  margin-right: ${(props) => props.$marginRight}px;
+`;
+
+export const ChartTitle = styled.div`
+  color: #012322;
+  fontsize: 18px;
+  margin-bottom: 8px;
+`;
+
+export const ChartSubTitle = styled.div`
+  margin-bottom: 8px;
+`;
+
+export const RecidivismChartLegend = styled.div`
+  display: flex;
+`;
+
+export const RecidivismChartLegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 24px;
+`;
+
+export const RecidivismChartLegendDot = styled.div<{
+  $backgroundColor: string;
+}>`
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: ${(props) => props.$backgroundColor};
+`;
+
+export const DispositionChartContainer = styled.div`
+  display: flex;
+  align-items: flex-end;
+  width: 552px;
+`;
+
+export const DispositionChartCircleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const DispositionChartCircle = styled.div<{
+  $width: number;
+  $backgroundColor: string;
+  $borderColor?: string;
+}>`
+  width: ${(props) => props.$width}px;
+  height: ${(props) => props.$width}px;
+  line-height: ${(props) => props.$width}px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  font-size: 26px;
+  color: #ffffff;
+  text-align: center;
+  background: ${(props) => props.$backgroundColor};
+  border: ${(props) =>
+    props.$borderColor ? `4px solid ${props.$borderColor}` : "none"};
+`;
+
+export const DispositionChartCircleLabel = styled.div<{
+  $color: string;
+}>`
+  color: ${(props) => props.$color};
 `;
 
 /** Opportunities */

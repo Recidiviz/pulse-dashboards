@@ -19,7 +19,9 @@ import { Insight } from "../../../api/APIClient";
 import chevronIcon from "../../assets/chevron-down.svg";
 import * as Styled from "../CaseDetails.styles";
 import { SelectedRecommendation } from "../types";
-import { getPlot } from "./utils";
+import { DispositionChart } from "./components/DispositionChart";
+import { RECOMMENDATION_TYPE_TO_COLOR } from "./constants";
+import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
 
 export interface InsightsProps {
   insight?: Insight;
@@ -34,7 +36,23 @@ export const Insights = ({
     return null;
   }
 
-  const plot = getPlot(insight, selectedRecommendation);
+  const { dispositionData, rollupRecidivismNumRecords, dispositionNumRecords } =
+    insight;
+
+  const recidivismPlotSubtitle = getRecidivismPlotSubtitle(insight);
+  const plot = getRecidivismPlot(insight, selectedRecommendation);
+
+  const recidivismChartLegend = dispositionData.map(
+    ({ recommendationType }) =>
+      recommendationType !== "None" && (
+        <Styled.RecidivismChartLegendItem>
+          <Styled.RecidivismChartLegendDot
+            $backgroundColor={RECOMMENDATION_TYPE_TO_COLOR[recommendationType]}
+          />
+          <div>{recommendationType}</div>
+        </Styled.RecidivismChartLegendItem>
+      ),
+  );
 
   return (
     <Styled.Insights>
@@ -49,19 +67,38 @@ export const Insights = ({
           </Styled.CarouselButton>
         </Styled.CarouselButtons>
       </Styled.ChartControls>
-      {
-        // // TOOD(https://github.com/Recidiviz/recidiviz-data/issues/30951): Add titles and legends to plot
-      }
       <Styled.Charts>
-        <div
-          ref={(ref) => {
-            if (!ref) {
-              return;
-            }
-            ref.replaceChildren();
-            ref.appendChild(plot);
-          }}
-        />
+        <Styled.Chart $width={752} $marginRight={16}>
+          <Styled.ChartTitle>Cumulative Recidivism Rates</Styled.ChartTitle>
+          <Styled.ChartSubTitle>
+            {recidivismPlotSubtitle} (Based on {rollupRecidivismNumRecords}{" "}
+            records)
+          </Styled.ChartSubTitle>
+          <Styled.RecidivismChartLegend>
+            {recidivismChartLegend}
+          </Styled.RecidivismChartLegend>
+          <div
+            ref={(ref) => {
+              if (!ref) {
+                return;
+              }
+              ref.replaceChildren();
+              ref.appendChild(plot);
+            }}
+          />
+        </Styled.Chart>
+        <Styled.Chart $width={552}>
+          <Styled.ChartTitle>Previous Sentences</Styled.ChartTitle>
+          <Styled.ChartSubTitle>
+            {recidivismPlotSubtitle} (Based on {dispositionNumRecords} records)
+          </Styled.ChartSubTitle>
+          <Styled.DispositionChartContainer>
+            <DispositionChart
+              dispositionData={dispositionData}
+              selectedRecommendation={selectedRecommendation}
+            />
+          </Styled.DispositionChartContainer>
+        </Styled.Chart>
       </Styled.Charts>
     </Styled.Insights>
   );
