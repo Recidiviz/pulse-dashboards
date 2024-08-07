@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult } from "mobx";
+import { flowResult, makeObservable } from "mobx";
 
 import {
   castToError,
@@ -42,6 +42,50 @@ export abstract class SupervisionOfficerPresenterBase implements Hydratable {
     protected supervisionStore: InsightsSupervisionStore,
     public officerPseudoId: string,
   ) {
+    makeObservable<
+      SupervisionOfficerPresenterBase,
+      | "fetchedOfficerRecord"
+      | "expectMetricsPopulated"
+      | "hydrator"
+      | "officerRecordFromStore"
+      | "officerRecord"
+      | "outlierDataOrError"
+      | "expectOfficerPopulated"
+      | "expectSupervisorPopulated"
+      | "expectOutlierDataPopulated"
+      | "isOfficerPopulated"
+      | "populateSupervisionOfficer"
+    >(
+      this,
+      {
+        fetchedOfficerRecord: true,
+        hydrator: true,
+        populateMethods: true,
+        expectPopulated: true,
+        trackStaffPageViewed: true,
+        expectMetricsPopulated: true,
+        officerRecordFromStore: true,
+        officerRecord: true,
+        outlierDataOrError: true,
+        officerExternalId: true,
+        outlierOfficerData: true,
+        supervisorsInfo: true,
+        userCanAccessAllSupervisors: true,
+        goToSupervisorInfo: true,
+        methodologyUrl: true,
+        labels: true,
+        timePeriod: true,
+        areCaseloadTypeBreakdownsEnabled: true,
+        expectOfficerPopulated: true,
+        expectSupervisorPopulated: true,
+        expectOutlierDataPopulated: true,
+        isOfficerPopulated: true,
+        populateSupervisionOfficer: true,
+        hydrate: true,
+        hydrationState: true,
+      },
+      { autoBind: true },
+    );
     this.hydrator = new HydratesFromSource({
       expectPopulated: this.expectPopulated,
       populate: async () => {

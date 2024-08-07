@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable } from "mobx";
+import { flowResult, makeObservable, override } from "mobx";
 
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
@@ -44,44 +44,19 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       | "populateSupervisionOfficer"
       | "expectClientsPopulated"
       | "populateCaseload"
-      | "expectMetricsPopulated"
-      | "expectOfficerPopulated"
-      | "expectSupervisorPopulated"
-      | "expectOutlierDataPopulated"
-    >(
-      this,
-      {
-        populateMethods: true,
-        expectPopulated: true,
-        trackStaffPageViewed: true,
-        officerExternalId: true,
-        outlierOfficerData: true,
-        supervisorsInfo: true,
-        userCanAccessAllSupervisors: true,
-        goToSupervisorInfo: true,
-        methodologyUrl: true,
-        labels: true,
-        timePeriod: true,
-        areCaseloadTypeBreakdownsEnabled: true,
-        populateSupervisionOfficer: true,
-        hydrate: true,
-        hydrationState: true,
-        officerPseudoId: true,
-        expectClientsPopulated: true,
-        populateCaseload: true,
-        clients: true,
-        numClientsOnCaseload: true,
-        numEligibleOpportunities: true,
-        opportunitiesByType: true,
-        expectMetricsPopulated: true,
-        expectOfficerPopulated: true,
-        expectSupervisorPopulated: true,
-        expectOutlierDataPopulated: true,
-        metricConfigsById: true,
-        isWorkflowsEnabled: true,
-      },
-      { autoBind: true },
-    );
+    >(this, {
+      metricConfigsById: true,
+      isWorkflowsEnabled: true,
+      expectClientsPopulated: true,
+      populateCaseload: true,
+      clients: true,
+      numClientsOnCaseload: true,
+      numEligibleOpportunities: true,
+      opportunitiesByType: true,
+      populateSupervisionOfficer: override,
+      hydrate: override,
+      hydrationState: override,
+    });
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [...super.expectPopulated, this.expectClientsPopulated],

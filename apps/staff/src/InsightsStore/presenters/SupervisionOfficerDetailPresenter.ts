@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
@@ -33,42 +33,17 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
 
     makeObservable<
       SupervisionOfficerDetailPresenter,
-      | "populateSupervisionOfficer"
-      | "expectMetricsPopulated"
-      | "expectOfficerPopulated"
-      | "expectSupervisorPopulated"
-      | "expectOutlierDataPopulated"
-    >(
-      this,
-      {
-        populateMethods: true,
-        expectPopulated: true,
-        trackStaffPageViewed: true,
-        trackMetricViewed: true,
-        officerExternalId: true,
-        outlierOfficerData: true,
-        defaultMetricId: true,
-        metricId: true,
-        currentMetricIndex: true,
-        metricInfo: true,
-        supervisorsInfo: true,
-        userCanAccessAllSupervisors: true,
-        goToSupervisorInfo: true,
-        methodologyUrl: true,
-        labels: true,
-        timePeriod: true,
-        areCaseloadTypeBreakdownsEnabled: true,
-        populateSupervisionOfficer: true,
-        hydrate: true,
-        hydrationState: true,
-        officerPseudoId: true,
-        expectMetricsPopulated: true,
-        expectOfficerPopulated: true,
-        expectSupervisorPopulated: true,
-        expectOutlierDataPopulated: true,
-      },
-      { autoBind: true },
-    );
+      "populateSupervisionOfficer"
+    >(this, {
+      trackMetricViewed: true,
+      defaultMetricId: true,
+      metricId: true,
+      currentMetricIndex: true,
+      metricInfo: true,
+      ctaText: true,
+      isInsightsLanternState: true,
+      populateSupervisionOfficer: override,
+    });
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: this.expectPopulated,
