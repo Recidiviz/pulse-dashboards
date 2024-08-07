@@ -19,9 +19,6 @@ import { Case } from "../../../api/APIClient";
 import { NO_OPTION, NOT_SURE_YET_OPTION, YES_OPTION } from "../constants";
 import { FormFieldList, NonArrayType, NonNullableKey } from "../types";
 
-// TODO(Recidiviz/recidiviz-data#): Handle displaying the list of charges coming from the backend
-const offenseOptions = ["Felony", "Misdemeanor"];
-
 export const needsToBeAddressed: Record<
   NonArrayType<Case["needsToBeAddressed"]>,
   string
@@ -116,7 +113,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
     description:
       "If there are multiple charges for this case, choose the most severe",
     inputType: "dropdown",
-    options: offenseOptions,
+    options: [],
     isRequired: true,
   },
   {
@@ -127,6 +124,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
     disabledMessage:
       "This score has been pulled in from Atlas and is unable to be edited.",
     validationErrorMessage: "Please enter a number between 0 and 54.",
+    isRequired: true,
   },
   {
     key: "needsToBeAddressed",

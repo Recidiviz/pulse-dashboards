@@ -60,7 +60,10 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       { label: "County", value: county },
       {
         label: "Gender",
-        value: gender === "EXTERNAL_UNKNOWN" ? "Unknown" : gender,
+        value:
+          gender === "EXTERNAL_UNKNOWN"
+            ? "Unknown"
+            : gender?.toLocaleLowerCase(),
       },
       { label: "Age", value: moment().diff(birthDate, "years") },
       { label: "Offense", value: offense, isEditable: true },

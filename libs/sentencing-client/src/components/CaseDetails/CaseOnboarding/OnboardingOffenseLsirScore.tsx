@@ -27,8 +27,8 @@ export const OnboardingOffenseLsirScore: React.FC<CaseOnboardingTopicProps> =
       <>
         <Styled.OnboardingHeaderWrapper>
           <Styled.OnboardingHeader>
-            Let&apos;s get some details about {firstName} case to enhance the
-            historical insights
+            Let&apos;s get some details about {firstName}&apos;s case to enhance
+            the historical insights
           </Styled.OnboardingHeader>
         </Styled.OnboardingHeaderWrapper>
         <Form

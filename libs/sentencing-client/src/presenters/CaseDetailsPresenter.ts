@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startCase, toLower } from "lodash";
 import { flowResult, makeAutoObservable, when } from "mobx";
 
 import {
@@ -65,6 +66,7 @@ export class CaseDetailsPresenter implements Hydratable {
         if (!this.caseStore.psiStore.staffStore.staffInfo) {
           await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
         }
+        await flowResult(this.caseStore.loadOffenses());
         await flowResult(this.caseStore.loadCaseDetails(this.caseId));
         await flowResult(this.caseStore.loadCommunityOpportunities());
       },
@@ -73,7 +75,10 @@ export class CaseDetailsPresenter implements Hydratable {
     when(
       () => isHydrated(this),
       () => {
-        this.caseDetailsForm = new CaseDetailsForm(this.caseAttributes);
+        this.caseDetailsForm = new CaseDetailsForm(
+          this.caseAttributes,
+          this.offenses,
+        );
         this.recommendedOpportunities =
           this.caseAttributes.recommendedOpportunities ?? [];
       },
@@ -85,7 +90,18 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   get caseAttributes() {
-    return this.caseStore.caseDetailsById[this.caseId];
+    const currentCase = this.caseStore.caseDetailsById[this.caseId];
+    if (currentCase.Client?.fullName) {
+      currentCase.Client.fullName = startCase(
+        toLower(currentCase.Client?.fullName),
+      );
+    }
+
+    return currentCase;
+  }
+
+  get offenses() {
+    return this.caseStore.offenses;
   }
 
   get communityOpportunities(): Opportunities {

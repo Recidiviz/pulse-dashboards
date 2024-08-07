@@ -27,6 +27,7 @@ import {
   NeedsToBeAddressedKey,
   NO_OPTION,
   NOT_SURE_YET_OPTION,
+  OFFENSE_KEY,
   OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
   PLEA_KEY,
@@ -154,7 +155,8 @@ export const transformUpdates = (updates: FormUpdates): FormAttributes => {
       isBoolean ||
       isNumber ||
       key === OTHER_NEED_TO_BE_ADDRESSED_KEY ||
-      key === OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY
+      key === OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY ||
+      key === OFFENSE_KEY
     ) {
       transformedUpdates[key] = value;
       return;

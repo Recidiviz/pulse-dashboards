@@ -53,6 +53,7 @@ export const FullPageContainer = styled.div`
 export const Body = styled.div`
   width: 100%;
   display: flex;
+  justify-content: space-between;
   background-color: rgba(244, 245, 246, 1);
   border: 1px solid ${palette.marble5};
   flex-grow: 1;
@@ -140,6 +141,7 @@ export const Value = styled.div`
   align-items: center;
   gap: 6px;
   color: ${palette.pine2};
+  text-transform: capitalize;
 `;
 
 export const EditCaseDetails = styled.div`
@@ -491,6 +493,7 @@ export const ButtonWrapper = styled.div`
 /** Insights */
 
 export const InsightsOpportunitiesWrapper = styled.div`
+  width: 100%;
   max-height: calc(100vh - 64px - 180px);
   display: flex;
   flex-direction: column;
@@ -657,7 +660,7 @@ export const OpportunitiesNotAvailable = styled.div`
   padding: 7px 16px;
   color: ${palette.slate85};
   position: absolute;
-  top: 80px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;

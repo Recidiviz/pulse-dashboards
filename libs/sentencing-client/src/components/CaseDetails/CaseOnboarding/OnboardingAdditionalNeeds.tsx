@@ -32,8 +32,8 @@ export const OnboardingAdditionalNeeds: React.FC<CaseOnboardingTopicProps> =
           </Styled.OnboardingHeader>
           <Styled.OnboardingDescription>
             We will use this data to generate opportunities for {firstName}.
-            It&apos;s ok if you don&apos;t have this information yet. You can
-            add it in later.{" "}
+            It&apos;s okay if you don&apos;t have this information yet, you can
+            add it later.{" "}
           </Styled.OnboardingDescription>
         </Styled.OnboardingHeaderWrapper>
         <Form

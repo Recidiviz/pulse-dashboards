@@ -53,7 +53,10 @@ export class CaseDetailsForm {
 
   hasError: boolean;
 
-  constructor(private readonly caseAttributes: Case) {
+  constructor(
+    private readonly caseAttributes: Case,
+    private readonly offenses: string[],
+  ) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.hasError = false;
     this.content = this.createForm(caseAttributes);
@@ -112,7 +115,7 @@ export class CaseDetailsForm {
         field.key === LSIR_SCORE_KEY &&
         attributeValue &&
         !isValidLsirScore(String(attributeValue));
-      if (attributeValue === undefined) {
+      if (attributeValue === undefined && field.key !== OFFENSE_KEY) {
         return field;
       }
 
@@ -122,6 +125,7 @@ export class CaseDetailsForm {
 
       return {
         ...field,
+        options: field.key === OFFENSE_KEY ? this.offenses : field.options,
         value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {
           const nestedAttributeValue = caseAttributes[nestedField.key];

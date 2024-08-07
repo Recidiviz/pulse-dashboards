@@ -56,4 +56,8 @@ export class OfflineAPIClient {
   async getCommunityOpportunities(): Promise<Opportunities> {
     return [];
   }
+
+  async getOffenses(): Promise<string[]> {
+    return [];
+  }
 }

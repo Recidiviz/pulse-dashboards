@@ -37,7 +37,7 @@ import { parseAttributeValue } from "../utils";
 
 const caseId = Object.keys(CaseDetailsFixture)[0];
 const caseAttributes = CaseDetailsFixture[caseId];
-const form = new CaseDetailsForm(caseAttributes);
+const form = new CaseDetailsForm(caseAttributes, []);
 
 test("form is initialized with case attribute values", () => {
   expect(Object.keys(form.content).length).toBe(caseDetailsFormTemplate.length);
@@ -88,7 +88,7 @@ test("getFormValue returns the latest value for a field", () => {
 });
 
 test("form value changes update content and updates properties", () => {
-  const localForm = new CaseDetailsForm(caseAttributes);
+  const localForm = new CaseDetailsForm(caseAttributes, []);
 
   localForm.updateForm(LSIR_SCORE_KEY, "22");
 
@@ -112,12 +112,12 @@ test("form value changes update content and updates properties", () => {
 });
 
 test("form sets error flag to true when caseAttributes has an error in values", () => {
-  let localForm = new CaseDetailsForm(caseAttributes);
+  let localForm = new CaseDetailsForm(caseAttributes, []);
   expect(localForm.hasError).toBeFalse();
 
   caseAttributes.lsirScore = 222;
 
-  localForm = new CaseDetailsForm(caseAttributes);
+  localForm = new CaseDetailsForm(caseAttributes, []);
   expect(localForm.hasError).toBeTrue();
 });
 
@@ -164,7 +164,7 @@ test("onboardingFields returns the expected onboarding fields", () => {
 });
 
 test("transformedUpdates converts values to enums/expected BE values", () => {
-  const localForm = new CaseDetailsForm(caseAttributes);
+  const localForm = new CaseDetailsForm(caseAttributes, []);
   const updates = {
     [ASAM_CARE_RECOMMENDATION_KEY]: "2.5 High-Intensity Outpatient (HIOP)",
     [PLEA_KEY]: "Alford Plea",

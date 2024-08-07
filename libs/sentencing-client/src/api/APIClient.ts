@@ -147,4 +147,13 @@ export class APIClient {
 
     return fetchedData;
   }
+
+  async getOffenses(): Promise<string[]> {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    const fetchedData = await this.trpcClient.offense.getOffenses.query();
+
+    return fetchedData;
+  }
 }

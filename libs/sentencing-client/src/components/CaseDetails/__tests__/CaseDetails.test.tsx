@@ -70,10 +70,10 @@ test("loads onboarding screen when user first accesses the case", async () => {
 
   const firstName = presenter.caseAttributes?.Client?.fullName.split(" ")[0];
   const onboardingCaption = await screen.getByText(
-    `Let's get some details about ${firstName} case to enhance the historical insights`,
+    `Let's get some details about ${firstName}'s case to enhance the historical insights`,
   );
-  const offenseField = await screen.getByText("Offense");
-  const lsirScoreField = await screen.getByText("Draft LSI-R Score");
+  const offenseField = await screen.getByText("Offense*");
+  const lsirScoreField = await screen.getByText("Draft LSI-R Score*");
 
   expect(onboardingCaption).toBeInTheDocument();
   expect(offenseField).toBeInTheDocument();

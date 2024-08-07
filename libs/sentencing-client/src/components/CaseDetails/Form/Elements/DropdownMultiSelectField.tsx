@@ -38,20 +38,36 @@ export const DropdownMultiSelectField: React.FC<InputFieldProps> = ({
   const updateDropdownInput = (options: MultiValue<SelectOption>) => {
     if (!options) return;
 
+    /**
+     * Note: there is special handling when selecting the "None" option.
+     *  - If there are existing non-"None" selections, and a user selects "None",
+     *    then all other selections are cleared except for "None".
+     *  - If "None" is the existing selection and a user selects another option,
+     *    then the "None" selection is removed.
+     */
+
     const hasNoneOption = options.find(
       (option: SelectOption) => option.value === "None",
     );
+    /**
+     * "None" as the first option means that it was either a single selection of "None", or
+     * the "None" selection already existed before an attempt to add a new item to the list.
+     */
+    const hasNoneAsFirstOption = options[0].value === "None";
 
-    if (hasNoneOption) {
+    if (hasNoneOption && !hasNoneAsFirstOption) {
+      // Clears out all other pre-selected options except for "None"
       setCurrentValue([{ label: "None", value: "None" }]);
       updateForm(element.key, ["None"], parentKey);
       return;
     }
 
-    setCurrentValue(options);
+    // Filter out the "None" option
+    const filteredOptions = options.filter((item) => item.value !== "None");
+    setCurrentValue(filteredOptions);
     updateForm(
       element.key,
-      (options as { label: string; value: string }[]).map(
+      (filteredOptions as { label: string; value: string }[]).map(
         (selection) => selection.value,
       ),
       parentKey,

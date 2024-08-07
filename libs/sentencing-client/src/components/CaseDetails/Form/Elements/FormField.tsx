@@ -46,6 +46,7 @@ export const FormField = ({
     <>
       <Styled.InputLabel htmlFor={element.key}>
         {element.label}
+        {element.isRequired ? "*" : ""}
       </Styled.InputLabel>
 
       {(element.inputType === "text" || element.inputType === "number") && (

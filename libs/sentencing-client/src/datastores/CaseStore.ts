@@ -31,10 +31,13 @@ export class CaseStore {
 
   communityOpportunities: Opportunities;
 
+  offenses: string[];
+
   constructor(public readonly psiStore: PSIStore) {
     makeAutoObservable(this);
     this.caseDetailsById = {};
     this.communityOpportunities = [];
+    this.offenses = [];
   }
 
   /** This is a MobX flow method and should be called with mobx.flowResult */
@@ -80,6 +83,20 @@ export class CaseStore {
     } catch (error) {
       toast(
         "Something went wrong loading the community opportunities. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
+  }
+
+  *loadOffenses() {
+    try {
+      this.offenses = yield this.psiStore.apiClient.getOffenses();
+    } catch (error) {
+      toast(
+        "Something went wrong loading a list of offenses. Please try again or contact us for support.",
         {
           duration: ERROR_TOAST_DURATION,
           style: { backgroundColor: palette.signal.error },
