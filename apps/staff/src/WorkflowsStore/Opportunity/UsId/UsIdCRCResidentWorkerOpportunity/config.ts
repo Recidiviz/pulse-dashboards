@@ -49,7 +49,12 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
       Other: "Other, please specify a reason",
     },
     methodologyUrl: WORKFLOWS_METHODOLOGY_URL.US_ID,
-    sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],
+    sidebarComponents: [
+      "Incarceration",
+      "UsIdPastTwoYearsAlert",
+      "UsIdParoleDates",
+      "CaseNotes",
+    ],
     eligibleCriteriaCopy: {
       custodyLevelIsMinimum: {
         text: "Currently on Minimum custody",

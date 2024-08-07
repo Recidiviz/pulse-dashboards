@@ -23,6 +23,10 @@ import {
   UsMoSolitaryAssignmentInfoPastYear,
 } from "../../WorkflowsStore/Opportunity/UsMo/common";
 
+/*****
+ US_AR
+ ****/
+
 type UsArProgramAchievement = {
   programLocation: string;
   programEvaluationScore: string | null;
@@ -53,6 +57,22 @@ export type UsArResidentMetadata = {
   projectedReleaseDate: string;
 };
 
+/*****
+ US_ID
+ ****/
+
+export type UsIdResidentMetadata = {
+  stateCode: "US_ID";
+  crcFacility: string;
+  initialParoleHearingDate: string | null;
+  nextParoleHearingDate: string | null;
+  tentativeParoleDate: string | null;
+};
+
+/*****
+ US_MO
+ ****/
+
 export type UsMoResidentMetadata = {
   stateCode: "US_MO";
   d1SanctionInfoInPastYear: UsMoSanctionInfo[];
@@ -61,6 +81,10 @@ export type UsMoResidentMetadata = {
   numD1SanctionsPastYear: number;
 };
 
+/*****
+ US_ME
+ ****/
+
 export type UsMeResidentMetadata = {
   stateCode: "US_ME";
   portionServedNeeded: "1/2" | "2/3";
@@ -68,9 +92,10 @@ export type UsMeResidentMetadata = {
 };
 
 type DefinedResidentMetadata = {
-  US_MO: UsMoResidentMetadata;
   US_AR: UsArResidentMetadata;
+  US_ID: UsIdResidentMetadata;
   US_ME: UsMeResidentMetadata;
+  US_MO: UsMoResidentMetadata;
 };
 
 export type ResidentMetadataMap = {

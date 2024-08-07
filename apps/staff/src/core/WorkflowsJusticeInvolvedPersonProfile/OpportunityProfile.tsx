@@ -47,6 +47,7 @@ import {
   UsMoRestrictiveHousing,
   UsTnCommonlyUsedOverrideCodes,
 } from "./ResidentDetailSidebarComponents";
+import { UsIdParoleDates } from "./ResidentDetailSidebarComponents/US_ID/UsIdParoleDates";
 import { UsIdPastTwoYearsAlert } from "./ResidentDetailSidebarComponents/US_ID/UsIdPastTwoYearsAlert";
 import { UsMiRestrictiveHousing } from "./ResidentDetailSidebarComponents/US_MI/UsMiRestrictiveHousingDetails";
 import { Divider } from "./styles";
@@ -86,6 +87,7 @@ export const ResidentDetailSidebarComponents = {
   ResidentHousing,
   UsMoIncarceration,
   UsIdPastTwoYearsAlert,
+  UsIdParoleDates,
 };
 
 type ResidentDetailComponentName = keyof typeof ResidentDetailSidebarComponents;

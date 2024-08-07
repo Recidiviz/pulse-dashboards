@@ -101,7 +101,6 @@ export type FeatureVariant =
   | "usPaSpecialCircumstances"
   | "opportunityPolicyCopy"
   | "interCandidateNavigation"
-  | "interCandidateNavigation"
   | "lastSyncedDate";
 export type FeatureVariantValue = {
   activeDate?: Date;

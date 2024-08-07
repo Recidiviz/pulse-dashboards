@@ -49,7 +49,12 @@ export const usIdCRCWorkReleaseConfig: OpportunityConfig<UsIdCRCWorkReleaseOppor
       IN_PROGRESS: "Was approved and is waiting to be transferred to a CRC",
       Other: "Other, please specify a reason",
     },
-    sidebarComponents: ["Incarceration", "UsIdPastTwoYearsAlert", "CaseNotes"],
+    sidebarComponents: [
+      "Incarceration",
+      "UsIdPastTwoYearsAlert",
+      "UsIdParoleDates",
+      "CaseNotes",
+    ],
     eligibleCriteriaCopy: {
       custodyLevelIsMinimum: {
         text: "Currently on Minimum custody",

@@ -238,6 +238,14 @@ function formatWorkflowsDate(date?: Date): string {
   return formatDate(date, "MMM d, yyyy");
 }
 
+function formatWorkflowsDateString(
+  date?: string | null,
+  fallback = "Unknown",
+): string {
+  if (!date) return fallback;
+  return formatWorkflowsDate(new Date(date));
+}
+
 function formatDurationFromDays(days: number): string {
   return moment.duration(days, "days").humanize();
 }
@@ -439,6 +447,7 @@ export {
   formatOfficerLabel,
   formatPercent,
   formatWorkflowsDate,
+  formatWorkflowsDateString,
   formatYearsMonthsFromNow,
   genderValueToHumanReadable,
   genderValueToLabel,

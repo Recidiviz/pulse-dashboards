@@ -218,7 +218,13 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2019-08-12",
     releaseDate: "2025-10-22",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ID",
+      tentativeParoleDate: "2025-02-10",
+      nextParoleHearingDate: "2024-09-15",
+      initialParoleHearingDate: "2020-03-12",
+      crcFacility: "CRC Facility 1",
+    },
   },
   {
     allEligibleOpportunities: ["usIdCRCWorkRelease"],
@@ -236,7 +242,13 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2020-01-12",
     releaseDate: "2026-07-06",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ID",
+      tentativeParoleDate: "2025-02-10",
+      nextParoleHearingDate: "2024-09-15",
+      initialParoleHearingDate: "2021-03-12",
+      crcFacility: "CRC Facility 1",
+    },
   },
   {
     allEligibleOpportunities: ["usIdCRCWorkRelease", "usIdCRCResidentWorker"],
@@ -254,7 +266,13 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2017-07-12",
     releaseDate: "2027-06-06",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ID",
+      tentativeParoleDate: "2026-02-10",
+      nextParoleHearingDate: "2024-09-15",
+      initialParoleHearingDate: "2018-05-18",
+      crcFacility: "CRC Facility 1",
+    },
   },
   {
     allEligibleOpportunities: ["usIdCRCResidentWorker"],
@@ -272,7 +290,13 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     custodyLevel: "MINIMUM",
     admissionDate: "2021-07-12",
     releaseDate: "2027-06-06",
-    metadata: {},
+    metadata: {
+      stateCode: "US_ID",
+      tentativeParoleDate: "2025-09-10",
+      nextParoleHearingDate: "2024-09-15",
+      initialParoleHearingDate: "2023-03-12",
+      crcFacility: "CRC Facility 1",
+    },
   },
 
   {
