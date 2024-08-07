@@ -826,6 +826,48 @@ export const ModalDescription = styled.div`
   margin-bottom: 32px;
 `;
 
+export const ModalBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 32px 0;
+`;
+
+export const SectionRowWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`;
+
+export const Section = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 32px;
+`;
+
+export const SectionContent = styled.div<{ isLink?: boolean }>`
+  ${typography.Sans14}
+  display: flex;
+  flex-direction: column;
+  color: ${palette.slate85};
+  line-height: 21px;
+
+  ${({ isLink }) =>
+    isLink &&
+    `
+      color: ${palette.pine4};
+
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    `}
+`;
+
+export const SectionLabel = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate70};
+  margin-bottom: 4px;
+`;
+
 export const Form = styled.form`
   display: flex;
   flex-direction: column;

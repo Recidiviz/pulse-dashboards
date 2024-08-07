@@ -124,9 +124,7 @@ export class CaseDetailsForm {
         ...field,
         value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {
-          const nestedAttributeValue = caseAttributes[
-            nestedField.key
-          ] as FormValue;
+          const nestedAttributeValue = caseAttributes[nestedField.key];
           if (nestedAttributeValue === undefined) {
             return nestedField;
           }

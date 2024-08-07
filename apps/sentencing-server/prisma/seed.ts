@@ -1,8 +1,11 @@
 import { faker } from "@faker-js/faker";
 import {
+  AsamLevelOfCareRecommendationCriterion,
   CaseStatus,
+  DiagnosedSubstanceUseDisorderCriterion,
   Gender,
   Plea,
+  PriorCriminalHistoryCriterion,
   Prisma,
   PrismaClient,
   ReportType,
@@ -130,6 +133,15 @@ async function main() {
         faker.datatype.boolean(),
       entryOfGuiltyPleaCriterion: faker.datatype.boolean(),
       veteranStatusCriterion: faker.datatype.boolean(),
+      priorCriminalHistoryCriterion: faker.helpers.enumValue(
+        PriorCriminalHistoryCriterion,
+      ),
+      asamLevelOfCareRecommendationCriterion: faker.helpers.enumValue(
+        AsamLevelOfCareRecommendationCriterion,
+      ),
+      diagnosedSubstanceUseDisorderCriterion: faker.helpers.enumValue(
+        DiagnosedSubstanceUseDisorderCriterion,
+      ),
     });
   }
 

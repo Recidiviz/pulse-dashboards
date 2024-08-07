@@ -78,6 +78,7 @@ export const RecommendationOptionBase: React.FC<RecommendationsOptionProps> = ({
         id={option.key}
         type="radio"
         checked={isSelectedRecommendation}
+        readOnly
       />
       <Styled.RecommendationDetails>
         <Styled.RecommendationOptionLabel

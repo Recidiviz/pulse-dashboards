@@ -234,10 +234,10 @@ model Opportunity {
   noPendingFelonyChargesInAnotherCountyOrStateCriterion Boolean
   entryOfGuiltyPleaCriterion                            Boolean
   veteranStatusCriterion                                Boolean
-  PriorCriminalHistoryCriterion                         PriorCriminalHistoryCriterion[]
+  priorCriminalHistoryCriterion                         PriorCriminalHistoryCriterion?
   diagnosedMentalHealthDiagnosisCriterion               DiagnosedMentalHealthDiagnosisCriterion[]
-  asamLevelOfCareRecommendationCriterion                AsamLevelOfCareRecommendationCriterion[]
-  diagnosedSubstanceUseDisorderCriterion                DiagnosedSubstanceUseDisorderCriterion[]
+  asamLevelOfCareRecommendationCriterion                AsamLevelOfCareRecommendationCriterion?
+  diagnosedSubstanceUseDisorderCriterion                DiagnosedSubstanceUseDisorderCriterion?
   minLsirScoreCriterion                                 Int?
   maxLsirScoreCriterion                                 Int?
 

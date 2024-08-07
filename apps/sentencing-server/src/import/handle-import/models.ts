@@ -20,17 +20,17 @@ const gender = z.nativeEnum(Gender);
 
 const needToBeAddressed = z.array(z.nativeEnum(NeedToBeAddressed));
 
-const priorCriminalHistoryCriterion = z.array(
-  z.nativeEnum(PriorCriminalHistoryCriterion),
+const priorCriminalHistoryCriterion = z.nativeEnum(
+  PriorCriminalHistoryCriterion,
 );
 const diagnosedMentalHealthDiagnosisCriterion = z.array(
   z.nativeEnum(DiagnosedMentalHealthDiagnosisCriterion),
 );
-const asamLevelOfCareRecommendationCriterion = z.array(
-  z.nativeEnum(AsamLevelOfCareRecommendationCriterion),
+const asamLevelOfCareRecommendationCriterion = z.nativeEnum(
+  AsamLevelOfCareRecommendationCriterion,
 );
-const diagnosedSubstanceUseDisorderCriterion = z.array(
-  z.nativeEnum(DiagnosedSubstanceUseDisorderCriterion),
+const diagnosedSubstanceUseDisorderCriterion = z.nativeEnum(
+  DiagnosedSubstanceUseDisorderCriterion,
 );
 
 export const nameSchema = zu.stringToJSON().pipe(

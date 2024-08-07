@@ -56,6 +56,7 @@ import {
   RecommendationType,
   SelectedRecommendation,
 } from "../types";
+import OpportunityModal from "./OpportunityModal";
 
 type OpportunitiesProps = {
   firstName?: string;
@@ -103,6 +104,15 @@ const columns = [
   },
 ];
 
+const createOpportunityProviderDisplayName = (
+  opportunityName: string,
+  providerName?: string,
+) => {
+  return providerName
+    ? `${opportunityName} - ${providerName}`
+    : opportunityName;
+};
+
 // TODO(Recidiviz/recidiviz-data#30650) Implement Opportunities flow
 export const Opportunities: React.FC<OpportunitiesProps> = ({
   firstName,
@@ -115,7 +125,10 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const [showRemoveOnHover, setShowRemoveOnHover] = useState<{
     [column: string]: boolean;
   }>({});
-
+  const [showOpportunityModal, setShowOpportunityModal] = useState(false);
+  const [selectedOpportunity, setSelectedOpportunity] =
+    useState<OpportunitiesType[number]>();
+  const [selectedRowId, setSelectedRowId] = useState<string>();
   const [data] = useState(
     communityOpportunities.map((opp) => ({
       ...opp,
@@ -301,9 +314,9 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     );
   };
 
-  const toggleAddRemoveOpportunity = (
+  const toggleOpportunity = (
     opportunityNameProviderName: string,
-    rowId: string,
+    rowId?: string,
   ) => {
     const isRemovingOpportunity = recommendedOpportunities.find(
       (opp) =>
@@ -323,13 +336,26 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     Recommendation`,
     );
 
-    if (isRemovingOpportunity) {
+    if (isRemovingOpportunity && rowId) {
       setShowRemoveOnHover((prev) => ({
         ...prev,
         [rowId]: false,
       }));
     }
   };
+
+  const showModal = (
+    isOpportunityNameProviderNameColumn: boolean,
+    value: string,
+    rowId: string,
+  ) => {
+    if (!isOpportunityNameProviderNameColumn) return;
+    setShowOpportunityModal(true);
+    setSelectedOpportunity(opportunitiesByNameProviderName[value]);
+    setSelectedRowId(rowId);
+  };
+
+  const hideModal = () => setShowOpportunityModal(false);
 
   return (
     <Styled.Opportunities>
@@ -408,7 +434,16 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                     );
 
                     return (
-                      <StyledDashboard.Cell key={cell.id}>
+                      <StyledDashboard.Cell
+                        key={cell.id}
+                        onClick={() => {
+                          showModal(
+                            cell.column.id === "opportunityNameProviderName",
+                            String(cell.getValue()),
+                            row.id,
+                          );
+                        }}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -417,14 +452,12 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                         {/* Add To Recommendation Button */}
                         {cell.column.id === "addToRecommendationAction" && (
                           <Styled.AddRecommendationButton
-                            onClick={() => {
-                              const opportunityNameProviderName =
-                                cell.row.original.opportunityNameProviderName;
-                              toggleAddRemoveOpportunity(
-                                opportunityNameProviderName,
+                            onClick={() =>
+                              toggleOpportunity(
+                                cell.row.original.opportunityNameProviderName,
                                 row.id,
-                              );
-                            }}
+                              )
+                            }
                             isAdded={isAddedOpportunity}
                             onMouseEnter={() =>
                               isAddedOpportunity &&
@@ -464,6 +497,37 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
           </Styled.Table>
         </Styled.TableWrapper>
       </Styled.OpportunitiesTableWrapper>
+
+      {/* Opportunity Modal */}
+      <OpportunityModal
+        isOpen={showOpportunityModal}
+        hideModal={hideModal}
+        selectedOpportunity={selectedOpportunity}
+        isAddedOpportunity={Boolean(
+          selectedOpportunity &&
+            recommendedOpportunities.find(
+              (opp) =>
+                opp.opportunityName ===
+                  opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
+                    `${selectedOpportunity.opportunityName} - ${selectedOpportunity.providerName}`
+                  ].opportunityName &&
+                opp.providerPhoneNumber ===
+                  opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
+                    `${selectedOpportunity.opportunityName} - ${selectedOpportunity.providerName}`
+                  ].providerPhoneNumber,
+            ),
+        )}
+        toggleOpportunity={() =>
+          selectedOpportunity &&
+          toggleOpportunity(
+            createOpportunityProviderDisplayName(
+              selectedOpportunity.opportunityName,
+              selectedOpportunity.providerName,
+            ),
+            selectedRowId,
+          )
+        }
+      />
     </Styled.Opportunities>
   );
 };

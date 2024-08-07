@@ -33,6 +33,11 @@ import {
   PleaKey,
   YES_OPTION,
 } from "../constants";
+import {
+  ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
+  MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY,
+  NEEDS_ADDRESSED_CRITERIA_KEY,
+} from "../Opportunities/constants";
 import { FormAttributes, FormUpdates, FormValue } from "../types";
 import {
   asamLevelOfCareRecommendation,
@@ -55,7 +60,7 @@ export const formatFormEnumValue = (value: string) => {
 /** Parses stored values and enums into form/attribute values */
 export const parseAttributeValue = (
   key: string,
-  value?: boolean | number | string | string[] | Date | null,
+  value?: boolean | number | string | string[] | null,
 ) => {
   if (value === undefined) return;
 
@@ -74,19 +79,28 @@ export const parseAttributeValue = (
 
   const isArray = Array.isArray(value);
   if (isArray) {
-    if (key === NEEDS_TO_BE_ADDRESSED_KEY) {
+    if (
+      key === NEEDS_TO_BE_ADDRESSED_KEY ||
+      key === NEEDS_ADDRESSED_CRITERIA_KEY
+    ) {
       return (value as Case[NeedsToBeAddressedKey]).map(
         (val) => needsToBeAddressed[val],
       );
     }
-    if (key === MENTAL_HEALTH_DIAGNOSES_KEY) {
+    if (
+      key === MENTAL_HEALTH_DIAGNOSES_KEY ||
+      key === MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY
+    ) {
       return (value as Case[MentalHealthDiagnosesKey]).map(
         (val) => mentalHealthDiagnoses[val],
       );
     }
   }
 
-  if (key === ASAM_CARE_RECOMMENDATION_KEY) {
+  if (
+    key === ASAM_CARE_RECOMMENDATION_KEY ||
+    key === ASAM_CARE_RECOMMENDATION_CRITERIA_KEY
+  ) {
     return (
       asamLevelOfCareRecommendation[
         value as NonNullable<Case[AsamCareRecommendationKey]>
