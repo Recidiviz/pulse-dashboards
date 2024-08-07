@@ -26,13 +26,13 @@ const supervisionOfficerBaseSchema = z.object({
   fullName: fullNameSchema,
   externalId: z.string(),
   district: z.string().nullable(),
-  caseloadType: z.string().nullable(),
   pseudonymizedId: z.string(),
   supervisorExternalIds: z.array(z.string()),
 });
 
 export const supervisionOfficerSchema = supervisionOfficerBaseSchema
   .extend({
+    caseloadType: z.string().nullable(),
     outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
     topXPctMetrics: z.array(
       z.object({

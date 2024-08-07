@@ -19,7 +19,6 @@ import {
   excludedSupervisionOfficerSchema,
   RawExcludedSupervisionOfficer,
 } from "../SupervisionOfficer";
-import { CASELOAD_TYPE_IDS } from "./constants";
 import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSupervisor";
 
 export const rawExcludedSupervisionOfficerFixture: RawExcludedSupervisionOfficer[] =
@@ -32,7 +31,6 @@ export const rawExcludedSupervisionOfficerFixture: RawExcludedSupervisionOfficer
         surname: "Harris",
       },
       district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-      caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
       supervisorExternalIds: [
         supervisionOfficerSupervisorsFixture[0].externalId,
       ],
@@ -45,7 +43,6 @@ export const rawExcludedSupervisionOfficerFixture: RawExcludedSupervisionOfficer
         surname: "Hernandez",
       },
       district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-      caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
       supervisorExternalIds: [
         supervisionOfficerSupervisorsFixture[0].externalId,
       ],
