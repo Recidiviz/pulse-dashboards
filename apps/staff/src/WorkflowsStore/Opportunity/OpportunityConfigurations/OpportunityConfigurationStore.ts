@@ -27,12 +27,9 @@ import { OpportunityType } from "../OpportunityType/types";
 import { OpportunityConfigurationAPI } from "./api/interface";
 import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfigurationAPIClient";
 import { OpportunityConfigurationOfflineAPIClient } from "./api/OpportunityConfigurationOfflineAPIClient";
-import {
-  IApiOpportunityConfiguration,
-  OpportunityConfiguration,
-} from "./interfaces";
+import { OpportunityConfiguration } from "./interfaces";
 import { LocalOpportunityConfiguration } from "./models";
-import { ApiOpportunityConfiguration } from "./models/ApiOpportunityConfigurationImpl";
+import { apiOpportunityConfigurationFactory } from "./models/CustomOpportunityConfigurations";
 
 export class OpportunityConfigurationStore implements Hydratable {
   apiClient: OpportunityConfigurationAPI;
@@ -112,13 +109,15 @@ export class OpportunityConfigurationStore implements Hydratable {
 
     const rawConfigs = yield this.apiClient.opportunities();
 
-    this.apiOpportunityConfigurations = mapValues(
-      rawConfigs,
-      (rawConfig) =>
-        new ApiOpportunityConfiguration(
-          rawConfig as IApiOpportunityConfiguration,
+    this.apiOpportunityConfigurations = Object.fromEntries(
+      Object.entries(rawConfigs).map(([oppType, rawConfig]) => [
+        oppType,
+        apiOpportunityConfigurationFactory(
+          oppType as OpportunityType,
+          rawConfig,
           this.rootStore.userStore,
         ),
+      ]),
     );
   }
 

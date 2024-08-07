@@ -155,9 +155,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     >
       <OpportunityHeaderWrapper isMobile={isMobile}>
         <OpportunityHeader isMobile={isMobile}>
-          {eligibilityTextForCount(
-            countOpportunities(opportunities, opportunityType),
-          )}
+          {eligibilityTextForCount(countOpportunities(opportunities))}
         </OpportunityHeader>
         <ReviewStatusWrapper>
           {numIneligible > 0 && (

@@ -183,3 +183,5 @@ export type DenialConfirmationModalProps = {
   onCloseFn: () => any;
   onSuccessFn: () => any;
 };
+
+export type OpportunityPriority = "NORMAL" | "HIGH";

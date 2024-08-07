@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { pluralizeWord } from "../../../utils";
-import { Opportunity, OPPORTUNITY_CONFIGS, OpportunityType } from "..";
+import { Opportunity } from "..";
 
 export const generateOpportunityInitialHeader = (
   label: string,
@@ -33,14 +33,11 @@ export const generateOpportunityInitialHeader = (
 /**
  * This counts the number of opportunities in a list using the default counting algorithm if there is not one defined for the opportunityType.
  * @param opportunities list of opportunities
- * @param opportunityType opportunityType to count in a list
- * @returns number of opportunities according to counting algorithm or -1
+ * @returns number of opportunities according to counting algorithm
  */
-export const countOpportunities = (
-  opportunities: Opportunity[],
-  opportunityType: OpportunityType,
-): number => {
+export const countOpportunities = (opportunities: Opportunity[]): number => {
   if (opportunities.length === 0) return 0;
+  const opportunityType = opportunities[0].type;
   opportunities.every((opportunity) => {
     const { type } = opportunity;
     if (type !== opportunityType)
@@ -50,7 +47,7 @@ export const countOpportunities = (
     return true;
   });
 
-  const countByFunction = OPPORTUNITY_CONFIGS[opportunityType].countByFunction;
+  const countByFunction = opportunities[0].config.countByFunction;
   const count = countByFunction
     ? countByFunction(opportunities)
     : opportunities.filter(

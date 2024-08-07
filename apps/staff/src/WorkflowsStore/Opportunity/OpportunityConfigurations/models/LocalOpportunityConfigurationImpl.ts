@@ -16,9 +16,9 @@
 // =============================================================================
 
 import UserStore from "../../../../RootStore/UserStore";
-import { OpportunityTabGroups } from "../../types";
+import { OpportunityConfig } from "../../OpportunityConfigs";
+import { Opportunity, OpportunityTabGroups } from "../../types";
 import { generateTabs } from "../../utils/tabUtils";
-import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
 import {
   formatEligibilityText,
@@ -27,7 +27,7 @@ import {
 
 export class LocalOpportunityConfiguration implements OpportunityConfiguration {
   constructor(
-    private configurationObject: ILocalOpportunityConfiguration,
+    private configurationObject: OpportunityConfig<Opportunity>,
     private userStore: UserStore,
   ) {}
 
@@ -130,6 +130,10 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
 
   get homepagePosition() {
     return this.configurationObject.homepagePosition;
+  }
+
+  get countByFunction() {
+    return this.configurationObject.countByFunction;
   }
 
   get isEnabled(): boolean {

@@ -20,7 +20,9 @@ import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import { SortParamObject } from "../../OpportunityConfigs";
 import {
   DenialReasonsMap,
+  Opportunity,
   OpportunityNotification,
+  OpportunityPriority,
   OpportunityTabGroups,
 } from "../../types";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
@@ -29,7 +31,7 @@ export interface OpportunityConfiguration {
   systemType: SystemId;
   stateCode: TenantId;
   urlSection: string;
-  priority: string;
+  priority: OpportunityPriority;
   featureVariant?: FeatureVariant;
   inverseFeatureVariant?: FeatureVariant;
   label: string;
@@ -54,4 +56,5 @@ export interface OpportunityConfiguration {
   ineligibleCriteriaCopy: CriteriaCopy;
   compareBy: SortParamObject<string>[] | undefined;
   homepagePosition: number;
+  countByFunction?: (opportunities: Opportunity[]) => number;
 }

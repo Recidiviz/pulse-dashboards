@@ -194,7 +194,7 @@ const HydratedOpportunityPersonList = observer(
       opportunityConfigs[opportunityType];
 
     const opportunityCount = oppsFromOpportunitiesByOppType
-      ? countOpportunities(oppsFromOpportunitiesByOppType, opportunityType)
+      ? countOpportunities(oppsFromOpportunitiesByOppType)
       : 0;
 
     const handleTabClick = (tab: OpportunityTab) => {

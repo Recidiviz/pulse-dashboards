@@ -16,11 +16,11 @@
 // =============================================================================
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import UserStore from "../../../../RootStore/UserStore";
+import { Client } from "../../../Client";
 import { JusticeInvolvedPerson } from "../../../types";
 import { OTHER_KEY } from "../../../utils";
-import { OpportunityType } from "../..";
+import { Opportunity, OpportunityConfig, OpportunityType } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
-import { ILocalOpportunityConfiguration } from "../interfaces/LocalOpportunityConfiguration";
 
 export const mockUsXxOpp: OpportunityType = "mockUsXxOpp" as OpportunityType;
 export const mockUsXxTwoOpp: OpportunityType =
@@ -34,36 +34,36 @@ export class TestOpportunity<
   }
 }
 
-export const mockLocalOpportunityConfigurationObject: ILocalOpportunityConfiguration =
-  {
-    systemType: "SUPERVISION",
-    stateCode: "US_XX" as TenantId,
-    urlSection: "mockOpportunity",
-    label: "Mock Opportunity",
-    featureVariant: "usXxMockOpportunity" as FeatureVariant,
-    initialHeader: "Mock initial header to search for something",
-    snooze: {
-      autoSnoozeParams: {
-        type: "snoozeUntil",
-        params: {
-          weekday: "Sunday",
-        },
+export const mockLocalOpportunityConfigurationObject: OpportunityConfig<
+  Opportunity<Client>
+> = {
+  systemType: "SUPERVISION",
+  stateCode: "US_XX" as TenantId,
+  urlSection: "mockOpportunity",
+  label: "Mock Opportunity",
+  featureVariant: "usXxMockOpportunity" as FeatureVariant,
+  initialHeader: "Mock initial header to search for something",
+  snooze: {
+    autoSnoozeParams: {
+      type: "snoozeUntil",
+      params: {
+        weekday: "Sunday",
       },
     },
-    dynamicEligibilityText:
-      "client[|s] may be on or past their expiration date",
-    callToAction:
-      "Review these clients and complete their auto-generated TEPE Note.",
-    firestoreCollection: "US_XX_mockOpportunity",
-    methodologyUrl: "methodologyUrl",
-    isAlert: true,
-    denialReasons: {
-      CODE: "Denial reason",
-      [OTHER_KEY]: "Other",
-    },
-    sidebarComponents: [],
-    homepagePosition: 1,
-  };
+  },
+  dynamicEligibilityText: "client[|s] may be on or past their expiration date",
+  callToAction:
+    "Review these clients and complete their auto-generated TEPE Note.",
+  firestoreCollection: "US_XX_mockOpportunity",
+  methodologyUrl: "methodologyUrl",
+  isAlert: true,
+  denialReasons: {
+    CODE: "Denial reason",
+    [OTHER_KEY]: "Other",
+  },
+  sidebarComponents: [],
+  homepagePosition: 1,
+};
 
 export const mockApiOpportunityConfigurationResponse = {
   usIdCrcWorkRelease: {

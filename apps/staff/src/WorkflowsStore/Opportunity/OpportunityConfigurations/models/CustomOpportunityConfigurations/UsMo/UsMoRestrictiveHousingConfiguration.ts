@@ -15,5 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./ApiOpportunityConfiguration";
-export * from "./OpportunityConfiguration";
+import { FeatureVariant } from "../../../../../../RootStore/types";
+import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
+
+export class UsMoRestrictiveHousingConfiguration extends ApiOpportunityConfiguration {
+  get inverseFeatureVariant(): FeatureVariant {
+    return "usMoOverdueRHPilot";
+  }
+}

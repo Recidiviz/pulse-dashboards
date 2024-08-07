@@ -27,17 +27,6 @@ import {
 vi.mock("../../subscriptions");
 vi.mock("firebase/firestore");
 vi.mock("../Forms/FormBase");
-const hoisted = vi.hoisted(async () => {
-  const { MOCK_OPPORTUNITY_CONFIGS } = await import("../__fixtures__");
-  return { MOCK_OPPORTUNITY_CONFIGS };
-});
-
-vi.mock("../OpportunityConfigs", async (importOriginal) => {
-  return {
-    ...(await importOriginal<typeof import("../OpportunityConfigs")>()),
-    OPPORTUNITY_CONFIGS: (await hoisted).MOCK_OPPORTUNITY_CONFIGS,
-  };
-});
 
 describe("monthsOrDaysRemainingFromToday", () => {
   beforeEach(() => {
@@ -71,45 +60,63 @@ test("Generate header", () => {
 });
 
 describe("Generate counts for opportunities", () => {
-  type MockAOpps = Pick<Opportunity, "type" | "reviewStatus">;
-  type MockBOpps = Pick<Opportunity, "type" | "isSnoozed">;
-
   const emptyOppsList: Opportunity[] = [];
 
-  const aOpps: MockAOpps[] = [
-    { type: "mockUsXxOpp" as OpportunityType, reviewStatus: "IN_PROGRESS" },
-    { type: "mockUsXxOpp" as OpportunityType, reviewStatus: "IN_PROGRESS" },
+  const aOpps = [
+    {
+      type: "mockUsXxOpp" as OpportunityType,
+      reviewStatus: "IN_PROGRESS",
+      config: {},
+    },
+    {
+      type: "mockUsXxOpp" as OpportunityType,
+      reviewStatus: "IN_PROGRESS",
+      config: {},
+    },
     {
       type: "mockUsXxOpp" as OpportunityType,
       reviewStatus: "DENIED",
+      config: {},
     },
-  ];
+  ] as Opportunity[];
 
-  const bOpps: MockBOpps[] = [
-    { type: "mockUsXxTwoOpp" as OpportunityType, isSnoozed: true },
-    { type: "mockUsXxTwoOpp" as OpportunityType, isSnoozed: false },
-    { type: "mockUsXxTwoOpp" as OpportunityType, isSnoozed: true },
-  ] as unknown as Opportunity[];
+  const customConfig = {
+    countByFunction: (opportunities: Opportunity[]) =>
+      opportunities.filter((opp) => opp.isSnoozed).length,
+  };
+
+  const bOpps = [
+    {
+      type: "mockUsXxTwoOpp" as OpportunityType,
+      isSnoozed: true,
+      config: customConfig,
+    },
+    {
+      type: "mockUsXxTwoOpp" as OpportunityType,
+      isSnoozed: false,
+      config: customConfig,
+    },
+    {
+      type: "mockUsXxTwoOpp" as OpportunityType,
+      isSnoozed: true,
+      config: customConfig,
+    },
+  ] as Opportunity[];
 
   const baseTests = [
-    [aOpps as Opportunity[], "mockUsXxOpp" as OpportunityType, 2],
-    [bOpps as Opportunity[], "mockUsXxTwoOpp" as OpportunityType, 2],
-    [emptyOppsList as Opportunity[], "mockUsXxOpp" as OpportunityType, 0],
+    [aOpps, 2],
+    [bOpps, 2],
+    [emptyOppsList, 0],
   ];
 
   it.each(baseTests)(
     `should count opportunities %o properly when type is %s (TEST CASE %#)`,
-    (opps, type, expected) =>
-      expect(
-        countOpportunities(opps as Opportunity[], type as OpportunityType),
-      ).toEqual(expected),
+    (opps, expected) =>
+      expect(countOpportunities(opps as Opportunity[])).toEqual(expected),
   );
 
   it(`should throw an error when the opportunities are different types`, () =>
     expect(() =>
-      countOpportunities(
-        [...aOpps, ...bOpps] as Opportunity[],
-        "mockUsXxOpp" as OpportunityType,
-      ),
+      countOpportunities([...aOpps, ...bOpps] as Opportunity[]),
     ).toThrowError());
 });

@@ -29,6 +29,7 @@ import {
   DenialReasonsMap,
   Opportunity,
   OpportunityNotification,
+  OpportunityPriority,
   OpportunityTabGroups,
 } from "./types";
 import { usCaSupervisionLevelDowngradeConfig as usCaSupervisionLevelDowngrade } from "./UsCa/UsCaSupervisionLevelDowngradeOpportunity/config";
@@ -96,8 +97,7 @@ export type OpportunityHydratedHeader =
   | OpportunityHeadersWithEligibilityTextType
   | OpportunityHeadersWithFullTextType;
 
-type ExtractPersonType<T> =
-  T extends OpportunityBase<infer P, any, any> ? P : never;
+type ExtractPersonType<T> = T extends Opportunity<infer P> ? P : never;
 
 type ClientSystemType<T> = T extends Client
   ? Extract<SystemId, "SUPERVISION">
@@ -164,6 +164,7 @@ export type OpportunityConfig<OpportunityVariant extends Opportunity> = {
   ineligibleCriteriaCopy?: Record<string, { text: string; tooltip?: string }>;
   compareBy?: SortParam[];
   homepagePosition: number;
+  priority?: OpportunityPriority;
 };
 
 export const OPPORTUNITY_CONFIGS = {
