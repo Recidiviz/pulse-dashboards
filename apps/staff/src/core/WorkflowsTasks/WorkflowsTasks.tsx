@@ -228,6 +228,8 @@ const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
     }
 
     const tasks = store.orderedTasksByCategory[type];
+    // TODO(#5975): Remove when we know how to display last synced data when there are no JII eligible for tasks
+    if (!tasks.length) return;
 
     const calendar = [] as ReactNode[];
 
@@ -269,6 +271,7 @@ const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
     return (
       <>
         {calendar}
+        {/* TODO(#5975): Update to handle when tasks.length === 0 */}
         <WorkflowsLastSynced date={tasks[0].person.lastDataFromState} />
       </>
     );
