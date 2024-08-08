@@ -10,15 +10,20 @@ import {
 import z from "zod";
 import { zu } from "zod_utilz";
 
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
+
 export function fullNameObjectToString(nameObject: z.infer<typeof nameSchema>) {
   return `${nameObject.given_names} ${nameObject.middle_names} ${nameObject.surname} ${nameObject.name_suffix}`;
 }
 
-const stateCode = z.nativeEnum(StateCode);
+const stateCode = z.preprocess(
+  (v) => (v === "US_IX" ? StateCode.US_ID : v),
+  z.nativeEnum(StateCode),
+);
 
 const gender = z.nativeEnum(Gender);
 
-const needToBeAddressed = z.array(z.nativeEnum(NeedToBeAddressed));
+const needsAddressed = z.array(z.nativeEnum(NeedToBeAddressed));
 
 const priorCriminalHistoryCriterion = z.nativeEnum(
   PriorCriminalHistoryCriterion,
@@ -110,17 +115,21 @@ export const staffImportSchema = z.array(
 export const opportunityImportSchema = z.array(
   z.object({
     OpportunityName: z.string(),
-    Description: z.string(),
-    ProviderName: z.string(),
-    CleanedProviderPhoneNumber: z.string(),
-    ProviderWebsite: z.string(),
-    ProviderAddress: z.string(),
-    CapacityTotal: z.number(),
-    CapacityAvailable: z.number(),
-    NeedsAddressed: needToBeAddressed.optional(),
-    eighteenOrOlderCriterion: z.boolean(),
+    Description: z.string().optional(),
+    ProviderName: z
+      .string()
+      .optional()
+      // If providerName is null, we should default to OPPORTUNITY_UNKNOWN_PROVIDER_NAME
+      .transform((v) => v ?? OPPORTUNITY_UNKNOWN_PROVIDER_NAME),
+    CleanedProviderPhoneNumber: z.string().optional(),
+    ProviderWebsite: z.string().optional(),
+    ProviderAddress: z.string().optional(),
+    // Integers are being converted to strings for some reason
+    CapacityTotal: z.coerce.number().optional(),
+    // Integers are being converted to strings for some reason
+    CapacityAvailable: z.coerce.number().optional(),
+    NeedsAddressed: needsAddressed,
     developmentalDisabilityDiagnosisCriterion: z.boolean(),
-    minorCriterion: z.boolean(),
     noCurrentOrPriorSexOffenseCriterion: z.boolean(),
     noCurrentOrPriorViolentOffenseCriterion: z.boolean(),
     noPendingFelonyChargesInAnotherCountyOrStateCriterion: z.boolean(),
@@ -128,13 +137,16 @@ export const opportunityImportSchema = z.array(
     veteranStatusCriterion: z.boolean(),
     priorCriminalHistoryCriterion: priorCriminalHistoryCriterion.optional(),
     diagnosedMentalHealthDiagnosisCriterion:
-      diagnosedMentalHealthDiagnosisCriterion.optional(),
+      diagnosedMentalHealthDiagnosisCriterion,
     asamLevelOfCareRecommendationCriterion:
       asamLevelOfCareRecommendationCriterion.optional(),
     diagnosedSubstanceUseDisorderCriterion:
       diagnosedSubstanceUseDisorderCriterion.optional(),
-    minLsirScoreCriterion: z.number().optional(),
-    maxLsirScoreCriterion: z.number().optional(),
+    minLsirScoreCriterion: z.coerce.number().optional(),
+    maxLsirScoreCriterion: z.coerce.number().optional(),
+    minAge: z.coerce.number().optional(),
+    maxAge: z.coerce.number().optional(),
+    district: z.string().optional(),
   }),
 );
 
@@ -152,7 +164,7 @@ export const recidivismSeriesSchema = zu.stringToJSON().pipe(
 export const recidivismRollupSchema = zu.stringToJSON().pipe(
   z.object({
     state_code: stateCode,
-    gender: gender,
+    gender: gender.optional(),
     assessment_score_bucket_start: z.number().optional(),
     assessment_score_bucket_end: z.number().optional(),
     most_severe_description: z.string().optional(),
@@ -166,15 +178,19 @@ export const insightImportSchema = z.array(
   z.object({
     state_code: stateCode,
     gender: gender,
-    assessment_score_bucket_start: z.number(),
-    assessment_score_bucket_end: z.number(),
+    // Integers are being converted to strings for some reason
+    assessment_score_bucket_start: z.coerce.number(),
+    // Integers are being converted to strings for some reason
+    assessment_score_bucket_end: z.coerce.number(),
     most_severe_description: z.string(),
     recidivism_rollup: recidivismRollupSchema,
-    recidivism_num_records: z.number(),
-    recidivism_probation_series: recidivismSeriesSchema,
-    recidivism_rider_series: recidivismSeriesSchema,
-    recidivism_term_series: recidivismSeriesSchema,
-    disposition_num_records: z.number(),
+    // Integers are being converted to strings for some reason
+    recidivism_num_records: z.coerce.number(),
+    recidivism_probation_series: recidivismSeriesSchema.optional(),
+    recidivism_rider_series: recidivismSeriesSchema.optional(),
+    recidivism_term_series: recidivismSeriesSchema.optional(),
+    // Integers are being converted to strings for some reason
+    disposition_num_records: z.coerce.number(),
     disposition_probation_pc: z.number(),
     disposition_rider_pc: z.number(),
     disposition_term_pc: z.number(),

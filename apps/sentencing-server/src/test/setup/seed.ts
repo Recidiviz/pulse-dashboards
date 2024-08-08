@@ -61,9 +61,7 @@ export const fakeOpportunity = {
   providerAddress: faker.location.streetAddress(),
   totalCapacity: faker.number.int({ max: 100 }),
   availableCapacity: faker.number.int({ max: 100 }),
-  eighteenOrOlderCriterion: false,
   developmentalDisabilityDiagnosisCriterion: false,
-  minorCriterion: false,
   noCurrentOrPriorSexOffenseCriterion: false,
   noCurrentOrPriorViolentOffenseCriterion: false,
   noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
@@ -80,9 +78,7 @@ export const fakeOpportunity2 = {
   providerAddress: faker.location.streetAddress(),
   totalCapacity: faker.number.int({ max: 100 }),
   availableCapacity: faker.number.int({ max: 100 }),
-  eighteenOrOlderCriterion: false,
   developmentalDisabilityDiagnosisCriterion: false,
-  minorCriterion: false,
   noCurrentOrPriorSexOffenseCriterion: false,
   noCurrentOrPriorViolentOffenseCriterion: false,
   noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
@@ -126,11 +122,11 @@ export const fakeCase = {
   recommendedOpportunities: [
     {
       opportunityName: fakeOpportunity.opportunityName,
-      providerPhoneNumber: fakeOpportunity.providerPhoneNumber,
+      providerName: fakeOpportunity.providerName,
     },
     {
       opportunityName: fakeOpportunity2.opportunityName,
-      providerPhoneNumber: fakeOpportunity2.providerPhoneNumber,
+      providerName: fakeOpportunity2.providerName,
     },
   ],
 };
@@ -139,7 +135,7 @@ export const fakeCasePrismaInput = {
   ...fakeCase,
   recommendedOpportunities: {
     connect: fakeCase.recommendedOpportunities.map((opportunity) => ({
-      opportunityName_providerPhoneNumber: opportunity,
+      opportunityName_providerName: opportunity,
     })),
   },
   offense: {

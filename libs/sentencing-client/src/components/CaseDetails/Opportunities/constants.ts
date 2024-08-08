@@ -32,12 +32,12 @@ export const MIN_LSIR_SCORE_CRITERIA_KEY = "minLsirScoreCriterion";
 
 export const MAX_LSIR_SCORE_CRITERIA_KEY = "maxLsirScoreCriterion";
 
-export const EIGHTEEN_OR_OLDER_CRITERION_KEY = "eighteenOrOlderCriterion";
+export const MIN_AGE_KEY = "minAge";
 
 export const DEVELOPMENTAL_DISABILITY_DIAGNOSIS_CRITERION_KEY =
   "developmentalDisabilityDiagnosisCriterion";
 
-export const MINOR_CRITERION_KEY = "minorCriterion";
+export const MAX_AGE_KEY = "maxAge";
 
 export const NO_CURRENT_OR_PRIOR_SEX_OFFENSE_CRITERION_KEY =
   "noCurrentOrPriorSexOffenseCriterion";
@@ -59,10 +59,10 @@ export const eligibilityCriteriaToLabelName: Record<
   keyof EligibilityCriteria,
   string
 > = {
-  [EIGHTEEN_OR_OLDER_CRITERION_KEY]: "Adults 18+",
+  [MIN_AGE_KEY]: "Minimum Age",
   [DEVELOPMENTAL_DISABILITY_DIAGNOSIS_CRITERION_KEY]:
     "Has developmental disability diagnosis",
-  [MINOR_CRITERION_KEY]: "Minors <18",
+  [MAX_AGE_KEY]: "Maximum Age",
   [NO_CURRENT_OR_PRIOR_SEX_OFFENSE_CRITERION_KEY]:
     "No current/prior sex offense",
   [NO_CURRENT_OR_PRIOR_VIOLENT_OFFENSE_CRITERION_KEY]:

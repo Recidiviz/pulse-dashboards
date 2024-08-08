@@ -10,9 +10,10 @@ import {
 } from "@prisma/client";
 import { z } from "zod";
 
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
 import {
   GetCaseInput,
-  OpportunityIdentifier,
+  OpportunityNameIdentifier,
   UpdateCaseInput,
 } from "~sentencing-server/trpc/routes/case/types";
 
@@ -38,10 +39,14 @@ const OnboardingTopicEnum = z.nativeEnum(OnboardingTopic);
 
 const OpportunitiesSchema = z.array(
   z.object({
-    opportunityName: z.string(),
-    providerPhoneNumber: z.string(),
+    opportunityName: z.string() satisfies z.ZodType<OpportunityNameIdentifier>,
+    providerName: z
+      .string()
+      .nullable()
+      // If providerName is null, we should default to OPPORTUNITY_UNKNOWN_PROVIDER_NAME
+      .transform((v) => v ?? OPPORTUNITY_UNKNOWN_PROVIDER_NAME),
   }),
-) satisfies z.ZodType<OpportunityIdentifier[]>;
+);
 
 export const updateCaseSchema = z.object({
   id: z.string(),

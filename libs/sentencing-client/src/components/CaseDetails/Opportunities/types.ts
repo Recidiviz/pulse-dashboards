@@ -19,9 +19,7 @@ import { Opportunities } from "../../../api";
 
 export type EligibilityCriteria = Pick<
   Opportunities[number],
-  | "eighteenOrOlderCriterion"
   | "developmentalDisabilityDiagnosisCriterion"
-  | "minorCriterion"
   | "noCurrentOrPriorSexOffenseCriterion"
   | "noCurrentOrPriorViolentOffenseCriterion"
   | "noPendingFelonyChargesInAnotherCountyOrStateCriterion"
@@ -33,4 +31,6 @@ export type EligibilityCriteria = Pick<
   | "diagnosedSubstanceUseDisorderCriterion"
   | "minLsirScoreCriterion"
   | "maxLsirScoreCriterion"
+  | "maxAge"
+  | "minAge"
 >;

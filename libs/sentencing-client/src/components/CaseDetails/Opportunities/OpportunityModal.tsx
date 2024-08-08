@@ -86,7 +86,9 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
     ) as string[]) ?? [];
   const eligibilityCriteria = getEligibilityCriteria(selectedOpportunity);
   const eligibilityCriteriaEntries = Object.entries(eligibilityCriteria);
-  const providerURL = new URL(selectedOpportunity.providerWebsite).href;
+  const providerURL = selectedOpportunity.providerWebsite
+    ? new URL(selectedOpportunity.providerWebsite).href
+    : undefined;
 
   return (
     <Modal isOpen={isOpen} hideModal={hideModal}>
@@ -105,10 +107,13 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
         <Styled.Section>
           <Styled.SectionLabel>Provider</Styled.SectionLabel>
           <Styled.SectionContent
-            isLink
-            onClick={() =>
-              window.open(providerURL, "_blank", "noopener,noreferrer")
-            }
+            isLink={providerURL !== undefined}
+            onClick={() => {
+              if (!providerURL) {
+                return;
+              }
+              return window.open(providerURL, "_blank", "noopener,noreferrer");
+            }}
           >
             {selectedOpportunity.providerName}
           </Styled.SectionContent>

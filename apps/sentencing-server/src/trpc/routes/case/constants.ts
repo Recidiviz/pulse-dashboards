@@ -10,7 +10,7 @@ export const PRISMA_CASE_GET_ARGS = {
     recommendedOpportunities: {
       select: {
         opportunityName: true,
-        providerPhoneNumber: true,
+        providerName: true,
       },
     },
     offense: {

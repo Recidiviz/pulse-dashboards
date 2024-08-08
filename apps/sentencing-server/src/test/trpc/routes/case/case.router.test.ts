@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
 import { prismaClient } from "~sentencing-server/prisma";
 import { testAndGetSentryReport } from "~sentencing-server/test/common/utils";
 import { testTRPCClient } from "~sentencing-server/test/setup";
@@ -12,6 +13,7 @@ import {
   fakeInsight,
   fakeInsightPrismaInput,
   fakeOffense,
+  fakeOpportunity,
   fakeRecidivismSeries,
 } from "~sentencing-server/test/setup/seed";
 
@@ -150,6 +152,38 @@ describe("case router", () => {
         "Multiple insights found for case with id",
       );
     });
+
+    test("should set opportunity provider name to null if it is unknown", async () => {
+      // Set an opportunity provider name to unknown
+      await prismaClient.opportunity.update({
+        where: {
+          opportunityName_providerName: {
+            opportunityName:
+              fakeCase.recommendedOpportunities[0].opportunityName,
+            providerName: fakeCase.recommendedOpportunities[0].providerName,
+          },
+        },
+        data: {
+          providerName: OPPORTUNITY_UNKNOWN_PROVIDER_NAME,
+        },
+      });
+
+      const returnedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(returnedCase).toEqual(
+        expect.objectContaining({
+          recommendedOpportunities: expect.arrayContaining([
+            expect.objectContaining({
+              opportunityName:
+                fakeCase.recommendedOpportunities[0].opportunityName,
+              providerName: null,
+            }),
+          ]),
+        }),
+      );
+    });
   });
 
   describe("updateCase", () => {
@@ -202,67 +236,41 @@ describe("case router", () => {
     });
 
     test("should update recommendedOpportunities", async () => {
+      // Create an opportunity with the default provider name
+      await prismaClient.opportunity.create({
+        data: {
+          ...fakeOpportunity,
+          providerName: OPPORTUNITY_UNKNOWN_PROVIDER_NAME,
+        },
+      });
+
+      // Update the opportunities to be the one with out a provider name
       await testTRPCClient.case.updateCase.mutate({
         id: fakeCase.id,
         attributes: {
           recommendedOpportunities: [
             {
               opportunityName: "opportunity-name",
-              providerPhoneNumber: "800-212-3942",
-            },
-            {
-              opportunityName: "opportunity-name-2",
-              providerPhoneNumber: "800-212-1111",
+              providerName: null,
             },
           ],
         },
       });
 
-      let updatedCase = await testTRPCClient.case.getCase.query({
-        id: fakeCase.id,
-      });
-
-      expect(updatedCase.recommendedOpportunities.length).toBe(2);
-      expect(updatedCase).toEqual(
-        expect.objectContaining({
-          recommendedOpportunities: [
-            {
-              opportunityName: "opportunity-name",
-              providerPhoneNumber: "800-212-3942",
-            },
-            {
-              opportunityName: "opportunity-name-2",
-              providerPhoneNumber: "800-212-1111",
-            },
-          ],
-        }),
-      );
-
-      // Should also properly update when we send a smaller list
-      await testTRPCClient.case.updateCase.mutate({
-        id: fakeCase.id,
-        attributes: {
-          recommendedOpportunities: [
-            {
-              opportunityName: "opportunity-name-2",
-              providerPhoneNumber: "800-212-1111",
-            },
-          ],
-        },
-      });
-
-      updatedCase = await testTRPCClient.case.getCase.query({
-        id: fakeCase.id,
+      const updatedCase = await prismaClient.case.findUniqueOrThrow({
+        where: { id: fakeCase.id },
+        select: { recommendedOpportunities: true },
       });
 
       expect(updatedCase.recommendedOpportunities.length).toBe(1);
       expect(updatedCase).toEqual(
         expect.objectContaining({
           recommendedOpportunities: [
-            {
-              opportunityName: "opportunity-name-2",
-              providerPhoneNumber: "800-212-1111",
-            },
+            expect.objectContaining({
+              opportunityName: "opportunity-name",
+              // provider name should be the default string in the database
+              providerName: "unknown",
+            }),
           ],
         }),
       );

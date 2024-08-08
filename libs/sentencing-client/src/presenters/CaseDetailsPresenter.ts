@@ -40,10 +40,7 @@ export class CaseDetailsPresenter implements Hydratable {
 
   private caseDetailsForm?: CaseDetailsForm;
 
-  recommendedOpportunities: {
-    opportunityName: string;
-    providerPhoneNumber: string;
-  }[];
+  recommendedOpportunities: OpportunitiesIdentifier;
 
   constructor(
     public readonly caseStore: CaseStore,

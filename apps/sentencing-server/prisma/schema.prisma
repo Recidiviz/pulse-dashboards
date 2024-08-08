@@ -64,6 +64,11 @@ enum StateCode {
 enum Gender {
   MALE
   FEMALE
+  NON_BINARY
+  TRANS
+  TRANS_FEMALE
+  TRANS_MALE
+  INTERNAL_UNKNOWN
   EXTERNAL_UNKNOWN
 }
 
@@ -216,19 +221,17 @@ enum OnboardingTopic {
 model Opportunity {
   id                  String              @id @default(cuid())
   opportunityName     String
-  description         String
   providerName        String
-  providerPhoneNumber String
-  providerWebsite     String
-  providerAddress     String
-  totalCapacity       Int
-  availableCapacity   Int
+  description         String?
+  providerPhoneNumber String?
+  providerWebsite     String?
+  providerAddress     String?
+  totalCapacity       Int?
+  availableCapacity   Int?
   needsAddressed      NeedToBeAddressed[]
 
   // Eligibility Criteria
-  eighteenOrOlderCriterion                              Boolean
   developmentalDisabilityDiagnosisCriterion             Boolean
-  minorCriterion                                        Boolean
   noCurrentOrPriorSexOffenseCriterion                   Boolean
   noCurrentOrPriorViolentOffenseCriterion               Boolean
   noPendingFelonyChargesInAnotherCountyOrStateCriterion Boolean
@@ -240,11 +243,14 @@ model Opportunity {
   diagnosedSubstanceUseDisorderCriterion                DiagnosedSubstanceUseDisorderCriterion?
   minLsirScoreCriterion                                 Int?
   maxLsirScoreCriterion                                 Int?
+  minAge                                                Int?
+  maxAge                                                Int?
+  district                                              String?
 
   cases Case[]
 
   // This is the best way to identify unique opportunities
-  @@unique([opportunityName, providerPhoneNumber])
+  @@unique([opportunityName, providerName])
 }
 
 model Offense {

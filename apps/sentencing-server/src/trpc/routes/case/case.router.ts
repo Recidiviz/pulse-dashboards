@@ -2,6 +2,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
 import {
   getCaseInputSchema,
@@ -41,6 +42,16 @@ export const caseRouter = router({
       return {
         ...caseData,
         reportType: REPORT_TYPE_ENUM_TO_STRING[caseData.reportType],
+        recommendedOpportunities: caseData.recommendedOpportunities.map(
+          (opportunity) => ({
+            ...opportunity,
+            providerName:
+              // Map these names back to null for the client
+              opportunity.providerName === OPPORTUNITY_UNKNOWN_PROVIDER_NAME
+                ? null
+                : opportunity.providerName,
+          }),
+        ),
         offense: caseData.offense?.name,
         insight,
       };
@@ -86,7 +97,7 @@ export const caseRouter = router({
             ...attributes,
             recommendedOpportunities: {
               set: attributes.recommendedOpportunities?.map((opportunity) => ({
-                opportunityName_providerPhoneNumber: opportunity,
+                opportunityName_providerName: opportunity,
               })),
             },
             offense: {

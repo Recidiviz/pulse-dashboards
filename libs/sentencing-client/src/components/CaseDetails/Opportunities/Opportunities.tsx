@@ -106,7 +106,7 @@ const columns = [
 
 const createOpportunityProviderDisplayName = (
   opportunityName: string,
-  providerName?: string,
+  providerName: string | null,
 ) => {
   return providerName
     ? `${opportunityName} - ${providerName}`
@@ -133,7 +133,6 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     communityOpportunities.map((opp) => ({
       ...opp,
       opportunityNameProviderName: `${opp.opportunityName} - ${opp.providerName}`,
-      opportunityNamePhoneNumber: opp.opportunityName + opp.providerPhoneNumber,
     })),
   );
 
@@ -151,9 +150,9 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     "opportunityNameProviderName",
   );
 
-  const opportunitiesNameProviderNameToOpportunityNamePhoneNumber = mapValues(
+  const opportunityDisplayNameToOpportunityNameProviderName = mapValues(
     opportunitiesByNameProviderName,
-    (opp) => pick(opp, ["opportunityName", "providerPhoneNumber"]),
+    (opp) => pick(opp, ["opportunityName", "providerName"]),
   );
 
   // TODO(Recidiviz/recidiviz-data#30954) - Refactor structure and move outside of component. This is placeholder for now to display the UI banner.
@@ -320,13 +319,13 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   ) => {
     const isRemovingOpportunity = recommendedOpportunities.find(
       (opp) =>
-        opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
+        opportunityDisplayNameToOpportunityNameProviderName[
           opportunityNameProviderName
         ].opportunityName === opp.opportunityName,
     );
 
     updateRecommendedOpportunities(
-      opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
+      opportunityDisplayNameToOpportunityNameProviderName[
         opportunityNameProviderName
       ],
     );
@@ -423,13 +422,13 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                       recommendedOpportunities.find(
                         (opp) =>
                           opp.opportunityName ===
-                            opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
+                            opportunityDisplayNameToOpportunityNameProviderName[
                               cell.row.original.opportunityNameProviderName
                             ].opportunityName &&
-                          opp.providerPhoneNumber ===
-                            opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
+                          opp.providerName ===
+                            opportunityDisplayNameToOpportunityNameProviderName[
                               cell.row.original.opportunityNameProviderName
-                            ].providerPhoneNumber,
+                            ].providerName,
                       ),
                     );
 
@@ -505,17 +504,21 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
         selectedOpportunity={selectedOpportunity}
         isAddedOpportunity={Boolean(
           selectedOpportunity &&
-            recommendedOpportunities.find(
-              (opp) =>
+            recommendedOpportunities.find((opp) => {
+              const key = createOpportunityProviderDisplayName(
+                selectedOpportunity.opportunityName,
+                selectedOpportunity.providerName,
+              );
+
+              return (
                 opp.opportunityName ===
-                  opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
-                    `${selectedOpportunity.opportunityName} - ${selectedOpportunity.providerName}`
-                  ].opportunityName &&
-                opp.providerPhoneNumber ===
-                  opportunitiesNameProviderNameToOpportunityNamePhoneNumber[
-                    `${selectedOpportunity.opportunityName} - ${selectedOpportunity.providerName}`
-                  ].providerPhoneNumber,
-            ),
+                  opportunityDisplayNameToOpportunityNameProviderName[key]
+                    .opportunityName &&
+                opp.providerName ===
+                  opportunityDisplayNameToOpportunityNameProviderName[key]
+                    .providerName
+              );
+            }),
         )}
         toggleOpportunity={() =>
           selectedOpportunity &&

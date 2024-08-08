@@ -2,8 +2,8 @@ import type { Prisma } from "@prisma/client";
 
 export type GetCaseInput = Pick<Prisma.CaseWhereUniqueInput, "id">;
 
-export type OpportunityIdentifier =
-  Prisma.OpportunityOpportunityNameProviderPhoneNumberCompoundUniqueInput;
+export type OpportunityNameIdentifier =
+  Prisma.OpportunityOpportunityNameProviderNameCompoundUniqueInput["opportunityName"];
 
 export type UpdateCaseInput = Pick<
   Prisma.CaseUpdateInput,
@@ -27,6 +27,8 @@ export type UpdateCaseInput = Pick<
   | "selectedRecommendation"
   | "currentOnboardingTopic"
 > & {
-  recommendedOpportunities?: OpportunityIdentifier[];
+  recommendedOpportunities?: {
+    opportunityName: OpportunityNameIdentifier;
+  }[];
   offense?: string | null;
 };

@@ -1,8 +1,15 @@
 import { faker } from "@faker-js/faker";
-import { Gender, StateCode } from "@prisma/client";
+import {
+  AsamLevelOfCareRecommendationCriterion,
+  DiagnosedMentalHealthDiagnosisCriterion,
+  Gender,
+  PriorCriminalHistoryCriterion,
+  StateCode,
+} from "@prisma/client";
 import { MockStorage } from "mock-gcs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
 import { prismaClient } from "~sentencing-server/prisma";
 import { testAndGetSentryReport } from "~sentencing-server/test/common/utils";
 import { caseBody } from "~sentencing-server/test/import/handle-import/constants";
@@ -883,20 +890,29 @@ describe("handle_import", () => {
             {
               OpportunityName: "new-opportunity-name",
               Description: "new-opportunity-description",
-              ProviderName: "provider-name",
               CleanedProviderPhoneNumber: "9256400137",
               ProviderWebsite: "fake.com",
               ProviderAddress: "123 Main Street",
               CapacityTotal: 10,
               CapacityAvailable: 5,
-              eighteenOrOlderCriterion: false,
               developmentalDisabilityDiagnosisCriterion: false,
-              minorCriterion: false,
               noCurrentOrPriorSexOffenseCriterion: false,
               noCurrentOrPriorViolentOffenseCriterion: false,
               noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
               entryOfGuiltyPleaCriterion: false,
               veteranStatusCriterion: false,
+              NeedsAddressed: [],
+              diagnosedMentalHealthDiagnosisCriterion: [],
+              priorCriminalHistoryCriterion: PriorCriminalHistoryCriterion.None,
+              asamLevelOfCareRecommendationCriterion:
+                AsamLevelOfCareRecommendationCriterion.Any,
+              diagnosedSubstanceUseDisorderCriterion:
+                DiagnosedMentalHealthDiagnosisCriterion.Any,
+              minLsirScoreCriterion: 10,
+              maxLsirScoreCriterion: 10,
+              minAge: 35,
+              maxAge: 55,
+              district: "D1",
             },
           ]),
         );
@@ -917,6 +933,31 @@ describe("handle_import", () => {
         expect.objectContaining({
           opportunityName: "new-opportunity-name",
           description: "new-opportunity-description",
+          // Since no provider name was provided, it should use the default name
+          providerName: OPPORTUNITY_UNKNOWN_PROVIDER_NAME,
+          providerPhoneNumber: "9256400137",
+          providerWebsite: "fake.com",
+          providerAddress: "123 Main Street",
+          totalCapacity: 10,
+          availableCapacity: 5,
+          developmentalDisabilityDiagnosisCriterion: false,
+          noCurrentOrPriorSexOffenseCriterion: false,
+          noCurrentOrPriorViolentOffenseCriterion: false,
+          noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+          entryOfGuiltyPleaCriterion: false,
+          veteranStatusCriterion: false,
+          needsAddressed: [],
+          diagnosedMentalHealthDiagnosisCriterion: [],
+          priorCriminalHistoryCriterion: PriorCriminalHistoryCriterion.None,
+          asamLevelOfCareRecommendationCriterion:
+            AsamLevelOfCareRecommendationCriterion.Any,
+          diagnosedSubstanceUseDisorderCriterion:
+            DiagnosedMentalHealthDiagnosisCriterion.Any,
+          minLsirScoreCriterion: 10,
+          maxLsirScoreCriterion: 10,
+          minAge: 35,
+          maxAge: 55,
+          district: "D1",
         }),
       );
     });
@@ -937,14 +978,14 @@ describe("handle_import", () => {
               ProviderAddress: "123 Main Street",
               CapacityTotal: 10,
               CapacityAvailable: 5,
-              eighteenOrOlderCriterion: false,
               developmentalDisabilityDiagnosisCriterion: false,
-              minorCriterion: false,
               noCurrentOrPriorSexOffenseCriterion: false,
               noCurrentOrPriorViolentOffenseCriterion: false,
               noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
               entryOfGuiltyPleaCriterion: false,
               veteranStatusCriterion: false,
+              NeedsAddressed: [],
+              diagnosedMentalHealthDiagnosisCriterion: [],
             },
             // New opportunity
             {
@@ -956,14 +997,14 @@ describe("handle_import", () => {
               ProviderAddress: "123 Main Street",
               CapacityTotal: 10,
               CapacityAvailable: 5,
-              eighteenOrOlderCriterion: false,
               developmentalDisabilityDiagnosisCriterion: false,
-              minorCriterion: false,
               noCurrentOrPriorSexOffenseCriterion: false,
               noCurrentOrPriorViolentOffenseCriterion: false,
               noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
               entryOfGuiltyPleaCriterion: false,
               veteranStatusCriterion: false,
+              NeedsAddressed: [],
+              diagnosedMentalHealthDiagnosisCriterion: [],
             },
           ]),
         );
@@ -991,7 +1032,7 @@ describe("handle_import", () => {
     });
 
     test("should only delete opportunities that don't match composite id", async () => {
-      // Create two new opportunities, one with the same name but with the provider phone number changed, and another one with vice versa
+      // Create two new opportunities, one with the same name but with the provider name changed, and another one with vice versa
       // These two should be deleted after import since they don't match the composite id of the existing opportunity
       await prismaClient.opportunity.createMany({
         data: [
@@ -1004,9 +1045,7 @@ describe("handle_import", () => {
             providerAddress: faker.location.streetAddress(),
             totalCapacity: faker.number.int({ max: 100 }),
             availableCapacity: faker.number.int({ max: 100 }),
-            eighteenOrOlderCriterion: false,
             developmentalDisabilityDiagnosisCriterion: false,
-            minorCriterion: false,
             noCurrentOrPriorSexOffenseCriterion: false,
             noCurrentOrPriorViolentOffenseCriterion: false,
             noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
@@ -1016,15 +1055,13 @@ describe("handle_import", () => {
           {
             opportunityName: "new-opportunity-name",
             description: "new-opportunity-description-2",
-            providerName: "new-provider-name-2",
-            providerPhoneNumber: fakeOpportunity.providerPhoneNumber,
+            providerName: fakeOpportunity.providerName,
+            providerPhoneNumber: "1234567890",
             providerWebsite: faker.internet.url(),
             providerAddress: faker.location.streetAddress(),
             totalCapacity: faker.number.int({ max: 100 }),
             availableCapacity: faker.number.int({ max: 100 }),
-            eighteenOrOlderCriterion: false,
             developmentalDisabilityDiagnosisCriterion: false,
-            minorCriterion: false,
             noCurrentOrPriorSexOffenseCriterion: false,
             noCurrentOrPriorViolentOffenseCriterion: false,
             noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
@@ -1043,20 +1080,20 @@ describe("handle_import", () => {
             {
               OpportunityName: fakeOpportunity.opportunityName,
               Description: fakeOpportunity.description,
-              ProviderName: "provider-name",
+              ProviderName: fakeOpportunity.providerName,
               CleanedProviderPhoneNumber: fakeOpportunity.providerPhoneNumber,
               ProviderWebsite: "fake.com",
               ProviderAddress: "123 Main Street",
               CapacityTotal: 10,
               CapacityAvailable: 5,
-              eighteenOrOlderCriterion: false,
               developmentalDisabilityDiagnosisCriterion: false,
-              minorCriterion: false,
               noCurrentOrPriorSexOffenseCriterion: false,
               noCurrentOrPriorViolentOffenseCriterion: false,
               noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
               entryOfGuiltyPleaCriterion: false,
               veteranStatusCriterion: false,
+              NeedsAddressed: [],
+              diagnosedMentalHealthDiagnosisCriterion: [],
             },
           ]),
         );
@@ -1076,7 +1113,7 @@ describe("handle_import", () => {
       expect(newOpportunity).toEqual(
         expect.objectContaining({
           opportunityName: "opportunity-name",
-          providerPhoneNumber: fakeOpportunity.providerPhoneNumber,
+          providerName: fakeOpportunity.providerName,
         }),
       );
     });
@@ -1184,6 +1221,156 @@ describe("handle_import", () => {
             expect.objectContaining({ recommendationType: "Term" }),
           ]),
         }),
+      );
+    });
+
+    test("should transform IX to ID", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("US_ID/case_insights_record.json")
+        .save(
+          arrayToJsonLines([
+            // New insight
+            {
+              state_code: StateCode.US_ID,
+              // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
+              gender: Gender.MALE,
+              assessment_score_bucket_start: faker.number.int({ max: 100 }),
+              assessment_score_bucket_end: faker.number.int({ max: 100 }),
+              most_severe_description: fakeOffense.name,
+              recidivism_rollup: JSON.stringify({
+                // Should handle US_IX correctly
+                state_code: "US_IX",
+                gender: Gender.MALE,
+                assessment_score_bucket_start: faker.number.int({ max: 100 }),
+                assessment_score_bucket_end: faker.number.int({ max: 100 }),
+                most_severe_ncic_category_uniform: faker.string.alpha(),
+              }),
+              recidivism_num_records: faker.number.int({ max: 100 }),
+              recidivism_probation_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              recidivism_rider_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              recidivism_term_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              disposition_num_records: faker.number.int({ max: 100 }),
+              disposition_probation_pc: faker.number.float(),
+              disposition_rider_pc: faker.number.float(),
+              disposition_term_pc: faker.number.float(),
+            },
+          ]),
+        );
+
+      const response = await callHandleImportInsightData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new Insight was created
+      const dbInsights = await prismaClient.insight.findMany();
+
+      // There should only be one insight in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbInsights).toHaveLength(1);
+
+      const newInsight = dbInsights[0];
+      expect(newInsight).toEqual(
+        expect.objectContaining({
+          // US_IX should have been transformed to US_ID
+          rollupStateCode: StateCode.US_ID,
+        }),
+      );
+    });
+
+    test("should create offense if does not exist already", async () => {
+      await mockStorageSingleton
+        .bucket(TEST_BUCKET_ID)
+        .file("US_ID/case_insights_record.json")
+        .save(
+          arrayToJsonLines([
+            // New insight
+            {
+              state_code: StateCode.US_ID,
+              // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
+              gender: Gender.MALE,
+              assessment_score_bucket_start: faker.number.int({ max: 100 }),
+              assessment_score_bucket_end: faker.number.int({ max: 100 }),
+              // New offense
+              most_severe_description: "new offense one",
+              recidivism_rollup: JSON.stringify({
+                state_code: StateCode.US_ID,
+                gender: Gender.MALE,
+                assessment_score_bucket_start: faker.number.int({ max: 100 }),
+                assessment_score_bucket_end: faker.number.int({ max: 100 }),
+                // New offense
+                most_severe_description: "new offense two",
+              }),
+              recidivism_num_records: faker.number.int({ max: 100 }),
+              recidivism_probation_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              recidivism_rider_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              recidivism_term_series: JSON.stringify(
+                createFakeRecidivismSeriesForImport(),
+              ),
+              disposition_num_records: faker.number.int({ max: 100 }),
+              disposition_probation_pc: faker.number.float(),
+              disposition_rider_pc: faker.number.float(),
+              disposition_term_pc: faker.number.float(),
+            },
+          ]),
+        );
+
+      const response = await callHandleImportInsightData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new Insight was created
+      const dbInsights = await prismaClient.insight.findMany({
+        include: {
+          offense: {
+            select: {
+              name: true,
+            },
+          },
+          rollupOffense: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+
+      // There should only be one insight in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbInsights).toHaveLength(1);
+
+      const newInsight = dbInsights[0];
+      expect(newInsight).toEqual(
+        expect.objectContaining({
+          offense: expect.objectContaining({ name: "new offense one" }),
+          rollupOffense: expect.objectContaining({ name: "new offense two" }),
+        }),
+      );
+
+      const offenses = await prismaClient.offense.findMany({
+        where: {
+          name: {
+            in: ["new offense one", "new offense two"],
+          },
+        },
+      });
+
+      // Make sure the new offenses were created
+      expect(offenses).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: "new offense one" }),
+          expect.objectContaining({ name: "new offense two" }),
+        ]),
       );
     });
   });

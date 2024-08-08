@@ -196,9 +196,7 @@ export async function transformAndLoadOpportunityData(data: unknown) {
   const cleanedData = parsedData.map((opportunityData) => {
     return {
       ..._.pick(opportunityData, [
-        "eighteenOrOlderCriterion",
         "developmentalDisabilityDiagnosisCriterion",
-        "minorCriterion",
         "noCurrentOrPriorSexOffenseCriterion",
         "noCurrentOrPriorViolentOffenseCriterion",
         "noPendingFelonyChargesInAnotherCountyOrStateCriterion",
@@ -210,9 +208,14 @@ export async function transformAndLoadOpportunityData(data: unknown) {
         "diagnosedSubstanceUseDisorderCriterion",
         "minLsirScoreCriterion",
         "maxLsirScoreCriterion",
+        "minAge",
+        "maxAge",
+        "district",
       ]),
       opportunityName: opportunityData.OpportunityName,
       description: opportunityData.Description,
+      // We need to use the default provider name if the provider name is empty because prisma
+      // doesn't allow for nulls in composite unique fields
       providerName: opportunityData.ProviderName,
       providerPhoneNumber: opportunityData.CleanedProviderPhoneNumber,
       providerWebsite: opportunityData.ProviderWebsite,
@@ -228,10 +231,10 @@ export async function transformAndLoadOpportunityData(data: unknown) {
   for (const newOpportunity of cleanedData) {
     await prismaClient.opportunity.upsert({
       where: {
-        opportunityName_providerPhoneNumber: _.pick(newOpportunity, [
-          "opportunityName",
-          "providerPhoneNumber",
-        ]),
+        opportunityName_providerName: {
+          opportunityName: newOpportunity.opportunityName,
+          providerName: newOpportunity.providerName,
+        },
       },
       create: newOpportunity,
       update: newOpportunity,
@@ -249,8 +252,8 @@ export async function transformAndLoadOpportunityData(data: unknown) {
             },
           },
           {
-            providerPhoneNumber: {
-              in: _.map(cleanedData, "providerPhoneNumber"),
+            providerName: {
+              in: _.map(cleanedData, "providerName"),
             },
           },
         ],
@@ -261,8 +264,12 @@ export async function transformAndLoadOpportunityData(data: unknown) {
 
 function transformRecidivismSeries(
   recommendationType: CaseRecommendation,
-  dataPoints: z.infer<typeof recidivismSeriesSchema>,
-) {
+  dataPoints?: z.infer<typeof recidivismSeriesSchema>,
+): Prisma.RecidivismSeriesCreateWithoutInsightInput | undefined {
+  if (dataPoints === undefined) {
+    return undefined;
+  }
+
   return {
     recommendationType,
     dataPoints: {
@@ -291,7 +298,10 @@ function transformAllRecidivismSeries(
     transformRecidivismSeries("Probation", recidivism_probation_series),
     transformRecidivismSeries("Rider", recidivism_rider_series),
     transformRecidivismSeries("Term", recidivism_term_series),
-  ] satisfies Prisma.RecidivismSeriesCreateWithoutInsightInput[];
+  ].filter(
+    (v): v is Prisma.RecidivismSeriesCreateWithoutInsightInput =>
+      v !== undefined,
+  ) satisfies Prisma.RecidivismSeriesCreateWithoutInsightInput[];
 }
 
 function transformDispositions(
@@ -320,9 +330,16 @@ export async function transformAndLoadInsightData(data: unknown) {
     return {
       stateCode: insightData.state_code,
       gender: insightData.gender,
+      // Create the offense if it doesn't already exist in the db
       offense: {
-        connect: {
-          name: insightData.most_severe_description,
+        connectOrCreate: {
+          where: {
+            name: insightData.most_severe_description,
+          },
+          create: {
+            stateCode: insightData.state_code,
+            name: insightData.most_severe_description,
+          },
         },
       },
       assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
@@ -333,10 +350,17 @@ export async function transformAndLoadInsightData(data: unknown) {
         insightData.recidivism_rollup.assessment_score_bucket_start,
       rollupAssessmentScoreBucketEnd:
         insightData.recidivism_rollup.assessment_score_bucket_end,
+      // Create the offense if it doesn't already exist in the db
       rollupOffense: {
-        connect: insightData.recidivism_rollup.most_severe_description
+        connectOrCreate: insightData.recidivism_rollup.most_severe_description
           ? {
-              name: insightData.recidivism_rollup.most_severe_description,
+              where: {
+                name: insightData.recidivism_rollup.most_severe_description,
+              },
+              create: {
+                stateCode: insightData.state_code,
+                name: insightData.recidivism_rollup.most_severe_description,
+              },
             }
           : undefined,
       },
