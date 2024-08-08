@@ -39,20 +39,19 @@ export const FormEarlyTerminationDeferred: React.FC = () => {
         />
         <br />
         <section>
-          [1] Comes now the above named Defendant and respectfully petitions the
+          [1] Comes now the above-named Defendant and respectfully petitions the
           Court for permission to withdraw the plea of guilty theretofore
           entered and enter a plea of not guilty in lieu thereof; and further
           petitions that the charges heretofore made be dismissed.
         </section>
         <br />
         <section>
-          [2] The petitioner appeared on the{" "}
+          [2] The petitioner appeared before the Honorable{" "}
+          <DOCXFormInput name="judgeName" placeholder="Judge name" /> on the{" "}
           <DOCXFormInput name="priorCourtDay" placeholder="Court day" /> day of{" "}
           <DOCXFormInput name="priorCourtMonth" placeholder="Court month" /> ,{" "}
           <DOCXFormInput name="priorCourtYear" placeholder="Court year" />,
-          before the Honorable{" "}
-          <DOCXFormInput name="judgeName" placeholder="Judge name" /> having
-          been charged with the crime of{" "}
+          having been charged with the crime of{" "}
           <DOCXFormInput name="crimeNames" placeholder="Crime names" /> and was
           placed on a deferred imposition of sentence for a period of{" "}
           <DOCXFormInput name="sentenceLengthMonths" placeholder="months" />.
