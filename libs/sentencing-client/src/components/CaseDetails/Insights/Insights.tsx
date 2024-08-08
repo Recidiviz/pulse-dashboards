@@ -68,7 +68,7 @@ export const Insights = ({
         </Styled.CarouselButtons>
       </Styled.ChartControls>
       <Styled.Charts>
-        <Styled.Chart $width={752} $marginRight={16}>
+        <Styled.Chart $marginRight={16}>
           <Styled.ChartTitle>Cumulative Recidivism Rates</Styled.ChartTitle>
           <Styled.ChartSubTitle>
             {recidivismPlotSubtitle} (Based on {rollupRecidivismNumRecords}{" "}
@@ -77,7 +77,7 @@ export const Insights = ({
           <Styled.RecidivismChartLegend>
             {recidivismChartLegend}
           </Styled.RecidivismChartLegend>
-          <div
+          <Styled.RecidivismChartPlotContainer
             ref={(ref) => {
               if (!ref) {
                 return;
@@ -87,7 +87,7 @@ export const Insights = ({
             }}
           />
         </Styled.Chart>
-        <Styled.Chart $width={552}>
+        <Styled.Chart>
           <Styled.ChartTitle>Previous Sentences</Styled.ChartTitle>
           <Styled.ChartSubTitle>
             {recidivismPlotSubtitle} (Based on {dispositionNumRecords} records)

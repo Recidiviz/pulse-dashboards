@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import { Insight } from "../../../../api";
 import * as Styled from "../../CaseDetails.styles";
 import { SelectedRecommendation } from "../../types";
@@ -6,7 +8,7 @@ import {
   RECOMMENDATION_TYPE_TO_COLOR,
 } from "../constants";
 
-const SENTENCES_WIDTH = 552;
+const DISPOSITION_HEIGHT = 287.39;
 
 interface DispositionChartProps {
   dispositionData: Insight["dispositionData"];
@@ -17,6 +19,8 @@ export function DispositionChart({
   dispositionData,
   selectedRecommendation,
 }: DispositionChartProps) {
+  const maxPercentage = _.maxBy(dispositionData, "percentage")?.percentage ?? 1;
+
   return (
     <>
       {dispositionData.map(
@@ -24,7 +28,7 @@ export function DispositionChart({
           recommendationType !== "None" && (
             <Styled.DispositionChartCircleContainer>
               <Styled.DispositionChartCircle
-                $width={SENTENCES_WIDTH * percentage}
+                $height={(DISPOSITION_HEIGHT * percentage) / maxPercentage}
                 $backgroundColor={
                   RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
                 }

@@ -5,16 +5,21 @@ import {
   dotY,
   lineY,
   plot,
+  pointer,
   ruleY,
   selectMaxX,
   text,
+  tip,
 } from "@observablehq/plot";
 
 import { Insight } from "../../../api/APIClient";
 import { SelectedRecommendation } from "../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "./constants";
 
-const PLOT_MARGIN_RIGHT = 30;
+const PLOT_MARGIN_RIGHT = 40;
+const PLOT_MARGIN_BOTTOM = 40;
+const PLOT_HEIGHT = 360;
+const PLOT_WIDTH = 704;
 
 export function getRecidivismPlot(
   insight: Insight,
@@ -28,6 +33,9 @@ export function getRecidivismPlot(
 
   return plot({
     marginRight: PLOT_MARGIN_RIGHT,
+    marginBottom: PLOT_MARGIN_BOTTOM,
+    height: PLOT_HEIGHT,
+    width: PLOT_WIDTH,
     y: {
       percent: true,
     },
@@ -60,27 +68,46 @@ export function getRecidivismPlot(
         stroke: "recommendationType",
         r: 6,
       }),
+      tip(
+        data,
+        pointer({
+          x: "cohortMonths",
+          y: "eventRate",
+          title: (d) => `${Math.round(d.eventRate * 100)}%`,
+        }),
+      ),
       text(
         data,
         selectMaxX({
           x: "cohortMonths",
           y: "eventRate",
           z: "recommendationType",
-          text: (d) => `${d.eventRate * 100}%`,
-          fillOpacity: 0.5,
-          dx: 20,
+          text: (d) => `${Math.round(d.eventRate * 100)}%`,
+          dx: 25,
+          fontFamily: "Public Sans",
+          fontSize: 14,
+          fill: "#001133B2",
         }),
       ),
       axisX({
+        label: "Months",
+        labelAnchor: "center",
+        labelArrow: false,
+        labelOffset: 40,
         ticks: [0, 3, 6, 9, 12, 18, 24, 30, 36],
         tickSize: 0,
         tickFormat: "",
-        label: null,
+        fontSize: 14,
+        fontWeight: 400,
+        color: "#001133B2",
       }),
       axisY({
         tickFormat: (y) => `${y}%`,
         tickSize: 0,
         interval: 10,
+        fontSize: 14,
+        fontWeight: 400,
+        color: "#001133B2",
       }),
       // Adds a horizontal line a y = 0
       ruleY([0]),

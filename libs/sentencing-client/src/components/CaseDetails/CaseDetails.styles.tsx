@@ -541,15 +541,13 @@ export const CarouselButton = styled.div`
 `;
 
 export const Charts = styled.div`
-  overflow-x: hidden;
+  overflow-x: scroll;
   display: flex;
 `;
 
 export const Chart = styled.div<{
   $marginRight?: number;
-  $width: number;
 }>`
-  background: ${(props) => props.$width};
   height: 473px;
   background-color: #ffffff;
   border-radius: 10px;
@@ -588,10 +586,14 @@ export const RecidivismChartLegendDot = styled.div<{
   background: ${(props) => props.$backgroundColor};
 `;
 
+export const RecidivismChartPlotContainer = styled.div`
+  width: 704px;
+`;
+
 export const DispositionChartContainer = styled.div`
   display: flex;
   align-items: flex-end;
-  width: 552px;
+  padding-top: 32px;
 `;
 
 export const DispositionChartCircleContainer = styled.div`
@@ -601,13 +603,13 @@ export const DispositionChartCircleContainer = styled.div`
 `;
 
 export const DispositionChartCircle = styled.div<{
-  $width: number;
+  $height: number;
   $backgroundColor: string;
   $borderColor?: string;
 }>`
-  width: ${(props) => props.$width}px;
-  height: ${(props) => props.$width}px;
-  line-height: ${(props) => props.$width}px;
+  width: ${(props) => props.$height}px;
+  height: ${(props) => props.$height}px;
+  line-height: ${(props) => props.$height}px;
   margin-bottom: 16px;
   border-radius: 50%;
   font-size: 26px;
