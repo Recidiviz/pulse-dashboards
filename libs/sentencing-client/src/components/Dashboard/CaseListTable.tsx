@@ -58,11 +58,14 @@ const columns = [
         rowA.original.Client?.fullName,
         rowB.original.Client?.fullName,
       ),
-    cell: (name: CellContext<CaseListTableCase, string>) => (
-      <div style={{ textTransform: "capitalize" }}>
-        {name.getValue().toLocaleLowerCase()}
-      </div>
-    ),
+    cell: (name: CellContext<CaseListTableCase, string>) => {
+      const clientName = name.getValue() ?? "No name found";
+      return (
+        <div style={{ textTransform: "capitalize" }}>
+          {clientName.toLocaleLowerCase()}
+        </div>
+      );
+    },
   },
   {
     header: "ID",
