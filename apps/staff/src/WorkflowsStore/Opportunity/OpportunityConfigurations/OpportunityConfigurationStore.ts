@@ -155,4 +155,18 @@ export class OpportunityConfigurationStore implements Hydratable {
     this.apiOpportunityConfigurations = apiConfigs;
     this.hydrator.setHydrationStateOverride({ status: "hydrated" });
   }
+
+  /**
+   * Convert an opportunity's url section to the relevant opportunity type.
+   */
+  getOpportunityTypeFromUrl(url: string): OpportunityType {
+    const { currentTenantId } = this.rootStore;
+    const opportunityEntry = Object.entries(this.opportunities).find(
+      ([, opportunity]) =>
+        opportunity.urlSection === url &&
+        opportunity.stateCode === currentTenantId,
+    );
+
+    return opportunityEntry?.[0] as OpportunityType;
+  }
 }

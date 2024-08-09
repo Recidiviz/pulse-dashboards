@@ -48,7 +48,11 @@ const RouteSync = observer(function RouteSync({
 }: {
   children?: React.ReactNode;
 }) {
-  const { workflowsStore, currentTenantId } = useRootStore();
+  const {
+    workflowsStore,
+    currentTenantId,
+    workflowsRootStore: { opportunityConfigurationStore },
+  } = useRootStore();
   const loc = useLocation();
 
   const [notFound, setNotFound] = useState(false);
@@ -67,7 +71,7 @@ const RouteSync = observer(function RouteSync({
         workflowsStore.setActivePage({ page, personId });
 
         const opportunityType =
-          page && workflowsStore.getOpportunityTypeFromUrl(page);
+          page && opportunityConfigurationStore.getOpportunityTypeFromUrl(page);
 
         /* 1. Update activeSystem and selectedOpportunityType */
         if (opportunityType) {
@@ -125,6 +129,7 @@ const RouteSync = observer(function RouteSync({
     [
       OPPORTUNITY_CONFIGS,
       loc,
+      opportunityConfigurationStore,
       workflowsStore,
       currentTenantId,
       previousLocContainedPersonId,

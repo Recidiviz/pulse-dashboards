@@ -26,6 +26,8 @@ import {
 } from "../../../components/StoreProvider";
 import isIE11 from "../../../utils/isIE11";
 import { WorkflowsStore } from "../../../WorkflowsStore";
+import { OpportunityConfigurationStore } from "../../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { WorkflowsRootStore } from "../../../WorkflowsStore/WorkflowsRootStore";
 import { CaseloadView } from "../../CaseloadView";
 import { OpportunityCaseloadView } from "../../OpportunityCaseloadView";
 import { WORKFLOWS_PATHS } from "../../views";
@@ -93,9 +95,13 @@ const mockUseRootStore = useRootStore as unknown as Mock;
 const mockUseOpportunityConfigurations =
   useOpportunityConfigurations as unknown as Mock;
 
-function mockWorkflowsStore(mockStore: any) {
+function mockStores(mockWorkflowsStore: any, mockOpportunityConfigStore: any) {
   mockUseRootStore.mockReturnValue({
-    workflowsStore: mockStore as WorkflowsStore,
+    workflowsStore: mockWorkflowsStore as WorkflowsStore,
+    workflowsRootStore: {
+      opportunityConfigurationStore:
+        mockOpportunityConfigStore as OpportunityConfigurationStore,
+    } as WorkflowsRootStore,
     currentTenantId: "US_TN",
   });
 }
@@ -112,14 +118,17 @@ function renderRouter(relativePath?: string) {
 
 describe("PageWorkflows", () => {
   let baseMockWorkflowsStore: any;
+  let baseMockOppConfigStore: any;
   beforeEach(() => {
-    mockWorkflowsStore({
-      hydrate: vi.fn().mockReturnValue(vi.fn()),
-      hydrationState: { status: "needs hydration" },
-      keepUserObserved: vi.fn(),
-      stopKeepingUserObserved: vi.fn(),
-      getOpportunityTypeFromUrl: vi.fn(() => "usTnCompliantReporting"),
-    });
+    mockStores(
+      {
+        hydrate: vi.fn().mockReturnValue(vi.fn()),
+        hydrationState: { status: "needs hydration" },
+        keepUserObserved: vi.fn(),
+        stopKeepingUserObserved: vi.fn(),
+      },
+      { getOpportunityTypeFromUrl: vi.fn(() => "usTnCompliantReporting") },
+    );
   });
 
   describe("IE11", () => {
@@ -144,9 +153,11 @@ describe("PageWorkflows", () => {
         hydrationState: { status: "needs hydration" },
         keepUserObserved: vi.fn(),
         stopKeepingUserObserved: vi.fn(),
+      };
+      baseMockOppConfigStore = {
         getOpportunityTypeFromUrl: vi.fn(() => "usTnCompliantReporting"),
       };
-      mockWorkflowsStore(baseMockWorkflowsStore);
+      mockStores(baseMockWorkflowsStore, baseMockOppConfigStore);
     });
 
     it("is observed on component mount", () => {
@@ -180,6 +191,8 @@ describe("PageWorkflows", () => {
         activeSystem: "SUPERVISION",
         keepUserObserved: vi.fn(),
         stopKeepingUserObserved: vi.fn(),
+      };
+      baseMockOppConfigStore = {
         getOpportunityTypeFromUrl: vi.fn(() => null),
       };
       (WorkflowsHomepage as unknown as Mock).mockReturnValue(
@@ -191,10 +204,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the homepage for route /home", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "home",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "home",
+        },
+        baseMockOppConfigStore,
+      );
 
       renderRouter(WORKFLOWS_PATHS.home);
 
@@ -202,10 +218,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the milestones page for route /milestones", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "milestones",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "milestones",
+        },
+        baseMockOppConfigStore,
+      );
       (WorkflowsMilestones as unknown as Mock).mockReturnValue(
         <div>Workflows Milestones Page</div>,
       );
@@ -214,10 +233,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the client profile page for route /clientProfile", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "clientProfile",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "clientProfile",
+        },
+        baseMockOppConfigStore,
+      );
 
       (FullProfile as unknown as Mock).mockReturnValue(
         <div>Client FullProfile</div>,
@@ -228,10 +250,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the client profile page for route /residentProfile", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "residentProfile",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "residentProfile",
+        },
+        baseMockOppConfigStore,
+      );
       (FullProfile as unknown as Mock).mockReturnValue(
         <div>Resident FullProfile</div>,
       );
@@ -241,10 +266,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the caseload route /clients", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "clients",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "clients",
+        },
+        baseMockOppConfigStore,
+      );
       (CaseloadView as unknown as Mock).mockReturnValue(
         <div>Client CaseloadView</div>,
       );
@@ -254,10 +282,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the caseload route /residents", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "residents",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "residents",
+        },
+        baseMockOppConfigStore,
+      );
       (CaseloadView as unknown as Mock).mockReturnValue(
         <div>Resident CaseloadView</div>,
       );
@@ -267,10 +298,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the tasks page for route /tasks", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "tasks",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "tasks",
+        },
+        baseMockOppConfigStore,
+      );
       (WorkflowsTasks as unknown as Mock).mockReturnValue(<div>Tasks</div>);
       renderRouter(WORKFLOWS_PATHS.tasks);
 
@@ -278,10 +312,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the opportunity page for route /opportunityClients", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "opportunityClients",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "opportunityClients",
+        },
+        baseMockOppConfigStore,
+      );
       (OpportunityCaseloadView as unknown as Mock).mockReturnValue(
         <div>Opportunity Caseload View</div>,
       );
@@ -292,10 +329,13 @@ describe("PageWorkflows", () => {
     });
 
     it("renders the opportunity action page for route /opportunityAction", () => {
-      mockWorkflowsStore({
-        ...baseMockWorkflowsStore,
-        activePage: "opportunityAction",
-      });
+      mockStores(
+        {
+          ...baseMockWorkflowsStore,
+          activePage: "opportunityAction",
+        },
+        baseMockOppConfigStore,
+      );
 
       renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting/101`);
 
@@ -319,7 +359,6 @@ describe("PageWorkflows", () => {
           .mockImplementation(() => ({ catch: vi.fn() })),
         keepUserObserved: vi.fn(),
         stopKeepingUserObserved: vi.fn(),
-        getOpportunityTypeFromUrl: vi.fn(() => null),
       };
       (WorkflowsTasks as unknown as Mock).mockReturnValue(
         <div>Tasks Page</div>,
@@ -335,10 +374,7 @@ describe("PageWorkflows", () => {
 
     describe("/workflows/tasks", () => {
       it("updates activeSystem based on page", () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
-          getOpportunityTypeFromUrl: vi.fn(() => null),
-        });
+        mockStores(baseMockWorkflowsStore, baseMockOppConfigStore);
         renderRouter(WORKFLOWS_PATHS.tasks);
 
         expect(
@@ -349,8 +385,7 @@ describe("PageWorkflows", () => {
 
     describe("/workflows/:opportunityTypeUrl route", () => {
       it("updates activeSystem based on page for SUPERVISION", () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
+        mockStores(baseMockWorkflowsStore, {
           getOpportunityTypeFromUrl: vi.fn(() => "usTnCompliantReporting"),
         });
         mockUseOpportunityConfigurations.mockReturnValue({
@@ -361,7 +396,8 @@ describe("PageWorkflows", () => {
         renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting`);
 
         expect(
-          useRootStore().workflowsStore.getOpportunityTypeFromUrl,
+          useRootStore().workflowsRootStore.opportunityConfigurationStore
+            .getOpportunityTypeFromUrl,
         ).toHaveBeenCalledWith("compliantReporting");
         expect(
           useRootStore().workflowsStore.updateActiveSystem,
@@ -369,8 +405,7 @@ describe("PageWorkflows", () => {
       });
 
       it("updates activeSystem based on page for INCARCERATION", () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
+        mockStores(baseMockWorkflowsStore, {
           getOpportunityTypeFromUrl: vi.fn(() => "usTnCustodyLevelDowngrade"),
         });
         mockUseOpportunityConfigurations.mockReturnValue({
@@ -381,7 +416,8 @@ describe("PageWorkflows", () => {
         renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
 
         expect(
-          useRootStore().workflowsStore.getOpportunityTypeFromUrl,
+          useRootStore().workflowsRootStore.opportunityConfigurationStore
+            .getOpportunityTypeFromUrl,
         ).toHaveBeenCalledWith("custodyLevelDowngrade");
         expect(
           useRootStore().workflowsStore.updateActiveSystem,
@@ -389,8 +425,7 @@ describe("PageWorkflows", () => {
       });
 
       it("updates selectedOpportunityType based on page", () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
+        mockStores(baseMockWorkflowsStore, {
           getOpportunityTypeFromUrl: vi.fn(() => "usTnCustodyLevelDowngrade"),
         });
         mockUseOpportunityConfigurations.mockReturnValue({
@@ -399,7 +434,8 @@ describe("PageWorkflows", () => {
         renderRouter(`${WORKFLOWS_PATHS.workflows}/custodyLevelDowngrade`);
 
         expect(
-          useRootStore().workflowsStore.getOpportunityTypeFromUrl,
+          useRootStore().workflowsRootStore.opportunityConfigurationStore
+            .getOpportunityTypeFromUrl,
         ).toHaveBeenCalledWith("custodyLevelDowngrade");
         expect(
           useRootStore().workflowsStore.updateSelectedOpportunityType,
@@ -409,10 +445,13 @@ describe("PageWorkflows", () => {
 
     describe("/workflows route", () => {
       it("updates activeSystem based on workflowsSupportedSystems", () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
-          workflowsSupportedSystems: ["INCARCERATION"],
-        });
+        mockStores(
+          {
+            ...baseMockWorkflowsStore,
+            workflowsSupportedSystems: ["INCARCERATION"],
+          },
+          baseMockOppConfigStore,
+        );
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
           useRootStore().workflowsStore.updateActiveSystem,
@@ -420,9 +459,7 @@ describe("PageWorkflows", () => {
       });
 
       it("sets selectedOpportunityType to be undefined", () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
-        });
+        mockStores(baseMockWorkflowsStore, baseMockOppConfigStore);
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
           useRootStore().workflowsStore.updateSelectedOpportunityType,
@@ -435,10 +472,13 @@ describe("PageWorkflows", () => {
             urlSection: "compliantReporting",
           } as any,
         } as any);
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
-          opportunityTypes: ["compliantReporting"],
-        });
+        mockStores(
+          {
+            ...baseMockWorkflowsStore,
+            opportunityTypes: ["compliantReporting"],
+          },
+          baseMockOppConfigStore,
+        );
 
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(
@@ -447,10 +487,13 @@ describe("PageWorkflows", () => {
       });
 
       it("redirects to the homepage if there is more than 1 opp", async () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
-          opportunityTypes: ["compliantReporting", "classificationReview"],
-        });
+        mockStores(
+          {
+            ...baseMockWorkflowsStore,
+            opportunityTypes: ["compliantReporting", "classificationReview"],
+          },
+          baseMockWorkflowsStore,
+        );
         renderRouter(WORKFLOWS_PATHS.workflows);
         expect(screen.getByText("Workflows Homepage")).toBeInTheDocument();
       });
@@ -458,11 +501,13 @@ describe("PageWorkflows", () => {
 
     describe("Person profile route", () => {
       it("updates the selected person", () => {
-        mockWorkflowsStore({
-          ...baseMockWorkflowsStore,
-          getOpportunityTypeFromUrl: () => null,
-          opportunityTypes: ["compliantReporting"],
-        });
+        mockStores(
+          {
+            ...baseMockWorkflowsStore,
+            opportunityTypes: ["compliantReporting"],
+          },
+          { getOpportunityTypeFromUrl: () => null },
+        );
         renderRouter(`${WORKFLOWS_PATHS.workflows}/clients/p101`);
         expect(
           useRootStore().workflowsStore.updateSelectedPerson,
