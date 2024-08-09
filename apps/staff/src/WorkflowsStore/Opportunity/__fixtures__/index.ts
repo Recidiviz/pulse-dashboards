@@ -16,12 +16,11 @@
 // =============================================================================
 import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
-import { Client } from "../../Client";
-import { Resident } from "../../Resident";
 import { JusticeInvolvedPerson } from "../../types";
 import { dateToTimestamp } from "../../utils";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityConfig } from "../OpportunityConfigs";
+import { OpportunityConfiguration } from "../OpportunityConfigurations";
 import { OpportunityType } from "../OpportunityType/types";
 import { Opportunity } from "../types";
 
@@ -58,22 +57,20 @@ export class TestOpportunity<
   }
 }
 
-export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
+export const mockUsXxOppConfig: OpportunityConfiguration = {
+  priority: "HIGH",
+  tabGroups: { "ELIGIBILITY STATUS": [] },
+  eligibilityTextForCount: (count: number) => "cool",
+  eligibleCriteriaCopy: {},
+  ineligibleCriteriaCopy: {},
+  compareBy: [],
   systemType: "SUPERVISION",
   stateCode: "US_XX" as TenantId,
   urlSection: "mockOpportunity",
   label: "Mock Opportunity",
+  isEnabled: true,
   featureVariant: "usXxMockOpportunity" as FeatureVariant,
   initialHeader: "Mock initial header to search for something",
-  snooze: {
-    autoSnoozeParams: {
-      type: "snoozeUntil",
-      params: {
-        weekday: "Sunday",
-      },
-    },
-  },
-  dynamicEligibilityText: "client[|s] may be on or past their expiration date",
   callToAction:
     "Review these clients and complete their auto-generated TEPE Note.",
   firestoreCollection: "US_XX_mockOpportunity",
@@ -83,13 +80,9 @@ export const mockUsXxOppConfig: OpportunityConfig<TestOpportunity<Client>> = {
   homepagePosition: 1,
 };
 
-export const mockUsXxTwoOppConfig: OpportunityConfig<
-  TestOpportunity<Resident>
-> = {
+export const mockUsXxTwoOppConfig: OpportunityConfiguration = {
   ...mockUsXxOppConfig,
   systemType: "INCARCERATION",
-  countByFunction: (opportunities: Opportunity[]) =>
-    opportunities.filter((opp) => opp.isSnoozed).length,
 };
 
 export const MOCK_OPPORTUNITY_CONFIGS = {

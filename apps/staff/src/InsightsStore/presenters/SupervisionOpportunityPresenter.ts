@@ -17,7 +17,6 @@
 
 import { makeObservable } from "mobx";
 
-import UserStore from "../../RootStore/UserStore";
 import { Opportunity, OpportunityType } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
@@ -32,16 +31,10 @@ export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter
   constructor(
     supervisionStore: InsightsSupervisionStore,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
-    userStore: UserStore,
     officerPseudoId: string,
     public opportunityType: OpportunityType,
   ) {
-    super(
-      supervisionStore,
-      justiceInvolvedPersonsStore,
-      userStore,
-      officerPseudoId,
-    );
+    super(supervisionStore, officerPseudoId, justiceInvolvedPersonsStore);
 
     makeObservable<SupervisionOpportunityPresenter>(this, {
       opportunityType: true,

@@ -91,7 +91,7 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
   },
 };
 
-const supervisionOpportunityConstructors: Partial<
+export const supervisionOpportunityConstructors: Partial<
   Record<SupervisionOpportunityType, new (c: Client) => Opportunity<Client>>
 > = {
   compliantReporting: CompliantReportingOpportunity,

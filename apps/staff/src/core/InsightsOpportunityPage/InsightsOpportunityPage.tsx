@@ -101,7 +101,6 @@ const InsightsOpportunityPage = observer(function InsightsMetricPage() {
       justiceInvolvedPersonsStore,
       opportunityConfigurationStore,
     },
-    userStore,
   } = useRootStore();
 
   const officerPseudoId = supervisionStore?.officerPseudoId;
@@ -114,7 +113,6 @@ const InsightsOpportunityPage = observer(function InsightsMetricPage() {
   const presenter = new SupervisionOpportunityPresenter(
     supervisionStore,
     justiceInvolvedPersonsStore,
-    userStore,
     officerPseudoId,
     opportunityConfigurationStore.getOpportunityTypeFromUrl(oppTypeUrl),
   );

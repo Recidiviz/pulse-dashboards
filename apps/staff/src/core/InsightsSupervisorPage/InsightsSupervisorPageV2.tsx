@@ -25,8 +25,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
-import { pluralize } from "../../utils";
-import { toTitleCase } from "../../utils";
+import { pluralize, toTitleCase } from "../../utils";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
   Body,

@@ -223,7 +223,6 @@ const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
   const {
     insightsStore: { supervisionStore },
     workflowsRootStore: { justiceInvolvedPersonsStore },
-    userStore,
   } = useRootStore();
   const officerPseudoId = supervisionStore?.officerPseudoId;
 
@@ -232,9 +231,8 @@ const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
 
   const presenter = new SupervisionOfficerPresenter(
     supervisionStore,
-    justiceInvolvedPersonsStore,
-    userStore,
     officerPseudoId,
+    justiceInvolvedPersonsStore,
   );
 
   return (

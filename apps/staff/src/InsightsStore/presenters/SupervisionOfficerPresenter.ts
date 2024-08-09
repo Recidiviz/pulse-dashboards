@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable, override } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
-import UserStore from "../../RootStore/UserStore";
 import {
   JusticeInvolvedPerson,
   Opportunity,
@@ -27,26 +26,27 @@ import {
 } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsAPI } from "../api/interface";
+import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 
-export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase {
+export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
+  SupervisionOfficerPresenterBase,
+) {
   constructor(
-    supervisionStore: InsightsSupervisionStore,
-    private justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
-    private userStore: UserStore,
-    officerPseudoId: string,
+    protected supervisionStore: InsightsSupervisionStore,
+    public officerPseudoId: string,
+    justiceInvolvedPersonStore: JusticeInvolvedPersonsStore,
   ) {
     super(supervisionStore, officerPseudoId);
+    this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
 
     makeObservable<
       SupervisionOfficerPresenter,
       | "populateSupervisionOfficer"
       | "expectClientsPopulated"
       | "populateCaseload"
-      | "populate"
     >(this, {
-      metricConfigsById: true,
       isWorkflowsEnabled: true,
       expectClientsPopulated: true,
       populateCaseload: true,
@@ -57,27 +57,47 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       populateSupervisionOfficer: override,
       hydrate: override,
       hydrationState: override,
-      populate: true,
     });
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: [...super.expectPopulated, this.expectClientsPopulated],
-      populate: this.populate,
+      expectPopulated: [
+        ...super.expectPopulated,
+        () => this.expectClientsPopulated(this.officerExternalId),
+      ],
+      populate: async () => {
+        await Promise.all(super.populateMethods);
+        // this needs to happen after the above calls so that the officer record is hydrated, since
+        // we need its external ID
+        await this.populateCaseload();
+      },
     });
   }
 
-  protected async populate() {
-    await Promise.all(super.populateMethods);
-    // this needs to happen after the above calls so that the officer record is hydrated, since
-    // we need its external ID
-    await this.populateCaseload();
+  private async populateCaseload() {
+    if (!this.isWorkflowsEnabled || !this.officerExternalId) return;
+    await this.populateOpportunitiesForOfficer(this.officerExternalId);
   }
 
-  /**
-   * Provide access to all configured metrics.
-   */
-  get metricConfigsById() {
-    return this.supervisionStore.metricConfigsById;
+  get clients(): JusticeInvolvedPerson[] | undefined {
+    return this.officerExternalId
+      ? this.findClientsForOfficer(this.officerExternalId)
+      : undefined;
+  }
+
+  get numClientsOnCaseload(): number | undefined {
+    return this.clients?.length;
+  }
+
+  get opportunitiesByType():
+    | Record<OpportunityType, Opportunity[]>
+    | undefined {
+    return this.officerExternalId
+      ? this.opportunitiesEligibleByTypeForOfficer(this.officerExternalId)
+      : undefined;
+  }
+
+  get numEligibleOpportunities(): number | undefined {
+    return this.countOpportunitiesEligibleForOfficer(this.officerExternalId);
   }
 
   /**
@@ -92,88 +112,5 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
         this.officerPseudoId,
       );
-  }
-
-  /**
-   * Gate any workflows data access on user permissions.
-   */
-  get isWorkflowsEnabled() {
-    return (
-      this.userStore.userAllowedNavigation?.workflows?.length &&
-      !!this.userStore.activeFeatureVariants.supervisorHomepageWorkflows
-    );
-  }
-
-  private expectClientsPopulated() {
-    if (this.isWorkflowsEnabled && !this.clients)
-      throw new Error("Failed to populate clients");
-  }
-
-  protected async populateCaseload() {
-    if (!this.isWorkflowsEnabled || !this.officerExternalId) return;
-    await flowResult(
-      this.justiceInvolvedPersonsStore.populateCaseloadForSupervisionOfficer(
-        this.officerExternalId,
-      ),
-    );
-
-    this.justiceInvolvedPersonsStore.caseloadByOfficerExternalId
-      .get(this.officerExternalId)
-      ?.forEach((client) =>
-        Object.values(client.potentialOpportunities).forEach((opp) =>
-          opp.hydrate(),
-        ),
-      );
-  }
-
-  get clients(): JusticeInvolvedPerson[] | undefined {
-    if (!this.officerExternalId) return;
-    return this.justiceInvolvedPersonsStore.caseloadByOfficerExternalId.get(
-      this.officerExternalId,
-    );
-  }
-
-  get numClientsOnCaseload(): number | undefined {
-    return this.clients?.length;
-  }
-
-  get numEligibleOpportunities(): number | undefined {
-    return this.clients?.reduce(
-      (totalNum, client) =>
-        Object.keys(client.opportunitiesEligible).length + totalNum,
-      0,
-    );
-  }
-
-  // TODO (#5994): this field appears to briefly remain empty, even after hydration
-  // completes.
-  get opportunitiesByType():
-    | Record<OpportunityType, Opportunity[]>
-    | undefined {
-    return this.clients?.reduce(
-      (oppsByType, client) => {
-        Object.entries(client.opportunitiesEligible).forEach(([key, opp]) => {
-          const oppList = oppsByType[key as OpportunityType];
-          if (oppList) {
-            oppList.push(opp);
-          } else {
-            oppsByType[key as OpportunityType] = [opp];
-          }
-        });
-        return oppsByType;
-      },
-      {} as Record<OpportunityType, Opportunity[]>,
-    );
-  }
-
-  /**
-   * Initiates hydration for all data needed within this presenter class
-   */
-  async hydrate(): Promise<void> {
-    return this.hydrator.hydrate();
-  }
-
-  get hydrationState() {
-    return this.hydrator.hydrationState;
   }
 }

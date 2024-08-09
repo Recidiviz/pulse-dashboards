@@ -28,10 +28,14 @@ import { InsightsAPI } from "../api/interface";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
+import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
-export abstract class SupervisionOfficerPresenterBase implements Hydratable {
+export abstract class SupervisionOfficerPresenterBase
+  extends SupervisionBasePresenter
+  implements Hydratable
+{
   // rather than dealing with a partially hydrated unit in the supervisionStore,
   // we will just put the API response here (when applicable)
   protected fetchedOfficerRecord?: SupervisionOfficer;
@@ -42,6 +46,8 @@ export abstract class SupervisionOfficerPresenterBase implements Hydratable {
     protected supervisionStore: InsightsSupervisionStore,
     public officerPseudoId: string,
   ) {
+    super(supervisionStore);
+
     makeObservable<
       SupervisionOfficerPresenterBase,
       | "fetchedOfficerRecord"

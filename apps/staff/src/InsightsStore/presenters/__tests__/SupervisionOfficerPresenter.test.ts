@@ -58,11 +58,12 @@ beforeEach(() => {
 
   const rootStore = new RootStore();
   rootStore.tenantStore.currentTenantId = stateCode;
+
   store = new InsightsSupervisionStore(
     rootStore.insightsStore,
     InsightsConfigFixture,
   );
-  jiiStore = new JusticeInvolvedPersonsStore(rootStore.firestoreStore);
+
   vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
   vi.spyOn(
@@ -70,12 +71,16 @@ beforeEach(() => {
     "getClientsForOfficerId",
   ).mockResolvedValue([testClient1, testClient2]);
 
-  presenter = new SupervisionOfficerPresenter(
-    store,
-    jiiStore,
-    rootStore.userStore,
-    testOfficer.pseudonymizedId,
-  );
+  const { workflowsRootStore } = rootStore;
+  workflowsRootStore.populateJusticeInvolvedPersonsStore();
+  if (workflowsRootStore.justiceInvolvedPersonsStore) {
+    jiiStore = workflowsRootStore.justiceInvolvedPersonsStore;
+    presenter = new SupervisionOfficerPresenter(
+      store,
+      testOfficer.pseudonymizedId,
+      jiiStore,
+    );
+  }
   vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
 });
 
@@ -144,10 +149,6 @@ describe("with unit data already hydrated", () => {
     expect(presenter.outlierOfficerData).toMatchSnapshot();
   });
 
-  test("has metricConfigs", async () => {
-    expect(presenter.metricConfigsById).toBeDefined();
-  });
-
   test("has supervisorsInfo", () => {
     expect(presenter.supervisorsInfo).toBeDefined();
     expect(presenter.supervisorsInfo).toEqual([
@@ -181,12 +182,6 @@ test("has outlierOfficerData", async () => {
 
   expect(presenter.outlierOfficerData).toBeDefined();
   expect(presenter.outlierOfficerData).toMatchSnapshot();
-});
-
-test("has metricConfigs", async () => {
-  await presenter.hydrate();
-
-  expect(presenter.metricConfigsById).toBeDefined();
 });
 
 test("has supervisorsInfo", async () => {
@@ -259,7 +254,6 @@ describe("does not have client-dependent fields if workflows is disabled", () =>
     vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
     await presenter.hydrate();
     expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-
     // Mock opportunity hydration so that client functions populate.
     for (const client of presenter.clients ?? []) {
       for (const opp of Object.values(client.potentialOpportunities)) {
