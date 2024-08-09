@@ -26,7 +26,9 @@ import {
   ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
   DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY,
   eligibilityCriteriaToLabelName,
+  MAX_AGE_KEY,
   MAX_LSIR_SCORE_CRITERIA_KEY,
+  MIN_AGE_KEY,
   MIN_LSIR_SCORE_CRITERIA_KEY,
 } from "./constants";
 import { EligibilityCriteria } from "./types";
@@ -50,6 +52,8 @@ const displayEligibilityCriterias = (
     MAX_LSIR_SCORE_CRITERIA_KEY,
     ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
     DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY,
+    MIN_AGE_KEY,
+    MAX_AGE_KEY,
   ].includes(key);
   const label = eligibilityCriteriaToLabelName[key];
   // We only need to display the `<label>: <val>` for LSI-R score and lists, because `val` for all other
@@ -65,9 +69,9 @@ const displayEligibilityCriterias = (
     </div>
   ) : (
     <div
-      style={{ textIndent: "-6px", marginLeft: "6px" }} // Hanging indent
+      style={{ textIndent: "-14px", marginLeft: "14px" }} // Hanging indent
       key={key}
-    >{`${label}${val ? `: ${val}` : ``}`}</div>
+    >{`- ${label}${val ? `: ${val}` : ``}`}</div>
   );
 };
 

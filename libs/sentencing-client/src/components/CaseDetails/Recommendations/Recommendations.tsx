@@ -18,6 +18,7 @@
 import React, { Fragment, useState } from "react";
 
 import * as Styled from "../CaseDetails.styles";
+import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
 import {
   NoneOption,
@@ -46,8 +47,11 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
     {
       key: RecommendationType.Probation,
       label: RecommendationType.Probation,
-      opportunities: recommendedOpportunities?.map(
-        (opp) => opp.opportunityName,
+      opportunities: recommendedOpportunities?.map((opp) =>
+        createOpportunityProviderDisplayName(
+          opp.opportunityName,
+          opp.providerName,
+        ),
       ),
       recidivismRate: 22, // Placeholder until insights data is connected
       historicalSentencingRate: 23, // Placeholder until insights data is connected

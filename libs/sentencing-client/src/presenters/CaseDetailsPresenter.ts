@@ -17,6 +17,7 @@
 
 import { startCase, toLower } from "lodash";
 import { flowResult, makeAutoObservable, when } from "mobx";
+import moment from "moment";
 
 import {
   Hydratable,
@@ -27,6 +28,7 @@ import {
 
 import { Opportunities } from "../api";
 import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
+import { filterEligibleOpportunities } from "../components/CaseDetails/Opportunities/utils";
 import {
   FormAttributes,
   MutableCaseAttributes,
@@ -93,8 +95,45 @@ export class CaseDetailsPresenter implements Hydratable {
         toLower(currentCase.Client?.fullName),
       );
     }
-
     return currentCase;
+  }
+
+  get caseEligibilityAttributes() {
+    const {
+      lsirScore,
+      needsToBeAddressed,
+      substanceUseDisorderDiagnosis,
+      asamCareRecommendation,
+      mentalHealthDiagnoses,
+      isVeteran,
+      previouslyIncarceratedOrUnderSupervision,
+      hasPreviousFelonyConviction,
+      hasPreviousViolentOffenseConviction,
+      hasPreviousSexOffenseConviction,
+      hasPreviousTreatmentCourt,
+      hasDevelopmentalDisability,
+      hasOpenChildProtectiveServicesCase,
+      plea,
+    } = this.caseAttributes ?? {};
+    const { birthDate, county } = this.caseAttributes?.Client ?? {};
+    return {
+      age: moment().diff(birthDate, "years"),
+      lsirScore,
+      needsToBeAddressed,
+      substanceUseDisorderDiagnosis,
+      asamCareRecommendation,
+      mentalHealthDiagnoses,
+      isVeteran,
+      previouslyIncarceratedOrUnderSupervision,
+      hasPreviousFelonyConviction,
+      hasPreviousViolentOffenseConviction,
+      hasPreviousSexOffenseConviction,
+      hasPreviousTreatmentCourt,
+      hasDevelopmentalDisability,
+      hasOpenChildProtectiveServicesCase,
+      plea,
+      county,
+    };
   }
 
   get offenses() {
@@ -102,7 +141,9 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   get communityOpportunities(): Opportunities {
-    return this.caseStore.communityOpportunities;
+    return this.caseStore.communityOpportunities.filter((opportunity) =>
+      filterEligibleOpportunities(opportunity, this.caseEligibilityAttributes),
+    );
   }
 
   get form() {

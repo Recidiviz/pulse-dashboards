@@ -124,9 +124,9 @@ async function main() {
       providerAddress: faker.location.streetAddress(),
       totalCapacity: faker.number.int({ max: 100 }),
       availableCapacity: faker.number.int({ max: 100 }),
-      eighteenOrOlderCriterion: faker.datatype.boolean(),
+      minAge: faker.number.int({ max: 50 }),
+      maxAge: faker.number.int({ min: 50, max: 100 }),
       developmentalDisabilityDiagnosisCriterion: faker.datatype.boolean(),
-      minorCriterion: faker.datatype.boolean(),
       noCurrentOrPriorSexOffenseCriterion: faker.datatype.boolean(),
       noCurrentOrPriorViolentOffenseCriterion: faker.datatype.boolean(),
       noPendingFelonyChargesInAnotherCountyOrStateCriterion:

@@ -57,6 +57,7 @@ import {
   SelectedRecommendation,
 } from "../types";
 import OpportunityModal from "./OpportunityModal";
+import { createOpportunityProviderDisplayName } from "./utils";
 
 type OpportunitiesProps = {
   firstName?: string;
@@ -104,15 +105,6 @@ const columns = [
   },
 ];
 
-const createOpportunityProviderDisplayName = (
-  opportunityName: string,
-  providerName: string | null,
-) => {
-  return providerName
-    ? `${opportunityName} - ${providerName}`
-    : opportunityName;
-};
-
 // TODO(Recidiviz/recidiviz-data#30650) Implement Opportunities flow
 export const Opportunities: React.FC<OpportunitiesProps> = ({
   firstName,
@@ -132,7 +124,10 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const [data] = useState(
     communityOpportunities.map((opp) => ({
       ...opp,
-      opportunityNameProviderName: `${opp.opportunityName} - ${opp.providerName}`,
+      opportunityNameProviderName: createOpportunityProviderDisplayName(
+        opp.opportunityName,
+        opp.providerName,
+      ),
     })),
   );
 
@@ -160,10 +155,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     {
       key: "Age",
       label: "Age",
-      value:
-        moment().diff(caseAttributes.Client?.birthDate, "years") >= 18
-          ? "Adult 18+"
-          : "Minor",
+      value: moment().diff(caseAttributes.Client?.birthDate, "years"),
     },
     {
       key: LSIR_SCORE_KEY,
@@ -270,7 +262,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     },
   ];
 
-  const currentDetailsApplied = eligibilityFiltersList.map((detail) => {
+  const currentDetailsApplied = eligibilityFiltersList.map((detail, idx) => {
     if (
       detail.value === null ||
       detail.value === NOT_SURE_YET_OPTION ||
@@ -283,7 +275,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
         {Array.isArray(detail.value)
           ? detail.value.join(", ")
           : detail.value?.toString()}
-        {"; "}
+        {idx === eligibilityFiltersList.length - 1 ? "" : "; "}
       </Fragment>
     );
   });

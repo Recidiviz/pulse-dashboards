@@ -23,6 +23,7 @@ import { Case } from "../../api";
 import * as Styled from "./CaseDetails.styles";
 import EditCaseDetailsModal from "./EditCaseDetailsModal";
 import { CaseDetailsForm } from "./Form/CaseDetailsForm";
+import { Gender } from "./types";
 type CaseAttributesProps = {
   caseAttributes: Case;
   firstName?: string;
@@ -60,10 +61,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       { label: "County", value: county },
       {
         label: "Gender",
-        value:
-          gender === "EXTERNAL_UNKNOWN"
-            ? "Unknown"
-            : gender?.toLocaleLowerCase(),
+        value: gender ? Gender[gender] : undefined,
       },
       { label: "Age", value: moment().diff(birthDate, "years") },
       { label: "Offense", value: offense, isEditable: true },

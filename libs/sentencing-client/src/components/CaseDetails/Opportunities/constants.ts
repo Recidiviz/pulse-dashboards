@@ -60,22 +60,22 @@ export const eligibilityCriteriaToLabelName: Record<
   string
 > = {
   [MIN_AGE_KEY]: "Minimum Age",
+  [MAX_AGE_KEY]: "Maximum Age",
+  [MIN_LSIR_SCORE_CRITERIA_KEY]: "Minimum LSI-R score",
+  [MAX_LSIR_SCORE_CRITERIA_KEY]: "Maximum LSI-R score",
+  [VETERAN_STATUS_CRITERION_KEY]: "Veteran",
   [DEVELOPMENTAL_DISABILITY_DIAGNOSIS_CRITERION_KEY]:
     "Has developmental disability diagnosis",
-  [MAX_AGE_KEY]: "Maximum Age",
+  [MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY]: "Mental health diagnosis(es)",
+  [DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY]:
+    "Substance use disorder severity",
+  [ASAM_CARE_RECOMMENDATION_CRITERIA_KEY]: "ASAM level of care recommendation",
+  [PRIOR_CRIMINAL_HISTORY_CRITERION_KEY]: "Prior criminal history",
+  [ENTRY_OF_GUILTY_PLEA_CRITERION_KEY]: "Guilty plea",
   [NO_CURRENT_OR_PRIOR_SEX_OFFENSE_CRITERION_KEY]:
     "No current/prior sex offense",
   [NO_CURRENT_OR_PRIOR_VIOLENT_OFFENSE_CRITERION_KEY]:
     "No current/prior violent offense",
   [NO_PENDING_FELONY_CHARGES_IN_ANOTHER_COUNTY_OR_STATE_CRITERION_KEY]:
     "No pending felony charges in another county or state",
-  [ENTRY_OF_GUILTY_PLEA_CRITERION_KEY]: "Guilty plea",
-  [VETERAN_STATUS_CRITERION_KEY]: "Veteran",
-  [PRIOR_CRIMINAL_HISTORY_CRITERION_KEY]: "Prior criminal history",
-  [MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY]: "Mental health diagnosis(es)",
-  [ASAM_CARE_RECOMMENDATION_CRITERIA_KEY]: "ASAM level of care recommendation",
-  [DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY]:
-    "Severity of substance use disorder",
-  [MIN_LSIR_SCORE_CRITERIA_KEY]: "Minimum LSI-R score",
-  [MAX_LSIR_SCORE_CRITERIA_KEY]: "Maximum LSI-R score",
 };

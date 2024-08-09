@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Opportunities } from "../../../api";
+import { Case, Opportunities } from "../../../api";
 
 export type EligibilityCriteria = Pick<
   Opportunities[number],
@@ -34,3 +34,18 @@ export type EligibilityCriteria = Pick<
   | "maxAge"
   | "minAge"
 >;
+
+export type EligibilityAttributes = Pick<
+  Case,
+  | "lsirScore"
+  | "needsToBeAddressed"
+  | "substanceUseDisorderDiagnosis"
+  | "asamCareRecommendation"
+  | "mentalHealthDiagnoses"
+  | "isVeteran"
+  | "previouslyIncarceratedOrUnderSupervision"
+  | "hasPreviousViolentOffenseConviction"
+  | "hasPreviousSexOffenseConviction"
+  | "hasDevelopmentalDisability"
+  | "plea"
+> & { age: number };
