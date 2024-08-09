@@ -34,9 +34,9 @@ import { pluralizeWord } from "../../utils";
 import {
   countOpportunities,
   generateOpportunityInitialHeader,
-  Opportunity,
   OpportunityTab,
   OpportunityTabGroup,
+  OpportunityType,
 } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
@@ -102,10 +102,13 @@ const Empty = observer(function Empty() {
 });
 
 const HydratedOpportunityPersonList = observer(
-  function HydratedOpportunityPersonList() {
+  function HydratedOpportunityPersonList({
+    opportunityType,
+  }: {
+    opportunityType: OpportunityType;
+  }) {
     const {
       workflowsStore: {
-        selectedOpportunityType: opportunityType,
         opportunitiesByTab,
         allOpportunitiesByType,
         selectedPerson,
@@ -122,35 +125,28 @@ const HydratedOpportunityPersonList = observer(
 
     const { isMobile } = useIsMobile(true);
 
-    const displayTabGroups = (
-      opportunityType
-        ? [...Object.keys(opportunityConfigs[opportunityType].tabGroups)]
-        : ["Eligibility Status"]
-    ) as OpportunityTabGroup[];
+    const displayTabGroups = [
+      ...Object.keys(opportunityConfigs[opportunityType].tabGroups),
+    ] as OpportunityTabGroup[];
 
     const [activeTabGroup, setActiveTabGroup] = useState<OpportunityTabGroup>(
       // The default tab group is the first for the current opportunity, not "Show All"
       displayTabGroups[0],
     );
 
-    const oppsFromOpportunitiesByTab:
-      | Partial<Record<OpportunityTab, Opportunity[]>>
-      | undefined =
-      opportunityType && allOpportunitiesByType
-        ? opportunitiesByTab(allOpportunitiesByType, activeTabGroup)[
-            opportunityType
-          ]
-        : undefined;
+    const oppsFromOpportunitiesByTab = opportunitiesByTab(
+      allOpportunitiesByType,
+      activeTabGroup,
+    )[opportunityType];
 
     const oppsFromOpportunitiesByOppType = useMemo(() => {
-      if (allOpportunitiesByType && opportunityType) {
-        return allOpportunitiesByType[opportunityType];
-      }
-      return undefined;
+      return allOpportunitiesByType[opportunityType];
     }, [allOpportunitiesByType, opportunityType]);
 
+    // Only display tabs in the active tab group that correspond to relevant
+    // opportunities.
     const displayTabs = useMemo(() => {
-      return oppsFromOpportunitiesByTab && opportunityType
+      return oppsFromOpportunitiesByTab
         ? intersection(
             opportunityConfigs[opportunityType].tabGroups[activeTabGroup],
             Object.keys(oppsFromOpportunitiesByTab),
@@ -168,6 +164,8 @@ const HydratedOpportunityPersonList = observer(
       setActiveTab((prevTab) => prevTab || displayTabs[0]);
     }, [displayTabs]);
 
+    // Switch to the default tab when there are no longer relevant opportunities for
+    // the current tab (e.g. search item was removed, or eligibility status changed).
     useEffect(() => {
       if (!oppsFromOpportunitiesByTab?.[activeTab]?.length) {
         setActiveTab(displayTabs[0]);
@@ -193,9 +191,7 @@ const HydratedOpportunityPersonList = observer(
     const { label, eligibilityTextForCount, callToAction, subheading } =
       opportunityConfigs[opportunityType];
 
-    const opportunityCount = oppsFromOpportunitiesByOppType
-      ? countOpportunities(oppsFromOpportunitiesByOppType)
-      : 0;
+    const opportunityCount = countOpportunities(oppsFromOpportunitiesByOppType);
 
     const handleTabClick = (tab: OpportunityTab) => {
       analyticsStore.trackOpportunityTabClicked({ tab });
@@ -204,11 +200,10 @@ const HydratedOpportunityPersonList = observer(
 
     const handleTabGroupClick = (tabGroup: string) => {
       setActiveTabGroup(tabGroup as OpportunityTabGroup);
-      const currentTabs = opportunityType
-        ? opportunityConfigs[opportunityType].tabGroups[
-            tabGroup as OpportunityTabGroup
-          ] || []
-        : [];
+      const currentTabs =
+        opportunityConfigs[opportunityType].tabGroups[
+          tabGroup as OpportunityTabGroup
+        ] || [];
       setActiveTab(currentTabs[0] || displayTabs[0]);
     };
 
@@ -219,9 +214,7 @@ const HydratedOpportunityPersonList = observer(
     const currentOpportunity =
       selectedPerson?.verifiedOpportunities[opportunityType];
 
-    return !oppsFromOpportunitiesByOppType.length ? (
-      <Empty />
-    ) : (
+    return (
       <>
         <Heading isMobile={isMobile} className="PersonList__Heading">
           {opportunityPolicyCopy
@@ -298,7 +291,9 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     <WorkflowsResults headerText={label} callToActionText={cta} />
   );
 
-  const hydrated = <HydratedOpportunityPersonList />;
+  const hydrated = (
+    <HydratedOpportunityPersonList opportunityType={opportunityType} />
+  );
 
   return (
     <CaseloadOpportunitiesHydrator

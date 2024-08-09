@@ -283,38 +283,6 @@ test("hydrated with eligible and ineligible opps", () => {
   ).toBeInTheDocument();
 });
 
-test("when `allOpportunitiesByType` is undefined", () => {
-  const firstTabText = "Eligible Now";
-
-  const opp = {
-    ...mockOpportunity,
-    tabOrder: [firstTabText],
-    person: {
-      recordId: "4",
-    } as Client,
-    type: "earlyTermination",
-  };
-
-  useRootStoreMock.mockReturnValue({
-    workflowsStore: {
-      ...baseWorkflowsStoreMock,
-      selectedSearchIds: ["123"],
-      opportunitiesLoaded: () => true,
-      hasOpportunities: () => true,
-      allOpportunitiesByType: undefined,
-      opportunitiesByTab: () => ({
-        earlyTermination: {
-          [firstTabText]: [{ ...opp, type: "earlyTermination" }],
-        },
-      }),
-    },
-  });
-
-  const { container } = render(<OpportunityPersonList />);
-
-  expect(container).toContainHTML("<div></div>");
-});
-
 test("when `allOpportunitiesByType` is an empty object", () => {
   const firstTabText = "Eligible Now";
 
@@ -378,7 +346,7 @@ test("when `opportunitiesByTab` is an empty object", () => {
   expect(container).toContainHTML("<div></div>");
 });
 
-test("when `earlyTermination` in `allOpportunitiesByType` is an empty list", () => {
+test("when `hasOpportunities` returns false", () => {
   const firstTabText = "Eligible Now";
 
   const opp = {
@@ -394,7 +362,7 @@ test("when `earlyTermination` in `allOpportunitiesByType` is an empty list", () 
       ...baseWorkflowsStoreMock,
       selectedSearchIds: ["123"],
       opportunitiesLoaded: () => true,
-      hasOpportunities: () => true,
+      hasOpportunities: () => false,
       allOpportunitiesByType: {
         earlyTermination: [],
       },
