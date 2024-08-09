@@ -29,7 +29,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     county: "Borders",
     lsirScore: null,
     lsirLevel: "6584455049248768",
-    reportType: "Full PSI",
+    reportType: "FullPSI",
     offense: "Felony",
     previouslyIncarceratedOrUnderSupervision: false,
     hasPreviousFelonyConviction: true,

@@ -97,7 +97,7 @@ export const fakeCase = {
   county: faker.location.county(),
   lsirScore: FAKE_CASE_LSIR_SCORE,
   lsirLevel: faker.number.int().toString(),
-  reportType: "Full PSI",
+  reportType: ReportType.FullPSI,
   offense: fakeOffense.name,
   isVeteran: faker.datatype.boolean(),
   previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
@@ -143,7 +143,6 @@ export const fakeCasePrismaInput = {
       name: fakeOffense.name,
     },
   },
-  reportType: ReportType.FullPSI,
 } satisfies CaseCreateInput;
 
 export const fakeRecidivismSeries = createFakeRecidivismSeries();

@@ -4,6 +4,7 @@ import {
   DiagnosedMentalHealthDiagnosisCriterion,
   Gender,
   PriorCriminalHistoryCriterion,
+  ReportType,
   StateCode,
 } from "@prisma/client";
 import { MockStorage } from "mock-gcs";
@@ -350,6 +351,8 @@ describe("handle_import", () => {
         expect.objectContaining({
           externalId: fakeCase.externalId,
           lsirScore: 1000,
+          // Make sure report type is converted to the enum
+          reportType: ReportType.FullPSI,
         }),
         expect.objectContaining({ externalId: "new-case-ext-id" }),
       ]);

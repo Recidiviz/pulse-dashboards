@@ -2,7 +2,6 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
-import { REPORT_TYPE_ENUM_TO_STRING } from "~sentencing-server/trpc/routes/common/constants";
 import {
   getStaffInputSchema,
   updateStaffSchema,
@@ -53,7 +52,6 @@ export const staffRouter = router({
         ...staff,
         Cases: staff.Cases.map((c: (typeof staff.Cases)[number]) => ({
           ...c,
-          reportType: REPORT_TYPE_ENUM_TO_STRING[c.reportType],
           offense: c.offense?.name,
         })),
       };

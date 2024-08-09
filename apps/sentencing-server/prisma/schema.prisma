@@ -276,15 +276,15 @@ model Case {
   Client   Client? @relation(fields: [clientId], references: [externalId])
   clientId String?
 
-  dueDate           DateTime
-  completionDate    DateTime
+  dueDate           DateTime?
+  completionDate    DateTime?
   sentenceDate      DateTime
   assignedDate      DateTime
   county            String
   lsirLevel         String?
-  reportType        ReportType
+  reportType        ReportType?
   // Whether the LSIR score is locked and cannot be changed
-  isLsirScoreLocked Boolean    @default(false)
+  isLsirScoreLocked Boolean     @default(false)
 
   // Mutable Attributes
   lsirScore Int?

@@ -149,33 +149,30 @@ export async function transformAndLoadCaseData(data: unknown) {
     })
   ).map(({ externalId }) => externalId);
 
-  const cleanedData = await Promise.all(
-    parsedData.map(async (caseData) => {
-      // Check if the staff and clients exist in the db - if not, we'll link
-      // them later
-      const staffId = staffExternalIds.find((id) => id === caseData.staff_id);
-      const clientId = clientExternalIds.find(
-        (id) => id === caseData.client_id,
-      );
+  const cleanedData = parsedData.map((caseData) => {
+    // Check if the staff and clients exist in the db - if not, we'll link
+    // them later
+    const staffId = staffExternalIds.find((id) => id === caseData.staff_id);
+    const clientId = clientExternalIds.find((id) => id === caseData.client_id);
 
-      return {
-        externalId: caseData.external_id,
-        stateCode: caseData.state_code,
-        staffId,
-        clientId,
-        dueDate: caseData.due_date,
-        completionDate: caseData.completion_date,
-        sentenceDate: caseData.sentence_date,
-        assignedDate: caseData.assigned_date,
-        county: caseData.county,
-        lsirScore: caseData.lsir_score,
-        lsirLevel: caseData.lsir_level,
-        reportType:
-          EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[caseData.report_type],
-        isLsirScoreLocked: caseData.lsir_score !== undefined,
-      };
-    }),
-  );
+    return {
+      externalId: caseData.external_id,
+      stateCode: caseData.state_code,
+      staffId,
+      clientId,
+      dueDate: caseData.due_date,
+      completionDate: caseData.completion_date,
+      sentenceDate: caseData.sentence_date,
+      assignedDate: caseData.assigned_date,
+      county: caseData.county,
+      lsirScore: caseData.lsir_score,
+      lsirLevel: caseData.lsir_level,
+      reportType: caseData.report_type
+        ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[caseData.report_type]
+        : null,
+      isLsirScoreLocked: caseData.lsir_score !== undefined,
+    };
+  });
 
   // Load new case data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error

@@ -61,14 +61,14 @@ export const caseImportSchema = z.array(
     state_code: stateCode,
     staff_id: z.string(),
     client_id: z.string(),
-    due_date: z.coerce.date(),
-    completion_date: z.coerce.date(),
+    due_date: z.coerce.date().optional(),
+    completion_date: z.coerce.date().optional(),
     sentence_date: z.coerce.date(),
     assigned_date: z.coerce.date(),
     county: z.string(),
     lsir_score: z.coerce.number().optional(),
     lsir_level: z.string().optional(),
-    report_type: reportType,
+    report_type: reportType.optional(),
   }),
 );
 

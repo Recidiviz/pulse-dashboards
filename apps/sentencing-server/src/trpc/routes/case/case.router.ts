@@ -10,7 +10,6 @@ import {
 } from "~sentencing-server/trpc/routes/case/case.schema";
 import { PRISMA_CASE_GET_ARGS } from "~sentencing-server/trpc/routes/case/constants";
 import { getInsightForCase } from "~sentencing-server/trpc/routes/case/utils";
-import { REPORT_TYPE_ENUM_TO_STRING } from "~sentencing-server/trpc/routes/common/constants";
 
 export const caseRouter = router({
   getCase: baseProcedure
@@ -41,7 +40,7 @@ export const caseRouter = router({
       // move offense to top level and include insight
       return {
         ...caseData,
-        reportType: REPORT_TYPE_ENUM_TO_STRING[caseData.reportType],
+        reportType: caseData.reportType,
         recommendedOpportunities: caseData.recommendedOpportunities.map(
           (opportunity) => ({
             ...opportunity,

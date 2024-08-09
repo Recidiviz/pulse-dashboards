@@ -40,7 +40,12 @@ import {
 } from "./constants";
 import * as Styled from "./Dashboard.styles";
 import { useDetectOutsideClick } from "./hooks";
-import { CaseListTableCase, CaseListTableCases, CaseStatus } from "./types";
+import {
+  CaseListTableCase,
+  CaseListTableCases,
+  CaseStatus,
+  ReportType,
+} from "./types";
 
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
@@ -81,6 +86,12 @@ const columns = [
   {
     header: "Report Type",
     accessorKey: REPORT_TYPE_KEY,
+    cell: (
+      reportType: CellContext<CaseListTableCase, keyof typeof ReportType>,
+    ) => {
+      const value = reportType.getValue();
+      return value ? ReportType[value] : undefined;
+    },
   },
   {
     header: "Offense",
