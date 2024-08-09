@@ -35,7 +35,7 @@ import {
   OpportunityType,
 } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
-import { workflowsUrl } from "../views";
+import { insightsUrl, workflowsUrl } from "../views";
 
 const OpportunityTypeSummaryWrapper = styled.div<{
   isMobile: boolean;
@@ -126,9 +126,11 @@ const ReviewStatusCount = styled.div`
 const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunities,
   opportunityType,
+  officerPseudoId,
 }: {
   opportunities: Opportunity[];
   opportunityType: OpportunityType;
+  officerPseudoId?: string;
 }): React.ReactElement | null {
   const { isMobile } = useIsMobile(true);
   const { eligibilityTextForCount, urlSection } =
@@ -147,6 +149,12 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   const numIneligible = opportunities.filter(
     (opp) => opp.reviewStatus === "DENIED",
   ).length;
+  const navigationURL = officerPseudoId
+    ? insightsUrl("supervisionOpportunity", {
+        officerPseudoId,
+        opportunityTypeUrl: urlSection,
+      })
+    : workflowsUrl("opportunityClients", { urlSection });
 
   return (
     <OpportunityTypeSummaryWrapper
@@ -169,7 +177,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
         <ViewAllLink
           $isMobile={isMobile}
           className={`ViewAllLink__${opportunityType}`}
-          to={workflowsUrl("opportunityClients", { urlSection })}
+          to={navigationURL}
         >
           View all{" "}
           <ViewAllArrow>

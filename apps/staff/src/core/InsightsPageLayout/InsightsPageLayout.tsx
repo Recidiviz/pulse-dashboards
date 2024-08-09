@@ -144,6 +144,38 @@ const TooltipWrapper = styled.div`
   padding: ${rem(spacing.sm)};
 `;
 
+const TitleContents = ({
+  pageTitle,
+  supervisorHomepage,
+  textToHighlight,
+  tooltipContents,
+}: {
+  pageTitle: string;
+  supervisorHomepage: boolean;
+  textToHighlight: string;
+  tooltipContents: string;
+}) => {
+  const hasHighlightedSubstring = pageTitle.includes(textToHighlight);
+  const textToHighlightPlural = pluralizeWord(textToHighlight);
+  const outlierSubstring = pageTitle.includes(textToHighlightPlural)
+    ? textToHighlightPlural
+    : textToHighlight;
+  const [pageTitleStart, pageTitleEnd] = pageTitle.split(outlierSubstring);
+  return supervisorHomepage ? (
+    pageTitle
+  ) : (
+    <>
+      {pageTitleStart}
+      {hasHighlightedSubstring && (
+        <InsightsTooltip contents={`${tooltipContents}`} maxWidth={310}>
+          <HighlightedText>{outlierSubstring}</HighlightedText>
+        </InsightsTooltip>
+      )}
+      {pageTitleEnd}
+    </>
+  );
+};
+
 export const InsightsTooltip = ({
   contents,
   maxWidth,
@@ -165,7 +197,7 @@ export const InsightsTooltip = ({
 };
 
 type InsightsPageLayoutProps = {
-  pageTitle: string;
+  pageTitle?: string;
   infoItems?: {
     title: string;
     info: string | number | undefined | null;
@@ -214,36 +246,21 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   const { labels, methodologyUrl, exclusionReasonDescription } =
     supervisionStore;
 
-  const hasHighlightedSubstring = pageTitle.includes(textToHighlight);
-  const textToHighlightPlural = pluralizeWord(textToHighlight);
-  const outlierSubstring = pageTitle.includes(textToHighlightPlural)
-    ? textToHighlightPlural
-    : textToHighlight;
-  const [pageTitleStart, pageTitleEnd] = pageTitle.split(outlierSubstring);
-
   return (
     <PageWrapper isMobile={isTablet} supervisorHomepage={supervisorHomepage}>
       {contentsAboveTitle}
       <Wrapper isLaptop={isLaptop} supervisorHomepage={supervisorHomepage}>
         <Header>
-          <Title isMobile={isMobile} supervisorHomepage={supervisorHomepage}>
-            {supervisorHomepage ? (
-              pageTitle
-            ) : (
-              <>
-                {pageTitleStart}
-                {hasHighlightedSubstring && (
-                  <InsightsTooltip
-                    contents={`${labels.outliersHover}`}
-                    maxWidth={310}
-                  >
-                    <HighlightedText>{outlierSubstring}</HighlightedText>
-                  </InsightsTooltip>
-                )}
-                {pageTitleEnd}
-              </>
-            )}
-          </Title>
+          {pageTitle && (
+            <Title isMobile={isMobile} supervisorHomepage={supervisorHomepage}>
+              <TitleContents
+                pageTitle={pageTitle}
+                supervisorHomepage={supervisorHomepage}
+                textToHighlight={textToHighlight}
+                tooltipContents={labels.outliersHover}
+              />
+            </Title>
+          )}
           {infoItems && infoItems.length > 0 && (
             <InfoSection
               isMobile={isMobile}

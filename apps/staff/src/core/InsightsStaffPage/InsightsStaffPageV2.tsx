@@ -205,6 +205,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               opportunityTypes={
                 Object.keys(opportunitiesByType) as OpportunityType[]
               }
+              officerPseudoId={officerPseudoId}
             />
           ) : (
             <EmptyCard

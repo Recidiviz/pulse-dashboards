@@ -88,6 +88,6 @@ export function useOpportunityConfigurations(
   opportunityType?: OpportunityType,
 ) {
   const { opportunities } =
-    useRootStore().workflowsStore.opportunityConfigurationStore;
+    useRootStore().workflowsRootStore.opportunityConfigurationStore;
   return opportunityType ? opportunities[opportunityType] : opportunities;
 }

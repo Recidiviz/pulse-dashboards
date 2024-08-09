@@ -28,10 +28,13 @@ import OpportunityTypeSummary from "./OpportunityTypeSummary";
 export const OpportunitySummaries = observer(function OpportunitySummaries({
   opportunitiesByType,
   opportunityTypes,
+  officerPseudoId,
 }: {
   opportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>;
   opportunityTypes: OpportunityType[];
+  officerPseudoId?: string;
 }) {
+  // TODO(#5959): Hide the last synced date from the supervisor homepage.
   // take the last synced date from an arbitrary person's record
   const firstOpportunityPerson = Object.values(opportunitiesByType).find(
     (opp) => opp.length,
@@ -48,6 +51,7 @@ export const OpportunitySummaries = observer(function OpportunitySummaries({
               key={opportunityType}
               opportunities={opportunities}
               opportunityType={opportunityType}
+              officerPseudoId={officerPseudoId}
             />
           );
         }

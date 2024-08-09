@@ -65,6 +65,8 @@ export class InsightsSupervisionStore {
 
   outcomeDate?: Date;
 
+  opportunityTypeUrl?: string;
+
   latestBenchmarksDate?: Date;
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
@@ -373,6 +375,10 @@ export class InsightsSupervisionStore {
 
   setOutcomeDate(dateString: string | undefined): void {
     this.outcomeDate = dateString ? parseISO(dateString) : undefined;
+  }
+
+  setOpportunityTypeUrl(opportunityTypeUrl: string | undefined): void {
+    this.opportunityTypeUrl = opportunityTypeUrl;
   }
 
   trackPageViewed30Seconds(path: string): void {

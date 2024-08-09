@@ -44,6 +44,7 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       | "populateSupervisionOfficer"
       | "expectClientsPopulated"
       | "populateCaseload"
+      | "populate"
     >(this, {
       metricConfigsById: true,
       isWorkflowsEnabled: true,
@@ -56,17 +57,20 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       populateSupervisionOfficer: override,
       hydrate: override,
       hydrationState: override,
+      populate: true,
     });
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [...super.expectPopulated, this.expectClientsPopulated],
-      populate: async () => {
-        await Promise.all(super.populateMethods);
-        // this needs to happen after the above calls so that the officer record is hydrated, since
-        // we need its external ID
-        await this.populateCaseload();
-      },
+      populate: this.populate,
     });
+  }
+
+  protected async populate() {
+    await Promise.all(super.populateMethods);
+    // this needs to happen after the above calls so that the officer record is hydrated, since
+    // we need its external ID
+    await this.populateCaseload();
   }
 
   /**
@@ -90,6 +94,9 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       );
   }
 
+  /**
+   * Gate any workflows data access on user permissions.
+   */
   get isWorkflowsEnabled() {
     return (
       this.userStore.userAllowedNavigation?.workflows?.length &&
@@ -102,7 +109,7 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
       throw new Error("Failed to populate clients");
   }
 
-  private async populateCaseload() {
+  protected async populateCaseload() {
     if (!this.isWorkflowsEnabled || !this.officerExternalId) return;
     await flowResult(
       this.justiceInvolvedPersonsStore.populateCaseloadForSupervisionOfficer(
@@ -138,6 +145,8 @@ export class SupervisionOfficerPresenter extends SupervisionOfficerPresenterBase
     );
   }
 
+  // TODO (#5994): this field appears to briefly remain empty, even after hydration
+  // completes.
   get opportunitiesByType():
     | Record<OpportunityType, Opportunity[]>
     | undefined {
