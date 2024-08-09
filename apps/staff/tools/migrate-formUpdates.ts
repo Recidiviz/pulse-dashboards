@@ -16,14 +16,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { Firestore } from "@google-cloud/firestore";
+import { FieldValue, Firestore } from "@google-cloud/firestore";
 
 import { PartialRecord } from "../src/utils/typeUtils";
 import { OpportunityType } from "../src/WorkflowsStore";
 
 type Options = {
-  /** Dry run if not set */
+  /** Update dry run if not set */
   shouldUpdate: boolean;
+  /** Deletion dry run if not set */
+  shouldDelete: boolean;
 };
 
 const formIdByOpp: PartialRecord<OpportunityType, string> = {
@@ -76,7 +78,7 @@ const db = getDb();
 
 const skippedOpps: PartialRecord<OpportunityType, number> = {};
 
-async function migrateFormUpdates({ shouldUpdate }: Options) {
+async function migrateFormUpdates({ shouldUpdate, shouldDelete }: Options) {
   const legacyFormUpdateDocs = (
     await db
       .collectionGroup("clientOpportunityUpdates")
@@ -123,6 +125,14 @@ async function migrateFormUpdates({ shouldUpdate }: Options) {
             console.log(`Would update ${newFormUpdatesRef.path}`);
           }
         }
+        if (shouldDelete) {
+          await legacySnapshot.ref.update({
+            referralForm: FieldValue.delete(),
+          });
+          console.log(`Delete referralForm from ${path}`);
+        } else {
+          console.log(`Would delete referralForm from ${path}`);
+        }
       } catch (e) {
         console.log("Error migrating: ", legacySnapshot.ref.path);
         console.log(e);
@@ -134,8 +144,10 @@ async function migrateFormUpdates({ shouldUpdate }: Options) {
 
 const opts = {
   shouldUpdate: process.argv.includes("--update"),
+  shouldDelete: process.argv.includes("--delete"),
 };
 
 if (!opts.shouldUpdate) console.log("To actually run updates, pass --update");
+if (!opts.shouldDelete) console.log("To actually run deletion, pass --delete");
 
 migrateFormUpdates(opts);
