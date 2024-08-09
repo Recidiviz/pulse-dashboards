@@ -86,6 +86,7 @@ describe("LocationSubscription tests", () => {
           caseloadDistrict: "TEST",
           activeSystem: "ALL",
           searchField: "district",
+          locationSearchField: "facilityId",
         },
         firestoreStore: {
           collection: collectionMock,
@@ -94,7 +95,7 @@ describe("LocationSubscription tests", () => {
       sub = new LocationSubscription(rootStoreMock);
     });
 
-    test("it selects the searchField from the tenant config", () => {
+    test("it selects the locationSearchField from the tenant config", () => {
       sub.subscribe();
 
       runInAction(() => {

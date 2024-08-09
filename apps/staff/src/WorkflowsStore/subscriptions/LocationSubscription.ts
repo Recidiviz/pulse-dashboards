@@ -19,7 +19,6 @@ import { Query, query, where } from "firebase/firestore";
 
 import { LocationRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import tenants from "../../tenants";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 
 export class LocationSubscription extends FirestoreQuerySubscription<LocationRecord> {
@@ -31,15 +30,10 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
   }
 
   get dataSource(): Query | undefined {
-    const { searchField, activeSystem } = this.rootStore.workflowsStore;
+    const { searchField, activeSystem, locationSearchField } =
+      this.rootStore.workflowsStore;
     const stateCode = this.rootStore.currentTenantId;
     if (!stateCode) return;
-
-    const locationSearchField = Object.values(
-      tenants[stateCode].workflowsSystemConfigs ?? {},
-    )
-      .filter((config) => config.searchType === "LOCATION")
-      .map((c) => c.searchField)[0];
 
     const constraints = [where("stateCode", "==", stateCode)];
 

@@ -46,6 +46,8 @@ export class CaseloadSubscription<
       selectedSearchIds,
       searchField,
       rootStore: { currentTenantId, firestoreStore },
+      activeSystem,
+      locationSearchField,
     } = this.workflowsStore;
 
     if (!currentTenantId || !selectedSearchIds.length) {
@@ -53,10 +55,23 @@ export class CaseloadSubscription<
     }
 
     const { firestoreCollectionKey, personType } = this;
+
+    const constraints = [where("stateCode", "==", currentTenantId)];
+    if (
+      personType === "RESIDENT" &&
+      activeSystem === "ALL" &&
+      locationSearchField
+    ) {
+      /* If activeSystem is ALL, then we need to select the location type's search field. */
+      constraints.push(where(locationSearchField, "in", selectedSearchIds));
+    } else {
+      /* If the activeSystem is already selected, then we can use the computed searchField */
+      constraints.push(where(searchField, "in", selectedSearchIds));
+    }
+
     return query(
       firestoreStore.collection(firestoreCollectionKey),
-      where("stateCode", "==", currentTenantId),
-      where(searchField, "in", selectedSearchIds),
+      ...constraints,
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);

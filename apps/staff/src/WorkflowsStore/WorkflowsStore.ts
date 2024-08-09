@@ -1010,6 +1010,23 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
+  /**
+   * For use when the activeSystem is "ALL", as the LocationSubscription and resident
+   * CaseloadSubscription need to pull the location searchField directly from the
+   * tenant config.
+   */
+  get locationSearchField(): string | undefined {
+    const {
+      rootStore: { currentTenantId },
+    } = this;
+
+    if (!currentTenantId) return undefined;
+
+    return Object.values(tenants[currentTenantId].workflowsSystemConfigs ?? {})
+      .filter((config) => config.searchType === "LOCATION")
+      .map((c) => c.searchField)[0];
+  }
+
   get formIsDownloading(): boolean {
     return this.formDownloadingFlag;
   }
