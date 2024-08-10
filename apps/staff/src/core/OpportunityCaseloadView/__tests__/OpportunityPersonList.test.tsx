@@ -24,11 +24,7 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { Client } from "../../../WorkflowsStore/Client";
-import { OpportunityType } from "../../../WorkflowsStore/Opportunity/OpportunityType/types";
-import {
-  Opportunity,
-  OpportunityTab,
-} from "../../../WorkflowsStore/Opportunity/types";
+import { opportunitiesByTab } from "../../../WorkflowsStore/utils";
 import {
   mockOpportunity,
   mockOpportunityConfigs,
@@ -37,10 +33,12 @@ import { OpportunityPersonList } from "../OpportunityPersonList";
 
 vi.mock("../../../components/StoreProvider");
 vi.mock("../../../hooks/useHydrateOpportunities");
+vi.mock("../../../WorkflowsStore/utils");
 
 const useRootStoreMock = useRootStore as Mock;
 const useOpportunityConfigurationsMock = useOpportunityConfigurations as Mock;
 const useFeatureVariantsMock = useFeatureVariants as Mock;
+const mockOpportunitiesByTab = opportunitiesByTab as Mock;
 
 const baseWorkflowsStoreMock = {
   opportunityTypes: ["earlyTermination"],
@@ -49,17 +47,16 @@ const baseWorkflowsStoreMock = {
   selectedOpportunityType: "earlyTermination",
   justiceInvolvedPersonTitle: "client",
   workflowsSearchFieldTitle: "officer",
-  opportunitiesByTab: () => ({
-    earlyTermination: [],
-  }),
   allOpportunitiesByType: { earlyTermination: [] },
   potentialOpportunities: () => [],
   hasOpportunities: () => false,
+  activeNotificationsForOpportunityType: () => [],
 };
 beforeEach(() => {
   vi.resetAllMocks();
   useOpportunityConfigurationsMock.mockReturnValue(mockOpportunityConfigs);
   useFeatureVariantsMock.mockReturnValue({});
+  mockOpportunitiesByTab.mockReturnValue({ earlyTermination: [] });
 });
 
 test("initial", () => {
@@ -126,12 +123,10 @@ test("hydrated", () => {
     type: "earlyTermination",
   };
 
-  const opportunitiesByTab = (): Partial<
-    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
-  > => ({
+  mockOpportunitiesByTab.mockReturnValue({
     earlyTermination: {
-      [firstTabText]: [opp1 as Opportunity],
-      [otherTabText]: [opp2 as Opportunity],
+      [firstTabText]: [opp1],
+      [otherTabText]: [opp2],
       [emptyTabText]: [],
     },
   });
@@ -142,7 +137,6 @@ test("hydrated", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
-      opportunitiesByTab,
     },
   });
 
@@ -175,6 +169,11 @@ test("hydrated with one tab", () => {
     } as Client,
     type: "earlyTermination",
   };
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: {
+      [firstTabText]: [opp],
+    },
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -182,11 +181,6 @@ test("hydrated with one tab", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
-      opportunitiesByTab: () => ({
-        earlyTermination: {
-          [firstTabText]: [opp],
-        },
-      }),
     },
   });
 
@@ -212,11 +206,9 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
     type: "earlyTermination",
   };
 
-  const opportunitiesByTab = (): Partial<
-    Record<OpportunityType, Partial<Record<OpportunityTab, Opportunity[]>>>
-  > => ({
+  mockOpportunitiesByTab.mockReturnValue({
     earlyTermination: {
-      [overriddenTabText]: [opp as Opportunity],
+      [overriddenTabText]: [opp],
     },
   });
   useRootStoreMock.mockReturnValue({
@@ -226,7 +218,6 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
-      opportunitiesByTab,
     },
   });
 
@@ -255,6 +246,12 @@ test("hydrated with eligible and ineligible opps", () => {
   const almostOpp = { ...opp, reviewStatus: "ALMOST" };
 
   const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
+
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: {
+      [firstTabText]: [opp],
+    },
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -268,11 +265,6 @@ test("hydrated with eligible and ineligible opps", () => {
           { ...ineligibleOpp, type: "earlyTermination" },
         ],
       },
-      opportunitiesByTab: () => ({
-        earlyTermination: {
-          [firstTabText]: [opp],
-        },
-      }),
     },
   });
 
@@ -293,7 +285,11 @@ test("when `allOpportunitiesByType` is an empty object", () => {
       recordId: "4",
     } as Client,
   };
-
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: {
+      [firstTabText]: [opp],
+    },
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -301,11 +297,6 @@ test("when `allOpportunitiesByType` is an empty object", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: {},
-      opportunitiesByTab: () => ({
-        earlyTermination: {
-          [firstTabText]: [opp],
-        },
-      }),
     },
   });
 
@@ -328,6 +319,8 @@ test("when `opportunitiesByTab` is an empty object", () => {
   const almostOpp = { ...opp, reviewStatus: "ALMOST" };
 
   const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
+
+  mockOpportunitiesByTab.mockReturnValue({});
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -337,7 +330,6 @@ test("when `opportunitiesByTab` is an empty object", () => {
       allOpportunitiesByType: {
         earlyTermination: [opp, almostOpp, ineligibleOpp],
       },
-      opportunitiesByTab: () => ({}),
     },
   });
 
@@ -357,6 +349,11 @@ test("when `hasOpportunities` returns false", () => {
     } as Client,
   };
 
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: {
+      [firstTabText]: [opp],
+    },
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -366,11 +363,6 @@ test("when `hasOpportunities` returns false", () => {
       allOpportunitiesByType: {
         earlyTermination: [],
       },
-      opportunitiesByTab: () => ({
-        earlyTermination: {
-          [firstTabText]: [opp],
-        },
-      }),
     },
   });
   render(<OpportunityPersonList />);
@@ -381,7 +373,7 @@ test("when `hasOpportunities` returns false", () => {
   ).toBeInTheDocument();
 });
 
-test("when `earlyTermination` in `opportunitiesByTab` is undefined", () => {
+test("when `earlyTermination` in `allOpportunitiesByType` is undefined", () => {
   const firstTabText = "Eligible Now";
 
   const opp = {
@@ -392,6 +384,11 @@ test("when `earlyTermination` in `opportunitiesByTab` is undefined", () => {
     } as Client,
   };
 
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: {
+      [firstTabText]: [opp],
+    },
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -401,11 +398,6 @@ test("when `earlyTermination` in `opportunitiesByTab` is undefined", () => {
       allOpportunitiesByType: {
         earlyTermination: undefined,
       },
-      opportunitiesByTab: () => ({
-        earlyTermination: {
-          [firstTabText]: [opp],
-        },
-      }),
     },
   });
   const { container } = render(<OpportunityPersonList />);
@@ -427,6 +419,9 @@ test("an opp is undefined in `opportunitiesByTab`", () => {
   const almostOpp = { ...opp, reviewStatus: "ALMOST" };
 
   const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: undefined,
+  });
   useRootStoreMock.mockReturnValue({
     workflowsStore: {
       ...baseWorkflowsStoreMock,
@@ -436,9 +431,6 @@ test("an opp is undefined in `opportunitiesByTab`", () => {
       allOpportunitiesByType: {
         earlyTermination: [opp, almostOpp, ineligibleOpp],
       },
-      opportunitiesByTab: () => ({
-        earlyTermination: undefined,
-      }),
     },
   });
 
@@ -467,7 +459,9 @@ describe("opportunityPolicyCopy feature variant", () => {
       } as Client,
       type: "earlyTermination",
     };
-
+    mockOpportunitiesByTab.mockReturnValue({
+      earlyTermination: { "Eligible Now": [opp1, opp2] },
+    });
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         ...baseWorkflowsStoreMock,
@@ -496,6 +490,9 @@ describe("opportunityPolicyCopy feature variant", () => {
       type: "earlyTermination",
     };
 
+    mockOpportunitiesByTab.mockReturnValue({
+      earlyTermination: { "Eligible Now": [opp] },
+    });
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         ...baseWorkflowsStoreMock,

@@ -90,14 +90,17 @@ export function WithJusticeInvolvedPersonStore<
       );
     }
 
+    // TODO (#5994): this field appears to briefly remain empty, even after hydration
+    // completes.
     /**
-     * Finds eligible opportunities for all clients assigned to a given officer, grouped by opportunity type.
-     * @param officerExternalId - The external ID of the officer to look up eligible opportunities.
+     * Finds verified opportunities (eligible, almost eligible, overridden) for all
+     * clients assigned to a given officer, grouped by opportunity type.
+     * @param officerExternalId - The external ID of the officer to look up opportunities.
      * @returns An object with lists of opportunities assigned to keys of the same type.
      * @see {Opportunity}
      * @see {OpportunityType}
      */
-    protected opportunitiesEligibleByTypeForOfficer(
+    protected verifiedOpportunitiesByTypeForOfficer(
       officerExternalId: string,
     ): Record<OpportunityType, Opportunity[]> | undefined {
       // Get the list of clients assigned to the officer
@@ -107,7 +110,7 @@ export function WithJusticeInvolvedPersonStore<
       const opportunitiesByType = clients?.reduce(
         (oppsByType, client) => {
           for (const opportunity of Object.values(
-            client.opportunitiesEligible,
+            client.verifiedOpportunities,
           )) {
             const { type } = opportunity;
             // Initialize the array for the opportunity type if it doesn't exist and then push the opportunity to the array
@@ -124,17 +127,18 @@ export function WithJusticeInvolvedPersonStore<
     }
 
     /**
-     * Counts the number of eligible opportunities for clients assigned to a given officer.
-     * @param officerExternalId - The external ID of the officer to count eligible opportunities for.
+     * Counts the number of verified opportunities (eligible, almost eligible, overridden)
+     * for clients assigned to a given officer.
+     * @param officerExternalId - The external ID of the officer to count opportunities for.
      * @returns The number of eligible opportunities for clients assigned to the officer.
      */
-    protected countOpportunitiesEligibleForOfficer(
+    protected countVerifiedOpportunitiesForOfficer(
       officerExternalId: string | undefined,
     ): number | undefined {
       return officerExternalId !== undefined
         ? this.findClientsForOfficer(officerExternalId)?.reduce(
             (acc, client) =>
-              (acc += Object.values(client.opportunitiesEligible).length),
+              (acc += Object.values(client.verifiedOpportunities).length),
             0,
           )
         : undefined;

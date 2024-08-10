@@ -15,17 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
-import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import InsightsPageLayout from "../InsightsPageLayout";
-import { Body, Wrapper } from "../InsightsPageLayout/InsightsPageLayout";
+import { Body } from "../InsightsPageLayout/InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import ModelHydrator from "../ModelHydrator";
+import { HydratedOpportunityPersonList } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { insightsUrl } from "../views";
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+`;
 
 export const OpportunityPageWithPresenter = observer(
   function OpportunityPageWithPresenter({
@@ -33,23 +42,38 @@ export const OpportunityPageWithPresenter = observer(
   }: {
     presenter: SupervisionOpportunityPresenter;
   }) {
-    const { isLaptop } = useIsMobile(true);
+    // TODO(#5965): Look into isolating selectedPerson from the workflows store.
+    const {
+      workflowsStore: { selectedPerson },
+    } = useRootStore();
 
     const {
       outlierOfficerData,
       goToSupervisorInfo,
+      clients,
       labels,
       userCanAccessAllSupervisors,
       opportunityType,
       opportunities,
       opportunityLabel,
+      opportunitiesByType,
     } = presenter;
+
+    // Pull the selected client from the hydrated list so that we can access the
+    // relevant hydrated opportunity when selected.
+    const selectedClient = clients?.find(
+      (client) => client.pseudonymizedId === selectedPerson?.pseudonymizedId,
+    );
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
     // never be missing in practice.
-    if (!outlierOfficerData || !opportunityType || !opportunities) {
+    if (
+      !outlierOfficerData ||
+      !opportunityType ||
+      !opportunities ||
+      !opportunitiesByType
+    )
       return <NotFound />;
-    }
 
     return (
       <InsightsPageLayout
@@ -86,8 +110,15 @@ export const OpportunityPageWithPresenter = observer(
           </InsightsBreadcrumbs>
         }
       >
-        <Wrapper isLaptop={isLaptop}>
-          <Body supervisorHomepage>TODO: insert person list here</Body>
+        <Wrapper>
+          <Body supervisorHomepage>
+            <HydratedOpportunityPersonList
+              allOpportunitiesByType={opportunitiesByType}
+              opportunityType={opportunityType}
+              justiceInvolvedPersonTitle={labels.supervisionJiiLabel}
+              selectedPerson={selectedClient}
+            />
+          </Body>
         </Wrapper>
       </InsightsPageLayout>
     );
@@ -101,6 +132,7 @@ const InsightsOpportunityPage = observer(function InsightsMetricPage() {
       justiceInvolvedPersonsStore,
       opportunityConfigurationStore,
     },
+    workflowsStore,
   } = useRootStore();
 
   const officerPseudoId = supervisionStore?.officerPseudoId;
@@ -110,16 +142,24 @@ const InsightsOpportunityPage = observer(function InsightsMetricPage() {
   if (!oppTypeUrl) return null;
   if (!justiceInvolvedPersonsStore) return null;
 
+  const opportunityType =
+    opportunityConfigurationStore.getOpportunityTypeFromUrl(oppTypeUrl);
+
   const presenter = new SupervisionOpportunityPresenter(
     supervisionStore,
     justiceInvolvedPersonsStore,
     officerPseudoId,
-    opportunityConfigurationStore.getOpportunityTypeFromUrl(oppTypeUrl),
+    opportunityType,
   );
+
+  // Needed in order to set a selectedPerson in the workflows store.
+  workflowsStore.updateActiveSystem("SUPERVISION");
 
   return (
     <ModelHydrator model={presenter}>
-      <OpportunityPageWithPresenter presenter={presenter} />
+      <ModelHydrator model={workflowsStore}>
+        <OpportunityPageWithPresenter presenter={presenter} />
+      </ModelHydrator>
     </ModelHydrator>
   );
 });

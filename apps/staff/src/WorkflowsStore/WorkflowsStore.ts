@@ -19,14 +19,7 @@
 
 import assertNever from "assert-never";
 import { ascending } from "d3-array";
-import {
-  difference,
-  groupBy,
-  intersection,
-  mapValues,
-  pick,
-  sortBy,
-} from "lodash";
+import { difference, intersection, pick, sortBy } from "lodash";
 import {
   action,
   has,
@@ -83,12 +76,7 @@ import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
-import {
-  Opportunity,
-  OpportunityNotification,
-  OpportunityTab,
-  OpportunityTabGroup,
-} from "./Opportunity";
+import { Opportunity, OpportunityNotification } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { OpportunityType } from "./Opportunity/OpportunityType/types";
 import { Resident } from "./Resident";
@@ -401,17 +389,17 @@ export class WorkflowsStore implements Hydratable {
     return this.user?.updates?.dismissedOpportunityNotificationIds ?? [];
   }
 
-  get activeOpportunityNotification(): OpportunityNotification[] | undefined {
-    if (!this.selectedOpportunityType) {
-      return;
-    }
+  /**
+   * Returns the relevant, undismissed notifications for the given opportunity type.
+   */
+  activeNotificationsForOpportunityType(
+    opportunityType: OpportunityType | undefined,
+  ): OpportunityNotification[] | undefined {
+    if (!opportunityType) return;
 
     const { notifications } =
-      this.opportunityConfigurationStore.opportunities[
-        this.selectedOpportunityType
-      ];
+      this.opportunityConfigurationStore.opportunities[opportunityType];
     const dismissedIds = this.dismissedOpportunityNotificationIds;
-
     return notifications?.filter(({ id }) => !dismissedIds.includes(id));
   }
 
@@ -739,17 +727,6 @@ export class WorkflowsStore implements Hydratable {
 
   get deniedOpportunities(): Record<OpportunityType, Opportunity[]> {
     return this.opportunitiesByEligibilityStatus("opportunitiesDenied");
-  }
-
-  opportunitiesByTab(
-    allOpportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>,
-    category?: OpportunityTabGroup,
-  ): Partial<Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>> {
-    return mapValues(allOpportunitiesByType, (opps) => {
-      return groupBy(opps, (opp) =>
-        opp.tabTitle((category || Object.keys(opp.config.tabGroups)[0]) as any),
-      ) as Record<OpportunityTab, Opportunity[]>;
-    });
   }
 
   opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {

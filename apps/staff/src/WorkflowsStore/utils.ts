@@ -18,6 +18,7 @@
 import assertNever from "assert-never";
 import { add, endOfToday, getMonth, getYear, parseISO } from "date-fns";
 import { Timestamp } from "firebase/firestore";
+import { groupBy, mapValues } from "lodash";
 import moment from "moment";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
@@ -31,6 +32,12 @@ import {
   ManualSnoozeUpdate,
 } from "../FirestoreStore/types";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
+import {
+  Opportunity,
+  OpportunityTab,
+  OpportunityTabGroup,
+  OpportunityType,
+} from "./Opportunity";
 import { StaffFilterFunction } from "./types";
 
 /**
@@ -254,4 +261,18 @@ export function getSnoozeUntilDate({
 
 export function snoozeUntilDateInTheFuture(snoozeUntilDate: Date) {
   return snoozeUntilDate > endOfToday();
+}
+
+/**
+ * Organizes opportunities by both opportunity type and the relevant tab grouping.
+ */
+export function opportunitiesByTab(
+  allOpportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>,
+  tabGroup?: OpportunityTabGroup,
+): Partial<Record<OpportunityType, Record<OpportunityTab, Opportunity[]>>> {
+  return mapValues(allOpportunitiesByType, (opps) => {
+    return groupBy(opps, (opp) =>
+      opp.tabTitle((tabGroup || Object.keys(opp.config.tabGroups)[0]) as any),
+    ) as Record<OpportunityTab, Opportunity[]>;
+  });
 }

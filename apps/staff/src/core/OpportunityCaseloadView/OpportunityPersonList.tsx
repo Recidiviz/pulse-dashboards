@@ -14,41 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import { toTitleCase } from "@artsy/to-title-case";
 import { spacing } from "@recidiviz/design-system";
-import { intersection } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect, useMemo, useState } from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
 // TODO: Gut this entire document, so it uses the new caseload presenter.
 import {
-  useFeatureVariants,
   useOpportunityConfigurations,
   useRootStore,
 } from "../../components/StoreProvider";
-import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import {
-  countOpportunities,
   generateOpportunityInitialHeader,
-  OpportunityTab,
-  OpportunityTabGroup,
   OpportunityType,
 } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
-import { Heading, SubHeading } from "../sharedComponents";
-import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import WorkflowsResults from "../WorkflowsResults";
-import { CallToActionText } from "../WorkflowsResults/WorkflowsResults";
-import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
-import OpportunityNotifications from "./OpportunityNotifications";
-import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
-import OpportunitySubheading from "./OpportunitySubheading";
+import { HydratedOpportunityPersonList } from "./HydratedOpportunityPersonList";
 
 export const PersonList = styled.ul`
   column-gap: ${rem(spacing.md)};
@@ -62,16 +47,6 @@ export const PersonList = styled.ul`
   @media screen and (min-width: ${cssVars.breakpointSm}) {
     grid-template-columns: 50% 50%;
   }
-`;
-
-const EmptyTabGroupWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-self: center;
-  width: 100%;
-  height: 100%;
-  text-align: center;
 `;
 
 const Empty = observer(function Empty() {
@@ -101,167 +76,27 @@ const Empty = observer(function Empty() {
   );
 });
 
-const HydratedOpportunityPersonList = observer(
-  function HydratedOpportunityPersonList({
-    opportunityType,
-  }: {
-    opportunityType: OpportunityType;
-  }) {
-    const {
-      workflowsStore: {
-        opportunitiesByTab,
-        allOpportunitiesByType,
-        selectedPerson,
-        justiceInvolvedPersonTitle,
-        activeOpportunityNotification,
-      },
-      analyticsStore,
-    } = useRootStore();
-
-    const { workflowsStore } = useRootStore();
-
-    const opportunityConfigs = useOpportunityConfigurations();
-    const { opportunityPolicyCopy } = useFeatureVariants();
-
-    const { isMobile } = useIsMobile(true);
-
-    const displayTabGroups = [
-      ...Object.keys(opportunityConfigs[opportunityType].tabGroups),
-    ] as OpportunityTabGroup[];
-
-    const [activeTabGroup, setActiveTabGroup] = useState<OpportunityTabGroup>(
-      // The default tab group is the first for the current opportunity, not "Show All"
-      displayTabGroups[0],
-    );
-
-    const oppsFromOpportunitiesByTab = opportunitiesByTab(
+const Hydrated = observer(function Hydrated({
+  opportunityType,
+}: {
+  opportunityType: OpportunityType;
+}) {
+  const {
+    workflowsStore: {
       allOpportunitiesByType,
-      activeTabGroup,
-    )[opportunityType];
-
-    const oppsFromOpportunitiesByOppType = useMemo(() => {
-      return allOpportunitiesByType[opportunityType];
-    }, [allOpportunitiesByType, opportunityType]);
-
-    // Only display tabs in the active tab group that correspond to relevant
-    // opportunities.
-    const displayTabs = useMemo(() => {
-      return oppsFromOpportunitiesByTab
-        ? intersection(
-            opportunityConfigs[opportunityType].tabGroups[activeTabGroup],
-            Object.keys(oppsFromOpportunitiesByTab),
-          )
-        : [];
-    }, [
-      activeTabGroup,
-      opportunityConfigs,
-      opportunityType,
-      oppsFromOpportunitiesByTab,
-    ]) as OpportunityTab[];
-
-    const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
-    useEffect(() => {
-      setActiveTab((prevTab) => prevTab || displayTabs[0]);
-    }, [displayTabs]);
-
-    // Switch to the default tab when there are no longer relevant opportunities for
-    // the current tab (e.g. search item was removed, or eligibility status changed).
-    useEffect(() => {
-      if (!oppsFromOpportunitiesByTab?.[activeTab]?.length) {
-        setActiveTab(displayTabs[0]);
-      }
-    }, [oppsFromOpportunitiesByTab, activeTab, displayTabs]);
-
-    // Calculate map of the tabs to the value to display on that tab's badge
-    const tabBadges: Partial<Record<OpportunityTab, number>> = useMemo(() => {
-      const badges: Partial<Record<OpportunityTab, number>> = {};
-      for (const tab of displayTabs) {
-        badges[tab] = oppsFromOpportunitiesByTab?.[tab]?.length ?? 0;
-      }
-      return badges;
-    }, [displayTabs, oppsFromOpportunitiesByTab]);
-
-    if (
-      !opportunityType ||
-      !oppsFromOpportunitiesByOppType ||
-      !oppsFromOpportunitiesByTab
-    )
-      return null;
-
-    const { label, eligibilityTextForCount, callToAction, subheading } =
-      opportunityConfigs[opportunityType];
-
-    const opportunityCount = countOpportunities(oppsFromOpportunitiesByOppType);
-
-    const handleTabClick = (tab: OpportunityTab) => {
-      analyticsStore.trackOpportunityTabClicked({ tab });
-      setActiveTab(tab);
-    };
-
-    const handleTabGroupClick = (tabGroup: string) => {
-      setActiveTabGroup(tabGroup as OpportunityTabGroup);
-      const currentTabs =
-        opportunityConfigs[opportunityType].tabGroups[
-          tabGroup as OpportunityTabGroup
-        ] || [];
-      setActiveTab(currentTabs[0] || displayTabs[0]);
-    };
-
-    const handleNotificationDismiss = (id: string) =>
-      workflowsStore.dismissOpportunityNotification(id);
-
-    const items = oppsFromOpportunitiesByTab?.[activeTab];
-    const currentOpportunity =
-      selectedPerson?.verifiedOpportunities[opportunityType];
-
-    return (
-      <>
-        <Heading isMobile={isMobile} className="PersonList__Heading">
-          {opportunityPolicyCopy
-            ? label
-            : eligibilityTextForCount(opportunityCount)}
-        </Heading>
-        {opportunityPolicyCopy && subheading ? (
-          <OpportunitySubheading subheading={subheading} />
-        ) : (
-          <SubHeading className="PersonList__Subheading">
-            {callToAction}
-          </SubHeading>
-        )}
-        {opportunityPolicyCopy && activeOpportunityNotification && (
-          <OpportunityNotifications
-            notifications={activeOpportunityNotification}
-            handleDismiss={handleNotificationDismiss}
-          />
-        )}
-        <WorkflowsCaseloadControlBar
-          title={"Group by"}
-          tabBadges={opportunityPolicyCopy && tabBadges}
-          tabs={displayTabs}
-          activeTab={activeTab}
-          setActiveTab={handleTabClick}
-          setActiveTabGroup={handleTabGroupClick}
-          activeTabGroup={activeTabGroup as string}
-          tabGroups={displayTabGroups as string[]}
-        />
-        {items && items.length > 0 ? (
-          <CaseloadOpportunityGrid items={items} />
-        ) : (
-          <EmptyTabGroupWrapper>
-            <CallToActionText>
-              {`Please select a different grouping.\n None of the ${justiceInvolvedPersonTitle}s were able to be grouped by "${toTitleCase(activeTabGroup.toLowerCase())}".`}
-            </CallToActionText>
-          </EmptyTabGroupWrapper>
-        )}
-        <OpportunityPreviewModal
-          opportunity={currentOpportunity}
-          navigableOpportunities={items}
-        />
-        <WorkflowsLastSynced date={items?.[0].person?.lastDataFromState} />
-      </>
-    );
-  },
-);
+      selectedPerson,
+      justiceInvolvedPersonTitle,
+    },
+  } = useRootStore();
+  return (
+    <HydratedOpportunityPersonList
+      allOpportunitiesByType={allOpportunitiesByType}
+      opportunityType={opportunityType}
+      justiceInvolvedPersonTitle={justiceInvolvedPersonTitle}
+      selectedPerson={selectedPerson}
+    />
+  );
+});
 
 export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const {
@@ -291,9 +126,7 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
     <WorkflowsResults headerText={label} callToActionText={cta} />
   );
 
-  const hydrated = (
-    <HydratedOpportunityPersonList opportunityType={opportunityType} />
-  );
+  const hydrated = <Hydrated opportunityType={opportunityType} />;
 
   return (
     <CaseloadOpportunitiesHydrator

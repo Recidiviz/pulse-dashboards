@@ -36,10 +36,10 @@ export class MockSupervisionPresenterWithJiiMixin extends WithJusticeInvolvedPer
   }
 
   findClientsForOfficer = super.findClientsForOfficer;
-  countOpportunitiesEligibleForOfficer = super
-    .countOpportunitiesEligibleForOfficer;
-  opportunitiesEligibleByTypeForOfficer = super
-    .opportunitiesEligibleByTypeForOfficer;
+  countVerifiedOpportunitiesForOfficer = super
+    .countVerifiedOpportunitiesForOfficer;
+  verifiedOpportunitiesByTypeForOfficer = super
+    .verifiedOpportunitiesByTypeForOfficer;
   expectClientsPopulated = super.expectClientsPopulated;
   expectClientsForOfficersPopulated = super.expectClientsForOfficersPopulated;
 }

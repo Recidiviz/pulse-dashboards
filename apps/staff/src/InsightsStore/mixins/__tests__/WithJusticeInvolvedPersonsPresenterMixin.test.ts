@@ -347,13 +347,13 @@ describe("JusticeInvolvedPersonsStore", () => {
         "Proper count of clients for officer %d",
         (officerId, expectedCount) => {
           expect(
-            presenter.countOpportunitiesEligibleForOfficer(officerId),
+            presenter.countVerifiedOpportunitiesForOfficer(officerId),
           ).toBe(expectedCount);
         },
       );
 
       it(`returns undefined for an externalId that does not exist (DNE) on caseload`, () => {
-        expect(presenter.countOpportunitiesEligibleForOfficer("DNE")).toEqual(
+        expect(presenter.countVerifiedOpportunitiesForOfficer("DNE")).toEqual(
           undefined,
         );
       });
@@ -361,7 +361,7 @@ describe("JusticeInvolvedPersonsStore", () => {
       it(`returns 0 for supervision officer with no clients,
       ${OFFICER_WITH_NO_CLIENTS.externalId}`, () => {
         expect(
-          presenter.countOpportunitiesEligibleForOfficer(
+          presenter.countVerifiedOpportunitiesForOfficer(
             OFFICER_WITH_NO_CLIENTS.externalId,
           ),
         ).toEqual(0);
@@ -370,7 +370,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
     describe("Method: opportunitiesEligibleByTypeForOfficer", () => {
       it("returns the officers for an officer with a valid externalId", () => {
-        const oppsByType = presenter.opportunitiesEligibleByTypeForOfficer(
+        const oppsByType = presenter.verifiedOpportunitiesByTypeForOfficer(
           officersExternalIds[0],
         );
         expect(oppsByType).toBeDefined();
@@ -385,14 +385,14 @@ describe("JusticeInvolvedPersonsStore", () => {
 
       it("returns undefined for an externalId that does not exist (DNE)", () => {
         expect(
-          presenter.opportunitiesEligibleByTypeForOfficer("DNE"),
+          presenter.verifiedOpportunitiesByTypeForOfficer("DNE"),
         ).toBeUndefined();
       });
 
       it(`returns an empty object for supervision officer with no clients,
       ${OFFICER_WITH_NO_CLIENTS.externalId}`, () => {
         expect(
-          presenter.opportunitiesEligibleByTypeForOfficer(
+          presenter.verifiedOpportunitiesByTypeForOfficer(
             OFFICER_WITH_NO_CLIENTS.externalId,
           ),
         ).toStrictEqual({});

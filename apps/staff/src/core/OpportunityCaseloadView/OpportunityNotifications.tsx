@@ -128,6 +128,7 @@ const OpportunityNotifications = ({
     <div>
       {notifications.map((notification) => (
         <OpportunityNotificationDisplay
+          key={notification.id}
           notification={notification}
           handleDismiss={() => handleDismiss(notification.id)}
         />
