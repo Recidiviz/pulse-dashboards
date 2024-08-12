@@ -38,19 +38,6 @@ Bringing criminal justice analysis to decision makers to help reduce incarcerati
 
    [Instructions for installing Redis 5.0.14 on Windows](https://github.com/tporadowski/redis#redis-5014-for-windows)
 
-1. Install Firebase Tools (version >=10 required) and ensure you are logged in:
-
-   ```
-   yarn global add firebase-tools
-   # OR npm install -g firebase-tools
-   ```
-
-   Then:
-
-   ```
-   firebase login
-   ```
-
 #### Environment variables
 
 Environment variables, auth configs, and service accounts are stored in Google Secrets Manager and loaded into the environment prior to launching or deploying the app.

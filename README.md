@@ -34,6 +34,19 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
 
    `yarn install`
 
+1. Install Firebase Tools (version >=10 required) and ensure you are logged in:
+
+   ```
+   yarn global add firebase-tools
+   # OR npm install -g firebase-tools
+   ```
+
+   Then:
+
+   ```
+   firebase login
+   ```
+
 1. Additional recommendations:
    1. Install [Nx](https://nx.dev/getting-started/intro) globally (convenient for running package scripts):
       `yarn global add nx@latest`

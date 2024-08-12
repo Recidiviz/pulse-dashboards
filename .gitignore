@@ -6,6 +6,7 @@
 !.env.offline
 !apps/jii/.env.*
 !apps/jii-functions/.env*
+!apps/staff-functions/.env*
 .env-cmdrc
 .nx
 

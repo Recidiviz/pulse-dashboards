@@ -1,0 +1,79 @@
+{
+  "name": "staff-functions",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/staff-functions/src",
+  "projectType": "application",
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p ./tsconfig.app.json"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/staff-functions",
+        "format": ["cjs"],
+        "bundle": true,
+        "main": "apps/staff-functions/src/index.ts",
+        "tsConfig": "apps/staff-functions/tsconfig.app.json",
+        "generatePackageJson": true,
+        "target": "node20",
+        "esbuildConfig": "{projectRoot}/esbuild.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "staging": {},
+        "production": {}
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx build staff-functions -c development --watch",
+          "firebase --config firebase.json --project staging-backend emulators:start"
+        ]
+      }
+    },
+    "deploy": {
+      "dependsOn": [{ "target": "build", "params": "forward" }],
+      "command": "firebase deploy --only functions --config firebase.json",
+      "defaultConfiguration": "staging",
+      "configurations": {
+        "staging": {
+          "args": "--project staging-backend"
+        },
+        "production": {
+          "args": "--project production-backend"
+        }
+      }
+    },
+    "logs": {
+      "command": "firebase --config firebase.json functions:log"
+    },
+    "shell": {
+      "dependsOn": [{ "target": "build", "params": "forward" }],
+      "command": "firebase --config firebase.json functions:shell",
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {},
+        "staging": {},
+        "production": {}
+      }
+    }
+  },
+  "tags": []
+}
