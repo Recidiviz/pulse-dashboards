@@ -34,12 +34,9 @@ export class MockSupervisionPresenterWithJiiMixin extends WithJusticeInvolvedPer
     super(supervisionStore, officerPseudoId);
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
   }
-
   findClientsForOfficer = super.findClientsForOfficer;
-  countVerifiedOpportunitiesForOfficer = super
-    .countVerifiedOpportunitiesForOfficer;
-  verifiedOpportunitiesByTypeForOfficer = super
-    .verifiedOpportunitiesByTypeForOfficer;
+  countOpportunitiesForOfficer = super.countOpportunitiesForOfficer;
+  opportunitiesByTypeForOfficer = super.opportunitiesByTypeForOfficer;
   expectClientsPopulated = super.expectClientsPopulated;
   expectClientsForOfficersPopulated = super.expectClientsForOfficersPopulated;
 }

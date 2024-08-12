@@ -84,6 +84,9 @@ beforeEach(async () => {
       CLIENTS_OFFICERS[0].pseudonymizedId,
       justiceInvolvedPersonsStore,
     );
+
+    // TODO: (#6012) Create the rest of tests for the various types of opportunityMappings.
+    presenter.opportunityMapping = "opportunitiesEligible";
   }
 
   // OPPORTUNITIES ========================================================
@@ -114,8 +117,6 @@ beforeEach(async () => {
 
   // PRESENTER ==============================================================
   vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
-
-  // POPULATE OFFICERS AND OPPORTUNITIES
 });
 
 afterAll(() => {
@@ -335,7 +336,7 @@ describe("JusticeInvolvedPersonsStore", () => {
       });
     });
 
-    describe("Method: countOpportunitiesEligibleForOfficer", () => {
+    describe("Method: countOpportunitiesForOfficer", () => {
       const OFFICER_COUNT_CASES: [string, number][] = [
         [officersExternalIds[0], 6],
         [officersExternalIds[1], 5],
@@ -346,14 +347,14 @@ describe("JusticeInvolvedPersonsStore", () => {
       it.each(OFFICER_COUNT_CASES)(
         "Proper count of clients for officer %d",
         (officerId, expectedCount) => {
-          expect(
-            presenter.countVerifiedOpportunitiesForOfficer(officerId),
-          ).toBe(expectedCount);
+          expect(presenter.countOpportunitiesForOfficer(officerId)).toBe(
+            expectedCount,
+          );
         },
       );
 
       it(`returns undefined for an externalId that does not exist (DNE) on caseload`, () => {
-        expect(presenter.countVerifiedOpportunitiesForOfficer("DNE")).toEqual(
+        expect(presenter.countOpportunitiesForOfficer("DNE")).toEqual(
           undefined,
         );
       });
@@ -361,16 +362,16 @@ describe("JusticeInvolvedPersonsStore", () => {
       it(`returns 0 for supervision officer with no clients,
       ${OFFICER_WITH_NO_CLIENTS.externalId}`, () => {
         expect(
-          presenter.countVerifiedOpportunitiesForOfficer(
+          presenter.countOpportunitiesForOfficer(
             OFFICER_WITH_NO_CLIENTS.externalId,
           ),
         ).toEqual(0);
       });
     });
 
-    describe("Method: opportunitiesEligibleByTypeForOfficer", () => {
+    describe("Method: opportunitiesByTypeForOfficer", () => {
       it("returns the officers for an officer with a valid externalId", () => {
-        const oppsByType = presenter.verifiedOpportunitiesByTypeForOfficer(
+        const oppsByType = presenter.opportunitiesByTypeForOfficer(
           officersExternalIds[0],
         );
         expect(oppsByType).toBeDefined();
@@ -384,15 +385,13 @@ describe("JusticeInvolvedPersonsStore", () => {
       });
 
       it("returns undefined for an externalId that does not exist (DNE)", () => {
-        expect(
-          presenter.verifiedOpportunitiesByTypeForOfficer("DNE"),
-        ).toBeUndefined();
+        expect(presenter.opportunitiesByTypeForOfficer("DNE")).toBeUndefined();
       });
 
       it(`returns an empty object for supervision officer with no clients,
       ${OFFICER_WITH_NO_CLIENTS.externalId}`, () => {
         expect(
-          presenter.verifiedOpportunitiesByTypeForOfficer(
+          presenter.opportunitiesByTypeForOfficer(
             OFFICER_WITH_NO_CLIENTS.externalId,
           ),
         ).toStrictEqual({});

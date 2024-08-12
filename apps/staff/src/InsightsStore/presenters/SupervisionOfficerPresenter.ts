@@ -92,12 +92,12 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
     | Record<OpportunityType, Opportunity[]>
     | undefined {
     return this.officerExternalId
-      ? this.verifiedOpportunitiesByTypeForOfficer(this.officerExternalId)
+      ? this.opportunitiesByTypeForOfficer(this.officerExternalId)
       : undefined;
   }
 
   get numEligibleOpportunities(): number | undefined {
-    return this.countVerifiedOpportunitiesForOfficer(this.officerExternalId);
+    return this.countOpportunitiesForOfficer(this.officerExternalId);
   }
 
   /**

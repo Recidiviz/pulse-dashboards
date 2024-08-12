@@ -27,7 +27,10 @@ import {
 } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { SupervisionBasePresenter } from "../presenters/SupervisionBasePresenter";
-import { ConstrainedAbstractConstructor } from "./types";
+import {
+  ConstrainedAbstractConstructor,
+  JusticeInvolvedPersonOpportunityMapping,
+} from "./types";
 
 /**
  * This requires that a class object using the `WithJusticeInvolvedPersonStoreMixin`
@@ -59,6 +62,9 @@ export function WithJusticeInvolvedPersonStore<
       | JusticeInvolvedPersonsStore
       | undefined;
 
+    private _opportunityMapping: JusticeInvolvedPersonOpportunityMapping =
+      "verifiedOpportunities";
+
     /**
      * Checks if workflows are enabled based on user permissions.
      * @returns `true` if workflows are enabled, otherwise `false`.
@@ -73,6 +79,16 @@ export function WithJusticeInvolvedPersonStore<
         // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
         !!userStore.activeFeatureVariants.supervisorHomepageWorkflows
       );
+    }
+
+    get opportunityMapping(): JusticeInvolvedPersonOpportunityMapping {
+      return this._opportunityMapping;
+    }
+
+    set opportunityMapping(
+      opportunityMapping: JusticeInvolvedPersonOpportunityMapping,
+    ) {
+      this._opportunityMapping = opportunityMapping;
     }
 
     /**
@@ -100,8 +116,9 @@ export function WithJusticeInvolvedPersonStore<
      * @see {Opportunity}
      * @see {OpportunityType}
      */
-    protected verifiedOpportunitiesByTypeForOfficer(
+    protected opportunitiesByTypeForOfficer(
       officerExternalId: string,
+      opportunityMappingOverride?: JusticeInvolvedPersonOpportunityMapping,
     ): Record<OpportunityType, Opportunity[]> | undefined {
       // Get the list of clients assigned to the officer
       const clients = this.findClientsForOfficer(officerExternalId);
@@ -110,7 +127,7 @@ export function WithJusticeInvolvedPersonStore<
       const opportunitiesByType = clients?.reduce(
         (oppsByType, client) => {
           for (const opportunity of Object.values(
-            client.verifiedOpportunities,
+            client[opportunityMappingOverride ?? this.opportunityMapping],
           )) {
             const { type } = opportunity;
             // Initialize the array for the opportunity type if it doesn't exist and then push the opportunity to the array
@@ -132,13 +149,16 @@ export function WithJusticeInvolvedPersonStore<
      * @param officerExternalId - The external ID of the officer to count opportunities for.
      * @returns The number of eligible opportunities for clients assigned to the officer.
      */
-    protected countVerifiedOpportunitiesForOfficer(
+    protected countOpportunitiesForOfficer(
       officerExternalId: string | undefined,
+      opportunityMappingOverride?: JusticeInvolvedPersonOpportunityMapping,
     ): number | undefined {
       return officerExternalId !== undefined
         ? this.findClientsForOfficer(officerExternalId)?.reduce(
             (acc, client) =>
-              (acc += Object.values(client.verifiedOpportunities).length),
+              (acc += Object.values(
+                client[opportunityMappingOverride ?? this.opportunityMapping],
+              ).length),
             0,
           )
         : undefined;

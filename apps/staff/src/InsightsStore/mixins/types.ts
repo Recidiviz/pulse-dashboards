@@ -15,6 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { JusticeInvolvedPersonBase } from "../../WorkflowsStore/JusticeInvolvedPersonBase";
+import { OpportunityMapping } from "../../WorkflowsStore/types";
+
 export type ConstrainedAbstractConstructor<T = object> = abstract new (
   ...args: any[]
 ) => T;
+
+type GetOpportunityMappingMethods<T> = NonNullable<
+  {
+    [K in keyof T]: T[K] extends OpportunityMapping ? K : never;
+  }[keyof T]
+>;
+
+export type JusticeInvolvedPersonOpportunityMapping = Exclude<
+  NonNullable<GetOpportunityMappingMethods<JusticeInvolvedPersonBase>>,
+  "searchIdValue"
+>;
