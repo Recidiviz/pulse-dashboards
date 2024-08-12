@@ -677,11 +677,21 @@ export const SearchFilter = styled.div`
 export const Search = styled.div`
   position: relative;
 
-  svg {
+  /* Search icon */
+  svg:first-child {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     left: 16px;
+  }
+
+  /* Reset search icon */
+  svg:nth-of-type(2) {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 16px;
   }
 `;
 
@@ -690,11 +700,11 @@ export const SearchInput = styled.input`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 12px 16px 12px 34px;
+  padding: 12px 36px 12px 34px;
   gap: 6px;
   border-radius: 5px;
   border: 1px solid ${palette.slate20};
-  color: ${palette.slate70};
+  color: ${palette.pine3};
 `;
 
 export const Filter = styled.div`

@@ -19,6 +19,7 @@ import {
   CellContext,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { keyBy, mapValues, pick } from "lodash";
@@ -28,6 +29,7 @@ import toast from "react-hot-toast";
 
 import { Case, Opportunities as OpportunitiesType } from "../../../api";
 import CheckIcon from "../../assets/check-icon.svg?react";
+import ResetSearchIcon from "../../assets/close-icon.svg?react";
 import MagnifyingGlassIcon from "../../assets/magnifying-class-icon.svg?react";
 import PlusIcon from "../../assets/plus-icon.svg?react";
 import TrashIcon from "../../assets/trash-icon.svg?react";
@@ -130,11 +132,18 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
       ),
     })),
   );
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable<OpportunitiesWithOppNameProviderName[number]>({
     data,
     columns,
+    state: {
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: "includesString",
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   const isProbationRecommendation =
@@ -374,7 +383,15 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
         </Styled.CaseDetailsApplied>
         <Styled.Search>
           <MagnifyingGlassIcon />
-          <Styled.SearchInput type="text" placeholder="Search" />
+          <Styled.SearchInput
+            type="text"
+            placeholder="Search"
+            value={globalFilter ?? ""}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+          />
+          {globalFilter && (
+            <ResetSearchIcon onClick={() => setGlobalFilter("")} />
+          )}
         </Styled.Search>
 
         <Styled.TableWrapper>
