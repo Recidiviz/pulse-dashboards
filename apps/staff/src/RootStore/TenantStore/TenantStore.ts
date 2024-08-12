@@ -109,7 +109,7 @@ export default class TenantStore {
    */
   saveTenantIdToQuery() {
     when(
-      () => !this.rootStore.userStore.userIsLoading,
+      () => this.rootStore.userStore.isAuthorized,
       () => {
         if (!this.rootStore.userStore.isRecidivizUser) {
           return;
