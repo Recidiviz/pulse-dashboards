@@ -79,11 +79,11 @@ test("timePeriod", async () => {
   expect(timePeriod).toMatch("9/1/22 - 9/1/23");
 });
 
-test("outlierOfficersByMetric", async () => {
+test("outlierOfficersByMetricAndCaseloadType", async () => {
   await presenter.hydrate();
 
-  const { outlierOfficersByMetric } = presenter;
-  expect(outlierOfficersByMetric).toMatchSnapshot();
+  const { outlierOfficersByMetricAndCaseloadCategory } = presenter;
+  expect(outlierOfficersByMetricAndCaseloadCategory).toMatchSnapshot();
 });
 
 test("hydration error in dependency", async () => {

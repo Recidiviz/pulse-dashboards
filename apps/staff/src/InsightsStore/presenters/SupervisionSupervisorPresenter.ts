@@ -32,8 +32,9 @@ import {
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
+  ByMetricAndCategory2DMap,
   ConfigLabels,
-  OutlierMetricOfficerGroup,
+  MetricAndOutliersInfo,
   OutlierOfficerData,
 } from "./types";
 import { getOutlierOfficerData } from "./utils";
@@ -170,60 +171,84 @@ export class SupervisionSupervisorPresenter implements Hydratable {
     return this.supervisionStore.labels;
   }
 
-  private get outlierOfficersByMetricOrError():
-    | OutlierMetricOfficerGroup[]
+  private get outlierOfficersByMetricAndCaseloadCategoryOrError():
+    | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
     | Error {
     try {
-      const officersByMetric:
-        | Map<string, OutlierMetricOfficerGroup>
-        | undefined = this.outlierOfficersData?.reduce(
-        (officersByMetric, officer) => {
-          for (const outlierMetric of officer.outlierMetrics) {
-            const metricOfficerGroup = officersByMetric.get(
-              outlierMetric.metricId,
-            );
-            if (metricOfficerGroup) {
-              metricOfficerGroup.officersForMetric.push(officer);
-            } else {
-              const {
-                statusesOverTime,
-                metricId,
-                currentPeriodData,
-                ...metricConfigWithBenchmark
-              } = outlierMetric;
-              officersByMetric.set(outlierMetric.metricId, {
-                metricId: outlierMetric.metricId,
-                officersForMetric: [officer],
-                metricConfigWithBenchmark,
-              });
-            }
-          }
-          return officersByMetric;
-        },
-        new Map<string, OutlierMetricOfficerGroup>(),
-      );
-
-      if (officersByMetric === undefined) {
+      if (!this.outlierOfficersData) {
         throw new Error(
           "Missing expected data for grouping officers by metric",
         );
       }
-      return Array.from(officersByMetric.values());
+
+      //  outer map: by metric, inner map: by caseload category
+      const resultMap: ByMetricAndCategory2DMap<MetricAndOutliersInfo> =
+        new Map();
+      this.outlierOfficersData.forEach((outlierOfficerData) => {
+        outlierOfficerData.outlierMetrics.forEach((metric) => {
+          const {
+            statusesOverTime,
+            metricId,
+            currentPeriodData,
+            ...metricConfigWithBenchmark
+          } = metric;
+          const caseloadCategoryToOfficers = resultMap.get(metricId);
+          if (caseloadCategoryToOfficers) {
+            const officersForCaseloadType = caseloadCategoryToOfficers.get(
+              outlierOfficerData.caseloadCategory,
+            );
+            if (officersForCaseloadType) {
+              officersForCaseloadType.officersForMetric.push(
+                outlierOfficerData,
+              );
+            } else {
+              caseloadCategoryToOfficers.set(
+                outlierOfficerData.caseloadCategory,
+                {
+                  metricConfigWithBenchmark: metricConfigWithBenchmark,
+                  caseloadCategoryName: outlierOfficerData.caseloadCategoryName,
+                  officersForMetric: [outlierOfficerData],
+                },
+              );
+            }
+          } else {
+            const caseloadCategoryToOfficers = new Map<
+              string | null,
+              MetricAndOutliersInfo
+            >();
+            caseloadCategoryToOfficers.set(
+              outlierOfficerData.caseloadCategory,
+              {
+                metricConfigWithBenchmark: metricConfigWithBenchmark,
+                caseloadCategoryName: outlierOfficerData.caseloadCategoryName,
+                officersForMetric: [outlierOfficerData],
+              },
+            );
+            resultMap.set(metricId, caseloadCategoryToOfficers);
+          }
+        });
+      });
+
+      return resultMap;
     } catch (e) {
       return castToError(e);
     }
   }
 
   /**
-   * Return all outlier officers of this supervisor, grouped by metricId. Includes
+   * Return all outlier officers of this supervisor, grouped by metric + caseload category. Includes
    * officer-agnostic metric info (see metricConfigWithBenchmark field).
    */
-  get outlierOfficersByMetric(): OutlierMetricOfficerGroup[] | undefined {
-    if (this.outlierOfficersByMetricOrError instanceof Error) {
-      captureException(this.outlierOfficersByMetricOrError);
+  get outlierOfficersByMetricAndCaseloadCategory():
+    | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
+    | undefined {
+    if (
+      this.outlierOfficersByMetricAndCaseloadCategoryOrError instanceof Error
+    ) {
+      captureException(this.outlierOfficersByMetricAndCaseloadCategoryOrError);
       return undefined;
     }
-    return this.outlierOfficersByMetricOrError;
+    return this.outlierOfficersByMetricAndCaseloadCategoryOrError;
   }
 
   private expectMetricsPopulated() {

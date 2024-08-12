@@ -68,7 +68,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     userCanAccessAllSupervisors,
     timePeriod,
     labels,
-    outlierOfficersByMetric,
+    outlierOfficersByMetricAndCaseloadCategory,
   } = presenter;
 
   const tooltipContents = (
@@ -169,7 +169,9 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       <Wrapper isLaptop={isLaptop} supervisorHomepage>
         <Body>
           <InsightsStaffCardV2
-            outlierOfficersByMetric={outlierOfficersByMetric}
+            outlierOfficersByMetricAndCaseloadCategory={
+              outlierOfficersByMetricAndCaseloadCategory
+            }
             officers={outlierOfficersData}
           />
         </Body>

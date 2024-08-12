@@ -25,7 +25,8 @@ import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react"
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
-  OutlierMetricOfficerGroup,
+  ByMetricAndCategory2DMap,
+  MetricAndOutliersInfo,
   OutlierOfficerData,
 } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
@@ -135,7 +136,12 @@ const PlotTitle = styled.div`
   ${typography.Sans16}
   color: ${palette.pine1};
   display: flex;
-  gap: ${rem(spacing.xs)};
+`;
+
+const PlotSubtitle = styled.div`
+  ${typography.Sans14}
+  color: ${palette.slate85};
+  padding: ${rem(spacing.xs)} 0;
 `;
 
 const PlotHint = styled.div`
@@ -172,13 +178,15 @@ export const EmptyCard = ({
 };
 
 type InsightsStaffCardType = {
-  outlierOfficersByMetric: OutlierMetricOfficerGroup[] | undefined;
+  outlierOfficersByMetricAndCaseloadCategory:
+    | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
+    | undefined;
   officers: OutlierOfficerData[] | undefined;
   title?: string;
 };
 
 const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
-  outlierOfficersByMetric,
+  outlierOfficersByMetricAndCaseloadCategory,
   officers,
   title,
 }) => {
@@ -206,8 +214,8 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
   if (
     !officers ||
     officers.length === 0 ||
-    !outlierOfficersByMetric ||
-    outlierOfficersByMetric.length === 0
+    !outlierOfficersByMetricAndCaseloadCategory ||
+    outlierOfficersByMetricAndCaseloadCategory.size === 0
   ) {
     return (
       <EmptyCard message="Nice! No officers are outliers on any metrics this month." />
@@ -248,71 +256,87 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
       )}
 
       <CardBody>
-        {outlierOfficersByMetric.map(
-          ({ metricId, officersForMetric, metricConfigWithBenchmark }) => {
-            const generalMetricConfig = metricConfigsById?.get(metricId);
+        {Array.from(outlierOfficersByMetricAndCaseloadCategory.entries()).map(
+          ([metricId, officersAndBenchmarkByCaseloadType]) => {
+            return Array.from(officersAndBenchmarkByCaseloadType.entries()).map(
+              ([caseloadType, officersAndBenchmark]) => {
+                const generalMetricConfig = metricConfigsById?.get(metricId);
 
-            if (!generalMetricConfig) return null;
+                if (!generalMetricConfig) return null;
 
-            return (
-              <React.Fragment key={metricId}>
-                {isTablet &&
-                  officersForMetric.map((officer) => {
-                    const currentMetric = officer.outlierMetrics.find(
-                      (officerMetric) => officerMetric.metricId === metricId,
-                    );
+                const {
+                  metricConfigWithBenchmark,
+                  officersForMetric,
+                  caseloadCategoryName,
+                } = officersAndBenchmark;
 
-                    if (!currentMetric) return null;
+                return (
+                  <React.Fragment key={`${metricId} / ${caseloadType}`}>
+                    {isTablet &&
+                      officersForMetric.map((officer) => {
+                        const currentMetric = officer.outlierMetrics.find(
+                          (officerMetric) =>
+                            officerMetric.metricId === metricId,
+                        );
 
-                    return (
-                      <CardHeaderItem
-                        key={officer.externalId}
-                        to={insightsUrl("supervisionStaffMetric", {
-                          officerPseudoId: officer.pseudonymizedId,
-                          metricId: currentMetric.metricId,
-                        })}
-                      >
-                        <CardTitle>{title || officer.displayName}</CardTitle>
+                        if (!currentMetric) return null;
 
-                        <CardSubtitle
-                          key={currentMetric.metricId}
-                          id={`subtitle-${currentMetric.metricId}`}
-                        >
-                          {currentMetric.config.titleDisplayName}
-                          <span
-                            aria-describedby={`subtitle-${currentMetric.metricId}`}
+                        return (
+                          <CardHeaderItem
+                            key={officer.externalId}
+                            to={insightsUrl("supervisionStaffMetric", {
+                              officerPseudoId: officer.pseudonymizedId,
+                              metricId: currentMetric.metricId,
+                            })}
                           >
-                            {formatTargetAndHighlight(
-                              currentMetric.currentPeriodData.metricRate,
-                            )}
-                          </span>
-                        </CardSubtitle>
-                      </CardHeaderItem>
-                    );
-                  })}
+                            <CardTitle>
+                              {title || officer.displayName}
+                            </CardTitle>
 
-                <PlotSection key={metricId}>
-                  <PlotHeader>
-                    <PlotTitle>
-                      {toTitleCase(generalMetricConfig.eventName)}
-                    </PlotTitle>
-                    <PlotHint>
-                      <InsightsInfoModalV2
-                        title={toTitleCase(generalMetricConfig.eventName)}
-                        copy={generalMetricConfig.descriptionMarkdown}
-                        methodologyLink={methodologyUrl}
-                      />
-                    </PlotHint>
-                  </PlotHeader>
-                  <CardContent>
-                    <InsightsSwarmPlotContainerV2
-                      metric={metricConfigWithBenchmark}
-                      officersForMetric={officersForMetric}
-                      onDotHover={onDotHover}
-                    />
-                  </CardContent>
-                </PlotSection>
-              </React.Fragment>
+                            <CardSubtitle
+                              key={`${currentMetric.metricId} / ${caseloadType}`}
+                              id={`subtitle-${currentMetric.metricId}`}
+                            >
+                              {currentMetric.config.titleDisplayName}
+                              <span
+                                aria-describedby={`subtitle-${currentMetric.metricId}`}
+                              >
+                                {formatTargetAndHighlight(
+                                  currentMetric.currentPeriodData.metricRate,
+                                )}
+                              </span>
+                            </CardSubtitle>
+                          </CardHeaderItem>
+                        );
+                      })}
+
+                    <PlotSection key={`${metricId} / ${caseloadType}`}>
+                      <PlotHeader>
+                        <PlotTitle>
+                          {toTitleCase(generalMetricConfig.eventName)}
+                        </PlotTitle>
+                        <PlotHint>
+                          <InsightsInfoModalV2
+                            title={toTitleCase(generalMetricConfig.eventName)}
+                            copy={generalMetricConfig.descriptionMarkdown}
+                            methodologyLink={methodologyUrl}
+                          />
+                        </PlotHint>
+                      </PlotHeader>
+                      {caseloadCategoryName && (
+                        <PlotSubtitle>{caseloadCategoryName}</PlotSubtitle>
+                      )}
+                      <CardContent>
+                        <InsightsSwarmPlotContainerV2
+                          metric={metricConfigWithBenchmark}
+                          officersForMetric={officersForMetric}
+                          onDotHover={onDotHover}
+                        />
+                      </CardContent>
+                    </PlotSection>
+                  </React.Fragment>
+                );
+              },
             );
           },
         )}

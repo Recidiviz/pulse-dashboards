@@ -72,12 +72,15 @@ export type HighlightedOfficersDetail = {
 };
 
 /**
- * All outlier officers for a given metric, grouped by the outlier metricId.
+ * All outlier officers for a given metric + caseload category.
  *
  * TODO(#5615): Pare down obsolete data being presented.
  */
-export type OutlierMetricOfficerGroup = {
-  metricId: string;
+export type MetricAndOutliersInfo = {
   metricConfigWithBenchmark: MetricConfigWithBenchmark;
+  caseloadCategoryName?: string;
   officersForMetric: OutlierOfficerData[];
 };
+
+/** Helper type to group information by metric and by caseload category */
+export type ByMetricAndCategory2DMap<V> = Map<string, Map<string | null, V>>;
