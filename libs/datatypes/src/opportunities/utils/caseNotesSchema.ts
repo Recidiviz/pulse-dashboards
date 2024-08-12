@@ -30,3 +30,20 @@ const caseNoteSchema = z
 export const caseNotesSchema = z.object({
   caseNotes: z.record(z.array(caseNoteSchema)).default({}),
 });
+
+export const caseNoteSearchSchema = z.object({
+  error: z.string().nullable(),
+  results: z.array(
+    caseNoteSchema.extend({
+      documentId: z.string(),
+      contactMode: z.string(),
+      extractiveAnswer: z.string(),
+      noteType: z.string(),
+      preview: z.string(),
+      snippet: z.string().nullable(),
+    }),
+  ),
+});
+
+export type CaseNoteSearchRecord = z.infer<typeof caseNoteSearchSchema>;
+export type CaseNoteSearchRecordRaw = z.input<typeof caseNoteSearchSchema>;

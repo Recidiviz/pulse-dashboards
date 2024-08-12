@@ -101,7 +101,8 @@ export type FeatureVariant =
   | "usPaSpecialCircumstances"
   | "opportunityPolicyCopy"
   | "interCandidateNavigation"
-  | "lastSyncedDate";
+  | "lastSyncedDate"
+  | "caseNoteSearch";
 export type FeatureVariantValue = {
   activeDate?: Date;
   variant?: string;
@@ -151,6 +152,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   opportunityPolicyCopy: {},
   interCandidateNavigation: {},
   lastSyncedDate: {},
+  caseNoteSearch: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
