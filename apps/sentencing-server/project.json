@@ -4,6 +4,13 @@
   "sourceRoot": "apps/sentencing-server/src",
   "projectType": "application",
   "targets": {
+    "test-zod": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx test-zod/index.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint-files": {
       "executor": "nx:run-commands",
       "options": {

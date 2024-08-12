@@ -278,6 +278,7 @@
     "sentry-testkit": "^5.0.9",
     "supertest": "^6.0.1",
     "ts-node": "^10.9.1",
+    "tsx": "^4.17.0",
     "typescript": "^5.4.2",
     "utility-types": "^3.10.0",
     "vite": "^5.2.6",

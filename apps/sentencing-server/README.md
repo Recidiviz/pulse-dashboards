@@ -34,3 +34,9 @@ In order to run these tests:
 1. Get any necessary env variables from [GSM](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging) and put them in an `.env.test` file (the name must match exactly for nx to pick up on the variables) in the `apps/sentencing-server` directory.
 2. Make sure you have your Docker daemon running.
 3. Run `nx test sentencing-server` to run the tests.
+
+## Testing zod schemas
+
+If you'd like to test the zod import schemas against a downloaded JSONLines file of expected data, you can run `nx test-zod sentencing-server {path-to-jsonlines-file} {name-of-schema}`. This will run the zod schema against each line of the file and log any errors.
+
+The valid schema names are the keys of the `zodSchemaMap` object found in `test-zod/index.ts`
