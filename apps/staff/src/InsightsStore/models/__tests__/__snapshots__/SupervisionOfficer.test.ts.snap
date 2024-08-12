@@ -3,7 +3,7 @@
 exports[`transformations 1`] = `
 {
   "avgDailyPopulation": 54,
-  "caseloadType": "SEX_OFFENSE",
+  "caseloadCategory": "SEX_OFFENSE",
   "displayName": "Walter Harris",
   "district": "Region D1",
   "externalId": "OFFICER4",
@@ -110,7 +110,7 @@ exports[`transformations 1`] = `
 exports[`transformations 2`] = `
 {
   "avgDailyPopulation": 12,
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Jack Hernandez",
   "district": "Region D1",
   "externalId": "so2",
@@ -135,7 +135,7 @@ exports[`transformations 2`] = `
 exports[`transformations 3`] = `
 {
   "avgDailyPopulation": 32,
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Jason Nelson",
   "district": "Region D1",
   "externalId": "so3",
@@ -226,7 +226,7 @@ exports[`transformations 3`] = `
 exports[`transformations 4`] = `
 {
   "avgDailyPopulation": 43,
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Carl Mark Campbell",
   "district": null,
   "externalId": "so4",
@@ -318,7 +318,7 @@ exports[`transformations 4`] = `
 exports[`transformations 5`] = `
 {
   "avgDailyPopulation": 5,
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Casey Ramirez",
   "district": null,
   "externalId": "so5",

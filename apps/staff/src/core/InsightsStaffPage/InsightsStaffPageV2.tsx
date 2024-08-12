@@ -85,10 +85,10 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       info: outlierOfficerData?.avgDailyPopulation,
     },
     {
-      title: "caseload types",
+      title: "caseload type",
       info:
         (presenter.areCaseloadTypeBreakdownsEnabled &&
-          outlierOfficerData?.caseloadType) ||
+          outlierOfficerData?.caseloadCategoryName) ||
         null,
     },
   ];

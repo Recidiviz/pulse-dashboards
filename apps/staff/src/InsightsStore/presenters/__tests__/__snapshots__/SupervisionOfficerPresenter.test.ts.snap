@@ -3,7 +3,8 @@
 exports[`has outlierOfficerData 1`] = `
 {
   "avgDailyPopulation": 54,
-  "caseloadType": "SEX_OFFENSE",
+  "caseloadCategory": "SEX_OFFENSE",
+  "caseloadCategoryName": "Sex Offense Caseloads",
   "displayName": "Walter Harris",
   "district": "Region D1",
   "externalId": "OFFICER4",
@@ -1326,7 +1327,8 @@ exports[`has outlierOfficerData 1`] = `
 exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
 {
   "avgDailyPopulation": 54,
-  "caseloadType": "SEX_OFFENSE",
+  "caseloadCategory": "SEX_OFFENSE",
+  "caseloadCategoryName": "Sex Offense Caseloads",
   "displayName": "Walter Harris",
   "district": "Region D1",
   "externalId": "OFFICER4",

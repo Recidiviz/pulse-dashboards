@@ -28,6 +28,7 @@ import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMet
 // where all necessary related objects are guaranteed to exist
 export type OutlierOfficerData = Omit<SupervisionOfficer, "outlierMetrics"> & {
   outlierMetrics: MetricWithConfig[];
+  caseloadCategoryName?: string;
 };
 export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   currentPeriodData: ValuesType<

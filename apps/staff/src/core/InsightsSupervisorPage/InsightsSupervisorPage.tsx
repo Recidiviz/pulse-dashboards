@@ -164,7 +164,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
                 officerIndex={officerIndex}
                 subtitle={
                   (presenter.areCaseloadTypeBreakdownsEnabled &&
-                    officer.caseloadType) ||
+                    officer.caseloadCategory) ||
                   undefined
                 }
                 hasLegend={outcomeTypes.length > 1}

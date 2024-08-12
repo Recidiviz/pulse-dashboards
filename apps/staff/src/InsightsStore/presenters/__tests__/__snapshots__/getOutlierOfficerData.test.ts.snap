@@ -3,7 +3,8 @@
 exports[`combines related data 1`] = `
 {
   "avgDailyPopulation": 32,
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategoryName": "General Or Other Caseloads",
   "displayName": "Jason Nelson",
   "district": "Region D1",
   "externalId": "so3",

@@ -200,7 +200,8 @@ exports[`outlierOfficersByMetric 1`] = `
     "officersForMetric": [
       {
         "avgDailyPopulation": 54,
-        "caseloadType": "SEX_OFFENSE",
+        "caseloadCategory": "SEX_OFFENSE",
+        "caseloadCategoryName": "Sex Offense Caseloads",
         "displayName": "Walter Harris",
         "district": "Region D1",
         "externalId": "OFFICER4",
@@ -1520,7 +1521,8 @@ exports[`outlierOfficersByMetric 1`] = `
       },
       {
         "avgDailyPopulation": 32,
-        "caseloadType": "GENERAL_OR_OTHER",
+        "caseloadCategory": "GENERAL_OR_OTHER",
+        "caseloadCategoryName": "General Or Other Caseloads",
         "displayName": "Jason Nelson",
         "district": "Region D1",
         "externalId": "so3",
@@ -4046,7 +4048,8 @@ exports[`outlierOfficersByMetric 1`] = `
     "officersForMetric": [
       {
         "avgDailyPopulation": 54,
-        "caseloadType": "SEX_OFFENSE",
+        "caseloadCategory": "SEX_OFFENSE",
+        "caseloadCategoryName": "Sex Offense Caseloads",
         "displayName": "Walter Harris",
         "district": "Region D1",
         "externalId": "OFFICER4",
@@ -6184,7 +6187,8 @@ exports[`outlierOfficersByMetric 1`] = `
     "officersForMetric": [
       {
         "avgDailyPopulation": 54,
-        "caseloadType": "SEX_OFFENSE",
+        "caseloadCategory": "SEX_OFFENSE",
+        "caseloadCategoryName": "Sex Offense Caseloads",
         "displayName": "Walter Harris",
         "district": "Region D1",
         "externalId": "OFFICER4",
@@ -7504,7 +7508,8 @@ exports[`outlierOfficersByMetric 1`] = `
       },
       {
         "avgDailyPopulation": 32,
-        "caseloadType": "GENERAL_OR_OTHER",
+        "caseloadCategory": "GENERAL_OR_OTHER",
+        "caseloadCategoryName": "General Or Other Caseloads",
         "displayName": "Jason Nelson",
         "district": "Region D1",
         "externalId": "so3",
@@ -9831,7 +9836,8 @@ exports[`outlierOfficersData 1`] = `
 [
   {
     "avgDailyPopulation": 54,
-    "caseloadType": "SEX_OFFENSE",
+    "caseloadCategory": "SEX_OFFENSE",
+    "caseloadCategoryName": "Sex Offense Caseloads",
     "displayName": "Walter Harris",
     "district": "Region D1",
     "externalId": "OFFICER4",
@@ -11151,7 +11157,8 @@ exports[`outlierOfficersData 1`] = `
   },
   {
     "avgDailyPopulation": 32,
-    "caseloadType": "GENERAL_OR_OTHER",
+    "caseloadCategory": "GENERAL_OR_OTHER",
+    "caseloadCategoryName": "General Or Other Caseloads",
     "displayName": "Jason Nelson",
     "district": "Region D1",
     "externalId": "so3",

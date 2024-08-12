@@ -17,6 +17,14 @@
 
 import { z } from "zod";
 
+const caseloadCategorySchema = z.object({
+  // The ID of the caseload category as it appears in the data
+  id: z.string(),
+
+  // The caseload category as it should appear in the UI
+  displayName: z.string(),
+});
+
 export const insightsConfigSchema = z.object({
   supervisionOfficerLabel: z.string(),
   supervisionDistrictLabel: z.string(),
@@ -52,6 +60,7 @@ export const insightsConfigSchema = z.object({
   ),
   docLabel: z.string(),
   outliersHover: z.string(),
+  caseloadCategories: z.array(caseloadCategorySchema).optional(),
 });
 
 export type InsightsConfig = z.infer<typeof insightsConfigSchema>;

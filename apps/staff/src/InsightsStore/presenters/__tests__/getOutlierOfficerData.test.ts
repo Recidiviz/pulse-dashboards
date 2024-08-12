@@ -60,7 +60,7 @@ test("excludes current officer from the benchmark data points", async () => {
   const outlierMetric = officerData.outlierMetrics[0];
   const matchingBenchmarkForOfficer = benchmarks.find(
     (b) =>
-      b.caseloadType === officerData.caseloadType &&
+      b.caseloadType === officerData.caseloadCategory &&
       b.metricId === outlierMetric.metricId,
   );
 

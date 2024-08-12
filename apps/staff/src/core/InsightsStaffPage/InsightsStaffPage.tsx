@@ -236,10 +236,10 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 
   const infoItems = [
     {
-      title: "caseload types",
+      title: "caseload type",
       info:
         (presenter.areCaseloadTypeBreakdownsEnabled &&
-          outlierOfficerData.caseloadType) ||
+          outlierOfficerData.caseloadCategoryName) ||
         null,
     },
     {

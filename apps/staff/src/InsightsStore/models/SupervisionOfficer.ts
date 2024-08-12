@@ -44,7 +44,15 @@ export const supervisionOfficerSchema = supervisionOfficerBaseSchema
       .number()
       .transform((avgDailyPopulation) => Math.round(avgDailyPopulation)),
   })
-  .transform(addDisplayName);
+  .transform(addDisplayName)
+  .transform((officer) => {
+    // TODO(Recidiviz/recidiviz-data#31634): Remove this transformation once the backend does it
+    const { caseloadType, ...officerWithoutCaseloadType } = officer;
+    return {
+      ...officerWithoutCaseloadType,
+      caseloadCategory: caseloadType,
+    };
+  });
 
 export const excludedSupervisionOfficerSchema =
   supervisionOfficerBaseSchema.transform(addDisplayName);

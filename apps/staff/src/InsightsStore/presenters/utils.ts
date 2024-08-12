@@ -32,8 +32,12 @@ export function getOutlierOfficerData(
   officerData: SupervisionOfficer,
   supervisionStore: InsightsSupervisionStore,
 ): OutlierOfficerData {
+  const { caseloadCategory } = officerData;
   return {
     ...officerData,
+    caseloadCategoryName: caseloadCategory
+      ? supervisionStore.caseloadCategoryDisplayName(caseloadCategory)
+      : undefined,
     outlierMetrics: officerData.outlierMetrics.map((metric) => {
       // verify that the related objects we need are actually present;
       // specifically, the metric configs for this officer and the benchmarks
@@ -50,7 +54,7 @@ export function getOutlierOfficerData(
         throw new Error(`Missing metric benchmark data for ${metric.metricId}`);
       }
 
-      const caseloadType = officerData?.caseloadType || "ALL";
+      const caseloadType = caseloadCategory || "ALL";
       const benchmark = metricBenchmarks.get(caseloadType);
       if (!benchmark) {
         throw new Error(

@@ -295,6 +295,16 @@ export class InsightsSupervisionStore {
     );
   }
 
+  private get caseloadCategories() {
+    return this.config.caseloadCategories;
+  }
+
+  caseloadCategoryDisplayName(categoryId: string) {
+    return this.caseloadCategories?.find(
+      (categoryConfig) => categoryConfig.id === categoryId,
+    )?.displayName;
+  }
+
   /**
    * Fetches supervision officer supervisor data for the current tenant.
    */

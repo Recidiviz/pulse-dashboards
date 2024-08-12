@@ -18,7 +18,11 @@
 import dedent from "dedent";
 
 import { InsightsConfig } from "../InsightsConfig";
-import { ADVERSE_METRIC_IDS, FAVORABLE_METRIC_IDS } from "./constants";
+import {
+  ADVERSE_METRIC_IDS,
+  CASELOAD_TYPE_IDS,
+  FAVORABLE_METRIC_IDS,
+} from "./constants";
 
 export const InsightsConfigFixture: InsightsConfig = {
   supervisionOfficerLabel: "officer",
@@ -113,4 +117,14 @@ export const InsightsConfigFixture: InsightsConfig = {
   ],
   outliersHover:
     "Has a rate on any metric significantly higher than peers - over 1 Interquartile Range above the statewide rate.",
+  caseloadCategories: [
+    {
+      id: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+      displayName: "General Or Other Caseloads",
+    },
+    {
+      id: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+      displayName: "Sex Offense Caseloads",
+    },
+  ],
 };
