@@ -1,6 +1,46 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`supervisors with outliers data 1`] = `
+exports[`supervisors by district when homepage variant not set 1`] = `
+[
+  {
+    "district": "Region D1",
+    "supervisors": [
+      {
+        "displayName": "Alejandro D Gonzalez",
+        "email": "mock-email",
+        "externalId": "agonzalez123",
+        "fullName": {
+          "givenNames": "Alejandro",
+          "middleNames": "D",
+          "surname": "Gonzalez",
+        },
+        "hasOutliers": true,
+        "pseudonymizedId": "hashed-agonzalez123",
+        "supervisionDistrict": "Region D1",
+      },
+    ],
+  },
+  {
+    "district": null,
+    "supervisors": [
+      {
+        "displayName": "David Lee",
+        "email": null,
+        "externalId": "dlee456",
+        "fullName": {
+          "givenNames": "David",
+          "surname": "Lee",
+        },
+        "hasOutliers": true,
+        "pseudonymizedId": "hashed-dlee456",
+        "supervisionDistrict": null,
+      },
+    ],
+  },
+]
+`;
+
+exports[`supervisors by district when workflows variant not set 1`] = `
 [
   {
     "district": "Region D1",

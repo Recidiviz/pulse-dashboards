@@ -22,6 +22,7 @@ import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
 import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
+import { SupervisionOfficerSupervisor } from "../../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerSupervisorsPresenter } from "../SupervisionOfficerSupervisorsPresenter";
 
@@ -35,6 +36,11 @@ beforeEach(() => {
     InsightsConfigFixture,
   );
   vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
+  vi.spyOn(
+    store.insightsStore,
+    "shouldUseSupervisorHomepageUI",
+    "get",
+  ).mockReturnValue(false);
 
   presenter = new SupervisionOfficerSupervisorsPresenter(store);
 });
@@ -70,12 +76,50 @@ test("all supervisors data", async () => {
   );
 });
 
-test("supervisors with outliers data", async () => {
+test("supervisors by district when homepage variant not set", async () => {
   await presenter.hydrate();
-  expect(presenter.supervisorsWithOutliersByDistrict).toMatchSnapshot();
-  presenter.supervisorsWithOutliersByDistrict.forEach(({ supervisors }) => {
+  expect(presenter.supervisorsByDistrict).toMatchSnapshot();
+  presenter.supervisorsByDistrict.forEach(({ supervisors }) => {
     supervisors.forEach((s) => expect(s.hasOutliers).toBeTrue());
   });
+});
+
+test("supervisors by district when workflows variant not set", async () => {
+  await presenter.hydrate();
+  vi.spyOn(
+    store.insightsStore,
+    "shouldUseSupervisorHomepageUI",
+    "get",
+  ).mockReturnValue(true);
+  expect(presenter.supervisorsByDistrict).toMatchSnapshot();
+  presenter.supervisorsByDistrict.forEach(({ supervisors }) => {
+    supervisors.forEach((s) => expect(s.hasOutliers).toBeTrue());
+  });
+});
+
+test("supervisors by district when homepage and workflows variant is set", async () => {
+  vi.spyOn(
+    store.insightsStore,
+    "shouldUseSupervisorHomepageUI",
+    "get",
+  ).mockReturnValue(true);
+
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "activeFeatureVariants",
+    "get",
+  ).mockReturnValue({ supervisorHomepageWorkflows: {} });
+
+  await presenter.hydrate();
+
+  const testSupervisors = presenter.supervisorsByDistrict.reduce(
+    (acc, { district, supervisors }) => acc.concat(supervisors),
+    [] as SupervisionOfficerSupervisor[],
+  );
+
+  expect(testSupervisors).toContainAllValues(
+    supervisionOfficerSupervisorsFixture,
+  );
 });
 
 test("districts ordered correctly", async () => {
@@ -165,11 +209,7 @@ test("districts ordered correctly", async () => {
     null,
   ];
   expect(
-    Array.from(
-      presenter.supervisorsWithOutliersByDistrict.map(
-        ({ district }) => district,
-      ),
-    ),
+    Array.from(presenter.supervisorsByDistrict.map(({ district }) => district)),
   ).toEqual(orderedDistrictList);
 });
 
@@ -190,18 +230,33 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
     ).mockReturnValue(launchedDistricts);
 
     vi.spyOn(store, "supervisionOfficerSupervisors", "get").mockReturnValue(
-      supervisionOfficerSupervisorsFixture.concat({
-        supervisionDistrict: launchedDistricts[0],
-        externalId: "testid1",
-        displayName: "Test Name",
-        fullName: {
-          givenNames: "Test",
-          surname: "Name",
+      supervisionOfficerSupervisorsFixture.concat(
+        {
+          supervisionDistrict: launchedDistricts[0],
+          externalId: "testid1",
+          displayName: "Test Name",
+          fullName: {
+            givenNames: "Test",
+            surname: "Name",
+          },
+          hasOutliers: true,
+          pseudonymizedId: "hashed-testid1",
+          email: null,
         },
-        hasOutliers: true,
-        pseudonymizedId: "hashed-testid1",
-        email: null,
-      }),
+        // Supervisor in launched district without outliers
+        {
+          supervisionDistrict: launchedDistricts[0],
+          externalId: "testid2",
+          displayName: "Test Name2",
+          fullName: {
+            givenNames: "Test",
+            surname: "Name2",
+          },
+          hasOutliers: false,
+          pseudonymizedId: "hashed-testid2",
+          email: null,
+        },
+      ),
     );
 
     presenter = new SupervisionOfficerSupervisorsPresenter(
@@ -215,9 +270,32 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
 
     expect(presenter.supervisorsWithOutliersCount).toEqual(1);
     expect(
-      presenter.supervisorsWithOutliersByDistrict.map(
-        ({ district }) => district,
-      ),
+      presenter.supervisorsByDistrict.map(({ district }) => district),
+    ).toEqual(launchedDistricts);
+  });
+
+  it("handles supervisor homepage variant", async () => {
+    vi.spyOn(
+      store.insightsStore,
+      "shouldUseSupervisorHomepageUI",
+      "get",
+    ).mockReturnValue(true);
+    vi.spyOn(
+      store.insightsStore.rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue({ supervisorHomepageWorkflows: {} });
+
+    await presenter.hydrate();
+
+    expect(presenter.supervisorsWithOutliersCount).toEqual(1);
+    expect(
+      presenter.supervisorsByDistrict.find(
+        ({ district }) => district === launchedDistricts[0],
+      )?.supervisors.length,
+    ).toEqual(2);
+    expect(
+      presenter.supervisorsByDistrict.map(({ district }) => district),
     ).toEqual(launchedDistricts);
   });
 });

@@ -99,6 +99,11 @@ test("valid route", async () => {
     "get",
   ).mockReturnValue(true);
   vi.spyOn(
+    insightsStore,
+    "shouldUseSupervisorHomepageUI",
+    "get",
+  ).mockReturnValue(false);
+  vi.spyOn(
     insightsStore.supervisionStore,
     "userHasSeenOnboarding",
     "get",

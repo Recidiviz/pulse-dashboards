@@ -26,7 +26,6 @@ import { now } from "mobx-utils";
 import { rem } from "polished";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import simplur from "simplur";
 import styled from "styled-components/macro";
 
 import {
@@ -98,11 +97,7 @@ const SupervisorsList = observer(function SupervisorsList({
     undefined,
   );
 
-  const {
-    supervisorsWithOutliersByDistrict,
-    supervisorsWithOutliersCount,
-    labels,
-  } = presenter;
+  const { supervisorsByDistrict, pageTitle } = presenter;
 
   // trackPageViewed30Seconds every 30 seconds after the initial page load
   if (
@@ -117,7 +112,7 @@ const SupervisorsList = observer(function SupervisorsList({
     setInitialPageLoad(new Date());
   }
 
-  const districtViz = supervisorsWithOutliersByDistrict.map(
+  const districtViz = supervisorsByDistrict.map(
     ({ district, supervisors }, districtIndex) => (
       <div key={district}>
         <DistrictName>{district ?? "Unknown"}</DistrictName>
@@ -148,8 +143,6 @@ const SupervisorsList = observer(function SupervisorsList({
       </div>
     ),
   );
-
-  const pageTitle = simplur`${supervisorsWithOutliersCount} ${labels.supervisionSupervisorLabel}[|s] across the state have one or more outlier ${labels.supervisionOfficerLabel}s in their ${labels.supervisionUnitLabel}`;
 
   return (
     <Wrapper isLaptop={isLaptop} isTablet={isTablet}>
