@@ -18,16 +18,18 @@
  *
  */
 import { render, screen } from "@testing-library/react";
-import { Mock } from "vitest";
 
-import { useRootStore } from "../../../components/StoreProvider";
+import { HydrationState } from "~hydration-utils";
+
+import { JusticeInvolvedPerson } from "../../../WorkflowsStore/";
 import { SelectedPersonOpportunitiesHydrator } from "../SelectedPersonOpportunitiesHydrator";
 
 vi.mock("../../../components/StoreProvider");
-const useRootStoreMock = useRootStore as Mock;
 
 const lsuHydrateMock = vi.fn();
 const pastFTRDHydrateMock = vi.fn();
+let testSelectedPerson: JusticeInvolvedPerson;
+const defaultHydrationState: HydrationState = { status: "hydrated" };
 
 const empty = <div>Empty!</div>;
 const hydrated = <div>Hydrated!</div>;
@@ -37,41 +39,41 @@ beforeEach(() => {
 });
 
 const setUp = ({
-  lsuHydrationState = { status: "hydrated" },
-  pastFTRDHydrationState = { status: "hydrated" },
+  lsuHydrationState = defaultHydrationState,
+  pastFTRDHydrationState = defaultHydrationState,
   lsuVerified = true,
   pastFTRDVerified = true,
+}: {
+  lsuHydrationState?: HydrationState;
+  pastFTRDHydrationState?: HydrationState;
+  lsuVerified?: boolean;
+  pastFTRDVerified?: boolean;
 }) => {
-  const mockRoot = {
-    workflowsStore: {
-      selectedPerson: {
-        potentialOpportunities: {
-          LSU: {
-            hydrate: lsuHydrateMock,
-            hydrationState: lsuHydrationState,
-          },
-          pastFTRD: {
-            hydrate: pastFTRDHydrateMock,
-            hydrationState: pastFTRDHydrationState,
-          },
-        },
-        verifiedOpportunities: {},
+  testSelectedPerson = {
+    potentialOpportunities: {
+      LSU: {
+        hydrate: lsuHydrateMock,
+        hydrationState: lsuHydrationState,
+      },
+      pastFTRD: {
+        hydrate: pastFTRDHydrateMock,
+        hydrationState: pastFTRDHydrationState,
       },
     },
-  };
+    verifiedOpportunities: {},
+  } as any as JusticeInvolvedPerson;
   if (lsuVerified) {
     // @ts-ignore
-    mockRoot.workflowsStore.selectedPerson.verifiedOpportunities.LSU = {
+    testSelectedPerson.verifiedOpportunities.LSU = {
       hydrationState: lsuHydrationState,
     };
   }
   if (pastFTRDVerified) {
     // @ts-ignore
-    mockRoot.workflowsStore.selectedPerson.verifiedOpportunities.pastFTRD = {
+    testSelectedPerson.verifiedOpportunities.pastFTRD = {
       hydrationState: pastFTRDHydrationState,
     };
   }
-  useRootStoreMock.mockReturnValue(mockRoot as any);
 };
 
 const expectStateToBe = (expectedState: "HYDRATED" | "EMPTY" | "LOADING") => {
@@ -110,6 +112,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -125,6 +128,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -144,6 +148,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -159,6 +164,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -174,6 +180,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -189,6 +196,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["pastFTRD"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -207,6 +215,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -225,6 +234,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU"]}
+        person={testSelectedPerson}
       />,
     );
 
@@ -234,8 +244,8 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
   // eslint-disable-next-line vitest/expect-expect
   it("exits loading state even if hydration fails", () => {
     setUp({
-      lsuHydrationState: { status: "failed" },
-      pastFTRDHydrationState: { status: "failed" },
+      lsuHydrationState: { status: "failed" } as HydrationState,
+      pastFTRDHydrationState: { status: "failed" } as HydrationState,
       lsuVerified: false,
       pastFTRDVerified: false,
     });
@@ -245,6 +255,7 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
         hydrated={hydrated}
         empty={empty}
         opportunityTypes={["LSU", "pastFTRD"]}
+        person={testSelectedPerson}
       />,
     );
 

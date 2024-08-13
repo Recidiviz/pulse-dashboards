@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { JusticeInvolvedPerson, OpportunityType } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { NavigationBackButton } from "../NavigationBackButton";
@@ -82,6 +83,9 @@ const BackButtonWrapper = styled.div`
 
 const FormWrapper = styled.div``;
 
+// TODO(#6017): In order for the FormLayout to integrate with insights and the
+// supervisor homepage, we'll need to update the form components themselves to
+// take a JusticeInvolvedPerson parameter. This has already been done for US_ID forms.
 const FormComponents = {
   WorkflowsCompliantReportingForm,
   WorkflowsEarlyTerminationForm,
@@ -103,14 +107,43 @@ export type OpportunityFormComponentName = keyof typeof FormComponents;
 
 type FormSidebarView = "OPPORTUNITY" | "DENIAL";
 
-export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
-  const {
-    currentTenantId,
-    workflowsStore: {
-      selectedOpportunityType: opportunityType,
-      selectedPerson,
-    },
-  } = useRootStore();
+/**
+ * A wrapper for the FormLayout that's used from workflows views - access to
+ * state fields in the store is consolidated here and passed into the layout component.
+ */
+export const WorkflowsFormLayoutWrapper = observer(
+  function WorkflowsFormLayoutWrapper() {
+    const {
+      workflowsStore: {
+        selectedOpportunityType: opportunityType,
+        selectedPerson,
+      },
+    } = useRootStore();
+    return (
+      <WorkflowsFormLayout
+        opportunityType={opportunityType}
+        selectedPerson={selectedPerson}
+      />
+    );
+  },
+);
+
+/**
+ * Interactive form layout UI for a given person and opportunity; this UI is shared
+ * between workflows and the supervisor homepage.
+ *
+ * ***Note*** Because of the shared nature of this layout, it's best to keep necessary
+ * data or state as parameters that are passed in, rather than pulling stateful info
+ * from a store within the component itself.
+ */
+export const WorkflowsFormLayout = observer(function WorkflowsFormLayout({
+  opportunityType,
+  selectedPerson,
+}: {
+  opportunityType: OpportunityType | undefined;
+  selectedPerson: JusticeInvolvedPerson | undefined;
+}) {
+  const { currentTenantId } = useRootStore();
   const [currentView, setCurrentView] =
     useState<FormSidebarView>("OPPORTUNITY");
   const navigate = useNavigate();
@@ -139,6 +172,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
         opportunity={opportunity}
         formLinkButton={false}
         onDenialButtonClick={() => setCurrentView("DENIAL")}
+        selectedPerson={selectedPerson}
         formView
       />
     );
@@ -173,7 +207,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
       <FormWrapper>
         {FormComponent && (
           <OpportunityFormProvider value={opportunity.form}>
-            <FormComponent />
+            <FormComponent person={selectedPerson} />
           </OpportunityFormProvider>
         )}
       </FormWrapper>
@@ -184,7 +218,12 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout() {
 
   return (
     <SelectedPersonOpportunitiesHydrator
-      {...{ hydrated, empty, opportunityTypes: [opportunityType] }}
+      {...{
+        hydrated,
+        empty,
+        opportunityTypes: [opportunityType],
+        person: selectedPerson,
+      }}
     />
   );
 });

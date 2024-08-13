@@ -300,6 +300,7 @@ export const INSIGHTS_PATHS: Record<InsightsPage, string> = {
   supervisionStaffMetric: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/outcome/:metricId`,
   supervisionClientDetail: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
   supervisionOpportunity: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl`,
+  supervisionOpportunityForm: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId`,
 };
 
 export type InsightsPage = keyof typeof INSIGHTS_PAGES;
@@ -313,6 +314,7 @@ export const INSIGHTS_PAGES = {
   supervisionStaffMetric: "supervisionStaffMetric",
   supervisionClientDetail: "supervisionClientDetail",
   supervisionOpportunity: "supervisionOpportunity",
+  supervisionOpportunityForm: "supervisionOpportunityForm",
 } as const;
 
 type InsightsRouteParams = {
@@ -357,6 +359,14 @@ export function insightsUrl(
 export function insightsUrl(
   routeName: "supervisionOpportunity",
   params: { officerPseudoId: string; opportunityTypeUrl: string },
+): string;
+export function insightsUrl(
+  routeName: "supervisionOpportunityForm",
+  params: {
+    officerPseudoId: string;
+    opportunityTypeUrl: string;
+    clientPseudoId: string;
+  },
 ): string;
 
 export function insightsUrl(

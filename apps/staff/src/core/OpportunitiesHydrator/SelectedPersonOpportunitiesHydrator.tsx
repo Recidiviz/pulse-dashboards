@@ -22,13 +22,14 @@ import React, { useEffect } from "react";
 
 import { isHydrationInProgress } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 
 type PersonOpportunitiesHydratorProps = {
   hydrated: React.ReactNode;
   empty: React.ReactNode;
   opportunityTypes: OpportunityType[];
+  person: JusticeInvolvedPerson;
 };
 
 export const SelectedPersonOpportunitiesHydrator = observer(
@@ -36,11 +37,8 @@ export const SelectedPersonOpportunitiesHydrator = observer(
     hydrated,
     empty,
     opportunityTypes,
+    person,
   }: PersonOpportunitiesHydratorProps) {
-    const {
-      workflowsStore: { selectedPerson: person },
-    } = useRootStore();
-
     useEffect(
       () =>
         autorun(() => {

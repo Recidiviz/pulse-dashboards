@@ -21,7 +21,11 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Opportunity } from "../../WorkflowsStore";
+import {
+  Client,
+  JusticeInvolvedPerson,
+  Opportunity,
+} from "../../WorkflowsStore";
 import {
   ClientEmployer,
   ClientHousing,
@@ -57,6 +61,7 @@ type OpportunitySidebarProfileProps = {
   formLinkButton?: boolean;
   formView?: boolean;
   onDenialButtonClick?: () => void;
+  selectedPerson: JusticeInvolvedPerson | undefined;
 };
 
 export const ClientDetailSidebarComponents = {
@@ -119,14 +124,16 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     formView = false,
     onDenialButtonClick = () => null,
     opportunity,
+    selectedPerson,
   }) {
     const {
-      workflowsStore: { selectedPerson, selectedClient, selectedResident },
+      workflowsStore: { selectedResident },
     } = useRootStore();
 
     if (!opportunity || !selectedPerson) {
       return null;
     }
+
     return (
       <article>
         <Heading person={selectedPerson} />
@@ -139,15 +146,17 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
         </AccordionWrapper>
         {opportunity.config.sidebarComponents.map((componentName) => {
           if (componentName in FormViewOnlyComponent && !formView) return null;
-          if (componentName in ClientDetailSidebarComponents) {
-            if (!selectedClient) return null;
+          if (
+            componentName in ClientDetailSidebarComponents &&
+            selectedPerson instanceof Client
+          ) {
             const Component =
               ClientDetailSidebarComponents[
                 componentName as ClientDetailComponentName
               ];
             return (
               <DetailsSection key={componentName}>
-                <Component client={selectedClient} />
+                <Component client={selectedPerson} />
               </DetailsSection>
             );
           }

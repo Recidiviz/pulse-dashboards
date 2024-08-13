@@ -19,7 +19,7 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { matchPath, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import {
@@ -28,6 +28,7 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
+import { INSIGHTS_PATHS } from "../views";
 
 export const INTERCOM_HEIGHT = 64;
 
@@ -72,7 +73,19 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
   } = useRootStore();
   const { insightsOnboarding } = useFeatureVariants();
 
-  const isOnboardingView = pathname.split("/")[3] === "onboarding";
+  const pathParts = pathname.split("/");
+
+  const isFormView = matchPath(
+    INSIGHTS_PATHS.supervisionOpportunityForm,
+    pathname,
+  );
+  // For the auto-fill form page, we want to have a full screen experience for the
+  // interactive form. The layout includes a back navigation button, so the user can
+  // navigate away without access to the nav layout.
+  if (isFormView) return <Wrapper>{children}</Wrapper>;
+
+  const isOnboardingView = pathParts[3] === "onboarding";
+
   const isHideNavLayout =
     (insightsOnboarding && !supervisionStore?.userHasSeenOnboarding) ||
     (supervisionStore?.insightsStore.rootStore.userStore.isRecidivizUser &&

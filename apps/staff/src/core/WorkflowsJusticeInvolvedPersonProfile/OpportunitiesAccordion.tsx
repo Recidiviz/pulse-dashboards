@@ -220,7 +220,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
 
   return (
     <SelectedPersonOpportunitiesHydrator
-      {...{ empty, hydrated, opportunityTypes }}
+      {...{ empty, hydrated, opportunityTypes, person }}
     />
   );
 });

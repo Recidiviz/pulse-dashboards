@@ -55,6 +55,7 @@ describe("getRelativePath", () => {
     supervisionStaffMetric: `/supervision/staff/:officerPseudoId/outcome/:metricId`,
     supervisionClientDetail: `/supervision/staff/:officerPseudoId/outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
     supervisionOpportunity: `/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl`,
+    supervisionOpportunityForm: `/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId`,
   };
 
   test.each([...Object.keys(INSIGHTS_PATHS)])(

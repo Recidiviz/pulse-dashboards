@@ -25,7 +25,13 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { shiftFixtureDate, StaffRecord } from "~datatypes";
 
 import { SystemId } from "../core/models/types";
-import { WORKFLOWS_SYSTEM_ID_TO_PAGE, WorkflowsPage } from "../core/views";
+import {
+  INSIGHTS_PATHS,
+  insightsUrl,
+  WORKFLOWS_SYSTEM_ID_TO_PAGE,
+  WorkflowsPage,
+  workflowsUrl,
+} from "../core/views";
 import {
   AutoSnoozeUpdate,
   CombinedUserRecord,
@@ -275,4 +281,28 @@ export function opportunitiesByTab(
       opp.tabTitle((tabGroup || Object.keys(opp.config.tabGroups)[0]) as any),
     ) as Record<OpportunityTab, Opportunity[]>;
   });
+}
+
+/**
+ * Return the relevant url for the "navigate to form" button.
+ */
+export function getLinkToForm(
+  pathname: string,
+  urlSection: string,
+  justiceInvolvedPersonPseudoId: string,
+  officerPseudoId: string | undefined,
+): string {
+  const isInsights = pathname.startsWith(INSIGHTS_PATHS.supervision);
+  const linkToForm =
+    isInsights && officerPseudoId
+      ? insightsUrl("supervisionOpportunityForm", {
+          officerPseudoId,
+          opportunityTypeUrl: urlSection,
+          clientPseudoId: justiceInvolvedPersonPseudoId,
+        })
+      : workflowsUrl("opportunityAction", {
+          urlSection,
+          justiceInvolvedPersonId: justiceInvolvedPersonPseudoId,
+        });
+  return linkToForm;
 }

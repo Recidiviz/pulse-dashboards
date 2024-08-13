@@ -20,7 +20,7 @@ import { parseISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import {
@@ -29,10 +29,10 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
+import { getLinkToForm } from "../../WorkflowsStore/utils";
 import { desktopLinkGate } from "../desktopLinkGate";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { useStatusColors } from "../utils/workflowsUtils";
-import { workflowsUrl } from "../views";
 import { TextLink } from "../WorkflowsMilestones/styles";
 import { CriteriaList } from "./CriteriaList";
 import MarkedIneligibleReasons, {
@@ -108,6 +108,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     // on screen sizes smaller than desktop.
     const { isLaptop } = useIsMobile(true);
 
+    const { pathname } = useLocation();
+    const { officerPseudoId } = useParams();
+
     useEffect(() => {
       opportunity.setLastViewed();
     }, [opportunity]);
@@ -136,6 +139,14 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
     const OPPORTUNITY_CONFIGS = useOpportunityConfigurations();
 
+    const urlSection = OPPORTUNITY_CONFIGS[opportunity.type].urlSection;
+    const linkToForm = getLinkToForm(
+      pathname,
+      urlSection,
+      opportunity.person.pseudonymizedId,
+      officerPseudoId,
+    );
+
     return (
       <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
@@ -150,12 +161,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         {(showDenialButton || formLinkButton) && (
           <ActionButtons isMobile={isLaptop}>
             {formLinkButton && opportunity?.form && (
-              <Link
-                to={workflowsUrl("opportunityAction", {
-                  urlSection: OPPORTUNITY_CONFIGS[opportunity.type].urlSection,
-                  justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
-                })}
-              >
+              <Link to={linkToForm}>
                 <FormActionButton
                   className="NavigateToFormButton"
                   buttonFill={colors.buttonFill}

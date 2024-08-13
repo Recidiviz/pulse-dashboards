@@ -24,6 +24,7 @@ import { SupervisionPresenter } from "../../InsightsStore/presenters/Supervision
 import InsightsMetricPage from "../InsightsMetricPage";
 import InsightsNavLayout from "../InsightsNavLayout";
 import InsightsOnboardingPage from "../InsightsOnboardingPage";
+import InsightsOpportunityFormPage from "../InsightsOpportunityFormPage";
 import InsightsOpportunityPage from "../InsightsOpportunityPage";
 import { InsightsRoute } from "../InsightsRoute";
 import InsightsStaffPage from "../InsightsStaffPage";
@@ -98,6 +99,15 @@ const PageInsights: React.FC = memo(function PageInsights() {
               <Route
                 path={insightsRoute({ routeName: "supervisionOpportunity" })}
                 element={<InsightsOpportunityPage />}
+              />
+            )}
+
+            {supervisorHomepage && (
+              <Route
+                path={insightsRoute({
+                  routeName: "supervisionOpportunityForm",
+                })}
+                element={<InsightsOpportunityFormPage />}
               />
             )}
           </Route>

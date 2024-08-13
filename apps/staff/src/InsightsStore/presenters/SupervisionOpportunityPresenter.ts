@@ -17,7 +17,11 @@
 
 import { makeObservable } from "mobx";
 
-import { Opportunity, OpportunityType } from "../../WorkflowsStore";
+import {
+  JusticeInvolvedPerson,
+  Opportunity,
+  OpportunityType,
+} from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenter } from "./SupervisionOfficerPresenter";
@@ -48,5 +52,15 @@ export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter
 
   get opportunityLabel(): string {
     return this.opportunities?.[0].config.label ?? "";
+  }
+
+  get clientPseudoId() {
+    return this.supervisionStore.clientPseudoId;
+  }
+
+  get client(): JusticeInvolvedPerson | undefined {
+    return this.clients?.find(
+      (client) => client.pseudonymizedId === this.clientPseudoId,
+    );
   }
 }

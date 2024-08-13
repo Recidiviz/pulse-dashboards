@@ -18,7 +18,7 @@
 import { useRef, useState } from "react";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
-import { Opportunity } from "../../WorkflowsStore";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityProfileFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
@@ -27,6 +27,7 @@ import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
   navigableOpportunities?: Opportunity[];
+  selectedPerson: JusticeInvolvedPerson | undefined;
 };
 
 type OPPORTUNITY_SIDE_PANEL_VIEW = "OPPORTUNITY_PREVIEW" | "MARK_INELIGIBLE";
@@ -34,6 +35,7 @@ type OPPORTUNITY_SIDE_PANEL_VIEW = "OPPORTUNITY_PREVIEW" | "MARK_INELIGIBLE";
 export function OpportunityPreviewModal({
   opportunity,
   navigableOpportunities,
+  selectedPerson,
 }: OpportunityCaseloadProps): JSX.Element | null {
   const [currentView, setCurrentView] = useState<OPPORTUNITY_SIDE_PANEL_VIEW>(
     "OPPORTUNITY_PREVIEW",
@@ -62,6 +64,7 @@ export function OpportunityPreviewModal({
               opportunity={opportunity}
               formLinkButton={!!opportunity?.form}
               onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
+              selectedPerson={selectedPerson}
             />
           }
           footerContent={

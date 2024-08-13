@@ -23,8 +23,7 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
-import { Client } from "../../../../WorkflowsStore";
+import { Client, JusticeInvolvedPerson } from "../../../../WorkflowsStore";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
@@ -80,17 +79,18 @@ const formDownloader = async (client: Client): Promise<void> => {
   );
 };
 
-export const FormEarnedDischarge = observer(function FormEarnedDischarge() {
+export const FormEarnedDischarge = observer(function FormEarnedDischarge({
+  person: client,
+}: {
+  person?: JusticeInvolvedPerson;
+}) {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
   const { resize } = useResizeForm(formRef, `${FormTransformContainer}`);
 
-  const {
-    workflowsStore: { selectedClient: client },
-  } = useRootStore();
   const opportunity = client?.verifiedOpportunities?.earnedDischarge;
 
-  if (!opportunity) {
+  if (!opportunity || !(client instanceof Client)) {
     return null;
   }
 

@@ -33,7 +33,7 @@ import { OpportunityCaseloadView } from "../../OpportunityCaseloadView";
 import { WORKFLOWS_PATHS } from "../../views";
 import WorkflowsHomepage from "../../WorkflowsHomepage";
 import { FullProfile } from "../../WorkflowsJusticeInvolvedPersonProfile";
-import { WorkflowsFormLayout } from "../../WorkflowsLayouts";
+import { WorkflowsFormLayoutWrapper } from "../../WorkflowsLayouts";
 import WorkflowsMilestones from "../../WorkflowsMilestones";
 import { WorkflowsTasks } from "../../WorkflowsTasks/WorkflowsTasks";
 import PageWorkflows from "../PageWorkflows";
@@ -87,7 +87,7 @@ vi.mock("../../OpportunityCaseloadView", () => {
 vi.mock("../../WorkflowsLayouts", () => {
   return {
     __esModule: true,
-    WorkflowsFormLayout: vi.fn(),
+    WorkflowsFormLayoutWrapper: vi.fn(),
   };
 });
 
@@ -198,7 +198,7 @@ describe("PageWorkflows", () => {
       (WorkflowsHomepage as unknown as Mock).mockReturnValue(
         <div>Workflows Homepage</div>,
       );
-      (WorkflowsFormLayout as unknown as Mock).mockReturnValue(
+      (WorkflowsFormLayoutWrapper as unknown as Mock).mockReturnValue(
         <div>Opportunity Action Page</div>,
       );
     });

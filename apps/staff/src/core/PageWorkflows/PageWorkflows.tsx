@@ -29,7 +29,7 @@ import { OpportunityCaseloadView } from "../OpportunityCaseloadView";
 import { workflowsRoute } from "../views";
 import WorkflowsHomepage from "../WorkflowsHomepage";
 import { FullProfile } from "../WorkflowsJusticeInvolvedPersonProfile";
-import { WorkflowsFormLayout } from "../WorkflowsLayouts";
+import { WorkflowsFormLayoutWrapper } from "../WorkflowsLayouts";
 import WorkflowsMilestones from "../WorkflowsMilestones/WorkflowsMilestones";
 import WorkflowsRoute from "../WorkflowsRoute/WorkflowsRoute";
 import { WorkflowsTasks } from "../WorkflowsTasks";
@@ -123,7 +123,7 @@ const PageWorkflows: React.FC = () => {
             path={workflowsRoute({
               routeName: "opportunityAction",
             })}
-            element={<WorkflowsFormLayout />}
+            element={<WorkflowsFormLayoutWrapper />}
           />
           <Route path="*" element={<NotFound />} />
         </Route>

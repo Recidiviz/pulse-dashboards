@@ -209,6 +209,7 @@ export const HydratedOpportunityPersonList = observer(
         <OpportunityPreviewModal
           opportunity={currentOpportunity}
           navigableOpportunities={items}
+          selectedPerson={selectedPerson}
         />
         <WorkflowsLastSynced date={items?.at(0)?.person?.lastDataFromState} />
       </>

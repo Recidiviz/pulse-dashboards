@@ -20,6 +20,7 @@ import { useState } from "react";
 import useClipboard from "react-use-clipboard";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import {
   FormContainer,
   FormHeaderSection,
@@ -36,10 +37,13 @@ import template from "../Paperwork/US_ID/LSU/Chrono";
 import { WebForm } from "../Paperwork/WebForm";
 import PillNav from "../PillNav";
 
-const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
-  const { workflowsStore, analyticsStore } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedClient?.verifiedOpportunities?.LSU;
+const WorkflowsLSUForm = observer(function WorkflowsLSUForm({
+  person: client,
+}: {
+  person?: JusticeInvolvedPerson;
+}) {
+  const { analyticsStore } = useRootStore();
+  const opportunity = client?.verifiedOpportunities.LSU;
   const [selectedFormSection, setSelectedFormSection] = useState(0);
   const chrono = template(opportunity?.form.formData);
 
@@ -47,7 +51,7 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm() {
     successDuration: animation.extendedDurationMs,
   });
 
-  if (!opportunity) {
+  if (!opportunity || !(client instanceof Client)) {
     return null;
   }
   const formFields = LSUFormFields.map((props) => ({

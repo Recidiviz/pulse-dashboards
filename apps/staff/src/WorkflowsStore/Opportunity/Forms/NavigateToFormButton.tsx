@@ -16,14 +16,14 @@
 // =============================================================================
 import { Button, ButtonProps, spacing } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
-import { Link, LinkProps } from "react-router-dom";
+import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useOpportunityConfigurations } from "../../../components/StoreProvider";
 import { desktopLinkGate } from "../../../core/desktopLinkGate";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
-import { workflowsUrl } from "../../../core/views";
 import { JusticeInvolvedPerson } from "../../types";
+import { getLinkToForm } from "../../utils";
 import { OpportunityType } from "../OpportunityType/types";
 
 const NavigateToFormButtonStyle = styled(Button)`
@@ -59,10 +59,15 @@ export function NavigateToFormButton({
   ...props
 }: React.PropsWithChildren<NavigateToFormButtonProps>): JSX.Element {
   const { urlSection } = useOpportunityConfigurations()[opportunityType];
-  const linkToForm = workflowsUrl("opportunityAction", {
+  const { pathname } = useLocation();
+  const { officerPseudoId } = useParams();
+
+  const linkToForm = getLinkToForm(
+    pathname,
     urlSection,
-    justiceInvolvedPersonId: pseudonymizedId,
-  });
+    pseudonymizedId,
+    officerPseudoId,
+  );
 
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
