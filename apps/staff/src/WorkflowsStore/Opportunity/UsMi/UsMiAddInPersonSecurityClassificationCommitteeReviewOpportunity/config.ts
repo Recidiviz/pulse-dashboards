@@ -72,7 +72,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
     },
     ineligibleCriteriaCopy: {
       usMiPastAddInPersonReviewForSccDate: {
-        text: "Next ADD in-person review due next month, on or before {{date nextSccDate}}",
+        text: "Next ADD in-person review due in the next two months, on or before {{date nextSccDate}}",
         tooltip:
           "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
       },

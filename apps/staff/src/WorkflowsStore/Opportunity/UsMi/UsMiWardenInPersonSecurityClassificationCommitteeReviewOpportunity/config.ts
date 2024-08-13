@@ -72,7 +72,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
     },
     ineligibleCriteriaCopy: {
       usMiPastWardenInPersonReviewForSccDate: {
-        text: "Next Warden in-person review due next month, on or before {{date nextSccDate}}",
+        text: "Next Warden in-person review due in the next two months, on or before {{date nextSccDate}}",
         tooltip:
           "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
       },
