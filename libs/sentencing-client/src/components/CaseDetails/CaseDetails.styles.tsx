@@ -138,7 +138,6 @@ export const Attribute = styled.div`
 
 export const Value = styled.div`
   display: flex;
-  align-items: center;
   gap: 6px;
   color: ${palette.pine2};
   text-transform: capitalize;
@@ -295,10 +294,12 @@ export const Title = styled.div`
   margin-bottom: 4px;
 `;
 
-export const Description = styled.div`
+export const Description = styled.div<{ rightPadding?: number }>`
   color: ${palette.slate85};
   display: flex;
   flex-direction: column;
+  padding-right: ${({ rightPadding }) =>
+    rightPadding ? `${rightPadding}px` : "inherit"};
 `;
 
 export const RecommendationOptionsWrapper = styled.div`
@@ -1146,5 +1147,35 @@ export const OnboardingProgressBar = styled.div<{
     position: absolute;
     top: 0;
     background-color: ${palette.signal.highlight};
+  }
+`;
+
+export const Pagination = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-left: auto;
+  margin-top: 20px;
+`;
+
+export const Pages = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: ${palette.text.normal};
+`;
+
+export const PaginationButton = styled.div<{ disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+  svg {
+    opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   }
 `;

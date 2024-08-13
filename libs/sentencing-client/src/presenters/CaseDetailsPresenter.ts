@@ -169,6 +169,7 @@ export class CaseDetailsPresenter implements Hydratable {
       ),
     );
     await flowResult(this.caseStore.loadCaseDetails(this.caseId));
+    await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
   }
 
   async updateRecommendation(recommendation: SelectedRecommendation) {
@@ -179,7 +180,6 @@ export class CaseDetailsPresenter implements Hydratable {
 
   async updateCaseStatusToCompleted() {
     await this.updateAttributes(this.caseId, { status: "Complete" });
-    await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
   }
 
   async updateOnboardingTopicStatus(

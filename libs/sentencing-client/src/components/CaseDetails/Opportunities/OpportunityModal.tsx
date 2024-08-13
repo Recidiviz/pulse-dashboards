@@ -75,6 +75,13 @@ const displayEligibilityCriterias = (
   );
 };
 
+const normalizeURL = (url: string) => {
+  const protocolRegex = /^https?:\/\//i;
+  const hasProtocol = protocolRegex.test(url);
+  if (!hasProtocol) return `https://${url}`;
+  return url;
+};
+
 const OpportunityModal: React.FC<OpportunityModalProps> = ({
   isOpen,
   selectedOpportunity,
@@ -91,7 +98,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
   const eligibilityCriteria = getEligibilityCriteria(selectedOpportunity);
   const eligibilityCriteriaEntries = Object.entries(eligibilityCriteria);
   const providerURL = selectedOpportunity.providerWebsite
-    ? new URL(selectedOpportunity.providerWebsite).href
+    ? new URL(normalizeURL(selectedOpportunity.providerWebsite)).href
     : undefined;
 
   return (

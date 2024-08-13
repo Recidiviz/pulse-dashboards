@@ -20,6 +20,8 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
+  PaginationState,
   useReactTable,
 } from "@tanstack/react-table";
 import { keyBy, mapValues, pick } from "lodash";
@@ -30,8 +32,10 @@ import toast from "react-hot-toast";
 import { Case, Opportunities as OpportunitiesType } from "../../../api";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import ResetSearchIcon from "../../assets/close-icon.svg?react";
+import LeftArrowIcon from "../../assets/left-arrow-carot-icon.svg?react";
 import MagnifyingGlassIcon from "../../assets/magnifying-class-icon.svg?react";
 import PlusIcon from "../../assets/plus-icon.svg?react";
+import RightArrowIcon from "../../assets/right-arrow-carot-icon.svg?react";
 import TrashIcon from "../../assets/trash-icon.svg?react";
 import * as StyledDashboard from "../../Dashboard/Dashboard.styles";
 import * as Styled from "../CaseDetails.styles";
@@ -133,18 +137,36 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     })),
   );
   const [globalFilter, setGlobalFilter] = useState("");
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  });
 
   const table = useReactTable<OpportunitiesWithOppNameProviderName[number]>({
     data,
     columns,
     state: {
       globalFilter,
+      pagination,
     },
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: "includesString",
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
   });
+
+  const totalRowCount = table.getRowCount();
+  const hasPagination = totalRowCount > pagination.pageSize;
+  const pageStart =
+    table.getState().pagination.pageIndex * pagination.pageSize + 1;
+  const pageEnd = Math.min(
+    (table.getState().pagination.pageIndex + 1) * pagination.pageSize,
+    totalRowCount,
+  );
+  const pagePrompt =
+    pageStart === pageEnd ? pageEnd : `${pageStart} – ${pageEnd}`;
 
   const isProbationRecommendation =
     selectedRecommendation === RecommendationType.Probation;
@@ -359,9 +381,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 
   return (
     <Styled.Opportunities>
-      <Styled.Title>
-        Opportunities for {firstName} <Styled.InfoIcon />
-      </Styled.Title>
+      <Styled.Title>Opportunities for {firstName}</Styled.Title>
       <Styled.Description>
         <span>
           The following opportunities are available to {firstName} based on the
@@ -504,6 +524,27 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
             </StyledDashboard.TableBody>
           </Styled.Table>
         </Styled.TableWrapper>
+
+        {/* Pagination */}
+        {hasPagination && (
+          <Styled.Pagination>
+            <Styled.Pages>
+              {pagePrompt} <span>of</span> {totalRowCount}
+            </Styled.Pages>
+            <Styled.PaginationButton
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <LeftArrowIcon />
+            </Styled.PaginationButton>
+            <Styled.PaginationButton
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <RightArrowIcon />
+            </Styled.PaginationButton>
+          </Styled.Pagination>
+        )}
       </Styled.OpportunitiesTableWrapper>
 
       {/* Opportunity Modal */}

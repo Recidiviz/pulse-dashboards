@@ -138,6 +138,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             <Recommendations
               firstName={firstName}
               fullName={caseAttributes.Client?.fullName}
+              insight={caseAttributes.insight}
               selectedRecommendation={selectedRecommendation}
               handleRecommendationUpdate={handleRecommendationUpdate}
               saveRecommendation={saveRecommendation}

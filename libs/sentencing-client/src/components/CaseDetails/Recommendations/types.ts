@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Insight } from "../../../api";
 import {
   OpportunitiesIdentifier,
   RecommendationType,
@@ -27,6 +28,7 @@ export type RecommendationsProps = {
   selectedRecommendation?: SelectedRecommendation;
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
+  insight?: Insight;
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => void;

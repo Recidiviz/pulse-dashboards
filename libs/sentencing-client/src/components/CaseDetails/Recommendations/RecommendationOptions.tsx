@@ -49,11 +49,13 @@ export const HistoricalOutcomes: React.FC<{ option: RecommendationOption }> = ({
   return (
     <Styled.RecommendationOutcome>
       <Styled.PercentageWrapper>
-        <Styled.Percentage>{recidivismRate}%</Styled.Percentage>
+        <Styled.Percentage>{recidivismRate ?? "--"}%</Styled.Percentage>
         <Styled.PercentageLabel>Recidivism Rate</Styled.PercentageLabel>
       </Styled.PercentageWrapper>
       <Styled.PercentageWrapper>
-        <Styled.Percentage>{historicalSentencingRate}%</Styled.Percentage>
+        <Styled.Percentage>
+          {historicalSentencingRate ?? "--"}%
+        </Styled.Percentage>
         <Styled.PercentageLabel>Historical Sentencing</Styled.PercentageLabel>
       </Styled.PercentageWrapper>
     </Styled.RecommendationOutcome>

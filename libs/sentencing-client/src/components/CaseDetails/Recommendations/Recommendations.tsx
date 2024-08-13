@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { keyBy } from "lodash";
 import React, { Fragment, useState } from "react";
 
+import { Insight } from "../../../api";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
@@ -28,6 +30,12 @@ import {
 import { SummaryReport } from "./SummaryReport";
 import { RecommendationOption, RecommendationsProps } from "./types";
 
+const convertEventRateToPercentage = (
+  datapoint: Insight["rollupRecidivismSeries"][number]["dataPoints"],
+) => {
+  return parseFloat(datapoint[datapoint.length - 1].eventRate.toFixed(2)) * 100;
+};
+
 // TODO(Recidiviz/recidiviz-data#30651) Implement Recommendations flow
 export const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
@@ -35,6 +43,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   selectedRecommendation,
   lastSavedRecommendation,
   recommendedOpportunities,
+  insight,
   handleRecommendationUpdate,
   saveRecommendation,
   setCaseStatusCompleted,
@@ -42,6 +51,29 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   const [showSummaryReport, setShowSummaryReport] = useState(false);
 
   const hideSummaryReport = () => setShowSummaryReport(false);
+
+  const { dispositionData, rollupRecidivismSeries } = insight ?? {};
+
+  const dispositionDataByRecommendationType = keyBy(
+    dispositionData,
+    "recommendationType",
+  );
+  const rollUpRecidivismSeriesByRecommendationType = keyBy(
+    rollupRecidivismSeries,
+    "recommendationType",
+  );
+
+  const probationDatapoints =
+    rollUpRecidivismSeriesByRecommendationType["Probation"]?.dataPoints;
+  const riderDatapoints =
+    rollUpRecidivismSeriesByRecommendationType["Rider"]?.dataPoints;
+  const termDatapoints =
+    rollUpRecidivismSeriesByRecommendationType["Term"]?.dataPoints;
+
+  const probationRecidivismRate =
+    convertEventRateToPercentage(probationDatapoints);
+  const riderRecidivismRate = convertEventRateToPercentage(riderDatapoints);
+  const termRecidivismRate = convertEventRateToPercentage(termDatapoints);
 
   const recommendationOptions: RecommendationOption[] = [
     {
@@ -53,20 +85,26 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
           opp.providerName,
         ),
       ),
-      recidivismRate: 22, // Placeholder until insights data is connected
-      historicalSentencingRate: 23, // Placeholder until insights data is connected
+      recidivismRate: probationRecidivismRate,
+      historicalSentencingRate:
+        dispositionDataByRecommendationType[RecommendationType.Probation]
+          ?.percentage,
     },
     {
       key: RecommendationType.Rider,
       label: RecommendationType.Rider,
-      recidivismRate: 32,
-      historicalSentencingRate: 47,
+      recidivismRate: riderRecidivismRate,
+      historicalSentencingRate:
+        dispositionDataByRecommendationType[RecommendationType.Rider]
+          ?.percentage,
     },
     {
       key: RecommendationType.Term,
       label: RecommendationType.Term,
-      recidivismRate: 52,
-      historicalSentencingRate: 73,
+      recidivismRate: termRecidivismRate,
+      historicalSentencingRate:
+        dispositionDataByRecommendationType[RecommendationType.Term]
+          ?.percentage,
     },
     {
       key: RecommendationType.None,
@@ -145,7 +183,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
           >
             {lastSavedRecommendation ? "Update" : "Create"}
           </Styled.ActionButton>
-          <Styled.Description>
+          <Styled.Description rightPadding={36}>
             Clicking “Create” or "Update" will generate a downloadable report
             for the judge.
           </Styled.Description>
