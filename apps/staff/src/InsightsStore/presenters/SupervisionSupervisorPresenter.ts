@@ -25,6 +25,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import { ActionStrategyCopy } from "../models/ActionStrategies";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
@@ -302,5 +303,9 @@ export class SupervisionSupervisorPresenter implements Hydratable {
         viewedBy: userPseudoId,
       },
     );
+  }
+
+  get actionStrategy(): ActionStrategyCopy | undefined {
+    return this.supervisionStore.actionStrategy;
   }
 }

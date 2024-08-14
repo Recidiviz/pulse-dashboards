@@ -103,3 +103,19 @@ export const TooltipTealStar = styled(TealStar)`
   height: 16px;
   width: 16px;
 `;
+
+export const Banner = styled.div`
+  background: #f2f7f7;
+  border-width: 1px;
+  border-radius: 8px;
+  border-color: #00665f;
+  border-opacity: 10%;
+  margin-top: ${rem(spacing.xs)};
+  margin-bottom: ${rem(spacing.xs)};
+  justify-content: center;
+  padding: ${rem(spacing.lg)};
+  color: ${palette.pine1};
+  @media (max-width: 1024px) {
+    width: 100% !important;
+  }
+`;

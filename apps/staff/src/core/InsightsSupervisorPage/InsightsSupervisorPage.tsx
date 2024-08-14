@@ -15,18 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useState } from "react";
 import simplur from "simplur";
-import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../InsightsStore/presenters/SupervisionOfficersPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
 import { getWelcomeText } from "../../utils";
+import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import { InsightsSidebarLegend } from "../InsightsLegend";
 import InsightsPageLayout from "../InsightsPageLayout";
@@ -37,16 +35,10 @@ import {
 } from "../InsightsPageLayout/InsightsPageLayout";
 import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
+import { Banner } from "../sharedComponents";
 import { insightsUrl } from "../views";
 import InsightsStaffCard from "./InsightsStaffCard";
 import { highlightedOfficerText } from "./utils";
-
-const HighlightedOfficers = styled.div`
-  background: #f9fafa;
-  border: 1px solid ${palette.slate30};
-  padding: ${rem(spacing.lg)};
-  color: ${palette.pine2};
-`;
 
 export const SupervisorPage = observer(function SupervisorPage({
   presenter,
@@ -66,6 +58,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     labels,
     outcomeTypes,
     highlightedOfficersByMetric,
+    actionStrategy,
   } = presenter;
 
   const emptyPageHeaderText = `${getWelcomeText(
@@ -134,6 +127,11 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
         )
       }
     >
+      {actionStrategy && (
+        <InsightsActionStrategyBanner
+          actionStrategy={actionStrategy}
+        ></InsightsActionStrategyBanner>
+      )}
       <Wrapper isLaptop={isLaptop}>
         {/* Only render Sidebar if a single outcome type appears on the page */}
         {outcomeTypes.length === 1 && (
@@ -151,9 +149,9 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
         <Body>
           {highlightedOfficersByMetric.map((detail) => {
             return (
-              <HighlightedOfficers>
+              <Banner>
                 {highlightedOfficerText(detail, labels.supervisionOfficerLabel)}
-              </HighlightedOfficers>
+              </Banner>
             );
           })}
           {outlierOfficersData.map((officer, officerIndex) => {

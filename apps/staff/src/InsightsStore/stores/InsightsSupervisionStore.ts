@@ -26,6 +26,10 @@ import { FlowMethod } from "~hydration-utils";
 import { formatDate } from "../../utils";
 import { InsightsAPI, PatchUserInfoProps } from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
+import {
+  ActionStrategies,
+  ActionStrategyCopy,
+} from "../models/ActionStrategies";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { InsightsConfig } from "../models/InsightsConfig";
@@ -70,6 +74,8 @@ export class InsightsSupervisionStore {
   latestBenchmarksDate?: Date;
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
+
+  actionStrategies: Map<string, ActionStrategies | undefined> = new Map();
 
   metricEventsByOfficerPseudoIdAndMetricId: StringMap2D<
     Array<SupervisionOfficerMetricEvent>
@@ -303,6 +309,57 @@ export class InsightsSupervisionStore {
     return this.caseloadCategories?.find(
       (categoryConfig) => categoryConfig.id === categoryId,
     )?.displayName;
+  }
+
+  getCopyForActionStrategy(
+    actionStrategy: string | undefined,
+  ): ActionStrategyCopy | undefined {
+    switch (actionStrategy) {
+      case "ACTION_STRATEGY_OUTLIER":
+        return {
+          prompt: "How might I investigate what is driving this metric?",
+          body: " ",
+        };
+      case "ACTION_STRATEGY_OUTLIER_3_MONTHS":
+        return {
+          prompt:
+            "How might I discuss this with the agent in a constructive way?",
+          body: " ",
+        };
+      case "ACTION_STRATEGY_OUTLIER_ABSCONSION":
+        return {
+          prompt:
+            "What strategies could an agent take to reduce their absconder warrant rate?",
+          body: " ",
+        };
+      case "ACTION_STRATEGY_OUTLIER_NEW_OFFICER":
+        return {
+          prompt:
+            "How might I help a outlying or new agent learn from other agents on my team?",
+          body: " ",
+        };
+      case "ACTION_STRATEGY_60_PERC_OUTLIERS":
+        return {
+          prompt: "How might I work with my team to improve these metrics?",
+          body: " ",
+        };
+      default:
+        return undefined;
+    }
+  }
+
+  get actionStrategy(): ActionStrategyCopy | undefined {
+    const { userPseudoId } = this.insightsStore.rootStore.userStore;
+    if (userPseudoId) {
+      if (
+        this.actionStrategies.get(userPseudoId) ===
+        "ACTION_STRATEGY_60_PERC_OUTLIERS"
+      ) {
+        return this.getCopyForActionStrategy(
+          "ACTION_STRATEGY_60_PERC_OUTLIERS",
+        );
+      } else return undefined;
+    }
   }
 
   /**
