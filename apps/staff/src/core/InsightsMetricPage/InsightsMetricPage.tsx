@@ -16,12 +16,9 @@
 // =============================================================================
 
 import { toTitleCase } from "@artsy/to-title-case";
-import { palette } from "@recidiviz/design-system";
 import { sub } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
@@ -43,11 +40,6 @@ import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { MetricEventsTable } from "./MetricEventsTable";
-
-const StyledLink = styled(Link)`
-  color: ${palette.signal.links} !important;
-  border-bottom: 1px solid ${palette.signal.links};
-`;
 
 export const MetricPageWithPresenter = observer(
   function MetricPageWithPresenter({
@@ -125,18 +117,6 @@ export const MetricPageWithPresenter = observer(
       setInitialPageLoad(false);
     }
 
-    const pageDescription = (
-      <>
-        Measure {outlierOfficerData.fullName.givenNames}’s performance as
-        compared to other {labels.supervisionOfficerLabel}s in the state. Rates
-        for the metrics below are calculated for the time period: {timePeriod}
-        .&nbsp;
-        <StyledLink to={methodologyUrl}>
-          How did we calculate this rate?
-        </StyledLink>
-      </>
-    );
-
     const secondToLastDate = metric.benchmark.benchmarks.at(-2)?.endDate;
 
     const {
@@ -182,6 +162,21 @@ export const MetricPageWithPresenter = observer(
         ${descriptionMarkdown}<br><br>
         As a result, this rate can be over 100%. For example, if 60 ${labels.supervisionJiiLabel}s on an ${labels.supervisionOfficerLabel}’s caseload ${eventNamePastTense} in the past 12 months, and their average daily caseload was 50 ${eventName}, the rate would be 120%.
             `;
+
+    const pageDescription = (
+      <>
+        Measure {outlierOfficerData.fullName.givenNames}’s performance as
+        compared to other {labels.supervisionOfficerLabel}s in the state. Rates
+        for the metrics below are calculated for the time period: {timePeriod}
+        .&nbsp;
+        <InsightsInfoModalV2
+          title="How did we calculate this rate?"
+          buttonText="How did we calculate this rate?"
+          copy={dotPlotLearnMoreText}
+          methodologyLink={methodologyUrl}
+        />
+      </>
+    );
 
     return (
       <InsightsPageLayout
