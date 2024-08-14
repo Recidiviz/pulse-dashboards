@@ -53,9 +53,11 @@ const TableHeader = styled.div`
 
 const TableBody = styled.div``;
 
-const TH = styled.div`
-  background: ${palette.marble3};
-  padding: ${rem(spacing.md)};
+const TH = styled.div<{ supervisorHomepage?: boolean }>`
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage
+      ? `padding-top: ${rem(spacing.sm)}; padding-bottom: ${rem(spacing.sm)};`
+      : `background: ${palette.marble3}; padding: ${rem(spacing.md)};`}
 `;
 
 const TR = styled.div<{
@@ -76,24 +78,32 @@ const TR = styled.div<{
     )};`}
 `;
 
-const TD = styled.div<{ transformToMobile?: boolean }>`
+const TD = styled.div<{
+  transformToMobile?: boolean;
+  supervisorHomepage?: boolean;
+}>`
   display: flex;
   align-items: center;
   padding: ${({ transformToMobile }) =>
     transformToMobile ? 0 : rem(spacing.md)};
 
   ${({ transformToMobile }) => transformToMobile && `width: 100% !important;`}
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage && `padding-left: 0; padding-right: 0;`}
 `;
 
 const Text = styled.div`
   border-bottom: 1px solid transparent;
 `;
 
-const StyledLink = styled(Link)`
+const StyledLink = styled(Link)<{ supervisorHomepage?: boolean }>`
   color: inherit !important;
 
   &:hover ${TR} {
-    background: ${rgba(palette.signal.highlight, 0.05)};
+    background: ${({ supervisorHomepage }) =>
+      supervisorHomepage
+        ? rgba(palette.slate30, 0.05)
+        : rgba(palette.signal.highlight, 0.05)};
   }
   &:hover ${TD}:first-child ${Text} {
     color: ${palette.signal.links};
@@ -184,6 +194,7 @@ const InsightsTable = <T extends object>({
             return (
               <TD
                 transformToMobile={transformToMobile}
+                supervisorHomepage={supervisorHomepage}
                 {...cell.getCellProps()}
               >
                 <Text>{cell.render("Cell")}</Text>
@@ -199,6 +210,7 @@ const InsightsTable = <T extends object>({
           to={rowLinks[index]}
           state={{ from: location.pathname }}
           onClick={() => setScrollIndex(index)}
+          supervisorHomepage={supervisorHomepage}
         >
           {rowViz}
         </StyledLink>
@@ -227,7 +239,12 @@ const InsightsTable = <T extends object>({
           {headerGroups.map((headerGroup) => (
             <TR {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <TH {...column.getHeaderProps()}>{column.render("title")}</TH>
+                <TH
+                  supervisorHomepage={supervisorHomepage}
+                  {...column.getHeaderProps()}
+                >
+                  {column.render("title")}
+                </TH>
               ))}
             </TR>
           ))}
@@ -250,10 +267,9 @@ const InsightsTable = <T extends object>({
                 // If there is a scroll element, find the height of the element
                 // minus the height of the header, minus the border for the listHeight.
                 // Otherwise the list height is the number of rows * height of each row.
-                const listHeight =
-                  scrollElement && !supervisorHomepage
-                    ? height - rowSize - 1
-                    : rows.length * rowSize;
+                const listHeight = scrollElement
+                  ? height - rowSize - 1
+                  : rows.length * rowSize;
                 return (
                   <List
                     ref={listRef}
