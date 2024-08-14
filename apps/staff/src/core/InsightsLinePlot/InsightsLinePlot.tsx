@@ -250,13 +250,18 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
     data: statewidePoints,
   };
 
+  const dataWithEarliestStartDate =
+    statewidePoints[0].date < usersPoints[0].date
+      ? statewidePoints
+      : usersPoints;
+
   const { beginDate, endDate } = getDateRange(
-    statewidePoints[0]?.date,
-    statewidePoints.slice(-1)[0]?.date,
+    dataWithEarliestStartDate[0].date,
+    dataWithEarliestStartDate.slice(-1)[0]?.date,
     16,
   );
 
-  const bottomTickValues = statewidePoints.map((d) => d.date);
+  const bottomTickValues = dataWithEarliestStartDate.map((d) => d.date);
   const reducedBottomTickValues = reduceBottomTicks(bottomTickValues, isMobile);
 
   const { maxTickValue } = getTicks(
