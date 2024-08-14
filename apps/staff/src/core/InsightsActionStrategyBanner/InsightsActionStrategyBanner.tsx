@@ -20,7 +20,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { ActionStrategyCopy } from "../../InsightsStore/models/ActionStrategies";
+import { ActionStrategyCopy } from "../../InsightsStore/models/offlineFixtures/constants";
 import { Banner } from "../sharedComponents";
 
 const BannerText = styled.div`

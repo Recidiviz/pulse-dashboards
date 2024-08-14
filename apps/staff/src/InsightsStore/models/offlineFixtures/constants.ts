@@ -38,3 +38,16 @@ export const LOOKBACK_END_DATES = range(6)
 export const LOOKBACK_END_DATE_STRINGS = LOOKBACK_END_DATES.map((endDate) =>
   formatISO(endDate, { representation: "date" }),
 );
+
+export const ACTION_STRATEGY = z.enum([
+  "ACTION_STRATEGY_OUTLIER",
+  "ACTION_STRATEGY_OUTLIER_3_MONTHS",
+  "ACTION_STRATEGY_OUTLIER_ABSCONSION",
+  "ACTION_STRATEGY_OUTLIER_NEW_OFFICER",
+  "ACTION_STRATEGY_60_PERC_OUTLIERS",
+]);
+
+export type ActionStrategyCopy = {
+  prompt: string;
+  body: string;
+};

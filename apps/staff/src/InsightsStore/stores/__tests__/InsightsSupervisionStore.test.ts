@@ -584,3 +584,74 @@ test("setOutcomeDate", async () => {
   store.setOutcomeDate("2023-05-14");
   expect(store.outcomeDate?.toISOString()).toEqual("2023-05-14T00:00:00.000Z");
 });
+
+test("hydrate actionStrategies", async () => {
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: "abc123",
+    pseudonymizedId: "hashed-agonzalez123",
+    district: "District One",
+    stateCode: "us_mi",
+  });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "activeFeatureVariants",
+    "get",
+  ).mockReturnValue({
+    actionStrategies: {},
+  });
+  await flowResult(store.populateActionStrategies("hashed-agonzalez123"));
+
+  expect(store.actionStrategies).toBeDefined();
+  expect(store.actionStrategies).toMatchInlineSnapshot(`
+    {
+      "hashed-agonzalez123": "ACTION_STRATEGY_60_PERC_OUTLIERS",
+      "hashed-so1": "ACTION_STRATEGY_OUTLIER",
+      "hashed-so2": "ACTION_STRATEGY_OUTLIER_3_MONTHS",
+      "hashed-so3": "ACTION_STRATEGY_OUTLIER_ABSCONSION",
+      "hashed-so4": "ACTION_STRATEGY_OUTLIER_NEW_OFFICER",
+    }
+  `);
+});
+
+test("hydrate actionStrategies requires userPseudoId", async () => {
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    district: "District One",
+    stateCode: "us_mi",
+  });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "activeFeatureVariants",
+    "get",
+  ).mockReturnValue({
+    actionStrategies: {},
+  });
+
+  await expect(() =>
+    store.populateActionStrategies("hashed-agonzalez123"),
+  ).rejects.toThrow("Missing pseudonymizedId for user");
+});
+
+test("hydrate actionStrategies without required featureVariant", async () => {
+  const pseudoId = "hashed-agonzalez123";
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    district: "District One",
+    stateCode: "us_mi",
+    externalId: "abc123",
+    pseudonymizedId: pseudoId,
+  });
+
+  await flowResult(store.populateActionStrategies(pseudoId));
+  expect(store.actionStrategies).toMatchInlineSnapshot(`{}`);
+});

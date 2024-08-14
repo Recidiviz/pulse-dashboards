@@ -25,7 +25,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { ActionStrategyCopy } from "../models/ActionStrategies";
+import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
@@ -54,6 +54,11 @@ export class SupervisionOfficersPresenter implements Hydratable {
           ),
           flowResult(
             this.supervisionStore.populateSupervisionOfficerSupervisors(),
+          ),
+          flowResult(
+            this.supervisionStore?.populateActionStrategies(
+              this.supervisorPseudoId,
+            ),
           ),
         ]);
       },
@@ -142,6 +147,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
     return this.outlierDataOrError;
   }
 
+  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+    return this.supervisionStore.actionStrategyCopy;
+  }
+
   /**
    * Provides information about the currently selected supervisor
    */
@@ -168,11 +177,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   get supervisorIsCurrentUser() {
-    return (
-      !!this.supervisorPseudoId &&
-      this.supervisorPseudoId ===
-        this.supervisionStore.currentSupervisorUser?.pseudonymizedId
-    );
+    return this.supervisionStore?.supervisorIsCurrentUser;
   }
 
   /**
@@ -231,9 +236,5 @@ export class SupervisionOfficersPresenter implements Hydratable {
         viewedBy: userPseudoId,
       },
     );
-  }
-
-  get actionStrategy(): ActionStrategyCopy | undefined {
-    return this.supervisionStore.actionStrategy;
   }
 }

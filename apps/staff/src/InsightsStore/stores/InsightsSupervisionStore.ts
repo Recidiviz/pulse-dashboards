@@ -26,15 +26,13 @@ import { FlowMethod } from "~hydration-utils";
 import { formatDate } from "../../utils";
 import { InsightsAPI, PatchUserInfoProps } from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
-import {
-  ActionStrategies,
-  ActionStrategyCopy,
-} from "../models/ActionStrategies";
+import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { InsightsConfig } from "../models/InsightsConfig";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
+import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
@@ -47,6 +45,8 @@ import { StringMap2D } from "../types";
 
 export class InsightsSupervisionStore {
   private benchmarksByMetricAndCaseloadType?: StringMap2D<MetricBenchmark>;
+
+  actionStrategies?: ActionStrategy;
 
   userInfo?: UserInfo;
 
@@ -75,8 +75,6 @@ export class InsightsSupervisionStore {
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
 
-  actionStrategies: Map<string, ActionStrategies | undefined> = new Map();
-
   metricEventsByOfficerPseudoIdAndMetricId: StringMap2D<
     Array<SupervisionOfficerMetricEvent>
   > = new Map();
@@ -86,6 +84,8 @@ export class InsightsSupervisionStore {
 
   clientInfoByClientPseudoId: Map<string, ClientInfo> = new Map();
 
+  actionStrategiesEnabled = true;
+
   constructor(
     public readonly insightsStore: InsightsStore,
     private readonly config: InsightsConfig,
@@ -94,70 +94,6 @@ export class InsightsSupervisionStore {
       // this object will be static so there's no need to deeply observe it
       config: observable.ref,
     });
-  }
-
-  /**
-   * Fetches metric benchmark data for the current tenant.
-   *
-   * This is a MobX flow method and should be called with mobx.flowResult.
-   */
-  *populateMetricConfigs(): FlowMethod<InsightsAPI["metricBenchmarks"], void> {
-    if (this.benchmarksByMetricAndCaseloadType) return;
-
-    const benchmarks = yield this.insightsStore.apiClient.metricBenchmarks();
-    const benchmarksByMetricAndCaseloadType = index(
-      benchmarks,
-      (b) => b.metricId,
-      (b) => b.caseloadType,
-    );
-
-    const latestBenchmarksDate = new Date(
-      Math.max(
-        ...uniq(
-          benchmarks
-            .map((b) => b.benchmarks.map((d) => d.endDate))
-            .flat(2)
-            .map((d) => d.getTime()),
-        ),
-      ),
-    );
-
-    this.benchmarksByMetricAndCaseloadType = benchmarksByMetricAndCaseloadType;
-    this.latestBenchmarksDate = latestBenchmarksDate;
-  }
-
-  *populateUserInfo(): FlowMethod<InsightsAPI["userInfo"], void> {
-    if (this.userInfo) return;
-
-    const { userAppMetadata, isRecidivizUser, isCSGUser } =
-      this.insightsStore.rootStore.userStore;
-
-    // Recidiviz and CSG users might not have pseudonymizedIds, but should have an experience
-    // similar to leadership users.
-    if (isRecidivizUser || isCSGUser) {
-      this.userInfo = {
-        entity: null,
-        role: null,
-        // Recidiviz/CSG users don't need to see the onboarding flow to learn how to use the tool,
-        // so hard code that they've already seen it.
-        metadata: {
-          hasSeenOnboarding: true,
-        },
-      };
-      return;
-    }
-
-    if (!userAppMetadata) {
-      throw new Error("Missing app_metadata for user");
-    }
-
-    const { pseudonymizedId } = userAppMetadata;
-
-    if (!pseudonymizedId) {
-      throw new Error("Missing pseudonymizedId for user");
-    }
-    this.userInfo =
-      yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
   }
 
   private get allCaseloadTypes(): Set<string> {
@@ -220,6 +156,13 @@ export class InsightsSupervisionStore {
     if (this.userInfo?.role === "supervision_officer_supervisor") {
       return this.userInfo.entity;
     }
+  }
+
+  get supervisorIsCurrentUser() {
+    return (
+      !!this.supervisorPseudoId &&
+      this.supervisorPseudoId === this.currentSupervisorUser?.pseudonymizedId
+    );
   }
 
   get supervisionOfficerSupervisors():
@@ -348,11 +291,11 @@ export class InsightsSupervisionStore {
     }
   }
 
-  get actionStrategy(): ActionStrategyCopy | undefined {
+  get actionStrategyCopy(): ActionStrategyCopy | undefined {
     const { userPseudoId } = this.insightsStore.rootStore.userStore;
     if (userPseudoId) {
       if (
-        this.actionStrategies.get(userPseudoId) ===
+        this.actionStrategies?.[userPseudoId] ===
         "ACTION_STRATEGY_60_PERC_OUTLIERS"
       ) {
         return this.getCopyForActionStrategy(
@@ -360,6 +303,101 @@ export class InsightsSupervisionStore {
         );
       } else return undefined;
     }
+  }
+
+  /**
+   * Fetches metric benchmark data for the current tenant.
+   *
+   * This is a MobX flow method and should be called with mobx.flowResult.
+   */
+  *populateMetricConfigs(): FlowMethod<InsightsAPI["metricBenchmarks"], void> {
+    if (this.benchmarksByMetricAndCaseloadType) return;
+
+    const benchmarks = yield this.insightsStore.apiClient.metricBenchmarks();
+    const benchmarksByMetricAndCaseloadType = index(
+      benchmarks,
+      (b) => b.metricId,
+      (b) => b.caseloadType,
+    );
+
+    const latestBenchmarksDate = new Date(
+      Math.max(
+        ...uniq(
+          benchmarks
+            .map((b) => b.benchmarks.map((d) => d.endDate))
+            .flat(2)
+            .map((d) => d.getTime()),
+        ),
+      ),
+    );
+
+    this.benchmarksByMetricAndCaseloadType = benchmarksByMetricAndCaseloadType;
+    this.latestBenchmarksDate = latestBenchmarksDate;
+  }
+
+  *populateActionStrategies(
+    supervisorPseudoId: string,
+  ): FlowMethod<InsightsAPI["actionStrategies"], void> {
+    const { isRecidivizUser, isCSGUser, userPseudoId, activeFeatureVariants } =
+      this.insightsStore.rootStore.userStore;
+
+    // set actionStrategies to empty object for non-state users to avoid throwing a hydration error
+    if (isRecidivizUser || isCSGUser) {
+      this.actionStrategies = {};
+      return;
+    }
+
+    if (!userPseudoId) {
+      throw new Error("Missing pseudonymizedId for user");
+    }
+
+    // set actionStrategies to empty object when access requirements aren't met to avoid throwing a hydration error
+    if (
+      !activeFeatureVariants.actionStrategies ||
+      !(userPseudoId === supervisorPseudoId)
+    ) {
+      this.actionStrategies = {};
+      return;
+    }
+
+    if (this.actionStrategies) return;
+
+    this.actionStrategies =
+      yield this.insightsStore.apiClient.actionStrategies(userPseudoId);
+  }
+
+  *populateUserInfo(): FlowMethod<InsightsAPI["userInfo"], void> {
+    if (this.userInfo) return;
+
+    const { userAppMetadata, isRecidivizUser, isCSGUser } =
+      this.insightsStore.rootStore.userStore;
+
+    // Recidiviz and CSG users might not have pseudonymizedIds, but should have an experience
+    // similar to leadership users.
+    if (isRecidivizUser || isCSGUser) {
+      this.userInfo = {
+        entity: null,
+        role: null,
+        // Recidiviz/CSG users don't need to see the onboarding flow to learn how to use the tool,
+        // so hard code that they've already seen it.
+        metadata: {
+          hasSeenOnboarding: true,
+        },
+      };
+      return;
+    }
+
+    if (!userAppMetadata) {
+      throw new Error("Missing app_metadata for user");
+    }
+
+    const { pseudonymizedId } = userAppMetadata;
+
+    if (!pseudonymizedId) {
+      throw new Error("Missing pseudonymizedId for user");
+    }
+    this.userInfo =
+      yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
   }
 
   /**

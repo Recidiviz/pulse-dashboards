@@ -58,7 +58,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     labels,
     outcomeTypes,
     highlightedOfficersByMetric,
-    actionStrategy,
+    actionStrategyCopy,
   } = presenter;
 
   const emptyPageHeaderText = `${getWelcomeText(
@@ -127,9 +127,9 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
         )
       }
     >
-      {actionStrategy && (
+      {actionStrategyCopy && (
         <InsightsActionStrategyBanner
-          actionStrategy={actionStrategy}
+          actionStrategy={actionStrategyCopy}
         ></InsightsActionStrategyBanner>
       )}
       <Wrapper isLaptop={isLaptop}>

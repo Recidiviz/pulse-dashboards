@@ -19,6 +19,10 @@ import { RootStore } from "../../../RootStore";
 import { APIStore } from "../../../RootStore/APIStore";
 import UserStore from "../../../RootStore/UserStore";
 import { InsightsStore } from "../../InsightsStore";
+import {
+  actionStrategyFixture,
+  rawActionStrategyFixture,
+} from "../../models/offlineFixtures/ActionStrategyFixture";
 import { ADVERSE_METRIC_IDS } from "../../models/offlineFixtures/constants";
 import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import {
@@ -53,6 +57,7 @@ describe("InsightsAPIClient", () => {
     vi.stubEnv("VITE_NEW_BACKEND_API_URL", "http://localhost:5000");
     const mockUserStore = {
       getToken: () => Promise.resolve(""),
+      user: {},
     } as UserStore;
     // @ts-ignore
     const mockRootStore = {
@@ -219,5 +224,13 @@ describe("InsightsAPIClient", () => {
     );
 
     expect(response).toEqual(supervisionOfficerMetricEventFixture);
+  });
+
+  it("actionStrategies parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ actionStrategies: rawActionStrategyFixture }),
+    );
+    const response = await client.actionStrategies("fake-pseudo-id");
+    expect(response).toEqual(actionStrategyFixture);
   });
 });

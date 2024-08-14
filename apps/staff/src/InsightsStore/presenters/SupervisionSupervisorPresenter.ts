@@ -25,7 +25,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { ActionStrategyCopy } from "../models/ActionStrategies";
+import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
@@ -157,11 +157,7 @@ export class SupervisionSupervisorPresenter implements Hydratable {
   }
 
   get supervisorIsCurrentUser() {
-    return (
-      !!this.supervisorPseudoId &&
-      this.supervisorPseudoId ===
-        this.supervisionStore.currentSupervisorUser?.pseudonymizedId
-    );
+    return this.supervisionStore?.supervisorIsCurrentUser;
   }
 
   get userCanAccessAllSupervisors() {
@@ -305,7 +301,7 @@ export class SupervisionSupervisorPresenter implements Hydratable {
     );
   }
 
-  get actionStrategy(): ActionStrategyCopy | undefined {
-    return this.supervisionStore.actionStrategy;
+  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+    return this.supervisionStore.actionStrategyCopy;
   }
 }

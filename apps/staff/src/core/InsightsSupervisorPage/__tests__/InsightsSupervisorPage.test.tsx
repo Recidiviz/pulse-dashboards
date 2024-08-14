@@ -50,6 +50,12 @@ beforeEach(() => {
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
     () => false,
   );
+  vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
+    () => "US_CA",
+  );
+  vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
+    () => supervisorUser.pseudonymizedId,
+  );
   configure({ safeDescriptors: false });
 });
 
@@ -172,6 +178,7 @@ describe("Hydrated Supervisor Page", () => {
     vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
       supervisorUser,
     );
+    vi.spyOn(store, "supervisorIsCurrentUser", "get").mockReturnValue(true);
     render(
       <BrowserRouter>
         <SupervisorPage presenter={presenter} />

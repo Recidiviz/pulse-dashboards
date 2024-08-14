@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { InsightsConfig } from "../models/InsightsConfig";
@@ -30,6 +31,7 @@ import { UserInfo } from "../models/UserInfo";
 export type PatchUserInfoProps = { hasSeenOnboarding: boolean };
 export interface InsightsAPI {
   init(): Promise<InsightsConfig>;
+  actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy>;
   userInfo(userPseudoId: string): Promise<UserInfo>;
   patchUserInfo(
     userPseudoId: string,

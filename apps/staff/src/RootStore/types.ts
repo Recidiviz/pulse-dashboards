@@ -102,7 +102,9 @@ export type FeatureVariant =
   | "opportunityPolicyCopy"
   | "interCandidateNavigation"
   | "lastSyncedDate"
-  | "caseNoteSearch";
+  | "caseNoteSearch"
+  | "actionStrategies";
+
 export type FeatureVariantValue = {
   activeDate?: Date;
   variant?: string;
@@ -153,6 +155,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   interCandidateNavigation: {},
   lastSyncedDate: {},
   caseNoteSearch: {},
+  actionStrategies: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

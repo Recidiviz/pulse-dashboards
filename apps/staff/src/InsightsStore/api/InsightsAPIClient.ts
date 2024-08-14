@@ -17,6 +17,7 @@
 
 import { formatDateToISO } from "../../utils";
 import type { InsightsStore } from "../InsightsStore";
+import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent, clientEventSchema } from "../models/ClientEvent";
 import { ClientInfo, clientInfoSchema } from "../models/ClientInfo";
 import { insightsConfigSchema } from "../models/InsightsConfig";
@@ -65,6 +66,14 @@ export class InsightsAPIClient implements InsightsAPI {
     const endpoint = `${this.baseUrl}/configuration`;
     const fetchedData = await this.apiStore.get(endpoint);
     return insightsConfigSchema.parse(fetchedData.config);
+  }
+
+  async actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy> {
+    const { actionStrategyFixture } = await import(
+      "../models/offlineFixtures/ActionStrategyFixture"
+    );
+
+    return actionStrategyFixture;
   }
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {

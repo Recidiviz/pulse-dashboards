@@ -914,6 +914,7 @@ describe("feature variants", () => {
       {
         "CompliantReportingAlmostEligible": {},
         "TEST": {},
+        "actionStrategies": {},
         "caseNoteSearch": {},
         "enableSnooze": {},
         "formRevertButton": {},
@@ -957,6 +958,7 @@ describe("feature variants", () => {
         "CompliantReportingAlmostEligible": {},
         "EXTRA_FV": {},
         "TEST": {},
+        "actionStrategies": {},
         "caseNoteSearch": {},
         "enableSnooze": {},
         "formRevertButton": {},
@@ -998,6 +1000,7 @@ describe("feature variants", () => {
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
         "CompliantReportingAlmostEligible": {},
+        "actionStrategies": {},
         "caseNoteSearch": {},
         "enableSnooze": {},
         "formRevertButton": {},

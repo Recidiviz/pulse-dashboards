@@ -17,18 +17,10 @@
 
 import { z } from "zod";
 
-export const actionStrategies = z.enum([
-  "ACTION_STRATEGY_OUTLIER",
-  "ACTION_STRATEGY_OUTLIER_3_MONTHS",
-  "ACTION_STRATEGY_OUTLIER_ABSCONSION",
-  "ACTION_STRATEGY_OUTLIER_NEW_OFFICER",
-  "ACTION_STRATEGY_60_PERC_OUTLIERS",
-]);
+import { ACTION_STRATEGY } from "./offlineFixtures/constants";
 
-export const actionStrategyCopy = z.object({
-  prompt: z.string(),
-  body: z.string(),
-});
+// The key in this record is the pseudoId of the officer/supervisor
+export const actionStrategySchema = z.record(z.string(), ACTION_STRATEGY);
 
-export type ActionStrategies = z.infer<typeof actionStrategies>;
-export type ActionStrategyCopy = z.infer<typeof actionStrategyCopy>;
+export type ActionStrategy = z.infer<typeof actionStrategySchema>;
+export type RawActionStrategy = z.input<typeof actionStrategySchema>;

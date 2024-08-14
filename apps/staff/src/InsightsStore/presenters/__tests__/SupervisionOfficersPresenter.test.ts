@@ -39,6 +39,10 @@ beforeEach(() => {
     () => pseudoId,
   );
 
+  vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
+    () => "US_CA",
+  );
+
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
     () => false,
   );

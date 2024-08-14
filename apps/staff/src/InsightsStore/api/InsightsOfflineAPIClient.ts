@@ -21,6 +21,7 @@ import { differenceInDays, subDays } from "date-fns";
 import { isDemoMode } from "~client-env-utils";
 
 import type { InsightsStore } from "../InsightsStore";
+import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
@@ -53,6 +54,14 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     ).InsightsConfigFixture;
 
     return config;
+  }
+
+  async actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy> {
+    const { actionStrategyFixture } = await import(
+      "../models/offlineFixtures/ActionStrategyFixture"
+    );
+
+    return actionStrategyFixture;
   }
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {
