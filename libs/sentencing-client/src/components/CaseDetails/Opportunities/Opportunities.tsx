@@ -26,7 +26,7 @@ import {
 } from "@tanstack/react-table";
 import { keyBy, mapValues, pick } from "lodash";
 import moment from "moment";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { Case, Opportunities as OpportunitiesType } from "../../../api";
@@ -111,6 +111,18 @@ const columns = [
   },
 ];
 
+const normalizeCommunityOpportunities = (
+  communityOpportunities: OpportunitiesType,
+) => {
+  return communityOpportunities.map((opp) => ({
+    ...opp,
+    opportunityNameProviderName: createOpportunityProviderDisplayName(
+      opp.opportunityName,
+      opp.providerName,
+    ),
+  }));
+};
+
 // TODO(Recidiviz/recidiviz-data#30650) Implement Opportunities flow
 export const Opportunities: React.FC<OpportunitiesProps> = ({
   firstName,
@@ -127,14 +139,8 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const [selectedOpportunity, setSelectedOpportunity] =
     useState<OpportunitiesType[number]>();
   const [selectedRowId, setSelectedRowId] = useState<string>();
-  const [data] = useState(
-    communityOpportunities.map((opp) => ({
-      ...opp,
-      opportunityNameProviderName: createOpportunityProviderDisplayName(
-        opp.opportunityName,
-        opp.providerName,
-      ),
-    })),
+  const [data, setData] = useState(
+    normalizeCommunityOpportunities(communityOpportunities),
   );
   const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState<PaginationState>({
@@ -293,23 +299,32 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     },
   ];
 
-  const currentDetailsApplied = eligibilityFiltersList.map((detail, idx) => {
-    if (
-      detail.value === null ||
-      detail.value === NOT_SURE_YET_OPTION ||
-      (Array.isArray(detail.value) && detail.value && !detail.value.length)
-    )
-      return;
-    return (
-      <Fragment key={detail.key}>
-        <span style={{ fontWeight: 600 }}>{detail.label}: </span>
-        {Array.isArray(detail.value)
-          ? detail.value.join(", ")
-          : detail.value?.toString()}
-        {idx === eligibilityFiltersList.length - 1 ? "" : "; "}
-      </Fragment>
-    );
-  });
+  const filteredCurrentDetailsApplied = eligibilityFiltersList.filter(
+    (detail) => {
+      if (
+        detail.value === null ||
+        detail.value === NOT_SURE_YET_OPTION ||
+        (Array.isArray(detail.value) && detail.value && !detail.value.length)
+      ) {
+        return false;
+      }
+      return true;
+    },
+  );
+
+  const currentDetailsApplied = filteredCurrentDetailsApplied.map(
+    (detail, idx) => {
+      return (
+        <Fragment key={detail.key}>
+          <span style={{ fontWeight: 600 }}>{detail.label}: </span>
+          {Array.isArray(detail.value)
+            ? detail.value.join(", ")
+            : detail.value?.toString()}
+          {idx === filteredCurrentDetailsApplied.length - 1 ? "" : "; "}
+        </Fragment>
+      );
+    },
+  );
 
   const addToRecommendationButtonContent = (
     rowId: string,
@@ -379,13 +394,17 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 
   const hideModal = () => setShowOpportunityModal(false);
 
+  useEffect(() => {
+    setData(normalizeCommunityOpportunities(communityOpportunities));
+  }, [communityOpportunities]);
+
   return (
     <Styled.Opportunities>
       <Styled.Title>Opportunities for {firstName}</Styled.Title>
       <Styled.Description>
         <span>
           The following opportunities are available to {firstName} based on the
-          details of his case and personal information.
+          details of their case and personal information.
         </span>
         <span>
           Explore and add any opportunities that would set {firstName} up for
@@ -532,13 +551,13 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
               {pagePrompt} <span>of</span> {totalRowCount}
             </Styled.Pages>
             <Styled.PaginationButton
-              onClick={() => table.previousPage()}
+              onClick={() => table.getCanPreviousPage() && table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               <LeftArrowIcon />
             </Styled.PaginationButton>
             <Styled.PaginationButton
-              onClick={() => table.nextPage()}
+              onClick={() => table.getCanNextPage() && table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
               <RightArrowIcon />

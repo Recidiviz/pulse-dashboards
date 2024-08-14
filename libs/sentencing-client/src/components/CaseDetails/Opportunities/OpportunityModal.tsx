@@ -32,7 +32,10 @@ import {
   MIN_LSIR_SCORE_CRITERIA_KEY,
 } from "./constants";
 import { EligibilityCriteria } from "./types";
-import { getEligibilityCriteria } from "./utils";
+import {
+  createOpportunityProviderDisplayName,
+  getEligibilityCriteria,
+} from "./utils";
 
 type OpportunityModalProps = {
   isOpen: boolean;
@@ -104,7 +107,12 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
   return (
     <Modal isOpen={isOpen} hideModal={hideModal}>
       <Styled.ModalHeaderWrapper>
-        <Styled.ModalHeader>{`${selectedOpportunity.opportunityName} - ${selectedOpportunity.providerName}`}</Styled.ModalHeader>
+        <Styled.ModalHeader>
+          {createOpportunityProviderDisplayName(
+            selectedOpportunity.opportunityName,
+            selectedOpportunity.providerName,
+          )}
+        </Styled.ModalHeader>
       </Styled.ModalHeaderWrapper>
 
       <Styled.ModalBody>
@@ -184,7 +192,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
           }}
         >
           {isAddedOpportunity
-            ? "- Remove Recommendation"
+            ? "Remove Recommendation"
             : "+ Add to recommendation"}
         </Styled.ActionButton>
       </Styled.StickyActionButtonWrapper>

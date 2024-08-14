@@ -18,7 +18,6 @@
 import { keyBy } from "lodash";
 import React, { Fragment, useState } from "react";
 
-import { Insight } from "../../../api";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
@@ -30,10 +29,8 @@ import {
 import { SummaryReport } from "./SummaryReport";
 import { RecommendationOption, RecommendationsProps } from "./types";
 
-const convertEventRateToPercentage = (
-  datapoint: Insight["rollupRecidivismSeries"][number]["dataPoints"],
-) => {
-  return parseFloat(datapoint[datapoint.length - 1].eventRate.toFixed(2)) * 100;
+const convertDecimalToPercentage = (decimal: number) => {
+  return Math.round(decimal * 100);
 };
 
 // TODO(Recidiviz/recidiviz-data#30651) Implement Recommendations flow
@@ -71,9 +68,36 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
     rollUpRecidivismSeriesByRecommendationType["Term"]?.dataPoints;
 
   const probationRecidivismRate =
-    convertEventRateToPercentage(probationDatapoints);
-  const riderRecidivismRate = convertEventRateToPercentage(riderDatapoints);
-  const termRecidivismRate = convertEventRateToPercentage(termDatapoints);
+    probationDatapoints &&
+    convertDecimalToPercentage(
+      probationDatapoints[probationDatapoints.length - 1].eventRate,
+    );
+  const probationHistoricalRate =
+    dispositionDataByRecommendationType[RecommendationType.Probation] &&
+    convertDecimalToPercentage(
+      dispositionDataByRecommendationType[RecommendationType.Probation]
+        .percentage,
+    );
+  const riderRecidivismRate =
+    riderDatapoints &&
+    convertDecimalToPercentage(
+      riderDatapoints[riderDatapoints.length - 1].eventRate,
+    );
+  const riderHistoricalRate =
+    dispositionDataByRecommendationType[RecommendationType.Rider] &&
+    convertDecimalToPercentage(
+      dispositionDataByRecommendationType[RecommendationType.Rider]?.percentage,
+    );
+  const termRecidivismRate =
+    termDatapoints &&
+    convertDecimalToPercentage(
+      termDatapoints[termDatapoints.length - 1].eventRate,
+    );
+  const termHistoricalRate =
+    dispositionDataByRecommendationType[RecommendationType.Term] &&
+    convertDecimalToPercentage(
+      dispositionDataByRecommendationType[RecommendationType.Term]?.percentage,
+    );
 
   const recommendationOptions: RecommendationOption[] = [
     {
@@ -86,25 +110,19 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
         ),
       ),
       recidivismRate: probationRecidivismRate,
-      historicalSentencingRate:
-        dispositionDataByRecommendationType[RecommendationType.Probation]
-          ?.percentage,
+      historicalSentencingRate: probationHistoricalRate,
     },
     {
       key: RecommendationType.Rider,
       label: RecommendationType.Rider,
       recidivismRate: riderRecidivismRate,
-      historicalSentencingRate:
-        dispositionDataByRecommendationType[RecommendationType.Rider]
-          ?.percentage,
+      historicalSentencingRate: riderHistoricalRate,
     },
     {
       key: RecommendationType.Term,
       label: RecommendationType.Term,
       recidivismRate: termRecidivismRate,
-      historicalSentencingRate:
-        dispositionDataByRecommendationType[RecommendationType.Term]
-          ?.percentage,
+      historicalSentencingRate: termHistoricalRate,
     },
     {
       key: RecommendationType.None,

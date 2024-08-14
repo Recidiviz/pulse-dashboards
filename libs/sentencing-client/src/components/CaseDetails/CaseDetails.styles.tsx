@@ -432,7 +432,7 @@ export const ActionButton = styled.button<{
 /** Recommendation: Summary and Report */
 export const RecommendationSummaryReport = styled.div`
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   justify-content: center;
   background-color: ${palette.white};
@@ -440,7 +440,7 @@ export const RecommendationSummaryReport = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 99;
 `;
 
 export const SummaryReportWrapper = styled.div`
@@ -834,6 +834,7 @@ export const ModalHeader = styled.div`
   ${typography.Sans24}
   color: ${palette.pine2};
   margin-bottom: 4px;
+  padding-right: 32px;
 `;
 
 export const ModalDescription = styled.div`
@@ -1154,7 +1155,7 @@ export const Pagination = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   margin-left: auto;
   margin-top: 20px;
 `;
@@ -1168,9 +1169,13 @@ export const Pages = styled.div`
 `;
 
 export const PaginationButton = styled.div<{ disabled?: boolean }>`
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 
   &:hover {
     cursor: pointer;

@@ -50,10 +50,11 @@ export const DropdownMultiSelectField: React.FC<InputFieldProps> = ({
       (option: SelectOption) => option.value === "None",
     );
     /**
-     * "None" as the first option means that it was either a single selection of "None", or
-     * the "None" selection already existed before an attempt to add a new item to the list.
+     * "None" as the first option means that the "None" selection already existed
+     * before an attempt to add a new item to the list.
      */
-    const hasNoneAsFirstOption = options[0].value === "None";
+    const hasNoneAsFirstOption =
+      options.length > 1 && options[0]?.value === "None";
 
     if (hasNoneOption && !hasNoneAsFirstOption) {
       // Clears out all other pre-selected options except for "None"

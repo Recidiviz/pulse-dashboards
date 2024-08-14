@@ -165,7 +165,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
     showOtherContextValuesMatch: ["Other"],
     otherContext: {
       key: "otherMentalHealthDiagnosis",
-      placeholder: "Please specify other need",
+      placeholder: "Please specify other diagnosis",
       value: null,
     },
   },
