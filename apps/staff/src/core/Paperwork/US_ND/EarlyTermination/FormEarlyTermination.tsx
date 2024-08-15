@@ -254,6 +254,8 @@ export const FormEarlyTermination: React.FC = () => {
           <FormParagraph>I concur,</FormParagraph>
           <Spacer size={176} />
           <section>
+            <FormManualEntry size={39} />
+            <br />
             <DOCXFormInput
               name="probationOfficerFullName"
               placeholder="Probation officer name"
@@ -265,6 +267,8 @@ export const FormEarlyTermination: React.FC = () => {
         <br />
         <SectionOfficerDate>
           <section>
+            <FormManualEntry size={39} />
+            <br />
             <DOCXFormInput
               name="statesAttorneyName"
               placeholder="States Attorney"
