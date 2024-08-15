@@ -32,7 +32,7 @@ import { OpportunityInfo } from "../../InsightsStore/models/OpportunityInfo";
 import { insightsUrl } from "../views";
 
 const OfficerWithOpportunityDetailsName = styled.h1`
-  ${typography.Sans12}
+  ${typography.Sans14}
   color: ${palette.pine1};
 `;
 const OfficerWithOpportunityDetailsInfo = styled.div`

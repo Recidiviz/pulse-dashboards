@@ -289,7 +289,10 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
             supervisionOfficerLabel.slice(1)}{" "}
           was excluded from some portion of this chart due to unusual patterns
           in their caseload. For more, see{" "}
-          <StyledLink to={methodologyUrl}>methodology</StyledLink>.
+          <StyledLink to={methodologyUrl} target="_blank">
+            methodology
+          </StyledLink>
+          .
         </NoteText>
       </NoteContainer>
     );
