@@ -19,6 +19,7 @@ import UserStore from "../../../../../RootStore/UserStore";
 import { OpportunityType } from "../../../OpportunityType";
 import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
+import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoRestrictiveHousingConfiguration } from "./UsMo/UsMoRestrictiveHousingConfiguration";
 
@@ -32,6 +33,7 @@ const customOpportunityConfigurations: Partial<
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoRestrictiveHousingStatusHearing: UsMoRestrictiveHousingConfiguration,
+  pastFTRD: UsIdPastFTRD,
 };
 
 export function apiOpportunityConfigurationFactory(
