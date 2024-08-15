@@ -247,7 +247,7 @@ In order to cherry-pick or revert:
 - Create a new branch.
 - Revert or cherry-pick the desired commit onto the new branch. For a detailed description of these steps, follow the steps in the 'Cherry-pick flow' section [here](https://github.com/Recidiviz/recidiviz-data/wiki/Code-Versioning-and-Release-Process#cherry-pick-flow) up to, but not including, 'All scenarios'.
 
-Once you've pushed the branch with the changes, create a PR for the change and set the base as the release branch selected earlier. Merge the change once approved. To deploy this change, switch to the release branch and pull the changes. Then deploy to production via the deploy script as normal, but be sure to select that this is a cherry-pick deploy when asked
+Once you've pushed the branch with the changes, create a PR for the change and set the base as the release branch selected earlier. Merge the change once approved. To deploy this change, switch to the release branch and pull the changes. Then deploy to production via the deploy script as normal, but be sure to select that this is a cherry-pick deploy when asked.
 
 #### Firestore rules
 
@@ -255,13 +255,11 @@ Firestore security rules and their tests are found in `./firestore-config`. Chan
 
 #### Deploy cadence
 
-Deploys to all environments are done ad-hoc, as an engineer sees fit. The team should merge code to main with the knowledge that a deploy could happen at any time, and put breaking changes / new functionality that is expected to launch on a specific date behind feature variants so they can be turned on and off separately from the code deploy.
+In most cases, deploys are run by the on-call engineer. The standard schedule is for `main` to be deployed to staging every workday afternoon, and for production+demo deploys twice a week (usually Tuesday and Thursday afternoons) promoting the version that was on staging overnight. Frontend and backend are always deployed simultaneously to ensure that everything remains in sync.
 
-Except in emergency situations, code should always be deployed to staging before it has been deployed to production. Deploys to production do not need to happen from HEAD, and engineers may opt to deploy to production from a commit that has "baked" in staging for some time.
+To keep the deploy process running smoothly, it's good practice to put breaking changes / new functionality that is expected to launch on a specific date behind feature variants so they can be turned on and off separately from the code deploy. Never knowingly put `main` in a state that can't be released to production.
 
-Deploys to production should not occur within a week of a major event that would cause a majority of team members to have unreliable availability, such as a company-wide retreat or Christmas holiday, except in emergency circumstances.
-
-Frontend production deploys should occur at least every 2 weeks, and backend production deploys should occur at least every month (except as noted above, where circumstances may cause much of the team to be unavailable). This minimum deploy cadence ensures that each deploy only changes the overall code by a small amount, making it easier to roll back and pinpoint root causes if we find issues.
+If there is an emergency fix that needs to go to production before the next scheduled deploy, run a [cherry-pick deploy](#cherry-pick-deploys). (If nothing but the fix has been merged to main since the last prod deploy, it's fine to just run normal staging and prod deploys instead.)
 
 ## Tests
 
@@ -358,17 +356,17 @@ Here's how you can access the staging and production instances on gcloud:
 :> redis-cli -h <host> -p <port> -a <password>
 ```
 
-### Jest
+### Vitest
 
-[Jest](https://facebook.github.io/jest/) is our testing framework. It provides a friendly testing API, a powerful and easy-to-use mocking functionality, and plenty of speed. Snapshot testing is also a nice feature but should be used with caution. It is served best as a supplement, rather than a substitute, of a robust set of unit tests that properly describes what a piece of code is intended to do.
+[Vitest](https://vitest.dev/) is our testing framework. It provides a friendly testing API, a powerful and easy-to-use mocking functionality, and plenty of speed. Snapshot testing is also a nice feature but should be used with caution. It is served best as a supplement, rather than a substitute, of a robust set of unit tests that properly describes what a piece of code is intended to do.
 
 To execute tests, see [Linting & running tests](#linting--running-tests).
 
-To add new tests, create a file with the same name as the file you are testing and append the extension `.test.js`. This file should be located in the same directory as the file you are testing.
+To add new tests, create a file with the same name as the file you are testing and append the extension `.test.ts`. This file should be located in the same directory as the file you are testing.
 
-For example, if you are testing the `Recidiviz` component which is defined in `Recidiviz.js`, you would add tests in `Recidiviz.test.js`.
+For example, if you are testing the `Recidiviz` component which is defined in `Recidiviz.js`, you would add tests in `Recidiviz.test.ts`.
 
-See Jest [API](https://jest-archive-august-2023.netlify.app/docs/27.x/api/) and [Docs](https://jest-archive-august-2023.netlify.app/docs/27.x/getting-started) for more information.
+See Vitest [API](https://vitest.dev/api/) and [Docs](https://vitest.dev/guide/) for more information.
 
 ### eslint
 
