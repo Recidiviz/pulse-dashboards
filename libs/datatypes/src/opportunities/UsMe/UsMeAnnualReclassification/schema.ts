@@ -25,7 +25,6 @@ import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 const usMeIncarcerationPastRelevantClassificationDate = z.object({
   latestClassificationDate: dateStringSchema.nullable(),
   reclassType: z.string(),
-  reclassesNeeded: z.number(),
 });
 
 export const usMeAnnualReclassificationSchema = opportunitySchemaBase

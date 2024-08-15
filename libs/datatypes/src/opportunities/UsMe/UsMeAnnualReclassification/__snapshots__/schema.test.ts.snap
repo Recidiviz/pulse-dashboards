@@ -17,7 +17,6 @@ exports[`schema for almostEligible 1`] = `
     "usMeIncarcerationPastRelevantClassificationDate": {
       "latestClassificationDate": null,
       "reclassType": "SEMIANNUAL",
-      "reclassesNeeded": 0,
     },
   },
   "stateCode": "US_ME",
@@ -31,7 +30,6 @@ exports[`schema for fullyEligible 1`] = `
     "usMeIncarcerationPastRelevantClassificationDate": {
       "latestClassificationDate": null,
       "reclassType": "ANNUAL",
-      "reclassesNeeded": 14,
     },
   },
   "externalId": "RES001",

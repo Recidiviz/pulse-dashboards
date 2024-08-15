@@ -30,7 +30,6 @@ export const usMeAnnualReclassificationFixtures = {
       usMeIncarcerationPastRelevantClassificationDate: {
         latestClassificationDate: null,
         reclassType: "ANNUAL",
-        reclassesNeeded: 14,
       },
     },
     formInformation: {
@@ -53,7 +52,6 @@ export const usMeAnnualReclassificationFixtures = {
       usMeIncarcerationPastRelevantClassificationDate: {
         latestClassificationDate: null,
         reclassType: "SEMIANNUAL",
-        reclassesNeeded: 0,
       },
     },
     formInformation: {
