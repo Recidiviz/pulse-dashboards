@@ -29,13 +29,16 @@ import { pluralize, toTitleCase } from "../../utils";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
   Body,
+  Grid,
   InsightsTooltip,
   Wrapper,
 } from "../InsightsPageLayout/InsightsPageLayout";
+import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
 import InsightsStaffCardV2 from "./InsightsStaffCardV2";
+import { InsightsSupervisorOpportunityDetailCard } from "./InsightsSupervisorOpportunityDetailCard";
 
 const HighlightedDescription = styled.span`
   border-bottom: 1px dashed ${palette.slate85};
@@ -69,6 +72,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     userCanAccessAllSupervisors,
     timePeriod,
     labels,
+    isWorkflowsEnabled,
+    opportunitiesDetails,
     outlierOfficersByMetricAndCaseloadCategory,
   } = presenter;
 
@@ -175,6 +180,28 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
             }
             officers={outlierOfficersData}
           />
+          {opportunitiesDetails &&
+            opportunitiesDetails.length > 0 &&
+            isWorkflowsEnabled && (
+              <InsightsPageSection
+                sectionTitle="Opportunities"
+                sectionDescription={`Take action on opportunities that ${labels.supervisionJiiLabel}s may be eligible for`}
+              >
+                <Wrapper isLaptop={isLaptop} supervisorHomepage>
+                  <Body>
+                    <Grid>
+                      {opportunitiesDetails.map((opportunityDetail) => (
+                        <InsightsSupervisorOpportunityDetailCard
+                          opportunityInfo={opportunityDetail}
+                          labels={labels}
+                          key={opportunityDetail.label}
+                        />
+                      ))}
+                    </Grid>
+                  </Body>
+                </Wrapper>
+              </InsightsPageSection>
+            )}
         </Body>
       </Wrapper>
     </InsightsPageLayout>

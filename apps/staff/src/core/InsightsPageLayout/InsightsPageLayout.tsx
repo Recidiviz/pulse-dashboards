@@ -60,7 +60,7 @@ export const Wrapper = styled.div<{
   gap: ${rem(spacing.md)};
 `;
 
-const Header = styled.div`
+export const Header = styled.div`
   flex-basis: 66%;
 `;
 
@@ -85,7 +85,7 @@ const HighlightedText = styled.span`
   }
 `;
 
-const InfoSection = styled.div<{
+export const InfoSection = styled.div<{
   isMobile: boolean;
   supervisorHomepage: boolean;
 }>`
@@ -195,6 +195,13 @@ export const InsightsTooltip = ({
     </TooltipTrigger>
   );
 };
+
+export const Grid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${rem(spacing.md)};
+  width: 100%;
+`;
 
 type InsightsPageLayoutProps = {
   pageTitle?: string;

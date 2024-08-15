@@ -21,7 +21,6 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
-import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
@@ -93,46 +92,6 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     },
   ];
 
-  if (outlierOfficerData && !outlierOfficerData.outlierMetrics.length) {
-    return (
-      <InsightsPageLayout
-        pageTitle={outlierOfficerData.displayName}
-        pageSubtitle="Outcomes"
-        infoItems={infoItems}
-        contentsAboveTitle={
-          supervisorsInfo &&
-          goToSupervisorInfo && (
-            <InsightsBreadcrumbs
-              previousPages={[
-                ...(userCanAccessAllSupervisors
-                  ? [
-                      {
-                        title: "All Supervisors",
-                        url: insightsUrl("supervisionSupervisorsList"),
-                      },
-                    ]
-                  : []),
-                {
-                  title: `${goToSupervisorInfo.displayName || labels.supervisionSupervisorLabel} Overview`,
-                  url: insightsUrl("supervisionSupervisor", {
-                    supervisorPseudoId: goToSupervisorInfo.pseudonymizedId,
-                  }),
-                },
-              ]}
-            >
-              {outlierOfficerData.displayName} Profile
-            </InsightsBreadcrumbs>
-          )
-        }
-      >
-        <EmptyCard message="Nice! No officer outcomes to review this month." />
-      </InsightsPageLayout>
-    );
-  }
-
-  // if the presenter is hydrated, this stuff should never be missing in practice
-  if (!outlierOfficerData) return <NotFound />;
-
   if (initialPageLoad) {
     presenter.trackStaffPageViewed();
     setInitialPageLoad(false);
@@ -140,7 +99,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 
   return (
     <InsightsPageLayout
-      pageTitle={outlierOfficerData.displayName}
+      pageTitle={outlierOfficerData?.displayName}
       pageSubtitle="Outcomes"
       infoItems={infoItems}
       contentsAboveTitle={
@@ -164,38 +123,43 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               },
             ]}
           >
-            {outlierOfficerData.displayName} Profile
+            {outlierOfficerData?.displayName} Profile
           </InsightsBreadcrumbs>
         )
       }
     >
-      <Wrapper isTablet={isTablet}>
-        {outlierOfficerData.outlierMetrics.map((metric) => {
-          const { bodyDisplayName } = metric.config;
+      {outlierOfficerData?.outlierMetrics &&
+      outlierOfficerData.outlierMetrics?.length > 0 ? (
+        <Wrapper isTablet={isTablet}>
+          {outlierOfficerData.outlierMetrics.map((metric) => {
+            const { bodyDisplayName } = metric.config;
 
-          return (
-            <InsightsChartCard
-              key={metric.metricId}
-              url={insightsUrl("supervisionStaffMetric", {
-                officerPseudoId,
-                metricId: metric.metricId,
-              })}
-              title={toTitleCase(bodyDisplayName)}
-              subtitle={timePeriod}
-              rate={formatTargetAndHighlight(
-                metric.currentPeriodData.metricRate,
-              )}
-              supervisorHomepage
-            >
-              <InsightsSwarmPlotContainerV2
-                metric={metric}
-                officersForMetric={[outlierOfficerData]}
-                isMinimized
-              />
-            </InsightsChartCard>
-          );
-        })}
-      </Wrapper>
+            return (
+              <InsightsChartCard
+                key={metric.metricId}
+                url={insightsUrl("supervisionStaffMetric", {
+                  officerPseudoId,
+                  metricId: metric.metricId,
+                })}
+                title={toTitleCase(bodyDisplayName)}
+                subtitle={timePeriod}
+                rate={formatTargetAndHighlight(
+                  metric.currentPeriodData.metricRate,
+                )}
+                supervisorHomepage
+              >
+                <InsightsSwarmPlotContainerV2
+                  metric={metric}
+                  officersForMetric={[outlierOfficerData]}
+                  isMinimized
+                />
+              </InsightsChartCard>
+            );
+          })}
+        </Wrapper>
+      ) : (
+        <EmptyCard message="Nice! No officer outcomes to review this month." />
+      )}
       {opportunitiesByType && (
         <OpportunitiesWrapper>
           <Subtitle>{`Opportunities (${numEligibleOpportunities ?? 0})`}</Subtitle>
@@ -219,15 +183,14 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   );
 });
 
-const InsightsStaffPageV2 = observer(function InsightsStaffPageV2()
-{
+const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
   const {
     insightsStore: { supervisionStore },
     workflowsRootStore: { justiceInvolvedPersonsStore },
   } = useRootStore();
   const officerPseudoId = supervisionStore?.officerPseudoId;
 
-  if (!officerPseudoId || !justiceInvolvedPersonsStore ) return null;
+  if (!officerPseudoId || !justiceInvolvedPersonsStore) return null;
 
   const presenter = new SupervisionOfficerPresenter(
     supervisionStore,

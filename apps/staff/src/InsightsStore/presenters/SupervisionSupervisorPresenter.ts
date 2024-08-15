@@ -317,7 +317,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    *
    * @private
    * @param {((SupervisionOfficer | ExcludedSupervisionOfficer)[])} allOfficers
-   * @return {*}  {RawOpportunityDetailsMap}
+   * @return {*}  {RawOpportunityInfoByOpportunityType}
    */
   private processOfficersAndOpportunities(
     allOfficers: (SupervisionOfficer | ExcludedSupervisionOfficer)[],
