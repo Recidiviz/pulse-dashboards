@@ -18,6 +18,7 @@
 import { UsMeMediumTrusteeRecord, usMeMediumTrusteeSchema } from "~datatypes";
 
 import { Resident } from "../../../Resident";
+import { UsMeMediumTrusteeForm } from "../../Forms/UsMeMediumTrusteeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 
 export class UsMeMediumTrusteeOpportunity extends OpportunityBase<
@@ -25,6 +26,8 @@ export class UsMeMediumTrusteeOpportunity extends OpportunityBase<
   UsMeMediumTrusteeRecord["output"]
 > {
   resident: Resident;
+
+  form: UsMeMediumTrusteeForm;
 
   constructor(resident: Resident) {
     super(
@@ -35,5 +38,7 @@ export class UsMeMediumTrusteeOpportunity extends OpportunityBase<
     );
 
     this.resident = resident;
+
+    this.form = new UsMeMediumTrusteeForm(this, this.resident.rootStore);
   }
 }

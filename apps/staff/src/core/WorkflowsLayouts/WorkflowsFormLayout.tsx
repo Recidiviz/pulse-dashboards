@@ -35,6 +35,7 @@ import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import AnnualClassificationReview from "../Paperwork/US_ME/AnnualReclassificationReview/AnnualReclassificationReview";
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
+import MediumTrustee from "../Paperwork/US_ME/MediumTrustee/MediumTrustee";
 import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCReview";
@@ -101,6 +102,7 @@ const FormComponents = {
   FormUsPaAdminSupervision,
   AnnualClassificationReview,
   FormUsMiSCCReview,
+  MediumTrustee,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;
