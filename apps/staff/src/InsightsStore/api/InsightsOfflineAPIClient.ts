@@ -185,6 +185,23 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       : officerFixture;
   }
 
+  async excludedSupervisionOfficer(
+    officerPseudoId: string,
+  ): Promise<ExcludedSupervisionOfficer> {
+    const { excludedSupervisionOfficerFixture } = await import(
+      "../models/offlineFixtures/ExcludedSupervisionOfficerFixture"
+    );
+
+    const officerFixture = excludedSupervisionOfficerFixture.find(
+      (o) => o.pseudonymizedId === officerPseudoId,
+    );
+
+    if (!officerFixture)
+      throw new Error(`Officer ${officerPseudoId} not present in fixture data`);
+
+    return officerFixture;
+  }
+
   async supervisionOfficerMetricEvents(
     officerPseudoId: string,
     metricId: string,

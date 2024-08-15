@@ -24,6 +24,10 @@ import {
   rawActionStrategyFixture,
 } from "../../models/offlineFixtures/ActionStrategyFixture";
 import { ADVERSE_METRIC_IDS } from "../../models/offlineFixtures/constants";
+import {
+  excludedSupervisionOfficerFixture,
+  rawExcludedSupervisionOfficerFixture,
+} from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
 import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import {
   metricBenchmarksFixture,
@@ -204,6 +208,27 @@ describe("InsightsAPIClient", () => {
     );
 
     expect(response).toEqual(supervisionOfficerFixture[0]);
+  });
+
+  it("excludedSupervisionOfficer calls the correct endpoint", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ officer: rawExcludedSupervisionOfficerFixture[0] }),
+    );
+    await client.excludedSupervisionOfficer("any-hashed-id");
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/excluded_officer/any-hashed-id`),
+    );
+  });
+
+  it("excludedSupervisionOfficer parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ officer: rawExcludedSupervisionOfficerFixture[0] }),
+    );
+    const response = await client.excludedSupervisionOfficer(
+      rawExcludedSupervisionOfficerFixture[0].pseudonymizedId,
+    );
+
+    expect(response).toEqual(excludedSupervisionOfficerFixture[0]);
   });
 
   it("supervisionOfficerMetricEvents calls the correct endpoint", async () => {

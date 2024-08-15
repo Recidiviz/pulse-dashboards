@@ -46,6 +46,9 @@ export interface InsightsAPI {
     supervisorPseudoId: string,
   ): Promise<Array<ExcludedSupervisionOfficer>>;
   supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer>;
+  excludedSupervisionOfficer(
+    officerPseudoId: string,
+  ): Promise<ExcludedSupervisionOfficer>;
   supervisionOfficerMetricEvents(
     officerPseudoId: string,
     metricId: string,

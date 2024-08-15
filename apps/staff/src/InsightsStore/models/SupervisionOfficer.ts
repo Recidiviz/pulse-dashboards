@@ -30,21 +30,24 @@ const supervisionOfficerBaseSchema = z.object({
   supervisorExternalIds: z.array(z.string()),
 });
 
+const withOutlierDataSchema = z.object({
+  caseloadType: z.string().nullable(),
+  outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
+  topXPctMetrics: z.array(
+    z.object({
+      metricId: z.string(),
+      topXPct: z.number(),
+    }),
+  ),
+  avgDailyPopulation: z
+    .number()
+    .transform((avgDailyPopulation) => Math.round(avgDailyPopulation)),
+});
+export type WithOutlierData = z.infer<typeof withOutlierDataSchema>;
+
 export const supervisionOfficerSchema = supervisionOfficerBaseSchema
-  .extend({
-    caseloadType: z.string().nullable(),
-    outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
-    topXPctMetrics: z.array(
-      z.object({
-        metricId: z.string(),
-        topXPct: z.number(),
-      }),
-    ),
-    avgDailyPopulation: z
-      .number()
-      .transform((avgDailyPopulation) => Math.round(avgDailyPopulation)),
-  })
   .transform(addDisplayName)
+  .and(withOutlierDataSchema)
   .transform((officer) => {
     // TODO(Recidiviz/recidiviz-data#31634): Remove this transformation once the backend does it
     const { caseloadType, ...officerWithoutCaseloadType } = officer;

@@ -138,6 +138,16 @@ export class InsightsAPIClient implements InsightsAPI {
     return supervisionOfficerSchema.parse(officerData);
   }
 
+  async excludedSupervisionOfficer(
+    officerPseudoId: string,
+  ): Promise<ExcludedSupervisionOfficer> {
+    // TODO: (#6044) Convert "/excluded_officer/" to "/officer/" once all officers are served from the same endpoint.
+    const endpoint = `${this.baseUrl}/excluded_officer/${officerPseudoId}`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const officerData = fetchedData.officer as unknown;
+    return excludedSupervisionOfficerSchema.parse(officerData);
+  }
+
   async supervisionOfficerMetricEvents(
     officerPseudoId: string,
     metricId: string,
