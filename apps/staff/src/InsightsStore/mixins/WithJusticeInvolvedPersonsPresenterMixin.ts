@@ -18,8 +18,6 @@
 import { initial, join, last } from "lodash";
 import { flowResult } from "mobx";
 
-import { Hydratable } from "~hydration-utils";
-
 import {
   JusticeInvolvedPerson,
   Opportunity,
@@ -36,9 +34,8 @@ import {
  * This requires that a class object using the `WithJusticeInvolvedPersonStoreMixin`
  * contains the following properties below.
  */
-type SupervisionBasePresenterWithHydratable = ConstrainedAbstractConstructor<
-  Hydratable & SupervisionBasePresenter
->;
+type SupervisionBasePresenterWithHydratable =
+  ConstrainedAbstractConstructor<SupervisionBasePresenter>;
 
 /**
  * This is a mixin ({@Link https://www.typescriptlang.org/docs/handbook/mixins.html}) that adds methods to a class
@@ -147,7 +144,7 @@ export function WithJusticeInvolvedPersonStore<
      * Counts the number of verified opportunities (eligible, almost eligible, overridden)
      * for clients assigned to a given officer.
      * @param officerExternalId - The external ID of the officer to count opportunities for.
-     * @returns The number of eligible opportunities for clients assigned to the officer.
+     * @returns The number of verified opportunities for clients assigned to the officer.
      */
     protected countOpportunitiesForOfficer(
       officerExternalId: string | undefined,

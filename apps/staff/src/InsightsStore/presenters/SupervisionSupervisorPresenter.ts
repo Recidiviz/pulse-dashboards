@@ -16,71 +16,432 @@
 // =============================================================================
 
 import { captureException } from "@sentry/react";
-import { flowResult, makeAutoObservable } from "mobx";
+import { ascending, descending } from "d3-array";
+import { computed, flowResult, makeObservable } from "mobx";
 
-import {
-  castToError,
-  Hydratable,
-  HydratesFromSource,
-  HydrationState,
-} from "~hydration-utils";
+import { castToError, HydratesFromSource, isHydrated } from "~hydration-utils";
 
+import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { Opportunity } from "../../WorkflowsStore/Opportunity";
+import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
+import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
+import { OpportunityInfo } from "../models/OpportunityInfo";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
 } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
+import { SupervisionOfficerWithOpportunityDetails } from "../models/SupervisionOfficerWithOpportunityDetails";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
+import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import {
   ByMetricAndCategory2DMap,
   ConfigLabels,
   MetricAndOutliersInfo,
   OutlierOfficerData,
+  RawOpportunityInfo,
+  RawOpportunityInfoByOpportunityType,
 } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
-export class SupervisionSupervisorPresenter implements Hydratable {
-  private hydrator: HydratesFromSource;
+/**
+ * The `SupervisionSupervisorPresenter` class is responsible for managing and presenting
+ * data related to a supervisor and their supervised officers within the Recidiviz platform.
+ * It handles data hydration, supervision data aggregation, metrics computation, and
+ * user-specific contextual information.
+ *
+ * It also extends to provide details about supervision supervisor opportunities.
+ */
+export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonStore(
+  SupervisionBasePresenter,
+) {
+  // ==============================
+  // Properties and Constructor
+  // ==============================
+
+  protected hydrator: HydratesFromSource;
 
   constructor(
-    private supervisionStore: InsightsSupervisionStore,
+    protected supervisionStore: InsightsSupervisionStore,
     public supervisorPseudoId: string,
+    justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
+    private opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+    super(supervisionStore);
+
+    this.justiceInvolvedPersonsStore = justiceInvolvedPersonsStore;
+    this.opportunityMapping = "opportunitiesEligible";
+
+    makeObservable<
+      SupervisionSupervisorPresenter,
+      | "processOfficersAndOpportunities"
+      | "buildOpportunitiesDetails"
+      | "expectMetricsPopulated"
+      | "expectOfficersWithOutliersPopulated"
+      | "expectExcludedOfficersPopulated"
+      | "expectSupervisorPopulated"
+      | "expectOutlierDataPopulated"
+      | "populateCaseload"
+      | "hydrator"
+      | "hydrationState"
+    >(
+      this,
+      {
+        expectOutlierDataPopulated: true,
+        expectSupervisorPopulated: true,
+        expectExcludedOfficersPopulated: true,
+        expectOfficersWithOutliersPopulated: true,
+        expectMetricsPopulated: true,
+        supervisorPseudoId: true,
+        outlierOfficersData: computed,
+        supervisorInfo: computed,
+        timePeriod: computed,
+        officersWithOutliersData: computed,
+        excludedOfficers: computed,
+        allOfficers: computed,
+        metricConfigsById: computed,
+        supervisorIsCurrentUser: computed,
+        userCanAccessAllSupervisors: computed,
+        labels: computed,
+        outlierOfficersByMetricAndCaseloadCategory: computed,
+        expectPopulated: computed,
+        populateMethods: computed,
+        populateOpportunitiesForOfficers: true,
+        populateCaseload: true,
+        populateOpportunityConfigurationStore: true,
+        expectOpportunityConfigurationStorePopulated: true,
+        hydrate: true,
+        trackViewed: true,
+        hydrator: true,
+        hydrationState: true,
+        opportunitiesDetails: true,
+        processOfficersAndOpportunities: true,
+        buildOpportunitiesDetails: true,
+      },
+      { autoBind: true },
+    );
 
     this.hydrator = new HydratesFromSource({
       populate: async () => {
-        await Promise.all([
-          flowResult(this.supervisionStore.populateMetricConfigs()),
-          flowResult(
-            this.supervisionStore.populateOfficersForSupervisor(
-              this.supervisorPseudoId,
-            ),
-          ),
-          flowResult(
-            this.supervisionStore.populateSupervisionOfficerSupervisors(),
-          ),
-          flowResult(
-            this.supervisionStore.populateExcludedOfficersForSupervisor(
-              this.supervisorPseudoId,
-            ),
-          ),
-        ]);
+        await Promise.all([...this.populateMethods]);
+        await this.populateCaseload();
       },
-      expectPopulated: [
-        this.expectMetricsPopulated,
-        this.expectOfficersPopulated,
-        this.expectExcludedOfficersPopulated,
-        this.expectSupervisorPopulated,
-        this.expectOutlierDataPopulated,
-      ],
+      expectPopulated: this.expectPopulated,
     });
   }
 
+  // ==============================
+  // Hydration and Initialization
+  // ==============================
+
   /**
-   * Augments officer data with all necessary relationships fully hydrated.
-   * If this fails for any reason the value will instead be the error that was encountered.
+   * Returns an array of promises representing the methods required to populate
+   * the necessary data for this presenter.
+   */
+  get populateMethods() {
+    return [
+      flowResult(this.supervisionStore.populateMetricConfigs()),
+      flowResult(
+        this.supervisionStore.populateOfficersForSupervisor(
+          this.supervisorPseudoId,
+        ),
+      ),
+      flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
+      flowResult(
+        this.supervisionStore.populateExcludedOfficersForSupervisor(
+          this.supervisorPseudoId,
+        ),
+      ),
+      flowResult(this.populateOpportunityConfigurationStore()),
+    ];
+  }
+
+  /**
+   * Returns an array of expectations for whether the necessary data has been populated.
+   */
+  get expectPopulated() {
+    return [
+      this.expectMetricsPopulated,
+      this.expectOfficersWithOutliersPopulated,
+      this.expectExcludedOfficersPopulated,
+      this.expectSupervisorPopulated,
+      this.expectOutlierDataPopulated,
+      this.expectOpportunityConfigurationStorePopulated,
+      () =>
+        this.expectClientsForOfficersPopulated(
+          this.allOfficers.map((o) => o.externalId),
+        ),
+    ];
+  }
+
+  // ==============================
+  // Supervision and Officer Data
+  // ==============================
+
+  /**
+   * Provides information about the currently selected supervisor.
+   * @returns The supervisor record, or `undefined` if not yet fetched.
+   */
+  get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
+    return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
+      this.supervisorPseudoId,
+    );
+  }
+
+  /**
+   * Provides outlier officers' data with all necessary relationships fully hydrated.
+   * @returns An array of `OutlierOfficerData` or `undefined` if an error occurs.
+   */
+  get outlierOfficersData(): OutlierOfficerData[] | undefined {
+    if (this.outlierDataOrError instanceof Error) {
+      return undefined;
+    }
+    return this.outlierDataOrError;
+  }
+
+  /**
+   * Provides a list of all officers in this supervisor's unit that were not
+   * explicitly excluded from outcomes.
+   * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.
+   */
+  get officersWithOutliersData(): SupervisionOfficer[] | undefined {
+    return this.supervisionStore.officersBySupervisorPseudoId.get(
+      this.supervisorPseudoId,
+    );
+  }
+
+  /**
+   * Provides a list of all officers excluded from outcomes in this supervisor's unit.
+   * @returns An array of `ExcludedSupervisionOfficer` or `undefined` if data is not available.
+   */
+  get excludedOfficers(): ExcludedSupervisionOfficer[] | undefined {
+    return this.supervisionStore.excludedOfficersBySupervisorPseudoId.get(
+      this.supervisorPseudoId,
+    );
+  }
+
+  /**
+   * Combines and returns all officers, both included and excluded, under this supervisor.
+   * @returns An array of `SupervisionOfficer` and `ExcludedSupervisionOfficer`, or `undefined`.
+   */
+  get allOfficers(): (SupervisionOfficer | ExcludedSupervisionOfficer)[] {
+    return [
+      ...(this.officersWithOutliersData || []),
+      ...(this.excludedOfficers || []),
+    ];
+  }
+
+  // ==============================
+  // Metrics and Labels
+  // ==============================
+
+  /**
+   * Provides access to all configured metrics by their IDs.
+   * @returns A map of metric configurations.
+   */
+  get metricConfigsById() {
+    return this.supervisionStore.metricConfigsById;
+  }
+
+  /**
+   * Provides configuration labels used within the supervision data.
+   * @returns A `ConfigLabels` object.
+   */
+  get labels(): ConfigLabels {
+    return this.supervisionStore.labels;
+  }
+
+  /**
+   * Returns all outlier officers of this supervisor, grouped by metric and caseload category.
+   * Includes officer-agnostic metric info.
+   * @returns A 2D map of outlier officers by metric and caseload category, or `undefined` if an error occurs.
+   */
+  get outlierOfficersByMetricAndCaseloadCategory():
+    | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
+    | undefined {
+    if (
+      this.outlierOfficersByMetricAndCaseloadCategoryOrError instanceof Error
+    ) {
+      captureException(this.outlierOfficersByMetricAndCaseloadCategoryOrError);
+      return undefined;
+    }
+    return this.outlierOfficersByMetricAndCaseloadCategoryOrError;
+  }
+
+  // ==============================
+  // Opportunity Details
+  // ==============================
+
+  /**
+   * Provides details about supervision supervisor opportunities.
+   * @returns An array of `OpportunityInfo` or `undefined` if workflows are not enabled or data is not available.
+   */
+  get opportunitiesDetails(): OpportunityInfo[] | undefined {
+    if (!this.isWorkflowsEnabled) return;
+
+    const { allOfficers } = this;
+
+    return allOfficers
+      ? this.buildOpportunitiesDetails(
+          this.processOfficersAndOpportunities(allOfficers),
+        )
+      : [];
+  }
+
+  /**
+   * Populates the caseload by getting all officers and populating opportunities for them.
+   */
+  async populateCaseload() {
+    if (!this.isWorkflowsEnabled) return;
+
+    const { allOfficers } = this;
+    if (allOfficers) {
+      await this.populateOpportunitiesForOfficers(
+        allOfficers.map((officer) => officer.externalId),
+      );
+    }
+  }
+
+  /**
+   * Populates the opportunity configuration store.
+   */
+  async populateOpportunityConfigurationStore() {
+    this.opportunityConfigurationStore.hydrate();
+  }
+
+  /**
+   * Processes officers and their clients, creating a map of raw opportunity details.
+   *
+   * @private
+   * @param {((SupervisionOfficer | ExcludedSupervisionOfficer)[])} allOfficers
+   * @return {*}  {RawOpportunityDetailsMap}
+   */
+  private processOfficersAndOpportunities(
+    allOfficers: (SupervisionOfficer | ExcludedSupervisionOfficer)[],
+  ): RawOpportunityInfoByOpportunityType {
+    return allOfficers.reduce(
+      (
+        acc: RawOpportunityInfoByOpportunityType,
+        officer: SupervisionOfficer | ExcludedSupervisionOfficer,
+      ) => {
+        const opportunitiesByType =
+          this.opportunitiesByTypeForOfficer(officer.externalId) ?? {};
+
+        Object.entries<[OpportunityType, Opportunity<JusticeInvolvedPerson>[]]>(
+          opportunitiesByType,
+        ).forEach(([oppType, opportunities]) => {
+          const opportunityType = oppType as OpportunityType;
+          const oppDetail =
+            acc.get(opportunityType) ??
+            this.initializeOpportunityDetail(opportunityType);
+
+          oppDetail.officersWithEligibleClients.push({
+            ...officer,
+            clientsEligibleCount: opportunities.length,
+          });
+          oppDetail.clientsEligibleCount += opportunities.length;
+
+          acc.set(opportunityType, oppDetail);
+        });
+
+        return acc;
+      },
+      new Map(),
+    );
+  }
+
+  /**
+   * Builds the opportunities details array from raw opportunity info.
+   *
+   * @private
+   * @param {RawOpportunityInfoByOpportunityType} rawOpportunityInfoMap
+   * @returns {OpportunityInfo[]}
+   */
+  private buildOpportunitiesDetails(
+    rawOpportunityInfoMap: RawOpportunityInfoByOpportunityType,
+  ): OpportunityInfo[] {
+    return Array.from(rawOpportunityInfoMap.values())
+      .toSorted(SupervisionSupervisorPresenter.sortOpportunitiesDetails)
+      .map(({ officersWithEligibleClients, homepagePosition, ...rest }) => ({
+        ...rest,
+        officersWithEligibleClients: officersWithEligibleClients.toSorted(
+          SupervisionSupervisorPresenter.sortSupervisionOfficerWithOpportunityDetails,
+        ),
+      }));
+  }
+
+  /**
+   * Initializes an opportunity detail object for a given opportunity type.
+   *
+   * @private
+   * @param {OpportunityType} opportunityType
+   * @returns {RawOpportunityInfo}
+   */
+  private initializeOpportunityDetail(
+    opportunityType: OpportunityType,
+  ): RawOpportunityInfo {
+    const { homepagePosition, priority, label } =
+      this.opportunityConfigurationStore.opportunities[opportunityType];
+    return {
+      priority,
+      label,
+      officersWithEligibleClients: [],
+      clientsEligibleCount: 0,
+      homepagePosition,
+    };
+  }
+
+  /**
+   * Asserts that the opportunity configuration store has been populated.
+   * @throws An error if the store is not hydrated.
+   */
+  expectOpportunityConfigurationStorePopulated() {
+    if (!isHydrated(this.opportunityConfigurationStore))
+      throw new Error("Opportunity configuration store not hydrated");
+  }
+
+  // ==============================
+  // User and Supervisor Context
+  // ==============================
+
+  /**
+   * Determines if the current supervisor is the logged-in user.
+   * @returns `true` if the supervisor is the current user, `false` otherwise.
+   */
+  get supervisorIsCurrentUser() {
+    return (
+      this.supervisorPseudoId ===
+      this.supervisionStore.currentSupervisorUser?.pseudonymizedId
+    );
+  }
+
+  /**
+   * Checks if the current user has access to all supervisors.
+   * @returns `true` if the user can access all supervisors, `false` otherwise.
+   */
+  get userCanAccessAllSupervisors() {
+    return this.supervisionStore.userCanAccessAllSupervisors;
+  }
+
+  /**
+   * Provides a string with the current time period.
+   * @returns The time period string or `undefined` if not available.
+   */
+  get timePeriod(): string | undefined {
+    return this.supervisionStore.benchmarksTimePeriod;
+  }
+
+  // ==============================
+  // Error Handling and Assertions
+  // ==============================
+
+  /**
+   * The outlier data for the `SupervisionOfficerSupervisor`
+   * @throws An error if the data is not available.
+   * @returns An array of `OutlierOfficerData` or an `Error` object.
    */
   private get outlierDataOrError(): OutlierOfficerData[] | Error {
     try {
@@ -105,69 +466,9 @@ export class SupervisionSupervisorPresenter implements Hydratable {
   }
 
   /**
-   * Provide outlier officers' data with all necessary relationships fully hydrated.
+   * Internal method to calculate the grouping of outlier officers by metric and caseload category.
+   * @returns A 2D map of outlier officers by metric and caseload category, or an `Error` object.
    */
-  get outlierOfficersData(): OutlierOfficerData[] | undefined {
-    if (this.outlierDataOrError instanceof Error) {
-      return undefined;
-    }
-    return this.outlierDataOrError;
-  }
-
-  /**
-   * Provides information about the currently selected supervisor
-   */
-  get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
-      this.supervisorPseudoId,
-    );
-  }
-
-  /**
-   * Provides string with current time period
-   */
-  get timePeriod(): string | undefined {
-    return this.supervisionStore.benchmarksTimePeriod;
-  }
-
-  /**
-   * Provides a list of all officers in this supervisor's unit that were not
-   * explicitly excluded from outcomes
-   */
-  get allOfficers(): SupervisionOfficer[] | undefined {
-    return this.supervisionStore.officersBySupervisorPseudoId.get(
-      this.supervisorPseudoId,
-    );
-  }
-
-  /**
-   * Provides a list of all officers excluded from outcomes in this supervisor's unit
-   */
-  get excludedOfficers(): ExcludedSupervisionOfficer[] | undefined {
-    return this.supervisionStore.excludedOfficersBySupervisorPseudoId.get(
-      this.supervisorPseudoId,
-    );
-  }
-
-  /**
-   * Provide access to all configured metrics.
-   */
-  get metricConfigsById() {
-    return this.supervisionStore.metricConfigsById;
-  }
-
-  get supervisorIsCurrentUser() {
-    return this.supervisionStore?.supervisorIsCurrentUser;
-  }
-
-  get userCanAccessAllSupervisors() {
-    return this.supervisionStore.userCanAccessAllSupervisors;
-  }
-
-  get labels(): ConfigLabels {
-    return this.supervisionStore.labels;
-  }
-
   private get outlierOfficersByMetricAndCaseloadCategoryOrError():
     | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
     | Error {
@@ -178,7 +479,6 @@ export class SupervisionSupervisorPresenter implements Hydratable {
         );
       }
 
-      //  outer map: by metric, inner map: by caseload category
       const resultMap: ByMetricAndCategory2DMap<MetricAndOutliersInfo> =
         new Map();
       this.outlierOfficersData.forEach((outlierOfficerData) => {
@@ -233,35 +533,31 @@ export class SupervisionSupervisorPresenter implements Hydratable {
   }
 
   /**
-   * Return all outlier officers of this supervisor, grouped by metric + caseload category. Includes
-   * officer-agnostic metric info (see metricConfigWithBenchmark field).
+   * Asserts that metrics have been populated.
+   * @throws An error if metrics are not populated.
    */
-  get outlierOfficersByMetricAndCaseloadCategory():
-    | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
-    | undefined {
-    if (
-      this.outlierOfficersByMetricAndCaseloadCategoryOrError instanceof Error
-    ) {
-      captureException(this.outlierOfficersByMetricAndCaseloadCategoryOrError);
-      return undefined;
-    }
-    return this.outlierOfficersByMetricAndCaseloadCategoryOrError;
-  }
-
   private expectMetricsPopulated() {
     if (this.supervisionStore.metricConfigsById === undefined)
       throw new Error("Failed to populate metrics");
   }
 
-  private expectOfficersPopulated() {
+  /**
+   * Asserts that officers with outliers have been populated.
+   * @throws An error if officers with outliers are not populated.
+   */
+  private expectOfficersWithOutliersPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(
         this.supervisorPseudoId,
       )
     )
-      throw new Error("failed to populate officers");
+      throw new Error("failed to populate officers with outliers");
   }
 
+  /**
+   * Asserts that excluded officers have been populated.
+   * @throws An error if excluded officers are not populated.
+   */
   private expectExcludedOfficersPopulated() {
     if (
       !this.supervisionStore.excludedOfficersBySupervisorPseudoId.has(
@@ -271,25 +567,25 @@ export class SupervisionSupervisorPresenter implements Hydratable {
       throw new Error("failed to populate excluded officers");
   }
 
+  /**
+   * Asserts that supervisor data has been populated.
+   * @throws An error if supervisor data is not populated.
+   */
   private expectSupervisorPopulated() {
     if (!this.supervisorInfo) throw new Error("failed to populate supervisor");
   }
 
+  /**
+   * Asserts that outlier data has been populated.
+   * @throws The encountered error if outlier data is not populated.
+   */
   private expectOutlierDataPopulated() {
     if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
   }
 
   /**
-   * Initiates hydration for all data needed within this presenter class
+   * Tracks the event when a supervisor's page is viewed by the user.
    */
-  async hydrate(): Promise<void> {
-    return this.hydrator.hydrate();
-  }
-
-  get hydrationState(): HydrationState {
-    return this.hydrator.hydrationState;
-  }
-
   trackViewed(): void {
     const { userPseudoId } =
       this.supervisionStore.insightsStore.rootStore.userStore;
@@ -303,5 +599,56 @@ export class SupervisionSupervisorPresenter implements Hydratable {
 
   get actionStrategyCopy(): ActionStrategyCopy | undefined {
     return this.supervisionStore.actionStrategyCopy;
+  }
+
+  // ==============================
+  // Static Sort Functions
+  // ==============================
+
+  /**
+   * Static method to sort opportunities details by priority, homepage position, and clients eligible count.
+   *
+   * @param {RawOpportunityInfo} a - The first opportunity info to compare.
+   * @param {RawOpportunityInfo} b - The second opportunity info to compare.
+   * @returns The comparison result as a number.
+   */
+  static sortOpportunitiesDetails(
+    a: RawOpportunityInfo,
+    b: RawOpportunityInfo,
+  ) {
+    // HIGH priority opportunityTypes should be first
+    if (a.priority !== b.priority) return a.priority === "HIGH" ? -1 : 1;
+
+    // Check homepage position
+    if (a.homepagePosition !== b.homepagePosition)
+      return ascending(a.homepagePosition, b.homepagePosition);
+
+    // Highest clients eligible count
+    if (a.clientsEligibleCount !== b.clientsEligibleCount)
+      return descending(a.clientsEligibleCount, b.clientsEligibleCount);
+
+    // Compare by label finally
+    return a.label.localeCompare(b.label);
+  }
+
+  /**
+   * Static method to sort supervision officers with opportunity details by clients eligible count and name.
+   *
+   * @param {SupervisionOfficerWithOpportunityDetails} a - The first officer to compare.
+   * @param {SupervisionOfficerWithOpportunityDetails} b - The second officer to compare.
+   * @returns The comparison result as a number.
+   */
+  static sortSupervisionOfficerWithOpportunityDetails(
+    a: SupervisionOfficerWithOpportunityDetails,
+    b: SupervisionOfficerWithOpportunityDetails,
+  ) {
+    const clientsEligibleCompare = descending(
+      a.clientsEligibleCount,
+      b.clientsEligibleCount,
+    );
+    // name
+    return clientsEligibleCompare !== 0
+      ? clientsEligibleCompare
+      : a.displayName.localeCompare(b.displayName);
   }
 }

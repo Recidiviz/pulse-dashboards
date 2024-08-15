@@ -47,7 +47,6 @@ export abstract class SupervisionOfficerPresenterBase
     public officerPseudoId: string,
   ) {
     super(supervisionStore);
-
     makeObservable<
       SupervisionOfficerPresenterBase,
       | "fetchedOfficerRecord"

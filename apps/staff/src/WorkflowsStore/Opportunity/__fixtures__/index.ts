@@ -82,7 +82,11 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {
   ...mockUsXxOppConfig,
+  priority: "NORMAL",
+  label: "Mock Opportunity Two",
+
   systemType: "INCARCERATION",
+  homepagePosition: 2,
 };
 
 export const MOCK_OPPORTUNITY_CONFIGS = {

@@ -14,20 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
 import { HydrationState } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
-import {
-  JusticeInvolvedPerson,
-  OpportunityType,
-} from "../../../WorkflowsStore";
+import { OpportunityType } from "../../../WorkflowsStore";
+import { JusticeInvolvedPersonBase } from "../../../WorkflowsStore/JusticeInvolvedPersonBase";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
+import { OpportunityBase } from "../../../WorkflowsStore/Opportunity/OpportunityBase";
 import { OpportunityConfiguration } from "../../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 
+/**
+ * Mock Opportunity for testing Workflows functionality in Insights
+ */
 export class MockOpportunity {
   constructor(
-    public person: JusticeInvolvedPerson,
+    public person: JusticeInvolvedPersonBase,
     public type: OpportunityType,
     public rootStore: RootStore,
   ) {}
@@ -45,4 +46,17 @@ export class MockOpportunity {
   get hydrationState() {
     return { status: "hydrated" } as HydrationState;
   }
+}
+
+/**
+ * Function that gives constructor for a MockOpportunity of the given type.
+ *
+ * Consider using to mock as a value on an `OpportunityFactory`, like `supervisionOpportunityConstructors`
+ */
+export function getMockOpportunityConstructor(type: OpportunityType) {
+  return class extends MockOpportunity {
+    constructor(person: JusticeInvolvedPersonBase, rootStore: RootStore) {
+      super(person, type, rootStore);
+    }
+  } as unknown as OpportunityBase<JusticeInvolvedPersonBase, any, any>;
 }

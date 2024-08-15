@@ -219,15 +219,15 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   );
 });
 
-const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
+const InsightsStaffPageV2 = observer(function InsightsStaffPageV2()
+{
   const {
     insightsStore: { supervisionStore },
     workflowsRootStore: { justiceInvolvedPersonsStore },
   } = useRootStore();
   const officerPseudoId = supervisionStore?.officerPseudoId;
 
-  if (!officerPseudoId) return null;
-  if (!justiceInvolvedPersonsStore) return null;
+  if (!officerPseudoId || !justiceInvolvedPersonsStore ) return null;
 
   const presenter = new SupervisionOfficerPresenter(
     supervisionStore,

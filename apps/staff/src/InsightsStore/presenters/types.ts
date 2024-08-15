@@ -17,9 +17,11 @@
 
 import { ValuesType } from "utility-types";
 
+import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 import { InsightsConfig } from "../models/InsightsConfig";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
+import { OpportunityInfo } from "../models/OpportunityInfo";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMetricOutlier";
@@ -84,3 +86,14 @@ export type MetricAndOutliersInfo = {
 
 /** Helper type to group information by metric and by caseload category */
 export type ByMetricAndCategory2DMap<V> = Map<string, Map<string | null, V>>;
+
+/**
+ * Type for object to hold data before transforming it into `OpportunityInfo`
+ */
+export type RawOpportunityInfo = OpportunityInfo & {
+  homepagePosition: number;
+};
+export type RawOpportunityInfoByOpportunityType = Map<
+  OpportunityType,
+  RawOpportunityInfo
+>;

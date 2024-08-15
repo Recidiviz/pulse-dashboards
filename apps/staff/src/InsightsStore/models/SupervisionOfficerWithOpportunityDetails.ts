@@ -16,26 +16,15 @@
 // =============================================================================
 
 import {
-  Hydratable,
-  HydratesFromSource,
-  HydrationState,
-} from "~hydration-utils";
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "./SupervisionOfficer";
 
-import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-
-export abstract class SupervisionBasePresenter implements Hydratable {
-  protected abstract hydrator: HydratesFromSource;
-
-  constructor(protected supervisionStore: InsightsSupervisionStore) {}
-
-  /**
-   * Initiates hydration for all data needed within this presenter class
-   */
-  async hydrate(): Promise<void> {
-    return this.hydrator.hydrate();
-  }
-
-  get hydrationState(): HydrationState {
-    return this.hydrator.hydrationState;
-  }
-}
+type WithOpportunityDetails = {
+  clientsEligibleCount: number;
+};
+export type SupervisionOfficerWithOpportunityDetails = (
+  | SupervisionOfficer
+  | ExcludedSupervisionOfficer
+) &
+  WithOpportunityDetails;

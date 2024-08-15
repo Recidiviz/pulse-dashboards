@@ -20,6 +20,10 @@ import { size } from "lodash";
 import { clientsData } from "../../../../../staff/tools/fixtures/clients";
 import { ClientRecord } from "../../../FirestoreStore";
 import { SupervisionOpportunityType } from "../../../WorkflowsStore";
+import {
+  mockUsXxOpp,
+  mockUsXxTwoOpp,
+} from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { clientInfoFixture } from "./ClientInfoFixture";
 import { excludedSupervisionOfficerFixture } from "./ExcludedSupervisionOfficerFixture";
 import { supervisionOfficerFixture } from "./SupervisionOfficerFixture";
@@ -34,9 +38,9 @@ export const CLIENTS_OFFICERS = [
 ];
 
 const ELIGIBLE_OPPORTUNITY_CASES = [
-  ["mockUsXxOpp"],
-  ["mockUsXxOpp", "mockUsXxOppTwo"],
-  ["mockUsXxOppTwo"],
+  [mockUsXxOpp],
+  [mockUsXxOpp, mockUsXxTwoOpp],
+  [mockUsXxTwoOpp],
 ];
 
 /**
@@ -49,11 +53,11 @@ export const clientFixture: Record<string, ClientRecord> = Object.entries(
   clientInfoFixture,
 ).reduce(
   /**
-   * Converts {@link clientInfoFixture} to {@link rawWorkflowsClientsData} 
+   * Converts {@link clientInfoFixture} to {@link rawWorkflowsClientsData}
    * @param acc mapping of pid to client
    * @param param1 @type [string, ClientInfoFixture]
    * @param idx index of the fixture in {@link clientsData}
-   * @returns 
+   * @returns
    */
   (acc, [pId, insightsClientInfo], idx) => {
     acc[pId] = {
@@ -67,7 +71,7 @@ export const clientFixture: Record<string, ClientRecord> = Object.entries(
       personName: insightsClientInfo.fullName,
       recordId: `us_xx_${insightsClientInfo.clientId}`,
       officerId: CLIENTS_OFFICERS[idx % CLIENTS_OFFICERS.length].externalId,
-      // One of the three opportunity cases, except for the last two, 
+      // One of the three opportunity cases, except for the last two,
       // where the client has no eligible opportunities.
       allEligibleOpportunities:
         size(clientInfoFixture) - idx <= 2

@@ -63,7 +63,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   const {
     supervisorInfo,
     outlierOfficersData,
-    allOfficers,
+    // TODO: (6040) Change this to `allOfficers` once backend is updated.
+    officersWithOutliersData: allOfficers,
     excludedOfficers,
     userCanAccessAllSupervisors,
     timePeriod,
@@ -183,13 +184,24 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 const InsightsSupervisorPageV2 = observer(function InsightsSupervisorPageV2() {
   const {
     insightsStore: { supervisionStore },
+    workflowsRootStore: {
+      justiceInvolvedPersonsStore,
+      opportunityConfigurationStore,
+    },
   } = useRootStore();
 
-  if (!supervisionStore?.supervisorPseudoId) return null;
+  if (
+    !supervisionStore?.supervisorPseudoId ||
+    !justiceInvolvedPersonsStore ||
+    !opportunityConfigurationStore
+  )
+    return null;
 
   const presenter = new SupervisionSupervisorPresenter(
     supervisionStore,
     supervisionStore.supervisorPseudoId,
+    justiceInvolvedPersonsStore,
+    opportunityConfigurationStore,
   );
 
   return (

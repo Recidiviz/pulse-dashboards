@@ -14,28 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
+import { SupervisionOfficerWithOpportunityDetails } from "./SupervisionOfficerWithOpportunityDetails";
 
-import {
-  Hydratable,
-  HydratesFromSource,
-  HydrationState,
-} from "~hydration-utils";
-
-import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-
-export abstract class SupervisionBasePresenter implements Hydratable {
-  protected abstract hydrator: HydratesFromSource;
-
-  constructor(protected supervisionStore: InsightsSupervisionStore) {}
-
-  /**
-   * Initiates hydration for all data needed within this presenter class
-   */
-  async hydrate(): Promise<void> {
-    return this.hydrator.hydrate();
-  }
-
-  get hydrationState(): HydrationState {
-    return this.hydrator.hydrationState;
-  }
-}
+export type OpportunityInfo = Pick<
+  OpportunityConfiguration,
+  "label" | "priority"
+> & {
+  officersWithEligibleClients: SupervisionOfficerWithOpportunityDetails[];
+  clientsEligibleCount: number;
+};

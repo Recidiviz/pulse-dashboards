@@ -58,7 +58,6 @@ beforeEach(() => {
 
   const rootStore = new RootStore();
   rootStore.tenantStore.currentTenantId = stateCode;
-
   store = new InsightsSupervisionStore(
     rootStore.insightsStore,
     InsightsConfigFixture,
