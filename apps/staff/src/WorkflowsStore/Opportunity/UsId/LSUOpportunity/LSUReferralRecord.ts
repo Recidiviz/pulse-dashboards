@@ -17,80 +17,74 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import {
-  defaultOnNull,
-  opportunitySchemaBase,
-  stringToIntSchema,
-} from "../../schemaHelpers";
+import { defaultOnNull, stringToIntSchema } from "../../schemaHelpers";
 import {
   eligibleCriteriaLsuED,
   ineligibleCriteriaLsuED,
 } from "../UsIdSharedCriteria";
 
-export const usIdLsuSchema = opportunitySchemaBase
-  .extend({
-    formInformation: z
-      .object({
-        chargeDescriptions: z.array(z.string()),
-        currentAddress: z.string(),
-        currentPhoneNumber: z.string(),
-        assessmentDate: z.string(),
-        assessmentScore: stringToIntSchema,
-        emailAddress: z.string(),
-        employerName: z.string(),
-        employerAddress: z.string(),
-        employmentStartDate: z.string(),
-        employmentDateVerified: z.string(),
-        latestNegativeDrugScreenDate: z.string(),
-        ncicReviewDate: z.string(),
-        ncicNoteTitle: z.string(),
-        ncicNoteBody: z.string(),
-        txDischargeDate: z.string(),
-        txNoteTitle: z.string(),
-        txNoteBody: z.string(),
-        caseNumbers: z.array(z.string()),
-      })
-      .partial(),
-    eligibleCriteria: eligibleCriteriaLsuED.extend({
-      usIdNoActiveNco: defaultOnNull(
-        z.object({
-          activeNco: z.boolean(),
-        }),
-        { activeNco: false },
-      ),
-      usIdLsirLevelLowFor90Days: z.object({
-        eligibleDate: dateStringSchema,
-        riskLevel: z.literal("LOW"),
+export const usIdLsuSchema = opportunitySchemaBase.extend({
+  formInformation: z
+    .object({
+      chargeDescriptions: z.array(z.string()),
+      currentAddress: z.string(),
+      currentPhoneNumber: z.string(),
+      assessmentDate: z.string(),
+      assessmentScore: stringToIntSchema,
+      emailAddress: z.string(),
+      employerName: z.string(),
+      employerAddress: z.string(),
+      employmentStartDate: z.string(),
+      employmentDateVerified: z.string(),
+      latestNegativeDrugScreenDate: z.string(),
+      ncicReviewDate: z.string(),
+      ncicNoteTitle: z.string(),
+      ncicNoteBody: z.string(),
+      txDischargeDate: z.string(),
+      txNoteTitle: z.string(),
+      txNoteBody: z.string(),
+      caseNumbers: z.array(z.string()),
+    })
+    .partial(),
+  eligibleCriteria: eligibleCriteriaLsuED.extend({
+    usIdNoActiveNco: defaultOnNull(
+      z.object({
+        activeNco: z.boolean(),
       }),
+      { activeNco: false },
+    ),
+    usIdLsirLevelLowFor90Days: z.object({
+      eligibleDate: dateStringSchema,
+      riskLevel: z.literal("LOW"),
+    }),
+    onSupervisionAtLeastOneYear: z
+      .object({
+        eligibleDate: dateStringSchema,
+      })
+      .partial()
+      .optional(),
+    usIdIncomeVerifiedWithin3Months: z
+      .object({
+        incomeVerifiedDate: dateStringSchema,
+      })
+      .optional(),
+  }),
+  ineligibleCriteria: ineligibleCriteriaLsuED
+    .extend({
       onSupervisionAtLeastOneYear: z
         .object({
           eligibleDate: dateStringSchema,
         })
-        .partial()
-        .optional(),
-      usIdIncomeVerifiedWithin3Months: z
-        .object({
-          incomeVerifiedDate: dateStringSchema,
-        })
-        .optional(),
-    }),
-    ineligibleCriteria: ineligibleCriteriaLsuED
-      .extend({
-        onSupervisionAtLeastOneYear: z
-          .object({
-            eligibleDate: dateStringSchema,
-          })
-          .partial(),
-        // this will only be here if the verification is missing, which is why it can only be null;
-        // however, it's easier to reason about downstream if it's a truthy value
-        usIdIncomeVerifiedWithin3Months: z.null().transform(() => true),
-      })
-      .partial(),
-    eligibleStartDate: dateStringSchema,
-  })
-  .merge(caseNotesSchema);
+        .partial(),
+      // this will only be here if the verification is missing, which is why it can only be null;
+      // however, it's easier to reason about downstream if it's a truthy value
+      usIdIncomeVerifiedWithin3Months: z.null().transform(() => true),
+    })
+    .partial(),
+  eligibleStartDate: dateStringSchema,
+});
 
 export type LSUReferralRecord = z.infer<typeof usIdLsuSchema>;
 export type LSUReferralRecordRaw = z.input<typeof usIdLsuSchema>;

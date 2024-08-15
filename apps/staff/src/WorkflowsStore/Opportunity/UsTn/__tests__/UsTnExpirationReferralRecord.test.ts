@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { identity } from "lodash";
+import { z } from "zod";
 
 import { OpportunityValidationError } from "../../../../errors";
 import { fieldToDate } from "../../../utils";
@@ -24,7 +25,7 @@ import {
   usTnExpirationSchema,
 } from "../UsTnExpirationOpportunity";
 
-const usTnExpirationRecordRaw = {
+const usTnExpirationRecordRaw: z.input<typeof usTnExpirationSchema> = {
   stateCode: "US_XX",
   externalId: "abc123",
   formInformation: {
@@ -36,7 +37,6 @@ const usTnExpirationRecordRaw = {
       contactType: "PSET",
     },
     sexOffenses: ["sex offense"],
-    gangAffiliation: "Gang A",
     latestEmp: {
       contactDate: "2022-05-05",
       contactType: "EMPV",
@@ -89,6 +89,7 @@ const usTnExpirationRecordRaw = {
       lifetimeFlag: false,
     },
   },
+  ineligibleCriteria: {},
 };
 
 const mockClient = {

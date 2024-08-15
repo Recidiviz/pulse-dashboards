@@ -18,19 +18,15 @@
 import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
-import { caseNotesSchema } from "../../utils/caseNotesSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
-export const usMeMediumTrusteeSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z.object({
-      usMeCustodyLevelIsMedium: z.object({}),
-      usMeFiveOrMoreYearsRemainingOnSentence: z.object({}),
-      usMeNoViolationFor5Years: z.null(),
-    }),
-    ineligibleCriteria: z.object({}),
-  })
-  .merge(caseNotesSchema);
+export const usMeMediumTrusteeSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z.object({
+    usMeCustodyLevelIsMedium: z.object({}),
+    usMeFiveOrMoreYearsRemainingOnSentence: z.object({}),
+    usMeNoViolationFor5Years: z.null(),
+  }),
+});
 
 export type UsMeMediumTrusteeRecord = ParsedRecord<
   typeof usMeMediumTrusteeSchema

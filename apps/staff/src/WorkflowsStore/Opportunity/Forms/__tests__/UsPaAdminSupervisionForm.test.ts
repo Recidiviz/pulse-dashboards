@@ -56,6 +56,7 @@ function createTestUnit() {
       usPaNotServingIneligibleOffenseForAdminSupervision: null,
     },
     ineligibleCriteria: {},
+    caseNotes: {},
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsPaAdminSupervisionOpportunity(person);

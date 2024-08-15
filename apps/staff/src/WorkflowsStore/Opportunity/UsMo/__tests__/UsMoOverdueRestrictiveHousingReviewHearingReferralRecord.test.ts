@@ -26,6 +26,7 @@ describe("UsMoOverdueRestrictiveHousingReviewHearingReferralRecord", () => {
       ),
     ).toMatchInlineSnapshot(`
       {
+        "caseNotes": {},
         "eligibleCriteria": {
           "usMoHearingAfterRestrictiveHousingStart": {
             "latestRestrictiveHousingHearingDate": 2023-10-15T00:00:00.000Z,
@@ -79,6 +80,7 @@ describe("UsMoOverdueRestrictiveHousingReviewHearingReferralRecord", () => {
     expect(usMoOverdueRestrictiveHousingReviewHearingSchema.parse(record))
       .toMatchInlineSnapshot(`
         {
+          "caseNotes": {},
           "eligibleCriteria": {
             "usMoHearingAfterRestrictiveHousingStart": {
               "latestRestrictiveHousingHearingDate": 2023-10-15T00:00:00.000Z,

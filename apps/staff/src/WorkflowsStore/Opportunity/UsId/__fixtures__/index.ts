@@ -275,6 +275,7 @@ export const pastFTRDRecordEligibleFixture: UsIdPastFTRDReferralRecord = {
     },
   },
   ineligibleCriteria: {},
+  caseNotes: {},
 };
 
 export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecord = {
@@ -286,6 +287,7 @@ export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecord = {
       eligibleDate: parseISO("2022-09-01"),
     },
   },
+  caseNotes: {},
 };
 
 export const pastFTRDEligibleClientRecord: ClientRecord = {

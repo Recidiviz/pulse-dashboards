@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData } from "firebase/firestore";
 import { intersection, xor } from "lodash";
 import {
   action,
@@ -31,7 +30,12 @@ import {
   values,
 } from "mobx";
 
-import { FullName, StaffRecord } from "~datatypes";
+import {
+  FullName,
+  OpportunityRecordBase,
+  opportunitySchemaBase,
+  StaffRecord,
+} from "~datatypes";
 import { isHydrated, isHydrationFinished } from "~hydration-utils";
 
 import {
@@ -133,10 +137,14 @@ export class JusticeInvolvedPersonBase<
                 opportunityType,
                 this as unknown as PersonClassForRecord<RecordType>,
               ) ??
-                new OpportunityBase<JusticeInvolvedPerson, DocumentData>(
+                new OpportunityBase<
+                  JusticeInvolvedPerson,
+                  OpportunityRecordBase
+                >(
                   this,
                   opportunityType,
                   rootStore,
+                  opportunitySchemaBase.parse,
                 ),
             );
           }

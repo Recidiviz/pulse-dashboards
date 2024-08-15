@@ -32,6 +32,7 @@ export const UsMiClassificationReviewReferralsFixture =
           eligibleDate: "2022-12-12",
         },
       },
+      ineligibleCriteria: {},
       metadata: { recommendedSupervisionLevel: "MEDIUM" },
       caseNotes: {
         Education: [
@@ -52,6 +53,7 @@ export const UsMiClassificationReviewReferralsFixture =
           eligibleDate: "2023-02-28",
         },
       },
+      ineligibleCriteria: {},
       metadata: {},
       caseNotes: {
         Education: [

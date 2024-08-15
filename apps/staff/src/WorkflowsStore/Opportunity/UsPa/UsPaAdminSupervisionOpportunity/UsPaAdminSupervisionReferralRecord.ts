@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { eligibleDateSchema } from "../../schemaHelpers";
 
 export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z.object({
@@ -32,7 +32,6 @@ export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
       })
       .nullable(),
   }),
-  ineligibleCriteria: z.object({}),
 });
 
 export type UsPaAdminSupervisionReferralRecord = z.infer<

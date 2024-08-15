@@ -144,6 +144,7 @@ export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecord = {
     },
   },
   ineligibleCriteria: {},
+  caseNotes: {},
 };
 
 export const usMiPastFTRDEligibleClientRecord: ClientRecord = {

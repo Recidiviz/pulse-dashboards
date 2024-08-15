@@ -17,24 +17,23 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-export const usCaSupervisionLevelDowngradeSchema = z.object({
-  stateCode: z.string(),
-  externalId: z.string(),
-  formInformation: z.object({
-    cdcno: z.string(),
-  }),
-  eligibleCriteria: z.object({
-    noSupervisionViolationWithin6Months: z.object({}).nullable(),
-    supervisionLevelIsHighFor6Months: z.object({
-      highStartDate: dateStringSchema,
+export const usCaSupervisionLevelDowngradeSchema = opportunitySchemaBase.extend(
+  {
+    formInformation: z.object({
+      cdcno: z.string(),
     }),
-    usCaAssessmentLevel3OrLower: z.object({}).nullable(),
-    usCaHousingTypeIsNotTransient: z.object({}).nullable(),
-  }),
-  ineligibleCriteria: z.object({}),
-});
+    eligibleCriteria: z.object({
+      noSupervisionViolationWithin6Months: z.object({}).nullable(),
+      supervisionLevelIsHighFor6Months: z.object({
+        highStartDate: dateStringSchema,
+      }),
+      usCaAssessmentLevel3OrLower: z.object({}).nullable(),
+      usCaHousingTypeIsNotTransient: z.object({}).nullable(),
+    }),
+  },
+);
 
 export type UsCaSupervisionLevelDowngradeReferralRecordRaw = z.input<
   typeof usCaSupervisionLevelDowngradeSchema

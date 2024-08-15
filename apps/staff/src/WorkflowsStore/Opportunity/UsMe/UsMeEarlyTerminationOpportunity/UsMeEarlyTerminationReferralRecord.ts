@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { NullCoalesce, opportunitySchemaBase } from "../../schemaHelpers";
+import { NullCoalesce } from "../../schemaHelpers";
 
 const usMePaidAllOwedRestitution = NullCoalesce(
   {},
@@ -64,12 +64,10 @@ const ineligibleCriteria = z.object({
     .optional(),
 });
 
-export const usMeEarlyTerminationSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria,
-    ineligibleCriteria,
-  })
-  .merge(caseNotesSchema);
+export const usMeEarlyTerminationSchema = opportunitySchemaBase.extend({
+  eligibleCriteria,
+  ineligibleCriteria,
+});
 
 export type UsMeEarlyTerminationReferralRecord = z.infer<
   typeof usMeEarlyTerminationSchema

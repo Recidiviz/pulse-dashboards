@@ -53,6 +53,7 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
       ),
     ).toMatchInlineSnapshot(`
       {
+        "caseNotes": {},
         "eligibleCriteria": {
           "usMoD1SanctionAfterMostRecentHearing": {
             "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
@@ -108,6 +109,7 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
       }),
     ).toMatchInlineSnapshot(`
       {
+        "caseNotes": {},
         "eligibleCriteria": {
           "usMoD1SanctionAfterMostRecentHearing": {
             "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,
@@ -157,6 +159,7 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
       ),
     ).toMatchInlineSnapshot(`
       {
+        "caseNotes": {},
         "eligibleCriteria": {
           "usMoD1SanctionAfterMostRecentHearing": {
             "latestRestrictiveHousingHearingDate": 2023-09-20T00:00:00.000Z,

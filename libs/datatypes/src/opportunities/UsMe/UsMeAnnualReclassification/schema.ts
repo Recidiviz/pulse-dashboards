@@ -19,7 +19,6 @@ import { z } from "zod";
 
 import { dateStringSchema } from "../../../utils/dateStringSchema";
 import { ParsedRecord } from "../../../utils/types";
-import { caseNotesSchema } from "../../utils/caseNotesSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 const usMeIncarcerationPastRelevantClassificationDate = z.object({
@@ -27,31 +26,29 @@ const usMeIncarcerationPastRelevantClassificationDate = z.object({
   reclassType: z.string(),
 });
 
-export const usMeAnnualReclassificationSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z
-      .object({
-        usMeIncarcerationPastRelevantClassificationDate,
-      })
-      .partial(),
-    ineligibleCriteria: z
-      .object({
-        usMeIncarcerationPastRelevantClassificationDate,
-      })
-      .partial(),
-    formInformation: z.object({
-      arrivalDate: dateStringSchema,
-      casePlanGoals: z.string().optional(),
-      currentOffenses: z.string().optional(),
-      programEnrollment: z.string().optional(),
-      disciplinaryReports: z.string().optional(),
-      furloughs: z.string().optional(),
-      workAssignments: z.string().optional(),
-      escapeHistory10Years: z.string().optional(),
-      sentenceIncludesProbation: z.string().optional(),
-    }),
-  })
-  .merge(caseNotesSchema);
+export const usMeAnnualReclassificationSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z
+    .object({
+      usMeIncarcerationPastRelevantClassificationDate,
+    })
+    .partial(),
+  ineligibleCriteria: z
+    .object({
+      usMeIncarcerationPastRelevantClassificationDate,
+    })
+    .partial(),
+  formInformation: z.object({
+    arrivalDate: dateStringSchema,
+    casePlanGoals: z.string().optional(),
+    currentOffenses: z.string().optional(),
+    programEnrollment: z.string().optional(),
+    disciplinaryReports: z.string().optional(),
+    furloughs: z.string().optional(),
+    workAssignments: z.string().optional(),
+    escapeHistory10Years: z.string().optional(),
+    sentenceIncludesProbation: z.string().optional(),
+  }),
+});
 
 export type UsMeAnnualReclassificationRecord = ParsedRecord<
   typeof usMeAnnualReclassificationSchema

@@ -20,9 +20,8 @@
 import { cloneDeep } from "lodash";
 import { z } from "zod";
 
-import { caseNotesSchema } from "~datatypes";
+import { opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase } from "../../schemaHelpers";
 import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
 export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
@@ -40,10 +39,8 @@ export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
         ineligibleCriteria: z.array(z.string()),
       }),
     }),
-    ineligibleCriteria: z.object({}),
     formInformation,
   })
-  .merge(caseNotesSchema)
   .transform((r) => {
     const out = cloneDeep(r);
     if (!out.caseNotes["ASSAULTIVE DISCIPLINARIES"])

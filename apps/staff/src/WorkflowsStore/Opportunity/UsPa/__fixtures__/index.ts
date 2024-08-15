@@ -34,6 +34,7 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
       },
     },
     ineligibleCriteria: {},
+    caseNotes: {},
   };
 
 export const usPaAdminSupervisionEligibleClientRecord: ClientRecord = {

@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 import { OpportunityValidationError } from "../../errors";
 import { toTitleCase } from "../../utils";
@@ -26,20 +26,15 @@ import { ValidateFunction } from "../subscriptions";
 
 export const supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter =
   (fmt: (raw: string) => string = (s) => s) =>
-    z
-      .object({
-        stateCode: z.string(),
-        externalId: z.string(),
-        eligibleCriteria: z.object({
-          supervisionLevelHigherThanAssessmentLevel: z.object({
-            latestAssessmentDate: dateStringSchema.nullable(),
-            assessmentLevel: z.string().transform(toTitleCase),
-            supervisionLevel: z.string().transform(fmt),
-          }),
+    opportunitySchemaBase.extend({
+      eligibleCriteria: z.object({
+        supervisionLevelHigherThanAssessmentLevel: z.object({
+          latestAssessmentDate: dateStringSchema.nullable(),
+          assessmentLevel: z.string().transform(toTitleCase),
+          supervisionLevel: z.string().transform(fmt),
         }),
-        ineligibleCriteria: z.object({}),
-      })
-      .merge(caseNotesSchema);
+      }),
+    });
 
 export type SupervisionLevelDowngradeReferralRecordRaw = z.input<
   ReturnType<

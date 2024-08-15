@@ -17,9 +17,8 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase } from "../../schemaHelpers";
 import {
   custodyLevelIsMinimum,
   notServingForSexualOffense,
@@ -27,29 +26,26 @@ import {
   usIdNoDetainersForXcrcAndCrc,
 } from "../UsIdSharedCriteria";
 
-export const usIdExpandedCRCSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z.object({
-      custodyLevelIsMinimum,
-      notServingForSexualOffense,
-      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-      usIdNoDetainersForXcrcAndCrc,
-      usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: z.object({
-        fullTermCompletionDate: dateStringSchema.nullable(),
-        paroleEligibilityDate: dateStringSchema.nullable(),
-        tentativeParoleDate: dateStringSchema.nullable(),
-      }),
-      usIdInCrcFacilityOrPwccUnit1: z.object({
-        crcStartDate: dateStringSchema,
-        facilityName: z.string(),
-      }),
-      usIdInCrcFacilityOrPwccUnit1For60Days: z.object({
-        sixtyDaysInCrcFacilityDate: dateStringSchema,
-      }),
+export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z.object({
+    custodyLevelIsMinimum,
+    notServingForSexualOffense,
+    usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
+    usIdNoDetainersForXcrcAndCrc,
+    usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: z.object({
+      fullTermCompletionDate: dateStringSchema.nullable(),
+      paroleEligibilityDate: dateStringSchema.nullable(),
+      tentativeParoleDate: dateStringSchema.nullable(),
     }),
-    ineligibleCriteria: z.object({}),
-  })
-  .merge(caseNotesSchema);
+    usIdInCrcFacilityOrPwccUnit1: z.object({
+      crcStartDate: dateStringSchema,
+      facilityName: z.string(),
+    }),
+    usIdInCrcFacilityOrPwccUnit1For60Days: z.object({
+      sixtyDaysInCrcFacilityDate: dateStringSchema,
+    }),
+  }),
+});
 
 export type UsIdExpandedCRCReferralRecord = z.infer<
   typeof usIdExpandedCRCSchema

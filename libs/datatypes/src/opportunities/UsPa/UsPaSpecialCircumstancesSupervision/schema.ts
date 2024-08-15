@@ -19,7 +19,6 @@ import { z } from "zod";
 
 import { dateStringSchema } from "../../../utils/dateStringSchema";
 import { ParsedRecord } from "../../../utils/types";
-import { caseNotesSchema } from "../../utils/caseNotesSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 const possiblyIneligibleCriteria = z
@@ -32,8 +31,8 @@ const possiblyIneligibleCriteria = z
   })
   .partial();
 
-export const usPaSpecialCircumstancesSupervisionSchema = opportunitySchemaBase
-  .extend({
+export const usPaSpecialCircumstancesSupervisionSchema =
+  opportunitySchemaBase.extend({
     eligibleCriteria: possiblyIneligibleCriteria.extend({
       usPaMeetsSpecialCircumstancesCriteriaForSanctions: z
         .object({
@@ -47,8 +46,7 @@ export const usPaSpecialCircumstancesSupervisionSchema = opportunitySchemaBase
         .nullable(),
     }),
     ineligibleCriteria: possiblyIneligibleCriteria,
-  })
-  .merge(caseNotesSchema);
+  });
 
 export type UsPaSpecialCircumstancesSupervisionRecord = ParsedRecord<
   typeof usPaSpecialCircumstancesSupervisionSchema

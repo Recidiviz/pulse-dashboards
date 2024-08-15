@@ -17,7 +17,24 @@
 
 import { z } from "zod";
 
+import { dateStringSchema } from "../../utils/dateStringSchema";
+
+const caseNoteSchema = z
+  .object({
+    noteTitle: z.string().nullable(),
+    noteBody: z.string().nullable(),
+    eventDate: dateStringSchema.nullable(),
+  })
+  .partial();
+
+const baseCriteriaSchema = z.record(z.record(z.any()).nullable());
+
 export const opportunitySchemaBase = z.object({
   stateCode: z.string(),
   externalId: z.string(),
+  eligibleCriteria: baseCriteriaSchema,
+  ineligibleCriteria: baseCriteriaSchema,
+  caseNotes: z.record(z.array(caseNoteSchema)).default({}),
 });
+
+export type OpportunityRecordBase = z.infer<typeof opportunitySchemaBase>;

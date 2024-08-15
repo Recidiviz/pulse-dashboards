@@ -60,6 +60,7 @@ exports[`eligibleCriteria must not be empty 1`] = `
 exports[`ineligiibleCriteria 1`] = `
 {
   "data": {
+    "caseNotes": {},
     "eligibleCriteria": {
       "supervisionPastEarlyDischargeDate": {
         "eligibleDate": 2022-01-03T00:00:00.000Z,
@@ -125,6 +126,7 @@ exports[`must not have revocation date 1`] = `
 
 exports[`transform record 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "supervisionPastEarlyDischargeDate": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,

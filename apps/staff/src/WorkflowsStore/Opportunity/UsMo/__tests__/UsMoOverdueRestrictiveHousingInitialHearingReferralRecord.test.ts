@@ -26,6 +26,7 @@ describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
       ),
     ).toMatchInlineSnapshot(`
       {
+        "caseNotes": {},
         "eligibleCriteria": {
           "usMoInRestrictiveHousing": {
             "confinementType": "COMMUNITY",
@@ -77,6 +78,7 @@ describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
     expect(usMoOverdueRestrictiveHousingInitialHearingSchema.parse(record))
       .toMatchInlineSnapshot(`
         {
+          "caseNotes": {},
           "eligibleCriteria": {
             "usMoInRestrictiveHousing": {
               "confinementType": "COMMUNITY",

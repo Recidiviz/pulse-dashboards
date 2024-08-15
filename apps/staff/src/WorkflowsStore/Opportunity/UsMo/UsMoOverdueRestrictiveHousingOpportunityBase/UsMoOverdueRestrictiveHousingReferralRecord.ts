@@ -17,9 +17,8 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase } from "../../schemaHelpers";
 import { usMoMetadataSchema as metadata } from "../common";
 
 export const usMoInRestrictiveHousing = z.object({

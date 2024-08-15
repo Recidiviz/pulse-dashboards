@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { identity } from "lodash";
+import { z } from "zod";
 
 import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "..";
 
@@ -27,12 +28,14 @@ const mockClient = {
   },
 };
 
-const transformer = usMiClassificationReviewSchemaForSupervisionLevelFormatter(
+const schema = usMiClassificationReviewSchemaForSupervisionLevelFormatter(
   mockClient.rootStore.workflowsStore.formatSupervisionLevel,
-).parse;
+);
+
+type RawRecord = z.input<typeof schema>;
 
 test("transform record for initial CR", () => {
-  const rawRecord: Record<string, any> = {
+  const rawRecord: RawRecord = {
     stateCode: "US_MI",
     externalId: "cr-eligible-1",
     eligibleCriteria: {
@@ -44,6 +47,7 @@ test("transform record for initial CR", () => {
         eligibleDate: "2022-12-12",
       },
     },
+    ineligibleCriteria: {},
     metadata: { recommendedSupervisionLevel: "MEDIUM" },
     caseNotes: {
       "Recommended supervision level": [
@@ -63,11 +67,11 @@ test("transform record for initial CR", () => {
     },
   };
 
-  expect(transformer(rawRecord)).toMatchSnapshot();
+  expect(schema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("transform record for six-month CR", () => {
-  const rawRecord: Record<string, any> = {
+  const rawRecord: RawRecord = {
     stateCode: "US_MI",
     externalId: "cr-eligible-2",
     eligibleCriteria: {
@@ -79,6 +83,7 @@ test("transform record for six-month CR", () => {
         eligibleDate: "2019-01-12",
       },
     },
+    ineligibleCriteria: {},
     metadata: { recommendedSupervisionLevel: "MEDIUM" },
     caseNotes: {
       "Recommended supervision level": [
@@ -91,10 +96,11 @@ test("transform record for six-month CR", () => {
     },
   };
 
-  expect(transformer(rawRecord)).toMatchSnapshot();
+  expect(schema.parse(rawRecord)).toMatchSnapshot();
 });
 
 test("expect to fail if both date reasons are set", () => {
+  // Not typed as RawRecord because this is intentionally invalid
   const rawRecord: Record<string, any> = {
     stateCode: "US_MI",
     externalId: "cr-eligible-2",
@@ -110,6 +116,7 @@ test("expect to fail if both date reasons are set", () => {
         eligibleDate: "2019-01-12",
       },
     },
+    ineligibleCriteria: {},
     metadata: { recommendedSupervisionLevel: "MEDIUM" },
     caseNotes: {
       "Recommended supervision level": [
@@ -122,11 +129,11 @@ test("expect to fail if both date reasons are set", () => {
     },
   };
 
-  expect(() => transformer(rawRecord)).toThrow();
+  expect(() => schema.parse(rawRecord)).toThrow();
 });
 
 test("transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLevel", () => {
-  const rawRecord: Record<string, any> = {
+  const rawRecord: RawRecord = {
     stateCode: "US_MI",
     externalId: "cr-eligible-3",
     eligibleCriteria: {
@@ -135,8 +142,9 @@ test("transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLeve
         eligibleDate: "2023-03-14",
       },
     },
+    ineligibleCriteria: {},
     metadata: {},
   };
 
-  expect(transformer(rawRecord)).toMatchSnapshot();
+  expect(schema.parse(rawRecord)).toMatchSnapshot();
 });

@@ -19,54 +19,52 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema } from "~datatypes";
+import { opportunitySchemaBase } from "~datatypes";
 
-import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { eligibleDateSchema } from "../../schemaHelpers";
 
 export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
   formatter: (raw: string) => string = (s) => s,
 ) =>
-  opportunitySchemaBase
-    .extend({
-      eligibleCriteria: z
-        .object({
-          usMiNotAlreadyOnLowestEligibleSupervisionLevel: z
-            .object({
-              supervisionLevel: z.string().transform(formatter).nullable(),
-              requiresSoRegistration: z.boolean().nullable(),
-            })
-            .nullable(),
-        })
-        .and(
-          // this tells zod (and typescript) that we expect exactly one of these fields to be set
-          z.union([
-            z.object({
-              usMiPastInitialClassificationReviewDate: eligibleDateSchema,
-              usMiSixMonthsPastLastClassificationReviewDate: z.undefined(),
-            }),
-            z.object({
-              usMiPastInitialClassificationReviewDate: z.undefined(),
-              usMiSixMonthsPastLastClassificationReviewDate: eligibleDateSchema,
-            }),
-          ]),
-        )
-        .transform(
-          ({
-            usMiPastInitialClassificationReviewDate,
-            usMiSixMonthsPastLastClassificationReviewDate,
-            ...rest
-          }) => ({
-            usMiClassificationReviewPastDueDate:
-              usMiPastInitialClassificationReviewDate ??
-              usMiSixMonthsPastLastClassificationReviewDate,
-            ...rest,
+  opportunitySchemaBase.extend({
+    eligibleCriteria: z
+      .object({
+        usMiNotAlreadyOnLowestEligibleSupervisionLevel: z
+          .object({
+            supervisionLevel: z.string().transform(formatter).nullable(),
+            requiresSoRegistration: z.boolean().nullable(),
+          })
+          .nullable(),
+      })
+      .and(
+        // this tells zod (and typescript) that we expect exactly one of these fields to be set
+        z.union([
+          z.object({
+            usMiPastInitialClassificationReviewDate: eligibleDateSchema,
+            usMiSixMonthsPastLastClassificationReviewDate: z.undefined(),
           }),
-        ),
-      metadata: z.object({
-        recommendedSupervisionLevel: z.string().optional(),
-      }),
-    })
-    .merge(caseNotesSchema);
+          z.object({
+            usMiPastInitialClassificationReviewDate: z.undefined(),
+            usMiSixMonthsPastLastClassificationReviewDate: eligibleDateSchema,
+          }),
+        ]),
+      )
+      .transform(
+        ({
+          usMiPastInitialClassificationReviewDate,
+          usMiSixMonthsPastLastClassificationReviewDate,
+          ...rest
+        }) => ({
+          usMiClassificationReviewPastDueDate:
+            usMiPastInitialClassificationReviewDate ??
+            usMiSixMonthsPastLastClassificationReviewDate,
+          ...rest,
+        }),
+      ),
+    metadata: z.object({
+      recommendedSupervisionLevel: z.string().optional(),
+    }),
+  });
 
 export type UsMiClassificationReviewReferralRecordRaw = z.input<
   ReturnType<typeof usMiClassificationReviewSchemaForSupervisionLevelFormatter>

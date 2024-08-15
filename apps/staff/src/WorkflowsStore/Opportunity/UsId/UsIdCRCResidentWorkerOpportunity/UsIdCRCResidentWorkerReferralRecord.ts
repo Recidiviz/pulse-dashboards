@@ -17,9 +17,8 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase } from "../../schemaHelpers";
 import {
   custodyLevelIsMinimum,
   notServingForSexualOffense,
@@ -55,83 +54,80 @@ const usIdCrcResidentWorkerTimeBasedCriteria = z.object({
   ),
 });
 
-export const usIdCRCResidentWorkerSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z
-      .object({
-        custodyLevelIsMinimum,
-        notServingForSexualOffense,
-        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-        usIdNoDetainersForXcrcAndCrc,
-        usIdCrcResidentWorkerTimeBasedCriteria,
-        // The three criteria below do not come directly from firestore
-        // but are instead derived from usIdCrcResidentWorkerTimeBasedCriteria
-        usIdIncarcerationWithin7YearsOfFtcdOrTpd: z
-          .object({
-            fullTermCompletionDate: dateStringSchema.nullable(),
-            tentativeParoleDate: dateStringSchema.nullable(),
-          })
-          .optional(),
-        usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd: z
-          .object({
-            fullTermCompletionDate: dateStringSchema,
-            paroleEligibilityDate: dateStringSchema,
-            nextParoleHearingDate: dateStringSchema,
-          })
-          .optional(),
-        usIdIncarcerationWithin3YearsOfTpdAndLifeSentence: z
-          .object({
-            tentativeParoleDate: dateStringSchema,
-          })
-          .optional(),
-      })
-      .transform(
-        ({ usIdCrcResidentWorkerTimeBasedCriteria: timeCriteria, ...rest }) => {
-          const transformedCriteria = { ...rest };
-          const criteriaPriority = [
-            "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD",
-            "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD",
-            "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE",
-          ];
+export const usIdCRCResidentWorkerSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z
+    .object({
+      custodyLevelIsMinimum,
+      notServingForSexualOffense,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
+      usIdNoDetainersForXcrcAndCrc,
+      usIdCrcResidentWorkerTimeBasedCriteria,
+      // The three criteria below do not come directly from firestore
+      // but are instead derived from usIdCrcResidentWorkerTimeBasedCriteria
+      usIdIncarcerationWithin7YearsOfFtcdOrTpd: z
+        .object({
+          fullTermCompletionDate: dateStringSchema.nullable(),
+          tentativeParoleDate: dateStringSchema.nullable(),
+        })
+        .optional(),
+      usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd: z
+        .object({
+          fullTermCompletionDate: dateStringSchema,
+          paroleEligibilityDate: dateStringSchema,
+          nextParoleHearingDate: dateStringSchema,
+        })
+        .optional(),
+      usIdIncarcerationWithin3YearsOfTpdAndLifeSentence: z
+        .object({
+          tentativeParoleDate: dateStringSchema,
+        })
+        .optional(),
+    })
+    .transform(
+      ({ usIdCrcResidentWorkerTimeBasedCriteria: timeCriteria, ...rest }) => {
+        const transformedCriteria = { ...rest };
+        const criteriaPriority = [
+          "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD",
+          "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD",
+          "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE",
+        ];
 
-          const criteriaFound = timeCriteria.reasons.reduce(
-            (acc: any, { criteriaName, ...otherReasons }: any) => {
-              acc[criteriaName] = otherReasons;
-              return acc;
-            },
-            {},
-          );
+        const criteriaFound = timeCriteria.reasons.reduce(
+          (acc: any, { criteriaName, ...otherReasons }: any) => {
+            acc[criteriaName] = otherReasons;
+            return acc;
+          },
+          {},
+        );
 
-          for (const criteria of criteriaPriority) {
-            if (criteriaFound[criteria]) {
-              switch (criteria) {
-                case "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD":
-                  transformedCriteria.usIdIncarcerationWithin7YearsOfFtcdOrTpd =
-                    criteriaFound[criteria];
-                  break;
-                case "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD":
-                  transformedCriteria.usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd =
-                    criteriaFound[criteria];
-                  break;
-                case "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE":
-                  transformedCriteria.usIdIncarcerationWithin3YearsOfTpdAndLifeSentence =
-                    criteriaFound[criteria];
-                  break;
-                default:
-                  throw new Error(
-                    `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
-                  );
-              }
-              break;
+        for (const criteria of criteriaPriority) {
+          if (criteriaFound[criteria]) {
+            switch (criteria) {
+              case "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD":
+                transformedCriteria.usIdIncarcerationWithin7YearsOfFtcdOrTpd =
+                  criteriaFound[criteria];
+                break;
+              case "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD":
+                transformedCriteria.usIdIncarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd =
+                  criteriaFound[criteria];
+                break;
+              case "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE":
+                transformedCriteria.usIdIncarcerationWithin3YearsOfTpdAndLifeSentence =
+                  criteriaFound[criteria];
+                break;
+              default:
+                throw new Error(
+                  `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
+                );
             }
+            break;
           }
+        }
 
-          return transformedCriteria;
-        },
-      ),
-    ineligibleCriteria: z.object({}),
-  })
-  .merge(caseNotesSchema);
+        return transformedCriteria;
+      },
+    ),
+});
 
 export type UsIdCRCResidentWorkerReferralRecord = z.infer<
   typeof usIdCRCResidentWorkerSchema

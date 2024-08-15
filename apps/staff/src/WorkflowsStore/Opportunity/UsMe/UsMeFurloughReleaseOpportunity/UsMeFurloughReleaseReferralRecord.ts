@@ -19,37 +19,34 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { eligibleDateSchema, opportunitySchemaBase } from "../../schemaHelpers";
+import { eligibleDateSchema } from "../../schemaHelpers";
 
-export const usMeFurloughReleaseSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z.object({
-      usMeThreeYearsRemainingOnSentence: eligibleDateSchema,
-      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease:
-        eligibleDateSchema,
-      usMeNoClassAOrBViolationFor90Days: z
-        .object({
-          eligibleDate: dateStringSchema.nullable(),
-          highestClassViol: z.string(),
-          violType: z.string(),
-        })
-        .nullable(),
-      usMeCustodyLevelIsMinimumOrCommunity: z.object({
-        custodyLevel: z.string(),
-      }),
-      usMeNoDetainersWarrantsOrOther: z
-        .object({
-          detainer: z.string(),
-          detainerStartDate: dateStringSchema.nullable(),
-        })
-        .nullable(),
-      usMeServedHalfOfSentence: eligibleDateSchema.optional(),
+export const usMeFurloughReleaseSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z.object({
+    usMeThreeYearsRemainingOnSentence: eligibleDateSchema,
+    usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease:
+      eligibleDateSchema,
+    usMeNoClassAOrBViolationFor90Days: z
+      .object({
+        eligibleDate: dateStringSchema.nullable(),
+        highestClassViol: z.string(),
+        violType: z.string(),
+      })
+      .nullable(),
+    usMeCustodyLevelIsMinimumOrCommunity: z.object({
+      custodyLevel: z.string(),
     }),
-    ineligibleCriteria: z.object({}),
-  })
-  .merge(caseNotesSchema);
+    usMeNoDetainersWarrantsOrOther: z
+      .object({
+        detainer: z.string(),
+        detainerStartDate: dateStringSchema.nullable(),
+      })
+      .nullable(),
+    usMeServedHalfOfSentence: eligibleDateSchema.optional(),
+  }),
+});
 
 export type UsMeFurloughReleaseReferralRecord = z.infer<
   typeof usMeFurloughReleaseSchema

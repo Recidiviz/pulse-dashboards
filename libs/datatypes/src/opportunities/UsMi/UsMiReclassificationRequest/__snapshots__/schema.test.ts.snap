@@ -2,6 +2,7 @@
 
 exports[`schema for almostEligible 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {},
   "externalId": "RES021",
   "formInformation": {},
@@ -23,6 +24,7 @@ exports[`schema for almostEligible 1`] = `
 
 exports[`schema for fullyEligible1 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMiEligibleForReclassificationFromSolitaryToGeneral": {
       "detentionSanctionHasExpired": true,
@@ -44,6 +46,7 @@ exports[`schema for fullyEligible1 1`] = `
 
 exports[`schema for fullyEligible2 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMiEligibleForReclassificationFromSolitaryToGeneral": {
       "detentionSanctionHasExpired": null,

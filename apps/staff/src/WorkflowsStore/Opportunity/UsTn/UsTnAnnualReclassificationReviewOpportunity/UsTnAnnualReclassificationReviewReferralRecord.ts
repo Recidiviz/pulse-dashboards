@@ -17,13 +17,12 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase } from "../../schemaHelpers";
 import { formInformationSchema as formInformation } from "../UsTnSharedCriteria";
 
-export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
-  .extend({
+export const usTnAnnualReclassificationReviewSchema =
+  opportunitySchemaBase.extend({
     eligibleCriteria: z.object({
       usTnAtLeast12MonthsSinceLatestAssessment: z.null(),
       custodyLevelIsNotMax: z.null(),
@@ -35,11 +34,9 @@ export const usTnAnnualReclassificationReviewSchema = opportunitySchemaBase
         recommendedCustodyLevel: z.string().nullable(),
       }),
     }),
-    ineligibleCriteria: z.object({}),
     formInformation: formInformation.partial(),
     formReclassificationDueDate: dateStringSchema.optional(),
-  })
-  .merge(caseNotesSchema);
+  });
 
 export type UsTnAnnualReclassificationReviewReferralRecord = z.infer<
   typeof usTnAnnualReclassificationReviewSchema

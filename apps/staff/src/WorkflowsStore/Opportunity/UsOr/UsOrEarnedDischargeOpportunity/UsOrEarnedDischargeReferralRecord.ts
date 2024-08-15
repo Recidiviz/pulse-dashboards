@@ -17,9 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
-
-import { opportunitySchemaBase } from "../../schemaHelpers";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 export const usOrEarnedDischargeSchema = opportunitySchemaBase
   .extend({
@@ -38,7 +36,6 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
       }),
       usOrNoSupervisionSanctionsWithin6Months: z.object({}).nullable(),
     }),
-    ineligibleCriteria: z.object({}),
     metadata: z.object({
       programs: z.array(
         z.object({

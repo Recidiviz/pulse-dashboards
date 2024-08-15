@@ -32,7 +32,7 @@ export * from "./opportunities/UsMi/UsMiWardenInPersonSecurityClassificationComm
 export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/fixtures";
 export * from "./opportunities/UsPa/UsPaSpecialCircumstancesSupervision/schema";
 export * from "./opportunities/utils/caseNotesSchema";
-export * from "./opportunities/utils/types";
+export * from "./opportunities/utils/opportunitySchemaBase";
 export * from "./opportunities/utils/types";
 export type * from "./people/JusticeInvolvedPerson/schema";
 export * from "./people/Resident/fixtures";

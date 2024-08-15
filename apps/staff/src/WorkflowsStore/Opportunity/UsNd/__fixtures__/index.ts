@@ -114,6 +114,7 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
       outOfState: false,
       ICOut: false,
     },
+    caseNotes: {},
   };
 
 export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminationReferralRecord =

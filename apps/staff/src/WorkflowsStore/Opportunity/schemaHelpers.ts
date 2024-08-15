@@ -49,11 +49,6 @@ export function defaultOnNull<T extends z.ZodTypeAny>(
   });
 }
 
-export const opportunitySchemaBase = z.object({
-  stateCode: z.string(),
-  externalId: z.string(),
-});
-
 /**
  * Renames all occurrences of the keys in `obj` that are present as a key in `oldToNewKeyMapping`.
  * @param obj The object to be renamed.

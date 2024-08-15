@@ -18,9 +18,9 @@
 import { zipWith } from "lodash";
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase, stringToIntSchema } from "../../schemaHelpers";
+import { stringToIntSchema } from "../../schemaHelpers";
 
 const SpecialConditionsNoteType = ["SPEC", "SPET"] as const;
 

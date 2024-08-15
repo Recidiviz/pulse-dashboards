@@ -43,6 +43,7 @@ test("transform record with restitution case", () => {
       usMePaidAllOwedRestitution: { amountOwed: 0 },
     },
     ineligibleCriteria: {},
+    caseNotes: {},
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();

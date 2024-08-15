@@ -17,9 +17,9 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase, stringToIntSchema } from "../../schemaHelpers";
+import { stringToIntSchema } from "../../schemaHelpers";
 
 export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
   formInformation: z

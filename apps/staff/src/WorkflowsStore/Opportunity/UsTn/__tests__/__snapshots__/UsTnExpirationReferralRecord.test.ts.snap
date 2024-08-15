@@ -75,6 +75,7 @@ exports[`transform function 1`] = `
       "sex offense",
     ],
   },
+  "ineligibleCriteria": {},
   "stateCode": "US_XX",
 }
 `;

@@ -30,9 +30,9 @@ const US_ND_CONFIG: TenantConfig = {
   domain: "nd.gov",
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
-  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   navigation: {
-    workflows: ["earlyTermination", "clients", "home"],
+    workflows: ["home", "clients", "residents"],
     operations: [],
     system: [
       PATHWAYS_PAGES.libertyToPrison,

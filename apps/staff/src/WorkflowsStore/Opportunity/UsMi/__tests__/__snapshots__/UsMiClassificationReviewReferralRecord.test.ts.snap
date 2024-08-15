@@ -28,6 +28,7 @@ exports[`transform record for initial CR 1`] = `
     },
   },
   "externalId": "cr-eligible-1",
+  "ineligibleCriteria": {},
   "metadata": {
     "recommendedSupervisionLevel": "MEDIUM",
   },
@@ -45,6 +46,7 @@ exports[`transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionL
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
   },
   "externalId": "cr-eligible-3",
+  "ineligibleCriteria": {},
   "metadata": {},
   "stateCode": "US_MI",
 }
@@ -71,6 +73,7 @@ exports[`transform record for six-month CR 1`] = `
     },
   },
   "externalId": "cr-eligible-2",
+  "ineligibleCriteria": {},
   "metadata": {
     "recommendedSupervisionLevel": "MEDIUM",
   },

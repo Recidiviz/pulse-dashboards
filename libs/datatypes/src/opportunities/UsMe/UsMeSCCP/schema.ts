@@ -19,7 +19,6 @@ import { z } from "zod";
 
 import { dateStringSchema } from "../../../utils/dateStringSchema";
 import { ParsedRecord } from "../../../utils/types";
-import { caseNotesSchema } from "../../utils/caseNotesSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import type { MergedCriteria } from "../../utils/types";
 
@@ -36,27 +35,25 @@ const possiblyIneligibleCriteria = z
   })
   .partial();
 
-export const usMeSCCPSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: possiblyIneligibleCriteria.extend({
-      // optional because it can also be ineligible, with a different shape
-      usMeNoClassAOrBViolationFor90Days: z.null().optional(),
-      usMeNoDetainersWarrantsOrOther: z.null(),
-      usMeCustodyLevelIsMinimumOrCommunity: z.object({
-        custodyLevel: z.string(),
-      }),
+export const usMeSCCPSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: possiblyIneligibleCriteria.extend({
+    // optional because it can also be ineligible, with a different shape
+    usMeNoClassAOrBViolationFor90Days: z.null().optional(),
+    usMeNoDetainersWarrantsOrOther: z.null(),
+    usMeCustodyLevelIsMinimumOrCommunity: z.object({
+      custodyLevel: z.string(),
     }),
-    ineligibleCriteria: possiblyIneligibleCriteria.extend({
-      usMeNoClassAOrBViolationFor90Days: z
-        .object({
-          eligibleDate: dateStringSchema.nullable(),
-          highestClassViol: z.string(),
-          violType: z.string(),
-        })
-        .optional(),
-    }),
-  })
-  .merge(caseNotesSchema);
+  }),
+  ineligibleCriteria: possiblyIneligibleCriteria.extend({
+    usMeNoClassAOrBViolationFor90Days: z
+      .object({
+        eligibleDate: dateStringSchema.nullable(),
+        highestClassViol: z.string(),
+        violType: z.string(),
+      })
+      .optional(),
+  }),
+});
 
 export type UsMeSCCPRecord = ParsedRecord<typeof usMeSCCPSchema>;
 

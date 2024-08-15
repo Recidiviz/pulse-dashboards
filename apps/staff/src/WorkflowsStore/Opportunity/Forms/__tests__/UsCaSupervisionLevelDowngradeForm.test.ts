@@ -62,6 +62,7 @@ function createTestUnit() {
       usCaHousingTypeIsNotTransient: null,
     },
     ineligibleCriteria: {},
+    caseNotes: {},
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsCaSupervisionLevelDowngradeOpportunity(person);

@@ -2,6 +2,7 @@
 
 exports[`transform ineligible record with hearing date in past into eligible criteria 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMoInRestrictiveHousing": {
       "confinementType": "confinement type",
@@ -39,6 +40,7 @@ exports[`transform ineligible record with hearing date in past into eligible cri
 
 exports[`transform record 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMoInRestrictiveHousing": {
       "confinementType": "confinement type",
@@ -77,6 +79,7 @@ exports[`transform record 1`] = `
 
 exports[`transform record 2`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMoInRestrictiveHousing": {
       "confinementType": "confinement type",
@@ -114,6 +117,7 @@ exports[`transform record 2`] = `
 
 exports[`transform record 3`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMoInRestrictiveHousing": {
       "confinementType": "confinement type",
@@ -152,6 +156,7 @@ exports[`transform record 3`] = `
 
 exports[`transform record 4`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMoInRestrictiveHousing": {
       "confinementType": "confinement type",

@@ -81,6 +81,7 @@ export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHo
       cdvsSinceLastHearing: [],
       numMinorCdvsBeforeLastHearing: 5,
     },
+    caseNotes: {},
   };
 
 export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
@@ -124,6 +125,7 @@ export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
       cdvsSinceLastHearing: [],
       numMinorCdvsBeforeLastHearing: "5",
     },
+    formInformation: {},
   }) as BaseUsMoOverdueRestrictiveHousingReferralRecordRaw as T;
 
 export const usMoOverdueRestrictiveHousingReleaseReferralRecordFixture =

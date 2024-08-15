@@ -18,9 +18,9 @@
 import { camelCase, mapKeys } from "lodash";
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase, stringToIntSchema } from "../../schemaHelpers";
+import { stringToIntSchema } from "../../schemaHelpers";
 import {
   eligibleCriteriaLsuED,
   ineligibleCriteriaLsuED,
@@ -62,52 +62,50 @@ const collapsedCriteriaSchema = z
     },
   );
 
-export const usIdEarnedDischargeSchema = opportunitySchemaBase
-  .extend({
-    formInformation: z
-      .object({
-        ncicCheckDate: dateStringSchema,
-        fullTermReleaseDates: z.array(dateStringSchema),
-        chargeDescriptions: z.array(z.string()),
-        judgeNames: z.array(
-          z
-            .string()
-            .transform((content) => {
-              const parsedJSON = JSON.parse(content);
-              return mapKeys(parsedJSON, (_v, k) => camelCase(k));
-            })
-            .pipe(
-              z.object({
-                givenNames: z.string(),
-                middleNames: z.string().optional(),
-                nameSuffix: z.string().optional(),
-                surname: z.string(),
-              }),
-            ),
-        ),
-        countyNames: z.array(z.string()),
-        sentenceMax: z.array(stringToIntSchema),
-        sentenceMin: z.array(stringToIntSchema),
-        caseNumbers: z.array(z.string()),
-        dateImposed: z.array(dateStringSchema),
-        firstAssessmentScore: stringToIntSchema,
-        firstAssessmentDate: dateStringSchema,
-        latestAssessmentScore: stringToIntSchema,
-        latestAssessmentDate: dateStringSchema,
-      })
-      .partial(),
-    ineligibleCriteria: ineligibleCriteriaLsuED.and(collapsedCriteriaSchema),
-    eligibleCriteria: eligibleCriteriaLsuED
-      .extend({
-        usIdLsirLevelLowModerateForXDays: z.object({
-          eligibleDate: dateStringSchema,
-          riskLevel: z.enum(["LOW", "MODERATE"]),
-        }),
-      })
-      .and(collapsedCriteriaSchema),
-    eligibleStartDate: dateStringSchema,
-  })
-  .merge(caseNotesSchema);
+export const usIdEarnedDischargeSchema = opportunitySchemaBase.extend({
+  formInformation: z
+    .object({
+      ncicCheckDate: dateStringSchema,
+      fullTermReleaseDates: z.array(dateStringSchema),
+      chargeDescriptions: z.array(z.string()),
+      judgeNames: z.array(
+        z
+          .string()
+          .transform((content) => {
+            const parsedJSON = JSON.parse(content);
+            return mapKeys(parsedJSON, (_v, k) => camelCase(k));
+          })
+          .pipe(
+            z.object({
+              givenNames: z.string(),
+              middleNames: z.string().optional(),
+              nameSuffix: z.string().optional(),
+              surname: z.string(),
+            }),
+          ),
+      ),
+      countyNames: z.array(z.string()),
+      sentenceMax: z.array(stringToIntSchema),
+      sentenceMin: z.array(stringToIntSchema),
+      caseNumbers: z.array(z.string()),
+      dateImposed: z.array(dateStringSchema),
+      firstAssessmentScore: stringToIntSchema,
+      firstAssessmentDate: dateStringSchema,
+      latestAssessmentScore: stringToIntSchema,
+      latestAssessmentDate: dateStringSchema,
+    })
+    .partial(),
+  ineligibleCriteria: ineligibleCriteriaLsuED.and(collapsedCriteriaSchema),
+  eligibleCriteria: eligibleCriteriaLsuED
+    .extend({
+      usIdLsirLevelLowModerateForXDays: z.object({
+        eligibleDate: dateStringSchema,
+        riskLevel: z.enum(["LOW", "MODERATE"]),
+      }),
+    })
+    .and(collapsedCriteriaSchema),
+  eligibleStartDate: dateStringSchema,
+});
 
 export type EarnedDischargeReferralRecord = z.infer<
   typeof usIdEarnedDischargeSchema

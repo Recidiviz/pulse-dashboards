@@ -17,7 +17,9 @@
 
 import { z } from "zod";
 
-import { eligibleDateSchema, opportunitySchemaBase } from "./schemaHelpers";
+import { opportunitySchemaBase } from "~datatypes";
+
+import { eligibleDateSchema } from "./schemaHelpers";
 
 const supervisionPastFullTermCompletionDate = eligibleDateSchema.optional();
 

@@ -404,6 +404,7 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
         lifetimeFlag: false,
       },
     },
+    ineligibleCriteria: {},
     caseNotes: {
       "Special Conditions": [
         {

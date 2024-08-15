@@ -30,6 +30,7 @@ test("validateReferral", () => {
     ),
   ).toMatchInlineSnapshot(`
     {
+      "caseNotes": {},
       "eligibleCriteria": {
         "usMoInRestrictiveHousing": {
           "confinementType": "COMMUNITY",

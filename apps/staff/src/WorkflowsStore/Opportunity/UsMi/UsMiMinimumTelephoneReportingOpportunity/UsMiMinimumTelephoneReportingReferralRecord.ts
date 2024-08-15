@@ -17,9 +17,7 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
-
-import { opportunitySchemaBase } from "../../schemaHelpers";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 // TODO: tighten this up once we see some real records (i.e. what's actually nullable?)
 const criteria = z.object({
@@ -57,15 +55,15 @@ const criteria = z.object({
     .nullable(),
 });
 
-export const usMiMinimumTelephoneReportingSchema = opportunitySchemaBase
-  .extend({
+export const usMiMinimumTelephoneReportingSchema = opportunitySchemaBase.extend(
+  {
     eligibleCriteria: criteria,
     ineligibleCriteria: z.strictObject({}),
     metadata: z.object({
       eligibleDate: dateStringSchema,
     }),
-  })
-  .merge(caseNotesSchema);
+  },
+);
 
 export type UsMiMinimumTelephoneReportingReferralRecord = z.infer<
   typeof usMiMinimumTelephoneReportingSchema

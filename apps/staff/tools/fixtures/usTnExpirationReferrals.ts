@@ -93,6 +93,7 @@ const data: UsTnExpirationReferralRecordRaw[] = [
         lifetimeFlag: false,
       },
     },
+    ineligibleCriteria: {},
   },
 ];
 

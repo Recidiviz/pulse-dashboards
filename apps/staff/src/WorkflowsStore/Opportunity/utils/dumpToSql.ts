@@ -49,6 +49,7 @@ function buildOpportunityFields(
     opportunity_type: sqlify(opportunity_type),
     updated_by: sqlify(updated_by),
     gating_feature_variant: sqlify(config.featureVariant),
+    homepage_position: sqlify(config.homepagePosition),
     updated_at: "CURRENT_TIMESTAMP",
   };
 }
@@ -64,7 +65,7 @@ function buildOpportunityConfigFields(
     created_at: "CURRENT_TIMESTAMP",
     description: sqlify("Imported from pulse-dashboards"),
     status: sqlify("ACTIVE"),
-    display_name: sqlify(config.label),
+    display_name: sqlify(config.newPolicyCopyLabel ?? config.label),
     methodology_url: sqlify(config.methodologyUrl),
     is_alert: sqlify(!!config.isAlert),
     initial_header: sqlify(config.initialHeader),
@@ -76,6 +77,7 @@ function buildOpportunityConfigFields(
     hide_denial_revert: sqlify(!!config.hideDenialRevert),
     tooltip_eligibility_text: sqlify(config.tooltipEligibilityText),
     call_to_action: sqlify(config.callToAction),
+    subheading: sqlify(config.subheading),
     denial_text: sqlify(config.denialButtonText),
     snooze: sqlify(deepMapKeys(config.snooze, snakeCase)),
     sidebar_components: sqlify(config.sidebarComponents, true),
@@ -85,6 +87,7 @@ function buildOpportunityConfigFields(
         ? config.compareBy.map((sp) => deepMapKeys(sp, snakeCase))
         : undefined,
     ),
+    notifications: sqlify(config.notifications ?? []),
   };
 }
 

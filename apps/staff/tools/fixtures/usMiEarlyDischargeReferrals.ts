@@ -65,6 +65,7 @@ export const usMiEarlyDischargeReferralsFixture =
           latestIneligibleConvictions: [],
         },
       },
+      ineligibleCriteria: {},
     },
     {
       stateCode: "US_MI",
@@ -91,5 +92,6 @@ export const usMiEarlyDischargeReferralsFixture =
             currentOffenses: [],
           },
       },
+      ineligibleCriteria: {},
     },
   ]);

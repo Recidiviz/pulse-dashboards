@@ -2,6 +2,7 @@
 
 exports[`schema for almostEligible1 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMiInSolitaryConfinementAtLeastOneYear": {
       "eligibleDate": 2021-10-27T00:00:00.000Z,
@@ -52,6 +53,7 @@ exports[`schema for almostEligible1 1`] = `
 
 exports[`schema for almostEligible2 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMiPastAddInPersonReviewForSccDate": {
       "latestAddInPersonSccReviewDate": null,
@@ -102,6 +104,7 @@ exports[`schema for almostEligible2 1`] = `
 
 exports[`schema for fullyEligible1 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMiInSolitaryConfinementAtLeastOneYear": {
       "eligibleDate": 2021-11-26T00:00:00.000Z,
@@ -161,6 +164,7 @@ exports[`schema for fullyEligible1 1`] = `
 
 exports[`schema for fullyEligible2 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "usMiInSolitaryConfinementAtLeastOneYear": {
       "eligibleDate": 2021-10-27T00:00:00.000Z,

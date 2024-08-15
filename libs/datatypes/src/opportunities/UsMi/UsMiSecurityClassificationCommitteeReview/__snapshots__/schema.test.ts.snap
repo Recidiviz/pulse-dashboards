@@ -2,6 +2,7 @@
 
 exports[`schema for almostEligible 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "housingUnitTypeIsSolitaryConfinement": {
       "solitaryStartDate": 2021-10-27T00:00:00.000Z,
@@ -52,6 +53,7 @@ exports[`schema for almostEligible 1`] = `
 
 exports[`schema for fullyEligible1 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "housingUnitTypeIsSolitaryConfinement": {
       "solitaryStartDate": 2021-11-26T00:00:00.000Z,
@@ -111,6 +113,7 @@ exports[`schema for fullyEligible1 1`] = `
 
 exports[`schema for fullyEligible2 1`] = `
 {
+  "caseNotes": {},
   "eligibleCriteria": {
     "housingUnitTypeIsSolitaryConfinement": {
       "solitaryStartDate": 2021-10-27T00:00:00.000Z,

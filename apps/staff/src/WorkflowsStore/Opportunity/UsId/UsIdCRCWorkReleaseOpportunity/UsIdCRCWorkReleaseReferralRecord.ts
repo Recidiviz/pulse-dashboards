@@ -17,9 +17,8 @@
 
 import { z } from "zod";
 
-import { caseNotesSchema, dateStringSchema } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { opportunitySchemaBase } from "../../schemaHelpers";
 import {
   custodyLevelIsMinimum,
   notServingForSexualOffense,
@@ -54,82 +53,79 @@ const usIdCrcWorkReleaseTimeBasedCriteria = z.object({
   ),
 });
 
-export const usIdCRCWorkReleaseSchema = opportunitySchemaBase
-  .extend({
-    eligibleCriteria: z
-      .object({
-        custodyLevelIsMinimum,
-        notServingForSexualOffense,
-        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-        usIdNoDetainersForXcrcAndCrc,
-        usIdCrcWorkReleaseTimeBasedCriteria,
-        // The three criteria below do not come directly from firestore
-        // but are instead derived from usIdCrcWorkReleaseTimeBasedCriteria
-        usIdIncarcerationWithin18MonthsOfFtcdOrTpd: z
-          .object({
-            fullTermCompletionDate: dateStringSchema.nullable(),
-            tentativeParoleDate: dateStringSchema.nullable(),
-          })
-          .optional(),
-        usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: z
-          .object({
-            fullTermCompletionDate: dateStringSchema,
-            minTermCompletionDate: dateStringSchema,
-          })
-          .optional(),
-        usIdIncarcerationWithin1YearOfTpdAndLifeSentence: z
-          .object({
-            tentativeParoleDate: dateStringSchema,
-          })
-          .optional(),
-      })
-      .transform(
-        ({ usIdCrcWorkReleaseTimeBasedCriteria: timeCriteria, ...rest }) => {
-          const transformedCriteria = { ...rest };
-          const criteriaPriority = [
-            "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
-            "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
-            "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
-          ];
+export const usIdCRCWorkReleaseSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: z
+    .object({
+      custodyLevelIsMinimum,
+      notServingForSexualOffense,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
+      usIdNoDetainersForXcrcAndCrc,
+      usIdCrcWorkReleaseTimeBasedCriteria,
+      // The three criteria below do not come directly from firestore
+      // but are instead derived from usIdCrcWorkReleaseTimeBasedCriteria
+      usIdIncarcerationWithin18MonthsOfFtcdOrTpd: z
+        .object({
+          fullTermCompletionDate: dateStringSchema.nullable(),
+          tentativeParoleDate: dateStringSchema.nullable(),
+        })
+        .optional(),
+      usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: z
+        .object({
+          fullTermCompletionDate: dateStringSchema,
+          minTermCompletionDate: dateStringSchema,
+        })
+        .optional(),
+      usIdIncarcerationWithin1YearOfTpdAndLifeSentence: z
+        .object({
+          tentativeParoleDate: dateStringSchema,
+        })
+        .optional(),
+    })
+    .transform(
+      ({ usIdCrcWorkReleaseTimeBasedCriteria: timeCriteria, ...rest }) => {
+        const transformedCriteria = { ...rest };
+        const criteriaPriority = [
+          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
+          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
+          "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
+        ];
 
-          const criteriaFound = timeCriteria.reasons.reduce(
-            (acc: any, { criteriaName, ...otherReasons }: any) => {
-              acc[criteriaName] = otherReasons;
-              return acc;
-            },
-            {},
-          );
+        const criteriaFound = timeCriteria.reasons.reduce(
+          (acc: any, { criteriaName, ...otherReasons }: any) => {
+            acc[criteriaName] = otherReasons;
+            return acc;
+          },
+          {},
+        );
 
-          for (const criteria of criteriaPriority) {
-            if (criteriaFound[criteria]) {
-              switch (criteria) {
-                case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD":
-                  transformedCriteria.usIdIncarcerationWithin18MonthsOfFtcdOrTpd =
-                    criteriaFound[criteria];
-                  break;
-                case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD":
-                  transformedCriteria.usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd =
-                    criteriaFound[criteria];
-                  break;
-                case "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE":
-                  transformedCriteria.usIdIncarcerationWithin1YearOfTpdAndLifeSentence =
-                    criteriaFound[criteria];
-                  break;
-                default:
-                  throw new Error(
-                    `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
-                  );
-              }
-              break;
+        for (const criteria of criteriaPriority) {
+          if (criteriaFound[criteria]) {
+            switch (criteria) {
+              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD":
+                transformedCriteria.usIdIncarcerationWithin18MonthsOfFtcdOrTpd =
+                  criteriaFound[criteria];
+                break;
+              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD":
+                transformedCriteria.usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd =
+                  criteriaFound[criteria];
+                break;
+              case "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE":
+                transformedCriteria.usIdIncarcerationWithin1YearOfTpdAndLifeSentence =
+                  criteriaFound[criteria];
+                break;
+              default:
+                throw new Error(
+                  `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
+                );
             }
+            break;
           }
+        }
 
-          return transformedCriteria;
-        },
-      ),
-    ineligibleCriteria: z.object({}),
-  })
-  .merge(caseNotesSchema);
+        return transformedCriteria;
+      },
+    ),
+});
 
 export type UsIdCRCWorkReleaseReferralRecord = z.infer<
   typeof usIdCRCWorkReleaseSchema
