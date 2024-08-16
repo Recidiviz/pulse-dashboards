@@ -62,4 +62,5 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
     },
   },
   homepagePosition: 1,
+  priority: "HIGH",
 };
