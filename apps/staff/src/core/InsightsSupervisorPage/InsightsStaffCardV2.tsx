@@ -227,32 +227,35 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
     <CardWrapper noFlex={isTablet}>
       {!isTablet && (
         <CardHeader hasBorder={!isTablet}>
-          {officers.map((officer) => (
-            <CardHeaderItem
-              key={officer.externalId}
-              hovered={officer.externalId === hoveredOfficer}
-              to={insightsUrl("supervisionStaff", {
-                officerPseudoId: officer.pseudonymizedId,
-              })}
-            >
-              <CardTitle>{title || officer.displayName}</CardTitle>
-              {officer.outlierMetrics.map((metric) => (
-                <CardSubtitle
-                  key={metric.metricId}
-                  id={`subtitle-${metric.config.titleDisplayName}`}
-                >
-                  {metric.config.titleDisplayName}
-                  <span
-                    aria-describedby={`subtitle-${metric.config.titleDisplayName}`}
+          {officers
+            // We want multiple-metric outlier officers to display first in the list.
+            .sort((a, b) => b.outlierMetrics.length - a.outlierMetrics.length)
+            .map((officer) => (
+              <CardHeaderItem
+                key={officer.externalId}
+                hovered={officer.externalId === hoveredOfficer}
+                to={insightsUrl("supervisionStaff", {
+                  officerPseudoId: officer.pseudonymizedId,
+                })}
+              >
+                <CardTitle>{title || officer.displayName}</CardTitle>
+                {officer.outlierMetrics.map((metric) => (
+                  <CardSubtitle
+                    key={metric.metricId}
+                    id={`subtitle-${metric.config.titleDisplayName}`}
                   >
-                    {formatTargetAndHighlight(
-                      metric.currentPeriodData.metricRate,
-                    )}
-                  </span>
-                </CardSubtitle>
-              ))}
-            </CardHeaderItem>
-          ))}
+                    {metric.config.titleDisplayName}
+                    <span
+                      aria-describedby={`subtitle-${metric.config.titleDisplayName}`}
+                    >
+                      {formatTargetAndHighlight(
+                        metric.currentPeriodData.metricRate,
+                      )}
+                    </span>
+                  </CardSubtitle>
+                ))}
+              </CardHeaderItem>
+            ))}
         </CardHeader>
       )}
 
