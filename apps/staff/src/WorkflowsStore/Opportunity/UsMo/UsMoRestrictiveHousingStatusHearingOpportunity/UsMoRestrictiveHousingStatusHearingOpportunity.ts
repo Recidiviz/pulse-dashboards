@@ -121,8 +121,6 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
   Resident,
   UsMoRestrictiveHousingStatusHearingReferralRecord
 > {
-  resident: Resident;
-
   constructor(resident: Resident) {
     super(
       resident,
@@ -131,10 +129,10 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       usMoRestrictiveHousingStatusHearingSchema.parse,
       validateReferral,
     );
-    this.resident = resident;
 
     makeObservable(this, {
       requirementsMet: override,
+      requirementsAlmostMet: override,
     });
   }
 
@@ -154,10 +152,6 @@ export class UsMoRestrictiveHousingStatusHearingOpportunity extends OpportunityB
       CRITERIA_COPY,
       CRITERIA_FORMATTERS,
     );
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get eligibleStatusMessage(): string | undefined {

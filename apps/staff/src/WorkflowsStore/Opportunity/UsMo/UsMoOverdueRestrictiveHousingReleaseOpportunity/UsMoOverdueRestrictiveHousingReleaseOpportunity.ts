@@ -127,15 +127,12 @@ const removeDuplicateCopyIfPresent = (
 };
 
 export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReleaseReferralRecord> {
-  resident: Resident;
-
   constructor(resident: Resident) {
     super(
       resident,
       "usMoOverdueRestrictiveHousingRelease",
       usMoOverdueRestrictiveHousingReleaseSchema.parse,
     );
-    this.resident = resident;
 
     makeObservable(this, {
       requirementsMet: override,

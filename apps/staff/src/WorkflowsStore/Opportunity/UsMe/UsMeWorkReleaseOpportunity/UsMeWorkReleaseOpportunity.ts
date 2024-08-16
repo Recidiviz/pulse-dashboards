@@ -133,16 +133,12 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
   Resident,
   UsMeWorkReleaseReferralRecord
 > {
-  resident: Resident;
-
   form: UsMeWorkReleaseForm;
 
   readonly hideUnknownCaseNoteDates = true;
 
   constructor(resident: Resident) {
     super(resident, "usMeWorkRelease", resident.rootStore, transformReferral);
-    this.resident = resident;
-
     makeObservable(this, {
       requirementsMet: override,
     });

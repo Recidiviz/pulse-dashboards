@@ -127,16 +127,11 @@ export class LSUOpportunity extends OpportunityBase<
     super(client, "LSU", client.rootStore, usIdLsuSchema.parse);
     makeObservable(this, {
       requirementsMet: override,
-      almostEligible: computed,
       requirementsAlmostMet: override,
       almostEligibleStatusMessage: computed,
     });
 
     this.form = new LSUForm(this, client.rootStore);
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {

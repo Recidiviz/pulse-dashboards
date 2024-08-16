@@ -41,11 +41,11 @@ export class UsCaSupervisionLevelDowngradeForm extends FormBase<
   prefilledDataTransformer: PrefilledDataTransformer<UsCaSupervisionLevelDowngradeDraftData> =
     () => {
       if (!this.opportunity.record) return {};
-      const { client } = this.opportunity;
+      const { person } = this.opportunity;
 
       return {
-        cdcNumber: client.displayId,
-        fullName: formatNameLastFirst(client.fullName),
+        cdcNumber: person.displayId,
+        fullName: formatNameLastFirst(person.fullName),
       };
     };
 }

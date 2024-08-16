@@ -27,8 +27,6 @@ export class usMiReclassificationRequestOpportunity extends OpportunityBase<
   Resident,
   usMiReclassificationRequestRecord["output"]
 > {
-  resident: Resident;
-
   constructor(resident: Resident) {
     super(
       resident,
@@ -36,11 +34,5 @@ export class usMiReclassificationRequestOpportunity extends OpportunityBase<
       resident.rootStore,
       usMiReclassificationRequestSchema.parse,
     );
-
-    this.resident = resident;
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 }

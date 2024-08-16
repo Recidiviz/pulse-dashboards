@@ -30,8 +30,6 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
   Resident,
   UsMeFurloughReleaseReferralRecord
 > {
-  resident: Resident;
-
   readonly hideUnknownCaseNoteDates = true;
 
   form: UsMeFurloughReleaseForm;
@@ -58,7 +56,6 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
         }
       },
     );
-    this.resident = resident;
 
     this.form = new UsMeFurloughReleaseForm(this, resident.rootStore);
   }

@@ -47,15 +47,10 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, {
-      almostEligible: computed,
       almostEligibleStatusMessage: computed,
     });
 
     this.form = new EarlyTerminationForm(this, client.rootStore);
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get almostEligibleStatusMessage(): string | undefined {

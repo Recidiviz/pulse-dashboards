@@ -35,8 +35,6 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsCaSupervisionLevelDowngradeReferralRecord
 > {
-  client: Client;
-
   form: UsCaSupervisionLevelDowngradeForm;
 
   constructor(client: Client) {
@@ -46,8 +44,6 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client.rootStore,
       usCaSupervisionLevelDowngradeSchema.parse,
     );
-
-    this.client = client;
 
     this.form = new UsCaSupervisionLevelDowngradeForm(this, client.rootStore);
   }
@@ -69,7 +65,7 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     }
 
     return `${
-      this.client.displayPreferredName
+      this.person.displayPreferredName
     } is ${tooltipEligibilityText.toLowerCase()}`;
   }
 }

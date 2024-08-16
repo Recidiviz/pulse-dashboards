@@ -61,7 +61,7 @@ function MediumTrustee() {
     return null;
   }
 
-  const resident = opportunity.resident;
+  const resident = opportunity.person;
 
   return (
     <FormContainer

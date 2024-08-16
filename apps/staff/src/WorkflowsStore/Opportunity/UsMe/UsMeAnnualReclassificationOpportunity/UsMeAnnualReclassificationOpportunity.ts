@@ -28,8 +28,6 @@ export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
   Resident,
   UsMeAnnualReclassificationRecord["output"]
 > {
-  resident: Resident;
-
   form: UsMeAnnualReclassificationReviewForm;
 
   constructor(resident: Resident) {
@@ -40,15 +38,9 @@ export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
       usMeAnnualReclassificationSchema.parse,
     );
 
-    this.resident = resident;
-
     this.form = new UsMeAnnualReclassificationReviewForm(
       this,
-      this.resident.rootStore,
+      resident.rootStore,
     );
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 }

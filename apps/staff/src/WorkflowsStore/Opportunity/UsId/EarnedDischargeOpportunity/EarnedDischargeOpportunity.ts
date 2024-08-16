@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { computed, makeObservable, override } from "mobx";
+import { computed, makeObservable } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
@@ -43,17 +43,11 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, {
-      almostEligible: computed,
-      requirementsMet: override,
-      requirementsAlmostMet: override,
+      eligibilityDate: computed,
       almostEligibleStatusMessage: computed,
     });
 
     this.form = new UsIdEarnedDischargeForm(this, client.rootStore);
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get almostEligibleStatusMessage(): string | undefined {

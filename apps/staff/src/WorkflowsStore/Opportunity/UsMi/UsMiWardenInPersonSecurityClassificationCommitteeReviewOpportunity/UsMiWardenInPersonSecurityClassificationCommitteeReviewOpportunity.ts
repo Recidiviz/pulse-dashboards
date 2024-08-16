@@ -31,7 +31,6 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
   Resident,
   usMiWardenInPersonSecurityClassificationCommitteeReviewRecord["output"]
 > {
-  resident: Resident;
   form: UsMiSCCReviewForm;
 
   criteriaFormatters = {
@@ -53,12 +52,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
       usMiWardenInPersonSecurityClassificationCommitteeReviewSchema.parse,
     );
 
-    this.resident = resident;
     this.form = new UsMiSCCReviewForm(this, resident.rootStore);
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get almostEligibleStatusMessage(): string | undefined {

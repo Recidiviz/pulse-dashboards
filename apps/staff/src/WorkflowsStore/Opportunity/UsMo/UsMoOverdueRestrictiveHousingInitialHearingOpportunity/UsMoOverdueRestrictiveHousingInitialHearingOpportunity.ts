@@ -79,15 +79,12 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingIniti
   };
 
 export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingInitialHearingReferralRecord> {
-  resident: Resident;
-
   constructor(resident: Resident) {
     super(
       resident,
       "usMoOverdueRestrictiveHousingInitialHearing",
       usMoOverdueRestrictiveHousingInitialHearingSchema.parse,
     );
-    this.resident = resident;
 
     makeObservable(this, {
       requirementsMet: override,

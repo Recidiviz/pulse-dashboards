@@ -29,7 +29,6 @@ export class usMiSecurityClassificationCommitteeReviewOpportunity extends Opport
   Resident,
   usMiSecurityClassificationCommitteeReviewRecord["output"]
 > {
-  resident: Resident;
   form: UsMiSCCReviewForm;
 
   constructor(resident: Resident) {
@@ -40,12 +39,7 @@ export class usMiSecurityClassificationCommitteeReviewOpportunity extends Opport
       usMiSecurityClassificationCommitteeReviewSchema.parse,
     );
 
-    this.resident = resident;
     this.form = new UsMiSCCReviewForm(this, resident.rootStore);
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get almostEligibleStatusMessage(): string | undefined {

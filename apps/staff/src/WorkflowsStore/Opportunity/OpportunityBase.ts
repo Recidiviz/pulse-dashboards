@@ -170,6 +170,8 @@ export class OpportunityBase<
       setOtherReasonText: action,
       requirementsMet: computed,
       requirementsAlmostMet: computed,
+      almostEligible: computed,
+      denied: computed,
     });
 
     this.person = person;
@@ -568,20 +570,19 @@ export class OpportunityBase<
     );
   }
 
-  // ===============================
-  // properties below this line are stubs and in most cases should be overridden
-  // in a subclass. Given their triviality they are not annotated by MobX either,
-  // so subclasses can use normal annotations instead of having to use `override`.
-  // ===============================
-
-  // eslint-disable-next-line class-methods-use-this
   get almostEligible(): boolean {
-    return false;
+    return !!Object.keys(this.record?.ineligibleCriteria || {}).length;
   }
 
   get denied(): boolean {
     return !!this.denial;
   }
+
+  // ===============================
+  // properties below this line are stubs and in most cases should be overridden
+  // in a subclass. Given their triviality they are not annotated by MobX either,
+  // so subclasses can use normal annotations instead of having to use `override`.
+  // ===============================
 
   // eslint-disable-next-line class-methods-use-this
   get eligibilityDate(): Date | undefined {

@@ -150,7 +150,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     );
 
     makeObservable<CompliantReportingOpportunity>(this, {
-      almostEligible: true,
       almostEligibleStatusMessage: true,
       requirementsMet: override,
       requirementsAlmostMet: override,
@@ -158,10 +157,6 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     });
 
     this.form = new CompliantReportingForm(this, client.rootStore);
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get reviewStatus(): OpportunityStatus {

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable, override } from "mobx";
+import { computed, makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
@@ -85,18 +85,18 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingRevie
   };
 
 export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReviewHearingReferralRecord> {
-  resident: Resident;
-
   constructor(resident: Resident) {
     super(
       resident,
       "usMoOverdueRestrictiveHousingReviewHearing",
       usMoOverdueRestrictiveHousingReviewHearingSchema.parse,
     );
-    this.resident = resident;
 
     makeObservable(this, {
       requirementsMet: override,
+      requirementsAlmostMet: override,
+      eligibilityDate: computed,
+      eligibleStatusMessage: computed,
     });
   }
 

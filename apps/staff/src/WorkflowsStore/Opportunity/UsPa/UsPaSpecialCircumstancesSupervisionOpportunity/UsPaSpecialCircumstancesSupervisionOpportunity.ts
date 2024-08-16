@@ -37,8 +37,4 @@ export class UsPaSpecialCircumstancesSupervisionOpportunity extends OpportunityB
       usPaSpecialCircumstancesSupervisionSchema.parse,
     );
   }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
-  }
 }

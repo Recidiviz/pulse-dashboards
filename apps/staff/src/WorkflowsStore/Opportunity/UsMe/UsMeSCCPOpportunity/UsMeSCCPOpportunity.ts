@@ -17,7 +17,7 @@
 
 import { differenceInDays, differenceInMonths } from "date-fns";
 import { cloneDeep } from "lodash";
-import { computed, makeObservable, observable, override } from "mobx";
+import { makeObservable, observable, override } from "mobx";
 
 import { UsMeSCCPCriteria, UsMeSCCPRecord } from "~datatypes";
 
@@ -247,8 +247,6 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
   Resident,
   UsMeSCCPRecord["output"]
 > {
-  resident: Resident;
-
   form: UsMeSCCPForm;
 
   readonly portionServedRequirement = ["1/2", "2/3"];
@@ -257,20 +255,14 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
   constructor(resident: Resident) {
     super(resident, "usMeSCCP", resident.rootStore, transformReferral);
-    this.resident = resident;
 
     makeObservable(this, {
-      almostEligible: computed,
       almostEligibleRecommendedNote: observable,
       requirementsMet: override,
       requirementsAlmostMet: override,
     });
 
     this.form = new UsMeSCCPForm(this, resident.rootStore);
-  }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
   }
 
   get requirementsMet(): OpportunityRequirement[] {

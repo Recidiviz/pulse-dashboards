@@ -41,8 +41,4 @@ export abstract class PastFTRDOpportunityBase<
         ?.eligibleDate
     );
   }
-
-  get almostEligible(): boolean {
-    return !!Object.keys(this.record?.ineligibleCriteria || {}).length;
-  }
 }

@@ -25,8 +25,6 @@ export class UsMeMediumTrusteeOpportunity extends OpportunityBase<
   Resident,
   UsMeMediumTrusteeRecord["output"]
 > {
-  resident: Resident;
-
   form: UsMeMediumTrusteeForm;
 
   constructor(resident: Resident) {
@@ -37,8 +35,6 @@ export class UsMeMediumTrusteeOpportunity extends OpportunityBase<
       usMeMediumTrusteeSchema.parse,
     );
 
-    this.resident = resident;
-
-    this.form = new UsMeMediumTrusteeForm(this, this.resident.rootStore);
+    this.form = new UsMeMediumTrusteeForm(this, resident.rootStore);
   }
 }

@@ -66,17 +66,11 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     );
 
     makeObservable(this, {
-      almostEligible: computed,
       requirementsMet: override,
       requirementsAlmostMet: override,
       almostEligibleStatusMessage: computed,
     });
   }
-
-  get almostEligible(): boolean {
-    return Object.keys(this.record?.ineligibleCriteria ?? {}).length > 0;
-  }
-
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.almostEligible || !this.record) return;
     const { ineligibleCriteria } = this.record;

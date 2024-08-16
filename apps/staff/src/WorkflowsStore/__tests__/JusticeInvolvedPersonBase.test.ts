@@ -263,7 +263,7 @@ describe("opportunities", () => {
 
     test("almost eligible", () => {
       vi.spyOn(
-        TestOpportunity.prototype,
+        opportunityInstances[0],
         "almostEligible",
         "get",
       ).mockReturnValue(true);
