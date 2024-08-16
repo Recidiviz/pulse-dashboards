@@ -57,8 +57,10 @@ export const supervisionOfficerSchema = supervisionOfficerBaseSchema
     };
   });
 
-export const excludedSupervisionOfficerSchema =
-  supervisionOfficerBaseSchema.transform(addDisplayName);
+export const excludedSupervisionOfficerSchema = supervisionOfficerBaseSchema
+  .transform(addDisplayName)
+  .and(withOutlierDataSchema.partial());
+// TODO: Remove once excludedSupervisionOfficerSchema and supervisionOfficerSchema are merged
 
 export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
 export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;

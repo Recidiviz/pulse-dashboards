@@ -23,12 +23,17 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../../InsightsStore/models/SupervisionOfficer";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
+import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import { OpportunityType } from "../../WorkflowsStore";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsPageLayout from "../InsightsPageLayout";
-import { Subtitle } from "../InsightsPageLayout/InsightsPageLayout";
+import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import { EmptyCard } from "../InsightsSupervisorPage/InsightsStaffCardV2";
 import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
@@ -46,16 +51,12 @@ const Wrapper = styled.div<{ isTablet: boolean }>`
   gap: ${rem(spacing.md)};
 `;
 
-const OpportunitiesWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.md)};
-`;
-
 export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   presenter,
 }: {
-  presenter: SupervisionOfficerPresenter;
+  presenter: SupervisionOfficerPresenter<
+    SupervisionOfficer | ExcludedSupervisionOfficer
+  >;
 }) {
   const { isTablet } = useIsMobile(true);
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
@@ -128,8 +129,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         )
       }
     >
-      {outlierOfficerData?.outlierMetrics &&
-      outlierOfficerData.outlierMetrics?.length > 0 ? (
+      {outlierOfficerData?.outlierMetrics?.length ? (
         <Wrapper isTablet={isTablet}>
           {outlierOfficerData.outlierMetrics.map((metric) => {
             const { bodyDisplayName } = metric.config;
@@ -150,7 +150,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               >
                 <InsightsSwarmPlotContainerV2
                   metric={metric}
-                  officersForMetric={[outlierOfficerData]}
+                  officersForMetric={[
+                    outlierOfficerData as OutlierOfficerData<SupervisionOfficer>,
+                  ]}
                   isMinimized
                 />
               </InsightsChartCard>
@@ -161,8 +163,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         <EmptyCard message="Nice! No officer outcomes to review this month." />
       )}
       {opportunitiesByType && (
-        <OpportunitiesWrapper>
-          <Subtitle>{`Opportunities (${numEligibleOpportunities ?? 0})`}</Subtitle>
+        <InsightsPageSection
+          sectionTitle={`Opportunities (${numEligibleOpportunities ?? 0})`}
+        >
           {numEligibleOpportunities ? (
             <OpportunitySummaries
               opportunitiesByType={opportunitiesByType}
@@ -177,7 +180,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               height={200}
             />
           )}
-        </OpportunitiesWrapper>
+        </InsightsPageSection>
       )}
     </InsightsPageLayout>
   );

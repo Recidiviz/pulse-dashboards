@@ -22,16 +22,29 @@ import { InsightsConfig } from "../models/InsightsConfig";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
 import { OpportunityInfo } from "../models/OpportunityInfo";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../models/SupervisionOfficer";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMetricOutlier";
 
 // This type represents the state of fully hydrated data
 // where all necessary related objects are guaranteed to exist
-export type OutlierOfficerData = Omit<SupervisionOfficer, "outlierMetrics"> & {
-  outlierMetrics: MetricWithConfig[];
-  caseloadCategoryName?: string;
-};
+export type OutlierOfficerData<
+  T extends SupervisionOfficer | ExcludedSupervisionOfficer,
+> = T extends SupervisionOfficer
+  ? Omit<SupervisionOfficer, "outlierMetrics"> & {
+      outlierMetrics: MetricWithConfig[];
+      caseloadCategoryName?: string;
+    }
+  : T extends ExcludedSupervisionOfficer
+    ? Omit<ExcludedSupervisionOfficer, "outlierMetrics"> & {
+        outlierMetrics?: MetricWithConfig[];
+        caseloadCategoryName?: string;
+      }
+    : never;
+
 export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   currentPeriodData: ValuesType<
     SupervisionOfficerMetricOutlier["statusesOverTime"]
@@ -81,7 +94,7 @@ export type HighlightedOfficersDetail = {
 export type MetricAndOutliersInfo = {
   metricConfigWithBenchmark: MetricConfigWithBenchmark;
   caseloadCategoryName?: string;
-  officersForMetric: OutlierOfficerData[];
+  officersForMetric: OutlierOfficerData<SupervisionOfficer>[];
 };
 
 /** Helper type to group information by metric and by caseload category */

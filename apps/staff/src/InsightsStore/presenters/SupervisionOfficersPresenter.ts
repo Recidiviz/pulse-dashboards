@@ -115,7 +115,9 @@ export class SupervisionOfficersPresenter implements Hydratable {
    * If this fails for any reason the value will instead be the error that was encountered,
    * useful mainly for debugging.
    */
-  private get outlierDataOrError(): OutlierOfficerData[] | Error {
+  private get outlierDataOrError():
+    | OutlierOfficerData<SupervisionOfficer>[]
+    | Error {
     try {
       const officersData =
         this.supervisionStore.officersBySupervisorPseudoId.get(
@@ -129,7 +131,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
 
       return officersData
         .filter((o) => o.outlierMetrics.length > 0)
-        .map((o): OutlierOfficerData => {
+        .map((o): OutlierOfficerData<SupervisionOfficer> => {
           return getOutlierOfficerData(o, this.supervisionStore);
         });
     } catch (e) {
@@ -140,7 +142,9 @@ export class SupervisionOfficersPresenter implements Hydratable {
   /**
    * Augments officer data with all necessary relationships fully hydrated.
    */
-  get outlierOfficersData(): OutlierOfficerData[] | undefined {
+  get outlierOfficersData():
+    | OutlierOfficerData<SupervisionOfficer>[]
+    | undefined {
     if (this.outlierDataOrError instanceof Error) {
       return undefined;
     }

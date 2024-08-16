@@ -17,26 +17,48 @@
 import { Optional } from "utility-types";
 
 import { MetricConfig } from "../models/MetricConfig";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  excludedSupervisionOfficerSchema,
+  SupervisionOfficer,
+  supervisionOfficerSchema,
+} from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { OutlierOfficerData } from "./types";
 
 export const THIRTY_SECONDS = 1000 * 30;
+
+export function isExcludedSupervisionOfficer(
+  officerData: object | undefined,
+): officerData is ExcludedSupervisionOfficer {
+  return (
+    excludedSupervisionOfficerSchema.safeParse(officerData).success &&
+    !supervisionOfficerSchema.safeParse(officerData).success
+  );
+}
 
 /**
  * Collects all of the officer data, modeling relationships between them with nested objects,
  * and verifies that all of the related objects actually exist. It throws an error rather than
  * returning a partial result, to guarantee return values are fully hydrated.
  */
-export function getOutlierOfficerData(
-  officerData: SupervisionOfficer,
+export function getOutlierOfficerData<
+  T extends SupervisionOfficer | ExcludedSupervisionOfficer,
+>(
+  officer: T,
   supervisionStore: InsightsSupervisionStore,
-): OutlierOfficerData {
-  const { caseloadCategory } = officerData;
+): OutlierOfficerData<T> {
+  if (isExcludedSupervisionOfficer(officer))
+    return officer as OutlierOfficerData<T>;
+
+  const officerData = officer as SupervisionOfficer;
+
   return {
     ...officerData,
-    caseloadCategoryName: caseloadCategory
-      ? supervisionStore.caseloadCategoryDisplayName(caseloadCategory)
+    caseloadCategoryName: officerData.caseloadCategory
+      ? supervisionStore.caseloadCategoryDisplayName(
+          officerData.caseloadCategory,
+        )
       : undefined,
     outlierMetrics: officerData.outlierMetrics.map((metric) => {
       // verify that the related objects we need are actually present;
@@ -54,7 +76,7 @@ export function getOutlierOfficerData(
         throw new Error(`Missing metric benchmark data for ${metric.metricId}`);
       }
 
-      const caseloadType = caseloadCategory || "ALL";
+      const caseloadType = officerData.caseloadCategory || "ALL";
       const benchmark = metricBenchmarks.get(caseloadType);
       if (!benchmark) {
         throw new Error(
@@ -94,7 +116,7 @@ export function getOutlierOfficerData(
         currentPeriodData,
       };
     }),
-  };
+  } as OutlierOfficerData<T>;
 }
 
 export function getDistrictWithoutLabel(

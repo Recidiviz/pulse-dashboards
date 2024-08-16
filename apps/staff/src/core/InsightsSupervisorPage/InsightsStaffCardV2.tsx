@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { SupervisionOfficer } from "../../InsightsStore/models/SupervisionOfficer";
 import {
   ByMetricAndCategory2DMap,
   MetricAndOutliersInfo,
@@ -181,7 +182,7 @@ type InsightsStaffCardType = {
   outlierOfficersByMetricAndCaseloadCategory:
     | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
     | undefined;
-  officers: OutlierOfficerData[] | undefined;
+  officers: OutlierOfficerData<SupervisionOfficer>[] | undefined;
   title?: string;
 };
 

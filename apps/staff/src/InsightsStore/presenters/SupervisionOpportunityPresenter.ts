@@ -23,6 +23,7 @@ import {
   OpportunityType,
 } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenter } from "./SupervisionOfficerPresenter";
 
@@ -31,7 +32,7 @@ import { SupervisionOfficerPresenter } from "./SupervisionOfficerPresenter";
  * supervisor homepage opportunity drill-down view. At this time, there's not a need
  * to override the parent hydrator/hydration methods.
  */
-export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter {
+export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter<SupervisionOfficer> {
   constructor(
     supervisionStore: InsightsSupervisionStore,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,

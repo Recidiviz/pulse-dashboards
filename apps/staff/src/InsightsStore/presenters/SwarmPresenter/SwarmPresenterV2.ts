@@ -20,6 +20,7 @@ import { makeAutoObservable, toJS } from "mobx";
 
 import { castToError, FlowMethod } from "~hydration-utils";
 
+import { SupervisionOfficer } from "../../models/SupervisionOfficer";
 import { MetricConfigWithBenchmark, OutlierOfficerData } from "../types";
 import {
   CHART_ASPECT_RATIO,
@@ -39,7 +40,7 @@ export class SwarmPresenterV2 {
   metricId: string;
   constructor(
     public readonly metric: MetricConfigWithBenchmark,
-    readonly outlierOfficersForMetric: OutlierOfficerData[],
+    readonly outlierOfficersForMetric: OutlierOfficerData<SupervisionOfficer>[],
   ) {
     this.metricId = metric.config.name;
     makeAutoObservable(this);

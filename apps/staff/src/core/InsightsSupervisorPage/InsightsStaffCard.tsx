@@ -29,6 +29,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { SupervisionOfficer } from "../../InsightsStore/models/SupervisionOfficer";
 import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsInfoModal from "../InsightsInfoModal";
@@ -126,7 +127,7 @@ const MetricSection = styled(Link)<{ $hasBorder: boolean }>`
 `;
 
 type InsightsStaffCardType = {
-  officer: OutlierOfficerData;
+  officer: OutlierOfficerData<SupervisionOfficer>;
   officerIndex: number;
   title?: string;
   subtitle?: string;

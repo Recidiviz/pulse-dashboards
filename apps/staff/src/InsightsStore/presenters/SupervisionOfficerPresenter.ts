@@ -27,11 +27,20 @@ import {
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
+import { isExcludedSupervisionOfficer } from "./utils";
 
-export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
-  SupervisionOfficerPresenterBase,
+export class SupervisionOfficerPresenter<
+  T extends SupervisionOfficer | ExcludedSupervisionOfficer,
+> extends WithJusticeInvolvedPersonStore(
+  SupervisionOfficerPresenterBase<
+    SupervisionOfficer | ExcludedSupervisionOfficer
+  >,
 ) {
   constructor(
     protected supervisionStore: InsightsSupervisionStore,
@@ -42,7 +51,7 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
 
     makeObservable<
-      SupervisionOfficerPresenter,
+      SupervisionOfficerPresenter<T>,
       | "populateSupervisionOfficer"
       | "expectClientsPopulated"
       | "populateCaseload"
@@ -100,17 +109,30 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
     return this.countOpportunitiesForOfficer(this.officerExternalId);
   }
 
+  protected expectMetricsPopulated() {
+    if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord)) return;
+    super.expectMetricsPopulated();
+  }
+
   /**
    * Fetch record for current officer.
    */
   protected *populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer"],
+    InsightsAPI["supervisionOfficer" | "excludedSupervisionOfficer"],
     void
   > {
     if (this.isOfficerPopulated) return;
-    this.fetchedOfficerRecord =
-      yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
-        this.officerPseudoId,
-      );
+    try {
+      this.fetchedOfficerRecord =
+        yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
+          this.officerPseudoId,
+        );
+    } catch (e) {
+      // TODO: (#6044) Remove once they work with the same endpoint.
+      this.fetchedOfficerRecord =
+        yield this.supervisionStore.insightsStore.apiClient.excludedSupervisionOfficer(
+          this.officerPseudoId,
+        );
+    }
   }
 }

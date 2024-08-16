@@ -25,14 +25,18 @@ import {
   ADVERSE_METRIC_IDS,
   CASELOAD_TYPE_IDS,
 } from "../../models/offlineFixtures/constants";
+import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
 import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
-import { SupervisionOfficer } from "../../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
-import { getOutlierOfficerData } from "../utils";
+import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "../utils";
 
-let officerData: SupervisionOfficer;
+let officerData: SupervisionOfficer | ExcludedSupervisionOfficer;
 let supervisionStore: InsightsSupervisionStore;
 
 beforeEach(() => {
@@ -57,17 +61,18 @@ test("excludes current officer from the benchmark data points", async () => {
   // this is really more relevant to the favorable metrics that tend to skew towards zero,
   // but it is equally valid for all metrics
   const benchmarks = cloneDeep(metricBenchmarksFixture);
-  const outlierMetric = officerData.outlierMetrics[0];
+  const outlierMetric = officerData?.outlierMetrics?.[0];
   const matchingBenchmarkForOfficer = benchmarks.find(
     (b) =>
-      b.caseloadType === officerData.caseloadCategory &&
-      b.metricId === outlierMetric.metricId,
+      "caseloadCategory" in officerData &&
+      b.caseloadType === officerData?.caseloadCategory &&
+      b.metricId === outlierMetric?.metricId,
   );
 
   if (!matchingBenchmarkForOfficer)
     throw new Error("unable to mock benchmark data");
 
-  const currentOutlierRate = outlierMetric.statusesOverTime.at(-1)
+  const currentOutlierRate = outlierMetric?.statusesOverTime.at(-1)
     ?.metricRate as number;
 
   matchingBenchmarkForOfficer.latestPeriodValues.push({
@@ -93,7 +98,7 @@ test("excludes current officer from the benchmark data points", async () => {
   const outlierData = getOutlierOfficerData(officerData, supervisionStore);
 
   expect(
-    outlierData.outlierMetrics[0].benchmark.latestPeriodValues.filter(
+    outlierData?.outlierMetrics?.[0].benchmark.latestPeriodValues.filter(
       (d) => d.value === currentOutlierRate,
     ),
   ).toHaveLength(1);
@@ -150,4 +155,38 @@ test("throws on missing benchmark for required caseload type", async () => {
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
     `Missing metric benchmark data for caseload type ${CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
+});
+
+describe("when used in a context that expects excluded officers", () => {
+  beforeEach(async () => {
+    await flowResult(supervisionStore.populateMetricConfigs());
+  });
+
+  it.each([
+    ["an officer with outlier data", [officerData]],
+    ["an empty object", {}],
+    ["some object", { dog: "" }],
+    ["an undefined", undefined],
+  ] as const)(
+    "type narrower should reject non-excluded officers",
+    (_, data) => {
+      expect(isExcludedSupervisionOfficer(data)).toBeFalse();
+    },
+  );
+
+  it("should not mistake a non-excluded officer for an excluded officer", () => {
+    const officerWithOutlierData = getOutlierOfficerData(
+      officerData,
+      supervisionStore,
+    );
+    expect(isExcludedSupervisionOfficer(officerWithOutlierData)).toBeFalse();
+  });
+
+  it("should return an excluded officer without issue", () => {
+    const officerWithOutlierData = getOutlierOfficerData(
+      excludedSupervisionOfficerFixture[0],
+      supervisionStore,
+    );
+    expect(isExcludedSupervisionOfficer(officerWithOutlierData)).toBeTrue();
+  });
 });

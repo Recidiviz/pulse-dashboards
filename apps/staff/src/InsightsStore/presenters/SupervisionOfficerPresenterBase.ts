@@ -25,20 +25,25 @@ import {
 } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
+import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+} from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
-export abstract class SupervisionOfficerPresenterBase
+export abstract class SupervisionOfficerPresenterBase<
+    T extends SupervisionOfficer | ExcludedSupervisionOfficer,
+  >
   extends SupervisionBasePresenter
   implements Hydratable
 {
   // rather than dealing with a partially hydrated unit in the supervisionStore,
   // we will just put the API response here (when applicable)
-  protected fetchedOfficerRecord?: SupervisionOfficer;
+  protected fetchedOfficerRecord?: T;
 
   protected hydrator: HydratesFromSource;
 
@@ -48,7 +53,7 @@ export abstract class SupervisionOfficerPresenterBase
   ) {
     super(supervisionStore);
     makeObservable<
-      SupervisionOfficerPresenterBase,
+      SupervisionOfficerPresenterBase<T>,
       | "fetchedOfficerRecord"
       | "expectMetricsPopulated"
       | "hydrator"
@@ -125,22 +130,25 @@ export abstract class SupervisionOfficerPresenterBase
         staffPseudonymizedId: this.officerPseudoId,
         supervisorPseudonymizedId: this.goToSupervisorInfo?.pseudonymizedId,
         viewedBy: userPseudoId,
-        numOutlierMetrics: this.outlierOfficerData?.outlierMetrics.length,
+        numOutlierMetrics: this.outlierOfficerData?.outlierMetrics?.length,
       },
     );
   }
 
-  private expectMetricsPopulated() {
+  protected expectMetricsPopulated() {
     if (!this.supervisionStore.metricConfigsById)
       throw new Error("Failed to populate metric configs");
   }
 
-  private get officerRecordFromStore(): SupervisionOfficer | undefined {
-    return Array.from(
-      this.supervisionStore.officersBySupervisorPseudoId.values(),
-    )
+  private get officerRecordFromStore(): T | undefined {
+    const officer = [
+      ...this.supervisionStore.officersBySupervisorPseudoId.values(),
+      ...this.supervisionStore.excludedOfficersBySupervisorPseudoId.values(),
+    ]
       .flat()
       .find((o) => o.pseudonymizedId === this.officerPseudoId);
+
+    return officer ? (officer as T) : undefined;
   }
 
   private get officerRecord() {
@@ -151,7 +159,7 @@ export abstract class SupervisionOfficerPresenterBase
    * Augments officer data with all necessary relationships fully hydrated.
    * If this fails for any reason, the value will instead reflect the error that was encountered.
    */
-  private get outlierDataOrError(): OutlierOfficerData | Error {
+  private get outlierDataOrError(): OutlierOfficerData<T> | Error {
     try {
       if (!this.officerRecord) throw new Error("Missing officer record");
       return getOutlierOfficerData(this.officerRecord, this.supervisionStore);
@@ -167,7 +175,7 @@ export abstract class SupervisionOfficerPresenterBase
   /**
    * Augments officer data with all necessary relationships fully hydrated.
    */
-  get outlierOfficerData(): OutlierOfficerData | undefined {
+  get outlierOfficerData(): OutlierOfficerData<T> | undefined {
     if (this.outlierDataOrError instanceof Error) return;
     return this.outlierDataOrError;
   }
@@ -237,7 +245,7 @@ export abstract class SupervisionOfficerPresenterBase
   }
 
   protected abstract populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer"],
+    InsightsAPI["supervisionOfficer" | "excludedSupervisionOfficer"],
     void
   >;
 
