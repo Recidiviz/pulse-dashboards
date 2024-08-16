@@ -77,6 +77,14 @@ export function Incarceration({
           </SecureDetailsContent>
           <PartialTime person={resident} />
           <ReleaseDate resident={resident} opportunity={opportunity} />
+          {resident.usNdParoleReviewDate && (
+            <>
+              <DetailsSubheading>Parole Review Date</DetailsSubheading>
+              <SecureDetailsContent>
+                {formatWorkflowsDate(resident.usNdParoleReviewDate)}
+              </SecureDetailsContent>
+            </>
+          )}
 
           {resident.assignedStaffId && (
             <>

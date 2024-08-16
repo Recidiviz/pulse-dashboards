@@ -22,6 +22,7 @@ import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl"
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoRestrictiveHousingConfiguration } from "./UsMo/UsMoRestrictiveHousingConfiguration";
+import { UsNdIncarcerationConfiguration } from "./UsNd/UsNdIncarcerationConfiguration";
 
 const customOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
@@ -34,6 +35,9 @@ const customOpportunityConfigurations: Partial<
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoRestrictiveHousingStatusHearing: UsMoRestrictiveHousingConfiguration,
   pastFTRD: UsIdPastFTRD,
+  ["usNdTransferToMinFacility" as OpportunityType]:
+    UsNdIncarcerationConfiguration,
+  ["usNdATP" as OpportunityType]: UsNdIncarcerationConfiguration,
 };
 
 export function apiOpportunityConfigurationFactory(

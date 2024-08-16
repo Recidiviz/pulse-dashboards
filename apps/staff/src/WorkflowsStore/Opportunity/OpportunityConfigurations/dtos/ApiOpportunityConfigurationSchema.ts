@@ -51,10 +51,7 @@ export const apiOpportunityConfigurationSchema = z.object({
     .nullish()
     .transform((r) => r ?? []),
   firestoreCollection: z.string(),
-  snooze: z.preprocess(
-    (r: any) => (r && r.defaultSnoozeDays ? r : undefined),
-    nullishAsUndefined(snoozeConfigurationSchema),
-  ),
+  snooze: nullishAsUndefined(snoozeConfigurationSchema),
   denialReasons: z.record(z.string()),
   tabGroups: nullishAsUndefined(z.record(z.string(), z.array(z.string()))),
   initialHeader: nullishAsUndefined(z.string()),
@@ -62,6 +59,8 @@ export const apiOpportunityConfigurationSchema = z.object({
   eligibilityDateText: nullishAsUndefined(z.string()),
   tooltipEligibilityText: nullishAsUndefined(z.string()),
   hideDenialRevert: z.boolean().optional(),
+  snoozeModalPrompt: nullishAsUndefined(z.string()),
+  snoozeConfirmationText: nullishAsUndefined(z.string()),
   eligibleCriteriaCopy: criteriaCopySchema,
   ineligibleCriteriaCopy: criteriaCopySchema,
   sidebarComponents: z.array(z.string()),

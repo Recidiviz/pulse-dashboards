@@ -91,11 +91,21 @@ export type UsMeResidentMetadata = {
   sccpEligibilityDate: string;
 };
 
+/*****
+ US_ND
+ ****/
+
+export type UsNdResidentMetadata = {
+  stateCode: "US_ND";
+  paroleReviewDate: string;
+};
+
 type DefinedResidentMetadata = {
   US_AR: UsArResidentMetadata;
   US_ID: UsIdResidentMetadata;
   US_ME: UsMeResidentMetadata;
   US_MO: UsMoResidentMetadata;
+  US_ND: UsNdResidentMetadata;
 };
 
 export type ResidentMetadataMap = {

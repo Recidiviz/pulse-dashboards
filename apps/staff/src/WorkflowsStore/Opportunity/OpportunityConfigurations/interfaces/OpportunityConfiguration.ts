@@ -45,6 +45,8 @@ export interface OpportunityConfiguration {
   denialButtonText?: string;
   eligibilityDateText?: string;
   hideDenialRevert?: boolean;
+  snoozeModalPrompt?: string;
+  snoozeConfirmationText?: string;
   isEnabled: boolean;
   methodologyUrl: string;
   denialReasons: DenialReasonsMap;
