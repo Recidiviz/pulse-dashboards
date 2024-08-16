@@ -45,5 +45,8 @@ export const caseNoteSearchSchema = z.object({
   ),
 });
 
+export type CaseNoteSearchResults = z.input<
+  typeof caseNoteSearchSchema
+>["results"];
 export type CaseNoteSearchRecord = z.infer<typeof caseNoteSearchSchema>;
 export type CaseNoteSearchRecordRaw = z.input<typeof caseNoteSearchSchema>;

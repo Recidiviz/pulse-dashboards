@@ -22,11 +22,15 @@ import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
+import { CaseNoteSearch } from "../CaseNoteSearch";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
@@ -144,6 +148,13 @@ const ContactValue = styled.dd`
 const SectionHeading = styled(Sans16)`
   color: ${palette.slate80};
   margin-bottom: ${rem(spacing.md)};
+`;
+
+const CasenoteSearchWrapper = styled.div`
+  & ${Divider} {
+    display: block;
+    margin-bottom: 0;
+  }
 `;
 
 export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
@@ -291,6 +302,7 @@ export const FullProfile = observer(
       workflowsStore: { selectedPerson: person },
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
+    const { caseNoteSearch } = useFeatureVariants();
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -310,6 +322,12 @@ export const FullProfile = observer(
             />
             <ContactDetails person={person} isMobile={isTablet} />
           </Header>
+          {caseNoteSearch && (
+            <CasenoteSearchWrapper>
+              <CaseNoteSearch />
+              <Divider />
+            </CasenoteSearchWrapper>
+          )}
           <Content isMobile={isTablet}>
             <div className="ProfileDetails">
               <AdditionalDetails person={person} />
