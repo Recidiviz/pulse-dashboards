@@ -207,6 +207,14 @@ export class InsightsSupervisionStore {
       supervisionDistrictManagerLabel:
         this.config.supervisionDistrictManagerLabel,
       supervisionJiiLabel: this.config.supervisionJiiLabel,
+      supervisorHasNoOutlierOfficersLabel:
+        this.config.supervisorHasNoOutlierOfficersLabel,
+      officerHasNoOutlierMetricsLabel:
+        this.config.officerHasNoOutlierMetricsLabel,
+      supervisorHasNoOfficersWithEligibleClientsLabel:
+        this.config.supervisorHasNoOfficersWithEligibleClientsLabel,
+      officerHasNoEligibleClientsLabel:
+        this.config.officerHasNoEligibleClientsLabel,
       supervisionSupervisorLabel: this.config.supervisionSupervisorLabel,
       supervisionUnitLabel: this.config.supervisionUnitLabel,
       atOrBelowRateLabel: this.config.atOrBelowRateLabel,

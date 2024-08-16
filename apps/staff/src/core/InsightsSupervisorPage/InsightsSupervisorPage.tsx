@@ -23,7 +23,6 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../InsightsStore/presenters/SupervisionOfficersPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
-import { getWelcomeText } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import { InsightsSidebarLegend } from "../InsightsLegend";
@@ -61,12 +60,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     actionStrategyCopy,
   } = presenter;
 
-  const emptyPageHeaderText = `${getWelcomeText(
-    supervisorInfo?.fullName.givenNames,
-    "Nice work",
-  )}! None of the ${labels.supervisionOfficerLabel}s in your ${
-    labels.supervisionUnitLabel
-  } ${labels.noneAreOutliersLabel}.`;
+  const emptyPageHeaderText = labels.supervisorHasNoOutlierOfficersLabel;
 
   if (!outlierOfficersData || outlierOfficersData.length === 0)
     return (

@@ -160,7 +160,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           })}
         </Wrapper>
       ) : (
-        <EmptyCard message="Nice! No officer outcomes to review this month." />
+        <EmptyCard message={labels.officerHasNoOutlierMetricsLabel} />
       )}
       {opportunitiesByType && (
         <InsightsPageSection
@@ -176,7 +176,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
             />
           ) : (
             <EmptyCard
-              message="No outstanding opportunities for now"
+              message={labels.officerHasNoEligibleClientsLabel}
               height={200}
             />
           )}

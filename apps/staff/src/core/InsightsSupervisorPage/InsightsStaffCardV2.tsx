@@ -183,6 +183,7 @@ type InsightsStaffCardType = {
     | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
     | undefined;
   officers: OutlierOfficerData<SupervisionOfficer>[] | undefined;
+  emptyMessage: string;
   title?: string;
 };
 
@@ -190,6 +191,7 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
   outlierOfficersByMetricAndCaseloadCategory,
   officers,
   title,
+  emptyMessage,
 }) => {
   const { isTablet } = useIsMobile(true);
 
@@ -218,9 +220,7 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
     !outlierOfficersByMetricAndCaseloadCategory ||
     outlierOfficersByMetricAndCaseloadCategory.size === 0
   ) {
-    return (
-      <EmptyCard message="Nice! No officers are outliers on any metrics this month." />
-    );
+    return <EmptyCard message={emptyMessage} />;
   }
 
   return (

@@ -179,6 +179,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
               outlierOfficersByMetricAndCaseloadCategory
             }
             officers={outlierOfficersData}
+            emptyMessage={labels.supervisorHasNoOutlierOfficersLabel}
           />
           {opportunitiesDetails &&
             opportunitiesDetails.length > 0 &&

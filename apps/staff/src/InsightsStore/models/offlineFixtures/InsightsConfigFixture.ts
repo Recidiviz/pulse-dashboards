@@ -29,6 +29,13 @@ export const InsightsConfigFixture: InsightsConfig = {
   supervisionDistrictLabel: "region",
   supervisionDistrictManagerLabel: "district manager",
   supervisionJiiLabel: "client",
+  supervisorHasNoOutlierOfficersLabel:
+    "Nice! No officers are outliers on any metrics this month.",
+  officerHasNoOutlierMetricsLabel: "Nice! No outlying metrics this month.",
+  supervisorHasNoOfficersWithEligibleClientsLabel:
+    "Nice! No outstanding opportunities for now.",
+  officerHasNoEligibleClientsLabel:
+    "Nice! No outstanding opportunities for now.",
   supervisionSupervisorLabel: "supervisor",
   supervisionUnitLabel: "team",
   atOrBelowRateLabel: "At or below statewide rate",
