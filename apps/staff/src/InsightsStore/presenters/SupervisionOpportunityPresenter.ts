@@ -23,6 +23,7 @@ import {
   OpportunityType,
 } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenter } from "./SupervisionOfficerPresenter";
@@ -36,10 +37,16 @@ export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter
   constructor(
     supervisionStore: InsightsSupervisionStore,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
+    opportunityConfigurationStore: OpportunityConfigurationStore,
     officerPseudoId: string,
     public opportunityType: OpportunityType,
   ) {
-    super(supervisionStore, officerPseudoId, justiceInvolvedPersonsStore);
+    super(
+      supervisionStore,
+      officerPseudoId,
+      justiceInvolvedPersonsStore,
+      opportunityConfigurationStore,
+    );
 
     makeObservable<SupervisionOpportunityPresenter>(this, {
       opportunityType: true,

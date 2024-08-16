@@ -69,6 +69,7 @@ const InsightsOpportunityFormPage = observer(
     const presenter = new SupervisionOpportunityPresenter(
       supervisionStore,
       justiceInvolvedPersonsStore,
+      opportunityConfigurationStore,
       officerPseudoId,
       opportunityType,
     );

@@ -30,7 +30,6 @@ import {
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
 import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
-import { OpportunityType } from "../../WorkflowsStore";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsPageLayout from "../InsightsPageLayout";
 import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
@@ -72,6 +71,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     numClientsOnCaseload,
     numEligibleOpportunities,
     opportunitiesByType,
+    opportunityTypes,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -169,9 +169,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           {numEligibleOpportunities ? (
             <OpportunitySummaries
               opportunitiesByType={opportunitiesByType}
-              opportunityTypes={
-                Object.keys(opportunitiesByType) as OpportunityType[]
-              }
+              opportunityTypes={opportunityTypes}
               officerPseudoId={officerPseudoId}
             />
           ) : (
@@ -189,7 +187,10 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
   const {
     insightsStore: { supervisionStore },
-    workflowsRootStore: { justiceInvolvedPersonsStore },
+    workflowsRootStore: {
+      justiceInvolvedPersonsStore,
+      opportunityConfigurationStore,
+    },
   } = useRootStore();
   const officerPseudoId = supervisionStore?.officerPseudoId;
 
@@ -199,6 +200,7 @@ const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
     supervisionStore,
     officerPseudoId,
     justiceInvolvedPersonsStore,
+    opportunityConfigurationStore,
   );
 
   return (

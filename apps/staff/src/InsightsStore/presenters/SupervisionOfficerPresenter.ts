@@ -25,6 +25,7 @@ import {
   OpportunityType,
 } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import {
@@ -46,6 +47,7 @@ export class SupervisionOfficerPresenter<
     protected supervisionStore: InsightsSupervisionStore,
     public officerPseudoId: string,
     justiceInvolvedPersonStore: JusticeInvolvedPersonsStore,
+    private opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {
     super(supervisionStore, officerPseudoId);
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
@@ -103,6 +105,18 @@ export class SupervisionOfficerPresenter<
     return this.officerExternalId
       ? this.opportunitiesByTypeForOfficer(this.officerExternalId)
       : undefined;
+  }
+
+  /**
+   * The relevant opportunity types for this officer in display order.
+   */
+  get opportunityTypes(): OpportunityType[] {
+    if (!this.opportunitiesByType) return [];
+    return (Object.keys(this.opportunitiesByType) as OpportunityType[]).sort(
+      (a, b) =>
+        this.opportunityConfigurationStore.opportunities[a].homepagePosition -
+        this.opportunityConfigurationStore.opportunities[b].homepagePosition,
+    );
   }
 
   get numEligibleOpportunities(): number | undefined {

@@ -148,6 +148,7 @@ const InsightsOpportunityPage = observer(function InsightsMetricPage() {
   const presenter = new SupervisionOpportunityPresenter(
     supervisionStore,
     justiceInvolvedPersonsStore,
+    opportunityConfigurationStore,
     officerPseudoId,
     opportunityType,
   );

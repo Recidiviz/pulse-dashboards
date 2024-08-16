@@ -100,6 +100,7 @@ const initPresenter = async (
       store,
       testOfficer.pseudonymizedId,
       jiiStore,
+      workflowsRootStore.opportunityConfigurationStore,
     );
   }
 
