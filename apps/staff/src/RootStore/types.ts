@@ -173,6 +173,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         insightsOnboarding: {},
         isolateFormUpdates: {},
         usNdCheckboxDocstars: {},
+        supervisorHomepageWorkflows: {},
       }
     : {
         ...allFeatureVariants,
