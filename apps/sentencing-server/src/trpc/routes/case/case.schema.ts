@@ -74,5 +74,6 @@ export const updateCaseSchema = z.object({
     selectedRecommendation: CaseRecommendationEnum.nullable().optional(),
     recommendedOpportunities: OpportunitiesSchema.optional(),
     currentOnboardingTopic: OnboardingTopicEnum.optional(),
+    recommendationSummary: z.string().nullable().optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });

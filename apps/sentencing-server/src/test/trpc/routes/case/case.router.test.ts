@@ -257,6 +257,7 @@ describe("case router", () => {
           needsToBeAddressed: ["FamilyServices", "JobTrainingOrOpportunities"],
           status: "InProgress",
           currentOnboardingTopic: "OffenseLsirScore",
+          recommendationSummary: "Recommendation Summary",
         },
       });
 
@@ -281,6 +282,7 @@ describe("case router", () => {
           hasOpenChildProtectiveServicesCase: false,
           needsToBeAddressed: ["FamilyServices", "JobTrainingOrOpportunities"],
           status: "InProgress",
+          recommendationSummary: "Recommendation Summary",
         }),
       );
     });

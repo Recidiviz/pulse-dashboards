@@ -318,6 +318,7 @@ model Case {
   status                   CaseStatus          @default(NotYetStarted)
   selectedRecommendation   CaseRecommendation?
   recommendedOpportunities Opportunity[]
+  recommendationSummary    String?
 }
 
 model Insight {
