@@ -448,14 +448,18 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const isInsightsLanternState =
       tenantStore && tenantStore.insightsLanternState;
 
+    const isPsiStaff = enabledPSI && !userStore.isRecidivizUser;
+
     const quickLinks = (
       <>
         <AccountLink enabled />
-        <MethodologyLink
-          currentTenantId={currentTenantId}
-          view={view}
-          externalMethodologyUrl={externalMethodologyUrl}
-        />
+        {!isPsiStaff && (
+          <MethodologyLink
+            currentTenantId={currentTenantId}
+            view={view}
+            externalMethodologyUrl={externalMethodologyUrl}
+          />
+        )}
         <PathwaysLink enabled={enabledPathwaysPages} />
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} />
