@@ -209,6 +209,8 @@ export const fakeInsightPrismaInput = {
   },
 } satisfies InsightCreateInput;
 
+export let fakeInsightId: string;
+
 export async function seed() {
   // Seed Data
   await prismaClient.offense.create({ data: fakeOffense });
@@ -232,5 +234,9 @@ export async function seed() {
       },
     },
   });
-  await prismaClient.insight.create({ data: fakeInsightPrismaInput });
+  fakeInsightId = (
+    await prismaClient.insight.create({
+      data: fakeInsightPrismaInput,
+    })
+  ).id;
 }

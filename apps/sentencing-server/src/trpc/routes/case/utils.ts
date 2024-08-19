@@ -21,12 +21,28 @@ export async function getInsightForCase(
 
   const insights = await prisma.insight.findMany({
     where: {
+      // Check that the LSIR score is larger than the start of the bucket, where the start of the bucket is not -1
       assessmentScoreBucketStart: {
         lte: caseData.lsirScore,
       },
-      assessmentScoreBucketEnd: {
-        gte: caseData.lsirScore,
+      NOT: {
+        assessmentScoreBucketStart: {
+          equals: -1,
+        },
       },
+      // Check that the LSIR score is smaller than the end of the bucket or that the end of the bucket is -1 (which means that there is no end)
+      OR: [
+        {
+          assessmentScoreBucketEnd: {
+            gte: caseData.lsirScore,
+          },
+        },
+        {
+          assessmentScoreBucketEnd: {
+            equals: -1,
+          },
+        },
+      ],
       offense: {
         name: caseData.offense.name,
       },

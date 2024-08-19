@@ -1,3 +1,4 @@
+import { Gender } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
@@ -11,6 +12,7 @@ import {
   fakeClient,
   fakeDispositions,
   fakeInsight,
+  fakeInsightId,
   fakeInsightPrismaInput,
   fakeOffense,
   fakeOpportunity,
@@ -114,6 +116,54 @@ describe("case router", () => {
     test("should capture exception if there is no insight matching case", async () => {
       // Delete all insights so nothing matches
       await prismaClient.insight.deleteMany({});
+
+      const returnedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(returnedCase).toEqual(
+        expect.objectContaining({ insight: undefined }),
+      );
+
+      const sentryReport = await testAndGetSentryReport();
+      expect(sentryReport.error?.message).toContain(
+        "No corresponding insight found for provided case with id",
+      );
+    });
+
+    test("should get insights with end buckets of -1", async () => {
+      // Update the insight to have an end bucket of -1
+      await prismaClient.insight.update({
+        where: { id: fakeInsightId },
+        data: {
+          assessmentScoreBucketEnd: -1,
+        },
+      });
+
+      const returnedCase = await testTRPCClient.case.getCase.query({
+        id: fakeCase.id,
+      });
+
+      expect(returnedCase).toEqual(
+        expect.objectContaining({
+          insight: expect.objectContaining({
+            gender: Gender.FEMALE,
+            assessmentScoreBucketStart: 0,
+            assessmentScoreBucketEnd: -1,
+            offense: fakeOffense.name,
+          }),
+        }),
+      );
+    });
+
+    test("should not show insights with start buckets of -1", async () => {
+      // Update the insight to have a start bucket of -1
+      await prismaClient.insight.update({
+        where: { id: fakeInsightId },
+        data: {
+          assessmentScoreBucketStart: -1,
+        },
+      });
 
       const returnedCase = await testTRPCClient.case.getCase.query({
         id: fakeCase.id,
