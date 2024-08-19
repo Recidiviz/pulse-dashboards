@@ -123,6 +123,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               <Insights
                 insight={caseAttributes.insight}
                 selectedRecommendation={selectedRecommendation}
+                fullName={caseAttributes.Client?.fullName}
               />
               {/* Opportunities */}
               <Opportunities

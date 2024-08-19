@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Insight } from "../../../api/APIClient";
-import chevronIcon from "../../assets/chevron-down.svg";
+import DraggableScrollContainer from "../../DraggableScrollContainer/DraggableScrollContainer";
 import * as Styled from "../CaseDetails.styles";
 import { SelectedRecommendation } from "../types";
 import { DispositionChart } from "./components/DispositionChart";
@@ -26,11 +26,13 @@ import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
 export interface InsightsProps {
   insight?: Insight;
   selectedRecommendation: SelectedRecommendation;
+  fullName?: string;
 }
 
 export const Insights = ({
   insight,
   selectedRecommendation,
+  fullName,
 }: InsightsProps) => {
   if (!insight) {
     return null;
@@ -45,7 +47,7 @@ export const Insights = ({
   const recidivismChartLegend = dispositionData.map(
     ({ recommendationType }) =>
       recommendationType !== "None" && (
-        <Styled.RecidivismChartLegendItem>
+        <Styled.RecidivismChartLegendItem key={recommendationType}>
           <Styled.RecidivismChartLegendDot
             $backgroundColor={RECOMMENDATION_TYPE_TO_COLOR[recommendationType]}
           />
@@ -56,50 +58,55 @@ export const Insights = ({
 
   return (
     <Styled.Insights>
-      <Styled.Title>Insights</Styled.Title>
-      <Styled.ChartControls>
-        <Styled.CarouselButtons>
-          <Styled.CarouselButton>
-            <img src={chevronIcon} alt="" />
-          </Styled.CarouselButton>
-          <Styled.CarouselButton>
-            <img src={chevronIcon} alt="" style={{ rotate: "180deg" }} />
-          </Styled.CarouselButton>
-        </Styled.CarouselButtons>
-      </Styled.ChartControls>
-      <Styled.Charts>
-        <Styled.Chart $marginRight={16}>
-          <Styled.ChartTitle>Cumulative Recidivism Rates</Styled.ChartTitle>
-          <Styled.ChartSubTitle>
-            {recidivismPlotSubtitle} (Based on {rollupRecidivismNumRecords}{" "}
-            records)
-          </Styled.ChartSubTitle>
-          <Styled.RecidivismChartLegend>
-            {recidivismChartLegend}
-          </Styled.RecidivismChartLegend>
-          <Styled.RecidivismChartPlotContainer
-            ref={(ref) => {
-              if (!ref) {
-                return;
-              }
-              ref.replaceChildren();
-              ref.appendChild(plot);
-            }}
-          />
-        </Styled.Chart>
-        <Styled.Chart>
-          <Styled.ChartTitle>Previous Sentences</Styled.ChartTitle>
-          <Styled.ChartSubTitle>
-            {recidivismPlotSubtitle} (Based on {dispositionNumRecords} records)
-          </Styled.ChartSubTitle>
-          <Styled.DispositionChartContainer>
-            <DispositionChart
-              dispositionData={dispositionData}
-              selectedRecommendation={selectedRecommendation}
+      <Styled.InsightsHeaderWrapper>
+        <Styled.Title>Insights</Styled.Title>
+        <Styled.Description>
+          This information represents outcomes for cases similar to that of the
+          current client, {fullName}, based on gender, risk score, and type of
+          conviction.
+        </Styled.Description>
+      </Styled.InsightsHeaderWrapper>
+
+      {/* Charts */}
+      <DraggableScrollContainer>
+        <Styled.Charts>
+          {/* Cumulative Recidivism Rates Chart */}
+          <Styled.Chart $marginRight={16}>
+            <Styled.ChartTitle>Cumulative Recidivism Rates</Styled.ChartTitle>
+            <Styled.ChartSubTitle>
+              {recidivismPlotSubtitle}{" "}
+              <span>(Based on {rollupRecidivismNumRecords} records)</span>
+            </Styled.ChartSubTitle>
+            <Styled.RecidivismChartLegend>
+              {recidivismChartLegend}
+            </Styled.RecidivismChartLegend>
+            <Styled.RecidivismChartPlotContainer
+              ref={(ref) => {
+                if (!ref) {
+                  return;
+                }
+                ref.replaceChildren();
+                ref.appendChild(plot);
+              }}
             />
-          </Styled.DispositionChartContainer>
-        </Styled.Chart>
-      </Styled.Charts>
+          </Styled.Chart>
+
+          {/* Previous Sentence Rates Chart */}
+          <Styled.Chart>
+            <Styled.ChartTitle>Previous Sentences</Styled.ChartTitle>
+            <Styled.ChartSubTitle>
+              {recidivismPlotSubtitle}{" "}
+              <span>(Based on {dispositionNumRecords} records)</span>
+            </Styled.ChartSubTitle>
+            <Styled.DispositionChartContainer>
+              <DispositionChart
+                dispositionData={dispositionData}
+                selectedRecommendation={selectedRecommendation}
+              />
+            </Styled.DispositionChartContainer>
+          </Styled.Chart>
+        </Styled.Charts>
+      </DraggableScrollContainer>
     </Styled.Insights>
   );
 };

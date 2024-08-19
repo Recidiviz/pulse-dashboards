@@ -17,9 +17,10 @@ import { SelectedRecommendation } from "../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "./constants";
 
 const PLOT_MARGIN_RIGHT = 40;
-const PLOT_MARGIN_BOTTOM = 40;
+const PLOT_MARGIN_BOTTOM = 52;
 const PLOT_HEIGHT = 360;
 const PLOT_WIDTH = 704;
+const Y_TEXT_LABEL_OFFSET = 0.00099;
 
 export function getRecidivismPlot(
   insight: Insight,
@@ -80,7 +81,8 @@ export function getRecidivismPlot(
         data,
         selectMaxX({
           x: "cohortMonths",
-          y: "eventRate",
+          // y is slightly offset to avoid labels overlapping for datapoints that are close to each other
+          y: (d, i) => d.eventRate + i * Y_TEXT_LABEL_OFFSET - 0.01,
           z: "recommendationType",
           text: (d) => `${Math.round(d.eventRate * 100)}%`,
           dx: 25,
@@ -90,7 +92,7 @@ export function getRecidivismPlot(
         }),
       ),
       axisX({
-        label: "Months",
+        label: "Months since release",
         labelAnchor: "center",
         labelArrow: false,
         labelOffset: 40,

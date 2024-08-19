@@ -18,6 +18,7 @@
 import { keyBy } from "lodash";
 import React, { Fragment, useState } from "react";
 
+import { convertDecimalToPercentage } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
@@ -28,10 +29,6 @@ import {
 } from "./RecommendationOptions";
 import { SummaryReport } from "./SummaryReport";
 import { RecommendationOption, RecommendationsProps } from "./types";
-
-const convertDecimalToPercentage = (decimal: number) => {
-  return Math.round(decimal * 100);
-};
 
 // TODO(Recidiviz/recidiviz-data#30651) Implement Recommendations flow
 export const Recommendations: React.FC<RecommendationsProps> = ({

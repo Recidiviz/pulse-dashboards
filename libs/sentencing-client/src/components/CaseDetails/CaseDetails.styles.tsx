@@ -347,9 +347,14 @@ export const OpportunitiesSelections = styled.div`
 `;
 
 export const OpportunitiesWrapper = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 6px;
+
+  svg {
+    flex-shrink: 0;
+  }
 `;
 
 export const OpportunitiesText = styled.div`
@@ -498,7 +503,7 @@ export const InsightsOpportunitiesWrapper = styled.div`
   max-height: calc(100vh - 64px - 180px);
   display: flex;
   flex-direction: column;
-  padding: 18px 0 18px 22px;
+  padding: 18px 0 18px 0;
   overflow-x: hidden;
   overflow-y: auto;
 `;
@@ -508,6 +513,11 @@ export const Insights = styled.div`
   flex-direction: column;
   gap: 12px;
   margin-bottom: 24px;
+`;
+
+export const InsightsHeaderWrapper = styled.div`
+  margin-left: 22px;
+  padding-right: 50px;
 `;
 
 export const ChartControls = styled.div`
@@ -526,11 +536,6 @@ export const Notification = styled.div`
   background-color: ${palette.marble5};
 `;
 
-export const CarouselButtons = styled.div`
-  display: flex;
-  gap: 4px;
-`;
-
 export const CarouselButton = styled.div`
   display: flex;
   align-items: center;
@@ -539,16 +544,42 @@ export const CarouselButton = styled.div`
   border-radius: 3px;
   border: 1px solid ${palette.text.links};
   padding: 7px;
+  user-select: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const CarouselButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-right: 24px;
+  margin-left: 50px;
+  position: absolute;
+  right: 0;
+  top: -36px;
+  z-index: 10;
+
+  ${CarouselButton} > svg {
+    stroke: ${palette.text.links};
+    stroke-width: 0.5px;
+  }
+
+  ${CarouselButton}:nth-of-type(2) > svg {
+    rotate: 180deg;
+  }
 `;
 
 export const Charts = styled.div`
-  overflow-x: scroll;
-  display: flex;
+  display: inline-flex;
 `;
 
 export const Chart = styled.div<{
   $marginRight?: number;
 }>`
+  display: flex;
+  flex-direction: column;
   height: 473px;
   background-color: #ffffff;
   border-radius: 10px;
@@ -558,13 +589,21 @@ export const Chart = styled.div<{
 `;
 
 export const ChartTitle = styled.div`
-  color: #012322;
-  fontsize: 18px;
+  ${typography.Sans18};
+  color: ${palette.pine1};
   margin-bottom: 8px;
 `;
 
 export const ChartSubTitle = styled.div`
+  ${typography.Sans14};
+  font-weight: 600;
   margin-bottom: 8px;
+  color: ${palette.slate80};
+
+  span {
+    font-weight: 400;
+    font-style: italic;
+  }
 `;
 
 export const RecidivismChartLegend = styled.div`
@@ -575,6 +614,11 @@ export const RecidivismChartLegendItem = styled.div`
   display: flex;
   align-items: center;
   margin-right: 24px;
+  gap: 8px;
+
+  div {
+    color: ${palette.pine1};
+  }
 `;
 
 export const RecidivismChartLegendDot = styled.div<{
@@ -582,7 +626,6 @@ export const RecidivismChartLegendDot = styled.div<{
 }>`
   width: 12px;
   height: 12px;
-  margin-right: 4px;
   border-radius: 50%;
   background: ${(props) => props.$backgroundColor};
 `;
@@ -593,14 +636,17 @@ export const RecidivismChartPlotContainer = styled.div`
 
 export const DispositionChartContainer = styled.div`
   display: flex;
+  justify-content: center;
   align-items: flex-end;
-  padding-top: 32px;
+  padding: 32px 20px 0 20px;
+  margin-top: auto;
 `;
 
 export const DispositionChartCircleContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 export const DispositionChartCircle = styled.div<{
@@ -611,9 +657,13 @@ export const DispositionChartCircle = styled.div<{
   width: ${(props) => props.$height}px;
   height: ${(props) => props.$height}px;
   line-height: ${(props) => props.$height}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 16px;
   border-radius: 50%;
   font-size: 26px;
+  font-weight: 400;
   color: #ffffff;
   text-align: center;
   background: ${(props) => props.$backgroundColor};
@@ -633,6 +683,7 @@ export const Opportunities = styled.div`
   display: flex;
   flex-direction: column;
   margin-right: 22px;
+  margin-left: 22px;
 `;
 
 export const OpportunitiesTableWrapper = styled.div`

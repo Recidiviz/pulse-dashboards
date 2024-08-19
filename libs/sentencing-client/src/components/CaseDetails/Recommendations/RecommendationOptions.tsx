@@ -22,22 +22,25 @@ import { RecommendationOption, RecommendationsOptionProps } from "./types";
 export const Opportunities: React.FC<{
   opportunities: RecommendationOption["opportunities"];
 }> = ({ opportunities }) => {
-  if (!opportunities) return null;
   return (
     <Styled.OpportunitiesSelections>
       <Styled.OpportunitiesWrapper>
         <Styled.OpportunitiesText>Opportunities</Styled.OpportunitiesText>
         <Styled.OpportunitiesCount>
-          {opportunities.length}
+          {opportunities?.length}
         </Styled.OpportunitiesCount>
       </Styled.OpportunitiesWrapper>
 
-      {opportunities.map((opportunity) => (
-        <Styled.OpportunitiesWrapper key={opportunity}>
-          <CheckIcon />
-          <Styled.OpportunitiesText>{opportunity}</Styled.OpportunitiesText>
-        </Styled.OpportunitiesWrapper>
-      ))}
+      {opportunities?.length ? (
+        opportunities.map((opportunity) => (
+          <Styled.OpportunitiesWrapper key={opportunity}>
+            <CheckIcon width="17px" height="17px" />
+            <Styled.OpportunitiesText>{opportunity}</Styled.OpportunitiesText>
+          </Styled.OpportunitiesWrapper>
+        ))
+      ) : (
+        <span>None yet</span>
+      )}
     </Styled.OpportunitiesSelections>
   );
 };
@@ -104,9 +107,7 @@ export const ProbationOption: React.FC<{
   optionProps: RecommendationsOptionProps;
 }> = ({ optionProps }) => {
   const { isSelectedRecommendation, option } = optionProps;
-  const showOpportunities = Boolean(
-    isSelectedRecommendation && option.opportunities?.length,
-  );
+  const showOpportunities = Boolean(isSelectedRecommendation);
 
   return (
     <RecommendationOptionBase {...optionProps}>
