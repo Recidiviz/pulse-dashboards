@@ -17,10 +17,12 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { ActionStrategyCopy } from "../../InsightsStore/models/offlineFixtures/constants";
+import { InsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import { Banner } from "../sharedComponents";
 
 const BannerText = styled.div`
@@ -42,6 +44,16 @@ type InsightsActionStrategyBannerType = {
 const InsightsActionStrategyBanner: React.FC<
   InsightsActionStrategyBannerType
 > = ({ actionStrategy }) => {
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
   return (
     <Banner
       style={{
@@ -49,7 +61,14 @@ const InsightsActionStrategyBanner: React.FC<
       }}
     >
       <BannerText>{actionStrategy.prompt}</BannerText>
-      <StyledLink to={""}>Read more</StyledLink>
+      <StyledLink to="#" onClick={openModal}>
+        Read more
+      </StyledLink>
+      <InsightsActionStrategyModal
+        isOpen={modalIsOpen}
+        onBackClick={closeModal}
+        actionStrategy={actionStrategy}
+      />
     </Banner>
   );
 };

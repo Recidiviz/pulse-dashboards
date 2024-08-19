@@ -40,6 +40,7 @@ import useIsOverflown from "../../hooks/useIsOverflown";
 import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenters/SupervisionOfficerDetailPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
 import { formatDate, toTitleCase } from "../../utils";
+import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import InsightsInfoModal from "../InsightsInfoModal";
@@ -160,6 +161,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     trackMetricViewed,
     goToSupervisorInfo,
     ctaText,
+    actionStrategyCopy,
   } = presenter;
 
   useEffect(() => {
@@ -276,6 +278,11 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         )
       }
     >
+      {actionStrategyCopy && (
+        <InsightsActionStrategyBanner
+          actionStrategy={actionStrategyCopy}
+        ></InsightsActionStrategyBanner>
+      )}
       <StyledTabs
         $isMobile={isMobile}
         selectedIndex={presenter.currentMetricIndex}

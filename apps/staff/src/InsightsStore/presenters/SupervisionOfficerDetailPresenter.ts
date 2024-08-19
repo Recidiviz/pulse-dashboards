@@ -21,6 +21,7 @@ import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
 import { MetricConfig } from "../models/MetricConfig";
+import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
@@ -120,5 +121,9 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
       yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
         this.officerPseudoId,
       );
+  }
+
+  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+    return this.supervisionStore.actionStrategyCopy;
   }
 }
