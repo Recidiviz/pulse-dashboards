@@ -21,7 +21,11 @@
 import { TenantConfig } from "../core/models/types";
 import { METRIC_TYPE_LABELS, METRIC_TYPES } from "../core/PageVitals/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
-import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
+import {
+  INSIGHTS_PAGES,
+  PATHWAYS_PAGES,
+  PATHWAYS_SECTIONS,
+} from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 
 const US_ND_CONFIG: TenantConfig = {
@@ -88,6 +92,7 @@ const US_ND_CONFIG: TenantConfig = {
       PATHWAYS_SECTIONS.countByRace,
     ],
     methodology: ["system", "operations"],
+    insights: [INSIGHTS_PAGES.supervision],
   },
   tableColumns: enabledTableColumns[pathways.US_ND],
   vitalsMetrics: [
