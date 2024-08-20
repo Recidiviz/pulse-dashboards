@@ -233,7 +233,6 @@ export const WorkflowsPageIdList = [
   "home",
   "opportunityClients",
   "opportunityAction",
-  "workflows",
   "tasks",
   "milestones",
 ] as const;
@@ -250,7 +249,6 @@ export const WORKFLOWS_PAGES: Record<WorkflowsPage, string> = {
   opportunityAction: "opportunityAction",
   tasks: "tasks",
   milestones: "milestones",
-  workflows: "workflows",
 };
 
 /**

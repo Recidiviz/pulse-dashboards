@@ -61,7 +61,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       )}
       {enableWorkflows && (
         <NavLink
-          to={workflowsUrl("workflows")}
+          to={workflowsUrl("home")}
           end={
             (enableSystems &&
               workflowsSupportedSystems?.some((systemId: SystemId) =>
