@@ -43,7 +43,7 @@ const CardWrapper = styled.div`
   gap: ${rem(32)};
   overflow: hidden;
   border-radius: ${BORDER_RADIUS};
-  border: ${rem(1)} solid ${palette.slate70};
+  border: ${rem(1)} solid ${palette.slate30};
   border-top-width: ${rem(1)};
   display: flex;
   flex-direction: column;

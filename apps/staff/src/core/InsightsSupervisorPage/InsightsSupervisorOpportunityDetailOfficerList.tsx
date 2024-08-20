@@ -57,7 +57,7 @@ const LIST_WIDTH = rem(261);
 const LIST_ITEM_HEIGHT = rem(44);
 const LIST_ITEM_WIDTH = `100%`;
 
-const OfficerWithOpportunityDetailList = styled.ul`
+const OfficerWithOpportunityDetailList = styled.ul<{ isOverflowing: boolean }>`
   align-items: flex-start;
   display: flex;
   flex-direction: column;
@@ -65,14 +65,20 @@ const OfficerWithOpportunityDetailList = styled.ul`
   width: ${LIST_WIDTH};
   height: ${LIST_HEIGHT};
   scrollbar-width: thin;
-  overflow-y: scroll;
-  padding-bottom: 48px;
+  padding-bottom: 2px;
   padding-left: 0;
-  mask-image: linear-gradient(
-    to bottom,
-    white calc(100% - 48px),
-    transparent 100%
-  );
+  border-top: ${rem(1)} solid ${palette.slate20};
+
+  ${({ isOverflowing }) =>
+    isOverflowing &&
+    `
+    overflow-y: scroll;
+    mask-image: linear-gradient(
+      to bottom,
+      white calc(100% - 24px),
+      transparent 100%
+    );
+  `}
 `;
 
 const OfficerWithOpportunityDetailListItem = styled.li<{ hovered?: boolean }>`
@@ -82,6 +88,10 @@ const OfficerWithOpportunityDetailListItem = styled.li<{ hovered?: boolean }>`
   gap: 0;
   border-top: ${rem(1)} solid ${palette.slate20};
   color: ${palette.pine1};
+
+  &:first-child {
+    border-top: none;
+  }
 
   ${({ hovered }) =>
     hovered &&
@@ -120,8 +130,10 @@ export const InsightsSupervisorOpportunityDetailOfficerList: React.FC<
 > = ({ officersWithEligibleClients, supervisionJiiLabel }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
+  const isOverflowing = officersWithEligibleClients.length > 7;
+
   return (
-    <OfficerWithOpportunityDetailList>
+    <OfficerWithOpportunityDetailList isOverflowing={isOverflowing}>
       {officersWithEligibleClients.map((officer) => (
         <OfficerWithOpportunityDetailListItem
           key={officer.externalId}

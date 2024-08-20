@@ -186,7 +186,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
             isWorkflowsEnabled && (
               <InsightsPageSection
                 sectionTitle="Opportunities"
-                sectionDescription={`Take action on opportunities that ${labels.supervisionJiiLabel}s may be eligible for`}
+                sectionDescription={`Take action on opportunities that ${labels.supervisionJiiLabel}s may be eligible for.`}
               >
                 <Wrapper isLaptop={isLaptop} supervisorHomepage>
                   <Body>
