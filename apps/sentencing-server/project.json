@@ -121,7 +121,7 @@
       "dependsOn": [{ "target": "container", "params": "forward" }],
       "configurations": {
         "staging": {
-          "command": "gcloud run jobs deploy sentencing-server-migrate-db --project recidiviz-dashboard-staging --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest --set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db --region us-central1 --execute-now --command yarn --args prisma,migrate,deploy"
+          "command": "gcloud run jobs deploy sentencing-server-migrate-db --project recidiviz-dashboard-staging --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest --set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db --region us-central1 --execute-now --wait --command yarn --args prisma,migrate,deploy"
         }
       },
       "defaultConfiguration": "staging"

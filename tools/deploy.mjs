@@ -316,6 +316,37 @@ if (deployFrontendPrompt.deployFrontend) {
   }
 }
 
+if (deployEnv === "staging") {
+  const deploySentencingServerPrompt = await inquirer.prompt({
+    type: "confirm",
+    name: "deploySentencingServer",
+    message: "Would you like to deploy the Sentencing Server?",
+  });
+
+  if (deploySentencingServerPrompt.deploySentencingServer) {
+    console.log("Building and deploying the application...");
+
+    let retryDeploy = false;
+    do {
+      // Deploy the app
+      console.log("Deploying application to Cloud Run...");
+      try {
+        await $`nx deploy-app sentencing-server`.pipe(process.stdout);
+        retryDeploy = false;
+      } catch (e) {
+        // eslint-disable-next-line no-await-in-loop
+        const retryDeployPrompt = await inquirer.prompt({
+          type: "confirm",
+          name: "retryDeploy",
+          message: `Sentencing server deploy failed with error: ${e}. Retry?`,
+          default: false,
+        });
+        retryDeploy = retryDeployPrompt.retryDeploy;
+      }
+    } while (retryDeploy);
+  }
+}
+
 // If one deploy succeeded but the other deploy failed, we still want to publish release notes for
 // the one that succeeded, since any code change to fix the other will increment the release version.
 if (publishReleaseNotes) {
