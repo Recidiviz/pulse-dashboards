@@ -148,7 +148,6 @@
     "prisma-generate": {
       "inputs": ["{projectRoot}/apps/sentencing-server/prisma/schema.prisma"],
       "executor": "@nx-tools/nx-prisma:generate",
-      "cache": true,
       "options": {
         "schema": "apps/sentencing-server/prisma/schema.prisma"
       }
