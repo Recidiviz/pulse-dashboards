@@ -25,6 +25,7 @@ import {
 export type RecommendationsProps = {
   firstName?: string;
   fullName?: string;
+  externalId: string;
   selectedRecommendation?: SelectedRecommendation;
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;

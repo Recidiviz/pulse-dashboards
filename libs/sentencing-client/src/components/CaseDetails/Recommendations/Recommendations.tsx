@@ -38,6 +38,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   lastSavedRecommendation,
   recommendedOpportunities,
   insight,
+  externalId,
   handleRecommendationUpdate,
   saveRecommendation,
   setCaseStatusCompleted,
@@ -133,6 +134,9 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
         <SummaryReport
           fullName={fullName}
           firstName={firstName}
+          insight={insight}
+          externalId={externalId}
+          selectedRecommendation={selectedRecommendation}
           hideSummaryReport={hideSummaryReport}
           setCaseStatusCompleted={setCaseStatusCompleted}
         />

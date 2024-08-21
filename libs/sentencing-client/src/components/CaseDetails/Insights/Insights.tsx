@@ -18,10 +18,9 @@
 import { Insight } from "../../../api/APIClient";
 import DraggableScrollContainer from "../../DraggableScrollContainer/DraggableScrollContainer";
 import * as Styled from "../CaseDetails.styles";
+import { DispositionChart } from "../components/DispositionChart/DispositionChart";
+import { RecidivismPlot } from "../components/RecidivismPlot/RecidivismPlot";
 import { SelectedRecommendation } from "../types";
-import { DispositionChart } from "./components/DispositionChart";
-import { RECOMMENDATION_TYPE_TO_COLOR } from "./constants";
-import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
 
 export interface InsightsProps {
   insight?: Insight;
@@ -37,24 +36,6 @@ export const Insights = ({
   if (!insight) {
     return null;
   }
-
-  const { dispositionData, rollupRecidivismNumRecords, dispositionNumRecords } =
-    insight;
-
-  const recidivismPlotSubtitle = getRecidivismPlotSubtitle(insight);
-  const plot = getRecidivismPlot(insight, selectedRecommendation);
-
-  const recidivismChartLegend = dispositionData.map(
-    ({ recommendationType }) =>
-      recommendationType !== "None" && (
-        <Styled.RecidivismChartLegendItem key={recommendationType}>
-          <Styled.RecidivismChartLegendDot
-            $backgroundColor={RECOMMENDATION_TYPE_TO_COLOR[recommendationType]}
-          />
-          <div>{recommendationType}</div>
-        </Styled.RecidivismChartLegendItem>
-      ),
-  );
 
   return (
     <Styled.Insights>
@@ -72,38 +53,18 @@ export const Insights = ({
         <Styled.Charts>
           {/* Cumulative Recidivism Rates Chart */}
           <Styled.Chart $marginRight={16}>
-            <Styled.ChartTitle>Cumulative Recidivism Rates</Styled.ChartTitle>
-            <Styled.ChartSubTitle>
-              {recidivismPlotSubtitle}{" "}
-              <span>(Based on {rollupRecidivismNumRecords} records)</span>
-            </Styled.ChartSubTitle>
-            <Styled.RecidivismChartLegend>
-              {recidivismChartLegend}
-            </Styled.RecidivismChartLegend>
-            <Styled.RecidivismChartPlotContainer
-              ref={(ref) => {
-                if (!ref) {
-                  return;
-                }
-                ref.replaceChildren();
-                ref.appendChild(plot);
-              }}
-            />
+          <RecidivismPlot
+            insight={insight}
+            selectedRecommendation={selectedRecommendation}
+          />
           </Styled.Chart>
 
           {/* Previous Sentence Rates Chart */}
           <Styled.Chart>
-            <Styled.ChartTitle>Previous Sentences</Styled.ChartTitle>
-            <Styled.ChartSubTitle>
-              {recidivismPlotSubtitle}{" "}
-              <span>(Based on {dispositionNumRecords} records)</span>
-            </Styled.ChartSubTitle>
-            <Styled.DispositionChartContainer>
-              <DispositionChart
-                dispositionData={dispositionData}
-                selectedRecommendation={selectedRecommendation}
-              />
-            </Styled.DispositionChartContainer>
+          <DispositionChart
+            insight={insight}
+            selectedRecommendation={selectedRecommendation}
+          />
           </Styled.Chart>
         </Styled.Charts>
       </DraggableScrollContainer>

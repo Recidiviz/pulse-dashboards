@@ -14,13 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-
-import { useState } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useReactToPrint } from "react-to-print";
 
+import { Insight } from "../../../api";
 import CopyIcon from "../../assets/copy-icon.svg?react";
 import DownloadIcon from "../../assets/download-icon.svg?react";
 import * as Styled from "../CaseDetails.styles";
+import { SelectedRecommendation } from "../types";
+import { Report } from "./report/Report";
 
 const COPY_TO_CLIPBOARD_TIMEOUT = 1500;
 const TOAST_TIMEOUT = 3000;
@@ -28,6 +31,9 @@ const TOAST_TIMEOUT = 3000;
 type SummaryReportProps = {
   firstName?: string;
   fullName?: string;
+  insight?: Insight;
+  externalId: string;
+  selectedRecommendation: SelectedRecommendation;
   hideSummaryReport: () => void;
   setCaseStatusCompleted: () => void;
 };
@@ -35,6 +41,9 @@ type SummaryReportProps = {
 export const SummaryReport: React.FC<SummaryReportProps> = ({
   firstName,
   fullName,
+  insight,
+  externalId,
+  selectedRecommendation,
   hideSummaryReport,
   setCaseStatusCompleted,
 }) => {
@@ -60,6 +69,11 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
       duration: TOAST_TIMEOUT,
     });
   };
+
+  const reportRef = useRef(null);
+  const handlePrint = useReactToPrint({
+    content: () => reportRef.current,
+  });
 
   return (
     <Styled.RecommendationSummaryReport>
@@ -109,7 +123,19 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
             report.
           </div>
           <Styled.PlaceholderPdfPreview />
-          <Styled.ActionButton>
+          <div style={{ display: "none" }}>
+            <div ref={reportRef}>
+              {insight ? (
+                <Report
+                  fullName={fullName}
+                  externalId={externalId}
+                  selectedRecommendation={selectedRecommendation}
+                  insight={insight}
+                />
+              ) : null}
+            </div>
+          </div>
+          <Styled.ActionButton onClick={handlePrint}>
             <DownloadIcon />
             Download Report
           </Styled.ActionButton>

@@ -12,19 +12,63 @@ import {
   tip,
 } from "@observablehq/plot";
 
-import { Insight } from "../../../api/APIClient";
-import { SelectedRecommendation } from "../types";
-import { RECOMMENDATION_TYPE_TO_COLOR } from "./constants";
+import { Insight } from "../../../../api";
+import { SelectedRecommendation } from "../../types";
+import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
+import { getGenderString, getLsirScoreString } from "../common/utils";
+
+export function getRecidivismPlotSubtitle(insight: Insight) {
+  const {
+    rollupStateCode,
+    rollupGender,
+    rollupAssessmentScoreBucketStart,
+    rollupAssessmentScoreBucketEnd,
+    rollupOffense,
+    rollupNcicCategory,
+    rollupCombinedOffenseCategory,
+    rollupViolentOffense,
+  } = insight;
+
+  const genderString = getGenderString(rollupGender);
+  const lsirScoreString = getLsirScoreString(
+    rollupAssessmentScoreBucketStart,
+    rollupAssessmentScoreBucketEnd,
+  );
+
+  const offenseString = rollupOffense ? `${rollupOffense} offenses` : undefined;
+  const combinedOffenseString = rollupCombinedOffenseCategory
+    ? `${rollupCombinedOffenseCategory} offenses`
+    : undefined;
+  const rollupNcicCategoryString = rollupNcicCategory
+    ? `${rollupNcicCategory} offenses`
+    : undefined;
+  const rollupViolentOffenseString = rollupViolentOffense
+    ? "Violent Offenses"
+    : undefined;
+
+  const recidivismSubtitleStrings = [
+    genderString,
+    lsirScoreString,
+    offenseString,
+    combinedOffenseString,
+    rollupNcicCategoryString,
+    rollupViolentOffenseString,
+  ].filter((v) => v);
+
+  return recidivismSubtitleStrings.length > 0
+    ? recidivismSubtitleStrings.join(", ")
+    : `All cases in ${rollupStateCode}`;
+}
 
 const PLOT_MARGIN_RIGHT = 40;
 const PLOT_MARGIN_BOTTOM = 52;
-const PLOT_HEIGHT = 360;
-const PLOT_WIDTH = 704;
+const PLOT_HEIGHT_RATIO = 360 / 704;
 const Y_TEXT_LABEL_OFFSET = 0.00099;
 
 export function getRecidivismPlot(
   insight: Insight,
   selectedRecommendation: SelectedRecommendation,
+  plotWidth: number,
 ) {
   const series = insight.rollupRecidivismSeries;
 
@@ -35,8 +79,8 @@ export function getRecidivismPlot(
   return plot({
     marginRight: PLOT_MARGIN_RIGHT,
     marginBottom: PLOT_MARGIN_BOTTOM,
-    height: PLOT_HEIGHT,
-    width: PLOT_WIDTH,
+    height: PLOT_HEIGHT_RATIO * plotWidth,
+    width: plotWidth,
     y: {
       percent: true,
     },
@@ -115,48 +159,4 @@ export function getRecidivismPlot(
       ruleY([0]),
     ],
   });
-}
-
-export function getRecidivismPlotSubtitle(insight: Insight) {
-  const {
-    rollupStateCode,
-    rollupGender,
-    rollupAssessmentScoreBucketStart,
-    rollupAssessmentScoreBucketEnd,
-    rollupOffense,
-    rollupNcicCategory,
-    rollupCombinedOffenseCategory,
-    rollupViolentOffense,
-  } = insight;
-
-  const genderString = rollupGender ? `${rollupGender}s` : undefined;
-  const lsirScoreString =
-    rollupAssessmentScoreBucketStart !== null &&
-    rollupAssessmentScoreBucketEnd !== null
-      ? `LSI-R = ${rollupAssessmentScoreBucketStart}-${rollupAssessmentScoreBucketEnd}`
-      : undefined;
-
-  const offenseString = rollupOffense ? `${rollupOffense} offenses` : undefined;
-  const combinedOffenseString = rollupCombinedOffenseCategory
-    ? `${rollupCombinedOffenseCategory} offenses`
-    : undefined;
-  const rollupNcicCategoryString = rollupNcicCategory
-    ? `${rollupNcicCategory} offenses`
-    : undefined;
-  const rollupViolentOffenseString = rollupViolentOffense
-    ? "Violent Offenses"
-    : undefined;
-
-  const recidivismSubtitleStrings = [
-    genderString,
-    lsirScoreString,
-    offenseString,
-    combinedOffenseString,
-    rollupNcicCategoryString,
-    rollupViolentOffenseString,
-  ].filter((v) => v);
-
-  return recidivismSubtitleStrings.length > 0
-    ? recidivismSubtitleStrings.join(", ")
-    : `All cases in ${rollupStateCode}`;
 }
