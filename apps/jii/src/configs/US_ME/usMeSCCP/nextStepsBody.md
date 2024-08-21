@@ -1,3 +1,10 @@
-- If you’re interested in SCCP, talk to your case manager about your home plan, employment plan, and any programs you’re required to complete in the facility.
-- Ask your case manager for a blank application form that you can begin filling out
-- Start writing your SCCP application essay
+If you are eligible for SCCP, your case manager will give you an <FormPreview linkText="application packet" /> to fill out, which includes several parts:
+
+<dl>
+<dt>Application</dt>
+<dd>In the application, you’ll need to outline your release plan, including: your home plan, employment / education plan, treatment (if applicable), and your support system.</dd>
+<dt>Essay</dt>
+<dd>You’ll have to write an essay describing the path you’re on, the first steps you’ll take when released, and how you plan to do well on SCCP.</dd>
+<dt>Paperwork</dt>
+<dd>You’ll sign paperwork agreeing to the conditions of the program. You’ll also need to get a warrantless search agreement signed by the person whose place you’ll be living in.</dd>
+</dl>

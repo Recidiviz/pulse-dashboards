@@ -33,14 +33,13 @@ export class NavigationMenuPresenter {
 
     if (this.userStore.hasPermission("enhanced")) {
       links.push({ text: "Search for Residents", url: "/eligibility/search" });
+      links.push(
+        ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
+          text: c.copy.menuLabel,
+          url: `/eligibility/${c.urlSection}`,
+        })),
+      );
     }
-
-    links.push(
-      ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
-        text: c.copy.menuLabel,
-        url: `/eligibility/${c.urlSection}`,
-      })),
-    );
 
     return links;
   }

@@ -22,6 +22,7 @@ import styled from "styled-components/macro";
 
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { Wordmark } from "../Wordmark/Wordmark";
 import pageLandingCopy from "./pageLandingCopy.md?raw";
 
 const Wrapper = styled.div`
@@ -59,6 +60,7 @@ export const PageLanding: FC = () => {
   return (
     <Wrapper>
       <Main>
+        <Wordmark width={185} />
         <LandingPageCopyWrapper>{pageLandingCopy}</LandingPageCopyWrapper>
         <Buttons>
           <Button onClick={() => authClient.logIn()}>Log in</Button>

@@ -15,20 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig } from "../../types";
-import { config } from "../usMeSCCP/config";
-import releaseDateInfo from "./releaseDateInfo.md?raw";
+import { rem } from "polished";
+import { FC, memo } from "react";
+import styled from "styled-components/macro";
 
-export const usMeResidentsConfig: ResidentsConfig = {
-  headerProfileFields: [
-    {
-      label: "Current release date",
-      value:
-        "{{#if resident.releaseDate}}{{formatFullDate resident.releaseDate}}{{else}}Not available{{/if}}",
-      moreInfo: releaseDateInfo,
-    },
-  ],
-  incarcerationOpportunities: {
-    usMeSCCP: config,
-  },
+import wordmarkUrl from "../../assets/images/wordmark.svg";
+
+const Img = styled.img`
+  display: block;
+  height: auto;
+  width: ${rem(132)};
+`;
+
+type WordmarkProps = {
+  width?: number;
 };
+
+export const Wordmark: FC<WordmarkProps> = memo(function Wordmark({ width }) {
+  return (
+    <Img
+      src={wordmarkUrl}
+      alt="Opportunities"
+      style={width ? { width: rem(width) } : undefined}
+    />
+  );
+});

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Body32, Sans14, Sans16, spacing } from "@recidiviz/design-system";
+import { Header34, Sans14, Sans16, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -34,7 +34,7 @@ const ResidentsSearchWithPresenter: React.FC<{
   return (
     <PageHydrator hydratable={presenter}>
       <div>
-        <Body32 as="h1">Select a resident</Body32>
+        <Header34 as="h1">Select a resident</Header34>
 
         <Sans14 style={{ marginBottom: rem(spacing.lg) }}>
           Filter by facility:

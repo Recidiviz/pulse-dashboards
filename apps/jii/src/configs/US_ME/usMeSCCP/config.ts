@@ -17,8 +17,6 @@
 
 import { OpportunityConfig } from "../../types";
 import aboutBody1 from "./aboutBody1.md?raw";
-import aboutBody2 from "./aboutBody2.md?raw";
-import aboutBody3 from "./aboutBody3.md?raw";
 import aboutPage from "./aboutPage.md?raw";
 import nextStepsBody from "./nextStepsBody.md?raw";
 import nextStepsPage from "./nextStepsPage.md?raw";
@@ -40,7 +38,7 @@ export const config: OpportunityConfig = {
       {{#if custom.ineligibleViolation}}You have remaining requirements. Talk to your case manager to understand if and when you can apply.
       {{else}}
         {{#if (isFutureDate custom.eligibilityDate)}}
-        You could be eligible for release onto SCCP on {{formatFullDate custom.eligibilityDate}}. 
+        You could be eligible for release onto SCCP on <strong>{{formatFullDate custom.eligibilityDate}}</strong>. 
         You can apply up to 3 months prior to that date —
           {{#if (isFutureDate custom.applicationDate )}} as soon as {{formatFullDate custom.applicationDate}}.
           {{else}} which means that you may be eligible to apply now.
@@ -49,21 +47,13 @@ export const config: OpportunityConfig = {
       {{/if}} 
     {{/if}}`,
     about: {
-      sections: [
-        {
-          heading: "About the program",
-          body: aboutBody1,
-        },
-        {
-          heading: "Quick facts",
-          body: aboutBody2,
-        },
-        { heading: "How to apply", body: aboutBody3 },
-      ],
+      title: "About the program",
+      body: aboutBody1,
       linkText: "Learn more about how the program works",
       fullPage: aboutPage,
     },
     requirements: {
+      title: "Requirements",
       trackedCriteria: {
         usMeServedXPortionOfSentence: {
           criterion: `{{#if currentCriterion}}Served {{currentCriterion.xPortionServed}} of your sentence
@@ -100,11 +90,11 @@ export const config: OpportunityConfig = {
         },
         {
           criterion:
-            "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+            "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
         },
         {
           criterion:
-            "Completed required programs, following your case plan, and showing positive change",
+            "Completing required programs and following your case plan",
         },
       ],
       staticRequirementsLabel:
@@ -113,8 +103,9 @@ export const config: OpportunityConfig = {
       fullPage: requirementsPage,
     },
     nextSteps: {
+      title: "How to apply",
       body: nextStepsBody,
-      linkText: "How to put together a strong application and essay",
+      linkText: "Learn more about the application process",
       fullPage: nextStepsPage,
     },
     menuLabel: "SCCP",

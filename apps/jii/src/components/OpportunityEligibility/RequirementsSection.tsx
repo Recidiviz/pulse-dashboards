@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, spacing } from "@recidiviz/design-system";
+import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
+import Markdown from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import { FC, Fragment } from "react";
@@ -27,32 +28,39 @@ import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresent
 import { Section, SectionHeading } from "./styles";
 
 const LIST_PAD = spacing.xl;
-const RequirementsGroupings = styled.dl`
-  display: grid;
-  gap: ${rem(spacing.xl)};
-  grid-template-columns: 1fr 2fr;
+const BULLET_PAD = 12;
 
+const RequirementsGroupings = styled.dl`
   dt {
+    ${typography.Sans18}
+
     color: ${palette.text.caption};
+    margin-bottom: ${rem(BULLET_PAD)};
     text-wrap: balance;
   }
 
   dd {
     margin: 0;
+    margin-bottom: ${rem(spacing.xxl)};
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
   }
 
   ul {
     margin: 0;
+
     padding-inline-start: ${rem(LIST_PAD)};
     list-style-type: none;
 
     li {
-      margin-bottom: ${rem(spacing.sm)};
+      margin-bottom: ${rem(BULLET_PAD)};
     }
   }
 `;
 
-const MARKER_SIZE = 16;
+const MARKER_SIZE = 18;
 const RequirementMarker = styled(Icon).attrs({ size: MARKER_SIZE })`
   margin-right: calc(${rem(LIST_PAD)} - ${MARKER_SIZE}px);
   margin-left: -${rem(LIST_PAD)};
@@ -60,7 +68,7 @@ const RequirementMarker = styled(Icon).attrs({ size: MARKER_SIZE })`
 `;
 
 const IneligibleReason = styled.div`
-  color: ${palette.slate80};
+  ${typography.Sans14}
   margin-top: ${rem(spacing.xs)};
 `;
 
@@ -75,7 +83,9 @@ const RequirementsList: FC<{ section: RequirementsSectionContent }> = observer(
               color={
                 section.icon === "Success"
                   ? palette.signal.highlight
-                  : rgba(palette.slate, 0.4)
+                  : section.icon === "CloseOutlined"
+                    ? palette.pine3
+                    : rgba(palette.slate, 0.4)
               }
             />
             {r.criterion}
@@ -94,11 +104,13 @@ export const RequirementsSection: FC<{
 }> = observer(function RequirementsSection({ presenter }) {
   return (
     <Section>
-      <SectionHeading>Requirements</SectionHeading>
+      <SectionHeading>{presenter.requirementsContent.title}</SectionHeading>
       <RequirementsGroupings>
         {presenter.requirementsContent.sections.map((section) => (
           <Fragment key={section.label}>
-            <dt>{section.label}</dt>
+            <dt>
+              <Markdown>{section.label}</Markdown>
+            </dt>
             <dd>
               <RequirementsList section={section} />
             </dd>

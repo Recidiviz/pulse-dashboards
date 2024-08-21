@@ -21,7 +21,7 @@ import styled from "styled-components/macro";
 
 export const Section = styled.section`
   border: 1px solid ${palette.slate20};
-  border-radius: ${rem(5)};
+  border-radius: ${rem(24)};
   margin: ${rem(spacing.lg)} 0;
   padding: ${rem(spacing.xl)};
   text-wrap: pretty;

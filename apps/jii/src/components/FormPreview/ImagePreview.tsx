@@ -19,13 +19,12 @@ import {
   Button,
   Icon,
   palette,
-  Sans24,
   spacing,
   typography,
 } from "@recidiviz/design-system";
 import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
+import { darken, rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
@@ -50,6 +49,27 @@ const FormImage = styled.div`
   border-radius: ${rem(4)};
   min-height: 0;
   overflow: hidden;
+`;
+
+const PaginationButton = styled(Button).attrs({
+  kind: "primary",
+  shape: "block",
+})`
+  background-color: ${palette.pine4};
+  margin-right: ${rem(spacing.sm)};
+  height: 40px;
+  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
+
+  &:hover,
+  &:focus {
+    background: ${darken(0.1, palette.pine4)};
+  }
+`;
+
+const PreviewHeading = styled.h2`
+  ${typography.Sans24}
+
+  margin-bottom: 0.5em;
 `;
 
 const ImageSizer = styled.img`
@@ -97,19 +117,19 @@ const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
   observer(function ImagePreviewWithPresenter({ presenter }) {
     return (
       <Wrapper>
-        <Sans24 as="h2">{presenter.title}</Sans24>
+        <PreviewHeading>{presenter.title}</PreviewHeading>
         <ResponsiveImage presenter={presenter} />
         <Controls>
-          <Button shape="block" onClick={() => presenter.previous()}>
+          <PaginationButton shape="block" onClick={() => presenter.previous()}>
             <Icon kind="Arrow" size={14} rotate={180} /> Previous page
-          </Button>
+          </PaginationButton>
           <div>
             Page {presenter.currentPage} of {presenter.totalPages}
           </div>
-          <Button shape="block" onClick={() => presenter.next()}>
+          <PaginationButton shape="block" onClick={() => presenter.next()}>
             Next page
             <Icon kind="Arrow" size={14} />
-          </Button>
+          </PaginationButton>
         </Controls>
       </Wrapper>
     );

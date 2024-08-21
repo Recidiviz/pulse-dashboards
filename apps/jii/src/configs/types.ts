@@ -21,11 +21,6 @@ import { EligibilityReport } from "../models/EligibilityReport/interface";
 import { residentsConfigByState } from "./residentsConfig";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 
-type AboutSection = {
-  heading: string;
-  body: string;
-};
-
 export type ProfileField = {
   label: string;
   value: string;
@@ -41,11 +36,13 @@ export type OpportunityConfig = {
     headline: string;
     subheading: string;
     about: {
-      sections: [AboutSection, ...AboutSection[]];
+      title: string;
+      body: string;
       linkText: string;
       fullPage: string;
     };
     requirements: {
+      title: string;
       trackedCriteria: Record<string, RequirementCopy>;
       untrackedCriteria: Array<RequirementCopy>;
       staticRequirementsLabel: string;
@@ -53,6 +50,7 @@ export type OpportunityConfig = {
       fullPage: string;
     };
     nextSteps: {
+      title: string;
       body: string;
       linkText: string;
       fullPage: string;

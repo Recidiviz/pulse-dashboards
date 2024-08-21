@@ -58,9 +58,4 @@ export class ResidentMiniProfilePresenter {
         .filter((f) => !!(f.label && f.value))
     );
   }
-
-  get name() {
-    const { personName } = this.resident;
-    return `${personName.givenNames} ${personName.surname}`;
-  }
 }

@@ -51,10 +51,10 @@ const StyledApp = styled.div``;
 
 const GlobalStyle = createGlobalStyle`
   body {
-    ${typography.Sans14}
+    ${typography.Sans16}
     
     background: ${palette.white};
-    color: ${palette.text.normal};
+    color: ${palette.pine2};
   }
 `;
 

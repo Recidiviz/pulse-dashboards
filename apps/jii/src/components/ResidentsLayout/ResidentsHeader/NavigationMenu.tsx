@@ -20,12 +20,21 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
+  typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components/macro";
 
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
+
+const StyledMenuItem = styled(DropdownMenuItem)`
+  ${typography.Sans14}
+
+  height: 3em;
+  padding: 0 1.5em;
+`;
 
 export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> =
   observer(function NavigationMenu({ presenter }) {
@@ -37,16 +46,16 @@ export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> =
           <DropdownMenu alignment="right">
             <>
               {presenter.links.map((link) => (
-                <DropdownMenuItem
+                <StyledMenuItem
                   key={link.url}
                   onClick={() => navigate(link.url)}
                 >
                   {link.text}
-                </DropdownMenuItem>
+                </StyledMenuItem>
               ))}
-              <DropdownMenuItem onClick={() => presenter.logout()}>
+              <StyledMenuItem onClick={() => presenter.logout()}>
                 Log out
-              </DropdownMenuItem>
+              </StyledMenuItem>
             </>
           </DropdownMenu>
         </Dropdown>

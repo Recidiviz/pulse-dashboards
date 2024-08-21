@@ -34,7 +34,7 @@ const StyledLink = styled(Link)`
   margin-top: ${rem(spacing.lg)};
   min-height: ${rem(32)};
   min-width: ${rem(129)};
-  padding: ${rem(8)} ${rem(16)};
+  padding: ${rem(10)} ${rem(18)};
   text-decoration: none;
   transition-duration: ${animation.defaultDurationMs}ms;
   transition-property: color, background-color, border-color;
@@ -58,7 +58,7 @@ export const ButtonLink: FC<LinkProps> = ({ children, ...linkProps }) => {
   return (
     <StyledLink {...linkProps}>
       <span>{children}</span>
-      <Icon kind="Arrow" size={14} />
+      <Icon kind="Arrow" size={16} />
     </StyledLink>
   );
 };

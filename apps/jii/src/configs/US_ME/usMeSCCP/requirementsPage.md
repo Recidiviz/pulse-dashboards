@@ -1,74 +1,45 @@
-# Eligibility Requirements for the Supervised Community Confinement Program (SCCP)
+# SCCP Eligibility Requirements
+
+## How do I qualify for SCCP?
 
 To apply for SCCP, you must first work with your case manager to make sure that you meet all of the following eligibility requirements:
 
-<dl>
-<dt>Time served</dt>
-<dd>
+### Time served
 
-If you were sentenced to five years or fewer, you must serve 1/2 of your sentence. If you were sentenced to more than five years or have a split sentence, you must serve 2/3 of your sentence.
+- If you were sentenced to five years or fewer, you must serve 1/2 of your sentence.
+- If you were sentenced to more than five years or have a split sentence, you must serve 2/3 of your sentence.
+- You must have fewer than 30 months remaining on your sentence.
+- You must have spent more than 120 days incarcerated in a MDOC facility.
 
-You must have fewer than 30 months remaining on your sentence.
+### Custody level
 
-</dd>
+- You must be classified as minimum or community custody.
 
-<dt>
-Time in MDOC
-</dt>
-<dd>
-You must have spent more than 120 days incarcerated in a MDOC facility.
-</dd>
+### Charges and violations
 
-<dt>
-Custody level
-</dt>
-<dd>
-You must be classified as minimum or community custody.
-</dd>
+- You must have no detainers, warrants, or pending holds.
+- You must have no Class A or B disciplines within the last 90 days.
 
-<dt>
-Detainers, etc.
-</dt>
-<dd>
-You must have no detainers, warrants, or pending holds.
-</dd>
+### Programming and case plan
 
-<dt>
-Programming / Case Plan
-</dt>
-<dd>
-You must be participating in assigned core programs and be following your case plan in the facility.
-</dd>
+- You must be participating in assigned core programs.
+- You must be following your case plan in the facility.
 
-<dt>
-Discipline
-</dt>
-<dd>
-You must have no Class A or B disciplines within the last 90 days.
-</dd>
+### Housing
 
-<dt>
-Housing
-</dt>
-<dd>
-You must have suitable housing set up for after release. On SCCP, you must live in Maine. You can stay in different kinds of places, like a house, apartment, sober living residence, transitional housing, education or vocational training housing, or treatment or healthcare facility.
-</dd>
+- You must have suitable housing set up for after release. On SCCP, you must live in Maine.
+- Housing options could include: a house, apartment, sober living residence, transitional housing, education or vocational training housing, or treatment or healthcare facility.
 
-<dt>
-Employment / Education
-</dt>
-<dd>
-While on SCCP, you must have a job or be in school. If not, you should be searching for one.
-</dd>
+### Employment and finances
 
-<dt>
-Treatment
-</dt>
-<dd>
-Depending on your case, you may be required to participate in treatment while you’re on SCCP. Ask your case manager about any treatment requirements you may have. In certain cases, you may not have to work or go to school if you’re participating in treatment.
-</dd>
+- While on SCCP, you must have a job or be in school. If not, you should be searching for one.
+- If you qualify for Social Security or disability benefits, you may be able to use those instead.
 
-</dl>
+### Treatment
+
+- Depending on your case, you may have to participate in treatment while you’re on SCCP.
+- Ask your case manager about any treatment requirements you may have.
+- In certain cases, you may not have to go to work or school if you’re in treatment.
 
 ## How is my Current Release Date calculated?
 

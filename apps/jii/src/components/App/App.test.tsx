@@ -155,7 +155,7 @@ describe("protected routes", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: "Eligibility Requirements for the Supervised Community Confinement Program (SCCP)",
+          name: "SCCP Eligibility Requirements",
         }),
       ).toBeInTheDocument(),
     );
@@ -170,7 +170,7 @@ describe("protected routes", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("heading", {
-          name: "SCCP Application and Essay Tips",
+          name: "SCCP Application and Tips",
         }),
       ).toBeInTheDocument(),
     );

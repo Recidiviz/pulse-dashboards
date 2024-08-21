@@ -20,7 +20,6 @@ import { set } from "mobx";
 
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
-import { SegmentClient } from "../../apis/Segment/SegmentClient";
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import {
   IncarcerationOpportunityId,
@@ -118,7 +117,7 @@ describe("after hydration", () => {
         "sections": [
           {
             "icon": "Success",
-            "label": "Requirements you've met",
+            "label": "Requirements you <u>have</u> met",
             "requirements": [
               {
                 "criterion": "Served 2/3 of your sentence",
@@ -136,7 +135,7 @@ describe("after hydration", () => {
           },
           {
             "icon": "CloseOutlined",
-            "label": "Requirements you haven't met yet",
+            "label": "Requirements you <u>have not</u> met yet",
             "requirements": [
               {
                 "criterion": "Fewer than 30 months remaining on your sentence",
@@ -152,35 +151,20 @@ describe("after hydration", () => {
                 "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
               },
               {
-                "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+                "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
               },
               {
-                "criterion": "Completed required programs, following your case plan, and showing positive change",
+                "criterion": "Completing required programs and following your case plan",
               },
             ],
           },
         ],
+        "title": "Requirements",
       }
     `);
   });
 
   test("next steps content", () => {
     expect(presenter.nextStepsContent).toMatchSnapshot();
-  });
-
-  test("event tracking", () => {
-    const spy = vi.spyOn(SegmentClient.prototype, "track");
-
-    presenter.trackAccordionOpened("section Title");
-
-    expect(spy.mock.lastCall).toMatchInlineSnapshot(`
-      [
-        "frontend_about_section_expanded",
-        {
-          "opportunityId": "usMeSCCP",
-          "section": "section Title",
-        },
-      ]
-    `);
   });
 });

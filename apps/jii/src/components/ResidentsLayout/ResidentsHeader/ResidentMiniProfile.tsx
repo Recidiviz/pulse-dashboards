@@ -37,14 +37,8 @@ const ProfileWrapper = styled.div`
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: ${rem(spacing.md)};
+  gap: ${rem(spacing.sm)};
   justify-content: space-between;
-`;
-
-const Name = styled.div`
-  ${typography.Sans16}
-
-  color: ${palette.pine1};
 `;
 
 const Fields = styled.dl`
@@ -59,6 +53,7 @@ const Fields = styled.dl`
     display: flex;
     flex: 0 0 auto;
     gap: ${rem(spacing.sm)};
+    margin: 0.15em 0;
   }
 
   & dt {
@@ -76,6 +71,10 @@ const Fields = styled.dl`
   }
 `;
 
+const FieldValueButton = styled(Button).attrs({ kind: "link" })`
+  ${typography.Sans14};
+`;
+
 function FieldValue({ field }: { field: ProfileField }) {
   const { showModal, modalProps } = useModal();
 
@@ -83,8 +82,7 @@ function FieldValue({ field }: { field: ProfileField }) {
 
   return (
     <>
-      <Button
-        kind="link"
+      <FieldValueButton
         onClick={() => {
           showModal();
         }}
@@ -98,7 +96,7 @@ function FieldValue({ field }: { field: ProfileField }) {
             marginLeft: rem(spacing.xs),
           }}
         />
-      </Button>
+      </FieldValueButton>
       <Modal {...modalProps}>
         <CopyWrapper>{field.moreInfo}</CopyWrapper>
       </Modal>
@@ -111,7 +109,6 @@ export const ResidentMiniProfile: FC<{
 }> = observer(function ResidentMiniProfile({ presenter }) {
   return (
     <ProfileWrapper>
-      <Name>{presenter.name}</Name>
       <Fields>
         {presenter.profileFields.map((f) => (
           <div key={f.label}>

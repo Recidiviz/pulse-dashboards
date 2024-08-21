@@ -19,9 +19,11 @@ import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../StoreProvider/useRootStore";
+import { Wordmark } from "../../Wordmark/Wordmark";
 import { NavigationMenu } from "./NavigationMenu";
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 import { ResidentMiniProfile } from "./ResidentMiniProfile";
@@ -30,9 +32,16 @@ import { ResidentMiniProfilePresenter } from "./ResidentMiniProfilePresenter";
 const Header = styled.header`
   align-items: center;
   border-bottom: 1px solid ${palette.slate20};
-  display: grid;
+  display: flex;
   gap: ${rem(spacing.md)};
-  grid-template-columns: 1fr max-content;
+  /* specificity hack vs BaseLayout */
+  && {
+    padding-bottom: ${rem(spacing.lg)};
+  }
+
+  > a {
+    margin-right: auto;
+  }
 `;
 
 export const ResidentsHeader: FC = observer(function ResidentsHeader() {
@@ -50,11 +59,11 @@ export const ResidentsHeader: FC = observer(function ResidentsHeader() {
 
   return (
     <Header>
-      <div>
-        {profilePresenter && (
-          <ResidentMiniProfile presenter={profilePresenter} />
-        )}
-      </div>
+      <Link to="/">
+        <Wordmark />
+      </Link>
+
+      {profilePresenter && <ResidentMiniProfile presenter={profilePresenter} />}
       <NavigationMenu
         presenter={
           new NavigationMenuPresenter(residentsStore.config, userStore)

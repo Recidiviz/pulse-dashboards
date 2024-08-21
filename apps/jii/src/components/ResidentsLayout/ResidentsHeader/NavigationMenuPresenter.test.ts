@@ -46,10 +46,6 @@ test("links", () => {
         "text": "Home",
         "url": "/",
       },
-      {
-        "text": "SCCP",
-        "url": "/eligibility/sccp",
-      },
     ]
   `);
 });

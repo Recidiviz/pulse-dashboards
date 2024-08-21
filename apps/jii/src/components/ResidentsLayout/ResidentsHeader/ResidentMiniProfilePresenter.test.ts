@@ -38,18 +38,6 @@ test("profile fields 2/3", () => {
     ",
         "value": "November 16, 2024",
       },
-      {
-        "label": "2/3 time date",
-        "moreInfo": "## How is my 2/3 time date calculated?
-
-    Your 2/3 time date falls  two thirds of the way  between the date you first entered a DOC facility and your current release date. If your current release date moves earlier because you keep earning good time, your 2/3 time date will also move earlier.
-
-    For example, if you entered a DOC facility on 1/1/2020, and your current release date is 1/1/2026, your 2/3 time date would be on 1/1/2024.
-
-    Since your sentence is  more than  5 years long, you must pass your 2/3 time date to be eligible for SCCP.
-    ",
-        "value": "November 16, 2021",
-      },
     ]
   `);
 });
@@ -70,25 +58,6 @@ test("profile fields 1/2", () => {
     ",
         "value": "December 16, 2023",
       },
-      {
-        "label": "1/2 time date",
-        "moreInfo": "## How is my 1/2 time date calculated?
-
-    Your 1/2 time date falls  halfway  between the date you first entered a DOC facility and your current release date. If your current release date moves earlier because you keep earning good time, your 1/2 time date will also move earlier.
-
-    For example, if you entered a DOC facility on 1/1/2020, and your current release date is 1/1/2026, your 1/2 time date would be on 1/1/2023.
-
-    Since your sentence is  between 0 and  5 years long, you must pass your 1/2 time date to be eligible for SCCP.
-    ",
-        "value": "September 16, 2021",
-      },
     ]
   `);
-});
-
-test("name", () => {
-  expect(
-    new ResidentMiniProfilePresenter(outputFixture(usMeResidents[0]), config)
-      .name,
-  ).toMatchInlineSnapshot(`"First Resident"`);
 });

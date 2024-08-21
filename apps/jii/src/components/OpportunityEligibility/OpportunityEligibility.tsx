@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import Markdown from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
@@ -32,21 +33,29 @@ import { RequirementsSection } from "./RequirementsSection";
 import { Section, SectionHeading } from "./styles";
 
 const Header = styled.header`
-  margin: ${rem(spacing.xl)} 0;
+  margin: ${rem(spacing.xxl)} 0;
 `;
 
 const Headline = styled.h1`
-  ${typography.Sans24}
+  ${typography.Header34}
 
   color: ${palette.pine2};
   font-size: ${rem(34)};
-  margin-bottom: ${rem(spacing.lg)};
+  margin: 0 5% ${rem(spacing.lg)};
+  text-align: center;
 `;
 
 const Subheading = styled.h2`
   ${typography.Sans18}
 
   color: ${palette.slate85};
+  margin: 0 10%;
+  text-align: center;
+
+  strong {
+    color: ${palette.pine1};
+    font-weight: inherit;
+  }
 `;
 
 const OpportunityEligibilityWithPresenter: FC<{
@@ -57,7 +66,11 @@ const OpportunityEligibilityWithPresenter: FC<{
       <Header>
         <Headline>{presenter.headline}</Headline>
         {presenter.subheading && (
-          <Subheading>{presenter.subheading}</Subheading>
+          <Subheading>
+            <Markdown options={{ forceInline: true }}>
+              {presenter.subheading}
+            </Markdown>
+          </Subheading>
         )}
       </Header>
 
@@ -67,7 +80,7 @@ const OpportunityEligibilityWithPresenter: FC<{
 
       {presenter.nextStepsContent && (
         <Section>
-          <SectionHeading>Next steps</SectionHeading>
+          <SectionHeading>{presenter.nextStepsContent.title}</SectionHeading>
           <CopyWrapper>{presenter.nextStepsContent.body}</CopyWrapper>
           <ButtonLink to={presenter.nextStepsContent.linkUrl}>
             {presenter.nextStepsContent.linkText}

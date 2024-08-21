@@ -24,7 +24,7 @@ import { PAGE_WIDTH } from "../../utils/constants";
 import { ModalProps } from "./types";
 
 export const MAX_MODAL_HEIGHT = "90vh";
-export const MODAL_PADDING = spacing.xl;
+export const MODAL_PADDING = spacing.xxl;
 
 const StyledModal = styled(ModalBase)`
   .ReactModal__Content {
@@ -40,6 +40,7 @@ const CloseButton = styled(Button).attrs({
   kind: "borderless",
   shape: "block",
 })`
+  padding: ${rem(spacing.md)};
   position: absolute;
   right: ${rem(spacing.sm)};
   top: ${rem(spacing.sm)};

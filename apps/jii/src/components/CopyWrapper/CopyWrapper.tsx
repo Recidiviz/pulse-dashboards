@@ -27,65 +27,71 @@ import { clickableText } from "../styles/clickableText";
 import { InternalOrExternalLink } from "./InternalOrExternalLink";
 
 const MarkdownWrapper = styled(Markdown)`
-  ${typography.Body14}
+  ${typography.Body16}
 
   h1 {
-    ${typography.Sans24}
+    ${typography.Serif34}
 
-    color: ${palette.pine2};
+    color: ${palette.pine1};
     font-size: ${rem(34)};
     margin: ${rem(spacing.xxl)} 0 ${rem(spacing.xxl)};
   }
 
   h2 {
-    ${typography.Sans18}
+    ${typography.Sans24}
 
     color: ${palette.pine2};
-    margin: ${rem(spacing.xl)} 0 ${rem(spacing.lg)};
-  }
+    font-weight: 500;
+    margin: 2.5em 0 0.5em;
 
-  ul {
-    padding-left: ${rem(spacing.md)};
-    list-style-type: none;
-    position: relative;
-
-    li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
+    /* in UI contexts where this is the main heading of a container, rather than
+    a subheading of a larger document, collapse the top margin */
+    &:first-child {
+      margin-top: 0;
     }
   }
 
+  h3 {
+    ${typography.Sans18}
+
+    color: ${palette.slate85};
+    font-weight: 500;
+    margin: 2em 0 0.33em;
+  }
+
+  ul,
   ol {
-    padding-left: ${rem(spacing.md)};
+    padding-left: 1.5em;
+    position: relative;
+  }
+
+  li {
+    margin: 0.75em 0;
   }
 
   dl {
-    column-gap: ${rem(spacing.lg)};
+    border-bottom: 1px solid ${palette.slate20};
+    column-gap: 0;
     display: grid;
     grid-template-columns: 1fr 4.5fr;
     margin: 2em 0;
-    row-gap: ${rem(spacing.lg)};
+    padding-bottom: ${rem(spacing.md)};
+    row-gap: ${rem(spacing.md)};
   }
 
   dt {
+    border-top: 1px solid ${palette.slate20};
     color: ${palette.text.caption};
-    padding-top: ${rem(spacing.lg)};
+    padding-right: ${rem(spacing.xl)};
+    padding-top: ${rem(spacing.md)};
     text-wrap: balance;
-
-    &:first-of-type {
-      padding: 0;
-    }
   }
 
   dd {
     border-top: 1px solid ${palette.slate20};
-    padding-top: ${rem(spacing.lg)};
-
-    &:first-of-type {
-      border: none;
-      padding: 0;
-    }
+    margin-left: 0;
+    padding-left: ${rem(spacing.xl)};
+    padding-top: ${rem(spacing.md)};
   }
 
   a {

@@ -50,7 +50,7 @@ describe("fully eligible, needs to serve half", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you've met",
+          "label": "Requirements you <u>have</u> met",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -77,10 +77,10 @@ describe("fully eligible, needs to serve half", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
@@ -106,7 +106,7 @@ describe("eligible to apply before X portion served", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on February 16, 2022. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
+      `"You could be eligible for release onto SCCP on <strong>February 16, 2022</strong>. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
     );
   });
 
@@ -115,7 +115,7 @@ describe("eligible to apply before X portion served", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you've met",
+          "label": "Requirements you <u>have</u> met",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
@@ -133,7 +133,7 @@ describe("eligible to apply before X portion served", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you haven't met yet",
+          "label": "Requirements you <u>have not</u> met yet",
           "requirements": [
             {
               "criterion": "Served 2/3 of your sentence",
@@ -149,10 +149,10 @@ describe("eligible to apply before X portion served", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
@@ -178,7 +178,7 @@ describe("eligible to apply before X months remaining", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on February 16, 2022. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
+      `"You could be eligible for release onto SCCP on <strong>February 16, 2022</strong>. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
     );
   });
 
@@ -187,7 +187,7 @@ describe("eligible to apply before X months remaining", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you've met",
+          "label": "Requirements you <u>have</u> met",
           "requirements": [
             {
               "criterion": "Served 2/3 of your sentence",
@@ -205,7 +205,7 @@ describe("eligible to apply before X months remaining", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you haven't met yet",
+          "label": "Requirements you <u>have not</u> met yet",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
@@ -221,10 +221,10 @@ describe("eligible to apply before X months remaining", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
@@ -250,7 +250,7 @@ describe("almost eligible, portion served", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on May 16, 2022. You can apply up to 3 months prior to that date — as soon as February 16, 2022."`,
+      `"You could be eligible for release onto SCCP on <strong>May 16, 2022</strong>. You can apply up to 3 months prior to that date — as soon as February 16, 2022."`,
     );
   });
 
@@ -259,7 +259,7 @@ describe("almost eligible, portion served", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you've met",
+          "label": "Requirements you <u>have</u> met",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
@@ -277,7 +277,7 @@ describe("almost eligible, portion served", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you haven't met yet",
+          "label": "Requirements you <u>have not</u> met yet",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -293,10 +293,10 @@ describe("almost eligible, portion served", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
@@ -331,7 +331,7 @@ describe("almost eligible, recent violation", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you've met",
+          "label": "Requirements you <u>have</u> met",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -349,7 +349,7 @@ describe("almost eligible, recent violation", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you haven't met yet",
+          "label": "Requirements you <u>have not</u> met yet",
           "requirements": [
             {
               "criterion": "No Class A or B discipline in past 90 days",
@@ -365,10 +365,10 @@ describe("almost eligible, recent violation", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
@@ -403,7 +403,7 @@ describe("almost eligible, pending violation", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you've met",
+          "label": "Requirements you <u>have</u> met",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -421,7 +421,7 @@ describe("almost eligible, pending violation", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you haven't met yet",
+          "label": "Requirements you <u>have not</u> met yet",
           "requirements": [
             {
               "criterion": "No Class A or B discipline in past 90 days",
@@ -437,10 +437,10 @@ describe("almost eligible, pending violation", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
@@ -466,7 +466,7 @@ describe("almost eligible, months remaining", () => {
 
   test("subheading", () => {
     expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on May 16, 2022. You can apply up to 3 months prior to that date — as soon as February 16, 2022."`,
+      `"You could be eligible for release onto SCCP on <strong>May 16, 2022</strong>. You can apply up to 3 months prior to that date — as soon as February 16, 2022."`,
     );
   });
 
@@ -475,7 +475,7 @@ describe("almost eligible, months remaining", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you've met",
+          "label": "Requirements you <u>have</u> met",
           "requirements": [
             {
               "criterion": "Served 2/3 of your sentence",
@@ -493,7 +493,7 @@ describe("almost eligible, months remaining", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you haven't met yet",
+          "label": "Requirements you <u>have not</u> met yet",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
@@ -509,10 +509,10 @@ describe("almost eligible, months remaining", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
@@ -569,10 +569,10 @@ describe("not eligible", () => {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },
             {
-              "criterion": "Have a plan for supporting yourself – getting a job, going to school, or receiving Social Security or disability benefits",
+              "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
             },
             {
-              "criterion": "Completed required programs, following your case plan, and showing positive change",
+              "criterion": "Completing required programs and following your case plan",
             },
           ],
         },
