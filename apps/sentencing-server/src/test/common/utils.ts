@@ -2,14 +2,14 @@ import { expect, vi } from "vitest";
 
 import { testkit } from "~sentencing-server/test/setup";
 
-export async function testAndGetSentryReport() {
+export async function testAndGetSentryReports(expectedLength = 1) {
   // Use waitFor because sentry-testkit can be async
   const sentryReports = await vi.waitFor(async () => {
     const reports = testkit.reports();
-    expect(reports).toHaveLength(1);
+    expect(reports).toHaveLength(expectedLength);
 
     return reports;
   });
 
-  return sentryReports[0];
+  return sentryReports;
 }

@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
 import { prismaClient } from "~sentencing-server/prisma";
-import { testAndGetSentryReport } from "~sentencing-server/test/common/utils";
+import { testAndGetSentryReports } from "~sentencing-server/test/common/utils";
 import { testTRPCClient } from "~sentencing-server/test/setup";
 import {
   fakeCase,
@@ -125,8 +125,8 @@ describe("case router", () => {
         expect.objectContaining({ insight: undefined }),
       );
 
-      const sentryReport = await testAndGetSentryReport();
-      expect(sentryReport.error?.message).toContain(
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
         "No corresponding insight found for provided case with id",
       );
     });
@@ -173,8 +173,8 @@ describe("case router", () => {
         expect.objectContaining({ insight: undefined }),
       );
 
-      const sentryReport = await testAndGetSentryReport();
-      expect(sentryReport.error?.message).toContain(
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
         "No corresponding insight found for provided case with id",
       );
     });
@@ -197,8 +197,8 @@ describe("case router", () => {
         expect.objectContaining({ insight: expect.objectContaining({}) }),
       );
 
-      const sentryReport = await testAndGetSentryReport();
-      expect(sentryReport.error?.message).toContain(
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
         "Multiple insights found for case with id",
       );
     });

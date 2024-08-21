@@ -1,3 +1,15 @@
+import { EtlHelper } from "~fastify-data-import-plugin";
+import {
+  transformAndLoadCaseData,
+  transformAndLoadClientData,
+  transformAndLoadInsightData,
+  transformAndLoadOffenseData,
+  transformAndLoadOpportunityData,
+  transformAndLoadStaffData,
+} from "~sentencing-server/import/handle-import/utils";
+
+export const SUPPORTED_STATE_CODES = ["US_ID"];
+
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_record.py
 export const CASES_FILE_NAME = "sentencing_case_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/staff_record.py
@@ -12,20 +24,11 @@ export const INSIGHTS_FILE_NAME = "case_insights_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/charge_record.py
 export const OFFENSES_FILE_NAME = "sentencing_charge_record.json";
 
-export enum FileType {
-  Cases,
-  Staff,
-  Clients,
-  Opportunities,
-  Insights,
-  Offenses,
-}
-
-export const FILE_NAME_TO_FILE_TYPE: Record<string, FileType> = {
-  [CASES_FILE_NAME]: FileType.Cases,
-  [STAFF_FILE_NAME]: FileType.Staff,
-  [CLIENTS_FILE_NAME]: FileType.Clients,
-  [OPPORTUNITIES_FILE_NAME]: FileType.Opportunities,
-  [INSIGHTS_FILE_NAME]: FileType.Insights,
-  [OFFENSES_FILE_NAME]: FileType.Offenses,
+export const FILE_NAME_TO_ETL_HELPER: Record<string, EtlHelper> = {
+  [CASES_FILE_NAME]: transformAndLoadCaseData,
+  [STAFF_FILE_NAME]: transformAndLoadStaffData,
+  [CLIENTS_FILE_NAME]: transformAndLoadClientData,
+  [OPPORTUNITIES_FILE_NAME]: transformAndLoadOpportunityData,
+  [INSIGHTS_FILE_NAME]: transformAndLoadInsightData,
+  [OFFENSES_FILE_NAME]: transformAndLoadOffenseData,
 };

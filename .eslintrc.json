@@ -43,7 +43,8 @@
                 "name": "styled-components",
                 "message": "Please import from styled-components/macro."
               }
-            ]
+            ],
+            "patterns": ["~fastify-data-import-plugin/*"]
           }
         ],
         // TODO(#5767): Enable these checks

@@ -8,6 +8,7 @@ import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach, vi } from "vitest";
 
+import { MockImportRoutesHandler } from "~fastify-data-import-plugin/testkit";
 import { buildServer } from "~sentencing-server/server";
 import { seed } from "~sentencing-server/test/setup/seed";
 import { resetDb } from "~sentencing-server/test/setup/utils";
@@ -24,6 +25,10 @@ export let testServer: ReturnType<typeof buildServer>;
 const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
+
+vi.mock("~fastify-data-import-plugin", () => ({
+  ImportRoutesHandler: MockImportRoutesHandler,
+}));
 
 beforeAll(async () => {
   init({
