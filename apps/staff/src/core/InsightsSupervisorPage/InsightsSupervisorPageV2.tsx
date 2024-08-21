@@ -37,7 +37,7 @@ import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
-import InsightsStaffCardV2 from "./InsightsStaffCardV2";
+import InsightsStaffCardV2, { EmptyCard } from "./InsightsStaffCardV2";
 import { InsightsSupervisorOpportunityDetailCard } from "./InsightsSupervisorOpportunityDetailCard";
 
 const HighlightedDescription = styled.span`
@@ -181,15 +181,14 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
             officers={outlierOfficersData}
             emptyMessage={labels.supervisorHasNoOutlierOfficersLabel}
           />
-          {opportunitiesDetails &&
-            opportunitiesDetails.length > 0 &&
-            isWorkflowsEnabled && (
-              <InsightsPageSection
-                sectionTitle="Opportunities"
-                sectionDescription={`Take action on opportunities that ${labels.supervisionJiiLabel}s may be eligible for.`}
-              >
-                <Wrapper isLaptop={isLaptop} supervisorHomepage>
-                  <Body>
+          {opportunitiesDetails && isWorkflowsEnabled && (
+            <InsightsPageSection
+              sectionTitle="Opportunities"
+              sectionDescription={`Take action on opportunities that ${labels.supervisionJiiLabel}s may be eligible for.`}
+            >
+              <Wrapper isLaptop={isLaptop} supervisorHomepage>
+                <Body>
+                  {opportunitiesDetails.length > 0 ? (
                     <Grid>
                       {opportunitiesDetails.map((opportunityDetail) => (
                         <InsightsSupervisorOpportunityDetailCard
@@ -199,10 +198,17 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
                         />
                       ))}
                     </Grid>
-                  </Body>
-                </Wrapper>
-              </InsightsPageSection>
-            )}
+                  ) : (
+                    <EmptyCard
+                      message={
+                        labels.supervisorHasNoOfficersWithEligibleClientsLabel
+                      }
+                    />
+                  )}
+                </Body>
+              </Wrapper>
+            </InsightsPageSection>
+          )}
         </Body>
       </Wrapper>
     </InsightsPageLayout>
