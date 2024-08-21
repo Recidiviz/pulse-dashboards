@@ -296,8 +296,11 @@ const InsightsMetricPage = observer(function InsightsMetricPage() {
   } = useRootStore();
 
   const officerPseudoId = supervisionStore?.officerPseudoId;
+  const metricId = supervisionStore?.metricId;
 
-  if (!officerPseudoId) return null;
+  // TODO: If/when we remove the original insights layout, we should refactor the
+  // officer detail presenter to take the metric ID as a parameter.
+  if (!officerPseudoId || !metricId) return null;
 
   const presenter = new SupervisionOfficerDetailPresenter(
     supervisionStore,
