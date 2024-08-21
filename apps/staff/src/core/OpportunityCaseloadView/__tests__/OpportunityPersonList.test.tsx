@@ -142,10 +142,6 @@ test("hydrated", () => {
 
   render(<OpportunityPersonList />);
 
-  expect(
-    screen.getByText("2 clients may be eligible for early termination"),
-  ).toBeInTheDocument();
-
   expect(screen.queryByText(emptyTabText)).not.toBeInTheDocument();
 
   const firstTab = screen.getByText(firstTabText);
@@ -186,10 +182,6 @@ test("hydrated with one tab", () => {
 
   render(<OpportunityPersonList />);
 
-  expect(
-    screen.getByText("1 client may be eligible for early termination"),
-  ).toBeInTheDocument();
-
   expect(screen.queryByText(firstTabText)).toBeInTheDocument();
 });
 
@@ -223,56 +215,8 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
 
   render(<OpportunityPersonList />);
 
-  expect(
-    screen.getByText("1 client may be eligible for early termination"),
-  ).toBeInTheDocument();
-
   expect(screen.queryByText(firstTabText)).not.toBeInTheDocument();
   expect(screen.getByText(overriddenTabText)).toBeInTheDocument();
-});
-
-test("hydrated with eligible and ineligible opps", () => {
-  const firstTabText = "Eligible Now";
-
-  const opp = {
-    ...mockOpportunity,
-    tabOrder: [firstTabText],
-    person: {
-      recordId: "4",
-    } as Client,
-    type: "earlyTermination",
-  };
-
-  const almostOpp = { ...opp, reviewStatus: "ALMOST" };
-
-  const ineligibleOpp = { ...opp, denial: { reasons: ["test"] } };
-
-  mockOpportunitiesByTab.mockReturnValue({
-    earlyTermination: {
-      [firstTabText]: [opp],
-    },
-  });
-  useRootStoreMock.mockReturnValue({
-    workflowsStore: {
-      ...baseWorkflowsStoreMock,
-      selectedSearchIds: ["123"],
-      opportunitiesLoaded: () => true,
-      hasOpportunities: () => true,
-      allOpportunitiesByType: {
-        earlyTermination: [
-          opp,
-          { ...almostOpp, type: "earlyTermination" },
-          { ...ineligibleOpp, type: "earlyTermination" },
-        ],
-      },
-    },
-  });
-
-  render(<OpportunityPersonList />);
-
-  expect(
-    screen.getByText("2 clients may be eligible for early termination"),
-  ).toBeInTheDocument();
 });
 
 test("when `allOpportunitiesByType` is an empty object", () => {
@@ -439,76 +383,66 @@ test("an opp is undefined in `opportunitiesByTab`", () => {
   expect(container).toContainHTML("<div></div>");
 });
 
-describe("opportunityPolicyCopy feature variant", () => {
-  beforeEach(() => {
-    useFeatureVariantsMock.mockReturnValue({ opportunityPolicyCopy: {} });
+test("displays simplified title", () => {
+  const opp1 = {
+    ...mockOpportunity,
+    person: {
+      recordId: "1",
+    } as Client,
+    type: "earlyTermination",
+  };
+  const opp2 = {
+    ...opp1,
+    person: {
+      recordId: "2",
+    } as Client,
+    type: "earlyTermination",
+  };
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: { "Eligible Now": [opp1, opp2] },
+  });
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
+    },
   });
 
-  test("displays simplified title", () => {
-    const opp1 = {
-      ...mockOpportunity,
-      person: {
-        recordId: "1",
-      } as Client,
-      type: "earlyTermination",
-    };
-    const opp2 = {
-      ...opp1,
-      person: {
-        recordId: "2",
-      } as Client,
-      type: "earlyTermination",
-    };
-    mockOpportunitiesByTab.mockReturnValue({
-      earlyTermination: { "Eligible Now": [opp1, opp2] },
-    });
-    useRootStoreMock.mockReturnValue({
-      workflowsStore: {
-        ...baseWorkflowsStoreMock,
-        selectedSearchIds: ["123"],
-        opportunitiesLoaded: () => true,
-        hasOpportunities: () => true,
-        allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
-      },
-    });
+  render(<OpportunityPersonList />);
 
-    render(<OpportunityPersonList />);
+  expect(screen.getByText("Early Termination")).toBeInTheDocument();
+});
 
-    expect(screen.getByText("Early Termination")).toBeInTheDocument();
+test("displays subheading", () => {
+  const opp = {
+    ...mockOpportunity,
+    person: {
+      recordId: "1",
+    } as Client,
+    type: "earlyTermination",
+  };
 
-    expect(
-      screen.queryByText("2 clients may be eligible for early termination"),
-    ).not.toBeInTheDocument();
+  mockOpportunitiesByTab.mockReturnValue({
+    earlyTermination: { "Eligible Now": [opp] },
+  });
+  useRootStoreMock.mockReturnValue({
+    workflowsStore: {
+      ...baseWorkflowsStoreMock,
+      selectedSearchIds: ["123"],
+      opportunitiesLoaded: () => true,
+      hasOpportunities: () => true,
+      allOpportunitiesByType: { earlyTermination: [opp] },
+    },
   });
 
-  test("displays subheading", () => {
-    const opp = {
-      ...mockOpportunity,
-      person: {
-        recordId: "1",
-      } as Client,
-      type: "earlyTermination",
-    };
+  render(<OpportunityPersonList />);
 
-    mockOpportunitiesByTab.mockReturnValue({
-      earlyTermination: { "Eligible Now": [opp] },
-    });
-    useRootStoreMock.mockReturnValue({
-      workflowsStore: {
-        ...baseWorkflowsStoreMock,
-        selectedSearchIds: ["123"],
-        opportunitiesLoaded: () => true,
-        hasOpportunities: () => true,
-        allOpportunitiesByType: { earlyTermination: [opp] },
-      },
-    });
-
-    render(<OpportunityPersonList />);
-
-    expect(
-      screen.getByText(
-        "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork. Review clients eligible for early termination and complete the auto-filled paperwork to file with the Court.",
-      ),
-    ).toBeInTheDocument();
-  });
+  expect(
+    screen.getByText(
+      "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork. Review clients eligible for early termination and complete the auto-filled paperwork to file with the court.",
+    ),
+  ).toBeInTheDocument();
 });

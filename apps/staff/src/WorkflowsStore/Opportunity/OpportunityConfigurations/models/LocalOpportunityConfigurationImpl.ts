@@ -47,13 +47,10 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.inverseFeatureVariant;
   }
   get label() {
-    if (
-      this.configurationObject.newPolicyCopyLabel &&
-      this.userStore.activeFeatureVariants?.opportunityPolicyCopy
-    ) {
-      return this.configurationObject.newPolicyCopyLabel;
-    }
-    return this.configurationObject.label;
+    return (
+      this.configurationObject.newPolicyCopyLabel ??
+      this.configurationObject.label
+    );
   }
   get firestoreCollection() {
     return this.configurationObject.firestoreCollection;

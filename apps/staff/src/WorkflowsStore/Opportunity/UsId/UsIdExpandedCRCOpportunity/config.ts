@@ -34,7 +34,7 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
     callToAction:
       "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
     subheading:
-      "This alert helps staff identify people who may be eligible for transfer to an Expanded CRC and directs staff to start their paperwork in ATLAS",
+      "This alert helps staff identify people who meet the criteria to participate in the expanded CRC program, which allows eligible CRC residents to spend the last six months of their sentence living and working in the community. Review eligible residents and work with P&P to complete a transfer to expanded CRC if program capacity allows.",
     firestoreCollection: "US_ID-expandedCRCReferrals",
     snooze: {
       defaultSnoozeDays: 30,

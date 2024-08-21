@@ -30,7 +30,7 @@ export const usMiSupervisionLevelDowngradeConfig: OpportunityConfig<UsMiSupervis
     callToAction:
       "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
     subheading:
-      "This alert helps staff identify clients who are eligible for a downgrade in their supervision level during their first six months on supervision. The tool will surface clients who have not yet received a COMPAS but are being supervised at a level other than medium or whose supervision level is not aligned with their COMPAS score. Review clients within their first six months of supervision and whose supervision level does not match their risk level and downgrade their supervision level in OMNI.",
+      "This alert helps staff identify clients who are eligible for a downgrade in their supervision level during their first six months on supervision. The tool will surface clients who have not yet received a COMPAS but are being supervised at a level other than medium or whose supervision level is not aligned with their COMPAS score. Review clients within their first six months of supervision and whose supervision level does not match their risk level and downgrade their supervision level in COMS.",
     firestoreCollection: "US_MI-supervisionLevelDowngrade",
     snooze: {
       defaultSnoozeDays: 30,

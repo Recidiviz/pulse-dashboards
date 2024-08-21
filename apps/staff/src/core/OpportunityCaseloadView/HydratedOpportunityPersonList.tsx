@@ -22,13 +22,11 @@ import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
 import {
-  useFeatureVariants,
   useOpportunityConfigurations,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import {
-  countOpportunities,
   JusticeInvolvedPerson,
   Opportunity,
   OpportunityTab,
@@ -76,7 +74,6 @@ export const HydratedOpportunityPersonList = observer(
     const { analyticsStore, workflowsStore } = useRootStore();
 
     const opportunityConfigs = useOpportunityConfigurations();
-    const { opportunityPolicyCopy } = useFeatureVariants();
 
     const { isMobile } = useIsMobile(true);
 
@@ -142,10 +139,8 @@ export const HydratedOpportunityPersonList = observer(
     const activeOpportunityNotifications =
       workflowsStore.activeNotificationsForOpportunityType(opportunityType);
 
-    const { label, eligibilityTextForCount, callToAction, subheading } =
+    const { label, callToAction, subheading } =
       opportunityConfigs[opportunityType];
-
-    const opportunityCount = countOpportunities(oppsFromOpportunitiesByOppType);
 
     const handleTabClick = (tab: OpportunityTab) => {
       analyticsStore.trackOpportunityTabClicked({ tab });
@@ -171,18 +166,16 @@ export const HydratedOpportunityPersonList = observer(
     return (
       <>
         <Heading isMobile={isMobile} className="PersonList__Heading">
-          {opportunityPolicyCopy
-            ? label
-            : eligibilityTextForCount(opportunityCount)}
+          {label}
         </Heading>
-        {opportunityPolicyCopy && subheading ? (
+        {subheading ? (
           <OpportunitySubheading subheading={subheading} />
         ) : (
           <SubHeading className="PersonList__Subheading">
             {callToAction}
           </SubHeading>
         )}
-        {opportunityPolicyCopy && activeOpportunityNotifications && (
+        {activeOpportunityNotifications && (
           <OpportunityNotifications
             notifications={activeOpportunityNotifications}
             handleDismiss={handleNotificationDismiss}
@@ -190,7 +183,7 @@ export const HydratedOpportunityPersonList = observer(
         )}
         <WorkflowsCaseloadControlBar
           title={"Group by"}
-          tabBadges={opportunityPolicyCopy && tabBadges}
+          tabBadges={tabBadges}
           tabs={displayTabs}
           activeTab={activeTab}
           setActiveTab={handleTabClick}

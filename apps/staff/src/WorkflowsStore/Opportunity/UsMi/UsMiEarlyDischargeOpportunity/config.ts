@@ -29,7 +29,7 @@ export const usMiEarlyDischargeConfig: OpportunityConfig<UsMiEarlyDischargeOppor
     callToAction:
       "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
     subheading:
-      "Early discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision. Review clients who may be eligible for early discharge and complete discharge paperwork in OMNI.",
+      "Early discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision. Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
     firestoreCollection: "US_MI-earlyDischargeReferrals",
     snooze: {
       defaultSnoozeDays: 30,

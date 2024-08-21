@@ -32,7 +32,7 @@ export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<
     callToAction:
       "Complete SCC review and fill out 283 Form for eligible residents",
     subheading:
-      "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete SCC review and fill out 283 Form for eligible residents.",
+      "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
     firestoreCollection: "US_MI-securityClassificationCommitteeReview",
     denialReasons: {
       "PRIOR RH":

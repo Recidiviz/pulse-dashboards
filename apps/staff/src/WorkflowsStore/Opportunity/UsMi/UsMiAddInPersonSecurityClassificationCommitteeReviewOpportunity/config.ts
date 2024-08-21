@@ -30,7 +30,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
     callToAction:
       "Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
     subheading:
-      "This alert helps staff identify residents in restrictive housing who are due for an ADD In-person Review. Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
+      "This alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
     firestoreCollection:
       "US_MI-addInPersonSecurityClassificationCommitteeReview",
     denialReasons: {

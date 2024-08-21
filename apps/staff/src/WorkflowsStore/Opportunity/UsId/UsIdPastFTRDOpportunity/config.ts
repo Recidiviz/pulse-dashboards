@@ -32,7 +32,7 @@ export const usIdPastFTRDConfig: OpportunityConfig<UsIdPastFTRDOpportunity> = {
   callToAction:
     "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
   subheading:
-    "This alert helps staff identify people whose full-term release date has passed so that they can be moved to history in order to right-size caseloads.",
+    "This alert helps staff identify people whose full-term release date has passed so that they can be moved to history in order to right-size caseloads. Review clients whose full-term release date has passed and discharge them in Atlas.",
   firestoreCollection: "US_ID-pastFTRDReferrals",
   snooze: {
     autoSnoozeParams: {

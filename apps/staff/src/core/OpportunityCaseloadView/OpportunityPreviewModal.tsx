@@ -17,7 +17,6 @@
 
 import { useRef, useState } from "react";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
@@ -40,8 +39,6 @@ export function OpportunityPreviewModal({
   const [currentView, setCurrentView] = useState<OPPORTUNITY_SIDE_PANEL_VIEW>(
     "OPPORTUNITY_PREVIEW",
   );
-
-  const { interCandidateNavigation } = useFeatureVariants();
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -68,13 +65,11 @@ export function OpportunityPreviewModal({
             />
           }
           footerContent={
-            interCandidateNavigation && (
-              <OpportunityProfileFooter
-                currentOpportunity={opportunity}
-                navigiableOpportunities={navigableOpportunities}
-                modalRef={modalRef}
-              />
-            )
+            <OpportunityProfileFooter
+              currentOpportunity={opportunity}
+              navigiableOpportunities={navigableOpportunities}
+              modalRef={modalRef}
+            />
           }
         />
       );

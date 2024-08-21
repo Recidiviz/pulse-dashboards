@@ -29,7 +29,7 @@ export const usMiPastFTRDConfig: OpportunityConfig<UsMiPastFTRDOpportunity> = {
   callToAction:
     "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
   subheading:
-    "This alert helps staff identify supervision clients who are past their full-term release date and directs staff to complete the discharge in OMNI.",
+    "This alert helps staff identify supervision clients who are past their full-term release date and directs staff to complete the discharge in COMS.",
   firestoreCollection: "US_MI-pastFTRDReferrals",
   snooze: {
     autoSnoozeParams: {

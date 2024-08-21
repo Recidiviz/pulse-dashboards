@@ -29,7 +29,7 @@ export const usNdEarlyTerminationConfig: OpportunityConfig<UsNdEarlyTerminationO
     callToAction:
       "Review clients eligible for early termination and download the paperwork to file with the Court.",
     subheading:
-      "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork. Review clients eligible for early termination and complete the auto-filled paperwork to file with the Court.",
+      "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork. Review clients eligible for early termination and complete the auto-filled paperwork to file with the court.",
     firestoreCollection: "earlyTerminationReferrals",
     snooze: {
       defaultSnoozeDays: 30,

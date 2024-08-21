@@ -30,7 +30,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
     callToAction:
       "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
     subheading:
-      "This alert helps staff identify residents in restrictive housing who are due for a Warden In-person Review at SCC, which is to be conducted if a resident is confined to restrictive housing for 6 continuous months. Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
+      "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
     firestoreCollection:
       "US_MI-wardenInPersonSecurityClassificationCommitteeReview",
     denialReasons: {

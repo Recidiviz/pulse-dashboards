@@ -28,7 +28,7 @@ export const usIdSupervisionLevelDowngradeConfig: OpportunityConfig<UsIdSupervis
       "client[|s] [is|are] being supervised at a level that does not match their latest risk score",
     callToAction: "Change their supervision level in Atlas",
     subheading:
-      "This alert helps staff identify people who may be supervised at a higher level than their latest risk score and directs staff to update their supervision level in Atlas. The tool doesn't surface people who are on specialized supervision levels.",
+      "This alert helps staff identify people whose current supervision level does not match their latest LSI-R or STATIC risk score; it does not surface people who are on specialized supervision levels by policy. Review eligible clients and update their supervision level in Atlas.",
     firestoreCollection: "US_ID-supervisionLevelDowngrade",
     snooze: {
       defaultSnoozeDays: 30,

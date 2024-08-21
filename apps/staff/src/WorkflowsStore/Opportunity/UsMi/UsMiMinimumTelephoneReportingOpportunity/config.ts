@@ -28,9 +28,9 @@ export const usMiMinimumTelephoneReportingConfig: OpportunityConfig<UsMiMinimumT
     dynamicEligibilityText:
       "client[|s] may be eligible for downgrade to a minimum telephone reporting",
     callToAction:
-      "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in OMNI.",
+      "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
     subheading:
-      "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts. Review clients who meet the requirements for minimum telephone reporting and change their supervision levels in OMNI.",
+      "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts. Review clients who meet the requirements for minimum telephone reporting and transfer them to telephone reporting in COMS.",
     firestoreCollection: "US_MI-minimumTelephoneReporting",
     snooze: {
       defaultSnoozeDays: 30,

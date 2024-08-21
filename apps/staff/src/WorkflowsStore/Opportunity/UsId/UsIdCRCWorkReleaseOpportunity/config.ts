@@ -33,7 +33,7 @@ export const usIdCRCWorkReleaseConfig: OpportunityConfig<UsIdCRCWorkReleaseOppor
     callToAction:
       "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
     subheading:
-      "This alert helps staff identify people whose full-term release date has passed so that they can be moved to history in order to right-size caseloads.",
+      "This alert helps staff identify people who may be eligible for transfer to a work-release bed at a Community Reentry Center (CRC). Review eligible residents and request a transfer in Atlas.",
     firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
     snooze: {
       defaultSnoozeDays: 30,
