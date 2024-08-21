@@ -34,12 +34,7 @@ import {
 vi.mock("../../../../components/StoreProvider");
 vi.mock("react-hot-toast");
 
-const mockRootStore = ({
-  featureVariants = {
-    usNdWriteToDocstars: {},
-    usNdCheckboxDocstars: {},
-  } as object,
-} = {}) => {
+const mockRootStore = () => {
   const apiPost = vi.fn();
   const updateOmsSnoozeStatus = vi.fn();
   updateOmsSnoozeStatus.mockImplementation(
@@ -50,10 +45,7 @@ const mockRootStore = ({
   );
 
   (useRootStore as Mock).mockReturnValue({
-    workflowsStore: {
-      currentUserEmail: "mock-email@nd.gov",
-      featureVariants,
-    },
+    workflowsStore: { currentUserEmail: "mock-email@nd.gov" },
     userStore: { stateCode: "US_ND" },
     apiStore: { post: apiPost },
     firestoreStore: {
@@ -75,41 +67,6 @@ afterEach(async () => {
 });
 
 describe("DocstarsDenialModal", () => {
-  it("immediately succeeds if featureVariant isn't set", () => {
-    mockRootStore({ featureVariants: {} });
-
-    const onSuccessFn = vi.fn();
-
-    // modal not shown yet
-    const modal = render(
-      <DocstarsDenialModal
-        opportunity={mockOpportunity}
-        reasons={[]}
-        otherReason=""
-        snoozeUntilDate={undefined}
-        showModal={false}
-        onCloseFn={vi.fn()}
-        onSuccessFn={onSuccessFn}
-      />,
-    );
-    expect(onSuccessFn).not.toHaveBeenCalled();
-
-    // show modal
-    modal.rerender(
-      <DocstarsDenialModal
-        opportunity={mockOpportunity}
-        reasons={[]}
-        otherReason=""
-        snoozeUntilDate={undefined}
-        showModal
-        onCloseFn={vi.fn()}
-        onSuccessFn={onSuccessFn}
-      />,
-    );
-    expect(onSuccessFn).toHaveBeenCalledOnce();
-    expect(toast).not.toHaveBeenCalled();
-  });
-
   it("displays information for confirmation", () => {
     mockRootStore();
 

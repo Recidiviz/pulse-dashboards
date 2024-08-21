@@ -84,8 +84,6 @@ export type FeatureVariant =
   | "usIdCRC"
   | "usIdExpandedCRC"
   | "usCaEnableSMS"
-  | "usNdWriteToDocstars"
-  | "usNdCheckboxDocstars"
   | "usMeCustodyLevelReview"
   | "usMeAnnualReclassificationReview"
   | "usMoOverdueRHPilot"
@@ -132,8 +130,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdExpandedCRC: {},
   usCaEnableSMS: {},
   enableSnooze: {},
-  usNdWriteToDocstars: {},
-  usNdCheckboxDocstars: {},
   supervisionUnrestrictedSearch: {},
   formRevertButton: {},
   usMoOverdueRHPilot: {},
@@ -166,7 +162,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         enableSnooze: {},
         insightsOnboarding: {},
         isolateFormUpdates: {},
-        usNdCheckboxDocstars: {},
         supervisorHomepageWorkflows: {},
       }
     : {

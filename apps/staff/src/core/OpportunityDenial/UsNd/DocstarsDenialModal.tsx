@@ -163,17 +163,13 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
     apiStore,
     firestoreStore,
     userStore: { stateCode: userStateCode },
-    workflowsStore: { currentUserEmail, featureVariants },
+    workflowsStore: { currentUserEmail },
   } = useRootStore();
 
   const snoozeUntilDate =
     reasons.length === 0 || !maybeSnoozeUntilDate
       ? startOfToday()
       : maybeSnoozeUntilDate;
-
-  useEffect(() => {
-    if (!featureVariants.usNdWriteToDocstars && showModal) onSuccessFn();
-  });
 
   // Rather than using opportunity.omsSnoozeStatus directly, we keep track
   // of our own status, with a defined set of allowable transitions.
@@ -292,29 +288,23 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
           <ConfirmationLabel>Staff ID</ConfirmationLabel>{" "}
           <ConfirmationField>{currentUserEmail}</ConfirmationField>
         </dl>
-        {featureVariants.usNdCheckboxDocstars && (
-          <Acknowledgement>
-            <AcknowledgementCheckbox
-              name={"acknowledgement-checkbox"}
-              checked={isAcknowledgementChecked}
-              value={"acknowledgement-checkbox"}
-              onChange={handleAcknowledgementCheckboxChange}
-            />
-            <Sans16>
-              By clicking this box, I confirm that I have consulted with my
-              direct supervisor regarding the client's ineligibility for early
-              termination due to the reasons indicated on the previous screen.
-            </Sans16>
-          </Acknowledgement>
-        )}
+        <Acknowledgement>
+          <AcknowledgementCheckbox
+            name={"acknowledgement-checkbox"}
+            checked={isAcknowledgementChecked}
+            value={"acknowledgement-checkbox"}
+            onChange={handleAcknowledgementCheckboxChange}
+          />
+          <Sans16>
+            By clicking this box, I confirm that I have consulted with my direct
+            supervisor regarding the client's ineligibility for early
+            termination due to the reasons indicated on the previous screen.
+          </Sans16>
+        </Acknowledgement>
         <ActionButton
           data-testid="docstars-submit-button"
           onClick={onSubmitButtonClick}
-          disabled={
-            featureVariants.usNdCheckboxDocstars
-              ? !isAcknowledgementChecked
-              : false
-          }
+          disabled={!isAcknowledgementChecked}
         >
           Acknowledge and Save to DOCSTARS
         </ActionButton>
