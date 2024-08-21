@@ -21,9 +21,15 @@ export type CaseListTableCases = StaffCases;
 
 export type CaseListTableCase = StaffCase;
 
-export enum CaseStatus {
+export enum CaseStatusToDisplay {
   NotYetStarted = "Not yet started",
   InProgress = "In Progress",
+  Complete = "Complete",
+}
+
+export enum CaseStatus {
+  NotYetStarted = "NotYetStarted",
+  InProgress = "InProgress",
   Complete = "Complete",
 }
 

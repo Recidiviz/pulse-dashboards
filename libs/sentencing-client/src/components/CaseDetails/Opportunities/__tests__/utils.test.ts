@@ -17,7 +17,10 @@
 
 import { Opportunities } from "../../../../api";
 import { EligibilityAttributes } from "../types";
-import { filterEligibleOpportunities } from "../utils";
+import {
+  filterEligibleOpportunities,
+  formatPhoneNumberWithExtension,
+} from "../utils";
 
 describe("filterEligibleOpportunities", () => {
   const opportunity: Opportunities[number] = {
@@ -526,4 +529,32 @@ describe("filterEligibleOpportunities", () => {
 
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
+});
+
+test("formatPhoneNumberWithExtension handles base phone numbers", () => {
+  expect(formatPhoneNumberWithExtension("2234567890")).toBe("(223) 456-7890");
+  // With US country code
+  expect(formatPhoneNumberWithExtension("17234567890")).toBe("(723) 456-7890");
+});
+
+test("formatPhoneNumberWithExtension handles multiple phone numbers", () => {
+  const multipleNumbersWithSomeCountryCode = "17234567890172345678902234567890";
+  expect(
+    formatPhoneNumberWithExtension(multipleNumbersWithSomeCountryCode),
+  ).toBe("(723) 456-7890, (723) 456-7890, (223) 456-7890");
+});
+
+test("formatPhoneNumberWithExtension handles extensions", () => {
+  expect(formatPhoneNumberWithExtension("223456789022")).toBe(
+    "(223) 456-7890 x22",
+  );
+  // With US country code
+  expect(formatPhoneNumberWithExtension("17234567890232312")).toBe(
+    "(723) 456-7890 x232312",
+  );
+});
+
+test("formatPhoneNumberWithExtension handles digits less than a phone number length", () => {
+  expect(formatPhoneNumberWithExtension("223456789")).toBeNull();
+  expect(formatPhoneNumberWithExtension("223456")).toBeNull();
 });

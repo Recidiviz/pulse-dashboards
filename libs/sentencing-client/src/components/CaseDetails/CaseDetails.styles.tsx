@@ -408,6 +408,13 @@ export const RecommendationActionButtonWrapper = styled.div`
   gap: 10px;
   padding: 10px 24px;
   border-top: 1px solid ${palette.marble5};
+  position: fixed;
+  background-color: ${palette.white};
+  bottom: 0;
+
+  @media screen and (max-height: 336px) {
+    position: unset;
+  }
 `;
 
 export const ActionButton = styled.button<{
@@ -832,11 +839,13 @@ export const SectionContent = styled.div<{ isLink?: boolean }>`
   ${({ isLink }) =>
     isLink &&
     `
+      width: fit-content;
       color: ${palette.pine4};
+      border-bottom: 1px solid ${palette.pine4};
 
       &:hover {
         cursor: pointer;
-        text-decoration: underline;
+             color: ${palette.pine2};
       }
     `}
 `;

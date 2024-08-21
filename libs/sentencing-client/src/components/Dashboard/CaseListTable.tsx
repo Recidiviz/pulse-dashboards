@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 
 import { psiUrl } from "../../utils/routing";
 import { sortFullNameByLastNameDescending } from "../../utils/sorting";
+import { displayReportType } from "../../utils/utils";
 import SortIcon from "../assets/sort-icon.svg?react";
 import {
   CLIENT_FULL_NAME_KEY,
@@ -43,7 +44,7 @@ import { useDetectOutsideClick } from "./hooks";
 import {
   CaseListTableCase,
   CaseListTableCases,
-  CaseStatus,
+  CaseStatusToDisplay,
   ReportType,
 } from "./types";
 
@@ -52,7 +53,7 @@ type CaseListTableProps = {
   staffPseudoId: string;
 };
 
-type StatusFilter = CaseStatus | "Active" | "Archived";
+type StatusFilter = CaseStatusToDisplay | "Active" | "Archived";
 
 const columns = [
   {
@@ -90,7 +91,7 @@ const columns = [
       reportType: CellContext<CaseListTableCase, keyof typeof ReportType>,
     ) => {
       const value = reportType.getValue();
-      return value ? ReportType[value] : undefined;
+      return displayReportType(value);
     },
   },
   {
@@ -110,11 +111,13 @@ const columns = [
   {
     header: "Recommendation Status",
     accessorKey: STATUS_KEY,
-    cell: (status: CellContext<CaseListTableCase, keyof typeof CaseStatus>) => {
+    cell: (
+      status: CellContext<CaseListTableCase, keyof typeof CaseStatusToDisplay>,
+    ) => {
       const statusValue = status.getValue();
       const statusToDisplay =
         moment() < moment(status.cell.row.original.dueDate)
-          ? CaseStatus[statusValue]
+          ? CaseStatusToDisplay[statusValue]
           : "Archived";
 
       return (
@@ -137,11 +140,11 @@ const getUpdatedStatusFilters = (
       : [];
 
     if (includesArchived && currentFilters.length === 1) {
-      return [...Object.values(CaseStatus), "Archived"];
+      return [...Object.values(CaseStatusToDisplay), "Archived"];
     }
     return currentFilters.length > 0
       ? emptyOrArchived
-      : Object.values(CaseStatus);
+      : Object.values(CaseStatusToDisplay);
   }
 
   if (currentFilters.includes(status)) {
@@ -163,7 +166,7 @@ export const CaseListTable = ({
   );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
-    ...Object.values(CaseStatus),
+    ...Object.values(CaseStatusToDisplay),
   ]);
 
   const table = useReactTable({
@@ -175,7 +178,7 @@ export const CaseListTable = ({
 
   const filterOptions: { key: StatusFilter }[] = [
     { key: "Active" },
-    ...Object.values(CaseStatus).map((status) => ({
+    ...Object.values(CaseStatusToDisplay).map((status) => ({
       key: status,
     })),
     { key: "Archived" },
@@ -184,7 +187,7 @@ export const CaseListTable = ({
   const isFilterChecked = (status: StatusFilter) =>
     status === "Active"
       ? statusFilters.length > 0 &&
-        Object.values(CaseStatus).some((filter) =>
+        Object.values(CaseStatusToDisplay).some((filter) =>
           statusFilters.includes(filter),
         )
       : statusFilters.includes(status);
@@ -199,7 +202,7 @@ export const CaseListTable = ({
 
         if (datapoint.status) {
           const hasMatchingStatus = filters.includes(
-            CaseStatus[datapoint.status],
+            CaseStatusToDisplay[datapoint.status],
           );
           if (!includesArchived) {
             return hasMatchingStatus && isBeforeDueDate;

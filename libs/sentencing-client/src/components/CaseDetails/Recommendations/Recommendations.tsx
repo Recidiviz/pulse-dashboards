@@ -128,6 +128,10 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
     },
   ];
 
+  const updateOrCreateDisplayText = lastSavedRecommendation
+    ? "Update"
+    : "Create";
+
   return (
     <>
       {showSummaryReport && (
@@ -200,11 +204,11 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
               saveRecommendation();
             }}
           >
-            {lastSavedRecommendation ? "Update" : "Create"}
+            {updateOrCreateDisplayText}
           </Styled.ActionButton>
           <Styled.Description rightPadding={36}>
-            Clicking “Create” or "Update" will generate a downloadable report
-            for the judge.
+            Clicking "{updateOrCreateDisplayText}" will generate a downloadable
+            report for the judge.
           </Styled.Description>
         </Styled.RecommendationActionButtonWrapper>
       </Styled.Recommendations>

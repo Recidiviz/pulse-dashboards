@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { CaseDetailsForm } from "../Form/CaseDetailsForm";
-import { FormAttributes, FormFieldList } from "../types";
+import { FormAttributes, FormFieldList, MutableCaseAttributes } from "../types";
 
 export enum OnboardingTopic {
   OffenseLsirScore = "OffenseLsirScore",
@@ -29,11 +29,12 @@ export type CaseOnboardingProps = {
   form?: CaseDetailsForm;
   firstName?: string;
   lastTopic?: FormAttributes["currentOnboardingTopic"];
-  saveAttributes: (options?: { showToast: boolean }) => void;
+  saveAttributes: (
+    options?: { showToast: boolean },
+    attributes?: MutableCaseAttributes,
+    mergeUpdates?: boolean,
+  ) => void;
   navigateToDashboard: () => void;
-  updateOnboardingTopicStatus: (
-    currentTopic: FormAttributes["currentOnboardingTopic"],
-  ) => Promise<void>;
 };
 
 export type CaseOnboardingTopicProps = {

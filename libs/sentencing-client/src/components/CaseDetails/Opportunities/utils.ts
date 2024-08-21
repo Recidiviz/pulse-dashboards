@@ -222,3 +222,39 @@ export const filterEligibleOpportunities = (
 
   return true;
 };
+
+export const formatPhoneNumber = (basePhoneNumberString: string) => {
+  return `(${basePhoneNumberString.slice(0, 3)}) ${basePhoneNumberString.slice(3, 6)}-${basePhoneNumberString.slice(6)}`;
+};
+
+export const formatPhoneNumberWithExtension = (phoneNumberString: string) => {
+  const sanitizedNumber = phoneNumberString.replace(/\D/g, ""); // Remove non-digit characters
+  const basePhoneLength = 10;
+
+  if (sanitizedNumber.length < basePhoneLength) return null; // Not a valid number
+
+  const formattedNumbers = [];
+  let remainingDigits = sanitizedNumber;
+
+  while (remainingDigits.length > 0) {
+    const hasCountryCode = remainingDigits.startsWith("1");
+    let basePhoneNumber;
+
+    if (hasCountryCode && remainingDigits.length >= basePhoneLength + 1) {
+      basePhoneNumber = remainingDigits.slice(1, basePhoneLength + 1);
+      remainingDigits = remainingDigits.slice(basePhoneLength + 1);
+    } else if (remainingDigits.length >= basePhoneLength) {
+      basePhoneNumber = remainingDigits.slice(0, basePhoneLength);
+      remainingDigits = remainingDigits.slice(basePhoneLength);
+    } else {
+      // Treat as an extension if not enough digits left for a full phone number
+      formattedNumbers.push(`${formattedNumbers.pop()} x${remainingDigits}`);
+      break;
+    }
+
+    const formattedPhoneNumber = formatPhoneNumber(basePhoneNumber);
+    formattedNumbers.push(formattedPhoneNumber);
+  }
+
+  return formattedNumbers.join(", ");
+};

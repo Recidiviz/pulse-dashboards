@@ -21,7 +21,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { customPalette } from "../styles/palette";
-import { CaseStatus } from "./types";
+import { CaseStatusToDisplay } from "./types";
 
 const TABLE_COLUMN_WIDTH = 400;
 
@@ -274,7 +274,7 @@ export const Offense = styled.div<{ isNotSpecified: boolean }>`
 const statusToCSS = {
   "Not yet started": `
     color: rgba(58, 80, 90, 1);
-    background-color: ${palette.slate20};
+    background-color: rgba(227, 234, 237, 1);
   `,
   "In Progress": `
     color: rgba(107, 80, 39, 1);
@@ -290,7 +290,9 @@ const statusToCSS = {
   `,
 };
 
-export const StatusChip = styled.div<{ status: CaseStatus | "Archived" }>`
+export const StatusChip = styled.div<{
+  status: CaseStatusToDisplay | "Archived";
+}>`
   width: fit-content;
   border-radius: 100px;
   padding: 2px 8px;

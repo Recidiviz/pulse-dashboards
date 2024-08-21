@@ -33,7 +33,7 @@ import { OnboardingTopic } from "./CaseOnboarding/types";
 import { Insights } from "./Insights/Insights";
 import { Opportunities } from "./Opportunities/Opportunities";
 import { Recommendations } from "./Recommendations/Recommendations";
-import { RecommendationType } from "./types";
+import { MutableCaseAttributes, RecommendationType } from "./types";
 
 const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter,
@@ -51,7 +51,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     updateAttributes,
     updateRecommendation,
     updateCaseStatusToCompleted,
-    updateOnboardingTopicStatus,
     updateRecommendedOpportunities,
   } = presenter;
 
@@ -70,8 +69,12 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     }
   };
 
-  const saveAttributes = (options?: { showToast?: boolean }) => {
-    updateAttributes(caseId);
+  const saveAttributes = (
+    options?: { showToast?: boolean },
+    attributes?: MutableCaseAttributes,
+    mergeUpdates?: boolean,
+  ) => {
+    updateAttributes(caseId, attributes, mergeUpdates);
     if (options?.showToast) {
       toast(() => <span>Case details updated</span>, {
         duration: 3000,
@@ -101,7 +104,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           lastTopic={caseAttributes.currentOnboardingTopic}
           saveAttributes={saveAttributes}
           navigateToDashboard={navigateToDashboard}
-          updateOnboardingTopicStatus={updateOnboardingTopicStatus}
         />
       ) : (
         <>

@@ -15,6 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ReportType } from "../components/Dashboard/types";
+
 export const convertDecimalToPercentage = (decimal: number) => {
   return Math.round(decimal * 100);
+};
+
+export const displayReportType = (
+  reportType: keyof typeof ReportType | null,
+) => {
+  return reportType ? ReportType[reportType] : "Unknown";
 };

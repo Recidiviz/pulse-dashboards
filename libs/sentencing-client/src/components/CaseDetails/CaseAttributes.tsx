@@ -20,7 +20,7 @@ import moment from "moment";
 import { useState } from "react";
 
 import { Case } from "../../api";
-import { ReportType } from "../Dashboard/types";
+import { displayReportType } from "../../utils/utils";
 import * as Styled from "./CaseDetails.styles";
 import EditCaseDetailsModal from "./EditCaseDetailsModal";
 import { CaseDetailsForm } from "./Form/CaseDetailsForm";
@@ -60,7 +60,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
     const attributesRow: AttributeLabelValue[] = [
       {
         label: "Report Type",
-        value: reportType ? ReportType[reportType] : null,
+        value: displayReportType(reportType),
       },
       { label: "County", value: county },
       {

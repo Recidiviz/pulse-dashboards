@@ -158,16 +158,17 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.hydrator.hydrate();
   }
 
-  async updateAttributes(caseId: string, attributes?: MutableCaseAttributes) {
+  async updateAttributes(
+    caseId: string,
+    attributes?: MutableCaseAttributes,
+    mergeUpdates?: boolean,
+  ) {
     if (!attributes && JSON.stringify(this.form?.transformedUpdates) === "{}")
       return;
-
-    await flowResult(
-      this.caseStore.updateCaseDetails(
-        caseId,
-        attributes ?? this.form?.transformedUpdates,
-      ),
-    );
+    const updates = mergeUpdates
+      ? { ...this.form?.transformedUpdates, ...attributes }
+      : attributes ?? this.form?.transformedUpdates;
+    await flowResult(this.caseStore.updateCaseDetails(caseId, updates));
     await flowResult(this.caseStore.loadCaseDetails(this.caseId));
     await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
   }

@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
+import { CaseStatus } from "../../Dashboard/types";
 import * as Styled from "../CaseDetails.styles";
 import { FormAttributes } from "../types";
 import { OnboardingAdditionalNeeds } from "./OnboardingAdditionalNeeds";
@@ -38,7 +39,6 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
     lastTopic,
     saveAttributes,
     navigateToDashboard,
-    updateOnboardingTopicStatus,
   }) {
     const [currentTopicIndex, setCurrentTopicIndex] = useState(
       lastTopic ? onboardingTopics.indexOf(lastTopic) : 0,
@@ -65,21 +65,24 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
     const goToNextTopic = () => {
       const nextTopic = onboardingTopics[currentTopicIndex + 1];
       const willCompleteOnboarding = !nextTopic;
-
+      const currentTopicProgressUpdate = {
+        currentOnboardingTopic: willCompleteOnboarding
+          ? OnboardingTopic.Done
+          : nextTopic,
+        // Set the case status to "In Progress" after completing the first onboarding topic
+        ...(nextTopic === OnboardingTopic.PrimaryNeeds
+          ? { status: CaseStatus.InProgress }
+          : {}),
+      };
       setCurrentTopicIndex((prev) => prev + 1);
-      saveAttributes();
 
       if (willCompleteOnboarding) {
         // TODO(Recidiviz/recidiviz-data#31435): Instead of an artificial timeout, figure out a way to wait for the response of the update.
         setTimeout(() => {
-          updateOnboardingTopicStatus(
-            willCompleteOnboarding ? OnboardingTopic.Done : nextTopic,
-          );
-        }, 1500);
+          saveAttributes(undefined, currentTopicProgressUpdate, true);
+        }, 2500);
       } else {
-        updateOnboardingTopicStatus(
-          willCompleteOnboarding ? OnboardingTopic.Done : nextTopic,
-        );
+        saveAttributes(undefined, currentTopicProgressUpdate, true);
       }
     };
 

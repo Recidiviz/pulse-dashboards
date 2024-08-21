@@ -34,6 +34,7 @@ import {
 import { EligibilityCriteria } from "./types";
 import {
   createOpportunityProviderDisplayName,
+  formatPhoneNumberWithExtension,
   getEligibilityCriteria,
 } from "./utils";
 
@@ -78,11 +79,22 @@ const displayEligibilityCriterias = (
   );
 };
 
+function isValidURL(url?: string | null) {
+  if (!url) return false;
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 const normalizeURL = (url: string) => {
   const protocolRegex = /^https?:\/\//i;
   const hasProtocol = protocolRegex.test(url);
-  if (!hasProtocol) return `https://${url}`;
-  return url;
+  const encodedURI = encodeURI(url);
+  if (!hasProtocol) return `https://${encodedURI}`;
+  return encodedURI;
 };
 
 const OpportunityModal: React.FC<OpportunityModalProps> = ({
@@ -100,9 +112,11 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
     ) as string[]) ?? [];
   const eligibilityCriteria = getEligibilityCriteria(selectedOpportunity);
   const eligibilityCriteriaEntries = Object.entries(eligibilityCriteria);
-  const providerURL = selectedOpportunity.providerWebsite
-    ? new URL(normalizeURL(selectedOpportunity.providerWebsite)).href
-    : undefined;
+  const providerURL =
+    selectedOpportunity.providerWebsite &&
+    isValidURL(selectedOpportunity.providerWebsite)
+      ? new URL(normalizeURL(selectedOpportunity.providerWebsite)).href
+      : undefined;
 
   return (
     <Modal isOpen={isOpen} hideModal={hideModal}>
@@ -123,61 +137,72 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
           </Styled.SectionContent>
         </Styled.Section>
 
-        <Styled.Section>
-          <Styled.SectionLabel>Provider</Styled.SectionLabel>
-          <Styled.SectionContent
-            isLink={providerURL !== undefined}
-            onClick={() => {
-              if (!providerURL) {
-                return;
-              }
-              return window.open(providerURL, "_blank", "noopener,noreferrer");
-            }}
-          >
-            {selectedOpportunity.providerName}
-          </Styled.SectionContent>
-        </Styled.Section>
+        {providerURL && (
+          <Styled.Section>
+            <Styled.SectionLabel>Provider</Styled.SectionLabel>
+            <Styled.SectionContent
+              isLink={providerURL !== undefined}
+              onClick={() => {
+                if (!providerURL) {
+                  return;
+                }
+                return window.open(
+                  providerURL,
+                  "_blank",
+                  "noopener,noreferrer",
+                );
+              }}
+            >
+              {selectedOpportunity.providerName}
+            </Styled.SectionContent>
+          </Styled.Section>
+        )}
 
         <Styled.SectionRowWrapper>
-          <Styled.Section>
-            <Styled.SectionLabel>Phone</Styled.SectionLabel>
-            <Styled.SectionContent>
-              {selectedOpportunity.providerPhoneNumber}
-            </Styled.SectionContent>
-          </Styled.Section>
-          <Styled.Section>
-            <Styled.SectionLabel>Address</Styled.SectionLabel>
-            <Styled.SectionContent>
-              {selectedOpportunity.providerAddress}
-            </Styled.SectionContent>
-          </Styled.Section>
+          {selectedOpportunity.providerPhoneNumber && (
+            <Styled.Section>
+              <Styled.SectionLabel>Phone</Styled.SectionLabel>
+              <Styled.SectionContent>
+                {formatPhoneNumberWithExtension(
+                  selectedOpportunity.providerPhoneNumber,
+                )}
+              </Styled.SectionContent>
+            </Styled.Section>
+          )}
+          {selectedOpportunity.providerAddress && (
+            <Styled.Section>
+              <Styled.SectionLabel>Address</Styled.SectionLabel>
+              <Styled.SectionContent>
+                {selectedOpportunity.providerAddress}
+              </Styled.SectionContent>
+            </Styled.Section>
+          )}
         </Styled.SectionRowWrapper>
 
         <Styled.SectionRowWrapper>
-          <Styled.Section>
-            <Styled.SectionLabel>Needs Addressed</Styled.SectionLabel>
-            <Styled.SectionContent>
-              {needsAddressed.length === 0
-                ? "None listed"
-                : needsAddressed.map((need) => {
-                    return <div key={need}>- {need}</div>;
-                  })}
-            </Styled.SectionContent>
-          </Styled.Section>
-
-          <Styled.Section>
-            <Styled.SectionLabel>Eligibility Criteria</Styled.SectionLabel>
-            <Styled.SectionContent>
-              {eligibilityCriteriaEntries.length === 0
-                ? "None listed"
-                : eligibilityCriteriaEntries.map(([key, value]) =>
-                    displayEligibilityCriterias(
-                      key as keyof EligibilityCriteria,
-                      value,
-                    ),
-                  )}
-            </Styled.SectionContent>
-          </Styled.Section>
+          {needsAddressed.length > 0 && (
+            <Styled.Section>
+              <Styled.SectionLabel>Needs Addressed</Styled.SectionLabel>
+              <Styled.SectionContent>
+                {needsAddressed.map((need) => {
+                  return <div key={need}>- {need}</div>;
+                })}
+              </Styled.SectionContent>
+            </Styled.Section>
+          )}
+          {eligibilityCriteriaEntries.length > 0 && (
+            <Styled.Section>
+              <Styled.SectionLabel>Eligibility Criteria</Styled.SectionLabel>
+              <Styled.SectionContent>
+                {eligibilityCriteriaEntries.map(([key, value]) =>
+                  displayEligibilityCriterias(
+                    key as keyof EligibilityCriteria,
+                    value,
+                  ),
+                )}
+              </Styled.SectionContent>
+            </Styled.Section>
+          )}
         </Styled.SectionRowWrapper>
       </Styled.ModalBody>
 

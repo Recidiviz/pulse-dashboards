@@ -30,7 +30,8 @@ import {
 } from "@observablehq/plot";
 
 import { Insight } from "../../../../api";
-import { SelectedRecommendation } from "../../types";
+import { convertDecimalToPercentage } from "../../../../utils/utils";
+import { RecommendationType, SelectedRecommendation } from "../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
 import { getGenderString, getLsirScoreString } from "../common/utils";
 
@@ -77,6 +78,21 @@ export function getRecidivismPlotSubtitle(insight: Insight) {
     : `All cases in ${rollupStateCode}`;
 }
 
+const consolidateDuplicateLabels = (
+  d: Insight["rollupRecidivismSeries"][number]["dataPoints"][number],
+  uniqueEndingEventRates: Set<number>,
+  recommendationType: keyof typeof RecommendationType,
+) => {
+  const eventRatePercent = convertDecimalToPercentage(d.eventRate);
+  if (d.cohortMonths === 36) {
+    if (uniqueEndingEventRates.has(eventRatePercent)) {
+      return { ...d, recommendationType, eventRate: null };
+    }
+    uniqueEndingEventRates.add(eventRatePercent);
+  }
+  return { ...d, recommendationType };
+};
+
 const PLOT_MARGIN_RIGHT = 40;
 const PLOT_MARGIN_BOTTOM = 52;
 const PLOT_HEIGHT_RATIO = 360 / 704;
@@ -88,9 +104,11 @@ export function getRecidivismPlot(
   plotWidth: number,
 ) {
   const series = insight.rollupRecidivismSeries;
-
+  const uniqueEndingEventRates: Set<number> = new Set();
   const data = series.flatMap(({ recommendationType, dataPoints }) =>
-    dataPoints.map((d) => ({ ...d, recommendationType })),
+    dataPoints.map((d) =>
+      consolidateDuplicateLabels(d, uniqueEndingEventRates, recommendationType),
+    ),
   );
 
   return plot({
@@ -145,7 +163,7 @@ export function getRecidivismPlot(
           // y is slightly offset to avoid labels overlapping for datapoints that are close to each other
           y: (d, i) => d.eventRate + i * Y_TEXT_LABEL_OFFSET - 0.01,
           z: "recommendationType",
-          text: (d) => `${Math.round(d.eventRate * 100)}%`,
+          text: (d) => d.eventRate && `${Math.round(d.eventRate * 100)}%`,
           dx: 25,
           fontFamily: "Public Sans",
           fontSize: 14,
