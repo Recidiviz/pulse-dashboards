@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2019 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
 /**
  * Creates the redis and memory caching managers and the redis client and
  * provides the helper function `cacheResponse` which takes an argument to determine which caching service to use.
@@ -26,6 +27,7 @@
  * The callback should be a function with a signature of `function (error, results)`.
  *
  */
+
 const cacheManager = require("cache-manager");
 const redisStore = require("cache-manager-ioredis");
 const Redis = require("ioredis");

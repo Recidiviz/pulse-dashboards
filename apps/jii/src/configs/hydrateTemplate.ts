@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
 import { toTitleCase } from "@artsy/to-title-case";
 import { isFuture } from "date-fns";
 import Handlebars from "handlebars";

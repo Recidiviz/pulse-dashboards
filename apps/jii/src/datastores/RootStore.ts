@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
 import { captureException } from "@sentry/react";
 import { makeObservable, onReactionError } from "mobx";
 

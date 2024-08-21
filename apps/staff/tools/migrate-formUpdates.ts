@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-console */
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2024 Recidiviz, Inc.
 //
@@ -16,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
+/* eslint-disable no-continue */
+/* eslint-disable no-console */
+
 import { FieldValue, Firestore } from "@google-cloud/firestore";
 
 import { PartialRecord } from "../src/utils/typeUtils";
