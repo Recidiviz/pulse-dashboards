@@ -36,6 +36,7 @@ import styled from "styled-components/macro";
 import { CaseNoteSearchResults } from "~datatypes";
 
 import SearchIconComponent from "../../assets/static/images/search.svg?react";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatWorkflowsDateString } from "../../utils";
 
@@ -246,10 +247,15 @@ const CaseNoteSearchInput: React.FC<CaseNoteSearchInputProps> = ({
 
 export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const { isMobile } = useIsMobile(true);
+  const { workflowsStore, analyticsStore, userStore } = useRootStore();
+
+  const { selectedPerson } = workflowsStore;
 
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchData, setSearchData] = React.useState<CaseNoteSearchResults>([]);
+
+  if (!selectedPerson) return null;
 
   const handleReturnClick = async () => {
     const { caseNoteSearchData } = await import(
@@ -257,6 +263,13 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
     );
 
     const { results, error } = caseNoteSearchData;
+
+    analyticsStore.trackCaseNoteSearch({
+      userPseudonymizedId: userStore.userPseudoId,
+      clientPseudonymizedId: selectedPerson.pseudonymizedId,
+      numResults: results.length,
+      error: error,
+    });
 
     if (error) {
       return new Error(error);

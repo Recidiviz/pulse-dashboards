@@ -324,4 +324,13 @@ export default class AnalyticsStore {
   trackAlmostEligibleCopyCTAClicked(metadata: CopyCTAMetadata) {
     this.track("frontend.almost_eligible_copy_cta_clicked", metadata);
   }
+
+  trackCaseNoteSearch(metadata: {
+    userPseudonymizedId: string;
+    clientPseudonymizedId: string;
+    numResults?: number;
+    error?: string | null;
+  }) {
+    this.track("frontend.case_note_search", metadata);
+  }
 }
