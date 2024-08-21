@@ -35,6 +35,13 @@ const US_ND_CONFIG: TenantConfig = {
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+  workflowsSystemConfigs: {
+    INCARCERATION: {
+      searchType: "OFFICER",
+      searchField: "officerId",
+      searchTitleOverride: "case manager",
+    },
+  },
   releaseDateCopyOverride: "Good Time Release Date",
   navigation: {
     workflows: ["home", "clients", "residents"],
