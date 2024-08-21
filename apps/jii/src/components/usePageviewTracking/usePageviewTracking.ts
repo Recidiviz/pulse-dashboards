@@ -15,28 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-import { AuthClientHydrator } from "~auth";
-
-import { BaseLayout } from "../BaseLayout/BaseLayout";
-import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
 import { useRootStore } from "../StoreProvider/useRootStore";
-import { usePageviewTracking } from "../usePageviewTracking/usePageviewTracking";
 
-export const PageRoot = observer(function AppRoot() {
+export function usePageviewTracking() {
   const {
-    userStore: { authClient },
+    userStore: { segmentClient },
   } = useRootStore();
-  usePageviewTracking();
+  const location = useLocation();
 
-  return (
-    <AuthClientHydrator authClient={authClient}>
-      <BaseLayout>
-        <Outlet />
-      </BaseLayout>
-      <ScrollToTop />
-    </AuthClientHydrator>
-  );
-});
+  useEffect(() => {
+    segmentClient.page();
+  }, [location, segmentClient]);
+}

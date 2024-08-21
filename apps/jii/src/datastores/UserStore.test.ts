@@ -20,6 +20,7 @@ import { configure } from "mobx";
 import { isOfflineMode, isTestEnv } from "~client-env-utils";
 
 import { IntercomClient } from "../apis/Intercom/IntercomClient";
+import { SegmentClient } from "../apis/Segment/SegmentClient";
 import { UserStore } from "./UserStore";
 
 vi.mock("~client-env-utils");
@@ -124,19 +125,50 @@ test("log out", () => {
 
 test("identify to trackers", () => {
   vi.spyOn(IntercomClient.prototype, "updateUser");
+  vi.spyOn(SegmentClient.prototype, "identify");
 
   store.identifyToTrackers();
 
-  expect(store.intercomClient.updateUser).toHaveBeenCalledWith({
+  expect(IntercomClient.prototype.updateUser).toHaveBeenCalledWith({
     state_code: "US_ME",
     user_id: "test-pid",
     user_hash: "test-hash",
     external_id: "123456",
   });
+
+  expect(SegmentClient.prototype.identify).toHaveBeenCalledExactlyOnceWith(
+    "test-pid",
+  );
 });
 
-test("do not identify to trackers when user has no external ID", () => {
+test("identify to Intercom only when we have user hash but no ID", () => {
   vi.spyOn(IntercomClient.prototype, "updateUser");
+  vi.spyOn(SegmentClient.prototype, "identify");
+
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "US_ME",
+    intercomUserHash: "test-hash",
+  });
+  vi.spyOn(store.authClient, "userProperties", "get").mockReturnValue({
+    sub: "test-userid",
+    email: "test@example.com",
+  });
+
+  store.identifyToTrackers();
+
+  expect(IntercomClient.prototype.updateUser).toHaveBeenCalledWith({
+    state_code: "US_ME",
+    user_id: "test-userid",
+    user_hash: "test-hash",
+    email: "test@example.com",
+  });
+  expect(SegmentClient.prototype.identify).not.toHaveBeenCalled();
+});
+
+test("do not identify to trackers when user has no hash", () => {
+  vi.spyOn(IntercomClient.prototype, "updateUser");
+  vi.spyOn(SegmentClient.prototype, "identify");
+
   vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
     stateCode: "RECIDIVIZ",
     allowedStates: ["US_ME"],
@@ -144,5 +176,6 @@ test("do not identify to trackers when user has no external ID", () => {
 
   store.identifyToTrackers();
 
-  expect(store.intercomClient.updateUser).not.toHaveBeenCalled();
+  expect(IntercomClient.prototype.updateUser).not.toHaveBeenCalled();
+  expect(SegmentClient.prototype.identify).not.toHaveBeenCalled();
 });

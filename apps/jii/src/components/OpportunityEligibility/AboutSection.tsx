@@ -107,9 +107,23 @@ export const AboutSection: FC<{
       <CopyWrapper>{mainSection.body}</CopyWrapper>
 
       {collapsibleSections.length > 0 && (
-        <Accordion allowZeroExpanded>
+        <Accordion
+          allowZeroExpanded
+          onChange={([openSectionHeadingEncoded]) => {
+            // this is configured for only one section to be open at a time
+            if (openSectionHeadingEncoded) {
+              // set this to a string below when rendering AccordionItem
+              presenter.trackAccordionOpened(
+                decodeURIComponent(openSectionHeadingEncoded as string),
+              );
+            }
+          }}
+        >
           {collapsibleSections.map((section) => (
-            <AccordionItem key={section.heading}>
+            <AccordionItem
+              key={section.heading}
+              uuid={encodeURIComponent(section.heading)}
+            >
               <AccordionItemHeading>
                 <AccordionItemButton>
                   {section.heading} <AccordionMarker />

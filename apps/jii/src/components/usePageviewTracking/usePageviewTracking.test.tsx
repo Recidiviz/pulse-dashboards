@@ -15,28 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Outlet } from "react-router-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { Link, MemoryRouter } from "react-router-dom";
 
-import { AuthClientHydrator } from "~auth";
-
-import { BaseLayout } from "../BaseLayout/BaseLayout";
-import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
+import { RootStore } from "../../datastores/RootStore";
 import { useRootStore } from "../StoreProvider/useRootStore";
-import { usePageviewTracking } from "../usePageviewTracking/usePageviewTracking";
+import { usePageviewTracking } from "./usePageviewTracking";
 
-export const PageRoot = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
+vi.mock("../StoreProvider/useRootStore");
+
+function TestComponent() {
   usePageviewTracking();
 
-  return (
-    <AuthClientHydrator authClient={authClient}>
-      <BaseLayout>
-        <Outlet />
-      </BaseLayout>
-      <ScrollToTop />
-    </AuthClientHydrator>
+  return <Link to="/bar">test</Link>;
+}
+
+test("tracks pageview when location changes", () => {
+  const store = new RootStore();
+  vi.spyOn(store.userStore.segmentClient, "page");
+
+  vi.mocked(useRootStore).mockReturnValue(store);
+
+  render(
+    <MemoryRouter initialEntries={["/foo"]}>
+      <TestComponent />
+    </MemoryRouter>,
   );
+
+  expect(store.userStore.segmentClient.page).toHaveBeenCalledTimes(1);
+
+  // this will navigate to another page
+  fireEvent.click(screen.getByRole("link"));
+
+  expect(store.userStore.segmentClient.page).toHaveBeenCalledTimes(2);
 });

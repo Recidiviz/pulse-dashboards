@@ -20,6 +20,7 @@ import { set } from "mobx";
 
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
+import { SegmentClient } from "../../apis/Segment/SegmentClient";
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import {
   IncarcerationOpportunityId,
@@ -165,5 +166,21 @@ describe("after hydration", () => {
 
   test("next steps content", () => {
     expect(presenter.nextStepsContent).toMatchSnapshot();
+  });
+
+  test("event tracking", () => {
+    const spy = vi.spyOn(SegmentClient.prototype, "track");
+
+    presenter.trackAccordionOpened("section Title");
+
+    expect(spy.mock.lastCall).toMatchInlineSnapshot(`
+      [
+        "frontend_about_section_expanded",
+        {
+          "opportunityId": "usMeSCCP",
+          "section": "section Title",
+        },
+      ]
+    `);
   });
 });

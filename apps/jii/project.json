@@ -41,8 +41,12 @@
         "emptyOutDir": true
       },
       "configurations": {
-        "staging": {},
-        "production": {}
+        "staging": {
+          "mode": "staging"
+        },
+        "production": {
+          "mode": "production"
+        }
       },
       "defaultConfiguration": "staging"
     },

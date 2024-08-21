@@ -129,4 +129,11 @@ export class OpportunityEligibilityPresenter implements Hydratable {
       linkUrl: `requirements`,
     };
   }
+
+  trackAccordionOpened(heading: string) {
+    this.residentsStore.userStore.segmentClient.track(
+      "frontend_about_section_expanded",
+      { section: heading, opportunityId: this.opportunityId },
+    );
+  }
 }

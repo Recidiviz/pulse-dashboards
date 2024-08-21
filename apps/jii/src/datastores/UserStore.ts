@@ -27,6 +27,10 @@ import {
 import { isOfflineMode } from "~client-env-utils";
 
 import { IntercomClient } from "../apis/Intercom/IntercomClient";
+import {
+  SegmentClient,
+  SegmentClientExternals,
+} from "../apis/Segment/SegmentClient";
 import { StateCode } from "../configs/types";
 
 export class UserStore {
@@ -34,7 +38,9 @@ export class UserStore {
 
   intercomClient: IntercomClient;
 
-  constructor(private externals: { stateCode: StateCode }) {
+  segmentClient: SegmentClient;
+
+  constructor(public externals: { stateCode: StateCode }) {
     makeAutoObservable(this);
 
     this.authClient = new AuthClient(
@@ -46,6 +52,8 @@ export class UserStore {
     );
 
     this.intercomClient = new IntercomClient();
+
+    this.segmentClient = new SegmentClient(new SegmentExternals(this));
   }
 
   private externalIdOverride?: string;
@@ -96,6 +104,8 @@ export class UserStore {
   identifyToTrackers() {
     // non-JII users (e.g. Recidiviz employees) will not have this property
     if (this.pseudonymizedId) {
+      this.segmentClient.identify(this.pseudonymizedId);
+
       this.intercomClient.updateUser({
         state_code: this.authClient.appMetadata.stateCode,
         user_id: this.pseudonymizedId,
@@ -110,6 +120,9 @@ export class UserStore {
       this.authClient.appMetadata.intercomUserHash &&
       this.authClient.userProperties?.sub
     ) {
+      // we still want to enable intercom here but we will not identify the user to Segment,
+      // since we can't guarantee that this ID has no PII in it (e.g. an email address).
+      // this will not disable tracking, just keep the user anonymous
       this.intercomClient.updateUser({
         state_code: this.authClient.appMetadata.stateCode,
         user_hash: this.authClient.appMetadata.intercomUserHash,
@@ -117,5 +130,25 @@ export class UserStore {
         email: this.authClient.userProperties.email,
       });
     }
+  }
+
+  get isRecidivizUser(): boolean {
+    try {
+      return this.authClient.appMetadata.stateCode === "RECIDIVIZ";
+    } catch {
+      // appMetadata may throw if, e.g., a user isn't logged in yet. this is fine
+      return false;
+    }
+  }
+}
+
+class SegmentExternals implements SegmentClientExternals {
+  constructor(private userStore: UserStore) {}
+  get isRecidivizUser() {
+    return this.userStore.isRecidivizUser;
+  }
+
+  get stateCode() {
+    return this.userStore.externals.stateCode;
   }
 }
