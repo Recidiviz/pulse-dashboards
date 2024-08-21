@@ -23,7 +23,6 @@ import { ClientRecord } from "../../../../FirestoreStore";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { DocumentSubscription } from "../../../subscriptions";
-import { WorkflowsStore } from "../../../WorkflowsStore";
 import { constructorSpy } from "../../__tests__/testUtils";
 import {
   COMPLETED_UPDATE,
@@ -165,12 +164,6 @@ describe.each([
     expectedNote,
   ) => {
     beforeEach(() => {
-      vi.spyOn(
-        WorkflowsStore.prototype,
-        "featureVariants",
-        "get",
-      ).mockReturnValue({ CompliantReportingAlmostEligible: {} });
-
       const testRecord = cloneDeep(
         compliantReportingAlmostEligibleReferralRecord,
       );

@@ -913,7 +913,6 @@ describe("feature variants", () => {
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
-        "CompliantReportingAlmostEligible": {},
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
@@ -956,7 +955,6 @@ describe("feature variants", () => {
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
-        "CompliantReportingAlmostEligible": {},
         "EXTRA_FV": {},
         "TEST": {},
         "actionStrategies": {},
@@ -1000,7 +998,6 @@ describe("feature variants", () => {
 
     expect(store.activeFeatureVariants).toMatchInlineSnapshot(`
       {
-        "CompliantReportingAlmostEligible": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
         "enableSnooze": {},

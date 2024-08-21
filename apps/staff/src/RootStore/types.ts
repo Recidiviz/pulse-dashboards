@@ -77,7 +77,6 @@ export type FeatureVariant =
   | "TEST"
   | "enableSnooze"
   | "supervisionUnrestrictedSearch"
-  | "CompliantReportingAlmostEligible"
   | "usMeWorkRelease"
   | "usMeFurloughRelease"
   | "usTnExpiration"
@@ -127,7 +126,6 @@ export type ActiveFeatureVariantRecord = Partial<
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
-  CompliantReportingAlmostEligible: {},
   usMeWorkRelease: {},
   usMeFurloughRelease: {},
   usTnExpiration: {},
@@ -161,7 +159,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
-        CompliantReportingAlmostEligible: {},
         usIdCRC: {},
         usIdExpandedCRC: {},
         usTnExpiration: {},
