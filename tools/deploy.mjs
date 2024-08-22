@@ -299,7 +299,7 @@ if (deployFrontendPrompt.deployFrontend) {
   }
 }
 
-if (deployEnv === "staging") {
+if (deployEnv === "staging" || deployEnv === "production") {
   const deploySentencingServerPrompt = await inquirer.prompt({
     type: "confirm",
     name: "deploySentencingServer",
@@ -314,7 +314,16 @@ if (deployEnv === "staging") {
       // Deploy the app
       console.log("Deploying application to Cloud Run...");
       try {
-        await $`nx deploy-app sentencing-server`.pipe(process.stdout);
+        // We only need to build and push the docker container if we are deploying to staging. If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+        if (deployEnv === "staging") {
+          await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
+        }
+        await $`COMMIT_SHA=${currentRevision} nx deploy-app sentencing-server --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+
         retryDeploy = false;
       } catch (e) {
         // eslint-disable-next-line no-await-in-loop

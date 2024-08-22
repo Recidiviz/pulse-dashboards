@@ -40,3 +40,7 @@ In order to run these tests:
 If you'd like to test the zod import schemas against a downloaded JSONLines file of expected data, you can run `nx test-zod sentencing-server {path-to-jsonlines-file} {name-of-schema}`. This will run the zod schema against each line of the file and log any errors.
 
 The valid schema names are the keys of the `zodSchemaMap` object found in `test-zod/index.ts`
+
+## Deployment
+
+Please only deploy the sentencing server via the `nx deploy` command. This will ensure that the correct environment variables are used for the deployment.

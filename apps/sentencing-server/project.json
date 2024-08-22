@@ -100,8 +100,7 @@
       "cache": true,
       "options": {
         "engine": "docker",
-        "platforms": ["linux/amd64"],
-        "build-args": ["-t"]
+        "platforms": ["linux/amd64"]
       },
       "configurations": {
         "dev": {
@@ -110,36 +109,51 @@
         "staging": {
           "push": true,
           "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA",
             "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest"
           ]
         }
       },
       "defaultConfiguration": "dev"
     },
-    "deploy-migrate-db": {
+    "migrate-db": {
       "executor": "nx:run-commands",
-      "dependsOn": [{ "target": "container", "params": "forward" }],
+      "options": {
+        "command": "gcloud run jobs deploy sentencing-server-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command yarn --args prisma,migrate,deploy"
+      },
       "configurations": {
         "staging": {
-          "command": "gcloud run jobs deploy sentencing-server-migrate-db --project recidiviz-dashboard-staging --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest --set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db --region us-central1 --execute-now --wait --command yarn --args prisma,migrate,deploy"
+          "args": [
+            "--project recidiviz-dashboard-staging",
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db"
+          ]
+        },
+        "production": {
+          "args": [
+            "--project recidiviz-dashboard-production",
+            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:sentencing-db"
+          ]
         }
       },
       "defaultConfiguration": "staging"
     },
     "deploy-app": {
       "executor": "@nx-extend/gcp-cloud-run:deploy",
-      "dependsOn": [
-        { "target": "container", "params": "forward" },
-        { "target": "deploy-migrate-db", "params": "forward" }
-      ],
+      "dependsOn": [{ "target": "migrate-db" }],
       "options": {
         "region": "us-central1"
       },
       "configurations": {
         "staging": {
           "project": "recidiviz-dashboard-staging",
-          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:latest",
+          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA",
           "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:sentencing-db",
+          "memory": "512Mi"
+        },
+        "production": {
+          "project": "recidiviz-dashboard-production",
+          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA",
+          "cloudSqlInstance": "recidiviz-dashboard-production:us-central1:sentencing-db",
           "memory": "512Mi"
         }
       },
