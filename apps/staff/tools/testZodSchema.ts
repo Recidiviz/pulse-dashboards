@@ -29,6 +29,9 @@ import {
   usMeAnnualReclassificationSchema,
   usMeMediumTrusteeSchema,
   usMeSCCPSchema,
+  usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
+  usMiSecurityClassificationCommitteeReviewSchema,
+  usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
 } from "~datatypes";
 
 import { OpportunityType } from "../src/WorkflowsStore";
@@ -113,6 +116,12 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usCaSupervisionLevelDowngrade: usCaSupervisionLevelDowngradeSchema,
   usMiEarlyDischarge: usMiEarlyDischargeSchema,
   usMiMinimumTelephoneReporting: usMiMinimumTelephoneReportingSchema,
+  usMiAddInPersonSecurityClassificationCommitteeReview:
+    usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
+  usMiSecurityClassificationCommitteeReview:
+    usMiSecurityClassificationCommitteeReviewSchema,
+  usMiWardenInPersonSecurityClassificationCommitteeReview:
+    usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
   usTnAnnualReclassification: usTnAnnualReclassificationReviewSchema,
   usMeWorkRelease: usMeWorkReleaseSchema,
   usMoOverdueRestrictiveHousingRelease:

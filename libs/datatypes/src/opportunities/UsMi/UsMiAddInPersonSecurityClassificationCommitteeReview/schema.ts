@@ -19,7 +19,7 @@ import { z } from "zod";
 
 import { dateStringSchema } from "../../../utils/dateStringSchema";
 import { ParsedRecord } from "../../../utils/types";
-import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usMiSecurityClassificationCommitteeReviewSchema } from "../UsMiSecurityClassificationCommitteeReview/schema";
 
 const possiblyIneligibleCriteria = z
   .object({
@@ -37,35 +37,9 @@ const possiblyIneligibleCriteria = z
   .partial();
 
 export const usMiAddInPersonSecurityClassificationCommitteeReviewSchema =
-  opportunitySchemaBase.extend({
+  usMiSecurityClassificationCommitteeReviewSchema.extend({
     eligibleCriteria: possiblyIneligibleCriteria,
     ineligibleCriteria: possiblyIneligibleCriteria,
-    formInformation: z.object({
-      segregationType: z.string(),
-      segregationClassificationDate: dateStringSchema.nullable(),
-      prisonerNumber: z.string(),
-      prisonerName: z.string(),
-      maxReleaseDate: dateStringSchema.nullish(),
-      minReleaseDate: dateStringSchema.nullish(),
-      facility: z.string(),
-      lock: z.string(),
-      OPT: z.boolean(),
-      STG: z.string(),
-      bondableOffensesWithin6Months: z.string().nullish(),
-      nonbondableOffensesWithin1Year: z.string().optional(),
-      adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
-    }),
-    metadata: z.object({
-      daysInCollapsedSolitarySession: z.coerce.number(),
-      recentBondableOffenses: z.string().nullish(),
-      recentNonbondableOffenses: z.string().optional(),
-      adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
-      OPT: z.boolean(),
-      lessThan3MonthsFromErd: z.boolean().optional(),
-      neededProgramming: z.string().optional(),
-      completedProgramming: z.string().optional(),
-    }),
-    isOverdue: z.boolean(),
   });
 
 export type usMiAddInPersonSecurityClassificationCommitteeReviewRecord =
