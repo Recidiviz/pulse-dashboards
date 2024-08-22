@@ -257,7 +257,7 @@ export default class FirestoreStore {
     update: any,
   ) {
     if (this.rootStore.isImpersonating) {
-      // eslint-disable-next-line
+      // eslint-disable-next-line no-console
       console.log(
         `[IMPERSONATOR] Skipping update for: ${docRef.path} with updates ${JSON.stringify(
           update,
@@ -266,7 +266,17 @@ export default class FirestoreStore {
       return;
     }
 
-    // First add the state code to the `clientUpdatesV2 document
+    if (this.rootStore.userStore.isRecidivizUser && import.meta.env.PROD) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `Recidiviz user in prod; Skipping update for: ${docRef.path} with updates ${JSON.stringify(
+          update,
+        )}`,
+      );
+      return;
+    }
+
+    // First add the state code to the `clientUpdatesV2` document
     await this.updatePerson(recordId, { stateCode: recordId.slice(0, 5) });
 
     // Then update the document with the actual update

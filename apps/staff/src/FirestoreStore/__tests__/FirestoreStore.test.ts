@@ -213,10 +213,72 @@ describe("FirestoreStore", () => {
     });
   });
 
+  describe("updateClientUpdatesV2Document", () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.spyOn(console, "log");
+    });
+
+    test("Does not call updateDocument/updatePerson when user is impersonating", () => {
+      mockRootStore = {
+        isImpersonating: true,
+      } as unknown as RootStore;
+      store = new FirestoreStore({ rootStore: mockRootStore });
+      store.updateClientUpdatesV2Document(
+        "testDocument/recordId",
+        { path: "testDocument/recordId" } as DocumentReference,
+        {},
+      );
+      expect(mockSetDoc).not.toBeCalled();
+      // eslint-disable-next-line no-console
+      expect(console.log).toBeCalledWith(
+        "[IMPERSONATOR] Skipping update for: testDocument/recordId with updates {}",
+      );
+    });
+
+    test("Does not call updateDocument/updatePerson for Recidiviz user in prod", () => {
+      mockRootStore = {
+        userStore: {
+          isRecidivizUser: true,
+        },
+      } as unknown as RootStore;
+      store = new FirestoreStore({ rootStore: mockRootStore });
+      vi.stubEnv("PROD", true);
+
+      store.updateClientUpdatesV2Document(
+        "testDocument/recordId",
+        { path: "testDocument/recordId" } as DocumentReference,
+        {},
+      );
+      expect(mockSetDoc).not.toBeCalled();
+      // eslint-disable-next-line no-console
+      expect(console.log).toBeCalledWith(
+        "Recidiviz user in prod; Skipping update for: testDocument/recordId with updates {}",
+      );
+
+      vi.unstubAllEnvs();
+    });
+
+    test("Calls setDoc when user is not impersonating", () => {
+      mockRootStore = {
+        isImpersonating: false,
+        userStore: {
+          isRecidivizUser: false,
+        },
+      } as unknown as RootStore;
+      store = new FirestoreStore({ rootStore: mockRootStore });
+      store.updateClientUpdatesV2Document("", {} as DocumentReference, {});
+      expect(mockSetDoc).toBeCalled();
+    });
+  });
+
   describe("firestore updates", () => {
     beforeEach(() => {
       mockRootStore = {
         isImpersonating: false,
+        userStore: {
+          isRecidivizUser: false,
+        },
       } as unknown as RootStore;
       mockDoc.mockReturnValue("test-doc-ref");
       mockDeleteField.mockReturnValue("mock-delete-fn");
