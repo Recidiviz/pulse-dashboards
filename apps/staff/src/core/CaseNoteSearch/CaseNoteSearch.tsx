@@ -22,6 +22,7 @@ import {
   Pill,
   Sans14,
   Sans16,
+  Sans24,
   spacing,
   typography,
 } from "@recidiviz/design-system";
@@ -40,6 +41,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { formatWorkflowsDateString } from "../../utils";
 
 type CASE_NOTE_SEARCH_VIEWS = "SEARCH_VIEW" | "NOTE_VIEW";
+type CASE_NOTE_SEARCH_RESULTS_STATUS = "OK" | "NO_RESULTS" | "ERROR";
 
 const Wrapper = styled.div`
   color: ${palette.slate85};
@@ -154,16 +156,35 @@ const ModalDescription = styled.div`
 
 const StyledLink = styled(Link)`
   color: ${palette.signal.links} !important;
-  border-bottom: 1px solid transparent;
   &:hover {
-    border-bottom: 1px solid ${palette.signal.links};
+    text-decoration: underline;
   }
 `;
 
 const ModalResults = styled.div`
+  height: 100%;
   padding: 0 ${rem(spacing.xl)};
   border-top: 1px solid ${palette.slate20};
   overflow-y: auto;
+`;
+
+const EmptyWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: ${rem(spacing.sm)};
+  text-align: center;
+
+  & > * {
+    width: ${rem(300)};
+  }
+`;
+
+const EmptyTitle = styled(Sans24)`
+  color: ${palette.pine1};
 `;
 
 const NoteWrapper = styled.div`
@@ -279,18 +300,76 @@ const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
 };
 
 const SearchView = ({
+  resultsStatus,
   searchQuery,
   searchData,
   setSearchQuery,
   handleNoteClick,
   handleReturnClick,
 }: {
+  resultsStatus: CASE_NOTE_SEARCH_RESULTS_STATUS;
   searchQuery: string;
   searchData: CaseNoteSearchResults;
   setSearchQuery: (searchQuery: string) => void;
   handleNoteClick: (docId: string) => void;
   handleReturnClick: () => void;
 }) => {
+  let resultsViz = null;
+
+  switch (resultsStatus) {
+    case "NO_RESULTS":
+      resultsViz = (
+        <EmptyWrapper>
+          <EmptyTitle>No Results</EmptyTitle>
+          <NoteTextLight>
+            You may want to try using different keywords or checking for typos.
+          </NoteTextLight>
+          <StyledLink to="mailto:feedback@recidiviz.org">
+            Provide Feedback
+          </StyledLink>
+        </EmptyWrapper>
+      );
+      break;
+    case "ERROR":
+      resultsViz = (
+        <EmptyWrapper>
+          <EmptyTitle>Error Fetching Results</EmptyTitle>
+          <NoteTextLight>
+            Something went wrong searching your client's case notes. Click the
+            link below to send us an email so we can look into the issue.
+          </NoteTextLight>
+          <StyledLink to="mailto:feedback@recidiviz.org">Contact</StyledLink>
+        </EmptyWrapper>
+      );
+      break;
+    default:
+      resultsViz = (
+        <>
+          {searchData.map((d) => (
+            <NoteWrapper
+              key={d.documentId}
+              onClick={() => handleNoteClick(d.documentId)}
+            >
+              <NoteHeader>
+                <NoteTextDark>
+                  {d.noteTitle || formatWorkflowsDateString(d.eventDate)}
+                </NoteTextDark>
+                <NoteAdditionalInfo>
+                  <NoteTextDark>{d.noteType}</NoteTextDark>
+                  <NoteTextDark> | </NoteTextDark>
+                  <NoteTextDark>{d.contactMode}</NoteTextDark>
+                </NoteAdditionalInfo>
+              </NoteHeader>
+              <NotePreview markdown={d.preview} />
+              <NoteTextLight>
+                {formatWorkflowsDateString(d.eventDate)}
+              </NoteTextLight>
+            </NoteWrapper>
+          ))}
+        </>
+      );
+  }
+
   return (
     <>
       <ModalContent>
@@ -309,29 +388,7 @@ const SearchView = ({
           onPressReturn={handleReturnClick}
         />
       </ModalContent>
-      <ModalResults>
-        {searchData.map((d) => (
-          <NoteWrapper
-            key={d.documentId}
-            onClick={() => handleNoteClick(d.documentId)}
-          >
-            <NoteHeader>
-              <NoteTextDark>
-                {d.noteTitle || formatWorkflowsDateString(d.eventDate)}
-              </NoteTextDark>
-              <NoteAdditionalInfo>
-                <NoteTextDark>{d.noteType}</NoteTextDark>
-                <NoteTextDark> | </NoteTextDark>
-                <NoteTextDark>{d.contactMode}</NoteTextDark>
-              </NoteAdditionalInfo>
-            </NoteHeader>
-            <NotePreview markdown={d.preview} />
-            <NoteTextLight>
-              {formatWorkflowsDateString(d.eventDate)}
-            </NoteTextLight>
-          </NoteWrapper>
-        ))}
-      </ModalResults>
+      <ModalResults>{resultsViz}</ModalResults>
     </>
   );
 };
@@ -348,6 +405,8 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchData, setSearchData] = React.useState<CaseNoteSearchResults>([]);
+  const [resultsStatus, setResultsStatus] =
+    React.useState<CASE_NOTE_SEARCH_RESULTS_STATUS>("NO_RESULTS");
 
   const isNoteView = currentView === "NOTE_VIEW";
   const currentNote = searchData.find((d) => d.documentId === docId);
@@ -365,6 +424,8 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
 
     const { results, error } = caseNoteSearchData;
 
+    if (!modalIsOpen) setModalIsOpen(true);
+
     analyticsStore.trackCaseNoteSearch({
       userPseudonymizedId: userStore.userPseudoId,
       clientPseudonymizedId: selectedPerson.pseudonymizedId,
@@ -373,10 +434,11 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
     });
 
     if (error) {
+      setResultsStatus("ERROR");
       return new Error(error);
     } else {
+      setResultsStatus(results.length > 0 ? "OK" : "NO_RESULTS");
       setSearchData(results);
-      if (!modalIsOpen) setModalIsOpen(true);
     }
   };
 
@@ -418,6 +480,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
           <NoteView note={currentNote} />
         ) : (
           <SearchView
+            resultsStatus={resultsStatus}
             searchQuery={searchQuery}
             searchData={searchData}
             setSearchQuery={setSearchQuery}
