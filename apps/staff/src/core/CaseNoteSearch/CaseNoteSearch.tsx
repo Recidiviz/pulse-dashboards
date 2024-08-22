@@ -39,6 +39,8 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatWorkflowsDateString } from "../../utils";
 
+type CASE_NOTE_SEARCH_VIEWS = "SEARCH_VIEW" | "NOTE_VIEW";
+
 const Wrapper = styled.div`
   color: ${palette.slate85};
 `;
@@ -85,7 +87,7 @@ const PrototypePill = styled(Pill).attrs({
 })`
   border-radius: ${rem(4)};
   border-color: #a2e5ef;
-  font-size: 12px;
+  font-size: ${rem(12)};
   text-transform: uppercase;
   height: ${rem(20)};
   padding: ${rem(2)} ${rem(6)};
@@ -111,18 +113,27 @@ const StyledModal = styled(Modal)<{ isMobile: boolean }>`
 `;
 
 const ModalHeader = styled.div`
-  border-bottom: 1px solid ${palette.slate20};
-`;
-
-const HeaderTopbar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: ${rem(spacing.lg)} ${rem(spacing.xl)};
+  border-bottom: 1px solid ${palette.slate20};
 `;
 
 const ModalTitle = styled(Sans16)`
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.sm)};
   color: ${palette.pine1};
+
+  i {
+    font-size: ${rem(20)};
+    font-weight: 600;
+    padding-right: ${rem(spacing.sm)};
+    &:hover {
+      cursor: pointer;
+    }
+  }
 `;
 
 const ModalCloseButton = styled(Icon)`
@@ -132,9 +143,8 @@ const ModalCloseButton = styled(Icon)`
   }
 `;
 
-const HeaderSearch = styled.div`
+const ModalContent = styled.div`
   padding: ${rem(spacing.xl)} ${rem(spacing.xl)} ${rem(spacing.lg)};
-  border-top: 1px solid ${palette.slate20};
 `;
 
 const ModalDescription = styled.div`
@@ -152,6 +162,7 @@ const StyledLink = styled(Link)`
 
 const ModalResults = styled.div`
   padding: 0 ${rem(spacing.xl)};
+  border-top: 1px solid ${palette.slate20};
   overflow-y: auto;
 `;
 
@@ -177,18 +188,19 @@ const NoteHeader = styled.div`
   justify-content: space-between;
 `;
 
-const NoteTitle = styled(Sans14)`
+const NoteTextDark = styled(Sans14)`
   color: ${palette.pine1};
 `;
 
-const OtherInfo = styled.div`
+const NoteTextLight = styled(Sans14)`
+  color: ${palette.slate60};
+  font-weight: 400;
+`;
+
+const NoteAdditionalInfo = styled.div`
   display: flex;
   align-items: center;
   gap: ${rem(spacing.xs)};
-`;
-
-const Separator = styled.span`
-  color: ${palette.pine1};
 `;
 
 const NotePreview = styled(MarkdownView)`
@@ -203,20 +215,22 @@ const NotePreview = styled(MarkdownView)`
   }
 `;
 
-const NoteDate = styled(Sans14)`
-  color: ${palette.slate60};
-  font-weight: 400;
+const NoteViewWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+  padding: ${rem(spacing.xl)};
 `;
 
 interface CaseNoteSearchInputProps
   extends React.ComponentPropsWithoutRef<"input"> {
   hasSearchIcon?: boolean;
   hasPrototypeBadge?: boolean;
-  onPressEnter: () => void;
+  onPressReturn: () => void;
 }
 
 const CaseNoteSearchInput: React.FC<CaseNoteSearchInputProps> = ({
-  onPressEnter,
+  onPressReturn,
   hasSearchIcon = true,
   hasPrototypeBadge = true,
   ...props
@@ -232,7 +246,7 @@ const CaseNoteSearchInput: React.FC<CaseNoteSearchInputProps> = ({
         {...props}
         placeholder="Search Case Notes"
         onKeyDown={(e) => {
-          if (e.key === "Enter") onPressEnter();
+          if (e.key === "Enter") onPressReturn();
         }}
       />
       {hasPrototypeBadge && (
@@ -244,19 +258,107 @@ const CaseNoteSearchInput: React.FC<CaseNoteSearchInputProps> = ({
   );
 };
 
+const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
+  if (!note) return null;
+
+  return (
+    <NoteViewWrapper>
+      <NoteHeader>
+        <NoteTextLight>
+          {formatWorkflowsDateString(note.eventDate)}
+        </NoteTextLight>
+        <NoteAdditionalInfo>
+          <NoteTextLight>{note.noteType}</NoteTextLight>
+          <NoteTextLight> | </NoteTextLight>
+          <NoteTextLight>{note.contactMode}</NoteTextLight>
+        </NoteAdditionalInfo>
+      </NoteHeader>
+      <NoteTextDark>{note.noteBody}</NoteTextDark>
+    </NoteViewWrapper>
+  );
+};
+
+const SearchView = ({
+  searchQuery,
+  searchData,
+  setSearchQuery,
+  handleNoteClick,
+  handleReturnClick,
+}: {
+  searchQuery: string;
+  searchData: CaseNoteSearchResults;
+  setSearchQuery: (searchQuery: string) => void;
+  handleNoteClick: (docId: string) => void;
+  handleReturnClick: () => void;
+}) => {
+  return (
+    <>
+      <ModalContent>
+        <ModalDescription>
+          Case Note Search is now available in its beta version! You’re getting
+          a first look at our latest innovation, and your feedback is crucial in
+          helping us refine and improve it.&nbsp;
+          <StyledLink to="https://recidiviz.org">
+            Share feedback on search
+          </StyledLink>
+        </ModalDescription>
+        <CaseNoteSearchInput
+          hasPrototypeBadge={false}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onPressReturn={handleReturnClick}
+        />
+      </ModalContent>
+      <ModalResults>
+        {searchData.map((d) => (
+          <NoteWrapper
+            key={d.documentId}
+            onClick={() => handleNoteClick(d.documentId)}
+          >
+            <NoteHeader>
+              <NoteTextDark>
+                {d.noteTitle || formatWorkflowsDateString(d.eventDate)}
+              </NoteTextDark>
+              <NoteAdditionalInfo>
+                <NoteTextDark>{d.noteType}</NoteTextDark>
+                <NoteTextDark> | </NoteTextDark>
+                <NoteTextDark>{d.contactMode}</NoteTextDark>
+              </NoteAdditionalInfo>
+            </NoteHeader>
+            <NotePreview markdown={d.preview} />
+            <NoteTextLight>
+              {formatWorkflowsDateString(d.eventDate)}
+            </NoteTextLight>
+          </NoteWrapper>
+        ))}
+      </ModalResults>
+    </>
+  );
+};
+
 export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const { isMobile } = useIsMobile(true);
   const { workflowsStore, analyticsStore, userStore } = useRootStore();
 
   const { selectedPerson } = workflowsStore;
 
+  const [currentView, setCurrentView] =
+    React.useState<CASE_NOTE_SEARCH_VIEWS>("SEARCH_VIEW");
+  const [docId, setDocId] = React.useState("");
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchData, setSearchData] = React.useState<CaseNoteSearchResults>([]);
 
+  const isNoteView = currentView === "NOTE_VIEW";
+  const currentNote = searchData.find((d) => d.documentId === docId);
+  const currentNoteTitle =
+    currentNote?.noteTitle || formatWorkflowsDateString(currentNote?.eventDate);
+
   if (!selectedPerson) return null;
 
   const handleReturnClick = async () => {
+    setCurrentView("SEARCH_VIEW");
+
     const { caseNoteSearchData } = await import(
       "../../../tools/fixtures/caseNoteSearch"
     );
@@ -278,10 +380,16 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
     }
   };
 
+  const handleNoteClick = (docId: string) => {
+    setDocId(docId);
+    setCurrentView("NOTE_VIEW");
+  };
+
   return (
     <Wrapper>
       <CaseNoteSearchInput
-        onPressEnter={handleReturnClick}
+        value={searchQuery}
+        onPressReturn={handleReturnClick}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
       <StyledModal
@@ -290,51 +398,33 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
         onRequestClose={() => setModalIsOpen(false)}
       >
         <ModalHeader>
-          <HeaderTopbar>
-            <ModalTitle>
-              Case Note Search &nbsp;
-              <PrototypePill>Prototype</PrototypePill>
-            </ModalTitle>
-            <ModalCloseButton
-              kind="Close"
-              size={14}
-              onClick={() => setModalIsOpen(false)}
-            />
-          </HeaderTopbar>
-          <HeaderSearch>
-            <ModalDescription>
-              Case Note Search is now available in its beta version! You’re
-              getting a first look at our latest innovation, and your feedback
-              is crucial in helping us refine and improve it.&nbsp;
-              <StyledLink to="https://recidiviz.org">
-                Share feedback on search
-              </StyledLink>
-            </ModalDescription>
-            <CaseNoteSearchInput
-              hasPrototypeBadge={false}
-              defaultValue={searchQuery}
-              onPressEnter={handleReturnClick}
-            />
-          </HeaderSearch>
+          <ModalTitle>
+            {isNoteView && (
+              <i
+                className="fa fa-angle-left"
+                onClick={() => setCurrentView("SEARCH_VIEW")}
+              />
+            )}
+            {isNoteView ? currentNoteTitle : "Case Note Search"}
+            <PrototypePill>Prototype</PrototypePill>
+          </ModalTitle>
+          <ModalCloseButton
+            kind="Close"
+            size={14}
+            onClick={() => setModalIsOpen(false)}
+          />
         </ModalHeader>
-        <ModalResults>
-          {searchData.map((d) => (
-            <NoteWrapper key={d.documentId}>
-              <NoteHeader>
-                <NoteTitle>
-                  {d.noteTitle || formatWorkflowsDateString(d.eventDate)}
-                </NoteTitle>
-                <OtherInfo>
-                  <NoteTitle>{d.noteType}</NoteTitle>
-                  <Separator> | </Separator>
-                  <NoteTitle>{d.contactMode}</NoteTitle>
-                </OtherInfo>
-              </NoteHeader>
-              <NotePreview markdown={d.preview} />
-              <NoteDate>{formatWorkflowsDateString(d.eventDate)}</NoteDate>
-            </NoteWrapper>
-          ))}
-        </ModalResults>
+        {isNoteView ? (
+          <NoteView note={currentNote} />
+        ) : (
+          <SearchView
+            searchQuery={searchQuery}
+            searchData={searchData}
+            setSearchQuery={setSearchQuery}
+            handleNoteClick={handleNoteClick}
+            handleReturnClick={handleReturnClick}
+          />
+        )}
       </StyledModal>
     </Wrapper>
   );
