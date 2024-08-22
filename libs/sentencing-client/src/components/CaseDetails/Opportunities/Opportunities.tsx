@@ -38,6 +38,7 @@ import PlusIcon from "../../assets/plus-icon.svg?react";
 import RightArrowIcon from "../../assets/right-arrow-carot-icon.svg?react";
 import TrashIcon from "../../assets/trash-icon.svg?react";
 import * as StyledDashboard from "../../Dashboard/Dashboard.styles";
+import { Tooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
 import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
 import {
@@ -63,8 +64,12 @@ import {
   RecommendationType,
   SelectedRecommendation,
 } from "../types";
+import { OPPORTUNITY_TOOLTIP_WIDTH } from "./constants";
 import OpportunityModal from "./OpportunityModal";
-import { createOpportunityProviderDisplayName } from "./utils";
+import {
+  createOpportunityProviderDisplayName,
+  getOpportunityButtonTooltipText,
+} from "./utils";
 
 type OpportunitiesProps = {
   firstName?: string;
@@ -128,7 +133,6 @@ const normalizeCommunityOpportunities = (
   }));
 };
 
-// TODO(Recidiviz/recidiviz-data#30650) Implement Opportunities flow
 export const Opportunities: React.FC<OpportunitiesProps> = ({
   firstName,
   selectedRecommendation,
@@ -439,16 +443,8 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
         </Styled.Search>
 
         <Styled.TableWrapper>
-          {/* Caption for non-Probation selections */}
-          {!isProbationRecommendation && (
-            <Styled.OpportunitiesNotAvailable>
-              Community opportunities are only available for Probation
-              participants
-            </Styled.OpportunitiesNotAvailable>
-          )}
-
           {/* Table */}
-          <Styled.Table disabled={!isProbationRecommendation}>
+          <Styled.Table>
             <StyledDashboard.TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <StyledDashboard.Row key={headerGroup.id}>
@@ -503,33 +499,43 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 
                         {/* Add To Recommendation Button */}
                         {cell.column.id === "addToRecommendationAction" && (
-                          <Styled.AddRecommendationButton
-                            onClick={() =>
-                              toggleOpportunity(
-                                cell.row.original.opportunityNameProviderName,
-                                row.id,
-                              )
-                            }
-                            isAdded={isAddedOpportunity}
-                            onMouseEnter={() =>
-                              isAddedOpportunity &&
-                              setShowRemoveOnHover((prev) => ({
-                                ...prev,
-                                [row.id]: true,
-                              }))
-                            }
-                            onMouseLeave={() =>
-                              setShowRemoveOnHover((prev) => ({
-                                ...prev,
-                                [row.id]: false,
-                              }))
-                            }
-                          >
-                            {addToRecommendationButtonContent(
-                              row.id,
+                          <Tooltip
+                            disabled={isProbationRecommendation}
+                            width={OPPORTUNITY_TOOLTIP_WIDTH}
+                            content={getOpportunityButtonTooltipText(
                               isAddedOpportunity,
+                              selectedRecommendation,
                             )}
-                          </Styled.AddRecommendationButton>
+                          >
+                            <Styled.AddRecommendationButton
+                              disabled={!isProbationRecommendation}
+                              onClick={() =>
+                                toggleOpportunity(
+                                  cell.row.original.opportunityNameProviderName,
+                                  row.id,
+                                )
+                              }
+                              isAdded={isAddedOpportunity}
+                              onMouseEnter={() =>
+                                isAddedOpportunity &&
+                                setShowRemoveOnHover((prev) => ({
+                                  ...prev,
+                                  [row.id]: true,
+                                }))
+                              }
+                              onMouseLeave={() =>
+                                setShowRemoveOnHover((prev) => ({
+                                  ...prev,
+                                  [row.id]: false,
+                                }))
+                              }
+                            >
+                              {addToRecommendationButtonContent(
+                                row.id,
+                                isAddedOpportunity,
+                              )}
+                            </Styled.AddRecommendationButton>
+                          </Tooltip>
                         )}
                       </StyledDashboard.Cell>
                     );
@@ -604,6 +610,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
             selectedRowId,
           )
         }
+        selectedRecommendation={selectedRecommendation}
       />
     </Styled.Opportunities>
   );

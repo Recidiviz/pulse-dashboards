@@ -182,7 +182,10 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
 
                   {/* Probation Option */}
                   {isProbationOption && (
-                    <ProbationOption optionProps={baseProps} />
+                    <ProbationOption
+                      optionProps={baseProps}
+                      firstName={firstName}
+                    />
                   )}
 
                   {/* Term or Rider Option */}

@@ -79,3 +79,5 @@ export const eligibilityCriteriaToLabelName: Record<
   [NO_PENDING_FELONY_CHARGES_IN_ANOTHER_COUNTY_OR_STATE_CRITERION_KEY]:
     "No pending felony charges in another county or state",
 };
+
+export const OPPORTUNITY_TOOLTIP_WIDTH = 244;

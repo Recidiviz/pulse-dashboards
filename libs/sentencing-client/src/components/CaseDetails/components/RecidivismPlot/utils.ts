@@ -93,7 +93,7 @@ const consolidateDuplicateLabels = (
   return { ...d, recommendationType };
 };
 
-const PLOT_MARGIN_RIGHT = 40;
+const PLOT_MARGIN_RIGHT = 42;
 const PLOT_MARGIN_BOTTOM = 52;
 const PLOT_HEIGHT_RATIO = 360 / 704;
 const Y_TEXT_LABEL_OFFSET = 0.00099;

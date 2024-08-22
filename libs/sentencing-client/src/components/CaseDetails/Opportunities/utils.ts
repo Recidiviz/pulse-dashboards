@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Opportunities } from "../../../api";
-import { FormValue } from "../types";
+import { FormValue, RecommendationType } from "../types";
 import { eligibilityCriteriaToLabelName } from "./constants";
 import { EligibilityAttributes } from "./types";
 
@@ -27,6 +27,10 @@ export const createOpportunityProviderDisplayName = (
   opportunityName: string,
   providerName: string | null,
 ) => {
+  if (opportunityName === providerName) {
+    return opportunityName;
+  }
+
   return providerName
     ? `${opportunityName} - ${providerName}`
     : opportunityName;
@@ -257,4 +261,13 @@ export const formatPhoneNumberWithExtension = (phoneNumberString: string) => {
   }
 
   return formattedNumbers.join(", ");
+};
+
+export const getOpportunityButtonTooltipText = (
+  isAddedOpportunity: boolean,
+  selectedRecommendation?: keyof typeof RecommendationType | null,
+) => {
+  return isAddedOpportunity && selectedRecommendation
+    ? "Switch your recommendation back to Probation if you want to add or remove opportunities"
+    : `You cannot add or edit opportunities when ${selectedRecommendation === RecommendationType.None ? "no" : selectedRecommendation} recommendation is selected`;
 };

@@ -16,19 +16,20 @@
 // =============================================================================
 
 import CheckIcon from "../../assets/green-check-icon.svg?react";
+import { InfoIconWithTooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
 import { RecommendationOption, RecommendationsOptionProps } from "./types";
 
-export const Opportunities: React.FC<{
+export const OpportunitiesList: React.FC<{
   opportunities: RecommendationOption["opportunities"];
-}> = ({ opportunities }) => {
+  firstName?: string;
+}> = ({ opportunities, firstName }) => {
+  const tooltipText = `When you add opportunities from the “Opportunities${firstName && ` for ${firstName}`}” table, they will appear here under your Probation recommendation.`;
   return (
     <Styled.OpportunitiesSelections>
       <Styled.OpportunitiesWrapper>
-        <Styled.OpportunitiesText>Opportunities</Styled.OpportunitiesText>
-        <Styled.OpportunitiesCount>
-          {opportunities?.length}
-        </Styled.OpportunitiesCount>
+        <Styled.OpportunitiesText>Opportunities:</Styled.OpportunitiesText>
+        <InfoIconWithTooltip headerText="Opportunities" content={tooltipText} />
       </Styled.OpportunitiesWrapper>
 
       {opportunities?.length ? (
@@ -105,14 +106,18 @@ export const NoneOption: React.FC<{
 
 export const ProbationOption: React.FC<{
   optionProps: RecommendationsOptionProps;
-}> = ({ optionProps }) => {
+  firstName?: string;
+}> = ({ optionProps, firstName }) => {
   const { isSelectedRecommendation, option } = optionProps;
   const showOpportunities = Boolean(isSelectedRecommendation);
 
   return (
     <RecommendationOptionBase {...optionProps}>
       {showOpportunities && (
-        <Opportunities opportunities={option.opportunities} />
+        <OpportunitiesList
+          opportunities={option.opportunities}
+          firstName={firstName}
+        />
       )}
       <HistoricalOutcomes option={option} />
     </RecommendationOptionBase>

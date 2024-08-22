@@ -239,13 +239,14 @@ export const Text = styled.div`
 `;
 export const Caption = styled.div``;
 
-export const EditCaseDetailsButton = styled.div`
+export const EditCaseDetailsButton = styled.button`
   width: fit-content;
   display: flex;
   align-items: center;
   align-self: flex-end;
   border: 1px solid ${palette.slate20};
   border-radius: 32px;
+  background-color: ${palette.white};
   color: ${palette.slate85};
   padding: 8px 16px;
   font-size: 13px;
@@ -767,12 +768,25 @@ export const AddRecommendationButton = styled(EditCaseDetailsButton)<{
   min-width: 200px;
   height: 32px;
   text-align: center;
+
+  &:disabled {
+    cursor: not-allowed;
+    color: ${palette.slate60};
+    svg path {
+      ${({ isAdded }) =>
+        isAdded
+          ? `fill: rgba(134, 152, 161, 1);`
+          : `stroke: rgba(134, 152, 161, 1);`}
+    }
+    ${({ isAdded }) => isAdded && `border: 1px solid transparent;`};
+  }
+
   ${({ isAdded }) =>
     isAdded &&
     `
       background-color: ${palette.slate10}; 
       border: 1px solid transparent;
-      &:hover {
+      &:not(:disabled):hover {
         background-color: ${palette.white};
         border: 1px solid ${palette.slate30};
       }

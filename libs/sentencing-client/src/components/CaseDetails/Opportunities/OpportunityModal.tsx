@@ -19,10 +19,12 @@ import { observer } from "mobx-react-lite";
 
 import { Opportunities as OpportunitiesType } from "../../../api";
 import { Modal } from "../../Modal/Modal";
+import { Tooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
 import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
 import { NEEDS_TO_BE_ADDRESSED_KEY } from "../constants";
 import { parseAttributeValue } from "../Form/utils";
+import { RecommendationType } from "../types";
 import {
   ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
   DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY,
@@ -31,18 +33,21 @@ import {
   MAX_LSIR_SCORE_CRITERIA_KEY,
   MIN_AGE_KEY,
   MIN_LSIR_SCORE_CRITERIA_KEY,
+  OPPORTUNITY_TOOLTIP_WIDTH,
 } from "./constants";
 import { EligibilityCriteria } from "./types";
 import {
   createOpportunityProviderDisplayName,
   formatPhoneNumberWithExtension,
   getEligibilityCriteria,
+  getOpportunityButtonTooltipText,
 } from "./utils";
 
 type OpportunityModalProps = {
   isOpen: boolean;
   selectedOpportunity?: OpportunitiesType[number];
   isAddedOpportunity: boolean;
+  selectedRecommendation?: keyof typeof RecommendationType | null;
   hideModal: () => void;
   toggleOpportunity: () => void;
 };
@@ -104,6 +109,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
   hideModal,
   toggleOpportunity,
   isAddedOpportunity,
+  selectedRecommendation,
 }) => {
   if (!selectedOpportunity) return null;
   const needsAddressed =
@@ -216,16 +222,26 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
         <Styled.ActionButton kind="link" onClick={hideModal}>
           Cancel
         </Styled.ActionButton>
-        <Styled.ActionButton
-          onClick={() => {
-            hideModal();
-            toggleOpportunity();
-          }}
+        <Tooltip
+          disabled={selectedRecommendation === RecommendationType.Probation}
+          width={OPPORTUNITY_TOOLTIP_WIDTH}
+          content={getOpportunityButtonTooltipText(
+            isAddedOpportunity,
+            selectedRecommendation,
+          )}
         >
-          {isAddedOpportunity
-            ? "Remove Recommendation"
-            : "+ Add to recommendation"}
-        </Styled.ActionButton>
+          <Styled.ActionButton
+            disabled={selectedRecommendation !== RecommendationType.Probation}
+            onClick={() => {
+              hideModal();
+              toggleOpportunity();
+            }}
+          >
+            {isAddedOpportunity
+              ? "Remove Recommendation"
+              : "+ Add to recommendation"}
+          </Styled.ActionButton>
+        </Tooltip>
       </Styled.StickyActionButtonWrapper>
     </Modal>
   );
