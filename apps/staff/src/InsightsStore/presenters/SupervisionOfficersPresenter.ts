@@ -155,6 +155,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
     return this.supervisionStore.actionStrategyCopy;
   }
 
+  disableSurfaceActionStrategies(): void {
+    this.supervisionStore.disableSurfaceActionStrategies();
+  }
+
   /**
    * Provides information about the currently selected supervisor
    */

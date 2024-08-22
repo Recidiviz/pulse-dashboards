@@ -162,6 +162,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     goToSupervisorInfo,
     ctaText,
     actionStrategyCopy,
+    disableSurfaceActionStrategies,
   } = presenter;
 
   useEffect(() => {
@@ -281,6 +282,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       {actionStrategyCopy && (
         <InsightsActionStrategyBanner
           actionStrategy={actionStrategyCopy}
+          disableBannerCallback={disableSurfaceActionStrategies}
         ></InsightsActionStrategyBanner>
       )}
       <StyledTabs

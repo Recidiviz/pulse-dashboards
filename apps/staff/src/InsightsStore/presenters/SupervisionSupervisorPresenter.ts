@@ -605,6 +605,10 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     return this.supervisionStore.actionStrategyCopy;
   }
 
+  disableSurfaceActionStrategies(): void {
+    this.supervisionStore.disableSurfaceActionStrategies();
+  }
+
   // ==============================
   // Static Sort Functions
   // ==============================

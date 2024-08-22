@@ -655,3 +655,48 @@ test("hydrate actionStrategies without required featureVariant", async () => {
   await flowResult(store.populateActionStrategies(pseudoId));
   expect(store.actionStrategies).toMatchInlineSnapshot(`{}`);
 });
+
+test("surfaceActionStrategies is true when all requirements met", async () => {
+  const pseudoId = "hashed-agonzalez123";
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    district: "District One",
+    stateCode: "us_mi",
+    externalId: "abc123",
+    pseudonymizedId: pseudoId,
+  });
+  store.supervisorPseudoId = pseudoId;
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "activeFeatureVariants",
+    "get",
+  ).mockReturnValue({
+    actionStrategies: {},
+  });
+  await flowResult(store.populateUserInfo());
+
+  expect(store.surfaceActionStrategies).toBeTrue();
+
+  store.disableSurfaceActionStrategies();
+
+  expect(store.surfaceActionStrategies).toBeFalse();
+});
+
+test("surfaceActionStrategies without required featureVariant", async () => {
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    district: "District One",
+    stateCode: "us_mi",
+    externalId: "abc123",
+    pseudonymizedId: "hashed-agonzalez123",
+  });
+  store.supervisorPseudoId = "hashed-agonzalez123";
+  await flowResult(store.populateUserInfo());
+  expect(store.surfaceActionStrategies).toBeFalse();
+});

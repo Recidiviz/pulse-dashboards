@@ -17,7 +17,7 @@
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -39,11 +39,12 @@ const StyledLink = styled(Link)`
 
 type InsightsActionStrategyBannerType = {
   actionStrategy: ActionStrategyCopy;
+  disableBannerCallback: () => void;
 };
 
 const InsightsActionStrategyBanner: React.FC<
   InsightsActionStrategyBannerType
-> = ({ actionStrategy }) => {
+> = ({ actionStrategy, disableBannerCallback }) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   const openModal = () => {
@@ -53,6 +54,11 @@ const InsightsActionStrategyBanner: React.FC<
   const closeModal = () => {
     setModalIsOpen(false);
   };
+
+  useEffect(() => {
+    // Cleanup function
+    return () => disableBannerCallback();
+  }, [disableBannerCallback]);
 
   return (
     <Banner

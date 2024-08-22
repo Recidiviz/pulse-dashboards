@@ -262,6 +262,23 @@ export class InsightsSupervisionStore {
     )?.displayName;
   }
 
+  get surfaceActionStrategies(): boolean {
+    const { activeFeatureVariants } = this.insightsStore.rootStore.userStore;
+    if (!activeFeatureVariants?.actionStrategies) return false;
+    return this.actionStrategiesEnabled;
+  }
+
+  /**
+   * Disables the action strategy banner.
+   *
+   * There is not a way to re-enable the banner because the user
+   * should only ever see a single banner per session. The banner
+   * should disappear as soon as the user navigates away from the page.
+   */
+  disableSurfaceActionStrategies(): void {
+    this.actionStrategiesEnabled = false;
+  }
+
   getCopyForActionStrategy(
     actionStrategy: string | undefined,
   ): ActionStrategyCopy | undefined {
@@ -298,16 +315,11 @@ export class InsightsSupervisionStore {
 
   get actionStrategyCopy(): ActionStrategyCopy | undefined {
     const { userPseudoId } = this.insightsStore.rootStore.userStore;
-    if (userPseudoId) {
-      if (
-        this.actionStrategies?.[userPseudoId] ===
-        "ACTION_STRATEGY_60_PERC_OUTLIERS"
-      ) {
-        return this.getCopyForActionStrategy(
-          "ACTION_STRATEGY_60_PERC_OUTLIERS",
-        );
-      } else return undefined;
-    }
+    if (userPseudoId && this.surfaceActionStrategies) {
+      return this.getCopyForActionStrategy(
+        this.actionStrategies?.[userPseudoId],
+      );
+    } else return undefined;
   }
 
   /**

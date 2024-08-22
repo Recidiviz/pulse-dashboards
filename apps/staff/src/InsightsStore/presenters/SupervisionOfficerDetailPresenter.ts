@@ -126,4 +126,8 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
   get actionStrategyCopy(): ActionStrategyCopy | undefined {
     return this.supervisionStore.actionStrategyCopy;
   }
+
+  disableSurfaceActionStrategies(): void {
+    this.supervisionStore.disableSurfaceActionStrategies();
+  }
 }
