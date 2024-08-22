@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Case } from "../../api";
+
 export const OFFENSE_KEY = "offense";
 
 export const LSIR_SCORE_KEY = "lsirScore";
@@ -75,3 +77,25 @@ export type HasOpenChildProtectiveServicesCase =
 export const NO_OPTION = "No";
 export const YES_OPTION = "Yes";
 export const NOT_SURE_YET_OPTION = "Not sure yet";
+
+export const needsToBeAddressed: Record<
+  Case["needsToBeAddressed"][number],
+  string
+> = {
+  AngerManagement: "Anger management",
+  CaseManagement: "Case management",
+  ClothingAndToiletries: "Clothing and toiletries",
+  DomesticViolenceIssues: "Domestic violence issues",
+  Education: "Education",
+  FamilyServices: "Family services",
+  FinancialAssistance: "Financial assistance",
+  FoodInsecurity: "Food insecurity",
+  GeneralReEntrySupport: "General re-entry support",
+  Healthcare: "Healthcare",
+  HousingOpportunities: "Housing opportunities",
+  JobTrainingOrOpportunities: "Job training or opportunities",
+  MentalHealth: "Mental health",
+  SubstanceUse: "Substance use",
+  Transportation: "Transportation",
+  Other: "Other",
+};

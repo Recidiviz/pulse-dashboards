@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { Opportunities as OpportunitiesType } from "../../../api";
 import { Modal } from "../../Modal/Modal";
 import * as Styled from "../CaseDetails.styles";
+import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
 import { NEEDS_TO_BE_ADDRESSED_KEY } from "../constants";
 import { parseAttributeValue } from "../Form/utils";
 import {
@@ -69,7 +70,7 @@ const displayEligibilityCriterias = (
 
   return Array.isArray(val) ? (
     <div key={key}>
-      {label}: {val?.map((item) => <div key={item}>- {item}</div>)}
+      {label}: {val?.map((item) => <div key={item}>&bull; {item}</div>)}
     </div>
   ) : (
     <div
@@ -153,7 +154,8 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
                 );
               }}
             >
-              {selectedOpportunity.providerName}
+              {selectedOpportunity.providerName ??
+                selectedOpportunity.opportunityName}
             </Styled.SectionContent>
           </Styled.Section>
         )}
@@ -185,7 +187,11 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
               <Styled.SectionLabel>Needs Addressed</Styled.SectionLabel>
               <Styled.SectionContent>
                 {needsAddressed.map((need) => {
-                  return <div key={need}>- {need}</div>;
+                  return (
+                    <Styled.Need key={need}>
+                      {NeedsIcons[need]} {need}
+                    </Styled.Need>
+                  );
                 })}
               </Styled.SectionContent>
             </Styled.Section>

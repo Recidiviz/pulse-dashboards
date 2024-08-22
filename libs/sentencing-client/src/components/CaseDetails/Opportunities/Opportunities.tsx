@@ -39,6 +39,7 @@ import RightArrowIcon from "../../assets/right-arrow-carot-icon.svg?react";
 import TrashIcon from "../../assets/trash-icon.svg?react";
 import * as StyledDashboard from "../../Dashboard/Dashboard.styles";
 import * as Styled from "../CaseDetails.styles";
+import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -99,9 +100,13 @@ const columns = [
         needs.getValue(),
       ) as string[];
       return (
-        <div style={{ textTransform: "capitalize" }}>
-          {value?.map((need) => <div key={need}>- {need}</div>)}
-        </div>
+        <Styled.NeedsWrapper>
+          {value?.map((need) => (
+            <div key={need}>
+              {NeedsIcons[need]} {need}
+            </div>
+          ))}
+        </Styled.NeedsWrapper>
       );
     },
   },

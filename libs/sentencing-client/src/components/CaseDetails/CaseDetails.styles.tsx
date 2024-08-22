@@ -349,7 +349,7 @@ export const OpportunitiesSelections = styled.div`
 export const OpportunitiesWrapper = styled.div`
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
 
   svg {
@@ -792,6 +792,20 @@ export const Chip = styled.div<{ color?: keyof typeof ChipColors }>`
   ${typography.Sans12}
 `;
 
+export const NeedsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-transform: capitalize;
+  gap: 8px;
+`;
+
+export const Need = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: capitalize;
+`;
 /** Edit Case Details Modal */
 
 export const ModalHeaderWrapper = styled.div`
@@ -833,6 +847,7 @@ export const SectionContent = styled.div<{ isLink?: boolean }>`
   ${typography.Sans14}
   display: flex;
   flex-direction: column;
+  gap: 4px;
   color: ${palette.slate85};
   line-height: 21px;
 
@@ -945,8 +960,8 @@ export const MultiSelectChip = styled.div<{
 }>`
   width: fit-content;
   display: flex;
-  padding: 9px 12px;
   align-items: center;
+  padding: 9px 12px;
   gap: 6px;
   background-color: ${({ selected }) =>
     selected ? customPalette.green.light3 : "none"};
@@ -954,6 +969,7 @@ export const MultiSelectChip = styled.div<{
   border: 1px solid
     ${({ selected }) => (selected ? palette.pine4 : palette.slate20)};
   border-radius: 32px;
+  text-transform: capitalize;
   ${typography.Sans14}
 
   &:hover {

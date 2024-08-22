@@ -24,6 +24,7 @@ import {
   MENTAL_HEALTH_DIAGNOSES_KEY,
   MentalHealthDiagnosesKey,
   NEEDS_TO_BE_ADDRESSED_KEY,
+  needsToBeAddressed,
   NeedsToBeAddressedKey,
   NO_OPTION,
   NOT_SURE_YET_OPTION,
@@ -43,7 +44,6 @@ import { FormAttributes, FormUpdates, FormValue } from "../types";
 import {
   asamLevelOfCareRecommendation,
   mentalHealthDiagnoses,
-  needsToBeAddressed,
   pleas,
 } from "./CaseDetailsFormTemplate";
 

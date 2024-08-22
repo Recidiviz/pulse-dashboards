@@ -19,7 +19,11 @@ import { useState } from "react";
 
 import CheckIcon from "../../../assets/green-check-icon.svg?react";
 import * as Styled from "../../CaseDetails.styles";
-import { NOT_SURE_YET_OPTION } from "../../constants";
+import { NeedsIcons } from "../../components/NeedsIcons/NeedsIcons";
+import {
+  NEEDS_TO_BE_ADDRESSED_KEY,
+  NOT_SURE_YET_OPTION,
+} from "../../constants";
 import { InputFieldProps } from "../types";
 import { OtherContextInputField } from "./OtherContextField";
 
@@ -65,6 +69,7 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
               {((option === NOT_SURE_YET_OPTION &&
                 currentValue?.length === 0) ||
                 currentValue?.includes(option)) && <CheckIcon />}
+              {element.key === NEEDS_TO_BE_ADDRESSED_KEY && NeedsIcons[option]}
               {option}
             </Styled.MultiSelectChip>
           );

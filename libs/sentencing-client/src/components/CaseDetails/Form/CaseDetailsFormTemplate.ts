@@ -16,30 +16,13 @@
 // =============================================================================
 
 import { Case } from "../../../api/APIClient";
-import { NO_OPTION, NOT_SURE_YET_OPTION, YES_OPTION } from "../constants";
+import {
+  needsToBeAddressed,
+  NO_OPTION,
+  NOT_SURE_YET_OPTION,
+  YES_OPTION,
+} from "../constants";
 import { FormFieldList, NonArrayType, NonNullableKey } from "../types";
-
-export const needsToBeAddressed: Record<
-  NonArrayType<Case["needsToBeAddressed"]>,
-  string
-> = {
-  AngerManagement: "Anger management",
-  CaseManagement: "Case management",
-  ClothingAndToiletries: "Clothing and toiletries",
-  DomesticViolenceIssues: "Domestic violence issues",
-  Education: "Education",
-  FamilyServices: "Family services",
-  FinancialAssistance: "Financial assistance",
-  FoodInsecurity: "Food insecurity",
-  GeneralReEntrySupport: "General re-entry support",
-  Healthcare: "Healthcare",
-  HousingOpportunities: "Housing opportunities",
-  JobTrainingOrOpportunities: "Job training or opportunities",
-  MentalHealth: "Mental health",
-  SubstanceUse: "Substance use",
-  Transportation: "Transportation",
-  Other: "Other",
-};
 
 const needsToBeAddressedOptions = [
   ...Object.values(needsToBeAddressed),
