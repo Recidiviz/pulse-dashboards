@@ -17,6 +17,11 @@
 
 import { Insight } from "../../../../api";
 import { convertDecimalToPercentage } from "../../../../utils/utils";
+import { InfoIconWithTooltip } from "../../../Tooltip/Tooltip";
+import {
+  TooltipContentSection,
+  TooltipTextHighlight,
+} from "../../../Tooltip/Tooltip.styles";
 import { SelectedRecommendation } from "../../types";
 import {
   RECOMMENDATION_TYPE_TO_BORDER_COLOR,
@@ -56,10 +61,30 @@ export function DispositionChart({
   const orderedDatapoints = [...otherDatapoints, smallestDatapoint];
 
   const dispositionChartSubtitle = getDispositionChartSubtitle(insight);
-
   return (
     <>
-      <CommonStyled.ChartTitle>Previous Sentences</CommonStyled.ChartTitle>
+      <CommonStyled.ChartTitle>
+        Previous Sentences{" "}
+        <InfoIconWithTooltip
+          headerText="Previous Sentences"
+          content={
+            <TooltipContentSection>
+              This information represents the percentage of cases sentenced to a
+              particular dispositions over the past 3 years. The rates are based
+              on <TooltipTextHighlight>{insight.gender}</TooltipTextHighlight>{" "}
+              with{" "}
+              <TooltipTextHighlight>
+                LSI-R scores between {insight.assessmentScoreBucketStart} and{" "}
+                {insight.assessmentScoreBucketEnd}
+              </TooltipTextHighlight>{" "}
+              with{" "}
+              <TooltipTextHighlight>
+                {insight.offense} convictions.
+              </TooltipTextHighlight>
+            </TooltipContentSection>
+          }
+        />
+      </CommonStyled.ChartTitle>
       <CommonStyled.ChartSubTitle>
         {dispositionChartSubtitle} (Based on {dispositionNumRecords} records)
       </CommonStyled.ChartSubTitle>

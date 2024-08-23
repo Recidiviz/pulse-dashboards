@@ -22,6 +22,7 @@ export const customPalette = {
     light2: "rgba(43, 84, 105, 0.1)",
     light3: "rgba(193, 227, 216, 0.24)",
     light4: "rgba(0, 102, 95, 0.4)",
+    highlight: "#00C49D",
   },
   white: {
     white1: "rgba(249, 250, 250, 1)",

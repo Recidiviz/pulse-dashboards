@@ -18,6 +18,8 @@
 import { palette, typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
+import { customPalette } from "../styles/palette";
+
 export const TooltipContentContainer = styled.div`
   padding: 12px;
 `;
@@ -33,4 +35,16 @@ export const TooltipBody = styled.div`
   ${typography.Sans12}
   color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
+`;
+
+export const TooltipContentSection = styled.div`
+  &:not(:first-child) {
+    margin-top: 12px;
+  }
+`;
+
+export const TooltipTextHighlight = styled.span`
+  ${typography.Sans12}
+  font-weight: 700;
+  color: ${customPalette.green.highlight};
 `;

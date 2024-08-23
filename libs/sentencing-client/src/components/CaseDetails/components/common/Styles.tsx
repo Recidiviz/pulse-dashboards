@@ -20,6 +20,9 @@ import styled from "styled-components/macro";
 
 export const ChartTitle = styled.div`
   ${typography.Sans18};
+  display: flex;
+  gap: 4px;
+  align-items: center;
   color: ${palette.pine1};
   margin-bottom: 8px;
 `;

@@ -38,7 +38,8 @@ import PlusIcon from "../../assets/plus-icon.svg?react";
 import RightArrowIcon from "../../assets/right-arrow-carot-icon.svg?react";
 import TrashIcon from "../../assets/trash-icon.svg?react";
 import * as StyledDashboard from "../../Dashboard/Dashboard.styles";
-import { Tooltip } from "../../Tooltip/Tooltip";
+import { InfoIconWithTooltip, Tooltip } from "../../Tooltip/Tooltip";
+import { TooltipContentSection } from "../../Tooltip/Tooltip.styles";
 import * as Styled from "../CaseDetails.styles";
 import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
 import {
@@ -409,7 +410,26 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 
   return (
     <Styled.Opportunities>
-      <Styled.Title>Opportunities for {firstName}</Styled.Title>
+      <Styled.Title>
+        Opportunities for {firstName}
+        <InfoIconWithTooltip
+          headerText="Opportunities"
+          content={
+            <>
+              <TooltipContentSection>
+                This list includes opportunities for treatment, programming, and
+                other resources that may be helpful and relevant to your client
+                based on their individual needs. Add additional case details to
+                further refine the results.
+              </TooltipContentSection>
+              <TooltipContentSection>
+                When recommending probation, any opportunities you add will be
+                used to generate a recommendation summary for the judge.
+              </TooltipContentSection>
+            </>
+          }
+        />
+      </Styled.Title>
       <Styled.Description>
         <span>
           The following opportunities are available to {firstName} based on the
