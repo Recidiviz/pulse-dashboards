@@ -85,6 +85,11 @@ const StyledMarkdownView = styled(MarkdownView)`
     padding-right: ${rem(spacing.lg)};
     color: ${palette.slate85};
   }
+  a {
+    color: ${palette.signal.links} !important;
+    padding-top: ${rem(spacing.sm)};
+    text-decoration: underline;
+  }
 `;
 
 const Wrapper = styled.div`
