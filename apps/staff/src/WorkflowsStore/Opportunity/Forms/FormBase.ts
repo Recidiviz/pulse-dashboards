@@ -55,7 +55,7 @@ export class FormBase<
 
   opportunity: OpportunityModel;
 
-  updatesSubscription?: DocumentSubscription<FormUpdate<FormDisplayType>>;
+  updatesSubscription: DocumentSubscription<FormUpdate<FormDisplayType>>;
 
   constructor(opportunity: OpportunityModel, rootStore: RootStore) {
     this.opportunity = opportunity;
@@ -74,11 +74,9 @@ export class FormBase<
       hydrationState: computed,
     });
 
-    if (this.shouldUseFormUpdates) {
-      this.updatesSubscription = new FormUpdateSubscription<
-        FormUpdate<FormDisplayType>
-      >(this.rootStore.firestoreStore, this.person.recordId, this.formId);
-    }
+    this.updatesSubscription = new FormUpdateSubscription<
+      FormUpdate<FormDisplayType>
+    >(this.rootStore.firestoreStore, this.person.recordId, this.formId);
   }
 
   get currentUserEmail(): string | undefined {
@@ -90,24 +88,15 @@ export class FormBase<
   }
 
   get updates(): FormUpdate<FormDisplayType> | undefined {
-    if (!this.shouldUseFormUpdates) {
-      return undefined;
-    }
-    return this.updatesSubscription?.data;
+    return this.updatesSubscription.data;
   }
 
   get formLastUpdated(): UpdateLog | undefined {
-    if (this.shouldUseFormUpdates) {
-      return this.updates?.updated;
-    }
-    return this.opportunity.updates?.referralForm?.updated;
+    return this.updates?.updated;
   }
 
   get draftData(): Partial<FormDisplayType> {
-    if (this.shouldUseFormUpdates) {
-      return this.updates?.data ?? {};
-    }
-    return this.opportunity.updates?.referralForm?.data ?? {};
+    return this.updates?.data ?? {};
   }
 
   get prefilledData(): Partial<FormDisplayType> {
@@ -176,21 +165,11 @@ export class FormBase<
    */
   async clearDraftData() {
     const { person } = this.opportunity;
-    if (this.shouldUseFormUpdates) {
-      await this.rootStore.firestoreStore.updateForm(
-        person.recordId,
-        { data: deleteField() },
-        this.formId,
-      );
-    } else {
-      await this.rootStore.firestoreStore.updateOpportunity(
-        this.type,
-        person.recordId,
-        {
-          referralForm: deleteField(),
-        },
-      );
-    }
+    await this.rootStore.firestoreStore.updateForm(
+      person.recordId,
+      { data: deleteField() },
+      this.formId,
+    );
   }
 
   /**
@@ -213,19 +192,11 @@ export class FormBase<
     };
     const isFirstEdit = !this.formLastUpdated;
 
-    if (this.shouldUseFormUpdates) {
-      await this.rootStore.firestoreStore.updateForm(
-        person.recordId,
-        update.referralForm,
-        this.formId,
-      );
-    } else {
-      await this.rootStore.firestoreStore.updateOpportunity(
-        this.type,
-        person.recordId,
-        update,
-      );
-    }
+    await this.rootStore.firestoreStore.updateForm(
+      person.recordId,
+      update.referralForm,
+      this.formId,
+    );
 
     this.recordEdit();
     if (isFirstEdit) {
@@ -240,25 +211,19 @@ export class FormBase<
    * Returns the evaluated hydration state.
    */
   get hydrationState(): HydrationState {
-    if (this.shouldUseFormUpdates && this.updatesSubscription) {
-      return this.updatesSubscription.hydrationState;
-    } else {
-      return this.opportunity.updatesSubscription.hydrationState;
-    }
+    return this.updatesSubscription.hydrationState;
   }
 
   /**
    * Initiates hydration for subscriptions.
    */
   hydrate(): void {
-    if (this.shouldUseFormUpdates && this.updatesSubscription) {
-      this.updatesSubscription.hydrate();
-    }
+    this.updatesSubscription.hydrate();
   }
 
-  get hydratableSubscription():
-    | DocumentSubscription<FormUpdate<FormDisplayType>>
-    | undefined {
+  get hydratableSubscription(): DocumentSubscription<
+    FormUpdate<FormDisplayType>
+  > {
     return this.updatesSubscription;
   }
 
@@ -270,13 +235,6 @@ export class FormBase<
   get formId(): string {
     const formInstance = this.shareFormUpdates ? "common" : this.type;
     return `${this.formType}-${formInstance}`;
-  }
-
-  /**
-   * Only use form updates implementation for FV users.
-   */
-  get shouldUseFormUpdates(): boolean {
-    return !!this.rootStore.userStore.activeFeatureVariants.isolateFormUpdates;
   }
 
   /**

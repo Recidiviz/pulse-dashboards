@@ -93,7 +93,6 @@ export type FeatureVariant =
   | "hideDenialRevert"
   | "opportunityConfigurationAPI"
   | "workflowsSupervisorSearch"
-  | "isolateFormUpdates"
   | "supervisorHomepage"
   | "supervisorHomepageWorkflows"
   | "usPaSpecialCircumstances"
@@ -140,7 +139,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMeCustodyLevelReview: {},
   usMeAnnualReclassificationReview: {},
   workflowsSupervisorSearch: {},
-  isolateFormUpdates: {},
   supervisorHomepage: {},
   supervisorHomepageWorkflows: {},
   usPaSpecialCircumstances: {},
@@ -161,7 +159,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usMoOverdueRHPilot: {},
         enableSnooze: {},
         insightsOnboarding: {},
-        isolateFormUpdates: {},
         supervisorHomepageWorkflows: {},
         opportunityConfigurationAPI: {
           activeTenants: ["US_ND"],

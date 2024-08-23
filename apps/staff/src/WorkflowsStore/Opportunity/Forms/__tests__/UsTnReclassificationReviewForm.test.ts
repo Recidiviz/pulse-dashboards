@@ -109,8 +109,8 @@ function createTestUnit() {
   const person = new Resident(personRecord, rootStore);
   opp = new UsTnAnnualReclassificationReviewOpportunity(person);
   vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord as any);
-  vi.spyOn(opp, "updates", "get").mockImplementation(
-    () => ({ referralForm: { data: formUpdates } }) as any,
+  vi.spyOn(opp.form, "updates", "get").mockImplementation(
+    () => ({ data: formUpdates }) as any,
   );
   form = opp.form;
 }

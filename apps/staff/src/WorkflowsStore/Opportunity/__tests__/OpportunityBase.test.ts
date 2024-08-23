@@ -57,6 +57,13 @@ let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
 let mockUserStateCode: MockInstance;
 
+const statuses = {
+  needsHydration: { status: "needs hydration" },
+  loading: { status: "loading" },
+  failed: { status: "failed", error: new Error("test") },
+  hydrated: { status: "hydrated" },
+} satisfies Record<string, HydrationState>;
+
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
   form: FormBase<any>;
 
@@ -100,8 +107,15 @@ function mockHydration({
   updateData?: OpportunityUpdate;
 } = {}) {
   runInAction(() => {
-    referralSub.hydrationState = { status: "hydrated" };
-    updatesSub.hydrationState = { status: "hydrated" };
+    referralSub.hydrationState = statuses.hydrated;
+    updatesSub.hydrationState = statuses.hydrated;
+
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(statuses.hydrated);
+
     if (referralData) {
       referralSub.data = referralData;
     }
@@ -162,12 +176,14 @@ afterEach(() => {
 });
 
 describe("hydrationState", () => {
-  const statuses = {
-    needsHydration: { status: "needs hydration" },
-    loading: { status: "loading" },
-    failed: { status: "failed", error: new Error("test") },
-    hydrated: { status: "hydrated" },
-  } satisfies Record<string, HydrationState>;
+  beforeEach(() => {
+    // Pretend the form is fully hydrated to not interfere with testing subs hydration
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(statuses.hydrated);
+  });
 
   test.each([
     [statuses.needsHydration, statuses.needsHydration],
@@ -316,6 +332,11 @@ describe("snoozedOnDate", () => {
 describe("setLastViewed", () => {
   beforeEach(() => {
     vi.spyOn(root.firestoreStore, "updateOpportunityLastViewed");
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(statuses.hydrated);
   });
   test("waits for hydration", () => {
     opp.setLastViewed();
@@ -460,16 +481,6 @@ describe("setCompletedIfEligible", () => {
       root.analyticsStore.trackSetOpportunityStatus,
     ).not.toHaveBeenCalled();
   });
-});
-
-test("form updates override prefilled data", () => {
-  referralSub.data = { formInformation: { foo: "test1" } };
-
-  expect(opp.form?.formData).toEqual({ foo: "test1" });
-
-  updatesSub.data = { referralForm: { data: { foo: "test2" } } };
-
-  expect(opp.form?.formData).toEqual({ foo: "test2" });
 });
 
 describe("setDenialReasons", () => {

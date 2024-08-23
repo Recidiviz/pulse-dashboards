@@ -243,7 +243,7 @@ describe("FirestoreStore", () => {
         },
       } as unknown as RootStore;
       store = new FirestoreStore({ rootStore: mockRootStore });
-      vi.stubEnv("PROD", true);
+      vi.stubEnv("VITE_DEPLOY_ENV", "production");
 
       store.updateClientUpdatesV2Document(
         "testDocument/recordId",

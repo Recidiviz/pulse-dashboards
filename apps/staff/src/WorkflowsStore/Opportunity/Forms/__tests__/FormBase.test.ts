@@ -107,12 +107,11 @@ describe("record form download", () => {
 });
 
 describe("draft data", () => {
-  test("uses form updates subscription when shouldUseFormUpdates is true", async () => {
+  test("uses form updates subscription", async () => {
     vi.spyOn(form, "updates", "get").mockReturnValue({
       updated: { by: "user", date: vi.fn() as any },
       data: { foo: "bar" },
     });
-    vi.spyOn(form, "shouldUseFormUpdates", "get").mockReturnValue(true);
     expect(form.draftData).toEqual({ foo: "bar" });
   });
 });
@@ -154,26 +153,9 @@ describe("form update analytics functions", () => {
 });
 
 describe("form update", () => {
-  test("updates in firestore", async () => {
-    vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
-    const testField = "testField";
-    const testValue = "testValue";
-    await form.updateDraftData(testField, testValue);
-    expect(rootStore.firestoreStore.updateOpportunity).toHaveBeenCalledWith(
-      opp.type,
-      client.recordId,
-      {
-        referralForm: expect.objectContaining({
-          data: { testField: testValue },
-        }),
-      },
-    );
-  });
-
-  test("uses updateForm if shouldUseFormUpdates is true", async () => {
+  test("updates in firestore using updateForm", async () => {
     vi.spyOn(rootStore.firestoreStore, "updateForm");
     vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
-    vi.spyOn(form, "shouldUseFormUpdates", "get").mockReturnValue(true);
     const testField = "testField";
     const testValue = "testValue";
     await form.updateDraftData(testField, testValue);
@@ -231,22 +213,9 @@ describe("form update", () => {
 });
 
 describe("form clear data", () => {
-  test("clears referralForm field", async () => {
-    vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
-    await form.clearDraftData();
-    expect(rootStore.firestoreStore.updateOpportunity).toHaveBeenCalledWith(
-      opp.type,
-      client.recordId,
-      {
-        referralForm: undefined,
-      },
-    );
-  });
-
-  test("calls updateForm if shouldUseFormUpdates is true", async () => {
+  test("calls updateForm with no referralForm field", async () => {
     vi.spyOn(rootStore.firestoreStore, "updateForm");
     vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
-    vi.spyOn(form, "shouldUseFormUpdates", "get").mockReturnValue(true);
     await form.clearDraftData();
     expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
       client.recordId,

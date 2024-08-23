@@ -364,7 +364,7 @@ export class OpportunityBase<
   hydrate(): void {
     this.referralSubscription.hydrate();
     this.updatesSubscription.hydrate();
-    if (this.form && this.form.shouldUseFormUpdates) {
+    if (this.form) {
       this.form.hydrate();
     }
   }

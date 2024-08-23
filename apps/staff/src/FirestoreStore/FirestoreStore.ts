@@ -266,7 +266,10 @@ export default class FirestoreStore {
       return;
     }
 
-    if (this.rootStore.userStore.isRecidivizUser && import.meta.env.PROD) {
+    if (
+      this.rootStore.userStore.isRecidivizUser &&
+      import.meta.env.VITE_DEPLOY_ENV === "production"
+    ) {
       // eslint-disable-next-line no-console
       console.log(
         `Recidiviz user in prod; Skipping update for: ${docRef.path} with updates ${JSON.stringify(

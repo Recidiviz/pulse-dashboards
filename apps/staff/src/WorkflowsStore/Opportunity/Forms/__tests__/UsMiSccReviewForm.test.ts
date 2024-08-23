@@ -164,20 +164,3 @@ describe("prefilledDataTransformer", () => {
     `);
   });
 });
-
-describe("shouldUseFormUpdates", () => {
-  test("is true when FV is set", () => {
-    vi.spyOn(
-      rootStore.userStore,
-      "activeFeatureVariants",
-      "get",
-    ).mockReturnValue({
-      isolateFormUpdates: {},
-    });
-    expect(form.shouldUseFormUpdates).toBeTrue();
-  });
-
-  test("is false when FV is not set", () => {
-    expect(form.shouldUseFormUpdates).toBeFalse();
-  });
-});
