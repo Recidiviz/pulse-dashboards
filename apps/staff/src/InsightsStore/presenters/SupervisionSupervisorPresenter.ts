@@ -27,7 +27,6 @@ import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
-import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import { OpportunityInfo } from "../models/OpportunityInfo";
 import {
   ExcludedSupervisionOfficer,
@@ -599,14 +598,6 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         viewedBy: userPseudoId,
       },
     );
-  }
-
-  get actionStrategyCopy(): ActionStrategyCopy | undefined {
-    return this.supervisionStore.actionStrategyCopy;
-  }
-
-  disableSurfaceActionStrategies(): void {
-    this.supervisionStore.disableSurfaceActionStrategies();
   }
 
   // ==============================

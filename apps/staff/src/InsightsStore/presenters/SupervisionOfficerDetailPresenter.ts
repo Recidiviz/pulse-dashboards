@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable, override } from "mobx";
+import { flowResult, makeObservable, override } from "mobx";
 
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
@@ -45,12 +45,16 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
       ctaText: true,
       isInsightsLanternState: true,
       populateSupervisionOfficer: override,
+      disableSurfaceActionStrategies: true,
     });
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: this.expectPopulated,
       populate: async () => {
-        await Promise.all(this.populateMethods);
+        await Promise.all([
+          ...this.populateMethods,
+          flowResult(this.supervisionStore?.populateActionStrategies()),
+        ]);
       },
     });
   }
@@ -124,7 +128,7 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
   }
 
   get actionStrategyCopy(): ActionStrategyCopy | undefined {
-    return this.supervisionStore.actionStrategyCopy;
+    return this.supervisionStore.getActionStrategyCopy(this.officerPseudoId);
   }
 
   disableSurfaceActionStrategies(): void {

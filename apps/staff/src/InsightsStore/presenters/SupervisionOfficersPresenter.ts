@@ -55,11 +55,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
           flowResult(
             this.supervisionStore.populateSupervisionOfficerSupervisors(),
           ),
-          flowResult(
-            this.supervisionStore?.populateActionStrategies(
-              this.supervisorPseudoId,
-            ),
-          ),
+          flowResult(this.supervisionStore.populateActionStrategies()),
         ]);
       },
       expectPopulated: [
@@ -152,7 +148,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   get actionStrategyCopy(): ActionStrategyCopy | undefined {
-    return this.supervisionStore.actionStrategyCopy;
+    return this.supervisionStore.getActionStrategyCopy(this.supervisorPseudoId);
   }
 
   disableSurfaceActionStrategies(): void {

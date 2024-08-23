@@ -51,6 +51,12 @@ beforeEach(() => {
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
     () => false,
   );
+  vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
+    () => "US_CA",
+  );
+  vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
+    () => supervisorPseudoId,
+  );
 });
 
 afterEach(() => {

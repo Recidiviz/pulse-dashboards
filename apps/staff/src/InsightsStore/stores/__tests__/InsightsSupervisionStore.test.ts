@@ -603,7 +603,7 @@ test("hydrate actionStrategies", async () => {
   ).mockReturnValue({
     actionStrategies: {},
   });
-  await flowResult(store.populateActionStrategies("hashed-agonzalez123"));
+  await flowResult(store.populateActionStrategies());
 
   expect(store.actionStrategies).toBeDefined();
   expect(store.actionStrategies).toMatchInlineSnapshot(`
@@ -634,9 +634,9 @@ test("hydrate actionStrategies requires userPseudoId", async () => {
     actionStrategies: {},
   });
 
-  await expect(() =>
-    store.populateActionStrategies("hashed-agonzalez123"),
-  ).rejects.toThrow("Missing pseudonymizedId for user");
+  await expect(() => store.populateActionStrategies()).rejects.toThrow(
+    "Missing pseudonymizedId for user",
+  );
 });
 
 test("hydrate actionStrategies without required featureVariant", async () => {
@@ -652,7 +652,7 @@ test("hydrate actionStrategies without required featureVariant", async () => {
     pseudonymizedId: pseudoId,
   });
 
-  await flowResult(store.populateActionStrategies(pseudoId));
+  await flowResult(store.populateActionStrategies());
   expect(store.actionStrategies).toMatchInlineSnapshot(`{}`);
 });
 

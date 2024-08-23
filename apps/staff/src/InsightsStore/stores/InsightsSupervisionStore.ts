@@ -279,47 +279,40 @@ export class InsightsSupervisionStore {
     this.actionStrategiesEnabled = false;
   }
 
-  getCopyForActionStrategy(
-    actionStrategy: string | undefined,
+  getActionStrategyCopy(
+    pseudoId: string | undefined,
   ): ActionStrategyCopy | undefined {
-    switch (actionStrategy) {
-      case "ACTION_STRATEGY_OUTLIER":
-        return {
-          prompt: `How might I investigate what is driving this metric?`,
-          body: `<p>Try conducting case reviews and direct observations:</p><ol><li>Gather additional information on how ${this.labels.supervisionOfficerLabel}s do their work to inform how you approach the staff member, where there are gaps in client or staff resources, and where additional ${this.labels.supervisionOfficerLabel} training could help.</li><li>Conduct case reviews to ascertain whether outlying ${this.labels.supervisionOfficerLabel}s are consistently following agency policy and practice expectations; using the strategies and techniques that have been identified as most effective in meeting agency goals (e.g., evidence-based practices); and delivering services in the manner intended. Consider using cases listed in the tool for the ${this.labels.supervisionOfficerLabel}'s 3 self-assessments/case management reviews this quarter.</li><li>Conduct direct observations of in-person staff/client meetings to determine the quality of interactions with clients and how ${this.labels.supervisionOfficerLabel}s are building rapport and using strategies that promote behavior change.</li></ol><p>See this and other action strategies here.</p>`,
-        };
-      case "ACTION_STRATEGY_OUTLIER_3_MONTHS":
-        return {
-          prompt: `How might I discuss this with the ${this.labels.supervisionOfficerLabel} in a constructive way?`,
-          body: `<p>First, investigate: Conduct further case reviews or direct observations along with using the Lantern Insights tool to make sure that you understand the agent’s caseload, trends, and approach. Other strategies to better investigate behind the metrics are here.<p>After investigating, try having a positive meeting 1:1 with the agent:<ol><li>Establish a meeting atmosphere that fosters open communication. Ensure that your ${this.labels.supervisionOfficerLabel} comprehends the purpose behind this coaching conversation - improving future client outcomes.</li><li>Customize the discussion to cater to the individual needs and growth of the ${this.labels.supervisionOfficerLabel} you are engaging with.</li><li>Utilize positive reinforcement and subtle prompts to demonstrate attentive listening.</li><li>Collaborate on generating ideas to reduce outlier metrics and improve overall performance of the officer.</li><li>If needed, schedule regular meetings and formulate objectives with clear timeframe expectations to track the progress of the ${this.labels.supervisionOfficerLabel} or tackle persistent challenges and issues.</ol><p>See this and other action strategies here.</p>`,
-        };
-      case "ACTION_STRATEGY_OUTLIER_ABSCONSION":
-        return {
-          prompt: `What strategies should I as a supervisor in order to reduce a ${this.labels.supervisionOfficerLabel}'s absconder warrant rate?`,
-          body: `<p>Try prioritizing rapport-building activities between the ${this.labels.supervisionOfficerLabel} and the client:</p><ol><li style="margin-bottom: 0">Suggest to this agent that they should prioritize:<ol style="list-style-type: lower-alpha; margin-left: 0"><li style="margin-bottom: 0;"">accommodating client work schedules for meetings</li><li style="margin-bottom: 0;">building rapport with clients early-on</li><li style="margin-bottom: 0;">building relationships with community-based providers to connect with struggling clients.</li></ol></li><li>Implement unit-wide strategies to encourage client engagement, such as:<ol style="list-style-type: lower-alpha; margin-left: 0"><li style="margin-bottom:0;">early meaningful contact with all new clients</li><li style="margin-bottom:0;">clear explanations of absconding and reengagement to new clients during their orientation and beyond</li><li style="margin-bottom: 0;">rewarding agents building positive rapport (supportive communication, some amounts of small talk) with clients.</li></ol></ol>See more details on this and other action strategies here.`,
-        };
-      case "ACTION_STRATEGY_OUTLIER_NEW_OFFICER":
-        return {
-          prompt: `How might I discuss this with the ${this.labels.supervisionOfficerLabel} in a constructive way?`,
-          body: `<p>Try pairing agents up to shadow each other on a regular basis:</p><ol><li>Identify ${this.labels.supervisionOfficerLabel}s who have a track record of following agency policy, have a growth mindset for their clients, and have a positive rapport with clients.</li><li>Offer outlying ${this.labels.supervisionOfficerLabel}s the opportunity for on-the-job shadowing to learn different approaches, skills, and response techniques when interacting with clients.</li><li>Reinforce the notion among your staff that this presents a valuable opportunity for learning and growth.</li></ol><p>See more details on this and other action strategies here.</p>`,
-        };
-      case "ACTION_STRATEGY_60_PERC_OUTLIERS":
-        return {
-          prompt: `How might I work with my team to improve these metrics?`,
-          body: `<p>Try setting positive, collective goals with your team:</p><ol><li>After some investigation, arrange a meeting with your team to engage in a comprehensive discussion about their strengths, challenges, and metrics.</li><li>Prepare a well-structured agenda and establish clear objectives for the meeting. Additionally, come prepared with inquiries for your staff, as well as be open to addressing any questions they may have.</li><li>Collaborate as a team to brainstorm innovative approaches for overcoming challenges and improving upon any outliers in the metrics.</li><li>Establish SMART (Specific, Measurable, Achievable, Relevant, Time-bound) goals together with your team for future endeavors and devise a plan to effectively monitor their progress. Ensure that these goals are communicated and easily accessible to all team members.</li><li>Foster an environment of open communication and actively encourage the implementation of the strategies and plans that have been established for moving forward.</li></ol><p>See more details on this and other action strategies here.</p>`,
-        };
-      default:
-        return undefined;
+    if (pseudoId && this.surfaceActionStrategies) {
+      switch (this.actionStrategies?.[pseudoId]) {
+        case "ACTION_STRATEGY_OUTLIER":
+          return {
+            prompt: `How might I investigate what is driving this metric?`,
+            body: `<p>Try conducting case reviews and direct observations:</p><ol><li>Gather additional information on how ${this.labels.supervisionOfficerLabel}s do their work to inform how you approach the staff member, where there are gaps in client or staff resources, and where additional ${this.labels.supervisionOfficerLabel} training could help.</li><li>Conduct case reviews to ascertain whether outlying ${this.labels.supervisionOfficerLabel}s are consistently following agency policy and practice expectations; using the strategies and techniques that have been identified as most effective in meeting agency goals (e.g., evidence-based practices); and delivering services in the manner intended. Consider using cases listed in the tool for the ${this.labels.supervisionOfficerLabel}'s 3 self-assessments/case management reviews this quarter.</li><li>Conduct direct observations of in-person staff/client meetings to determine the quality of interactions with clients and how ${this.labels.supervisionOfficerLabel}s are building rapport and using strategies that promote behavior change.</li></ol><p>See this and other action strategies here.</p>`,
+          };
+        case "ACTION_STRATEGY_OUTLIER_3_MONTHS":
+          return {
+            prompt: `How might I discuss this with the ${this.labels.supervisionOfficerLabel} in a constructive way?`,
+            body: `<p>First, investigate: Conduct further case reviews or direct observations along with using the Lantern Insights tool to make sure that you understand the agent’s caseload, trends, and approach. Other strategies to better investigate behind the metrics are here.<p>After investigating, try having a positive meeting 1:1 with the agent:<ol><li>Establish a meeting atmosphere that fosters open communication. Ensure that your ${this.labels.supervisionOfficerLabel} comprehends the purpose behind this coaching conversation - improving future client outcomes.</li><li>Customize the discussion to cater to the individual needs and growth of the ${this.labels.supervisionOfficerLabel} you are engaging with.</li><li>Utilize positive reinforcement and subtle prompts to demonstrate attentive listening.</li><li>Collaborate on generating ideas to reduce outlier metrics and improve overall performance of the officer.</li><li>If needed, schedule regular meetings and formulate objectives with clear timeframe expectations to track the progress of the ${this.labels.supervisionOfficerLabel} or tackle persistent challenges and issues.</ol><p>See this and other action strategies here.</p>`,
+          };
+        case "ACTION_STRATEGY_OUTLIER_ABSCONSION":
+          return {
+            prompt: `What strategies should I as a supervisor in order to reduce a ${this.labels.supervisionOfficerLabel}'s absconder warrant rate?`,
+            body: `<p>Try prioritizing rapport-building activities between the ${this.labels.supervisionOfficerLabel} and the client:</p><ol><li style="margin-bottom: 0">Suggest to this agent that they should prioritize:<ol style="list-style-type: lower-alpha; margin-left: 0"><li style="margin-bottom: 0;"">accommodating client work schedules for meetings</li><li style="margin-bottom: 0;">building rapport with clients early-on</li><li style="margin-bottom: 0;">building relationships with community-based providers to connect with struggling clients.</li></ol></li><li>Implement unit-wide strategies to encourage client engagement, such as:<ol style="list-style-type: lower-alpha; margin-left: 0"><li style="margin-bottom:0;">early meaningful contact with all new clients</li><li style="margin-bottom:0;">clear explanations of absconding and reengagement to new clients during their orientation and beyond</li><li style="margin-bottom: 0;">rewarding agents building positive rapport (supportive communication, some amounts of small talk) with clients.</li></ol></ol>See more details on this and other action strategies here.`,
+          };
+        case "ACTION_STRATEGY_OUTLIER_NEW_OFFICER":
+          return {
+            prompt: `How might I discuss this with the ${this.labels.supervisionOfficerLabel} in a constructive way?`,
+            body: `<p>Try pairing agents up to shadow each other on a regular basis:</p><ol><li>Identify ${this.labels.supervisionOfficerLabel}s who have a track record of following agency policy, have a growth mindset for their clients, and have a positive rapport with clients.</li><li>Offer outlying ${this.labels.supervisionOfficerLabel}s the opportunity for on-the-job shadowing to learn different approaches, skills, and response techniques when interacting with clients.</li><li>Reinforce the notion among your staff that this presents a valuable opportunity for learning and growth.</li></ol><p>See more details on this and other action strategies here.</p>`,
+          };
+        case "ACTION_STRATEGY_60_PERC_OUTLIERS":
+          return {
+            prompt: `How might I work with my team to improve these metrics?`,
+            body: `<p>Try setting positive, collective goals with your team:</p><ol><li>After some investigation, arrange a meeting with your team to engage in a comprehensive discussion about their strengths, challenges, and metrics.</li><li>Prepare a well-structured agenda and establish clear objectives for the meeting. Additionally, come prepared with inquiries for your staff, as well as be open to addressing any questions they may have.</li><li>Collaborate as a team to brainstorm innovative approaches for overcoming challenges and improving upon any outliers in the metrics.</li><li>Establish SMART (Specific, Measurable, Achievable, Relevant, Time-bound) goals together with your team for future endeavors and devise a plan to effectively monitor their progress. Ensure that these goals are communicated and easily accessible to all team members.</li><li>Foster an environment of open communication and actively encourage the implementation of the strategies and plans that have been established for moving forward.</li></ol><p>See more details on this and other action strategies here.</p>`,
+          };
+        default:
+          return undefined;
+      }
     }
-  }
-
-  get actionStrategyCopy(): ActionStrategyCopy | undefined {
-    const { userPseudoId } = this.insightsStore.rootStore.userStore;
-    if (userPseudoId && this.surfaceActionStrategies) {
-      return this.getCopyForActionStrategy(
-        this.actionStrategies?.[userPseudoId],
-      );
-    } else return undefined;
   }
 
   /**
@@ -352,9 +345,10 @@ export class InsightsSupervisionStore {
     this.latestBenchmarksDate = latestBenchmarksDate;
   }
 
-  *populateActionStrategies(
-    supervisorPseudoId: string,
-  ): FlowMethod<InsightsAPI["actionStrategies"], void> {
+  *populateActionStrategies(): FlowMethod<
+    InsightsAPI["actionStrategies"],
+    void
+  > {
     const { isRecidivizUser, isCSGUser, userPseudoId, activeFeatureVariants } =
       this.insightsStore.rootStore.userStore;
 
@@ -369,10 +363,7 @@ export class InsightsSupervisionStore {
     }
 
     // set actionStrategies to empty object when access requirements aren't met to avoid throwing a hydration error
-    if (
-      !activeFeatureVariants.actionStrategies ||
-      !(userPseudoId === supervisorPseudoId)
-    ) {
+    if (!activeFeatureVariants.actionStrategies) {
       this.actionStrategies = {};
       return;
     }

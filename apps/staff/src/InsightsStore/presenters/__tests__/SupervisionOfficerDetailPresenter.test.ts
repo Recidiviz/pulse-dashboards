@@ -41,6 +41,9 @@ beforeEach(() => {
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
     () => false,
   );
+  vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
+    () => "US_CA",
+  );
 
   store = new InsightsSupervisionStore(
     new RootStore().insightsStore,
