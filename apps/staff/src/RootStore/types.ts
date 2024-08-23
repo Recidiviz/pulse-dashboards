@@ -163,6 +163,9 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         insightsOnboarding: {},
         isolateFormUpdates: {},
         supervisorHomepageWorkflows: {},
+        opportunityConfigurationAPI: {
+          activeTenants: ["US_ND"],
+        },
       }
     : {
         ...allFeatureVariants,
