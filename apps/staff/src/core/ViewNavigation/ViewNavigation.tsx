@@ -105,6 +105,24 @@ function MethodologyLink({
   );
 }
 
+function InsightsLink({ enabled }: OptionalLinkProps) {
+  if (!enabled) return null;
+
+  return (
+    <NavLink
+      className={({ isActive }) =>
+        `ViewNavigation__navlink${
+          isActive ? " ViewNavigation__navlink--active" : ""
+        }`
+      }
+      to={`/${DASHBOARD_VIEWS.insights}`}
+    >
+      <Icon kind={IconSVG.Insights} width={24} />
+      <div className="ViewNavigation__navlink-heading">Overview</div>
+    </NavLink>
+  );
+}
+
 function WorkflowsLink({ enabled }: OptionalLinkProps) {
   if (!enabled) return null;
 
@@ -154,11 +172,13 @@ const ViewNavigation: React.FC<{ children?: React.ReactNode }> = ({
   if (!navigationLayout || !currentTenantId) return <div />;
 
   const enabledPathwaysPages = (navigationLayout.system || []).length > 0;
+  const enableInsights = !!navigationLayout.insights;
   const enableOperations = !!navigationLayout.operations;
   const enableWorkflows = !!navigationLayout.workflows;
 
   return (
     <div className="ViewNavigation__mobile">
+      <InsightsLink enabled={enableInsights} />
       <PathwaysLink enabled={enabledPathwaysPages} />
       {children}
       <OperationsLink enabled={enableOperations} />
