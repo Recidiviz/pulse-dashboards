@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import moment from "moment";
+
 import { Insight } from "../../../../api";
+import RecidivizLogo from "../../../assets/recidiviz-logo.png";
 import { SelectedRecommendation } from "../../../CaseDetails/types";
 import { DispositionChart } from "../../components/DispositionChart/DispositionChart";
 import { RecidivismPlot } from "../../components/RecidivismPlot/RecidivismPlot";
@@ -25,7 +28,7 @@ import {
 } from "./Descriptions";
 import * as Styled from "./Report.styles";
 
-const PLOT_WIDTH = 1050;
+const PLOT_WIDTH = 850;
 
 interface ReportProps {
   fullName?: string;
@@ -38,7 +41,7 @@ function Header() {
   return (
     <Styled.Header>
       <div>Case Insights Report</div>
-      <div>{new Date().toLocaleString()}</div>
+      <div>{moment().format("MMMM DD, YYYY")}</div>
     </Styled.Header>
   );
 }
@@ -50,7 +53,10 @@ interface FooterProps {
 function Footer({ pageNumber }: FooterProps) {
   return (
     <Styled.Footer>
-      <div>Report provided by Recidiviz</div>
+      <div>
+        Report provided by{" "}
+        <img src={RecidivizLogo} width="58px" alt="Recidiviz logo" />
+      </div>
       <div>Page {pageNumber} of 2</div>
     </Styled.Footer>
   );
@@ -63,7 +69,7 @@ export function Report({
   selectedRecommendation,
 }: ReportProps) {
   return (
-    <>
+    <Styled.ReportContainer>
       {/* Page 1 */}
       <Styled.Page>
         <Header />
@@ -95,6 +101,7 @@ export function Report({
         </div>
         <Footer pageNumber={1} />
       </Styled.Page>
+
       {/* Page 2 */}
       <Styled.Page>
         <Header />
@@ -103,11 +110,12 @@ export function Report({
             insight={insight}
             selectedRecommendation={selectedRecommendation}
             justifyContent="flex-start"
+            scale={1.5}
           />
         </Styled.PlotContainer>
         <DispositionExplanation insight={insight} />
         <Footer pageNumber={2} />
       </Styled.Page>
-    </>
+    </Styled.ReportContainer>
   );
 }

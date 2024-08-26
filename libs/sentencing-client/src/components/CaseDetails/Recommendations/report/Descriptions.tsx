@@ -135,7 +135,7 @@ export function RecidivismPlotExplanation({
   const genderString = getRollupGenderString(rollupGender);
 
   return (
-    <span>
+    <Styled.Explanation>
       These recidivism rates represent the percentage of individuals who have
       been convicted of a subsequent offense or violated the conditions of their
       probation or parole over the course of the three years immediately after
@@ -155,7 +155,7 @@ export function RecidivismPlotExplanation({
       </span>
       . The shaded areas represent the confidence intervals, or the range of
       possible values for the true recidivism rate.
-    </span>
+    </Styled.Explanation>
   );
 }
 
@@ -175,7 +175,7 @@ export function DispositionExplanation({
   const genderString = getGenderString(gender);
 
   return (
-    <span>
+    <Styled.Explanation>
       This information represents the percentage of cases sentenced to
       particular dispositions over the past three years. The rates are based on{" "}
       <span>
@@ -187,6 +187,6 @@ export function DispositionExplanation({
         with <Styled.Bold>{offense} convictions</Styled.Bold>
       </span>
       .
-    </span>
+    </Styled.Explanation>
   );
 }

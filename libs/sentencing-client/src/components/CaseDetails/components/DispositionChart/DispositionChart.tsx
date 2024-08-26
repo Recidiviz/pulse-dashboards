@@ -34,22 +34,24 @@ import { getDispositionChartSubtitle } from "./utils";
 const MIN_CIRCLE_HEIGHT = 60;
 const MAX_CIRCLE_HEIGHT = 272;
 
-const getChartCircleHeight = (percentage: number) => {
-  return (
-    MIN_CIRCLE_HEIGHT + percentage * (MAX_CIRCLE_HEIGHT - MIN_CIRCLE_HEIGHT)
-  );
+const getChartCircleHeight = (percentage: number, scale = 1) => {
+  const minHeight = MIN_CIRCLE_HEIGHT * scale;
+  const maxHeight = MAX_CIRCLE_HEIGHT * scale;
+  return minHeight + percentage * (maxHeight - minHeight);
 };
 
 interface DispositionChartProps {
   insight: Insight;
   selectedRecommendation: SelectedRecommendation;
   justifyContent?: "center" | "flex-start";
+  scale?: number;
 }
 
 export function DispositionChart({
   insight,
   selectedRecommendation,
   justifyContent = "center",
+  scale,
 }: DispositionChartProps) {
   const { dispositionData, dispositionNumRecords } = insight;
 
@@ -94,7 +96,7 @@ export function DispositionChart({
             recommendationType !== "None" && (
               <Styled.DispositionChartCircleContainer key={recommendationType}>
                 <Styled.DispositionChartCircle
-                  $height={getChartCircleHeight(percentage)}
+                  $height={getChartCircleHeight(percentage, scale)}
                   $backgroundColor={
                     RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
                   }

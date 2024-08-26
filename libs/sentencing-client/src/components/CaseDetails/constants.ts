@@ -17,6 +17,8 @@
 
 import { Case } from "../../api";
 
+export const PDF_PAGE_WIDTH = 950;
+
 export const OFFENSE_KEY = "offense";
 
 export const LSIR_SCORE_KEY = "lsirScore";

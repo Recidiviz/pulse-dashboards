@@ -27,7 +27,10 @@ import {
 import { MAX_MODAL_HEIGHT } from "../Modal/Modal";
 import { customPalette } from "../styles/palette";
 import { OnboardingTopic } from "./CaseOnboarding/types";
+import { PDF_PAGE_WIDTH } from "./constants";
 import { FormAttributes, ProfileStrength } from "./types";
+
+const RECOMMENDATION_PANEL_HEIGHT_OFFSET = 244;
 
 export const PageContainer = styled.div`
   width: 100%;
@@ -271,6 +274,9 @@ export const Recommendations = styled.div`
   gap: 16px;
   border-left: 1px solid ${palette.marble5};
   background-color: ${palette.white};
+  max-height: calc(-${RECOMMENDATION_PANEL_HEIGHT_OFFSET}px + 100vh);
+  overflow-y: auto;
+  padding-bottom: 120px;
 `;
 
 export const RecommendationsWrapper = styled.div`
@@ -407,7 +413,7 @@ export const RecommendationActionButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px 24px;
+  padding: 10px 24px 24px 24px;
   border-top: 1px solid ${palette.marble5};
   position: fixed;
   background-color: ${palette.white};
@@ -454,6 +460,12 @@ export const RecommendationSummaryReport = styled.div`
   top: 0;
   left: 0;
   z-index: 99;
+
+  & > div:nth-child(2) {
+    position: absolute;
+    left: 100%;
+    top: -200%;
+  }
 `;
 
 export const SummaryReportWrapper = styled.div`
@@ -492,11 +504,38 @@ export const SummaryTextAreaWrapper = styled.div`
   }
 `;
 
+export const ReportPDFContainer = styled.div``;
+
+// TODO(Recidiviz/recidiviz-data#32716) Refactor and better target the `div > div > div`
 export const PlaceholderPdfPreview = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: ${palette.slate30};
   height: 346px;
   margin-top: 8px;
   margin-bottom: 8px;
+
+  ${ReportPDFContainer} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 24px;
+  }
+
+  ${ReportPDFContainer} > div > div > div {
+    background: ${palette.white};
+    min-width: ${PDF_PAGE_WIDTH}px;
+    height: 1335px;
+  }
+
+  ${ReportPDFContainer} > div > div {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
 `;
 
 export const ButtonWrapper = styled.div`

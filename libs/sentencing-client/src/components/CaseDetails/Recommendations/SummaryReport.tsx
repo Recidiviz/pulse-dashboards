@@ -17,16 +17,19 @@
 
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { useReactToPrint } from "react-to-print";
+import generatePDF from "react-to-pdf";
 
 import { Insight } from "../../../api";
+import CheckIcon from "../../assets/check-icon.svg?react";
+import CheckWhiteIcon from "../../assets/check-white-icon.svg?react";
 import CopyIcon from "../../assets/copy-icon.svg?react";
 import DownloadIcon from "../../assets/download-icon.svg?react";
 import * as Styled from "../CaseDetails.styles";
+import { PDF_PAGE_WIDTH } from "../constants";
+import { Report } from "../Recommendations/report/Report";
 import { SelectedRecommendation } from "../types";
-import { Report } from "./report/Report";
 
-const COPY_TO_CLIPBOARD_TIMEOUT = 1500;
+const BUTTON_CHANGE_TIMEOUT = 2500;
 const TOAST_TIMEOUT = 3000;
 
 type SummaryReportProps = {
@@ -48,8 +51,10 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   hideSummaryReport,
   setCaseStatusCompleted,
 }) => {
+  const targetRef = useRef<HTMLDivElement>(null);
   const placeholderRecommendationSummary = `Based on ${fullName}'s multiple mental health diagnosis and high LSI-R score, we submit for the court's consideration that she may be a good candidate for a community-based assisted living program and/or a structured treatment program with an integrated continuum of care. A reentry program may also be appropriate given ${firstName}'s criminal history and high risk of recidivism.`;
 
+  const [hasDownloadedReport, setHasDownloadedReport] = useState(false);
   const [hasCopiedText, setHasCopiedText] = useState(false);
   const [summaryValue, setSummaryValue] = useState(
     placeholderRecommendationSummary,
@@ -59,7 +64,15 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   const handleCopySummaryToClipboard = () => {
     navigator.clipboard.writeText(summaryValue);
     setHasCopiedText(true);
-    setTimeout(() => setHasCopiedText(false), COPY_TO_CLIPBOARD_TIMEOUT);
+    setTimeout(() => setHasCopiedText(false), BUTTON_CHANGE_TIMEOUT);
+  };
+
+  const handleClickToDownload = () => {
+    setHasDownloadedReport(true);
+    generatePDF(targetRef, {
+      filename: `${fullName?.replaceAll(" ", "")}Recommendation.pdf`, // "FirstNameLastNameRecommendation.pdf"
+    });
+    setTimeout(() => setHasDownloadedReport(false), BUTTON_CHANGE_TIMEOUT);
   };
 
   /** Marks the case status as "Complete" and hides the summary report view */
@@ -71,10 +84,15 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     });
   };
 
-  const reportRef = useRef(null);
-  const handlePrint = useReactToPrint({
-    content: () => reportRef.current,
-  });
+  const renderReport = () =>
+    insight ? (
+      <Report
+        fullName={fullName}
+        externalId={externalId}
+        selectedRecommendation={selectedRecommendation}
+        insight={insight}
+      />
+    ) : null;
 
   return (
     <Styled.RecommendationSummaryReport>
@@ -108,8 +126,15 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
             kind="bordered"
             onClick={handleCopySummaryToClipboard}
           >
-            <CopyIcon />
-            {hasCopiedText ? "Copied to clipboard!" : "Copy to clipboard"}
+            {hasCopiedText ? (
+              <>
+                <CheckIcon /> Copied to clipboard
+              </>
+            ) : (
+              <>
+                <CopyIcon /> Copy to clipboard
+              </>
+            )}
           </Styled.ActionButton>
         </Styled.SectionWrapper>
 
@@ -123,25 +148,27 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
             Download this PDF and include it as an attachment to your finished
             report.
           </div>
-          <Styled.PlaceholderPdfPreview />
-          <div style={{ display: "none" }}>
-            <div ref={reportRef}>
-              {insight ? (
-                <Report
-                  fullName={fullName}
-                  externalId={externalId}
-                  selectedRecommendation={selectedRecommendation}
-                  insight={insight}
-                />
-              ) : null}
-            </div>
-          </div>
-          <Styled.ActionButton onClick={handlePrint}>
-            <DownloadIcon />
-            Download Report
+
+          {/* Preview PDF */}
+          <Styled.PlaceholderPdfPreview>
+            <Styled.ReportPDFContainer>
+              <div style={{ scale: "0.24" }}>{renderReport()}</div>
+            </Styled.ReportPDFContainer>
+          </Styled.PlaceholderPdfPreview>
+          <Styled.ActionButton onClick={handleClickToDownload}>
+            {hasDownloadedReport ? (
+              <>
+                <CheckWhiteIcon />
+                Downloaded
+              </>
+            ) : (
+              <>
+                <DownloadIcon />
+                Download Report
+              </>
+            )}
           </Styled.ActionButton>
         </Styled.SectionWrapper>
-
         <Styled.ButtonWrapper>
           <Styled.ActionButton kind="link" onClick={hideSummaryReport}>
             Cancel
@@ -151,6 +178,13 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
           </Styled.ActionButton>
         </Styled.ButtonWrapper>
       </Styled.SummaryReportWrapper>
+
+      {/* PDF Report */}
+      <Styled.ReportPDFContainer>
+        <div ref={targetRef} style={{ width: `${PDF_PAGE_WIDTH}px` }}>
+          {renderReport()}
+        </div>
+      </Styled.ReportPDFContainer>
     </Styled.RecommendationSummaryReport>
   );
 };
