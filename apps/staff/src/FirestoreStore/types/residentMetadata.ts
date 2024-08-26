@@ -73,7 +73,7 @@ export type UsIdResidentMetadata = {
 
 export type UsMoResidentMetadata = {
   stateCode: "US_MO";
-  d1SanctionInfoInPastYear: UsMoSanctionInfo[];
+  d1SanctionInfoPastYear: UsMoSanctionInfo[];
   solitaryAssignmentInfoPastYear: UsMoSolitaryAssignmentInfoPastYear[];
   numSolitaryAssignmentsPastYear: number;
   numD1SanctionsPastYear: number;

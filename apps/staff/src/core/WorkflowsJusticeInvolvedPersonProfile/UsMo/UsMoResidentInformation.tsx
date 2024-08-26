@@ -16,11 +16,12 @@
 // =============================================================================
 
 import React from "react";
+import z from "zod";
 
+import { sanctionsSchema } from "../../../WorkflowsStore";
 import { UsMoSanctions } from "../ResidentDetailSidebarComponents/US_MO/UsMoSanctions";
 import { UsMoSolitary } from "../ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
 import { ResidentProfileProps } from "../types";
-
 export function UsMoResidentInformation({
   resident,
 }: ResidentProfileProps): React.ReactElement | null {
@@ -33,7 +34,11 @@ export function UsMoResidentInformation({
   return (
     <>
       <UsMoSolitary person={resident} />
-      <UsMoSanctions sanctions={metadata.d1SanctionInfoInPastYear} />
+      <UsMoSanctions
+        sanctions={z
+          .array(sanctionsSchema)
+          .parse(metadata.d1SanctionInfoPastYear)}
+      />
     </>
   );
 }

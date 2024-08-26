@@ -48,7 +48,7 @@ const cdvSchema = z.object({
 
 export type UsMoConductViolationInfo = z.infer<typeof cdvSchema>;
 
-const sanctionsSchema = z.object({
+export const sanctionsSchema = z.object({
   sanctionCode: z.string().nullable(),
   sanctionExpirationDate: dateStringSchema.nullable(),
   sanctionId: z.number().nullable(),
