@@ -309,6 +309,18 @@ if (deployEnv === "staging" || deployEnv === "production") {
   if (deploySentencingServerPrompt.deploySentencingServer) {
     console.log("Building and deploying the application...");
 
+    // Start docker and configure docker to upload to container registry
+    // Only needed for staging deploys
+    if (deployEnv === "staging") {
+      try {
+        await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
+          process.stdout,
+        );
+      } catch (e) {
+        console.error("Failed to configure docker for gcloud", e);
+      }
+    }
+
     let retryDeploy = false;
     do {
       // Deploy the app
