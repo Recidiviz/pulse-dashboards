@@ -27,13 +27,18 @@ import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
-import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
+import {
+  FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY,
+  worksheetSectionsCopy,
+} from "./constants";
 import CriteriaChecklist from "./CriteriaChecklist";
 import Footer from "./Footer";
 import FormClientDetails from "./FormClientDetails";
 import FormHeading from "./FormHeading";
 import OffenseHistoryChecklist from "./OffenseHistoryChecklist";
 import SignOffSection from "./SignOffSection";
+import WorksheetHeader from "./WorksheetHeader";
+import WorksheetSection from "./WorksheetSection";
 
 const FormPage = styled.div`
   font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
@@ -117,6 +122,24 @@ export const FormUsPaAdminSupervision = observer(
                   <OffenseHistoryChecklist />
                   <CriteriaChecklist />
                   <SignOffSection />
+                </FormContent>
+                <Footer />
+              </FormPage>
+            </PrintablePage>
+          </PrintablePageMargin>
+          <PrintablePageMargin>
+            <PrintablePage>
+              <FormPage>
+                <FormContent>
+                  <WorksheetHeader />
+                  {worksheetSectionsCopy.map((section) => {
+                    return (
+                      <WorksheetSection
+                        key={section.sectionNumber}
+                        {...section}
+                      />
+                    );
+                  })}
                 </FormContent>
                 <Footer />
               </FormPage>

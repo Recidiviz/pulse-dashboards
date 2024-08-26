@@ -15,38 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rem } from "polished";
-import * as React from "react";
 import styled from "styled-components/macro";
 
-import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
-import { Logo } from "./PDOCLogo";
+import pdocLogo from "./assets/pdocLogo.png";
 
-const ContentContainer = styled.div`
-  display: flex;
-  align-items: flex-end;
-  margin-bottom: 10px;
+const LogoComponent = styled.img`
+  width: 175px;
+  height: auto;
 `;
 
-const HeadingText = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 800px;
-  font-size: ${rem(15)};
-  font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
-  letter-spacing: -0.01em;
-  border: 0.5px solid black;
-  margin-bottom: 5px;
-`;
-
-const FormHeading: React.FC = () => {
-  return (
-    <ContentContainer>
-      <Logo />
-      <HeadingText>Administrative Parole Eligibility</HeadingText>
-    </ContentContainer>
-  );
+export const Logo = () => {
+  return <LogoComponent src={pdocLogo} alt="PDOC Logo" />;
 };
-
-export default FormHeading;

@@ -241,3 +241,107 @@ export const strings = {
   agentName: `Agent Name (Printed)`,
   footer: `DC-P 402 | rvsd. 08.2021`,
 } as const;
+
+export const worksheetSectionsCopy: {
+  sectionNumber: number;
+  headerText: string;
+  checklist: { label: string; field: keyof FormDataType }[];
+  footerText?: string;
+  footerAddendum?: string[];
+}[] = [
+  {
+    sectionNumber: 1,
+    headerText: `Use this sheet if the PA rap sheet, out-of-state criminal history, and/or "Offense History and Pattern" section of the ICSA shows a drug offense for which the reentrant was charged as an adult and:`,
+    checklist: [
+      {
+        label: `The reentrant was found guilty on a PA drug charge (continue to section 2) or`,
+        field: "guiltyPADrugCharge",
+      },
+      {
+        label: `No disposition was reported on a PA drug charge (continue to section 2) or`,
+        field: "noDispositionPADrugCharge",
+      },
+      {
+        label: `The reentrant was found guilty on an out-of-state drug charge (skip to section 4) or`,
+        field: "guiltyOOSDrugCharge",
+      },
+      {
+        label: `No disposition was reported on an out-of-state drug charge (skip to section 4) or`,
+        field: "noDispositionOOSDrugCharge",
+      },
+    ],
+    footerText: `If none of these boxes are checked, then drug charges do not preclude the reentrant's eligibility.`,
+  },
+  {
+    sectionNumber: 2,
+    headerText: `For in-state offenses, the AOPC UJS Portal shows that the reentrant was charged with:`,
+    checklist: [
+      {
+        label: `35 P.S. 780-113 (14) - Delivery by practitioner (continue to section 3)`,
+        field: "charge780_11314",
+      },
+      {
+        label: `35 P.S. 780-113 (30) - Possession with intent to deliver (continue to section 3)`,
+        field: "charge780_11330",
+      },
+      {
+        label: `35 P.S. 780-113 (37) - Possession> 30 Doses related to steroids (continue to section 3)`,
+        field: "charge780_11337",
+      },
+    ],
+    footerText: `If none of these boxes are checked, then the PA drug charges do not preclude the reentrant's eligibility.`,
+    footerAddendum: [
+      `If one or more boxes are checked, continue to section 3.`,
+      `If there are out-of-state drug charges, then skip to section 4.`,
+    ],
+  },
+  {
+    sectionNumber: 3,
+    headerText: `The reentrant is ineligible for administrative parole if the disposition shows that the reentrant was found guilty on one of the drug offenses in section 2 and at least one of the following sentencing enhancements were included in the disposition:`,
+    checklist: [
+      {
+        label: `18PA. C.S. 7508(a)1 (iii) - marijuana > 50 Ibs or 51 plants; min 5 years, $50,000`,
+        field: "offense7508_a1",
+      },
+      {
+        label: `18PA. C.S. 7508(a)2(iii) - narcotic > 100 grams; min 5 years, $25,000`,
+        field: "offense7508_a2",
+      },
+      {
+        label: `18PA. C.S. 7508(a)3(iii) - cocoa leaves > 100 grams; min 4 years, $25,000`,
+        field: "offense7508_a3",
+      },
+      {
+        label: `18PA. C.S. 7508(a)4(iii) - methamphetamine > 100 grams; min 5 years, $50,000`,
+        field: "offense7508_a4",
+      },
+      {
+        label: `18PA. C.S. 7508(a)7(iii) - heroin > 50 grams; min 5 years, $25,000`,
+        field: "offense7508_a7",
+      },
+      {
+        label: `18PA. C.S. 7508(a)8(iii) - MDA, MDMA, MMDA > 1,000 tablets or 300 grams; max 15 years, $250,000`,
+        field: "offense7508_a8",
+      },
+    ],
+    footerText: `If none of these boxes are checked, then the PA drug charges do not preclude the reentrant's eligibility. Continue to section 4 if the reentrant also has out-of-state drug charges.`,
+  },
+  {
+    sectionNumber: 4,
+    headerText: `For out-of-state drug offenses in which the reentrant was found guilty or the disposition was unreported, the reentrant shall not be placed on administrative supervision unless:`,
+    checklist: [
+      {
+        label: `ICOTS records are reviewed to gather all available information about the offense(s) in question; and`,
+        field: "reviewICOTSRecords",
+      },
+      {
+        label: `The records clearly show that the drug offense(s) is (are) not delivery-related; or`,
+        field: "notDeliveryRelated",
+      },
+      {
+        label: `Unclear records are resolved according to procedure.`,
+        field: "unclearRecords",
+      },
+    ],
+  },
+];

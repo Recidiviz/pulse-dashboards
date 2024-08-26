@@ -16,37 +16,27 @@
 // =============================================================================
 
 import { rem } from "polished";
-import * as React from "react";
 import styled from "styled-components/macro";
 
-import { FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY } from "./constants";
 import { Logo } from "./PDOCLogo";
 
-const ContentContainer = styled.div`
+const HeaderText = styled.div`
   display: flex;
-  align-items: flex-end;
-  margin-bottom: 10px;
+  justify-content: center;
+  margin: 0.7em;
+  font-weight: bold;
+  font-size: ${rem(12)};
 `;
 
-const HeadingText = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 800px;
-  font-size: ${rem(15)};
-  font-family: ${FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY};
-  letter-spacing: -0.01em;
-  border: 0.5px solid black;
-  margin-bottom: 5px;
-`;
-
-const FormHeading: React.FC = () => {
+const WorksheetHeader = () => {
   return (
-    <ContentContainer>
+    <>
       <Logo />
-      <HeadingText>Administrative Parole Eligibility</HeadingText>
-    </ContentContainer>
+      <HeaderText>
+        Administrative Parole Eligibility Worksheet: DRUG ADDENDUM
+      </HeaderText>
+    </>
   );
 };
 
-export default FormHeading;
+export default WorksheetHeader;
