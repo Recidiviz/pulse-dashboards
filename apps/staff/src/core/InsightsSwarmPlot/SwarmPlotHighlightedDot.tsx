@@ -27,7 +27,7 @@ import {
 } from "@floating-ui/react";
 import { spacing } from "@recidiviz/design-system";
 import { ReactNode, useEffect, useState } from "react";
-import { Link, LinkProps, useMatch } from "react-router-dom";
+import { Link, LinkProps, matchPath, useLocation } from "react-router-dom";
 
 import {
   HIGHLIGHT_MARK_STROKE_WIDTH,
@@ -36,7 +36,7 @@ import {
   SWARM_SIZE_BREAKPOINT,
 } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import { HighlightedDot } from "../../InsightsStore/presenters/SwarmPresenter/types";
-import { insightsUrl } from "../views";
+import { getRelativePath, insightsRoute, insightsUrl } from "../views";
 import {
   HighlightLabel,
   LabelName,
@@ -120,11 +120,10 @@ export const SwarmPlotHighlightedDot = function SwarmPlotHighlightedDot({
     isHovered ? onDotHover(data.officerId) : onDotHover("");
   }, [isHovered, onDotHover, data.officerId]);
 
-  const isMetricPage = useMatch(
-    insightsUrl("supervisionStaffMetric", {
-      officerPseudoId: data.officerPseudoId,
-      metricId: data.metricId,
-    }),
+  const currRelativePath = getRelativePath(useLocation().pathname);
+  const isMetricPage = matchPath(
+    insightsRoute({ routeName: "supervisionStaffMetric" }),
+    currRelativePath,
   );
 
   return (

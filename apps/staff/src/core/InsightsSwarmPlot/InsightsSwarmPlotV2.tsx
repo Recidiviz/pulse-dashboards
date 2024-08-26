@@ -18,11 +18,13 @@
 import { Loading, palette, spacing } from "@recidiviz/design-system";
 import { scaleLinear } from "d3-scale";
 import { observer } from "mobx-react-lite";
+import { matchPath, useLocation } from "react-router-dom";
 
 import {
   MARGIN,
   SWARM_AREA_BOTTOM_OFFSET,
 } from "../../InsightsStore/presenters/SwarmPresenter/constants";
+import { getRelativePath, insightsRoute } from "../views";
 import { TARGET_LINE_WIDTH } from "./constants";
 import { Plot, PlotWrapper, TargetLabel, TargetLine } from "./styles";
 import { SwarmedCircleGroup } from "./SwarmedCircleGroup";
@@ -45,10 +47,17 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
       benchmark: { currentPeriodTarget: targetRate },
     },
   } = presenter;
+  const currRelativePath = getRelativePath(useLocation().pathname);
 
   if (isLoading) return <Loading />;
 
   if (!chartData) return null;
+
+  const isSupervisorPage =
+    matchPath(
+      insightsRoute({ routeName: "supervisionSupervisor" }),
+      currRelativePath,
+    ) !== null;
 
   const {
     centerOfContentArea,
@@ -111,7 +120,7 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
               cy={yScale(index * centerOfContentArea)}
               plotWidth={width}
               onDotHover={onDotHover}
-              isHoverable={!isMinimized}
+              isHoverable={!isMinimized && isSupervisorPage}
             />
           );
         })}
