@@ -22,10 +22,7 @@ import {
   formatWorkflowsDate,
   toTitleCase,
 } from "../../../utils";
-import {
-  EarnedDischargeOpportunity,
-  EarnedDischargeTransformedETLFormInput,
-} from "../UsId";
+import { EarnedDischargeDraftData, EarnedDischargeOpportunity } from "../UsId";
 import { FormBase } from "./FormBase";
 import {
   transformPossibleDateFields,
@@ -33,7 +30,7 @@ import {
 } from "./utils";
 
 export class UsIdEarnedDischargeForm extends FormBase<
-  EarnedDischargeTransformedETLFormInput,
+  EarnedDischargeDraftData,
   EarnedDischargeOpportunity
 > {
   navigateToFormText = "Generate paperwork";
@@ -47,7 +44,7 @@ export class UsIdEarnedDischargeForm extends FormBase<
     return "UsIdEarnedDischargeForm";
   }
 
-  prefilledDataTransformer(): Partial<EarnedDischargeTransformedETLFormInput> {
+  prefilledDataTransformer(): Partial<EarnedDischargeDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
     const { assignedStaff } = this.person;
@@ -66,7 +63,7 @@ export class UsIdEarnedDischargeForm extends FormBase<
       fullTermReleaseDates,
     } = formInformation;
 
-    const initialData: Partial<EarnedDischargeTransformedETLFormInput> = {
+    const initialData: Partial<EarnedDischargeDraftData> = {
       clientName: this.person.displayName,
       supervisionType: toTitleCase(this.person.supervisionType),
       probationOfficerFullName: assignedStaff
@@ -169,6 +166,12 @@ export class UsIdEarnedDischargeForm extends FormBase<
       firstAssessmentDate: formData.firstAssessmentDate,
       latestAssessmentScore: formData.latestAssessmentScore,
       latestAssessmentDate: formData.latestAssessmentDate,
+      initialRestitution: formData.initialRestitution,
+      lastRestitutionPaymentDate: formData.lastRestitutionPaymentDate,
+      currentRestitutionBalance: formData.currentRestitutionBalance,
+      initialFines: formData.initialFines,
+      lastFinesPaymentDate: formData.lastFinesPaymentDate,
+      currentFinesBalance: formData.currentFinesBalance,
       offenses: [],
     };
 
