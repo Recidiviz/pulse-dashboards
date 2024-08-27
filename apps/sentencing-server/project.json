@@ -97,7 +97,6 @@
     "container": {
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["build"],
-      "cache": true,
       "options": {
         "engine": "docker",
         "platforms": ["linux/amd64"]
