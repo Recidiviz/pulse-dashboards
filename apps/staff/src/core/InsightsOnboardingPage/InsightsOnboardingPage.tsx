@@ -158,6 +158,9 @@ const OnboardingPage = observer(function OnboardingPage({
     labels,
     eventLabels,
     isRecidivizUser,
+    isWorkflowsHomepageEnabled,
+    tenantId,
+    isInsightsLanternState,
   } = presenter;
 
   const tabs = [
@@ -168,11 +171,13 @@ const OnboardingPage = observer(function OnboardingPage({
     },
     {
       id: "descriptionTab",
-      description: `This **new update** shows you which staff member might need help with their caseload.`,
+      description: `This **new update** will show you which staff members may need additional support with their caseload.
+      
+${isWorkflowsHomepageEnabled ? "You'll see more information on outlier metrics and a team-level view of clients eligible for opportunities" : ""}`,
     },
     {
       id: "rosterTab",
-      description: `This is the list of staff we have reporting to you. You'll have the ability to report an inaccurate roster within this new tool.`,
+      description: `We've preloaded your team roster:`,
       extra: <OutliersStaff supervisorPseudoId={userPseudoId} />,
     },
     {
@@ -181,7 +186,9 @@ const OnboardingPage = observer(function OnboardingPage({
     },
     {
       id: "explainTab",
-      description: `Evidence suggests that **good rapport** oftentimes reduces absconders and other violations.`,
+      description: `Evidence suggests that **good rapport** with clients can reduce violations and improve outcomes.
+      
+Reducing potential **cases of over-supervision** can give your officers more time to focus on building rapport and supporting clients.`,
     },
     {
       id: "checkboxTab",
@@ -255,7 +262,13 @@ const OnboardingPage = observer(function OnboardingPage({
       <Wrapper isMobile={isMobile}>
         <Tab>
           {isLastTab && (
-            <OnboardingFeatures labels={labels} eventLabels={eventLabels} />
+            <OnboardingFeatures
+              labels={labels}
+              eventLabels={eventLabels}
+              tenantId={tenantId}
+              isWorkflowsHomepageEnabled={isWorkflowsHomepageEnabled}
+              isInsightsLanternState={isInsightsLanternState}
+            />
           )}
           <Content>
             {currentTab.h1 && <H1>{currentTab.h1}</H1>}

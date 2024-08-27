@@ -21,13 +21,17 @@ import React from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
+import ClientEventsTableImage from "../../assets/static/images/ClientEventsTableImage.png";
 import DotPlotAgentImage from "../../assets/static/images/DotPlot-Agent.png";
 import DotPlotOfficerImage from "../../assets/static/images/DotPlot-Officer.png";
-import EventsTableImage from "../../assets/static/images/EventsTableImage.png";
 import LineChartAgentImage from "../../assets/static/images/LineChart-Agent.png";
 import LineChartOfficerImage from "../../assets/static/images/LineChart-Officer.png";
+import OfficerEventsTableImage from "../../assets/static/images/OfficerEventsTableImage.png";
+import WorkflowsUsIdImage from "../../assets/static/images/Workflows-US_ID.png";
 import useIsMobile from "../../hooks/useIsMobile";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
+import { US_ID } from "../../RootStore/TenantStore/pathwaysTenants";
+import { TenantId } from "../../RootStore/types";
 import { toTitleCase } from "../../utils";
 import { createLabelString } from "./utils";
 
@@ -100,48 +104,86 @@ const ImageTitle = styled.div`
   }
 `;
 
+function getWorkflowsOnboardingFeature(
+  tenantId: TenantId | undefined,
+  isWorkflowsHomepageEnabled: boolean,
+) {
+  if (!isWorkflowsHomepageEnabled) return;
+  switch (tenantId) {
+    case US_ID:
+      return {
+        title: "Track officer progress toward granting opportunities",
+        description:
+          "For each opportunity, including early discharge and LSU, see the **number of clients eligible for each officer**.",
+        imageTitle: "Clients Eligible Per Opportunity",
+        image: WorkflowsUsIdImage,
+      };
+    default:
+      return;
+  }
+}
+
 const OnboardingFeatures: React.FC<{
   labels: ConfigLabels;
   eventLabels: string[];
-}> = ({ labels, eventLabels }) => {
+  tenantId: TenantId | undefined;
+  isWorkflowsHomepageEnabled: boolean;
+  isInsightsLanternState: boolean;
+}> = ({
+  labels,
+  eventLabels,
+  tenantId,
+  isWorkflowsHomepageEnabled,
+  isInsightsLanternState,
+}) => {
   const { isTablet } = useIsMobile(true);
   const { supervisionOfficerLabel, supervisionJiiLabel } = labels;
   const isAgentState = supervisionOfficerLabel === "agent";
 
+  const workflowsOnboardingFeature = getWorkflowsOnboardingFeature(
+    tenantId,
+    isWorkflowsHomepageEnabled,
+  );
+  const clientEventsFeature = {
+    title: `Track events for each ${supervisionJiiLabel}`,
+    description: `Understand the full story by seeing the full list of events that lead to each ${supervisionJiiLabel} outcome.`,
+    imageTitle: "History of Events",
+    image: ClientEventsTableImage,
+  };
+  const officerEventsFeature = {
+    title: `Track events for each ${supervisionOfficerLabel}`,
+    description: `Understand the full story by seeing the full list of ${supervisionJiiLabel}s included in the metric.`,
+    imageTitle: "History of Events",
+    image: OfficerEventsTableImage,
+  };
+
   const onboardingFeatures = [
+    ...(workflowsOnboardingFeature ? [workflowsOnboardingFeature] : []),
     {
-      id: 0,
-      title: "See who is underperforming",
-      description: `Whose ${createLabelString(eventLabels, "and/or")} rates are **significantly higher than the statewide rate**.`,
+      title: "See which officers have outlying rates",
+      description: `See whose ${createLabelString(eventLabels, "and/or")} rates are **significantly higher than the statewide rate**.`,
       imageTitle: `Incarcerations Rate of all ${toTitleCase(
         supervisionOfficerLabel,
       )}s`,
       image: isAgentState ? DotPlotAgentImage : DotPlotOfficerImage,
     },
     {
-      id: 1,
       title: "Discover trends over time",
-      description: `For each staff member, get a better understanding of their progression over time.`,
+      description: `For each staff member, get a better understanding of how caseload-level outcome metrics have changed over time.`,
       imageTitle: `Historical Incarceration Rate`,
       image: isAgentState ? LineChartAgentImage : LineChartOfficerImage,
     },
-    {
-      id: 2,
-      title: `Track events for each ${supervisionJiiLabel}`,
-      description: `Understand the full story by seeing the full list of events that lead to each ${supervisionJiiLabel} outcome.`,
-      imageTitle: "History of Events",
-      image: EventsTableImage,
-    },
+    isInsightsLanternState ? clientEventsFeature : officerEventsFeature,
   ];
 
   return (
     <Wrapper>
-      {onboardingFeatures.map((feature) => (
+      {onboardingFeatures.map((feature, index) => (
         <Feature key={feature.title}>
           <Header>
             <Title>
               <StyledPill filled color={palette.pine3}>
-                {feature.id + 1}
+                {index + 1}
               </StyledPill>
               {feature.title}
             </Title>

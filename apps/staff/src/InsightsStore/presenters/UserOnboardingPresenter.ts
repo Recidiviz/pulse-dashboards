@@ -23,6 +23,7 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import { TenantId } from "../../RootStore/types";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 
 export class UserOnboardingPresenter implements Hydratable {
@@ -85,6 +86,19 @@ export class UserOnboardingPresenter implements Hydratable {
   get isRecidivizUser(): boolean {
     return this.supervisionStore.insightsStore.rootStore.userStore
       .isRecidivizUser;
+  }
+
+  get isWorkflowsHomepageEnabled(): boolean {
+    return !!this.supervisionStore.insightsStore.rootStore.userStore
+      .activeFeatureVariants.supervisorHomepageWorkflows;
+  }
+
+  get isInsightsLanternState(): boolean {
+    return this.supervisionStore.isInsightsLanternState;
+  }
+
+  get tenantId(): TenantId | undefined {
+    return this.supervisionStore.insightsStore.rootStore.currentTenantId;
   }
 
   async setUserHasSeenOnboarding(hasSeenOnboarding: boolean) {
