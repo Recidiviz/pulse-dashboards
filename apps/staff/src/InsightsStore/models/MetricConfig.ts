@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ValuesType } from "utility-types";
+import { z } from "zod";
 
-import { InsightsConfig } from "./InsightsConfig";
-import { MetricBenchmark } from "./MetricBenchmark";
+import { metricsSchema } from "./InsightsConfig";
+import { metricBenchmarkSchema } from "./MetricBenchmark";
 
-export type MetricConfig = ValuesType<InsightsConfig["metrics"]> & {
-  metricBenchmarksByCaseloadType: Map<string, MetricBenchmark> | undefined;
-};
+const metricConfigSchema = metricsSchema.extend({
+  metricBenchmarksByCaseloadType: z
+    .map(z.string(), metricBenchmarkSchema)
+    .optional(),
+});
+
+export type MetricConfig = z.infer<typeof metricConfigSchema>;

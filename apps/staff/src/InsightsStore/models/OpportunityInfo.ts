@@ -15,13 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
-import { SupervisionOfficerWithOpportunityDetails } from "./SupervisionOfficerWithOpportunityDetails";
+import { z } from "zod";
 
-export type OpportunityInfo = Pick<
-  OpportunityConfiguration,
-  "label" | "priority"
-> & {
-  officersWithEligibleClients: SupervisionOfficerWithOpportunityDetails[];
-  clientsEligibleCount: number;
-};
+import { supervisionOfficerWithOpportunityDetailsSchema } from "./SupervisionOfficerWithOpportunityDetails";
+
+export const OpportunityInfoSchema = z.object({
+  label: z.string(),
+  // TODO (#6190): Refactor to be source of truth for OpportunityConfiguration["priority"]
+  priority: z.enum(["NORMAL", "HIGH"]),
+  officersWithEligibleClients: z.array(
+    supervisionOfficerWithOpportunityDetailsSchema,
+  ),
+  clientsEligibleCount: z.number(),
+});
+
+export type OpportunityInfo = z.infer<typeof OpportunityInfoSchema>;

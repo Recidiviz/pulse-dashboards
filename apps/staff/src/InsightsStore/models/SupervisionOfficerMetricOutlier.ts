@@ -16,23 +16,22 @@
 // =============================================================================
 
 import { ascending } from "d3-array";
-import { ValuesType } from "utility-types";
 import { z } from "zod";
 
 import { dateStringSchemaWithoutTimeShift } from "~datatypes";
 
 import { targetStatusSchema } from "./schemaHelpers";
 
+const rateDatapointSchema = z.object({
+  endDate: dateStringSchemaWithoutTimeShift,
+  metricRate: z.number(),
+  status: targetStatusSchema,
+});
+
 export const supervisionOfficerMetricOutlierSchema = z.object({
   metricId: z.string(),
   statusesOverTime: z
-    .array(
-      z.object({
-        endDate: dateStringSchemaWithoutTimeShift,
-        metricRate: z.number(),
-        status: targetStatusSchema,
-      }),
-    )
+    .array(rateDatapointSchema)
     .transform((v) => v.sort((a, b) => ascending(a.endDate, b.endDate))),
 });
 
@@ -43,6 +42,4 @@ export type RawSupervisionOfficerMetricOutlier = z.input<
   typeof supervisionOfficerMetricOutlierSchema
 >;
 
-export type RateDatapoint = ValuesType<
-  SupervisionOfficerMetricOutlier["statusesOverTime"]
->;
+export type RateDatapoint = z.infer<typeof rateDatapointSchema>;

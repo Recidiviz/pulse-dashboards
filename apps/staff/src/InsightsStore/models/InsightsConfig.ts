@@ -25,6 +25,18 @@ const caseloadCategorySchema = z.object({
   displayName: z.string(),
 });
 
+export const metricsSchema = z.object({
+  name: z.string(),
+  outcomeType: z.enum(["FAVORABLE", "ADVERSE"]),
+  titleDisplayName: z.string(),
+  bodyDisplayName: z.string(),
+  eventName: z.string(),
+  eventNameSingular: z.string(),
+  eventNamePastTense: z.string(),
+  descriptionMarkdown: z.string(),
+  topXPct: z.number().nullable(),
+});
+
 export const insightsConfigSchema = z.object({
   supervisionOfficerLabel: z.string(),
   supervisionDistrictLabel: z.string(),
@@ -43,19 +55,7 @@ export const insightsConfigSchema = z.object({
   noneAreOutliersLabel: z.string(),
   learnMoreUrl: z.string(),
   exclusionReasonDescription: z.string(),
-  metrics: z.array(
-    z.object({
-      name: z.string(),
-      outcomeType: z.enum(["FAVORABLE", "ADVERSE"]),
-      titleDisplayName: z.string(),
-      bodyDisplayName: z.string(),
-      eventName: z.string(),
-      eventNameSingular: z.string(),
-      eventNamePastTense: z.string(),
-      descriptionMarkdown: z.string(),
-      topXPct: z.number().nullable(),
-    }),
-  ),
+  metrics: z.array(metricsSchema),
   clientEvents: z.array(
     z.object({
       displayName: z.string(),

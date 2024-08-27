@@ -15,16 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
+  excludedSupervisionOfficerSchema,
+  supervisionOfficerSchema,
 } from "./SupervisionOfficer";
 
-type WithOpportunityDetails = {
-  clientsEligibleCount: number;
-};
-export type SupervisionOfficerWithOpportunityDetails = (
-  | SupervisionOfficer
-  | ExcludedSupervisionOfficer
-) &
-  WithOpportunityDetails;
+export const withOpportunityDetailsSchema = z.object({
+  clientsEligibleCount: z.number(),
+});
+
+export const supervisionOfficerWithOpportunityDetailsSchema = z
+  .union([supervisionOfficerSchema, excludedSupervisionOfficerSchema])
+  .and(withOpportunityDetailsSchema);
+
+export type SupervisionOfficerWithOpportunityDetails = z.infer<
+  typeof supervisionOfficerWithOpportunityDetailsSchema
+>;
