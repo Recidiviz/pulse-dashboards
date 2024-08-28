@@ -45,7 +45,6 @@ import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } fr
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
-import { UsMoRestrictiveHousingStatusHearingOpportunity } from "./Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
@@ -65,8 +64,6 @@ const residentialOpportunityConstructors: Partial<
   usMeMediumTrustee: UsMeMediumTrusteeOpportunity,
   usMeSCCP: UsMeSCCPOpportunity,
   usMeWorkRelease: UsMeWorkReleaseOpportunity,
-  usMoRestrictiveHousingStatusHearing:
-    UsMoRestrictiveHousingStatusHearingOpportunity,
   usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
   usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
   usMoOverdueRestrictiveHousingRelease:

@@ -15,14 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-
 import { WorkflowsResidentRecord } from "../../../../FirestoreStore";
 import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
-import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 
 export const usMoPersonRecord: WorkflowsResidentRecord = {
   recordId: "us_mo_111",
@@ -41,49 +38,11 @@ export const usMoPersonRecord: WorkflowsResidentRecord = {
   admissionDate: "2020-03-10",
   releaseDate: "2025-05-20",
   allEligibleOpportunities: [
-    "usMoRestrictiveHousingStatusHearing",
     "usMoOverdueRestrictiveHousingRelease",
     "usMoOverdueRestrictiveHousingInitialHearing",
   ],
   metadata: {},
 };
-
-export const UsMoRestrictiveHousingStatusHearingRecordFixture: UsMoRestrictiveHousingStatusHearingReferralRecord =
-  {
-    stateCode: "US_MO",
-    externalId: "004",
-    eligibleCriteria: {
-      usMoOverdueForHearing: {
-        nextReviewDate: parseISO("2022-11-03"),
-      },
-      usMoInRestrictiveHousing: {
-        confinementType: "confinement type",
-      },
-    },
-    ineligibleCriteria: {},
-    metadata: {
-      mostRecentHearingDate: parseISO("2022-09-03"),
-      mostRecentHearingType: "hearing type",
-      mostRecentHearingFacility: "FACILITY NAME",
-      mostRecentHearingComments: "Reason for Hearing: 30 day review",
-      currentFacility: "FACILITY 01",
-      restrictiveHousingStartDate: parseISO("2022-10-01"),
-      bedNumber: "03",
-      roomNumber: "05",
-      complexNumber: "2",
-      buildingNumber: "13",
-      housingUseCode: "123456",
-      majorCdvs: [
-        {
-          cdvDate: parseISO("2022-02-20"),
-          cdvRule: "Rule 7.2",
-        },
-      ],
-      cdvsSinceLastHearing: [],
-      numMinorCdvsBeforeLastHearing: 5,
-    },
-    caseNotes: {},
-  };
 
 export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
   T extends BaseUsMoOverdueRestrictiveHousingReferralRecordRaw,

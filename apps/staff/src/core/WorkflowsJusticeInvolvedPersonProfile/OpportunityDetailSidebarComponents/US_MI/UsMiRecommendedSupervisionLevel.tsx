@@ -17,7 +17,10 @@
 
 import React from "react";
 
-import { UsMiClassificationReviewReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity";
+import {
+  UsMiClassificationReviewOpportunity,
+  UsMiClassificationReviewReferralRecord,
+} from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity";
 import {
   DetailsHeading,
   DetailsSection,
@@ -29,6 +32,9 @@ import { OpportunityProfileProps } from "../../types";
 export function UsMiRecommendedSupervisionLevel({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
+  if (!(opportunity instanceof UsMiClassificationReviewOpportunity)) {
+    return null;
+  }
   const opportunityRecord =
     opportunity.record as UsMiClassificationReviewReferralRecord;
   if (!opportunityRecord) return null;

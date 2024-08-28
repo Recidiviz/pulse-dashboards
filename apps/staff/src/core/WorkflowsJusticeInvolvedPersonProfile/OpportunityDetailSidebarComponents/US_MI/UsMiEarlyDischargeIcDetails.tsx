@@ -17,7 +17,10 @@
 
 import React from "react";
 
-import { UsMiEarlyDischargeReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMi";
+import {
+  UsMiEarlyDischargeOpportunity,
+  UsMiEarlyDischargeReferralRecord,
+} from "../../../../WorkflowsStore/Opportunity/UsMi";
 import {
   DetailsBorderedSection,
   DetailsHeading,
@@ -43,6 +46,9 @@ const INTERSTATE_COPY = {
 export function UsMiEarlyDischargeIcDetails({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
+  if (!(opportunity instanceof UsMiEarlyDischargeOpportunity)) {
+    return null;
+  }
   const opportunityRecord =
     opportunity.record as UsMiEarlyDischargeReferralRecord;
   if (!opportunityRecord) return null;

@@ -547,57 +547,6 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
     releaseDate: relativeFixtureDate({ months: 3 }),
     metadata: {},
   },
-
-  {
-    allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
-    stateCode: "US_MO",
-    personExternalId: "RES004",
-    displayId: "dRES004",
-    personName: {
-      givenNames: "KHALIL",
-      surname: "HOWARD",
-    },
-    gender: "MALE",
-    pseudonymizedId: "anonres004",
-    facilityId: "FACILITY1",
-    unitId: "UNIT B",
-    custodyLevel: "MINIMUM",
-    // Resident record query doesn't currently write start/end dates for MO
-    metadata: {},
-  },
-  {
-    allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
-    stateCode: "US_MO",
-    personExternalId: "RES005",
-    displayId: "dRES005",
-    personName: {
-      givenNames: "MICHAEL",
-      surname: "IYER",
-    },
-    gender: "MALE",
-    pseudonymizedId: "anonres005",
-    facilityId: "FACILITY2",
-    unitId: "UNIT C",
-    custodyLevel: "MINIMUM",
-    metadata: {},
-  },
-  {
-    allEligibleOpportunities: ["usMoRestrictiveHousingStatusHearing"],
-    stateCode: "US_MO",
-    personExternalId: "RES006",
-    displayId: "dRES006",
-    personName: {
-      givenNames: "SAMUEL",
-      surname: "FELDMAN",
-    },
-    gender: "MALE",
-    pseudonymizedId: "anonres006",
-    facilityId: "FACILITY2",
-    unitId: "UNIT D",
-    custodyLevel: "MINIMUM",
-    // Resident record query doesn't currently write start/end dates for MO
-    metadata: {},
-  },
   {
     allEligibleOpportunities: ["usMoOverdueRestrictiveHousingRelease"],
     stateCode: "US_MO",

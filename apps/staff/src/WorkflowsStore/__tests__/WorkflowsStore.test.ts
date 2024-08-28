@@ -138,10 +138,7 @@ const { stateConfigs } = vi.hoisted(() => {
       availableStateCodes: ["US_ME"],
     },
     US_MO: {
-      opportunityTypes: [
-        "usMoRestrictiveHousingStatusHearing",
-        "usMoOverdueRestrictiveHousingRelease",
-      ],
+      opportunityTypes: ["usMoOverdueRestrictiveHousingRelease"],
       workflowsSupportedSystems: ["INCARCERATION"],
       workflowsSystemConfigs: {
         INCARCERATION: {
@@ -1210,33 +1207,6 @@ describe("test state-specific opportunity type feature variant filters", () => {
       expect(
         workflowsStore.opportunityTypes.includes("compliantReporting"),
       ).toBeFalsy();
-    });
-  });
-
-  describe("for US_MO", () => {
-    const SESSION_STATE_CODE = "US_MO";
-
-    beforeEach(async () => {
-      runInAction(() => {
-        workflowsStore.updateActiveSystem("INCARCERATION");
-        rootStore.tenantStore.currentTenantId = SESSION_STATE_CODE;
-      });
-    });
-
-    test("US_MO opp does not include usMoOverdueRestrictiveHousingRelease", async () => {
-      setUser({ usMoOverdueRHPilot: {} }, SESSION_STATE_CODE);
-      await waitForHydration({ ...mockOfficer });
-      expect(workflowsStore.opportunityTypes).not.toContain([
-        "usMoOverdueRestrictiveHousingRelease",
-      ]);
-    });
-
-    test("includes all non-gated opportunityTypes", async () => {
-      setUser({}, SESSION_STATE_CODE);
-      await waitForHydration({ ...mockOfficer });
-      expect(workflowsStore.opportunityTypes).toEqual([
-        "usMoRestrictiveHousingStatusHearing",
-      ]);
     });
   });
 });

@@ -19,7 +19,8 @@ import { differenceInDays } from "date-fns";
 import React from "react";
 
 import { formatWorkflowsDate } from "../../../../utils";
-import { UsMoRestrictiveHousingStatusHearingReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
+import { UsMoOverdueRestrictiveHousingBase } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingOpportunityBase";
+import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
   CaseNoteDate,
@@ -40,8 +41,11 @@ import { UsMoUnwaivedEnemies } from "./UsMoUnwaivedEnemies";
 export function UsMoRestrictiveHousing({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
+  if (!(opportunity instanceof UsMoOverdueRestrictiveHousingBase)) {
+    return null;
+  }
   const opportunityRecord =
-    opportunity.record as UsMoRestrictiveHousingStatusHearingReferralRecord;
+    opportunity.record as BaseUsMoOverdueRestrictiveHousingReferralRecord;
   if (!opportunityRecord) return null;
 
   const {

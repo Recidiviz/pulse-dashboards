@@ -59,7 +59,6 @@ import { usMiWardenInPersonSecurityClassificationCommitteeReviewConfig as usMiWa
 import { usMoOverdueRestrictiveHousingInitialHearingConfig as usMoOverdueRestrictiveHousingInitialHearing } from "./UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity/config";
 import { usMoOverdueRestrictiveHousingReleaseConfig as usMoOverdueRestrictiveHousingRelease } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity/config";
 import { usMoOverdueRestrictiveHousingReviewHearingConfig as usMoOverdueRestrictiveHousingReviewHearing } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/config";
-import { usMoRestrictiveHousingStatusHearingConfig as usMoRestrictiveHousingStatusHearing } from "./UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/config";
 import { usNdEarlyTerminationConfig as earlyTermination } from "./UsNd/UsNdEarlyTerminationOpportunity/config";
 import { usOrEarnedDischargeConfig as usOrEarnedDischarge } from "./UsOr/UsOrEarnedDischargeOpportunity/config";
 import { usPaAdminSupervisionConfig as usPaAdminSupervision } from "./UsPa/UsPaAdminSupervisionOpportunity/config";
@@ -201,7 +200,6 @@ export const OPPORTUNITY_CONFIGS = {
   usMiAddInPersonSecurityClassificationCommitteeReview,
 
   /* US_MO */
-  usMoRestrictiveHousingStatusHearing,
   usMoOverdueRestrictiveHousingRelease,
   usMoOverdueRestrictiveHousingInitialHearing,
   usMoOverdueRestrictiveHousingReviewHearing,

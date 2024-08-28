@@ -55,7 +55,6 @@ import { usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFor
 import { usMoOverdueRestrictiveHousingInitialHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 import { usMoOverdueRestrictiveHousingReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 import { usMoOverdueRestrictiveHousingReviewHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
-import { usMoRestrictiveHousingStatusHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoRestrictiveHousingStatusHearingOpportunity/UsMoRestrictiveHousingStatusHearingReferralRecord";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdEarlyTerminationOpportunity/UsNdEarlyTerminationReferralRecord";
 import { usOrEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeOpportunity/UsOrEarnedDischargeReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
@@ -101,8 +100,6 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   supervisionLevelDowngrade:
     usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
-  usMoRestrictiveHousingStatusHearing:
-    usMoRestrictiveHousingStatusHearingSchema,
   usMeEarlyTermination: usMeEarlyTerminationSchema,
   usMiSupervisionLevelDowngrade:
     usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(

@@ -19,6 +19,7 @@ import React from "react";
 
 import { usMiSecurityClassificationCommitteeReviewRecord } from "~datatypes";
 
+import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
 import {
   DetailsHeading,
   DetailsSection,
@@ -31,6 +32,14 @@ import { OpportunityProfileProps } from "../../types";
 export function UsMiRestrictiveHousing({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
+  if (
+    !(
+      opportunity instanceof
+      usMiSecurityClassificationCommitteeReviewOpportunity
+    )
+  ) {
+    return null;
+  }
   const opportunityRecord =
     opportunity.record as usMiSecurityClassificationCommitteeReviewRecord["output"];
   if (!opportunityRecord) return null;

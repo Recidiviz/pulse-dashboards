@@ -21,7 +21,6 @@ import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
-import { UsMoRestrictiveHousingConfiguration } from "./UsMo/UsMoRestrictiveHousingConfiguration";
 import { UsNdIncarcerationConfiguration } from "./UsNd/UsNdIncarcerationConfiguration";
 
 const customOpportunityConfigurations: Partial<
@@ -33,7 +32,6 @@ const customOpportunityConfigurations: Partial<
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
-  usMoRestrictiveHousingStatusHearing: UsMoRestrictiveHousingConfiguration,
   pastFTRD: UsIdPastFTRD,
   ["usNdTransferToMinFacility" as OpportunityType]:
     UsNdIncarcerationConfiguration,
