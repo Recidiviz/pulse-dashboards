@@ -55,7 +55,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewConfig: Oppo
         "Marked Ineligible",
       ],
     },
-    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing"],
+    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing", "CaseNotes"],
     eligibleCriteriaCopy: {
       usMiPastWardenInPersonReviewForSccDate: {
         text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDate}}`,

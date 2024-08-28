@@ -59,7 +59,7 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewConfig: Opportu
         "Marked Ineligible",
       ],
     },
-    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing"],
+    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing", "CaseNotes"],
     eligibleCriteriaCopy: {
       usMiPastAddInPersonReviewForSccDate: {
         text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestADDInPersonSccReviewDate}} last ADD in-person review recorded on {{date latestADDInPersonSccReviewDate}};{{/if}} ADD in-person review due on or before {{date nextSccDate}}`,

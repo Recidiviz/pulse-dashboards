@@ -56,7 +56,7 @@ export const usMiSecurityClassificationCommitteeReviewConfig: OpportunityConfig<
         "Marked Ineligible",
       ],
     },
-    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing"],
+    sidebarComponents: ["Incarceration", "UsMiRestrictiveHousing", "CaseNotes"],
     eligibleCriteriaCopy: {
       usMiPastSecurityClassificationCommitteeReviewDate: {
         text: `{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestSccReviewDate}} last SCC review recorded on {{date latestSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDate}}`,
