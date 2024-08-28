@@ -66,6 +66,7 @@ Expected frontend environment variables include:
 - `VITE_FIREBASE_BACKEND_PROJECT` - Name of the GCP project where Firebase is hosted
 - `VITE_FIREBASE_API_KEY` - API Key to access Firebase
 - `VITE_SENTENCING_API_BASE` - base URL of the sentencing backend API server
+- `VITE_PROTOTYPES_API_URL` - base URL of the prototypes backend API server
 
 Expected backend environment variables include:
 

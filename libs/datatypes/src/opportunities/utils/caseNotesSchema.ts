@@ -34,19 +34,36 @@ export const caseNotesSchema = z.object({
 export const caseNoteSearchSchema = z.object({
   error: z.string().nullable(),
   results: z.array(
-    caseNoteSchema.extend({
-      documentId: z.string(),
-      contactMode: z.string(),
-      extractiveAnswer: z.string(),
-      noteType: z.string(),
-      preview: z.string(),
-      snippet: z.string().nullable(),
-    }),
+    z
+      .object({
+        note_title: z.string().nullable(),
+        case_note: z.string().nullable(),
+        date: z.string(),
+        document_id: z.string(),
+        contact_mode: z.string().nullable(),
+        extractive_answer: z.string().nullable(),
+        note_type: z.string().nullable(),
+        preview: z.string(),
+        snippet: z.string().nullable(),
+      })
+      .transform((data) => {
+        return {
+          noteTitle: data.note_title,
+          noteBody: data.case_note,
+          eventDate: data.date,
+          documentId: data.document_id,
+          contactMode: data.contact_mode,
+          extractiveAnswer: data.extractive_answer,
+          noteType: data.note_type,
+          preview: data.preview,
+          snippet: data.snippet,
+        };
+      }),
   ),
 });
 
-export type CaseNoteSearchResults = z.input<
+export type CaseNoteSearchResults = z.infer<
   typeof caseNoteSearchSchema
 >["results"];
 export type CaseNoteSearchRecord = z.infer<typeof caseNoteSearchSchema>;
-export type CaseNoteSearchRecordRaw = z.input<typeof caseNoteSearchSchema>;
+export type CaseNoteSearchRecordRaw = z.infer<typeof caseNoteSearchSchema>;
