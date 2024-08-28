@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ADVERSE_METRIC_IDS, InsightsConfigFixture } from "~datatypes";
+
 import { RootStore } from "../../../RootStore";
 import { APIStore } from "../../../RootStore/APIStore";
 import UserStore from "../../../RootStore/UserStore";
@@ -23,12 +25,10 @@ import {
   actionStrategyFixture,
   rawActionStrategyFixture,
 } from "../../models/offlineFixtures/ActionStrategyFixture";
-import { ADVERSE_METRIC_IDS } from "../../models/offlineFixtures/constants";
 import {
   excludedSupervisionOfficerFixture,
   rawExcludedSupervisionOfficerFixture,
 } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import {
   metricBenchmarksFixture,
   rawMetricBenchmarksFixture,

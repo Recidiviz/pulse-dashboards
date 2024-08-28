@@ -20,10 +20,11 @@ import { shuffle } from "lodash";
 import { ValuesType } from "utility-types";
 
 import {
+  InsightsConfigFixture,
   LOOKBACK_END_DATE_STRINGS,
   LOOKBACK_END_DATES,
-} from "../offlineFixtures/constants";
-import { InsightsConfigFixture } from "../offlineFixtures/InsightsConfigFixture";
+} from "~datatypes";
+
 import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "../offlineFixtures/SupervisionOfficerMetricOutlierFixture";
 import {

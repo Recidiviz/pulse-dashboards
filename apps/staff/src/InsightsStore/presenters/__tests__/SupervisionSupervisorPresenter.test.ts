@@ -18,6 +18,7 @@
 import { shuffle, sum } from "lodash";
 import { configure } from "mobx";
 
+import { InsightsConfigFixture } from "~datatypes";
 import { isHydrated, unpackAggregatedErrors } from "~hydration-utils";
 
 import { ClientRecord } from "../../../FirestoreStore";
@@ -45,7 +46,6 @@ import {
   CLIENTS_OFFICERS,
 } from "../../models/offlineFixtures/ClientFixture";
 import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionOfficerWithOpportunityDetails } from "../../models/SupervisionOfficerWithOpportunityDetails";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";

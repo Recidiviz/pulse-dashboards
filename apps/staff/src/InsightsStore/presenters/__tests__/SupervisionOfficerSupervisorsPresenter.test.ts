@@ -17,10 +17,11 @@
 
 import { configure } from "mobx";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import { RootStore } from "../../../RootStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
-import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionOfficerSupervisor } from "../../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";

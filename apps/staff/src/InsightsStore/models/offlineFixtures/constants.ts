@@ -15,29 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ascending, range } from "d3-array";
-import { formatISO, subMonths } from "date-fns";
 import { z } from "zod";
-
-export const ADVERSE_METRIC_IDS = z.enum([
-  "incarceration_starts",
-  "absconsions_bench_warrants",
-  "incarceration_starts_technical_violation",
-]);
-
-export const FAVORABLE_METRIC_IDS = z.enum(["treatment_starts"]);
-
-export const CASELOAD_TYPE_IDS = z.enum(["GENERAL_OR_OTHER", "SEX_OFFENSE"]);
-
-export const LATEST_END_DATE = new Date(2023, 8, 1);
-
-export const LOOKBACK_END_DATES = range(6)
-  .map((offset) => subMonths(LATEST_END_DATE, offset))
-  .sort(ascending);
-
-export const LOOKBACK_END_DATE_STRINGS = LOOKBACK_END_DATES.map((endDate) =>
-  formatISO(endDate, { representation: "date" }),
-);
 
 export const ACTION_STRATEGY = z.enum([
   "ACTION_STRATEGY_OUTLIER",

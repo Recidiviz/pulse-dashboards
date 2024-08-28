@@ -18,11 +18,11 @@
 import { descending } from "d3-array";
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { FAVORABLE_METRIC_IDS } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { insightsUrl } from "../../core/views";
 import { formatDateToISO } from "../../utils";
-import { FAVORABLE_METRIC_IDS } from "../models/offlineFixtures/constants";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { ConfigLabels } from "./types";

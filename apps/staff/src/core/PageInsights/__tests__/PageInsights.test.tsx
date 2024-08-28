@@ -20,12 +20,13 @@ import { configure } from "mobx";
 import { MemoryRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
 import { InsightsStore } from "../../../InsightsStore/InsightsStore";
-import { InsightsConfigFixture } from "../../../InsightsStore/models/offlineFixtures/InsightsConfigFixture";
 import { InsightsSupervisionStore } from "../../../InsightsStore/stores/InsightsSupervisionStore";
 import { RootStore } from "../../../RootStore";
 import { insightsRoute } from "../../views";

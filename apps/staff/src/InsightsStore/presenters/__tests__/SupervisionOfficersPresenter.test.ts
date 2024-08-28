@@ -17,6 +17,7 @@
 
 import { configure } from "mobx";
 
+import { InsightsConfigFixture } from "~datatypes";
 import { unpackAggregatedErrors } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
@@ -24,7 +25,6 @@ import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
-import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficersPresenter } from "../SupervisionOfficersPresenter";
 import * as utils from "../utils";

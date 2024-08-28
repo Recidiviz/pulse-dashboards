@@ -20,16 +20,17 @@
 import { differenceInDays, subDays } from "date-fns";
 
 import { isDemoMode } from "~client-env-utils";
+import {
+  FAVORABLE_METRIC_IDS,
+  InsightsConfigFixture,
+  LATEST_END_DATE,
+} from "~datatypes";
 
 import type { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
-import {
-  FAVORABLE_METRIC_IDS,
-  LATEST_END_DATE,
-} from "../models/offlineFixtures/constants";
 import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
 import {
   ExcludedSupervisionOfficer,
@@ -50,11 +51,7 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   constructor(public readonly insightsStore: InsightsStore) {}
 
   async init() {
-    const config = (
-      await import("../models/offlineFixtures/InsightsConfigFixture")
-    ).InsightsConfigFixture;
-
-    return config;
+    return InsightsConfigFixture;
   }
 
   async actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy> {

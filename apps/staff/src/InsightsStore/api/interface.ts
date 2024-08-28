@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { InsightsConfig } from "~datatypes";
+
 import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
-import { InsightsConfig } from "../models/InsightsConfig";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import {
   ExcludedSupervisionOfficer,

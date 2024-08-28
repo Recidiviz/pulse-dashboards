@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { metricBenchmarkSchema, RawMetricBenchmark } from "../MetricBenchmark";
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_TYPE_IDS,
   FAVORABLE_METRIC_IDS,
   LOOKBACK_END_DATE_STRINGS,
-} from "./constants";
+} from "~datatypes";
+
+import { metricBenchmarkSchema, RawMetricBenchmark } from "../MetricBenchmark";
 
 export const rawMetricBenchmarksFixture = [
   {

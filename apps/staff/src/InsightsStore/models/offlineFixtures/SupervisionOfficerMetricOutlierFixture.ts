@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RawSupervisionOfficerMetricOutlier } from "../SupervisionOfficerMetricOutlier";
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_TYPE_IDS,
   FAVORABLE_METRIC_IDS,
   LOOKBACK_END_DATE_STRINGS,
-} from "./constants";
+} from "~datatypes";
+
+import { RawSupervisionOfficerMetricOutlier } from "../SupervisionOfficerMetricOutlier";
 
 export const rawSupervisionOfficerMetricOutlierFixtures = {
   [ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants]: {

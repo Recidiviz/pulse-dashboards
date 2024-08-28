@@ -20,11 +20,12 @@ import { axe } from "jest-axe";
 import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { InsightsConfigFixture } from "../../../InsightsStore/models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerSupervisorsFixture } from "../../../InsightsStore/models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionOfficersPresenter } from "../../../InsightsStore/presenters/SupervisionOfficersPresenter";
 import { HighlightedOfficersDetail } from "../../../InsightsStore/presenters/types";

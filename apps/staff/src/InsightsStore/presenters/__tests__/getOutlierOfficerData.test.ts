@@ -18,15 +18,16 @@
 import { cloneDeep } from "lodash";
 import { flowResult } from "mobx";
 
-import { RootStore } from "../../../RootStore";
-import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
-import { InsightsStore } from "../../InsightsStore";
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_TYPE_IDS,
-} from "../../models/offlineFixtures/constants";
+  InsightsConfigFixture,
+} from "~datatypes";
+
+import { RootStore } from "../../../RootStore";
+import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
+import { InsightsStore } from "../../InsightsStore";
 import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
 import {

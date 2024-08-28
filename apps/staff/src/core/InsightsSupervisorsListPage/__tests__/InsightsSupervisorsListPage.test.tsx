@@ -20,11 +20,12 @@ import { axe } from "jest-axe";
 import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { InsightsConfigFixture } from "../../../InsightsStore/models/offlineFixtures/InsightsConfigFixture";
 import { InsightsSupervisionStore } from "../../../InsightsStore/stores/InsightsSupervisionStore";
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";

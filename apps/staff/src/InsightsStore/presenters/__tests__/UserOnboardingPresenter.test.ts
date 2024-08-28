@@ -17,10 +17,11 @@
 
 import { flowResult, observable } from "mobx";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
-import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { UserOnboardingPresenter } from "../UserOnboardingPresenter";
 

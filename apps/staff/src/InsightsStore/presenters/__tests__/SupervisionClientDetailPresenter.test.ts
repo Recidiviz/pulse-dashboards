@@ -18,11 +18,12 @@
 import { parseISO } from "date-fns";
 import { flowResult } from "mobx";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
-import { InsightsConfigFixture } from "../../models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
 import { supervisionOfficerMetricEventFixture } from "../../models/offlineFixtures/SupervisionOfficerMetricEventFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";

@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usIdSupervisionStaffFixtures } from "~datatypes";
+import {
+  CASELOAD_TYPE_IDS,
+  FAVORABLE_METRIC_IDS,
+  usIdSupervisionStaffFixtures,
+} from "~datatypes";
 
 import {
   RawSupervisionOfficer,
   supervisionOfficerSchema,
 } from "../SupervisionOfficer";
-import { CASELOAD_TYPE_IDS, FAVORABLE_METRIC_IDS } from "./constants";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "./SupervisionOfficerMetricOutlierFixture";
 import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSupervisor";
 

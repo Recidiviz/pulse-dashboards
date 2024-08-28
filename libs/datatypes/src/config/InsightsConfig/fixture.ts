@@ -17,12 +17,12 @@
 
 import dedent from "dedent";
 
-import { InsightsConfig } from "../InsightsConfig";
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_TYPE_IDS,
   FAVORABLE_METRIC_IDS,
-} from "./constants";
+} from "../../metrics/utils/constants";
+import { InsightsConfig } from "./schema";
 
 export const InsightsConfigFixture: InsightsConfig = {
   supervisionOfficerLabel: "officer",

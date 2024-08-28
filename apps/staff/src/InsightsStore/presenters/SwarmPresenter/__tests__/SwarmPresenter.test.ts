@@ -17,8 +17,9 @@
 
 import { flowResult } from "mobx";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
-import { InsightsConfigFixture } from "../../../models/offlineFixtures/InsightsConfigFixture";
 import { supervisionOfficerFixture } from "../../../models/offlineFixtures/SupervisionOfficerFixture";
 import { InsightsSupervisionStore } from "../../../stores/InsightsSupervisionStore";
 import { getOutlierOfficerData } from "../../utils";

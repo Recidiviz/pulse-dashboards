@@ -17,7 +17,8 @@
 
 import { z } from "zod";
 
-import { metricsSchema } from "./InsightsConfig";
+import { metricsSchema } from "~datatypes";
+
 import { metricBenchmarkSchema } from "./MetricBenchmark";
 
 const metricConfigSchema = metricsSchema.extend({

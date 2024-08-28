@@ -17,8 +17,8 @@
 
 import { subYears } from "date-fns";
 
-import { LATEST_END_DATE } from "../offlineFixtures/constants";
-import { InsightsConfigFixture } from "../offlineFixtures/InsightsConfigFixture";
+import { InsightsConfigFixture, LATEST_END_DATE } from "~datatypes";
+
 import {
   rawSupervisionOfficerMetricEventFixture,
   supervisionOfficerMetricEventFixture,

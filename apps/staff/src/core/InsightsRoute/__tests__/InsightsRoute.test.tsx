@@ -20,12 +20,12 @@ import { configure, observable } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Mock } from "vitest";
 
+import { ADVERSE_METRIC_IDS, InsightsConfigFixture } from "~datatypes";
+
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { ADVERSE_METRIC_IDS } from "../../../InsightsStore/models/offlineFixtures/constants";
-import { InsightsConfigFixture } from "../../../InsightsStore/models/offlineFixtures/InsightsConfigFixture";
 import { InsightsSupervisionStore } from "../../../InsightsStore/stores/InsightsSupervisionStore";
 import { RootStore } from "../../../RootStore";
 import { INSIGHTS_PATHS, insightsUrl } from "../../views";

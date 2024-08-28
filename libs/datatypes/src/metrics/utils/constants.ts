@@ -15,27 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { shuffle } from "lodash";
+import { ascending } from "d3-array";
+import { formatISO, subMonths } from "date-fns";
+import { range } from "lodash";
+import { z } from "zod";
 
-import { LOOKBACK_END_DATES } from "~datatypes";
+export const ADVERSE_METRIC_IDS = z.enum([
+  "incarceration_starts",
+  "absconsions_bench_warrants",
+  "incarceration_starts_technical_violation",
+]);
 
-import { metricBenchmarkSchema } from "../MetricBenchmark";
-import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
+export const FAVORABLE_METRIC_IDS = z.enum(["treatment_starts"]);
 
-test("transformations", () => {
-  rawMetricBenchmarksFixture.forEach((b) =>
-    expect(metricBenchmarkSchema.parse(b)).toMatchSnapshot(),
-  );
-});
+export const CASELOAD_TYPE_IDS = z.enum(["GENERAL_OR_OTHER", "SEX_OFFENSE"]);
 
-test("benchmarks should be sorted chronologically", () => {
-  rawMetricBenchmarksFixture.forEach((rawBenchmark) => {
-    const shuffledBenchmark = { ...rawBenchmark };
-    shuffledBenchmark.benchmarks = shuffle(shuffledBenchmark.benchmarks);
-    expect(
-      metricBenchmarkSchema
-        .parse(shuffledBenchmark)
-        .benchmarks.map((b) => b.endDate),
-    ).toEqual(LOOKBACK_END_DATES);
-  });
-});
+export const LATEST_END_DATE = new Date(2023, 8, 1);
+
+export const LOOKBACK_END_DATES = range(6)
+  .map((offset) => subMonths(LATEST_END_DATE, offset))
+  .sort(ascending);
+
+export const LOOKBACK_END_DATE_STRINGS = LOOKBACK_END_DATES.map((endDate) =>
+  formatISO(endDate, { representation: "date" }),
+);

@@ -17,8 +17,9 @@
 
 import { ValuesType } from "utility-types";
 
+import { InsightsConfig } from "~datatypes";
+
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
-import { InsightsConfig } from "../models/InsightsConfig";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
 import { OpportunityInfo } from "../models/OpportunityInfo";

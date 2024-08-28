@@ -20,9 +20,10 @@ import { configure, runInAction } from "mobx";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { Mock } from "vitest";
 
+import { InsightsConfigFixture } from "~datatypes";
+
 import { useRootStore } from "../../../components/StoreProvider";
 import { InsightsStore } from "../../../InsightsStore/InsightsStore";
-import { InsightsConfigFixture } from "../../../InsightsStore/models/offlineFixtures/InsightsConfigFixture";
 import { InsightsSupervisionStore } from "../../../InsightsStore/stores/InsightsSupervisionStore";
 import { RootStore } from "../../../RootStore";
 import { INSIGHTS_PATHS, insightsUrl } from "../../views";
@@ -56,7 +57,7 @@ function addPathToRouter(path: string) {
   return router;
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   configure({ safeDescriptors: false });
   insightsStore = new RootStore().insightsStore;
 
