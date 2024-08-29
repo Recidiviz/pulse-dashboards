@@ -27,7 +27,7 @@ import { rem } from "polished";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import { ActionStrategyCopy } from "../../InsightsStore/models/offlineFixtures/constants";
+import { ActionStrategyCopy } from "../../InsightsStore/presenters/types";
 import LanternLogo from "../LanternLogo";
 
 export const StyledDrawerModal = styled(DrawerModal)`

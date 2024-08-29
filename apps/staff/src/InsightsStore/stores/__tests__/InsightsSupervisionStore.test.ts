@@ -657,7 +657,7 @@ test("hydrate actionStrategies without required featureVariant", async () => {
   expect(store.actionStrategies).toMatchInlineSnapshot(`{}`);
 });
 
-test("surfaceActionStrategies is true when all requirements met", async () => {
+test("isActionStrategiesEnabled is true when all requirements met", async () => {
   const pseudoId = "hashed-agonzalez123";
   vi.spyOn(
     store.insightsStore.rootStore.userStore,
@@ -679,14 +679,14 @@ test("surfaceActionStrategies is true when all requirements met", async () => {
   });
   await flowResult(store.populateUserInfo());
 
-  expect(store.surfaceActionStrategies).toBeTrue();
+  expect(store.isActionStrategiesEnabled).toBeTrue();
 
   store.disableSurfaceActionStrategies();
 
-  expect(store.surfaceActionStrategies).toBeFalse();
+  expect(store.isActionStrategiesEnabled).toBeFalse();
 });
 
-test("surfaceActionStrategies without required featureVariant", async () => {
+test("isActionStrategiesEnabled without required featureVariant", async () => {
   vi.spyOn(
     store.insightsStore.rootStore.userStore,
     "userAppMetadata",
@@ -699,5 +699,40 @@ test("surfaceActionStrategies without required featureVariant", async () => {
   });
   store.supervisorPseudoId = "hashed-agonzalez123";
   await flowResult(store.populateUserInfo());
-  expect(store.surfaceActionStrategies).toBeFalse();
+  expect(store.isActionStrategiesEnabled).toBeFalse();
+});
+
+test("setUserHasSeenActionStrategy", async () => {
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "userAppMetadata",
+    "get",
+  ).mockReturnValue({
+    externalId: "abc123",
+    pseudonymizedId: "hashed-agonzalez123",
+    district: "District One",
+    stateCode: "us_mi",
+    routes: observable({
+      insights: true,
+      "insights_supervision_supervisors-list": false,
+    }),
+  });
+  vi.spyOn(
+    store.insightsStore.rootStore.userStore,
+    "activeFeatureVariants",
+    "get",
+  ).mockReturnValue({
+    actionStrategies: {},
+  });
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "patchActionStrategies");
+  await flowResult(store.populateActionStrategies());
+
+  store.setUserHasSeenActionStrategy("hashed-agonzalez123");
+  expect(
+    store.insightsStore.apiClient.patchActionStrategies,
+  ).toHaveBeenCalledWith({
+    actionStrategy: "ACTION_STRATEGY_60_PERC_OUTLIERS",
+    officerPseudonymizedId: undefined,
+    userPseudonymizedId: "hashed-agonzalez123",
+  });
 });

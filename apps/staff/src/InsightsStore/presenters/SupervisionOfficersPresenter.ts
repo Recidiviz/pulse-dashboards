@@ -25,11 +25,11 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
+  ActionStrategyCopy,
   ConfigLabels,
   HighlightedOfficersDetail,
   OutlierOfficerData,
@@ -153,6 +153,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
 
   disableSurfaceActionStrategies(): void {
     this.supervisionStore.disableSurfaceActionStrategies();
+  }
+
+  setUserHasSeenActionStrategy(): void {
+    this.supervisionStore.setUserHasSeenActionStrategy(this.supervisorPseudoId);
   }
 
   /**

@@ -21,7 +21,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { ActionStrategyCopy } from "../../InsightsStore/models/offlineFixtures/constants";
+import { ActionStrategyCopy } from "../../InsightsStore/presenters/types";
 import { InsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import { Banner } from "../sharedComponents";
 
@@ -39,12 +39,13 @@ const StyledLink = styled(Link)`
 
 type InsightsActionStrategyBannerType = {
   actionStrategy: ActionStrategyCopy;
+  bannerViewedCallback: () => void;
   disableBannerCallback: () => void;
 };
 
 const InsightsActionStrategyBanner: React.FC<
   InsightsActionStrategyBannerType
-> = ({ actionStrategy, disableBannerCallback }) => {
+> = ({ actionStrategy, bannerViewedCallback, disableBannerCallback }) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   const openModal = () => {
@@ -56,9 +57,16 @@ const InsightsActionStrategyBanner: React.FC<
   };
 
   useEffect(() => {
-    // Cleanup function
-    return () => disableBannerCallback();
-  }, [disableBannerCallback]);
+    bannerViewedCallback();
+
+    // These must be in different callbacks because the cleanup function
+    // is only called when the component is unmounted, which does not happen
+    // when a tab/window is closed. So we want to notify the BE that a banner
+    // was viewed when the banner is first rendered, then disable it on navigation (unmount).
+    return () => {
+      disableBannerCallback();
+    };
+  }, [bannerViewedCallback, disableBannerCallback]);
 
   return (
     <Banner

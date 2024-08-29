@@ -15,22 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { actionStrategySchema, RawActionStrategy } from "../ActionStrategy";
-import { ACTION_STRATEGY } from "./constants";
+import {
+  ACTION_STRATEGY_TYPE,
+  actionStrategySchema,
+  RawActionStrategy,
+} from "../ActionStrategy";
 import { rawSupervisionOfficerFixture } from "./SupervisionOfficerFixture";
 import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSupervisor";
 
 export const rawActionStrategyFixture: RawActionStrategy = {
   [rawSupervisionOfficerFixture[0].pseudonymizedId]:
-    ACTION_STRATEGY.enum.ACTION_STRATEGY_OUTLIER,
+    ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER,
   [rawSupervisionOfficerFixture[1].pseudonymizedId]:
-    ACTION_STRATEGY.enum.ACTION_STRATEGY_OUTLIER_3_MONTHS,
+    ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER_3_MONTHS,
   [rawSupervisionOfficerFixture[2].pseudonymizedId]:
-    ACTION_STRATEGY.enum.ACTION_STRATEGY_OUTLIER_ABSCONSION,
+    ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER_ABSCONSION,
   [rawSupervisionOfficerFixture[3].pseudonymizedId]:
-    ACTION_STRATEGY.enum.ACTION_STRATEGY_OUTLIER_NEW_OFFICER,
+    ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER_NEW_OFFICER,
   [supervisionOfficerSupervisorsFixture[0].pseudonymizedId]:
-    ACTION_STRATEGY.enum.ACTION_STRATEGY_60_PERC_OUTLIERS,
+    ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_60_PERC_OUTLIERS,
 };
 
 export const actionStrategyFixture = actionStrategySchema.parse(

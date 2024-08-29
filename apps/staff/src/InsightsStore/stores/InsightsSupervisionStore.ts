@@ -25,14 +25,17 @@ import { InsightsConfig } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
 import { formatDate } from "../../utils";
-import { InsightsAPI, PatchUserInfoProps } from "../api/interface";
+import {
+  ActionStrategySurfacedEvent,
+  InsightsAPI,
+  PatchUserInfoProps,
+} from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
 import { MetricConfig } from "../models/MetricConfig";
-import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
@@ -40,7 +43,7 @@ import {
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
-import { ConfigLabels } from "../presenters/types";
+import { ActionStrategyCopy, ConfigLabels } from "../presenters/types";
 import { StringMap2D } from "../types";
 
 export class InsightsSupervisionStore {
@@ -262,7 +265,10 @@ export class InsightsSupervisionStore {
     )?.displayName;
   }
 
-  get surfaceActionStrategies(): boolean {
+  /**
+   * Indicates whether to surface action strategies (enabled)
+   **/
+  get isActionStrategiesEnabled(): boolean {
     const { activeFeatureVariants } = this.insightsStore.rootStore.userStore;
     if (!activeFeatureVariants?.actionStrategies) return false;
     return this.actionStrategiesEnabled;
@@ -279,10 +285,31 @@ export class InsightsSupervisionStore {
     this.actionStrategiesEnabled = false;
   }
 
+  /**
+   * When the user has seen an action strategy banner, send a patch request
+   * to the BE with a new surfaced event
+   */
+  setUserHasSeenActionStrategy(pseudoId: string): void {
+    const { userPseudoId } = this.insightsStore.rootStore.userStore;
+    if (!userPseudoId) {
+      throw new Error(
+        "Missing pseudonymizedId for user when marking Action Strategy as surfaced",
+      );
+    }
+    const actionStrategy = this.actionStrategies?.[pseudoId];
+    if (!actionStrategy) return;
+    const event: ActionStrategySurfacedEvent = {
+      userPseudonymizedId: userPseudoId,
+      officerPseudonymizedId: pseudoId !== userPseudoId ? pseudoId : undefined,
+      actionStrategy,
+    };
+    this.patchActionStrategiesForCurrentUser(event);
+  }
+
   getActionStrategyCopy(
     pseudoId: string | undefined,
   ): ActionStrategyCopy | undefined {
-    if (pseudoId && this.surfaceActionStrategies) {
+    if (pseudoId && this.isActionStrategiesEnabled) {
       switch (this.actionStrategies?.[pseudoId]) {
         case "ACTION_STRATEGY_OUTLIER":
           return {
@@ -372,6 +399,33 @@ export class InsightsSupervisionStore {
 
     this.actionStrategies =
       yield this.insightsStore.apiClient.actionStrategies(userPseudoId);
+  }
+
+  /*
+   * Updates action strategies with surfaced event
+   */
+  *patchActionStrategiesForCurrentUser(
+    props: ActionStrategySurfacedEvent,
+  ): FlowMethod<InsightsAPI["patchActionStrategies"], void> {
+    const { userAppMetadata, isRecidivizUser, isCSGUser } =
+      this.insightsStore.rootStore.userStore;
+
+    if (isRecidivizUser || isCSGUser) {
+      throw new Error(
+        "Cannot update action strategies for Recidiviz or CSG user",
+      );
+    }
+
+    if (!userAppMetadata) {
+      throw new Error("Missing app_metadata for user");
+    }
+
+    const { pseudonymizedId } = userAppMetadata;
+
+    if (!pseudonymizedId) {
+      throw new Error("Missing pseudonymizedId for user");
+    }
+    yield this.insightsStore.apiClient.patchActionStrategies(props);
   }
 
   *populateUserInfo(): FlowMethod<InsightsAPI["userInfo"], void> {

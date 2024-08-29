@@ -115,3 +115,11 @@ export type RawOpportunityInfoByOpportunityType = Map<
   OpportunityType,
   RawOpportunityInfo
 >;
+
+/**
+ * Type for object to hold the copy for the Action Strategy banner and modal
+ */
+export type ActionStrategyCopy = {
+  prompt: string;
+  body: string;
+};

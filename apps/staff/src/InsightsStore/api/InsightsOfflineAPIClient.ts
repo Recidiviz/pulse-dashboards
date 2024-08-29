@@ -39,7 +39,11 @@ import {
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo } from "../models/UserInfo";
-import { InsightsAPI, PatchUserInfoProps } from "./interface";
+import {
+  ActionStrategySurfacedEvent,
+  InsightsAPI,
+  PatchUserInfoProps,
+} from "./interface";
 
 export class InsightsOfflineAPIClient implements InsightsAPI {
   private pseudoIdToEditableUserInfo: Map<
@@ -60,6 +64,12 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     );
 
     return actionStrategyFixture;
+  }
+
+  async patchActionStrategies(
+    props: ActionStrategySurfacedEvent,
+  ): Promise<ActionStrategySurfacedEvent> {
+    return { ...props, timestamp: new Date() };
   }
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {

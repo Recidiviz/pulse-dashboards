@@ -41,7 +41,11 @@ import {
   supervisionOfficerSupervisorSchema,
 } from "../models/SupervisionOfficerSupervisor";
 import { UserInfo, userInfoSchema } from "../models/UserInfo";
-import { InsightsAPI, PatchUserInfoProps } from "./interface";
+import {
+  ActionStrategySurfacedEvent,
+  InsightsAPI,
+  PatchUserInfoProps,
+} from "./interface";
 
 export class InsightsAPIClient implements InsightsAPI {
   // eslint-disable-next-line no-useless-constructor
@@ -75,6 +79,12 @@ export class InsightsAPIClient implements InsightsAPI {
     );
 
     return actionStrategyFixture;
+  }
+
+  async patchActionStrategies(
+    props: ActionStrategySurfacedEvent,
+  ): Promise<ActionStrategySurfacedEvent> {
+    return { ...props, timestamp: new Date() };
   }
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {

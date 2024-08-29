@@ -21,10 +21,10 @@ import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
 import { MetricConfig } from "../models/MetricConfig";
-import { ActionStrategyCopy } from "../models/offlineFixtures/constants";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
+import { ActionStrategyCopy } from "./types";
 
 export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresenterBase<SupervisionOfficer> {
   constructor(
@@ -46,6 +46,7 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
       isInsightsLanternState: true,
       populateSupervisionOfficer: override,
       disableSurfaceActionStrategies: true,
+      setUserHasSeenActionStrategy: true,
     });
 
     this.hydrator = new HydratesFromSource({
@@ -133,5 +134,9 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
 
   disableSurfaceActionStrategies(): void {
     this.supervisionStore.disableSurfaceActionStrategies();
+  }
+
+  setUserHasSeenActionStrategy(): void {
+    this.supervisionStore.setUserHasSeenActionStrategy(this.officerPseudoId);
   }
 }

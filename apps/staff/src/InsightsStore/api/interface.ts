@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import { InsightsConfig } from "~datatypes";
 
-import { ActionStrategy } from "../models/ActionStrategy";
+import { ACTION_STRATEGY_TYPE, ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { MetricBenchmark } from "../models/MetricBenchmark";
@@ -30,9 +32,18 @@ import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSuperv
 import { UserInfo } from "../models/UserInfo";
 
 export type PatchUserInfoProps = { hasSeenOnboarding: boolean };
+export type ActionStrategySurfacedEvent = {
+  userPseudonymizedId: string;
+  officerPseudonymizedId?: string;
+  actionStrategy: z.infer<typeof ACTION_STRATEGY_TYPE>;
+  timestamp?: Date;
+};
 export interface InsightsAPI {
   init(): Promise<InsightsConfig>;
   actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy>;
+  patchActionStrategies(
+    props: ActionStrategySurfacedEvent,
+  ): Promise<ActionStrategySurfacedEvent>;
   userInfo(userPseudoId: string): Promise<UserInfo>;
   patchUserInfo(
     userPseudoId: string,

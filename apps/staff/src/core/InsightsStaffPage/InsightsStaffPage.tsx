@@ -162,6 +162,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     goToSupervisorInfo,
     ctaText,
     actionStrategyCopy,
+    setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
   } = presenter;
 
@@ -282,6 +283,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       {actionStrategyCopy && (
         <InsightsActionStrategyBanner
           actionStrategy={actionStrategyCopy}
+          bannerViewedCallback={setUserHasSeenActionStrategy}
           disableBannerCallback={disableSurfaceActionStrategies}
         ></InsightsActionStrategyBanner>
       )}

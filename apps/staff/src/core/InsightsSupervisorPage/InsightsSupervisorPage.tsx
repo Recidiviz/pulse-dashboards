@@ -58,6 +58,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     outcomeTypes,
     highlightedOfficersByMetric,
     actionStrategyCopy,
+    setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
   } = presenter;
 
@@ -125,6 +126,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
       {actionStrategyCopy && (
         <InsightsActionStrategyBanner
           actionStrategy={actionStrategyCopy}
+          bannerViewedCallback={setUserHasSeenActionStrategy}
           disableBannerCallback={disableSurfaceActionStrategies}
         ></InsightsActionStrategyBanner>
       )}
