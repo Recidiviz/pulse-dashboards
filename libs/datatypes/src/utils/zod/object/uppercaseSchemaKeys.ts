@@ -16,14 +16,7 @@
 // =============================================================================
 
 import { Dictionary, mapKeys, toUpper } from "lodash";
-import { z, ZodTypeAny } from "zod";
-
-import { FullName } from "~datatypes";
-
-import { renameObjectKeys } from "../../WorkflowsStore/Opportunity/schemaHelpers";
-
-export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
-export type TargetStatus = z.infer<typeof targetStatusSchema>;
+import { z } from "zod";
 
 export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
   schema: Schema,
@@ -35,33 +28,3 @@ export function uppercaseSchemaKeys<Schema extends z.ZodTypeAny>(
     schema,
   );
 }
-
-export function addDisplayName<T>(
-  obj: T & {
-    fullName: FullName;
-  },
-) {
-  return {
-    ...obj,
-    displayName: [
-      obj.fullName.givenNames,
-      obj.fullName.middleNames,
-      obj.fullName.surname,
-    ]
-      .filter((n) => Boolean(n))
-      .join(" "),
-  };
-}
-
-export const preprocessSchemaWithCaseloadCategoryOrType = <
-  T extends ZodTypeAny,
->(
-  schema: T,
-) =>
-  z.preprocess(
-    (input) =>
-      input && typeof input === "object" && "caseloadType" in input
-        ? renameObjectKeys({ caseloadType: "caseloadCategory" })(input)
-        : input,
-    schema,
-  );

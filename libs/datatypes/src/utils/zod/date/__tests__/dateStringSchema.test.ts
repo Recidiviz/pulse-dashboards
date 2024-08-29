@@ -22,7 +22,7 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   dateStringSchema,
   dateStringSchemaWithoutTimeShift,
-} from "./dateStringSchema";
+} from "../dateStringSchema";
 
 vi.mock("~client-env-utils");
 

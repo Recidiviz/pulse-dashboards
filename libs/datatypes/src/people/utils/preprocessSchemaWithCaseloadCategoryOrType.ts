@@ -15,21 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { z, ZodTypeAny } from "zod";
 
-import { makeRecordFixture } from "./makeRecordFixture";
+import { renameObjectKeys } from "../../utils/zod/object/renameObjectKeys";
 
-test("makeRecordFixture", () => {
-  const testSchema = z.object({ foo: z.string().toUpperCase() });
-
-  expect(makeRecordFixture(testSchema, { foo: "bar" })).toMatchInlineSnapshot(`
-    {
-      "input": {
-        "foo": "bar",
-      },
-      "output": {
-        "foo": "BAR",
-      },
-    }
-  `);
-});
+export const preprocessSchemaWithCaseloadCategoryOrType = <
+  T extends ZodTypeAny,
+>(
+  schema: T,
+) =>
+  z.preprocess(
+    (input) =>
+      input && typeof input === "object" && "caseloadType" in input
+        ? renameObjectKeys({ caseloadType: "caseloadCategory" })(input)
+        : input,
+    schema,
+  );

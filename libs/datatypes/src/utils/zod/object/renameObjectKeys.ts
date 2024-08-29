@@ -15,24 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { mapKeys } from "lodash";
 
-import { addDisplayName, fullNameSchema } from "~datatypes";
-
-export const supervisionOfficerSupervisorSchema = z
-  .object({
-    email: z.string().nullable(),
-    externalId: z.string(),
-    fullName: fullNameSchema,
-    pseudonymizedId: z.string(),
-    hasOutliers: z.boolean(),
-    supervisionDistrict: z.string().nullable(),
-  })
-  .transform(addDisplayName);
-
-export type SupervisionOfficerSupervisor = z.infer<
-  typeof supervisionOfficerSupervisorSchema
->;
-export type RawSupervisionOfficerSupervisor = z.input<
-  typeof supervisionOfficerSupervisorSchema
->;
+/**
+ * Renames all occurrences of the keys in `obj` that are present as a key in `oldToNewKeyMapping`.
+ * @param obj The object to be renamed.
+ * @param oldToNewKeyMapping Mapping of keys to be renamed. The keys of this object are the old keys, and the values are the new keys.
+ * @returns The object with the renamed keys.
+ */
+export function renameObjectKeys<
+  T extends object,
+  M extends Partial<Record<keyof T, string>>,
+>(oldToNewKeyMapping: M) {
+  return function (obj: T) {
+    return mapKeys(
+      obj,
+      (_, k) => oldToNewKeyMapping[k as keyof T] ?? k,
+    ) as Omit<T, keyof M>;
+  };
+}

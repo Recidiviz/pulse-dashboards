@@ -17,17 +17,19 @@
 
 import { z } from "zod";
 
-import { ParsedRecord } from "./types";
+import { makeRecordFixture } from "../makeRecordFixture";
 
-/**
- * Given a schema and raw data, produces an object of raw and parsed data.
- */
-export function makeRecordFixture<S extends z.ZodTypeAny>(
-  schema: S,
-  input: ParsedRecord<S>["input"],
-): ParsedRecord<S> {
-  return {
-    input,
-    output: schema.parse(input),
-  };
-}
+test("makeRecordFixture", () => {
+  const testSchema = z.object({ foo: z.string().toUpperCase() });
+
+  expect(makeRecordFixture(testSchema, { foo: "bar" })).toMatchInlineSnapshot(`
+    {
+      "input": {
+        "foo": "bar",
+      },
+      "output": {
+        "foo": "BAR",
+      },
+    }
+  `);
+});

@@ -15,24 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { ParsedRecord } from "../../types";
 
-import { addDisplayName, fullNameSchema } from "~datatypes";
+export function inputFixture<PR extends ParsedRecord>(
+  fixture: PR,
+): PR["input"] {
+  return fixture.input;
+}
 
-export const supervisionOfficerSupervisorSchema = z
-  .object({
-    email: z.string().nullable(),
-    externalId: z.string(),
-    fullName: fullNameSchema,
-    pseudonymizedId: z.string(),
-    hasOutliers: z.boolean(),
-    supervisionDistrict: z.string().nullable(),
-  })
-  .transform(addDisplayName);
+export function inputFixtureArray<PR extends ParsedRecord>(
+  fixtures: Array<PR>,
+): Array<PR["input"]> {
+  return fixtures.map(inputFixture);
+}
 
-export type SupervisionOfficerSupervisor = z.infer<
-  typeof supervisionOfficerSupervisorSchema
->;
-export type RawSupervisionOfficerSupervisor = z.input<
-  typeof supervisionOfficerSupervisorSchema
->;
+export function outputFixture<PR extends ParsedRecord>(
+  fixture: PR,
+): PR["output"] {
+  return fixture.output;
+}
+
+export function outputFixtureArray<PR extends ParsedRecord>(
+  fixtures: Array<PR>,
+): Array<PR["output"]> {
+  return fixtures.map(outputFixture);
+}

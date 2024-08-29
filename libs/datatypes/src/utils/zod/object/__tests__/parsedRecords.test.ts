@@ -17,14 +17,14 @@
 
 import { z } from "zod";
 
-import { makeRecordFixture } from "./makeRecordFixture";
+import { ParsedRecord } from "../../../types";
+import { makeRecordFixture } from "../makeRecordFixture";
 import {
   inputFixture,
   inputFixtureArray,
   outputFixture,
   outputFixtureArray,
-} from "./parsedRecords";
-import { ParsedRecord } from "./types";
+} from "../parsedRecords";
 
 const testSchema = z.object({ foo: z.string().toUpperCase() });
 let testFixture: ParsedRecord<typeof testSchema>;

@@ -68,8 +68,9 @@ export * from "./people/Staff/schema";
 
 // Utilities Exports: Common utilities for people
 // -----------------------------------------------------------------------------
+export * from "./people/utils/addDisplayName";
 export * from "./people/utils/fullNameSchema";
-
+export * from "./people/utils/preprocessSchemaWithCaseloadCategoryOrType";
 // =============================================================================
 // Config
 // =============================================================================
@@ -93,7 +94,5 @@ export * from "./metrics/utils/constants";
 
 // General Utilities Exports: Includes common utilities for date handling, fixtures, and parsing
 // -----------------------------------------------------------------------------
-export * from "./utils/dateStringSchema";
-export * from "./utils/fixtureDates";
-export * from "./utils/parsedRecords";
 export * from "./utils/types";
+export * from "./utils/zod";

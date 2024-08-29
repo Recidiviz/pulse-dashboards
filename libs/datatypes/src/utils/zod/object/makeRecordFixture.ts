@@ -17,22 +17,17 @@
 
 import { z } from "zod";
 
-import { addDisplayName, fullNameSchema } from "~datatypes";
+import { ParsedRecord } from "../../types";
 
-export const supervisionOfficerSupervisorSchema = z
-  .object({
-    email: z.string().nullable(),
-    externalId: z.string(),
-    fullName: fullNameSchema,
-    pseudonymizedId: z.string(),
-    hasOutliers: z.boolean(),
-    supervisionDistrict: z.string().nullable(),
-  })
-  .transform(addDisplayName);
-
-export type SupervisionOfficerSupervisor = z.infer<
-  typeof supervisionOfficerSupervisorSchema
->;
-export type RawSupervisionOfficerSupervisor = z.input<
-  typeof supervisionOfficerSupervisorSchema
->;
+/**
+ * Given a schema and raw data, produces an object of raw and parsed data.
+ */
+export function makeRecordFixture<S extends z.ZodTypeAny>(
+  schema: S,
+  input: ParsedRecord<S>["input"],
+): ParsedRecord<S> {
+  return {
+    input,
+    output: schema.parse(input),
+  };
+}

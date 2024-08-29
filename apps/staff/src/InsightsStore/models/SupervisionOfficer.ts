@@ -17,12 +17,12 @@
 
 import { z } from "zod";
 
-import { fullNameSchema } from "~datatypes";
-
 import {
   addDisplayName,
+  fullNameSchema,
   preprocessSchemaWithCaseloadCategoryOrType,
-} from "./schemaHelpers";
+} from "~datatypes";
+
 import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
 
 const supervisionOfficerBaseSchema = z.object({

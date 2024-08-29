@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../utils/dateStringSchema";
+import { dateStringSchema } from "../../utils/zod/date/dateStringSchema";
 
 const caseNoteSchema = z
   .object({

@@ -28,8 +28,9 @@ import useMeasure from "react-use-measure";
 import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components/macro";
 
+import { TargetStatus } from "~datatypes";
+
 import useIsMobile from "../../hooks/useIsMobile";
-import { TargetStatus } from "../../InsightsStore/models/schemaHelpers";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
 import { formatDate, formatPercent, getTicks } from "../../utils";
 import {

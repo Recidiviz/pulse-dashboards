@@ -15,24 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
-
-import { addDisplayName, fullNameSchema } from "~datatypes";
-
-export const supervisionOfficerSupervisorSchema = z
-  .object({
-    email: z.string().nullable(),
-    externalId: z.string(),
-    fullName: fullNameSchema,
-    pseudonymizedId: z.string(),
-    hasOutliers: z.boolean(),
-    supervisionDistrict: z.string().nullable(),
-  })
-  .transform(addDisplayName);
-
-export type SupervisionOfficerSupervisor = z.infer<
-  typeof supervisionOfficerSupervisorSchema
->;
-export type RawSupervisionOfficerSupervisor = z.input<
-  typeof supervisionOfficerSupervisorSchema
->;
+export * from "./makeRecordFixture";
+export * from "./parsedRecords";
+export * from "./uppercaseSchemaKeys";

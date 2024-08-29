@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { relativeFixtureDate } from "../../utils/fixtureDates";
-import { makeRecordFixture } from "../../utils/makeRecordFixture";
 import { ParsedRecord } from "../../utils/types";
+import { relativeFixtureDate } from "../../utils/zod/date/fixtureDates";
+import { makeRecordFixture } from "../../utils/zod/object/makeRecordFixture";
 import { residentRecordSchema } from "./schema";
 
 export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [

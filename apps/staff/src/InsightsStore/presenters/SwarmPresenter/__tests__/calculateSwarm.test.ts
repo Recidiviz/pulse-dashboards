@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { targetStatusSchema } from "../../../models/schemaHelpers";
+import { targetStatusSchema } from "~datatypes";
+
 import { calculateSwarm } from "../calculateSwarm";
 import { InputPoint } from "../types";
 

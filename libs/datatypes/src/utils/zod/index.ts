@@ -15,28 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParsedRecord } from "./types";
-
-export function inputFixture<PR extends ParsedRecord>(
-  fixture: PR,
-): PR["input"] {
-  return fixture.input;
-}
-
-export function inputFixtureArray<PR extends ParsedRecord>(
-  fixtures: Array<PR>,
-): Array<PR["input"]> {
-  return fixtures.map(inputFixture);
-}
-
-export function outputFixture<PR extends ParsedRecord>(
-  fixture: PR,
-): PR["output"] {
-  return fixture.output;
-}
-
-export function outputFixtureArray<PR extends ParsedRecord>(
-  fixtures: Array<PR>,
-): Array<PR["output"]> {
-  return fixtures.map(outputFixture);
-}
+export * from "./date";
+export * from "./object";

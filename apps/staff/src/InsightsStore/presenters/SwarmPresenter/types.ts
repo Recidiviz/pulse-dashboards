@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TargetStatus } from "../../models/schemaHelpers";
+import { TargetStatus } from "~datatypes";
+
 import { MetricConfigWithBenchmark, MetricWithConfig } from "../types";
 
 export type ScaleParameter = [number, number];

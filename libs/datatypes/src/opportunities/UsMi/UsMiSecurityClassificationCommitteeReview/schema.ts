@@ -17,8 +17,8 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../../utils/dateStringSchema";
 import { ParsedRecord } from "../../../utils/types";
+import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 const possiblyIneligibleCriteria = z

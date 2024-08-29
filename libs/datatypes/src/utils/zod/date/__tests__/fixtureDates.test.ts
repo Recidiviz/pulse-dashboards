@@ -17,7 +17,7 @@
 
 import tk from "timekeeper";
 
-import { relativeFixtureDate, shiftFixtureDate } from "./fixtureDates";
+import { relativeFixtureDate, shiftFixtureDate } from "../fixtureDates";
 
 test("shift fixture date", () => {
   tk.withFreeze(new Date(2024, 2, 25), () => {

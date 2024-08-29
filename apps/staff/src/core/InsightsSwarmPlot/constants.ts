@@ -17,7 +17,7 @@
 
 import { palette } from "@recidiviz/design-system";
 
-import { TargetStatus } from "../../InsightsStore/models/schemaHelpers";
+import { TargetStatus } from "~datatypes";
 
 export const TARGET_LINE_WIDTH = 2;
 

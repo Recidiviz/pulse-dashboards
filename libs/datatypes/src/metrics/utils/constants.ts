@@ -42,3 +42,6 @@ export const LOOKBACK_END_DATES = range(6)
 export const LOOKBACK_END_DATE_STRINGS = LOOKBACK_END_DATES.map((endDate) =>
   formatISO(endDate, { representation: "date" }),
 );
+
+export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
+export type TargetStatus = z.infer<typeof targetStatusSchema>;

@@ -19,8 +19,7 @@ import { ascending } from "d3-array";
 import { z } from "zod";
 
 import { dateStringSchemaWithoutTimeShift } from "~datatypes";
-
-import { targetStatusSchema } from "./schemaHelpers";
+import { targetStatusSchema } from "~datatypes";
 
 const rateDatapointSchema = z.object({
   endDate: dateStringSchemaWithoutTimeShift,
