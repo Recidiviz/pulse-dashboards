@@ -23,3 +23,48 @@ test("transformations", () => {
     expect(supervisionOfficerSchema.parse(so)).toMatchSnapshot(),
   );
 });
+
+test("caseload type is renamed to caseload category", () => {
+  const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
+    rawSupervisionOfficerFixture[0];
+  const rawFixtureCaseloadType = {
+    caseloadType: caseloadCategory,
+    ...rawFixtureNoCaseloadCategory,
+  };
+
+  const parsedSupervisionOfficer = supervisionOfficerSchema.parse(
+    rawFixtureCaseloadType,
+  );
+  expect(
+    Object.prototype.hasOwnProperty.call(
+      parsedSupervisionOfficer,
+      "caseloadType",
+    ),
+  ).toBeFalse();
+  expect(
+    Object.prototype.hasOwnProperty.call(
+      parsedSupervisionOfficer,
+      "caseloadCategory",
+    ),
+  ).toBeTrue();
+});
+
+test("missing caseload type / category fails parsing", () => {
+  const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
+    rawSupervisionOfficerFixture[0];
+
+  expect(() => supervisionOfficerSchema.parse(rawFixtureNoCaseloadCategory))
+    .toThrowErrorMatchingInlineSnapshot(`
+    [ZodError: [
+      {
+        "code": "invalid_type",
+        "expected": "string",
+        "received": "undefined",
+        "path": [
+          "caseloadCategory"
+        ],
+        "message": "Required"
+      }
+    ]]
+  `);
+});

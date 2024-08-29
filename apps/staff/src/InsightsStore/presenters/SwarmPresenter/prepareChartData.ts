@@ -138,7 +138,7 @@ export const prepareChartData: PrepareFn = (
   const chartLabel = `Swarm plot of all ${
     metric.config.bodyDisplayName
   }s in the state for ${
-    metric.benchmark.caseloadType
+    metric.benchmark.caseloadCategory
   } caseloads, highlighting a value of ${formatTargetAndHighlight(
     currentMetricData.metricRate,
   )}, which is far worse than the statewide rate of ${formatTargetAndHighlight(
@@ -208,7 +208,7 @@ export const prepareChartDataV2: PrepareFnV2 = (
   const chartLabel = `Swarm plot of all ${
     metric.config.bodyDisplayName
   }s in the state for ${
-    metric.benchmark.caseloadType
+    metric.benchmark.caseloadCategory
   } caseloads, highlighting values of ${getHighlightInfoForChartLabel(highlightedDots)}, which are far worse than the statewide rate of ${formatTargetAndHighlight(
     metric.benchmark.currentPeriodTarget,
   )}. Other values in the chart range from ${formatTickLabel(

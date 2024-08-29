@@ -17,7 +17,7 @@
 
 import {
   ADVERSE_METRIC_IDS,
-  CASELOAD_TYPE_IDS,
+  CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
   LOOKBACK_END_DATE_STRINGS,
 } from "~datatypes";
@@ -26,7 +26,7 @@ import { RawSupervisionOfficerMetricOutlier } from "../SupervisionOfficerMetricO
 
 export const rawSupervisionOfficerMetricOutlierFixtures = {
   [ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants]: {
-    [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER]: [
+    [CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER]: [
       {
         metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
         statusesOverTime: (
@@ -60,7 +60,7 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
         })),
       },
     ],
-    [CASELOAD_TYPE_IDS.enum.SEX_OFFENSE]: [
+    [CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE]: [
       {
         metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
         statusesOverTime: (
@@ -80,7 +80,7 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
     ],
   },
   [ADVERSE_METRIC_IDS.enum.incarceration_starts]: {
-    [CASELOAD_TYPE_IDS.enum.SEX_OFFENSE]: [
+    [CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE]: [
       {
         metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
         statusesOverTime: (
@@ -96,7 +96,7 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
     ],
   },
   [FAVORABLE_METRIC_IDS.enum.treatment_starts]: {
-    [CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER]: [
+    [CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER]: [
       {
         metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
         statusesOverTime: (
@@ -130,7 +130,7 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
         })),
       },
     ],
-    [CASELOAD_TYPE_IDS.enum.SEX_OFFENSE]: [
+    [CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE]: [
       {
         metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
         statusesOverTime: (

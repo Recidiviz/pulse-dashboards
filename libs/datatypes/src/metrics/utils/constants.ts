@@ -28,7 +28,10 @@ export const ADVERSE_METRIC_IDS = z.enum([
 
 export const FAVORABLE_METRIC_IDS = z.enum(["treatment_starts"]);
 
-export const CASELOAD_TYPE_IDS = z.enum(["GENERAL_OR_OTHER", "SEX_OFFENSE"]);
+export const CASELOAD_CATEGORY_IDS = z.enum([
+  "GENERAL_OR_OTHER",
+  "SEX_OFFENSE",
+]);
 
 export const LATEST_END_DATE = new Date(2023, 8, 1);
 

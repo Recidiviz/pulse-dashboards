@@ -39,20 +39,24 @@ function forEachOutlierFixture(
   ) => void,
 ) {
   Object.entries(rawSupervisionOfficerMetricOutlierFixtures).forEach(
-    ([metricId, byCaseloadType]) => {
-      Object.entries(byCaseloadType).forEach(([caseloadType, metrics]) => {
-        const benchmarkData = rawMetricBenchmarksFixture.find(
-          (b) => b.metricId === metricId && b.caseloadType === caseloadType,
-        );
+    ([metricId, byCaseloadCategory]) => {
+      Object.entries(byCaseloadCategory).forEach(
+        ([caseloadCategory, metrics]) => {
+          const benchmarkData = rawMetricBenchmarksFixture.find(
+            (b) =>
+              b.metricId === metricId &&
+              b.caseloadCategory === caseloadCategory,
+          );
 
-        if (!benchmarkData)
-          throw new Error("unable to find matching benchmark data");
+          if (!benchmarkData)
+            throw new Error("unable to find matching benchmark data");
 
-        // Typescript for some reason has lost track of what this array of metric objects looks like
-        metrics.forEach((metric: RawSupervisionOfficerMetricOutlier) => {
-          cb(metric, benchmarkData);
-        });
-      });
+          // Typescript for some reason has lost track of what this array of metric objects looks like
+          metrics.forEach((metric: RawSupervisionOfficerMetricOutlier) => {
+            cb(metric, benchmarkData);
+          });
+        },
+      );
     },
   );
 }

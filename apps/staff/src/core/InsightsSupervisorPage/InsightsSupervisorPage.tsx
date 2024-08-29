@@ -136,7 +136,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
           <Sidebar isLaptop={isLaptop}>
             <InsightsSidebarLegend
               note={
-                presenter.areCaseloadTypeBreakdownsEnabled
+                presenter.areCaseloadCategoryBreakdownsEnabled
                   ? `Correctional ${labels.supervisionOfficerLabel}s are only compared with other ${labels.supervisionOfficerLabel}s with similar caseloads. An ${labels.supervisionOfficerLabel} with a specialized caseload will not be compared to one with a general caseload.`
                   : undefined
               }
@@ -159,7 +159,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
                 officer={officer}
                 officerIndex={officerIndex}
                 subtitle={
-                  (presenter.areCaseloadTypeBreakdownsEnabled &&
+                  (presenter.areCaseloadCategoryBreakdownsEnabled &&
                     officer.caseloadCategory) ||
                   undefined
                 }

@@ -261,87 +261,84 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
 
       <CardBody>
         {Array.from(outlierOfficersByMetricAndCaseloadCategory.entries()).map(
-          ([metricId, officersAndBenchmarkByCaseloadType]) => {
-            return Array.from(officersAndBenchmarkByCaseloadType.entries()).map(
-              ([caseloadType, officersAndBenchmark]) => {
-                const generalMetricConfig = metricConfigsById?.get(metricId);
+          ([metricId, officersAndBenchmarkByCaseloadCategory]) => {
+            return Array.from(
+              officersAndBenchmarkByCaseloadCategory.entries(),
+            ).map(([caseloadCategory, officersAndBenchmark]) => {
+              const generalMetricConfig = metricConfigsById?.get(metricId);
 
-                if (!generalMetricConfig) return null;
+              if (!generalMetricConfig) return null;
 
-                const {
-                  metricConfigWithBenchmark,
-                  officersForMetric,
-                  caseloadCategoryName,
-                } = officersAndBenchmark;
+              const {
+                metricConfigWithBenchmark,
+                officersForMetric,
+                caseloadCategoryName,
+              } = officersAndBenchmark;
 
-                return (
-                  <React.Fragment key={`${metricId} / ${caseloadType}`}>
-                    {isTablet &&
-                      officersForMetric.map((officer) => {
-                        const currentMetric = officer.outlierMetrics.find(
-                          (officerMetric) =>
-                            officerMetric.metricId === metricId,
-                        );
+              return (
+                <React.Fragment key={`${metricId} / ${caseloadCategory}`}>
+                  {isTablet &&
+                    officersForMetric.map((officer) => {
+                      const currentMetric = officer.outlierMetrics.find(
+                        (officerMetric) => officerMetric.metricId === metricId,
+                      );
 
-                        if (!currentMetric) return null;
+                      if (!currentMetric) return null;
 
-                        return (
-                          <CardHeaderItem
-                            key={officer.externalId}
-                            to={insightsUrl("supervisionStaffMetric", {
-                              officerPseudoId: officer.pseudonymizedId,
-                              metricId: currentMetric.metricId,
-                            })}
+                      return (
+                        <CardHeaderItem
+                          key={officer.externalId}
+                          to={insightsUrl("supervisionStaffMetric", {
+                            officerPseudoId: officer.pseudonymizedId,
+                            metricId: currentMetric.metricId,
+                          })}
+                        >
+                          <CardTitle>{title || officer.displayName}</CardTitle>
+
+                          <CardSubtitle
+                            key={`${currentMetric.metricId} / ${caseloadCategory}`}
+                            id={`subtitle-${currentMetric.metricId}`}
                           >
-                            <CardTitle>
-                              {title || officer.displayName}
-                            </CardTitle>
-
-                            <CardSubtitle
-                              key={`${currentMetric.metricId} / ${caseloadType}`}
-                              id={`subtitle-${currentMetric.metricId}`}
+                            {currentMetric.config.titleDisplayName}
+                            <span
+                              aria-describedby={`subtitle-${currentMetric.metricId}`}
                             >
-                              {currentMetric.config.titleDisplayName}
-                              <span
-                                aria-describedby={`subtitle-${currentMetric.metricId}`}
-                              >
-                                {formatTargetAndHighlight(
-                                  currentMetric.currentPeriodData.metricRate,
-                                )}
-                              </span>
-                            </CardSubtitle>
-                          </CardHeaderItem>
-                        );
-                      })}
+                              {formatTargetAndHighlight(
+                                currentMetric.currentPeriodData.metricRate,
+                              )}
+                            </span>
+                          </CardSubtitle>
+                        </CardHeaderItem>
+                      );
+                    })}
 
-                    <PlotSection key={`${metricId} / ${caseloadType}`}>
-                      <PlotHeader>
-                        <PlotTitle>
-                          {toTitleCase(generalMetricConfig.eventName)}
-                        </PlotTitle>
-                        <PlotHint>
-                          <InsightsInfoModalV2
-                            title={toTitleCase(generalMetricConfig.eventName)}
-                            copy={generalMetricConfig.descriptionMarkdown}
-                            methodologyLink={methodologyUrl}
-                          />
-                        </PlotHint>
-                      </PlotHeader>
-                      {caseloadCategoryName && (
-                        <PlotSubtitle>{caseloadCategoryName}</PlotSubtitle>
-                      )}
-                      <CardContent>
-                        <InsightsSwarmPlotContainerV2
-                          metric={metricConfigWithBenchmark}
-                          officersForMetric={officersForMetric}
-                          onDotHover={onDotHover}
+                  <PlotSection key={`${metricId} / ${caseloadCategory}`}>
+                    <PlotHeader>
+                      <PlotTitle>
+                        {toTitleCase(generalMetricConfig.eventName)}
+                      </PlotTitle>
+                      <PlotHint>
+                        <InsightsInfoModalV2
+                          title={toTitleCase(generalMetricConfig.eventName)}
+                          copy={generalMetricConfig.descriptionMarkdown}
+                          methodologyLink={methodologyUrl}
                         />
-                      </CardContent>
-                    </PlotSection>
-                  </React.Fragment>
-                );
-              },
-            );
+                      </PlotHint>
+                    </PlotHeader>
+                    {caseloadCategoryName && (
+                      <PlotSubtitle>{caseloadCategoryName}</PlotSubtitle>
+                    )}
+                    <CardContent>
+                      <InsightsSwarmPlotContainerV2
+                        metric={metricConfigWithBenchmark}
+                        officersForMetric={officersForMetric}
+                        onDotHover={onDotHover}
+                      />
+                    </CardContent>
+                  </PlotSection>
+                </React.Fragment>
+              );
+            });
           },
         )}
       </CardBody>

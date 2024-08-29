@@ -39,3 +39,45 @@ test("benchmarks should be sorted chronologically", () => {
     ).toEqual(LOOKBACK_END_DATES);
   });
 });
+
+test("caseload type is renamed to caseload category", () => {
+  const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
+    rawMetricBenchmarksFixture[0];
+  const rawFixtureCaseloadType = {
+    caseloadType: caseloadCategory,
+    ...rawFixtureNoCaseloadCategory,
+  };
+
+  const parsedMetricBenchmark = metricBenchmarkSchema.parse(
+    rawFixtureCaseloadType,
+  );
+  expect(
+    Object.prototype.hasOwnProperty.call(parsedMetricBenchmark, "caseloadType"),
+  ).toBeFalse();
+  expect(
+    Object.prototype.hasOwnProperty.call(
+      parsedMetricBenchmark,
+      "caseloadCategory",
+    ),
+  ).toBeTrue();
+});
+
+test("missing caseload type / category fails parsing", () => {
+  const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
+    rawMetricBenchmarksFixture[0];
+
+  expect(() => metricBenchmarkSchema.parse(rawFixtureNoCaseloadCategory))
+    .toThrowErrorMatchingInlineSnapshot(`
+    [ZodError: [
+      {
+        "code": "invalid_type",
+        "expected": "string",
+        "received": "undefined",
+        "path": [
+          "caseloadCategory"
+        ],
+        "message": "Required"
+      }
+    ]]
+  `);
+});

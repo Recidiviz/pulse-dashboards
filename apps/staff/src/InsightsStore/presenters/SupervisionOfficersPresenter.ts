@@ -102,8 +102,8 @@ export class SupervisionOfficersPresenter implements Hydratable {
     return this.hydrator.hydrate();
   }
 
-  get areCaseloadTypeBreakdownsEnabled() {
-    return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
+  get areCaseloadCategoryBreakdownsEnabled() {
+    return this.supervisionStore.areCaseloadCategoryBreakdownsEnabled;
   }
 
   /**

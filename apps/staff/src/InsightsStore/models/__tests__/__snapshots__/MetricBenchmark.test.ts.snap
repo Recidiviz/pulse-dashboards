@@ -28,7 +28,7 @@ exports[`transformations 1`] = `
       "target": 0.17139496103300086,
     },
   ],
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "latestPeriodValues": [
     {
       "targetStatus": "FAR",
@@ -1431,7 +1431,7 @@ exports[`transformations 2`] = `
       "target": 0.06030045665489481,
     },
   ],
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "latestPeriodValues": [
     {
       "targetStatus": "FAR",
@@ -2834,7 +2834,7 @@ exports[`transformations 3`] = `
       "target": 0.04833977875065241,
     },
   ],
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "latestPeriodValues": [
     {
       "targetStatus": "FAR",
@@ -4237,7 +4237,7 @@ exports[`transformations 4`] = `
       "target": 0.12170399045971189,
     },
   ],
-  "caseloadType": "GENERAL_OR_OTHER",
+  "caseloadCategory": "GENERAL_OR_OTHER",
   "latestPeriodValues": [
     {
       "targetStatus": "FAR",
@@ -5040,7 +5040,7 @@ exports[`transformations 5`] = `
       "target": 0.028739974981108838,
     },
   ],
-  "caseloadType": "SEX_OFFENSE",
+  "caseloadCategory": "SEX_OFFENSE",
   "latestPeriodValues": [
     {
       "targetStatus": "FAR",
@@ -5223,7 +5223,7 @@ exports[`transformations 6`] = `
       "target": 0.21415916840761745,
     },
   ],
-  "caseloadType": "SEX_OFFENSE",
+  "caseloadCategory": "SEX_OFFENSE",
   "latestPeriodValues": [
     {
       "targetStatus": "FAR",
@@ -5410,7 +5410,7 @@ exports[`transformations 7`] = `
       "target": 0.10847022815450755,
     },
   ],
-  "caseloadType": "SEX_OFFENSE",
+  "caseloadCategory": "SEX_OFFENSE",
   "latestPeriodValues": [
     {
       "targetStatus": "NEAR",
@@ -5593,7 +5593,7 @@ exports[`transformations 8`] = `
       "target": 0.12170399045971189,
     },
   ],
-  "caseloadType": "SEX_OFFENSE",
+  "caseloadCategory": "SEX_OFFENSE",
   "latestPeriodValues": [
     {
       "targetStatus": "FAR",

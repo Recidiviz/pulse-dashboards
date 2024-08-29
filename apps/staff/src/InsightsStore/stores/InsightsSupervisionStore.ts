@@ -47,7 +47,7 @@ import { ActionStrategyCopy, ConfigLabels } from "../presenters/types";
 import { StringMap2D } from "../types";
 
 export class InsightsSupervisionStore {
-  private benchmarksByMetricAndCaseloadType?: StringMap2D<MetricBenchmark>;
+  private benchmarksByMetricAndCaseloadCategory?: StringMap2D<MetricBenchmark>;
 
   actionStrategies?: ActionStrategy;
 
@@ -99,16 +99,16 @@ export class InsightsSupervisionStore {
     });
   }
 
-  private get allCaseloadTypes(): Set<string> {
+  private get allCaseloadCategories(): Set<string> {
     return new Set(
       ...Array.from(
-        this.benchmarksByMetricAndCaseloadType?.values() ?? [],
+        this.benchmarksByMetricAndCaseloadCategory?.values() ?? [],
       ).flatMap((b) => b.keys()),
     );
   }
 
-  get areCaseloadTypeBreakdownsEnabled(): boolean {
-    return this.allCaseloadTypes.size > 1;
+  get areCaseloadCategoryBreakdownsEnabled(): boolean {
+    return this.allCaseloadCategories.size > 1;
   }
 
   /**
@@ -116,17 +116,17 @@ export class InsightsSupervisionStore {
    * If undefined, it is still awaiting hydration.
    */
   get metricConfigsById(): Map<string, MetricConfig> | undefined {
-    const { benchmarksByMetricAndCaseloadType } = this;
-    if (!benchmarksByMetricAndCaseloadType) return;
+    const { benchmarksByMetricAndCaseloadCategory } = this;
+    if (!benchmarksByMetricAndCaseloadCategory) return;
 
     return index(
       this.config.metrics.map((m): MetricConfig => {
-        const metricBenchmarksByCaseloadType =
-          benchmarksByMetricAndCaseloadType.get(m.name);
+        const metricBenchmarksByCaseloadCategory =
+          benchmarksByMetricAndCaseloadCategory.get(m.name);
 
         return {
           ...m,
-          metricBenchmarksByCaseloadType,
+          metricBenchmarksByCaseloadCategory,
         };
       }),
       (m) => m.name,
@@ -348,13 +348,13 @@ export class InsightsSupervisionStore {
    * This is a MobX flow method and should be called with mobx.flowResult.
    */
   *populateMetricConfigs(): FlowMethod<InsightsAPI["metricBenchmarks"], void> {
-    if (this.benchmarksByMetricAndCaseloadType) return;
+    if (this.benchmarksByMetricAndCaseloadCategory) return;
 
     const benchmarks = yield this.insightsStore.apiClient.metricBenchmarks();
-    const benchmarksByMetricAndCaseloadType = index(
+    const benchmarksByMetricAndCaseloadCategory = index(
       benchmarks,
       (b) => b.metricId,
-      (b) => b.caseloadType,
+      (b) => b.caseloadCategory,
     );
 
     const latestBenchmarksDate = new Date(
@@ -368,7 +368,8 @@ export class InsightsSupervisionStore {
       ),
     );
 
-    this.benchmarksByMetricAndCaseloadType = benchmarksByMetricAndCaseloadType;
+    this.benchmarksByMetricAndCaseloadCategory =
+      benchmarksByMetricAndCaseloadCategory;
     this.latestBenchmarksDate = latestBenchmarksDate;
   }
 

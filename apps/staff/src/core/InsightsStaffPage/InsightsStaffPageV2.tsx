@@ -87,7 +87,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     {
       title: "caseload type",
       info:
-        (presenter.areCaseloadTypeBreakdownsEnabled &&
+        (presenter.areCaseloadCategoryBreakdownsEnabled &&
           outlierOfficerData?.caseloadCategoryName) ||
         null,
     },

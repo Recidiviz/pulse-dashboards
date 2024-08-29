@@ -72,16 +72,16 @@ export function getOutlierOfficerData<
         throw new Error(`Missing metric configuration for ${metric.metricId}`);
       }
 
-      const metricBenchmarks = metricConfig.metricBenchmarksByCaseloadType;
+      const metricBenchmarks = metricConfig.metricBenchmarksByCaseloadCategory;
       if (!metricBenchmarks) {
         throw new Error(`Missing metric benchmark data for ${metric.metricId}`);
       }
 
-      const caseloadType = officerData.caseloadCategory || "ALL";
-      const benchmark = metricBenchmarks.get(caseloadType);
+      const caseloadCategory = officerData.caseloadCategory || "ALL";
+      const benchmark = metricBenchmarks.get(caseloadCategory);
       if (!benchmark) {
         throw new Error(
-          `Missing metric benchmark data for caseload type ${caseloadType} for ${metric.metricId}`,
+          `Missing metric benchmark data for caseload type ${caseloadCategory} for ${metric.metricId}`,
         );
       }
 
@@ -105,10 +105,13 @@ export function getOutlierOfficerData<
         filteredBenchmark.latestPeriodValues.splice(matchingIndex, 1);
       }
 
-      const config: Optional<MetricConfig, "metricBenchmarksByCaseloadType"> = {
+      const config: Optional<
+        MetricConfig,
+        "metricBenchmarksByCaseloadCategory"
+      > = {
         ...metricConfig,
       };
-      delete config.metricBenchmarksByCaseloadType;
+      delete config.metricBenchmarksByCaseloadCategory;
 
       return {
         ...metric,

@@ -21,7 +21,7 @@ import { configure, flowResult, observable } from "mobx";
 import { ValuesType } from "utility-types";
 
 import {
-  CASELOAD_TYPE_IDS,
+  CASELOAD_CATEGORY_IDS,
   InsightsConfig,
   InsightsConfigFixture,
   LATEST_END_DATE,
@@ -89,7 +89,7 @@ test("can hydrate benchmarks with missing metrics", async () => {
   );
   expect(techsConfig).toBeDefined();
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  expect(techsConfig!.metricBenchmarksByCaseloadType).toBeUndefined();
+  expect(techsConfig!.metricBenchmarksByCaseloadCategory).toBeUndefined();
 });
 
 test("configs include benchmarks", async () => {
@@ -97,11 +97,11 @@ test("configs include benchmarks", async () => {
 
   store.metricConfigsById?.forEach((mc) => {
     // benchmarks data should be hydrated
-    expect(mc.metricBenchmarksByCaseloadType).toBeDefined();
+    expect(mc.metricBenchmarksByCaseloadCategory).toBeDefined();
     // both caseload types should be present for all
-    expect(Array.from(mc.metricBenchmarksByCaseloadType?.keys() ?? [])).toEqual(
-      expect.arrayContaining(CASELOAD_TYPE_IDS.options),
-    );
+    expect(
+      Array.from(mc.metricBenchmarksByCaseloadCategory?.keys() ?? []),
+    ).toEqual(expect.arrayContaining(CASELOAD_CATEGORY_IDS.options));
   });
 
   expect.assertions(InsightsConfigFixture.metrics.length * 2);
@@ -118,27 +118,27 @@ test("hydrated benchmarks can be missing caseload types", async () => {
 
   store.metricConfigsById?.forEach((mc) => {
     expect(
-      mc.metricBenchmarksByCaseloadType?.get(
-        CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+      mc.metricBenchmarksByCaseloadCategory?.get(
+        CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
       ),
     ).toBeDefined();
     expect(
-      mc.metricBenchmarksByCaseloadType?.get(
-        CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+      mc.metricBenchmarksByCaseloadCategory?.get(
+        CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
       ),
     ).toBeUndefined();
   });
 });
 
 test("caseload typebreakdowns enabled", async () => {
-  expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
+  expect(store.areCaseloadCategoryBreakdownsEnabled).toBeFalse();
 
   await flowResult(store.populateMetricConfigs());
-  expect(store.areCaseloadTypeBreakdownsEnabled).toBeTrue();
+  expect(store.areCaseloadCategoryBreakdownsEnabled).toBeTrue();
 });
 
 test("caseload typebreakdowns not enabled", async () => {
-  expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
+  expect(store.areCaseloadCategoryBreakdownsEnabled).toBeFalse();
 
   vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks")
     // this should be missing the SEX_OFFENSE caseload type for all metrics
@@ -146,7 +146,7 @@ test("caseload typebreakdowns not enabled", async () => {
 
   await flowResult(store.populateMetricConfigs());
 
-  expect(store.areCaseloadTypeBreakdownsEnabled).toBeFalse();
+  expect(store.areCaseloadCategoryBreakdownsEnabled).toBeFalse();
 });
 
 test("adverse metric configs", async () => {

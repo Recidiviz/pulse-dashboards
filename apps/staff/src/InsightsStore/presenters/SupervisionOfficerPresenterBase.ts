@@ -85,7 +85,7 @@ export abstract class SupervisionOfficerPresenterBase<
         methodologyUrl: true,
         labels: true,
         timePeriod: true,
-        areCaseloadTypeBreakdownsEnabled: true,
+        areCaseloadCategoryBreakdownsEnabled: true,
         expectOfficerPopulated: true,
         expectSupervisorPopulated: true,
         expectOutlierDataPopulated: true,
@@ -223,8 +223,8 @@ export abstract class SupervisionOfficerPresenterBase<
     return this.supervisionStore?.benchmarksTimePeriod;
   }
 
-  get areCaseloadTypeBreakdownsEnabled() {
-    return this.supervisionStore.areCaseloadTypeBreakdownsEnabled;
+  get areCaseloadCategoryBreakdownsEnabled() {
+    return this.supervisionStore.areCaseloadCategoryBreakdownsEnabled;
   }
 
   private expectOfficerPopulated() {

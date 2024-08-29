@@ -16,7 +16,7 @@
 // =============================================================================
 
 import {
-  CASELOAD_TYPE_IDS,
+  CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
   usIdSupervisionStaffFixtures,
 } from "~datatypes";
@@ -28,7 +28,7 @@ import {
 import { rawSupervisionOfficerMetricOutlierFixtures } from "./SupervisionOfficerMetricOutlierFixture";
 import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSupervisor";
 
-export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
+export const rawSupervisionOfficerFixture = [
   {
     externalId: usIdSupervisionStaffFixtures[0].id,
     pseudonymizedId: "hashed-so1",
@@ -37,7 +37,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: usIdSupervisionStaffFixtures[0].surname,
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
     supervisorExternalIds: [
       supervisionOfficerSupervisorsFixture[0].externalId,
       supervisionOfficerSupervisorsFixture[1].externalId,
@@ -61,7 +61,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Hernandez",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [],
     topXPctMetrics: [
@@ -77,7 +77,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Nelson",
     },
     district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
@@ -97,7 +97,7 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Campbell",
     },
     district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[1].externalId],
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
@@ -116,13 +116,13 @@ export const rawSupervisionOfficerFixture: RawSupervisionOfficer[] = [
       surname: "Ramirez",
     },
     district: null,
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
     outlierMetrics: [],
     topXPctMetrics: [],
     avgDailyPopulation: 5.43,
   },
-];
+] satisfies RawSupervisionOfficer[];
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(
   (officer) => supervisionOfficerSchema.parse(officer),

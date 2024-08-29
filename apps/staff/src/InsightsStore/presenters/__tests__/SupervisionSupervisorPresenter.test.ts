@@ -140,7 +140,7 @@ test("timePeriod", async () => {
   expect(timePeriod).toMatch("9/1/22 - 9/1/23");
 });
 
-test("outlierOfficersByMetricAndCaseloadType", async () => {
+test("outlierOfficersByMetricAndCaseloadCategory", async () => {
   await presenter.hydrate();
 
   const { outlierOfficersByMetricAndCaseloadCategory } = presenter;

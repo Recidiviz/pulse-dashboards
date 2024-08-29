@@ -19,7 +19,7 @@ import dedent from "dedent";
 
 import {
   ADVERSE_METRIC_IDS,
-  CASELOAD_TYPE_IDS,
+  CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
 } from "../../metrics/utils/constants";
 import { InsightsConfig } from "./schema";
@@ -126,11 +126,11 @@ export const InsightsConfigFixture: InsightsConfig = {
     "Has a rate on any metric significantly higher than peers - over 1 Interquartile Range above the statewide rate.",
   caseloadCategories: [
     {
-      id: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+      id: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
       displayName: "General Or Other Caseloads",
     },
     {
-      id: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+      id: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
       displayName: "Sex Offense Caseloads",
     },
   ],

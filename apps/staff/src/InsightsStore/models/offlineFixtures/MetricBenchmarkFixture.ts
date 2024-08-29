@@ -17,7 +17,7 @@
 
 import {
   ADVERSE_METRIC_IDS,
-  CASELOAD_TYPE_IDS,
+  CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
   LOOKBACK_END_DATE_STRINGS,
 } from "~datatypes";
@@ -27,7 +27,7 @@ import { metricBenchmarkSchema, RawMetricBenchmark } from "../MetricBenchmark";
 export const rawMetricBenchmarksFixture = [
   {
     metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     benchmarks: LOOKBACK_END_DATE_STRINGS.map((endDate) => ({
       target: 0.17139496103300086,
       endDate,
@@ -161,7 +161,7 @@ export const rawMetricBenchmarksFixture = [
       target: 0.06030045665489481,
       endDate,
     })),
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
     latestPeriodValues: {
       far: [
@@ -272,7 +272,7 @@ export const rawMetricBenchmarksFixture = [
       endDate,
     })),
     metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     latestPeriodValues: {
       far: [
         0.08987934006402364, 0.0908638287279064, 0.09370988446726573,
@@ -380,7 +380,7 @@ export const rawMetricBenchmarksFixture = [
       endDate,
     })),
     metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-    caseloadType: CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     latestPeriodValues: {
       far: [
         0.0, 0.0, 0.0, 0.0, 0.012540688709953743, 0.013397856342985123,
@@ -458,7 +458,7 @@ export const rawMetricBenchmarksFixture = [
       target: 0.028739974981108838,
       endDate,
     })),
-    caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
     metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
     latestPeriodValues: {
       near: [
@@ -484,7 +484,7 @@ export const rawMetricBenchmarksFixture = [
       endDate,
     })),
 
-    caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
     metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
     latestPeriodValues: {
       near: [
@@ -513,7 +513,7 @@ export const rawMetricBenchmarksFixture = [
       endDate,
     })),
 
-    caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
     metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
     latestPeriodValues: {
       near: [
@@ -541,7 +541,7 @@ export const rawMetricBenchmarksFixture = [
       endDate,
     })),
     metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
-    caseloadType: CASELOAD_TYPE_IDS.enum.SEX_OFFENSE,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
     latestPeriodValues: {
       far: [
         0.0, 0.0, 0.0, 0.0, 0.012540688709953743, 0.013397856342985123,

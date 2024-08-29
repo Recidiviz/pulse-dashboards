@@ -50,7 +50,7 @@ export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   currentPeriodData: ValuesType<
     SupervisionOfficerMetricOutlier["statusesOverTime"]
   >;
-  config: Omit<MetricConfig, "metricBenchmarksByCaseloadType">;
+  config: Omit<MetricConfig, "metricBenchmarksByCaseloadCategory">;
   benchmark: MetricBenchmark & { currentPeriodTarget: number };
 };
 
@@ -103,7 +103,7 @@ export type MetricAndOutliersInfo = {
 };
 
 /** Helper type to group information by metric and by caseload category */
-export type ByMetricAndCategory2DMap<V> = Map<string, Map<string | null, V>>;
+export type ByMetricAndCategory2DMap<V> = Map<string, Map<string, V>>;
 
 /**
  * Type for object to hold data before transforming it into `OpportunityInfo`

@@ -19,7 +19,10 @@ import { z } from "zod";
 
 import { fullNameSchema } from "~datatypes";
 
-import { addDisplayName } from "./schemaHelpers";
+import {
+  addDisplayName,
+  preprocessSchemaWithCaseloadCategoryOrType,
+} from "./schemaHelpers";
 import { supervisionOfficerMetricOutlierSchema } from "./SupervisionOfficerMetricOutlier";
 
 const supervisionOfficerBaseSchema = z.object({
@@ -31,7 +34,7 @@ const supervisionOfficerBaseSchema = z.object({
 });
 
 const withOutlierDataSchema = z.object({
-  caseloadType: z.string().nullable(),
+  caseloadCategory: z.string(),
   outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
   topXPctMetrics: z.array(
     z.object({
@@ -45,17 +48,15 @@ const withOutlierDataSchema = z.object({
 });
 export type WithOutlierData = z.infer<typeof withOutlierDataSchema>;
 
-export const supervisionOfficerSchema = supervisionOfficerBaseSchema
+const supervisionOfficerSchemaPreprocess = supervisionOfficerBaseSchema
   .transform(addDisplayName)
-  .and(withOutlierDataSchema)
-  .transform((officer) => {
-    // TODO(Recidiviz/recidiviz-data#31634): Remove this transformation once the backend does it
-    const { caseloadType, ...officerWithoutCaseloadType } = officer;
-    return {
-      ...officerWithoutCaseloadType,
-      caseloadCategory: caseloadType,
-    };
-  });
+  .and(withOutlierDataSchema);
+
+// TODO(Recidiviz/recidiviz-data#31634): Remove this transformation once the backend does it
+export const supervisionOfficerSchema =
+  preprocessSchemaWithCaseloadCategoryOrType(
+    supervisionOfficerSchemaPreprocess,
+  );
 
 export const excludedSupervisionOfficerSchema = supervisionOfficerBaseSchema
   .transform(addDisplayName)

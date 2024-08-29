@@ -42,7 +42,7 @@ exports[`outlierOfficersData 1`] = `
               "target": 0.028739974981108838,
             },
           ],
-          "caseloadType": "SEX_OFFENSE",
+          "caseloadCategory": "SEX_OFFENSE",
           "currentPeriodTarget": 0.028739974981108838,
           "latestPeriodValues": [
             {
@@ -273,7 +273,7 @@ exports[`outlierOfficersData 1`] = `
               "target": 0.21415916840761745,
             },
           ],
-          "caseloadType": "SEX_OFFENSE",
+          "caseloadCategory": "SEX_OFFENSE",
           "currentPeriodTarget": 0.21415916840761745,
           "latestPeriodValues": [
             {
@@ -492,7 +492,7 @@ exports[`outlierOfficersData 1`] = `
               "target": 0.12170399045971189,
             },
           ],
-          "caseloadType": "SEX_OFFENSE",
+          "caseloadCategory": "SEX_OFFENSE",
           "currentPeriodTarget": 0.12170399045971189,
           "latestPeriodValues": [
             {
@@ -1363,7 +1363,7 @@ exports[`outlierOfficersData 1`] = `
               "target": 0.06030045665489481,
             },
           ],
-          "caseloadType": "GENERAL_OR_OTHER",
+          "caseloadCategory": "GENERAL_OR_OTHER",
           "currentPeriodTarget": 0.06030045665489481,
           "latestPeriodValues": [
             {
@@ -2814,7 +2814,7 @@ exports[`outlierOfficersData 1`] = `
               "target": 0.12170399045971189,
             },
           ],
-          "caseloadType": "GENERAL_OR_OTHER",
+          "caseloadCategory": "GENERAL_OR_OTHER",
           "currentPeriodTarget": 0.12170399045971189,
           "latestPeriodValues": [
             {

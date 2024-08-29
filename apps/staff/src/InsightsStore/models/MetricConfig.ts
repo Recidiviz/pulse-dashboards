@@ -22,7 +22,7 @@ import { metricsSchema } from "~datatypes";
 import { metricBenchmarkSchema } from "./MetricBenchmark";
 
 const metricConfigSchema = metricsSchema.extend({
-  metricBenchmarksByCaseloadType: z
+  metricBenchmarksByCaseloadCategory: z
     .map(z.string(), metricBenchmarkSchema)
     .optional(),
 });

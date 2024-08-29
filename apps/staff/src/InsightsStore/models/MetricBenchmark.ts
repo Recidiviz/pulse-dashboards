@@ -20,11 +20,15 @@ import { z } from "zod";
 
 import { dateStringSchemaWithoutTimeShift } from "~datatypes";
 
-import { targetStatusSchema, uppercaseSchemaKeys } from "./schemaHelpers";
+import {
+  preprocessSchemaWithCaseloadCategoryOrType,
+  targetStatusSchema,
+  uppercaseSchemaKeys,
+} from "./schemaHelpers";
 
-export const metricBenchmarkSchema = z.object({
+const metricBenchmarkSchemaPreprocess = z.object({
   metricId: z.string(),
-  caseloadType: z.string(),
+  caseloadCategory: z.string(),
   benchmarks: z
     .array(
       z.object({
@@ -48,6 +52,11 @@ export const metricBenchmarkSchema = z.object({
     });
   }),
 });
+
+// TODO(Recidiviz/recidiviz-data#31634): Remove this transformation once the backend does it
+export const metricBenchmarkSchema = preprocessSchemaWithCaseloadCategoryOrType(
+  metricBenchmarkSchemaPreprocess,
+);
 
 export type MetricBenchmark = z.infer<typeof metricBenchmarkSchema>;
 export type RawMetricBenchmark = z.input<typeof metricBenchmarkSchema>;

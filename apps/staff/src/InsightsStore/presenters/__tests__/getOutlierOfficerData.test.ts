@@ -20,7 +20,7 @@ import { flowResult } from "mobx";
 
 import {
   ADVERSE_METRIC_IDS,
-  CASELOAD_TYPE_IDS,
+  CASELOAD_CATEGORY_IDS,
   InsightsConfigFixture,
 } from "~datatypes";
 
@@ -66,7 +66,7 @@ test("excludes current officer from the benchmark data points", async () => {
   const matchingBenchmarkForOfficer = benchmarks.find(
     (b) =>
       "caseloadCategory" in officerData &&
-      b.caseloadType === officerData?.caseloadCategory &&
+      b.caseloadCategory === officerData?.caseloadCategory &&
       b.metricId === outlierMetric?.metricId,
   );
 
@@ -90,8 +90,8 @@ test("excludes current officer from the benchmark data points", async () => {
   expect(
     supervisionStore.metricConfigsById
       ?.get(matchingBenchmarkForOfficer.metricId)
-      ?.metricBenchmarksByCaseloadType?.get(
-        matchingBenchmarkForOfficer.caseloadType,
+      ?.metricBenchmarksByCaseloadCategory?.get(
+        matchingBenchmarkForOfficer.caseloadCategory,
       )
       ?.latestPeriodValues.filter((d) => d.value === currentOutlierRate),
   ).toHaveLength(2);
@@ -154,7 +154,7 @@ test("throws on missing benchmark for required caseload type", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
-    `Missing metric benchmark data for caseload type ${CASELOAD_TYPE_IDS.enum.GENERAL_OR_OTHER} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
+    `Missing metric benchmark data for caseload type ${CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
 

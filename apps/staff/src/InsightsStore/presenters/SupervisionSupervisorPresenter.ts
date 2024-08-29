@@ -494,11 +494,11 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
           } = metric;
           const caseloadCategoryToOfficers = resultMap.get(metricId);
           if (caseloadCategoryToOfficers) {
-            const officersForCaseloadType = caseloadCategoryToOfficers.get(
+            const officersForCaseloadCategory = caseloadCategoryToOfficers.get(
               outlierOfficerData.caseloadCategory,
             );
-            if (officersForCaseloadType) {
-              officersForCaseloadType.officersForMetric.push(
+            if (officersForCaseloadCategory) {
+              officersForCaseloadCategory.officersForMetric.push(
                 outlierOfficerData,
               );
             } else {
@@ -513,7 +513,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
             }
           } else {
             const caseloadCategoryToOfficers = new Map<
-              string | null,
+              string,
               MetricAndOutliersInfo
             >();
             caseloadCategoryToOfficers.set(
