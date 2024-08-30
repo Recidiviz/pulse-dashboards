@@ -96,6 +96,7 @@ export type UsMeResidentMetadata = {
 export type UsNdResidentMetadata = {
   stateCode: "US_ND";
   paroleReviewDate: string;
+  paroleDate: string | null;
 };
 
 type DefinedResidentMetadata = {

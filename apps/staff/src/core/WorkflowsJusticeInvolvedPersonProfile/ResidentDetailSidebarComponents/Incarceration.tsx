@@ -19,6 +19,10 @@ import React from "react";
 
 import { useRootStore } from "../../../components/StoreProvider/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
+import {
+  fieldToDate,
+  optionalFieldToDate,
+} from "../../../WorkflowsStore/utils";
 import WorkflowsOfficerName from "../../WorkflowsOfficerName";
 import { PartialTime } from "../PartialTime";
 import {
@@ -28,7 +32,10 @@ import {
   DetailsSubheading,
   SecureDetailsContent,
 } from "../styles";
-import { ResidentWithOptionalOpportunityProps } from "../types";
+import {
+  ResidentProfileProps,
+  ResidentWithOptionalOpportunityProps,
+} from "../types";
 import { UsMiMinMaxReleaseDates } from "./US_MI/UsMiMinMaxReleaseDates";
 import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissionDateSubsection";
 
@@ -77,14 +84,7 @@ export function Incarceration({
           </SecureDetailsContent>
           <PartialTime person={resident} />
           <ReleaseDate resident={resident} opportunity={opportunity} />
-          {resident.usNdParoleReviewDate && (
-            <>
-              <DetailsSubheading>Parole Review Date</DetailsSubheading>
-              <SecureDetailsContent>
-                {formatWorkflowsDate(resident.usNdParoleReviewDate)}
-              </SecureDetailsContent>
-            </>
-          )}
+          <StateSpecificIncarcerationDetails resident={resident} />
 
           {resident.assignedStaffId && (
             <>
@@ -102,5 +102,41 @@ export function Incarceration({
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>
+  );
+}
+
+function StateSpecificIncarcerationDetails({
+  resident,
+}: ResidentProfileProps): React.ReactElement | null {
+  switch (resident.stateCode) {
+    case "US_ND":
+      return <UsNdIncarcerationDetails resident={resident} />;
+    default:
+      return null;
+  }
+}
+
+function UsNdIncarcerationDetails({
+  resident,
+}: ResidentProfileProps): React.ReactElement | null {
+  const { metadata } = resident;
+  if (metadata.stateCode !== "US_ND") return null;
+
+  const { paroleDate, paroleReviewDate } = metadata;
+
+  return (
+    <>
+      <DetailsSubheading>Parole Start Date</DetailsSubheading>
+      <SecureDetailsContent>
+        {paroleDate
+          ? formatWorkflowsDate(optionalFieldToDate(paroleDate))
+          : "N/A"}
+      </SecureDetailsContent>
+
+      <DetailsSubheading>Parole Review Date</DetailsSubheading>
+      <SecureDetailsContent>
+        {formatWorkflowsDate(fieldToDate(paroleReviewDate))}
+      </SecureDetailsContent>
+    </>
   );
 }

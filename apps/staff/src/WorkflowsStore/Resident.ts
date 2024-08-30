@@ -149,14 +149,6 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return optionalFieldToDate(this.record.usTnFacilityAdmissionDate);
   }
 
-  get usNdParoleReviewDate(): Date | undefined {
-    if (this.record.metadata.stateCode !== "US_ND") {
-      return;
-    }
-
-    return optionalFieldToDate(this.record.metadata.paroleReviewDate);
-  }
-
   get metadata(): ResidentMetadata {
     return this.record.metadata;
   }
