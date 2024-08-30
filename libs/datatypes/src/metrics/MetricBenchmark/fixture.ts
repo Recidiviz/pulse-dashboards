@@ -20,9 +20,8 @@ import {
   CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
   LOOKBACK_END_DATE_STRINGS,
-} from "~datatypes";
-
-import { metricBenchmarkSchema, RawMetricBenchmark } from "../MetricBenchmark";
+} from "../utils/constants";
+import { metricBenchmarkSchema, RawMetricBenchmark } from "./schema";
 
 export const rawMetricBenchmarksFixture = [
   {

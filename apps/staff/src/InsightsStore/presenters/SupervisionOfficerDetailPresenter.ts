@@ -17,10 +17,10 @@
 
 import { flowResult, makeObservable, override } from "mobx";
 
+import { MetricConfig } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
-import { MetricConfig } from "../models/MetricConfig";
 import { SupervisionOfficer } from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";

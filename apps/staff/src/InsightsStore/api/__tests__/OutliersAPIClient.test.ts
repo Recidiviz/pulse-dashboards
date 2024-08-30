@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ADVERSE_METRIC_IDS, InsightsConfigFixture } from "~datatypes";
+import {
+  ADVERSE_METRIC_IDS,
+  InsightsConfigFixture,
+  metricBenchmarksFixture,
+  rawMetricBenchmarksFixture,
+} from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { APIStore } from "../../../RootStore/APIStore";
@@ -29,10 +34,6 @@ import {
   excludedSupervisionOfficerFixture,
   rawExcludedSupervisionOfficerFixture,
 } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import {
-  metricBenchmarksFixture,
-  rawMetricBenchmarksFixture,
-} from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import {
   rawSupervisionOfficerFixture,
   supervisionOfficerFixture,

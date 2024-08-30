@@ -18,12 +18,12 @@
 import { ascending } from "d3-array";
 import { z } from "zod";
 
+import { preprocessSchemaWithCaseloadCategoryOrType } from "../../people/utils/preprocessSchemaWithCaseloadCategoryOrType";
 import {
   dateStringSchemaWithoutTimeShift,
-  preprocessSchemaWithCaseloadCategoryOrType,
-  targetStatusSchema,
   uppercaseSchemaKeys,
-} from "~datatypes";
+} from "../../utils/zod";
+import { targetStatusSchema } from "../utils/constants";
 
 const metricBenchmarkSchemaPreprocess = z.object({
   metricId: z.string(),

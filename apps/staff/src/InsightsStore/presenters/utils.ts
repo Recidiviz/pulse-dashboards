@@ -17,7 +17,8 @@
 
 import { Optional } from "utility-types";
 
-import { MetricConfig } from "../models/MetricConfig";
+import { MetricConfig } from "~datatypes";
+
 import {
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerSchema,

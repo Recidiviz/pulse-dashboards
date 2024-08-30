@@ -22,13 +22,13 @@ import {
   ADVERSE_METRIC_IDS,
   CASELOAD_CATEGORY_IDS,
   InsightsConfigFixture,
+  metricBenchmarksFixture,
 } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
 import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { metricBenchmarksFixture } from "../../models/offlineFixtures/MetricBenchmarkFixture";
 import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
 import {
   ExcludedSupervisionOfficer,

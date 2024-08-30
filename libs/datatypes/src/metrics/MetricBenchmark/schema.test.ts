@@ -17,10 +17,9 @@
 
 import { shuffle } from "lodash";
 
-import { LOOKBACK_END_DATES } from "~datatypes";
-
-import { metricBenchmarkSchema } from "../MetricBenchmark";
-import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
+import { LOOKBACK_END_DATES } from "../utils/constants";
+import { rawMetricBenchmarksFixture } from "./fixture";
+import { metricBenchmarkSchema } from "./schema";
 
 test("transformations", () => {
   rawMetricBenchmarksFixture.forEach((b) =>
@@ -63,6 +62,7 @@ test("caseload type is renamed to caseload category", () => {
 });
 
 test("missing caseload type / category fails parsing", () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
     rawMetricBenchmarksFixture[0];
 

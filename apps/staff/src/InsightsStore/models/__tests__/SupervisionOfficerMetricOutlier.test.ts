@@ -23,9 +23,9 @@ import {
   InsightsConfigFixture,
   LOOKBACK_END_DATE_STRINGS,
   LOOKBACK_END_DATES,
+  rawMetricBenchmarksFixture,
 } from "~datatypes";
 
-import { rawMetricBenchmarksFixture } from "../offlineFixtures/MetricBenchmarkFixture";
 import { rawSupervisionOfficerMetricOutlierFixtures } from "../offlineFixtures/SupervisionOfficerMetricOutlierFixture";
 import {
   RawSupervisionOfficerMetricOutlier,

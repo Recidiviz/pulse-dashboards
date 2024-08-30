@@ -15,17 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { insightsConfigSchema } from "~datatypes";
+import {
+  insightsConfigSchema,
+  MetricBenchmark,
+  metricBenchmarkSchema,
+} from "~datatypes";
 
 import { formatDateToISO } from "../../utils";
 import type { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent, clientEventSchema } from "../models/ClientEvent";
 import { ClientInfo, clientInfoSchema } from "../models/ClientInfo";
-import {
-  MetricBenchmark,
-  metricBenchmarkSchema,
-} from "../models/MetricBenchmark";
 import {
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerSchema,

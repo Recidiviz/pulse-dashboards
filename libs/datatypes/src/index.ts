@@ -83,6 +83,9 @@ export * from "./config/InsightsConfig/schema";
 // =============================================================================
 // Metrics
 // =============================================================================
+export * from "./metrics/MetricBenchmark/fixture";
+export * from "./metrics/MetricBenchmark/schema";
+export * from "./metrics/MetricConfig/schema";
 
 // Metrics Utilities Exports: Common utilities for metrics
 // -----------------------------------------------------------------------------

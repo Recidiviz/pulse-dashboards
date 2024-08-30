@@ -24,13 +24,14 @@ import {
   FAVORABLE_METRIC_IDS,
   InsightsConfigFixture,
   LATEST_END_DATE,
+  MetricBenchmark,
+  metricBenchmarksFixture,
 } from "~datatypes";
 
 import type { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
 import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
-import { MetricBenchmark } from "../models/MetricBenchmark";
 import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
 import {
   ExcludedSupervisionOfficer,
@@ -111,9 +112,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   }
 
   async metricBenchmarks(): Promise<MetricBenchmark[]> {
-    const { metricBenchmarksFixture } = await import(
-      "../models/offlineFixtures/MetricBenchmarkFixture"
-    );
     return metricBenchmarksFixture;
   }
 

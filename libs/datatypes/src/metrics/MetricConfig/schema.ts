@@ -17,9 +17,8 @@
 
 import { z } from "zod";
 
-import { metricsSchema } from "~datatypes";
-
-import { metricBenchmarkSchema } from "./MetricBenchmark";
+import { metricsSchema } from "../../config/InsightsConfig/schema";
+import { metricBenchmarkSchema } from "../MetricBenchmark/schema";
 
 const metricConfigSchema = metricsSchema.extend({
   metricBenchmarksByCaseloadCategory: z
