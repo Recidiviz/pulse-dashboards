@@ -21,6 +21,8 @@ import { differenceInDays, subDays } from "date-fns";
 
 import { isDemoMode } from "~client-env-utils";
 import {
+  ClientEvent,
+  clientEventFixture,
   FAVORABLE_METRIC_IDS,
   InsightsConfigFixture,
   LATEST_END_DATE,
@@ -30,7 +32,6 @@ import {
 
 import type { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
-import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
 import {
@@ -238,10 +239,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     clientPseudoId: string,
     endDate: Date,
   ): Promise<Array<ClientEvent>> {
-    const { clientEventFixture } = await import(
-      "../models/offlineFixtures/ClientEventFixture"
-    );
-
     // adjust fixture dates relative to the input
     const dateOffsetInDays = differenceInDays(LATEST_END_DATE, endDate);
 

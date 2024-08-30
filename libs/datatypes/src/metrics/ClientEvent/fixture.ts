@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientEvent, clientEventSchema, RawClientEvent } from "../ClientEvent";
+import { ClientEvent, clientEventSchema, RawClientEvent } from "./schema";
 
 export const rawClientEventFixture: Array<RawClientEvent> = [
   {

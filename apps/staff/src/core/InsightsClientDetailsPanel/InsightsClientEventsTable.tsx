@@ -20,11 +20,9 @@ import { rem } from "polished";
 import { Column } from "react-table";
 import styled from "styled-components/macro";
 
+import { ClientEvent, ClientEventAttributes } from "~datatypes";
+
 import useIsMobile from "../../hooks/useIsMobile";
-import {
-  ClientEvent,
-  ClientEventAttributes,
-} from "../../InsightsStore/models/ClientEvent";
 import { formatDate, humanReadableTitleCase } from "../../utils";
 import InsightsTable from "../InsightsTable";
 

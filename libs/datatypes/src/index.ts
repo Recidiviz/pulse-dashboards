@@ -83,6 +83,8 @@ export * from "./config/InsightsConfig/schema";
 // =============================================================================
 // Metrics
 // =============================================================================
+export * from "./metrics/ClientEvent/fixture";
+export * from "./metrics/ClientEvent/schema";
 export * from "./metrics/MetricBenchmark/fixture";
 export * from "./metrics/MetricBenchmark/schema";
 export * from "./metrics/MetricConfig/schema";

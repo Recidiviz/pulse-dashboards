@@ -21,7 +21,12 @@ import { uniq } from "lodash";
 import { makeAutoObservable, observable } from "mobx";
 import moment from "moment";
 
-import { InsightsConfig, MetricBenchmark, MetricConfig } from "~datatypes";
+import {
+  ClientEvent,
+  InsightsConfig,
+  MetricBenchmark,
+  MetricConfig,
+} from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
 import { formatDate } from "../../utils";
@@ -32,7 +37,6 @@ import {
 } from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
-import { ClientEvent } from "../models/ClientEvent";
 import { ClientInfo } from "../models/ClientInfo";
 import {
   ExcludedSupervisionOfficer,

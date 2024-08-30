@@ -15,11 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { clientEventSchema } from "../ClientEvent";
-import { rawClientEventFixture } from "../offlineFixtures/ClientEventFixture";
+import { z } from "zod";
 
-test("transformation", () => {
-  expect(
-    rawClientEventFixture.map((e) => clientEventSchema.parse(e)),
-  ).toMatchSnapshot();
+import { dateStringSchemaWithoutTimeShift } from "../../utils/zod/date";
+
+export const clientEventSchema = z.object({
+  eventDate: dateStringSchemaWithoutTimeShift,
+  metricId: z.string(),
+  attributes: z.object({
+    code: z.string().nullable(),
+    description: z.string().nullable(),
+  }),
 });
+
+export type ClientEvent = z.infer<typeof clientEventSchema>;
+export type RawClientEvent = z.input<typeof clientEventSchema>;
+export type ClientEventAttributes = z.infer<
+  typeof clientEventSchema.shape.attributes
+>;
