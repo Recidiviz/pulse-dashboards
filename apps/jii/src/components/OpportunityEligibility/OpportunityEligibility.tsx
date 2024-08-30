@@ -26,6 +26,7 @@ import { IncarcerationOpportunityId } from "../../configs/types";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { AboutSection } from "./AboutSection";
 import { ButtonLink } from "./ButtonLink";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
@@ -61,6 +62,8 @@ const Subheading = styled.h2`
 const OpportunityEligibilityWithPresenter: FC<{
   presenter: OpportunityEligibilityPresenter;
 }> = observer(function OpportunityEligibilityWithPresenter({ presenter }) {
+  usePageTitle(presenter.htmlTitle);
+
   return (
     <article>
       <Header>

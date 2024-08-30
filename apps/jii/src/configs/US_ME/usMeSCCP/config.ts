@@ -25,6 +25,7 @@ import requirementsPage from "./requirementsPage.md?raw";
 export const config: OpportunityConfig = {
   urlSection: "sccp",
   firestoreCollection: "US_ME-SCCPReferrals",
+  htmlTitle: "Supervised Community Confinement Program",
   copy: {
     headline: `{{#if eligibilityData}}
         {{#if resident.personName.givenNames}}{{ resident.personName.givenNames }}, you{{ else }}You{{/if}} 
@@ -51,6 +52,8 @@ export const config: OpportunityConfig = {
       body: aboutBody1,
       linkText: "Learn more about how the program works",
       fullPage: aboutPage,
+      fullPageHtmlTitle:
+        "About the Supervised Community Confinement Program (SCCP)",
     },
     requirements: {
       title: "Requirements",
@@ -101,12 +104,14 @@ export const config: OpportunityConfig = {
         "In order to be eligible for SCCP, you must have met the following requirements:",
       linkText: "Get details about each requirement",
       fullPage: requirementsPage,
+      fullPageHtmlTitle: "SCCP Eligibility Requirements",
     },
     nextSteps: {
       title: "How to apply",
       body: nextStepsBody,
       linkText: "Learn more about the application process",
       fullPage: nextStepsPage,
+      fullPageHtmlTitle: "SCCP Application and Tips",
     },
     menuLabel: "SCCP",
     formPreview: { title: "SCCP Application" },

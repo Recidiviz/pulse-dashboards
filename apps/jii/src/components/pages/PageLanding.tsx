@@ -22,6 +22,7 @@ import styled from "styled-components/macro";
 
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { Wordmark } from "../Wordmark/Wordmark";
 import pageLandingCopy from "./pageLandingCopy.md?raw";
 
@@ -53,6 +54,8 @@ const LandingPageCopyWrapper = styled(CopyWrapper)`
 `;
 
 export const PageLanding: FC = () => {
+  usePageTitle(undefined);
+
   const {
     userStore: { authClient },
   } = useRootStore();

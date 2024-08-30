@@ -32,6 +32,7 @@ export type RequirementCopy = { criterion: string; ineligibleReason?: string };
 export type OpportunityConfig = {
   urlSection: string;
   firestoreCollection: string;
+  htmlTitle: string;
   copy: {
     headline: string;
     subheading: string;
@@ -40,6 +41,7 @@ export type OpportunityConfig = {
       body: string;
       linkText: string;
       fullPage: string;
+      fullPageHtmlTitle: string;
     };
     requirements: {
       title: string;
@@ -48,12 +50,14 @@ export type OpportunityConfig = {
       staticRequirementsLabel: string;
       linkText: string;
       fullPage: string;
+      fullPageHtmlTitle: string;
     };
     nextSteps: {
       title: string;
       body: string;
       linkText: string;
       fullPage: string;
+      fullPageHtmlTitle: string;
     };
     menuLabel: string;
     formPreview: {

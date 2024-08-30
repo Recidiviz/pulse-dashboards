@@ -48,12 +48,15 @@ const Fields = styled.dl`
   flex-wrap: wrap;
   gap: ${rem(spacing.md)};
   margin: 0;
+  max-width: 100%;
 
   & > div {
     display: flex;
     flex: 0 0 auto;
+    flex-wrap: wrap;
     gap: ${rem(spacing.sm)};
     margin: 0.15em 0;
+    max-width: 100%;
   }
 
   & dt {
@@ -87,14 +90,15 @@ function FieldValue({ field }: { field: ProfileField }) {
           showModal();
         }}
       >
-        {field.value}
+        {field.value}{" "}
         <Icon
           size={12}
           kind={"Info"}
           style={{
             opacity: 0.5,
-            marginLeft: rem(spacing.xs),
           }}
+          aria-label="More information"
+          role="img"
         />
       </FieldValueButton>
       <Modal {...modalProps}>

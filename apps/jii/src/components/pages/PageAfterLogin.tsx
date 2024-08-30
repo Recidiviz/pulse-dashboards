@@ -21,11 +21,14 @@ import { FC } from "react";
 import { HandleRedirectAfterLogin } from "~auth";
 
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export const PageAfterLogin: FC = observer(function PageAfterLogin() {
   const {
     userStore: { authClient },
   } = useRootStore();
+
+  usePageTitle(undefined);
 
   return <HandleRedirectAfterLogin authClient={authClient} />;
 });

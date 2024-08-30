@@ -117,7 +117,7 @@ describe("after hydration", () => {
         "sections": [
           {
             "icon": "Success",
-            "label": "Requirements you <u>have</u> met",
+            "label": "Requirements you **have** met",
             "requirements": [
               {
                 "criterion": "Served 2/3 of your sentence",
@@ -135,7 +135,7 @@ describe("after hydration", () => {
           },
           {
             "icon": "CloseOutlined",
-            "label": "Requirements you <u>have not</u> met yet",
+            "label": "Requirements you **have not** met yet",
             "requirements": [
               {
                 "criterion": "Fewer than 30 months remaining on your sentence",

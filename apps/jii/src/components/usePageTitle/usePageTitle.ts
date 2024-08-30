@@ -15,35 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "@testing-library/jest-dom";
-import "jest-styled-components";
+import { useEffect } from "react";
 
-import { Globals } from "@react-spring/web";
-import { toHaveNoViolations } from "jest-axe";
-import jestExtendedMatchers from "jest-extended";
-import { freeze } from "timekeeper";
-import createFetchMock from "vitest-fetch-mock";
+/**
+ * Sets the current page's title to the provided string.
+ */
+function useTitle(title: string) {
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
+}
 
-import { CURRENT_DATE_FIXTURE } from "~datatypes";
-
-expect.extend(jestExtendedMatchers);
-
-expect.extend(toHaveNoViolations);
-
-const fetchMocker = createFetchMock(vi);
-
-beforeAll(() => {
-  fetchMocker.enableMocks();
-
-  // speeds up animated transitions in UI tests; they still happen async but complete immediately
-  Globals.assign({
-    skipAnimation: true,
-  });
-});
-
-beforeEach(() => {
-  freeze(CURRENT_DATE_FIXTURE);
-
-  // because mocks are reset globally between tests we do have to re-enable
-  fetchMock.doMock();
-});
+/**
+ * Creates an appropriately structured string based on the provided title
+ * and sets the HTML document title accordingly.
+ * @param pageTitle - the title you want to assign to the current page. DO NOT
+ * include supplemental information such as the name of the website, etc.; this hook
+ * will handle that for you. Falls back to a default value if an empty or undefined title
+ * is passed.
+ */
+export function usePageTitle(pageTitle: string | undefined) {
+  useTitle(`${pageTitle ?? ""}${pageTitle ? " – " : ""}Opportunities`);
+}

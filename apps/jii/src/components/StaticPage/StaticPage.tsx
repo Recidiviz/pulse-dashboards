@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { NotFound } from "../NotFound/NotFound";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { StaticPagePresenter } from "./StaticPagePresenter";
 import { PageId } from "./types";
 
@@ -44,6 +45,8 @@ const BackLink = styled(Link)`
 
 const StaticPageWithPresenter: FC<{ presenter: StaticPagePresenter }> =
   observer(function StaticPageWithPresenter({ presenter }) {
+    usePageTitle(presenter.htmlTitle);
+
     return (
       <>
         <BackLink to="../">

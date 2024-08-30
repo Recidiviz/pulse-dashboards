@@ -19,8 +19,11 @@ import { observer } from "mobx-react-lite";
 
 import { RequiresPermission } from "../RequiresPermission/RequiresPermission";
 import { ResidentsSearch } from "../ResidentsSearch/ResidentsSearch";
+import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export const PageSearch = observer(function PageSearch() {
+  usePageTitle("Search");
+
   return (
     <RequiresPermission permissionId="enhanced">
       <ResidentsSearch />

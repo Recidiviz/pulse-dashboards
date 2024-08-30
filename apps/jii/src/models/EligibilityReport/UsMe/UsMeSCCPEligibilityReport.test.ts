@@ -50,7 +50,7 @@ describe("fully eligible, needs to serve half", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you <u>have</u> met",
+          "label": "Requirements you **have** met",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -115,7 +115,7 @@ describe("eligible to apply before X portion served", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you <u>have</u> met",
+          "label": "Requirements you **have** met",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
@@ -133,7 +133,7 @@ describe("eligible to apply before X portion served", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you <u>have not</u> met yet",
+          "label": "Requirements you **have not** met yet",
           "requirements": [
             {
               "criterion": "Served 2/3 of your sentence",
@@ -187,7 +187,7 @@ describe("eligible to apply before X months remaining", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you <u>have</u> met",
+          "label": "Requirements you **have** met",
           "requirements": [
             {
               "criterion": "Served 2/3 of your sentence",
@@ -205,7 +205,7 @@ describe("eligible to apply before X months remaining", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you <u>have not</u> met yet",
+          "label": "Requirements you **have not** met yet",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
@@ -259,7 +259,7 @@ describe("almost eligible, portion served", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you <u>have</u> met",
+          "label": "Requirements you **have** met",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
@@ -277,7 +277,7 @@ describe("almost eligible, portion served", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you <u>have not</u> met yet",
+          "label": "Requirements you **have not** met yet",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -331,7 +331,7 @@ describe("almost eligible, recent violation", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you <u>have</u> met",
+          "label": "Requirements you **have** met",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -349,7 +349,7 @@ describe("almost eligible, recent violation", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you <u>have not</u> met yet",
+          "label": "Requirements you **have not** met yet",
           "requirements": [
             {
               "criterion": "No Class A or B discipline in past 90 days",
@@ -403,7 +403,7 @@ describe("almost eligible, pending violation", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you <u>have</u> met",
+          "label": "Requirements you **have** met",
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence",
@@ -421,7 +421,7 @@ describe("almost eligible, pending violation", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you <u>have not</u> met yet",
+          "label": "Requirements you **have not** met yet",
           "requirements": [
             {
               "criterion": "No Class A or B discipline in past 90 days",
@@ -475,7 +475,7 @@ describe("almost eligible, months remaining", () => {
       [
         {
           "icon": "Success",
-          "label": "Requirements you <u>have</u> met",
+          "label": "Requirements you **have** met",
           "requirements": [
             {
               "criterion": "Served 2/3 of your sentence",
@@ -493,7 +493,7 @@ describe("almost eligible, months remaining", () => {
         },
         {
           "icon": "CloseOutlined",
-          "label": "Requirements you <u>have not</u> met yet",
+          "label": "Requirements you **have not** met yet",
           "requirements": [
             {
               "criterion": "Fewer than 30 months remaining on your sentence",

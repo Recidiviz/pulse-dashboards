@@ -15,35 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "@testing-library/jest-dom";
-import "jest-styled-components";
+import { EmailVerificationRequired } from "~auth";
 
-import { Globals } from "@react-spring/web";
-import { toHaveNoViolations } from "jest-axe";
-import jestExtendedMatchers from "jest-extended";
-import { freeze } from "timekeeper";
-import createFetchMock from "vitest-fetch-mock";
+import { usePageTitle } from "../usePageTitle/usePageTitle";
 
-import { CURRENT_DATE_FIXTURE } from "~datatypes";
+export function PageVerifyEmail() {
+  usePageTitle("Verify your email");
 
-expect.extend(jestExtendedMatchers);
-
-expect.extend(toHaveNoViolations);
-
-const fetchMocker = createFetchMock(vi);
-
-beforeAll(() => {
-  fetchMocker.enableMocks();
-
-  // speeds up animated transitions in UI tests; they still happen async but complete immediately
-  Globals.assign({
-    skipAnimation: true,
-  });
-});
-
-beforeEach(() => {
-  freeze(CURRENT_DATE_FIXTURE);
-
-  // because mocks are reset globally between tests we do have to re-enable
-  fetchMock.doMock();
-});
+  return <EmailVerificationRequired />;
+}

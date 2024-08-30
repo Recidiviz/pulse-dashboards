@@ -70,28 +70,46 @@ const MarkdownWrapper = styled(Markdown)`
   }
 
   dl {
-    border-bottom: 1px solid ${palette.slate20};
-    column-gap: 0;
-    display: grid;
-    grid-template-columns: 1fr 4.5fr;
     margin: 2em 0;
-    padding-bottom: ${rem(spacing.md)};
-    row-gap: ${rem(spacing.md)};
+    border-bottom: 1px solid ${palette.slate20};
   }
 
   dt {
     border-top: 1px solid ${palette.slate20};
     color: ${palette.text.caption};
-    padding-right: ${rem(spacing.xl)};
     padding-top: ${rem(spacing.md)};
-    text-wrap: balance;
   }
 
-  dd {
-    border-top: 1px solid ${palette.slate20};
-    margin-left: 0;
-    padding-left: ${rem(spacing.xl)};
-    padding-top: ${rem(spacing.md)};
+  @media (max-width: 499px) {
+    dd {
+      margin-left: 1em;
+      padding-bottom: ${rem(spacing.md)};
+    }
+  }
+
+  @media (min-width: 500px) {
+    dl {
+      border-bottom: 1px solid ${palette.slate20};
+      column-gap: 0;
+      display: grid;
+      grid-template-columns: 1fr 4.5fr;
+      margin: 2em 0;
+      padding-bottom: ${rem(spacing.md)};
+      row-gap: ${rem(spacing.md)};
+    }
+
+    dt {
+      padding-right: ${rem(spacing.xl)};
+
+      text-wrap: balance;
+    }
+
+    dd {
+      border-top: 1px solid ${palette.slate20};
+      margin-left: 0;
+      padding-left: ${rem(spacing.xl)};
+      padding-top: ${rem(spacing.md)};
+    }
   }
 
   a {

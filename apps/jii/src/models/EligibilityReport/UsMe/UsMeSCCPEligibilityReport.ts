@@ -184,7 +184,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
 
     if (Object.keys(met).length) {
       sections.push({
-        label: "Requirements you <u>have</u> met",
+        label: "Requirements you **have** met",
         icon: "Success",
         requirements: orderedCriteria
           .filter((key): key is keyof typeof met => key in met)
@@ -201,7 +201,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
 
     if (Object.keys(notMet).length) {
       sections.push({
-        label: "Requirements you <u>have not</u> met yet",
+        label: "Requirements you **have not** met yet",
         icon: "CloseOutlined",
         requirements: orderedCriteria
           .filter((key): key is keyof typeof notMet => key in notMet)

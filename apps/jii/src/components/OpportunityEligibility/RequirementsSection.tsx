@@ -65,6 +65,10 @@ const RequirementMarker = styled(Icon).attrs({ size: MARKER_SIZE })`
   margin-right: calc(${rem(LIST_PAD)} - ${MARKER_SIZE}px);
   margin-left: -${rem(LIST_PAD)};
   vertical-align: bottom;
+
+  @media (forced-colors: active) {
+    fill: currentColor;
+  }
 `;
 
 const IneligibleReason = styled.div`

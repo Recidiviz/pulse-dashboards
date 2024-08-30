@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { animated, useTransition } from "@react-spring/web";
 import { Loading } from "@recidiviz/design-system";
 import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useEffect } from "react";
-import { animated, useTransition } from "react-spring/web.cjs";
 import styled from "styled-components/macro";
 
 import { isHydrationUntouched } from "../Hydratable/utils";
@@ -75,31 +75,23 @@ export const Hydrator: React.FC<HydratorProps> = observer(function Hydrator({
     }
   }, [hydratable, needsHydration]);
 
-  const transitions = useTransition(hydrationStatus, null, crossFade);
+  const transitions = useTransition(hydrationStatus, crossFade);
 
   return (
     <Wrapper className={className}>
-      {transitions.map(({ item, key, props }) => {
+      {transitions((style, item) => {
         switch (item) {
           case "needs hydration":
           case "loading":
             return (
-              <StatusWrapper key={key} style={props}>
+              <StatusWrapper style={style}>
                 <Loading />
               </StatusWrapper>
             );
           case "failed":
-            return (
-              <StatusWrapper key={key} style={props}>
-                {failed}
-              </StatusWrapper>
-            );
+            return <StatusWrapper style={style}>{failed}</StatusWrapper>;
           case "hydrated":
-            return (
-              <ContentWrapper key={key} style={props}>
-                {children}
-              </ContentWrapper>
-            );
+            return <ContentWrapper style={style}>{children}</ContentWrapper>;
           default:
             return assertNever(item);
         }

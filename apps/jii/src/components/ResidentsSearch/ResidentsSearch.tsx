@@ -15,28 +15,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Header34, Sans14, Sans16, spacing } from "@recidiviz/design-system";
+import {
+  Header34,
+  palette,
+  Sans16,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { useId } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactSelect from "react-select";
+import styled from "styled-components/macro";
 
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
+const FacilityLabel = styled.label`
+  ${typography.Sans14}
+
+  display: block;
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
 const ResidentsSearchWithPresenter: React.FC<{
   presenter: ResidentsSearchPresenter;
 }> = observer(function ResidentsSearchWithPresenter({ presenter }) {
   const navigate = useNavigate();
+  const labelId = useId();
 
   return (
     <PageHydrator hydratable={presenter}>
       <div>
-        <Header34 as="h1">Select a resident</Header34>
+        <Header34 as="h1" id={labelId}>
+          Select a resident
+        </Header34>
 
-        <Sans14 style={{ marginBottom: rem(spacing.lg) }}>
+        <FacilityLabel>
           Filter by facility:
           <ReactSelect
             options={presenter.facilityFilterOptions}
@@ -48,10 +65,11 @@ const ResidentsSearchWithPresenter: React.FC<{
             }}
             isClearable={false}
           />
-        </Sans14>
+        </FacilityLabel>
 
         <Sans16>
           <ReactSelect
+            aria-labelledby={labelId}
             options={presenter.selectOptions}
             defaultValue={presenter.defaultOption}
             onChange={(o) => {
@@ -60,6 +78,11 @@ const ResidentsSearchWithPresenter: React.FC<{
                 // this should land you on the selected resident's homepage
                 navigate("/");
               }
+            }}
+            styles={{
+              placeholder(baseStyles, state) {
+                return { ...baseStyles, color: palette.slate85 };
+              },
             }}
           />
         </Sans16>

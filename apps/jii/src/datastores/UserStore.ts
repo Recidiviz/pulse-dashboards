@@ -81,7 +81,11 @@ export class UserStore {
   }
 
   get externalId(): string | undefined {
-    return this.externalIdOverride ?? this.authClient.appMetadata.externalId;
+    try {
+      return this.externalIdOverride ?? this.authClient.appMetadata.externalId;
+    } catch {
+      return undefined;
+    }
   }
 
   get pseudonymizedId(): string | undefined {
@@ -102,6 +106,8 @@ export class UserStore {
   }
 
   identifyToTrackers() {
+    if (isOfflineMode()) return;
+
     // non-JII users (e.g. Recidiviz employees) will not have this property
     if (this.pseudonymizedId) {
       this.segmentClient.identify(this.pseudonymizedId);

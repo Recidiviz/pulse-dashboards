@@ -20,6 +20,7 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
+  Icon,
   typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
@@ -42,7 +43,15 @@ export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> =
     return (
       <nav>
         <Dropdown>
-          <DropdownToggle icon="Hamburger" iconSize={16} kind="borderless" />
+          <DropdownToggle kind="borderless">
+            {/* TODO(https://github.com/Recidiviz/web-libraries/issues/188): accessibility workaround */}
+            <Icon
+              kind="Hamburger"
+              size={16}
+              aria-label="Toggle menu"
+              role="img"
+            />
+          </DropdownToggle>
           <DropdownMenu alignment="right">
             <>
               {presenter.links.map((link) => (

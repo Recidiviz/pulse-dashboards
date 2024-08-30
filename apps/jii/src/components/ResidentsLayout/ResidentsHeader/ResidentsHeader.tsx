@@ -30,14 +30,23 @@ import { ResidentMiniProfile } from "./ResidentMiniProfile";
 import { ResidentMiniProfilePresenter } from "./ResidentMiniProfilePresenter";
 
 const Header = styled.header`
-  align-items: center;
+  align-items: flex-start;
   border-bottom: 1px solid ${palette.slate20};
   display: flex;
   gap: ${rem(spacing.md)};
+
   /* specificity hack vs BaseLayout */
   && {
     padding-bottom: ${rem(spacing.lg)};
   }
+`;
+
+const HeaderContent = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: ${rem(spacing.md)};
 
   > a {
     margin-right: auto;
@@ -59,11 +68,15 @@ export const ResidentsHeader: FC = observer(function ResidentsHeader() {
 
   return (
     <Header>
-      <Link to="/">
-        <Wordmark />
-      </Link>
+      <HeaderContent>
+        <Link to="/">
+          <Wordmark />
+        </Link>
 
-      {profilePresenter && <ResidentMiniProfile presenter={profilePresenter} />}
+        {profilePresenter && (
+          <ResidentMiniProfile presenter={profilePresenter} />
+        )}
+      </HeaderContent>
       <NavigationMenu
         presenter={
           new NavigationMenuPresenter(residentsStore.config, userStore)

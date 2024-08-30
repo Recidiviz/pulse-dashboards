@@ -31,8 +31,6 @@ import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Route, Routes } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components/macro";
 
-import { EmailVerificationRequired } from "~auth";
-
 import { initializeSentry } from "../../apis/Sentry/initializeSentry";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { NotFound } from "../NotFound/NotFound";
@@ -44,6 +42,7 @@ import { PageLanding } from "../pages/PageLanding";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
+import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { StaticPage } from "../StaticPage/StaticPage";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
@@ -75,7 +74,7 @@ export function App() {
             <Route path="/" element={<PageRoot />}>
               <Route index element={<PageHome />} />
               <Route path="welcome" element={<PageLanding />} />
-              <Route path="verify" element={<EmailVerificationRequired />} />
+              <Route path="verify" element={<PageVerifyEmail />} />
               <Route path="after-login" element={<PageAfterLogin />} />
               <Route path="eligibility" element={<PageEligibility />}>
                 <Route index element={<PageEligibilityHome />} />

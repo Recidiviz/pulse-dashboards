@@ -20,11 +20,23 @@ import { FC, memo } from "react";
 import styled from "styled-components/macro";
 
 import wordmarkUrl from "../../assets/images/wordmark.svg";
+import wordmarkHighContrastUrl from "../../assets/images/wordmark-hc-wob.svg";
 
 const Img = styled.img`
   display: block;
   height: auto;
   width: ${rem(132)};
+
+  @media (forced-colors: active) and (prefers-color-scheme: dark) {
+    display: none;
+  }
+`;
+
+const ImgHighContrastWhite = styled(Img)`
+  display: none;
+  @media (forced-colors: active) and (prefers-color-scheme: dark) {
+    display: block;
+  
 `;
 
 type WordmarkProps = {
@@ -33,10 +45,17 @@ type WordmarkProps = {
 
 export const Wordmark: FC<WordmarkProps> = memo(function Wordmark({ width }) {
   return (
-    <Img
-      src={wordmarkUrl}
-      alt="Opportunities"
-      style={width ? { width: rem(width) } : undefined}
-    />
+    <>
+      <Img
+        src={wordmarkUrl}
+        alt="Opportunities"
+        style={width ? { width: rem(width) } : undefined}
+      />
+      <ImgHighContrastWhite
+        src={wordmarkHighContrastUrl}
+        alt="Opportunities"
+        style={width ? { width: rem(width) } : undefined}
+      />
+    </>
   );
 });

@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, Modal as ModalBase, spacing } from "@recidiviz/design-system";
+import {
+  Button,
+  Icon,
+  Modal as ModalBase,
+  spacing,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import styled from "styled-components/macro";
@@ -35,8 +40,6 @@ const StyledModal = styled(ModalBase)`
 `;
 
 const CloseButton = styled(Button).attrs({
-  icon: "Close",
-  iconSize: 16,
   kind: "borderless",
   shape: "block",
 })`
@@ -55,7 +58,10 @@ export const Modal: FC<
       isOpen={isOpen}
       onRequestClose={hideModal}
     >
-      <CloseButton onClick={hideModal} />
+      <CloseButton onClick={hideModal}>
+        {/* TODO(https://github.com/Recidiviz/web-libraries/issues/188): accessibility workaround */}
+        <Icon kind="Close" size={16} role="img" aria-label="Close" />
+      </CloseButton>
       {children}
     </StyledModal>
   );

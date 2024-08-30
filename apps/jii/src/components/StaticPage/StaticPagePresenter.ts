@@ -48,4 +48,8 @@ export class StaticPagePresenter {
   get contents() {
     return this.config.copy[this.pageId].fullPage;
   }
+
+  get htmlTitle() {
+    return this.config.copy[this.pageId].fullPageHtmlTitle;
+  }
 }

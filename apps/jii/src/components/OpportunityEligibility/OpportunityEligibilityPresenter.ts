@@ -130,4 +130,8 @@ export class OpportunityEligibilityPresenter implements Hydratable {
       linkUrl: `requirements`,
     };
   }
+
+  get htmlTitle() {
+    return this.config.htmlTitle;
+  }
 }
