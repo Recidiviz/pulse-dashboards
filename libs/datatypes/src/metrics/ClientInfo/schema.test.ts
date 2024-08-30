@@ -17,8 +17,8 @@
 
 import { mapValues } from "lodash";
 
-import { clientInfoSchema } from "../ClientInfo";
-import { rawClientInfoFixture } from "../offlineFixtures/ClientInfoFixture";
+import { rawClientInfoFixture } from "./fixture";
+import { clientInfoSchema } from "./schema";
 
 test("transformations", () => {
   expect(

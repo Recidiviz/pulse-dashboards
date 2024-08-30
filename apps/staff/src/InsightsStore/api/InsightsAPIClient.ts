@@ -18,6 +18,8 @@
 import {
   ClientEvent,
   clientEventSchema,
+  ClientInfo,
+  clientInfoSchema,
   insightsConfigSchema,
   MetricBenchmark,
   metricBenchmarkSchema,
@@ -26,7 +28,6 @@ import {
 import { formatDateToISO } from "../../utils";
 import type { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
-import { ClientInfo, clientInfoSchema } from "../models/ClientInfo";
 import {
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerSchema,

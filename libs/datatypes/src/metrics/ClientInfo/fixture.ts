@@ -17,7 +17,7 @@
 
 import { mapValues } from "lodash";
 
-import { ClientInfo, clientInfoSchema, RawClientInfo } from "../ClientInfo";
+import { ClientInfo, clientInfoSchema, RawClientInfo } from "./schema";
 
 export const rawClientInfoFixture: Record<string, RawClientInfo> = {
   "hashed-707222": {

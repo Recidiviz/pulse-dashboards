@@ -15,13 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ADVERSE_METRIC_IDS, FAVORABLE_METRIC_IDS } from "~datatypes";
+import {
+  ADVERSE_METRIC_IDS,
+  FAVORABLE_METRIC_IDS,
+  rawClientInfoFixture,
+} from "~datatypes";
 
 import {
   RawSupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventSchema,
 } from "../SupervisionOfficerMetricEvent";
-import { rawClientInfoFixture } from "./ClientInfoFixture";
 
 export const rawSupervisionOfficerMetricEventFixture: RawSupervisionOfficerMetricEvent[] =
   [

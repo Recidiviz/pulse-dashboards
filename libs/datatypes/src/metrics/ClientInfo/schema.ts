@@ -17,11 +17,9 @@
 
 import { z } from "zod";
 
-import {
-  addDisplayName,
-  dateStringSchemaWithoutTimeShift,
-  fullNameSchema,
-} from "~datatypes";
+import { addDisplayName } from "../../people/utils/addDisplayName";
+import { fullNameSchema } from "../../people/utils/fullNameSchema";
+import { dateStringSchemaWithoutTimeShift } from "../../utils/zod";
 
 export const clientInfoSchema = z
   .object({

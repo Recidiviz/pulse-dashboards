@@ -23,6 +23,8 @@ import { isDemoMode } from "~client-env-utils";
 import {
   ClientEvent,
   clientEventFixture,
+  ClientInfo,
+  clientInfoFixture,
   FAVORABLE_METRIC_IDS,
   InsightsConfigFixture,
   LATEST_END_DATE,
@@ -32,7 +34,6 @@ import {
 
 import type { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
-import { ClientInfo } from "../models/ClientInfo";
 import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
 import {
   ExcludedSupervisionOfficer,
@@ -222,10 +223,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   }
 
   async clientInfo(clientPseudoId: string): Promise<ClientInfo> {
-    const { clientInfoFixture } = await import(
-      "../models/offlineFixtures/ClientInfoFixture"
-    );
-
     const clientInfo = clientInfoFixture[clientPseudoId];
 
     if (!clientInfo) {

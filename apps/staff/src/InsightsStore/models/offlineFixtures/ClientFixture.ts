@@ -17,6 +17,8 @@
 
 import { size } from "lodash";
 
+import { clientInfoFixture } from "~datatypes";
+
 import { clientsData } from "../../../../../staff/tools/fixtures/clients";
 import { ClientRecord } from "../../../FirestoreStore";
 import { SupervisionOpportunityType } from "../../../WorkflowsStore";
@@ -24,7 +26,6 @@ import {
   mockUsXxOpp,
   mockUsXxTwoOpp,
 } from "../../../WorkflowsStore/Opportunity/__fixtures__";
-import { clientInfoFixture } from "./ClientInfoFixture";
 import { excludedSupervisionOfficerFixture } from "./ExcludedSupervisionOfficerFixture";
 import { supervisionOfficerFixture } from "./SupervisionOfficerFixture";
 

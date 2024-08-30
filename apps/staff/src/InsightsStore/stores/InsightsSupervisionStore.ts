@@ -23,6 +23,7 @@ import moment from "moment";
 
 import {
   ClientEvent,
+  ClientInfo,
   InsightsConfig,
   MetricBenchmark,
   MetricConfig,
@@ -37,7 +38,6 @@ import {
 } from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
 import { ActionStrategy } from "../models/ActionStrategy";
-import { ClientInfo } from "../models/ClientInfo";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,

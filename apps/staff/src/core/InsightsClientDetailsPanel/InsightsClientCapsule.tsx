@@ -20,7 +20,8 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { ClientInfo } from "../../InsightsStore/models/ClientInfo";
+import { ClientInfo } from "~datatypes";
+
 import { PersonInitialsAvatar } from "../Avatar";
 import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";

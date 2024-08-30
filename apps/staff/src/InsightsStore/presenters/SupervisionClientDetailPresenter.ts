@@ -20,10 +20,9 @@ import { pick } from "lodash/fp";
 import { flowResult, makeAutoObservable } from "mobx";
 import moment from "moment";
 
-import { ClientEvent } from "~datatypes";
+import { ClientEvent, ClientInfo } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
-import { ClientInfo } from "../models/ClientInfo";
 import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { ConfigLabels, SupervisionDetails } from "./types";

@@ -17,10 +17,14 @@
 
 import { z } from "zod";
 
-import { ClientEvent, InsightsConfig, MetricBenchmark } from "~datatypes";
+import {
+  ClientEvent,
+  ClientInfo,
+  InsightsConfig,
+  MetricBenchmark,
+} from "~datatypes";
 
 import { ACTION_STRATEGY_TYPE, ActionStrategy } from "../models/ActionStrategy";
-import { ClientInfo } from "../models/ClientInfo";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,

@@ -20,7 +20,8 @@ import moment from "moment";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { ClientInfo } from "../../InsightsStore/models/ClientInfo";
+import { ClientInfo } from "~datatypes";
+
 import { SupervisionDetails } from "../../InsightsStore/presenters/types";
 import {
   formatWorkflowsDate,
