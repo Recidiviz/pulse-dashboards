@@ -141,11 +141,11 @@ describe("fractionalDateBetweenTwoDates", () => {
 describe("filterByUserDistrict", () => {
   const userWithoutDistrict: CombinedUserRecord = {
     info: {
-      email: "test",
-      givenNames: "test",
-      id: "test",
+      email: "testEmail",
+      givenNames: "testGivenNames",
+      id: "testId",
       stateCode: "US_XX",
-      surname: "test",
+      surname: "testSurname",
       recordType: "supervisionStaff",
     },
   };
@@ -186,8 +186,12 @@ describe("filterByUserDistrict", () => {
     expect(filterByUserDistrict(user, {})).toEqual(expected);
   });
 
-  it("should be undefined if no district and no overrides", () => {
-    expect(filterByUserDistrict(userWithoutDistrict, {})).toBeUndefined();
+  it("should be restricted to email if no district and no overrides", () => {
+    const expected: StaffFilter = {
+      filterField: "email",
+      filterValues: ["testEmail"],
+    };
+    expect(filterByUserDistrict(userWithoutDistrict, {})).toEqual(expected);
   });
 
   it("can be overridden by a feature flag", () => {
@@ -209,11 +213,11 @@ describe("filterByUserDistrict", () => {
 describe("usCaFilterByRoleSubtype", () => {
   const userWithoutDistrictOrRole = {
     info: {
-      email: "test",
+      email: "testEmail",
       givenNames: "test",
-      id: "test",
+      id: "testId",
       stateCode: "US_XX",
-      surname: "test",
+      surname: "testSurname",
       recordType: "supervisionStaff" as const,
     },
   };
@@ -248,7 +252,7 @@ describe("usCaFilterByRoleSubtype", () => {
     ).toBeUndefined();
   });
 
-  it("should restrict to the user's id", () => {
+  it("should restrict to the user's email", () => {
     const user: CombinedUserRecord = {
       info: {
         ...userWithoutDistrictOrRole.info,
@@ -260,7 +264,7 @@ describe("usCaFilterByRoleSubtype", () => {
 
     const expected: StaffFilter = {
       filterField: "email",
-      filterValues: ["test"],
+      filterValues: ["testEmail"],
     };
 
     expect(usCaFilterByRoleSubtype(user, {})).toEqual(expected);
@@ -282,7 +286,7 @@ describe("usCaFilterByRoleSubtype", () => {
     expect(usCaFilterByRoleSubtype(user, {})).toEqual(expected);
   });
 
-  it("should restrict to the user's id with no district set", () => {
+  it("should restrict to the user's email with no district set", () => {
     const user: CombinedUserRecord = {
       info: {
         ...userWithoutDistrictOrRole.info,
@@ -291,7 +295,7 @@ describe("usCaFilterByRoleSubtype", () => {
 
     const expected: StaffFilter = {
       filterField: "email",
-      filterValues: [user.info.id],
+      filterValues: [user.info.email],
     };
 
     expect(usCaFilterByRoleSubtype(user, {})).toEqual(expected);

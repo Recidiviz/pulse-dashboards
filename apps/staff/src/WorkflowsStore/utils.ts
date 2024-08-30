@@ -217,7 +217,11 @@ export const filterByUserDistrict: StaffFilterFunction = (
     if (user.info.district) {
       filterValues = [user.info.district];
     } else {
-      return undefined;
+      // If the user doesn't have a district, only let them search for themselves
+      return {
+        filterField: "email",
+        filterValues: [user.info.email],
+      };
     }
   }
 
