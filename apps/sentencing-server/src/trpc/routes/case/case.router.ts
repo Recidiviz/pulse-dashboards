@@ -113,7 +113,10 @@ export const caseRouter = router({
             ...attributes,
             recommendedOpportunities: {
               set: attributes.recommendedOpportunities?.map((opportunity) => ({
-                opportunityName_providerName: opportunity,
+                opportunityName_providerName: {
+                  opportunityName: opportunity.opportunityName,
+                  providerName: opportunity.providerName,
+                },
               })),
             },
             offense: {

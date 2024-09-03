@@ -38,6 +38,8 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   lastSavedRecommendation,
   recommendedOpportunities,
   insight,
+  needs,
+  gender,
   externalId,
   handleRecommendationUpdate,
   saveRecommendation,
@@ -132,6 +134,10 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
     ? "Update"
     : "Create";
 
+  const opportunityDescriptions = recommendedOpportunities
+    ?.map((opp) => opp.genericDescription)
+    .filter((desc) => desc) as string[] | undefined;
+
   return (
     <>
       {showSummaryReport && (
@@ -141,6 +147,9 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
           insight={insight}
           externalId={externalId}
           selectedRecommendation={selectedRecommendation}
+          opportunityDescriptions={opportunityDescriptions}
+          needs={needs}
+          gender={gender}
           hideSummaryReport={hideSummaryReport}
           setCaseStatusCompleted={setCaseStatusCompleted}
         />

@@ -40,7 +40,7 @@ export type Case = Awaited<ReturnType<APIClient["getCaseDetails"]>>;
 
 export type Insight = NonNullable<Case["insight"]>;
 
-export type Client = Case["Client"];
+export type Client = NonNullable<Case["Client"]>;
 
 export type Opportunities = Awaited<
   ReturnType<tRPCClient["opportunity"]["getOpportunities"]["query"]>

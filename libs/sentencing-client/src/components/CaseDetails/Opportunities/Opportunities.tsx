@@ -155,7 +155,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: 10,
   });
 
   const table = useReactTable<OpportunitiesWithOppNameProviderName[number]>({
@@ -165,6 +165,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
       globalFilter,
       pagination,
     },
+    autoResetPageIndex: false,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: "includesString",
     getCoreRowModel: getCoreRowModel(),
@@ -194,7 +195,8 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 
   const opportunityDisplayNameToOpportunityNameProviderName = mapValues(
     opportunitiesByNameProviderName,
-    (opp) => pick(opp, ["opportunityName", "providerName"]),
+    (opp) =>
+      pick(opp, ["opportunityName", "providerName", "genericDescription"]),
   );
 
   // TODO(Recidiviz/recidiviz-data#30954) - Refactor structure and move outside of component. This is placeholder for now to display the UI banner.

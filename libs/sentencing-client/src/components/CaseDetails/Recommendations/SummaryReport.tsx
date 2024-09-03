@@ -19,7 +19,7 @@ import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import generatePDF from "react-to-pdf";
 
-import { Insight } from "../../../api";
+import { Case, Client, Insight } from "../../../api";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import CheckWhiteIcon from "../../assets/check-white-icon.svg?react";
 import CopyIcon from "../../assets/copy-icon.svg?react";
@@ -28,6 +28,7 @@ import * as Styled from "../CaseDetails.styles";
 import { PDF_PAGE_WIDTH } from "../constants";
 import { Report } from "../Recommendations/report/Report";
 import { SelectedRecommendation } from "../types";
+import { generateRecommendationSummary } from "./summaryUtils";
 
 const BUTTON_CHANGE_TIMEOUT = 2500;
 const TOAST_TIMEOUT = 3000;
@@ -38,6 +39,9 @@ type SummaryReportProps = {
   insight?: Insight;
   externalId: string;
   selectedRecommendation: SelectedRecommendation;
+  needs: Case["needsToBeAddressed"];
+  opportunityDescriptions?: string[];
+  gender?: Client["gender"];
   hideSummaryReport: () => void;
   setCaseStatusCompleted: () => void;
 };
@@ -48,16 +52,25 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   insight,
   externalId,
   selectedRecommendation,
+  needs,
+  opportunityDescriptions,
+  gender,
   hideSummaryReport,
   setCaseStatusCompleted,
 }) => {
   const targetRef = useRef<HTMLDivElement>(null);
-  const placeholderRecommendationSummary = `Based on ${fullName}'s multiple mental health diagnosis and high LSI-R score, we submit for the court's consideration that she may be a good candidate for a community-based assisted living program and/or a structured treatment program with an integrated continuum of care. A reentry program may also be appropriate given ${firstName}'s criminal history and high risk of recidivism.`;
+  const defaultRecommendationSummary = generateRecommendationSummary({
+    recommendation: selectedRecommendation,
+    fullName,
+    needs,
+    opportunityDescriptions,
+    gender,
+  });
 
   const [hasDownloadedReport, setHasDownloadedReport] = useState(false);
   const [hasCopiedText, setHasCopiedText] = useState(false);
   const [summaryValue, setSummaryValue] = useState(
-    placeholderRecommendationSummary,
+    defaultRecommendationSummary ?? "",
   );
 
   /** Handles the copying of the generated (and optionally edited) summary to a user's clipboard */

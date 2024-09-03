@@ -321,6 +321,7 @@ describe("case router", () => {
             {
               opportunityName: "opportunity-name",
               providerName: null,
+              genericDescription: null,
             },
           ],
         },

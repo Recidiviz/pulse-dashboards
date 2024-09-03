@@ -62,6 +62,7 @@ const OpportunitiesSchema = z.array(
       .nullable()
       // If providerName is null, we should default to OPPORTUNITY_UNKNOWN_PROVIDER_NAME
       .transform((v) => v ?? OPPORTUNITY_UNKNOWN_PROVIDER_NAME),
+    genericDescription: z.string().nullable(),
   }),
 );
 

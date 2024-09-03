@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../api";
+import { Case, Client, Insight } from "../../../api";
 import {
   OpportunitiesIdentifier,
   RecommendationType,
@@ -26,9 +26,11 @@ export type RecommendationsProps = {
   firstName?: string;
   fullName?: string;
   externalId: string;
+  gender?: Client["gender"];
   selectedRecommendation?: SelectedRecommendation;
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
+  needs: Case["needsToBeAddressed"];
   insight?: Insight;
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
@@ -50,4 +52,26 @@ export type RecommendationOption = {
   opportunities?: string[];
   recidivismRate?: number;
   historicalSentencingRate?: number;
+};
+
+export type GenerateRecommendationProps = {
+  recommendation?: keyof typeof RecommendationType | null;
+  fullName?: string;
+  needs: Case["needsToBeAddressed"];
+  opportunityDescriptions?: string[];
+  gender?: Client["gender"];
+};
+
+export type Pronouns = Record<
+  Client["gender"] | "UNKNOWN",
+  {
+    subject: string;
+    possessive: string;
+    object: string;
+    salutation: string | null;
+  }
+>;
+
+export type NeedsToDisplayName = {
+  [key in Case["needsToBeAddressed"][number]]?: string;
 };

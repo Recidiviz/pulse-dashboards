@@ -84,6 +84,7 @@ export const fakeOpportunity = {
   noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
   entryOfGuiltyPleaCriterion: false,
   veteranStatusCriterion: false,
+  genericDescription: null,
   lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
@@ -102,6 +103,7 @@ export const fakeOpportunity2 = {
   noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
   entryOfGuiltyPleaCriterion: false,
   veteranStatusCriterion: false,
+  genericDescription: null,
   lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
@@ -142,10 +144,12 @@ export const fakeCase = {
     {
       opportunityName: fakeOpportunity.opportunityName,
       providerName: fakeOpportunity.providerName,
+      genericDescription: null,
     },
     {
       opportunityName: fakeOpportunity2.opportunityName,
       providerName: fakeOpportunity2.providerName,
+      genericDescription: null,
     },
   ],
 };
@@ -154,7 +158,10 @@ export const fakeCasePrismaInput = {
   ...fakeCase,
   recommendedOpportunities: {
     connect: fakeCase.recommendedOpportunities.map((opportunity) => ({
-      opportunityName_providerName: opportunity,
+      opportunityName_providerName: {
+        opportunityName: opportunity.opportunityName,
+        providerName: opportunity.providerName,
+      },
     })),
   },
   offense: {

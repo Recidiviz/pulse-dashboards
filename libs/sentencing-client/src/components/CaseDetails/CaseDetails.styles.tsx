@@ -534,7 +534,7 @@ export const PlaceholderPdfPreview = styled.div`
   ${ReportPDFContainer} > div > div {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 30px;
   }
 `;
 
