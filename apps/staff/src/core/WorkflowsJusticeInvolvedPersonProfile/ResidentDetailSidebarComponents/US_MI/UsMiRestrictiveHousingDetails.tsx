@@ -47,7 +47,7 @@ export function UsMiRestrictiveHousing({
   const {
     daysInCollapsedSolitarySession,
     OPT,
-    lessThan3MonthsFromErd,
+    lessThan24MonthsFromErd,
     recentNonbondableOffenses,
     recentBondableOffenses,
     adSegStaysAndReasonsWithin3Yrs,
@@ -72,9 +72,9 @@ export function UsMiRestrictiveHousing({
 
           <DetailsSubheading>Misconduct History</DetailsSubheading>
           <SecureDetailsContent>{misconductHistory}</SecureDetailsContent>
-          <DetailsSubheading>Less than 3 months from ERD?</DetailsSubheading>
+          <DetailsSubheading>Less than 24 months from ERD?</DetailsSubheading>
           <SecureDetailsContent>
-            {lessThan3MonthsFromErd ? "Yes" : "No"}
+            {lessThan24MonthsFromErd ? "Yes" : "No"}
           </SecureDetailsContent>
           <DetailsSubheading>Mental health needs?</DetailsSubheading>
           <SecureDetailsContent>{OPT ? "Yes" : "No"}</SecureDetailsContent>

@@ -121,7 +121,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       metadata: {
         daysInCollapsedSolitarySession: 50,
         OPT: true,
-        lessThan3MonthsFromErd: true,
+        lessThan24MonthsFromErd: true,
         recentBondableOffenses:
           "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
         recentNonbondableOffenses: "(008, 2023-05-31)",
@@ -168,7 +168,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       metadata: {
         daysInCollapsedSolitarySession: 30,
         OPT: false,
-        lessThan3MonthsFromErd: false,
+        lessThan24MonthsFromErd: false,
         recentBondableOffenses: "(020, 2024-02-26)",
         recentNonbondableOffenses: "(008, 2023-05-31)",
         adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],
@@ -214,7 +214,7 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
       metadata: {
         daysInCollapsedSolitarySession: 30,
         OPT: false,
-        lessThan3MonthsFromErd: false,
+        lessThan24MonthsFromErd: false,
         recentBondableOffenses: "(020, 2024-02-26)",
         recentNonbondableOffenses: "(008, 2023-05-31)",
         adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],

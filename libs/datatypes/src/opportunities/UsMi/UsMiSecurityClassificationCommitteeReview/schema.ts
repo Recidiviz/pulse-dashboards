@@ -62,7 +62,7 @@ export const usMiSecurityClassificationCommitteeReviewSchema =
       recentNonbondableOffenses: z.string().optional(),
       adSegStaysAndReasonsWithin3Yrs: z.array(z.string()).optional(),
       OPT: z.boolean().optional(),
-      lessThan3MonthsFromErd: z.boolean().optional(),
+      lessThan24MonthsFromErd: z.boolean().optional(),
       neededProgramming: z.string().optional(),
       completedProgramming: z.string().optional(),
     }),

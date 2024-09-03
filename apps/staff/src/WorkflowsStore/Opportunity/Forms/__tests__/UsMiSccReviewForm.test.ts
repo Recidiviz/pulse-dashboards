@@ -97,7 +97,7 @@ function createTestUnit() {
     metadata: {
       daysInCollapsedSolitarySession: 35,
       OPT: false,
-      lessThan3MonthsFromErd: false,
+      lessThan24MonthsFromErd: false,
       recentBondableOffenses: "(423, 2023-12-27)",
       recentNonbondableOffenses: "(008, 2023-05-31)",
       adSegStaysAndReasonsWithin3Yrs: [
