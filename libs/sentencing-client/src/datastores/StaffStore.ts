@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette } from "@recidiviz/design-system";
+import { captureException } from "@sentry/react";
 import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
@@ -45,6 +46,7 @@ export class StaffStore {
       this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
       this.caseBriefsById = keyBy(this.staffInfo.Cases, "id");
     } catch (error) {
+      captureException(error);
       toast(
         "Something went wrong loading your cases. Please try again or contact us for support.",
         {

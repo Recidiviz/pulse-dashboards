@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import {
+  ErrorPage,
+  palette,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
+import { ErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -59,33 +65,42 @@ const PagePSI: React.FC = function PagePSI() {
   const { isMobile } = useIsMobile(true);
 
   return (
-    <Wrapper>
-      <NavigationLayout />
-      <Main isMobile={isMobile}>
-        <Routes>
-          <Route
-            index
-            element={
-              <Navigate
-                to={psiUrl("dashboard", {
-                  staffPseudoId: psiStore.staffPseudoId,
-                })}
-                replace
-              />
-            }
-          />
-          <Route
-            path={psiRoute({ routeName: "dashboard" })}
-            element={<Dashboard psiStore={psiStore} />}
-          />
-          <Route
-            path={psiRoute({ routeName: "caseDetails" })}
-            element={<CaseDetails psiStore={psiStore} />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Main>
-    </Wrapper>
+    <ErrorBoundary
+      fallback={
+        <ErrorPage headerText="Sorry, it looks like something went wrong...">
+          Please try refreshing the page or reach out to your contact at
+          Recidiviz for more assistance.
+        </ErrorPage>
+      }
+    >
+      <Wrapper>
+        <NavigationLayout />
+        <Main isMobile={isMobile}>
+          <Routes>
+            <Route
+              index
+              element={
+                <Navigate
+                  to={psiUrl("dashboard", {
+                    staffPseudoId: psiStore.staffPseudoId,
+                  })}
+                  replace
+                />
+              }
+            />
+            <Route
+              path={psiRoute({ routeName: "dashboard" })}
+              element={<Dashboard psiStore={psiStore} />}
+            />
+            <Route
+              path={psiRoute({ routeName: "caseDetails" })}
+              element={<CaseDetails psiStore={psiStore} />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Main>
+      </Wrapper>
+    </ErrorBoundary>
   );
 };
 

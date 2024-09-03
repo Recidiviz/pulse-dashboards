@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { palette } from "@recidiviz/design-system";
+import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
@@ -51,6 +52,7 @@ export class CaseStore {
         [caseId]: caseDetails,
       };
     } catch (error) {
+      captureException(error);
       toast(
         "Something went wrong loading the case details. Please try again or contact us for support.",
         {
@@ -66,6 +68,7 @@ export class CaseStore {
       if (!updates) return;
       yield this.psiStore.apiClient.updateCaseDetails(caseId, updates);
     } catch (error) {
+      captureException(error);
       toast(
         "Something went wrong updating the case details. Please try again or contact us for support.",
         {
@@ -81,6 +84,7 @@ export class CaseStore {
       this.communityOpportunities =
         yield this.psiStore.apiClient.getCommunityOpportunities();
     } catch (error) {
+      captureException(error);
       toast(
         "Something went wrong loading the community opportunities. Please try again or contact us for support.",
         {
@@ -95,6 +99,7 @@ export class CaseStore {
     try {
       this.offenses = yield this.psiStore.apiClient.getOffenses();
     } catch (error) {
+      captureException(error);
       toast(
         "Something went wrong loading a list of offenses. Please try again or contact us for support.",
         {
