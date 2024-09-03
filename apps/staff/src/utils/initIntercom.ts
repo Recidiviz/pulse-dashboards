@@ -15,15 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const APP_ID = import.meta.env.VITE_INTERCOM_APP_ID;
+import Intercom from "@intercom/messenger-js-sdk";
 
-function initIntercomSettings() {
-  window.intercomSettings = {
-    app_id: APP_ID,
-    hide_default_launcher: true,
-  };
-
-  window.Intercom("boot", window.intercomSettings);
+function initIntercom() {
+  const appId = import.meta.env.VITE_INTERCOM_APP_ID;
+  Intercom({ app_id: appId, hide_default_launcher: true });
 }
 
-export default initIntercomSettings;
+export default initIntercom;

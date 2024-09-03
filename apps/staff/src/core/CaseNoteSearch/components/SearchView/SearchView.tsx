@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { show } from "@intercom/messenger-js-sdk";
 import { palette, Sans24, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
@@ -54,6 +55,16 @@ export const EmptyTitle = styled(Sans24)`
 
 export const StyledLink = styled(Link)`
   color: ${palette.signal.links} !important;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const LinkButton = styled.button`
+  color: ${palette.signal.links} !important;
+  border: none;
+  background-color: unset;
+
   &:hover {
     text-decoration: underline;
   }
@@ -121,6 +132,10 @@ export function SearchView({
 }) {
   let resultsViz = null;
 
+  function provideFeedback() {
+    show();
+  }
+
   switch (resultsStatus) {
     case "NO_RESULTS":
       resultsViz = (
@@ -129,9 +144,7 @@ export function SearchView({
           <NoteTextLight>
             You may want to try using different keywords or checking for typos.
           </NoteTextLight>
-          <StyledLink to="mailto:feedback@recidiviz.org">
-            Provide Feedback
-          </StyledLink>
+          <LinkButton onClick={provideFeedback}>Provide Feedback</LinkButton>
         </EmptyWrapper>
       );
       break;
@@ -188,10 +201,10 @@ export function SearchView({
         <ModalDescription>
           Case Note Search is now available in its beta version! You’re getting
           a first look at our latest innovation, and your feedback is crucial in
-          helping us refine and improve it.&nbsp;
-          <StyledLink to="https://recidiviz.org">
+          helping us refine and improve it.
+          <LinkButton onClick={provideFeedback}>
             Share feedback on search
-          </StyledLink>
+          </LinkButton>
         </ModalDescription>
         <CaseNoteSearchInput
           hasPrototypeBadge={false}

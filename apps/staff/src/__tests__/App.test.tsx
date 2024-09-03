@@ -26,6 +26,8 @@ import StoreProvider, { useRootStore } from "../components/StoreProvider";
 import VerificationNeeded from "../components/VerificationNeeded";
 import ProtectedLayout from "../ProtectedLayout";
 
+// Mock out intercom so it doesn't throw errors during render
+vi.mock("@intercom/messenger-js-sdk");
 vi.mock("mobx-react-lite", () => {
   return {
     observer: (component: any) => component,

@@ -15,11 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { renderHook } from "@testing-library/react";
+import { update } from "@intercom/messenger-js-sdk";
+import { renderHook, RenderHookResult } from "@testing-library/react";
+import { Mock, vi } from "vitest";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIntercom from "../useIntercom";
 
+const mockUseRootStore = useRootStore as Mock;
+
+vi.mock("@intercom/messenger-js-sdk");
 vi.mock("../../components/StoreProvider");
 
 describe("useIntercom hook tests", () => {
@@ -41,14 +46,11 @@ describe("useIntercom hook tests", () => {
     intercomId: mockIntercomId,
   };
 
-  const intercom = vi.fn();
-  window.Intercom = intercom;
-
-  let rendered;
+  let rendered: RenderHookResult<void, unknown>;
 
   beforeEach(() => {
     vi.resetAllMocks();
-    useRootStore.mockReturnValue({
+    mockUseRootStore.mockReturnValue({
       userStore: {
         user: mockUser,
         userAppMetadata: mockUserAppMetadata,
@@ -59,7 +61,7 @@ describe("useIntercom hook tests", () => {
   });
 
   it("should update intercom with user data", () => {
-    expect(intercom).toHaveBeenCalledWith("update", {
+    expect(update).toHaveBeenCalledWith({
       state_code: mockStateCode,
       name: mockName,
       nickname: mockNickname,
@@ -74,15 +76,15 @@ describe("useIntercom hook tests", () => {
     const mockNewName = "some new user name";
     mockUser.name = mockNewName;
 
-    useRootStore.mockReturnValue({
+    mockUseRootStore.mockReturnValue({
       userStore: { user: mockUser, userAppMetadata: mockUserAppMetadata },
       tenantStore: { currentTenantId: mockStateCode },
     });
 
     rendered.rerender();
 
-    expect(intercom).toHaveBeenCalledTimes(2);
-    expect(intercom).toHaveBeenLastCalledWith("update", {
+    expect(update).toHaveBeenCalledTimes(2);
+    expect(update).toHaveBeenLastCalledWith({
       state_code: mockStateCode,
       name: mockNewName,
       nickname: mockNickname,
@@ -96,8 +98,8 @@ describe("useIntercom hook tests", () => {
   it("should hide intercom on unmount", () => {
     rendered.unmount();
 
-    expect(intercom).toHaveBeenCalledTimes(2);
-    expect(intercom).toHaveBeenLastCalledWith("update", {
+    expect(update).toHaveBeenCalledTimes(2);
+    expect(update).toHaveBeenLastCalledWith({
       hide_default_launcher: true,
     });
   });

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { update } from "@intercom/messenger-js-sdk";
 import { useEffect } from "react";
 
 import { useRootStore } from "../components/StoreProvider";
@@ -24,7 +25,7 @@ const useIntercom = () => {
   const { user, userAppMetadata = {} } = userStore;
 
   useEffect(() => {
-    window.Intercom("update", {
+    update({
       state_code: tenantStore.currentTenantId,
       name: user.name,
       nickname: user.nickname,
@@ -45,7 +46,7 @@ const useIntercom = () => {
 
   useEffect(() => {
     return () => {
-      window.Intercom("update", { hide_default_launcher: true });
+      update({ hide_default_launcher: true });
     };
   }, []);
 };

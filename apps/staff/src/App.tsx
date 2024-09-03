@@ -32,10 +32,10 @@ import StyledToaster from "./components/StyledToaster";
 import VerificationNeeded from "./components/VerificationNeeded";
 import ProtectedLayout from "./ProtectedLayout";
 import { initI18n } from "./utils/i18nSettings";
-import initIntercomSettings from "./utils/initIntercomSettings";
+import initIntercom from "./utils/initIntercom";
 
 if (!isDemoMode()) {
-  initIntercomSettings();
+  initIntercom();
 }
 initI18n();
 

@@ -15,18 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Intercom from "@intercom/messenger-js-sdk";
+import { vi } from "vitest";
+
+import initIntercomSettings from "../initIntercom";
+
 const mockIntercomAppId = "some app id";
 
-describe("initIntercomSettings tests", () => {
-  const intercom = vi.fn();
-  let initIntercomSettings;
+vi.mock("@intercom/messenger-js-sdk");
 
+describe("initIntercomSettings tests", () => {
   beforeEach(async () => {
     vi.resetModules();
-    vi.stubGlobal("Intercom", intercom);
     vi.stubEnv("VITE_INTERCOM_APP_ID", mockIntercomAppId);
-
-    initIntercomSettings = (await import("../initIntercomSettings")).default;
   });
 
   afterEach(() => {
@@ -36,8 +37,7 @@ describe("initIntercomSettings tests", () => {
   it("should set intercom app id and boot hidden intercom with settings", () => {
     initIntercomSettings();
 
-    expect(window.intercomSettings.app_id).toBe(mockIntercomAppId);
-    expect(intercom).toHaveBeenCalledWith("boot", {
+    expect(Intercom).toHaveBeenCalledWith({
       app_id: mockIntercomAppId,
       hide_default_launcher: true,
     });
