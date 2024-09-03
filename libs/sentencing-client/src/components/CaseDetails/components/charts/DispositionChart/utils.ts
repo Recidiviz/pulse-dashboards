@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../api";
-import { getGenderString, getLsirScoreString } from "../common/utils";
+import { Insight } from "../../../../../api";
+import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
 export function getDispositionChartSubtitle(insight: Insight) {
   const {
@@ -25,8 +25,8 @@ export function getDispositionChartSubtitle(insight: Insight) {
     assessmentScoreBucketEnd,
     offense,
   } = insight;
-  const genderString = getGenderString(gender);
-  const lsirScoreString = getLsirScoreString(
+  const genderString = getSubtitleGender(gender);
+  const lsirScoreString = getSubtitleLsirScore(
     assessmentScoreBucketStart,
     assessmentScoreBucketEnd,
   );

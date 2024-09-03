@@ -18,6 +18,14 @@
 import { palette, typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
+import { customPalette } from "../../../../../components/styles/palette";
+
+export const TextContainer = styled.div`
+  span {
+    font-weight: bold;
+  }
+`;
+
 export const ChartTitle = styled.div`
   ${typography.Sans18};
   display: flex;
@@ -36,5 +44,17 @@ export const ChartSubTitle = styled.div`
   span {
     font-weight: 400;
     font-style: italic;
+  }
+`;
+
+export const ChartTooltipContentSection = styled.div`
+  &:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  span {
+    ${typography.Sans12}
+    font-weight: 700;
+    color: ${customPalette.green.highlight};
   }
 `;

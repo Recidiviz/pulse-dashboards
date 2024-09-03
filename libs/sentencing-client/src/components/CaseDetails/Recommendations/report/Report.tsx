@@ -20,12 +20,10 @@ import moment from "moment";
 import { Insight } from "../../../../api";
 import RecidivizLogo from "../../../assets/recidiviz-logo.png";
 import { SelectedRecommendation } from "../../../CaseDetails/types";
-import { DispositionChart } from "../../components/DispositionChart/DispositionChart";
-import { RecidivismPlot } from "../../components/RecidivismPlot/RecidivismPlot";
-import {
-  DispositionExplanation,
-  RecidivismPlotExplanation,
-} from "./Descriptions";
+import { DispositionChart } from "../../components/charts/DispositionChart/DispositionChart";
+import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
+import { RecidivismPlot } from "../../components/charts/RecidivismPlot/RecidivismPlot";
+import { RecidivismPlotExplanation } from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
 import * as Styled from "./Report.styles";
 
 const PLOT_WIDTH = 850;
@@ -97,7 +95,9 @@ export function Report({
               plotWidth={PLOT_WIDTH}
             />
           </Styled.PlotContainer>
-          <RecidivismPlotExplanation insight={insight} />
+          <Styled.Explanation>
+            <RecidivismPlotExplanation insight={insight} />
+          </Styled.Explanation>
         </div>
         <Footer pageNumber={1} />
       </Styled.Page>
@@ -113,7 +113,9 @@ export function Report({
             scale={1.5}
           />
         </Styled.PlotContainer>
-        <DispositionExplanation insight={insight} />
+        <Styled.Explanation>
+          <DispositionChartExplanation insight={insight} />
+        </Styled.Explanation>
         <Footer pageNumber={2} />
       </Styled.Page>
     </Styled.ReportContainer>

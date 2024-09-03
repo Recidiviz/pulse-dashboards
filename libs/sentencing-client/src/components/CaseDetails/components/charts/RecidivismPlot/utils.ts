@@ -29,11 +29,11 @@ import {
   tip,
 } from "@observablehq/plot";
 
-import { Insight } from "../../../../api";
-import { convertDecimalToPercentage } from "../../../../utils/utils";
-import { RecommendationType, SelectedRecommendation } from "../../types";
+import { Insight } from "../../../../../api";
+import { convertDecimalToPercentage } from "../../../../../utils/utils";
+import { RecommendationType, SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
-import { getGenderString, getLsirScoreString } from "../common/utils";
+import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
 export function getRecidivismPlotSubtitle(insight: Insight) {
   const {
@@ -47,8 +47,8 @@ export function getRecidivismPlotSubtitle(insight: Insight) {
     rollupViolentOffense,
   } = insight;
 
-  const genderString = getGenderString(rollupGender);
-  const lsirScoreString = getLsirScoreString(
+  const genderString = getSubtitleGender(rollupGender);
+  const lsirScoreString = getSubtitleLsirScore(
     rollupAssessmentScoreBucketStart,
     rollupAssessmentScoreBucketEnd,
   );

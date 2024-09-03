@@ -18,8 +18,8 @@
 import { Insight } from "../../../api/APIClient";
 import DraggableScrollContainer from "../../DraggableScrollContainer/DraggableScrollContainer";
 import * as Styled from "../CaseDetails.styles";
-import { DispositionChart } from "../components/DispositionChart/DispositionChart";
-import { RecidivismPlot } from "../components/RecidivismPlot/RecidivismPlot";
+import { DispositionChart } from "../components/charts/DispositionChart/DispositionChart";
+import { RecidivismPlot } from "../components/charts/RecidivismPlot/RecidivismPlot";
 import { SelectedRecommendation } from "../types";
 
 export interface InsightsProps {
@@ -53,18 +53,18 @@ export const Insights = ({
         <Styled.Charts>
           {/* Cumulative Recidivism Rates Chart */}
           <Styled.Chart $marginRight={16}>
-          <RecidivismPlot
-            insight={insight}
-            selectedRecommendation={selectedRecommendation}
-          />
+            <RecidivismPlot
+              insight={insight}
+              selectedRecommendation={selectedRecommendation}
+            />
           </Styled.Chart>
 
           {/* Previous Sentence Rates Chart */}
           <Styled.Chart>
-          <DispositionChart
-            insight={insight}
-            selectedRecommendation={selectedRecommendation}
-          />
+            <DispositionChart
+              insight={insight}
+              selectedRecommendation={selectedRecommendation}
+            />
           </Styled.Chart>
         </Styled.Charts>
       </DraggableScrollContainer>

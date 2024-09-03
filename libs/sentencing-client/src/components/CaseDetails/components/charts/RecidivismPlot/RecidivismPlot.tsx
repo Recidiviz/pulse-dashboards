@@ -15,16 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../api";
-import { InfoIconWithTooltip } from "../../../Tooltip/Tooltip";
-import {
-  TooltipContentSection,
-  TooltipTextHighlight,
-} from "../../../Tooltip/Tooltip.styles";
-import { SelectedRecommendation } from "../../types";
+import { Insight } from "../../../../../api";
+import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
+import { SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
-import * as CommonStyled from "../common/Styles";
+import * as CommonStyled from "../components/Styles";
 import * as Styled from "./RecidivismPlot.styles";
+import { RecidivismPlotExplanation } from "./RecidivismPlotExplanation";
 import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
 
 const DEFAULT_PLOT_WIDTH = 704;
@@ -64,25 +61,9 @@ export function RecidivismPlot({
         <InfoIconWithTooltip
           headerText="Previous Sentences"
           content={
-            <TooltipContentSection>
-              These recidivism rates represent the percentage of individuals who
-              have been convicted of a subsequent offense or violated the
-              conditions of their probation or parole over the course of the
-              three years immediately after their release into the community.
-              The rates are based on{" "}
-              <TooltipTextHighlight>{insight.gender}</TooltipTextHighlight> with{" "}
-              <TooltipTextHighlight>
-                LSI-R scores between {insight.assessmentScoreBucketStart} and{" "}
-                {insight.assessmentScoreBucketEnd}
-              </TooltipTextHighlight>{" "}
-              with{" "}
-              <TooltipTextHighlight>
-                {insight.offense} convictions{" "}
-              </TooltipTextHighlight>
-              from 2010-2021. The shaded areas represent the confidence
-              intervals, or the range of possible values for the true recidivism
-              rate.
-            </TooltipContentSection>
+            <CommonStyled.ChartTooltipContentSection>
+              <RecidivismPlotExplanation insight={insight} />
+            </CommonStyled.ChartTooltipContentSection>
           }
         />
       </CommonStyled.ChartTitle>

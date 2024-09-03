@@ -15,13 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../api";
+import _ from "lodash";
 
-export function getGenderString(gender: Insight["rollupGender"]) {
-  return gender ? `${gender}s` : undefined;
+import { Insight } from "../../../../../api/APIClient";
+import { Gender } from "../../../types";
+
+export function getDescriptionGender(rollupGender: Insight["gender"]) {
+  let genderString;
+  if (Gender[rollupGender] === Gender.MALE) {
+    genderString = "men";
+  } else if (Gender[rollupGender] === Gender.FEMALE) {
+    genderString = "women";
+  } else if (Gender[rollupGender] === Gender.NON_BINARY) {
+    genderString = "non-binary people";
+  } else if (Gender[rollupGender] === Gender.TRANS) {
+    genderString = "trans people";
+  } else if (Gender[rollupGender] === Gender.TRANS_FEMALE) {
+    genderString = "trans women";
+  } else if (Gender[rollupGender] === Gender.TRANS_MALE) {
+    genderString = "trans men";
+  }
+
+  return ` ${genderString}`;
 }
 
-export function getLsirScoreString(
+export function getSubtitleGender(gender: Insight["rollupGender"]) {
+  return gender
+    ? `${_.chain(gender).lowerCase().startCase().value()}s`
+    : undefined;
+}
+
+export function getSubtitleLsirScore(
   rollupAssessmentScoreBucketStart: number | null,
   rollupAssessmentScoreBucketEnd: number | null,
 ) {

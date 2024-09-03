@@ -15,20 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../api";
-import { convertDecimalToPercentage } from "../../../../utils/utils";
-import { InfoIconWithTooltip } from "../../../Tooltip/Tooltip";
-import {
-  TooltipContentSection,
-  TooltipTextHighlight,
-} from "../../../Tooltip/Tooltip.styles";
-import { SelectedRecommendation } from "../../types";
+import { Insight } from "../../../../../api";
+import { convertDecimalToPercentage } from "../../../../../utils/utils";
+import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
+import { SelectedRecommendation } from "../../../types";
 import {
   RECOMMENDATION_TYPE_TO_BORDER_COLOR,
   RECOMMENDATION_TYPE_TO_COLOR,
 } from "../common/constants";
-import * as CommonStyled from "../common/Styles";
+import * as CommonStyled from "../components/Styles";
 import * as Styled from "./DispositionChart.styles";
+import { DispositionChartExplanation } from "./DispositionChartExplanation";
 import { getDispositionChartSubtitle } from "./utils";
 
 const MIN_CIRCLE_HEIGHT = 60;
@@ -70,20 +67,9 @@ export function DispositionChart({
         <InfoIconWithTooltip
           headerText="Previous Sentences"
           content={
-            <TooltipContentSection>
-              This information represents the percentage of cases sentenced to a
-              particular dispositions over the past 3 years. The rates are based
-              on <TooltipTextHighlight>{insight.gender}</TooltipTextHighlight>{" "}
-              with{" "}
-              <TooltipTextHighlight>
-                LSI-R scores between {insight.assessmentScoreBucketStart} and{" "}
-                {insight.assessmentScoreBucketEnd}
-              </TooltipTextHighlight>{" "}
-              with{" "}
-              <TooltipTextHighlight>
-                {insight.offense} convictions.
-              </TooltipTextHighlight>
-            </TooltipContentSection>
+            <CommonStyled.ChartTooltipContentSection>
+              <DispositionChartExplanation insight={insight} />
+            </CommonStyled.ChartTooltipContentSection>
           }
         />
       </CommonStyled.ChartTitle>

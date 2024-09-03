@@ -15,76 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../api";
-import { Gender } from "../../types";
-import * as Styled from "./Report.styles";
+import React from "react";
 
-function getGenderString(rollupGender: Insight["gender"]) {
-  let genderString;
-  if (Gender[rollupGender] === Gender.MALE) {
-    genderString = "men";
-  } else if (Gender[rollupGender] === Gender.FEMALE) {
-    genderString = "women";
-  } else if (Gender[rollupGender] === Gender.NON_BINARY) {
-    genderString = "non-binary people";
-  } else if (Gender[rollupGender] === Gender.TRANS) {
-    genderString = "trans people";
-  } else if (Gender[rollupGender] === Gender.TRANS_FEMALE) {
-    genderString = "trans women";
-  } else if (Gender[rollupGender] === Gender.TRANS_MALE) {
-    genderString = "trans men";
-  }
-
-  return ` ${genderString}`;
-}
+import { Insight } from "../../../../../api";
+import { getDescriptionGender } from "../common/utils";
+import { LsirScoreText } from "../components/LsirScoreText";
+import { TextContainer } from "../components/Styles";
 
 function getRollupGenderString(rollupGender: Insight["rollupGender"]) {
   if (rollupGender === null) {
     return undefined;
   }
 
-  return getGenderString(rollupGender);
-}
-
-interface LsirScoreSpanProps {
-  rollupAssessmentScoreBucketStart: number | null;
-  rollupAssessmentScoreBucketEnd: number | null;
-}
-
-function LsirScoreSpan({
-  rollupAssessmentScoreBucketStart,
-  rollupAssessmentScoreBucketEnd,
-}: LsirScoreSpanProps) {
-  if (
-    rollupAssessmentScoreBucketStart === null ||
-    rollupAssessmentScoreBucketStart === -1 ||
-    rollupAssessmentScoreBucketEnd === null
-  ) {
-    return null;
-  }
-
-  if (rollupAssessmentScoreBucketEnd === -1) {
-    return (
-      <span>
-        {" "}
-        with{" "}
-        <Styled.Bold>
-          LSI-R scores of at least {rollupAssessmentScoreBucketStart}
-        </Styled.Bold>
-      </span>
-    );
-  }
-
-  return (
-    <span>
-      {" "}
-      with{" "}
-      <Styled.Bold>
-        LSI-R scores between {rollupAssessmentScoreBucketStart} and{" "}
-        {rollupAssessmentScoreBucketEnd}
-      </Styled.Bold>
-    </span>
-  );
+  return getDescriptionGender(rollupGender);
 }
 
 interface OffenseSpanProps {
@@ -94,7 +37,7 @@ interface OffenseSpanProps {
   rollupViolentOffense: boolean | null;
 }
 
-function OffenseSpan({
+function OffenseText({
   rollupOffense,
   rollupNcicCategory,
   rollupCombinedOffenseCategory,
@@ -108,10 +51,10 @@ function OffenseSpan({
     (rollupViolentOffense === false ? "non-violent" : null);
 
   return offenseString ? (
-    <span>
+    <>
       {" "}
-      with <Styled.Bold>{offenseString} convictions</Styled.Bold>
-    </span>
+      with <span>{offenseString} convictions</span>
+    </>
   ) : null;
 }
 
@@ -135,18 +78,18 @@ export function RecidivismPlotExplanation({
   const genderString = getRollupGenderString(rollupGender);
 
   return (
-    <Styled.Explanation>
+    <TextContainer>
       These recidivism rates represent the percentage of individuals who have
       been convicted of a subsequent offense or violated the conditions of their
       probation or parole over the course of the three years immediately after
       their release into the community. The rates are based on{" "}
       <span>
-        <Styled.Bold>{genderString ?? "all people"}</Styled.Bold>
-        <LsirScoreSpan
+        <span>{genderString ?? "all people"}</span>
+        <LsirScoreText
           rollupAssessmentScoreBucketStart={rollupAssessmentScoreBucketStart}
           rollupAssessmentScoreBucketEnd={rollupAssessmentScoreBucketEnd}
         />
-        <OffenseSpan
+        <OffenseText
           rollupOffense={rollupOffense}
           rollupNcicCategory={rollupNcicCategory}
           rollupCombinedOffenseCategory={rollupCombinedOffenseCategory}
@@ -155,38 +98,6 @@ export function RecidivismPlotExplanation({
       </span>
       . The shaded areas represent the confidence intervals, or the range of
       possible values for the true recidivism rate.
-    </Styled.Explanation>
-  );
-}
-
-interface DispositionExplanationProps {
-  insight: Insight;
-}
-
-export function DispositionExplanation({
-  insight,
-}: DispositionExplanationProps) {
-  const {
-    gender,
-    assessmentScoreBucketStart,
-    assessmentScoreBucketEnd,
-    offense,
-  } = insight;
-  const genderString = getGenderString(gender);
-
-  return (
-    <Styled.Explanation>
-      This information represents the percentage of cases sentenced to
-      particular dispositions over the past three years. The rates are based on{" "}
-      <span>
-        <Styled.Bold>{genderString}</Styled.Bold>
-        <LsirScoreSpan
-          rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
-          rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
-        />{" "}
-        with <Styled.Bold>{offense} convictions</Styled.Bold>
-      </span>
-      .
-    </Styled.Explanation>
+    </TextContainer>
   );
 }
