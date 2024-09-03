@@ -225,6 +225,8 @@ export async function transformAndLoadOpportunityData(data: unknown) {
         "minAge",
         "maxAge",
         "district",
+        "additionalNotes",
+        "genericDescription",
       ]),
       opportunityName: opportunityData.OpportunityName,
       description: opportunityData.Description,
@@ -237,6 +239,8 @@ export async function transformAndLoadOpportunityData(data: unknown) {
       totalCapacity: opportunityData.CapacityTotal,
       availableCapacity: opportunityData.CapacityAvailable,
       needsAddressed: opportunityData.NeedsAddressed,
+      genders: opportunityData.genders ?? [],
+      lastUpdatedAt: opportunityData.lastUpdatedDate,
     };
   });
 

@@ -49,6 +49,8 @@ import {
   fakeStaff,
 } from "~sentencing-server/test/setup/seed";
 
+const lastUpdatedDate = new Date(1, 1, 1);
+
 describe("handle_import", () => {
   test("should return 500 if data is malformed", async () => {
     dataProviderSingleton.setData([
@@ -637,6 +639,10 @@ describe("handle_import", () => {
           minAge: 35,
           maxAge: 55,
           district: "D1",
+          lastUpdatedDate: lastUpdatedDate,
+          additionalNotes: "new-opportunity-notes",
+          genders: ["Men"],
+          genericDescription: "new-opportunity-generic-description",
         },
       ]);
 
@@ -681,6 +687,10 @@ describe("handle_import", () => {
           minAge: 35,
           maxAge: 55,
           district: "D1",
+          lastUpdatedAt: lastUpdatedDate,
+          additionalNotes: "new-opportunity-notes",
+          genders: [Gender.MALE],
+          genericDescription: "new-opportunity-generic-description",
         }),
       );
     });
@@ -705,6 +715,7 @@ describe("handle_import", () => {
           veteranStatusCriterion: false,
           NeedsAddressed: [],
           diagnosedMentalHealthDiagnosisCriterion: [],
+          lastUpdatedDate: lastUpdatedDate,
         },
         // New opportunity
         {
@@ -724,6 +735,7 @@ describe("handle_import", () => {
           veteranStatusCriterion: false,
           NeedsAddressed: [],
           diagnosedMentalHealthDiagnosisCriterion: [],
+          lastUpdatedDate: lastUpdatedDate,
         },
       ]);
 
@@ -769,6 +781,7 @@ describe("handle_import", () => {
             noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
             entryOfGuiltyPleaCriterion: false,
             veteranStatusCriterion: false,
+            lastUpdatedAt: lastUpdatedDate,
           },
           {
             opportunityName: "new-opportunity-name",
@@ -785,6 +798,7 @@ describe("handle_import", () => {
             noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
             entryOfGuiltyPleaCriterion: false,
             veteranStatusCriterion: false,
+            lastUpdatedAt: lastUpdatedDate,
           },
         ],
       });
@@ -808,6 +822,7 @@ describe("handle_import", () => {
           veteranStatusCriterion: false,
           NeedsAddressed: [],
           diagnosedMentalHealthDiagnosisCriterion: [],
+          lastUpdatedDate: lastUpdatedDate,
         },
       ]);
 

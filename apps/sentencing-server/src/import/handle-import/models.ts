@@ -129,6 +129,10 @@ export const staffImportSchema = z.array(
     }),
 );
 
+const opportunityGender = z
+  .enum(["Women", "Men"])
+  .transform((v) => (v === "Women" ? Gender.FEMALE : Gender.MALE));
+
 export const opportunityImportSchema = z.array(
   z.object({
     OpportunityName: z.string(),
@@ -164,6 +168,10 @@ export const opportunityImportSchema = z.array(
     minAge: z.coerce.number().optional(),
     maxAge: z.coerce.number().optional(),
     district: z.string().optional(),
+    lastUpdatedDate: z.coerce.date(),
+    additionalNotes: z.string().optional(),
+    genders: z.array(opportunityGender).optional(),
+    genericDescription: z.string().optional(),
   }),
 );
 

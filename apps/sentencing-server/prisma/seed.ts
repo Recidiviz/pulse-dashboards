@@ -159,6 +159,7 @@ async function main() {
       diagnosedSubstanceUseDisorderCriterion: faker.helpers.enumValue(
         DiagnosedSubstanceUseDisorderCriterion,
       ),
+      lastUpdatedAt: faker.date.recent(),
     });
   }
 

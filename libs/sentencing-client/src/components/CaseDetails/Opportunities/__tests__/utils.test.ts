@@ -48,6 +48,10 @@ describe("filterEligibleOpportunities", () => {
     minLsirScoreCriterion: 5,
     maxLsirScoreCriterion: 25,
     district: "D1",
+    lastUpdatedAt: new Date(),
+    additionalNotes: null,
+    genders: [],
+    genericDescription: null,
   };
   let attributes: EligibilityAttributes;
 
@@ -489,6 +493,10 @@ describe("filterEligibleOpportunities", () => {
       maxLsirScoreCriterion: null,
       noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
       district: null,
+      lastUpdatedAt: new Date(),
+      additionalNotes: null,
+      genders: [],
+      genericDescription: null,
     };
 
     attributes = {

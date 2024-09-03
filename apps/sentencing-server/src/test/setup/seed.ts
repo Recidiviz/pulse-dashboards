@@ -84,6 +84,7 @@ export const fakeOpportunity = {
   noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
   entryOfGuiltyPleaCriterion: false,
   veteranStatusCriterion: false,
+  lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
 export const fakeOpportunity2 = {
@@ -101,6 +102,7 @@ export const fakeOpportunity2 = {
   noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
   entryOfGuiltyPleaCriterion: false,
   veteranStatusCriterion: false,
+  lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
 export const fakeCase = {

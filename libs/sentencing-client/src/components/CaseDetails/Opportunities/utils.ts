@@ -18,7 +18,7 @@
 import { Opportunities } from "../../../api";
 import { FormValue, RecommendationType } from "../types";
 import { eligibilityCriteriaToLabelName } from "./constants";
-import { EligibilityAttributes } from "./types";
+import { EligibilityAttributes, EligibilityCriteria } from "./types";
 
 const DEFAULT_MIN_NUMBER = 0;
 const DEFAULT_MAX_NUMBER = 1000;
@@ -38,7 +38,7 @@ export const createOpportunityProviderDisplayName = (
 
 const eligibilityCriteriaKeys = Object.keys(
   eligibilityCriteriaToLabelName,
-) as (keyof Opportunities[number])[];
+) as (keyof EligibilityCriteria)[];
 
 export const getEligibilityCriteria = (opportunity: Opportunities[number]) => {
   return eligibilityCriteriaKeys.reduce(

@@ -220,6 +220,7 @@ enum OnboardingTopic {
 
 model Opportunity {
   id                  String              @id @default(cuid())
+  lastUpdatedAt       DateTime
   opportunityName     String
   providerName        String
   description         String?
@@ -229,6 +230,7 @@ model Opportunity {
   totalCapacity       Int?
   availableCapacity   Int?
   needsAddressed      NeedToBeAddressed[]
+  additionalNotes     String?
 
   // Eligibility Criteria
   developmentalDisabilityDiagnosisCriterion             Boolean
@@ -246,6 +248,8 @@ model Opportunity {
   minAge                                                Int?
   maxAge                                                Int?
   district                                              String?
+  genders                                               Gender[]
+  genericDescription                                    String?
 
   cases Case[]
 
