@@ -175,8 +175,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         // but the data doesn't show them as being supervision line staff or a supervision supervisor.
         // In that case, they will have a role of "unknown" and no permissions.
         const hasNoPermissions =
-          !!restrictions.routes ||
-          Object.keys(restrictions.routes).length === 0;
+          !restrictions.routes || Object.keys(restrictions.routes).length === 0;
         // Users in lantern states are allowed to have no routes; they'll just get redirected to
         // lantern. TODO(#4731): restrict lantern access based on routes.
         const hasLanternAccess = stateCode === "us_mo" || stateCode === "us_pa";
