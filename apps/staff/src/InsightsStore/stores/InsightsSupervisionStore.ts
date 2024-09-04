@@ -21,6 +21,7 @@ import { uniq } from "lodash";
 import { makeAutoObservable, observable } from "mobx";
 import moment from "moment";
 
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   ClientEvent,
   ClientInfo,
@@ -321,17 +322,17 @@ export class InsightsSupervisionStore {
         case "ACTION_STRATEGY_OUTLIER_3_MONTHS":
           return {
             prompt: `How might I discuss this with the ${this.labels.supervisionOfficerLabel} in a constructive way?`,
-            body: `<p>First, investigate: Conduct further case reviews or direct observations along with using the Lantern Insights tool to make sure that you understand the agent’s caseload, trends, and approach. Other strategies to better investigate behind the metrics are here.<p>After investigating, try having a positive meeting 1:1 with the agent:<ol><li>Establish a meeting atmosphere that fosters open communication. Ensure that your ${this.labels.supervisionOfficerLabel} comprehends the purpose behind this coaching conversation - improving future client outcomes.</li><li>Customize the discussion to cater to the individual needs and growth of the ${this.labels.supervisionOfficerLabel} you are engaging with.</li><li>Utilize positive reinforcement and subtle prompts to demonstrate attentive listening.</li><li>Collaborate on generating ideas to reduce outlier metrics and improve overall performance of the officer.</li><li>If needed, schedule regular meetings and formulate objectives with clear timeframe expectations to track the progress of the ${this.labels.supervisionOfficerLabel} or tackle persistent challenges and issues.</ol><p>See this and other action strategies here.</p>`,
+            body: `<p>First, investigate: Conduct further case reviews or direct observations along with using the Lantern Insights tool to make sure that you understand the ${this.labels.supervisionOfficerLabel}'s caseload, trends, and approach. Other strategies to better investigate behind the metrics are here.<p>After investigating, try having a positive meeting 1:1 with the ${this.labels.supervisionOfficerLabel}:<ol><li>Establish a meeting atmosphere that fosters open communication. Ensure that your ${this.labels.supervisionOfficerLabel} comprehends the purpose behind this coaching conversation - improving future client outcomes.</li><li>Customize the discussion to cater to the individual needs and growth of the ${this.labels.supervisionOfficerLabel} you are engaging with.</li><li>Utilize positive reinforcement and subtle prompts to demonstrate attentive listening.</li><li>Collaborate on generating ideas to reduce outlier metrics and improve overall performance of the officer.</li><li>If needed, schedule regular meetings and formulate objectives with clear timeframe expectations to track the progress of the ${this.labels.supervisionOfficerLabel} or tackle persistent challenges and issues. Consider using cases listed in the tool for the outlying ${this.labels.supervisionOfficerLabel}'s 3 self-assessments/case management reviews this quarter.</ol><p>See this and other action strategies here.</p>`,
           };
         case "ACTION_STRATEGY_OUTLIER_ABSCONSION":
           return {
-            prompt: `What strategies should I as a supervisor in order to reduce a ${this.labels.supervisionOfficerLabel}'s absconder warrant rate?`,
+            prompt: `What strategies could an ${this.labels.supervisionOfficerLabel} take to reduce their absconder warrant rate?`,
             body: `<p>Try prioritizing rapport-building activities between the ${this.labels.supervisionOfficerLabel} and the client:</p><ol><li style="margin-bottom: 0">Suggest to this agent that they should prioritize:<ol style="list-style-type: lower-alpha; margin-left: 0"><li style="margin-bottom: 0;"">accommodating client work schedules for meetings</li><li style="margin-bottom: 0;">building rapport with clients early-on</li><li style="margin-bottom: 0;">building relationships with community-based providers to connect with struggling clients.</li></ol></li><li>Implement unit-wide strategies to encourage client engagement, such as:<ol style="list-style-type: lower-alpha; margin-left: 0"><li style="margin-bottom:0;">early meaningful contact with all new clients</li><li style="margin-bottom:0;">clear explanations of absconding and reengagement to new clients during their orientation and beyond</li><li style="margin-bottom: 0;">rewarding agents building positive rapport (supportive communication, some amounts of small talk) with clients.</li></ol></ol>See more details on this and other action strategies here.`,
           };
         case "ACTION_STRATEGY_OUTLIER_NEW_OFFICER":
           return {
-            prompt: `How might I discuss this with the ${this.labels.supervisionOfficerLabel} in a constructive way?`,
-            body: `<p>Try pairing agents up to shadow each other on a regular basis:</p><ol><li>Identify ${this.labels.supervisionOfficerLabel}s who have a track record of following agency policy, have a growth mindset for their clients, and have a positive rapport with clients.</li><li>Offer outlying ${this.labels.supervisionOfficerLabel}s the opportunity for on-the-job shadowing to learn different approaches, skills, and response techniques when interacting with clients.</li><li>Reinforce the notion among your staff that this presents a valuable opportunity for learning and growth.</li></ol><p>See more details on this and other action strategies here.</p>`,
+            prompt: `How might I help an outlying or new ${this.labels.supervisionOfficerLabel} learn from other agents on my team?`,
+            body: `<p>Try pairing agents up to shadow each other on a regular basis:</p><ol><li>Identify ${this.labels.supervisionOfficerLabel}s who have a track record of following agency policy, have a growth mindset for their clients, and have a positive rapport with clients.</li><li>Offer outlying ${this.labels.supervisionOfficerLabel}s and/or new ${this.labels.supervisionOfficerLabel}s the opportunity for on-the-job shadowing to learn different approaches, skills, and response techniques when interacting with clients.</li><li>Reinforce the notion among your staff that this presents a valuable opportunity for learning and growth.</li></ol><p>See more details on this and other action strategies here.</p>`,
           };
         case "ACTION_STRATEGY_60_PERC_OUTLIERS":
           return {
@@ -379,17 +380,26 @@ export class InsightsSupervisionStore {
     InsightsAPI["actionStrategies"],
     void
   > {
-    const { isRecidivizUser, isCSGUser, userPseudoId, activeFeatureVariants } =
-      this.insightsStore.rootStore.userStore;
+    const {
+      isRecidivizUser,
+      isCSGUser,
+      userPseudoId,
+      activeFeatureVariants,
+      isImpersonating,
+    } = this.insightsStore.rootStore.userStore;
+    if (this.actionStrategies) return;
 
-    // set actionStrategies to empty object for non-state users to avoid throwing a hydration error
-    if (isRecidivizUser || isCSGUser) {
-      this.actionStrategies = {};
+    if (isDemoMode() || isOfflineMode()) {
+      // The offline apiClient does not use the userPseudo  Id param so we can pass a dummy param here in demo mode
+      this.actionStrategies =
+        yield this.insightsStore.apiClient.actionStrategies("demo");
       return;
     }
 
-    if (!userPseudoId) {
-      throw new Error("Missing pseudonymizedId for user");
+    // set actionStrategies to empty object for non-state users to avoid throwing a hydration error
+    if (!isImpersonating && (isRecidivizUser || isCSGUser)) {
+      this.actionStrategies = {};
+      return;
     }
 
     // set actionStrategies to empty object when access requirements aren't met to avoid throwing a hydration error
@@ -398,7 +408,9 @@ export class InsightsSupervisionStore {
       return;
     }
 
-    if (this.actionStrategies) return;
+    if (!userPseudoId) {
+      throw new Error("Missing pseudonymizedId for user");
+    }
 
     this.actionStrategies =
       yield this.insightsStore.apiClient.actionStrategies(userPseudoId);
@@ -410,8 +422,23 @@ export class InsightsSupervisionStore {
   *patchActionStrategiesForCurrentUser(
     props: ActionStrategySurfacedEvent,
   ): FlowMethod<InsightsAPI["patchActionStrategies"], void> {
-    const { userAppMetadata, isRecidivizUser, isCSGUser } =
+    const { userAppMetadata, isRecidivizUser, isCSGUser, isImpersonating } =
       this.insightsStore.rootStore.userStore;
+    if (isImpersonating) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[Impersonation][Action Strategies]: Patching action strategies for ${props.userPseudonymizedId}`,
+      );
+      return;
+    }
+
+    if (isDemoMode() || isOfflineMode()) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[Demo/Offline Mode][Action Strategies]: Patching action strategies for ${props.userPseudonymizedId}`,
+      );
+      return;
+    }
 
     if (isRecidivizUser || isCSGUser) {
       throw new Error(

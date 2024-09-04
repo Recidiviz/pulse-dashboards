@@ -253,9 +253,7 @@ describe("InsightsAPIClient", () => {
   });
 
   it("actionStrategies parses the data", async () => {
-    fetchMock.mockResponse(
-      JSON.stringify({ actionStrategies: rawActionStrategyFixture }),
-    );
+    fetchMock.mockResponse(JSON.stringify(rawActionStrategyFixture));
     const response = await client.actionStrategies("fake-pseudo-id");
     expect(response).toEqual(actionStrategyFixture);
   });

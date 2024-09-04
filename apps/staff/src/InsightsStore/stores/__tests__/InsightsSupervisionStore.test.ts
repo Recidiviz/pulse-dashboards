@@ -610,10 +610,11 @@ test("hydrate actionStrategies", async () => {
   expect(store.actionStrategies).toMatchInlineSnapshot(`
     {
       "hashed-agonzalez123": "ACTION_STRATEGY_60_PERC_OUTLIERS",
+      "hashed-rsmith789": "ACTION_STRATEGY_60_PERC_OUTLIERS",
       "hashed-so1": "ACTION_STRATEGY_OUTLIER",
-      "hashed-so2": "ACTION_STRATEGY_OUTLIER_3_MONTHS",
       "hashed-so3": "ACTION_STRATEGY_OUTLIER_ABSCONSION",
       "hashed-so4": "ACTION_STRATEGY_OUTLIER_NEW_OFFICER",
+      "hashed-so8": "ACTION_STRATEGY_OUTLIER_3_MONTHS",
     }
   `);
 });

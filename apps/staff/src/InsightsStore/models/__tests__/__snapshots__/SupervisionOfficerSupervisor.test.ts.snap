@@ -40,9 +40,9 @@ exports[`transformations 3`] = `
     "givenNames": "Rosa",
     "surname": "Smith",
   },
-  "hasOutliers": false,
+  "hasOutliers": true,
   "pseudonymizedId": "hashed-rsmith789",
-  "supervisionDistrict": "D1",
+  "supervisionDistrict": "Region D1",
 }
 `;
 

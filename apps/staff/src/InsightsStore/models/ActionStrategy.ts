@@ -26,7 +26,10 @@ export const ACTION_STRATEGY_TYPE = z.enum([
 ]);
 
 // The key in this record is the pseudoId of the officer/supervisor
-export const actionStrategySchema = z.record(z.string(), ACTION_STRATEGY_TYPE);
+export const actionStrategySchema = z.record(
+  z.string(),
+  ACTION_STRATEGY_TYPE.nullable(),
+);
 
 export type ActionStrategy = z.infer<typeof actionStrategySchema>;
 export type RawActionStrategy = z.input<typeof actionStrategySchema>;

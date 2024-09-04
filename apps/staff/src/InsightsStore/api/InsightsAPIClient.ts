@@ -27,7 +27,7 @@ import {
 
 import { formatDateToISO } from "../../utils";
 import type { InsightsStore } from "../InsightsStore";
-import { ActionStrategy } from "../models/ActionStrategy";
+import { ActionStrategy, actionStrategySchema } from "../models/ActionStrategy";
 import {
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerSchema,
@@ -76,17 +76,28 @@ export class InsightsAPIClient implements InsightsAPI {
   }
 
   async actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy> {
-    const { actionStrategyFixture } = await import(
-      "../models/offlineFixtures/ActionStrategyFixture"
-    );
-
-    return actionStrategyFixture;
+    const endpoint = `${this.baseUrl}/action_strategies/${supervisorPseudoId}`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    return actionStrategySchema.parse(fetchedData);
   }
 
   async patchActionStrategies(
     props: ActionStrategySurfacedEvent,
   ): Promise<ActionStrategySurfacedEvent> {
-    return { ...props, timestamp: new Date() };
+    const endpoint = `${this.baseUrl}/action_strategies/${props.userPseudonymizedId}`;
+    const fetchedData = await this.apiStore.patch(endpoint, props);
+    const {
+      userPseudonymizedId,
+      officerPseudonymizedId,
+      actionStrategy,
+      timestamp,
+    } = fetchedData;
+    return {
+      userPseudonymizedId,
+      officerPseudonymizedId,
+      actionStrategy,
+      timestamp,
+    };
   }
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {

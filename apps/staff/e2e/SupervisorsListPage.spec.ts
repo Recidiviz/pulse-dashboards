@@ -31,7 +31,7 @@ test.describe("Supervisors List Page", () => {
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
-        "2 supervisors across the state have one or more outlier officers in their team",
+        "3 supervisors across the state have one or more outlier officers in their team",
       );
       await expect(page.getByRole("main")).toContainText("Region D1");
       await expect(
@@ -70,7 +70,7 @@ test.describe("Supervisors List Page", () => {
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
-        "2 supervisors across the state have one or more outlier officers in their team",
+        "3 supervisors across the state have one or more outlier officers in their team",
       );
       await expect(page.getByRole("main")).toContainText("Region D1");
       await expect(

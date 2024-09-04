@@ -216,7 +216,7 @@ test("districts ordered correctly", async () => {
 
 test("supervisors with outliers count", async () => {
   await presenter.hydrate();
-  expect(presenter.supervisorsWithOutliersCount).toMatchInlineSnapshot(`2`);
+  expect(presenter.supervisorsWithOutliersCount).toMatchInlineSnapshot(`3`);
 });
 
 describe("insightsLeadershipPageAllDistricts feature variant not set", () => {

@@ -18,6 +18,18 @@ exports[`supervisors by district when homepage variant not set 1`] = `
         "pseudonymizedId": "hashed-agonzalez123",
         "supervisionDistrict": "Region D1",
       },
+      {
+        "displayName": "Rosa Smith",
+        "email": "mock-email",
+        "externalId": "rsmith789",
+        "fullName": {
+          "givenNames": "Rosa",
+          "surname": "Smith",
+        },
+        "hasOutliers": true,
+        "pseudonymizedId": "hashed-rsmith789",
+        "supervisionDistrict": "Region D1",
+      },
     ],
   },
   {
@@ -56,6 +68,18 @@ exports[`supervisors by district when workflows variant not set 1`] = `
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-agonzalez123",
+        "supervisionDistrict": "Region D1",
+      },
+      {
+        "displayName": "Rosa Smith",
+        "email": "mock-email",
+        "externalId": "rsmith789",
+        "fullName": {
+          "givenNames": "Rosa",
+          "surname": "Smith",
+        },
+        "hasOutliers": true,
+        "pseudonymizedId": "hashed-rsmith789",
         "supervisionDistrict": "Region D1",
       },
     ],

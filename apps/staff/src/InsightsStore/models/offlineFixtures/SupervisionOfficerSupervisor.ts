@@ -45,9 +45,9 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Rosa", surname: "Smith" },
       externalId: "rsmith789",
-      supervisionDistrict: "D1",
+      supervisionDistrict: "Region D1",
       pseudonymizedId: "hashed-rsmith789",
-      hasOutliers: false,
+      hasOutliers: true,
       email: "mock-email",
     },
     {

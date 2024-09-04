@@ -26,13 +26,15 @@ import { supervisionOfficerSupervisorsFixture } from "./SupervisionOfficerSuperv
 export const rawActionStrategyFixture: RawActionStrategy = {
   [rawSupervisionOfficerFixture[0].pseudonymizedId]:
     ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER,
-  [rawSupervisionOfficerFixture[1].pseudonymizedId]:
+  [rawSupervisionOfficerFixture[5].pseudonymizedId]:
     ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER_3_MONTHS,
   [rawSupervisionOfficerFixture[2].pseudonymizedId]:
     ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER_ABSCONSION,
   [rawSupervisionOfficerFixture[3].pseudonymizedId]:
     ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_OUTLIER_NEW_OFFICER,
   [supervisionOfficerSupervisorsFixture[0].pseudonymizedId]:
+    ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_60_PERC_OUTLIERS,
+  [supervisionOfficerSupervisorsFixture[2].pseudonymizedId]:
     ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_60_PERC_OUTLIERS,
 };
 

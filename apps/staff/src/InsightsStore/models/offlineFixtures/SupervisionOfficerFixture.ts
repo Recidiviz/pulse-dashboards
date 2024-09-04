@@ -122,6 +122,23 @@ export const rawSupervisionOfficerFixture = [
     topXPctMetrics: [],
     avgDailyPopulation: 5.43,
   },
+  {
+    externalId: "so8",
+    pseudonymizedId: "hashed-so8",
+    fullName: {
+      givenNames: "Elizabeth",
+      surname: "Ramirez",
+    },
+    district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
+    outlierMetrics: [
+      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
+        .GENERAL_OR_OTHER[0],
+    ],
+    topXPctMetrics: [],
+    avgDailyPopulation: 43.21,
+  },
 ] satisfies RawSupervisionOfficer[];
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(
