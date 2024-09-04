@@ -20,18 +20,12 @@ import { z } from "zod";
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 import {
-  custodyLevelIsMinimum,
-  notServingForSexualOffense,
-  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-  usIdNoDetainersForXcrcAndCrc,
+  crcSharedCriteria,
+  crcSharedIneligibleCriteria,
 } from "../UsIdSharedCriteria";
 
 export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z.object({
-    custodyLevelIsMinimum,
-    notServingForSexualOffense,
-    usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-    usIdNoDetainersForXcrcAndCrc,
+  eligibleCriteria: crcSharedCriteria.extend({
     usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: z.object({
       fullTermCompletionDate: dateStringSchema.nullable(),
       paroleEligibilityDate: dateStringSchema.nullable(),
@@ -41,9 +35,18 @@ export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
       crcStartDate: dateStringSchema,
       facilityName: z.string(),
     }),
-    usIdInCrcFacilityOrPwccUnit1For60Days: z.object({
-      sixtyDaysInCrcFacilityDate: dateStringSchema,
-    }),
+    usIdInCrcFacilityOrPwccUnit1For60Days: z
+      .object({
+        sixtyDaysInCrcFacilityDate: dateStringSchema,
+      })
+      .optional(),
+  }),
+  ineligibleCriteria: crcSharedIneligibleCriteria.extend({
+    usIdInCrcFacilityOrPwccUnit1For60Days: z
+      .object({
+        sixtyDaysInCrcFacilityDate: dateStringSchema,
+      })
+      .optional(),
   }),
 });
 

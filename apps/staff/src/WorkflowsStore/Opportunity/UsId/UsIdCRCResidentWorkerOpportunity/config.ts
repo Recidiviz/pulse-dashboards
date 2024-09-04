@@ -63,6 +63,9 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
       notServingForSexualOffense: {
         text: "Not serving for a sexual offense",
       },
+      notServingForViolentOffense: {
+        text: "Not serving for a violent offense",
+      },
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
         text: "No escape attempts in the last 10 years",
         tooltip:
@@ -86,6 +89,11 @@ export const usIdCRCResidentWorkerConfig: OpportunityConfig<UsIdCRCResidentWorke
         text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
         tooltip:
           "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+      },
+    },
+    ineligibleCriteriaCopy: {
+      notServingForViolentOffense: {
+        text: "Serving for a violent offense and eligible for CRC placement with an override",
       },
     },
     compareBy: [{ field: "releaseDate" }],

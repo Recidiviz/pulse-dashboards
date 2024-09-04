@@ -20,10 +20,8 @@ import { z } from "zod";
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 import {
-  custodyLevelIsMinimum,
-  notServingForSexualOffense,
-  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-  usIdNoDetainersForXcrcAndCrc,
+  crcSharedCriteria,
+  crcSharedIneligibleCriteria,
 } from "../UsIdSharedCriteria";
 
 const usIdCrcResidentWorkerTimeBasedCriteria = z.object({
@@ -55,12 +53,8 @@ const usIdCrcResidentWorkerTimeBasedCriteria = z.object({
 });
 
 export const usIdCRCResidentWorkerSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z
-    .object({
-      custodyLevelIsMinimum,
-      notServingForSexualOffense,
-      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years,
-      usIdNoDetainersForXcrcAndCrc,
+  eligibleCriteria: crcSharedCriteria
+    .extend({
       usIdCrcResidentWorkerTimeBasedCriteria,
       // The three criteria below do not come directly from firestore
       // but are instead derived from usIdCrcResidentWorkerTimeBasedCriteria
@@ -127,6 +121,7 @@ export const usIdCRCResidentWorkerSchema = opportunitySchemaBase.extend({
         return transformedCriteria;
       },
     ),
+  ineligibleCriteria: crcSharedIneligibleCriteria,
 });
 
 export type UsIdCRCResidentWorkerReferralRecord = z.infer<

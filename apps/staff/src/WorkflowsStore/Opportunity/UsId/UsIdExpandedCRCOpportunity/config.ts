@@ -71,6 +71,9 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
       notServingForSexualOffense: {
         text: "Not serving for a sexual offense",
       },
+      notServingForViolentOffense: {
+        text: "Not serving for a violent offense",
+      },
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
         text: "No escape attempts in the last 10 years",
         tooltip:
@@ -98,6 +101,14 @@ export const usIdExpandedCRCConfig: OpportunityConfig<UsIdExpandedCRCOpportunity
 
       usIdInCrcFacilityOrPwccUnit1: {
         text: "Resident in {{facilityName}} since {{date crcStartDate}}",
+      },
+    },
+    ineligibleCriteriaCopy: {
+      notServingForViolentOffense: {
+        text: "Serving for a violent offense and eligible for CRC placement with an override",
+      },
+      usIdInCrcFacilityOrPwccUnit1For60Days: {
+        text: "In a CRC facility but has not been there for 60 days",
       },
     },
     compareBy: [{ field: "releaseDate" }],

@@ -20,7 +20,6 @@ import { z } from "zod";
 import { dateStringSchema } from "~datatypes";
 
 import { defaultOnNull } from "../schemaHelpers";
-import { CopyTuple } from "../utils/criteriaUtils";
 
 export const sentenceTypeSchema = z.enum(["PROBATION", "PAROLE", "DUAL"]);
 
@@ -43,48 +42,18 @@ export type LSUEarnedDischargeEligibleCriteria = z.infer<
   typeof eligibleCriteriaLsuED
 >;
 
-export const custodyLevelIsMinimum = z.object({
-  custodyLevel: z.string(),
+export const crcSharedCriteria = z.object({
+  custodyLevelIsMinimum: z.object({
+    custodyLevel: z.string(),
+  }),
+  notServingForSexualOffense: z.object({}).nullable(),
+  notServingForViolentOffense: z.object({}).nullable().optional(),
+  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: z
+    .object({})
+    .nullable(),
+  usIdNoDetainersForXcrcAndCrc: z.object({}).nullable(),
 });
 
-export const custodyLevelIsMinimumCopy: CopyTuple<"custodyLevelIsMinimum"> = [
-  "custodyLevelIsMinimum",
-  {
-    text: "Currently on Minimum custody",
-  },
-];
-
-export const notServingForSexualOffense = z.object({}).nullable();
-
-export const notServingForSexualOffenseCopy: CopyTuple<"notServingForSexualOffense"> =
-  [
-    "notServingForSexualOffense",
-    {
-      text: "Not serving for a sexual offense",
-    },
-  ];
-
-export const usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years = z
-  .object({})
-  .nullable();
-
-export const usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10YearsCopy: CopyTuple<"usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years"> =
-  [
-    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years",
-    {
-      text: "No escape attempts in the last 10 years",
-      tooltip:
-        "No escape, eluding police, or absconsion offense(s) in the last 10 years",
-    },
-  ];
-
-export const usIdNoDetainersForXcrcAndCrc = z.object({}).nullable();
-
-export const usIdNoDetainersForXcrcAndCrcCopy: CopyTuple<"usIdNoDetainersForXcrcAndCrc"> =
-  [
-    "usIdNoDetainersForXcrcAndCrc",
-    {
-      text: "No active felony detainers or holds",
-      tooltip: "Cannot have any felony detainers or holds",
-    },
-  ];
+export const crcSharedIneligibleCriteria = crcSharedCriteria.pick({
+  notServingForViolentOffense: true,
+});
