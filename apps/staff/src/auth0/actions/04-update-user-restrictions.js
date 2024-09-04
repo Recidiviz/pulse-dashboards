@@ -117,6 +117,19 @@ exports.onExecutePostLogin = async (event, api) => {
     const apiResponse = await client.request({ url, retry: true });
     const restrictions = apiResponse.data;
 
+    // If a user has no routes but is in our roster, treat them as if they weren't in the roster at
+    // all. This can happen when a state is on roster sync and a user exists in the synced roster,
+    // but the data doesn't show them as being supervision line staff or a supervision supervisor.
+    // In that case, they will have a role of "unknown" and no permissions.
+    const hasNoPermissions =
+      !!restrictions.routes || Object.keys(restrictions.routes).length === 0;
+    // Users in lantern states are allowed to have no routes; they'll just get redirected to
+    // lantern. TODO(#4731): restrict lantern access based on routes.
+    const hasLanternAccess = stateCode === "us_mo" || stateCode === "us_pa";
+    if (hasNoPermissions && !hasLanternAccess) {
+      throw new Error("User has no permissions");
+    }
+
     const arrayOfLocations =
       (restrictions.allowedSupervisionLocationIds ?? "") === ""
         ? []
