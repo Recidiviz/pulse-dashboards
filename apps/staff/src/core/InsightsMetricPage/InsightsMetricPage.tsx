@@ -281,6 +281,7 @@ export const MetricPageWithPresenter = observer(
                 supervisionOfficerLabel={labels.supervisionOfficerLabel}
                 supervisorHomepage
                 methodologyUrl={methodologyUrl}
+                eventName={metricInfo.eventName}
               />
             </InsightsChartCard>
           </Body>

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2023 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
 // =============================================================================
 
 import {
-  Icon,
   palette,
   spacing,
   Tooltip,
   typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
 import { ResponsiveXYFrame } from "semiotic";
@@ -38,6 +38,8 @@ import {
   lineLegendIcon,
 } from "../InsightsLegend/InsightsLegend";
 import { GOAL_COLORS } from "../InsightsSwarmPlot/constants";
+import NoteComponent from "./NoteComponent";
+
 const Wrapper = styled.div<{ supervisorHomepage: boolean }>`
   .data-visualization {
     .axis-baseline {
@@ -84,37 +86,6 @@ const Wrapper = styled.div<{ supervisorHomepage: boolean }>`
 const StyledLink = styled(Link)`
   color: ${palette.signal.links} !important;
   border-bottom: 1px solid ${palette.signal.links};
-`;
-
-const NoteContainer = styled.div<{
-  supervisorHomepage: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  background-color: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? "#ECF1F0" : "#FDF9DD"};
-  padding: ${rem(spacing.md)};
-  margin-bottom: ${rem(spacing.md)};
-  border-radius: 4px;
-`;
-
-const NoteLabelContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const NoteLabel = styled.div`
-  color: ${palette.pine1};
-  ${typography.Sans16};
-`;
-
-const NoteText = styled.div`
-  ${typography.Sans14};
-  color: ${palette.slate85};
-  margin-top: ${rem(spacing.sm)};
-  line-height: 1.5;
 `;
 
 const StyledTooltip = styled(Tooltip).attrs({
@@ -198,6 +169,7 @@ type InsightsLinePlotType = {
   supervisionOfficerLabel: string;
   supervisorHomepage: boolean;
   methodologyUrl: string;
+  eventName: string;
 };
 
 type Point = {
@@ -206,12 +178,19 @@ type Point = {
   status?: TargetStatus;
 };
 
+interface NoteConfig {
+  label: string;
+  text: JSX.Element;
+  shouldRender: boolean;
+}
+
 const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
   metric,
   officerName,
   supervisionOfficerLabel,
   supervisorHomepage,
   methodologyUrl,
+  eventName,
 }) => {
   const { isMobile, isLaptop } = useIsMobile(true);
   const [ref, bounds] = useMeasure();
@@ -251,57 +230,83 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
     data: statewidePoints,
   };
 
-  const dataWithEarliestStartDate =
-    statewidePoints[0].date < usersPoints[0].date
-      ? statewidePoints
-      : usersPoints;
-
   const { beginDate, endDate } = getDateRange(
-    dataWithEarliestStartDate[0].date,
-    dataWithEarliestStartDate.slice(-1)[0]?.date,
+    statewidePoints[0]?.date,
+    statewidePoints.slice(-1)[0]?.date,
     16,
   );
 
-  const bottomTickValues = dataWithEarliestStartDate.map((d) => d.date);
+  const bottomTickValues = statewidePoints.map((d) => d.date);
   const reducedBottomTickValues = reduceBottomTicks(bottomTickValues, isMobile);
 
   const { maxTickValue } = getTicks(
     Math.max(...usersPoints.concat(statewidePoints).map((d) => d.value)),
   );
 
-  const yRange = [0, maxTickValue];
+  const yRange = [0, maxTickValue + 5];
 
-  const DataUnavailableNoteComponent: React.FC = () => {
-    return (
-      <NoteContainer supervisorHomepage={supervisorHomepage}>
-        <NoteLabelContainer>
-          {supervisorHomepage ? null : (
-            <Icon
-              kind="Alert"
-              color="#E0A852"
-              size={14}
-              style={{ marginRight: rem(spacing.xs) }}
-            />
-          )}
-          <NoteLabel>Data is unavailable</NoteLabel>
-        </NoteLabelContainer>
-        <NoteText>
-          {supervisionOfficerLabel[0].toUpperCase() +
-            supervisionOfficerLabel.slice(1)}{" "}
-          was excluded from some portion of this chart due to unusual patterns
-          in their caseload. For more, see{" "}
-          <StyledLink to={methodologyUrl} target="_blank">
-            methodology
-          </StyledLink>
-          .
-        </NoteText>
-      </NoteContainer>
-    );
+  const OverOneHundredNoteText = (
+    <>
+      This rate is calculated by taking the total number of {eventName} on this{" "}
+      {supervisionOfficerLabel}'s caseload in the past 12 months and dividing it
+      by the {supervisionOfficerLabel}'s average <i>daily</i> caseload. As a
+      result, this rate can be over 100%.
+    </>
+  );
+
+  const DataUnavailableNoteText = (
+    <>
+      {supervisionOfficerLabel[0].toUpperCase() +
+        supervisionOfficerLabel.slice(1)}{" "}
+      was excluded from some portion of this chart due to unusual patterns in
+      their caseload. For more, see{" "}
+      <StyledLink to={methodologyUrl}>methodology</StyledLink>.
+    </>
+  );
+
+  const notes: NoteConfig[] = [
+    {
+      label: `Why is this rate over 100%?`,
+      text: OverOneHundredNoteText,
+      shouldRender: usersPoints.some((point) => point.value > 100),
+    },
+    {
+      label: `Data is unavailable`,
+      text: DataUnavailableNoteText,
+      shouldRender: metric.statusesOverTime.length < 6,
+    },
+  ];
+
+  const [currentNoteIndex, setCurrentNoteIndex] = useState(0);
+  const renderedNotes = notes.filter((note) => note.shouldRender);
+
+  const handleNextNote = () => {
+    if (currentNoteIndex < renderedNotes.length - 1) {
+      setCurrentNoteIndex(currentNoteIndex + 1);
+    }
+  };
+  const handlePreviousNote = () => {
+    if (currentNoteIndex > 0) {
+      setCurrentNoteIndex(currentNoteIndex - 1);
+    }
   };
 
   return (
     <Wrapper ref={ref} supervisorHomepage={supervisorHomepage}>
-      {metric.statusesOverTime.length < 6 && <DataUnavailableNoteComponent />}
+      {renderedNotes.length > 0 && (
+        <NoteComponent
+          key={currentNoteIndex}
+          showFooter={renderedNotes.length > 1}
+          onNext={handleNextNote}
+          onPrevious={handlePreviousNote}
+          index={currentNoteIndex}
+          supervisorHomepage={supervisorHomepage}
+          numNotes={renderedNotes.length}
+          label={renderedNotes[currentNoteIndex].label}
+          text={renderedNotes[currentNoteIndex].text}
+        />
+      )}
+
       <ResponsiveXYFrame
         responsiveWidth={!bounds.width}
         hoverAnnotation

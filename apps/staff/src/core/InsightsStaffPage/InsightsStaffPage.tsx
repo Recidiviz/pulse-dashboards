@@ -425,6 +425,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                       supervisorHomepage={false}
                       supervisionOfficerLabel={labels.supervisionOfficerLabel}
                       methodologyUrl={methodologyUrl}
+                      eventName={metricInfo.eventName}
                     />
                   </InsightsChartCard>
                 </Body>
