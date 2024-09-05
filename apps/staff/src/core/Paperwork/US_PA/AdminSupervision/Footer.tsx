@@ -16,10 +16,7 @@
 // =============================================================================
 
 import { rem } from "polished";
-import * as React from "react";
 import styled from "styled-components/macro";
-
-import { strings } from "./constants";
 
 const ContentContainer = styled.div`
   display: flex;
@@ -27,8 +24,12 @@ const ContentContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-const Footer: React.FC = () => (
-  <ContentContainer>{strings.footer}</ContentContainer>
+type footerProps = {
+  text: string;
+};
+
+const Footer = ({ text }: footerProps) => (
+  <ContentContainer>{text}</ContentContainer>
 );
 
 export default Footer;

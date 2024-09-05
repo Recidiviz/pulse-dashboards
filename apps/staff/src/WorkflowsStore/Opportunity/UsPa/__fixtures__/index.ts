@@ -35,6 +35,12 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
     },
     ineligibleCriteria: {},
     caseNotes: {},
+    formInformation: {
+      drugCharge: true,
+      statue14: false,
+      statue30: true,
+      statue37: false,
+    },
   };
 
 export const usPaAdminSupervisionEligibleClientRecord: ClientRecord = {

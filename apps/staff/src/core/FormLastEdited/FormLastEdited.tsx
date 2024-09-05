@@ -62,6 +62,7 @@ export const FormLastEdited: React.FC<FormLastEditedProps> = observer(
           >
             {moment(formLastUpdated.date.seconds * 1000).fromNow()}
           </LastEditedMessagePulse>
+          {dataProviso ? `. ${dataProviso}` : ""}
         </>
       );
     }

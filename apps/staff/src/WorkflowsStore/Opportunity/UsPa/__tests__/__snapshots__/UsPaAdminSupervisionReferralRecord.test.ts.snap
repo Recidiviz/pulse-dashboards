@@ -14,6 +14,12 @@ exports[`parses empty ineligible offenses array 1`] = `
     },
   },
   "externalId": "abc123",
+  "formInformation": {
+    "drugCharge": true,
+    "statue14": false,
+    "statue30": true,
+    "statue37": false,
+  },
   "ineligibleCriteria": {},
   "stateCode": "US_PA",
 }
@@ -28,6 +34,12 @@ exports[`parses null reason fields 1`] = `
     "usPaNotServingIneligibleOffenseForAdminSupervision": null,
   },
   "externalId": "abc123",
+  "formInformation": {
+    "drugCharge": true,
+    "statue14": false,
+    "statue30": true,
+    "statue37": false,
+  },
   "ineligibleCriteria": {},
   "stateCode": "US_PA",
 }
@@ -53,6 +65,12 @@ exports[`record parses as expected 1`] = `
     },
   },
   "externalId": "abc123",
+  "formInformation": {
+    "drugCharge": true,
+    "statue14": false,
+    "statue30": true,
+    "statue37": false,
+  },
   "ineligibleCriteria": {},
   "stateCode": "US_PA",
 }

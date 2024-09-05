@@ -32,6 +32,14 @@ export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
       })
       .nullable(),
   }),
+  formInformation: z
+    .object({
+      drugCharge: z.boolean(),
+      statue14: z.boolean(),
+      statue30: z.boolean(),
+      statue37: z.boolean(),
+    })
+    .partial(),
 });
 
 export type UsPaAdminSupervisionReferralRecord = z.infer<

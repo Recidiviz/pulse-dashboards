@@ -29,6 +29,7 @@ import FormViewer from "../../FormViewer";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import {
   FORM_US_PA_ADMIN_SUPERVISION_FORM_FONT_FAMILY,
+  strings,
   worksheetSectionsCopy,
 } from "./constants";
 import CriteriaChecklist from "./CriteriaChecklist";
@@ -102,6 +103,8 @@ export const FormUsPaAdminSupervision = observer(
       return null;
     }
 
+    const showProviso = opportunity.record?.formInformation?.drugCharge;
+
     const client = opportunity.person;
 
     return (
@@ -111,6 +114,11 @@ export const FormUsPaAdminSupervision = observer(
         onClickDownload={() => formDownloader(client)}
         opportunity={opportunity}
         downloadButtonLabel="Download DOCX"
+        dataProviso={
+          showProviso
+            ? `${client.displayName} is serving a drug offense that may be eligible for Administrative Supervision. Fill out both the 402 and 402a forms.`
+            : undefined
+        }
       >
         <FormViewer formRef={formRef}>
           <PrintablePageMargin>
@@ -123,7 +131,7 @@ export const FormUsPaAdminSupervision = observer(
                   <CriteriaChecklist />
                   <SignOffSection />
                 </FormContent>
-                <Footer />
+                <Footer text={strings.footer} />
               </FormPage>
             </PrintablePage>
           </PrintablePageMargin>
@@ -141,7 +149,7 @@ export const FormUsPaAdminSupervision = observer(
                     );
                   })}
                 </FormContent>
-                <Footer />
+                <Footer text={strings.addendumFooter} />
               </FormPage>
             </PrintablePage>
           </PrintablePageMargin>

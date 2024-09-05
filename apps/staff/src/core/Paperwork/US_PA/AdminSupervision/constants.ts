@@ -240,6 +240,7 @@ export const strings = {
   agentSignature: `Agent Signature`,
   agentName: `Agent Name (Printed)`,
   footer: `DC-P 402 | rvsd. 08.2021`,
+  addendumFooter: `DC-P 402A | rvsd. 08.2021`,
 } as const;
 
 export const worksheetSectionsCopy: {

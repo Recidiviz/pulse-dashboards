@@ -45,7 +45,15 @@ export class UsPaAdminSupervisionForm extends FormBase<
       supervisionLevel: currentGradeOfSupervisionLevel,
     } = this.person;
 
-    const { eligibleCriteria } = this.opportunity.record;
+    const {
+      eligibleCriteria,
+      formInformation: {
+        drugCharge: guiltyPADrugCharge,
+        statue14: charge780_11314,
+        statue30: charge780_11330,
+        statue37: charge780_11337,
+      },
+    } = this.opportunity.record;
 
     const reentrantName = `${surname}, ${givenNames}`;
 
@@ -61,6 +69,10 @@ export class UsPaAdminSupervisionForm extends FormBase<
       paroleNumber,
       currentGradeOfSupervisionLevel,
       dateOfReview,
+      guiltyPADrugCharge,
+      charge780_11314,
+      charge780_11330,
+      charge780_11337,
     };
   }
 }

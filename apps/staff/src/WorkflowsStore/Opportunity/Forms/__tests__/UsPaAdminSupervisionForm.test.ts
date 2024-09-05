@@ -57,6 +57,12 @@ function createTestUnit() {
     },
     ineligibleCriteria: {},
     caseNotes: {},
+    formInformation: {
+      drugCharge: true,
+      statue14: false,
+      statue30: true,
+      statue37: false,
+    },
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsPaAdminSupervisionOpportunity(person);
@@ -83,9 +89,13 @@ describe("prefilledDataTransformer", () => {
   test("basic transformation", () => {
     expect(form.prefilledDataTransformer()).toMatchInlineSnapshot(`
       {
+        "charge780_11314": false,
+        "charge780_11330": true,
+        "charge780_11337": false,
         "criteriaHighSanction": false,
         "currentGradeOfSupervisionLevel": "Medium",
         "dateOfReview": "Dec 12, 2023",
+        "guiltyPADrugCharge": true,
         "paroleNumber": "pei1",
         "reentrantName": "Test, Joe",
       }

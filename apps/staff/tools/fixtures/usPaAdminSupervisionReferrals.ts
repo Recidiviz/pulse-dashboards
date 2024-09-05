@@ -31,6 +31,12 @@ export const usPaAdminSupervisionReferrals =
         usPaNotServingIneligibleOffenseForAdminSupervision: null,
       },
       ineligibleCriteria: {},
+      formInformation: {
+        drugCharge: true,
+        statue14: false,
+        statue30: true,
+        statue37: false,
+      },
     },
     {
       stateCode: "US_PA",
@@ -46,6 +52,12 @@ export const usPaAdminSupervisionReferrals =
         },
       },
       ineligibleCriteria: {},
+      formInformation: {
+        drugCharge: true,
+        statue14: false,
+        statue30: true,
+        statue37: false,
+      },
     },
     {
       stateCode: "US_PA",
@@ -56,5 +68,11 @@ export const usPaAdminSupervisionReferrals =
         usPaNotServingIneligibleOffenseForAdminSupervision: null,
       },
       ineligibleCriteria: {},
+      formInformation: {
+        drugCharge: true,
+        statue14: false,
+        statue30: true,
+        statue37: false,
+      },
     },
   ]);
