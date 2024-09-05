@@ -45,6 +45,7 @@ export type Client = NonNullable<Case["Client"]>;
 export type Opportunities = Awaited<
   ReturnType<tRPCClient["opportunity"]["getOpportunities"]["query"]>
 >;
+
 export class APIClient {
   client?: tRPCClient;
 
@@ -71,30 +72,26 @@ export class APIClient {
   async initTRPCClient(): Promise<tRPCClient | undefined> {
     if (!this.baseUrl) return;
     if (this.client) return this.client;
-    const requestHeaders = await this.getRequestHeaders();
+
+    const userStore = this.psiStore.rootStore.userStore;
 
     return createTRPCProxyClient<AppRouter>({
       links: [
         httpBatchLink({
           url: this.baseUrl,
           async headers() {
-            return requestHeaders;
+            if (!userStore.getToken) return {};
+            const token = await userStore.getToken();
+
+            return {
+              Authorization: `Bearer ${token}`,
+            };
           },
         }),
       ],
       // Required to get Date objects to serialize correctly.
       transformer: superjson,
     });
-  }
-
-  async getRequestHeaders(): Promise<{ [key: string]: string }> {
-    const userStore = this.psiStore.rootStore.userStore;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const token = await userStore.getToken!();
-
-    return {
-      Authorization: `Bearer ${token}`,
-    };
   }
 
   async getStaffInfo() {

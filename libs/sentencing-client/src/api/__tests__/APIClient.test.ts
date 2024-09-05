@@ -69,13 +69,6 @@ test("client is initialized after instantiation of the PSIStore and APIClient", 
   expect(apiClient.client).not.toBeUndefined();
 });
 
-test("getRequestHeaders returns expected request headers with Auth0 token", async () => {
-  const requestHeaders = await apiClient.getRequestHeaders();
-  expect(requestHeaders).toEqual({
-    Authorization: "Bearer auth0-token",
-  });
-});
-
 test("client should not be initialized if there is no baseUrl", () => {
   const psiStore = createMockPSIStore({ hideApiUrl: true });
   const apiClient = new APIClient(psiStore);
