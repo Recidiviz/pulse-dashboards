@@ -35,7 +35,7 @@ beforeEach(() => {
 });
 
 describe("public routes", () => {
-  describe("landing page", () => {
+  describe("state selection page", () => {
     beforeEach(() => {
       container = render(
         <MemoryRouter initialEntries={["/welcome"]}>
@@ -44,14 +44,48 @@ describe("public routes", () => {
       ).container;
     });
 
-    it("should render", () => {
+    it("should render", async () => {
       expect(
-        screen.getByRole("button", { name: "Log in" }),
+        await screen.findByRole("combobox", {
+          name: "Find opportunities in the state where you’re incarcerated",
+        }),
       ).toBeInTheDocument();
     });
 
     it("should be accessible", async () => {
-      await screen.findByRole("button", { name: "Log in" });
+      await screen.findByRole("combobox", {
+        name: "Find opportunities in the state where you’re incarcerated",
+      });
+
+      expect(await axe(container)).toHaveNoViolations();
+    });
+
+    it("should set page title", () => {
+      expect(window.document.title).toMatchInlineSnapshot(`"Opportunities"`);
+    });
+  });
+
+  describe("state landing page", () => {
+    beforeEach(() => {
+      container = render(
+        <MemoryRouter initialEntries={["/maine"]}>
+          <App />
+        </MemoryRouter>,
+      ).container;
+    });
+
+    it("should render", async () => {
+      expect(
+        await screen.findByRole("combobox", {
+          name: "Select your facility to log in to Opportunities",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("should be accessible", async () => {
+      await screen.findByRole("combobox", {
+        name: "Select your facility to log in to Opportunities",
+      });
 
       expect(await axe(container)).toHaveNoViolations();
     });
@@ -163,13 +197,11 @@ describe("protected routes", () => {
     });
 
     it("should render", async () => {
-      await waitFor(() =>
-        expect(screen.getByText("Select a resident")).toBeInTheDocument(),
-      );
+      expect(await screen.findByText("Look up a resident")).toBeInTheDocument();
     });
 
     it("should be accessible", async () => {
-      await screen.findByText("Select a resident");
+      await screen.findByText("Look up a resident");
 
       expect(await axe(container)).toHaveNoViolations();
     });

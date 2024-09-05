@@ -16,9 +16,8 @@
 // =============================================================================
 
 import {
+  Body16,
   Header34,
-  palette,
-  Sans16,
   spacing,
   typography,
 } from "@recidiviz/design-system";
@@ -26,10 +25,10 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useId } from "react";
 import { useNavigate } from "react-router-dom";
-import ReactSelect from "react-select";
 import styled from "styled-components/macro";
 
 import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { Selector } from "../Selector/Selector";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
@@ -44,48 +43,39 @@ const ResidentsSearchWithPresenter: React.FC<{
   presenter: ResidentsSearchPresenter;
 }> = observer(function ResidentsSearchWithPresenter({ presenter }) {
   const navigate = useNavigate();
-  const labelId = useId();
+  const residentLabelId = useId();
+  const facilityLabelId = useId();
 
   return (
     <PageHydrator hydratable={presenter}>
       <div>
-        <Header34 as="h1" id={labelId}>
-          Select a resident
-        </Header34>
+        <Header34 as="h1">Look up a resident</Header34>
 
-        <FacilityLabel>
+        <FacilityLabel id={facilityLabelId}>
           Filter by facility:
-          <ReactSelect
+          <Selector
+            labelId={facilityLabelId}
             options={presenter.facilityFilterOptions}
+            onChange={(v) => presenter.setFacilityFilter(v)}
+            placeholder=""
             defaultValue={presenter.facilityFilterDefaultOption}
-            onChange={(o) => {
-              if (o) {
-                presenter.setFacilityFilter(o.value);
-              }
-            }}
-            isClearable={false}
           />
         </FacilityLabel>
 
-        <Sans16>
-          <ReactSelect
-            aria-labelledby={labelId}
-            options={presenter.selectOptions}
-            defaultValue={presenter.defaultOption}
-            onChange={(o) => {
-              presenter.setActiveResident(o?.value);
-              if (o) {
-                // this should land you on the selected resident's homepage
-                navigate("/");
-              }
-            }}
-            styles={{
-              placeholder(baseStyles, state) {
-                return { ...baseStyles, color: palette.slate85 };
-              },
-            }}
-          />
-        </Sans16>
+        <Body16 as="p" id={residentLabelId}>
+          Search for a resident to explore what they will see in Opportunities.
+        </Body16>
+        <Selector
+          labelId={residentLabelId}
+          options={presenter.selectOptions}
+          defaultValue={presenter.defaultOption}
+          onChange={(value) => {
+            presenter.setActiveResident(value);
+            // this should land you on the selected resident's homepage
+            navigate("/");
+          }}
+          placeholder="Start typing a resident's name or DOC ID …"
+        />
       </div>
     </PageHydrator>
   );

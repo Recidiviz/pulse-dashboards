@@ -15,10 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { RootStore } from "../../datastores/RootStore";
+import { LandingStateSelectionPresenter } from "./LandingStateSelectionPresenter";
 
-import { LoginStateSelection } from "../LandingPages/LandingStateSelection";
+test("constructs URL when a state is selected", async () => {
+  const rootStore = new RootStore();
+  const presenter = new LandingStateSelectionPresenter(
+    rootStore.loginConfigStore,
+  );
 
-export const PageLanding: FC = () => {
-  return <LoginStateSelection />;
-};
+  await presenter.hydrate();
+
+  expect(presenter.stateLandingPageUrl).toBeUndefined();
+  presenter.setSelectedOption(presenter.selectOptions[0].value);
+  expect(presenter.stateLandingPageUrl).toMatchInlineSnapshot(`"/maine"`);
+});

@@ -25,6 +25,7 @@ import { ApiClient } from "../apis/data/ApiClient";
 import { DataAPI } from "../apis/data/interface";
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { StateCode } from "../configs/types";
+import { LoginConfigStore } from "./LoginConfigStore";
 import { ResidentsStore } from "./ResidentsStore";
 import { UiStore } from "./UiStore";
 import { UserStore } from "./UserStore";
@@ -47,6 +48,8 @@ export class RootStore {
 
   uiStore: UiStore;
 
+  loginConfigStore: LoginConfigStore;
+
   // for convenience, this is a constant while we only have one state onboarded
   readonly stateCode: StateCode = "US_ME";
 
@@ -61,6 +64,8 @@ export class RootStore {
     this.uiStore = new UiStore();
 
     this.apiClient = this.createApiClient();
+
+    this.loginConfigStore = new LoginConfigStore(this);
   }
 
   /**

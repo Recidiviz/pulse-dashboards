@@ -42,6 +42,7 @@ import { PageLanding } from "../pages/PageLanding";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
+import { PageStateLanding } from "../pages/PageStateLanding";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { StaticPage } from "../StaticPage/StaticPage";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
@@ -74,6 +75,7 @@ export function App() {
             <Route path="/" element={<PageRoot />}>
               <Route index element={<PageHome />} />
               <Route path="welcome" element={<PageLanding />} />
+              <Route path=":landingPageUrl" element={<PageStateLanding />} />
               <Route path="verify" element={<PageVerifyEmail />} />
               <Route path="after-login" element={<PageAfterLogin />} />
               <Route path="eligibility" element={<PageEligibility />}>

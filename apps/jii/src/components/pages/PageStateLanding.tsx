@@ -17,8 +17,8 @@
 
 import { FC } from "react";
 
-import { LoginStateSelection } from "../LandingPages/LandingStateSelection";
+import { LandingStateSpecific } from "../LandingPages/LandingStateSpecific";
 
-export const PageLanding: FC = () => {
-  return <LoginStateSelection />;
+export const PageStateLanding: FC = () => {
+  return <LandingStateSpecific />;
 };

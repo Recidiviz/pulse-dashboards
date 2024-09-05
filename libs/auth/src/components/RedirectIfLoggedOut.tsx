@@ -15,23 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Loading } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { FC, ReactNode, useEffect } from "react";
+import { To, useNavigate } from "react-router-dom";
 
-import { RedirectIfLoggedOut } from "~auth";
+import { AuthClient } from "../models/AuthClient";
+import { EmailVerificationRequired } from "./EmailVerificationRequired";
 
-import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
-import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
-import { ResidentsLayout } from "../ResidentsLayout/ResidentsLayout";
-import { useRootStore } from "../StoreProvider/useRootStore";
+export const RedirectIfLoggedOut: FC<{
+  children: ReactNode;
+  authClient: AuthClient;
+  to: To;
+}> = observer(function RedirectIfLoggedOut({ children, authClient, to }) {
+  const navigate = useNavigate();
 
-export const PageEligibility = observer(function ResidentsRoot() {
-  const rootStore = useRootStore();
-  return (
-    <RedirectIfLoggedOut authClient={rootStore.userStore.authClient} to="/">
-      <RequiresStateAuth>
-        <IdentityTracker />
-        <ResidentsLayout />
-      </RequiresStateAuth>
-    </RedirectIfLoggedOut>
-  );
+  useEffect(() => {
+    authClient.checkForAuthentication().then((isAuthenticated) => {
+      if (!isAuthenticated) {
+        navigate(to);
+      }
+    });
+  });
+
+  if (authClient.isAuthorized) {
+    return children;
+  }
+
+  if (authClient.isEmailVerificationRequired) {
+    return <EmailVerificationRequired />;
+  }
+
+  return <Loading />;
 });

@@ -26,6 +26,7 @@ import {
   IncarcerationOpportunityId,
   ResidentsConfig,
   StateCode,
+  StateLandingPageConfig,
 } from "../../configs/types";
 import { DataAPI } from "./interface";
 
@@ -71,6 +72,28 @@ export class ApiClient implements DataAPI {
 
   get isAuthenticated() {
     return this.authentication.current();
+  }
+
+  /**
+   * Fetches application config object for the landing page (pre-login)
+   */
+  async landingPageConfig() {
+    const { landingPageConfig } = await import(
+      "../../configs/landingPageConfig"
+    );
+    return landingPageConfig;
+  }
+
+  /**
+   * Fetches application config object for a state-specific landing page (pre-login)
+   */
+  async stateLandingPageConfig(
+    stateCode: StateCode,
+  ): Promise<StateLandingPageConfig> {
+    const { getConfig } = await import(
+      `../../configs/${stateCode}/landingPageConfig/config.ts`
+    );
+    return getConfig(import.meta.env["VITE_AUTH0_TENANT_KEY"]);
   }
 
   /**

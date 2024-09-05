@@ -56,7 +56,7 @@ export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
   /**
    * Indicates whether the user has successfully authenticated.
    * While not continuously synchronized with the Auth0 session, it should be updated
-   * as soon as we detect a change in status
+   * as soon as we detect a change in status.
    */
   private isAuthenticated = false;
 
@@ -179,8 +179,9 @@ export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
    * and {@link user} accordingly.
    */
   async updateAuthStatus(): Promise<void> {
-    // bypass this in offline and test modes
+    // bypass this in offline and test modes and simulate authentication
     if (isOfflineMode() || isTestEnv()) {
+      this.isAuthenticated = true;
       return;
     }
 
@@ -209,12 +210,24 @@ export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
    * @param targetPath User's final destination after successful login. Defaults to the current path,
    * pass a different value to override
    */
-  async logIn(targetPath?: string): Promise<void> {
+  async logIn({
+    targetPath,
+    connection,
+  }: { targetPath?: string; connection?: string } = {}): Promise<void> {
     const auth0 = await this.authClient();
 
     return auth0.loginWithRedirect({
       appState: { targetPath: targetPath ?? window.location.pathname },
+      connection,
     });
+  }
+
+  /**
+   * Ensures auth status data is fresh before returning the current authentication status.
+   */
+  async checkForAuthentication() {
+    await this.updateAuthStatus();
+    return this.isAuthenticated;
   }
 
   /**
@@ -223,11 +236,10 @@ export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
    * pass a different value to override
    */
   async logInIfLoggedOut(targetPath?: string): Promise<void> {
-    await this.updateAuthStatus();
     // note that we are only checking authentication, not authorization (which includes email verification).
     // we don't want to trigger an infinite login loop while awaiting email verification
-    if (!this.isAuthenticated) {
-      await this.logIn(targetPath);
+    if (!(await this.checkForAuthentication())) {
+      await this.logIn({ targetPath });
     }
   }
 

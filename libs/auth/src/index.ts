@@ -20,4 +20,5 @@ export * from "./components/EmailVerificationRequired";
 export * from "./components/HandleRedirectAfterLogin";
 export * from "./components/LoginImmediatelyIfLoggedOut";
 export * from "./components/NotAuthorized";
+export * from "./components/RedirectIfLoggedOut";
 export * from "./models/AuthClient";

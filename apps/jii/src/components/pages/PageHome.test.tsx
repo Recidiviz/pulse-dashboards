@@ -53,7 +53,7 @@ function renderHome() {
   );
 }
 
-test("landing page if unauthorized", () => {
+test("landing page if unauthorized", async () => {
   vi.spyOn(authClient, "isAuthorized", "get").mockReturnValue(false);
   vi.spyOn(authClient, "isEmailVerificationRequired", "get").mockReturnValue(
     false,
@@ -61,8 +61,8 @@ test("landing page if unauthorized", () => {
 
   renderHome();
   expect(
-    screen.getByRole("heading", {
-      name: "Learn if you are eligible for opportunities like community confinement",
+    await screen.findByRole("combobox", {
+      name: "Find opportunities in the state where you’re incarcerated",
     }),
   ).toBeInTheDocument();
 });

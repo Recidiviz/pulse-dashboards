@@ -45,6 +45,7 @@ const StatusWrapper = styled(animated.div)`
 
 const ContentWrapper = styled(animated.div)`
   height: 100%;
+  width: 100%;
 `;
 
 const crossFade = {

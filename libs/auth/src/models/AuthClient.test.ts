@@ -121,6 +121,10 @@ describe("after hydration", () => {
       expect(client.isEmailVerificationRequired).toBeFalse();
     });
 
+    test("check authentication", async () => {
+      expect(await client.checkForAuthentication()).toBeFalse();
+    });
+
     test("automatic redirect to login", async () => {
       await client.logInIfLoggedOut();
       expect(loginWithRedirectMock).toHaveBeenCalledExactlyOnceWith({
@@ -139,15 +143,21 @@ describe("after hydration", () => {
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: getToken test]`);
     });
 
-    test("log in", async () => {
+    test("log in with defaults", async () => {
       await client.logIn();
       expect(loginWithRedirectMock).toHaveBeenCalledExactlyOnceWith({
         appState: { targetPath: "/" },
       });
+    });
 
-      await client.logIn("/another/page");
+    test("log in with options", async () => {
+      await client.logIn({
+        targetPath: "/another/page",
+        connection: "US_XX-AD-Connection",
+      });
       expect(loginWithRedirectMock).toHaveBeenLastCalledWith({
         appState: { targetPath: "/another/page" },
+        connection: "US_XX-AD-Connection",
       });
     });
   });
@@ -166,6 +176,10 @@ describe("after hydration", () => {
 
     test("authorized", () => {
       expect(client.isAuthorized).toBeTrue();
+    });
+
+    test("check authentication", async () => {
+      expect(await client.checkForAuthentication()).toBeTrue();
     });
 
     test("no automatic redirect to login", async () => {

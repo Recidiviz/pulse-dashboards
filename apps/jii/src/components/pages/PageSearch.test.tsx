@@ -50,7 +50,7 @@ test("it should render the search page", async () => {
   );
 
   await waitFor(() =>
-    expect(screen.getByText("Select a resident")).toBeInTheDocument(),
+    expect(screen.getByText("Look up a resident")).toBeInTheDocument(),
   );
 });
 

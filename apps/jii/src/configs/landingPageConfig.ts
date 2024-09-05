@@ -15,10 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { LandingPageConfig } from "./types";
 
-import { LoginStateSelection } from "../LandingPages/LandingStateSelection";
-
-export const PageLanding: FC = () => {
-  return <LoginStateSelection />;
+export const landingPageConfig: LandingPageConfig = {
+  copy: {
+    intro: `# Learn about opportunities you may be eligible for.`,
+    selectorLabel: "Find opportunities in the state where you’re incarcerated",
+    selectorPlaceholder: "Select a state …",
+  },
+  states: [{ stateCode: "US_ME", displayName: "Maine", urlSlug: "maine" }],
 };

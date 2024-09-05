@@ -15,10 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { palette, typography } from "@recidiviz/design-system";
+import styled from "styled-components/macro";
 
-import { LoginStateSelection } from "../LandingPages/LandingStateSelection";
+import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 
-export const PageLanding: FC = () => {
-  return <LoginStateSelection />;
-};
+export const LandingPageCopyWrapper = styled(CopyWrapper)`
+  ${typography.Body16}
+
+  color: ${palette.slate85};
+
+  h1 {
+    margin-top: 0;
+  }
+
+  strong {
+    color: ${palette.pine1};
+  }
+`;

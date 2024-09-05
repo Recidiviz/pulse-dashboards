@@ -20,11 +20,22 @@ import { FilterParams } from "~firestore-api";
 
 import {
   IncarcerationOpportunityId,
+  LandingPageConfig,
   OpportunityRecord,
   ResidentsConfig,
+  StateCode,
+  StateLandingPageConfig,
 } from "../../configs/types";
 
 export interface DataAPI {
+  /**
+   * Fetches application config object for the landing page (pre-login)
+   */
+  landingPageConfig(): Promise<LandingPageConfig>;
+  /**
+   * Fetches application config object for a state-specific landing page (pre-login)
+   */
+  stateLandingPageConfig(stateCode: StateCode): Promise<StateLandingPageConfig>;
   /**
    * Fetches residents application config object for the active StateCode.
    */

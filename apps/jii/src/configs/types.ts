@@ -98,3 +98,36 @@ export type ResidentEligibilityReportMapping = {
     ]
   ) => EligibilityReport;
 };
+
+export type StateLoginConfig = {
+  stateCode: StateCode;
+  displayName: string;
+  urlSlug: string;
+};
+
+export type LandingPageConfig = {
+  copy: {
+    intro: string;
+    selectorLabel: string;
+    selectorPlaceholder: string;
+  };
+  states: Array<StateLoginConfig>;
+};
+
+export type StateLandingPageConfig = {
+  copy: {
+    intro: string;
+    selectorLabel: string;
+    selectorPlaceholder: string;
+    useCases: {
+      intro: string;
+      examples: Array<{
+        icon: string;
+        description: string;
+      }>;
+    };
+  };
+  connections: {
+    [key: string]: { displayName: string; connectionName: string };
+  };
+};

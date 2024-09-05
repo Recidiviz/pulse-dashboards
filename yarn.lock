@@ -5835,10 +5835,10 @@
     mobx-react-lite "^3.4.0"
     qs "^6.11.0"
 
-"@recidiviz/design-system@^5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-5.6.0.tgz#a8d0b237192c959486329ffa3cfa7532fac7a350"
-  integrity sha512-v6dfFB6fY5W2sNPLlpq4b6WrA2UjcKb44fAUTCPamVUm9DBaOF3Epn958GVRDwXB5iQkTfn2QkW+MwoAa0k4ZA==
+"@recidiviz/design-system@^5.7.0":
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/@recidiviz/design-system/-/design-system-5.7.0.tgz#e3d3f90bed91729fa233a78b6be50c407e111f03"
+  integrity sha512-cWpmNIospWyppl6B+cQ9UqkDOoXXS3vogV2B58gN9NLBvLdExMMbbq4kxXa325PHiKk7wYCA4tUCrC9y/KI0Tg==
   dependencies:
     "@fontsource/libre-baskerville" "^4.1.0"
     "@fontsource/public-sans" "^4.5.3"
