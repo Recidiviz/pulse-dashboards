@@ -15,8 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ApiOpportunityConfigurationMap } from "../interfaces";
+import { TenantId } from "../../../../RootStore/types";
+import {
+  ApiOpportunityConfigurationMap,
+  ApiOpportunityConfigurationResponse,
+} from "../interfaces";
 
 export interface OpportunityConfigurationAPI {
+  fetchForTenantId(
+    tenantId: TenantId,
+  ): Promise<ApiOpportunityConfigurationResponse>;
   opportunities(): Promise<ApiOpportunityConfigurationMap>;
 }

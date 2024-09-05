@@ -21,7 +21,9 @@ import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { downloadZipFile } from "../../../core/Paperwork/utils";
 import { RootStore } from "../../../RootStore";
+import TENANTS from "../../../tenants";
 import { OPPORTUNITY_CONFIGS } from "..";
 import { OpportunityType } from "../OpportunityType/types";
 import { OpportunityConfigurationAPI } from "./api/interface";
@@ -135,6 +137,24 @@ export class OpportunityConfigurationStore implements Hydratable {
     } else {
       return this.localOpportunityConfigurations;
     }
+  }
+
+  async downloadBlob(throttle_ms = 250) {
+    const files = await Promise.all(
+      TENANTS.RECIDIVIZ.availableStateCodes
+        .filter((t) => TENANTS[t].navigation?.workflows)
+        .map(async (tenant, i) => {
+          await new Promise((resolve) => setTimeout(resolve, throttle_ms * i));
+          const fetched = await this.apiClient.fetchForTenantId(tenant);
+          return {
+            filename: `${tenant}.ts`,
+            fileContents: `import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
+
+export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse = ${JSON.stringify(fetched)}`,
+          };
+        }),
+    );
+    downloadZipFile("configs.zip", files);
   }
 
   get enabledOpportunityTypes() {

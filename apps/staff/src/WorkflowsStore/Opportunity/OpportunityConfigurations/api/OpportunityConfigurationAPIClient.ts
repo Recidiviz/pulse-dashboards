@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TenantId } from "../../../../RootStore/types";
 import { apiOpportunityConfigurationResponseSchema } from "../dtos/ApiOpportunityConfigurationSchema";
+import { ApiOpportunityConfigurationResponse } from "../interfaces";
 import { OpportunityConfigurationStore } from "../OpportunityConfigurationStore";
 import { OpportunityConfigurationAPI } from "./interface";
 
@@ -31,11 +33,7 @@ export class OpportunityConfigurationAPIClient
     return this.opportunityConfigurationStore.rootStore.apiStore;
   }
 
-  private get baseUrl() {
-    return `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/${this.tenantId}`;
-  }
-
-  get tenantId(): string {
+  get tenantId(): TenantId {
     const { currentTenantId } = this.opportunityConfigurationStore.rootStore;
     if (!currentTenantId) {
       throw new Error(`Attempted to fetch data with undefined tenantId`);
@@ -43,30 +41,34 @@ export class OpportunityConfigurationAPIClient
     return currentTenantId;
   }
 
-  get featureVariantsParam(): string {
-    return Object.keys(
-      this.opportunityConfigurationStore.rootStore.userStore
-        .activeFeatureVariants,
-    ).join(",");
-  }
-
-  async opportunities() {
-    let endpoint = `${this.baseUrl}/opportunities`;
+  async fetchForTenantId(
+    tenantId: TenantId,
+  ): Promise<ApiOpportunityConfigurationResponse> {
+    let endpoint = `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/${tenantId}/opportunities`;
     const { isImpersonating, isRecidivizUser } =
       this.opportunityConfigurationStore.rootStore.userStore;
     if (isRecidivizUser || isImpersonating) {
-      endpoint += `?featureVariants=${this.featureVariantsParam}`;
+      const featureVariantsParam = Object.keys(
+        this.opportunityConfigurationStore.rootStore.userStore
+          .activeFeatureVariants,
+      ).join(",");
+      endpoint += `?featureVariants=${featureVariantsParam}`;
     }
-    let fetchedData;
     try {
-      fetchedData = await this.apiStore.get(endpoint);
+      // this await isn't redundant, because without it we don't catch the error
+      return await this.apiStore.get(endpoint);
     } catch (e) {
       // This isn't optimal error handling, but the backend sends a 401
       // for non-workflows enabled states, and apiStore doesn't throw a
       // machine-readable exception
       console.error(e);
-      return {};
+      return { enabledConfigs: {} };
     }
+  }
+
+  async opportunities() {
+    const fetchedData = await this.fetchForTenantId(this.tenantId);
+
     return apiOpportunityConfigurationResponseSchema.parse(fetchedData)
       .enabledConfigs;
   }

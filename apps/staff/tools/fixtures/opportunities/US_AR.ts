@@ -15,17 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TenantId } from "../../../../RootStore/types";
-import { ApiOpportunityConfigurationResponse } from "../interfaces";
-import { OpportunityConfigurationAPIClient } from "./OpportunityConfigurationAPIClient";
+import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
-export class OpportunityConfigurationOfflineAPIClient extends OpportunityConfigurationAPIClient {
-  async fetchForTenantId(
-    tenantId: TenantId,
-  ): Promise<ApiOpportunityConfigurationResponse> {
-    const { mockApiOpportunityConfigurationResponse } = await import(
-      `../../../../../tools/fixtures/opportunities/${tenantId}.ts`
-    );
-    return mockApiOpportunityConfigurationResponse;
-  }
-}
+export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse =
+  { enabledConfigs: {} };

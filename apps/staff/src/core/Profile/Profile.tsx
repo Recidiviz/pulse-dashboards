@@ -19,10 +19,10 @@ import "./Profile.scss";
 
 import { Button, TooltipTrigger } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { isOfflineMode } from "~client-env-utils";
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
 import StateSelection from "../../components/StateSelection";
 import { useUserStore } from "../../components/StoreProvider";
@@ -38,6 +38,14 @@ function Profile() {
   const { user } = userStore;
   const logout = useLogout();
   const navigate = useNavigate();
+
+  const [isDownloadingConfigurations, setIsDownloadingConfigurations] =
+    useState(false);
+  const downloadConfigurations = async () => {
+    setIsDownloadingConfigurations(true);
+    await userStore.rootStore?.workflowsStore.opportunityConfigurationStore.downloadBlob();
+    setIsDownloadingConfigurations(false);
+  };
 
   const showImpersonationForm =
     userStore.isImpersonating || userStore.isRecidivizUser;
@@ -78,6 +86,17 @@ function Profile() {
             <Link to="/">
               <Button className="Profile__button">Back to dashboard</Button>
             </Link>
+            {userStore.isRecidivizUser && !isDemoMode() && !isOfflineMode() && (
+              <Button
+                className="Profile__button"
+                disabled={isDownloadingConfigurations}
+                onClick={downloadConfigurations}
+              >
+                {isDownloadingConfigurations
+                  ? "Downloading..."
+                  : "Download Opportunity Configurations"}
+              </Button>
+            )}
             <Button
               className="Profile__button"
               onClick={logout}
