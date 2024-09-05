@@ -96,15 +96,14 @@ export const mockOpportunity: Opportunity<Client> = {
       autoSnoozeParams: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
     },
     tabGroups: {
-      "ELIGIBILITY STATUS": generateTabs({
-        isAlert: false,
-      }) as OpportunityTab[],
+      "ELIGIBILITY STATUS": generateTabs({}) as OpportunityTab[],
     },
     isEnabled: true,
     denialReasons: { CODE: "Denial Code", [OTHER_KEY]: "Other" },
     methodologyUrl: "https://example.com",
     sidebarComponents: [],
     isAlert: false,
+    deniedTabTitle: "Marked Ineligible",
     eligibleCriteriaCopy: {},
     ineligibleCriteriaCopy: {},
     homepagePosition: 1,

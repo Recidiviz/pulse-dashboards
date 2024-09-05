@@ -24,7 +24,7 @@ import {
   FeatureVariant,
 } from "../../../../RootStore/types";
 import UserStore from "../../../../RootStore/UserStore";
-import { OpportunityTabGroups } from "../../types";
+import { OpportunityTab, OpportunityTabGroups } from "../../types";
 import { generateTabs } from "../../utils/tabUtils";
 import { IApiOpportunityConfiguration } from "../interfaces";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
@@ -154,7 +154,9 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     const tabs = this.configurationObject.tabGroups as OpportunityTabGroups;
     if (tabs) return tabs;
     return {
-      "ELIGIBILITY STATUS": generateTabs({ isAlert: this.isAlert }),
+      "ELIGIBILITY STATUS": generateTabs({
+        deniedTabTitle: this.deniedTabTitle,
+      }),
     } as OpportunityTabGroups;
   }
 
@@ -204,5 +206,9 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       !!inverseFeatureVariant && !!activeFeatureVariants[inverseFeatureVariant];
 
     return featureVariantEnabled && !inverseFeatureVariantDisabled;
+  }
+
+  get deniedTabTitle(): OpportunityTab {
+    return this.isAlert ? "Overridden" : "Marked Ineligible";
   }
 }

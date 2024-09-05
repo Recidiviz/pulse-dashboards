@@ -524,7 +524,7 @@ export class OpportunityBase<
   }
 
   get deniedTabTitle(): OpportunityTab {
-    return this.config.isAlert ? "Overridden" : "Marked Ineligible";
+    return this.config.deniedTabTitle ?? "Marked Ineligible";
   }
 
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {

@@ -143,9 +143,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
       : defaultAvatarsShown;
   const previewOpportunities = opportunities.slice(0, sliceIndex);
   const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
-  const reviewStatusText = opportunities[0].config.isAlert
-    ? "Overridden"
-    : "Ineligible";
+  const reviewStatusText = opportunities[0].config.deniedTabTitle;
   const numIneligible = opportunities.filter(
     (opp) => opp.reviewStatus === "DENIED",
   ).length;

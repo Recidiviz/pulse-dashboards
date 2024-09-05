@@ -33,13 +33,20 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
       eligibleStatusMessage,
       defaultEligibility,
       denial,
-      config: { isAlert },
+      config: { isAlert, deniedTabTitle },
     } = opportunity;
 
     if (!isHydrated(opportunity)) return null;
 
     if (denial?.reasons.length) {
-      const statusText = isAlert ? "Override" : "Currently ineligible";
+      let statusText;
+      // TODO(#6224): Move this logic to OpportunityBase and individual opportunities
+      if (deniedTabTitle === "Assessment Complete") {
+        statusText = "Assessment completed";
+        includeReasons = false; // Don't show "(ASSESSED)"
+      } else {
+        statusText = isAlert ? "Override" : "Currently ineligible";
+      }
 
       return (
         <>

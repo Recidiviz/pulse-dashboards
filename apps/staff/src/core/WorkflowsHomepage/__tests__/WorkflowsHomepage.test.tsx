@@ -406,7 +406,7 @@ describe("WorkflowsHomepage", () => {
       ),
     ).toBeInTheDocument();
 
-    expect(screen.getByText("Ineligible: 1")).toBeInTheDocument();
+    expect(screen.getByText("Marked Ineligible: 1")).toBeInTheDocument();
   });
 
   test("header does not include ineligible opps in count", () => {
@@ -446,24 +446,36 @@ describe("WorkflowsHomepage", () => {
       ),
     ).toBeInTheDocument();
 
-    expect(screen.getByText("Ineligible: 1")).toBeInTheDocument();
+    expect(screen.getByText("Marked Ineligible: 1")).toBeInTheDocument();
   });
 
   test("review status uses overridden text for alert opps", () => {
     const firstOpp = {
       ...mockOpportunity,
-      config: { ...mockOpportunity.config, isAlert: true },
+      config: {
+        ...mockOpportunity.config,
+        isAlert: true,
+        deniedTabTitle: "Overridden",
+      },
       reviewStatus: "DENIED",
     };
     const secondOpp = {
       ...mockOpportunity,
-      config: { ...mockOpportunity.config, isAlert: true },
+      config: {
+        ...mockOpportunity.config,
+        isAlert: true,
+        deniedTabTitle: "Overridden",
+      },
       reviewStatus: "IN_PROGRESS",
       person: { recordId: "2" },
     };
     const thirdOpp = {
       ...mockOpportunity,
-      config: { ...mockOpportunity.config, isAlert: true },
+      config: {
+        ...mockOpportunity.config,
+        isAlert: true,
+        deniedTabTitle: "Overridden",
+      },
       reviewStatus: "IN_PROGRESS",
       person: { recordId: "3" },
     };

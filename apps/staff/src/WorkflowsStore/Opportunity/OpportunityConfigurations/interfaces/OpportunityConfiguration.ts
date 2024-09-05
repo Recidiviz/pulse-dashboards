@@ -23,6 +23,7 @@ import {
   Opportunity,
   OpportunityNotification,
   OpportunityPriority,
+  OpportunityTab,
   OpportunityTabGroups,
 } from "../../types";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
@@ -59,4 +60,5 @@ export interface OpportunityConfiguration {
   compareBy: SortParamObject<string>[] | undefined;
   homepagePosition: number;
   countByFunction?: (opportunities: Opportunity[]) => number;
+  deniedTabTitle?: OpportunityTab;
 }

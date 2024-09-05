@@ -17,7 +17,7 @@
 
 import UserStore from "../../../../RootStore/UserStore";
 import { OpportunityConfig } from "../../OpportunityConfigs";
-import { Opportunity, OpportunityTabGroups } from "../../types";
+import { Opportunity, OpportunityTab, OpportunityTabGroups } from "../../types";
 import { generateTabs } from "../../utils/tabUtils";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
 import {
@@ -64,7 +64,9 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
     else if (tabs && typeof tabs === "object")
       return tabs as OpportunityTabGroups;
     return {
-      "ELIGIBILITY STATUS": generateTabs({ isAlert: this.isAlert }),
+      "ELIGIBILITY STATUS": generateTabs({
+        deniedTabTitle: this.deniedTabTitle,
+      }),
     } as OpportunityTabGroups;
   }
 
@@ -143,5 +145,9 @@ export class LocalOpportunityConfiguration implements OpportunityConfiguration {
       !!inverseFeatureVariant && !!activeFeatureVariants[inverseFeatureVariant];
 
     return featureVariantEnabled && !inverseFeatureVariantDisabled;
+  }
+
+  get deniedTabTitle(): OpportunityTab {
+    return this.isAlert ? "Overridden" : "Marked Ineligible";
   }
 }

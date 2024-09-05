@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 // TODO(#6073) Remove this file once the fields are added to the backend
@@ -25,5 +26,9 @@ export class UsNdIncarcerationConfiguration extends ApiOpportunityConfiguration 
 
   get snoozeConfirmationText() {
     return "Action taken: Entered in Elite";
+  }
+
+  get deniedTabTitle(): OpportunityTab {
+    return "Assessment Complete";
   }
 }
