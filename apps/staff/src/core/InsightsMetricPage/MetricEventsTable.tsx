@@ -20,11 +20,10 @@ import { ComponentType, useEffect, useRef, useState } from "react";
 import { Column } from "react-table";
 import styled from "styled-components/macro";
 
-import { FullName } from "~datatypes";
+import { FullName, SupervisionOfficerMetricEvent } from "~datatypes";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionOfficerMetricEvent } from "../../InsightsStore/models/SupervisionOfficerMetricEvent";
 import { SupervisionOfficerMetricEventsPresenter } from "../../InsightsStore/presenters/SupervisionOfficerMetricEventsPresenter";
 import { formatDate } from "../../utils";
 import InsightsClientDetailsPanel from "../InsightsClientDetailsPanel";

@@ -18,7 +18,8 @@
 import { observer } from "mobx-react-lite";
 import { AspectRatio } from "react-aspect-ratio";
 
-import { SupervisionOfficer } from "../../InsightsStore/models/SupervisionOfficer";
+import { SupervisionOfficer } from "~datatypes";
+
 import { SwarmPresenterV2 } from "../../InsightsStore/presenters/SwarmPresenter";
 import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import {

@@ -18,6 +18,11 @@
 import { flowResult, makeObservable } from "mobx";
 
 import {
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
+  SupervisionOfficerSupervisor,
+} from "~datatypes";
+import {
   castToError,
   FlowMethod,
   Hydratable,
@@ -25,11 +30,6 @@ import {
 } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../models/SupervisionOfficer";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import { ConfigLabels, OutlierOfficerData } from "./types";

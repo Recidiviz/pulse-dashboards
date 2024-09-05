@@ -23,11 +23,17 @@ import moment from "moment";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
+  ActionStrategy,
   ClientEvent,
   ClientInfo,
+  ExcludedSupervisionOfficer,
   InsightsConfig,
   MetricBenchmark,
   MetricConfig,
+  SupervisionOfficer,
+  SupervisionOfficerMetricEvent,
+  SupervisionOfficerSupervisor,
+  UserInfo,
 } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
@@ -38,14 +44,6 @@ import {
   PatchUserInfoProps,
 } from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
-import { ActionStrategy } from "../models/ActionStrategy";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../models/SupervisionOfficer";
-import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
-import { UserInfo } from "../models/UserInfo";
 import { ActionStrategyCopy, ConfigLabels } from "../presenters/types";
 import { StringMap2D } from "../types";
 

@@ -22,10 +22,10 @@ import values from "lodash/fp/values";
 import { flowResult, makeAutoObservable } from "mobx";
 import simplur from "simplur";
 
+import { SupervisionOfficerSupervisor } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { FeatureVariantValue } from "../../RootStore/types";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { ConfigLabels } from "./types";
 

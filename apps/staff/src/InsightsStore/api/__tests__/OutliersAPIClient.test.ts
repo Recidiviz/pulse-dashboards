@@ -17,38 +17,27 @@
 
 import {
   ADVERSE_METRIC_IDS,
+  excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
+  leadershipUserInfoFixture,
   metricBenchmarksFixture,
+  rawExcludedSupervisionOfficerFixture,
+  rawLeadershipUserInfoFixture,
   rawMetricBenchmarksFixture,
+  rawSupervisionOfficerFixture,
+  rawSupervisionOfficerMetricEventFixture,
+  rawSupervisorUserInfoFixture,
+  supervisionOfficerFixture,
+  supervisionOfficerMetricEventFixture,
+  supervisionOfficerSupervisorsFixture,
+  supervisorUserInfoFixture,
 } from "~datatypes";
+import { actionStrategyFixture, rawActionStrategyFixture } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { APIStore } from "../../../RootStore/APIStore";
 import UserStore from "../../../RootStore/UserStore";
 import { InsightsStore } from "../../InsightsStore";
-import {
-  actionStrategyFixture,
-  rawActionStrategyFixture,
-} from "../../models/offlineFixtures/ActionStrategyFixture";
-import {
-  excludedSupervisionOfficerFixture,
-  rawExcludedSupervisionOfficerFixture,
-} from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import {
-  rawSupervisionOfficerFixture,
-  supervisionOfficerFixture,
-} from "../../models/offlineFixtures/SupervisionOfficerFixture";
-import {
-  rawSupervisionOfficerMetricEventFixture,
-  supervisionOfficerMetricEventFixture,
-} from "../../models/offlineFixtures/SupervisionOfficerMetricEventFixture";
-import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
-import {
-  leadershipUserInfoFixture,
-  rawLeadershipUserInfoFixture,
-  rawSupervisorUserInfoFixture,
-  supervisorUserInfoFixture,
-} from "../../models/offlineFixtures/UserInfoFixture";
 import { InsightsAPIClient } from "../InsightsAPIClient";
 
 const mockTenantId = "us_tn";

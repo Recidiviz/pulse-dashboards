@@ -18,7 +18,12 @@
 import { shuffle, sum } from "lodash";
 import { configure } from "mobx";
 
-import { InsightsConfigFixture } from "~datatypes";
+import {
+  excludedSupervisionOfficerFixture,
+  InsightsConfigFixture,
+  supervisionOfficerSupervisorsFixture,
+  SupervisionOfficerWithOpportunityDetails,
+} from "~datatypes";
 import { isHydrated, unpackAggregatedErrors } from "~hydration-utils";
 
 import { ClientRecord } from "../../../FirestoreStore";
@@ -45,9 +50,6 @@ import {
   clientFixture,
   CLIENTS_OFFICERS,
 } from "../../models/offlineFixtures/ClientFixture";
-import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
-import { SupervisionOfficerWithOpportunityDetails } from "../../models/SupervisionOfficerWithOpportunityDetails";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionSupervisorPresenter } from "../SupervisionSupervisorPresenter";
 import { RawOpportunityInfo } from "../types";

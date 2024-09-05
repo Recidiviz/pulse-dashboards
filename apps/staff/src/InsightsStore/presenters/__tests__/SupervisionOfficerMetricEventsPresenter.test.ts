@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { InsightsConfigFixture } from "~datatypes";
+import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
-import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerMetricEventsPresenter } from "../SupervisionOfficerMetricEventsPresenter";
 

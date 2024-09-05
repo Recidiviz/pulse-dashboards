@@ -21,19 +21,17 @@ import { flowResult } from "mobx";
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_CATEGORY_IDS,
+  ExcludedSupervisionOfficer,
+  excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
   metricBenchmarksFixture,
+  SupervisionOfficer,
+  supervisionOfficerFixture,
 } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
-import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "../utils";
 

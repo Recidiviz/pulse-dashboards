@@ -21,27 +21,30 @@ import { differenceInDays, subDays } from "date-fns";
 
 import { isDemoMode } from "~client-env-utils";
 import {
+  ActionStrategy,
+  actionStrategyFixture,
   ClientEvent,
   clientEventFixture,
   ClientInfo,
   clientInfoFixture,
+  ExcludedSupervisionOfficer,
+  excludedSupervisionOfficerFixture,
   FAVORABLE_METRIC_IDS,
   InsightsConfigFixture,
   LATEST_END_DATE,
+  leadershipUserInfoFixture,
   MetricBenchmark,
   metricBenchmarksFixture,
+  SupervisionOfficer,
+  supervisionOfficerFixture,
+  SupervisionOfficerMetricEvent,
+  supervisionOfficerMetricEventFixture,
+  SupervisionOfficerSupervisor,
+  supervisionOfficerSupervisorsFixture,
+  UserInfo,
 } from "~datatypes";
 
 import type { InsightsStore } from "../InsightsStore";
-import { ActionStrategy } from "../models/ActionStrategy";
-import { leadershipUserInfoFixture } from "../models/offlineFixtures/UserInfoFixture";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../models/SupervisionOfficer";
-import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
-import { UserInfo } from "../models/UserInfo";
 import {
   ActionStrategySurfacedEvent,
   InsightsAPI,
@@ -62,10 +65,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   }
 
   async actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy> {
-    const { actionStrategyFixture } = await import(
-      "../models/offlineFixtures/ActionStrategyFixture"
-    );
-
     return actionStrategyFixture;
   }
 
@@ -76,9 +75,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   }
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {
-    const { supervisionOfficerSupervisorsFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerSupervisor"
-    );
     const matchingSupervisor = supervisionOfficerSupervisorsFixture.find(
       (supervisor) => supervisor.pseudonymizedId === userPseudoId,
     );
@@ -120,9 +116,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async supervisionOfficerSupervisors(): Promise<
     SupervisionOfficerSupervisor[]
   > {
-    const { supervisionOfficerSupervisorsFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerSupervisor"
-    );
     return supervisionOfficerSupervisorsFixture;
   }
 
@@ -143,10 +136,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async officersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
-    const { supervisionOfficerFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerFixture"
-    );
-
     const transformedFixture = isDemoMode()
       ? supervisionOfficerFixture.map((officer) =>
           this.removeCaSpecificDataFromFixture(officer),
@@ -163,10 +152,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async excludedOfficersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<ExcludedSupervisionOfficer>> {
-    const { excludedSupervisionOfficerFixture } = await import(
-      "../models/offlineFixtures/ExcludedSupervisionOfficerFixture"
-    );
-
     return excludedSupervisionOfficerFixture.filter((o) =>
       o.supervisorExternalIds
         .map((i) => `hashed-${i}`)
@@ -177,10 +162,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async supervisionOfficer(
     officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
-    const { supervisionOfficerFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerFixture"
-    );
-
     const officerFixture = supervisionOfficerFixture.find(
       (o) => o.pseudonymizedId === officerPseudoId,
     );
@@ -196,10 +177,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async excludedSupervisionOfficer(
     officerPseudoId: string,
   ): Promise<ExcludedSupervisionOfficer> {
-    const { excludedSupervisionOfficerFixture } = await import(
-      "../models/offlineFixtures/ExcludedSupervisionOfficerFixture"
-    );
-
     const officerFixture = excludedSupervisionOfficerFixture.find(
       (o) => o.pseudonymizedId === officerPseudoId,
     );
@@ -214,9 +191,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     officerPseudoId: string,
     metricId: string,
   ): Promise<SupervisionOfficerMetricEvent[]> {
-    const { supervisionOfficerMetricEventFixture } = await import(
-      "../models/offlineFixtures/SupervisionOfficerMetricEventFixture"
-    );
     return supervisionOfficerMetricEventFixture.filter(
       (e) => e.metricId === metricId,
     );

@@ -16,33 +16,29 @@
 // =============================================================================
 
 import {
+  ActionStrategy,
+  actionStrategySchema,
   ClientEvent,
   clientEventSchema,
   ClientInfo,
   clientInfoSchema,
+  ExcludedSupervisionOfficer,
+  excludedSupervisionOfficerSchema,
   insightsConfigSchema,
   MetricBenchmark,
   metricBenchmarkSchema,
+  SupervisionOfficer,
+  SupervisionOfficerMetricEvent,
+  supervisionOfficerMetricEventSchema,
+  supervisionOfficerSchema,
+  SupervisionOfficerSupervisor,
+  supervisionOfficerSupervisorSchema,
+  UserInfo,
+  userInfoSchema,
 } from "~datatypes";
 
 import { formatDateToISO } from "../../utils";
 import type { InsightsStore } from "../InsightsStore";
-import { ActionStrategy, actionStrategySchema } from "../models/ActionStrategy";
-import {
-  ExcludedSupervisionOfficer,
-  excludedSupervisionOfficerSchema,
-  SupervisionOfficer,
-  supervisionOfficerSchema,
-} from "../models/SupervisionOfficer";
-import {
-  SupervisionOfficerMetricEvent,
-  supervisionOfficerMetricEventSchema,
-} from "../models/SupervisionOfficerMetricEvent";
-import {
-  SupervisionOfficerSupervisor,
-  supervisionOfficerSupervisorSchema,
-} from "../models/SupervisionOfficerSupervisor";
-import { UserInfo, userInfoSchema } from "../models/UserInfo";
 import {
   ActionStrategySurfacedEvent,
   InsightsAPI,

@@ -63,20 +63,30 @@ export * from "./people/Resident/schema";
 
 // Staff Exports: Includes fixtures and schema related to Staff
 // -----------------------------------------------------------------------------
-export * from "./people/Staff/fixtures";
-export * from "./people/Staff/schema";
+export * from "./people/Staff/Incarceration/Workflows/fixture";
+export * from "./people/Staff/Incarceration/Workflows/schema";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/schema";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/fixture";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/schema";
+export * from "./people/Staff/Supervision/Workflows/fixture";
+export * from "./people/Staff/Supervision/Workflows/schema";
 
 // Utilities Exports: Common utilities for people
 // -----------------------------------------------------------------------------
 export * from "./people/utils/addDisplayName";
 export * from "./people/utils/fullNameSchema";
 export * from "./people/utils/preprocessSchemaWithCaseloadCategoryOrType";
+export * from "./people/utils/types";
+
 // =============================================================================
 // Config
 // =============================================================================
 
 // Config Exports: Configuration fixtures and schema
 // -----------------------------------------------------------------------------
+export * from "./config/ActionStrategy/fixture";
+export * from "./config/ActionStrategy/schema";
 export * from "./config/InsightsConfig/fixture";
 export * from "./config/InsightsConfig/schema";
 
@@ -90,10 +100,23 @@ export * from "./metrics/ClientInfo/schema";
 export * from "./metrics/MetricBenchmark/fixture";
 export * from "./metrics/MetricBenchmark/schema";
 export * from "./metrics/MetricConfig/schema";
+export * from "./metrics/SupervisionOfficerMetricEvent/fixture";
+export * from "./metrics/SupervisionOfficerMetricEvent/schema";
+export * from "./metrics/SupervisionOfficerMetricOutlier/fixture";
+export * from "./metrics/SupervisionOfficerMetricOutlier/schema";
 
 // Metrics Utilities Exports: Common utilities for metrics
 // -----------------------------------------------------------------------------
 export * from "./metrics/utils/constants";
+
+// =============================================================================
+// Utils
+// =============================================================================
+
+// System: Types related to the system, such as the User, metadata, etc.
+// -----------------------------------------------------------------------------
+export * from "./system/UserInfo/fixture";
+export * from "./system/UserInfo/schema";
 
 // =============================================================================
 // Utils

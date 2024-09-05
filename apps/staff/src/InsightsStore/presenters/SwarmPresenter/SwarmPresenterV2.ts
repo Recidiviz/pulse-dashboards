@@ -18,9 +18,9 @@
 import { captureException } from "@sentry/react";
 import { makeAutoObservable, toJS } from "mobx";
 
+import { SupervisionOfficer } from "~datatypes";
 import { castToError, FlowMethod } from "~hydration-utils";
 
-import { SupervisionOfficer } from "../../models/SupervisionOfficer";
 import { MetricConfigWithBenchmark, OutlierOfficerData } from "../types";
 import {
   CHART_ASPECT_RATIO,

@@ -28,7 +28,8 @@ import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import { OpportunityInfo } from "../../InsightsStore/models/OpportunityInfo";
+import { OpportunityInfo } from "~datatypes";
+
 import { insightsUrl } from "../views";
 
 const OfficerWithOpportunityDetailsName = styled.h1`

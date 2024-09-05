@@ -18,7 +18,10 @@
 import { configure } from "mobx";
 import { vi } from "vitest";
 
-import { InsightsConfigFixture } from "~datatypes";
+import {
+  excludedSupervisionOfficerFixture,
+  InsightsConfigFixture,
+} from "~datatypes";
 
 import { ClientRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
@@ -36,7 +39,6 @@ import {
   clientFixture,
   CLIENTS_OFFICERS,
 } from "../../models/offlineFixtures/ClientFixture";
-import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { MockOpportunity } from "../__mocks__/MockOpportunity";
 import { MockSupervisionPresenterWithJiiMixin } from "../__mocks__/MockSupervisionPresenterWithJiiMixin";

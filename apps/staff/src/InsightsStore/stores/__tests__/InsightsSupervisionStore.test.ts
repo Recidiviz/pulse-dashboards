@@ -22,20 +22,20 @@ import { ValuesType } from "utility-types";
 
 import {
   CASELOAD_CATEGORY_IDS,
+  excludedSupervisionOfficerFixture,
   InsightsConfig,
   InsightsConfigFixture,
   LATEST_END_DATE,
   metricBenchmarksFixture,
+  supervisionOfficerFixture,
+  supervisionOfficerMetricEventFixture,
+  supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { formatDateToISO } from "../../../utils";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
-import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
-import { supervisionOfficerMetricEventFixture } from "../../models/offlineFixtures/SupervisionOfficerMetricEventFixture";
-import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionPresenter } from "../../presenters/SupervisionPresenter";
 import { InsightsSupervisionStore } from "../InsightsSupervisionStore";
 

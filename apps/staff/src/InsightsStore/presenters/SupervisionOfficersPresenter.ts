@@ -18,6 +18,7 @@
 import { compact, uniq } from "lodash/fp";
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { SupervisionOfficer, SupervisionOfficerSupervisor } from "~datatypes";
 import {
   castToError,
   Hydratable,
@@ -25,8 +26,6 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
-import { SupervisionOfficer } from "../models/SupervisionOfficer";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
   ActionStrategyCopy,

@@ -20,13 +20,15 @@ import { axe } from "jest-axe";
 import { configure } from "mobx";
 import { BrowserRouter } from "react-router-dom";
 
-import { InsightsConfigFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  supervisionOfficerSupervisorsFixture,
+} from "~datatypes";
 
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { supervisionOfficerSupervisorsFixture } from "../../../InsightsStore/models/offlineFixtures/SupervisionOfficerSupervisor";
 import { SupervisionOfficersPresenter } from "../../../InsightsStore/presenters/SupervisionOfficersPresenter";
 import { HighlightedOfficersDetail } from "../../../InsightsStore/presenters/types";
 import { InsightsSupervisionStore } from "../../../InsightsStore/stores/InsightsSupervisionStore";

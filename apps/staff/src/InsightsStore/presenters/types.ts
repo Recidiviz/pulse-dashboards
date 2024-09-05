@@ -17,16 +17,18 @@
 
 import { ValuesType } from "utility-types";
 
-import { InsightsConfig, MetricBenchmark, MetricConfig } from "~datatypes";
-
-import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
-import { OpportunityInfo } from "../models/OpportunityInfo";
 import {
   ExcludedSupervisionOfficer,
+  InsightsConfig,
+  MetricBenchmark,
+  MetricConfig,
+  OpportunityInfo,
   SupervisionOfficer,
-} from "../models/SupervisionOfficer";
-import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
-import { SupervisionOfficerMetricOutlier } from "../models/SupervisionOfficerMetricOutlier";
+  SupervisionOfficerMetricEvent,
+  SupervisionOfficerMetricOutlier,
+} from "~datatypes";
+
+import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 
 // This type represents the state of fully hydrated data
 // where all necessary related objects are guaranteed to exist

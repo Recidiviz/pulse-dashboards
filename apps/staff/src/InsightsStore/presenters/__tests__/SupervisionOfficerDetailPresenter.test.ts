@@ -17,15 +17,17 @@
 
 import { configure, flowResult } from "mobx";
 
-import { InsightsConfigFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  supervisionOfficerFixture,
+  supervisionOfficerSupervisorsFixture,
+} from "~datatypes";
 import { unpackAggregatedErrors } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
-import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
-import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerDetailPresenter } from "../SupervisionOfficerDetailPresenter";
 import * as utils from "../utils";

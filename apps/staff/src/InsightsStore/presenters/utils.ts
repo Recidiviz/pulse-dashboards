@@ -17,14 +17,14 @@
 
 import { Optional } from "utility-types";
 
-import { MetricConfig } from "~datatypes";
-
 import {
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerSchema,
+  MetricConfig,
   SupervisionOfficer,
   supervisionOfficerSchema,
-} from "../models/SupervisionOfficer";
+} from "~datatypes";
+
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { OutlierOfficerData } from "./types";
 

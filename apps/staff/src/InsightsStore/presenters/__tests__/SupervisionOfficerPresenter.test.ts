@@ -17,7 +17,14 @@
 
 import { configure, flowResult } from "mobx";
 
-import { InsightsConfigFixture } from "~datatypes";
+import {
+  ExcludedSupervisionOfficer,
+  excludedSupervisionOfficerFixture,
+  InsightsConfigFixture,
+  SupervisionOfficer,
+  supervisionOfficerFixture,
+  supervisionOfficerSupervisorsFixture,
+} from "~datatypes";
 import { hydrationFailure, unpackAggregatedErrors } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
@@ -28,13 +35,6 @@ import {
 } from "../../../WorkflowsStore/__fixtures__";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
-import { excludedSupervisionOfficerFixture } from "../../models/offlineFixtures/ExcludedSupervisionOfficerFixture";
-import { supervisionOfficerFixture } from "../../models/offlineFixtures/SupervisionOfficerFixture";
-import { supervisionOfficerSupervisorsFixture } from "../../models/offlineFixtures/SupervisionOfficerSupervisor";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenter } from "../SupervisionOfficerPresenter";
 import * as utils from "../utils";

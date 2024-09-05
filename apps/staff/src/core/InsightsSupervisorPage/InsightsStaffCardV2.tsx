@@ -21,10 +21,11 @@ import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { SupervisionOfficer } from "~datatypes";
+
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionOfficer } from "../../InsightsStore/models/SupervisionOfficer";
 import {
   ByMetricAndCategory2DMap,
   MetricAndOutliersInfo,

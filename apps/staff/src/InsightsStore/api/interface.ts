@@ -18,20 +18,18 @@
 import { z } from "zod";
 
 import {
+  ACTION_STRATEGY_TYPE,
+  ActionStrategy,
   ClientEvent,
   ClientInfo,
+  ExcludedSupervisionOfficer,
   InsightsConfig,
   MetricBenchmark,
-} from "~datatypes";
-
-import { ACTION_STRATEGY_TYPE, ActionStrategy } from "../models/ActionStrategy";
-import {
-  ExcludedSupervisionOfficer,
   SupervisionOfficer,
-} from "../models/SupervisionOfficer";
-import { SupervisionOfficerMetricEvent } from "../models/SupervisionOfficerMetricEvent";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
-import { UserInfo } from "../models/UserInfo";
+  SupervisionOfficerMetricEvent,
+  SupervisionOfficerSupervisor,
+  UserInfo,
+} from "~datatypes";
 
 export type PatchUserInfoProps = { hasSeenOnboarding: boolean };
 export type ActionStrategySurfacedEvent = {

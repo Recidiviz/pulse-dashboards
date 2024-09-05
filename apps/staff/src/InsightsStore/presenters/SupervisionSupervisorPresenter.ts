@@ -19,6 +19,13 @@ import { captureException } from "@sentry/react";
 import { ascending, descending } from "d3-array";
 import { computed, flowResult, makeObservable } from "mobx";
 
+import {
+  ExcludedSupervisionOfficer,
+  OpportunityInfo,
+  SupervisionOfficer,
+  SupervisionOfficerSupervisor,
+  SupervisionOfficerWithOpportunityDetails,
+} from "~datatypes";
 import { castToError, HydratesFromSource, isHydrated } from "~hydration-utils";
 
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
@@ -27,13 +34,6 @@ import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/
 import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
-import { OpportunityInfo } from "../models/OpportunityInfo";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../models/SupervisionOfficer";
-import { SupervisionOfficerSupervisor } from "../models/SupervisionOfficerSupervisor";
-import { SupervisionOfficerWithOpportunityDetails } from "../models/SupervisionOfficerWithOpportunityDetails";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import {

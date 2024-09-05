@@ -1,0 +1,56 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`incarceration staff schema for 'US_ID' 'OFFICER6' 1`] = `
+{
+  "email": "test-officer-6@example.com",
+  "givenNames": "Test",
+  "id": "OFFICER6",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_ID",
+  "surname": "Officer6",
+}
+`;
+
+exports[`incarceration staff schema for 'US_ME' 'OFFICER5' 1`] = `
+{
+  "email": "test-officer-5@example.com",
+  "givenNames": "Test",
+  "id": "OFFICER5",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_ME",
+  "surname": "Officer5",
+}
+`;
+
+exports[`incarceration staff schema for 'US_MO' 'FACILITY1' 1`] = `
+{
+  "email": null,
+  "givenNames": "Facility 1",
+  "id": "FACILITY1",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_MO",
+  "surname": "",
+}
+`;
+
+exports[`incarceration staff schema for 'US_MO' 'OFFICER7' 1`] = `
+{
+  "email": "test-officer-7@example.com",
+  "givenNames": "Test",
+  "id": "OFFICER7",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_MO",
+  "surname": "Officer7",
+}
+`;
+
+exports[`incarceration staff schema for 'US_TN' 'OFFICER5' 1`] = `
+{
+  "email": "test-officer-5@example.com",
+  "givenNames": "Test",
+  "id": "OFFICER5",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_TN",
+  "surname": "Officer5",
+}
+`;

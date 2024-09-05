@@ -27,7 +27,8 @@ import React from "react";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import { OpportunityInfo } from "../../InsightsStore/models/OpportunityInfo";
+import { OpportunityInfo } from "~datatypes";
+
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
 import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 import { InsightsSupervisorOpportunityDetailOfficerList } from "./InsightsSupervisorOpportunityDetailOfficerList";

@@ -21,12 +21,10 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
+import { ExcludedSupervisionOfficer, SupervisionOfficer } from "~datatypes";
+
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../../InsightsStore/models/SupervisionOfficer";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
 import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";

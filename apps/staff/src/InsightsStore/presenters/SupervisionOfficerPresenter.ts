@@ -17,6 +17,7 @@
 
 import { makeObservable, override } from "mobx";
 
+import { ExcludedSupervisionOfficer, SupervisionOfficer } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import {
@@ -28,10 +29,6 @@ import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolve
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../models/SupervisionOfficer";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 import { isExcludedSupervisionOfficer } from "./utils";
