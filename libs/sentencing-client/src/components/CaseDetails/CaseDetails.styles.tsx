@@ -380,6 +380,32 @@ export const OpportunitiesCount = styled.div`
   font-size: 12px;
 `;
 
+export const NoOpportunitiesWrapper = styled.div`
+  width: 100%;
+  height: 430px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: ${palette.slate60};
+  margin-right: 4px;
+
+  span {
+    ${typography.Sans18}
+    color: ${palette.pine1};
+  }
+`;
+
+export const NoOpportunitiesTextContainer = styled.div`
+  width: 285px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+`;
+
 export const NoOpportunitiesSelectedText = styled.div`
   color: ${palette.slate60};
   margin-right: 4px;
@@ -515,6 +541,7 @@ export const PlaceholderPdfPreview = styled.div`
   height: 346px;
   margin-top: 8px;
   margin-bottom: 8px;
+  user-select: none;
 
   ${ReportPDFContainer} {
     width: 100%;
@@ -750,7 +777,7 @@ export const CaseDetailsApplied = styled.div`
 
 export const CaseDetailsAppliedTitle = styled.div`
   font-size: 13px;
-  color: ${palette.slate60};
+  color: ${palette.pine1};
 `;
 
 export const CaseDetailsAppliedList = styled.div`

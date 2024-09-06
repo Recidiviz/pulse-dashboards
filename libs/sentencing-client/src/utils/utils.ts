@@ -73,7 +73,8 @@ export const trimExtraSpaces = (str: string) => {
 /**
  * Formats a name to its possessive form by adding an apostrophe (') or ('s) based on whether a given name ends with 's'
  */
-export const formatPossessiveName = (name: string) => {
+export const formatPossessiveName = (name?: string) => {
+  if (!name) return;
   const trimmedName = name.trim();
   return trimmedName.endsWith("s") ? `${trimmedName}'` : `${trimmedName}'s`;
 };

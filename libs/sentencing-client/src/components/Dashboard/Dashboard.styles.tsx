@@ -241,7 +241,9 @@ export const TableHeader = styled.thead`
   background-color: ${customPalette.white.white1};
 `;
 
-export const TableBody = styled.tbody``;
+export const TableBody = styled.tbody`
+  width: 100%;
+`;
 
 export const Row = styled.tr`
   color: ${palette.slate80};

@@ -15,28 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../../api";
-import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
+import { palette, typography } from "@recidiviz/design-system";
+import styled from "styled-components/macro";
 
-export function getDispositionChartSubtitle(insight: Insight) {
-  const {
-    gender,
-    assessmentScoreBucketStart,
-    assessmentScoreBucketEnd,
-    offense,
-  } = insight ?? {};
-  const genderString = getSubtitleGender(gender);
-  const lsirScoreString = getSubtitleLsirScore(
-    assessmentScoreBucketStart,
-    assessmentScoreBucketEnd,
+const NoDataMessageContainer = styled.div`
+  width: 535px;
+  ${typography.Sans14}
+  color: ${palette.slate60};
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: auto;
+
+  span {
+    max-width: 285px;
+  }
+`;
+
+const NoDataMessage = () => {
+  return (
+    <NoDataMessageContainer>
+      <span>
+        There are not enough historical records of similar offenses to show this
+        data
+      </span>
+    </NoDataMessageContainer>
   );
-  const offenseString = `${offense} offenses`;
+};
 
-  const dispositionSubtitleStrings = [
-    genderString,
-    lsirScoreString,
-    offenseString,
-  ].filter((v) => v);
-
-  return dispositionSubtitleStrings.join(", ");
-}
+export default NoDataMessage;

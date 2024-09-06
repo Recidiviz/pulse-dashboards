@@ -32,7 +32,7 @@ interface ReportProps {
   fullName?: string;
   externalId: string;
   selectedRecommendation: SelectedRecommendation;
-  insight: Insight;
+  insight?: Insight;
 }
 
 function Header() {
@@ -93,11 +93,14 @@ export function Report({
               insight={insight}
               selectedRecommendation={selectedRecommendation}
               plotWidth={PLOT_WIDTH}
+              hideInfoTooltip
             />
           </Styled.PlotContainer>
-          <Styled.Explanation>
-            <RecidivismPlotExplanation insight={insight} />
-          </Styled.Explanation>
+          {insight && (
+            <Styled.Explanation>
+              <RecidivismPlotExplanation insight={insight} />
+            </Styled.Explanation>
+          )}
         </div>
         <Footer pageNumber={1} />
       </Styled.Page>
@@ -111,11 +114,14 @@ export function Report({
             selectedRecommendation={selectedRecommendation}
             justifyContent="flex-start"
             scale={1.5}
+            hideInfoTooltip
           />
         </Styled.PlotContainer>
-        <Styled.Explanation>
-          <DispositionChartExplanation insight={insight} />
-        </Styled.Explanation>
+        {insight && (
+          <Styled.Explanation>
+            <DispositionChartExplanation insight={insight} />
+          </Styled.Explanation>
+        )}
         <Footer pageNumber={2} />
       </Styled.Page>
     </Styled.ReportContainer>

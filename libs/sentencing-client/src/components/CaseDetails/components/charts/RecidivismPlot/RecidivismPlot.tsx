@@ -19,6 +19,7 @@ import { Insight } from "../../../../../api";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
 import { SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
+import NoDataMessage from "../components/NoDataMessage";
 import * as CommonStyled from "../components/Styles";
 import * as Styled from "./RecidivismPlot.styles";
 import { RecidivismPlotExplanation } from "./RecidivismPlotExplanation";
@@ -27,22 +28,25 @@ import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
 const DEFAULT_PLOT_WIDTH = 704;
 
 interface RecidivismPlotProps {
-  insight: Insight;
+  insight?: Insight;
   selectedRecommendation: SelectedRecommendation;
   plotWidth?: number;
+  hideInfoTooltip?: boolean;
 }
 
 export function RecidivismPlot({
   insight,
   selectedRecommendation,
   plotWidth = DEFAULT_PLOT_WIDTH,
+  hideInfoTooltip,
 }: RecidivismPlotProps) {
-  const { dispositionData, rollupRecidivismNumRecords } = insight;
+  const { dispositionData, rollupRecidivismNumRecords } = insight ?? {};
 
-  const recidivismPlotSubtitle = getRecidivismPlotSubtitle(insight);
-  const plot = getRecidivismPlot(insight, selectedRecommendation, plotWidth);
+  const recidivismPlotSubtitle = insight && getRecidivismPlotSubtitle(insight);
+  const plot =
+    insight && getRecidivismPlot(insight, selectedRecommendation, plotWidth);
 
-  const recidivismChartLegend = dispositionData.map(
+  const recidivismChartLegend = dispositionData?.map(
     ({ recommendationType }) =>
       recommendationType !== "None" && (
         <Styled.RecidivismChartLegendItem key={recommendationType}>
@@ -58,31 +62,42 @@ export function RecidivismPlot({
     <>
       <CommonStyled.ChartTitle>
         Cumulative Recidivism Rates{" "}
-        <InfoIconWithTooltip
-          headerText="Previous Sentences"
-          content={
-            <CommonStyled.ChartTooltipContentSection>
-              <RecidivismPlotExplanation insight={insight} />
-            </CommonStyled.ChartTooltipContentSection>
-          }
-        />
+        {!hideInfoTooltip && insight && (
+          <InfoIconWithTooltip
+            headerText="Previous Sentences"
+            content={
+              <CommonStyled.ChartTooltipContentSection>
+                <RecidivismPlotExplanation insight={insight} />
+              </CommonStyled.ChartTooltipContentSection>
+            }
+          />
+        )}
       </CommonStyled.ChartTitle>
       <CommonStyled.ChartSubTitle>
-        {recidivismPlotSubtitle} (Based on {rollupRecidivismNumRecords} records)
+        {recidivismPlotSubtitle && (
+          <>
+            {recidivismPlotSubtitle} (Based on {rollupRecidivismNumRecords}{" "}
+            records)
+          </>
+        )}
       </CommonStyled.ChartSubTitle>
       <Styled.RecidivismChartLegend>
         {recidivismChartLegend}
       </Styled.RecidivismChartLegend>
-      <Styled.RecidivismChartPlotContainer
-        $width={plotWidth}
-        ref={(ref) => {
-          if (!ref) {
-            return;
-          }
-          ref.replaceChildren();
-          ref.appendChild(plot);
-        }}
-      />
+      {!insight ? (
+        <NoDataMessage />
+      ) : (
+        <Styled.RecidivismChartPlotContainer
+          $width={plotWidth}
+          ref={(ref) => {
+            if (!ref || !plot) {
+              return;
+            }
+            ref.replaceChildren();
+            ref.appendChild(plot);
+          }}
+        />
+      )}
     </>
   );
 }

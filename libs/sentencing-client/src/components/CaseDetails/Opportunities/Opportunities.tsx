@@ -30,6 +30,7 @@ import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { Case, Opportunities as OpportunitiesType } from "../../../api";
+import { formatPossessiveName } from "../../../utils/utils";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import ResetSearchIcon from "../../assets/close-icon.svg?react";
 import LeftArrowIcon from "../../assets/left-arrow-carot-icon.svg?react";
@@ -567,11 +568,18 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 
               {/* No opportunities to display */}
               {data.length === 0 && (
-                <StyledDashboard.Row>
-                  <StyledDashboard.Cell>
-                    No opportunities available to display
-                  </StyledDashboard.Cell>
-                </StyledDashboard.Row>
+                <tr>
+                  <td colSpan={3}>
+                    <Styled.NoOpportunitiesWrapper>
+                      <Styled.NoOpportunitiesTextContainer>
+                        <span>No Opportunities</span>
+                        There are no opportunities that fit{" "}
+                        {formatPossessiveName(firstName)} needs and case details
+                        at this time.
+                      </Styled.NoOpportunitiesTextContainer>
+                    </Styled.NoOpportunitiesWrapper>
+                  </td>
+                </tr>
               )}
             </StyledDashboard.TableBody>
           </Styled.Table>

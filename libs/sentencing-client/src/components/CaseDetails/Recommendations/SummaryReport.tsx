@@ -97,15 +97,14 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     });
   };
 
-  const renderReport = () =>
-    insight ? (
-      <Report
-        fullName={fullName}
-        externalId={externalId}
-        selectedRecommendation={selectedRecommendation}
-        insight={insight}
-      />
-    ) : null;
+  const renderReport = () => (
+    <Report
+      fullName={fullName}
+      externalId={externalId}
+      selectedRecommendation={selectedRecommendation}
+      insight={insight}
+    />
+  );
 
   return (
     <Styled.RecommendationSummaryReport>

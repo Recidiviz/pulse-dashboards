@@ -23,6 +23,7 @@ import {
   RECOMMENDATION_TYPE_TO_BORDER_COLOR,
   RECOMMENDATION_TYPE_TO_COLOR,
 } from "../common/constants";
+import NoDataMessage from "../components/NoDataMessage";
 import * as CommonStyled from "../components/Styles";
 import * as Styled from "./DispositionChart.styles";
 import { DispositionChartExplanation } from "./DispositionChartExplanation";
@@ -38,10 +39,11 @@ const getChartCircleHeight = (percentage: number, scale = 1) => {
 };
 
 interface DispositionChartProps {
-  insight: Insight;
+  insight?: Insight;
   selectedRecommendation: SelectedRecommendation;
   justifyContent?: "center" | "flex-start";
   scale?: number;
+  hideInfoTooltip?: boolean;
 }
 
 export function DispositionChart({
@@ -49,64 +51,82 @@ export function DispositionChart({
   selectedRecommendation,
   justifyContent = "center",
   scale,
+  hideInfoTooltip,
 }: DispositionChartProps) {
-  const { dispositionData, dispositionNumRecords } = insight;
+  const { dispositionData, dispositionNumRecords } = insight ?? {};
 
-  const sortedDatapoints = dispositionData.sort(
-    (a, b) => a.percentage - b.percentage,
-  );
+  const sortedDatapoints =
+    dispositionData?.sort((a, b) => a.percentage - b.percentage) ?? [];
   const [smallestDatapoint, ...otherDatapoints] = sortedDatapoints;
   // Ordered by second largest percentage, largest percentage, and smallest percentage
-  const orderedDatapoints = [...otherDatapoints, smallestDatapoint];
+  const orderedDatapoints = [...otherDatapoints, smallestDatapoint].filter(
+    (x) => x,
+  );
 
-  const dispositionChartSubtitle = getDispositionChartSubtitle(insight);
+  const dispositionChartSubtitle =
+    insight && getDispositionChartSubtitle(insight);
   return (
     <>
       <CommonStyled.ChartTitle>
         Previous Sentences{" "}
-        <InfoIconWithTooltip
-          headerText="Previous Sentences"
-          content={
-            <CommonStyled.ChartTooltipContentSection>
-              <DispositionChartExplanation insight={insight} />
-            </CommonStyled.ChartTooltipContentSection>
-          }
-        />
+        {!hideInfoTooltip && insight && (
+          <InfoIconWithTooltip
+            headerText="Previous Sentences"
+            content={
+              <CommonStyled.ChartTooltipContentSection>
+                <DispositionChartExplanation insight={insight} />
+              </CommonStyled.ChartTooltipContentSection>
+            }
+          />
+        )}
       </CommonStyled.ChartTitle>
       <CommonStyled.ChartSubTitle>
-        {dispositionChartSubtitle} (Based on {dispositionNumRecords} records)
-      </CommonStyled.ChartSubTitle>
-      <Styled.DispositionChartContainer $justify={justifyContent}>
-        {orderedDatapoints.map(
-          ({ percentage, recommendationType }) =>
-            recommendationType !== "None" && (
-              <Styled.DispositionChartCircleContainer key={recommendationType}>
-                <Styled.DispositionChartCircle
-                  $height={getChartCircleHeight(percentage, scale)}
-                  $backgroundColor={
-                    RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
-                  }
-                  $borderColor={
-                    recommendationType === selectedRecommendation
-                      ? RECOMMENDATION_TYPE_TO_BORDER_COLOR[recommendationType]
-                      : undefined
-                  }
-                >
-                  {convertDecimalToPercentage(percentage)}%
-                </Styled.DispositionChartCircle>
-                <Styled.DispositionChartCircleLabel
-                  $color={
-                    recommendationType === selectedRecommendation
-                      ? "#004D48"
-                      : "#2B546999"
-                  }
-                >
-                  {recommendationType}
-                </Styled.DispositionChartCircleLabel>
-              </Styled.DispositionChartCircleContainer>
-            ),
+        {dispositionChartSubtitle && (
+          <>
+            {dispositionChartSubtitle} (Based on {dispositionNumRecords}{" "}
+            records)
+          </>
         )}
-      </Styled.DispositionChartContainer>
+      </CommonStyled.ChartSubTitle>
+      {!insight ? (
+        <NoDataMessage />
+      ) : (
+        <Styled.DispositionChartContainer $justify={justifyContent}>
+          {orderedDatapoints.map(
+            ({ percentage, recommendationType }) =>
+              recommendationType !== "None" && (
+                <Styled.DispositionChartCircleContainer
+                  key={recommendationType}
+                >
+                  <Styled.DispositionChartCircle
+                    $height={getChartCircleHeight(percentage, scale)}
+                    $backgroundColor={
+                      RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
+                    }
+                    $borderColor={
+                      recommendationType === selectedRecommendation
+                        ? RECOMMENDATION_TYPE_TO_BORDER_COLOR[
+                            recommendationType
+                          ]
+                        : undefined
+                    }
+                  >
+                    {convertDecimalToPercentage(percentage)}%
+                  </Styled.DispositionChartCircle>
+                  <Styled.DispositionChartCircleLabel
+                    $color={
+                      recommendationType === selectedRecommendation
+                        ? "#004D48"
+                        : "#2B546999"
+                    }
+                  >
+                    {recommendationType}
+                  </Styled.DispositionChartCircleLabel>
+                </Styled.DispositionChartCircleContainer>
+              ),
+          )}
+        </Styled.DispositionChartContainer>
+      )}
     </>
   );
 }

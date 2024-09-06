@@ -33,10 +33,6 @@ export const Insights = ({
   selectedRecommendation,
   fullName,
 }: InsightsProps) => {
-  if (!insight) {
-    return null;
-  }
-
   return (
     <Styled.Insights>
       <Styled.InsightsHeaderWrapper>
