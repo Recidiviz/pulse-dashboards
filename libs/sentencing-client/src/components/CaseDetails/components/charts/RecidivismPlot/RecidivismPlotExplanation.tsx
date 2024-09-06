@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
-
 import { Insight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
 import { TextContainer } from "../components/Styles";
+import { stateCodeToStateName } from "./utils";
 
 function getRollupGenderString(rollupGender: Insight["rollupGender"]) {
   if (rollupGender === null) {
@@ -73,6 +72,7 @@ export function RecidivismPlotExplanation({
     rollupNcicCategory,
     rollupCombinedOffenseCategory,
     rollupViolentOffense,
+    rollupStateCode,
   } = insight;
 
   const genderString = getRollupGenderString(rollupGender);
@@ -84,7 +84,10 @@ export function RecidivismPlotExplanation({
       probation or parole over the course of the three years immediately after
       their release into the community. The rates are based on{" "}
       <span>
-        <span>{genderString ?? "all people"}</span>
+        <span>
+          {genderString ??
+            `all cases in ${stateCodeToStateName(rollupStateCode)}`}
+        </span>
         <LsirScoreText
           rollupAssessmentScoreBucketStart={rollupAssessmentScoreBucketStart}
           rollupAssessmentScoreBucketEnd={rollupAssessmentScoreBucketEnd}

@@ -35,6 +35,10 @@ import { RecommendationType, SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
 import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
+export function stateCodeToStateName(stateCode: Insight["rollupStateCode"]) {
+  return stateCode === "US_ID" ? "Idaho" : stateCode;
+}
+
 export function getRecidivismPlotSubtitle(insight: Insight) {
   const {
     rollupStateCode,
@@ -75,7 +79,7 @@ export function getRecidivismPlotSubtitle(insight: Insight) {
 
   return recidivismSubtitleStrings.length > 0
     ? recidivismSubtitleStrings.join(", ")
-    : `All cases in ${rollupStateCode}`;
+    : `All cases in ${stateCodeToStateName(rollupStateCode)}`;
 }
 
 const consolidateDuplicateLabels = (

@@ -445,7 +445,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
       <Styled.OpportunitiesTableWrapper>
         <Styled.CaseDetailsApplied>
           <Styled.CaseDetailsAppliedTitle>
-            Current details applied
+            Filtered by case details:
           </Styled.CaseDetailsAppliedTitle>
           <Styled.CaseDetailsAppliedList>
             {currentDetailsApplied}
