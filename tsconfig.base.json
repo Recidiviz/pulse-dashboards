@@ -35,6 +35,7 @@
       ],
       "~firestore-api": ["libs/firestore-api/src/index.ts"],
       "~firestore-config": ["libs/firestore-config/src/index.ts"],
+      "~fixture-generator": ["libs/fixture-generator/src/index.ts"],
       "~hydration-utils": ["libs/hydration-utils/src/index.ts"],
       "~repo": ["plugins/repo/src/index.ts"],
       "~sentencing-client": ["libs/sentencing-client/src/index.ts"],
