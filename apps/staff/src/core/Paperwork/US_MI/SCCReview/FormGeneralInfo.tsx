@@ -17,11 +17,10 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import * as React from "react";
 import styled from "styled-components/macro";
 
 import { UsMiSCCReviewDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewForm";
-import { FormCheckbox, FormInput } from "./FormUtils";
+import { FormCheckbox, FormDropdown, FormInput } from "./FormUtils";
 
 const ContentContainer = styled.div`
   display: grid;
@@ -102,6 +101,23 @@ const InputField = (props: InputProps) => {
   );
 };
 
+const reviewTypeOptions = [
+  "Initial - Within 7 days of Classification",
+  "At Least Monthly Thereafter",
+  "Punitive Monthly Warden Approval (Skip to Bottom)",
+  "Interview Only - Warden (Skip to Bottom)",
+  "Interview Only - ADD (Skip to Bottom)",
+];
+
+const segregationClassificationReason = [
+  "Inability To Be Managed With GP Privileges",
+  "Serious Threat To Physical Safety Of Others",
+  "Serious Threat To Good Order Of The Facility",
+  "Serious Escape Risk",
+  "Under Investigation - Outside Authority - Felony Susp",
+  "Control Of Communicable Bloodborne Disease",
+];
+
 const FormGeneralInfo: React.FC = () => {
   return (
     <ContentContainer>
@@ -109,9 +125,14 @@ const FormGeneralInfo: React.FC = () => {
         <b>GENERAL INFORMATION</b>
       </HeaderRow>
       <Cell row={2} col={1} colSpan={2} rowSpan={2}>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           Review Type:
-          <FormInput name="reviewType" />
+          <FormDropdown name="reviewType" menuItems={reviewTypeOptions} />
         </div>
       </Cell>
       <InputField row={2} col={3} title="ERD:" name="ERD" maxWidth="80px" />
@@ -193,7 +214,10 @@ const FormGeneralInfo: React.FC = () => {
       <Cell row={8} col={1} colSpan={"end"}>
         <div style={{ display: "flex", alignItems: "center" }}>
           Reason for Segregation Classification:
-          <FormInput name="segReason" />
+          <FormDropdown
+            name="segReason"
+            menuItems={segregationClassificationReason}
+          />
         </div>
       </Cell>
     </ContentContainer>

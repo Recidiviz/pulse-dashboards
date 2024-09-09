@@ -18,6 +18,7 @@
 import * as React from "react";
 
 import { UsMiSCCReviewDraftData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMiSCCReviewForm";
+import { DOCXFormDropdown } from "../../DOCXFormDropdown";
 import DOCXFormInput from "../../DOCXFormInput";
 import DOCXFormCheckbox from "../../FormCheckbox";
 
@@ -62,4 +63,16 @@ export const FormCheckbox: React.FC<CheckboxProps> = (props: CheckboxProps) => {
   ) : (
     checkbox
   );
+};
+
+type DropdownProps = {
+  name: Extract<keyof UsMiSCCReviewDraftData, string>;
+  menuItems: string[];
+};
+
+/**
+ * A wrapper for the DOCX dropdown for the MI SCC review form.
+ */
+export const FormDropdown = (props: DropdownProps) => {
+  return <DOCXFormDropdown<UsMiSCCReviewDraftData> {...props} />;
 };
