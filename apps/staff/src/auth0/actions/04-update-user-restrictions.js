@@ -58,7 +58,7 @@ exports.onExecutePostLogin = async (event, api) => {
   /** Set featureVariants to allow CSG access to insights (permission is still required) */
   if (stateCode === "csg") {
     api.user.setAppMetadata("featureVariants", {
-      insightsLeadershipPageAllDistricts: true,
+      insightsLeadershipPageAllDistricts: {},
     });
     return;
   }
