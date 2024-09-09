@@ -19,7 +19,6 @@ import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const US_ME_CONFIG: TenantConfig = {
   name: "Maine",
@@ -28,7 +27,6 @@ const US_ME_CONFIG: TenantConfig = {
   pathwaysNameOverride: "Pathways",
   availableStateCodes: [pathways.US_ME],
   enableUserRestrictions: false,
-  workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
