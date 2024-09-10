@@ -150,7 +150,7 @@ describe("trigger_import", () => {
         message: {
           attributes: {
             bucketId: testBucketId,
-            objectId: "not-a-valid-file.json",
+            objectId: "US_ID/not-a-valid-file.json",
           },
         },
       },
@@ -162,7 +162,7 @@ describe("trigger_import", () => {
     });
 
     expect(testExceptionHandler).toHaveBeenCalledWith(
-      `Unsupported bucket + object pair: test-bucket/not-a-valid-file.json`,
+      `Unsupported bucket + state code + file name: test-bucket/US_ID/not-a-valid-file.json`,
     );
   });
 
@@ -189,7 +189,7 @@ describe("trigger_import", () => {
             body: Buffer.from(
               JSON.stringify({
                 bucketId: "test-bucket",
-                objectId: "test-object",
+                objectId: "US_ID/test-object",
               }),
             ),
             httpMethod: "POST",

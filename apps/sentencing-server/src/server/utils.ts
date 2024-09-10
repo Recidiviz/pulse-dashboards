@@ -28,13 +28,11 @@ import {
 } from "~sentencing-server/server/constants";
 
 export function etlHelperGetter(identifier: ObjectIdentifier) {
-  const { objectId, bucketId } = identifier;
+  const { stateCode, fileName, bucketId } = identifier;
 
   if (!(bucketId === process.env["IMPORT_BUCKET_ID"])) {
     return undefined;
   }
-
-  const [stateCode, fileName] = objectId.split("/");
 
   if (!SUPPORTED_STATE_CODES.includes(stateCode)) {
     return undefined;

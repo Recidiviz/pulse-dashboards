@@ -15,14 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type ObjectIdentifier = { bucketId: string; objectId: string };
+export type GcsObjectIdentifier = { bucketId: string; objectId: string };
 
-export type EtlHelper = (data: unknown[]) => Promise<void>;
+export type ObjectIdentifier = {
+  bucketId: string;
+  stateCode: string;
+  fileName: string;
+};
+
+export type EtlHelper = (stateCode: string, data: unknown[]) => Promise<void>;
 
 /**
  * A function that returns the ETL helper function for a given object identifier.
  *
- * Expects an identifier of the form { bucketId: string, objectId: string } and returns
+ * Expects an identifier of the form { bucketId: string; stateCode: string, fileName: string } and returns
  * the ETL helper function for that object, or undefined if no such function exists.
  */
 export type EtlHelperGetter = (

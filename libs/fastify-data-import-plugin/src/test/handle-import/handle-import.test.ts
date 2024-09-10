@@ -155,7 +155,7 @@ describe("handle_import", () => {
         url: "/handle_import",
         payload: {
           bucketId: "test-bucket",
-          objectId: "not-a-valid-file.json",
+          objectId: "US_ID/not-a-valid-file.json",
         },
         headers: { authorization: `Bearer token` },
       });
@@ -166,14 +166,14 @@ describe("handle_import", () => {
       });
 
       expect(testExceptionHandler).toHaveBeenCalledWith(
-        `Unsupported bucket + object pair: test-bucket/not-a-valid-file.json`,
+        `Unsupported bucket + object pair: test-bucket/US_ID/not-a-valid-file.json`,
       );
     });
 
     test("should work if email is correct", async () => {
       await mockStorageSingleton
         .bucket("test-bucket")
-        .file("test-object")
+        .file("US_ID/test-object")
         .save(
           arrayToJsonLines([
             {
@@ -194,7 +194,7 @@ describe("handle_import", () => {
 
       expect(response.statusCode).toBe(200);
 
-      expect(testEtlHelper).toHaveBeenCalledWith([
+      expect(testEtlHelper).toHaveBeenCalledWith("US_ID", [
         {
           datapoint: "first",
         },

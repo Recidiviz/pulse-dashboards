@@ -23,6 +23,7 @@ import { OAuth2Client } from "google-auth-library";
 import { ImportRoutesHandlerBase } from "~fastify-data-import-plugin/common/classes";
 import {
   EtlHelper,
+  GcsObjectIdentifier,
   ObjectIdentifier,
 } from "~fastify-data-import-plugin/common/types";
 
@@ -65,7 +66,7 @@ export class ImportRoutesHandler extends ImportRoutesHandlerBase {
     console.log(`Email verified: ${payload.email}`);
   }
 
-  async getDataFromGCS(objectIdentifier: ObjectIdentifier) {
+  async getDataFromGCS(objectIdentifier: GcsObjectIdentifier) {
     const storage = new Storage();
 
     const { bucketId, objectId } = objectIdentifier;

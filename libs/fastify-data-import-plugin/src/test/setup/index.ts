@@ -24,7 +24,7 @@ import { mock } from "vitest-mock-extended";
 import { ImportRoutesHandler } from "~fastify-data-import-plugin/index";
 export const testEtlHelper = vi.fn();
 export const testBucketId = "test-bucket";
-export const testObjectId = "test-object";
+export const testFileName = "test-object";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
@@ -87,8 +87,8 @@ beforeAll(async () => {
   });
 
   const routeHandler = new ImportRoutesHandler({
-    etlHelperGetter: ({ bucketId, objectId }) => {
-      if (objectId === testObjectId && bucketId === testBucketId) {
+    etlHelperGetter: ({ bucketId, fileName }) => {
+      if (fileName === testFileName && bucketId === testBucketId) {
         return testEtlHelper;
       }
       return undefined;

@@ -32,7 +32,10 @@ import {
 } from "~sentencing-server/import/handle-import/models";
 import { prismaClient } from "~sentencing-server/prisma";
 
-export async function transformAndLoadClientData(data: unknown) {
+export async function transformAndLoadClientData(
+  stateCode: string,
+  data: unknown,
+) {
   const parsedData = clientImportSchema.parse(data);
 
   const existingCases = await prismaClient.case.findMany({
@@ -84,7 +87,10 @@ export async function transformAndLoadClientData(data: unknown) {
   });
 }
 
-export async function transformAndLoadStaffData(data: unknown) {
+export async function transformAndLoadStaffData(
+  stateCode: string,
+  data: unknown,
+) {
   const parsedData = staffImportSchema.parse(data);
 
   const existingCases = await prismaClient.case.findMany({
@@ -133,7 +139,10 @@ export async function transformAndLoadStaffData(data: unknown) {
   });
 }
 
-export async function transformAndLoadCaseData(data: unknown) {
+export async function transformAndLoadCaseData(
+  stateCode: string,
+  data: unknown,
+) {
   const parsedData = caseImportSchema.parse(data);
 
   const existingCaseExternalIds = (
@@ -204,7 +213,10 @@ export async function transformAndLoadCaseData(data: unknown) {
   }
 }
 
-export async function transformAndLoadOpportunityData(data: unknown) {
+export async function transformAndLoadOpportunityData(
+  stateCode: string,
+  data: unknown,
+) {
   const parsedData = opportunityImportSchema.parse(data);
 
   const cleanedData = parsedData.map((opportunityData) => {
@@ -341,7 +353,10 @@ function transformDispositions(
   ] satisfies Prisma.DispositionCreateManyInsightInput[];
 }
 
-export async function transformAndLoadInsightData(data: unknown) {
+export async function transformAndLoadInsightData(
+  stateCode: string,
+  data: unknown,
+) {
   const parsedData = insightImportSchema.parse(data);
 
   const cleanedData = parsedData.map((insightData) => {
@@ -408,7 +423,10 @@ export async function transformAndLoadInsightData(data: unknown) {
   }
 }
 
-export async function transformAndLoadOffenseData(data: unknown) {
+export async function transformAndLoadOffenseData(
+  stateCode: string,
+  data: unknown,
+) {
   const parsedData = offenseImportSchema.parse(data);
 
   const cleanedData = parsedData.map((offenseData) => {

@@ -43,7 +43,7 @@ describe("trigger_import", () => {
 
     const sentryReports = await testAndGetSentryReports();
     expect(sentryReports[0].error?.message).toBe(
-      "Unsupported bucket + object pair: not-the-right-bucket/US_ID/sentencing_case_record.json",
+      "Unsupported bucket + state code + file name: not-the-right-bucket/US_ID/sentencing_case_record.json",
     );
   });
 
@@ -68,7 +68,7 @@ describe("trigger_import", () => {
 
     const sentryReports = await testAndGetSentryReports();
     expect(sentryReports[0].error?.message).toBe(
-      "Unsupported bucket + object pair: test-bucket/US_MO/sentencing_case_record.json",
+      "Unsupported bucket + state code + file name: test-bucket/US_MO/sentencing_case_record.json",
     );
   });
 
@@ -93,7 +93,7 @@ describe("trigger_import", () => {
 
     const sentryReports = await testAndGetSentryReports();
     expect(sentryReports[0].error?.message).toBe(
-      "Unsupported bucket + object pair: test-bucket/US_ID/random_file.json",
+      "Unsupported bucket + state code + file name: test-bucket/US_ID/random_file.json",
     );
   });
 

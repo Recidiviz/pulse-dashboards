@@ -17,8 +17,10 @@
 
 import type { FastifyInstance, FastifyRequest } from "fastify";
 
-import type { Props } from "~fastify-data-import-plugin/common/types";
-import { ObjectIdentifier } from "~fastify-data-import-plugin/common/types";
+import type {
+  GcsObjectIdentifier,
+  Props,
+} from "~fastify-data-import-plugin/common/types";
 const HANDLE_IMPORT_ROUTE_DEFAULT_NAME = "/handle_import";
 const TRIGGER_IMPORT_ROUTE_DEFAULT_NAME = "/trigger_import";
 
@@ -58,7 +60,7 @@ export abstract class ImportRoutesHandlerBase {
    * Retrieves data from GCS for the provided object identifier.
    */
   abstract getDataFromGCS(
-    objectIdentifier: ObjectIdentifier,
+    objectIdentifier: GcsObjectIdentifier,
   ): Promise<unknown[]>;
 
   /**
@@ -131,11 +133,12 @@ export abstract class ImportRoutesHandlerBase {
         }
 
         const { bucketId, objectId } = req.body.message.attributes;
+        const [stateCode, fileName] = objectId.split("/");
 
         // Make sure the object type is valid before proceeding
-        if (!etlHelperGetter({ bucketId, objectId })) {
+        if (!etlHelperGetter({ bucketId, stateCode, fileName })) {
           exceptionHandler(
-            `Unsupported bucket + object pair: ${bucketId}/${objectId}`,
+            `Unsupported bucket + state code + file name: ${bucketId}/${stateCode}/${fileName}`,
           );
           return;
         }
@@ -189,11 +192,12 @@ export abstract class ImportRoutesHandlerBase {
         }
 
         const { bucketId, objectId } = req.body;
+        const [stateCode, fileName] = objectId.split("/");
         console.log(
-          `Received notification for import of object ${objectId} from bucket ${bucketId}`,
+          `Received notification for import of file ${fileName} with state code ${stateCode} from bucket ${bucketId}`,
         );
 
-        const etlHelper = etlHelperGetter({ bucketId, objectId });
+        const etlHelper = etlHelperGetter({ bucketId, stateCode, fileName });
 
         if (etlHelper === undefined) {
           res.status(400);
@@ -205,7 +209,7 @@ export abstract class ImportRoutesHandlerBase {
 
         try {
           const data = await this.getDataFromGCS({ bucketId, objectId });
-          await etlHelper(data);
+          await etlHelper(stateCode, data);
         } catch (e) {
           res.status(500);
 

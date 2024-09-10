@@ -17,10 +17,11 @@
 
 import {
   testBucketId,
-  testObjectId,
+  testFileName,
 } from "~fastify-data-import-plugin/test/setup";
 
 export const handleImportBody = {
   bucketId: testBucketId,
-  objectId: testObjectId,
+  // Have to prepend a state to the file name to make it a valid object ID
+  objectId: `US_ID/${testFileName}`,
 };
