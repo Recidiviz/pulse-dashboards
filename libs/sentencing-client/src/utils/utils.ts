@@ -107,3 +107,11 @@ export const pluralizeDuplicates = (items: string[]) => {
 
   return Array.from(uniqueItems);
 };
+
+/**
+ * Converts a county name (e.g. "District 3 - Caldwell") to the district code (e.g. "D3")
+ */
+export const convertCountyToDistrictCode = (county: string) => {
+  const match = county.match(/District (\d+)/);
+  return match ? `D${match[1]}` : null;
+};

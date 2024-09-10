@@ -114,8 +114,9 @@ export class CaseDetailsPresenter implements Hydratable {
       hasDevelopmentalDisability,
       hasOpenChildProtectiveServicesCase,
       plea,
+      county,
     } = this.caseAttributes ?? {};
-    const { birthDate, county } = this.caseAttributes?.Client ?? {};
+    const { birthDate } = this.caseAttributes?.Client ?? {};
     return {
       age: moment().diff(birthDate, "years"),
       lsirScore,

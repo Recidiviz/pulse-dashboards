@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Opportunities } from "../../../api";
+import { convertCountyToDistrictCode } from "../../../utils/utils";
 import { FormValue, RecommendationType } from "../types";
 import { eligibilityCriteriaToLabelName } from "./constants";
 import { EligibilityAttributes, EligibilityCriteria } from "./types";
@@ -95,6 +96,11 @@ export const filterEligibleOpportunities = (
 
   if (hasDevelopmentalDisabilityCriteria && !isDevelopmentalDisabilityEligible)
     return false;
+
+  const isDistrictEligible =
+    opportunity.district === convertCountyToDistrictCode(attributes.county);
+
+  if (!isDistrictEligible) return false;
 
   // TODO(Recidiviz/recidiviz-data#32242) Add CPS Criteria Check
   // const hasOpenChildProtectiveServicesCriteria = Boolean(

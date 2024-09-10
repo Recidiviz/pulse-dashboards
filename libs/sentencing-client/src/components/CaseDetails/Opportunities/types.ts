@@ -48,4 +48,5 @@ export type EligibilityAttributes = Pick<
   | "hasPreviousSexOffenseConviction"
   | "hasDevelopmentalDisability"
   | "plea"
+  | "county"
 > & { age: number };

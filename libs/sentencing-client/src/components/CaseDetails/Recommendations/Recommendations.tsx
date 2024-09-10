@@ -18,7 +18,10 @@
 import { keyBy } from "lodash";
 import React, { Fragment, useState } from "react";
 
-import { convertDecimalToPercentage } from "../../../utils/utils";
+import {
+  convertDecimalToPercentage,
+  pluralizeDuplicates,
+} from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
@@ -147,7 +150,9 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
           insight={insight}
           externalId={externalId}
           selectedRecommendation={selectedRecommendation}
-          opportunityDescriptions={opportunityDescriptions}
+          opportunityDescriptions={pluralizeDuplicates(
+            opportunityDescriptions ?? [],
+          )}
           needs={needs}
           gender={gender}
           hideSummaryReport={hideSummaryReport}
