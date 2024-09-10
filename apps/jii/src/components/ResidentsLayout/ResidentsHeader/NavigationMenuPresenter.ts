@@ -17,8 +17,10 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { stateConfigsByStateCode } from "../../../configs/stateConstants";
 import { ResidentsConfig } from "../../../configs/types";
 import { UserStore } from "../../../datastores/UserStore";
+import { State } from "../../../routes/routes";
 
 export class NavigationMenuPresenter {
   constructor(
@@ -31,12 +33,21 @@ export class NavigationMenuPresenter {
   get links() {
     const links = [{ text: "Home", url: "/" }];
 
+    const stateSlug = stateConfigsByStateCode[this.userStore.stateCode].urlSlug;
+
     if (this.userStore.hasPermission("enhanced")) {
-      links.push({ text: "Search for Residents", url: "/eligibility/search" });
+      links.push({
+        text: "Search for Residents",
+        url: State.Eligibility.Search.buildPath({ stateSlug }),
+      });
+
       links.push(
         ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
           text: c.copy.menuLabel,
-          url: `/eligibility/${c.urlSection}`,
+          url: State.Eligibility.Opportunity.buildPath({
+            opportunitySlug: c.urlSection,
+            stateSlug,
+          }),
         })),
       );
     }

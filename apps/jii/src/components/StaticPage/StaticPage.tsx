@@ -19,11 +19,12 @@ import { Icon, palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { State } from "../../routes/routes";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
-import { NotFound } from "../NotFound/NotFound";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { StaticPagePresenter } from "./StaticPagePresenter";
@@ -61,20 +62,16 @@ const StaticPageWithPresenter: FC<{ presenter: StaticPagePresenter }> =
 export const StaticPage: FC<{ pageId: PageId }> = observer(function StaticPage({
   pageId,
 }) {
-  const { opportunityUrl } = useParams();
+  const { opportunitySlug } = useTypedParams(State.Eligibility.Opportunity);
   const { residentsStore } = useRootStore();
 
   if (!residentsStore) return;
 
-  if (opportunityUrl) {
-    return (
-      <StaticPageWithPresenter
-        presenter={
-          new StaticPagePresenter(opportunityUrl, pageId, residentsStore)
-        }
-      />
-    );
-  }
-
-  return <NotFound />;
+  return (
+    <StaticPageWithPresenter
+      presenter={
+        new StaticPagePresenter(opportunitySlug, pageId, residentsStore)
+      }
+    />
+  );
 });

@@ -15,32 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
+import { route, string, types } from "react-router-typesafe-routes/dom";
 
-import { stateConfigsByStateCode } from "../../configs/stateConstants";
-import { EmailVerification, State } from "../../routes/routes";
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageLanding } from "./PageLanding";
+export const EmailVerification = route("verify");
 
-export const PageHome = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-    stateCode,
-  } = useRootStore();
+export const AfterLogin = route("after-login");
 
-  if (authClient.isAuthorized)
-    return (
-      <Navigate
-        to={State.Eligibility.buildPath({
-          stateSlug: stateConfigsByStateCode[stateCode].urlSlug,
-        })}
-        replace
-      />
-    );
-
-  if (authClient.isEmailVerificationRequired)
-    return <Navigate to={EmailVerification.buildPath({})} replace />;
-
-  return <PageLanding />;
+export const ReturnToPathFragment = route("", {
+  searchParams: { returnToPath: string() },
 });
+
+export const State = route(":stateSlug", types(ReturnToPathFragment), {
+  Eligibility: route(
+    "eligibility",
+    {},
+    {
+      Search: route("search"),
+      Opportunity: route(
+        ":opportunitySlug",
+        {},
+        {
+          About: route("about"),
+          Requirements: route("requirements"),
+          NextSteps: route("next-steps"),
+        },
+      ),
+    },
+  ),
+});
+
+export const SiteRoot = route("", types(ReturnToPathFragment));

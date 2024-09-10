@@ -21,8 +21,10 @@ import { ValuesType } from "utility-types";
 import { AuthClient } from "~auth";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
 import { StateLandingPageConfig } from "../../configs/types";
 import { LoginConfigStore } from "../../datastores/LoginConfigStore";
+import { State } from "../../routes/routes";
 
 export class LandingStateSpecificPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;
@@ -32,12 +34,16 @@ export class LandingStateSpecificPresenter implements Hydratable {
   constructor(
     private configStore: LoginConfigStore,
     private authClient: AuthClient,
-    public urlParam: string,
+    public stateUrlSlug: string,
+    public returnToPath?: string,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
     this.hydrationSource = new HydratesFromSource({
-      populate: () => this.populateConfigs(),
+      populate: () =>
+        flowResult(
+          this.configStore.populateStateLandingPageConfig(this.stateCode()),
+        ),
       expectPopulated: [
         () => {
           if (!this.configStore.stateLandingPageConfigs.get(this.stateCode())) {
@@ -57,29 +63,11 @@ export class LandingStateSpecificPresenter implements Hydratable {
   }
 
   private stateCode() {
-    const { states } = this.landingPageConfigOrError;
-    const configMatchingUrl = states.find((s) => s.urlSlug === this.urlParam);
+    const configMatchingUrl = stateConfigsByUrlSlug[this.stateUrlSlug];
     if (!configMatchingUrl) {
-      throw new Error("Unknown URL");
+      throw new Error("Unknown state URL");
     }
     return configMatchingUrl.stateCode;
-  }
-
-  private async populateConfigs() {
-    // the landing page config contains the URL mapping
-    await flowResult(this.configStore.populateLandingPageConfig());
-    await flowResult(
-      this.configStore.populateStateLandingPageConfig(this.stateCode()),
-    );
-  }
-
-  private get landingPageConfigOrError() {
-    if (!this.configStore.landingPageConfig) {
-      throw new Error(
-        "Presenter must be hydrated before accessing this property",
-      );
-    }
-    return this.configStore.landingPageConfig;
   }
 
   private get stateLandingPageConfigOrError() {
@@ -113,7 +101,8 @@ export class LandingStateSpecificPresenter implements Hydratable {
 
   goToLogin() {
     this.authClient.logIn({
-      targetPath: "/",
+      targetPath:
+        this.returnToPath ?? State.buildPath({ stateSlug: this.stateUrlSlug }),
       connection: this.selectedConnectionName,
     });
   }

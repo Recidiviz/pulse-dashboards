@@ -22,6 +22,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { AuthClient } from "~auth";
 
 import { RootStore } from "../../datastores/RootStore";
+import { EmailVerification, State } from "../../routes/routes";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageHome } from "./PageHome";
 
@@ -46,8 +47,11 @@ function renderHome() {
     <MemoryRouter>
       <Routes>
         <Route path="/" element={<PageHome />} />
-        <Route path="/eligibility" element={<div>eligibility page</div>} />
-        <Route path="/verify" element={<div>verify page</div>} />
+        <Route
+          path={State.Eligibility.path}
+          element={<div>eligibility page</div>}
+        />
+        <Route path={EmailVerification.path} element={<div>verify page</div>} />
       </Routes>
     </MemoryRouter>,
   );

@@ -40,7 +40,7 @@ export class UserStore {
 
   segmentClient: SegmentClient;
 
-  constructor(public externals: { stateCode: StateCode }) {
+  constructor(private externals: { stateCode: StateCode }) {
     makeAutoObservable(this);
 
     this.authClient = new AuthClient(
@@ -146,6 +146,10 @@ export class UserStore {
       return false;
     }
   }
+
+  get stateCode() {
+    return this.externals.stateCode;
+  }
 }
 
 class SegmentExternals implements SegmentClientExternals {
@@ -155,6 +159,6 @@ class SegmentExternals implements SegmentClientExternals {
   }
 
   get stateCode() {
-    return this.userStore.externals.stateCode;
+    return this.userStore.stateCode;
   }
 }

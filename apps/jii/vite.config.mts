@@ -63,6 +63,7 @@ export default defineConfig({
     setupFiles: ["./src/setupTests.ts"],
     restoreMocks: true,
     unstubEnvs: true,
+    unstubGlobals: true,
     reporters: ["default"],
     coverage: {
       reportsDirectory: "../../coverage/apps/jii",

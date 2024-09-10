@@ -16,9 +16,36 @@
 // =============================================================================
 
 import { FC } from "react";
+import { Navigate } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { EmailVerification, State } from "../../routes/routes";
 import { LandingStateSpecific } from "../LandingPages/LandingStateSpecific";
+import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const PageStateLanding: FC = () => {
+export const PageState: FC = () => {
+  const { userStore } = useRootStore();
+  const { stateSlug } = useTypedParams(State);
+
+  try {
+    if (userStore.authClient.isAuthorized) {
+      if (userStore.isAuthorizedForCurrentState)
+        return (
+          <Navigate
+            to={State.Eligibility.buildPath({
+              stateSlug,
+            })}
+            replace
+          />
+        );
+    }
+  } catch {
+    // fall through
+  }
+
+  if (userStore.authClient.isEmailVerificationRequired) {
+    return <Navigate to={EmailVerification.buildPath({})} replace />;
+  }
+
   return <LandingStateSpecific />;
 };

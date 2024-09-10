@@ -18,8 +18,9 @@
 import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
-import { useParams } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { State } from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
 import { useRootStore } from "../StoreProvider/useRootStore";
@@ -27,7 +28,7 @@ import { opportunityIdFromUrl } from "../utils/opportunityIdFromUrl";
 
 export const PageOpportunityEligibility: FC = withErrorBoundary(
   observer(function PageOpportunityEligibility() {
-    const { opportunityUrl } = useParams();
+    const { opportunitySlug } = useTypedParams(State.Eligibility.Opportunity);
 
     const { residentsStore } = useRootStore();
     if (!residentsStore) return null;
@@ -37,10 +38,7 @@ export const PageOpportunityEligibility: FC = withErrorBoundary(
       throw new Error("missing Resident ID");
     }
 
-    const opportunityId = opportunityIdFromUrl(
-      opportunityUrl ?? "",
-      residentsStore,
-    );
+    const opportunityId = opportunityIdFromUrl(opportunitySlug, residentsStore);
 
     return (
       <OpportunityEligibility

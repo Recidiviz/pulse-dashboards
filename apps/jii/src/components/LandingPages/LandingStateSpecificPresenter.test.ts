@@ -46,13 +46,14 @@ describe("valid state URL", () => {
 
   test("login with a specific connection", () => {
     vi.spyOn(rootStore.userStore.authClient, "logIn");
+    vi.stubGlobal("location", { pathname: "/maine" });
 
     const connection = presenter.selectorOptions[0].value;
 
     presenter.setSelectedConnection(connection);
     presenter.goToLogin();
     expect(rootStore.userStore.authClient.logIn).toHaveBeenCalledWith({
-      targetPath: "/",
+      targetPath: "/maine",
       connection: connection.connectionName,
     });
   });
@@ -70,6 +71,6 @@ describe("invalid state URL", () => {
 
     const hydrationError = hydrationFailure(presenter);
     expect(hydrationError).toBeDefined();
-    expect(hydrationError).toMatchInlineSnapshot(`[Error: Unknown URL]`);
+    expect(hydrationError).toMatchInlineSnapshot(`[Error: Unknown state URL]`);
   });
 });

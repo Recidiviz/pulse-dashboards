@@ -16,7 +16,19 @@
     }
   ],
   "rules": {
-    "react/display-name": ["error"]
+    "react/display-name": ["error"],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "react-router-dom",
+            "importNames": ["useParams"],
+            "message": "Please import useTypedParams from react-router-typesafe-routes/dom instead"
+          }
+        ]
+      }
+    ]
   },
   "settings": {
     "componentWrapperFunctions": ["observer"]

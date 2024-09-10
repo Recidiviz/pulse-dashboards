@@ -19,6 +19,7 @@ import { configure } from "mobx";
 
 import { residentsConfigByState } from "../../../configs/residentsConfig";
 import { UserStore } from "../../../datastores/UserStore";
+import { State } from "../../../routes/routes";
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 
 let presenter: NavigationMenuPresenter;
@@ -53,14 +54,20 @@ test("links", () => {
 test("links exclude search", () => {
   vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
 
-  expect(presenter.links.find((l) => l.url === "/search")).toBeUndefined();
+  expect(
+    presenter.links.find((l) =>
+      l.url.match(new RegExp(State.Eligibility.$.Search.relativePath)),
+    ),
+  ).toBeUndefined();
 });
 
 test("links include search", () => {
   vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
 
   expect(
-    presenter.links.find((l) => l.url === "/eligibility/search"),
+    presenter.links.find((l) =>
+      l.url.match(new RegExp(State.Eligibility.$.Search.relativePath)),
+    ),
   ).toBeDefined();
 });
 

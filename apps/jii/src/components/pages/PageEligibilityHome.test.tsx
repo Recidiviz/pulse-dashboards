@@ -19,8 +19,10 @@ import { render, screen } from "@testing-library/react";
 import { configure, flowResult } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { RootStore } from "../../datastores/RootStore";
 import { UserStore } from "../../datastores/UserStore";
+import { State } from "../../routes/routes";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageEligibilityHome } from "./PageEligibilityHome";
 
@@ -30,13 +32,25 @@ let userStore: UserStore;
 
 function renderPage() {
   render(
-    <MemoryRouter initialEntries={["/eligibility"]}>
+    <MemoryRouter
+      initialEntries={[
+        State.Eligibility.buildPath({
+          stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+        }),
+      ]}
+    >
       <Routes>
-        <Route path="/eligibility">
+        <Route path={State.Eligibility.path}>
           <Route index element={<PageEligibilityHome />} />
-          <Route path="search" element={<div>search page</div>} />
+          <Route
+            path={State.Eligibility.Search.path}
+            element={<div>search page</div>}
+          />
           {/* in reality this is a parameter, but for now there is only one possible value */}
-          <Route path="sccp" element={<div>SCCP page</div>} />
+          <Route
+            path={State.Eligibility.Opportunity.path}
+            element={<div>SCCP page</div>}
+          />
         </Route>
       </Routes>
     </MemoryRouter>,

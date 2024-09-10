@@ -32,17 +32,17 @@ import { Route, Routes } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components/macro";
 
 import { initializeSentry } from "../../apis/Sentry/initializeSentry";
+import * as routes from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { NotFound } from "../NotFound/NotFound";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEligibility } from "../pages/PageEligibility";
 import { PageEligibilityHome } from "../pages/PageEligibilityHome";
 import { PageHome } from "../pages/PageHome";
-import { PageLanding } from "../pages/PageLanding";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
-import { PageStateLanding } from "../pages/PageStateLanding";
+import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { StaticPage } from "../StaticPage/StaticPage";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
@@ -72,28 +72,47 @@ export function App() {
 
         <StyledApp>
           <SentryRoutes>
-            <Route path="/" element={<PageRoot />}>
+            <Route path={routes.SiteRoot.path} element={<PageRoot />}>
               <Route index element={<PageHome />} />
-              <Route path="welcome" element={<PageLanding />} />
-              <Route path=":landingPageUrl" element={<PageStateLanding />} />
-              <Route path="verify" element={<PageVerifyEmail />} />
-              <Route path="after-login" element={<PageAfterLogin />} />
-              <Route path="eligibility" element={<PageEligibility />}>
-                <Route index element={<PageEligibilityHome />} />
-                <Route path="search" element={<PageSearch />} />
-                <Route path=":opportunityUrl">
-                  <Route index element={<PageOpportunityEligibility />} />
-                  <Route path="about" element={<StaticPage pageId="about" />} />
+              <Route path={routes.State.path}>
+                <Route index element={<PageState />} />
+                <Route
+                  path={routes.State.Eligibility.path}
+                  element={<PageEligibility />}
+                >
+                  <Route index element={<PageEligibilityHome />} />
                   <Route
-                    path="requirements"
-                    element={<StaticPage pageId="requirements" />}
+                    path={routes.State.Eligibility.Search.path}
+                    element={<PageSearch />}
                   />
-                  <Route
-                    path="next-steps"
-                    element={<StaticPage pageId="nextSteps" />}
-                  />
+                  <Route path={routes.State.Eligibility.Opportunity.path}>
+                    <Route index element={<PageOpportunityEligibility />} />
+                    <Route
+                      path={routes.State.Eligibility.Opportunity.About.path}
+                      element={<StaticPage pageId="about" />}
+                    />
+                    <Route
+                      path={
+                        routes.State.Eligibility.Opportunity.Requirements.path
+                      }
+                      element={<StaticPage pageId="requirements" />}
+                    />
+                    <Route
+                      path={routes.State.Eligibility.Opportunity.NextSteps.path}
+                      element={<StaticPage pageId="nextSteps" />}
+                    />
+                  </Route>
                 </Route>
               </Route>
+              <Route
+                path={routes.EmailVerification.path}
+                element={<PageVerifyEmail />}
+              />
+              <Route
+                path={routes.AfterLogin.path}
+                element={<PageAfterLogin />}
+              />
+
               <Route path="*" element={<NotFound />} />
             </Route>
           </SentryRoutes>

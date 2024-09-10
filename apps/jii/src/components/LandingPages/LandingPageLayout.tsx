@@ -19,9 +19,11 @@ import { Button, palette, spacing, typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
+import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
 import recidivizWordmarkUrl from "../../assets/images/recidiviz-wordmark-white.svg";
+import { ReturnToPathFragment } from "../../routes/routes";
 import { PAGE_WIDTH } from "../../utils/constants";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { Wordmark } from "../Wordmark/Wordmark";
@@ -108,6 +110,7 @@ export const LandingPageLayout: FC<{ children: ReactNode }> = ({
   const {
     userStore: { authClient },
   } = useRootStore();
+  const [{ returnToPath }] = useTypedSearchParams(ReturnToPathFragment);
 
   return (
     <Wrapper>
@@ -127,7 +130,11 @@ export const LandingPageLayout: FC<{ children: ReactNode }> = ({
           <p>
             <Button
               kind="link"
-              onClick={() => authClient.logIn({ targetPath: "/" })}
+              onClick={() =>
+                authClient.logIn({
+                  targetPath: returnToPath ?? window.location.pathname,
+                })
+              }
             >
               Log in to Opportunities
             </Button>

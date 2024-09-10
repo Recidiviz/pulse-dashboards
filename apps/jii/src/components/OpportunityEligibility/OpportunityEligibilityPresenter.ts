@@ -19,12 +19,14 @@ import { flowResult, makeAutoObservable } from "mobx";
 
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import {
   IncarcerationOpportunityId,
   OpportunityConfig,
 } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { EligibilityReport } from "../../models/EligibilityReport/interface";
+import { State } from "../../routes/routes";
 
 export class OpportunityEligibilityPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;
@@ -97,10 +99,17 @@ export class OpportunityEligibilityPresenter implements Hydratable {
     return this.eligibilityReport.subheading;
   }
 
+  private get linkParams() {
+    return {
+      stateSlug: stateConfigsByStateCode[this.residentsStore.stateCode].urlSlug,
+      opportunitySlug: this.config.urlSection,
+    };
+  }
+
   get aboutContent() {
     return {
       ...this.config.copy.about,
-      linkUrl: `/eligibility/${this.config.urlSection}/about`,
+      linkUrl: State.Eligibility.Opportunity.About.buildPath(this.linkParams),
     };
   }
 
@@ -110,7 +119,9 @@ export class OpportunityEligibilityPresenter implements Hydratable {
 
     return {
       ...this.config.copy.nextSteps,
-      linkUrl: `/eligibility/${this.config.urlSection}/next-steps`,
+      linkUrl: State.Eligibility.Opportunity.NextSteps.buildPath(
+        this.linkParams,
+      ),
     };
   }
 
@@ -127,7 +138,9 @@ export class OpportunityEligibilityPresenter implements Hydratable {
       title,
       sections,
       linkText,
-      linkUrl: `requirements`,
+      linkUrl: State.Eligibility.Opportunity.Requirements.buildPath(
+        this.linkParams,
+      ),
     };
   }
 

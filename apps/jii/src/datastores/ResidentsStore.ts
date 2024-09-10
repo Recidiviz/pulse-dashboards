@@ -233,4 +233,8 @@ export class ResidentsStore {
       }
     });
   }
+
+  get stateCode() {
+    return this.userStore.stateCode;
+  }
 }

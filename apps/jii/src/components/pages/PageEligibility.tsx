@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { RedirectIfLoggedOut } from "~auth";
 
+import { State } from "../../routes/routes";
 import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
 import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
 import { ResidentsLayout } from "../ResidentsLayout/ResidentsLayout";
@@ -26,8 +28,16 @@ import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageEligibility = observer(function ResidentsRoot() {
   const rootStore = useRootStore();
+  const { stateSlug } = useTypedParams(State.Eligibility);
+
   return (
-    <RedirectIfLoggedOut authClient={rootStore.userStore.authClient} to="/">
+    <RedirectIfLoggedOut
+      authClient={rootStore.userStore.authClient}
+      to={State.buildPath(
+        { stateSlug },
+        { returnToPath: window.location.pathname },
+      )}
+    >
       <RequiresStateAuth>
         <IdentityTracker />
         <ResidentsLayout />

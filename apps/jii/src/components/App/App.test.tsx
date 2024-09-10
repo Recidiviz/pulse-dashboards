@@ -24,7 +24,9 @@ import { MockInstance } from "vitest";
 import { AuthClient } from "~auth";
 import { outputFixture, usMeResidents } from "~datatypes";
 
+import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { RootStore } from "../../datastores/RootStore";
+import * as routes from "../../routes/routes";
 import * as hooks from "../StoreProvider/useRootStore";
 import { App } from "./App";
 
@@ -32,13 +34,24 @@ let container: HTMLElement;
 
 beforeEach(() => {
   expect.hasAssertions();
+  configure({ safeDescriptors: false });
+});
+
+afterEach(() => {
+  configure({ safeDescriptors: true });
 });
 
 describe("public routes", () => {
+  beforeEach(() => {
+    vi.spyOn(AuthClient.prototype, "isAuthorized", "get").mockReturnValue(
+      false,
+    );
+  });
+
   describe("state selection page", () => {
     beforeEach(() => {
       container = render(
-        <MemoryRouter initialEntries={["/welcome"]}>
+        <MemoryRouter initialEntries={["/"]}>
           <App />
         </MemoryRouter>,
       ).container;
@@ -68,7 +81,9 @@ describe("public routes", () => {
   describe("state landing page", () => {
     beforeEach(() => {
       container = render(
-        <MemoryRouter initialEntries={["/maine"]}>
+        <MemoryRouter
+          initialEntries={[routes.State.buildPath({ stateSlug: "maine" })]}
+        >
           <App />
         </MemoryRouter>,
       ).container;
@@ -91,14 +106,16 @@ describe("public routes", () => {
     });
 
     it("should set page title", () => {
-      expect(window.document.title).toMatchInlineSnapshot(`"Opportunities"`);
+      expect(window.document.title).toMatchInlineSnapshot(
+        `"Maine – Opportunities"`,
+      );
     });
   });
 
   describe("email verification page", () => {
     beforeEach(() => {
       container = render(
-        <MemoryRouter initialEntries={["/verify"]}>
+        <MemoryRouter initialEntries={[routes.EmailVerification.buildPath({})]}>
           <App />
         </MemoryRouter>,
       ).container;
@@ -132,7 +149,7 @@ describe("public routes", () => {
         .mockResolvedValue(undefined);
 
       container = render(
-        <MemoryRouter initialEntries={["/after-login"]}>
+        <MemoryRouter initialEntries={[routes.AfterLogin.buildPath({})]}>
           <App />
         </MemoryRouter>,
       ).container;
@@ -161,7 +178,6 @@ describe("protected routes", () => {
   const residentFixture = outputFixture(usMeResidents[0]);
 
   beforeEach(() => {
-    configure({ safeDescriptors: false });
     rootStore = new RootStore();
     vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
 
@@ -177,10 +193,6 @@ describe("protected routes", () => {
     });
   });
 
-  afterEach(() => {
-    configure({ safeDescriptors: true });
-  });
-
   describe("search page", () => {
     beforeEach(() => {
       vi.spyOn(
@@ -190,7 +202,13 @@ describe("protected routes", () => {
       ).mockReturnValue({ stateCode: "US_ME", permissions: ["enhanced"] });
 
       container = render(
-        <MemoryRouter initialEntries={["/eligibility/search"]}>
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Eligibility.Search.buildPath({
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+            }),
+          ]}
+        >
           <App />
         </MemoryRouter>,
       ).container;
@@ -211,9 +229,27 @@ describe("protected routes", () => {
     });
   });
 
-  it("should render the sccp page as the user's homepage", async () => {
+  it("root should redirect to default opportunity", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("You could be eligible for release onto SCCP", {
+          exact: false,
+        }),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("state root should redirect to default opportunity", async () => {
+    render(
+      <MemoryRouter
+        initialEntries={[routes.State.buildPath({ stateSlug: "maine" })]}
+      >
         <App />
       </MemoryRouter>,
     );
@@ -230,7 +266,14 @@ describe("protected routes", () => {
   describe("SCCP page", () => {
     beforeEach(() => {
       container = render(
-        <MemoryRouter initialEntries={["/eligibility/sccp"]}>
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Eligibility.Opportunity.buildPath({
+              opportunitySlug: "sccp",
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+            }),
+          ]}
+        >
           <App />
         </MemoryRouter>,
       ).container;
@@ -276,7 +319,14 @@ describe("protected routes", () => {
   describe("SCCP about page", () => {
     beforeEach(() => {
       container = render(
-        <MemoryRouter initialEntries={["/eligibility/sccp/about"]}>
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Eligibility.Opportunity.About.buildPath({
+              opportunitySlug: "sccp",
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+            }),
+          ]}
+        >
           <App />
         </MemoryRouter>,
       ).container;
@@ -310,7 +360,14 @@ describe("protected routes", () => {
   describe("SCCP requirements page", () => {
     beforeEach(() => {
       container = render(
-        <MemoryRouter initialEntries={["/eligibility/sccp/requirements"]}>
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Eligibility.Opportunity.Requirements.buildPath({
+              opportunitySlug: "sccp",
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+            }),
+          ]}
+        >
           <App />
         </MemoryRouter>,
       ).container;
@@ -344,7 +401,14 @@ describe("protected routes", () => {
   describe("SCCP next steps page", () => {
     beforeEach(() => {
       container = render(
-        <MemoryRouter initialEntries={["/eligibility/sccp/next-steps"]}>
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Eligibility.Opportunity.NextSteps.buildPath({
+              opportunitySlug: "sccp",
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+            }),
+          ]}
+        >
           <App />
         </MemoryRouter>,
       ).container;

@@ -135,25 +135,16 @@ const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
     );
   });
 
-export const ImagePreview: FC<{ opportunityUrl: string | undefined }> =
-  withErrorBoundary(
-    observer(function ImagePreview({ opportunityUrl }) {
-      const { residentsStore } = useRootStore();
-      if (!residentsStore) return;
+export const ImagePreview: FC<{ opportunityUrl: string }> = withErrorBoundary(
+  observer(function ImagePreview({ opportunityUrl }) {
+    const { residentsStore } = useRootStore();
+    if (!residentsStore) return;
 
-      // in practice we don't expect this, something further up the component tree
-      // should have already failed to render before we reach this point
-      if (!opportunityUrl) {
-        throw new Error(
-          "URL does not contain a valid opportunity for image preview",
-        );
-      }
-
-      return (
-        <ImagePreviewWithPresenter
-          presenter={new ImagePreviewPresenter(opportunityUrl, residentsStore)}
-        />
-      );
-    }),
-    { fallback: <NotFound /> },
-  );
+    return (
+      <ImagePreviewWithPresenter
+        presenter={new ImagePreviewPresenter(opportunityUrl, residentsStore)}
+      />
+    );
+  }),
+  { fallback: <NotFound /> },
+);

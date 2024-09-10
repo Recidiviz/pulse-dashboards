@@ -142,6 +142,7 @@
     "react-modal": "^3.12.1",
     "react-perfect-scrollbar": "^1.5.8",
     "react-router-dom": "^6.20.1",
+    "react-router-typesafe-routes": "^1.2.2",
     "react-select": "^5.8.0",
     "react-select-event": "^5.5.1",
     "react-showdown": "^2.3.1",

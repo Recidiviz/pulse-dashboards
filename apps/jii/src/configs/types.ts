@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import { ParsedRecord, ResidentRecord } from "~datatypes";
 
 import { EligibilityReport } from "../models/EligibilityReport/interface";
-import { residentsConfigByState } from "./residentsConfig";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
+import { stateCodes } from "./stateConstants";
 
 export type ProfileField = {
   label: string;
@@ -75,7 +77,7 @@ export type ResidentsConfig = {
   >;
 };
 
-export type StateCode = keyof typeof residentsConfigByState;
+export type StateCode = z.infer<typeof stateCodes>;
 
 export type ResidentOpportunitySchemaMapping =
   typeof residentOpportunitySchemas;
@@ -99,8 +101,8 @@ export type ResidentEligibilityReportMapping = {
   ) => EligibilityReport;
 };
 
-export type StateLoginConfig = {
-  stateCode: StateCode;
+export type StateConfig<Code extends StateCode = StateCode> = {
+  stateCode: Code;
   displayName: string;
   urlSlug: string;
 };
@@ -111,7 +113,6 @@ export type LandingPageConfig = {
     selectorLabel: string;
     selectorPlaceholder: string;
   };
-  states: Array<StateLoginConfig>;
 };
 
 export type StateLandingPageConfig = {

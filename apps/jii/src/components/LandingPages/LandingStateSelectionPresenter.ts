@@ -19,11 +19,13 @@ import { flowResult, makeAutoObservable } from "mobx";
 
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
-import { StateLoginConfig } from "../../configs/types";
+import { stateConfigs } from "../../configs/stateConstants";
+import { StateConfig } from "../../configs/types";
 import type { LoginConfigStore } from "../../datastores/LoginConfigStore";
+import { State } from "../../routes/routes";
 
 export class LandingStateSelectionPresenter implements Hydratable {
-  private selectedStateConfig?: StateLoginConfig;
+  private selectedStateConfig?: StateConfig;
 
   private hydrationSource: HydratesFromSource;
 
@@ -64,19 +66,21 @@ export class LandingStateSelectionPresenter implements Hydratable {
   }
 
   get selectOptions() {
-    return this.landingPageConfigOrError.states.map((stateConfig) => ({
+    return stateConfigs.map((stateConfig) => ({
       label: stateConfig.displayName,
       value: stateConfig,
     }));
   }
 
-  setSelectedOption(config: StateLoginConfig) {
+  setSelectedOption(config: StateConfig) {
     this.selectedStateConfig = config;
   }
 
   get stateLandingPageUrl() {
     return this.selectedStateConfig?.urlSlug
-      ? `/${this.selectedStateConfig.urlSlug}`
+      ? State.buildPath({
+          stateSlug: this.selectedStateConfig.urlSlug,
+        })
       : undefined;
   }
 }

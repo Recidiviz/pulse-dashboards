@@ -113,7 +113,7 @@ describe("after hydration", () => {
     expect(presenter.requirementsContent).toMatchInlineSnapshot(`
       {
         "linkText": "Get details about each requirement",
-        "linkUrl": "requirements",
+        "linkUrl": "/maine/eligibility/sccp/requirements",
         "sections": [
           {
             "icon": "Success",

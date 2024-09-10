@@ -19,23 +19,39 @@ import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { Navigate } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { State } from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageEligibilityHome: FC = withErrorBoundary(
   observer(function PageEligibilityHome() {
     const { residentsStore, userStore } = useRootStore();
+    const { stateSlug } = useTypedParams(State.Eligibility);
     if (!residentsStore) return null;
 
     const { externalId } = residentsStore.userStore;
     if (externalId) {
       // for convenience, while there is only one opp configured we skip the lookup step
-      return <Navigate to="sccp" replace />;
+      return (
+        <Navigate
+          to={State.Eligibility.Opportunity.buildPath({
+            opportunitySlug: "sccp",
+            stateSlug,
+          })}
+          replace
+        />
+      );
     }
 
     if (userStore.hasPermission("enhanced"))
-      return <Navigate to="search" replace />;
+      return (
+        <Navigate
+          to={State.Eligibility.Search.buildPath({ stateSlug })}
+          replace
+        />
+      );
 
     throw new Error("No user ID specified for eligibility page");
   }),

@@ -19,10 +19,14 @@ import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, memo } from "react";
-import { useParams } from "react-router-dom";
+import {
+  useTypedParams,
+  useTypedSearchParams,
+} from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
-import { NotFound } from "../NotFound/NotFound";
+import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
+import { State } from "../../routes/routes";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
@@ -74,20 +78,20 @@ const LandingStateSpecificWithPresenter: FC<{
 });
 
 export const LandingStateSpecific = memo(function LandingStateSpecific() {
-  usePageTitle(undefined);
-  const { landingPageUrl } = useParams();
+  const { stateSlug } = useTypedParams(State);
+  const [{ returnToPath }] = useTypedSearchParams(State);
   const {
     loginConfigStore,
     userStore: { authClient },
   } = useRootStore();
 
-  // this is just type safety, in practice we do not expect this param to ever be missing
-  if (!landingPageUrl) return <NotFound />;
+  usePageTitle(stateConfigsByUrlSlug[stateSlug]?.displayName);
 
   const presenter = new LandingStateSpecificPresenter(
     loginConfigStore,
     authClient,
-    landingPageUrl,
+    stateSlug,
+    returnToPath,
   );
 
   return (
