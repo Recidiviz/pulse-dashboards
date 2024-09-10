@@ -17,9 +17,9 @@
 
 import { show } from "@intercom/messenger-js-sdk";
 import { palette, Sans24, spacing, typography } from "@recidiviz/design-system";
+import DomPurify from "dompurify";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
-import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
 import { CaseNoteSearchResults } from "~datatypes";
@@ -87,16 +87,10 @@ export const NoteWrapper = styled.div`
   }
 `;
 
-export const NotePreview = styled(MarkdownView)`
-  p {
-    ${typography.Sans14}
-    font-weight: 400;
-    color: ${palette.slate60};
-  }
-  b {
-    color: ${palette.pine1};
-    font-weight: 400;
-  }
+export const NotePreview = styled.div`
+  ${typography.Sans14}
+  font-weight: 400;
+  color: ${palette.slate60};
 `;
 
 export const ModalContent = styled.div`
@@ -185,7 +179,13 @@ export function SearchView({
                   <NoteTextDark>{d.contactMode}</NoteTextDark>
                 </NoteAdditionalInfo>
               </NoteHeader>
-              <NotePreview markdown={d.preview} />
+              <NotePreview
+                dangerouslySetInnerHTML={{
+                  __html: DomPurify.sanitize(d.preview, {
+                    FORBID_ATTR: ["style"],
+                  }),
+                }}
+              />
               <NoteTextLight>
                 {formatWorkflowsDateString(d.eventDate)}
               </NoteTextLight>

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import DomPurify from "dompurify";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
@@ -50,6 +51,10 @@ import { SearchView } from "./components/SearchView/SearchView";
 const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
   if (!note) return null;
 
+  const sanitizedNoteBody = note.noteBody
+    ? DomPurify.sanitize(note.noteBody, { FORBID_ATTR: ["style"] })
+    : "";
+
   return (
     <NoteViewWrapper>
       <NoteHeader>
@@ -62,7 +67,9 @@ const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
           <NoteTextLight>{note.contactMode}</NoteTextLight>
         </NoteAdditionalInfo>
       </NoteHeader>
-      <NoteTextDark>{note.noteBody}</NoteTextDark>
+      <NoteTextDark
+        dangerouslySetInnerHTML={{ __html: sanitizedNoteBody }}
+      ></NoteTextDark>
     </NoteViewWrapper>
   );
 };
