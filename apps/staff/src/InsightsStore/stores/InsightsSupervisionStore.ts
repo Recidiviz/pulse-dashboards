@@ -292,15 +292,17 @@ export class InsightsSupervisionStore {
    */
   setUserHasSeenActionStrategy(pseudoId: string): void {
     const { userPseudoId } = this.insightsStore.rootStore.userStore;
-    if (!userPseudoId) {
+
+    if (!userPseudoId && !isDemoMode() && !isOfflineMode()) {
       throw new Error(
         "Missing pseudonymizedId for user when marking Action Strategy as surfaced",
       );
     }
+
     const actionStrategy = this.actionStrategies?.[pseudoId];
     if (!actionStrategy) return;
     const event: ActionStrategySurfacedEvent = {
-      userPseudonymizedId: userPseudoId,
+      userPseudonymizedId: userPseudoId || "RECIDIVIZ",
       officerPseudonymizedId: pseudoId !== userPseudoId ? pseudoId : undefined,
       actionStrategy,
     };
@@ -418,14 +420,15 @@ export class InsightsSupervisionStore {
    * Updates action strategies with surfaced event
    */
   *patchActionStrategiesForCurrentUser(
-    props: ActionStrategySurfacedEvent,
+    event: ActionStrategySurfacedEvent,
   ): FlowMethod<InsightsAPI["patchActionStrategies"], void> {
     const { userAppMetadata, isRecidivizUser, isCSGUser, isImpersonating } =
       this.insightsStore.rootStore.userStore;
+
     if (isImpersonating) {
       // eslint-disable-next-line no-console
       console.log(
-        `[Impersonation][Action Strategies]: Patching action strategies for ${props.userPseudonymizedId}`,
+        `[Impersonation][Action Strategies]: Patching action strategies with event: ${JSON.stringify(event)}`,
       );
       return;
     }
@@ -433,7 +436,7 @@ export class InsightsSupervisionStore {
     if (isDemoMode() || isOfflineMode()) {
       // eslint-disable-next-line no-console
       console.log(
-        `[Demo/Offline Mode][Action Strategies]: Patching action strategies for ${props.userPseudonymizedId}`,
+        `[Demo/Offline Mode][Action Strategies]: Patching action strategies with event: ${JSON.stringify(event)}`,
       );
       return;
     }
@@ -453,7 +456,8 @@ export class InsightsSupervisionStore {
     if (!pseudonymizedId) {
       throw new Error("Missing pseudonymizedId for user");
     }
-    yield this.insightsStore.apiClient.patchActionStrategies(props);
+
+    yield this.insightsStore.apiClient.patchActionStrategies(event);
   }
 
   *populateUserInfo(): FlowMethod<InsightsAPI["userInfo"], void> {
