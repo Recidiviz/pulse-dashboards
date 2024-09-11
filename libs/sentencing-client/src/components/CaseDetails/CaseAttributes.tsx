@@ -17,34 +17,26 @@
 
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useState } from "react";
 
 import { Case } from "../../api";
 import { displayReportType } from "../../utils/utils";
 import * as Styled from "./CaseDetails.styles";
-import EditCaseDetailsModal from "./EditCaseDetailsModal";
-import { CaseDetailsForm } from "./Form/CaseDetailsForm";
-import { Gender } from "./types";
+import { GenderToDisplayName } from "./constants";
+
 type CaseAttributesProps = {
   caseAttributes: Case;
+  openEditCaseDetailsModal: () => void;
   firstName?: string;
-  form?: CaseDetailsForm;
-  saveAttributes: (options?: { showToast: boolean }) => void;
 };
 
 type AttributeLabelValue = {
   label: string;
   value: string | number;
+  fallbackValue?: string;
 };
 
 export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
-  function CaseAttributes({ firstName, caseAttributes, form, saveAttributes }) {
-    const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
-      useState(false);
-
-    const showModal = () => setShowEditCaseDetailsModal(true);
-    const hideModal = () => setShowEditCaseDetailsModal(false);
-
+  function CaseAttributes({ caseAttributes, openEditCaseDetailsModal }) {
     const {
       externalId,
       dueDate,
@@ -65,13 +57,20 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       { label: "County", value: county },
       {
         label: "Gender",
-        value: gender ? Gender[gender] : undefined,
+        value: gender ? GenderToDisplayName[gender] : undefined,
       },
       { label: "Age", value: moment().diff(birthDate, "years") },
-      { label: "Offense", value: offense, isEditable: true },
-      { label: "LSI-R Score", value: lsirScore, isEditable: true },
+      { label: "Offense", value: offense },
+      {
+        label: "LSI-R Score",
+        value: lsirScore,
+        fallbackValue: "No score provided",
+      },
     ].map((attribute) => {
-      return { ...attribute, value: attribute.value ?? "-" };
+      return {
+        ...attribute,
+        value: attribute.value ?? (attribute.fallbackValue ? "" : "-"),
+      };
     });
 
     return (
@@ -83,7 +82,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
           <Styled.DueDate>
             Due {moment(dueDate).format("MM/DD/YYYY")}
           </Styled.DueDate>
-          <Styled.EditCaseDetailsButton onClick={showModal}>
+          <Styled.EditCaseDetailsButton onClick={openEditCaseDetailsModal}>
             Edit Case Details
           </Styled.EditCaseDetailsButton>
         </Styled.HeaderWrapper>
@@ -93,21 +92,17 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
           {attributesRow.map((attribute) => (
             <Styled.AttributeValueWrapper key={attribute.label}>
               <Styled.Attribute>{attribute.label}:</Styled.Attribute>
-              <Styled.Value>{attribute.value}</Styled.Value>
+              <Styled.Value>
+                {attribute.value}
+                <span>
+                  {attribute.value !== 0 &&
+                    !attribute.value &&
+                    attribute.fallbackValue}
+                </span>
+              </Styled.Value>
             </Styled.AttributeValueWrapper>
           ))}
         </Styled.CaseAttributesWrapper>
-
-        {/* Edit Case Details Modal */}
-        {form && (
-          <EditCaseDetailsModal
-            firstName={firstName}
-            form={form}
-            hideModal={hideModal}
-            isOpen={showEditCaseDetailsModal}
-            saveAttributes={saveAttributes}
-          />
-        )}
       </Styled.CaseAttributes>
     );
   },

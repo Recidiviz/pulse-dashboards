@@ -32,17 +32,6 @@ export enum ProfileStrength {
   Low = "Low",
 }
 
-export enum Gender {
-  MALE = "Male",
-  FEMALE = "Female",
-  NON_BINARY = "Non-binary",
-  TRANS = "Transgender",
-  TRANS_FEMALE = "Transgender Female",
-  TRANS_MALE = "Transgender Male",
-  INTERNAL_UNKNOWN = "Unknown (Internal)",
-  EXTERNAL_UNKNOWN = "Unknown (External)",
-}
-
 export type MutableCaseAttributes =
   inferRouterInputs<AppRouter>["case"]["updateCase"]["attributes"];
 

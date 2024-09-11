@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Insight } from "../../../api/APIClient";
+import PlusIcon from "../../assets/plus-icon.svg?react";
 import DraggableScrollContainer from "../../DraggableScrollContainer/DraggableScrollContainer";
 import * as Styled from "../CaseDetails.styles";
 import { DispositionChart } from "../components/charts/DispositionChart/DispositionChart";
@@ -23,15 +24,19 @@ import { RecidivismPlot } from "../components/charts/RecidivismPlot/RecidivismPl
 import { SelectedRecommendation } from "../types";
 
 export interface InsightsProps {
-  insight?: Insight;
   selectedRecommendation: SelectedRecommendation;
+  insight?: Insight;
   fullName?: string;
+  lsirScore?: number | null;
+  openEditCaseDetailsModal: () => void;
 }
 
 export const Insights = ({
   insight,
   selectedRecommendation,
   fullName,
+  lsirScore,
+  openEditCaseDetailsModal,
 }: InsightsProps) => {
   return (
     <Styled.Insights>
@@ -42,6 +47,17 @@ export const Insights = ({
           current client, {fullName}, based on gender, risk score, and type of
           conviction.
         </Styled.Description>
+        {!lsirScore && lsirScore !== 0 && (
+          <Styled.AddLsirScoreContainer>
+            Add LSI-R draft score for most accurate insights{" "}
+            <Styled.ActionButton
+              kind="bordered"
+              onClick={openEditCaseDetailsModal}
+            >
+              <PlusIcon /> Add LSI-R Score
+            </Styled.ActionButton>
+          </Styled.AddLsirScoreContainer>
+        )}
       </Styled.InsightsHeaderWrapper>
 
       {/* Charts */}

@@ -119,10 +119,8 @@ test("shows all of the non-nested fields", async () => {
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");
   fireEvent.click(editCaseDetailsButton);
 
-  const offenseField = await screen.getByText(nonNestedFormLabels[0] + "*");
-  const draftLsirScoreField = await screen.getByText(
-    nonNestedFormLabels[1] + "*",
-  );
+  const offenseField = await screen.getByText(nonNestedFormLabels[0]);
+  const draftLsirScoreField = await screen.getByText(nonNestedFormLabels[1]);
   const primaryNeedsField = await screen.getByText(nonNestedFormLabels[2]);
   const substanceUseDisorderField = await screen.getByText(
     nonNestedFormLabels[3],
@@ -313,7 +311,7 @@ test("error message displays when invalid lsir score is given and saving is disa
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");
   fireEvent.click(editCaseDetailsButton);
 
-  const lsirScoreInput = await screen.getByLabelText("Draft LSI-R Score*");
+  const lsirScoreInput = await screen.getByLabelText("Draft LSI-R Score");
   let errorMessage = await screen.queryByText(
     "Please enter a number between 0 and 54.",
   );

@@ -144,6 +144,11 @@ export const Value = styled.div`
   gap: 6px;
   color: ${palette.pine2};
   text-transform: capitalize;
+
+  span {
+    text-transform: none;
+    color: ${palette.slate60};
+  }
 `;
 
 export const EditCaseDetails = styled.div`
@@ -455,9 +460,10 @@ export const ActionButton = styled.button<{
   fullWidth?: boolean;
 }>`
   height: 48px;
+  min-width: 117px;
   display: flex;
   gap: 8px;
-  padding: 12px 32px;
+  padding: 8px 16px;
   justify-content: center;
   align-items: center;
   background-color: ${({ kind }) =>
@@ -592,6 +598,19 @@ export const Insights = styled.div`
 export const InsightsHeaderWrapper = styled.div`
   margin-left: 22px;
   padding-right: 50px;
+`;
+
+export const AddLsirScoreContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: ${palette.white};
+  margin-right: 60px;
+  margin-top: 12px;
+  border: 1px solid ${palette.slate20};
+  border-radius: 10px;
+  color: ${palette.pine1};
 `;
 
 export const ChartControls = styled.div`
@@ -1013,9 +1032,17 @@ export const InputLabel = styled.label`
   ${typography.Sans16}
   color: ${palette.pine1};
   margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    color: ${palette.slate60};
+    font-style: italic;
+  }
 `;
 
 export const InputDescription = styled.div`
+  ${typography.Sans16};
   color: ${palette.slate60};
   margin-top: 4px;
   ${typography.Sans14}

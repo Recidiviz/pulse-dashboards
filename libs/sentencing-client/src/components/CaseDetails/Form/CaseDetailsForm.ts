@@ -19,6 +19,7 @@ import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { Case } from "../../../api/APIClient";
+import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { OnboardingFields } from "../CaseOnboarding/types";
 import {
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -54,13 +55,17 @@ export class CaseDetailsForm {
   hasError: boolean;
 
   constructor(
-    private readonly caseAttributes: Case,
+    private readonly caseDetailsPresenter: CaseDetailsPresenter,
     private readonly offenses: string[],
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.hasError = false;
-    this.content = this.createForm(caseAttributes);
+    this.content = this.createForm(caseDetailsPresenter.caseAttributes);
     this.updates = {} as FormUpdates;
+  }
+
+  get caseAttributes() {
+    return this.caseDetailsPresenter.caseAttributes;
   }
 
   get contentList() {

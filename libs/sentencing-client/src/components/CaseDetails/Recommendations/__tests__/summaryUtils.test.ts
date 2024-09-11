@@ -67,7 +67,6 @@ describe("formatNeedsList", () => {
       "Healthcare",
       "Mental health",
       "Substance use",
-      "Other",
     ]);
     expect(result).not.toContain("Case management");
     expect(result).not.toContain("Clothing and toiletries");
@@ -78,6 +77,7 @@ describe("formatNeedsList", () => {
     expect(result).not.toContain("Housing");
     expect(result).not.toContain("Job training or opportunities");
     expect(result).not.toContain("Transportation");
+    expect(result).not.toContain("Other");
   });
 
   test("format needs list based on Term recommendation type", () => {
@@ -90,7 +90,6 @@ describe("formatNeedsList", () => {
       "Healthcare",
       "Mental health",
       "Substance use",
-      "Other",
     ]);
     expect(result).not.toContain("Case management");
     expect(result).not.toContain("Clothing and toiletries");
@@ -101,6 +100,7 @@ describe("formatNeedsList", () => {
     expect(result).not.toContain("Housing");
     expect(result).not.toContain("Job training or opportunities");
     expect(result).not.toContain("Transportation");
+    expect(result).not.toContain("Other");
   });
 
   test("format needs list based using the default adjustments for Probation recommendation type", () => {
@@ -120,12 +120,12 @@ describe("formatNeedsList", () => {
       "Mental health",
       "Substance use",
       "Transportation",
-      "Other",
     ]);
 
     expect(result).not.toContain("Clothing and toiletries");
     expect(result).not.toContain("General reentry support");
     expect(result).not.toContain("Job training or opportunities");
+    expect(result).not.toContain("Other");
   });
 
   test("format needs list based using the default adjustments for None recommendation type", () => {
@@ -145,12 +145,12 @@ describe("formatNeedsList", () => {
       "Mental health",
       "Substance use",
       "Transportation",
-      "Other",
     ]);
 
     expect(result).not.toContain("Clothing and toiletries");
     expect(result).not.toContain("General reentry support");
     expect(result).not.toContain("Job training or opportunities");
+    expect(result).not.toContain("Other");
   });
 });
 
@@ -455,11 +455,11 @@ describe("generateRecommendationSummary", () => {
     };
     let summary = generateRecommendationSummary(props);
     const femaleOrTransFemaleCopy =
-      "After careful consideration of the details of this case, I respectfully recommend that Ms. Robertson be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet her anger management, case management, domestic violence training, education, family support, food insecurity, financial support, healthcare, housing, vocational training, mental health, substance use, transportation and other needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set her life on a better path.";
+      "After careful consideration of the details of this case, I respectfully recommend that Ms. Robertson be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet her anger management, case management, domestic violence training, education, family support, food insecurity, financial support, healthcare, housing, vocational training, mental health, substance use and transportation needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set her life on a better path.";
     const maleOrTransMaleCopy =
-      "After careful consideration of the details of this case, I respectfully recommend that Mr. Robertson be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet his anger management, case management, domestic violence training, education, family support, food insecurity, financial support, healthcare, housing, vocational training, mental health, substance use, transportation and other needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set his life on a better path.";
+      "After careful consideration of the details of this case, I respectfully recommend that Mr. Robertson be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet his anger management, case management, domestic violence training, education, family support, food insecurity, financial support, healthcare, housing, vocational training, mental health, substance use and transportation needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set his life on a better path.";
     const neutralGenderCopy =
-      "After careful consideration of the details of this case, I respectfully recommend that Jo Robertson be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet their anger management, case management, domestic violence training, education, family support, food insecurity, financial support, healthcare, housing, vocational training, mental health, substance use, transportation and other needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set their life on a better path.";
+      "After careful consideration of the details of this case, I respectfully recommend that Jo Robertson be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet their anger management, case management, domestic violence training, education, family support, food insecurity, financial support, healthcare, housing, vocational training, mental health, substance use and transportation needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set their life on a better path.";
 
     // Gender: Female
     expect(summary).toBe(femaleOrTransFemaleCopy);

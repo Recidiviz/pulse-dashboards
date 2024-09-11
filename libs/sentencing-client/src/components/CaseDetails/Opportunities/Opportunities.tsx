@@ -623,10 +623,10 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
               return (
                 opp.opportunityName ===
                   opportunityDisplayNameToOpportunityNameProviderName[key]
-                    .opportunityName &&
+                    ?.opportunityName &&
                 opp.providerName ===
                   opportunityDisplayNameToOpportunityNameProviderName[key]
-                    .providerName
+                    ?.providerName
               );
             }),
         )}

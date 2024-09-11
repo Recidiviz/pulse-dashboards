@@ -53,14 +53,14 @@ export const TextInputField: React.FC<InputFieldProps> = ({
     setCurrentValue(e.target.value);
 
     if (element.key === LSIR_SCORE_KEY) {
-      if (!isValidLsirScore(e.target.value) || e.target.value.trim() === "") {
+      if (!isValidLsirScore(e.target.value)) {
         handleValidationError(true);
         return;
       }
       handleValidationError(false);
     }
 
-    updateForm(element.key, e.target.value, parentKey, isOtherContext);
+    updateForm(element.key, e.target.value || null, parentKey, isOtherContext);
   };
 
   return !isOtherContext ? (

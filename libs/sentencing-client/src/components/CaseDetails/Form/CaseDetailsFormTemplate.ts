@@ -107,7 +107,6 @@ export const caseDetailsFormTemplate: FormFieldList = [
     disabledMessage:
       "This score has been pulled in from Atlas and is unable to be edited.",
     validationErrorMessage: "Please enter a number between 0 and 54.",
-    isRequired: true,
   },
   {
     key: "needsToBeAddressed",

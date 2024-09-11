@@ -18,21 +18,27 @@
 import _ from "lodash";
 
 import { Insight } from "../../../../../api/APIClient";
-import { Gender } from "../../../types";
+import { GenderToDisplayName } from "../../../constants";
 
 export function getDescriptionGender(rollupGender: Insight["gender"]) {
   let genderString;
-  if (Gender[rollupGender] === Gender.MALE) {
+  if (GenderToDisplayName[rollupGender] === GenderToDisplayName.MALE) {
     genderString = "men";
-  } else if (Gender[rollupGender] === Gender.FEMALE) {
+  } else if (GenderToDisplayName[rollupGender] === GenderToDisplayName.FEMALE) {
     genderString = "women";
-  } else if (Gender[rollupGender] === Gender.NON_BINARY) {
+  } else if (
+    GenderToDisplayName[rollupGender] === GenderToDisplayName.NON_BINARY
+  ) {
     genderString = "non-binary people";
-  } else if (Gender[rollupGender] === Gender.TRANS) {
+  } else if (GenderToDisplayName[rollupGender] === GenderToDisplayName.TRANS) {
     genderString = "trans people";
-  } else if (Gender[rollupGender] === Gender.TRANS_FEMALE) {
+  } else if (
+    GenderToDisplayName[rollupGender] === GenderToDisplayName.TRANS_FEMALE
+  ) {
     genderString = "trans women";
-  } else if (Gender[rollupGender] === Gender.TRANS_MALE) {
+  } else if (
+    GenderToDisplayName[rollupGender] === GenderToDisplayName.TRANS_MALE
+  ) {
     genderString = "trans men";
   }
 

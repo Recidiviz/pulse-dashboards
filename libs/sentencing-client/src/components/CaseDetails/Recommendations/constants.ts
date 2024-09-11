@@ -57,6 +57,7 @@ export const pronouns: Pronouns = {
 export const defaultExclusionList: Case["needsToBeAddressed"] = [
   "ClothingAndToiletries",
   "GeneralReEntrySupport",
+  "Other",
 ];
 
 /** Needs to be excluded from Rider or Term recommendations */

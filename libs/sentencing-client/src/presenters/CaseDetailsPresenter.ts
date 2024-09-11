@@ -74,10 +74,7 @@ export class CaseDetailsPresenter implements Hydratable {
     when(
       () => isHydrated(this),
       () => {
-        this.caseDetailsForm = new CaseDetailsForm(
-          this.caseAttributes,
-          this.offenses,
-        );
+        this.caseDetailsForm = new CaseDetailsForm(this, this.offenses);
         this.recommendedOpportunities =
           this.caseAttributes.recommendedOpportunities ?? [];
       },
@@ -138,7 +135,9 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   get offenses() {
-    return this.caseStore.offenses;
+    return this.caseStore.offenses
+      .slice()
+      .sort((a: string, b: string) => a.localeCompare(b));
   }
 
   get communityOpportunities(): Opportunities {

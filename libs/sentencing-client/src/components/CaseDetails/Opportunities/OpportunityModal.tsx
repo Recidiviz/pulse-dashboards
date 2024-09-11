@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 
 import { Opportunities as OpportunitiesType } from "../../../api";
 import { Modal } from "../../Modal/Modal";
@@ -134,6 +135,12 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
             selectedOpportunity.providerName,
           )}
         </Styled.ModalHeader>
+        {selectedOpportunity.lastUpdatedAt && (
+          <Styled.SectionLabel>
+            Last updated{" "}
+            {moment(selectedOpportunity.lastUpdatedAt).format("MM/DD/YYYY")}
+          </Styled.SectionLabel>
+        )}
       </Styled.ModalHeaderWrapper>
 
       <Styled.ModalBody>
@@ -212,6 +219,17 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
                     value,
                   ),
                 )}
+              </Styled.SectionContent>
+            </Styled.Section>
+          )}
+        </Styled.SectionRowWrapper>
+
+        <Styled.SectionRowWrapper>
+          {selectedOpportunity.additionalNotes && (
+            <Styled.Section>
+              <Styled.SectionLabel>Additional Notes</Styled.SectionLabel>
+              <Styled.SectionContent>
+                {selectedOpportunity.additionalNotes}
               </Styled.SectionContent>
             </Styled.Section>
           )}

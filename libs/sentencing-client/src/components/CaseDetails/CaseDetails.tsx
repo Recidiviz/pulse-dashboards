@@ -30,6 +30,7 @@ import { CaseAttributes } from "./CaseAttributes";
 import * as Styled from "./CaseDetails.styles";
 import { CaseOnboarding } from "./CaseOnboarding/CaseOnboarding";
 import { OnboardingTopic } from "./CaseOnboarding/types";
+import EditCaseDetailsModal from "./EditCaseDetailsModal";
 import { Insights } from "./Insights/Insights";
 import { Opportunities } from "./Opportunities/Opportunities";
 import { Recommendations } from "./Recommendations/Recommendations";
@@ -59,6 +60,11 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   const [selectedRecommendation, setSelectedRecommendation] = useState(
     caseAttributes.selectedRecommendation ?? RecommendationType.Probation,
   );
+  const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
+    useState(false);
+
+  const openEditCaseDetailsModal = () => setShowEditCaseDetailsModal(true);
+  const hideEditCaseDetailsModal = () => setShowEditCaseDetailsModal(false);
 
   const handleRecommendationUpdate = (recommendation: RecommendationType) =>
     setSelectedRecommendation(recommendation);
@@ -116,8 +122,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           <CaseAttributes
             firstName={firstName}
             caseAttributes={caseAttributes}
-            form={form}
-            saveAttributes={saveAttributes}
+            openEditCaseDetailsModal={openEditCaseDetailsModal}
           />
           <Styled.Body>
             <Styled.InsightsOpportunitiesWrapper>
@@ -126,6 +131,8 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 insight={caseAttributes.insight}
                 selectedRecommendation={selectedRecommendation}
                 fullName={caseAttributes.Client?.fullName}
+                openEditCaseDetailsModal={openEditCaseDetailsModal}
+                lsirScore={caseAttributes.lsirScore}
               />
               {/* Opportunities */}
               <Opportunities
@@ -153,6 +160,17 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               setCaseStatusCompleted={updateCaseStatusToCompleted}
             />
           </Styled.Body>
+
+          {/* Edit Case Details Modal */}
+          {form && (
+            <EditCaseDetailsModal
+              firstName={firstName}
+              form={form}
+              hideModal={hideEditCaseDetailsModal}
+              isOpen={showEditCaseDetailsModal}
+              saveAttributes={saveAttributes}
+            />
+          )}
         </>
       )}
     </Styled.PageContainer>

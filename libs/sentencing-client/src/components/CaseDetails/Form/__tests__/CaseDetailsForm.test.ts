@@ -16,6 +16,8 @@
 // =============================================================================
 
 import { CaseDetailsFixture } from "../../../../api/offlineFixtures";
+import { CaseDetailsPresenter } from "../../../../presenters/CaseDetailsPresenter";
+import { createMockPSIStore } from "../../../../utils/test";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -36,8 +38,20 @@ import { caseDetailsFormTemplate } from "../CaseDetailsFormTemplate";
 import { parseAttributeValue } from "../utils";
 
 const caseId = Object.keys(CaseDetailsFixture)[0];
+const mockPSIStore = createMockPSIStore();
+const mockCaseStore = mockPSIStore.caseStore;
+mockPSIStore.caseStore.caseDetailsById = CaseDetailsFixture;
+
+const caseDetailsPresenter = new CaseDetailsPresenter(mockCaseStore, caseId);
 const caseAttributes = CaseDetailsFixture[caseId];
-const form = new CaseDetailsForm(caseAttributes, []);
+const form = new CaseDetailsForm(caseDetailsPresenter, []);
+// caseDetailsPresenter.caseAttributes = caseAttributes;
+// vi.spyOn(mockCaseStore, "caseDetailsById", "get").mockResolvedValue(
+//   CaseDetailsFixture,
+// );
+// vi.spyOn(caseDetailsPresenter, "caseAttributes", "get").mockResolvedValue(
+//   caseAttributes,
+// );
 
 test("form is initialized with case attribute values", () => {
   expect(Object.keys(form.content).length).toBe(caseDetailsFormTemplate.length);
@@ -88,7 +102,7 @@ test("getFormValue returns the latest value for a field", () => {
 });
 
 test("form value changes update content and updates properties", () => {
-  const localForm = new CaseDetailsForm(caseAttributes, []);
+  const localForm = new CaseDetailsForm(caseDetailsPresenter, []);
 
   localForm.updateForm(LSIR_SCORE_KEY, "22");
 
@@ -112,12 +126,16 @@ test("form value changes update content and updates properties", () => {
 });
 
 test("form sets error flag to true when caseAttributes has an error in values", () => {
-  let localForm = new CaseDetailsForm(caseAttributes, []);
+  let localForm = new CaseDetailsForm(caseDetailsPresenter, []);
   expect(localForm.hasError).toBeFalse();
 
-  caseAttributes.lsirScore = 222;
+  vi.spyOn(
+    caseDetailsPresenter.caseAttributes,
+    "lsirScore",
+    "get",
+  ).mockResolvedValue(222);
 
-  localForm = new CaseDetailsForm(caseAttributes, []);
+  localForm = new CaseDetailsForm(caseDetailsPresenter, []);
   expect(localForm.hasError).toBeTrue();
 });
 
@@ -164,7 +182,7 @@ test("onboardingFields returns the expected onboarding fields", () => {
 });
 
 test("transformedUpdates converts values to enums/expected BE values", () => {
-  const localForm = new CaseDetailsForm(caseAttributes, []);
+  const localForm = new CaseDetailsForm(caseDetailsPresenter, []);
   const updates = {
     [ASAM_CARE_RECOMMENDATION_KEY]: "2.5 High-Intensity Outpatient (HIOP)",
     [PLEA_KEY]: "Alford Plea",

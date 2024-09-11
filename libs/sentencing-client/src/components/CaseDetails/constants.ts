@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case } from "../../api";
+import { Case, Client } from "../../api";
 
 export const PDF_PAGE_WIDTH = 950;
 
@@ -100,4 +100,15 @@ export const needsToBeAddressed: Record<
   SubstanceUse: "Substance use",
   Transportation: "Transportation",
   Other: "Other",
+};
+
+export const GenderToDisplayName: Record<Client["gender"], string> = {
+  MALE: "Male",
+  FEMALE: "Female",
+  NON_BINARY: "Non-binary",
+  TRANS: "Transgender",
+  TRANS_FEMALE: "Transgender Female",
+  TRANS_MALE: "Transgender Male",
+  INTERNAL_UNKNOWN: "Unknown",
+  EXTERNAL_UNKNOWN: "Unknown",
 };

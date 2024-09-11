@@ -51,9 +51,7 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
       currentTopicIndex === onboardingTopics.length;
     const isNextButtonDisabled =
       currentTopic === OnboardingTopic.OffenseLsirScore &&
-      (form.hasError ||
-        !form.getFormValue("lsirScore") ||
-        !form.getFormValue("offense"));
+      (form.hasError || !form.getFormValue("offense"));
 
     const goToPrevTopic = () => {
       if (currentTopicIndex === 0) {
