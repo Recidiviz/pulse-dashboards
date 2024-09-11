@@ -43,9 +43,9 @@ export class NavigationMenuPresenter {
 
       links.push(
         ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
-          text: c.copy.menuLabel,
+          text: c.menuLabel,
           url: State.Eligibility.Opportunity.buildPath({
-            opportunitySlug: c.urlSection,
+            opportunitySlug: c.urlSlug,
             stateSlug,
           }),
         })),

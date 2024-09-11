@@ -35,9 +35,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
         ":opportunitySlug",
         {},
         {
-          About: route("about"),
-          Requirements: route("requirements"),
-          NextSteps: route("next-steps"),
+          InfoPage: route(":pageSlug"),
         },
       ),
     },

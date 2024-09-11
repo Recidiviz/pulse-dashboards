@@ -72,12 +72,12 @@ export class ResidentsStore {
     return this.rootStore.userStore;
   }
 
-  get opportunityIdsByUrl(): Map<string, IncarcerationOpportunityId> {
+  get opportunityIdsByUrlSlug(): Map<string, IncarcerationOpportunityId> {
     return new Map(
       Object.entries(this.config.incarcerationOpportunities).map(
         ([id, config]) => {
           return [
-            config.urlSection,
+            config.urlSlug,
             id as keyof typeof this.config.incarcerationOpportunities,
           ];
         },

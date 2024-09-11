@@ -1,5 +1,3 @@
-# SCCP Eligibility Requirements
-
 ## How do I qualify for SCCP?
 
 To apply for SCCP, you must first work with your case manager to make sure that you meet all of the following eligibility requirements:
@@ -43,7 +41,7 @@ To apply for SCCP, you must first work with your case manager to make sure that 
 
 ## How is my Current Release Date calculated?
 
-Your Current Release Date is calculated by taking the amount of time you were sentenced to the DOC, minus the amount of good time you earned and any jail time credit you’ve been given.
+Your Current Release Date is calculated by taking the amount of time you were sentenced to DOC custody, minus the amount of good time you earned and any jail time credit you’ve been given.
 
 It does not factor in any good time you will earn after today, so if you continue earning good time, your Current Release Date will move earlier.
 
@@ -51,8 +49,8 @@ For example, let’s say you were sentenced to 10 years, and you spent 1 year in
 
 ## What is a 1/2 Time or 2/3 Time Date? How are those calculated?
 
-Your 1/2 or 2/3 Time Date falls halfway or two-thirds between the date you first entered a DOC facility and your Current Release Date.
+Your 1/2 or 2/3 Time Date falls halfway or two-thirds of the way between the date you first entered a DOC facility and your Current Release Date.
 
-For example, if you entered a DOC facility on 1/1/2020, and your current Release Date is 1/1/2028, your 1/2 time date would be on 1/1/2024. If your Current Release Date moves earlier because you earn good time, your 1/2 or 2/3 Time Date will also move earlier.
+For example, if you entered a DOC facility on 1/1/2020, and your Current Release Date is 1/1/2028, your 1/2 time date would be on 1/1/2024. If your Current Release Date moves earlier because you earn good time, your 1/2 or 2/3 Time Date will also move earlier.
 
 If your sentence is between 0 to 5 years, you must pass your 1/2 Time Date to be eligible for SCCP. If your sentence is longer than 5 years, you must pass your 2/3 Time Date to be eligible for SCCP.

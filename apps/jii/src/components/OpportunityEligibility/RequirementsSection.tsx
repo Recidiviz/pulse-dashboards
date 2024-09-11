@@ -108,7 +108,7 @@ export const RequirementsSection: FC<{
 }> = observer(function RequirementsSection({ presenter }) {
   return (
     <Section>
-      <SectionHeading>{presenter.requirementsContent.title}</SectionHeading>
+      <SectionHeading>{presenter.requirementsContent.heading}</SectionHeading>
       <RequirementsGroupings>
         {presenter.requirementsContent.sections.map((section) => (
           <Fragment key={section.label}>

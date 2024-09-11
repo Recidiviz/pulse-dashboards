@@ -23,15 +23,13 @@ import { FC } from "react";
 import styled from "styled-components/macro";
 
 import { IncarcerationOpportunityId } from "../../configs/types";
-import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
-import { AboutSection } from "./AboutSection";
-import { ButtonLink } from "./ButtonLink";
+import { AdditionalSection } from "./AdditionalSection";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { RequirementsSection } from "./RequirementsSection";
-import { Section, SectionHeading } from "./styles";
+import { SummarySection } from "./SummarySection";
 
 const Header = styled.header`
   margin: ${rem(spacing.xxl)} 0;
@@ -77,19 +75,16 @@ const OpportunityEligibilityWithPresenter: FC<{
         )}
       </Header>
 
-      <AboutSection presenter={presenter} />
+      <SummarySection content={presenter.summaryContent} />
 
       <RequirementsSection presenter={presenter} />
 
-      {presenter.nextStepsContent && (
-        <Section>
-          <SectionHeading>{presenter.nextStepsContent.title}</SectionHeading>
-          <CopyWrapper>{presenter.nextStepsContent.body}</CopyWrapper>
-          <ButtonLink to={presenter.nextStepsContent.linkUrl}>
-            {presenter.nextStepsContent.linkText}
-          </ButtonLink>
-        </Section>
-      )}
+      {presenter.additionalSections.map((sectionContent) => (
+        <AdditionalSection
+          content={sectionContent}
+          key={sectionContent.linkUrl}
+        />
+      ))}
     </article>
   );
 });

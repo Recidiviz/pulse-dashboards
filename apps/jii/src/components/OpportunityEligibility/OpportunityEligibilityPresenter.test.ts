@@ -33,7 +33,10 @@ import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresent
 let residentsStore: ResidentsStore;
 let presenter: OpportunityEligibilityPresenter;
 const opportunityId: IncarcerationOpportunityId = "usMeSCCP";
-const resident = outputFixture(usMeResidents[0]);
+const eligibleResident = outputFixture(usMeResidents[0]);
+const ineligibleResident = outputFixture(
+  usMeResidents[usMeResidents.length - 1],
+);
 const stateConfig = residentsConfigByState.US_ME;
 const oppConfig = stateConfig.incarcerationOpportunities[
   opportunityId
@@ -41,15 +44,18 @@ const oppConfig = stateConfig.incarcerationOpportunities[
 
 beforeEach(() => {
   residentsStore = new ResidentsStore(new RootStore(), stateConfig);
-  presenter = new OpportunityEligibilityPresenter(
-    residentsStore,
-    resident.personExternalId,
-    opportunityId,
-    oppConfig,
-  );
 });
 
 describe("hydration", () => {
+  beforeEach(() => {
+    presenter = new OpportunityEligibilityPresenter(
+      residentsStore,
+      eligibleResident.personExternalId,
+      opportunityId,
+      oppConfig,
+    );
+  });
+
   test("needs hydration", () => {
     expect(presenter.hydrationState.status).toBe("needs hydration");
   });
@@ -57,12 +63,12 @@ describe("hydration", () => {
   test("already hydrated", () => {
     set(
       residentsStore.residentsByExternalId,
-      resident.personExternalId,
-      resident,
+      eligibleResident.personExternalId,
+      eligibleResident,
     );
     set(
       residentsStore.residentOpportunityRecordsByExternalId,
-      resident.personExternalId,
+      eligibleResident.personExternalId,
       {
         [opportunityId]: outputFixture(
           usMeSccpFixtures.fullyEligibleHalfPortion,
@@ -71,12 +77,12 @@ describe("hydration", () => {
     );
     set(
       residentsStore.residentEligibilityReportsByExternalId,
-      resident.personExternalId,
+      eligibleResident.personExternalId,
       new Map([
         [
           opportunityId,
           new UsMeSCCPEligibilityReport(
-            resident,
+            eligibleResident,
             oppConfig,
             outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion),
           ),
@@ -100,71 +106,101 @@ describe("hydration", () => {
   });
 });
 
-test("about content", () => {
-  expect(presenter.aboutContent).toMatchSnapshot();
+describe("eligible resident", () => {
+  beforeEach(() => {
+    presenter = new OpportunityEligibilityPresenter(
+      residentsStore,
+      eligibleResident.personExternalId,
+      opportunityId,
+      oppConfig,
+    );
+  });
+
+  test("summary content", () => {
+    expect(presenter.summaryContent).toMatchSnapshot();
+  });
+
+  describe("after hydration", () => {
+    beforeEach(async () => {
+      await presenter.hydrate();
+    });
+
+    test("requirements content", () => {
+      expect(presenter.requirementsContent).toMatchInlineSnapshot(`
+        {
+          "heading": "Requirements",
+          "linkText": "Get details about each requirement",
+          "linkUrl": "/maine/eligibility/sccp/requirements",
+          "sections": [
+            {
+              "icon": "Success",
+              "label": "Requirements you **have** met",
+              "requirements": [
+                {
+                  "criterion": "Served 2/3 of your sentence",
+                },
+                {
+                  "criterion": "No Class A or B discipline in past 90 days",
+                },
+                {
+                  "criterion": "Current custody level is Community",
+                },
+                {
+                  "criterion": "No unresolved detainers, warrants or pending charges",
+                },
+              ],
+            },
+            {
+              "icon": "CloseOutlined",
+              "label": "Requirements you **have not** met yet",
+              "requirements": [
+                {
+                  "criterion": "Fewer than 30 months remaining on your sentence",
+                  "ineligibleReason": "You'll meet this requirement on May 16, 2022",
+                },
+              ],
+            },
+            {
+              "icon": "ArrowCircled",
+              "label": "Ask your case manager if you’ve met these requirements",
+              "requirements": [
+                {
+                  "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+                },
+                {
+                  "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
+                },
+                {
+                  "criterion": "Completing required programs and following your case plan",
+                },
+              ],
+            },
+          ],
+        }
+      `);
+    });
+
+    test("additional sections content", () => {
+      expect(presenter.additionalSections).toHaveLength(2);
+      expect(presenter.additionalSections).toMatchSnapshot();
+    });
+  });
 });
 
-describe("after hydration", () => {
+describe("ineligible resident", () => {
   beforeEach(async () => {
+    presenter = new OpportunityEligibilityPresenter(
+      residentsStore,
+      ineligibleResident.personExternalId,
+      opportunityId,
+      oppConfig,
+    );
+
     await presenter.hydrate();
   });
 
-  test("requirements content", () => {
-    expect(presenter.requirementsContent).toMatchInlineSnapshot(`
-      {
-        "linkText": "Get details about each requirement",
-        "linkUrl": "/maine/eligibility/sccp/requirements",
-        "sections": [
-          {
-            "icon": "Success",
-            "label": "Requirements you **have** met",
-            "requirements": [
-              {
-                "criterion": "Served 2/3 of your sentence",
-              },
-              {
-                "criterion": "No Class A or B discipline in past 90 days",
-              },
-              {
-                "criterion": "Current custody level is Community",
-              },
-              {
-                "criterion": "No unresolved detainers, warrants or pending charges",
-              },
-            ],
-          },
-          {
-            "icon": "CloseOutlined",
-            "label": "Requirements you **have not** met yet",
-            "requirements": [
-              {
-                "criterion": "Fewer than 30 months remaining on your sentence",
-                "ineligibleReason": "You'll meet this requirement on May 16, 2022",
-              },
-            ],
-          },
-          {
-            "icon": "ArrowCircled",
-            "label": "Check with your case manager to see if you’ve met these requirements",
-            "requirements": [
-              {
-                "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
-              },
-              {
-                "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
-              },
-              {
-                "criterion": "Completing required programs and following your case plan",
-              },
-            ],
-          },
-        ],
-        "title": "Requirements",
-      }
-    `);
-  });
-
-  test("next steps content", () => {
-    expect(presenter.nextStepsContent).toMatchSnapshot();
+  test("additional sections content", () => {
+    expect(presenter.additionalSections).toHaveLength(1);
+    expect(presenter.additionalSections).toMatchSnapshot();
   });
 });

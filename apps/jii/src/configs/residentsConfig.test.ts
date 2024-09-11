@@ -29,7 +29,7 @@ describe("requirements configs should match criteria in schema", () => {
           const schema =
             residentOpportunitySchemas[oppId as IncarcerationOpportunityId];
           expect(
-            Object.keys(oppConfig.copy.requirements.trackedCriteria),
+            Object.keys(oppConfig.requirements.summary.trackedCriteria),
           ).toEqual(
             expect.arrayContaining(
               schema.shape.eligibleCriteria.keyof().options,

@@ -1,5 +1,3 @@
-# About the Supervised Community Confinement Program (SCCP)
-
 ## What is SCCP? How does it work?
 
 SCCP is a program for MDOC residents who are almost done with their prison sentence. It is also called “home confinement” or “supervised release.”

@@ -17,23 +17,22 @@
 
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
+import { ValuesType } from "utility-types";
 
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { ButtonLink } from "./ButtonLink";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { Section, SectionHeading } from "./styles";
 
-export const AboutSection: FC<{
-  presenter: OpportunityEligibilityPresenter;
-}> = observer(function AboutSection({ presenter }) {
+export const AdditionalSection: FC<{
+  content: ValuesType<OpportunityEligibilityPresenter["additionalSections"]>;
+}> = observer(function AdditionalSection({ content }) {
   return (
     <Section>
-      <SectionHeading>{presenter.aboutContent.title}</SectionHeading>
-      <CopyWrapper>{presenter.aboutContent.body}</CopyWrapper>
+      <SectionHeading>{content.heading}</SectionHeading>
+      <CopyWrapper>{content.body}</CopyWrapper>
 
-      <ButtonLink to={presenter.aboutContent.linkUrl}>
-        {presenter.aboutContent.linkText}
-      </ButtonLink>
+      <ButtonLink to={content.linkUrl}>{content.linkText}</ButtonLink>
     </Section>
   );
 });

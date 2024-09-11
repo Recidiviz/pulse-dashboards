@@ -27,8 +27,7 @@ import { State } from "../../routes/routes";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
-import { StaticPagePresenter } from "./StaticPagePresenter";
-import { PageId } from "./types";
+import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
 
 const BackLink = styled(Link)`
   align-items: center;
@@ -44,33 +43,39 @@ const BackLink = styled(Link)`
   }
 `;
 
-const StaticPageWithPresenter: FC<{ presenter: StaticPagePresenter }> =
-  observer(function StaticPageWithPresenter({ presenter }) {
-    usePageTitle(presenter.htmlTitle);
+const OpportunityInfoPageWithPresenter: FC<{
+  presenter: OpportunityInfoPagePresenter;
+}> = observer(function OpportunityInfoPageWithPresenter({ presenter }) {
+  usePageTitle(presenter.heading);
 
-    return (
-      <>
-        <BackLink to="../">
-          <Icon kind="Arrow" rotate={180} size={13} />
-          Back
-        </BackLink>
-        <CopyWrapper>{presenter.contents}</CopyWrapper>
-      </>
-    );
-  });
+  return (
+    <>
+      <BackLink to="../">
+        <Icon kind="Arrow" rotate={180} size={13} />
+        Back
+      </BackLink>
+      <CopyWrapper>{`# ${presenter.heading}`}</CopyWrapper>
+      <CopyWrapper>{presenter.body}</CopyWrapper>
+    </>
+  );
+});
 
-export const StaticPage: FC<{ pageId: PageId }> = observer(function StaticPage({
-  pageId,
-}) {
-  const { opportunitySlug } = useTypedParams(State.Eligibility.Opportunity);
+export const OpportunityInfoPage = observer(function OpportunityInfoPage() {
+  const { opportunitySlug, pageSlug } = useTypedParams(
+    State.Eligibility.Opportunity.InfoPage,
+  );
   const { residentsStore } = useRootStore();
 
   if (!residentsStore) return;
 
   return (
-    <StaticPageWithPresenter
+    <OpportunityInfoPageWithPresenter
       presenter={
-        new StaticPagePresenter(opportunitySlug, pageId, residentsStore)
+        new OpportunityInfoPagePresenter(
+          opportunitySlug,
+          pageSlug,
+          residentsStore,
+        )
       }
     />
   );

@@ -20,13 +20,13 @@ import { ResidentsStore } from "../../datastores/ResidentsStore";
 /**
  * Looks up opportunity ID from residents config given its URL segment. Will throw if not found.
  */
-export function opportunityIdFromUrl(
-  url: string,
+export function opportunityIdFromSlug(
+  slug: string,
   residentsStore: ResidentsStore,
 ) {
-  const id = residentsStore.opportunityIdsByUrl.get(url);
+  const id = residentsStore.opportunityIdsByUrlSlug.get(slug);
   if (!id) {
-    throw new Error(`No opportunity ID matches url ${url}`);
+    throw new Error(`No opportunity ID matches url segment ${slug}`);
   }
   return id;
 }

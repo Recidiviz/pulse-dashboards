@@ -1,10 +1,8 @@
-# SCCP Application and Tips
-
 ## What makes a good SCCP application and essay?
 
 You should work to ensure that your SCCP application is fully complete and no important information is missing. If possible, work closely with your case manager on your application to ensure that the information is complete.
 
-<p><FormPreview linkText="Preview a blank SCCP application" icon /></p>
+<p><FormPreview linkText="Preview a blank SCCP application" /></p>
 
 In your SCCP application essay, consider the following:
 
@@ -22,9 +20,9 @@ In your SCCP application essay, consider the following:
 
 ## What happens after I submit my application?
 
-Once you fill out the packet and return it to your case manager, there are a few steps that happen for you to be approved and released:
+Once you fill out the packet and return it to your case manager, there are a few steps that must happen for you to be approved and released:
 
 1. The application will be brought by your case manager to the facility unit team for review.
 1. If the unit team agrees to move your application forward, it will then be sent to probation for review.
 1. Once the application returns from probation with an approval, it goes to the Central Office for final approval.
-1. Then the CPC and case manager will begin the process of releasing you on to SCCP.
+1. Then the CPC and case manager will begin the process of releasing you onto SCCP.

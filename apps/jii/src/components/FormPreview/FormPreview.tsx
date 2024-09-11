@@ -61,7 +61,7 @@ export const FormPreview: FC<{
         {icon && <InlineIcon />}
       </ModalTrigger>
       <Modal {...modalProps}>
-        <ImagePreview opportunityUrl={opportunitySlug} />
+        <ImagePreview opportunitySlug={opportunitySlug} />
       </Modal>
     </>
   );

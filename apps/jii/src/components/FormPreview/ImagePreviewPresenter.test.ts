@@ -104,9 +104,9 @@ test("unknown URL", () => {
   );
 
   expect(() => presenter.title).toThrowErrorMatchingInlineSnapshot(
-    `[Error: No opportunity ID matches url not-configured]`,
+    `[Error: No opportunity ID matches url segment not-configured]`,
   );
   expect(() => presenter.currentUrl).toThrowErrorMatchingInlineSnapshot(
-    `[Error: No opportunity ID matches url not-configured]`,
+    `[Error: No opportunity ID matches url segment not-configured]`,
   );
 });

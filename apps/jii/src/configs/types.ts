@@ -31,40 +31,62 @@ export type ProfileField = {
 
 export type RequirementCopy = { criterion: string; ineligibleReason?: string };
 
+export type SummaryContent = {
+  heading: string;
+  body: string;
+};
+
+type FullPageConfig = {
+  linkText: string;
+  urlSlug: string;
+  heading: string;
+  body: string;
+};
+
+type EligibilityPageSection = {
+  /**
+   * Short version that appears on the main eligibility page
+   */
+  summary: SummaryContent;
+  /**
+   * Long version that is linked to from the main eligibility page
+   */
+  fullPage: FullPageConfig;
+  /**
+   * Sections are always shown by default; set true to suppress for ineligible people
+   */
+  hideWhenIneligible?: boolean;
+};
+
 export type OpportunityConfig = {
-  urlSection: string;
+  urlSlug: string;
   firestoreCollection: string;
   htmlTitle: string;
-  copy: {
-    headline: string;
-    subheading: string;
-    about: {
-      title: string;
-      body: string;
-      linkText: string;
-      fullPage: string;
-      fullPageHtmlTitle: string;
-    };
-    requirements: {
-      title: string;
+  headline: string;
+  subheading: string;
+  /**
+   * short section that appears right below the headline and above requirements
+   */
+  summary: SummaryContent;
+  /**
+   * Required section that has a specific format
+   */
+  requirements: {
+    summary: {
+      heading: string;
       trackedCriteria: Record<string, RequirementCopy>;
       untrackedCriteria: Array<RequirementCopy>;
       staticRequirementsLabel: string;
-      linkText: string;
-      fullPage: string;
-      fullPageHtmlTitle: string;
     };
-    nextSteps: {
-      title: string;
-      body: string;
-      linkText: string;
-      fullPage: string;
-      fullPageHtmlTitle: string;
-    };
-    menuLabel: string;
-    formPreview: {
-      title: string;
-    };
+    fullPage: FullPageConfig;
+  };
+  /**
+   * Optional copy-only sections that will appear below requirements
+   */
+  sections: Array<EligibilityPageSection>;
+  menuLabel: string;
+  formPreview: {
+    title: string;
   };
 };
 

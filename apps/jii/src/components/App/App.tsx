@@ -35,6 +35,7 @@ import { initializeSentry } from "../../apis/Sentry/initializeSentry";
 import * as routes from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { NotFound } from "../NotFound/NotFound";
+import { OpportunityInfoPage } from "../OpportunityInfoPage/OpportunityInfoPage";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEligibility } from "../pages/PageEligibility";
 import { PageEligibilityHome } from "../pages/PageEligibilityHome";
@@ -44,7 +45,6 @@ import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
-import { StaticPage } from "../StaticPage/StaticPage";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div``;
@@ -88,18 +88,8 @@ export function App() {
                   <Route path={routes.State.Eligibility.Opportunity.path}>
                     <Route index element={<PageOpportunityEligibility />} />
                     <Route
-                      path={routes.State.Eligibility.Opportunity.About.path}
-                      element={<StaticPage pageId="about" />}
-                    />
-                    <Route
-                      path={
-                        routes.State.Eligibility.Opportunity.Requirements.path
-                      }
-                      element={<StaticPage pageId="requirements" />}
-                    />
-                    <Route
-                      path={routes.State.Eligibility.Opportunity.NextSteps.path}
-                      element={<StaticPage pageId="nextSteps" />}
+                      path={routes.State.Eligibility.Opportunity.InfoPage.path}
+                      element={<OpportunityInfoPage />}
                     />
                   </Route>
                 </Route>

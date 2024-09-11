@@ -24,7 +24,7 @@ import { State } from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
 import { useRootStore } from "../StoreProvider/useRootStore";
-import { opportunityIdFromUrl } from "../utils/opportunityIdFromUrl";
+import { opportunityIdFromSlug } from "../utils/opportunityIdFromUrl";
 
 export const PageOpportunityEligibility: FC = withErrorBoundary(
   observer(function PageOpportunityEligibility() {
@@ -38,7 +38,10 @@ export const PageOpportunityEligibility: FC = withErrorBoundary(
       throw new Error("missing Resident ID");
     }
 
-    const opportunityId = opportunityIdFromUrl(opportunitySlug, residentsStore);
+    const opportunityId = opportunityIdFromSlug(
+      opportunitySlug,
+      residentsStore,
+    );
 
     return (
       <OpportunityEligibility

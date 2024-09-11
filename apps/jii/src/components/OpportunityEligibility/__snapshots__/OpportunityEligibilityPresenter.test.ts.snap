@@ -1,57 +1,27 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`about content 1`] = `
-{
-  "body": "- Sometimes called “home confinement” or “supervised release”
-- Spend the last 30 months of your sentence in the community, while still under MDOC custody
-- Get used to being back in the community with the support of a structured plan
+exports[`eligible resident > after hydration > additional sections content 1`] = `
+[
+  {
+    "body": "While you’re on SCCP, the following rules and conditions apply:
 
 <dl>
 <dt>Good Time</dt>
-<dd>You still earn good time when you’re on SCCP.</dd>
+<dd>You still earn good time.</dd>
 <dt>Housing</dt>
-<dd>While on SCCP, you must live in Maine.</dd>
+<dd>You must live in Maine.</dd>
 <dt>Employment</dt>
-<dd>While on SCCP, you must have a job or be looking for one, or be in school. If you qualify for Social Security or disability benefits, you may be able to use those instead.</dd>
+<dd>You must have a job or be looking for one, or be in school. If you qualify for Social Security or disability benefits, you may be able to use those instead.</dd>
 <dt>Supervision</dt>
-<dd>You have to check in regularly with a probation officer while on SCCP.</dd>
+<dd>You have to meet regularly with a probation officer.</dd>
 </dl>
 ",
-  "fullPage": "# About the Supervised Community Confinement Program (SCCP)
-
-## What is SCCP? How does it work?
-
-SCCP is a program for MDOC residents who are almost done with their prison sentence. It is also called “home confinement” or “supervised release.”
-
-- If eligible, you can apply **to spend the last 30 months of your sentence in the community,** while under supervision.
-- The program helps you get used to being back in the community with the support of a structured plan.
-
-Probation officers supervise you during SCCP.
-
-- You have to meet with your PO **within 24 hours** of being released on SCCP.
-- Then, you have to meet with your PO **once a week for the first month.**
-- After that, your PO will decide how often you have to meet.
-
-For the official policy document, ask the librarian at the law library for Policy Number 27.2.
-
-## What if I’m not interested in SCCP?
-
-Here are other options to help you transition into the community:
-
-- **Work Release:** Through this program, you can find a job outside the facility and make money. To qualify, you need to meet some of the same requirements as SCCP. Your case manager can help you know if you qualify for work release and can help you find a job.
-
-- **Furlough Passes:** You can also ask to leave the facility for a short time with a furlough pass. This is like a special permission to visit your family or do other important things. There are rules that limit how many times you can leave.
-",
-  "fullPageHtmlTitle": "About the Supervised Community Confinement Program (SCCP)",
-  "linkText": "Learn more about how the program works",
-  "linkUrl": "/maine/eligibility/sccp/about",
-  "title": "About the program",
-}
-`;
-
-exports[`after hydration > next steps content 1`] = `
-{
-  "body": "If you are eligible for SCCP, your case manager will give you an <FormPreview linkText="application packet" /> to fill out, which includes several parts:
+    "heading": "Quick facts",
+    "linkText": "Learn more about how the program works",
+    "linkUrl": "/maine/eligibility/sccp/about",
+  },
+  {
+    "body": "If you are eligible for SCCP, your case manager will give you an <FormPreview linkText="application packet" /> to fill out, which includes several parts:
 
 <dl>
 <dt>Application</dt>
@@ -60,42 +30,46 @@ exports[`after hydration > next steps content 1`] = `
 <dd>You’ll have to write an essay describing the path you’re on, the first steps you’ll take when released, and how you plan to do well on SCCP.</dd>
 <dt>Paperwork</dt>
 <dd>You’ll sign paperwork agreeing to the conditions of the program. You’ll also need to get a warrantless search agreement signed by the person whose place you’ll be living in.</dd>
+<dt>Supervision</dt>
+<dd>You have to check in regularly with a probation officer while on SCCP.</dd>
 </dl>
 ",
-  "fullPage": "# SCCP Application and Tips
+    "heading": "How to apply",
+    "linkText": "Learn more about the application process",
+    "linkUrl": "/maine/eligibility/sccp/application-process",
+  },
+]
+`;
 
-## What makes a good SCCP application and essay?
-
-You should work to ensure that your SCCP application is fully complete and no important information is missing. If possible, work closely with your case manager on your application to ensure that the information is complete.
-
-<p><FormPreview linkText="Preview a blank SCCP application" icon /></p>
-
-In your SCCP application essay, consider the following:
-
-- **Keep it simple** Write about the path you are on and your vision for the future, including the first steps you will take when released on to SCCP.
-
-- **Keep it positive:** Focus on how you plan to do well while on SCCP. For example, you can write about how living with family will be a supportive and stable environment where you will be able to save up to eventually get your own place.
-
-## How can I advocate well for myself?
-
-**Being proactive** through the SCCP application process is the best way to advocate for yourself.
-
-- When talking to your case manager, go prepared with a list of questions.
-- Take the time to ask your case manager all of the questions you have. Ask them for a follow-up appointment if they don’t have all the answers for you at that moment.
-- When checking on the progress of your application, be patient and respectful. Case managers are handling a lot of different issues and paperwork, so a simple “excuse me” or “thank you for your time” can go a long way.
-
-## What happens after I submit my application?
-
-Once you fill out the packet and return it to your case manager, there are a few steps that happen for you to be approved and released:
-
-1. The application will be brought by your case manager to the facility unit team for review.
-1. If the unit team agrees to move your application forward, it will then be sent to probation for review.
-1. Once the application returns from probation with an approval, it goes to the Central Office for final approval.
-1. Then the CPC and case manager will begin the process of releasing you on to SCCP.
+exports[`eligible resident > summary content 1`] = `
+{
+  "body": "- SCCP is sometimes called “home confinement” or “supervised release”
+- You can spend the last part of your sentence under supervision in the community
+- SCCP can help you adjust to being back in the community with structured support
 ",
-  "fullPageHtmlTitle": "SCCP Application and Tips",
-  "linkText": "Learn more about the application process",
-  "linkUrl": "/maine/eligibility/sccp/next-steps",
-  "title": "How to apply",
+  "heading": "About the program",
 }
+`;
+
+exports[`ineligible resident > additional sections content 1`] = `
+[
+  {
+    "body": "While you’re on SCCP, the following rules and conditions apply:
+
+<dl>
+<dt>Good Time</dt>
+<dd>You still earn good time.</dd>
+<dt>Housing</dt>
+<dd>You must live in Maine.</dd>
+<dt>Employment</dt>
+<dd>You must have a job or be looking for one, or be in school. If you qualify for Social Security or disability benefits, you may be able to use those instead.</dd>
+<dt>Supervision</dt>
+<dd>You have to meet regularly with a probation officer.</dd>
+</dl>
+",
+    "heading": "Quick facts",
+    "linkText": "Learn more about how the program works",
+    "linkUrl": "/maine/eligibility/sccp/about",
+  },
+]
 `;

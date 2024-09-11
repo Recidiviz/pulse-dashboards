@@ -135,14 +135,14 @@ const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
     );
   });
 
-export const ImagePreview: FC<{ opportunityUrl: string }> = withErrorBoundary(
-  observer(function ImagePreview({ opportunityUrl }) {
+export const ImagePreview: FC<{ opportunitySlug: string }> = withErrorBoundary(
+  observer(function ImagePreview({ opportunitySlug }) {
     const { residentsStore } = useRootStore();
     if (!residentsStore) return;
 
     return (
       <ImagePreviewWithPresenter
-        presenter={new ImagePreviewPresenter(opportunityUrl, residentsStore)}
+        presenter={new ImagePreviewPresenter(opportunitySlug, residentsStore)}
       />
     );
   }),

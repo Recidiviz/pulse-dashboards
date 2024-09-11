@@ -24,7 +24,9 @@ import { MockInstance } from "vitest";
 import { AuthClient } from "~auth";
 import { outputFixture, usMeResidents } from "~datatypes";
 
+import { residentsConfigByState } from "../../configs/residentsConfig";
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
+import { OpportunityConfig } from "../../configs/types";
 import { RootStore } from "../../datastores/RootStore";
 import * as routes from "../../routes/routes";
 import * as hooks from "../StoreProvider/useRootStore";
@@ -263,13 +265,16 @@ describe("protected routes", () => {
     );
   });
 
+  const sccpConfig = residentsConfigByState.US_ME.incarcerationOpportunities
+    .usMeSCCP as OpportunityConfig;
+
   describe("SCCP page", () => {
     beforeEach(() => {
       container = render(
         <MemoryRouter
           initialEntries={[
             routes.State.Eligibility.Opportunity.buildPath({
-              opportunitySlug: "sccp",
+              opportunitySlug: sccpConfig.urlSlug,
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
             }),
           ]}
@@ -302,7 +307,7 @@ describe("protected routes", () => {
 
       await waitFor(() =>
         expect(
-          screen.getByRole("heading", { name: "SCCP Application" }),
+          screen.getByRole("heading", { name: sccpConfig.formPreview.title }),
         ).toBeVisible(),
       );
 
@@ -310,49 +315,8 @@ describe("protected routes", () => {
     });
 
     it("should set page title", () => {
-      expect(window.document.title).toMatchInlineSnapshot(
-        `"Supervised Community Confinement Program – Opportunities"`,
-      );
-    });
-  });
-
-  describe("SCCP about page", () => {
-    beforeEach(() => {
-      container = render(
-        <MemoryRouter
-          initialEntries={[
-            routes.State.Eligibility.Opportunity.About.buildPath({
-              opportunitySlug: "sccp",
-              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
-            }),
-          ]}
-        >
-          <App />
-        </MemoryRouter>,
-      ).container;
-    });
-
-    it("should render", async () => {
-      await waitFor(() =>
-        expect(
-          screen.getByRole("heading", {
-            name: "About the Supervised Community Confinement Program (SCCP)",
-          }),
-        ).toBeInTheDocument(),
-      );
-    });
-
-    it("should be accessible", async () => {
-      await screen.findByRole("heading", {
-        name: "About the Supervised Community Confinement Program (SCCP)",
-      });
-
-      expect(await axe(container)).toHaveNoViolations();
-    });
-
-    it("should set page title", () => {
-      expect(window.document.title).toMatchInlineSnapshot(
-        `"About the Supervised Community Confinement Program (SCCP) – Opportunities"`,
+      expect(window.document.title).toBe(
+        `${sccpConfig.htmlTitle} – Opportunities`,
       );
     });
   });
@@ -362,9 +326,10 @@ describe("protected routes", () => {
       container = render(
         <MemoryRouter
           initialEntries={[
-            routes.State.Eligibility.Opportunity.Requirements.buildPath({
-              opportunitySlug: "sccp",
+            routes.State.Eligibility.Opportunity.InfoPage.buildPath({
+              opportunitySlug: sccpConfig.urlSlug,
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+              pageSlug: sccpConfig.requirements.fullPage.urlSlug,
             }),
           ]}
         >
@@ -377,7 +342,7 @@ describe("protected routes", () => {
       await waitFor(() =>
         expect(
           screen.getByRole("heading", {
-            name: "SCCP Eligibility Requirements",
+            name: sccpConfig.requirements.fullPage.heading,
           }),
         ).toBeInTheDocument(),
       );
@@ -385,57 +350,61 @@ describe("protected routes", () => {
 
     it("should be accessible", async () => {
       await screen.findByRole("heading", {
-        name: "SCCP Eligibility Requirements",
+        name: sccpConfig.requirements.fullPage.heading,
       });
 
       expect(await axe(container)).toHaveNoViolations();
     });
 
     it("should set page title", () => {
-      expect(window.document.title).toMatchInlineSnapshot(
-        `"SCCP Eligibility Requirements – Opportunities"`,
+      expect(window.document.title).toBe(
+        `${sccpConfig.requirements.fullPage.heading} – Opportunities`,
       );
     });
   });
 
-  describe("SCCP next steps page", () => {
-    beforeEach(() => {
-      container = render(
-        <MemoryRouter
-          initialEntries={[
-            routes.State.Eligibility.Opportunity.NextSteps.buildPath({
-              opportunitySlug: "sccp",
-              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+  describe.each(sccpConfig.sections.map((s) => s.fullPage))(
+    "SCCP page: $urlSlug",
+    (pageConfig) => {
+      beforeEach(() => {
+        container = render(
+          <MemoryRouter
+            initialEntries={[
+              routes.State.Eligibility.Opportunity.InfoPage.buildPath({
+                opportunitySlug: "sccp",
+                stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+                pageSlug: pageConfig.urlSlug,
+              }),
+            ]}
+          >
+            <App />
+          </MemoryRouter>,
+        ).container;
+      });
+
+      it("should render", async () => {
+        await waitFor(() =>
+          expect(
+            screen.getByRole("heading", {
+              name: pageConfig.heading,
             }),
-          ]}
-        >
-          <App />
-        </MemoryRouter>,
-      ).container;
-    });
-
-    it("should render", async () => {
-      await waitFor(() =>
-        expect(
-          screen.getByRole("heading", {
-            name: "SCCP Application and Tips",
-          }),
-        ).toBeInTheDocument(),
-      );
-    });
-
-    it("should be accessible", async () => {
-      await screen.findByRole("heading", {
-        name: "SCCP Application and Tips",
+          ).toBeInTheDocument(),
+        );
       });
 
-      expect(await axe(container)).toHaveNoViolations();
-    });
+      it("should be accessible", async () => {
+        await screen.findByRole("heading", {
+          name: pageConfig.heading,
+        });
 
-    it("should set page title", () => {
-      expect(window.document.title).toMatchInlineSnapshot(
-        `"SCCP Application and Tips – Opportunities"`,
-      );
-    });
-  });
+        expect(await axe(container)).toHaveNoViolations();
+      });
+
+      it("should set page title", () => {
+        expect(window.document.title).toBe(
+          `${pageConfig.heading} – Opportunities`,
+        );
+      });
+    },
+  );
 });

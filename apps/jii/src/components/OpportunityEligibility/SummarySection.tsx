@@ -15,4 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type PageId = "about" | "requirements" | "nextSteps";
+import { observer } from "mobx-react-lite";
+import { FC } from "react";
+
+import { SummaryContent } from "../../configs/types";
+import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
+import { Section, SectionHeading } from "./styles";
+
+export const SummarySection: FC<{
+  content: SummaryContent;
+}> = observer(function SummarySection({ content }) {
+  return (
+    <Section>
+      <SectionHeading>{content.heading}</SectionHeading>
+      <CopyWrapper>{content.body}</CopyWrapper>
+    </Section>
+  );
+});

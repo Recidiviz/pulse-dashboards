@@ -16,26 +16,26 @@
 // =============================================================================
 
 import { OpportunityConfig } from "../../types";
-import aboutBody1 from "./aboutBody1.md?raw";
 import aboutPage from "./aboutPage.md?raw";
 import nextStepsBody from "./nextStepsBody.md?raw";
 import nextStepsPage from "./nextStepsPage.md?raw";
+import quickFactsSummary from "./quickFactsSummary.md?raw";
 import requirementsPage from "./requirementsPage.md?raw";
+import summaryBody from "./summaryBody.md?raw";
 
 export const config: OpportunityConfig = {
-  urlSection: "sccp",
+  urlSlug: "sccp",
   firestoreCollection: "US_ME-SCCPReferrals",
   htmlTitle: "Supervised Community Confinement Program",
-  copy: {
-    headline: `{{#if eligibilityData}}
+  headline: `{{#if eligibilityData}}
         {{#if resident.personName.givenNames}}{{ resident.personName.givenNames }}, you{{ else }}You{{/if}} 
         could be eligible to apply for the Supervised Community Confinement Program
         {{#if (isFutureDate custom.applicationDate)}} on {{ formatFullDate custom.applicationDate }}{{/if}}
       {{else}}Learn about the Supervised Community Confinement Program
       {{/if}}`,
-    // if no eligibility data, or if resident is fully eligible, this will be blank;
-    // otherwise the copy responds to various data conditions
-    subheading: `{{#if eligibilityData}} 
+  // if no eligibility data, or if resident is fully eligible, this will be blank;
+  // otherwise the copy responds to various data conditions
+  subheading: `{{#if eligibilityData}} 
       {{#if custom.ineligibleViolation}}You have remaining requirements. Talk to your case manager to understand if and when you can apply.
       {{else}}
         {{#if (isFutureDate custom.eligibilityDate)}}
@@ -47,22 +47,19 @@ export const config: OpportunityConfig = {
         {{/if}}
       {{/if}} 
     {{/if}}`,
-    about: {
-      title: "About the program",
-      body: aboutBody1,
-      linkText: "Learn more about how the program works",
-      fullPage: aboutPage,
-      fullPageHtmlTitle:
-        "About the Supervised Community Confinement Program (SCCP)",
-    },
-    requirements: {
-      title: "Requirements",
+  summary: {
+    heading: "About the program",
+    body: summaryBody,
+  },
+  requirements: {
+    summary: {
+      heading: "Requirements",
       trackedCriteria: {
         usMeServedXPortionOfSentence: {
           criterion: `{{#if currentCriterion}}Served {{currentCriterion.xPortionServed}} of your sentence
-            {{else}}Served 1/2 of your sentence if your sentence is 5 years or fewer; 
-              served 2/3 of your sentence if your sentence is 5 or more years
-            {{/if}}`,
+              {{else}}Served 1/2 of your sentence if your sentence is 5 years or fewer; 
+                served 2/3 of your sentence if your sentence is 5 or more years
+              {{/if}}`,
           ineligibleReason:
             "You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}",
         },
@@ -78,9 +75,9 @@ export const config: OpportunityConfig = {
         },
         usMeCustodyLevelIsMinimumOrCommunity: {
           criterion: `Current custody level is {{#if currentCriterion}} 
-              {{titleCase (lowerCase currentCriterion.custodyLevel) }}
-              {{else}} Minimum or Community
-            {{/if}}`,
+                {{titleCase (lowerCase currentCriterion.custodyLevel) }}
+                {{else}} Minimum or Community
+              {{/if}}`,
         },
         usMeNoDetainersWarrantsOrOther: {
           criterion: "No unresolved detainers, warrants or pending charges",
@@ -102,18 +99,42 @@ export const config: OpportunityConfig = {
       ],
       staticRequirementsLabel:
         "In order to be eligible for SCCP, you must have met the following requirements:",
+    },
+    fullPage: {
       linkText: "Get details about each requirement",
-      fullPage: requirementsPage,
-      fullPageHtmlTitle: "SCCP Eligibility Requirements",
+      urlSlug: "requirements",
+      heading: "SCCP Eligibility Requirements",
+      body: requirementsPage,
     },
-    nextSteps: {
-      title: "How to apply",
-      body: nextStepsBody,
-      linkText: "Learn more about the application process",
-      fullPage: nextStepsPage,
-      fullPageHtmlTitle: "SCCP Application and Tips",
-    },
-    menuLabel: "SCCP",
-    formPreview: { title: "SCCP Application" },
   },
+  sections: [
+    {
+      summary: {
+        heading: "Quick facts",
+        body: quickFactsSummary,
+      },
+      fullPage: {
+        linkText: "Learn more about how the program works",
+        urlSlug: "about",
+        heading: "About the Supervised Community Confinement Program (SCCP)",
+        body: aboutPage,
+      },
+    },
+    {
+      summary: {
+        heading: "How to apply",
+        body: nextStepsBody,
+      },
+      fullPage: {
+        linkText: "Learn more about the application process",
+        urlSlug: "application-process",
+        heading: "SCCP Application Process and Tips",
+        body: nextStepsPage,
+      },
+      hideWhenIneligible: true,
+    },
+  ],
+
+  menuLabel: "SCCP",
+  formPreview: { title: "SCCP Application" },
 } satisfies OpportunityConfig;

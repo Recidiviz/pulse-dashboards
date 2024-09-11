@@ -102,46 +102,62 @@ export class OpportunityEligibilityPresenter implements Hydratable {
   private get linkParams() {
     return {
       stateSlug: stateConfigsByStateCode[this.residentsStore.stateCode].urlSlug,
-      opportunitySlug: this.config.urlSection,
+      opportunitySlug: this.config.urlSlug,
     };
   }
 
-  get aboutContent() {
-    return {
-      ...this.config.copy.about,
-      linkUrl: State.Eligibility.Opportunity.About.buildPath(this.linkParams),
-    };
-  }
-
-  get nextStepsContent() {
-    // this content is not relevant for ineligible residents and should be suppressed
-    if (!this.eligibilityReport.hasEligibilityData) return;
-
-    return {
-      ...this.config.copy.nextSteps,
-      linkUrl: State.Eligibility.Opportunity.NextSteps.buildPath(
-        this.linkParams,
-      ),
-    };
+  get summaryContent() {
+    return this.config.summary;
   }
 
   get requirementsContent() {
     const { requirements: sections } = this.eligibilityReport;
 
     const {
-      copy: {
-        requirements: { title, linkText },
+      requirements: {
+        summary: { heading },
+        fullPage: { linkText, urlSlug },
       },
     } = this.config;
 
     return {
-      title,
+      heading,
       sections,
       linkText,
-      linkUrl: State.Eligibility.Opportunity.Requirements.buildPath(
-        this.linkParams,
-      ),
+      linkUrl: State.Eligibility.Opportunity.InfoPage.buildPath({
+        ...this.linkParams,
+        pageSlug: urlSlug,
+      }),
     };
+  }
+
+  get additionalSections() {
+    return this.config.sections
+      .filter((sectionConfig) => {
+        // drop sections that are hidden for ineligible users, when applicable
+        if (
+          // for now this is a proxy for ineligible status; revisit when we add more data for those users
+          !this.eligibilityReport.hasEligibilityData
+        ) {
+          return !sectionConfig.hideWhenIneligible;
+        }
+        return true;
+      })
+      .map((sectionConfig) => {
+        const {
+          summary: { heading, body },
+          fullPage: { urlSlug, linkText },
+        } = sectionConfig;
+        return {
+          heading,
+          body,
+          linkText,
+          linkUrl: State.Eligibility.Opportunity.InfoPage.buildPath({
+            ...this.linkParams,
+            pageSlug: urlSlug,
+          }),
+        };
+      });
   }
 
   get htmlTitle() {

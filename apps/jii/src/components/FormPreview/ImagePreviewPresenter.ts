@@ -19,21 +19,21 @@ import { makeAutoObservable } from "mobx";
 
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { opportunityConfigFromId } from "../utils/opportunityConfigFromId";
-import { opportunityIdFromUrl } from "../utils/opportunityIdFromUrl";
+import { opportunityIdFromSlug } from "../utils/opportunityIdFromUrl";
 import { formImageUrlsByOpportunity } from "./formImageUrlsByOpportunity";
 
 export class ImagePreviewPresenter {
   private index = 0;
 
   constructor(
-    private url: string,
+    private opportunitySlug: string,
     private residentsStore: ResidentsStore,
   ) {
     makeAutoObservable(this);
   }
 
   private get id() {
-    return opportunityIdFromUrl(this.url, this.residentsStore);
+    return opportunityIdFromSlug(this.opportunitySlug, this.residentsStore);
   }
 
   private get opportunityConfig() {
@@ -41,7 +41,7 @@ export class ImagePreviewPresenter {
   }
 
   get title() {
-    return this.opportunityConfig.copy.formPreview.title;
+    return this.opportunityConfig.formPreview.title;
   }
 
   private get imageUrls() {

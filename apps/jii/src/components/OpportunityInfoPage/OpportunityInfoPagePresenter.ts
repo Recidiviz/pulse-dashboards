@@ -19,37 +19,47 @@ import { makeAutoObservable } from "mobx";
 
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { opportunityConfigFromId } from "../utils/opportunityConfigFromId";
-import { opportunityIdFromUrl } from "../utils/opportunityIdFromUrl";
-import { PageId } from "./types";
+import { opportunityIdFromSlug } from "../utils/opportunityIdFromUrl";
 
 /**
  * Reads the specified static page content out of the opportunity config
  */
-export class StaticPagePresenter {
+export class OpportunityInfoPagePresenter {
   constructor(
-    private url: string,
-    private pageId: PageId,
+    private opportunitySlug: string,
+    private pageSlug: string,
     private residentsStore: ResidentsStore,
   ) {
     makeAutoObservable(this);
   }
 
   private get id() {
-    return opportunityIdFromUrl(this.url, this.residentsStore);
+    return opportunityIdFromSlug(this.opportunitySlug, this.residentsStore);
   }
 
   private get config() {
     return opportunityConfigFromId(this.id, this.residentsStore);
   }
 
-  /**
-   * Full page contents as a single string (presumably Markdown to be rendered to HTML)
-   */
-  get contents() {
-    return this.config.copy[this.pageId].fullPage;
+  private get pageConfig() {
+    const config = [this.config.requirements, ...this.config.sections].find(
+      (s) => s.fullPage.urlSlug === this.pageSlug,
+    );
+    // in practice we don't really expect this to happen, mostly for type safety
+    if (!config) {
+      throw new Error(`No contents found for page ${this.pageSlug}`);
+    }
+    return config.fullPage;
   }
 
-  get htmlTitle() {
-    return this.config.copy[this.pageId].fullPageHtmlTitle;
+  get heading() {
+    return this.pageConfig.heading;
+  }
+
+  /**
+   * Page contents as a single string (presumably Markdown to be rendered to HTML)
+   */
+  get body() {
+    return this.pageConfig.body;
   }
 }

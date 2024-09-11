@@ -103,13 +103,13 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
 
   get headline(): string {
     return cleanupInlineTemplate(
-      hydrateTemplate(this.config.copy.headline, this.templateContext),
+      hydrateTemplate(this.config.headline, this.templateContext),
     );
   }
 
   get subheading(): string {
     return cleanupInlineTemplate(
-      hydrateTemplate(this.config.copy.subheading, this.templateContext),
+      hydrateTemplate(this.config.subheading, this.templateContext),
     );
   }
 
@@ -126,7 +126,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
    */
   private get staticRequirements(): [RequirementsSectionContent] {
     const trackedRequirements = Object.values(
-      this.config.copy.requirements.trackedCriteria,
+      this.config.requirements.summary.trackedCriteria,
     ).map((r) => ({
       // ineligible reasons are dropped since we don't know eligibility info
       criterion: hydrateTemplate(r.criterion, {}),
@@ -134,11 +134,11 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
 
     return [
       {
-        label: this.config.copy.requirements.staticRequirementsLabel,
+        label: this.config.requirements.summary.staticRequirementsLabel,
         icon: "ArrowCircled",
         requirements: [
           ...trackedRequirements,
-          ...this.config.copy.requirements.untrackedCriteria,
+          ...this.config.requirements.summary.untrackedCriteria,
         ],
       },
     ];
@@ -175,7 +175,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
 
     const sections: Array<RequirementsSectionContent> = [];
 
-    const { trackedCriteria } = this.config.copy.requirements;
+    const { trackedCriteria } = this.config.requirements.summary;
     const orderedCriteria = Object.keys(trackedCriteria);
 
     // run a separate formatting pipeline for each grouping
@@ -221,12 +221,11 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       });
     }
 
-    if (this.config.copy.requirements.untrackedCriteria.length) {
+    if (this.config.requirements.summary.untrackedCriteria.length) {
       sections.push({
-        label:
-          "Check with your case manager to see if you’ve met these requirements",
+        label: "Ask your case manager if you’ve met these requirements",
         icon: "ArrowCircled",
-        requirements: this.config.copy.requirements.untrackedCriteria,
+        requirements: this.config.requirements.summary.untrackedCriteria,
       });
     }
 

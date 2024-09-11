@@ -71,7 +71,7 @@ describe("fully eligible, needs to serve half", () => {
         },
         {
           "icon": "ArrowCircled",
-          "label": "Check with your case manager to see if you’ve met these requirements",
+          "label": "Ask your case manager if you’ve met these requirements",
           "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
@@ -143,7 +143,7 @@ describe("eligible to apply before X portion served", () => {
         },
         {
           "icon": "ArrowCircled",
-          "label": "Check with your case manager to see if you’ve met these requirements",
+          "label": "Ask your case manager if you’ve met these requirements",
           "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
@@ -215,7 +215,7 @@ describe("eligible to apply before X months remaining", () => {
         },
         {
           "icon": "ArrowCircled",
-          "label": "Check with your case manager to see if you’ve met these requirements",
+          "label": "Ask your case manager if you’ve met these requirements",
           "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
@@ -287,7 +287,7 @@ describe("almost eligible, portion served", () => {
         },
         {
           "icon": "ArrowCircled",
-          "label": "Check with your case manager to see if you’ve met these requirements",
+          "label": "Ask your case manager if you’ve met these requirements",
           "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
@@ -359,7 +359,7 @@ describe("almost eligible, recent violation", () => {
         },
         {
           "icon": "ArrowCircled",
-          "label": "Check with your case manager to see if you’ve met these requirements",
+          "label": "Ask your case manager if you’ve met these requirements",
           "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
@@ -431,7 +431,7 @@ describe("almost eligible, pending violation", () => {
         },
         {
           "icon": "ArrowCircled",
-          "label": "Check with your case manager to see if you’ve met these requirements",
+          "label": "Ask your case manager if you’ve met these requirements",
           "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
@@ -503,7 +503,7 @@ describe("almost eligible, months remaining", () => {
         },
         {
           "icon": "ArrowCircled",
-          "label": "Check with your case manager to see if you’ve met these requirements",
+          "label": "Ask your case manager if you’ve met these requirements",
           "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
@@ -549,7 +549,7 @@ describe("not eligible", () => {
           "requirements": [
             {
               "criterion": "Served 1/2 of your sentence if your sentence is 5 years or fewer; 
-                    served 2/3 of your sentence if your sentence is 5 or more years
+                      served 2/3 of your sentence if your sentence is 5 or more years
       ",
             },
             {
