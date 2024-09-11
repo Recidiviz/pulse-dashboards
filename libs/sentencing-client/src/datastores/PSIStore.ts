@@ -24,13 +24,71 @@ import { APIClient } from "../api/APIClient";
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { CaseStore } from "./CaseStore";
 import { StaffStore } from "./StaffStore";
+import {
+  CreateOrUpdateRecommendationTrackingMetadata,
+  IndividualCaseClickedWithStatusMetadata,
+  OnboardingTrackingMetadata,
+  OpportunityViewedTrackingMetadata,
+  OpportunityWithOriginTrackingMetadata,
+  PageOrClickTrackingMetadata,
+  RecommendationStatusFilterMetadata,
+  RecommendedDispositionTrackingMetadata,
+  SortOrderTrackingMetadata,
+} from "./types";
 
 export interface RootStore {
   userStore: {
     userPseudoId?: string;
+    isImpersonating: boolean;
+    isRecidivizUser: boolean;
     getToken?: (
       options?: GetTokenSilentlyOptions,
     ) => Promise<string> | undefined;
+  };
+  analyticsStore: {
+    rootStore: RootStore;
+    sessionId: string;
+    disableAnalytics: boolean;
+    identify: (userId: string) => void;
+    track: (eventName: string, metadata?: Record<string, unknown>) => void;
+    page: (pagePath: string) => void;
+    trackDashboardPageViewed: (metadata: PageOrClickTrackingMetadata) => void;
+    trackIndividualCaseClicked: (
+      metadata: IndividualCaseClickedWithStatusMetadata,
+    ) => void;
+    trackRecommendationStatusFilterChanged: (
+      metadata: RecommendationStatusFilterMetadata,
+    ) => void;
+    trackDashboardSortOrderChanged: (
+      metadata: SortOrderTrackingMetadata,
+    ) => void;
+    trackCaseDetailsPageViewed: (metadata: PageOrClickTrackingMetadata) => void;
+    trackOnboardingPageViewed: (metadata: OnboardingTrackingMetadata) => void;
+    trackEditCaseDetailsClicked: (
+      metadata: PageOrClickTrackingMetadata,
+    ) => void;
+    trackOpportunityModalOpened: (
+      metadata: OpportunityViewedTrackingMetadata,
+    ) => void;
+    trackAddOpportunityToRecommendationClicked: (
+      metadata: OpportunityWithOriginTrackingMetadata,
+    ) => void;
+    trackRemoveOpportunityFromRecommendationClicked: (
+      metadata: OpportunityWithOriginTrackingMetadata,
+    ) => void;
+    trackRecommendedDispositionChanged: (
+      metadata: RecommendedDispositionTrackingMetadata,
+    ) => void;
+    trackCreateOrUpdateRecommendationClicked: (
+      metadata: CreateOrUpdateRecommendationTrackingMetadata,
+    ) => void;
+    trackCopySummaryToClipboardClicked: (
+      metadata: PageOrClickTrackingMetadata,
+    ) => void;
+    trackDownloadReportClicked: (metadata: PageOrClickTrackingMetadata) => void;
+    trackCaseStatusCompleteClicked: (
+      metadata: PageOrClickTrackingMetadata,
+    ) => void;
   };
 }
 
@@ -41,6 +99,8 @@ export class PSIStore {
 
   apiClient: APIClient | OfflineAPIClient;
 
+  analyticsStore: RootStore["analyticsStore"];
+
   constructor(public rootStore: RootStore) {
     makeAutoObservable(this);
     this.apiClient = isOfflineMode()
@@ -48,6 +108,7 @@ export class PSIStore {
       : new APIClient(this);
     this.staffStore = new StaffStore(this);
     this.caseStore = new CaseStore(this);
+    this.analyticsStore = this.rootStore.analyticsStore;
   }
 
   get staffPseudoId(): string | undefined {

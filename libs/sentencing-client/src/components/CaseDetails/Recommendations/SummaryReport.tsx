@@ -42,6 +42,11 @@ type SummaryReportProps = {
   needs: Case["needsToBeAddressed"];
   opportunityDescriptions?: string[];
   gender?: Client["gender"];
+  analytics: {
+    trackCopySummaryToClipboardClicked: () => void;
+    trackDownloadReportClicked: () => void;
+    trackCaseStatusCompleteClicked: () => void;
+  };
   hideSummaryReport: () => void;
   setCaseStatusCompleted: () => void;
 };
@@ -55,9 +60,15 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   needs,
   opportunityDescriptions,
   gender,
+  analytics,
   hideSummaryReport,
   setCaseStatusCompleted,
 }) => {
+  const {
+    trackCopySummaryToClipboardClicked,
+    trackDownloadReportClicked,
+    trackCaseStatusCompleteClicked,
+  } = analytics;
   const targetRef = useRef<HTMLDivElement>(null);
   const defaultRecommendationSummary = generateRecommendationSummary({
     recommendation: selectedRecommendation,
@@ -77,11 +88,13 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   const handleCopySummaryToClipboard = () => {
     navigator.clipboard.writeText(summaryValue);
     setHasCopiedText(true);
+    trackCopySummaryToClipboardClicked();
     setTimeout(() => setHasCopiedText(false), BUTTON_CHANGE_TIMEOUT);
   };
 
   const handleClickToDownload = () => {
     setHasDownloadedReport(true);
+    trackDownloadReportClicked();
     generatePDF(targetRef, {
       filename: `${fullName?.replaceAll(" ", "")}Recommendation.pdf`, // "FirstNameLastNameRecommendation.pdf"
     });
@@ -91,6 +104,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   /** Marks the case status as "Complete" and hides the summary report view */
   const completeSummaryReport = () => {
     setCaseStatusCompleted();
+    trackCaseStatusCompleteClicked();
     hideSummaryReport();
     toast(() => <span>{firstName}'s case has been updated</span>, {
       duration: TOAST_TIMEOUT,

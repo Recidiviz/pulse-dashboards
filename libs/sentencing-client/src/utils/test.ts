@@ -15,7 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PSIStore } from "../datastores/PSIStore";
+import { PSIStore, RootStore } from "../datastores/PSIStore";
+import {
+  CreateOrUpdateRecommendationTrackingMetadata,
+  IndividualCaseClickedWithStatusMetadata,
+  OnboardingTrackingMetadata,
+  OpportunityViewedTrackingMetadata,
+  OpportunityWithOriginTrackingMetadata,
+  PageOrClickTrackingMetadata,
+  RecommendationStatusFilterMetadata,
+  RecommendedDispositionTrackingMetadata,
+  SortOrderTrackingMetadata,
+} from "../datastores/types";
 
 export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
   const mockRootStore = {
@@ -25,6 +36,52 @@ export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
           ? undefined
           : userPseudoIdOverride ?? "TestID-123",
       getToken: () => Promise.resolve("auth0-token"),
+      isRecidivizUser: false,
+      isImpersonating: false,
+    },
+    analyticsStore: {
+      rootStore: {} as RootStore,
+      sessionId: "session-test",
+      disableAnalytics: true,
+      identify: (userId: string) => null,
+      track: (eventName: string, metadata?: Record<string, unknown>) => null,
+      page: (pagePath: string) => null,
+      trackDashboardPageViewed: (metadata: PageOrClickTrackingMetadata) => null,
+      trackIndividualCaseClicked: (
+        metadata: IndividualCaseClickedWithStatusMetadata,
+      ) => null,
+      trackRecommendationStatusFilterChanged: (
+        metadata: RecommendationStatusFilterMetadata,
+      ) => null,
+      trackDashboardSortOrderChanged: (metadata: SortOrderTrackingMetadata) =>
+        null,
+      trackCaseDetailsPageViewed: (metadata: PageOrClickTrackingMetadata) =>
+        null,
+      trackOnboardingPageViewed: (metadata: OnboardingTrackingMetadata) => null,
+      trackEditCaseDetailsClicked: (metadata: PageOrClickTrackingMetadata) =>
+        null,
+      trackOpportunityModalOpened: (
+        metadata: OpportunityViewedTrackingMetadata,
+      ) => null,
+      trackAddOpportunityToRecommendationClicked: (
+        metadata: OpportunityWithOriginTrackingMetadata,
+      ) => null,
+      trackRemoveOpportunityFromRecommendationClicked: (
+        metadata: OpportunityWithOriginTrackingMetadata,
+      ) => null,
+      trackRecommendedDispositionChanged: (
+        metadata: RecommendedDispositionTrackingMetadata,
+      ) => null,
+      trackCreateOrUpdateRecommendationClicked: (
+        metadata: CreateOrUpdateRecommendationTrackingMetadata,
+      ) => null,
+      trackCopySummaryToClipboardClicked: (
+        metadata: PageOrClickTrackingMetadata,
+      ) => null,
+      trackDownloadReportClicked: (metadata: PageOrClickTrackingMetadata) =>
+        null,
+      trackCaseStatusCompleteClicked: (metadata: PageOrClickTrackingMetadata) =>
+        null,
     },
   };
   return mockRootStore;

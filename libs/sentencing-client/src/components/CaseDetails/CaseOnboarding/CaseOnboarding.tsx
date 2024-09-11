@@ -18,18 +18,19 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
+import { Case } from "../../../api";
 import { CaseStatus } from "../../Dashboard/types";
 import * as Styled from "../CaseDetails.styles";
-import { FormAttributes } from "../types";
 import { OnboardingAdditionalNeeds } from "./OnboardingAdditionalNeeds";
 import { OnboardingOffenseLsirScore } from "./OnboardingOffenseLsirScore";
 import { OnboardingPrimaryNeeds } from "./OnboardingPrimaryNeeds";
 import { CaseOnboardingProps, OnboardingTopic } from "./types";
 
-const onboardingTopics: FormAttributes["currentOnboardingTopic"][] = [
+const onboardingTopics: Case["currentOnboardingTopic"][] = [
   OnboardingTopic.OffenseLsirScore,
   OnboardingTopic.PrimaryNeeds,
   OnboardingTopic.AdditionalNeeds,
+  OnboardingTopic.Done,
 ];
 
 export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
@@ -39,14 +40,17 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
     lastTopic,
     saveAttributes,
     navigateToDashboard,
+    analytics,
   }) {
+    const { trackOnboardingPageViewed } = analytics;
     const [currentTopicIndex, setCurrentTopicIndex] = useState(
       lastTopic ? onboardingTopics.indexOf(lastTopic) : 0,
     );
 
     if (!form) return;
 
-    const currentTopic = onboardingTopics[currentTopicIndex];
+    const currentTopic: Case["currentOnboardingTopic"] | undefined =
+      onboardingTopics[currentTopicIndex];
     const hasCompletedOnboarding =
       currentTopicIndex === onboardingTopics.length;
     const isNextButtonDisabled =
@@ -57,6 +61,7 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
       if (currentTopicIndex === 0) {
         navigateToDashboard();
       }
+      currentTopic && trackOnboardingPageViewed(currentTopic, "back");
       setCurrentTopicIndex((prev) => prev - 1);
     };
 
@@ -72,6 +77,7 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
           ? { status: CaseStatus.InProgress }
           : {}),
       };
+      currentTopic && trackOnboardingPageViewed(currentTopic, "next");
       setCurrentTopicIndex((prev) => prev + 1);
 
       if (willCompleteOnboarding) {

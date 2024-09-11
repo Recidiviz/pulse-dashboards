@@ -26,16 +26,22 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
-import { Opportunities } from "../api";
+import { Case, Opportunities } from "../api";
 import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
 import { filterEligibleOpportunities } from "../components/CaseDetails/Opportunities/utils";
 import {
   FormAttributes,
   MutableCaseAttributes,
   OpportunitiesIdentifier,
+  RecommendationType,
   SelectedRecommendation,
 } from "../components/CaseDetails/types";
 import { CaseStore } from "../datastores/CaseStore";
+import {
+  CreateOrUpdateRecommendation,
+  OnboardingNextOrBack,
+  OpportunityViewOrigin,
+} from "../datastores/types";
 
 export class CaseDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
@@ -205,6 +211,110 @@ export class CaseDetailsPresenter implements Hydratable {
     this.recommendedOpportunities = updatedOpportunitiesList;
     await this.updateAttributes(this.caseId, {
       recommendedOpportunities: updatedOpportunitiesList,
+    });
+  }
+
+  // TODO(#33262) - Refactor tracking functions
+  trackCaseDetailsPageViewed() {
+    this.caseStore.psiStore.analyticsStore.trackCaseDetailsPageViewed({
+      viewedBy: this.staffPseudoId,
+      caseId: this.caseId,
+    });
+  }
+
+  trackOnboardingPageViewed(
+    onboardingTopic: Case["currentOnboardingTopic"],
+    buttonClicked: OnboardingNextOrBack,
+  ) {
+    this.caseStore.psiStore.analyticsStore.trackOnboardingPageViewed({
+      viewedBy: this.staffPseudoId,
+      onboardingTopic,
+      buttonClicked,
+      caseId: this.caseId,
+    });
+  }
+
+  trackEditCaseDetailsClicked() {
+    this.caseStore.psiStore.analyticsStore.trackEditCaseDetailsClicked({
+      viewedBy: this.staffPseudoId,
+      caseId: this.caseId,
+    });
+  }
+
+  trackOpportunityModalOpened(opportunityNameProviderName: string) {
+    this.caseStore.psiStore.analyticsStore.trackOpportunityModalOpened({
+      viewedBy: this.staffPseudoId,
+      opportunityNameProviderName,
+      caseId: this.caseId,
+    });
+  }
+
+  trackAddOpportunityToRecommendationClicked(
+    opportunityNameProviderName: string,
+    origin: OpportunityViewOrigin,
+  ) {
+    this.caseStore.psiStore.analyticsStore.trackAddOpportunityToRecommendationClicked(
+      {
+        viewedBy: this.staffPseudoId,
+        opportunityNameProviderName,
+        origin,
+        caseId: this.caseId,
+      },
+    );
+  }
+
+  trackRemoveOpportunityFromRecommendationClicked(
+    opportunityNameProviderName: string,
+    origin: OpportunityViewOrigin,
+  ) {
+    this.caseStore.psiStore.analyticsStore.trackRemoveOpportunityFromRecommendationClicked(
+      {
+        viewedBy: this.staffPseudoId,
+        opportunityNameProviderName,
+        origin,
+        caseId: this.caseId,
+      },
+    );
+  }
+
+  trackRecommendedDispositionChanged(
+    selectedRecommendation: RecommendationType,
+  ) {
+    this.caseStore.psiStore.analyticsStore.trackRecommendedDispositionChanged({
+      viewedBy: this.staffPseudoId,
+      selectedRecommendation,
+      caseId: this.caseId,
+    });
+  }
+
+  trackCreateOrUpdateRecommendationClicked(type: CreateOrUpdateRecommendation) {
+    this.caseStore.psiStore.analyticsStore.trackCreateOrUpdateRecommendationClicked(
+      {
+        viewedBy: this.staffPseudoId,
+        type,
+        caseId: this.caseId,
+      },
+    );
+  }
+
+  trackCopySummaryToClipboardClicked() {
+    this.caseStore.psiStore.analyticsStore.trackCopySummaryToClipboardClicked({
+      viewedBy: this.staffPseudoId,
+      caseId: this.caseId,
+    });
+  }
+
+  trackDownloadReportClicked() {
+    this.caseStore.psiStore.analyticsStore.trackDownloadReportClicked({
+      viewedBy: this.staffPseudoId,
+      caseId: this.caseId,
+    });
+  }
+
+  trackCaseStatusCompleteClicked() {
+    this.caseStore.psiStore.analyticsStore.trackCaseStatusCompleteClicked({
+      viewedBy: this.staffPseudoId,
+      caseId: this.caseId,
     });
   }
 }

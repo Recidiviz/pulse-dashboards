@@ -30,6 +30,7 @@ import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { Case, Opportunities as OpportunitiesType } from "../../../api";
+import { OpportunityViewOrigin } from "../../../datastores/types";
 import { formatPossessiveName } from "../../../utils/utils";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import ResetSearchIcon from "../../assets/close-icon.svg?react";
@@ -82,6 +83,17 @@ type OpportunitiesProps = {
   updateRecommendedOpportunities: (
     opportunity: OpportunitiesIdentifier[number],
   ) => void;
+  analytics: {
+    trackOpportunityModalOpened: (opportunityNameProviderName: string) => void;
+    trackAddOpportunityToRecommendationClicked: (
+      opportunityNameProviderName: string,
+      origin: OpportunityViewOrigin,
+    ) => void;
+    trackRemoveOpportunityFromRecommendationClicked: (
+      opportunityNameProviderName: string,
+      origin: OpportunityViewOrigin,
+    ) => void;
+  };
 };
 
 type OpportunitiesWithOppNameProviderName = (OpportunitiesType[number] & {
@@ -141,8 +153,15 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   communityOpportunities,
   recommendedOpportunities,
   caseAttributes,
+  analytics,
   updateRecommendedOpportunities,
 }) => {
+  const {
+    trackOpportunityModalOpened,
+    trackAddOpportunityToRecommendationClicked,
+    trackRemoveOpportunityFromRecommendationClicked,
+  } = analytics;
+
   const [showRemoveOnHover, setShowRemoveOnHover] = useState<{
     [column: string]: boolean;
   }>({});
@@ -366,6 +385,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
 
   const toggleOpportunity = (
     opportunityNameProviderName: string,
+    origin: "table" | "modal",
     rowId?: string,
   ) => {
     const isRemovingOpportunity = recommendedOpportunities.find(
@@ -386,12 +406,26 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     Recommendation`,
     );
 
-    if (isRemovingOpportunity && rowId) {
-      setShowRemoveOnHover((prev) => ({
-        ...prev,
-        [rowId]: false,
-      }));
+    if (isRemovingOpportunity) {
+      trackRemoveOpportunityFromRecommendationClicked(
+        opportunityNameProviderName,
+        origin,
+      );
+
+      if (rowId) {
+        setShowRemoveOnHover((prev) => ({
+          ...prev,
+          [rowId]: false,
+        }));
+      }
+
+      return;
     }
+
+    trackAddOpportunityToRecommendationClicked(
+      opportunityNameProviderName,
+      origin,
+    );
   };
 
   const showModal = (
@@ -400,6 +434,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     rowId: string,
   ) => {
     if (!isOpportunityNameProviderNameColumn) return;
+    trackOpportunityModalOpened(value);
     setShowOpportunityModal(true);
     setSelectedOpportunity(opportunitiesByNameProviderName[value]);
     setSelectedRowId(rowId);
@@ -535,6 +570,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                               onClick={() =>
                                 toggleOpportunity(
                                   cell.row.original.opportunityNameProviderName,
+                                  "table",
                                   row.id,
                                 )
                               }
@@ -637,6 +673,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
               selectedOpportunity.opportunityName,
               selectedOpportunity.providerName,
             ),
+            "modal",
             selectedRowId,
           )
         }

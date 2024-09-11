@@ -53,6 +53,17 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     updateRecommendation,
     updateCaseStatusToCompleted,
     updateRecommendedOpportunities,
+    trackCaseDetailsPageViewed,
+    trackOnboardingPageViewed,
+    trackEditCaseDetailsClicked,
+    trackOpportunityModalOpened,
+    trackAddOpportunityToRecommendationClicked,
+    trackRemoveOpportunityFromRecommendationClicked,
+    trackRecommendedDispositionChanged,
+    trackCreateOrUpdateRecommendationClicked,
+    trackCopySummaryToClipboardClicked,
+    trackDownloadReportClicked,
+    trackCaseStatusCompleteClicked,
   } = presenter;
 
   const firstName = caseAttributes.Client?.fullName?.split(" ")[0];
@@ -62,12 +73,15 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   );
   const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
     useState(false);
+  const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   const openEditCaseDetailsModal = () => setShowEditCaseDetailsModal(true);
   const hideEditCaseDetailsModal = () => setShowEditCaseDetailsModal(false);
 
-  const handleRecommendationUpdate = (recommendation: RecommendationType) =>
+  const handleRecommendationUpdate = (recommendation: RecommendationType) => {
+    trackRecommendedDispositionChanged(recommendation);
     setSelectedRecommendation(recommendation);
+  };
 
   const saveRecommendation = () => {
     if (selectedRecommendation) {
@@ -96,6 +110,11 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
       }),
     );
 
+  if (initialPageLoad) {
+    trackCaseDetailsPageViewed();
+    setInitialPageLoad(false);
+  }
+
   if (!staffPseudoId) {
     return <Styled.PageContainer>No staff ID found.</Styled.PageContainer>;
   }
@@ -110,6 +129,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           lastTopic={caseAttributes.currentOnboardingTopic}
           saveAttributes={saveAttributes}
           navigateToDashboard={navigateToDashboard}
+          analytics={{ trackOnboardingPageViewed }}
         />
       ) : (
         <>
@@ -120,9 +140,9 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
 
           {/* Case Attributes */}
           <CaseAttributes
-            firstName={firstName}
             caseAttributes={caseAttributes}
             openEditCaseDetailsModal={openEditCaseDetailsModal}
+            analytics={{ trackEditCaseDetailsClicked }}
           />
           <Styled.Body>
             <Styled.InsightsOpportunitiesWrapper>
@@ -142,6 +162,11 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 recommendedOpportunities={recommendedOpportunities}
                 updateRecommendedOpportunities={updateRecommendedOpportunities}
                 caseAttributes={caseAttributes}
+                analytics={{
+                  trackOpportunityModalOpened,
+                  trackAddOpportunityToRecommendationClicked,
+                  trackRemoveOpportunityFromRecommendationClicked,
+                }}
               />
             </Styled.InsightsOpportunitiesWrapper>
             {/* Recommendations */}
@@ -158,6 +183,12 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               recommendedOpportunities={recommendedOpportunities}
               lastSavedRecommendation={caseAttributes.selectedRecommendation}
               setCaseStatusCompleted={updateCaseStatusToCompleted}
+              analytics={{
+                trackCreateOrUpdateRecommendationClicked,
+                trackCopySummaryToClipboardClicked,
+                trackDownloadReportClicked,
+                trackCaseStatusCompleteClicked,
+              }}
             />
           </Styled.Body>
 

@@ -44,10 +44,18 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   needs,
   gender,
   externalId,
+  analytics,
   handleRecommendationUpdate,
   saveRecommendation,
   setCaseStatusCompleted,
 }) => {
+  const {
+    trackCreateOrUpdateRecommendationClicked,
+    trackCopySummaryToClipboardClicked,
+    trackDownloadReportClicked,
+    trackCaseStatusCompleteClicked,
+  } = analytics;
+
   const [showSummaryReport, setShowSummaryReport] = useState(false);
 
   const hideSummaryReport = () => setShowSummaryReport(false);
@@ -157,6 +165,11 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
           gender={gender}
           hideSummaryReport={hideSummaryReport}
           setCaseStatusCompleted={setCaseStatusCompleted}
+          analytics={{
+            trackCopySummaryToClipboardClicked,
+            trackDownloadReportClicked,
+            trackCaseStatusCompleteClicked,
+          }}
         />
       )}
 
@@ -219,6 +232,9 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
             onClick={() => {
               setShowSummaryReport(true);
               saveRecommendation();
+              trackCreateOrUpdateRecommendationClicked(
+                lastSavedRecommendation ? "update" : "create",
+              );
             }}
           >
             {updateOrCreateDisplayText}

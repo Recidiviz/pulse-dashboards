@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Case, Client, Insight } from "../../../api";
+import { CreateOrUpdateRecommendation } from "../../../datastores/types";
 import {
   OpportunitiesIdentifier,
   RecommendationType,
@@ -35,6 +36,14 @@ export type RecommendationsProps = {
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => void;
+  analytics: {
+    trackCreateOrUpdateRecommendationClicked: (
+      type: CreateOrUpdateRecommendation,
+    ) => void;
+    trackCopySummaryToClipboardClicked: () => void;
+    trackDownloadReportClicked: () => void;
+    trackCaseStatusCompleteClicked: () => void;
+  };
 };
 
 export type RecommendationsOptionProps = {

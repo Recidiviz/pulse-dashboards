@@ -48,3 +48,5 @@ export enum ReportType {
   FileReview = "File Review",
   FileReviewWithUpdatedLSIRScore = "File Review + Updated LSI-R",
 }
+
+export type RecommendationStatusFilter = CaseStatusToDisplay | "Archived";

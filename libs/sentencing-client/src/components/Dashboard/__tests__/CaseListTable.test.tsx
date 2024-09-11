@@ -29,6 +29,11 @@ import { CaseListTable } from "../CaseListTable";
 
 let psiStore: PSIStore;
 let presenter: StaffPresenter;
+const analytics = {
+  trackIndividualCaseClicked: () => null,
+  trackRecommendationStatusFilterChanged: () => null,
+  trackDashboardSortOrderChanged: () => null,
+};
 
 beforeEach(() => {
   psiStore = createMockPSIStore();
@@ -47,7 +52,11 @@ afterEach(() => {
 test("shows status filter with default filters checked", async () => {
   const screen = render(
     <MemoryRouter>
-      <CaseListTable caseTableData={[]} staffPseudoId="" />
+      <CaseListTable
+        caseTableData={[]}
+        staffPseudoId=""
+        analytics={analytics}
+      />
     </MemoryRouter>,
   );
 
@@ -88,7 +97,11 @@ test("shows status filter with default filters checked", async () => {
 test("displays no cases message when none are provided", async () => {
   const screen = render(
     <MemoryRouter>
-      <CaseListTable caseTableData={[]} staffPseudoId="" />
+      <CaseListTable
+        caseTableData={[]}
+        staffPseudoId=""
+        analytics={analytics}
+      />
     </MemoryRouter>,
   );
 
@@ -110,6 +123,7 @@ test("does not show archived cases", async () => {
       <CaseListTable
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
+        analytics={analytics}
       />
     </MemoryRouter>,
   );
@@ -143,6 +157,7 @@ test("shows archived case when filter is checked", async () => {
       <CaseListTable
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
+        analytics={analytics}
       />
     </MemoryRouter>,
   );
@@ -197,6 +212,7 @@ test("show/hide cases when 'Not yet started' filter is checked/unchecked", async
       <CaseListTable
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
+        analytics={analytics}
       />
     </MemoryRouter>,
   );
@@ -240,6 +256,7 @@ test("show/hide cases when 'In Progress' filter is checked/unchecked", async () 
       <CaseListTable
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
+        analytics={analytics}
       />
     </MemoryRouter>,
   );
@@ -283,6 +300,7 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
       <CaseListTable
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
+        analytics={analytics}
       />
     </MemoryRouter>,
   );

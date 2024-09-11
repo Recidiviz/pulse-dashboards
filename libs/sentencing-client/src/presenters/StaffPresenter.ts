@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { SortDirection } from "@tanstack/react-table";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import {
@@ -23,6 +24,10 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import {
+  CaseListTableCase,
+  RecommendationStatusFilter,
+} from "../components/Dashboard/types";
 import { StaffStore } from "../datastores/StaffStore";
 import { sortFullNameByLastNameDescending } from "../utils/sorting";
 
@@ -76,5 +81,44 @@ export class StaffPresenter implements Hydratable {
     return this.staffStore.psiStore.apiClient.setIsFirstLogin(
       this.staffPseudoId,
     );
+  }
+
+  trackDashboardPageViewed(): void {
+    this.staffStore.psiStore.analyticsStore.trackDashboardPageViewed({
+      viewedBy: this.staffPseudoId,
+    });
+  }
+
+  trackRecommendationStatusFilterChanged(
+    filters: RecommendationStatusFilter[],
+  ): void {
+    this.staffStore.psiStore.analyticsStore.trackRecommendationStatusFilterChanged(
+      {
+        viewedBy: this.staffPseudoId,
+        filters,
+      },
+    );
+  }
+
+  trackIndividualCaseClicked(
+    caseId: string,
+    recommendationStatus: CaseListTableCase["status"],
+  ): void {
+    this.staffStore.psiStore.analyticsStore.trackIndividualCaseClicked({
+      viewedBy: this.staffPseudoId,
+      status: recommendationStatus,
+      caseId,
+    });
+  }
+
+  trackDashboardSortOrderChanged(
+    sortDirection: false | SortDirection,
+    columnName?: string,
+  ): void {
+    this.staffStore.psiStore.analyticsStore.trackDashboardSortOrderChanged({
+      viewedBy: this.staffPseudoId,
+      order: sortDirection,
+      columnName,
+    });
   }
 }

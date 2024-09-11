@@ -20,6 +20,17 @@ import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
 import { isDemoMode } from "~client-env-utils";
+import {
+  CreateOrUpdateRecommendationTrackingMetadata,
+  IndividualCaseClickedWithStatusMetadata,
+  OnboardingTrackingMetadata,
+  OpportunityViewedTrackingMetadata,
+  OpportunityWithOriginTrackingMetadata,
+  PageOrClickTrackingMetadata,
+  RecommendationStatusFilterMetadata,
+  RecommendedDispositionTrackingMetadata,
+  SortOrderTrackingMetadata,
+} from "~sentencing-client";
 
 import { SearchType } from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
@@ -332,5 +343,104 @@ export default class AnalyticsStore {
     error?: string | null;
   }) {
     this.track("frontend.case_note_search", metadata);
+  }
+
+  /****************************
+   * PSI Application Tracking *
+   ****************************/
+
+  /** Dashboard */
+
+  trackDashboardPageViewed(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_dashboard_page_viewed", metadata);
+  }
+
+  trackIndividualCaseClicked(
+    metadata: IndividualCaseClickedWithStatusMetadata,
+  ): void {
+    this.track("frontend.sentencing_individual_case_clicked", metadata);
+  }
+
+  trackRecommendationStatusFilterChanged(
+    metadata: RecommendationStatusFilterMetadata,
+  ): void {
+    this.track(
+      "frontend.sentencing_recommendation_status_filter_changed",
+      metadata,
+    );
+  }
+
+  trackDashboardSortOrderChanged(metadata: SortOrderTrackingMetadata): void {
+    this.track("frontend.sentencing_dashboard_sort_order_changed", metadata);
+  }
+
+  /** Case Details */
+
+  trackCaseDetailsPageViewed(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_case_details_page_viewed", metadata);
+  }
+
+  trackOnboardingPageViewed(metadata: OnboardingTrackingMetadata): void {
+    this.track("frontend.sentencing_onboarding_page_viewed", metadata);
+  }
+
+  trackEditCaseDetailsClicked(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_edit_case_details_clicked", metadata);
+  }
+
+  trackOpportunityModalOpened(
+    metadata: OpportunityViewedTrackingMetadata,
+  ): void {
+    this.track("frontend.sentencing_opportunity_modal_opened", metadata);
+  }
+
+  trackAddOpportunityToRecommendationClicked(
+    metadata: OpportunityWithOriginTrackingMetadata,
+  ): void {
+    this.track(
+      "frontend.sentencing_add_opportunity_to_recommendation_clicked",
+      metadata,
+    );
+  }
+
+  trackRemoveOpportunityFromRecommendationClicked(
+    metadata: OpportunityWithOriginTrackingMetadata,
+  ): void {
+    this.track(
+      "frontend.sentencing_remove_opportunity_from_recommendation_clicked",
+      metadata,
+    );
+  }
+
+  trackRecommendedDispositionChanged(
+    metadata: RecommendedDispositionTrackingMetadata,
+  ): void {
+    this.track("frontend.sentencing_recommended_disposition_changed", metadata);
+  }
+
+  trackCreateOrUpdateRecommendationClicked(
+    metadata: CreateOrUpdateRecommendationTrackingMetadata,
+  ): void {
+    this.track(
+      "frontend.sentencing_create_or_update_recommendation_clicked",
+      metadata,
+    );
+  }
+
+  trackCopySummaryToClipboardClicked(
+    metadata: PageOrClickTrackingMetadata,
+  ): void {
+    this.track(
+      "frontend.sentencing_copy_summary_to_clipboard_clicked",
+      metadata,
+    );
+  }
+
+  trackDownloadReportClicked(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_download_report_clicked", metadata);
+  }
+
+  trackCaseStatusCompleteClicked(metadata: PageOrClickTrackingMetadata): void {
+    this.track("frontend.sentencing_case_status_complete_clicked", metadata);
   }
 }

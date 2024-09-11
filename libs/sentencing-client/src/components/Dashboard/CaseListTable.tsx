@@ -21,6 +21,7 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   Row,
+  SortDirection,
   useReactTable,
 } from "@tanstack/react-table";
 import moment from "moment";
@@ -45,15 +46,29 @@ import {
   CaseListTableCase,
   CaseListTableCases,
   CaseStatusToDisplay,
+  RecommendationStatusFilter,
   ReportType,
 } from "./types";
 
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
   staffPseudoId: string;
+  analytics: {
+    trackIndividualCaseClicked: (
+      clientName: string,
+      recommendationStatus: CaseListTableCase["status"],
+    ) => void;
+    trackRecommendationStatusFilterChanged: (
+      filters: RecommendationStatusFilter[],
+    ) => void;
+    trackDashboardSortOrderChanged: (
+      sortDirection: false | SortDirection,
+      columnName?: string,
+    ) => void;
+  };
 };
 
-type StatusFilter = CaseStatusToDisplay | "Active" | "Archived";
+type StatusFilter = RecommendationStatusFilter | "Active";
 
 const columns = [
   {
@@ -112,7 +127,7 @@ const columns = [
     header: "Recommendation Status",
     accessorKey: STATUS_KEY,
     cell: (
-      status: CellContext<CaseListTableCase, keyof typeof CaseStatusToDisplay>,
+      status: CellContext<CaseListTableCase, CaseListTableCase["status"]>,
     ) => {
       const statusValue = status.getValue();
       const statusToDisplay =
@@ -157,7 +172,13 @@ const getUpdatedStatusFilters = (
 export const CaseListTable = ({
   caseTableData,
   staffPseudoId,
+  analytics,
 }: CaseListTableProps) => {
+  const {
+    trackIndividualCaseClicked,
+    trackRecommendationStatusFilterChanged,
+    trackDashboardSortOrderChanged,
+  } = analytics;
   const navigate = useNavigate();
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
@@ -194,6 +215,10 @@ export const CaseListTable = ({
 
   const handleFilterChange = (status: StatusFilter) => {
     const filters = getUpdatedStatusFilters(status, statusFilters);
+    const filtersExcludingActive = filters.filter(
+      (item): item is RecommendationStatusFilter => item !== "Active",
+    );
+    trackRecommendationStatusFilterChanged(filtersExcludingActive);
     setStatusFilters(filters);
     setData(() => {
       return caseTableData.filter((datapoint) => {
@@ -270,6 +295,12 @@ export const CaseListTable = ({
                     )}
                     {header.column.getCanSort() && (
                       <Styled.SortIconWrapper
+                        onClick={() =>
+                          trackDashboardSortOrderChanged(
+                            header.column.getIsSorted(),
+                            String(header.column.columnDef.header),
+                          )
+                        }
                         sortDirection={header.column.getIsSorted()}
                       >
                         <SortIcon />
@@ -287,15 +318,22 @@ export const CaseListTable = ({
               {row.getVisibleCells().map((cell) => (
                 <Styled.Cell
                   key={cell.id}
-                  onClick={() =>
-                    cell.getValue() === cell.row.original.Client?.fullName &&
-                    navigate(
-                      psiUrl("caseDetails", {
-                        staffPseudoId,
-                        caseId: cell.row.original.id,
-                      }),
-                    )
-                  }
+                  onClick={() => {
+                    if (
+                      cell.getValue() === cell.row.original.Client?.fullName
+                    ) {
+                      trackIndividualCaseClicked(
+                        cell.row.original.id,
+                        cell.row.original.status,
+                      );
+                      navigate(
+                        psiUrl("caseDetails", {
+                          staffPseudoId,
+                          caseId: cell.row.original.id,
+                        }),
+                      );
+                    }
+                  }}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Styled.Cell>

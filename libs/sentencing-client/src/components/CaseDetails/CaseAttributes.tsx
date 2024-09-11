@@ -26,7 +26,7 @@ import { GenderToDisplayName } from "./constants";
 type CaseAttributesProps = {
   caseAttributes: Case;
   openEditCaseDetailsModal: () => void;
-  firstName?: string;
+  analytics: { trackEditCaseDetailsClicked: () => void };
 };
 
 type AttributeLabelValue = {
@@ -36,7 +36,13 @@ type AttributeLabelValue = {
 };
 
 export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
-  function CaseAttributes({ caseAttributes, openEditCaseDetailsModal }) {
+  function CaseAttributes({
+    caseAttributes,
+    openEditCaseDetailsModal,
+    analytics,
+  }) {
+    const { trackEditCaseDetailsClicked } = analytics;
+
     const {
       externalId,
       dueDate,
@@ -82,7 +88,12 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
           <Styled.DueDate>
             Due {moment(dueDate).format("MM/DD/YYYY")}
           </Styled.DueDate>
-          <Styled.EditCaseDetailsButton onClick={openEditCaseDetailsModal}>
+          <Styled.EditCaseDetailsButton
+            onClick={() => {
+              openEditCaseDetailsModal();
+              trackEditCaseDetailsClicked();
+            }}
+          >
             Edit Case Details
           </Styled.EditCaseDetailsButton>
         </Styled.HeaderWrapper>

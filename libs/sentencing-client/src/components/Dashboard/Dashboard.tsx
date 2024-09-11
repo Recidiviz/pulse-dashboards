@@ -32,14 +32,28 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
 }: {
   presenter: StaffPresenter;
 }) {
-  const { staffInfo, staffPseudoId, caseTableData, setIsFirstLogin } =
-    presenter;
+  const {
+    staffInfo,
+    staffPseudoId,
+    caseTableData,
+    setIsFirstLogin,
+    trackDashboardPageViewed,
+    trackIndividualCaseClicked,
+    trackRecommendationStatusFilterChanged,
+    trackDashboardSortOrderChanged,
+  } = presenter;
 
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(
     !staffInfo?.hasLoggedIn,
   );
+  const [initialPageLoad, setInitialPageLoad] = useState(true);
 
   if (!staffPseudoId || !caseTableData) return null;
+
+  if (initialPageLoad) {
+    trackDashboardPageViewed();
+    setInitialPageLoad(false);
+  }
 
   return (
     <Styled.PageContainer>
@@ -75,6 +89,11 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
         <CaseListTable
           caseTableData={caseTableData}
           staffPseudoId={staffPseudoId}
+          analytics={{
+            trackIndividualCaseClicked,
+            trackRecommendationStatusFilterChanged,
+            trackDashboardSortOrderChanged,
+          }}
         />
       </Styled.Cases>
     </Styled.PageContainer>

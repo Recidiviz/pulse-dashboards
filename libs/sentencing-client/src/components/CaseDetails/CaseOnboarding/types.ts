@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Case } from "../../../api";
+import { OnboardingNextOrBack } from "../../../datastores/types";
 import { CaseDetailsForm } from "../Form/CaseDetailsForm";
-import { FormAttributes, FormFieldList, MutableCaseAttributes } from "../types";
+import { FormFieldList, MutableCaseAttributes } from "../types";
 
 export enum OnboardingTopic {
   OffenseLsirScore = "OffenseLsirScore",
@@ -28,13 +30,19 @@ export enum OnboardingTopic {
 export type CaseOnboardingProps = {
   form?: CaseDetailsForm;
   firstName?: string;
-  lastTopic?: FormAttributes["currentOnboardingTopic"];
+  lastTopic: Case["currentOnboardingTopic"];
   saveAttributes: (
     options?: { showToast: boolean },
     attributes?: MutableCaseAttributes,
     mergeUpdates?: boolean,
   ) => void;
   navigateToDashboard: () => void;
+  analytics: {
+    trackOnboardingPageViewed: (
+      onboardingTopic: Case["currentOnboardingTopic"],
+      buttonClicked: OnboardingNextOrBack,
+    ) => void;
+  };
 };
 
 export type CaseOnboardingTopicProps = {
