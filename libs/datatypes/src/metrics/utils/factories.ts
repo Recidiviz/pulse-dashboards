@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./FixtureFactoryConfig/FixtureFactoryConfig";
-export * from "./FixtureFactoryMap/FixtureFactoryMap";
-export * from "./utils/constants";
-export * from "./utils/hasDifferentValuesAtKeys";
-export * from "./utils/nullable";
+import { faker } from "@faker-js/faker";
+
+import { CASELOAD_CATEGORY_IDS, FAVORABLE_METRIC_IDS } from "./constants";
+
+export const randCaseloadCategoryId = () =>
+  faker.helpers.arrayElement(Object.values(CASELOAD_CATEGORY_IDS.Values));
+
+export const randFavorableMetricId = () =>
+  faker.helpers.maybe(() => FAVORABLE_METRIC_IDS.Values.treatment_starts);

@@ -61,7 +61,10 @@ export const excludedSupervisionOfficerSchema = supervisionOfficerBaseSchema
 // TODO: Remove once excludedSupervisionOfficerSchema and supervisionOfficerSchema are merged
 
 export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
-export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;
+// TODO: (6309) Remove the `_def.schema` once preprocess is removed
+export type RawSupervisionOfficer = z.input<
+  typeof supervisionOfficerSchema._def.schema
+>;
 export type ExcludedSupervisionOfficer = z.infer<
   typeof excludedSupervisionOfficerSchema
 >;

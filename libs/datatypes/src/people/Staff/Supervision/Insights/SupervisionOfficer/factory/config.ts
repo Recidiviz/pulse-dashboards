@@ -15,8 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./FixtureFactoryConfig/FixtureFactoryConfig";
-export * from "./FixtureFactoryMap/FixtureFactoryMap";
-export * from "./utils/constants";
-export * from "./utils/hasDifferentValuesAtKeys";
-export * from "./utils/nullable";
+import { FixtureFactoryConfig } from "~fixture-generator";
+
+import {
+  excludedSupervisionOfficerSchema,
+  supervisionOfficerSchema,
+} from "../schema";
+import {
+  rawExcludedSupervisionOfficerFactory,
+  rawSupervisionOfficerFactory,
+} from "./factory";
+
+export const rawSupervisionOfficerFactoryConfig = {
+  schema: supervisionOfficerSchema,
+  factory: rawSupervisionOfficerFactory,
+  defaultCount: 30,
+} as const satisfies FixtureFactoryConfig<
+  ReturnType<typeof rawSupervisionOfficerFactory>
+>;
+
+export const rawExcludedSupervisionOfficerFactoryConfig = {
+  schema: excludedSupervisionOfficerSchema,
+  factory: rawExcludedSupervisionOfficerFactory,
+  defaultCount: 30,
+} as const satisfies FixtureFactoryConfig<
+  ReturnType<typeof rawExcludedSupervisionOfficerFactory>
+>;

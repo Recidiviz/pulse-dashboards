@@ -65,8 +65,12 @@ export * from "./people/Resident/schema";
 // -----------------------------------------------------------------------------
 export * from "./people/Staff/Incarceration/Workflows/fixture";
 export * from "./people/Staff/Incarceration/Workflows/schema";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/factory/config";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/factory/factory";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/schema";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/factory/config";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/factory/factory";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/fixture";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/schema";
 export * from "./people/Staff/Supervision/Workflows/fixture";

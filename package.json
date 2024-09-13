@@ -265,6 +265,7 @@
     "eslint-plugin-vitest": "^0.5.4",
     "eslint-plugin-vitest-globals": "^1.4.0",
     "eslint-plugin-wdio": "^7.0.0",
+    "factory.ts": "^1.4.1",
     "google-spreadsheet": "^4.1.1",
     "husky": "^9.0.11",
     "inquirer": "^9.1.5",

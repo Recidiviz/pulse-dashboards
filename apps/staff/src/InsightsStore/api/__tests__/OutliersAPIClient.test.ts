@@ -16,11 +16,13 @@
 // =============================================================================
 
 import {
+  actionStrategyFixture,
   ADVERSE_METRIC_IDS,
   excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
   leadershipUserInfoFixture,
   metricBenchmarksFixture,
+  rawActionStrategyFixture,
   rawExcludedSupervisionOfficerFixture,
   rawLeadershipUserInfoFixture,
   rawMetricBenchmarksFixture,
@@ -32,7 +34,6 @@ import {
   supervisionOfficerSupervisorsFixture,
   supervisorUserInfoFixture,
 } from "~datatypes";
-import { actionStrategyFixture, rawActionStrategyFixture } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { APIStore } from "../../../RootStore/APIStore";

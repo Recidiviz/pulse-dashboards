@@ -1,0 +1,45 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`function: SupervisionOfficerSupervisorRawFactory > should generate realistic supervision officer supervisors 1`] = `
+[
+  {
+    "displayName": "Oliver Little",
+    "email": "Oliver.Little@doc.xx.testdomain.gov",
+    "externalId": "InFnqh",
+    "fullName": {
+      "givenNames": "Oliver",
+      "middleNames": undefined,
+      "surname": "Little",
+    },
+    "hasOutliers": false,
+    "pseudonymizedId": "JerShMLpdq3APTcv",
+    "supervisionDistrict": "REGION 3",
+  },
+  {
+    "displayName": "Joseph Kenji Legros",
+    "email": "Joseph_Legros67@doc.xx.testdomain.gov",
+    "externalId": "zV4fi3",
+    "fullName": {
+      "givenNames": "Joseph",
+      "middleNames": "Kenji",
+      "surname": "Legros",
+    },
+    "hasOutliers": true,
+    "pseudonymizedId": "-SaZljQSF3yHPjvQ",
+    "supervisionDistrict": "REGION 2",
+  },
+  {
+    "displayName": "Perry Buddy Rowe",
+    "email": "Perry.Rowe@doc.xx.testdomain.gov",
+    "externalId": "Q6J0uo",
+    "fullName": {
+      "givenNames": "Perry",
+      "middleNames": "Buddy",
+      "surname": "Rowe",
+    },
+    "hasOutliers": true,
+    "pseudonymizedId": "LWMXvodokT4bYeah",
+    "supervisionDistrict": "REGION 2",
+  },
+]
+`;

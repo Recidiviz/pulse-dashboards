@@ -1,0 +1,249 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realistic excluded supervision officers 1`] = `
+[
+  {
+    "displayName": "Lynette Swaniawski",
+    "district": "REGION 3",
+    "externalId": "so5",
+    "fullName": {
+      "givenNames": "Lynette",
+      "middleNames": undefined,
+      "surname": "Swaniawski",
+    },
+    "pseudonymizedId": "hashed-so5",
+    "supervisorExternalIds": [
+      "onjV5r",
+    ],
+  },
+  {
+    "displayName": "Jacquelyn Imani Waters",
+    "district": "REGION 3",
+    "externalId": "so2",
+    "fullName": {
+      "givenNames": "Jacquelyn",
+      "middleNames": "Imani",
+      "surname": "Waters",
+    },
+    "pseudonymizedId": "hashed-so2",
+    "supervisorExternalIds": [
+      "Tvza2z",
+    ],
+  },
+  {
+    "displayName": "Amos Jackson Reichel",
+    "district": "REGION 1",
+    "externalId": "OFFICER4",
+    "fullName": {
+      "givenNames": "Amos",
+      "middleNames": "Jackson",
+      "surname": "Reichel",
+    },
+    "pseudonymizedId": "hashed-so1",
+    "supervisorExternalIds": [
+      "moSvxx",
+    ],
+  },
+]
+`;
+
+exports[`function: SupervisionOfficerRawFactory > should generate realistic supervision officers 1`] = `
+[
+  {
+    "avgDailyPopulation": 32,
+    "caseloadCategory": "GENERAL_OR_OTHER",
+    "displayName": "Juan Bode",
+    "district": "REGION 2",
+    "externalId": "so3",
+    "fullName": {
+      "givenNames": "Juan",
+      "middleNames": undefined,
+      "surname": "Bode",
+    },
+    "outlierMetrics": [
+      {
+        "metricId": "absconsions_bench_warrants",
+        "statusesOverTime": [
+          {
+            "endDate": 2023-04-01T00:00:00.000Z,
+            "metricRate": 0.154553,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-05-01T00:00:00.000Z,
+            "metricRate": 0.109407,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-06-01T00:00:00.000Z,
+            "metricRate": 0.12125238767544223,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-07-01T00:00:00.000Z,
+            "metricRate": 0.1466368227731864,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-08-01T00:00:00.000Z,
+            "metricRate": 0.110487,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-09-01T00:00:00.000Z,
+            "metricRate": 0.11521464646464646,
+            "status": "FAR",
+          },
+        ],
+      },
+      {
+        "metricId": "treatment_starts",
+        "statusesOverTime": [
+          {
+            "endDate": 2023-04-01T00:00:00.000Z,
+            "metricRate": 0.022968597032909103,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-05-01T00:00:00.000Z,
+            "metricRate": 0,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-06-01T00:00:00.000Z,
+            "metricRate": 0.027919749790220463,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-07-01T00:00:00.000Z,
+            "metricRate": 0.032353114502917085,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-08-01T00:00:00.000Z,
+            "metricRate": 0.03232644409114997,
+            "status": "NEAR",
+          },
+          {
+            "endDate": 2023-09-01T00:00:00.000Z,
+            "metricRate": 0.028747594548953384,
+            "status": "FAR",
+          },
+        ],
+      },
+    ],
+    "pseudonymizedId": "hashed-so3",
+    "supervisorExternalIds": [
+      "Ea2uUU",
+    ],
+    "topXPctMetrics": [],
+  },
+  {
+    "avgDailyPopulation": 5,
+    "caseloadCategory": "GENERAL_OR_OTHER",
+    "displayName": "Frank Ellis Smitham",
+    "district": "REGION 2",
+    "externalId": "so5",
+    "fullName": {
+      "givenNames": "Frank",
+      "middleNames": "Ellis",
+      "surname": "Smitham",
+    },
+    "outlierMetrics": [],
+    "pseudonymizedId": "hashed-so5",
+    "supervisorExternalIds": [
+      "Ea2uUU",
+    ],
+    "topXPctMetrics": [],
+  },
+  {
+    "avgDailyPopulation": 32,
+    "caseloadCategory": "GENERAL_OR_OTHER",
+    "displayName": "Jerome Monahan",
+    "district": "REGION 1",
+    "externalId": "so3",
+    "fullName": {
+      "givenNames": "Jerome",
+      "middleNames": undefined,
+      "surname": "Monahan",
+    },
+    "outlierMetrics": [
+      {
+        "metricId": "absconsions_bench_warrants",
+        "statusesOverTime": [
+          {
+            "endDate": 2023-04-01T00:00:00.000Z,
+            "metricRate": 0.154553,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-05-01T00:00:00.000Z,
+            "metricRate": 0.109407,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-06-01T00:00:00.000Z,
+            "metricRate": 0.12125238767544223,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-07-01T00:00:00.000Z,
+            "metricRate": 0.1466368227731864,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-08-01T00:00:00.000Z,
+            "metricRate": 0.110487,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-09-01T00:00:00.000Z,
+            "metricRate": 0.11521464646464646,
+            "status": "FAR",
+          },
+        ],
+      },
+      {
+        "metricId": "treatment_starts",
+        "statusesOverTime": [
+          {
+            "endDate": 2023-04-01T00:00:00.000Z,
+            "metricRate": 0.022968597032909103,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-05-01T00:00:00.000Z,
+            "metricRate": 0,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-06-01T00:00:00.000Z,
+            "metricRate": 0.027919749790220463,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-07-01T00:00:00.000Z,
+            "metricRate": 0.032353114502917085,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2023-08-01T00:00:00.000Z,
+            "metricRate": 0.03232644409114997,
+            "status": "NEAR",
+          },
+          {
+            "endDate": 2023-09-01T00:00:00.000Z,
+            "metricRate": 0.028747594548953384,
+            "status": "FAR",
+          },
+        ],
+      },
+    ],
+    "pseudonymizedId": "hashed-so3",
+    "supervisorExternalIds": [
+      "2CC8Zp",
+    ],
+    "topXPctMetrics": [],
+  },
+]
+`;

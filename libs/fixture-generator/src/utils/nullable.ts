@@ -15,8 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./FixtureFactoryConfig/FixtureFactoryConfig";
-export * from "./FixtureFactoryMap/FixtureFactoryMap";
-export * from "./utils/constants";
-export * from "./utils/hasDifferentValuesAtKeys";
-export * from "./utils/nullable";
+import { faker } from "@faker-js/faker";
+
+/**
+ * This takes a function and a null probability and returns a function that \
+ * returns either the input function or null.
+ * @param builder the builder function returning `T`
+ * @param nullProbability the probability that the function returns null\
+ * defaults to null. See https://fakerjs.dev/guide/usage.html#weighted-array-element for\
+ * how the probability is applied.
+ * @returns 
+ */
+export const nullable = <T>(builder: () => T, nullProbability = 1): T | null =>
+  faker.helpers.weightedArrayElement([
+    { weight: nullProbability, value: null },
+    { weight: 10 - nullProbability, value: builder() },
+  ]);
