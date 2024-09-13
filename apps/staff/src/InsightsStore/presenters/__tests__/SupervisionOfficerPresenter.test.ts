@@ -64,6 +64,7 @@ beforeEach(() => {
 
   rootStore = new RootStore();
   rootStore.tenantStore.currentTenantId = stateCode;
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   store = new InsightsSupervisionStore(
     rootStore.insightsStore,
     InsightsConfigFixture,

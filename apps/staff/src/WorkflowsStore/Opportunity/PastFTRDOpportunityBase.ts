@@ -17,8 +17,8 @@
 
 import { Client } from "../Client";
 import { TransformFunction, ValidateFunction } from "../subscriptions";
+import { OpportunityType } from ".";
 import { OpportunityBase } from "./OpportunityBase";
-import { OpportunityType } from "./OpportunityType/types";
 import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
 
 export abstract class PastFTRDOpportunityBase<

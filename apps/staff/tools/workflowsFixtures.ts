@@ -35,12 +35,12 @@ import {
 } from "~datatypes";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
 
+import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import {
   FirestoreCollectionKey,
   MilestonesMessage,
 } from "../src/FirestoreStore/types";
 import { PartialRecord } from "../src/utils/typeUtils";
-import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 import { getMonthYearFromDate } from "../src/WorkflowsStore/utils";
 import { deleteCollection } from "./firestoreUtils";
 import { clientsData } from "./fixtures/clients";
@@ -98,11 +98,11 @@ console.log(fsSettings);
 const db = new Firestore(fsSettings);
 
 const OPPORTUNITIES_MAP = Object.fromEntries(
-  Object.entries(OPPORTUNITY_CONFIGS).map(([k, { firestoreCollection }]) => [
+  Object.entries(mockOpportunityConfigs).map(([k, { firestoreCollection }]) => [
     `${k}Referrals`,
     firestoreCollection,
   ]),
-) as Record<`${keyof typeof OPPORTUNITY_CONFIGS}Referrals`, string>;
+) as Record<`${keyof typeof mockOpportunityConfigs}Referrals`, string>;
 
 type Logger = {
   (...data: any[]): void;

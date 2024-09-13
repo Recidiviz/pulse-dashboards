@@ -27,25 +27,10 @@ import {
 } from "../FirestoreStore";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { Client } from "./Client";
-import {
-  IncarcerationOpportunityType,
-  OPPORTUNITY_CONFIGS,
-  OpportunityConfig,
-  OpportunityType,
-} from "./Opportunity";
-import { SupervisionOpportunityType } from "./Opportunity/OpportunityConfigs";
+import { OpportunityMapping } from "./Opportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
-
-type ExtractOpportunityFromConfig<T> =
-  T extends OpportunityConfig<infer U> ? U : never;
-
-export type OpportunityMapping = {
-  [K in OpportunityType]?: ExtractOpportunityFromConfig<
-    (typeof OPPORTUNITY_CONFIGS)[K]
-  >;
-};
 
 export type JusticeInvolvedPerson = {
   /**
@@ -121,13 +106,6 @@ export type PersonClassForRecord<RecordType extends PersonRecordType> =
     : RecordType extends ClientRecord
       ? Client
       : JusticeInvolvedPerson;
-
-export type OpportunityTypeForRecord<PersonRecord extends PersonRecordType> =
-  PersonRecord extends ClientRecord
-    ? SupervisionOpportunityType
-    : PersonRecord extends WorkflowsResidentRecord
-      ? IncarcerationOpportunityType
-      : never;
 
 export type EligibilityStatus =
   | "opportunitiesEligible"

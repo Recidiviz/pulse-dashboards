@@ -39,6 +39,7 @@ function createTestUnit(
   residentRecord: typeof UsTnCustodyLevelDowngradeEligibleResidentRecord,
 ) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "usTnCustodyLevelDowngrade",
   ]);

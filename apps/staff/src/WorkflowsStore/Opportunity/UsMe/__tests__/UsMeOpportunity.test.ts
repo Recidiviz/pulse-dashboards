@@ -18,12 +18,12 @@
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { mockOpportunityConfigs } from "../../../../core/__tests__/testUtils";
 import { UsMeResidentMetadata } from "../../../../FirestoreStore";
 import { RootStore } from "../../../../RootStore";
 import { TenantId } from "../../../../RootStore/types";
 import { Client } from "../../../Client";
 import { Resident } from "../../../Resident";
-import { OPPORTUNITY_CONFIGS } from "../../OpportunityConfigs";
 import {
   UsTnExpirationEligibleClientRecord,
   usTnVerifiedOpportunities,
@@ -353,7 +353,7 @@ describe("client on EarlyTermination", () => {
 
 describe("opportunity config denial reasons uses OTHER_CORIS", () => {
   test("denial reasons doesn't include the standard Other reason", () => {
-    const testConfigs = Object.values(OPPORTUNITY_CONFIGS).filter(
+    const testConfigs = Object.values(mockOpportunityConfigs).filter(
       (config) => config.stateCode === "US_ME",
     );
     testConfigs.forEach((config) => {

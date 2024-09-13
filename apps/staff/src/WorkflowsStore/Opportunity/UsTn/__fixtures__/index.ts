@@ -23,8 +23,10 @@ import {
   WorkflowsResidentRecord,
 } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
-import { UsTnCustodyLevelDowngradeReferralRecord } from "../..";
-import { SupervisionOpportunityType } from "../../OpportunityConfigs";
+import {
+  OpportunityType,
+  UsTnCustodyLevelDowngradeReferralRecord,
+} from "../..";
 import { CompliantReportingReferralRecord } from "../CompliantReportingOpportunity";
 import { UsTnAnnualReclassificationReviewReferralRecord } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnExpirationReferralRecord } from "../UsTnExpirationOpportunity";
@@ -71,9 +73,7 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
-  allEligibleOpportunities: [
-    "compliantReporting",
-  ] as SupervisionOpportunityType[],
+  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
   personType: "CLIENT",
 };
 
@@ -342,9 +342,7 @@ export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
-  allEligibleOpportunities: [
-    "compliantReporting",
-  ] as SupervisionOpportunityType[],
+  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
   personType: "CLIENT",
 };
 

@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { JusticeInvolvedPersonBase } from "../../WorkflowsStore/JusticeInvolvedPersonBase";
-import { OpportunityMapping } from "../../WorkflowsStore/types";
+import { OpportunityMapping } from "../../WorkflowsStore/Opportunity/types";
 
 export type ConstrainedAbstractConstructor<T = object> = abstract new (
   ...args: any[]

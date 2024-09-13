@@ -23,7 +23,12 @@ export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfiguratio
       usMoOverdueRestrictiveHousingInitialHearing: {
         callToAction:
           "Review residents and prepare necessary paperwork for their hearing.",
-        compareBy: [{ field: "eligibilityDate" }],
+        compareBy: [
+          {
+            field: "eligibilityDate",
+            undefinedBehavior: "undefinedFirst",
+          },
+        ],
         denialReasons: {
           BEDS: "Released early due to a need for Restrictive Housing beds",
           EXTENDED:
@@ -78,7 +83,12 @@ export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfiguratio
       usMoOverdueRestrictiveHousingRelease: {
         callToAction:
           "Review residents for release and prepare necessary paperwork for their return to general population.",
-        compareBy: [{ field: "eligibilityDate" }],
+        compareBy: [
+          {
+            field: "eligibilityDate",
+            undefinedBehavior: "undefinedFirst",
+          },
+        ],
         denialReasons: {
           BEDS: "Released early due to a need for Restrictive Housing beds",
           EXTENDED:
@@ -131,7 +141,12 @@ export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfiguratio
       usMoOverdueRestrictiveHousingReviewHearing: {
         callToAction:
           "Review residents and prepare necessary paperwork for their next hearing",
-        compareBy: [{ field: "eligibilityDate" }],
+        compareBy: [
+          {
+            field: "eligibilityDate",
+            undefinedBehavior: "undefinedFirst",
+          },
+        ],
         denialReasons: {
           BEDS: "Released early due to a need for Extended Restrictive Housing beds",
           OUTDATED: "Hearing occurred this week",

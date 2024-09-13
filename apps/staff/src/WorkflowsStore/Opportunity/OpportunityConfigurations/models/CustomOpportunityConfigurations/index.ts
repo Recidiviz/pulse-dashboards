@@ -16,7 +16,7 @@
 // =============================================================================
 
 import UserStore from "../../../../../RootStore/UserStore";
-import { OpportunityType } from "../../../OpportunityType";
+import { OpportunityType } from "../../..";
 import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";

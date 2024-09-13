@@ -43,6 +43,7 @@ function createTestUnit(
   clientRecord: typeof usMeEarlyTerminationEligibleClientRecord,
 ) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "usMeEarlyTermination",
   ]);

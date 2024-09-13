@@ -18,3 +18,9 @@
 import { OpportunityRequirement } from "../../types";
 
 export type CriteriaCopy = Record<string, OpportunityRequirement>;
+
+export type SortParam = {
+  field: string;
+  sortDirection?: "asc" | "desc";
+  undefinedBehavior?: "undefinedFirst" | "undefinedLast";
+};

@@ -34,8 +34,8 @@ import {
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
 } from "~datatypes";
 
+import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { OpportunityType } from "../src/WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity";
@@ -158,7 +158,8 @@ function getTestParams(key: SchemaKey): {
     if (!schema) {
       throw new Error(`No schema found for ${key}`);
     }
-    const { firestoreCollection } = OPPORTUNITY_CONFIGS[key as OpportunityType];
+    const { firestoreCollection } =
+      mockOpportunityConfigs[key as OpportunityType];
     return { schema, firestoreCollection };
   }
   if (key in OTHER_SCHEMAS) {

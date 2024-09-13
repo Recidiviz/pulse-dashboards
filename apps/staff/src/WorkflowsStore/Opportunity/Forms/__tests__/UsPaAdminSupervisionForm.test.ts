@@ -35,6 +35,7 @@ let oppRecord: (typeof opp)["record"] & object;
 
 function createTestUnit() {
   const rootStore = new RootStore();
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   personRecord = {
     personType: "CLIENT",
     stateCode: "US_OZ",

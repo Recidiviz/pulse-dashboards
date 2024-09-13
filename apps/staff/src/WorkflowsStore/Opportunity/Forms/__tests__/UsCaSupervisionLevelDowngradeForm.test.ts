@@ -36,6 +36,7 @@ type PartialFormData = ReturnType<(typeof form)["prefilledDataTransformer"]>;
 
 function createTestUnit() {
   const rootStore = new RootStore();
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   personRecord = {
     personType: "CLIENT",
     stateCode: "US_OZ",

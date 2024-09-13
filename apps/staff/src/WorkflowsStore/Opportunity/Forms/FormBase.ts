@@ -30,8 +30,8 @@ import {
 import { RootStore } from "../../../RootStore";
 import { DocumentSubscription } from "../../subscriptions";
 import { FormUpdateSubscription } from "../../subscriptions/FormUpdateSubscription";
+import { OpportunityType } from "..";
 import { OpportunityBase } from "../OpportunityBase";
-import { OpportunityType } from "../OpportunityType/types";
 
 export type PrefilledDataTransformer<FormInformation> =
   () => Partial<FormInformation>;

@@ -30,8 +30,8 @@ import { castToError, HydratesFromSource, isHydrated } from "~hydration-utils";
 
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";

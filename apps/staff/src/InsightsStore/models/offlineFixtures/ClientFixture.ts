@@ -23,9 +23,9 @@ import {
   supervisionOfficerFixture,
 } from "~datatypes";
 
-import { clientsData } from "../../../../../staff/tools/fixtures/clients";
+import { clientsData } from "../../../../tools/fixtures/clients";
 import { ClientRecord } from "../../../FirestoreStore";
-import { SupervisionOpportunityType } from "../../../WorkflowsStore";
+import { OpportunityType } from "../../../WorkflowsStore";
 import {
   mockUsXxOpp,
   mockUsXxTwoOpp,
@@ -81,7 +81,7 @@ export const clientFixture: Record<string, ClientRecord> = Object.entries(
           ? []
           : (ELIGIBLE_OPPORTUNITY_CASES[
               idx % ELIGIBLE_OPPORTUNITY_CASES.length
-            ] as SupervisionOpportunityType[]),
+            ] as OpportunityType[]),
     };
 
     return acc;

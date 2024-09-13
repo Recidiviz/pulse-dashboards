@@ -17,7 +17,7 @@
 
 import tk from "timekeeper";
 
-import { OpportunityType } from "../OpportunityType/types";
+import { OpportunityType } from "..";
 import { Opportunity } from "../types";
 import { monthsOrDaysRemainingFromToday } from "../utils/criteriaUtils";
 import {

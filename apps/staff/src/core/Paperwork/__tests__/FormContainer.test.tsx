@@ -40,6 +40,7 @@ let form: FormBase<any>;
 
 function setup(props: Partial<FormHeaderProps> = {}) {
   rootStore = new RootStore();
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   (useFeatureVariants as Mock).mockReturnValue({
     formRevertButton: {},
   });

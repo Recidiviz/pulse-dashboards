@@ -23,9 +23,9 @@ import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../../../utils";
 import { Client } from "../../../Client";
+import { OpportunityType } from "../..";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityType } from "../../OpportunityType/types";
 import { OpportunityRequirement, OpportunityStatus } from "../../types";
 import { formatNoteDate } from "../../utils/caseNotesUtils";
 import {

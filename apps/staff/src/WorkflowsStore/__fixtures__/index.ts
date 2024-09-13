@@ -31,7 +31,7 @@ import {
   UserRecord,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
-import { SupervisionOpportunityType } from "../Opportunity/OpportunityConfigs";
+import { OpportunityType } from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 
 const userInfoFixtures = outputFixtureArray(supervisionStaffFixtures).filter(
@@ -149,9 +149,7 @@ export const eligibleClient: ClientRecord = {
   expirationDate: dateToTimestamp("2024-12-31"),
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
-  allEligibleOpportunities: [
-    "compliantReporting",
-  ] as SupervisionOpportunityType[],
+  allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
   currentEmployers: [
     {
       name: "The Penny Ice Cream Store",

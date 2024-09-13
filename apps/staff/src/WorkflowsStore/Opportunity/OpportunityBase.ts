@@ -58,9 +58,9 @@ import {
   OTHER_KEY,
   snoozeUntilDateInTheFuture,
 } from "../utils";
+import { OpportunityType } from ".";
 import { FormBase } from "./Forms/FormBase";
-import { AutoSnoozeUntil } from "./OpportunityConfigs";
-import { OpportunityType } from "./OpportunityType/types";
+import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import {
   Component,
   DefaultEligibility,
@@ -403,7 +403,7 @@ export class OpportunityBase<
   }
 
   async setAutoSnooze(
-    autoSnoozeParams: AutoSnoozeUntil["autoSnoozeParams"],
+    autoSnoozeParams: NonNullable<SnoozeConfiguration["autoSnoozeParams"]>,
     reasons: string[],
   ): Promise<void> {
     const { recordId } = this.person;

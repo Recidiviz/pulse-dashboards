@@ -50,7 +50,7 @@ import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import type RootStore from "../RootStore";
 import { UserAppMetadata } from "../RootStore/types";
 import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
-import { OpportunityType } from "../WorkflowsStore/Opportunity/OpportunityType/types";
+import { OpportunityType } from "../WorkflowsStore/Opportunity";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
   AutoSnoozeUpdate,

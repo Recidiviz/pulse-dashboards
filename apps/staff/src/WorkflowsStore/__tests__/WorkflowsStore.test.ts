@@ -26,6 +26,7 @@ import {
 } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
+import { mockOpportunityConfigs } from "../../core/__tests__/testUtils";
 import { SystemId } from "../../core/models/types";
 import FirestoreStore, {
   ClientRecord,
@@ -41,12 +42,7 @@ import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
 import UserStore from "../../RootStore/UserStore";
-import type {
-  IncarcerationOpportunityType,
-  OpportunityType,
-  SupervisionOpportunityType,
-  WorkflowsStore,
-} from "..";
+import type { OpportunityType, WorkflowsStore } from "..";
 import {
   ineligibleClient,
   lsuAlmostEligibleClient,
@@ -65,12 +61,9 @@ import {
 import { Client } from "../Client";
 import {
   CompliantReportingOpportunity,
-  INCARCERATION_OPPORTUNITY_TYPES,
   LSUOpportunity,
-  SUPERVISION_OPPORTUNITY_TYPES,
   UsNdEarlyTerminationOpportunity,
 } from "../Opportunity";
-import { OPPORTUNITY_CONFIGS } from "../Opportunity/OpportunityConfigs";
 import {
   IApiOpportunityConfiguration,
   OpportunityConfiguration,
@@ -393,6 +386,7 @@ describe("hydrationState", () => {
     workflowsStore.userSubscription.hydrationState = statuses.hydrated;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     workflowsStore.userUpdatesSubscription!.hydrationState = statuses.hydrated;
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
     expect(workflowsStore.hydrationState).toEqual({ status: "hydrated" });
   });
 
@@ -863,6 +857,7 @@ describe("opportunitiesLoaded", () => {
     // officer2 has no clients
     await waitForHydration(mockOfficer2);
     populateClients([]);
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting"]),
     ).toBeTrue();
@@ -870,6 +865,7 @@ describe("opportunitiesLoaded", () => {
 
   test("opportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
     await waitForHydration(mockSupervisor);
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting"]),
     ).toBeFalse();
@@ -878,6 +874,7 @@ describe("opportunitiesLoaded", () => {
   test("opportunitiesLoaded is false when clients are loading", async () => {
     await waitForHydration();
     populateClients(mockClients);
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
     expect(
       workflowsStore.opportunitiesLoaded(["compliantReporting"]),
     ).toBeFalse();
@@ -896,6 +893,7 @@ describe("opportunitiesLoaded", () => {
     );
     await waitForHydration();
     populateClients(mockClients);
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
 
     compliantReportingHydrationStateMock.mockReturnValue({
       status: "hydrated",
@@ -914,6 +912,7 @@ describe("opportunitiesLoaded", () => {
     );
     await waitForHydration();
     populateClients(mockClients);
+    workflowsStore.opportunityConfigurationStore.mockHydrated();
 
     hydrationStateMock.mockReturnValue({ status: "hydrated" });
     expect(
@@ -1218,14 +1217,6 @@ describe("opportunityTypes for US_TN", () => {
     });
   });
 
-  test("includes all non-gated opportunityTypes", async () => {
-    await waitForHydration({ ...mockOfficer });
-    expect(workflowsStore.opportunityTypes.sort()).toEqual([
-      "compliantReporting",
-      "supervisionLevelDowngrade",
-    ]);
-  });
-
   test("includes usTnExpiration", async () => {
     runInAction(() => {
       rootStore.userStore.user = {
@@ -1241,7 +1232,7 @@ describe("opportunityTypes for US_TN", () => {
     await waitForHydration({
       ...mockOfficer,
     });
-
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
     expect(workflowsStore.opportunityTypes).toContain("usTnExpiration");
   });
 });
@@ -1276,7 +1267,6 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
   beforeEach(() => {
     runInAction(() => {
       rootStore.tenantStore.currentTenantId = "US_XX" as TenantId;
-      OPPORTUNITY_CONFIGS[TEST_GATED_OPP].featureVariant = TEST_FEAT_VAR;
     });
 
     setOpportunities({
@@ -1306,10 +1296,9 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
 
     const oppTypes = workflowsStore.opportunityTypes;
     expect(
-      oppTypes.every((oppType) =>
-        INCARCERATION_OPPORTUNITY_TYPES.includes(
-          oppType as IncarcerationOpportunityType,
-        ),
+      oppTypes.every(
+        (oppType) =>
+          mockOpportunityConfigs[oppType].systemType === "INCARCERATION",
       ),
     ).toBeTruthy();
   });
@@ -1323,10 +1312,9 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
     const oppTypes = workflowsStore.opportunityTypes;
     expect(
       oppTypes.length > 0 &&
-        oppTypes.every((oppType) =>
-          SUPERVISION_OPPORTUNITY_TYPES.includes(
-            oppType as SupervisionOpportunityType,
-          ),
+        oppTypes.every(
+          (oppType) =>
+            mockOpportunityConfigs[oppType].systemType === "SUPERVISION",
         ),
     ).toBeTruthy();
   });

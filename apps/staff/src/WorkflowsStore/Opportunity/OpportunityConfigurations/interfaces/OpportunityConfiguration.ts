@@ -17,7 +17,6 @@
 
 import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
-import { SortParamObject } from "../../OpportunityConfigs";
 import {
   DenialReasonsMap,
   Opportunity,
@@ -27,7 +26,7 @@ import {
   OpportunityTabGroups,
 } from "../../types";
 import { SnoozeConfiguration } from "../modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
-import { CriteriaCopy } from "./shared";
+import { CriteriaCopy, SortParam } from "./shared";
 export interface OpportunityConfiguration {
   systemType: SystemId;
   stateCode: TenantId;
@@ -57,7 +56,7 @@ export interface OpportunityConfiguration {
   tooltipEligibilityText?: string;
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;
-  compareBy: SortParamObject<string>[] | undefined;
+  compareBy: SortParam[] | undefined;
   homepagePosition: number;
   countByFunction?: (opportunities: Opportunity[]) => number;
   deniedTabTitle?: OpportunityTab;

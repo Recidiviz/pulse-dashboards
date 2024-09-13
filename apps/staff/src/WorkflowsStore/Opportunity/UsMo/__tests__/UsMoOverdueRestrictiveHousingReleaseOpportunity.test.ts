@@ -85,6 +85,7 @@ describe("fully eligible", () => {
     );
 
     root = new RootStore();
+    root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
     vi.spyOn(
       root.workflowsRootStore.opportunityConfigurationStore,
       "enabledOpportunityTypes",
@@ -291,19 +292,16 @@ describe("fully eligible", () => {
   });
 });
 
-class TestOpportunity extends UsMoOverdueRestrictiveHousingReleaseOpportunity {
-  compare(other: UsMoOverdueRestrictiveHousingReleaseOpportunity) {
-    return super.compare(other);
-  }
-}
-
 const createOpportunityInstance = (
   reviewStatus: OpportunityStatus,
   eligibilityDate: Date | undefined,
 ) => {
   const mockRoot = new RootStore();
+  mockRoot.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
-  const mockOpp = new TestOpportunity(mockResident);
+  const mockOpp = new UsMoOverdueRestrictiveHousingReleaseOpportunity(
+    mockResident,
+  );
 
   vi.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
   vi.spyOn(mockOpp, "eligibilityDate", "get").mockReturnValue(eligibilityDate);
@@ -352,7 +350,7 @@ export const orderedDates: (Date | undefined)[] = [
 ];
 
 describe("Test custom compare function", () => {
-  let opportunities: TestOpportunity[];
+  let opportunities: UsMoOverdueRestrictiveHousingReleaseOpportunity[];
   beforeEach(() => {
     freeze(new Date(2022, 7, 1));
   });

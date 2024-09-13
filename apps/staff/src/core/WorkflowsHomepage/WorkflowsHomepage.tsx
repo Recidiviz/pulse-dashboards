@@ -26,8 +26,8 @@ import {
 import { TenantId } from "../../RootStore/types";
 import TENANTS from "../../tenants";
 import { getWelcomeText, pluralizeWord } from "../../utils";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import { SystemId } from "../models/types";

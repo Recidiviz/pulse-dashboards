@@ -48,15 +48,14 @@ import {
 import { RootStore } from "../RootStore";
 import { humanReadableTitleCase } from "../utils";
 import { TaskFactory } from "./Client";
-import { OpportunityFactory, OpportunityType } from "./Opportunity";
+import { OpportunityMapping, OpportunityType } from "./Opportunity";
 import { OpportunityBase } from "./Opportunity/OpportunityBase";
+import { opportunityConstructors } from "./Opportunity/opportunityConstructors";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
 import {
   JusticeInvolvedPerson,
-  OpportunityMapping,
-  OpportunityTypeForRecord,
   PersonClassForRecord,
   PersonRecordType,
 } from "./types";
@@ -79,10 +78,6 @@ export class JusticeInvolvedPersonBase<
   constructor(
     record: RecordType,
     rootStore: RootStore,
-    opportunityFactory: OpportunityFactory<
-      OpportunityTypeForRecord<RecordType>,
-      PersonClassForRecord<RecordType>
-    >,
     taskFactory?: TaskFactory<PersonClassForRecord<RecordType>>,
   ) {
     this.rootStore = rootStore;
@@ -126,26 +121,25 @@ export class JusticeInvolvedPersonBase<
       const incomingOpps = intersection(
         this.record.allEligibleOpportunities,
         enabledOpportunityTypes,
-      ) as OpportunityTypeForRecord<RecordType>[];
+      ) as OpportunityType[];
       incomingOpps.forEach((opportunityType) => {
         runInAction(() => {
           if (!this.potentialOpportunities[opportunityType]) {
+            const constructor = opportunityConstructors[opportunityType];
             set(
               this.potentialOpportunities,
               opportunityType,
-              opportunityFactory(
-                opportunityType,
-                this as unknown as PersonClassForRecord<RecordType>,
-              ) ??
-                new OpportunityBase<
-                  JusticeInvolvedPerson,
-                  OpportunityRecordBase
-                >(
-                  this,
-                  opportunityType,
-                  rootStore,
-                  opportunitySchemaBase.parse,
-                ),
+              constructor
+                ? new constructor(this as any)
+                : new OpportunityBase<
+                    JusticeInvolvedPerson,
+                    OpportunityRecordBase
+                  >(
+                    this,
+                    opportunityType,
+                    rootStore,
+                    opportunitySchemaBase.parse,
+                  ),
             );
           }
         });

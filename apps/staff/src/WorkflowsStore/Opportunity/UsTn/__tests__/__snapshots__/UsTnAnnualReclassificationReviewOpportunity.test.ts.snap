@@ -3,10 +3,10 @@
 exports[`Annual Reclassification Opportunity for fully eligible resident > requirements met 1`] = `
 [
   {
-    "text": "At least 12 months since last reclassification date",
+    "text": "Custody level is not maximum",
   },
   {
-    "text": "Custody level is not maximum",
+    "text": "At least 12 months since last reclassification date",
   },
 ]
 `;

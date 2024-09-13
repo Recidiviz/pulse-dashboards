@@ -16,12 +16,12 @@ exports[`almost eligible past discharge date coming up > requirements met 1`] = 
     "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
   {
-    "text": "Currently on medium supervision",
-    "tooltip": "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
-  },
-  {
     "text": "Serving probation sentence",
     "tooltip": "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
+  },
+  {
+    "text": "Currently on medium supervision",
+    "tooltip": "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
   },
   {
     "text": "Not on active revocation status",
@@ -37,12 +37,12 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
   },
   {
-    "text": "Currently on medium supervision",
-    "tooltip": "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
-  },
-  {
     "text": "Serving probation sentence",
     "tooltip": "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
+  },
+  {
+    "text": "Currently on medium supervision",
+    "tooltip": "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
   },
   {
     "text": "Not on active revocation status",

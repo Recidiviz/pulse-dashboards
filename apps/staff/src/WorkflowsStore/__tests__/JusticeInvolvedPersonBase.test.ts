@@ -22,7 +22,6 @@ import {
   observable,
   runInAction,
 } from "mobx";
-import { MockedFunction } from "vitest";
 
 import { StaffRecord } from "~datatypes";
 
@@ -32,10 +31,12 @@ import {
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
-import { OpportunityFactory, OpportunityType } from "../Opportunity";
+import { OpportunityType } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
 import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
+import { opportunityConstructors } from "../Opportunity/opportunityConstructors";
 import { CollectionDocumentSubscription } from "../subscriptions";
+import { JusticeInvolvedPerson } from "../types";
 
 vi.mock("firebase/firestore");
 vi.mock("../subscriptions");
@@ -45,19 +46,13 @@ let testPerson: JusticeInvolvedPersonBase;
 let record: WorkflowsJusticeInvolvedPersonRecord;
 let mockOpportunityTypes: IObservableValue<OpportunityType[]>;
 
-function createTestUnit(
-  opportunityFactory: OpportunityFactory<any, any> = () => undefined as any,
-) {
-  testPerson = new JusticeInvolvedPersonBase(
-    record,
-    rootStore,
-    opportunityFactory,
-  );
+function createTestUnit() {
+  testPerson = new JusticeInvolvedPersonBase(record, rootStore);
 }
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  mockOpportunityTypes = observable.box([]);
+  mockOpportunityTypes = observable.box(["JIP_TEST_OPP" as OpportunityType]);
 
   rootStore = new RootStore();
   vi.spyOn(
@@ -123,8 +118,8 @@ describe("opportunities", () => {
   let opportunityInstances: TestOpportunity[];
 
   class TestOpportunity extends OpportunityBase<any, any> {
-    constructor(...[person, type, rootStore, ...args]: any[]) {
-      super(person, type, rootStore, ...args);
+    constructor(person: JusticeInvolvedPerson) {
+      super(person, "JIP_TEST_OPP" as OpportunityType, rootStore);
       opportunityInstances.push(this);
     }
 
@@ -133,26 +128,22 @@ describe("opportunities", () => {
     }
   }
 
-  let mockFactory: MockedFunction<OpportunityFactory<any, any>>;
-
   beforeEach(() => {
     opportunityInstances = [];
-    mockFactory = vi
-      .fn()
-      .mockImplementation(
-        (opportunityType, person) =>
-          new TestOpportunity(person, opportunityType, rootStore),
-      );
-    mockOpportunityTypes.set(["LSU"]);
-    record.allEligibleOpportunities = ["LSU"];
+    record.allEligibleOpportunities = ["JIP_TEST_OPP" as OpportunityType];
+    // @ts-ignore
+    opportunityConstructors["JIP_TEST_OPP" as any] = TestOpportunity;
+    // @ts-ignore
+    opportunityConstructors["JIP_TEST_OPP2" as any] = TestOpportunity;
+    // @ts-ignore
+    opportunityConstructors["JIP_TEST_OPP3" as any] = TestOpportunity;
   });
 
   test("created", () => {
-    createTestUnit(mockFactory);
+    createTestUnit();
     expect(opportunityInstances[0]).toEqual(expect.any(TestOpportunity));
-    expect(mockFactory).toHaveBeenCalledWith("LSU", testPerson);
     expect(testPerson.potentialOpportunities).toStrictEqual({
-      LSU: opportunityInstances[0],
+      JIP_TEST_OPP: opportunityInstances[0],
     });
     expect(testPerson.verifiedOpportunities).toStrictEqual({});
     expect(testPerson.opportunitiesEligible).toStrictEqual({});
@@ -198,7 +189,7 @@ describe("opportunities", () => {
 
   describe("displayPreferredName", () => {
     beforeEach(() => {
-      createTestUnit(mockFactory);
+      createTestUnit();
     });
 
     test("with preferred name", () => {
@@ -241,7 +232,7 @@ describe("opportunities", () => {
 
   describe("successfully", () => {
     beforeEach(() => {
-      createTestUnit(mockFactory);
+      createTestUnit();
       runInAction(() => {
         const [opp] = opportunityInstances;
         opp.referralSubscription.hydrationState = { status: "hydrated" };
@@ -251,13 +242,13 @@ describe("opportunities", () => {
 
     test("verified", () => {
       expect(testPerson.verifiedOpportunities).toStrictEqual({
-        LSU: opportunityInstances[0],
+        JIP_TEST_OPP: opportunityInstances[0],
       });
     });
 
     test("eligible", () => {
       expect(testPerson.opportunitiesEligible).toStrictEqual({
-        LSU: opportunityInstances[0],
+        JIP_TEST_OPP: opportunityInstances[0],
       });
     });
 
@@ -269,14 +260,14 @@ describe("opportunities", () => {
       ).mockReturnValue(true);
 
       expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({
-        LSU: opportunityInstances[0],
+        JIP_TEST_OPP: opportunityInstances[0],
       });
     });
   });
 
   describe("fail to be", () => {
     beforeEach(() => {
-      createTestUnit(mockFactory);
+      createTestUnit();
       runInAction(() => {
         const [opp] = opportunityInstances;
         opp.referralSubscription.hydrationState = { status: "hydrated" };
@@ -309,58 +300,58 @@ describe("opportunities", () => {
 
   test("are limited to configured opportunity types", () => {
     mockOpportunityTypes.set(["compliantReporting"]);
-    createTestUnit(mockFactory);
+    createTestUnit();
     expect(testPerson.potentialOpportunities).toStrictEqual({});
   });
 
   test("react to config changes", () => {
-    createTestUnit(mockFactory);
+    createTestUnit();
     mockOpportunityTypes.set(["compliantReporting"]);
     expect(testPerson.potentialOpportunities).toStrictEqual({});
   });
 
   test("are limited to person's eligibility list", () => {
     mockOpportunityTypes.set([
-      "LSU",
+      "JIP_TEST_OPP" as OpportunityType,
       "compliantReporting",
       "earlyTermination",
       "earnedDischarge",
     ]);
-    createTestUnit(mockFactory);
+    createTestUnit();
     expect(testPerson.potentialOpportunities).toStrictEqual({
-      LSU: opportunityInstances[0],
+      JIP_TEST_OPP: opportunityInstances[0],
     });
   });
 
   test("react to changes in person's eligibility list", () => {
-    mockOpportunityTypes.set(["LSU", "earlyTermination", "pastFTRD"]);
-    createTestUnit(mockFactory);
+    mockOpportunityTypes.set([
+      "JIP_TEST_OPP" as OpportunityType,
+      "JIP_TEST_OPP2" as OpportunityType,
+      "JIP_TEST_OPP3" as OpportunityType,
+    ]);
+    createTestUnit();
     testPerson.updateRecord({
       ...record,
-      allEligibleOpportunities: ["earlyTermination"],
+      allEligibleOpportunities: ["JIP_TEST_OPP2" as OpportunityType],
     });
     expect(opportunityInstances[1]).toEqual(expect.any(TestOpportunity));
-    expect(mockFactory).toHaveBeenNthCalledWith(
-      2,
-      "earlyTermination",
-      testPerson,
-    );
     expect(testPerson.potentialOpportunities).toStrictEqual({
-      earlyTermination: opportunityInstances[1],
+      JIP_TEST_OPP2: opportunityInstances[1],
     });
 
     // should not re-create existing opportunities
     testPerson.updateRecord({
       ...record,
-      allEligibleOpportunities: ["earlyTermination", "pastFTRD"],
+      allEligibleOpportunities: [
+        "JIP_TEST_OPP2" as OpportunityType,
+        "JIP_TEST_OPP3" as OpportunityType,
+      ],
     });
     expect(opportunityInstances[2]).toEqual(expect.any(TestOpportunity));
     expect(opportunityInstances.length).toBe(3);
-    expect(mockFactory).toHaveBeenNthCalledWith(3, "pastFTRD", testPerson);
-    expect(mockFactory.mock.calls.length).toBe(3);
     expect(testPerson.potentialOpportunities).toStrictEqual({
-      earlyTermination: opportunityInstances[1],
-      pastFTRD: opportunityInstances[2],
+      JIP_TEST_OPP2: opportunityInstances[1],
+      JIP_TEST_OPP3: opportunityInstances[2],
     });
   });
 });

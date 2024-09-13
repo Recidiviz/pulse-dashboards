@@ -40,6 +40,7 @@ function createTestUnit(
   clientRecord: typeof EarnedDischargeEligibleClientRecord,
 ) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "earnedDischarge",
   ]);

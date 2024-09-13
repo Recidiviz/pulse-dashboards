@@ -42,6 +42,7 @@ let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "LSU",
   ]);

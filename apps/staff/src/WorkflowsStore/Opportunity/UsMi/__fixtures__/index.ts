@@ -19,7 +19,7 @@ import { parseISO } from "date-fns";
 
 import { ClientRecord } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
-import { SupervisionOpportunityType } from "../../OpportunityConfigs";
+import { OpportunityType } from "../..";
 import {
   UsMiMinimumTelephoneReportingReferralRecord,
   UsMiPastFTRDReferralRecord,
@@ -80,9 +80,7 @@ export const usMiClassificationReviewEligibleClientRecord: ClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
-  allEligibleOpportunities: [
-    "usMiClassificationReview",
-  ] as SupervisionOpportunityType[],
+  allEligibleOpportunities: ["usMiClassificationReview"] as OpportunityType[],
   personType: "CLIENT",
 };
 

@@ -28,7 +28,7 @@ import {
   SupervisionOfficerMetricOutlier,
 } from "~datatypes";
 
-import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 
 // This type represents the state of fully hydrated data
 // where all necessary related objects are guaranteed to exist

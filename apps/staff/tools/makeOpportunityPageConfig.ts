@@ -19,10 +19,10 @@ import { writeFileSync } from "fs";
 import { mapValues } from "lodash";
 import path from "path";
 
-import { OPPORTUNITY_CONFIGS } from "../src/WorkflowsStore/Opportunity/OpportunityConfigs";
+import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 
 const pageConfigs = mapValues(
-  OPPORTUNITY_CONFIGS,
+  mockOpportunityConfigs,
   (config) => config.urlSection,
 );
 

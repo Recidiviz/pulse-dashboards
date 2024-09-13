@@ -37,6 +37,7 @@ class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {}
 
 function createTestUnit() {
   rootStore = new RootStore();
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   rootStore.userStore = {
     isRecidivizUser: false,
     activeFeatureVariants: {},

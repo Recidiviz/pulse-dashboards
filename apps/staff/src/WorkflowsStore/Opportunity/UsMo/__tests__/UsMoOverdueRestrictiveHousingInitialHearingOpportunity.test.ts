@@ -23,7 +23,8 @@ import { freeze } from "timekeeper";
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
 import { DocumentSubscription } from "../../../subscriptions";
-import { OpportunityStatus, SortParamObject } from "../..";
+import { OpportunityStatus } from "../..";
+import { SortParam } from "../../OpportunityConfigurations/interfaces/shared";
 import {
   usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
   usMoPersonRecord,
@@ -85,6 +86,7 @@ describe("fully eligible", () => {
     );
 
     root = new RootStore();
+    root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
     vi.spyOn(
       root.workflowsRootStore.opportunityConfigurationStore,
       "enabledOpportunityTypes",
@@ -267,20 +269,16 @@ describe("fully eligible", () => {
   });
 });
 
-class TestOpportunity extends UsMoOverdueRestrictiveHousingInitialHearingOpportunity {
-  compare(other: UsMoOverdueRestrictiveHousingInitialHearingOpportunity) {
-    return super.compare(other);
-  }
-}
-
 const createOpportunityInstance = (
+  mockRoot: RootStore,
   reviewStatus: OpportunityStatus,
   eligibilityDate: Date | undefined,
-  compareBy?: SortParamObject<string>[],
+  compareBy?: SortParam[],
 ) => {
-  const mockRoot = new RootStore();
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
-  const mockOpp = new TestOpportunity(mockResident);
+  const mockOpp = new UsMoOverdueRestrictiveHousingInitialHearingOpportunity(
+    mockResident,
+  );
 
   vi.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
   vi.spyOn(mockOpp, "eligibilityDate", "get").mockReturnValue(eligibilityDate);
@@ -292,10 +290,13 @@ const createOpportunityInstance = (
 const initOpportunitiesList = (
   reviewStatuses: OpportunityStatus[],
   eligibilityDates: (Date | undefined)[],
-  compareBy?: SortParamObject<string>[],
+  compareBy?: SortParam[],
 ) => {
+  const mockRoot = new RootStore();
+  mockRoot.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   return reviewStatuses.map((reviewStatus, index) => {
     return createOpportunityInstance(
+      mockRoot,
       reviewStatus,
       eligibilityDates[index],
       compareBy,
@@ -335,7 +336,7 @@ export const orderedDates: (Date | undefined)[] = [
 ];
 
 describe("Test custom compare function", () => {
-  let opportunities: TestOpportunity[];
+  let opportunities: UsMoOverdueRestrictiveHousingInitialHearingOpportunity[];
   beforeEach(() => {
     freeze(new Date(2022, 7, 1));
   });

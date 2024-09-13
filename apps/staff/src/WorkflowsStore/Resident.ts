@@ -20,81 +20,13 @@ import { uniqBy } from "lodash";
 
 import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
 import { ResidentMetadata } from "../FirestoreStore/types";
-import { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
-import {
-  IncarcerationOpportunityType,
-  Opportunity,
-  OpportunityFactory,
-  UsMeSCCPOpportunity,
-} from "./Opportunity";
-import { UsIdExpandedCRCOpportunity } from "./Opportunity/UsId";
-import { UsIdCRCResidentWorkerOpportunity } from "./Opportunity/UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
-import { UsIdCRCWorkReleaseOpportunity } from "./Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
-import {
-  UsMeFurloughReleaseOpportunity,
-  UsMeWorkReleaseOpportunity,
-} from "./Opportunity/UsMe";
-import { UsMeAnnualReclassificationOpportunity } from "./Opportunity/UsMe/UsMeAnnualReclassificationOpportunity";
-import { UsMeMediumTrusteeOpportunity } from "./Opportunity/UsMe/UsMeMediumTrusteeOpportunity";
-import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "./Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
-import { usMiReclassificationRequestOpportunity } from "./Opportunity/UsMi/UsMiReclassificationRequestOpportunity";
-import { usMiSecurityClassificationCommitteeReviewOpportunity } from "./Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
-import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "./Opportunity/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
-import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
-import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
-import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
-import { UsTnCustodyLevelDowngradeOpportunity } from "./Opportunity/UsTn";
-import { UsTnAnnualReclassificationReviewOpportunity } from "./Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
 
-const residentialOpportunityConstructors: Partial<
-  Record<
-    IncarcerationOpportunityType,
-    new (c: Resident) => Opportunity<Resident>
-  >
-> = {
-  usIdCRCResidentWorker: UsIdCRCResidentWorkerOpportunity,
-  usIdCRCWorkRelease: UsIdCRCWorkReleaseOpportunity,
-  usIdExpandedCRC: UsIdExpandedCRCOpportunity,
-  usMeFurloughRelease: UsMeFurloughReleaseOpportunity,
-  usMeMediumTrustee: UsMeMediumTrusteeOpportunity,
-  usMeSCCP: UsMeSCCPOpportunity,
-  usMeWorkRelease: UsMeWorkReleaseOpportunity,
-  usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
-  usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
-  usMoOverdueRestrictiveHousingRelease:
-    UsMoOverdueRestrictiveHousingReleaseOpportunity,
-  usMoOverdueRestrictiveHousingInitialHearing:
-    UsMoOverdueRestrictiveHousingInitialHearingOpportunity,
-  usMoOverdueRestrictiveHousingReviewHearing:
-    UsMoOverdueRestrictiveHousingReviewHearingOpportunity,
-  usMeReclassificationReview: UsMeAnnualReclassificationOpportunity,
-  usMiReclassificationRequest: usMiReclassificationRequestOpportunity,
-  usMiSecurityClassificationCommitteeReview:
-    usMiSecurityClassificationCommitteeReviewOpportunity,
-  usMiWardenInPersonSecurityClassificationCommitteeReview:
-    usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity,
-  usMiAddInPersonSecurityClassificationCommitteeReview:
-    usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity,
-};
-
-const createResidentOpportunity: OpportunityFactory<
-  IncarcerationOpportunityType,
-  Resident
-> = (type, person) => {
-  const constructor = residentialOpportunityConstructors[type];
-  if (constructor) return new constructor(person);
-};
-
 export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord> {
-  constructor(record: WorkflowsResidentRecord, rootStore: RootStore) {
-    super(record, rootStore, createResidentOpportunity);
-  }
-
   get facilityId(): string | undefined {
     return this.record.facilityId ?? undefined;
   }

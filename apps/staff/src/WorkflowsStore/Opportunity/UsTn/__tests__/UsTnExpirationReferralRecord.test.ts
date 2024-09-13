@@ -23,7 +23,7 @@ import { fieldToDate } from "../../../utils";
 import {
   getUsTnExpirationValidator as getValidator,
   usTnExpirationSchema,
-} from "../UsTnExpirationOpportunity";
+} from "../UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
 
 const usTnExpirationRecordRaw: z.input<typeof usTnExpirationSchema> = {
   stateCode: "US_XX",

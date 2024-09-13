@@ -39,6 +39,7 @@ function createTestUnit(
   clientRecord: typeof UsTnExpirationEligibleClientRecord,
 ) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(
     root.workflowsRootStore.opportunityConfigurationStore,
     "enabledOpportunityTypes",

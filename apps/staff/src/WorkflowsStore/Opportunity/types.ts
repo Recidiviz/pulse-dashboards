@@ -30,9 +30,10 @@ import {
 } from "../../FirestoreStore";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
-import { AutoSnoozeUntil } from "./OpportunityConfigs";
 import { OpportunityConfiguration } from "./OpportunityConfigurations";
-import { OpportunityType } from "./OpportunityType/types";
+import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
+import { opportunityConstructors } from "./opportunityConstructors";
+import { OpportunityType } from "./OpportunityType";
 
 export type OpportunityRequirement = {
   isHeading?: boolean;
@@ -120,7 +121,7 @@ export interface Opportunity<
   externalRequestData?: ExternalRequestUpdate<any>;
   readonly externalRequestStatusMessage?: string;
   setAutoSnooze: (
-    autoSnoozeParams: AutoSnoozeUntil["autoSnoozeParams"],
+    autoSnoozeParams: NonNullable<SnoozeConfiguration["autoSnoozeParams"]>,
     reasons: string[],
   ) => Promise<void>;
   setManualSnooze: (days: number, reasons: string[]) => Promise<void>;
@@ -186,3 +187,7 @@ export type DenialConfirmationModalProps = {
 };
 
 export type OpportunityPriority = "NORMAL" | "HIGH";
+
+export type OpportunityMapping = {
+  [K in OpportunityType]?: InstanceType<(typeof opportunityConstructors)[K]>;
+};

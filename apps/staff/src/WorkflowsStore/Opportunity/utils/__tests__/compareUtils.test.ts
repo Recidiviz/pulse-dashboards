@@ -21,9 +21,9 @@ import { configure } from "mobx";
 import { SystemId } from "../../../../core/models/types";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
+import { OpportunityType } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityConfiguration } from "../../OpportunityConfigurations";
-import { OpportunityType } from "../../OpportunityType";
 import { OpportunityStatus } from "../../types";
 import { buildOpportunityCompareFunction } from "../compareUtils";
 

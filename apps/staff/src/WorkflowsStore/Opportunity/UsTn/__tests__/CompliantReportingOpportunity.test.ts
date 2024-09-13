@@ -54,6 +54,7 @@ let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(clientRecord: ClientRecord) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "compliantReporting",
   ]);

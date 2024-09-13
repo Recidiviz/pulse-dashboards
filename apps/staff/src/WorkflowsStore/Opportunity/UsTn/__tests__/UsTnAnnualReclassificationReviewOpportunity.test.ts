@@ -39,6 +39,7 @@ function createTestUnit(
   residentRecord: typeof UsTnAnnualReclassificationEligibleResidentRecord,
 ) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(
     root.workflowsRootStore.opportunityConfigurationStore,
     "enabledOpportunityTypes",

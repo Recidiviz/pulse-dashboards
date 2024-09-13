@@ -43,6 +43,7 @@ vi.mock("../../../subscriptions");
 
 function createTestUnit(residentRecord: typeof usMePersonRecord) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "usMeSCCP",
   ]);

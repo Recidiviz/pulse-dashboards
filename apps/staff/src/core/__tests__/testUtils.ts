@@ -16,23 +16,34 @@
 // =============================================================================
 
 import { add } from "date-fns";
-import { mapValues } from "lodash";
 
+import CONFIG_FIXTURES from "../../../tools/fixtures/opportunities";
 import { AutoSnoozeUpdate, ManualSnoozeUpdate } from "../../FirestoreStore";
-import { Client, Opportunity, OpportunityTab } from "../../WorkflowsStore";
-import { OPPORTUNITY_CONFIGS } from "../../WorkflowsStore/Opportunity/OpportunityConfigs";
+import {
+  Client,
+  Opportunity,
+  OpportunityTab,
+  OpportunityType,
+} from "../../WorkflowsStore";
+import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
+import { apiOpportunityConfigurationSchema } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/dtos/ApiOpportunityConfigurationSchema";
 import { formatEligibilityText } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
-import { LocalOpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/LocalOpportunityConfigurationImpl";
+import { apiOpportunityConfigurationFactory } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/CustomOpportunityConfigurations";
 import { generateTabs } from "../../WorkflowsStore/Opportunity/utils/tabUtils";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
-export const mockOpportunityConfigs = mapValues(
-  OPPORTUNITY_CONFIGS,
-  (rawConfig) =>
-    new LocalOpportunityConfiguration(rawConfig, {
-      featureVariants: {},
-    } as any),
-);
+export const mockOpportunityConfigs = Object.fromEntries(
+  Object.entries(CONFIG_FIXTURES).map(([type, rawConfig]) => [
+    type,
+    apiOpportunityConfigurationFactory(
+      type as OpportunityType,
+      apiOpportunityConfigurationSchema.parse(rawConfig),
+      {
+        featureVariants: {},
+      } as any,
+    ),
+  ]),
+) as Record<OpportunityType, OpportunityConfiguration>;
 
 export const mockOpportunity: Opportunity<Client> = {
   record: {},

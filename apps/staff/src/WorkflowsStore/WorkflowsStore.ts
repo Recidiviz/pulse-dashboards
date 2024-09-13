@@ -75,8 +75,8 @@ import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
 import { Opportunity, OpportunityNotification } from "./Opportunity";
+import { OpportunityType } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
-import { OpportunityType } from "./Opportunity/OpportunityType/types";
 import { Resident } from "./Resident";
 import {
   CaseloadSubscription,
@@ -917,7 +917,7 @@ export class WorkflowsStore implements Hydratable {
     const { opportunities } = this.opportunityConfigurationStore;
 
     return Object.entries(opportunities)
-      .filter(([, opportunity]) => {
+      .filter(([type, opportunity]) => {
         const isInState = opportunity.stateCode === currentTenantId;
         const isInSystem =
           activeSystem === "ALL" || opportunity?.systemType === activeSystem;

@@ -40,29 +40,6 @@ import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { humanReadableTitleCase } from "../utils";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
-import {
-  CompliantReportingOpportunity,
-  EarnedDischargeOpportunity,
-  LSUOpportunity,
-  Opportunity,
-  OpportunityFactory,
-  UsCaSupervisionLevelDowngradeOpportunity,
-  UsIdPastFTRDOpportunity,
-  UsIdSupervisionLevelDowngradeOpportunity,
-  UsMeEarlyTerminationOpportunity,
-  UsMiClassificationReviewOpportunity,
-  UsMiEarlyDischargeOpportunity,
-  UsMiMinimumTelephoneReportingOpportunity,
-  UsMiPastFTRDOpportunity,
-  UsMiSupervisionLevelDowngradeOpportunity,
-  UsNdEarlyTerminationOpportunity,
-  UsPaSpecialCircumstancesSupervisionOpportunity,
-  UsTnExpirationOpportunity,
-  UsTnSupervisionLevelDowngradeOpportunity,
-} from "./Opportunity";
-import { SupervisionOpportunityType } from "./Opportunity/OpportunityConfigs";
-import { UsOrEarnedDischargeOpportunity } from "./Opportunity/UsOr/UsOrEarnedDischargeOpportunity/UsOrEarnedDischargeOpportunity";
-import { UsPaAdminSupervisionOpportunity } from "./Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
@@ -89,38 +66,6 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
         "This date is included in the filled form as the date that the Defendant was sentenced; in rare cases, the sentencing date and supervision start date may differ. Double check the date in the form to ensure that the sentencing date and supervision start date match in this case.",
     },
   },
-};
-
-export const supervisionOpportunityConstructors: Partial<
-  Record<SupervisionOpportunityType, new (c: Client) => Opportunity<Client>>
-> = {
-  compliantReporting: CompliantReportingOpportunity,
-  earlyTermination: UsNdEarlyTerminationOpportunity,
-  earnedDischarge: EarnedDischargeOpportunity,
-  LSU: LSUOpportunity,
-  pastFTRD: UsIdPastFTRDOpportunity,
-  supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
-  usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
-  usMiSupervisionLevelDowngrade: UsMiSupervisionLevelDowngradeOpportunity,
-  usMiClassificationReview: UsMiClassificationReviewOpportunity,
-  usMiEarlyDischarge: UsMiEarlyDischargeOpportunity,
-  usTnExpiration: UsTnExpirationOpportunity,
-  usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
-  usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingOpportunity,
-  usMiPastFTRD: UsMiPastFTRDOpportunity,
-  usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,
-  usOrEarnedDischarge: UsOrEarnedDischargeOpportunity,
-  usPaAdminSupervision: UsPaAdminSupervisionOpportunity,
-  usPaSpecialCircumstancesSupervision:
-    UsPaSpecialCircumstancesSupervisionOpportunity,
-};
-
-export const createClientOpportunity: OpportunityFactory<
-  SupervisionOpportunityType,
-  Client
-> = (type, person) => {
-  const constructor = supervisionOpportunityConstructors[type];
-  if (constructor) return new constructor(person);
 };
 
 export type TaskFactory<PersonType extends JusticeInvolvedPerson> = (
@@ -196,12 +141,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   emailAddress?: string;
 
   constructor(record: ClientRecord, rootStore: RootStore) {
-    super(
-      record,
-      rootStore,
-      createClientOpportunity,
-      createClientSupervisionTasks,
-    );
+    super(record, rootStore, createClientSupervisionTasks);
     makeObservable(this, {
       supervisionLevel: true,
       updateRecord: override,

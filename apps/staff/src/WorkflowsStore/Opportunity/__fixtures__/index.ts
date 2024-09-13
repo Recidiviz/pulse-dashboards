@@ -19,11 +19,9 @@ import { ClientRecord } from "../../../FirestoreStore";
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { JusticeInvolvedPerson } from "../../types";
 import { dateToTimestamp } from "../../utils";
+import { OpportunityType } from "..";
 import { OpportunityBase } from "../OpportunityBase";
-import { OpportunityConfig } from "../OpportunityConfigs";
 import { OpportunityConfiguration } from "../OpportunityConfigurations";
-import { OpportunityType } from "../OpportunityType/types";
-import { Opportunity } from "../types";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_xx_001",
@@ -93,4 +91,4 @@ export const mockUsXxTwoOppConfig: OpportunityConfiguration = {
 export const MOCK_OPPORTUNITY_CONFIGS = {
   [mockUsXxOpp]: mockUsXxOppConfig,
   [mockUsXxTwoOpp]: mockUsXxTwoOppConfig,
-} as unknown as Record<OpportunityType, OpportunityConfig<Opportunity>>;
+};

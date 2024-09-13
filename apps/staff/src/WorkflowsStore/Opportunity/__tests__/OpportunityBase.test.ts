@@ -30,6 +30,7 @@ import { formatDateToISO } from "../../../utils";
 import { Client } from "../../Client";
 import { DocumentSubscription, UpdateFunction } from "../../subscriptions";
 import { OTHER_KEY } from "../../utils";
+import { OpportunityType } from "..";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { FormBase } from "../Forms/FormBase";
 import {
@@ -37,7 +38,6 @@ import {
   updateOpportunityEligibility,
 } from "../OpportunityBase";
 import { OpportunityConfiguration } from "../OpportunityConfigurations";
-import { OpportunityType } from "../OpportunityType/types";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,

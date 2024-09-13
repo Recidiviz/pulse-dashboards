@@ -30,11 +30,6 @@ import { ClientRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
 import UserStore from "../../../RootStore/UserStore";
-import {
-  OpportunityType,
-  supervisionOpportunityConstructors,
-  SupervisionOpportunityType,
-} from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import {
   MOCK_OPPORTUNITY_CONFIGS,
@@ -43,6 +38,7 @@ import {
 } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { OpportunityConfiguration } from "../../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { OpportunityConfigurationStore } from "../../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { opportunityConstructors } from "../../../WorkflowsStore/Opportunity/opportunityConstructors";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
 import { getMockOpportunityConstructor } from "../../mixins/__mocks__/MockOpportunity";
@@ -95,6 +91,8 @@ beforeEach(async () => {
 
   vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   rootStore = store.insightsStore.rootStore;
+
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
 
   // JII STORE =========================================================
   rootStore.workflowsRootStore.populateJusticeInvolvedPersonsStore();
@@ -249,23 +247,13 @@ describe("Opportunity details methods", () => {
     );
 
     // OPPORTUNITIES ========================================================
-    const { opportunities } = oppConfigStore;
-    const newConfig = {
-      ...opportunities,
-      ...MOCK_OPPORTUNITY_CONFIGS,
-    };
-    supervisionOpportunityConstructors[
-      OPP_TYPE_1 as SupervisionOpportunityType
-    ] = getMockOpportunityConstructor(OPP_TYPE_1) as any;
-    supervisionOpportunityConstructors[
-      OPP_TYPE_2 as SupervisionOpportunityType
-    ] = getMockOpportunityConstructor(OPP_TYPE_2) as any;
-    vi.spyOn(oppConfigStore, "opportunities", "get").mockReturnValue(
-      newConfig as unknown as OpportunityConfigurationStore["opportunities"],
-    );
-    vi.spyOn(oppConfigStore, "enabledOpportunityTypes", "get").mockReturnValue(
-      Object.keys(newConfig) as OpportunityType[],
-    );
+    oppConfigStore.mockHydrated(MOCK_OPPORTUNITY_CONFIGS);
+    // @ts-ignore
+    opportunityConstructors[OPP_TYPE_1] =
+      getMockOpportunityConstructor(OPP_TYPE_1);
+    // @ts-ignore
+    opportunityConstructors[OPP_TYPE_2] =
+      getMockOpportunityConstructor(OPP_TYPE_2);
   });
 
   describe("when isWorkflowsEnabled is False", () => {

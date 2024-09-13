@@ -15,33 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mapValues } from "lodash";
 import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { mockOpportunityConfigs } from "../../../core/__tests__/testUtils";
 import { downloadZipFile } from "../../../core/Paperwork/utils";
 import { RootStore } from "../../../RootStore";
 import TENANTS from "../../../tenants";
-import { OPPORTUNITY_CONFIGS } from "..";
-import { OpportunityType } from "../OpportunityType/types";
+import { OpportunityType } from "../OpportunityType";
 import { OpportunityConfigurationAPI } from "./api/interface";
 import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfigurationAPIClient";
 import { OpportunityConfigurationOfflineAPIClient } from "./api/OpportunityConfigurationOfflineAPIClient";
 import { OpportunityConfiguration } from "./interfaces";
-import { LocalOpportunityConfiguration } from "./models";
 import { apiOpportunityConfigurationFactory } from "./models/CustomOpportunityConfigurations";
+
+type OpportunityConfigurations = Record<
+  OpportunityType,
+  OpportunityConfiguration
+>;
 
 export class OpportunityConfigurationStore implements Hydratable {
   apiClient: OpportunityConfigurationAPI;
-  apiOpportunityConfigurations?: Partial<
-    Record<OpportunityType, OpportunityConfiguration>
-  >;
-  localOpportunityConfigurations: Record<
-    OpportunityType,
-    OpportunityConfiguration
-  >;
+  apiOpportunityConfigurations?: OpportunityConfigurations;
   hydrator: HydratesFromSource;
 
   constructor(public rootStore: RootStore) {
@@ -61,12 +58,6 @@ export class OpportunityConfigurationStore implements Hydratable {
         await flowResult(this.populateApiOpportunityConfigurations());
       },
     });
-
-    this.localOpportunityConfigurations = mapValues(
-      OPPORTUNITY_CONFIGS,
-      (rawConfig) =>
-        new LocalOpportunityConfiguration(rawConfig, this.rootStore.userStore),
-    );
 
     makeAutoObservable(this);
 
@@ -101,14 +92,6 @@ export class OpportunityConfigurationStore implements Hydratable {
     OpportunityConfigurationAPI["opportunities"],
     void
   > {
-    if (
-      !this.rootStore.userStore.activeFeatureVariants
-        .opportunityConfigurationAPI
-    ) {
-      this.apiOpportunityConfigurations = {};
-      return;
-    }
-
     const rawConfigs = yield this.apiClient.opportunities();
 
     this.apiOpportunityConfigurations = Object.fromEntries(
@@ -120,40 +103,39 @@ export class OpportunityConfigurationStore implements Hydratable {
           this.rootStore.userStore,
         ),
       ]),
-    );
+    ) as OpportunityConfigurations;
   }
 
   get opportunities() {
-    if (
-      this.rootStore.userStore.activeFeatureVariants.opportunityConfigurationAPI
-    ) {
-      // This assertion is temporary: we'll never instantiate an opportunity
-      // that doesn't have a config, but there are a lot of places which assume
-      // the existance of a config for all OpportunityTypes
-      return (this.apiOpportunityConfigurations ?? {}) as Record<
-        OpportunityType,
-        OpportunityConfiguration
-      >;
-    } else {
-      return this.localOpportunityConfigurations;
-    }
+    return (
+      this.apiOpportunityConfigurations ?? ({} as OpportunityConfigurations)
+    );
   }
 
   async downloadBlob(throttle_ms = 250) {
+    const states = TENANTS.RECIDIVIZ.availableStateCodes.filter(
+      (t) => TENANTS[t].navigation?.workflows,
+    );
     const files = await Promise.all(
-      TENANTS.RECIDIVIZ.availableStateCodes
-        .filter((t) => TENANTS[t].navigation?.workflows)
-        .map(async (tenant, i) => {
-          await new Promise((resolve) => setTimeout(resolve, throttle_ms * i));
-          const fetched = await this.apiClient.fetchForTenantId(tenant);
-          return {
-            filename: `${tenant}.ts`,
-            fileContents: `import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
+      states.map(async (tenant, i) => {
+        await new Promise((resolve) => setTimeout(resolve, throttle_ms * i));
+        const fetched = await this.apiClient.fetchForTenantId(tenant);
+        return {
+          filename: `${tenant}.ts`,
+          fileContents: `import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
 export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse = ${JSON.stringify(fetched)}`,
-          };
-        }),
+        };
+      }),
     );
+    files.push({
+      filename: "index.ts",
+      fileContents: `${states.map((s) => `import * as ${s} from "./${s}";`).join("")}
+                      const allConfigs = {
+                      ${states.map((s) => `...${s}.mockApiOpportunityConfigurationResponse.enabledConfigs,`).join("")}
+                      };
+                      export default allConfigs`,
+    });
     downloadZipFile("configs.zip", files);
   }
 
@@ -165,14 +147,18 @@ export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfiguratio
       );
   }
 
-  mockHydrated(apiConfigs: typeof this.apiOpportunityConfigurations = {}) {
+  mockHydrated(
+    apiConfigs: Record<
+      string,
+      OpportunityConfiguration
+    > = mockOpportunityConfigs,
+  ) {
     if (!isTestEnv()) {
       throw new Error(
         "Do not call OpportunityConfigurationStore.mockHydrated() outside of tests",
       );
     }
-
-    this.apiOpportunityConfigurations = apiConfigs;
+    this.apiOpportunityConfigurations = apiConfigs as OpportunityConfigurations;
     this.hydrator.setHydrationStateOverride({ status: "hydrated" });
   }
 

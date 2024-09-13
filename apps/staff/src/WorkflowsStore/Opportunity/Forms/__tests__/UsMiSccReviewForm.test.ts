@@ -38,6 +38,7 @@ let rootStore: RootStore;
 
 function createTestUnit() {
   rootStore = new RootStore();
+  rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   rootStore.userStore = {
     activeFeatureVariants: {},
   } as UserStore;

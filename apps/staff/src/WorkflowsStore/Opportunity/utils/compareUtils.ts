@@ -17,7 +17,7 @@
 
 import { ascending, descending } from "d3-array";
 
-import { SortParamObject } from "../OpportunityConfigs";
+import { SortParam } from "../OpportunityConfigurations/interfaces/shared";
 import {
   Opportunity,
   OPPORTUNITY_STATUS_RANKED,
@@ -28,8 +28,6 @@ const RANKING_OVERRIDES = {
   reviewStatus: OPPORTUNITY_STATUS_RANKED,
   priority: PRIORITY_STATUS_RANKED,
 };
-
-type SortParam = SortParamObject<string>;
 
 /**
  * Creates a sort function that sorts two opportunities by the provided sort fields. If the sort direction is not provided, it defaults to ascending.

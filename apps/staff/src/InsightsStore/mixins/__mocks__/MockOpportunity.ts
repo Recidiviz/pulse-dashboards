@@ -22,7 +22,6 @@ import { OpportunityType } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonBase } from "../../../WorkflowsStore/JusticeInvolvedPersonBase";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { OpportunityBase } from "../../../WorkflowsStore/Opportunity/OpportunityBase";
-import { OpportunityConfiguration } from "../../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 
 /**
  * Mock Opportunity for testing Workflows functionality in Insights
@@ -35,9 +34,7 @@ export class MockOpportunity {
   ) {}
 
   get config() {
-    return MOCK_OPPORTUNITY_CONFIGS[
-      this.type
-    ] as unknown as OpportunityConfiguration;
+    return MOCK_OPPORTUNITY_CONFIGS[this.type];
   }
 
   hydrate() {

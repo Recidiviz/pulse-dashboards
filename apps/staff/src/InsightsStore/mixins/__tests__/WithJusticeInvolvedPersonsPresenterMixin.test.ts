@@ -26,15 +26,10 @@ import {
 import { ClientRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
-import {
-  JusticeInvolvedPerson,
-  OpportunityType,
-  supervisionOpportunityConstructors,
-  SupervisionOpportunityType,
-} from "../../../WorkflowsStore";
+import { JusticeInvolvedPerson } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
-import { OpportunityConfigurationStore } from "../../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { opportunityConstructors } from "../../../WorkflowsStore/Opportunity/opportunityConstructors";
 import {
   clientFixture,
   CLIENTS_OFFICERS,
@@ -93,31 +88,13 @@ beforeEach(async () => {
   }
 
   // OPPORTUNITIES ========================================================
-  const { opportunities } =
-    mockRootStore.workflowsRootStore.opportunityConfigurationStore;
-  const newConfig = {
-    ...opportunities,
-    ...MOCK_OPPORTUNITY_CONFIGS,
-  };
-  supervisionOpportunityConstructors[
-    "mockUsXxOpp" as SupervisionOpportunityType
-  ] = MockOpportunity as any;
-  supervisionOpportunityConstructors[
-    "mockUsXxOppTwo" as SupervisionOpportunityType
-  ] = MockOpportunity as any;
-  vi.spyOn(
-    mockRootStore.workflowsRootStore.opportunityConfigurationStore,
-    "opportunities",
-    "get",
-  ).mockReturnValue(
-    newConfig as unknown as OpportunityConfigurationStore["opportunities"],
+  mockRootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated(
+    MOCK_OPPORTUNITY_CONFIGS,
   );
-  vi.spyOn(
-    mockRootStore.workflowsRootStore.opportunityConfigurationStore,
-    "enabledOpportunityTypes",
-    "get",
-  ).mockReturnValue(Object.keys(newConfig) as OpportunityType[]);
-
+  // @ts-ignore
+  opportunityConstructors["mockUsXxOpp"] = MockOpportunity;
+  // @ts-ignore
+  opportunityConstructors["mockUsXxOppTwo"] = MockOpportunity;
   // PRESENTER ==============================================================
   vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
 });

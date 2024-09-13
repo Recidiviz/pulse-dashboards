@@ -19,10 +19,7 @@ import type { Timestamp } from "firebase/firestore";
 
 import { JusticeInvolvedPersonRecord, ResidentRecord } from "~datatypes";
 
-import {
-  IncarcerationOpportunityType,
-  SupervisionOpportunityType,
-} from "../../WorkflowsStore";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 import { ResidentMetadata } from ".";
 import { Milestone } from "./milestones";
 
@@ -50,9 +47,7 @@ export type SpecialConditionCode = {
 export type WorkflowsJusticeInvolvedPersonRecord =
   JusticeInvolvedPersonRecord & {
     recordId: string;
-    allEligibleOpportunities:
-      | SupervisionOpportunityType[]
-      | IncarcerationOpportunityType[];
+    allEligibleOpportunities: OpportunityType[];
   };
 
 export type ClientEmployer = {
@@ -78,7 +73,6 @@ export type ClientRecord = WorkflowsJusticeInvolvedPersonRecord & {
   lastPaymentDate?: Timestamp | string;
   specialConditions?: string[];
   boardConditions?: SpecialConditionCode[];
-  allEligibleOpportunities: SupervisionOpportunityType[];
   currentEmployers?: ClientEmployer[];
   milestones?: Milestone[];
   emailAddress?: string;
@@ -90,6 +84,5 @@ export type ClientRecord = WorkflowsJusticeInvolvedPersonRecord & {
  */
 export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
   ResidentRecord["output"] & {
-    allEligibleOpportunities: IncarcerationOpportunityType[];
     metadata: ResidentMetadata;
   };

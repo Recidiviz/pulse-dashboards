@@ -20,14 +20,10 @@ import * as Sentry from "@sentry/react";
 import { Client } from "../../../Client";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { SupervisionOpportunityType } from "../../OpportunityConfigs";
 import {
   UsCaSupervisionLevelDowngradeReferralRecord,
   usCaSupervisionLevelDowngradeSchema,
 } from "./UsCaSupervisionLevelDowngradeReferralRecord";
-
-const OPPORTUNITY_TYPE: SupervisionOpportunityType =
-  "usCaSupervisionLevelDowngrade";
 
 export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
@@ -38,7 +34,7 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   constructor(client: Client) {
     super(
       client,
-      OPPORTUNITY_TYPE,
+      "usCaSupervisionLevelDowngrade",
       client.rootStore,
       usCaSupervisionLevelDowngradeSchema.parse,
     );

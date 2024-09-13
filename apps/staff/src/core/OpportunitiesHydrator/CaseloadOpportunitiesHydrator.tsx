@@ -23,7 +23,7 @@ import React, { useEffect } from "react";
 import { isHydrated } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity/OpportunityType/types";
+import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 
 type OpportunitiesHydratorProps = {
   initial: React.ReactNode;

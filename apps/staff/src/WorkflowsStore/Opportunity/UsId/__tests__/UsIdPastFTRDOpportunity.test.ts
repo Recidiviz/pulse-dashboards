@@ -37,6 +37,7 @@ vi.mock("../../../subscriptions");
 
 function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
   root = new RootStore();
+  root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
     "pastFTRD",
   ]);
