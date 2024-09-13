@@ -60,6 +60,11 @@ beforeEach(() => {
         query: vi.fn(),
       },
     },
+    insight: {
+      getInsight: {
+        query: vi.fn(),
+      },
+    },
   };
   (createTRPCProxyClient as Mock).mockReturnValue(mockTRPCClient);
   apiClient = new APIClient(psiStore);

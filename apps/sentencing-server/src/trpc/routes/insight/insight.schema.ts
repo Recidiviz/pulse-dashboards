@@ -15,20 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "~sentencing-server/trpc/init";
-import { caseRouter } from "~sentencing-server/trpc/routes/case/case.router";
-import { insightRouter } from "~sentencing-server/trpc/routes/insight/insight.router";
-import { offenseRouter } from "~sentencing-server/trpc/routes/offense/offense.router";
-import { opportunityRouter } from "~sentencing-server/trpc/routes/opportunity/opportunity.router";
-import { staffRouter } from "~sentencing-server/trpc/routes/staff/staff.router";
+import { Gender } from "@prisma/client";
+import { z } from "zod";
 
-export const appRouter = router({
-  staff: staffRouter,
-  case: caseRouter,
-  opportunity: opportunityRouter,
-  offense: offenseRouter,
-  insight: insightRouter,
+export const getInsightSchema = z.object({
+  offenseName: z.string(),
+  gender: z.nativeEnum(Gender),
+  lsirScore: z.number(),
 });
-
-// export type definition of API
-export type AppRouter = typeof appRouter;

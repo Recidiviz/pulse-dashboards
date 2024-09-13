@@ -19,6 +19,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { captureException } from "@sentry/node";
 
 import { PRISMA_CASE_GET_ARGS } from "~sentencing-server/trpc/routes/case/constants";
+import { getInsights } from "~sentencing-server/trpc/routes/common/utils";
 
 type CaseData = Prisma.CaseGetPayload<typeof PRISMA_CASE_GET_ARGS>;
 
@@ -36,70 +37,12 @@ export async function getInsightForCase(
 
   const { id } = caseData;
 
-  const insights = await prisma.insight.findMany({
-    where: {
-      // Check that the LSIR score is larger than the start of the bucket, where the start of the bucket is not -1
-      assessmentScoreBucketStart: {
-        lte: caseData.lsirScore,
-      },
-      NOT: {
-        assessmentScoreBucketStart: {
-          equals: -1,
-        },
-      },
-      // Check that the LSIR score is smaller than the end of the bucket or that the end of the bucket is -1 (which means that there is no end)
-      OR: [
-        {
-          assessmentScoreBucketEnd: {
-            gte: caseData.lsirScore,
-          },
-        },
-        {
-          assessmentScoreBucketEnd: {
-            equals: -1,
-          },
-        },
-      ],
-      offense: {
-        name: caseData.offense.name,
-      },
-      gender: caseData.Client.gender,
-    },
-    include: {
-      offense: {
-        select: {
-          name: true,
-        },
-      },
-      rollupOffense: {
-        select: {
-          name: true,
-        },
-      },
-      rollupRecidivismSeries: {
-        select: {
-          recommendationType: true,
-          dataPoints: {
-            omit: {
-              id: true,
-              recidivismSeriesId: true,
-            },
-          },
-        },
-      },
-      dispositionData: {
-        omit: {
-          id: true,
-          insightId: true,
-        },
-      },
-    },
-    omit: {
-      id: true,
-      offenseId: true,
-      rollupOffenseId: true,
-    },
-  });
+  const insights = await getInsights(
+    caseData.offense.name,
+    caseData.Client.gender,
+    caseData.lsirScore,
+    prisma,
+  );
 
   if (!insights.length) {
     throw new Error(
