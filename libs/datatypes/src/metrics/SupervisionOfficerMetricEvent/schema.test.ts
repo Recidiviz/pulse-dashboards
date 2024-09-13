@@ -17,7 +17,7 @@
 
 import { subYears } from "date-fns";
 
-import { InsightsConfigFixture } from "../../config/InsightsConfig/fixture";
+import { InsightsConfigFixture } from "../../config/InsightsConfig/fixtures/fixture";
 import { LATEST_END_DATE } from "../utils/constants";
 import {
   rawSupervisionOfficerMetricEventFixture,

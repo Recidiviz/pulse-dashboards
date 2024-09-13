@@ -19,7 +19,7 @@ import assertNever from "assert-never";
 import { shuffle } from "lodash";
 import { ValuesType } from "utility-types";
 
-import { InsightsConfigFixture } from "../../config/InsightsConfig/fixture";
+import { InsightsConfigFixture } from "../../config/InsightsConfig/fixtures/fixture";
 import { rawMetricBenchmarksFixture } from "../MetricBenchmark/fixture";
 import {
   LOOKBACK_END_DATE_STRINGS,

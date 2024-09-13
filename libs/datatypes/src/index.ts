@@ -87,7 +87,7 @@ export * from "./people/utils/types";
 // -----------------------------------------------------------------------------
 export * from "./config/ActionStrategy/fixture";
 export * from "./config/ActionStrategy/schema";
-export * from "./config/InsightsConfig/fixture";
+export * from "./config/InsightsConfig/fixtures/fixture";
 export * from "./config/InsightsConfig/schema";
 
 // =============================================================================

@@ -21,8 +21,14 @@ import {
   ADVERSE_METRIC_IDS,
   CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
-} from "../../metrics/utils/constants";
-import { InsightsConfig } from "./schema";
+} from "../../../metrics/utils/constants";
+import { InsightsConfig } from "../schema";
+import US_CA from "./US_CA";
+import US_ID from "./US_ID";
+import US_MI from "./US_MI";
+import US_ND from "./US_ND";
+import US_PA from "./US_PA";
+import US_TN from "./US_TN";
 
 export const InsightsConfigFixture: InsightsConfig = {
   supervisionOfficerLabel: "officer",
@@ -135,3 +141,12 @@ export const InsightsConfigFixture: InsightsConfig = {
     },
   ],
 };
+
+export const getMockConfigs = () => ({
+  US_CA,
+  US_ID,
+  US_MI,
+  US_PA,
+  US_ND,
+  US_TN,
+});

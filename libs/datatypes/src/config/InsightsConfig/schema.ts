@@ -68,3 +68,4 @@ export const insightsConfigSchema = z.object({
 });
 
 export type InsightsConfig = z.infer<typeof insightsConfigSchema>;
+export type RawInsightsConfig = z.input<typeof insightsConfigSchema>;
