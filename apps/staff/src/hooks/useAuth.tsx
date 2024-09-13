@@ -52,7 +52,12 @@ const useAuth = () => {
   );
 
   useIdleTimer({
-    onIdle: () => userStore.logout?.({ returnTo: window.location.origin }),
+    onIdle: () => {
+      // TODO(#6315): Remove this check
+      if (import.meta.env.VITE_DEPLOY_ENV === "production") {
+        userStore.logout?.({ returnTo: window.location.origin });
+      }
+    },
     // Certain state policies require that users reauthenticate after 15
     // minutes of inactivity. More details at:
     // https://github.com/Recidiviz/pulse-dashboards/issues/3403#issuecomment-1569096723
