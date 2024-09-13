@@ -80,7 +80,11 @@ export class CaseDetailsPresenter implements Hydratable {
     when(
       () => isHydrated(this),
       () => {
-        this.caseDetailsForm = new CaseDetailsForm(this, this.offenses);
+        this.caseDetailsForm = new CaseDetailsForm(
+          this,
+          this.offenses,
+          this.getInsight,
+        );
         this.recommendedOpportunities =
           this.caseAttributes.recommendedOpportunities ?? [];
       },
@@ -144,6 +148,10 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.caseStore.offenses
       .slice()
       .sort((a: string, b: string) => a.localeCompare(b));
+  }
+
+  get insight() {
+    return this.caseStore.insight;
   }
 
   get communityOpportunities(): Opportunities {
@@ -316,5 +324,17 @@ export class CaseDetailsPresenter implements Hydratable {
       viewedBy: this.staffPseudoId,
       caseId: this.caseId,
     });
+  }
+
+  async getInsight(
+    offense: string,
+    lsirScore: number,
+  ): Promise<CaseStore["insight"]> {
+    const currentCase = this.caseStore.caseDetailsById[this.caseId];
+    const gender = currentCase.Client?.gender;
+    if (!gender) return;
+
+    await flowResult(this.caseStore.loadInsight(offense, gender, lsirScore));
+    return this.caseStore.insight;
   }
 }

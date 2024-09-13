@@ -49,6 +49,7 @@ export const DropdownField: React.FC<InputFieldProps> = ({
         }))}
         onChange={(value) => {
           updateDropdownInput(value);
+          element.onChange && element.onChange();
         }}
       />
       <OtherContextInputField

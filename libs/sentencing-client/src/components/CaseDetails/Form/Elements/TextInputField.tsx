@@ -70,7 +70,10 @@ export const TextInputField: React.FC<InputFieldProps> = ({
         name={element.key}
         type={element.inputType}
         value={currentValue ?? ""}
-        onChange={updateTextInput}
+        onChange={(e) => {
+          updateTextInput(e);
+          element.onChange && element.onChange();
+        }}
         disabled={element.isDisabled}
       />
       {hasValidationError && (
@@ -83,7 +86,10 @@ export const TextInputField: React.FC<InputFieldProps> = ({
     <Styled.TextArea
       placeholder={placeholder}
       value={currentValue ?? ""}
-      onChange={updateTextInput}
+      onChange={(e) => {
+        updateTextInput(e);
+        element.onChange && element.onChange();
+      }}
     />
   );
 };

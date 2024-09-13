@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+
 import * as Styled from "../../CaseDetails.styles";
 import { FormAttributes, FormFieldWithNestedList } from "../../types";
 import { CaseDetailsForm } from "../CaseDetailsForm";
@@ -24,51 +26,56 @@ import { MultiSelectField } from "./MultiSelectField";
 import { RadioSelectField } from "./RadioSelectField";
 import { TextInputField } from "./TextInputField";
 
-export const FormField = ({
-  element,
-  parentKey,
-  form,
-}: {
-  element: FormFieldWithNestedList;
-  parentKey?: keyof FormAttributes;
-  form: CaseDetailsForm;
-}) => {
-  const prevValue = form.getFormValue(element.key, parentKey);
-  const fieldProps = {
+// eslint-disable-next-line react/display-name
+export const FormField = observer(
+  ({
     element,
     parentKey,
-    prevValue,
-    updateForm: form.updateForm,
-    updateFormError: form.updateFormError,
-  };
+    form,
+  }: {
+    element: FormFieldWithNestedList;
+    parentKey?: keyof FormAttributes;
+    form: CaseDetailsForm;
+  }) => {
+    const prevValue = form.getFormValue(element.key, parentKey);
+    const fieldProps = {
+      element,
+      parentKey,
+      prevValue,
+      updateForm: form.updateForm,
+      updateFormError: form.updateFormError,
+    };
 
-  return (
-    <>
-      <Styled.InputLabel htmlFor={element.key}>
-        {element.label}
-        <span>{element.isRequired ? "Required*" : ""}</span>
-      </Styled.InputLabel>
+    return (
+      <>
+        <Styled.InputLabel htmlFor={element.key}>
+          {element.label}
+          <span>{element.isRequired ? "Required*" : ""}</span>
+        </Styled.InputLabel>
 
-      {(element.inputType === "text" || element.inputType === "number") && (
-        <TextInputField {...fieldProps} />
-      )}
-      {element.inputType === "multi-select" && (
-        <MultiSelectField {...fieldProps} />
-      )}
-      {element.inputType === "radio" && <RadioSelectField {...fieldProps} />}
-      {element.inputType === "dropdown" && <DropdownField {...fieldProps} />}
-      {element.inputType === "dropdown-multi-select" && (
-        <DropdownMultiSelectField {...fieldProps} />
-      )}
+        {(element.inputType === "text" || element.inputType === "number") && (
+          <TextInputField {...fieldProps} />
+        )}
+        {element.inputType === "multi-select" && (
+          <MultiSelectField {...fieldProps} />
+        )}
+        {element.inputType === "radio" && <RadioSelectField {...fieldProps} />}
+        {element.inputType === "dropdown" && <DropdownField {...fieldProps} />}
+        {element.inputType === "dropdown-multi-select" && (
+          <DropdownMultiSelectField {...fieldProps} />
+        )}
 
-      {element.description && (
-        <Styled.InputDescription>{element.description}</Styled.InputDescription>
-      )}
-      {element.isDisabled && (
-        <Styled.InputDescription>
-          {element.disabledMessage}
-        </Styled.InputDescription>
-      )}
-    </>
-  );
-};
+        {element.description && (
+          <Styled.InputDescription>
+            {element.description}
+          </Styled.InputDescription>
+        )}
+        {element.isDisabled && (
+          <Styled.InputDescription>
+            {element.disabledMessage}
+          </Styled.InputDescription>
+        )}
+      </>
+    );
+  },
+);

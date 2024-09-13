@@ -60,4 +60,8 @@ export class OfflineAPIClient {
   async getOffenses(): Promise<string[]> {
     return [];
   }
+
+  async getInsight(): Promise<string[]> {
+    return [];
+  }
 }

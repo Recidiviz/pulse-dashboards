@@ -85,9 +85,10 @@ export const DropdownMultiSelectField: React.FC<InputFieldProps> = ({
         }))}
         isMulti
         styles={Styled.dropdownStyles}
-        onChange={(value) =>
-          updateDropdownInput(value as MultiValue<SelectOption>)
-        }
+        onChange={(value) => {
+          updateDropdownInput(value as MultiValue<SelectOption>);
+          element.onChange && element.onChange();
+        }}
       />
       <OtherContextInputField
         {...{ element, parentKey, prevValue, updateForm }}

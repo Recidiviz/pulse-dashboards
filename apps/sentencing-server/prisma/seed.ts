@@ -106,7 +106,7 @@ async function main() {
         offense: {
           create: {
             stateCode: StateCode.US_ID,
-            name: faker.string.alpha(),
+            name: faker.string.alpha({ length: { min: 5, max: 100 } }),
           },
         },
         isVeteran: faker.datatype.boolean(),

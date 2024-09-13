@@ -1095,6 +1095,19 @@ export const MultiSelectChip = styled.div<{
   `}
 `;
 
+export const RollupOffenseCategory = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 40px;
+  margin-top: 24px;
+
+  span {
+    ${typography.Sans14}
+    color: ${palette.pine3};
+  }
+`;
+
 export const NestedWrapper = styled.div`
   margin-top: 24px;
   margin-left: 40px;

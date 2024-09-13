@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { keyBy } from "lodash";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 import { Case } from "../../../api/APIClient";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
@@ -54,14 +54,29 @@ export class CaseDetailsForm {
 
   hasError: boolean;
 
+  insight?: Awaited<ReturnType<CaseDetailsPresenter["getInsight"]>>;
+
+  getInsight?: (
+    offense: string,
+    lsirScore: number,
+  ) => ReturnType<CaseDetailsPresenter["getInsight"]>;
+
   constructor(
     private readonly caseDetailsPresenter: CaseDetailsPresenter,
     private readonly offenses: string[],
+    getInsight: (
+      offense: string,
+      lsirScore: number,
+    ) => ReturnType<CaseDetailsPresenter["getInsight"]>,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.hasError = false;
     this.content = this.createForm(caseDetailsPresenter.caseAttributes);
     this.updates = {} as FormUpdates;
+    this.insight = undefined;
+    this.getInsight = getInsight;
+
+    this.fetchInsight();
   }
 
   get caseAttributes() {
@@ -113,6 +128,21 @@ export class CaseDetailsForm {
     return transformUpdates(this.updates);
   }
 
+  async fetchInsight() {
+    const offenseName = this.content?.[OFFENSE_KEY]?.value;
+    const lsirScore = this.content?.[LSIR_SCORE_KEY]?.value;
+
+    if (this.getInsight && offenseName && lsirScore) {
+      const insight = await this.getInsight(
+        String(offenseName),
+        Number(lsirScore),
+      );
+      runInAction(() => {
+        this.insight = this.hasError ? undefined : insight;
+      });
+    }
+  }
+
   createForm(caseAttributes: Case) {
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
       const attributeValue = caseAttributes[field.key];
@@ -120,6 +150,9 @@ export class CaseDetailsForm {
         field.key === LSIR_SCORE_KEY &&
         attributeValue &&
         !isValidLsirScore(String(attributeValue));
+      const isLsirScoreOrOffenseKey =
+        field.key === OFFENSE_KEY || field.key === LSIR_SCORE_KEY;
+
       if (attributeValue === undefined && field.key !== OFFENSE_KEY) {
         return field;
       }
@@ -142,6 +175,12 @@ export class CaseDetailsForm {
             value: parseAttributeValue(nestedField.key, nestedAttributeValue),
           };
         }),
+        /** Adds `onChange` to fetch insights when the LSI-R score or offense are changed */
+        onChange: isLsirScoreOrOffenseKey
+          ? () => {
+              this.fetchInsight();
+            }
+          : undefined,
         otherContext: {
           ...field.otherContext,
           value: field.otherContext?.key

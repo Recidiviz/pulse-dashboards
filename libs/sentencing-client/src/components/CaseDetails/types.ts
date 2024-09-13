@@ -74,6 +74,7 @@ export type FormFieldBase = {
   isDisabled?: boolean;
   disabledMessage?: string;
   validationErrorMessage?: string;
+  onChange?: () => void;
 };
 
 export type FormField = FormFieldBase & {

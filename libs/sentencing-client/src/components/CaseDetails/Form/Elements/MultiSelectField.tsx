@@ -63,7 +63,10 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
               selected={
                 isDefaultNotSureYetSelected || currentValue?.includes(option)
               }
-              onClick={() => updateMultiSelect(option)}
+              onClick={() => {
+                updateMultiSelect(option);
+                element.onChange && element.onChange();
+              }}
               isNotSureYetOption={option === NOT_SURE_YET_OPTION}
             >
               {((option === NOT_SURE_YET_OPTION &&

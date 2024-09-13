@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 
 import { FlowMethod } from "~hydration-utils";
 
-import { APIClient, Case, Opportunities } from "../api/APIClient";
+import { APIClient, Case, Client, Opportunities } from "../api/APIClient";
 import { FormAttributes } from "../components/CaseDetails/types";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { PSIStore } from "./PSIStore";
@@ -33,6 +33,8 @@ export class CaseStore {
   communityOpportunities: Opportunities;
 
   offenses: string[];
+
+  insight: Case["insight"];
 
   constructor(public readonly psiStore: PSIStore) {
     makeAutoObservable(this);
@@ -107,6 +109,27 @@ export class CaseStore {
           style: { backgroundColor: palette.signal.error },
         },
       );
+    }
+  }
+
+  *loadInsight(offense: string, gender: Client["gender"], lsirScore: number) {
+    try {
+      this.insight = yield this.psiStore.apiClient.getInsight(
+        offense,
+        gender,
+        lsirScore,
+      );
+      return this.insight;
+    } catch (error) {
+      captureException(error);
+      toast(
+        "Something went wrong loading a list of offenses. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+      return error;
     }
   }
 }

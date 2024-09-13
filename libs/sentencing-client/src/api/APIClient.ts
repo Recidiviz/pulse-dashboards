@@ -153,4 +153,21 @@ export class APIClient {
 
     return fetchedData;
   }
+
+  async getInsight(
+    offense: string,
+    gender: Client["gender"],
+    lsirScore: number,
+  ) {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    const fetchedData = await this.trpcClient.insight.getInsight.query({
+      offenseName: offense,
+      gender: gender,
+      lsirScore: lsirScore,
+    });
+
+    return fetchedData;
+  }
 }
