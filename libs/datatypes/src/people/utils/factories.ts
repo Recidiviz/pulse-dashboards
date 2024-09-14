@@ -41,6 +41,7 @@ export const fullNameFactory = (sexType: "male" | "female") =>
 
 export const randId = () => faker.string.alphanumeric(6);
 export const randPseudonymizedId = () => faker.string.nanoid(16);
+export const randJiiId = () => faker.string.numeric(6);
 
 export const randDistrict = () =>
   faker.helpers.arrayElement(["REGION 1", "REGION 2", "REGION 3"]);
@@ -75,10 +76,10 @@ export const randJiiGender = () =>
   faker.helpers.weightedArrayElement([
     { weight: 30, value: "MALE" },
     { weight: 30, value: "FEMALE" },
-    { weight: 30, value: "NON_BINARY" },
-    { weight: 30, value: "TRANS" },
-    { weight: 30, value: "TRANS_FEMALE" },
-    { weight: 30, value: "TRANS_MALE" },
+    { weight: 3, value: "NON_BINARY" },
+    { weight: 3, value: "TRANS" },
+    { weight: 2, value: "TRANS_FEMALE" },
+    { weight: 2, value: "TRANS_MALE" },
     { weight: 1, value: "INTERNAL_UNKNOWN" },
     { weight: 1, value: "EXTERNAL_UNKNOWN" },
   ]);

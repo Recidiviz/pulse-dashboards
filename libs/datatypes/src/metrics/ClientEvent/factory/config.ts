@@ -15,28 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { faker } from "@faker-js/faker";
-import { each, makeFactory } from "factory.ts";
+import { FixtureFactoryConfig } from "~fixture-generator";
 
-import { nullable } from "~fixture-generator";
+import { clientEventSchema } from "../schema";
+import { rawClientEventFactory } from "./factory";
 
-import {
-  fullNameFactory,
-  randJiiBirthdate,
-  randJiiGender,
-  randJiiId,
-  randJiiRace,
-  randPseudonymizedId,
-} from "../../../people/utils/factories";
-
-const { person } = faker;
-
-export const rawClientInfoFactory = () =>
-  makeFactory({
-    clientName: each(() => fullNameFactory(person.sexType()).build()),
-    clientId: each(() => randJiiId()),
-    pseudonymizedClientId: each(() => randPseudonymizedId()),
-    raceOrEthnicity: each(() => nullable(() => randJiiRace())),
-    gender: each(() => randJiiGender()),
-    birthdate: each(() => nullable(() => randJiiBirthdate().toISOString())),
-  });
+export const rawClientEventFactoryConfig = {
+  schema: clientEventSchema,
+  factory: rawClientEventFactory,
+  defaultCount: 10,
+} as const satisfies FixtureFactoryConfig<
+  ReturnType<typeof rawClientEventFactory>
+>;

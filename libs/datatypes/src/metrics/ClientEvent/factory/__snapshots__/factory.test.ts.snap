@@ -1,0 +1,233 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for ALL in US_MI 1`] = `
+[
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "Taedium quibusdam capitulus speciosus debitis suasoria vacuus cito.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "ALL",
+  },
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "Terreo vitae tempore delicate cura ars.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "ALL",
+  },
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "Curia tam advoco.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "ALL",
+  },
+]
+`;
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for ALL in US_XX 1`] = `
+[
+  {
+    "attributes": {
+      "code": "IZEGS",
+      "description": "Cilicium optio sumptus sub bis atavus somnus exercitationem decipio.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "ALL",
+  },
+  {
+    "attributes": {
+      "code": "GVVZB",
+      "description": "Auxilium verecundia perferendis auctus demum adimpleo.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "ALL",
+  },
+  {
+    "attributes": {
+      "code": "PDZKY",
+      "description": "Vigor audax amicitia libero vigilo claro.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "ALL",
+  },
+]
+`;
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for treatment_referrals in US_MI 1`] = `
+[
+  {
+    "attributes": {
+      "code": "FELONY",
+      "description": "GENERAL SUPPORT SERVICES (IDENTIFICATION)",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "treatment_referrals",
+  },
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "GENERAL SUPPORT SERVICES (CLOTHING)",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "treatment_referrals",
+  },
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "SHELTER/RESIDENTIAL/HOUSING (TRANSITIONAL HOUSING)",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "treatment_referrals",
+  },
+]
+`;
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for treatment_referrals in US_XX 1`] = `
+[
+  {
+    "attributes": {
+      "code": "GYWSA",
+      "description": null,
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "treatment_referrals",
+  },
+  {
+    "attributes": {
+      "code": "ZXWWE",
+      "description": "Xiphias tepidus conor vito coma sto uberrime aestus utrum sulum.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "treatment_referrals",
+  },
+  {
+    "attributes": {
+      "code": "BBGOD",
+      "description": null,
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "treatment_referrals",
+  },
+]
+`;
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for violation_responses in US_MI 1`] = `
+[
+  {
+    "attributes": {
+      "code": "NON-TECHNICAL",
+      "description": "ISSUE #2 PAROLE WARRANT",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "RETURN FOR PAROLE REVOCATION PROCESS",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+  {
+    "attributes": {
+      "code": "NON-TECHNICAL",
+      "description": "ISSUE #2 PAROLE WARRANT",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+]
+`;
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for violation_responses in US_XX 1`] = `
+[
+  {
+    "attributes": {
+      "code": "JRJLH",
+      "description": "Quibusdam capitulus speciosus debitis suasoria vacuus cito civitas.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+  {
+    "attributes": {
+      "code": "UYTMK",
+      "description": "Adhaero curia tam advoco.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+  {
+    "attributes": {
+      "code": null,
+      "description": "Verto desipio vergo vehemens.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+]
+`;
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for violations in US_MI 1`] = `
+[
+  {
+    "attributes": {
+      "code": "NON-TECHNICAL",
+      "description": "Depromo tabgo cotidie causa cotidie allatus totus vitium.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violations",
+  },
+  {
+    "attributes": {
+      "code": "FELONY",
+      "description": "Bestia cilicium casus tenuis repellendus.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violations",
+  },
+  {
+    "attributes": {
+      "code": "NON-TECHNICAL",
+      "description": "Illum sunt crebro speculum creber currus.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violations",
+  },
+]
+`;
+
+exports[`function: ClientEventRawFactory > should generate realistic client event entries for violations in US_XX 1`] = `
+[
+  {
+    "attributes": {
+      "code": "NIWMH",
+      "description": "Speculum curiositas abduco statim mollitia brevis angustus inflammatio.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violations",
+  },
+  {
+    "attributes": {
+      "code": "WCTAM",
+      "description": "Tepesco tersus virgo asporto texo occaecati.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violations",
+  },
+  {
+    "attributes": {
+      "code": "LNBKH",
+      "description": "Cresco civitas confero crinis varius rem aeger tripudio.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violations",
+  },
+]
+`;

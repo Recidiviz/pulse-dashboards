@@ -15,28 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { faker } from "@faker-js/faker";
-import { each, makeFactory } from "factory.ts";
-
-import { nullable } from "~fixture-generator";
-
-import {
-  fullNameFactory,
-  randJiiBirthdate,
-  randJiiGender,
-  randJiiId,
-  randJiiRace,
-  randPseudonymizedId,
-} from "../../../people/utils/factories";
-
-const { person } = faker;
-
-export const rawClientInfoFactory = () =>
-  makeFactory({
-    clientName: each(() => fullNameFactory(person.sexType()).build()),
-    clientId: each(() => randJiiId()),
-    pseudonymizedClientId: each(() => randPseudonymizedId()),
-    raceOrEthnicity: each(() => nullable(() => randJiiRace())),
-    gender: each(() => randJiiGender()),
-    birthdate: each(() => nullable(() => randJiiBirthdate().toISOString())),
-  });
+export const VIOLATION_CODES = ["TECHNICAL", "FELONY", "NON-TECHNICAL"];
+export const VIOLATION_RESPONSE_DESCRIPTIONS = [
+  "CONTINUE PAROLE",
+  "REINSTATE PAROLE",
+  "CONTINUE PAROLE PENDING PROGRAMMING",
+  "ISSUE #2 PAROLE WARRANT",
+  "RETURN FOR PAROLE REVOCATION PROCESS",
+];
+export const TREATMENT_REFERRAL_DESCRIPTIONS = [
+  "TRANSPORTATION (PUBLIC TRANSPORTATION)",
+  "SHELTER/RESIDENTIAL/HOUSING (TRANSITIONAL HOUSING)",
+  "GENERAL SUPPORT SERVICES (CLOTHING)",
+  "GENERAL SUPPORT SERVICES (IDENTIFICATION)",
+  "EMPLOYMENT (EMPLOYMENT WORKSHOPS)",
+  "EMPLOYMENT (JOB PLACEMENTS)",
+];

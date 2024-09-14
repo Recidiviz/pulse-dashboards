@@ -15,28 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { faker } from "@faker-js/faker";
-import { each, makeFactory } from "factory.ts";
+import { each, Factory, makeFactory } from "factory.ts";
 
-import { nullable } from "~fixture-generator";
+import { RawClientEvent } from "../schema";
+import { randClientEventCodeAndDescription } from "./factories";
 
-import {
-  fullNameFactory,
-  randJiiBirthdate,
-  randJiiGender,
-  randJiiId,
-  randJiiRace,
-  randPseudonymizedId,
-} from "../../../people/utils/factories";
-
-const { person } = faker;
-
-export const rawClientInfoFactory = () =>
+export const rawClientEventFactory = (
+  eventDate: string,
+  metricId: string,
+  stateCode = "US_XX",
+): Factory<RawClientEvent> =>
   makeFactory({
-    clientName: each(() => fullNameFactory(person.sexType()).build()),
-    clientId: each(() => randJiiId()),
-    pseudonymizedClientId: each(() => randPseudonymizedId()),
-    raceOrEthnicity: each(() => nullable(() => randJiiRace())),
-    gender: each(() => randJiiGender()),
-    birthdate: each(() => nullable(() => randJiiBirthdate().toISOString())),
+    eventDate,
+    metricId,
+    attributes: each(() =>
+      randClientEventCodeAndDescription(metricId, stateCode),
+    ),
   });
