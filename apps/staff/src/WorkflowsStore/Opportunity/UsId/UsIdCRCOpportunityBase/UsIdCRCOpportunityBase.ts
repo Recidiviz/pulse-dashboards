@@ -49,6 +49,7 @@ export abstract class UsIdCRCOpportunityBase<
   tabTitle(category?: OpportunityTabGroup | undefined): OpportunityTab {
     if (category?.startsWith("GENDER")) {
       const { gender } = this.person;
+      // TODO(6314): Consider adding gender onto a base person schema once someone checks to see if it's used in `Insights`, `Workflows`, neither, or both.
       const genderMapping = {
         MALE: "Cisgender Male",
         FEMALE: "Cisgender Female",

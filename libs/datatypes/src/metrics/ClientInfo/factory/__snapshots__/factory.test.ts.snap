@@ -1,0 +1,45 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`function: ClientInfoRawFactory > should generate realistic client info entries 1`] = `
+[
+  {
+    "birthdate": 2003-11-12T00:52:56.428Z,
+    "clientId": "pdfDtIFqGCFHhpXt",
+    "displayName": "Rachel Anaïs Rodriguez",
+    "fullName": {
+      "givenNames": "Rachel",
+      "middleNames": "Anaïs",
+      "surname": "Rodriguez",
+    },
+    "gender": "TRANS",
+    "pseudonymizedClientId": "pdfDtIFqGCFHhpXt",
+    "raceOrEthnicity": "AMERICAN_INDIAN_ALASKAN_NATIVE",
+  },
+  {
+    "birthdate": null,
+    "clientId": "2VURXI9Wz4iZRbS-",
+    "displayName": "Dixie Stamm",
+    "fullName": {
+      "givenNames": "Dixie",
+      "middleNames": undefined,
+      "surname": "Stamm",
+    },
+    "gender": "TRANS_FEMALE",
+    "pseudonymizedClientId": "2VURXI9Wz4iZRbS-",
+    "raceOrEthnicity": "AMERICAN_INDIAN_ALASKAN_NATIVE",
+  },
+  {
+    "birthdate": 1982-12-28T19:16:30.387Z,
+    "clientId": "yHPjvQiFqGdyQJun",
+    "displayName": "Wilson Schamberger",
+    "fullName": {
+      "givenNames": "Wilson",
+      "middleNames": undefined,
+      "surname": "Schamberger",
+    },
+    "gender": "NON_BINARY",
+    "pseudonymizedClientId": "yHPjvQiFqGdyQJun",
+    "raceOrEthnicity": "NATIVE_HAWAIIAN_PACIFIC_ISLANDER",
+  },
+]
+`;

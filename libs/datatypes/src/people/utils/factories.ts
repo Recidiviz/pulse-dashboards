@@ -61,3 +61,36 @@ export const randStaffEmail = (
       ".testdomain.gov",
     ...(options ?? {}),
   });
+
+export const randJiiBirthdate = () =>
+  faker.date.birthdate(
+    faker.helpers.weightedArrayElement([
+      { weight: 1, value: { mode: "age", min: 18, max: 24 } },
+      { weight: 2, value: { mode: "age", min: 25, max: 40 } },
+      { weight: 1, value: { mode: "age", min: 41, max: 65 } },
+    ]),
+  );
+
+export const randJiiGender = () =>
+  faker.helpers.weightedArrayElement([
+    { weight: 30, value: "MALE" },
+    { weight: 30, value: "FEMALE" },
+    { weight: 30, value: "NON_BINARY" },
+    { weight: 30, value: "TRANS" },
+    { weight: 30, value: "TRANS_FEMALE" },
+    { weight: 30, value: "TRANS_MALE" },
+    { weight: 1, value: "INTERNAL_UNKNOWN" },
+    { weight: 1, value: "EXTERNAL_UNKNOWN" },
+  ]);
+
+export const randJiiRace = () =>
+  faker.helpers.weightedArrayElement([
+    { weight: 20, value: "AMERICAN_INDIAN_ALASKAN_NATIVE" },
+    { weight: 20, value: "ASIAN" },
+    { weight: 20, value: "BLACK" },
+    { weight: 1, value: "EXTERNAL_UNKNOWN" },
+    { weight: 1, value: "INTERNAL_UNKNOWN" },
+    { weight: 20, value: "NATIVE_HAWAIIAN_PACIFIC_ISLANDER" },
+    { weight: 20, value: "OTHER" },
+    { weight: 20, value: "WHITE" },
+  ]);
