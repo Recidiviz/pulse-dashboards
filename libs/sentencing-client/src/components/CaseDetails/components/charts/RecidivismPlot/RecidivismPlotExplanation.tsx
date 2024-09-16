@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../../api";
+import { CaseInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
 import { TextContainer } from "../components/Styles";
 import { stateCodeToStateName } from "./utils";
 
-function getRollupGenderString(rollupGender: Insight["rollupGender"]) {
+function getRollupGenderString(rollupGender: CaseInsight["rollupGender"]) {
   if (rollupGender === null) {
     return undefined;
   }
@@ -36,6 +36,14 @@ interface OffenseSpanProps {
   rollupViolentOffense: boolean | null;
 }
 
+export function getOffenseName({
+  rollupOffense,
+  rollupNcicCategory,
+  rollupCombinedOffenseCategory,
+}: Omit<OffenseSpanProps, "rollupViolentOffense">) {
+  return rollupOffense || rollupCombinedOffenseCategory || rollupNcicCategory;
+}
+
 function OffenseText({
   rollupOffense,
   rollupNcicCategory,
@@ -43,9 +51,11 @@ function OffenseText({
   rollupViolentOffense,
 }: OffenseSpanProps) {
   const offenseString =
-    rollupOffense ||
-    rollupCombinedOffenseCategory ||
-    rollupNcicCategory ||
+    getOffenseName({
+      rollupOffense,
+      rollupNcicCategory,
+      rollupCombinedOffenseCategory,
+    }) ||
     (rollupViolentOffense === true ? "violent" : null) ||
     (rollupViolentOffense === false ? "non-violent" : null);
 
@@ -58,7 +68,7 @@ function OffenseText({
 }
 
 interface RecidivismPlotExplanationProps {
-  insight: Insight;
+  insight: CaseInsight;
 }
 
 export function RecidivismPlotExplanation({

@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../../api";
+import { CaseInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
 import { TextContainer } from "../components/Styles";
 
 interface DispositionChartExplanationProps {
-  insight: Insight;
+  insight: CaseInsight;
 }
 
 export function DispositionChartExplanation({

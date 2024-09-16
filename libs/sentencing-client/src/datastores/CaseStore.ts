@@ -22,7 +22,13 @@ import toast from "react-hot-toast";
 
 import { FlowMethod } from "~hydration-utils";
 
-import { APIClient, Case, Client, Opportunities } from "../api/APIClient";
+import {
+  APIClient,
+  Case,
+  Client,
+  Insight,
+  Opportunities,
+} from "../api/APIClient";
 import { FormAttributes } from "../components/CaseDetails/types";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { PSIStore } from "./PSIStore";
@@ -34,13 +40,14 @@ export class CaseStore {
 
   offenses: string[];
 
-  insight: Case["insight"];
+  insight?: Insight;
 
   constructor(public readonly psiStore: PSIStore) {
     makeAutoObservable(this);
     this.caseDetailsById = {};
     this.communityOpportunities = [];
     this.offenses = [];
+    this.insight = undefined;
   }
 
   /** This is a MobX flow method and should be called with mobx.flowResult */

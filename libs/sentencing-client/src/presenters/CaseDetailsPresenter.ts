@@ -26,7 +26,7 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
-import { Case, Opportunities } from "../api";
+import { Case, Insight, Opportunities } from "../api";
 import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
 import { filterEligibleOpportunities } from "../components/CaseDetails/Opportunities/utils";
 import {
@@ -329,7 +329,7 @@ export class CaseDetailsPresenter implements Hydratable {
   async getInsight(
     offense: string,
     lsirScore: number,
-  ): Promise<CaseStore["insight"]> {
+  ): Promise<Insight | undefined> {
     const currentCase = this.caseStore.caseDetailsById[this.caseId];
     const gender = currentCase.Client?.gender;
     if (!gender) return;

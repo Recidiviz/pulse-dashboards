@@ -29,17 +29,19 @@ import {
   tip,
 } from "@observablehq/plot";
 
-import { Insight } from "../../../../../api";
+import { CaseInsight } from "../../../../../api";
 import { convertDecimalToPercentage } from "../../../../../utils/utils";
 import { RecommendationType, SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
 import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
-export function stateCodeToStateName(stateCode: Insight["rollupStateCode"]) {
+export function stateCodeToStateName(
+  stateCode: CaseInsight["rollupStateCode"],
+) {
   return stateCode === "US_ID" ? "Idaho" : stateCode;
 }
 
-export function getRecidivismPlotSubtitle(insight: Insight) {
+export function getRecidivismPlotSubtitle(insight: CaseInsight) {
   const {
     rollupStateCode,
     rollupGender,
@@ -83,7 +85,7 @@ export function getRecidivismPlotSubtitle(insight: Insight) {
 }
 
 const consolidateDuplicateLabels = (
-  d: Insight["rollupRecidivismSeries"][number]["dataPoints"][number],
+  d: CaseInsight["rollupRecidivismSeries"][number]["dataPoints"][number],
   uniqueEndingEventRates: Set<number>,
   recommendationType: keyof typeof RecommendationType,
 ) => {
@@ -103,7 +105,7 @@ const PLOT_HEIGHT_RATIO = 360 / 704;
 const Y_TEXT_LABEL_OFFSET = 0.00099;
 
 export function getRecidivismPlot(
-  insight: Insight,
+  insight: CaseInsight,
   selectedRecommendation: SelectedRecommendation,
   plotWidth: number,
 ) {

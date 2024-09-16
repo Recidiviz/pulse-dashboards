@@ -18,7 +18,7 @@
 import { keyBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { Case } from "../../../api/APIClient";
+import { Case, Insight } from "../../../api/APIClient";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { OnboardingFields } from "../CaseOnboarding/types";
 import {
@@ -54,20 +54,20 @@ export class CaseDetailsForm {
 
   hasError: boolean;
 
-  insight?: Awaited<ReturnType<CaseDetailsPresenter["getInsight"]>>;
+  insight?: Insight;
 
   getInsight?: (
     offense: string,
     lsirScore: number,
-  ) => ReturnType<CaseDetailsPresenter["getInsight"]>;
+  ) => Promise<Insight | undefined>;
 
   constructor(
     private readonly caseDetailsPresenter: CaseDetailsPresenter,
     private readonly offenses: string[],
-    getInsight: (
+    getInsight?: (
       offense: string,
       lsirScore: number,
-    ) => ReturnType<CaseDetailsPresenter["getInsight"]>,
+    ) => Promise<Insight | undefined>,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
     this.hasError = false;

@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 
 import * as Styled from "../../CaseDetails.styles";
+import { getOffenseName } from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
 import { LSIR_SCORE_KEY } from "../../constants";
 import { FormFieldList } from "../../types";
 import { CaseDetailsForm } from "../CaseDetailsForm";
@@ -30,6 +31,13 @@ type FormProps = {
 
 // eslint-disable-next-line react/display-name
 export const Form: React.FC<FormProps> = observer(({ form, formFields }) => {
+  const rollupOffenseName = getOffenseName({
+    rollupCombinedOffenseCategory:
+      form.insight?.rollupCombinedOffenseCategory ?? null,
+    rollupNcicCategory: form.insight?.rollupNcicCategory ?? null,
+    rollupOffense: form.insight?.rollupOffense?.name,
+  });
+
   return (
     <Styled.Form>
       {formFields.map((element) => {
@@ -56,21 +64,23 @@ export const Form: React.FC<FormProps> = observer(({ form, formFields }) => {
                 </Styled.NestedWrapper>
               ))}
 
-            {element.key === LSIR_SCORE_KEY && form.insight && (
-              <Styled.RollupOffenseCategory>
-                <Styled.InputLabel>Recidivism Cohort</Styled.InputLabel>
-                <span>{form.insight?.rollupOffense}</span>
-                <Styled.InputDescription>
-                  In order to provide recidivism rates based on a sufficient
-                  sample size, we need to broaden the group of similar cases we
-                  use to compare this case to. The new cohort may include all
-                  genders, risk scores, and/or a more general category of
-                  offense. A description of the cohort is listed above. If you
-                  think this categorization is inaccurate, reach out to
-                  Recidiviz.
-                </Styled.InputDescription>
-              </Styled.RollupOffenseCategory>
-            )}
+            {element.key === LSIR_SCORE_KEY &&
+              form.insight &&
+              rollupOffenseName !== form.insight.offense.name && (
+                <Styled.RollupOffenseCategory>
+                  <Styled.InputLabel>Recidivism Cohort</Styled.InputLabel>
+                  <span>{rollupOffenseName}</span>
+                  <Styled.InputDescription>
+                    In order to provide recidivism rates based on a sufficient
+                    sample size, we need to broaden the group of similar cases
+                    we use to compare this case to. The new cohort may include
+                    all genders, risk scores, and/or a more general category of
+                    offense. A description of the cohort is listed above. If you
+                    think this categorization is inaccurate, reach out to
+                    Recidiviz.
+                  </Styled.InputDescription>
+                </Styled.RollupOffenseCategory>
+              )}
           </Styled.InputWrapper>
         );
       })}

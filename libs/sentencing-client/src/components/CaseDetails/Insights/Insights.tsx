@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../api/APIClient";
+import { CaseInsight } from "../../../api/APIClient";
 import PlusIcon from "../../assets/plus-icon.svg?react";
 import DraggableScrollContainer from "../../DraggableScrollContainer/DraggableScrollContainer";
 import * as Styled from "../CaseDetails.styles";
@@ -25,7 +25,7 @@ import { SelectedRecommendation } from "../types";
 
 export interface InsightsProps {
   selectedRecommendation: SelectedRecommendation;
-  insight?: Insight;
+  insight?: CaseInsight;
   fullName?: string;
   lsirScore?: number | null;
   openEditCaseDetailsModal: () => void;

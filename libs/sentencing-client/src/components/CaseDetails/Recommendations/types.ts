@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case, Client, Insight } from "../../../api";
+import { Case, CaseInsight, Client } from "../../../api";
 import { CreateOrUpdateRecommendation } from "../../../datastores/types";
 import {
   OpportunitiesIdentifier,
@@ -32,7 +32,7 @@ export type RecommendationsProps = {
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
   needs: Case["needsToBeAddressed"];
-  insight?: Insight;
+  insight?: CaseInsight;
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => void;

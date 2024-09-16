@@ -19,7 +19,7 @@ import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import generatePDF from "react-to-pdf";
 
-import { Case, Client, Insight } from "../../../api";
+import { Case, CaseInsight, Client } from "../../../api";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import CheckWhiteIcon from "../../assets/check-white-icon.svg?react";
 import CopyIcon from "../../assets/copy-icon.svg?react";
@@ -36,7 +36,7 @@ const TOAST_TIMEOUT = 3000;
 type SummaryReportProps = {
   firstName?: string;
   fullName?: string;
-  insight?: Insight;
+  insight?: CaseInsight;
   externalId: string;
   selectedRecommendation: SelectedRecommendation;
   needs: Case["needsToBeAddressed"];

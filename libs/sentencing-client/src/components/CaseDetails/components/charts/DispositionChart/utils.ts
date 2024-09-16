@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../../api";
+import { CaseInsight } from "../../../../../api";
 import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
-export function getDispositionChartSubtitle(insight: Insight) {
+export function getDispositionChartSubtitle(insight: CaseInsight) {
   const {
     gender,
     assessmentScoreBucketStart,

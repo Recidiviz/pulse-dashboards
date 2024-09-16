@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../../api";
+import { CaseInsight } from "../../../../../api";
 import { convertDecimalToPercentage } from "../../../../../utils/utils";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
 import { SelectedRecommendation } from "../../../types";
@@ -39,7 +39,7 @@ const getChartCircleHeight = (percentage: number, scale = 1) => {
 };
 
 interface DispositionChartProps {
-  insight?: Insight;
+  insight?: CaseInsight;
   selectedRecommendation: SelectedRecommendation;
   justifyContent?: "center" | "flex-start";
   scale?: number;

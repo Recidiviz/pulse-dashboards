@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Insight } from "../../../../../api";
+import { CaseInsight } from "../../../../../api";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
 import { SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
@@ -28,7 +28,7 @@ import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
 const DEFAULT_PLOT_WIDTH = 704;
 
 interface RecidivismPlotProps {
-  insight?: Insight;
+  insight?: CaseInsight;
   selectedRecommendation: SelectedRecommendation;
   plotWidth?: number;
   hideInfoTooltip?: boolean;

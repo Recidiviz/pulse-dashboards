@@ -17,7 +17,7 @@
 
 import moment from "moment";
 
-import { Insight } from "../../../../api";
+import { CaseInsight } from "../../../../api";
 import RecidivizLogo from "../../../assets/recidiviz-logo.png";
 import { SelectedRecommendation } from "../../../CaseDetails/types";
 import { DispositionChart } from "../../components/charts/DispositionChart/DispositionChart";
@@ -32,7 +32,7 @@ interface ReportProps {
   fullName?: string;
   externalId: string;
   selectedRecommendation: SelectedRecommendation;
-  insight?: Insight;
+  insight?: CaseInsight;
 }
 
 function Header() {

@@ -17,10 +17,10 @@
 
 import _ from "lodash";
 
-import { Insight } from "../../../../../api/APIClient";
+import { CaseInsight } from "../../../../../api/APIClient";
 import { GenderToDisplayName } from "../../../constants";
 
-export function getDescriptionGender(rollupGender: Insight["gender"]) {
+export function getDescriptionGender(rollupGender: CaseInsight["gender"]) {
   let genderString;
   if (GenderToDisplayName[rollupGender] === GenderToDisplayName.MALE) {
     genderString = "men";
@@ -45,7 +45,7 @@ export function getDescriptionGender(rollupGender: Insight["gender"]) {
   return ` ${genderString}`;
 }
 
-export function getSubtitleGender(gender: Insight["rollupGender"]) {
+export function getSubtitleGender(gender: CaseInsight["rollupGender"]) {
   return gender
     ? `${_.chain(gender).lowerCase().startCase().value()}s`
     : undefined;
