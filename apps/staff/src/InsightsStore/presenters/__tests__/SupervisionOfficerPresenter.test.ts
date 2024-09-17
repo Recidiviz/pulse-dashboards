@@ -61,6 +61,9 @@ beforeEach(() => {
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
     () => false,
   );
+  vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
+    () => "US_ID",
+  );
 
   rootStore = new RootStore();
   rootStore.tenantStore.currentTenantId = stateCode;

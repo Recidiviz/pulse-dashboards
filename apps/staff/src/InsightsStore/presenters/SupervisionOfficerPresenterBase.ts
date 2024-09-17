@@ -32,7 +32,7 @@ import {
 import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
-import { ConfigLabels, OutlierOfficerData } from "./types";
+import { ActionStrategyCopy, ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
 export abstract class SupervisionOfficerPresenterBase<
@@ -64,6 +64,7 @@ export abstract class SupervisionOfficerPresenterBase<
       | "expectSupervisorPopulated"
       | "expectOutlierDataPopulated"
       | "isOfficerPopulated"
+      | "expectActionStrategiesPopulated"
       | "populateSupervisionOfficer"
     >(
       this,
@@ -86,10 +87,14 @@ export abstract class SupervisionOfficerPresenterBase<
         labels: true,
         timePeriod: true,
         areCaseloadCategoryBreakdownsEnabled: true,
+        actionStrategyCopy: true,
+        setUserHasSeenActionStrategy: true,
+        disableSurfaceActionStrategies: true,
         expectOfficerPopulated: true,
         expectSupervisorPopulated: true,
         expectOutlierDataPopulated: true,
         isOfficerPopulated: true,
+        expectActionStrategiesPopulated: true,
         populateSupervisionOfficer: true,
         hydrate: true,
         hydrationState: true,
@@ -109,6 +114,7 @@ export abstract class SupervisionOfficerPresenterBase<
       flowResult(this.supervisionStore.populateMetricConfigs()),
       flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
       flowResult(this.populateSupervisionOfficer()),
+      flowResult(this.supervisionStore.populateActionStrategies()),
     ];
   }
 
@@ -227,6 +233,33 @@ export abstract class SupervisionOfficerPresenterBase<
     return this.supervisionStore.areCaseloadCategoryBreakdownsEnabled;
   }
 
+  /**
+   * Passthrough to supervisionStore.
+   * Provides the Action Strategy copy with prompt and body text
+   * @returns an ActionStrategyCopy object
+   */
+  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+    return this.supervisionStore.getActionStrategyCopy(this.officerPseudoId);
+  }
+
+  /**
+   * Passthrough to supervisionStore.
+   * Disables Action Strategies so that the banner is not seen
+   * again in the current session
+   */
+  disableSurfaceActionStrategies(): void {
+    this.supervisionStore.disableSurfaceActionStrategies();
+  }
+
+  /**
+   * Passthrough to supervisionStore.
+   * When the user has seen an Action Strategy banner,
+   * use this to notify the BE of the new surfaced event
+   */
+  setUserHasSeenActionStrategy(): void {
+    this.supervisionStore.setUserHasSeenActionStrategy(this.officerPseudoId);
+  }
+
   private expectOfficerPopulated() {
     if (!this.officerRecord) throw new Error("Failed to populate officer data");
   }
@@ -242,6 +275,15 @@ export abstract class SupervisionOfficerPresenterBase<
 
   protected get isOfficerPopulated() {
     return !(this.outlierDataOrError instanceof Error);
+  }
+
+  /**
+   * Asserts that metrics have been populated.
+   * @throws An error if Action Strategies are not populated.
+   */
+  private expectActionStrategiesPopulated() {
+    if (this.supervisionStore.actionStrategies === undefined)
+      throw new Error("Failed to populate action strategies");
   }
 
   protected abstract populateSupervisionOfficer(): FlowMethod<

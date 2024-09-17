@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable, override } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { MetricConfig, SupervisionOfficer } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
@@ -23,7 +23,6 @@ import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
-import { ActionStrategyCopy } from "./types";
 
 export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresenterBase<SupervisionOfficer> {
   constructor(
@@ -44,17 +43,12 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
       ctaText: true,
       isInsightsLanternState: true,
       populateSupervisionOfficer: override,
-      disableSurfaceActionStrategies: true,
-      setUserHasSeenActionStrategy: true,
     });
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: this.expectPopulated,
       populate: async () => {
-        await Promise.all([
-          ...this.populateMethods,
-          flowResult(this.supervisionStore?.populateActionStrategies()),
-        ]);
+        await Promise.all([...this.populateMethods]);
       },
     });
   }
@@ -125,17 +119,5 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
       yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
         this.officerPseudoId,
       );
-  }
-
-  get actionStrategyCopy(): ActionStrategyCopy | undefined {
-    return this.supervisionStore.getActionStrategyCopy(this.officerPseudoId);
-  }
-
-  disableSurfaceActionStrategies(): void {
-    this.supervisionStore.disableSurfaceActionStrategies();
-  }
-
-  setUserHasSeenActionStrategy(): void {
-    this.supervisionStore.setUserHasSeenActionStrategy(this.officerPseudoId);
   }
 }

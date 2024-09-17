@@ -41,11 +41,17 @@ type InsightsActionStrategyBannerType = {
   actionStrategy: ActionStrategyCopy;
   bannerViewedCallback: () => void;
   disableBannerCallback: () => void;
+  supervisorHomepage?: boolean;
 };
 
 const InsightsActionStrategyBanner: React.FC<
   InsightsActionStrategyBannerType
-> = ({ actionStrategy, bannerViewedCallback, disableBannerCallback }) => {
+> = ({
+  actionStrategy,
+  bannerViewedCallback,
+  disableBannerCallback,
+  supervisorHomepage = false,
+}) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   const openModal = () => {
@@ -71,7 +77,8 @@ const InsightsActionStrategyBanner: React.FC<
   return (
     <Banner
       style={{
-        width: "66%",
+        width: supervisorHomepage ? "100%" : "66%",
+        border: `1px solid ${palette.slate10}`,
       }}
     >
       <BannerText>{actionStrategy.prompt}</BannerText>
@@ -82,6 +89,7 @@ const InsightsActionStrategyBanner: React.FC<
         isOpen={modalIsOpen}
         onBackClick={closeModal}
         actionStrategy={actionStrategy}
+        supervisorHomepage={supervisorHomepage}
       />
     </Banner>
   );

@@ -28,6 +28,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
 import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
+import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsPageLayout from "../InsightsPageLayout";
 import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
@@ -70,6 +71,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     numEligibleOpportunities,
     opportunitiesByType,
     opportunityTypes,
+    actionStrategyCopy,
+    setUserHasSeenActionStrategy,
+    disableSurfaceActionStrategies,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -128,35 +132,45 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       }
     >
       {outlierOfficerData?.outlierMetrics?.length ? (
-        <Wrapper isTablet={isTablet}>
-          {outlierOfficerData.outlierMetrics.map((metric) => {
-            const { bodyDisplayName } = metric.config;
+        <>
+          {actionStrategyCopy && (
+            <InsightsActionStrategyBanner
+              actionStrategy={actionStrategyCopy}
+              bannerViewedCallback={setUserHasSeenActionStrategy}
+              disableBannerCallback={disableSurfaceActionStrategies}
+              supervisorHomepage
+            />
+          )}
+          <Wrapper isTablet={isTablet}>
+            {outlierOfficerData.outlierMetrics.map((metric) => {
+              const { bodyDisplayName } = metric.config;
 
-            return (
-              <InsightsChartCard
-                key={metric.metricId}
-                url={insightsUrl("supervisionStaffMetric", {
-                  officerPseudoId,
-                  metricId: metric.metricId,
-                })}
-                title={toTitleCase(bodyDisplayName)}
-                subtitle={timePeriod}
-                rate={formatTargetAndHighlight(
-                  metric.currentPeriodData.metricRate,
-                )}
-                supervisorHomepage
-              >
-                <InsightsSwarmPlotContainerV2
-                  metric={metric}
-                  officersForMetric={[
-                    outlierOfficerData as OutlierOfficerData<SupervisionOfficer>,
-                  ]}
-                  isMinimized
-                />
-              </InsightsChartCard>
-            );
-          })}
-        </Wrapper>
+              return (
+                <InsightsChartCard
+                  key={metric.metricId}
+                  url={insightsUrl("supervisionStaffMetric", {
+                    officerPseudoId,
+                    metricId: metric.metricId,
+                  })}
+                  title={toTitleCase(bodyDisplayName)}
+                  subtitle={timePeriod}
+                  rate={formatTargetAndHighlight(
+                    metric.currentPeriodData.metricRate,
+                  )}
+                  supervisorHomepage
+                >
+                  <InsightsSwarmPlotContainerV2
+                    metric={metric}
+                    officersForMetric={[
+                      outlierOfficerData as OutlierOfficerData<SupervisionOfficer>,
+                    ]}
+                    isMinimized
+                  />
+                </InsightsChartCard>
+              );
+            })}
+          </Wrapper>
+        </>
       ) : (
         <EmptyCard message={labels.officerHasNoOutlierMetricsLabel} />
       )}

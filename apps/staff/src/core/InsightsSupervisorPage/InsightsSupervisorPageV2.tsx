@@ -26,6 +26,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
 import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
 import { pluralize, toTitleCase } from "../../utils";
+import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
   Body,
@@ -75,6 +76,9 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     isWorkflowsEnabled,
     opportunitiesDetails,
     outlierOfficersByMetricAndCaseloadCategory,
+    actionStrategyCopy,
+    setUserHasSeenActionStrategy,
+    disableSurfaceActionStrategies,
   } = presenter;
 
   const tooltipContents = (
@@ -172,6 +176,14 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         )
       }
     >
+      {actionStrategyCopy && (
+        <InsightsActionStrategyBanner
+          actionStrategy={actionStrategyCopy}
+          bannerViewedCallback={setUserHasSeenActionStrategy}
+          disableBannerCallback={disableSurfaceActionStrategies}
+          supervisorHomepage
+        />
+      )}
       <Wrapper isLaptop={isLaptop} supervisorHomepage>
         <Body>
           <InsightsStaffCardV2

@@ -37,6 +37,7 @@ import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPer
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import {
+  ActionStrategyCopy,
   ByMetricAndCategory2DMap,
   ConfigLabels,
   MetricAndOutliersInfo,
@@ -83,6 +84,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       | "expectExcludedOfficersPopulated"
       | "expectSupervisorPopulated"
       | "expectOutlierDataPopulated"
+      | "expectActionStrategiesPopulated"
       | "populateCaseload"
       | "hydrator"
       | "hydrationState"
@@ -94,6 +96,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         expectExcludedOfficersPopulated: true,
         expectOfficersWithOutliersPopulated: true,
         expectMetricsPopulated: true,
+        expectActionStrategiesPopulated: true,
         supervisorPseudoId: true,
         outlierOfficersData: computed,
         supervisorInfo: computed,
@@ -119,6 +122,9 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         opportunitiesDetails: true,
         processOfficersAndOpportunities: true,
         buildOpportunitiesDetails: true,
+        actionStrategyCopy: true,
+        disableSurfaceActionStrategies: true,
+        setUserHasSeenActionStrategy: true,
       },
       { autoBind: true },
     );
@@ -155,6 +161,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         ),
       ),
       flowResult(this.populateOpportunityConfigurationStore()),
+      flowResult(this.supervisionStore.populateActionStrategies()),
     ];
   }
 
@@ -173,6 +180,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         this.expectClientsForOfficersPopulated(
           this.allOfficers.map((o) => o.externalId),
         ),
+      this.expectActionStrategiesPopulated,
     ];
   }
 
@@ -405,6 +413,37 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   }
 
   // ==============================
+  // Action Strategies
+  // ==============================
+
+  /**
+   * Passthrough to supervisionStore.
+   * Provides the Action Strategy copy with prompt and body text
+   * @returns an ActionStrategyCopy object
+   */
+  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+    return this.supervisionStore.getActionStrategyCopy(this.supervisorPseudoId);
+  }
+
+  /**
+   * Passthrough to supervisionStore.
+   * Disables Action Strategies so that the banner is not seen
+   * again in the current session
+   */
+  disableSurfaceActionStrategies(): void {
+    this.supervisionStore.disableSurfaceActionStrategies();
+  }
+
+  /**
+   * Passthrough to supervisionStore.
+   * When the user has seen an Action Strategy banner,
+   * use this to notify the BE of the new surfaced event
+   */
+  setUserHasSeenActionStrategy(): void {
+    this.supervisionStore.setUserHasSeenActionStrategy(this.supervisorPseudoId);
+  }
+
+  // ==============================
   // User and Supervisor Context
   // ==============================
 
@@ -584,6 +623,15 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    */
   private expectOutlierDataPopulated() {
     if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
+  }
+
+  /**
+   * Asserts that metrics have been populated.
+   * @throws An error if Action Strategies are not populated.
+   */
+  private expectActionStrategiesPopulated() {
+    if (this.supervisionStore.actionStrategies === undefined)
+      throw new Error("Failed to populate action strategies");
   }
 
   /**

@@ -83,6 +83,10 @@ beforeEach(async () => {
     () => false,
   );
 
+  vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
+    () => "US_ID",
+  );
+
   // SUPERVISION STORE =================================================
   store = new InsightsSupervisionStore(
     new InsightsStore(new RootStore()),

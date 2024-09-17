@@ -27,15 +27,46 @@ import { rem } from "polished";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import { ActionStrategyCopy } from "../../InsightsStore/presenters/types";
 import LanternLogo from "../LanternLogo";
 
-export const StyledDrawerModal = styled(DrawerModal)`
-  .ReactModal__Content {
-    display: flex;
-    flex-direction: column;
-    height: 85% !important;
-  }
+export const StyledDrawerModal = styled(DrawerModal)<{
+  isMobile: boolean;
+  supervisorHomepage: boolean;
+}>`
+  ${({ supervisorHomepage }) =>
+    supervisorHomepage
+      ? `.ReactModal__Overlay {
+        background-color: unset;
+        backdrop-filter: unset;
+      }
+
+      .ReactModal__Content {
+        height: 100vh !important;
+        right: 0 !important;
+        border-radius: unset !important;
+        box-shadow: unset !important;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid ${palette.slate20};
+      }`
+      : `.ReactModal__Content {
+        display: flex;
+        flex-direction: column;
+        height: 85% !important;
+      }`}
+
+  ${({ supervisorHomepage, isMobile }) =>
+    supervisorHomepage &&
+    isMobile &&
+    `.ReactModal__Content {
+        max-width: unset !important;
+        max-height: unset !important;
+        width: 100% !important;
+        height: 100% !important;
+        border: unset !important;
+      }`}
 `;
 
 const ModalControls = styled.div`
@@ -100,15 +131,24 @@ type PreviewModalProps = {
   isOpen: boolean;
   onBackClick?: () => void;
   actionStrategy: ActionStrategyCopy;
+  supervisorHomepage: boolean;
 };
 
 export function InsightsActionStrategyModal({
   isOpen,
   onBackClick,
   actionStrategy,
+  supervisorHomepage,
 }: PreviewModalProps): JSX.Element {
+  const { isMobile } = useIsMobile(true);
+
   return (
-    <StyledDrawerModal isOpen={isOpen} onRequestClose={onBackClick}>
+    <StyledDrawerModal
+      isOpen={isOpen}
+      onRequestClose={onBackClick}
+      supervisorHomepage={supervisorHomepage}
+      isMobile={isMobile}
+    >
       <ModalControls>
         <Button
           className="InsightsActionStrategyModal__close"
