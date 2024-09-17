@@ -45,6 +45,7 @@ export const staffRouter = router({
               status: true,
               Client: {
                 select: {
+                  externalId: true,
                   fullName: true,
                 },
               },

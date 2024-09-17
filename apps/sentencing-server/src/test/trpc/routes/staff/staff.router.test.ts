@@ -46,7 +46,7 @@ describe("staff router", () => {
               "status",
               "offense",
             ]),
-            Client: _.pick(fakeClient, ["fullName"]),
+            Client: _.pick(fakeClient, ["fullName", "externalId"]),
           },
         ],
       });

@@ -42,6 +42,7 @@ export const PRISMA_CASE_GET_ARGS = {
         gender: true,
         county: true,
         birthDate: true,
+        externalId: true,
       },
     },
   },

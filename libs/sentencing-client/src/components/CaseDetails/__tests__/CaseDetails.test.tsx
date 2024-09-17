@@ -32,7 +32,8 @@ let psiStore: PSIStore;
 let presenter: CaseDetailsPresenter;
 const mockCase = Object.values(CaseDetailsFixture)[0];
 const caseId = mockCase.id;
-const caseExternalId = mockCase.externalId;
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const clientExternalId = mockCase.Client!.externalId;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -44,9 +45,7 @@ beforeEach(() => {
     StaffInfoFixture,
   );
   vi.spyOn(psiStore.caseStore, "loadCaseDetails");
-  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(
-    CaseDetailsFixture[caseId],
-  );
+  vi.spyOn(psiStore.apiClient, "getCaseDetails").mockResolvedValue(mockCase);
 });
 
 afterEach(() => {
@@ -113,7 +112,7 @@ test("display case details page", async () => {
   const opportunities = await screen.getByText(
     `Opportunities for ${fullName.split(" ")[0]}`,
   );
-  const caseIdNode = await screen.getByText(caseExternalId);
+  const caseIdNode = await screen.getByText(clientExternalId);
 
   expect(backToDashboard).toBeInTheDocument();
   expect(clientName).toBeInTheDocument();

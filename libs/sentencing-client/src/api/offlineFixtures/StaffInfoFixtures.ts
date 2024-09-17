@@ -29,6 +29,7 @@ export const StaffInfoFixture: Staff = {
       externalId: "198374019",
       Client: {
         fullName: "Blanda Furman",
+        externalId: "70478174",
       },
       dueDate: new Date("2025-01-19T13:52:20.338Z"),
       reportType: "FullPSI",
@@ -40,6 +41,7 @@ export const StaffInfoFixture: Staff = {
       externalId: "198374019",
       Client: {
         fullName: "Xavier Smith",
+        externalId: "93012938",
       },
       dueDate: new Date("2024-11-01T13:52:20.338Z"),
       reportType: "FileReview",
@@ -51,6 +53,7 @@ export const StaffInfoFixture: Staff = {
       externalId: "198374019",
       Client: {
         fullName: "Anne Teak",
+        externalId: "98302183",
       },
       dueDate: new Date("2023-01-11T13:52:20.338Z"),
       reportType: "FileReviewWithUpdatedLSIRScore",
@@ -62,6 +65,7 @@ export const StaffInfoFixture: Staff = {
       externalId: "198374019",
       Client: {
         fullName: "Bob Thornburg",
+        externalId: "89721399",
       },
       dueDate: new Date("2025-01-11T13:52:20.338Z"),
       reportType: "FileReviewWithUpdatedLSIRScore",

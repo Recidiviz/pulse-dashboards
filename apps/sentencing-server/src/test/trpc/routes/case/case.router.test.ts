@@ -51,6 +51,7 @@ describe("case router", () => {
             "gender",
             "county",
             "birthDate",
+            "externalId",
           ]),
           // Should return an insight object
           insight: expect.objectContaining({

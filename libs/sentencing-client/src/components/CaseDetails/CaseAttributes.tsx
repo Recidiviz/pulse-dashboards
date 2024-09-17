@@ -43,17 +43,10 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
   }) {
     const { trackEditCaseDetailsClicked } = analytics;
 
-    const {
-      externalId,
-      dueDate,
-      reportType,
-      county,
-      offense,
-      lsirScore,
-      Client,
-    } = caseAttributes;
+    const { dueDate, reportType, county, offense, lsirScore, Client } =
+      caseAttributes;
 
-    const { birthDate, fullName, gender } = Client || {};
+    const { birthDate, fullName, gender, externalId } = Client || {};
 
     const attributesRow: AttributeLabelValue[] = [
       {

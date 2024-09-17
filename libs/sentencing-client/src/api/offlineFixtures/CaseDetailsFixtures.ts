@@ -58,6 +58,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       gender: "EXTERNAL_UNKNOWN",
       county: "Gwynedd County",
       birthDate: new Date("1990-11-13T21:37:16.551Z"),
+      externalId: "70478174",
     },
     insight: {
       stateCode: "US_ID",
