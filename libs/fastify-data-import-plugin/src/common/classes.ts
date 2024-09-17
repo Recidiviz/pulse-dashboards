@@ -61,7 +61,7 @@ export abstract class ImportRoutesHandlerBase {
    */
   abstract getDataFromGCS(
     objectIdentifier: GcsObjectIdentifier,
-  ): Promise<unknown[]>;
+  ): AsyncGenerator<unknown>;
 
   /**
    * Schedules the import of data from GCS for the provided object identifier.
@@ -208,8 +208,10 @@ export abstract class ImportRoutesHandlerBase {
         }
 
         try {
-          const data = await this.getDataFromGCS({ bucketId, objectId });
-          await etlHelper(stateCode, data);
+          await etlHelper(
+            stateCode,
+            this.getDataFromGCS({ bucketId, objectId }),
+          );
         } catch (e) {
           res.status(500);
 

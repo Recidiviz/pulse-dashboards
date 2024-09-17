@@ -131,7 +131,7 @@ describe("handle_import", () => {
       ]);
     });
 
-    test("should throw an error if old cases aren't listed and abort update", async () => {
+    test("should capture an exception if old cases aren't listed", async () => {
       dataProviderSingleton.setData([
         // New case
         {
@@ -152,23 +152,27 @@ describe("handle_import", () => {
 
       const response = await callHandleImportCaseData(testServer);
 
-      expect(response.statusCode).toBe(500);
+      expect(response.statusCode).toBe(200);
       const sentryReports = await testAndGetSentryReports();
       expect(sentryReports[0].error?.message).toContain(
-        "Error importing object US_ID/sentencing_case_record.json from bucket test-bucket: Error when importing cases! These cases exist in the database but are missing from the data import:",
+        "Error when importing cases! These cases exist in the database but are missing from the data import:",
       );
 
       // Check that the new case was created
       const dbCases = await prismaClient.case.findMany();
 
       // Only the old case should be there
-      expect(dbCases).toHaveLength(1);
+      expect(dbCases).toHaveLength(2);
 
-      const oldCase = dbCases[0];
-      expect(oldCase).toEqual(
-        expect.objectContaining({
-          externalId: fakeCase.externalId,
-        }),
+      expect(dbCases).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            externalId: fakeCase.externalId,
+          }),
+          expect.objectContaining({
+            externalId: "new-case-ext-id",
+          }),
+        ]),
       );
     });
 

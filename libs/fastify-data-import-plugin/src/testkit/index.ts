@@ -48,8 +48,10 @@ export class MockImportRoutesHandler extends ImportRoutesHandlerBase {
     return;
   }
 
-  override async getDataFromGCS() {
-    return dataProviderSingleton.data;
+  override async *getDataFromGCS() {
+    for (const datum of dataProviderSingleton.data) {
+      yield datum;
+    }
   }
 
   // Always schedule the task

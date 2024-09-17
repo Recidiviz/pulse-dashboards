@@ -72,108 +72,100 @@ const reportType = z.enum([
   "PSI File Review w/LSI Assigned",
 ]);
 
-export const caseImportSchema = z.array(
-  z.object({
+export const caseImportSchema = z.object({
+  external_id: z.string(),
+  state_code: stateCode,
+  staff_id: z.string(),
+  client_id: z.string(),
+  due_date: z.coerce.date().optional(),
+  completion_date: z.coerce.date().optional(),
+  sentence_date: z.coerce.date(),
+  assigned_date: z.coerce.date(),
+  county: z.string(),
+  lsir_score: z.coerce.number().optional(),
+  lsir_level: z.string().optional(),
+  report_type: reportType.optional(),
+});
+
+export const clientImportSchema = z
+  .object({
     external_id: z.string(),
+    pseudonymized_id: z.string(),
+    case_ids: caseIdsSchema,
     state_code: stateCode,
-    staff_id: z.string(),
-    client_id: z.string(),
-    due_date: z.coerce.date().optional(),
-    completion_date: z.coerce.date().optional(),
-    sentence_date: z.coerce.date(),
-    assigned_date: z.coerce.date(),
-    county: z.string(),
-    lsir_score: z.coerce.number().optional(),
-    lsir_level: z.string().optional(),
-    report_type: reportType.optional(),
-  }),
-);
+    full_name: nameSchema,
+    gender: gender,
+    county: z.string().optional(),
+    birth_date: z.coerce.date(),
+  })
+  .transform((data) => {
+    // Spread the full_name object into the root object
+    return {
+      ...data,
+      full_name: fullNameObjectToString(data.full_name),
+    };
+  });
 
-export const clientImportSchema = z.array(
-  z
-    .object({
-      external_id: z.string(),
-      pseudonymized_id: z.string(),
-      case_ids: caseIdsSchema,
-      state_code: stateCode,
-      full_name: nameSchema,
-      gender: gender,
-      county: z.string().optional(),
-      birth_date: z.coerce.date(),
-    })
-    .transform((data) => {
-      // Spread the full_name object into the root object
-      return {
-        ...data,
-        full_name: fullNameObjectToString(data.full_name),
-      };
-    }),
-);
-
-export const staffImportSchema = z.array(
-  z
-    .object({
-      external_id: z.string(),
-      pseudonymized_id: z.string(),
-      case_ids: caseIdsSchema,
-      state_code: stateCode,
-      full_name: nameSchema,
-      email: z.string(),
-    })
-    .transform((data) => {
-      // Spread the full_name object into the root object
-      return {
-        ...data,
-        full_name: fullNameObjectToString(data.full_name),
-      };
-    }),
-);
+export const staffImportSchema = z
+  .object({
+    external_id: z.string(),
+    pseudonymized_id: z.string(),
+    case_ids: caseIdsSchema,
+    state_code: stateCode,
+    full_name: nameSchema,
+    email: z.string(),
+  })
+  .transform((data) => {
+    // Spread the full_name object into the root object
+    return {
+      ...data,
+      full_name: fullNameObjectToString(data.full_name),
+    };
+  });
 
 const opportunityGender = z
   .enum(["Women", "Men"])
   .transform((v) => (v === "Women" ? Gender.FEMALE : Gender.MALE));
 
-export const opportunityImportSchema = z.array(
-  z.object({
-    OpportunityName: z.string(),
-    Description: z.string().optional(),
-    ProviderName: z
-      .string()
-      .optional()
-      // If providerName is null, we should default to OPPORTUNITY_UNKNOWN_PROVIDER_NAME
-      .transform((v) => v ?? OPPORTUNITY_UNKNOWN_PROVIDER_NAME),
-    CleanedProviderPhoneNumber: z.string().optional(),
-    ProviderWebsite: z.string().optional(),
-    ProviderAddress: z.string().optional(),
-    // Integers are being converted to strings for some reason
-    CapacityTotal: z.coerce.number().optional(),
-    // Integers are being converted to strings for some reason
-    CapacityAvailable: z.coerce.number().optional(),
-    NeedsAddressed: needsAddressed,
-    developmentalDisabilityDiagnosisCriterion: z.boolean(),
-    noCurrentOrPriorSexOffenseCriterion: z.boolean(),
-    noCurrentOrPriorViolentOffenseCriterion: z.boolean(),
-    noPendingFelonyChargesInAnotherCountyOrStateCriterion: z.boolean(),
-    entryOfGuiltyPleaCriterion: z.boolean(),
-    veteranStatusCriterion: z.boolean(),
-    priorCriminalHistoryCriterion: priorCriminalHistoryCriterion.optional(),
-    diagnosedMentalHealthDiagnosisCriterion:
-      diagnosedMentalHealthDiagnosisCriterion,
-    asamLevelOfCareRecommendationCriterion:
-      asamLevelOfCareRecommendationCriterion.optional(),
-    diagnosedSubstanceUseDisorderCriterion:
-      diagnosedSubstanceUseDisorderCriterion.optional(),
-    minLsirScoreCriterion: z.coerce.number().optional(),
-    maxLsirScoreCriterion: z.coerce.number().optional(),
-    minAge: z.coerce.number().optional(),
-    maxAge: z.coerce.number().optional(),
-    district: z.string().optional(),
-    lastUpdatedDate: z.coerce.date(),
-    additionalNotes: z.string().optional(),
-    genders: z.array(opportunityGender).optional(),
-    genericDescription: z.string().optional(),
-  }),
-);
+export const opportunityImportSchema = z.object({
+  OpportunityName: z.string(),
+  Description: z.string().optional(),
+  ProviderName: z
+    .string()
+    .optional()
+    // If providerName is null, we should default to OPPORTUNITY_UNKNOWN_PROVIDER_NAME
+    .transform((v) => v ?? OPPORTUNITY_UNKNOWN_PROVIDER_NAME),
+  CleanedProviderPhoneNumber: z.string().optional(),
+  ProviderWebsite: z.string().optional(),
+  ProviderAddress: z.string().optional(),
+  // Integers are being converted to strings for some reason
+  CapacityTotal: z.coerce.number().optional(),
+  // Integers are being converted to strings for some reason
+  CapacityAvailable: z.coerce.number().optional(),
+  NeedsAddressed: needsAddressed,
+  developmentalDisabilityDiagnosisCriterion: z.boolean(),
+  noCurrentOrPriorSexOffenseCriterion: z.boolean(),
+  noCurrentOrPriorViolentOffenseCriterion: z.boolean(),
+  noPendingFelonyChargesInAnotherCountyOrStateCriterion: z.boolean(),
+  entryOfGuiltyPleaCriterion: z.boolean(),
+  veteranStatusCriterion: z.boolean(),
+  priorCriminalHistoryCriterion: priorCriminalHistoryCriterion.optional(),
+  diagnosedMentalHealthDiagnosisCriterion:
+    diagnosedMentalHealthDiagnosisCriterion,
+  asamLevelOfCareRecommendationCriterion:
+    asamLevelOfCareRecommendationCriterion.optional(),
+  diagnosedSubstanceUseDisorderCriterion:
+    diagnosedSubstanceUseDisorderCriterion.optional(),
+  minLsirScoreCriterion: z.coerce.number().optional(),
+  maxLsirScoreCriterion: z.coerce.number().optional(),
+  minAge: z.coerce.number().optional(),
+  maxAge: z.coerce.number().optional(),
+  district: z.string().optional(),
+  lastUpdatedDate: z.coerce.date(),
+  additionalNotes: z.string().optional(),
+  genders: z.array(opportunityGender).optional(),
+  genericDescription: z.string().optional(),
+});
 
 export const recidivismSeriesSchema = zu.stringToJSON().pipe(
   z.array(
@@ -199,32 +191,28 @@ export const recidivismRollupSchema = zu.stringToJSON().pipe(
   }),
 );
 
-export const insightImportSchema = z.array(
-  z.object({
-    state_code: stateCode,
-    gender: gender,
-    // Integers are being converted to strings for some reason
-    assessment_score_bucket_start: z.coerce.number(),
-    // Integers are being converted to strings for some reason
-    assessment_score_bucket_end: z.coerce.number(),
-    most_severe_description: z.string(),
-    recidivism_rollup: recidivismRollupSchema,
-    // Integers are being converted to strings for some reason
-    recidivism_num_records: z.coerce.number(),
-    recidivism_probation_series: recidivismSeriesSchema.optional(),
-    recidivism_rider_series: recidivismSeriesSchema.optional(),
-    recidivism_term_series: recidivismSeriesSchema.optional(),
-    // Integers are being converted to strings for some reason
-    disposition_num_records: z.coerce.number(),
-    disposition_probation_pc: z.number(),
-    disposition_rider_pc: z.number(),
-    disposition_term_pc: z.number(),
-  }),
-);
+export const insightImportSchema = z.object({
+  state_code: stateCode,
+  gender: gender,
+  // Integers are being converted to strings for some reason
+  assessment_score_bucket_start: z.coerce.number(),
+  // Integers are being converted to strings for some reason
+  assessment_score_bucket_end: z.coerce.number(),
+  most_severe_description: z.string(),
+  recidivism_rollup: recidivismRollupSchema,
+  // Integers are being converted to strings for some reason
+  recidivism_num_records: z.coerce.number(),
+  recidivism_probation_series: recidivismSeriesSchema.optional(),
+  recidivism_rider_series: recidivismSeriesSchema.optional(),
+  recidivism_term_series: recidivismSeriesSchema.optional(),
+  // Integers are being converted to strings for some reason
+  disposition_num_records: z.coerce.number(),
+  disposition_probation_pc: z.number(),
+  disposition_rider_pc: z.number(),
+  disposition_term_pc: z.number(),
+});
 
-export const offenseImportSchema = z.array(
-  z.object({
-    state_code: stateCode,
-    charge: z.string(),
-  }),
-);
+export const offenseImportSchema = z.object({
+  state_code: stateCode,
+  charge: z.string(),
+});

@@ -23,7 +23,10 @@ export type ObjectIdentifier = {
   fileName: string;
 };
 
-export type EtlHelper = (stateCode: string, data: unknown[]) => Promise<void>;
+export type EtlHelper = (
+  stateCode: string,
+  data: AsyncGenerator<unknown>,
+) => Promise<void>;
 
 /**
  * A function that returns the ETL helper function for a given object identifier.

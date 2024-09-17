@@ -19,6 +19,7 @@ import { Storage } from "@google-cloud/storage";
 import { CloudTasksClient, protos } from "@google-cloud/tasks";
 import { captureException } from "@sentry/node";
 import { OAuth2Client } from "google-auth-library";
+import readline from "readline";
 
 import { ImportRoutesHandlerBase } from "~fastify-data-import-plugin/common/classes";
 import {
@@ -35,7 +36,7 @@ export type { EtlHelper, ObjectIdentifier };
  * Use `registerImportRoutes` to add the import routes to a Fastify server instance.
  */
 export class ImportRoutesHandler extends ImportRoutesHandlerBase {
-  async verifyGoogleIdToken(
+  override async verifyGoogleIdToken(
     authorizationHeaders: string | undefined,
     email: string,
   ) {
@@ -66,27 +67,30 @@ export class ImportRoutesHandler extends ImportRoutesHandlerBase {
     console.log(`Email verified: ${payload.email}`);
   }
 
-  async getDataFromGCS(objectIdentifier: GcsObjectIdentifier) {
+  override async *getDataFromGCS(objectIdentifier: GcsObjectIdentifier) {
     const storage = new Storage();
 
     const { bucketId, objectId } = objectIdentifier;
 
     // The files are newline-delimited JSON, so we need to split them
-    const contents = (await storage.bucket(bucketId).file(objectId).download())
-      .toString()
-      .split("\n");
-    const data = contents
-      .map((row) => {
-        try {
-          return JSON.parse(row);
-        } catch (e) {
-          captureException(`Error parsing JSON ${row}: ${e}`);
-          return undefined;
-        }
-      })
-      .filter((row) => row !== undefined);
+    const fileStream = storage
+      .bucket(bucketId)
+      .file(objectId)
+      .createReadStream();
 
-    return data;
+    const rl = readline.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity,
+    });
+
+    for await (const line of rl) {
+      try {
+        yield JSON.parse(line);
+      } catch (e) {
+        captureException(`Error parsing JSON ${line}: ${e}`);
+        yield undefined;
+      }
+    }
   }
 
   async scheduleHandleImportCloudTask(bucketId: string, objectId: string) {
