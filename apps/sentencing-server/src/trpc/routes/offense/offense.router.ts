@@ -23,6 +23,13 @@ export const offenseRouter = router({
       select: {
         name: true,
       },
+      where: {
+        // TODO: Remove once we have insights for all offenses?
+        // Only return offenses that have insights
+        insightOffenses: {
+          some: {},
+        },
+      },
     });
 
     return offenses.map((offense) => offense.name);

@@ -17,14 +17,24 @@
 
 import { describe, expect, test } from "vitest";
 
+import { prismaClient } from "~sentencing-server/prisma";
 import { testTRPCClient } from "~sentencing-server/test/setup";
 import { fakeOffense } from "~sentencing-server/test/setup/seed";
 
 describe("offense router", () => {
   describe("getOffenses", () => {
-    test("should return all offenses", async () => {
+    test("should return only offenses that insights", async () => {
+      // Create a new offense that won't have an insight
+      await prismaClient.offense.create({
+        data: {
+          stateCode: fakeOffense.stateCode,
+          name: "New Offense",
+        },
+      });
+
       const returnedOffenses = await testTRPCClient.offense.getOffenses.query();
 
+      // Only the original fake offense should be returned
       expect(returnedOffenses).toEqual(
         expect.arrayContaining([fakeOffense.name]),
       );
