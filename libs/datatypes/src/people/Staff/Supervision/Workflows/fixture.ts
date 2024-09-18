@@ -29,6 +29,7 @@ export const usIdSupervisionStaffFixtures: Array<
     givenNames: "Walter",
     surname: "Harris",
     supervisorExternalId: "SUPER847",
+    pseudonymizedId: "p004",
   },
 ];
 
@@ -42,6 +43,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Agent1",
     supervisorExternalId: "SUPERVISOR1",
+    pseudonymizedId: "p001",
   },
   {
     email: "test-officer-1@example.com",
@@ -51,6 +53,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Agent2",
     supervisorExternalId: null,
+    pseudonymizedId: "p002",
   },
   // US_ID - IDAHO
   ...usIdSupervisionStaffFixtures,
@@ -63,6 +66,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Officer8",
     supervisorExternalId: null,
+    pseudonymizedId: "p008",
   },
 
   // US_MI - MICHIGAN
@@ -73,6 +77,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Officer8",
     supervisorExternalId: "1290831",
+    pseudonymizedId: "p008",
   },
 
   // US_ND - NORTH DAKOTA
@@ -84,6 +89,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Officer3",
     supervisorExternalId: null,
+    pseudonymizedId: "p003",
   },
 
   // US_OR - OREGON
@@ -94,6 +100,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "271828",
     surname: "271828",
     supervisorExternalId: null,
+    pseudonymizedId: "p271",
   },
   {
     email: null,
@@ -102,6 +109,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "314159",
     surname: "314159",
     supervisorExternalId: "SUPER221",
+    pseudonymizedId: "p314",
   },
 
   // US_PA - PENNSYLVANIA
@@ -112,6 +120,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "TEST",
     surname: "OFFICER1",
     supervisorExternalId: "25-1239123A",
+    pseudonymizedId: "p001",
   },
   {
     email: "test-officer@example.com",
@@ -120,6 +129,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "TEST",
     surname: "OFFICER2",
     supervisorExternalId: null,
+    pseudonymizedId: "p002",
   },
 
   // US_TN - TENNESSEE
@@ -131,6 +141,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Officer1",
     supervisorExternalId: "SUPERVISOR1",
+    pseudonymizedId: "p001",
   },
   {
     email: null,
@@ -140,6 +151,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Officer2",
     supervisorExternalId: "SUPERVISOR1",
+    pseudonymizedId: "p002",
   },
   {
     email: "test-supervisor@example.com",
@@ -149,6 +161,7 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Supervisor",
     supervisorExternalId: null,
+    pseudonymizedId: "p001",
   },
   {
     email: null,
@@ -158,5 +171,6 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     givenNames: "Test",
     surname: "Officer3",
     supervisorExternalId: null,
+    pseudonymizedId: "p003",
   },
 ].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));

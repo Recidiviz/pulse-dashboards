@@ -86,6 +86,7 @@ function createTestUnit() {
       id: "abc123",
       surname: "",
       recordType: "supervisionStaff",
+      pseudonymizedId: "p123",
     },
   };
   root = new RootStore();

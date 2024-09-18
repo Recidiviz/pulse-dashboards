@@ -34,6 +34,7 @@ test.each([{ type: "supervision", schema: supervisionStaffRecordSchema }])(
         stateCode: "US_XX",
         givenNames: "Test",
         surname: "Person",
+        pseudonymizedId: "anon123",
       }),
     ).toHaveProperty("recordType", `${type}Staff`);
   },

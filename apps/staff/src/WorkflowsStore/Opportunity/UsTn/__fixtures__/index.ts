@@ -106,6 +106,7 @@ export const usTnUserRecord: CombinedUserRecord = {
     givenNames: "Test",
     surname: "Officer1",
     recordType: "supervisionStaff",
+    pseudonymizedId: "p001",
   },
 };
 

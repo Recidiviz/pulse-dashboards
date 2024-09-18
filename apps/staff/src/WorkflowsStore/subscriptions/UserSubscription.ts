@@ -148,7 +148,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
   private get userWithoutCaseload(): StaffRecord | undefined {
     const {
       user,
-      userStore: { stateCode, district, externalId },
+      userStore: { stateCode, district, externalId, userPseudoId },
     } = this.rootStore;
 
     const { staffRecordCollectionName } = this;
@@ -169,6 +169,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       district,
       hasCaseload: false,
       recordType: staffRecordCollectionName,
+      pseudonymizedId: userPseudoId ?? "",
     };
   }
 
@@ -198,6 +199,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         surname: "",
         hasCaseload: false,
         recordType: staffRecordCollectionName,
+        pseudonymizedId: "p100",
       };
     }
     // there are no records in Firestore for Recidiviz users;
@@ -216,6 +218,7 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
         surname: (user?.family_name || formattedUserName?.lastName) ?? "",
         hasCaseload: false,
         recordType: staffRecordCollectionName,
+        pseudonymizedId: user?.email ?? "",
       };
     }
     return injectedUserData;

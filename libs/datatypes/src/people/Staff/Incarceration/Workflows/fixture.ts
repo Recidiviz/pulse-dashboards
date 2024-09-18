@@ -29,6 +29,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     stateCode: "US_ID",
     givenNames: "Test",
     surname: "Officer6",
+    pseudonymizedId: "p006",
   },
 
   // US_ME - MAINE
@@ -38,6 +39,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     stateCode: "US_ME",
     givenNames: "Test",
     surname: "Officer5",
+    pseudonymizedId: "p005",
   },
 
   // US_MO - MISSOURI
@@ -47,6 +49,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     stateCode: "US_MO",
     givenNames: "Facility 1",
     surname: "",
+    pseudonymizedId: "p001",
   },
   {
     email: "test-officer-7@example.com",
@@ -54,6 +57,7 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     stateCode: "US_MO",
     givenNames: "Test",
     surname: "Officer7",
+    pseudonymizedId: "p007",
   },
 
   // US_TN - TENNESSEE
@@ -63,5 +67,6 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     stateCode: "US_TN",
     givenNames: "Test",
     surname: "Officer5",
+    pseudonymizedId: "p015",
   },
 ].map((r) => makeRecordFixture(incarcerationStaffRecordSchema, r));

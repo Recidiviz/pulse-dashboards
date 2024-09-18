@@ -37,4 +37,5 @@ export const workflowsStaffRecordBaseSchema = staffRecordBaseSchema.extend({
     ])
     .nullish(),
   hasCaseload: z.boolean().optional(),
+  pseudonymizedId: z.string(),
 });

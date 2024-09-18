@@ -40,6 +40,7 @@ test("staffNameComparator", () => {
       givenNames: "John",
       surname: "Doe",
       supervisorExternalId: null,
+      pseudonymizedId: "p001",
     },
     {
       id: "2",
@@ -49,6 +50,7 @@ test("staffNameComparator", () => {
       givenNames: "Jane",
       surname: "Doe",
       supervisorExternalId: null,
+      pseudonymizedId: "p002",
     },
     {
       id: "3",
@@ -58,6 +60,7 @@ test("staffNameComparator", () => {
       givenNames: "Chad",
       surname: "Doe-Adams",
       supervisorExternalId: null,
+      pseudonymizedId: "p003",
     },
     {
       id: "4",
@@ -67,6 +70,7 @@ test("staffNameComparator", () => {
       givenNames: "Bob",
       surname: "Adams-Doe",
       supervisorExternalId: "ABC201",
+      pseudonymizedId: "p004",
     },
     {
       id: "4",
@@ -76,6 +80,7 @@ test("staffNameComparator", () => {
       givenNames: "Brad",
       surname: "Collins (Doe)",
       supervisorExternalId: null,
+      pseudonymizedId: "p005",
     },
   ];
 
@@ -147,6 +152,7 @@ describe("filterByUserDistrict", () => {
       stateCode: "US_XX",
       surname: "testSurname",
       recordType: "supervisionStaff",
+      pseudonymizedId: "test",
     },
   };
 
@@ -219,6 +225,7 @@ describe("usCaFilterByRoleSubtype", () => {
       stateCode: "US_XX",
       surname: "testSurname",
       recordType: "supervisionStaff" as const,
+      pseudonymizedId: "ptest",
     },
   };
 
