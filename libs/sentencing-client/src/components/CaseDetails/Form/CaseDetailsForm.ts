@@ -131,14 +131,25 @@ export class CaseDetailsForm {
   async fetchInsight() {
     const offenseName = this.content?.[OFFENSE_KEY]?.value;
     const lsirScore = this.content?.[LSIR_SCORE_KEY]?.value;
+    const formattedLsirScore =
+      typeof lsirScore === "string" ? lsirScore.trim() : lsirScore;
 
-    if (this.getInsight && offenseName && lsirScore) {
+    if (
+      this.getInsight &&
+      offenseName &&
+      formattedLsirScore &&
+      !this.hasError
+    ) {
       const insight = await this.getInsight(
         String(offenseName),
-        Number(lsirScore),
+        Number(formattedLsirScore),
       );
       runInAction(() => {
-        this.insight = this.hasError ? undefined : insight;
+        this.insight = insight;
+      });
+    } else {
+      runInAction(() => {
+        this.insight = undefined;
       });
     }
   }

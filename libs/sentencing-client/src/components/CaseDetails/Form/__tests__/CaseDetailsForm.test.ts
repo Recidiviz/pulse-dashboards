@@ -206,3 +206,60 @@ test("transformedUpdates converts values to enums/expected BE values", () => {
     hasOpenChildProtectiveServicesCase: null,
   });
 });
+
+test("form fetches insight when there is an offenseName and lsirScore", () => {
+  const localForm = new CaseDetailsForm(
+    caseDetailsPresenter,
+    [],
+    mockGetInsights,
+  );
+
+  localForm.content[LSIR_SCORE_KEY] = {
+    ...localForm.content[LSIR_SCORE_KEY],
+    value: "0",
+  };
+  localForm.fetchInsight();
+
+  expect(mockGetInsights).toHaveBeenCalled();
+});
+
+test("form does not fetch insight when there is no lsirScore", () => {
+  const localForm = new CaseDetailsForm(
+    caseDetailsPresenter,
+    [],
+    mockGetInsights,
+  );
+
+  localForm.content[LSIR_SCORE_KEY] = {
+    ...localForm.content[LSIR_SCORE_KEY],
+    value: "    ",
+  };
+  localForm.fetchInsight();
+
+  expect(mockGetInsights).not.toHaveBeenCalled();
+
+  localForm.content[LSIR_SCORE_KEY] = {
+    ...localForm.content[LSIR_SCORE_KEY],
+    value: "",
+  };
+  localForm.fetchInsight();
+
+  expect(mockGetInsights).not.toHaveBeenCalled();
+});
+
+test("form does not fetch insight when there is an invalid lsirScore", () => {
+  const localForm = new CaseDetailsForm(
+    caseDetailsPresenter,
+    [],
+    mockGetInsights,
+  );
+
+  localForm.content[LSIR_SCORE_KEY] = {
+    ...localForm.content[LSIR_SCORE_KEY],
+    value: "123x",
+  };
+  localForm.hasError = true;
+  localForm.fetchInsight();
+
+  expect(mockGetInsights).not.toHaveBeenCalled();
+});
