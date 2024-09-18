@@ -19,7 +19,7 @@
 
 import { differenceInDays, subDays } from "date-fns";
 
-import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
+import { isDemoMode } from "~client-env-utils";
 import {
   ActionStrategy,
   actionStrategyFixture,
@@ -35,9 +35,6 @@ import {
   leadershipUserInfoFixture,
   MetricBenchmark,
   metricBenchmarksFixture,
-  rawExcludedSupervisionOfficerFactoryConfig,
-  rawSupervisionOfficerFactoryConfig,
-  rawSupervisionOfficerSupervisorFactoryConfig,
   SupervisionOfficer,
   supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
@@ -46,7 +43,6 @@ import {
   supervisionOfficerSupervisorsFixture,
   UserInfo,
 } from "~datatypes";
-import { FixtureFactoryMap } from "~fixture-generator";
 
 import type { InsightsStore } from "../InsightsStore";
 import {
@@ -54,15 +50,6 @@ import {
   InsightsAPI,
   PatchUserInfoProps,
 } from "./interface";
-
-let insightsOfflineFixtureMap: FixtureFactoryMap | undefined;
-// TODO: Remove once we can use the new fixtures in demo mode?
-
-const isOfflineAndNotTest = () => isOfflineMode() && !isTestEnv();
-const getInsightsOfflineFixtureMap = (): FixtureFactoryMap =>
-  insightsOfflineFixtureMap === undefined
-    ? (insightsOfflineFixtureMap = new FixtureFactoryMap())
-    : insightsOfflineFixtureMap;
 
 export class InsightsOfflineAPIClient implements InsightsAPI {
   private pseudoIdToEditableUserInfo: Map<
@@ -129,13 +116,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async supervisionOfficerSupervisors(): Promise<
     SupervisionOfficerSupervisor[]
   > {
-    if (isOfflineAndNotTest()) {
-      const { stateCode } = this.insightsStore.rootStore.userStore;
-      const supervisors = getInsightsOfflineFixtureMap().get<
-        SupervisionOfficerSupervisor[]
-      >(rawSupervisionOfficerSupervisorFactoryConfig, undefined, stateCode);
-      return supervisors;
-    }
     return supervisionOfficerSupervisorsFixture;
   }
 
@@ -156,32 +136,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async officersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
-    if (isOfflineAndNotTest()) {
-      const { stateCode } = this.insightsStore.rootStore.userStore;
-      const supervisors = getInsightsOfflineFixtureMap().get<
-        SupervisionOfficerSupervisor[]
-      >(rawSupervisionOfficerSupervisorFactoryConfig, undefined, stateCode);
-
-      const officers = getInsightsOfflineFixtureMap().get<SupervisionOfficer[]>(
-        rawSupervisionOfficerFactoryConfig,
-        undefined,
-        supervisors,
-        stateCode,
-      );
-
-      const supervisor = supervisors.find(
-        (s) => s.pseudonymizedId === supervisorPseudoId,
-      );
-
-      const officersWithSupervisorPseudoId = supervisor
-        ? officers.filter((o) =>
-            o.supervisorExternalIds.includes(supervisor.externalId),
-          )
-        : [];
-
-      return officersWithSupervisorPseudoId;
-    }
-
     const transformedFixture = isDemoMode()
       ? supervisionOfficerFixture.map((officer) =>
           this.removeCaSpecificDataFromFixture(officer),
@@ -198,34 +152,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async excludedOfficersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<ExcludedSupervisionOfficer>> {
-    if (isOfflineAndNotTest()) {
-      const { stateCode } = this.insightsStore.rootStore.userStore;
-      const supervisors = getInsightsOfflineFixtureMap().get<
-        SupervisionOfficerSupervisor[]
-      >(rawSupervisionOfficerSupervisorFactoryConfig, undefined, stateCode);
-
-      const officers = getInsightsOfflineFixtureMap().get<
-        ExcludedSupervisionOfficer[]
-      >(
-        rawExcludedSupervisionOfficerFactoryConfig,
-        undefined,
-        supervisors,
-        stateCode,
-      );
-
-      const supervisor = supervisors.find(
-        (s) => s.pseudonymizedId === supervisorPseudoId,
-      );
-
-      const excludedOfficersWithSupervisorPseudoId = supervisor
-        ? officers.filter((o) =>
-            o.supervisorExternalIds.includes(supervisor.externalId),
-          )
-        : [];
-
-      return excludedOfficersWithSupervisorPseudoId;
-    }
-
     return excludedSupervisionOfficerFixture.filter((o) =>
       o.supervisorExternalIds
         .map((i) => `hashed-${i}`)
@@ -236,19 +162,7 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async supervisionOfficer(
     officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
-    let supervisionOfficers: SupervisionOfficer[];
-    if (isOfflineAndNotTest()) {
-      const { stateCode } = this.insightsStore.rootStore.userStore;
-      const supervisors = getInsightsOfflineFixtureMap().get<
-        SupervisionOfficerSupervisor[]
-      >(rawSupervisionOfficerSupervisorFactoryConfig, undefined, stateCode);
-
-      supervisionOfficers = getInsightsOfflineFixtureMap().get<
-        SupervisionOfficer[]
-      >(rawSupervisionOfficerFactoryConfig, undefined, supervisors, stateCode);
-    } else supervisionOfficers = supervisionOfficerFixture;
-
-    const officerFixture = supervisionOfficers.find(
+    const officerFixture = supervisionOfficerFixture.find(
       (o) => o.pseudonymizedId === officerPseudoId,
     );
 
@@ -263,26 +177,7 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async excludedSupervisionOfficer(
     officerPseudoId: string,
   ): Promise<ExcludedSupervisionOfficer> {
-    let excludedOfficers: ExcludedSupervisionOfficer[];
-
-    if (isOfflineAndNotTest()) {
-      const { stateCode } = this.insightsStore.rootStore.userStore;
-
-      const supervisors = getInsightsOfflineFixtureMap().get<
-        SupervisionOfficerSupervisor[]
-      >(rawSupervisionOfficerSupervisorFactoryConfig, undefined, stateCode);
-
-      excludedOfficers = getInsightsOfflineFixtureMap().get<
-        ExcludedSupervisionOfficer[]
-      >(
-        rawExcludedSupervisionOfficerFactoryConfig,
-        undefined,
-        supervisors,
-        stateCode,
-      );
-    } else excludedOfficers = excludedSupervisionOfficerFixture;
-
-    const officerFixture = excludedOfficers.find(
+    const officerFixture = excludedSupervisionOfficerFixture.find(
       (o) => o.pseudonymizedId === officerPseudoId,
     );
 
