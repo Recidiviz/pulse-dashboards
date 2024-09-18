@@ -18,6 +18,7 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
+import _ from "lodash";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
@@ -76,20 +77,42 @@ export const caseRouter = router({
     .input(updateCaseSchema)
     .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
       try {
-        if (attributes.lsirScore) {
-          const { isLsirScoreLocked } = await prisma.case.findUniqueOrThrow({
-            where: {
-              id,
-            },
-            select: {
-              isLsirScoreLocked: true,
-            },
-          });
+        const { lsirScore, reportType, clientGender } = attributes;
+        if (lsirScore || reportType || clientGender) {
+          const { isLsirScoreLocked, isReportTypeLocked, Client } =
+            await prisma.case.findUniqueOrThrow({
+              where: {
+                id,
+              },
+              select: {
+                isLsirScoreLocked: true,
+                isReportTypeLocked: true,
+                Client: {
+                  select: {
+                    isGenderLocked: true,
+                  },
+                },
+              },
+            });
 
-          if (isLsirScoreLocked) {
+          if (lsirScore && isLsirScoreLocked) {
             throw new TRPCError({
               code: "BAD_REQUEST",
               message: "LSIR score is locked and cannot be updated",
+            });
+          }
+
+          if (reportType && isReportTypeLocked) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Report type is locked and cannot be updated",
+            });
+          }
+
+          if (clientGender && Client?.isGenderLocked) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Client gender is locked and cannot be updated",
             });
           }
         }
@@ -110,7 +133,7 @@ export const caseRouter = router({
             id,
           },
           data: {
-            ...attributes,
+            ..._.omit(attributes, "clientGender"),
             recommendedOpportunities: {
               set: attributes.recommendedOpportunities?.map((opportunity) => ({
                 opportunityName_providerName: {
@@ -125,6 +148,11 @@ export const caseRouter = router({
                     name: attributes.offense,
                   }
                 : undefined,
+            },
+            Client: {
+              update: {
+                gender: attributes.clientGender,
+              },
             },
           },
         });

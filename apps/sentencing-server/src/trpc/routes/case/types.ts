@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Prisma } from "@prisma/client";
+import type { Client, Offense, Prisma } from "@prisma/client";
 
 export type GetCaseInput = Pick<Prisma.CaseWhereUniqueInput, "id">;
 
@@ -44,9 +44,11 @@ export type UpdateCaseInput = Pick<
   | "selectedRecommendation"
   | "currentOnboardingTopic"
   | "recommendationSummary"
+  | "reportType"
 > & {
   recommendedOpportunities?: {
     opportunityName: OpportunityNameIdentifier;
   }[];
-  offense?: string | null;
+  offense?: Offense["name"] | null;
+  clientGender?: Client["gender"];
 };

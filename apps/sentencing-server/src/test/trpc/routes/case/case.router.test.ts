@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender } from "@prisma/client";
+import { Gender, ReportType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
@@ -280,16 +280,32 @@ describe("case router", () => {
           status: "InProgress",
           currentOnboardingTopic: "OffenseLsirScore",
           recommendationSummary: "Recommendation Summary",
+          lsirScore: 10,
+          reportType: "FullPSI",
+          clientGender: "MALE",
         },
       });
 
-      const updatedCase = await testTRPCClient.case.getCase.query({
-        id: fakeCase.id,
+      const updatedCase = await prismaClient.case.findUniqueOrThrow({
+        where: {
+          id: fakeCase.id,
+        },
+        include: {
+          Client: {
+            select: {
+              gender: true,
+            },
+          },
+          offense: {
+            select: {
+              name: true,
+            },
+          },
+        },
       });
 
       expect(updatedCase).toEqual(
         expect.objectContaining({
-          offense: fakeOffense.name,
           previouslyIncarceratedOrUnderSupervision: true,
           hasPreviousFelonyConviction: true,
           hasPreviousViolentOffenseConviction: true,
@@ -305,6 +321,14 @@ describe("case router", () => {
           needsToBeAddressed: ["FamilyServices", "JobTrainingOrOpportunities"],
           status: "InProgress",
           recommendationSummary: "Recommendation Summary",
+          lsirScore: 10,
+          reportType: ReportType.FullPSI,
+          Client: expect.objectContaining({
+            gender: Gender.MALE,
+          }),
+          offense: expect.objectContaining({
+            name: fakeOffense.name,
+          }),
         }),
       );
     });
@@ -382,6 +406,54 @@ describe("case router", () => {
         new TRPCError({
           code: "BAD_REQUEST",
           message: "LSIR score is locked and cannot be updated",
+        }),
+      );
+    });
+
+    test("should throw error if report type is locked and report type is provided", async () => {
+      await prismaClient.case.update({
+        where: { id: fakeCase.id },
+        data: { isReportTypeLocked: true },
+      });
+
+      await expect(() =>
+        testTRPCClient.case.updateCase.mutate({
+          id: fakeCase.id,
+          attributes: {
+            reportType: "FullPSI",
+          },
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Report type is locked and cannot be updated",
+        }),
+      );
+    });
+
+    test("should throw error if client gender is locked and gender is provided", async () => {
+      await prismaClient.case.update({
+        where: { id: fakeCase.id },
+        data: {
+          Client: {
+            update: {
+              isGenderLocked: true,
+            },
+          },
+        },
+      });
+
+      await expect(() =>
+        testTRPCClient.case.updateCase.mutate({
+          id: fakeCase.id,
+          attributes: {
+            clientGender: "MALE",
+          },
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Client gender is locked and cannot be updated",
         }),
       );
     });

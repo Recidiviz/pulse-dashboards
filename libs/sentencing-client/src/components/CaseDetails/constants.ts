@@ -76,6 +76,11 @@ export const HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY =
 export type HasOpenChildProtectiveServicesCase =
   "hasOpenChildProtectiveServicesCase";
 
+export const CLIENT_GENDER_KEY = "clientGender";
+export type ClientGender = "clientGender";
+
+export const REPORT_TYPE_KEY = "reportType";
+
 export const NO_OPTION = "No";
 export const YES_OPTION = "Yes";
 export const NOT_SURE_YET_OPTION = "Not sure yet";

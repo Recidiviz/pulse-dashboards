@@ -22,6 +22,8 @@ import { Case, Insight } from "../../../api/APIClient";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { OnboardingFields } from "../CaseOnboarding/types";
 import {
+  CLIENT_GENDER_KEY,
+  ClientGender,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
   HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
   IS_VETERAN_KEY,
@@ -31,6 +33,7 @@ import {
   OFFENSE_KEY,
   PLEA_KEY,
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
+  REPORT_TYPE_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
 import {
@@ -156,7 +159,10 @@ export class CaseDetailsForm {
 
   createForm(caseAttributes: Case) {
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
-      const attributeValue = caseAttributes[field.key];
+      const attributeValue =
+        field.key === CLIENT_GENDER_KEY
+          ? caseAttributes.Client?.gender
+          : caseAttributes[field.key];
       const invalidLsirScore =
         field.key === LSIR_SCORE_KEY &&
         attributeValue &&
@@ -177,7 +183,10 @@ export class CaseDetailsForm {
         options: field.key === OFFENSE_KEY ? this.offenses : field.options,
         value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {
-          const nestedAttributeValue = caseAttributes[nestedField.key];
+          const nestedAttributeValue =
+            nestedField.key === CLIENT_GENDER_KEY
+              ? caseAttributes.Client?.gender
+              : caseAttributes[nestedField.key];
           if (nestedAttributeValue === undefined) {
             return nestedField;
           }
@@ -197,12 +206,18 @@ export class CaseDetailsForm {
           value: field.otherContext?.key
             ? parseAttributeValue(
                 field.otherContext.key,
-                caseAttributes[field.otherContext.key],
+                field.otherContext.key === CLIENT_GENDER_KEY
+                  ? caseAttributes.Client?.gender
+                  : caseAttributes[field.otherContext.key],
               )
             : field.otherContext?.value,
         },
         isDisabled:
-          field.key === LSIR_SCORE_KEY && caseAttributes.isLsirScoreLocked,
+          (field.key === LSIR_SCORE_KEY && caseAttributes.isLsirScoreLocked) ||
+          (field.key === REPORT_TYPE_KEY &&
+            caseAttributes.isReportTypeLocked) ||
+          (field.key === CLIENT_GENDER_KEY &&
+            caseAttributes.Client?.isGenderLocked),
       };
     });
 
@@ -255,7 +270,7 @@ export class CaseDetailsForm {
     this.hasError = hasError;
   }
 
-  getFormValue(key: keyof Case, parentKey?: string) {
+  getFormValue(key: keyof Case | ClientGender, parentKey?: string) {
     if (parentKey) {
       return this.content[parentKey].nested?.[key]?.value;
     }

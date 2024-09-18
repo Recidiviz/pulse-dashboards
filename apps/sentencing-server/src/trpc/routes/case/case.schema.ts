@@ -19,10 +19,12 @@ import {
   AsamCareRecommendation,
   CaseRecommendation,
   CaseStatus,
+  Gender,
   MentalHealthDiagnosis,
   NeedToBeAddressed,
   OnboardingTopic,
   Plea,
+  ReportType,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
 import { z } from "zod";
@@ -53,6 +55,10 @@ const CaseStatusEnum = z.nativeEnum(CaseStatus);
 const CaseRecommendationEnum = z.nativeEnum(CaseRecommendation);
 
 const OnboardingTopicEnum = z.nativeEnum(OnboardingTopic);
+
+const ReportTypeEnum = z.nativeEnum(ReportType);
+
+const GenderEnum = z.nativeEnum(Gender);
 
 const OpportunitiesSchema = z.array(
   z.object({
@@ -93,5 +99,7 @@ export const updateCaseSchema = z.object({
     recommendedOpportunities: OpportunitiesSchema.optional(),
     currentOnboardingTopic: OnboardingTopicEnum.optional(),
     recommendationSummary: z.string().nullable().optional(),
+    reportType: ReportTypeEnum.optional(),
+    clientGender: GenderEnum.optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });
