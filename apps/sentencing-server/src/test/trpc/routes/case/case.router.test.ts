@@ -46,13 +46,17 @@ describe("case router", () => {
       expect(returnedCase).toEqual(
         expect.objectContaining({
           ...fakeCase,
-          Client: _.pick(fakeClient, [
-            "fullName",
-            "gender",
-            "county",
-            "birthDate",
-            "externalId",
-          ]),
+          Client: {
+            ..._.pick(fakeClient, [
+              "fullName",
+              "gender",
+              "county",
+              "birthDate",
+              "externalId",
+            ]),
+            isGenderLocked: false,
+          },
+          isReportTypeLocked: false,
           // Should return an insight object
           insight: expect.objectContaining({
             ...fakeInsight,

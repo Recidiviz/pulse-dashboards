@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CaseRecommendation, Prisma } from "@prisma/client";
+import { CaseRecommendation, Gender, Prisma } from "@prisma/client";
 import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";
@@ -52,14 +52,18 @@ export async function transformAndLoadClientData(
       clientData.case_ids.includes(externalId),
     );
 
+    const hasKnownGender =
+      clientData.gender !== Gender.INTERNAL_UNKNOWN &&
+      clientData.gender !== Gender.EXTERNAL_UNKNOWN;
+
     const newClient = {
       externalId: clientData.external_id,
       pseudonymizedId: clientData.pseudonymized_id,
       stateCode: clientData.state_code,
       fullName: clientData.full_name,
-      gender: clientData.gender,
       county: clientData.county ?? "UNKNOWN",
       birthDate: clientData.birth_date,
+      isGenderLocked: hasKnownGender,
       Cases: {
         connect: existingCasesForClient,
       },
@@ -72,8 +76,16 @@ export async function transformAndLoadClientData(
       where: {
         externalId: newClient.externalId,
       },
-      create: newClient,
-      update: newClient,
+      create: {
+        ...newClient,
+        // When creating, always set the gender
+        gender: clientData.gender,
+      },
+      update: {
+        ...newClient,
+        // When updating, only change the gender if it's defined
+        gender: hasKnownGender ? clientData.gender : undefined,
+      },
     });
   }
 
@@ -196,6 +208,7 @@ export async function transformAndLoadCaseData(
         ? EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE[caseData.report_type]
         : null,
       isLsirScoreLocked: caseData.lsir_score !== undefined,
+      isReportTypeLocked: caseData.report_type !== undefined,
     };
 
     // Load data

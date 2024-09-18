@@ -53,12 +53,14 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     isLsirScoreLocked: false,
     currentOnboardingTopic: "OffenseLsirScore",
     recommendationSummary: null,
+    isReportTypeLocked: false,
     Client: {
       fullName: "Blanda Furman",
       gender: "EXTERNAL_UNKNOWN",
       county: "Gwynedd County",
       birthDate: new Date("1990-11-13T21:37:16.551Z"),
       externalId: "70478174",
+      isGenderLocked: false,
     },
     insight: {
       stateCode: "US_ID",

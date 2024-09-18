@@ -373,6 +373,91 @@ describe("handle_import", () => {
         }),
       ]);
     });
+
+    test("should set isReportTypeLocked if report type is provided", async () => {
+      dataProviderSingleton.setData([
+        // Existing case
+        {
+          external_id: fakeCase.externalId,
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          completion_date: faker.date.future(),
+          sentence_date: faker.date.past(),
+          assigned_date: faker.date.past(),
+          county: faker.location.county(),
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+        },
+      ]);
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await prismaClient.case.findMany({});
+
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+          reportType: ReportType.FullPSI,
+          isReportTypeLocked: true,
+        }),
+      ]);
+    });
+
+    test("should not set isReportTypeLocked if report type is not provided", async () => {
+      dataProviderSingleton.setData([
+        // Existing case
+        {
+          external_id: fakeCase.externalId,
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          completion_date: faker.date.future(),
+          sentence_date: faker.date.past(),
+          assigned_date: faker.date.past(),
+          county: faker.location.county(),
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+        },
+        // New case
+        {
+          external_id: "new-case-ext-id",
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          completion_date: faker.date.future(),
+          sentence_date: faker.date.past(),
+          assigned_date: faker.date.past(),
+          county: faker.location.county(),
+          lsir_level: faker.number.int().toString(),
+        },
+      ]);
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await prismaClient.case.findMany({});
+
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+        }),
+        expect.objectContaining({
+          externalId: "new-case-ext-id",
+          isReportTypeLocked: false,
+        }),
+      ]);
+    });
   });
 
   describe("import client data", () => {
@@ -491,6 +576,205 @@ describe("handle_import", () => {
         expect.objectContaining({
           externalId: "client-ext-1",
           county: "my fake county",
+        }),
+      ]);
+    });
+
+    test("should set isGenderLocked if known gender is provided", async () => {
+      dataProviderSingleton.setData([
+        // New client
+        {
+          external_id: "new-client-ext-id",
+          pseudonymized_id: "new-client-pid",
+          case_ids: JSON.stringify(["new-case-ext-id"]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: "Given",
+            middle_names: "Middle",
+            surname: "Last",
+            name_suffix: "Sr.",
+          }),
+          gender: Gender.FEMALE,
+          county: faker.location.county(),
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      // Create a new case to link to the new client
+      await prismaClient.case.create({
+        data: {
+          ...fakeCasePrismaInput,
+          externalId: "new-case-ext-id",
+          id: "new-case-id",
+        },
+      });
+
+      const response = await callHandleImportClientData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbClients = await prismaClient.client.findMany({
+        include: {
+          Cases: true,
+        },
+      });
+
+      // There should only be one client in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbClients).toHaveLength(1);
+
+      const newClient = dbClients[0];
+      expect(newClient).toEqual(
+        expect.objectContaining({
+          externalId: "new-client-ext-id",
+          gender: Gender.FEMALE,
+          isGenderLocked: true,
+        }),
+      );
+    });
+
+    test("should not set isGenderLocked if internal unknown gender is provided", async () => {
+      dataProviderSingleton.setData([
+        // New client
+        {
+          external_id: "new-client-ext-id",
+          pseudonymized_id: "new-client-pid",
+          case_ids: JSON.stringify(["new-case-ext-id"]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: "Given",
+            middle_names: "Middle",
+            surname: "Last",
+            name_suffix: "Sr.",
+          }),
+          gender: Gender.INTERNAL_UNKNOWN,
+          county: faker.location.county(),
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      // Create a new case to link to the new client
+      await prismaClient.case.create({
+        data: {
+          ...fakeCasePrismaInput,
+          externalId: "new-case-ext-id",
+          id: "new-case-id",
+        },
+      });
+
+      const response = await callHandleImportClientData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbClients = await prismaClient.client.findMany({
+        include: {
+          Cases: true,
+        },
+      });
+
+      // There should only be one client in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbClients).toHaveLength(1);
+
+      const newClient = dbClients[0];
+      expect(newClient).toEqual(
+        expect.objectContaining({
+          externalId: "new-client-ext-id",
+          gender: Gender.INTERNAL_UNKNOWN,
+          isGenderLocked: false,
+        }),
+      );
+    });
+
+    test("should not set isGenderLocked if external unknown gender is provided", async () => {
+      dataProviderSingleton.setData([
+        // New client
+        {
+          external_id: "new-client-ext-id",
+          pseudonymized_id: "new-client-pid",
+          case_ids: JSON.stringify(["new-case-ext-id"]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: "Given",
+            middle_names: "Middle",
+            surname: "Last",
+            name_suffix: "Sr.",
+          }),
+          gender: Gender.EXTERNAL_UNKNOWN,
+          county: faker.location.county(),
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      // Create a new case to link to the new client
+      await prismaClient.case.create({
+        data: {
+          ...fakeCasePrismaInput,
+          externalId: "new-case-ext-id",
+          id: "new-case-id",
+        },
+      });
+
+      const response = await callHandleImportClientData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbClients = await prismaClient.client.findMany({
+        include: {
+          Cases: true,
+        },
+      });
+
+      // There should only be one client in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbClients).toHaveLength(1);
+
+      const newClient = dbClients[0];
+      expect(newClient).toEqual(
+        expect.objectContaining({
+          externalId: "new-client-ext-id",
+          gender: Gender.EXTERNAL_UNKNOWN,
+          isGenderLocked: false,
+        }),
+      );
+    });
+
+    test("should not override gender if updating with unknown gender", async () => {
+      dataProviderSingleton.setData([
+        // existing client
+        {
+          external_id: fakeClient.externalId,
+          pseudonymized_id: fakeClient.pseudonymizedId,
+          case_ids: JSON.stringify([fakeCase.externalId]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: faker.person.firstName(),
+            middle_names: faker.person.firstName(),
+            surname: faker.person.lastName(),
+            name_suffix: faker.person.suffix(),
+          }),
+          gender: Gender.EXTERNAL_UNKNOWN,
+          county: "my fake county",
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      const response = await callHandleImportClientData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbClients = await prismaClient.client.findMany({});
+
+      expect(dbClients).toHaveLength(1);
+
+      expect(dbClients).toEqual([
+        expect.objectContaining({
+          externalId: "client-ext-1",
+          gender: fakeClient.gender,
         }),
       ]);
     });

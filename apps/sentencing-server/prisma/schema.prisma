@@ -94,6 +94,9 @@ model Client {
   county    String
   birthDate DateTime
   Cases     Case[]
+
+  // Whether the gender is locked and cannot be changed
+  isGenderLocked Boolean @default(false)
 }
 
 enum ReportType {
@@ -280,15 +283,17 @@ model Case {
   Client   Client? @relation(fields: [clientId], references: [externalId])
   clientId String?
 
-  dueDate           DateTime?
-  completionDate    DateTime?
-  sentenceDate      DateTime
-  assignedDate      DateTime
-  county            String
-  lsirLevel         String?
-  reportType        ReportType?
+  dueDate            DateTime?
+  completionDate     DateTime?
+  sentenceDate       DateTime
+  assignedDate       DateTime
+  county             String
+  lsirLevel          String?
+  reportType         ReportType?
   // Whether the LSIR score is locked and cannot be changed
-  isLsirScoreLocked Boolean     @default(false)
+  isLsirScoreLocked  Boolean     @default(false)
+  // Whether the report type is locked and cannot be changed
+  isReportTypeLocked Boolean     @default(false)
 
   // Mutable Attributes
   lsirScore Int?
