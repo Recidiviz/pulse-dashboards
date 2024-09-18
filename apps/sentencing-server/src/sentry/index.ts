@@ -24,4 +24,5 @@ init({
   tracesSampleRate: 0.25,
   profilesSampleRate: 0.1,
   integrations: [nodeProfilingIntegration(), prismaIntegration()],
+  maxValueLength: 5000,
 });
