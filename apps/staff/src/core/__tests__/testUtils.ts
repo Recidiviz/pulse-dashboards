@@ -85,6 +85,7 @@ export const mockOpportunity: Opportunity<Client> = {
   tabTitle: () => "Eligible Now",
   compare: () => 1,
   showEligibilityStatus: () => true,
+  nonOMSRequirements: [],
   config: {
     systemType: "SUPERVISION",
     stateCode: "US_ID",
@@ -115,8 +116,11 @@ export const mockOpportunity: Opportunity<Client> = {
     sidebarComponents: [],
     isAlert: false,
     deniedTabTitle: "Marked Ineligible",
+    omsCriteriaHeader: "OMS Requirements",
     eligibleCriteriaCopy: {},
     ineligibleCriteriaCopy: {},
+    nonOMSCriteriaHeader: "Requirements to Check",
+    nonOMSCriteria: [],
     homepagePosition: 1,
   },
 };

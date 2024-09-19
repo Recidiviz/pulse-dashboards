@@ -73,6 +73,7 @@ import {
 } from "./types";
 import { buildOpportunityCompareFunction } from "./utils/compareUtils";
 import {
+  hydrateReq,
   hydrateUntypedCriteria,
   UntypedCriteriaFormatters,
 } from "./utils/criteriaUtils";
@@ -567,6 +568,21 @@ export class OpportunityBase<
       ineligibleCriteriaCopy,
       this,
       this.criteriaFormatters,
+    );
+  }
+
+  get nonOMSRequirements(): OpportunityRequirement[] {
+    const {
+      config: { nonOMSCriteria },
+    } = this;
+
+    // Because these criteria aren't associated with a referral record, they don't have reasons
+    return nonOMSCriteria.map((req) =>
+      hydrateReq({
+        raw: req,
+        opportunity: this,
+        formatters: this.criteriaFormatters,
+      }),
     );
   }
 

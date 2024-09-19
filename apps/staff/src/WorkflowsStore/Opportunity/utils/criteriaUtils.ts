@@ -183,28 +183,50 @@ export function hydrateStr(
   );
 }
 
+export function hydrateReq({
+  raw,
+  opportunity,
+  criteria = {},
+  formatters = {},
+}: {
+  raw: OpportunityRequirement;
+  opportunity: Opportunity<JusticeInvolvedPerson>;
+  criteria?: Reason;
+  formatters?: UntypedCriteriaFormatters;
+}) {
+  const context: HydrationContext = {
+    criteria,
+    formatters,
+    opportunity,
+  };
+  const out = {
+    ...raw,
+    text: hydrateStr(raw.text, context),
+  };
+  if (raw.tooltip) out.tooltip = hydrateStr(raw.tooltip, context);
+  return out;
+}
+
+/**
+ * Return an array of the requirements from criteriaCopy that are named in recordCriteria,
+ * hydrated with the corresponding reason in recordCriteria and the provided formatters.
+ */
 export function hydrateUntypedCriteria(
   recordCriteria: Record<string, Reason | null>,
   criteriaCopy: Record<string, OpportunityRequirement>,
   opportunity: Opportunity<JusticeInvolvedPerson>,
   formatters: UntypedCriteriaFormatters = {},
 ): OpportunityRequirement[] {
-  function hydrateReq(raw: OpportunityRequirement, criteria: Reason) {
-    const context: HydrationContext = {
-      criteria,
-      formatters,
-      opportunity,
-    };
-    const out = {
-      ...raw,
-      text: hydrateStr(raw.text, context),
-    };
-    if (raw.tooltip) out.tooltip = hydrateStr(raw.tooltip, context);
-    return out;
-  }
-  return Object.entries(criteriaCopy).flatMap(([criteria, copy]) =>
+  return Object.entries(criteriaCopy).flatMap(([criteria, raw]) =>
     criteria in recordCriteria
-      ? [hydrateReq(copy, recordCriteria[criteria] ?? {})]
+      ? [
+          hydrateReq({
+            raw,
+            opportunity,
+            criteria: recordCriteria[criteria] ?? {},
+            formatters,
+          }),
+        ]
       : [],
   );
 }

@@ -100,6 +100,7 @@ export interface Opportunity<
   form?: FormBase<any>;
   requirementsAlmostMet: OpportunityRequirement[];
   requirementsMet: OpportunityRequirement[];
+  nonOMSRequirements: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
   readonly type: OpportunityType;
   denial: Denial | undefined;

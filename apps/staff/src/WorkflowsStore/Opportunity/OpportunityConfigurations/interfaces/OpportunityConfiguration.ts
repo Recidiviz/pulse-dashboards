@@ -22,6 +22,7 @@ import {
   Opportunity,
   OpportunityNotification,
   OpportunityPriority,
+  OpportunityRequirement,
   OpportunityTab,
   OpportunityTabGroups,
 } from "../../types";
@@ -54,9 +55,12 @@ export interface OpportunityConfiguration {
   isAlert?: boolean;
   notifications?: OpportunityNotification[];
   tooltipEligibilityText?: string;
+  omsCriteriaHeader: string;
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;
   compareBy: SortParam[] | undefined;
+  nonOMSCriteriaHeader: string;
+  nonOMSCriteria: OpportunityRequirement[];
   homepagePosition: number;
   countByFunction?: (opportunities: Opportunity[]) => number;
   deniedTabTitle?: OpportunityTab;

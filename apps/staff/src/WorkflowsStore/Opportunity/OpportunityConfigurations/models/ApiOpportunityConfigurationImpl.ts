@@ -24,7 +24,11 @@ import {
   FeatureVariant,
 } from "../../../../RootStore/types";
 import UserStore from "../../../../RootStore/UserStore";
-import { OpportunityTab, OpportunityTabGroups } from "../../types";
+import {
+  OpportunityRequirement,
+  OpportunityTab,
+  OpportunityTabGroups,
+} from "../../types";
 import { generateTabs } from "../../utils/tabUtils";
 import { IApiOpportunityConfiguration } from "../interfaces";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
@@ -188,6 +192,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.ineligibleCriteriaCopy;
   }
 
+  get nonOMSCriteria(): OpportunityRequirement[] {
+    return [];
+  }
+
   get compareBy() {
     return this.configurationObject.compareBy;
   }
@@ -210,5 +218,13 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
 
   get deniedTabTitle(): OpportunityTab {
     return this.isAlert ? "Overridden" : "Marked Ineligible";
+  }
+
+  get omsCriteriaHeader() {
+    return "OMS Requirements";
+  }
+
+  get nonOMSCriteriaHeader() {
+    return "Requirements to Check";
   }
 }

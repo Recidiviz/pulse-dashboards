@@ -18,6 +18,7 @@
 import {
   Icon,
   IconSVG,
+  palette,
   Sans14,
   Sans16,
   spacing,
@@ -25,10 +26,11 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
+import React, { ReactElement } from "react";
 import styled from "styled-components/macro";
 
-import { Opportunity } from "../../WorkflowsStore";
+import { useFeatureVariants } from "../../components/StoreProvider";
+import { Opportunity, OpportunityRequirement } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { InfoButton } from "./InfoButton";
 import OpportunityRecommendedLanguageModal from "./OpportunityRecommendedLanguageModal";
@@ -48,6 +50,13 @@ const KeepTogether = styled.span`
 
 const CriterionHeading = styled(Sans16)<{ isFirst?: boolean }>`
   margin-top: ${(props) => (props.isFirst ? "0" : rem(spacing.md))};
+  grid-column: 1 / 3;
+`;
+
+const CriteriaSectionHeading = styled(Sans14)<{ isFirst?: boolean }>`
+  margin-top: ${(props) => (props.isFirst ? "0" : rem(spacing.md))};
+  color: ${palette.slate80};
+  margin-bottom: ${rem(spacing.sm)};
   grid-column: 1 / 3;
 `;
 
@@ -75,7 +84,84 @@ export const CriteriaList = observer(function CriteriaList({
 }): React.ReactElement {
   const colors = useStatusColors(opportunity);
 
+  const featureVariants = useFeatureVariants();
+
   const alert = opportunity.config.isAlert;
+  const methodologyUrl = opportunity.config.methodologyUrl;
+
+  const reqToCriterion = (
+    { isHeading, text, tooltip, key }: OpportunityRequirement,
+    i: number,
+    iconType: ReactElement,
+    useRecommendedLanguage?: boolean,
+  ) => {
+    const tooltipElem = (
+      <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+        <InfoButton infoUrl={methodologyUrl} />
+      </InfoTooltipWrapper>
+    );
+
+    const recommendedLanguageElem = (
+      <>
+        <OpportunityRecommendedLanguageModal opportunity={opportunity}>
+          {text}
+        </OpportunityRecommendedLanguageModal>
+        {tooltip && <> {tooltipElem}</>}
+      </>
+    );
+
+    // if text doesn't need to be wrapped, split it so we can prevent orphaned tooltips
+    const textTokens = text.split(" ");
+    const splitTextElem = (
+      <>
+        {textTokens.slice(0, -1).join(" ")}{" "}
+        <KeepTogether>
+          {textTokens.slice(-1)}
+          {tooltip && <> {tooltipElem}</>}
+        </KeepTogether>
+      </>
+    );
+
+    return (
+      <CriterionWrapper key={key ?? text} alert={alert}>
+        {isHeading ? (
+          <CriterionHeading isFirst={i === 0}>{text}</CriterionHeading>
+        ) : (
+          <>
+            {iconType}
+            <CriterionContentWrapper>
+              {useRecommendedLanguage ? recommendedLanguageElem : splitTextElem}
+            </CriterionContentWrapper>
+          </>
+        )}
+      </CriterionWrapper>
+    );
+  };
+
+  const almostMetReqToCriterion = (req: OpportunityRequirement, i: number) => {
+    const icon = (
+      <CriterionIcon kind={IconSVG.Error} color={colors.iconAlmost} size={16} />
+    );
+    return reqToCriterion(req, i, icon, true);
+  };
+
+  const metReqToCriterion = (req: OpportunityRequirement, i: number) => {
+    const icon = (
+      <CriterionIcon
+        kind={alert ? IconSVG.Error : IconSVG.Success}
+        color={colors.icon}
+        size={16}
+      />
+    );
+    return reqToCriterion(req, i, icon);
+  };
+
+  const nonOMSReqToCriterion = (req: OpportunityRequirement, i: number) => {
+    const icon = (
+      <CriterionIcon kind={IconSVG.Check} color={palette.slate30} size={14} />
+    );
+    return reqToCriterion(req, i, icon);
+  };
 
   return (
     <Wrapper
@@ -83,64 +169,24 @@ export const CriteriaList = observer(function CriteriaList({
       alert={alert}
       className="CriteraList"
     >
-      {opportunity.requirementsAlmostMet.map(({ text, tooltip }) => {
-        return (
-          <CriterionWrapper key={text} alert={alert}>
-            <CriterionIcon
-              kind={IconSVG.Error}
-              color={colors.iconAlmost}
-              size={16}
-            />
-            <CriterionContentWrapper>
-              <OpportunityRecommendedLanguageModal opportunity={opportunity}>
-                {text}
-              </OpportunityRecommendedLanguageModal>
-              {tooltip && (
-                <>
-                  {" "}
-                  <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                    <InfoButton infoUrl={opportunity.config.methodologyUrl} />
-                  </InfoTooltipWrapper>
-                </>
-              )}
-            </CriterionContentWrapper>
-          </CriterionWrapper>
-        );
-      })}
-      {opportunity.requirementsMet.map(
-        ({ text, tooltip, isHeading, key }, i) => {
-          // split text so we can prevent orphaned tooltips
-          const textTokens = text.split(" ");
-          return (
-            <CriterionWrapper key={key ?? text}>
-              {isHeading ? (
-                <CriterionHeading isFirst={i === 0}>{text}</CriterionHeading>
-              ) : (
-                <>
-                  <CriterionIcon
-                    kind={alert ? IconSVG.Error : IconSVG.Success}
-                    color={colors.icon}
-                    size={16}
-                  />
-                  <CriterionContentWrapper>
-                    {textTokens.slice(0, -1).join(" ")}{" "}
-                    <KeepTogether>
-                      {textTokens.slice(-1)}{" "}
-                      {tooltip && (
-                        <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                          <InfoButton
-                            infoUrl={opportunity.config.methodologyUrl}
-                          />
-                        </InfoTooltipWrapper>
-                      )}
-                    </KeepTogether>
-                  </CriterionContentWrapper>
-                </>
-              )}
-            </CriterionWrapper>
-          );
-        },
+      {featureVariants.nonOMSCriteria && (
+        <CriteriaSectionHeading isFirst={true}>
+          {opportunity.config.omsCriteriaHeader}
+        </CriteriaSectionHeading>
       )}
+
+      {opportunity.requirementsAlmostMet.map(almostMetReqToCriterion)}
+      {opportunity.requirementsMet.map(metReqToCriterion)}
+
+      {featureVariants.nonOMSCriteria &&
+        opportunity.nonOMSRequirements.length > 0 && (
+          <>
+            <CriteriaSectionHeading>
+              {opportunity.config.nonOMSCriteriaHeader}
+            </CriteriaSectionHeading>
+            {opportunity.nonOMSRequirements.map(nonOMSReqToCriterion)}
+          </>
+        )}
     </Wrapper>
   );
 });
