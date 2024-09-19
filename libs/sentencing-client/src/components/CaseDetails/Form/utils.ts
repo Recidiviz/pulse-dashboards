@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { capitalize } from "lodash";
+import _, { capitalize } from "lodash";
 
-import { Case } from "../../../api";
+import { Case, Client } from "../../../api";
+import { ReportType } from "../../Dashboard/types";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
   AsamCareRecommendationKey,
+  CLIENT_GENDER_KEY,
+  GenderToDisplayName,
   MENTAL_HEALTH_DIAGNOSES_KEY,
   MentalHealthDiagnosesKey,
   NEEDS_TO_BE_ADDRESSED_KEY,
@@ -33,6 +36,8 @@ import {
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
   PLEA_KEY,
   PleaKey,
+  REPORT_TYPE_KEY,
+  SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
   YES_OPTION,
 } from "../constants";
 import {
@@ -46,6 +51,16 @@ import {
   mentalHealthDiagnoses,
   pleas,
 } from "./CaseDetailsFormTemplate";
+
+const convertGenderDisplayNameToEnum = (gender: string) => {
+  const genderDisplayNameToEnum = _.invert(GenderToDisplayName);
+  return genderDisplayNameToEnum[gender];
+};
+
+const convertReportTypeDisplayNameToEnum = (reportType: string) => {
+  const reportTypeDisplayNameToEnum = _.invert(ReportType);
+  return reportTypeDisplayNameToEnum[reportType];
+};
 
 /** Formats form value to enum */
 export const formatFormEnumValue = (value: string) => {
@@ -113,6 +128,14 @@ export const parseAttributeValue = (
     return pleas[value as NonNullable<Case[PleaKey]>] ?? null;
   }
 
+  if (key === CLIENT_GENDER_KEY) {
+    return GenderToDisplayName[value as NonNullable<Client["gender"]>] ?? null;
+  }
+
+  if (key === REPORT_TYPE_KEY) {
+    return ReportType[value as NonNullable<Case["reportType"]>] ?? null;
+  }
+
   const isString = typeof value === "string";
   const isNumber = typeof value === "number";
   const isNull = value === null;
@@ -128,6 +151,15 @@ export const transformUpdates = (updates: FormUpdates): FormAttributes => {
   const transformedUpdates = {} as { [key: string]: FormValue };
 
   Object.entries(updates).forEach(([key, value]) => {
+    if (
+      key === SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY &&
+      (value === "None" || value === NOT_SURE_YET_OPTION)
+    ) {
+      transformedUpdates[key] = null;
+      transformedUpdates[ASAM_CARE_RECOMMENDATION_KEY] = null;
+      return;
+    }
+
     if (value === NOT_SURE_YET_OPTION) {
       transformedUpdates[key] = null;
       return;
@@ -164,6 +196,16 @@ export const transformUpdates = (updates: FormUpdates): FormAttributes => {
 
     const isUndefined = value === undefined;
     if (isUndefined) return;
+
+    if (key === REPORT_TYPE_KEY) {
+      transformedUpdates[key] = convertReportTypeDisplayNameToEnum(value);
+      return;
+    }
+
+    if (key === CLIENT_GENDER_KEY) {
+      transformedUpdates[key] = convertGenderDisplayNameToEnum(value);
+      return;
+    }
 
     transformedUpdates[key] = formatFormEnumValue(value);
     return;

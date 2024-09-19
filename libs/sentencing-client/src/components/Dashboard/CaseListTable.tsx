@@ -32,12 +32,12 @@ import { psiUrl } from "../../utils/routing";
 import { sortFullNameByLastNameDescending } from "../../utils/sorting";
 import { displayReportType } from "../../utils/utils";
 import SortIcon from "../assets/sort-icon.svg?react";
+import { REPORT_TYPE_KEY } from "../CaseDetails/constants";
 import {
   CLIENT_FULL_NAME_KEY,
   DUE_DATE_KEY,
   ID_KEY,
   OFFENSE_KEY,
-  REPORT_TYPE_KEY,
   STATUS_KEY,
 } from "./constants";
 import * as Styled from "./Dashboard.styles";

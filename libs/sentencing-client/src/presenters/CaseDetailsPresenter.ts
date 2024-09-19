@@ -26,7 +26,7 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
-import { Case, Insight, Opportunities } from "../api";
+import { Case, Client, Insight, Opportunities } from "../api";
 import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
 import { filterEligibleOpportunities } from "../components/CaseDetails/Opportunities/utils";
 import {
@@ -95,14 +95,14 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.caseStore.psiStore.staffPseudoId;
   }
 
-  get caseAttributes() {
+  get caseAttributes(): Case & { clientGender?: Client["gender"] } {
     const currentCase = this.caseStore.caseDetailsById[this.caseId];
     if (currentCase.Client?.fullName) {
       currentCase.Client.fullName = startCase(
         toLower(currentCase.Client?.fullName),
       );
     }
-    return currentCase;
+    return { ...currentCase, clientGender: currentCase.Client?.gender };
   }
 
   get caseEligibilityAttributes() {

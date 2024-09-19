@@ -22,7 +22,7 @@ import { Case } from "../../../api";
 import { CaseStatus } from "../../Dashboard/types";
 import * as Styled from "../CaseDetails.styles";
 import { OnboardingAdditionalNeeds } from "./OnboardingAdditionalNeeds";
-import { OnboardingOffenseLsirScore } from "./OnboardingOffenseLsirScore";
+import { OnboardingOffenseLsirScoreGenderReportType } from "./OnboardingOffenseLsirScore";
 import { OnboardingPrimaryNeeds } from "./OnboardingPrimaryNeeds";
 import { CaseOnboardingProps, OnboardingTopic } from "./types";
 
@@ -97,7 +97,10 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
           {!hasCompletedOnboarding ? (
             <>
               {currentTopic === OnboardingTopic.OffenseLsirScore && (
-                <OnboardingOffenseLsirScore form={form} firstName={firstName} />
+                <OnboardingOffenseLsirScoreGenderReportType
+                  form={form}
+                  firstName={firstName}
+                />
               )}
               {currentTopic === OnboardingTopic.PrimaryNeeds && (
                 <OnboardingPrimaryNeeds form={form} firstName={firstName} />

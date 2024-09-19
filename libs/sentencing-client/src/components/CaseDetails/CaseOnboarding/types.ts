@@ -51,7 +51,7 @@ export type CaseOnboardingTopicProps = {
 };
 
 export type OnboardingFields = {
-  OFFENSE_LSIR_SCORE_FIELDS: FormFieldList;
+  OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS: FormFieldList;
   PRIMARY_NEEDS_FIELD: FormFieldList;
   ADDITIONAL_NEEDS_FIELDS: FormFieldList;
 };

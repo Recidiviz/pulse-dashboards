@@ -21,6 +21,9 @@ export const PDF_PAGE_WIDTH = 950;
 
 export const OFFENSE_KEY = "offense";
 
+export const REPORT_TYPE_KEY = "reportType";
+export type ReportTypeKey = typeof REPORT_TYPE_KEY;
+
 export const LSIR_SCORE_KEY = "lsirScore";
 export type LsirScoreKey = "lsirScore";
 
@@ -78,8 +81,6 @@ export type HasOpenChildProtectiveServicesCase =
 
 export const CLIENT_GENDER_KEY = "clientGender";
 export type ClientGender = "clientGender";
-
-export const REPORT_TYPE_KEY = "reportType";
 
 export const NO_OPTION = "No";
 export const YES_OPTION = "Yes";

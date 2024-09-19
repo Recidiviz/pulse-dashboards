@@ -42,7 +42,8 @@ export const DropdownField: React.FC<InputFieldProps> = ({
   return (
     <>
       <Select
-        defaultValue={currentValue}
+        placeholder={element.placeholder}
+        value={currentValue?.value ? currentValue : null}
         options={element.options?.map((selection) => ({
           label: selection,
           value: selection,

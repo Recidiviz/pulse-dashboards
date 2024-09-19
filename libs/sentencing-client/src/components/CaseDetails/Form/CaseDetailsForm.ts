@@ -18,10 +18,11 @@
 import { keyBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { Case, Insight } from "../../../api/APIClient";
+import { Case, Client, Insight } from "../../../api/APIClient";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { OnboardingFields } from "../CaseOnboarding/types";
 import {
+  ASAM_CARE_RECOMMENDATION_KEY,
   CLIENT_GENDER_KEY,
   ClientGender,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
@@ -30,6 +31,7 @@ import {
   LSIR_SCORE_KEY,
   MENTAL_HEALTH_DIAGNOSES_KEY,
   NEEDS_TO_BE_ADDRESSED_KEY,
+  NOT_SURE_YET_OPTION,
   OFFENSE_KEY,
   PLEA_KEY,
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
@@ -96,8 +98,15 @@ export class CaseDetailsForm {
   get onboardingFields() {
     const fields = this.contentList.reduce(
       (acc, field) => {
-        if ([OFFENSE_KEY, LSIR_SCORE_KEY].includes(field.key)) {
-          acc.OFFENSE_LSIR_SCORE_FIELDS.push(field);
+        if (
+          [
+            OFFENSE_KEY,
+            LSIR_SCORE_KEY,
+            CLIENT_GENDER_KEY,
+            REPORT_TYPE_KEY,
+          ].includes(field.key)
+        ) {
+          acc.OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS.push(field);
         }
         if (field.key === NEEDS_TO_BE_ADDRESSED_KEY) {
           acc.PRIMARY_NEEDS_FIELD.push(field);
@@ -119,7 +128,7 @@ export class CaseDetailsForm {
         return acc;
       },
       {
-        OFFENSE_LSIR_SCORE_FIELDS: [],
+        OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS: [],
         PRIMARY_NEEDS_FIELD: [],
         ADDITIONAL_NEEDS_FIELDS: [],
       } as OnboardingFields,
@@ -157,12 +166,9 @@ export class CaseDetailsForm {
     }
   }
 
-  createForm(caseAttributes: Case) {
+  createForm(caseAttributes: Case & { clientGender?: Client["gender"] }) {
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
-      const attributeValue =
-        field.key === CLIENT_GENDER_KEY
-          ? caseAttributes.Client?.gender
-          : caseAttributes[field.key];
+      const attributeValue = caseAttributes[field.key];
       const invalidLsirScore =
         field.key === LSIR_SCORE_KEY &&
         attributeValue &&
@@ -183,10 +189,7 @@ export class CaseDetailsForm {
         options: field.key === OFFENSE_KEY ? this.offenses : field.options,
         value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {
-          const nestedAttributeValue =
-            nestedField.key === CLIENT_GENDER_KEY
-              ? caseAttributes.Client?.gender
-              : caseAttributes[nestedField.key];
+          const nestedAttributeValue = caseAttributes[nestedField.key];
           if (nestedAttributeValue === undefined) {
             return nestedField;
           }
@@ -242,6 +245,28 @@ export class CaseDetailsForm {
 
     this.updates[keyOrContextKey] =
       key === "lsirScore" && value ? Number(value) : value;
+
+    // Special handling for ASAM level of care recommendation: clear values if "None" or "Not Sure Yet" options are selected
+    if (key === SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY) {
+      const isNoneOrNull = [NOT_SURE_YET_OPTION, "None"].includes(
+        String(value),
+      );
+
+      if (
+        isNoneOrNull &&
+        this.content?.[SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY]?.nested?.[
+          ASAM_CARE_RECOMMENDATION_KEY
+        ]
+      ) {
+        this.content[SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY].nested[
+          ASAM_CARE_RECOMMENDATION_KEY
+        ].value = null;
+        this.updates[ASAM_CARE_RECOMMENDATION_KEY] = null;
+      }
+
+      this.content[SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY].value = value;
+      return;
+    }
 
     if (parentKey && this.content[parentKey].nested?.[key]) {
       if (

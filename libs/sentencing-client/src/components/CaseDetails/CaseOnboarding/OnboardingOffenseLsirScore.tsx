@@ -21,7 +21,7 @@ import * as Styled from "../CaseDetails.styles";
 import { Form } from "../Form/Elements/Form";
 import { CaseOnboardingTopicProps } from "./types";
 
-export const OnboardingOffenseLsirScore: React.FC<CaseOnboardingTopicProps> =
+export const OnboardingOffenseLsirScoreGenderReportType: React.FC<CaseOnboardingTopicProps> =
   observer(function OnboardingOffenseLsirScore({ form, firstName }) {
     return (
       <>
@@ -33,7 +33,9 @@ export const OnboardingOffenseLsirScore: React.FC<CaseOnboardingTopicProps> =
         </Styled.OnboardingHeaderWrapper>
         <Form
           form={form}
-          formFields={form.onboardingFields.OFFENSE_LSIR_SCORE_FIELDS}
+          formFields={
+            form.onboardingFields.OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS
+          }
         />
       </>
     );

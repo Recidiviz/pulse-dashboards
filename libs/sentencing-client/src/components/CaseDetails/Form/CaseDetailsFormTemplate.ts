@@ -16,13 +16,25 @@
 // =============================================================================
 
 import { Case } from "../../../api/APIClient";
+import { ReportType } from "../../Dashboard/types";
 import {
+  CLIENT_GENDER_KEY,
+  GenderToDisplayName,
+  LSIR_SCORE_KEY,
   needsToBeAddressed,
   NO_OPTION,
   NOT_SURE_YET_OPTION,
+  OFFENSE_KEY,
+  REPORT_TYPE_KEY,
   YES_OPTION,
 } from "../constants";
 import { FormFieldList, NonArrayType, NonNullableKey } from "../types";
+
+const genderOptions = Object.values(GenderToDisplayName).filter(
+  (gender) => gender !== "Unknown",
+);
+
+const reportTypeOptions = Object.values(ReportType);
 
 const needsToBeAddressedOptions = [
   ...Object.values(needsToBeAddressed),
@@ -90,7 +102,7 @@ const yesNoUnsureOptions = [YES_OPTION, NO_OPTION, NOT_SURE_YET_OPTION];
 
 export const caseDetailsFormTemplate: FormFieldList = [
   {
-    key: "offense",
+    key: OFFENSE_KEY,
     label: "Offense",
     value: null,
     description:
@@ -100,13 +112,31 @@ export const caseDetailsFormTemplate: FormFieldList = [
     isRequired: true,
   },
   {
-    key: "lsirScore",
+    key: LSIR_SCORE_KEY,
     label: "Draft LSI-R Score",
     value: null,
     inputType: "text",
     disabledMessage:
       "This score has been pulled in from Atlas and is unable to be edited.",
     validationErrorMessage: "Please enter a number between 0 and 54.",
+  },
+  {
+    key: CLIENT_GENDER_KEY,
+    label: "Gender",
+    value: null,
+    inputType: "dropdown",
+    options: genderOptions,
+    disabledMessage:
+      "This field has been pulled in from Atlas and is unable to be edited.",
+  },
+  {
+    key: REPORT_TYPE_KEY,
+    label: "Report Type",
+    value: null,
+    inputType: "dropdown",
+    options: reportTypeOptions,
+    disabledMessage:
+      "This field has been pulled in from Atlas and is unable to be edited.",
   },
   {
     key: "needsToBeAddressed",

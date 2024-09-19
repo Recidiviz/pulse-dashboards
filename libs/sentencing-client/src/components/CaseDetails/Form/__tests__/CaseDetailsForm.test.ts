@@ -131,28 +131,42 @@ test("form sets error flag to true when caseAttributes has an error in values", 
   );
   expect(localForm.hasError).toBeFalse();
 
-  vi.spyOn(
-    caseDetailsPresenter.caseAttributes,
-    "lsirScore",
-    "get",
-  ).mockResolvedValue(222);
+  caseAttributes.lsirScore = 222;
 
-  localForm = new CaseDetailsForm(caseDetailsPresenter, [], mockGetInsights);
+  const localCaseDetailsPresenter = {
+    ...caseDetailsPresenter,
+    get caseAttributes() {
+      return caseAttributes;
+    },
+  } as CaseDetailsPresenter;
+
+  localForm = new CaseDetailsForm(
+    localCaseDetailsPresenter,
+    [],
+    mockGetInsights,
+  );
   expect(localForm.hasError).toBeTrue();
 });
 
 test("onboardingFields returns the expected onboarding fields", () => {
-  expect(form.onboardingFields).toHaveProperty("OFFENSE_LSIR_SCORE_FIELDS");
+  expect(form.onboardingFields).toHaveProperty(
+    "OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS",
+  );
   expect(form.onboardingFields).toHaveProperty("PRIMARY_NEEDS_FIELD");
   expect(form.onboardingFields).toHaveProperty("ADDITIONAL_NEEDS_FIELDS");
 
-  expect(form.onboardingFields["OFFENSE_LSIR_SCORE_FIELDS"].length).toBe(2);
-  expect(form.onboardingFields["OFFENSE_LSIR_SCORE_FIELDS"][0].key).toBe(
-    OFFENSE_KEY,
-  );
-  expect(form.onboardingFields["OFFENSE_LSIR_SCORE_FIELDS"][1].key).toBe(
-    LSIR_SCORE_KEY,
-  );
+  expect(
+    form.onboardingFields["OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS"]
+      .length,
+  ).toBe(4);
+  expect(
+    form.onboardingFields["OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS"][0]
+      .key,
+  ).toBe(OFFENSE_KEY);
+  expect(
+    form.onboardingFields["OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS"][1]
+      .key,
+  ).toBe(LSIR_SCORE_KEY);
 
   expect(form.onboardingFields["PRIMARY_NEEDS_FIELD"].length).toBe(1);
   expect(form.onboardingFields["PRIMARY_NEEDS_FIELD"][0].key).toBe(

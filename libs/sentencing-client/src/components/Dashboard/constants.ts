@@ -23,8 +23,6 @@ export const DUE_DATE_KEY: keyof StaffCase = "dueDate";
 
 export const CLIENT_KEY: keyof StaffCase = "Client";
 
-export const REPORT_TYPE_KEY: keyof StaffCase = "reportType";
-
 const CLIENT_ID_KEY: keyof NonNullable<StaffCaseClient> = "externalId";
 
 export const ID_KEY = [CLIENT_KEY, CLIENT_ID_KEY].join(".");
