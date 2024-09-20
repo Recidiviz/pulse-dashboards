@@ -22,6 +22,8 @@ import {
   DASHBOARD_TENANTS,
   US_AR,
   US_CA,
+  US_ME,
+  US_MI,
   US_OR,
 } from "./RootStore/TenantStore/dashboardTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
@@ -31,12 +33,10 @@ import { TenantConfigId } from "./RootStore/types";
 import { CSG_CONFIG } from "./tenants/CSG";
 import US_AR_CONFIG from "./tenants/US_AR";
 import US_CA_CONFIG from "./tenants/US_CA";
-import US_CO_CONFIG from "./tenants/US_CO";
 import US_ID_CONFIG from "./tenants/US_ID";
 import US_ME_CONFIG from "./tenants/US_ME";
 import US_MI_CONFIG from "./tenants/US_MI";
 import US_MO_CONFIG from "./tenants/US_MO";
-import US_NC_CONFIG from "./tenants/US_NC";
 import US_ND_CONFIG from "./tenants/US_ND";
 import US_OR_CONFIG from "./tenants/US_OR";
 import US_PA_CONFIG from "./tenants/US_PA";
@@ -55,12 +55,10 @@ const ALL_TENANTS = uniq([...DASHBOARD_TENANTS, ...LANTERN_TENANTS]);
 const TENANTS: Tenants = {
   [US_AR]: US_AR_CONFIG,
   [US_CA]: US_CA_CONFIG,
-  [pathways.US_CO]: US_CO_CONFIG,
   [pathways.US_ID]: US_ID_CONFIG,
-  [pathways.US_ME]: US_ME_CONFIG,
-  [pathways.US_MI]: US_MI_CONFIG,
+  [US_ME]: US_ME_CONFIG,
+  [US_MI]: US_MI_CONFIG,
   [lantern.US_MO]: US_MO_CONFIG,
-  [pathways.US_NC]: US_NC_CONFIG,
   [pathways.US_ND]: US_ND_CONFIG,
   [US_OR]: US_OR_CONFIG,
   [lantern.US_PA]: US_PA_CONFIG,

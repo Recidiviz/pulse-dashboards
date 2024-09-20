@@ -172,7 +172,7 @@ describe("OverTimeMetric", () => {
   });
 
   it("calls the backend again when the tenant changes", () => {
-    const newTenantId = "US_CO";
+    const newTenantId = "US_ID";
     runInAction(() => {
       metric.rootStore.tenantStore.currentTenantId = newTenantId;
     });

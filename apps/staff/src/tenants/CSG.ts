@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
+import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import * as lantern from "../RootStore/TenantStore/lanternTenants";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 
@@ -25,7 +26,7 @@ export const CSG_CONFIG: TenantConfig = {
   domain: "csg.org",
   availableStateCodes: [
     ...lantern.LANTERN_TENANTS,
-    pathways.US_MI,
+    dashboard.US_MI,
     pathways.US_TN,
   ],
   enableUserRestrictions: false,

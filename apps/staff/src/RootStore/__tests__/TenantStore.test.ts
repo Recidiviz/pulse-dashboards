@@ -191,7 +191,7 @@ describe("TenantStore", () => {
       // location, this works.
       // @ts-expect-error
       delete window.location;
-      window.location = { search: "?tenantId=US_CO" } as Location;
+      window.location = { search: "?tenantId=US_TN" } as Location;
       sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantIdFromStorage);
     });
 
@@ -207,7 +207,7 @@ describe("TenantStore", () => {
         rootStore: mockRootStore,
       });
 
-      expect(tenantStore.currentTenantId).toEqual("US_CO");
+      expect(tenantStore.currentTenantId).toEqual("US_TN");
     });
 
     it("currentTenantId is not set to the tenantId in the url query for non-Recidiviz users", () => {

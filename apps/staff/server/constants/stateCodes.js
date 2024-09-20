@@ -18,12 +18,10 @@
 const stateCodes = {
   US_AR: "US_AR",
   US_CA: "US_CA",
-  US_CO: "US_CO",
   US_ID: "US_ID",
   US_ME: "US_ME",
   US_MI: "US_MI",
   US_MO: "US_MO",
-  US_NC: "US_NC",
   US_ND: "US_ND",
   US_OR: "US_OR",
   US_PA: "US_PA",

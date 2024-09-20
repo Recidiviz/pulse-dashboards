@@ -15,12 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const US_CO = "US_CO";
 export const US_ID = "US_ID";
-export const US_ME = "US_ME";
-export const US_MI = "US_MI";
 export const US_MO = "US_MO";
-export const US_NC = "US_NC";
 export const US_ND = "US_ND";
 export const US_TN = "US_TN";
 export const US_DEMO = "US_DEMO";
@@ -28,11 +24,7 @@ export const US_DEMO = "US_DEMO";
 export const PATHWAYS_TENANTS = [
   // NOTE: the first state in this list is where Recidiviz users will default to
   US_TN,
-  US_CO,
   US_ID,
-  US_ME,
-  US_MI,
   US_MO,
-  US_NC,
   US_ND,
 ] as const;

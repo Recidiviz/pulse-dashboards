@@ -16,20 +16,15 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
-import enabledTableColumns from "../core/utils/enabledTableColumns";
-import {
-  INSIGHTS_PAGES,
-  PATHWAYS_PAGES,
-  PATHWAYS_SECTIONS,
-} from "../core/views";
-import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import { INSIGHTS_PAGES } from "../core/views";
+import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const US_MI_CONFIG: TenantConfig = {
   name: "Michigan",
   stateCode: "MI",
   domain: "michigan.gov",
-  availableStateCodes: [pathways.US_MI],
+  availableStateCodes: [dashboard.US_MI],
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
@@ -50,53 +45,7 @@ const US_MI_CONFIG: TenantConfig = {
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients", "residents"],
-    system: [PATHWAYS_PAGES.prison],
-    libertyToPrison: [
-      PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByPriorLengthOfIncarceration,
-      PATHWAYS_SECTIONS.countByGender,
-      PATHWAYS_SECTIONS.countByAgeGroup,
-      PATHWAYS_SECTIONS.countByRace,
-    ],
-    prison: [
-      PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByRace,
-      PATHWAYS_SECTIONS.personLevelDetail,
-    ],
-    prisonToSupervision: [
-      PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByAgeGroup,
-      PATHWAYS_SECTIONS.countByRace,
-      PATHWAYS_SECTIONS.personLevelDetail,
-    ],
-    supervisionToPrison: [
-      PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLengthOfStay,
-      PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByOfficer,
-      PATHWAYS_SECTIONS.countByGender,
-      PATHWAYS_SECTIONS.countByRace,
-    ],
-    supervision: [
-      PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countBySupervisionLevel,
-      PATHWAYS_SECTIONS.countByRace,
-    ],
-    supervisionToLiberty: [
-      PATHWAYS_SECTIONS.countOverTime,
-      PATHWAYS_SECTIONS.countByLengthOfStay,
-      PATHWAYS_SECTIONS.countByLocation,
-      PATHWAYS_SECTIONS.countByGender,
-      PATHWAYS_SECTIONS.countByAgeGroup,
-      PATHWAYS_SECTIONS.countByRace,
-    ],
-    methodology: ["system"],
   },
-  tableColumns: enabledTableColumns[pathways.US_MI],
 };
 
 export default US_MI_CONFIG;

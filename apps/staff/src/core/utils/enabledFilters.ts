@@ -16,12 +16,8 @@
 // =============================================================================
 
 import {
-  US_CO,
   US_ID,
-  US_ME,
-  US_MI,
   US_MO,
-  US_NC,
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
@@ -353,19 +349,6 @@ export const EnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
 };
 
-export const CoEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-  prisonPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.ADMISSION_REASON,
-    ],
-  },
-};
-
 export const IdEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
   // LIBERTY TO PRISON
@@ -548,85 +531,7 @@ export const TnEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   },
 };
 
-export const MeEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-  libertyToPrisonPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  libertyToPrisonPopulationByDistrict: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  libertyToPrisonPopulationByPriorLengthOfIncarceration: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  libertyToPrisonPopulationByGender: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  libertyToPrisonPopulationByAgeGroup: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  libertyToPrisonPopulationByRace: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.AGE_GROUP,
-    ],
-  },
-  supervisionToPrisonOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.DISTRICT,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.SUPERVISION_TYPE,
-    ],
-  },
-};
-
-export const MiEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-  prisonPopulationOverTime: {
-    enabledFilters: [
-      FILTER_TYPES.TIME_PERIOD,
-      FILTER_TYPES.FACILITY,
-      FILTER_TYPES.GENDER,
-      FILTER_TYPES.RACE,
-      FILTER_TYPES.ADMISSION_REASON,
-    ],
-  },
-};
-
 export const MoEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
-  ...EnabledFilterOptions,
-};
-
-export const NcEnabledFilterOptions: Partial<EnabledFiltersByMetric> = {
   ...EnabledFilterOptions,
 };
 
@@ -654,13 +559,9 @@ const AllEnabledFilterOptions: Record<
   PathwaysTenants,
   Partial<EnabledFiltersByMetric>
 > = {
-  [US_CO]: CoEnabledFilterOptions,
   [US_ID]: IdEnabledFilterOptions,
   [US_TN]: TnEnabledFilterOptions,
-  [US_ME]: MeEnabledFilterOptions,
-  [US_MI]: MiEnabledFilterOptions,
   [US_MO]: MoEnabledFilterOptions,
-  [US_NC]: NcEnabledFilterOptions,
   [US_ND]: NdEnabledFilterOptions,
 } as const;
 

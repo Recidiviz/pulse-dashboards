@@ -16,12 +16,8 @@
 // =============================================================================
 
 import {
-  US_CO,
   US_ID,
-  US_ME,
-  US_MI,
   US_MO,
-  US_NC,
   US_ND,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
@@ -123,27 +119,11 @@ export const DefaultTableColumns: TableColumns = {
   ],
 };
 
-export const CoEnabledTableColumns: TableColumns = {
-  ...DefaultTableColumns,
-};
-
 export const IdEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
 
-export const MeEnabledTableColumns: TableColumns = {
-  ...DefaultTableColumns,
-};
-
-export const MiEnabledTableColumns: TableColumns = {
-  ...DefaultTableColumns,
-};
-
 export const MoEnabledTableColumns: TableColumns = {
-  ...DefaultTableColumns,
-};
-
-export const NcEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
 
@@ -156,12 +136,8 @@ export const TnEnabledTableColumns: TableColumns = {
 };
 
 export default {
-  [US_CO]: CoEnabledTableColumns,
   [US_ID]: IdEnabledTableColumns,
-  [US_ME]: MeEnabledTableColumns,
-  [US_MI]: MiEnabledTableColumns,
   [US_MO]: MoEnabledTableColumns,
-  [US_NC]: NcEnabledTableColumns,
   [US_ND]: NdEnabledTableColumns,
   [US_TN]: TnEnabledTableColumns,
 } as const;
