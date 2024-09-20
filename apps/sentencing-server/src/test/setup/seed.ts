@@ -248,12 +248,12 @@ export async function seed() {
   await prismaClient.case.create({
     data: {
       ...fakeCasePrismaInput,
-      Client: {
+      client: {
         connect: {
           externalId: fakeClient.externalId,
         },
       },
-      Staff: {
+      staff: {
         connect: {
           externalId: fakeStaff.externalId,
         },

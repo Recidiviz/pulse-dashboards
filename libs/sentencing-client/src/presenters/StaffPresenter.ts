@@ -60,10 +60,10 @@ export class StaffPresenter implements Hydratable {
   get caseTableData() {
     return !this.staffInfo
       ? undefined
-      : [...this.staffInfo.Cases].sort((a, b) =>
+      : [...this.staffInfo.cases].sort((a, b) =>
           sortFullNameByLastNameDescending(
-            a.Client?.fullName,
-            b.Client?.fullName,
+            a.client?.fullName,
+            b.client?.fullName,
           ),
         );
   }

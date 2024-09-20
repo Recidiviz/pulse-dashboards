@@ -36,14 +36,14 @@ export const staffRouter = router({
           externalId: true,
         },
         include: {
-          Cases: {
+          cases: {
             select: {
               id: true,
               externalId: true,
               dueDate: true,
               reportType: true,
               status: true,
-              Client: {
+              client: {
                 select: {
                   externalId: true,
                   fullName: true,
@@ -68,7 +68,7 @@ export const staffRouter = router({
 
       return {
         ...staff,
-        Cases: staff.Cases.map((c: (typeof staff.Cases)[number]) => ({
+        cases: staff.cases.map((c: (typeof staff.cases)[number]) => ({
           ...c,
           offense: c.offense?.name,
         })),

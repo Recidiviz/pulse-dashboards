@@ -224,7 +224,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     {
       key: "Age",
       label: "Age",
-      value: moment().diff(caseAttributes.Client?.birthDate, "years"),
+      value: moment().diff(caseAttributes.client?.birthDate, "years"),
     },
     {
       key: LSIR_SCORE_KEY,

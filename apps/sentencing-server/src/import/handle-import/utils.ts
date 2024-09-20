@@ -64,7 +64,8 @@ export async function transformAndLoadClientData(
       county: clientData.county ?? "UNKNOWN",
       birthDate: clientData.birth_date,
       isGenderLocked: hasKnownGender,
-      Cases: {
+      district: clientData.district,
+      cases: {
         connect: existingCasesForClient,
       },
     };
@@ -127,7 +128,7 @@ export async function transformAndLoadStaffData(
       stateCode: staffData.state_code,
       fullName: staffData.full_name,
       email: staffData.email,
-      Cases: {
+      cases: {
         connect: existingCasesForStaff,
       },
     };

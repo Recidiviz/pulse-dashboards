@@ -82,13 +82,13 @@ async function main() {
     await prisma.case.create({
       data: {
         externalId: faker.string.uuid(),
-        Client: {
+        client: {
           connect: {
             externalId:
               clients[faker.number.int({ max: clients.length - 1 })].externalId,
           },
         },
-        Staff: {
+        staff: {
           connect: {
             externalId:
               staff[faker.number.int({ max: staff.length - 1 })].externalId,

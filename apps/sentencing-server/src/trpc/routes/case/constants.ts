@@ -36,7 +36,7 @@ export const PRISMA_CASE_GET_ARGS = {
         name: true,
       },
     },
-    Client: {
+    client: {
       select: {
         fullName: true,
         gender: true,

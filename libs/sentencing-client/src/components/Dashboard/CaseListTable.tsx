@@ -76,8 +76,8 @@ const columns = [
     accessorKey: CLIENT_FULL_NAME_KEY,
     sortingFn: (rowA: Row<CaseListTableCase>, rowB: Row<CaseListTableCase>) =>
       sortFullNameByLastNameDescending(
-        rowA.original.Client?.fullName,
-        rowB.original.Client?.fullName,
+        rowA.original.client?.fullName,
+        rowB.original.client?.fullName,
       ),
     cell: (name: CellContext<CaseListTableCase, string>) => {
       const clientName = name.getValue() ?? "No name found";
@@ -320,7 +320,7 @@ export const CaseListTable = ({
                   key={cell.id}
                   onClick={() => {
                     if (
-                      cell.getValue() === cell.row.original.Client?.fullName
+                      cell.getValue() === cell.row.original.client?.fullName
                     ) {
                       trackIndividualCaseClicked(
                         cell.row.original.id,

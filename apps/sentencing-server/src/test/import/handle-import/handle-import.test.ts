@@ -478,6 +478,7 @@ describe("handle_import", () => {
           gender: faker.helpers.enumValue(Gender),
           county: faker.location.county(),
           birth_date: faker.date.birthdate(),
+          district: "D1",
         },
       ]);
 
@@ -497,7 +498,7 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbClients = await prismaClient.client.findMany({
         include: {
-          Cases: true,
+          cases: true,
         },
       });
 
@@ -512,8 +513,9 @@ describe("handle_import", () => {
           pseudonymizedId: "new-client-pid",
           // The name should be collapsed into a single field
           fullName: "Given Middle Last Sr.",
+          district: "D1",
           // The case should have been linked as well
-          Cases: [
+          cases: [
             expect.objectContaining({
               externalId: "new-case-ext-id",
             }),
@@ -616,7 +618,7 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbClients = await prismaClient.client.findMany({
         include: {
-          Cases: true,
+          cases: true,
         },
       });
 
@@ -670,7 +672,7 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbClients = await prismaClient.client.findMany({
         include: {
-          Cases: true,
+          cases: true,
         },
       });
 
@@ -724,7 +726,7 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbClients = await prismaClient.client.findMany({
         include: {
-          Cases: true,
+          cases: true,
         },
       });
 
@@ -815,7 +817,7 @@ describe("handle_import", () => {
       // Check that the new case was created
       const dbStaff = await prismaClient.staff.findMany({
         include: {
-          Cases: true,
+          cases: true,
         },
       });
 
@@ -831,7 +833,7 @@ describe("handle_import", () => {
           // The name should be collapsed into a single field
           fullName: "Given Middle Last Sr.",
           // The case should have been linked as well
-          Cases: [
+          cases: [
             expect.objectContaining({
               externalId: "new-case-ext-id",
             }),

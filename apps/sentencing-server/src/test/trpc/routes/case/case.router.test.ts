@@ -46,7 +46,7 @@ describe("case router", () => {
       expect(returnedCase).toEqual(
         expect.objectContaining({
           ...fakeCase,
-          Client: {
+          client: {
             ..._.pick(fakeClient, [
               "fullName",
               "gender",
@@ -291,7 +291,7 @@ describe("case router", () => {
           id: fakeCase.id,
         },
         include: {
-          Client: {
+          client: {
             select: {
               gender: true,
             },
@@ -323,7 +323,7 @@ describe("case router", () => {
           recommendationSummary: "Recommendation Summary",
           lsirScore: 10,
           reportType: ReportType.FullPSI,
-          Client: expect.objectContaining({
+          client: expect.objectContaining({
             gender: Gender.MALE,
           }),
           offense: expect.objectContaining({
@@ -435,7 +435,7 @@ describe("case router", () => {
       await prismaClient.case.update({
         where: { id: fakeCase.id },
         data: {
-          Client: {
+          client: {
             update: {
               isGenderLocked: true,
             },

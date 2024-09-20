@@ -97,12 +97,12 @@ export class CaseDetailsPresenter implements Hydratable {
 
   get caseAttributes(): Case & { clientGender?: Client["gender"] } {
     const currentCase = this.caseStore.caseDetailsById[this.caseId];
-    if (currentCase.Client?.fullName) {
-      currentCase.Client.fullName = startCase(
-        toLower(currentCase.Client?.fullName),
+    if (currentCase.client?.fullName) {
+      currentCase.client.fullName = startCase(
+        toLower(currentCase.client?.fullName),
       );
     }
-    return { ...currentCase, clientGender: currentCase.Client?.gender };
+    return { ...currentCase, clientGender: currentCase.client?.gender };
   }
 
   get caseEligibilityAttributes() {
@@ -123,7 +123,7 @@ export class CaseDetailsPresenter implements Hydratable {
       plea,
       county,
     } = this.caseAttributes ?? {};
-    const { birthDate } = this.caseAttributes?.Client ?? {};
+    const { birthDate } = this.caseAttributes?.client ?? {};
     return {
       age: moment().diff(birthDate, "years"),
       lsirScore,
@@ -331,7 +331,7 @@ export class CaseDetailsPresenter implements Hydratable {
     lsirScore: number,
   ): Promise<Insight | undefined> {
     const currentCase = this.caseStore.caseDetailsById[this.caseId];
-    const gender = currentCase.Client?.gender;
+    const gender = currentCase.client?.gender;
     if (!gender) return;
 
     await flowResult(this.caseStore.loadInsight(offense, gender, lsirScore));

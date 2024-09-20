@@ -44,7 +44,7 @@ export class StaffStore {
   *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
     try {
       this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
-      this.caseBriefsById = keyBy(this.staffInfo.Cases, "id");
+      this.caseBriefsById = keyBy(this.staffInfo.cases, "id");
     } catch (error) {
       captureException(error);
       toast(

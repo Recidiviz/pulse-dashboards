@@ -32,7 +32,7 @@ export type tRPCClient = CreateTRPCProxyClient<AppRouter>;
 
 export type Staff = Awaited<ReturnType<APIClient["getStaffInfo"]>>;
 
-export type StaffCases = Staff["Cases"];
+export type StaffCases = Staff["cases"];
 
 export type StaffCase = StaffCases[number];
 
@@ -42,7 +42,7 @@ export type CaseInsight = NonNullable<Case["insight"]>;
 
 export type Insight = Awaited<ReturnType<APIClient["getInsight"]>>;
 
-export type Client = NonNullable<Case["Client"]>;
+export type Client = NonNullable<Case["client"]>;
 
 export type Opportunities = Awaited<
   ReturnType<tRPCClient["opportunity"]["getOpportunities"]["query"]>

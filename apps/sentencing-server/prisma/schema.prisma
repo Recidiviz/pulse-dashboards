@@ -81,7 +81,7 @@ model Staff {
   hasLoggedIn Boolean @default(false)
 
   email String
-  Cases Case[]
+  cases Case[]
 }
 
 model Client {
@@ -93,7 +93,8 @@ model Client {
   gender    Gender
   county    String
   birthDate DateTime
-  Cases     Case[]
+  district  String?
+  cases     Case[]
 
   // Whether the gender is locked and cannot be changed
   isGenderLocked Boolean @default(false)
@@ -278,9 +279,9 @@ model Case {
   // These relationships are only optional because data loading for staff, client,
   // and cases happens independently and in random order, so the referenced staff
   // or client may not exist yet
-  Staff    Staff?  @relation(fields: [staffId], references: [externalId])
+  staff    Staff?  @relation(fields: [staffId], references: [externalId])
   staffId  String?
-  Client   Client? @relation(fields: [clientId], references: [externalId])
+  client   Client? @relation(fields: [clientId], references: [externalId])
   clientId String?
 
   dueDate            DateTime?

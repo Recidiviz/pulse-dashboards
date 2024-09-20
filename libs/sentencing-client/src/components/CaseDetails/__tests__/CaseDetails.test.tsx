@@ -33,7 +33,7 @@ let presenter: CaseDetailsPresenter;
 const mockCase = Object.values(CaseDetailsFixture)[0];
 const caseId = mockCase.id;
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const clientExternalId = mockCase.Client!.externalId;
+const clientExternalId = mockCase.client!.externalId;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -67,7 +67,7 @@ test("loads onboarding screen when user first accesses the case", async () => {
     </MemoryRouter>,
   );
 
-  const firstName = presenter.caseAttributes?.Client?.fullName.split(" ")[0];
+  const firstName = presenter.caseAttributes?.client?.fullName.split(" ")[0];
   const onboardingCaption = await screen.getByText(
     `Let's get some details about ${firstName}'s case to enhance the historical insights`,
   );
@@ -101,7 +101,7 @@ test("display case details page", async () => {
       </Routes>
     </MemoryRouter>,
   );
-  const fullName = presenter.caseAttributes?.Client?.fullName ?? "";
+  const fullName = presenter.caseAttributes?.client?.fullName ?? "";
   const backToDashboard = await screen.getByText(`Back to Dashboard`);
   const clientName = await screen.getByText(fullName);
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");

@@ -87,7 +87,7 @@ test("clicking edit case details button opens the edit case details modal", asyn
   expect(editCaseDetailsButton).toBeInTheDocument();
   fireEvent.click(editCaseDetailsButton);
 
-  const firstName = presenter.caseAttributes?.Client?.fullName.split(" ")[0];
+  const firstName = presenter.caseAttributes?.client?.fullName.split(" ")[0];
   const editCaseDetailsTitles = await screen.getAllByText("Edit Case Details");
   const editCaseDetailsDescription = await screen.getByText(
     `We will use this data to generate opportunities for ${firstName}. If you don't have this information yet, you can add it in later.`,

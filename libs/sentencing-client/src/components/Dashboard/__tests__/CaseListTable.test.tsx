@@ -133,7 +133,7 @@ test("does not show archived cases", async () => {
   const inProgressCase = await screen.getByText("In Progress");
   const archivedCase = await screen.queryByText("Archived");
   const pastDueCaseName = await screen.queryByText(
-    pastDueCase!.Client!.fullName,
+    pastDueCase!.client!.fullName,
   );
 
   expect(archivedCase).toBeNull();
@@ -168,7 +168,7 @@ test("shows archived case when filter is checked", async () => {
   let archivedCase: HTMLElement | HTMLElement[] | null =
     await screen.queryByText("Archived");
   let pastDueCaseName: HTMLElement | HTMLElement[] | null =
-    await screen.queryByText(pastDueCase!.Client!.fullName.toLocaleLowerCase());
+    await screen.queryByText(pastDueCase!.client!.fullName.toLocaleLowerCase());
   const statusFilter = await screen.findByText("Status (3)");
 
   expect(archivedCase).toBeNull();
@@ -188,7 +188,7 @@ test("shows archived case when filter is checked", async () => {
 
   archivedCase = await screen.getByText("Archived");
   pastDueCaseName = await screen.getByText(
-    pastDueCase!.Client!.fullName.toLocaleLowerCase(),
+    pastDueCase!.client!.fullName.toLocaleLowerCase(),
   );
   notYetStartedCase = await screen.getByText("Not yet started");
   completeCase = await screen.getByText("Complete");
@@ -223,7 +223,7 @@ test("show/hide cases when 'Not yet started' filter is checked/unchecked", async
 
   const notYetStartedName = data
     .find((user) => user.status === "NotYetStarted")
-    ?.Client?.fullName.toLocaleLowerCase();
+    ?.client?.fullName.toLocaleLowerCase();
   let notYetStartedCase: HTMLElement | null = await screen.queryByText(
     notYetStartedName!,
   );
@@ -267,7 +267,7 @@ test("show/hide cases when 'In Progress' filter is checked/unchecked", async () 
 
   const inProgressName = data
     .find((user) => user.status === "InProgress")
-    ?.Client?.fullName.toLocaleLowerCase();
+    ?.client?.fullName.toLocaleLowerCase();
   let inProgressCase: HTMLElement | null = await screen.queryByText(
     inProgressName!,
   );
@@ -314,7 +314,7 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
       (caseBrief) =>
         caseBrief.status === "Complete" && moment() < moment(caseBrief.dueDate),
     )
-    ?.Client?.fullName.toLocaleLowerCase();
+    ?.client?.fullName.toLocaleLowerCase();
   let completeCase: HTMLElement | null = await screen.queryByText(
     completeName!,
   );

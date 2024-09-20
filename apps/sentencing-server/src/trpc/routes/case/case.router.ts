@@ -79,7 +79,7 @@ export const caseRouter = router({
       try {
         const { lsirScore, reportType, clientGender } = attributes;
         if (lsirScore || reportType || clientGender) {
-          const { isLsirScoreLocked, isReportTypeLocked, Client } =
+          const { isLsirScoreLocked, isReportTypeLocked, client } =
             await prisma.case.findUniqueOrThrow({
               where: {
                 id,
@@ -87,7 +87,7 @@ export const caseRouter = router({
               select: {
                 isLsirScoreLocked: true,
                 isReportTypeLocked: true,
-                Client: {
+                client: {
                   select: {
                     isGenderLocked: true,
                   },
@@ -109,7 +109,7 @@ export const caseRouter = router({
             });
           }
 
-          if (clientGender && Client?.isGenderLocked) {
+          if (clientGender && client?.isGenderLocked) {
             throw new TRPCError({
               code: "BAD_REQUEST",
               message: "Client gender is locked and cannot be updated",
@@ -149,7 +149,7 @@ export const caseRouter = router({
                   }
                 : undefined,
             },
-            Client: {
+            client: {
               update: {
                 gender: attributes.clientGender,
               },

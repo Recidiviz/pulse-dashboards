@@ -23,11 +23,11 @@ export const StaffInfoFixture: Staff = {
   email: "firstlast@test.com",
   stateCode: "US_ID",
   hasLoggedIn: false,
-  Cases: [
+  cases: [
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f913",
       externalId: "198374019",
-      Client: {
+      client: {
         fullName: "Blanda Furman",
         externalId: "70478174",
       },
@@ -39,7 +39,7 @@ export const StaffInfoFixture: Staff = {
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132",
       externalId: "198374019",
-      Client: {
+      client: {
         fullName: "Xavier Smith",
         externalId: "93012938",
       },
@@ -51,7 +51,7 @@ export const StaffInfoFixture: Staff = {
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x2",
       externalId: "198374019",
-      Client: {
+      client: {
         fullName: "Anne Teak",
         externalId: "98302183",
       },
@@ -63,7 +63,7 @@ export const StaffInfoFixture: Staff = {
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x",
       externalId: "198374019",
-      Client: {
+      client: {
         fullName: "Bob Thornburg",
         externalId: "89721399",
       },

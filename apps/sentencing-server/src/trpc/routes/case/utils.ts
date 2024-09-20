@@ -27,7 +27,7 @@ export async function getInsightForCase(
   caseData: CaseData,
   prisma: PrismaClient,
 ) {
-  if (!caseData.Client || !caseData.lsirScore || !caseData.offense) {
+  if (!caseData.client || !caseData.lsirScore || !caseData.offense) {
     // Log this, but it might not necessarily be an error
     console.log(
       `Unable to retrieve insight for case with id ${caseData.id}. Some necessary data is missing: ${JSON.stringify(caseData)}.`,
@@ -39,7 +39,7 @@ export async function getInsightForCase(
 
   const insights = await getInsights(
     caseData.offense.name,
-    caseData.Client.gender,
+    caseData.client.gender,
     caseData.lsirScore,
     prisma,
   );

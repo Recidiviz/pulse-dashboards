@@ -210,7 +210,7 @@ export class CaseDetailsForm {
             ? parseAttributeValue(
                 field.otherContext.key,
                 field.otherContext.key === CLIENT_GENDER_KEY
-                  ? caseAttributes.Client?.gender
+                  ? caseAttributes.client?.gender
                   : caseAttributes[field.otherContext.key],
               )
             : field.otherContext?.value,
@@ -220,7 +220,7 @@ export class CaseDetailsForm {
           (field.key === REPORT_TYPE_KEY &&
             caseAttributes.isReportTypeLocked) ||
           (field.key === CLIENT_GENDER_KEY &&
-            caseAttributes.Client?.isGenderLocked),
+            caseAttributes.client?.isGenderLocked),
       };
     });
 

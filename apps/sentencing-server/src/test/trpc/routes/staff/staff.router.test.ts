@@ -36,7 +36,7 @@ describe("staff router", () => {
 
       expect(returnedStaff).toEqual({
         ..._.omit(fakeStaff, "externalId"),
-        Cases: [
+        cases: [
           {
             ..._.pick(fakeCase, [
               "id",
@@ -46,7 +46,7 @@ describe("staff router", () => {
               "status",
               "offense",
             ]),
-            Client: _.pick(fakeClient, ["fullName", "externalId"]),
+            client: _.pick(fakeClient, ["fullName", "externalId"]),
           },
         ],
       });

@@ -17,11 +17,11 @@
 
 import { StaffCase } from "../../api";
 
-type StaffCaseClient = StaffCase["Client"];
+type StaffCaseClient = StaffCase["client"];
 
 export const DUE_DATE_KEY: keyof StaffCase = "dueDate";
 
-export const CLIENT_KEY: keyof StaffCase = "Client";
+export const CLIENT_KEY: keyof StaffCase = "client";
 
 const CLIENT_ID_KEY: keyof NonNullable<StaffCaseClient> = "externalId";
 

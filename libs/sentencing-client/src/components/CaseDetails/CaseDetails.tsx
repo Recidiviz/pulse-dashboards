@@ -66,7 +66,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     trackCaseStatusCompleteClicked,
   } = presenter;
 
-  const firstName = caseAttributes.Client?.fullName?.split(" ")[0];
+  const firstName = caseAttributes.client?.fullName?.split(" ")[0];
 
   const [selectedRecommendation, setSelectedRecommendation] = useState(
     caseAttributes.selectedRecommendation ?? RecommendationType.Probation,
@@ -150,7 +150,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               <Insights
                 insight={caseAttributes.insight}
                 selectedRecommendation={selectedRecommendation}
-                fullName={caseAttributes.Client?.fullName}
+                fullName={caseAttributes.client?.fullName}
                 openEditCaseDetailsModal={openEditCaseDetailsModal}
                 lsirScore={caseAttributes.lsirScore}
               />
@@ -173,11 +173,11 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             <Recommendations
               firstName={firstName}
               externalId={caseAttributes.externalId}
-              fullName={caseAttributes.Client?.fullName}
+              fullName={caseAttributes.client?.fullName}
               insight={caseAttributes.insight}
               selectedRecommendation={selectedRecommendation}
               needs={caseAttributes.needsToBeAddressed}
-              gender={caseAttributes.Client?.gender}
+              gender={caseAttributes.client?.gender}
               handleRecommendationUpdate={handleRecommendationUpdate}
               saveRecommendation={saveRecommendation}
               recommendedOpportunities={recommendedOpportunities}

@@ -97,6 +97,7 @@ export const clientImportSchema = z
     gender: gender,
     county: z.string().optional(),
     birth_date: z.coerce.date(),
+    district: z.string().optional(),
   })
   .transform((data) => {
     // Spread the full_name object into the root object
