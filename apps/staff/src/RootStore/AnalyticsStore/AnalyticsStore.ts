@@ -18,8 +18,10 @@
 import { clone } from "lodash";
 import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
+import { z } from "zod";
 
 import { isDemoMode } from "~client-env-utils";
+import { ACTION_STRATEGY_TYPE } from "~datatypes";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
   IndividualCaseClickedWithStatusMetadata,
@@ -82,6 +84,24 @@ type ClientPageTrackingMetadata = {
 type PageViewed30SecondsTrackingMetadata = {
   path: string;
   viewedBy?: string;
+};
+
+type ActionStrategySurfacedMetadata = {
+  viewedBy?: string;
+  pseudonymizedId: string;
+  actionStrategy: z.infer<typeof ACTION_STRATEGY_TYPE>;
+};
+
+type ActionStrategyPopupMetadata = {
+  viewedBy?: string;
+  pseudonymizedId: string;
+  actionStrategy: z.infer<typeof ACTION_STRATEGY_TYPE>;
+};
+
+type ActionStrategyPopupViewed10SecondsTrackingMetadata = {
+  viewedBy?: string;
+  pseudonymizedId: string;
+  actionStrategy: z.infer<typeof ACTION_STRATEGY_TYPE>;
 };
 
 type OpportunityTrackingMetadata = {
@@ -219,6 +239,27 @@ export default class AnalyticsStore {
     metadata: PageViewed30SecondsTrackingMetadata,
   ): void {
     this.track("frontend.outliers_page_viewed_30_seconds", metadata);
+  }
+
+  trackInsightsActionStrategySurfaced(
+    metadata: ActionStrategySurfacedMetadata,
+  ): void {
+    this.track("frontend.outliers_action_strategy_surfaced", metadata);
+  }
+
+  trackInsightsActionStrategyPopupViewed(
+    metadata: ActionStrategyPopupMetadata,
+  ): void {
+    this.track("frontend.outliers_action_strategy_popup_viewed", metadata);
+  }
+
+  trackInsightsActionStrategyPopupViewed10seconds(
+    metadata: ActionStrategyPopupViewed10SecondsTrackingMetadata,
+  ): void {
+    this.track(
+      "frontend.outliers_action_strategy_popup_viewed_10_seconds",
+      metadata,
+    );
   }
 
   trackReferralFormViewed(metadata: OpportunityTrackingMetadata): void {

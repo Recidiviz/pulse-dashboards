@@ -29,6 +29,7 @@ import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { OutlierOfficerData } from "./types";
 
 export const THIRTY_SECONDS = 1000 * 30;
+export const TEN_SECONDS = 1000 * 10;
 
 export function isExcludedSupervisionOfficer(
   officerData: object | undefined,

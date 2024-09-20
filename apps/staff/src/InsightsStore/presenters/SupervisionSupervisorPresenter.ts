@@ -125,6 +125,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         actionStrategyCopy: true,
         disableSurfaceActionStrategies: true,
         setUserHasSeenActionStrategy: true,
+        trackActionStrategyPopupViewed: true,
       },
       { autoBind: true },
     );
@@ -441,6 +442,16 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    */
   setUserHasSeenActionStrategy(): void {
     this.supervisionStore.setUserHasSeenActionStrategy(this.supervisorPseudoId);
+  }
+
+  /**
+   * Passthrough to supervisionStore.
+   * Sends analytics event when the popup is viewed
+   */
+  trackActionStrategyPopupViewed(): void {
+    this.supervisionStore.trackActionStrategyPopupViewed({
+      pseudoId: this.supervisorPseudoId,
+    });
   }
 
   // ==============================

@@ -23,12 +23,17 @@ import {
   spacing,
   typography,
 } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { now } from "mobx-utils";
 import { rem } from "polished";
+import { useEffect, useState } from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { ActionStrategyCopy } from "../../InsightsStore/presenters/types";
+import { TEN_SECONDS } from "../../InsightsStore/presenters/utils";
 import LanternLogo from "../LanternLogo";
 
 export const StyledDrawerModal = styled(DrawerModal)<{
@@ -127,46 +132,78 @@ const Wrapper = styled.div`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
 `;
 
-type PreviewModalProps = {
+type ActionStratetgyModalProps = {
   isOpen: boolean;
   onBackClick?: () => void;
   actionStrategy: ActionStrategyCopy;
+  pseudoId: string;
+  trackViewed: () => void;
   supervisorHomepage: boolean;
 };
 
-export function InsightsActionStrategyModal({
-  isOpen,
-  onBackClick,
-  actionStrategy,
-  supervisorHomepage,
-}: PreviewModalProps): JSX.Element {
-  const { isMobile } = useIsMobile(true);
+export const InsightsActionStrategyModal = observer(
+  function InsightsActionStrategyModal({
+    isOpen,
+    onBackClick,
+    actionStrategy,
+    pseudoId,
+    trackViewed,
+    supervisorHomepage,
+  }: ActionStratetgyModalProps) {
+    const {
+      insightsStore: { supervisionStore },
+    } = useRootStore();
+    const { isMobile } = useIsMobile(true);
 
-  return (
-    <StyledDrawerModal
-      isOpen={isOpen}
-      onRequestClose={onBackClick}
-      supervisorHomepage={supervisorHomepage}
-      isMobile={isMobile}
-    >
-      <ModalControls>
-        <Button
-          className="InsightsActionStrategyModal__close"
-          kind="link"
-          onClick={onBackClick}
-        >
-          <Icon kind="Close" size="14" color={palette.pine2} />
-        </Button>
-      </ModalControls>
-      <Wrapper>
-        <div>
-          <ModalHeader>{actionStrategy.prompt}</ModalHeader>
-          <StyledMarkdownView markdown={actionStrategy.body} />
-        </div>
-      </Wrapper>
-      <ModalFooter>
-        <LanternLogo />
-      </ModalFooter>
-    </StyledDrawerModal>
-  );
-}
+    const [initialModalLoadTime, setModalOpenedAt] = useState<Date | undefined>(
+      undefined,
+    );
+
+    // trackActionStrategyPopupViewed10Seconds every 10 seconds after the initial modal load
+    if (
+      initialModalLoadTime &&
+      initialModalLoadTime.getTime() < now(TEN_SECONDS) - TEN_SECONDS
+    ) {
+      supervisionStore?.trackActionStrategyPopupViewed10Seconds({
+        pseudoId,
+      });
+    }
+
+    useEffect(() => {
+      if (isOpen) {
+        setModalOpenedAt(new Date());
+        trackViewed();
+      } else {
+        setModalOpenedAt(undefined);
+      }
+    }, [isOpen, trackViewed]);
+
+    return (
+      <StyledDrawerModal
+        isOpen={isOpen}
+        onRequestClose={onBackClick}
+        supervisorHomepage={supervisorHomepage}
+        isMobile={isMobile}
+      >
+        <ModalControls>
+          <Button
+            className="InsightsActionStrategyModal__close"
+            kind="link"
+            onClick={onBackClick}
+          >
+            <Icon kind="Close" size="14" color={palette.pine2} />
+          </Button>
+        </ModalControls>
+        <Wrapper>
+          <div>
+            <ModalHeader>{actionStrategy.prompt}</ModalHeader>
+            <StyledMarkdownView markdown={actionStrategy.body} />
+          </div>
+        </Wrapper>
+        <ModalFooter>
+          <LanternLogo />
+        </ModalFooter>
+      </StyledDrawerModal>
+    );
+  },
+);

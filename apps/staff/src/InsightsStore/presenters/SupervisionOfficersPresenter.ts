@@ -244,4 +244,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
       },
     );
   }
+
+  trackActionStrategyPopupViewed(): void {
+    this.supervisionStore.trackActionStrategyPopupViewed({
+      pseudoId: this.supervisorPseudoId,
+    });
+  }
 }

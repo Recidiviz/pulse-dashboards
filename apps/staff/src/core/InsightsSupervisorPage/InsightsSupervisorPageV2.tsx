@@ -79,6 +79,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     actionStrategyCopy,
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
+    supervisorPseudoId,
+    trackActionStrategyPopupViewed,
   } = presenter;
 
   const tooltipContents = (
@@ -182,6 +184,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
           bannerViewedCallback={setUserHasSeenActionStrategy}
           disableBannerCallback={disableSurfaceActionStrategies}
           supervisorHomepage
+          pseudoId={supervisorPseudoId}
+          modalViewedCallback={trackActionStrategyPopupViewed}
         />
       )}
       <Wrapper isLaptop={isLaptop} supervisorHomepage>

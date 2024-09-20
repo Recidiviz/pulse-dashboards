@@ -98,6 +98,7 @@ export abstract class SupervisionOfficerPresenterBase<
         populateSupervisionOfficer: true,
         hydrate: true,
         hydrationState: true,
+        trackActionStrategyPopupViewed: true,
       },
       { autoBind: true },
     );
@@ -258,6 +259,16 @@ export abstract class SupervisionOfficerPresenterBase<
    */
   setUserHasSeenActionStrategy(): void {
     this.supervisionStore.setUserHasSeenActionStrategy(this.officerPseudoId);
+  }
+
+  /**
+   * Passthrough to supervisionStore.
+   * Sends analytics event when the popup is viewed
+   */
+  trackActionStrategyPopupViewed(): void {
+    this.supervisionStore.trackActionStrategyPopupViewed({
+      pseudoId: this.officerPseudoId,
+    });
   }
 
   private expectOfficerPopulated() {

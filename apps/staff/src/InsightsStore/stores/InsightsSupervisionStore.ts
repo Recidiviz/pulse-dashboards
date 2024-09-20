@@ -306,6 +306,7 @@ export class InsightsSupervisionStore {
       officerPseudonymizedId: pseudoId !== userPseudoId ? pseudoId : undefined,
       actionStrategy,
     };
+    this.trackActionStrategySurfaced({ userPseudoId, pseudoId });
     this.patchActionStrategiesForCurrentUser(event);
   }
 
@@ -589,6 +590,56 @@ export class InsightsSupervisionStore {
         viewedBy: userPseudoId,
       },
     );
+  }
+
+  trackActionStrategyPopupViewed10Seconds({
+    pseudoId,
+  }: {
+    pseudoId: string;
+  }): void {
+    const { userPseudoId } = this.insightsStore.rootStore.userStore;
+    const actionStrategy = this.actionStrategies?.[pseudoId];
+    if (!actionStrategy) return;
+
+    this.insightsStore.rootStore.analyticsStore.trackInsightsActionStrategyPopupViewed10seconds(
+      {
+        viewedBy: userPseudoId || "RECIDIVIZ",
+        pseudonymizedId: pseudoId,
+        actionStrategy,
+      },
+    );
+  }
+
+  trackActionStrategySurfaced({
+    userPseudoId = "RECIDIVIZ",
+    pseudoId,
+  }: {
+    userPseudoId?: string;
+    pseudoId: string;
+  }): void {
+    const actionStrategy = this.actionStrategies?.[pseudoId];
+    if (actionStrategy)
+      this.insightsStore.rootStore.analyticsStore.trackInsightsActionStrategySurfaced(
+        {
+          viewedBy: userPseudoId,
+          pseudonymizedId: pseudoId,
+          actionStrategy,
+        },
+      );
+  }
+
+  trackActionStrategyPopupViewed({ pseudoId }: { pseudoId: string }): void {
+    const { userPseudoId } = this.insightsStore.rootStore.userStore;
+
+    const actionStrategy = this.actionStrategies?.[pseudoId];
+    if (actionStrategy)
+      this.insightsStore.rootStore.analyticsStore.trackInsightsActionStrategyPopupViewed(
+        {
+          viewedBy: userPseudoId,
+          pseudonymizedId: pseudoId,
+          actionStrategy,
+        },
+      );
   }
 
   /*

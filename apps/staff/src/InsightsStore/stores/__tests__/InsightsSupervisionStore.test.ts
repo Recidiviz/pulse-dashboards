@@ -726,6 +726,7 @@ test("setUserHasSeenActionStrategy", async () => {
     actionStrategies: {},
   });
   vi.spyOn(InsightsOfflineAPIClient.prototype, "patchActionStrategies");
+  vi.spyOn(InsightsSupervisionStore.prototype, "trackActionStrategySurfaced");
   await flowResult(store.populateActionStrategies());
 
   store.setUserHasSeenActionStrategy("hashed-agonzalez123");
@@ -735,5 +736,9 @@ test("setUserHasSeenActionStrategy", async () => {
     actionStrategy: "ACTION_STRATEGY_60_PERC_OUTLIERS",
     officerPseudonymizedId: undefined,
     userPseudonymizedId: "hashed-agonzalez123",
+  });
+  expect(store.trackActionStrategySurfaced).toHaveBeenCalledWith({
+    userPseudoId: "hashed-agonzalez123",
+    pseudoId: "hashed-agonzalez123",
   });
 });
