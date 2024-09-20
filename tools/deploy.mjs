@@ -326,12 +326,20 @@ if (deployEnv === "staging" || deployEnv === "production") {
       // Deploy the app
       console.log("Deploying application to Cloud Run...");
       try {
-        // We only need to build and push the docker container if we are deploying to staging. If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+        // We only need to build and push the docker container if we are
+        // 1. deploying to staging.
+        // 2. deploying a cherry-pick
+        // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
+        } else if (deployEnv === "production" && isCpDeploy) {
+          await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
         }
+
         await $`COMMIT_SHA=${currentRevision} nx deploy-app sentencing-server --configuration ${deployEnv}`.pipe(
           process.stdout,
         );
