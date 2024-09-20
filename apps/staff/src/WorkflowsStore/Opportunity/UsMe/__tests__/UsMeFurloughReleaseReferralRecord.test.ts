@@ -21,7 +21,9 @@ import {
 } from "..";
 
 test("transform record", () => {
-  const rawRecord: Record<keyof UsMeFurloughReleaseReferralRecord, any> = {
+  const rawRecord: Partial<
+    Record<keyof UsMeFurloughReleaseReferralRecord, any>
+  > = {
     stateCode: "US_ME",
     externalId: "001",
     eligibleCriteria: {

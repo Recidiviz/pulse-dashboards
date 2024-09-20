@@ -35,6 +35,11 @@ export const opportunitySchemaBase = z.object({
   eligibleCriteria: baseCriteriaSchema,
   ineligibleCriteria: baseCriteriaSchema,
   caseNotes: z.record(z.array(caseNoteSchema)).default({}),
+  // Identifier to support sentence-level opportunities, that is multiple instances of a
+  // given opportunity for a given person
+  opportunityId: z.string().optional(),
+  // Hashed opportunity ID used to prevent emitting PII in Segment events
+  opportunityPseudoId: z.string().optional(),
 });
 
 export type OpportunityRecordBase = z.infer<typeof opportunitySchemaBase>;
