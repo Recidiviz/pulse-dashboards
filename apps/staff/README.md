@@ -19,14 +19,14 @@ Bringing criminal justice analysis to decision makers to help reduce incarcerati
 1. [Install Redis Version 7](https://redis.io/download#installation) (matches Memorystore for Redis version):
 
    Via Homebrew:
-   `brew install redis@7.0`
+   `brew install redis@7.2`
 
    Using wget:
 
    ```sh
-   :> wget https://download.redis.io/releases/redis-7.0.11.tar.gz
-   :> tar xzf redis-7.0.11.tar.gz
-   :> cd redis-7.0.11
+   :> wget https://download.redis.io/releases/redis-7.0.15.tar.gz
+   :> tar xzf redis-7.0.15.tar.gz
+   :> cd redis-7.0.15
    :> make
 
    <!-- Run redis with: -->
@@ -89,7 +89,7 @@ The backend API server and most frontend views in the app are authenticated via 
 
 This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. The development and staging environments should be configured in `auth_config_dev.json`, demo environment in `auth_config_demo.json` and production in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `VITE_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
 
-In order to load these configs, run `./apps/staff/load_config_files.sh`.
+In order to load these configs, run `./load_config_files.sh` from the `./apps/staff` directory. It must be run from this directory so that the config files are created and saved in the correct place.
 
 ### Nx
 
