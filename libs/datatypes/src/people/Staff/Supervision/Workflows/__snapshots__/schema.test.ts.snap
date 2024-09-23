@@ -4,13 +4,13 @@ exports[`supervision staff schema for 'US_CA' 'OFFICER1' 1`] = `
 {
   "district": "DISTRICT 1",
   "email": "test-officer-1@example.com",
-  "givenNames": "Test",
+  "givenNames": "Maia",
   "id": "OFFICER1",
   "pseudonymizedId": "p001",
   "recordType": "supervisionStaff",
   "stateCode": "US_CA",
   "supervisorExternalId": "SUPERVISOR1",
-  "surname": "Agent1",
+  "surname": "Douglas",
 }
 `;
 
@@ -18,13 +18,13 @@ exports[`supervision staff schema for 'US_CA' 'OFFICER2' 1`] = `
 {
   "district": "DISTRICT 1",
   "email": "test-officer-1@example.com",
-  "givenNames": "Test",
+  "givenNames": "Eloise",
   "id": "OFFICER2",
   "pseudonymizedId": "p002",
   "recordType": "supervisionStaff",
   "stateCode": "US_CA",
   "supervisorExternalId": null,
-  "surname": "Agent2",
+  "surname": "Rocha",
 }
 `;
 
@@ -42,29 +42,43 @@ exports[`supervision staff schema for 'US_ID' 'OFFICER4' 1`] = `
 }
 `;
 
+exports[`supervision staff schema for 'US_ID' 'OFFICER6' 1`] = `
+{
+  "district": "DISTRICT 1",
+  "email": "test-officer-6@example.com",
+  "givenNames": "Hank",
+  "id": "OFFICER6",
+  "pseudonymizedId": "p006",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_ID",
+  "supervisorExternalId": "SUPER847",
+  "surname": "Schroeder",
+}
+`;
+
 exports[`supervision staff schema for 'US_ME' 'OFFICER8' 1`] = `
 {
   "email": "test-officer-8@example.com",
-  "givenNames": "Test",
+  "givenNames": "Brittney",
   "id": "OFFICER8",
   "pseudonymizedId": "p008",
   "recordType": "supervisionStaff",
   "stateCode": "US_ME",
   "supervisorExternalId": null,
-  "surname": "Officer8",
+  "surname": "Chapman",
 }
 `;
 
 exports[`supervision staff schema for 'US_MI' 'OFFICER8' 1`] = `
 {
   "email": "test-officer-8@example.com",
-  "givenNames": "Test",
+  "givenNames": "Antonia",
   "id": "OFFICER8",
   "pseudonymizedId": "p008",
   "recordType": "supervisionStaff",
   "stateCode": "US_MI",
   "supervisorExternalId": "1290831",
-  "surname": "Officer8",
+  "surname": "Bonilla",
 }
 `;
 
@@ -72,13 +86,13 @@ exports[`supervision staff schema for 'US_ND' 'OFFICER3' 1`] = `
 {
   "district": "DISTRICT 1",
   "email": "test-officer-3@example.com",
-  "givenNames": "Test",
+  "givenNames": "Sumaiya",
   "id": "OFFICER3",
   "pseudonymizedId": "p003",
   "recordType": "supervisionStaff",
   "stateCode": "US_ND",
   "supervisorExternalId": null,
-  "surname": "Officer3",
+  "surname": "Osborne",
 }
 `;
 
@@ -111,26 +125,26 @@ exports[`supervision staff schema for 'US_OR' '314159' 1`] = `
 exports[`supervision staff schema for 'US_PA' 'OFFICER1' 1`] = `
 {
   "email": "test-officer@example.com",
-  "givenNames": "TEST",
+  "givenNames": "Dana",
   "id": "OFFICER1",
   "pseudonymizedId": "p001",
   "recordType": "supervisionStaff",
   "stateCode": "US_PA",
   "supervisorExternalId": "25-1239123A",
-  "surname": "OFFICER1",
+  "surname": "Pruitt",
 }
 `;
 
 exports[`supervision staff schema for 'US_PA' 'OFFICER2' 1`] = `
 {
   "email": "test-officer@example.com",
-  "givenNames": "TEST",
+  "givenNames": "Katelyn",
   "id": "OFFICER2",
   "pseudonymizedId": "p002",
   "recordType": "supervisionStaff",
   "stateCode": "US_PA",
   "supervisorExternalId": null,
-  "surname": "OFFICER2",
+  "surname": "Frederick",
 }
 `;
 
@@ -138,13 +152,13 @@ exports[`supervision staff schema for 'US_TN' 'OFFICER1' 1`] = `
 {
   "district": "DISTRICT 50",
   "email": "test-officer@example.com",
-  "givenNames": "Test",
+  "givenNames": "Shayla",
   "id": "OFFICER1",
   "pseudonymizedId": "p001",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
   "supervisorExternalId": "SUPERVISOR1",
-  "surname": "Officer1",
+  "surname": "Rice",
 }
 `;
 
@@ -152,13 +166,13 @@ exports[`supervision staff schema for 'US_TN' 'OFFICER2' 1`] = `
 {
   "district": "DISTRICT 50",
   "email": null,
-  "givenNames": "Test",
+  "givenNames": "Hollie",
   "id": "OFFICER2",
   "pseudonymizedId": "p002",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
   "supervisorExternalId": "SUPERVISOR1",
-  "surname": "Officer2",
+  "surname": "Monroe",
 }
 `;
 
@@ -166,13 +180,13 @@ exports[`supervision staff schema for 'US_TN' 'OFFICER3' 1`] = `
 {
   "district": "DISTRICT 50",
   "email": null,
-  "givenNames": "Test",
+  "givenNames": "Luis",
   "id": "OFFICER3",
   "pseudonymizedId": "p003",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
   "supervisorExternalId": null,
-  "surname": "Officer3",
+  "surname": "Levy",
 }
 `;
 
@@ -180,12 +194,12 @@ exports[`supervision staff schema for 'US_TN' 'SUPERVISOR1' 1`] = `
 {
   "district": "DISTRICT 50",
   "email": "test-supervisor@example.com",
-  "givenNames": "Test",
+  "givenNames": "Raihan",
   "id": "SUPERVISOR1",
   "pseudonymizedId": "p001",
   "recordType": "supervisionStaff",
   "stateCode": "US_TN",
   "supervisorExternalId": null,
-  "surname": "Supervisor",
+  "surname": "Phelpa",
 }
 `;

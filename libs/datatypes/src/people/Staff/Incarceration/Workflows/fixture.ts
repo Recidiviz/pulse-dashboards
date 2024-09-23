@@ -27,8 +27,8 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     email: "test-officer-6@example.com",
     id: "OFFICER6",
     stateCode: "US_ID",
-    givenNames: "Test",
-    surname: "Officer6",
+    givenNames: "Ross",
+    surname: "Moyer",
     pseudonymizedId: "p006",
   },
 
@@ -37,8 +37,8 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     email: "test-officer-5@example.com",
     id: "OFFICER5",
     stateCode: "US_ME",
-    givenNames: "Test",
-    surname: "Officer5",
+    givenNames: "Mikolaj",
+    surname: "Gomez",
     pseudonymizedId: "p005",
   },
 
@@ -55,8 +55,8 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     email: "test-officer-7@example.com",
     id: "OFFICER7",
     stateCode: "US_MO",
-    givenNames: "Test",
-    surname: "Officer7",
+    givenNames: "Samara",
+    surname: "Riddle",
     pseudonymizedId: "p007",
   },
 
@@ -65,8 +65,8 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     email: "test-officer-5@example.com",
     id: "OFFICER5",
     stateCode: "US_TN",
-    givenNames: "Test",
-    surname: "Officer5",
+    givenNames: "Francesca",
+    surname: "Contreras",
     pseudonymizedId: "p015",
   },
 ].map((r) => makeRecordFixture(incarcerationStaffRecordSchema, r));

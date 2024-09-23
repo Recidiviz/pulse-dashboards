@@ -15,12 +15,63 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays, endOfToday, formatISO, subDays } from "date-fns";
-
 import { SupervisionTasksRecord } from "../../src/WorkflowsStore/Task/types";
 import { FirestoreFixture } from "./utils";
 
 const data: SupervisionTasksRecord[] = [
+  {
+    stateCode: "US_ID",
+    externalId: "004",
+    officerId: "OFFICER6",
+    tasks: [
+      {
+        type: "homeVisit",
+        // overdue
+        dueDate: "2021-11-28",
+        details: {
+          caseType: "GENERAL",
+          lastHomeVisit: "2021-05-29",
+          supervisionLevel: "MINIMUM",
+          currentAddress: "100 Proplantination Drive",
+        },
+      },
+      {
+        type: "employment",
+        dueDate: "2021-12-18",
+        details: {
+          lastAssessedOn: "2021-06-18",
+          riskLevel: "MINIMUM",
+        },
+      },
+    ],
+    needs: [],
+  },
+  {
+    stateCode: "US_ID",
+    externalId: "007",
+    officerId: "OFFICER6",
+    tasks: [
+      {
+        type: "contact",
+        // upcoming
+        dueDate: "2022-01-17",
+        details: {
+          caseType: "GENERAL",
+          lastContacted: "2021-12-18",
+          supervisionLevel: "HIGH",
+        },
+      },
+      {
+        type: "employment",
+        dueDate: "2021-12-09",
+        details: {
+          lastAssessedOn: "2021-06-09",
+          riskLevel: "MEDIUM",
+        },
+      },
+    ],
+    needs: [],
+  },
   {
     stateCode: "US_ID",
     externalId: "008",
@@ -29,10 +80,10 @@ const data: SupervisionTasksRecord[] = [
       {
         type: "homeVisit",
         // overdue
-        dueDate: formatISO(subDays(endOfToday(), 2)),
+        dueDate: "2021-12-19",
         details: {
           caseType: "GENERAL",
-          lastHomeVisit: "2023-01-20",
+          lastHomeVisit: "2021-08-20",
           supervisionLevel: "MINIMUM",
           currentAddress: "100 Proplantination Drive",
         },
@@ -40,26 +91,26 @@ const data: SupervisionTasksRecord[] = [
       {
         type: "contact",
         // upcoming
-        dueDate: formatISO(addDays(endOfToday(), 15)),
+        dueDate: "2022-01-12",
         details: {
           caseType: "GENERAL",
-          lastContacted: "2023-03-23",
+          lastContacted: "2021-11-12",
           supervisionLevel: "MINIMUM",
         },
       },
       {
         type: "assessment",
-        dueDate: formatISO(subDays(endOfToday(), 2)),
+        dueDate: "2021-12-22",
         details: {
-          lastAssessedOn: "2023-03-23",
+          lastAssessedOn: "2020-12-22",
           riskLevel: "MEDIUM",
         },
       },
       {
         type: "employment",
-        dueDate: formatISO(subDays(endOfToday(), 4)),
+        dueDate: "2022-01-09",
         details: {
-          lastAssessedOn: formatISO(subDays(endOfToday(), 176)),
+          lastAssessedOn: "2021-07-09",
           riskLevel: "MEDIUM",
         },
       },

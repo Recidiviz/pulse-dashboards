@@ -3,24 +3,24 @@
 exports[`incarceration staff schema for 'US_ID' 'OFFICER6' 1`] = `
 {
   "email": "test-officer-6@example.com",
-  "givenNames": "Test",
+  "givenNames": "Ross",
   "id": "OFFICER6",
   "pseudonymizedId": "p006",
   "recordType": "incarcerationStaff",
   "stateCode": "US_ID",
-  "surname": "Officer6",
+  "surname": "Moyer",
 }
 `;
 
 exports[`incarceration staff schema for 'US_ME' 'OFFICER5' 1`] = `
 {
   "email": "test-officer-5@example.com",
-  "givenNames": "Test",
+  "givenNames": "Mikolaj",
   "id": "OFFICER5",
   "pseudonymizedId": "p005",
   "recordType": "incarcerationStaff",
   "stateCode": "US_ME",
-  "surname": "Officer5",
+  "surname": "Gomez",
 }
 `;
 
@@ -39,23 +39,23 @@ exports[`incarceration staff schema for 'US_MO' 'FACILITY1' 1`] = `
 exports[`incarceration staff schema for 'US_MO' 'OFFICER7' 1`] = `
 {
   "email": "test-officer-7@example.com",
-  "givenNames": "Test",
+  "givenNames": "Samara",
   "id": "OFFICER7",
   "pseudonymizedId": "p007",
   "recordType": "incarcerationStaff",
   "stateCode": "US_MO",
-  "surname": "Officer7",
+  "surname": "Riddle",
 }
 `;
 
 exports[`incarceration staff schema for 'US_TN' 'OFFICER5' 1`] = `
 {
   "email": "test-officer-5@example.com",
-  "givenNames": "Test",
+  "givenNames": "Francesca",
   "id": "OFFICER5",
   "pseudonymizedId": "p015",
   "recordType": "incarcerationStaff",
   "stateCode": "US_TN",
-  "surname": "Officer5",
+  "surname": "Contreras",
 }
 `;

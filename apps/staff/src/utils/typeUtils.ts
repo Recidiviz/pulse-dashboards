@@ -68,7 +68,7 @@ export type Nullable<T> = {
 //    z.object({'bar': z.number()}),
 //    z.object({'zap': z.number()}),
 // ]),
-// we generate the type `SchemaType = {foo: number, bar: number} | {fop: number, zap: number}
+// we generate the type `SchemaType = {foo: number, bar: number} | {foo: number, zap: number}
 // the standard `keyof SchemaType` will return `"foo"`
 // AllPossibleKeys<SchemaType> will return `"foo" | "bar" | "zap"`
 // This is due to "Distributive Conditional Types"

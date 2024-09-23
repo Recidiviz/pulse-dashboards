@@ -601,11 +601,11 @@ test("available searchables for search by officer", async () => {
     [
       {
         "searchId": "OFFICER1",
-        "searchLabel": "Test Agent1",
+        "searchLabel": "Maia Douglas",
       },
       {
         "searchId": "OFFICER2",
-        "searchLabel": "Test Agent2",
+        "searchLabel": "Eloise Rocha",
       },
     ]
   `);
@@ -635,7 +635,8 @@ test("available searchables for search by officer when user has staff they super
   expect(workflowsStore.availableSearchables.length).toBe(2);
   expect(workflowsStore.availableSearchables[0].groupLabel).toBe("Your Team");
   expect(workflowsStore.availableSearchables[1].groupLabel).toBe("All Staff");
-  expect(yourTeamSearchableIds).toEqual(["OFFICER1", "OFFICER2"]);
+  // alphabetically, Eloise (Officer2) comes before Maia (Officer1)
+  expect(yourTeamSearchableIds).toEqual(["OFFICER2", "OFFICER1"]);
   expect(allStaffSearchableIds).toEqual(["OFFICER3"]);
 });
 
@@ -1501,7 +1502,8 @@ test("caseload (`selectedSearchIds`) default to current user's supervised staff 
     workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers2;
   });
 
-  expect(workflowsStore.selectedSearchIds).toEqual(["OFFICER1", "OFFICER2"]);
+  // Eloise (2) before Maia (1)
+  expect(workflowsStore.selectedSearchIds).toEqual(["OFFICER2", "OFFICER1"]);
 });
 
 test("caseload (`selectedSearchIds`) reflects updated list after user with supervised staff makes new search updates", async () => {
@@ -1522,8 +1524,9 @@ test("caseload (`selectedSearchIds`) reflects updated list after user with super
 
   expect(workflowsStore.selectedSearchIds).toEqual([
     "SUPERVISOR1",
-    "OFFICER1",
+    // Eloise (2) before Maia (1)
     "OFFICER2",
+    "OFFICER1",
   ]);
 
   runInAction(() => {
@@ -1562,8 +1565,9 @@ test("caseload (`selectedSearchIds`) include current user's caseload if current 
 
   expect(workflowsStore.selectedSearchIds).toEqual([
     "SUPERVISOR1",
-    "OFFICER1",
+    // Eloise (2) before Maia (1)
     "OFFICER2",
+    "OFFICER1",
   ]);
 });
 
