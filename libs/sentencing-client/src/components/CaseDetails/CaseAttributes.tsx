@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 
 import { Case } from "../../api";
-import { displayReportType } from "../../utils/utils";
+import { displayReportType, extractDistrictAndCounty } from "../../utils/utils";
 import * as Styled from "./CaseDetails.styles";
 import { GenderToDisplayName } from "./constants";
 
@@ -43,17 +43,46 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
   }) {
     const { trackEditCaseDetailsClicked } = analytics;
 
-    const { dueDate, reportType, county, offense, lsirScore, client } =
-      caseAttributes;
+    const {
+      dueDate,
+      reportType,
+      county: districtCountyOfSentencing,
+      offense,
+      lsirScore,
+      client,
+    } = caseAttributes;
+    const {
+      birthDate,
+      fullName,
+      gender,
+      externalId,
+      county: countyOfResidence,
+    } = client || {};
 
-    const { birthDate, fullName, gender, externalId } = client || {};
+    const countyOfSentencingField = {
+      label: "County",
+      value: extractDistrictAndCounty(districtCountyOfSentencing).county,
+    };
+    const countyOfResidenceField = {
+      label: "County of Residence",
+      value: countyOfResidence?.toLocaleLowerCase() ?? "Unknown",
+    };
+
+    const hasMatchingCountyOfResidenceAndSentencing =
+      countyOfResidence?.toLocaleLowerCase() ===
+      extractDistrictAndCounty(districtCountyOfSentencing).county;
+
+    /** If the county of residence and sentencing differ, display both counties in header */
+    const countyField = hasMatchingCountyOfResidenceAndSentencing
+      ? [countyOfSentencingField]
+      : [countyOfSentencingField, countyOfResidenceField];
 
     const attributesRow: AttributeLabelValue[] = [
       {
         label: "Report Type",
         value: displayReportType(reportType),
       },
-      { label: "County", value: county },
+      ...countyField,
       {
         label: "Gender",
         value: gender ? GenderToDisplayName[gender] : undefined,

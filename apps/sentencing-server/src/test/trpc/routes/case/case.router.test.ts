@@ -51,6 +51,7 @@ describe("case router", () => {
               "fullName",
               "gender",
               "county",
+              "district",
               "birthDate",
               "externalId",
             ]),

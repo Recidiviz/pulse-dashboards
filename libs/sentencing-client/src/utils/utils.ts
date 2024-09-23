@@ -111,7 +111,27 @@ export const pluralizeDuplicates = (items: string[]) => {
 /**
  * Converts a county name (e.g. "District 3 - Caldwell") to the district code (e.g. "D3")
  */
-export const convertCountyToDistrictCode = (county: string) => {
-  const match = county.match(/District (\d+)/);
+export const convertCountyToDistrictCode = (county?: string) => {
+  const match = county?.match(/District (\d+)/);
   return match ? `D${match[1]}` : null;
+};
+
+/**
+ * Converts a district name (e.g. "DISTRICT 4") to the district code (e.g. "D4")
+ */
+export const convertDistrictToDistrictCode = (district?: string) => {
+  const match = district?.match(/district (\d+)/i);
+  return match ? `D${match[1]}` : null;
+};
+
+/**
+ * Returns an object containing the `district` and `county` names
+ * extracted from a formatted string
+ * (e.g. "District 4 - Caldwell" -> { district: "District 4", county: "Caldwell"})
+ */
+export const extractDistrictAndCounty = (input: string) => {
+  const [district, county] = input
+    .split(" - ")
+    .map((str) => str.trim().toLocaleLowerCase());
+  return { district, county };
 };

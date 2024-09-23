@@ -61,6 +61,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       birthDate: new Date("1990-11-13T21:37:16.551Z"),
       externalId: "70478174",
       isGenderLocked: false,
+      district: "DISTRICT 1",
     },
     insight: {
       stateCode: "US_ID",

@@ -66,6 +66,7 @@ export const fakeClient = {
   stateCode: StateCode.US_ID,
   gender: FAKE_CLIENT_GENDER,
   county: faker.location.county(),
+  district: faker.location.city(),
   birthDate: faker.date.birthdate(),
 } satisfies ClientCreateInput;
 

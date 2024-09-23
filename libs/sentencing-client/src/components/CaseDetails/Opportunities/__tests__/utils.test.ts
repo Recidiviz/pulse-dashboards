@@ -64,6 +64,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -84,6 +85,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -95,6 +97,34 @@ describe("filterEligibleOpportunities", () => {
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
 
     attributes.county = "District 7 - Wallace"; // does not match criterion
+    attributes.district = "DISTRICT 7"; // does not match criterion
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+  });
+
+  it("should fallback on matching district of residence if district of residence and sentencing differ", () => {
+    attributes = {
+      age: 30,
+      hasDevelopmentalDisability: true,
+      hasPreviousSexOffenseConviction: false,
+      hasPreviousViolentOffenseConviction: false,
+      previouslyIncarceratedOrUnderSupervision: false,
+      plea: "Guilty",
+      county: "District 7 - Caldwell",
+      district: "DISTRICT 1",
+      isVeteran: true,
+      mentalHealthDiagnoses: ["BipolarDisorder"],
+      substanceUseDisorderDiagnosis: "Moderate",
+      asamCareRecommendation: "HighIntensityOutpatient",
+      needsToBeAddressed: ["Education"],
+      lsirScore: 10,
+    };
+
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+
+    attributes.district = "DISTRICT 2"; // district (of residence) is the fallback and does not match criteron
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+
+    attributes.county = "District 2 - Caldera"; // district sentencing matches district of residence and both do not match criteron
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
 
@@ -107,6 +137,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -135,6 +166,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -155,6 +187,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -175,6 +208,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -195,6 +229,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: true, // does not match criterion
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -215,6 +250,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "NotGuilty", // does not match criterion
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -235,6 +271,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: false, // does not match criterion
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -255,6 +292,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: [], // does not match criterion
       substanceUseDisorderDiagnosis: "Moderate",
@@ -300,6 +338,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Mild", // does not match criterion
@@ -402,6 +441,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -422,6 +462,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -447,6 +488,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -467,6 +509,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -487,6 +530,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -545,6 +589,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
       substanceUseDisorderDiagnosis: "Moderate",
@@ -567,6 +612,7 @@ describe("filterEligibleOpportunities", () => {
       previouslyIncarceratedOrUnderSupervision: true,
       plea: "NotGuilty",
       county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
       isVeteran: false,
       mentalHealthDiagnoses: ["None"],
       substanceUseDisorderDiagnosis: "Severe",

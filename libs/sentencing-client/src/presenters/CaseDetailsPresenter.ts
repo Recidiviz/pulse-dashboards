@@ -123,7 +123,8 @@ export class CaseDetailsPresenter implements Hydratable {
       plea,
       county,
     } = this.caseAttributes ?? {};
-    const { birthDate } = this.caseAttributes?.client ?? {};
+    const { birthDate, district } = this.caseAttributes?.client ?? {};
+
     return {
       age: moment().diff(birthDate, "years"),
       lsirScore,
@@ -140,7 +141,8 @@ export class CaseDetailsPresenter implements Hydratable {
       hasDevelopmentalDisability,
       hasOpenChildProtectiveServicesCase,
       plea,
-      county,
+      district, // district of client's residence
+      county, // district + county of sentencing
     };
   }
 

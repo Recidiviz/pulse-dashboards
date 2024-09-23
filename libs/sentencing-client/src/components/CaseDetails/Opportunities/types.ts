@@ -49,4 +49,5 @@ export type EligibilityAttributes = Pick<
   | "hasDevelopmentalDisability"
   | "plea"
   | "county"
-> & { age: number };
+  | "county"
+> & { age: number; district?: string | null };

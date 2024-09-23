@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { Opportunities } from "../../../api";
-import { convertCountyToDistrictCode } from "../../../utils/utils";
+import {
+  convertDistrictToDistrictCode,
+  extractDistrictAndCounty,
+} from "../../../utils/utils";
 import { FormValue, RecommendationType } from "../types";
 import { eligibilityCriteriaToLabelName } from "./constants";
 import { EligibilityAttributes, EligibilityCriteria } from "./types";
@@ -74,9 +77,12 @@ export const filterEligibleOpportunities = (
     needsAddressed,
     minLsirScoreCriterion,
     maxLsirScoreCriterion,
+    district: opportunityDistrict,
     // TODO(Recidiviz/recidiviz-data#32242) Add CPS Criteria Check
     // hasOpenChildProtectiveServicesCaseCriterion
   } = opportunity;
+  const { district: districtOfResidence, county: districtCountyOfSentencing } =
+    attributes;
 
   // Age Criteria Check
   const hasAgeCriteria = Boolean(minAge || maxAge);
@@ -97,8 +103,17 @@ export const filterEligibleOpportunities = (
   if (hasDevelopmentalDisabilityCriteria && !isDevelopmentalDisabilityEligible)
     return false;
 
+  const districtOfSentencing = extractDistrictAndCounty(
+    districtCountyOfSentencing,
+  ).district;
+  const hasMatchingDistricts =
+    districtOfSentencing === districtOfResidence?.toLocaleLowerCase();
+  const districtName = hasMatchingDistricts
+    ? districtOfSentencing
+    : districtOfResidence;
   const isDistrictEligible =
-    opportunity.district === convertCountyToDistrictCode(attributes.county);
+    districtName &&
+    opportunityDistrict === convertDistrictToDistrictCode(districtName);
 
   if (!isDistrictEligible) return false;
 
