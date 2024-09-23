@@ -140,7 +140,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
   },
   {
     key: "needsToBeAddressed",
-    label: `What are their primary needs?`,
+    label: `What are their primary needs? Select all that apply.`,
     value: null,
     inputType: "multi-select",
     options: needsToBeAddressedOptions,

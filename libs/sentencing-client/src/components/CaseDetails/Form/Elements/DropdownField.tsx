@@ -52,6 +52,7 @@ export const DropdownField: React.FC<InputFieldProps> = ({
           updateDropdownInput(value);
           element.onChange && element.onChange();
         }}
+        isDisabled={element.isDisabled}
       />
       <OtherContextInputField
         {...{ element, parentKey, prevValue, updateForm }}

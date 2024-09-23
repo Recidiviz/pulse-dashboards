@@ -110,6 +110,7 @@ export function DispositionChart({
                           ]
                         : undefined
                     }
+                    $hideCircle={convertDecimalToPercentage(percentage) === 0}
                   >
                     {convertDecimalToPercentage(percentage)}%
                   </Styled.DispositionChartCircle>
@@ -120,7 +121,8 @@ export function DispositionChart({
                         : "#2B546999"
                     }
                   >
-                    {recommendationType}
+                    {convertDecimalToPercentage(percentage) > 0 &&
+                      recommendationType}
                   </Styled.DispositionChartCircleLabel>
                 </Styled.DispositionChartCircleContainer>
               ),

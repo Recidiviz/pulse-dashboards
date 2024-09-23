@@ -39,6 +39,7 @@ export const DispositionChartCircle = styled.div<{
   $height: number;
   $backgroundColor: string;
   $borderColor?: string;
+  $hideCircle?: boolean;
 }>`
   width: ${(props) => props.$height}px;
   height: ${(props) => props.$height}px;
@@ -55,6 +56,8 @@ export const DispositionChartCircle = styled.div<{
   background: ${(props) => props.$backgroundColor};
   border: ${(props) =>
     props.$borderColor ? `4px solid ${props.$borderColor}` : "none"};
+
+  ${({ $hideCircle }) => $hideCircle && `opacity: 0;`}
 `;
 
 export const DispositionChartCircleLabel = styled.div<{
