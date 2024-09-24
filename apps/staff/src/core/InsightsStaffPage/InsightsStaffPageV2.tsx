@@ -75,6 +75,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
     trackActionStrategyPopupViewed,
+    isInsightsLanternState,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -142,6 +143,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               supervisorHomepage
               pseudoId={officerPseudoId}
               modalViewedCallback={trackActionStrategyPopupViewed}
+              insightsLanternState={isInsightsLanternState}
             />
           )}
           <Wrapper isTablet={isTablet}>

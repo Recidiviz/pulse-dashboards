@@ -165,6 +165,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
     trackActionStrategyPopupViewed,
+    isInsightsLanternState,
   } = presenter;
 
   useEffect(() => {
@@ -288,6 +289,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           disableBannerCallback={disableSurfaceActionStrategies}
           pseudoId={officerPseudoId}
           modalViewedCallback={trackActionStrategyPopupViewed}
+          insightsLanternState={isInsightsLanternState}
         ></InsightsActionStrategyBanner>
       )}
       <StyledTabs

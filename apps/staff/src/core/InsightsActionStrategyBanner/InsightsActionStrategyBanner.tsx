@@ -44,6 +44,7 @@ type InsightsActionStrategyBannerType = {
   pseudoId: string;
   modalViewedCallback: () => void;
   supervisorHomepage?: boolean;
+  insightsLanternState: boolean;
 };
 
 const InsightsActionStrategyBanner: React.FC<
@@ -55,6 +56,7 @@ const InsightsActionStrategyBanner: React.FC<
   pseudoId,
   modalViewedCallback,
   supervisorHomepage = false,
+  insightsLanternState,
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
@@ -96,6 +98,7 @@ const InsightsActionStrategyBanner: React.FC<
         pseudoId={pseudoId}
         trackViewed={modalViewedCallback}
         supervisorHomepage={supervisorHomepage}
+        insightsLanternState={insightsLanternState}
       />
     </Banner>
   );

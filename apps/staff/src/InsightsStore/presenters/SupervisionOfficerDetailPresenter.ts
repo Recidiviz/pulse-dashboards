@@ -96,10 +96,6 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
     };
   }
 
-  get isInsightsLanternState(): boolean {
-    return this.supervisionStore.isInsightsLanternState;
-  }
-
   protected *populateSupervisionOfficer(): FlowMethod<
     InsightsAPI["supervisionOfficer"],
     void

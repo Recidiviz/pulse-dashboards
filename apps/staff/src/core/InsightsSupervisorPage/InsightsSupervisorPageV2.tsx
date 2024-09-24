@@ -81,6 +81,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     disableSurfaceActionStrategies,
     supervisorPseudoId,
     trackActionStrategyPopupViewed,
+    isInsightsLanternState,
   } = presenter;
 
   const tooltipContents = (
@@ -186,6 +187,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
           supervisorHomepage
           pseudoId={supervisorPseudoId}
           modalViewedCallback={trackActionStrategyPopupViewed}
+          insightsLanternState={isInsightsLanternState}
         />
       )}
       <Wrapper isLaptop={isLaptop} supervisorHomepage>

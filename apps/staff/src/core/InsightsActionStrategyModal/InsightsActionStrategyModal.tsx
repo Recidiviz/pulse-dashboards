@@ -120,6 +120,8 @@ const StyledMarkdownView = styled(MarkdownView)`
     padding-left: ${rem(spacing.lg)};
     padding-right: ${rem(spacing.lg)};
     color: ${palette.slate85};
+    ${typography.Sans16}
+    line-height: 1.8;
   }
   a {
     color: ${palette.signal.links} !important;
@@ -139,6 +141,7 @@ type ActionStratetgyModalProps = {
   pseudoId: string;
   trackViewed: () => void;
   supervisorHomepage: boolean;
+  insightsLanternState: boolean;
 };
 
 export const InsightsActionStrategyModal = observer(
@@ -149,6 +152,7 @@ export const InsightsActionStrategyModal = observer(
     pseudoId,
     trackViewed,
     supervisorHomepage,
+    insightsLanternState,
   }: ActionStratetgyModalProps) {
     const {
       insightsStore: { supervisionStore },
@@ -200,9 +204,11 @@ export const InsightsActionStrategyModal = observer(
             <StyledMarkdownView markdown={actionStrategy.body} />
           </div>
         </Wrapper>
-        <ModalFooter>
-          <LanternLogo />
-        </ModalFooter>
+        {insightsLanternState && (
+          <ModalFooter>
+            <LanternLogo />
+          </ModalFooter>
+        )}
       </StyledDrawerModal>
     );
   },

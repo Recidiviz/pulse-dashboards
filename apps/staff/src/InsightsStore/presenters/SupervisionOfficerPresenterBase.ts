@@ -312,4 +312,8 @@ export abstract class SupervisionOfficerPresenterBase<
   get hydrationState() {
     return this.hydrator.hydrationState;
   }
+
+  get isInsightsLanternState(): boolean {
+    return this.supervisionStore.isInsightsLanternState;
+  }
 }

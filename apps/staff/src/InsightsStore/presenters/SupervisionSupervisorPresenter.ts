@@ -485,6 +485,14 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     return this.supervisionStore.benchmarksTimePeriod;
   }
 
+  /**
+   * Passthrough to supervisionStore
+   * @returns The whether or not the current tenant is a Lantern state
+   */
+  get isInsightsLanternState(): boolean {
+    return this.supervisionStore.isInsightsLanternState;
+  }
+
   // ==============================
   // Error Handling and Assertions
   // ==============================

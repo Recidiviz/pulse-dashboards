@@ -234,6 +234,10 @@ export class SupervisionOfficersPresenter implements Hydratable {
     );
   }
 
+  get isInsightsLanternState(): boolean {
+    return this.supervisionStore.isInsightsLanternState;
+  }
+
   trackViewed(): void {
     const { userPseudoId } =
       this.supervisionStore.insightsStore.rootStore.userStore;
