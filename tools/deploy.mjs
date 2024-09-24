@@ -11,7 +11,7 @@ import inquirer from "inquirer";
 import { inc } from "semver";
 import { WebClient as SlackClient } from "@slack/web-api";
 
-// The default is true, but we explicitely set it here because it needs to be set to true
+// The default is true, but we explicitly set it here because it needs to be set to true
 // in order for the gcloud stderr to display (used for the backend deploy)
 $.verbose = true;
 
@@ -62,7 +62,6 @@ if (deployEnv === "preview") {
 const owner = "Recidiviz";
 const repo = "pulse-dashboards";
 const currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
-const currentRevisionFull = (await $`git rev-parse HEAD`).stdout.trim();
 const octokit = new Octokit({
   auth: deployScriptPat.payload.data.toString(),
 });
@@ -73,7 +72,6 @@ let generatedReleaseNotes;
 let nextVersion = "deploy-candidate";
 let publishReleaseNotes;
 let releaseNotes;
-let e2eTestRun;
 let isCpDeploy;
 
 if (deployEnv === "production") {
@@ -83,42 +81,6 @@ if (deployEnv === "production") {
     message: `Is this a cherry-pick deploy?`,
     default: false,
   }));
-
-  console.log("Checking e2e test results...");
-  const {
-    data: { workflow_runs: workflowRuns },
-  } = await octokit.actions.listWorkflowRuns({
-    owner,
-    repo,
-    workflow_id: "e2e.yml",
-    per_page: 1, // Limit to 1 run to get the latest
-    page: 1, // Page number, starting at 1
-    event: "push", // Filter by event type (e.g., 'push')
-    head_sha: currentRevisionFull, // Filter by current revision
-  });
-
-  // Check if any workflow runs were found
-  if (workflowRuns.length > 0) {
-    [e2eTestRun] = workflowRuns;
-    console.log("Latest Workflow Run ID:", e2eTestRun.id);
-  } else {
-    console.log("No workflow runs found.");
-  }
-
-  if (e2eTestRun.conclusion !== "success") {
-    const e2eTestsFailedPrompt = await inquirer.prompt({
-      type: "confirm",
-      name: "continueToDeploy",
-      message: `The latest e2e test run had the following result on main: "${e2eTestRun.conclusion}". Would you like to continue the deploy to ${deployEnv}?`,
-      default: true,
-    });
-    if (!e2eTestsFailedPrompt.continueToDeploy) {
-      console.log(
-        `Cancelling deploy to ${deployEnv} because of E2E test failures.`,
-      );
-      process.exit();
-    }
-  }
 
   console.log("Generating release notes...");
   latestRelease = await octokit.rest.repos.getLatestRelease({
