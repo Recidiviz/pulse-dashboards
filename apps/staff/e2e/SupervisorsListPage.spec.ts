@@ -31,7 +31,7 @@ test.describe("Supervisors List Page", () => {
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
-        "3 supervisors across the state have one or more outlier officers in their team",
+        "Select a supervisor to view their overview",
       );
       await expect(page.getByRole("main")).toContainText("Region D1");
       await expect(
@@ -71,6 +71,39 @@ test.describe("Supervisors List Page", () => {
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
         "3 supervisors across the state have one or more outlier officers in their team",
+      );
+      await expect(page.getByRole("main")).toContainText("Region D1");
+      await expect(
+        page.getByRole("link", { name: "Alejandro D Gonzalez" }),
+      ).toBeVisible();
+    });
+
+    test("Supervisors list page - with supervisors_list permission + supervisor homepage", async ({
+      page,
+    }) => {
+      await page.route(
+        "http://localhost:3001/api/offlineUser?*",
+        async (route) => {
+          const response = await route.fetch();
+          const json = await response.json();
+          json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
+            "us_mi";
+          json["https://dashboard.recidiviz.org/app_metadata"].routes = {
+            insights: true,
+            "insights_supervision_supervisors-list": true,
+          };
+          json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
+            { insightsLeadershipPageAllDistricts: {}, supervisorHomepage: {} };
+          await route.fulfill({ response, json });
+        },
+      );
+
+      await page.goto("/");
+      await expect(
+        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+      ).toBeVisible();
+      await expect(page.getByRole("main")).toContainText(
+        "Select a supervisor to view their overview",
       );
       await expect(page.getByRole("main")).toContainText("Region D1");
       await expect(
