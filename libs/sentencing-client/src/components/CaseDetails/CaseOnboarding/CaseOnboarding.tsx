@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
 import { Case } from "../../../api";
+import { formatPossessiveName } from "../../../utils/utils";
 import { CaseStatus } from "../../Dashboard/types";
 import * as Styled from "../CaseDetails.styles";
 import { OnboardingAdditionalNeeds } from "./OnboardingAdditionalNeeds";
@@ -123,8 +124,8 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
           ) : (
             <Styled.OnboardingCompleteLoading>
               <Styled.OnboardingCompleteMessage>
-                Pulling in all of {firstName}&apos;s case details to find the
-                best opportunities and insights
+                Pulling in all of {formatPossessiveName(firstName)} case details
+                to find the best opportunities and insights
               </Styled.OnboardingCompleteMessage>
               <span>Loading...</span>
             </Styled.OnboardingCompleteLoading>

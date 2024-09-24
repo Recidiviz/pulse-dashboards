@@ -67,7 +67,7 @@ test("loads onboarding screen when user first accesses the case", async () => {
     </MemoryRouter>,
   );
 
-  const firstName = presenter.caseAttributes?.client?.fullName.split(" ")[0];
+  const firstName = presenter.caseAttributes?.client?.firstName;
   const onboardingCaption = await screen.getByText(
     `Let's get some details about ${firstName}'s case to enhance the historical insights`,
   );
@@ -110,7 +110,7 @@ test("display case details page", async () => {
     "Create Recommendations",
   );
   const opportunities = await screen.getByText(
-    `Opportunities for ${fullName.split(" ")[0]}`,
+    `Opportunities for ${presenter.caseAttributes?.client?.firstName}`,
   );
   const caseIdNode = await screen.getByText(clientExternalId);
 

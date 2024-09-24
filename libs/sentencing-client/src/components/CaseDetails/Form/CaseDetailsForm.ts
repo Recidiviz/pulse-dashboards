@@ -20,6 +20,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { Case, Client, Insight } from "../../../api/APIClient";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
+import { formatPossessiveName } from "../../../utils/utils";
 import { OnboardingFields } from "../CaseOnboarding/types";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
@@ -46,6 +47,7 @@ import {
   FormValue,
 } from "../types";
 import { caseDetailsFormTemplate } from "./CaseDetailsFormTemplate";
+import { FALLBACK_POSSESSIVE_PRONOUN } from "./constants";
 import {
   isValidLsirScore,
   parseAttributeValue,
@@ -167,6 +169,8 @@ export class CaseDetailsForm {
   }
 
   createForm(caseAttributes: Case & { clientGender?: Client["gender"] }) {
+    const firstName = caseAttributes.client?.firstName;
+    const formattedFirstName = formatPossessiveName(firstName);
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
       const attributeValue = caseAttributes[field.key];
       const invalidLsirScore =
@@ -186,6 +190,14 @@ export class CaseDetailsForm {
 
       return {
         ...field,
+        label:
+          /** Adds possesive form of client's first name in the primary needs label */
+          field.key === NEEDS_TO_BE_ADDRESSED_KEY && formattedFirstName
+            ? field.label.replace(
+                FALLBACK_POSSESSIVE_PRONOUN,
+                formattedFirstName,
+              )
+            : field.label,
         options: field.key === OFFENSE_KEY ? this.offenses : field.options,
         value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {

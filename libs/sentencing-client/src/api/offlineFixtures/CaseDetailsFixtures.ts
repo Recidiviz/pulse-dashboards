@@ -56,6 +56,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     isReportTypeLocked: false,
     client: {
       fullName: "Blanda Furman",
+      firstName: "Blanda",
+      lastName: "Furman",
       gender: "EXTERNAL_UNKNOWN",
       county: "Gwynedd County",
       birthDate: new Date("1990-11-13T21:37:16.551Z"),

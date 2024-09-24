@@ -164,6 +164,7 @@ describe("generateRecommendationSummary", () => {
     const summary = generateRecommendationSummary({
       recommendation: recommendationType,
       fullName: "Jane Doe Williams",
+      lastName: "Williams",
       needs: [],
       opportunityDescriptions: [],
       gender: "FEMALE",
@@ -180,6 +181,7 @@ describe("generateRecommendationSummary", () => {
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       fullName: "Jane Doe Williams",
+      lastName: "Williams",
       needs: [],
       opportunityDescriptions: [],
       gender: "FEMALE",
@@ -243,6 +245,7 @@ describe("generateRecommendationSummary", () => {
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       fullName: "Jane Doe Williams",
+      lastName: "Williams",
       needs: [],
       opportunityDescriptions: [],
       gender: "FEMALE",
@@ -306,6 +309,7 @@ describe("generateRecommendationSummary", () => {
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       fullName: "Jane Doe Williams",
+      lastName: "Williams",
       needs: [
         "CaseManagement",
         "ClothingAndToiletries",
@@ -380,6 +384,7 @@ describe("generateRecommendationSummary", () => {
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       fullName: "Jo Robertson",
+      lastName: "Robertson",
       needs: [],
       opportunityDescriptions: pluralizeDuplicates([
         "mental health provider",
@@ -449,6 +454,7 @@ describe("generateRecommendationSummary", () => {
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       fullName: "Jo Robertson",
+      lastName: "Robertson",
       needs: allNeeds,
       opportunityDescriptions: [],
       gender: "FEMALE",
@@ -511,6 +517,7 @@ describe("generateRecommendationSummary", () => {
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       fullName: "Jo Robertson",
+      lastName: "Robertson",
       needs: [],
       opportunityDescriptions: [],
       gender: "FEMALE",

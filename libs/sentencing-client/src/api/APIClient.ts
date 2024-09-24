@@ -20,6 +20,7 @@ import {
   createTRPCProxyClient,
   httpBatchLink,
 } from "@trpc/client";
+import _ from "lodash";
 import { runInAction, when } from "mobx";
 import superjson from "superjson";
 
@@ -124,7 +125,20 @@ export class APIClient {
     const fetchedData = await this.trpcClient.case.getCase.query({
       id: caseId,
     });
-    return fetchedData;
+
+    const fullNameSplit = fetchedData.client?.fullName?.trim().split(/\s+/);
+    const updatedClient = fetchedData.client
+      ? {
+          ...fetchedData.client,
+          firstName: _.capitalize(fullNameSplit?.[0]),
+          lastName: _.capitalize(fullNameSplit?.[fullNameSplit.length - 1]),
+        }
+      : undefined;
+
+    return {
+      ...fetchedData,
+      client: updatedClient,
+    };
   }
 
   async updateCaseDetails(caseId: string, attributes: FormAttributes) {

@@ -35,6 +35,7 @@ const TOAST_TIMEOUT = 3000;
 
 type SummaryReportProps = {
   firstName?: string;
+  lastName?: string;
   fullName?: string;
   insight?: CaseInsight;
   externalId: string;
@@ -53,6 +54,7 @@ type SummaryReportProps = {
 
 export const SummaryReport: React.FC<SummaryReportProps> = ({
   firstName,
+  lastName,
   fullName,
   insight,
   externalId,
@@ -73,6 +75,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   const defaultRecommendationSummary = generateRecommendationSummary({
     recommendation: selectedRecommendation,
     fullName,
+    lastName,
     needs,
     opportunityDescriptions,
     gender,

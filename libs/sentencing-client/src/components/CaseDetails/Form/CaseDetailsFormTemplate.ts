@@ -29,6 +29,7 @@ import {
   YES_OPTION,
 } from "../constants";
 import { FormFieldList, NonArrayType, NonNullableKey } from "../types";
+import { FALLBACK_POSSESSIVE_PRONOUN } from "./constants";
 
 const genderOptions = Object.values(GenderToDisplayName).filter(
   (gender) => gender !== "Unknown",
@@ -140,7 +141,7 @@ export const caseDetailsFormTemplate: FormFieldList = [
   },
   {
     key: "needsToBeAddressed",
-    label: `What are their primary needs? Select all that apply.`,
+    label: `What are ${FALLBACK_POSSESSIVE_PRONOUN} primary needs? Select all that apply.`,
     value: null,
     inputType: "multi-select",
     options: needsToBeAddressedOptions,

@@ -36,6 +36,7 @@ import { RecommendationOption, RecommendationsProps } from "./types";
 // TODO(Recidiviz/recidiviz-data#30651) Implement Recommendations flow
 export const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
+  lastName,
   fullName,
   selectedRecommendation,
   lastSavedRecommendation,
@@ -155,6 +156,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
         <SummaryReport
           fullName={fullName}
           firstName={firstName}
+          lastName={lastName}
           insight={insight}
           externalId={externalId}
           selectedRecommendation={selectedRecommendation}

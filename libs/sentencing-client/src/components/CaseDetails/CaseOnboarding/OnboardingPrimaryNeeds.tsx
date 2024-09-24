@@ -17,6 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 
+import { formatPossessiveName } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import { Form } from "../Form/Elements/Form";
 import { CaseOnboardingTopicProps } from "./types";
@@ -27,8 +28,8 @@ export const OnboardingPrimaryNeeds: React.FC<CaseOnboardingTopicProps> =
       <>
         <Styled.OnboardingHeaderWrapper>
           <Styled.OnboardingHeader>
-            Gathering {firstName}&apos;s primary needs help pinpoint the best
-            suited community opportunities
+            Gathering {formatPossessiveName(firstName)} primary needs help
+            pinpoint the best suited community opportunities
           </Styled.OnboardingHeader>
           <Styled.OnboardingDescription>
             We will use this data to generate opportunities for {firstName}.

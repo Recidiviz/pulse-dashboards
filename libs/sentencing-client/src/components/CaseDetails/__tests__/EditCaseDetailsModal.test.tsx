@@ -26,8 +26,10 @@ import {
 import { PSIStore } from "../../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { createMockPSIStore } from "../../../utils/test";
+import { formatPossessiveName } from "../../../utils/utils";
 import { CaseDetails } from "../CaseDetails";
 import { caseDetailsFormTemplate } from "../Form/CaseDetailsFormTemplate";
+import { FALLBACK_POSSESSIVE_PRONOUN } from "../Form/constants";
 
 let psiStore: PSIStore;
 let presenter: CaseDetailsPresenter;
@@ -87,7 +89,7 @@ test("clicking edit case details button opens the edit case details modal", asyn
   expect(editCaseDetailsButton).toBeInTheDocument();
   fireEvent.click(editCaseDetailsButton);
 
-  const firstName = presenter.caseAttributes?.client?.fullName.split(" ")[0];
+  const firstName = presenter.caseAttributes?.client?.firstName;
   const editCaseDetailsTitles = await screen.getAllByText("Edit Case Details");
   const editCaseDetailsDescription = await screen.getByText(
     `We will use this data to generate opportunities for ${firstName}. If you don't have this information yet, you can add it in later.`,
@@ -121,27 +123,37 @@ test("shows all of the non-nested fields", async () => {
 
   const offenseField = await screen.getByText(nonNestedFormLabels[0]);
   const draftLsirScoreField = await screen.getByText(nonNestedFormLabels[1]);
-  const primaryNeedsField = await screen.getByText(nonNestedFormLabels[2]);
+  const genderField = await screen.getByText(nonNestedFormLabels[2]);
+  const reportTypeField = await screen.getByText(nonNestedFormLabels[3]);
+
+  const primaryNeedsField = await screen.getByText(
+    nonNestedFormLabels[4].replace(
+      FALLBACK_POSSESSIVE_PRONOUN,
+      formatPossessiveName(presenter.caseAttributes.client?.firstName) ?? "",
+    ),
+  );
   const substanceUseDisorderField = await screen.getByText(
-    nonNestedFormLabels[3],
+    nonNestedFormLabels[5],
   );
   const mentalHealthDiagnosisField = await screen.getByText(
-    nonNestedFormLabels[4],
+    nonNestedFormLabels[6],
   );
   const priorHistoryOfSupervisionIncarcerationField = await screen.getByText(
-    nonNestedFormLabels[5],
+    nonNestedFormLabels[7],
   );
   const isVeteranField = await screen.getByText(nonNestedFormLabels[6]);
   const developmentalDisabilityField = await screen.getByText(
-    nonNestedFormLabels[7],
-  );
-  const childProtectiveServicesField = await screen.getByText(
     nonNestedFormLabels[8],
   );
-  const pleaField = await screen.getByText(nonNestedFormLabels[9]);
+  const childProtectiveServicesField = await screen.getByText(
+    nonNestedFormLabels[9],
+  );
+  const pleaField = await screen.getByText(nonNestedFormLabels[10]);
 
   expect(offenseField).toBeInTheDocument();
   expect(draftLsirScoreField).toBeInTheDocument();
+  expect(genderField).toBeInTheDocument();
+  expect(reportTypeField).toBeInTheDocument();
   expect(primaryNeedsField).toBeInTheDocument();
   expect(substanceUseDisorderField).toBeInTheDocument();
   expect(mentalHealthDiagnosisField).toBeInTheDocument();

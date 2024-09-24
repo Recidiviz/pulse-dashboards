@@ -25,6 +25,7 @@ import {
 
 export type RecommendationsProps = {
   firstName?: string;
+  lastName?: string;
   fullName?: string;
   externalId: string;
   gender?: Client["gender"];
@@ -66,6 +67,7 @@ export type RecommendationOption = {
 export type GenerateRecommendationProps = {
   recommendation?: keyof typeof RecommendationType | null;
   fullName?: string;
+  lastName?: string;
   needs: Case["needsToBeAddressed"];
   opportunityDescriptions?: string[];
   gender?: Client["gender"];

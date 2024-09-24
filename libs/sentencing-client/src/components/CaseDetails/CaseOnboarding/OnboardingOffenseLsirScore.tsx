@@ -17,6 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 
+import { formatPossessiveName } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import { Form } from "../Form/Elements/Form";
 import { CaseOnboardingTopicProps } from "./types";
@@ -27,8 +28,8 @@ export const OnboardingOffenseLsirScoreGenderReportType: React.FC<CaseOnboarding
       <>
         <Styled.OnboardingHeaderWrapper>
           <Styled.OnboardingHeader>
-            Let&apos;s get some details about {firstName}&apos;s case to enhance
-            the historical insights
+            Let&apos;s get some details about {formatPossessiveName(firstName)}{" "}
+            case to enhance the historical insights
           </Styled.OnboardingHeader>
         </Styled.OnboardingHeaderWrapper>
         <Form

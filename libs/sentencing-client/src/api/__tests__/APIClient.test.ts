@@ -44,7 +44,7 @@ beforeEach(() => {
     },
     case: {
       getCase: {
-        query: vi.fn().mockResolvedValue(CaseDetailsFixture),
+        query: vi.fn().mockResolvedValue(CaseDetailsFixture[caseId]),
       },
       updateCase: {
         mutate: vi.fn(),
@@ -121,7 +121,7 @@ test("setIsFirstLogin calls the updateStaff endpoint with the correct arguments"
 
 test("getCaseDetails returns data", async () => {
   const result = await apiClient.getCaseDetails(caseId);
-  expect(result).toBe(CaseDetailsFixture);
+  expect(result).toStrictEqual(CaseDetailsFixture[caseId]);
   expect(mockTRPCClient.case.getCase.query).toHaveBeenCalledTimes(1);
   expect(mockTRPCClient.case.getCase.query).toHaveBeenCalledWith({
     id: caseId,
