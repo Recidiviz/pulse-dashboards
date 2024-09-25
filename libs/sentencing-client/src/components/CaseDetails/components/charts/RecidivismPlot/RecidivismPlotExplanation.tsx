@@ -15,19 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import moment from "moment";
+
 import { CaseInsight } from "../../../../../api";
-import { getDescriptionGender } from "../common/utils";
-import { LsirScoreText } from "../components/LsirScoreText";
 import { TextContainer } from "../components/Styles";
-import { stateCodeToStateName } from "./utils";
-
-function getRollupGenderString(rollupGender: CaseInsight["rollupGender"]) {
-  if (rollupGender === null) {
-    return undefined;
-  }
-
-  return getDescriptionGender(rollupGender);
-}
 
 interface OffenseSpanProps {
   rollupOffense: string | undefined;
@@ -59,12 +50,7 @@ function OffenseText({
     (rollupViolentOffense === true ? "violent" : null) ||
     (rollupViolentOffense === false ? "non-violent" : null);
 
-  return offenseString ? (
-    <>
-      {" "}
-      with <span>{offenseString} convictions</span>
-    </>
-  ) : null;
+  return offenseString ? <span>{offenseString} convictions</span> : null;
 }
 
 interface RecidivismPlotExplanationProps {
@@ -75,33 +61,19 @@ export function RecidivismPlotExplanation({
   insight,
 }: RecidivismPlotExplanationProps) {
   const {
-    rollupGender,
-    rollupAssessmentScoreBucketStart,
-    rollupAssessmentScoreBucketEnd,
     rollupOffense,
     rollupNcicCategory,
     rollupCombinedOffenseCategory,
     rollupViolentOffense,
-    rollupStateCode,
   } = insight;
-
-  const genderString = getRollupGenderString(rollupGender);
 
   return (
     <TextContainer>
       These recidivism rates represent the percentage of individuals who have
-      been convicted of a subsequent offense or violated the conditions of their
-      probation or parole over the course of the three years immediately after
-      their release into the community. The rates are based on{" "}
+      been incarcerated or re-incarcerated during the three years immediately
+      after the start of their probation sentence or their release into the
+      community. The rates are based on{" "}
       <span>
-        <span>
-          {genderString ??
-            `all cases in ${stateCodeToStateName(rollupStateCode)}`}
-        </span>
-        <LsirScoreText
-          rollupAssessmentScoreBucketStart={rollupAssessmentScoreBucketStart}
-          rollupAssessmentScoreBucketEnd={rollupAssessmentScoreBucketEnd}
-        />
         <OffenseText
           rollupOffense={rollupOffense}
           rollupNcicCategory={rollupNcicCategory}
@@ -109,8 +81,9 @@ export function RecidivismPlotExplanation({
           rollupViolentOffense={rollupViolentOffense}
         />
       </span>
-      . The shaded areas represent the confidence intervals, or the range of
-      possible values for the true recidivism rate.
+      , using IDOC data from 2010-{moment().year() - 3}. The shaded areas
+      represent the confidence intervals, or the range of possible values for
+      the true recidivism rate.
     </TextContainer>
   );
 }
