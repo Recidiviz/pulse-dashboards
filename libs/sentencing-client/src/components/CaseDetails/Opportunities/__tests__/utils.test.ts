@@ -128,6 +128,33 @@ describe("filterEligibleOpportunities", () => {
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
 
+  it("should fallback on matching district of sentencing if district of residence is null", () => {
+    attributes = {
+      age: 30,
+      hasDevelopmentalDisability: true,
+      hasPreviousSexOffenseConviction: false,
+      hasPreviousViolentOffenseConviction: false,
+      previouslyIncarceratedOrUnderSupervision: false,
+      plea: "Guilty",
+      county: "District 1 - Caldwell",
+      district: null,
+      isVeteran: true,
+      mentalHealthDiagnoses: ["BipolarDisorder"],
+      substanceUseDisorderDiagnosis: "Moderate",
+      asamCareRecommendation: "HighIntensityOutpatient",
+      needsToBeAddressed: ["Education"],
+      lsirScore: 10,
+    };
+
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+
+    attributes.county = "District 2 - Caldera";
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+
+    attributes.district = "DISTRICT 1";
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+  });
+
   it("should return false if age criteria are not met", () => {
     attributes = {
       age: 17, // below minAge

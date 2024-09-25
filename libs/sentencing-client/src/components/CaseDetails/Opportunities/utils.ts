@@ -108,9 +108,10 @@ export const filterEligibleOpportunities = (
   ).district;
   const hasMatchingDistricts =
     districtOfSentencing === districtOfResidence?.toLocaleLowerCase();
-  const districtName = hasMatchingDistricts
-    ? districtOfSentencing
-    : districtOfResidence;
+  const districtName =
+    hasMatchingDistricts || !districtOfResidence
+      ? districtOfSentencing
+      : districtOfResidence;
   const isDistrictEligible =
     districtName &&
     opportunityDistrict === convertDistrictToDistrictCode(districtName);
