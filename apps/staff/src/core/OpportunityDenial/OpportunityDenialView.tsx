@@ -215,11 +215,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const savingWillUnsnooze = reasons.length === 0 && !reasonsUnchanged;
 
-  let prompt = opportunity.config.isAlert
+  const prompt = opportunity.config.isAlert
     ? `Please select the reason(s) ${opportunity.person?.displayPreferredName} should be overridden:`
     : `Which of the following requirements has ${opportunity.person?.displayPreferredName} not met?`;
-
-  prompt = opportunity.config.snoozeModalPrompt ?? prompt;
 
   const snoozeSection = (
     <>
@@ -240,13 +238,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       )}
       {snoozeUntilDate !== undefined && (
         <SnoozeUntilReminderText>
-          {opportunity.config.snoozeConfirmationText ?? (
-            <>
-              <div>{buildResurfaceText(opportunity, snoozeUntilDate)}</div>
-              <br />
-              <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
-            </>
-          )}
+          <div>{buildResurfaceText(opportunity, snoozeUntilDate)}</div>
+          <br />
+          <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
         </SnoozeUntilReminderText>
       )}
     </>

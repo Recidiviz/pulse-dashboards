@@ -111,15 +111,6 @@ const MarkedIneligibleReasons: React.FC<{
 
   if (!denialReasons || !enableSnooze) return null;
 
-  const { snoozeConfirmationText } = opportunity.config;
-  if (snoozeConfirmationText) {
-    return (
-      <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
-        {snoozeConfirmationText}
-      </MarkedIneligibleReasonsText>
-    );
-  }
-
   const ineligibleReasonsList = buildDenialReasonsListText(
     opportunity,
     denialReasons,

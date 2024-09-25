@@ -59,8 +59,6 @@ export const apiOpportunityConfigurationSchema = z.object({
   eligibilityDateText: nullishAsUndefined(z.string()),
   tooltipEligibilityText: nullishAsUndefined(z.string()),
   hideDenialRevert: z.boolean().optional(),
-  snoozeModalPrompt: nullishAsUndefined(z.string()),
-  snoozeConfirmationText: nullishAsUndefined(z.string()),
   eligibleCriteriaCopy: criteriaCopySchema,
   ineligibleCriteriaCopy: criteriaCopySchema,
   sidebarComponents: z.array(z.string()),

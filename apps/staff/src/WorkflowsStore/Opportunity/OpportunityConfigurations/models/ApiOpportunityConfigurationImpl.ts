@@ -146,14 +146,6 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.hideDenialRevert;
   }
 
-  get snoozeModalPrompt() {
-    return this.configurationObject.snoozeModalPrompt;
-  }
-
-  get snoozeConfirmationText() {
-    return this.configurationObject.snoozeConfirmationText;
-  }
-
   get tabGroups() {
     const tabs = this.configurationObject.tabGroups as OpportunityTabGroups;
     if (tabs) return tabs;
