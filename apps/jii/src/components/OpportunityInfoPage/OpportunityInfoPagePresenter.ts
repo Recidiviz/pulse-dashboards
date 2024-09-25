@@ -18,6 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { OpportunityConfig } from "../../configs/types";
+import { EligibilityReport } from "../../models/EligibilityReport/interface";
 
 /**
  * Reads the specified static page content out of the opportunity config
@@ -26,6 +27,7 @@ export class OpportunityInfoPagePresenter {
   constructor(
     private opportunityConfig: OpportunityConfig,
     private pageSlug: string,
+    private eligibilityReport: EligibilityReport,
   ) {
     makeAutoObservable(this);
   }
@@ -52,5 +54,26 @@ export class OpportunityInfoPagePresenter {
    */
   get body() {
     return this.pageConfig.body;
+  }
+
+  get pageLinksHeading() {
+    return `Learn more about ${this.opportunityConfig.shortName}`;
+  }
+
+  /**
+   * used for bottom-of-page navigation to other info pages
+   */
+  get pageLinks(): Array<{ text: string; url: string }> {
+    return [
+      this.opportunityConfig.requirements.fullPage,
+      ...this.eligibilityReport.enabledSections.map((s) => s.fullPage),
+    ]
+      .filter((c) => c.urlSlug !== this.pageConfig.urlSlug)
+      .map((c) => ({
+        // intentionally using the page title here rather than the link text,
+        // which is for the buttons on the main eligibility page
+        text: c.heading,
+        url: `../${c.urlSlug}`,
+      }));
   }
 }

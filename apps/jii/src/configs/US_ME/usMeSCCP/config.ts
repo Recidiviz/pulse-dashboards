@@ -135,6 +135,6 @@ export const config: OpportunityConfig = {
     },
   ],
 
-  menuLabel: "SCCP",
+  shortName: "SCCP",
   formPreview: { title: "SCCP Application" },
 } satisfies OpportunityConfig;

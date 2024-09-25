@@ -16,6 +16,7 @@
 // =============================================================================
 
 import {
+  animation,
   Button,
   Icon,
   palette,
@@ -76,6 +77,14 @@ const Fields = styled.dl`
 
 const FieldValueButton = styled(Button).attrs({ kind: "link" })`
   ${typography.Sans14};
+  text-decoration: underline;
+
+  transition: color ${animation.defaultDurationMs / 2}ms ease-in-out;
+
+  &:hover,
+  &:focus {
+    color: ${palette.signal.highlight};
+  }
 `;
 
 function FieldValue({ field }: { field: ProfileField }) {

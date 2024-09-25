@@ -22,6 +22,10 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import {
+  PageContainer,
+  UnpaddedPageContainer,
+} from "../../BaseLayout/BaseLayout";
 import { useRootStore } from "../../StoreProvider/useRootStore";
 import { Wordmark } from "../../Wordmark/Wordmark";
 import { NavigationMenu } from "./NavigationMenu";
@@ -29,16 +33,16 @@ import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 import { ResidentMiniProfile } from "./ResidentMiniProfile";
 import { ResidentMiniProfilePresenter } from "./ResidentMiniProfilePresenter";
 
-const Header = styled.header`
-  align-items: flex-start;
+const HeaderWrapper = styled(UnpaddedPageContainer)`
   border-bottom: 1px solid ${palette.slate20};
+`;
+
+const Header = styled(PageContainer).attrs({ as: "header" })`
+  align-items: flex-start;
   display: flex;
   gap: ${rem(spacing.md)};
-
-  /* specificity hack vs BaseLayout */
-  && {
-    padding-bottom: ${rem(spacing.lg)};
-  }
+  padding-bottom: ${rem(spacing.md)};
+  padding-top: ${rem(spacing.md)};
 `;
 
 const HeaderContent = styled.div`
@@ -67,21 +71,23 @@ export const ResidentsHeader: FC = observer(function ResidentsHeader() {
     new ResidentMiniProfilePresenter(resident, residentsStore.config);
 
   return (
-    <Header>
-      <HeaderContent>
-        <Link to="/">
-          <Wordmark />
-        </Link>
+    <HeaderWrapper>
+      <Header>
+        <HeaderContent>
+          <Link to="/">
+            <Wordmark />
+          </Link>
 
-        {profilePresenter && (
-          <ResidentMiniProfile presenter={profilePresenter} />
-        )}
-      </HeaderContent>
-      <NavigationMenu
-        presenter={
-          new NavigationMenuPresenter(residentsStore.config, userStore)
-        }
-      />
-    </Header>
+          {profilePresenter && (
+            <ResidentMiniProfile presenter={profilePresenter} />
+          )}
+        </HeaderContent>
+        <NavigationMenu
+          presenter={
+            new NavigationMenuPresenter(residentsStore.config, userStore)
+          }
+        />
+      </Header>
+    </HeaderWrapper>
   );
 });

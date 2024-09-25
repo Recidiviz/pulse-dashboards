@@ -43,7 +43,7 @@ export class NavigationMenuPresenter {
 
       links.push(
         ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
-          text: c.menuLabel,
+          text: c.shortName,
           url: State.Eligibility.Opportunity.buildPath({
             opportunitySlug: c.urlSlug,
             stateSlug,

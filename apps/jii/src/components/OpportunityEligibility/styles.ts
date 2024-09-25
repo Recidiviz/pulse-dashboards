@@ -19,12 +19,18 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { ButtonLink } from "../ButtonLink/ButtonLink";
+
 export const Section = styled.section`
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(24)};
   margin: ${rem(spacing.lg)} 0;
   padding: ${rem(spacing.xl)};
   text-wrap: pretty;
+
+  ${ButtonLink} {
+    margin-top: ${rem(spacing.lg)};
+  }
 `;
 
 export const SectionHeading = styled.h2`

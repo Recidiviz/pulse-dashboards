@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Icon } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { ValuesType } from "utility-types";
 
+import { ButtonLink } from "../ButtonLink/ButtonLink";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
-import { ButtonLink } from "./ButtonLink";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { Section, SectionHeading } from "./styles";
 
@@ -32,7 +33,10 @@ export const AdditionalSection: FC<{
       <SectionHeading>{content.heading}</SectionHeading>
       <CopyWrapper>{content.body}</CopyWrapper>
 
-      <ButtonLink to={content.linkUrl}>{content.linkText}</ButtonLink>
+      <ButtonLink to={content.linkUrl}>
+        <span>{content.linkText}</span>
+        <Icon kind="Arrow" size={16} />
+      </ButtonLink>
     </Section>
   );
 });

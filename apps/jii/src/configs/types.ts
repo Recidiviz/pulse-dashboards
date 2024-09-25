@@ -84,7 +84,11 @@ export type OpportunityConfig = {
    * Optional copy-only sections that will appear below requirements
    */
   sections: Array<EligibilityPageSection>;
-  menuLabel: string;
+  /**
+   * Could be an abbreviation or other identifier that may be inserted
+   * into menus and headings to refer to this opportunity generically
+   */
+  shortName: string;
   formPreview: {
     title: string;
   };

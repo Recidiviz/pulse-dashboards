@@ -15,14 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, Icon, palette, spacing } from "@recidiviz/design-system";
+import { animation, palette, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { FC } from "react";
-import { Link, LinkProps } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-// many of these styles are borrowed from the design system, which does not export them
-const StyledLink = styled(Link)`
+/**
+ * It's a React Router Link but it looks like a button
+ */
+export const ButtonLink = styled(Link)`
+  // many of these styles are borrowed from the design system, which does not export them
   align-items: center;
   background-color: transparent;
   border-radius: ${rem(999)};
@@ -30,8 +32,7 @@ const StyledLink = styled(Link)`
   color: ${palette.signal.links};
   display: inline-flex;
   gap: ${rem(spacing.sm)};
-  justify-content: center;
-  margin-top: ${rem(spacing.lg)};
+  justify-content: center;s
   min-height: ${rem(32)};
   min-width: ${rem(129)};
   padding: ${rem(10)} ${rem(18)};
@@ -50,15 +51,3 @@ const StyledLink = styled(Link)`
     color: ${palette.signal.highlight};
   }
 `;
-
-/**
- * It's a React Router Link but it looks like a button
- */
-export const ButtonLink: FC<LinkProps> = ({ children, ...linkProps }) => {
-  return (
-    <StyledLink {...linkProps}>
-      <span>{children}</span>
-      <Icon kind="Arrow" size={16} />
-    </StyledLink>
-  );
-};

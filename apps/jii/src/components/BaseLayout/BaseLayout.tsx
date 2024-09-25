@@ -21,12 +21,35 @@ import styled from "styled-components/macro";
 
 import { PAGE_WIDTH } from "../../utils/constants";
 
-export const BaseLayout = styled.div`
+const PAGE_PADDING = rem(spacing.xl);
+
+/**
+ * Constrained to a desired max width, with left and right padding
+ */
+export const PageContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
   max-width: ${rem(PAGE_WIDTH)};
+  padding-left: ${PAGE_PADDING};
+  padding-right: ${PAGE_PADDING};
+`;
 
-  & > * {
-    padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-  }
+/**
+ * Breaks out of the left/right padding to let content fill max width
+ */
+export const UnpaddedPageContainer = styled.div`
+  margin-left: -${PAGE_PADDING};
+  margin-right: -${PAGE_PADDING};
+`;
+
+/**
+ * Breaks out of the max width to fill the entire screen width
+ */
+export const FullBleedContainer = styled.div`
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 `;

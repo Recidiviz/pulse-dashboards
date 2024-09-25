@@ -78,32 +78,21 @@ export class OpportunityEligibilityPresenter {
   }
 
   get additionalSections() {
-    return this.config.sections
-      .filter((sectionConfig) => {
-        // drop sections that are hidden for ineligible users, when applicable
-        if (
-          // for now this is a proxy for ineligible status; revisit when we add more data for those users
-          !this.eligibilityReport.hasEligibilityData
-        ) {
-          return !sectionConfig.hideWhenIneligible;
-        }
-        return true;
-      })
-      .map((sectionConfig) => {
-        const {
-          summary: { heading, body },
-          fullPage: { urlSlug, linkText },
-        } = sectionConfig;
-        return {
-          heading,
-          body,
-          linkText,
-          linkUrl: State.Eligibility.Opportunity.InfoPage.buildPath({
-            ...this.linkParams,
-            pageSlug: urlSlug,
-          }),
-        };
-      });
+    return this.eligibilityReport.enabledSections.map((sectionConfig) => {
+      const {
+        summary: { heading, body },
+        fullPage: { urlSlug, linkText },
+      } = sectionConfig;
+      return {
+        heading,
+        body,
+        linkText,
+        linkUrl: State.Eligibility.Opportunity.InfoPage.buildPath({
+          ...this.linkParams,
+          pageSlug: urlSlug,
+        }),
+      };
+    });
   }
 
   get htmlTitle() {

@@ -20,7 +20,7 @@ import { Outlet } from "react-router-dom";
 
 import { AuthClientHydrator } from "~auth";
 
-import { BaseLayout } from "../BaseLayout/BaseLayout";
+import { PageContainer } from "../BaseLayout/BaseLayout";
 import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageviewTracking } from "../usePageviewTracking/usePageviewTracking";
@@ -33,9 +33,9 @@ export const PageRoot = observer(function AppRoot() {
 
   return (
     <AuthClientHydrator authClient={authClient}>
-      <BaseLayout>
+      <PageContainer>
         <Outlet />
-      </BaseLayout>
+      </PageContainer>
       <ScrollToTop />
     </AuthClientHydrator>
   );

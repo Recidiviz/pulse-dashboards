@@ -25,14 +25,17 @@ import styled from "styled-components/macro";
 import recidivizWordmarkUrl from "../../assets/images/recidiviz-wordmark-white.svg";
 import { ReturnToPathFragment } from "../../routes/routes";
 import { PAGE_WIDTH } from "../../utils/constants";
+import { FullBleedContainer } from "../BaseLayout/BaseLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { Wordmark } from "../Wordmark/Wordmark";
+
+const CONTENT_WIDTH = rem(PAGE_WIDTH * 0.8);
 
 const Wrapper = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
   margin: 0 auto;
-  max-width: ${rem(PAGE_WIDTH * 0.8)};
+  max-width: ${CONTENT_WIDTH};
   min-height: 100vh;
 `;
 
@@ -44,26 +47,18 @@ const Main = styled.main`
   padding-bottom: ${rem(spacing.xxl)};
 `;
 
-const Footer = styled.footer`
+const Footer = styled(FullBleedContainer).attrs({ as: "footer" })`
   background: #001414;
+`;
+
+const FooterContents = styled.div`
   color: ${palette.white};
   column-gap: 15%;
   display: grid;
   grid-template-columns: 1fr auto;
+  margin: 0 auto;
+  max-width: ${CONTENT_WIDTH};
   padding: ${rem(spacing.xxl)} 0;
-  position: relative;
-
-  &:before {
-    content: "";
-    z-index: -1;
-    position: absolute;
-    top: 0;
-    /* extra overflow to cover up the padding from BaseLayout */
-    bottom: -${rem(spacing.md)};
-    left: -100vw;
-    right: -100vw;
-    background: inherit;
-  }
 
   h2 {
     ${typography.Sans14}
@@ -119,30 +114,32 @@ export const LandingPageLayout: FC<{ children: ReactNode }> = ({
       </Header>
       <Main>{children}</Main>
       <Footer>
-        <div>
-          <h2>
-            Made by <RecidivizWordmark />
-          </h2>
-          <Markdown>{landingPageConfig.aboutRecidivizCopy}</Markdown>
-        </div>
-        <div>
-          <h2>For staff</h2>
-          <p>
-            <Button
-              kind="link"
-              onClick={() =>
-                authClient.logIn({
-                  targetPath: returnToPath ?? window.location.pathname,
-                })
-              }
-            >
-              Log in to Opportunities
-            </Button>
-          </p>
-          <p>
-            <a href="mailto:feedback@recidiviz.org">Contact us</a>
-          </p>
-        </div>
+        <FooterContents>
+          <div>
+            <h2>
+              Made by <RecidivizWordmark />
+            </h2>
+            <Markdown>{landingPageConfig.aboutRecidivizCopy}</Markdown>
+          </div>
+          <div>
+            <h2>For staff</h2>
+            <p>
+              <Button
+                kind="link"
+                onClick={() =>
+                  authClient.logIn({
+                    targetPath: returnToPath ?? window.location.pathname,
+                  })
+                }
+              >
+                Log in to Opportunities
+              </Button>
+            </p>
+            <p>
+              <a href="mailto:feedback@recidiviz.org">Contact us</a>
+            </p>
+          </div>
+        </FooterContents>
       </Footer>
     </Wrapper>
   );

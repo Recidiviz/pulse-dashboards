@@ -20,13 +20,13 @@ import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
 import { FC } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
 import { FormPreview } from "../FormPreview/FormPreview";
 import { clickableText } from "../styles/clickableText";
 import { InternalOrExternalLink } from "./InternalOrExternalLink";
 
-const MarkdownWrapper = styled(Markdown)`
+export const styles = css`
   ${typography.Body16}
 
   h1 {
@@ -45,7 +45,7 @@ const MarkdownWrapper = styled(Markdown)`
     margin: 2.5em 0 0.5em;
 
     /* in UI contexts where this is the main heading of a container, rather than
-    a subheading of a larger document, collapse the top margin */
+  a subheading of a larger document, collapse the top margin */
     &:first-child {
       margin-top: 0;
     }
@@ -121,6 +121,10 @@ const MarkdownWrapper = styled(Markdown)`
     border-color: ${palette.slate20};
     border-style: solid;
   }
+`;
+
+const MarkdownWrapper = styled(Markdown)`
+  ${styles}
 `;
 
 /**

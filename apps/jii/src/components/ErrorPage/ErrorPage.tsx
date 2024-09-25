@@ -19,11 +19,11 @@ import { Body16, Body19, Header34 } from "@recidiviz/design-system";
 import { ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { BaseLayout } from "../BaseLayout/BaseLayout";
+import { PageContainer } from "../BaseLayout/BaseLayout";
 
 export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
   return (
-    <BaseLayout>
+    <PageContainer>
       <Header34>Something went wrong</Header34>
       <Body19>
         An error occurred that prevented this page from loading. Please try
@@ -34,6 +34,6 @@ export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
           [{error.name}] {error.message}
         </em>
       </Body16>
-    </BaseLayout>
+    </PageContainer>
   );
 };

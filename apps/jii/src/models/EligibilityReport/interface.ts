@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RequirementCopy } from "../../configs/types";
+import { OpportunityConfig, RequirementCopy } from "../../configs/types";
 
 /**
  * `icon` property should correspond to design system Icon name
@@ -31,4 +31,5 @@ export interface EligibilityReport {
   headline: string;
   subheading: string;
   requirements: Array<RequirementsSectionContent>;
+  enabledSections: OpportunityConfig["sections"];
 }

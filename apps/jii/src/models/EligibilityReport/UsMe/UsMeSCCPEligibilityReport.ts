@@ -231,4 +231,17 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
 
     return sections;
   }
+
+  get enabledSections() {
+    return this.config.sections.filter((sectionConfig) => {
+      // drop sections that are hidden for ineligible users, when applicable
+      if (
+        // for now this is a proxy for ineligible status; revisit when we add more data for those users
+        !this.hasEligibilityData
+      ) {
+        return !sectionConfig.hideWhenIneligible;
+      }
+      return true;
+    });
+  }
 }

@@ -22,7 +22,6 @@ import { FC, memo } from "react";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { PAGE_WIDTH } from "../../utils/constants";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useSkipNav } from "../SkipNav/SkipNav";
 import { useRootStore } from "../StoreProvider/useRootStore";
@@ -30,14 +29,10 @@ import { ResidentsContext } from "./context";
 import { ResidentsHeader } from "./ResidentsHeader/ResidentsHeader";
 import { ResidentsLayoutPresenter } from "./ResidentsLayoutPresenter";
 
-const BaseLayout = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  max-width: ${rem(PAGE_WIDTH)};
-
-  & > * {
-    padding: ${rem(spacing.md)} ${rem(spacing.lg)};
-  }
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.xl)};
 `;
 
 const ResidentsLayoutWithPresenter: FC<{
@@ -48,12 +43,12 @@ const ResidentsLayoutWithPresenter: FC<{
   return (
     <SkipNavController>
       <SkipNav />
-      <BaseLayout>
+      <Wrapper>
         <ResidentsHeader />
         <MainContent>
           <Outlet context={{ residentsStore } satisfies ResidentsContext} />
         </MainContent>
-      </BaseLayout>
+      </Wrapper>
     </SkipNavController>
   );
 });

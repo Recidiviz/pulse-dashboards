@@ -87,6 +87,10 @@ describe("fully eligible, needs to serve half", () => {
       ]
     `);
   });
+
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
+  });
 });
 
 describe("eligible to apply before X portion served", () => {
@@ -158,6 +162,10 @@ describe("eligible to apply before X portion served", () => {
         },
       ]
     `);
+  });
+
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
   });
 });
 
@@ -231,6 +239,10 @@ describe("eligible to apply before X months remaining", () => {
       ]
     `);
   });
+
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
+  });
 });
 
 describe("almost eligible, portion served", () => {
@@ -302,6 +314,10 @@ describe("almost eligible, portion served", () => {
         },
       ]
     `);
+  });
+
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
   });
 });
 
@@ -375,6 +391,10 @@ describe("almost eligible, recent violation", () => {
       ]
     `);
   });
+
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
+  });
 });
 
 describe("almost eligible, pending violation", () => {
@@ -446,6 +466,10 @@ describe("almost eligible, pending violation", () => {
         },
       ]
     `);
+  });
+
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
   });
 });
 
@@ -519,6 +543,10 @@ describe("almost eligible, months remaining", () => {
       ]
     `);
   });
+
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
+  });
 });
 
 describe("not eligible", () => {
@@ -578,5 +606,9 @@ describe("not eligible", () => {
         },
       ]
     `);
+  });
+
+  test("section disabled", () => {
+    expect(report.enabledSections).toEqual(config.sections.slice(0, 1));
   });
 });

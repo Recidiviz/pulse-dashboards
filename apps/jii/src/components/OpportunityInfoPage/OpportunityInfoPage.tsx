@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, spacing } from "@recidiviz/design-system";
+import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
@@ -24,22 +24,44 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
 import { State } from "../../routes/routes";
+import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
+import { ButtonLink } from "../ButtonLink/ButtonLink";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
+import { TableOfContents } from "./TableOfContents";
 
-const BackLink = styled(Link)`
-  align-items: center;
-  color: ${palette.signal.links};
-  display: inline-flex;
-  gap: ${rem(spacing.sm)};
-  margin-left: -${rem(spacing.md)};
-  padding: ${rem(spacing.md)};
-  text-decoration: none;
+const PageLinksFooter = styled(FullBleedContainer).attrs({ as: "footer" })`
+  background: ${palette.marble3};
+`;
 
-  svg {
-    display: inline-block;
+const PageLinks = styled(PageContainer)`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${rem(spacing.lg)};
+  justify-content: space-between;
+  margin-top: ${rem(spacing.xl * 2)};
+  padding-bottom: ${rem(spacing.xl)};
+  padding-top: ${rem(spacing.xxl)};
+
+  h2 {
+    ${typography.Sans24}
+    color: ${palette.pine1};
+  }
+
+  ul {
+    ${typography.Sans16};
+    list-style-type: none;
+    padding-inline-start: 0;
+  }
+
+  li {
+    margin: ${rem(spacing.lg)} 0;
+  }
+
+  a {
+    color: ${palette.text.links};
   }
 `;
 
@@ -50,23 +72,55 @@ const OpportunityInfoPageWithPresenter: FC<{
 
   return (
     <>
-      <BackLink to="../">
+      <ButtonLink to="../">
         <Icon kind="Arrow" rotate={180} size={13} />
-        Back
-      </BackLink>
-      <CopyWrapper>{`# ${presenter.heading}`}</CopyWrapper>
-      <CopyWrapper>{presenter.body}</CopyWrapper>
+        <span>Go back</span>
+      </ButtonLink>
+      <article>
+        <CopyWrapper>{`# ${presenter.heading}`}</CopyWrapper>
+        <TableOfContents presenter={presenter} />
+        <CopyWrapper>{presenter.body}</CopyWrapper>
+      </article>
+      {presenter.pageLinks.length > 0 && (
+        <PageLinksFooter>
+          <PageLinks>
+            <div>
+              <h2>{presenter.pageLinksHeading}</h2>
+              <ul>
+                {presenter.pageLinks.map((link) => (
+                  <li key={link.url}>
+                    <Link to={link.url}>{link.text}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <ButtonLink to="#top" reloadDocument>
+                <Icon kind="Arrow" rotate={-90} size={12} />
+                <span>Back to top</span>
+              </ButtonLink>
+            </div>
+          </PageLinks>
+        </PageLinksFooter>
+      )}
     </>
   );
 });
 
 export const OpportunityInfoPage = observer(function OpportunityInfoPage() {
   const { pageSlug } = useTypedParams(State.Eligibility.Opportunity.InfoPage);
-  const { opportunityConfig } = useResidentOpportunityContext();
+  const { opportunityConfig, eligibilityReport } =
+    useResidentOpportunityContext();
 
   return (
     <OpportunityInfoPageWithPresenter
-      presenter={new OpportunityInfoPagePresenter(opportunityConfig, pageSlug)}
+      presenter={
+        new OpportunityInfoPagePresenter(
+          opportunityConfig,
+          pageSlug,
+          eligibilityReport,
+        )
+      }
     />
   );
 });

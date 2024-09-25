@@ -48,7 +48,11 @@ import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
-const StyledApp = styled.div``;
+const StyledApp = styled.div`
+  /* these properties prevent full-bleed sections from messing up the page width */
+  min-height: 100vh;
+  overflow-x: hidden;
+`;
 
 const GlobalStyle = createGlobalStyle`
   body {
