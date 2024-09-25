@@ -17,7 +17,7 @@
 
 import { captureException } from "@sentry/react";
 import { ascending, descending } from "d3-array";
-import { computed, flowResult, makeObservable } from "mobx";
+import { action, computed, flowResult, makeObservable, observable } from "mobx";
 
 import {
   ExcludedSupervisionOfficer,
@@ -29,8 +29,7 @@ import {
 import { castToError, HydratesFromSource, isHydrated } from "~hydration-utils";
 
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
-import { Opportunity } from "../../WorkflowsStore/Opportunity";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity";
+import { Opportunity, OpportunityType } from "../../WorkflowsStore/Opportunity";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
@@ -63,6 +62,8 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   // ==============================
 
   protected hydrator: HydratesFromSource;
+
+  _hoveredOfficerId?: string;
 
   constructor(
     protected supervisionStore: InsightsSupervisionStore,
@@ -111,6 +112,9 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         outlierOfficersByMetricAndCaseloadCategory: computed,
         expectPopulated: computed,
         populateMethods: computed,
+        _hoveredOfficerId: observable,
+        hoveredOfficerId: computed,
+        updateHoveredOfficerId: action,
         populateOpportunitiesForOfficers: true,
         populateCaseload: true,
         populateOpportunityConfigurationStore: true,
@@ -491,6 +495,14 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    */
   get isInsightsLanternState(): boolean {
     return this.supervisionStore.isInsightsLanternState;
+  }
+
+  get hoveredOfficerId() {
+    return this._hoveredOfficerId;
+  }
+
+  updateHoveredOfficerId(officerId: string | undefined) {
+    this._hoveredOfficerId = officerId;
   }
 
   // ==============================

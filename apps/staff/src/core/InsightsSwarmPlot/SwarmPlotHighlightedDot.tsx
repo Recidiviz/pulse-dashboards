@@ -26,6 +26,7 @@ import {
   useInteractions,
 } from "@floating-ui/react";
 import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { ReactNode, useEffect, useState } from "react";
 import { Link, LinkProps, matchPath, useLocation } from "react-router-dom";
 
@@ -36,6 +37,7 @@ import {
   SWARM_SIZE_BREAKPOINT,
 } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import { HighlightedDot } from "../../InsightsStore/presenters/SwarmPresenter/types";
+import { PresenterWithHoverManager } from "../../InsightsStore/presenters/types";
 import { getRelativePath, insightsRoute, insightsUrl } from "../views";
 import {
   HighlightLabel,
@@ -52,10 +54,13 @@ type HighlightedPointProps = {
   cy: number;
   plotWidth: number;
   isHoverable?: boolean;
-  onDotHover?: (officerId: string) => void;
+  presenter?: PresenterWithHoverManager;
 };
 
-function useHoverProps() {
+function useHoverProps(
+  hoveredOfficerId: string | undefined,
+  officerId: string,
+) {
   const [isOpen, setIsOpen] = useState(false);
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -73,8 +78,13 @@ function useHoverProps() {
     focus,
   ]);
 
+  useEffect(() => {
+    setIsOpen(hoveredOfficerId === officerId);
+  }, [hoveredOfficerId, officerId]);
+
   return {
     isOpen,
+    setIsOpen,
     refs,
     floatingStyles,
     getReferenceProps,
@@ -94,77 +104,79 @@ const ConditionalLinkWrapper: React.FC<
   return condition ? <Link {...linkProps}>{children}</Link> : <>{children}</>;
 };
 
-export const SwarmPlotHighlightedDot = function SwarmPlotHighlightedDot({
-  data,
-  r,
-  cx,
-  cy,
-  plotWidth,
-  isHoverable,
-  onDotHover,
-}: HighlightedPointProps) {
-  const { floatingStyles, getReferenceProps, getFloatingProps, isOpen, refs } =
-    useHoverProps();
+export const SwarmPlotHighlightedDot = observer(
+  function SwarmPlotHighlightedDot({
+    data,
+    r,
+    cx,
+    cy,
+    plotWidth,
+    isHoverable,
+    presenter,
+  }: HighlightedPointProps) {
+    const {
+      floatingStyles,
+      getReferenceProps,
+      getFloatingProps,
+      isOpen,
+      refs,
+    } = useHoverProps(presenter?.hoveredOfficerId, data.officerId);
 
-  const showLabel = !data.labelHidden && isHoverable;
-  const isHovered = showLabel && isOpen;
+    const showLabel = !data.labelHidden && isHoverable;
+    const isHovered = showLabel && isOpen;
 
-  /**
-   * When a highlighted dot is hovered, select the relevant officer to be highlighted
-   * in the side panel.
-   */
-  useEffect(() => {
-    if (!onDotHover) {
-      return;
-    }
-    isHovered ? onDotHover(data.officerId) : onDotHover("");
-  }, [isHovered, onDotHover, data.officerId]);
+    const currRelativePath = getRelativePath(useLocation().pathname);
+    const isMetricPage = matchPath(
+      insightsRoute({ routeName: "supervisionStaffMetric" }),
+      currRelativePath,
+    );
 
-  const currRelativePath = getRelativePath(useLocation().pathname);
-  const isMetricPage = matchPath(
-    insightsRoute({ routeName: "supervisionStaffMetric" }),
-    currRelativePath,
-  );
-
-  return (
-    <>
-      <ConditionalLinkWrapper
-        condition={!isMetricPage}
-        to={insightsUrl("supervisionStaffMetric", {
-          officerPseudoId: data.officerPseudoId,
-          metricId: data.metricId,
-        })}
-      >
-        <RateHighlightMark
-          tabIndex={0}
-          r={r ?? SWARM_DOT_RADIUS_V2}
-          cx={cx}
-          cy={cy}
-          fill={HIGHLIGHTED_DOT_COLOR_V2}
-          stroke={isHovered ? `${HIGHLIGHTED_DOT_COLOR_V2}1A` : "transparent"}
-          strokeWidth={`${isHovered ? 20 : HIGHLIGHT_MARK_STROKE_WIDTH}px`}
-          ref={refs.setReference}
-          {...getReferenceProps()}
-        />
-      </ConditionalLinkWrapper>
-      <FloatingPortal>
-        <HighlightLabel
-          ref={refs.setFloating}
-          style={floatingStyles}
-          $size={plotWidth > SWARM_SIZE_BREAKPOINT ? "lg" : "sm"}
-          {...getFloatingProps()}
+    return (
+      <>
+        <ConditionalLinkWrapper
+          condition={!isMetricPage}
+          to={insightsUrl("supervisionStaffMetric", {
+            officerPseudoId: data.officerPseudoId,
+            metricId: data.metricId,
+          })}
         >
-          {showLabel && (
-            <>
-              {data.label && <LabelName>{data.label}:</LabelName>}
-              &nbsp;
-              <LabelPercent>
-                {formatTargetAndHighlight(data.value)}
-              </LabelPercent>
-            </>
-          )}
-        </HighlightLabel>
-      </FloatingPortal>
-    </>
-  );
-};
+          <RateHighlightMark
+            onMouseEnter={() => {
+              if (presenter) presenter.updateHoveredOfficerId(data.officerId);
+            }}
+            onMouseOut={() => {
+              if (presenter) presenter.updateHoveredOfficerId(undefined);
+            }}
+            tabIndex={0}
+            r={r ?? SWARM_DOT_RADIUS_V2}
+            cx={cx}
+            cy={cy}
+            fill={HIGHLIGHTED_DOT_COLOR_V2}
+            stroke={isHovered ? `${HIGHLIGHTED_DOT_COLOR_V2}1A` : "transparent"}
+            strokeWidth={`${isHovered ? 20 : HIGHLIGHT_MARK_STROKE_WIDTH}px`}
+            ref={refs.setReference}
+            {...getReferenceProps()}
+          />
+        </ConditionalLinkWrapper>
+        <FloatingPortal>
+          <HighlightLabel
+            ref={refs.setFloating}
+            style={floatingStyles}
+            $size={plotWidth > SWARM_SIZE_BREAKPOINT ? "lg" : "sm"}
+            {...getFloatingProps()}
+          >
+            {showLabel && (
+              <>
+                {data.label && <LabelName>{data.label}:</LabelName>}
+                &nbsp;
+                <LabelPercent>
+                  {formatTargetAndHighlight(data.value)}
+                </LabelPercent>
+              </>
+            )}
+          </HighlightLabel>
+        </FloatingPortal>
+      </>
+    );
+  },
+);

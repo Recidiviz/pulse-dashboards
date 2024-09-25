@@ -16,21 +16,16 @@
 // =============================================================================
 
 import { palette, spacing, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
-
-import { SupervisionOfficer } from "~datatypes";
 
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import {
-  ByMetricAndCategory2DMap,
-  MetricAndOutliersInfo,
-  OutlierOfficerData,
-} from "../../InsightsStore/presenters/types";
+import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
 import { toTitleCase } from "../../utils";
 import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";
 import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
@@ -179,37 +174,20 @@ export const EmptyCard = ({
   );
 };
 
-type InsightsStaffCardType = {
-  outlierOfficersByMetricAndCaseloadCategory:
-    | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
-    | undefined;
-  officers: OutlierOfficerData<SupervisionOfficer>[] | undefined;
-  emptyMessage: string;
-  title?: string;
-};
-
-const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
-  outlierOfficersByMetricAndCaseloadCategory,
-  officers,
-  title,
-  emptyMessage,
-}) => {
+const InsightsStaffCardV2: React.FC<{
+  presenter: SupervisionSupervisorPresenter;
+}> = ({ presenter }) => {
   const { isTablet } = useIsMobile(true);
-
-  const [hoveredOfficer, setHoveredOfficer] = useState<string>("");
-
-  /**
-   * Highlight the officer in the side panel when the user hovers over the officer's
-   * highlighted dot in the swarm plot.
-   */
-  const onDotHover = useCallback(
-    (officerId: string) => setHoveredOfficer(officerId),
-    [setHoveredOfficer],
-  );
 
   const {
     insightsStore: { supervisionStore },
   } = useRootStore();
+
+  const {
+    outlierOfficersByMetricAndCaseloadCategory,
+    outlierOfficersData: officers,
+    labels: { supervisorHasNoOutlierOfficersLabel: emptyMessage },
+  } = presenter;
 
   if (!supervisionStore) return null;
 
@@ -234,12 +212,18 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
             .map((officer) => (
               <CardHeaderItem
                 key={officer.externalId}
-                hovered={officer.externalId === hoveredOfficer}
+                onMouseOver={() => {
+                  presenter?.updateHoveredOfficerId(officer.externalId);
+                }}
+                onMouseLeave={() => {
+                  presenter?.updateHoveredOfficerId(undefined);
+                }}
+                hovered={presenter?.hoveredOfficerId === officer.externalId}
                 to={insightsUrl("supervisionStaff", {
                   officerPseudoId: officer.pseudonymizedId,
                 })}
               >
-                <CardTitle>{title || officer.displayName}</CardTitle>
+                <CardTitle>{officer.displayName}</CardTitle>
                 {officer.outlierMetrics.map((metric) => (
                   <CardSubtitle
                     key={metric.metricId}
@@ -294,7 +278,7 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                             metricId: currentMetric.metricId,
                           })}
                         >
-                          <CardTitle>{title || officer.displayName}</CardTitle>
+                          <CardTitle>{officer.displayName}</CardTitle>
 
                           <CardSubtitle
                             key={`${currentMetric.metricId} / ${caseloadCategory}`}
@@ -333,7 +317,7 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
                       <InsightsSwarmPlotContainerV2
                         metric={metricConfigWithBenchmark}
                         officersForMetric={officersForMetric}
-                        onDotHover={onDotHover}
+                        presenterWithHoverManager={presenter}
                       />
                     </CardContent>
                   </PlotSection>
@@ -347,4 +331,4 @@ const InsightsStaffCardV2: React.FC<InsightsStaffCardType> = ({
   );
 };
 
-export default InsightsStaffCardV2;
+export default observer(InsightsStaffCardV2);

@@ -21,6 +21,7 @@ import {
   SwarmPresenter,
   SwarmPresenterV2,
 } from "../../InsightsStore/presenters/SwarmPresenter";
+import { PresenterWithHoverManager } from "../../InsightsStore/presenters/types";
 
 export type InsightsSwarmPlotWrappedProps = {
   presenter: SwarmPresenter;
@@ -30,6 +31,6 @@ export type InsightsSwarmPlotWrappedProps = {
 export type InsightsSwarmPlotWrappedPropsV2 = {
   presenter: SwarmPresenterV2;
   isMinimized?: boolean;
-  onDotHover?: (officerId: string) => void;
   children?: ReactNode;
+  presenterWithHoverManager?: PresenterWithHoverManager;
 };

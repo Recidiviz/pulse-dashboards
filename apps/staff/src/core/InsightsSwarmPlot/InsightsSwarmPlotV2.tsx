@@ -35,7 +35,7 @@ import { formatTargetAndHighlight } from "./utils";
 export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
   presenter,
   isMinimized,
-  onDotHover,
+  presenterWithHoverManager,
 }: InsightsSwarmPlotWrappedPropsV2) {
   const {
     width,
@@ -119,7 +119,7 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
               cx={xScale(dot.value)}
               cy={yScale(index * centerOfContentArea)}
               plotWidth={width}
-              onDotHover={onDotHover}
+              presenter={presenterWithHoverManager}
               isHoverable={!isMinimized && isSupervisorPage}
             />
           );

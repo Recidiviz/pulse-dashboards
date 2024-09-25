@@ -25,6 +25,7 @@ import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresente
 import {
   MetricConfigWithBenchmark,
   OutlierOfficerData,
+  PresenterWithHoverManager,
 } from "../../InsightsStore/presenters/types";
 import { PlotMeasurer } from "./InsightsSwarmPlotContainer";
 import { InsightsSwarmPlotV2 } from "./InsightsSwarmPlotV2";
@@ -32,7 +33,7 @@ import { InsightsSwarmPlotV2 } from "./InsightsSwarmPlotV2";
 type InsightsSwarmPlotProps = {
   metric: MetricConfigWithBenchmark;
   officersForMetric: OutlierOfficerData<SupervisionOfficer>[];
-  onDotHover?: (officerId: string) => void;
+  presenterWithHoverManager?: PresenterWithHoverManager;
   isMinimized?: boolean;
 };
 
@@ -40,11 +41,10 @@ const InsightsSwarmPlotContainerV2 = observer(
   function InsightsSwarmPlotContainerV2({
     metric,
     officersForMetric,
-    onDotHover,
+    presenterWithHoverManager,
     isMinimized,
   }: InsightsSwarmPlotProps) {
     const presenter = new SwarmPresenterV2(metric, officersForMetric);
-
     return (
       <PlotMeasurer presenter={presenter}>
         <AspectRatio ratio={1 / CHART_ASPECT_RATIO}>
@@ -53,7 +53,7 @@ const InsightsSwarmPlotContainerV2 = observer(
           <div>
             <InsightsSwarmPlotV2
               presenter={presenter}
-              onDotHover={onDotHover}
+              presenterWithHoverManager={presenterWithHoverManager}
               isMinimized={isMinimized}
             />
           </div>

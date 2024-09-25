@@ -66,7 +66,6 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 
   const {
     supervisorInfo,
-    outlierOfficersData,
     // TODO: (6040) Change this to `allOfficers` once backend is updated.
     officersWithOutliersData: allOfficers,
     excludedOfficers,
@@ -75,7 +74,6 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     labels,
     isWorkflowsEnabled,
     opportunitiesDetails,
-    outlierOfficersByMetricAndCaseloadCategory,
     actionStrategyCopy,
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
@@ -192,13 +190,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       )}
       <Wrapper isLaptop={isLaptop} supervisorHomepage>
         <Body>
-          <InsightsStaffCardV2
-            outlierOfficersByMetricAndCaseloadCategory={
-              outlierOfficersByMetricAndCaseloadCategory
-            }
-            officers={outlierOfficersData}
-            emptyMessage={labels.supervisorHasNoOutlierOfficersLabel}
-          />
+          <InsightsStaffCardV2 presenter={presenter} />
           {opportunitiesDetails && isWorkflowsEnabled && (
             <InsightsPageSection
               sectionTitle="Opportunities"

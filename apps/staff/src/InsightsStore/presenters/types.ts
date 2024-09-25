@@ -123,3 +123,8 @@ export type ActionStrategyCopy = {
   prompt: string;
   body: string;
 };
+
+export interface PresenterWithHoverManager {
+  hoveredOfficerId?: string;
+  updateHoveredOfficerId: (officerId: string | undefined) => void;
+}
