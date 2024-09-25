@@ -15,9 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { waitFor } from "@testing-library/react";
-import { set } from "mobx";
-
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
@@ -38,72 +35,12 @@ const ineligibleResident = outputFixture(
   usMeResidents[usMeResidents.length - 1],
 );
 const stateConfig = residentsConfigByState.US_ME;
-const oppConfig = stateConfig.incarcerationOpportunities[
+const opportunityConfig = stateConfig.incarcerationOpportunities[
   opportunityId
 ] as OpportunityConfig;
 
 beforeEach(() => {
   residentsStore = new ResidentsStore(new RootStore(), stateConfig);
-});
-
-describe("hydration", () => {
-  beforeEach(() => {
-    presenter = new OpportunityEligibilityPresenter(
-      residentsStore,
-      eligibleResident.personExternalId,
-      opportunityId,
-      oppConfig,
-    );
-  });
-
-  test("needs hydration", () => {
-    expect(presenter.hydrationState.status).toBe("needs hydration");
-  });
-
-  test("already hydrated", () => {
-    set(
-      residentsStore.residentsByExternalId,
-      eligibleResident.personExternalId,
-      eligibleResident,
-    );
-    set(
-      residentsStore.residentOpportunityRecordsByExternalId,
-      eligibleResident.personExternalId,
-      {
-        [opportunityId]: outputFixture(
-          usMeSccpFixtures.fullyEligibleHalfPortion,
-        ),
-      },
-    );
-    set(
-      residentsStore.residentEligibilityReportsByExternalId,
-      eligibleResident.personExternalId,
-      new Map([
-        [
-          opportunityId,
-          new UsMeSCCPEligibilityReport(
-            eligibleResident,
-            oppConfig,
-            outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion),
-          ),
-        ],
-      ]),
-    );
-
-    expect(presenter.hydrationState.status).toBe("hydrated");
-  });
-
-  test("hydrate", async () => {
-    expect(presenter.hydrationState.status).toBe("needs hydration");
-
-    presenter.hydrate();
-
-    expect(presenter.hydrationState.status).toBe("loading");
-
-    await waitFor(() =>
-      expect(presenter.hydrationState.status).toBe("hydrated"),
-    );
-  });
 });
 
 describe("eligible resident", () => {
@@ -112,7 +49,12 @@ describe("eligible resident", () => {
       residentsStore,
       eligibleResident.personExternalId,
       opportunityId,
-      oppConfig,
+      opportunityConfig,
+      new UsMeSCCPEligibilityReport(
+        eligibleResident,
+        opportunityConfig,
+        outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+      ),
     );
   });
 
@@ -120,13 +62,8 @@ describe("eligible resident", () => {
     expect(presenter.summaryContent).toMatchSnapshot();
   });
 
-  describe("after hydration", () => {
-    beforeEach(async () => {
-      await presenter.hydrate();
-    });
-
-    test("requirements content", () => {
-      expect(presenter.requirementsContent).toMatchInlineSnapshot(`
+  test("requirements content", () => {
+    expect(presenter.requirementsContent).toMatchInlineSnapshot(`
         {
           "heading": "Requirements",
           "linkText": "Get details about each requirement",
@@ -178,25 +115,27 @@ describe("eligible resident", () => {
           ],
         }
       `);
-    });
+  });
 
-    test("additional sections content", () => {
-      expect(presenter.additionalSections).toHaveLength(2);
-      expect(presenter.additionalSections).toMatchSnapshot();
-    });
+  test("additional sections content", () => {
+    expect(presenter.additionalSections).toHaveLength(2);
+    expect(presenter.additionalSections).toMatchSnapshot();
   });
 });
 
 describe("ineligible resident", () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     presenter = new OpportunityEligibilityPresenter(
       residentsStore,
       ineligibleResident.personExternalId,
       opportunityId,
-      oppConfig,
+      opportunityConfig,
+      new UsMeSCCPEligibilityReport(
+        ineligibleResident,
+        opportunityConfig,
+        undefined,
+      ),
     );
-
-    await presenter.hydrate();
   });
 
   test("additional sections content", () => {

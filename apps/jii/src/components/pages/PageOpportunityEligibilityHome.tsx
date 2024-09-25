@@ -15,16 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { memo } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { FC, memo } from "react";
 
-import { State } from "../../routes/routes";
-import { ResidentOpportunityHydrator } from "../ResidentOpportunityHydrator/ResidentOpportunityHydrator";
+import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
+import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 
-export const PageOpportunityEligibility = memo(
-  function PageOpportunityEligibility() {
-    const urlParams = useTypedParams(State.Eligibility.Opportunity);
-
-    return <ResidentOpportunityHydrator {...urlParams} />;
+export const PageOpportunityEligibilityHome: FC = memo(
+  function PageOpportunityEligibilityHome() {
+    return <OpportunityEligibility {...useResidentOpportunityContext()} />;
   },
 );

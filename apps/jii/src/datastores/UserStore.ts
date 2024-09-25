@@ -41,7 +41,7 @@ export class UserStore {
   segmentClient: SegmentClient;
 
   constructor(private externals: { stateCode: StateCode }) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
 
     this.authClient = new AuthClient(
       {

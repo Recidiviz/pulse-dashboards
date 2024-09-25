@@ -23,15 +23,14 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useResidentsContext } from "../ResidentsLayout/context";
 
 export const PageEligibilityHome: FC = withErrorBoundary(
   observer(function PageEligibilityHome() {
-    const { residentsStore, userStore } = useRootStore();
+    const { residentsStore } = useResidentsContext();
     const { stateSlug } = useTypedParams(State.Eligibility);
-    if (!residentsStore) return null;
 
-    const { externalId } = residentsStore.userStore;
+    const { externalId, hasPermission } = residentsStore.userStore;
     if (externalId) {
       // for convenience, while there is only one opp configured we skip the lookup step
       return (
@@ -45,7 +44,7 @@ export const PageEligibilityHome: FC = withErrorBoundary(
       );
     }
 
-    if (userStore.hasPermission("enhanced"))
+    if (hasPermission("enhanced"))
       return (
         <Navigate
           to={State.Eligibility.Search.buildPath({ stateSlug })}

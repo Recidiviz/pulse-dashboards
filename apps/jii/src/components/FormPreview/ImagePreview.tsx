@@ -30,7 +30,7 @@ import styled from "styled-components/macro";
 
 import { MAX_MODAL_HEIGHT, MODAL_PADDING } from "../Modal/Modal";
 import { NotFound } from "../NotFound/NotFound";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { ImagePreviewPresenter } from "./ImagePreviewPresenter";
 
 const Wrapper = styled.article`
@@ -135,14 +135,14 @@ const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
     );
   });
 
-export const ImagePreview: FC<{ opportunitySlug: string }> = withErrorBoundary(
-  observer(function ImagePreview({ opportunitySlug }) {
-    const { residentsStore } = useRootStore();
-    if (!residentsStore) return;
+export const ImagePreview: FC = withErrorBoundary(
+  observer(function ImagePreview() {
+    const { opportunityId, opportunityConfig } =
+      useResidentOpportunityContext();
 
     return (
       <ImagePreviewWithPresenter
-        presenter={new ImagePreviewPresenter(opportunitySlug, residentsStore)}
+        presenter={new ImagePreviewPresenter(opportunityId, opportunityConfig)}
       />
     );
   }),

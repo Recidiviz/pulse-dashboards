@@ -25,7 +25,7 @@ import styled from "styled-components/macro";
 
 import { State } from "../../routes/routes";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
 
@@ -61,22 +61,12 @@ const OpportunityInfoPageWithPresenter: FC<{
 });
 
 export const OpportunityInfoPage = observer(function OpportunityInfoPage() {
-  const { opportunitySlug, pageSlug } = useTypedParams(
-    State.Eligibility.Opportunity.InfoPage,
-  );
-  const { residentsStore } = useRootStore();
-
-  if (!residentsStore) return;
+  const { pageSlug } = useTypedParams(State.Eligibility.Opportunity.InfoPage);
+  const { opportunityConfig } = useResidentOpportunityContext();
 
   return (
     <OpportunityInfoPageWithPresenter
-      presenter={
-        new OpportunityInfoPagePresenter(
-          opportunitySlug,
-          pageSlug,
-          residentsStore,
-        )
-      }
+      presenter={new OpportunityInfoPagePresenter(opportunityConfig, pageSlug)}
     />
   );
 });

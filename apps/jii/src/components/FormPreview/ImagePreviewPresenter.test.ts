@@ -17,7 +17,7 @@
 
 import { flowResult } from "mobx";
 
-import { ResidentsStore } from "../../datastores/ResidentsStore";
+import { residentsConfigByState } from "../../configs/residentsConfig";
 import { RootStore } from "../../datastores/RootStore";
 import { ImagePreviewPresenter } from "./ImagePreviewPresenter";
 
@@ -29,8 +29,9 @@ beforeEach(async () => {
   await flowResult(rootStore.populateResidentsStore());
 
   presenter = new ImagePreviewPresenter(
-    "sccp",
-    rootStore.residentsStore as ResidentsStore,
+    "usMeSCCP",
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP!,
   );
 });
 
@@ -95,18 +96,4 @@ test("progress", () => {
   presenter.previous();
   presenter.previous();
   expect(presenter.currentPage).toBe(10);
-});
-
-test("unknown URL", () => {
-  presenter = new ImagePreviewPresenter(
-    "not-configured",
-    rootStore.residentsStore as ResidentsStore,
-  );
-
-  expect(() => presenter.title).toThrowErrorMatchingInlineSnapshot(
-    `[Error: No opportunity ID matches url segment not-configured]`,
-  );
-  expect(() => presenter.currentUrl).toThrowErrorMatchingInlineSnapshot(
-    `[Error: No opportunity ID matches url segment not-configured]`,
-  );
 });

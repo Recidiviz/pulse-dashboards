@@ -17,27 +17,20 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { opportunityConfigFromId } from "../utils/opportunityConfigFromId";
-import { opportunityIdFromSlug } from "../utils/opportunityIdFromUrl";
+import {
+  IncarcerationOpportunityId,
+  OpportunityConfig,
+} from "../../configs/types";
 import { formImageUrlsByOpportunity } from "./formImageUrlsByOpportunity";
 
 export class ImagePreviewPresenter {
   private index = 0;
 
   constructor(
-    private opportunitySlug: string,
-    private residentsStore: ResidentsStore,
+    private opportunityId: IncarcerationOpportunityId,
+    private opportunityConfig: OpportunityConfig,
   ) {
     makeAutoObservable(this);
-  }
-
-  private get id() {
-    return opportunityIdFromSlug(this.opportunitySlug, this.residentsStore);
-  }
-
-  private get opportunityConfig() {
-    return opportunityConfigFromId(this.id, this.residentsStore);
   }
 
   get title() {
@@ -45,10 +38,10 @@ export class ImagePreviewPresenter {
   }
 
   private get imageUrls() {
-    const urls = formImageUrlsByOpportunity[this.id];
+    const urls = formImageUrlsByOpportunity[this.opportunityId];
     if (!urls) {
       throw new Error(
-        `No form image previews found for opportunity ${this.id}`,
+        `No form image previews found for opportunity ${this.opportunityId}`,
       );
     }
     return urls;

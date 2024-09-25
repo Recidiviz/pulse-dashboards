@@ -41,6 +41,7 @@ import { PageEligibility } from "../pages/PageEligibility";
 import { PageEligibilityHome } from "../pages/PageEligibilityHome";
 import { PageHome } from "../pages/PageHome";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
+import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibilityHome";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
 import { PageState } from "../pages/PageState";
@@ -85,8 +86,11 @@ export function App() {
                     path={routes.State.Eligibility.Search.path}
                     element={<PageSearch />}
                   />
-                  <Route path={routes.State.Eligibility.Opportunity.path}>
-                    <Route index element={<PageOpportunityEligibility />} />
+                  <Route
+                    path={routes.State.Eligibility.Opportunity.path}
+                    element={<PageOpportunityEligibility />}
+                  >
+                    <Route index element={<PageOpportunityEligibilityHome />} />
                     <Route
                       path={routes.State.Eligibility.Opportunity.InfoPage.path}
                       element={<OpportunityInfoPage />}

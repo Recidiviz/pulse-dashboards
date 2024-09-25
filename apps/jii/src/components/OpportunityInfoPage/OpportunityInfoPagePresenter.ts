@@ -17,34 +17,25 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { opportunityConfigFromId } from "../utils/opportunityConfigFromId";
-import { opportunityIdFromSlug } from "../utils/opportunityIdFromUrl";
+import { OpportunityConfig } from "../../configs/types";
 
 /**
  * Reads the specified static page content out of the opportunity config
  */
 export class OpportunityInfoPagePresenter {
   constructor(
-    private opportunitySlug: string,
+    private opportunityConfig: OpportunityConfig,
     private pageSlug: string,
-    private residentsStore: ResidentsStore,
   ) {
     makeAutoObservable(this);
   }
 
-  private get id() {
-    return opportunityIdFromSlug(this.opportunitySlug, this.residentsStore);
-  }
-
-  private get config() {
-    return opportunityConfigFromId(this.id, this.residentsStore);
-  }
-
   private get pageConfig() {
-    const config = [this.config.requirements, ...this.config.sections].find(
-      (s) => s.fullPage.urlSlug === this.pageSlug,
-    );
+    const config = [
+      this.opportunityConfig.requirements,
+      ...this.opportunityConfig.sections,
+    ].find((s) => s.fullPage.urlSlug === this.pageSlug);
+
     // in practice we don't really expect this to happen, mostly for type safety
     if (!config) {
       throw new Error(`No contents found for page ${this.pageSlug}`);

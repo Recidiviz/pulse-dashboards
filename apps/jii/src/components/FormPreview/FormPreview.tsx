@@ -17,10 +17,8 @@
 
 import { Icon } from "@recidiviz/design-system";
 import { FC } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
-import { State } from "../../routes/routes";
 import { Modal } from "../Modal/Modal";
 import { useModal } from "../Modal/useModal";
 import { clickableText } from "../styles/clickableText";
@@ -41,7 +39,6 @@ export const FormPreview: FC<{
   linkText?: string;
 }> = ({ icon, linkText }) => {
   const { showModal, modalProps } = useModal();
-  const { opportunitySlug } = useTypedParams(State.Eligibility.Opportunity);
   return (
     <>
       <ModalTrigger
@@ -61,7 +58,7 @@ export const FormPreview: FC<{
         {icon && <InlineIcon />}
       </ModalTrigger>
       <Modal {...modalProps}>
-        <ImagePreview opportunitySlug={opportunitySlug} />
+        <ImagePreview />
       </Modal>
     </>
   );

@@ -15,18 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsStore } from "../../datastores/ResidentsStore";
+import { useOutletContext } from "react-router-dom";
 
-/**
- * Looks up opportunity ID from residents config given its URL segment. Will throw if not found.
- */
-export function opportunityIdFromSlug(
-  slug: string,
-  residentsStore: ResidentsStore,
-) {
-  const id = residentsStore.opportunityIdsByUrlSlug.get(slug);
-  if (!id) {
-    throw new Error(`No opportunity ID matches url segment ${slug}`);
-  }
-  return id;
+import {
+  IncarcerationOpportunityId,
+  OpportunityConfig,
+} from "../../configs/types";
+import { EligibilityReport } from "../../models/EligibilityReport/interface";
+import { ResidentsContext } from "../ResidentsLayout/context";
+
+export type ResidentOpportunityContext = ResidentsContext & {
+  opportunityConfig: OpportunityConfig;
+  opportunityId: IncarcerationOpportunityId;
+  residentExternalId: string;
+  eligibilityReport: EligibilityReport;
+};
+
+export function useResidentOpportunityContext() {
+  return useOutletContext<ResidentOpportunityContext>();
 }

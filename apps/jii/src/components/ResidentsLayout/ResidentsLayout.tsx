@@ -26,6 +26,7 @@ import { PAGE_WIDTH } from "../../utils/constants";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useSkipNav } from "../SkipNav/SkipNav";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { ResidentsContext } from "./context";
 import { ResidentsHeader } from "./ResidentsHeader/ResidentsHeader";
 import { ResidentsLayoutPresenter } from "./ResidentsLayoutPresenter";
 
@@ -43,26 +44,25 @@ const ResidentsLayoutWithPresenter: FC<{
   presenter: ResidentsLayoutPresenter;
 }> = observer(function ResidentsLayoutWithPresenter({ presenter }) {
   const { MainContent, SkipNav, SkipNavController } = useSkipNav();
-
+  const { residentsStore } = presenter;
   return (
-    <PageHydrator hydratable={presenter}>
-      <SkipNavController>
-        <SkipNav />
-        <BaseLayout>
-          <ResidentsHeader />
-          <MainContent>
-            <Outlet />
-          </MainContent>
-        </BaseLayout>
-      </SkipNavController>
-    </PageHydrator>
+    <SkipNavController>
+      <SkipNav />
+      <BaseLayout>
+        <ResidentsHeader />
+        <MainContent>
+          <Outlet context={{ residentsStore } satisfies ResidentsContext} />
+        </MainContent>
+      </BaseLayout>
+    </SkipNavController>
   );
 });
 
 export const ResidentsLayout = memo(function ResidentsLayout() {
+  const presenter = new ResidentsLayoutPresenter(useRootStore());
   return (
-    <ResidentsLayoutWithPresenter
-      presenter={new ResidentsLayoutPresenter(useRootStore())}
-    />
+    <PageHydrator hydratable={presenter}>
+      <ResidentsLayoutWithPresenter presenter={presenter} />
+    </PageHydrator>
   );
 });

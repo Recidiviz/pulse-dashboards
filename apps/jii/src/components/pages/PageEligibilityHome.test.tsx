@@ -23,10 +23,10 @@ import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { RootStore } from "../../datastores/RootStore";
 import { UserStore } from "../../datastores/UserStore";
 import { State } from "../../routes/routes";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useResidentsContext } from "../ResidentsLayout/context";
 import { PageEligibilityHome } from "./PageEligibilityHome";
 
-vi.mock("../StoreProvider/useRootStore");
+vi.mock("../ResidentsLayout/context");
 
 let userStore: UserStore;
 
@@ -61,14 +61,16 @@ beforeEach(async () => {
   configure({ safeDescriptors: false });
 
   const rootStore = new RootStore();
+  await flowResult(rootStore.populateResidentsStore());
+  vi.mocked(useResidentsContext).mockReturnValue({
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    residentsStore: rootStore.residentsStore!,
+  });
+
   userStore = rootStore.userStore;
   vi.spyOn(userStore.authClient, "appMetadata", "get").mockReturnValue({
     stateCode: "US_ME",
   });
-
-  vi.mocked(useRootStore).mockReturnValue(rootStore);
-
-  await flowResult(rootStore.populateResidentsStore());
 });
 
 afterEach(() => {

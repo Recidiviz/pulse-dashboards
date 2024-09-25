@@ -15,19 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { IncarcerationOpportunityId } from "../../configs/types";
+import { useOutletContext } from "react-router-dom";
+
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 
-/**
- * Looks up opportunity config from residents config given its ID. Will throw if not found.
- */
-export function opportunityConfigFromId(
-  id: IncarcerationOpportunityId,
-  residentsStore: ResidentsStore,
-) {
-  const config = residentsStore.config.incarcerationOpportunities[id];
-  if (!config) {
-    throw new Error(`Missing config for ${id}`);
-  }
-  return config;
+export type ResidentsContext = { residentsStore: ResidentsStore };
+
+export function useResidentsContext() {
+  return useOutletContext<ResidentsContext>();
 }

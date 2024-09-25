@@ -51,4 +51,12 @@ export class ResidentsLayoutPresenter implements Hydratable {
   async hydrate(): Promise<void> {
     return this.hydrator.hydrate();
   }
+
+  get residentsStore() {
+    const { residentsStore } = this.rootStore;
+    if (residentsStore === undefined) {
+      throw new Error("missing expected residentsStore");
+    }
+    return residentsStore;
+  }
 }

@@ -22,9 +22,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { IncarcerationOpportunityId } from "../../configs/types";
-import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { ResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { AdditionalSection } from "./AdditionalSection";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
@@ -89,31 +87,26 @@ const OpportunityEligibilityWithPresenter: FC<{
   );
 });
 
-export const OpportunityEligibility: FC<{
-  opportunityId: IncarcerationOpportunityId;
-  residentExternalId: string;
-}> = observer(function OpportunityEligibility({
-  opportunityId,
-  residentExternalId,
-}) {
-  const { residentsStore } = useRootStore();
-  if (!residentsStore) return null;
-
-  const config =
-    residentsStore.config.incarcerationOpportunities[opportunityId];
-  if (!config) {
-    throw new Error(`Missing configuration for ${opportunityId}`);
-  }
-
-  const presenter = new OpportunityEligibilityPresenter(
-    residentsStore,
+export const OpportunityEligibility: FC<ResidentOpportunityContext> = observer(
+  function OpportunityEligibility({
     residentExternalId,
+    residentsStore,
+    opportunityConfig,
     opportunityId,
-    config,
-  );
-  return (
-    <PageHydrator hydratable={presenter}>
-      <OpportunityEligibilityWithPresenter presenter={presenter} />
-    </PageHydrator>
-  );
-});
+    eligibilityReport,
+  }) {
+    return (
+      <OpportunityEligibilityWithPresenter
+        presenter={
+          new OpportunityEligibilityPresenter(
+            residentsStore,
+            residentExternalId,
+            opportunityId,
+            opportunityConfig,
+            eligibilityReport,
+          )
+        }
+      />
+    );
+  },
+);

@@ -15,9 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable } from "mobx";
-
-import { Hydratable, HydratesFromSource } from "~hydration-utils";
+import { makeAutoObservable } from "mobx";
 
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import {
@@ -28,67 +26,15 @@ import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { EligibilityReport } from "../../models/EligibilityReport/interface";
 import { State } from "../../routes/routes";
 
-export class OpportunityEligibilityPresenter implements Hydratable {
-  private hydrationSource: HydratesFromSource;
-
+export class OpportunityEligibilityPresenter {
   constructor(
     private residentsStore: ResidentsStore,
     public residentExternalId: string,
     public opportunityId: IncarcerationOpportunityId,
     private config: OpportunityConfig,
+    private eligibilityReport: EligibilityReport,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
-
-    this.hydrationSource = new HydratesFromSource({
-      populate: () =>
-        flowResult(
-          this.residentsStore.populateEligibilityReportByResidentId(
-            this.residentExternalId,
-            this.opportunityId,
-            this.config,
-          ),
-        ),
-      expectPopulated: [this.expectReportPopulated],
-    });
-  }
-
-  private expectReportPopulated() {
-    if (
-      !this.residentsStore.isResidentEligibilityReportPopulated(
-        this.residentExternalId,
-        this.opportunityId,
-      )
-    ) {
-      throw new Error(
-        `Failed to populate ${this.opportunityId} eligibility report for ${this.residentExternalId}`,
-      );
-    }
-  }
-
-  get hydrationState() {
-    return this.hydrationSource.hydrationState;
-  }
-
-  hydrate() {
-    return this.hydrationSource.hydrate();
-  }
-
-  /**
-   * This will throw an error if it is accessed before the presenter is hydrated;
-   * for convenient type safety downstream it will require that the report actually exist
-   */
-  private get eligibilityReport(): EligibilityReport {
-    const report = this.residentsStore.residentEligibilityReportsByExternalId
-      .get(this.residentExternalId)
-      ?.get(this.opportunityId);
-
-    if (!report) {
-      throw new Error(
-        `${this.opportunityId} EligibilityReport is missing for resident ${this.residentExternalId}`,
-      );
-    }
-
-    return report;
   }
 
   get headline() {
