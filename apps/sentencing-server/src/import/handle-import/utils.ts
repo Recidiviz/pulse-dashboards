@@ -30,12 +30,14 @@ import {
   recidivismSeriesSchema,
   staffImportSchema,
 } from "~sentencing-server/import/handle-import/models";
-import { prismaClient } from "~sentencing-server/prisma";
+import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
 
 export async function transformAndLoadClientData(
   stateCode: string,
   data: AsyncGenerator<unknown>,
 ) {
+  const prismaClient = getPrismaClientForStateCode(stateCode);
+
   const existingCases = await prismaClient.case.findMany({
     select: { externalId: true },
   });
@@ -106,6 +108,8 @@ export async function transformAndLoadStaffData(
   stateCode: string,
   data: AsyncGenerator<unknown>,
 ) {
+  const prismaClient = getPrismaClientForStateCode(stateCode);
+
   const existingCases = await prismaClient.case.findMany({
     select: { externalId: true },
   });
@@ -161,6 +165,8 @@ export async function transformAndLoadCaseData(
   stateCode: string,
   data: AsyncGenerator<unknown>,
 ) {
+  const prismaClient = getPrismaClientForStateCode(stateCode);
+
   const existingCaseExternalIds = (
     await prismaClient.case.findMany({
       select: { externalId: true },
@@ -238,6 +244,8 @@ export async function transformAndLoadOpportunityData(
   stateCode: string,
   data: AsyncGenerator<unknown>,
 ) {
+  const prismaClient = getPrismaClientForStateCode(stateCode);
+
   const opportunityNames: string[] = [];
   const providerNames: string[] = [];
 
@@ -381,6 +389,8 @@ export async function transformAndLoadInsightData(
   stateCode: string,
   data: AsyncGenerator<unknown>,
 ) {
+  const prismaClient = getPrismaClientForStateCode(stateCode);
+
   // Insights aren't linked to any other models and don't have any frontend-mutable attributes, so we can just delete all of them and re-add them
   await prismaClient.insight.deleteMany();
 
@@ -451,6 +461,8 @@ export async function transformAndLoadOffenseData(
   stateCode: string,
   data: AsyncGenerator<unknown>,
 ) {
+  const prismaClient = getPrismaClientForStateCode(stateCode);
+
   const offenses = [];
 
   for await (const datum of data) {

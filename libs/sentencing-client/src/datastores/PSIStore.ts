@@ -37,6 +37,7 @@ import {
 } from "./types";
 
 export interface RootStore {
+  currentTenantId?: string;
   userStore: {
     userPseudoId?: string;
     isImpersonating: boolean;

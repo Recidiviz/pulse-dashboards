@@ -22,10 +22,8 @@ import {
   ImportRoutesHandler,
   ObjectIdentifier,
 } from "~fastify-data-import-plugin";
-import {
-  FILE_NAME_TO_ETL_HELPER,
-  SUPPORTED_STATE_CODES,
-} from "~sentencing-server/server/constants";
+import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
+import { FILE_NAME_TO_ETL_HELPER } from "~sentencing-server/server/constants";
 
 export function etlHelperGetter(identifier: ObjectIdentifier) {
   const { stateCode, fileName, bucketId } = identifier;
@@ -34,7 +32,9 @@ export function etlHelperGetter(identifier: ObjectIdentifier) {
     return undefined;
   }
 
-  if (!SUPPORTED_STATE_CODES.includes(stateCode)) {
+  try {
+    getPrismaClientForStateCode(stateCode);
+  } catch (e) {
     return undefined;
   }
 

@@ -17,15 +17,17 @@
 
 import { describe, expect, test } from "vitest";
 
-import { prismaClient } from "~sentencing-server/prisma";
-import { testTRPCClient } from "~sentencing-server/test/setup";
+import {
+  testPrismaClient,
+  testTRPCClient,
+} from "~sentencing-server/test/setup";
 import { fakeOffense } from "~sentencing-server/test/setup/seed";
 
 describe("offense router", () => {
   describe("getOffenses", () => {
-    test("should return only offenses that insights", async () => {
+    test("should return only offenses that have insights", async () => {
       // Create a new offense that won't have an insight
-      await prismaClient.offense.create({
+      await testPrismaClient.offense.create({
         data: {
           stateCode: fakeOffense.stateCode,
           name: "New Offense",

@@ -25,8 +25,6 @@ import {
   transformAndLoadStaffData,
 } from "~sentencing-server/import/handle-import/utils";
 
-export const SUPPORTED_STATE_CODES = ["US_ID"];
-
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_record.py
 export const CASES_FILE_NAME = "sentencing_case_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/staff_record.py

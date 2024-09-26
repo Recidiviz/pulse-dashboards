@@ -28,9 +28,17 @@ import { describe, expect, test } from "vitest";
 
 import { dataProviderSingleton } from "~fastify-data-import-plugin/testkit";
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
-import { prismaClient } from "~sentencing-server/prisma";
 import { testAndGetSentryReports } from "~sentencing-server/test/common/utils";
 import {
+  caseBody,
+  clientBody,
+  insightBody,
+  offenseBody,
+  opportunityBody,
+  staffBody,
+} from "~sentencing-server/test/import/handle-import/constants";
+import {
+  callHandleImport,
   callHandleImportCaseData,
   callHandleImportClientData,
   callHandleImportInsightData,
@@ -39,7 +47,7 @@ import {
   callHandleImportStaffData,
   createFakeRecidivismSeriesForImport,
 } from "~sentencing-server/test/import/handle-import/utils";
-import { testServer } from "~sentencing-server/test/setup";
+import { testPrismaClient, testServer } from "~sentencing-server/test/setup";
 import {
   fakeCase,
   fakeCasePrismaInput,
@@ -77,6 +85,33 @@ describe("handle_import", () => {
   });
 
   describe("import case data", () => {
+    test("should throw error if state is not supported", async () => {
+      dataProviderSingleton.setData([
+        // Old offense
+        {
+          state_code: StateCode.US_ID,
+          charge: fakeOffense.name,
+        },
+        // New offense with invalid schema
+        {
+          stateCode: StateCode.US_ID,
+          charge: "new-offense",
+        },
+      ]);
+
+      const response = await callHandleImport(testServer, {
+        ...caseBody,
+        objectId: "US_ME/sentencing_case_record.json",
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Unsupported bucket + object pair: test-bucket/US_ME/sentencing_case_record.json",
+      );
+    });
+
     test("should upsert existing cases and add new cases", async () => {
       dataProviderSingleton.setData([
         // Existing case
@@ -117,7 +152,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
+      const dbCases = await testPrismaClient.case.findMany({});
 
       // The old case should have been updated and the new one should have been inserted
       expect(dbCases).toEqual([
@@ -159,7 +194,7 @@ describe("handle_import", () => {
       );
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany();
+      const dbCases = await testPrismaClient.case.findMany();
 
       // Only the old case should be there
       expect(dbCases).toHaveLength(2);
@@ -199,7 +234,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
+      const dbCases = await testPrismaClient.case.findMany({});
 
       // The old case should have been updated but the lsirScore should not have been overridden
       expect(dbCases).toEqual([
@@ -249,7 +284,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
+      const dbCases = await testPrismaClient.case.findMany({});
 
       expect(dbCases).toEqual([
         expect.objectContaining({
@@ -303,7 +338,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
+      const dbCases = await testPrismaClient.case.findMany({});
 
       expect(dbCases).toEqual([
         expect.objectContaining({
@@ -358,7 +393,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
+      const dbCases = await testPrismaClient.case.findMany({});
 
       expect(dbCases).toEqual([
         expect.objectContaining({
@@ -398,7 +433,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
+      const dbCases = await testPrismaClient.case.findMany({});
 
       expect(dbCases).toEqual([
         expect.objectContaining({
@@ -446,7 +481,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbCases = await prismaClient.case.findMany({});
+      const dbCases = await testPrismaClient.case.findMany({});
 
       expect(dbCases).toEqual([
         expect.objectContaining({
@@ -461,6 +496,39 @@ describe("handle_import", () => {
   });
 
   describe("import client data", () => {
+    test("should throw error if state is not supported", async () => {
+      dataProviderSingleton.setData([
+        // New client
+        {
+          external_id: "new-client-ext-id",
+          pseudonymized_id: "new-client-pid",
+          case_ids: JSON.stringify(["new-case-ext-id"]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: "Given",
+            middle_names: "Middle",
+            surname: "Last",
+            name_suffix: "Sr.",
+          }),
+          gender: faker.helpers.enumValue(Gender),
+          county: faker.location.county(),
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      const response = await callHandleImport(testServer, {
+        ...clientBody,
+        objectId: "US_ME/sentencing_client_record.json",
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Unsupported bucket + object pair: test-bucket/US_ME/sentencing_client_record.json",
+      );
+    });
+
     test("should import new client data and delete old data", async () => {
       dataProviderSingleton.setData([
         // New client
@@ -483,7 +551,7 @@ describe("handle_import", () => {
       ]);
 
       // Create a new case to link to the new client
-      await prismaClient.case.create({
+      await testPrismaClient.case.create({
         data: {
           ...fakeCasePrismaInput,
           externalId: "new-case-ext-id",
@@ -496,7 +564,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbClients = await prismaClient.client.findMany({
+      const dbClients = await testPrismaClient.client.findMany({
         include: {
           cases: true,
         },
@@ -566,7 +634,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbClients = await prismaClient.client.findMany({});
+      const dbClients = await testPrismaClient.client.findMany({});
 
       // There should only be two clients in the database - the new one and the updated existing one
       expect(dbClients).toHaveLength(2);
@@ -603,7 +671,7 @@ describe("handle_import", () => {
       ]);
 
       // Create a new case to link to the new client
-      await prismaClient.case.create({
+      await testPrismaClient.case.create({
         data: {
           ...fakeCasePrismaInput,
           externalId: "new-case-ext-id",
@@ -616,7 +684,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbClients = await prismaClient.client.findMany({
+      const dbClients = await testPrismaClient.client.findMany({
         include: {
           cases: true,
         },
@@ -657,7 +725,7 @@ describe("handle_import", () => {
       ]);
 
       // Create a new case to link to the new client
-      await prismaClient.case.create({
+      await testPrismaClient.case.create({
         data: {
           ...fakeCasePrismaInput,
           externalId: "new-case-ext-id",
@@ -670,7 +738,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbClients = await prismaClient.client.findMany({
+      const dbClients = await testPrismaClient.client.findMany({
         include: {
           cases: true,
         },
@@ -711,7 +779,7 @@ describe("handle_import", () => {
       ]);
 
       // Create a new case to link to the new client
-      await prismaClient.case.create({
+      await testPrismaClient.case.create({
         data: {
           ...fakeCasePrismaInput,
           externalId: "new-case-ext-id",
@@ -724,7 +792,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbClients = await prismaClient.client.findMany({
+      const dbClients = await testPrismaClient.client.findMany({
         include: {
           cases: true,
         },
@@ -769,7 +837,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbClients = await prismaClient.client.findMany({});
+      const dbClients = await testPrismaClient.client.findMany({});
 
       expect(dbClients).toHaveLength(1);
 
@@ -783,6 +851,37 @@ describe("handle_import", () => {
   });
 
   describe("import staff data", () => {
+    test("should throw error if state is not supported", async () => {
+      dataProviderSingleton.setData([
+        // New staff
+        {
+          external_id: "new-staff-ext-id",
+          pseudonymized_id: "new-staff-pid",
+          case_ids: JSON.stringify(["new-case-ext-id"]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: "Given",
+            middle_names: "Middle",
+            surname: "Last",
+            name_suffix: "Sr.",
+          }),
+          email: faker.internet.email(),
+        },
+      ]);
+
+      const response = await callHandleImport(testServer, {
+        ...staffBody,
+        objectId: "US_ME/sentencing_staff_record.json",
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Unsupported bucket + object pair: test-bucket/US_ME/sentencing_staff_record.json",
+      );
+    });
+
     test("should import new staff data and delete old data", async () => {
       dataProviderSingleton.setData([
         // New staff
@@ -802,7 +901,7 @@ describe("handle_import", () => {
       ]);
 
       // Create a new case to link to the new client
-      await prismaClient.case.create({
+      await testPrismaClient.case.create({
         data: {
           ...fakeCasePrismaInput,
           externalId: "new-case-ext-id",
@@ -815,7 +914,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbStaff = await prismaClient.staff.findMany({
+      const dbStaff = await testPrismaClient.staff.findMany({
         include: {
           cases: true,
         },
@@ -880,7 +979,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbStaff = await prismaClient.staff.findMany({});
+      const dbStaff = await testPrismaClient.staff.findMany({});
 
       // There should only be two staff in the database - the new one and the updated existing one
       expect(dbStaff).toHaveLength(2);
@@ -900,6 +999,55 @@ describe("handle_import", () => {
   });
 
   describe("import opportunity data", () => {
+    test("should throw error if state is not supported", async () => {
+      dataProviderSingleton.setData([
+        // New opportunity
+        {
+          OpportunityName: "new-opportunity-name",
+          Description: "new-opportunity-description",
+          CleanedProviderPhoneNumber: "9256400137",
+          ProviderWebsite: "fake.com",
+          ProviderAddress: "123 Main Street",
+          CapacityTotal: 10,
+          CapacityAvailable: 5,
+          developmentalDisabilityDiagnosisCriterion: false,
+          noCurrentOrPriorSexOffenseCriterion: false,
+          noCurrentOrPriorViolentOffenseCriterion: false,
+          noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+          entryOfGuiltyPleaCriterion: false,
+          veteranStatusCriterion: false,
+          NeedsAddressed: [],
+          diagnosedMentalHealthDiagnosisCriterion: [],
+          priorCriminalHistoryCriterion: PriorCriminalHistoryCriterion.None,
+          asamLevelOfCareRecommendationCriterion:
+            AsamLevelOfCareRecommendationCriterion.Any,
+          diagnosedSubstanceUseDisorderCriterion:
+            DiagnosedMentalHealthDiagnosisCriterion.Any,
+          minLsirScoreCriterion: 10,
+          maxLsirScoreCriterion: 10,
+          minAge: 35,
+          maxAge: 55,
+          district: "D1",
+          lastUpdatedDate: lastUpdatedDate,
+          additionalNotes: "new-opportunity-notes",
+          genders: ["Men"],
+          genericDescription: "new-opportunity-generic-description",
+        },
+      ]);
+
+      const response = await callHandleImport(testServer, {
+        ...opportunityBody,
+        objectId: "US_ME/sentencing_community_opportunity_record.json",
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Unsupported bucket + object pair: test-bucket/US_ME/sentencing_community_opportunity_record.json",
+      );
+    });
+
     test("should import new opportunity and delete old data", async () => {
       dataProviderSingleton.setData([
         // New opportunity
@@ -941,7 +1089,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new opportunity was created
-      const dbOpportunities = await prismaClient.opportunity.findMany({});
+      const dbOpportunities = await testPrismaClient.opportunity.findMany({});
 
       // There should only be one opportunity in the database - the new one should have been created
       // and the old one should have been deleted
@@ -1034,7 +1182,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new opportunity was created
-      const dbOpportunities = await prismaClient.opportunity.findMany({});
+      const dbOpportunities = await testPrismaClient.opportunity.findMany({});
 
       // There should only be two opportunites in the database - the new one and the updated existing one
       expect(dbOpportunities).toHaveLength(2);
@@ -1054,7 +1202,7 @@ describe("handle_import", () => {
     test("should only delete opportunities that don't match composite id", async () => {
       // Create two new opportunities, one with the same name but with the provider name changed, and another one with vice versa
       // These two should be deleted after import since they don't match the composite id of the existing opportunity
-      await prismaClient.opportunity.createMany({
+      await testPrismaClient.opportunity.createMany({
         data: [
           {
             opportunityName: fakeOpportunity.opportunityName,
@@ -1121,7 +1269,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new opportunity was created
-      const dbOpportunities = await prismaClient.opportunity.findMany({});
+      const dbOpportunities = await testPrismaClient.opportunity.findMany({});
 
       // There should only be one opportunity in the database - the new one should have been created
       // and the old one should have been deleted
@@ -1138,6 +1286,53 @@ describe("handle_import", () => {
   });
 
   describe("import insight data", () => {
+    test("should throw error if state is not supported", async () => {
+      dataProviderSingleton.setData([
+        // New insight
+        {
+          state_code: StateCode.US_ID,
+          // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
+          gender: Gender.MALE,
+          assessment_score_bucket_start: faker.number.int({ max: 100 }),
+          assessment_score_bucket_end: faker.number.int({ max: 100 }),
+          most_severe_description: fakeOffense.name,
+          recidivism_rollup: JSON.stringify({
+            state_code: StateCode.US_ID,
+            gender: Gender.MALE,
+            assessment_score_bucket_start: faker.number.int({ max: 100 }),
+            assessment_score_bucket_end: faker.number.int({ max: 100 }),
+            most_severe_ncic_category_uniform: faker.string.alpha(),
+          }),
+          recidivism_num_records: faker.number.int({ max: 100 }),
+          recidivism_probation_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          recidivism_rider_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          recidivism_term_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          disposition_num_records: faker.number.int({ max: 100 }),
+          disposition_probation_pc: faker.number.float(),
+          disposition_rider_pc: faker.number.float(),
+          disposition_term_pc: faker.number.float(),
+        },
+      ]);
+
+      const response = await callHandleImport(testServer, {
+        ...insightBody,
+        objectId: "US_ME/case_insights_record.json",
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Unsupported bucket + object pair: test-bucket/US_ME/case_insights_record.json",
+      );
+    });
+
     test("should import new insights and delete old data", async () => {
       dataProviderSingleton.setData([
         // New insight
@@ -1177,7 +1372,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new Insight was created
-      const dbInsights = await prismaClient.insight.findMany({
+      const dbInsights = await testPrismaClient.insight.findMany({
         include: {
           rollupRecidivismSeries: {
             select: {
@@ -1239,6 +1434,33 @@ describe("handle_import", () => {
   });
 
   describe("import offense data", () => {
+    test("should throw error if state is not supported", async () => {
+      dataProviderSingleton.setData([
+        // Old offense
+        {
+          state_code: StateCode.US_ID,
+          charge: fakeOffense.name,
+        },
+        // New offense
+        {
+          state_code: StateCode.US_ID,
+          charge: "new-offense",
+        },
+      ]);
+
+      const response = await callHandleImport(testServer, {
+        ...offenseBody,
+        objectId: "US_ME/sentencing_charge_record.json",
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Unsupported bucket + object pair: test-bucket/US_ME/sentencing_charge_record.json",
+      );
+    });
+
     test("should import new offenses", async () => {
       dataProviderSingleton.setData([
         // Old offense
@@ -1258,7 +1480,7 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new offense was created
-      const dbOffenses = await prismaClient.offense.findMany();
+      const dbOffenses = await testPrismaClient.offense.findMany();
 
       // There should only be two offenses in the database - the old one should have been preserved and the new one created
       expect(dbOffenses).toHaveLength(2);

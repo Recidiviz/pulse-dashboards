@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StateCode } from "@prisma/client";
 import { init } from "@sentry/node";
 import {
   CreateTRPCProxyClient,
@@ -26,6 +27,7 @@ import superjson from "superjson";
 import { beforeAll, beforeEach, vi } from "vitest";
 
 import { MockImportRoutesHandler } from "~fastify-data-import-plugin/testkit";
+import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
 import { buildServer } from "~sentencing-server/server";
 import { seed } from "~sentencing-server/test/setup/seed";
 import { resetDb } from "~sentencing-server/test/setup/utils";
@@ -38,6 +40,7 @@ export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
 export let testServer: ReturnType<typeof buildServer>;
+export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
 const { testkit, sentryTransport } = sentryTestkit();
 
@@ -80,6 +83,7 @@ beforeAll(async () => {
         headers() {
           return {
             Authorization: "Bearer test-token",
+            StateCode: "US_ID",
           };
         },
       }),
@@ -90,8 +94,8 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await resetDb();
-  await seed();
+  await resetDb(testPrismaClient);
+  await seed(testPrismaClient);
 
   testkit.reset();
 });

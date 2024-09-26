@@ -16,15 +16,13 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { CaseRecommendation, Prisma } from "@prisma/client";
-
-import { prismaClient } from "~sentencing-server/prisma";
+import { CaseRecommendation, Prisma, PrismaClient } from "@prisma/client";
 
 const PRISMA_TABLES = Prisma.dmmf.datamodel.models
   .map((model) => model.name)
   .filter((table) => table);
 
-export async function resetDb() {
+export async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(
     PRISMA_TABLES.map((table) =>
       prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),

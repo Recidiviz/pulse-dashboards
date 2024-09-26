@@ -18,8 +18,10 @@
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
-import { prismaClient } from "~sentencing-server/prisma";
-import { testTRPCClient } from "~sentencing-server/test/setup";
+import {
+  testPrismaClient,
+  testTRPCClient,
+} from "~sentencing-server/test/setup";
 import { fakeOpportunity } from "~sentencing-server/test/setup/seed";
 
 describe("opportunity router", () => {
@@ -39,7 +41,7 @@ describe("opportunity router", () => {
 
     test("should return empty provider name if it is set to unknown", async () => {
       // Create an opportunity with the default provider name
-      await prismaClient.opportunity.create({
+      await testPrismaClient.opportunity.create({
         data: {
           ...fakeOpportunity,
           providerName: OPPORTUNITY_UNKNOWN_PROVIDER_NAME,

@@ -22,12 +22,12 @@ import {
   Gender,
   OnboardingTopic,
   Plea,
+  PrismaClient,
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
 
-import { prismaClient } from "~sentencing-server/prisma";
 import {
   CaseCreateInput,
   ClientCreateInput,
@@ -238,7 +238,7 @@ export const fakeInsightPrismaInput = {
 
 export let fakeInsightId: string;
 
-export async function seed() {
+export async function seed(prismaClient: PrismaClient) {
   // Seed Data
   await prismaClient.offense.create({ data: fakeOffense });
   await prismaClient.staff.create({ data: fakeStaff });

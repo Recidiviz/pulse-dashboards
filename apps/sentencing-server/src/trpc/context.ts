@@ -18,9 +18,13 @@
 // Required to get the "request.jwtVerify" decorator to be recongized by typescript
 import "@fastify/jwt";
 
+import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
-import { prismaClient } from "~sentencing-server/prisma";
+import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
+
+// HTTP headers are flattened to lowercase in Fastify
+const STATE_CODE_HEADER_KEY = "statecode";
 
 export async function createContext({ req, res }: CreateFastifyContextOptions) {
   let auth0Authorized;
@@ -39,7 +43,32 @@ export async function createContext({ req, res }: CreateFastifyContextOptions) {
     auth0Authorized = false;
   }
 
-  return { req, res, prisma: prismaClient, auth0Authorized };
+  const stateCode = req.headers[STATE_CODE_HEADER_KEY];
+
+  if (!stateCode || typeof stateCode !== "string") {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: `Unsupported state code provided in request headers: ${stateCode}`,
+    });
+  }
+
+  let prismaClient;
+  try {
+    prismaClient = getPrismaClientForStateCode(stateCode);
+  } catch (e) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: `Unsupported state code provided in request headers: ${stateCode}`,
+      cause: e,
+    });
+  }
+
+  return {
+    req,
+    res,
+    prisma: prismaClient,
+    auth0Authorized,
+  };
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

@@ -19,8 +19,10 @@ import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
-import { prismaClient } from "~sentencing-server/prisma";
-import { testTRPCClient } from "~sentencing-server/test/setup";
+import {
+  testPrismaClient,
+  testTRPCClient,
+} from "~sentencing-server/test/setup";
 import {
   fakeCase,
   fakeClient,
@@ -73,7 +75,7 @@ describe("staff router", () => {
         hasLoggedIn: true,
       });
 
-      const dbStaff = await prismaClient.staff.findUnique({
+      const dbStaff = await testPrismaClient.staff.findUnique({
         where: { pseudonymizedId: fakeStaff.pseudonymizedId },
       });
 

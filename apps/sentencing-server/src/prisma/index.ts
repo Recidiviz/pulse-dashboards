@@ -17,4 +17,18 @@
 
 import { PrismaClient } from "@prisma/client";
 
-export const prismaClient = new PrismaClient();
+export function getPrismaClientForStateCode(stateCode: string) {
+  if (!process.env[`DATABASE_URL_${stateCode}`]) {
+    throw Error(
+      `Attempted to access unsupported database for state ${stateCode}`,
+    );
+  }
+
+  return new PrismaClient({
+    datasources: {
+      db: {
+        url: process.env[`DATABASE_URL_${stateCode}`],
+      },
+    },
+  });
+}

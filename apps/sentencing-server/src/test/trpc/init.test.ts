@@ -33,6 +33,11 @@ describe("init trpc", () => {
         links: [
           httpBatchLink({
             url: `http://${testHost}:${testPort}`,
+            headers() {
+              return {
+                StateCode: "US_ID",
+              };
+            },
           }),
         ],
         // Required to get Date objects to serialize correctly.
@@ -83,6 +88,7 @@ describe("init trpc", () => {
             headers() {
               return {
                 Authorization: "Bearer test-token",
+                StateCode: "US_ID",
               };
             },
           }),
@@ -98,6 +104,68 @@ describe("init trpc", () => {
       ).rejects.toThrowError(
         new TRPCError({
           code: "UNAUTHORIZED",
+        }),
+      );
+    });
+  });
+
+  describe("state code", () => {
+    test("should throw error if there is no state code in the header", async () => {
+      // Don't pass a state code
+      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+        links: [
+          httpBatchLink({
+            url: `http://${testHost}:${testPort}`,
+            headers() {
+              return {
+                Authorization: "Bearer test-token",
+              };
+            },
+          }),
+        ],
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
+      });
+
+      await expect(() =>
+        customTestTRPCClient.case.getCase.query({
+          id: fakeCase.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message:
+            "Unsupported state code provided in request headers: undefined",
+        }),
+      );
+    });
+
+    test("should throw error if the state code isn't supported", async () => {
+      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+        links: [
+          httpBatchLink({
+            url: `http://${testHost}:${testPort}`,
+            headers() {
+              return {
+                Authorization: "Bearer test-token",
+                // This is technically a valid state code, but there isn't a prisma client available for it
+                StateCode: "US_ME",
+              };
+            },
+          }),
+        ],
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
+      });
+
+      await expect(() =>
+        customTestTRPCClient.case.getCase.query({
+          id: fakeCase.id,
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Unsupported state code provided in request headers: US_ME",
         }),
       );
     });

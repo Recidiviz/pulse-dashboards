@@ -21,9 +21,11 @@ import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
-import { prismaClient } from "~sentencing-server/prisma";
 import { testAndGetSentryReports } from "~sentencing-server/test/common/utils";
-import { testTRPCClient } from "~sentencing-server/test/setup";
+import {
+  testPrismaClient,
+  testTRPCClient,
+} from "~sentencing-server/test/setup";
 import {
   fakeCase,
   fakeClient,
@@ -106,7 +108,7 @@ describe("case router", () => {
 
     test("should return undefined insight if lsir score is missing", async () => {
       // Set lsir score to null
-      await prismaClient.case.update({
+      await testPrismaClient.case.update({
         where: { id: fakeCase.id },
         data: { lsirScore: null },
       });
@@ -122,7 +124,7 @@ describe("case router", () => {
 
     test("should return undefined insight if there is no offense for case", async () => {
       // Set offense to null
-      await prismaClient.case.update({
+      await testPrismaClient.case.update({
         where: { id: fakeCase.id },
         data: { offenseId: null },
       });
@@ -138,7 +140,7 @@ describe("case router", () => {
 
     test("should capture exception if there is no insight matching case", async () => {
       // Delete all insights so nothing matches
-      await prismaClient.insight.deleteMany({});
+      await testPrismaClient.insight.deleteMany({});
 
       const returnedCase = await testTRPCClient.case.getCase.query({
         id: fakeCase.id,
@@ -156,7 +158,7 @@ describe("case router", () => {
 
     test("should get insights with end buckets of -1", async () => {
       // Update the insight to have an end bucket of -1
-      await prismaClient.insight.update({
+      await testPrismaClient.insight.update({
         where: { id: fakeInsightId },
         data: {
           assessmentScoreBucketEnd: -1,
@@ -181,7 +183,7 @@ describe("case router", () => {
 
     test("should not show insights with start buckets of -1", async () => {
       // Update the insight to have a start bucket of -1
-      await prismaClient.insight.update({
+      await testPrismaClient.insight.update({
         where: { id: fakeInsightId },
         data: {
           assessmentScoreBucketStart: -1,
@@ -204,7 +206,7 @@ describe("case router", () => {
 
     test("should capture exception if there are multiple insights for a single case", async () => {
       // Create a new insight that the fake case still applies to (this one just has a very large assessment bucket range)
-      await prismaClient.insight.create({
+      await testPrismaClient.insight.create({
         data: {
           ...fakeInsightPrismaInput,
           assessmentScoreBucketStart: 0,
@@ -228,7 +230,7 @@ describe("case router", () => {
 
     test("should set opportunity provider name to null if it is unknown", async () => {
       // Set an opportunity provider name to unknown
-      await prismaClient.opportunity.update({
+      await testPrismaClient.opportunity.update({
         where: {
           opportunityName_providerName: {
             opportunityName:
@@ -287,7 +289,7 @@ describe("case router", () => {
         },
       });
 
-      const updatedCase = await prismaClient.case.findUniqueOrThrow({
+      const updatedCase = await testPrismaClient.case.findUniqueOrThrow({
         where: {
           id: fakeCase.id,
         },
@@ -336,7 +338,7 @@ describe("case router", () => {
 
     test("should update recommendedOpportunities", async () => {
       // Create an opportunity with the default provider name
-      await prismaClient.opportunity.create({
+      await testPrismaClient.opportunity.create({
         data: {
           ...fakeOpportunity,
           providerName: OPPORTUNITY_UNKNOWN_PROVIDER_NAME,
@@ -357,7 +359,7 @@ describe("case router", () => {
         },
       });
 
-      const updatedCase = await prismaClient.case.findUniqueOrThrow({
+      const updatedCase = await testPrismaClient.case.findUniqueOrThrow({
         where: { id: fakeCase.id },
         select: { recommendedOpportunities: true },
       });
@@ -391,7 +393,7 @@ describe("case router", () => {
     });
 
     test("should throw error if lsir score is locked and lsirScore is provided", async () => {
-      await prismaClient.case.update({
+      await testPrismaClient.case.update({
         where: { id: fakeCase.id },
         data: { isLsirScoreLocked: true },
       });
@@ -412,7 +414,7 @@ describe("case router", () => {
     });
 
     test("should throw error if report type is locked and report type is provided", async () => {
-      await prismaClient.case.update({
+      await testPrismaClient.case.update({
         where: { id: fakeCase.id },
         data: { isReportTypeLocked: true },
       });
@@ -433,7 +435,7 @@ describe("case router", () => {
     });
 
     test("should throw error if client gender is locked and gender is provided", async () => {
-      await prismaClient.case.update({
+      await testPrismaClient.case.update({
         where: { id: fakeCase.id },
         data: {
           client: {

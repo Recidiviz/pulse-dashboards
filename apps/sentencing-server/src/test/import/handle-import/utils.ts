@@ -27,7 +27,7 @@ import {
   staffBody,
 } from "~sentencing-server/test/import/handle-import/constants";
 
-async function callHandleImport(
+export async function callHandleImport(
   server: ReturnType<typeof buildServer>,
   data: object,
 ) {

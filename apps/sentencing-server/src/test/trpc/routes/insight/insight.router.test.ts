@@ -18,9 +18,11 @@
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
-import { prismaClient } from "~sentencing-server/prisma";
 import { testAndGetSentryReports } from "~sentencing-server/test/common/utils";
-import { testTRPCClient } from "~sentencing-server/test/setup";
+import {
+  testPrismaClient,
+  testTRPCClient,
+} from "~sentencing-server/test/setup";
 import {
   fakeInsight,
   fakeInsightPrismaInput,
@@ -61,7 +63,7 @@ describe("insight router", () => {
 
     test("should capture exception and return first insight if there are multiple", async () => {
       // Create a new insight that the fake case still applies to (this one just has a very large assessment bucket range)
-      await prismaClient.insight.create({
+      await testPrismaClient.insight.create({
         data: {
           ...fakeInsightPrismaInput,
           assessmentScoreBucketStart: 0,

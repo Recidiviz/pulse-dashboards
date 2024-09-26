@@ -30,6 +30,7 @@ import {
 
 export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
   const mockRootStore = {
+    currentTenantId: "US_ID",
     userStore: {
       userPseudoId:
         userPseudoIdOverride === null

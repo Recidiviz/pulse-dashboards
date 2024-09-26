@@ -76,18 +76,20 @@ export class APIClient {
     if (!this.baseUrl) return;
     if (this.client) return this.client;
 
-    const userStore = this.psiStore.rootStore.userStore;
+    const rootStore = this.psiStore.rootStore;
 
     return createTRPCProxyClient<AppRouter>({
       links: [
         httpBatchLink({
           url: this.baseUrl,
           async headers() {
-            if (!userStore.getToken) return {};
-            const token = await userStore.getToken();
+            if (!rootStore.userStore.getToken) return {};
+            const token = await rootStore.userStore.getToken();
+            const stateCode = rootStore.currentTenantId;
 
             return {
               Authorization: `Bearer ${token}`,
+              StateCode: `${stateCode}`,
             };
           },
         }),
