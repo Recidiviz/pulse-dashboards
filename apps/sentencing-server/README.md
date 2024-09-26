@@ -13,14 +13,14 @@ Staging
 - [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing-server/metrics?project=recidiviz-dashboard-staging)
 - [Cloud Run DB Migration Job](https://console.cloud.google.com/run/jobs/details/us-central1/sentencing-server-migrate-db/executions?project=recidiviz-dashboard-staging)
 - [Data Import Task Queue](https://console.cloud.google.com/cloudtasks/queue/us-central1/sentencing-server-import-queue/tasks?project=recidiviz-dashboard-staging)
-- [Database](https://console.cloud.google.com/sql/instances/sentencing-db/studio?project=recidiviz-dashboard-staging)
+- [Cloud SQL Databases](https://console.cloud.google.com/sql/instances/sentencing-db/studio?project=recidiviz-dashboard-staging)
 
 Production
 
 - [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing-server/metrics?project=recidiviz-dashboard-production)
 - [Cloud Run DB Migration Job](https://console.cloud.google.com/run/jobs/details/us-central1/sentencing-server-migrate-db/executions?project=recidiviz-dashboard-production)
 - [Data Import Task Queue](https://console.cloud.google.com/cloudtasks/queue/us-central1/sentencing-server-import-queue/tasks?project=recidiviz-dashboard-production)
-- [Database](https://console.cloud.google.com/sql/instances/sentencing-db/studio?project=recidiviz-dashboard-production)
+- [Cloud SQL Databases](https://console.cloud.google.com/sql/instances/sentencing-db/studio?project=recidiviz-dashboard-production)
 
 ## Development
 
@@ -42,7 +42,15 @@ If you make changes to the prisma schema, you will need to run `nx prisma-migrat
 
 ## Add support for a new state
 
-If you'd like to add support for a new state, you don't have to make any code changes! You just need to add an environment variable for the new state's database connection string to the Cloud Run deploys of the server (see links above). The naming convention for these environment variables is `DATABASE_URL_{STATE_ABBREVIATION}`. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA` with the connection string for the California database.
+If you'd like to add support for a new state, you don't have to make any code changes!
+
+Note: This is just for the application to support a new state. You will still need to add metric exports + Cloud Storage notifications for the new state in order for data to be be imported for the new state.
+
+Note: this process is the same for both staging and production.
+
+1. For the new state, create a new database in the Cloud SQL instance. The naming convention for these databases is the tenant id in all lowercase, like `us_ca` for California.
+
+2. Next, add a new environment variable for the new state's database connection string to both the Cloud Run and Cloud Run DB Migration Job deploys of the server. The naming convention for these environment variables is `DATABASE_URL_{STATE_ABBREVIATION}`. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA` with the connection string for the California database.
 
 ## Testing
 

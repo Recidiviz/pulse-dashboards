@@ -68,7 +68,8 @@
         "minify": true,
         "assets": [
           "{projectRoot}/prisma/schema.prisma",
-          "{projectRoot}/prisma/migrations/**/*"
+          "{projectRoot}/prisma/migrations/**/*",
+          "{projectRoot}/scripts/*"
         ]
       },
       "configurations": {
@@ -124,7 +125,7 @@
     "migrate-db": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "gcloud run jobs deploy sentencing-server-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command yarn --args prisma,migrate,deploy"
+        "command": "gcloud run jobs deploy sentencing-server-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh"
       },
       "configurations": {
         "staging": {
