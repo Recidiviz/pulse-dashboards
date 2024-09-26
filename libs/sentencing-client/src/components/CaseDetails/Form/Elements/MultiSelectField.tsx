@@ -39,7 +39,7 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
     if (option === null) return;
     if (option === NOT_SURE_YET_OPTION) {
       setCurrentValue([]);
-      updateForm(element.key, null, parentKey);
+      updateForm(element.key, [], parentKey);
       return;
     }
 
@@ -61,7 +61,7 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
             <Styled.MultiSelectChip
               key={option}
               selected={
-                isDefaultNotSureYetSelected || currentValue?.includes(option)
+                currentValue?.includes(option) || isDefaultNotSureYetSelected
               }
               onClick={() => {
                 updateMultiSelect(option);

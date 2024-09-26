@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useMemo } from "react";
+
 import { CaseInsight } from "../../../../../api";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
 import { SelectedRecommendation } from "../../../types";
@@ -46,16 +48,22 @@ export function RecidivismPlot({
   const plot =
     insight && getRecidivismPlot(insight, selectedRecommendation, plotWidth);
 
-  const recidivismChartLegend = dispositionData?.map(
-    ({ recommendationType }) =>
-      recommendationType !== "None" && (
-        <Styled.RecidivismChartLegendItem key={recommendationType}>
-          <Styled.RecidivismChartLegendDot
-            $backgroundColor={RECOMMENDATION_TYPE_TO_COLOR[recommendationType]}
-          />
-          <div>{recommendationType}</div>
-        </Styled.RecidivismChartLegendItem>
+  const recidivismChartLegend = useMemo(
+    () =>
+      dispositionData?.map(
+        ({ recommendationType }) =>
+          recommendationType !== "None" && (
+            <Styled.RecidivismChartLegendItem key={recommendationType}>
+              <Styled.RecidivismChartLegendDot
+                $backgroundColor={
+                  RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
+                }
+              />
+              <div>{recommendationType}</div>
+            </Styled.RecidivismChartLegendItem>
+          ),
       ),
+    [dispositionData],
   );
 
   return (
