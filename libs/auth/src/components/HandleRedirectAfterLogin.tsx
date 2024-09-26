@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Loading } from "@recidiviz/design-system";
+import { captureException } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +40,7 @@ export const HandleRedirectAfterLogin: FC<{
     authClient
       .handleRedirectFromLogin(navigate, defaultRedirectPath)
       .catch((r) => {
+        captureException(r);
         setError(castToError(r));
       });
   });

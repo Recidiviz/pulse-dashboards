@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { render, screen } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 import { MockInstance } from "vitest";
@@ -23,6 +24,7 @@ import { z } from "zod";
 import { AuthClient } from "../models/AuthClient";
 import { HandleRedirectAfterLogin } from "./HandleRedirectAfterLogin";
 
+vi.mock("@sentry/react");
 vi.mock("react-router-dom");
 
 let client: AuthClient;
@@ -65,4 +67,6 @@ test("error during handling", async () => {
   expect(
     await screen.findByRole("heading", { name: "Authorization required" }),
   ).toBeInTheDocument();
+
+  expect(captureException).toHaveBeenCalledWith("test");
 });
