@@ -88,6 +88,9 @@ describe("CoreLayout tests", () => {
       insightsStore: {
         shouldUseSupervisorHomepageUI: false,
       },
+      workflowsStore: {
+        homepage: "home",
+      },
     };
 
     useRootStoreMock.mockReturnValue(rootStoreMock);

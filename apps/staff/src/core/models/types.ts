@@ -73,6 +73,7 @@ export type TenantConfig = {
     SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;
   };
   workflowsHomepage?: WorkflowsPage;
+  workflowsHomepageName?: string;
   workflowsTasksConfig?: SnoozeTaskConfig;
   tasks?: {
     [k in SupervisionTaskType]: new (

@@ -46,7 +46,7 @@ import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
 import LanternLogo from "../LanternLogo";
 import RecidivizLogo from "../RecidivizLogo";
-import { DASHBOARD_VIEWS, workflowsUrl } from "../views";
+import { DASHBOARD_VIEWS, WorkflowsPage, workflowsUrl } from "../views";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { SYSTEM_ID_TO_PATH } from "./OverviewNavLinks";
 
@@ -274,13 +274,16 @@ function MainLogo({
   );
 }
 
-function WorkflowsLink({ enabled }: OptionalLinkProps) {
+function WorkflowsLink({
+  enabled,
+  homepage,
+}: OptionalLinkProps & { homepage: WorkflowsPage }) {
   const { isMobile } = useIsMobile(true);
 
   if (!enabled) return null;
 
   return (
-    <NavLink className="WorkflowsLink" to={workflowsUrl("home")}>
+    <NavLink className="WorkflowsLink" to={workflowsUrl(homepage)}>
       {isMobile && <Icon kind={IconSVG.Workflows} width={20} />}
       Go to Workflows
     </NavLink>
@@ -422,6 +425,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       userStore,
       tenantStore,
       insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
+      workflowsStore: { homepage },
     } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
 
@@ -462,7 +466,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         )}
         <PathwaysLink enabled={enabledPathwaysPages} />
         <OperationsLink enabled={enableOperations} />
-        <WorkflowsLink enabled={enableWorkflows} />
+        <WorkflowsLink enabled={enableWorkflows} homepage={homepage} />
         <WorkflowsSystemLinks enabled={supervisorHomepage} />
         <InsightsLink enabled={enabledInsights} />
         <PSILink enabled={enabledPSI} />

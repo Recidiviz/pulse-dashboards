@@ -42,6 +42,8 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       allowSupervisionTasks,
       workflowsSupportedSystems,
       supportsMultipleSystems,
+      homepage,
+      homepageNameOverride,
     },
     userStore: { userAllowedNavigation },
     insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
@@ -53,6 +55,8 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const enableSystems =
     (supervisorHomepage && (!supportsMultipleSystems || !isMobile)) ||
     !supervisorHomepage;
+  const workflowsHomepageName =
+    homepageNameOverride ?? (supervisorHomepage ? "Opportunities" : "Home");
 
   return (
     <>
@@ -61,7 +65,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       )}
       {enableWorkflows && (
         <NavLink
-          to={workflowsUrl("home")}
+          to={workflowsUrl(homepage)}
           end={
             (enableSystems &&
               workflowsSupportedSystems?.some((systemId: SystemId) =>
@@ -70,7 +74,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
             pathname.includes("tasks")
           }
         >
-          {supervisorHomepage ? "Opportunities" : "Home"}
+          {workflowsHomepageName}
         </NavLink>
       )}
       {allowSupervisionTasks && enableWorkflows && (
@@ -83,10 +87,14 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       )}
       {enableSystems
         ? workflowsSupportedSystems?.map((systemId: SystemId) => {
+            const path = SYSTEM_ID_TO_PATH[systemId];
+            if (path === homepage) {
+              return null;
+            }
             return (
               <NavLink
                 key={systemId}
-                to={workflowsUrl(SYSTEM_ID_TO_PATH[systemId])}
+                to={workflowsUrl(path)}
                 onClick={() => workflowsStore.updateActiveSystem(systemId)}
               >
                 {toTitleCase(getJusticeInvolvedPersonTitle(systemId))}s
