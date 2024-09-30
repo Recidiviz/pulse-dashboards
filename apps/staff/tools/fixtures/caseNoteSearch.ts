@@ -39,7 +39,7 @@ export const caseNoteSearchData: CaseNoteSearchRecordRaw = {
       noteBody:
         "Bill was on time for today's meeting and reported that his job is stable, though he is still staying with a friend. We discussed potential housing options, and he is exploring a transitional housing program. His sentencing evaluation is on track, and Bill remains focused on meeting all his parole requirements.",
       contactMode: "19-2524 SUD Assessment",
-      eventDate: "2024-03-12 12:39:00",
+      eventDate: "2023-08-12 12:39:00",
       documentId: "10008",
       extractiveAnswer:
         "Bill was on time for today&#39;s meeting and reported that his job is stable, though he is still staying with a friend. We discussed potential housing options, and he is exploring a transitional housing program. His sentencing evaluation is on track, and Bill remains focused on meeting all his parole requirements.",
@@ -54,7 +54,7 @@ export const caseNoteSearchData: CaseNoteSearchRecordRaw = {
       noteBody:
         "Bill attended today's session on time and shared that his job continues to go well. However, he is still searching for stable housing. We discussed various resources available to him, and he is considering a housing assistance program. Bill's sentencing evaluation is moving forward positively, and he remains committed to his rehabilitation.",
       contactMode: "PSI Assigned Full",
-      eventDate: "2024-03-12 12:39:00",
+      eventDate: "2022-01-11 12:39:00",
       documentId: "10009",
       extractiveAnswer:
         "Bill attended today&#39;s session on time and shared that his job continues to go well. However, he is still searching for stable housing.",
@@ -69,7 +69,7 @@ export const caseNoteSearchData: CaseNoteSearchRecordRaw = {
       noteBody:
         "Alice arrived early for today's meeting and shared exciting news: she has been offered a full-time position at her job. Her housing situation remains stable, and she is saving money to move into her own place. We reviewed her sentencing evaluation, which is progressing positively. Alice is determined to stay on track.",
       contactMode: "PSI Submitted to Court/Uploaded",
-      eventDate: "2024-03-12 12:39:00",
+      eventDate: "2024-01-01 12:39:00",
       documentId: "10003",
       extractiveAnswer:
         "Alice arrived early for today&#39;s meeting and shared exciting news: she has been offered a full-time position at her job. Her housing situation remains stable, and she is saving money to move into her own place. We reviewed her sentencing evaluation, which is progressing positively. Alice is determined to stay on track.",

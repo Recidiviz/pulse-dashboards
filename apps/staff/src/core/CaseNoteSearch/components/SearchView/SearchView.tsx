@@ -16,9 +16,19 @@
 // =============================================================================
 
 import { show } from "@intercom/messenger-js-sdk";
-import { palette, Sans24, spacing, typography } from "@recidiviz/design-system";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+  palette,
+  Sans24,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import DomPurify from "dompurify";
 import { rem } from "polished";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -33,6 +43,8 @@ import {
 } from "../../common/Styles";
 import { CASE_NOTE_SEARCH_RESULTS_STATUS } from "../../common/types";
 import { CaseNoteSearchInput } from "../CaseNoteSearchInput/CaseNoteSearchInput";
+
+type SortOrder = "Relevance" | "Date";
 
 export const EmptyWrapper = styled.div`
   display: flex;
@@ -76,10 +88,7 @@ export const NoteWrapper = styled.div`
   gap: ${rem(spacing.sm)};
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
   margin: 0 -${rem(spacing.md)};
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${palette.slate10};
-  }
+  border-top: 1px solid ${palette.slate10};
 
   &:hover {
     background: #f9fafa;
@@ -109,6 +118,27 @@ export const ModalResults = styled.div`
   overflow-y: auto;
 `;
 
+const StyledDropdownToggle = styled(DropdownToggle)`
+  color: ${palette.pine1} !important;
+  padding: ${rem(spacing.md)} 0;
+  outline: 0;
+`;
+
+const StyledDropdownMenu = styled(DropdownMenu)`
+  margin-top: -${rem(spacing.xs)};
+`;
+
+const StyledDropdownMenuItem = styled(DropdownMenuItem)`
+  &:focus {
+    background: transparent;
+    color: ${palette.pine3};
+  }
+  &:hover {
+    background: ${palette.signal.links};
+    color: ${palette.white};
+  }
+`;
+
 export function SearchView({
   resultsStatus,
   searchQuery,
@@ -124,6 +154,8 @@ export function SearchView({
   handleNoteClick: (docId: string) => void;
   handleReturnClick: () => void;
 }) {
+  const [sortOrder, setSortOrder] = useState<SortOrder>("Relevance");
+
   let resultsViz = null;
 
   function provideFeedback() {
@@ -164,33 +196,41 @@ export function SearchView({
     default:
       resultsViz = (
         <>
-          {searchResults.map((d) => (
-            <NoteWrapper
-              key={d.documentId}
-              onClick={() => handleNoteClick(d.documentId)}
-            >
-              <NoteHeader>
-                <NoteTextDark>
-                  {d.noteTitle || formatWorkflowsDateString(d.eventDate)}
-                </NoteTextDark>
-                <NoteAdditionalInfo>
-                  <NoteTextDark>{d.noteType}</NoteTextDark>
-                  <NoteTextDark> | </NoteTextDark>
-                  <NoteTextDark>{d.contactMode}</NoteTextDark>
-                </NoteAdditionalInfo>
-              </NoteHeader>
-              <NotePreview
-                dangerouslySetInnerHTML={{
-                  __html: DomPurify.sanitize(d.preview, {
-                    FORBID_ATTR: ["style"],
-                  }),
-                }}
-              />
-              <NoteTextLight>
-                {formatWorkflowsDateString(d.eventDate)}
-              </NoteTextLight>
-            </NoteWrapper>
-          ))}
+          {searchResults
+            .map((note, index) => ({ ...note, relevance: index }))
+            .sort((a, b) => {
+              if (sortOrder === "Relevance") {
+                return a.relevance - b.relevance;
+              }
+              return b.eventDate.localeCompare(a.eventDate);
+            })
+            .map((d) => (
+              <NoteWrapper
+                key={d.documentId}
+                onClick={() => handleNoteClick(d.documentId)}
+              >
+                <NoteHeader>
+                  <NoteTextDark>
+                    {d.noteTitle || formatWorkflowsDateString(d.eventDate)}
+                  </NoteTextDark>
+                  <NoteAdditionalInfo>
+                    <NoteTextDark>{d.noteType}</NoteTextDark>
+                    <NoteTextDark> | </NoteTextDark>
+                    <NoteTextDark>{d.contactMode}</NoteTextDark>
+                  </NoteAdditionalInfo>
+                </NoteHeader>
+                <NotePreview
+                  dangerouslySetInnerHTML={{
+                    __html: DomPurify.sanitize(d.preview, {
+                      FORBID_ATTR: ["style"],
+                    }),
+                  }}
+                />
+                <NoteTextLight>
+                  {formatWorkflowsDateString(d.eventDate)}
+                </NoteTextLight>
+              </NoteWrapper>
+            ))}
         </>
       );
   }
@@ -213,7 +253,22 @@ export function SearchView({
           onPressReturn={handleReturnClick}
         />
       </ModalContent>
-      <ModalResults>{resultsViz}</ModalResults>
+      <ModalResults>
+        <Dropdown>
+          <StyledDropdownToggle kind="borderless" showCaret>
+            Sorted by {sortOrder}
+          </StyledDropdownToggle>
+          <StyledDropdownMenu alignment="left">
+            <StyledDropdownMenuItem onClick={() => setSortOrder("Relevance")}>
+              Relevance
+            </StyledDropdownMenuItem>
+            <StyledDropdownMenuItem onClick={() => setSortOrder("Date")}>
+              Date
+            </StyledDropdownMenuItem>
+          </StyledDropdownMenu>
+        </Dropdown>
+        {resultsViz}
+      </ModalResults>
     </>
   );
 }
