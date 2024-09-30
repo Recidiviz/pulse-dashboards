@@ -203,6 +203,23 @@ describe("hydrateStr", () => {
     expect(result).toEqual("Our hero is trapped in a template!");
   });
 
+  it("doesn't escape html characters", () => {
+    const template =
+      "The result differs from the template by {{diffThreshold}}.";
+    const criteria = { diffThreshold: `<2 "character's"[sic]` };
+    const formatters = {};
+
+    const result = hydrateStr(template, {
+      criteria,
+      formatters,
+      opportunity: mockOpportunity,
+    });
+
+    expect(result).toEqual(
+      `The result differs from the template by <2 "character's"[sic].`,
+    );
+  });
+
   describe("helpers", () => {
     test.each([
       ["lowerCase", "two words"],

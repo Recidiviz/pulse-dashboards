@@ -154,7 +154,7 @@ export function hydrateStr(
   raw: string,
   { criteria, formatters, opportunity }: HydrationContext,
 ) {
-  const template = Handlebars.compile(raw);
+  const template = Handlebars.compile(raw, { noEscape: true });
 
   function trapException(f: (...args: any) => any) {
     return function (this: any, ...args: any[]) {
