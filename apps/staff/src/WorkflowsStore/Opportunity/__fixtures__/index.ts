@@ -80,6 +80,10 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   denialReasons: {},
   methodologyUrl: "",
   homepagePosition: 1,
+  deniedTabTitle: "Marked Ineligible",
+  denialAdjective: "Ineligible",
+  denialNoun: "Ineligibility",
+  submittedTabTitle: "Submitted",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

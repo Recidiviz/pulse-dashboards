@@ -23,6 +23,12 @@ import { dateToTimestamp } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { EligibilityStatus } from "../EligibilityStatus";
 
+vi.mock("../../../components/StoreProvider");
+
+beforeEach(() => {
+  vi.resetAllMocks();
+});
+
 test("render nothing until hydrated", async () => {
   const observableOpportunity = observable({
     ...mockOpportunity,
@@ -119,4 +125,14 @@ describe("almost eligible", () => {
     render(<EligibilityStatus opportunity={almost} includeReasons />);
     expect(screen.getByText("test message")).toBeInTheDocument();
   });
+});
+
+test("submitted", () => {
+  const submitted = {
+    ...mockOpportunity,
+    isSubmitted: true,
+  };
+
+  render(<EligibilityStatus opportunity={submitted} />);
+  expect(screen.getByText("Submitted")).toBeInTheDocument();
 });

@@ -36,7 +36,7 @@ import { useStatusColors } from "../utils/workflowsUtils";
 import { TextLink } from "../WorkflowsMilestones/styles";
 import { CriteriaList } from "./CriteriaList";
 import MarkedIneligibleReasons, {
-  buildSnoozedByTextAndResurfaceText,
+  buildActedOnTextAndResurfaceText,
 } from "./MarkedIneligibleReasons";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
 
@@ -102,7 +102,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
     onDenialButtonClick = () => null,
   }) {
-    const { hideDenialRevert } = useFeatureVariants();
+    const { hideDenialRevert, submittedOpportunityStatus } =
+      useFeatureVariants();
 
     // We use isLaptop here, rather than isTablet or isMobile, as we've seen issues with profile formatting
     // on screen sizes smaller than desktop.
@@ -116,7 +117,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     }, [opportunity]);
 
     const colors = useStatusColors(opportunity);
-    const showDenialButton = opportunity.supportsDenial;
+    const showUpdateStatusButton =
+      opportunity.supportsDenial || submittedOpportunityStatus;
 
     const snoozeUntil: Date | undefined =
       opportunity.manualSnoozeUntilDate ??
@@ -124,7 +126,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         ? parseISO(opportunity?.autoSnooze?.snoozeUntil)
         : undefined);
 
-    const [snoozedByText, resurfaceText] = buildSnoozedByTextAndResurfaceText(
+    const [actedOnText, resurfaceText] = buildActedOnTextAndResurfaceText(
       opportunity,
       snoozeUntil,
     );
@@ -134,7 +136,11 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     );
 
     const handleUndoClick = async () => {
-      await opportunity.deleteOpportunityDenialAndSnooze();
+      if (opportunity.denial) {
+        await opportunity.deleteOpportunityDenialAndSnooze();
+      } else if (opportunity.isSubmitted) {
+        await opportunity.deleteSubmitted();
+      }
     };
 
     const OPPORTUNITY_CONFIGS = useOpportunityConfigurations();
@@ -151,14 +157,14 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
         <CriteriaList opportunity={opportunity} />
-        {showDenialButton && (
+        {showUpdateStatusButton && (
           <MarkedIneligibleReasons
             opportunity={opportunity}
-            snoozedByTextAndResurfaceTextPair={[snoozedByText, resurfaceText]}
+            actedOnTextAndResurfaceTextPair={[actedOnText, resurfaceText]}
             denialReasons={opportunity.denial?.reasons}
           />
         )}
-        {(showDenialButton || formLinkButton) && (
+        {(showUpdateStatusButton || formLinkButton) && (
           <ActionButtons isMobile={isLaptop}>
             {formLinkButton && opportunity?.form && (
               <Link to={linkToForm}>
@@ -173,17 +179,19 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 </FormActionButton>
               </Link>
             )}
-            {showDenialButton && onDenialButtonClick && (
+            {showUpdateStatusButton && onDenialButtonClick && (
               <>
                 <MenuButton
                   opportunity={opportunity}
                   onDenialButtonClick={onDenialButtonClick}
                 />
-                {showRevertLink && snoozedByText && resurfaceText && (
-                  <RevertChangesButtonLink onClick={handleUndoClick}>
-                    Revert Changes
-                  </RevertChangesButtonLink>
-                )}
+                {showRevertLink &&
+                  ((actedOnText && resurfaceText) ||
+                    opportunity.isSubmitted) && (
+                    <RevertChangesButtonLink onClick={handleUndoClick}>
+                      Revert Changes
+                    </RevertChangesButtonLink>
+                  )}
               </>
             )}
           </ActionButtons>

@@ -33,7 +33,8 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
       eligibleStatusMessage,
       defaultEligibility,
       denial,
-      config: { isAlert, deniedTabTitle },
+      isSubmitted,
+      config: { isAlert, deniedTabTitle, submittedTabTitle },
     } = opportunity;
 
     if (!isHydrated(opportunity)) return null;
@@ -54,6 +55,10 @@ export const EligibilityStatus: React.FC<EligibilityStatusProps> = observer(
           {includeReasons && ` (${denial.reasons.join(", ")})`}
         </>
       );
+    }
+
+    if (isSubmitted) {
+      return <>{submittedTabTitle}</>;
     }
 
     if (almostEligible) {

@@ -61,5 +61,8 @@ export interface OpportunityConfiguration {
   nonOMSCriteria: OpportunityRequirement[];
   homepagePosition: number;
   countByFunction?: (opportunities: Opportunity[]) => number;
-  deniedTabTitle?: OpportunityTab;
+  deniedTabTitle: OpportunityTab;
+  denialAdjective: string;
+  denialNoun: string;
+  submittedTabTitle: OpportunityTab;
 }

@@ -18,6 +18,7 @@
 import tk from "timekeeper";
 
 import { OpportunityType } from "..";
+import { DENIED_UPDATE } from "../testUtils";
 import { Opportunity } from "../types";
 import { monthsOrDaysRemainingFromToday } from "../utils/criteriaUtils";
 import {
@@ -66,17 +67,15 @@ describe("Generate counts for opportunities", () => {
   const aOpps = [
     {
       type: "mockUsXxOpp" as OpportunityType,
-      reviewStatus: "IN_PROGRESS",
       config: {},
     },
     {
       type: "mockUsXxOpp" as OpportunityType,
-      reviewStatus: "IN_PROGRESS",
       config: {},
     },
     {
       type: "mockUsXxOpp" as OpportunityType,
-      reviewStatus: "DENIED",
+      denial: DENIED_UPDATE,
       config: {},
     },
   ] as Opportunity[];

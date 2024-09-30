@@ -150,9 +150,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     const tabs = this.configurationObject.tabGroups as OpportunityTabGroups;
     if (tabs) return tabs;
     return {
-      "ELIGIBILITY STATUS": generateTabs({
-        deniedTabTitle: this.deniedTabTitle,
-      }),
+      "ELIGIBILITY STATUS": generateTabs(this),
     } as OpportunityTabGroups;
   }
 
@@ -210,6 +208,18 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
 
   get deniedTabTitle(): OpportunityTab {
     return this.isAlert ? "Overridden" : "Marked Ineligible";
+  }
+
+  get denialAdjective(): string {
+    return this.isAlert ? "Overridden" : "Ineligible";
+  }
+
+  get denialNoun(): string {
+    return this.isAlert ? "Override Status" : "Ineligibility";
+  }
+
+  get submittedTabTitle(): OpportunityTab {
+    return "Submitted";
   }
 
   get omsCriteriaHeader() {

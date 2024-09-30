@@ -15,12 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, spacing } from "@recidiviz/design-system";
+import {
+  Button,
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+  palette,
+  spacing,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
+
+const StatusAwareToggle = styled(DropdownToggle).attrs({
+  kind: "secondary",
+  shape: "block",
+  showCaret: true,
+})`
+  max-width: 11rem;
+  height: 40px;
+  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
+`;
 
 const StatusAwareButton = styled(Button).attrs({
   kind: "secondary",
@@ -31,6 +51,13 @@ const StatusAwareButton = styled(Button).attrs({
   padding: ${rem(spacing.xs)} ${rem(spacing.md)};
 `;
 
+const OpportunityStatusDropdownMenuItem = styled(DropdownMenuItem)`
+  :focus {
+    background-color: ${palette.slate10};
+    color: ${palette.pine2};
+  }
+`;
+
 export const MenuButton = observer(function MenuButton({
   opportunity,
   onDenialButtonClick = () => null,
@@ -38,13 +65,76 @@ export const MenuButton = observer(function MenuButton({
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
 }) {
-  const buttonText =
-    opportunity.config.denialButtonText ??
-    (opportunity.config.isAlert ? "Override?" : "Update eligibility");
+  const { submittedOpportunityStatus } = useFeatureVariants();
 
-  return (
-    <StatusAwareButton onClick={onDenialButtonClick}>
-      {buttonText}
-    </StatusAwareButton>
-  );
+  const { config } = opportunity;
+
+  const toggleText = config.isAlert ? "Override?" : "Update status";
+
+  const submittedText = `Mark ${opportunity.submittedTabTitle}`;
+  const undoSubmitText = `Revert from ${opportunity.submittedTabTitle}`;
+
+  const denialText = opportunity.denial
+    ? `Update ${config.denialNoun}`
+    : config.denialButtonText ?? `Mark ${config.denialAdjective}`;
+
+  const deleteSubmitted = async () => {
+    await opportunity.deleteSubmitted();
+    // The person may become either Eligible or Almost Eligible
+    toast(
+      `Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${config.label}`,
+      {
+        id: "eligibleToast", // prevent duplicate toasts
+        position: "bottom-left",
+      },
+    );
+  };
+
+  const markSubmitted = async () => {
+    await opportunity.markSubmitted();
+    toast(
+      `Marked ${opportunity.person.displayName} as ${config.submittedTabTitle} for ${config.label}`,
+      {
+        id: "submittedToast", // prevent duplicate toasts
+        position: "bottom-left",
+      },
+    );
+  };
+
+  if (submittedOpportunityStatus) {
+    return (
+      <Dropdown>
+        <StatusAwareToggle>{toggleText}</StatusAwareToggle>
+        <DropdownMenu>
+          {opportunity.isSubmitted ? (
+            <OpportunityStatusDropdownMenuItem onClick={deleteSubmitted}>
+              {undoSubmitText}
+            </OpportunityStatusDropdownMenuItem>
+          ) : (
+            <OpportunityStatusDropdownMenuItem onClick={markSubmitted}>
+              {submittedText}
+            </OpportunityStatusDropdownMenuItem>
+          )}
+          <>
+            {opportunity.supportsDenial && (
+              <OpportunityStatusDropdownMenuItem onClick={onDenialButtonClick}>
+                {denialText}
+              </OpportunityStatusDropdownMenuItem>
+            )}
+          </>
+        </DropdownMenu>
+      </Dropdown>
+    );
+  } else {
+    return (
+      <>
+        {opportunity.supportsDenial && (
+          <StatusAwareButton onClick={onDenialButtonClick}>
+            {config.denialButtonText ??
+              (config.isAlert ? "Override?" : "Update eligibility")}
+          </StatusAwareButton>
+        )}
+      </>
+    );
+  }
 });

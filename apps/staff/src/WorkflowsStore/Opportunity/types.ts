@@ -45,7 +45,8 @@ export type OpportunityRequirement = {
 // ranked roughly by actionability
 export const OPPORTUNITY_STATUS_RANKED = [
   "PENDING",
-  "IN_PROGRESS",
+  "IN_PROGRESS", // form viewed
+  "SUBMITTED", // user marked as "submitted" or "in progress"
   "DENIED",
   "COMPLETED",
   "ALMOST",
@@ -139,6 +140,11 @@ export interface Opportunity<
   showEligibilityStatus: (component: Component) => boolean;
   readonly portionServedRequirement?: string[];
   readonly DenialConfirmationModal?: React.ComponentType<DenialConfirmationModalProps>;
+  isSubmitted: boolean;
+  readonly submittedTabTitle: string;
+  markSubmitted: () => Promise<void>;
+  deleteSubmitted: () => Promise<void>;
+  submittedUpdate: UpdateLog | undefined;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
@@ -165,7 +171,9 @@ export type OpportunityTab =
   | "Overdue"
   | "Upcoming"
   | "Due now"
-  | "Assessment Complete";
+  | "Assessment Complete"
+  | "In Progress"
+  | "Submitted";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

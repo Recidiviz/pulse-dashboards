@@ -21,6 +21,7 @@ import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
@@ -111,7 +112,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     opportunity?.autoSnooze?.snoozeUntil,
   );
 
-  const { enableSnooze } = useFeatureVariants();
+  const { enableSnooze, submittedOpportunityStatus } = useFeatureVariants();
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
@@ -150,11 +151,25 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const { DenialConfirmationModal } = opportunity;
 
+  const postDenialToast = () => {
+    if (submittedOpportunityStatus) {
+      toast(
+        `${opportunity.person.displayName} is now ${opportunity.tabTitle()} for ${opportunity.config.label}`,
+        {
+          id: "denialToast", // prevent duplicate toasts
+          position: "bottom-left",
+        },
+      );
+    }
+  };
+
   const submitDenial = async () => {
     setShowConfirmationModal(false);
 
     if (reasons.length === 0) {
       await opportunity.deleteOpportunityDenialAndSnooze();
+      postDenialToast();
+      onSubmit();
       return;
     }
 
@@ -167,6 +182,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         await opportunity.setAutoSnooze(defaultAutoSnoozeFn, reasons);
       }
     }
+    postDenialToast();
     onSubmit();
   };
 

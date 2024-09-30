@@ -355,12 +355,27 @@ export default class FirestoreStore {
     });
   }
 
+  async updateOpportunitySubmitted(
+    userEmail: string,
+    opportunityType: OpportunityType,
+    recordId: string,
+  ) {
+    // If someone is now submitted, they should not be denied
+    await this.deleteOpportunityDenialAndSnooze(opportunityType, recordId);
+    return this.updateOpportunity(opportunityType, recordId, {
+      submitted: { by: userEmail, date: serverTimestamp() },
+    });
+  }
+
   async updateOpportunityAutoSnooze(
     opportunityType: OpportunityType,
     recordId: string,
     snoozeUpdate: AutoSnoozeUpdate,
     deleteSnoozeField: boolean,
   ): Promise<void> {
+    // If someone is now snoozed, they should not be submitted
+    await this.deleteOpportunitySubmitted(opportunityType, recordId);
+
     const changes = deleteSnoozeField
       ? { autoSnooze: deleteField() }
       : {
@@ -376,6 +391,9 @@ export default class FirestoreStore {
     snoozeUpdate: ManualSnoozeUpdate,
     deleteSnoozeField: boolean,
   ): Promise<void> {
+    // If someone is now snoozed, they should not be submitted
+    await this.deleteOpportunitySubmitted(opportunityType, recordId);
+
     const changes = deleteSnoozeField
       ? { manualSnooze: deleteField() }
       : {
@@ -397,6 +415,9 @@ export default class FirestoreStore {
       otherReason: boolean;
     },
   ): Promise<void> {
+    // If someone is now denied, they should not be submitted
+    await this.deleteOpportunitySubmitted(opportunityType, recordId);
+
     // Firestore will reject any undefined values so filter them out
     const filteredUpdates = pickBy(fieldUpdates);
 
@@ -527,6 +548,15 @@ export default class FirestoreStore {
         snoozeUntil,
         ...(error !== undefined && { error }),
       },
+    });
+  }
+
+  async deleteOpportunitySubmitted(
+    opportunityType: OpportunityType,
+    recordId: string,
+  ) {
+    return this.updateOpportunity(opportunityType, recordId, {
+      submitted: deleteField(),
     });
   }
 

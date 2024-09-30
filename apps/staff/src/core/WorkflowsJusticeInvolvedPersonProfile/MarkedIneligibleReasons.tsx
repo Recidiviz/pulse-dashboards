@@ -21,6 +21,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
+import { Denial, UpdateLog } from "../../FirestoreStore";
 import { Opportunity } from "../../WorkflowsStore";
 
 const MarkedIneligibleReasonsText = styled.div`
@@ -39,18 +40,33 @@ const OtherReasonText = styled.pre`
   margin: ${rem(spacing.md)} 0 0 0;
 `;
 
-export function buildSnoozedByText({
+export function buildActedOnText({
+  denial,
+  isSubmitted,
   deniedTabTitle,
   snoozedOnDate,
   snoozedBy,
+  submittedTabTitle,
+  submittedUpdate,
 }: {
+  denial?: Denial;
+  isSubmitted: boolean;
   deniedTabTitle: string;
   snoozedOnDate?: Date;
   snoozedBy?: string;
+  submittedTabTitle: string;
+  submittedUpdate?: UpdateLog;
 }): string | undefined {
-  if (!snoozedOnDate || !snoozedBy) return;
-  return `${deniedTabTitle.charAt(0).toUpperCase() + deniedTabTitle.slice(1).toLowerCase()} by ${snoozedBy} on ${format(
-    snoozedOnDate,
+  if (!isSubmitted && !denial) return;
+
+  const status = denial ? deniedTabTitle : submittedTabTitle;
+  const actionBy = denial ? snoozedBy : submittedUpdate?.by;
+  const actionDate = denial ? snoozedOnDate : submittedUpdate?.date.toDate();
+
+  if (!actionBy || !actionDate) return;
+
+  return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()} by ${actionBy} on ${format(
+    actionDate,
     "LLLL d, yyyy",
   )}.`;
 }
@@ -91,23 +107,31 @@ export function buildDenialReasonsListText(
   return `${ineligibleReasonsListCopy}${" "}${denialReasonsList}`;
 }
 
-export function buildSnoozedByTextAndResurfaceText(
+export function buildActedOnTextAndResurfaceText(
   opportunity: Opportunity,
   snoozeUntil?: Date,
 ) {
-  const snoozedByText = buildSnoozedByText(opportunity);
+  const actedOnText = buildActedOnText(opportunity);
   const resurfaceText = buildResurfaceText(opportunity, snoozeUntil);
-  return [snoozedByText, resurfaceText];
+  return [actedOnText, resurfaceText];
 }
 
 const MarkedIneligibleReasons: React.FC<{
   opportunity: Opportunity;
-  snoozedByTextAndResurfaceTextPair: ReturnType<
-    typeof buildSnoozedByTextAndResurfaceText
+  actedOnTextAndResurfaceTextPair: ReturnType<
+    typeof buildActedOnTextAndResurfaceText
   >;
   denialReasons?: string[];
-}> = ({ opportunity, snoozedByTextAndResurfaceTextPair, denialReasons }) => {
+}> = ({ opportunity, actedOnTextAndResurfaceTextPair, denialReasons }) => {
   const { enableSnooze } = useFeatureVariants();
+
+  if (opportunity.isSubmitted) {
+    return (
+      <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
+        <div>{`Marked as ${actedOnTextAndResurfaceTextPair[0]}`} </div>
+      </MarkedIneligibleReasonsText>
+    );
+  }
 
   if (!denialReasons || !enableSnooze) return null;
 
@@ -116,28 +140,30 @@ const MarkedIneligibleReasons: React.FC<{
     denialReasons,
   );
 
-  const snoozedByTextAndResurfaceText = snoozedByTextAndResurfaceTextPair.every(
+  const actedOnTextAndResurfaceText = actedOnTextAndResurfaceTextPair.every(
     (text) => text,
   )
-    ? snoozedByTextAndResurfaceTextPair.join(" ")
+    ? actedOnTextAndResurfaceTextPair.join(" ")
     : undefined;
 
   return (
     <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
-      {snoozedByTextAndResurfaceText && (
+      {actedOnTextAndResurfaceText && (
         <>
           {" "}
-          <div>{snoozedByTextAndResurfaceText} </div> <br />
+          <div>{actedOnTextAndResurfaceText} </div> <br />
         </>
       )}
-      <div>
-        {ineligibleReasonsList}
-        {opportunity.denial?.otherReason ? (
-          <OtherReasonText>
-            &quot;{opportunity.denial.otherReason}&quot;
-          </OtherReasonText>
-        ) : null}
-      </div>
+      {opportunity.denial && (
+        <div>
+          {ineligibleReasonsList}
+          {opportunity.denial?.otherReason ? (
+            <OtherReasonText>
+              &quot;{opportunity.denial.otherReason}&quot;
+            </OtherReasonText>
+          ) : null}
+        </div>
+      )}
     </MarkedIneligibleReasonsText>
   );
 };

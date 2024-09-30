@@ -173,6 +173,8 @@ export class OpportunityBase<
       requirementsAlmostMet: computed,
       almostEligible: computed,
       denied: computed,
+      isSubmitted: computed,
+      submittedUpdate: computed,
     });
 
     this.person = person;
@@ -261,6 +263,14 @@ export class OpportunityBase<
     return differenceInDays(this.manualSnoozeUntilDate, startOfToday());
   }
 
+  get submittedUpdate(): UpdateLog | undefined {
+    return this.updates?.submitted;
+  }
+
+  get isSubmitted(): boolean {
+    return !!this.submittedUpdate;
+  }
+
   get isSnoozed(): boolean {
     const snoozeUntil =
       (this.autoSnooze?.snoozeUntil &&
@@ -299,13 +309,17 @@ export class OpportunityBase<
   }
 
   get reviewStatus(): OpportunityStatus {
-    const { updates, denial } = this;
+    const { updates, denial, isSubmitted } = this;
     if (denial) {
       return "DENIED";
     }
 
     if (updates?.completed) {
       return "COMPLETED";
+    }
+
+    if (isSubmitted) {
+      return "SUBMITTED";
     }
 
     if (this.lastViewed || updates?.referralForm) {
@@ -368,6 +382,13 @@ export class OpportunityBase<
     if (this.form) {
       this.form.hydrate();
     }
+  }
+
+  async deleteSubmitted(): Promise<void> {
+    await this.rootStore.firestoreStore.deleteOpportunitySubmitted(
+      this.type,
+      this.person.recordId,
+    );
   }
 
   async deleteOpportunityDenialAndSnooze(): Promise<void> {
@@ -454,6 +475,16 @@ export class OpportunityBase<
     return buildOpportunityCompareFunction(sortParams);
   }
 
+  async markSubmitted(): Promise<void> {
+    await this.rootStore.firestoreStore.updateOpportunitySubmitted(
+      this.currentUserEmail,
+      this.type,
+      this.person.recordId,
+    );
+
+    // TODO(#6186): Analytics for marking this opportunity as in progress
+  }
+
   async setDenialReasons(reasons: string[]): Promise<void> {
     const { recordId, pseudonymizedId } = this.person;
 
@@ -524,12 +555,17 @@ export class OpportunityBase<
     });
   }
 
+  get submittedTabTitle(): OpportunityTab {
+    return this.config.submittedTabTitle;
+  }
+
   get deniedTabTitle(): OpportunityTab {
-    return this.config.deniedTabTitle ?? "Marked Ineligible";
+    return this.config.deniedTabTitle;
   }
 
   tabTitle(category?: OpportunityTabGroup): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
+    if (this.isSubmitted) return this.submittedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
     return "Eligible Now";
   }

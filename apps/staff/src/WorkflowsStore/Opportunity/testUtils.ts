@@ -34,6 +34,10 @@ export const DENIED_UPDATE = {
   denial: { reasons: ["ABC"], updated: UPDATE_RECORD },
 };
 
+export const SUBMITTED_UPDATE = {
+  submitted: { update: UPDATE_RECORD },
+};
+
 export const COMPLETED_UPDATE = {
   completed: { update: UPDATE_RECORD },
 };

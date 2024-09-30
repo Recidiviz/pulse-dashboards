@@ -97,7 +97,8 @@ export type FeatureVariant =
   | "lastSyncedDate"
   | "caseNoteSearch"
   | "actionStrategies"
-  | "nonOMSCriteria";
+  | "nonOMSCriteria"
+  | "submittedOpportunityStatus";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -145,6 +146,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   caseNoteSearch: {},
   actionStrategies: {},
   nonOMSCriteria: {},
+  submittedOpportunityStatus: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

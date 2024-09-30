@@ -45,6 +45,7 @@ export type AutoSnoozeUpdate = {
 
 export type OpportunityUpdate = {
   denial?: Denial;
+  submitted?: UpdateLog;
   manualSnooze?: ManualSnoozeUpdate;
   autoSnooze?: AutoSnoozeUpdate;
   omsSnooze?: ExternalRequestUpdate<{ snoozeUntil: string }>;

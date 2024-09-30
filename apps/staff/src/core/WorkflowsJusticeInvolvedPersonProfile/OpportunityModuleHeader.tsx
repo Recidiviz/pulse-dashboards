@@ -15,17 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans16 } from "@recidiviz/design-system";
+import { palette, Pill, Sans16 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { EligibilityStatus } from "../OpportunityStatus";
+import { useStatusColors } from "../utils/workflowsUtils";
 import { Separator } from "./styles";
 
 const TitleText = styled(Sans16)`
   color: ${palette.pine1};
   display: inline-block;
+`;
+
+const EligibilityStatusPill = styled(Pill)<{ $borderColor: string }>`
+  border-radius: ${rem(4)};
+  border: 1px solid ${(props) => props.$borderColor};
+  font-size: ${rem(12)};
+  font-weight: 600;
+  height: ${rem(20)};
+  padding: 0 ${rem(6)};
+  margin-left: ${rem(14)};
+  vertical-align: top;
 `;
 
 const OpportunityLabel = styled.span``;
@@ -36,22 +50,36 @@ type OpportunityModuleHeaderProps = {
 
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
   observer(function OpportunityModuleHeader({ opportunity }) {
+    const colors = useStatusColors(opportunity);
+    const { submittedOpportunityStatus } = useFeatureVariants();
+
     return (
       <TitleText>
         <OpportunityLabel>{opportunity.config.label}</OpportunityLabel>
-        {opportunity.showEligibilityStatus("OpportunityModuleHeader") && (
-          <>
-            <Separator> • </Separator>
-            <span
+        {opportunity.showEligibilityStatus("OpportunityModuleHeader") &&
+          (submittedOpportunityStatus ? (
+            <EligibilityStatusPill
               className="EligibilityStatus"
-              style={{
-                color: palette.pine1,
-              }}
+              filled
+              color={colors.badgeBackground}
+              textColor={colors.badgeText}
+              $borderColor={colors.badgeBorder}
             >
               <EligibilityStatus opportunity={opportunity} />
-            </span>
-          </>
-        )}
+            </EligibilityStatusPill>
+          ) : (
+            <>
+              <Separator> • </Separator>
+              <span
+                className="EligibilityStatus"
+                style={{
+                  color: palette.pine1,
+                }}
+              >
+                <EligibilityStatus opportunity={opportunity} />
+              </span>
+            </>
+          ))}
       </TitleText>
     );
   });

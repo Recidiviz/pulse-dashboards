@@ -143,10 +143,12 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
       : defaultAvatarsShown;
   const previewOpportunities = opportunities.slice(0, sliceIndex);
   const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
+
   const reviewStatusText = opportunities[0].config.deniedTabTitle;
-  const numIneligible = opportunities.filter(
-    (opp) => opp.reviewStatus === "DENIED",
-  ).length;
+  const numIneligible = opportunities.filter((opp) => opp.denial).length;
+  const submittedText = opportunities[0].config.submittedTabTitle;
+  const numSubmitted = opportunities.filter((opp) => opp.isSubmitted).length;
+
   const navigationURL = officerPseudoId
     ? insightsUrl("supervisionOpportunity", {
         officerPseudoId,
@@ -167,6 +169,11 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
           {numIneligible > 0 && (
             <ReviewStatusCount>
               {reviewStatusText}: {numIneligible}
+            </ReviewStatusCount>
+          )}
+          {numSubmitted > 0 && (
+            <ReviewStatusCount>
+              {submittedText}: {numSubmitted}
             </ReviewStatusCount>
           )}
         </ReviewStatusWrapper>

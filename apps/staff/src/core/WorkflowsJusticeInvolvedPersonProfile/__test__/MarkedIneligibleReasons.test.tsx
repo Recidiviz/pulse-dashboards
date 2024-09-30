@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import { Timestamp } from "firebase/firestore";
 import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
@@ -23,10 +24,10 @@ import { useFeatureVariants } from "../../../components/StoreProvider";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import MarkedIneligibleReasons, {
+  buildActedOnText,
+  buildActedOnTextAndResurfaceText,
   buildDenialReasonsListText,
   buildResurfaceText,
-  buildSnoozedByText,
-  buildSnoozedByTextAndResurfaceText,
 } from "../MarkedIneligibleReasons";
 
 vi.mock("../../../components/StoreProvider");
@@ -50,15 +51,31 @@ describe("buildDenialReasonsListText", () => {
   });
 });
 
-describe("snoozedByText", () => {
+describe("actedOnText", () => {
+  test("marked submitted", () => {
+    const testOpp = {
+      ...mockOpportunity,
+      isSubmitted: true,
+      submittedTabTitle: "Submitted",
+      submittedUpdate: {
+        date: Timestamp.fromDate(new Date(2023, 9, 15)),
+        by: "test-email",
+      },
+    };
+    expect(buildActedOnText(testOpp)).toEqual(
+      "Submitted by test-email on October 15, 2023.",
+    );
+  });
+
   test("marked ineligible", () => {
     const testOpp = {
       ...mockOpportunity,
+      denial: { reasons: [] },
       deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 15),
       snoozedBy: "test-email",
     };
-    expect(buildSnoozedByText(testOpp)).toEqual(
+    expect(buildActedOnText(testOpp)).toEqual(
       "Marked ineligible by test-email on October 15, 2023.",
     );
   });
@@ -66,11 +83,12 @@ describe("snoozedByText", () => {
   test("override opportunities", () => {
     const testOpp = {
       ...mockOpportunity,
+      denial: { reasons: [] },
       deniedTabTitle: "Overridden",
       snoozedOnDate: new Date(2023, 9, 15),
       snoozedBy: "test-email",
     };
-    expect(buildSnoozedByText(testOpp)).toEqual(
+    expect(buildActedOnText(testOpp)).toEqual(
       "Overridden by test-email on October 15, 2023.",
     );
   });
@@ -78,19 +96,21 @@ describe("snoozedByText", () => {
   test("no snoozed on date supplied", () => {
     const testOpp = {
       ...mockOpportunity,
+      denial: { reasons: [] },
       deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
-    expect(buildSnoozedByText(testOpp)).toBeUndefined();
+    expect(buildActedOnText(testOpp)).toBeUndefined();
   });
 
   test("no snoozed by supplied", () => {
     const testOpp = {
       ...mockOpportunity,
+      denial: { reasons: [] },
       deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
-    expect(buildSnoozedByText(testOpp)).toBeUndefined();
+    expect(buildActedOnText(testOpp)).toBeUndefined();
   });
 });
 
@@ -146,7 +166,7 @@ describe("MarkedIneligibleReasons", () => {
         otherReason: "Other Reason",
       },
     };
-    const testText = buildSnoozedByTextAndResurfaceText(
+    const testText = buildActedOnTextAndResurfaceText(
       opp,
       new Date(2023, 9, 15),
     );
@@ -154,7 +174,7 @@ describe("MarkedIneligibleReasons", () => {
       <BrowserRouter>
         <MarkedIneligibleReasons
           opportunity={opp}
-          snoozedByTextAndResurfaceTextPair={testText}
+          actedOnTextAndResurfaceTextPair={testText}
           denialReasons={["REASON", OTHER_KEY]}
         />
       </BrowserRouter>,

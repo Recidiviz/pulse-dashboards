@@ -20,9 +20,18 @@ import { OpportunityTab } from "../types";
 export const generateTabs = ({
   customTabOrder,
   deniedTabTitle = "Marked Ineligible",
+  submittedTabTitle,
 }: {
   customTabOrder?: OpportunityTab[];
   deniedTabTitle?: OpportunityTab;
+  submittedTabTitle?: OpportunityTab;
 }): ReadonlyArray<OpportunityTab> => {
-  return customTabOrder ?? ["Eligible Now", "Almost Eligible", deniedTabTitle];
+  return (
+    customTabOrder ?? [
+      "Eligible Now",
+      "Almost Eligible",
+      ...(submittedTabTitle ? [submittedTabTitle] : []),
+      deniedTabTitle,
+    ]
+  );
 };

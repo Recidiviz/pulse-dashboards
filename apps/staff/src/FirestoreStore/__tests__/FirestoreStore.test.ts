@@ -21,6 +21,7 @@ import {
   doc,
   DocumentReference,
   PartialWithFieldValue,
+  serverTimestamp,
   setDoc,
 } from "firebase/firestore";
 import tk from "timekeeper";
@@ -56,6 +57,7 @@ const mockConnectAuthEmulator = connectAuthEmulator as Mock;
 const mockSetDoc = setDoc as Mock;
 const mockDoc = doc as Mock;
 const mockDeleteField = deleteField as Mock;
+const mockServerTimestamp = serverTimestamp as Mock;
 
 vi.mock("../../api/fetchFirebaseToken", () => {
   return {
@@ -282,6 +284,7 @@ describe("FirestoreStore", () => {
       } as unknown as RootStore;
       mockDoc.mockReturnValue("test-doc-ref");
       mockDeleteField.mockReturnValue("mock-delete-fn");
+      mockServerTimestamp.mockReturnValue("mock-timestamp");
       store = new FirestoreStore({ rootStore: mockRootStore });
     });
 
@@ -358,30 +361,23 @@ describe("FirestoreStore", () => {
         update,
         false,
       );
-      expect(mockDoc.mock.calls).toEqual([
-        [
-          undefined,
-          "clientUpdatesV2",
-          "us_id_123/clientOpportunityUpdates/LSU",
-        ],
-        [undefined, "clientUpdatesV2", "us_id_123"],
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123/clientOpportunityUpdates/LSU",
+      ]);
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123",
       ]);
 
-      expect(mockSetDoc.mock.calls).toEqual([
-        [
-          "test-doc-ref",
-          { stateCode: "us_id" },
-          {
-            merge: true,
-          },
-        ],
-        [
-          "test-doc-ref",
-          { autoSnooze: update },
-          {
-            merge: true,
-          },
-        ],
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        { autoSnooze: update },
+        {
+          merge: true,
+        },
       ]);
     });
 
@@ -392,30 +388,23 @@ describe("FirestoreStore", () => {
         snoozedOn: "2023-11-10",
       };
       await store.updateOpportunityAutoSnooze("LSU", "us_id_123", update, true);
-      expect(mockDoc.mock.calls).toEqual([
-        [
-          undefined,
-          "clientUpdatesV2",
-          "us_id_123/clientOpportunityUpdates/LSU",
-        ],
-        [undefined, "clientUpdatesV2", "us_id_123"],
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123/clientOpportunityUpdates/LSU",
+      ]);
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123",
       ]);
 
-      expect(mockSetDoc.mock.calls).toEqual([
-        [
-          "test-doc-ref",
-          { stateCode: "us_id" },
-          {
-            merge: true,
-          },
-        ],
-        [
-          "test-doc-ref",
-          { autoSnooze: "mock-delete-fn" },
-          {
-            merge: true,
-          },
-        ],
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        { autoSnooze: "mock-delete-fn" },
+        {
+          merge: true,
+        },
       ]);
     });
 
@@ -431,30 +420,23 @@ describe("FirestoreStore", () => {
         update,
         false,
       );
-      expect(mockDoc.mock.calls).toEqual([
-        [
-          undefined,
-          "clientUpdatesV2",
-          "us_id_123/clientOpportunityUpdates/LSU",
-        ],
-        [undefined, "clientUpdatesV2", "us_id_123"],
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123/clientOpportunityUpdates/LSU",
+      ]);
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123",
       ]);
 
-      expect(mockSetDoc.mock.calls).toEqual([
-        [
-          "test-doc-ref",
-          { stateCode: "us_id" },
-          {
-            merge: true,
-          },
-        ],
-        [
-          "test-doc-ref",
-          { manualSnooze: update },
-          {
-            merge: true,
-          },
-        ],
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        { manualSnooze: update },
+        {
+          merge: true,
+        },
       ]);
     });
 
@@ -470,30 +452,52 @@ describe("FirestoreStore", () => {
         update,
         true,
       );
-      expect(mockDoc.mock.calls).toEqual([
-        [
-          undefined,
-          "clientUpdatesV2",
-          "us_id_123/clientOpportunityUpdates/LSU",
-        ],
-        [undefined, "clientUpdatesV2", "us_id_123"],
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123/clientOpportunityUpdates/LSU",
+      ]);
+      expect(mockDoc.mock.calls).toContainEqual([
+        undefined,
+        "clientUpdatesV2",
+        "us_id_123",
       ]);
 
-      expect(mockSetDoc.mock.calls).toEqual([
-        [
-          "test-doc-ref",
-          { stateCode: "us_id" },
-          {
-            merge: true,
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        { manualSnooze: "mock-delete-fn" },
+        {
+          merge: true,
+        },
+      ]);
+    });
+
+    test("updateOpportunitySubmitted", async () => {
+      await store.updateOpportunitySubmitted("test-email", "LSU", "us_id_123");
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          submitted: {
+            by: "test-email",
+            date: "mock-timestamp",
           },
-        ],
-        [
-          "test-doc-ref",
-          { manualSnooze: "mock-delete-fn" },
-          {
-            merge: true,
-          },
-        ],
+        },
+        {
+          merge: true,
+        },
+      ]);
+    });
+
+    test("deleteOpportunitySubmitted", async () => {
+      await store.deleteOpportunitySubmitted("LSU", "us_id_123");
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          submitted: "mock-delete-fn",
+        },
+        {
+          merge: true,
+        },
       ]);
     });
 
