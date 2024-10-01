@@ -21,10 +21,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
-import {
-  useOpportunityConfigurations,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { WorkflowsRouteParams } from "../../WorkflowsStore";
 import { getSystemIdFromPage } from "../../WorkflowsStore/utils";
 import { SystemId } from "../models/types";
@@ -61,7 +58,6 @@ const RouteSync = observer(function RouteSync({
   const [previousLocContainedPersonId, setPreviousLocContainedPersonId] =
     useState(false);
 
-  const OPPORTUNITY_CONFIGS = useOpportunityConfigurations();
   useEffect(
     () =>
       autorun(() => {
@@ -76,7 +72,8 @@ const RouteSync = observer(function RouteSync({
         /* 1. Update activeSystem and selectedOpportunityType */
         if (opportunityType) {
           workflowsStore.updateActiveSystem(
-            OPPORTUNITY_CONFIGS[opportunityType].systemType,
+            opportunityConfigurationStore.opportunities[opportunityType]
+              .systemType,
           );
           workflowsStore.updateSelectedOpportunityType(opportunityType);
         } else {
@@ -114,7 +111,10 @@ const RouteSync = observer(function RouteSync({
           runInAction(() => {
             const { opportunityTypes } = workflowsStore;
             if (opportunityTypes.length === 1) {
-              const { urlSection } = OPPORTUNITY_CONFIGS[opportunityTypes[0]];
+              const { urlSection } =
+                opportunityConfigurationStore.opportunities[
+                  opportunityTypes[0]
+                ];
               setRedirectPath(
                 workflowsUrl("opportunityClients", {
                   urlSection,
@@ -127,7 +127,6 @@ const RouteSync = observer(function RouteSync({
         }
       }),
     [
-      OPPORTUNITY_CONFIGS,
       loc,
       opportunityConfigurationStore,
       workflowsStore,
