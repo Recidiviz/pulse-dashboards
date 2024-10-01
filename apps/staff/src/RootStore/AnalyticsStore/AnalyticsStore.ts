@@ -314,8 +314,12 @@ export default class AnalyticsStore {
     this.track("frontend.tasks_previewed", metadata);
   }
 
-  trackOpportunityMarkedEligible(metadata: OpportunityTrackingMetadata): void {
-    this.track("frontend.opportunity_marked_eligible", metadata);
+  trackOpportunityMarkedSubmitted(metadata: OpportunityTrackingMetadata): void {
+    this.track("frontend.opportunity_marked_submitted", metadata);
+  }
+
+  trackOpportunityUnsubmitted(metadata: OpportunityTrackingMetadata): void {
+    this.track("frontend.opportunity_unsubmitted", metadata);
   }
 
   trackReferralFormCopiedToClipboard(

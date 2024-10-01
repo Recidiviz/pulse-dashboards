@@ -344,7 +344,6 @@ export class OpportunityBase<
           this.type,
         );
         this.rootStore.analyticsStore.trackSetOpportunityStatus({
-          clientId: pseudonymizedId,
           justiceInvolvedPersonId: pseudonymizedId,
           status: "COMPLETED",
           opportunityType: this.type,
@@ -389,6 +388,11 @@ export class OpportunityBase<
       this.type,
       this.person.recordId,
     );
+
+    this.rootStore.analyticsStore.trackOpportunityUnsubmitted({
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      opportunityType: this.type,
+    });
   }
 
   async deleteOpportunityDenialAndSnooze(): Promise<void> {
@@ -396,6 +400,12 @@ export class OpportunityBase<
       this.type,
       this.person.recordId,
     );
+
+    this.rootStore.analyticsStore.trackSetOpportunityStatus({
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      status: this.reviewStatus,
+      opportunityType: this.type,
+    });
   }
 
   async setManualSnooze(days: number, reasons: string[]): Promise<void> {
@@ -411,6 +421,12 @@ export class OpportunityBase<
       snoozeForDays: days,
       reasons,
     });
+
+    // If someone goes from being submitted to being snoozed,
+    // they should no longer be submitted
+    if (this.isSubmitted) {
+      await this.deleteSubmitted();
+    }
 
     await this.rootStore.firestoreStore.updateOpportunityManualSnooze(
       this.type,
@@ -442,6 +458,12 @@ export class OpportunityBase<
       snoozeUntil: formatDateToISO(snoozeUntil),
       reasons,
     });
+
+    // If someone goes from being submitted to being snoozed,
+    // they should no longer be submitted
+    if (this.isSubmitted) {
+      await this.deleteSubmitted();
+    }
 
     await this.rootStore.firestoreStore.updateOpportunityAutoSnooze(
       this.type,
@@ -482,11 +504,31 @@ export class OpportunityBase<
       this.person.recordId,
     );
 
-    // TODO(#6186): Analytics for marking this opportunity as in progress
+    this.rootStore.analyticsStore.trackOpportunityMarkedSubmitted({
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      opportunityType: this.type,
+    });
+
+    // If someone is now submitted, they should not be denied/snoozed
+    if (this.denial) {
+      await this.deleteOpportunityDenialAndSnooze();
+    }
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {
+    if (reasons.length === 0) {
+      // If the reasons are empty, this is equivalent to deleting the denial
+      await this.deleteOpportunityDenialAndSnooze();
+      return;
+    }
+
     const { recordId, pseudonymizedId } = this.person;
+
+    // If someone goes from being submitted to being denied,
+    // they should no longer be submitted
+    if (this.isSubmitted) {
+      await this.deleteSubmitted();
+    }
 
     // clear irrelevant "other" text if necessary
     const deletions = reasons.includes(OTHER_KEY)
@@ -508,26 +550,12 @@ export class OpportunityBase<
       true,
     );
 
-    if (reasons.length) {
-      this.rootStore.analyticsStore.trackSetOpportunityStatus({
-        clientId: pseudonymizedId,
-        justiceInvolvedPersonId: pseudonymizedId,
-        status: "DENIED",
-        opportunityType: this.type,
-        deniedReasons: reasons,
-      });
-    } else {
-      this.rootStore.analyticsStore.trackSetOpportunityStatus({
-        clientId: pseudonymizedId,
-        justiceInvolvedPersonId: pseudonymizedId,
-        status: "IN_PROGRESS",
-        opportunityType: this.type,
-      });
-      this.rootStore.analyticsStore.trackOpportunityMarkedEligible({
-        justiceInvolvedPersonId: pseudonymizedId,
-        opportunityType: this.type,
-      });
-    }
+    this.rootStore.analyticsStore.trackSetOpportunityStatus({
+      justiceInvolvedPersonId: pseudonymizedId,
+      status: "DENIED",
+      opportunityType: this.type,
+      deniedReasons: reasons,
+    });
   }
 
   async setOtherReasonText(otherReason?: string): Promise<void> {

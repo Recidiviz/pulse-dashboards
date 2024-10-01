@@ -360,8 +360,6 @@ export default class FirestoreStore {
     opportunityType: OpportunityType,
     recordId: string,
   ) {
-    // If someone is now submitted, they should not be denied
-    await this.deleteOpportunityDenialAndSnooze(opportunityType, recordId);
     return this.updateOpportunity(opportunityType, recordId, {
       submitted: { by: userEmail, date: serverTimestamp() },
     });
@@ -373,9 +371,6 @@ export default class FirestoreStore {
     snoozeUpdate: AutoSnoozeUpdate,
     deleteSnoozeField: boolean,
   ): Promise<void> {
-    // If someone is now snoozed, they should not be submitted
-    await this.deleteOpportunitySubmitted(opportunityType, recordId);
-
     const changes = deleteSnoozeField
       ? { autoSnooze: deleteField() }
       : {
@@ -391,9 +386,6 @@ export default class FirestoreStore {
     snoozeUpdate: ManualSnoozeUpdate,
     deleteSnoozeField: boolean,
   ): Promise<void> {
-    // If someone is now snoozed, they should not be submitted
-    await this.deleteOpportunitySubmitted(opportunityType, recordId);
-
     const changes = deleteSnoozeField
       ? { manualSnooze: deleteField() }
       : {
@@ -415,9 +407,6 @@ export default class FirestoreStore {
       otherReason: boolean;
     },
   ): Promise<void> {
-    // If someone is now denied, they should not be submitted
-    await this.deleteOpportunitySubmitted(opportunityType, recordId);
-
     // Firestore will reject any undefined values so filter them out
     const filteredUpdates = pickBy(fieldUpdates);
 
@@ -564,7 +553,7 @@ export default class FirestoreStore {
     opportunityType: OpportunityType,
     recordId: string,
   ) {
-    this.updateOpportunity(opportunityType, recordId, {
+    return this.updateOpportunity(opportunityType, recordId, {
       denial: deleteField(),
       autoSnooze: deleteField(),
       manualSnooze: deleteField(),

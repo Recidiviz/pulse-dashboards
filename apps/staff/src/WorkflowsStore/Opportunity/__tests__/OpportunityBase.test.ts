@@ -145,6 +145,14 @@ function mockCompleted() {
   });
 }
 
+function mockSubmitted() {
+  mockHydration({
+    updateData: {
+      submitted: { by: "foo", date: vi.fn() as any },
+    },
+  });
+}
+
 const originalEnv = process.env;
 
 beforeEach(() => {
@@ -161,12 +169,9 @@ beforeEach(() => {
 
   // configure a mock user who is viewing this opportunity
   vi.spyOn(root.workflowsStore, "user", "get").mockReturnValue(mockUser);
-
   vi.spyOn(AnalyticsStore.prototype, "trackSetOpportunityStatus");
-  vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
-  vi.spyOn(AnalyticsStore.prototype, "trackOpportunityPreviewed");
-  vi.spyOn(AnalyticsStore.prototype, "trackOpportunityMarkedEligible");
   vi.spyOn(AnalyticsStore.prototype, "trackOpportunitySnoozed");
+
   mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
 });
 
@@ -436,7 +441,6 @@ describe("setCompletedIfEligible", () => {
     opp.setCompletedIfEligible();
 
     expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
-      clientId: ineligibleClientRecord.pseudonymizedId,
       justiceInvolvedPersonId: ineligibleClientRecord.pseudonymizedId,
       opportunityType: "TEST",
       status: "COMPLETED",
@@ -552,15 +556,8 @@ describe("tracking", () => {
     await opp.setDenialReasons(reasons);
 
     expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
-      clientId: client.pseudonymizedId,
       justiceInvolvedPersonId: client.pseudonymizedId,
-      status: "IN_PROGRESS",
-      opportunityType: opp.type,
-    });
-    expect(
-      root.analyticsStore.trackOpportunityMarkedEligible,
-    ).toHaveBeenCalledWith({
-      justiceInvolvedPersonId: client.pseudonymizedId,
+      status: "PENDING",
       opportunityType: opp.type,
     });
   });
@@ -571,18 +568,15 @@ describe("tracking", () => {
     await opp.setDenialReasons(reasons);
 
     expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
-      clientId: client.pseudonymizedId,
       justiceInvolvedPersonId: client.pseudonymizedId,
       status: "DENIED",
       opportunityType: opp.type,
       deniedReasons: reasons,
     });
-    expect(
-      root.analyticsStore.trackOpportunityMarkedEligible,
-    ).not.toHaveBeenCalled();
   });
 
   test("list view tracking", () => {
+    vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
     opp.trackListViewed();
 
     expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
@@ -592,10 +586,60 @@ describe("tracking", () => {
   });
 
   test("preview tracking", async () => {
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityPreviewed");
     opp.trackPreviewed();
 
     expect(root.analyticsStore.trackOpportunityPreviewed).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+    });
+  });
+
+  test("denying a submitted event tracks both changes", async () => {
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityUnsubmitted");
+    mockSubmitted();
+    const reasons = ["test1", "test2"];
+    await opp.setDenialReasons(reasons);
+
+    expect(
+      root.analyticsStore.trackOpportunityUnsubmitted,
+    ).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+    });
+
+    expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      status: "DENIED",
+      opportunityType: opp.type,
+      deniedReasons: reasons,
+    });
+  });
+
+  test("submitting a denied event tracks both changes", async () => {
+    vi.spyOn(AnalyticsStore.prototype, "trackOpportunityMarkedSubmitted");
+    vi.spyOn(
+      root.firestoreStore,
+      "deleteOpportunityDenialAndSnooze",
+    ).mockImplementation(async () => {
+      mockSubmitted();
+    });
+
+    mockDenied();
+    await opp.markSubmitted();
+
+    expect(
+      root.analyticsStore.trackOpportunityMarkedSubmitted,
+    ).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+    });
+
+    expect(
+      root.analyticsStore.trackSetOpportunityStatus,
+    ).toHaveBeenLastCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      status: "SUBMITTED",
       opportunityType: opp.type,
     });
   });
