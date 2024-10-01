@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React, { memo } from "react";
+import { observer } from "mobx-react-lite";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 import NotFound from "../../components/NotFound";
@@ -36,8 +37,7 @@ import InsightsSupervisorsListPage from "../InsightsSupervisorsListPage";
 import ModelHydrator from "../ModelHydrator";
 import { insightsRoute } from "../views";
 
-// memo is used to prevent re-rendering the entire component on route changes
-const PageInsights: React.FC = memo(function PageInsights() {
+const PageInsights: React.FC = observer(function PageInsights() {
   window.scrollTo({
     top: 0,
   });
@@ -56,7 +56,9 @@ const PageInsights: React.FC = memo(function PageInsights() {
               element={<InsightsSupervisionHome />}
             />
             <Route
-              path={insightsRoute({ routeName: "supervisionSupervisorsList" })}
+              path={insightsRoute({
+                routeName: "supervisionSupervisorsList",
+              })}
               element={<InsightsSupervisorsListPage />}
             />
 

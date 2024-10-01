@@ -66,18 +66,21 @@ const CardTitle = styled.h1`
   margin-bottom: ${rem(10)};
 `;
 
-const CardHeaderItem = styled(Link)<{ hovered?: boolean }>`
+const CardHeaderItemWrapper = styled.div<{ hovered?: boolean }>`
+  ${({ hovered }) =>
+    hovered &&
+    `background-color: ${palette.slate10};
+      
+    ${CardTitle} {
+      border-bottom: 1px solid ${palette.pine1};
+    }`}
+`;
+
+const CardHeaderItem = styled(Link)`
   display: block;
   padding: ${rem(spacing.md)};
   min-width: ${rem(200)};
   border-bottom: 1px solid ${palette.slate30};
-  ${({ hovered }) =>
-    hovered &&
-    `background-color: ${palette.slate10};
-  
-  ${CardTitle} {
-      border-bottom: 1px solid ${palette.pine1};
-    }`}
 
   &:hover {
     background-color: ${palette.slate10};
@@ -210,7 +213,7 @@ const InsightsStaffCardV2: React.FC<{
             // We want multiple-metric outlier officers to display first in the list.
             .sort((a, b) => b.outlierMetrics.length - a.outlierMetrics.length)
             .map((officer) => (
-              <CardHeaderItem
+              <CardHeaderItemWrapper
                 key={officer.externalId}
                 onMouseOver={() => {
                   presenter?.updateHoveredOfficerId(officer.externalId);
@@ -219,27 +222,30 @@ const InsightsStaffCardV2: React.FC<{
                   presenter?.updateHoveredOfficerId(undefined);
                 }}
                 hovered={presenter?.hoveredOfficerId === officer.externalId}
-                to={insightsUrl("supervisionStaff", {
-                  officerPseudoId: officer.pseudonymizedId,
-                })}
               >
-                <CardTitle>{officer.displayName}</CardTitle>
-                {officer.outlierMetrics.map((metric) => (
-                  <CardSubtitle
-                    key={metric.metricId}
-                    id={`subtitle-${metric.config.titleDisplayName}`}
-                  >
-                    {metric.config.titleDisplayName}
-                    <span
-                      aria-describedby={`subtitle-${metric.config.titleDisplayName}`}
+                <CardHeaderItem
+                  to={insightsUrl("supervisionStaff", {
+                    officerPseudoId: officer.pseudonymizedId,
+                  })}
+                >
+                  <CardTitle>{officer.displayName}</CardTitle>
+                  {officer.outlierMetrics.map((metric) => (
+                    <CardSubtitle
+                      key={metric.metricId}
+                      id={`subtitle-${metric.config.titleDisplayName}`}
                     >
-                      {formatTargetAndHighlight(
-                        metric.currentPeriodData.metricRate,
-                      )}
-                    </span>
-                  </CardSubtitle>
-                ))}
-              </CardHeaderItem>
+                      {metric.config.titleDisplayName}
+                      <span
+                        aria-describedby={`subtitle-${metric.config.titleDisplayName}`}
+                      >
+                        {formatTargetAndHighlight(
+                          metric.currentPeriodData.metricRate,
+                        )}
+                      </span>
+                    </CardSubtitle>
+                  ))}
+                </CardHeaderItem>
+              </CardHeaderItemWrapper>
             ))}
         </CardHeader>
       )}

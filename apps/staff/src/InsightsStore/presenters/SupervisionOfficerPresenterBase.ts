@@ -103,14 +103,14 @@ export abstract class SupervisionOfficerPresenterBase<
       { autoBind: true },
     );
     this.hydrator = new HydratesFromSource({
-      expectPopulated: this.expectPopulated,
+      expectPopulated: this.expectPopulated(),
       populate: async () => {
-        await Promise.all(this.populateMethods);
+        await Promise.all(this.populateMethods());
       },
     });
   }
 
-  get populateMethods() {
+  populateMethods() {
     return [
       flowResult(this.supervisionStore.populateMetricConfigs()),
       flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
@@ -119,7 +119,7 @@ export abstract class SupervisionOfficerPresenterBase<
     ];
   }
 
-  get expectPopulated() {
+  expectPopulated() {
     return [
       this.expectMetricsPopulated,
       this.expectOfficerPopulated,

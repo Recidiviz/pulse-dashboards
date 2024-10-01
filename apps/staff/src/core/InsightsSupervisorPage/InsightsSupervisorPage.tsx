@@ -153,7 +153,7 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
         <Body>
           {highlightedOfficersByMetric.map((detail) => {
             return (
-              <Banner>
+              <Banner key={detail.metricName}>
                 {highlightedOfficerText(detail, labels.supervisionOfficerLabel)}
               </Banner>
             );

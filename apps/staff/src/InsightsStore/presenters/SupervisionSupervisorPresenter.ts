@@ -110,8 +110,8 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         userCanAccessAllSupervisors: computed,
         labels: computed,
         outlierOfficersByMetricAndCaseloadCategory: computed,
-        expectPopulated: computed,
-        populateMethods: computed,
+        expectPopulated: true,
+        populateMethods: true,
         _hoveredOfficerId: observable,
         hoveredOfficerId: computed,
         updateHoveredOfficerId: action,
@@ -136,10 +136,10 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
 
     this.hydrator = new HydratesFromSource({
       populate: async () => {
-        await Promise.all([...this.populateMethods]);
+        await Promise.all([...this.populateMethods()]);
         await this.populateCaseload();
       },
-      expectPopulated: this.expectPopulated,
+      expectPopulated: this.expectPopulated(),
     });
   }
 
@@ -151,7 +151,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    * Returns an array of promises representing the methods required to populate
    * the necessary data for this presenter.
    */
-  get populateMethods() {
+  populateMethods() {
     return [
       flowResult(this.supervisionStore.populateMetricConfigs()),
       flowResult(
@@ -173,7 +173,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   /**
    * Returns an array of expectations for whether the necessary data has been populated.
    */
-  get expectPopulated() {
+  expectPopulated() {
     return [
       this.expectMetricsPopulated,
       this.expectOfficersWithOutliersPopulated,

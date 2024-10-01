@@ -46,9 +46,9 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
     });
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: this.expectPopulated,
+      expectPopulated: this.expectPopulated(),
       populate: async () => {
-        await Promise.all([...this.populateMethods]);
+        await Promise.all([...this.populateMethods()]);
       },
     });
   }

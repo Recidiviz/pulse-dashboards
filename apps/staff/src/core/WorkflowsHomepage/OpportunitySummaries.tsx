@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-
 import { Opportunity, OpportunityType } from "../../WorkflowsStore";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
@@ -25,7 +23,7 @@ import OpportunityTypeSummary from "./OpportunityTypeSummary";
  * A shared component between workflows and the supervisor homepage officer view.
  * The parent component should handle any data retrieval.
  */
-export const OpportunitySummaries = observer(function OpportunitySummaries({
+export const OpportunitySummaries = function OpportunitySummaries({
   opportunitiesByType,
   opportunityTypes,
   officerPseudoId,
@@ -60,4 +58,4 @@ export const OpportunitySummaries = observer(function OpportunitySummaries({
       <WorkflowsLastSynced date={lastSyncedDate} />
     </div>
   );
-});
+};

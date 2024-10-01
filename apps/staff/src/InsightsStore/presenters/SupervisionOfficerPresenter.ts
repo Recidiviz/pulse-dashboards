@@ -69,11 +69,11 @@ export class SupervisionOfficerPresenter<
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
-        ...super.expectPopulated,
+        ...super.expectPopulated(),
         () => this.expectClientsPopulated(this.officerExternalId),
       ],
       populate: async () => {
-        await Promise.all(super.populateMethods);
+        await Promise.all(super.populateMethods());
         // this needs to happen after the above calls so that the officer record is hydrated, since
         // we need its external ID
         await this.populateCaseload();

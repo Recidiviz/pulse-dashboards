@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { Hydratable, Hydrator } from "~hydration-utils";
@@ -46,4 +45,4 @@ function ModelHydrator({
   );
 }
 
-export default observer(ModelHydrator);
+export default ModelHydrator;

@@ -126,15 +126,15 @@ export const SwarmPlotHighlightedDot = observer(
     const isHovered = showLabel && isOpen;
 
     const currRelativePath = getRelativePath(useLocation().pathname);
-    const isMetricPage = matchPath(
-      insightsRoute({ routeName: "supervisionStaffMetric" }),
+    const isSupervisorPage = matchPath(
+      insightsRoute({ routeName: "supervisionSupervisor" }),
       currRelativePath,
     );
 
     return (
       <>
         <ConditionalLinkWrapper
-          condition={!isMetricPage}
+          condition={!!isSupervisorPage}
           to={insightsUrl("supervisionStaffMetric", {
             officerPseudoId: data.officerPseudoId,
             metricId: data.metricId,
@@ -142,10 +142,12 @@ export const SwarmPlotHighlightedDot = observer(
         >
           <RateHighlightMark
             onMouseEnter={() => {
-              if (presenter) presenter.updateHoveredOfficerId(data.officerId);
+              if (isSupervisorPage && presenter)
+                presenter.updateHoveredOfficerId(data.officerId);
             }}
             onMouseOut={() => {
-              if (presenter) presenter.updateHoveredOfficerId(undefined);
+              if (isSupervisorPage && presenter)
+                presenter.updateHoveredOfficerId(undefined);
             }}
             tabIndex={0}
             r={r ?? SWARM_DOT_RADIUS_V2}

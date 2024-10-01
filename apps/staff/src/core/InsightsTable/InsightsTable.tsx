@@ -76,6 +76,13 @@ const TR = styled.div<{
     `flex-direction: column; gap: ${rem(spacing.xxs)}; padding: ${rem(
       spacing.md,
     )};`}
+
+    &:hover {
+    background: ${({ supervisorHomepage }) =>
+      supervisorHomepage
+        ? rgba(palette.slate30, 0.05)
+        : rgba(palette.signal.highlight, 0.05)};
+  }
 `;
 
 const TD = styled.div<{
@@ -96,15 +103,9 @@ const Text = styled.div`
   border-bottom: 1px solid transparent;
 `;
 
-const StyledLink = styled(Link)<{ supervisorHomepage?: boolean }>`
+const StyledLink = styled(Link)`
   color: inherit !important;
 
-  &:hover ${TR} {
-    background: ${({ supervisorHomepage }) =>
-      supervisorHomepage
-        ? rgba(palette.slate30, 0.05)
-        : rgba(palette.signal.highlight, 0.05)};
-  }
   &:hover ${TD}:first-child ${Text} {
     color: ${palette.signal.links};
     border-bottom: 1px solid ${palette.signal.links};
@@ -210,7 +211,6 @@ const InsightsTable = <T extends object>({
           to={rowLinks[index]}
           state={{ from: location.pathname }}
           onClick={() => setScrollIndex(index)}
-          supervisorHomepage={supervisorHomepage}
         >
           {rowViz}
         </StyledLink>

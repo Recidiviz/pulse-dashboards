@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 
 import { InsightsStore } from "../../InsightsStore/InsightsStore";
@@ -36,16 +35,14 @@ const StoreContext = React.createContext<undefined | StoreContextType>(
   undefined,
 );
 
-const StoreProvider: React.FC<{ children: React.ReactNode }> = observer(
+const StoreProvider: React.FC<{ children: React.ReactNode }> =
   function StoreProvider({ children }) {
     return (
       <StoreContext.Provider value={{ store }}>
         {children}
       </StoreContext.Provider>
     );
-  },
-);
-
+  };
 export default StoreProvider;
 
 /**
