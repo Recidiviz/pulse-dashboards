@@ -18,7 +18,10 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import {
   Client,
   JusticeInvolvedPerson,
@@ -36,6 +39,7 @@ import {
 } from "./ClientDetailSidebarComponents";
 import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
+import { OpportunityBanner } from "./OpportunityBanner";
 import {
   CaseNotes,
   EligibilityDate,
@@ -125,8 +129,9 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     selectedPerson,
   }) {
     const {
-      workflowsStore: { selectedResident },
+      workflowsStore: { selectedResident, justiceInvolvedPersonTitle },
     } = useRootStore();
+    const { personSpecificOppBanners } = useFeatureVariants();
 
     if (!opportunity || !selectedPerson) {
       return null;
@@ -135,6 +140,12 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     return (
       <article>
         <Heading person={selectedPerson} />
+        {personSpecificOppBanners && opportunity.previewBannerText && (
+          <OpportunityBanner
+            opportunity={opportunity}
+            title={justiceInvolvedPersonTitle}
+          />
+        )}
         <AccordionWrapper allowZeroExpanded preExpanded={[opportunity.type]}>
           <AccordionSection
             opportunity={opportunity}

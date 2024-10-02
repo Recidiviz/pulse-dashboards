@@ -18,6 +18,7 @@
 import { addYears } from "date-fns";
 import { uniqBy } from "lodash";
 
+import { workflowsUrl } from "../core/views";
 import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
 import { ResidentMetadata } from "../FirestoreStore/types";
 import tenants from "../tenants";
@@ -27,6 +28,12 @@ import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
 
 export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord> {
+  get profileUrl(): string {
+    return workflowsUrl("residentProfile", {
+      justiceInvolvedPersonId: this.pseudonymizedId,
+    });
+  }
+
   get facilityId(): string | undefined {
     return this.record.facilityId ?? undefined;
   }

@@ -358,6 +358,22 @@ export class OpportunityBase<
   }
 
   /**
+   * Text displayed as a header when this opportunity is previewed
+   */
+  get previewBannerText(): string | undefined {
+    switch (this.person.stateCode) {
+      case "US_AZ":
+      case "US_MI":
+      case "US_ME":
+      case "US_OR":
+      case "US_TN":
+        return "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod temor. With longer text, the profile link stays on one line";
+      default:
+        return;
+    }
+  }
+
+  /**
    * An Opportunity is only as hydrated as its least-hydrated Subscription.
    */
   get hydrationState(): HydrationState {

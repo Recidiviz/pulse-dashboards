@@ -104,6 +104,7 @@ export interface Opportunity<
   nonOMSRequirements: OpportunityRequirement[];
   reviewStatus: OpportunityStatus;
   readonly type: OpportunityType;
+  previewBannerText?: string;
   denial: Denial | undefined;
   manualSnooze: ManualSnoozeUpdate | undefined;
   autoSnooze: AutoSnoozeUpdate | undefined;

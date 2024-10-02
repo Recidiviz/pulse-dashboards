@@ -25,11 +25,10 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord, toTitleCase } from "../../utils";
-import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { ProfileCapsule } from "../PersonCapsules";
 import { SectionLabelText } from "../sharedComponents";
-import { workflowsUrl } from "../views";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import WorkflowsResults from "../WorkflowsResults";
 
@@ -48,12 +47,7 @@ function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
   if (!persons.length) return null;
   const items = persons.map((person) => (
     <li key={`externalId-${person.externalId}`}>
-      <Link
-        to={workflowsUrl(
-          person instanceof Client ? "clientProfile" : "residentProfile",
-          { justiceInvolvedPersonId: person.pseudonymizedId },
-        )}
-      >
+      <Link to={person.profileUrl}>
         <ProfileCapsule avatarSize="lg" person={person} textSize="sm" />
       </Link>
     </li>

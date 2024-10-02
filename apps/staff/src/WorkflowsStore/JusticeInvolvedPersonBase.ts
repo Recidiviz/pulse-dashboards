@@ -38,6 +38,7 @@ import {
 } from "~datatypes";
 import { isHydrated, isHydrationFinished } from "~hydration-utils";
 
+import { workflowsUrl } from "../core/views";
 import {
   ContactMethodType,
   MilestonesMessage,
@@ -152,6 +153,12 @@ export class JusticeInvolvedPersonBase<
       oppsToDelete.forEach((opportunityType) => {
         remove(this.potentialOpportunities, opportunityType);
       });
+    });
+  }
+
+  get profileUrl(): string {
+    return workflowsUrl("residentProfile", {
+      justiceInvolvedPersonId: this.pseudonymizedId,
     });
   }
 

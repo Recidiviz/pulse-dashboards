@@ -20,9 +20,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { Client } from "../../WorkflowsStore";
 import { ProfileCapsule } from "../PersonCapsules";
-import { workflowsUrl } from "../views";
 import { PersonProfileProps } from "./types";
 
 const HeadingWrapper = styled.div`
@@ -39,10 +37,7 @@ export const Heading = observer(function Heading({
         person={person}
         textSize="sm"
         nameHoverState={false}
-        profileLink={workflowsUrl(
-          person instanceof Client ? "clientProfile" : "residentProfile",
-          { justiceInvolvedPersonId: person.pseudonymizedId },
-        )}
+        profileLink={person.profileUrl}
       />
     </HeadingWrapper>
   );

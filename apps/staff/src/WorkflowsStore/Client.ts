@@ -22,6 +22,7 @@ import { action, makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 import { toast } from "react-hot-toast";
 
+import { workflowsUrl } from "../core/views";
 import {
   ClientEmployer,
   ClientRecord,
@@ -180,6 +181,12 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.tenantMilestones = tenantMilestoneTypes
       ? filteredMilestoneTypes(record.milestones, tenantMilestoneTypes)
       : record.milestones;
+  }
+
+  get profileUrl(): string {
+    return workflowsUrl("clientProfile", {
+      justiceInvolvedPersonId: this.pseudonymizedId,
+    });
   }
 
   get assignedStaffId(): string {

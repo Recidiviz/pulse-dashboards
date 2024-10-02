@@ -18,7 +18,7 @@
 import { palette } from "@recidiviz/design-system";
 import { rgba } from "polished";
 
-import type { Opportunity } from "../../WorkflowsStore";
+import { type Opportunity } from "../../WorkflowsStore";
 
 export const OPPORTUNITY_STATUS_COLORS = {
   eligible: {
