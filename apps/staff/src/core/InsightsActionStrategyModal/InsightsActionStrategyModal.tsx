@@ -96,6 +96,7 @@ const ModalHeader = styled.div`
   padding-left: ${rem(spacing.lg)};
   padding-right: ${rem(spacing.lg)};
   line-height: 1.5;
+  font-weight: 600;
 `;
 
 const ModalFooter = styled.div`
@@ -126,7 +127,9 @@ const StyledMarkdownView = styled(MarkdownView)`
   a {
     color: ${palette.signal.links} !important;
     padding-top: ${rem(spacing.sm)};
-    text-decoration: underline;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
@@ -201,7 +204,10 @@ export const InsightsActionStrategyModal = observer(
         <Wrapper>
           <div>
             <ModalHeader>{actionStrategy.prompt}</ModalHeader>
-            <StyledMarkdownView markdown={actionStrategy.body} />
+            <StyledMarkdownView
+              markdown={actionStrategy.body}
+              options={{ openLinksInNewWindow: true }}
+            />
           </div>
         </Wrapper>
         {insightsLanternState && (
