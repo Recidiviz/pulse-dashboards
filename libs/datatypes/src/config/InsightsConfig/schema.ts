@@ -35,6 +35,10 @@ export const metricsSchema = z.object({
   eventNamePastTense: z.string(),
   descriptionMarkdown: z.string(),
   topXPct: z.number().nullable(),
+  listTableText: z
+    .string()
+    .nullable()
+    .transform((x) => x ?? undefined),
 });
 
 export const insightsConfigSchema = z.object({

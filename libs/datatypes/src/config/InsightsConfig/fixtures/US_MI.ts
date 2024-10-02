@@ -42,6 +42,8 @@ const US_MI: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Incarceration Rate",
       topXPct: null,
+      listTableText:
+        "Clients will appear on this list multiple times if they have been incarcerated more than once under this agent in the time period.",
     },
     {
       bodyDisplayName: "absconder warrant rate",
@@ -54,6 +56,8 @@ const US_MI: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Absconder Warrant Rate",
       topXPct: null,
+      listTableText:
+        "Clients will appear on this list multiple times if they have had more than one absconder warrant under this agent in the time period.",
     },
     {
       bodyDisplayName: "technical incarceration rate",
@@ -66,6 +70,7 @@ const US_MI: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Technical Incarceration Rate (TPVs)",
       topXPct: null,
+      listTableText: null,
     },
   ],
   noneAreOutliersLabel: "are outliers on any metrics",

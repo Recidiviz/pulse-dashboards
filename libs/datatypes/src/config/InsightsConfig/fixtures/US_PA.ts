@@ -37,6 +37,7 @@ const US_PA: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Incarceration Rate (CPVs & TPVs)",
       topXPct: null,
+      listTableText: null,
     },
     {
       bodyDisplayName: "technical incarceration rate",
@@ -48,6 +49,7 @@ const US_PA: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Technical Incarceration Rate (TPVs)",
       topXPct: null,
+      listTableText: null,
     },
     {
       bodyDisplayName: "absconsion rate",
@@ -59,6 +61,7 @@ const US_PA: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Absconsion Rate",
       topXPct: null,
+      listTableText: null,
     },
   ],
   noneAreOutliersLabel: "are outliers",

@@ -39,6 +39,7 @@ const US_CA: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Absconding Rate",
       topXPct: null,
+      listTableText: null,
     },
     {
       bodyDisplayName: "program start rate",
@@ -51,6 +52,7 @@ const US_CA: RawInsightsConfig = {
       outcomeType: "FAVORABLE",
       titleDisplayName: "Program Start Rate",
       topXPct: 10,
+      listTableText: null,
     },
   ],
   noneAreOutliersLabel: "are outliers on any metrics",

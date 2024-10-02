@@ -42,6 +42,7 @@ export const US_TN: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Incarceration Rate",
       topXPct: null,
+      listTableText: null,
     },
     {
       bodyDisplayName: "absconsion rate",
@@ -54,6 +55,7 @@ export const US_TN: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Absconsion Rate",
       topXPct: null,
+      listTableText: null,
     },
     {
       bodyDisplayName: "technical incarceration rate",
@@ -66,6 +68,7 @@ export const US_TN: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Technical Incarceration Rate",
       topXPct: null,
+      listTableText: null,
     },
   ],
   noneAreOutliersLabel: "are outliers",

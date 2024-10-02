@@ -366,6 +366,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                         ? "List of clients with no Program Starts"
                         : `List of ${toTitleCase(eventName)}`
                     }
+                    subtitle={metric.config.listTableText}
                     infoModal={
                       <InsightsInfoModal
                         title={`List of ${toTitleCase(eventName)}`}

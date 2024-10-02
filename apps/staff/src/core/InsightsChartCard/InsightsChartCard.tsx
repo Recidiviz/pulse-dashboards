@@ -71,6 +71,7 @@ const Subtitle = styled.div`
   ${typography.Sans14}
   color: ${palette.slate85};
   padding-top: ${rem(spacing.xs)};
+  line-height: 19.6px;
 `;
 
 const Hint = styled.div<{ isClickable?: boolean }>`

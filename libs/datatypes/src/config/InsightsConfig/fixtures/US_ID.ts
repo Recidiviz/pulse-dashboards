@@ -42,6 +42,8 @@ const US_ID: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Incarceration Rate",
       topXPct: null,
+      listTableText:
+        "Clients will appear on this list multiple times if they have been incarcerated more than once under this officer in the time period.",
     },
     {
       bodyDisplayName: "absconsion rate",
@@ -54,6 +56,8 @@ const US_ID: RawInsightsConfig = {
       outcomeType: "ADVERSE",
       titleDisplayName: "Absconsion Rate",
       topXPct: null,
+      listTableText:
+        "Clients will appear on this list multiple times if they have had more than one absconsion under this officer in the time period.",
     },
   ],
   noneAreOutliersLabel: "are outliers",

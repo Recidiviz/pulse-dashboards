@@ -22,7 +22,11 @@ import {
   CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
 } from "../../../metrics/utils/constants";
-import { InsightsConfig } from "../schema";
+import {
+  InsightsConfig,
+  insightsConfigSchema,
+  RawInsightsConfig,
+} from "../schema";
 import US_CA from "./US_CA";
 import US_ID from "./US_ID";
 import US_MI from "./US_MI";
@@ -30,7 +34,7 @@ import US_ND from "./US_ND";
 import US_PA from "./US_PA";
 import US_TN from "./US_TN";
 
-export const InsightsConfigFixture: InsightsConfig = {
+export const rawInsightsConfigFixture: RawInsightsConfig = {
   supervisionOfficerLabel: "officer",
   supervisionDistrictLabel: "region",
   supervisionDistrictManagerLabel: "district manager",
@@ -67,6 +71,8 @@ export const InsightsConfigFixture: InsightsConfig = {
       <br />
       **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.`,
       topXPct: null,
+      listTableText:
+        "Clients will appear on this list multiple times if they have had more than one absconsion under this officer in the time period.",
     },
     {
       name: ADVERSE_METRIC_IDS.enum.incarceration_starts,
@@ -85,6 +91,8 @@ export const InsightsConfigFixture: InsightsConfig = {
       “Incarcerations” does not include:
       * Absconsions and bench warrants`,
       topXPct: null,
+      listTableText:
+        "Clients will appear on this list multiple times if they have been incarcerated more than once under this officer in the time period.",
     },
     {
       name: ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation,
@@ -102,6 +110,7 @@ export const InsightsConfigFixture: InsightsConfig = {
       <br />
       Note: There are situations where we are unable to associate an incarceration with a violation type, especially if the revocation leads to time in county jail. We may also associate an incorrect violation type, if for example, there are no violations due to poor data entry.`,
       topXPct: null,
+      listTableText: null,
     },
     {
       name: FAVORABLE_METRIC_IDS.enum.treatment_starts,
@@ -116,6 +125,7 @@ export const InsightsConfigFixture: InsightsConfig = {
       <br />
       **Denominator** is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.`,
       topXPct: 10,
+      listTableText: null,
     },
   ],
   clientEvents: [
@@ -141,6 +151,10 @@ export const InsightsConfigFixture: InsightsConfig = {
     },
   ],
 };
+
+export const InsightsConfigFixture: InsightsConfig = insightsConfigSchema.parse(
+  rawInsightsConfigFixture,
+);
 
 export const getMockConfigs = () => ({
   US_CA,

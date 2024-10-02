@@ -24,6 +24,7 @@ import {
   metricBenchmarksFixture,
   rawActionStrategyFixture,
   rawExcludedSupervisionOfficerFixture,
+  rawInsightsConfigFixture,
   rawLeadershipUserInfoFixture,
   rawMetricBenchmarksFixture,
   rawSupervisionOfficerFixture,
@@ -64,7 +65,9 @@ describe("InsightsAPIClient", () => {
   });
 
   it("init calls the correct endpoint", async () => {
-    fetchMock.mockResponse(JSON.stringify({ config: InsightsConfigFixture }));
+    fetchMock.mockResponse(
+      JSON.stringify({ config: rawInsightsConfigFixture }),
+    );
     await client.init();
     expect(fetchMock.requests()[0].url).toEqual(
       encodeURI(`${BASE_URL}/configuration`),
@@ -72,7 +75,9 @@ describe("InsightsAPIClient", () => {
   });
 
   it("init parses the config data", async () => {
-    fetchMock.mockResponse(JSON.stringify({ config: InsightsConfigFixture }));
+    fetchMock.mockResponse(
+      JSON.stringify({ config: rawInsightsConfigFixture }),
+    );
     const response = await client.init();
     expect(response).toEqual(InsightsConfigFixture);
   });
