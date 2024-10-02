@@ -110,10 +110,9 @@ export type SnoozeTaskConfig = {
   };
 };
 
-export type ResidentSearchFields = Pick<
-  WorkflowsResidentRecord,
-  "officerId" | "facilityId" | "facilityUnitId"
->;
+export type SearchField = "officerId" | "facilityId" | "facilityUnitId";
+
+export type ResidentSearchFields = Pick<WorkflowsResidentRecord, SearchField>;
 
 export type ClientSearchFields = Pick<ClientRecord, "officerId">;
 

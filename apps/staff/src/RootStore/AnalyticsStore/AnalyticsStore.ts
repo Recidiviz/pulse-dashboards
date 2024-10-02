@@ -278,7 +278,13 @@ export default class AnalyticsStore {
     this.track("frontend.referral_form_downloaded", metadata);
   }
 
-  trackSurfacedInList(metadata: OpportunityTrackingMetadata): void {
+  trackSurfacedInList<
+    Metadata extends OpportunityTrackingMetadata & {
+      searchIdValue: string | undefined;
+      searchField: string | undefined;
+      tabTitle: string;
+    },
+  >(metadata: Metadata): void {
     this.track("frontend.surfaced_in_list", metadata);
   }
 

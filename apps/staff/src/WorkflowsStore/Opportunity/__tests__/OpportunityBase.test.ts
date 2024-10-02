@@ -582,6 +582,9 @@ describe("tracking", () => {
     expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
+      searchField: undefined,
+      searchIdValue: undefined,
+      tabTitle: opp.tabTitle(),
     });
   });
 

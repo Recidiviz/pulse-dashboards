@@ -38,6 +38,7 @@ import {
 } from "~datatypes";
 import { isHydrated, isHydrationFinished } from "~hydration-utils";
 
+import { SearchField } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
 import {
   ContactMethodType,
@@ -213,6 +214,10 @@ export class JusticeInvolvedPersonBase<
       .trim();
   }
 
+  get assignedStaffPseudoId(): string | undefined {
+    return this.assignedStaff?.pseudonymizedId;
+  }
+
   get displayName(): string {
     return humanReadableTitleCase(
       [this.fullName.givenNames, this.fullName.surname]
@@ -345,7 +350,11 @@ export class JusticeInvolvedPersonBase<
     });
   }
 
-  get searchIdValue(): any {
+  get searchField(): SearchField | undefined {
+    return undefined;
+  }
+
+  get searchIdValue(): string | undefined {
     return this.assignedStaffId;
   }
 }

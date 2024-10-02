@@ -18,6 +18,7 @@
 import { addYears } from "date-fns";
 import { uniqBy } from "lodash";
 
+import { SearchField } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
 import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
 import { ResidentMetadata } from "../FirestoreStore/types";
@@ -66,14 +67,17 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return new Date(releaseDate) > LIFE_SENTENCE_THRESHOLD;
   }
 
-  get searchIdValue(): any {
+  get searchField(): SearchField | undefined {
     const { currentTenantId } = this.rootStore;
-    const searchField =
+    return (
       currentTenantId &&
       tenants[currentTenantId]?.workflowsSystemConfigs?.INCARCERATION
-        ?.searchField;
-
-    return searchField ? this.record[searchField] : this.assignedStaffId;
+        ?.searchField
+    );
+  }
+  get searchIdValue(): string | undefined {
+    const searchField = this.searchField;
+    return (searchField && this.record[searchField]) ?? this.assignedStaffId;
   }
 
   get sccpEligibilityDate(): Date | undefined {

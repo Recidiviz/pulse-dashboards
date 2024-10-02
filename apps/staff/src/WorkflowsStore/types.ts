@@ -17,7 +17,7 @@
 
 import { FullName } from "~datatypes";
 
-import { StaffFilter } from "../core/models/types";
+import { SearchField, StaffFilter } from "../core/models/types";
 import {
   ClientRecord,
   CombinedUserRecord,
@@ -54,6 +54,7 @@ export type JusticeInvolvedPerson = {
   displayName: string;
   displayPreferredName: string;
   assignedStaffId?: string;
+  assignedStaffPseudoId?: string;
   assignedStaffFullName: string;
   profileUrl: string;
   supervisionTasks?: SupervisionTaskInterface;
@@ -89,7 +90,11 @@ export type JusticeInvolvedPerson = {
    * The value of the field on the person record that is used to return search results. Defaults to
    * the person's assigned staff ID.
    */
-  searchIdValue: any;
+  searchIdValue: string | undefined;
+  /**
+   * The category of search that was conducted (officer, facility, or facility unit.)
+   */
+  searchField: SearchField | undefined;
   /**
    * The date when the data about this person was most recently synced from the state
    */

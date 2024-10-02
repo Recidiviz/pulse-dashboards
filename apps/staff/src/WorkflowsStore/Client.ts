@@ -22,6 +22,7 @@ import { action, makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 import { toast } from "react-hot-toast";
 
+import { SearchField } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
 import {
   ClientEmployer,
@@ -294,14 +295,19 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return conditionsToDisplay;
   }
 
-  get searchIdValue(): any {
+  get searchField(): SearchField | undefined {
     const { currentTenantId } = this.rootStore;
-    const searchField =
+    return (
       currentTenantId &&
-      tenants[currentTenantId]?.workflowsSystemConfigs?.SUPERVISION
-        ?.searchField;
+      tenants[currentTenantId]?.workflowsSystemConfigs?.SUPERVISION?.searchField
+    );
+  }
 
-    return searchField ? this.record[searchField] : this.assignedStaffId;
+  get searchIdValue(): string {
+    const searchField = this.searchField;
+    return searchField === "officerId"
+      ? this.record[searchField]
+      : this.assignedStaffId;
   }
 
   get profileMilestones(): Milestone[] {

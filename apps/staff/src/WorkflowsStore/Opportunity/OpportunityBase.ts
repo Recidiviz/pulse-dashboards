@@ -586,9 +586,22 @@ export class OpportunityBase<
   }
 
   trackListViewed(): void {
+    // Pseudonymize staff IDs
+    // (emit undefined if we don't know the search field
+    // to avoid emitting outputting a non-pseudonymized staff id)
+    const pseudoSearchId =
+      this.person.searchField === undefined
+        ? undefined
+        : this.person.searchField === "officerId"
+          ? this.person.assignedStaffPseudoId
+          : this.person.searchIdValue;
+
     this.rootStore.analyticsStore.trackSurfacedInList({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      searchIdValue: pseudoSearchId,
+      searchField: this.person.searchField,
+      tabTitle: this.tabTitle(),
     });
   }
 
