@@ -24,19 +24,21 @@ import { formInformationSchema as formInformation } from "../UsTnSharedCriteria"
 
 export const usTnCustodyLevelDowngradeSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: z.object({
-      custodyLevelHigherThanRecommended: z.object({
-        custodyLevel: z.string(),
-        recommendedCustodyLevel: z.string(),
-      }),
-      custodyLevelIsNotMax: z.null(),
-      usTnLatestCafAssessmentNotOverride: z.object({
-        overrideReason: z.string().nullable(),
-      }),
-      usTnIneligibleForAnnualReclassification: z.object({
-        ineligibleCriteria: z.array(z.string()),
-      }),
-    }),
+    eligibleCriteria: z
+      .object({
+        custodyLevelHigherThanRecommended: z.object({
+          custodyLevel: z.string(),
+          recommendedCustodyLevel: z.string(),
+        }),
+        custodyLevelIsNotMax: z.null(),
+        usTnLatestCafAssessmentNotOverride: z.object({
+          overrideReason: z.string().nullable(),
+        }),
+        usTnIneligibleForAnnualReclassification: z.object({
+          ineligibleCriteria: z.array(z.string()),
+        }),
+      })
+      .passthrough(),
     formInformation,
   })
   .transform((r) => {

@@ -34,136 +34,140 @@ const zipIneligibleOffenseAndDates = (
   }));
 
 export const compliantReportingSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z.object({
-    usTnOnEligibleLevelForSufficientTime: z
-      .object({
-        eligibleDate: dateStringSchema,
-        eligibleLevel: z.string(),
-        startDateOnEligibleLevel: dateStringSchema,
-      })
-      .optional(),
-    usTnFinesFeesEligible: z
-      .object({
-        hasFinesFeesBalanceBelow500: z.object({
-          amountOwed: z.number(),
-        }),
-        hasPayments3ConsecutiveMonths: z.object({
-          amountOwed: z.number(),
-          consecutiveMonthlyPayments: z.number().nullable(),
-        }),
-        hasPermanentFinesFeesExemption: z
-          .object({
-            currentExemptions: z.array(z.string()),
-          })
-          .optional(),
-      })
-      .optional(),
-    // Transform null fields to empty object to make them easier to use in conditionals later
-    usTnNoArrestsInPastYear: z.null().transform((_val) => ({})),
-    usTnNoHighSanctionsInPastYear: z
-      .null()
-      .transform((_val) => ({}))
-      .optional(),
-    usTnNoRecentCompliantReportingRejections: z
-      .null()
-      .transform((_val) => ({}))
-      .optional(),
-    usTnSpecialConditionsAreCurrent: z.object({
-      speNoteDue: dateStringSchema.nullable(),
-    }),
-    usTnNotServingIneligibleCrOffense: z.null().transform((_val) => ({})),
-    usTnPassedDrugScreenCheck: z.object({
-      hasAtLeast1NegativeDrugTestPastYear: z.array(
-        z.object({
-          negativeScreenDate: dateStringSchema,
-          negativeScreenResult: z.string(),
-        }),
-      ),
-      latestDrugTestIsNegative: z.object({
-        latestDrugScreenDate: dateStringSchema,
-        latestDrugScreenResult: z.string(),
+  eligibleCriteria: z
+    .object({
+      usTnOnEligibleLevelForSufficientTime: z
+        .object({
+          eligibleDate: dateStringSchema,
+          eligibleLevel: z.string(),
+          startDateOnEligibleLevel: dateStringSchema,
+        })
+        .optional(),
+      usTnFinesFeesEligible: z
+        .object({
+          hasFinesFeesBalanceBelow500: z.object({
+            amountOwed: z.number(),
+          }),
+          hasPayments3ConsecutiveMonths: z.object({
+            amountOwed: z.number(),
+            consecutiveMonthlyPayments: z.number().nullable(),
+          }),
+          hasPermanentFinesFeesExemption: z
+            .object({
+              currentExemptions: z.array(z.string()),
+            })
+            .optional(),
+        })
+        .optional(),
+      // Transform null fields to empty object to make them easier to use in conditionals later
+      usTnNoArrestsInPastYear: z.null().transform((_val) => ({})),
+      usTnNoHighSanctionsInPastYear: z
+        .null()
+        .transform((_val) => ({}))
+        .optional(),
+      usTnNoRecentCompliantReportingRejections: z
+        .null()
+        .transform((_val) => ({}))
+        .optional(),
+      usTnSpecialConditionsAreCurrent: z.object({
+        speNoteDue: dateStringSchema.nullable(),
       }),
-      // omitting hasAtLeast2NegativeDrugTestsPastYear because if they have at least 2, they have at least 1
-      // omitting latestAlcoholDrugNeedLevel because it is not used in any copy
-    }),
-    usTnNoZeroToleranceCodesSpans: z
-      .object({
-        zeroToleranceCodeDates: z.array(dateStringSchema).nullable(),
-      })
-      .nullable(),
-    usTnIneligibleOffensesExpired: z
-      .object({
-        ineligibleOffenses: z.array(z.string()),
-        ineligibleSentencesExpirationDates: z.array(dateStringSchema),
-      })
-      .transform((val) =>
-        zipIneligibleOffenseAndDates(
-          val.ineligibleOffenses,
-          val.ineligibleSentencesExpirationDates,
+      usTnNotServingIneligibleCrOffense: z.null().transform((_val) => ({})),
+      usTnPassedDrugScreenCheck: z.object({
+        hasAtLeast1NegativeDrugTestPastYear: z.array(
+          z.object({
+            negativeScreenDate: dateStringSchema,
+            negativeScreenResult: z.string(),
+          }),
         ),
-      )
-      .nullish(),
-    usTnNotServingUnknownCrOffense: z
-      .object({
-        ineligibleOffenses: z.array(z.string()),
-        ineligibleSentencesExpirationDate: z.array(dateStringSchema),
-      })
-      .transform((val) =>
-        zipIneligibleOffenseAndDates(
-          val.ineligibleOffenses,
-          val.ineligibleSentencesExpirationDate,
-        ),
-      )
-      .nullish(),
-    usTnNoPriorRecordWithIneligibleCrOffense: z
-      .object({
-        ineligibleOffenses: z.array(z.string()),
-        ineligibleOffenseDates: z.array(dateStringSchema),
-      })
-      .transform((val) =>
-        zipIneligibleOffenseAndDates(
-          val.ineligibleOffenses,
-          val.ineligibleOffenseDates,
-        ),
-      )
-      .nullish(),
-    hasActiveSentence: z
-      .object({
-        hasActiveSentence: z.boolean(),
-      })
-      .nullable()
-      .transform((val) => val ?? { hasActiveSentence: false }),
-  }),
-  ineligibleCriteria: z.object({
-    usTnOnEligibleLevelForSufficientTime: z
-      .object({
-        eligibleDate: dateStringSchema,
-        eligibleLevel: z.string(),
-        startDateOnEligibleLevel: dateStringSchema,
-      })
-      .optional(),
-    usTnFinesFeesEligible: z
-      .object({
-        hasFinesFeesBalanceBelow500: z.object({
-          amountOwed: z.number(),
+        latestDrugTestIsNegative: z.object({
+          latestDrugScreenDate: dateStringSchema,
+          latestDrugScreenResult: z.string(),
         }),
-        hasPayments3ConsecutiveMonths: z.object({
-          amountOwed: z.number(),
-          consecutiveMonthlyPayments: z.number().nullable(),
-        }),
-      })
-      .optional(),
-    usTnNoHighSanctionsInPastYear: z
-      .object({
-        latestHighSanctionDate: dateStringSchema,
-      })
-      .optional(),
-    usTnNoRecentCompliantReportingRejections: z
-      .object({
-        contactCode: z.array(z.string()),
-      })
-      .optional(),
-  }),
+        // omitting hasAtLeast2NegativeDrugTestsPastYear because if they have at least 2, they have at least 1
+        // omitting latestAlcoholDrugNeedLevel because it is not used in any copy
+      }),
+      usTnNoZeroToleranceCodesSpans: z
+        .object({
+          zeroToleranceCodeDates: z.array(dateStringSchema).nullable(),
+        })
+        .nullable(),
+      usTnIneligibleOffensesExpired: z
+        .object({
+          ineligibleOffenses: z.array(z.string()),
+          ineligibleSentencesExpirationDates: z.array(dateStringSchema),
+        })
+        .transform((val) =>
+          zipIneligibleOffenseAndDates(
+            val.ineligibleOffenses,
+            val.ineligibleSentencesExpirationDates,
+          ),
+        )
+        .nullish(),
+      usTnNotServingUnknownCrOffense: z
+        .object({
+          ineligibleOffenses: z.array(z.string()),
+          ineligibleSentencesExpirationDate: z.array(dateStringSchema),
+        })
+        .transform((val) =>
+          zipIneligibleOffenseAndDates(
+            val.ineligibleOffenses,
+            val.ineligibleSentencesExpirationDate,
+          ),
+        )
+        .nullish(),
+      usTnNoPriorRecordWithIneligibleCrOffense: z
+        .object({
+          ineligibleOffenses: z.array(z.string()),
+          ineligibleOffenseDates: z.array(dateStringSchema),
+        })
+        .transform((val) =>
+          zipIneligibleOffenseAndDates(
+            val.ineligibleOffenses,
+            val.ineligibleOffenseDates,
+          ),
+        )
+        .nullish(),
+      hasActiveSentence: z
+        .object({
+          hasActiveSentence: z.boolean(),
+        })
+        .nullable()
+        .transform((val) => val ?? { hasActiveSentence: false }),
+    })
+    .passthrough(),
+  ineligibleCriteria: z
+    .object({
+      usTnOnEligibleLevelForSufficientTime: z
+        .object({
+          eligibleDate: dateStringSchema,
+          eligibleLevel: z.string(),
+          startDateOnEligibleLevel: dateStringSchema,
+        })
+        .optional(),
+      usTnFinesFeesEligible: z
+        .object({
+          hasFinesFeesBalanceBelow500: z.object({
+            amountOwed: z.number(),
+          }),
+          hasPayments3ConsecutiveMonths: z.object({
+            amountOwed: z.number(),
+            consecutiveMonthlyPayments: z.number().nullable(),
+          }),
+        })
+        .optional(),
+      usTnNoHighSanctionsInPastYear: z
+        .object({
+          latestHighSanctionDate: dateStringSchema,
+        })
+        .optional(),
+      usTnNoRecentCompliantReportingRejections: z
+        .object({
+          contactCode: z.array(z.string()),
+        })
+        .optional(),
+    })
+    .passthrough(),
   formInformation: z
     .object({
       sentenceStartDate: dateStringSchema,

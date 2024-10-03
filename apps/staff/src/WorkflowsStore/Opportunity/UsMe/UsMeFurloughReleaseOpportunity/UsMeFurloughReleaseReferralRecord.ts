@@ -22,28 +22,30 @@ import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 import { eligibleDateSchema } from "../../schemaHelpers";
 
 export const usMeFurloughReleaseSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z.object({
-    usMeThreeYearsRemainingOnSentence: eligibleDateSchema,
-    usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease:
-      eligibleDateSchema,
-    usMeNoClassAOrBViolationFor90Days: z
-      .object({
-        eligibleDate: dateStringSchema.nullable(),
-        highestClassViol: z.string(),
-        violType: z.string(),
-      })
-      .nullable(),
-    usMeCustodyLevelIsMinimumOrCommunity: z.object({
-      custodyLevel: z.string(),
-    }),
-    usMeNoDetainersWarrantsOrOther: z
-      .object({
-        detainer: z.string(),
-        detainerStartDate: dateStringSchema.nullable(),
-      })
-      .nullable(),
-    usMeServedHalfOfSentence: eligibleDateSchema.optional(),
-  }),
+  eligibleCriteria: z
+    .object({
+      usMeThreeYearsRemainingOnSentence: eligibleDateSchema,
+      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease:
+        eligibleDateSchema,
+      usMeNoClassAOrBViolationFor90Days: z
+        .object({
+          eligibleDate: dateStringSchema.nullable(),
+          highestClassViol: z.string(),
+          violType: z.string(),
+        })
+        .nullable(),
+      usMeCustodyLevelIsMinimumOrCommunity: z.object({
+        custodyLevel: z.string(),
+      }),
+      usMeNoDetainersWarrantsOrOther: z
+        .object({
+          detainer: z.string(),
+          detainerStartDate: dateStringSchema.nullable(),
+        })
+        .nullable(),
+      usMeServedHalfOfSentence: eligibleDateSchema.optional(),
+    })
+    .passthrough(),
 });
 
 export type UsMeFurloughReleaseReferralRecord = z.infer<

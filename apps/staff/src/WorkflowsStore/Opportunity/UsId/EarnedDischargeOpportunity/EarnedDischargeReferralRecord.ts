@@ -38,27 +38,29 @@ const collapsedCriteriaSchema = z
     }),
   })
   .partial()
+  .passthrough()
   .transform(
     ({
       usIdParoleDualSupervisionPastEarlyDischargeDate,
       onProbationAtLeastOneYear,
+      ...rest
     }) => {
       if (onProbationAtLeastOneYear) {
-        const { eligibleDate } = onProbationAtLeastOneYear;
         return {
-          pastEarnedDischargeEligibleDate: { eligibleDate },
+          pastEarnedDischargeEligibleDate: onProbationAtLeastOneYear,
+          ...rest,
         };
       }
 
       if (usIdParoleDualSupervisionPastEarlyDischargeDate) {
-        const { eligibleDate, sentenceType } =
-          usIdParoleDualSupervisionPastEarlyDischargeDate;
         return {
-          pastEarnedDischargeEligibleDate: { eligibleDate, sentenceType },
+          pastEarnedDischargeEligibleDate:
+            usIdParoleDualSupervisionPastEarlyDischargeDate,
+          ...rest,
         };
       }
 
-      return {};
+      return rest;
     },
   );
 
@@ -95,7 +97,7 @@ export const usIdEarnedDischargeSchema = opportunitySchemaBase.extend({
       latestAssessmentDate: dateStringSchema,
     })
     .partial(),
-  ineligibleCriteria: ineligibleCriteriaLsuED.and(collapsedCriteriaSchema),
+  ineligibleCriteria: ineligibleCriteriaLsuED.pipe(collapsedCriteriaSchema),
   eligibleCriteria: eligibleCriteriaLsuED
     .extend({
       usIdLsirLevelLowModerateForXDays: z.object({
@@ -103,7 +105,7 @@ export const usIdEarnedDischargeSchema = opportunitySchemaBase.extend({
         riskLevel: z.enum(["LOW", "MODERATE"]),
       }),
     })
-    .and(collapsedCriteriaSchema),
+    .pipe(collapsedCriteriaSchema),
   eligibleStartDate: dateStringSchema,
 });
 

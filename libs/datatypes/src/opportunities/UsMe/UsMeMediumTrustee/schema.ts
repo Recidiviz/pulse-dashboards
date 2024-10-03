@@ -21,11 +21,13 @@ import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 
 export const usMeMediumTrusteeSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z.object({
-    usMeCustodyLevelIsMedium: z.object({}),
-    usMeFiveOrMoreYearsRemainingOnSentence: z.object({}),
-    usMeNoViolationFor5Years: z.null(),
-  }),
+  eligibleCriteria: z
+    .object({
+      usMeCustodyLevelIsMedium: z.object({}),
+      usMeFiveOrMoreYearsRemainingOnSentence: z.object({}),
+      usMeNoViolationFor5Years: z.null(),
+    })
+    .passthrough(),
 });
 
 export type UsMeMediumTrusteeRecord = ParsedRecord<

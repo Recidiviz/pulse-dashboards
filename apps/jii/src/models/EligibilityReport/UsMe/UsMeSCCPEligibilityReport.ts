@@ -187,7 +187,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
         label: "Requirements you **have** met",
         icon: "Success",
         requirements: orderedCriteria
-          .filter((key): key is keyof typeof met => key in met)
+          .filter((key) => key in met)
           .map((key) => ({
             // ineligible reason is excluded, since these criteria are met
             criterion: cleanupInlineTemplate(
@@ -204,7 +204,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
         label: "Requirements you **have not** met yet",
         icon: "CloseOutlined",
         requirements: orderedCriteria
-          .filter((key): key is keyof typeof notMet => key in notMet)
+          .filter((key) => key in notMet)
           .map((key) =>
             // here, by mapping over both values in the copy object,
             // we are including criterion and ineligible reason, when it is present

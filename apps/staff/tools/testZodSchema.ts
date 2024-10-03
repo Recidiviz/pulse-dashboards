@@ -102,9 +102,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   usMeEarlyTermination: usMeEarlyTerminationSchema,
   usMiSupervisionLevelDowngrade:
-    usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-      (s) => s,
-    ),
+    usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   usMiClassificationReview:
     usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
   usTnCustodyLevelDowngrade: usTnCustodyLevelDowngradeSchema,
@@ -170,6 +168,17 @@ function getTestParams(key: SchemaKey): {
 
 const ALL_SCHEMAS = { ...OTHER_SCHEMAS, ...OPPORTUNITY_SCHEMAS };
 
+const opportunityPassthroughTestSchema = z.object({
+  eligibleCriteria: z.object({
+    PASSTHROUGH_NULL: z.null(),
+    PASSTHROUGH_OBJ: z.object({ test: z.literal("valid") }),
+  }),
+  ineligibleCriteria: z.object({
+    INELIGIBLE_PASSTHROUGH_NULL: z.null(),
+    INELIGIBLE_PASSTHROUGH_OBJ: z.object({ test: z.literal("valid") }),
+  }),
+});
+
 async function testCollection(opportunityType: SchemaKey, limit?: number) {
   const { schema, firestoreCollection } = getTestParams(opportunityType);
   const coll = db.collection(firestoreCollection);
@@ -179,24 +188,35 @@ async function testCollection(opportunityType: SchemaKey, limit?: number) {
   let failed = 0;
   const failures: Record<string, z.ZodIssue[]> = {};
   (await query.get()).docs.forEach((d) => {
-    const result = schema.safeParse(d.data());
-    if (!result.success) {
+    const raw = d.data();
+    const isOpportunity = !!raw.eligibleCriteria;
+    if (isOpportunity) {
+      raw.eligibleCriteria.PASSTHROUGH_NULL = null;
+      raw.eligibleCriteria.PASSTHROUGH_OBJ = { test: "valid" };
+      raw.ineligibleCriteria.INELIGIBLE_PASSTHROUGH_NULL = null;
+      raw.ineligibleCriteria.INELIGIBLE_PASSTHROUGH_OBJ = { test: "valid" };
+    }
+    const result = isOpportunity
+      ? schema.pipe(opportunityPassthroughTestSchema).safeParse(raw)
+      : schema.safeParse(raw);
+    if (result.success) {
+      succeeded += 1;
+    } else {
       failed += 1;
       failures[d.id] = result.error.issues;
-    } else {
-      succeeded += 1;
     }
   });
   return { succeeded, failed, failures };
 }
 
-async function automatic() {
+async function automatic({ limit }: Args) {
   Object.keys(ALL_SCHEMAS).forEach(async (schemaKey) => {
     const { failures, ...result } = await testCollection(
       schemaKey as SchemaKey,
+      limit,
     );
     // don't print failures so we don't leave PII in the github logs
-    console.log(schemaKey, result);
+    console.log(result.failed ? "❌" : "✅", schemaKey, result);
     if (result.failed > 0) process.exitCode = 1;
   });
 }
@@ -274,7 +294,7 @@ type Args = {
 const args = parser.parse_args() as Args;
 
 if (args.all) {
-  automatic();
+  automatic(args);
 } else {
   manual(args);
 }

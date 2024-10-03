@@ -19,46 +19,45 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-// TODO: tighten this up once we see some real records (i.e. what's actually nullable?)
-const criteria = z.object({
-  onMinimumSupervisionAtLeastSixMonths: z
-    .object({
-      eligibleDate: dateStringSchema,
-    })
-    .nullable(),
-  usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: z.object({
-    supervisionLevelRawText: z.string(),
-    initialAssessmentLevel: z.string(),
-  }),
-  usMiNotServingIneligibleOffensesForTelephoneReporting: z
-    .object({
-      ineligibleOffenses: z.array(z.string()),
-      sentenceStatus: z.array(z.string()),
-      isLifeSentence: z.array(z.string()),
-      sentenceStatusRawText: z.array(z.string()),
-    })
-    .nullable(),
-  supervisionNotPastFullTermCompletionDateOrUpcoming90Days: z
-    .object({
-      eligibleDate: dateStringSchema.nullable(),
-    })
-    .nullable(),
-  usMiNotRequiredToRegisterUnderSora: z
-    .object({
-      ineligibleDate: dateStringSchema,
-    })
-    .nullable(),
-  usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: z
-    .object({
-      eligibleDate: dateStringSchema,
-    })
-    .nullable(),
-});
-
 export const usMiMinimumTelephoneReportingSchema = opportunitySchemaBase.extend(
   {
-    eligibleCriteria: criteria,
-    ineligibleCriteria: z.strictObject({}),
+    eligibleCriteria: z
+      .object({
+        onMinimumSupervisionAtLeastSixMonths: z
+          .object({
+            eligibleDate: dateStringSchema,
+          })
+          .nullable(),
+        usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting:
+          z.object({
+            supervisionLevelRawText: z.string(),
+            initialAssessmentLevel: z.string(),
+          }),
+        usMiNotServingIneligibleOffensesForTelephoneReporting: z
+          .object({
+            ineligibleOffenses: z.array(z.string()),
+            sentenceStatus: z.array(z.string()),
+            isLifeSentence: z.array(z.string()),
+            sentenceStatusRawText: z.array(z.string()),
+          })
+          .nullable(),
+        supervisionNotPastFullTermCompletionDateOrUpcoming90Days: z
+          .object({
+            eligibleDate: dateStringSchema.nullable(),
+          })
+          .nullable(),
+        usMiNotRequiredToRegisterUnderSora: z
+          .object({
+            ineligibleDate: dateStringSchema,
+          })
+          .nullable(),
+        usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision: z
+          .object({
+            eligibleDate: dateStringSchema,
+          })
+          .nullable(),
+      })
+      .passthrough(),
     metadata: z.object({
       eligibleDate: dateStringSchema,
     }),

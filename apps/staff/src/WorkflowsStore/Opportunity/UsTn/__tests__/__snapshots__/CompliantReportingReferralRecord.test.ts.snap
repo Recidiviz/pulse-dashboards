@@ -7,12 +7,25 @@ exports[`parse almost eligible 1`] = `
     "hasActiveSentence": {
       "hasActiveSentence": true,
     },
+    "supervisionLevelIsNotInternalUnknown": null,
+    "supervisionLevelIsNotInterstateCompact": null,
+    "supervisionLevelIsNotUnassigned": null,
+    "supervisionNotPastFullTermCompletionDateOrUpcoming90Days": {
+      "eligibleDate": "2029-06-06",
+    },
     "usTnIneligibleOffensesExpired": null,
     "usTnNoArrestsInPastYear": {},
+    "usTnNoDuiOffenseInPast5Years": null,
     "usTnNoHighSanctionsInPastYear": {},
+    "usTnNoMurderConvictions": null,
     "usTnNoPriorRecordWithIneligibleCrOffense": null,
     "usTnNoRecentCompliantReportingRejections": {},
     "usTnNoZeroToleranceCodesSpans": null,
+    "usTnNotInJudicialDistrict17WhileOnProbation": null,
+    "usTnNotOnLifeSentenceOrLifetimeSupervision": {
+      "lifetimeFlag": false,
+    },
+    "usTnNotPermanentlyRejectedFromCompliantReporting": null,
     "usTnNotServingIneligibleCrOffense": {},
     "usTnNotServingUnknownCrOffense": null,
     "usTnOnEligibleLevelForSufficientTime": {
@@ -100,6 +113,12 @@ exports[`parse eligible 1`] = `
     "hasActiveSentence": {
       "hasActiveSentence": true,
     },
+    "supervisionLevelIsNotInternalUnknown": null,
+    "supervisionLevelIsNotInterstateCompact": null,
+    "supervisionLevelIsNotUnassigned": null,
+    "supervisionNotPastFullTermCompletionDateOrUpcoming90Days": {
+      "eligibleDate": "2029-06-06",
+    },
     "usTnFinesFeesEligible": {
       "hasFinesFeesBalanceBelow500": {
         "amountOwed": 400,
@@ -111,10 +130,17 @@ exports[`parse eligible 1`] = `
     },
     "usTnIneligibleOffensesExpired": null,
     "usTnNoArrestsInPastYear": {},
+    "usTnNoDuiOffenseInPast5Years": null,
     "usTnNoHighSanctionsInPastYear": {},
+    "usTnNoMurderConvictions": null,
     "usTnNoPriorRecordWithIneligibleCrOffense": null,
     "usTnNoRecentCompliantReportingRejections": {},
     "usTnNoZeroToleranceCodesSpans": null,
+    "usTnNotInJudicialDistrict17WhileOnProbation": null,
+    "usTnNotOnLifeSentenceOrLifetimeSupervision": {
+      "lifetimeFlag": false,
+    },
+    "usTnNotPermanentlyRejectedFromCompliantReporting": null,
     "usTnNotServingIneligibleCrOffense": {},
     "usTnNotServingUnknownCrOffense": null,
     "usTnOnEligibleLevelForSufficientTime": {

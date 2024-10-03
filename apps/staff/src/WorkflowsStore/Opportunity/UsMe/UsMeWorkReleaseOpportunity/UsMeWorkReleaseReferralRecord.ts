@@ -19,11 +19,9 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-const possiblyIneligibleCriteria = z.object({});
-
 export const usMeWorkReleaseSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: possiblyIneligibleCriteria
-    .extend({
+  eligibleCriteria: z
+    .object({
       usMeThreeYearsRemainingOnSentence: z.object({
         eligibleDate: dateStringSchema,
       }),
@@ -44,6 +42,7 @@ export const usMeWorkReleaseSchema = opportunitySchemaBase.extend({
         })
         .nullable(),
     })
+    .passthrough()
     // TODO: remove usMeCustodyLevelIsMinimumOrCommunity from code
     .and(
       z.union([

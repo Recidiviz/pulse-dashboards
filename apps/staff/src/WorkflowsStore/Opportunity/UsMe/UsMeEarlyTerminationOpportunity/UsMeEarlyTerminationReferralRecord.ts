@@ -26,43 +26,47 @@ const usMePaidAllOwedRestitution = NullCoalesce(
   z.object({ amountOwed: z.number().optional() }),
 ).optional();
 
-const eligibleCriteria = z.object({
-  usMePaidAllOwedRestitution,
-  noConvictionWithin6Months: NullCoalesce(
-    {},
-    z
-      .object({
-        latestConvictions: z.array(z.string()).optional(),
-      })
-      .optional(),
-  ).optional(),
-  usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: z.object({
-    eligibleDate: dateStringSchema,
-  }),
-  usMeNoPendingViolationsWhileSupervised: NullCoalesce(
-    {},
-    z
-      .object({
-        currentStatus: z.string().optional(),
-        violationDate: dateStringSchema.optional(),
-      })
-      .optional(),
-  ).optional(),
-  supervisionLevelIsMediumOrLower: z.object({
-    supervisionLevel: z.string(),
-  }),
-});
+const eligibleCriteria = z
+  .object({
+    usMePaidAllOwedRestitution,
+    noConvictionWithin6Months: NullCoalesce(
+      {},
+      z
+        .object({
+          latestConvictions: z.array(z.string()).optional(),
+        })
+        .optional(),
+    ).optional(),
+    usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: z.object({
+      eligibleDate: dateStringSchema,
+    }),
+    usMeNoPendingViolationsWhileSupervised: NullCoalesce(
+      {},
+      z
+        .object({
+          currentStatus: z.string().optional(),
+          violationDate: dateStringSchema.optional(),
+        })
+        .optional(),
+    ).optional(),
+    supervisionLevelIsMediumOrLower: z.object({
+      supervisionLevel: z.string(),
+    }),
+  })
+  .passthrough();
 
-const ineligibleCriteria = z.object({
-  usMePaidAllOwedRestitution,
-  usMeNoPendingViolationsWhileSupervised: z
-    .object({
-      currentStatus: z.string(),
-      violationDate: dateStringSchema,
-    })
-    .nullable()
-    .optional(),
-});
+const ineligibleCriteria = z
+  .object({
+    usMePaidAllOwedRestitution,
+    usMeNoPendingViolationsWhileSupervised: z
+      .object({
+        currentStatus: z.string(),
+        violationDate: dateStringSchema,
+      })
+      .nullable()
+      .optional(),
+  })
+  .passthrough();
 
 export const usMeEarlyTerminationSchema = opportunitySchemaBase.extend({
   eligibleCriteria,

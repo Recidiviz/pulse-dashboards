@@ -23,17 +23,19 @@ import { formInformationSchema as formInformation } from "../UsTnSharedCriteria"
 
 export const usTnAnnualReclassificationReviewSchema =
   opportunitySchemaBase.extend({
-    eligibleCriteria: z.object({
-      usTnAtLeast12MonthsSinceLatestAssessment: z.null(),
-      custodyLevelIsNotMax: z.null(),
-      custodyLevelComparedToRecommended: z.object({
-        custodyLevel: z
-          .string()
-          .nullable()
-          .transform((custodyLevel) => custodyLevel ?? "NOT YET CLASSIFIED"),
-        recommendedCustodyLevel: z.string().nullable(),
-      }),
-    }),
+    eligibleCriteria: z
+      .object({
+        usTnAtLeast12MonthsSinceLatestAssessment: z.null(),
+        custodyLevelIsNotMax: z.null(),
+        custodyLevelComparedToRecommended: z.object({
+          custodyLevel: z
+            .string()
+            .nullable()
+            .transform((custodyLevel) => custodyLevel ?? "NOT YET CLASSIFIED"),
+          recommendedCustodyLevel: z.string().nullable(),
+        }),
+      })
+      .passthrough(),
     formInformation: formInformation.partial(),
     formReclassificationDueDate: dateStringSchema.optional(),
   });

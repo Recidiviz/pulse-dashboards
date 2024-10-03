@@ -23,13 +23,15 @@ import { eligibleDateSchema } from "../../schemaHelpers";
 
 const objectOrNull = z.object({}).nullable();
 
-const sharedCriteria = z.object({
-  supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate:
-    eligibleDateSchema,
-  supervisionNotPastFullTermCompletionDate: objectOrNull,
-  usMiNoActivePpo: objectOrNull,
-  usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: objectOrNull,
-});
+const sharedCriteria = z
+  .object({
+    supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate:
+      eligibleDateSchema,
+    supervisionNotPastFullTermCompletionDate: objectOrNull,
+    usMiNoActivePpo: objectOrNull,
+    usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: objectOrNull,
+  })
+  .passthrough();
 
 const paroleDualCriteria = z.object({
   supervisionOrSupervisionOutOfStateLevelIsNotHigh: objectOrNull,
@@ -60,7 +62,7 @@ const paroleRecord = opportunitySchemaBase.extend({
       supervisionType: z.literal("Parole"),
     }),
   ),
-  eligibleCriteria: sharedCriteria.merge(paroleDualCriteria),
+  eligibleCriteria: paroleDualCriteria.merge(sharedCriteria),
 });
 
 const probationRecord = opportunitySchemaBase.extend({
@@ -69,7 +71,7 @@ const probationRecord = opportunitySchemaBase.extend({
       supervisionType: z.literal("Probation"),
     }),
   ),
-  eligibleCriteria: sharedCriteria.merge(probationCriteria),
+  eligibleCriteria: probationCriteria.merge(sharedCriteria),
 });
 
 export const usMiEarlyDischargeSchema = z.union([

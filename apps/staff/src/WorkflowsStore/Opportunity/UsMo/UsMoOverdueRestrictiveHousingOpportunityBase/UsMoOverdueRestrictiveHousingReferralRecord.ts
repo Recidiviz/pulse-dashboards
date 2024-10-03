@@ -35,11 +35,13 @@ export const usMoNoActiveD1Sanctions = z
 export const baseUsMoOverdueRestrictiveHousingSchema =
   opportunitySchemaBase.extend({
     metadata,
-    eligibleCriteria: z.object({
-      usMoInRestrictiveHousing,
-      usMoNoActiveD1Sanctions,
-    }),
-    ineligibleCriteria: z.object({}),
+    eligibleCriteria: z
+      .object({
+        usMoInRestrictiveHousing,
+        usMoNoActiveD1Sanctions,
+      })
+      .passthrough(),
+    ineligibleCriteria: z.object({}).passthrough(), // Empty shape here so that it can be pulled out and extended
   });
 
 export type BaseUsMoOverdueRestrictiveHousingReferralRecord = z.infer<

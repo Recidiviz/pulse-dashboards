@@ -33,7 +33,8 @@ const possiblyIneligibleCriteria = z
       xPortionServed: z.enum(["1/2", "2/3"]),
     }),
   })
-  .partial();
+  .partial()
+  .passthrough();
 
 export const usMeSCCPSchema = opportunitySchemaBase.extend({
   eligibleCriteria: possiblyIneligibleCriteria.extend({

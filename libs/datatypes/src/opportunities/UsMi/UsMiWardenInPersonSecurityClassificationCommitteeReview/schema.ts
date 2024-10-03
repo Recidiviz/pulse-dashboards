@@ -34,7 +34,8 @@ const possiblyIneligibleCriteria = z
       eligibleDate: dateStringSchema,
     }),
   })
-  .partial();
+  .partial()
+  .passthrough();
 
 export const usMiWardenInPersonSecurityClassificationCommitteeReviewSchema =
   usMiSecurityClassificationCommitteeReviewSchema.extend({

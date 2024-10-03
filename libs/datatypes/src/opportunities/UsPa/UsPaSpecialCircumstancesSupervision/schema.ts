@@ -29,7 +29,8 @@ const possiblyIneligibleCriteria = z
       eligibleDate: dateStringSchema,
     }),
   })
-  .partial();
+  .partial()
+  .passthrough();
 
 export const usPaSpecialCircumstancesSupervisionSchema =
   opportunitySchemaBase.extend({

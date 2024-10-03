@@ -93,10 +93,14 @@ export class UsTnReclassificationReviewForm extends FormBase<
       out.incompatiblesList = formInformation.incompatibleArray
         ?.map(({ incompatibleOffenderId }) => incompatibleOffenderId)
         .join(", ");
-      if ("custodyLevelHigherThanRecommended" in eligibleCriteria) {
+
+      // These reverse checks are needed because unknown criteria pass through.
+      // Checking that a criteria required for one opportunity is absent verifies
+      // that we're dealing with the other type.
+      if (!("custodyLevelComparedToRecommended" in eligibleCriteria)) {
         out.currentCustodyLevel =
           eligibleCriteria.custodyLevelHigherThanRecommended.custodyLevel;
-      } else {
+      } else if (!("custodyLevelHigherThanRecommended" in eligibleCriteria)) {
         out.currentCustodyLevel =
           eligibleCriteria.custodyLevelComparedToRecommended.custodyLevel;
       }

@@ -17,17 +17,14 @@
 
 import { z } from "zod";
 
-import { Equal, Expect } from "../../../../utils/typeUtils";
-import {
-  BasePastFTRDReferralRecord,
-  basePastFTRDSchema,
-} from "../../PastFTRDReferralRecord";
+import { basePastFTRDSchema } from "../../PastFTRDReferralRecord";
 import { eligibleDateSchema } from "../../schemaHelpers";
 
 const eligibleCriteria = z
   .object({
     supervisionTwoDaysPastFullTermCompletionDate: eligibleDateSchema,
   })
+  .passthrough()
   .transform((data) => {
     const {
       supervisionTwoDaysPastFullTermCompletionDate,
@@ -41,20 +38,9 @@ const eligibleCriteria = z
     };
   });
 
-const ineligibleCriteria = z.object({});
-
 export const usMiPastFTRDSchema = basePastFTRDSchema.extend({
   eligibleCriteria,
-  ineligibleCriteria,
 });
 
 export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
 export type UsMiPastFTRDReferralRecordRaw = z.input<typeof usMiPastFTRDSchema>;
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type VerifyEquivalenceToBase = Expect<
-  Equal<
-    UsMiPastFTRDReferralRecord["eligibleCriteria"],
-    Required<BasePastFTRDReferralRecord["eligibleCriteria"]>
-  >
->;

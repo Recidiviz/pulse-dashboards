@@ -23,9 +23,11 @@ import { eligibleDateSchema } from "./schemaHelpers";
 
 const supervisionPastFullTermCompletionDate = eligibleDateSchema.optional();
 
-const ineligibleAndEligibleCriteria = z.object({
-  supervisionPastFullTermCompletionDate,
-});
+const ineligibleAndEligibleCriteria = z
+  .object({
+    supervisionPastFullTermCompletionDate,
+  })
+  .passthrough();
 
 export const basePastFTRDSchema = opportunitySchemaBase.extend({
   eligibleCriteria: ineligibleAndEligibleCriteria,

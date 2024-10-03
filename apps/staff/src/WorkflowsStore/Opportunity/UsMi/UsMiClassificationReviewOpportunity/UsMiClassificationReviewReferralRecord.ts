@@ -33,19 +33,20 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
             requiresSoRegistration: z.boolean().nullable(),
           })
           .nullable(),
+        usMiPastInitialClassificationReviewDate: eligibleDateSchema.optional(),
+        usMiSixMonthsPastLastClassificationReviewDate:
+          eligibleDateSchema.optional(),
       })
-      .and(
-        // this tells zod (and typescript) that we expect exactly one of these fields to be set
-        z.union([
-          z.object({
-            usMiPastInitialClassificationReviewDate: eligibleDateSchema,
-            usMiSixMonthsPastLastClassificationReviewDate: z.undefined(),
-          }),
-          z.object({
-            usMiPastInitialClassificationReviewDate: z.undefined(),
-            usMiSixMonthsPastLastClassificationReviewDate: eligibleDateSchema,
-          }),
-        ]),
+      .passthrough()
+      .refine(
+        (r) =>
+          (r.usMiPastInitialClassificationReviewDate ||
+            r.usMiSixMonthsPastLastClassificationReviewDate) &&
+          !(
+            r.usMiPastInitialClassificationReviewDate &&
+            r.usMiSixMonthsPastLastClassificationReviewDate
+          ),
+        "Exactly one of usMiPastInitialClassificationReviewDate or usMiSixMonthsPastLastClassificationReviewDate must be present",
       )
       .transform(
         ({
@@ -55,7 +56,9 @@ export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
         }) => ({
           usMiClassificationReviewPastDueDate:
             usMiPastInitialClassificationReviewDate ??
-            usMiSixMonthsPastLastClassificationReviewDate,
+            // the refine above verifies that at least one of these is non-null
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            usMiSixMonthsPastLastClassificationReviewDate!,
           ...rest,
         }),
       ),

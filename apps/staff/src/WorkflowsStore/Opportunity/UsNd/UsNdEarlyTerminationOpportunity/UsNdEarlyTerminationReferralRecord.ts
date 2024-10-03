@@ -40,29 +40,33 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
       statesAttorneyName: z.string(),
     })
     .partial(),
-  eligibleCriteria: z.object({
-    supervisionPastEarlyDischargeDate: z
-      .object({
-        eligibleDate: dateStringSchema.optional(),
-      })
-      .optional(),
-    usNdImpliedValidEarlyTerminationSupervisionLevel: z.object({
-      supervisionLevel: z.string(),
-    }),
-    usNdImpliedValidEarlyTerminationSentenceType: z.object({
-      supervisionType: z.string(),
-    }),
-    usNdNotInActiveRevocationStatus: z.object({
-      revocationDate: z.null(),
-    }),
-  }),
-  ineligibleCriteria: z.object({
-    supervisionPastEarlyDischargeDate: z
-      .object({
-        eligibleDate: dateStringSchema.optional(),
-      })
-      .optional(),
-  }),
+  eligibleCriteria: z
+    .object({
+      supervisionPastEarlyDischargeDate: z
+        .object({
+          eligibleDate: dateStringSchema.optional(),
+        })
+        .optional(),
+      usNdImpliedValidEarlyTerminationSupervisionLevel: z.object({
+        supervisionLevel: z.string(),
+      }),
+      usNdImpliedValidEarlyTerminationSentenceType: z.object({
+        supervisionType: z.string(),
+      }),
+      usNdNotInActiveRevocationStatus: z.object({
+        revocationDate: z.null(),
+      }),
+    })
+    .passthrough(),
+  ineligibleCriteria: z
+    .object({
+      supervisionPastEarlyDischargeDate: z
+        .object({
+          eligibleDate: dateStringSchema.optional(),
+        })
+        .optional(),
+    })
+    .passthrough(),
   metadata: z.object({
     multipleSentences: z.boolean(),
     outOfState: z.boolean(),

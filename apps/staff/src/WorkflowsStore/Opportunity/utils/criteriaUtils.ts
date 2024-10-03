@@ -27,7 +27,7 @@ import {
   formatYearsMonthsFromNow,
   toTitleCase,
 } from "../../../utils";
-import { AllPossibleKeys } from "../../../utils/typeUtils";
+import { RemoveIndexSignature } from "../../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../../types";
 import { Opportunity, OpportunityRequirement } from "../types";
 import { usMiSegregationDisplayName } from "./usMi/usMiCriteriaUtils";
@@ -41,22 +41,19 @@ export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
 };
 
 type CriteriaGroupKey = "eligibleCriteria" | "ineligibleCriteria";
-type WithCriteria = Record<
-  CriteriaGroupKey,
-  Record<string, object | null | undefined>
->;
+type WithCriteria = Record<CriteriaGroupKey, Record<string, unknown>>;
 
 export type CopyTuple<K extends string> = [K, OpportunityRequirement];
 // Copy is defined as an array rather than a record so it can have a well-defined order
 
 export type CriteriaCopy<R extends WithCriteria> = {
-  [K in CriteriaGroupKey]: Array<CopyTuple<AllPossibleKeys<R[K]>>>;
+  [K in CriteriaGroupKey]: Array<CopyTuple<keyof RemoveIndexSignature<R[K]>>>;
 };
 // Formatters are defined in a separate dict so the function type can depend on the criterion
 
 export type CriteriaFormatters<R extends WithCriteria> = {
   [K in CriteriaGroupKey]?: {
-    [C in keyof R[K]]?: Record<
+    [C in keyof RemoveIndexSignature<R[K]>]?: Record<
       string,
       (criterion: Required<R[K]>[C], record: R) => string
     >;

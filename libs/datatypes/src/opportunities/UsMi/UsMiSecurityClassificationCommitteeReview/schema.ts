@@ -31,7 +31,8 @@ const possiblyIneligibleCriteria = z
       numberOfReviews: z.number().nullable(),
     }),
   })
-  .partial();
+  .partial()
+  .passthrough();
 
 export const usMiSecurityClassificationCommitteeReviewSchema =
   opportunitySchemaBase.extend({

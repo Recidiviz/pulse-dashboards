@@ -152,7 +152,7 @@ function hydrateDaysWithoutViolationRequirementText(
 }
 
 const requirementsForEligibleCriteria = (
-  criteria: Partial<UsMeSCCPCriteria>,
+  criteria: UsMeSCCPRecord["output"]["eligibleCriteria"],
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 

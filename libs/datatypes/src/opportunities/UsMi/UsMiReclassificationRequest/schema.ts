@@ -30,7 +30,8 @@ const possiblyIneligibleCriteria = z
       overdueInTemporaryDate: dateStringSchema.nullable(),
     }),
   })
-  .partial();
+  .partial()
+  .passthrough();
 
 export const usMiReclassificationRequestSchema = opportunitySchemaBase.extend({
   eligibleCriteria: possiblyIneligibleCriteria,

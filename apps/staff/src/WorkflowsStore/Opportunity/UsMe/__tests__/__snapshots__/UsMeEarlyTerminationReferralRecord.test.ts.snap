@@ -10,6 +10,7 @@ exports[`transform record with null pending violation criteria 1`] = `
     },
     "usMeNoPendingViolationsWhileSupervised": {},
     "usMePaidAllOwedRestitution": {},
+    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -29,6 +30,7 @@ exports[`transform record with pending violation ineligibleCriteria 1`] = `
       "supervisionLevel": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": {},
+    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -55,6 +57,7 @@ exports[`transform record with restitution case 1`] = `
     "usMePaidAllOwedRestitution": {
       "amountOwed": 0,
     },
+    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -73,6 +76,7 @@ exports[`transform record with restitution ineligibleCriteria 1`] = `
     "supervisionLevelIsMediumOrLower": {
       "supervisionLevel": "MEDIUM",
     },
+    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },
@@ -96,6 +100,7 @@ exports[`transform record without restitution case 1`] = `
       "supervisionLevel": "MEDIUM",
     },
     "usMePaidAllOwedRestitution": {},
+    "usMeSupervisionIsNotIcIn": null,
     "usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart": {
       "eligibleDate": 2022-01-03T00:00:00.000Z,
     },

@@ -45,25 +45,27 @@ export const usTnExpirationSchema = opportunitySchemaBase.extend({
     convictionCounties: z.array(z.string()),
     gangAffiliationId: z.string().optional(),
   }),
-  eligibleCriteria: z.object({
-    supervisionPastFullTermCompletionDateOrUpcoming1Day: z.object({
-      eligibleDate: dateStringSchema,
-    }),
-    usTnNoZeroToleranceCodesSpans: NullCoalesce(
-      { zeroToleranceCodeDates: undefined },
-      z
-        .object({
-          zeroToleranceCodeDates: z.array(dateStringSchema).nullish(),
-        })
-        .optional(),
-    ),
-    usTnNotOnLifeSentenceOrLifetimeSupervision: NullCoalesce(
-      {},
-      z.object({
-        lifetimeFlag: z.boolean().optional(),
+  eligibleCriteria: z
+    .object({
+      supervisionPastFullTermCompletionDateOrUpcoming1Day: z.object({
+        eligibleDate: dateStringSchema,
       }),
-    ),
-  }),
+      usTnNoZeroToleranceCodesSpans: NullCoalesce(
+        { zeroToleranceCodeDates: undefined },
+        z
+          .object({
+            zeroToleranceCodeDates: z.array(dateStringSchema).nullish(),
+          })
+          .optional(),
+      ),
+      usTnNotOnLifeSentenceOrLifetimeSupervision: NullCoalesce(
+        {},
+        z.object({
+          lifetimeFlag: z.boolean().optional(),
+        }),
+      ),
+    })
+    .passthrough(),
 });
 
 export type UsTnExpirationReferralRecord = z.infer<typeof usTnExpirationSchema>;

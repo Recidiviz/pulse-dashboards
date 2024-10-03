@@ -31,12 +31,14 @@ export const usMeAnnualReclassificationSchema = opportunitySchemaBase.extend({
     .object({
       usMeIncarcerationPastRelevantClassificationDate,
     })
-    .partial(),
+    .partial()
+    .passthrough(),
   ineligibleCriteria: z
     .object({
       usMeIncarcerationPastRelevantClassificationDate,
     })
-    .partial(),
+    .partial()
+    .passthrough(),
   formInformation: z.object({
     arrivalDate: dateStringSchema,
     casePlanGoals: z.string().optional(),

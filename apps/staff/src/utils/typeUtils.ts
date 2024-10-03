@@ -74,3 +74,9 @@ export type Nullable<T> = {
 // This is due to "Distributive Conditional Types"
 // https://www.typescriptlang.org/docs/handbook/2/conditional-types.html#distributive-conditional-types
 export type AllPossibleKeys<T> = T extends any ? keyof T : never;
+
+// If T includes both named properties and a fallback index signature,
+// RemoveIndexSignature<T> includes just the explicitly named properties
+export type RemoveIndexSignature<T> = {
+  [K in keyof T as string extends K ? never : K]: T[K];
+};

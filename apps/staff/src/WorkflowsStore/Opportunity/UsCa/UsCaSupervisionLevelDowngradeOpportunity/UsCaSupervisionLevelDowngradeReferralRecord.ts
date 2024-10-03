@@ -24,14 +24,16 @@ export const usCaSupervisionLevelDowngradeSchema = opportunitySchemaBase.extend(
     formInformation: z.object({
       cdcno: z.string(),
     }),
-    eligibleCriteria: z.object({
-      noSupervisionViolationWithin6Months: z.object({}).nullable(),
-      supervisionLevelIsHighFor6Months: z.object({
-        highStartDate: dateStringSchema,
-      }),
-      usCaAssessmentLevel3OrLower: z.object({}).nullable(),
-      usCaHousingTypeIsNotTransient: z.object({}).nullable(),
-    }),
+    eligibleCriteria: z
+      .object({
+        noSupervisionViolationWithin6Months: z.object({}).nullable(),
+        supervisionLevelIsHighFor6Months: z.object({
+          highStartDate: dateStringSchema,
+        }),
+        usCaAssessmentLevel3OrLower: z.object({}).nullable(),
+        usCaHousingTypeIsNotTransient: z.object({}).nullable(),
+      })
+      .passthrough(),
   },
 );
 

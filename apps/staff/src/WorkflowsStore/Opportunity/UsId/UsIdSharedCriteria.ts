@@ -23,36 +23,40 @@ import { defaultOnNull } from "../schemaHelpers";
 
 export const sentenceTypeSchema = z.enum(["PROBATION", "PAROLE", "DUAL"]);
 
-export const eligibleCriteriaLsuED = z.object({
-  negativeDaWithin90Days: defaultOnNull(
-    z.object({
-      latestUaDates: z.array(dateStringSchema),
-      latestUaResults: z.array(z.boolean()),
-    }),
-    { latestUaDates: [], latestUaResults: [] },
-  ),
-  noFelonyWithin24Months: z
-    .null()
-    .transform((output) => (output === null ? true : output)),
-});
+export const eligibleCriteriaLsuED = z
+  .object({
+    negativeDaWithin90Days: defaultOnNull(
+      z.object({
+        latestUaDates: z.array(dateStringSchema),
+        latestUaResults: z.array(z.boolean()),
+      }),
+      { latestUaDates: [], latestUaResults: [] },
+    ),
+    noFelonyWithin24Months: z
+      .null()
+      .transform((output) => (output === null ? true : output)),
+  })
+  .passthrough();
 
-export const ineligibleCriteriaLsuED = z.object({}).partial();
+export const ineligibleCriteriaLsuED = z.object({}).passthrough();
 
 export type LSUEarnedDischargeEligibleCriteria = z.infer<
   typeof eligibleCriteriaLsuED
 >;
 
-export const crcSharedCriteria = z.object({
-  custodyLevelIsMinimum: z.object({
-    custodyLevel: z.string(),
-  }),
-  notServingForSexualOffense: z.object({}).nullable(),
-  notServingForViolentOffense: z.object({}).nullable().optional(),
-  usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: z
-    .object({})
-    .nullable(),
-  usIdNoDetainersForXcrcAndCrc: z.object({}).nullable(),
-});
+export const crcSharedCriteria = z
+  .object({
+    custodyLevelIsMinimum: z.object({
+      custodyLevel: z.string(),
+    }),
+    notServingForSexualOffense: z.object({}).nullable(),
+    notServingForViolentOffense: z.object({}).nullable().optional(),
+    usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: z
+      .object({})
+      .nullable(),
+    usIdNoDetainersForXcrcAndCrc: z.object({}).nullable(),
+  })
+  .passthrough();
 
 export const crcSharedIneligibleCriteria = crcSharedCriteria.pick({
   notServingForViolentOffense: true,
