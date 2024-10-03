@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { US_PA } from "../../RootStore/TenantStore/dashboardTenants";
 import {
   US_DEMO,
   US_ID,
@@ -1270,6 +1271,30 @@ export const NdPopulationFilterOptions: PopulationFilters = {
   },
 };
 
+export const PaPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    type: FILTER_TYPES.SUPERVISION_LEVEL,
+    title: "Supervision Level",
+    setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "Minimum", value: "MINIMUM" },
+      { label: "Medium", value: "MEDIUM" },
+      { label: "Maximum", value: "MAXIMUM" },
+      { label: "Administrative", value: "ADM" },
+      { label: "Special Circumstances", value: "SPC" },
+      { label: "Unknown", value: "UNKNOWN" },
+    ],
+    get defaultOption(): FilterOption {
+      return this.options[0];
+    },
+    get defaultValue(): string {
+      return this.defaultOption.value;
+    },
+  },
+};
+
 export const DemoPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.AGE_GROUP]: {
@@ -1442,11 +1467,15 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
 };
 
-const FilterOptions: Record<PathwaysTenants | "US_DEMO", PopulationFilters> = {
+const FilterOptions: Record<
+  PathwaysTenants | "US_DEMO" | "US_PA",
+  PopulationFilters
+> = {
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
   [US_MO]: MoPopulationFilterOptions,
   [US_ND]: NdPopulationFilterOptions,
+  [US_PA]: PaPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;
 
