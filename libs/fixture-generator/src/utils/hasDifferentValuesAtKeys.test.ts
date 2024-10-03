@@ -49,6 +49,19 @@ describe("function: hasDifferentValuesAtKeys", () => {
     ).toBe(true);
   });
 
+  test("should log a warning when verbose is true and all values for a key are the same", () => {
+    const consoleLogSpy = vi
+      .spyOn(console, "warn")
+      .mockImplementationOnce(vi.fn());
+
+    hasDifferentValuesAtKeys(OBJECTS, [], true);
+
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      `WARNING: All values are the same for non-excluded key(s): `,
+      [{ a: 1 }, { b: 2 }, { c: 3 }],
+    );
+  });
+
   test("should return false even with a missing key", () => {
     expect(hasDifferentValuesAtKeys([...OBJECTS, { a: 1, b: 2 }])).toBe(false);
   });

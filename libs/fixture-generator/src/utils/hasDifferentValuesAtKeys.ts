@@ -28,28 +28,38 @@
 export function hasDifferentValuesAtKeys(
   objects: object[],
   excludedKeys?: string[],
+  verbose = false,
 ): boolean {
-  const seenValuesByKey = new Map<string, [number, Set<unknown>]>();
+  const seenValuesByKey = new Map<string, Set<unknown>>();
 
   if (objects.length <= 1) return false;
 
   for (const obj of objects) {
     if (obj === null) continue;
     for (const [key, value] of Object.entries(obj)) {
-      if (!seenValuesByKey.has(key)) seenValuesByKey.set(key, [0, new Set()]);
+      if (!seenValuesByKey.has(key)) seenValuesByKey.set(key, new Set());
       const keyStatus = seenValuesByKey.get(key);
-      if (keyStatus) {
-        keyStatus[0]++;
-        keyStatus[1].add(value);
-      }
+      if (keyStatus) keyStatus.add(value);
     }
   }
 
-  return !Array.from(seenValuesByKey.entries()).some(
-    ([key, [count, uniqueValues]]) => {
-      return (
-        !excludedKeys?.includes(key) && count > 1 && uniqueValues.size === 1
-      );
+  /**
+   * Key-value pairs where all values are the same across all objects.
+   */
+  const badPairs = Array.from(seenValuesByKey.entries()).reduce(
+    (acc, [key, uniqueValues]) => {
+      if (!excludedKeys?.includes(key) && uniqueValues.size === 1)
+        acc.push({ [key]: uniqueValues.values().next().value });
+      return acc;
     },
+    [] as unknown[],
   );
+
+  if (badPairs.length > 0 && verbose)
+    console.warn(
+      `WARNING: All values are the same for non-excluded key(s): `,
+      badPairs,
+    );
+
+  return badPairs.length === 0;
 }
