@@ -34,6 +34,6 @@ export type InputFieldProps = {
 };
 
 export type SelectOption = {
-  label?: FormValue;
+  label?: string;
   value?: FormValue;
 };

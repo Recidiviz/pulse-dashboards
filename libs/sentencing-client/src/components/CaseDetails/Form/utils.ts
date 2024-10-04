@@ -51,6 +51,7 @@ import {
   mentalHealthDiagnoses,
   pleas,
 } from "./CaseDetailsFormTemplate";
+import { SelectOption } from "./types";
 
 const convertGenderDisplayNameToEnum = (gender: string) => {
   const genderDisplayNameToEnum = _.invert(GenderToDisplayName);
@@ -228,4 +229,11 @@ export const isValidLsirScore = (value: string): boolean => {
   }
 
   return true;
+};
+
+/** A simple fuzzy matching function that will return a boolean based on whether every word in the input is included in the option label */
+export const fuzzyMatch = (input: string, option: SelectOption) => {
+  const searchWords = input.toLowerCase().split(/\s+/).filter(Boolean);
+  const label = option.label?.toLowerCase();
+  return searchWords.every((word) => label?.includes(word));
 };

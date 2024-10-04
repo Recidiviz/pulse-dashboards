@@ -19,6 +19,7 @@ import { useState } from "react";
 import Select from "react-select";
 
 import { InputFieldProps, SelectOption } from "../types";
+import { fuzzyMatch } from "../utils";
 import { OtherContextInputField } from "./OtherContextField";
 
 export const DropdownField: React.FC<InputFieldProps> = ({
@@ -28,7 +29,7 @@ export const DropdownField: React.FC<InputFieldProps> = ({
   updateForm,
 }) => {
   const [currentValue, setCurrentValue] = useState<SelectOption | null>({
-    label: prevValue,
+    label: String(prevValue),
     value: prevValue,
   });
 
@@ -37,6 +38,11 @@ export const DropdownField: React.FC<InputFieldProps> = ({
 
     setCurrentValue(option);
     updateForm(element.key, option.value, parentKey);
+  };
+
+  const customFilter = (option: SelectOption, inputValue: string) => {
+    if (!inputValue) return true;
+    return fuzzyMatch(inputValue, option);
   };
 
   return (
@@ -53,6 +59,7 @@ export const DropdownField: React.FC<InputFieldProps> = ({
           element.onChange && element.onChange();
         }}
         isDisabled={element.isDisabled}
+        filterOption={customFilter}
       />
       <OtherContextInputField
         {...{ element, parentKey, prevValue, updateForm }}
