@@ -306,6 +306,18 @@ describe("after hydration", () => {
     });
   });
 
+  test("authorized with email verification skipped", async () => {
+    isAuthenticatedMock.mockResolvedValue(true);
+    getUserMock.mockResolvedValue({
+      email_verified: false,
+      [`${testNamespace}/app_metadata`]: { skipEmailVerification: true },
+    });
+
+    await client.hydrate();
+
+    expect(client.isAuthorized).toBeTrue();
+  });
+
   describe("authorized with invalid metadata", () => {
     beforeEach(async () => {
       isAuthenticatedMock.mockResolvedValue(true);

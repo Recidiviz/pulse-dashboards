@@ -43,6 +43,8 @@ exports.onExecutePostLogin = async (event, api) => {
 
     if (!usernameFromAD) return;
 
+    api.user.setAppMetadata("skipEmailVerification", true);
+
     const rosterMatch = ROSTER.find((row) => {
       return (
         (row.username ?? "").toLowerCase() === usernameFromAD.toLowerCase()

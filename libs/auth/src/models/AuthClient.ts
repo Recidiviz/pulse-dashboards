@@ -41,11 +41,19 @@ type Settings<AppMetadata extends z.ZodTypeAny> = {
 };
 
 /**
+ * We can look for the properties in this schema
+ * in addition to what's passed at construction
+ */
+const constantAppMetadataPropertiesSchema = z.object({
+  skipEmailVerification: z.boolean().optional(),
+});
+
+/**
  * Provides a Mobx-observable integration with the Auth0 SDK, translating async interactions
  * with Auth0 into synchronously observable properties.
  *
  */
-export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
+export class AuthClient<AppMetadata extends z.ZodType<object> = z.ZodTypeAny>
   implements Hydratable
 {
   /**
@@ -101,15 +109,17 @@ export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
       return true;
     }
 
-    return this.isAuthenticated && this.isEmailVerified;
+    return this.isAuthenticated && !this.isEmailVerificationRequired;
   }
 
   /**
    * Indicates that the user has logged in successfully but has not yet verified their email.
-   * Can only be true if {@link isAuthorized} is false
+   * Can only be true if {@link isAuthorized} is false. Set a flag in app_metadata
+   * to override the need for actual verification
    */
   get isEmailVerificationRequired(): boolean {
-    if (this.isAuthorized) return false;
+    if (this.appMetadataConstants?.skipEmailVerification) return false;
+
     return this.isAuthenticated && !this.isEmailVerified;
   }
 
@@ -322,6 +332,12 @@ export class AuthClient<AppMetadata extends z.ZodTypeAny = z.ZodTypeAny>
 
     const replacementPath = appState?.targetPath ?? defaultRedirectPath;
     navigate(replacementPath, { replace: true });
+  }
+
+  private get appMetadataConstants() {
+    return constantAppMetadataPropertiesSchema.safeParse(
+      this.user?.[`${this.clientSettings.metadataNamespace}/app_metadata`],
+    ).data;
   }
 
   get appMetadata(): z.infer<AppMetadata> {
