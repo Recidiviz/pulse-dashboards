@@ -175,7 +175,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 7,
   });
 
   const table = useReactTable<OpportunitiesWithOppNameProviderName[number]>({
@@ -503,7 +503,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
         <Styled.TableWrapper>
           {/* Table */}
           <Styled.Table>
-            <StyledDashboard.TableHeader>
+            <Styled.TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <StyledDashboard.Row key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -520,8 +520,8 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                   ))}
                 </StyledDashboard.Row>
               ))}
-            </StyledDashboard.TableHeader>
-            <StyledDashboard.TableBody>
+            </Styled.TableHeader>
+            <Styled.TableBody>
               {table.getRowModel().rows.map((row) => (
                 <Styled.TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => {
@@ -617,7 +617,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                   </td>
                 </tr>
               )}
-            </StyledDashboard.TableBody>
+            </Styled.TableBody>
           </Styled.Table>
         </Styled.TableWrapper>
 

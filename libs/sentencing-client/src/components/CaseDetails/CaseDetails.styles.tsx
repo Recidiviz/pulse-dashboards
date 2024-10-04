@@ -23,6 +23,8 @@ import {
   HeaderCell as DashboardHeaderCell,
   Row,
   Table as DashboardTable,
+  TableBody as DashboardTableBody,
+  TableHeader as DashboardTableHeader,
 } from "../Dashboard/Dashboard.styles";
 import { MAX_MODAL_HEIGHT } from "../Modal/Modal";
 import { customPalette } from "../styles/palette";
@@ -31,6 +33,7 @@ import { PDF_PAGE_WIDTH } from "./constants";
 import { FormAttributes, ProfileStrength } from "./types";
 
 const RECOMMENDATION_PANEL_HEIGHT_OFFSET = 244;
+const OPPORTUNITY_TABLE_HEIGHT = 525;
 
 export const PageContainer = styled.div`
   width: 100%;
@@ -705,7 +708,11 @@ export const OpportunitiesTable = styled.div`
 `;
 
 export const TableWrapper = styled.div`
+  width: 100%;
   position: relative;
+  height: ${OPPORTUNITY_TABLE_HEIGHT}px;
+  overflow-y: scroll;
+  border: 0.5px solid ${customPalette.white.white2};
 `;
 
 export const OpportunitiesNotAvailable = styled.div`
@@ -769,14 +776,32 @@ export const Filter = styled.div`
 `;
 
 export const Table = styled(DashboardTable)<{ disabled?: boolean }>`
+  border-spacing: 0;
+  border: none;
+
   ${({ disabled }) => disabled && `opacity: 0.5; pointer-events: none;`}
 `;
 
 export const TableRow = styled(Row)`
+  border-bottom: 1px solid ${customPalette.white.white2};
+
   &:hover {
     background: ${customPalette.grey.light1};
   }
 `;
+
+export const TableHeader = styled(DashboardTableHeader)`
+  position: relative;
+
+  tr {
+    position: sticky;
+    top: 0;
+    background: ${customPalette.white.white1};
+    box-shadow: inset 0 -1px 0 ${customPalette.white.white2};
+  }
+`;
+
+export const TableBody = styled(DashboardTableBody)``;
 
 export const HeaderCell = styled(DashboardHeaderCell)`
   font-weight: 500;
