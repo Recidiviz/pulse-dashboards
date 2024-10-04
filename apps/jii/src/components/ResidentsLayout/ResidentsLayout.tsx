@@ -16,18 +16,14 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, memo } from "react";
+import { memo } from "react";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSkipNav } from "../SkipNav/SkipNav";
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { ResidentsContext } from "./context";
 import { ResidentsHeader } from "./ResidentsHeader/ResidentsHeader";
-import { ResidentsLayoutPresenter } from "./ResidentsLayoutPresenter";
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,29 +31,17 @@ const Wrapper = styled.div`
   gap: ${rem(spacing.xl)};
 `;
 
-const ResidentsLayoutWithPresenter: FC<{
-  presenter: ResidentsLayoutPresenter;
-}> = observer(function ResidentsLayoutWithPresenter({ presenter }) {
+export const ResidentsLayout = memo(function ResidentsLayout() {
   const { MainContent, SkipNav, SkipNavController } = useSkipNav();
-  const { residentsStore } = presenter;
   return (
     <SkipNavController>
       <SkipNav />
       <Wrapper>
         <ResidentsHeader />
         <MainContent>
-          <Outlet context={{ residentsStore } satisfies ResidentsContext} />
+          <Outlet context={useResidentsContext()} />
         </MainContent>
       </Wrapper>
     </SkipNavController>
-  );
-});
-
-export const ResidentsLayout = memo(function ResidentsLayout() {
-  const presenter = new ResidentsLayoutPresenter(useRootStore());
-  return (
-    <PageHydrator hydratable={presenter}>
-      <ResidentsLayoutWithPresenter presenter={presenter} />
-    </PageHydrator>
   );
 });

@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useOutletContext } from "react-router-dom";
+import { OutParams, Route } from "react-router-typesafe-routes/dom";
 
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-
-export type ResidentsContext = { residentsStore: ResidentsStore };
-
-export function useResidentsContext() {
-  return useOutletContext<ResidentsContext>();
-}
+export type RouteParams<T> =
+  // we are disregarding the types treated as any here so no harm done
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends Route<infer TPath, infer TPathTypes, any, any, any>
+    ? OutParams<TPath, TPathTypes>
+    : never;

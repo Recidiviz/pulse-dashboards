@@ -18,17 +18,25 @@
 import { render, screen } from "@testing-library/react";
 import { configure, flowResult } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MockedFunction } from "vitest";
+
+import { outputFixture, usMeResidents } from "~datatypes";
 
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { RootStore } from "../../datastores/RootStore";
 import { UserStore } from "../../datastores/UserStore";
 import { State } from "../../routes/routes";
-import { useResidentsContext } from "../ResidentsLayout/context";
+import {
+  ResidentsContext,
+  useResidentsContext,
+} from "../ResidentsHydrator/context";
 import { PageEligibilityHome } from "./PageEligibilityHome";
 
-vi.mock("../ResidentsLayout/context");
+vi.mock("../ResidentsHydrator/context");
 
+let rootStore: RootStore;
 let userStore: UserStore;
+let residentsContextSpy: MockedFunction<() => ResidentsContext>;
 
 function renderPage() {
   render(
@@ -43,12 +51,12 @@ function renderPage() {
         <Route path={State.Eligibility.path}>
           <Route index element={<PageEligibilityHome />} />
           <Route
-            path={State.Eligibility.Search.path}
+            path={State.Eligibility.$.Search.relativePath}
             element={<div>search page</div>}
           />
           {/* in reality this is a parameter, but for now there is only one possible value */}
           <Route
-            path={State.Eligibility.Opportunity.path}
+            path={State.Eligibility.$.Opportunity.relativePath}
             element={<div>SCCP page</div>}
           />
         </Route>
@@ -60,11 +68,12 @@ function renderPage() {
 beforeEach(async () => {
   configure({ safeDescriptors: false });
 
-  const rootStore = new RootStore();
+  rootStore = new RootStore();
   await flowResult(rootStore.populateResidentsStore());
-  vi.mocked(useResidentsContext).mockReturnValue({
+  residentsContextSpy = vi.mocked(useResidentsContext).mockReturnValue({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     residentsStore: rootStore.residentsStore!,
+    activeResident: undefined,
   });
 
   userStore = rootStore.userStore;
@@ -78,7 +87,13 @@ afterEach(() => {
 });
 
 test("SCCP page", () => {
-  vi.spyOn(userStore, "externalId", "get").mockReturnValue("abc123");
+  const testResident = outputFixture(usMeResidents[0]);
+
+  residentsContextSpy.mockReturnValue({
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    residentsStore: rootStore.residentsStore!,
+    activeResident: testResident,
+  });
 
   renderPage();
 

@@ -53,6 +53,13 @@ export interface DataAPI {
    */
   residentById(residentExternalId: string): Promise<ResidentRecord["output"]>;
   /**
+   * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
+   * for the active StateCode. Throws if a match cannot be found.
+   */
+  residentByPseudoId(
+    residentPseudoId: string,
+  ): Promise<ResidentRecord["output"]>;
+  /**
    * Fetches the opportunity eligibility record for the specified resident
    * and opportunity type for the active StateCode. Will not throw if a record cannot be found;
    * the lack of a record should indicate that the resident is not currently eligible.

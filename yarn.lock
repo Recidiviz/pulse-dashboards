@@ -2230,6 +2230,11 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@cascadia-code/scroll-to-hash-element@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@cascadia-code/scroll-to-hash-element/-/scroll-to-hash-element-2.0.2.tgz#5375b678f1a8837150d8769d82a9c93547a4b1b7"
+  integrity sha512-XpPBapwNzu5rTMffckG2o/h4Qm5HOZWKnXO+WcArecKQmcwEJ31+sQM1sM7NqlDd2S8aCpEUCoiATHjJR5V+Ag==
+
 "@cspotcode/source-map-consumer@0.8.0":
   version "0.8.0"
   resolved "https://registry.npmjs.org/@cspotcode/source-map-consumer/-/source-map-consumer-0.8.0.tgz"

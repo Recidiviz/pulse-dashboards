@@ -39,6 +39,7 @@ export class ResidentsSearchPresenter implements Hydratable {
   constructor(
     private residentsStore: ResidentsStore,
     private uiStore: UiStore,
+    private activeResident: ResidentRecord["output"] | undefined,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -79,16 +80,9 @@ export class ResidentsSearchPresenter implements Hydratable {
     );
   }
 
-  /**
-   * Setting a resident "active" allows the user to simulate that resident's view of the app
-   */
-  setActiveResident(externalId: string | undefined): void {
-    this.residentsStore.userStore.overrideExternalId(externalId);
-  }
-
   get selectOptions() {
     return this.residents.map((r) => ({
-      value: r.personExternalId,
+      value: r,
       label: `${r.personName.givenNames} ${r.personName.surname} (${r.personExternalId})`,
     }));
   }
@@ -99,7 +93,7 @@ export class ResidentsSearchPresenter implements Hydratable {
    */
   get defaultOption() {
     return this.selectOptions.find(
-      (o) => o.value === this.residentsStore.userStore.externalId,
+      (o) => o.value.personExternalId === this.activeResident?.personExternalId,
     );
   }
 

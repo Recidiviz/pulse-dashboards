@@ -18,10 +18,23 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { configure, flowResult } from "mobx";
 import { MemoryRouter } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { RootStore } from "../../datastores/RootStore";
-import * as hooks from "../StoreProvider/useRootStore";
+import { useResidentsContext } from "../ResidentsHydrator/context";
+import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageSearch } from "./PageSearch";
+
+vi.mock("../ResidentsHydrator/context");
+vi.mock("../StoreProvider/useRootStore");
+vi.mock("react-router-typesafe-routes/dom", async (importOriginal) => {
+  return {
+    ...(await importOriginal<
+      typeof import("react-router-typesafe-routes/dom")
+    >()),
+    useTypedParams: vi.fn(),
+  };
+});
 
 let rootStore: RootStore;
 
@@ -29,7 +42,13 @@ beforeEach(async () => {
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
   await flowResult(rootStore.populateResidentsStore());
-  vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
+  vi.mocked(useRootStore).mockReturnValue(rootStore);
+  vi.mocked(useResidentsContext).mockReturnValue({
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    residentsStore: rootStore.residentsStore!,
+    activeResident: undefined,
+  });
+  vi.mocked(useTypedParams).mockReturnValue({ stateSlug: "maine" });
 });
 
 afterEach(() => {

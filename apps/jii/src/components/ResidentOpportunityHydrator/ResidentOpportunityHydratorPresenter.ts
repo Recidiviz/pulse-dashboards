@@ -17,6 +17,7 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { ResidentRecord } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { ResidentsStore } from "../../datastores/ResidentsStore";
@@ -27,6 +28,7 @@ export class ResidentOpportunityHydratorPresenter implements Hydratable {
   constructor(
     private opportunitySlug: string,
     private residentsStore: ResidentsStore,
+    public readonly activeResident: ResidentRecord["output"],
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
 
@@ -59,12 +61,7 @@ export class ResidentOpportunityHydratorPresenter implements Hydratable {
   }
 
   get residentExternalId() {
-    const { externalId } = this.residentsStore.userStore;
-    // this we do expect, for any non-Resident user (staff, internal, etc)
-    if (!externalId) {
-      throw new Error("missing Resident ID");
-    }
-    return externalId;
+    return this.activeResident.personExternalId;
   }
 
   private expectReportPopulated() {
@@ -85,24 +82,6 @@ export class ResidentOpportunityHydratorPresenter implements Hydratable {
 
   hydrate() {
     return this.hydrationSource.hydrate();
-  }
-
-  /**
-   * This is an annoyance that mostly affects staff/internal users, since searches do not
-   * persist across browser sessions. Catches the error before it bubbles up the component tree
-   * so we have a chance to redirect the user somewhere more useful.
-   */
-  get redirectToSearch() {
-    try {
-      if (this.residentExternalId) {
-        return false;
-      }
-    } catch {
-      if (this.residentsStore.userStore.hasPermission("enhanced")) {
-        return true;
-      }
-    }
-    return false;
   }
 
   get eligibilityReport() {

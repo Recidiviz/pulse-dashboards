@@ -97,23 +97,6 @@ test("reads pseudonymizedId from app metadata", () => {
   expect(store.pseudonymizedId).toBe("test-pid");
 });
 
-test("cannot override externalId without permission", () => {
-  expect(() =>
-    store.overrideExternalId("foo"),
-  ).toThrowErrorMatchingInlineSnapshot(
-    `[Error: You don't have permission to override external ID]`,
-  );
-});
-
-test("can override externalId in offline mode", () => {
-  vi.mocked(isOfflineMode).mockReturnValue(true);
-
-  expect(store.externalId).not.toBe("foo");
-
-  store.overrideExternalId("foo");
-  expect(store.externalId).toBe("foo");
-});
-
 test("log out", () => {
   vi.spyOn(store.authClient, "logOut");
   vi.spyOn(store.intercomClient, "logOut");

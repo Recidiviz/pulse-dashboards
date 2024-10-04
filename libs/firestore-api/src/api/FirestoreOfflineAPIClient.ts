@@ -58,6 +58,16 @@ export class FirestoreOfflineAPIClient implements FirestoreAPI {
     return residentFixture ? outputFixture(residentFixture) : undefined;
   }
 
+  async residentByPseudoId(pseudoId: string) {
+    const residentFixture = allResidents.find(
+      (r) =>
+        r.output.stateCode === this.stateCode &&
+        r.output.pseudonymizedId === pseudoId,
+    );
+
+    return residentFixture ? outputFixture(residentFixture) : undefined;
+  }
+
   async recordForExternalId() {
     throw new Error("Not implemented");
   }

@@ -34,6 +34,10 @@ export interface FirestoreAPI {
 
   resident(externalId: string): Promise<ResidentRecord["output"] | undefined>;
 
+  residentByPseudoId(
+    pseudoId: string,
+  ): Promise<ResidentRecord["output"] | undefined>;
+
   recordForExternalId<Schema extends z.ZodTypeAny>(
     collectionName: string,
     externalId: string,

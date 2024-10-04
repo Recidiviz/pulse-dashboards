@@ -17,6 +17,8 @@
 
 import { configure } from "mobx";
 
+import { outputFixture, usMeResidents } from "~datatypes";
+
 import { residentsConfigByState } from "../../../configs/residentsConfig";
 import { UserStore } from "../../../datastores/UserStore";
 import { State } from "../../../routes/routes";
@@ -25,13 +27,20 @@ import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 let presenter: NavigationMenuPresenter;
 let userStore: UserStore;
 
+const testResident = outputFixture(usMeResidents[0]);
+const stateSlug = "maine";
+
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
   userStore = new UserStore({ stateCode: "US_ME" });
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
+
   presenter = new NavigationMenuPresenter(
     residentsConfigByState.US_ME,
     userStore,
+    { stateSlug },
+    testResident,
   );
 });
 
@@ -39,21 +48,14 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-test("links", () => {
-  vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
-  expect(presenter.links).toMatchInlineSnapshot(`
-    [
-      {
-        "text": "Home",
-        "url": "/",
-      },
-    ]
-  `);
+test("link to home", () => {
+  expect(presenter.links).toContainEqual({
+    text: "Home",
+    url: "/",
+  });
 });
 
 test("links exclude search", () => {
-  vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
-
   expect(
     presenter.links.find((l) =>
       l.url.match(new RegExp(State.Eligibility.$.Search.relativePath)),
@@ -63,6 +65,90 @@ test("links exclude search", () => {
 
 test("links include search", () => {
   vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
+
+  expect(
+    presenter.links.find((l) =>
+      l.url.match(new RegExp(State.Eligibility.$.Search.relativePath)),
+    ),
+  ).toBeDefined();
+});
+
+test("links to opportunities with active resident", () => {
+  expect(
+    presenter.links.find(
+      (l) =>
+        l.url ===
+        State.Eligibility.Opportunity.buildPath({
+          stateSlug,
+          opportunitySlug: "sccp",
+        }),
+    ),
+  ).toBeDefined();
+});
+
+test("no links to opportunities without active resident", () => {
+  presenter = new NavigationMenuPresenter(
+    residentsConfigByState.US_ME,
+    userStore,
+    { stateSlug },
+    undefined,
+  );
+
+  expect(
+    presenter.links.find(
+      (l) =>
+        l.url ===
+        State.Eligibility.Opportunity.buildPath({
+          stateSlug,
+          opportunitySlug: "sccp",
+        }),
+    ),
+  ).toBeUndefined();
+});
+
+test("opportunity links include person ID from URL", () => {
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
+
+  presenter = new NavigationMenuPresenter(
+    residentsConfigByState.US_ME,
+    userStore,
+    { stateSlug, personPseudoId: testResident.pseudonymizedId },
+    testResident,
+  );
+
+  expect(
+    presenter.links.find(
+      (l) =>
+        l.url ===
+        State.Eligibility.Opportunity.buildPath({
+          stateSlug,
+          opportunitySlug: "sccp",
+          personPseudoId: testResident.pseudonymizedId,
+        }),
+    ),
+  ).toBeDefined();
+});
+
+test("search link does not include person ID from URL", () => {
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
+
+  presenter = new NavigationMenuPresenter(
+    residentsConfigByState.US_ME,
+    userStore,
+    { stateSlug, personPseudoId: testResident.pseudonymizedId },
+    testResident,
+  );
+
+  expect(
+    presenter.links.find(
+      (l) =>
+        l.url ===
+        State.Eligibility.Search.buildPath({
+          stateSlug,
+          personPseudoId: testResident.pseudonymizedId,
+        }),
+    ),
+  ).toBeUndefined();
 
   expect(
     presenter.links.find((l) =>

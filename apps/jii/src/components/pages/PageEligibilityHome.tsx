@@ -23,21 +23,22 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
-import { useResidentsContext } from "../ResidentsLayout/context";
+import { useResidentsContext } from "../ResidentsHydrator/context";
 
 export const PageEligibilityHome: FC = withErrorBoundary(
   observer(function PageEligibilityHome() {
-    const { residentsStore } = useResidentsContext();
-    const { stateSlug } = useTypedParams(State.Eligibility);
+    const { residentsStore, activeResident } = useResidentsContext();
+    const urlParams = useTypedParams(State.Eligibility);
 
-    const { externalId, hasPermission } = residentsStore.userStore;
-    if (externalId) {
+    const { hasPermission } = residentsStore.userStore;
+
+    if (activeResident) {
       // for convenience, while there is only one opp configured we skip the lookup step
       return (
         <Navigate
           to={State.Eligibility.Opportunity.buildPath({
+            ...urlParams,
             opportunitySlug: "sccp",
-            stateSlug,
           })}
           replace
         />
@@ -46,10 +47,7 @@ export const PageEligibilityHome: FC = withErrorBoundary(
 
     if (hasPermission("enhanced"))
       return (
-        <Navigate
-          to={State.Eligibility.Search.buildPath({ stateSlug })}
-          replace
-        />
+        <Navigate to={State.Eligibility.Search.buildPath(urlParams)} replace />
       );
 
     throw new Error("No user ID specified for eligibility page");

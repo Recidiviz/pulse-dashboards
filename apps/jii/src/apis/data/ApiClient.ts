@@ -124,6 +124,18 @@ export class ApiClient implements DataAPI {
     return record;
   }
 
+  async residentByPseudoId(residentPseudoId: string) {
+    await when(() => this.isAuthenticated);
+
+    const record =
+      await this.firestoreClient.residentByPseudoId(residentPseudoId);
+    if (!record) {
+      throw new Error(`No data found for resident ${residentPseudoId}`);
+    }
+
+    return record;
+  }
+
   async residentEligibility<O extends IncarcerationOpportunityId>(
     residentExternalId: string,
     opportunityId: O,

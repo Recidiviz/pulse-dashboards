@@ -47,8 +47,6 @@ describe("eligible resident", () => {
   beforeEach(() => {
     presenter = new OpportunityEligibilityPresenter(
       residentsStore,
-      eligibleResident.personExternalId,
-      opportunityId,
       opportunityConfig,
       new UsMeSCCPEligibilityReport(
         eligibleResident,
@@ -127,8 +125,6 @@ describe("ineligible resident", () => {
   beforeEach(() => {
     presenter = new OpportunityEligibilityPresenter(
       residentsStore,
-      ineligibleResident.personExternalId,
-      opportunityId,
       opportunityConfig,
       new UsMeSCCPEligibilityReport(
         ineligibleResident,
@@ -142,4 +138,29 @@ describe("ineligible resident", () => {
     expect(presenter.additionalSections).toHaveLength(1);
     expect(presenter.additionalSections).toMatchSnapshot();
   });
+});
+
+test("links reflect provided person ID", () => {
+  presenter = new OpportunityEligibilityPresenter(
+    residentsStore,
+    opportunityConfig,
+    new UsMeSCCPEligibilityReport(
+      eligibleResident,
+      opportunityConfig,
+      outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+    ),
+    eligibleResident.pseudonymizedId,
+  );
+
+  expect(presenter.requirementsContent.linkUrl).toMatchInlineSnapshot(
+    `"/maine/anonres001/eligibility/sccp/requirements"`,
+  );
+
+  expect(presenter.additionalSections.map((s) => s.linkUrl))
+    .toMatchInlineSnapshot(`
+    [
+      "/maine/anonres001/eligibility/sccp/about",
+      "/maine/anonres001/eligibility/sccp/application-process",
+    ]
+  `);
 });

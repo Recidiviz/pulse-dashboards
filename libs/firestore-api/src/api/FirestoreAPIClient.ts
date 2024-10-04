@@ -94,6 +94,15 @@ export class FirestoreAPIClient implements FirestoreAPI {
     );
   }
 
+  residentByPseudoId(pseudoId: string) {
+    return this.recordForUniqueId(
+      FIRESTORE_GENERAL_COLLECTION_MAP.residents,
+      "pseudonymizedId",
+      pseudoId,
+      residentRecordSchema,
+    );
+  }
+
   async recordForExternalId<Schema extends z.ZodTypeAny>(
     collectionName: string,
     externalId: string,
@@ -110,5 +119,34 @@ export class FirestoreAPIClient implements FirestoreAPI {
     if (!snapshot.exists()) return;
 
     return recordSchema.parse(snapshot.data());
+  }
+
+  /**
+   * Use to lookup by a field that is expected to be unique
+   * but is not actually used as the document ID.
+   * Will throw if more than one record is found
+   */
+  private async recordForUniqueId<Schema extends z.ZodTypeAny>(
+    collectionName: string,
+    fieldName: string,
+    fieldValue: string,
+    recordSchema: Schema,
+  ): Promise<z.infer<Schema> | undefined> {
+    const snapshot = await getDocs(
+      query(
+        collection(this.db, collectionName),
+        where("stateCode", "==", this.stateCode),
+        where(fieldName, "==", fieldValue),
+      ),
+    );
+
+    if (snapshot.size === 0) return;
+    if (snapshot.size > 1) {
+      throw new Error(
+        `Found ${snapshot.size} documents matching ${fieldName} = ${fieldValue} in ${collectionName}, but only one was expected`,
+      );
+    }
+
+    return recordSchema.parse(snapshot.docs[0].data());
   }
 }

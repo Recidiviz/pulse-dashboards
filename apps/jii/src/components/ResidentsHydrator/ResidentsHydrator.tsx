@@ -16,32 +16,36 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { FC, memo } from "react";
+import { Outlet } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { RedirectIfLoggedOut } from "~auth";
-
 import { State } from "../../routes/routes";
-import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
-import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
-import { ResidentsHydrator } from "../ResidentsHydrator/ResidentsHydrator";
+import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { ResidentsContext } from "./context";
+import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 
-export const PageEligibility = observer(function ResidentsRoot() {
-  const rootStore = useRootStore();
-  const { stateSlug } = useTypedParams(State.Eligibility);
-
+const ResidentsHydratorWithPresenter: FC<{
+  presenter: ResidentsHydratorPresenter;
+}> = observer(function ResidentsHydratorWithPresenter({ presenter }) {
+  const { residentsStore, activeResident } = presenter;
   return (
-    <RedirectIfLoggedOut
-      authClient={rootStore.userStore.authClient}
-      to={State.buildPath(
-        { stateSlug },
-        { returnToPath: window.location.pathname },
-      )}
-    >
-      <RequiresStateAuth>
-        <IdentityTracker />
-        <ResidentsHydrator />
-      </RequiresStateAuth>
-    </RedirectIfLoggedOut>
+    <Outlet
+      context={{ residentsStore, activeResident } satisfies ResidentsContext}
+    />
+  );
+});
+
+export const ResidentsHydrator: FC = memo(function ResidentsHydrator() {
+  const { personPseudoId } = useTypedParams(State.Eligibility);
+  const presenter = new ResidentsHydratorPresenter(
+    useRootStore(),
+    personPseudoId,
+  );
+  return (
+    <PageHydrator hydratable={presenter}>
+      <ResidentsHydratorWithPresenter presenter={presenter} />
+    </PageHydrator>
   );
 });

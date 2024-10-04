@@ -18,10 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
-import {
-  IncarcerationOpportunityId,
-  OpportunityConfig,
-} from "../../configs/types";
+import { OpportunityConfig } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { EligibilityReport } from "../../models/EligibilityReport/interface";
 import { State } from "../../routes/routes";
@@ -29,10 +26,9 @@ import { State } from "../../routes/routes";
 export class OpportunityEligibilityPresenter {
   constructor(
     private residentsStore: ResidentsStore,
-    public residentExternalId: string,
-    public opportunityId: IncarcerationOpportunityId,
     private config: OpportunityConfig,
     private eligibilityReport: EligibilityReport,
+    private residentPseudoId?: string,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
@@ -49,6 +45,7 @@ export class OpportunityEligibilityPresenter {
     return {
       stateSlug: stateConfigsByStateCode[this.residentsStore.stateCode].urlSlug,
       opportunitySlug: this.config.urlSlug,
+      personPseudoId: this.residentPseudoId,
     };
   }
 

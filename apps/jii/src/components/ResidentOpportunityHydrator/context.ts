@@ -22,12 +22,15 @@ import {
   OpportunityConfig,
 } from "../../configs/types";
 import { EligibilityReport } from "../../models/EligibilityReport/interface";
-import { ResidentsContext } from "../ResidentsLayout/context";
+import { ResidentsContext } from "../ResidentsHydrator/context";
 
-export type ResidentOpportunityContext = ResidentsContext & {
+export type ResidentOpportunityContext = Omit<
+  ResidentsContext,
+  "activeResident"
+> & {
+  activeResident: NonNullable<ResidentsContext["activeResident"]>;
   opportunityConfig: OpportunityConfig;
   opportunityId: IncarcerationOpportunityId;
-  residentExternalId: string;
   eligibilityReport: EligibilityReport;
 };
 

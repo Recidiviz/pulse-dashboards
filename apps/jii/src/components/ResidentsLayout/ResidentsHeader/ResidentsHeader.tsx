@@ -20,13 +20,15 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import { Link } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { State } from "../../../routes/routes";
 import {
   PageContainer,
   UnpaddedPageContainer,
 } from "../../BaseLayout/BaseLayout";
-import { useRootStore } from "../../StoreProvider/useRootStore";
+import { useResidentsContext } from "../../ResidentsHydrator/context";
 import { Wordmark } from "../../Wordmark/Wordmark";
 import { NavigationMenu } from "./NavigationMenu";
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
@@ -58,17 +60,11 @@ const HeaderContent = styled.div`
 `;
 
 export const ResidentsHeader: FC = observer(function ResidentsHeader() {
-  const { residentsStore, userStore } = useRootStore();
-
-  if (!residentsStore) return null;
-
-  const { externalId } = userStore;
-  const resident =
-    externalId && residentsStore.residentsByExternalId.get(externalId);
+  const { residentsStore, activeResident } = useResidentsContext();
 
   const profilePresenter =
-    resident &&
-    new ResidentMiniProfilePresenter(resident, residentsStore.config);
+    activeResident &&
+    new ResidentMiniProfilePresenter(activeResident, residentsStore.config);
 
   return (
     <HeaderWrapper>
@@ -84,7 +80,12 @@ export const ResidentsHeader: FC = observer(function ResidentsHeader() {
         </HeaderContent>
         <NavigationMenu
           presenter={
-            new NavigationMenuPresenter(residentsStore.config, userStore)
+            new NavigationMenuPresenter(
+              residentsStore.config,
+              residentsStore.userStore,
+              useTypedParams(State.Eligibility),
+              activeResident,
+            )
           }
         />
       </Header>

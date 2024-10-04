@@ -32,7 +32,9 @@ import {
 
 import {
   allResidents,
+  inputFixture,
   inputFixtureArray,
+  outputFixture,
   outputFixtureArray,
 } from "~datatypes";
 
@@ -128,5 +130,56 @@ describe("residents", () => {
       whereMock,
     );
     expect(getDocs).toHaveBeenCalledExactlyOnceWith(queryMock);
+  });
+});
+
+describe("resident by pseudo ID", () => {
+  const expectedFixture = allResidents[0];
+  const testId = inputFixture(expectedFixture).pseudonymizedId;
+
+  test("parsed result", async () => {
+    const mockSnapshot = {
+      docs: inputFixtureArray([expectedFixture]).map((f) => ({
+        data() {
+          return f;
+        },
+      })),
+      size: 1,
+    } as unknown as QuerySnapshot;
+
+    vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
+
+    const result = await client.residentByPseudoId(testId);
+
+    expect(vi.mocked(where).mock.calls).toEqual([
+      ["stateCode", "==", "US_XX"],
+      ["pseudonymizedId", "==", testId],
+    ]);
+    expect(result).toEqual(outputFixture(expectedFixture));
+  });
+
+  test("no results", async () => {
+    const mockSnapshot = {
+      size: 0,
+    } as unknown as QuerySnapshot;
+
+    vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
+
+    const result = await client.residentByPseudoId(testId);
+    expect(result).toBeUndefined();
+  });
+
+  test("too many results", async () => {
+    const mockSnapshot = {
+      size: 3,
+    } as unknown as QuerySnapshot;
+
+    vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
+
+    await expect(
+      client.residentByPseudoId(testId),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Found 3 documents matching pseudonymizedId = anonres001 in residents, but only one was expected]`,
+    );
   });
 });

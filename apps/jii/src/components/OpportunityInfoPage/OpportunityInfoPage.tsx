@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -103,6 +104,7 @@ const OpportunityInfoPageWithPresenter: FC<{
           </PageLinks>
         </PageLinksFooter>
       )}
+      <ScrollToHashElement />
     </>
   );
 });

@@ -87,26 +87,24 @@ const OpportunityEligibilityWithPresenter: FC<{
   );
 });
 
-export const OpportunityEligibility: FC<ResidentOpportunityContext> = observer(
-  function OpportunityEligibility({
-    residentExternalId,
-    residentsStore,
-    opportunityConfig,
-    opportunityId,
-    eligibilityReport,
-  }) {
-    return (
-      <OpportunityEligibilityWithPresenter
-        presenter={
-          new OpportunityEligibilityPresenter(
-            residentsStore,
-            residentExternalId,
-            opportunityId,
-            opportunityConfig,
-            eligibilityReport,
-          )
-        }
-      />
-    );
-  },
-);
+export const OpportunityEligibility: FC<
+  ResidentOpportunityContext & { residentPseudoId?: string }
+> = observer(function OpportunityEligibility({
+  residentsStore,
+  opportunityConfig,
+  eligibilityReport,
+  residentPseudoId,
+}) {
+  return (
+    <OpportunityEligibilityWithPresenter
+      presenter={
+        new OpportunityEligibilityPresenter(
+          residentsStore,
+          opportunityConfig,
+          eligibilityReport,
+          residentPseudoId,
+        )
+      }
+    />
+  );
+});

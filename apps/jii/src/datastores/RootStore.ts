@@ -98,9 +98,15 @@ export class RootStore {
     }
   }
 
-  *populateResidentsStore(): FlowMethod<DataAPI["residentsConfig"], void> {
+  *populateResidentsStore(): FlowMethod<
+    DataAPI["residentsConfig"],
+    ResidentsStore
+  > {
     const config = yield this.apiClient.residentsConfig();
 
-    this.residentsStore = new ResidentsStore(this, config);
+    const residentsStore = new ResidentsStore(this, config);
+    this.residentsStore = residentsStore;
+
+    return residentsStore;
   }
 }

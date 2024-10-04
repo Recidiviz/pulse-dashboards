@@ -15,22 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, memo } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { useOutletContext } from "react-router-dom";
 
-import { State } from "../../routes/routes";
-import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
-import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
+import { ResidentRecord } from "~datatypes";
 
-export const PageOpportunityEligibilityHome: FC = memo(
-  function PageOpportunityEligibilityHome() {
-    const { personPseudoId } = useTypedParams(State.Eligibility);
+import { ResidentsStore } from "../../datastores/ResidentsStore";
 
-    return (
-      <OpportunityEligibility
-        {...useResidentOpportunityContext()}
-        residentPseudoId={personPseudoId}
-      />
-    );
-  },
-);
+export type ResidentsContext = {
+  residentsStore: ResidentsStore;
+  activeResident: ResidentRecord["output"] | undefined;
+};
+
+export function useResidentsContext() {
+  return useOutletContext<ResidentsContext>();
+}

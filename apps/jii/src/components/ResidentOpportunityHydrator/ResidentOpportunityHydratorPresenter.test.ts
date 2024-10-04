@@ -27,6 +27,8 @@ import { ResidentOpportunityHydratorPresenter } from "./ResidentOpportunityHydra
 let presenter: ResidentOpportunityHydratorPresenter;
 let store: ResidentsStore;
 
+const testResident = outputFixture(usMeResidents[0]);
+
 beforeEach(async () => {
   configure({ safeDescriptors: false });
 
@@ -34,76 +36,49 @@ beforeEach(async () => {
   await flowResult(rootStore.populateResidentsStore());
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   store = rootStore.residentsStore!;
-  presenter = new ResidentOpportunityHydratorPresenter("sccp", store);
+  vi.spyOn(store.userStore.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "US_ME",
+    externalId: testResident.personExternalId,
+    pseudonymizedId: testResident.pseudonymizedId,
+    intercomUserHash: "intercom-abc123",
+  });
+
+  presenter = new ResidentOpportunityHydratorPresenter(
+    "sccp",
+    store,
+    testResident,
+  );
 });
 
 afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-describe("user without external ID", () => {
-  test("external ID property throws", () => {
+describe("before hydration", () => {
+  test("report property throws", () => {
     expect(
-      () => presenter.residentExternalId,
-    ).toThrowErrorMatchingInlineSnapshot(`[Error: missing Resident ID]`);
+      () => presenter.eligibilityReport,
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[Error: Failed to populate usMeSCCP eligibility report for RES001]`,
+    );
   });
 
-  test("flag for redirect with permissions", () => {
-    vi.spyOn(store.userStore.authClient, "appMetadata", "get").mockReturnValue({
-      stateCode: "US_ME",
-      permissions: ["enhanced"],
-    });
-
-    expect(presenter.redirectToSearch).toBeTrue();
-  });
-
-  test("no flag for redirect without permissions", () => {
-    vi.spyOn(store.userStore.authClient, "appMetadata", "get").mockReturnValue({
-      stateCode: "US_ME",
-    });
-
-    expect(presenter.redirectToSearch).toBeFalse();
+  test("properties hydrated upstream do not throw", () => {
+    expect(() => [
+      presenter.opportunityConfig,
+      presenter.opportunityId,
+    ]).not.toThrow();
   });
 });
 
-describe("user with external ID", () => {
-  beforeEach(() => {
-    const testResident = outputFixture(usMeResidents[0]);
-
-    vi.spyOn(store.userStore.authClient, "appMetadata", "get").mockReturnValue({
-      stateCode: "US_ME",
-      externalId: testResident.personExternalId,
-      pseudonymizedId: testResident.pseudonymizedId,
-      intercomUserHash: "intercom-abc123",
-    });
+describe("after hydration", () => {
+  beforeEach(async () => {
+    await presenter.hydrate();
   });
 
-  describe("before hydration", () => {
-    test("report property throws", () => {
-      expect(
-        () => presenter.eligibilityReport,
-      ).toThrowErrorMatchingInlineSnapshot(
-        `[Error: Failed to populate usMeSCCP eligibility report for RES001]`,
-      );
-    });
-
-    test("properties hydrated upstream do not throw", () => {
-      expect(() => [
-        presenter.opportunityConfig,
-        presenter.opportunityId,
-      ]).not.toThrow();
-    });
-  });
-
-  describe("after hydration", () => {
-    beforeEach(async () => {
-      await presenter.hydrate();
-    });
-
-    test("eligibility report", () => {
-      expect(presenter.eligibilityReport).toBeInstanceOf(
-        UsMeSCCPEligibilityReport,
-      );
-    });
+  test("eligibility report", () => {
+    expect(presenter.eligibilityReport).toBeInstanceOf(
+      UsMeSCCPEligibilityReport,
+    );
   });
 });

@@ -25,9 +25,12 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { useId } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { State } from "../../routes/routes";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { useResidentsContext } from "../ResidentsHydrator/context";
 import { Selector } from "../Selector/Selector";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
@@ -45,6 +48,7 @@ const ResidentsSearchWithPresenter: React.FC<{
   const navigate = useNavigate();
   const residentLabelId = useId();
   const facilityLabelId = useId();
+  const urlParams = useTypedParams(State.Eligibility.Search);
 
   return (
     <PageHydrator hydratable={presenter}>
@@ -70,9 +74,13 @@ const ResidentsSearchWithPresenter: React.FC<{
           options={presenter.selectOptions}
           defaultValue={presenter.defaultOption}
           onChange={(value) => {
-            presenter.setActiveResident(value);
             // this should land you on the selected resident's homepage
-            navigate("/");
+            navigate(
+              State.Eligibility.buildPath({
+                ...urlParams,
+                personPseudoId: value.pseudonymizedId,
+              }),
+            );
           }}
           placeholder="Start typing a resident's name or DOC ID …"
         />
@@ -82,12 +90,14 @@ const ResidentsSearchWithPresenter: React.FC<{
 });
 
 export const ResidentsSearch = observer(function ResidentsSearch() {
-  const { residentsStore, uiStore } = useRootStore();
-  if (!residentsStore) return null;
+  const { uiStore } = useRootStore();
+  const { residentsStore, activeResident } = useResidentsContext();
 
   return (
     <ResidentsSearchWithPresenter
-      presenter={new ResidentsSearchPresenter(residentsStore, uiStore)}
+      presenter={
+        new ResidentsSearchPresenter(residentsStore, uiStore, activeResident)
+      }
     />
   );
 });

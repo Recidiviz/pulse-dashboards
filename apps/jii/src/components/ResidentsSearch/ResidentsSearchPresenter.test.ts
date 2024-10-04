@@ -28,10 +28,11 @@ import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
 let residentsStore: ResidentsStore;
 let presenter: ResidentsSearchPresenter;
+let rootStore: RootStore;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
-  const rootStore = new RootStore();
+  rootStore = new RootStore();
   vi.spyOn(
     rootStore.userStore.authClient,
     "appMetadata",
@@ -41,7 +42,11 @@ beforeEach(() => {
   });
 
   residentsStore = new ResidentsStore(rootStore, residentsConfigByState.US_ME);
-  presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
+  presenter = new ResidentsSearchPresenter(
+    residentsStore,
+    rootStore.uiStore,
+    undefined,
+  );
 });
 
 afterEach(() => {
@@ -82,19 +87,20 @@ describe("hydration", () => {
   });
 });
 
-test("set active resident", async () => {
+test("with active resident", async () => {
   vi.spyOn(residentsStore.userStore, "hasPermission").mockReturnValue(true);
-  await presenter.hydrate();
-
-  expect(presenter.defaultOption).toBeUndefined();
 
   const expectedResident = outputFixture(usMeResidents[2]);
 
-  presenter.setActiveResident(expectedResident.personExternalId);
-
-  expect(presenter.defaultOption?.value).toBe(
-    expectedResident.personExternalId,
+  presenter = new ResidentsSearchPresenter(
+    residentsStore,
+    rootStore.uiStore,
+    expectedResident,
   );
+
+  await presenter.hydrate();
+
+  expect(presenter.defaultOption?.value).toEqual(expectedResident);
 });
 
 describe("facility filter", () => {

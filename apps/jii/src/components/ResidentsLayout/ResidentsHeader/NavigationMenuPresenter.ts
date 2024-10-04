@@ -17,15 +17,18 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { stateConfigsByStateCode } from "../../../configs/stateConstants";
 import { ResidentsConfig } from "../../../configs/types";
 import { UserStore } from "../../../datastores/UserStore";
 import { State } from "../../../routes/routes";
+import { RouteParams } from "../../../routes/utils";
+import { ResidentsContext } from "../../ResidentsHydrator/context";
 
 export class NavigationMenuPresenter {
   constructor(
     private config: ResidentsConfig,
     private userStore: UserStore,
+    private eligibilityRouteParams: RouteParams<typeof State.Eligibility>,
+    private activeResident: ResidentsContext["activeResident"],
   ) {
     makeAutoObservable(this);
   }
@@ -33,20 +36,23 @@ export class NavigationMenuPresenter {
   get links() {
     const links = [{ text: "Home", url: "/" }];
 
-    const stateSlug = stateConfigsByStateCode[this.userStore.stateCode].urlSlug;
-
     if (this.userStore.hasPermission("enhanced")) {
       links.push({
         text: "Search for Residents",
-        url: State.Eligibility.Search.buildPath({ stateSlug }),
+        url: State.Eligibility.Search.buildPath({
+          stateSlug: this.eligibilityRouteParams.stateSlug,
+        }),
       });
+    }
 
+    // these links will just be broken without a resident active
+    if (this.activeResident) {
       links.push(
         ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
           text: c.shortName,
           url: State.Eligibility.Opportunity.buildPath({
+            ...this.eligibilityRouteParams,
             opportunitySlug: c.urlSlug,
-            stateSlug,
           }),
         })),
       );

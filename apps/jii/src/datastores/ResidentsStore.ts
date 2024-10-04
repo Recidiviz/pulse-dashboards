@@ -119,6 +119,7 @@ export class ResidentsStore {
   isResidentPopulated(residentExternalId: string): boolean {
     return this.residentsByExternalId.has(residentExternalId);
   }
+
   /**
    * Populates {@link residentsByExternalId} with the API response for the resident
    * with personExternalId matching `residentExternalId`. Throws if the API request fails.
@@ -130,6 +131,32 @@ export class ResidentsStore {
     if (this.isResidentPopulated(residentExternalId)) return;
 
     const resident = yield this.apiClient.residentById(residentExternalId);
+    this.residentsByExternalId.set(resident.personExternalId, resident);
+  }
+
+  get residentsByPseudoId(): Map<string, ResidentRecord["output"]> {
+    return new Map(
+      Object.entries(
+        keyBy([...this.residentsByExternalId.values()], "pseudonymizedId"),
+      ),
+    );
+  }
+
+  isResidentWithPseudoIdPopulated(pseudoId: string): boolean {
+    return this.residentsByPseudoId.has(pseudoId);
+  }
+
+  /**
+   * Populates {@link residentsByExternalId} with the API response for the resident
+   * with pseudonymizedId matching `residentPseudoId`. Throws if the API request fails.
+   * Will not refetch if data is already populated.
+   */
+  *populateResidentByPseudoId(
+    residentPseudoId: string,
+  ): FlowMethod<DataAPI["residentById"], void> {
+    if (this.isResidentWithPseudoIdPopulated(residentPseudoId)) return;
+
+    const resident = yield this.apiClient.residentByPseudoId(residentPseudoId);
     this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 

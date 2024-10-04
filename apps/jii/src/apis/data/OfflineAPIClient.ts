@@ -96,6 +96,23 @@ export class OfflineAPIClient implements DataAPI {
   }
 
   /**
+   * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
+   * and {@link stateCode}. Throws if a match cannot be found.
+   */
+  async residentByPseudoId(residentPseudoId: string) {
+    const residentFixture =
+      await this.firestoreClient.residentByPseudoId(residentPseudoId);
+
+    if (!residentFixture) {
+      throw new Error(
+        `Missing data for resident ${residentPseudoId} in ${this.stateCode}`,
+      );
+    }
+
+    return residentFixture;
+  }
+
+  /**
    * Fetches the opportunity eligibility record fixture for the specified resident
    * and opportunity type, returning `undefined` if a record is not found (indicating
    * the resident is not currently eligible).

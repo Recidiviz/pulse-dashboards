@@ -17,11 +17,10 @@
 
 import { observer } from "mobx-react-lite";
 import { FC, memo } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-import { State } from "../../routes/routes";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { useResidentsContext } from "../ResidentsLayout/context";
+import { useResidentsContext } from "../ResidentsHydrator/context";
 import { ResidentOpportunityContext } from "./context";
 import { ResidentOpportunityHydratorPresenter } from "./ResidentOpportunityHydratorPresenter";
 
@@ -29,10 +28,10 @@ const ResidentOpportunityHydratorWithPresenter: FC<{
   presenter: ResidentOpportunityHydratorPresenter;
 }> = observer(function ResidentOpportunityHydratorWithPresenter({ presenter }) {
   const {
+    activeResident,
     eligibilityReport,
     opportunityConfig,
     opportunityId,
-    residentExternalId,
   } = presenter;
 
   return (
@@ -40,10 +39,10 @@ const ResidentOpportunityHydratorWithPresenter: FC<{
       context={
         {
           ...useResidentsContext(),
+          activeResident,
           eligibilityReport,
           opportunityConfig,
           opportunityId,
-          residentExternalId,
         } satisfies ResidentOpportunityContext
       }
     />
@@ -52,20 +51,18 @@ const ResidentOpportunityHydratorWithPresenter: FC<{
 
 export const ResidentOpportunityHydrator: FC<{
   opportunitySlug: string;
-  stateSlug: string;
-}> = memo(function ResidentOpportunityHydrator({ opportunitySlug, stateSlug }) {
-  const { residentsStore } = useResidentsContext();
+}> = memo(function ResidentOpportunityHydrator({ opportunitySlug }) {
+  const { residentsStore, activeResident } = useResidentsContext();
+
+  if (!activeResident) {
+    throw new Error("Missing resident data");
+  }
 
   const presenter = new ResidentOpportunityHydratorPresenter(
     opportunitySlug,
     residentsStore,
+    activeResident,
   );
-
-  // prevent some error pages for developers and staff
-  // by redirecting before an expected hydration failure
-  if (presenter.redirectToSearch) {
-    return <Navigate to={State.Eligibility.Search.buildPath({ stateSlug })} />;
-  }
 
   return (
     <PageHydrator hydratable={presenter}>

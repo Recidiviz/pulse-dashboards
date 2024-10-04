@@ -16,6 +16,7 @@
   "dependencies": {
     "@artsy/to-title-case": "^1.1.0",
     "@auth0/auth0-spa-js": "^1.12.1",
+    "@cascadia-code/scroll-to-hash-element": "^2.0.2",
     "@fastify/cors": "^9.0.1",
     "@floating-ui/react": "^0.26.1",
     "@google-cloud/storage": "^7.11.1",

@@ -56,18 +56,6 @@ export class UserStore {
     this.segmentClient = new SegmentClient(new SegmentExternals(this));
   }
 
-  private externalIdOverride?: string;
-
-  private get canOverrideExternalId() {
-    return this.hasPermission("enhanced");
-  }
-
-  overrideExternalId(newId: string | undefined) {
-    if (!this.canOverrideExternalId)
-      throw new Error("You don't have permission to override external ID");
-    this.externalIdOverride = newId;
-  }
-
   get isAuthorizedForCurrentState(): boolean {
     if (isOfflineMode()) return true;
 
@@ -82,7 +70,7 @@ export class UserStore {
 
   get externalId(): string | undefined {
     try {
-      return this.externalIdOverride ?? this.authClient.appMetadata.externalId;
+      return this.authClient.appMetadata.externalId;
     } catch {
       return undefined;
     }
