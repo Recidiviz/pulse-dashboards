@@ -90,6 +90,7 @@ export type TenantConfig = {
   insightsLanternState?: boolean;
   insightsLegacyUI?: boolean;
   releaseDateCopyOverride?: string;
+  insightsUnitState?: boolean;
 };
 
 /**

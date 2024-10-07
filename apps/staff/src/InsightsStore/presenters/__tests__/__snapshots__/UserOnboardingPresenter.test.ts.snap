@@ -14,6 +14,7 @@ exports[`has userInfo 1`] = `
     "hasOutliers": true,
     "pseudonymizedId": "hashed-agonzalez123",
     "supervisionDistrict": "Region D1",
+    "supervisionUnit": "Unit 1",
   },
   "metadata": {
     "hasSeenOnboarding": false,
@@ -36,6 +37,7 @@ exports[`with user data already hydrated > has userInfo 1`] = `
     "hasOutliers": true,
     "pseudonymizedId": "hashed-agonzalez123",
     "supervisionDistrict": "Region D1",
+    "supervisionUnit": "Unit 1",
   },
   "metadata": {
     "hasSeenOnboarding": false,

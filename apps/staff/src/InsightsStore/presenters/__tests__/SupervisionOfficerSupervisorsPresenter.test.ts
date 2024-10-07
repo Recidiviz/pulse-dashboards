@@ -130,6 +130,7 @@ test("districts ordered correctly", async () => {
   presenter.allSupervisors.push(
     {
       supervisionDistrict: "REGION 7",
+      supervisionUnit: "UNIT 7",
       externalId: "testid1",
       displayName: "Test Name",
       fullName: {
@@ -142,6 +143,7 @@ test("districts ordered correctly", async () => {
     },
     {
       supervisionDistrict: "REGION 4B",
+      supervisionUnit: "UNIT 4B",
       externalId: "testid2",
       displayName: "Test Name",
       fullName: {
@@ -154,6 +156,7 @@ test("districts ordered correctly", async () => {
     },
     {
       supervisionDistrict: "REGION 1",
+      supervisionUnit: "UNIT 1",
       externalId: "testid3",
       displayName: "Test Name",
       fullName: {
@@ -166,6 +169,7 @@ test("districts ordered correctly", async () => {
     },
     {
       supervisionDistrict: "REGION 10 - CENTRAL",
+      supervisionUnit: "UNIT 10 - CENTRAL",
       externalId: "testid4",
       displayName: "Test Name",
       fullName: {
@@ -178,6 +182,7 @@ test("districts ordered correctly", async () => {
     },
     {
       supervisionDistrict: "REGION 4A",
+      supervisionUnit: "UNIT 4A",
       externalId: "testid5",
       displayName: "Test Name",
       fullName: {
@@ -190,6 +195,7 @@ test("districts ordered correctly", async () => {
     },
     {
       supervisionDistrict: "REGION 10 - WEST",
+      supervisionUnit: "UNIT 10 - WEST",
       externalId: "testid6",
       displayName: "Test Name",
       fullName: {
@@ -236,6 +242,7 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
       supervisionOfficerSupervisorsFixture.concat(
         {
           supervisionDistrict: launchedDistricts[0],
+          supervisionUnit: launchedDistricts[0],
           externalId: "testid1",
           displayName: "Test Name",
           fullName: {
@@ -249,6 +256,7 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
         // Supervisor in launched district without outliers
         {
           supervisionDistrict: launchedDistricts[0],
+          supervisionUnit: launchedDistricts[0],
           externalId: "testid2",
           displayName: "Test Name2",
           fullName: {

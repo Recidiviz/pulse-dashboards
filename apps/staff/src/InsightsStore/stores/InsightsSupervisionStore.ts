@@ -45,6 +45,7 @@ import {
 } from "../api/interface";
 import { InsightsStore } from "../InsightsStore";
 import { ActionStrategyCopy, ConfigLabels } from "../presenters/types";
+import { getLocationWithoutLabel } from "../presenters/utils";
 import { StringMap2D } from "../types";
 
 export class InsightsSupervisionStore {
@@ -254,6 +255,34 @@ export class InsightsSupervisionStore {
     return this.supervisionOfficerSupervisors?.find(
       (s) => s.pseudonymizedId === supervisorPseudoId,
     );
+  }
+
+  supervisorInfo(
+    supervisorPseudoId: string,
+  ): SupervisionOfficerSupervisor | undefined {
+    return this.supervisionOfficerSupervisorByPseudoId(supervisorPseudoId);
+  }
+
+  supervisionLocationInfo(supervisorPseudoId: string): {
+    locationLabel: string;
+    supervisionLocation?: string | null;
+  } {
+    const {
+      tenantStore: { insightsUnitState },
+    } = this.insightsStore.rootStore;
+    const locationLabel = insightsUnitState
+      ? this.labels.supervisionUnitLabel
+      : this.labels.supervisionDistrictLabel;
+    const supervisionLocation = getLocationWithoutLabel(
+      insightsUnitState
+        ? this.supervisorInfo(supervisorPseudoId)?.supervisionUnit
+        : this.supervisorInfo(supervisorPseudoId)?.supervisionDistrict,
+      locationLabel,
+    );
+    return {
+      locationLabel,
+      supervisionLocation,
+    };
   }
 
   private get caseloadCategories() {

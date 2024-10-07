@@ -24,7 +24,6 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
-import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
 import { pluralize, toTitleCase } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
@@ -80,6 +79,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     supervisorPseudoId,
     trackActionStrategyPopupViewed,
     isInsightsLanternState,
+    supervisionLocationInfo,
   } = presenter;
 
   const tooltipContents = (
@@ -114,11 +114,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 
   const infoItems = [
     {
-      title: labels.supervisionDistrictLabel,
-      info: getDistrictWithoutLabel(
-        supervisorInfo?.supervisionDistrict,
-        labels.supervisionDistrictLabel,
-      ),
+      title: supervisionLocationInfo.locationLabel,
+      info: supervisionLocationInfo.supervisionLocation,
     },
     {
       title: "team",

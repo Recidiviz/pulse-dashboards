@@ -38,7 +38,6 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import useIsOverflown from "../../hooks/useIsOverflown";
 import { SupervisionOfficerDetailPresenter } from "../../InsightsStore/presenters/SupervisionOfficerDetailPresenter";
-import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
 import { formatDate, toTitleCase } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsChartCard from "../InsightsChartCard";
@@ -166,6 +165,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     disableSurfaceActionStrategies,
     trackActionStrategyPopupViewed,
     isInsightsLanternState,
+    supervisionLocationInfo,
   } = presenter;
 
   useEffect(() => {
@@ -249,11 +249,8 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         null,
     },
     {
-      title: labels.supervisionDistrictLabel,
-      info: getDistrictWithoutLabel(
-        outlierOfficerData.district,
-        labels.supervisionDistrictLabel,
-      ),
+      title: supervisionLocationInfo().locationLabel,
+      info: supervisionLocationInfo().supervisionLocation,
     },
     {
       title: simplur`${labels.supervisionUnitLabel} ${[supervisorsInfo?.length]}${labels.supervisionSupervisorLabel}[|s]`,

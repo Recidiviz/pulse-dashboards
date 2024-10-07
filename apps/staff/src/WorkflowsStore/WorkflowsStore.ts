@@ -74,11 +74,8 @@ import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
-import {
-  Opportunity,
-  OpportunityNotification,
-  OpportunityType,
-} from "./Opportunity";
+import { Opportunity, OpportunityNotification } from "./Opportunity";
+import { OpportunityType } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { Resident } from "./Resident";
 import {

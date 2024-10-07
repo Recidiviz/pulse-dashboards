@@ -81,6 +81,7 @@ test("homepage redirects supervisors without the list permission to their own re
     externalId: "abc123",
     pseudonymizedId: "hashed-abc123",
     supervisionDistrict: null,
+    supervisionUnit: null,
     email: "mock-email",
     hasOutliers: true,
   });
@@ -106,6 +107,7 @@ test("homepage redirects non-supervisors to the supervisors list page", () => {
     externalId: "abc123",
     pseudonymizedId: "hashed-abc123",
     supervisionDistrict: null,
+    supervisionUnit: null,
     email: null,
     hasOutliers: true,
   });
@@ -160,6 +162,7 @@ test("redirect waits for supervision store to be hydrated", async () => {
     fullName: {},
     externalId: "abc123",
     supervisionDistrict: null,
+    supervisionUnit: null,
     pseudonymizedId: "hashed-abc123",
     email: "mock-email",
     hasOutliers: true,

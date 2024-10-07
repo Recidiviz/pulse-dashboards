@@ -46,6 +46,9 @@ export const randJiiId = () => faker.string.numeric(6);
 export const randDistrict = () =>
   faker.helpers.arrayElement(["REGION 1", "REGION 2", "REGION 3"]);
 
+export const randUnit = () =>
+  faker.helpers.arrayElement(["UNIT 1", "UNIT 2", "UNIT 3"]);
+
 export const randStaffEmail = (
   stateCode = "US_XX",
   options?: Exclude<Parameters<typeof faker.internet.email>[0], string>,

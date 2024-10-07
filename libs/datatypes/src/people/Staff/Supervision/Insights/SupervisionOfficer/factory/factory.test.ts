@@ -35,7 +35,7 @@ import {
 
 faker.seed(FIXTURE_SEED_DEFAULT);
 
-const getTestSupervisors = (count = 3) =>
+const getTestSupervisors = (count = 5) =>
   rawSupervisionOfficerSupervisorFactory()
     .buildList(count)
     .map((s) => supervisionOfficerSupervisorSchema.parse(s));

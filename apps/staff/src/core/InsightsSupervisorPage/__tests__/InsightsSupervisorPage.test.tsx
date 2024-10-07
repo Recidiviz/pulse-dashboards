@@ -54,7 +54,7 @@ beforeEach(() => {
     () => false,
   );
   vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
-    () => "US_CA",
+    () => "US_MI",
   );
   vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
     () => supervisorUser.pseudonymizedId,
@@ -80,6 +80,7 @@ describe("Hydrated Supervisor Page", () => {
       rootStore.insightsStore,
       InsightsConfigFixture,
     );
+    rootStore.tenantStore.setCurrentTenantId("US_MI");
     rootStore.insightsStore.supervisionStore = store;
     useRootStoreMock.mockReturnValue(rootStore);
     presenter = new SupervisionOfficersPresenter(store, supervisorPseudoId);
@@ -228,6 +229,47 @@ describe("Hydrated Supervisor Page", () => {
   });
 });
 
+describe("When insightsUnitState is true", () => {
+  let presenter: SupervisionOfficersPresenter;
+  let rootStore: RootStore;
+  let store: InsightsSupervisionStore;
+
+  beforeEach(async () => {
+    rootStore = new RootStore();
+    store = new InsightsSupervisionStore(
+      rootStore.insightsStore,
+      InsightsConfigFixture,
+    );
+    rootStore.tenantStore.setCurrentTenantId("US_CA");
+    rootStore.insightsStore.supervisionStore = store;
+    useRootStoreMock.mockReturnValue(rootStore);
+    presenter = new SupervisionOfficersPresenter(store, supervisorPseudoId);
+    await presenter?.hydrate();
+  });
+
+  test("Renders the unit location correctly", async () => {
+    vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
+      supervisorUser,
+    );
+    render(
+      <BrowserRouter>
+        <SupervisorPage presenter={presenter} />
+      </BrowserRouter>,
+    );
+
+    await Promise.all(
+      [
+        "Unit 1",
+        "Alejandro D Gonzalez",
+        "Walter Harris, Jack Hernandez, Jason Nelson",
+        "Team:",
+        "Team Supervisor:",
+      ].map((text) =>
+        waitFor(() => expect(screen.getByText(text)).toBeInTheDocument()),
+      ),
+    );
+  });
+});
 describe("Insights Supervisor Page", () => {
   let store: InsightsSupervisionStore;
 

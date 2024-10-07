@@ -22,7 +22,6 @@ import simplur from "simplur";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../InsightsStore/presenters/SupervisionOfficersPresenter";
-import { getDistrictWithoutLabel } from "../../InsightsStore/presenters/utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsEmptyPage from "../InsightsEmptyPage";
 import { InsightsSidebarLegend } from "../InsightsLegend";
@@ -63,6 +62,7 @@ export const SupervisorPage = observer(function SupervisorPage({
     supervisorPseudoId,
     trackActionStrategyPopupViewed,
     isInsightsLanternState,
+    supervisionLocationInfo,
   } = presenter;
 
   const emptyPageHeaderText = labels.supervisorHasNoOutlierOfficersLabel;
@@ -78,11 +78,8 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
 
   const infoItems = [
     {
-      title: labels.supervisionDistrictLabel,
-      info: getDistrictWithoutLabel(
-        supervisorInfo?.supervisionDistrict,
-        labels.supervisionDistrictLabel,
-      ),
+      title: supervisionLocationInfo.locationLabel,
+      info: supervisionLocationInfo.supervisionLocation,
     },
     {
       title: `${labels.supervisionUnitLabel} ${labels.supervisionSupervisorLabel}`,

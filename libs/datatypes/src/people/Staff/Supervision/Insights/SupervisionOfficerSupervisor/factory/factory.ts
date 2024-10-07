@@ -26,6 +26,7 @@ import {
   randId,
   randPseudonymizedId,
   randStaffEmail,
+  randUnit,
 } from "../../../../../utils/factories";
 import { RawSupervisionOfficerSupervisor } from "../schema";
 
@@ -40,6 +41,7 @@ export const rawSupervisionOfficerSupervisorFactory = (
       externalId: randId(),
       pseudonymizedId: randPseudonymizedId(),
       supervisionDistrict: nullable(() => randDistrict()),
+      supervisionUnit: nullable(() => randUnit()),
       email: nullable(() =>
         randStaffEmail(stateCode, {
           firstName: fullName.givenNames,

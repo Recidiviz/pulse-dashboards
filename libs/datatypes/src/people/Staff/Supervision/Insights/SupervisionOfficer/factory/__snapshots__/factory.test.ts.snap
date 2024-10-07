@@ -3,45 +3,45 @@
 exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realistic excluded supervision officers 1`] = `
 [
   {
-    "displayName": "Lynette Swaniawski",
+    "displayName": "Rogelio Kylo Carroll",
     "district": "REGION 3",
     "externalId": "so5",
     "fullName": {
-      "givenNames": "Lynette",
-      "middleNames": undefined,
-      "surname": "Swaniawski",
+      "givenNames": "Rogelio",
+      "middleNames": "Kylo",
+      "surname": "Carroll",
     },
     "pseudonymizedId": "hashed-so5",
     "supervisorExternalIds": [
-      "onjV5r",
+      "fvqWr2",
     ],
   },
   {
-    "displayName": "Jacquelyn Imani Waters",
+    "displayName": "Elias Borer",
+    "district": "REGION 2",
+    "externalId": "so5",
+    "fullName": {
+      "givenNames": "Elias",
+      "middleNames": undefined,
+      "surname": "Borer",
+    },
+    "pseudonymizedId": "hashed-so5",
+    "supervisorExternalIds": [
+      "M3xYAi",
+    ],
+  },
+  {
+    "displayName": "Roy Roberts-Jacobi",
     "district": "REGION 3",
     "externalId": "so2",
     "fullName": {
-      "givenNames": "Jacquelyn",
-      "middleNames": "Imani",
-      "surname": "Waters",
+      "givenNames": "Roy",
+      "middleNames": undefined,
+      "surname": "Roberts-Jacobi",
     },
     "pseudonymizedId": "hashed-so2",
     "supervisorExternalIds": [
-      "Tvza2z",
-    ],
-  },
-  {
-    "displayName": "Amos Jackson Reichel",
-    "district": "REGION 1",
-    "externalId": "OFFICER4",
-    "fullName": {
-      "givenNames": "Amos",
-      "middleNames": "Jackson",
-      "surname": "Reichel",
-    },
-    "pseudonymizedId": "hashed-so1",
-    "supervisorExternalIds": [
-      "moSvxx",
+      "fvqWr2",
     ],
   },
 ]
@@ -50,15 +50,15 @@ exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realis
 exports[`function: SupervisionOfficerRawFactory > should generate realistic supervision officers 1`] = `
 [
   {
-    "avgDailyPopulation": 32,
+    "avgDailyPopulation": 43,
     "caseloadCategory": "GENERAL_OR_OTHER",
-    "displayName": "Juan Bode",
+    "displayName": "Jimmy Greenfelder",
     "district": "REGION 2",
-    "externalId": "so3",
+    "externalId": "so4",
     "fullName": {
-      "givenNames": "Juan",
+      "givenNames": "Jimmy",
       "middleNames": undefined,
-      "surname": "Bode",
+      "surname": "Greenfelder",
     },
     "outlierMetrics": [
       {
@@ -66,32 +66,32 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
         "statusesOverTime": [
           {
             "endDate": 2023-04-01T00:00:00.000Z,
-            "metricRate": 0.154553,
-            "status": "FAR",
+            "metricRate": 0.06283,
+            "status": "NEAR",
           },
           {
             "endDate": 2023-05-01T00:00:00.000Z,
+            "metricRate": 0.088881,
+            "status": "NEAR",
+          },
+          {
+            "endDate": 2023-06-01T00:00:00.000Z,
             "metricRate": 0.109407,
             "status": "FAR",
           },
           {
-            "endDate": 2023-06-01T00:00:00.000Z,
-            "metricRate": 0.12125238767544223,
-            "status": "FAR",
-          },
-          {
             "endDate": 2023-07-01T00:00:00.000Z,
-            "metricRate": 0.1466368227731864,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-08-01T00:00:00.000Z,
             "metricRate": 0.110487,
             "status": "FAR",
           },
           {
+            "endDate": 2023-08-01T00:00:00.000Z,
+            "metricRate": 0.154553,
+            "status": "FAR",
+          },
+          {
             "endDate": 2023-09-01T00:00:00.000Z,
-            "metricRate": 0.11521464646464646,
+            "metricRate": 0.1604677745537677,
             "status": "FAR",
           },
         ],
@@ -132,118 +132,57 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
         ],
       },
     ],
-    "pseudonymizedId": "hashed-so3",
+    "pseudonymizedId": "hashed-so4",
     "supervisorExternalIds": [
-      "Ea2uUU",
+      "zhJOf8",
     ],
     "topXPctMetrics": [],
   },
   {
-    "avgDailyPopulation": 5,
+    "avgDailyPopulation": 12,
     "caseloadCategory": "GENERAL_OR_OTHER",
-    "displayName": "Frank Ellis Smitham",
-    "district": "REGION 2",
-    "externalId": "so5",
+    "displayName": "Megan Haley",
+    "district": "REGION 1",
+    "externalId": "so2",
     "fullName": {
-      "givenNames": "Frank",
-      "middleNames": "Ellis",
-      "surname": "Smitham",
+      "givenNames": "Megan",
+      "middleNames": undefined,
+      "surname": "Haley",
     },
     "outlierMetrics": [],
-    "pseudonymizedId": "hashed-so5",
+    "pseudonymizedId": "hashed-so2",
     "supervisorExternalIds": [
-      "Ea2uUU",
+      "wxaST5",
     ],
-    "topXPctMetrics": [],
-  },
-  {
-    "avgDailyPopulation": 32,
-    "caseloadCategory": "GENERAL_OR_OTHER",
-    "displayName": "Jerome Monahan",
-    "district": "REGION 1",
-    "externalId": "so3",
-    "fullName": {
-      "givenNames": "Jerome",
-      "middleNames": undefined,
-      "surname": "Monahan",
-    },
-    "outlierMetrics": [
-      {
-        "metricId": "absconsions_bench_warrants",
-        "statusesOverTime": [
-          {
-            "endDate": 2023-04-01T00:00:00.000Z,
-            "metricRate": 0.154553,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-05-01T00:00:00.000Z,
-            "metricRate": 0.109407,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-06-01T00:00:00.000Z,
-            "metricRate": 0.12125238767544223,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-07-01T00:00:00.000Z,
-            "metricRate": 0.1466368227731864,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-08-01T00:00:00.000Z,
-            "metricRate": 0.110487,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-09-01T00:00:00.000Z,
-            "metricRate": 0.11521464646464646,
-            "status": "FAR",
-          },
-        ],
-      },
+    "topXPctMetrics": [
       {
         "metricId": "treatment_starts",
-        "statusesOverTime": [
-          {
-            "endDate": 2023-04-01T00:00:00.000Z,
-            "metricRate": 0.022968597032909103,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-05-01T00:00:00.000Z,
-            "metricRate": 0,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-06-01T00:00:00.000Z,
-            "metricRate": 0.027919749790220463,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-07-01T00:00:00.000Z,
-            "metricRate": 0.032353114502917085,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2023-08-01T00:00:00.000Z,
-            "metricRate": 0.03232644409114997,
-            "status": "NEAR",
-          },
-          {
-            "endDate": 2023-09-01T00:00:00.000Z,
-            "metricRate": 0.028747594548953384,
-            "status": "FAR",
-          },
-        ],
+        "topXPct": 10,
       },
     ],
-    "pseudonymizedId": "hashed-so3",
+  },
+  {
+    "avgDailyPopulation": 12,
+    "caseloadCategory": "GENERAL_OR_OTHER",
+    "displayName": "Mattie Fawn Schaefer",
+    "district": "REGION 1",
+    "externalId": "so2",
+    "fullName": {
+      "givenNames": "Mattie",
+      "middleNames": "Fawn",
+      "surname": "Schaefer",
+    },
+    "outlierMetrics": [],
+    "pseudonymizedId": "hashed-so2",
     "supervisorExternalIds": [
-      "2CC8Zp",
+      "NpMsAB",
     ],
-    "topXPctMetrics": [],
+    "topXPctMetrics": [
+      {
+        "metricId": "treatment_starts",
+        "topXPct": 10,
+      },
+    ],
   },
 ]
 `;

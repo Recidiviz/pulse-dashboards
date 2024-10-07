@@ -162,7 +162,18 @@ export class SupervisionOfficersPresenter implements Hydratable {
    * Provides information about the currently selected supervisor
    */
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
+    return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
+  }
+
+  /**
+   * Provides information about the currently selected supervisor's
+   * supervision location, whether it is by unit or by district
+   */
+  get supervisionLocationInfo(): {
+    locationLabel: string;
+    supervisionLocation?: string | null;
+  } {
+    return this.supervisionStore.supervisionLocationInfo(
       this.supervisorPseudoId,
     );
   }

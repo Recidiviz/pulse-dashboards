@@ -125,11 +125,11 @@ export function getOutlierOfficerData<
   } as OutlierOfficerData<T>;
 }
 
-export function getDistrictWithoutLabel(
-  district: string | null | undefined,
+export function getLocationWithoutLabel(
+  location: string | null | undefined,
   label: string,
 ): string | undefined {
-  return district?.toUpperCase().startsWith(label.toUpperCase())
-    ? district.toUpperCase().split(`${label.toUpperCase()} `)[1]
-    : district ?? undefined;
+  return location?.toUpperCase().startsWith(label.toUpperCase())
+    ? location.toUpperCase().split(`${label.toUpperCase()} `)[1]
+    : location ?? undefined;
 }

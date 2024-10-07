@@ -190,7 +190,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   }
 
   // ==============================
-  // Supervision and Officer Data
+  // Supervisor and Officer Data
   // ==============================
 
   /**
@@ -198,7 +198,18 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    * @returns The supervisor record, or `undefined` if not yet fetched.
    */
   get supervisorInfo(): SupervisionOfficerSupervisor | undefined {
-    return this.supervisionStore.supervisionOfficerSupervisorByPseudoId(
+    return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
+  }
+
+  /**
+   * Provides information about the currently selected supervisor's
+   * supervision location, whether it is by unit or by district
+   */
+  get supervisionLocationInfo(): {
+    locationLabel: string;
+    supervisionLocation?: string | null;
+  } {
+    return this.supervisionStore.supervisionLocationInfo(
       this.supervisorPseudoId,
     );
   }

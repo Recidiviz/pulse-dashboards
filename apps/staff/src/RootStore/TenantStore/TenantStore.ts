@@ -203,6 +203,15 @@ export default class TenantStore {
   }
 
   /**
+   * Returns the boolean from the tenant config which specifies whether to display the supervisor's
+   * supervisionUnit rather than the supervisionDistrict on the Supervisor Page (and Staff page in legacy layout)
+   */
+  get insightsUnitState(): boolean {
+    if (!this.currentTenantId) return false;
+    return !!tenants[this.currentTenantId].insightsUnitState;
+  }
+
+  /**
    * Returns the function used to filter which staff members a user can search for. If the tenant
    * config does not specify one, returns a function which allows all staff to search for anyone
    * unless they have override districts set, in which case they can only search within the

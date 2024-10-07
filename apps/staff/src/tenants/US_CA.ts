@@ -55,6 +55,7 @@ const US_CA_CONFIG: TenantConfig = {
     "PARTICIPATED_IN_PROGRAMMING_FOR_12_TO_14_MONTHS",
   ],
   insightsLegacyUI: true,
+  insightsUnitState: true,
 };
 
 export default US_CA_CONFIG;

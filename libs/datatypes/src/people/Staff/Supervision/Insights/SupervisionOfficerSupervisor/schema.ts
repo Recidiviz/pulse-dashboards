@@ -28,6 +28,7 @@ export const supervisionOfficerSupervisorSchema = z
     pseudonymizedId: z.string(),
     hasOutliers: z.boolean(),
     supervisionDistrict: z.string().nullable(),
+    supervisionUnit: z.string().nullable(),
   })
   .transform(addDisplayName);
 

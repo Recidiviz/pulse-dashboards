@@ -70,6 +70,7 @@ describe("Insights Staff Page", () => {
 
   beforeEach(async () => {
     rootStore = new RootStore();
+    rootStore.tenantStore.setCurrentTenantId("US_CA");
     store = new InsightsSupervisionStore(
       rootStore.insightsStore,
       InsightsConfigFixture,

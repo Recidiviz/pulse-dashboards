@@ -13,6 +13,7 @@ exports[`transformations 1`] = `
   "hasOutliers": true,
   "pseudonymizedId": "hashed-agonzalez123",
   "supervisionDistrict": "Region D1",
+  "supervisionUnit": "Unit 1",
 }
 `;
 
@@ -28,6 +29,7 @@ exports[`transformations 2`] = `
   "hasOutliers": true,
   "pseudonymizedId": "hashed-dlee456",
   "supervisionDistrict": null,
+  "supervisionUnit": "Unit 1",
 }
 `;
 
@@ -43,6 +45,7 @@ exports[`transformations 3`] = `
   "hasOutliers": true,
   "pseudonymizedId": "hashed-rsmith789",
   "supervisionDistrict": "Region D1",
+  "supervisionUnit": "Unit 1",
 }
 `;
 
@@ -58,5 +61,6 @@ exports[`transformations 4`] = `
   "hasOutliers": false,
   "pseudonymizedId": "hashed-cthomas321",
   "supervisionDistrict": null,
+  "supervisionUnit": null,
 }
 `;
