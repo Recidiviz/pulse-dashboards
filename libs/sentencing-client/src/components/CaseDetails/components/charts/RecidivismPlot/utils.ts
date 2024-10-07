@@ -24,14 +24,13 @@ import {
   plot,
   pointer,
   ruleY,
-  selectMaxX,
   text,
   tip,
 } from "@observablehq/plot";
 
 import { CaseInsight } from "../../../../../api";
 import { convertDecimalToPercentage } from "../../../../../utils/utils";
-import { RecommendationType, SelectedRecommendation } from "../../../types";
+import { SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
 import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
@@ -84,37 +83,43 @@ export function getRecidivismPlotSubtitle(insight: CaseInsight) {
     : `All cases in ${stateCodeToStateName(rollupStateCode)}`;
 }
 
-const consolidateDuplicateLabels = (
-  d: CaseInsight["rollupRecidivismSeries"][number]["dataPoints"][number],
-  uniqueEndingEventRates: Set<number>,
-  recommendationType: keyof typeof RecommendationType,
-) => {
-  const eventRatePercent = convertDecimalToPercentage(d.eventRate);
-  if (d.cohortMonths === 36) {
-    if (uniqueEndingEventRates.has(eventRatePercent)) {
-      return { ...d, recommendationType, eventRate: null };
-    }
-    uniqueEndingEventRates.add(eventRatePercent);
-  }
-  return { ...d, recommendationType };
-};
-
 const PLOT_MARGIN_RIGHT = 42;
 const PLOT_MARGIN_BOTTOM = 52;
-const PLOT_HEIGHT_RATIO = 360 / 704;
-const Y_TEXT_LABEL_OFFSET = 0.00099;
+const PLOT_HEIGHT_RATIO = 445 / 704;
 
 export function getRecidivismPlot(
   insight: CaseInsight,
   selectedRecommendation: SelectedRecommendation,
   plotWidth: number,
 ) {
-  const series = insight.rollupRecidivismSeries;
-  const uniqueEndingEventRates: Set<number> = new Set();
-  const data = series.flatMap(({ recommendationType, dataPoints }) =>
-    dataPoints.map((d) =>
-      consolidateDuplicateLabels(d, uniqueEndingEventRates, recommendationType),
-    ),
+  const { rollupRecidivismSeries } = insight;
+
+  const transformedSeries = rollupRecidivismSeries.map((series) => ({
+    ...series,
+    dataPoints: series.dataPoints.map((dataPoint) => ({
+      ...dataPoint,
+      eventRate: convertDecimalToPercentage(dataPoint.eventRate),
+      lowerCI: convertDecimalToPercentage(dataPoint.lowerCI),
+      upperCI: convertDecimalToPercentage(dataPoint.upperCI),
+    })),
+  }));
+
+  const endingEventRates = transformedSeries.reduce(
+    (acc, series) => {
+      const lastDataPoint = series.dataPoints.sort(
+        (a, b) => a.cohortMonths - b.cohortMonths,
+      )[series.dataPoints.length - 1];
+      acc.push({
+        cohortMonths: lastDataPoint.cohortMonths,
+        eventRate: lastDataPoint.eventRate,
+      });
+      return acc;
+    },
+    <{ cohortMonths: number; eventRate: number }[]>[],
+  );
+
+  const data = transformedSeries.flatMap(({ recommendationType, dataPoints }) =>
+    dataPoints.map((d) => ({ ...d, recommendationType })),
   );
 
   return plot({
@@ -122,9 +127,6 @@ export function getRecidivismPlot(
     marginBottom: PLOT_MARGIN_BOTTOM,
     height: PLOT_HEIGHT_RATIO * plotWidth,
     width: plotWidth,
-    y: {
-      percent: true,
-    },
     // The "white" fill is so that non-selected dots have a white fill
     color: {
       domain: [...Object.keys(RECOMMENDATION_TYPE_TO_COLOR), "white"],
@@ -159,23 +161,18 @@ export function getRecidivismPlot(
         pointer({
           x: "cohortMonths",
           y: "eventRate",
-          title: (d) => `${Math.round(d.eventRate * 100)}%`,
+          title: (d) => `${d.eventRate}%`,
         }),
       ),
-      text(
-        data,
-        selectMaxX({
-          x: "cohortMonths",
-          // y is slightly offset to avoid labels overlapping for datapoints that are close to each other
-          y: (d, i) => d.eventRate + i * Y_TEXT_LABEL_OFFSET - 0.01,
-          z: "recommendationType",
-          text: (d) => d.eventRate && `${Math.round(d.eventRate * 100)}%`,
-          dx: 25,
-          fontFamily: "Public Sans",
-          fontSize: 14,
-          fill: "#001133B2",
-        }),
-      ),
+      text(endingEventRates, {
+        x: "cohortMonths",
+        y: (d) => d.eventRate,
+        text: (d) => d.eventRate && `${d.eventRate}%`,
+        dx: 25,
+        fontFamily: "Public Sans",
+        fontSize: 14,
+        fill: "#001133B2",
+      }),
       axisX({
         label: "Months since release",
         labelAnchor: "center",

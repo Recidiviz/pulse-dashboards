@@ -676,7 +676,7 @@ export const Chart = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  height: 473px;
+  height: 555px;
   background-color: #ffffff;
   border-radius: 10px;
   padding: 24px;
