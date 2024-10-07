@@ -22,6 +22,8 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { TenantId } from "../../RootStore/types";
+import TENANTS from "../../tenants";
 import { getStateNameForStateCode } from "../../utils/navigation";
 import { useRootStore } from "../StoreProvider";
 
@@ -35,7 +37,7 @@ const StateSelection: React.FC = () => {
   const { userStore, tenantStore } = useRootStore();
 
   const availableStatesOptions = userStore.availableStateCodes
-    .sort()
+    .sort((code: TenantId) => TENANTS[code].name)
     .map((code: any) => ({
       value: code,
       label: getStateNameForStateCode(code),

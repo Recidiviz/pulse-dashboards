@@ -387,7 +387,7 @@ export default class UserStore {
   /**
    * Returns the list of states which are accessible to users to view data for.
    */
-  get availableStateCodes(): string[] {
+  get availableStateCodes(): TenantId[] {
     if (this.isRecidivizUser) {
       return this.recidivizAllowedStates;
     }
