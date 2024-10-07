@@ -63,6 +63,9 @@ export const Body = styled.div`
   background-color: rgba(244, 245, 246, 1);
   border: 1px solid ${palette.marble5};
   flex-grow: 1;
+  overflow-y: auto;
+  overscroll-behavior: auto;
+  position: relative;
 `;
 
 export const BackLink = styled.div<{ leftMargin?: number }>`
@@ -283,8 +286,11 @@ export const Recommendations = styled.div`
   border-left: 1px solid ${palette.marble5};
   background-color: ${palette.white};
   max-height: calc(-${RECOMMENDATION_PANEL_HEIGHT_OFFSET}px + 100vh);
-  overflow-y: auto;
   padding-bottom: 120px;
+  overflow-y: auto;
+  overscroll-behavior: auto;
+  position: fixed;
+  right: 0;
 `;
 
 export const RecommendationsWrapper = styled.div`
@@ -583,12 +589,11 @@ export const ButtonWrapper = styled.div`
 
 export const InsightsOpportunitiesWrapper = styled.div`
   width: 100%;
-  max-height: calc(100vh - 64px - 180px);
   display: flex;
   flex-direction: column;
   padding: 18px 0 18px 0;
   overflow-x: hidden;
-  overflow-y: auto;
+  padding-right: 500px;
 `;
 
 export const Insights = styled.div`
