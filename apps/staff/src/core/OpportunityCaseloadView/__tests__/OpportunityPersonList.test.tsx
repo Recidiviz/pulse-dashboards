@@ -55,7 +55,7 @@ const baseWorkflowsStoreMock = {
 beforeEach(() => {
   vi.resetAllMocks();
   useOpportunityConfigurationsMock.mockReturnValue(mockOpportunityConfigs);
-  useFeatureVariantsMock.mockReturnValue({});
+  useFeatureVariantsMock.mockReturnValue({ sortableOpportunityTabs: {} });
   mockOpportunitiesByTab.mockReturnValue({ earlyTermination: [] });
 });
 
@@ -138,6 +138,9 @@ test("hydrated", () => {
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
     },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
+    },
   });
 
   render(<OpportunityPersonList />);
@@ -178,6 +181,9 @@ test("hydrated with one tab", () => {
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
     },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
+    },
   });
 
   render(<OpportunityPersonList />);
@@ -211,11 +217,15 @@ test("hydrated with a tab that is not listed as the first tab in the order", () 
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
     },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
+    },
   });
 
   render(<OpportunityPersonList />);
 
-  expect(screen.queryByText(firstTabText)).not.toBeInTheDocument();
+  // All tabs, even empty ones, should be shown
+  expect(screen.getByText(firstTabText)).toBeInTheDocument();
   expect(screen.getByText(overriddenTabText)).toBeInTheDocument();
 });
 
@@ -241,6 +251,9 @@ test("when `allOpportunitiesByType` is an empty object", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: {},
+    },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
     },
   });
 
@@ -274,6 +287,9 @@ test("when `opportunitiesByTab` is an empty object", () => {
       allOpportunitiesByType: {
         earlyTermination: [opp, almostOpp, ineligibleOpp],
       },
+    },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
     },
   });
 
@@ -343,6 +359,9 @@ test("when `earlyTermination` in `allOpportunitiesByType` is undefined", () => {
         earlyTermination: undefined,
       },
     },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
+    },
   });
   const { container } = render(<OpportunityPersonList />);
 
@@ -375,6 +394,9 @@ test("an opp is undefined in `opportunitiesByTab`", () => {
       allOpportunitiesByType: {
         earlyTermination: [opp, almostOpp, ineligibleOpp],
       },
+    },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
     },
   });
 
@@ -409,6 +431,9 @@ test("displays simplified title", () => {
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp1, opp2] },
     },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
+    },
   });
 
   render(<OpportunityPersonList />);
@@ -435,6 +460,9 @@ test("displays subheading", () => {
       opportunitiesLoaded: () => true,
       hasOpportunities: () => true,
       allOpportunitiesByType: { earlyTermination: [opp] },
+    },
+    firestoreStore: {
+      getCustomTabOrdering: vi.fn().mockResolvedValue(undefined),
     },
   });
 

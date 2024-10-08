@@ -27,10 +27,7 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
-import {
-  generateOpportunityInitialHeader,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { generateOpportunityInitialHeader } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import WorkflowsResults from "../WorkflowsResults";
@@ -77,46 +74,23 @@ const Empty = observer(function Empty() {
   );
 });
 
-const Hydrated = observer(function Hydrated({
-  opportunityType,
-}: {
-  opportunityType: OpportunityType;
-}) {
-  const {
-    workflowsStore: {
-      allOpportunitiesByType,
-      selectedPerson,
-      justiceInvolvedPersonTitle,
-    },
-  } = useRootStore();
-  return (
-    <HydratedOpportunityPersonList
-      allOpportunitiesByType={allOpportunitiesByType}
-      opportunityType={opportunityType}
-      justiceInvolvedPersonTitle={justiceInvolvedPersonTitle}
-      selectedPerson={selectedPerson}
-    />
-  );
-});
-
 export const OpportunityPersonList = observer(function OpportunityPersonList() {
+  const { workflowsStore } = useRootStore();
   const {
-    workflowsStore: {
-      selectedOpportunityType: opportunityType,
-      justiceInvolvedPersonTitle,
-      workflowsSearchFieldTitle,
-    },
-  } = useRootStore();
+    selectedOpportunityType: opportunityType,
+    justiceInvolvedPersonTitle,
+    workflowsSearchFieldTitle,
+  } = workflowsStore;
   const opportunityConfigs = useOpportunityConfigurations();
 
   if (!opportunityType) return null;
 
-  const { label, initialHeader } = opportunityConfigs[opportunityType];
+  const config = opportunityConfigs[opportunityType];
 
   const cta =
-    initialHeader ||
+    config.initialHeader ||
     generateOpportunityInitialHeader(
-      label,
+      config.label,
       justiceInvolvedPersonTitle,
       workflowsSearchFieldTitle,
     );
@@ -124,10 +98,12 @@ export const OpportunityPersonList = observer(function OpportunityPersonList() {
   const empty = <Empty />;
 
   const initial = (
-    <WorkflowsResults headerText={label} callToActionText={cta} />
+    <WorkflowsResults headerText={config.label} callToActionText={cta} />
   );
 
-  const hydrated = <Hydrated opportunityType={opportunityType} />;
+  const hydrated = (
+    <HydratedOpportunityPersonList opportunityType={opportunityType} />
+  );
 
   return (
     <CaseloadOpportunitiesHydrator

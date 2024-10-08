@@ -100,7 +100,8 @@ export type FeatureVariant =
   | "actionStrategies"
   | "nonOMSCriteria"
   | "submittedOpportunityStatus"
-  | "personSpecificOppBanners";
+  | "personSpecificOppBanners"
+  | "sortableOpportunityTabs";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -150,6 +151,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   nonOMSCriteria: {},
   submittedOpportunityStatus: {},
   personSpecificOppBanners: {},
+  sortableOpportunityTabs: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

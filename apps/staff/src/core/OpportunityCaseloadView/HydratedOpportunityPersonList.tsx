@@ -16,24 +16,40 @@
 // =============================================================================
 
 import { toTitleCase } from "@artsy/to-title-case";
-import { intersection } from "lodash";
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  restrictToHorizontalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
+import {
+  horizontalListSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 import { observer } from "mobx-react-lite";
-import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
 import {
+  useFeatureVariants,
   useOpportunityConfigurations,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import {
-  JusticeInvolvedPerson,
-  Opportunity,
   OpportunityTab,
   OpportunityTabGroup,
   OpportunityType,
 } from "../../WorkflowsStore";
-import { opportunitiesByTab } from "../../WorkflowsStore/utils";
+import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
 import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
@@ -53,159 +69,142 @@ const EmptyTabGroupWrapper = styled.div`
   text-align: center;
 `;
 
+export const HydratedOpportunityPersonList = observer(
+  function HydratedOpportunityPersonList({
+    opportunityType,
+    supervisionPresenter,
+  }: {
+    opportunityType: OpportunityType;
+    supervisionPresenter?: SupervisionOpportunityPresenter;
+  }) {
+    const { workflowsStore, analyticsStore, firestoreStore } = useRootStore();
+    const opportunityConfigs = useOpportunityConfigurations();
+    const featureVariants = useFeatureVariants();
+    const config = opportunityConfigs[opportunityType];
+
+    const presenter = new OpportunityCaseloadPresenter(
+      analyticsStore,
+      firestoreStore,
+      workflowsStore,
+      config,
+      featureVariants,
+      opportunityType,
+      supervisionPresenter,
+    );
+    return <HydratedOpportunityPersonListWithPresenter presenter={presenter} />;
+  },
+);
+
 /**
  * Displays relevant opportunities for a particular opportunity type organized into
  * various tabs (e.g Almost Eligible, Eligible). Various tab partitions can be set in the
- * opportunity config.
+ * opportunity config. This component is shared between Workflows and Insights; as
+ * information is calculated differently, we share the SupervisionOpportunityPresenter.
  */
-export const HydratedOpportunityPersonList = observer(
-  function HydratedOpportunityPersonList({
-    allOpportunitiesByType,
-    opportunityType,
-    justiceInvolvedPersonTitle,
-    selectedPerson,
+export const HydratedOpportunityPersonListWithPresenter = observer(
+  function HydratedOpportunityPersonListWithPresenter({
+    presenter,
   }: {
-    allOpportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>;
-    opportunityType: OpportunityType;
-    justiceInvolvedPersonTitle: string;
-    selectedPerson?: JusticeInvolvedPerson;
+    presenter: OpportunityCaseloadPresenter;
   }) {
-    // TODO: try to refactor the opp notifications so we don't rely on workflowsStore here.
-    const { analyticsStore, workflowsStore } = useRootStore();
-
-    const opportunityConfigs = useOpportunityConfigurations();
-
     const { isMobile } = useIsMobile(true);
 
-    const displayTabGroups = [
-      ...Object.keys(opportunityConfigs[opportunityType].tabGroups),
-    ] as OpportunityTabGroup[];
-
-    const [activeTabGroup, setActiveTabGroup] = useState<OpportunityTabGroup>(
-      // The default tab group is the first for the current opportunity, not "Show All"
-      displayTabGroups[0],
+    // Use MouseSensor instead of PointerSensor to disable drag-and-drop on touch screens
+    const sensors = useSensors(
+      useSensor(MouseSensor, {
+        // Require the mouse to move by 10 pixels before activating
+        activationConstraint: {
+          distance: 10,
+        },
+      }),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+      }),
     );
 
-    const oppsFromOpportunitiesByTab = opportunitiesByTab(
-      allOpportunitiesByType,
-      activeTabGroup,
-    )[opportunityType];
-
-    const oppsFromOpportunitiesByOppType = useMemo(() => {
-      return allOpportunitiesByType[opportunityType];
-    }, [allOpportunitiesByType, opportunityType]);
-
-    // Only display tabs in the active tab group that correspond to relevant
-    // opportunities.
-    const displayTabs = useMemo(() => {
-      return oppsFromOpportunitiesByTab
-        ? intersection(
-            opportunityConfigs[opportunityType].tabGroups[activeTabGroup],
-            Object.keys(oppsFromOpportunitiesByTab),
-          )
-        : [];
-    }, [
-      activeTabGroup,
-      opportunityConfigs,
-      opportunityType,
-      oppsFromOpportunitiesByTab,
-    ]) as OpportunityTab[];
-
-    const [activeTab, setActiveTab] = useState<OpportunityTab>(displayTabs[0]);
-    useEffect(() => {
-      setActiveTab((prevTab) => prevTab || displayTabs[0]);
-    }, [displayTabs]);
-
-    // Switch to the default tab when there are no longer relevant opportunities for
-    // the current tab (e.g. search item was removed, or eligibility status changed).
-    useEffect(() => {
-      if (!oppsFromOpportunitiesByTab?.[activeTab]?.length) {
-        setActiveTab(displayTabs[0]);
-      }
-    }, [oppsFromOpportunitiesByTab, activeTab, displayTabs]);
-
-    // Calculate map of the tabs to the value to display on that tab's badge
-    const tabBadges: Partial<Record<OpportunityTab, number>> = useMemo(() => {
-      const badges: Partial<Record<OpportunityTab, number>> = {};
-      for (const tab of displayTabs) {
-        badges[tab] = oppsFromOpportunitiesByTab?.[tab]?.length ?? 0;
-      }
-      return badges;
-    }, [displayTabs, oppsFromOpportunitiesByTab]);
-
-    if (!oppsFromOpportunitiesByOppType || !oppsFromOpportunitiesByTab)
-      return null;
-
-    const activeOpportunityNotifications =
-      workflowsStore.activeNotificationsForOpportunityType(opportunityType);
-
-    const { label, callToAction, subheading } =
-      opportunityConfigs[opportunityType];
-
     const handleTabClick = (tab: OpportunityTab) => {
-      analyticsStore.trackOpportunityTabClicked({ tab });
-      setActiveTab(tab);
+      presenter.activeTab = tab;
     };
 
-    const handleTabGroupClick = (tabGroup: string) => {
-      setActiveTabGroup(tabGroup as OpportunityTabGroup);
-      const currentTabs =
-        opportunityConfigs[opportunityType].tabGroups[
-          tabGroup as OpportunityTabGroup
-        ] || [];
-      setActiveTab(currentTabs[0] || displayTabs[0]);
+    const handleTabGroupClick = (newTabGroup: string) => {
+      presenter.activeTabGroup = newTabGroup as OpportunityTabGroup;
     };
 
-    const handleNotificationDismiss = (id: string) =>
-      workflowsStore.dismissOpportunityNotification(id);
+    const handleNotificationDismiss = (id: string) => {
+      presenter.dismissNotification(id);
+    };
 
-    const items = oppsFromOpportunitiesByTab[activeTab];
-    const currentOpportunity =
-      selectedPerson?.verifiedOpportunities[opportunityType];
+    const handleDragEnd = (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        presenter.swapTabs(
+          active.id as OpportunityTab,
+          over.id as OpportunityTab,
+        );
+      }
+    };
 
     return (
       <>
         <Heading isMobile={isMobile} className="PersonList__Heading">
-          {label}
+          {presenter.label}
         </Heading>
-        {subheading ? (
-          <OpportunitySubheading subheading={subheading} />
+        {presenter.subheading ? (
+          <OpportunitySubheading subheading={presenter.subheading} />
         ) : (
           <SubHeading className="PersonList__Subheading">
-            {callToAction}
+            {presenter.callToAction}
           </SubHeading>
         )}
-        {activeOpportunityNotifications && (
+        {presenter.activeOpportunityNotifications && (
           <OpportunityNotifications
-            notifications={activeOpportunityNotifications}
+            notifications={presenter.activeOpportunityNotifications}
             handleDismiss={handleNotificationDismiss}
           />
         )}
-        <WorkflowsCaseloadControlBar
-          title={"Group by"}
-          tabBadges={tabBadges}
-          tabs={displayTabs}
-          activeTab={activeTab}
-          setActiveTab={handleTabClick}
-          setActiveTabGroup={handleTabGroupClick}
-          activeTabGroup={activeTabGroup as string}
-          tabGroups={displayTabGroups as string[]}
-        />
-        {items && items.length > 0 ? (
-          <CaseloadOpportunityGrid items={items} />
+        {presenter.displayTabs && (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
+          >
+            <SortableContext
+              items={presenter.displayTabs}
+              strategy={horizontalListSortingStrategy}
+            >
+              <WorkflowsCaseloadControlBar
+                title={"Group by"}
+                tabBadges={presenter.tabBadges}
+                tabs={presenter.displayTabs}
+                activeTab={presenter.activeTab}
+                setActiveTab={handleTabClick}
+                setActiveTabGroup={handleTabGroupClick}
+                activeTabGroup={presenter.activeTabGroup as string}
+                tabGroups={presenter.displayTabGroups as string[]}
+                sortable={presenter.shouldShowAllTabs}
+              />
+            </SortableContext>
+          </DndContext>
+        )}
+        {presenter.peopleInActiveTab &&
+        presenter.peopleInActiveTab.length > 0 ? (
+          <CaseloadOpportunityGrid items={presenter.peopleInActiveTab} />
         ) : (
           <EmptyTabGroupWrapper>
             <CallToActionText>
-              {`Please select a different grouping.\n None of the ${justiceInvolvedPersonTitle}s were able to be grouped by "${toTitleCase(activeTabGroup.toLowerCase())}".`}
+              {`Please select a different grouping.\n None of the ${presenter.justiceInvolvedPersonTitle}s were able to be grouped by ${toTitleCase(presenter.activeTabGroup?.toLowerCase())}".`}
             </CallToActionText>
           </EmptyTabGroupWrapper>
         )}
         <OpportunityPreviewModal
-          opportunity={currentOpportunity}
-          navigableOpportunities={items}
-          selectedPerson={selectedPerson}
+          opportunity={presenter.currentOpportunity}
+          navigableOpportunities={presenter.peopleInActiveTab}
+          selectedPerson={presenter.selectedPerson}
         />
-        <WorkflowsLastSynced date={items?.at(0)?.person?.lastDataFromState} />
+        <WorkflowsLastSynced
+          date={presenter.peopleInActiveTab?.at(0)?.person?.lastDataFromState}
+        />
       </>
     );
   },

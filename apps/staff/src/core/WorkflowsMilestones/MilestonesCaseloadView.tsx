@@ -254,6 +254,7 @@ const MilestonesCaseloadView: React.FC = observer(
                 tabs={tabs}
                 activeTab={activeTab}
                 setActiveTab={handleTabClick}
+                sortable={false}
               />
               {numOfNewMilestones === 0 && activeTab === "New Milestones" ? (
                 <WorkflowsResults

@@ -42,15 +42,9 @@ export const OpportunityPageWithPresenter = observer(
   }: {
     presenter: SupervisionOpportunityPresenter;
   }) {
-    // TODO(#5965): Look into isolating selectedPerson from the workflows store.
-    const {
-      workflowsStore: { selectedPerson },
-    } = useRootStore();
-
     const {
       outlierOfficerData,
       goToSupervisorInfo,
-      clients,
       labels,
       userCanAccessAllSupervisors,
       opportunityType,
@@ -58,12 +52,6 @@ export const OpportunityPageWithPresenter = observer(
       opportunityLabel,
       opportunitiesByType,
     } = presenter;
-
-    // Pull the selected client from the hydrated list so that we can access the
-    // relevant hydrated opportunity when selected.
-    const selectedClient = clients?.find(
-      (client) => client.pseudonymizedId === selectedPerson?.pseudonymizedId,
-    );
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
     // never be missing in practice.
@@ -113,10 +101,8 @@ export const OpportunityPageWithPresenter = observer(
         <Wrapper>
           <Body supervisorHomepage>
             <HydratedOpportunityPersonList
-              allOpportunitiesByType={opportunitiesByType}
               opportunityType={opportunityType}
-              justiceInvolvedPersonTitle={labels.supervisionJiiLabel}
-              selectedPerson={selectedClient}
+              supervisionPresenter={presenter}
             />
           </Body>
         </Wrapper>

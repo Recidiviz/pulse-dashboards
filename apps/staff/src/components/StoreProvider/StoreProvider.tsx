@@ -17,6 +17,7 @@
 
 import React, { useContext } from "react";
 
+import FirestoreStore from "../../FirestoreStore";
 import { InsightsStore } from "../../InsightsStore/InsightsStore";
 import store, { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -53,6 +54,7 @@ interface PartiallyTypedRootStore {
   workflowsStore: WorkflowsStore;
   workflowsRootStore: WorkflowsRootStore;
   analyticsStore: AnalyticsStore;
+  firestoreStore: FirestoreStore;
   [key: string]: any;
 }
 

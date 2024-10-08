@@ -67,12 +67,12 @@ export function WorkflowsCaseloadControlBar<T extends string>(
     | WorkflowsCaseloadControlBarProps<T>
     | WorkflowsCaseloadControlBarPropsWithoutTabControls<T>,
 ) {
-  const { tabs, tabBadges, activeTab, setActiveTab, ...rest } = props;
+  const { tabs, tabBadges, activeTab, setActiveTab, sortable, ...rest } = props;
   return (
     <TabControls>
       {tabs && (
         <WorkflowsCaseloadTabs
-          {...{ tabs, tabBadges, setActiveTab, activeTab }}
+          {...{ tabs, tabBadges, setActiveTab, activeTab, sortable }}
         />
       )}
       {Object.keys(rest).length > 0 && (

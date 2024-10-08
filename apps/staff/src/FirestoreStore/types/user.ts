@@ -17,6 +17,12 @@
 
 import { StaffRecord } from "~datatypes";
 
+import {
+  OpportunityTab,
+  OpportunityTabGroup,
+  OpportunityType,
+} from "../../WorkflowsStore/Opportunity";
+
 /**
  * User-level data generated within this application
  */
@@ -27,6 +33,11 @@ export type UserUpdateRecord = {
   // TODO(#3522): [Workflows][Auth] Rethink district overrides
   overrideDistrictIds?: string[];
   dismissedOpportunityNotificationIds?: string[];
+  // Stores custom orders of tabs when viewing opportunities
+  customTabOrderings?: Record<
+    OpportunityType,
+    Record<OpportunityTabGroup, OpportunityTab[]>
+  >;
 };
 export type UserRecord = Omit<StaffRecord, "email"> & { email: string };
 export function isUserRecord(

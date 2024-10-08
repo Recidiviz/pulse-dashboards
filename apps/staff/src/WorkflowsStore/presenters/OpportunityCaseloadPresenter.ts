@@ -1,0 +1,246 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2024 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { arrayMove } from "@dnd-kit/sortable";
+import { intersection } from "lodash";
+import { makeAutoObservable } from "mobx";
+import toast from "react-hot-toast";
+
+import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
+import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
+import AnalyticsStore from "../../RootStore/AnalyticsStore";
+import { FeatureVariantRecord } from "../../RootStore/types";
+import { opportunitiesByTab } from "../../WorkflowsStore/utils";
+import {
+  Opportunity,
+  OpportunityTab,
+  OpportunityTabGroup,
+  OpportunityType,
+} from "../Opportunity";
+import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
+import { CollectionDocumentSubscription } from "../subscriptions";
+import { WorkflowsStore } from "../WorkflowsStore";
+/**
+ * Responsible for presenting information about the caseload relative to a user's
+ * current view of a single opportunity, including who is eligible and the user's
+ * visual settings such as tab grouping and tab ordering.
+ */
+export class OpportunityCaseloadPresenter {
+  readonly displayTabGroups: OpportunityTabGroup[];
+  private readonly sortingEnabled: boolean;
+  private _activeTabGroup: OpportunityTabGroup;
+  private userSelectedTab?: OpportunityTab;
+  private userOrderedTabs?: OpportunityTab[];
+  private readonly updatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
+
+  constructor(
+    private readonly analyticsStore: AnalyticsStore,
+    private readonly firestoreStore: FirestoreStore,
+    private readonly workflowsStore: WorkflowsStore,
+    public readonly config: OpportunityConfiguration,
+    featureVariants: FeatureVariantRecord,
+    public readonly opportunityType: OpportunityType,
+    private readonly supervisionPresenter?: SupervisionOpportunityPresenter,
+  ) {
+    this.displayTabGroups = Object.keys(
+      config.tabGroups,
+    ) as OpportunityTabGroup[];
+    this._activeTabGroup = this.displayTabGroups[0];
+    this.userSelectedTab = this.defaultOrderedTabs[0];
+    this.userOrderedTabs = undefined;
+
+    this.updatesSubscription = this.workflowsStore.userUpdatesSubscription;
+
+    this.sortingEnabled = !!featureVariants.sortableOpportunityTabs;
+
+    makeAutoObservable(this);
+  }
+
+  get activeTab() {
+    // The currently active tab is either the user's selection or the default tab.
+    // We switch to the default tab when the user has not clicked anything or
+    // when the user-selected tab is no longer displayed (either when the user
+    // switches tab groups, or when the current tab group disallows showing empty
+    // tabs and the user-selected tab becomes empty upon removing a search item)
+    return this.userSelectedTab &&
+      this.displayTabs.includes(this.userSelectedTab)
+      ? this.userSelectedTab
+      : this.defaultTab;
+  }
+
+  set activeTab(newTab: OpportunityTab) {
+    this.userSelectedTab = newTab;
+    this.analyticsStore.trackOpportunityTabClicked({ tab: newTab });
+  }
+
+  get displayTabs() {
+    if (this.shouldShowAllTabs) {
+      return this.userOrderedTabs || this.defaultOrderedTabs;
+    } else {
+      return this.unorderedTabs;
+    }
+  }
+
+  set displayTabs(newTabOrder: OpportunityTab[]) {
+    this.userOrderedTabs = newTabOrder;
+    if (this.shouldShowAllTabs) {
+      this.firestoreStore
+        .updateCustomTabOrderings(
+          this.workflowsStore.currentUserEmail,
+          this.opportunityType,
+          this.activeTabGroup,
+          newTabOrder,
+        )
+        .then(() => {
+          toast(`New tab ordering has been saved for ${this.config.label}!`, {
+            id: "newTabOrderingToast", // prevent duplicate toasts
+            position: "bottom-left",
+          });
+        })
+        .catch((e: Error) => {
+          toast("Failed to save new tab ordering: " + e.message, {
+            position: "bottom-left",
+          });
+        });
+    }
+  }
+
+  get activeTabGroup() {
+    return this._activeTabGroup;
+  }
+
+  set activeTabGroup(newTabGroup: OpportunityTabGroup) {
+    if (newTabGroup !== this._activeTabGroup) {
+      this._activeTabGroup = newTabGroup;
+      // The user's tab order preference may have changed based on this new tab group
+      this.userOrderedTabs = undefined;
+    }
+  }
+
+  private get defaultTab() {
+    return this.displayTabs[0];
+  }
+
+  private get defaultOrderedTabs(): OpportunityTab[] {
+    // The ordering of tabs is the user's preference from firestore,
+    // or the default for this tab group if they don't have one
+    return (
+      this.updatesSubscription?.data?.customTabOrderings?.[
+        this.opportunityType
+      ]?.[this.activeTabGroup] ??
+      this.config.tabGroups[this.activeTabGroup] ??
+      []
+    );
+  }
+
+  private get unorderedTabs(): OpportunityTab[] {
+    // Only display tabs in the active tab group that correspond to relevant
+    // opportunities
+    const tabs = this.oppsFromOpportunitiesByTab
+      ? (intersection(
+          this.config.tabGroups[this.activeTabGroup],
+          Object.keys(this.oppsFromOpportunitiesByTab),
+        ) as OpportunityTab[])
+      : [];
+    return tabs;
+  }
+
+  get shouldShowAllTabs() {
+    return this.sortingEnabled && this.activeTabGroup === "ELIGIBILITY STATUS";
+  }
+
+  get activeOpportunityNotifications() {
+    return this.workflowsStore.activeNotificationsForOpportunityType(
+      this.opportunityType,
+    );
+  }
+
+  /**
+   * @return A map from tabs to the value to display on that tab's badge,
+   * i.e. the number of people in that tab
+   */
+  get tabBadges(): Partial<Record<OpportunityTab, number>> {
+    const badges: Partial<Record<OpportunityTab, number>> = {};
+    for (const tab of this.displayTabs) {
+      badges[tab] = this.oppsFromOpportunitiesByTab?.[tab]?.length ?? 0;
+    }
+    return badges;
+  }
+
+  get oppsFromOpportunitiesByTab():
+    | Record<OpportunityTab, Opportunity[]>
+    | undefined {
+    const opps =
+      this.supervisionPresenter?.opportunitiesByType ??
+      this.workflowsStore.allOpportunitiesByType;
+    return opportunitiesByTab(opps, this.activeTabGroup)[this.opportunityType];
+  }
+
+  get label() {
+    return this.config.label;
+  }
+
+  get callToAction() {
+    return this.config.callToAction;
+  }
+
+  get subheading() {
+    return this.config.subheading;
+  }
+
+  get currentOpportunity() {
+    return this.selectedPerson?.verifiedOpportunities[this.opportunityType];
+  }
+
+  get peopleInActiveTab() {
+    return this.oppsFromOpportunitiesByTab?.[this.activeTab] ?? [];
+  }
+
+  get justiceInvolvedPersonTitle() {
+    if (this.supervisionPresenter) {
+      return this.supervisionPresenter.labels.supervisionJiiLabel;
+    } else {
+      return this.workflowsStore.justiceInvolvedPersonTitle;
+    }
+  }
+
+  get selectedPerson() {
+    // TODO(#5965): Look into isolating the selected person from the workflows store
+    if (this.supervisionPresenter) {
+      // Pull the selected client from the presenter's hydrated list of clients
+      // so that we can access the relevant hydrated opportunity when selected.
+      return this.supervisionPresenter.clients?.find(
+        (client) =>
+          client.pseudonymizedId ===
+          this.workflowsStore.selectedPerson?.pseudonymizedId,
+      );
+    } else {
+      return this.workflowsStore.selectedPerson;
+    }
+  }
+
+  dismissNotification(id: string) {
+    this.workflowsStore.dismissOpportunityNotification(id);
+  }
+
+  swapTabs(dragged: OpportunityTab, newLocation: OpportunityTab) {
+    const oldIndex = this.displayTabs.indexOf(dragged);
+    const newIndex = this.displayTabs.indexOf(newLocation);
+    const newTabs = arrayMove(this.displayTabs, oldIndex, newIndex);
+    this.displayTabs = newTabs;
+  }
+}

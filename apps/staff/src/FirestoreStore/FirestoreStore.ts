@@ -30,6 +30,7 @@ import {
   DocumentData,
   DocumentReference,
   Firestore,
+  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -49,7 +50,12 @@ import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
 import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import type RootStore from "../RootStore";
 import { UserAppMetadata } from "../RootStore/types";
-import { Opportunity, UsTnExpirationOpportunity } from "../WorkflowsStore";
+import {
+  Opportunity,
+  OpportunityTab,
+  OpportunityTabGroup,
+  UsTnExpirationOpportunity,
+} from "../WorkflowsStore";
 import { OpportunityType } from "../WorkflowsStore/Opportunity";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
@@ -226,6 +232,16 @@ export default class FirestoreStore {
         recordId: result.id,
         personType: "RESIDENT",
       };
+  }
+
+  async getCustomTabOrdering(
+    userEmail: string,
+    opportunity: OpportunityType,
+    tabGroup: OpportunityTabGroup,
+  ): Promise<OpportunityTab[] | undefined> {
+    const doc = this.doc({ key: "userUpdates" }, userEmail);
+    const orderings = (await getDoc(doc)).get("customTabOrderings") ?? {};
+    return orderings[opportunity]?.[tabGroup];
   }
 
   /**
@@ -471,6 +487,28 @@ export default class FirestoreStore {
   ) {
     return this.updateDocument(this.doc({ key: "userUpdates" }, userEmail), {
       dismissedOpportunityNotificationIds,
+    });
+  }
+
+  async updateCustomTabOrderings(
+    userEmail: string,
+    opportunityToUpdate: OpportunityType,
+    tabGroupToUpdate: OpportunityTabGroup,
+    customTabOrdering: OpportunityTab[],
+  ) {
+    // Add the new opportunity-ordering pair to the existing record
+    const doc = this.doc({ key: "userUpdates" }, userEmail);
+    const previousCustomOrderings =
+      (await getDoc(doc)).get("customTabOrderings") ?? {};
+    const customTabOrderings = {
+      ...previousCustomOrderings,
+      [opportunityToUpdate]: {
+        ...previousCustomOrderings[opportunityToUpdate],
+        [tabGroupToUpdate]: customTabOrdering,
+      },
+    };
+    return this.updateDocument(doc, {
+      customTabOrderings,
     });
   }
 
