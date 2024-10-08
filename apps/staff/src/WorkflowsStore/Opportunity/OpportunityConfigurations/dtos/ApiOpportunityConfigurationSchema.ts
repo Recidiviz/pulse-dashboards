@@ -26,7 +26,13 @@ const copySchema = z.object({
   text: z.string(),
   tooltip: z.string().optional(),
 });
-const criteriaCopySchema = z.record(copySchema);
+
+const criteriaCopySchema = z
+  .array(copySchema.extend({ key: z.string() }))
+  .transform((a) =>
+    Object.fromEntries(a.map(({ key, ...rest }) => [key, rest])),
+  )
+  .or(z.record(copySchema));
 
 export const apiOpportunityConfigurationSchema = z.object({
   stateCode: z.enum(TenantIds),
@@ -52,8 +58,16 @@ export const apiOpportunityConfigurationSchema = z.object({
     .transform((r) => r ?? []),
   firestoreCollection: z.string(),
   snooze: nullishAsUndefined(snoozeConfigurationSchema),
-  denialReasons: z.record(z.string()),
-  tabGroups: nullishAsUndefined(z.record(z.string(), z.array(z.string()))),
+  denialReasons: z
+    .array(z.object({ key: z.string(), text: z.string() }))
+    .transform((a) => Object.fromEntries(a.map((e) => [e.key, e.text])))
+    .or(z.record(z.string())),
+  tabGroups: nullishAsUndefined(
+    z
+      .array(z.object({ key: z.string(), tabs: z.array(z.string()) }))
+      .transform((a) => Object.fromEntries(a.map((e) => [e.key, e.tabs])))
+      .or(z.record(z.string(), z.array(z.string()))),
+  ),
   initialHeader: nullishAsUndefined(z.string()),
   denialText: nullishAsUndefined(z.string()),
   eligibilityDateText: nullishAsUndefined(z.string()),

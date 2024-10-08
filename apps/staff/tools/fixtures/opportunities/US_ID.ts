@@ -62,53 +62,71 @@ export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfiguratio
         callToAction:
           "Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.",
         compareBy: null,
-        denialReasons: {
-          CD: "Court permanently denied early discharge request",
-          FFR: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
-          INTERLOCK: "Has an active interlock device",
-          MIS: "Has had a violent misdemeanor conviction in the past 12 months",
-          NCIC: "Did not pass NCIC check",
-          Other: "Other, please specify a reason",
-          PCD: "Parole Commission permanently denied early discharge request",
-          SCNC: "Not compliant with special conditions",
-        },
+        denialReasons: [
+          {
+            key: "CD",
+            text: "Court permanently denied early discharge request",
+          },
+          {
+            key: "FFR",
+            text: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
+          },
+          { key: "INTERLOCK", text: "Has an active interlock device" },
+          {
+            key: "MIS",
+            text: "Has had a violent misdemeanor conviction in the past 12 months",
+          },
+          { key: "NCIC", text: "Did not pass NCIC check" },
+          { key: "Other", text: "Other, please specify a reason" },
+          {
+            key: "PCD",
+            text: "Parole Commission permanently denied early discharge request",
+          },
+          { key: "SCNC", text: "Not compliant with special conditions" },
+        ],
         denialText: null,
         displayName: "Earned Discharge",
         dynamicEligibilityText:
           "client[|s] may be eligible for earned discharge",
         eligibilityDateText: null,
-        eligibleCriteriaCopy: {
-          negativeDaWithin90Days: {
+        eligibleCriteriaCopy: [
+          {
+            key: "negativeDaWithin90Days",
             text: "Negative UA within past 90 days",
             tooltip:
               "Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
           },
-          noFelonyWithin24Months: {
+          {
+            key: "noFelonyWithin24Months",
             text: "No felony convictions in past 24 months",
             tooltip:
               "Has not committed a felony while on probation or parole in past 24 months",
           },
-          noViolentMisdemeanorWithin12Months: {
+          {
+            key: "noViolentMisdemeanorWithin12Months",
             text: "No violent misdemeanor convictions in past 12 months",
             tooltip:
               "Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
           },
-          pastEarnedDischargeEligibleDate: {
+          {
+            key: "pastEarnedDischargeEligibleDate",
             text: "Served {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
             tooltip:
               "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
           },
-          usIdIncomeVerifiedWithin3Months: {
+          {
+            key: "usIdIncomeVerifiedWithin3Months",
             text: "Verified compliant employment",
             tooltip:
               "Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
           },
-          usIdLsirLevelLowModerateForXDays: {
+          {
+            key: "usIdLsirLevelLowModerateForXDays",
             text: '{{#if (eq "LOW" riskLevel)}}Currently low risk with no increase in risk level in past 90 days{{else}}Currently moderate risk with no increase in risk level in past 360 days{{/if}}',
             tooltip:
               "Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
           },
-        },
+        ],
         firestoreCollection: "US_ID-earnedDischargeReferrals",
         hideDenialRevert: false,
         homepagePosition: 2,
