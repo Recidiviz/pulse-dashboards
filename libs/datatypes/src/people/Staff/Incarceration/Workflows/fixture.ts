@@ -22,6 +22,31 @@ import {
 } from "./schema";
 
 export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
+  // US_AZ - ARIZONA
+  {
+    email: "az-officer-1@example.com",
+    id: "OFFICER1",
+    stateCode: "US_AZ",
+    givenNames: "Solomon",
+    surname: "Cordova",
+    pseudonymizedId: "p001",
+  },
+  {
+    email: "az-officer-2@example.com",
+    id: "OFFICER2",
+    stateCode: "US_AZ",
+    givenNames: "Safa",
+    surname: "Stevens",
+    pseudonymizedId: "p002",
+  },
+  {
+    email: "az-officer-3@example.com",
+    id: "OFFICER3",
+    stateCode: "US_AZ",
+    givenNames: "Idris",
+    surname: "Vang",
+    pseudonymizedId: "p003",
+  },
   // US_ID - IDAHO
   {
     email: "test-officer-6@example.com",

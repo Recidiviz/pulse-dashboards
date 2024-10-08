@@ -15,28 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const stateCodes = {
-  US_AZ: "US_AZ",
-  US_AR: "US_AR",
-  US_CA: "US_CA",
-  US_ID: "US_ID",
-  US_ME: "US_ME",
-  US_MI: "US_MI",
-  US_MO: "US_MO",
-  US_ND: "US_ND",
-  US_OR: "US_OR",
-  US_PA: "US_PA",
-  US_TN: "US_TN",
-};
+import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
-const csgStateCodes = [
-  stateCodes.US_MO,
-  stateCodes.US_PA,
-  stateCodes.US_MI,
-  stateCodes.US_TN,
-];
-
-module.exports = {
-  stateCodes,
-  csgStateCodes,
-};
+export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse =
+  { enabledConfigs: {} };

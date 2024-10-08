@@ -1,5 +1,41 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`incarceration staff schema for 'US_AZ' 'OFFICER1' 1`] = `
+{
+  "email": "az-officer-1@example.com",
+  "givenNames": "Solomon",
+  "id": "OFFICER1",
+  "pseudonymizedId": "p001",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_AZ",
+  "surname": "Cordova",
+}
+`;
+
+exports[`incarceration staff schema for 'US_AZ' 'OFFICER2' 1`] = `
+{
+  "email": "az-officer-2@example.com",
+  "givenNames": "Safa",
+  "id": "OFFICER2",
+  "pseudonymizedId": "p002",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_AZ",
+  "surname": "Stevens",
+}
+`;
+
+exports[`incarceration staff schema for 'US_AZ' 'OFFICER3' 1`] = `
+{
+  "email": "az-officer-3@example.com",
+  "givenNames": "Idris",
+  "id": "OFFICER3",
+  "pseudonymizedId": "p003",
+  "recordType": "incarcerationStaff",
+  "stateCode": "US_AZ",
+  "surname": "Vang",
+}
+`;
+
 exports[`incarceration staff schema for 'US_ID' 'OFFICER6' 1`] = `
 {
   "email": "test-officer-6@example.com",
