@@ -80,8 +80,9 @@ exports.onExecutePostLogin = async (event, api) => {
         sc.toUpperCase(),
       );
       if (
-        allowedStates.length === 0 ||
-        (allowedStates.length === 1 && allowedStates[0] === "US_OZ")
+        event.client.client_id !== event.secrets.DEMO_APP_CLIENT_ID &&
+        (allowedStates.length === 0 ||
+          (allowedStates.length === 1 && allowedStates[0] === "US_OZ"))
       ) {
         api.access.deny(
           "No access granted to state data. " +
