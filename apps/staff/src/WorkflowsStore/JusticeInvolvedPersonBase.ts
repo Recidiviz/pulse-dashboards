@@ -307,7 +307,7 @@ export class JusticeInvolvedPersonBase<
   get opportunitiesEligible(): OpportunityMapping {
     return Object.entries(this.verifiedOpportunities).reduce(
       (opportunities, [key, opp]) => {
-        if (opp && !opp.almostEligible && !opp.denied) {
+        if (opp && !opp.isSubmitted && !opp.almostEligible && !opp.denied) {
           return { ...opportunities, [key as OpportunityType]: opp };
         }
         return opportunities;
@@ -319,7 +319,7 @@ export class JusticeInvolvedPersonBase<
   get opportunitiesAlmostEligible(): OpportunityMapping {
     return Object.entries(this.verifiedOpportunities).reduce(
       (opportunities, [key, opp]) => {
-        if (opp && opp.almostEligible && !opp.denied) {
+        if (opp && opp.almostEligible && !opp.isSubmitted && !opp.denied) {
           return { ...opportunities, [key as OpportunityType]: opp };
         }
         return opportunities;
