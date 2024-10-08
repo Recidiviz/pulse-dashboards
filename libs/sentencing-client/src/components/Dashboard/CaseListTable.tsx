@@ -25,7 +25,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { psiUrl } from "../../utils/routing";
@@ -169,6 +169,8 @@ const getUpdatedStatusFilters = (
   return [...currentFilters, status];
 };
 
+const LOCAL_STORAGE_KEY = "dashboard-sort-order";
+
 export const CaseListTable = ({
   caseTableData,
   staffPseudoId,
@@ -190,11 +192,20 @@ export const CaseListTable = ({
     ...Object.values(CaseStatusToDisplay),
   ]);
 
+  const [sortingOrder, setSortingOrder] = useState(() => {
+    const savedSortingOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return savedSortingOrder ? JSON.parse(savedSortingOrder) : [];
+  });
+
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting: sortingOrder,
+    },
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSortingOrder,
   });
 
   const filterOptions: { key: StatusFilter }[] = [
@@ -241,6 +252,17 @@ export const CaseListTable = ({
       });
     });
   };
+
+  // Preserve sorting order in user's local storage
+  useEffect(() => {
+    const savedSortingOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (
+      sortingOrder.length > 0 &&
+      JSON.stringify(savedSortingOrder) !== JSON.stringify(sortingOrder)
+    ) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sortingOrder));
+    }
+  }, [sortingOrder]);
 
   return (
     <Styled.CaseListContainer>
