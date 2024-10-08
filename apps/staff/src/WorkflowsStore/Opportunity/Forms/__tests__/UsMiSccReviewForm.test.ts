@@ -89,7 +89,6 @@ function createTestUnit() {
       minReleaseDate: new Date("2025-04-01T12:00"),
       lock: "lock1",
       facility: "FACILITY1",
-      OPT: true,
       STG: "1",
       bondableOffensesWithin6Months:
         "(040, 011, 2024-01-01), (011, 2023-12-12)",
@@ -97,7 +96,6 @@ function createTestUnit() {
     },
     metadata: {
       daysInCollapsedSolitarySession: 35,
-      OPT: false,
       lessThan24MonthsFromErd: false,
       recentBondableOffenses: "(423, 2023-12-27)",
       recentNonbondableOffenses: "(008, 2023-05-31)",
@@ -138,7 +136,6 @@ describe("prefilledDataTransformer", () => {
       {
         "AMX": "Apr 1, 2027",
         "ERD": "Apr 1, 2025",
-        "OPT": true,
         "STG1": true,
         "STG2": false,
         "adSegDate1": "2023-12-01",

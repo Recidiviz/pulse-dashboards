@@ -10,7 +10,6 @@ exports[`schema for almostEligible1 1`] = `
   },
   "externalId": "RES021",
   "formInformation": {
-    "OPT": true,
     "STG": "2",
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2022-11-07,003,)",
@@ -37,7 +36,6 @@ exports[`schema for almostEligible1 1`] = `
   },
   "isOverdue": false,
   "metadata": {
-    "OPT": false,
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2022-11-07,003,)",
     ],
@@ -65,7 +63,6 @@ exports[`schema for almostEligible2 1`] = `
   },
   "externalId": "RES022",
   "formInformation": {
-    "OPT": true,
     "STG": "2",
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2022-11-07,003,)",
@@ -88,7 +85,6 @@ exports[`schema for almostEligible2 1`] = `
   },
   "isOverdue": false,
   "metadata": {
-    "OPT": false,
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2022-11-07,003,)",
     ],
@@ -119,7 +115,6 @@ exports[`schema for fullyEligible1 1`] = `
   },
   "externalId": "RES019",
   "formInformation": {
-    "OPT": true,
     "STG": "1",
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2021-11-03,014,)",
@@ -143,7 +138,6 @@ exports[`schema for fullyEligible1 1`] = `
   "ineligibleCriteria": {},
   "isOverdue": true,
   "metadata": {
-    "OPT": false,
     "adSegStaysAndReasonsWithin3Yrs": [
       "(2021-11-03,014,)",
       "(2022-03-02,014,)",
@@ -179,7 +173,6 @@ exports[`schema for fullyEligible2 1`] = `
   },
   "externalId": "RES020",
   "formInformation": {
-    "OPT": false,
     "STG": "2",
     "adSegStaysAndReasonsWithin3Yrs": [],
     "bondableOffensesWithin6Months": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
@@ -196,7 +189,6 @@ exports[`schema for fullyEligible2 1`] = `
   "ineligibleCriteria": {},
   "isOverdue": false,
   "metadata": {
-    "OPT": true,
     "adSegStaysAndReasonsWithin3Yrs": [],
     "daysInCollapsedSolitarySession": 50,
     "lessThan24MonthsFromErd": true,

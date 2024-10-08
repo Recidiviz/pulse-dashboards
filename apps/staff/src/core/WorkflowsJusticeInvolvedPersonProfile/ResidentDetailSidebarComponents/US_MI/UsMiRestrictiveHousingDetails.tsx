@@ -46,7 +46,6 @@ export function UsMiRestrictiveHousing({
 
   const {
     daysInCollapsedSolitarySession,
-    OPT,
     lessThan24MonthsFromErd,
     recentNonbondableOffenses,
     recentBondableOffenses,
@@ -76,8 +75,6 @@ export function UsMiRestrictiveHousing({
           <SecureDetailsContent>
             {lessThan24MonthsFromErd ? "Yes" : "No"}
           </SecureDetailsContent>
-          <DetailsSubheading>Mental health needs?</DetailsSubheading>
-          <SecureDetailsContent>{OPT ? "Yes" : "No"}</SecureDetailsContent>
           <DetailsSubheading>{"Length of stay > 30 days?"}</DetailsSubheading>
           <SecureDetailsContent>
             {daysInCollapsedSolitarySession > 30 ? "Yes" : "No"}

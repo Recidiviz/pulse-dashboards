@@ -50,7 +50,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
         prisonerNumber: "RES019",
         facility: "FACILITY1",
         lock: "LOCKID1",
-        OPT: true,
         STG: "1",
         bondableOffensesWithin6Months: "(423, 2023-12-27)",
         nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
@@ -66,7 +65,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
       ineligibleCriteria: {},
       metadata: {
         daysInCollapsedSolitarySession: 25,
-        OPT: false,
         recentBondableOffenses: "(423, 2023-12-27)",
         recentNonbondableOffenses: "(008, 2023-05-31)",
         adSegStaysAndReasonsWithin3Yrs: [
@@ -110,7 +108,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
         prisonerNumber: "RES020",
         facility: "FACILITY2",
         lock: "LOCKID2",
-        OPT: false,
         STG: "2",
         bondableOffensesWithin6Months:
           "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
@@ -120,7 +117,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
       ineligibleCriteria: {},
       metadata: {
         daysInCollapsedSolitarySession: 50,
-        OPT: true,
         lessThan24MonthsFromErd: true,
         recentBondableOffenses:
           "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
@@ -150,7 +146,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
         prisonerNumber: "RES021",
         facility: "FACILITY2",
         lock: "LOCKID3",
-        OPT: true,
         STG: "2",
         bondableOffensesWithin6Months: "(020, 2024-02-26)",
         nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
@@ -167,7 +162,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
       },
       metadata: {
         daysInCollapsedSolitarySession: 30,
-        OPT: false,
         lessThan24MonthsFromErd: false,
         recentBondableOffenses: "(020, 2024-02-26)",
         recentNonbondableOffenses: "(008, 2023-05-31)",
@@ -200,7 +194,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
         prisonerNumber: "RES021",
         facility: "FACILITY2",
         lock: "LOCKID3",
-        OPT: true,
         STG: "2",
         bondableOffensesWithin6Months: "(020, 2024-02-26)",
         nonbondableOffensesWithin1Year: "(008, 2023-05-31)",
@@ -213,7 +206,6 @@ export const usMiAddInPersonSecurityClassificationCommitteeReviewFixtures = {
       },
       metadata: {
         daysInCollapsedSolitarySession: 30,
-        OPT: false,
         lessThan24MonthsFromErd: false,
         recentBondableOffenses: "(020, 2024-02-26)",
         recentNonbondableOffenses: "(008, 2023-05-31)",
