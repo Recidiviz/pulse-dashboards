@@ -471,6 +471,14 @@ export async function transformAndLoadOffenseData(
     offenses.push({
       stateCode: offenseData.state_code,
       name: offenseData.charge,
+      // If the data doesn't specify the value, make sure to set it to be explicitly
+      // null (passing an undefined value to Prisma will just leave the field as is)
+      isSexOffense:
+        offenseData.is_sex_offense === undefined
+          ? null
+          : offenseData.is_sex_offense,
+      isViolentOffense:
+        offenseData.is_violent === undefined ? null : offenseData.is_violent,
     });
   }
 
@@ -492,9 +500,14 @@ export async function transformAndLoadOffenseData(
     return;
   }
 
-  await prismaClient.offense.createMany({
-    // If an offense already exists, skip it because its just a name and there's no other data to update
-    skipDuplicates: true,
-    data: offenses,
-  });
+  for (const offense of offenses) {
+    // Load data
+    await prismaClient.offense.upsert({
+      where: {
+        name: offense.name,
+      },
+      create: offense,
+      update: offense,
+    });
+  }
 }

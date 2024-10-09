@@ -216,4 +216,6 @@ export const insightImportSchema = z.object({
 export const offenseImportSchema = z.object({
   state_code: stateCode,
   charge: z.string(),
+  is_sex_offense: z.boolean().optional(),
+  is_violent: z.boolean().optional(),
 });

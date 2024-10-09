@@ -31,6 +31,8 @@ describe("offense router", () => {
         data: {
           stateCode: fakeOffense.stateCode,
           name: "New Offense",
+          isSexOffense: false,
+          isViolentOffense: true,
         },
       });
 
@@ -38,7 +40,13 @@ describe("offense router", () => {
 
       // Only the original fake offense should be returned
       expect(returnedOffenses).toEqual(
-        expect.arrayContaining([fakeOffense.name]),
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: fakeOffense.name,
+            isSexOffense: false,
+            isViolentOffense: true,
+          }),
+        ]),
       );
     });
   });

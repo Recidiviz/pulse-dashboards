@@ -43,6 +43,8 @@ export type CaseInsight = NonNullable<Case["insight"]>;
 
 export type Insight = Awaited<ReturnType<APIClient["getInsight"]>>;
 
+export type Offenses = Awaited<ReturnType<APIClient["getOffenses"]>>;
+
 export type Client = NonNullable<Case["client"]>;
 
 export type Opportunities = Awaited<
@@ -163,7 +165,7 @@ export class APIClient {
     return fetchedData;
   }
 
-  async getOffenses(): Promise<string[]> {
+  async getOffenses() {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
 

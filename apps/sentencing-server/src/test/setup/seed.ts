@@ -48,6 +48,8 @@ const FAKE_CLIENT_GENDER = Gender.FEMALE;
 export const fakeOffense = {
   stateCode: StateCode.US_ID,
   name: "offense-name",
+  isSexOffense: false,
+  isViolentOffense: true,
 } satisfies OffenseCreateInput;
 
 export const fakeStaff = {

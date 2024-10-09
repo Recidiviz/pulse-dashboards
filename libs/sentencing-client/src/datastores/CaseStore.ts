@@ -27,6 +27,7 @@ import {
   Case,
   Client,
   Insight,
+  Offenses,
   Opportunities,
 } from "../api/APIClient";
 import { FormAttributes } from "../components/CaseDetails/types";
@@ -38,7 +39,7 @@ export class CaseStore {
 
   communityOpportunities: Opportunities;
 
-  offenses: string[];
+  offenses: Offenses;
 
   insight?: Insight;
 

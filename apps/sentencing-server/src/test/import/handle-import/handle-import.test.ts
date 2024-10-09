@@ -1467,11 +1467,13 @@ describe("handle_import", () => {
         {
           state_code: StateCode.US_ID,
           charge: fakeOffense.name,
+          is_sex_offense: false,
         },
         // New offense
         {
           state_code: StateCode.US_ID,
           charge: "new-offense",
+          is_sex_offense: false,
         },
       ]);
 
@@ -1487,8 +1489,17 @@ describe("handle_import", () => {
 
       expect(dbOffenses).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ name: fakeOffense.name }),
-          expect.objectContaining({ name: "new-offense" }),
+          expect.objectContaining({
+            name: fakeOffense.name,
+            isSexOffense: false,
+            // This should be explicitly updated to null
+            isViolentOffense: null,
+          }),
+          expect.objectContaining({
+            name: "new-offense",
+            isSexOffense: false,
+            isViolentOffense: null,
+          }),
         ]),
       );
     });

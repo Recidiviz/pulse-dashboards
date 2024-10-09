@@ -148,8 +148,9 @@ export class CaseDetailsPresenter implements Hydratable {
 
   get offenses() {
     return this.caseStore.offenses
+      .map((offense) => offense.name)
       .slice()
-      .sort((a: string, b: string) => a.localeCompare(b));
+      .sort((a, b) => a.localeCompare(b));
   }
 
   get insight() {

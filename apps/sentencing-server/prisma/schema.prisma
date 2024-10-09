@@ -262,9 +262,11 @@ model Opportunity {
 }
 
 model Offense {
-  id        String    @id @default(cuid())
-  stateCode StateCode
-  name      String    @unique
+  id               String    @id @default(cuid())
+  stateCode        StateCode
+  name             String    @unique
+  isViolentOffense Boolean?
+  isSexOffense     Boolean?
 
   Case                  Case[]
   insightOffenses       Insight[] @relation("InsightOffenses")

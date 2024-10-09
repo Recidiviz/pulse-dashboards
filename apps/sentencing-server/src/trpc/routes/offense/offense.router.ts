@@ -19,9 +19,10 @@ import { baseProcedure, router } from "~sentencing-server/trpc/init";
 
 export const offenseRouter = router({
   getOffenses: baseProcedure.query(async ({ ctx: { prisma } }) => {
-    const offenses = await prisma.offense.findMany({
-      select: {
-        name: true,
+    return await prisma.offense.findMany({
+      omit: {
+        id: true,
+        stateCode: true,
       },
       where: {
         // TODO: Remove once we have insights for all offenses?
@@ -31,7 +32,5 @@ export const offenseRouter = router({
         },
       },
     });
-
-    return offenses.map((offense) => offense.name);
   }),
 });
