@@ -50,6 +50,7 @@ import { locationsData } from "./fixtures/locations";
 import { LSUReferralsFixture } from "./fixtures/LSUReferrals";
 import { residentsData } from "./fixtures/residents";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
+import { usAzReleaseToTPRReferrals } from "./fixtures/usAzReleaseToTPRReferrals";
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
 import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
 import { usIdCRCWorkReleaseReferrals } from "./fixtures/UsIdCRCWorkReleaseReferrals";
@@ -154,6 +155,9 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   earnedDischargeReferrals: earnedDischargeReferralsFixture,
   LSUReferrals: LSUReferralsFixture,
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
+  // TODO(#6489): Look at relaxing opportunityType typing here
+  // @ts-expect-error
+  usAzReleaseToTPRReferrals,
   usCaSupervisionLevelDowngradeReferrals,
   usIdCRCResidentWorkerReferrals,
   usIdCRCWorkReleaseReferrals,

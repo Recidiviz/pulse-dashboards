@@ -22,7 +22,9 @@ export const usAzResidents: Omit<
   "personType" | "recordId"
 >[] = [
   {
-    allEligibleOpportunities: [],
+    // TODO($6489): Look at relaxing typing to be string[]
+    // @ts-expect-error
+    allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES001",
     displayId: "RES001",
@@ -42,7 +44,8 @@ export const usAzResidents: Omit<
     metadata: {},
   },
   {
-    allEligibleOpportunities: [],
+    // @ts-expect-error
+    allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES002",
     displayId: "RES002",
@@ -62,7 +65,8 @@ export const usAzResidents: Omit<
     metadata: {},
   },
   {
-    allEligibleOpportunities: [],
+    // @ts-expect-error
+    allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES003",
     displayId: "RES003",
@@ -82,7 +86,8 @@ export const usAzResidents: Omit<
     metadata: {},
   },
   {
-    allEligibleOpportunities: [],
+    // @ts-expect-error
+    allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES004",
     displayId: "RES004",

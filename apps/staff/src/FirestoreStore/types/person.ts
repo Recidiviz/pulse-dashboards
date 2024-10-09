@@ -47,6 +47,7 @@ export type SpecialConditionCode = {
 export type WorkflowsJusticeInvolvedPersonRecord =
   JusticeInvolvedPersonRecord & {
     recordId: string;
+    // TODO($6489): Look at relaxing typing to be string[]
     allEligibleOpportunities: OpportunityType[];
   };
 

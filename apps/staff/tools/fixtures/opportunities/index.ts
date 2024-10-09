@@ -16,6 +16,7 @@
 // =============================================================================
 
 import * as US_AR from "./US_AR";
+import * as US_AZ from "./US_AZ";
 import * as US_CA from "./US_CA";
 import * as US_ID from "./US_ID";
 import * as US_ME from "./US_ME";
@@ -25,7 +26,9 @@ import * as US_ND from "./US_ND";
 import * as US_OR from "./US_OR";
 import * as US_PA from "./US_PA";
 import * as US_TN from "./US_TN";
+
 const allConfigs = {
+  ...US_AZ.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_AR.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_CA.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_OR.mockApiOpportunityConfigurationResponse.enabledConfigs,
