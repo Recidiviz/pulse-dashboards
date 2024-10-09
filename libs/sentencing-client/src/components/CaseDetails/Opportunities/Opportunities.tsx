@@ -603,15 +603,21 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
               ))}
 
               {/* No opportunities to display */}
-              {data.length === 0 && (
+              {table.getFilteredRowModel().rows.length === 0 && (
                 <tr>
                   <td colSpan={3}>
                     <Styled.NoOpportunitiesWrapper>
                       <Styled.NoOpportunitiesTextContainer>
-                        <span>No Opportunities</span>
-                        There are no opportunities that fit{" "}
-                        {formatPossessiveName(firstName)} needs and case details
-                        at this time.
+                        <span>
+                          No Opportunities {data.length > 0 && `Found`}{" "}
+                        </span>
+                        {data.length === 0 && (
+                          <>
+                            There are no opportunities that fit{" "}
+                            {formatPossessiveName(firstName)} needs and case
+                            details at this time.
+                          </>
+                        )}
                       </Styled.NoOpportunitiesTextContainer>
                     </Styled.NoOpportunitiesWrapper>
                   </td>
