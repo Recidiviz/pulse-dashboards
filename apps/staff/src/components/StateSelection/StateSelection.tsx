@@ -18,12 +18,12 @@
 import "./StateSelection.scss";
 
 import cn from "classnames";
+import { sortBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { TenantId } from "../../RootStore/types";
-import TENANTS from "../../tenants";
 import { getStateNameForStateCode } from "../../utils/navigation";
 import { useRootStore } from "../StoreProvider";
 
@@ -36,12 +36,13 @@ const StateSelection: React.FC = () => {
   const navigate = useNavigate();
   const { userStore, tenantStore } = useRootStore();
 
-  const availableStatesOptions = userStore.availableStateCodes
-    .sort((code: TenantId) => TENANTS[code].name)
-    .map((code: any) => ({
+  const availableStatesOptions = sortBy(
+    userStore.availableStateCodes.map((code: TenantId) => ({
       value: code,
       label: getStateNameForStateCode(code),
-    }));
+    })),
+    "label",
+  );
 
   const handleOnClick = (option: StateSelectOption) => {
     tenantStore.setCurrentTenantId(option.value);
