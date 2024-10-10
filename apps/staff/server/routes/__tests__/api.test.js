@@ -374,6 +374,14 @@ describe("API GET tests", () => {
 
       expect(set).toHaveBeenCalledWith("Cache-Control", "no-store, max-age=0");
     });
+
+    it("should set the X-Content-Type-Options header", () => {
+      const data = "some data";
+      const callback = responder(res);
+      callback(null, data);
+
+      expect(set).toHaveBeenCalledWith("X-Content-Type-Options", "nosniff");
+    });
   });
 
   describe("getImpersonatedUserRestrictions", () => {

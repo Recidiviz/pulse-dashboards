@@ -78,6 +78,7 @@ function responder(res) {
       });
     } else {
       res.set("Cache-Control", "no-store, max-age=0");
+      res.set("X-Content-Type-Options", "nosniff");
       res.send(data);
     }
   };
