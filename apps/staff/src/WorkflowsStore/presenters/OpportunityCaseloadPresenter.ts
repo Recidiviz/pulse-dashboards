@@ -111,6 +111,11 @@ export class OpportunityCaseloadPresenter {
             id: "newTabOrderingToast", // prevent duplicate toasts
             position: "bottom-left",
           });
+
+          this.analyticsStore.trackOpportunityTabOrderChanged({
+            tabOrder: newTabOrder,
+            opportunityType: this.opportunityType,
+          });
         })
         .catch((e: Error) => {
           toast("Failed to save new tab ordering: " + e.message, {

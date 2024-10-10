@@ -292,6 +292,13 @@ export default class AnalyticsStore {
     this.track("frontend.opportunity_tab_clicked", metadata);
   }
 
+  trackOpportunityTabOrderChanged(metadata: {
+    tabOrder: OpportunityTab[];
+    opportunityType: OpportunityType;
+  }): void {
+    this.track("frontend.opportunity_tab_order_changed", metadata);
+  }
+
   trackSetOpportunityStatus<
     Metadata extends OpportunityTrackingMetadata & {
       status: OpportunityStatus;
