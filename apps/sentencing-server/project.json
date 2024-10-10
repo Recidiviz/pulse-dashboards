@@ -74,7 +74,14 @@
       },
       "configurations": {
         "dev": {},
-        "staging": {}
+        "staging": {
+          "sourcemap": true,
+          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        },
+        "cherry-pick": {
+          "sourcemap": true,
+          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        }
       },
       "defaultConfiguration": "dev"
     },
