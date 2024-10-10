@@ -35,6 +35,9 @@ const BannerText = styled.div`
 const StyledLink = styled(Link)`
   color: ${palette.signal.links} !important;
   padding-top: ${rem(spacing.sm)};
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 type InsightsActionStrategyBannerType = {
