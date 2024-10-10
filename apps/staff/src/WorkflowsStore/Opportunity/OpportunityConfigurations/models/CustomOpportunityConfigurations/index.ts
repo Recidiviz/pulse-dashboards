@@ -21,8 +21,9 @@ import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
+import { UsNdMinimumCustodyConfiguration } from "./UsNd/UsNdMinimumCustodyConfiguration";
 
-const customOpportunityConfigurations: Partial<
+const localCustomOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
 > = {
   usMoOverdueRestrictiveHousingInitialHearing:
@@ -32,6 +33,20 @@ const customOpportunityConfigurations: Partial<
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
   pastFTRD: UsIdPastFTRD,
+};
+
+const adminPanelOnlyCustomOpportunityConfigurations: Partial<
+  Record<string, typeof ApiOpportunityConfiguration>
+> = {
+  usNdATP: UsNdMinimumCustodyConfiguration,
+  usNdTransferToMinFacility: UsNdMinimumCustodyConfiguration,
+};
+
+const customOpportunityConfigurations: Partial<
+  Record<string, typeof ApiOpportunityConfiguration>
+> = {
+  ...localCustomOpportunityConfigurations,
+  ...adminPanelOnlyCustomOpportunityConfigurations,
 };
 
 export function apiOpportunityConfigurationFactory(
