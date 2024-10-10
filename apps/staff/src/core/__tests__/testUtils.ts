@@ -130,5 +130,6 @@ export const mockOpportunity: Opportunity<Client> = {
     nonOMSCriteriaHeader: "Requirements to Check",
     nonOMSCriteria: [],
     homepagePosition: 1,
+    emptyTabCopy: {},
   },
 };

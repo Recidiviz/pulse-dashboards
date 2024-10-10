@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "@artsy/to-title-case";
 import {
   closestCenter,
   DndContext,
@@ -34,6 +33,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
+import { palette, Sans18 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
@@ -53,20 +53,32 @@ import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/Op
 import { Heading, SubHeading } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
-import { CallToActionText } from "../WorkflowsResults/WorkflowsResults";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
 
-const EmptyTabGroupWrapper = styled.div`
+const FlexWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  align-self: center;
-  width: 100%;
   height: 100%;
+`;
+
+const EmptyTabGroupWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  width: 100%;
+  flex-grow: 1;
+
+  border: 1px dashed ${palette.slate30};
+  background-color: ${palette.marble2};
+`;
+
+const EmptyTabText = styled(Sans18)`
+  color: ${palette.slate80};
+  width: 50%;
 `;
 
 export const HydratedOpportunityPersonList = observer(
@@ -145,7 +157,7 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
     };
 
     return (
-      <>
+      <FlexWrapper>
         <Heading isMobile={isMobile} className="PersonList__Heading">
           {presenter.label}
         </Heading>
@@ -192,9 +204,7 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
           <CaseloadOpportunityGrid items={presenter.peopleInActiveTab} />
         ) : (
           <EmptyTabGroupWrapper>
-            <CallToActionText>
-              {`Please select a different grouping.\n None of the ${presenter.justiceInvolvedPersonTitle}s were able to be grouped by ${toTitleCase(presenter.activeTabGroup?.toLowerCase())}".`}
-            </CallToActionText>
+            <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
         )}
         <OpportunityPreviewModal
@@ -205,7 +215,7 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
         <WorkflowsLastSynced
           date={presenter.peopleInActiveTab?.at(0)?.person?.lastDataFromState}
         />
-      </>
+      </FlexWrapper>
     );
   },
 );

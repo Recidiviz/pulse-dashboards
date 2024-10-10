@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toTitleCase } from "@artsy/to-title-case";
 import { arrayMove } from "@dnd-kit/sortable";
 import { intersection } from "lodash";
 import { makeAutoObservable } from "mobx";
@@ -216,6 +217,17 @@ export class OpportunityCaseloadPresenter {
     } else {
       return this.workflowsStore.justiceInvolvedPersonTitle;
     }
+  }
+
+  get emptyTabText() {
+    if (this.activeTab) {
+      return (
+        this.config.emptyTabCopy[this.activeTab] ??
+        `At this time, there are no ${this.justiceInvolvedPersonTitle}s who are ${this.activeTab}. Please navigate to one of the other tabs.`
+      );
+    }
+    // When we don't have an active tab, there are no people in our current tab group
+    return `Please select a different grouping. None of the ${this.justiceInvolvedPersonTitle}s were able to be grouped by ${toTitleCase(this.activeTabGroup.toLowerCase())}.`;
   }
 
   get selectedPerson() {

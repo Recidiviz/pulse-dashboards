@@ -65,4 +65,5 @@ export interface OpportunityConfiguration {
   denialAdjective: string;
   denialNoun: string;
   submittedTabTitle: OpportunityTab;
+  emptyTabCopy: Partial<Record<OpportunityTab, string>>;
 }

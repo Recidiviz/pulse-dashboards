@@ -17,7 +17,6 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
 import { CaseloadSelect } from "../CaseloadSelect";
@@ -27,6 +26,7 @@ import { OpportunityPersonList } from "./OpportunityPersonList";
 const Wrapper = styled.div`
   /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(spacing.md * 4)};
+  height: 100%;
 `;
 
 export const OpportunityCaseloadView = function OpportunityCaseloadView() {

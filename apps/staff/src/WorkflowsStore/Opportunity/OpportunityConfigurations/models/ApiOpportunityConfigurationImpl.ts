@@ -229,4 +229,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get nonOMSCriteriaHeader() {
     return "Requirements to Check";
   }
+
+  get emptyTabCopy() {
+    return {};
+  }
 }

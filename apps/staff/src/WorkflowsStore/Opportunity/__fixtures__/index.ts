@@ -84,6 +84,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   denialAdjective: "Ineligible",
   denialNoun: "Ineligibility",
   submittedTabTitle: "Submitted",
+  emptyTabCopy: {},
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

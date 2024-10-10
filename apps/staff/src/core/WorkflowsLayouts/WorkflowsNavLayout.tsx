@@ -32,6 +32,7 @@ import { workflowsUrl } from "../views";
 const Wrapper = styled.div`
   background-color: ${palette.marble1};
   min-height: 100vh;
+  height: 100%;
   width: 100%;
 `;
 
@@ -43,6 +44,8 @@ const Main = styled.main<{
   padding-top: ${rem(spacing.sm)};
   /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(spacing.md * 4)};
+
+  height: calc(100% - ${rem(spacing.md * 4)});
 
   max-width: 75vw;
   margin: 0 auto;
