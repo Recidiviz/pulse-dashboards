@@ -41,6 +41,8 @@ const ScrollContainer = styled.div`
   margin-right: 40px;
 `;
 
+const SCROLL_SPEED_OFFSET = 200;
+
 const DraggableScrollContainer: React.FC<PropsWithChildren> = ({
   children,
 }) => {
@@ -86,11 +88,15 @@ const DraggableScrollContainer: React.FC<PropsWithChildren> = ({
   };
 
   const handleScrollLeft = () => {
-    setCurrentScrollLeft((prev) => calculateNewOffset(prev, -60));
+    setCurrentScrollLeft((prev) =>
+      calculateNewOffset(prev, -SCROLL_SPEED_OFFSET),
+    );
   };
 
   const handleScrollRight = () => {
-    setCurrentScrollLeft((prev) => calculateNewOffset(prev, 60));
+    setCurrentScrollLeft((prev) =>
+      calculateNewOffset(prev, SCROLL_SPEED_OFFSET),
+    );
   };
 
   useEffect(() => {

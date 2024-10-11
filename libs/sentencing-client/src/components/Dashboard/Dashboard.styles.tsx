@@ -209,11 +209,11 @@ export const DropdownOption = styled.div<{ isNested?: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: ${palette.pine3};
+  color: #006655;
   ${({ isNested }) => isNested && `margin-left: 20px;`}
 
   input[type="checkbox"] {
-    accent-color: ${palette.pine4};
+    accent-color: #006655;
   }
 
   label {
@@ -295,9 +295,16 @@ const statusToCSS = {
 export const StatusChip = styled.div<{
   status: CaseStatusToDisplay | "Archived";
 }>`
+  ${typography.Sans16}
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: fit-content;
   border-radius: 100px;
-  padding: 2px 8px;
+  padding: 0px 8px;
+  line-height: 18px;
+  font-size: 13px;
   text-transform: capitalize;
   ${({ status }) => statusToCSS[status]}
 `;

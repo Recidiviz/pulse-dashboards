@@ -121,11 +121,17 @@ export const ID = styled.div`
 `;
 
 export const DueDate = styled.div`
+  ${typography.Sans14}
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: ${palette.pine1};
   background-color: ${customPalette.blue1};
   border-radius: 10px;
-  padding: 4px 10px;
+  padding: 0 8px;
   font-size: 13px;
+  line-height: 18px;
   margin-bottom: 5px;
 `;
 
