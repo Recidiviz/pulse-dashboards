@@ -27,6 +27,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { Supervision } from "./ClientDetailSidebarComponents/Supervision";
@@ -263,6 +264,10 @@ export function IncarcerationProgress({
     onLifeSentence,
   } = resident;
 
+  const {
+    tenantStore: { releaseDateCopy },
+  } = useRootStore();
+
   if (onLifeSentence) {
     return (
       <VizHeader>
@@ -287,7 +292,7 @@ export function IncarcerationProgress({
       endDate={releaseDate}
       officerId={officerId}
       fallbackComponent={<Incarceration resident={resident} />}
-      timelineLabels={{ start: "Start", end: "Release" }}
+      timelineLabels={{ start: "Start", end: releaseDateCopy }}
     />
   );
 }

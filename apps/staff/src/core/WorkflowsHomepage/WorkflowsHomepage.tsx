@@ -115,7 +115,7 @@ const WorkflowsHomepage = observer(
       user?.info.givenNames
     }. We’ve found some outstanding items across ${
       selectedSearchIds.length
-    } ${getHydratedCallToActionPluralizedText(selectedSearchIds.length, workflowsSearchFieldTitle, currentTenantId, activeSystem)}`;
+    } ${getHydratedCallToActionPluralizedText(selectedSearchIds.length, workflowsSearchFieldTitle, currentTenantId, activeSystem)}.`;
 
     const initial = (
       <WorkflowsResults

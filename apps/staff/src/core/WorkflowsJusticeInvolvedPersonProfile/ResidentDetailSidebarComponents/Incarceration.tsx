@@ -17,12 +17,8 @@
 
 import React from "react";
 
-import { useRootStore } from "../../../components/StoreProvider/StoreProvider";
+import { useRootStore } from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
-import {
-  fieldToDate,
-  optionalFieldToDate,
-} from "../../../WorkflowsStore/utils";
 import WorkflowsOfficerName from "../../WorkflowsOfficerName";
 import { PartialTime } from "../PartialTime";
 import {
@@ -37,6 +33,7 @@ import {
   ResidentWithOptionalOpportunityProps,
 } from "../types";
 import { UsMiMinMaxReleaseDates } from "./US_MI/UsMiMinMaxReleaseDates";
+import { UsNdIncarcerationDetails } from "./US_ND/UsNdIncarcerationDetails";
 import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissionDateSubsection";
 
 function ReleaseDate({
@@ -114,29 +111,4 @@ function StateSpecificIncarcerationDetails({
     default:
       return null;
   }
-}
-
-function UsNdIncarcerationDetails({
-  resident,
-}: ResidentProfileProps): React.ReactElement | null {
-  const { metadata } = resident;
-  if (metadata.stateCode !== "US_ND") return null;
-
-  const { paroleDate, paroleReviewDate } = metadata;
-
-  return (
-    <>
-      <DetailsSubheading>Parole Start Date</DetailsSubheading>
-      <SecureDetailsContent>
-        {paroleDate
-          ? formatWorkflowsDate(optionalFieldToDate(paroleDate))
-          : "N/A"}
-      </SecureDetailsContent>
-
-      <DetailsSubheading>Parole Review Date</DetailsSubheading>
-      <SecureDetailsContent>
-        {formatWorkflowsDate(fieldToDate(paroleReviewDate))}
-      </SecureDetailsContent>
-    </>
-  );
 }

@@ -228,7 +228,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload",
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload.",
       ),
     ).toBeInTheDocument();
   });
@@ -257,7 +257,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "Hi, Recidiviz. We’ve found some outstanding items across 1 facility",
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 facility.",
       ),
     ).toBeInTheDocument();
   });
@@ -286,7 +286,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload",
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload.",
       ),
     ).toBeInTheDocument();
   });
@@ -317,7 +317,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload and/or facility",
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload and/or facility.",
       ),
     ).toBeInTheDocument();
   });
@@ -348,7 +348,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload",
+        "Hi, Recidiviz. We’ve found some outstanding items across 1 caseload.",
       ),
     ).toBeInTheDocument();
   });
