@@ -124,7 +124,7 @@ export class OpportunityConfigurationStore implements Hydratable {
           filename: `${tenant}.ts`,
           fileContents: `import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
-export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse = ${JSON.stringify(fetched)}`,
+export const mockApiOpportunityConfigurationResponse = ${JSON.stringify(fetched)} as const satisfies ApiOpportunityConfigurationResponse;`,
         };
       }),
     );
@@ -133,8 +133,8 @@ export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfiguratio
       fileContents: `${states.map((s) => `import * as ${s} from "./${s}";`).join("")}
                       const allConfigs = {
                       ${states.map((s) => `...${s}.mockApiOpportunityConfigurationResponse.enabledConfigs,`).join("")}
-                      };
-                      export default allConfigs`,
+                      } as const;
+                      export default allConfigs; export type FixtureOpportunityType = keyof typeof allConfigs;`,
     });
     downloadZipFile("configs.zip", files);
   }

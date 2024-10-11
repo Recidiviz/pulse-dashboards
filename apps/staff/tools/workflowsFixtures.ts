@@ -22,7 +22,9 @@ import { Firestore } from "@google-cloud/firestore";
 import { mapValues } from "lodash";
 
 import {
+  FixtureMapping,
   incarcerationStaffFixtures,
+  ParsedRecord,
   supervisionStaffFixtures,
   usMeAnnualReclassificationFixtures,
   usMeMediumTrusteeFixtures,
@@ -48,6 +50,7 @@ import { clientUpdatesV2Data } from "./fixtures/clientUpdatesV2";
 import { earnedDischargeReferralsFixture } from "./fixtures/earnedDischargeReferrals";
 import { locationsData } from "./fixtures/locations";
 import { LSUReferralsFixture } from "./fixtures/LSUReferrals";
+import { FixtureOpportunityType } from "./fixtures/opportunities";
 import { residentsData } from "./fixtures/residents";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
 import { usAzReleaseToTPRReferrals } from "./fixtures/usAzReleaseToTPRReferrals";
@@ -103,7 +106,7 @@ const OPPORTUNITIES_MAP = Object.fromEntries(
     `${k}Referrals`,
     firestoreCollection,
   ]),
-) as Record<`${keyof typeof mockOpportunityConfigs}Referrals`, string>;
+) as Record<`${FixtureOpportunityType}Referrals`, string>;
 
 type Logger = {
   (...data: any[]): void;
@@ -112,14 +115,12 @@ type Logger = {
 const GENERAL_FIXTURES_TO_LOAD: Partial<
   Record<FirestoreCollectionKey["key"] & string, FirestoreFixture<any>>
 > = {
-  // TODO(#5285): Fix typing for spreading operator by specifying the generic for `mapValues`
-  ...mapValues(
+  ...mapValues<Record<string, ParsedRecord[]>, FirestoreFixture<ParsedRecord>>(
     {
       incarcerationStaff: incarcerationStaffFixtures,
       supervisionStaff: supervisionStaffFixtures,
     },
-    // @ts-ignore
-    (fixtures) => fixtureFromParsedRecords("id", fixtures),
+    (fixtures) => fixtureFromParsedRecords<ParsedRecord>("id", fixtures),
   ),
   clients: clientsData,
   residents: residentsData,
@@ -131,8 +132,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   keyof typeof OPPORTUNITIES_MAP,
   FirestoreFixture<any>
 > = {
-  // TODO(#5285): Fix typing for spreading operator by specifying the generic for `mapValues`
-  ...mapValues(
+  ...mapValues<Record<string, FixtureMapping>, FirestoreFixture<ParsedRecord>>(
     {
       usMeSCCPReferrals: usMeSccpFixtures,
       usMeMediumTrusteeReferrals: usMeMediumTrusteeFixtures,
@@ -147,7 +147,6 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
       usPaSpecialCircumstancesSupervisionReferrals:
         usPaSpecialCircumstancesSupervisionFixtures,
     },
-    // @ts-ignore
     (fixtures) => fixtureFromParsedRecords("externalId", fixtures),
   ),
   earlyTerminationReferrals: usNdEarlyTerminationFixture,
@@ -155,8 +154,6 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   earnedDischargeReferrals: earnedDischargeReferralsFixture,
   LSUReferrals: LSUReferralsFixture,
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
-  // TODO(#6489): Look at relaxing opportunityType typing here
-  // @ts-expect-error
   usAzReleaseToTPRReferrals,
   usCaSupervisionLevelDowngradeReferrals,
   usIdCRCResidentWorkerReferrals,

@@ -15,12 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "../../../src/FirestoreStore";
+import { ResidentFixture } from "../residents";
 
-export const usIdResidents: Omit<
-  WorkflowsResidentRecord,
-  "personType" | "recordId"
->[] = [
+export const usIdResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: ["usIdExpandedCRC"],
     stateCode: "US_ID",

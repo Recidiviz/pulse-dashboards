@@ -19,6 +19,8 @@ import { ValuesType } from "utility-types";
 
 import { FixtureMapping, inputFixtureArray, ParsedRecord } from "~datatypes";
 
+import { FixtureOpportunityType } from "./opportunities";
+
 /**
  * Includes documents to import and a function for generating document IDs for them
  */
@@ -65,7 +67,14 @@ function allInputFixtures<FM extends FixtureMapping>(
  */
 export function fixtureFromParsedRecords<FixtureType extends ParsedRecord>(
   key: StringProperties<FixtureType["input"]>,
-  mapping: FixtureMapping<FixtureType>,
+  mapping: FixtureMapping<FixtureType> | FixtureType[],
 ): FirestoreFixture<FixtureType> {
+  if (Array.isArray(mapping))
+    return fixtureWithIdKey(key, inputFixtureArray(mapping));
   return fixtureWithIdKey(key, allInputFixtures(mapping));
 }
+
+export type PersonFixture<RecordType> = Omit<
+  RecordType,
+  "personType" | "recordId" | "allEligibleOpportunities"
+> & { allEligibleOpportunities: FixtureOpportunityType[] };

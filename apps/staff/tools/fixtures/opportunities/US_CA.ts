@@ -17,37 +17,36 @@
 
 import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
-export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse =
-  {
-    enabledConfigs: {
-      usCaSupervisionLevelDowngrade: {
-        callToAction:
-          "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
-        compareBy: null,
-        denialReasons: { Other: "Other: please specify a reason" },
-        denialText: null,
-        displayName: "Supervision Level Downgrade",
-        dynamicEligibilityText:
-          "client[|s] may be eligible for a supervision level downgrade",
-        eligibilityDateText: null,
-        eligibleCriteriaCopy: {},
-        firestoreCollection: "US_CA-supervisionLevelDowngrade",
-        hideDenialRevert: false,
-        homepagePosition: 1,
-        ineligibleCriteriaCopy: {},
-        initialHeader: null,
-        isAlert: false,
-        methodologyUrl: "TBD",
-        notifications: [],
-        priority: "NORMAL",
-        sidebarComponents: ["ClientProfileDetails"],
-        snooze: null,
-        stateCode: "US_CA",
-        subheading: null,
-        systemType: "SUPERVISION",
-        tabGroups: null,
-        tooltipEligibilityText: "Eligible for supervision downgrade",
-        urlSection: "supervisionLevelDowngrade",
-      },
+export const mockApiOpportunityConfigurationResponse = {
+  enabledConfigs: {
+    usCaSupervisionLevelDowngrade: {
+      callToAction:
+        "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
+      compareBy: null,
+      denialReasons: { Other: "Other: please specify a reason" },
+      denialText: null,
+      displayName: "Supervision Level Downgrade",
+      dynamicEligibilityText:
+        "client[|s] may be eligible for a supervision level downgrade",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: {},
+      firestoreCollection: "US_CA-supervisionLevelDowngrade",
+      hideDenialRevert: false,
+      homepagePosition: 1,
+      ineligibleCriteriaCopy: {},
+      initialHeader: null,
+      isAlert: false,
+      methodologyUrl: "TBD",
+      notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: ["ClientProfileDetails"],
+      snooze: null,
+      stateCode: "US_CA",
+      subheading: null,
+      systemType: "SUPERVISION",
+      tabGroups: null,
+      tooltipEligibilityText: "Eligible for supervision downgrade",
+      urlSection: "supervisionLevelDowngrade",
     },
-  };
+  },
+} as const satisfies ApiOpportunityConfigurationResponse;

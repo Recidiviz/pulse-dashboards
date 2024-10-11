@@ -17,12 +17,9 @@
 
 import { relativeFixtureDate } from "~datatypes";
 
-import { WorkflowsResidentRecord } from "../../../src/FirestoreStore";
+import { ResidentFixture } from "../residents";
 
-export const usMeResidents: Omit<
-  WorkflowsResidentRecord,
-  "personType" | "recordId"
->[] = [
+export const usMeResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: [
       "usMeSCCP",

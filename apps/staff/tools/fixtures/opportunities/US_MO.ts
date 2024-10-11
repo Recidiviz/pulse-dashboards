@@ -17,182 +17,181 @@
 
 import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
-export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse =
-  {
-    enabledConfigs: {
-      usMoOverdueRestrictiveHousingInitialHearing: {
-        callToAction:
-          "Review residents and prepare necessary paperwork for their hearing.",
-        compareBy: [
-          {
-            field: "eligibilityDate",
-            undefinedBehavior: "undefinedFirst",
-          },
-        ],
-        denialReasons: {
-          BEDS: "Released early due to a need for Restrictive Housing beds",
-          EXTENDED:
-            "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
-          OUTDATED: "Hearing occurred this week",
-          Other: "Other",
-          REFERRED:
-            "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
-          RELEASED: "Released this week",
-          SPACE: "Completed time but pending bed space",
+export const mockApiOpportunityConfigurationResponse = {
+  enabledConfigs: {
+    usMoOverdueRestrictiveHousingInitialHearing: {
+      callToAction:
+        "Review residents and prepare necessary paperwork for their hearing.",
+      compareBy: [
+        {
+          field: "eligibilityDate",
+          undefinedBehavior: "undefinedFirst",
         },
-        denialText: null,
-        displayName: "Temporary Assignment",
-        dynamicEligibilityText:
-          "resident[|s] on Temporary Assignment to review for their initial meaningful hearing",
-        eligibilityDateText: null,
-        eligibleCriteriaCopy: {},
-        firestoreCollection:
-          "US_MO-overdueRestrictiveHousingInitialHearingReferrals",
-        hideDenialRevert: false,
-        homepagePosition: 3,
-        ineligibleCriteriaCopy: {},
-        initialHeader: null,
-        isAlert: true,
-        methodologyUrl:
-          "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
-        notifications: [],
-        priority: "NORMAL",
-        sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
-        snooze: {
-          autoSnoozeParams: {
-            params: { weekday: "Sunday" },
-            type: "snoozeUntil",
-          },
-        },
-        stateCode: "US_MO",
-        subheading:
-          "This alert helps staff identify residents in Temporary Assignment who are overdue or due for an initial meaningful hearing.",
-        systemType: "INCARCERATION",
-        tabGroups: {
-          "ELIGIBILITY STATUS": [
-            "Overdue as of Aug 19, 2024",
-            "Due this week",
-            "Coming up",
-            "Overridden",
-            "Missing Review Date",
-          ],
-        },
-        tooltipEligibilityText: null,
-        urlSection: "overdueRestrictiveHousingInitialHearing",
+      ],
+      denialReasons: {
+        BEDS: "Released early due to a need for Restrictive Housing beds",
+        EXTENDED:
+          "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
+        OUTDATED: "Hearing occurred this week",
+        Other: "Other",
+        REFERRED:
+          "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
+        RELEASED: "Released this week",
+        SPACE: "Completed time but pending bed space",
       },
-      usMoOverdueRestrictiveHousingRelease: {
-        callToAction:
-          "Review residents for release and prepare necessary paperwork for their return to general population.",
-        compareBy: [
-          {
-            field: "eligibilityDate",
-            undefinedBehavior: "undefinedFirst",
-          },
-        ],
-        denialReasons: {
-          BEDS: "Released early due to a need for Restrictive Housing beds",
-          EXTENDED:
-            "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
-          Other: "Other",
-          REFERRED:
-            "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
-          RELEASED: "Released this week",
-          SPACE: "Completed time but pending bed space",
+      denialText: null,
+      displayName: "Temporary Assignment",
+      dynamicEligibilityText:
+        "resident[|s] on Temporary Assignment to review for their initial meaningful hearing",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: {},
+      firestoreCollection:
+        "US_MO-overdueRestrictiveHousingInitialHearingReferrals",
+      hideDenialRevert: false,
+      homepagePosition: 3,
+      ineligibleCriteriaCopy: {},
+      initialHeader: null,
+      isAlert: true,
+      methodologyUrl:
+        "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
+      notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
+      snooze: {
+        autoSnoozeParams: {
+          params: { weekday: "Sunday" },
+          type: "snoozeUntil",
         },
-        denialText: null,
-        displayName: "Release from Restrictive Housing",
-        dynamicEligibilityText:
-          "resident[|s] to review for release from Restrictive Housing",
-        eligibilityDateText: null,
-        eligibleCriteriaCopy: {},
-        firestoreCollection: "US_MO-overdueRestrictiveHousingReleaseReferrals",
-        hideDenialRevert: false,
-        homepagePosition: 2,
-        ineligibleCriteriaCopy: {},
-        initialHeader: null,
-        isAlert: true,
-        methodologyUrl:
-          "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
-        notifications: [],
-        priority: "NORMAL",
-        sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
-        snooze: {
-          autoSnoozeParams: {
-            params: { weekday: "Sunday" },
-            type: "snoozeUntil",
-          },
-        },
-        stateCode: "US_MO",
-        subheading:
-          "This alert helps staff identify residents in Restrictive Housing who have already reached or are about to reach the total number of days they were assigned to serve in restrictive housing before returning to the General Population. Review residents for release and prepare necessary paperwork for their return to the General Population.",
-        systemType: "INCARCERATION",
-        tabGroups: {
-          "ELIGIBILITY STATUS": [
-            "Overdue as of Aug 19, 2024",
-            "Due this week",
-            "Coming up",
-            "Overridden",
-            "Missing Review Date",
-          ],
-        },
-        tooltipEligibilityText: null,
-        urlSection: "overdueRestrictiveHousingRelease",
       },
-      usMoOverdueRestrictiveHousingReviewHearing: {
-        callToAction:
-          "Review residents and prepare necessary paperwork for their next hearing",
-        compareBy: [
-          {
-            field: "eligibilityDate",
-            undefinedBehavior: "undefinedFirst",
-          },
+      stateCode: "US_MO",
+      subheading:
+        "This alert helps staff identify residents in Temporary Assignment who are overdue or due for an initial meaningful hearing.",
+      systemType: "INCARCERATION",
+      tabGroups: {
+        "ELIGIBILITY STATUS": [
+          "Overdue as of Aug 19, 2024",
+          "Due this week",
+          "Coming up",
+          "Overridden",
+          "Missing Review Date",
         ],
-        denialReasons: {
-          BEDS: "Released early due to a need for Extended Restrictive Housing beds",
-          OUTDATED: "Hearing occurred this week",
-          Other: "Other",
-          RELEASED: "Released this week",
-          SPACE: "Completed time but pending bed space",
-        },
-        denialText: null,
-        displayName: "Extended Restrictive Housing Review",
-        dynamicEligibilityText:
-          "resident[|s] in Extended Restrictive Housing to review for their next hearing",
-        eligibilityDateText: null,
-        eligibleCriteriaCopy: {},
-        firestoreCollection:
-          "US_MO-overdueRestrictiveHousingReviewHearingReferrals",
-        hideDenialRevert: false,
-        homepagePosition: 4,
-        ineligibleCriteriaCopy: {},
-        initialHeader: null,
-        isAlert: true,
-        methodologyUrl:
-          "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
-        notifications: [],
-        priority: "NORMAL",
-        sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
-        snooze: {
-          autoSnoozeParams: {
-            params: { weekday: "Sunday" },
-            type: "snoozeUntil",
-          },
-        },
-        stateCode: "US_MO",
-        subheading:
-          "This alert helps staff identify residents in Extended Restrictive Housing  who are overdue or due for a hearing. Review residents and prepare necessary paperwork for their next hearing.",
-        systemType: "INCARCERATION",
-        tabGroups: {
-          "ELIGIBILITY STATUS": [
-            "Overdue as of Aug 19, 2024",
-            "Due this week",
-            "Coming up",
-            "Overridden",
-            "Missing Review Date",
-          ],
-        },
-        tooltipEligibilityText: null,
-        urlSection: "overdueRestrictiveHousingReviewHearing",
       },
+      tooltipEligibilityText: null,
+      urlSection: "overdueRestrictiveHousingInitialHearing",
     },
-  };
+    usMoOverdueRestrictiveHousingRelease: {
+      callToAction:
+        "Review residents for release and prepare necessary paperwork for their return to general population.",
+      compareBy: [
+        {
+          field: "eligibilityDate",
+          undefinedBehavior: "undefinedFirst",
+        },
+      ],
+      denialReasons: {
+        BEDS: "Released early due to a need for Restrictive Housing beds",
+        EXTENDED:
+          "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
+        Other: "Other",
+        REFERRED:
+          "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
+        RELEASED: "Released this week",
+        SPACE: "Completed time but pending bed space",
+      },
+      denialText: null,
+      displayName: "Release from Restrictive Housing",
+      dynamicEligibilityText:
+        "resident[|s] to review for release from Restrictive Housing",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: {},
+      firestoreCollection: "US_MO-overdueRestrictiveHousingReleaseReferrals",
+      hideDenialRevert: false,
+      homepagePosition: 2,
+      ineligibleCriteriaCopy: {},
+      initialHeader: null,
+      isAlert: true,
+      methodologyUrl:
+        "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
+      notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
+      snooze: {
+        autoSnoozeParams: {
+          params: { weekday: "Sunday" },
+          type: "snoozeUntil",
+        },
+      },
+      stateCode: "US_MO",
+      subheading:
+        "This alert helps staff identify residents in Restrictive Housing who have already reached or are about to reach the total number of days they were assigned to serve in restrictive housing before returning to the General Population. Review residents for release and prepare necessary paperwork for their return to the General Population.",
+      systemType: "INCARCERATION",
+      tabGroups: {
+        "ELIGIBILITY STATUS": [
+          "Overdue as of Aug 19, 2024",
+          "Due this week",
+          "Coming up",
+          "Overridden",
+          "Missing Review Date",
+        ],
+      },
+      tooltipEligibilityText: null,
+      urlSection: "overdueRestrictiveHousingRelease",
+    },
+    usMoOverdueRestrictiveHousingReviewHearing: {
+      callToAction:
+        "Review residents and prepare necessary paperwork for their next hearing",
+      compareBy: [
+        {
+          field: "eligibilityDate",
+          undefinedBehavior: "undefinedFirst",
+        },
+      ],
+      denialReasons: {
+        BEDS: "Released early due to a need for Extended Restrictive Housing beds",
+        OUTDATED: "Hearing occurred this week",
+        Other: "Other",
+        RELEASED: "Released this week",
+        SPACE: "Completed time but pending bed space",
+      },
+      denialText: null,
+      displayName: "Extended Restrictive Housing Review",
+      dynamicEligibilityText:
+        "resident[|s] in Extended Restrictive Housing to review for their next hearing",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: {},
+      firestoreCollection:
+        "US_MO-overdueRestrictiveHousingReviewHearingReferrals",
+      hideDenialRevert: false,
+      homepagePosition: 4,
+      ineligibleCriteriaCopy: {},
+      initialHeader: null,
+      isAlert: true,
+      methodologyUrl:
+        "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
+      notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
+      snooze: {
+        autoSnoozeParams: {
+          params: { weekday: "Sunday" },
+          type: "snoozeUntil",
+        },
+      },
+      stateCode: "US_MO",
+      subheading:
+        "This alert helps staff identify residents in Extended Restrictive Housing  who are overdue or due for a hearing. Review residents and prepare necessary paperwork for their next hearing.",
+      systemType: "INCARCERATION",
+      tabGroups: {
+        "ELIGIBILITY STATUS": [
+          "Overdue as of Aug 19, 2024",
+          "Due this week",
+          "Coming up",
+          "Overridden",
+          "Missing Review Date",
+        ],
+      },
+      tooltipEligibilityText: null,
+      urlSection: "overdueRestrictiveHousingReviewHearing",
+    },
+  },
+} as const satisfies ApiOpportunityConfigurationResponse;

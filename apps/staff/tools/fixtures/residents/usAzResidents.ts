@@ -15,15 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "../../../src/FirestoreStore";
+import { ResidentFixture } from "../residents";
 
-export const usAzResidents: Omit<
-  WorkflowsResidentRecord,
-  "personType" | "recordId"
->[] = [
+export const usAzResidents: ResidentFixture[] = [
   {
-    // TODO($6489): Look at relaxing typing to be string[]
-    // @ts-expect-error
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES001",
@@ -44,7 +39,6 @@ export const usAzResidents: Omit<
     metadata: {},
   },
   {
-    // @ts-expect-error
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES002",
@@ -65,7 +59,6 @@ export const usAzResidents: Omit<
     metadata: {},
   },
   {
-    // @ts-expect-error
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES003",
@@ -86,7 +79,6 @@ export const usAzResidents: Omit<
     metadata: {},
   },
   {
-    // @ts-expect-error
     allEligibleOpportunities: ["usAzReleaseToTPR"],
     stateCode: "US_AZ",
     personExternalId: "AZ_RES004",

@@ -39,5 +39,6 @@ const allConfigs = {
   ...US_MI.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MO.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_ND.mockApiOpportunityConfigurationResponse.enabledConfigs,
-};
+} as const;
 export default allConfigs;
+export type FixtureOpportunityType = keyof typeof allConfigs;

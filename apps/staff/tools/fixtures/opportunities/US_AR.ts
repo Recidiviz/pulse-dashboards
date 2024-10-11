@@ -17,5 +17,6 @@
 
 import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
-export const mockApiOpportunityConfigurationResponse: ApiOpportunityConfigurationResponse =
-  { enabledConfigs: {} };
+export const mockApiOpportunityConfigurationResponse = {
+  enabledConfigs: {},
+} as const satisfies ApiOpportunityConfigurationResponse;

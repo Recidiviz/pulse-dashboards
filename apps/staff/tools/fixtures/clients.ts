@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { ClientRecord } from "../../src/FirestoreStore";
-import { FirestoreFixture } from "./utils";
+import { FirestoreFixture, PersonFixture } from "./utils";
 
-const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+type ClientFixture = PersonFixture<ClientRecord>;
+
+const US_CA_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "PETER",
@@ -240,7 +242,7 @@ const US_CA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+const US_ID_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "CASEY",
@@ -599,7 +601,7 @@ const US_ID_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+const US_ME_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "LAURA",
@@ -766,7 +768,7 @@ const US_ME_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+const US_MI_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "PATRICK",
@@ -872,7 +874,7 @@ const US_MI_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const US_ND_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+const US_ND_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "JAMILYN",
@@ -947,7 +949,7 @@ const US_ND_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+const US_OR_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "PETER",
@@ -994,7 +996,7 @@ const US_OR_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const US_PA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+const US_PA_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "BENJAMIN",
@@ -1105,7 +1107,7 @@ const US_PA_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
+const US_TN_CLIENTS: ClientFixture[] = [
   {
     personName: {
       givenNames: "TONYE",
@@ -1386,7 +1388,7 @@ const US_TN_CLIENTS: Omit<ClientRecord, "personType" | "recordId">[] = [
   },
 ];
 
-const data: Omit<ClientRecord, "personType" | "recordId">[] = [
+const data: ClientFixture[] = [
   ...US_CA_CLIENTS,
   ...US_ID_CLIENTS,
   ...US_ME_CLIENTS,
@@ -1397,9 +1399,7 @@ const data: Omit<ClientRecord, "personType" | "recordId">[] = [
   ...US_PA_CLIENTS,
 ];
 
-export const clientsData: FirestoreFixture<
-  Omit<ClientRecord, "personType" | "recordId">
-> = {
+export const clientsData: FirestoreFixture<ClientFixture> = {
   data,
   idFunc: (r) => r.personExternalId,
 };

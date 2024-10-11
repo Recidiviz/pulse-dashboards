@@ -23,9 +23,11 @@ import { usMeResidents } from "./residents/usMeResidents";
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
 import { usTnResidents } from "./residents/usTnResidents";
-import { FirestoreFixture } from "./utils";
+import { FirestoreFixture, PersonFixture } from "./utils";
 
-const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
+export type ResidentFixture = PersonFixture<WorkflowsResidentRecord>;
+
+const data: ResidentFixture[] = [
   ...usAzResidents,
   ...usArResidents,
   ...usIdResidents,
@@ -35,9 +37,7 @@ const data: Omit<WorkflowsResidentRecord, "personType" | "recordId">[] = [
   ...usTnResidents,
 ];
 
-export const residentsData: FirestoreFixture<
-  Omit<WorkflowsResidentRecord, "personType" | "recordId">
-> = {
+export const residentsData: FirestoreFixture<ResidentFixture> = {
   data,
   idFunc: (r) => r.personExternalId,
 };
