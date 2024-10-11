@@ -28,12 +28,30 @@ const TabWrapper = styled.div`
   scrollbar-width: none;
 `;
 
+const TabBadge = styled(Pill)<{ $sortable: boolean }>`
+  font-size: 0.75rem;
+  padding: 0.2rem 0.7rem;
+  margin: 0;
+  height: 1.6rem;
+
+  ${({ $sortable }) =>
+    $sortable &&
+    `
+    cursor: move;
+    &:active {
+      cursor: grab;
+    }`}
+`;
+
 const TabButton = styled.div<{ $active: boolean }>`
   ${typography.Sans16}
+
+  background-color: ${palette.marble1};
   color: ${(props) => (props.$active ? palette.pine4 : palette.slate60)};
-  padding: 0.5rem 0;
-  border-bottom: ${(props) =>
-    props.$active ? `1px solid ${palette.pine4}` : "none"};
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid;
+  border-bottom-color: ${(props) =>
+    props.$active ? palette.pine4 : `transparent`};
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -45,25 +63,16 @@ const TabButton = styled.div<{ $active: boolean }>`
 
   &:hover {
     color: ${({ $active }) => !$active && palette.slate80};
+
+    ${TabBadge} {
+      background-color: ${({ $active }) => !$active && palette.slate20};
+    }
   }
 
   &:active {
     cursor: grab;
+    z-index: 1;
   }
-`;
-
-const TabBadge = styled(Pill)<{ $sortable: boolean }>`
-  font-size: 0.75rem;
-  padding: 0.2rem 0.7rem;
-  height: 1.6rem;
-
-  ${({ $sortable }) =>
-    $sortable &&
-    `
-    cursor: move;
-    &:active {
-      cursor: grab;
-    }`}
 `;
 
 export interface SortableTabButtonProps<T extends string> {
@@ -105,7 +114,7 @@ function SortableTabButton<T extends string>({
           filled
           color={active ? palette.pine4 : palette.slate10}
           textColor={active ? "white" : palette.slate70}
-          $sortable={true}
+          $sortable={sortingEnabled}
         >
           {badge}
         </TabBadge>

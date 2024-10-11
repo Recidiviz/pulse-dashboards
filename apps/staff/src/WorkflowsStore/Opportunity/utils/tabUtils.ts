@@ -18,20 +18,26 @@
 import { OpportunityTab } from "../types";
 
 export const generateTabs = ({
+  supportsAlmostEligible,
+  supportsDenial,
   customTabOrder,
   deniedTabTitle = "Marked Ineligible",
   submittedTabTitle,
 }: {
+  supportsAlmostEligible: boolean;
+  supportsDenial: boolean;
   customTabOrder?: OpportunityTab[];
   deniedTabTitle?: OpportunityTab;
   submittedTabTitle?: OpportunityTab;
 }): ReadonlyArray<OpportunityTab> => {
+  const almostEligibleTabTitle: OpportunityTab = "Almost Eligible";
+
   return (
     customTabOrder ?? [
       "Eligible Now",
-      "Almost Eligible",
+      ...(supportsAlmostEligible ? [almostEligibleTabTitle] : []),
       ...(submittedTabTitle ? [submittedTabTitle] : []),
-      deniedTabTitle,
+      ...(supportsDenial ? [deniedTabTitle] : []),
     ]
   );
 };

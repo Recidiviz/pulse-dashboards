@@ -233,4 +233,12 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get emptyTabCopy() {
     return {};
   }
+
+  get supportsDenial() {
+    return Object.keys(this.denialReasons).length > 0;
+  }
+
+  get supportsAlmostEligible() {
+    return !!this.ineligibleCriteriaCopy;
+  }
 }

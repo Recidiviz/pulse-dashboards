@@ -20,6 +20,7 @@ import { parseISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -118,7 +119,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
     const colors = useStatusColors(opportunity);
     const showUpdateStatusButton =
-      opportunity.supportsDenial || submittedOpportunityStatus;
+      opportunity.config.supportsDenial || submittedOpportunityStatus;
 
     const snoozeUntil: Date | undefined =
       opportunity.manualSnoozeUntilDate ??
@@ -140,6 +141,15 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         await opportunity.deleteOpportunityDenialAndSnooze();
       } else if (opportunity.isSubmitted) {
         await opportunity.deleteSubmitted();
+      }
+
+      if (submittedOpportunityStatus) {
+        toast(
+          `${opportunity.person.displayName} is now ${opportunity.tabTitle()} for ${opportunity.config.label}`,
+          {
+            position: "bottom-left",
+          },
+        );
       }
     };
 

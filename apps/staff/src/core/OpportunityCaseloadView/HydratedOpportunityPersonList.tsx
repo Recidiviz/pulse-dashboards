@@ -33,8 +33,9 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { palette, Sans18 } from "@recidiviz/design-system";
+import { palette, Sans16, Sans18, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import {
@@ -50,13 +51,18 @@ import {
   OpportunityType,
 } from "../../WorkflowsStore";
 import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
-import { Heading, SubHeading } from "../sharedComponents";
+import { Heading } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
+
+const OpportunityPageCTA = styled(Sans16)`
+  color: ${palette.slate70};
+  padding-bottom: ${rem(spacing.md)};
+`;
 
 const FlexWrapper = styled.div`
   display: flex;
@@ -164,9 +170,7 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
         {presenter.subheading ? (
           <OpportunitySubheading subheading={presenter.subheading} />
         ) : (
-          <SubHeading className="PersonList__Subheading">
-            {presenter.callToAction}
-          </SubHeading>
+          <OpportunityPageCTA>{presenter.callToAction}</OpportunityPageCTA>
         )}
         {presenter.activeOpportunityNotifications && (
           <OpportunityNotifications

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Pill, Sans16 } from "@recidiviz/design-system";
+import { palette, Pill, Sans16, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
@@ -28,6 +28,7 @@ import { Separator } from "./styles";
 
 const TitleText = styled(Sans16)`
   color: ${palette.pine1};
+  line-height: 1.5;
   display: inline-block;
 `;
 
@@ -38,11 +39,15 @@ const EligibilityStatusPill = styled(Pill)<{ $borderColor: string }>`
   font-weight: 600;
   height: ${rem(20)};
   padding: 0 ${rem(6)};
-  margin-left: ${rem(14)};
-  vertical-align: top;
+  vertical-align: text-top;
 `;
 
-const OpportunityLabel = styled.span``;
+const OpportunityLabelWithPill = styled.span`
+  margin-right: ${rem(spacing.md)};
+  line-height: 2;
+`;
+
+const OpportunityLabelWithoutPill = styled.span``;
 
 type OpportunityModuleHeaderProps = {
   opportunity: Opportunity;
@@ -53,33 +58,43 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
     const colors = useStatusColors(opportunity);
     const { submittedOpportunityStatus } = useFeatureVariants();
 
+    if (submittedOpportunityStatus) {
+      return (
+        <TitleText>
+          <OpportunityLabelWithPill>
+            {opportunity.config.label}
+          </OpportunityLabelWithPill>
+          <EligibilityStatusPill
+            className="EligibilityStatus"
+            filled
+            color={colors.badgeBackground}
+            textColor={colors.badgeText}
+            $borderColor={colors.badgeBorder}
+          >
+            <EligibilityStatus opportunity={opportunity} />
+          </EligibilityStatusPill>
+        </TitleText>
+      );
+    }
+
     return (
       <TitleText>
-        <OpportunityLabel>{opportunity.config.label}</OpportunityLabel>
-        {opportunity.showEligibilityStatus("OpportunityModuleHeader") &&
-          (submittedOpportunityStatus ? (
-            <EligibilityStatusPill
+        {opportunity.showEligibilityStatus("OpportunityModuleHeader") && (
+          <>
+            <OpportunityLabelWithoutPill>
+              {opportunity.config.label}
+            </OpportunityLabelWithoutPill>
+            <Separator> • </Separator>
+            <span
               className="EligibilityStatus"
-              filled
-              color={colors.badgeBackground}
-              textColor={colors.badgeText}
-              $borderColor={colors.badgeBorder}
+              style={{
+                color: palette.pine1,
+              }}
             >
               <EligibilityStatus opportunity={opportunity} />
-            </EligibilityStatusPill>
-          ) : (
-            <>
-              <Separator> • </Separator>
-              <span
-                className="EligibilityStatus"
-                style={{
-                  color: palette.pine1,
-                }}
-              >
-                <EligibilityStatus opportunity={opportunity} />
-              </span>
-            </>
-          ))}
+            </span>
+          </>
+        )}
       </TitleText>
     );
   });

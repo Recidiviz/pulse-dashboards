@@ -119,7 +119,6 @@ export interface Opportunity<
   setLastViewed: () => void;
   setCompletedIfEligible: () => void;
   eligibilityDate: Date | undefined;
-  supportsDenial: boolean;
   readonly supportsExternalRequest: boolean;
   externalRequestData?: ExternalRequestUpdate<any>;
   readonly externalRequestStatusMessage?: string;

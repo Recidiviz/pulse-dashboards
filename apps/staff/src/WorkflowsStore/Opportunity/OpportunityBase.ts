@@ -210,10 +210,6 @@ export class OpportunityBase<
       .opportunities[this.type];
   }
 
-  get supportsDenial(): boolean {
-    return Object.keys(this.config.denialReasons).length > 0;
-  }
-
   get record(): ReferralRecord | undefined {
     return this.referralSubscription.data;
   }

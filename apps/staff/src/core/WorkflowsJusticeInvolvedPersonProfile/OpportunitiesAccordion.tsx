@@ -50,7 +50,7 @@ const OpportunityWrapper = styled.div<{ background: string; border: string }>`
 `;
 
 const AccordionButton = styled(AccordionItemButton)`
-  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
+  padding: ${rem(spacing.md)} ${rem(spacing.md)};
   position: relative;
   cursor: pointer;
 

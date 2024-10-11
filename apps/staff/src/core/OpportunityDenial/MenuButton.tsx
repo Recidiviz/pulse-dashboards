@@ -116,7 +116,7 @@ export const MenuButton = observer(function MenuButton({
             </OpportunityStatusDropdownMenuItem>
           )}
           <>
-            {opportunity.supportsDenial && (
+            {config.supportsDenial && (
               <OpportunityStatusDropdownMenuItem onClick={onDenialButtonClick}>
                 {denialText}
               </OpportunityStatusDropdownMenuItem>
@@ -128,7 +128,7 @@ export const MenuButton = observer(function MenuButton({
   } else {
     return (
       <>
-        {opportunity.supportsDenial && (
+        {config.supportsDenial && (
           <StatusAwareButton onClick={onDenialButtonClick}>
             {config.denialButtonText ??
               (config.isAlert ? "Override?" : "Update eligibility")}

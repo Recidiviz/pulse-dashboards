@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, spacing } from "@recidiviz/design-system";
+import { Button, palette, Sans16, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useState } from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { SubHeading } from "../sharedComponents";
 
 const StyledMarkdownView = styled(MarkdownView)`
   display: inline;
@@ -51,6 +50,11 @@ const ViewMoreButton = styled(Button)<{ expanded: boolean }>`
       : `margin-left: 10px;`}
 `;
 
+const OpportunityStyledSubheading = styled(Sans16)`
+  color: ${palette.slate70};
+  padding-bottom: ${rem(spacing.md)};
+`;
+
 interface OpportunitySubheadingProps {
   subheading: string;
 }
@@ -67,7 +71,7 @@ const OpportunitySubheading = ({ subheading }: OpportunitySubheadingProps) => {
       : subheading;
 
   return (
-    <SubHeading className="PersonList__Subheading">
+    <OpportunityStyledSubheading>
       <StyledMarkdownView markdown={visibleSubheading} />
       {isMobile &&
         subheading.length > MOBILE_SUBHEADING_CUTOFF &&
@@ -88,7 +92,7 @@ const OpportunitySubheading = ({ subheading }: OpportunitySubheadingProps) => {
             View more <i className="fa fa-angle-down" />
           </ViewMoreButton>
         ))}
-    </SubHeading>
+    </OpportunityStyledSubheading>
   );
 };
 

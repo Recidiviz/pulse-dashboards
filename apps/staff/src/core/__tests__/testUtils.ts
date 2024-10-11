@@ -77,7 +77,6 @@ export const mockOpportunity: Opportunity<Client> = {
   type: "pastFTRD",
   eligibilityDate: undefined,
   isSnoozed: false,
-  supportsDenial: false,
   trackListViewed: () => undefined,
   trackPreviewed: () => undefined,
   supportsExternalRequest: false,
@@ -113,7 +112,10 @@ export const mockOpportunity: Opportunity<Client> = {
       autoSnoozeParams: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
     },
     tabGroups: {
-      "ELIGIBILITY STATUS": generateTabs({}) as OpportunityTab[],
+      "ELIGIBILITY STATUS": generateTabs({
+        supportsAlmostEligible: false,
+        supportsDenial: true,
+      }) as OpportunityTab[],
     },
     isEnabled: true,
     denialReasons: { CODE: "Denial Code", [OTHER_KEY]: "Other" },
@@ -131,5 +133,7 @@ export const mockOpportunity: Opportunity<Client> = {
     nonOMSCriteria: [],
     homepagePosition: 1,
     emptyTabCopy: {},
+    supportsAlmostEligible: false,
+    supportsDenial: true,
   },
 };

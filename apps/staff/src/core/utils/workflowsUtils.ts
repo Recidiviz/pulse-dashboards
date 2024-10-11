@@ -100,13 +100,14 @@ export type StatusPalette =
 
 export function useStatusColors({
   config: { isAlert },
-  reviewStatus,
+  isSubmitted,
+  denial,
   almostEligible,
 }: Opportunity): StatusPalette {
-  if (reviewStatus === "SUBMITTED") return OPPORTUNITY_STATUS_COLORS.submitted;
+  if (isSubmitted) return OPPORTUNITY_STATUS_COLORS.submitted;
 
   if (isAlert) {
-    if (reviewStatus === "DENIED") {
+    if (denial) {
       return OPPORTUNITY_STATUS_COLORS.alertOverride;
     }
     if (almostEligible) {
@@ -115,7 +116,7 @@ export function useStatusColors({
     return OPPORTUNITY_STATUS_COLORS.alert;
   }
 
-  if (reviewStatus === "DENIED") {
+  if (denial) {
     return OPPORTUNITY_STATUS_COLORS.ineligible;
   }
 

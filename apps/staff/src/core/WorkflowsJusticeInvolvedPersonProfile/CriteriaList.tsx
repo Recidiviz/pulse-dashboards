@@ -73,7 +73,7 @@ const CriterionContentWrapper = styled(Sans14)`
 const CriterionWrapper = styled.li<{ alert?: boolean }>`
   display: grid;
   grid-template-columns: ${rem(spacing.lg)} 1fr;
-  margin: ${(props) => (props.alert ? "0" : "0 0 8px")};
+  margin: 0 0 ${rem(spacing.sm)};
   line-height: 1.3;
 `;
 

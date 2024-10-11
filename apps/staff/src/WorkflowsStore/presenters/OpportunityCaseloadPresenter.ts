@@ -107,7 +107,7 @@ export class OpportunityCaseloadPresenter {
           newTabOrder,
         )
         .then(() => {
-          toast(`New tab ordering has been saved for ${this.config.label}!`, {
+          toast(`New tab ordering has been saved for ${this.config.label}`, {
             id: "newTabOrderingToast", // prevent duplicate toasts
             position: "bottom-left",
           });
