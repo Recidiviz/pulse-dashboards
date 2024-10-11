@@ -21,6 +21,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
+import { formatDate } from "../../utils";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
@@ -81,6 +82,11 @@ const TaskContent = styled.div`
   grid-column-start: 1;
 `;
 
+const TaskSnoozedDate = styled(Sans14)`
+  color: ${palette.slate70};
+  line-height: 2;
+`;
+
 export const PreviewTasks = observer(function PreviewTasks({
   person,
   showSnoozeDropdown,
@@ -107,13 +113,19 @@ export const PreviewTasks = observer(function PreviewTasks({
                     <TaskDueDate
                       font={typography.Sans16}
                       marginLeft="0"
-                      overdue={task.isOverdue}
+                      overdue={task.isOverdue && !task.isSnoozed}
                       title={task.dueDateDisplayShort}
                       isMobile={isMobile}
                     >
                       {task.dueDateDisplayShort}
                     </TaskDueDate>
                   </TaskTitle>
+                  {task.snoozedUntil && (
+                    <TaskSnoozedDate>
+                      {"Hidden from Tasks list until " +
+                        formatDate(task.snoozedUntil)}
+                    </TaskSnoozedDate>
+                  )}
                   <TaskDetails>{task.additionalDetails}</TaskDetails>
                 </TaskContent>
                 {showSnoozeDropdown && (

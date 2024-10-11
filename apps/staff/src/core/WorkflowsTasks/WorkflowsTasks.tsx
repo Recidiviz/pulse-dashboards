@@ -114,7 +114,6 @@ export const TaskDueDate = styled.div<{
   ${({ font }) => font}
   color: ${({ overdue }) => (overdue ? palette.signal.error : palette.slate70)};
   margin-left: ${({ marginLeft = "auto" }) => marginLeft};
-  text-align: right;
   ${({ isMobile }) => isMobile && `font-size: ${rem(12)} !important;`}
 `;
 

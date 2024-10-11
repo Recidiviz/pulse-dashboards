@@ -28,7 +28,6 @@ import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
-import { formatDate } from "../../utils";
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";
 import { SnoozeTaskConfig } from "../models/types";
 
@@ -168,8 +167,6 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
             <SnoozeMenuInstruction>
               {task.isSnoozed ? (
                 <SnoozedTaskMenu>
-                  This task will be hidden from the Tasks list until{" "}
-                  {formatDate(task.snoozedUntil)}.
                   <UnhideTaskButton
                     type="submit"
                     onClick={() => task.updateSupervisionTask(undefined)}
