@@ -63,10 +63,10 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialReasons: {
         "CASE PLAN": "Not compliant with case plan goals",
-        DECLINE: "Resident declined opportunity to apply for Furlough",
-        OTHER_CORIS: "Other, please add a case note in CORIS",
         PROGRAM:
           "Has not completed, or is not currently participating in, required core programming",
+        DECLINE: "Resident declined opportunity to apply for Furlough",
+        OTHER_CORIS: "Other, please add a case note in CORIS",
       },
       denialText: null,
       displayName: "Furlough Program",
@@ -74,9 +74,19 @@ export const mockApiOpportunityConfigurationResponse = {
         "resident[|s] may be eligible for the Furlough Program",
       eligibilityDateText: null,
       eligibleCriteriaCopy: {
+        usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+          text: "Served at least 30 days at current facility",
+          tooltip:
+            "Served at least thirty (30) days of the term of imprisonment in the facility providing the furlough program",
+        },
         usMeCustodyLevelIsMinimumOrCommunity: {
           text: "Currently on {{lowerCase custodyLevel}}",
           tooltip: "Currently on minimum or community custody",
+        },
+        usMeThreeYearsRemainingOnSentence: {
+          text: "{{monthsRemaining}} months remaining on sentence",
+          tooltip:
+            "No more than three (3) years remaining on the term(s) of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311 (i.e., first day on a furlough must be no more than three (3) years prior to the resident’s current custody release date).",
         },
         usMeNoClassAOrBViolationFor90Days: {
           text: "No Class A or B disciplines pending or occurring in the past 90 days",
@@ -88,20 +98,10 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Must have no detainers, warrants, or other pending holds preventing participation in a community program as set out in Department Policy (AF) 23.1",
         },
-        usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-          text: "Served at least 30 days at current facility",
-          tooltip:
-            "Served at least thirty (30) days of the term of imprisonment in the facility providing the furlough program",
-        },
         usMeServedHalfOfSentence: {
           text: "Served at least 1/2 of sentence",
           tooltip:
             "The resident must have served at least 1/2 of the term of imprisonment imposed or, in the  case of a split sentence, at least 1/2 of the unsuspended portion, after consideration of  any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311.\n \nA resident who is serving concurrent sentences must have served 1/2 of the term of imprisonment imposed or, in the case of a split sentence, of the unsuspended portion, on the controlling sentence, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311.\n\nA resident who is serving consecutive or nonconcurrent sentences must have served 1/2 of the imprisonment time to be served on the combined sentences, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311. Depending on the length of the sentences and the deductions received and retained, a resident may become eligible for a furlough to visit with family during any of the sentences.",
-        },
-        usMeThreeYearsRemainingOnSentence: {
-          text: "{{monthsRemaining}} months remaining on sentence",
-          tooltip:
-            "No more than three (3) years remaining on the term(s) of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311 (i.e., first day on a furlough must be no more than three (3) years prior to the resident’s current custody release date).",
         },
       },
       firestoreCollection: "US_ME-furloughReleaseReferrals",
@@ -130,9 +130,9 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialReasons: {
         BEHAVIOR: "Has not demonstrated prosocial behavior",
+        PROGRAM: "Has not completed required core programming",
         DECLINE: "Resident declined Medium Trustee Status",
         OTHER_CORIS: "Other, please add a case note in CORIS",
-        PROGRAM: "Has not completed required core programming",
       },
       denialText: null,
       displayName: "Medium Trustee Status",
@@ -231,10 +231,10 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialReasons: {
         "CASE PLAN": "Not compliant with case plan goals",
-        DECLINE: "Resident declined opportunity to apply for SCCP",
-        DISCIPLINE: "Has a Class A or B disciplinary violation pending",
-        OTHER_CORIS: "Other, please add a case note in CORIS",
         PROGRAM: "Has not completed required core programming",
+        DISCIPLINE: "Has a Class A or B disciplinary violation pending",
+        DECLINE: "Resident declined opportunity to apply for SCCP",
+        OTHER_CORIS: "Other, please add a case note in CORIS",
       },
       denialText: null,
       displayName: "Supervised Community Confinement Program",
@@ -268,10 +268,10 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialReasons: {
         "CASE PLAN": "Not compliant with case plan goals",
-        DECLINE: "Resident declined opportunity to apply for Work Release",
-        OTHER_CORIS: "Other, please add a case note in CORIS",
         PROGRAM:
           "Has not completed, or is not currently participating in, required core programming",
+        DECLINE: "Resident declined opportunity to apply for Work Release",
+        OTHER_CORIS: "Other, please add a case note in CORIS",
       },
       denialText: null,
       displayName: "Work Release",

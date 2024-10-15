@@ -23,21 +23,18 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review residents and prepare necessary paperwork for their hearing.",
       compareBy: [
-        {
-          field: "eligibilityDate",
-          undefinedBehavior: "undefinedFirst",
-        },
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
       denialReasons: {
         BEDS: "Released early due to a need for Restrictive Housing beds",
+        SPACE: "Completed time but pending bed space",
+        RELEASED: "Released this week",
+        OUTDATED: "Hearing occurred this week",
         EXTENDED:
           "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
-        OUTDATED: "Hearing occurred this week",
-        Other: "Other",
         REFERRED:
           "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
-        RELEASED: "Released this week",
-        SPACE: "Completed time but pending bed space",
+        Other: "Other",
       },
       denialText: null,
       displayName: "Temporary Assignment",
@@ -59,8 +56,8 @@ export const mockApiOpportunityConfigurationResponse = {
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       snooze: {
         autoSnoozeParams: {
-          params: { weekday: "Sunday" },
           type: "snoozeUntil",
+          params: { weekday: "Sunday" },
         },
       },
       stateCode: "US_MO",
@@ -69,7 +66,7 @@ export const mockApiOpportunityConfigurationResponse = {
       systemType: "INCARCERATION",
       tabGroups: {
         "ELIGIBILITY STATUS": [
-          "Overdue as of Aug 19, 2024",
+          "Overdue as of Sep 9, 2024",
           "Due this week",
           "Coming up",
           "Overridden",
@@ -83,20 +80,17 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review residents for release and prepare necessary paperwork for their return to general population.",
       compareBy: [
-        {
-          field: "eligibilityDate",
-          undefinedBehavior: "undefinedFirst",
-        },
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
       denialReasons: {
         BEDS: "Released early due to a need for Restrictive Housing beds",
+        SPACE: "Completed time but pending bed space",
+        RELEASED: "Released this week",
         EXTENDED:
           "Received a new minor rule violation, resulting in an extension to their Restrictive Housing placement",
-        Other: "Other",
         REFERRED:
           "Received a new major rule violation, resulting in a referral to Extended Restrictive Housing Review Committee",
-        RELEASED: "Released this week",
-        SPACE: "Completed time but pending bed space",
+        Other: "Other",
       },
       denialText: null,
       displayName: "Release from Restrictive Housing",
@@ -117,8 +111,8 @@ export const mockApiOpportunityConfigurationResponse = {
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       snooze: {
         autoSnoozeParams: {
-          params: { weekday: "Sunday" },
           type: "snoozeUntil",
+          params: { weekday: "Sunday" },
         },
       },
       stateCode: "US_MO",
@@ -127,7 +121,7 @@ export const mockApiOpportunityConfigurationResponse = {
       systemType: "INCARCERATION",
       tabGroups: {
         "ELIGIBILITY STATUS": [
-          "Overdue as of Aug 19, 2024",
+          "Overdue as of Sep 9, 2024",
           "Due this week",
           "Coming up",
           "Overridden",
@@ -141,17 +135,14 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review residents and prepare necessary paperwork for their next hearing",
       compareBy: [
-        {
-          field: "eligibilityDate",
-          undefinedBehavior: "undefinedFirst",
-        },
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
       denialReasons: {
         BEDS: "Released early due to a need for Extended Restrictive Housing beds",
+        SPACE: "Completed time but pending bed space",
+        RELEASED: "Released this week",
         OUTDATED: "Hearing occurred this week",
         Other: "Other",
-        RELEASED: "Released this week",
-        SPACE: "Completed time but pending bed space",
       },
       denialText: null,
       displayName: "Extended Restrictive Housing Review",
@@ -173,8 +164,8 @@ export const mockApiOpportunityConfigurationResponse = {
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       snooze: {
         autoSnoozeParams: {
-          params: { weekday: "Sunday" },
           type: "snoozeUntil",
+          params: { weekday: "Sunday" },
         },
       },
       stateCode: "US_MO",
@@ -183,7 +174,7 @@ export const mockApiOpportunityConfigurationResponse = {
       systemType: "INCARCERATION",
       tabGroups: {
         "ELIGIBILITY STATUS": [
-          "Overdue as of Aug 19, 2024",
+          "Overdue as of Sep 9, 2024",
           "Due this week",
           "Coming up",
           "Overridden",

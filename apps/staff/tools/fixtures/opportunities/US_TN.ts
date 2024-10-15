@@ -114,10 +114,10 @@ export const mockApiOpportunityConfigurationResponse = {
         "resident[|s] [is|are] eligible for their annual reclassification",
       eligibilityDateText: null,
       eligibleCriteriaCopy: {
-        custodyLevelIsNotMax: { text: "Custody level is not maximum" },
         usTnAtLeast12MonthsSinceLatestAssessment: {
           text: "At least 12 months since last reclassification date",
         },
+        custodyLevelIsNotMax: { text: "Custody level is not maximum" },
       },
       firestoreCollection: "US_TN-annualReclassificationReferrals",
       hideDenialRevert: false,
@@ -223,7 +223,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: {
-        autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
+        autoSnoozeParams: { type: "snoozeDays", params: { days: 30 } },
       },
       stateCode: "US_TN",
       subheading:

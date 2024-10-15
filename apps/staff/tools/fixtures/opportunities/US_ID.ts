@@ -24,12 +24,12 @@ export const mockApiOpportunityConfigurationResponse = {
         "Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.",
       compareBy: null,
       denialReasons: {
+        SCNC: "SCNC: Not compliant with all court-ordered conditions and special conditions",
         FFR: "FFR: Failure to make payments toward fines, fees, and restitution despite ability to pay",
+        "NCO/CPO": "NCO/CPO: Has an active NCO, CPO, or restraining order",
         INTERLOCK: "INTERLOCK: Has an active interlock device",
         MIS: "Has had a violent misdemeanor conviction in the past 12 months",
-        "NCO/CPO": "NCO/CPO: Has an active NCO, CPO, or restraining order",
         Other: "Other, please specify a reason",
-        SCNC: "SCNC: Not compliant with all court-ordered conditions and special conditions",
       },
       denialText: null,
       displayName: "Limited Supervision Unit",
@@ -61,70 +61,52 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.",
       compareBy: null,
-      denialReasons: [
-        {
-          key: "CD",
-          text: "Court permanently denied early discharge request",
-        },
-        {
-          key: "FFR",
-          text: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
-        },
-        { key: "INTERLOCK", text: "Has an active interlock device" },
-        {
-          key: "MIS",
-          text: "Has had a violent misdemeanor conviction in the past 12 months",
-        },
-        { key: "NCIC", text: "Did not pass NCIC check" },
-        { key: "Other", text: "Other, please specify a reason" },
-        {
-          key: "PCD",
-          text: "Parole Commission permanently denied early discharge request",
-        },
-        { key: "SCNC", text: "Not compliant with special conditions" },
-      ],
+      denialReasons: {
+        SCNC: "Not compliant with special conditions",
+        FFR: "Failure to make payments towards fines, fees, and restitution despite ability to pay",
+        INTERLOCK: "Has an active interlock device",
+        NCIC: "Did not pass NCIC check",
+        PCD: "Parole Commission permanently denied early discharge request",
+        CD: "Court permanently denied early discharge request",
+        MIS: "Has had a violent misdemeanor conviction in the past 12 months",
+        Other: "Other, please specify a reason",
+      },
       denialText: null,
       displayName: "Earned Discharge",
       dynamicEligibilityText: "client[|s] may be eligible for earned discharge",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [
-        {
-          key: "negativeDaWithin90Days",
-          text: "Negative UA within past 90 days",
-          tooltip:
-            "Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
-        },
-        {
-          key: "noFelonyWithin24Months",
-          text: "No felony convictions in past 24 months",
-          tooltip:
-            "Has not committed a felony while on probation or parole in past 24 months",
-        },
-        {
-          key: "noViolentMisdemeanorWithin12Months",
-          text: "No violent misdemeanor convictions in past 12 months",
-          tooltip:
-            "Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
-        },
-        {
-          key: "pastEarnedDischargeEligibleDate",
-          text: "Served {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
-          tooltip:
-            "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
-        },
-        {
-          key: "usIdIncomeVerifiedWithin3Months",
-          text: "Verified compliant employment",
-          tooltip:
-            "Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
-        },
-        {
-          key: "usIdLsirLevelLowModerateForXDays",
+      eligibleCriteriaCopy: {
+        usIdLsirLevelLowModerateForXDays: {
           text: '{{#if (eq "LOW" riskLevel)}}Currently low risk with no increase in risk level in past 90 days{{else}}Currently moderate risk with no increase in risk level in past 360 days{{/if}}',
           tooltip:
             "Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
         },
-      ],
+        negativeDaWithin90Days: {
+          text: "Negative UA within past 90 days",
+          tooltip:
+            "Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
+        },
+        usIdIncomeVerifiedWithin3Months: {
+          text: "Verified compliant employment",
+          tooltip:
+            "Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
+        },
+        noFelonyWithin24Months: {
+          text: "No felony convictions in past 24 months",
+          tooltip:
+            "Has not committed a felony while on probation or parole in past 24 months",
+        },
+        noViolentMisdemeanorWithin12Months: {
+          text: "No violent misdemeanor convictions in past 12 months",
+          tooltip:
+            "Has not committed a violent misdemeanor or DUI misdemeanor while on probation or parole in past 12 months",
+        },
+        pastEarnedDischargeEligibleDate: {
+          text: "Served {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
+          tooltip:
+            "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
+        },
+      },
       firestoreCollection: "US_ID-earnedDischargeReferrals",
       hideDenialRevert: false,
       homepagePosition: 2,
@@ -157,8 +139,8 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialReasons: {
         ABSCONDING: "Client is in absconder status",
-        Other: "Other: please specify a reason",
         VIOLATION: "Client is in violation status",
+        Other: "Other: please specify a reason",
       },
       denialText: null,
       displayName: "Release from Supervision",
@@ -187,7 +169,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "HIGH",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: {
-        autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
+        autoSnoozeParams: { type: "snoozeDays", params: { days: 30 } },
       },
       stateCode: "US_ID",
       subheading:
@@ -202,14 +184,14 @@ export const mockApiOpportunityConfigurationResponse = {
         "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
       compareBy: [{ field: "releaseDate" }],
       denialReasons: {
-        BEHAVIOR: "Resident has had poor institutional behavior",
-        DENIED: "Was denied a transfer to a CRC",
-        IN_PROGRESS: "Was approved and is waiting to be transferred to a CRC",
         MEDICAL: "Was not approved by an IDOC medical provider",
-        Other: "Other, please specify a reason",
         PENDING:
           "There are pending felony charges or felony investigations in which the resident is a suspect",
+        BEHAVIOR: "Resident has had poor institutional behavior",
         PROGRAM: "Missing required facility programming",
+        DENIED: "Was denied a transfer to a CRC",
+        IN_PROGRESS: "Was approved and is waiting to be transferred to a CRC",
+        Other: "Other, please specify a reason",
       },
       denialText: null,
       displayName: "Resident worker at Community Reentry Centers",
@@ -224,10 +206,14 @@ export const mockApiOpportunityConfigurationResponse = {
         notServingForViolentOffense: {
           text: "Not serving for a violent offense",
         },
-        usIdIncarcerationWithin3YearsOfTpdAndLifeSentence: {
-          text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
+        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
+          text: "No escape attempts in the last 10 years",
           tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+            "No escape, eluding police, or absconsion offense(s) in the last 10 years",
+        },
+        usIdNoDetainersForXcrcAndCrc: {
+          text: "No active felony detainers or holds",
+          tooltip: "Cannot have any felony detainers or holds",
         },
         usIdIncarcerationWithin7YearsOfFtcdOrTpd: {
           text: "Tentative Parole Date (TPD) within seven (7) years OR Full Term Release Date (FTRD) within seven (7) years",
@@ -239,14 +225,10 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
         },
-        usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
-          text: "No escape attempts in the last 10 years",
+        usIdIncarcerationWithin3YearsOfTpdAndLifeSentence: {
+          text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
           tooltip:
-            "No escape, eluding police, or absconsion offense(s) in the last 10 years",
-        },
-        usIdNoDetainersForXcrcAndCrc: {
-          text: "No active felony detainers or holds",
-          tooltip: "Cannot have any felony detainers or holds",
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
         },
       },
       firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
@@ -305,14 +287,14 @@ export const mockApiOpportunityConfigurationResponse = {
         "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
       compareBy: [{ field: "releaseDate" }],
       denialReasons: {
-        BEHAVIOR: "Resident has had poor institutional behavior",
-        DENIED: "Was denied a transfer to a CRC",
-        IN_PROGRESS: "Was approved and is waiting to be transferred to a CRC",
         MEDICAL: "Was not approved by an IDOC medical provider",
-        Other: "Other, please specify a reason",
         PENDING:
           "There are pending felony charges or felony investigations in which the resident is a suspect",
+        BEHAVIOR: "Resident has had poor institutional behavior",
         PROGRAM: "Missing required facility programming",
+        DENIED: "Was denied a transfer to a CRC",
+        IN_PROGRESS: "Was approved and is waiting to be transferred to a CRC",
+        Other: "Other, please specify a reason",
       },
       denialText: null,
       displayName: "Work-release at Community Reentry Centers",
@@ -327,21 +309,6 @@ export const mockApiOpportunityConfigurationResponse = {
         notServingForViolentOffense: {
           text: "Not serving for a violent offense",
         },
-        usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: {
-          text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
-        },
-        usIdIncarcerationWithin18MonthsOfFtcdOrTpd: {
-          text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
-        },
-        usIdIncarcerationWithin1YearOfTpdAndLifeSentence: {
-          text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
-        },
         usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: {
           text: "No escape attempts in the last 10 years",
           tooltip:
@@ -350,6 +317,21 @@ export const mockApiOpportunityConfigurationResponse = {
         usIdNoDetainersForXcrcAndCrc: {
           text: "No active felony detainers or holds",
           tooltip: "Cannot have any felony detainers or holds",
+        },
+        usIdIncarcerationWithin18MonthsOfFtcdOrTpd: {
+          text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+        },
+        usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: {
+          text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+        },
+        usIdIncarcerationWithin1YearOfTpdAndLifeSentence: {
+          text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
         },
       },
       firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
@@ -438,7 +420,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Not serving for a violent offense",
         },
         usIdInCrcFacilityOrPwccUnit1: {
-          text: "Resident in {{facilityName}} since {{date crcStartDate}}",
+          text: "Resident in {{{facilityName}}} since {{date crcStartDate}}",
         },
         usIdInCrcFacilityOrPwccUnit1For60Days: {
           text: "Served at least 60 days at current facility",

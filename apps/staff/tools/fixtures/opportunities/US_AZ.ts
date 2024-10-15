@@ -20,17 +20,9 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usAzReleaseToTPR: {
-      stateCode: "US_AZ",
-      displayName: "Standard Transition Program Release",
-      dynamicEligibilityText:
-        "inmate[|s] may be eligible for Standard Transition Program Release",
-      eligibilityDateText: null,
-      hideDenialRevert: false,
-      tooltipEligibilityText: null,
       callToAction:
         "Review inmates who may be eligible for Standard Transition Program Release",
-      subheading: null,
-      snooze: { defaultSnoozeDays: 20, maxSnoozeDays: 45 },
+      compareBy: null,
       denialReasons: {
         COMPLIANCE: "Not compliant with corrections plan programming",
         "HOME PLAN": "Home plan incomplete",
@@ -38,7 +30,10 @@ export const mockApiOpportunityConfigurationResponse = {
         Other: "Other, please specify reason",
       },
       denialText: null,
-      initialHeader: null,
+      displayName: "Standard Transition Program Release",
+      dynamicEligibilityText:
+        "inmate[|s] may be eligible for Standard Transition Program Release",
+      eligibilityDateText: null,
       eligibleCriteriaCopy: {
         usAzFunctionalLiteracyComplete: {
           text: "Functional literacy complete",
@@ -65,6 +60,9 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No major rule violation in past six months",
         },
       },
+      firestoreCollection: "US_AZ-TPRReferrals",
+      hideDenialRevert: false,
+      homepagePosition: 1,
       ineligibleCriteriaCopy: {
         usAzFunctionalLiteracyComplete: {
           text: "Functional literacy outstanding",
@@ -76,17 +74,19 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "One or more major rule violation in the past six months",
         },
       },
-      sidebarComponents: ["Incarceration"],
-      methodologyUrl: "https://example.com",
+      initialHeader: null,
       isAlert: false,
-      priority: "NORMAL",
-      tabGroups: null,
-      compareBy: null,
+      methodologyUrl: "https://example.com",
       notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: ["Incarceration"],
+      snooze: { defaultSnoozeDays: 20, maxSnoozeDays: 45 },
+      stateCode: "US_AZ",
+      subheading: null,
       systemType: "INCARCERATION",
+      tabGroups: null,
+      tooltipEligibilityText: null,
       urlSection: "TPR",
-      firestoreCollection: "US_AZ-TPRReferrals",
-      homepagePosition: 1,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

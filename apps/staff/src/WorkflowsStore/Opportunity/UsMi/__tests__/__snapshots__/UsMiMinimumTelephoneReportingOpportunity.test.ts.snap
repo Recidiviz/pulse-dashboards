@@ -7,7 +7,8 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": "Offenders assigned to minimum in person or minimum low-risk supervision shall be evaluated for assignment to minimum TRS after they have completed six months of active supervision.",
   },
   {
-    "text": "More than 90 days remaining until full-term discharge.",
+    "text": "Original COMPAS score was Medium/Medium",
+    "tooltip": "Original COMPAS score was minimum or medium and current supervision level is minimum in person or current supervision level is minimum low risk.",
   },
   {
     "text": "Not required to register per SORA",
@@ -18,8 +19,7 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": "Not currently serving for an offense listed in WS 01.06.115 Attachment A “Michigan Sex Offender Registry Offenses” or any any similar offense from another state. Not currently serving for an offense included in OP 06.04.130K Attachment A “TRS Exclusion List” including Attempts, Solicitation and Conspiracy. Agents should reference the PACC code on the list when determining eligibility. Not serving for Operating Under the Influence of Liquor (OUIL) or Operating While Impaired (OWI) (any level), unless the offender has successfully completed twelve months of active supervision. A probationer currently serving for OUIL/OWI may only be placed on TRS if authorized by the sentencing court and documented by a court order. Not serving a life or commuted sentence. Not serving a probation term with a delay of sentence.",
   },
   {
-    "text": "Original COMPAS score was Medium/Medium",
-    "tooltip": "Original COMPAS score was minimum or medium and current supervision level is minimum in person or current supervision level is minimum low risk.",
+    "text": "More than 90 days remaining until full-term discharge.",
   },
 ]
 `;

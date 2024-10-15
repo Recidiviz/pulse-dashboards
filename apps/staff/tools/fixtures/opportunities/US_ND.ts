@@ -24,15 +24,15 @@ export const mockApiOpportunityConfigurationResponse = {
         "Review clients eligible for early termination and download the paperwork to file with the Court.",
       compareBy: null,
       denialReasons: {
+        "INT MEASURE":
+          "Under active intermediate measure as a result of 1+ violations",
+        "PENDING CHARGE": "Has a pending felony or misdemeanor charge",
         "CASE PLAN NC": "Has not completed case plan goals",
+        "MIN PERIOD NE": "Minimum mandatory supervision period not expired",
         DOP: "Being supervised for an offense resulting in the death of a person",
         "FINES/FEES":
           "Willful nonpayment of fines / fees despite ability to pay",
         INC: "Incarcerated on another offense",
-        "INT MEASURE":
-          "Under active intermediate measure as a result of 1+ violations",
-        "MIN PERIOD NE": "Minimum mandatory supervision period not expired",
-        "PENDING CHARGE": "Has a pending felony or misdemeanor charge",
         "PROS PERM DENIED": "Prosecutor permanently denied early termination",
         "PROS TEMP DENIED":
           "Prosecutor temporarily denied early termination and will reconsider",
@@ -49,15 +49,15 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
         },
-        usNdImpliedValidEarlyTerminationSentenceType: {
-          text: "Serving {{lowerCase supervisionType}} sentence",
-          tooltip:
-            "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
-        },
         usNdImpliedValidEarlyTerminationSupervisionLevel: {
           text: "Currently on {{lowerCase supervisionLevel}} supervision",
           tooltip:
             "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
+        },
+        usNdImpliedValidEarlyTerminationSentenceType: {
+          text: "Serving {{lowerCase supervisionType}} sentence",
+          tooltip:
+            "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
         },
         usNdNotInActiveRevocationStatus: {
           text: "Not on active revocation status",
@@ -94,9 +94,16 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction: "Review residents who may be eligible for ATP",
       compareBy: null,
       denialReasons: {
-        ASSESSED: "This person has had an assessment completed in Elite.",
+        Removal: "Recently removed from ATP",
+        Medical: "Disqualifying medical condition",
+        "Mental health": "Disqualifying mental health condition",
+        Violation:
+          "Recent community or reentry violations resulting in a return to DOCR custody",
+        Victim:
+          "Active or unresolved concerns in the community, such as victim relationships",
+        Other: "Other, please specify reason",
       },
-      denialText: "Update List",
+      denialText: "Mark Ineligible",
       displayName: "Adult Transition Program",
       dynamicEligibilityText:
         "resident[|s] may be eligible for the Adult Transition Program (ATP)",
@@ -104,18 +111,17 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: {
         custodyLevelIsMinimum: {
           text: "Currently classified as minimum custody",
-        },
-        incarceratedAtLeast30DaysInSameFacility: {
-          text: "Incarcerated for at least 30 days in current facility",
-        },
-        incarceratedAtLeast90Days: {
-          text: "In custody for at least 90 days",
+          tooltip: "Must be classified as minimum to qualify for ATP",
         },
         usNdIncarcerationWithin1YearOfFtcdOrPrdOrCppRelease: {
           text: "Less than 12 months until release or parole review date",
+          tooltip:
+            "Residents must be within 12 months of release to be eligible for ATP",
         },
         usNdNoDetainersOrWarrants: {
           text: "No felony warrants or detainers",
+          tooltip:
+            "Active felony warrants or detainers disqualify a resident from transfer to ATP",
         },
         usNdNotServingIneligibleOffenseForAtpWorkRelease: {
           text: "Eligible offense",
@@ -126,6 +132,30 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "{{#if requiresCommitteeApproval}}The resident is compliant with the Work Release Committee's conditions{{else}}The resident does not require approval through the Work Release Committee{{/if}}",
           tooltip:
             "Adults in custody serving an 85% or Armed Offender Minimum Mandatory Sentence (AOMMS), having registration requirements, or having more than ten years until their maximum release date must be approved through the Work/Education Release Committee before consideration for the Adult Transition Program (ATP). Additionally, people in these circumstances can only start working during the last six months of their sentence and must be free of Level II or III disciplinary reports for six months prior to applying to be eligible.",
+        },
+        incarceratedAtLeast90Days: { text: "In custody for at least 90 days" },
+        incarceratedAtLeast30DaysInSameFacility: {
+          text: "Incarcerated for at least 30 days in current facility",
+        },
+        notIncarcerationWithin3MonthsOfFullTermCompletionDate: {
+          text: "More than 3 months until release or parole review date",
+        },
+        usNdNoRecentReferralsToMinimumHousing: {
+          text: "No recent referrals to minimum housing in Elite",
+        },
+        noEscapeInCurrentIncarceration: {
+          text: "No escape-related sentences in current incarceration term",
+        },
+        usNdHasFacilityRestrictions: {
+          text: "The resident has no alerts preventing them from being transferred to an ATP facility",
+          tooltip:
+            "Alerts requiring a resident to remain in a specific facility disqualify them from being transferred to an ATP facility.",
+        },
+        notWithin1MonthOfParoleStartDate: {
+          text: "More than 1 month until parole start date",
+        },
+        usNdNotEnrolledInRelevantProgram: {
+          text: "Not currently enrolled in a core program",
         },
       },
       firestoreCollection: "US_ND-AtpReferrals",
@@ -138,8 +168,8 @@ export const mockApiOpportunityConfigurationResponse = {
         incarceratedAtLeast90Days: {
           text: "Needs {{daysUntil eligibleDate}} more days in custody",
         },
-        usNdWorkReleaseCommitteeRequirements: {
-          text: "This resident has a Level II/III disciplinary report in the last six months",
+        usNdNotEnrolledInRelevantProgram: {
+          text: "The resident is currently enrolled in a core program",
         },
       },
       initialHeader: null,
@@ -149,12 +179,10 @@ export const mockApiOpportunityConfigurationResponse = {
       notifications: [],
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
-      snooze: {
-        autoSnoozeParams: { params: { days: 3 }, type: "snoozeDays" },
-      },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       stateCode: "US_ND",
       subheading:
-        "This helps staff identify residents who are eligible for a referral to ATP, which provides residential transitional services and a stable foundation for residents as they prepare for release into the community. Staff are directed to complete a Minimum Housing Referral assessment within Elite for every resident.",
+        "This tool helps case managers identify residents who are eligible for a referral to ATP (including FTP or MTP), which provides residential transitional services and a stable foundation for residents as they prepare for release into the community. Case managers should complete a Minimum Housing Referral assessment in Elite for every eligible resident.",
       systemType: "INCARCERATION",
       tabGroups: null,
       tooltipEligibilityText: null,
@@ -164,10 +192,15 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction: "Review clients overdue for minimum housing referral",
       compareBy: null,
       denialReasons: {
-        ASSESSED:
-          "Minimum housing referral assessment completed for this resident in Elite",
+        Removal: "Recently removed from a minimum custody facility",
+        Medical: "Disqualifying medical condition",
+        "Mental health": "Disqualifying mental health condition",
+        Separations: "Disqualifying separations",
+        Denial: "Recent transfer request denial",
+        Escape: "History of escape (in the last 5 years)",
+        Other: "Other, please specify reason",
       },
-      denialText: "Update List",
+      denialText: "Mark Ineligible",
       displayName: "Transfer to a Minimum Security Unit",
       dynamicEligibilityText:
         "resident[|s] [is|are] waiting for a minimum custody housing referral",
@@ -178,17 +211,23 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Residents who are classified as minimum custody but residing in a medium or maximum unit may be eligible for transfer to a minimum unit. Residents in an orientation unit are not eligible for transfer until completion of orientation.",
         },
+        usNdNotInMinimumSecurityFacility: {
+          text: "Not residing in a minimum-security unit",
+        },
         incarcerationWithin42MonthsOfFullTermCompletionDate: {
           text: "Less than 42 months until release",
         },
         notIncarcerationWithin3MonthsOfFullTermCompletionDate: {
           text: "More than 3 months until release",
         },
-        usNdNotInAnOrientationUnit: {
+        usNdNoRecentReferralsToMinimumHousing: {
           text: "Has not received a recent minimum housing referral",
         },
-        usNdNotInMinimumSecurityFacility: {
-          text: "Not residing in a minimum-security unit",
+        noEscapeInCurrentIncarceration: {
+          text: "No escape-related sentences in current incarceration term",
+        },
+        usNdNotEnrolledInRelevantProgram: {
+          text: "Not currently enrolled in a core program",
         },
       },
       firestoreCollection: "US_ND-TransferToMinFacility",
@@ -202,12 +241,10 @@ export const mockApiOpportunityConfigurationResponse = {
       notifications: [],
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
-      snooze: {
-        autoSnoozeParams: { params: { days: 3 }, type: "snoozeDays" },
-      },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 60 },
       stateCode: "US_ND",
       subheading:
-        "This helps staff identify residents who are eligible for Transfer to a Minimum Security Unit - MRCC or JRMU. Staff are directed to complete a Minimum Housing Referral assessment within Elite for every resident.",
+        "This tool helps case managers identify residents who are eligible for transfer to a minimum security unit (MRCC or JRMU). Case managers should complete a Minimum Housing Referral assessment in Elite for every eligible resident.",
       systemType: "INCARCERATION",
       tabGroups: null,
       tooltipEligibilityText: null,

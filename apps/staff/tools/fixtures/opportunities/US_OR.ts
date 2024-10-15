@@ -24,17 +24,17 @@ export const mockApiOpportunityConfigurationResponse = {
         "Review clients who may be eligible for ED and complete the EDIS checklist.",
       compareBy: null,
       denialReasons: {
-        COMPLIANCE: "Not in compliance with the supervision case plan",
-        CONVICTION:
-          "Has been convicted a crime that occurred while on supervision for the case under review; not found in the DOC400/CIS",
-        "COURT VIOLATION":
-          "Has been found in violation of the court in the past 6 months",
         ENHANCEMENTS: "Ineligible crime due to sentencing enhancements",
         "FINES & FEES":
           "Compensatory fines and restitution have not been paid in full or not current on payment plan",
-        Other: "Other: please specify a reason",
+        "COURT VIOLATION":
+          "Has been found in violation of the court in the past 6 months",
         PROGRAMMING:
           "Incomplete specialty court programs or treatment programs",
+        COMPLIANCE: "Not in compliance with the supervision case plan",
+        CONVICTION:
+          "Has been convicted a crime that occurred while on supervision for the case under review; not found in the DOC400/CIS",
+        Other: "Other: please specify a reason",
       },
       denialText: "Additional Eligibility",
       displayName: "Earned Discharge",
@@ -47,6 +47,11 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Felony and/or designated drug-related or designated person misdemeanor convictions sentenced to Probation, Local Control Post-Prison Supervision or Board Post-Prison Supervision.",
         },
+        pastHalfCompletionOrSixMonths: {
+          text: "Has served at least 6 months or half the supervision period",
+          tooltip:
+            "Served the minimum period of active supervision on the case under consideration (minimum of 6 months or half of the supervision period whichever is greater).",
+        },
         noAdministrativeSanction: {
           text: "No administrative sanctions in the past 6 months Officer must confirm no court violations",
           tooltip:
@@ -56,11 +61,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Not convicted of a crime that occurred while on supervision for case under review; found in the DOC400/CIS",
           tooltip:
             "Has not been convicted of a crime (felony or misdemeanor) that occurred while on supervision for the case(s) under review.",
-        },
-        pastHalfCompletionOrSixMonths: {
-          text: "Has served at least 6 months or half the supervision period",
-          tooltip:
-            "Served the minimum period of active supervision on the case under consideration (minimum of 6 months or half of the supervision period whichever is greater).",
         },
       },
       firestoreCollection: "US_OR-earnedDischarge",
