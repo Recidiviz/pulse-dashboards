@@ -118,6 +118,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
       analyticsStore.trackReferralFormCopiedToClipboard({
         justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
         opportunityType: opportunity.type,
+        opportunityId: opportunity.sentryTrackingId,
       });
     };
 

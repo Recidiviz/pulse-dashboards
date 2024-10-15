@@ -444,6 +444,7 @@ describe("setCompletedIfEligible", () => {
       justiceInvolvedPersonId: ineligibleClientRecord.pseudonymizedId,
       opportunityType: "TEST",
       status: "COMPLETED",
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -559,6 +560,7 @@ describe("tracking", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       status: "PENDING",
       opportunityType: opp.type,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -572,6 +574,7 @@ describe("tracking", () => {
       status: "DENIED",
       opportunityType: opp.type,
       deniedReasons: reasons,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -585,6 +588,7 @@ describe("tracking", () => {
       searchField: undefined,
       searchIdValue: undefined,
       tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -595,6 +599,7 @@ describe("tracking", () => {
     expect(root.analyticsStore.trackOpportunityPreviewed).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -609,6 +614,7 @@ describe("tracking", () => {
     ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
+      opportunityId: opp.sentryTrackingId,
     });
 
     expect(root.analyticsStore.trackSetOpportunityStatus).toHaveBeenCalledWith({
@@ -616,6 +622,7 @@ describe("tracking", () => {
       status: "DENIED",
       opportunityType: opp.type,
       deniedReasons: reasons,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -636,6 +643,7 @@ describe("tracking", () => {
     ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
+      opportunityId: opp.sentryTrackingId,
     });
 
     expect(
@@ -644,6 +652,7 @@ describe("tracking", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       status: "SUBMITTED",
       opportunityType: opp.type,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 });
@@ -697,6 +706,7 @@ describe("setAutoSnooze", () => {
       opportunityType: opp.type,
       snoozeUntil: "2023-10-30",
       reasons: ["REASON"],
+      opportunityId: opp.sentryTrackingId,
     });
   });
 });
@@ -747,6 +757,7 @@ describe("setManualSnooze", () => {
       opportunityType: opp.type,
       snoozeForDays: 5,
       reasons: ["REASON"],
+      opportunityId: opp.sentryTrackingId,
     });
   });
 });

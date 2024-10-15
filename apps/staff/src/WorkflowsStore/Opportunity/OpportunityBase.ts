@@ -343,6 +343,7 @@ export class OpportunityBase<
           justiceInvolvedPersonId: pseudonymizedId,
           status: "COMPLETED",
           opportunityType: this.type,
+          opportunityId: this.sentryTrackingId,
         });
       },
     );
@@ -404,6 +405,7 @@ export class OpportunityBase<
     this.rootStore.analyticsStore.trackOpportunityUnsubmitted({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -417,6 +419,7 @@ export class OpportunityBase<
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       status: this.reviewStatus,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -432,6 +435,7 @@ export class OpportunityBase<
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       snoozeForDays: days,
       reasons,
+      opportunityId: this.sentryTrackingId,
     });
 
     // If someone goes from being submitted to being snoozed,
@@ -469,6 +473,7 @@ export class OpportunityBase<
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       snoozeUntil: formatDateToISO(snoozeUntil),
       reasons,
+      opportunityId: this.sentryTrackingId,
     });
 
     // If someone goes from being submitted to being snoozed,
@@ -519,6 +524,7 @@ export class OpportunityBase<
     this.rootStore.analyticsStore.trackOpportunityMarkedSubmitted({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
 
     // If someone is now submitted, they should not be denied/snoozed
@@ -567,6 +573,7 @@ export class OpportunityBase<
       status: "DENIED",
       opportunityType: this.type,
       deniedReasons: reasons,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -598,6 +605,7 @@ export class OpportunityBase<
       searchIdValue: pseudoSearchId,
       searchField: this.person.searchField,
       tabTitle: this.tabTitle(),
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -605,6 +613,7 @@ export class OpportunityBase<
     this.rootStore.analyticsStore.trackOpportunityPreviewed({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -681,6 +690,10 @@ export class OpportunityBase<
 
   get denied(): boolean {
     return !!this.denial;
+  }
+
+  get sentryTrackingId(): string {
+    return this.record?.opportunityPseudonymizedId ?? null;
   }
 
   // ===============================

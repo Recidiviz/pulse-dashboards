@@ -184,6 +184,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     analyticsStore.trackReferralFormCopiedToClipboard({
       justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
+      opportunityId: opportunity.sentryTrackingId,
     });
   };
 
@@ -222,6 +223,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         analyticsStore.trackReferralFormSubmitted({
           justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
           opportunityType: opportunity.type,
+          opportunityId: opportunity.sentryTrackingId,
         });
       })
       .catch((e: Error) => {

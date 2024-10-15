@@ -107,6 +107,7 @@ type ActionStrategyPopupViewed10SecondsTrackingMetadata = {
 type OpportunityTrackingMetadata = {
   justiceInvolvedPersonId: string;
   opportunityType: OpportunityType;
+  opportunityId?: string;
 };
 
 type TasksTrackingMetadata = {
@@ -114,20 +115,16 @@ type TasksTrackingMetadata = {
   taskTypes: (SupervisionTaskType | SupervisionNeedType)[];
 };
 
-type SnoozeTrackingMetadata = {
-  opportunityType: OpportunityType;
+type SnoozeTrackingMetadata = OpportunityTrackingMetadata & {
   opportunityStatus: OpportunityStatus;
-  justiceInvolvedPersonId: string;
   snoozeForDays?: number;
   snoozeUntil?: string;
   reasons: string[];
 };
 
-export type CopyCTAMetadata = {
+export type CopyCTAMetadata = OpportunityTrackingMetadata & {
   stateCode: string;
-  opportunityType: OpportunityType;
   almostEligibleCriteria: string;
-  justiceInvolvedPersonId: string;
   justiceInvolvedPersonName: string;
   staffId?: string;
   staffName: string;

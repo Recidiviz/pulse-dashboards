@@ -74,6 +74,7 @@ test("form view tracking", () => {
     {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: "LSU",
+      opportunityId: opp.sentryTrackingId,
     },
   );
 });
@@ -103,6 +104,7 @@ describe("record form download", () => {
     ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 });
@@ -126,6 +128,7 @@ describe("form update analytics functions", () => {
     ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -137,6 +140,7 @@ describe("form update analytics functions", () => {
     ).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
+      opportunityId: opp.sentryTrackingId,
     });
   });
 
@@ -149,6 +153,7 @@ describe("form update analytics functions", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: form.type,
       status: "IN_PROGRESS",
+      opportunityId: opp.sentryTrackingId,
     });
   });
 });

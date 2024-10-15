@@ -91,6 +91,10 @@ export class FormBase<
     return this.updatesSubscription.data;
   }
 
+  get sentryTrackingId(): string {
+    return this.opportunity.sentryTrackingId;
+  }
+
   get formLastUpdated(): UpdateLog | undefined {
     return this.updates?.updated;
   }
@@ -115,6 +119,7 @@ export class FormBase<
     this.rootStore.analyticsStore.trackReferralFormViewed({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -135,6 +140,7 @@ export class FormBase<
     this.rootStore.analyticsStore.trackReferralFormDownloaded({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -142,6 +148,7 @@ export class FormBase<
     this.rootStore.analyticsStore.trackReferralFormEdited({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -149,6 +156,7 @@ export class FormBase<
     this.rootStore.analyticsStore.trackReferralFormFirstEdited({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
     });
   }
 
@@ -157,6 +165,7 @@ export class FormBase<
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
       status: "IN_PROGRESS",
+      opportunityId: this.sentryTrackingId,
     });
   }
 

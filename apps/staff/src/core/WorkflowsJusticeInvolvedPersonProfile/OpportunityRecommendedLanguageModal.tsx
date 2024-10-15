@@ -111,6 +111,7 @@ const OpportunityRecommendedLanguageModal = ({
     justiceInvolvedPersonName: opportunity.person.displayPreferredName,
     staffId: opportunity.person.assignedStaffId,
     staffName: opportunity.person.assignedStaffFullName,
+    opportunityId: opportunity.sentryTrackingId,
   };
 
   const handleCopyClick = () => {

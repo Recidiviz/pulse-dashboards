@@ -145,6 +145,7 @@ export interface Opportunity<
   markSubmitted: () => Promise<void>;
   deleteSubmitted: () => Promise<void>;
   submittedUpdate: UpdateLog | undefined;
+  sentryTrackingId: string | undefined;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

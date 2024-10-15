@@ -75,6 +75,7 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm({
     analyticsStore.trackReferralFormCopiedToClipboard({
       justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
       opportunityType: opportunity.type,
+      opportunityId: opportunity.sentryTrackingId,
     });
   };
 
