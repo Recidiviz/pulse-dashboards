@@ -47,10 +47,40 @@ export const Form: React.FC<FormProps> = observer(({ form, formFields }) => {
               element.showNestedValuesMatch?.includes(val),
             )
           : element.showNestedValuesMatch?.includes(String(element.value));
-
+        // const currentOffense =
+        //   element.key === OFFENSE_KEY && element.value
+        //     ? // Narrows the `element.value` to a string type, as we expect the "offense" value to be a valid string and confirmed to be defined at this stage.
+        //       form.offensesByName[String(element.value)]
+        //     : null;
         return (
           <Styled.InputWrapper key={element.key}>
             <FormField element={element} form={form} />
+
+            {/* Violent/Sex Offense Fields */}
+            {/* {element.key === OFFENSE_KEY && element.value && (
+              <Styled.ViolentOrSexOffenseCheckboxContainer>
+                <Styled.CheckboxWrapper>
+                  <label htmlFor="is_violent_offense">Violent Offense</label>
+                  <input
+                    id="is_violent_offense"
+                    type="checkbox"
+                    checked={Boolean(currentOffense?.isViolentOffense)}
+                    // Placeholder for saving functionality; to be implemented once the backend write path is available
+                    onChange={() => null}
+                  />
+                </Styled.CheckboxWrapper>
+                <Styled.CheckboxWrapper>
+                  <label htmlFor="is_sex_offense">Sex Offense</label>
+                  <input
+                    id="is_sex_offense"
+                    type="checkbox"
+                    checked={Boolean(currentOffense?.isSexOffense)}
+                    // Placeholder for saving functionality; to be implemented once the backend write path is available
+                    onChange={() => null}
+                  />
+                </Styled.CheckboxWrapper>
+              </Styled.ViolentOrSexOffenseCheckboxContainer>
+            )} */}
 
             {element.nested &&
               showNestedFields &&

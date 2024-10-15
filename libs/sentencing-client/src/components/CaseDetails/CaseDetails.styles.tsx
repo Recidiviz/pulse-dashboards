@@ -1052,6 +1052,27 @@ export const Input = styled.input`
   }
 `;
 
+export const ViolentOrSexOffenseCheckboxContainer = styled.div`
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+`;
+
+export const CheckboxWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    color: ${palette.slate85};
+    margin: 0;
+  }
+
+  input {
+    accent-color: ${palette.pine4};
+  }
+`;
+
 export const TextArea = styled.textarea`
   min-height: 117px;
   padding: 12px 16px;

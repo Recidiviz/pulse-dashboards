@@ -107,7 +107,10 @@ export class CaseStore {
 
   *loadOffenses() {
     try {
-      this.offenses = yield this.psiStore.apiClient.getOffenses();
+      const offenses: Offenses = yield this.psiStore.apiClient.getOffenses();
+      this.offenses = offenses
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
       captureException(error);
       toast(

@@ -45,7 +45,7 @@ mockPSIStore.caseStore.caseDetailsById = CaseDetailsFixture;
 const caseDetailsPresenter = new CaseDetailsPresenter(mockCaseStore, caseId);
 const mockGetInsights = vi.fn();
 const caseAttributes = CaseDetailsFixture[caseId];
-const form = new CaseDetailsForm(caseDetailsPresenter, [], mockGetInsights);
+const form = new CaseDetailsForm(caseDetailsPresenter, {}, mockGetInsights);
 
 test("form is initialized with case attribute values", () => {
   expect(Object.keys(form.content).length).toBe(caseDetailsFormTemplate.length);
@@ -98,7 +98,7 @@ test("getFormValue returns the latest value for a field", () => {
 test("form value changes update content and updates properties", () => {
   const localForm = new CaseDetailsForm(
     caseDetailsPresenter,
-    [],
+    {},
     mockGetInsights,
   );
 
@@ -126,7 +126,7 @@ test("form value changes update content and updates properties", () => {
 test("form sets error flag to true when caseAttributes has an error in values", () => {
   let localForm = new CaseDetailsForm(
     caseDetailsPresenter,
-    [],
+    {},
     mockGetInsights,
   );
   expect(localForm.hasError).toBeFalse();
@@ -142,7 +142,7 @@ test("form sets error flag to true when caseAttributes has an error in values", 
 
   localForm = new CaseDetailsForm(
     localCaseDetailsPresenter,
-    [],
+    {},
     mockGetInsights,
   );
   expect(localForm.hasError).toBeTrue();
@@ -200,7 +200,7 @@ test("onboardingFields returns the expected onboarding fields", () => {
 test("transformedUpdates converts values to enums/expected BE values", () => {
   const localForm = new CaseDetailsForm(
     caseDetailsPresenter,
-    [],
+    {},
     mockGetInsights,
   );
   const updates = {
@@ -224,7 +224,7 @@ test("transformedUpdates converts values to enums/expected BE values", () => {
 test("form fetches insight when there is an offenseName and lsirScore", () => {
   const localForm = new CaseDetailsForm(
     caseDetailsPresenter,
-    [],
+    {},
     mockGetInsights,
   );
 
@@ -240,7 +240,7 @@ test("form fetches insight when there is an offenseName and lsirScore", () => {
 test("form does not fetch insight when there is no lsirScore", () => {
   const localForm = new CaseDetailsForm(
     caseDetailsPresenter,
-    [],
+    {},
     mockGetInsights,
   );
 
@@ -264,7 +264,7 @@ test("form does not fetch insight when there is no lsirScore", () => {
 test("form does not fetch insight when there is an invalid lsirScore", () => {
   const localForm = new CaseDetailsForm(
     caseDetailsPresenter,
-    [],
+    {},
     mockGetInsights,
   );
 

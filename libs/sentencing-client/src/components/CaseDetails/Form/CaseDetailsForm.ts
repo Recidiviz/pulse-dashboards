@@ -18,7 +18,7 @@
 import { keyBy } from "lodash";
 import { makeAutoObservable, runInAction } from "mobx";
 
-import { Case, Client, Insight } from "../../../api/APIClient";
+import { Case, Client, Insight, Offenses } from "../../../api/APIClient";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { formatPossessiveName } from "../../../utils/utils";
 import { OnboardingFields } from "../CaseOnboarding/types";
@@ -70,7 +70,7 @@ export class CaseDetailsForm {
 
   constructor(
     private readonly caseDetailsPresenter: CaseDetailsPresenter,
-    private readonly offenses: string[],
+    public offensesByName: { [key: string]: Offenses[number] },
     getInsight?: (
       offense: string,
       lsirScore: number,
@@ -198,7 +198,10 @@ export class CaseDetailsForm {
                 formattedFirstName,
               )
             : field.label,
-        options: field.key === OFFENSE_KEY ? this.offenses : field.options,
+        options:
+          field.key === OFFENSE_KEY
+            ? Object.keys(this.offensesByName)
+            : field.options,
         value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {
           const nestedAttributeValue = caseAttributes[nestedField.key];
