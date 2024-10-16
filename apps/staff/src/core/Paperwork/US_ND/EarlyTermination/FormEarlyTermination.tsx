@@ -138,7 +138,7 @@ export const FormEarlyTermination: React.FC = () => {
     <FormSkeleton>
       <FormPage>
         <FormHeading
-          title={`MOTION TO \n TERMINATE PROBATION`}
+          title={`STIPULATION TO \n TERMINATE PROBATION`}
           saNumberTitle="SA No."
         />
         <br />
