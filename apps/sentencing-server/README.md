@@ -28,8 +28,9 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 1. Get env variables from Google Secrets Manager and put them in this directory
    - Put the [env_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env` file
-   - Put the [env_staging_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
-   - Put the [env_test_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.test` file
+   - Put the [env_staging_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_staging_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
+   - Put the [env_prod_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_prod_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
+   - Put the [env_test_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.test` file
 
    This way, `nx` will automatically pick up the correct environment variables based on the targets your are running.
 

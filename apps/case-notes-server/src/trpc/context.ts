@@ -15,25 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+// Required to get the "request.jwtVerify" decorator to be recongized by typescript
+import "@fastify/jwt";
 
-export default defineConfig({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/sentencing-server",
+import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
-  plugins: [nxViteTsPaths()],
-  test: {
-    setupFiles: ["src/test/setup/index.ts"],
-    globals: true,
-    cache: { dir: "../../node_modules/.vitest" },
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/apps/sentencing-server",
-      provider: "v8",
-    },
-  },
-});
+import { getIsAuth0Authorized } from "~server-setup-plugin";
+
+export async function createContext(opts: CreateFastifyContextOptions) {
+  const auth0Authorized = await getIsAuth0Authorized(opts);
+
+  return {
+    ...opts,
+    auth0Authorized,
+  };
+}

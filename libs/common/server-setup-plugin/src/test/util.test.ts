@@ -20,20 +20,77 @@ import { TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { describe, expect, test } from "vitest";
 
-import { testHost, testPort } from "~sentencing-server/test/setup";
-import { fakeCase } from "~sentencing-server/test/setup/seed";
-import { AppRouter } from "~sentencing-server/trpc/router";
+import { buildCommonServer } from "~server-setup-plugin";
+import { testHost, testPort } from "~server-setup-plugin/test/setup";
+import {
+  AppRouter,
+  createContext,
+  testRouter,
+} from "~server-setup-plugin/test/setup/trpc";
 
 describe("init trpc", () => {
   describe("auth", () => {
-    test("should throw an error if authorization fails", async () => {
-      // Don't pass authorization headers so that authorization fails
+    test("should be marked as unauthorized if there is no authorization header", async () => {
+      // Don't pass authorization headers
       const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
         links: [
           httpBatchLink({
             url: `http://${testHost}:${testPort}`,
+          }),
+        ],
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
+      });
+
+      await expect(() =>
+        customTestTRPCClient.test.query(),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "UNAUTHORIZED",
+        }),
+      );
+    });
+
+    test("should throw error if not authorized", async () => {
+      // Create a new server for this test that fails on auth
+      const customTestServer = buildCommonServer({
+        createContext,
+        appRouter: testRouter,
+        auth0Options: {
+          domain: "test",
+          audience: "test",
+        },
+      });
+
+      customTestServer.addHook("preHandler", (req, reply, done) => {
+        req.jwtVerify = vi.fn(async () => {
+          throw new Error("Unauthorized");
+        });
+        done();
+      });
+
+      const customTestPort = testPort + 1;
+
+      // Start listening.
+      customTestServer.listen(
+        { port: customTestPort, host: testHost },
+        (err) => {
+          if (err) {
+            customTestServer.log.error(err);
+            process.exit(1);
+          } else {
+            console.log(`[ ready ] http://${testHost}:${testPort}`);
+          }
+        },
+      );
+
+      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+        links: [
+          httpBatchLink({
+            url: `http://${testHost}:${customTestPort}`,
             headers() {
               return {
+                Authorization: "Bearer test-token",
                 StateCode: "US_ID",
               };
             },
@@ -44,74 +101,10 @@ describe("init trpc", () => {
       });
 
       await expect(() =>
-        customTestTRPCClient.case.getCase.query({
-          id: fakeCase.id,
-        }),
+        customTestTRPCClient.test.query(),
       ).rejects.toThrowError(
         new TRPCError({
           code: "UNAUTHORIZED",
-        }),
-      );
-    });
-  });
-
-  describe("state code", () => {
-    test("should throw error if there is no state code in the header", async () => {
-      // Don't pass a state code
-      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
-        links: [
-          httpBatchLink({
-            url: `http://${testHost}:${testPort}`,
-            headers() {
-              return {
-                Authorization: "Bearer test-token",
-              };
-            },
-          }),
-        ],
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
-      });
-
-      await expect(() =>
-        customTestTRPCClient.case.getCase.query({
-          id: fakeCase.id,
-        }),
-      ).rejects.toThrowError(
-        new TRPCError({
-          code: "PRECONDITION_FAILED",
-          message:
-            "Unsupported state code provided in request headers: undefined",
-        }),
-      );
-    });
-
-    test("should throw error if the state code isn't supported", async () => {
-      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
-        links: [
-          httpBatchLink({
-            url: `http://${testHost}:${testPort}`,
-            headers() {
-              return {
-                Authorization: "Bearer test-token",
-                // This is technically a valid state code, but there isn't a prisma client available for it
-                StateCode: "US_ME",
-              };
-            },
-          }),
-        ],
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
-      });
-
-      await expect(() =>
-        customTestTRPCClient.case.getCase.query({
-          id: fakeCase.id,
-        }),
-      ).rejects.toThrowError(
-        new TRPCError({
-          code: "PRECONDITION_FAILED",
-          message: "Unsupported state code provided in request headers: US_ME",
         }),
       );
     });

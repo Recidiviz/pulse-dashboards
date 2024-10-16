@@ -15,25 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { describe, expect, test } from "vitest";
 
-export default defineConfig({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/sentencing-server",
-
-  plugins: [nxViteTsPaths()],
-  test: {
-    setupFiles: ["src/test/setup/index.ts"],
-    globals: true,
-    cache: { dir: "../../node_modules/.vitest" },
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/apps/sentencing-server",
-      provider: "v8",
-    },
-  },
+describe("init trpc", () => {
+  describe("auth", () => {
+    test("fake test", async () => {
+      expect(true).toBe(true);
+    });
+  });
 });

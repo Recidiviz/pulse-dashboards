@@ -15,25 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { createContext } from "~case-notes-server/trpc/context";
+import { appRouter } from "~case-notes-server/trpc/router";
+import { buildCommonServer } from "~server-setup-plugin";
 
-export default defineConfig({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/sentencing-server",
+export function buildServer() {
+  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
+    throw new Error("Missing required environment variables for Auth0");
+  }
 
-  plugins: [nxViteTsPaths()],
-  test: {
-    setupFiles: ["src/test/setup/index.ts"],
-    globals: true,
-    cache: { dir: "../../node_modules/.vitest" },
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/apps/sentencing-server",
-      provider: "v8",
+  const server = buildCommonServer({
+    appRouter,
+    createContext,
+    auth0Options: {
+      domain: process.env["AUTH0_DOMAIN"],
+      audience: process.env["AUTH0_AUDIENCE"],
     },
-  },
-});
+  });
+
+  return server;
+}

@@ -15,26 +15,46 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { createContext } from "~sentencing-server/trpc/context";
-import { appRouter } from "~sentencing-server/trpc/router";
+import { beforeAll, vi } from "vitest";
+
 import { buildCommonServer } from "~server-setup-plugin";
+import {
+  createContext,
+  testRouter,
+} from "~server-setup-plugin/test/setup/trpc";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+export const testPort = process.env["PORT"]
+  ? Number(process.env["PORT"])
+  : 3003;
+export const testHost = process.env["HOST"] ?? "localhost";
 
-  const server = buildCommonServer({
-    appRouter,
+export let testServer: ReturnType<typeof buildCommonServer>;
+
+beforeAll(async () => {
+  const testServer = buildCommonServer({
     createContext,
+    appRouter: testRouter,
     auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
+      domain: "test",
+      audience: "test",
     },
   });
 
-  registerImportRoutes(server);
+  // Override he jwtVerify function to always pass
+  testServer.addHook("preHandler", (req, reply, done) => {
+    req.jwtVerify = vi.fn(async () => {
+      return "";
+    });
+    done();
+  });
 
-  return server;
-}
+  // Start listening.
+  testServer.listen({ port: testPort, host: testHost }, (err) => {
+    if (err) {
+      testServer.log.error(err);
+      process.exit(1);
+    } else {
+      console.log(`[ ready ] http://${testHost}:${testPort}`);
+    }
+  });
+});

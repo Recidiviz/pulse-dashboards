@@ -1,0 +1,35 @@
+{
+  "name": "server-setup-plugin",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/server-setup-plugin/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/server-setup-plugin"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

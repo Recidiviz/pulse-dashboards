@@ -15,25 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types='vitest' />
-import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
-import { defineConfig } from "vite";
+import { buildServer } from "~case-notes-server/server";
 
-export default defineConfig({
-  root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/sentencing-server",
+const host = process.env["HOST"] ?? "localhost";
+const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;
 
-  plugins: [nxViteTsPaths()],
-  test: {
-    setupFiles: ["src/test/setup/index.ts"],
-    globals: true,
-    cache: { dir: "../../node_modules/.vitest" },
-    environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
-    reporters: ["default"],
-    coverage: {
-      reportsDirectory: "../../coverage/apps/sentencing-server",
-      provider: "v8",
-    },
-  },
+const server = buildServer();
+
+// Start listening.
+server.listen({ port, host }, (err) => {
+  if (err) {
+    server.log.error(err);
+    process.exit(1);
+  } else {
+    console.log(`[ ready ] http://${host}:${port}`);
+  }
 });

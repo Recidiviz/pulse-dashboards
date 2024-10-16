@@ -15,45 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Required to get the "request.jwtVerify" decorator to be recongized by typescript
-import "@fastify/jwt";
+import { initTRPC } from "@trpc/server";
+import { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+import superjson from "superjson";
 
-import { TRPCError } from "@trpc/server";
-import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
-
-import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
-import { getIsAuth0Authorized } from "~server-setup-plugin";
-
-// HTTP headers are flattened to lowercase in Fastify
-const STATE_CODE_HEADER_KEY = "statecode";
+import {
+  getIsAuth0Authorized,
+  procedurePlugin,
+} from "~server-setup-plugin/trpc";
 
 export async function createContext({ req, res }: CreateFastifyContextOptions) {
-  const stateCode = req.headers[STATE_CODE_HEADER_KEY];
-
-  if (!stateCode || typeof stateCode !== "string") {
-    throw new TRPCError({
-      code: "PRECONDITION_FAILED",
-      message: `Unsupported state code provided in request headers: ${stateCode}`,
-    });
-  }
-
-  let prismaClient;
-  try {
-    prismaClient = getPrismaClientForStateCode(stateCode);
-  } catch (e) {
-    throw new TRPCError({
-      code: "PRECONDITION_FAILED",
-      message: `Unsupported state code provided in request headers: ${stateCode}`,
-      cause: e,
-    });
-  }
-
   const auth0Authorized = await getIsAuth0Authorized({ req, res });
 
   return {
     req,
     res,
     auth0Authorized,
-    prisma: prismaClient,
   };
 }
+
+const t = initTRPC
+  .context<typeof createContext>()
+  // Required to get Date objects to serialize correctly.
+  .create({ transformer: superjson });
+
+const router = t.router;
+
+const plugin = procedurePlugin();
+
+const baseProcedure = t.procedure.unstable_concat(plugin.procedure);
+
+export const testRouter = router({
+  // A procedure that does nothing, but is used to test that the base procedure auth checks are running.
+  test: baseProcedure.query(async () => {
+    return;
+  }),
+});
+
+export type AppRouter = typeof testRouter;

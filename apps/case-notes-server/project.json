@@ -1,0 +1,118 @@
+{
+  "name": "case-notes-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/case-notes-server/src",
+  "projectType": "application",
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker"],
+      "options": {
+        "command": "vite-node --watch src/main.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/case-notes-server",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": true,
+        "target": "node20",
+        "minify": true
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "dependsOn": ["docker"],
+      "options": {
+        "buildTarget": "case-notes-server:build"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/apps/case-notes-server"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:latest"
+          ]
+        },
+        "cherry-pick": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "deploy-app": {
+      "executor": "@nx-extend/gcp-cloud-run:deploy",
+      "options": {
+        "region": "us-central1"
+      },
+      "configurations": {
+        "staging": {
+          "project": "recidiviz-dashboard-staging",
+          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
+          "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:case-notes-db",
+          "memory": "512Mi"
+        },
+        "production": {
+          "project": "recidiviz-dashboard-production",
+          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
+          "cloudSqlInstance": "recidiviz-dashboard-production:us-central1:case-notes-db",
+          "memory": "512Mi"
+        }
+      },
+      "defaultConfiguration": "staging"
+    }
+  },
+  "tags": []
+}
