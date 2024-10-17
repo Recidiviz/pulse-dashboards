@@ -19,6 +19,75 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
+    usAzOverdueForACISDTP: {
+      callToAction: "Review and refer eligible clients",
+      compareBy: null,
+      denialReasons: {
+        Discharged: "Already Discharged",
+        Other: "Other, please specify reason",
+      },
+      denialText: null,
+      displayName: "Overdue for Drug Transition Program",
+      dynamicEligibilityText: "resident[|s] are past their DTP date",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: {
+        usAzIncarcerationPastAcisDtpDate: {
+          text: "Past DTP date in ACIS: {{date acisDtpDate}}",
+        },
+      },
+      firestoreCollection: "US_AZ-OverdueForDTPReferrals",
+      hideDenialRevert: false,
+      homepagePosition: 2,
+      ineligibleCriteriaCopy: {},
+      initialHeader: null,
+      isAlert: false,
+      methodologyUrl: "http://example.com",
+      notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: ["Incarceration"],
+      snooze: null,
+      stateCode: "US_AZ",
+      subheading: null,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tooltipEligibilityText: null,
+      urlSection: "OverdueForDTP",
+    },
+    usAzOverdueForACISTPR: {
+      callToAction: "Review and refer eligible clients",
+      compareBy: null,
+      denialReasons: {
+        Transferred: "Resident already transferred",
+        Other: "Other, please add reason",
+      },
+      denialText: null,
+      displayName: "Overdue for Standard Transition Program",
+      dynamicEligibilityText:
+        "resident[|s] may be past their Standard Transition Program date",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: {
+        usAzIncarcerationPastAcisTprDate: {
+          text: "Past TPR date in ACIS: {{date acisTprDate}}",
+        },
+      },
+      firestoreCollection: "US_AZ-OverdueForTPRReferrals",
+      hideDenialRevert: false,
+      homepagePosition: 3,
+      ineligibleCriteriaCopy: {},
+      initialHeader: null,
+      isAlert: false,
+      methodologyUrl: "http://example.com",
+      notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: [],
+      snooze: null,
+      stateCode: "US_AZ",
+      subheading: null,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tooltipEligibilityText: null,
+      urlSection: "OverdueForTPR",
+    },
     usAzReleaseToTPR: {
       callToAction:
         "Review inmates who may be eligible for Standard Transition Program Release",
