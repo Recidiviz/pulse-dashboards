@@ -29,6 +29,8 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";
+import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { Resident } from "../../WorkflowsStore/Resident";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { Supervision } from "./ClientDetailSidebarComponents/Supervision";
 import { Incarceration } from "./ResidentDetailSidebarComponents/Incarceration";
@@ -295,4 +297,16 @@ export function IncarcerationProgress({
       timelineLabels={{ start: "Start", end: releaseDateCopy }}
     />
   );
+}
+
+export function SentenceProgress({
+  person,
+}: {
+  person: JusticeInvolvedPerson;
+}) {
+  if (person instanceof Resident) {
+    return <IncarcerationProgress resident={person} />;
+  } else if (person instanceof Client) {
+    return <SupervisionProgress client={person} />;
+  }
 }

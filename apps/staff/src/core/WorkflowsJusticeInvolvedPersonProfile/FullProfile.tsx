@@ -48,7 +48,11 @@ import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
 import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
 import { ResidentHousing } from "./ResidentDetailSidebarComponents/ResidentHousing";
-import { IncarcerationProgress, SupervisionProgress } from "./SentenceProgress";
+import {
+  IncarcerationProgress,
+  SentenceProgress,
+  SupervisionProgress,
+} from "./SentenceProgress";
 import { Divider } from "./styles";
 import {
   ClientProfileProps,
@@ -151,6 +155,10 @@ const SectionHeading = styled(Sans16)`
   margin-bottom: ${rem(spacing.md)};
 `;
 
+const TimelineHeading = styled(Sans16)`
+  color: ${palette.slate80};
+`;
+
 const CasenoteSearchWrapper = styled.div`
   & ${Divider} {
     display: block;
@@ -175,12 +183,16 @@ function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
 const ClientDetails = observer(function ClientDetails({
   client,
 }: ClientProfileProps): React.ReactElement {
+  const { fullWidthTimeline } = useFeatureVariants();
+
   return (
     <>
-      <SectionHeading>Progress toward success</SectionHeading>
-      <Divider />
-      <SupervisionProgress client={client} />
-      <Divider />
+      {!fullWidthTimeline && (
+        <>
+          <SupervisionProgress client={client} />
+          <Divider />
+        </>
+      )}
       <PartialTime person={client} />
       {client.portionServedDates.length > 0 && <Divider />}
       {client.profileMilestones.length > 0 && (
@@ -211,19 +223,20 @@ const ClientDetails = observer(function ClientDetails({
 const ResidentDetails = observer(function ResidentDetails({
   resident,
 }: ResidentProfileProps): React.ReactElement {
+  // MO residents don't have start/end dates or officer IDs in their resident record,
+  // so we do not show the sidebar timeline for MO residents
+  const { fullWidthTimeline } = useFeatureVariants();
+  const isMoResident = resident.stateCode === "US_MO";
+  const showSidebarTimeline = !isMoResident && !fullWidthTimeline;
+
   return (
     <>
-      <SectionHeading>Progress toward success</SectionHeading>
-      <Divider />
-      {
-        // MO residents don't have start/end dates or officer IDs in their resident record
-        resident.stateCode !== "US_MO" && (
-          <>
-            <IncarcerationProgress resident={resident} />
-            <Divider />
-          </>
-        )
-      }
+      {showSidebarTimeline && (
+        <>
+          <IncarcerationProgress resident={resident} />
+          <Divider />
+        </>
+      )}
       <PartialTime person={resident} />
       {resident.portionServedDates.length > 0 && <Divider />}
       <ResidentHousing resident={resident} />
@@ -305,13 +318,20 @@ export const FullProfile = observer(
       workflowsStore: { selectedPerson: person },
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
-    const { caseNoteSearch } = useFeatureVariants();
+    const { caseNoteSearch, fullWidthTimeline } = useFeatureVariants();
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
     });
 
     if (!person) return null;
+
+    const isMoResident =
+      person instanceof Resident && person.stateCode === "US_MO";
+    const showFullWidthTimeline = !isMoResident && fullWidthTimeline;
+    const sidebarHeadingText = showFullWidthTimeline
+      ? "Additional information"
+      : "Progress toward success";
 
     return (
       <WorkflowsNavLayout>
@@ -331,8 +351,18 @@ export const FullProfile = observer(
               <Divider />
             </CasenoteSearchWrapper>
           )}
+
+          {showFullWidthTimeline && (
+            <>
+              <TimelineHeading>Progress toward success</TimelineHeading>
+              <SentenceProgress person={person} />
+              <Divider />
+            </>
+          )}
           <Content isMobile={isTablet}>
             <div className="ProfileDetails">
+              <SectionHeading>{sidebarHeadingText}</SectionHeading>
+              <Divider />
               <AdditionalDetails person={person} />
             </div>
             <div>
