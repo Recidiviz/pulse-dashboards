@@ -17,20 +17,20 @@
 
 import { ClientRecord } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
-import { UsPaAdminSupervisionReferralRecord } from "../UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
+import { UsPaAdminSupervisionReferralRecordRaw } from "../UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 
-export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRecord =
+export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRecordRaw =
   {
     stateCode: "US_PA",
     externalId: "123",
     eligibleCriteria: {
       usPaFulfilledRequirements: {
-        eligibleDate: new Date("2022-01-03"),
+        eligibleDate: "2022-01-03",
       },
       usPaNoHighSanctionsInPastYear: {},
       usPaNotServingIneligibleOffenseForAdminSupervision: {
         ineligibleOffenses: ["EXAMPLE"],
-        ineligibleSentencesExpirationDate: [new Date("2021-06-01")],
+        ineligibleSentencesExpirationDate: ["2021-06-01"],
       },
     },
     ineligibleCriteria: {},

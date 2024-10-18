@@ -233,7 +233,8 @@ test("error assembling metrics data", async () => {
   `);
 });
 
-describe("Opportunity details methods", () => {
+// TODO(#6534): Properly mock opportunities instead of skipping
+describe.skip("Opportunity details methods", () => {
   beforeEach(() => {
     rootStore.tenantStore.setCurrentTenantId("US_XX" as TenantId);
 

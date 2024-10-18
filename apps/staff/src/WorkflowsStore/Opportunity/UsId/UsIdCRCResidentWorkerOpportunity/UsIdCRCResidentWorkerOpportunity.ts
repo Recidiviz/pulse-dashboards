@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Resident } from "../../../Resident";
 import { UsIdCRCOpportunityBase } from "../UsIdCRCOpportunityBase/UsIdCRCOpportunityBase";
 import {
@@ -23,12 +25,12 @@ import {
 } from "./UsIdCRCResidentWorkerReferralRecord";
 
 export class UsIdCRCResidentWorkerOpportunity extends UsIdCRCOpportunityBase<UsIdCRCResidentWorkerReferralRecord> {
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usIdCRCResidentWorker",
       resident.rootStore,
-      usIdCRCResidentWorkerSchema.parse,
+      usIdCRCResidentWorkerSchema.parse(record),
     );
   }
 }

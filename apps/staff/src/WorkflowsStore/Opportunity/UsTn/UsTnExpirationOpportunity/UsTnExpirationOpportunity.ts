@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,
@@ -41,14 +43,15 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
 
   form: UsTnExpirationForm;
 
-  constructor(client: Client) {
-    super(
-      client,
-      "usTnExpiration",
-      client.rootStore,
-      usTnExpirationSchema.parse,
-      getUsTnExpirationValidator(client),
-    );
+  constructor(client: Client, record: DocumentData) {
+    const parsedRecord = usTnExpirationSchema.parse(record);
+
+    if (parsedRecord !== undefined) {
+      const validateRecord = getUsTnExpirationValidator(client);
+      validateRecord(parsedRecord);
+    }
+
+    super(client, "usTnExpiration", client.rootStore, parsedRecord);
 
     this.form = new UsTnExpirationForm(this, client.rootStore);
   }

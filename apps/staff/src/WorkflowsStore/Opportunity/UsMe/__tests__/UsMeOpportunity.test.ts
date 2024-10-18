@@ -49,7 +49,7 @@ function createResidentTestUnit(
   root = new RootStore();
   // @ts-ignore
   vi.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
-    verifiedOpportunities: verifiedOpps,
+    opportunities: verifiedOpps,
   });
   // @ts-ignore
   const residentRecordWithMetadata: typeof usMePersonRecord = {
@@ -80,7 +80,7 @@ function createClientTestUnit(
 
   // @ts-ignore
   vi.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
-    verifiedOpportunities: verifiedOpps,
+    opportunities: verifiedOpps,
   });
   // @ts-ignore
   vi.spyOn(root.workflowsStore, "selectedClient", "get").mockReturnValue({

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import * as Sentry from "@sentry/react";
+import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
@@ -31,12 +32,12 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 > {
   form: UsCaSupervisionLevelDowngradeForm;
 
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usCaSupervisionLevelDowngrade",
       client.rootStore,
-      usCaSupervisionLevelDowngradeSchema.parse,
+      usCaSupervisionLevelDowngradeSchema.parse(record),
     );
 
     this.form = new UsCaSupervisionLevelDowngradeForm(this, client.rootStore);

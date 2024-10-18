@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import {
@@ -105,6 +107,6 @@ export const opportunityConstructors = {
     usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity,
 } as const satisfies Record<
   OpportunityType,
-  | (new (c: Resident) => Opportunity<Resident>)
-  | (new (c: Client) => Opportunity<Client>)
+  | (new (c: Resident, r: DocumentData) => Opportunity<Resident>)
+  | (new (c: Client, r: DocumentData) => Opportunity<Client>)
 >;

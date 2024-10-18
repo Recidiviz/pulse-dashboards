@@ -57,10 +57,10 @@ function createTestUnit() {
     metadata: {},
   };
 
-  oppRecord = {
+  const baseRecord = {
     stateCode: "US_OZ",
     externalId: "pei1",
-    formReclassificationDueDate: new Date("2024-01-01"),
+    formReclassificationDueDate: "2023-12-31",
     formInformation: {
       q1Score: 3,
       q2Score: 0,
@@ -71,19 +71,19 @@ function createTestUnit() {
       q7Score: 2,
       q8Score: 3,
       q9Score: 2,
-      q6Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
-      q7Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q6Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
+      q7Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
       q8Notes: [
         {
-          detainerReceivedDate: new Date("2022-08-22"),
-          detainerFelonyFlag: true,
-          detainerMisdemeanorFlag: false,
+          detainerReceivedDate: "2022-08-22",
+          detainerFelonyFlag: "X",
+          detainerMisdemeanorFlag: null,
         },
       ],
-      lastCafDate: new Date("2019-04-02T12:00"),
+      lastCafDate: "2019-04-02",
       lastCafTotal: "20",
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
-      latestClassificationDate: new Date("2019-04-03T12:00"),
+      latestClassificationDate: "2019-04-03T12:00",
       levelOfCare: "LOC",
       hasIncompatibles: true,
       incompatibleArray: [
@@ -108,7 +108,8 @@ function createTestUnit() {
   formUpdates = {};
 
   const person = new Resident(personRecord, rootStore);
-  opp = new UsTnAnnualReclassificationReviewOpportunity(person);
+  opp = new UsTnAnnualReclassificationReviewOpportunity(person, baseRecord);
+  oppRecord = opp.record;
   vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord as any);
   vi.spyOn(opp.form, "updates", "get").mockImplementation(
     () => ({ data: formUpdates }) as any,

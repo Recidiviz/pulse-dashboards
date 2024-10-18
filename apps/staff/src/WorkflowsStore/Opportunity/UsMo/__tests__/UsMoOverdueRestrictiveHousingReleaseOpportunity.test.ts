@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { addDays, addWeeks, startOfWeek, subDays, subWeeks } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { cloneDeep, shuffle } from "lodash";
 import { configure } from "mobx";
 import { freeze } from "timekeeper";
@@ -28,32 +29,27 @@ import {
   usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
   usMoPersonRecord,
 } from "../__fixtures__";
-import {
-  UsMoOverdueRestrictiveHousingReleaseOpportunity,
-  UsMoOverdueRestrictiveHousingReleaseReferralRecord,
-} from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
-import { usMoOverdueRestrictiveHousingReleaseSchema } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
+import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
+import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 
 let opp: UsMoOverdueRestrictiveHousingReleaseOpportunity;
 let resident: Resident;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
-let fixtureData: UsMoOverdueRestrictiveHousingReleaseReferralRecord;
+let fixtureData: UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw;
 
 vi.mock("../../../subscriptions");
 
-function createTestUnit(residentRecord: typeof usMoPersonRecord) {
+function createTestUnit(
+  residentRecord: typeof usMoPersonRecord,
+  opportunityRecord: DocumentData,
+) {
   resident = new Resident(residentRecord, root);
 
-  const maybeOpportunity =
-    resident.potentialOpportunities.usMoOverdueRestrictiveHousingRelease;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsMoOverdueRestrictiveHousingReleaseOpportunity(
+    resident,
+    opportunityRecord,
+  );
 }
 
 const today = new Date(2023, 11, 7);
@@ -61,9 +57,7 @@ const today = new Date(2023, 11, 7);
 beforeAll(() => {
   // this lets us spy on observables, e.g. computed getters
   fixtureData = cloneDeep(
-    usMoOverdueRestrictiveHousingReleaseSchema.parse(
-      usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
-    ),
+    usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
   );
   configure({ safeDescriptors: false });
 });
@@ -79,9 +73,7 @@ describe("fully eligible", () => {
 
     freeze(today);
     fixtureData = cloneDeep(
-      usMoOverdueRestrictiveHousingReleaseSchema.parse(
-        usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
-      ),
+      usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
     );
 
     root = new RootStore();
@@ -91,11 +83,7 @@ describe("fully eligible", () => {
       "enabledOpportunityTypes",
       "get",
     ).mockReturnValue(["usMoOverdueRestrictiveHousingRelease"]);
-    createTestUnit(usMoPersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = fixtureData;
+    createTestUnit(usMoPersonRecord, fixtureData);
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -120,8 +108,8 @@ describe("fully eligible", () => {
   test("requirements met, overdue today", () => {
     if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
       fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        today;
-    referralSub.data = fixtureData;
+        today.toISOString().split("T")[0];
+    createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
@@ -140,8 +128,8 @@ describe("fully eligible", () => {
   test("requirements met, overdue yesterday", () => {
     if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
       fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        subDays(today, 1);
-    referralSub.data = fixtureData;
+        subDays(today, 1).toISOString().split("T")[0];
+    createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
@@ -160,8 +148,8 @@ describe("fully eligible", () => {
   test("requirements almost met, hearing tomorrow", () => {
     if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
       fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-        addDays(today, 1);
-    referralSub.data = fixtureData;
+        addDays(today, 1).toISOString().split("T")[0];
+    createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
@@ -191,10 +179,10 @@ describe("fully eligible", () => {
         usMoNoActiveD1Sanctions: {
           latestSanctionStartDate:
             usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
-          latestSanctionEndDate: today,
+          latestSanctionEndDate: today.toISOString().split("T")[0],
         },
       };
-      referralSub.data = fixtureData;
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Due this week)/gm);
     });
 
@@ -206,18 +194,20 @@ describe("fully eligible", () => {
         usMoNoActiveD1Sanctions: {
           latestSanctionStartDate:
             usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
-          latestSanctionEndDate: startOfWeek(today, { weekStartsOn: 1 }),
+          latestSanctionEndDate: startOfWeek(today, { weekStartsOn: 1 })
+            .toISOString()
+            .split("T")[0],
         },
       };
-      referralSub.data = fixtureData;
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due last week", () => {
       if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
         fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          subWeeks(today, 1);
-      referralSub.data = fixtureData;
+          subWeeks(today, 1).toISOString().split("T")[0];
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
     });
 
@@ -229,10 +219,12 @@ describe("fully eligible", () => {
         usMoNoActiveD1Sanctions: {
           latestSanctionStartDate:
             usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
-          latestSanctionEndDate: addWeeks(new Date(), 1),
+          latestSanctionEndDate: addWeeks(new Date(), 1)
+            .toISOString()
+            .split("T")[0],
         },
       };
-      referralSub.data = fixtureData;
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Coming up)/gm);
     });
   });
@@ -241,16 +233,18 @@ describe("fully eligible", () => {
     test("Due this week", () => {
       if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
         fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          today;
-      referralSub.data = fixtureData;
+          today.toISOString().split("T")[0];
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(/\b(Sanction ends today)/gm);
     });
 
     test("Due this week, on day of reset", () => {
       if (fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions)
         fixtureData.eligibleCriteria.usMoNoActiveD1Sanctions.latestSanctionEndDate =
-          startOfWeek(new Date(), { weekStartsOn: 1 });
-      referralSub.data = fixtureData;
+          startOfWeek(new Date(), { weekStartsOn: 1 })
+            .toISOString()
+            .split("T")[0];
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Sanction ended 3 days ago)/gm,
       );
@@ -264,10 +258,12 @@ describe("fully eligible", () => {
         usMoNoActiveD1Sanctions: {
           latestSanctionStartDate:
             usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
-          latestSanctionEndDate: subWeeks(new Date(), 1),
+          latestSanctionEndDate: subWeeks(new Date(), 1)
+            .toISOString()
+            .split("T")[0],
         },
       };
-      referralSub.data = fixtureData;
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Sanction ended 7 days ago)/gm,
       );
@@ -281,10 +277,12 @@ describe("fully eligible", () => {
         usMoNoActiveD1Sanctions: {
           latestSanctionStartDate:
             usMoNoActiveD1Sanctions?.latestSanctionStartDate ?? null,
-          latestSanctionEndDate: addWeeks(new Date(), 1),
+          latestSanctionEndDate: addWeeks(new Date(), 1)
+            .toISOString()
+            .split("T")[0],
         },
       };
-      referralSub.data = fixtureData;
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Sanction ends in 7 days)/gm,
       );
@@ -301,6 +299,7 @@ const createOpportunityInstance = (
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
   const mockOpp = new UsMoOverdueRestrictiveHousingReleaseOpportunity(
     mockResident,
+    fixtureData,
   );
 
   vi.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);

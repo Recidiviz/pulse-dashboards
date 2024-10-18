@@ -42,22 +42,38 @@ export const CaseloadOpportunitiesHydrator = observer(
     const { workflowsStore } = useRootStore();
     const { selectedSearchIds } = workflowsStore;
 
+    // The two useEffects below are isolated but could be simplified to one if the
+    // useEffect that sets opportunity types is handled via a presenter.
+
+    // This effect just reacts to the hydration state and hydrates the managers as needed
     useEffect(
       () =>
         autorun(() => {
-          workflowsStore
-            .potentialOpportunities(opportunityTypes)
-            .forEach((opp) => {
-              if (!isHydrated(opp)) opp.hydrate();
-            });
+          workflowsStore.caseloadPersons.forEach((person) => {
+            if (!isHydrated(person.opportunityManager))
+              person.opportunityManager.hydrate();
+          });
+        }),
+      [workflowsStore],
+    );
+
+    // This effect sets the desired opportunity types on the manager, which might
+    // change the hydration state.
+    useEffect(
+      () =>
+        autorun(() => {
+          workflowsStore.caseloadPersons.forEach((person) => {
+            person.opportunityManager.setSelectedOpportunityTypes(
+              opportunityTypes,
+            );
+          });
         }),
       [workflowsStore, opportunityTypes],
     );
 
     const displayInitialState = !selectedSearchIds.length;
     const displayLoading =
-      !displayInitialState &&
-      !workflowsStore.opportunitiesLoaded(opportunityTypes);
+      !displayInitialState && !workflowsStore.opportunitiesLoaded();
     const displayNoResults =
       !displayInitialState &&
       !displayLoading &&

@@ -56,13 +56,13 @@ function createTestUnit() {
     metadata: {},
   };
 
-  const oppRecord: usMiSecurityClassificationCommitteeReviewRecord["output"] = {
+  const oppRecord: usMiSecurityClassificationCommitteeReviewRecord["input"] = {
     isOverdue: true,
     stateCode: "US_OZ",
     externalId: "pei1",
     eligibleCriteria: {
       housingUnitTypeIsSolitaryConfinement: {
-        solitaryStartDate: new Date("2019-04-01T12:00"),
+        solitaryStartDate: "2019-04-01T12:00",
       },
       usMiPastSecurityClassificationCommitteeReviewDate: {
         facilitySolitaryStartDate: null,
@@ -82,11 +82,11 @@ function createTestUnit() {
         "(2022-06-01,042,)",
       ],
       segregationType: "TEMPORARY_SOLITARY_CONFINEMENT",
-      segregationClassificationDate: new Date("2019-04-01T12:00"),
+      segregationClassificationDate: "2019-04-01T12:00",
       prisonerName: "FIRST RESIDENT",
       prisonerNumber: "pei1",
-      maxReleaseDate: new Date("2027-04-01T12:00"),
-      minReleaseDate: new Date("2025-04-01T12:00"),
+      maxReleaseDate: "2027-04-01T12:00",
+      minReleaseDate: "2025-04-01T12:00",
       lock: "lock1",
       facility: "FACILITY1",
       STG: "1",
@@ -113,8 +113,10 @@ function createTestUnit() {
     caseNotes: {},
   };
   const person = new Resident(personRecord, rootStore);
-  opp = new usMiSecurityClassificationCommitteeReviewOpportunity(person);
-  vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
+  opp = new usMiSecurityClassificationCommitteeReviewOpportunity(
+    person,
+    oppRecord,
+  );
   form = opp.form;
 }
 

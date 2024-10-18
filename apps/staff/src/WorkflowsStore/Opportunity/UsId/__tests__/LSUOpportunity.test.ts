@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
@@ -37,10 +38,12 @@ vi.mock("../../../subscriptions");
 let opp: LSUOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
-function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
+function createTestUnit(
+  clientRecord: typeof LSUEligibleClientRecord,
+  opportunityRecord: DocumentData,
+) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
@@ -48,13 +51,7 @@ function createTestUnit(clientRecord: typeof LSUEligibleClientRecord) {
   ]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.LSU;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new LSUOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -71,11 +68,7 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(LSUEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = LSUReferralRecordFixture;
+    createTestUnit(LSUEligibleClientRecord, LSUReferralRecordFixture);
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -199,16 +192,12 @@ describe("fully eligible", () => {
 
 describe("no UA required", () => {
   beforeEach(() => {
-    createTestUnit(LSUEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
     const record = LSUReferralRecordFixture;
     record.eligibleCriteria.negativeDaWithin90Days = {
       latestUaDates: [],
       latestUaResults: [],
     };
-    referralSub.data = record;
+    createTestUnit(LSUEligibleClientRecord, record);
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -227,17 +216,13 @@ describe("almost eligible income verified within 3 months", () => {
   const almostEligibleIncomeVerified = cloneDeep(LSUReferralRecordFixture);
 
   almostEligibleIncomeVerified.ineligibleCriteria.usIdIncomeVerifiedWithin3Months =
-    true;
+    null;
 
   delete almostEligibleIncomeVerified.eligibleCriteria
     .usIdIncomeVerifiedWithin3Months;
 
   beforeEach(() => {
-    createTestUnit(LSUEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = almostEligibleIncomeVerified;
+    createTestUnit(LSUEligibleClientRecord, almostEligibleIncomeVerified);
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -272,17 +257,15 @@ describe("almost eligible on supervision at least a year", () => {
 
   almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
     {
-      eligibleDate: new Date(2022, 12, 1),
+      eligibleDate: "2022-12-01",
     };
 
   delete almostEligibleSupervisionLength.eligibleCriteria
     .onSupervisionAtLeastOneYear;
   beforeEach(() => {
-    createTestUnit(LSUEligibleClientRecord);
+    tk.freeze(new Date(2022, 6, 1));
 
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = almostEligibleSupervisionLength;
+    createTestUnit(LSUEligibleClientRecord, almostEligibleSupervisionLength);
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -314,18 +297,14 @@ describe("almost eligible days remaining on supervision", () => {
   const almostEligibleSupervisionLength = cloneDeep(LSUReferralRecordFixture);
   almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
     {
-      eligibleDate: new Date(2023, 1, 30),
+      eligibleDate: "2023-03-02",
     };
 
   delete almostEligibleSupervisionLength.eligibleCriteria
     .onSupervisionAtLeastOneYear;
   beforeEach(() => {
-    createTestUnit(LSUEligibleClientRecord);
     tk.freeze(new Date(2023, 1, 23));
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = almostEligibleSupervisionLength;
+    createTestUnit(LSUEligibleClientRecord, almostEligibleSupervisionLength);
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

@@ -54,6 +54,11 @@ const baseRootStoreMock = {
   insightsStore: {
     shouldUseSupervisorHomepageUI: vi.fn(),
   },
+  workflowsRootStore: {
+    opportunityConfigurationStore: {
+      isHydrated: true,
+    },
+  },
 };
 const baseWorkflowsStoreMock = {
   caseloadLoaded: () => false,

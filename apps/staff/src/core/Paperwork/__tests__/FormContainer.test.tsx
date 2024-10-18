@@ -53,7 +53,7 @@ function setup(props: Partial<FormHeaderProps> = {}) {
     rootStore,
     recordId: "us_id_001",
   } as Client;
-  opp = new TestOpportunity(client, "LSU", rootStore);
+  opp = new TestOpportunity(client, "LSU", rootStore, {});
   vi.spyOn(opp, "hydrationState", "get").mockReturnValue({
     status: "hydrated",
   });

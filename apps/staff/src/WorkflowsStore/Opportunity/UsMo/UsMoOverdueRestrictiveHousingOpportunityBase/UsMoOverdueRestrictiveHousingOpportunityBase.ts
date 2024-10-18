@@ -25,7 +25,7 @@ import { makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
-import { TransformFunction, ValidateFunction } from "../../../subscriptions";
+import { ValidateFunction } from "../../../subscriptions";
 import { CopyTuple, OpportunityType } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
 import { Component, OpportunityTab, OpportunityTabGroup } from "../../types";
@@ -64,16 +64,12 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
   constructor(
     resident: Resident,
     type: OpportunityType,
-    transformReferral?: TransformFunction<ReferralRecord>,
+    record: ReferralRecord,
     validateRecord?: ValidateFunction<ReferralRecord>,
   ) {
-    super(
-      resident,
-      type,
-      resident.rootStore,
-      transformReferral,
-      validateRecord,
-    );
+    if (validateRecord !== undefined) validateRecord(record);
+
+    super(resident, type, resident.rootStore, record);
     makeObservable(this, {
       requirementsMet: override,
     });

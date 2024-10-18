@@ -167,7 +167,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   } = useRootStore();
 
   const opportunities = sortBy(
-    Object.values(person.verifiedOpportunities).filter(
+    Object.values(person.opportunities).filter(
       (opp) => opp !== undefined,
     ) as Opportunity[],
     (opp: Opportunity) => opportunityTypes.indexOf(opp.type),

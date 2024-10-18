@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -34,13 +35,13 @@ import {
 let opp: UsMeEarlyTerminationOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 vi.mock("../../../subscriptions");
 
 function createTestUnit(
   clientRecord: typeof usMeEarlyTerminationEligibleClientRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -49,13 +50,7 @@ function createTestUnit(
   ]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.usMeEarlyTermination;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsMeEarlyTerminationOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -72,11 +67,10 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(usMeEarlyTerminationEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeEarlyTerminationReferralRecord;
+    createTestUnit(
+      usMeEarlyTerminationEligibleClientRecord,
+      usMeEarlyTerminationReferralRecord,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -93,12 +87,15 @@ describe("fully eligible", () => {
 
 describe("almost eligible restitution owed", () => {
   beforeEach(() => {
-    createTestUnit(usMeEarlyTerminationAlmostEligibleRestitutionClientRecord);
+    createTestUnit(
+      usMeEarlyTerminationAlmostEligibleRestitutionClientRecord,
+      usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord,
+    );
 
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data =
-      usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord;
+    // referralSub = opp.referralSubscription;
+    // referralSub.hydrationState = { status: "hydrated" };
+    // referralSub.data =
+    //   usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord;
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -127,12 +124,13 @@ describe("almost eligible pending violation", () => {
   beforeEach(() => {
     createTestUnit(
       usMeEarlyTerminationAlmostEligiblePendingViolationClientRecord,
+      usMeEarlyTerminationViolationAlmostEligibleReferralRecord,
     );
 
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data =
-      usMeEarlyTerminationViolationAlmostEligibleReferralRecord;
+    // referralSub = opp.referralSubscription;
+    // referralSub.hydrationState = { status: "hydrated" };
+    // referralSub.data =
+    //   usMeEarlyTerminationViolationAlmostEligibleReferralRecord;
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

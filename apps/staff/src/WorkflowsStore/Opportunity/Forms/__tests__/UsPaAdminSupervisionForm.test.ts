@@ -66,8 +66,7 @@ function createTestUnit() {
     },
   };
   const person = new Client(personRecord, rootStore);
-  opp = new UsPaAdminSupervisionOpportunity(person);
-  vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
+  opp = new UsPaAdminSupervisionOpportunity(person, oppRecord);
   form = opp.form;
 }
 

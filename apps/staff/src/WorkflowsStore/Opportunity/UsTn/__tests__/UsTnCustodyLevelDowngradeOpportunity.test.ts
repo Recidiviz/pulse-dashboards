@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -32,11 +33,11 @@ vi.mock("../../../subscriptions");
 let opp: UsTnCustodyLevelDowngradeOpportunity;
 let resident: Resident;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
   residentRecord: typeof UsTnCustodyLevelDowngradeEligibleResidentRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -45,14 +46,7 @@ function createTestUnit(
   ]);
   resident = new Resident(residentRecord, root);
 
-  const maybeOpportunity =
-    resident.potentialOpportunities.usTnCustodyLevelDowngrade;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsTnCustodyLevelDowngradeOpportunity(resident, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -69,11 +63,10 @@ afterEach(() => {
 
 describe("fully eligible resident", () => {
   beforeEach(() => {
-    createTestUnit(UsTnCustodyLevelDowngradeEligibleResidentRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = UsTnCustodyLevelDowngradeReferralRecordFixture;
+    createTestUnit(
+      UsTnCustodyLevelDowngradeEligibleResidentRecord,
+      UsTnCustodyLevelDowngradeReferralRecordFixture,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

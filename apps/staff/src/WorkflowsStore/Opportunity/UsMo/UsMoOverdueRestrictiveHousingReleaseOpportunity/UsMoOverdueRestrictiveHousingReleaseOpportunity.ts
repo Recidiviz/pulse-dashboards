@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { reduce } from "lodash";
 import { makeObservable, override } from "mobx";
 import { ValuesType } from "utility-types";
@@ -127,11 +128,11 @@ const removeDuplicateCopyIfPresent = (
 };
 
 export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingReleaseReferralRecord> {
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usMoOverdueRestrictiveHousingRelease",
-      usMoOverdueRestrictiveHousingReleaseSchema.parse,
+      usMoOverdueRestrictiveHousingReleaseSchema.parse(record),
     );
 
     makeObservable(this, {
@@ -163,7 +164,6 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
     const sanctionInfo =
       this.record?.eligibleCriteria.usMoNoActiveD1Sanctions ??
       this.record?.ineligibleCriteria.usMoNoActiveD1Sanctions;
-
     return sanctionInfo?.latestSanctionEndDate ?? undefined;
   }
 

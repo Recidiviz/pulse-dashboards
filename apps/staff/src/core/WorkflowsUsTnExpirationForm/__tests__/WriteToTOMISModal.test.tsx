@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Timestamp } from "firebase/firestore";
+import { DocumentData, Timestamp } from "firebase/firestore";
 import { configure } from "mobx";
 import ReactModal from "react-modal";
 import tk from "timekeeper";
@@ -42,12 +42,12 @@ vi.mock("../../../WorkflowsStore/subscriptions");
 let opp: UsTnExpirationOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
   clientRecord: typeof UsTnExpirationEligibleClientRecord,
   userRecord: CombinedUserRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -63,13 +63,7 @@ function createTestUnit(
   vi.spyOn(root.userStore, "stateCode", "get").mockReturnValue("US_TN");
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.usTnExpiration;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsTnExpirationOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -86,10 +80,11 @@ afterEach(async () => {
 describe("WriteToTOMISModal", () => {
   let submitButton: HTMLElement;
   beforeEach(() => {
-    createTestUnit(UsTnExpirationEligibleClientRecord, usTnUserRecord);
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = UsTnExpirationReferralRecordFixture;
+    createTestUnit(
+      UsTnExpirationEligibleClientRecord,
+      usTnUserRecord,
+      UsTnExpirationReferralRecordFixture,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

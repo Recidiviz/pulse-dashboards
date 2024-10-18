@@ -65,7 +65,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
   function WorkflowsUsTnExpirationForm() {
     const { workflowsStore, analyticsStore } = useRootStore();
     const opportunity =
-      workflowsStore?.selectedClient?.verifiedOpportunities?.usTnExpiration;
+      workflowsStore?.selectedClient?.opportunities?.usTnExpiration;
     const [selectedFormSection, setSelectedFormSection] = useState(0);
     const completedTEPENOTE = tepeTemplate(opportunity?.form.formData);
     const fullCharLimitedTEPENote = charLimitedNote(completedTEPENOTE, 70);

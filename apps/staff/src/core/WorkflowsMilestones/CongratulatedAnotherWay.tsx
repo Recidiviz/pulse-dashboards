@@ -38,9 +38,7 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
   client,
 }: CongratulatedAnotherWayProps): JSX.Element {
   useHydrateOpportunities(client);
-  const opportunity = client.hasVerifiedOpportunities
-    ? client.verifiedOpportunities.usCaSupervisionLevelDowngrade
-    : undefined;
+  const opportunity = client.opportunities.usCaSupervisionLevelDowngrade;
   const { setDismissAfterMs, setModalIsOpen } = useContext(
     WorkflowsPreviewModalContext,
   );

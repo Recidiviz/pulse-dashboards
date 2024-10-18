@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Client } from "../../../Client";
 import { PastFTRDOpportunityBase } from "../../PastFTRDOpportunityBase";
 import {
@@ -23,7 +25,7 @@ import {
 } from "./UsIdPastFTRDReferralRecord";
 
 export class UsIdPastFTRDOpportunity extends PastFTRDOpportunityBase<UsIdPastFTRDReferralRecord> {
-  constructor(client: Client) {
-    super(client, "pastFTRD", usIdPastFTRDSchema.parse);
+  constructor(client: Client, record: DocumentData) {
+    super(client, "pastFTRD", usIdPastFTRDSchema.parse(record));
   }
 }

@@ -47,7 +47,13 @@ function createTestUnit() {
     rootStore,
     recordId: "us_id_001",
   } as Client;
-  opp = new TestOpportunity(client, "LSU", rootStore);
+  opp = new TestOpportunity(client, "LSU", rootStore, {
+    stateCode: "US_OZ",
+    externalId: "123",
+    eligibleCriteria: {},
+    ineligibleCriteria: {},
+    caseNotes: {},
+  });
   vi.spyOn(opp, "hydrationState", "get").mockReturnValue({
     status: "hydrated",
   });

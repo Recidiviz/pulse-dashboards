@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
-import { DocumentSubscription } from "../../../subscriptions";
 import {
   pastFTRDAlmostEligibleFixture,
   pastFTRDEligibleClientRecord,
@@ -31,11 +31,13 @@ import { UsIdPastFTRDOpportunity } from "../UsIdPastFTRDOpportunity";
 let opp: UsIdPastFTRDOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 
 vi.mock("../../../subscriptions");
 
-function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
+function createTestUnit(
+  clientRecord: typeof pastFTRDEligibleClientRecord,
+  opportunityRecord: DocumentData,
+) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
@@ -43,13 +45,7 @@ function createTestUnit(clientRecord: typeof pastFTRDEligibleClientRecord) {
   ]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.pastFTRD;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsIdPastFTRDOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -65,11 +61,7 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(pastFTRDEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = pastFTRDRecordEligibleFixture;
+    createTestUnit(pastFTRDEligibleClientRecord, pastFTRDRecordEligibleFixture);
   });
 
   test("requirements met", () => {
@@ -79,11 +71,7 @@ describe("fully eligible", () => {
 
 describe("almost eligible", () => {
   beforeEach(() => {
-    createTestUnit(pastFTRDEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = pastFTRDAlmostEligibleFixture;
+    createTestUnit(pastFTRDEligibleClientRecord, pastFTRDAlmostEligibleFixture);
   });
 
   test("requirements almost met", () => {

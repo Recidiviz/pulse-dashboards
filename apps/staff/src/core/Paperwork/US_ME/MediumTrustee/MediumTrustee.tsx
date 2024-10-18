@@ -35,11 +35,11 @@ const FormPreviewPage = styled.img`
 const formDownloader = async (resident: Resident): Promise<void> => {
   let contents: Partial<UsMeMediumTrusteeFormData> = {};
 
-  const { displayName, stateCode, rootStore, verifiedOpportunities } = resident;
+  const { displayName, stateCode, rootStore, opportunities } = resident;
 
   runInAction(() => {
     contents = {
-      ...toJS(verifiedOpportunities.usMeMediumTrustee?.form?.formData),
+      ...toJS(opportunities.usMeMediumTrustee?.form?.formData),
     };
   });
 
@@ -55,7 +55,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
 function MediumTrustee() {
   const { workflowsStore } = useRootStore();
   const opportunity =
-    workflowsStore.selectedResident?.verifiedOpportunities?.usMeMediumTrustee;
+    workflowsStore.selectedResident?.opportunities?.usMeMediumTrustee;
 
   if (!opportunity) {
     return null;

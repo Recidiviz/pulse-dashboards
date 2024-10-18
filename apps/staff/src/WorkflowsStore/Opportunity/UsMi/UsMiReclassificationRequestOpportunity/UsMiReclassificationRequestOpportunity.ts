@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import {
   usMiReclassificationRequestRecord,
   usMiReclassificationRequestSchema,
@@ -27,12 +29,12 @@ export class usMiReclassificationRequestOpportunity extends OpportunityBase<
   Resident,
   usMiReclassificationRequestRecord["output"]
 > {
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usMiReclassificationRequest",
       resident.rootStore,
-      usMiReclassificationRequestSchema.parse,
+      usMiReclassificationRequestSchema.parse(record),
     );
   }
 }

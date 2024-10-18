@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
 import { ClientRecord } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
-import { UsNdEarlyTerminationReferralRecord } from "../UsNdEarlyTerminationOpportunity";
+import { UsNdEarlyTerminationReferralRecordRaw } from "../UsNdEarlyTerminationOpportunity";
 
 export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
   {
@@ -76,7 +75,7 @@ export const usNdEarlyTerminationAlmostEligibleClientRecord: RequireKeys<ClientR
     pseudonymizedId: "p111",
   };
 
-export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRecord =
+export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRecordRaw =
   {
     stateCode: "US_ND",
     externalId: "110",
@@ -84,10 +83,10 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
       clientName: "Jamie Jones",
       convictionCounty: "NORTH_CENTRAL",
       judgeName: "JUDGE 1",
-      priorCourtDate: parseISO("2020-01-03"),
-      sentenceLengthMonths: 36,
+      priorCourtDate: "2020-01-03",
+      sentenceLengthMonths: "36",
       crimeNames: ["CHARGE 1", "CHARGE 2"],
-      probationExpirationDate: parseISO("2022-12-02"),
+      probationExpirationDate: "2022-12-02",
       probationOfficerFullName: "Karl Fog",
       criminalNumber: "12345",
       judicialDistrictCode: "BISMARCK",
@@ -97,7 +96,7 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
     },
     eligibleCriteria: {
       supervisionPastEarlyDischargeDate: {
-        eligibleDate: parseISO("2022-01-03"),
+        eligibleDate: "2022-01-03",
       },
       usNdNotInActiveRevocationStatus: {
         revocationDate: null,
@@ -118,13 +117,13 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
     caseNotes: {},
   };
 
-export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminationReferralRecord =
+export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminationReferralRecordRaw =
   {
     ...usNdEarlyTerminationReferralRecord,
     externalId: "111",
     ineligibleCriteria: {
       supervisionPastEarlyDischargeDate: {
-        eligibleDate: parseISO("2024-01-03"),
+        eligibleDate: "2024-01-03",
       },
     },
   };

@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
+import {} from "date-fns";
 
 import { ClientRecord } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
-import { EarnedDischargeReferralRecord } from "../EarnedDischargeOpportunity";
-import { LSUReferralRecord } from "../LSUOpportunity";
-import { UsIdPastFTRDReferralRecord } from "../UsIdPastFTRDOpportunity";
+import { EarnedDischargeReferralRecordRaw } from "../EarnedDischargeOpportunity";
+import { LSUReferralRecordRaw } from "../LSUOpportunity";
+import { UsIdPastFTRDReferralRecordRaw } from "../UsIdPastFTRDOpportunity";
 
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_id_001",
@@ -44,7 +44,7 @@ export const ineligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const LSUReferralRecordFixture: LSUReferralRecord = {
+export const LSUReferralRecordFixture: LSUReferralRecordRaw = {
   stateCode: "US_ID",
   externalId: "001",
   formInformation: {
@@ -55,7 +55,7 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
     ],
     currentAddress: "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
     assessmentDate: "2022-03-02",
-    assessmentScore: 25,
+    assessmentScore: "25",
     latestNegativeDrugScreenDate: "2022-03-02",
     txDischargeDate: "2022-08-04",
     txNoteTitle: "TX GOAL",
@@ -64,49 +64,49 @@ export const LSUReferralRecordFixture: LSUReferralRecord = {
   eligibleCriteria: {
     usIdLsirLevelLowFor90Days: {
       riskLevel: "LOW",
-      eligibleDate: parseISO("2022-01-03"),
+      eligibleDate: "2022-01-03",
     },
     negativeDaWithin90Days: {
-      latestUaDates: [parseISO("2022-05-28")],
+      latestUaDates: ["2022-05-28"],
       latestUaResults: [false],
     },
-    noFelonyWithin24Months: true,
+    noFelonyWithin24Months: null,
     usIdIncomeVerifiedWithin3Months: {
-      incomeVerifiedDate: parseISO("2022-06-03"),
+      incomeVerifiedDate: "2022-06-03",
     },
     onSupervisionAtLeastOneYear: {
-      eligibleDate: parseISO("2022-06-01"),
+      eligibleDate: "2022-06-01",
     },
     usIdNoActiveNco: {
       activeNco: false,
     },
   },
   ineligibleCriteria: {},
-  eligibleStartDate: new Date(2022, 10, 5),
+  eligibleStartDate: "2022-11-05",
   caseNotes: {
     "Special Conditions": [
       {
         noteTitle: "MUST JOURNAL",
         noteBody: "Client must journal at least once a week",
-        eventDate: parseISO("2022-08-22"),
+        eventDate: "2022-08-22",
       },
     ],
     Treatment: [
       {
         noteTitle: "STARTED",
         noteBody: "Treatment started",
-        eventDate: parseISO("2022-06-17"),
+        eventDate: "2022-06-17",
       },
       {
         noteTitle: "COMPLETED",
         noteBody: "Treatment successfully completed",
-        eventDate: parseISO("2022-09-22"),
+        eventDate: "2022-09-22",
       },
     ],
   },
 };
 
-export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecord = {
+export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
   stateCode: "US_ID",
   externalId: "us_xx_103",
   formInformation: {
@@ -117,7 +117,7 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecord = {
     ],
     currentAddress: "123 FAKE ST, TWIN FALLS, ID, 99999-9876",
     assessmentDate: "2022-03-02",
-    assessmentScore: 25,
+    assessmentScore: "25",
     latestNegativeDrugScreenDate: "2022-03-02",
     txDischargeDate: "2022-08-04",
     txNoteTitle: "TX GOAL",
@@ -126,48 +126,48 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecord = {
   eligibleCriteria: {
     usIdLsirLevelLowFor90Days: {
       riskLevel: "LOW",
-      eligibleDate: parseISO("2022-01-03"),
+      eligibleDate: "2022-01-03",
     },
     negativeDaWithin90Days: {
-      latestUaDates: [parseISO("2022-05-28")],
+      latestUaDates: ["2022-05-28"],
       latestUaResults: [false],
     },
-    noFelonyWithin24Months: true,
+    noFelonyWithin24Months: null,
     onSupervisionAtLeastOneYear: {
-      eligibleDate: parseISO("2022-06-01"),
+      eligibleDate: "2022-06-01",
     },
     usIdNoActiveNco: {
       activeNco: false,
     },
   },
   ineligibleCriteria: {
-    usIdIncomeVerifiedWithin3Months: true,
+    usIdIncomeVerifiedWithin3Months: null,
   },
-  eligibleStartDate: new Date(2022, 10, 5),
+  eligibleStartDate: "2022-10-05",
   caseNotes: {
     "Special Conditions": [
       {
         noteTitle: "MUST JOURNAL",
         noteBody: "Client must journal at least once a week",
-        eventDate: parseISO("2022-08-22"),
+        eventDate: "2022-08-22",
       },
     ],
     Treatment: [
       {
         noteTitle: "STARTED",
         noteBody: "Treatment started",
-        eventDate: parseISO("2022-06-17"),
+        eventDate: "2022-06-17",
       },
       {
         noteTitle: "COMPLETED",
         noteBody: "Treatment successfully completed",
-        eventDate: parseISO("2022-09-22"),
+        eventDate: "2022-09-22",
       },
     ],
   },
 };
 
-export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord =
+export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecordRaw =
   {
     stateCode: "US_ID",
     externalId: "001",
@@ -175,44 +175,44 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
     eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
-        eligibleDate: parseISO("2022-01-03"),
+        eligibleDate: "2022-01-03",
       },
       negativeDaWithin90Days: {
-        latestUaDates: [parseISO("2022-05-28")],
+        latestUaDates: ["2022-05-28"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: true,
-      pastEarnedDischargeEligibleDate: {
-        eligibleDate: parseISO("2022-03-17"),
+      noFelonyWithin24Months: null,
+      usIdParoleDualSupervisionPastEarlyDischargeDate: {
+        eligibleDate: "2022-03-17",
         sentenceType: "DUAL",
       },
     },
     ineligibleCriteria: {},
-    eligibleStartDate: new Date(2022, 10, 5),
+    eligibleStartDate: "2022-10-05",
     caseNotes: {
       "Special Conditions": [
         {
           noteTitle: "MUST JOURNAL",
           noteBody: "Client must journal at least once a week",
-          eventDate: parseISO("2022-08-22"),
+          eventDate: "2022-08-22",
         },
       ],
       Treatment: [
         {
           noteTitle: "STARTED",
           noteBody: "Treatment started",
-          eventDate: parseISO("2022-06-17"),
+          eventDate: "2022-06-17",
         },
         {
           noteTitle: "COMPLETED",
           noteBody: "Treatment successfully completed",
-          eventDate: parseISO("2022-09-22"),
+          eventDate: "2022-09-22",
         },
       ],
     },
   };
 
-export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeReferralRecord =
+export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeReferralRecordRaw =
   {
     stateCode: "US_ID",
     externalId: "001",
@@ -220,38 +220,38 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
     eligibleCriteria: {
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
-        eligibleDate: parseISO("2022-01-03"),
+        eligibleDate: "2022-01-03",
       },
       negativeDaWithin90Days: {
-        latestUaDates: [parseISO("2022-05-28")],
+        latestUaDates: ["2022-05-28"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: true,
+      noFelonyWithin24Months: null,
     },
     ineligibleCriteria: {
-      pastEarnedDischargeEligibleDate: {
-        eligibleDate: parseISO("2023-12-10"),
+      onProbationAtLeastOneYear: {
+        eligibleDate: "2023-12-10",
       },
     },
-    eligibleStartDate: new Date(2022, 10, 5),
+    eligibleStartDate: "2022-10-05",
     caseNotes: {
       "Special Conditions": [
         {
           noteTitle: "MUST JOURNAL",
           noteBody: "Client must journal at least once a week",
-          eventDate: parseISO("2022-08-22"),
+          eventDate: "2022-08-22",
         },
       ],
       Treatment: [
         {
           noteTitle: "STARTED",
           noteBody: "Treatment started",
-          eventDate: parseISO("2022-06-17"),
+          eventDate: "2022-06-17",
         },
         {
           noteTitle: "COMPLETED",
           noteBody: "Treatment successfully completed",
-          eventDate: parseISO("2022-09-22"),
+          eventDate: "2022-09-22",
         },
       ],
     },
@@ -267,25 +267,25 @@ export const EarnedDischargeEligibleClientRecord: ClientRecord = {
   allEligibleOpportunities: ["earnedDischarge"],
 };
 
-export const pastFTRDRecordEligibleFixture: UsIdPastFTRDReferralRecord = {
+export const pastFTRDRecordEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
   stateCode: "US_ID",
   externalId: "001",
   eligibleCriteria: {
     supervisionPastFullTermCompletionDate: {
-      eligibleDate: parseISO("2022-01-03"),
+      eligibleDate: "2022-01-03",
     },
   },
   ineligibleCriteria: {},
   caseNotes: {},
 };
 
-export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecord = {
+export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
   stateCode: "US_ID",
   externalId: "002",
   eligibleCriteria: {},
   ineligibleCriteria: {
     supervisionPastFullTermCompletionDate: {
-      eligibleDate: parseISO("2022-09-01"),
+      eligibleDate: "2022-09-01",
     },
   },
   caseNotes: {},

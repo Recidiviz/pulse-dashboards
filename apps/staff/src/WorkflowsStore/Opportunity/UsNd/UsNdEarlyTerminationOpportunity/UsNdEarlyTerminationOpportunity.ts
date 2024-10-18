@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { DocstarsDenialModal } from "../../../../core/OpportunityDenial/UsNd/DocstarsDenialModal";
@@ -38,12 +39,12 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
 
   readonly DenialConfirmationModal = DocstarsDenialModal;
 
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "earlyTermination",
       client.rootStore,
-      usNdEarlyTerminationSchema.parse,
+      usNdEarlyTerminationSchema.parse(record),
     );
 
     makeObservable(this, {

@@ -201,3 +201,8 @@ export type OpportunityPriority = "NORMAL" | "HIGH";
 export type OpportunityMapping = {
   [K in OpportunityType]?: InstanceType<(typeof opportunityConstructors)[K]>;
 };
+
+export interface OpportunityManagerInterface extends Hydratable {
+  opportunities: OpportunityMapping;
+  setSelectedOpportunityTypes: (opportunityTypes: OpportunityType[]) => void;
+}

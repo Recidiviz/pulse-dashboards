@@ -31,7 +31,7 @@ import {
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
-import { OpportunityType } from "../Opportunity";
+import { OpportunityMapping, OpportunityType } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
 import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
 import { opportunityConstructors } from "../Opportunity/opportunityConstructors";
@@ -88,6 +88,7 @@ beforeEach(() => {
 
 afterEach(() => {
   configure({ safeDescriptors: true });
+  vi.resetAllMocks();
 });
 
 const PROPERTIES_FROM_RECORD: [
@@ -119,7 +120,7 @@ describe("opportunities", () => {
 
   class TestOpportunity extends OpportunityBase<any, any> {
     constructor(person: JusticeInvolvedPerson) {
-      super(person, "JIP_TEST_OPP" as OpportunityType, rootStore);
+      super(person, "JIP_TEST_OPP" as OpportunityType, rootStore, {});
       opportunityInstances.push(this);
     }
 
@@ -141,13 +142,7 @@ describe("opportunities", () => {
 
   test("created", () => {
     createTestUnit();
-    expect(opportunityInstances[0]).toEqual(expect.any(TestOpportunity));
-    expect(testPerson.potentialOpportunities).toStrictEqual({
-      JIP_TEST_OPP: opportunityInstances[0],
-    });
-    expect(testPerson.verifiedOpportunities).toStrictEqual({});
-    expect(testPerson.opportunitiesEligible).toStrictEqual({});
-    expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({});
+    expect(testPerson.opportunityManager).toBeDefined();
   });
 
   describe("assignedStaffFullName", () => {
@@ -233,34 +228,35 @@ describe("opportunities", () => {
   describe("successfully", () => {
     beforeEach(() => {
       createTestUnit();
-      runInAction(() => {
-        const [opp] = opportunityInstances;
-        opp.referralSubscription.hydrationState = { status: "hydrated" };
-        opp.updatesSubscription.hydrationState = { status: "hydrated" };
-      });
-    });
-
-    test("verified", () => {
-      expect(testPerson.verifiedOpportunities).toStrictEqual({
-        JIP_TEST_OPP: opportunityInstances[0],
-      });
     });
 
     test("eligible", () => {
+      vi.spyOn(testPerson, "opportunities", "get").mockReturnValue({
+        JIP_TEST_OPP: {
+          hydrationState: { status: "hydrated" },
+        },
+      } as any as OpportunityMapping);
+
       expect(testPerson.opportunitiesEligible).toStrictEqual({
-        JIP_TEST_OPP: opportunityInstances[0],
+        JIP_TEST_OPP: {
+          hydrationState: { status: "hydrated" },
+        },
       });
     });
 
     test("almost eligible", () => {
-      vi.spyOn(
-        opportunityInstances[0],
-        "almostEligible",
-        "get",
-      ).mockReturnValue(true);
+      vi.spyOn(testPerson, "opportunities", "get").mockReturnValue({
+        JIP_TEST_OPP: {
+          hydrationState: { status: "hydrated" },
+          almostEligible: true,
+        },
+      } as any as OpportunityMapping);
 
       expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({
-        JIP_TEST_OPP: opportunityInstances[0],
+        JIP_TEST_OPP: {
+          hydrationState: { status: "hydrated" },
+          almostEligible: true,
+        },
       });
     });
   });
@@ -268,19 +264,19 @@ describe("opportunities", () => {
   describe("fail to be", () => {
     beforeEach(() => {
       createTestUnit();
-      runInAction(() => {
-        const [opp] = opportunityInstances;
-        opp.referralSubscription.hydrationState = { status: "hydrated" };
 
-        opp.updatesSubscription.hydrationState = {
-          status: "failed",
-          error: new Error("test"),
-        };
+      vi.spyOn(
+        testPerson.opportunityManager,
+        "hydrationState",
+        "get",
+      ).mockReturnValue({
+        status: "failed",
+        error: new Error("test"),
       });
     });
 
     test("verified", () => {
-      expect(testPerson.verifiedOpportunities).toStrictEqual({});
+      expect(testPerson.opportunities).toStrictEqual({});
     });
 
     test("eligible", () => {
@@ -295,63 +291,6 @@ describe("opportunities", () => {
       ).mockReturnValue(true);
 
       expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({});
-    });
-  });
-
-  test("are limited to configured opportunity types", () => {
-    mockOpportunityTypes.set(["compliantReporting"]);
-    createTestUnit();
-    expect(testPerson.potentialOpportunities).toStrictEqual({});
-  });
-
-  test("react to config changes", () => {
-    createTestUnit();
-    mockOpportunityTypes.set(["compliantReporting"]);
-    expect(testPerson.potentialOpportunities).toStrictEqual({});
-  });
-
-  test("are limited to person's eligibility list", () => {
-    mockOpportunityTypes.set([
-      "JIP_TEST_OPP" as OpportunityType,
-      "compliantReporting",
-      "earlyTermination",
-      "earnedDischarge",
-    ]);
-    createTestUnit();
-    expect(testPerson.potentialOpportunities).toStrictEqual({
-      JIP_TEST_OPP: opportunityInstances[0],
-    });
-  });
-
-  test("react to changes in person's eligibility list", () => {
-    mockOpportunityTypes.set([
-      "JIP_TEST_OPP" as OpportunityType,
-      "JIP_TEST_OPP2" as OpportunityType,
-      "JIP_TEST_OPP3" as OpportunityType,
-    ]);
-    createTestUnit();
-    testPerson.updateRecord({
-      ...record,
-      allEligibleOpportunities: ["JIP_TEST_OPP2" as OpportunityType],
-    });
-    expect(opportunityInstances[1]).toEqual(expect.any(TestOpportunity));
-    expect(testPerson.potentialOpportunities).toStrictEqual({
-      JIP_TEST_OPP2: opportunityInstances[1],
-    });
-
-    // should not re-create existing opportunities
-    testPerson.updateRecord({
-      ...record,
-      allEligibleOpportunities: [
-        "JIP_TEST_OPP2" as OpportunityType,
-        "JIP_TEST_OPP3" as OpportunityType,
-      ],
-    });
-    expect(opportunityInstances[2]).toEqual(expect.any(TestOpportunity));
-    expect(opportunityInstances.length).toBe(3);
-    expect(testPerson.potentialOpportunities).toStrictEqual({
-      JIP_TEST_OPP2: opportunityInstances[1],
-      JIP_TEST_OPP3: opportunityInstances[2],
     });
   });
 });

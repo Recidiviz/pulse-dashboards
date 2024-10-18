@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
+import {} from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
 import {
@@ -24,9 +24,9 @@ import {
 } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
 import {
-  UsMeEarlyTerminationReferralRecord,
-  UsMeFurloughReleaseReferralRecord,
-  UsMeWorkReleaseReferralRecord,
+  UsMeEarlyTerminationReferralRecordRaw,
+  UsMeFurloughReleaseReferralRecordRaw,
+  UsMeWorkReleaseReferralRecordRaw,
 } from "..";
 
 export const usMePersonRecord: WorkflowsResidentRecord = {
@@ -75,22 +75,22 @@ export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
   metadata: {},
 };
 
-export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferralRecord =
+export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferralRecordRaw =
   {
     stateCode: "US_ME",
     externalId: "111",
     eligibleCriteria: {
       usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
       usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-        eligibleDate: parseISO("2022-08-10"),
+        eligibleDate: "2022-08-10",
       },
       usMeThreeYearsRemainingOnSentence: {
-        eligibleDate: parseISO("2022-08-14"),
+        eligibleDate: "2022-08-14",
       },
       usMeNoClassAOrBViolationFor90Days: null,
       usMeNoDetainersWarrantsOrOther: null,
       usMeServedHalfOfSentence: {
-        eligibleDate: parseISO("2022-08-14"),
+        eligibleDate: "2022-08-14",
       },
     },
     ineligibleCriteria: {},
@@ -99,23 +99,23 @@ export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferr
         {
           noteTitle: "A title",
           noteBody: "A body",
-          eventDate: parseISO("2022-06-28"),
+          eventDate: "2022-06-28",
         },
       ],
     },
   };
 
-export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseReferralRecord =
+export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseReferralRecordRaw =
   {
     stateCode: "US_ME",
     externalId: "111",
     eligibleCriteria: {
       usMeCustodyLevelIsMinimum: { custodyLevel: "MINIMUM" },
       usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-        eligibleDate: parseISO("2022-08-10"),
+        eligibleDate: "2022-08-10",
       },
       usMeThreeYearsRemainingOnSentence: {
-        eligibleDate: parseISO("2022-08-14"),
+        eligibleDate: "2022-08-14",
       },
       usMeNoClassAOrBViolationFor90Days: null,
       usMeNoDetainersWarrantsOrOther: null,
@@ -126,7 +126,7 @@ export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseReferralRecord
         {
           noteTitle: "A title",
           noteBody: "A body",
-          eventDate: parseISO("2022-06-28"),
+          eventDate: "2022-06-28",
         },
       ],
     },
@@ -220,7 +220,7 @@ export const usMeEarlyTerminationAlmostEligibleSupervisionStartClientRecord: Req
     emailAddress: "tt@example.com",
   };
 
-export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRecord =
+export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
   {
     stateCode: "US_ME",
     externalId: "009",
@@ -230,7 +230,7 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
       },
       noConvictionWithin6Months: {},
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: parseISO("2024-04-03"),
+        eligibleDate: "2024-04-03",
       },
       supervisionLevelIsMediumOrLower: {
         supervisionLevel: "MEDIUM",
@@ -243,20 +243,20 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
         {
           noteTitle: "A title",
           noteBody: "A body",
-          eventDate: parseISO("2022-06-28"),
+          eventDate: "2022-06-28",
         },
       ],
     },
   };
 
-export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecord =
+export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
   {
     stateCode: "US_ME",
     externalId: "010",
     eligibleCriteria: {
       noConvictionWithin6Months: {},
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: parseISO("2024-04-03"),
+        eligibleDate: "2024-04-03",
       },
       supervisionLevelIsMediumOrLower: {
         supervisionLevel: "MEDIUM",
@@ -273,13 +273,13 @@ export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEa
         {
           noteTitle: "A title",
           noteBody: "A body",
-          eventDate: parseISO("2022-06-28"),
+          eventDate: "2022-06-28",
         },
       ],
     },
   };
 
-export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecord =
+export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
   {
     stateCode: "US_ME",
     externalId: "011",
@@ -287,7 +287,7 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
       usMePaidAllOwedRestitution: {},
       noConvictionWithin6Months: {},
       usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart: {
-        eligibleDate: parseISO("2024-04-03"),
+        eligibleDate: "2024-04-03",
       },
       supervisionLevelIsMediumOrLower: {
         supervisionLevel: "MEDIUM",
@@ -296,7 +296,7 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
     ineligibleCriteria: {
       usMeNoPendingViolationsWhileSupervised: {
         currentStatus: "PENDING VIOLATION",
-        violationDate: parseISO("2023-01-01"),
+        violationDate: "2023-01-01",
       },
     },
     caseNotes: {
@@ -304,7 +304,7 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
         {
           noteTitle: "A title",
           noteBody: "A body",
-          eventDate: parseISO("2022-06-28"),
+          eventDate: "2022-06-28",
         },
       ],
     },

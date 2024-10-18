@@ -51,7 +51,7 @@ function WorkflowsEarlyTerminationDeferredForm() {
   if (!client) return <div />;
 
   const onClickDownload = async (): Promise<void> => {
-    const { earlyTermination } = client.verifiedOpportunities;
+    const { earlyTermination } = client.opportunities;
 
     const contents = {
       ...toJS(earlyTermination?.form?.formData),

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
@@ -29,16 +30,21 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsMiSupervisionLevelDowngradeReferralRecord
 > {
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
+    const parsedRecord =
+      usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
+        (raw: string) =>
+          client.rootStore.workflowsStore.formatSupervisionLevel(raw),
+      ).parse(record);
+
+    const validateRecord = getValidator(client);
+    validateRecord(parsedRecord);
+
     super(
       client,
       "usMiSupervisionLevelDowngrade",
       client.rootStore,
-      usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-        (raw: string) =>
-          client.rootStore.workflowsStore.formatSupervisionLevel(raw),
-      ).parse,
-      getValidator(client),
+      parsedRecord,
     );
 
     makeObservable(this, { requirementsMet: override });

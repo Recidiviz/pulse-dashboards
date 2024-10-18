@@ -160,8 +160,7 @@ const FormUsCaSupervisionLeveDowngrade = observer(
 
     const onClickDownload = async () => {
       const formData =
-        person?.verifiedOpportunities?.usCaSupervisionLevelDowngrade?.form
-          ?.formData;
+        person?.opportunities?.usCaSupervisionLevelDowngrade?.form?.formData;
       if (!formData) return;
 
       await fillAndSavePDF(
@@ -176,8 +175,7 @@ const FormUsCaSupervisionLeveDowngrade = observer(
     const {
       workflowsStore: { selectedClient: client },
     } = useRootStore();
-    const opportunity =
-      client?.verifiedOpportunities?.usCaSupervisionLevelDowngrade;
+    const opportunity = client?.opportunities?.usCaSupervisionLevelDowngrade;
 
     if (!opportunity) {
       return null;

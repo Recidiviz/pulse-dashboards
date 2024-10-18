@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
@@ -23,7 +24,6 @@ import { ClientRecord } from "../../../../FirestoreStore";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { DocumentSubscription } from "../../../subscriptions";
-import { constructorSpy } from "../../__tests__/testUtils";
 import {
   COMPLETED_UPDATE,
   DENIED_UPDATE,
@@ -37,11 +37,8 @@ import {
   compliantReportingIneligibleCriteria,
   compliantReportingReferralRecord,
 } from "../__fixtures__";
-import type { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
-import {
-  CompliantReportingReferralRecord,
-  compliantReportingSchema,
-} from "../CompliantReportingOpportunity";
+import { CompliantReportingOpportunity } from "../CompliantReportingOpportunity";
+import { CompliantReportingReferralRecord } from "../CompliantReportingOpportunity";
 
 vi.mock("firebase/firestore");
 vi.mock("../../../subscriptions");
@@ -49,10 +46,12 @@ vi.mock("../../../subscriptions");
 let cr: CompliantReportingOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
-function createTestUnit(clientRecord: ClientRecord) {
+function createTestUnit(
+  clientRecord: ClientRecord,
+  opportunityRecord: DocumentData,
+) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
@@ -60,11 +59,7 @@ function createTestUnit(clientRecord: ClientRecord) {
   ]);
   vi.spyOn(root.workflowsStore, "featureVariants", "get").mockReturnValue({});
   client = new Client(clientRecord, root);
-  const maybeOpportunity = client.potentialOpportunities.compliantReporting;
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-  cr = maybeOpportunity;
+  cr = new CompliantReportingOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -82,8 +77,10 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(compliantReportingEligibleClientRecord);
-    referralSub = cr.referralSubscription;
+    createTestUnit(
+      compliantReportingEligibleClientRecord,
+      compliantReportingReferralRecord,
+    );
     updatesSub = cr.updatesSubscription;
   });
 
@@ -106,18 +103,26 @@ describe("fully eligible", () => {
   });
 
   test("requirements met", async () => {
-    referralSub.data = compliantReportingReferralRecord;
-    expect(cr.requirementsMet).toMatchSnapshot();
-  });
-
-  test("eligible with discretion", async () => {
-    referralSub.data = compliantReportingEligibleWithDiscretionReferralRecord;
     expect(cr.requirementsMet).toMatchSnapshot();
   });
 
   test("recommended note", () => {
     // this is for almost eligible only
     expect(cr.almostEligibleRecommendedNote).toBeUndefined();
+  });
+});
+
+describe("fully eligible with discretion", () => {
+  beforeEach(() => {
+    createTestUnit(
+      compliantReportingEligibleClientRecord,
+      compliantReportingEligibleWithDiscretionReferralRecord,
+    );
+    updatesSub = cr.updatesSubscription;
+  });
+
+  test("eligible with discretion", async () => {
+    expect(cr.requirementsMet).toMatchSnapshot();
   });
 });
 
@@ -176,11 +181,9 @@ describe.each([
           ],
       };
 
-      createTestUnit(compliantReportingAlmostEligibleClientRecord);
+      createTestUnit(compliantReportingAlmostEligibleClientRecord, testRecord);
 
-      referralSub = cr.referralSubscription;
       updatesSub = cr.updatesSubscription;
-      referralSub.data = testRecord;
     });
 
     test("review status", () => {
@@ -226,25 +229,13 @@ describe.each([
 );
 
 test("hydrate", () => {
-  createTestUnit(compliantReportingEligibleClientRecord);
+  createTestUnit(
+    compliantReportingEligibleClientRecord,
+    compliantReportingReferralRecord,
+  );
 
-  referralSub = cr.referralSubscription;
   updatesSub = cr.updatesSubscription;
 
   cr.hydrate();
-  expect(referralSub.hydrate).toHaveBeenCalled();
   expect(updatesSub.hydrate).toHaveBeenCalled();
-});
-
-test("fetch CompliantReportingReferral uses recordId", async () => {
-  createTestUnit(compliantReportingEligibleClientRecord);
-  cr.hydrate();
-
-  expect(constructorSpy).toHaveBeenCalledWith(
-    root.firestoreStore,
-    { raw: "compliantReportingReferrals" },
-    compliantReportingEligibleClientRecord.recordId,
-    compliantReportingSchema.parse,
-    expect.any(Function),
-  );
 });

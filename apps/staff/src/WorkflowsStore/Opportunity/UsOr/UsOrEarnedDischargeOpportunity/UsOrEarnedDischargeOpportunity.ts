@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
@@ -30,12 +31,12 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
   Client,
   UsOrEarnedDischargeReferralRecord
 > {
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usOrEarnedDischarge",
       client.rootStore,
-      usOrEarnedDischargeSchema.parse,
+      usOrEarnedDischargeSchema.parse(record),
     );
 
     makeObservable(this, { requirementsMet: override });

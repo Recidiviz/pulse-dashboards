@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
@@ -26,12 +28,12 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   Client,
   UsMiEarlyDischargeReferralRecord
 > {
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usMiEarlyDischarge",
       client.rootStore,
-      usMiEarlyDischargeSchema.parse,
+      usMiEarlyDischargeSchema.parse(record),
     );
   }
 

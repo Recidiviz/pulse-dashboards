@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
-import { DocumentSubscription } from "../../../subscriptions";
 import { UsMeWorkReleaseOpportunity } from "..";
 import {
   usMePersonRecord,
@@ -30,11 +30,13 @@ import {
 let opp: UsMeWorkReleaseOpportunity;
 let resident: Resident;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 
 vi.mock("../../../subscriptions");
 
-function createTestUnit(residentRecord: typeof usMePersonRecord) {
+function createTestUnit(
+  residentRecord: typeof usMePersonRecord,
+  opportunityRecord: DocumentData,
+) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(
@@ -44,12 +46,7 @@ function createTestUnit(residentRecord: typeof usMePersonRecord) {
   ).mockReturnValue(["usMeWorkRelease"]);
   resident = new Resident(residentRecord, root);
 
-  const maybeOpportunity = resident.potentialOpportunities.usMeWorkRelease;
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsMeWorkReleaseOpportunity(resident, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -65,11 +62,7 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(usMePersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeWorkReleaseEligibleRecordFixture;
+    createTestUnit(usMePersonRecord, usMeWorkReleaseEligibleRecordFixture);
   });
 
   test("requirements met", () => {

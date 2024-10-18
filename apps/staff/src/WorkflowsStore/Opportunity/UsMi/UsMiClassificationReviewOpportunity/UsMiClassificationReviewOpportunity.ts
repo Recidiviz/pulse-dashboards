@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
@@ -28,14 +30,14 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
 > {
   readonly hideUnknownCaseNoteDates = true;
 
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usMiClassificationReview",
       client.rootStore,
       usMiClassificationReviewSchemaForSupervisionLevelFormatter((raw) =>
         client.rootStore.workflowsStore.formatSupervisionLevel(raw),
-      ).parse,
+      ).parse(record),
     );
   }
 

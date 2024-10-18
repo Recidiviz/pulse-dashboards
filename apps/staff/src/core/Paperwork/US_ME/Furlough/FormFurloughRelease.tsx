@@ -60,7 +60,7 @@ const fillerFunc: (
 export const FormFurloughRelease = observer(function FormWorkRelease() {
   const { workflowsStore, getTokenSilently } = useRootStore();
   const opportunity =
-    workflowsStore?.selectedPerson?.verifiedOpportunities?.usMeFurloughRelease;
+    workflowsStore?.selectedPerson?.opportunities?.usMeFurloughRelease;
 
   if (!opportunity) {
     return null;
@@ -73,9 +73,7 @@ export const FormFurloughRelease = observer(function FormWorkRelease() {
     // we are not mutating any observables here, just telling Mobx not to track this access
     runInAction(() => {
       contents = {
-        ...toJS(
-          resident.verifiedOpportunities.usMeFurloughRelease?.form?.formData,
-        ),
+        ...toJS(resident.opportunities.usMeFurloughRelease?.form?.formData),
       };
     });
 

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Client } from "../../../Client";
 import { UsPaAdminSupervisionForm } from "../../Forms/UsPaAdminSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -29,12 +31,12 @@ export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
 > {
   form: UsPaAdminSupervisionForm;
 
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usPaAdminSupervision",
       client.rootStore,
-      usPaAdminSupervisionSchema.parse,
+      usPaAdminSupervisionSchema.parse(record),
     );
 
     this.form = new UsPaAdminSupervisionForm(this, client.rootStore);

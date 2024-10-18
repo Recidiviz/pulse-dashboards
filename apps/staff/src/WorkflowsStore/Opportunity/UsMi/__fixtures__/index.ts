@@ -15,14 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-
 import { ClientRecord } from "../../../../FirestoreStore";
 import { dateToTimestamp } from "../../../utils";
 import { OpportunityType } from "../..";
 import {
-  UsMiMinimumTelephoneReportingReferralRecord,
-  UsMiPastFTRDReferralRecord,
+  UsMiMinimumTelephoneReportingReferralRecordRaw,
+  UsMiPastFTRDReferralRecordRaw,
 } from "..";
 
 export const ineligibleClientRecord: ClientRecord = {
@@ -104,7 +102,7 @@ export const usMiMinimumTelephoneReportingEligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneReportingReferralRecord =
+export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneReportingReferralRecordRaw =
   {
     stateCode: "US_MI",
     externalId: "010",
@@ -125,21 +123,21 @@ export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneRe
         {
           noteTitle: "A title",
           noteBody: "A body",
-          eventDate: parseISO("2022-06-28"),
+          eventDate: "2022-06-28",
         },
       ],
     },
     metadata: {
-      eligibleDate: parseISO("2022-07-02"),
+      eligibleDate: "2022-07-02",
     },
   };
 
-export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecord = {
+export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecordRaw = {
   stateCode: "US_MI",
   externalId: "001",
   eligibleCriteria: {
-    supervisionPastFullTermCompletionDate: {
-      eligibleDate: parseISO("2022-01-03"),
+    supervisionTwoDaysPastFullTermCompletionDate: {
+      eligibleDate: "2022-01-03",
     },
   },
   ineligibleCriteria: {},

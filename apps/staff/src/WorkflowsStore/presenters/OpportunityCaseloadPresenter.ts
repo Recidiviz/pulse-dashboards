@@ -209,7 +209,7 @@ export class OpportunityCaseloadPresenter {
   }
 
   get currentOpportunity() {
-    return this.selectedPerson?.verifiedOpportunities[this.opportunityType];
+    return this.selectedPerson?.opportunities[this.opportunityType];
   }
 
   get peopleInActiveTab() {

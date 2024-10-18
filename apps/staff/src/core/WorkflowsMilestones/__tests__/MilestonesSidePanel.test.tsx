@@ -51,6 +51,11 @@ const baseRootStoreMock = {
     doc: vi.fn(),
     collection: vi.fn(),
   },
+  workflowsRootStore: {
+    opportunityConfigurationStore: {
+      isHydrated: true,
+    },
+  },
 };
 
 describe("MilestonesSidePanel", () => {

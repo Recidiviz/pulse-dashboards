@@ -239,7 +239,7 @@ export class WorkflowsStore implements Hydratable {
       opportunityTypes,
     );
     return (
-      this.opportunitiesLoaded(opportunityTypes) &&
+      this.opportunitiesLoaded() &&
       Object.values(opportunitiesByTypes).flat().length > 0
     );
   }
@@ -728,13 +728,13 @@ export class WorkflowsStore implements Hydratable {
     return this.opportunitiesByEligibilityStatus("opportunitiesDenied");
   }
 
-  opportunitiesLoaded(opportunityTypes: OpportunityType[]): boolean {
+  opportunitiesLoaded(): boolean {
     // Wait until we have an active caseload before checking that opportunities are loading.
     if (!this.caseloadLoaded()) return false;
 
     return (
-      this.potentialOpportunities(opportunityTypes).filter(
-        (opp) => isHydrationFinished(opp) === false,
+      this.caseloadPersons.filter(
+        (person) => isHydrationFinished(person.opportunityManager) === false,
       ).length === 0 && this.selectedSearchIds.length > 0
     );
   }
@@ -755,24 +755,13 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
-  potentialOpportunities(opportunityTypes: OpportunityType[]): Opportunity[] {
-    const out: Opportunity[] = [];
-    this.caseloadPersons.forEach((person) => {
-      opportunityTypes.forEach((oppType) => {
-        const opp = person.potentialOpportunities[oppType];
-        if (opp) out.push(opp);
-      });
-    });
-    return out;
-  }
-
   get allOpportunitiesByType(): Partial<
     Record<OpportunityType, Opportunity[]>
   > {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadPersonsSorted
-        .flatMap((c) => c.verifiedOpportunities[opportunityType] || []) // Flatten and handle undefined entries
+        .flatMap((c) => c.opportunities[opportunityType] || []) // Flatten and handle undefined entries
         .sort((a, b) => a.compare(b));
 
       mapping[opportunityType] = opportunities;

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 
 import { RootStore } from "../../../../RootStore";
@@ -30,7 +31,7 @@ import { UsCaSupervisionLevelDowngradeForm } from "../UsCaSupervisionLevelDowngr
 let form: UsCaSupervisionLevelDowngradeForm;
 let opp: (typeof form)["opportunity"];
 let personRecord: (typeof opp)["person"]["record"];
-let oppRecord: (typeof opp)["record"] & object;
+let oppRecord: DocumentData;
 
 type PartialFormData = ReturnType<(typeof form)["prefilledDataTransformer"]>;
 
@@ -57,7 +58,7 @@ function createTestUnit() {
     eligibleCriteria: {
       noSupervisionViolationWithin6Months: null,
       supervisionLevelIsHighFor6Months: {
-        highStartDate: new Date("2019-04-01T12:00"),
+        highStartDate: "2019-04-01T12:00",
       },
       usCaAssessmentLevel3OrLower: null,
       usCaHousingTypeIsNotTransient: null,
@@ -66,8 +67,7 @@ function createTestUnit() {
     caseNotes: {},
   };
   const person = new Client(personRecord, rootStore);
-  opp = new UsCaSupervisionLevelDowngradeOpportunity(person);
-  vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord);
+  opp = new UsCaSupervisionLevelDowngradeOpportunity(person, oppRecord);
   form = opp.form;
 }
 

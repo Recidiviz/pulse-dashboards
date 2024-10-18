@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import {
   UsPaSpecialCircumstancesSupervisionRecord,
   usPaSpecialCircumstancesSupervisionSchema,
@@ -27,12 +29,12 @@ export class UsPaSpecialCircumstancesSupervisionOpportunity extends OpportunityB
   Client,
   UsPaSpecialCircumstancesSupervisionRecord["output"]
 > {
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usPaSpecialCircumstancesSupervision",
       client.rootStore,
-      usPaSpecialCircumstancesSupervisionSchema.parse,
+      usPaSpecialCircumstancesSupervisionSchema.parse(record),
     );
   }
 }

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { cloneDeep, some } from "lodash";
 import { computed, makeObservable, override } from "mobx";
 
@@ -123,8 +124,8 @@ export class LSUOpportunity extends OpportunityBase<
 > {
   form: LSUForm;
 
-  constructor(client: Client) {
-    super(client, "LSU", client.rootStore, usIdLsuSchema.parse);
+  constructor(client: Client, record: DocumentData) {
+    super(client, "LSU", client.rootStore, usIdLsuSchema.parse(record));
     makeObservable(this, {
       requirementsMet: override,
       requirementsAlmostMet: override,

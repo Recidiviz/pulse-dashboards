@@ -29,7 +29,7 @@ import {
 export const OpportunitiesSection: React.FC<{
   person: JusticeInvolvedPerson;
 }> = observer(function OpportunitiesSection({ person }) {
-  const opportunities = Object.values(person.verifiedOpportunities);
+  const opportunities = Object.values(person.opportunities);
   if (opportunities.length === 0) {
     return null;
   }

@@ -151,7 +151,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout({
   const navigate = useNavigate();
 
   const opportunity =
-    opportunityType && selectedPerson?.verifiedOpportunities[opportunityType];
+    opportunityType && selectedPerson?.opportunities[opportunityType];
 
   usePersonTracking(selectedPerson, () => {
     opportunity?.form?.trackViewed();

@@ -28,7 +28,7 @@ import {
 export const TasksOpportunitiesSection: React.FC<{
   person: JusticeInvolvedPerson;
 }> = observer(function OpportunitiesSection({ person }) {
-  const opportunities = Object.values(person.verifiedOpportunities).filter(
+  const opportunities = Object.values(person.opportunities).filter(
     (o: Opportunity) => !!o?.config.tooltipEligibilityText,
   );
   if (opportunities.length === 0) {

@@ -52,7 +52,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
-      ...toJS(resident.verifiedOpportunities.usMeSCCP?.form?.formData),
+      ...toJS(resident.opportunities.usMeSCCP?.form?.formData),
     };
   });
 
@@ -81,8 +81,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
 
 export const FormSCCP = observer(function FormSCCP() {
   const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedPerson?.verifiedOpportunities?.usMeSCCP;
+  const opportunity = workflowsStore?.selectedPerson?.opportunities?.usMeSCCP;
 
   if (!opportunity) {
     return null;

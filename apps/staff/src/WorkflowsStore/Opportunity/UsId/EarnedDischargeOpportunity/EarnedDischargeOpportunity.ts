@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
@@ -34,16 +35,15 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
 > {
   form?: UsIdEarnedDischargeForm;
 
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "earnedDischarge",
       client.rootStore,
-      usIdEarnedDischargeSchema.parse,
+      usIdEarnedDischargeSchema.parse(record),
     );
 
     makeObservable(this, {
-      eligibilityDate: computed,
       almostEligibleStatusMessage: computed,
     });
 

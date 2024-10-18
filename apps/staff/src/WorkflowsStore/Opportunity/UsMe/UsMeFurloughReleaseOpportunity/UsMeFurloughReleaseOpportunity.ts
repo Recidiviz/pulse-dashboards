@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { differenceInMonths } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 
 import { FeatureGateError } from "../../../../errors";
 import { Resident } from "../../../Resident";
@@ -42,20 +43,19 @@ export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
     },
   };
 
-  constructor(resident: Resident) {
-    super(
-      resident,
-      "usMeFurloughRelease",
-      resident.rootStore,
-      usMeFurloughReleaseSchema.parse,
-      ({ eligibleCriteria: { usMeServedHalfOfSentence } }) => {
-        if (!usMeServedHalfOfSentence) {
-          throw new FeatureGateError(
-            "UsMeFurloughReleaseOpportunity doesn't yet support Almost Eligible",
-          );
-        }
-      },
-    );
+  constructor(resident: Resident, record: DocumentData) {
+    const parsedRecord = usMeFurloughReleaseSchema.parse(record);
+
+    const {
+      eligibleCriteria: { usMeServedHalfOfSentence },
+    } = record;
+    if (!usMeServedHalfOfSentence) {
+      throw new FeatureGateError(
+        "UsMeFurloughReleaseOpportunity doesn't yet support Almost Eligible",
+      );
+    }
+
+    super(resident, "usMeFurloughRelease", resident.rootStore, parsedRecord);
 
     this.form = new UsMeFurloughReleaseForm(this, resident.rootStore);
   }

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
@@ -79,11 +80,11 @@ const CRITERIA_FORMATTERS: CriteriaFormatters<UsMoOverdueRestrictiveHousingIniti
   };
 
 export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMoOverdueRestrictiveHousingBase<UsMoOverdueRestrictiveHousingInitialHearingReferralRecord> {
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usMoOverdueRestrictiveHousingInitialHearing",
-      usMoOverdueRestrictiveHousingInitialHearingSchema.parse,
+      usMoOverdueRestrictiveHousingInitialHearingSchema.parse(record),
     );
 
     makeObservable(this, {

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { UsMeMediumTrusteeRecord, usMeMediumTrusteeSchema } from "~datatypes";
 
 import { Resident } from "../../../Resident";
@@ -27,12 +29,12 @@ export class UsMeMediumTrusteeOpportunity extends OpportunityBase<
 > {
   form: UsMeMediumTrusteeForm;
 
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usMeMediumTrustee",
       resident.rootStore,
-      usMeMediumTrusteeSchema.parse,
+      usMeMediumTrusteeSchema.parse(record),
     );
 
     this.form = new UsMeMediumTrusteeForm(this, resident.rootStore);

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatDate } from "../../../../utils/formatStrings";
 import { Resident } from "../../../Resident";
@@ -35,12 +37,12 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
 
   form: UsTnReclassificationReviewForm;
 
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usTnAnnualReclassification",
       resident.rootStore,
-      usTnAnnualReclassificationReviewSchema.parse,
+      usTnAnnualReclassificationReviewSchema.parse(record),
     );
 
     this.form = new UsTnReclassificationReviewForm(this, resident.rootStore);

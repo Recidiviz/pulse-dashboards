@@ -19,13 +19,15 @@ import { render, screen } from "@testing-library/react";
 
 import { HydrationState } from "~hydration-utils";
 
-import { JusticeInvolvedPerson } from "../../../WorkflowsStore/";
+import {
+  JusticeInvolvedPerson,
+  OpportunityMapping,
+} from "../../../WorkflowsStore/";
 import { SelectedPersonOpportunitiesHydrator } from "../SelectedPersonOpportunitiesHydrator";
 
 vi.mock("../../../components/StoreProvider");
 
-const lsuHydrateMock = vi.fn();
-const pastFTRDHydrateMock = vi.fn();
+const setSelectedOpportunityTypesMock = vi.fn();
 let testSelectedPerson: JusticeInvolvedPerson;
 const defaultHydrationState: HydrationState = { status: "hydrated" };
 
@@ -37,40 +39,26 @@ beforeEach(() => {
 });
 
 const setUp = ({
-  lsuHydrationState = defaultHydrationState,
-  pastFTRDHydrationState = defaultHydrationState,
-  lsuVerified = true,
-  pastFTRDVerified = true,
+  oppManagerHydrationState = defaultHydrationState,
+  opportunitiesNotEmpty = true,
 }: {
-  lsuHydrationState?: HydrationState;
-  pastFTRDHydrationState?: HydrationState;
-  lsuVerified?: boolean;
-  pastFTRDVerified?: boolean;
+  oppManagerHydrationState?: HydrationState;
+  opportunitiesNotEmpty?: boolean;
 }) => {
   testSelectedPerson = {
-    potentialOpportunities: {
-      LSU: {
-        hydrate: lsuHydrateMock,
-        hydrationState: lsuHydrationState,
-      },
-      pastFTRD: {
-        hydrate: pastFTRDHydrateMock,
-        hydrationState: pastFTRDHydrationState,
-      },
+    opportunityManager: {
+      hydrationState: oppManagerHydrationState,
+      setSelectedOpportunityTypes: setSelectedOpportunityTypesMock,
     },
-    verifiedOpportunities: {},
+    opportunities: {},
   } as any as JusticeInvolvedPerson;
-  if (lsuVerified) {
+  if (opportunitiesNotEmpty) {
     // @ts-ignore
-    testSelectedPerson.verifiedOpportunities.LSU = {
-      hydrationState: lsuHydrationState,
-    };
-  }
-  if (pastFTRDVerified) {
-    // @ts-ignore
-    testSelectedPerson.verifiedOpportunities.pastFTRD = {
-      hydrationState: pastFTRDHydrationState,
-    };
+    testSelectedPerson.opportunities = {
+      LSU: {
+        hydrationState: defaultHydrationState,
+      },
+    } as any as OpportunityMapping;
   }
 };
 
@@ -102,7 +90,7 @@ const expectStateToBe = (expectedState: "HYDRATED" | "EMPTY" | "LOADING") => {
 };
 
 describe("SelectedPersonOpportunityHydrator tests", () => {
-  it("calls hydrate on all specified opportunities", () => {
+  it("calls update active opportunities on all specified opportunities", () => {
     setUp({});
 
     render(
@@ -114,48 +102,17 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
       />,
     );
 
-    expect(lsuHydrateMock).toHaveBeenCalled();
-    expect(pastFTRDHydrateMock).toHaveBeenCalled();
-  });
-
-  it("calls hydrate only on specified opportunities", () => {
-    setUp({});
-
-    render(
-      <SelectedPersonOpportunitiesHydrator
-        hydrated={hydrated}
-        empty={empty}
-        opportunityTypes={["LSU"]}
-        person={testSelectedPerson}
-      />,
-    );
-
-    expect(lsuHydrateMock).toHaveBeenCalled();
-    expect(pastFTRDHydrateMock).not.toHaveBeenCalled();
+    expect(setSelectedOpportunityTypesMock).toHaveBeenCalledExactlyOnceWith([
+      "LSU",
+      "pastFTRD",
+    ]);
   });
 
   // eslint-disable-next-line vitest/expect-expect
   it("renders loading state if loading is not complete", () => {
     setUp({
-      lsuHydrationState: { status: "loading" },
-      pastFTRDHydrationState: { status: "loading" },
+      oppManagerHydrationState: { status: "loading" },
     });
-
-    render(
-      <SelectedPersonOpportunitiesHydrator
-        hydrated={hydrated}
-        empty={empty}
-        opportunityTypes={["LSU", "pastFTRD"]}
-        person={testSelectedPerson}
-      />,
-    );
-
-    expectStateToBe("LOADING");
-  });
-
-  // eslint-disable-next-line vitest/expect-expect
-  it("renders loading state if one is loaded and the other is not", () => {
-    setUp({ lsuHydrationState: { status: "loading" } });
 
     render(
       <SelectedPersonOpportunitiesHydrator
@@ -186,26 +143,9 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
   });
 
   // eslint-disable-next-line vitest/expect-expect
-  it("renders hydrated state only based on specified opportunities", () => {
-    setUp({ lsuHydrationState: { status: "loading" } });
-
-    render(
-      <SelectedPersonOpportunitiesHydrator
-        hydrated={hydrated}
-        empty={empty}
-        opportunityTypes={["pastFTRD"]}
-        person={testSelectedPerson}
-      />,
-    );
-
-    expectStateToBe("HYDRATED");
-  });
-
-  // eslint-disable-next-line vitest/expect-expect
   it("renders empty state if no results", () => {
     setUp({
-      lsuVerified: false,
-      pastFTRDVerified: false,
+      opportunitiesNotEmpty: false,
     });
 
     render(
@@ -221,31 +161,10 @@ describe("SelectedPersonOpportunityHydrator tests", () => {
   });
 
   // eslint-disable-next-line vitest/expect-expect
-  it("only renders empty state based on specified opportunities", () => {
-    setUp({
-      lsuVerified: false,
-      pastFTRDVerified: true,
-    });
-
-    render(
-      <SelectedPersonOpportunitiesHydrator
-        hydrated={hydrated}
-        empty={empty}
-        opportunityTypes={["LSU"]}
-        person={testSelectedPerson}
-      />,
-    );
-
-    expectStateToBe("EMPTY");
-  });
-
-  // eslint-disable-next-line vitest/expect-expect
   it("exits loading state even if hydration fails", () => {
     setUp({
-      lsuHydrationState: { status: "failed" } as HydrationState,
-      pastFTRDHydrationState: { status: "failed" } as HydrationState,
-      lsuVerified: false,
-      pastFTRDVerified: false,
+      oppManagerHydrationState: { status: "failed" } as HydrationState,
+      opportunitiesNotEmpty: false,
     });
 
     render(

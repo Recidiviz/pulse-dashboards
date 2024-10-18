@@ -1,6 +1,51 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`fully eligible > eligible with discretion 1`] = `
+exports[`fully eligible > requirements met 1`] = `
+[
+  {
+    "text": "Currently on medium supervision level",
+    "tooltip": "Policy requirement: Currently on medium or minimum supervision.",
+  },
+  {
+    "text": "On medium supervision for 2 years",
+    "tooltip": "Policy requirement: On minimum supervision level for 1 year or medium level for 18 months.",
+  },
+  {
+    "text": "Negative arrest check on May 28, 2022",
+    "tooltip": "Policy requirement: No arrests in the last 1 year.",
+  },
+  {
+    "text": "No sanctions higher than Level 1 in the last year",
+    "tooltip": "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
+  },
+  {
+    "text": "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months",
+    "tooltip": undefined,
+  },
+  {
+    "text": "Passed drug screens in last 12 months: DRUN on Jan 4, 2022",
+    "tooltip": "Policy requirement: Passed drug screen in the last 12 months for non-drug offenders. Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.",
+  },
+  {
+    "text": "Special conditions up to date, last SPEC on Mar 15, 2022",
+    "tooltip": "Policy requirement: Special conditions are current.",
+  },
+  {
+    "text": "No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
+    "tooltip": "Policy requirement: Has reported as instructed without incident unless excused and documented by the officer.",
+  },
+  {
+    "text": "Valid current offense: EXAMPLE CURRENT",
+    "tooltip": "Policy requirement: Offense type not domestic abuse or sexual assault, DUI in past 5 years, not crime against person that resulted in physical bodily harm, not crime where victim was under 18.",
+  },
+  {
+    "text": "Ineligible offense expired 10+ years ago: EXAMPLE EXPIRED",
+    "tooltip": "Policy requirement: If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
+  },
+]
+`;
+
+exports[`fully eligible with discretion > eligible with discretion 1`] = `
 [
   {
     "text": "Currently on medium supervision level",
@@ -57,51 +102,6 @@ exports[`fully eligible > eligible with discretion 1`] = `
   {
     "text": "Eligible with discretion: Missing sentence information",
     "tooltip": "If the person is missing sentencing information, they may still be eligible for compliant reporting.",
-  },
-]
-`;
-
-exports[`fully eligible > requirements met 1`] = `
-[
-  {
-    "text": "Currently on medium supervision level",
-    "tooltip": "Policy requirement: Currently on medium or minimum supervision.",
-  },
-  {
-    "text": "On medium supervision for 2 years",
-    "tooltip": "Policy requirement: On minimum supervision level for 1 year or medium level for 18 months.",
-  },
-  {
-    "text": "Negative arrest check on May 28, 2022",
-    "tooltip": "Policy requirement: No arrests in the last 1 year.",
-  },
-  {
-    "text": "No sanctions higher than Level 1 in the last year",
-    "tooltip": "Policy requirement: No sanctions higher than Level 1 in the last 1 year.",
-  },
-  {
-    "text": "Fee balance for current sentence less than $2,000 and has made payments on three consecutive months",
-    "tooltip": undefined,
-  },
-  {
-    "text": "Passed drug screens in last 12 months: DRUN on Jan 4, 2022",
-    "tooltip": "Policy requirement: Passed drug screen in the last 12 months for non-drug offenders. Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.",
-  },
-  {
-    "text": "Special conditions up to date, last SPEC on Mar 15, 2022",
-    "tooltip": "Policy requirement: Special conditions are current.",
-  },
-  {
-    "text": "No DECF, DEDF, DEDU, DEIO, DEIR codes in the last 3 months",
-    "tooltip": "Policy requirement: Has reported as instructed without incident unless excused and documented by the officer.",
-  },
-  {
-    "text": "Valid current offense: EXAMPLE CURRENT",
-    "tooltip": "Policy requirement: Offense type not domestic abuse or sexual assault, DUI in past 5 years, not crime against person that resulted in physical bodily harm, not crime where victim was under 18.",
-  },
-  {
-    "text": "Ineligible offense expired 10+ years ago: EXAMPLE EXPIRED",
-    "tooltip": "Policy requirement: If the offender has a previous conviction for one of the crimes listed in Section VI.(A)(3) but is not currently on supervision for one of those crimes, then the  DD shall make a case by case determination as to whether an offender is suitable for CR. The DD review process is waived if the expiration date is more than ten years old.",
   },
 ]
 `;

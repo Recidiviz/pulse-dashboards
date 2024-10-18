@@ -21,6 +21,7 @@ import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 import { MockInstance } from "vitest";
 
+import { OpportunityRecordBase } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
@@ -49,13 +50,13 @@ import { Opportunity } from "../types";
 vi.mock("../../subscriptions");
 vi.mock("firebase/firestore");
 
-let opp: OpportunityBase<Client, any>;
+let opp: OpportunityBase<Client, Record<string, any>>;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 let mockUser: CombinedUserRecord;
 let mockUserStateCode: MockInstance;
+let oppRecord: OpportunityRecordBase;
 
 const statuses = {
   needsHydration: { status: "needs hydration" },
@@ -67,8 +68,8 @@ const statuses = {
 class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
   form: FormBase<any>;
 
-  constructor(oppClient: Client, type: OpportunityType) {
-    super(oppClient, type, root);
+  constructor(oppClient: Client, type: OpportunityType, record: DocumentData) {
+    super(oppClient, type, root, record);
     this.form = new FormBase<any>(this, root);
   }
 
@@ -95,20 +96,25 @@ function createTestUnit() {
     mockUser.info.email,
   );
 
+  oppRecord = {
+    stateCode: "US_OZ",
+    externalId: "123",
+    eligibleCriteria: {},
+    ineligibleCriteria: {},
+    caseNotes: {},
+  };
+
   // using an ineligible to avoid wasted work creating opportunities we don't need
   client = new Client(ineligibleClientRecord, root);
-  return new TestOpportunity(client, "TEST" as OpportunityType);
+  return new TestOpportunity(client, "TEST" as OpportunityType, oppRecord);
 }
 
 function mockHydration({
-  referralData,
   updateData,
 }: {
-  referralData?: any;
   updateData?: OpportunityUpdate;
 } = {}) {
   runInAction(() => {
-    referralSub.hydrationState = statuses.hydrated;
     updatesSub.hydrationState = statuses.hydrated;
 
     vi.spyOn(
@@ -117,9 +123,6 @@ function mockHydration({
       "get",
     ).mockReturnValue(statuses.hydrated);
 
-    if (referralData) {
-      referralSub.data = referralData;
-    }
     if (updateData) {
       updatesSub.data = updateData;
     }
@@ -164,7 +167,6 @@ beforeEach(() => {
   configure({ safeDescriptors: false });
   opp = createTestUnit();
 
-  referralSub = opp.referralSubscription;
   updatesSub = opp.updatesSubscription;
 
   // configure a mock user who is viewing this opportunity
@@ -182,15 +184,6 @@ afterEach(() => {
 });
 
 describe("hydrationState", () => {
-  beforeEach(() => {
-    // Pretend the form is fully hydrated to not interfere with testing subs hydration
-    vi.spyOn(
-      (opp as TestOpportunity).form,
-      "hydrationState",
-      "get",
-    ).mockReturnValue(statuses.hydrated);
-  });
-
   test.each([
     [statuses.needsHydration, statuses.needsHydration],
     [statuses.needsHydration, statuses.loading],
@@ -198,11 +191,19 @@ describe("hydrationState", () => {
   ])(
     "needs hydration (subs hydration %s + %s)",
     (hydrationStateA, hydrationStateB) => {
-      referralSub.hydrationState = hydrationStateA;
+      vi.spyOn(
+        (opp as TestOpportunity).form,
+        "hydrationState",
+        "get",
+      ).mockReturnValue(hydrationStateA);
       updatesSub.hydrationState = hydrationStateB;
       expect(opp.hydrationState).toEqual({ status: "needs hydration" });
 
-      referralSub.hydrationState = hydrationStateB;
+      vi.spyOn(
+        (opp as TestOpportunity).form,
+        "hydrationState",
+        "get",
+      ).mockReturnValue(hydrationStateB);
       updatesSub.hydrationState = hydrationStateA;
       expect(opp.hydrationState).toEqual({ status: "needs hydration" });
     },
@@ -212,11 +213,19 @@ describe("hydrationState", () => {
     [statuses.loading, statuses.loading],
     [statuses.loading, statuses.hydrated],
   ])("loading (subs hydration %s + %s)", (hydrationStateA, hydrationStateB) => {
-    referralSub.hydrationState = hydrationStateA;
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(hydrationStateA);
     updatesSub.hydrationState = hydrationStateB;
     expect(opp.hydrationState).toEqual({ status: "loading" });
 
-    referralSub.hydrationState = hydrationStateB;
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(hydrationStateB);
     updatesSub.hydrationState = hydrationStateA;
     expect(opp.hydrationState).toEqual({ status: "loading" });
   });
@@ -227,14 +236,22 @@ describe("hydrationState", () => {
     [statuses.failed, statuses.hydrated],
     [statuses.failed, statuses.needsHydration],
   ])("failed (subs hydration %s + %s)", (hydrationStateA, hydrationStateB) => {
-    referralSub.hydrationState = hydrationStateA;
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(hydrationStateA);
     updatesSub.hydrationState = hydrationStateB;
     expect(opp.hydrationState).toEqual({
       status: "failed",
       error: expect.any(Error),
     });
 
-    referralSub.hydrationState = hydrationStateB;
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(hydrationStateB);
     updatesSub.hydrationState = hydrationStateA;
     expect(opp.hydrationState).toEqual({
       status: "failed",
@@ -243,7 +260,11 @@ describe("hydrationState", () => {
   });
 
   test("hydrated", () => {
-    referralSub.hydrationState = statuses.hydrated;
+    vi.spyOn(
+      (opp as TestOpportunity).form,
+      "hydrationState",
+      "get",
+    ).mockReturnValue(statuses.hydrated);
     updatesSub.hydrationState = statuses.hydrated;
     expect(opp.hydrationState).toEqual({ status: "hydrated" });
   });
@@ -251,7 +272,6 @@ describe("hydrationState", () => {
 
 test("hydrate", () => {
   opp.hydrate();
-  expect(referralSub.hydrate).toHaveBeenCalled();
   expect(updatesSub.hydrate).toHaveBeenCalled();
 });
 

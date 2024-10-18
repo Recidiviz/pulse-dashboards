@@ -33,10 +33,7 @@ const useHydrateOpportunities = (person: JusticeInvolvedPerson): void => {
   useEffect(
     () =>
       autorun(() => {
-        const { potentialOpportunities } = person;
-        opportunityTypes.forEach((opportunityType) => {
-          potentialOpportunities[opportunityType]?.hydrate();
-        });
+        person.opportunityManager.hydrate();
       }),
     [person, opportunityTypes],
   );

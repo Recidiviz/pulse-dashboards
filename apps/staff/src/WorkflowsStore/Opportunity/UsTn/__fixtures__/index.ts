@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
-
 import {
   ClientRecord,
   CombinedUserRecord,
@@ -25,11 +23,11 @@ import {
 import { dateToTimestamp } from "../../../utils";
 import {
   OpportunityType,
-  UsTnCustodyLevelDowngradeReferralRecord,
+  UsTnCustodyLevelDowngradeReferralRecordRaw,
 } from "../..";
-import { CompliantReportingReferralRecord } from "../CompliantReportingOpportunity";
-import { UsTnAnnualReclassificationReviewReferralRecord } from "../UsTnAnnualReclassificationReviewOpportunity";
-import { UsTnExpirationReferralRecord } from "../UsTnExpirationOpportunity";
+import { CompliantReportingReferralRecordRaw } from "../CompliantReportingOpportunity";
+import { UsTnAnnualReclassificationReviewReferralRecordRaw } from "../UsTnAnnualReclassificationReviewOpportunity";
+import { UsTnExpirationReferralRecordRaw } from "../UsTnExpirationOpportunity";
 
 export const usTnVerifiedOpportunities = {
   usTnExpirationOpportunity: {
@@ -55,7 +53,7 @@ export const ineligibleClientRecord: ClientRecord = {
   supervisionLevelStart: dateToTimestamp("2019-12-20"),
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: "2022-02-02",
   allEligibleOpportunities: [],
   personType: "CLIENT",
 };
@@ -110,13 +108,15 @@ export const usTnUserRecord: CombinedUserRecord = {
   },
 };
 
-export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecord> =
+export const compliantReportingReferralRecord: Partial<CompliantReportingReferralRecordRaw> =
   {
+    stateCode: "US_TN",
+    externalId: "110",
     eligibleCriteria: {
       usTnOnEligibleLevelForSufficientTime: {
-        eligibleDate: parseISO("2021-12-20"),
+        eligibleDate: "2021-12-20",
         eligibleLevel: "MEDIUM",
-        startDateOnEligibleLevel: parseISO("2019-12-20"),
+        startDateOnEligibleLevel: "2019-12-20",
       },
       usTnFinesFeesEligible: {
         hasFinesFeesBalanceBelow500: {
@@ -127,22 +127,22 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
           consecutiveMonthlyPayments: 3,
         },
       },
-      usTnNoArrestsInPastYear: {},
-      usTnNoHighSanctionsInPastYear: {},
-      usTnNoRecentCompliantReportingRejections: {},
+      usTnNoArrestsInPastYear: null,
+      usTnNoHighSanctionsInPastYear: null,
+      usTnNoRecentCompliantReportingRejections: null,
       usTnSpecialConditionsAreCurrent: {
         speNoteDue: null,
       },
-      usTnNotServingIneligibleCrOffense: {},
+      usTnNotServingIneligibleCrOffense: null,
       usTnPassedDrugScreenCheck: {
         hasAtLeast1NegativeDrugTestPastYear: [
           {
-            negativeScreenDate: parseISO("2022-01-04"),
+            negativeScreenDate: "2022-01-04",
             negativeScreenResult: "DRUN",
           },
         ],
         latestDrugTestIsNegative: {
-          latestDrugScreenDate: parseISO("2022-01-04"),
+          latestDrugScreenDate: "2022-01-04",
           latestDrugScreenResult: "DRUN",
         },
       },
@@ -156,17 +156,17 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     },
     ineligibleCriteria: {},
     formInformation: {
-      sentenceStartDate: parseISO("2019-12-20"),
+      sentenceStartDate: "2019-12-20",
       currentOffenses: ["EXAMPLE CURRENT"],
       judicialDistrict: ["A"],
     },
     metadata: {
       mostRecentArrestCheck: {
-        contactDate: parseISO("2022-05-28"),
+        contactDate: "2022-05-28",
         contactType: "ARRN",
       },
       mostRecentSpeNote: {
-        contactDate: parseISO("2022-03-15"),
+        contactDate: "2022-03-15",
         contactType: "SPEC",
       },
       convictionCounties: [],
@@ -174,13 +174,15 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
     },
   };
 
-export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecord> =
+export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecordRaw> =
   {
+    stateCode: "US_TN",
+    externalId: "110",
     eligibleCriteria: {
       usTnOnEligibleLevelForSufficientTime: {
-        eligibleDate: parseISO("2021-12-20"),
+        eligibleDate: "2021-12-20",
         eligibleLevel: "MEDIUM",
-        startDateOnEligibleLevel: parseISO("2019-12-20"),
+        startDateOnEligibleLevel: "2019-12-20",
       },
       usTnFinesFeesEligible: {
         hasFinesFeesBalanceBelow500: {
@@ -191,48 +193,42 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
           consecutiveMonthlyPayments: 3,
         },
       },
-      usTnNoArrestsInPastYear: {},
-      usTnNoHighSanctionsInPastYear: {},
-      usTnNoRecentCompliantReportingRejections: {},
+      usTnNoArrestsInPastYear: null,
+      usTnNoHighSanctionsInPastYear: null,
+      usTnNoRecentCompliantReportingRejections: null,
       usTnSpecialConditionsAreCurrent: {
         speNoteDue: null,
       },
-      usTnNotServingIneligibleCrOffense: {},
+      usTnNotServingIneligibleCrOffense: null,
       usTnPassedDrugScreenCheck: {
         hasAtLeast1NegativeDrugTestPastYear: [
           {
-            negativeScreenDate: parseISO("2022-01-04"),
+            negativeScreenDate: "2022-01-04",
             negativeScreenResult: "DRUN",
           },
         ],
         latestDrugTestIsNegative: {
-          latestDrugScreenDate: parseISO("2022-01-04"),
+          latestDrugScreenDate: "2022-01-04",
           latestDrugScreenResult: "DRUN",
         },
       },
       // Eligible with discretion: Previous zero-tolerance codes
       usTnNoZeroToleranceCodesSpans: {
-        zeroToleranceCodeDates: [parseISO("2022-06-01")],
+        zeroToleranceCodeDates: ["2022-06-01"],
       },
       // Eligible with discretion: Prior offenses and lifetime offenses expired less than 10 years ago
-      usTnIneligibleOffensesExpired: [
-        {
-          ineligibleOffense: "EXAMPLE PAST",
-          relevantDate: parseISO("2023-02-02"),
-        },
-      ],
-      usTnNoPriorRecordWithIneligibleCrOffense: [
-        {
-          ineligibleOffense: "EXAMPLE PAST INELIGIBLE",
-          relevantDate: parseISO("2020-03-03"),
-        },
-      ],
-      usTnNotServingUnknownCrOffense: [
-        {
-          ineligibleOffense: "EXAMPLE UNKNOWN",
-          relevantDate: parseISO("2025-05-05"),
-        },
-      ],
+      usTnIneligibleOffensesExpired: {
+        ineligibleOffenses: ["EXAMPLE PAST"],
+        ineligibleSentencesExpirationDates: ["2023-02-02"],
+      },
+      usTnNoPriorRecordWithIneligibleCrOffense: {
+        ineligibleOffenses: ["EXAMPLE PAST INELIGIBLE"],
+        ineligibleOffenseDates: ["2020-03-03"],
+      },
+      usTnNotServingUnknownCrOffense: {
+        ineligibleOffenses: ["EXAMPLE UNKNOWN"],
+        ineligibleSentencesExpirationDate: ["2025-05-05"],
+      },
       hasActiveSentence: {
         // Eligible with discretion: Missing sentence information
         hasActiveSentence: false,
@@ -240,16 +236,16 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
     },
     ineligibleCriteria: {},
     formInformation: {
-      sentenceStartDate: parseISO("2019-12-20"),
+      sentenceStartDate: "2019-12-20",
       currentOffenses: [],
     },
     metadata: {
       mostRecentArrestCheck: {
-        contactDate: parseISO("2022-05-28"),
+        contactDate: "2022-05-28",
         contactType: "ARRN",
       },
       mostRecentSpeNote: {
-        contactDate: parseISO("2022-05-28"),
+        contactDate: "2022-05-28",
         contactType: "SPET",
       },
       convictionCounties: [],
@@ -258,12 +254,12 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
   };
 
 export const compliantReportingIneligibleCriteria: Required<
-  NonNullable<CompliantReportingReferralRecord["ineligibleCriteria"]>
+  NonNullable<CompliantReportingReferralRecordRaw["ineligibleCriteria"]>
 > = {
   usTnOnEligibleLevelForSufficientTime: {
-    eligibleDate: parseISO("2022-08-15"),
+    eligibleDate: "2022-08-15",
     eligibleLevel: "MEDIUM",
-    startDateOnEligibleLevel: parseISO("2019-12-20"),
+    startDateOnEligibleLevel: "2019-12-20",
   },
   usTnFinesFeesEligible: {
     hasFinesFeesBalanceBelow500: {
@@ -275,30 +271,32 @@ export const compliantReportingIneligibleCriteria: Required<
     },
   },
   usTnNoHighSanctionsInPastYear: {
-    latestHighSanctionDate: parseISO("2021-08-15"),
+    latestHighSanctionDate: "2021-08-15",
   },
   usTnNoRecentCompliantReportingRejections: {
     contactCode: ["TEST1"],
   },
 };
 
-export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecord> =
+export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantReportingReferralRecordRaw> =
   {
+    stateCode: "US_TN",
+    externalId: "110",
     eligibleCriteria: {
-      usTnNoArrestsInPastYear: {},
+      usTnNoArrestsInPastYear: null,
       usTnSpecialConditionsAreCurrent: {
         speNoteDue: null,
       },
-      usTnNotServingIneligibleCrOffense: {},
+      usTnNotServingIneligibleCrOffense: null,
       usTnPassedDrugScreenCheck: {
         hasAtLeast1NegativeDrugTestPastYear: [
           {
-            negativeScreenDate: parseISO("2022-01-04"),
+            negativeScreenDate: "2022-01-04",
             negativeScreenResult: "DRUN",
           },
         ],
         latestDrugTestIsNegative: {
-          latestDrugScreenDate: parseISO("2022-01-04"),
+          latestDrugScreenDate: "2022-01-04",
           latestDrugScreenResult: "DRUN",
         },
       },
@@ -312,17 +310,17 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
     },
     ineligibleCriteria: {},
     formInformation: {
-      sentenceStartDate: parseISO("2019-12-20"),
+      sentenceStartDate: "2019-12-20",
       currentOffenses: ["EXAMPLE OFFENSE"],
       judicialDistrict: ["A"],
     },
     metadata: {
       mostRecentArrestCheck: {
-        contactDate: parseISO("2022-05-28"),
+        contactDate: "2022-05-28",
         contactType: "ARRN",
       },
       mostRecentSpeNote: {
-        contactDate: parseISO("2022-03-15"),
+        contactDate: "2022-03-15",
         contactType: "SPEC",
       },
       convictionCounties: [],
@@ -352,7 +350,7 @@ export const UsTnExpirationEligibleClientRecord: ClientRecord = {
   allEligibleOpportunities: ["usTnExpiration"],
 };
 
-export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
+export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecordRaw =
   {
     stateCode: "US_TN",
     externalId: "101",
@@ -362,34 +360,34 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
       convictionCounties: ["123", "456"],
       sexOffenses: [],
       latestEmp: {
-        contactDate: parseISO("2022-01-01"),
+        contactDate: "2022-01-01",
         contactType: "EMPV",
         contactComment: "EMPLOYMENT VERIFIED",
       },
       latestVrr: {
-        contactDate: parseISO("2022-02-02"),
+        contactDate: "2022-02-02",
         contactType: "VRRE",
       },
       newOffenses: [
         {
-          contactDate: parseISO("2022-02-09"),
+          contactDate: "2022-02-09",
           contactType: "NCAF",
           contactComment: "ARRESTED",
         },
         {
-          contactDate: parseISO("2022-02-17"),
+          contactDate: "2022-02-17",
           contactType: "NCAC",
           contactComment: "INTERROGATED",
         },
       ],
       alcoholHistory: [
         {
-          contactDate: parseISO("2022-02-12"),
+          contactDate: "2022-02-12",
           contactType: "FSWR",
           contactComment: "HAD APPOINTMENT",
         },
         {
-          contactDate: parseISO("2022-02-07"),
+          contactDate: "2022-02-07",
           contactType: "FSWR",
           contactComment: "HAD ANOTHER APPOINTMENT",
         },
@@ -397,7 +395,7 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
     },
     eligibleCriteria: {
       supervisionPastFullTermCompletionDateOrUpcoming1Day: {
-        eligibleDate: parseISO("2022-02-02"),
+        eligibleDate: "2022-02-02",
       },
       usTnNoZeroToleranceCodesSpans: {},
       usTnNotOnLifeSentenceOrLifetimeSupervision: {
@@ -410,7 +408,7 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecord =
         {
           noteTitle: "MUST JOURNAL",
           noteBody: "Client must journal at least once a week",
-          eventDate: parseISO("2022-08-22"),
+          eventDate: "2022-08-22",
         },
       ],
     },
@@ -422,7 +420,7 @@ export const UsTnCustodyLevelDowngradeEligibleResidentRecord: WorkflowsResidentR
     allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
   };
 
-export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDowngradeReferralRecord =
+export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDowngradeReferralRecordRaw =
   {
     stateCode: "US_TN",
     externalId: UsTnCustodyLevelDowngradeEligibleResidentRecord.recordId,
@@ -447,9 +445,9 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       incompatibleArray: [],
       statusAtHearingSeg: "GEN",
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
-      lastCafDate: new Date("2022-08-22"),
+      lastCafDate: "2022-08-22",
       latestPreaScreeningResults: {
-        latestPreaScreeningDate: new Date("2022-02-23"),
+        latestPreaScreeningDate: "2022-02-23",
         aggressorFindingLevelChanged: true,
         victimFindingLevelChanged: false,
       },
@@ -463,13 +461,13 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       q7Score: 3,
       q8Score: 4,
       q9Score: 5,
-      q6Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
-      q7Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q6Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
+      q7Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
       q8Notes: [
         {
-          detainerReceivedDate: new Date("2022-08-22"),
-          detainerFelonyFlag: true,
-          detainerMisdemeanorFlag: false,
+          detainerReceivedDate: "2022-08-22",
+          detainerFelonyFlag: "X",
+          detainerMisdemeanorFlag: null,
         },
       ],
     },
@@ -482,10 +480,10 @@ export const UsTnAnnualReclassificationEligibleResidentRecord: WorkflowsResident
     allEligibleOpportunities: ["usTnAnnualReclassification"],
   };
 
-export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclassificationReviewReferralRecord =
+export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclassificationReviewReferralRecordRaw =
   {
     stateCode: "US_TN",
-    formReclassificationDueDate: parseISO("2024-01-01"),
+    formReclassificationDueDate: "2024-01-01",
     externalId:
       UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
     eligibleCriteria: {
@@ -500,19 +498,19 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
     caseNotes: {
       foo: [
         {
-          eventDate: parseISO("2022-04-06"),
+          eventDate: "2022-04-06",
           noteBody: "Body1",
           noteTitle: "Title1",
         },
         {
-          eventDate: parseISO("2022-06-06"),
+          eventDate: "2022-06-06",
           noteBody: "Body2",
           noteTitle: "Title2",
         },
       ],
       "ba bar": [
         {
-          eventDate: parseISO("2022-09-06"),
+          eventDate: "2022-09-06",
           noteBody: "Body3",
           noteTitle: "Title3",
         },
@@ -520,9 +518,9 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
     },
     formInformation: {
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
-      lastCafDate: new Date("2022-08-22"),
+      lastCafDate: "2022-08-22",
       latestPreaScreeningResults: {
-        latestPreaScreeningDate: new Date("2022-02-23"),
+        latestPreaScreeningDate: "2022-02-23",
         aggressorFindingLevelChanged: false,
         victimFindingLevelChanged: true,
       },
@@ -536,63 +534,14 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
       q7Score: 3,
       q8Score: 4,
       q9Score: 5,
-      q6Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
-      q7Notes: [{ eventDate: new Date("2022-08-22"), noteBody: "Some note" }],
+      q6Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
+      q7Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
       q8Notes: [
         {
-          detainerReceivedDate: new Date("2022-08-22"),
-          detainerFelonyFlag: true,
-          detainerMisdemeanorFlag: false,
+          detainerReceivedDate: "2022-08-22",
+          detainerFelonyFlag: "X",
+          detainerMisdemeanorFlag: null,
         },
       ],
-    },
-  };
-
-export const UsTnAnnualReclassificationReferralRecordFixture02: UsTnAnnualReclassificationReviewReferralRecord =
-  {
-    stateCode: "US_TN",
-    formReclassificationDueDate: parseISO("2024-02-01"),
-    externalId:
-      UsTnAnnualReclassificationEligibleResidentRecord.personExternalId,
-    eligibleCriteria: {
-      usTnAtLeast12MonthsSinceLatestAssessment: null,
-      custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
-        custodyLevel: "MEDIUM",
-        recommendedCustodyLevel: "MINIMUM",
-      },
-    },
-    ineligibleCriteria: {},
-    caseNotes: {
-      foo: [
-        {
-          eventDate: parseISO("2022-04-06"),
-          noteBody: "Body1",
-          noteTitle: "Title1",
-        },
-        {
-          eventDate: parseISO("2022-06-06"),
-          noteBody: "Body2",
-          noteTitle: "Title2",
-        },
-      ],
-      "ba bar": [
-        {
-          eventDate: parseISO("2022-09-06"),
-          noteBody: "Body3",
-          noteTitle: "Title3",
-        },
-      ],
-    },
-    formInformation: {
-      q1Score: -3,
-      q2Score: -2,
-      q3Score: -1,
-      q4Score: 0,
-      q5Score: 1,
-      q6Score: 2,
-      q7Score: 3,
-      q8Score: 4,
-      q9Score: 5,
     },
   };

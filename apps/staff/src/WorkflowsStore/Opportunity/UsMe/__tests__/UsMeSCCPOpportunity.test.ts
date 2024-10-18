@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { parseISO } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -27,7 +27,6 @@ import {
 
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
-import { DocumentSubscription } from "../../../subscriptions";
 import { UsMeSCCPOpportunity } from "..";
 import {
   usMePersonRecord,
@@ -37,11 +36,13 @@ import {
 let opp: UsMeSCCPOpportunity;
 let resident: Resident;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 
 vi.mock("../../../subscriptions");
 
-function createTestUnit(residentRecord: typeof usMePersonRecord) {
+function createTestUnit(
+  residentRecord: typeof usMePersonRecord,
+  opportunityRecord: DocumentData,
+) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   vi.spyOn(root.workflowsStore, "opportunityTypes", "get").mockReturnValue([
@@ -49,13 +50,7 @@ function createTestUnit(residentRecord: typeof usMePersonRecord) {
   ]);
   resident = new Resident(residentRecord, root);
 
-  const maybeOpportunity = resident.potentialOpportunities.usMeSCCP;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsMeSCCPOpportunity(resident, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -71,11 +66,10 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(usMePersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSccpFixtures.fullyEligibleTwoThirdsPortion.output;
+    createTestUnit(
+      usMePersonRecord,
+      usMeSccpFixtures.fullyEligibleTwoThirdsPortion.input,
+    );
   });
 
   test("requirements met", () => {
@@ -89,22 +83,19 @@ describe("fully eligible", () => {
 });
 
 test("requirements for half sentence served", () => {
-  createTestUnit(usMePersonRecordShorterSentence);
-
-  referralSub = opp.referralSubscription;
-  referralSub.hydrationState = { status: "hydrated" };
-  referralSub.data = usMeSccpFixtures.fullyEligibleHalfPortion.output;
+  createTestUnit(
+    usMePersonRecordShorterSentence,
+    usMeSccpFixtures.fullyEligibleHalfPortion.input,
+  );
 
   expect(opp.requirementsMet[1]).toMatchSnapshot();
 });
 
 test("eligible with future x portion date", () => {
-  createTestUnit(usMePersonRecord);
-
-  referralSub = opp.referralSubscription;
-  referralSub.hydrationState = { status: "hydrated" };
-  referralSub.data =
-    usMeSccpFixtures.eligibleToApplyBeforeXPortionServed.output;
+  createTestUnit(
+    usMePersonRecord,
+    usMeSccpFixtures.eligibleToApplyBeforeXPortionServed.input,
+  );
 
   expect(opp.requirementsMet[1]).toMatchSnapshot();
 
@@ -114,11 +105,10 @@ test("eligible with future x portion date", () => {
 
 describe("almost eligible but for months remaining", () => {
   beforeEach(() => {
-    createTestUnit(usMePersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSccpFixtures.almostEligibleMonthsRemaining.output;
+    createTestUnit(
+      usMePersonRecord,
+      usMeSccpFixtures.almostEligibleMonthsRemaining.input,
+    );
   });
 
   test("requirements met", () => {
@@ -133,17 +123,22 @@ describe("almost eligible but for months remaining", () => {
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toEqual("35 months until release");
   });
+});
 
-  test("almostEligibleStatusMessage with days", () => {
+describe("almost eligible but for months with days remaining", () => {
+  beforeEach(() => {
     const almostEligibleInDays = {
-      ...usMeSccpFixtures.almostEligibleMonthsRemaining.output,
+      ...usMeSccpFixtures.almostEligibleMonthsRemaining.input,
       ineligibleCriteria: {
         usMeXMonthsRemainingOnSentence: {
-          eligibleDate: parseISO(relativeFixtureDate({ days: 13 })),
+          eligibleDate: relativeFixtureDate({ days: 13 }),
         },
       },
     };
-    referralSub.data = almostEligibleInDays;
+    createTestUnit(usMePersonRecord, almostEligibleInDays);
+  });
+
+  test("almostEligibleStatusMessage with days", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
       "30 months and 13 days until release",
     );
@@ -155,18 +150,20 @@ describe("ensure requirements text updates when source changes", () => {
     // This is specifically to check for a bug where the first time we built
     // requirements we accidentally overwrote the source template instead of
     // copying it which made the requirements text never update until a reload.
-    createTestUnit(usMePersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSccpFixtures.fullyEligibleTwoThirdsPortion.output;
+    createTestUnit(
+      usMePersonRecord,
+      usMeSccpFixtures.fullyEligibleTwoThirdsPortion.input,
+    );
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textEligible = opp.requirementsMet.find(({ text }) =>
       text.includes("months remaining on sentence"),
     )!.text;
 
-    referralSub.data = usMeSccpFixtures.almostEligibleMonthsRemaining.output;
+    createTestUnit(
+      usMePersonRecord,
+      usMeSccpFixtures.almostEligibleMonthsRemaining.input,
+    );
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const textAlmostEligible = opp.requirementsAlmostMet.find(({ text }) =>
@@ -179,11 +176,10 @@ describe("ensure requirements text updates when source changes", () => {
 
 describe("almost eligible but for class A/B discipline", () => {
   beforeEach(() => {
-    createTestUnit(usMePersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSccpFixtures.almostEligibleRecentViolation.output;
+    createTestUnit(
+      usMePersonRecord,
+      usMeSccpFixtures.almostEligibleRecentViolation.input,
+    );
   });
 
   test("requirements met", () => {
@@ -204,11 +200,10 @@ describe("almost eligible but for class A/B discipline", () => {
 
 describe("almost eligible but for fraction of sentence served", () => {
   beforeEach(() => {
-    createTestUnit(usMePersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usMeSccpFixtures.almostEligibleXPortion.output;
+    createTestUnit(
+      usMePersonRecord,
+      usMeSccpFixtures.almostEligibleXPortion.input,
+    );
   });
 
   test("requirements met", () => {

@@ -64,7 +64,7 @@ const FormTransformContainer = styled.section`
 const formDownloader = async (client: Client): Promise<void> => {
   const contents = {
     ...toJS(
-      client.verifiedOpportunities.earnedDischarge?.form?.prepareDataForTemplate(),
+      client.opportunities.earnedDischarge?.form?.prepareDataForTemplate(),
     ),
   };
 
@@ -86,7 +86,7 @@ export const FormEarnedDischarge = observer(function FormEarnedDischarge({
 
   const { resize } = useResizeForm(formRef, `${FormTransformContainer}`);
 
-  const opportunity = client?.verifiedOpportunities?.earnedDischarge;
+  const opportunity = client?.opportunities?.earnedDischarge;
 
   if (!opportunity || !(client instanceof Client)) {
     return null;

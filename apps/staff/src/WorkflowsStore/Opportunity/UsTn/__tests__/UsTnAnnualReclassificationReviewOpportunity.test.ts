@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -32,11 +33,11 @@ vi.mock("../../../subscriptions");
 let opp: UsTnAnnualReclassificationReviewOpportunity;
 let resident: Resident;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
   residentRecord: typeof UsTnAnnualReclassificationEligibleResidentRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -47,14 +48,10 @@ function createTestUnit(
   ).mockReturnValue(["usTnAnnualReclassification"]);
   resident = new Resident(residentRecord, root);
 
-  const maybeOpportunity =
-    resident.potentialOpportunities.usTnAnnualReclassification;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsTnAnnualReclassificationReviewOpportunity(
+    resident,
+    opportunityRecord,
+  );
 }
 
 beforeEach(() => {
@@ -70,11 +67,10 @@ afterEach(() => {
 
 describe("Annual Reclassification Opportunity for fully eligible resident", () => {
   beforeEach(() => {
-    createTestUnit(UsTnAnnualReclassificationEligibleResidentRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = UsTnAnnualReclassificationReferralRecordFixture01;
+    createTestUnit(
+      UsTnAnnualReclassificationEligibleResidentRecord,
+      UsTnAnnualReclassificationReferralRecordFixture01,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { addDays, differenceInMonths } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 
 import {
   usMiWardenInPersonSecurityClassificationCommitteeReviewRecord,
@@ -44,12 +45,14 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
     },
   };
 
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usMiWardenInPersonSecurityClassificationCommitteeReview",
       resident.rootStore,
-      usMiWardenInPersonSecurityClassificationCommitteeReviewSchema.parse,
+      usMiWardenInPersonSecurityClassificationCommitteeReviewSchema.parse(
+        record,
+      ),
     );
 
     this.form = new UsMiSCCReviewForm(this, resident.rootStore);

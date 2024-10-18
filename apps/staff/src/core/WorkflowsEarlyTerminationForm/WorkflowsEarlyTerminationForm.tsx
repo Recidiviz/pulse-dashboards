@@ -43,7 +43,7 @@ import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
 
 const collectAdditionalDepositionLinesToDownload = (client: Client) => {
-  const { earlyTermination } = client.verifiedOpportunities;
+  const { earlyTermination } = client.opportunities;
   return earlyTermination?.form?.additionalDepositionLines.map(
     (key) => earlyTermination?.form?.formData[key],
   );
@@ -59,7 +59,7 @@ function WorkflowsEarlyTerminationForm() {
   if (!client) return <div />;
 
   const onClickDownload = async (): Promise<void> => {
-    const { earlyTermination } = client.verifiedOpportunities;
+    const { earlyTermination } = client.opportunities;
 
     const contents = {
       ...toJS(earlyTermination?.form?.formData),

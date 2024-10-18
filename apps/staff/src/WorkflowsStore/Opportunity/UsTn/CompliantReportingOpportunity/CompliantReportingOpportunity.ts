@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { add, differenceInCalendarDays, isEqual } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { makeObservable, override } from "mobx";
 
 import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
@@ -140,14 +141,15 @@ export class CompliantReportingOpportunity extends OpportunityBase<
 
   form: CompliantReportingForm;
 
-  constructor(client: Client) {
-    super(
-      client,
-      "compliantReporting",
-      client.rootStore,
-      compliantReportingSchema.parse,
-      getRecordValidator(client),
-    );
+  constructor(client: Client, record: DocumentData) {
+    const parsedRecord = compliantReportingSchema.parse(record);
+
+    if (parsedRecord !== undefined) {
+      const validateRecord = getRecordValidator(client);
+      validateRecord(parsedRecord);
+    }
+
+    super(client, "compliantReporting", client.rootStore, parsedRecord);
 
     makeObservable<CompliantReportingOpportunity>(this, {
       almostEligibleStatusMessage: true,

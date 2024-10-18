@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
-import { DocumentSubscription } from "../../../subscriptions";
 import {
   usPaAdminSupervisionEligibleClientRecord,
   usPaAdminSupervisionReferralRecord,
@@ -30,12 +30,12 @@ import { UsPaAdminSupervisionOpportunity } from "../UsPaAdminSupervisionOpportun
 let opp: UsPaAdminSupervisionOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 
 vi.mock("../../../subscriptions");
 
 function createTestUnit(
   clientRecord: typeof usPaAdminSupervisionEligibleClientRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -44,13 +44,7 @@ function createTestUnit(
   ]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.usPaAdminSupervision;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsPaAdminSupervisionOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -66,11 +60,10 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(usPaAdminSupervisionEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usPaAdminSupervisionReferralRecord;
+    createTestUnit(
+      usPaAdminSupervisionEligibleClientRecord,
+      usPaAdminSupervisionReferralRecord,
+    );
   });
 
   test("requirements met", () => {

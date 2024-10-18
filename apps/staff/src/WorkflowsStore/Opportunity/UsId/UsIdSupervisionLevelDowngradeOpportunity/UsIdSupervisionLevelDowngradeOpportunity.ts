@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
@@ -30,16 +32,21 @@ export class UsIdSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsIdSupervisionLevelDowngradeReferralRecord
 > {
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
+    const parsedRecord =
+      supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
+        (raw: string) =>
+          client.rootStore.workflowsStore.formatSupervisionLevel(raw),
+      ).parse(record);
+
+    const validateRecord = getBaseSLDValidator(client);
+    validateRecord(parsedRecord);
+
     super(
       client,
       "usIdSupervisionLevelDowngrade",
       client.rootStore,
-      supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(
-        (raw: string) =>
-          client.rootStore.workflowsStore.formatSupervisionLevel(raw),
-      ).parse,
-      getBaseSLDValidator(client),
+      parsedRecord,
     );
   }
 

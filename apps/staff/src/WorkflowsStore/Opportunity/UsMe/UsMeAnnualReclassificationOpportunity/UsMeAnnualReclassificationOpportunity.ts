@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import {
   UsMeAnnualReclassificationRecord,
   usMeAnnualReclassificationSchema,
@@ -30,12 +32,12 @@ export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
 > {
   form: UsMeAnnualReclassificationReviewForm;
 
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usMeReclassificationReview",
       resident.rootStore,
-      usMeAnnualReclassificationSchema.parse,
+      usMeAnnualReclassificationSchema.parse(record),
     );
 
     this.form = new UsMeAnnualReclassificationReviewForm(

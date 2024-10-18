@@ -16,6 +16,7 @@
 // =============================================================================
 
 import dedent from "dedent";
+import { DocumentData } from "firebase/firestore";
 import { computed, makeObservable, override } from "mobx";
 
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
@@ -57,12 +58,12 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
   readonly portionServedRequirement = ["1/2"];
 
-  constructor(client: Client) {
+  constructor(client: Client, record: DocumentData) {
     super(
       client,
       "usMeEarlyTermination",
       client.rootStore,
-      usMeEarlyTerminationSchema.parse,
+      usMeEarlyTerminationSchema.parse(record),
     );
 
     makeObservable(this, {

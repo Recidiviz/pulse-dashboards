@@ -27,7 +27,7 @@ import {
 } from "../FirestoreStore";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { Client } from "./Client";
-import { OpportunityMapping } from "./Opportunity";
+import { OpportunityManagerInterface, OpportunityMapping } from "./Opportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -58,16 +58,12 @@ export type JusticeInvolvedPerson = {
   assignedStaffFullName: string;
   profileUrl: string;
   supervisionTasks?: SupervisionTaskInterface;
-  /**
-   * Contains all expected opportunity objects. Mainly useful for inspecting or interacting with
-   * their loading and hydration status.
-   */
-  potentialOpportunities: OpportunityMapping;
+  opportunityManager: OpportunityManagerInterface;
   /**
    * Contains only the opportunity objects that have been hydrated and validated.
    * In most cases these are the only ones that should actually be displayed to users.
    */
-  verifiedOpportunities: OpportunityMapping;
+  opportunities: OpportunityMapping;
   /**
    * Subset of `verifiedOpportunities` that are fully eligible.
    */
@@ -80,7 +76,6 @@ export type JusticeInvolvedPerson = {
    * Subset of `verifiedOpportunities` that have been marked ineligible.
    */
   opportunitiesDenied: OpportunityMapping;
-  allOpportunitiesLoaded: boolean;
   /**
    * Contains the person updates, ex: preferredName
    */

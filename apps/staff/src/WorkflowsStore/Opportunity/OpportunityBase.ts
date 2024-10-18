@@ -45,12 +45,9 @@ import {
 import { RootStore } from "../../RootStore";
 import { formatDateToISO } from "../../utils";
 import {
-  CollectionDocumentSubscription,
   DocumentSubscription,
   OpportunityUpdateSubscription,
-  TransformFunction,
   UpdateFunction,
-  ValidateFunction,
 } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
 import {
@@ -120,15 +117,7 @@ export class OpportunityBase<
   UpdateRecord extends OpportunityUpdateWithForm<any> = OpportunityUpdate,
 > implements Opportunity<PersonType>
 {
-  readonly type: OpportunityType;
-
-  rootStore: RootStore;
-
-  person: PersonType;
-
   form?: FormBase<any, any>;
-
-  referralSubscription: DocumentSubscription<ReferralRecord>;
 
   updatesSubscription: DocumentSubscription<UpdateRecord>;
 
@@ -146,11 +135,10 @@ export class OpportunityBase<
   updateOpportunityEligibility: UpdateFunction<DocumentData>;
 
   constructor(
-    person: PersonType,
-    type: OpportunityType,
-    rootStore: RootStore,
-    transformReferral?: TransformFunction<ReferralRecord>,
-    validateRecord?: ValidateFunction<ReferralRecord>,
+    public person: PersonType,
+    readonly type: OpportunityType,
+    public rootStore: RootStore,
+    public record: ReferralRecord,
   ) {
     makeObservable(this, {
       denial: computed,
@@ -161,7 +149,6 @@ export class OpportunityBase<
       manualSnoozeUntilDate: computed,
       hydrate: action,
       hydrationState: computed,
-      record: computed,
       updates: computed,
       reviewStatus: computed,
       setCompletedIfEligible: action,
@@ -177,24 +164,12 @@ export class OpportunityBase<
       submittedUpdate: computed,
     });
 
-    this.person = person;
-    this.type = type;
-    this.rootStore = rootStore;
-
     this.updateOpportunityEligibility = updateOpportunityEligibility(
       this.type,
       this.person.recordId,
       this.rootStore,
     );
 
-    this.referralSubscription =
-      new CollectionDocumentSubscription<ReferralRecord>(
-        this.rootStore.firestoreStore,
-        { raw: this.config.firestoreCollection },
-        person.recordId,
-        transformReferral,
-        validateRecord,
-      );
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       this.rootStore.firestoreStore,
       person.recordId,
@@ -210,8 +185,8 @@ export class OpportunityBase<
       .opportunities[this.type];
   }
 
-  get record(): ReferralRecord | undefined {
-    return this.referralSubscription.data;
+  get supportsDenial(): boolean {
+    return Object.keys(this.config.denialReasons).length > 0;
   }
 
   get updates(): UpdateRecord | undefined {
@@ -374,10 +349,7 @@ export class OpportunityBase<
    * An Opportunity is only as hydrated as its least-hydrated Subscription.
    */
   get hydrationState(): HydrationState {
-    const opportunitySubscriptions: Hydratable[] = [
-      this.referralSubscription,
-      this.updatesSubscription,
-    ];
+    const opportunitySubscriptions: Hydratable[] = [this.updatesSubscription];
     // Also evaluate form subscription hydration state if applicable.
     if (this.form) {
       opportunitySubscriptions.push(this.form);
@@ -389,7 +361,6 @@ export class OpportunityBase<
    * Initiates hydration for all subscriptions.
    */
   hydrate(): void {
-    this.referralSubscription.hydrate();
     this.updatesSubscription.hydrate();
     if (this.form) {
       this.form.hydrate();

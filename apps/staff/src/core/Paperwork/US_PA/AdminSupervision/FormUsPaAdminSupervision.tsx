@@ -63,9 +63,7 @@ const formDownloader = async (client: Client): Promise<void> => {
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
-      ...toJS(
-        client.verifiedOpportunities.usPaAdminSupervision?.form?.formData,
-      ),
+      ...toJS(client.opportunities.usPaAdminSupervision?.form?.formData),
     };
   });
 
@@ -96,8 +94,7 @@ export const FormUsPaAdminSupervision = observer(
 
     const { workflowsStore } = useRootStore();
     const opportunity =
-      workflowsStore?.selectedPerson?.verifiedOpportunities
-        ?.usPaAdminSupervision;
+      workflowsStore?.selectedPerson?.opportunities?.usPaAdminSupervision;
 
     if (!opportunity) {
       return null;

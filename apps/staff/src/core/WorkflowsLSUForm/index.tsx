@@ -44,7 +44,7 @@ const WorkflowsLSUForm = observer(function WorkflowsLSUForm({
   person?: JusticeInvolvedPerson;
 }) {
   const { analyticsStore } = useRootStore();
-  const opportunity = client?.verifiedOpportunities.LSU;
+  const opportunity = client?.opportunities.LSU;
   const [selectedFormSection, setSelectedFormSection] = useState(0);
   const chrono = template(opportunity?.form.formData);
 

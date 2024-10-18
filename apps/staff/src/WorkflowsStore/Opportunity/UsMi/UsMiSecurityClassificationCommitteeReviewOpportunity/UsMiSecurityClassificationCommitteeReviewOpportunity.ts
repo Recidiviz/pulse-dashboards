@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import {
   usMiSecurityClassificationCommitteeReviewRecord,
   usMiSecurityClassificationCommitteeReviewSchema,
@@ -31,12 +33,12 @@ export class usMiSecurityClassificationCommitteeReviewOpportunity extends Opport
 > {
   form: UsMiSCCReviewForm;
 
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usMiSecurityClassificationCommitteeReview",
       resident.rootStore,
-      usMiSecurityClassificationCommitteeReviewSchema.parse,
+      usMiSecurityClassificationCommitteeReviewSchema.parse(record),
     );
 
     this.form = new UsMiSCCReviewForm(this, resident.rootStore);

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -33,11 +34,11 @@ vi.mock("../../../subscriptions");
 let opp: EarnedDischargeOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
   clientRecord: typeof EarnedDischargeEligibleClientRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -46,13 +47,7 @@ function createTestUnit(
   ]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.earnedDischarge;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new EarnedDischargeOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -69,11 +64,10 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(EarnedDischargeEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = EarnedDischargeReferralRecordFixture;
+    createTestUnit(
+      EarnedDischargeEligibleClientRecord,
+      EarnedDischargeReferralRecordFixture,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -91,11 +85,10 @@ describe("fully eligible", () => {
 
 describe("almost eligible on probation at least a year", () => {
   beforeEach(() => {
-    createTestUnit(EarnedDischargeEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = earnedDischargeAlmostEligibleSupervisionLength;
+    createTestUnit(
+      EarnedDischargeEligibleClientRecord,
+      earnedDischargeAlmostEligibleSupervisionLength,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -128,13 +121,14 @@ describe("almost eligible on probation at least a year", () => {
 
 describe("almost eligible days remaining on length of stay", () => {
   beforeEach(() => {
-    createTestUnit(EarnedDischargeEligibleClientRecord);
-    tk.freeze(new Date(2022, 1, 23));
-    earnedDischargeAlmostEligibleSupervisionLength.ineligibleCriteria.pastEarnedDischargeEligibleDate =
-      { eligibleDate: new Date(2022, 1, 24) };
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = earnedDischargeAlmostEligibleSupervisionLength;
+    tk.freeze(new Date("2022-01-23"));
+    earnedDischargeAlmostEligibleSupervisionLength.ineligibleCriteria.onProbationAtLeastOneYear =
+      { eligibleDate: "2022-01-24" };
+
+    createTestUnit(
+      EarnedDischargeEligibleClientRecord,
+      earnedDischargeAlmostEligibleSupervisionLength,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

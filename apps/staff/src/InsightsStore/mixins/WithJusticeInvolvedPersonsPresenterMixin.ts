@@ -60,7 +60,7 @@ export function WithJusticeInvolvedPersonStore<
       | undefined;
 
     private _opportunityMapping: JusticeInvolvedPersonOpportunityMapping =
-      "verifiedOpportunities";
+      "opportunities";
 
     /**
      * Checks if workflows are enabled based on user permissions.
@@ -181,11 +181,7 @@ export function WithJusticeInvolvedPersonStore<
       // Hydrate the opportunities for each client on the officer's caseload
       for (const client of caseloadByOfficerExternalId.get(officerExternalId) ??
         []) {
-        for (const opportunity of Object.values(
-          client.potentialOpportunities,
-        )) {
-          opportunity.hydrate();
-        }
+        client.opportunityManager.hydrate();
       }
     }
 

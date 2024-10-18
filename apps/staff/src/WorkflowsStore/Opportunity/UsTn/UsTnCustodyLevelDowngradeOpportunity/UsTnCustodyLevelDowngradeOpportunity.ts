@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
+
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
@@ -34,12 +36,12 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
 
   readonly caseNotesTitle = "Relevant Information For Classification";
 
-  constructor(resident: Resident) {
+  constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usTnCustodyLevelDowngrade",
       resident.rootStore,
-      usTnCustodyLevelDowngradeSchema.parse,
+      usTnCustodyLevelDowngradeSchema.parse(record),
     );
 
     this.form = new UsTnReclassificationReviewForm(this, resident.rootStore);

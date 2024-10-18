@@ -20,7 +20,7 @@ import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
-import { isHydrationInProgress } from "~hydration-utils";
+import { isHydrated, isHydrationFinished } from "~hydration-utils";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity";
@@ -39,27 +39,39 @@ export const SelectedPersonOpportunitiesHydrator = observer(
     opportunityTypes,
     person,
   }: PersonOpportunitiesHydratorProps) {
+    // The two useEffects below are isolated but could be simplified to one if the
+    // useEffect that sets opportunity types is handled via a presenter.
+
+    // This effect just reacts to the hydration state and hydrates the managers as needed
     useEffect(
       () =>
         autorun(() => {
-          if (person) {
-            const { potentialOpportunities } = person;
-            opportunityTypes.forEach((opportunityType) => {
-              potentialOpportunities[opportunityType]?.hydrate();
-            });
-          }
+          if (person && !isHydrated(person.opportunityManager))
+            person.opportunityManager.hydrate();
+        }),
+      [person],
+    );
+
+    // This effect sets the desired opportunity types on the manager, which might
+    // change the hydration state.
+    useEffect(
+      () =>
+        autorun(() => {
+          if (person)
+            person.opportunityManager.setSelectedOpportunityTypes(
+              opportunityTypes,
+            );
         }),
       [person, opportunityTypes],
     );
 
-    const displayLoading = opportunityTypes.some((oppType) => {
-      const opp = person?.potentialOpportunities[oppType];
-      return opp && isHydrationInProgress(opp);
-    });
+    const displayLoading =
+      person?.opportunityManager &&
+      !isHydrationFinished(person?.opportunityManager);
 
     const displayEmpty =
       opportunityTypes.filter(
-        (oppType) => oppType in (person?.verifiedOpportunities ?? {}),
+        (oppType) => oppType in (person?.opportunities ?? {}),
       ).length === 0;
 
     if (displayLoading) return <Loading />;

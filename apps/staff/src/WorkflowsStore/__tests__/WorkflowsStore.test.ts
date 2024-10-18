@@ -42,7 +42,7 @@ import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
 import UserStore from "../../RootStore/UserStore";
-import type { OpportunityType, WorkflowsStore } from "..";
+import type { OpportunityMapping, OpportunityType, WorkflowsStore } from "..";
 import {
   ineligibleClient,
   lsuAlmostEligibleClient,
@@ -59,16 +59,13 @@ import {
   mockSupervisor2,
 } from "../__fixtures__";
 import { Client } from "../Client";
-import {
-  CompliantReportingOpportunity,
-  LSUOpportunity,
-  UsNdEarlyTerminationOpportunity,
-} from "../Opportunity";
+import { CompliantReportingOpportunity, LSUOpportunity } from "../Opportunity";
 import {
   IApiOpportunityConfiguration,
   OpportunityConfiguration,
 } from "../Opportunity/OpportunityConfigurations";
 import { ApiOpportunityConfiguration } from "../Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
+import { OpportunityManager } from "../Opportunity/OpportunityManager";
 import { Resident } from "../Resident";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { filterByUserDistrict } from "../utils";
@@ -859,26 +856,20 @@ describe("opportunitiesLoaded", () => {
     await waitForHydration(mockOfficer2);
     populateClients([]);
     workflowsStore.opportunityConfigurationStore.mockHydrated();
-    expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
-    ).toBeTrue();
+    expect(workflowsStore.opportunitiesLoaded()).toBeTrue();
   });
 
   test("opportunitiesLoaded is false when clients are loading and we have not subscribed to clients", async () => {
     await waitForHydration(mockSupervisor);
     workflowsStore.opportunityConfigurationStore.mockHydrated();
-    expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
-    ).toBeFalse();
+    expect(workflowsStore.opportunitiesLoaded()).toBeFalse();
   });
 
   test("opportunitiesLoaded is false when clients are loading", async () => {
     await waitForHydration();
     populateClients(mockClients);
     workflowsStore.opportunityConfigurationStore.mockHydrated();
-    expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
-    ).toBeFalse();
+    expect(workflowsStore.opportunitiesLoaded()).toBeFalse();
   });
 
   test("opportunitiesLoaded is false when not all provided opportunities are hydrated", async () => {
@@ -900,14 +891,12 @@ describe("opportunitiesLoaded", () => {
       status: "hydrated",
     });
     lsuHydrationStateMock.mockReturnValue({ status: "loading" });
-    expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting", "LSU"]),
-    ).toBeFalse();
+    expect(workflowsStore.opportunitiesLoaded()).toBeFalse();
   });
 
-  test("opportunitiesLoaded is true when opportunities are hydrated", async () => {
+  test("opportunitiesLoaded is true when opportunity manager is hydrated", async () => {
     const hydrationStateMock = vi.spyOn(
-      CompliantReportingOpportunity.prototype,
+      OpportunityManager.prototype,
       "hydrationState",
       "get",
     );
@@ -916,9 +905,7 @@ describe("opportunitiesLoaded", () => {
     workflowsStore.opportunityConfigurationStore.mockHydrated();
 
     hydrationStateMock.mockReturnValue({ status: "hydrated" });
-    expect(
-      workflowsStore.opportunitiesLoaded(["compliantReporting"]),
-    ).toBeTrue();
+    expect(workflowsStore.opportunitiesLoaded()).toBeTrue();
   });
 });
 
@@ -949,15 +936,23 @@ describe("hasOpportunities", () => {
 
   test("hasOpportunities is true if any client has opportunities for any of the provided types", async () => {
     vi.spyOn(
-      CompliantReportingOpportunity.prototype,
+      OpportunityManager.prototype,
       "hydrationState",
       "get",
     ).mockReturnValue({ status: "hydrated" });
+
     vi.spyOn(
-      UsNdEarlyTerminationOpportunity.prototype,
-      "hydrationState",
+      OpportunityManager.prototype,
+      "opportunities",
       "get",
-    ).mockReturnValue({ status: "hydrated" });
+    ).mockReturnValueOnce({
+      earlyTermination: {
+        hydrationState: { status: "hydrated" },
+      },
+      compliantReporting: {
+        hydrationState: { status: "hydrated" },
+      },
+    } as any as OpportunityMapping);
 
     setOpportunities({
       compliantReporting: mockBaseOpportunityConfig,

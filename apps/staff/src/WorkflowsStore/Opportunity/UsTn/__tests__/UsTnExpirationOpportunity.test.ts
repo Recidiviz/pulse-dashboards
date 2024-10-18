@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -32,11 +33,11 @@ vi.mock("../../../subscriptions");
 let opp: UsTnExpirationOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 function createTestUnit(
   clientRecord: typeof UsTnExpirationEligibleClientRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -47,13 +48,7 @@ function createTestUnit(
   ).mockReturnValue(["usTnExpiration"]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.usTnExpiration;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsTnExpirationOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -70,11 +65,10 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(UsTnExpirationEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = UsTnExpirationReferralRecordFixture;
+    createTestUnit(
+      UsTnExpirationEligibleClientRecord,
+      UsTnExpirationReferralRecordFixture,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

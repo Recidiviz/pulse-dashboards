@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { differenceInDays, differenceInMonths } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { makeObservable, observable, override } from "mobx";
 
@@ -253,8 +254,8 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
   almostEligibleRecommendedNote = undefined;
 
-  constructor(resident: Resident) {
-    super(resident, "usMeSCCP", resident.rootStore, transformReferral);
+  constructor(resident: Resident, record: DocumentData) {
+    super(resident, "usMeSCCP", resident.rootStore, transformReferral(record));
 
     makeObservable(this, {
       almostEligibleRecommendedNote: observable,

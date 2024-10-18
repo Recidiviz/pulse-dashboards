@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Client } from "../Client";
-import { TransformFunction, ValidateFunction } from "../subscriptions";
+import { ValidateFunction } from "../subscriptions";
 import { OpportunityType } from ".";
 import { OpportunityBase } from "./OpportunityBase";
 import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
@@ -27,10 +27,11 @@ export abstract class PastFTRDOpportunityBase<
   constructor(
     client: Client,
     type: OpportunityType,
-    transformReferral?: TransformFunction<ReferralRecord>,
+    record: ReferralRecord,
     validateRecord?: ValidateFunction<ReferralRecord>,
   ) {
-    super(client, type, client.rootStore, transformReferral, validateRecord);
+    if (validateRecord !== undefined) validateRecord(record);
+    super(client, type, client.rootStore, record);
   }
 
   get eligibilityDate(): Date | undefined {

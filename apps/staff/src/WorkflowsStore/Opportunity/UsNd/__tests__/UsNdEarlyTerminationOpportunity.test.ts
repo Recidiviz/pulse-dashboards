@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { DocumentData } from "firebase/firestore";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
@@ -32,13 +33,13 @@ import {
 let opp: UsNdEarlyTerminationOpportunity;
 let client: Client;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
 
 vi.mock("../../../subscriptions");
 
 function createTestUnit(
   clientRecord: typeof usNdEarlyTerminationEligibleClientRecord,
+  opportunityRecord: DocumentData,
 ) {
   root = new RootStore();
   root.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
@@ -47,13 +48,7 @@ function createTestUnit(
   ]);
   client = new Client(clientRecord, root);
 
-  const maybeOpportunity = client.potentialOpportunities.earlyTermination;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsNdEarlyTerminationOpportunity(client, opportunityRecord);
 }
 
 beforeEach(() => {
@@ -70,11 +65,10 @@ afterEach(() => {
 
 describe("fully eligible", () => {
   beforeEach(() => {
-    createTestUnit(usNdEarlyTerminationEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usNdEarlyTerminationReferralRecord;
+    createTestUnit(
+      usNdEarlyTerminationEligibleClientRecord,
+      usNdEarlyTerminationReferralRecord,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -91,11 +85,10 @@ describe("fully eligible", () => {
 
 describe("almost eligible past discharge date coming up", () => {
   beforeEach(() => {
-    createTestUnit(usNdEarlyTerminationAlmostEligibleClientRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = usNdEarlyTerminationAlmostEligibleReferralRecord;
+    createTestUnit(
+      usNdEarlyTerminationAlmostEligibleClientRecord,
+      usNdEarlyTerminationAlmostEligibleReferralRecord,
+    );
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };

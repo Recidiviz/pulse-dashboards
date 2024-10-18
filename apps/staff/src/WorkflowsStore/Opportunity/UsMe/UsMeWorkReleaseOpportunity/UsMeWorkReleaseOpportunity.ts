@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { differenceInMonths } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { makeObservable, override } from "mobx";
 
@@ -137,8 +138,13 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
 
   readonly hideUnknownCaseNoteDates = true;
 
-  constructor(resident: Resident) {
-    super(resident, "usMeWorkRelease", resident.rootStore, transformReferral);
+  constructor(resident: Resident, record: DocumentData) {
+    super(
+      resident,
+      "usMeWorkRelease",
+      resident.rootStore,
+      transformReferral(record),
+    );
     makeObservable(this, {
       requirementsMet: override,
     });

@@ -40,11 +40,11 @@ const FormPreviewPage = styled.img`
 const formDownloader = async (resident: Resident): Promise<void> => {
   let contents: Partial<UsMeAnnualReclassificationReviewData> = {};
 
-  const { displayName, stateCode, rootStore, verifiedOpportunities } = resident;
+  const { displayName, stateCode, rootStore, opportunities } = resident;
 
   runInAction(() => {
     contents = {
-      ...toJS(verifiedOpportunities.usMeReclassificationReview?.form?.formData),
+      ...toJS(opportunities.usMeReclassificationReview?.form?.formData),
     };
   });
 
@@ -68,8 +68,7 @@ const formDownloader = async (resident: Resident): Promise<void> => {
 function AnnualClassificationReview() {
   const { workflowsStore } = useRootStore();
   const opportunity =
-    workflowsStore.selectedResident?.verifiedOpportunities
-      ?.usMeReclassificationReview;
+    workflowsStore.selectedResident?.opportunities?.usMeReclassificationReview;
 
   if (!opportunity) {
     return null;

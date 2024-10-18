@@ -15,28 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { intersection, xor } from "lodash";
-import {
-  action,
-  autorun,
-  computed,
-  entries,
-  keys,
-  makeObservable,
-  observable,
-  remove,
-  runInAction,
-  set,
-  values,
-} from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 
-import {
-  FullName,
-  OpportunityRecordBase,
-  opportunitySchemaBase,
-  StaffRecord,
-} from "~datatypes";
-import { isHydrated, isHydrationFinished } from "~hydration-utils";
+import { FullName, StaffRecord } from "~datatypes";
 
 import { SearchField } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
@@ -50,9 +31,12 @@ import {
 import { RootStore } from "../RootStore";
 import { humanReadableTitleCase } from "../utils";
 import { TaskFactory } from "./Client";
-import { OpportunityMapping, OpportunityType } from "./Opportunity";
-import { OpportunityBase } from "./Opportunity/OpportunityBase";
-import { opportunityConstructors } from "./Opportunity/opportunityConstructors";
+import {
+  OpportunityManagerInterface,
+  OpportunityMapping,
+  OpportunityType,
+} from "./Opportunity";
+import { OpportunityManager } from "./Opportunity/OpportunityManager";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -77,6 +61,8 @@ export class JusticeInvolvedPersonBase<
 
   milestonesMessageUpdatesSubscription?: MilestonesMessageUpdateSubscription<MilestonesMessage>;
 
+  opportunityManager: OpportunityManagerInterface;
+
   constructor(
     record: RecordType,
     rootStore: RootStore,
@@ -89,8 +75,8 @@ export class JusticeInvolvedPersonBase<
     makeObservable(this, {
       record: observable,
       supervisionTasks: observable,
-      potentialOpportunities: observable,
-      verifiedOpportunities: computed,
+      opportunityManager: observable,
+      opportunities: computed,
       opportunitiesAlmostEligible: computed,
       opportunitiesEligible: computed,
       updateRecord: action,
@@ -116,45 +102,11 @@ export class JusticeInvolvedPersonBase<
       ? taskFactory(this as unknown as PersonClassForRecord<RecordType>)
       : undefined;
 
-    // Create and destroy opportunity objects as needed
-    autorun(() => {
-      const { enabledOpportunityTypes } =
-        this.rootStore.workflowsRootStore.opportunityConfigurationStore;
-      const incomingOpps = intersection(
-        this.record.allEligibleOpportunities,
-        enabledOpportunityTypes,
-      ) as OpportunityType[];
-      incomingOpps.forEach((opportunityType) => {
-        runInAction(() => {
-          if (!this.potentialOpportunities[opportunityType]) {
-            const constructor = opportunityConstructors[opportunityType];
-            set(
-              this.potentialOpportunities,
-              opportunityType,
-              constructor
-                ? new constructor(this as any)
-                : new OpportunityBase<
-                    JusticeInvolvedPerson,
-                    OpportunityRecordBase
-                  >(
-                    this,
-                    opportunityType,
-                    rootStore,
-                    opportunitySchemaBase.parse,
-                  ),
-            );
-          }
-        });
-      });
-
-      const existingOpps = keys(
-        this.potentialOpportunities,
-      ) as OpportunityType[];
-      const oppsToDelete = xor(incomingOpps, existingOpps);
-      oppsToDelete.forEach((opportunityType) => {
-        remove(this.potentialOpportunities, opportunityType);
-      });
-    });
+    this.opportunityManager = new OpportunityManager(
+      rootStore,
+      this,
+      this.record.allEligibleOpportunities,
+    );
   }
 
   get profileUrl(): string {
@@ -262,50 +214,18 @@ export class JusticeInvolvedPersonBase<
     } as Record<PersonUpdateType, string | ContactMethodType>);
   }
 
-  /**
-   * These are all the opportunities we expect to be able to hydrate,
-   * but some may be invalid or feature gated
-   */
-  potentialOpportunities: OpportunityMapping = {};
-
   supervisionTasks?: SupervisionTaskInterface | undefined;
 
   /**
    * This mapping will only contain opportunities that are actually hydrated and valid;
    * in most cases these are the only ones that should ever be shown to users
    */
-  get verifiedOpportunities(): OpportunityMapping {
-    return entries(this.potentialOpportunities).reduce(
-      (opportunities, [opportunityType, opportunity]) => {
-        if (!opportunity || !isHydrated(opportunity)) {
-          return opportunities;
-        }
-        return {
-          ...opportunities,
-          [opportunityType as OpportunityType]: opportunity,
-        };
-      },
-      {} as OpportunityMapping,
-    );
-  }
-
-  get allOpportunitiesLoaded(): boolean {
-    return (
-      values(this.potentialOpportunities).filter(
-        (opp) => opp !== undefined && !isHydrationFinished(opp),
-      ).length === 0
-    );
-  }
-
-  get hasVerifiedOpportunities(): boolean {
-    return (
-      Object.values(this.verifiedOpportunities).filter((o) => o !== undefined)
-        .length > 0
-    );
+  get opportunities(): OpportunityMapping {
+    return this.opportunityManager.opportunities;
   }
 
   get opportunitiesEligible(): OpportunityMapping {
-    return Object.entries(this.verifiedOpportunities).reduce(
+    return Object.entries(this.opportunities).reduce(
       (opportunities, [key, opp]) => {
         if (opp && !opp.isSubmitted && !opp.almostEligible && !opp.denied) {
           return { ...opportunities, [key as OpportunityType]: opp };
@@ -317,7 +237,7 @@ export class JusticeInvolvedPersonBase<
   }
 
   get opportunitiesAlmostEligible(): OpportunityMapping {
-    return Object.entries(this.verifiedOpportunities).reduce(
+    return Object.entries(this.opportunities).reduce(
       (opportunities, [key, opp]) => {
         if (opp && opp.almostEligible && !opp.isSubmitted && !opp.denied) {
           return { ...opportunities, [key as OpportunityType]: opp };
@@ -329,7 +249,7 @@ export class JusticeInvolvedPersonBase<
   }
 
   get opportunitiesDenied(): OpportunityMapping {
-    return Object.entries(this.verifiedOpportunities).reduce(
+    return Object.entries(this.opportunities).reduce(
       (opportunities, [key, opp]) => {
         if (opp && opp.denied) {
           return { ...opportunities, [key as OpportunityType]: opp };

@@ -597,4 +597,20 @@ export default class FirestoreStore {
       manualSnooze: deleteField(),
     });
   }
+
+  async getOpportunitiesForJIIAndOpportunityType(
+    personExternalId: string,
+    opportunityTypeCollection: string,
+    stateCode: string,
+  ): Promise<DocumentData[]> {
+    const results = await getDocs(
+      query(
+        this.collection({ raw: opportunityTypeCollection }),
+        where("externalId", "==", personExternalId),
+        where("stateCode", "==", stateCode),
+      ),
+    );
+
+    return results.docs.map((result) => result.data());
+  }
 }

@@ -18,6 +18,8 @@
 import { reverse, shuffle } from "lodash";
 import { configure } from "mobx";
 
+import { OpportunityRecordBase } from "~datatypes";
+
 import { SystemId } from "../../../../core/models/types";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
@@ -33,13 +35,14 @@ vi.mock("firebase/firestore");
 let client: Client;
 let root: RootStore;
 
-class TestOpportunity extends OpportunityBase<Client, Record<string, any>> {
+class TestOpportunity extends OpportunityBase<Client, OpportunityRecordBase> {
   constructor(
     oppClient: Client,
     type: OpportunityType,
     public systemType: SystemId,
+    record: OpportunityRecordBase,
   ) {
-    super(oppClient, type, root);
+    super(oppClient, type, root, record);
   }
 
   get config() {
@@ -53,7 +56,13 @@ function createTestUnit(systemType: SystemId = "SUPERVISION") {
   root = new RootStore();
 
   client = new Client({} as any, root);
-  return new TestOpportunity(client, "TEST" as OpportunityType, systemType);
+  return new TestOpportunity(client, "TEST" as OpportunityType, systemType, {
+    stateCode: "US_OZ",
+    externalId: "123",
+    eligibleCriteria: {},
+    ineligibleCriteria: {},
+    caseNotes: {},
+  });
 }
 
 const originalEnv = process.env;

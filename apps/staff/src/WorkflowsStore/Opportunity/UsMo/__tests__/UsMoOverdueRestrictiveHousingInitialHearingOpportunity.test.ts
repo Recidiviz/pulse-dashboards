@@ -16,11 +16,13 @@
 // =============================================================================
 
 import { addDays, addWeeks, startOfWeek, subDays, subWeeks } from "date-fns";
+import { DocumentData } from "firebase/firestore";
 import { cloneDeep, shuffle } from "lodash";
 import { configure } from "mobx";
 import { freeze } from "timekeeper";
 
 import { RootStore } from "../../../../RootStore";
+import { formatDateToISO } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { DocumentSubscription } from "../../../subscriptions";
 import { OpportunityStatus } from "../..";
@@ -29,32 +31,27 @@ import {
   usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
   usMoPersonRecord,
 } from "../__fixtures__";
-import {
-  UsMoOverdueRestrictiveHousingInitialHearingOpportunity,
-  UsMoOverdueRestrictiveHousingInitialHearingReferralRecord,
-} from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
-import { usMoOverdueRestrictiveHousingInitialHearingSchema } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
+import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
+import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 
 let opp: UsMoOverdueRestrictiveHousingInitialHearingOpportunity;
 let resident: Resident;
 let root: RootStore;
-let referralSub: DocumentSubscription<any>;
 let updatesSub: DocumentSubscription<any>;
-let fixtureData: UsMoOverdueRestrictiveHousingInitialHearingReferralRecord;
+let fixtureData: UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw;
 
 vi.mock("../../../subscriptions");
 
-function createTestUnit(residentRecord: typeof usMoPersonRecord) {
+function createTestUnit(
+  residentRecord: typeof usMoPersonRecord,
+  opportunityRecord: DocumentData,
+) {
   resident = new Resident(residentRecord, root);
 
-  const maybeOpportunity =
-    resident.potentialOpportunities.usMoOverdueRestrictiveHousingInitialHearing;
-
-  if (maybeOpportunity === undefined) {
-    throw new Error("Unable to create opportunity instance");
-  }
-
-  opp = maybeOpportunity;
+  opp = new UsMoOverdueRestrictiveHousingInitialHearingOpportunity(
+    resident,
+    opportunityRecord,
+  );
 }
 
 const today = new Date(2023, 11, 7);
@@ -62,9 +59,7 @@ const today = new Date(2023, 11, 7);
 beforeAll(() => {
   // this lets us spy on observables, e.g. computed getters
   fixtureData = cloneDeep(
-    usMoOverdueRestrictiveHousingInitialHearingSchema.parse(
-      usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
-    ),
+    usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
   );
   configure({ safeDescriptors: false });
 });
@@ -80,9 +75,7 @@ describe("fully eligible", () => {
     freeze(today);
 
     fixtureData = cloneDeep(
-      usMoOverdueRestrictiveHousingInitialHearingSchema.parse(
-        usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
-      ),
+      usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
     );
 
     root = new RootStore();
@@ -92,11 +85,7 @@ describe("fully eligible", () => {
       "enabledOpportunityTypes",
       "get",
     ).mockReturnValue(["usMoOverdueRestrictiveHousingInitialHearing"]);
-    createTestUnit(usMoPersonRecord);
-
-    referralSub = opp.referralSubscription;
-    referralSub.hydrationState = { status: "hydrated" };
-    referralSub.data = fixtureData;
+    createTestUnit(usMoPersonRecord, fixtureData);
 
     updatesSub = opp.updatesSubscription;
     updatesSub.hydrationState = { status: "hydrated" };
@@ -122,8 +111,8 @@ describe("fully eligible", () => {
   test("requirements met, overdue today", () => {
     if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
       fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        today;
-    referralSub.data = fixtureData;
+        formatDateToISO(today);
+    createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
@@ -143,8 +132,8 @@ describe("fully eligible", () => {
   test("requirements met, overdue yesterday", () => {
     if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
       fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        subDays(today, 1);
-    referralSub.data = fixtureData;
+        formatDateToISO(subDays(today, 1));
+    createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
@@ -164,8 +153,8 @@ describe("fully eligible", () => {
   test("requirements almost met, hearing tomorrow", () => {
     if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
       fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-        addDays(today, 1);
-    referralSub.data = fixtureData;
+        formatDateToISO(addDays(today, 1));
+    createTestUnit(usMoPersonRecord, fixtureData);
     expect(opp.requirementsMet).toMatchInlineSnapshot(`
       [
         {
@@ -191,32 +180,32 @@ describe("fully eligible", () => {
     test("Due this week", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          today;
-      referralSub.data = fixtureData;
+          formatDateToISO(today);
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due this week, on day of reset", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          startOfWeek(today, { weekStartsOn: 1 });
-      referralSub.data = fixtureData;
+          formatDateToISO(startOfWeek(today, { weekStartsOn: 1 }));
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Due this week)/gm);
     });
 
     test("Due last week", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          subWeeks(today, 1);
-      referralSub.data = fixtureData;
+          formatDateToISO(subWeeks(today, 1));
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Overdue as of Dec 4, 2023)/gm);
     });
 
     test("Due next week", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          addWeeks(new Date(), 1);
-      referralSub.data = fixtureData;
+          formatDateToISO(addWeeks(new Date(), 1));
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.tabTitle()).toMatch(/\b(Coming up)/gm);
     });
   });
@@ -225,8 +214,8 @@ describe("fully eligible", () => {
     test("Due this week", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          today;
-      referralSub.data = fixtureData;
+          formatDateToISO(today);
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Initial hearing due today)/gm,
       );
@@ -235,10 +224,12 @@ describe("fully eligible", () => {
     test("Due this week, on day of reset", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate = {
-          nextReviewDate: startOfWeek(new Date(), { weekStartsOn: 1 }),
+          nextReviewDate: formatDateToISO(
+            startOfWeek(new Date(), { weekStartsOn: 1 }),
+          ),
           dueDateInferred: false,
         };
-      referralSub.data = fixtureData;
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Initial hearing due 3 days ago)/gm,
       );
@@ -247,8 +238,8 @@ describe("fully eligible", () => {
     test("Due last week", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate.nextReviewDate =
-          subWeeks(new Date(), 1);
-      referralSub.data = fixtureData;
+          formatDateToISO(subWeeks(new Date(), 1));
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Initial hearing due 7 days ago)/gm,
       );
@@ -257,11 +248,11 @@ describe("fully eligible", () => {
     test("Due next week", () => {
       if (fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate)
         fixtureData.eligibleCriteria.usMoInitialHearingPastDueDate = {
-          nextReviewDate: addWeeks(new Date(), 1),
+          nextReviewDate: formatDateToISO(addWeeks(new Date(), 1)),
           dueDateInferred: false,
         };
 
-      referralSub.data = fixtureData;
+      createTestUnit(usMoPersonRecord, fixtureData);
       expect(opp.eligibleStatusMessage).toMatch(
         /\b(Initial hearing due in 7 days)/gm,
       );
@@ -278,6 +269,7 @@ const createOpportunityInstance = (
   const mockResident = new Resident(usMoPersonRecord, mockRoot);
   const mockOpp = new UsMoOverdueRestrictiveHousingInitialHearingOpportunity(
     mockResident,
+    usMoOverdueRestrictiveHousingInitialHearingReferralRecordFixture,
   );
 
   vi.spyOn(mockOpp, "reviewStatus", "get").mockReturnValue(reviewStatus);
