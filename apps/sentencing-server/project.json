@@ -76,11 +76,11 @@
         "dev": {},
         "staging": {
           "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
         },
         "cherry-pick": {
           "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
         }
       },
       "defaultConfiguration": "dev"

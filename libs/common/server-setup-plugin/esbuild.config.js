@@ -23,8 +23,8 @@ module.exports = {
     // It automatically tags the release with the commit sha, so it will be easy to cross reference issues with the code that caused them
     sentryEsbuildPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: "recidiviz-inc",
-      project: "sentencing-server",
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
       debug: true,
       sourcemaps: {
         filesToDeleteAfterUpload: ["**/*.js.map"],
