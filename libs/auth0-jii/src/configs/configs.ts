@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { permissionSchema } from "./permissions";
+import { Permission, permissionSchema } from "./permissions";
 
 /**
  * Returns config values matching the specified tenant, if it exists.
@@ -76,7 +76,13 @@ export const metadataSchema = z
     pseudonymizedId: z.string().optional(),
     intercomUserHash: z.string().optional(),
     allowedStates: z.array(z.string()).optional(),
-    permissions: z.array(permissionSchema).optional(),
+    // accepts and discards unknown strings, to avoid breaking if new permissions are added before schema update
+    permissions: z
+      .array(z.string())
+      .transform((v) =>
+        v.filter((p): p is Permission => permissionSchema.safeParse(p).success),
+      )
+      .optional(),
   })
   .refine(
     (d) => {

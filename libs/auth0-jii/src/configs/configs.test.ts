@@ -146,4 +146,14 @@ describe("user metadata schema", () => {
       }
     `);
   });
+
+  test("ignores unknown permissions", () => {
+    expect(
+      metadataSchema.parse({
+        stateCode: "RECIDIVIZ",
+        allowedStates: ["US_ME"],
+        permissions: ["enhanced", "some_new_thing"],
+      }).permissions,
+    ).toEqual(["enhanced"]);
+  });
 });
