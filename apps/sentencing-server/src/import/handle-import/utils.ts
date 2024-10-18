@@ -479,6 +479,7 @@ export async function transformAndLoadOffenseData(
           : offenseData.is_sex_offense,
       isViolentOffense:
         offenseData.is_violent === undefined ? null : offenseData.is_violent,
+      frequency: offenseData.frequency,
     });
   }
 

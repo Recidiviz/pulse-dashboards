@@ -50,6 +50,7 @@ export const fakeOffense = {
   name: "offense-name",
   isSexOffense: false,
   isViolentOffense: true,
+  frequency: faker.number.int({ max: 100 }),
 } satisfies OffenseCreateInput;
 
 export const fakeStaff = {

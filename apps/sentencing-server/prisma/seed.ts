@@ -107,6 +107,7 @@ async function main() {
           create: {
             stateCode: StateCode.US_ID,
             name: faker.string.alpha({ length: { min: 5, max: 100 } }),
+            frequency: faker.number.int(100),
           },
         },
         isVeteran: faker.datatype.boolean(),

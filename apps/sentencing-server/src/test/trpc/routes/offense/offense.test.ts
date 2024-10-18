@@ -33,6 +33,7 @@ describe("offense router", () => {
           name: "New Offense",
           isSexOffense: false,
           isViolentOffense: true,
+          frequency: 10,
         },
       });
 
@@ -45,6 +46,7 @@ describe("offense router", () => {
             name: fakeOffense.name,
             isSexOffense: false,
             isViolentOffense: true,
+            frequency: fakeOffense.frequency,
           }),
         ]),
       );

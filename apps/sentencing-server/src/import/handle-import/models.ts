@@ -218,4 +218,6 @@ export const offenseImportSchema = z.object({
   charge: z.string(),
   is_sex_offense: z.boolean().optional(),
   is_violent: z.boolean().optional(),
+  // Integers are being converted to strings for some reason
+  frequency: z.coerce.number(),
 });

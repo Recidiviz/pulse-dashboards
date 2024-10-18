@@ -1468,12 +1468,14 @@ describe("handle_import", () => {
           state_code: StateCode.US_ID,
           charge: fakeOffense.name,
           is_sex_offense: false,
+          frequency: 100,
         },
         // New offense
         {
           state_code: StateCode.US_ID,
           charge: "new-offense",
           is_sex_offense: false,
+          frequency: 10,
         },
       ]);
 
@@ -1494,11 +1496,13 @@ describe("handle_import", () => {
             isSexOffense: false,
             // This should be explicitly updated to null
             isViolentOffense: null,
+            frequency: 100,
           }),
           expect.objectContaining({
             name: "new-offense",
             isSexOffense: false,
             isViolentOffense: null,
+            frequency: 10,
           }),
         ]),
       );
@@ -1510,6 +1514,7 @@ describe("handle_import", () => {
         {
           state_code: StateCode.US_ID,
           charge: "new-offense",
+          frequency: 10,
         },
       ]);
 

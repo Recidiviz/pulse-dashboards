@@ -267,6 +267,7 @@ model Offense {
   name             String    @unique
   isViolentOffense Boolean?
   isSexOffense     Boolean?
+  frequency        Int       @default(0)
 
   Case                  Case[]
   insightOffenses       Insight[] @relation("InsightOffenses")
