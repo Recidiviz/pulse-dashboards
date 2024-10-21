@@ -11,6 +11,13 @@
         "cwd": "{projectRoot}"
       }
     },
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./load_env_files.sh",
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint-files": {
       "executor": "nx:run-commands",
       "options": {

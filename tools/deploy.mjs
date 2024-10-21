@@ -27,6 +27,9 @@ const [slackToken] = await secretClient.accessSecretVersion({
   name: "projects/recidiviz-123/secrets/deploy_slack_bot_authorization_token/versions/latest",
 });
 
+console.log("Installing yarn packages...");
+await $`yarn install`.pipe(process.stdout);
+
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
   type: "list",
@@ -270,6 +273,9 @@ if (deployEnv === "staging" || deployEnv === "production") {
 
   if (deploySentencingServerPrompt.deploySentencingServer) {
     console.log("Building and deploying the application...");
+
+    console.log("Loading env variables...");
+    await $`nx load-env-files sentencing-server`.pipe(process.stdout);
 
     // Start docker and configure docker to upload to container registry
     // Only needed for staging deploys
