@@ -20,6 +20,8 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
+      "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
+      "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
       "~auth": ["libs/auth/src/index.ts"],
       "~auth0-jii": ["libs/auth0-jii/src/index.ts"],
       "~case-notes-server/*": ["apps/case-notes-server/src/*"],

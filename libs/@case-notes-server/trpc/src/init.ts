@@ -15,12 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { describe, expect, test } from "vitest";
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
 
-describe("init trpc", () => {
-  describe("auth", () => {
-    test("fake test", async () => {
-      expect(true).toBe(true);
-    });
-  });
-});
+import { createContext } from "~@case-notes-server/trpc/context";
+import { procedurePlugin } from "~server-setup-plugin";
+
+export const t = initTRPC
+  .context<typeof createContext>()
+  // Required to get Date objects to serialize correctly.
+  .create({ transformer: superjson });
+
+export const router = t.router;
+
+const plugin = procedurePlugin();
+
+export const baseProcedure = t.procedure.unstable_concat(plugin.procedure);

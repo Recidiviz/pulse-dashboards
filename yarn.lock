@@ -3882,6 +3882,13 @@
     retry-request "^4.2.2"
     teeny-request "^7.0.0"
 
+"@google-cloud/discoveryengine@^1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/discoveryengine/-/discoveryengine-1.14.0.tgz#436512b15609bee496d92b8c8c478698a09ea3f3"
+  integrity sha512-mwx/+Q3LpmyQbnIxhKNP3i8jgGyLm7NeyXJP11XwdbXOqvsOGrjsb6SOkNL2NzWVZFGtqP9K6jWz/9a0L1ZWYA==
+  dependencies:
+    google-gax "^4.0.3"
+
 "@google-cloud/firestore@^4.5.0":
   version "4.15.1"
   resolved "https://registry.npmjs.org/@google-cloud/firestore/-/firestore-4.15.1.tgz"
@@ -14374,6 +14381,24 @@ google-gax@^3.5.2, google-gax@^3.5.7:
     protobufjs-cli "1.1.1"
     retry-request "^5.0.0"
 
+google-gax@^4.0.3:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/google-gax/-/google-gax-4.4.1.tgz#95a9cf7ee7777ac22d1926a45b5f886dd8beecae"
+  integrity sha512-Phyp9fMfA00J3sZbJxbbB4jC55b7DBjE3F6poyL3wKMEBVKA79q6BGuHcTiM28yOzVql0NDbRL8MLLh8Iwk9Dg==
+  dependencies:
+    "@grpc/grpc-js" "^1.10.9"
+    "@grpc/proto-loader" "^0.7.13"
+    "@types/long" "^4.0.0"
+    abort-controller "^3.0.0"
+    duplexify "^4.0.0"
+    google-auth-library "^9.3.0"
+    node-fetch "^2.7.0"
+    object-hash "^3.0.0"
+    proto3-json-serializer "^2.0.2"
+    protobufjs "^7.3.2"
+    retry-request "^7.0.0"
+    uuid "^9.0.1"
+
 google-gax@^4.0.4:
   version "4.3.8"
   resolved "https://registry.yarnpkg.com/google-gax/-/google-gax-4.3.8.tgz#cc0111d764a803cedd616217b0fac48873dc3209"
@@ -18179,7 +18204,7 @@ node-fetch@^2.6.1:
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.1.tgz"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
-node-fetch@^2.6.12, node-fetch@^2.6.9:
+node-fetch@^2.6.12, node-fetch@^2.6.9, node-fetch@^2.7.0:
   version "2.7.0"
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.7.0.tgz"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==

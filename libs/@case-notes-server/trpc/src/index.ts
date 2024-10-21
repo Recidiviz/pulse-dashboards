@@ -15,22 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@case-notes-server/trpc";
-import { buildCommonServer } from "~server-setup-plugin";
-
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
-
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
-
-  return server;
-}
+export * from "~@case-notes-server/trpc/context";
+export * from "~@case-notes-server/trpc/router";

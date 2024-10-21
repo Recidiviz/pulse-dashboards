@@ -15,19 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
+/// <reference types='vitest' />
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import { defineConfig } from "vite";
 
-import { createContext } from "~case-notes-server/trpc/context";
-import { procedurePlugin } from "~server-setup-plugin";
+export default defineConfig({
+  root: __dirname,
+  cacheDir: "../../../node_modules/.vite/libs/@case-notes-server/trpc",
 
-export const t = initTRPC
-  .context<typeof createContext>()
-  // Required to get Date objects to serialize correctly.
-  .create({ transformer: superjson });
-
-export const router = t.router;
-
-const plugin = procedurePlugin();
-
-export const baseProcedure = t.procedure.unstable_concat(plugin.procedure);
+  plugins: [nxViteTsPaths()],
+  test: {
+    globals: true,
+    cache: { dir: "../../node_modules/.vitest" },
+    environment: "node",
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    coverage: {
+      reportsDirectory: "../../coverage/libs/@case-notes-server/trpc",
+      provider: "v8",
+    },
+  },
+});

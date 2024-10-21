@@ -15,14 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { baseProcedure, router } from "~case-notes-server/trpc/init";
+import { z } from "zod";
 
-export const appRouter = router({
-  search: baseProcedure.query(async () => {
-    // TODO: Implement search
-    return;
-  }),
+export const searchSchema = z.object({
+  query: z.string(),
+  externalId: z.string().optional(),
+  withSnippet: z.boolean().default(false),
 });
-
-// export type definition of API
-export type AppRouter = typeof appRouter;

@@ -29,3 +29,17 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 2. Make sure you have your Docker daemon running.
 3. Start the server with `nx dev case-notes-server`.
+
+## Testing
+
+We have unit tests for the server.
+
+In order to run these tests:
+
+1. Get any necessary env variables from [GSM](https://console.cloud.google.com/security/secret-manager/secret/env_test_case_notes_server/versions?project=recidiviz-dashboard-staging) and put them in an `.env.test` file (the name must match exactly for nx to pick up on the variables) in the `apps/case-notes-server` directory.
+2. Make sure you have your Docker daemon running.
+3. Run `nx test case-notes-server` to run the tests.
+
+### Connecting to the staging Vertex engine using a local instance
+
+If you run `nx local case-notes-server {state code} {query}`, you can run a query pointing at the staging or production version of the Case Notes Vertex AI engine. By default, the command will use the `PROJECT_ID` and `ENGINE_ID` set in your `.env` file. If you'd like to use different variables, you can create a `.env.local` and put them in there.

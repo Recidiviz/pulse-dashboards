@@ -18,15 +18,29 @@
 // Required to get the "request.jwtVerify" decorator to be recongized by typescript
 import "@fastify/jwt";
 
+import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
 import { getIsAuth0Authorized } from "~server-setup-plugin";
 
+// HTTP headers are flattened to lowercase in Fastify
+const STATE_CODE_HEADER_KEY = "statecode";
+
 export async function createContext(opts: CreateFastifyContextOptions) {
+  const { req } = opts;
+  const stateCode = req.headers[STATE_CODE_HEADER_KEY];
+
+  if (!stateCode || typeof stateCode !== "string") {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: `Unsupported state code provided in request headers: ${stateCode}`,
+    });
+  }
   const auth0Authorized = await getIsAuth0Authorized(opts);
 
   return {
     ...opts,
+    stateCode,
     auth0Authorized,
   };
 }
