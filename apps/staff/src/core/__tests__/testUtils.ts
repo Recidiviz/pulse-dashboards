@@ -137,4 +137,5 @@ export const mockOpportunity: Opportunity<Client> = {
     supportsDenial: true,
   },
   sentryTrackingId: undefined,
+  instanceDetails: undefined,
 };

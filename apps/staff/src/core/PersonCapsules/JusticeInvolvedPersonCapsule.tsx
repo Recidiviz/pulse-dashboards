@@ -43,6 +43,7 @@ export type JusticeInvolvedPersonCapsuleProps = {
   profileLink?: string;
   hideId?: boolean;
   nameHoverState?: boolean;
+  additionalDetails?: string;
 };
 
 const PersonName = styled.span`
@@ -124,10 +125,18 @@ export const JusticeInvolvedPersonCapsule = observer(
     textSize,
     profileLink,
     hideId = false,
+    additionalDetails,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
     const IdentityEl = SIZES.identity[textSize];
     const StatusEl = SIZES.status[textSize];
+
+    const nameElem = (
+      <PersonName className="PersonName fs-exclude">
+        {person.displayPreferredName}
+        {additionalDetails && ` • ${additionalDetails}`}
+      </PersonName>
+    );
 
     return (
       <Wrapper nameHoverState={nameHoverState}>
@@ -148,14 +157,10 @@ export const JusticeInvolvedPersonCapsule = observer(
           <IdentityEl>
             {profileLink ? (
               <ProfileLinkWrapper link={profileLink}>
-                <PersonName className="PersonName fs-exclude">
-                  {person.displayPreferredName}
-                </PersonName>
+                {nameElem}
               </ProfileLinkWrapper>
             ) : (
-              <PersonName className="PersonName fs-exclude">
-                {person.displayPreferredName}
-              </PersonName>
+              nameElem
             )}
             {!hideId && (
               <>

@@ -692,4 +692,9 @@ export class OpportunityBase<
   get almostEligibleStatusMessage(): string | undefined {
     return undefined;
   }
+
+  // Used to optionally display an opportunity-specific id in OpportunityCapsule
+  get instanceDetails(): string | undefined {
+    return undefined;
+  }
 }

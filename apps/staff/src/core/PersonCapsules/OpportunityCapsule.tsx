@@ -59,6 +59,7 @@ export const OpportunityCapsule = observer(function OpportunityCapsule({
     <JusticeInvolvedPersonCapsule
       person={person}
       status={status}
+      additionalDetails={opportunity.instanceDetails}
       {...otherProps}
     />
   );
