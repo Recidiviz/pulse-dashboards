@@ -20,7 +20,7 @@ import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
-import { isHydrated } from "~hydration-utils";
+import { isHydrationStarted } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityType } from "../../WorkflowsStore/Opportunity";
@@ -48,12 +48,15 @@ export const CaseloadOpportunitiesHydrator = observer(
     // This effect just reacts to the hydration state and hydrates the managers as needed
     useEffect(
       () =>
-        autorun(() => {
-          workflowsStore.caseloadPersons.forEach((person) => {
-            if (!isHydrated(person.opportunityManager))
-              person.opportunityManager.hydrate();
-          });
-        }),
+        autorun(
+          () => {
+            workflowsStore.caseloadPersons.forEach((person) => {
+              if (!isHydrationStarted(person.opportunityManager))
+                person.opportunityManager.hydrate();
+            });
+          },
+          { delay: 10 },
+        ),
       [workflowsStore],
     );
 

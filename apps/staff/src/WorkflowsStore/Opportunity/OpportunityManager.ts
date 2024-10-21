@@ -56,6 +56,8 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
   // contains the hydrated opportunities for all the active opportunity types
   opportunityMapping: OpportunityMapping = {};
 
+  private hydrationStarted = false;
+
   constructor(
     private rootStore: RootStore,
     private person: PersonType,
@@ -80,7 +82,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
   }
 
   setSelectedOpportunityTypes(opportunityTypes: OpportunityType[]): void {
-    this.selectedOpportunityTypes = opportunityTypes;
+    runInAction(() => (this.selectedOpportunityTypes = opportunityTypes));
   }
 
   // The opportunity types that we expect the manager to be hydrated with
@@ -93,6 +95,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
   }
 
   async hydrate(): Promise<void> {
+    runInAction(() => (this.hydrationStarted = true));
     // Instantiate the opportunities by type
     await Promise.all(
       this.activeOpportunityTypes.map(async (opportunityType) => {
@@ -170,11 +173,13 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
   }
 
   get hydrationState(): HydrationState {
+    if (!this.hydrationStarted && this.activeOpportunityTypes.length)
+      return { status: "needs hydration" };
     return compositeHydrationState(
       this.activeOpportunityTypes.map(
         (type) =>
           this.opportunityMapping[type] ??
-          ({ hydrationState: { status: "needs hydration" } } as Hydratable),
+          ({ hydrationState: { status: "loading" } } as Hydratable),
       ),
     );
   }

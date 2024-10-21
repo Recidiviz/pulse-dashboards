@@ -42,6 +42,7 @@ import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
 import { humanReadableTitleCase } from "../utils";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
+import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
@@ -142,8 +143,24 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   emailAddress?: string;
 
+  milestonesMessageUpdatesSubscription?: MilestonesMessageUpdateSubscription<MilestonesMessage>;
+
   constructor(record: ClientRecord, rootStore: RootStore) {
     super(record, rootStore, createClientSupervisionTasks);
+
+    if (
+      rootStore.currentTenantId &&
+      tenants[rootStore.currentTenantId]?.navigation?.workflows?.includes(
+        "milestones",
+      )
+    ) {
+      this.milestonesMessageUpdatesSubscription =
+        new MilestonesMessageUpdateSubscription(
+          this.rootStore.firestoreStore,
+          record.recordId,
+        );
+    }
+
     makeObservable(this, {
       supervisionLevel: true,
       updateRecord: override,

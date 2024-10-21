@@ -23,7 +23,6 @@ import { SearchField } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
 import {
   ContactMethodType,
-  MilestonesMessage,
   PersonUpdateRecord,
   PersonUpdateType,
   WorkflowsJusticeInvolvedPersonRecord,
@@ -38,7 +37,6 @@ import {
 } from "./Opportunity";
 import { OpportunityManager } from "./Opportunity/OpportunityManager";
 import { CollectionDocumentSubscription } from "./subscriptions";
-import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
 import {
   JusticeInvolvedPerson,
@@ -58,8 +56,6 @@ export class JusticeInvolvedPersonBase<
   // All JusticeInvolvedPerson updates (both Clients and Residents) are stored in `clientUpdatesv2`,
   // so the name of the collection is misleading, all person updates are stored here.
   personUpdatesSubscription?: CollectionDocumentSubscription<PersonUpdateRecord>;
-
-  milestonesMessageUpdatesSubscription?: MilestonesMessageUpdateSubscription<MilestonesMessage>;
 
   opportunityManager: OpportunityManagerInterface;
 
@@ -89,12 +85,6 @@ export class JusticeInvolvedPersonBase<
       new CollectionDocumentSubscription<PersonUpdateRecord>(
         this.rootStore.firestoreStore,
         { key: "clientUpdatesV2" },
-        record.recordId,
-      );
-
-    this.milestonesMessageUpdatesSubscription =
-      new MilestonesMessageUpdateSubscription(
-        this.rootStore.firestoreStore,
         record.recordId,
       );
 
