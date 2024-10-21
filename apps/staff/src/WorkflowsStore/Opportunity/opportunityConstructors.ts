@@ -57,6 +57,7 @@ import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./UsMo/U
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
 import { UsOrEarnedDischargeOpportunity } from "./UsOr";
+import { UsOrEarnedDischargeSentenceOpportunity } from "./UsOr/UsOrEarnedDischargeSentenceOpportunity";
 import { UsPaAdminSupervisionOpportunity } from "./UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
 import { UsTnCustodyLevelDowngradeOpportunity } from "./UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
@@ -78,6 +79,7 @@ export const opportunityConstructors = {
   usMiPastFTRD: UsMiPastFTRDOpportunity,
   usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,
   usOrEarnedDischarge: UsOrEarnedDischargeOpportunity,
+  usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceOpportunity,
   usPaAdminSupervision: UsPaAdminSupervisionOpportunity,
   usPaSpecialCircumstancesSupervision:
     UsPaSpecialCircumstancesSupervisionOpportunity,

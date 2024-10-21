@@ -57,6 +57,7 @@ const constructedOpportunityTypes = [
 
   // US_OR
   "usOrEarnedDischarge",
+  "usOrEarnedDischargeSentence",
 
   // US_PA
   "usPaAdminSupervision",

@@ -126,6 +126,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usMoOverdueRestrictiveHousingReviewHearing:
     usMoOverdueRestrictiveHousingReviewHearingSchema,
   usOrEarnedDischarge: usOrEarnedDischargeSchema,
+  usOrEarnedDischargeSentence: usOrEarnedDischargeSchema,
   usMeReclassificationReview: usMeAnnualReclassificationSchema,
   usMeMediumTrustee: usMeMediumTrusteeSchema,
 };
