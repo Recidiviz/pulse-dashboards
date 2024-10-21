@@ -108,9 +108,11 @@ export class CaseStore {
   *loadOffenses() {
     try {
       const offenses: Offenses = yield this.psiStore.apiClient.getOffenses();
+      // Sorted by frequency with alphabetical sorting applied to items that have the same frequency
       this.offenses = offenses
         .slice()
-        .sort((a, b) => a.name.localeCompare(b.name));
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => b.frequency - a.frequency);
     } catch (error) {
       captureException(error);
       toast(
