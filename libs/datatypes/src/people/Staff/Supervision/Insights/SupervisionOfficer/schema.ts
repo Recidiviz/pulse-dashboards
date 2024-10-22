@@ -42,6 +42,7 @@ const withOutlierDataSchema = z.object({
   avgDailyPopulation: z
     .number()
     .transform((avgDailyPopulation) => Math.round(avgDailyPopulation)),
+  zeroGrantOpportunities: z.array(z.string()).optional(),
 });
 export type WithOutlierData = z.infer<typeof withOutlierDataSchema>;
 

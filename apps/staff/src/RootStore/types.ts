@@ -102,7 +102,8 @@ export type FeatureVariant =
   | "submittedOpportunityStatus"
   | "personSpecificOppBanners"
   | "sortableOpportunityTabs"
-  | "fullWidthTimeline";
+  | "fullWidthTimeline"
+  | "zeroGrantsFlag";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -154,6 +155,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   personSpecificOppBanners: {},
   sortableOpportunityTabs: {},
   fullWidthTimeline: {},
+  zeroGrantsFlag: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

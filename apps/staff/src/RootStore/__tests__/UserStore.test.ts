@@ -941,6 +941,7 @@ describe("feature variants", () => {
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
         "workflowsSupervisorSearch": {},
+        "zeroGrantsFlag": {},
       }
     `);
   });
@@ -984,6 +985,7 @@ describe("feature variants", () => {
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
         "workflowsSupervisorSearch": {},
+        "zeroGrantsFlag": {},
       }
     `);
   });
@@ -1025,6 +1027,7 @@ describe("feature variants", () => {
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
         "workflowsSupervisorSearch": {},
+        "zeroGrantsFlag": {},
       }
     `);
   });
