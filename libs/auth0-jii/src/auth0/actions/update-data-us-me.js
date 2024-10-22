@@ -44,6 +44,7 @@ exports.onExecutePostLogin = async (event, api) => {
     if (!usernameFromAD) return;
 
     api.user.setAppMetadata("skipEmailVerification", true);
+    api.user.setAppMetadata("permissions", ["live_data"]);
 
     const rosterMatch = ROSTER.find((row) => {
       return (

@@ -32,7 +32,12 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["nx dev jii-functions", "nx dev-spa jii"]
-      }
+      },
+      "configurations": {
+        "live": {},
+        "demo": {}
+      },
+      "defaultConfiguration": "live"
     },
     "build": {
       "executor": "@nx/vite:build",

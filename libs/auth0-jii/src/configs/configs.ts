@@ -23,7 +23,7 @@ import { Permission, permissionSchema } from "./permissions";
  * Returns config values matching the specified tenant, if it exists.
  * For convenience in scenarios such as test, offline, etc., returns empty values
  * if the tenant does not exist so that the result can always be passed to the Auth0 SDK.
- * @param tenantKey the only valid keys are "staging" and "production", but because we expect
+ * @param tenantKey the only valid keys are enumerated below, but because we expect
  * this to be read from an environment variable in practice we will accept any string
  */
 export function getAuth0Config(tenantKey: string): {
@@ -43,6 +43,14 @@ export function getAuth0Config(tenantKey: string): {
       clientId = "9SXcwNaSRiRv6zGuYY2pgPUFH8zMZF2O";
       // this is not a real URL and won't be used for requests, this is just our naming convention
       // for Auth0 API identifiers (Auth0 recommends using a URL but does not actually call it)
+      audience = "https://jii-api-staging.recidiviz.org";
+      break;
+    case "demo":
+      // demo app is part of the staging environment
+      domain = "login-staging.opportunities.app";
+      // a different Application than the main staging app
+      clientId = "fwgl9sl9sSyrPR8pda6ghv8dGJKGpsDC";
+      // shares a backend with staging so this should be the same
       audience = "https://jii-api-staging.recidiviz.org";
       break;
     case "production":

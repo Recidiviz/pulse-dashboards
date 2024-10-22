@@ -38,6 +38,16 @@ describe("auth0 client config", () => {
     `);
   });
 
+  test("demo tenant", () => {
+    expect(getAuth0Config("demo")).toMatchInlineSnapshot(`
+      {
+        "audience": "https://jii-api-staging.recidiviz.org",
+        "client_id": "fwgl9sl9sSyrPR8pda6ghv8dGJKGpsDC",
+        "domain": "login-staging.opportunities.app",
+      }
+    `);
+  });
+
   test("invalid tenant", () => {
     expect(getAuth0Config("any-other-value")).toMatchInlineSnapshot(`
       {

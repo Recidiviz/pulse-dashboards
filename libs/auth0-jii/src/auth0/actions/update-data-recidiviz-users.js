@@ -24,20 +24,14 @@ const { Storage } = require("@google-cloud/storage");
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  const { app_metadata, email } = event.user;
+  const { email } = event.user;
   const emailSplit = email?.split("@") || [];
   const userDomain =
     (email?.length ?? 0) > 1 && emailSplit[emailSplit.length - 1].toLowerCase();
 
   if (userDomain === "recidiviz.org") {
-    const { stateCode, permissions } = app_metadata;
-    // defer to existing values so people can make manual overrides for testing, etc
-    if (!stateCode) {
-      api.user.setAppMetadata("stateCode", "RECIDIVIZ");
-    }
-    if (!permissions) {
-      api.user.setAppMetadata("permissions", ["enhanced"]);
-    }
+    api.user.setAppMetadata("stateCode", "RECIDIVIZ");
+    api.user.setAppMetadata("permissions", ["enhanced", "live_data"]);
 
     // the full credential exceeds the secrets character limit,
     // which is why the private key field is stored separately (it is by far the largest value)
@@ -67,8 +61,6 @@ exports.onExecutePostLogin = async (event, api) => {
       sc.toUpperCase(),
     );
 
-    // for this it is important NOT to defer to manual overrides,
-    // for security/compliance reasons
     api.user.setAppMetadata("allowedStates", allowedStates);
   }
 };
