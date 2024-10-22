@@ -174,6 +174,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             <Recommendations
               firstName={firstName}
               lastName={lastName}
+              age={caseAttributes.age}
               externalId={caseAttributes.externalId}
               fullName={caseAttributes.client?.fullName}
               insight={caseAttributes.insight}

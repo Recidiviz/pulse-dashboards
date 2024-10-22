@@ -38,6 +38,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
   lastName,
   fullName,
+  age,
   selectedRecommendation,
   lastSavedRecommendation,
   recommendedOpportunities,
@@ -157,6 +158,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
           fullName={fullName}
           firstName={firstName}
           lastName={lastName}
+          age={age}
           insight={insight}
           externalId={externalId}
           selectedRecommendation={selectedRecommendation}

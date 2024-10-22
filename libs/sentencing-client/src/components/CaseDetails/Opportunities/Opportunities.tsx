@@ -25,7 +25,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { keyBy, mapValues, pick } from "lodash";
-import moment from "moment";
 import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -224,7 +223,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     {
       key: "Age",
       label: "Age",
-      value: moment().diff(caseAttributes.client?.birthDate, "years"),
+      value: caseAttributes.age,
     },
     {
       key: LSIR_SCORE_KEY,

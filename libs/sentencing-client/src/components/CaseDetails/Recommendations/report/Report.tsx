@@ -18,19 +18,30 @@
 import moment from "moment";
 
 import { CaseInsight } from "../../../../api";
-import RecidivizLogo from "../../../assets/recidiviz-logo.png";
-import { SelectedRecommendation } from "../../../CaseDetails/types";
-import { DispositionChart } from "../../components/charts/DispositionChart/DispositionChart";
+import { convertDecimalToPercentage } from "../../../../utils/utils";
+import MultiRightArrows from "../../../assets/multi-right-arrow.svg?react";
+import RecidivizLogo from "../../../assets/recidiviz-logo-bw.png";
+import {
+  RecommendationType,
+  SelectedRecommendation,
+} from "../../../CaseDetails/types";
+import {
+  getDescriptionGender,
+  getSubtitleLsirScore,
+} from "../../components/charts/common/utils";
 import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
-import { RecidivismPlot } from "../../components/charts/RecidivismPlot/RecidivismPlot";
-import { RecidivismPlotExplanation } from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
+import {
+  OffenseText,
+  RecidivismPlotExplanation,
+} from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
+import { recommendationTypeOrder } from "../../constants";
+import { DispositionCard } from "./DispositionCard";
 import * as Styled from "./Report.styles";
-
-const PLOT_WIDTH = 850;
 
 interface ReportProps {
   fullName?: string;
   externalId: string;
+  age: number;
   selectedRecommendation: SelectedRecommendation;
   insight?: CaseInsight;
 }
@@ -38,24 +49,19 @@ interface ReportProps {
 function Header() {
   return (
     <Styled.Header>
-      <div>Case Insights Report</div>
+      <div>Case Insights</div>
       <div>{moment().format("MMMM DD, YYYY")}</div>
     </Styled.Header>
   );
 }
 
-interface FooterProps {
-  pageNumber: number;
-}
-
-function Footer({ pageNumber }: FooterProps) {
+function Footer() {
   return (
     <Styled.Footer>
       <div>
-        Report provided by{" "}
-        <img src={RecidivizLogo} width="58px" alt="Recidiviz logo" />
+        Report provided by
+        <img src={RecidivizLogo} width="38px" alt="Recidiviz logo" />
       </div>
-      <div>Page {pageNumber} of 2</div>
     </Styled.Footer>
   );
 }
@@ -63,66 +69,218 @@ function Footer({ pageNumber }: FooterProps) {
 export function Report({
   insight,
   fullName,
+  age,
   externalId,
   selectedRecommendation,
 }: ReportProps) {
+  const cumulativeRatesByRecommendationType =
+    insight?.rollupRecidivismSeries.reduce(
+      (acc, val) => {
+        const sortedDatapoints = val.dataPoints.sort(
+          (a, b) => a.cohortMonths - b.cohortMonths,
+        );
+        acc[val.recommendationType] = convertDecimalToPercentage(
+          sortedDatapoints[val.dataPoints.length - 1].eventRate,
+        );
+        return acc;
+      },
+      {} as { [key: string]: number },
+    );
+
+  const dispositionDataWithCumulativeRates = insight?.dispositionData.map(
+    (disposition) => {
+      return {
+        ...disposition,
+        cumulativeRate:
+          cumulativeRatesByRecommendationType?.[disposition.recommendationType],
+      };
+    },
+  );
+
+  const sortedDispositionDataWithCumulativeRates =
+    dispositionDataWithCumulativeRates?.sort(
+      (a, b) =>
+        recommendationTypeOrder.indexOf(a.recommendationType) -
+        recommendationTypeOrder.indexOf(b.recommendationType),
+    );
+
+  const selectedRecommendationRecidivismRate =
+    selectedRecommendation &&
+    cumulativeRatesByRecommendationType?.[selectedRecommendation];
+
+  const mostCommonHistoricalSentencing = insight?.dispositionData.reduce(
+    (mostCommonDisposition, currentDisposition) => {
+      return currentDisposition.percentage > mostCommonDisposition.percentage
+        ? currentDisposition
+        : mostCommonDisposition;
+    },
+    insight.dispositionData[0],
+  );
+
+  const isCumulativeProbationRateHigherThanCurrentRecommendationRate =
+    cumulativeRatesByRecommendationType && selectedRecommendation
+      ? cumulativeRatesByRecommendationType[RecommendationType.Probation] >
+        cumulativeRatesByRecommendationType[selectedRecommendation]
+      : null;
+
+  const gender = (
+    insight?.gender || insight?.rollupGender
+  )?.toLocaleLowerCase();
+
+  const AttributeChips = () =>
+    insight && (
+      <Styled.AttributeChipsWrapper>
+        <Styled.AttributeChip>
+          {getDescriptionGender(insight.gender)}
+        </Styled.AttributeChip>
+        <Styled.AttributeChip>
+          {getSubtitleLsirScore(
+            insight.assessmentScoreBucketStart,
+            insight.assessmentScoreBucketEnd,
+          )}
+        </Styled.AttributeChip>
+        <Styled.AttributeChip>
+          <OffenseText
+            rollupOffense={insight.rollupOffense}
+            rollupNcicCategory={insight.rollupNcicCategory}
+            rollupCombinedOffenseCategory={
+              insight.rollupCombinedOffenseCategory
+            }
+            rollupViolentOffense={insight.rollupViolentOffense}
+          />
+        </Styled.AttributeChip>
+      </Styled.AttributeChipsWrapper>
+    );
+
   return (
     <Styled.ReportContainer>
-      {/* Page 1 */}
       <Styled.Page>
         <Header />
         <Styled.Title>
-          <Styled.Name>{fullName}</Styled.Name>
-          <Styled.ExternalId>{externalId}</Styled.ExternalId>
+          Historical data for cases similar to this one...
         </Styled.Title>
-        <Styled.RecommendationSection>
-          <Styled.Subtitle>PSI Recommendation</Styled.Subtitle>
-          <Styled.RecommendationContainer>
-            {selectedRecommendation}
-          </Styled.RecommendationContainer>
-        </Styled.RecommendationSection>
-        <div>
-          <Styled.Subtitle>Insights</Styled.Subtitle>
-          <Styled.InsightSubtitle>
-            The following information represents outcomes for cases similar to
-            that of the current client, {fullName}, based on gender, risk score,
-            and type of conviction.
-          </Styled.InsightSubtitle>
-          <Styled.PlotContainer>
-            <RecidivismPlot
-              insight={insight}
-              selectedRecommendation={selectedRecommendation}
-              plotWidth={PLOT_WIDTH}
-              hideInfoTooltip
-            />
-          </Styled.PlotContainer>
+
+        {/* Case Snapshot */}
+        <Styled.CaseSnapshot>
+          <Styled.SnapshotContainer>
+            <Styled.SectionTitle>Case Overview</Styled.SectionTitle>
+            <Styled.CaseOverview>
+              <Styled.Name>{fullName}</Styled.Name>
+              <Styled.AttributesWrapper>
+                <Styled.ID>
+                  ID: <span>{externalId}</span>
+                </Styled.ID>
+                <Styled.Gender>
+                  Gender: <span>{gender}</span>
+                </Styled.Gender>
+                <Styled.Age>
+                  Age: <span>{age}</span>
+                </Styled.Age>
+              </Styled.AttributesWrapper>
+              <Styled.Offense>
+                Offense: <span>{insight?.offense}</span>
+              </Styled.Offense>
+            </Styled.CaseOverview>
+          </Styled.SnapshotContainer>
+          <MultiRightArrows />
+          <Styled.SnapshotContainer>
+            <Styled.SectionTitle>Common Sentences</Styled.SectionTitle>
+            <Styled.HistoricalDetails>
+              Historically, most cases like this one were sentenced to{" "}
+              <span>
+                {mostCommonHistoricalSentencing?.recommendationType.toLocaleLowerCase()}
+              </span>
+              .
+            </Styled.HistoricalDetails>
+          </Styled.SnapshotContainer>
+          <Styled.SnapshotContainer>
+            <Styled.SectionTitle>Recidivism</Styled.SectionTitle>
+            <Styled.HistoricalDetails>
+              Cumulatively, those sentenced to probation had{" "}
+              <span>
+                {isCumulativeProbationRateHigherThanCurrentRecommendationRate
+                  ? "higher"
+                  : "lower"}{" "}
+                recidivism rates
+              </span>
+              .
+            </Styled.HistoricalDetails>
+          </Styled.SnapshotContainer>
+        </Styled.CaseSnapshot>
+
+        {/* Disposition Breakdown */}
+        <Styled.BreakdownByDisposition>
+          <Styled.SectionTitle>Breakdown by Sentence</Styled.SectionTitle>
+
+          <Styled.DispositionCardWrapper>
+            {sortedDispositionDataWithCumulativeRates?.map((dp) => {
+              const isSelected =
+                dp.recommendationType === selectedRecommendation;
+
+              return (
+                <DispositionCard
+                  key={dp.recommendationType}
+                  isSelected={isSelected}
+                  recommendationType={dp.recommendationType}
+                  // ** Entry point for the chart component **
+                  chart={<div />}
+                  historicalSentencingPercentage={convertDecimalToPercentage(
+                    dp.percentage,
+                  )}
+                  cumulativeRecidivismRatePercentage={dp.cumulativeRate}
+                  recidivismRateDelta={
+                    !isSelected &&
+                    selectedRecommendationRecidivismRate &&
+                    dp.cumulativeRate
+                      ? selectedRecommendationRecidivismRate - dp.cumulativeRate
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </Styled.DispositionCardWrapper>
+        </Styled.BreakdownByDisposition>
+
+        {/* Historical Sentencing Explanation */}
+        <Styled.HistoricalSentencingExplanationContainer>
+          <Styled.SectionTitle noMargin>
+            Historical Sentencing
+          </Styled.SectionTitle>
+          <AttributeChips />
+
+          {insight && (
+            <Styled.Explanation>
+              <DispositionChartExplanation insight={insight} />
+            </Styled.Explanation>
+          )}
+        </Styled.HistoricalSentencingExplanationContainer>
+
+        {/* Cumulative Recidivism Rate Explanation */}
+        <Styled.CumulativeRecidivismRateExplanationContainer>
+          <Styled.SectionTitle noMargin>
+            Cumulative Recidivism Rate
+          </Styled.SectionTitle>
+          <AttributeChips />
+
           {insight && (
             <Styled.Explanation>
               <RecidivismPlotExplanation insight={insight} />
             </Styled.Explanation>
           )}
-        </div>
-        <Footer pageNumber={1} />
-      </Styled.Page>
+        </Styled.CumulativeRecidivismRateExplanationContainer>
 
-      {/* Page 2 */}
-      <Styled.Page>
-        <Header />
-        <Styled.PlotContainer>
-          <DispositionChart
-            insight={insight}
-            selectedRecommendation={selectedRecommendation}
-            justifyContent="flex-start"
-            scale={1.5}
-            hideInfoTooltip
-          />
-        </Styled.PlotContainer>
-        {insight && (
-          <Styled.Explanation>
-            <DispositionChartExplanation insight={insight} />
-          </Styled.Explanation>
-        )}
-        <Footer pageNumber={2} />
+        <Styled.Disclaimer>
+          <span>DISCLAIMER</span> This report is generated by Recidiviz and is
+          for informational purposes only. Recidiviz does not guarantee the
+          accuracy, completeness, validity, timeliness, or suitability of the
+          information in this report and is not liable for any errors,
+          omissions, or consequences of using the information. The information
+          is not legal advice. Data on past conduct is not a guarantee of future
+          outcomes. Users are solely responsible for their use of the
+          information and agree that Recidiviz is not liable for any claim,
+          loss, or damage arising from the use of this report.
+        </Styled.Disclaimer>
+        <Footer />
       </Styled.Page>
     </Styled.ReportContainer>
   );

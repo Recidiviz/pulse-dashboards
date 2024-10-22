@@ -27,6 +27,7 @@ export type RecommendationsProps = {
   firstName?: string;
   lastName?: string;
   fullName?: string;
+  age: number;
   externalId: string;
   gender?: Client["gender"];
   selectedRecommendation?: SelectedRecommendation;

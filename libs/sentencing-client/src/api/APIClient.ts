@@ -22,6 +22,7 @@ import {
 } from "@trpc/client";
 import _ from "lodash";
 import { runInAction, when } from "mobx";
+import moment from "moment";
 import superjson from "superjson";
 
 import type { AppRouter } from "~sentencing-server-types/shared/types";
@@ -141,6 +142,7 @@ export class APIClient {
 
     return {
       ...fetchedData,
+      age: moment().diff(fetchedData.client?.birthDate, "years"),
       client: updatedClient,
     };
   }

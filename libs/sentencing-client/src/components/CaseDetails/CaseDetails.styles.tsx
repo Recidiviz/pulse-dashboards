@@ -65,7 +65,6 @@ export const Body = styled.div`
   flex-grow: 1;
   overflow-y: auto;
   overscroll-behavior: auto;
-  position: relative;
 `;
 
 export const BackLink = styled.div<{ leftMargin?: number }>`

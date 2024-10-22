@@ -37,6 +37,7 @@ export type EligibilityCriteria = Pick<
 
 export type EligibilityAttributes = Pick<
   Case,
+  | "age"
   | "lsirScore"
   | "needsToBeAddressed"
   | "substanceUseDisorderDiagnosis"
@@ -50,4 +51,4 @@ export type EligibilityAttributes = Pick<
   | "plea"
   | "county"
   | "county"
-> & { age: number; district?: string | null };
+> & { district?: string | null };

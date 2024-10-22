@@ -18,33 +18,56 @@
 import { palette, typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
+import { customPalette } from "../../../styles/palette";
+
 const REPORT_PAGE_HEIGHT = 1340;
 
 export const ReportContainer = styled.div`
-  width: 100%;
+  width: 935px;
 `;
 
 export const Header = styled.div`
   ${typography.Sans16}
-  color: ${palette.pine1};
+  font-size: 11.5px;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 `;
 
 export const Footer = styled.div`
   width: 100%;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   position: absolute;
   bottom: 50px;
   padding-right: 100px;
-  color: ${palette.slate85};
+  color: ${customPalette.black};
+  font-size: 8px;
 
   div {
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+
+  img {
+    margin-bottom: 2px;
+  }
+`;
+
+export const Disclaimer = styled.div`
+  ${typography.Sans12}
+  font-size: 9px;
+  border-top: 1px solid ${customPalette.black};
+  border-bottom: 1px solid ${customPalette.black};
+  padding: 5px 0;
+  position: absolute;
+  bottom: 70px;
+  max-width: 826px;
+
+  span {
+    font-weight: 800;
   }
 `;
 
@@ -53,22 +76,229 @@ export const Page = styled.div`
   height: ${REPORT_PAGE_HEIGHT}px;
   break-after: page;
   position: relative;
-
+  color: ${customPalette.black};
   &:not(:first-child) {
     padding-top: 50px;
   }
 `;
 
 export const Title = styled.div`
-  padding-bottom: 16px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #35536233;
+  ${typography.Serif34}
+  max-width: 424px;
+  margin-bottom: 32px;
 `;
 
-export const Name = styled.span`
-  ${typography.Serif34}
-  color: ${palette.pine2};
-  margin-right: 8px;
+export const SnapshotContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const SectionTitle = styled.div<{ noMargin?: boolean }>`
+  margin-bottom: ${({ noMargin }) => (noMargin ? 0 : 6)}px;
+  font-weight: 500;
+`;
+
+export const Name = styled.div``;
+
+export const AttributesWrapper = styled.div`
+  width: 337px;
+  display: flex;
+  gap: 8px;
+
+  span {
+    font-weight: 600;
+  }
+
+  div {
+    font-weight: 400;
+  }
+`;
+
+export const ID = styled.div``;
+export const Gender = styled.div`
+  text-transform: capitalize;
+`;
+export const Age = styled.div``;
+export const Offense = styled.div`
+  font-weight: 400;
+  span {
+    font-weight: 600;
+  }
+`;
+
+export const CaseOverview = styled.div`
+  min-height: 92px;
+  border: 1px solid ${customPalette.black};
+  border-radius: 2px;
+
+  & > div {
+    padding: 8px;
+  }
+
+  & > div:not(:last-child) {
+    border-bottom: 1px solid ${customPalette.black};
+  }
+`;
+
+export const HistoricalDetails = styled(CaseOverview)`
+  height: 100%;
+  padding: 14px 16px;
+
+  span {
+    border-bottom: 1px solid ${customPalette.black};
+  }
+`;
+
+export const CaseSnapshot = styled.div`
+  ${typography.Sans12}
+  display: grid;
+  grid-template-columns: 1fr auto 1fr 1fr;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 84px;
+
+  svg {
+    min-width: 78px;
+    align-self: center;
+  }
+
+  ${SnapshotContainer}:nth-child(3) > ${HistoricalDetails} {
+    border-width: 1px 0px 1px 1px;
+    border-radius: 2px 0px 0px 2px;
+  }
+
+  ${SnapshotContainer}:nth-child(4) > ${HistoricalDetails} {
+    border-width: 1px 1px 1px 0.5px;
+    border-radius: 0px 2px 2px 0px;
+  }
+`;
+
+export const BreakdownByDisposition = styled.div`
+  margin-bottom: 76px;
+`;
+
+export const DispositionCardWrapper = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+`;
+
+export const DispositionCardTitle = styled.div`
+  font-weight: 700;
+  font-size: 17px;
+  margin-bottom: 32px;
+`;
+
+export const HistoricalSentencingWrapper = styled.div``;
+
+export const HistoricalDetailsTitlePercentage = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 6px;
+`;
+
+export const HistoricalDetailsTitle = styled.div`
+  ${typography.Sans12}
+  font-weight: 600;
+  font-size: 11.5px;
+`;
+
+export const HistoricalDetailsPercentage = styled.div`
+  ${typography.Sans16}
+  font-weight: 600;
+  line-height: 18px;
+`;
+
+export const ProgressBar = styled.div<{ percentage?: number }>`
+  height: 12px;
+  border: 0.25px solid ${customPalette.black};
+  position: relative;
+  margin-bottom: 32px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    height: 100%;
+    width: ${({ percentage }) => percentage ?? 0}%;
+    background: ${customPalette.black};
+  }
+`;
+
+export const ChartContainer = styled.div``;
+
+export const CardCaption = styled.div`
+  ${typography.Sans12}
+  height: 32px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  border-radius: 0 0 4px 4px;
+  padding: 10px 12px;
+  line-height: 12px;
+`;
+
+export const DispositionCard = styled.div<{ selected?: boolean }>`
+  ${typography.Sans16}
+  width: 267px;
+  height: 378px;
+  border-radius: 4px;
+  border: ${({ selected }) => (selected ? 2 : 1)}px solid ${customPalette.black};
+  padding: 12px;
+  position: relative;
+
+  ${CardCaption} {
+    ${({ selected }) =>
+      selected
+        ? `
+          background: ${customPalette.black};
+          color: ${palette.white};
+            bottom: -2px;`
+        : `
+          background: ${palette.white};
+          color: ${customPalette.black};
+    `}
+  }
+`;
+
+export const HistoricalSentencingExplanationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-bottom: 19px;
+`;
+
+export const CumulativeRecidivismRateExplanationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+`;
+
+export const AttributeChipsWrapper = styled.div`
+  display: flex;
+  gap: 4px;
+
+  div:first-child {
+    text-transform: capitalize;
+  }
+`;
+
+export const AttributeChip = styled.div`
+  ${typography.Sans12}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12px;
+  padding: 4px 8px;
+  border: 1px solid ${customPalette.black};
+  border-radius: 4px;
 `;
 
 export const ExternalId = styled.span`
@@ -112,7 +342,7 @@ export const Bold = styled.span`
 `;
 
 export const Explanation = styled.span`
-  ${typography.Sans14}
-  color: ${palette.slate85};
-  font-weight: 500;
+  ${typography.Sans12}
+  color: ${customPalette.black};
+  font-weight: 400;
 `;

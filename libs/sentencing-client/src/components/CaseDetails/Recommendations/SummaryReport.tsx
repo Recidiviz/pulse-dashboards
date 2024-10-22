@@ -26,8 +26,8 @@ import CopyIcon from "../../assets/copy-icon.svg?react";
 import DownloadIcon from "../../assets/download-icon.svg?react";
 import * as Styled from "../CaseDetails.styles";
 import { PDF_PAGE_WIDTH } from "../constants";
-import { Report } from "../Recommendations/report/Report";
 import { SelectedRecommendation } from "../types";
+import { OldReport } from "./report/OldReport";
 import { generateRecommendationSummary } from "./summaryUtils";
 
 const BUTTON_CHANGE_TIMEOUT = 2500;
@@ -37,6 +37,7 @@ type SummaryReportProps = {
   firstName?: string;
   lastName?: string;
   fullName?: string;
+  age: number;
   insight?: CaseInsight;
   externalId: string;
   selectedRecommendation: SelectedRecommendation;
@@ -56,6 +57,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   firstName,
   lastName,
   fullName,
+  age,
   insight,
   externalId,
   selectedRecommendation,
@@ -115,12 +117,20 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   };
 
   const renderReport = () => (
-    <Report
+    <OldReport
       fullName={fullName}
       externalId={externalId}
       selectedRecommendation={selectedRecommendation}
       insight={insight}
     />
+    // TODO(Recidiviz/recidiviz-data#33816) Ungate when new report is finalized
+    // <Report
+    //   fullName={fullName}
+    //   age={age}
+    //   externalId={externalId}
+    //   selectedRecommendation={selectedRecommendation}
+    //   insight={insight}
+    // />
   );
 
   return (

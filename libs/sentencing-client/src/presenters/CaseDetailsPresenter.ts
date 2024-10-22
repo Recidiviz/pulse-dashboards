@@ -17,7 +17,6 @@
 
 import { keyBy, startCase, toLower } from "lodash";
 import { flowResult, makeAutoObservable, when } from "mobx";
-import moment from "moment";
 
 import {
   Hydratable,
@@ -95,18 +94,24 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.caseStore.psiStore.staffPseudoId;
   }
 
-  get caseAttributes(): Case & { clientGender?: Client["gender"] } {
+  get caseAttributes(): Case & {
+    clientGender?: Client["gender"];
+  } {
     const currentCase = this.caseStore.caseDetailsById[this.caseId];
     if (currentCase.client?.fullName) {
       currentCase.client.fullName = startCase(
         toLower(currentCase.client?.fullName),
       );
     }
-    return { ...currentCase, clientGender: currentCase.client?.gender };
+    return {
+      ...currentCase,
+      clientGender: currentCase.client?.gender,
+    };
   }
 
   get caseEligibilityAttributes() {
     const {
+      age,
       lsirScore,
       needsToBeAddressed,
       substanceUseDisorderDiagnosis,
@@ -123,10 +128,10 @@ export class CaseDetailsPresenter implements Hydratable {
       plea,
       county,
     } = this.caseAttributes ?? {};
-    const { birthDate, district } = this.caseAttributes?.client ?? {};
+    const { district } = this.caseAttributes?.client ?? {};
 
     return {
-      age: moment().diff(birthDate, "years"),
+      age,
       lsirScore,
       needsToBeAddressed,
       substanceUseDisorderDiagnosis,

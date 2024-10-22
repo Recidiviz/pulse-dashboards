@@ -35,7 +35,7 @@ export function getOffenseName({
   return rollupOffense || rollupCombinedOffenseCategory || rollupNcicCategory;
 }
 
-function OffenseText({
+export function OffenseText({
   rollupOffense,
   rollupNcicCategory,
   rollupCombinedOffenseCategory,

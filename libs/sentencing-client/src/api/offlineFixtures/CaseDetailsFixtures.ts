@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import moment from "moment";
+
 import { Case } from "../APIClient";
+
+const birthDate = new Date("1990-11-13T21:37:16.551Z");
+const age = moment().diff(birthDate, "years");
 
 export const CaseDetailsFixture: { [caseId: string]: Case } = {
   "f9c7ad42-949c-4f11-9ece-caf66df9f913": {
@@ -26,6 +31,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     completionDate: new Date("2025-02-22T08:00:12.071Z"),
     sentenceDate: new Date("2023-12-16T04:52:18.339Z"),
     assignedDate: new Date("2023-10-20T20:19:13.149Z"),
+    age: age,
     county: "Borders",
     lsirScore: null,
     lsirLevel: "6584455049248768",
@@ -60,7 +66,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       lastName: "Furman",
       gender: "EXTERNAL_UNKNOWN",
       county: "Gwynedd County",
-      birthDate: new Date("1990-11-13T21:37:16.551Z"),
+      birthDate: birthDate,
       externalId: "70478174",
       isGenderLocked: false,
       district: "DISTRICT 1",

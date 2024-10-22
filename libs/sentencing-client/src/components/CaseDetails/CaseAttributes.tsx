@@ -44,6 +44,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
     const { trackEditCaseDetailsClicked } = analytics;
 
     const {
+      age,
       dueDate,
       reportType,
       county: districtCountyOfSentencing,
@@ -52,7 +53,6 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       client,
     } = caseAttributes;
     const {
-      birthDate,
       fullName,
       gender,
       externalId,
@@ -87,7 +87,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
         label: "Gender",
         value: gender ? GenderToDisplayName[gender] : undefined,
       },
-      { label: "Age", value: moment().diff(birthDate, "years") },
+      { label: "Age", value: age },
       { label: "Offense", value: offense },
       {
         label: "LSI-R Score",
