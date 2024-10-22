@@ -15,15 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  IconSVG,
-  palette,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled from "styled-components/macro";
@@ -32,25 +25,20 @@ import { OpportunityInfo } from "~datatypes";
 
 import { insightsUrl } from "../views";
 
-const OfficerWithOpportunityDetailsName = styled.h1`
+const OfficerWithOpportunityDetailsName = styled.div`
   ${typography.Sans14}
   color: ${palette.pine1};
 `;
 const OfficerWithOpportunityDetailsInfo = styled.div`
-  gap: ${rem(spacing.xs)};
   flex-direction: row;
   display: inline-flex;
   flex-wrap: nowrap;
   width: fit-content;
 `;
 
-const ClientsCountText = styled.p`
+const ClientsCountText = styled.div`
   ${typography.Sans12}
   color: ${palette.slate60};
-`;
-
-const ArrowWrapper = styled.span`
-  margin-left: ${rem(spacing.xs)};
 `;
 
 const LIST_HEIGHT = rem(352);
@@ -82,42 +70,37 @@ const OfficerWithOpportunityDetailList = styled.ul<{ isOverflowing: boolean }>`
   `}
 `;
 
-const OfficerWithOpportunityDetailListItem = styled.li<{ hovered?: boolean }>`
+const OfficerWithOpportunityDetailListItem = styled.li`
   width: ${LIST_ITEM_WIDTH};
   height: ${LIST_ITEM_HEIGHT};
-  padding: ${rem(spacing.md)} ${rem(spacing.md)} ${rem(spacing.md)} ${rem(0)};
   gap: 0;
   border-top: ${rem(1)} solid ${palette.slate20};
   color: ${palette.pine1};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   &:first-child {
     border-top: none;
   }
 
-  ${({ hovered }) =>
-    hovered &&
-    `
-  ${OfficerWithOpportunityDetailsName} {
-      color: ${palette.pine4};
-    }`}
-
   &:hover {
     ${OfficerWithOpportunityDetailsName} {
-      color: ${palette.pine4};
+      color: ${palette.signal.links};
+      text-decoration: underline;
     }
 
-    ${ArrowWrapper} {
-      opacity: 1;
-    }
+    background-color: ${palette.slate10};
   }
 `;
 
 const StaffPageLink = styled(Link)`
-  width: 100%;
-  height: 100%;
+  padding: ${rem(spacing.md)} ${rem(spacing.md)} ${rem(spacing.md)}
+    ${rem(spacing.sm)};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `;
 
 export type InsightsSupervisorOpportunityDetailOfficerListProps = {
@@ -129,18 +112,12 @@ export type InsightsSupervisorOpportunityDetailOfficerListProps = {
 export const InsightsSupervisorOpportunityDetailOfficerList: React.FC<
   InsightsSupervisorOpportunityDetailOfficerListProps
 > = ({ officersWithEligibleClients, supervisionJiiLabel }) => {
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-
   const isOverflowing = officersWithEligibleClients.length > 7;
 
   return (
     <OfficerWithOpportunityDetailList isOverflowing={isOverflowing}>
       {officersWithEligibleClients.map((officer) => (
-        <OfficerWithOpportunityDetailListItem
-          key={officer.externalId}
-          onMouseEnter={() => setHoveredItem(officer.externalId)}
-          onMouseLeave={() => setHoveredItem(null)}
-        >
+        <OfficerWithOpportunityDetailListItem key={officer.externalId}>
           <StaffPageLink
             to={insightsUrl("supervisionStaff", {
               officerPseudoId: officer.pseudonymizedId,
@@ -154,15 +131,6 @@ export const InsightsSupervisorOpportunityDetailOfficerList: React.FC<
                 {" "}
                 {simplur`${officer.clientsEligibleCount} ${supervisionJiiLabel}[|s]`}
               </ClientsCountText>
-              {hoveredItem === officer.externalId && (
-                <Icon
-                  strokeWidth={1.5}
-                  kind={IconSVG.Arrow}
-                  color={palette.pine4}
-                  width={12}
-                  height={12}
-                />
-              )}
             </OfficerWithOpportunityDetailsInfo>
           </StaffPageLink>
         </OfficerWithOpportunityDetailListItem>

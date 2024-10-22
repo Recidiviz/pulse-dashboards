@@ -40,7 +40,7 @@ const BORDER_RADIUS = rem(4);
 const CardWrapper = styled.div`
   max-width: ${WRAPPER_WIDTH};
   height: ${WRAPPER_HEIGHT};
-  padding: ${rem(spacing.lg)} ${rem(0)} ${rem(spacing.md)} ${rem(spacing.md)};
+  padding: ${rem(spacing.lg)} ${rem(0)} ${rem(spacing.md)} ${rem(spacing.sm)};
   gap: ${rem(32)};
   overflow: hidden;
   border-radius: ${BORDER_RADIUS};
@@ -56,7 +56,7 @@ const CardHeader = styled.div`
   width: 100%;
   flex-direction: row;
   justify-content: space-between;
-  padding: ${rem(0)} ${rem(spacing.md)} ${rem(0)} ${rem(0)};
+  padding: ${rem(0)} ${rem(spacing.md)} ${rem(0)} ${rem(spacing.sm)};
   min-height: ${rem(spacing.xl)};
 `;
 
