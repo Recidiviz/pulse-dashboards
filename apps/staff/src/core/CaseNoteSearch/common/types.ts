@@ -21,3 +21,5 @@ export type CASE_NOTE_SEARCH_RESULTS_STATUS =
   | "NO_RESULTS"
   | "ERROR"
   | "LOADING";
+
+export type SortOrder = "Relevance" | "Date";

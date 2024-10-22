@@ -28,7 +28,6 @@ import {
 } from "@recidiviz/design-system";
 import DomPurify from "dompurify";
 import { rem } from "polished";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -41,10 +40,8 @@ import {
   NoteTextDark,
   NoteTextLight,
 } from "../../common/Styles";
-import { CASE_NOTE_SEARCH_RESULTS_STATUS } from "../../common/types";
+import { CASE_NOTE_SEARCH_RESULTS_STATUS, SortOrder } from "../../common/types";
 import { CaseNoteSearchInput } from "../CaseNoteSearchInput/CaseNoteSearchInput";
-
-type SortOrder = "Relevance" | "Date";
 
 export const EmptyWrapper = styled.div`
   display: flex;
@@ -146,6 +143,8 @@ export function SearchView({
   setSearchQuery,
   handleNoteClick,
   handleReturnClick,
+  sortOrder,
+  updateSortOrder,
 }: {
   resultsStatus: CASE_NOTE_SEARCH_RESULTS_STATUS;
   searchQuery: string;
@@ -153,9 +152,9 @@ export function SearchView({
   setSearchQuery: (searchQuery: string) => void;
   handleNoteClick: (docId: string) => void;
   handleReturnClick: () => void;
+  sortOrder: SortOrder;
+  updateSortOrder: (order: SortOrder) => void;
 }) {
-  const [sortOrder, setSortOrder] = useState<SortOrder>("Relevance");
-
   let resultsViz = null;
 
   function provideFeedback() {
@@ -259,10 +258,12 @@ export function SearchView({
             Sorted by {sortOrder}
           </StyledDropdownToggle>
           <StyledDropdownMenu alignment="left">
-            <StyledDropdownMenuItem onClick={() => setSortOrder("Relevance")}>
+            <StyledDropdownMenuItem
+              onClick={() => updateSortOrder("Relevance")}
+            >
               Relevance
             </StyledDropdownMenuItem>
-            <StyledDropdownMenuItem onClick={() => setSortOrder("Date")}>
+            <StyledDropdownMenuItem onClick={() => updateSortOrder("Date")}>
               Date
             </StyledDropdownMenuItem>
           </StyledDropdownMenu>

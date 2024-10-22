@@ -44,6 +44,7 @@ import {
 import {
   CASE_NOTE_SEARCH_RESULTS_STATUS,
   CASE_NOTE_SEARCH_VIEWS,
+  SortOrder,
 } from "./common/types";
 import { CaseNoteSearchInput } from "./components/CaseNoteSearchInput/CaseNoteSearchInput";
 import { SearchView } from "./components/SearchView/SearchView";
@@ -83,6 +84,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
 
   const [currentView, setCurrentView] =
     React.useState<CASE_NOTE_SEARCH_VIEWS>("SEARCH_VIEW");
+  const [sortOrder, setSortOrder] = React.useState<SortOrder>("Relevance");
   const [docId, setDocId] = React.useState("");
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -192,6 +194,8 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
             setSearchQuery={setSearchQuery}
             handleNoteClick={handleNoteClick}
             handleReturnClick={handleReturnClick}
+            sortOrder={sortOrder}
+            updateSortOrder={setSortOrder}
           />
         )}
       </StyledModal>
