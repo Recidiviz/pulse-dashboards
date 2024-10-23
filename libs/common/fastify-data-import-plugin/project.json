@@ -1,7 +1,7 @@
 {
   "name": "fastify-data-import-plugin",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/fastify-data-import-plugin/src",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/common/fastify-data-import-plugin/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -24,7 +24,9 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/fastify-data-import-plugin"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/common/fastify-data-import-plugin"
+      ],
       "cache": true,
       "options": {
         "command": "vitest",
