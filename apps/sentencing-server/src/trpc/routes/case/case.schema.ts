@@ -77,6 +77,8 @@ export const updateCaseSchema = z.object({
   attributes: z.object({
     lsirScore: z.number().nullable().optional(),
     offense: z.string().nullable().optional(),
+    isCurrentOffenseViolent: z.boolean().nullable().optional(),
+    isCurrentOffenseSexual: z.boolean().nullable().optional(),
     previouslyIncarceratedOrUnderSupervision: z.boolean().nullable().optional(),
     hasPreviousFelonyConviction: z.boolean().nullable().optional(),
     hasPreviousViolentOffenseConviction: z.boolean().nullable().optional(),

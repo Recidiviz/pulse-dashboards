@@ -37,6 +37,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     lsirLevel: "6584455049248768",
     reportType: "FullPSI",
     offense: "Felony",
+    isCurrentOffenseViolent: true,
+    isCurrentOffenseSexual: false,
     previouslyIncarceratedOrUnderSupervision: false,
     hasPreviousFelonyConviction: true,
     hasPreviousViolentOffenseConviction: false,

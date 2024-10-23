@@ -267,6 +267,8 @@ describe("case router", () => {
         id: fakeCase.id,
         attributes: {
           offense: fakeOffense.name,
+          isCurrentOffenseViolent: true,
+          isCurrentOffenseSexual: false,
           previouslyIncarceratedOrUnderSupervision: true,
           hasPreviousFelonyConviction: true,
           hasPreviousViolentOffenseConviction: true,
@@ -309,6 +311,8 @@ describe("case router", () => {
 
       expect(updatedCase).toEqual(
         expect.objectContaining({
+          isCurrentOffenseViolent: true,
+          isCurrentOffenseSexual: false,
           previouslyIncarceratedOrUnderSupervision: true,
           hasPreviousFelonyConviction: true,
           hasPreviousViolentOffenseConviction: true,

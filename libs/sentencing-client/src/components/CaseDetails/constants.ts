@@ -22,6 +22,10 @@ export const PDF_PAGE_WIDTH = 950;
 
 export const OFFENSE_KEY = "offense";
 
+export const CURRENT_OFFENSE_VIOLENT_KEY = "isCurrentOffenseViolent";
+
+export const CURRENT_OFFENSE_SEXUAL_KEY = "isCurrentOffenseSexual";
+
 export const REPORT_TYPE_KEY = "reportType";
 export type ReportTypeKey = typeof REPORT_TYPE_KEY;
 

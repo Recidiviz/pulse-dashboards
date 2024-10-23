@@ -305,6 +305,9 @@ model Case {
   offense   Offense? @relation(fields: [offenseId], references: [id])
   offenseId String?
 
+  isCurrentOffenseViolent Boolean?
+  isCurrentOffenseSexual  Boolean?
+
   previouslyIncarceratedOrUnderSupervision Boolean?
   hasPreviousFelonyConviction              Boolean?
   hasPreviousViolentOffenseConviction      Boolean?

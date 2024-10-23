@@ -254,6 +254,7 @@ export class CaseDetailsForm {
     value?: FormValue,
     parentKey?: string,
     isOtherContext?: boolean,
+    skipContentUpdate?: boolean,
   ) {
     const otherContextKey = this.content[key]?.otherContext?.key;
     const keyOrContextKey =
@@ -261,6 +262,10 @@ export class CaseDetailsForm {
 
     this.updates[keyOrContextKey] =
       key === "lsirScore" && value ? Number(value) : value;
+
+    if (skipContentUpdate) {
+      return;
+    }
 
     // Special handling for ASAM level of care recommendation: clear values if "None" or "Not Sure Yet" options are selected
     if (key === SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY) {
@@ -304,6 +309,7 @@ export class CaseDetailsForm {
       this.content[key].otherContext.value = value ?? null;
       return;
     }
+
     this.content[key].value = value ?? null;
   }
 

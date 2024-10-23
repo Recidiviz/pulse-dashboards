@@ -110,6 +110,8 @@ async function main() {
             frequency: faker.number.int(100),
           },
         },
+        isCurrentOffenseViolent: faker.datatype.boolean(),
+        isCurrentOffenseSexual: faker.datatype.boolean(),
         isVeteran: faker.datatype.boolean(),
         previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
         hasPreviousFelonyConviction: faker.datatype.boolean(),

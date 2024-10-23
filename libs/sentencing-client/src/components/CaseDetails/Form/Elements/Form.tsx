@@ -16,10 +16,16 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useState } from "react";
 
 import * as Styled from "../../CaseDetails.styles";
 import { getOffenseName } from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
-import { LSIR_SCORE_KEY } from "../../constants";
+import {
+  CURRENT_OFFENSE_SEXUAL_KEY,
+  CURRENT_OFFENSE_VIOLENT_KEY,
+  LSIR_SCORE_KEY,
+  OFFENSE_KEY,
+} from "../../constants";
 import { FormFieldList } from "../../types";
 import { CaseDetailsForm } from "../CaseDetailsForm";
 import { FormField } from "./FormField";
@@ -31,12 +37,43 @@ type FormProps = {
 
 // eslint-disable-next-line react/display-name
 export const Form: React.FC<FormProps> = observer(({ form, formFields }) => {
+  const [isViolentOffense, setIsViolentOffense] = useState(
+    Boolean(form.caseAttributes.isCurrentOffenseViolent),
+  );
+  const [isSexOffense, setIsSexOffense] = useState(
+    Boolean(form.caseAttributes.isCurrentOffenseSexual),
+  );
+
   const rollupOffenseName = getOffenseName({
     rollupCombinedOffenseCategory:
       form.insight?.rollupCombinedOffenseCategory ?? null,
     rollupNcicCategory: form.insight?.rollupNcicCategory ?? null,
     rollupOffense: form.insight?.rollupOffense?.name,
   });
+
+  const handleViolentSexualOffenseSelection = (
+    key: typeof CURRENT_OFFENSE_VIOLENT_KEY | typeof CURRENT_OFFENSE_SEXUAL_KEY,
+  ) => {
+    if (key === CURRENT_OFFENSE_VIOLENT_KEY) {
+      setIsViolentOffense(!isViolentOffense);
+      form.updateForm(
+        CURRENT_OFFENSE_VIOLENT_KEY,
+        !isViolentOffense,
+        undefined,
+        false,
+        true,
+      );
+    } else if (key === CURRENT_OFFENSE_SEXUAL_KEY) {
+      setIsSexOffense(!isSexOffense);
+      form.updateForm(
+        CURRENT_OFFENSE_SEXUAL_KEY,
+        !isSexOffense,
+        undefined,
+        false,
+        true,
+      );
+    }
+  };
 
   return (
     <Styled.Form>
@@ -47,26 +84,25 @@ export const Form: React.FC<FormProps> = observer(({ form, formFields }) => {
               element.showNestedValuesMatch?.includes(val),
             )
           : element.showNestedValuesMatch?.includes(String(element.value));
-        // const currentOffense =
-        //   element.key === OFFENSE_KEY && element.value
-        //     ? // Narrows the `element.value` to a string type, as we expect the "offense" value to be a valid string and confirmed to be defined at this stage.
-        //       form.offensesByName[String(element.value)]
-        //     : null;
+
         return (
           <Styled.InputWrapper key={element.key}>
             <FormField element={element} form={form} />
 
             {/* Violent/Sex Offense Fields */}
-            {/* {element.key === OFFENSE_KEY && element.value && (
+            {element.key === OFFENSE_KEY && element.value && (
               <Styled.ViolentOrSexOffenseCheckboxContainer>
                 <Styled.CheckboxWrapper>
                   <label htmlFor="is_violent_offense">Violent Offense</label>
                   <input
                     id="is_violent_offense"
                     type="checkbox"
-                    checked={Boolean(currentOffense?.isViolentOffense)}
-                    // Placeholder for saving functionality; to be implemented once the backend write path is available
-                    onChange={() => null}
+                    checked={isViolentOffense}
+                    onChange={() =>
+                      handleViolentSexualOffenseSelection(
+                        CURRENT_OFFENSE_VIOLENT_KEY,
+                      )
+                    }
                   />
                 </Styled.CheckboxWrapper>
                 <Styled.CheckboxWrapper>
@@ -74,13 +110,16 @@ export const Form: React.FC<FormProps> = observer(({ form, formFields }) => {
                   <input
                     id="is_sex_offense"
                     type="checkbox"
-                    checked={Boolean(currentOffense?.isSexOffense)}
-                    // Placeholder for saving functionality; to be implemented once the backend write path is available
-                    onChange={() => null}
+                    checked={isSexOffense}
+                    onChange={() =>
+                      handleViolentSexualOffenseSelection(
+                        CURRENT_OFFENSE_SEXUAL_KEY,
+                      )
+                    }
                   />
                 </Styled.CheckboxWrapper>
               </Styled.ViolentOrSexOffenseCheckboxContainer>
-            )} */}
+            )}
 
             {element.nested &&
               showNestedFields &&
