@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import _ from "lodash";
 import moment from "moment";
 
 import { CaseInsight } from "../../../../api";
@@ -86,6 +87,14 @@ export function Report({
       },
       {} as { [key: string]: number },
     );
+
+  // Get the maximum upper CI value across all recommendation types
+  const maxUpperCI =
+    _.max(
+      insight?.rollupRecidivismSeries.flatMap((val) => {
+        return val.dataPoints.map((dp) => dp.upperCI);
+      }),
+    ) ?? 0;
 
   const dispositionDataWithCumulativeRates = insight?.dispositionData.map(
     (disposition) => {
@@ -223,7 +232,13 @@ export function Report({
                   isSelected={isSelected}
                   recommendationType={dp.recommendationType}
                   // ** Entry point for the chart component **
-                  chart={<div />}
+                  recidivismSeries={
+                    _.find(
+                      insight?.rollupRecidivismSeries,
+                      (series) =>
+                        series.recommendationType === dp.recommendationType,
+                    )?.dataPoints
+                  }
                   historicalSentencingPercentage={convertDecimalToPercentage(
                     dp.percentage,
                   )}
@@ -235,6 +250,7 @@ export function Report({
                       ? selectedRecommendationRecidivismRate - dp.cumulativeRate
                       : undefined
                   }
+                  maxUpperCI={maxUpperCI}
                 />
               );
             })}

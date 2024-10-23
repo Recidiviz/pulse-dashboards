@@ -261,8 +261,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
             {
               cohortMonths: 36,
               eventRate: 0.267,
-              lowerCI: 0.1759044241832965,
-              upperCI: 0.2682661391131417,
+              lowerCI: 0.2259044241832965,
+              upperCI: 0.3182661391131417,
             },
           ],
         },

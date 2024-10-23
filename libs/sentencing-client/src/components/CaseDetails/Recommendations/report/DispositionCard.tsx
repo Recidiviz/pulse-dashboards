@@ -15,31 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactNode } from "react";
-
+import { CaseInsight } from "../../../../api";
 import { RecommendationType } from "../../types";
+import { getRecidivismPlot } from "./Plot";
 import * as Styled from "./Report.styles";
 
 type DispositionCardProps = {
   recommendationType: keyof typeof RecommendationType;
   isSelected: boolean;
-  chart: ReactNode;
+  recidivismSeries?: CaseInsight["rollupRecidivismSeries"][0]["dataPoints"];
   historicalSentencingPercentage?: number;
   cumulativeRecidivismRatePercentage?: number;
   recidivismRateDelta?: number;
+  maxUpperCI: number;
 };
 
 export const DispositionCard = ({
   recommendationType,
   isSelected,
-  chart,
+  recidivismSeries,
   historicalSentencingPercentage,
   cumulativeRecidivismRatePercentage,
   recidivismRateDelta,
+  maxUpperCI,
 }: DispositionCardProps) => {
   const recidivismRateComparisonText =
     recidivismRateDelta &&
     `${Math.abs(recidivismRateDelta)}% ${recidivismRateDelta && recidivismRateDelta < 0 ? "Higher" : "Lower"} Recidivism Rate`;
+
+  const plot = recidivismSeries
+    ? getRecidivismPlot(recidivismSeries, maxUpperCI)
+    : undefined;
 
   return (
     <Styled.DispositionCard selected={isSelected}>
@@ -78,7 +84,15 @@ export const DispositionCard = ({
         </Styled.HistoricalDetailsTitlePercentage>
 
         {/* Chart */}
-        {chart}
+        <div
+          ref={(ref) => {
+            if (!ref || !plot) {
+              return;
+            }
+            ref.replaceChildren();
+            ref.appendChild(plot);
+          }}
+        />
       </Styled.ChartContainer>
 
       {/* Caption */}
