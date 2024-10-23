@@ -19,6 +19,7 @@ import * as Sentry from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
+import { FirestoreCollectionKey } from "~firestore-api";
 import {
   compositeHydrationState,
   HydrationState,
@@ -28,7 +29,6 @@ import {
 import { SnoozeTaskConfig } from "../../core/models/types";
 import { TaskValidationError } from "../../errors";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
-import { FirestoreCollectionKey } from "../../FirestoreStore/types";
 import { RootStore } from "../../RootStore";
 import tenants from "../../tenants";
 import {

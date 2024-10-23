@@ -17,8 +17,9 @@
 
 import { DocumentData, DocumentReference } from "firebase/firestore";
 
+import type { FirestoreCollectionKey } from "~firestore-api";
+
 import FirestoreStore from "../../FirestoreStore";
-import type { FirestoreCollectionKey } from "../../FirestoreStore/types";
 import { FirestoreDocumentSubscription } from "./FirestoreDocumentSubscription";
 import { TransformFunction, UpdateFunction, ValidateFunction } from "./types";
 

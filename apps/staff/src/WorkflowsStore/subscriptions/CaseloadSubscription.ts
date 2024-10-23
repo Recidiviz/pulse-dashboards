@@ -17,7 +17,8 @@
 
 import { DocumentData, Query, query, where } from "firebase/firestore";
 
-import type { FirestoreCollectionKey } from "../../FirestoreStore/types";
+import type { FirestoreCollectionKey } from "~firestore-api";
+
 import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 

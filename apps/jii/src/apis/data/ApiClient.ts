@@ -93,7 +93,7 @@ export class ApiClient implements DataAPI {
     const { getConfig } = await import(
       `../../configs/${stateCode}/landingPageConfig/config.ts`
     );
-    return getConfig(import.meta.env["VITE_AUTH0_TENANT_KEY"]);
+    return getConfig(import.meta.env["VITE_AUTH_ENV"]);
   }
 
   /**
@@ -155,7 +155,7 @@ export class ApiClient implements DataAPI {
       const schema = residentOpportunitySchemas[opportunityId];
 
       return this.firestoreClient.recordForExternalId(
-        collectionName,
+        { raw: collectionName },
         residentExternalId,
         schema,
       );

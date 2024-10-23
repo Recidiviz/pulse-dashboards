@@ -136,7 +136,11 @@ describe("after authentication", () => {
       expect(
         vi.mocked(FirestoreAPIClient.prototype.recordForExternalId).mock
           .calls[0],
-      ).toEqual(["US_ME-SCCPReferrals", "abc123", expect.any(z.ZodType)]);
+      ).toEqual([
+        { raw: "US_ME-SCCPReferrals" },
+        "abc123",
+        expect.any(z.ZodType),
+      ]);
 
       expect(fetched).toEqual(record);
     });

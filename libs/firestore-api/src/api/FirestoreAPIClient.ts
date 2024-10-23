@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// here we should not be accessing the raw mapping directly, only the mapping function
+/* eslint no-restricted-syntax: ["error", "Identifier[name=FIRESTORE_GENERAL_COLLECTION_MAP]"] */
+
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 import {
@@ -31,7 +34,8 @@ import { z } from "zod";
 
 import { ResidentRecord, residentRecordSchema, StaffRecord } from "~datatypes";
 
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../constants";
+import { FirestoreCollectionKey } from "../types";
+import { collectionNameForKey } from "../utils/collectionNameForKey";
 import { FirestoreOfflineAPIClient } from "./FirestoreOfflineAPIClient";
 import { FilterParams, FirestoreAPI } from "./interface";
 
@@ -69,7 +73,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
   async residents(filters: Array<FilterParams> = []) {
     const snapshot = await getDocs(
       query(
-        collection(this.db, FIRESTORE_GENERAL_COLLECTION_MAP.residents),
+        collection(this.db, collectionNameForKey({ key: "residents" })),
         where("stateCode", "==", this.stateCode),
         ...filters.map((params) => where(...params)),
       ),
@@ -88,7 +92,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
 
   resident(externalId: string) {
     return this.recordForExternalId(
-      FIRESTORE_GENERAL_COLLECTION_MAP.residents,
+      { key: "residents" },
       externalId,
       residentRecordSchema,
     );
@@ -96,7 +100,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
 
   residentByPseudoId(pseudoId: string) {
     return this.recordForUniqueId(
-      FIRESTORE_GENERAL_COLLECTION_MAP.residents,
+      { key: "residents" },
       "pseudonymizedId",
       pseudoId,
       residentRecordSchema,
@@ -104,14 +108,14 @@ export class FirestoreAPIClient implements FirestoreAPI {
   }
 
   async recordForExternalId<Schema extends z.ZodTypeAny>(
-    collectionName: string,
+    collectionKey: FirestoreCollectionKey,
     externalId: string,
     recordSchema: Schema,
   ): Promise<z.infer<Schema> | undefined> {
     const snapshot = await getDoc(
       doc(
         this.db,
-        collectionName,
+        collectionNameForKey(collectionKey),
         `${this.stateCode.toLowerCase()}_${externalId}`,
       ),
     );
@@ -127,14 +131,15 @@ export class FirestoreAPIClient implements FirestoreAPI {
    * Will throw if more than one record is found
    */
   private async recordForUniqueId<Schema extends z.ZodTypeAny>(
-    collectionName: string,
+    collectionKey: FirestoreCollectionKey,
     fieldName: string,
     fieldValue: string,
     recordSchema: Schema,
   ): Promise<z.infer<Schema> | undefined> {
+    const resolvedCollectionName = collectionNameForKey(collectionKey);
     const snapshot = await getDocs(
       query(
-        collection(this.db, collectionName),
+        collection(this.db, resolvedCollectionName),
         where("stateCode", "==", this.stateCode),
         where(fieldName, "==", fieldValue),
       ),
@@ -143,7 +148,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
     if (snapshot.size === 0) return;
     if (snapshot.size > 1) {
       throw new Error(
-        `Found ${snapshot.size} documents matching ${fieldName} = ${fieldValue} in ${collectionName}, but only one was expected`,
+        `Found ${snapshot.size} documents matching ${fieldName} = ${fieldValue} in ${resolvedCollectionName}, but only one was expected`,
       );
     }
 

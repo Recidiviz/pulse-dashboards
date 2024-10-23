@@ -19,12 +19,19 @@ import { waitFor } from "@testing-library/react";
 import { keyBy } from "lodash";
 import { configure, set } from "mobx";
 
+import { isDemoMode } from "~client-env-utils";
 import { outputFixture, outputFixtureArray, usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
+
+vi.mock("~client-env-utils", () => ({
+  isTestEnv: () => true,
+  isOfflineMode: vi.fn(),
+  isDemoMode: vi.fn(),
+}));
 
 let residentsStore: ResidentsStore;
 let presenter: ResidentsSearchPresenter;
@@ -142,5 +149,21 @@ describe("facility filter", () => {
       [["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"]],
       true,
     );
+  });
+
+  test("demo mode", () => {
+    vi.mocked(isDemoMode).mockReturnValue(true);
+
+    expect(presenter.facilityFilterOptions).toEqual([
+      {
+        label: "All",
+        value: "__ALL__",
+      },
+    ]);
+
+    expect(presenter.facilityFilterDefaultOption).toEqual({
+      label: "All",
+      value: "__ALL__",
+    });
   });
 });

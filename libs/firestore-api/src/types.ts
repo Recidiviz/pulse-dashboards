@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./api/FirestoreAPIClient";
-export * from "./api/FirestoreOfflineAPIClient";
-export * from "./api/interface";
-export * from "./constants";
-export * from "./types";
-export * from "./utils/collectionNameForKey";
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
+
+export type FirestoreCollectionKey =
+  | { key: keyof typeof FIRESTORE_GENERAL_COLLECTION_MAP; raw?: never }
+  | { raw: string; key?: never };

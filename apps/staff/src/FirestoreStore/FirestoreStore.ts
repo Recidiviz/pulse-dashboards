@@ -44,8 +44,12 @@ import {
 import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
+import { isOfflineMode } from "~client-env-utils";
+import {
+  collectionNameForKey,
+  FIRESTORE_GENERAL_COLLECTION_MAP,
+  FirestoreCollectionKey,
+} from "~firestore-api";
 
 import { fetchFirebaseToken } from "../api/fetchFirebaseToken";
 import type RootStore from "../RootStore";
@@ -63,7 +67,6 @@ import {
   ClientRecord,
   ContactMethodType,
   ExternalSystemRequestStatus,
-  FirestoreCollectionKey,
   FormUpdate,
   ManualSnoozeUpdate,
   MilestonesMessage,
@@ -150,20 +153,12 @@ export default class FirestoreStore {
     }
   }
 
-  collectionNameForKey(collectionKey: FirestoreCollectionKey) {
-    let collectionName = collectionKey.key
-      ? FIRESTORE_GENERAL_COLLECTION_MAP[collectionKey.key]
-      : collectionKey.raw;
-    if (isDemoMode()) collectionName = `DEMO_${collectionName}`;
-    return collectionName;
-  }
-
   collection(collectionKey: FirestoreCollectionKey) {
-    return collection(this.db, this.collectionNameForKey(collectionKey));
+    return collection(this.db, collectionNameForKey(collectionKey));
   }
 
   doc(collectionKey: FirestoreCollectionKey, ...paths: string[]) {
-    return doc(this.db, this.collectionNameForKey(collectionKey), ...paths);
+    return doc(this.db, collectionNameForKey(collectionKey), ...paths);
   }
 
   async getClient(

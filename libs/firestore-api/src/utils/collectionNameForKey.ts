@@ -15,34 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { where } from "firebase/firestore";
-import { z } from "zod";
+import { isDemoMode } from "~client-env-utils";
 
-import { ResidentRecord, StaffRecord } from "~datatypes";
-
+import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../constants";
 import { FirestoreCollectionKey } from "../types";
 
-export type FilterParams = Parameters<typeof where>;
-
-export interface FirestoreAPI {
-  authenticate(firebaseToken: string): Promise<void>;
-  staffRecordsWithSupervisor(
-    supervisorExternalId: string,
-  ): Promise<StaffRecord[]>;
-
-  residents(
-    filters?: Array<FilterParams>,
-  ): Promise<Array<ResidentRecord["output"]>>;
-
-  resident(externalId: string): Promise<ResidentRecord["output"] | undefined>;
-
-  residentByPseudoId(
-    pseudoId: string,
-  ): Promise<ResidentRecord["output"] | undefined>;
-
-  recordForExternalId<Schema extends z.ZodTypeAny>(
-    collection: FirestoreCollectionKey,
-    externalId: string,
-    recordSchema: Schema,
-  ): Promise<z.infer<Schema> | undefined>;
+export function collectionNameForKey(collectionKey: FirestoreCollectionKey) {
+  let collectionName = collectionKey.key
+    ? FIRESTORE_GENERAL_COLLECTION_MAP[collectionKey.key]
+    : collectionKey.raw;
+  if (isDemoMode()) collectionName = `DEMO_${collectionName}`;
+  return collectionName;
 }

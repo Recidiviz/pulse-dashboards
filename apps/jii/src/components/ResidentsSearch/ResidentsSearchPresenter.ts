@@ -17,7 +17,7 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { isOfflineMode } from "~client-env-utils";
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import {
@@ -103,7 +103,7 @@ export class ResidentsSearchPresenter implements Hydratable {
     ];
 
     // for convenience this is just hardcoded for the pilot
-    if (!isOfflineMode()) {
+    if (!isOfflineMode() && !isDemoMode()) {
       options.push({
         label: "Mountain View Correctional Facility",
         value: "MOUNTAIN VIEW CORRECTIONAL FACILITY",

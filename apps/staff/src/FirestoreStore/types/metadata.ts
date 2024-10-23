@@ -17,8 +17,6 @@
 
 import type { Timestamp } from "firebase/firestore";
 
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
-
 export type UpdateLog = {
   date: Timestamp;
   by: string;
@@ -34,7 +32,3 @@ export type ExternalRequestUpdate<RequestData> = {
   status: ExternalSystemRequestStatus;
   submitted: UpdateLog;
 } & RequestData;
-
-export type FirestoreCollectionKey =
-  | { key: keyof typeof FIRESTORE_GENERAL_COLLECTION_MAP; raw?: never }
-  | { raw: string; key?: never };

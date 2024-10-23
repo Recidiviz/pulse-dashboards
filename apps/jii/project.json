@@ -52,21 +52,26 @@
         },
         "production": {
           "mode": "production"
+        },
+        "demo": {
+          "mode": "demo"
         }
       },
       "defaultConfiguration": "staging"
     },
     "preview": {
-      "executor": "@nx/vite:preview-server",
-      "configurations": {
-        "staging": {
-          "buildTarget": "jii:build:staging"
-        },
-        "production": {
-          "buildTarget": "jii:build:production"
-        }
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite preview --outDir ../../dist/apps/jii",
+        "cwd": "{projectRoot}"
       },
-      "defaultConfiguration": "staging"
+      "configurations": {
+        "staging": {},
+        "demo": {},
+        "production": {}
+      },
+      "defaultConfiguration": "staging",
+      "dependsOn": [{ "target": "build", "params": "forward" }]
     },
     "deploy": {
       "dependsOn": [{ "target": "build", "params": "forward" }],
@@ -75,7 +80,6 @@
         "staging": {
           "args": "--project jii-staging"
         },
-
         "production": {
           "args": "--project jii-production"
         }
@@ -86,10 +90,12 @@
       "dependsOn": [{ "target": "build", "params": "forward" }],
       "command": "firebase --config firebase.jii.json hosting:channel:deploy",
       "configurations": {
+        "demo": {
+          "args": "--project jii-staging"
+        },
         "staging": {
           "args": "--project jii-staging"
         },
-
         "production": {
           "args": "--project jii-production"
         }

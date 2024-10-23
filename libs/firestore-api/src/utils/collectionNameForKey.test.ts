@@ -15,9 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./api/FirestoreAPIClient";
-export * from "./api/FirestoreOfflineAPIClient";
-export * from "./api/interface";
-export * from "./constants";
-export * from "./types";
-export * from "./utils/collectionNameForKey";
+import { isDemoMode } from "~client-env-utils";
+
+import { collectionNameForKey } from "./collectionNameForKey";
+
+vi.mock("~client-env-utils");
+
+describe("live mode", () => {
+  beforeEach(() => {
+    vi.mocked(isDemoMode).mockReturnValue(false);
+  });
+
+  test("collection key", () => {
+    expect(collectionNameForKey({ key: "residents" })).toBe("residents");
+  });
+
+  test("raw name", () => {
+    expect(collectionNameForKey({ raw: "foo" })).toBe("foo");
+  });
+});
+describe("demo mode", () => {
+  beforeEach(() => {
+    vi.mocked(isDemoMode).mockReturnValue(true);
+  });
+
+  test("collection key", () => {
+    expect(collectionNameForKey({ key: "residents" })).toBe("DEMO_residents");
+  });
+
+  test("raw name", () => {
+    expect(collectionNameForKey({ raw: "foo" })).toBe("DEMO_foo");
+  });
+});

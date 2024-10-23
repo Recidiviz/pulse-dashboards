@@ -58,7 +58,7 @@ export class OfflineAPIClient implements DataAPI {
     const { getConfig } = await import(
       `../../configs/${stateCode}/landingPageConfig/config.ts`
     );
-    return getConfig(import.meta.env["VITE_AUTH0_TENANT_KEY"]);
+    return getConfig(import.meta.env["VITE_AUTH_ENV"]);
   }
 
   /**

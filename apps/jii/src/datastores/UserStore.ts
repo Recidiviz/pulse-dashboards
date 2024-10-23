@@ -45,7 +45,7 @@ export class UserStore {
 
     this.authClient = new AuthClient(
       {
-        ...getAuth0Config(import.meta.env["VITE_AUTH0_TENANT_KEY"]),
+        ...getAuth0Config(import.meta.env["VITE_AUTH_ENV"]),
         redirect_uri: `${window.location.origin}/after-login`,
       },
       { metadataNamespace, metadataSchema },

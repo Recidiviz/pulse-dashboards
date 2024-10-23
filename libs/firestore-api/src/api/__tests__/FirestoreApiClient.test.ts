@@ -20,7 +20,11 @@ import { Auth, getAuth, signInWithCustomToken } from "firebase/auth";
 import {
   collection,
   CollectionReference,
+  doc,
+  DocumentReference,
+  DocumentSnapshot,
   Firestore,
+  getDoc,
   getDocs,
   getFirestore,
   Query,
@@ -29,7 +33,9 @@ import {
   QuerySnapshot,
   where,
 } from "firebase/firestore";
+import { z } from "zod";
 
+import { isDemoMode } from "~client-env-utils";
 import {
   allResidents,
   inputFixture,
@@ -43,6 +49,7 @@ import { FirestoreAPIClient } from "../FirestoreAPIClient";
 vi.mock("firebase/app");
 vi.mock("firebase/auth");
 vi.mock("firebase/firestore");
+vi.mock("~client-env-utils");
 
 let client: FirestoreAPIClient;
 
@@ -52,6 +59,7 @@ const authMock = "AUTH MOCK";
 const collectionMock = "COLLECTION MOCK";
 const whereMock = "WHERE MOCK";
 const queryMock = "QUERY MOCK";
+const docMock = "DOC MOCK";
 
 beforeEach(() => {
   // these mocks all get passed around to one another for the SDK to use internally;
@@ -67,6 +75,7 @@ beforeEach(() => {
     whereMock as unknown as QueryFieldFilterConstraint,
   );
   vi.mocked(query).mockReturnValue(queryMock as unknown as Query);
+  vi.mocked(doc).mockReturnValue(docMock as unknown as DocumentReference);
 
   client = new FirestoreAPIClient("US_XX", "project-xx", "api-xx");
 });
@@ -131,22 +140,33 @@ describe("residents", () => {
     );
     expect(getDocs).toHaveBeenCalledExactlyOnceWith(queryMock);
   });
+
+  test("demo data", async () => {
+    vi.mocked(isDemoMode).mockReturnValue(true);
+
+    await client.residents();
+
+    expect(collection).toHaveBeenCalledExactlyOnceWith(
+      dbMock,
+      "DEMO_residents",
+    );
+  });
 });
 
 describe("resident by pseudo ID", () => {
   const expectedFixture = allResidents[0];
   const testId = inputFixture(expectedFixture).pseudonymizedId;
 
-  test("parsed result", async () => {
-    const mockSnapshot = {
-      docs: inputFixtureArray([expectedFixture]).map((f) => ({
-        data() {
-          return f;
-        },
-      })),
-      size: 1,
-    } as unknown as QuerySnapshot;
+  const mockSnapshot = {
+    docs: inputFixtureArray([expectedFixture]).map((f) => ({
+      data() {
+        return f;
+      },
+    })),
+    size: 1,
+  } as unknown as QuerySnapshot;
 
+  test("parsed result", async () => {
     vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
 
     const result = await client.residentByPseudoId(testId);
@@ -180,6 +200,38 @@ describe("resident by pseudo ID", () => {
       client.residentByPseudoId(testId),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Found 3 documents matching pseudonymizedId = anonres001 in residents, but only one was expected]`,
+    );
+  });
+
+  test("demo data", async () => {
+    vi.mocked(isDemoMode).mockReturnValue(true);
+    vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
+
+    await client.residentByPseudoId(testId);
+
+    expect(collection).toHaveBeenCalledExactlyOnceWith(
+      dbMock,
+      "DEMO_residents",
+    );
+  });
+});
+
+describe("recordForExternalId", () => {
+  beforeEach(() => {
+    vi.mocked(getDoc).mockResolvedValue({
+      exists: () => false,
+    } as unknown as DocumentSnapshot);
+  });
+
+  test("demo data", async () => {
+    vi.mocked(isDemoMode).mockReturnValue(true);
+
+    await client.recordForExternalId({ key: "residents" }, "foo123", z.any());
+
+    expect(doc).toHaveBeenCalledExactlyOnceWith(
+      dbMock,
+      "DEMO_residents",
+      "us_xx_foo123",
     );
   });
 });

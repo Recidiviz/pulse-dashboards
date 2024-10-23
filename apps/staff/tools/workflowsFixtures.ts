@@ -35,13 +35,13 @@ import {
   usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures,
   usPaSpecialCircumstancesSupervisionFixtures,
 } from "~datatypes";
-import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
+import {
+  FIRESTORE_GENERAL_COLLECTION_MAP,
+  FirestoreCollectionKey,
+} from "~firestore-api";
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
-import {
-  FirestoreCollectionKey,
-  MilestonesMessage,
-} from "../src/FirestoreStore/types";
+import { MilestonesMessage } from "../src/FirestoreStore/types";
 import { PartialRecord } from "../src/utils/typeUtils";
 import { getMonthYearFromDate } from "../src/WorkflowsStore/utils";
 import { deleteCollection } from "./firestoreUtils";
