@@ -28,6 +28,7 @@ import {
 } from "@recidiviz/design-system";
 import DomPurify from "dompurify";
 import { rem } from "polished";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -136,6 +137,41 @@ const StyledDropdownMenuItem = styled(DropdownMenuItem)`
   }
 `;
 
+interface NoteProps {
+  document: CaseNoteSearchResults[0];
+  handleNoteClick: (docId: string) => void;
+}
+
+function Note({ document, handleNoteClick }: NoteProps) {
+  return (
+    <NoteWrapper
+      key={document.documentId}
+      onClick={() => handleNoteClick(document.documentId)}
+    >
+      <NoteHeader>
+        <NoteTextDark>
+          {document.noteTitle || formatWorkflowsDateString(document.eventDate)}
+        </NoteTextDark>
+        <NoteAdditionalInfo>
+          <NoteTextDark>{document.noteType}</NoteTextDark>
+          <NoteTextDark> | </NoteTextDark>
+          <NoteTextDark>{document.contactMode}</NoteTextDark>
+        </NoteAdditionalInfo>
+      </NoteHeader>
+      <NotePreview
+        dangerouslySetInnerHTML={{
+          __html: DomPurify.sanitize(document.preview, {
+            FORBID_ATTR: ["style"],
+          }),
+        }}
+      />
+      <NoteTextLight>
+        {formatWorkflowsDateString(document.eventDate)}
+      </NoteTextLight>
+    </NoteWrapper>
+  );
+}
+
 export function SearchView({
   resultsStatus,
   searchQuery,
@@ -145,6 +181,8 @@ export function SearchView({
   handleReturnClick,
   sortOrder,
   updateSortOrder,
+  initialScrollPosition,
+  setScrollPosition,
 }: {
   resultsStatus: CASE_NOTE_SEARCH_RESULTS_STATUS;
   searchQuery: string;
@@ -154,11 +192,27 @@ export function SearchView({
   handleReturnClick: () => void;
   sortOrder: SortOrder;
   updateSortOrder: (order: SortOrder) => void;
+  initialScrollPosition: number;
+  setScrollPosition: (newScrollPosition: number) => void;
 }) {
+  const scrollToRef = useRef<HTMLDivElement>(null);
+
   let resultsViz = null;
 
   function provideFeedback() {
     show();
+  }
+
+  // Set the initial scroll position when the component mounts
+  useEffect(() => {
+    if (scrollToRef.current) {
+      scrollToRef.current.scrollTop = initialScrollPosition;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleScroll(event: React.UIEvent<HTMLDivElement>) {
+    setScrollPosition(event.currentTarget.scrollTop);
   }
 
   switch (resultsStatus) {
@@ -204,31 +258,7 @@ export function SearchView({
               return b.eventDate.localeCompare(a.eventDate);
             })
             .map((d) => (
-              <NoteWrapper
-                key={d.documentId}
-                onClick={() => handleNoteClick(d.documentId)}
-              >
-                <NoteHeader>
-                  <NoteTextDark>
-                    {d.noteTitle || formatWorkflowsDateString(d.eventDate)}
-                  </NoteTextDark>
-                  <NoteAdditionalInfo>
-                    <NoteTextDark>{d.noteType}</NoteTextDark>
-                    <NoteTextDark> | </NoteTextDark>
-                    <NoteTextDark>{d.contactMode}</NoteTextDark>
-                  </NoteAdditionalInfo>
-                </NoteHeader>
-                <NotePreview
-                  dangerouslySetInnerHTML={{
-                    __html: DomPurify.sanitize(d.preview, {
-                      FORBID_ATTR: ["style"],
-                    }),
-                  }}
-                />
-                <NoteTextLight>
-                  {formatWorkflowsDateString(d.eventDate)}
-                </NoteTextLight>
-              </NoteWrapper>
+              <Note document={d} handleNoteClick={handleNoteClick} />
             ))}
         </>
       );
@@ -252,7 +282,7 @@ export function SearchView({
           onPressReturn={handleReturnClick}
         />
       </ModalContent>
-      <ModalResults>
+      <ModalResults ref={scrollToRef} onScroll={handleScroll}>
         <Dropdown>
           <StyledDropdownToggle kind="borderless" showCaret>
             Sorted by {sortOrder}

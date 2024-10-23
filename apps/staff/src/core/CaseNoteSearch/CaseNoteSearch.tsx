@@ -85,7 +85,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const [currentView, setCurrentView] =
     React.useState<CASE_NOTE_SEARCH_VIEWS>("SEARCH_VIEW");
   const [sortOrder, setSortOrder] = React.useState<SortOrder>("Relevance");
-  const [docId, setDocId] = React.useState("");
+  const [docId, setDocId] = React.useState<string>();
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchResults, setSearchResults] =
@@ -94,9 +94,12 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
     React.useState<CASE_NOTE_SEARCH_RESULTS_STATUS>("NO_RESULTS");
 
   const isNoteView = currentView === "NOTE_VIEW";
-  const currentNote = searchResults.find((d) => d.documentId === docId);
+  const currentNote = docId
+    ? searchResults.find((d) => d.documentId === docId)
+    : undefined;
   const currentNoteTitle =
     currentNote?.noteTitle || formatWorkflowsDateString(currentNote?.eventDate);
+  const [scrollPosition, setScrollPosition] = React.useState(0);
 
   if (!selectedPerson) return null;
 
@@ -125,6 +128,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const handleReturnClick = async () => {
     setResultsStatus("LOADING");
     setCurrentView("SEARCH_VIEW");
+    setScrollPosition(0);
     if (!modalIsOpen) setModalIsOpen(true);
 
     if (isDemoMode() || isOfflineMode()) {
@@ -196,6 +200,8 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
             handleReturnClick={handleReturnClick}
             sortOrder={sortOrder}
             updateSortOrder={setSortOrder}
+            initialScrollPosition={scrollPosition}
+            setScrollPosition={setScrollPosition}
           />
         )}
       </StyledModal>
