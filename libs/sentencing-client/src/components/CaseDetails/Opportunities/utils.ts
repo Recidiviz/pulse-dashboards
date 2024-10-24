@@ -135,8 +135,9 @@ export const filterEligibleOpportunities = (
   // Sex Offense Criteria Check
   const hasSexOffenseCriteria = Boolean(noCurrentOrPriorSexOffenseCriterion);
   const isSexOffenseEligible =
-    noCurrentOrPriorSexOffenseCriterion ===
-    !attributes.hasPreviousSexOffenseConviction;
+    noCurrentOrPriorSexOffenseCriterion !==
+      attributes.hasPreviousSexOffenseConviction &&
+    noCurrentOrPriorSexOffenseCriterion !== attributes.isCurrentOffenseSexual;
 
   if (hasSexOffenseCriteria && !isSexOffenseEligible) return false;
 
@@ -145,8 +146,10 @@ export const filterEligibleOpportunities = (
     noCurrentOrPriorViolentOffenseCriterion,
   );
   const isViolentOffenseEligible =
-    noCurrentOrPriorViolentOffenseCriterion ===
-    !attributes.hasPreviousViolentOffenseConviction;
+    noCurrentOrPriorViolentOffenseCriterion !==
+      attributes.hasPreviousViolentOffenseConviction &&
+    noCurrentOrPriorViolentOffenseCriterion !==
+      attributes.isCurrentOffenseViolent;
 
   if (hasViolentOffenseCriteria && !isViolentOffenseEligible) return false;
 

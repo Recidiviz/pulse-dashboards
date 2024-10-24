@@ -59,6 +59,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -80,6 +82,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -105,6 +109,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -132,6 +138,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -159,6 +167,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 17, // below minAge
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -188,6 +198,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: false, // does not match criterion
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -205,11 +217,13 @@ describe("filterEligibleOpportunities", () => {
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
 
-  it("should return false if sex offense criterion is not met", () => {
+  it("should return false if sex offense criterion is not met, and true if the criterion is met", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
       hasPreviousSexOffenseConviction: true, // does not match criterion
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
@@ -224,14 +238,24 @@ describe("filterEligibleOpportunities", () => {
     };
 
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+
+    attributes.hasPreviousSexOffenseConviction = false; // matches criterion
+
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+
+    attributes.isCurrentOffenseSexual = true; // current offense flag now does not match criterion
+
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
 
-  it("should return false if violent offense criterion is not met", () => {
+  it("should return false if violent offense criterion is not met, and true if the criterion is met", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: true, // does not match criterion
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
       county: "District 1 - Caldwell",
@@ -243,6 +267,14 @@ describe("filterEligibleOpportunities", () => {
       needsToBeAddressed: ["Education"],
       lsirScore: 10,
     };
+
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+
+    attributes.hasPreviousViolentOffenseConviction = false; // matches criterion
+
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+
+    attributes.isCurrentOffenseViolent = true; // current offense flag now does not match criterion
 
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
@@ -251,6 +283,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: true, // does not match criterion
@@ -272,6 +306,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -293,6 +329,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -314,6 +352,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -360,6 +400,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -463,6 +505,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -484,6 +528,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -510,6 +556,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -531,6 +579,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -552,6 +602,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -611,6 +663,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 30,
       hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: false,
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
@@ -634,6 +688,8 @@ describe("filterEligibleOpportunities", () => {
     attributes = {
       age: 85,
       hasDevelopmentalDisability: false,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
       hasPreviousSexOffenseConviction: true,
       hasPreviousViolentOffenseConviction: true,
       previouslyIncarceratedOrUnderSupervision: true,

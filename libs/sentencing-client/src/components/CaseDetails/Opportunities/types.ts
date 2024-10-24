@@ -44,11 +44,12 @@ export type EligibilityAttributes = Pick<
   | "asamCareRecommendation"
   | "mentalHealthDiagnoses"
   | "isVeteran"
+  | "isCurrentOffenseSexual"
+  | "isCurrentOffenseViolent"
   | "previouslyIncarceratedOrUnderSupervision"
   | "hasPreviousViolentOffenseConviction"
   | "hasPreviousSexOffenseConviction"
   | "hasDevelopmentalDisability"
   | "plea"
-  | "county"
   | "county"
 > & { district?: string | null };
