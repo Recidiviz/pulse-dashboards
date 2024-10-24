@@ -147,6 +147,12 @@ export const parseAttributeValue = (
   return value;
 };
 
+/** Removes the offense frequency text (# records) from the offense string */
+const removeRecordsCount = (offenseString: FormValue) => {
+  if (!offenseString) return;
+  return String(offenseString).replace(/\s*\(\d+\s+records\)/, "");
+};
+
 /** Converts form update inputs into enums or other backend-compatible data types. */
 export const transformUpdates = (updates: FormUpdates): FormAttributes => {
   const transformedUpdates = {} as { [key: string]: FormValue };
@@ -158,6 +164,11 @@ export const transformUpdates = (updates: FormUpdates): FormAttributes => {
     ) {
       transformedUpdates[key] = null;
       transformedUpdates[ASAM_CARE_RECOMMENDATION_KEY] = null;
+      return;
+    }
+
+    if (key === OFFENSE_KEY) {
+      transformedUpdates[key] = removeRecordsCount(value);
       return;
     }
 
