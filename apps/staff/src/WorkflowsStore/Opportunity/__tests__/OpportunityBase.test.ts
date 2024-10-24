@@ -382,11 +382,7 @@ describe("setLastViewed", () => {
 
     expect(
       root.firestoreStore.updateOpportunityLastViewed,
-    ).toHaveBeenCalledWith(
-      "test@email.gov",
-      ineligibleClientRecord.recordId,
-      "TEST",
-    );
+    ).toHaveBeenCalledWith("test@email.gov", opp);
   });
 
   test("updates Firestore with latest viewed", () => {
@@ -450,8 +446,7 @@ describe("setCompletedIfEligible", () => {
 
     expect(root.firestoreStore.updateOpportunityCompleted).toHaveBeenCalledWith(
       "test@email.gov",
-      ineligibleClientRecord.recordId,
-      "TEST",
+      opp,
     );
   });
 
@@ -522,9 +517,8 @@ describe("setDenialReasons", () => {
 
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
-      client.recordId,
+      opp,
       { reasons },
-      opp.type,
       { otherReason: true },
     );
   });
@@ -535,8 +529,7 @@ describe("setDenialReasons", () => {
     await opp.setDenialReasons(reasons);
     expect(root.firestoreStore.updateOpportunityCompleted).toHaveBeenCalledWith(
       mockUser.info.email,
-      client.recordId,
-      opp.type,
+      opp,
       true,
     );
   });
@@ -548,9 +541,8 @@ describe("setDenialReasons", () => {
 
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
-      client.recordId,
+      opp,
       { reasons },
-      opp.type,
       undefined,
     );
   });
@@ -563,9 +555,8 @@ describe("setDenialReasons", () => {
 
     expect(root.firestoreStore.updateOpportunityDenial).toHaveBeenCalledWith(
       mockUser.info.email,
-      client.recordId,
+      opp,
       { otherReason },
-      opp.type,
     );
   });
 });
@@ -691,8 +682,7 @@ describe("setAutoSnooze", () => {
     expect(
       root.firestoreStore.updateOpportunityAutoSnooze,
     ).toHaveBeenCalledWith(
-      "TEST",
-      "us_xx_001",
+      opp,
       {
         snoozeUntil: "2023-10-30",
         snoozedBy: "test@email.gov",
@@ -707,8 +697,7 @@ describe("setAutoSnooze", () => {
     expect(
       root.firestoreStore.updateOpportunityAutoSnooze,
     ).toHaveBeenCalledWith(
-      "TEST",
-      "us_xx_001",
+      opp,
       {
         snoozeUntil: "2023-10-30",
         snoozedBy: "test@email.gov",
@@ -742,8 +731,7 @@ describe("setManualSnooze", () => {
     expect(
       root.firestoreStore.updateOpportunityManualSnooze,
     ).toHaveBeenCalledWith(
-      "TEST",
-      "us_xx_001",
+      opp,
       {
         snoozeForDays: 5,
         snoozedBy: "test@email.gov",
@@ -758,8 +746,7 @@ describe("setManualSnooze", () => {
     expect(
       root.firestoreStore.updateOpportunityManualSnooze,
     ).toHaveBeenCalledWith(
-      "TEST",
-      "us_xx_001",
+      opp,
       {
         snoozeForDays: 5,
         snoozedBy: "test@email.gov",
@@ -784,7 +771,6 @@ describe("setManualSnooze", () => {
 
 describe("updateOpportunityEligibility", () => {
   let record: DocumentData;
-  const opportunityType = "LSU";
   const mockRecordId = "us_id_123";
   const snoozedOnDate = new Date(2023, 9, 25);
   let testUpdateFn: UpdateFunction<DocumentData>;
@@ -792,11 +778,7 @@ describe("updateOpportunityEligibility", () => {
   beforeEach(() => {
     timekeeper.freeze(snoozedOnDate);
     vi.spyOn(root.firestoreStore, "deleteOpportunityDenialAndSnooze");
-    testUpdateFn = updateOpportunityEligibility(
-      opportunityType,
-      mockRecordId,
-      root,
-    );
+    testUpdateFn = updateOpportunityEligibility(opp, root);
   });
 
   test("when there's no denial reasons", async () => {
@@ -854,7 +836,7 @@ describe("updateOpportunityEligibility", () => {
     await testUpdateFn(record);
     expect(
       root.firestoreStore.deleteOpportunityDenialAndSnooze,
-    ).toHaveBeenCalledWith("LSU", "us_id_123");
+    ).toHaveBeenCalledWith(opp);
   });
 
   test("when there's manual snooze config and it is expired", async () => {
@@ -868,6 +850,6 @@ describe("updateOpportunityEligibility", () => {
     await testUpdateFn(record);
     expect(
       root.firestoreStore.deleteOpportunityDenialAndSnooze,
-    ).toHaveBeenCalledWith("LSU", "us_id_123");
+    ).toHaveBeenCalledWith(opp);
   });
 });

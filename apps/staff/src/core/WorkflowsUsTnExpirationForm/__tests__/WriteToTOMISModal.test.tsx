@@ -212,25 +212,21 @@ describe("WriteToTOMISModal", () => {
     expect(submitButton).toBeInTheDocument();
     fireEvent.click(submitButton);
     await waitFor(() =>
-      expect(root.firestoreStore.updateOpportunity).toHaveBeenCalledWith(
-        "usTnExpiration",
-        "us_xx_001",
-        {
-          contactNote: {
-            status: "FAILURE",
-            submitted: {
-              by: "test-officer@example.com",
-              date: Timestamp.fromDate(now),
-            },
-            note: {
-              1: ["page 1, line 1", "page 1, line 2"],
-              2: ["page 2, line 1"],
-            },
-            noteStatus: {},
-            error: "test error",
+      expect(root.firestoreStore.updateOpportunity).toHaveBeenCalledWith(opp, {
+        contactNote: {
+          status: "FAILURE",
+          submitted: {
+            by: "test-officer@example.com",
+            date: Timestamp.fromDate(now),
           },
+          note: {
+            1: ["page 1, line 1", "page 1, line 2"],
+            2: ["page 2, line 1"],
+          },
+          noteStatus: {},
+          error: "test error",
         },
-      ),
+      }),
     );
   });
 

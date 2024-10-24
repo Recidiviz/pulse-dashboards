@@ -18,7 +18,6 @@
 import { differenceInDays, differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import { makeObservable, observable, override } from "mobx";
 
 import { UsMeSCCPCriteria, UsMeSCCPRecord } from "~datatypes";
 
@@ -256,12 +255,6 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
   constructor(resident: Resident, record: DocumentData) {
     super(resident, "usMeSCCP", resident.rootStore, transformReferral(record));
-
-    makeObservable(this, {
-      almostEligibleRecommendedNote: observable,
-      requirementsMet: override,
-      requirementsAlmostMet: override,
-    });
 
     this.form = new UsMeSCCPForm(this, resident.rootStore);
   }

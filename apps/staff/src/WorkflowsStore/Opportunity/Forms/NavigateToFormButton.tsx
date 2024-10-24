@@ -20,7 +20,10 @@ import { darken, rem } from "polished";
 import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useOpportunityConfigurations } from "../../../components/StoreProvider";
+import {
+  useOpportunityConfigurations,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { desktopLinkGate } from "../../../core/desktopLinkGate";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
 import { JusticeInvolvedPerson } from "../../types";
@@ -50,12 +53,14 @@ type NavigateToFormButtonProps = Omit<LinkProps, "to" | "onClick"> &
   Partial<ButtonProps> & {
     opportunityType: OpportunityType;
     pseudonymizedId: JusticeInvolvedPerson["pseudonymizedId"];
+    opportunityId: string | undefined;
   };
 
 export function NavigateToFormButton({
   children,
   opportunityType,
   pseudonymizedId,
+  opportunityId,
   onClick,
   ...props
 }: React.PropsWithChildren<NavigateToFormButtonProps>): JSX.Element {
@@ -70,10 +75,10 @@ export function NavigateToFormButton({
     officerPseudoId,
   );
 
+  const { workflowsStore } = useRootStore();
+
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (onClick) {
-      return onClick(e);
-    }
+    workflowsStore.updateSelectedOpportunity(opportunityId);
 
     return desktopLinkGate({
       headline: "Referral Unavailable in Mobile View",

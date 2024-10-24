@@ -21,7 +21,7 @@ import { useState } from "react";
 import useClipboard from "react-use-clipboard";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { Client, Opportunity } from "../../WorkflowsStore";
 import {
   FormContainer,
   FormHeaderSection,
@@ -39,14 +39,14 @@ import { WebForm } from "../Paperwork/WebForm";
 import PillNav from "../PillNav";
 
 const WorkflowsLSUForm = observer(function WorkflowsLSUForm({
-  person: client,
+  opportunity,
 }: {
-  person?: JusticeInvolvedPerson;
+  opportunity: Opportunity;
 }) {
+  const client = opportunity.person;
   const { analyticsStore } = useRootStore();
-  const opportunity = client?.opportunities.LSU;
   const [selectedFormSection, setSelectedFormSection] = useState(0);
-  const chrono = template(opportunity?.form.formData);
+  const chrono = template(opportunity.form?.formData);
 
   const [isCopied, copyToClipboard] = useClipboard(chrono, {
     successDuration: animation.extendedDurationMs,

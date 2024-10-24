@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import * as React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Opportunity } from "../../WorkflowsStore";
 import { UsCaSupervisionLevelDowngradeDraftData } from "../../WorkflowsStore/Opportunity/UsCa";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
@@ -150,32 +151,27 @@ const fillerFunc: (
 };
 
 const FormUsCaSupervisionLeveDowngrade = observer(
-  function FormUsCaSupervisionLeveDowngrade() {
-    const {
-      workflowsStore: { selectedPerson: person },
-      getTokenSilently,
-    } = useRootStore();
+  function FormUsCaSupervisionLeveDowngrade({
+    opportunity,
+  }: {
+    opportunity: Opportunity;
+  }) {
+    const { getTokenSilently } = useRootStore();
 
     const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
     const onClickDownload = async () => {
-      const formData =
-        person?.opportunities?.usCaSupervisionLevelDowngrade?.form?.formData;
+      const formData = opportunity?.form?.formData;
       if (!formData) return;
 
       await fillAndSavePDF(
-        `${person?.displayName} - CDCR 1657.pdf`,
+        `${opportunity.person.displayName} - CDCR 1657.pdf`,
         "US_CA",
         "CDCR1657.pdf",
         fillerFunc(formData),
         getTokenSilently,
       );
     };
-
-    const {
-      workflowsStore: { selectedClient: client },
-    } = useRootStore();
-    const opportunity = client?.opportunities?.usCaSupervisionLevelDowngrade;
 
     if (!opportunity) {
       return null;

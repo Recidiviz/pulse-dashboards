@@ -21,7 +21,12 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
-import { UsMeFurloughReleaseDraftData } from "../../../../WorkflowsStore";
+import {
+  Opportunity,
+  UsMeFurloughReleaseDraftData,
+  UsMeFurloughReleaseOpportunity,
+} from "../../../../WorkflowsStore";
+import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
   DocxTemplateFormContents,
   FileGeneratorArgs,
@@ -57,23 +62,27 @@ const fillerFunc: (
   set("CASE MANAGER", formData.caseManager);
 };
 
-export const FormFurloughRelease = observer(function FormWorkRelease() {
-  const { workflowsStore, getTokenSilently } = useRootStore();
-  const opportunity =
-    workflowsStore?.selectedPerson?.opportunities?.usMeFurloughRelease;
+export const FormFurloughRelease = observer(function FormWorkRelease({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  const { getTokenSilently } = useRootStore();
+  const resident = opportunity.person;
 
-  if (!opportunity) {
+  if (
+    !(resident instanceof Resident) ||
+    !(opportunity instanceof UsMeFurloughReleaseOpportunity)
+  ) {
     return null;
   }
-
-  const resident = opportunity.person;
 
   const formDownloader = async (): Promise<void> => {
     let contents: DocxTemplateFormContents = {};
     // we are not mutating any observables here, just telling Mobx not to track this access
     runInAction(() => {
       contents = {
-        ...toJS(resident.opportunities.usMeFurloughRelease?.form?.formData),
+        ...toJS(opportunity?.form?.formData),
       };
     });
 

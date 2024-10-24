@@ -32,6 +32,7 @@ import { isOfflineMode } from "~client-env-utils";
 import { fetchFirebaseToken } from "../../api/fetchFirebaseToken";
 import { RootStore } from "../../RootStore";
 import { UserAppMetadata } from "../../RootStore/types";
+import { Opportunity } from "../../WorkflowsStore";
 import FirestoreStore from "../FirestoreStore";
 import {
   FormUpdate,
@@ -81,6 +82,10 @@ afterAll(() => {
 describe("FirestoreStore", () => {
   let store: FirestoreStore;
   let mockRootStore = {} as RootStore;
+  const opp: Opportunity = {
+    person: { recordId: "us_id_123" },
+    firestoreUpdateDocId: "LSU",
+  } as unknown as Opportunity;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -317,7 +322,7 @@ describe("FirestoreStore", () => {
     });
 
     test("deleteOpportunityDenialAndSnooze", async () => {
-      await store.deleteOpportunityDenialAndSnooze("LSU", "us_id_123");
+      await store.deleteOpportunityDenialAndSnooze(opp);
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,
@@ -355,12 +360,7 @@ describe("FirestoreStore", () => {
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      await store.updateOpportunityAutoSnooze(
-        "LSU",
-        "us_id_123",
-        update,
-        false,
-      );
+      await store.updateOpportunityAutoSnooze(opp, update, false);
       expect(mockDoc.mock.calls).toContainEqual([
         undefined,
         "clientUpdatesV2",
@@ -387,7 +387,7 @@ describe("FirestoreStore", () => {
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      await store.updateOpportunityAutoSnooze("LSU", "us_id_123", update, true);
+      await store.updateOpportunityAutoSnooze(opp, update, true);
       expect(mockDoc.mock.calls).toContainEqual([
         undefined,
         "clientUpdatesV2",
@@ -414,12 +414,7 @@ describe("FirestoreStore", () => {
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      await store.updateOpportunityManualSnooze(
-        "LSU",
-        "us_id_123",
-        update,
-        false,
-      );
+      await store.updateOpportunityManualSnooze(opp, update, false);
       expect(mockDoc.mock.calls).toContainEqual([
         undefined,
         "clientUpdatesV2",
@@ -446,12 +441,7 @@ describe("FirestoreStore", () => {
         snoozedBy: "test-email",
         snoozedOn: "2023-11-10",
       };
-      await store.updateOpportunityManualSnooze(
-        "LSU",
-        "us_id_123",
-        update,
-        true,
-      );
+      await store.updateOpportunityManualSnooze(opp, update, true);
       expect(mockDoc.mock.calls).toContainEqual([
         undefined,
         "clientUpdatesV2",
@@ -473,7 +463,7 @@ describe("FirestoreStore", () => {
     });
 
     test("updateOpportunitySubmitted", async () => {
-      await store.updateOpportunitySubmitted("test-email", "LSU", "us_id_123");
+      await store.updateOpportunitySubmitted("test-email", opp);
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
         {
@@ -489,7 +479,7 @@ describe("FirestoreStore", () => {
     });
 
     test("deleteOpportunitySubmitted", async () => {
-      await store.deleteOpportunitySubmitted("LSU", "us_id_123");
+      await store.deleteOpportunitySubmitted(opp);
       expect(mockSetDoc.mock.calls).toContainEqual([
         "test-doc-ref",
         {
@@ -582,7 +572,7 @@ describe("FirestoreStore", () => {
           update: {},
         },
       };
-      await store.updateOpportunity("LSU", "us_id_123", opportunityUpdate);
+      await store.updateOpportunity(opp, opportunityUpdate);
       expect(mockDoc.mock.calls).toEqual([
         [
           undefined,

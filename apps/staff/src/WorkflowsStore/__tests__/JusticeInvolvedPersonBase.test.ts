@@ -232,31 +232,39 @@ describe("opportunities", () => {
 
     test("eligible", () => {
       vi.spyOn(testPerson, "opportunities", "get").mockReturnValue({
-        JIP_TEST_OPP: {
-          hydrationState: { status: "hydrated" },
-        },
+        JIP_TEST_OPP: [
+          {
+            hydrationState: { status: "hydrated" },
+          },
+        ],
       } as any as OpportunityMapping);
 
       expect(testPerson.opportunitiesEligible).toStrictEqual({
-        JIP_TEST_OPP: {
-          hydrationState: { status: "hydrated" },
-        },
+        JIP_TEST_OPP: [
+          {
+            hydrationState: { status: "hydrated" },
+          },
+        ],
       });
     });
 
     test("almost eligible", () => {
       vi.spyOn(testPerson, "opportunities", "get").mockReturnValue({
-        JIP_TEST_OPP: {
-          hydrationState: { status: "hydrated" },
-          almostEligible: true,
-        },
+        JIP_TEST_OPP: [
+          {
+            hydrationState: { status: "hydrated" },
+            almostEligible: true,
+          },
+        ],
       } as any as OpportunityMapping);
 
       expect(testPerson.opportunitiesAlmostEligible).toStrictEqual({
-        JIP_TEST_OPP: {
-          hydrationState: { status: "hydrated" },
-          almostEligible: true,
-        },
+        JIP_TEST_OPP: [
+          {
+            hydrationState: { status: "hydrated" },
+            almostEligible: true,
+          },
+        ],
       });
     });
   });

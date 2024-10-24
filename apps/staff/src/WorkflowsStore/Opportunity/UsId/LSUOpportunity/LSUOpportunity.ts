@@ -17,7 +17,6 @@
 
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep, some } from "lodash";
-import { computed, makeObservable, override } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
@@ -126,11 +125,6 @@ export class LSUOpportunity extends OpportunityBase<
 
   constructor(client: Client, record: DocumentData) {
     super(client, "LSU", client.rootStore, usIdLsuSchema.parse(record));
-    makeObservable(this, {
-      requirementsMet: override,
-      requirementsAlmostMet: override,
-      almostEligibleStatusMessage: computed,
-    });
 
     this.form = new LSUForm(this, client.rootStore);
   }

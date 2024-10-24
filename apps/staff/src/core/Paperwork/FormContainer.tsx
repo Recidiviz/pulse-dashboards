@@ -28,7 +28,7 @@ import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
-import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
+import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { FormLastEdited } from "../FormLastEdited";
 import { REACTIVE_INPUT_UPDATE_DELAY } from "./utils";
 
@@ -93,7 +93,7 @@ export type FormHeaderProps = {
   isMissingContent?: boolean;
   onClickDownload: () => Promise<void>;
   downloadButtonLabel: string;
-  opportunity: OpportunityBase<any, any>;
+  opportunity: Opportunity;
   children: React.ReactNode;
 };
 

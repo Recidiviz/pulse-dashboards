@@ -122,16 +122,20 @@ export type OpportunityProfileModuleName =
 
 export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
   observer(function OpportunitySidebarProfile({
+    opportunity,
     formLinkButton = false,
     formView = false,
     onDenialButtonClick = () => null,
-    opportunity,
-    selectedPerson,
   }) {
     const {
-      workflowsStore: { selectedResident, justiceInvolvedPersonTitle },
+      workflowsStore: {
+        selectedResident,
+        justiceInvolvedPersonTitle,
+      },
     } = useRootStore();
     const { personSpecificOppBanners } = useFeatureVariants();
+
+    const selectedPerson = opportunity?.person;
 
     if (!opportunity || !selectedPerson) {
       return null;

@@ -20,9 +20,9 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
+import { Opportunity } from "../../../../WorkflowsStore";
 import { UsMeAnnualReclassificationReviewData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMeAnnualReclassificationReviewForm";
-import { Resident } from "../../../../WorkflowsStore/Resident";
+import { UsMeAnnualReclassificationOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMe/UsMeAnnualReclassificationOpportunity";
 import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { downloadZipFile } from "../../utils";
@@ -37,14 +37,16 @@ const FormPreviewPage = styled.img`
   width: 100%;
 `;
 
-const formDownloader = async (resident: Resident): Promise<void> => {
+const formDownloader = async (
+  opportunity: UsMeAnnualReclassificationOpportunity,
+): Promise<void> => {
   let contents: Partial<UsMeAnnualReclassificationReviewData> = {};
 
-  const { displayName, stateCode, rootStore, opportunities } = resident;
+  const { displayName, stateCode, rootStore } = opportunity.person;
 
   runInAction(() => {
     contents = {
-      ...toJS(opportunities.usMeReclassificationReview?.form?.formData),
+      ...toJS(opportunity?.form?.formData),
     };
   });
 
@@ -65,23 +67,21 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   ]);
 };
 
-function AnnualClassificationReview() {
-  const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore.selectedResident?.opportunities?.usMeReclassificationReview;
-
-  if (!opportunity) {
+function AnnualClassificationReview({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  if (!(opportunity instanceof UsMeAnnualReclassificationOpportunity)) {
     return null;
   }
-
-  const resident = opportunity.person;
 
   return (
     <FormContainer
       heading="Classification Review Packet"
       agencyName="MDOC"
       downloadButtonLabel="Download ZIP"
-      onClickDownload={() => formDownloader(resident)}
+      onClickDownload={() => formDownloader(opportunity)}
       opportunity={opportunity}
     >
       {previewImages.map((image, index) => (

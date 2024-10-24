@@ -21,6 +21,7 @@ import * as React from "react";
 import { useRootStore } from "../../../../components/StoreProvider";
 import {
   Client,
+  UsNdEarlyTerminationOpportunity,
   UsNdEarlyTerminationReferralRecord,
 } from "../../../../WorkflowsStore";
 import { Prompt } from "../../FormPrompt";
@@ -60,12 +61,18 @@ const getMetadataPrompts = (
 const FormPrompts: React.FC<React.HTMLAttributes<HTMLElement>> = (
   props: React.HTMLAttributes<HTMLElement>,
 ) => {
-  const { workflowsStore } = useRootStore();
+  const {
+    workflowsStore: {
+      selectedClient: client,
+      selectedOpportunity: earlyTermination,
+    },
+  } = useRootStore();
 
-  const client = workflowsStore.selectedClient;
-  const earlyTermination = client?.opportunities?.earlyTermination;
-
-  if (!earlyTermination) return null;
+  if (
+    !earlyTermination ||
+    !(earlyTermination instanceof UsNdEarlyTerminationOpportunity)
+  )
+    return null;
 
   const { metadata } = earlyTermination;
 

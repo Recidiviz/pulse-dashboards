@@ -50,7 +50,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
   private selectedOpportunityTypes: OpportunityType[] = [];
 
   // The opportunity types that have failed to instantiate
-  private failedOpportunityTypes: OpportunityType[] = [];
+  private failedOpportunityTypes: Set<OpportunityType> = new Set();
 
   // When the OpportunityManager is hydrated, this should mean that this mapping
   // contains the hydrated opportunities for all the active opportunity types
@@ -90,7 +90,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
     return this.selectedOpportunityTypes.filter(
       (oppType) =>
         this.incomingOpportunityTypes.includes(oppType) &&
-        !this.failedOpportunityTypes.includes(oppType),
+        !this.failedOpportunityTypes.has(oppType),
     );
   }
 
@@ -126,57 +126,58 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
         this.rootStore.currentTenantId,
       );
 
+    const oppList: InstanceType<typeof constructor>[] = [];
+
     await Promise.all(
       records.map(async (record) => {
-        // For now, the OppMapping type will be an oppType mapped to a single instance
-        // The follow up work will update the value to be a list of opp instances
-        if (this.opportunityMapping[opportunityType] === undefined) {
-          let opp;
-          try {
-            opp = constructor
-              ? new constructor(this.person as any, record)
-              : new OpportunityBase<
-                  JusticeInvolvedPerson,
-                  OpportunityRecordBase
-                >(
-                  this.person,
-                  opportunityType,
-                  this.rootStore,
-                  opportunitySchemaBase.parse(record),
-                );
-          } catch (e) {
-            // Remove the failed opportunity type from the selected opportunity types
-            // so that the overall hydration of the manager isn't blocked on the
-            // failed type.
-            this.failedOpportunityTypes.push(opportunityType);
-
-            // don't log routine feature flag checks, but do log everything else
-            if (!(e instanceof FeatureGateError)) {
-              Sentry.captureException(e);
-            }
-
-            return;
+        // Create an instance of the opportunity for the given record.
+        let opp;
+        try {
+          opp = constructor
+            ? new constructor(this.person as any, record)
+            : new OpportunityBase<JusticeInvolvedPerson, OpportunityRecordBase>(
+                this.person,
+                opportunityType,
+                this.rootStore,
+                opportunitySchemaBase.parse(record),
+              );
+        } catch (e) {
+          // don't log routine feature flag checks, but do log everything else
+          if (!(e instanceof FeatureGateError)) {
+            Sentry.captureException(e);
           }
 
-          await opp.hydrate();
-          runInAction(() => {
-            if (this.failedOpportunityTypes.includes(opportunityType))
-              this.failedOpportunityTypes.splice(
-                this.failedOpportunityTypes.indexOf(opportunityType),
-                1,
-              );
-            set(this.opportunityMapping, opportunityType, opp);
-          });
+          return;
         }
+
+        // Hydrate the opportunity instance, i.e. instantiate the subscriptions to Firestore
+        await opp.hydrate();
+        oppList.push(opp as InstanceType<typeof constructor>);
       }),
     );
+
+    if (oppList.length > 0) {
+      runInAction(() => {
+        // If the opportunity type has previously failed, remove this type
+        // from the failures.
+        this.failedOpportunityTypes.delete(opportunityType);
+
+        set(this.opportunityMapping, opportunityType, oppList);
+      });
+    }
+
+    // If the person has records for this opportunity, but the opportunity type isn't
+    // a key in this.opportunityMapping, then all instances for this type failed to
+    // instantiate.
+    if (oppList.length === 0 && records.length > 0)
+      this.failedOpportunityTypes.add(opportunityType);
   }
 
   get hydrationState(): HydrationState {
     if (!this.hydrationStarted && this.activeOpportunityTypes.length)
       return { status: "needs hydration" };
     return compositeHydrationState(
-      this.activeOpportunityTypes.map(
+      this.activeOpportunityTypes.flatMap(
         (type) =>
           this.opportunityMapping[type] ??
           ({ hydrationState: { status: "loading" } } as Hydratable),

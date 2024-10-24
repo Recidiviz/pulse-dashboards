@@ -29,7 +29,7 @@ import {
 export const OpportunitiesSection: React.FC<{
   person: JusticeInvolvedPerson;
 }> = observer(function OpportunitiesSection({ person }) {
-  const opportunities = Object.values(person.opportunities);
+  const opportunities = person.flattenedOpportunities;
   if (opportunities.length === 0) {
     return null;
   }
@@ -38,7 +38,7 @@ export const OpportunitiesSection: React.FC<{
     <TooltipSection>
       <TooltipSectionHeader>Opportunities</TooltipSectionHeader>
       {opportunities.map((o: Opportunity) => (
-        <TooltipRow key={`{${o.type}-${o.person.recordId}`}>
+        <TooltipRow key={`{${o.selectId}`}>
           <TooltipTealStar />
           <TooltipSectionDetails>{o.config.label}</TooltipSectionDetails>
         </TooltipRow>

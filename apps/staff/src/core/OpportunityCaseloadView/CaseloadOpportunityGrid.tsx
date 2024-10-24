@@ -74,7 +74,7 @@ const CaseloadOpportunityGrid = ({
         .slice(fromIndex, toIndex)
         .map((item) => (
           <CaseloadOpportunityCell
-            key={item.person.externalId}
+            key={item.selectId}
             opportunity={item}
             style={halfWidthItem ? halfWidthStyle : defaultStyle}
           />

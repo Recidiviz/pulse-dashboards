@@ -20,7 +20,6 @@ import { DocumentData, DocumentReference } from "firebase/firestore";
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "~firestore-api";
 
 import FirestoreStore, { OpportunityUpdate } from "../../FirestoreStore";
-import { OpportunityType } from "../Opportunity";
 import { CollectionDocumentSubscription } from "./CollectionDocumentSubscription";
 import { UpdateFunction } from "./types";
 
@@ -30,12 +29,10 @@ export class OpportunityUpdateSubscription<
   // needs to be redefined because it's read-only but otherwise unchanged
   readonly dataSource: DocumentReference<RecordType>;
 
-  opportunityType: OpportunityType;
-
   constructor(
     firestoreStore: FirestoreStore,
     clientRecordId: string,
-    opportunityType: OpportunityType,
+    opportunityUpdateDocId: string,
     updateOpportunityEligibility: UpdateFunction<DocumentData>,
   ) {
     const firestoreCollectionKey = { key: "clientUpdatesV2" } as const;
@@ -49,13 +46,15 @@ export class OpportunityUpdateSubscription<
       updateOpportunityEligibility,
     );
 
-    this.dataSource = firestoreStore.doc(
-      firestoreCollectionKey,
+    const docPath = [
       clientRecordId,
       FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates,
-      opportunityType,
-    ) as DocumentReference<RecordType>;
+      opportunityUpdateDocId,
+    ];
 
-    this.opportunityType = opportunityType;
+    this.dataSource = firestoreStore.doc(
+      firestoreCollectionKey,
+      ...docPath,
+    ) as DocumentReference<RecordType>;
   }
 }

@@ -17,7 +17,6 @@
 
 import dedent from "dedent";
 import { DocumentData } from "firebase/firestore";
-import { computed, makeObservable, override } from "mobx";
 
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
@@ -65,12 +64,6 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       client.rootStore,
       usMeEarlyTerminationSchema.parse(record),
     );
-
-    makeObservable(this, {
-      requirementsMet: override,
-      requirementsAlmostMet: override,
-      almostEligibleStatusMessage: computed,
-    });
   }
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.almostEligible || !this.record) return;

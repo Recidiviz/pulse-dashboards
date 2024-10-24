@@ -19,12 +19,12 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { JusticeInvolvedPerson, OpportunityType } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { NavigationBackButton } from "../NavigationBackButton";
@@ -116,17 +116,9 @@ type FormSidebarView = "OPPORTUNITY" | "DENIAL";
 export const WorkflowsFormLayoutWrapper = observer(
   function WorkflowsFormLayoutWrapper() {
     const {
-      workflowsStore: {
-        selectedOpportunityType: opportunityType,
-        selectedPerson,
-      },
+      workflowsStore: { selectedOpportunity: opportunity },
     } = useRootStore();
-    return (
-      <WorkflowsFormLayout
-        opportunityType={opportunityType}
-        selectedPerson={selectedPerson}
-      />
-    );
+    return <WorkflowsFormLayout opportunity={opportunity} />;
   },
 );
 
@@ -139,27 +131,33 @@ export const WorkflowsFormLayoutWrapper = observer(
  * from a store within the component itself.
  */
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout({
-  opportunityType,
-  selectedPerson,
+  opportunity,
 }: {
-  opportunityType: OpportunityType | undefined;
-  selectedPerson: JusticeInvolvedPerson | undefined;
+  opportunity: Opportunity | undefined;
 }) {
+  const { workflowsStore } = useRootStore();
+  const selectedPerson = opportunity?.person;
+  const opportunityType = opportunity?.type;
+
+  // When the form layout is unmounted, clear the selected opportunity.
+  useEffect(() => {
+    return () => {
+      workflowsStore.updateSelectedOpportunity(undefined);
+    };
+  }, [workflowsStore]);
+
   const { currentTenantId } = useRootStore();
   const [currentView, setCurrentView] =
     useState<FormSidebarView>("OPPORTUNITY");
   const navigate = useNavigate();
 
-  const opportunity =
-    opportunityType && selectedPerson?.opportunities[opportunityType];
-
   usePersonTracking(selectedPerson, () => {
     opportunity?.form?.trackViewed();
   });
 
-  if (!opportunityType || !selectedPerson) return null;
+  if (!opportunityType || !selectedPerson || !opportunity) return null;
 
-  const formContents = opportunity?.form?.formContents;
+  const formContents = opportunity.form?.formContents;
 
   const FormComponent = formContents && FormComponents[formContents];
 
@@ -209,7 +207,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout({
       <FormWrapper>
         {FormComponent && (
           <OpportunityFormProvider value={opportunity.form}>
-            <FormComponent person={selectedPerson} />
+            <FormComponent opportunity={opportunity} />
           </OpportunityFormProvider>
         )}
       </FormWrapper>

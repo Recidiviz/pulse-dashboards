@@ -31,6 +31,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { formatDate } from "../../utils";
+import { Opportunity, UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {
   FormContainer,
   FormHeaderSection,
@@ -61,13 +62,15 @@ const SubmittedText = styled(Sans14)`
   width: 125px;
 `;
 
-const WorkflowsUsTnExpirationForm: React.FC = observer(
-  function WorkflowsUsTnExpirationForm() {
+const WorkflowsUsTnExpirationForm = observer(
+  function WorkflowsUsTnExpirationForm({
+    opportunity,
+  }: {
+    opportunity: Opportunity;
+  }) {
     const { workflowsStore, analyticsStore } = useRootStore();
-    const opportunity =
-      workflowsStore?.selectedClient?.opportunities?.usTnExpiration;
     const [selectedFormSection, setSelectedFormSection] = useState(0);
-    const completedTEPENOTE = tepeTemplate(opportunity?.form.formData);
+    const completedTEPENOTE = tepeTemplate(opportunity?.form?.formData);
     const fullCharLimitedTEPENote = charLimitedNote(completedTEPENOTE, 70);
     const paginatedNote = paginateTEPENote(fullCharLimitedTEPENote, 10);
     const [pageToCopy, setPageToCopy] = useState("");
@@ -85,7 +88,7 @@ const WorkflowsUsTnExpirationForm: React.FC = observer(
       }
     }, [pageToCopy, copyPageToClipboard]);
 
-    if (!opportunity) {
+    if (!(opportunity instanceof UsTnExpirationOpportunity)) {
       return null;
     }
     const form = (

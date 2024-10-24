@@ -211,7 +211,6 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
     firestoreStore.updateUsTnExpirationContactNoteStatus(
       opportunity,
       currentUserEmail,
-      person.recordId,
       contactNoteObj,
       Timestamp.fromDate(contactNoteDateTime),
       "PENDING",
@@ -230,7 +229,6 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         firestoreStore.updateUsTnExpirationContactNoteStatus(
           opportunity,
           currentUserEmail,
-          person.recordId,
           contactNoteObj,
           Timestamp.fromDate(contactNoteDateTime),
           "FAILURE",

@@ -21,7 +21,6 @@ import {
   nextSunday,
   startOfWeek,
 } from "date-fns";
-import { makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
@@ -70,9 +69,6 @@ export abstract class UsMoOverdueRestrictiveHousingBase<
     if (validateRecord !== undefined) validateRecord(record);
 
     super(resident, type, resident.rootStore, record);
-    makeObservable(this, {
-      requirementsMet: override,
-    });
   }
 
   /**

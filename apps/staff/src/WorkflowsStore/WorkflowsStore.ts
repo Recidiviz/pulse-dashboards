@@ -110,6 +110,8 @@ export class WorkflowsStore implements Hydratable {
 
   private selectedPersonPseudoId?: string;
 
+  private selectedOpportunityId?: string;
+
   selectedOpportunityType?: OpportunityType;
 
   selectedOpportunityOnFullProfile?: Opportunity;
@@ -493,6 +495,10 @@ export class WorkflowsStore implements Hydratable {
     });
   }
 
+  updateSelectedOpportunity(opportunityId?: string): void {
+    this.selectedOpportunityId = opportunityId;
+  }
+
   updateSelectedOpportunityType(opportunityType?: OpportunityType): void {
     runInAction(() => {
       this.selectedOpportunityType = opportunityType;
@@ -704,11 +710,11 @@ export class WorkflowsStore implements Hydratable {
     opportunityStatus: EligibilityStatus,
   ): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
-    this.opportunityTypes.forEach((opportunityType) => {
+    this.opportunityTypes.forEach((opportunityType: OpportunityType) => {
       const opportunities = this.caseloadPersonsSorted
-        .map((c) => c[opportunityStatus][opportunityType])
-        .filter((opp) => opp !== undefined)
-        .map((opp) => opp as Opportunity)
+        .flatMap(
+          (c): Opportunity[] => c[opportunityStatus][opportunityType] || [],
+        )
         .sort((a, b) => a.compare(b));
 
       mapping[opportunityType] = opportunities as Opportunity[];
@@ -761,7 +767,11 @@ export class WorkflowsStore implements Hydratable {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType) => {
       const opportunities = this.caseloadPersonsSorted
-        .flatMap((c) => c.opportunities[opportunityType] || []) // Flatten and handle undefined entries
+        .flatMap(
+          (c) =>
+            (c.opportunities[opportunityType] ||
+              []) as unknown as Opportunity[],
+        ) // Flatten and handle undefined entries
         .sort((a, b) => a.compare(b));
 
       mapping[opportunityType] = opportunities;
@@ -872,6 +882,21 @@ export class WorkflowsStore implements Hydratable {
     return this.selectedPersonPseudoId
       ? this.justiceInvolvedPersons[this.selectedPersonPseudoId]
       : undefined;
+  }
+
+  get selectedOpportunity(): Opportunity | undefined {
+    if (
+      !this.selectedOpportunityId ||
+      !this.selectedPerson ||
+      !this.selectedOpportunityType
+    )
+      return undefined;
+
+    return this.selectedPerson.opportunities[
+      this.selectedOpportunityType
+    ]?.filter(
+      (opp) => opp.selectId === this.selectedOpportunityId,
+    )[0] as any as Opportunity;
   }
 
   get selectedClient(): Client | undefined {

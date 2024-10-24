@@ -208,10 +208,6 @@ export class OpportunityCaseloadPresenter {
     return this.config.subheading;
   }
 
-  get currentOpportunity() {
-    return this.selectedPerson?.opportunities[this.opportunityType];
-  }
-
   get peopleInActiveTab() {
     return this.oppsFromOpportunitiesByTab?.[this.activeTab] ?? [];
   }
@@ -248,6 +244,10 @@ export class OpportunityCaseloadPresenter {
     } else {
       return this.workflowsStore.selectedPerson;
     }
+  }
+
+  get selectedOpportunity() {
+    return this.workflowsStore.selectedOpportunity;
   }
 
   dismissNotification(id: string) {

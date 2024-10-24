@@ -18,7 +18,6 @@
 import { differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import { makeObservable, override } from "mobx";
 
 import { Resident } from "../../../Resident";
 import { UsMeWorkReleaseForm } from "../../Forms/UsMeWorkReleaseForm";
@@ -145,9 +144,6 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
       resident.rootStore,
       transformReferral(record),
     );
-    makeObservable(this, {
-      requirementsMet: override,
-    });
 
     this.form = new UsMeWorkReleaseForm(this, resident.rootStore);
   }

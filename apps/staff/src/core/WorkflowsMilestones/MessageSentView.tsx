@@ -58,7 +58,7 @@ export const MessageSentView = function MessageSentView({
 
   // Hydrate opportunities for the client
   useHydrateOpportunities(client);
-  const opportunity = client.opportunities.usCaSupervisionLevelDowngrade;
+  const opportunity = client.opportunities.usCaSupervisionLevelDowngrade?.[0];
 
   // Auto dismiss for the modal if the modal is open and hasAutoDismiss is true,
   const modalContext = useContext(WorkflowsPreviewModalContext);

@@ -21,6 +21,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { Opportunity } from "../../../../WorkflowsStore";
 import { FormBase } from "../../../../WorkflowsStore/Opportunity/Forms/FormBase";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
@@ -72,12 +73,14 @@ const formDownloader = async (
   return;
 };
 
-export const FormUsMiSCCReview = observer(function FormUsMiSCCReview() {
+export const FormUsMiSCCReview = observer(function FormUsMiSCCReview({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
   const opportunityForm = useOpportunityFormContext();
-
-  const { opportunity } = opportunityForm;
 
   if (!opportunity) {
     return null;

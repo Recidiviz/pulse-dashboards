@@ -28,6 +28,7 @@ import { ineligibleClientRecord } from "../__fixtures__";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityManager } from "../OpportunityManager";
 import { OpportunityType } from "../OpportunityType";
+import { LSUOpportunity } from "../UsId";
 import {
   EarnedDischargeReferralRecordFixture,
   LSUReferralRecordFixture,
@@ -256,5 +257,101 @@ describe("instantiateOpportunitiesByType", () => {
     await person.opportunityManager.hydrate();
     expect(person.opportunityManager.opportunities).toBeEmptyObject();
     expect(isHydrated(person.opportunityManager)).toBeTrue();
+  });
+
+  test("one instantiation failed, but one succeeded", async () => {
+    setTestEnabledOppTypes(["LSU"]);
+    person = new Client(lsuEligibleClient, rootStore);
+    rootStore.tenantStore.currentTenantId = "US_ID";
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+
+    const { formInformation } = LSUReferralRecordFixture;
+
+    const malformedRecord = {
+      ...LSUReferralRecordFixture,
+      formInformation: {
+        ...formInformation,
+        // chargeDescriptions should be an array of strings
+        chargeDescriptions: "string",
+      },
+    };
+    vi.spyOn(
+      FirestoreStore.prototype,
+      "getOpportunitiesForJIIAndOpportunityType",
+    ).mockResolvedValue([malformedRecord, LSUReferralRecordFixture]);
+
+    vi.spyOn(
+      OpportunityBase.prototype,
+      "hydrationState",
+      "get",
+    ).mockReturnValue({ status: "hydrated" });
+
+    await person.opportunityManager.hydrate();
+    expect(Object.keys(person.opportunityManager.opportunities)).toEqual([
+      "LSU",
+    ]);
+    // @ts-expect-error - Ensure that internal fields are populated correctly
+    expect(person.opportunityManager.failedOpportunityTypes).toBeEmpty();
+    expect(person.opportunityManager.opportunities.LSU?.length).toEqual(1);
+    expect(isHydrated(person.opportunityManager)).toBeTrue();
+  });
+});
+
+describe("hydrationState", () => {
+  test("multiple opportunities for given type, but only one is hydrated", () => {
+    setTestEnabledOppTypes(["LSU"]);
+    person = new Client(lsuEligibleClient, rootStore);
+
+    vi.spyOn(
+      person.opportunityManager,
+      // @ts-expect-error - Ensure that internal fields are populated correctly
+      "opportunityMapping",
+      "get",
+    ).mockReturnValue({
+      LSU: [
+        {
+          hydrationState: { status: "loading" },
+        } as LSUOpportunity,
+        {
+          hydrationState: { status: "hydrated" },
+        } as LSUOpportunity,
+      ],
+    });
+
+    expect(isHydrated(person.opportunityManager)).toBeFalse();
+  });
+
+  test("opportunityMapping has hydrated opportunity, but it's not active", () => {
+    setTestEnabledOppTypes(["pastFTRD"]);
+
+    const clientRecord = {
+      ...ineligibleClientRecord,
+      allEligibleOpportunities: ["LSU", "pastFTRD"] as OpportunityType[],
+    };
+    person = new Client(clientRecord, rootStore);
+
+    vi.spyOn(
+      person.opportunityManager,
+      // @ts-expect-error - Ensure that internal fields are populated correctly
+      "opportunityMapping",
+      "get",
+    ).mockReturnValue({
+      LSU: [
+        {
+          hydrationState: { status: "hydrated" },
+        } as LSUOpportunity,
+      ],
+      pastFTRD: [
+        {
+          hydrationState: { status: "loading" },
+        } as LSUOpportunity,
+      ],
+    });
+
+    // @ts-expect-error - Ensure that internal fields are populated correctly
+    expect(person.opportunityManager.activeOpportunityTypes).toEqual([
+      "pastFTRD",
+    ]);
+    expect(isHydrated(person.opportunityManager)).toBeFalse();
   });
 });

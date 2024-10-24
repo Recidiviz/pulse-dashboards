@@ -125,7 +125,7 @@ export function WithJusticeInvolvedPersonStore<
         (oppsByType, client) => {
           for (const opportunity of Object.values(
             client[opportunityMappingOverride ?? this.opportunityMapping],
-          )) {
+          ).flat()) {
             const { type } = opportunity;
             // Initialize the array for the opportunity type if it doesn't exist and then push the opportunity to the array
             (oppsByType[type] ?? (oppsByType[type] = [])).push(opportunity);

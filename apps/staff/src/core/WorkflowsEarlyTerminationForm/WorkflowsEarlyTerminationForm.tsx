@@ -34,37 +34,44 @@
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { Client } from "../../WorkflowsStore";
+import {
+  Client,
+  Opportunity,
+  UsNdEarlyTerminationOpportunity,
+} from "../../WorkflowsStore";
 import { downloadSingle } from "../Paperwork/DOCXFormGenerator";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
 import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import FormEarlyTermination from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
 
-const collectAdditionalDepositionLinesToDownload = (client: Client) => {
-  const { earlyTermination } = client.opportunities;
+const collectAdditionalDepositionLinesToDownload = (
+  earlyTermination: UsNdEarlyTerminationOpportunity,
+) => {
   return earlyTermination?.form?.additionalDepositionLines.map(
     (key) => earlyTermination?.form?.formData[key],
   );
 };
 
-function WorkflowsEarlyTerminationForm() {
-  const {
-    workflowsStore: { selectedClient: client },
-  } = useRootStore();
-
+function WorkflowsEarlyTerminationForm({
+  opportunity: earlyTermination,
+}: {
+  opportunity: Opportunity;
+}) {
   const form = useOpportunityFormContext();
+  const client = earlyTermination.person;
 
-  if (!client) return <div />;
+  if (
+    !(earlyTermination instanceof UsNdEarlyTerminationOpportunity) ||
+    !(client instanceof Client)
+  )
+    return <div />;
 
   const onClickDownload = async (): Promise<void> => {
-    const { earlyTermination } = client.opportunities;
-
     const contents = {
       ...toJS(earlyTermination?.form?.formData),
       additionalDepositionLines:
-        collectAdditionalDepositionLinesToDownload(client),
+        collectAdditionalDepositionLinesToDownload(earlyTermination),
     };
 
     await downloadSingle(
@@ -82,7 +89,7 @@ function WorkflowsEarlyTerminationForm() {
       agencyName="ND DOCR"
       downloadButtonLabel={form.downloadText}
       onClickDownload={async () => onClickDownload()}
-      opportunity={form.opportunity}
+      opportunity={earlyTermination}
     >
       <FormViewer>
         <FormEarlyTermination />

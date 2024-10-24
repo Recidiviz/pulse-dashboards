@@ -21,7 +21,11 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import { Client, JusticeInvolvedPerson } from "../../../../WorkflowsStore";
+import {
+  Client,
+  EarnedDischargeOpportunity,
+  Opportunity,
+} from "../../../../WorkflowsStore";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import { DIMENSIONS_PX } from "../../PDFFormGenerator";
@@ -61,11 +65,12 @@ const FormTransformContainer = styled.section`
   max-width: ${rem(DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN)};
 `;
 
-const formDownloader = async (client: Client): Promise<void> => {
+const formDownloader = async (
+  client: Client,
+  opportunity: EarnedDischargeOpportunity,
+): Promise<void> => {
   const contents = {
-    ...toJS(
-      client.opportunities.earnedDischarge?.form?.prepareDataForTemplate(),
-    ),
+    ...toJS(opportunity?.form?.prepareDataForTemplate()),
   };
 
   await downloadSingle(
@@ -78,17 +83,20 @@ const formDownloader = async (client: Client): Promise<void> => {
 };
 
 export const FormEarnedDischarge = observer(function FormEarnedDischarge({
-  person: client,
+  opportunity,
 }: {
-  person?: JusticeInvolvedPerson;
+  opportunity: Opportunity;
 }) {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
   const { resize } = useResizeForm(formRef, `${FormTransformContainer}`);
 
-  const opportunity = client?.opportunities?.earnedDischarge;
+  const client = opportunity.person;
 
-  if (!opportunity || !(client instanceof Client)) {
+  if (
+    !(client instanceof Client) ||
+    !(opportunity instanceof EarnedDischargeOpportunity)
+  ) {
     return null;
   }
 
@@ -97,7 +105,7 @@ export const FormEarnedDischarge = observer(function FormEarnedDischarge({
       heading="Earned Discharge"
       agencyName="IDOC"
       downloadButtonLabel="Download .DOCX"
-      onClickDownload={async () => formDownloader(client)}
+      onClickDownload={async () => formDownloader(client, opportunity)}
       opportunity={opportunity}
     >
       <div

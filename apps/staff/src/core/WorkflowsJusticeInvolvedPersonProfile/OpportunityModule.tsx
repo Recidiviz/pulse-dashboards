@@ -27,6 +27,7 @@ import styled from "styled-components/macro";
 import {
   useFeatureVariants,
   useOpportunityConfigurations,
+  useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
@@ -103,6 +104,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
     onDenialButtonClick = () => null,
   }) {
+    const { workflowsStore } = useRootStore();
+
     const { hideDenialRevert, submittedOpportunityStatus } =
       useFeatureVariants();
 
@@ -181,9 +184,14 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 <FormActionButton
                   className="NavigateToFormButton"
                   buttonFill={colors.buttonFill}
-                  onClick={desktopLinkGate({
-                    headline: "Referral Unavailable in Mobile View",
-                  })}
+                  onClick={() => {
+                    desktopLinkGate({
+                      headline: "Referral Unavailable in Mobile View",
+                    });
+                    workflowsStore.updateSelectedOpportunity(
+                      opportunity.selectId,
+                    );
+                  }}
                 >
                   {opportunity.form.navigateToFormText}
                 </FormActionButton>

@@ -19,9 +19,9 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
+import { Opportunity } from "../../../../WorkflowsStore";
 import { UsMeMediumTrusteeFormData } from "../../../../WorkflowsStore/Opportunity/Forms/UsMeMediumTrusteeForm";
-import { Resident } from "../../../../WorkflowsStore/Resident";
+import { UsMeMediumTrusteeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMe/UsMeMediumTrusteeOpportunity";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import p1 from "./assets/p1.png";
@@ -32,14 +32,16 @@ const FormPreviewPage = styled.img`
   width: 100%;
 `;
 
-const formDownloader = async (resident: Resident): Promise<void> => {
+const formDownloader = async (
+  opportunity: UsMeMediumTrusteeOpportunity,
+): Promise<void> => {
   let contents: Partial<UsMeMediumTrusteeFormData> = {};
 
-  const { displayName, stateCode, rootStore, opportunities } = resident;
+  const { displayName, stateCode, rootStore } = opportunity.person;
 
   runInAction(() => {
     contents = {
-      ...toJS(opportunities.usMeMediumTrustee?.form?.formData),
+      ...toJS(opportunity?.form?.formData),
     };
   });
 
@@ -52,23 +54,17 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   );
 };
 
-function MediumTrustee() {
-  const { workflowsStore } = useRootStore();
-  const opportunity =
-    workflowsStore.selectedResident?.opportunities?.usMeMediumTrustee;
-
-  if (!opportunity) {
+function MediumTrustee({ opportunity }: { opportunity: Opportunity }) {
+  if (!(opportunity instanceof UsMeMediumTrusteeOpportunity)) {
     return null;
   }
-
-  const resident = opportunity.person;
 
   return (
     <FormContainer
       heading="Medium Trustee Form"
       agencyName="MDOC"
       downloadButtonLabel="Download Form"
-      onClickDownload={() => formDownloader(resident)}
+      onClickDownload={() => formDownloader(opportunity)}
       opportunity={opportunity}
     >
       {previewImages.map((image, index) => (

@@ -27,7 +27,11 @@ import {
 } from "../FirestoreStore";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { Client } from "./Client";
-import { OpportunityManagerInterface, OpportunityMapping } from "./Opportunity";
+import {
+  Opportunity,
+  OpportunityManagerInterface,
+  OpportunityMapping,
+} from "./Opportunity";
 import { Resident } from "./Resident";
 import { CollectionDocumentSubscription } from "./subscriptions";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -64,6 +68,10 @@ export type JusticeInvolvedPerson = {
    * In most cases these are the only ones that should actually be displayed to users.
    */
   opportunities: OpportunityMapping;
+  /**
+   * All opportunities for a person flattened into a list
+   */
+  flattenedOpportunities: Opportunity[];
   /**
    * Subset of `verifiedOpportunities` that are fully eligible.
    */

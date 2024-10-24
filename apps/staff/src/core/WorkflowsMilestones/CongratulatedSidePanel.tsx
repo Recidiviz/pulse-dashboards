@@ -60,7 +60,7 @@ const MessageSentView = function MessageSentView({
   );
 
   useHydrateOpportunities(client);
-  const opportunity = client.opportunities.usCaSupervisionLevelDowngrade;
+  const opportunity = client.opportunities.usCaSupervisionLevelDowngrade?.[0];
 
   return (
     <SidePanelContents data-testid="CongratulatedSidePanel">
@@ -96,7 +96,7 @@ const CongratulatedAnotherWayView = function CongratulatedAnotherWayView({
   };
 
   useHydrateOpportunities(client);
-  const opportunity = client.opportunities.usCaSupervisionLevelDowngrade;
+  const opportunity = client.opportunities.usCaSupervisionLevelDowngrade?.[0];
 
   return (
     <SidePanelContents data-testid="CongratulatedSidePanel">

@@ -350,35 +350,41 @@ export default class FirestoreStore {
   }
 
   async updateOpportunity(
-    opportunityType: OpportunityType,
-    recordId: string,
+    opportunity: Opportunity,
     update: PartialWithFieldValue<
       OpportunityUpdateWithForm<Record<string, any>>
     >,
   ) {
+    const {
+      person: { recordId: personRecordId },
+      firestoreUpdateDocId,
+    } = opportunity;
+
     const opportunityDocRef = this.doc(
       { key: "clientUpdatesV2" },
-      `${recordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates}/${opportunityType}`,
+      `${personRecordId}/${FIRESTORE_GENERAL_COLLECTION_MAP.clientOpportunityUpdates}/${firestoreUpdateDocId}`,
     );
 
-    return this.updateClientUpdatesV2Document(recordId, opportunityDocRef, {
-      ...update,
-    });
+    return this.updateClientUpdatesV2Document(
+      personRecordId,
+      opportunityDocRef,
+      {
+        ...update,
+      },
+    );
   }
 
   async updateOpportunitySubmitted(
     userEmail: string,
-    opportunityType: OpportunityType,
-    recordId: string,
+    opportunity: Opportunity,
   ) {
-    return this.updateOpportunity(opportunityType, recordId, {
+    return this.updateOpportunity(opportunity, {
       submitted: { by: userEmail, date: serverTimestamp() },
     });
   }
 
   async updateOpportunityAutoSnooze(
-    opportunityType: OpportunityType,
-    recordId: string,
+    opportunity: Opportunity,
     snoozeUpdate: AutoSnoozeUpdate,
     deleteSnoozeField: boolean,
   ): Promise<void> {
@@ -388,12 +394,11 @@ export default class FirestoreStore {
           autoSnooze: { ...snoozeUpdate },
         };
 
-    return this.updateOpportunity(opportunityType, recordId, changes);
+    return this.updateOpportunity(opportunity, changes);
   }
 
   async updateOpportunityManualSnooze(
-    opportunityType: OpportunityType,
-    recordId: string,
+    opportunity: Opportunity,
     snoozeUpdate: ManualSnoozeUpdate,
     deleteSnoozeField: boolean,
   ): Promise<void> {
@@ -403,17 +408,16 @@ export default class FirestoreStore {
           manualSnooze: { ...snoozeUpdate },
         };
 
-    return this.updateOpportunity(opportunityType, recordId, changes);
+    return this.updateOpportunity(opportunity, changes);
   }
 
   async updateOpportunityDenial(
     userEmail: string,
-    recordId: string,
+    opportunity: Opportunity,
     fieldUpdates: {
       reasons?: string[];
       otherReason?: string;
     },
-    opportunityType: OpportunityType,
     deleteFields?: {
       otherReason: boolean;
     },
@@ -434,16 +438,15 @@ export default class FirestoreStore {
       },
     };
 
-    return this.updateOpportunity(opportunityType, recordId, changes);
+    return this.updateOpportunity(opportunity, changes);
   }
 
   async updateOpportunityCompleted(
     userEmail: string,
-    recordId: string,
-    opportunityType: OpportunityType,
+    opportunity: Opportunity,
     clearCompletion = false,
   ): Promise<void> {
-    return this.updateOpportunity(opportunityType, recordId, {
+    return this.updateOpportunity(opportunity, {
       completed: clearCompletion
         ? deleteField()
         : {
@@ -457,10 +460,9 @@ export default class FirestoreStore {
 
   async updateOpportunityLastViewed(
     userEmail: string,
-    recordId: string,
-    opportunityType: OpportunityType,
+    opportunity: Opportunity,
   ): Promise<void> {
-    return this.updateOpportunity(opportunityType, recordId, {
+    return this.updateOpportunity(opportunity, {
       lastViewed: { by: userEmail, date: serverTimestamp() },
     });
   }
@@ -510,7 +512,6 @@ export default class FirestoreStore {
   async updateUsTnExpirationContactNoteStatus(
     opportunity: UsTnExpirationOpportunity,
     currentUserEmail: string,
-    recordId: string,
     contactNote: Record<number, string[]>,
     submittedTimestamp: Timestamp,
     status: ExternalSystemRequestStatus,
@@ -536,11 +537,7 @@ export default class FirestoreStore {
       },
     };
 
-    return this.updateOpportunity(
-      opportunity.type,
-      recordId,
-      contactNoteUpdate,
-    );
+    return this.updateOpportunity(opportunity, contactNoteUpdate);
   }
 
   async updateOmsSnoozeStatus(
@@ -560,7 +557,7 @@ export default class FirestoreStore {
     )
       return;
 
-    return this.updateOpportunity(opportunity.type, recordId, {
+    return this.updateOpportunity(opportunity, {
       omsSnooze: {
         status,
         submitted: {
@@ -573,20 +570,14 @@ export default class FirestoreStore {
     });
   }
 
-  async deleteOpportunitySubmitted(
-    opportunityType: OpportunityType,
-    recordId: string,
-  ) {
-    return this.updateOpportunity(opportunityType, recordId, {
+  async deleteOpportunitySubmitted(opportunity: Opportunity) {
+    return this.updateOpportunity(opportunity, {
       submitted: deleteField(),
     });
   }
 
-  async deleteOpportunityDenialAndSnooze(
-    opportunityType: OpportunityType,
-    recordId: string,
-  ) {
-    return this.updateOpportunity(opportunityType, recordId, {
+  async deleteOpportunityDenialAndSnooze(opportunity: Opportunity) {
+    return this.updateOpportunity(opportunity, {
       denial: deleteField(),
       autoSnooze: deleteField(),
       manualSnooze: deleteField(),

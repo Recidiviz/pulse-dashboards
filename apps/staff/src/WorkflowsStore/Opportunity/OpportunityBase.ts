@@ -76,8 +76,7 @@ import {
 } from "./utils/criteriaUtils";
 
 export function updateOpportunityEligibility(
-  opportunityType: OpportunityType,
-  recordId: string,
+  opportunity: Opportunity,
   rootStore: RootStore,
 ) {
   return async (record: DocumentData) => {
@@ -100,8 +99,7 @@ export function updateOpportunityEligibility(
     // If there are denial reasons and the opp should be resurfaced, reset the
     // denial reasons and the manual and auto snooze configs.
     await rootStore.firestoreStore.deleteOpportunityDenialAndSnooze(
-      opportunityType,
-      recordId,
+      opportunity,
     );
   };
 }
@@ -156,28 +154,42 @@ export class OpportunityBase<
       setManualSnooze: action,
       setDenialReasons: action,
       setOtherReasonText: action,
-      requirementsMet: computed,
-      requirementsAlmostMet: computed,
-      almostEligible: computed,
       denied: computed,
       isSubmitted: computed,
       submittedUpdate: computed,
     });
 
     this.updateOpportunityEligibility = updateOpportunityEligibility(
-      this.type,
-      this.person.recordId,
+      this,
       this.rootStore,
     );
 
     this.updatesSubscription = new OpportunityUpdateSubscription<UpdateRecord>(
       this.rootStore.firestoreStore,
       person.recordId,
-      type,
+      this.firestoreUpdateDocId,
       this.updateOpportunityEligibility,
     );
 
     this.compareFunction = this.buildCompareFunction();
+  }
+
+  get firestoreUpdateDocId() {
+    // For multi-instance opportunities, the document ID has the opportunity id
+    // appended to the opportunity type. Otherwise, use just the opportunity type
+    return this.opportunityId === undefined
+      ? this.type
+      : `${this.type}_${this.opportunityId}`;
+  }
+
+  get opportunityId() {
+    return this.record.opportunityId;
+  }
+
+  get selectId() {
+    // Used as the key for opportunity-specific components, i.e. CaseloadOpportunityCell
+    // Also used when filtering on a list of opportunities.
+    return this.opportunityId ?? this.person.recordId;
   }
 
   get config() {
@@ -272,8 +284,7 @@ export class OpportunityBase<
 
         this.rootStore.firestoreStore.updateOpportunityLastViewed(
           this.currentUserEmail,
-          this.person.recordId,
-          this.type,
+          this,
         );
       },
     );
@@ -305,14 +316,13 @@ export class OpportunityBase<
     when(
       () => isHydrated(this),
       () => {
-        const { recordId, pseudonymizedId } = this.person;
+        const { pseudonymizedId } = this.person;
         const { reviewStatus } = this;
         if (reviewStatus === "DENIED" || reviewStatus === "COMPLETED") return;
 
         this.rootStore.firestoreStore.updateOpportunityCompleted(
           this.currentUserEmail,
-          recordId,
-          this.type,
+          this,
         );
         this.rootStore.analyticsStore.trackSetOpportunityStatus({
           justiceInvolvedPersonId: pseudonymizedId,
@@ -368,10 +378,7 @@ export class OpportunityBase<
   }
 
   async deleteSubmitted(): Promise<void> {
-    await this.rootStore.firestoreStore.deleteOpportunitySubmitted(
-      this.type,
-      this.person.recordId,
-    );
+    await this.rootStore.firestoreStore.deleteOpportunitySubmitted(this);
 
     this.rootStore.analyticsStore.trackOpportunityUnsubmitted({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
@@ -381,10 +388,7 @@ export class OpportunityBase<
   }
 
   async deleteOpportunityDenialAndSnooze(): Promise<void> {
-    await this.rootStore.firestoreStore.deleteOpportunityDenialAndSnooze(
-      this.type,
-      this.person.recordId,
-    );
+    await this.rootStore.firestoreStore.deleteOpportunityDenialAndSnooze(this);
 
     this.rootStore.analyticsStore.trackSetOpportunityStatus({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
@@ -395,8 +399,6 @@ export class OpportunityBase<
   }
 
   async setManualSnooze(days: number, reasons: string[]): Promise<void> {
-    const { recordId } = this.person;
-
     // If there are no denial reasons selected, clear the snooze values
     const deleteSnoozeField = reasons.length === 0;
 
@@ -416,8 +418,7 @@ export class OpportunityBase<
     }
 
     await this.rootStore.firestoreStore.updateOpportunityManualSnooze(
-      this.type,
-      recordId,
+      this,
       {
         snoozedBy: this.currentUserEmail,
         snoozedOn: format(new Date(), "yyyy-MM-dd"),
@@ -431,8 +432,6 @@ export class OpportunityBase<
     autoSnoozeParams: NonNullable<SnoozeConfiguration["autoSnoozeParams"]>,
     reasons: string[],
   ): Promise<void> {
-    const { recordId } = this.person;
-
     // If there are no denial reasons selected, clear the snooze values
     const deleteSnoozeField = reasons.length === 0;
 
@@ -454,8 +453,7 @@ export class OpportunityBase<
     }
 
     await this.rootStore.firestoreStore.updateOpportunityAutoSnooze(
-      this.type,
-      recordId,
+      this,
       {
         snoozedBy: this.currentUserEmail,
         snoozedOn: format(new Date(), "yyyy-MM-dd"),
@@ -488,8 +486,7 @@ export class OpportunityBase<
   async markSubmitted(): Promise<void> {
     await this.rootStore.firestoreStore.updateOpportunitySubmitted(
       this.currentUserEmail,
-      this.type,
-      this.person.recordId,
+      this,
     );
 
     this.rootStore.analyticsStore.trackOpportunityMarkedSubmitted({
@@ -511,7 +508,7 @@ export class OpportunityBase<
       return;
     }
 
-    const { recordId, pseudonymizedId } = this.person;
+    const { pseudonymizedId } = this.person;
 
     // If someone goes from being submitted to being denied,
     // they should no longer be submitted
@@ -526,16 +523,14 @@ export class OpportunityBase<
 
     await this.rootStore.firestoreStore.updateOpportunityDenial(
       this.currentUserEmail,
-      recordId,
+      this,
       { reasons },
-      this.type,
       deletions,
     );
 
     await this.rootStore.firestoreStore.updateOpportunityCompleted(
       this.currentUserEmail,
-      recordId,
-      this.type,
+      this,
       true,
     );
 
@@ -551,11 +546,10 @@ export class OpportunityBase<
   async setOtherReasonText(otherReason?: string): Promise<void> {
     await this.rootStore.firestoreStore.updateOpportunityDenial(
       this.currentUserEmail,
-      this.person.recordId,
+      this,
       {
         otherReason,
       },
-      this.type,
     );
   }
 

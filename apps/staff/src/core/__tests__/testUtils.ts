@@ -138,4 +138,7 @@ export const mockOpportunity: Opportunity<Client> = {
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,
+  selectId: undefined,
+  firestoreUpdateDocId: "pastFTRD",
+  denied: false,
 };

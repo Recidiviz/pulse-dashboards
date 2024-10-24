@@ -32,7 +32,7 @@ export class UsOrEarnedDischargeSentenceOpportunity extends OpportunityBase<
   constructor(client: Client, record: DocumentData) {
     super(
       client,
-      "usOrEarnedDischarge",
+      "usOrEarnedDischargeSentence",
       client.rootStore,
       usOrEarnedDischargeSentenceSchema.parse(record),
     );

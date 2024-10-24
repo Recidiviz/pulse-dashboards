@@ -37,8 +37,7 @@ export const FormPageWithPresenter = observer(
 
     return (
       <WorkflowsFormLayout
-        opportunityType={opportunityType}
-        selectedPerson={client}
+        opportunity={client.opportunities[opportunityType]?.[0]}
       />
     );
   },

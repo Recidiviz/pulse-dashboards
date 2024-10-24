@@ -19,7 +19,9 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { Opportunity } from "../../WorkflowsStore";
 import { UsTnReclassificationReviewForm } from "../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
+import { Resident } from "../../WorkflowsStore/Resident";
 import {
   DocxTemplateFormContents,
   FileGeneratorArgs,
@@ -27,14 +29,21 @@ import {
 } from "../Paperwork/DOCXFormGenerator";
 import { FormContainer } from "../Paperwork/FormContainer";
 import FormViewer from "../Paperwork/FormViewer";
-import { useOpportunityFormContext } from "../Paperwork/OpportunityFormContext";
 import ClassificationCustodyAssessment from "../Paperwork/US_TN/CustodyReclassification/ClassificationCustodyAssessment";
 import { downloadZipFile } from "../Paperwork/utils";
 
-const WorkflowsUsTnReclassForm: React.FC = () => {
+const WorkflowsUsTnReclassForm = ({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) => {
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
-  const form = useOpportunityFormContext() as UsTnReclassificationReviewForm;
-  const resident = form.opportunity.person;
+  const form = opportunity.form as UsTnReclassificationReviewForm;
+  const resident = opportunity.person;
+
+  if (!(resident instanceof Resident)) {
+    return <div />;
+  }
 
   const onClickDownload = async () => {
     let contents: DocxTemplateFormContents;

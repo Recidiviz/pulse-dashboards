@@ -147,6 +147,9 @@ export interface Opportunity<
   submittedUpdate: UpdateLog | undefined;
   sentryTrackingId: string | undefined;
   instanceDetails: string | undefined;
+  selectId: string | undefined;
+  firestoreUpdateDocId: string;
+  denied: boolean;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
@@ -200,7 +203,7 @@ export type DenialConfirmationModalProps = {
 export type OpportunityPriority = "NORMAL" | "HIGH";
 
 export type OpportunityMapping = {
-  [K in OpportunityType]?: InstanceType<(typeof opportunityConstructors)[K]>;
+  [K in OpportunityType]?: InstanceType<(typeof opportunityConstructors)[K]>[];
 };
 
 export interface OpportunityManagerInterface extends Hydratable {

@@ -247,9 +247,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
     const opportunityDates: PortionServedDates = [];
 
-    const opportunities = Object.values(
-      this.rootStore.workflowsStore.selectedPerson?.opportunities || {},
-    );
+    const opportunities = Object.values(this.opportunities).flat();
 
     opportunities.forEach((opp) => {
       if ("portionServedRequirement" in opp) {

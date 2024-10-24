@@ -31,6 +31,7 @@ import { RootStore } from "../RootStore";
 import { humanReadableTitleCase } from "../utils";
 import { TaskFactory } from "./Client";
 import {
+  Opportunity,
   OpportunityManagerInterface,
   OpportunityMapping,
   OpportunityType,
@@ -214,40 +215,39 @@ export class JusticeInvolvedPersonBase<
     return this.opportunityManager.opportunities;
   }
 
-  get opportunitiesEligible(): OpportunityMapping {
+  get flattenedOpportunities(): Opportunity[] {
+    return Object.values(this.opportunities).flat();
+  }
+
+  getFilteredOpportunityMapping(
+    filterFn: (opp: Opportunity) => boolean,
+  ): OpportunityMapping {
     return Object.entries(this.opportunities).reduce(
-      (opportunities, [key, opp]) => {
-        if (opp && !opp.isSubmitted && !opp.almostEligible && !opp.denied) {
-          return { ...opportunities, [key as OpportunityType]: opp };
+      (opportunities, [key, oppList]) => {
+        const filteredOpps = oppList.filter(filterFn);
+        if (filteredOpps.length) {
+          return { ...opportunities, [key as OpportunityType]: filteredOpps };
         }
         return opportunities;
       },
       {} as OpportunityMapping,
+    );
+  }
+
+  get opportunitiesEligible(): OpportunityMapping {
+    return this.getFilteredOpportunityMapping(
+      (opp) => opp && !opp.isSubmitted && !opp.almostEligible && !opp.denied,
     );
   }
 
   get opportunitiesAlmostEligible(): OpportunityMapping {
-    return Object.entries(this.opportunities).reduce(
-      (opportunities, [key, opp]) => {
-        if (opp && opp.almostEligible && !opp.isSubmitted && !opp.denied) {
-          return { ...opportunities, [key as OpportunityType]: opp };
-        }
-        return opportunities;
-      },
-      {} as OpportunityMapping,
+    return this.getFilteredOpportunityMapping(
+      (opp) => opp && opp.almostEligible && !opp.isSubmitted && !opp.denied,
     );
   }
 
   get opportunitiesDenied(): OpportunityMapping {
-    return Object.entries(this.opportunities).reduce(
-      (opportunities, [key, opp]) => {
-        if (opp && opp.denied) {
-          return { ...opportunities, [key as OpportunityType]: opp };
-        }
-        return opportunities;
-      },
-      {} as OpportunityMapping,
-    );
+    return this.getFilteredOpportunityMapping((opp) => opp && opp.denied);
   }
 
   updateRecord(newRecord: RecordType): void {

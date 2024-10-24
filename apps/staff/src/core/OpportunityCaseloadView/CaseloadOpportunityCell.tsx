@@ -82,9 +82,10 @@ export const CaseloadOpportunityCell = observer(
           >
             <PersonLink
               className="PersonListItem__Link"
-              onClick={() =>
-                workflowsStore.updateSelectedPerson(person.pseudonymizedId)
-              }
+              onClick={() => {
+                workflowsStore.updateSelectedPerson(person.pseudonymizedId);
+                workflowsStore.updateSelectedOpportunity(opportunity.selectId);
+              }}
             >
               <OpportunityCapsule
                 avatarSize="lg"
@@ -100,6 +101,7 @@ export const CaseloadOpportunityCell = observer(
                   className="NavigateToFormButton"
                   opportunityType={opportunity.type}
                   pseudonymizedId={person.pseudonymizedId}
+                  opportunityId={opportunity.selectId}
                 >
                   {opportunity.form.navigateToFormText}
                 </NavigateToFormButton>

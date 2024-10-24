@@ -24,6 +24,7 @@ import { RootStore } from "../../../../RootStore";
 import { TenantId } from "../../../../RootStore/types";
 import { Client } from "../../../Client";
 import { Resident } from "../../../Resident";
+import { OpportunityMapping } from "../../types";
 import {
   UsTnExpirationEligibleClientRecord,
   usTnVerifiedOpportunities,
@@ -47,10 +48,7 @@ function createResidentTestUnit(
   portionServedNeeded: "1/2" | "2/3",
 ) {
   root = new RootStore();
-  // @ts-ignore
-  vi.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
-    opportunities: verifiedOpps,
-  });
+
   // @ts-ignore
   const residentRecordWithMetadata: typeof usMePersonRecord = {
     ...usMePersonRecord,
@@ -66,6 +64,10 @@ function createResidentTestUnit(
   );
 
   resident = new Resident(residentRecordWithMetadata, root);
+
+  vi.spyOn(resident, "opportunities", "get").mockReturnValue(
+    verifiedOpps as OpportunityMapping,
+  );
 }
 
 type clientType =
@@ -79,10 +81,6 @@ function createClientTestUnit(
   root = new RootStore();
 
   // @ts-ignore
-  vi.spyOn(root.workflowsStore, "selectedPerson", "get").mockReturnValue({
-    opportunities: verifiedOpps,
-  });
-  // @ts-ignore
   vi.spyOn(root.workflowsStore, "selectedClient", "get").mockReturnValue({
     ...usMeEarlyTerminationEligibleClientRecord,
   });
@@ -92,6 +90,10 @@ function createClientTestUnit(
   );
 
   client = new Client(clientRecord, root);
+
+  vi.spyOn(client, "opportunities", "get").mockReturnValue(
+    verifiedOpps as OpportunityMapping,
+  );
 }
 
 beforeEach(() => {
@@ -108,8 +110,8 @@ afterEach(() => {
 describe("resident has 2/3 date; eligible for SCCP and Furlough", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeSCCP: usMeVerifiedOpportunities.usMeSCCP,
-      usMeFurloughRelease: usMeVerifiedOpportunities.usMeFurloughRelease,
+      usMeSCCP: [usMeVerifiedOpportunities.usMeSCCP],
+      usMeFurloughRelease: [usMeVerifiedOpportunities.usMeFurloughRelease],
     };
     createResidentTestUnit(usMePersonRecord, testOpportunities, "2/3");
   });
@@ -134,8 +136,8 @@ describe("resident has 2/3 date; eligible for SCCP and Furlough", () => {
 describe("resident has 1/2 date; eligible for SCCP and Furlough", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeSCCP: usMeVerifiedOpportunities.usMeSCCP,
-      usMeFurloughRelease: usMeVerifiedOpportunities.usMeFurloughRelease,
+      usMeSCCP: [usMeVerifiedOpportunities.usMeSCCP],
+      usMeFurloughRelease: [usMeVerifiedOpportunities.usMeFurloughRelease],
     };
     createResidentTestUnit(
       usMePersonRecordShorterSentence,
@@ -164,7 +166,7 @@ describe("resident has 1/2 date; eligible for SCCP and Furlough", () => {
 describe("resident has 2/3 date; eligible for SCCP", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeSCCP: usMeVerifiedOpportunities.usMeSCCP,
+      usMeSCCP: [usMeVerifiedOpportunities.usMeSCCP],
     };
 
     createResidentTestUnit(usMePersonRecord, testOpportunities, "2/3");
@@ -194,7 +196,7 @@ describe("resident has 2/3 date; eligible for SCCP", () => {
 describe("resident has 2/3 date; eligible for Work Release", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeWorkRelease: usMeVerifiedOpportunities.usMeWorkRelease,
+      usMeWorkRelease: [usMeVerifiedOpportunities.usMeWorkRelease],
     };
 
     createResidentTestUnit(usMePersonRecord, testOpportunities, "2/3");
@@ -208,7 +210,7 @@ describe("resident has 2/3 date; eligible for Work Release", () => {
 describe("resident has 1/2 date; eligible for Work Release", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeWorkRelease: usMeVerifiedOpportunities.usMeWorkRelease,
+      usMeWorkRelease: [usMeVerifiedOpportunities.usMeWorkRelease],
     };
 
     createResidentTestUnit(
@@ -226,9 +228,9 @@ describe("resident has 1/2 date; eligible for Work Release", () => {
 describe("resident has 1/2 date; eligible for all incarceration opp", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeSCCP: usMeVerifiedOpportunities.usMeSCCP,
-      usMeFurloughRelease: usMeVerifiedOpportunities.usMeFurloughRelease,
-      usMeWorkRelease: usMeVerifiedOpportunities.usMeWorkRelease,
+      usMeSCCP: [usMeVerifiedOpportunities.usMeSCCP],
+      usMeFurloughRelease: [usMeVerifiedOpportunities.usMeFurloughRelease],
+      usMeWorkRelease: [usMeVerifiedOpportunities.usMeWorkRelease],
     };
 
     createResidentTestUnit(
@@ -254,9 +256,9 @@ describe("resident has 1/2 date; eligible for all incarceration opp", () => {
 describe("resident has 2/3 date; eligible for all incarceration opp", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeSCCP: usMeVerifiedOpportunities.usMeSCCP,
-      usMeFurloughRelease: usMeVerifiedOpportunities.usMeFurloughRelease,
-      usMeWorkRelease: usMeVerifiedOpportunities.usMeWorkRelease,
+      usMeSCCP: [usMeVerifiedOpportunities.usMeSCCP],
+      usMeFurloughRelease: [usMeVerifiedOpportunities.usMeFurloughRelease],
+      usMeWorkRelease: [usMeVerifiedOpportunities.usMeWorkRelease],
     };
 
     createResidentTestUnit(
@@ -317,7 +319,7 @@ describe("client not from US_ME", () => {
   beforeEach(() => {
     const testOpportunities = {
       // give TN opportunity
-      UsTnExpiration: usTnVerifiedOpportunities.usTnExpirationOpportunity,
+      UsTnExpiration: [usTnVerifiedOpportunities.usTnExpirationOpportunity],
     };
 
     createClientTestUnit(UsTnExpirationEligibleClientRecord, testOpportunities);
@@ -331,7 +333,7 @@ describe("client not from US_ME", () => {
 describe("client on EarlyTermination", () => {
   beforeEach(() => {
     const testOpportunities = {
-      usMeEarlyTermination: usMeVerifiedOpportunities.usMeEarlyTermination,
+      usMeEarlyTermination: [usMeVerifiedOpportunities.usMeEarlyTermination],
     };
 
     createClientTestUnit(

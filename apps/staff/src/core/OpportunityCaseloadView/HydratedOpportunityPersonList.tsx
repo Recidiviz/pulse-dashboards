@@ -212,7 +212,7 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
           </EmptyTabGroupWrapper>
         )}
         <OpportunityPreviewModal
-          opportunity={presenter.currentOpportunity}
+          opportunity={presenter.selectedOpportunity}
           navigableOpportunities={presenter.peopleInActiveTab}
           selectedPerson={presenter.selectedPerson}
         />

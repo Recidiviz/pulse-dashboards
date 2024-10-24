@@ -21,8 +21,8 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../../../components/StoreProvider";
-import { Client } from "../../../../WorkflowsStore";
+import { Opportunity } from "../../../../WorkflowsStore";
+import { UsPaAdminSupervisionOpportunity } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
 import { downloadSingle } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
@@ -58,14 +58,18 @@ const FormContent = styled.div`
   flex-direction: column;
 `;
 
-const formDownloader = async (client: Client): Promise<void> => {
+const formDownloader = async (
+  opportunity: UsPaAdminSupervisionOpportunity,
+): Promise<void> => {
   let contents: Record<string, unknown> = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
-      ...toJS(client.opportunities.usPaAdminSupervision?.form?.formData),
+      ...toJS(opportunity?.form?.formData),
     };
   });
+
+  const client = opportunity.person;
 
   // Extra fields to distingish a checked `NO` from no check
   contents.criteriaHighSanctionNo = contents.criteriaHighSanction === false;
@@ -89,14 +93,17 @@ const formDownloader = async (client: Client): Promise<void> => {
 };
 
 export const FormUsPaAdminSupervision = observer(
-  function FormUsPaAdminSupervision() {
+  function FormUsPaAdminSupervision({
+    opportunity,
+  }: {
+    opportunity: Opportunity;
+  }) {
     const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
-    const { workflowsStore } = useRootStore();
-    const opportunity =
-      workflowsStore?.selectedPerson?.opportunities?.usPaAdminSupervision;
-
-    if (!opportunity) {
+    if (
+      !opportunity ||
+      !(opportunity instanceof UsPaAdminSupervisionOpportunity)
+    ) {
       return null;
     }
 
@@ -108,7 +115,7 @@ export const FormUsPaAdminSupervision = observer(
       <FormContainer
         heading="DC-P 402"
         agencyName="PDOC"
-        onClickDownload={() => formDownloader(client)}
+        onClickDownload={() => formDownloader(opportunity)}
         opportunity={opportunity}
         downloadButtonLabel="Download DOCX"
         dataProviso={

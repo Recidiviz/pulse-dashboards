@@ -30,8 +30,7 @@ import p8 from "~shared-assets/images/form-previews/US_ME/SCCP/p8.png";
 import p9 from "~shared-assets/images/form-previews/US_ME/SCCP/p9.png";
 import p10 from "~shared-assets/images/form-previews/US_ME/SCCP/p10.png";
 
-import { useRootStore } from "../../../../components/StoreProvider";
-import { Resident } from "../../../../WorkflowsStore/Resident";
+import { Opportunity, UsMeSCCPOpportunity } from "../../../../WorkflowsStore";
 import {
   DocxTemplateFormContents,
   FileGeneratorArgs,
@@ -47,14 +46,18 @@ const FormPreviewPage = styled.img`
 
 const previewImages = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10];
 
-const formDownloader = async (resident: Resident): Promise<void> => {
+const formDownloader = async (
+  opportunity: UsMeSCCPOpportunity,
+): Promise<void> => {
   let contents: DocxTemplateFormContents;
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
-      ...toJS(resident.opportunities.usMeSCCP?.form?.formData),
+      ...toJS(opportunity?.form?.formData),
     };
   });
+
+  const resident = opportunity.person;
 
   const fileInputs: FileGeneratorArgs[] = [
     "SCCP_program_plan",
@@ -79,22 +82,21 @@ const formDownloader = async (resident: Resident): Promise<void> => {
   downloadZipFile(`${resident.displayName} SCCP Packet.zip`, documents);
 };
 
-export const FormSCCP = observer(function FormSCCP() {
-  const { workflowsStore } = useRootStore();
-  const opportunity = workflowsStore?.selectedPerson?.opportunities?.usMeSCCP;
-
-  if (!opportunity) {
+export const FormSCCP = observer(function FormSCCP({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  if (!(opportunity instanceof UsMeSCCPOpportunity)) {
     return null;
   }
-
-  const resident = opportunity.person;
 
   return (
     <FormContainer
       heading="SCCP Program Plan"
       agencyName="MDOC"
       downloadButtonLabel="Download .DOCX"
-      onClickDownload={() => formDownloader(resident)}
+      onClickDownload={() => formDownloader(opportunity)}
       opportunity={opportunity}
     >
       {previewImages.map((imageUrl, index) => (

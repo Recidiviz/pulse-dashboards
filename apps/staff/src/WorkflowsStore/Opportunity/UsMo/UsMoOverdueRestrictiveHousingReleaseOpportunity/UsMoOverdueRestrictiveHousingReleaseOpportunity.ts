@@ -17,7 +17,6 @@
 
 import { DocumentData } from "firebase/firestore";
 import { reduce } from "lodash";
-import { makeObservable, override } from "mobx";
 import { ValuesType } from "utility-types";
 
 import { formatWorkflowsDate } from "../../../../utils";
@@ -134,10 +133,6 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
       "usMoOverdueRestrictiveHousingRelease",
       usMoOverdueRestrictiveHousingReleaseSchema.parse(record),
     );
-
-    makeObservable(this, {
-      requirementsMet: override,
-    });
   }
 
   get requirementsMet(): OpportunityRequirement[] {
