@@ -87,6 +87,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   emptyTabCopy: {},
   supportsDenial: false,
   supportsAlmostEligible: false,
+  highlightCasesOnHomepage: false,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

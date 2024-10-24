@@ -17,6 +17,7 @@
 
 import { Opportunity, OpportunityType } from "../../WorkflowsStore";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
+import { OpportunityCaseHighlights } from "./OpportunityCaseHighlights";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
 
 /**
@@ -41,9 +42,16 @@ export const OpportunitySummaries = function OpportunitySummaries({
 
   return (
     <div>
+      <OpportunityCaseHighlights
+        opportunityTypes={opportunityTypes}
+        opportunitiesByType={opportunitiesByType}
+      />
       {opportunityTypes.map((opportunityType, index) => {
         const opportunities = opportunitiesByType[opportunityType] || [];
-        if (opportunities.length) {
+        if (
+          opportunities.length &&
+          !opportunities[0].config.highlightCasesOnHomepage
+        ) {
           return (
             <OpportunityTypeSummary
               key={opportunityType}

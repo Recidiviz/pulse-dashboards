@@ -135,6 +135,7 @@ export const mockOpportunity: Opportunity<Client> = {
     emptyTabCopy: {},
     supportsAlmostEligible: false,
     supportsDenial: true,
+    highlightCasesOnHomepage: false,
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

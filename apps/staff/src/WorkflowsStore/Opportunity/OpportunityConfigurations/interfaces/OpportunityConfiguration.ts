@@ -68,4 +68,5 @@ export interface OpportunityConfiguration {
   emptyTabCopy: Partial<Record<OpportunityTab, string>>;
   supportsDenial: boolean;
   supportsAlmostEligible: boolean;
+  highlightCasesOnHomepage: boolean;
 }

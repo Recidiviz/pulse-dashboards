@@ -19,6 +19,7 @@ import UserStore from "../../../../../RootStore/UserStore";
 import { OpportunityType } from "../../..";
 import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
+import { UsAzTransitionOverdueConfiguration } from "./UsAz/UsAzTransitionOverdueConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsNdMinimumCustodyConfiguration } from "./UsNd/UsNdMinimumCustodyConfiguration";
@@ -39,6 +40,8 @@ const localCustomOpportunityConfigurations: Partial<
 const adminPanelOnlyCustomOpportunityConfigurations: Partial<
   Record<string, typeof ApiOpportunityConfiguration>
 > = {
+  usAzOverdueForACISDTP: UsAzTransitionOverdueConfiguration,
+  usAzOverdueForACISTPR: UsAzTransitionOverdueConfiguration,
   usNdATP: UsNdMinimumCustodyConfiguration,
   usNdTransferToMinFacility: UsNdMinimumCustodyConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
