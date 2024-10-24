@@ -50,6 +50,10 @@ const mockSearchFn = vi.fn().mockResolvedValue([
       },
     },
   ],
+  undefined,
+  {
+    nextPageToken: "next-page-token",
+  },
 ]);
 
 vi.mock("@google-cloud/discoveryengine", async (importOriginal) => {
@@ -68,7 +72,7 @@ vi.mock("@google-cloud/discoveryengine", async (importOriginal) => {
 
 describe("search", () => {
   test("should work if all parameters are passed", async () => {
-    const searchReults = await testTRPCClient.search.query({
+    const { results, nextPageToken } = await testTRPCClient.search.query({
       query: "housing",
       externalId: "fake-external-id",
     });
@@ -85,12 +89,8 @@ describe("search", () => {
       {
         query: "housing",
         servingConfig: "serving-config",
-        contentSearchSpec: {
-          extractive_content_spec: {
-            maxExtractiveAnswerCount: 1,
-          },
-          snippetSpec: undefined,
-        },
+        contentSearchSpec: undefined,
+        pageToken: undefined,
         filter:
           'external_id: ANY("fake-external-id") AND state_code: ANY("US_ID") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
         pageSize: 20,
@@ -107,7 +107,8 @@ describe("search", () => {
       { autoPaginate: false },
     );
 
-    expect(searchReults).toEqual([
+    expect(nextPageToken).toEqual("next-page-token");
+    expect(results).toEqual([
       {
         documentId: "doc-id",
         fullText:
@@ -124,7 +125,7 @@ describe("search", () => {
   });
 
   test("should work without external ids", async () => {
-    const searchReults = await testTRPCClient.search.query({
+    const { results, nextPageToken } = await testTRPCClient.search.query({
       query: "housing",
     });
 
@@ -140,12 +141,7 @@ describe("search", () => {
       {
         query: "housing",
         servingConfig: "serving-config",
-        contentSearchSpec: {
-          extractive_content_spec: {
-            maxExtractiveAnswerCount: 1,
-          },
-          snippetSpec: undefined,
-        },
+        contentSearchSpec: undefined,
         filter:
           'state_code: ANY("US_ID") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
         pageSize: 20,
@@ -162,7 +158,8 @@ describe("search", () => {
       { autoPaginate: false },
     );
 
-    expect(searchReults).toEqual([
+    expect(nextPageToken).toEqual("next-page-token");
+    expect(results).toEqual([
       {
         documentId: "doc-id",
         fullText:

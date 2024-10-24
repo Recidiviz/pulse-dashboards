@@ -20,10 +20,10 @@ Production
 If you haven't already, follow the setup instructions in the root README to install dependencies.
 
 1. Get env variables from Google Secrets Manager and put them in this directory
-   - Put the [env_case-notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_case-notes_server/versions?project=recidiviz-dashboard-staging) in an `.env` file
-   - Put the [env_staging_case-notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_staging_case-notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
-   - Put the [env_prod_case-notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_prod_case-notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.prod` file
-   - Put the [env_test_case-notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_test_case-notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.test` file
+   - Put the [env_dev_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env` file
+   - Put the [env_staging_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_staging_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
+   - Put the [env_prod_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_prod_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.prod` file
+   - Put the [env_test_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_test_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.test` file
 
    This way, `nx` will automatically pick up the correct environment variables based on the targets your are running.
 

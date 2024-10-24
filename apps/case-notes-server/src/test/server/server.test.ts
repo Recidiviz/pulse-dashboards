@@ -49,6 +49,10 @@ const mockSearchFn = vi.fn().mockResolvedValue([
       },
     },
   ],
+  undefined,
+  {
+    nextPageToken: "next-page-token",
+  },
 ]);
 
 vi.mock("@google-cloud/discoveryengine", async (importOriginal) => {
@@ -67,12 +71,12 @@ vi.mock("@google-cloud/discoveryengine", async (importOriginal) => {
 
 describe("search", () => {
   test("trpc routes should be set", async () => {
-    const searchReults = await testTRPCClient.search.query({
+    const { results } = await testTRPCClient.search.query({
       query: "housing",
       externalId: "fake-external-id",
     });
 
-    expect(searchReults).toEqual([
+    expect(results).toEqual([
       {
         documentId: "doc-id",
         fullText:

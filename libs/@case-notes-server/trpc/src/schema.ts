@@ -20,5 +20,6 @@ import { z } from "zod";
 export const searchSchema = z.object({
   query: z.string(),
   externalId: z.string().optional(),
+  pageToken: z.string().optional(),
   withSnippet: z.boolean().default(false),
 });

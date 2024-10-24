@@ -45,7 +45,7 @@ export const appRouter = router({
     .input(searchSchema)
     .query(
       async ({
-        input: { withSnippet, query, externalId },
+        input: { withSnippet, query, externalId, pageToken },
         ctx: { stateCode },
       }) => {
         if (!process.env["PROJECT_ID"] || !process.env["ENGINE_ID"]) {
@@ -79,6 +79,7 @@ export const appRouter = router({
 
         const request = {
           query,
+          pageToken,
           servingConfig,
           contentSearchSpec,
           filter,
@@ -91,15 +92,21 @@ export const appRouter = router({
           },
         } satisfies protos.google.cloud.discoveryengine.v1.ISearchRequest;
 
-        const [results] = await searchClient.search(request, {
+        const [results, , response] = await searchClient.search(request, {
           autoPaginate: AUTO_PAGINATE_SETTING,
         });
 
-        const extractedResults = extractCaseNotesResults(results);
-        return extractedResults.map((result, i) => ({
-          ...result,
-          relevanceOrder: i,
-        }));
+        const extractedResults = extractCaseNotesResults(results).map(
+          (result, i) => ({
+            ...result,
+            relevanceOrder: i,
+          }),
+        );
+
+        return {
+          nextPageToken: response.nextPageToken,
+          results: extractedResults,
+        };
       },
     ),
 });

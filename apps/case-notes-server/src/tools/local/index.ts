@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import inquirer from "inquirer";
 import superjson from "superjson";
 
 import { AppRouter } from "~@case-notes-server/trpc";
@@ -26,7 +27,14 @@ export const testPort = process.env["PORT"]
   : 3003;
 export const testHost = process.env["HOST"] ?? "localhost";
 
-async function callSearch(query: string, stateCode: string) {
+async function main() {
+  const stateCode = process.argv[2];
+  const query = process.argv[3];
+
+  if (!stateCode || !query) {
+    throw Error("Missing required state code of query");
+  }
+
   const server = buildServer();
 
   // Override he jwtVerify function to always pass
@@ -64,24 +72,36 @@ async function callSearch(query: string, stateCode: string) {
     transformer: superjson,
   });
 
-  const results = await trpcClient.search.query({
+  const initialResults = await trpcClient.search.query({
     query,
   });
 
-  console.log(results);
+  console.log(initialResults.results);
 
-  server.close();
-}
+  let nextPageToken = initialResults.nextPageToken;
+  let keepSearching = true;
 
-async function main() {
-  const stateCode = process.argv[2];
-  const query = process.argv[3];
+  while (keepSearching) {
+    const { response } = await inquirer.prompt({
+      type: "confirm",
+      name: "response",
+      message: "Want to get the next page of results?",
+      default: "Yes",
+    });
 
-  if (!stateCode || !query) {
-    throw Error("Missing required state code of query");
+    keepSearching = response;
+
+    if (keepSearching) {
+      const nextResults = await trpcClient.search.query({
+        query,
+        pageToken: nextPageToken ?? undefined,
+      });
+      console.log(nextResults.results);
+      nextPageToken = nextResults.nextPageToken;
+    }
   }
 
-  await callSearch(query, stateCode);
+  server.close();
 }
 
 main();

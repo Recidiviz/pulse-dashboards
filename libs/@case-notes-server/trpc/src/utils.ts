@@ -20,7 +20,6 @@ import { captureException } from "@sentry/node";
 import _ from "lodash";
 
 const MAX_EXTRACTIVE_ANSWER_COUNT = 1;
-const MAX_SNIPPET_COUNT = 1;
 
 const EXCLUDE_FILTER_CONDITIONS = {
   note_type: [
@@ -31,19 +30,19 @@ const EXCLUDE_FILTER_CONDITIONS = {
 };
 
 export function getContentSearchSpec(withSnippet = false) {
-  if (withSnippet) {
+  if (!withSnippet) {
     return undefined;
   }
   return {
-    extractive_content_spec: {
+    extractiveContentSpec: {
       maxExtractiveAnswerCount: MAX_EXTRACTIVE_ANSWER_COUNT, // Ensuring extractive answer is always present.
     },
     snippetSpec: withSnippet
       ? {
-          maxSnippetCount: MAX_SNIPPET_COUNT, // Only one snippet per document.
+          returnSnippet: true, // Only one snippet per document.
         }
       : undefined,
-  };
+  } satisfies protos.google.cloud.discoveryengine.v1.SearchRequest.IContentSearchSpec;
 }
 
 export function formatFilterConditions(includeFilterConditions: {
