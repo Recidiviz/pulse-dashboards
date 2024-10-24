@@ -22,6 +22,7 @@ import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl"
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsNdMinimumCustodyConfiguration } from "./UsNd/UsNdMinimumCustodyConfiguration";
+import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 
 const localCustomOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
@@ -40,6 +41,7 @@ const adminPanelOnlyCustomOpportunityConfigurations: Partial<
 > = {
   usNdATP: UsNdMinimumCustodyConfiguration,
   usNdTransferToMinFacility: UsNdMinimumCustodyConfiguration,
+  usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
 };
 
 const customOpportunityConfigurations: Partial<
