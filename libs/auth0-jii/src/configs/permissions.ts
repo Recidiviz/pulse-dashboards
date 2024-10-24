@@ -17,6 +17,6 @@
 
 import { z } from "zod";
 
-export const permissionSchema = z.enum(["enhanced"]);
+export const permissionSchema = z.enum(["enhanced", "live_data"]);
 
 export type Permission = z.infer<typeof permissionSchema>;

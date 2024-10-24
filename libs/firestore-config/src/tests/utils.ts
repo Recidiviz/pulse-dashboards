@@ -52,6 +52,10 @@ export const ETL_COLLECTION_NAMES = [
   "residents",
   "compliantReportingReferrals",
 ];
+
+export const DEMO_ETL_COLLECTION_NAMES = ETL_COLLECTION_NAMES.map(
+  (n) => `DEMO_${n}`,
+);
 /**
  * Update collections are readable and writeable by all staff users within a state
  */
@@ -75,14 +79,14 @@ export async function testAllReadsUnrestricted(
   ]);
 }
 
-export async function testAllReadsForState(
+export async function testAllETLReadsForState(
   db: FirestoreInstance,
   assertFn: AssertFn,
   stateCode: string,
   collectionsPrefix = "",
 ) {
-  return Promise.all([
-    ...ETL_COLLECTION_NAMES.map(async (collectionName) => {
+  return Promise.all(
+    ETL_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
         getDocs(
           query(
@@ -92,6 +96,17 @@ export async function testAllReadsForState(
         ),
       );
     }),
+  );
+}
+
+export async function testAllReadsForState(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
+  collectionsPrefix = "",
+) {
+  return Promise.all([
+    testAllETLReadsForState(db, assertFn, stateCode, collectionsPrefix),
     ...SHARED_UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
         getDoc(

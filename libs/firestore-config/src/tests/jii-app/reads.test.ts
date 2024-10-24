@@ -31,13 +31,22 @@ import {
 
 import { AssertFn, FirestoreInstance } from "../types";
 import {
+  DEMO_ETL_COLLECTION_NAMES,
   ETL_COLLECTION_NAMES,
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
+  testAllETLReadsForState,
   testAllReadsForState,
   testAllReadsUnrestricted,
 } from "../utils";
-import { getEnhancedMEUser, getMEUser, getRecidivizUser } from "./utils";
+import {
+  getDemoMEUser,
+  getDemoRecidivizUser,
+  getEnhancedDemoMEUser,
+  getEnhancedMEUser,
+  getMEUser,
+  getRecidivizUser,
+} from "./utils";
 
 let testEnv: RulesTestEnvironment;
 
@@ -213,12 +222,12 @@ describe("app = jii", () => {
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("Recidiviz user can query collections and read updates", async () => {
-      await testAllReadsForState(db, assertSucceeds, "US_ME");
+    test("can query all ETL collections", async () => {
+      await testAllETLReadsForState(db, assertSucceeds, "US_ME");
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("Recidiviz user can read anyone's ETL documents", async () => {
+    test("can read anyone's ETL documents", async () => {
       await testGet(db, assertSucceeds, ETL_COLLECTION_NAMES, "us_me_user");
 
       await testGet(
@@ -227,6 +236,122 @@ describe("app = jii", () => {
         ETL_COLLECTION_NAMES,
         "us_me_other-user",
       );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("can read data from demo ETL collections", async () => {
+      await testAllETLReadsForState(db, assertSucceeds, "US_ME", "DEMO_");
+    });
+  });
+
+  describe("Maine demo user", () => {
+    beforeEach(() => {
+      db = getDemoMEUser(testEnv).firestore();
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("can read their own data from demo ETL collections", () => {
+      return testGet(
+        db,
+        assertSucceeds,
+        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "us_me_demouser",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read demo documents outside their state", () => {
+      return testGet(
+        db,
+        assertFails,
+        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "us_xx_demouser",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read data from live ETL collections, even if it matches their ID", () => {
+      return testGet(
+        db,
+        assertFails,
+        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "us_me_demouser",
+      );
+    });
+  });
+
+  describe("Maine enhanced demo user", () => {
+    beforeEach(() => {
+      db = getEnhancedDemoMEUser(testEnv).firestore();
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("can read anyone's ETL records in their state", async () => {
+      await testGet(
+        db,
+        assertSucceeds,
+        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "us_me_user",
+      );
+
+      await testGet(
+        db,
+        assertSucceeds,
+        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "us_me_other-user",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("can query ETL records for their state", () => {
+      return testList(
+        db,
+        assertSucceeds,
+        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "US_ME",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read or query records outside their state", () => {
+      return testList(db, assertFails, DEMO_ETL_COLLECTION_NAMES, "US_XX");
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read demo documents outside their state", () => {
+      return testGet(
+        db,
+        assertFails,
+        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "us_xx_demouser",
+      );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read data from live ETL collections, even if it matches their ID", async () => {
+      await testGet(
+        db,
+        assertFails,
+        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "us_me_demouser",
+      );
+      await testAllETLReadsForState(db, assertFails, "US_ME");
+    });
+  });
+
+  describe("Recidiviz demo user", () => {
+    beforeEach(() => {
+      db = getDemoRecidivizUser(testEnv).firestore();
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("can read data from demo ETL collections", async () => {
+      await testAllETLReadsForState(db, assertSucceeds, "US_ME", "DEMO_");
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read anything from live collections", () => {
+      return testAllReadsForState(db, assertFails, "US_ME");
     });
   });
 });

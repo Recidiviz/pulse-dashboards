@@ -27,12 +27,31 @@ export function getMEUser(testEnv: RulesTestEnvironment) {
     stateCode: "US_ME",
     externalId: "user",
     recidivizAllowedStates: [],
-    permissions: [],
+    permissions: ["live_data"],
   });
 }
 
 export function getEnhancedMEUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("enhanceduser@us_me.gov", {
+    app: "jii",
+    stateCode: "US_ME",
+    recidivizAllowedStates: [],
+    permissions: ["enhanced", "live_data"],
+  });
+}
+
+export function getDemoMEUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("demouser@us_me.gov", {
+    app: "jii",
+    stateCode: "US_ME",
+    externalId: "demouser",
+    recidivizAllowedStates: [],
+    permissions: [],
+  });
+}
+
+export function getEnhancedDemoMEUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("demouser@us_me.gov", {
     app: "jii",
     stateCode: "US_ME",
     recidivizAllowedStates: [],
@@ -42,6 +61,15 @@ export function getEnhancedMEUser(testEnv: RulesTestEnvironment) {
 
 export function getRecidivizUser(testEnv: RulesTestEnvironment) {
   return testEnv.authenticatedContext("admin", {
+    app: "jii",
+    stateCode: "RECIDIVIZ",
+    recidivizAllowedStates: ["US_ME"],
+    permissions: ["enhanced", "live_data"],
+  });
+}
+
+export function getDemoRecidivizUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("demo", {
     app: "jii",
     stateCode: "RECIDIVIZ",
     recidivizAllowedStates: ["US_ME"],
@@ -55,6 +83,6 @@ export function getXXUser(testEnv: RulesTestEnvironment) {
     stateCode: "US_XX",
     externalId: "user",
     recidivizAllowedStates: [],
-    permissions: [],
+    permissions: ["live_data"],
   });
 }

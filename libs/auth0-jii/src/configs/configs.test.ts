@@ -67,11 +67,15 @@ describe("user metadata schema", () => {
         externalId: "123456",
         pseudonymizedId: "asnvawepeawhfeuawoghuil",
         intercomUserHash: "eryiweyrwroywerowy",
+        permissions: ["live_data"],
       }),
     ).toMatchInlineSnapshot(`
       {
         "externalId": "123456",
         "intercomUserHash": "eryiweyrwroywerowy",
+        "permissions": [
+          "live_data",
+        ],
         "pseudonymizedId": "asnvawepeawhfeuawoghuil",
         "stateCode": "US_ME",
       }
@@ -142,7 +146,7 @@ describe("user metadata schema", () => {
       metadataSchema.parse({
         stateCode: "RECIDIVIZ",
         allowedStates: ["US_ME"],
-        permissions: ["enhanced"],
+        permissions: ["enhanced", "live_data"],
       }),
     ).toMatchInlineSnapshot(`
       {
@@ -151,6 +155,7 @@ describe("user metadata schema", () => {
         ],
         "permissions": [
           "enhanced",
+          "live_data",
         ],
         "stateCode": "RECIDIVIZ",
       }
