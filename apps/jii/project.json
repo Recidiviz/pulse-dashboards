@@ -75,13 +75,16 @@
     },
     "deploy": {
       "dependsOn": [{ "target": "build", "params": "forward" }],
-      "command": "firebase deploy --only hosting --config firebase.jii.json",
+      "command": "firebase deploy --config firebase.jii.json",
       "configurations": {
+        "demo": {
+          "args": "--project jii-staging --only hosting:demo"
+        },
         "staging": {
-          "args": "--project jii-staging"
+          "args": "--project jii-staging --only hosting:live"
         },
         "production": {
-          "args": "--project jii-production"
+          "args": "--project jii-production --only hosting:live"
         }
       },
       "defaultConfiguration": "staging"
@@ -91,13 +94,13 @@
       "command": "firebase --config firebase.jii.json hosting:channel:deploy",
       "configurations": {
         "demo": {
-          "args": "--project jii-staging"
+          "args": "--project jii-staging --only demo"
         },
         "staging": {
-          "args": "--project jii-staging"
+          "args": "--project jii-staging --only live"
         },
         "production": {
-          "args": "--project jii-production"
+          "args": "--project jii-production --only live"
         }
       },
       "defaultConfiguration": "staging"

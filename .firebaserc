@@ -8,5 +8,26 @@
     "default": "recidiviz-dashboard-stag-e1108",
     "jii-staging": "recidiviz-jii-staging",
     "jii-production": "recidiviz-jii-production"
-  }
+  },
+  "targets": {
+    "recidiviz-jii-staging": {
+      "hosting": {
+        "live": [
+          "recidiviz-jii-staging"
+        ],
+        "demo": [
+          "recidiviz-jii-demo"
+        ]
+      }
+    },
+    "recidiviz-jii-production": {
+      "hosting": {
+        "live": [
+          "recidiviz-jii-production"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }
