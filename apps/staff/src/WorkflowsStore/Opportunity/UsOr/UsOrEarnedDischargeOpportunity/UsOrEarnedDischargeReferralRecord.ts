@@ -26,11 +26,6 @@ export const usOrEarnedDischargeSchema = opportunitySchemaBase
         eligibleSentences: z.array(
           z.object({
             sentenceId: z.number(),
-            sentenceImposedDate: dateStringSchema,
-            supervisionSentenceStartDate: dateStringSchema,
-            numDaysAbsconsion: z.number(),
-            sentenceStatute: z.string(),
-            latestConvictionDate: dateStringSchema,
           }),
         ),
       }),

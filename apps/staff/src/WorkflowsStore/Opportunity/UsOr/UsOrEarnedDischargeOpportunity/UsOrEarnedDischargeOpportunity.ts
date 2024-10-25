@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -38,8 +37,6 @@ export class UsOrEarnedDischargeOpportunity extends OpportunityBase<
       client.rootStore,
       usOrEarnedDischargeSchema.parse(record),
     );
-
-    makeObservable(this, { requirementsMet: override });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

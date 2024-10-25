@@ -28,19 +28,9 @@ export const usOrEarnedDischargeReferrals =
           eligibleSentences: [
             {
               sentenceId: 123,
-              sentenceImposedDate: "2020-01-01",
-              supervisionSentenceStartDate: "2020-01-01",
-              numDaysAbsconsion: 0,
-              sentenceStatute: "STATUTE",
-              latestConvictionDate: "2020-01-01",
             },
             {
               sentenceId: 456,
-              sentenceImposedDate: "2020-01-01",
-              supervisionSentenceStartDate: "2020-01-01",
-              numDaysAbsconsion: 0,
-              sentenceStatute: "STATUTE",
-              latestConvictionDate: "2020-01-01",
             },
           ],
         },
@@ -87,19 +77,9 @@ export const usOrEarnedDischargeReferrals =
           eligibleSentences: [
             {
               sentenceId: 1123,
-              sentenceImposedDate: "2020-01-01",
-              supervisionSentenceStartDate: "2020-01-01",
-              numDaysAbsconsion: 0,
-              sentenceStatute: "STATUTE",
-              latestConvictionDate: "2020-01-01",
             },
             {
               sentenceId: 4456,
-              sentenceImposedDate: "2020-01-01",
-              supervisionSentenceStartDate: "2020-01-01",
-              numDaysAbsconsion: 0,
-              sentenceStatute: "STATUTE",
-              latestConvictionDate: "2020-01-01",
             },
           ],
         },
