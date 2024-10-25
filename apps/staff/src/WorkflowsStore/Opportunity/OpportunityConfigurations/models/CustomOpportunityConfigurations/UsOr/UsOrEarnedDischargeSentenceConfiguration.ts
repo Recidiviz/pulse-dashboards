@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityRequirement } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsOrEarnedDischargeSentenceConfiguration extends ApiOpportunityConfiguration {
@@ -26,11 +27,11 @@ export class UsOrEarnedDischargeSentenceConfiguration extends ApiOpportunityConf
     return "Additional Eligibility Requirements Manually Verified ";
   }
 
-  get nonOMSCriteria() {
+  get nonOMSCriteria(): OpportunityRequirement[] {
     return [
       {
         text: "No disqualifying sentence enhancements not entered in the DOC400",
-        tootip:
+        tooltip:
           "Is not on supervision for a sentencing enhancement imposed under the provisions of ORS 161.610, 161.725, 161.735, 164.061, 475.907, 475.925, or 475.930; as well as ORS 137.635 for Probation Burglary I ",
       },
       {
