@@ -76,6 +76,7 @@ import { usMoOverdueRestrictiveHousingReleaseReferrals } from "./fixtures/usMoOv
 import { usMoOverdueRestrictiveHousingReviewHearingReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReviewHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 import { usOrEarnedDischargeReferrals } from "./fixtures/usOrEarnedDischargeReferrals";
+import { usOrEarnedDischargeSentenceReferrals } from "./fixtures/usOrEarnedDischargeSentenceReferrals";
 import { usPaAdminSupervisionReferrals } from "./fixtures/usPaAdminSupervisionReferrals";
 import { usTnAnnualReclassificationReviewFixture } from "./fixtures/usTnAnnualReclassificationReviewReferrals";
 import { usTnCompliantReportingReferrals } from "./fixtures/usTnCompliantReportingReferrals";
@@ -175,6 +176,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usMeEarlyTerminationReferrals: usMeEarlyTerminationReferralsFixture,
   usMeFurloughReleaseReferrals: usMeFurloughReleaseFixture,
   usOrEarnedDischargeReferrals,
+  usOrEarnedDischargeSentenceReferrals,
   usPaAdminSupervisionReferrals,
   compliantReportingReferrals: usTnCompliantReportingReferrals,
   usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeFixture,

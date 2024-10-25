@@ -84,20 +84,19 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "earnedDischarge",
     },
     usOrEarnedDischargeSentence: {
-      callToAction:
-        "Review clients who may be eligible for ED and complete the EDIS checklist.",
+      callToAction: "Review eligible clients and complete the EDIS check-list.",
       compareBy: null,
       denialReasons: {
         ENHANCEMENTS: "Ineligible crime due to sentencing enhancements",
-        "FINES & FEES":
-          "Compensatory fines and restitution have not been paid in full or not current on payment plan",
         "COURT VIOLATION":
           "Has been found in violation of the court in the past 6 months",
+        CONVICTION:
+          "Has been convicted a crime that occurred while on supervision for the case under review (not found in the DOC400/CIS)",
+        "FINES & FEES":
+          "Compensatory fines and restitution have not been paid in full or not current on payment plan",
         PROGRAMMING:
           "Incomplete specialty court programs or treatment programs",
         COMPLIANCE: "Not in compliance with the supervision case plan",
-        CONVICTION:
-          "Has been convicted a crime that occurred while on supervision for the case under review; not found in the DOC400/CIS",
         Other: "Other: please specify a reason",
       },
       denialText: "Additional Eligibility",
@@ -107,30 +106,39 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: {
         eligibleStatute: {
-          text: "On supervision for felony, drug-related, or person misdemeanor Officer must confirm no disqualifying enhancements",
+          text: "On supervision for a qualifying felony, designated drug-related, or designated person misdemeanor",
           tooltip:
-            "Felony and/or designated drug-related or designated person misdemeanor convictions sentenced to Probation, Local Control Post-Prison Supervision or Board Post-Prison Supervision.",
+            "Qualifying felony, designated drug-related, or designated person misdemeanor convictions sentenced to Probation or Post-Prison Supervision",
         },
-        pastHalfCompletionOrSixMonths: {
-          text: "Has served at least 6 months or half the supervision period",
+        pastHalfCompletion: {
+          text: "Has served half of the supervision period",
           tooltip:
-            "Served the minimum period of active supervision on the case under consideration (minimum of 6 months or half of the supervision period whichever is greater).",
+            "Served the minimum period of active supervision on the case under consideration (minimum of 6 months or half of the supervision period, whichever is greater)",
         },
-        noAdministrativeSanction: {
-          text: "No administrative sanctions in the past 6 months Officer must confirm no court violations",
+        past6Months: {
+          text: "Has served at least 6 months of active supervision on the case under consideration",
+        },
+        usOrNoSupervisionSanctionsWithin6Months: {
+          text: "No administrative sanctions in the past 6 months",
           tooltip:
-            "Has not been administratively sanctioned, excluding interventions, or found in violation by the court in the immediate six months prior to review.",
+            "Has not been administratively sanctioned, excluding interventions, in the immediate 6 months prior to review",
         },
         noConvictionDuringSentence: {
-          text: "Not convicted of a crime that occurred while on supervision for case under review; found in the DOC400/CIS",
+          text: "Not convicted of a crime that occurred while on supervision for the case under review",
           tooltip:
-            "Has not been convicted of a crime (felony or misdemeanor) that occurred while on supervision for the case(s) under review.",
+            "Has not been convicted of a crime (felony or misdemeanor) that occurred while on supervision for the case under review",
         },
       },
       firestoreCollection: "US_OR-earnedDischargeSentence",
       hideDenialRevert: false,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: {
+        pastHalfCompletion: { text: "ALMOST ELIGIBLE: pastHalfCompletion" },
+        past6Months: { text: "ALMOST ELIGIBLE: past6Months" },
+        usOrNoSupervisionSanctionsWithin6Months: {
+          text: "ALMOST ELIGIBLE: usOrNoSupervisionSanctionsWithin6Months",
+        },
+      },
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -138,10 +146,10 @@ export const mockApiOpportunityConfigurationResponse = {
       notifications: [],
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_OR",
       subheading:
-        "Early Discharge is the ability to end probation or parole early for clients once they have completed at least 6 months or half the supervision period, and have met all of the criteria outlined in the ODOC’s [official policy](https://secure.sos.state.or.us/oard/displayDivisionRules.action?selectedDivision=999). Review eligible clients and complete the EDIS check-list.",
+        "Earned Discharge is the ability to end probation or parole early for clients once they have completed at least 6 months or half the supervision period, and have met all of the criteria outlined in the ODOC’s official policy.   Review eligible clients and complete the EDIS check-list.",
       systemType: "SUPERVISION",
       tabGroups: null,
       tooltipEligibilityText: "Eligible for early discharge",

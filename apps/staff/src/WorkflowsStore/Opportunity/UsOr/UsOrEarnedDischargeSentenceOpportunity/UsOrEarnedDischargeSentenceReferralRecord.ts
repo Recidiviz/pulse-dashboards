@@ -17,16 +17,64 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-export const usOrEarnedDischargeSentenceSchema = opportunitySchemaBase.extend({
-  metadata: z.object({
-    sentence: z.object({
-      courtCaseNumber: z.string(),
-      sentenceStatute: z.string(),
+const rawCriteriaSchema = z
+  .object({
+    usOrNoSupervisionSanctionsWithin6Months: z
+      .object({
+        latestSanctionDate: dateStringSchema,
+        violationExpirationDate: dateStringSchema,
+      })
+      .nullable(),
+    usOrSentenceEligible: z.object({
+      meetsCriteriaServedHalfOfSentence: z.boolean(),
+      meetsCriteriaServed6Months: z.boolean(),
     }),
-  }),
-});
+  })
+  .partial()
+  .passthrough();
+
+export const usOrEarnedDischargeSentenceSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: rawCriteriaSchema,
+    ineligibleCriteria: rawCriteriaSchema,
+    metadata: z.object({
+      sentence: z.object({
+        courtCaseNumber: z.string(),
+        sentenceStatute: z.string(),
+      }),
+    }),
+  })
+  .transform((r) => {
+    const pastHalfCompletion =
+      r.eligibleCriteria.usOrSentenceEligible
+        ?.meetsCriteriaServedHalfOfSentence ||
+      r.ineligibleCriteria.usOrSentenceEligible
+        ?.meetsCriteriaServedHalfOfSentence;
+    const past6Months =
+      r.eligibleCriteria.usOrSentenceEligible?.meetsCriteriaServed6Months ||
+      r.ineligibleCriteria.usOrSentenceEligible?.meetsCriteriaServed6Months;
+    return {
+      ...r,
+      eligibleCriteria: {
+        ...r.eligibleCriteria,
+        eligibleStatute: {},
+        noConvictionDuringSentence: {},
+        ...(pastHalfCompletion ? { pastHalfCompletion: {} } : {}),
+        ...(past6Months ? { past6Months: {} } : {}),
+      },
+      ineligibleCriteria: {
+        ...r.ineligibleCriteria,
+        ...(!pastHalfCompletion ? { pastHalfCompletion: {} } : {}),
+        ...(!past6Months ? { past6Months: {} } : {}),
+      },
+    };
+  });
+
+export type UsOrEarnedDischargeSentenceReferralRecordRaw = z.input<
+  typeof usOrEarnedDischargeSentenceSchema
+>;
 
 export type UsOrEarnedDischargeSentenceReferralRecord = z.infer<
   typeof usOrEarnedDischargeSentenceSchema
