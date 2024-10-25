@@ -40,7 +40,6 @@ import {
 } from "../FirestoreStore/types";
 import type { RootStore } from "../RootStore";
 import tenants from "../tenants";
-import { humanReadableTitleCase } from "../utils";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -537,9 +536,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     } = this;
 
     const clientName = this.preferredName ?? this.fullName.givenNames;
-    const salutation = clientName
-      ? `Hey ${humanReadableTitleCase(clientName)}!`
-      : `Hey!`;
+    const salutation = clientName ? `Hey ${clientName}!` : `Hey!`;
 
     return dedent`
     Message from Agent ${userSurname} at ${

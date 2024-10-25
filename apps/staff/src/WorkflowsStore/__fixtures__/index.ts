@@ -73,9 +73,9 @@ export const mockSupervisor2: CombinedUserRecord = {
 export const ineligibleClient: ClientRecord = {
   recordId: "us_xx_100",
   personName: {
-    givenNames: "TONYE",
-    middleNames: "BARBY",
-    surname: "THOMPSON",
+    givenNames: "Tonye",
+    middleNames: "Barby",
+    surname: "Thompson",
   },
   personExternalId: "100",
   displayId: "d100",
@@ -135,7 +135,7 @@ export const compliantReportingReferralRecord = {
 export const eligibleClient: ClientRecord = {
   personType: "CLIENT",
   recordId: "us_xx_101",
-  personName: { givenNames: "LINET", surname: "HANSEN" },
+  personName: { givenNames: "Linet", surname: "Hansen" },
   personExternalId: "101",
   displayId: "d101",
   pseudonymizedId: "p101",
@@ -175,7 +175,7 @@ export const eligibleClient: ClientRecord = {
 export const lsuEligibleClient: ClientRecord = {
   personType: "CLIENT",
   recordId: "us_xx_102",
-  personName: { givenNames: "REBEKAH", surname: "CORTES" },
+  personName: { givenNames: "Rebekah", surname: "Cortes" },
   personExternalId: "102",
   displayId: "d102",
   pseudonymizedId: "p102",
@@ -215,7 +215,7 @@ export const lsuEligibleClient: ClientRecord = {
 export const lsuAlmostEligibleClient: ClientRecord = {
   personType: "CLIENT",
   recordId: "us_xx_103",
-  personName: { givenNames: "CHAD", surname: "KROGER" },
+  personName: { givenNames: "Chad", surname: "Kroger" },
   personExternalId: "103",
   displayId: "d103",
   pseudonymizedId: "p103",
@@ -259,7 +259,7 @@ export const lsuAlmostEligibleClient: ClientRecord = {
 export const milestonesClient: ClientRecord = {
   ...eligibleClient,
   recordId: "us_xx_104",
-  personName: { givenNames: "MICKEY", surname: "MOUSE" },
+  personName: { givenNames: "Mickey", surname: "Mouse" },
   personExternalId: "104",
   displayId: "d104",
   pseudonymizedId: "p104",

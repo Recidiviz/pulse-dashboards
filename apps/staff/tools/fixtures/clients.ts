@@ -23,9 +23,9 @@ type ClientFixture = PersonFixture<ClientRecord>;
 const US_CA_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "PETER",
-      surname: "GREEN",
-      middleNames: "JR",
+      givenNames: "Peter",
+      surname: "Green",
+      middleNames: "Jr",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -61,9 +61,9 @@ const US_CA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "KEITH",
-      surname: "GARCIA",
-      middleNames: "JR",
+      givenNames: "Keith",
+      surname: "Garcia",
+      middleNames: "Jr",
     },
     personExternalId: "002",
     displayId: "d002",
@@ -99,8 +99,8 @@ const US_CA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "MARY",
-      surname: "DAVIS",
+      givenNames: "Mary",
+      surname: "Davis",
     },
     personExternalId: "003",
     displayId: "d003",
@@ -127,8 +127,8 @@ const US_CA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "JONATHAN",
-      surname: "MITCHELL",
+      givenNames: "Jonathan",
+      surname: "Mitchell",
     },
     personExternalId: "005",
     displayId: "d005",
@@ -164,8 +164,8 @@ const US_CA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "KYLE",
-      surname: "JOURNEY",
+      givenNames: "Kyle",
+      surname: "Journey",
       middleNames: "W.",
     },
     personExternalId: "006",
@@ -206,8 +206,8 @@ const US_CA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "OLIVER",
-      surname: "BAKER",
+      givenNames: "Oliver",
+      surname: "Baker",
     },
     personExternalId: "007",
     displayId: "d007",
@@ -245,9 +245,9 @@ const US_CA_CLIENTS: ClientFixture[] = [
 const US_ID_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "CASEY",
-      surname: "MARTINEZ",
-      middleNames: "JANE",
+      givenNames: "Casey",
+      surname: "Martinez",
+      middleNames: "Jane",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -288,9 +288,9 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "LARRY",
-      surname: "GREEN",
-      middleNames: "JEREMY",
+      givenNames: "Larry",
+      surname: "Green",
+      middleNames: "Jeremy",
     },
     personExternalId: "002",
     displayId: "d002",
@@ -329,8 +329,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "SYLVESTER",
-      surname: "ALLEN",
+      givenNames: "Sylvester",
+      surname: "Allen",
     },
     personExternalId: "003",
     displayId: "d003",
@@ -373,8 +373,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "FRANCINE",
-      surname: "ADAMS",
+      givenNames: "Francine",
+      surname: "Adams",
     },
     personExternalId: "005",
     displayId: "d005",
@@ -413,8 +413,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "JESSICA",
-      surname: "RIVERA",
+      givenNames: "Jessica",
+      surname: "Rivera",
     },
     personExternalId: "006",
     displayId: "d006",
@@ -449,8 +449,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "CANDY",
-      surname: "RAIN",
+      givenNames: "Candy",
+      surname: "Rain",
     },
     personExternalId: "004",
     displayId: "d004",
@@ -489,8 +489,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "CAROLYN",
-      surname: "SCOTT",
+      givenNames: "Carolyn",
+      surname: "Scott",
     },
     personExternalId: "007",
     displayId: "d007",
@@ -531,8 +531,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "LARRY",
-      surname: "ROBERTS",
+      givenNames: "Larry",
+      surname: "Roberts",
     },
     personExternalId: "008",
     displayId: "d008",
@@ -561,8 +561,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "ALFRED",
-      surname: "HILL",
+      givenNames: "Alfred",
+      surname: "Hill",
     },
     personExternalId: "010",
     displayId: "d010",
@@ -604,8 +604,8 @@ const US_ID_CLIENTS: ClientFixture[] = [
 const US_ME_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "LAURA",
-      surname: "WILSON",
+      givenNames: "Laura",
+      surname: "Wilson",
     },
     personExternalId: "009",
     displayId: "d009",
@@ -645,8 +645,8 @@ const US_ME_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "JENNIFER",
-      surname: "PEREZ",
+      givenNames: "Jennifer",
+      surname: "Perez",
     },
     personExternalId: "010",
     displayId: "d010",
@@ -686,8 +686,8 @@ const US_ME_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "MARIAH",
-      surname: "WRIGHT",
+      givenNames: "Mariah",
+      surname: "Wright",
     },
     personExternalId: "011",
     displayId: "d011",
@@ -727,8 +727,8 @@ const US_ME_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "DALE",
-      surname: "MOORE",
+      givenNames: "Dale",
+      surname: "Moore",
     },
     personExternalId: "012",
     displayId: "d012",
@@ -771,8 +771,8 @@ const US_ME_CLIENTS: ClientFixture[] = [
 const US_MI_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "PATRICK",
-      surname: "KING",
+      givenNames: "Patrick",
+      surname: "King",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -789,8 +789,8 @@ const US_MI_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "EUGENE",
-      surname: "ANDERSON",
+      givenNames: "Eugene",
+      surname: "Anderson",
     },
     personExternalId: "cr-eligible-1",
     displayId: "dcr-eligible-1",
@@ -806,8 +806,8 @@ const US_MI_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "SAMANTHA",
-      surname: "HERNANDEZ",
+      givenNames: "Samantha",
+      surname: "Hernandez",
     },
     personExternalId: "cr-eligible-2",
     displayId: "dcr-eligible-2",
@@ -823,8 +823,8 @@ const US_MI_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "AARON",
-      surname: "KING",
+      givenNames: "Aaron",
+      surname: "King",
     },
     personExternalId: "ed-eligible-1",
     displayId: "ded-eligible-1",
@@ -840,8 +840,8 @@ const US_MI_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "NATHANIEL",
-      surname: "SACKMAN",
+      givenNames: "Nathaniel",
+      surname: "Sackman",
     },
     personExternalId: "ed-eligible-2",
     displayId: "ded-eligible-2",
@@ -857,8 +857,8 @@ const US_MI_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "FAUSTO",
-      surname: "CARTER",
+      givenNames: "Fausto",
+      surname: "Carter",
     },
     personExternalId: "010",
     displayId: "d010",
@@ -877,9 +877,9 @@ const US_MI_CLIENTS: ClientFixture[] = [
 const US_ND_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "JAMILYN",
-      surname: "JONES",
-      middleNames: "JANE",
+      givenNames: "Jamilyn",
+      surname: "Jones",
+      middleNames: "Jane",
     },
     personExternalId: "110",
     displayId: "d110",
@@ -913,9 +913,9 @@ const US_ND_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "JUSTIN",
-      surname: "JACOBS",
-      middleNames: "JANE",
+      givenNames: "Justin",
+      surname: "Jacobs",
+      middleNames: "Jane",
     },
     personExternalId: "111",
     displayId: "d111",
@@ -952,8 +952,8 @@ const US_ND_CLIENTS: ClientFixture[] = [
 const US_OR_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "PETER",
-      surname: "RIVINGTON",
+      givenNames: "Peter",
+      surname: "Rivington",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -977,8 +977,8 @@ const US_OR_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "EDWARD",
-      surname: "YU",
+      givenNames: "Edward",
+      surname: "Yu",
     },
     personExternalId: "002",
     displayId: "d002",
@@ -1005,8 +1005,8 @@ const US_OR_CLIENTS: ClientFixture[] = [
 const US_PA_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "BENJAMIN",
-      surname: "HILL",
+      givenNames: "Benjamin",
+      surname: "Hill",
     },
     personExternalId: "001",
     displayId: "d001",
@@ -1026,8 +1026,8 @@ const US_PA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "LOUISA",
-      surname: "DAVIDSON",
+      givenNames: "Louisa",
+      surname: "Davidson",
     },
     personExternalId: "002",
     displayId: "d002",
@@ -1050,8 +1050,8 @@ const US_PA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "KEVIN",
-      surname: "ITO",
+      givenNames: "Kevin",
+      surname: "Ito",
     },
     personExternalId: "003",
     displayId: "d003",
@@ -1071,8 +1071,8 @@ const US_PA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "OSCAR",
-      surname: "TUPPER",
+      givenNames: "Oscar",
+      surname: "Tupper",
     },
     personExternalId: "CLIENT004",
     displayId: "d004",
@@ -1092,8 +1092,8 @@ const US_PA_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "TIMOTHY",
-      surname: "FIELD",
+      givenNames: "Timothy",
+      surname: "Field",
     },
     personExternalId: "CLIENT005",
     displayId: "d005",
@@ -1116,8 +1116,8 @@ const US_PA_CLIENTS: ClientFixture[] = [
 const US_TN_CLIENTS: ClientFixture[] = [
   {
     personName: {
-      givenNames: "TONYE",
-      surname: "BARLEY",
+      givenNames: "Tonye",
+      surname: "Barley",
     },
     personExternalId: "100",
     displayId: "d100",
@@ -1158,8 +1158,8 @@ const US_TN_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "VIVIAN",
-      surname: "HANSKILL",
+      givenNames: "Vivian",
+      surname: "Hanskill",
     },
     personExternalId: "101",
     displayId: "d101",
@@ -1201,8 +1201,8 @@ const US_TN_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "REBEKAH",
-      surname: "KARINER",
+      givenNames: "Rebekah",
+      surname: "Kariner",
       middleNames: "H.",
     },
     personExternalId: "102",
@@ -1235,8 +1235,8 @@ const US_TN_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "JACOB",
-      surname: "UNDERWOOD",
+      givenNames: "Jacob",
+      surname: "Underwood",
     },
     personExternalId: "104",
     displayId: "d104",
@@ -1264,8 +1264,8 @@ const US_TN_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "SARAH",
-      surname: "VELAZQUEZ",
+      givenNames: "Sarah",
+      surname: "Velazquez",
       middleNames: "M",
     },
     personExternalId: "107",
@@ -1291,8 +1291,8 @@ const US_TN_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "JACQUELINE",
-      surname: "WRIGHT",
+      givenNames: "Jacqueline",
+      surname: "Wright",
     },
     personExternalId: "109",
     displayId: "d109",
@@ -1320,9 +1320,9 @@ const US_TN_CLIENTS: ClientFixture[] = [
   },
   {
     personName: {
-      givenNames: "TWILA",
-      surname: "LOWERY",
-      middleNames: "NATALIE",
+      givenNames: "Twila",
+      surname: "Lowery",
+      middleNames: "Natalie",
     },
     personExternalId: "108",
     displayId: "d108",

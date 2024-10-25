@@ -40,8 +40,8 @@ export const usTnVerifiedOpportunities = {
 export const ineligibleClientRecord: ClientRecord = {
   recordId: "us_xx_001",
   personName: {
-    givenNames: "BETTY",
-    surname: "RUBBLE",
+    givenNames: "Betty",
+    surname: "Rubble",
   },
   personExternalId: "001",
   displayId: "d001",
@@ -78,8 +78,8 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
 export const residentRecordBase: WorkflowsResidentRecord = {
   recordId: "us_tn_002",
   personName: {
-    givenNames: "BARNEY",
-    surname: "RUBBLE",
+    givenNames: "Barney",
+    surname: "Rubble",
   },
   gender: "MALE",
   personExternalId: "002",

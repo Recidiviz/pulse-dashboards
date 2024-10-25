@@ -24,8 +24,8 @@ export const usTnResidents: ResidentFixture[] = [
     personExternalId: "RES001",
     displayId: "dRES001",
     personName: {
-      givenNames: "CARMEN",
-      surname: "REYES",
+      givenNames: "Carmen",
+      surname: "Reyes",
     },
     gender: "MALE",
     pseudonymizedId: "anonres001",
@@ -43,8 +43,8 @@ export const usTnResidents: ResidentFixture[] = [
     personExternalId: "RES002",
     displayId: "dRES002",
     personName: {
-      givenNames: "JESSICA",
-      surname: "REN",
+      givenNames: "Jessica",
+      surname: "Ren",
     },
     gender: "FEMALE",
     pseudonymizedId: "anonres002",
@@ -62,8 +62,8 @@ export const usTnResidents: ResidentFixture[] = [
     personExternalId: "RES003",
     displayId: "dRES003",
     personName: {
-      givenNames: "FEI",
-      surname: "JACKSON",
+      givenNames: "Fei",
+      surname: "Jackson",
     },
     gender: "MALE",
     pseudonymizedId: "anonres003",
@@ -81,8 +81,8 @@ export const usTnResidents: ResidentFixture[] = [
     personExternalId: "RES004",
     displayId: "dRES004",
     personName: {
-      givenNames: "GEOFF",
-      surname: "ZHANG",
+      givenNames: "Geoff",
+      surname: "Zhang",
     },
     gender: "INTERNAL_UNKNOWN",
     pseudonymizedId: "anonres004",

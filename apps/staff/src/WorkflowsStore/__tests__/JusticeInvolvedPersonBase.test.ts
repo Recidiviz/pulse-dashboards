@@ -190,7 +190,7 @@ describe("opportunities", () => {
     test("with preferred name", () => {
       runInAction(() => {
         testPerson.personUpdatesSubscription = {
-          data: { preferredName: "two names" },
+          data: { preferredName: "Two Names" },
         } as unknown as CollectionDocumentSubscription<PersonUpdateRecord>;
         testPerson.personUpdatesSubscription.hydrationState = {
           status: "hydrated",

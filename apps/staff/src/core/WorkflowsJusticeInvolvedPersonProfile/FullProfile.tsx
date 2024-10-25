@@ -27,7 +27,6 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { toTitleCase } from "../../utils";
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseNoteSearch } from "../CaseNoteSearch";
@@ -269,7 +268,7 @@ const PreferredName: React.FC<ClientProfileProps> = observer(
       client.preferredName || toJS(client.fullName).givenNames || "Unknown";
     return (
       <ClientDetailsInput
-        text={toTitleCase(name)}
+        text={name}
         client={client}
         updateType="preferredName"
       />

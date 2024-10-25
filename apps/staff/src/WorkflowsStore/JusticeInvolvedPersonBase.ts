@@ -28,7 +28,6 @@ import {
   WorkflowsJusticeInvolvedPersonRecord,
 } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
-import { humanReadableTitleCase } from "../utils";
 import { TaskFactory } from "./Client";
 import {
   Opportunity,
@@ -162,11 +161,9 @@ export class JusticeInvolvedPersonBase<
   }
 
   get displayName(): string {
-    return humanReadableTitleCase(
-      [this.fullName.givenNames, this.fullName.surname]
-        .filter((n) => Boolean(n))
-        .join(" "),
-    );
+    return [this.fullName.givenNames, this.fullName.surname]
+      .filter((n) => Boolean(n))
+      .join(" ");
   }
 
   get displayPreferredName(): string {
@@ -174,7 +171,7 @@ export class JusticeInvolvedPersonBase<
       return [
         this.fullName.givenNames,
         this.preferredName && this.preferredName !== this.fullName.givenNames
-          ? `(${humanReadableTitleCase(this.preferredName)})`
+          ? `(${this.preferredName})`
           : undefined,
         this.fullName.surname,
       ]
