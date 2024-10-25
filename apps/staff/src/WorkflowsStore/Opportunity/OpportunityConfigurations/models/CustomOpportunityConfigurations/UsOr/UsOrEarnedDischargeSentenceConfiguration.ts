@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityRequirement } from "../../../../types";
+import { Opportunity, OpportunityRequirement } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsOrEarnedDischargeSentenceConfiguration extends ApiOpportunityConfiguration {
   get omsCriteriaHeader() {
-    return "Eligibility Criteria Requirements Verified via DOC400";
+    return "Eligibility Requirements Verified via DOC400";
   }
 
   get nonOMSCriteriaHeader() {
@@ -60,5 +60,9 @@ export class UsOrEarnedDischargeSentenceConfiguration extends ApiOpportunityConf
           "Is in compliance with conditions of supervision and any applicable supervision case plan",
       },
     ];
+  }
+
+  countByFunction(opportunities: Opportunity[]): number {
+    return new Set(opportunities.map((opp) => opp.person.externalId)).size;
   }
 }

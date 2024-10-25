@@ -42,4 +42,8 @@ export class UsOrEarnedDischargeSentenceOpportunity extends OpportunityBase<
     const { courtCaseNumber, sentenceStatute } = this.record.metadata.sentence;
     return `${courtCaseNumber}: ${sentenceStatute}`;
   }
+
+  get labelAddendum() {
+    return ` • ${this.instanceDetails}`;
+  }
 }

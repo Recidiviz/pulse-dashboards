@@ -128,10 +128,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     onDenialButtonClick = () => null,
   }) {
     const {
-      workflowsStore: {
-        selectedResident,
-        justiceInvolvedPersonTitle,
-      },
+      workflowsStore: { selectedResident, justiceInvolvedPersonTitle },
     } = useRootStore();
     const { personSpecificOppBanners } = useFeatureVariants();
 
@@ -150,7 +147,10 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
             title={justiceInvolvedPersonTitle}
           />
         )}
-        <AccordionWrapper allowZeroExpanded preExpanded={[opportunity.type]}>
+        <AccordionWrapper
+          allowZeroExpanded
+          preExpanded={[opportunity.accordionKey]}
+        >
           <AccordionSection
             opportunity={opportunity}
             formLinkButton={formLinkButton}

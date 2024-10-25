@@ -192,6 +192,13 @@ export class OpportunityBase<
     return this.opportunityId ?? this.person.recordId;
   }
 
+  get accordionKey() {
+    // Used to control what opportunities are expanded in accordion components
+    return this.opportunityId
+      ? `${this.type}_${this.opportunityId}`
+      : this.type;
+  }
+
   get config() {
     return this.rootStore.workflowsRootStore.opportunityConfigurationStore
       .opportunities[this.type];
@@ -689,6 +696,11 @@ export class OpportunityBase<
 
   // Used to optionally display an opportunity-specific id in OpportunityCapsule
   get instanceDetails(): string | undefined {
+    return undefined;
+  }
+
+  // Used to optionally display information appended to an opportunity label
+  get labelAddendum(): string | undefined {
     return undefined;
   }
 }

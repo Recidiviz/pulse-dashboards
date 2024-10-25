@@ -142,4 +142,6 @@ export const mockOpportunity: Opportunity<Client> = {
   selectId: undefined,
   firestoreUpdateDocId: "pastFTRD",
   denied: false,
+  labelAddendum: undefined,
+  accordionKey: "pastFTRD",
 };

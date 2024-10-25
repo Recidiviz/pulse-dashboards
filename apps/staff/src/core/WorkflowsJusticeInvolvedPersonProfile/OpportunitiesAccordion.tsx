@@ -133,7 +133,7 @@ export const AccordionSection = observer(function AccordionSection({
 
   return (
     <OpportunityWrapper className="ProfileOpportunityItem" {...colors}>
-      <AccordionItem uuid={opportunity.type}>
+      <AccordionItem uuid={opportunity.accordionKey}>
         <AccordionItemHeading>
           <AccordionButton>
             <OpportunityModuleHeader opportunity={opportunity} />
@@ -183,13 +183,13 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
   const hydrated = (
     <AccordionWrapper
       allowZeroExpanded
-      preExpanded={opportunities.length ? [opportunities[0].type] : [0]}
+      preExpanded={opportunities.length ? [opportunities[0].accordionKey] : [0]}
     >
       {opportunities.map((opportunity) => {
         if (!opportunity) return undefined;
         return (
           <AccordionSection
-            key={opportunity.type}
+            key={opportunity.selectId}
             opportunity={opportunity}
             formLinkButton={formLinkButton}
             onDenialButtonClick={() => {

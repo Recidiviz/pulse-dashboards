@@ -94,6 +94,7 @@ export const OpportunityProfileFooter: React.FC<
       workflowsStore.updateSelectedPerson(
         nextOpportunity.person.pseudonymizedId,
       );
+      workflowsStore.updateSelectedOpportunity(nextOpportunity.selectId);
       nextOpportunity.trackPreviewed();
       if (modalRef?.current) {
         modalRef.current.scrollTo(0, 0);

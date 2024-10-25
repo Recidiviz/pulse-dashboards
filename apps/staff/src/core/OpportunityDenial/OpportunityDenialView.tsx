@@ -233,7 +233,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const prompt = opportunity.config.isAlert
     ? `Please select the reason(s) ${opportunity.person?.displayPreferredName} should be overridden:`
-    : `Which of the following requirements has ${opportunity.person?.displayPreferredName} not met?`;
+    : `Which of the following requirements has ${opportunity.person?.displayPreferredName} not met${opportunity.instanceDetails ? ` [${opportunity.instanceDetails}]` : ""}?`;
 
   const snoozeSection = (
     <>

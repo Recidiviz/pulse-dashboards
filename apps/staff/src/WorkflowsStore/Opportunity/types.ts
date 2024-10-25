@@ -147,9 +147,11 @@ export interface Opportunity<
   submittedUpdate: UpdateLog | undefined;
   sentryTrackingId: string | undefined;
   instanceDetails: string | undefined;
+  labelAddendum: string | undefined;
   selectId: string | undefined;
   firestoreUpdateDocId: string;
   denied: boolean;
+  accordionKey: string;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

@@ -63,6 +63,7 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
         <TitleText>
           <OpportunityLabelWithPill>
             {opportunity.config.label}
+            {opportunity.labelAddendum}
           </OpportunityLabelWithPill>
           <EligibilityStatusPill
             className="EligibilityStatus"

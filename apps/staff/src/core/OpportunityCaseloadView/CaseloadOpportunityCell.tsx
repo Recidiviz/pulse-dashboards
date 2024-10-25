@@ -67,12 +67,12 @@ export const CaseloadOpportunityCell = observer(
 
     return (
       <CellItem
-        key={person.externalId}
+        key={opportunity.selectId}
         aria-label={`CaseloadOpportunityCell-${person.externalId}`}
         style={style}
       >
         <WorkflowsTooltip
-          key={`tooltip-${person.recordId}`}
+          key={`tooltip-${opportunity.selectId}`}
           aria-label={`CaseloadOpportunityCell-tooltip-${person.recordId}`}
           person={opportunity.person}
         >
