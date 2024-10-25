@@ -308,7 +308,6 @@ export const RecommendationsWrapper = styled.div`
 export const Header = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
 `;
 
 export const Title = styled.div`
@@ -385,6 +384,7 @@ export const OpportunitiesWrapper = styled.div`
 
 export const OpportunitiesText = styled.div`
   color: ${palette.pine3};
+  text-wrap: balance;
 `;
 
 export const OpportunitiesCount = styled.div`
@@ -930,7 +930,6 @@ export const NeedsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-transform: capitalize;
   gap: 8px;
 `;
 
@@ -938,8 +937,8 @@ export const Need = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
-  text-transform: capitalize;
 `;
+
 /** Edit Case Details Modal */
 
 export const ModalHeaderWrapper = styled.div`
@@ -1075,13 +1074,21 @@ export const CheckboxWrapper = styled.div`
 export const TextArea = styled.textarea`
   min-height: 117px;
   padding: 12px 16px;
-  border: 1px solid ${customPalette.green.light4};
+  border: 1px solid ${palette.slate20};
   border-radius: 8px;
   color: ${palette.pine3};
   margin-top: 8px;
   font-size: 13px;
   font-weight: 500;
-  background-color: ${customPalette.green.light1};
+
+  &::placeholder {
+    ${typography.Sans16}
+    color: ${palette.slate60};
+  }
+
+  &:focus {
+    border-color: ${palette.pine4};
+  }
 `;
 
 export const InputLabel = styled.label`
@@ -1115,6 +1122,7 @@ export const MultiSelectContainer = styled.div<{ selected?: boolean }>`
   align-items: center;
   align-content: center;
   gap: 4px;
+  margin-bottom: 16px;
 `;
 
 export const MultiSelectChip = styled.div<{
@@ -1132,7 +1140,6 @@ export const MultiSelectChip = styled.div<{
   border: 1px solid
     ${({ selected }) => (selected ? palette.pine4 : palette.slate20)};
   border-radius: 32px;
-  text-transform: capitalize;
   ${typography.Sans14}
 
   &:hover {

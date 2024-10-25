@@ -61,21 +61,21 @@ describe("formatNeedsList", () => {
     const recommendationType = RecommendationType.Rider;
     const result = formatNeedsList(allNeeds, recommendationType);
     expect(result).toEqual([
-      "Anger management",
-      "Domestic violence training",
+      "Anger Management",
+      "Domestic Violence Training",
       "Education",
       "Healthcare",
-      "Mental health",
-      "Substance use",
+      "Mental Health",
+      "Substance Use",
     ]);
-    expect(result).not.toContain("Case management");
+    expect(result).not.toContain("Case Management");
     expect(result).not.toContain("Clothing and toiletries");
-    expect(result).not.toContain("Family support");
-    expect(result).not.toContain("Financial support");
-    expect(result).not.toContain("Food insecurity");
-    expect(result).not.toContain("General reentry support");
+    expect(result).not.toContain("Family Support");
+    expect(result).not.toContain("Financial Support");
+    expect(result).not.toContain("Food Insecurity");
+    expect(result).not.toContain("General Re-entry Support");
     expect(result).not.toContain("Housing");
-    expect(result).not.toContain("Job training or opportunities");
+    expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Transportation");
     expect(result).not.toContain("Other");
   });
@@ -84,21 +84,21 @@ describe("formatNeedsList", () => {
     const recommendationType = RecommendationType.Term;
     const result = formatNeedsList(allNeeds, recommendationType);
     expect(result).toEqual([
-      "Anger management",
-      "Domestic violence training",
+      "Anger Management",
+      "Domestic Violence Training",
       "Education",
       "Healthcare",
-      "Mental health",
-      "Substance use",
+      "Mental Health",
+      "Substance Use",
     ]);
-    expect(result).not.toContain("Case management");
+    expect(result).not.toContain("Case Management");
     expect(result).not.toContain("Clothing and toiletries");
-    expect(result).not.toContain("Family support");
-    expect(result).not.toContain("Financial support");
-    expect(result).not.toContain("Food insecurity");
-    expect(result).not.toContain("General reentry support");
+    expect(result).not.toContain("Family Support");
+    expect(result).not.toContain("Financial Support");
+    expect(result).not.toContain("Food Insecurity");
+    expect(result).not.toContain("General Re-entry Support");
     expect(result).not.toContain("Housing");
-    expect(result).not.toContain("Job training or opportunities");
+    expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Transportation");
     expect(result).not.toContain("Other");
   });
@@ -107,24 +107,24 @@ describe("formatNeedsList", () => {
     const recommendationType = RecommendationType.Probation;
     const result = formatNeedsList(allNeeds, recommendationType);
     expect(result).toEqual([
-      "Anger management",
-      "Case management",
-      "Domestic violence training",
+      "Anger Management",
+      "Case Management",
+      "Domestic Violence Training",
       "Education",
-      "Family support",
-      "Food insecurity",
-      "Financial support",
+      "Family Support",
+      "Food Insecurity",
+      "Financial Support",
       "Healthcare",
       "Housing",
-      "Vocational training",
-      "Mental health",
-      "Substance use",
+      "Vocational Training",
+      "Mental Health",
+      "Substance Use",
       "Transportation",
     ]);
 
     expect(result).not.toContain("Clothing and toiletries");
-    expect(result).not.toContain("General reentry support");
-    expect(result).not.toContain("Job training or opportunities");
+    expect(result).not.toContain("General Re-entry Support");
+    expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Other");
   });
 
@@ -132,24 +132,24 @@ describe("formatNeedsList", () => {
     const recommendationType = RecommendationType.None;
     const result = formatNeedsList(allNeeds, recommendationType);
     expect(result).toEqual([
-      "Anger management",
-      "Case management",
-      "Domestic violence training",
+      "Anger Management",
+      "Case Management",
+      "Domestic Violence Training",
       "Education",
-      "Family support",
-      "Food insecurity",
-      "Financial support",
+      "Family Support",
+      "Food Insecurity",
+      "Financial Support",
       "Healthcare",
       "Housing",
-      "Vocational training",
-      "Mental health",
-      "Substance use",
+      "Vocational Training",
+      "Mental Health",
+      "Substance Use",
       "Transportation",
     ]);
 
     expect(result).not.toContain("Clothing and toiletries");
-    expect(result).not.toContain("General reentry support");
-    expect(result).not.toContain("Job training or opportunities");
+    expect(result).not.toContain("General Re-entry Support");
+    expect(result).not.toContain("Job Training or Opportunities");
     expect(result).not.toContain("Other");
   });
 });

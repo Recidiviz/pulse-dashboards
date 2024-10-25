@@ -69,9 +69,7 @@ export const MultiSelectField: React.FC<InputFieldProps> = ({
               }}
               isNotSureYetOption={option === NOT_SURE_YET_OPTION}
             >
-              {((option === NOT_SURE_YET_OPTION &&
-                currentValue?.length === 0) ||
-                currentValue?.includes(option)) && <CheckIcon />}
+              {currentValue?.includes(option) && <CheckIcon />}
               {element.key === NEEDS_TO_BE_ADDRESSED_KEY && NeedsIcons[option]}
               {option}
             </Styled.MultiSelectChip>

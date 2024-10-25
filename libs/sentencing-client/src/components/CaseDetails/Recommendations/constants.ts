@@ -74,11 +74,11 @@ export const riderOrTermExclusionList: Case["needsToBeAddressed"] = [
 
 /** A map of need to display name overrides */
 export const needToDisplayNameMap: NeedsToDisplayName = {
-  DomesticViolenceIssues: "Domestic violence training",
-  FamilyServices: "Family support",
-  FinancialAssistance: "Financial support",
+  DomesticViolenceIssues: "Domestic Violence Training",
+  FamilyServices: "Family Support",
+  FinancialAssistance: "Financial Support",
   HousingOpportunities: "Housing",
-  JobTrainingOrOpportunities: "Vocational training",
+  JobTrainingOrOpportunities: "Vocational Training",
 };
 
 /**

@@ -30,7 +30,7 @@ import { SelectedRecommendation } from "../types";
 import { OldReport } from "./report/OldReport";
 import { generateRecommendationSummary } from "./summaryUtils";
 
-const BUTTON_CHANGE_TIMEOUT = 2500;
+const BUTTON_CHANGE_TIMEOUT = 5000;
 const TOAST_TIMEOUT = 3000;
 
 type SummaryReportProps = {
@@ -101,7 +101,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     setHasDownloadedReport(true);
     trackDownloadReportClicked();
     generatePDF(targetRef, {
-      filename: `${fullName?.replaceAll(" ", "")}Recommendation.pdf`, // "FirstNameLastNameRecommendation.pdf"
+      filename: `PSI Recommendation Report - ${fullName}.pdf`,
     });
     setTimeout(() => setHasDownloadedReport(false), BUTTON_CHANGE_TIMEOUT);
   };
