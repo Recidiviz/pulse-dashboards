@@ -21,12 +21,16 @@ import React from "react";
 import { AnchorProvider } from "react-anchor-navigation";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import MethodologyPathways from "../MethodologyPathways";
 import MethodologyProjections from "../MethodologyProjections";
 
 const PageMethodology: React.FC = () => {
-  const { userStore, tenantStore } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { userStore, tenantStore } = useRootStore() as PartiallyTypedRootStore;
   const { userHasAccess } = userStore;
   const { dashboard } = useParams();
   const location = useLocation();

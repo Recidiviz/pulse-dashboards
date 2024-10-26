@@ -20,7 +20,10 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Container } from "reactstrap";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { convertToSlug } from "../../utils/navigation";
 import { getMethodologyCopy } from "../content";
 import MobileNavigation from "../MobileNavigation";
@@ -47,7 +50,9 @@ const updateExternalLinks = (): void => {
 const MethodologyPathways: React.FC = () => {
   const { pathname } = useLocation();
   const view = pathname.split("/")[2];
-  const { currentTenantId, userStore } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { currentTenantId, userStore } =
+    useRootStore() as PartiallyTypedRootStore;
 
   useEffect(() => {
     updateExternalLinks();

@@ -23,7 +23,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { usePersonTracking } from "../hooks/usePersonTracking";
@@ -146,7 +149,7 @@ export const WorkflowsFormLayout = observer(function WorkflowsFormLayout({
     };
   }, [workflowsStore]);
 
-  const { currentTenantId } = useRootStore();
+  const { currentTenantId } = useRootStore() as PartiallyTypedRootStore;
   const [currentView, setCurrentView] =
     useState<FormSidebarView>("OPPORTUNITY");
   const navigate = useNavigate();

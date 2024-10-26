@@ -15,13 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { getPageCopy } from "../content";
 import { PageContent } from "../content/types";
 import { PathwaysPage } from "../views";
 
 export default function usePageContent(pageId: PathwaysPage): PageContent {
-  const { currentTenantId } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { currentTenantId } = useRootStore() as PartiallyTypedRootStore;
 
   return getPageCopy(currentTenantId)[pageId];
 }

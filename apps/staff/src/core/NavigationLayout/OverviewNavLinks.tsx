@@ -19,7 +19,10 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
@@ -36,6 +39,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const { pathname } = useLocation();
   const { isMobile } = useIsMobile(true);
 
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
   const {
     workflowsStore,
     workflowsStore: {
@@ -47,7 +51,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
     },
     userStore: { userAllowedNavigation },
     insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
-  } = useRootStore();
+  } = useRootStore() as PartiallyTypedRootStore;
 
   const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
   const enabledInsights =

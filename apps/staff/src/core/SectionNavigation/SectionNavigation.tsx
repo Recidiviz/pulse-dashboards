@@ -24,7 +24,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import Drawer from "../../components/Drawer";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useCoreStore } from "../CoreStoreProvider";
 import usePageContent from "../hooks/usePageContent";
@@ -35,7 +38,8 @@ const SectionNavigation: React.FC = () => {
 
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
-  const { userStore } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { userStore } = useRootStore() as PartiallyTypedRootStore;
   const { setSection } = useCoreStore();
   const navigationLayout = userStore.userAllowedNavigation;
   const [currentView, currentPage] = pathname.split("/").slice(1, 4);

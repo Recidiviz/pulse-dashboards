@@ -23,7 +23,10 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { PATHWAYS_TENANTS } from "../../RootStore/TenantStore/pathwaysTenants";
 import { getMethodologyCopy, getPageCopy } from "../content";
@@ -36,7 +39,9 @@ const PageNavigation: React.FC = () => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const { page } = useCoreStore();
-  const { userStore, currentTenantId } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { userStore, currentTenantId } =
+    useRootStore() as PartiallyTypedRootStore;
   const currentView = pathname.split("/")[1];
   const navigationLayout = userStore.userAllowedNavigation;
   const pageOptions = navigationLayout[currentView] ?? [];

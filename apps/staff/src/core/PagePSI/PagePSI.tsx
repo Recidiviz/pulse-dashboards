@@ -31,7 +31,10 @@ import styled from "styled-components/macro";
 import { CaseDetails, Dashboard, psiRoute, psiUrl } from "~sentencing-client";
 
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationLayout } from "../NavigationLayout";
 
@@ -61,7 +64,8 @@ const PagePSI: React.FC = function PagePSI() {
     top: 0,
   });
 
-  const { psiStore } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { psiStore } = useRootStore() as PartiallyTypedRootStore;
   const { isMobile } = useIsMobile(true);
 
   return (

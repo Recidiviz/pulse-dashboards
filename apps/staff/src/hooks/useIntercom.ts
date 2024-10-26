@@ -18,10 +18,14 @@
 import { update } from "@intercom/messenger-js-sdk";
 import { useEffect } from "react";
 
-import { useRootStore } from "../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../components/StoreProvider";
 
 const useIntercom = () => {
-  const { userStore, tenantStore } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { userStore, tenantStore } = useRootStore() as PartiallyTypedRootStore;
   const { user, userAppMetadata = {} } = userStore;
 
   useEffect(() => {

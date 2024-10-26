@@ -22,14 +22,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { isDemoMode } from "~client-env-utils";
 
-import { useRootStore } from "../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../components/StoreProvider";
 
 const THREE_HOURS = 3 * 60 * 60 * 1000;
 const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
 const useAuth = () => {
   const { search } = useLocation();
-  const { userStore, tenantStore } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { userStore, tenantStore } = useRootStore() as PartiallyTypedRootStore;
   const stateCodeParam = new URLSearchParams(search).get("stateCode");
   const navigate = useNavigate();
 

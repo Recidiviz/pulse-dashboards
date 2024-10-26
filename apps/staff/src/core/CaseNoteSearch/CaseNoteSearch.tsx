@@ -23,7 +23,10 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { CaseNoteSearchResults, caseNoteSearchSchema } from "~datatypes";
 import { castToError } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatWorkflowsDateString } from "../../utils";
 import {
@@ -77,8 +80,9 @@ const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
 
 export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const { isMobile } = useIsMobile(true);
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { workflowsStore, analyticsStore, userStore, apiStore } =
-    useRootStore();
+    useRootStore() as PartiallyTypedRootStore;
 
   const { selectedPerson } = workflowsStore;
 

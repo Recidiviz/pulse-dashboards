@@ -19,7 +19,10 @@ import { Button, Icon, Modal, palette } from "@recidiviz/design-system";
 import { useEffect, useState } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 
 const ModalControls = styled.div`
   padding: 0;
@@ -31,7 +34,8 @@ const Wrapper = styled.div`
 `;
 
 function ImpersonationErrorModal({ error }: { error?: Error }): JSX.Element {
-  const { userStore } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { userStore } = useRootStore() as PartiallyTypedRootStore;
   const [modalIsOpen, setModalIsOpen] = useState(!!error);
 
   useEffect(() => {

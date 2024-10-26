@@ -24,7 +24,10 @@ import { Helmet } from "react-helmet";
 import Footer from "../components/Footer";
 import IE11Banner from "../components/IE11Banner";
 import NotFound from "../components/NotFound";
-import { useRootStore } from "../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import { LANTERN_TENANTS } from "../RootStore/TenantStore/lanternTenants";
 import { setTranslateLocale } from "../utils/i18nSettings";
@@ -34,7 +37,8 @@ import LanternTopBar from "./LanternTopBar";
 import Revocations from "./Revocations";
 
 const LanternLayout: React.FC = (): React.ReactElement | null => {
-  const { currentTenantId } = useRootStore();
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
+  const { currentTenantId } = useRootStore() as PartiallyTypedRootStore;
   useIntercom();
 
   setTranslateLocale(currentTenantId);

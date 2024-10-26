@@ -21,7 +21,10 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import cssVars from "../CoreConstants.module.scss";
 import { NavigationBackButton } from "../NavigationBackButton";
@@ -79,11 +82,12 @@ const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
 `;
 
 export const WorkflowsNavLayout: React.FC<{ children?: React.ReactNode }> =
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
   observer(function WorkflowsNavLayout({ children }) {
     const {
       currentTenantId,
       workflowsStore: { homepage: workflowsHomepage, activePageIsHomepage },
-    } = useRootStore();
+    } = useRootStore() as PartiallyTypedRootStore;
     const { isMobile, isLaptop } = useIsMobile(true);
 
     return (

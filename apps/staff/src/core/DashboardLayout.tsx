@@ -27,7 +27,10 @@ import { PSI_PATHS } from "~sentencing-client";
 
 import IE11Banner from "../components/IE11Banner";
 import NotFound from "../components/NotFound";
-import { useRootStore } from "../components/StoreProvider";
+import {
+  PartiallyTypedRootStore,
+  useRootStore,
+} from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import useIsMobile from "../hooks/useIsMobile";
 import RedirectMethodology from "../RedirectMethodology";
@@ -66,10 +69,11 @@ const DashboardLayout: React.FC = () => {
   const isMobile = useIsMobile();
   const { pathname } = useLocation();
   const currentView = pathname.split("/")[1];
+  // TODO(#5636) Eliminate PartiallyTypedRootStore
   const {
     currentTenantId,
     userStore: { userAllowedNavigation },
-  } = useRootStore();
+  } = useRootStore() as PartiallyTypedRootStore;
   const dashboardAllowedPaths = [
     ...getPathsFromNavigation(userAllowedNavigation),
     "/profile",

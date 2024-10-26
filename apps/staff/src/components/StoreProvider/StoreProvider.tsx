@@ -46,10 +46,11 @@ const StoreProvider: React.FC<{ children: React.ReactNode }> =
   };
 export default StoreProvider;
 
+// TODO(#5636) Eliminate PartiallyTypedRootStore
 /**
  * incrementally starts to enforce typing in RootStore consumers
  */
-interface PartiallyTypedRootStore {
+export interface PartiallyTypedRootStore {
   insightsStore: InsightsStore;
   workflowsStore: WorkflowsStore;
   workflowsRootStore: WorkflowsRootStore;
@@ -58,7 +59,7 @@ interface PartiallyTypedRootStore {
   [key: string]: any;
 }
 
-export function useRootStore(): PartiallyTypedRootStore {
+export function useRootStore(): RootStore {
   const context = useContext(StoreContext);
   if (context === undefined) {
     throw new Error("useRootStore must be used within a StoreProvider");
