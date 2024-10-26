@@ -81,7 +81,8 @@ export const mockOpportunity: Opportunity<Client> = {
   trackPreviewed: () => undefined,
   supportsExternalRequest: false,
   deniedTabTitle: "Marked Ineligible",
-  tabTitle: () => "Eligible Now",
+  tabTitle: (tabGroup) =>
+    tabGroup === "ELIGIBILITY STATUS" ? "Eligible Now" : "Other",
   compare: () => 1,
   showEligibilityStatus: () => true,
   nonOMSRequirements: [],

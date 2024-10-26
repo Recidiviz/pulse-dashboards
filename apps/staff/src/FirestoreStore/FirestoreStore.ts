@@ -229,16 +229,6 @@ export default class FirestoreStore {
       };
   }
 
-  async getCustomTabOrdering(
-    userEmail: string,
-    opportunity: OpportunityType,
-    tabGroup: OpportunityTabGroup,
-  ): Promise<OpportunityTab[] | undefined> {
-    const doc = this.doc({ key: "userUpdates" }, userEmail);
-    const orderings = (await getDoc(doc)).get("customTabOrderings") ?? {};
-    return orderings[opportunity]?.[tabGroup];
-  }
-
   /**
    * All updates to Firestore should utilitize this method, which first checks that the user is an impersonator.
    * Do not use the Firestore setDoc directly.

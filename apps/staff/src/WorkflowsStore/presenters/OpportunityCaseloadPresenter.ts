@@ -90,6 +90,8 @@ export class OpportunityCaseloadPresenter {
 
   get displayTabs() {
     if (this.shouldShowAllTabs) {
+      // Keep track of the user's selection locally to avoid
+      // flickering when waiting for the user's tab preference to update in firestore
       return this.userOrderedTabs || this.defaultOrderedTabs;
     } else {
       return this.unorderedTabs;
