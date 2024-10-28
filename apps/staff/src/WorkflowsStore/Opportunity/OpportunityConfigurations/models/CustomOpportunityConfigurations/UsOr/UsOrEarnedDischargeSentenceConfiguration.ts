@@ -30,7 +30,7 @@ export class UsOrEarnedDischargeSentenceConfiguration extends ApiOpportunityConf
   get nonOMSCriteria(): OpportunityRequirement[] {
     return [
       {
-        text: "No disqualifying sentence enhancements not entered in the DOC400",
+        text: "No disqualifying sentence enhancements not entered in DOC400",
         tooltip:
           "Is not on supervision for a sentencing enhancement imposed under the provisions of ORS 161.610, 161.725, 161.735, 164.061, 475.907, 475.925, or 475.930; as well as ORS 137.635 for Probation Burglary I ",
       },
