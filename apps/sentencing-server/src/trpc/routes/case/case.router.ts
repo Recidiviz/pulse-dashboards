@@ -121,6 +121,7 @@ export const caseRouter = router({
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Case with that id was not found",
+            cause: e,
           });
         }
 
@@ -161,6 +162,7 @@ export const caseRouter = router({
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Case with that id was not found",
+            cause: e,
           });
         }
       }

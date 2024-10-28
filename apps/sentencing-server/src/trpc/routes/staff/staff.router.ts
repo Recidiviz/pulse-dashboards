@@ -95,6 +95,7 @@ export const staffRouter = router({
             throw new TRPCError({
               code: "NOT_FOUND",
               message: "Staff with that id was not found",
+              cause: e,
             });
           }
         }
