@@ -103,7 +103,8 @@ export type FeatureVariant =
   | "personSpecificOppBanners"
   | "sortableOpportunityTabs"
   | "fullWidthTimeline"
-  | "zeroGrantsFlag";
+  | "zeroGrantsFlag"
+  | "usOrEarnedDischargeSentence";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -156,6 +157,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   sortableOpportunityTabs: {},
   fullWidthTimeline: {},
   zeroGrantsFlag: {},
+  usOrEarnedDischargeSentence: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -174,6 +176,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         opportunityConfigurationAPI: {
           activeTenants: ["US_ND"],
         },
+        usOrEarnedDischargeSentence: {},
       }
     : {
         ...allFeatureVariants,
@@ -182,6 +185,8 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         },
         // Currently disabled because the last synced date doesn't exist on the backend yet.
         lastSyncedDate: undefined,
+        // Undefined so that Recidiviz users see both FVs in staging
+        usOrEarnedDischargeSentence: undefined,
       };
 
 export type LanternMethodologyByTenant = {
