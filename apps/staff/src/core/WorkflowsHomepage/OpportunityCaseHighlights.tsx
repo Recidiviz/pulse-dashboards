@@ -22,11 +22,18 @@ import {
   spacing,
   typography,
 } from "@recidiviz/design-system";
+import { ascending } from "d3-array";
 import { rem } from "polished";
+import { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { PartialRecord } from "../../utils/typeUtils";
 import { Opportunity, OpportunityType } from "../../WorkflowsStore";
+import { workflowsUrl } from "../views";
+
+const MAX_DISPLAYED_OPPORTUNITIES = 5;
 
 const Container = styled.section`
   background-color: #fff5f5;
@@ -65,9 +72,40 @@ const Entry = styled.li`
 
   &:not(:last-child) {
     margin-bottom: ${rem(spacing.sm)};
+  }
 
   gap: ${rem(14)};
 `;
+
+const HighlightedOpportunity = function HighlightedOpportunity({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}): ReactNode {
+  const { workflowsStore } = useRootStore();
+  const onClick = () => {
+    workflowsStore.updateSelectedOpportunity(opportunity.selectId);
+    workflowsStore.updateSelectedPerson(opportunity.person.pseudonymizedId);
+  };
+
+  const { urlSection } = opportunity.config;
+  const opportunityUrl = workflowsUrl("opportunityClients", { urlSection });
+
+  return (
+    <Entry>
+      <Icon kind={IconSVG.Error} size={16} color={palette.signal.error} />
+      <div>{opportunity.highlightCalloutText}</div>
+      <Link onClick={onClick} to={opportunityUrl}>
+        <Icon
+          kind={IconSVG.Arrow}
+          size={16}
+          strokeWidth={1.7}
+          color={palette.slate85}
+        />
+      </Link>
+    </Entry>
+  );
+};
 
 export const OpportunityCaseHighlights = function OpportunityCaseHighlights({
   opportunityTypes,
@@ -76,14 +114,14 @@ export const OpportunityCaseHighlights = function OpportunityCaseHighlights({
   opportunityTypes: OpportunityType[];
   opportunitiesByType: PartialRecord<OpportunityType, Opportunity[]>;
 }): React.ReactNode | null {
-  const highlightableOpportunities = opportunityTypes.flatMap(
-    (opportunityType) => {
+  const highlightableOpportunities = opportunityTypes
+    .flatMap((opportunityType) => {
       const opportunities = opportunitiesByType[opportunityType] || [];
       if (!opportunities[0]?.config.highlightCasesOnHomepage) return [];
 
       return opportunities;
-    },
-  );
+    })
+    .sort((a, b) => ascending(a.eligibilityDate, b.eligibilityDate));
 
   if (highlightableOpportunities.length === 0) return null;
 
@@ -91,14 +129,14 @@ export const OpportunityCaseHighlights = function OpportunityCaseHighlights({
     <Container>
       <Header>Overdue for transition program release</Header>
       <Entries>
-        <Entry>
-          <Icon kind={IconSVG.Error} size={16} color={palette.signal.error} />
-          <div>{highlightableOpportunities.length} overdue cases </div>
-          {
-            // TODO: Clean up this arrow. It should be heavier and vertically centered
-          }
-          <Icon kind={IconSVG.Arrow} size={16} />
-        </Entry>
+        {highlightableOpportunities
+          .slice(0, MAX_DISPLAYED_OPPORTUNITIES)
+          .map((o) => (
+            <HighlightedOpportunity
+              opportunity={o}
+              key={`${o.type}-${o.person.externalId}`}
+            />
+          ))}
       </Entries>
     </Container>
   );

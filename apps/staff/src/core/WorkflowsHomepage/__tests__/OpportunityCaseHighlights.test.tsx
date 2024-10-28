@@ -16,11 +16,44 @@
 // =============================================================================
 
 import { render, screen } from "@testing-library/react";
+import { addDays } from "date-fns";
+import { shuffle } from "lodash";
+import { BrowserRouter } from "react-router-dom";
+import { Mock } from "vitest";
 
+import { useRootStore } from "../../../components/StoreProvider";
 import { Opportunity } from "../../../WorkflowsStore";
 import { OpportunityCaseHighlights } from "../OpportunityCaseHighlights";
 
+vi.mock("../../../components/StoreProvider");
+
+function generateMockOpps(type: string, count: number): Opportunity[] {
+  return Array.from(
+    { length: count },
+    (_, i) =>
+      ({
+        type,
+        config: {
+          highlightCasesOnHomepage: true,
+        },
+        person: {
+          externalId: `${i}`,
+        },
+        highlightCalloutText: `I am candidate ${i}`,
+        eligibilityDate: addDays(new Date("2024-10-01"), i),
+      }) as Opportunity,
+  );
+}
+
+const mockUseRootStore = useRootStore as Mock;
+
 describe("OpportunityCaseHighlights", () => {
+  beforeEach(() => {
+    mockUseRootStore.mockReturnValue({
+      workflowsStore: {},
+    });
+  });
+
   it("does not render when no opportunities present", () => {
     const { container } = render(
       <OpportunityCaseHighlights
@@ -51,36 +84,127 @@ describe("OpportunityCaseHighlights", () => {
         highlightCasesOnHomepage: false,
       },
     } as Opportunity;
+
     const { container } = render(
-      <OpportunityCaseHighlights
-        opportunityTypes={["pastFTRD"]}
-        opportunitiesByType={{
-          pastFTRD: [mockOpp, mockOpp],
-        }}
-      />,
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["pastFTRD"]}
+          opportunitiesByType={{
+            pastFTRD: [mockOpp, mockOpp],
+          }}
+        />
+      </BrowserRouter>,
     );
 
     expect(container).toBeEmptyDOMElement();
   });
 
   it("renders when opportunities with highlightCasesOnHomepage set are present", () => {
-    const mockOpp = {
-      config: {
-        highlightCasesOnHomepage: true,
-      },
-    } as Opportunity;
-
     render(
-      <OpportunityCaseHighlights
-        opportunityTypes={["pastFTRD"]}
-        opportunitiesByType={{
-          pastFTRD: [mockOpp, mockOpp],
-        }}
-      />,
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["pastFTRD"]}
+          opportunitiesByType={{
+            pastFTRD: generateMockOpps("pastFTRD", 2),
+          }}
+        />
+      </BrowserRouter>,
     );
 
     expect(
       screen.queryByText("Overdue for transition program release"),
     ).not.toBeEmptyDOMElement();
+  });
+
+  it("renders one entry for each highlighted candidate for small numbers", () => {
+    render(
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["pastFTRD", "LSU"]}
+          opportunitiesByType={{
+            pastFTRD: generateMockOpps("pastFTRD", 2),
+            LSU: generateMockOpps("LSU", 2),
+          }}
+        />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.queryAllByText("I am candidate", { exact: false }),
+    ).toHaveLength(4);
+  });
+
+  it("only renders candidates for the enables types", () => {
+    render(
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["LSU"]}
+          opportunitiesByType={{
+            pastFTRD: generateMockOpps("pastFTRD", 2),
+            LSU: generateMockOpps("LSU", 2),
+          }}
+        />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.queryAllByText("I am candidate", { exact: false }),
+    ).toHaveLength(2);
+  });
+
+  it("orders candidates by eligibility date", () => {
+    render(
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["LSU"]}
+          opportunitiesByType={{
+            LSU: shuffle(generateMockOpps("LSU", 4)),
+          }}
+        />
+      </BrowserRouter>,
+    );
+
+    const res = screen.queryAllByText("I am candidate", { exact: false });
+
+    expect(res.map((r) => r.textContent)).toEqual(
+      [0, 1, 2, 3].map((i) => `I am candidate ${i}`),
+    );
+  });
+
+  it("only displays 5 candidates", () => {
+    render(
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["LSU"]}
+          opportunitiesByType={{
+            LSU: shuffle(generateMockOpps("LSU", 40)),
+          }}
+        />
+      </BrowserRouter>,
+    );
+
+    expect(
+      screen.queryAllByText("I am candidate", { exact: false }),
+    ).toHaveLength(5);
+  });
+
+  it("interlaces candidates for different opportunities together by eligibility date", () => {
+    render(
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["LSU", "pastFTRD"]}
+          opportunitiesByType={{
+            LSU: shuffle(generateMockOpps("LSU", 4)),
+            pastFTRD: shuffle(generateMockOpps("pastFTRD", 4)),
+          }}
+        />
+      </BrowserRouter>,
+    );
+
+    const res = screen.queryAllByText("I am candidate", { exact: false });
+
+    expect(res.map((r) => r.textContent)).toEqual(
+      [0, 0, 1, 1, 2].map((i) => `I am candidate ${i}`),
+    );
   });
 });

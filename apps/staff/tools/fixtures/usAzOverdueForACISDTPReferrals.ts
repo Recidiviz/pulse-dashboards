@@ -26,7 +26,7 @@ export const usAzOverdueForACISDTPReferrals =
       externalId: "AZ_RES007",
       eligibleCriteria: {
         usAzIncarcerationPastAcisDtpDate: {
-          acisDtpDate: "2023-10-10",
+          acisDtpDate: "2023-10-18",
         },
       },
       ineligibleCriteria: {},
@@ -37,7 +37,7 @@ export const usAzOverdueForACISDTPReferrals =
       externalId: "AZ_RES008",
       eligibleCriteria: {
         usAzIncarcerationPastAcisDtpDate: {
-          acisDtpDate: "2023-09-17",
+          acisDtpDate: "2023-09-13",
         },
       },
       ineligibleCriteria: {},

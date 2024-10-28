@@ -699,6 +699,10 @@ export class OpportunityBase<
     return undefined;
   }
 
+  get highlightCalloutText(): string {
+    throw Error(`Implement highlightCalloutText for ${this.type}`);
+  }
+
   // Used to optionally display information appended to an opportunity label
   get labelAddendum(): string | undefined {
     return undefined;

@@ -151,6 +151,7 @@ export interface Opportunity<
   selectId: string | undefined;
   firestoreUpdateDocId: string;
   denied: boolean;
+  highlightCalloutText: string;
   accordionKey: string;
 }
 

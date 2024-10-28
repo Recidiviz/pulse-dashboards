@@ -39,6 +39,8 @@ import {
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from ".";
+import { UsAzOverdueForAcisDtpOpportunity } from "./UsAz/UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpOpportunity";
+import { UsAzOverdueForAcisTprOpportunity } from "./UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprOpportunity";
 import { UsIdExpandedCRCOpportunity } from "./UsId";
 import { UsIdCRCResidentWorkerOpportunity } from "./UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
 import { UsIdCRCWorkReleaseOpportunity } from "./UsId/UsIdCRCWorkReleaseOpportunity";
@@ -63,50 +65,70 @@ import { UsTnCustodyLevelDowngradeOpportunity } from "./UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 
 export const opportunityConstructors = {
-  compliantReporting: CompliantReportingOpportunity,
-  earlyTermination: UsNdEarlyTerminationOpportunity,
+  // US_AZ
+  usAzOverdueForACISDTP: UsAzOverdueForAcisDtpOpportunity,
+  usAzOverdueForACISTPR: UsAzOverdueForAcisTprOpportunity,
+
+  // US_CA
+  usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,
+
+  // US_ID
+  usIdCRCResidentWorker: UsIdCRCResidentWorkerOpportunity,
+  usIdCRCWorkRelease: UsIdCRCWorkReleaseOpportunity,
   earnedDischarge: EarnedDischargeOpportunity,
+  usIdExpandedCRC: UsIdExpandedCRCOpportunity,
   LSU: LSUOpportunity,
   pastFTRD: UsIdPastFTRDOpportunity,
-  supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
-  usMiSupervisionLevelDowngrade: UsMiSupervisionLevelDowngradeOpportunity,
+
+  // US_MI
+  usMiAddInPersonSecurityClassificationCommitteeReview:
+    usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity,
   usMiClassificationReview: UsMiClassificationReviewOpportunity,
   usMiEarlyDischarge: UsMiEarlyDischargeOpportunity,
-  usTnExpiration: UsTnExpirationOpportunity,
-  usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
   usMiMinimumTelephoneReporting: UsMiMinimumTelephoneReportingOpportunity,
   usMiPastFTRD: UsMiPastFTRDOpportunity,
-  usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,
+  usMiReclassificationRequest: usMiReclassificationRequestOpportunity,
+  usMiSecurityClassificationCommitteeReview:
+    usMiSecurityClassificationCommitteeReviewOpportunity,
+  usMiSupervisionLevelDowngrade: UsMiSupervisionLevelDowngradeOpportunity,
+  usMiWardenInPersonSecurityClassificationCommitteeReview:
+    usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity,
+
+  // US_ME
+  usMeEarlyTermination: UsMeEarlyTerminationOpportunity,
+  usMeFurloughRelease: UsMeFurloughReleaseOpportunity,
+  usMeMediumTrustee: UsMeMediumTrusteeOpportunity,
+  usMeReclassificationReview: UsMeAnnualReclassificationOpportunity,
+  usMeSCCP: UsMeSCCPOpportunity,
+  usMeWorkRelease: UsMeWorkReleaseOpportunity,
+
+  // US_MO
+  usMoOverdueRestrictiveHousingInitialHearing:
+    UsMoOverdueRestrictiveHousingInitialHearingOpportunity,
+  usMoOverdueRestrictiveHousingRelease:
+    UsMoOverdueRestrictiveHousingReleaseOpportunity,
+  usMoOverdueRestrictiveHousingReviewHearing:
+    UsMoOverdueRestrictiveHousingReviewHearingOpportunity,
+
+  // US_ND
+  earlyTermination: UsNdEarlyTerminationOpportunity,
+
+  // US_OR
   usOrEarnedDischarge: UsOrEarnedDischargeOpportunity,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceOpportunity,
+
+  // US_PA
   usPaAdminSupervision: UsPaAdminSupervisionOpportunity,
   usPaSpecialCircumstancesSupervision:
     UsPaSpecialCircumstancesSupervisionOpportunity,
 
-  usIdCRCResidentWorker: UsIdCRCResidentWorkerOpportunity,
-  usIdCRCWorkRelease: UsIdCRCWorkReleaseOpportunity,
-  usIdExpandedCRC: UsIdExpandedCRCOpportunity,
-  usMeFurloughRelease: UsMeFurloughReleaseOpportunity,
-  usMeMediumTrustee: UsMeMediumTrusteeOpportunity,
-  usMeSCCP: UsMeSCCPOpportunity,
-  usMeWorkRelease: UsMeWorkReleaseOpportunity,
-  usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
+  // US_TN
   usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
-  usMoOverdueRestrictiveHousingRelease:
-    UsMoOverdueRestrictiveHousingReleaseOpportunity,
-  usMoOverdueRestrictiveHousingInitialHearing:
-    UsMoOverdueRestrictiveHousingInitialHearingOpportunity,
-  usMoOverdueRestrictiveHousingReviewHearing:
-    UsMoOverdueRestrictiveHousingReviewHearingOpportunity,
-  usMeReclassificationReview: UsMeAnnualReclassificationOpportunity,
-  usMiReclassificationRequest: usMiReclassificationRequestOpportunity,
-  usMiSecurityClassificationCommitteeReview:
-    usMiSecurityClassificationCommitteeReviewOpportunity,
-  usMiWardenInPersonSecurityClassificationCommitteeReview:
-    usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity,
-  usMiAddInPersonSecurityClassificationCommitteeReview:
-    usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity,
+  compliantReporting: CompliantReportingOpportunity,
+  usTnExpiration: UsTnExpirationOpportunity,
+  usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
+  supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
 } as const satisfies Record<
   OpportunityType,
   | (new (c: Resident, r: DocumentData) => Opportunity<Resident>)
