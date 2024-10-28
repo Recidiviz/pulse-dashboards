@@ -62,7 +62,13 @@ export class CaseStore {
         [caseId]: caseDetails,
       };
     } catch (error) {
-      captureException(error);
+      captureException(new Error("Error while loading case details"), {
+        extra: {
+          message: `loadCaseDetails error: ${error}`,
+          caseId,
+          staffId: this.psiStore.staffPseudoId,
+        },
+      });
       toast(
         "Something went wrong loading the case details. Please try again or contact us for support.",
         {
@@ -78,7 +84,14 @@ export class CaseStore {
       if (!updates) return;
       yield this.psiStore.apiClient.updateCaseDetails(caseId, updates);
     } catch (error) {
-      captureException(error);
+      captureException(new Error("Error while updating case details"), {
+        extra: {
+          message: `updateCaseDetails error: ${error}`,
+          payload: updates,
+          caseId,
+          staffId: this.psiStore.staffPseudoId,
+        },
+      });
       toast(
         "Something went wrong updating the case details. Please try again or contact us for support.",
         {
@@ -94,7 +107,15 @@ export class CaseStore {
       this.communityOpportunities =
         yield this.psiStore.apiClient.getCommunityOpportunities();
     } catch (error) {
-      captureException(error);
+      captureException(
+        new Error("Error while loading community opportunities"),
+        {
+          extra: {
+            message: `loadCommunityOpportunities error: ${error}`,
+            staffId: this.psiStore.staffPseudoId,
+          },
+        },
+      );
       toast(
         "Something went wrong loading the community opportunities. Please try again or contact us for support.",
         {
@@ -114,7 +135,12 @@ export class CaseStore {
         .sort((a, b) => a.name.localeCompare(b.name))
         .sort((a, b) => b.frequency - a.frequency);
     } catch (error) {
-      captureException(error);
+      captureException(new Error("Error while loading offenses"), {
+        extra: {
+          message: `loadOffenses error: ${error}`,
+          staffId: this.psiStore.staffPseudoId,
+        },
+      });
       toast(
         "Something went wrong loading a list of offenses. Please try again or contact us for support.",
         {
@@ -134,7 +160,17 @@ export class CaseStore {
       );
       return this.insight;
     } catch (error) {
-      captureException(error);
+      captureException(new Error("Error while loading insights"), {
+        extra: {
+          message: `loadInsight error: ${error}`,
+          payload: {
+            offense,
+            gender,
+            lsirScore,
+          },
+          staffId: this.psiStore.staffPseudoId,
+        },
+      });
       toast(
         "Something went wrong loading a list of offenses. Please try again or contact us for support.",
         {
