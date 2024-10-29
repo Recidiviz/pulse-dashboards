@@ -15,30 +15,69 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { protos, SearchServiceClient } from "@google-cloud/discoveryengine";
 import { TRPCError } from "@trpc/server";
 
 import { baseProcedure, router } from "~@case-notes-server/trpc/init";
 import { searchSchema } from "~@case-notes-server/trpc/schema";
-import {
-  extractCaseNotesResults,
-  formatFilterConditions,
-  getContentSearchSpec,
-} from "~@case-notes-server/trpc/utils";
+import { vertexSearch } from "~@case-notes-server/trpc/utils/ai";
+import { exactMatchSearch } from "~@case-notes-server/trpc/utils/exact-match";
 
-const DISCOVERY_ENGINE_API_ENDPOINT = "us-discoveryengine.googleapis.com";
-const LOCATION = "us";
-const COLLECTION_ID = "default_collection";
-const SERVING_CONFIG_ID = "default_config";
+type SearchResults = {
+  documentId: string | null | undefined;
+  date: Date | undefined;
+  contactMode: string | null | undefined;
+  type: string | null | undefined;
+  title: string | null | undefined;
+  preview: string | undefined;
+  fullText: string | null | undefined;
+}[];
 
-const PAGE_SIZE = 20;
-const QUERY_EXPANSION_CONDITION =
-  protos.google.cloud.discoveryengine.v1alpha.SearchRequest.QueryExpansionSpec
-    .Condition.AUTO;
-const SPELL_CORRECTION_MODE =
-  protos.google.cloud.discoveryengine.v1.SearchRequest.SpellCorrectionSpec.Mode
-    .AUTO;
-const AUTO_PAGINATE_SETTING = false;
+function sortResults(
+  vertexResults: SearchResults,
+  exactMatchResults: SearchResults,
+) {
+  const vertexResultIds = vertexResults.map((result) => result.documentId);
+  const exactMatchResultIds = exactMatchResults.map(
+    (result) => result.documentId,
+  );
+
+  // Split up the vertex results into exact match results and non-exact match results
+  const splitResults = vertexResults.reduce(
+    (
+      acc: {
+        exactMatchResults: SearchResults;
+        nonExactMatchResults: SearchResults;
+      },
+      result,
+    ) => {
+      if (exactMatchResultIds.includes(result.documentId)) {
+        acc.exactMatchResults.push(result);
+      } else {
+        acc.nonExactMatchResults.push(result);
+      }
+      return acc;
+    },
+    {
+      exactMatchResults: [],
+      nonExactMatchResults: [],
+    },
+  );
+
+  // Get the exact match results that are not in the vertex results
+  const nonVertexExactMatchResults = exactMatchResults.filter((result) => {
+    return !vertexResultIds.includes(result.documentId);
+  });
+
+  // Return results in this order:
+  // 1. Exact match results that are in the vertex results
+  // 2. Exact match results that are not in the vertex results
+  // 3. Non-exact match results
+  return [
+    ...splitResults.exactMatchResults,
+    ...nonVertexExactMatchResults,
+    ...splitResults.nonExactMatchResults,
+  ];
+}
 
 export const appRouter = router({
   search: baseProcedure
@@ -48,64 +87,51 @@ export const appRouter = router({
         input: { withSnippet, query, externalId, pageToken },
         ctx: { stateCode },
       }) => {
-        if (!process.env["PROJECT_ID"] || !process.env["ENGINE_ID"]) {
+        if (
+          !process.env["VERTEX_PROJECT_ID"] ||
+          !process.env["VERTEX_ENGINE_ID"] ||
+          !process.env["CASE_NOTES_BQ_TABLE_ADDRESS"]
+        ) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "Required env variables are not set",
           });
         }
 
-        const searchClient = new SearchServiceClient({
-          apiEndpoint: DISCOVERY_ENGINE_API_ENDPOINT,
-        });
-
         const includeFilterConditions = {
           external_id: externalId ? [externalId] : [],
           state_code: [stateCode],
         };
 
-        const contentSearchSpec = getContentSearchSpec(withSnippet);
-
-        const servingConfig =
-          searchClient.projectLocationCollectionEngineServingConfigPath(
-            process.env["PROJECT_ID"],
-            LOCATION,
-            COLLECTION_ID,
-            process.env["ENGINE_ID"],
-            SERVING_CONFIG_ID,
-          );
-
-        const filter = formatFilterConditions(includeFilterConditions);
-
-        const request = {
+        const { results: vertexResults, nextPageToken } = await vertexSearch({
+          withSnippet,
           query,
           pageToken,
-          servingConfig,
-          contentSearchSpec,
-          filter,
-          pageSize: PAGE_SIZE,
-          queryExpansionSpec: {
-            condition: QUERY_EXPANSION_CONDITION,
-          },
-          spellCorrectionSpec: {
-            mode: SPELL_CORRECTION_MODE,
-          },
-        } satisfies protos.google.cloud.discoveryengine.v1.ISearchRequest;
-
-        const [results, , response] = await searchClient.search(request, {
-          autoPaginate: AUTO_PAGINATE_SETTING,
+          includeFilterConditions,
+          projectId: process.env["VERTEX_PROJECT_ID"],
+          engineId: process.env["VERTEX_ENGINE_ID"],
         });
 
-        const extractedResults = extractCaseNotesResults(results).map(
-          (result, i) => ({
-            ...result,
-            relevanceOrder: i,
-          }),
-        );
+        let exactMatchResults: Awaited<ReturnType<typeof exactMatchSearch>> =
+          [];
+
+        // Only fetch exact match results if we're requesting the first page of results
+        if (!pageToken) {
+          exactMatchResults = await exactMatchSearch({
+            query,
+            projectId: process.env["VERTEX_PROJECT_ID"],
+            tableAddress: process.env["CASE_NOTES_BQ_TABLE_ADDRESS"],
+            includeFilterConditions,
+          });
+        }
+
+        const sortedResults = exactMatchResults.length
+          ? sortResults(vertexResults, exactMatchResults)
+          : vertexResults;
 
         return {
-          nextPageToken: response.nextPageToken,
-          results: extractedResults,
+          results: sortedResults,
+          nextPageToken,
         };
       },
     ),

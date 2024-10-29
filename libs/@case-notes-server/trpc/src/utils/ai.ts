@@ -15,21 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { protos } from "@google-cloud/discoveryengine";
+import { protos, SearchServiceClient } from "@google-cloud/discoveryengine";
 import { captureException } from "@sentry/node";
 import _ from "lodash";
 
+import { EXCLUDE_FILTER_CONDITIONS } from "~@case-notes-server/trpc/common/constants";
+import { IncludeFilterConditions } from "~@case-notes-server/trpc/common/types";
+
+const DISCOVERY_ENGINE_API_ENDPOINT = "us-discoveryengine.googleapis.com";
+const LOCATION = "us";
+const COLLECTION_ID = "default_collection";
+const SERVING_CONFIG_ID = "default_config";
+
+const PAGE_SIZE = 20;
+const QUERY_EXPANSION_CONDITION =
+  protos.google.cloud.discoveryengine.v1alpha.SearchRequest.QueryExpansionSpec
+    .Condition.AUTO;
+const SPELL_CORRECTION_MODE =
+  protos.google.cloud.discoveryengine.v1.SearchRequest.SpellCorrectionSpec.Mode
+    .AUTO;
+const AUTO_PAGINATE_SETTING = false;
+
 const MAX_EXTRACTIVE_ANSWER_COUNT = 1;
 
-const EXCLUDE_FILTER_CONDITIONS = {
-  note_type: [
-    "Investigation (Confidential)",
-    "Mental Health (Confidential)",
-    "FIAT - Confidential",
-  ],
-};
-
-export function getContentSearchSpec(withSnippet = false) {
+function getContentSearchSpec(withSnippet = false) {
   if (!withSnippet) {
     return undefined;
   }
@@ -45,10 +54,9 @@ export function getContentSearchSpec(withSnippet = false) {
   } satisfies protos.google.cloud.discoveryengine.v1.SearchRequest.IContentSearchSpec;
 }
 
-export function formatFilterConditions(includeFilterConditions: {
-  external_id: string[];
-  state_code: string[];
-}) {
+function formatFilterConditions(
+  includeFilterConditions: IncludeFilterConditions,
+) {
   const formattedConditions = [];
 
   formattedConditions.push(
@@ -74,7 +82,7 @@ export function formatFilterConditions(includeFilterConditions: {
   return formattedConditions.filter((v) => v !== undefined).join(" AND ");
 }
 
-export function extractCaseNotesResults(
+function extractCaseNotesResults(
   searchResults: protos.google.cloud.discoveryengine.v1.SearchResponse.ISearchResult[],
 ) {
   const results = [];
@@ -109,5 +117,67 @@ export function extractCaseNotesResults(
       );
     }
   }
+
   return results;
+}
+
+type VertexSearchArgs = {
+  withSnippet: boolean;
+  query: string;
+  includeFilterConditions: IncludeFilterConditions;
+  pageToken?: string;
+  projectId: string;
+  engineId: string;
+};
+
+export async function vertexSearch({
+  withSnippet,
+  query,
+  pageToken,
+  includeFilterConditions,
+  projectId,
+  engineId,
+}: VertexSearchArgs) {
+  const searchClient = new SearchServiceClient({
+    apiEndpoint: DISCOVERY_ENGINE_API_ENDPOINT,
+  });
+
+  const contentSearchSpec = getContentSearchSpec(withSnippet);
+
+  const servingConfig =
+    searchClient.projectLocationCollectionEngineServingConfigPath(
+      projectId,
+      LOCATION,
+      COLLECTION_ID,
+      engineId,
+      SERVING_CONFIG_ID,
+    );
+
+  const filter = formatFilterConditions(includeFilterConditions);
+
+  const request = {
+    query,
+    pageToken,
+    servingConfig,
+    contentSearchSpec,
+    filter,
+    pageSize: PAGE_SIZE,
+    queryExpansionSpec: {
+      condition: QUERY_EXPANSION_CONDITION,
+    },
+    spellCorrectionSpec: {
+      mode: SPELL_CORRECTION_MODE,
+    },
+  } satisfies protos.google.cloud.discoveryengine.v1.ISearchRequest;
+
+  const [results, , response] = await searchClient.search(request, {
+    autoPaginate: AUTO_PAGINATE_SETTING,
+  });
+
+  const extractedResults = extractCaseNotesResults(results);
+
+  return {
+    nextPageToken: response.nextPageToken ?? undefined,
+    results: extractedResults,
+  };
 }

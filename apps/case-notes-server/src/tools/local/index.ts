@@ -18,6 +18,7 @@
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import inquirer from "inquirer";
 import superjson from "superjson";
+import { parseArgs } from "util";
 
 import { AppRouter } from "~@case-notes-server/trpc";
 import { buildServer } from "~case-notes-server/server";
@@ -28,8 +29,26 @@ export const testPort = process.env["PORT"]
 export const testHost = process.env["HOST"] ?? "localhost";
 
 async function main() {
-  const stateCode = process.argv[2];
-  const query = process.argv[3];
+  const { values } = parseArgs({
+    options: {
+      stateCode: {
+        type: "string",
+      },
+      query: {
+        type: "string",
+      },
+      externalId: {
+        type: "string",
+      },
+    },
+    allowPositionals: true,
+  });
+
+  const { stateCode, query, externalId } = values;
+
+  console.log(
+    `Searching for "${query}" in state ${stateCode} with external ID ${externalId}`,
+  );
 
   if (!stateCode || !query) {
     throw Error("Missing required state code of query");
@@ -72,16 +91,24 @@ async function main() {
     transformer: superjson,
   });
 
-  const initialResults = await trpcClient.search.query({
-    query,
-  });
-
-  console.log(initialResults.results);
-
-  let nextPageToken = initialResults.nextPageToken;
   let keepSearching = true;
+  let nextPageToken = undefined;
 
   while (keepSearching) {
+    const nextResults = await trpcClient.search.query({
+      query,
+      externalId,
+      pageToken: nextPageToken ?? undefined,
+    });
+    console.log(nextResults.results);
+
+    nextPageToken = nextResults.nextPageToken;
+
+    if (!nextPageToken) {
+      console.log("No more results to show. Exiting search.");
+      break;
+    }
+
     const { response } = await inquirer.prompt({
       type: "confirm",
       name: "response",
@@ -90,15 +117,6 @@ async function main() {
     });
 
     keepSearching = response;
-
-    if (keepSearching) {
-      const nextResults = await trpcClient.search.query({
-        query,
-        pageToken: nextPageToken ?? undefined,
-      });
-      console.log(nextResults.results);
-      nextPageToken = nextResults.nextPageToken;
-    }
   }
 
   server.close();

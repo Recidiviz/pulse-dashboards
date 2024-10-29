@@ -56,9 +56,9 @@ const mockSearchFn = vi.fn().mockResolvedValue([
 ]);
 
 vi.mock("@google-cloud/discoveryengine", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual =
+    await importOriginal<typeof import("@google-cloud/discoveryengine")>();
   return {
-    // @ts-expect-error - TS doesn't know about the mock
     ...actual,
     SearchServiceClient: vi.fn().mockImplementation(() => {
       return {
@@ -74,6 +74,7 @@ describe("search", () => {
     const { results } = await testTRPCClient.search.query({
       query: "housing",
       externalId: "fake-external-id",
+      pageToken: "fake-page-token",
     });
 
     expect(results).toEqual([
@@ -87,7 +88,6 @@ describe("search", () => {
         title: "Address Change",
         preview:
           "During our meeting today, Alice was punctual and provided an update on her housing search. She has found a potential apartment and is hopeful about securing it soon. Her job is going well, and her manager has praised her dedication. Alice's sentencin",
-        relevanceOrder: 0,
       },
     ]);
   });

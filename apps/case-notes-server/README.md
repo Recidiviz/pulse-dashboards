@@ -42,4 +42,4 @@ In order to run these tests:
 
 ### Connecting to the staging Vertex engine using a local instance
 
-If you run `nx local case-notes-server {state code} {query}`, you can run a query pointing at the staging or production version of the Case Notes Vertex AI engine. By default, the command will use the `PROJECT_ID` and `ENGINE_ID` set in your `.env` file. If you'd like to use different variables, you can create a `.env.local` and put them in there.
+If you run `nx local case-notes-server --stateCode {state code} --query {query} --externalId {externalId}` (`externalId` is optional), you can run a query pointing at the staging or production version of the Case Notes Vertex AI engine. By default, the command will use the `PROJECT_ID` and `ENGINE_ID` set in your `.env` file. If you'd like to use different variables, you can create a `.env.local` and put them in there.
