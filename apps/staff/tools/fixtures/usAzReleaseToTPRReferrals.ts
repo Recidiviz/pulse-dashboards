@@ -15,69 +15,126 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityRecordBase } from "~datatypes";
-
+import { UsAzReleaseToTPRReferralRecord } from "../../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTPRReferralRecord";
 import { fixtureWithIdKey } from "./utils";
 
 export const usAzReleaseToTPRReferrals =
-  fixtureWithIdKey<OpportunityRecordBase>("externalId", [
+  fixtureWithIdKey<UsAzReleaseToTPRReferralRecord>("externalId", [
+    // Eligible - Fast Tracker
     {
       stateCode: "US_AZ",
       externalId: "AZ_RES001",
       eligibleCriteria: {
-        usAzFunctionalLiteracyComplete: {},
-        minimumOrMediumCustody: {},
-        usAzNotServingSexOffense: {},
-        usAzNotServingIneligibleOffense: {},
-        noFelonyDetainers: {},
-        usAzNoMajorViolation6Months: {},
+        usAzTime90DaysBeforeRelease: null,
+        usAzNoSexualOffenseConviction: null,
+        usAzNoArsonConviction: null,
+        usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
+          null,
+        usAzNoActiveFelonyDetainers: null,
+        custodyLevelIsMinimumOrMedium: null,
+        noNonviolentIncarcerationViolationWithin6Months: null,
+        usAzNoMajorViolentViolationDuringIncarceration: null,
+        usAzAtLeast24MonthsSinceLastCsed: null,
+        usAzIsUsCitizenOrLegalPermanentResident: null,
+        usAzNoUnsatisfactoryProgramRatingsWithin3Months: null,
+        usAzNoDangerousCrimesAgainstChildrenConviction: null,
+        usAzMeetsFunctionalLiteracy: null,
+        usAzNoTprDenialInCurrentIncarceration: null,
+        usAzNoTprRemovalsFromSelfImprovementPrograms: null,
       },
       ineligibleCriteria: {},
       caseNotes: {},
+      metadata: {
+        tabDescription: "FAST_TRACK",
+      },
     },
+    // Eligible - Approved by Time Comp
     {
       stateCode: "US_AZ",
       externalId: "AZ_RES002",
       eligibleCriteria: {
-        minimumOrMediumCustody: {},
-        usAzNotServingSexOffense: {},
-        usAzNotServingIneligibleOffense: {},
-        noFelonyDetainers: {},
-        usAzNoMajorViolation6Months: {},
+        usAzTime90DaysBeforeRelease: null,
+        usAzNoSexualOffenseConviction: null,
+        usAzNoArsonConviction: null,
+        usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
+          null,
+        usAzNoActiveFelonyDetainers: null,
+        custodyLevelIsMinimumOrMedium: null,
+        noNonviolentIncarcerationViolationWithin6Months: null,
+        usAzNoMajorViolentViolationDuringIncarceration: null,
+        usAzAtLeast24MonthsSinceLastCsed: null,
+        usAzIsUsCitizenOrLegalPermanentResident: null,
+        usAzNoUnsatisfactoryProgramRatingsWithin3Months: null,
+        usAzNoDangerousCrimesAgainstChildrenConviction: null,
+        usAzMeetsFunctionalLiteracy: null,
+        usAzNoTprDenialInCurrentIncarceration: null,
+        usAzNoTprRemovalsFromSelfImprovementPrograms: null,
       },
-      ineligibleCriteria: {
-        usAzFunctionalLiteracyComplete: {},
-      },
+      ineligibleCriteria: {},
       caseNotes: {},
+      metadata: {
+        tabDescription: "APPROVED_BY_TIME_COMP",
+      },
     },
+    // Almost Eligible - Missing functional literacy requirement, within 6 months
     {
       stateCode: "US_AZ",
       externalId: "AZ_RES003",
       eligibleCriteria: {
-        usAzFunctionalLiteracyComplete: {},
-        minimumOrMediumCustody: {},
-        usAzNotServingSexOffense: {},
-        usAzNotServingIneligibleOffense: {},
-        usAzNoMajorViolation6Months: {},
+        usAzTime90DaysBeforeRelease: null,
+        usAzNoSexualOffenseConviction: null,
+        usAzNoArsonConviction: null,
+        usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
+          null,
+        usAzNoActiveFelonyDetainers: null,
+        custodyLevelIsMinimumOrMedium: null,
+        noNonviolentIncarcerationViolationWithin6Months: null,
+        usAzNoMajorViolentViolationDuringIncarceration: null,
+        usAzAtLeast24MonthsSinceLastCsed: null,
+        usAzIsUsCitizenOrLegalPermanentResident: null,
+        usAzNoUnsatisfactoryProgramRatingsWithin3Months: null,
+        usAzNoDangerousCrimesAgainstChildrenConviction: null,
+        usAzNoTprDenialInCurrentIncarceration: null,
+        usAzNoTprRemovalsFromSelfImprovementPrograms: null,
       },
       ineligibleCriteria: {
-        noFelonyDetainers: {},
+        usAzMeetsFunctionalLiteracy: null,
       },
       caseNotes: {},
+      metadata: {
+        tabName: "ALMOST_ELIGIBLE_1",
+        tabDescription: "ALMOST_ELIGIBLE_MISSING_MANLIT_BETWEEN_7_AND_180_DAYS",
+      },
     },
+    // Almost Eligible - Missing criteria and 6+ months away
     {
       stateCode: "US_AZ",
       externalId: "AZ_RES004",
       eligibleCriteria: {
-        usAzFunctionalLiteracyComplete: {},
-        minimumOrMediumCustody: {},
-        usAzNotServingSexOffense: {},
-        usAzNotServingIneligibleOffense: {},
-        noFelonyDetainers: {},
+        usAzTime90DaysBeforeRelease: null,
+        usAzNoSexualOffenseConviction: null,
+        usAzNoArsonConviction: null,
+        usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
+          null,
+        custodyLevelIsMinimumOrMedium: null,
+        noNonviolentIncarcerationViolationWithin6Months: null,
+        usAzNoMajorViolentViolationDuringIncarceration: null,
+        usAzAtLeast24MonthsSinceLastCsed: null,
+        usAzIsUsCitizenOrLegalPermanentResident: null,
+        usAzNoUnsatisfactoryProgramRatingsWithin3Months: null,
+        usAzNoDangerousCrimesAgainstChildrenConviction: null,
+        usAzMeetsFunctionalLiteracy: null,
+        usAzNoTprDenialInCurrentIncarceration: null,
+        usAzNoTprRemovalsFromSelfImprovementPrograms: null,
       },
       ineligibleCriteria: {
-        usAzNoMajorViolation6Months: {},
+        usAzNoActiveFelonyDetainers: null,
       },
       caseNotes: {},
+      metadata: {
+        tabName: "ALMOST_ELIGIBLE_2",
+        tabDescription:
+          "ALMOST_ELIGIBLE_MISSING_CRITERIA_AND_BETWEEN_181_AND_365_DAYS",
+      },
     },
   ]);
