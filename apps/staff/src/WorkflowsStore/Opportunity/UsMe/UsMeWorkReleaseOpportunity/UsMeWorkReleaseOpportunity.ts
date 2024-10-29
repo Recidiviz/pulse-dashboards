@@ -34,11 +34,12 @@ const ELIGIBLE_CRITERIA_COPY: Record<
   OpportunityRequirement
 > = {
   usMeCustodyLevelIsMinimum: {
-    text: "Currently on minimum",
-    tooltip: "Currently on minimum custody",
+    text: "Currently on eligible custody level: minimum",
+    tooltip:
+      "The resident must be classified as community custody or minimum custody",
   },
   usMeThreeYearsRemainingOnSentence: {
-    text: "$MONTHS_REMAINING months remaining on sentence",
+    text: "Has three (3) years or fewer remaining on term: $MONTHS_REMAINING months remaining on sentence",
     tooltip:
       "No more than three (3) years remaining on the term(s) of imprisonment or, in the " +
       "case of a split sentence, on the unsuspended portion, after consideration of any " +
@@ -80,8 +81,13 @@ function hydrateThreeYearsRemainingRequirement(
   const monthsRemaining =
     differenceInMonths(criterion.eligibleDate, new Date()) + 36;
 
+  const pluralizedMonth = monthsRemaining === 1 ? "month" : "months";
+
   return {
-    text: copy.text.replace("$MONTHS_REMAINING", `${monthsRemaining}`),
+    text: copy.text.replace(
+      "$MONTHS_REMAINING months",
+      `${monthsRemaining} ${pluralizedMonth}`,
+    ),
     tooltip: copy.tooltip,
   };
 }

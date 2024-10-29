@@ -21,6 +21,12 @@ import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
 import { UsAzTransitionOverdueConfiguration } from "./UsAz/UsAzTransitionOverdueConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
+import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
+import { UsMeFurloughReleaseConfiguration } from "./UsMe/UsMeFurloughReleaseConfiguration";
+import { UsMeMediumTrusteeConfiguration } from "./UsMe/UsMeMediumTrusteeConfiguration";
+import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
+import { UsMeWorkReleaseConfiguration } from "./UsMe/UsMeWorkReleaseConfiguration";
+import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsNdMinimumCustodyConfiguration } from "./UsNd/UsNdMinimumCustodyConfiguration";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
@@ -35,6 +41,12 @@ const localCustomOpportunityConfigurations: Partial<
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
   pastFTRD: UsIdPastFTRD,
+  usMeSCCP: UsMeSCCPConfiguration,
+  usMeEarlyTermination: UsMeEarlyTerminationConfiguration,
+  usMeWorkRelease: UsMeWorkReleaseConfiguration,
+  usMeFurloughRelease: UsMeFurloughReleaseConfiguration,
+  usMeMediumTrustee: UsMeMediumTrusteeConfiguration,
+  usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
 };
 
 const adminPanelOnlyCustomOpportunityConfigurations: Partial<

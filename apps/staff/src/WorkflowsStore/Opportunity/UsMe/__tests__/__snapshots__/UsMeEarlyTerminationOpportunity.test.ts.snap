@@ -3,7 +3,7 @@
 exports[`almost eligible pending violation > requirements almost met 1`] = `
 [
   {
-    "text": "Violation Pending since Jan 1, 2023",
+    "text": "Violation pending since Jan 1, 2023",
     "tooltip": undefined,
   },
 ]
@@ -16,7 +16,7 @@ exports[`almost eligible pending violation > requirements met 1`] = `
     "tooltip": undefined,
   },
   {
-    "text": "Currently on medium",
+    "text": "Currently on eligible supervision level: medium",
     "tooltip": undefined,
   },
   {
@@ -40,7 +40,7 @@ with the court for early termination of probation.",
 exports[`almost eligible restitution owed > requirements almost met 1`] = `
 [
   {
-    "text": "Remaining Restitution Balance $500.00",
+    "text": "Remaining restitution balance $500.00",
     "tooltip": "In compliance with Department Policy (ACC) 9.6, Restitution and Fees, 
 under no circumstances may a Probation Officer make a motion for or agree to early 
 termination of probation if the probationer has not paid the total amount of restitution owed.",
@@ -55,7 +55,7 @@ exports[`almost eligible restitution owed > requirements met 1`] = `
     "tooltip": undefined,
   },
   {
-    "text": "Currently on medium",
+    "text": "Currently on eligible supervision level: medium",
     "tooltip": undefined,
   },
   {
@@ -68,7 +68,7 @@ period of probation is completed, the Probation Officer may file a motion
 with the court for early termination of probation.",
   },
   {
-    "text": "No Pending Violations",
+    "text": "No pending violations",
     "tooltip": undefined,
   },
 ]
@@ -81,7 +81,7 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": undefined,
   },
   {
-    "text": "Currently on medium",
+    "text": "Currently on eligible supervision level: medium",
     "tooltip": undefined,
   },
   {
@@ -100,7 +100,7 @@ period of probation is completed, the Probation Officer may file a motion
 with the court for early termination of probation.",
   },
   {
-    "text": "No Pending Violations",
+    "text": "No pending violations",
     "tooltip": undefined,
   },
 ]

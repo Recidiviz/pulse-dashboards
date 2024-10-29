@@ -222,12 +222,26 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return "Submitted";
   }
 
-  get omsCriteriaHeader() {
-    return "OMS Requirements";
+  get omsCriteriaHeader(): string {
+    switch (this.stateCode) {
+      case "US_ME":
+        return "Validated by data from CORIS";
+      case "US_MI":
+        return "Validated by data from COMS";
+      default:
+        return "Requirements validated by OMS data";
+    }
   }
 
   get nonOMSCriteriaHeader() {
-    return "Requirements to Check";
+    switch (this.stateCode) {
+      // Setting header for ME/MI explicitly in case we want to change the default
+      case "US_ME":
+      case "US_MI":
+        return "Requirements to check";
+      default:
+        return "Requirements to check";
+    }
   }
 
   get emptyTabCopy() {

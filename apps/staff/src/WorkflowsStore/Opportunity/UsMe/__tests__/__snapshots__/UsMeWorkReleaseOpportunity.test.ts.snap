@@ -3,11 +3,11 @@
 exports[`fully eligible > requirements met 1`] = `
 [
   {
-    "text": "Currently on minimum",
-    "tooltip": "Currently on minimum custody",
+    "text": "Currently on eligible custody level: minimum",
+    "tooltip": "The resident must be classified as community custody or minimum custody",
   },
   {
-    "text": "32 months remaining on sentence",
+    "text": "Has three (3) years or fewer remaining on term: 32 months remaining on sentence",
     "tooltip": "No more than three (3) years remaining on the term(s) of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311 (i.e., first day at the community transition site must be no more than three (3) years prior to the resident’s current custody release date).",
   },
   {

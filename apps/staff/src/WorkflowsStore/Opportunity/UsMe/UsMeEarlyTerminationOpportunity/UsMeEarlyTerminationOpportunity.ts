@@ -109,7 +109,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     if (supervisionLevelIsMediumOrLower?.supervisionLevel) {
       requirements.push({
-        text: `Currently on ${supervisionLevelIsMediumOrLower?.supervisionLevel.toLowerCase()}`,
+        text: `Currently on eligible supervision level: ${supervisionLevelIsMediumOrLower?.supervisionLevel.toLowerCase()}`,
         tooltip: CRITERIA.supervisionLevelIsMediumOrLower.tooltip,
       });
     }
@@ -145,7 +145,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       !usMeNoPendingViolationsWhileSupervised?.currentStatus
     ) {
       requirements.push({
-        text: `No Pending Violations`,
+        text: `No pending violations`,
         tooltip: CRITERIA.usMeNoPendingViolationsWhileSupervised.tooltip,
       });
     }
@@ -166,7 +166,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     if (usMeNoPendingViolationsWhileSupervised?.violationDate) {
       requirementsAlmostMet.push({
-        text: `Violation Pending since ${formatWorkflowsDate(
+        text: `Violation pending since ${formatWorkflowsDate(
           usMeNoPendingViolationsWhileSupervised?.violationDate,
         )}`,
         tooltip: CRITERIA.usMeNoPendingViolationsWhileSupervised.tooltip,
@@ -175,7 +175,7 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
 
     if (usMePaidAllOwedRestitution?.amountOwed) {
       requirementsAlmostMet.push({
-        text: `Remaining Restitution Balance ${formatAsCurrency(
+        text: `Remaining restitution balance ${formatAsCurrency(
           usMePaidAllOwedRestitution?.amountOwed,
         )}`,
         tooltip: CRITERIA.usMePaidAllOwedRestitution.tooltip,

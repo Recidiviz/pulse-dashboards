@@ -121,7 +121,9 @@ describe("almost eligible but for months remaining", () => {
   });
 
   test("almostEligibleStatusMessage", () => {
-    expect(opp.almostEligibleStatusMessage).toEqual("35 months until release");
+    expect(opp.almostEligibleStatusMessage).toEqual(
+      "Will reach 30 months or fewer remaining on term in 5 months",
+    );
   });
 });
 
@@ -140,7 +142,7 @@ describe("almost eligible but for months with days remaining", () => {
 
   test("almostEligibleStatusMessage with days", () => {
     expect(opp.almostEligibleStatusMessage).toEqual(
-      "30 months and 13 days until release",
+      "Will reach 30 months or fewer remaining on term in 13 days",
     );
   });
 });
@@ -217,7 +219,7 @@ describe("almost eligible but for fraction of sentence served", () => {
 
   test("almostEligibleStatusMessage", () => {
     expect(opp.almostEligibleStatusMessage).toMatchInlineSnapshot(
-      `"Needs to serve 5 more months on sentence."`,
+      `"Currently 5 months away from minimum time served requirement"`,
     );
   });
 });

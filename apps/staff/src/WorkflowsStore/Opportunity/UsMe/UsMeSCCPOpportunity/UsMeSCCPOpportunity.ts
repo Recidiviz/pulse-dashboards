@@ -33,11 +33,11 @@ const ELIGIBLE_CRITERIA_COPY: Record<
   OpportunityRequirement
 > = {
   usMeCustodyLevelIsMinimumOrCommunity: {
-    text: "Currently on $CUSTODY_LEVEL",
+    text: "Currently on eligible custody level: $CUSTODY_LEVEL",
     tooltip: "Currently on minimum or community custody",
   },
   usMeServedXPortionOfSentence: {
-    text: "$SERVED_CONDITION $MINIMUM_FRACTION of sentence",
+    text: "Has served minimum required time on term: $SERVED_CONDITION $MINIMUM_FRACTION of sentence",
     tooltip:
       "Served at least $MINIMUM_FRACTION of the term of imprisonment imposed or, in the case of " +
       "a split sentence, at least $MINIMUM_FRACTION of the unsuspended portion, after consideration of any " +
@@ -47,7 +47,7 @@ const ELIGIBLE_CRITERIA_COPY: Record<
       "unsuspended portion is $LENGTH_CONDITION.",
   },
   usMeXMonthsRemainingOnSentence: {
-    text: "$MONTHS_REMAINING months remaining on sentence",
+    text: "Has 30 or fewer months remaining on term: $MONTHS_REMAINING months remaining on sentence",
     tooltip:
       "No more than thirty (30) months remaining on the term of imprisonment or, " +
       "in the case of a split sentence, on the unsuspended portion, after consideration " +
@@ -82,7 +82,7 @@ const INELIGIBLE_CRITERIA_COPY = {
     tooltip: ELIGIBLE_CRITERIA_COPY.usMeNoClassAOrBViolationFor90Days.tooltip,
   },
   usMeServedXPortionOfSentence: {
-    text: "Needs to serve $TIME_REMAINING more $TIME_UNIT on sentence.",
+    text: "Currently $TIME_REMAINING $TIME_UNIT away from minimum time served requirement",
     tooltip: ELIGIBLE_CRITERIA_COPY.usMeServedXPortionOfSentence.tooltip,
   },
 };
@@ -92,10 +92,15 @@ export function hydrateXMonthsRemainingRequirement(
   copy: OpportunityRequirement,
 ) {
   const monthsRemaining =
-    differenceInMonths(criterion.eligibleDate, new Date()) + 30;
+    differenceInMonths(criterion.eligibleDate, new Date()) + 36;
+
+  const pluralizedMonth = monthsRemaining === 1 ? "month" : "months";
 
   return {
-    text: copy.text.replace("$MONTHS_REMAINING", `${monthsRemaining}`),
+    text: copy.text.replace(
+      "$MONTHS_REMAINING months",
+      `${monthsRemaining} ${pluralizedMonth}`,
+    ),
     tooltip: copy.tooltip,
   };
 }
@@ -283,16 +288,18 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
       const { eligibleDate } = usMeXMonthsRemainingOnSentence;
 
       const monthsRemaining = differenceInMonths(eligibleDate, new Date());
-      let daysRemaining;
+      let remainingText =
+        monthsRemaining === 1
+          ? `${monthsRemaining} month`
+          : `${monthsRemaining} months`;
       if (monthsRemaining === 0) {
-        daysRemaining = `and ${differenceInDays(
-          eligibleDate,
-          new Date(),
-        )} days `;
+        const daysRemaining = differenceInDays(eligibleDate, new Date());
+        remainingText =
+          daysRemaining === 1
+            ? `${daysRemaining} day`
+            : `${daysRemaining} days`;
       }
-      return `${monthsRemaining + 30} months ${
-        daysRemaining || ""
-      }until release`;
+      return `Will reach 30 months or fewer remaining on term in ${remainingText}`;
     }
 
     if (usMeNoClassAOrBViolationFor90Days) {
