@@ -7,12 +7,12 @@ exports[`almost eligible but for class A/B discipline > requirements met 1`] = `
     "tooltip": "Currently on minimum or community custody",
   },
   {
-    "text": "Has served minimum required time on term: Served at least 1/2 of sentence",
-    "tooltip": "Served at least 1/2 of the term of imprisonment imposed or, in the case of a split sentence, at least 1/2 of the unsuspended portion, after consideration of any deductions that the prisoner has received and retained under Title 17A, section 2302, subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or section 2311 if the term of imprisonment or, in the case of a split sentence, the unsuspended portion is 5 years or less.",
-  },
-  {
     "text": "Has 30 or fewer months remaining on term: 30 months remaining on sentence",
     "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+  },
+  {
+    "text": "Has served minimum required time on term: Served at least 1/2 of sentence",
+    "tooltip": "Served at least 1/2 of the term of imprisonment imposed or, in the case of a split sentence, at least 1/2 of the unsuspended portion, after consideration of any deductions that the prisoner has received and retained under Title 17A, section 2302, subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or section 2311 if the term of imprisonment or, in the case of a split sentence, the unsuspended portion is 5 years or less.",
   },
   {
     "text": "No detainers, warrants, or other pending holds",
@@ -92,8 +92,8 @@ exports[`almost eligible but for months remaining > requirements met 2`] = `
 
 exports[`eligible with future x portion date 1`] = `
 {
-  "text": "Has served minimum required time on term: Within 62 days of having served 2/3 of sentence",
-  "tooltip": "Served at least 2/3 of the term of imprisonment imposed or, in the case of a split sentence, at least 2/3 of the unsuspended portion, after consideration of any deductions that the prisoner has received and retained under Title 17A, section 2302, subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or section 2311 if the term of imprisonment or, in the case of a split sentence, the unsuspended portion is more than 5 years.",
+  "text": "Has 30 or fewer months remaining on term: 32 months remaining on sentence",
+  "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
 }
 `;
 
@@ -104,12 +104,12 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": "Currently on minimum or community custody",
   },
   {
-    "text": "Has served minimum required time on term: Served at least 2/3 of sentence",
-    "tooltip": "Served at least 2/3 of the term of imprisonment imposed or, in the case of a split sentence, at least 2/3 of the unsuspended portion, after consideration of any deductions that the prisoner has received and retained under Title 17A, section 2302, subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or section 2311 if the term of imprisonment or, in the case of a split sentence, the unsuspended portion is more than 5 years.",
-  },
-  {
     "text": "Has 30 or fewer months remaining on term: 32 months remaining on sentence",
     "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
+  },
+  {
+    "text": "Has served minimum required time on term: Served at least 2/3 of sentence",
+    "tooltip": "Served at least 2/3 of the term of imprisonment imposed or, in the case of a split sentence, at least 2/3 of the unsuspended portion, after consideration of any deductions that the prisoner has received and retained under Title 17A, section 2302, subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or section 2311 if the term of imprisonment or, in the case of a split sentence, the unsuspended portion is more than 5 years.",
   },
   {
     "text": "No detainers, warrants, or other pending holds",
@@ -124,7 +124,7 @@ exports[`fully eligible > requirements met 1`] = `
 
 exports[`requirements for half sentence served 1`] = `
 {
-  "text": "Has served minimum required time on term: Served at least 1/2 of sentence",
-  "tooltip": "Served at least 1/2 of the term of imprisonment imposed or, in the case of a split sentence, at least 1/2 of the unsuspended portion, after consideration of any deductions that the prisoner has received and retained under Title 17A, section 2302, subsection 1; section 2305; section 2307; section 2308; section 2309; section 2310; or section 2311 if the term of imprisonment or, in the case of a split sentence, the unsuspended portion is 5 years or less.",
+  "text": "Has 30 or fewer months remaining on term: 30 months remaining on sentence",
+  "tooltip": "No more than thirty (30) months remaining on the term of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 23017-2311, if the commissioner, or designee, determines that the average statewide case load is no more than ninety (90) adult community corrections clients to one probation officer.",
 }
 `;

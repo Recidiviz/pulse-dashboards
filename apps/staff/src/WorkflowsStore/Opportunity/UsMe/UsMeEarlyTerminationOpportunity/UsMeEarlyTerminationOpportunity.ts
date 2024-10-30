@@ -97,24 +97,6 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
     } = this.record;
 
     if (
-      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart.eligibleDate
-    ) {
-      requirements.push({
-        text: `Served 1/2 of probation term`,
-        tooltip:
-          CRITERIA.usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart
-            .tooltip,
-      });
-    }
-
-    if (supervisionLevelIsMediumOrLower?.supervisionLevel) {
-      requirements.push({
-        text: `Currently on eligible supervision level: ${supervisionLevelIsMediumOrLower?.supervisionLevel.toLowerCase()}`,
-        tooltip: CRITERIA.supervisionLevelIsMediumOrLower.tooltip,
-      });
-    }
-
-    if (
       usMePaidAllOwedRestitution &&
       usMePaidAllOwedRestitution?.amountOwed === 0
     ) {
@@ -133,10 +115,34 @@ export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
       });
     }
 
+    if (
+      usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart.eligibleDate
+    ) {
+      requirements.push({
+        text: `Served 1/2 of probation term`,
+        tooltip:
+          CRITERIA.usMeSupervisionPastHalfFullTermReleaseDateFromProbationStart
+            .tooltip,
+      });
+    }
+
     if (!noConvictionWithin6Months?.latestConvictions) {
       requirements.push({
         text: `No new convictions in the past 6 months`,
         tooltip: CRITERIA.noConvictionWithin6Months.tooltip,
+      });
+    }
+
+    if (supervisionLevelIsMediumOrLower?.supervisionLevel) {
+      // The supervision level in the record is actually a risk level, so get the
+      // supervision level from the person record instead
+      const supervisionLevel = this.person.record.supervisionLevel;
+      const supervisionLevelText = supervisionLevel
+        ? `Currently on eligible supervision level: ${supervisionLevel.toLowerCase()}`
+        : `Currently on eligible supervision level`;
+      requirements.push({
+        text: supervisionLevelText,
+        tooltip: CRITERIA.supervisionLevelIsMediumOrLower.tooltip,
       });
     }
 

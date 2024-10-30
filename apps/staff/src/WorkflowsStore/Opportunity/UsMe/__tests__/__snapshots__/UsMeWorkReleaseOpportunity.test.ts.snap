@@ -7,16 +7,16 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": "The resident must be classified as community custody or minimum custody",
   },
   {
-    "text": "Has three (3) years or fewer remaining on term: 32 months remaining on sentence",
+    "text": "Served at least 30 days at current facility",
+    "tooltip": "Served at least thirty (30) days of the term of imprisonment in the facility providing the community transition program",
+  },
+  {
+    "text": "Has three (3) years or fewer remaining on term: 32 months remaining",
     "tooltip": "No more than three (3) years remaining on the term(s) of imprisonment or, in the case of a split sentence, on the unsuspended portion, after consideration of any deductions that the resident has received and retained under Title 17-A, Sections 2302(1), 2305, and 2307 to 2311 (i.e., first day at the community transition site must be no more than three (3) years prior to the resident’s current custody release date).",
   },
   {
     "text": "No detainers, warrants, or other pending holds",
     "tooltip": "Must have no detainers, warrants, or other pending holds preventing participation in a community program as set out in Department Policy (AF) 23.1, Classification System.",
-  },
-  {
-    "text": "Served at least 30 days at current facility",
-    "tooltip": "Served at least thirty (30) days of the term of imprisonment in the facility providing the community transition program",
   },
   {
     "text": "No Class A or B disciplines pending or occurring in the past 90 days",

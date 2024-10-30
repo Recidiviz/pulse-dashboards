@@ -178,20 +178,20 @@ const requirementsForEligibleCriteria = (
     requirements.push(usMeCustodyLevelIsMinimumOrCommunity);
   }
 
-  if (criteria.usMeServedXPortionOfSentence) {
-    requirements.push(
-      hydrateServedXPortionOfSentence(
-        criteria.usMeServedXPortionOfSentence,
-        usMeServedXPortionOfSentence,
-      ),
-    );
-  }
-
   if (criteria.usMeXMonthsRemainingOnSentence) {
     requirements.push(
       hydrateXMonthsRemainingRequirement(
         criteria.usMeXMonthsRemainingOnSentence,
         usMeXMonthsRemainingOnSentence,
+      ),
+    );
+  }
+
+  if (criteria.usMeServedXPortionOfSentence) {
+    requirements.push(
+      hydrateServedXPortionOfSentence(
+        criteria.usMeServedXPortionOfSentence,
+        usMeServedXPortionOfSentence,
       ),
     );
   }

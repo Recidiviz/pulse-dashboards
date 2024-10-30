@@ -39,7 +39,7 @@ const ELIGIBLE_CRITERIA_COPY: Record<
       "The resident must be classified as community custody or minimum custody",
   },
   usMeThreeYearsRemainingOnSentence: {
-    text: "Has three (3) years or fewer remaining on term: $MONTHS_REMAINING months remaining on sentence",
+    text: "Has three (3) years or fewer remaining on term: $MONTHS_REMAINING months remaining",
     tooltip:
       "No more than three (3) years remaining on the term(s) of imprisonment or, in the " +
       "case of a split sentence, on the unsuspended portion, after consideration of any " +
@@ -109,6 +109,12 @@ const requirementsForEligibleCriteria = (
     requirements.push(usMeCustodyLevelIsMinimum);
   }
 
+  if (criteria.usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease) {
+    requirements.push(
+      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease,
+    );
+  }
+
   if (criteria.usMeThreeYearsRemainingOnSentence) {
     requirements.push(
       hydrateThreeYearsRemainingRequirement(
@@ -120,12 +126,6 @@ const requirementsForEligibleCriteria = (
 
   if (criteria.usMeNoDetainersWarrantsOrOther === null) {
     requirements.push(usMeNoDetainersWarrantsOrOther);
-  }
-
-  if (criteria.usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease) {
-    requirements.push(
-      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease,
-    );
   }
 
   if (criteria.usMeNoClassAOrBViolationFor90Days === null) {

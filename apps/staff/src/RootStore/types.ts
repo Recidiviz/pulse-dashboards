@@ -191,6 +191,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         lastSyncedDate: undefined,
         // Undefined so that Recidiviz users see both FVs in staging
         usOrEarnedDischargeSentence: undefined,
+        personSpecificOppBanners: undefined,
       };
 
 export type LanternMethodologyByTenant = {

@@ -12,18 +12,14 @@ exports[`almost eligible pending violation > requirements almost met 1`] = `
 exports[`almost eligible pending violation > requirements met 1`] = `
 [
   {
-    "text": "Served 1/2 of probation term",
-    "tooltip": undefined,
-  },
-  {
-    "text": "Currently on eligible supervision level: medium",
-    "tooltip": undefined,
-  },
-  {
     "text": "No restitution owed",
     "tooltip": "In compliance with Department Policy (ACC) 9.6, Restitution and Fees, 
 under no circumstances may a Probation Officer make a motion for or agree to early 
 termination of probation if the probationer has not paid the total amount of restitution owed.",
+  },
+  {
+    "text": "Served 1/2 of probation term",
+    "tooltip": undefined,
   },
   {
     "text": "No new convictions in the past 6 months",
@@ -33,6 +29,10 @@ is sentenced to an unsuspended term of imprisonment which is concurrent with the
 period of probation and the term of imprisonment will not expire until the
 period of probation is completed, the Probation Officer may file a motion
 with the court for early termination of probation.",
+  },
+  {
+    "text": "Currently on eligible supervision level: medium",
+    "tooltip": undefined,
   },
 ]
 `;
@@ -55,10 +55,6 @@ exports[`almost eligible restitution owed > requirements met 1`] = `
     "tooltip": undefined,
   },
   {
-    "text": "Currently on eligible supervision level: medium",
-    "tooltip": undefined,
-  },
-  {
     "text": "No new convictions in the past 6 months",
     "tooltip": "In addition, whenever a person on probation is convicted of a new crime 
 during the period of probation, the probation is not revoked, and the person
@@ -66,6 +62,10 @@ is sentenced to an unsuspended term of imprisonment which is concurrent with the
 period of probation and the term of imprisonment will not expire until the
 period of probation is completed, the Probation Officer may file a motion
 with the court for early termination of probation.",
+  },
+  {
+    "text": "Currently on eligible supervision level: medium",
+    "tooltip": undefined,
   },
   {
     "text": "No pending violations",
@@ -77,18 +77,14 @@ with the court for early termination of probation.",
 exports[`fully eligible > requirements met 1`] = `
 [
   {
-    "text": "Served 1/2 of probation term",
-    "tooltip": undefined,
-  },
-  {
-    "text": "Currently on eligible supervision level: medium",
-    "tooltip": undefined,
-  },
-  {
     "text": "Paid all owed restitution",
     "tooltip": "In compliance with Department Policy (ACC) 9.6, Restitution and Fees, 
 under no circumstances may a Probation Officer make a motion for or agree to early 
 termination of probation if the probationer has not paid the total amount of restitution owed.",
+  },
+  {
+    "text": "Served 1/2 of probation term",
+    "tooltip": undefined,
   },
   {
     "text": "No new convictions in the past 6 months",
@@ -98,6 +94,10 @@ is sentenced to an unsuspended term of imprisonment which is concurrent with the
 period of probation and the term of imprisonment will not expire until the
 period of probation is completed, the Probation Officer may file a motion
 with the court for early termination of probation.",
+  },
+  {
+    "text": "Currently on eligible supervision level: medium",
+    "tooltip": undefined,
   },
   {
     "text": "No pending violations",
