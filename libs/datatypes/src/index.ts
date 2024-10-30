@@ -16,8 +16,17 @@
 // =============================================================================
 
 // =============================================================================
+// Milestones
+// =============================================================================
+
+export * from "./milestones/schema";
+export * from "./milestones/types";
+
+// =============================================================================
 // Opportunities
 // =============================================================================
+
+export * from "./opportunities/OpportunityType";
 
 // UsMe Exports: Includes fixtures and schema related to US-ME opportunities
 // -----------------------------------------------------------------------------
@@ -56,6 +65,12 @@ export * from "./opportunities/utils/types";
 
 export type * from "./people/JusticeInvolvedPerson/schema";
 
+// Client Exports: Includes utils and schema related to Clients
+// -----------------------------------------------------------------------------
+export * from "./people/Client/fixture";
+export * from "./people/Client/schema";
+export * from "./people/Client/utils";
+
 // Resident Exports: Includes fixtures and schema related to Residents
 // -----------------------------------------------------------------------------
 export * from "./people/Resident/fixtures";
@@ -82,6 +97,10 @@ export * from "./people/utils/addDisplayName";
 export * from "./people/utils/fullNameSchema";
 export * from "./people/utils/preprocessSchemaWithCaseloadCategoryOrType";
 export * from "./people/utils/types";
+
+// Workflows JII Exports: Common utilities for people
+// -----------------------------------------------------------------------------
+export type * from "./people/WorkflowsJusticeInvolvedPerson/schema";
 
 // =============================================================================
 // Config

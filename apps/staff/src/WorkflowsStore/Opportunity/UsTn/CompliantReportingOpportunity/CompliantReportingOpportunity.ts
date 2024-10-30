@@ -18,12 +18,13 @@
 import { add, differenceInCalendarDays, isEqual } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 
+import { OpportunityType } from "~datatypes";
+
 import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
 import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { formatWorkflowsDate, pluralizeWord } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OpportunityType } from "../..";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement, OpportunityStatus } from "../../types";

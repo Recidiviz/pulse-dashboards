@@ -20,7 +20,11 @@ import { DocumentData } from "firebase/firestore";
 import { intersection } from "lodash";
 import { makeAutoObservable, runInAction, set } from "mobx";
 
-import { OpportunityRecordBase, opportunitySchemaBase } from "~datatypes";
+import {
+  OpportunityRecordBase,
+  opportunitySchemaBase,
+  OpportunityType,
+} from "~datatypes";
 import {
   compositeHydrationState,
   Hydratable,
@@ -33,7 +37,6 @@ import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPerson } from "../types";
 import { OpportunityBase } from "./OpportunityBase";
 import { opportunityConstructors } from "./opportunityConstructors";
-import { OpportunityType } from "./OpportunityType";
 import { OpportunityManagerInterface, OpportunityMapping } from "./types";
 
 /**

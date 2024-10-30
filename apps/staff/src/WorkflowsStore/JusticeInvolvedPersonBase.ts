@@ -17,7 +17,7 @@
 
 import { action, computed, makeObservable, observable } from "mobx";
 
-import { FullName, StaffRecord } from "~datatypes";
+import { FullName, OpportunityType, StaffRecord, WorkflowsJusticeInvolvedPersonRecord } from "~datatypes";
 
 import { SearchField } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
@@ -25,7 +25,6 @@ import {
   ContactMethodType,
   PersonUpdateRecord,
   PersonUpdateType,
-  WorkflowsJusticeInvolvedPersonRecord,
 } from "../FirestoreStore";
 import { RootStore } from "../RootStore";
 import { TaskFactory } from "./Client";
@@ -33,7 +32,6 @@ import {
   Opportunity,
   OpportunityManagerInterface,
   OpportunityMapping,
-  OpportunityType,
 } from "./Opportunity";
 import { OpportunityManager } from "./Opportunity/OpportunityManager";
 import { CollectionDocumentSubscription } from "./subscriptions";

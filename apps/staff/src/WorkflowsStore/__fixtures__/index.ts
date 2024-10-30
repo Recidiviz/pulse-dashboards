@@ -16,22 +16,22 @@
 // =============================================================================
 
 import {
+  ClientRecord,
   incarcerationStaffFixtures,
   IncarcerationStaffRecord,
+  OpportunityType,
   outputFixtureArray,
   supervisionStaffFixtures,
   SupervisionStaffRecord,
 } from "~datatypes";
 
 import {
-  ClientRecord,
   CombinedUserRecord,
   isUserRecord,
   LocationRecord,
   UserRecord,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
-import { OpportunityType } from "../Opportunity";
 import { dateToTimestamp } from "../utils";
 
 const userInfoFixtures = outputFixtureArray(supervisionStaffFixtures).filter(
@@ -84,13 +84,13 @@ export const ineligibleClient: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "TN PAROLEE",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2020-12-20"),
+  supervisionLevelStart: new Date("2020-12-20"),
   address: "123 Main St, Nashville, TN 12345",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2025-12-31"),
+  expirationDate: new Date("2025-12-31"),
   currentBalance: 0,
   lastPaymentAmount: 50,
-  lastPaymentDate: dateToTimestamp("2021-11-15"),
+  lastPaymentDate: new Date("2021-11-15"),
   specialConditions: ["SPECIAL CONDITIONS TEST TEST"],
   allEligibleOpportunities: [],
   personType: "CLIENT",
@@ -143,10 +143,10 @@ export const eligibleClient: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "TN PROBATIONER",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   address: "123 Main St, Nashville, TN 12345",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
@@ -183,10 +183,10 @@ export const lsuEligibleClient: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "MISDEMEANOR PROBATIONER",
   supervisionLevel: "STANDARD: MINIMUM",
-  supervisionLevelStart: dateToTimestamp("2021-07-05"),
+  supervisionLevelStart: new Date("2021-07-05"),
   address: "123 Main St, Nashville, TN 12345",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   allEligibleOpportunities: ["LSU"],
@@ -223,10 +223,10 @@ export const lsuAlmostEligibleClient: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "MISDEMEANOR PROBATIONER",
   supervisionLevel: "STANDARD: MINIMUM",
-  supervisionLevelStart: dateToTimestamp("2021-07-05"),
+  supervisionLevelStart: new Date("2021-07-05"),
   address: "123 Main St, Nashville, TN 12345",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   allEligibleOpportunities: ["LSU"],

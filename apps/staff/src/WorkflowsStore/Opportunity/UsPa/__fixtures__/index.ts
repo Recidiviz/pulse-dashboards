@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord } from "../../../../FirestoreStore";
-import { dateToTimestamp } from "../../../utils";
+import { ClientRecord } from "~datatypes";
+
 import { UsPaAdminSupervisionReferralRecordRaw } from "../UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 
 export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRecordRaw =
@@ -56,10 +56,10 @@ export const usPaAdminSupervisionEligibleClientRecord: ClientRecord = {
   officerId: "OFFICER3",
   supervisionType: "PROBATION",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   allEligibleOpportunities: ["usPaAdminSupervision"],
   personType: "CLIENT",
 };

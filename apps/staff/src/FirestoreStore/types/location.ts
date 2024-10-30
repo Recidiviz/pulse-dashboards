@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ClientRecord } from "~datatypes";
+
 import { SystemId } from "../../core/models/types";
-import { ClientRecord, WorkflowsResidentRecord } from "./person";
+import { WorkflowsResidentRecord } from "./person";
 
 export type LocationRecord = {
   stateCode: string;

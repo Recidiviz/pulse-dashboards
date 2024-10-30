@@ -23,7 +23,9 @@ import prompts from "prompts";
 import { z } from "zod";
 
 import {
+  clientRecordSchema,
   incarcerationStaffRecordSchema,
+  OpportunityType,
   residentRecordSchema,
   supervisionStaffRecordSchema,
   usMeAnnualReclassificationSchema,
@@ -35,7 +37,6 @@ import {
 } from "~datatypes";
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
-import { OpportunityType } from "../src/WorkflowsStore";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity";
@@ -143,6 +144,10 @@ const OTHER_SCHEMAS = {
   supervisionStaff: {
     schema: supervisionStaffRecordSchema,
     firestoreCollection: "supervisionStaff",
+  },
+  clients: {
+    schema: clientRecordSchema,
+    firestoreCollection: "clients",
   },
 };
 

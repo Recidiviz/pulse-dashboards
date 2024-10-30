@@ -22,6 +22,7 @@ import { action, computed, flowResult, makeObservable, observable } from "mobx";
 import {
   ExcludedSupervisionOfficer,
   OpportunityInfo,
+  OpportunityType,
   SupervisionOfficer,
   SupervisionOfficerSupervisor,
   SupervisionOfficerWithOpportunityDetails,
@@ -29,7 +30,7 @@ import {
 import { castToError, HydratesFromSource, isHydrated } from "~hydration-utils";
 
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
-import { Opportunity, OpportunityType } from "../../WorkflowsStore/Opportunity";
+import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore/types";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";

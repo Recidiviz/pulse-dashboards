@@ -20,10 +20,10 @@ import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
+import { OpportunityType } from "~datatypes";
 import { isHydrationStarted } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 
 type OpportunitiesHydratorProps = {
   initial: React.ReactNode;

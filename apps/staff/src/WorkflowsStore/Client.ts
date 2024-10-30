@@ -22,19 +22,22 @@ import { action, makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 import { toast } from "react-hot-toast";
 
-import { SearchField } from "../core/models/types";
-import { workflowsUrl } from "../core/views";
 import {
   ClientEmployer,
   ClientRecord,
   congratulationsMilestoneTypes,
-  DeclineReason,
   Milestone,
-  MilestonesMessage,
   MilestoneType,
-  PortionServedDates,
   profileMilestoneTypes,
   SpecialConditionCode,
+} from "~datatypes";
+
+import { SearchField } from "../core/models/types";
+import { workflowsUrl } from "../core/views";
+import {
+  DeclineReason,
+  MilestonesMessage,
+  PortionServedDates,
   TextMessageStatus,
   TextMessageStatuses,
 } from "../FirestoreStore/types";
@@ -49,7 +52,6 @@ import {
   clearPhoneNumberFormatting,
   formatSupervisionType,
   fractionalDateBetweenTwoDates,
-  optionalFieldToDate,
   OTHER_KEY,
 } from "./utils";
 
@@ -175,20 +177,16 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   updateRecord(record: ClientRecord): void {
     super.updateRecord(record);
-    this.supervisionLevelStart = optionalFieldToDate(
-      record.supervisionLevelStart,
-    );
+    this.supervisionLevelStart = record.supervisionLevelStart;
     this.address = record.address;
     this.rawPhoneNumber = record.phoneNumber;
-    this.expirationDate = optionalFieldToDate(record.expirationDate);
+    this.expirationDate = record.supervisionLevelStart;
     this.currentBalance = record.currentBalance;
-    this.lastPaymentDate = optionalFieldToDate(record.lastPaymentDate);
+    this.lastPaymentDate = record.supervisionLevelStart;
     this.lastPaymentAmount = record.lastPaymentAmount;
     this.probationSpecialConditions = record.specialConditions;
     this.paroleSpecialConditions = record.boardConditions ?? [];
-    this.supervisionStartDate = optionalFieldToDate(
-      record.supervisionStartDate,
-    );
+    this.supervisionStartDate = record.supervisionLevelStart;
     this.currentEmployers = record.currentEmployers;
     this.emailAddress = record.emailAddress;
 
@@ -241,8 +239,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   get portionServedDates(): PortionServedDates {
-    const startDate = optionalFieldToDate(this.record.supervisionStartDate);
-    const endDate = optionalFieldToDate(this.record.expirationDate);
+    const startDate = this.record.supervisionStartDate;
+    const endDate = this.record.expirationDate;
 
     const opportunityDates: PortionServedDates = [];
 

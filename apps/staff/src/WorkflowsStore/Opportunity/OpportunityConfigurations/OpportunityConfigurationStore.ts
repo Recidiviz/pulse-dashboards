@@ -19,13 +19,13 @@ import { mapValues, sortBy } from "lodash";
 import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
+import { OpportunityType } from "~datatypes";
 import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { mockOpportunityConfigs } from "../../../core/__tests__/testUtils";
 import { downloadZipFile } from "../../../core/Paperwork/utils";
 import { RootStore } from "../../../RootStore";
 import TENANTS from "../../../tenants";
-import { OpportunityType } from "../OpportunityType";
 import { OpportunityConfigurationAPI } from "./api/interface";
 import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfigurationAPIClient";
 import { OpportunityConfigurationOfflineAPIClient } from "./api/OpportunityConfigurationOfflineAPIClient";

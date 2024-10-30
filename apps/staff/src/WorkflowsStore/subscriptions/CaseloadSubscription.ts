@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { DocumentData, Query, query, where } from "firebase/firestore";
+import { z } from "zod";
 
 import type { FirestoreCollectionKey } from "~firestore-api";
 
@@ -35,8 +36,9 @@ export class CaseloadSubscription<
     workflowsStore: WorkflowsStore,
     firestoreCollectionKey: FirestoreCollectionKey,
     personType: RecordType["personType"],
+    parser?: z.ZodType<RecordType, any, any>,
   ) {
-    super();
+    parser ? super(parser.parse) : super();
     this.workflowsStore = workflowsStore;
     this.firestoreCollectionKey = firestoreCollectionKey;
     this.personType = personType;

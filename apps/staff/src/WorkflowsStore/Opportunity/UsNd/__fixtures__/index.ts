@@ -17,8 +17,8 @@
 
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord } from "../../../../FirestoreStore";
-import { dateToTimestamp } from "../../../utils";
+import { ClientRecord } from "~datatypes";
+
 import { UsNdEarlyTerminationReferralRecordRaw } from "../UsNdEarlyTerminationOpportunity";
 
 export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
@@ -37,15 +37,15 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
     officerId: "OFFICER3",
     supervisionType: "PROBATION",
     supervisionLevel: "MEDIUM",
-    supervisionLevelStart: dateToTimestamp("2019-12-20"),
+    supervisionLevelStart: new Date("2019-12-20"),
     address: "123 Bedrock Lane",
     phoneNumber: "5555555678",
-    expirationDate: dateToTimestamp("2024-12-31"),
+    expirationDate: new Date("2024-12-31"),
     allEligibleOpportunities: ["earlyTermination"],
-    supervisionStartDate: "2020-02-22",
+    supervisionStartDate: new Date("2020-02-22"),
     currentBalance: 0,
     lastPaymentAmount: 125.75,
-    lastPaymentDate: dateToTimestamp("2022-01-03"),
+    lastPaymentDate: new Date("2022-01-03"),
     specialConditions: [],
     boardConditions: [],
     currentEmployers: [

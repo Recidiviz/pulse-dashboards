@@ -17,7 +17,9 @@
 
 import { render, screen } from "@testing-library/react";
 
-import { Opportunity, OpportunityType } from "../../../../WorkflowsStore";
+import { OpportunityType } from "~datatypes";
+
+import { Opportunity } from "../../../../WorkflowsStore";
 import { OpportunityProfileProps } from "../../types";
 import { EligibilityDate } from "../EligibilityDate";
 

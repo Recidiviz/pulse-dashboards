@@ -17,8 +17,8 @@
 
 import {} from "date-fns";
 
-import { ClientRecord } from "../../../../FirestoreStore";
-import { dateToTimestamp } from "../../../utils";
+import { ClientRecord } from "~datatypes";
+
 import { EarnedDischargeReferralRecordRaw } from "../EarnedDischargeOpportunity";
 import { LSUReferralRecordRaw } from "../LSUOpportunity";
 import { UsIdPastFTRDReferralRecordRaw } from "../UsIdPastFTRDOpportunity";
@@ -36,10 +36,10 @@ export const ineligibleClientRecord: ClientRecord = {
   officerId: "OFFICER3",
   supervisionType: "PROBATION",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   allEligibleOpportunities: [],
   personType: "CLIENT",
 };

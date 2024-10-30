@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { z } from "zod";
+import { z } from "zod";
 
 /**
  * Standard format for bundling together a raw fixture with its parsed version.

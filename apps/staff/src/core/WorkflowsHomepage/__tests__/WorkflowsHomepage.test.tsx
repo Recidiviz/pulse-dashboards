@@ -19,12 +19,13 @@ import { render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
+import { OpportunityType } from "~datatypes";
+
 import {
   useFeatureVariants,
   useOpportunityConfigurations,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { OpportunityType } from "../../../WorkflowsStore";
 import { DENIED_UPDATE } from "../../../WorkflowsStore/Opportunity/testUtils";
 import {
   mockOpportunity,

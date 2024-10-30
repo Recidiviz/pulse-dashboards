@@ -18,11 +18,9 @@
 import { initial, join, last } from "lodash";
 import { flowResult } from "mobx";
 
-import {
-  JusticeInvolvedPerson,
-  Opportunity,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { OpportunityType } from "~datatypes";
+
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { SupervisionBasePresenter } from "../presenters/SupervisionBasePresenter";
 import {

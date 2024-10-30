@@ -20,7 +20,9 @@ import { deleteField } from "firebase/firestore";
 import { configure, runInAction } from "mobx";
 import { Mock } from "vitest";
 
-import { ClientRecord, MilestonesMessage } from "../../FirestoreStore";
+import { ClientRecord } from "~datatypes";
+
+import { MilestonesMessage } from "../../FirestoreStore";
 import FirestoreStore from "../../FirestoreStore/FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { APIStore } from "../../RootStore/APIStore";

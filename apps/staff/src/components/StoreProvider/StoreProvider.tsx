@@ -17,6 +17,8 @@
 
 import React, { useContext } from "react";
 
+import { OpportunityType } from "~datatypes";
+
 import FirestoreStore from "../../FirestoreStore";
 import { InsightsStore } from "../../InsightsStore/InsightsStore";
 import store, { RootStore } from "../../RootStore";
@@ -24,7 +26,6 @@ import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
 import type UserStore from "../../RootStore/UserStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { WorkflowsRootStore } from "../../WorkflowsStore/WorkflowsRootStore";
 

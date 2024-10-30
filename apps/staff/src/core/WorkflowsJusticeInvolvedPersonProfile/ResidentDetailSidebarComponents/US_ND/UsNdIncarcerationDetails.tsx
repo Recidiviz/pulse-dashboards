@@ -17,11 +17,10 @@
 
 import React from "react";
 
+import { fieldToDate } from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
-import {
-  fieldToDate,
-  optionalFieldToDate,
-} from "../../../../WorkflowsStore/utils";
+import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";
 import { DetailsSubheading, SecureDetailsContent } from "../../styles";
 import { ResidentProfileProps } from "../../types";
 

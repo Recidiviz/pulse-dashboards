@@ -31,8 +31,11 @@ import {
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
+  ClientRecord,
+  clientRecordSchema,
   IncarcerationStaffRecord,
   incarcerationStaffRecordSchema,
+  OpportunityType,
   StaffRecord,
   SupervisionStaffRecord,
   supervisionStaffRecordSchema,
@@ -60,7 +63,6 @@ import filterOptions, {
 } from "../core/utils/filterOptions";
 import { WorkflowsPage } from "../core/views";
 import {
-  ClientRecord,
   CombinedUserRecord,
   LocationRecord,
   MilestonesMessage,
@@ -75,7 +77,6 @@ import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
 import { Opportunity, OpportunityNotification } from "./Opportunity";
-import { OpportunityType } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { Resident } from "./Resident";
 import {
@@ -183,6 +184,7 @@ export class WorkflowsStore implements Hydratable {
       this,
       { key: "clients" },
       "CLIENT",
+      clientRecordSchema,
     );
     this.residentsSubscription =
       new CaseloadSubscription<WorkflowsResidentRecord>(

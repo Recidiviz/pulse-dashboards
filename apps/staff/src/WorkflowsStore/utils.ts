@@ -21,8 +21,7 @@ import { Timestamp } from "firebase/firestore";
 import { groupBy, mapValues } from "lodash";
 import moment from "moment";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import { shiftFixtureDate, StaffRecord } from "~datatypes";
+import { fieldToDate, OpportunityType, StaffRecord } from "~datatypes";
 
 import { SystemId } from "../core/models/types";
 import {
@@ -42,7 +41,6 @@ import {
   Opportunity,
   OpportunityTab,
   OpportunityTabGroup,
-  OpportunityType,
 } from "./Opportunity";
 import { StaffFilterFunction } from "./types";
 
@@ -92,25 +90,6 @@ export function formatFacilityHousingUnit(
     facilityId && unitId ? "/" : ""
   }${unitId ?? ""}`;
   return formattedFacilityHousingUnit;
-}
-
-/**
- * Given a raw field from Firestore, converts it to a Date.
- * When Demo or Offline Mode is active, it also applies a time shift so that
- * the date from demo fixture data is relevant to the current date.
- */
-export function fieldToDate(field: Timestamp | string): Date {
-  let result: Date;
-  if (typeof field === "string") {
-    result = parseISO(field);
-  } else {
-    result = field.toDate();
-  }
-  if (isDemoMode() || isOfflineMode()) {
-    result = shiftFixtureDate(result);
-  }
-
-  return result;
 }
 
 export function optionalFieldToDate(
@@ -310,3 +289,4 @@ export function getLinkToForm(
         });
   return linkToForm;
 }
+export { fieldToDate };

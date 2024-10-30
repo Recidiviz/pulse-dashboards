@@ -18,8 +18,9 @@
 import { identity } from "lodash";
 import { z } from "zod";
 
+import { fieldToDate } from "~datatypes";
+
 import { OpportunityValidationError } from "../../../../errors";
-import { fieldToDate } from "../../../utils";
 import {
   getUsTnExpirationValidator as getValidator,
   usTnExpirationSchema,

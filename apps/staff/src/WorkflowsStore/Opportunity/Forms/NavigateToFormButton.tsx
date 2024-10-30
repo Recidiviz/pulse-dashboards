@@ -20,6 +20,8 @@ import { darken, rem } from "polished";
 import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { OpportunityType } from "~datatypes";
+
 import {
   useOpportunityConfigurations,
   useRootStore,
@@ -28,7 +30,6 @@ import { desktopLinkGate } from "../../../core/desktopLinkGate";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
 import { JusticeInvolvedPerson } from "../../types";
 import { getLinkToForm } from "../../utils";
-import { OpportunityType } from "..";
 
 const NavigateToFormButtonStyle = styled(Button)`
   display: inline-flex;

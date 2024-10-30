@@ -15,16 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ClientRecord, OpportunityType } from "~datatypes";
+
 import {
-  ClientRecord,
   CombinedUserRecord,
   WorkflowsResidentRecord,
 } from "../../../../FirestoreStore";
-import { dateToTimestamp } from "../../../utils";
-import {
-  OpportunityType,
-  UsTnCustodyLevelDowngradeReferralRecordRaw,
-} from "../..";
+import { UsTnCustodyLevelDowngradeReferralRecordRaw } from "../..";
 import { CompliantReportingReferralRecordRaw } from "../CompliantReportingOpportunity";
 import { UsTnAnnualReclassificationReviewReferralRecordRaw } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnExpirationReferralRecordRaw } from "../UsTnExpirationOpportunity";
@@ -50,10 +47,10 @@ export const ineligibleClientRecord: ClientRecord = {
   officerId: "OFFICER3",
   supervisionType: "PROBATION",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
-  expirationDate: "2022-02-02",
+  expirationDate: new Date("2022-02-02"),
   allEligibleOpportunities: [],
   personType: "CLIENT",
 };
@@ -68,7 +65,7 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "TN PROBATIONER",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
   allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
@@ -338,7 +335,7 @@ export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "TN PROBATIONER",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
   allEligibleOpportunities: ["compliantReporting"] as OpportunityType[],
@@ -348,6 +345,7 @@ export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
 export const UsTnExpirationEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
   allEligibleOpportunities: ["usTnExpiration"],
+  supervisionLevelStart: new Date("2022-02-02"),
 };
 
 export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecordRaw =

@@ -17,14 +17,14 @@
 
 import { makeObservable, override } from "mobx";
 
-import { ExcludedSupervisionOfficer, SupervisionOfficer } from "~datatypes";
+import {
+  ExcludedSupervisionOfficer,
+  OpportunityType,
+  SupervisionOfficer,
+} from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
-import {
-  JusticeInvolvedPerson,
-  Opportunity,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsAPI } from "../api/interface";

@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityType } from "~datatypes";
+
 import { Client } from "../Client";
 import { ValidateFunction } from "../subscriptions";
-import { OpportunityType } from ".";
 import { OpportunityBase } from "./OpportunityBase";
 import { BasePastFTRDReferralRecord } from "./PastFTRDReferralRecord";
 

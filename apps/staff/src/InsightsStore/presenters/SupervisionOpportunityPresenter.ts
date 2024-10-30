@@ -17,13 +17,9 @@
 
 import { makeObservable } from "mobx";
 
-import { SupervisionOfficer } from "~datatypes";
+import { OpportunityType, SupervisionOfficer } from "~datatypes";
 
-import {
-  JusticeInvolvedPerson,
-  Opportunity,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";

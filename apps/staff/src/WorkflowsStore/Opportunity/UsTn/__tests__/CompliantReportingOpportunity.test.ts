@@ -20,7 +20,8 @@ import { cloneDeep } from "lodash";
 import { configure } from "mobx";
 import tk from "timekeeper";
 
-import { ClientRecord } from "../../../../FirestoreStore";
+import { ClientRecord } from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { DocumentSubscription } from "../../../subscriptions";

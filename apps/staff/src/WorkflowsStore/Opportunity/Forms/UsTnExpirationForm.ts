@@ -17,8 +17,9 @@
 
 import { compact } from "lodash";
 
+import { SpecialConditionCode } from "~datatypes";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { SpecialConditionCode } from "../../../FirestoreStore";
 import flags from "../../../flags";
 import { ParsedSpecialConditionOrString, UNKNOWN } from "../../Client";
 import {

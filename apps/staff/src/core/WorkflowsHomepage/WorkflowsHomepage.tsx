@@ -19,6 +19,8 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import simplur from "simplur";
 
+import { OpportunityType } from "~datatypes";
+
 import {
   useOpportunityConfigurations,
   useRootStore,
@@ -26,7 +28,6 @@ import {
 import { TenantId } from "../../RootStore/types";
 import TENANTS from "../../tenants";
 import { getWelcomeText, pluralizeWord } from "../../utils";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";

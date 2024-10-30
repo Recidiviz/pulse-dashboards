@@ -22,10 +22,12 @@ import {
   startOfWeek,
 } from "date-fns";
 
+import { OpportunityType } from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { ValidateFunction } from "../../../subscriptions";
-import { CopyTuple, OpportunityType } from "../..";
+import { CopyTuple } from "../..";
 import { OpportunityBase } from "../../OpportunityBase";
 import { Component, OpportunityTab, OpportunityTabGroup } from "../../types";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "./UsMoOverdueRestrictiveHousingReferralRecord";

@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Opportunity, OpportunityType } from "../../WorkflowsStore";
+import { OpportunityType } from "~datatypes";
+
+import { Opportunity } from "../../WorkflowsStore";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { OpportunityCaseHighlights } from "./OpportunityCaseHighlights";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";

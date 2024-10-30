@@ -20,8 +20,9 @@
 
 import { FieldValue, Firestore } from "@google-cloud/firestore";
 
+import { OpportunityType } from "~datatypes";
+
 import { PartialRecord } from "../src/utils/typeUtils";
-import { OpportunityType } from "../src/WorkflowsStore";
 
 type Options = {
   /** Update dry run if not set */

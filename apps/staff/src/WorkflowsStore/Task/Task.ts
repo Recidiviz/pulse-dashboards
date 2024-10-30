@@ -19,11 +19,12 @@ import { addDays, isPast, parseISO, startOfToday } from "date-fns";
 import { deleteField } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
+import { fieldToDate } from "~datatypes";
+
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { formatDate, formatDueDateFromToday } from "../../utils";
 import { JusticeInvolvedPerson } from "../types";
-import { fieldToDate } from "../utils";
 import {
   SupervisionDetailsForTask,
   SupervisionTask,

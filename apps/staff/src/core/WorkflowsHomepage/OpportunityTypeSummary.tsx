@@ -27,13 +27,11 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { OpportunityType } from "~datatypes";
+
 import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import {
-  countOpportunities,
-  Opportunity,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { countOpportunities, Opportunity } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
 import { insightsUrl, workflowsUrl } from "../views";
 

@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`almost eligible client transformation 1`] = `
+{
+  "address": "123 Bedrock Lane",
+  "allEligibleOpportunities": [],
+  "displayId": "d001",
+  "expirationDate": 2024-12-31T00:00:00.000Z,
+  "officerId": "OFFICER3",
+  "personExternalId": "001",
+  "personName": {
+    "givenNames": "BETTY",
+    "surname": "RUBBLE",
+  },
+  "personType": "CLIENT",
+  "phoneNumber": "5555555678",
+  "pseudonymizedId": "p001",
+  "recordId": "us_id_001",
+  "stateCode": "US_ID",
+  "supervisionLevel": "MEDIUM",
+  "supervisionLevelStart": 2019-12-20T00:00:00.000Z,
+  "supervisionType": "PROBATION",
+}
+`;
+
+exports[`eligible client transformation 1`] = `
+{
+  "address": "456 Bedrock Lane",
+  "allEligibleOpportunities": [
+    "LSU",
+  ],
+  "displayId": "d002",
+  "expirationDate": 2025-01-01T00:00:00.000Z,
+  "officerId": "OFFICER3",
+  "personExternalId": "002",
+  "personName": {
+    "givenNames": "BETTY",
+    "surname": "RUBBLE",
+  },
+  "personType": "CLIENT",
+  "phoneNumber": "4555555678",
+  "pseudonymizedId": "p002",
+  "recordId": "us_id_002",
+  "stateCode": "US_ID",
+  "supervisionLevel": "MEDIUM",
+  "supervisionLevelStart": 2018-12-20T00:00:00.000Z,
+  "supervisionType": "PROBATION",
+}
+`;

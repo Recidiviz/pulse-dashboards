@@ -15,12 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StaffRecord } from "~datatypes";
+import { ClientRecord, MilestoneType, StaffRecord } from "~datatypes";
 import { Hydratable } from "~hydration-utils";
 
 import {
-  ClientRecord,
-  MilestoneType,
   SupervisionTaskUpdate,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";

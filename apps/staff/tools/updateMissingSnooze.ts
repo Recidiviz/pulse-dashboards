@@ -21,8 +21,9 @@
 import { Firestore } from "@google-cloud/firestore";
 import { add } from "date-fns";
 
+import { OpportunityType } from "~datatypes";
+
 import { PartialRecord } from "../src/utils/typeUtils";
-import { OpportunityType } from "../src/WorkflowsStore";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 console.log({ FIREBASE_PROJECT, FIREBASE_CREDENTIAL });

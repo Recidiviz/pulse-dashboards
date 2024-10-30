@@ -17,6 +17,7 @@
 
 import { configure } from "mobx";
 
+import { OpportunityType } from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
 import FirestoreStore from "../../../FirestoreStore";
@@ -27,7 +28,6 @@ import { JusticeInvolvedPerson } from "../../types";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityManager } from "../OpportunityManager";
-import { OpportunityType } from "../OpportunityType";
 import { LSUOpportunity } from "../UsId";
 import {
   EarnedDischargeReferralRecordFixture,

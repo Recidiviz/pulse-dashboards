@@ -20,7 +20,9 @@ import { computed, configure, runInAction, when } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
 import {
+  ClientRecord,
   incarcerationStaffFixtures,
+  OpportunityType,
   outputFixture,
   SupervisionStaffRecord,
 } from "~datatypes";
@@ -29,7 +31,6 @@ import { HydrationState } from "~hydration-utils";
 import { mockOpportunityConfigs } from "../../core/__tests__/testUtils";
 import { SystemId } from "../../core/models/types";
 import FirestoreStore, {
-  ClientRecord,
   CombinedUserRecord,
   isUserRecord,
   MilestonesMessage,
@@ -42,7 +43,7 @@ import { RootStore } from "../../RootStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
 import UserStore from "../../RootStore/UserStore";
-import type { OpportunityMapping, OpportunityType, WorkflowsStore } from "..";
+import type { OpportunityMapping, WorkflowsStore } from "..";
 import {
   ineligibleClient,
   lsuAlmostEligibleClient,

@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
 import { isDemoMode } from "~client-env-utils";
-import { ACTION_STRATEGY_TYPE } from "~datatypes";
+import { ACTION_STRATEGY_TYPE, OpportunityType } from "~datatypes";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
   IndividualCaseClickedWithStatusMetadata,
@@ -38,11 +38,7 @@ import { SearchType } from "../../core/models/types";
 import { MilestonesTab } from "../../core/WorkflowsMilestones/MilestonesCaseloadView";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { DeclineReason } from "../../FirestoreStore";
-import {
-  OpportunityStatus,
-  OpportunityTab,
-  OpportunityType,
-} from "../../WorkflowsStore";
+import { OpportunityStatus, OpportunityTab } from "../../WorkflowsStore";
 import {
   SupervisionNeedType,
   SupervisionTaskType,

@@ -19,7 +19,8 @@ import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
-import { ClientRecord } from "../../../FirestoreStore";
+import { ClientRecord } from "~datatypes";
+
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { CaseloadSubscription } from "../CaseloadSubscription";
 

@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord } from "../../../FirestoreStore";
+import { ClientRecord, OpportunityType } from "~datatypes";
+
 import { FeatureVariant, TenantId } from "../../../RootStore/types";
 import { JusticeInvolvedPerson } from "../../types";
-import { dateToTimestamp } from "../../utils";
-import { OpportunityType } from "..";
 import { OpportunityBase } from "../OpportunityBase";
 import { OpportunityConfiguration } from "../OpportunityConfigurations";
 
@@ -36,10 +35,10 @@ export const ineligibleClientRecord: ClientRecord = {
   officerId: "OFFICER3",
   supervisionType: "PROBATION",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   allEligibleOpportunities: [],
   personType: "CLIENT",
 };

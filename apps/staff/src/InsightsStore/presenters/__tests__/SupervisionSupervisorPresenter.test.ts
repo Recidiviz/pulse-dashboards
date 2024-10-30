@@ -19,6 +19,7 @@ import { shuffle, sum } from "lodash";
 import { configure } from "mobx";
 
 import {
+  ClientRecord,
   excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
   supervisionOfficerSupervisorsFixture,
@@ -26,7 +27,6 @@ import {
 } from "~datatypes";
 import { isHydrated, unpackAggregatedErrors } from "~hydration-utils";
 
-import { ClientRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
 import UserStore from "../../../RootStore/UserStore";

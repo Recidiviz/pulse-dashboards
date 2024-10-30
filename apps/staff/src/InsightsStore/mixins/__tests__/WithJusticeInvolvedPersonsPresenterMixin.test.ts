@@ -19,11 +19,11 @@ import { configure } from "mobx";
 import { vi } from "vitest";
 
 import {
+  ClientRecord,
   excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
 } from "~datatypes";
 
-import { ClientRecord } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
 import { JusticeInvolvedPerson } from "../../../WorkflowsStore";

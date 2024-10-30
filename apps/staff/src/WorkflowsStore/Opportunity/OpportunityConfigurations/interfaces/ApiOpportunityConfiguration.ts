@@ -17,8 +17,9 @@
 
 import { z } from "zod";
 
+import { OpportunityType } from "~datatypes";
+
 import { PartialRecord } from "../../../../utils/typeUtils";
-import { OpportunityType } from "../..";
 import {
   apiOpportunityConfigurationResponseSchema,
   apiOpportunityConfigurationSchema,

@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
-import { OpportunityType } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonBase } from "../../../WorkflowsStore/JusticeInvolvedPersonBase";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { OpportunityBase } from "../../../WorkflowsStore/Opportunity/OpportunityBase";

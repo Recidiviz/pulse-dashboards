@@ -21,6 +21,8 @@ import { intersection } from "lodash";
 import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
+import { OpportunityType } from "~datatypes";
+
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -30,7 +32,6 @@ import {
   Opportunity,
   OpportunityTab,
   OpportunityTabGroup,
-  OpportunityType,
 } from "../Opportunity";
 import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
 import { CollectionDocumentSubscription } from "../subscriptions";

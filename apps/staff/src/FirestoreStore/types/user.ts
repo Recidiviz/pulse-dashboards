@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StaffRecord } from "~datatypes";
+import { OpportunityType, StaffRecord } from "~datatypes";
 
 import {
   OpportunityTab,
   OpportunityTabGroup,
-  OpportunityType,
 } from "../../WorkflowsStore/Opportunity";
 
 /**

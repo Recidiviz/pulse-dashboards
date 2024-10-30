@@ -19,6 +19,7 @@ import { FieldValue } from "@google-cloud/firestore";
 import { deleteField, serverTimestamp } from "firebase/firestore";
 import { action, computed, makeObservable, toJS } from "mobx";
 
+import { OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
@@ -30,7 +31,6 @@ import {
 import { RootStore } from "../../../RootStore";
 import { DocumentSubscription } from "../../subscriptions";
 import { FormUpdateSubscription } from "../../subscriptions/FormUpdateSubscription";
-import { OpportunityType } from "..";
 import { OpportunityBase } from "../OpportunityBase";
 
 export type PrefilledDataTransformer<FormInformation> =

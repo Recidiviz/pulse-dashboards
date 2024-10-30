@@ -20,10 +20,10 @@ import { autorun } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 
+import { OpportunityType } from "~datatypes";
 import { isHydrated, isHydrationFinished } from "~hydration-utils";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 
 type PersonOpportunitiesHydratorProps = {
   hydrated: React.ReactNode;

@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord } from "../../../FirestoreStore";
-import { dateToTimestamp } from "../../utils";
+import { ClientRecord } from "~datatypes";
+
 import { SupervisionTaskRecord } from "../types";
 
 export const supervisionTaskClientRecord: ClientRecord = {
@@ -30,10 +30,10 @@ export const supervisionTaskClientRecord: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "MISDEMEANOR PROBATIONER",
   supervisionLevel: "STANDARD: MINIMUM",
-  supervisionLevelStart: dateToTimestamp("2021-07-05"),
+  supervisionLevelStart: new Date("2021-07-05"),
   address: "123 Main St, Nashville, TN 12345",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   currentBalance: 221.88,
   specialConditions: ["EXAMPLE OF SPECIAL CONDITIONS HERE"],
   allEligibleOpportunities: ["LSU"],

@@ -21,7 +21,7 @@ import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 import { MockInstance } from "vitest";
 
-import { OpportunityRecordBase } from "~datatypes";
+import { OpportunityRecordBase, OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
@@ -31,7 +31,6 @@ import { formatDateToISO } from "../../../utils";
 import { Client } from "../../Client";
 import { DocumentSubscription, UpdateFunction } from "../../subscriptions";
 import { OTHER_KEY } from "../../utils";
-import { OpportunityType } from "..";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { FormBase } from "../Forms/FormBase";
 import {

@@ -45,6 +45,7 @@ import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { isOfflineMode } from "~client-env-utils";
+import { ClientRecord, OpportunityType } from "~datatypes";
 import {
   collectionNameForKey,
   FIRESTORE_GENERAL_COLLECTION_MAP,
@@ -60,11 +61,9 @@ import {
   OpportunityTabGroup,
   UsTnExpirationOpportunity,
 } from "../WorkflowsStore";
-import { OpportunityType } from "../WorkflowsStore/Opportunity";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
   AutoSnoozeUpdate,
-  ClientRecord,
   ContactMethodType,
   ExternalSystemRequestStatus,
   FormUpdate,

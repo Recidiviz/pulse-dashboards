@@ -17,6 +17,8 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { OpportunityType } from "~datatypes";
+
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import {
@@ -24,7 +26,6 @@ import {
   EarnedDischargeOpportunity,
   LSUOpportunity,
   Opportunity,
-  OpportunityType,
   UsCaSupervisionLevelDowngradeOpportunity,
   UsIdPastFTRDOpportunity,
   UsIdSupervisionLevelDowngradeOpportunity,

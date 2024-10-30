@@ -26,6 +26,7 @@ import {
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
+import { OpportunityType } from "~datatypes";
 import {
   compositeHydrationState,
   Hydratable,
@@ -55,7 +56,6 @@ import {
   OTHER_KEY,
   snoozeUntilDateInTheFuture,
 } from "../utils";
-import { OpportunityType } from ".";
 import { FormBase } from "./Forms/FormBase";
 import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import {

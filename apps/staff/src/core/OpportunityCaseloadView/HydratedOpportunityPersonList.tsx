@@ -38,6 +38,8 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { OpportunityType } from "~datatypes";
+
 import {
   useFeatureVariants,
   useOpportunityConfigurations,
@@ -48,7 +50,6 @@ import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/
 import {
   OpportunityTab,
   OpportunityTabGroup,
-  OpportunityType,
 } from "../../WorkflowsStore";
 import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
 import { Heading } from "../sharedComponents";

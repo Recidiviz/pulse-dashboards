@@ -17,6 +17,7 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { OpportunityType } from "~datatypes";
 import { Hydratable } from "~hydration-utils";
 
 import {
@@ -33,7 +34,6 @@ import { FormBase } from "./Forms/FormBase";
 import { OpportunityConfiguration } from "./OpportunityConfigurations";
 import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import { opportunityConstructors } from "./opportunityConstructors";
-import { OpportunityType } from "./OpportunityType";
 
 export type OpportunityRequirement = {
   isHeading?: boolean;

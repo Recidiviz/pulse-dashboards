@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord } from "../../../../FirestoreStore";
-import { dateToTimestamp } from "../../../utils";
-import { OpportunityType } from "../..";
+import { ClientRecord, OpportunityType } from "~datatypes";
+
 import {
   UsMiMinimumTelephoneReportingReferralRecordRaw,
   UsMiPastFTRDReferralRecordRaw,
@@ -36,10 +35,10 @@ export const ineligibleClientRecord: ClientRecord = {
   officerId: "OFFICER3",
   supervisionType: "PROBATION",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   allEligibleOpportunities: [],
   personType: "CLIENT",
 };
@@ -57,10 +56,10 @@ export const usMiClassificationReviewIneligibleClientRecord: ClientRecord = {
   officerId: "OFFICER3",
   supervisionType: "PROBATION",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   address: "123 Bedrock Lane",
   phoneNumber: "5555555678",
-  expirationDate: dateToTimestamp("2024-12-31"),
+  expirationDate: new Date("2024-12-31"),
   allEligibleOpportunities: [],
   personType: "CLIENT",
 };
@@ -75,7 +74,7 @@ export const usMiClassificationReviewEligibleClientRecord: ClientRecord = {
   officerId: "OFFICER1",
   supervisionType: "PROBATIONER",
   supervisionLevel: "MEDIUM",
-  supervisionLevelStart: dateToTimestamp("2019-12-20"),
+  supervisionLevelStart: new Date("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
   allEligibleOpportunities: ["usMiClassificationReview"] as OpportunityType[],
@@ -95,7 +94,7 @@ export const usMiMinimumTelephoneReportingEligibleClientRecord: ClientRecord = {
   officerId: "OFFICER8",
   supervisionType: "PROBATION",
   supervisionLevel: "HIGH",
-  supervisionLevelStart: "2019-12-20",
+  supervisionLevelStart: new Date("2019-12-20"),
   currentBalance: 221.88,
   specialConditions: [],
   allEligibleOpportunities: ["usMiMinimumTelephoneReporting"],

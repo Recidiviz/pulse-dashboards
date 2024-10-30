@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { fieldToDate } from "~datatypes";
+
 import { formatDate } from "../../utils";
-import { fieldToDate } from "../utils";
 import { Task } from "./Task";
 
 class UsIdRiskAssessmentTask extends Task<"assessment"> {

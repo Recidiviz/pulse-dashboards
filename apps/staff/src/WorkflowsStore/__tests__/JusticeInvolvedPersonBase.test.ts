@@ -23,15 +23,16 @@ import {
   runInAction,
 } from "mobx";
 
-import { StaffRecord } from "~datatypes";
-
 import {
-  PersonUpdateRecord,
+  OpportunityType,
+  StaffRecord,
   WorkflowsJusticeInvolvedPersonRecord,
-} from "../../FirestoreStore";
+} from "~datatypes";
+
+import { PersonUpdateRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
-import { OpportunityMapping, OpportunityType } from "../Opportunity";
+import { OpportunityMapping } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
 import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
 import { opportunityConstructors } from "../Opportunity/opportunityConstructors";

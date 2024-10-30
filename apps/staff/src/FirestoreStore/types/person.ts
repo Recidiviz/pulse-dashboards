@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Timestamp } from "firebase/firestore";
+import {
+  ResidentRecord,
+  WorkflowsJusticeInvolvedPersonRecord,
+} from "~datatypes";
 
-import { JusticeInvolvedPersonRecord, ResidentRecord } from "~datatypes";
-
-import { OpportunityType } from "../../WorkflowsStore/Opportunity";
 import { ResidentMetadata } from ".";
-import { Milestone } from "./milestones";
 
 export type PersonUpdateType = "preferredName" | "preferredContactMethod";
 export const contactMethods = ["Call", "Text", "Email", "None"];
@@ -37,47 +36,6 @@ export type PortionServedDates = {
 export type PersonUpdateRecord = {
   preferredName?: string;
   preferredContactMethod?: ContactMethodType;
-};
-
-export type SpecialConditionCode = {
-  condition: string;
-  conditionDescription: string;
-};
-
-export type WorkflowsJusticeInvolvedPersonRecord =
-  JusticeInvolvedPersonRecord & {
-    recordId: string;
-    // TODO($6489): Look at relaxing typing to be string[]
-    allEligibleOpportunities: OpportunityType[];
-  };
-
-export type ClientEmployer = {
-  name: string;
-  address?: string;
-};
-
-/**
- * Data from the Recidiviz data platform about a person on supervision
- */
-export type ClientRecord = WorkflowsJusticeInvolvedPersonRecord & {
-  personType: "CLIENT";
-  district?: string;
-  supervisionType?: string;
-  supervisionLevel?: string;
-  supervisionLevelStart?: Timestamp | string;
-  address?: string;
-  phoneNumber?: string;
-  supervisionStartDate?: string;
-  expirationDate?: Timestamp | string;
-  currentBalance?: number;
-  lastPaymentAmount?: number;
-  lastPaymentDate?: Timestamp | string;
-  specialConditions?: string[];
-  boardConditions?: SpecialConditionCode[];
-  currentEmployers?: ClientEmployer[];
-  milestones?: Milestone[];
-  emailAddress?: string;
-  officerId: string;
 };
 
 /**

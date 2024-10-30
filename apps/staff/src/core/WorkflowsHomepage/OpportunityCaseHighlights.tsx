@@ -28,9 +28,11 @@ import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { OpportunityType } from "~datatypes";
+
 import { useRootStore } from "../../components/StoreProvider";
 import { PartialRecord } from "../../utils/typeUtils";
-import { Opportunity, OpportunityType } from "../../WorkflowsStore";
+import { Opportunity } from "../../WorkflowsStore";
 import { workflowsUrl } from "../views";
 
 const MAX_DISPLAYED_OPPORTUNITIES = 5;

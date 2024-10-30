@@ -15,14 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FullName } from "~datatypes";
+import {
+  ClientRecord,
+  FullName,
+  WorkflowsJusticeInvolvedPersonRecord,
+} from "~datatypes";
 
 import { SearchField, StaffFilter } from "../core/models/types";
 import {
-  ClientRecord,
   CombinedUserRecord,
   PersonUpdateRecord,
-  WorkflowsJusticeInvolvedPersonRecord,
   WorkflowsResidentRecord,
 } from "../FirestoreStore";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
