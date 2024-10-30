@@ -90,7 +90,6 @@ export type FeatureVariant =
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
   | "hideDenialRevert"
-  | "opportunityConfigurationAPI"
   | "workflowsSupervisorSearch"
   | "supervisorHomepage"
   | "supervisorHomepageWorkflows"
@@ -141,7 +140,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsLeadershipPageAllDistricts: {},
   insightsOnboarding: {},
   hideDenialRevert: {},
-  opportunityConfigurationAPI: {},
   usMeCustodyLevelReview: {},
   usMeAnnualReclassificationReview: {},
   workflowsSupervisorSearch: {},
@@ -173,8 +171,14 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         enableSnooze: {},
         insightsOnboarding: {},
         supervisorHomepageWorkflows: {},
-        opportunityConfigurationAPI: {
-          activeTenants: ["US_ND"],
+        nonOMSCriteria: {
+          activeTenants: ["US_OR", "US_ME", "US_MI"],
+        },
+        submittedOpportunityStatus: {
+          activeTenants: ["US_OR", "US_ME", "US_MI"],
+        },
+        sortableOpportunityTabs: {
+          activeTenants: ["US_OR", "US_ME", "US_MI"],
         },
         usOrEarnedDischargeSentence: {},
       }
