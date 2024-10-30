@@ -20,7 +20,9 @@ import {
   deleteField,
   doc,
   DocumentReference,
+  getDocs,
   PartialWithFieldValue,
+  QuerySnapshot,
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
@@ -647,6 +649,55 @@ describe("FirestoreStore", () => {
           },
         ],
       ]);
+    });
+  });
+
+  // TODO(#6416) can remove once filtering moves into the query
+  describe("getOpportunitiesForJIIAndOpportunityType", () => {
+    function mockQueryResults(results: object[]) {
+      vi.mocked(getDocs).mockResolvedValue({
+        docs: results.map((r) => ({ data: () => r })),
+      } as QuerySnapshot);
+    }
+
+    test("always pass filters if flags are missing", async () => {
+      // any combination of missing flags should pass
+      const mockResults = [
+        {},
+        { isEligible: true },
+        { isEligible: false },
+        // we don't really see these in the wild but checking for extra safety
+        { isAlmostEligible: true },
+        { isAlmostEligible: false },
+      ];
+      mockQueryResults(mockResults);
+      expect(
+        await store.getOpportunitiesForJIIAndOpportunityType(
+          "foo",
+          "bar",
+          "US_XX",
+        ),
+      ).toEqual(mockResults);
+    });
+
+    test("filter based on flags", async () => {
+      const included = [
+        { isEligible: true, isAlmostEligible: false },
+        { isEligible: false, isAlmostEligible: true },
+        // this is nonsensical but not explicitly forbidden
+        { isEligible: true, isAlmostEligible: true },
+      ];
+      const excluded = [{ isEligible: false, isAlmostEligible: false }];
+
+      mockQueryResults([...included, ...excluded]);
+
+      expect(
+        await store.getOpportunitiesForJIIAndOpportunityType(
+          "foo",
+          "bar",
+          "US_XX",
+        ),
+      ).toEqual(included);
     });
   });
 });
