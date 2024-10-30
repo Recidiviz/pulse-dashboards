@@ -122,7 +122,19 @@ export class FirestoreAPIClient implements FirestoreAPI {
 
     if (!snapshot.exists()) return;
 
-    return recordSchema.parse(snapshot.data());
+    // this should only affect opportunity records and is temporary anyway,
+    // so while it's a little gross we should be able to get away with it
+    // TODO(#6418) delete this
+    const rawData = snapshot.data();
+    if (
+      // for backwards compatibility, missing/undefined is treated as equivalent to true;
+      // this will just cause explicitly ineligible opportunity records to be discarded
+      rawData["isEligible"] === false &&
+      rawData["isAlmostEligible"] === false
+    )
+      return;
+
+    return recordSchema.parse(rawData);
   }
 
   /**

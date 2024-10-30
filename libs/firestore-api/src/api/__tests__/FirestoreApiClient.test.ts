@@ -217,14 +217,12 @@ describe("resident by pseudo ID", () => {
 });
 
 describe("recordForExternalId", () => {
-  beforeEach(() => {
-    vi.mocked(getDoc).mockResolvedValue({
-      exists: () => false,
-    } as unknown as DocumentSnapshot);
-  });
-
   test("demo data", async () => {
     vi.mocked(isDemoMode).mockReturnValue(true);
+    vi.mocked(getDoc).mockResolvedValue({
+      // for this test we don't actually care what the data is
+      exists: () => false,
+    } as unknown as DocumentSnapshot);
 
     await client.recordForExternalId({ key: "residents" }, "foo123", z.any());
 
@@ -233,5 +231,49 @@ describe("recordForExternalId", () => {
       "DEMO_residents",
       "us_xx_foo123",
     );
+  });
+
+  describe("ineligible opportunities filter", () => {
+    const mockDataFn = vi.fn();
+
+    beforeEach(() => {
+      vi.mocked(getDoc).mockResolvedValue({
+        exists: () => true,
+        data: mockDataFn,
+      } as unknown as DocumentSnapshot);
+    });
+
+    test.for([
+      {},
+      { isEligible: true },
+      { isEligible: false },
+      { isAlmostEligible: true },
+      { isAlmostEligible: false },
+    ])("should pass with missing fields (%o)", async (obj) => {
+      mockDataFn.mockReturnValue(obj);
+      expect(
+        await client.recordForExternalId({ raw: "foo" }, "abc123", z.any()),
+      ).toEqual(obj);
+    });
+
+    test.for([
+      { isEligible: true, isAlmostEligible: false },
+      { isEligible: false, isAlmostEligible: true },
+    ])("should pass %o", async (obj) => {
+      mockDataFn.mockReturnValue(obj);
+      expect(
+        await client.recordForExternalId({ raw: "foo" }, "abc123", z.any()),
+      ).toEqual(obj);
+    });
+
+    test("should reject fully ineligible", async () => {
+      mockDataFn.mockReturnValue({
+        isEligible: false,
+        isAlmostEligible: false,
+      });
+      expect(
+        await client.recordForExternalId({ raw: "foo" }, "abc123", z.any()),
+      ).toBeUndefined();
+    });
   });
 });
