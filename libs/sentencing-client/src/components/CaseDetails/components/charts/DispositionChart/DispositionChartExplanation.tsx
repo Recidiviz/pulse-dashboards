@@ -32,13 +32,15 @@ export function DispositionChartExplanation({
     assessmentScoreBucketStart,
     assessmentScoreBucketEnd,
     offense,
+    dispositionNumRecords,
   } = insight;
   const genderString = getDescriptionGender(gender);
 
   return (
     <TextContainer>
       This information represents the percentage of cases sentenced to
-      particular dispositions over the past three years. The rates are based on{" "}
+      particular dispositions over the past 5 years. The rates are based on{" "}
+      {dispositionNumRecords.toLocaleString()} records of{" "}
       <span>{genderString}</span>
       <LsirScoreText
         rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}

@@ -18,6 +18,8 @@
 import moment from "moment";
 
 import { CaseInsight } from "../../../../../api";
+import { getDescriptionGender } from "../common/utils";
+import { LsirScoreText } from "../components/LsirScoreText";
 import { TextContainer } from "../components/Styles";
 
 interface OffenseSpanProps {
@@ -65,25 +67,35 @@ export function RecidivismPlotExplanation({
     rollupNcicCategory,
     rollupCombinedOffenseCategory,
     rollupViolentOffense,
+    rollupRecidivismNumRecords,
+    assessmentScoreBucketStart,
+    assessmentScoreBucketEnd,
+    gender,
   } = insight;
+  const genderString = getDescriptionGender(gender);
 
   return (
     <TextContainer>
-      These recidivism rates represent the percentage of individuals who have
-      been incarcerated or re-incarcerated during the three years immediately
-      after the start of their probation sentence or their release into the
-      community. The rates are based on{" "}
-      <span>
-        <OffenseText
-          rollupOffense={rollupOffense}
-          rollupNcicCategory={rollupNcicCategory}
-          rollupCombinedOffenseCategory={rollupCombinedOffenseCategory}
-          rollupViolentOffense={rollupViolentOffense}
-        />
-      </span>
-      , using IDOC data from 2010-{moment().year() - 3}. The shaded areas
-      represent the confidence intervals, or the range of possible values for
-      the true recidivism rate.
+      Based on gender, risk score, and type of conviction, the recidivism rates
+      represent the percentage of individuals who have been convicted of a
+      subsequent offense or violated the conditions of their probation or parole
+      over the course of the three years immediately after their release into
+      the community. The rates are based on{" "}
+      {rollupRecidivismNumRecords.toLocaleString()} records of{" "}
+      <span>{genderString}</span>
+      <LsirScoreText
+        rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
+        rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
+      />{" "}
+      with{" "}
+      <OffenseText
+        rollupOffense={rollupOffense}
+        rollupNcicCategory={rollupNcicCategory}
+        rollupCombinedOffenseCategory={rollupCombinedOffenseCategory}
+        rollupViolentOffense={rollupViolentOffense}
+      />{" "}
+      from 2010-{moment().year() - 3}. The shaded areas represent the confidence
+      intervals, or the range of possible values for the true recidivism rate.
     </TextContainer>
   );
 }

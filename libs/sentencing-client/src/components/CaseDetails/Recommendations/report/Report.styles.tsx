@@ -48,11 +48,11 @@ export const Footer = styled.div`
   div {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 3px;
   }
 
   img {
-    margin-bottom: 2px;
+    margin-bottom: 3px;
   }
 `;
 
@@ -91,53 +91,59 @@ export const Title = styled.div`
 export const SnapshotContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 40px;
 `;
 
 export const SectionTitle = styled.div<{ noMargin?: boolean }>`
-  margin-bottom: ${({ noMargin }) => (noMargin ? 0 : 6)}px;
-  font-weight: 500;
-`;
-
-export const Name = styled.div``;
-
-export const AttributesWrapper = styled.div`
-  width: 337px;
-  display: flex;
-  gap: 8px;
+  ${typography.Sans18}
+  margin-bottom: ${({ noMargin }) => (noMargin ? 0 : 8)}px;
+  font-weight: 700;
 
   span {
-    font-weight: 600;
-  }
-
-  div {
     font-weight: 400;
   }
 `;
 
-export const ID = styled.div``;
-export const Gender = styled.div`
-  text-transform: capitalize;
+export const AttributesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-bottom: 8px;
 `;
-export const Age = styled.div``;
-export const Offense = styled.div`
-  font-weight: 400;
-  span {
-    font-weight: 600;
-  }
+
+export const TitleAttributesWrapper = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
 `;
 
 export const CaseOverview = styled.div`
-  min-height: 92px;
-  border: 1px solid ${customPalette.black};
-  border-radius: 2px;
+  display: flex;
+  border: 0.5px solid ${customPalette.black};
+  border-radius: 4px;
+`;
 
-  & > div {
-    padding: 8px;
-  }
+export const OverviewWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px;
 
-  & > div:not(:last-child) {
-    border-bottom: 1px solid ${customPalette.black};
+  &:not(:last-child) {
+    min-width: 180px;
+    border-right: 0.5px solid ${customPalette.black};
   }
+`;
+
+export const OverviewTitle = styled.div`
+  ${typography.Sans12}
+  font-size: 9px;
+`;
+
+export const Name = styled.div`
+  ${typography.Sans16}
+  font-weight: 600;
 `;
 
 export const HistoricalDetails = styled(CaseOverview)`
@@ -146,30 +152,6 @@ export const HistoricalDetails = styled(CaseOverview)`
 
   span {
     border-bottom: 1px solid ${customPalette.black};
-  }
-`;
-
-export const CaseSnapshot = styled.div`
-  ${typography.Sans12}
-  display: grid;
-  grid-template-columns: 1fr auto 1fr 1fr;
-  font-weight: 600;
-  font-size: 13px;
-  margin-bottom: 84px;
-
-  svg {
-    min-width: 78px;
-    align-self: center;
-  }
-
-  ${SnapshotContainer}:nth-child(3) > ${HistoricalDetails} {
-    border-width: 1px 0px 1px 1px;
-    border-radius: 2px 0px 0px 2px;
-  }
-
-  ${SnapshotContainer}:nth-child(4) > ${HistoricalDetails} {
-    border-width: 1px 1px 1px 0.5px;
-    border-radius: 0px 2px 2px 0px;
   }
 `;
 
@@ -190,22 +172,45 @@ export const DispositionCardTitle = styled.div`
   margin-bottom: 32px;
 `;
 
-export const HistoricalSentencingWrapper = styled.div``;
+export const SentencingRecidivismRateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border: 0.5px solid ${customPalette.black};
+  border-radius: 4px;
+  padding: 16px;
+`;
 
-export const HistoricalDetailsTitlePercentage = styled.div`
+export const SentencingRecidivismRateWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const SentencingRecidivismRateSection = styled.div`
+  width: 243px;
+`;
+
+export const ChartCaption = styled.div`
+  ${typography.Sans12}
+  font-weight: 500;
+  margin-top: 8px;
+`;
+
+export const HistoricalSentencingExplanation = styled.div``;
+
+export const RateDetailsTitlePercentage = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 6px;
 `;
 
-export const HistoricalDetailsTitle = styled.div`
-  ${typography.Sans12}
+export const RateDetailsTitle = styled.div`
+  ${typography.Sans16}
   font-weight: 600;
-  font-size: 11.5px;
 `;
 
-export const HistoricalDetailsPercentage = styled.div`
+export const RateDetailsPercentage = styled.div`
   ${typography.Sans16}
   font-weight: 600;
   line-height: 18px;
@@ -215,7 +220,6 @@ export const ProgressBar = styled.div<{ percentage?: number }>`
   height: 12px;
   border: 0.25px solid ${customPalette.black};
   position: relative;
-  margin-bottom: 32px;
 
   &::before {
     content: "";
@@ -279,6 +283,13 @@ export const CumulativeRecidivismRateExplanationContainer = styled.div`
   gap: 11px;
 `;
 
+export const NumberOfRecords = styled.div`
+  ${typography.Sans12}
+  font-size: 10px;
+  font-weight: 400;
+  margin-bottom: 4px;
+`;
+
 export const AttributeChipsWrapper = styled.div`
   display: flex;
   gap: 4px;
@@ -290,6 +301,8 @@ export const AttributeChipsWrapper = styled.div`
 
 export const AttributeChip = styled.div`
   ${typography.Sans12}
+  width: fit-content;
+  max-width: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
