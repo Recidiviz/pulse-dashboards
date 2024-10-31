@@ -30,6 +30,7 @@ import { UsMeWorkReleaseConfiguration } from "./UsMe/UsMeWorkReleaseConfiguratio
 import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsNdMinimumCustodyConfiguration } from "./UsNd/UsNdMinimumCustodyConfiguration";
+import { UsOrEarnedDischargeConfiguration } from "./UsOr/UsOrEarnedDischargeConfiguration";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 
 const localCustomOpportunityConfigurations: Partial<
@@ -58,6 +59,7 @@ const adminPanelOnlyCustomOpportunityConfigurations: Partial<
   usNdATP: UsNdMinimumCustodyConfiguration,
   usNdTransferToMinFacility: UsNdMinimumCustodyConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
+  usOrEarnedDischarge: UsOrEarnedDischargeConfiguration,
 };
 
 const customOpportunityConfigurations: Partial<
