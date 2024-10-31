@@ -236,7 +236,12 @@ export const filterEligibleOpportunities = (
       attributes.needsToBeAddressed?.includes(need),
     );
 
-  if (hasNeedsAddressedCriteria && !isNeedsAddressedEligible) return false;
+  if (
+    attributes.needsToBeAddressed.length > 0 &&
+    hasNeedsAddressedCriteria &&
+    !isNeedsAddressedEligible
+  )
+    return false;
 
   // LSIR Score Criteria Check
   const hasLsirScoreCriteria = Boolean(

@@ -545,8 +545,9 @@ describe("filterEligibleOpportunities", () => {
     };
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
 
+    // should bypass needs addressed criterion if no needs are selected for client
     attributes.needsToBeAddressed = [];
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
 
     attributes.needsToBeAddressed = ["AngerManagement", "Education"];
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
