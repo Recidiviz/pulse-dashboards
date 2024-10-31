@@ -248,3 +248,31 @@ export const fuzzyMatch = (input: string, option: SelectOption) => {
   const label = option.label?.toLowerCase();
   return searchWords.every((word) => label?.includes(word));
 };
+
+/** A function that highlights matched search terms in a given label by wrapping them in styled <span> elements.  */
+export const highlightMatchedText = (searchInput: string, label?: string) => {
+  if (!searchInput || !label) return label;
+
+  // Split the input into words by splitting at the white space and filter out empty spaces
+  const searchWords = searchInput.toLowerCase().split(/\s+/).filter(Boolean);
+  // Create a regex of each word separated by a regex logical OR symbol `|`
+  const regex = new RegExp(`(${searchWords.join("|")})`, "gi");
+  /**
+   * Split the label into parts based on matches in the regex above.
+   * E.g. if the label is "POSSESSION OF A CONTROLLED SUBSTANCE" and the `regex` is `/possession|of/gi`,
+   *      the label will be split into the following array: ["CONTROLLED SUBSTANCE-", "POSSESSION", " ", "OF"]
+   *      so that we can isolate our fuzzy matched terms efficiently without breaking the entire label into individual words.
+   */
+  const labelParts = label.split(regex).filter(Boolean);
+
+  // Map through each label part and wrap our matched terms around a styled span
+  return labelParts.map((part, index) =>
+    searchWords.includes(part.toLowerCase()) ? (
+      <span key={index} style={{ backgroundColor: "rgba(160, 255, 202, 1)" }}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+};

@@ -17,6 +17,7 @@
 
 import { palette } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
+import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
@@ -49,6 +50,10 @@ export class CaseStore {
     this.communityOpportunities = [];
     this.offenses = [];
     this.insight = undefined;
+  }
+
+  get offensesByName() {
+    return keyBy(this.offenses, (offense) => offense.name);
   }
 
   /** This is a MobX flow method and should be called with mobx.flowResult */

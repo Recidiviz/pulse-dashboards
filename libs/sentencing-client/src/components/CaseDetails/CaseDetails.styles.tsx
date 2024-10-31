@@ -30,6 +30,7 @@ import { MAX_MODAL_HEIGHT } from "../Modal/Modal";
 import { customPalette } from "../styles/palette";
 import { OnboardingTopic } from "./CaseOnboarding/types";
 import { PDF_PAGE_WIDTH } from "./constants";
+import { SelectOption } from "./Form/types";
 import { FormAttributes, ProfileStrength } from "./types";
 
 const RECOMMENDATION_PANEL_HEIGHT_OFFSET = 244;
@@ -1116,6 +1117,27 @@ export const ErrorMessage = styled.div`
   color: ${palette.signal.error};
 `;
 
+export const DropdownHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 18px 12px 6px 12px;
+  color: ${palette.slate70};
+`;
+
+export const OptionFrequencyLabelWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+export const OptionLabel = styled.div``;
+
+export const FrequencyLabel = styled.div`
+  margin-left: 35px;
+  white-space: nowrap;
+`;
+
 export const MultiSelectContainer = styled.div<{ selected?: boolean }>`
   display: flex;
   flex-wrap: wrap;
@@ -1204,7 +1226,26 @@ export const StickyActionButtonWrapper = styled.div`
   z-index: 99;
 `;
 
-export const dropdownStyles: StylesConfig<unknown, true> = {
+export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
+  control: (styles, { isFocused }) => ({
+    ...styles,
+    borderColor: isFocused ? palette.pine4 : palette.slate20,
+    boxShadow: isFocused ? `0 0 0 1px  ${palette.pine4}` : "none",
+    ":hover": {
+      borderColor: palette.pine4,
+    },
+  }),
+  option: (styles, { isFocused }) => ({
+    ...styles,
+    color: palette.pine3,
+    backgroundColor: isFocused ? palette.slate10 : undefined,
+    ":active": {
+      backgroundColor: palette.slate10,
+    },
+  }),
+};
+
+export const multiDropdownStyles: StylesConfig<unknown, true> = {
   multiValue: (styles) => {
     return {
       ...styles,

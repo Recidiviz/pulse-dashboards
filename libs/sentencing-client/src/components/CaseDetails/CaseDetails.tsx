@@ -26,6 +26,7 @@ import { PSIStore } from "../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../presenters/CaseDetailsPresenter";
 import { psiUrl } from "../../utils/routing";
 import { ErrorMessage } from "../Error";
+import { StoreProvider } from "../StoreProvider/StoreProvider";
 import { CaseAttributes } from "./CaseAttributes";
 import * as Styled from "./CaseDetails.styles";
 import { CaseOnboarding } from "./CaseOnboarding/CaseOnboarding";
@@ -225,7 +226,9 @@ export const CaseDetails: React.FC<{
 
   return (
     <Hydrator hydratable={presenter} failed={<ErrorMessage />}>
-      <CaseDetailsWithPresenter presenter={presenter} />
+      <StoreProvider store={psiStore}>
+        <CaseDetailsWithPresenter presenter={presenter} />
+      </StoreProvider>
     </Hydrator>
   );
 });

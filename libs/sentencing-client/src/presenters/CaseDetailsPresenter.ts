@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { keyBy, startCase, toLower } from "lodash";
+import { startCase, toLower } from "lodash";
 import { flowResult, makeAutoObservable, when } from "mobx";
 
 import {
@@ -81,7 +81,7 @@ export class CaseDetailsPresenter implements Hydratable {
       () => {
         this.caseDetailsForm = new CaseDetailsForm(
           this,
-          this.offensesByName,
+          this.caseStore.offensesByName,
           this.getInsight,
         );
         this.recommendedOpportunities =
@@ -153,10 +153,6 @@ export class CaseDetailsPresenter implements Hydratable {
       district, // district of client's residence
       county, // district + county of sentencing
     };
-  }
-
-  get offensesByName() {
-    return keyBy(this.caseStore.offenses, (offense) => offense.name);
   }
 
   get insight() {

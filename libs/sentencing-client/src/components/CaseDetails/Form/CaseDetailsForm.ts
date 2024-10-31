@@ -171,10 +171,6 @@ export class CaseDetailsForm {
   createForm(caseAttributes: Case & { clientGender?: Client["gender"] }) {
     const firstName = caseAttributes.client?.firstName;
     const formattedFirstName = formatPossessiveName(firstName);
-    const offensesOptions = Object.keys(this.offensesByName).map(
-      (offenseName) =>
-        `${offenseName} (${this.offensesByName[offenseName].frequency} records)`,
-    );
     const withPreviousUpdates = caseDetailsFormTemplate.map((field) => {
       const attributeValue = caseAttributes[field.key];
       const invalidLsirScore =
@@ -202,7 +198,10 @@ export class CaseDetailsForm {
                 formattedFirstName,
               )
             : field.label,
-        options: field.key === OFFENSE_KEY ? offensesOptions : field.options,
+        options:
+          field.key === OFFENSE_KEY
+            ? Object.keys(this.offensesByName)
+            : field.options,
         value: parseAttributeValue(field.key, attributeValue),
         nested: field.nested?.map((nestedField) => {
           const nestedAttributeValue = caseAttributes[nestedField.key];

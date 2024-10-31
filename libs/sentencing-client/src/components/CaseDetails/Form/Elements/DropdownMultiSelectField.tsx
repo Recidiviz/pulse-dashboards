@@ -84,7 +84,7 @@ export const DropdownMultiSelectField: React.FC<InputFieldProps> = ({
           value: selection,
         }))}
         isMulti
-        styles={Styled.dropdownStyles}
+        styles={Styled.multiDropdownStyles}
         onChange={(value) => {
           updateDropdownInput(value as MultiValue<SelectOption>);
           element.onChange && element.onChange();
