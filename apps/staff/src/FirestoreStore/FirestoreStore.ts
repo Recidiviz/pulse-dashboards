@@ -45,7 +45,7 @@ import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { isOfflineMode } from "~client-env-utils";
-import { ClientRecord, OpportunityType } from "~datatypes";
+import { ClientRecord, clientRecordSchema, OpportunityType } from "~datatypes";
 import {
   collectionNameForKey,
   FIRESTORE_GENERAL_COLLECTION_MAP,
@@ -176,11 +176,10 @@ export default class FirestoreStore {
 
     const result = results.docs[0];
     if (result.exists())
-      return {
-        ...(result.data() as Omit<ClientRecord, "recordId" | "personType">),
+      return clientRecordSchema.parse({
+        ...result.data(),
         recordId: result.id,
-        personType: "CLIENT",
-      };
+      });
   }
 
   async getClientsForOfficerId(
@@ -195,11 +194,12 @@ export default class FirestoreStore {
       ),
     );
 
-    return results.docs.map((result) => ({
-      ...(result.data() as Omit<ClientRecord, "recordId" | "personType">),
-      recordId: result.id,
-      personType: "CLIENT",
-    }));
+    return results.docs.map((result) =>
+      clientRecordSchema.parse({
+        ...result.data(),
+        recordId: result.id,
+      }),
+    );
   }
 
   async getResident(

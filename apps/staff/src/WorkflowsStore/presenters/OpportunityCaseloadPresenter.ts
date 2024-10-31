@@ -250,7 +250,9 @@ export class OpportunityCaseloadPresenter {
   }
 
   get selectedOpportunity() {
-    return this.workflowsStore.selectedOpportunity;
+    return this.selectedPerson?.opportunities[this.opportunityType]?.find(
+      (opp) => opp.selectId === this.workflowsStore.selectedOpportunityId,
+    );
   }
 
   dismissNotification(id: string) {

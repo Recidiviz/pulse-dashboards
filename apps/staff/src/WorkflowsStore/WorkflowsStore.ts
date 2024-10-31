@@ -111,7 +111,7 @@ export class WorkflowsStore implements Hydratable {
 
   private selectedPersonPseudoId?: string;
 
-  private selectedOpportunityId?: string;
+  selectedOpportunityId?: string;
 
   selectedOpportunityType?: OpportunityType;
 
