@@ -1395,3 +1395,11 @@ export const PaginationButton = styled.div<{ disabled?: boolean }>`
     opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
   }
 `;
+
+export const DisclaimerWrapper = styled.div`
+  ${typography.Sans12}
+  color: ${palette.slate85};
+  margin-top: 32px;
+  padding: 0 24px;
+  font-weight: 500;
+`;

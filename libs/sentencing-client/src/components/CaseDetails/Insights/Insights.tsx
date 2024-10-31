@@ -45,7 +45,8 @@ export const Insights = ({
         <Styled.Description>
           This information represents outcomes for cases similar to that of the
           current client, {fullName}, based on gender, risk score, and type of
-          conviction.
+          conviction. Please keep in mind that data on past conduct is not a
+          guarantee of future outcomes.
         </Styled.Description>
         {!lsirScore && lsirScore !== 0 && (
           <Styled.AddLsirScoreContainer>

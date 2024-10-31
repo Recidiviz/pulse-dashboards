@@ -170,6 +170,19 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                   trackRemoveOpportunityFromRecommendationClicked,
                 }}
               />
+
+              <Styled.DisclaimerWrapper>
+                <span style={{ fontWeight: 800 }}>DISCLAIMER</span> This tool is
+                for informational purposes only. Recidiviz does not guarantee
+                the accuracy, completeness, validity, timeliness, or suitability
+                of the information in this tool and is not liable for any
+                errors, omissions, or consequences of using the information. The
+                information is not legal advice. Data on past conduct is not a
+                guarantee of future outcomes. Users are solely responsible for
+                their use of the information and agree that Recidiviz is not
+                liable for any claim, loss, or damage arising from the use of
+                this tool.
+              </Styled.DisclaimerWrapper>
             </Styled.InsightsOpportunitiesWrapper>
             {/* Recommendations */}
             <Recommendations
