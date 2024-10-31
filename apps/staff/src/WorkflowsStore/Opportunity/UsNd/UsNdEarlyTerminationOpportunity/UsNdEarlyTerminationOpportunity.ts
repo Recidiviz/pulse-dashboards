@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { computed, makeObservable } from "mobx";
 
 import { DocstarsDenialModal } from "../../../../core/OpportunityDenial/UsNd/DocstarsDenialModal";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
@@ -46,10 +45,6 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
       client.rootStore,
       usNdEarlyTerminationSchema.parse(record),
     );
-
-    makeObservable(this, {
-      almostEligibleStatusMessage: computed,
-    });
 
     this.form = new EarlyTerminationForm(this, client.rootStore);
   }

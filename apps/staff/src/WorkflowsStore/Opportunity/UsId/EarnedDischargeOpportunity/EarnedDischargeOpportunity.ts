@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { computed, makeObservable } from "mobx";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
@@ -42,10 +41,6 @@ export class EarnedDischargeOpportunity extends OpportunityBase<
       client.rootStore,
       usIdEarnedDischargeSchema.parse(record),
     );
-
-    makeObservable(this, {
-      almostEligibleStatusMessage: computed,
-    });
 
     this.form = new UsIdEarnedDischargeForm(this, client.rootStore);
   }

@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { computed, makeObservable, override } from "mobx";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
@@ -92,12 +91,6 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
       "usMoOverdueRestrictiveHousingReviewHearing",
       usMoOverdueRestrictiveHousingReviewHearingSchema.parse(record),
     );
-
-    makeObservable(this, {
-      requirementsMet: override,
-      requirementsAlmostMet: override,
-      eligibleStatusMessage: computed,
-    });
   }
 
   get requirementsMet(): OpportunityRequirement[] {

@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { makeObservable, override } from "mobx";
 
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -46,8 +45,6 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client.rootStore,
       parsedRecord,
     );
-
-    makeObservable(this, { requirementsMet: override });
   }
 
   readonly hideUnknownCaseNoteDates = true;
