@@ -68,4 +68,10 @@ export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter
       (client) => client.pseudonymizedId === this.clientPseudoId,
     );
   }
+
+  get selectedOpportunity(): Opportunity | undefined {
+    return this.client?.opportunities[this.opportunityType]?.find(
+      (opp) => opp.selectId === this.supervisionStore.opportunityPseudoId,
+    );
+  }
 }

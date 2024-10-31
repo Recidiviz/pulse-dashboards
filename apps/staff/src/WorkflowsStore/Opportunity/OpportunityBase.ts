@@ -189,7 +189,9 @@ export class OpportunityBase<
   get selectId() {
     // Used as the key for opportunity-specific components, i.e. CaseloadOpportunityCell
     // Also used when filtering on a list of opportunities.
-    return this.opportunityId ?? this.person.recordId;
+    return (
+      this.record.opportunityPseudonymizedId ?? this.person.pseudonymizedId
+    );
   }
 
   get accordionKey() {

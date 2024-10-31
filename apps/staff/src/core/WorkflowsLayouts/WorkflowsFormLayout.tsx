@@ -19,15 +19,14 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import {
-  PartiallyTypedRootStore,
-  useRootStore,
-} from "../../components/StoreProvider";
-import { Opportunity } from "../../WorkflowsStore";
+import { OpportunityType } from "~datatypes";
+
+import { useRootStore } from "../../components/StoreProvider";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { NavigationBackButton } from "../NavigationBackButton";
@@ -119,9 +118,20 @@ type FormSidebarView = "OPPORTUNITY" | "DENIAL";
 export const WorkflowsFormLayoutWrapper = observer(
   function WorkflowsFormLayoutWrapper() {
     const {
-      workflowsStore: { selectedOpportunity: opportunity },
+      workflowsStore: {
+        selectedOpportunity,
+        selectedPerson,
+        selectedOpportunityType,
+      },
     } = useRootStore();
-    return <WorkflowsFormLayout opportunity={opportunity} />;
+    if (!selectedPerson || !selectedOpportunityType) return null;
+    return (
+      <WorkflowsFormLayout
+        opportunity={selectedOpportunity}
+        selectedPerson={selectedPerson}
+        opportunityType={selectedOpportunityType}
+      />
+    );
   },
 );
 
@@ -133,96 +143,112 @@ export const WorkflowsFormLayoutWrapper = observer(
  * data or state as parameters that are passed in, rather than pulling stateful info
  * from a store within the component itself.
  */
+const HydratedWorkflowsFormLayout = observer(
+  function HydratedWorkflowsFormLayout({
+    opportunity,
+  }: {
+    opportunity: Opportunity;
+  }) {
+    const selectedPerson = opportunity.person;
+    const [currentView, setCurrentView] =
+      useState<FormSidebarView>("OPPORTUNITY");
+    const navigate = useNavigate();
+
+    usePersonTracking(selectedPerson, () => {
+      opportunity.form?.trackViewed();
+    });
+
+    const { currentTenantId } = useRootStore();
+    if (!currentTenantId) return;
+
+    const formContents = opportunity.form?.formContents;
+
+    const FormComponent = formContents && FormComponents[formContents];
+
+    const sidebarContents =
+      currentView === "DENIAL" ? (
+        <OpportunityDenialView
+          opportunity={opportunity}
+          onSubmit={() => setCurrentView("OPPORTUNITY")}
+        />
+      ) : (
+        <OpportunityProfile
+          opportunity={opportunity}
+          formLinkButton={false}
+          onDenialButtonClick={() => setCurrentView("DENIAL")}
+          selectedPerson={selectedPerson}
+          formView
+        />
+      );
+
+    const handleBack = () => {
+      if (currentView === "DENIAL") {
+        setCurrentView("OPPORTUNITY");
+      } else if (currentView === "OPPORTUNITY") {
+        navigate(-1);
+      } else {
+        assertNever(currentView);
+      }
+    };
+
+    return (
+      <Wrapper>
+        <Sidebar>
+          <NavigationLayout
+            externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+            isFixed={false}
+          />
+          <SidebarSection>
+            <BackButtonWrapper>
+              <NavigationBackButton action={{ onClick: handleBack }}>
+                Back
+              </NavigationBackButton>
+            </BackButtonWrapper>
+            {sidebarContents}
+          </SidebarSection>
+        </Sidebar>
+
+        <FormWrapper>
+          {FormComponent && (
+            <OpportunityFormProvider value={opportunity.form}>
+              <FormComponent opportunity={opportunity} />
+            </OpportunityFormProvider>
+          )}
+        </FormWrapper>
+      </Wrapper>
+    );
+  },
+);
+
+/*
+ * opportunityType and selectedPerson can both be derived from the opportunity, but
+ * need to be passed separately so that the Hydrator can work if the opportunity isn't
+ * loaded yet.
+ */
 export const WorkflowsFormLayout = observer(function WorkflowsFormLayout({
   opportunity,
+  selectedPerson,
+  opportunityType,
 }: {
   opportunity: Opportunity | undefined;
+  selectedPerson: JusticeInvolvedPerson;
+  opportunityType: OpportunityType;
 }) {
-  const { workflowsStore } = useRootStore();
-  const selectedPerson = opportunity?.person;
-  const opportunityType = opportunity?.type;
-
-  // When the form layout is unmounted, clear the selected opportunity.
-  useEffect(() => {
-    return () => {
-      workflowsStore.updateSelectedOpportunity(undefined);
-    };
-  }, [workflowsStore]);
-
-  const { currentTenantId } = useRootStore() as PartiallyTypedRootStore;
-  const [currentView, setCurrentView] =
-    useState<FormSidebarView>("OPPORTUNITY");
-  const navigate = useNavigate();
-
-  usePersonTracking(selectedPerson, () => {
-    opportunity?.form?.trackViewed();
-  });
-
-  if (!opportunityType || !selectedPerson || !opportunity) return null;
-
-  const formContents = opportunity.form?.formContents;
-
-  const FormComponent = formContents && FormComponents[formContents];
-
-  const sidebarContents =
-    currentView === "DENIAL" ? (
-      <OpportunityDenialView
-        opportunity={opportunity}
-        onSubmit={() => setCurrentView("OPPORTUNITY")}
-      />
-    ) : (
-      <OpportunityProfile
-        opportunity={opportunity}
-        formLinkButton={false}
-        onDenialButtonClick={() => setCurrentView("DENIAL")}
-        selectedPerson={selectedPerson}
-        formView
-      />
-    );
-
-  const handleBack = () => {
-    if (currentView === "DENIAL") {
-      setCurrentView("OPPORTUNITY");
-    } else if (currentView === "OPPORTUNITY") {
-      navigate(-1);
-    } else {
-      assertNever(currentView);
-    }
-  };
-
-  const hydrated = (
-    <Wrapper>
-      <Sidebar>
-        <NavigationLayout
-          externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
-          isFixed={false}
-        />
-        <SidebarSection>
-          <BackButtonWrapper>
-            <NavigationBackButton action={{ onClick: handleBack }}>
-              Back
-            </NavigationBackButton>
-          </BackButtonWrapper>
-          {sidebarContents}
-        </SidebarSection>
-      </Sidebar>
-
-      <FormWrapper>
-        {FormComponent && (
-          <OpportunityFormProvider value={opportunity.form}>
-            <FormComponent opportunity={opportunity} />
-          </OpportunityFormProvider>
-        )}
-      </FormWrapper>
-    </Wrapper>
-  );
+  if (opportunity) {
+    if (opportunity.type !== opportunityType)
+      throw new Error("WorkflowsFormLayout: opportunity types don't match");
+    if (opportunity.person !== selectedPerson)
+      throw new Error("WorkflowsFormLayout: people don't match");
+  }
 
   const empty = <div />;
 
   return (
     <SelectedPersonOpportunitiesHydrator
       {...{
-        hydrated,
+        hydrated: opportunity && (
+          <HydratedWorkflowsFormLayout opportunity={opportunity} />
+        ),
         empty,
         opportunityTypes: [opportunityType],
         person: selectedPerson,

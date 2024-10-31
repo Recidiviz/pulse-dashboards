@@ -498,7 +498,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   updateSelectedOpportunity(opportunityId?: string): void {
-    this.selectedOpportunityId = opportunityId;
+    runInAction(() => (this.selectedOpportunityId = opportunityId));
   }
 
   updateSelectedOpportunityType(opportunityType?: OpportunityType): void {
@@ -896,9 +896,7 @@ export class WorkflowsStore implements Hydratable {
 
     return this.selectedPerson.opportunities[
       this.selectedOpportunityType
-    ]?.filter(
-      (opp) => opp.selectId === this.selectedOpportunityId,
-    )[0] as any as Opportunity;
+    ]?.find((opp) => opp.selectId === this.selectedOpportunityId);
   }
 
   get selectedClient(): Client | undefined {

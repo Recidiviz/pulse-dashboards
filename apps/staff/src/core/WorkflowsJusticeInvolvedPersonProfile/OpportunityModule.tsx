@@ -24,11 +24,7 @@ import toast from "react-hot-toast";
 import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useOpportunityConfigurations,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useFeatureVariants } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { getLinkToForm } from "../../WorkflowsStore/utils";
@@ -104,8 +100,6 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
     onDenialButtonClick = () => null,
   }) {
-    const { workflowsStore } = useRootStore();
-
     const { hideDenialRevert, submittedOpportunityStatus } =
       useFeatureVariants();
 
@@ -156,15 +150,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       }
     };
 
-    const OPPORTUNITY_CONFIGS = useOpportunityConfigurations();
-
-    const urlSection = OPPORTUNITY_CONFIGS[opportunity.type].urlSection;
-    const linkToForm = getLinkToForm(
-      pathname,
-      urlSection,
-      opportunity.person.pseudonymizedId,
-      officerPseudoId,
-    );
+    const linkToForm = getLinkToForm(pathname, opportunity, officerPseudoId);
 
     return (
       <Wrapper {...colors}>
@@ -184,14 +170,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                 <FormActionButton
                   className="NavigateToFormButton"
                   buttonFill={colors.buttonFill}
-                  onClick={() => {
-                    desktopLinkGate({
-                      headline: "Referral Unavailable in Mobile View",
-                    });
-                    workflowsStore.updateSelectedOpportunity(
-                      opportunity.selectId,
-                    );
-                  }}
+                  onClick={desktopLinkGate({
+                    headline: "Referral Unavailable in Mobile View",
+                  })}
                 >
                   {opportunity.form.navigateToFormText}
                 </FormActionButton>

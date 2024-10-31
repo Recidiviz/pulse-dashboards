@@ -298,7 +298,7 @@ describe("PageWorkflows", () => {
         activePage: "opportunityAction",
       });
 
-      renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting/101`);
+      renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting/101/101`);
 
       expect(screen.getByText("Opportunity Action Page")).toBeInTheDocument();
     });

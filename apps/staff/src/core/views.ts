@@ -206,7 +206,7 @@ export function getSectionIdForMetric(metric: MetricId): PathwaysSection {
 
 export const WORKFLOWS_PATHS = {
   opportunityClients: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl`,
-  opportunityAction: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl/:justiceInvolvedPersonId`,
+  opportunityAction: `/${DASHBOARD_VIEWS.workflows}/:opportunityTypeUrl/:justiceInvolvedPersonId/:opportunityPseudoId`,
   workflows: `/${DASHBOARD_VIEWS.workflows}`,
   home: `/${DASHBOARD_VIEWS.workflows}/home`,
   tasks: `/${DASHBOARD_VIEWS.workflows}/tasks`,
@@ -263,6 +263,7 @@ export function workflowsRoute({
 }
 
 type WorkflowsRouteParams = {
+  opportunityPseudoId?: string;
   justiceInvolvedPersonId?: string;
   urlSection?: string;
 };
@@ -298,7 +299,7 @@ export const INSIGHTS_PATHS: Record<InsightsPage, string> = {
   supervisionStaffMetric: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/outcome/:metricId`,
   supervisionClientDetail: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
   supervisionOpportunity: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl`,
-  supervisionOpportunityForm: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId`,
+  supervisionOpportunityForm: `/${DASHBOARD_VIEWS.insights}/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId/:opportunityPseudoId`,
 };
 
 export type InsightsPage = keyof typeof INSIGHTS_PAGES;
@@ -364,6 +365,7 @@ export function insightsUrl(
     officerPseudoId: string;
     opportunityTypeUrl: string;
     clientPseudoId: string;
+    opportunityPseudoId: string;
   },
 ): string;
 

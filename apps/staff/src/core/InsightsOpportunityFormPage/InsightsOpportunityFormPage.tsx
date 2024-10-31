@@ -29,7 +29,7 @@ export const FormPageWithPresenter = observer(
   }: {
     presenter: SupervisionOpportunityPresenter;
   }) {
-    const { opportunityType, client } = presenter;
+    const { opportunityType, client, selectedOpportunity } = presenter;
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
     // never be missing in practice.
@@ -37,7 +37,9 @@ export const FormPageWithPresenter = observer(
 
     return (
       <WorkflowsFormLayout
-        opportunity={client.opportunities[opportunityType]?.[0]}
+        opportunity={selectedOpportunity}
+        selectedPerson={client}
+        opportunityType={opportunityType}
       />
     );
   },

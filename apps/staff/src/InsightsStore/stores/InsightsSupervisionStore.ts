@@ -72,6 +72,8 @@ export class InsightsSupervisionStore {
 
   clientPseudoId?: string;
 
+  opportunityPseudoId?: string;
+
   outcomeDate?: Date;
 
   opportunityTypeUrl?: string;
@@ -600,6 +602,10 @@ export class InsightsSupervisionStore {
 
   setClientPseudoId(clientPseudoId: string | undefined): void {
     this.clientPseudoId = clientPseudoId;
+  }
+
+  setOpportunityPseudoId(opportunityPseudoId: string | undefined): void {
+    this.opportunityPseudoId = opportunityPseudoId;
   }
 
   setOutcomeDate(dateString: string | undefined): void {

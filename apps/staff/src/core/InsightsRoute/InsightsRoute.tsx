@@ -40,6 +40,7 @@ const RouteSync = observer(function RouteSync({
     clientPseudoId,
     outcomeDate,
     opportunityTypeUrl,
+    opportunityPseudoId,
   } = routeParams;
   const loc = useLocation();
 
@@ -63,6 +64,7 @@ const RouteSync = observer(function RouteSync({
         supervisionStore.setClientPseudoId(clientPseudoId);
         supervisionStore.setOutcomeDate(outcomeDate);
         supervisionStore.setOpportunityTypeUrl(opportunityTypeUrl);
+        supervisionStore.setOpportunityPseudoId(opportunityPseudoId);
       }
     });
     syncParams();
@@ -75,6 +77,7 @@ const RouteSync = observer(function RouteSync({
     clientPseudoId,
     outcomeDate,
     opportunityTypeUrl,
+    opportunityPseudoId,
   ]);
 
   if (

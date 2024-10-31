@@ -271,21 +271,25 @@ export function opportunitiesByTab(
  */
 export function getLinkToForm(
   pathname: string,
-  urlSection: string,
-  justiceInvolvedPersonPseudoId: string,
+  opportunity: Opportunity,
   officerPseudoId: string | undefined,
 ): string {
   const isInsights = pathname.startsWith(INSIGHTS_PATHS.supervision);
+  const { urlSection } = opportunity.config;
+  const justiceInvolvedPersonId = opportunity.person.pseudonymizedId;
+  const opportunityPseudoId = opportunity.selectId;
   const linkToForm =
     isInsights && officerPseudoId
       ? insightsUrl("supervisionOpportunityForm", {
           officerPseudoId,
           opportunityTypeUrl: urlSection,
-          clientPseudoId: justiceInvolvedPersonPseudoId,
+          clientPseudoId: justiceInvolvedPersonId,
+          opportunityPseudoId,
         })
       : workflowsUrl("opportunityAction", {
           urlSection,
-          justiceInvolvedPersonId: justiceInvolvedPersonPseudoId,
+          justiceInvolvedPersonId,
+          opportunityPseudoId,
         });
   return linkToForm;
 }

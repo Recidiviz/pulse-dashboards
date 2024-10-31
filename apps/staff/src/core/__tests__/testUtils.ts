@@ -137,7 +137,7 @@ export const mockOpportunity: Opportunity<Client> = {
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,
-  selectId: undefined,
+  selectId: "SELECT_ID",
   firestoreUpdateDocId: "pastFTRD",
   denied: false,
   highlightCalloutText: "Highlight me!",

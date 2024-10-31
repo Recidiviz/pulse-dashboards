@@ -99,9 +99,7 @@ export const CaseloadOpportunityCell = observer(
               opportunity.form?.navigateToFormText && (
                 <NavigateToFormButton
                   className="NavigateToFormButton"
-                  opportunityType={opportunity.type}
-                  pseudonymizedId={person.pseudonymizedId}
-                  opportunityId={opportunity.selectId}
+                  opportunity={opportunity}
                 >
                   {opportunity.form.navigateToFormText}
                 </NavigateToFormButton>

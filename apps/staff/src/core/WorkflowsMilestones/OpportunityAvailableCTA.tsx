@@ -54,11 +54,7 @@ const OpportunityAvailableCTA = observer(function OpportunityAvailableCTA({
         </OpportunityAvailableText>
         <ButtonsContainer>
           {opportunity.form?.navigateToFormText && (
-            <NavigateToFormButton
-              opportunityType={opportunity.type}
-              pseudonymizedId={client.pseudonymizedId}
-              opportunityId={opportunity.selectId}
-            >
+            <NavigateToFormButton opportunity={opportunity}>
               {opportunity.form.navigateToFormText}
             </NavigateToFormButton>
           )}

@@ -148,7 +148,7 @@ export interface Opportunity<
   sentryTrackingId: string | undefined;
   instanceDetails: string | undefined;
   labelAddendum: string | undefined;
-  selectId: string | undefined;
+  selectId: string;
   firestoreUpdateDocId: string;
   denied: boolean;
   highlightCalloutText: string;

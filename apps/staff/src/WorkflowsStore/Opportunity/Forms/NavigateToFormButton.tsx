@@ -20,16 +20,10 @@ import { darken, rem } from "polished";
 import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { OpportunityType } from "~datatypes";
-
-import {
-  useOpportunityConfigurations,
-  useRootStore,
-} from "../../../components/StoreProvider";
 import { desktopLinkGate } from "../../../core/desktopLinkGate";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
-import { JusticeInvolvedPerson } from "../../types";
 import { getLinkToForm } from "../../utils";
+import { Opportunity } from "..";
 
 const NavigateToFormButtonStyle = styled(Button)`
   display: inline-flex;
@@ -52,39 +46,23 @@ const NavigateToFormButtonStyle = styled(Button)`
 
 type NavigateToFormButtonProps = Omit<LinkProps, "to" | "onClick"> &
   Partial<ButtonProps> & {
-    opportunityType: OpportunityType;
-    pseudonymizedId: JusticeInvolvedPerson["pseudonymizedId"];
-    opportunityId: string | undefined;
+    opportunity: Opportunity;
   };
 
 export function NavigateToFormButton({
   children,
-  opportunityType,
-  pseudonymizedId,
-  opportunityId,
+  opportunity,
   onClick,
   ...props
 }: React.PropsWithChildren<NavigateToFormButtonProps>): JSX.Element {
-  const { urlSection } = useOpportunityConfigurations()[opportunityType];
   const { pathname } = useLocation();
   const { officerPseudoId } = useParams();
 
-  const linkToForm = getLinkToForm(
-    pathname,
-    urlSection,
-    pseudonymizedId,
-    officerPseudoId,
-  );
+  const linkToForm = getLinkToForm(pathname, opportunity, officerPseudoId);
 
-  const { workflowsStore } = useRootStore();
-
-  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    workflowsStore.updateSelectedOpportunity(opportunityId);
-
-    return desktopLinkGate({
-      headline: "Referral Unavailable in Mobile View",
-    })(e);
-  };
+  const handleOnClick = desktopLinkGate({
+    headline: "Referral Unavailable in Mobile View",
+  });
 
   return (
     <Link

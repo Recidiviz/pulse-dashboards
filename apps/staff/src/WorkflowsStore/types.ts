@@ -130,7 +130,12 @@ export type EligibilityStatus =
 /**
  * Represents URL params for a workflows route
  */
-export type WorkflowsRouteParams = { page?: string; personId?: string };
+export type WorkflowsRouteParams = {
+  urlSection?: string;
+  page?: string;
+  personId?: string;
+  opportunityPseudoId?: string;
+};
 
 export type StaffFilterFunction = (
   user: CombinedUserRecord,

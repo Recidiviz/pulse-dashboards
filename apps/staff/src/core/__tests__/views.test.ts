@@ -26,7 +26,7 @@ import {
 describe("getRelativePath", () => {
   const WORKFLOWS_RELATIVE_PATHS = {
     opportunityClients: `/:opportunityTypeUrl`,
-    opportunityAction: `/:opportunityTypeUrl/:justiceInvolvedPersonId`,
+    opportunityAction: `/:opportunityTypeUrl/:justiceInvolvedPersonId/:opportunityPseudoId`,
     home: `/home`,
     tasks: `/tasks`,
     workflows: "",
@@ -55,7 +55,7 @@ describe("getRelativePath", () => {
     supervisionStaffMetric: `/supervision/staff/:officerPseudoId/outcome/:metricId`,
     supervisionClientDetail: `/supervision/staff/:officerPseudoId/outcome/:metricId/client/:clientPseudoId/:outcomeDate`,
     supervisionOpportunity: `/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl`,
-    supervisionOpportunityForm: `/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId`,
+    supervisionOpportunityForm: `/supervision/staff/:officerPseudoId/opportunity/:opportunityTypeUrl/:clientPseudoId/:opportunityPseudoId`,
   };
 
   test.each([...Object.keys(INSIGHTS_PATHS)])(

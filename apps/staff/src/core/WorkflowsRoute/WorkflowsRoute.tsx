@@ -33,11 +33,10 @@ type RouterLocation = ReturnType<typeof useLocation>;
 function parseLocation(loc: RouterLocation): WorkflowsRouteParams {
   // slicing off empty string at 0 caused by leading slash,
   // and 1 which should always be "workflows"
-  const [page, personId]: Array<string | undefined> = loc.pathname
-    .split("/")
-    .slice(2);
+  const [page, personId, opportunityPseudoId]: Array<string | undefined> =
+    loc.pathname.split("/").slice(2);
 
-  return { page, personId };
+  return { page, personId, opportunityPseudoId };
 }
 
 const RouteSync = observer(function RouteSync({
@@ -57,11 +56,15 @@ const RouteSync = observer(function RouteSync({
 
   const [previousLocContainedPersonId, setPreviousLocContainedPersonId] =
     useState(false);
+  const [
+    previousLocContainedOpportunityId,
+    setPreviousLocContainedOpportunityId,
+  ] = useState(false);
 
   useEffect(
     () =>
       autorun(() => {
-        const { page, personId } = parseLocation(loc);
+        const { page, personId, opportunityPseudoId } = parseLocation(loc);
         const { workflowsSupportedSystems, homepage } = workflowsStore;
         setRedirectPath(undefined);
         workflowsStore.setActivePage({ page, personId });
@@ -100,7 +103,12 @@ const RouteSync = observer(function RouteSync({
           });
         }
 
+        if (opportunityPseudoId || previousLocContainedOpportunityId) {
+          workflowsStore.updateSelectedOpportunity(opportunityPseudoId);
+        }
+
         setPreviousLocContainedPersonId(!!personId);
+        setPreviousLocContainedOpportunityId(!!opportunityPseudoId);
 
         /* 3. Redirect to first available opportunity page if only 1 opportunity or homepage for multiple */
         if (!page) {
@@ -132,6 +140,7 @@ const RouteSync = observer(function RouteSync({
       workflowsStore,
       currentTenantId,
       previousLocContainedPersonId,
+      previousLocContainedOpportunityId,
     ],
   );
 
