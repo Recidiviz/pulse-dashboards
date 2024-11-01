@@ -131,33 +131,31 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
 
     const oppList: InstanceType<typeof constructor>[] = [];
 
-    await Promise.all(
-      records.map(async (record) => {
-        // Create an instance of the opportunity for the given record.
-        let opp;
-        try {
-          opp = constructor
-            ? new constructor(this.person as any, record)
-            : new OpportunityBase<JusticeInvolvedPerson, OpportunityRecordBase>(
-                this.person,
-                opportunityType,
-                this.rootStore,
-                opportunitySchemaBase.parse(record),
-              );
-        } catch (e) {
-          // don't log routine feature flag checks, but do log everything else
-          if (!(e instanceof FeatureGateError)) {
-            Sentry.captureException(e);
-          }
-
-          return;
+    records.map(async (record) => {
+      // Create an instance of the opportunity for the given record.
+      let opp;
+      try {
+        opp = constructor
+          ? new constructor(this.person as any, record)
+          : new OpportunityBase<JusticeInvolvedPerson, OpportunityRecordBase>(
+              this.person,
+              opportunityType,
+              this.rootStore,
+              opportunitySchemaBase.parse(record),
+            );
+      } catch (e) {
+        // don't log routine feature flag checks, but do log everything else
+        if (!(e instanceof FeatureGateError)) {
+          Sentry.captureException(e);
         }
 
-        // Hydrate the opportunity instance, i.e. instantiate the subscriptions to Firestore
-        await opp.hydrate();
-        oppList.push(opp as InstanceType<typeof constructor>);
-      }),
-    );
+        return;
+      }
+
+      // Hydrate the opportunity instance, i.e. instantiate the subscriptions to Firestore
+      opp.hydrate();
+      oppList.push(opp as InstanceType<typeof constructor>);
+    });
 
     if (oppList.length > 0) {
       runInAction(() => {
@@ -167,13 +165,12 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
 
         set(this.opportunityMapping, opportunityType, oppList);
       });
+    } else {
+      // If we couldn't instantiate any opportunities of this type,
+      // mark as failed so that we don't leave the loading state hanging
+      // or keep retrying forever
+      runInAction(() => this.failedOpportunityTypes.add(opportunityType));
     }
-
-    // If the person has records for this opportunity, but the opportunity type isn't
-    // a key in this.opportunityMapping, then all instances for this type failed to
-    // instantiate.
-    if (oppList.length === 0 && records.length > 0)
-      this.failedOpportunityTypes.add(opportunityType);
   }
 
   get hydrationState(): HydrationState {

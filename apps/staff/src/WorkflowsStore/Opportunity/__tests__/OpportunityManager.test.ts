@@ -259,6 +259,22 @@ describe("instantiateOpportunitiesByType", () => {
     expect(isHydrated(person.opportunityManager)).toBeTrue();
   });
 
+  test("instantiation failed on missing record", async () => {
+    setTestEnabledOppTypes(["LSU"]);
+    person = new Client(lsuEligibleClient, rootStore);
+    rootStore.tenantStore.currentTenantId = "US_ID";
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+
+    vi.spyOn(
+      FirestoreStore.prototype,
+      "getOpportunitiesForJIIAndOpportunityType",
+    ).mockResolvedValue([]);
+
+    await person.opportunityManager.hydrate();
+    expect(person.opportunityManager.opportunities).toBeEmptyObject();
+    expect(isHydrated(person.opportunityManager)).toBeTrue();
+  });
+
   test("one instantiation failed, but one succeeded", async () => {
     setTestEnabledOppTypes(["LSU"]);
     person = new Client(lsuEligibleClient, rootStore);
