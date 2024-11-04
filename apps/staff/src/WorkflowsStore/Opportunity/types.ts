@@ -181,7 +181,8 @@ export type OpportunityTab =
   | "Due now"
   | "Assessment Complete"
   | "In Progress"
-  | "Submitted";
+  | "Submitted"
+  | "Pending";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"

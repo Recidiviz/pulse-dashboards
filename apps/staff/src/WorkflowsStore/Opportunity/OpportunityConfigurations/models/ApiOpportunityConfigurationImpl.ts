@@ -219,7 +219,12 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get submittedTabTitle(): OpportunityTab {
-    return "Submitted";
+    switch (this.stateCode) {
+      case "US_MI":
+        return "Pending";
+      default:
+        return "Submitted";
+    }
   }
 
   get omsCriteriaHeader(): string {
