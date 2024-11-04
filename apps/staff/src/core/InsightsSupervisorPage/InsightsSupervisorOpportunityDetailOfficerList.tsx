@@ -21,19 +21,34 @@ import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled from "styled-components/macro";
 
-import { OpportunityInfo } from "~datatypes";
+import { OpportunityInfo, OpportunityType } from "~datatypes";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
+import InsightsPill from "../InsightsPill";
 import { insightsUrl } from "../views";
 
-const OfficerWithOpportunityDetailsName = styled.div`
+const OfficerWithOpportunityDetailsName = styled.div<{
+  showZeroGrantsPill: boolean;
+}>`
   ${typography.Sans14}
   color: ${palette.pine1};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: ${rem(spacing.sm)};
+  ${({ showZeroGrantsPill }) => showZeroGrantsPill && "max-width: 48%;"}
 `;
-const OfficerWithOpportunityDetailsInfo = styled.div`
+const OfficerWithOpportunityDetailsInfo = styled.div<{
+  showZeroGrantsPill: boolean;
+}>`
   flex-direction: row;
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+  justify-content: ${({ showZeroGrantsPill }) =>
+    showZeroGrantsPill ? "space-between" : "flex-end"};
   flex-wrap: nowrap;
-  width: fit-content;
+  width: ${({ showZeroGrantsPill }) =>
+    showZeroGrantsPill ? "52%" : "fit-content"};
 `;
 
 const ClientsCountText = styled.div`
@@ -41,9 +56,9 @@ const ClientsCountText = styled.div`
   color: ${palette.slate60};
 `;
 
-const LIST_HEIGHT = rem(352);
-const LIST_WIDTH = rem(261);
-const LIST_ITEM_HEIGHT = rem(44);
+const LIST_HEIGHT = rem(496);
+const LIST_WIDTH = rem(305);
+const LIST_ITEM_HEIGHT = rem(62);
 const LIST_ITEM_WIDTH = `100%`;
 
 const OfficerWithOpportunityDetailList = styled.ul<{ isOverflowing: boolean }>`
@@ -95,8 +110,7 @@ const OfficerWithOpportunityDetailListItem = styled.li`
 `;
 
 const StaffPageLink = styled(Link)`
-  padding: ${rem(spacing.md)} ${rem(spacing.md)} ${rem(spacing.md)}
-    ${rem(spacing.sm)};
+  padding: ${rem(20)} ${rem(spacing.md)} ${rem(20)} ${rem(spacing.sm)};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -107,34 +121,54 @@ export type InsightsSupervisorOpportunityDetailOfficerListProps = {
   officersWithEligibleClients: OpportunityInfo["officersWithEligibleClients"];
   supervisionJiiLabel: string;
   label: string;
+  opportunityType: OpportunityType;
 };
 
 export const InsightsSupervisorOpportunityDetailOfficerList: React.FC<
   InsightsSupervisorOpportunityDetailOfficerListProps
-> = ({ officersWithEligibleClients, supervisionJiiLabel }) => {
+> = ({ officersWithEligibleClients, supervisionJiiLabel, opportunityType }) => {
+  const { zeroGrantsFlag } = useFeatureVariants();
+
   const isOverflowing = officersWithEligibleClients.length > 7;
 
   return (
     <OfficerWithOpportunityDetailList isOverflowing={isOverflowing}>
-      {officersWithEligibleClients.map((officer) => (
-        <OfficerWithOpportunityDetailListItem key={officer.externalId}>
-          <StaffPageLink
-            to={insightsUrl("supervisionStaff", {
-              officerPseudoId: officer.pseudonymizedId,
-            })}
-          >
-            <OfficerWithOpportunityDetailsName>
-              {officer.displayName}
-            </OfficerWithOpportunityDetailsName>
-            <OfficerWithOpportunityDetailsInfo>
-              <ClientsCountText>
-                {" "}
-                {simplur`${officer.clientsEligibleCount} ${supervisionJiiLabel}[|s]`}
-              </ClientsCountText>
-            </OfficerWithOpportunityDetailsInfo>
-          </StaffPageLink>
-        </OfficerWithOpportunityDetailListItem>
-      ))}
+      {officersWithEligibleClients.map((officer) => {
+        const showZeroGrantsPill =
+          zeroGrantsFlag &&
+          officer.zeroGrantOpportunities?.includes(opportunityType);
+        return (
+          <OfficerWithOpportunityDetailListItem key={officer.externalId}>
+            <StaffPageLink
+              to={insightsUrl("supervisionStaff", {
+                officerPseudoId: officer.pseudonymizedId,
+              })}
+            >
+              <OfficerWithOpportunityDetailsName
+                showZeroGrantsPill={!!showZeroGrantsPill}
+              >
+                {officer.displayName}
+              </OfficerWithOpportunityDetailsName>
+
+              <OfficerWithOpportunityDetailsInfo
+                showZeroGrantsPill={!!showZeroGrantsPill}
+              >
+                {showZeroGrantsPill && (
+                  <InsightsPill
+                    label="Zero Grants"
+                    // TODO(#6450): Pull tooltip copy from opportunity config
+                    tooltipCopy="This officer has not granted any clients this opportunity in the past 12 months."
+                  />
+                )}
+                <ClientsCountText>
+                  {" "}
+                  {simplur`${officer.clientsEligibleCount} ${supervisionJiiLabel}[|s]`}
+                </ClientsCountText>
+              </OfficerWithOpportunityDetailsInfo>
+            </StaffPageLink>
+          </OfficerWithOpportunityDetailListItem>
+        );
+      })}
     </OfficerWithOpportunityDetailList>
   );
 };

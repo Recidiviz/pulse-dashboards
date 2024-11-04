@@ -33,8 +33,8 @@ import { ConfigLabels } from "../../InsightsStore/presenters/types";
 import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 import { InsightsSupervisorOpportunityDetailOfficerList } from "./InsightsSupervisorOpportunityDetailOfficerList";
 
-const WRAPPER_HEIGHT = rem(448);
-const WRAPPER_WIDTH = rem(277);
+const WRAPPER_HEIGHT = rem(560);
+const WRAPPER_WIDTH = rem(315);
 const BORDER_RADIUS = rem(4);
 
 const CardWrapper = styled.div`
@@ -93,6 +93,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
     priority,
     clientsEligibleCount,
     officersWithEligibleClients,
+    opportunityType,
   },
 }) => {
   return (
@@ -118,6 +119,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
         label={label}
         officersWithEligibleClients={officersWithEligibleClients}
         supervisionJiiLabel={labels.supervisionJiiLabel}
+        opportunityType={opportunityType}
       />
     </CardWrapper>
   );

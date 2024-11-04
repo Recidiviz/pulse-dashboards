@@ -104,6 +104,10 @@ exports[`transformations 1`] = `
     "dlee456",
   ],
   "topXPctMetrics": [],
+  "zeroGrantOpportunities": [
+    "LSU",
+    "pastFTRD",
+  ],
 }
 `;
 

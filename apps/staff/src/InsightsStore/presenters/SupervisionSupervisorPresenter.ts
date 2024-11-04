@@ -417,6 +417,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       officersWithEligibleClients: [],
       clientsEligibleCount: 0,
       homepagePosition,
+      opportunityType,
     };
   }
 

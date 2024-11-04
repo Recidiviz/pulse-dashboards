@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityType } from "../../opportunities/OpportunityType";
 import { IncarcerationStaffRecord } from "../Staff/Incarceration/Workflows/schema";
 import {
   ExcludedSupervisionOfficer,
@@ -42,4 +43,5 @@ export type OpportunityInfo = {
   priority: "NORMAL" | "HIGH";
   officersWithEligibleClients: SupervisionOfficerWithOpportunityDetails[];
   clientsEligibleCount: number;
+  opportunityType: OpportunityType;
 };

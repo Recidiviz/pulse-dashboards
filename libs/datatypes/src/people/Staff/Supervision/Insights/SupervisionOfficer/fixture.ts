@@ -53,6 +53,7 @@ export const rawSupervisionOfficerFixture = [
     ],
     topXPctMetrics: [],
     avgDailyPopulation: 54.321,
+    zeroGrantOpportunities: ["LSU", "pastFTRD"],
   },
   {
     externalId: "so2",

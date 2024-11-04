@@ -1324,6 +1324,10 @@ exports[`has outlierOfficerData 1`] = `
     "dlee456",
   ],
   "topXPctMetrics": [],
+  "zeroGrantOpportunities": [
+    "LSU",
+    "pastFTRD",
+  ],
 }
 `;
 
@@ -2651,5 +2655,9 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
     "dlee456",
   ],
   "topXPctMetrics": [],
+  "zeroGrantOpportunities": [
+    "LSU",
+    "pastFTRD",
+  ],
 }
 `;

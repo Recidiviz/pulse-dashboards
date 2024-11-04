@@ -1325,6 +1325,10 @@ exports[`outlierOfficersData 1`] = `
       "dlee456",
     ],
     "topXPctMetrics": [],
+    "zeroGrantOpportunities": [
+      "LSU",
+      "pastFTRD",
+    ],
   },
   {
     "avgDailyPopulation": 32,
