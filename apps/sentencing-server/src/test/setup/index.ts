@@ -54,6 +54,7 @@ beforeAll(async () => {
   init({
     dsn: process.env["SENTRY_DSN"],
     transport: sentryTransport,
+    maxValueLength: 10000,
   });
 
   testServer = buildServer();

@@ -32,22 +32,48 @@ import {
 } from "~sentencing-server/import/handle-import/models";
 import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
 
+// Function definition pulled from https://zod.dev/?id=writing-generic-functions
+function parseData<T extends z.ZodTypeAny>(
+  datum: unknown,
+  schema: T,
+  errors: string[],
+) {
+  try {
+    // See https://zod.dev/?id=inferring-the-inferred-type for why we need to cast to z.infer<T>
+    return schema.parse(datum) as z.infer<T>;
+  } catch (e) {
+    errors.push(
+      `\nError parsing data:\nData: ${JSON.stringify(datum, null, 2)}\nError: ${e}`,
+    );
+  }
+  return undefined;
+}
+
 export async function transformAndLoadClientData(
   stateCode: string,
   data: AsyncGenerator<unknown>,
 ) {
   const prismaClient = getPrismaClientForStateCode(stateCode);
+  const errors: string[] = [];
 
   const existingCases = await prismaClient.case.findMany({
     select: { externalId: true },
   });
 
-  const clientIds: string[] = [];
+  const existingClientExternalIds = (
+    await prismaClient.client.findMany({
+      select: { externalId: true },
+    })
+  ).map(({ externalId }) => externalId);
+  const newClientExternalIds: string[] = [];
 
   // Load new client data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const datum of data) {
-    const clientData = clientImportSchema.parse(datum);
+    const clientData = parseData(datum, clientImportSchema, errors);
+    if (!clientData) {
+      continue;
+    }
 
     // Just get the cases which are already in the database (if a case hasn't been uploaded yet, it will be linked to this client during the case upload process)
     const existingCasesForClient = existingCases.filter(({ externalId }) =>
@@ -72,7 +98,7 @@ export async function transformAndLoadClientData(
       },
     };
 
-    clientIds.push(newClient.externalId);
+    newClientExternalIds.push(newClient.externalId);
 
     // Load data
     await prismaClient.client.upsert({
@@ -92,16 +118,20 @@ export async function transformAndLoadClientData(
     });
   }
 
-  // Delete all of the old clients that weren't just loaded
-  await prismaClient.client.deleteMany({
-    where: {
-      NOT: {
-        externalId: {
-          in: clientIds,
-        },
-      },
-    },
-  });
+  if (errors.length > 0) {
+    throw errors.join("\n");
+  }
+
+  // Check to make sure there aren't any missing cases in the data import
+  const missingClients = existingClientExternalIds.filter(
+    (id) => !newClientExternalIds.includes(id),
+  );
+
+  if (missingClients.length > 0) {
+    captureException(
+      `Error when importing clients! These clients exist in the database but are missing from the data import: ${JSON.stringify(missingClients)}`,
+    );
+  }
 }
 
 export async function transformAndLoadStaffData(
@@ -109,17 +139,21 @@ export async function transformAndLoadStaffData(
   data: AsyncGenerator<unknown>,
 ) {
   const prismaClient = getPrismaClientForStateCode(stateCode);
+  const errors: string[] = [];
 
   const existingCases = await prismaClient.case.findMany({
     select: { externalId: true },
   });
 
-  const staffIds: string[] = [];
+  const newStaffExternalIds: string[] = [];
 
   // Load new staff data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const datum of data) {
-    const staffData = staffImportSchema.parse(datum);
+    const staffData = parseData(datum, staffImportSchema, errors);
+    if (!staffData) {
+      continue;
+    }
 
     // Just get the cases which are already in the database (if a case hasn't been uploaded yet, it will be linked to this client during the case upload process)
     const existingCasesForStaff = existingCases.filter(({ externalId }) =>
@@ -137,7 +171,7 @@ export async function transformAndLoadStaffData(
       },
     };
 
-    staffIds.push(newStaff.externalId);
+    newStaffExternalIds.push(newStaff.externalId);
 
     // Load data
     await prismaClient.staff.upsert({
@@ -149,16 +183,26 @@ export async function transformAndLoadStaffData(
     });
   }
 
-  // Delete all of the old staff that weren't just loaded
-  await prismaClient.staff.deleteMany({
+  if (errors.length > 0) {
+    throw errors.join("\n");
+  }
+
+  // Check to make sure there aren't any missing staff in the data import
+  const missingStaff = await prismaClient.staff.findMany({
     where: {
       NOT: {
         externalId: {
-          in: staffIds,
+          in: newStaffExternalIds,
         },
       },
     },
   });
+
+  if (missingStaff.length > 0) {
+    captureException(
+      `Error when importing staff! These staff exist in the database but are missing from the data import: ${JSON.stringify(missingStaff)}`,
+    );
+  }
 }
 
 export async function transformAndLoadCaseData(
@@ -166,19 +210,17 @@ export async function transformAndLoadCaseData(
   data: AsyncGenerator<unknown>,
 ) {
   const prismaClient = getPrismaClientForStateCode(stateCode);
-
-  const existingCaseExternalIds = (
-    await prismaClient.case.findMany({
-      select: { externalId: true },
-    })
-  ).map(({ externalId }) => externalId);
+  const errors: string[] = [];
 
   const newCaseExternalIds: string[] = [];
 
   // Load new case data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const datum of data) {
-    const caseData = caseImportSchema.parse(datum);
+    const caseData = parseData(datum, caseImportSchema, errors);
+    if (!caseData) {
+      continue;
+    }
 
     newCaseExternalIds.push(caseData.external_id);
 
@@ -228,12 +270,22 @@ export async function transformAndLoadCaseData(
     });
   }
 
-  // Check to make sure there aren't any missing cases in the data import
-  const missingCases = existingCaseExternalIds.filter(
-    (id) => !newCaseExternalIds.includes(id),
-  );
+  if (errors.length > 0) {
+    throw errors.join("\n");
+  }
 
-  if (!_.isEmpty(missingCases)) {
+  // Check to make sure there aren't any missing cases in the data import
+  const missingCases = await prismaClient.case.findMany({
+    where: {
+      NOT: {
+        externalId: {
+          in: newCaseExternalIds,
+        },
+      },
+    },
+  });
+
+  if (missingCases.length > 0) {
     captureException(
       `Error when importing cases! These cases exist in the database but are missing from the data import: ${JSON.stringify(missingCases)}`,
     );
@@ -245,14 +297,17 @@ export async function transformAndLoadOpportunityData(
   data: AsyncGenerator<unknown>,
 ) {
   const prismaClient = getPrismaClientForStateCode(stateCode);
+  const errors: string[] = [];
 
-  const opportunityNames: string[] = [];
-  const providerNames: string[] = [];
+  const newOpportunities = [];
 
   // Load new opportunity data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const datum of data) {
-    const opportunityData = opportunityImportSchema.parse(datum);
+    const opportunityData = parseData(datum, opportunityImportSchema, errors);
+    if (!opportunityData) {
+      continue;
+    }
 
     const newOpportunity = {
       ..._.pick(opportunityData, [
@@ -289,11 +344,8 @@ export async function transformAndLoadOpportunityData(
       lastUpdatedAt: opportunityData.lastUpdatedDate,
     };
 
-    opportunityNames.push(opportunityData.OpportunityName);
-    providerNames.push(opportunityData.ProviderName);
-
     // Load data
-    await prismaClient.opportunity.upsert({
+    const newCreatedOpportunity = await prismaClient.opportunity.upsert({
       where: {
         opportunityName_providerName: {
           opportunityName: newOpportunity.opportunityName,
@@ -303,24 +355,21 @@ export async function transformAndLoadOpportunityData(
       create: newOpportunity,
       update: newOpportunity,
     });
+
+    newOpportunities.push(newCreatedOpportunity);
   }
 
-  // Delete all of the old opportunities that weren't just loaded
+  if (errors.length > 0) {
+    throw errors.join("\n");
+  }
+
+  // Delete all of the old opportunities that weren't just loaded if we haven't hit any errors
   await prismaClient.opportunity.deleteMany({
     where: {
       NOT: {
-        AND: [
-          {
-            opportunityName: {
-              in: opportunityNames,
-            },
-          },
-          {
-            providerName: {
-              in: providerNames,
-            },
-          },
-        ],
+        id: {
+          in: newOpportunities.map((opportunity) => opportunity.id),
+        },
       },
     },
   });
@@ -390,28 +439,37 @@ export async function transformAndLoadInsightData(
   data: AsyncGenerator<unknown>,
 ) {
   const prismaClient = getPrismaClientForStateCode(stateCode);
+  const errors: string[] = [];
 
-  // Insights aren't linked to any other models and don't have any frontend-mutable attributes, so we can just delete all of them and re-add them
-  await prismaClient.insight.deleteMany();
+  const newInsights = [];
 
   // Load new insight data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const datum of data) {
-    const insightData = insightImportSchema.parse(datum);
+    const insightData = parseData(datum, insightImportSchema, errors);
+    if (!insightData) {
+      continue;
+    }
+
+    // Create the offense if it doesn't already exist in the db
+    const offense = await prismaClient.offense.upsert({
+      where: {
+        stateCode: insightData.state_code,
+        name: insightData.most_severe_description,
+      },
+      create: {
+        stateCode: insightData.state_code,
+        name: insightData.most_severe_description,
+      },
+      update: {},
+    });
 
     const newInsight = {
       stateCode: insightData.state_code,
       gender: insightData.gender,
-      // Create the offense if it doesn't already exist in the db
       offense: {
-        connectOrCreate: {
-          where: {
-            name: insightData.most_severe_description,
-          },
-          create: {
-            stateCode: insightData.state_code,
-            name: insightData.most_severe_description,
-          },
+        connect: {
+          id: offense.id,
         },
       },
       assessmentScoreBucketStart: insightData.assessment_score_bucket_start,
@@ -451,10 +509,44 @@ export async function transformAndLoadInsightData(
       },
     } satisfies Prisma.InsightCreateInput;
 
-    await prismaClient.insight.create({
+    // Since the data has been validated, delete the existing insight and insert the new one so that all of stale recidivism and disposition records are deleted
+    await prismaClient.insight
+      .delete({
+        where: {
+          gender_offenseId_assessmentScoreBucketStart_assessmentScoreBucketEnd:
+            {
+              gender: newInsight.gender,
+              offenseId: newInsight.offense.connect.id,
+              assessmentScoreBucketStart: newInsight.assessmentScoreBucketStart,
+              assessmentScoreBucketEnd: newInsight.assessmentScoreBucketEnd,
+            },
+        },
+      })
+      .catch(() => {
+        // Catch an errors - it's possible that the insight doesn't exist in the database yet, so we don't want to throw an error if that's the case
+      });
+
+    const newCreatedInsight = await prismaClient.insight.create({
       data: newInsight,
     });
+
+    newInsights.push(newCreatedInsight);
   }
+
+  if (errors.length > 0) {
+    throw errors.join("\n");
+  }
+
+  // Delete all of the old insights that weren't just loaded if we haven't hit any errors
+  await prismaClient.insight.deleteMany({
+    where: {
+      NOT: {
+        id: {
+          in: newInsights.map((insight) => insight.id),
+        },
+      },
+    },
+  });
 }
 
 export async function transformAndLoadOffenseData(
@@ -462,13 +554,17 @@ export async function transformAndLoadOffenseData(
   data: AsyncGenerator<unknown>,
 ) {
   const prismaClient = getPrismaClientForStateCode(stateCode);
+  const errors: string[] = [];
 
-  const offenses = [];
+  const newOffenseNames = [];
 
   for await (const datum of data) {
-    const offenseData = offenseImportSchema.parse(datum);
+    const offenseData = parseData(datum, offenseImportSchema, errors);
+    if (!offenseData) {
+      continue;
+    }
 
-    offenses.push({
+    const newOffense = {
       stateCode: offenseData.state_code,
       name: offenseData.charge,
       // If the data doesn't specify the value, make sure to set it to be explicitly
@@ -480,35 +576,37 @@ export async function transformAndLoadOffenseData(
       isViolentOffense:
         offenseData.is_violent === undefined ? null : offenseData.is_violent,
       frequency: offenseData.frequency,
+    };
+
+    newOffenseNames.push(newOffense.name);
+
+    // Load data
+    await prismaClient.offense.upsert({
+      where: {
+        name: newOffense.name,
+      },
+      create: newOffense,
+      update: newOffense,
     });
+  }
+
+  if (errors.length > 0) {
+    throw errors.join("\n");
   }
 
   const missingExistingOffenses = await prismaClient.offense.findMany({
     where: {
       NOT: {
         name: {
-          in: offenses.map((offenseData) => offenseData.name),
+          in: newOffenseNames,
         },
       },
     },
   });
-
-  // If there are any offenses in the database that aren't in the data import, log an error, but don't fail the task or it will be retried
+  // If there are any offenses in the database that aren't in the data import, log an error
   if (missingExistingOffenses.length > 0) {
     captureException(
       `Error when importing offenses! These offenses exist in the database but are missing from the data import: ${missingExistingOffenses.map((offense) => offense.name).join(", ")}`,
     );
-    return;
-  }
-
-  for (const offense of offenses) {
-    // Load data
-    await prismaClient.offense.upsert({
-      where: {
-        name: offense.name,
-      },
-      create: offense,
-      update: offense,
-    });
   }
 }
