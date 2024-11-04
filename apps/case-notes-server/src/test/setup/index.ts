@@ -30,7 +30,7 @@ import { buildServer } from "~case-notes-server/server";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
-  : 3003;
+  : 3010;
 export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;

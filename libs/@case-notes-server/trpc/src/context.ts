@@ -26,6 +26,15 @@ import { getIsAuth0Authorized } from "~server-setup-plugin";
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
 
+// Idaho data is stored under US_IX in vertex + the exact match table, so we need to correct the state code
+function correctStateCode(stateCode: string) {
+  if (stateCode === "US_ID") {
+    return "US_IX";
+  }
+
+  return stateCode;
+}
+
 export async function createContext(opts: CreateFastifyContextOptions) {
   const { req } = opts;
   const stateCode = req.headers[STATE_CODE_HEADER_KEY];
@@ -36,11 +45,14 @@ export async function createContext(opts: CreateFastifyContextOptions) {
       message: `Unsupported state code provided in request headers: ${stateCode}`,
     });
   }
+
+  const correctedStateCode = correctStateCode(stateCode);
+
   const auth0Authorized = await getIsAuth0Authorized(opts);
 
   return {
     ...opts,
-    stateCode,
+    stateCode: correctedStateCode,
     auth0Authorized,
   };
 }

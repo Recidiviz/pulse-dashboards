@@ -97,8 +97,9 @@ async function main() {
   while (keepSearching) {
     const nextResults = await trpcClient.search.query({
       query,
-      externalId,
+      clientExternalId: externalId,
       pageToken: nextPageToken ?? undefined,
+      userExternalId: "LOCAL TEST SCRIPT - IGNORE FOR ANALYTICS",
     });
     console.log(nextResults.results);
 

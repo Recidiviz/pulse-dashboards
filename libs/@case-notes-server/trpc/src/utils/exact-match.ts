@@ -26,24 +26,23 @@ const exactMatchSchema = z
   .array(
     z.object({
       id: z.string(),
-      note_date: z.string(),
-      note_title: z.string(),
-      note_body: z.string(),
-      note_type: z.string(),
-      note_mode: z.string(),
-      external_id: z.string(),
+      note_date: z.string().nullable(),
+      note_title: z.string().nullable(),
+      note_body: z.string().nullable(),
+      note_type: z.string().nullable(),
+      note_mode: z.string().nullable(),
     }),
   )
   .transform((results) => {
     return results.map((result) => {
       return {
         documentId: result.id,
-        date: new Date(result.note_date),
-        contactMode: result.note_mode,
-        type: result.note_type,
-        title: result.note_title,
-        preview: result.note_body.substring(0, 250),
-        fullText: result.note_body,
+        date: result.note_date ? new Date(result.note_date) : undefined,
+        contactMode: result.note_mode ?? undefined,
+        type: result.note_type ?? undefined,
+        title: result.note_title ?? undefined,
+        preview: result.note_body?.substring(0, 250),
+        fullText: result.note_body ?? undefined,
       };
     });
   });
@@ -124,5 +123,5 @@ export async function exactMatchSearch(options: Options) {
 
   const [results] = await bigQueryClient.query(queryString);
 
-  return extractCaseNotesResults(results);
+  return { results: extractCaseNotesResults(results), queryString };
 }

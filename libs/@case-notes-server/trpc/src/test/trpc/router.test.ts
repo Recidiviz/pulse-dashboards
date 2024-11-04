@@ -105,6 +105,18 @@ const mockQueryFn = vi.fn().mockResolvedValue([
   ],
 ]);
 
+const mockInsertFn = vi.fn();
+const mockTableFn = vi.fn().mockImplementation(() => {
+  return {
+    insert: mockInsertFn,
+  };
+});
+const mockDatasetFn = vi.fn().mockImplementation(() => {
+  return {
+    table: mockTableFn,
+  };
+});
+
 vi.mock("@google-cloud/discoveryengine", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("@google-cloud/discoveryengine")>();
@@ -127,6 +139,7 @@ vi.mock("@google-cloud/bigquery", async (importOriginal) => {
     BigQuery: vi.fn().mockImplementation(() => {
       return {
         query: mockQueryFn,
+        dataset: mockDatasetFn,
       };
     }),
   };
@@ -136,7 +149,8 @@ describe("search", () => {
   test("should work if all parameters are passed", async () => {
     const { results, nextPageToken } = await testTRPCClient.search.query({
       query: "housing",
-      externalId: "fake-external-id",
+      clientExternalId: "fake-external-id",
+      userExternalId: "user-external-id",
     });
 
     expect(mockServerConfigFn).toHaveBeenCalledWith(
@@ -154,7 +168,7 @@ describe("search", () => {
         contentSearchSpec: undefined,
         pageToken: undefined,
         filter:
-          'external_id: ANY("fake-external-id") AND state_code: ANY("US_ID") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
+          'external_id: ANY("fake-external-id") AND state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
         pageSize: 20,
         queryExpansionSpec: {
           condition:
@@ -170,7 +184,7 @@ describe("search", () => {
     );
 
     expect(mockQueryFn).toHaveBeenCalledWith(
-      'SELECT * FROM `bq-table` WHERE external_id IN ("fake-external-id") AND state_code IN ("US_ID") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower("housing")) OR regexp_contains(lower(note_body), lower("housing")) OR regexp_contains(lower(note_date), lower("housing")) OR regexp_contains(lower(note_id), lower("housing")) OR regexp_contains(lower(note_mode), lower("housing")) OR regexp_contains(lower(note_title), lower("housing")) OR regexp_contains(lower(note_type), lower("housing")) OR regexp_contains(lower(state_code), lower("housing"))) LIMIT 50',
+      'SELECT * FROM `bq-table` WHERE external_id IN ("fake-external-id") AND state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower("housing")) OR regexp_contains(lower(note_body), lower("housing")) OR regexp_contains(lower(note_date), lower("housing")) OR regexp_contains(lower(note_id), lower("housing")) OR regexp_contains(lower(note_mode), lower("housing")) OR regexp_contains(lower(note_title), lower("housing")) OR regexp_contains(lower(note_type), lower("housing")) OR regexp_contains(lower(state_code), lower("housing"))) LIMIT 50',
     );
 
     expect(nextPageToken).toEqual("next-page-token");
@@ -189,25 +203,66 @@ describe("search", () => {
         title: "",
         preview:
           "After Kevin completes his CTC days, he will move to ROL or Veterans Housing. He is not going to live with his brother in Meridian because he feels he needs a clean and sober start to his probation again. Kevin is UE at this time and he will either be",
+        isExactMatch: true,
+        isVertexMatch: true,
       },
       expect.objectContaining({
         documentId: "exact-match-id-2",
+        isExactMatch: true,
+        isVertexMatch: false,
       }),
       expect.objectContaining({
         documentId: "doc-id",
+        isExactMatch: false,
+        isVertexMatch: true,
       }),
     ]);
+
+    expect(mockDatasetFn).toHaveBeenCalledWith("logs-dataset-id");
+    expect(mockTableFn).toHaveBeenCalledWith("logs-table-id");
+    expect(mockInsertFn).toHaveBeenCalledWith({
+      query: "housing",
+      page_token: undefined,
+      state_code: "US_IX",
+      client_external_id: "fake-external-id",
+      user_external_id: "user-external-id",
+      exact_match_query:
+        'SELECT * FROM `bq-table` WHERE external_id IN ("fake-external-id") AND state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower("housing")) OR regexp_contains(lower(note_body), lower("housing")) OR regexp_contains(lower(note_date), lower("housing")) OR regexp_contains(lower(note_id), lower("housing")) OR regexp_contains(lower(note_mode), lower("housing")) OR regexp_contains(lower(note_title), lower("housing")) OR regexp_contains(lower(note_type), lower("housing")) OR regexp_contains(lower(state_code), lower("housing"))) LIMIT 50',
+      performed_exact_match_search: true,
+      timestamp: expect.any(Date),
+      vertex_filter:
+        'external_id: ANY("fake-external-id") AND state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
+      env: "test",
+      results: JSON.stringify({
+        "exact-match-id": {
+          isExactMatch: true,
+          isVertexMatch: true,
+        },
+        "exact-match-id-2": {
+          isExactMatch: true,
+          isVertexMatch: false,
+        },
+        "doc-id": {
+          isExactMatch: false,
+          isVertexMatch: true,
+        },
+      }),
+    });
   });
 
   beforeEach(() => {
     mockServerConfigFn.mockClear();
     mockSearchFn.mockClear();
     mockQueryFn.mockClear();
+    mockDatasetFn.mockClear();
+    mockTableFn.mockClear();
+    mockInsertFn.mockClear();
   });
 
   test("should work without external ids", async () => {
     const { results, nextPageToken } = await testTRPCClient.search.query({
       query: "housing",
+      userExternalId: "user-external-id",
     });
 
     expect(mockServerConfigFn).toHaveBeenCalledWith(
@@ -224,7 +279,7 @@ describe("search", () => {
         servingConfig: "serving-config",
         contentSearchSpec: undefined,
         filter:
-          'state_code: ANY("US_ID") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
+          'state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
         pageSize: 20,
         queryExpansionSpec: {
           condition:
@@ -241,28 +296,66 @@ describe("search", () => {
 
     // Should not include external id filter
     expect(mockQueryFn).toHaveBeenCalledWith(
-      'SELECT * FROM `bq-table` WHERE state_code IN ("US_ID") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower("housing")) OR regexp_contains(lower(note_body), lower("housing")) OR regexp_contains(lower(note_date), lower("housing")) OR regexp_contains(lower(note_id), lower("housing")) OR regexp_contains(lower(note_mode), lower("housing")) OR regexp_contains(lower(note_title), lower("housing")) OR regexp_contains(lower(note_type), lower("housing")) OR regexp_contains(lower(state_code), lower("housing"))) LIMIT 50',
+      'SELECT * FROM `bq-table` WHERE state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower("housing")) OR regexp_contains(lower(note_body), lower("housing")) OR regexp_contains(lower(note_date), lower("housing")) OR regexp_contains(lower(note_id), lower("housing")) OR regexp_contains(lower(note_mode), lower("housing")) OR regexp_contains(lower(note_title), lower("housing")) OR regexp_contains(lower(note_type), lower("housing")) OR regexp_contains(lower(state_code), lower("housing"))) LIMIT 50',
     );
 
     expect(nextPageToken).toEqual("next-page-token");
     expect(results).toEqual([
       expect.objectContaining({
         documentId: "exact-match-id",
+        isExactMatch: true,
+        isVertexMatch: true,
       }),
       expect.objectContaining({
         documentId: "exact-match-id-2",
+        isExactMatch: true,
+        isVertexMatch: false,
       }),
       expect.objectContaining({
         documentId: "doc-id",
+        isExactMatch: false,
+        isVertexMatch: true,
       }),
     ]);
+
+    expect(mockDatasetFn).toHaveBeenCalledWith("logs-dataset-id");
+    expect(mockTableFn).toHaveBeenCalledWith("logs-table-id");
+    expect(mockInsertFn).toHaveBeenCalledWith({
+      query: "housing",
+      page_token: undefined,
+      state_code: "US_IX",
+      client_external_id: undefined,
+      user_external_id: "user-external-id",
+      exact_match_query:
+        'SELECT * FROM `bq-table` WHERE state_code IN ("US_IX") AND note_type NOT IN ("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential") AND (regexp_contains(lower(external_id), lower("housing")) OR regexp_contains(lower(note_body), lower("housing")) OR regexp_contains(lower(note_date), lower("housing")) OR regexp_contains(lower(note_id), lower("housing")) OR regexp_contains(lower(note_mode), lower("housing")) OR regexp_contains(lower(note_title), lower("housing")) OR regexp_contains(lower(note_type), lower("housing")) OR regexp_contains(lower(state_code), lower("housing"))) LIMIT 50',
+      performed_exact_match_search: true,
+      timestamp: expect.any(Date),
+      vertex_filter:
+        'state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
+      env: "test",
+      results: JSON.stringify({
+        "exact-match-id": {
+          isExactMatch: true,
+          isVertexMatch: true,
+        },
+        "exact-match-id-2": {
+          isExactMatch: true,
+          isVertexMatch: false,
+        },
+        "doc-id": {
+          isExactMatch: false,
+          isVertexMatch: true,
+        },
+      }),
+    });
   });
 
   test("shouldn't search bigquery if page token is passed", async () => {
     const { results, nextPageToken } = await testTRPCClient.search.query({
       query: "housing",
-      externalId: "fake-external-id",
+      clientExternalId: "fake-external-id",
       pageToken: "next-page-token",
+      userExternalId: "user-external-id",
     });
 
     expect(mockServerConfigFn).toHaveBeenCalledWith(
@@ -280,7 +373,7 @@ describe("search", () => {
         contentSearchSpec: undefined,
         pageToken: "next-page-token",
         filter:
-          'external_id: ANY("fake-external-id") AND state_code: ANY("US_ID") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
+          'external_id: ANY("fake-external-id") AND state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
         pageSize: 20,
         queryExpansionSpec: {
           condition:
@@ -303,10 +396,40 @@ describe("search", () => {
     expect(results).toEqual([
       expect.objectContaining({
         documentId: "exact-match-id",
+        isExactMatch: false,
+        isVertexMatch: true,
       }),
       expect.objectContaining({
         documentId: "doc-id",
+        isExactMatch: false,
+        isVertexMatch: true,
       }),
     ]);
+
+    expect(mockDatasetFn).toHaveBeenCalledWith("logs-dataset-id");
+    expect(mockTableFn).toHaveBeenCalledWith("logs-table-id");
+    expect(mockInsertFn).toHaveBeenCalledWith({
+      query: "housing",
+      page_token: "next-page-token",
+      state_code: "US_IX",
+      client_external_id: "fake-external-id",
+      user_external_id: "user-external-id",
+      performed_exact_match_search: false,
+      timestamp: expect.any(Date),
+      exact_match_query: undefined,
+      vertex_filter:
+        'external_id: ANY("fake-external-id") AND state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
+      env: "test",
+      results: JSON.stringify({
+        "exact-match-id": {
+          isExactMatch: false,
+          isVertexMatch: true,
+        },
+        "doc-id": {
+          isExactMatch: false,
+          isVertexMatch: true,
+        },
+      }),
+    });
   });
 });

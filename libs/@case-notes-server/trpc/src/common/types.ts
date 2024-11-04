@@ -19,3 +19,18 @@ export type IncludeFilterConditions = {
   external_id: string[];
   state_code: string[];
 };
+
+export type SearchResult = {
+  documentId: string;
+  date?: Date;
+  contactMode?: string;
+  type?: string;
+  title?: string;
+  preview?: string;
+  fullText?: string;
+};
+
+export type SearchResultWithTags = SearchResult & {
+  isExactMatch: boolean;
+  isVertexMatch: boolean;
+};

@@ -90,7 +90,8 @@ function extractCaseNotesResults(
     if (
       !result.document ||
       !result.document.structData ||
-      !result.document.structData.fields
+      !result.document.structData.fields ||
+      !result.document.id
     ) {
       continue;
     }
@@ -99,16 +100,16 @@ function extractCaseNotesResults(
     const documentId = result.document.id;
 
     try {
-      const noteBody = data["note_body"]?.stringValue;
-      const dateString = data["note_date"]?.stringValue;
+      const noteBody = data["note_body"]?.stringValue ?? undefined;
+      const dateString = data["note_date"]?.stringValue ?? undefined;
       results.push({
         documentId: documentId,
         date: dateString ? new Date(dateString) : undefined,
-        contactMode: data["note_mode"]?.stringValue,
-        type: data["note_type"]?.stringValue,
-        title: data["note_title"]?.stringValue,
+        contactMode: data["note_mode"]?.stringValue ?? undefined,
+        type: data["note_type"]?.stringValue ?? undefined,
+        title: data["note_title"]?.stringValue ?? undefined,
         preview: noteBody?.substring(0, 250),
-        fullText: noteBody,
+        fullText: noteBody ?? undefined,
       });
     } catch (e) {
       // Capture any errors during extraction but don't let it stop other results from being returned
@@ -179,5 +180,6 @@ export async function vertexSearch({
   return {
     nextPageToken: response.nextPageToken ?? undefined,
     results: extractedResults,
+    filter,
   };
 }

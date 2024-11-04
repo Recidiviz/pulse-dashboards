@@ -69,26 +69,41 @@ vi.mock("@google-cloud/discoveryengine", async (importOriginal) => {
   };
 });
 
+vi.mock("@google-cloud/bigquery", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@google-cloud/bigquery")>();
+  return {
+    ...actual,
+    BigQuery: vi.fn().mockImplementation(() => {
+      return {
+        query: vi.fn(),
+        dataset: vi.fn().mockImplementation(() => {
+          return {
+            table: vi.fn().mockImplementation(() => {
+              return {
+                insert: vi.fn(),
+              };
+            }),
+          };
+        }),
+      };
+    }),
+  };
+});
+
 describe("search", () => {
   test("trpc routes should be set", async () => {
     const { results } = await testTRPCClient.search.query({
       query: "housing",
-      externalId: "fake-external-id",
+      clientExternalId: "fake-external-id",
       pageToken: "fake-page-token",
+      userExternalId: "fake-user-external-id",
     });
 
     expect(results).toEqual([
-      {
+      expect.objectContaining({
         documentId: "doc-id",
-        fullText:
-          "During our meeting today, Alice was punctual and provided an update on her housing search. She has found a potential apartment and is hopeful about securing it soon. Her job is going well, and her manager has praised her dedication. Alice's sentencing evaluation is proceeding smoothly, and she feels confident about her future.",
-        date: new Date("2024-10-16"),
-        contactMode: "Address",
-        type: "Supervision Notes",
-        title: "Address Change",
-        preview:
-          "During our meeting today, Alice was punctual and provided an update on her housing search. She has found a potential apartment and is hopeful about securing it soon. Her job is going well, and her manager has praised her dedication. Alice's sentencin",
-      },
+      }),
     ]);
   });
 });
