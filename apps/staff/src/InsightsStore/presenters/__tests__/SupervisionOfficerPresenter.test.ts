@@ -35,6 +35,7 @@ import {
   lsuEligibleClient,
 } from "../../../WorkflowsStore/__fixtures__";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenter } from "../SupervisionOfficerPresenter";
@@ -81,10 +82,6 @@ const initPresenter = async (
   testOfficer: typeof testExcludedOfficer | typeof testOfficerWithOutlierData,
 ) => {
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
-  vi.spyOn(
-    rootStore.firestoreStore,
-    "getClientsForOfficerId",
-  ).mockResolvedValue([lsuEligibleClient, eligibleClient]);
 
   const testClient1 = lsuEligibleClient;
   testClient1.allEligibleOpportunities.push("pastFTRD");
@@ -92,10 +89,6 @@ const initPresenter = async (
   testClient2.allEligibleOpportunities.push("LSU");
 
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
-  vi.spyOn(
-    rootStore.firestoreStore,
-    "getClientsForOfficerId",
-  ).mockResolvedValue([testClient1, testClient2]);
 
   const { workflowsRootStore } = rootStore;
   workflowsRootStore.populateJusticeInvolvedPersonsStore();
@@ -108,6 +101,13 @@ const initPresenter = async (
       workflowsRootStore.opportunityConfigurationStore,
     );
   }
+
+  await mockFirestoreStoreClientsForOfficerId(
+    rootStore.firestoreStore,
+    [testClient1, testClient2],
+    true, // return all clients
+    undefined,
+  );
 
   vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
 };

@@ -19,7 +19,6 @@ import { configure } from "mobx";
 import { vi } from "vitest";
 
 import {
-  ClientRecord,
   excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
 } from "~datatypes";
@@ -30,10 +29,8 @@ import { JusticeInvolvedPerson } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { opportunityConstructors } from "../../../WorkflowsStore/Opportunity/opportunityConstructors";
-import {
-  clientFixture,
-  CLIENTS_OFFICERS,
-} from "../../models/offlineFixtures/ClientFixture";
+import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
+import { CLIENTS_OFFICERS } from "../../models/offlineFixtures/ClientFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { MockOpportunity } from "../__mocks__/MockOpportunity";
 import { MockSupervisionPresenterWithJiiMixin } from "../__mocks__/MockSupervisionPresenterWithJiiMixin";
@@ -59,17 +56,6 @@ beforeEach(async () => {
   );
   mockRootStore.tenantStore.setCurrentTenantId("US_XX" as TenantId);
 
-  // FIRESTORE ========================================================
-  vi.spyOn(
-    mockRootStore.firestoreStore,
-    "getClientsForOfficerId",
-  ).mockImplementation(async (stateCode: string, officerExternalId: string) => {
-    const clientData = Object.values<ClientRecord>(clientFixture).filter(
-      (fixture) => fixture.officerId === officerExternalId,
-    );
-    return clientData;
-  });
-
   // JII STORE =========================================================
   mockRootStore.workflowsRootStore.populateJusticeInvolvedPersonsStore();
   const { justiceInvolvedPersonsStore } = mockRootStore.workflowsRootStore;
@@ -86,6 +72,8 @@ beforeEach(async () => {
     // TODO: (#6012) Create the rest of tests for the various types of opportunityMappings.
     presenter.opportunityMapping = "opportunitiesEligible";
   }
+
+  await mockFirestoreStoreClientsForOfficerId(mockRootStore.firestoreStore);
 
   // OPPORTUNITIES ========================================================
   mockRootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated(

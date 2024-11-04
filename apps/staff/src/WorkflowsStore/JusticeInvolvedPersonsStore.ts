@@ -30,18 +30,22 @@ export class JusticeInvolvedPersonsStore {
     makeAutoObservable(this);
   }
 
+  private get tenantId() {
+    const tenantId = this.firestoreStore.rootStore.currentTenantId;
+    if (!tenantId) throw new Error("Tenant ID must be set");
+    return tenantId;
+  }
+
   *populateCaseloadForSupervisionOfficer(
     officerExternalId: string,
   ): FlowMethod<FirestoreStore["getClientsForOfficerId"], void> {
     if (this.caseloadByOfficerExternalId.has(officerExternalId)) return;
 
-    const currentTenantId = this.firestoreStore.rootStore.currentTenantId;
-    if (!currentTenantId) throw new Error("Tenant ID must be set");
-
     const clientData = yield this.firestoreStore.getClientsForOfficerId(
-      currentTenantId,
+      this.tenantId,
       officerExternalId,
     );
+
     this.caseloadByOfficerExternalId.set(
       officerExternalId,
       clientData.map((c) => new Client(c, this.firestoreStore.rootStore)),

@@ -19,7 +19,6 @@ import { shuffle, sum } from "lodash";
 import { configure } from "mobx";
 
 import {
-  ClientRecord,
   excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
   supervisionOfficerSupervisorsFixture,
@@ -42,10 +41,7 @@ import { opportunityConstructors } from "../../../WorkflowsStore/Opportunity/opp
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
 import { getMockOpportunityConstructor } from "../../mixins/__mocks__/MockOpportunity";
-import {
-  clientFixture,
-  CLIENTS_OFFICERS,
-} from "../../models/offlineFixtures/ClientFixture";
+import { CLIENTS_OFFICERS } from "../../models/offlineFixtures/ClientFixture";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionSupervisorPresenter } from "../SupervisionSupervisorPresenter";
 import { RawOpportunityInfo } from "../types";
@@ -237,19 +233,6 @@ test("error assembling metrics data", async () => {
 describe.skip("Opportunity details methods", () => {
   beforeEach(() => {
     rootStore.tenantStore.setCurrentTenantId("US_XX" as TenantId);
-
-    // FIRESTORE ========================================================
-    vi.spyOn(
-      rootStore.firestoreStore,
-      "getClientsForOfficerId",
-    ).mockImplementation(
-      async (stateCode: string, officerExternalId: string) => {
-        const clientData = Object.values<ClientRecord>(clientFixture).filter(
-          (fixture) => fixture.officerId === officerExternalId,
-        );
-        return clientData;
-      },
-    );
 
     // OPPORTUNITIES ========================================================
     oppConfigStore.mockHydrated(MOCK_OPPORTUNITY_CONFIGS);

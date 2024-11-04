@@ -18,6 +18,11 @@
 import { FirestoreError } from "firebase/firestore";
 import { Mock } from "vitest";
 
+import { ClientRecord } from "~datatypes";
+
+import FirestoreStore from "../../../FirestoreStore";
+import { clientFixture } from "../../../InsightsStore/models/offlineFixtures/ClientFixture";
+
 /**
  * @returns a reference to the callback that receives subscription data,
  * so that test data can be piped through the subscription on demand
@@ -100,4 +105,35 @@ export function getMockSnapshotErrorHandler(
   return function mockReceiveFirestoreError(error: FirestoreError): void {
     errorHandler(error);
   };
+}
+
+/**
+ * Mocks the FirestoreStore.getClientsForOfficerId method to return the given fixture data
+ *
+ * @export
+ * @param {FirestoreStore} firestoreStore - the FirestoreStore to mock
+ * @param {(ClientRecord[] | Record<any, ClientRecord>)} [fakeClientData=clientFixture] - the fixture data to return
+ * @param {boolean} [returnAll=false] - if true, return all clients
+ * @param {string} [fixtureOfficerIdKey="officerId"] - the key in the fixture data that corresponds to the officerId
+ */
+export async function mockFirestoreStoreClientsForOfficerId(
+  firestoreStore: FirestoreStore,
+  fakeClientData: ClientRecord[] | Record<any, ClientRecord> = clientFixture,
+  returnAll = false,
+  fixtureOfficerIdKey = "officerId",
+) {
+  const formattedFakeClientData =
+    fakeClientData instanceof Array
+      ? fakeClientData
+      : Object.values(fakeClientData);
+  vi.spyOn(firestoreStore, "getClientsForOfficerId").mockImplementation(
+    async (stateCode: string, officerExternalId: string) => {
+      if (returnAll) return formattedFakeClientData;
+      return formattedFakeClientData.filter(
+        (fixture) =>
+          fixture[fixtureOfficerIdKey as keyof ClientRecord] ===
+          officerExternalId,
+      );
+    },
+  );
 }
