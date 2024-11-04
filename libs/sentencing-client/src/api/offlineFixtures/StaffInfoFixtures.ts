@@ -17,6 +17,12 @@
 
 import { Staff } from "../APIClient";
 
+const startingDueDate = new Date();
+// Adds a year to `startingDueDate` to prevent it from automatically being archived for testing purposes
+const unarchivableDueDate = new Date(
+  startingDueDate.setFullYear(startingDueDate.getFullYear() + 1),
+);
+
 export const StaffInfoFixture: Staff = {
   pseudonymizedId: "ABC123",
   fullName: "",
@@ -31,7 +37,7 @@ export const StaffInfoFixture: Staff = {
         fullName: "Blanda Furman",
         externalId: "70478174",
       },
-      dueDate: new Date("2025-01-19T13:52:20.338Z"),
+      dueDate: unarchivableDueDate,
       reportType: "FullPSI",
       offense: "Burglary",
       status: "InProgress",
@@ -43,7 +49,7 @@ export const StaffInfoFixture: Staff = {
         fullName: "Xavier Smith",
         externalId: "93012938",
       },
-      dueDate: new Date("2024-11-01T13:52:20.338Z"),
+      dueDate: unarchivableDueDate,
       reportType: "FileReview",
       offense: "Burglary",
       status: "NotYetStarted",
@@ -67,7 +73,7 @@ export const StaffInfoFixture: Staff = {
         fullName: "Bob Thornburg",
         externalId: "89721399",
       },
-      dueDate: new Date("2025-01-11T13:52:20.338Z"),
+      dueDate: unarchivableDueDate,
       reportType: "FileReviewWithUpdatedLSIRScore",
       offense: "Burglary",
       status: "Complete",
