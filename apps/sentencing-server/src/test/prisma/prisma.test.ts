@@ -15,28 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/client";
+import { describe, expect, test } from "vitest";
 
-const prismaClients: Record<string, PrismaClient> = {};
+import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
 
-export function getPrismaClientForStateCode(stateCode: string) {
-  const dbUrl = process.env[`DATABASE_URL_${stateCode}`];
+describe("prisma", () => {
+  test("should return the same instance of a prisma client for a state code if it already exists", async () => {
+    const firstClient = getPrismaClientForStateCode("US_ID");
+    const secondClient = getPrismaClientForStateCode("US_ID");
 
-  if (!dbUrl) {
-    throw Error(
-      `Attempted to access unsupported database for state ${stateCode}`,
-    );
-  }
-
-  if (!prismaClients[dbUrl]) {
-    prismaClients[dbUrl] = new PrismaClient({
-      datasources: {
-        db: {
-          url: process.env[`DATABASE_URL_${stateCode}`],
-        },
-      },
-    });
-  }
-
-  return prismaClients[dbUrl];
-}
+    expect(secondClient).toBe(firstClient);
+  });
+});
