@@ -38,6 +38,7 @@ import {
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
+import { usAzReleaseToTPRSchema } from "../src/WorkflowsStore/Opportunity/UsAz";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity";
 import { usIdLsuSchema } from "../src/WorkflowsStore/Opportunity/UsId/LSUOpportunity";
@@ -130,6 +131,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usOrEarnedDischargeSentence: usOrEarnedDischargeSchema,
   usMeReclassificationReview: usMeAnnualReclassificationSchema,
   usMeMediumTrustee: usMeMediumTrusteeSchema,
+  usAzReleaseToTPR: usAzReleaseToTPRSchema,
 };
 
 const OTHER_SCHEMAS = {
@@ -195,7 +197,10 @@ async function testCollection(opportunityType: SchemaKey, limit?: number) {
   const failures: Record<string, z.ZodIssue[]> = {};
   (await query.get()).docs.forEach((d) => {
     const raw = d.data();
-    const isOpportunity = !!raw.eligibleCriteria;
+    // TODO(#6666) Remove the exception for AZ TPR opportunities, which rely on
+    // eligible/ineligible criteria being unions whose first element can't use passthrough
+    const isOpportunity =
+      !!raw.eligibleCriteria && opportunityType !== "usAzReleaseToTPR";
     if (isOpportunity) {
       raw.eligibleCriteria.PASSTHROUGH_NULL = null;
       raw.eligibleCriteria.PASSTHROUGH_OBJ = { test: "valid" };

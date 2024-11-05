@@ -366,9 +366,16 @@ export default class FirestoreStore {
   async updateOpportunitySubmitted(
     userEmail: string,
     opportunity: Opportunity,
+    subcategory?: string,
   ) {
+    // firestore rejects undefined values, so filter them out
+    const update = pickBy({
+      by: userEmail,
+      date: serverTimestamp(),
+      subcategory: subcategory,
+    });
     return this.updateOpportunity(opportunity, {
-      submitted: { by: userEmail, date: serverTimestamp() },
+      submitted: update,
     });
   }
 

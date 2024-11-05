@@ -27,6 +27,7 @@ import {
   ExternalSystemRequestStatus,
   ManualSnoozeUpdate,
   SharedSnoozeUpdate,
+  Submission,
   UpdateLog,
 } from "../../FirestoreStore";
 import { JusticeInvolvedPerson } from "../types";
@@ -135,6 +136,7 @@ export interface Opportunity<
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
   readonly eligibilityCallToActionText?: string;
+  subcategory?: string;
   tabTitle: (category?: OpportunityTabGroup) => OpportunityTab;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
@@ -144,7 +146,7 @@ export interface Opportunity<
   readonly submittedTabTitle: string;
   markSubmitted: () => Promise<void>;
   deleteSubmitted: () => Promise<void>;
-  submittedUpdate: UpdateLog | undefined;
+  submittedUpdate: Submission | undefined;
   sentryTrackingId: string | undefined;
   instanceDetails: string | undefined;
   labelAddendum: string | undefined;
@@ -182,6 +184,9 @@ export type OpportunityTab =
   | "Assessment Complete"
   | "In Progress"
   | "Submitted"
+  // For US_AZ TPR/DTP opportunities
+  | "Fast Trackers"
+  | "Approved by Time Comp"
   | "Pending";
 
 export type OpportunityTabGroup =

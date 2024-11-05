@@ -21,7 +21,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
-import { Denial, UpdateLog } from "../../FirestoreStore";
+import { Denial, Submission } from "../../FirestoreStore";
 import { Opportunity } from "../../WorkflowsStore";
 
 const MarkedIneligibleReasonsText = styled.div`
@@ -55,7 +55,7 @@ export function buildActedOnText({
   snoozedOnDate?: Date;
   snoozedBy?: string;
   submittedTabTitle: string;
-  submittedUpdate?: UpdateLog;
+  submittedUpdate?: Submission;
 }): string | undefined {
   if (!isSubmitted && !denial) return;
 

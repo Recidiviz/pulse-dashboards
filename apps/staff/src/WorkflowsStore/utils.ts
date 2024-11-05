@@ -267,6 +267,20 @@ export function opportunitiesByTab(
 }
 
 /**
+ * Return a map from subcategory to a list of opportunities from that subcategory
+ * from the given list, or undefined if none of the opportunities have a subcategory.
+ * Assumes that either all opportunities in the list have a subcategory or none do.
+ */
+export function opportunitiesBySubcategory(
+  opportunities: Opportunity[],
+): Record<string, Opportunity[]> | undefined {
+  if (!opportunities.length || !opportunities[0].subcategory) {
+    return;
+  }
+  return groupBy(opportunities, (opp) => opp.subcategory);
+}
+
+/**
  * Return the relevant url for the "navigate to form" button.
  */
 export function getLinkToForm(

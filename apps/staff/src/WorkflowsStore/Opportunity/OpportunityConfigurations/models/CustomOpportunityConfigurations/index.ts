@@ -20,6 +20,7 @@ import { OpportunityType } from "~datatypes";
 import UserStore from "../../../../../RootStore/UserStore";
 import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
+import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
 import { UsAzTransitionOverdueConfiguration } from "./UsAz/UsAzTransitionOverdueConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
@@ -49,6 +50,7 @@ const localCustomOpportunityConfigurations: Partial<
   usMeFurloughRelease: UsMeFurloughReleaseConfiguration,
   usMeMediumTrustee: UsMeMediumTrusteeConfiguration,
   usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
+  usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,
 };
 
 const adminPanelOnlyCustomOpportunityConfigurations: Partial<

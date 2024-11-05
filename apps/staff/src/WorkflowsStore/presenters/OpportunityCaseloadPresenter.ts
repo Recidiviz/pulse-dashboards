@@ -27,7 +27,10 @@ import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
-import { opportunitiesByTab } from "../../WorkflowsStore/utils";
+import {
+  opportunitiesBySubcategory,
+  opportunitiesByTab,
+} from "../../WorkflowsStore/utils";
 import {
   Opportunity,
   OpportunityTab,
@@ -213,6 +216,14 @@ export class OpportunityCaseloadPresenter {
 
   get peopleInActiveTab() {
     return this.oppsFromOpportunitiesByTab?.[this.activeTab] ?? [];
+  }
+
+  get peopleInActiveTabBySubcategory() {
+    return opportunitiesBySubcategory(this.peopleInActiveTab);
+  }
+
+  headingText(subcategory: string) {
+    return this.config.subcategoryHeadings?.[subcategory];
   }
 
   get justiceInvolvedPersonTitle() {

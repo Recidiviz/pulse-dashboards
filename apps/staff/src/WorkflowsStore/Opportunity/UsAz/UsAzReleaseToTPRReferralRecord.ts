@@ -26,32 +26,38 @@ const possiblyIneligibleCriteria = z
     usAzNoActiveFelonyDetainers: zodNullableObject,
     usAzMeetsFunctionalLiteracy: zodNullableObject,
   })
-  .partial()
-  .passthrough();
+  .partial();
 
 export const usAzReleaseToTPRSchema = opportunitySchemaBase
   .extend({
-    eligibleCriteria: possiblyIneligibleCriteria
-      .extend({
-        usAzTime90DaysBeforeRelease: zodNullableObject,
-        usAzNoSexualOffenseConviction: zodNullableObject,
-        usAzNoArsonConviction: zodNullableObject,
-        usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
-          zodNullableObject,
-        usAzNoActiveFelonyDetainers: zodNullableObject.optional(),
-        custodyLevelIsMinimumOrMedium: zodNullableObject,
-        noNonviolentIncarcerationViolationWithin6Months: zodNullableObject,
-        usAzNoMajorViolentViolationDuringIncarceration: zodNullableObject,
-        usAzAtLeast24MonthsSinceLastCsed: zodNullableObject,
-        usAzIsUsCitizenOrLegalPermanentResident: zodNullableObject,
-        usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
-        usAzNoDangerousCrimesAgainstChildrenConviction: zodNullableObject,
-        usAzMeetsFunctionalLiteracy: zodNullableObject.optional(),
-        usAzNoTprDenialInCurrentIncarceration: zodNullableObject,
-        usAzNoTprRemovalsFromSelfImprovementPrograms: zodNullableObject,
-      })
-      .passthrough(),
-    ineligibleCriteria: possiblyIneligibleCriteria,
+    eligibleCriteria: z.union([
+      z.object({
+        usAzNotIncarcerationWithin6MonthsOfAcisDtpDate: zodNullableObject,
+      }),
+      possiblyIneligibleCriteria
+        .extend({
+          usAzTime90DaysBeforeRelease: zodNullableObject,
+          usAzNoSexualOffenseConviction: zodNullableObject,
+          usAzNoArsonConviction: zodNullableObject,
+          usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
+            zodNullableObject,
+          custodyLevelIsMinimumOrMedium: zodNullableObject,
+          noNonviolentIncarcerationViolationWithin6Months: zodNullableObject,
+          usAzNoMajorViolentViolationDuringIncarceration: zodNullableObject,
+          usAzAtLeast24MonthsSinceLastCsed: zodNullableObject,
+          usAzIsUsCitizenOrLegalPermanentResident: zodNullableObject,
+          usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
+          usAzNoDangerousCrimesAgainstChildrenConviction: zodNullableObject,
+          usAzNoTprDateOrDenialOrReleaseInCurrentIncarceration:
+            zodNullableObject,
+          usAzNoTprRemovalsFromSelfImprovementPrograms: zodNullableObject,
+        })
+        .passthrough(),
+    ]),
+    ineligibleCriteria: z.union([
+      z.object({ usAzIncarcerationPastAcisTprDate: zodNullableObject }),
+      possiblyIneligibleCriteria.passthrough(),
+    ]),
     metadata: z
       .object({
         tabName: z.string().optional(),

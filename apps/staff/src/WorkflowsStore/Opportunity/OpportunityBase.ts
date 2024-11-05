@@ -41,6 +41,7 @@ import {
   OpportunityUpdate,
   OpportunityUpdateWithForm,
   SharedSnoozeUpdate,
+  Submission,
   UpdateLog,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -255,7 +256,7 @@ export class OpportunityBase<
     return differenceInDays(this.manualSnoozeUntilDate, startOfToday());
   }
 
-  get submittedUpdate(): UpdateLog | undefined {
+  get submittedUpdate(): Submission | undefined {
     return this.updates?.submitted;
   }
 
@@ -589,6 +590,10 @@ export class OpportunityBase<
       opportunityType: this.type,
       opportunityId: this.sentryTrackingId,
     });
+  }
+
+  get subcategory(): string | undefined {
+    return undefined;
   }
 
   get submittedTabTitle(): OpportunityTab {

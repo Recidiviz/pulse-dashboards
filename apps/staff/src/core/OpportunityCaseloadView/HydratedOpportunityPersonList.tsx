@@ -33,7 +33,13 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { palette, Sans16, Sans18, spacing } from "@recidiviz/design-system";
+import {
+  palette,
+  Sans14,
+  Sans16,
+  Sans18,
+  spacing,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
@@ -47,10 +53,7 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
-import {
-  OpportunityTab,
-  OpportunityTabGroup,
-} from "../../WorkflowsStore";
+import { OpportunityTab, OpportunityTabGroup } from "../../WorkflowsStore";
 import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
 import { Heading } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
@@ -86,6 +89,14 @@ const EmptyTabGroupWrapper = styled.div`
 const EmptyTabText = styled(Sans18)`
   color: ${palette.slate80};
   width: 50%;
+`;
+
+const SubcategoryHeading = styled(Sans14)`
+  text-transform: uppercase;
+  color: ${palette.slate60};
+  margin: ${rem(spacing.md)} 0;
+  border-bottom: 1px solid ${palette.slate20};
+  padding-bottom: ${rem(spacing.sm)};
 `;
 
 export const HydratedOpportunityPersonList = observer(
@@ -163,6 +174,8 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
       }
     };
 
+    const peopleInActiveTab = presenter.peopleInActiveTab;
+
     return (
       <FlexWrapper>
         <Heading isMobile={isMobile} className="PersonList__Heading">
@@ -179,46 +192,65 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
             handleDismiss={handleNotificationDismiss}
           />
         )}
-        {presenter.displayTabs && (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-            modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
-          >
-            <SortableContext
-              items={presenter.displayTabs}
-              strategy={horizontalListSortingStrategy}
+
+        {
+          /* Sortable tab control bar */
+          presenter.displayTabs && (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
             >
-              <WorkflowsCaseloadControlBar
-                title={"Group by"}
-                tabBadges={presenter.tabBadges}
-                tabs={presenter.displayTabs}
-                activeTab={presenter.activeTab}
-                setActiveTab={handleTabClick}
-                setActiveTabGroup={handleTabGroupClick}
-                activeTabGroup={presenter.activeTabGroup as string}
-                tabGroups={presenter.displayTabGroups as string[]}
-                sortable={presenter.shouldShowAllTabs}
-              />
-            </SortableContext>
-          </DndContext>
-        )}
-        {presenter.peopleInActiveTab &&
-        presenter.peopleInActiveTab.length > 0 ? (
-          <CaseloadOpportunityGrid items={presenter.peopleInActiveTab} />
-        ) : (
+              <SortableContext
+                items={presenter.displayTabs}
+                strategy={horizontalListSortingStrategy}
+              >
+                <WorkflowsCaseloadControlBar
+                  title={"Group by"}
+                  tabBadges={presenter.tabBadges}
+                  tabs={presenter.displayTabs}
+                  activeTab={presenter.activeTab}
+                  setActiveTab={handleTabClick}
+                  setActiveTabGroup={handleTabGroupClick}
+                  activeTabGroup={presenter.activeTabGroup as string}
+                  tabGroups={presenter.displayTabGroups as string[]}
+                  sortable={presenter.shouldShowAllTabs}
+                />
+              </SortableContext>
+            </DndContext>
+          )
+        }
+
+        {peopleInActiveTab.length === 0 ? (
+          /* Empty tab display */
           <EmptyTabGroupWrapper>
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
+        ) : presenter.peopleInActiveTabBySubcategory ? (
+          /* Subcategories display */
+          Object.entries(presenter.peopleInActiveTabBySubcategory).map(
+            ([category, people]) => (
+              <div key={category}>
+                <SubcategoryHeading>
+                  {presenter.headingText(category)}
+                </SubcategoryHeading>
+                <CaseloadOpportunityGrid items={people} />
+              </div>
+            ),
+          )
+        ) : (
+          /* Ordinary tab display with no subcategories */
+          <CaseloadOpportunityGrid items={peopleInActiveTab} />
         )}
+
         <OpportunityPreviewModal
           opportunity={presenter.selectedOpportunity}
-          navigableOpportunities={presenter.peopleInActiveTab}
+          navigableOpportunities={peopleInActiveTab}
           selectedPerson={presenter.selectedPerson}
         />
         <WorkflowsLastSynced
-          date={presenter.peopleInActiveTab?.at(0)?.person?.lastDataFromState}
+          date={peopleInActiveTab?.at(0)?.person?.lastDataFromState}
         />
       </FlexWrapper>
     );

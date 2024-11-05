@@ -80,6 +80,7 @@ export const mockOpportunity: Opportunity<Client> = {
   deniedTabTitle: "Marked Ineligible",
   tabTitle: (tabGroup) =>
     tabGroup === "ELIGIBILITY STATUS" ? "Eligible Now" : "Other",
+  subcategory: undefined,
   compare: () => 1,
   showEligibilityStatus: () => true,
   nonOMSRequirements: [],

@@ -19,6 +19,7 @@ const constructedOpportunityTypes = [
   // US_AZ
   "usAzOverdueForACISDTP",
   "usAzOverdueForACISTPR",
+  "usAzReleaseToTPR",
 
   // US_CA
   "usCaSupervisionLevelDowngrade",

@@ -33,6 +33,9 @@ export type Denial<DenialReason = string> = {
   otherReason?: string;
   updated?: UpdateLog;
 };
+export type Submission = UpdateLog & {
+  subcategory?: string;
+};
 export type ManualSnoozeUpdate = {
   snoozeForDays?: number;
   snoozeUntil?: never;
@@ -45,7 +48,7 @@ export type AutoSnoozeUpdate = {
 
 export type OpportunityUpdate = {
   denial?: Denial;
-  submitted?: UpdateLog;
+  submitted?: Submission;
   manualSnooze?: ManualSnoozeUpdate;
   autoSnooze?: AutoSnoozeUpdate;
   omsSnooze?: ExternalRequestUpdate<{ snoozeUntil: string }>;
