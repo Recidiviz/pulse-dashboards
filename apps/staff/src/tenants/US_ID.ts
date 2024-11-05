@@ -62,9 +62,6 @@ const US_ID_CONFIG: TenantConfig = {
     employment: UsIdEmploymentVerificationTask,
   },
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
-  workflowsSystemsGatedByFeatureVariant: {
-    INCARCERATION: ["usIdCRC", "usIdExpandedCRC"],
-  },
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "LOCATION",

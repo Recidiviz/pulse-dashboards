@@ -23,7 +23,7 @@ import {
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import { FeatureVariant, TenantId } from "../../RootStore/types";
+import { TenantId } from "../../RootStore/types";
 import {
   JusticeInvolvedPerson,
   StaffFilterFunction,
@@ -63,9 +63,6 @@ export type TenantConfig = {
   vitalsMetrics?: VitalsMetric[];
   tableColumns?: TableColumns;
   workflowsSupportedSystems?: SystemId[];
-  workflowsSystemsGatedByFeatureVariant?: Partial<
-    Record<SystemId, FeatureVariant[]>
-  >;
   workflowsSystemConfigs?: {
     INCARCERATION?: WorkflowsSystemConfig<ResidentSearchFields>;
     SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;

@@ -1022,7 +1022,7 @@ const setOpportunities = (
   );
 };
 
-describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByFeatureVariants testing", () => {
+describe("Additional workflowsSupportedSystems testing", () => {
   const SESSION_STATE_CODE = "US_BB" as any;
   const TEST_GATED_SYSTEM = "INCARCERATION";
   const SESSION_SUPPORTED_SYSTEMS =
@@ -1062,71 +1062,6 @@ describe("Additional workflowsSupportedSystems and unsupportedWorkflowSystemsByF
       ]),
     );
   });
-
-  test("does not include supported system if the user does not have featureVariant", () => {
-    setUser({});
-    expect(workflowsStore.workflowsSupportedSystems).not.toContain(
-      TEST_GATED_SYSTEM,
-    );
-    expect(workflowsStore.workflowsSupportedSystems).not.toEqual(
-      expect.arrayContaining([
-        TEST_GATED_SYSTEM,
-        ...SESSION_SYSTEMS_WITHOUT_GATES,
-      ]),
-    );
-  });
-
-  test(`unsupportedWorkflowsSystems if user does not have associated featureVariant for gated system`, () => {
-    setUser({});
-    expect(workflowsStore.unsupportedWorkflowSystemsByFeatureVariants).toEqual(
-      expect.arrayContaining([TEST_GATED_SYSTEM]),
-    );
-    expect(
-      workflowsStore.unsupportedWorkflowSystemsByFeatureVariants,
-    ).not.toEqual(expect.arrayContaining([...SESSION_SYSTEMS_WITHOUT_GATES]));
-  });
-
-  test.each(
-    // test only state codes that also have TEST_GATED_SYSTEM enabled and not gated
-    testStateCodes.filter(
-      (code) =>
-        code !== SESSION_STATE_CODE &&
-        (
-          (stateConfigs[code].workflowsSupportedSystems as any[]) || []
-        ).includes(TEST_GATED_SYSTEM) &&
-        !Object.keys(
-          (stateConfigs[code].workflowsSystemsGatedByFeatureVariant as Record<
-            any,
-            any[]
-          >) || {},
-        ).includes(TEST_GATED_SYSTEM),
-    ),
-  )(
-    `given gated system(s), %s systems remain unaffected when the same system is gated in another stateCode`,
-    (stateCode) => {
-      setUser({}, stateCode);
-      expect(workflowsStore.workflowsSupportedSystems).toContain(
-        TEST_GATED_SYSTEM,
-      );
-      expect(
-        workflowsStore.unsupportedWorkflowSystemsByFeatureVariants,
-      ).not.toContain(TEST_GATED_SYSTEM);
-
-      const SYSTEMS_WITHOUT_GATING_IN_OTHER_STATES = difference(
-        stateConfigs[stateCode].workflowsSupportedSystems as any[],
-        Object.keys(
-          (stateConfigs[stateCode]
-            .workflowsSystemsGatedByFeatureVariant as Record<any, any[]>) || {},
-        ),
-      );
-      expect(workflowsStore.workflowsSupportedSystems).toEqual(
-        expect.arrayContaining([
-          TEST_GATED_SYSTEM,
-          ...SYSTEMS_WITHOUT_GATING_IN_OTHER_STATES,
-        ]),
-      );
-    },
-  );
 
   test("systems are gated by routes", () => {
     setUser({}, "US_ME", {
