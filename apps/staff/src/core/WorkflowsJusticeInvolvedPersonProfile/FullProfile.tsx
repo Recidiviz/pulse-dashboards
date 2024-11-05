@@ -59,6 +59,7 @@ import {
   ResidentProfileProps,
 } from "./types";
 import { UsArResidentInformation } from "./UsAr/UsArResidentInformation";
+import { UsAzResidentInformation } from "./UsAz/UsAzResidentInformation";
 import { UsIdResidentInformation } from "./UsId/UsIdResidentInformation";
 import { UsMoResidentInformation } from "./UsMo/UsMoResidentInformation";
 import { UsNdResidentInformation } from "./UsNd/UsNdResidentInformation";
@@ -251,6 +252,8 @@ function StateSpecificResidentInformation({
   switch (resident.stateCode) {
     case "US_AR":
       return <UsArResidentInformation resident={resident} />;
+    case "US_AZ":
+      return <UsAzResidentInformation resident={resident} />;
     case "US_ID":
       return <UsIdResidentInformation resident={resident} />;
     case "US_MO":

@@ -56,6 +56,21 @@ export type UsArResidentMetadata = {
 };
 
 /*****
+ US_AZ
+ ****/
+export type UsAzResidentMetadata = {
+  stateCode: "US_AZ";
+  sedDate: string | null;
+  ercdDate: string | null;
+  csbdDate: string | null;
+  projectedCsbdDate: string | null;
+  acisTprDate: string | null;
+  projectedTprDate: string;
+  acisDtpDate: string | null;
+  projectedDtpDate: string | null;
+};
+
+/*****
  US_ID
  ****/
 
@@ -101,6 +116,7 @@ export type UsNdResidentMetadata = {
 
 type DefinedResidentMetadata = {
   US_AR: UsArResidentMetadata;
+  US_AZ: UsAzResidentMetadata;
   US_ID: UsIdResidentMetadata;
   US_ME: UsMeResidentMetadata;
   US_MO: UsMoResidentMetadata;
