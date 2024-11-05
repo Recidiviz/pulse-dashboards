@@ -34,6 +34,7 @@ import {
 import { recommendationTypeOrder } from "../../constants";
 import { getRecidivismPlot } from "./Plot";
 import * as Styled from "./Report.styles";
+import { getChartCaptions } from "./utils";
 
 interface ReportProps {
   fullName?: string;
@@ -106,6 +107,8 @@ export function Report({
         return val.dataPoints.map((dp) => dp.upperCI);
       }),
     ) ?? 0;
+
+  const chartCaptions = insight ? getChartCaptions(insight) : {};
 
   const AttributeChips = ({
     numberOfRecords,
@@ -255,6 +258,8 @@ export function Report({
                   ? getRecidivismPlot(recidivismSeries, maxUpperCI)
                   : undefined;
 
+                const chartCaption = chartCaptions[dp.recommendationType];
+
                 return (
                   <Styled.SentencingRecidivismRateSection
                     key={dp.recommendationType}
@@ -270,7 +275,6 @@ export function Report({
                         %
                       </Styled.RateDetailsPercentage>
                     </Styled.RateDetailsTitlePercentage>
-
                     {/* Chart */}
                     <div
                       style={{ marginLeft: "-6px" }}
@@ -282,9 +286,9 @@ export function Report({
                         ref.appendChild(plot);
                       }}
                     />
-
                     {/* Chart caption */}
-                    <Styled.ChartCaption>Caption text</Styled.ChartCaption>
+
+                    <Styled.ChartCaption>{chartCaption}</Styled.ChartCaption>
                   </Styled.SentencingRecidivismRateSection>
                 );
               })}
