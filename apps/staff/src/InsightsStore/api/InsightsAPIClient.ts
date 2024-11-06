@@ -28,11 +28,15 @@ import {
   MetricBenchmark,
   metricBenchmarkSchema,
   SupervisionOfficer,
+  supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventSchema,
   supervisionOfficerSchema,
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorSchema,
+  supervisionOfficerSupervisorsFixture,
+  SupervisionOfficerVitalsMetric,
+  supervisionOfficerVitalsMetricFixture,
   UserInfo,
   userInfoSchema,
 } from "~datatypes";
@@ -197,5 +201,21 @@ export class InsightsAPIClient implements InsightsAPI {
     const fetchedData = await this.apiStore.get(endpoint);
     const eventsData = fetchedData.events as Array<unknown>;
     return eventsData.map((b) => clientEventSchema.parse(b));
+  }
+
+  // TODO #6671 - Instead of using fixture data, make request to endpoint once it is deployed
+  async vitalsForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<SupervisionOfficerVitalsMetric>> {
+    return supervisionOfficerVitalsMetricFixture.filter((officerMetric) => {
+      const supervisor = supervisionOfficerSupervisorsFixture.find(
+        (s) => s.pseudonymizedId === supervisorPseudoId,
+      );
+      if (!supervisor) return false;
+      const officerPseudoIds = supervisionOfficerFixture
+        .filter((o) => o.supervisorExternalIds.includes(supervisor?.externalId))
+        .map((o) => o.pseudonymizedId);
+      return officerPseudoIds.includes(officerMetric.officerPseudonymizedId);
+    });
   }
 }

@@ -28,6 +28,7 @@ import {
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   SupervisionOfficerSupervisor,
+  SupervisionOfficerVitalsMetric,
   UserInfo,
 } from "~datatypes";
 
@@ -70,4 +71,7 @@ export interface InsightsAPI {
     clientPseudoId: string,
     endDate: Date,
   ): Promise<Array<ClientEvent>>;
+  vitalsForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<SupervisionOfficerVitalsMetric>>;
 }

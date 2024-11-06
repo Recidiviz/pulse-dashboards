@@ -45,3 +45,9 @@ export const LOOKBACK_END_DATE_STRINGS = LOOKBACK_END_DATES.map((endDate) =>
 
 export const targetStatusSchema = z.enum(["FAR", "NEAR", "MET"]);
 export type TargetStatus = z.infer<typeof targetStatusSchema>;
+
+export const VITALS_METRIC_IDS = z.enum([
+  "timely_risk_assessment",
+  "timely_contact",
+]);
+export type VitalsMetricId = z.infer<typeof VITALS_METRIC_IDS>;

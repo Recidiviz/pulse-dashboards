@@ -41,6 +41,8 @@ import {
   supervisionOfficerMetricEventFixture,
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorsFixture,
+  SupervisionOfficerVitalsMetric,
+  supervisionOfficerVitalsMetricFixture,
   UserInfo,
 } from "~datatypes";
 
@@ -217,5 +219,20 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       ...event,
       eventDate: subDays(event.eventDate, dateOffsetInDays),
     }));
+  }
+
+  async vitalsForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<SupervisionOfficerVitalsMetric>> {
+    return supervisionOfficerVitalsMetricFixture.filter((officerMetric) => {
+      const supervisor = supervisionOfficerSupervisorsFixture.find(
+        (s) => s.pseudonymizedId === supervisorPseudoId,
+      );
+      if (!supervisor) return false;
+      const officerPseudoIds = supervisionOfficerFixture
+        .filter((o) => o.supervisorExternalIds.includes(supervisor?.externalId))
+        .map((o) => o.pseudonymizedId);
+      return officerPseudoIds.includes(officerMetric.officerPseudonymizedId);
+    });
   }
 }

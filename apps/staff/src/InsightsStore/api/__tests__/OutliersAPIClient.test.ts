@@ -29,10 +29,12 @@ import {
   rawMetricBenchmarksFixture,
   rawSupervisionOfficerFixture,
   rawSupervisionOfficerMetricEventFixture,
+  rawSupervisionOfficerVitalsMetricFixture,
   rawSupervisorUserInfoFixture,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
   supervisionOfficerSupervisorsFixture,
+  supervisionOfficerVitalsMetricFixture,
   supervisorUserInfoFixture,
 } from "~datatypes";
 
@@ -251,5 +253,16 @@ describe("InsightsAPIClient", () => {
     fetchMock.mockResponse(JSON.stringify(rawActionStrategyFixture));
     const response = await client.actionStrategies("fake-pseudo-id");
     expect(response).toEqual(actionStrategyFixture);
+  });
+
+  it("vitalsForSupervisor parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ events: rawSupervisionOfficerVitalsMetricFixture }),
+    );
+    const response = await client.vitalsForSupervisor(
+      supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
+    );
+
+    expect(response).toEqual(supervisionOfficerVitalsMetricFixture.slice(0, 3));
   });
 });

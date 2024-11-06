@@ -127,6 +127,8 @@ export * from "./metrics/SupervisionOfficerMetricEvent/fixture";
 export * from "./metrics/SupervisionOfficerMetricEvent/schema";
 export * from "./metrics/SupervisionOfficerMetricOutlier/fixture";
 export * from "./metrics/SupervisionOfficerMetricOutlier/schema";
+export * from "./metrics/SupervisionOfficerVitalsMetric/fixture";
+export * from "./metrics/SupervisionOfficerVitalsMetric/schema";
 
 // Metrics Utilities Exports: Common utilities for metrics
 // -----------------------------------------------------------------------------
