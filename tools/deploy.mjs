@@ -327,6 +327,69 @@ if (deployEnv === "staging" || deployEnv === "production") {
   }
 }
 
+if (deployEnv === "staging" || deployEnv === "production") {
+  const deployCaseNotesServerPrompt = await inquirer.prompt({
+    type: "confirm",
+    name: "deployCaseNotesServer",
+    message: "Would you like to deploy the Case Notes Server?",
+  });
+
+  if (deployCaseNotesServerPrompt.deployCaseNotesServer) {
+    console.log("Building and deploying the application...");
+
+    console.log("Loading env variables...");
+    await $`nx load-env-files case-notes-server`.pipe(process.stdout);
+
+    // Start docker and configure docker to upload to container registry
+    // Only needed for staging deploys
+    if (deployEnv === "staging") {
+      try {
+        await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
+          process.stdout,
+        );
+      } catch (e) {
+        console.error("Failed to configure docker for gcloud", e);
+      }
+    }
+
+    let retryDeploy = false;
+    do {
+      // Deploy the app
+      console.log("Deploying application to Cloud Run...");
+      try {
+        // We only need to build and push the docker container if we are
+        // 1. deploying to staging.
+        // 2. deploying a cherry-pick
+        // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+        if (deployEnv === "staging") {
+          await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
+        } else if (deployEnv === "production" && isCpDeploy) {
+          await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+        }
+
+        await $`COMMIT_SHA=${currentRevision} nx deploy-app case-notes-server --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+
+        retryDeploy = false;
+      } catch (e) {
+        // eslint-disable-next-line no-await-in-loop
+        const retryDeployPrompt = await inquirer.prompt({
+          type: "confirm",
+          name: "retryDeploy",
+          message: `Case notes server deploy failed with error: ${e}. Retry?`,
+          default: false,
+        });
+        retryDeploy = retryDeployPrompt.retryDeploy;
+      }
+    } while (retryDeploy);
+  }
+}
+
 // If one deploy succeeded but the other deploy failed, we still want to publish release notes for
 // the one that succeeded, since any code change to fix the other will increment the release version.
 if (publishReleaseNotes) {

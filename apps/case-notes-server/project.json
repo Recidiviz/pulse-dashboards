@@ -11,6 +11,13 @@
         "cwd": "{projectRoot}"
       }
     },
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../tools/load_env_files.sh env_case_notes_server env_staging_case_notes_server env_prod_case_notes_server env_test_case_notes_server",
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint-files": {
       "executor": "nx:run-commands",
       "options": {
@@ -109,7 +116,19 @@
     "deploy-app": {
       "executor": "@nx-extend/gcp-cloud-run:deploy",
       "options": {
-        "region": "us-central1"
+        "region": "us-central1",
+        "envVars": {
+          "AUTH0_DOMAIN": "$AUTH0_DOMAIN",
+          "AUTH0_AUDIENCE": "$AUTH0_AUDIENCE",
+          "SENTRY_DSN": "$SENTRY_DSN",
+          "SENTRY_ENV": "$SENTRY_ENV",
+          "VERTEX_PROJECT_ID": "$VERTEX_PROJECT_ID",
+          "VERTEX_ENGINE_ID": "$VERTEX_ENGINE_ID",
+          "CASE_NOTES_BQ_TABLE_ADDRESS": "$CASE_NOTES_BQ_TABLE_ADDRESS",
+          "LOGS_BQ_PROJECT_ID": "$LOGS_BQ_PROJECT_ID",
+          "LOGS_BQ_DATASET_ID": "$LOGS_BQ_DATASET_ID",
+          "LOGS_BQ_TABLE_ID": "$LOGS_BQ_TABLE_ID"
+        }
       },
       "configurations": {
         "staging": {
