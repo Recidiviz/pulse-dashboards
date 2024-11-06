@@ -245,6 +245,12 @@ export class OpportunityCaseloadPresenter {
     return `Please select a different grouping. None of the ${this.justiceInvolvedPersonTitle}s were able to be grouped by ${toTitleCase(this.activeTabGroup.toLowerCase())}.`;
   }
 
+  get tabPrefaceText(): string | undefined {
+    if (this.activeTab) {
+      return this.config.tabPrefaceCopy[this.activeTab];
+    }
+  }
+
   get selectedPerson() {
     // TODO(#5965): Look into isolating the selected person from the workflows store
     if (this.supervisionPresenter) {

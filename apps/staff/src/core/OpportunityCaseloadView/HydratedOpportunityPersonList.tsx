@@ -63,7 +63,7 @@ import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
 
-const OpportunityPageCTA = styled(Sans16)`
+const OpportunityPageExplainer = styled(Sans16)`
   color: ${palette.slate70};
   padding-bottom: ${rem(spacing.md)};
 `;
@@ -184,7 +184,9 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
         {presenter.subheading ? (
           <OpportunitySubheading subheading={presenter.subheading} />
         ) : (
-          <OpportunityPageCTA>{presenter.callToAction}</OpportunityPageCTA>
+          <OpportunityPageExplainer>
+            {presenter.callToAction}
+          </OpportunityPageExplainer>
         )}
         {presenter.activeOpportunityNotifications && (
           <OpportunityNotifications
@@ -221,6 +223,12 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
             </DndContext>
           )
         }
+
+        {presenter.tabPrefaceText && (
+          <OpportunityPageExplainer>
+            {presenter.tabPrefaceText}
+          </OpportunityPageExplainer>
+        )}
 
         {peopleInActiveTab.length === 0 ? (
           /* Empty tab display */

@@ -84,6 +84,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   denialNoun: "Ineligibility",
   submittedTabTitle: "Submitted",
   emptyTabCopy: {},
+  tabPrefaceCopy: {},
   supportsDenial: false,
   supportsAlmostEligible: false,
   highlightCasesOnHomepage: false,

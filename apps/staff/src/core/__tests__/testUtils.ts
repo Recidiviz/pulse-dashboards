@@ -132,6 +132,7 @@ export const mockOpportunity: Opportunity<Client> = {
     nonOMSCriteria: [],
     homepagePosition: 1,
     emptyTabCopy: {},
+    tabPrefaceCopy: {},
     supportsAlmostEligible: false,
     supportsDenial: true,
     highlightCasesOnHomepage: false,

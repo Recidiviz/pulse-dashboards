@@ -253,6 +253,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return {};
   }
 
+  get tabPrefaceCopy() {
+    return {};
+  }
+
   get supportsDenial() {
     return Object.keys(this.denialReasons).length > 0;
   }
