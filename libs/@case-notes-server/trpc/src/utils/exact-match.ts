@@ -108,6 +108,10 @@ type Options = {
 export async function exactMatchSearch(options: Options) {
   const { query, projectId, tableAddress, includeFilterConditions } = options;
 
+  // Adjust matching behavior based on query term length. Short terms should be treated
+  // as full-word matches. e.g. "UA" should not match "graduation" or "February".
+  const finalQuery = query.length <= 3 ? `\\b${query}\\b` : query;
+
   const bigQueryClient = new BigQuery({
     projectId,
   });
@@ -116,7 +120,7 @@ export async function exactMatchSearch(options: Options) {
   const filterString = filter ? `${filter} AND` : "";
 
   const regex = SEARCHABLE_FIELDS.map((field) => {
-    return `regexp_contains(lower(${field}), lower("${query}"))`;
+    return `regexp_contains(lower(${field}), lower(r"${finalQuery}"))`;
   }).join(" OR ");
 
   const queryString = `SELECT * FROM \`${tableAddress}\` WHERE ${filterString} (${regex}) LIMIT ${MAX_RESULTS}`;
