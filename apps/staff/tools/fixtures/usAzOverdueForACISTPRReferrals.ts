@@ -31,6 +31,8 @@ export const usAzOverdueForACISTPRReferrals =
       },
       ineligibleCriteria: {},
       caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_AZ",
@@ -42,5 +44,7 @@ export const usAzOverdueForACISTPRReferrals =
       },
       ineligibleCriteria: {},
       caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

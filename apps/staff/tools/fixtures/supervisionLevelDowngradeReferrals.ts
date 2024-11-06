@@ -39,6 +39,8 @@ export const usTnSupervisionLevelDowngradeReferrals =
             { eventDate: "2020-01-10", noteTitle: "ARRP" },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
     ],
   );

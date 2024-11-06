@@ -23,6 +23,8 @@ exports[`transform function 1`] = `
   },
   "externalId": "abc123",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_XX",
 }
 `;

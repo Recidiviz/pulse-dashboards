@@ -72,6 +72,8 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
         },
         "externalId": "rh-1",
         "ineligibleCriteria": {},
+        "isAlmostEligible": false,
+        "isEligible": true,
         "metadata": {
           "bedNumber": "03",
           "buildingNumber": "13",
@@ -125,6 +127,8 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
         },
         "externalId": "rh-1",
         "ineligibleCriteria": {},
+        "isAlmostEligible": false,
+        "isEligible": true,
         "metadata": {
           "allSanctions": undefined,
           "bedNumber": "03",
@@ -178,6 +182,8 @@ describe("UsMoOverdueRestrictiveHousingReleaseReferralRecord", () => {
         },
         "externalId": "rh-1",
         "ineligibleCriteria": {},
+        "isAlmostEligible": false,
+        "isEligible": true,
         "metadata": {
           "allSanctions": [
             {

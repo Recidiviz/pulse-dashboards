@@ -71,6 +71,8 @@ test("transform record", () => {
       ],
     },
     eligibleStartDate: "2022-10-05",
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdLsuSchema.parse(rawRecord)).toMatchSnapshot();
@@ -103,6 +105,8 @@ test("optional criteria have sane fallbacks", () => {
       },
     },
     eligibleStartDate: "2022-10-05",
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdLsuSchema.parse(rawRecord)).toMatchSnapshot();
@@ -163,6 +167,8 @@ test("can transform record with eligible and ineligible criteria", () => {
       ],
     },
     eligibleStartDate: "2022-10-05",
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
   expect(usIdLsuSchema.parse(rawRecord)).toMatchSnapshot();

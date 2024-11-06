@@ -76,6 +76,8 @@ exports[`transform function 1`] = `
     ],
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_XX",
 }
 `;

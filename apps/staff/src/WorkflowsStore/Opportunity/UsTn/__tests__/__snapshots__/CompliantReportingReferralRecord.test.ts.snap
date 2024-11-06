@@ -88,6 +88,8 @@ exports[`parse almost eligible 1`] = `
       },
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "metadata": {
     "convictionCounties": [
       "123ABC",
@@ -193,6 +195,8 @@ exports[`parse eligible 1`] = `
     "supervisionFeeWaived": false,
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "metadata": {
     "convictionCounties": [
       "123ABC",

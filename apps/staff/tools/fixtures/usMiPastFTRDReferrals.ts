@@ -29,5 +29,7 @@ export const usMiPastFTRDReferralsFixture =
         },
       },
       ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

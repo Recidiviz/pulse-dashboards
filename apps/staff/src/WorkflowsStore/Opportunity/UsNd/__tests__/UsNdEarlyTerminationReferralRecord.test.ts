@@ -49,6 +49,8 @@ const rawRecord = {
     outOfState: false,
     ICOut: false,
   },
+  isEligible: true,
+  isAlmostEligible: false,
 };
 test("transform record", () => {
   expect(usNdEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();

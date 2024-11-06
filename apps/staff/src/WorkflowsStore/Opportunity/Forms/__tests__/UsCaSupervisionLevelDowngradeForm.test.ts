@@ -65,6 +65,8 @@ function createTestUnit() {
     },
     ineligibleCriteria: {},
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsCaSupervisionLevelDowngradeOpportunity(person, oppRecord);

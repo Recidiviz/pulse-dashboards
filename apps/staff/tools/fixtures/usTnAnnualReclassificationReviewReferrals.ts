@@ -68,6 +68,8 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
       q8Score: 0,
       q9Score: 0,
     },
+    isEligible: true,
+    isAlmostEligible: false,
   },
   {
     stateCode: "US_TN",
@@ -126,6 +128,8 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   },
 ];
 

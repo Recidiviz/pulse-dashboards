@@ -17,6 +17,8 @@ exports[`UsIdCRCResidentWorkerReferralRecord multiple criteria > transforms elig
   },
   "externalId": "crc-work-release-eligible-01",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ID",
 }
 `;
@@ -37,6 +39,8 @@ exports[`transforms eligible record with life temporal criteria 1`] = `
   },
   "externalId": "crc-work-release-eligible-02",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ID",
 }
 `;

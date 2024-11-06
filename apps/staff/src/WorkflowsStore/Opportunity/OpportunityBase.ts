@@ -664,7 +664,7 @@ export class OpportunityBase<
   }
 
   get almostEligible(): boolean {
-    return !!Object.keys(this.record?.ineligibleCriteria || {}).length;
+    return this.record.isAlmostEligible;
   }
 
   get denied(): boolean {

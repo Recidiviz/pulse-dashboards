@@ -28,6 +28,8 @@ exports[`schema for almostEligibleMonthsRemaining 1`] = `
       "eligibleDate": 2022-05-16T00:00:00.000Z,
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;
@@ -64,6 +66,8 @@ exports[`schema for almostEligiblePendingViolation 1`] = `
       "violType": "Pending since 2021-09-06",
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;
@@ -100,6 +104,8 @@ exports[`schema for almostEligibleRecentViolation 1`] = `
       "violType": "More than 1",
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;
@@ -132,6 +138,8 @@ exports[`schema for almostEligibleXPortion 1`] = `
       "xPortionServed": "1/2",
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;
@@ -163,6 +171,8 @@ exports[`schema for eligibleToApplyBeforeXMonthsRemaining 1`] = `
   },
   "externalId": "RES008",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;
@@ -194,6 +204,8 @@ exports[`schema for eligibleToApplyBeforeXPortionServed 1`] = `
   },
   "externalId": "RES002",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;
@@ -225,6 +237,8 @@ exports[`schema for fullyEligibleHalfPortion 1`] = `
   },
   "externalId": "RES004",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;
@@ -256,6 +270,8 @@ exports[`schema for fullyEligibleTwoThirdsPortion 1`] = `
   },
   "externalId": "RES006",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;

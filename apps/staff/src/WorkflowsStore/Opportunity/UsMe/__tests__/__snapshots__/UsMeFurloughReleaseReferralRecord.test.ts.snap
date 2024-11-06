@@ -29,6 +29,8 @@ exports[`transform record 1`] = `
   },
   "externalId": "001",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;

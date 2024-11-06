@@ -115,6 +115,8 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
       ICOut: false,
     },
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminationReferralRecordRaw =
@@ -126,4 +128,6 @@ export const usNdEarlyTerminationAlmostEligibleReferralRecord: UsNdEarlyTerminat
         eligibleDate: "2024-01-03",
       },
     },
+    isEligible: false,
+    isAlmostEligible: true,
   };

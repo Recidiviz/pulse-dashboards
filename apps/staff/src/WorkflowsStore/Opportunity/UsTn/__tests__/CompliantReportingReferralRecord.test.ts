@@ -131,6 +131,8 @@ test("parse eligible", () => {
     metadata,
     formInformation,
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
   expect(compliantReportingSchema.parse(rawRecord)).toMatchSnapshot();
 });
@@ -153,6 +155,8 @@ test("parse almost eligible", () => {
     metadata,
     formInformation,
     caseNotes: {},
+    isEligible: false,
+    isAlmostEligible: true,
   };
   expect(compliantReportingSchema.parse(rawRecord)).toMatchSnapshot();
 });

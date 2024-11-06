@@ -79,6 +79,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
         neededProgramming: "101",
         completedProgramming: "105",
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ),
   fullyEligible2: makeRecordFixture(
@@ -124,6 +126,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
         adSegStaysAndReasonsWithin3Yrs: [],
         neededProgramming: "101",
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ),
   almostEligible1: makeRecordFixture(
@@ -168,6 +172,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
         adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],
         neededProgramming: "105",
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
   ),
   almostEligible2: makeRecordFixture(
@@ -212,6 +218,8 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
         adSegStaysAndReasonsWithin3Yrs: ["(2022-11-07,003,)"],
         neededProgramming: "105",
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
   ),
 } satisfies FixtureMapping<usMiWardenInPersonSecurityClassificationCommitteeReviewRecord>;

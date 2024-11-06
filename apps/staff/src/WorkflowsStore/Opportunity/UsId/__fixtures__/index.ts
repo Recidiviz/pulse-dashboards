@@ -104,6 +104,8 @@ export const LSUReferralRecordFixture: LSUReferralRecordRaw = {
       },
     ],
   },
+  isEligible: true,
+  isAlmostEligible: false,
 };
 
 export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
@@ -165,6 +167,8 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
       },
     ],
   },
+  isEligible: false,
+  isAlmostEligible: true,
 };
 
 export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecordRaw =
@@ -210,6 +214,8 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeReferralRecordRaw =
@@ -255,6 +261,8 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
 export const LSUEligibleClientRecord: ClientRecord = {
@@ -278,6 +286,8 @@ export const pastFTRDRecordEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
   },
   ineligibleCriteria: {},
   caseNotes: {},
+  isEligible: true,
+  isAlmostEligible: false,
 };
 
 export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
@@ -290,6 +300,8 @@ export const pastFTRDAlmostEligibleFixture: UsIdPastFTRDReferralRecordRaw = {
     },
   },
   caseNotes: {},
+  isEligible: false,
+  isAlmostEligible: true,
 };
 
 export const pastFTRDEligibleClientRecord: ClientRecord = {

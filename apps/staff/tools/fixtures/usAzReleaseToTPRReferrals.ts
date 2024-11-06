@@ -47,6 +47,8 @@ export const usAzReleaseToTPRReferrals =
       metadata: {
         tabDescription: "FAST_TRACK",
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     // Eligible - Approved by Time Comp
     {
@@ -75,6 +77,8 @@ export const usAzReleaseToTPRReferrals =
       metadata: {
         tabDescription: "APPROVED_BY_TIME_COMP",
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     // Almost Eligible - Missing functional literacy requirement, within 6 months
     {
@@ -105,6 +109,8 @@ export const usAzReleaseToTPRReferrals =
         tabName: "ALMOST_ELIGIBLE_1",
         tabDescription: "ALMOST_ELIGIBLE_MISSING_MANLIT_BETWEEN_7_AND_180_DAYS",
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
     // Almost Eligible - Missing criteria and 6+ months away
     {
@@ -136,5 +142,7 @@ export const usAzReleaseToTPRReferrals =
         tabDescription:
           "ALMOST_ELIGIBLE_MISSING_CRITERIA_AND_BETWEEN_181_AND_365_DAYS",
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
   ]);

@@ -51,6 +51,8 @@ test("transform dual/parole record", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
@@ -90,6 +92,8 @@ test("transform probation record", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
@@ -117,6 +121,8 @@ test("optional criteria have sane fallbacks", () => {
       },
     },
     eligibleStartDate: "2022-10-05",
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
@@ -149,6 +155,8 @@ test("transforms records with eligible and ineligible criteria", () => {
       },
     },
     eligibleStartDate: "2022-10-05",
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
   expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();
@@ -194,6 +202,8 @@ test("formInformation parses", () => {
       },
     },
     eligibleStartDate: "2022-10-05",
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdEarnedDischargeSchema.parse(rawRecord)).toMatchSnapshot();

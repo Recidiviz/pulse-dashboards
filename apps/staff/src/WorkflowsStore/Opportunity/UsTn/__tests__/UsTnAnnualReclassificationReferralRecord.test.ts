@@ -77,6 +77,8 @@ const baseRawRecord: UsTnAnnualReclassificationReviewReferralRecordRaw = {
       },
     ],
   },
+  isEligible: true,
+  isAlmostEligible: false,
 };
 
 describe("UsTnAnnualReclassificationReviewReferralRecordRaw", () => {

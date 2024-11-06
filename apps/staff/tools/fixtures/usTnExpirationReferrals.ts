@@ -94,6 +94,8 @@ const data: UsTnExpirationReferralRecordRaw[] = [
       },
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   },
 ];
 

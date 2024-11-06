@@ -53,6 +53,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ID",
@@ -108,6 +110,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ID",
@@ -167,6 +171,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
             },
           ],
         },
+        isEligible: false,
+        isAlmostEligible: true,
       },
       {
         stateCode: "US_ID",
@@ -225,6 +231,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ID",
@@ -284,6 +292,8 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
             },
           ],
         },
+        isEligible: false,
+        isAlmostEligible: true,
       },
     ],
     idFunc: externalIdFunc,

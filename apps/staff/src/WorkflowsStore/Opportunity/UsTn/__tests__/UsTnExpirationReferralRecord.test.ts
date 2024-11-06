@@ -91,6 +91,8 @@ const usTnExpirationRecordRaw: z.input<typeof usTnExpirationSchema> = {
     },
   },
   ineligibleCriteria: {},
+  isEligible: true,
+  isAlmostEligible: false,
 };
 
 const mockClient = {

@@ -50,6 +50,8 @@ test("transform record", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usMeFurloughReleaseSchema.parse(rawRecord)).toMatchSnapshot();

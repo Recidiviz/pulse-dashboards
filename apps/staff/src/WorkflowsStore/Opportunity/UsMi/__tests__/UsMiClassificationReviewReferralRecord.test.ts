@@ -65,6 +65,8 @@ test("transform record for initial CR", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(schema.parse(rawRecord)).toMatchSnapshot();
@@ -94,6 +96,8 @@ test("transform record for six-month CR", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(schema.parse(rawRecord)).toMatchSnapshot();
@@ -144,6 +148,8 @@ test("transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLeve
     },
     ineligibleCriteria: {},
     metadata: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(schema.parse(rawRecord)).toMatchSnapshot();

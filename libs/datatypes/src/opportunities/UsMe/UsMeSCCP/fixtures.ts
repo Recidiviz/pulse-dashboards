@@ -48,6 +48,8 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   eligibleToApplyBeforeXMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -76,6 +78,8 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   fullyEligibleTwoThirdsPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -102,6 +106,8 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   fullyEligibleHalfPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -130,6 +136,8 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   almostEligibleRecentViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -163,6 +171,8 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   }),
   almostEligiblePendingViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -196,6 +206,8 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   }),
   almostEligibleMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -225,6 +237,8 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   }),
   almostEligibleXPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -252,5 +266,7 @@ export const usMeSccpFixtures = {
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   }),
 } satisfies FixtureMapping<UsMeSCCPRecord>;

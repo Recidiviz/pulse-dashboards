@@ -42,6 +42,8 @@ describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
         },
         "externalId": "rh-1",
         "ineligibleCriteria": {},
+        "isAlmostEligible": false,
+        "isEligible": true,
         "metadata": {
           "bedNumber": "03",
           "buildingNumber": "13",
@@ -96,6 +98,8 @@ describe("UsMoOverdueRestrictiveHousingInitialHearingReferralRecord", () => {
               "nextReviewDate": 2023-10-15T00:00:00.000Z,
             },
           },
+          "isAlmostEligible": false,
+          "isEligible": true,
           "metadata": {
             "bedNumber": "03",
             "buildingNumber": "13",

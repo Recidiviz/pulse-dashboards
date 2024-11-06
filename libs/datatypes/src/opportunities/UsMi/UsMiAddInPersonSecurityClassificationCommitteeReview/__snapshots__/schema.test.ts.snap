@@ -34,6 +34,8 @@ exports[`schema for almostEligible1 1`] = `
       "solitaryStartDate": 2021-11-16T00:00:00.000Z,
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "isOverdue": false,
   "metadata": {
     "adSegStaysAndReasonsWithin3Yrs": [
@@ -83,6 +85,8 @@ exports[`schema for almostEligible2 1`] = `
       "eligibleDate": 2021-12-22T00:00:00.000Z,
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "isOverdue": false,
   "metadata": {
     "adSegStaysAndReasonsWithin3Yrs": [
@@ -136,6 +140,8 @@ exports[`schema for fullyEligible1 1`] = `
     "segregationType": "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "isOverdue": true,
   "metadata": {
     "adSegStaysAndReasonsWithin3Yrs": [
@@ -187,6 +193,8 @@ exports[`schema for fullyEligible2 1`] = `
     "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "isOverdue": false,
   "metadata": {
     "adSegStaysAndReasonsWithin3Yrs": [],

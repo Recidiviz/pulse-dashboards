@@ -31,6 +31,8 @@ export const usIdSupervisionLevelDowngradeReferrals =
         },
       },
       ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_ID",
@@ -43,5 +45,7 @@ export const usIdSupervisionLevelDowngradeReferrals =
         },
       },
       ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

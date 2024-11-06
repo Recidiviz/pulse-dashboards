@@ -39,6 +39,8 @@ test("transform record", () => {
     metadata: {
       eligibleDate: "2022-08-12",
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(

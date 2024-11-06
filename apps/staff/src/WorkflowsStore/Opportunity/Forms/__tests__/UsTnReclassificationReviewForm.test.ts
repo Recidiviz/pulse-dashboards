@@ -103,6 +103,8 @@ function createTestUnit() {
     },
     ineligibleCriteria: {},
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   formUpdates = {};

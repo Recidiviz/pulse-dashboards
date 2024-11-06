@@ -79,6 +79,8 @@ export const usMiSecurityClassificationCommitteeReviewFixtures = {
         completedProgramming: "105",
       },
       isOverdue: true,
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ),
   fullyEligible2: makeRecordFixture(
@@ -124,6 +126,8 @@ export const usMiSecurityClassificationCommitteeReviewFixtures = {
         neededProgramming: "101",
       },
       isOverdue: true,
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ),
   almostEligible: makeRecordFixture(
@@ -168,6 +172,8 @@ export const usMiSecurityClassificationCommitteeReviewFixtures = {
         neededProgramming: "105",
       },
       isOverdue: false,
+      isEligible: false,
+      isAlmostEligible: true,
     },
   ),
 } satisfies FixtureMapping<usMiSecurityClassificationCommitteeReviewRecord>;

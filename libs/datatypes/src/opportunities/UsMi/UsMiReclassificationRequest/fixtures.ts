@@ -41,6 +41,8 @@ export const usMiReclassificationRequestFixtures = {
       solitaryConfinementType: "DISCIPLINARY_SOLITARY_CONFINEMENT",
       daysInSolitary: 15,
     },
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   fullyEligible2: makeRecordFixture(usMiReclassificationRequestSchema, {
     stateCode: "US_MI",
@@ -59,6 +61,8 @@ export const usMiReclassificationRequestFixtures = {
       solitaryConfinementType: "TEMPORARY_SOLITARY_CONFINEMENT",
       daysInSolitary: 31,
     },
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   almostEligible: makeRecordFixture(usMiReclassificationRequestSchema, {
     stateCode: "US_MI",
@@ -77,5 +81,7 @@ export const usMiReclassificationRequestFixtures = {
       solitaryConfinementType: "TEMPORARY_SOLITARY_CONFINEMENT",
       daysInSolitary: 27,
     },
+    isEligible: false,
+    isAlmostEligible: true,
   }),
 } satisfies FixtureMapping<usMiReclassificationRequestRecord>;

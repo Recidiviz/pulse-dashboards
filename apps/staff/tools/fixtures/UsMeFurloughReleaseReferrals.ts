@@ -50,6 +50,8 @@ export const usMeFurloughReleaseFixture: FirestoreFixture<UsMeFurloughReleaseRef
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ME",
@@ -80,6 +82,8 @@ export const usMeFurloughReleaseFixture: FirestoreFixture<UsMeFurloughReleaseRef
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ME",
@@ -110,6 +114,8 @@ export const usMeFurloughReleaseFixture: FirestoreFixture<UsMeFurloughReleaseRef
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
     ],
     idFunc: externalIdFunc,

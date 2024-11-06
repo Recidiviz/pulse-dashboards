@@ -26,6 +26,8 @@ exports[`transform record with usMeCustodyLevelIsMinimum 1`] = `
   },
   "externalId": "001",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;
@@ -56,6 +58,8 @@ exports[`transform record with usMeCustodyLevelIsMinimumOrCommunity 1`] = `
   },
   "externalId": "001",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;

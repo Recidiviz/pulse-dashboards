@@ -23,6 +23,7 @@ import {
   signInWithCustomToken,
 } from "firebase/auth";
 import {
+  and,
   collection,
   connectFirestoreEmulator,
   deleteField,
@@ -34,6 +35,7 @@ import {
   getDocs,
   getFirestore,
   limit,
+  or,
   PartialWithFieldValue,
   query,
   serverTimestamp,
@@ -588,25 +590,17 @@ export default class FirestoreStore {
     const results = await getDocs(
       query(
         this.collection({ raw: opportunityTypeCollection }),
-        where("externalId", "==", personExternalId),
-        where("stateCode", "==", stateCode),
+        and(
+          where("externalId", "==", personExternalId),
+          where("stateCode", "==", stateCode),
+          or(
+            where("isEligible", "==", true),
+            where("isAlmostEligible", "==", true),
+          ),
+        ),
       ),
     );
 
-    return (
-      results.docs
-        .map((result) => result.data())
-        // TODO(#6416) once required fields make it to prod, move this filtering
-        // into the query to prevent overfetching (and simplify the logic by not
-        // supporting missing fields anymore). Can't really construct queries around
-        // missing fields in Firestore which is why this is needed for now
-        .filter(
-          (record) =>
-            // when fields are missing we can infer they are either eligible or almost-eligible,
-            // and in either case they should pass through the filter. neither field is consistently
-            // included in product views so we always treat undefined as equivalent to true
-            !(record.isEligible === false && record.isAlmostEligible === false),
-        )
-    );
+    return results.docs.map((result) => result.data());
   }
 }

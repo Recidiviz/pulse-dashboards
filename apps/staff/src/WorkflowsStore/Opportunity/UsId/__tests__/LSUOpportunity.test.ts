@@ -213,7 +213,11 @@ describe("no UA required", () => {
 });
 
 describe("almost eligible income verified within 3 months", () => {
-  const almostEligibleIncomeVerified = cloneDeep(LSUReferralRecordFixture);
+  const almostEligibleIncomeVerified = {
+    ...cloneDeep(LSUReferralRecordFixture),
+    isEligible: false,
+    isAlmostEligible: true,
+  };
 
   almostEligibleIncomeVerified.ineligibleCriteria.usIdIncomeVerifiedWithin3Months =
     null;
@@ -253,7 +257,11 @@ describe("almost eligible income verified within 3 months", () => {
 });
 
 describe("almost eligible on supervision at least a year", () => {
-  const almostEligibleSupervisionLength = cloneDeep(LSUReferralRecordFixture);
+  const almostEligibleSupervisionLength = {
+    ...cloneDeep(LSUReferralRecordFixture),
+    isEligible: false,
+    isAlmostEligible: true,
+  };
 
   almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
     {
@@ -294,7 +302,11 @@ describe("almost eligible on supervision at least a year", () => {
 });
 
 describe("almost eligible days remaining on supervision", () => {
-  const almostEligibleSupervisionLength = cloneDeep(LSUReferralRecordFixture);
+  const almostEligibleSupervisionLength = {
+    ...cloneDeep(LSUReferralRecordFixture),
+    isEligible: false,
+    isAlmostEligible: true,
+  };
   almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
     {
       eligibleDate: "2023-03-02",

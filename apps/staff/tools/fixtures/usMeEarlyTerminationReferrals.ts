@@ -46,6 +46,8 @@ export const usMeEarlyTerminationReferralsFixture =
           },
         ],
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_ME",
@@ -74,6 +76,8 @@ export const usMeEarlyTerminationReferralsFixture =
           },
         ],
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
     {
       stateCode: "US_ME",
@@ -103,5 +107,7 @@ export const usMeEarlyTerminationReferralsFixture =
           },
         ],
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
   ]);

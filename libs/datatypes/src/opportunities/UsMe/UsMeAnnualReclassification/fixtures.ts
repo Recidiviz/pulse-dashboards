@@ -43,6 +43,8 @@ export const usMeAnnualReclassificationFixtures = {
       workAssignments: "Argo Labs, Lab Technician; 2023-10-03: Present",
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   almostEligible: makeRecordFixture(usMeAnnualReclassificationSchema, {
     stateCode: "US_ME",
@@ -64,5 +66,7 @@ export const usMeAnnualReclassificationFixtures = {
       furloughs: "2024-01-13, 2023-11-08",
       workAssignments: "Argo Labs, Lab Technician; 2023-10-03: Present",
     },
+    isEligible: false,
+    isAlmostEligible: true,
   }),
 } satisfies FixtureMapping<UsMeAnnualReclassificationRecord>;

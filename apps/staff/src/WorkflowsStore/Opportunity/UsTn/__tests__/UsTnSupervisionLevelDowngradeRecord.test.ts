@@ -42,6 +42,8 @@ const usTnSupervisionLevelDowngradeRecordRaw: UsTnSupervisionLevelDowngradeRefer
         { eventDate: "2020-01-10", noteBody: "ARRP" },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 const mockClient = {

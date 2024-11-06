@@ -45,6 +45,8 @@ export const usIdExpandedCRCReferrals: FirestoreFixture<UsIdExpandedCRCReferralR
           },
         },
         ineligibleCriteria: {},
+        isEligible: true,
+        isAlmostEligible: false,
       },
     ],
     idFunc: externalIdFunc,

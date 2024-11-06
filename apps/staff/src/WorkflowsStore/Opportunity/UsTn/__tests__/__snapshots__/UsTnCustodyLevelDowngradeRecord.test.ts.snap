@@ -67,6 +67,8 @@ exports[`record is properly parsed for opportunity 1`] = `
     "statusAtHearingSeg": "GEN",
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_XX",
 }
 `;

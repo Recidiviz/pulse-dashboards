@@ -43,6 +43,8 @@ export const UsMiClassificationReviewReferralsFixture =
           },
         ],
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_MI",
@@ -64,5 +66,7 @@ export const UsMiClassificationReviewReferralsFixture =
           },
         ],
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

@@ -44,6 +44,8 @@ test("transform record with usMeCustodyLevelIsMinimumOrCommunity", () => {
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: false,
   };
 
   expect(usMeWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();
@@ -74,6 +76,8 @@ test("transform record with usMeCustodyLevelIsMinimum", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usMeWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();

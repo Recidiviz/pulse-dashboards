@@ -111,6 +111,8 @@ function createTestUnit() {
       completedProgramming: "105",
     },
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
   const person = new Resident(personRecord, rootStore);
   opp = new usMiSecurityClassificationCommitteeReviewOpportunity(

@@ -24,6 +24,8 @@ exports[`transform record for SLD 1`] = `
   },
   "externalId": "sld-eligible-1",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "metadata": {
     "eligibleDate": 2022-12-12T00:00:00.000Z,
   },

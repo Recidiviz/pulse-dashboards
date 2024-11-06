@@ -62,6 +62,8 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
         },
       },
       caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       externalId: "005",
@@ -106,6 +108,8 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
         },
       },
       caseNotes: {},
+      isEligible: false,
+      isAlmostEligible: true,
     },
     {
       externalId: "006",
@@ -147,6 +151,8 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
         },
       },
       caseNotes: {},
+      isEligible: false,
+      isAlmostEligible: true,
     },
   ],
   idFunc: externalIdFunc,

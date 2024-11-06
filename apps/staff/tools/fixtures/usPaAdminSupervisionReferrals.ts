@@ -37,6 +37,8 @@ export const usPaAdminSupervisionReferrals =
         statue30: true,
         statue37: false,
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_PA",
@@ -58,6 +60,8 @@ export const usPaAdminSupervisionReferrals =
         statue30: true,
         statue37: false,
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_PA",
@@ -74,5 +78,7 @@ export const usPaAdminSupervisionReferrals =
         statue30: true,
         statue37: false,
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

@@ -50,6 +50,8 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   }),
   almostEligible: makeRecordFixture(usPaSpecialCircumstancesSupervisionSchema, {
     stateCode: "US_PA",
@@ -78,5 +80,7 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   }),
 } satisfies FixtureMapping<UsPaSpecialCircumstancesSupervisionRecord>;

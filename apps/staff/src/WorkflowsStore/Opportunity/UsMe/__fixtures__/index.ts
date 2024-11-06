@@ -101,6 +101,8 @@ export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferr
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseReferralRecordRaw =
@@ -128,6 +130,8 @@ export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseReferralRecord
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
@@ -245,6 +249,8 @@ export const usMeEarlyTerminationReferralRecord: UsMeEarlyTerminationReferralRec
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
@@ -275,6 +281,8 @@ export const usMeEarlyTerminationRestitutionAlmostEligibleReferralRecord: UsMeEa
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
 export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarlyTerminationReferralRecordRaw =
@@ -306,6 +314,8 @@ export const usMeEarlyTerminationViolationAlmostEligibleReferralRecord: UsMeEarl
         },
       ],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
 export const usMeVerifiedOpportunities = {

@@ -66,6 +66,8 @@ export const usMiEarlyDischargeReferralsFixture =
         },
       },
       ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_MI",
@@ -93,5 +95,7 @@ export const usMiEarlyDischargeReferralsFixture =
           },
       },
       ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

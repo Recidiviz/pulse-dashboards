@@ -71,6 +71,8 @@ const usTnCustodyLevelDowngradeRecordRaw: UsTnCustodyLevelDowngradeReferralRecor
         victimFindingLevelChanged: true,
       },
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 test("record is properly parsed for opportunity", () => {

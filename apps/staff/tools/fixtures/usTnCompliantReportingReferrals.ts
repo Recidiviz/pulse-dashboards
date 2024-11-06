@@ -88,6 +88,8 @@ export const usTnCompliantReportingReferrals =
           contactType: "SPET",
         },
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_TN",
@@ -163,6 +165,8 @@ export const usTnCompliantReportingReferrals =
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: [],
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_TN",
@@ -214,6 +218,8 @@ export const usTnCompliantReportingReferrals =
           contactType: "ARRN",
         },
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_TN",
@@ -283,6 +289,8 @@ export const usTnCompliantReportingReferrals =
         ineligibleOffensesExpired: ["TNCARE FRAUD"],
         convictionCounties: [],
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
     {
       stateCode: "US_TN",
@@ -367,6 +375,8 @@ export const usTnCompliantReportingReferrals =
           contactType: "SPEC",
         },
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_TN",
@@ -431,5 +441,7 @@ export const usTnCompliantReportingReferrals =
           contactType: "SPET",
         },
       },
+      isEligible: false,
+      isAlmostEligible: true,
     },
   ]);

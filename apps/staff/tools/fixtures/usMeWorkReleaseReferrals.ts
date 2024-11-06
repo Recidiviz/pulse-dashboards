@@ -47,6 +47,8 @@ export const usMeWorkReleaseReferrals: FirestoreFixture<UsMeWorkReleaseReferralR
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ME",
@@ -74,6 +76,8 @@ export const usMeWorkReleaseReferrals: FirestoreFixture<UsMeWorkReleaseReferralR
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ME",
@@ -101,6 +105,8 @@ export const usMeWorkReleaseReferrals: FirestoreFixture<UsMeWorkReleaseReferralR
             },
           ],
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
     ],
     idFunc: externalIdFunc,

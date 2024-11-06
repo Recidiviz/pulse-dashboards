@@ -129,6 +129,8 @@ export const usMiMinimumTelephoneReportingReferralRecord: UsMiMinimumTelephoneRe
     metadata: {
       eligibleDate: "2022-07-02",
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecordRaw = {
@@ -141,6 +143,8 @@ export const usMiPastFTRDRecordFixture: UsMiPastFTRDReferralRecordRaw = {
   },
   ineligibleCriteria: {},
   caseNotes: {},
+  isEligible: true,
+  isAlmostEligible: false,
 };
 
 export const usMiPastFTRDEligibleClientRecord: ClientRecord = {

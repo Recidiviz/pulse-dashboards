@@ -56,6 +56,8 @@ exports[`can transform record with eligible and ineligible criteria 1`] = `
   "ineligibleCriteria": {
     "usIdIncomeVerifiedWithin3Months": true,
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ID",
 }
 `;
@@ -90,6 +92,8 @@ exports[`optional criteria have sane fallbacks 1`] = `
   "externalId": "001",
   "formInformation": {},
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ID",
 }
 `;
@@ -150,6 +154,8 @@ exports[`transform record 1`] = `
     "employerName": "Betty Rubble",
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ID",
 }
 `;

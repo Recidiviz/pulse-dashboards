@@ -45,6 +45,8 @@ test("transforms record with FTCD and PED set", () => {
       },
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdExpandedCRCSchema.parse(rawRecord)).toMatchSnapshot();
@@ -75,6 +77,8 @@ test("transforms record with TPD set", () => {
       },
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdExpandedCRCSchema.parse(rawRecord)).toMatchSnapshot();
@@ -112,6 +116,8 @@ test("transforms record with caseNotes set", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdExpandedCRCSchema.parse(rawRecord)).toMatchSnapshot();

@@ -40,6 +40,8 @@ const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
     statue30: true,
     statue37: false,
   },
+  isEligible: true,
+  isAlmostEligible: false,
 };
 
 test("record parses as expected", () => {

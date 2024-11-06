@@ -34,6 +34,8 @@ exports[`schema for almostEligible 1`] = `
       "numberOfReviews": null,
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "isOverdue": false,
   "metadata": {
     "adSegStaysAndReasonsWithin3Yrs": [
@@ -87,6 +89,8 @@ exports[`schema for fullyEligible1 1`] = `
     "segregationType": "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "isOverdue": true,
   "metadata": {
     "adSegStaysAndReasonsWithin3Yrs": [
@@ -138,6 +142,8 @@ exports[`schema for fullyEligible2 1`] = `
     "segregationType": "TEMPORARY_SOLITARY_CONFINEMENT",
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "isOverdue": true,
   "metadata": {
     "adSegStaysAndReasonsWithin3Yrs": [],

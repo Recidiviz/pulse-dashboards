@@ -63,6 +63,8 @@ export const usTnCustodyLevelDowngradeFixture =
         q8Score: 0,
         q9Score: 0,
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_TN",
@@ -105,5 +107,7 @@ export const usTnCustodyLevelDowngradeFixture =
         q8Score: 5,
         q9Score: 4,
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

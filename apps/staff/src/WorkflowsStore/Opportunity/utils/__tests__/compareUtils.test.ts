@@ -62,6 +62,8 @@ function createTestUnit(systemType: SystemId = "SUPERVISION") {
     eligibleCriteria: {},
     ineligibleCriteria: {},
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   });
 }
 

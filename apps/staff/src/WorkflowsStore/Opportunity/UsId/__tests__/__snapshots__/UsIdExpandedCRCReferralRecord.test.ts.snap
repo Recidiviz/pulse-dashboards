@@ -25,6 +25,8 @@ exports[`transforms record with FTCD and PED set 1`] = `
   },
   "externalId": "xcrc-eligible-01",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_MI",
 }
 `;
@@ -54,6 +56,8 @@ exports[`transforms record with TPD set 1`] = `
   },
   "externalId": "xcrc-eligible-02",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_MI",
 }
 `;
@@ -89,6 +93,8 @@ exports[`transforms record with caseNotes set 1`] = `
   },
   "externalId": "xcrc-eligible-02",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_MI",
 }
 `;

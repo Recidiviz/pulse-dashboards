@@ -169,6 +169,8 @@ export const compliantReportingReferralRecord: Partial<CompliantReportingReferra
       convictionCounties: [],
       ineligibleOffensesExpired: ["EXAMPLE EXPIRED"],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<CompliantReportingReferralRecordRaw> =
@@ -248,6 +250,8 @@ export const compliantReportingEligibleWithDiscretionReferralRecord: Partial<Com
       convictionCounties: [],
       ineligibleOffensesExpired: [],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const compliantReportingIneligibleCriteria: Required<
@@ -323,6 +327,8 @@ export const compliantReportingAlmostEligibleReferralRecord: Partial<CompliantRe
       convictionCounties: [],
       ineligibleOffensesExpired: ["EXAMPLE EXPIRED"],
     },
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
 export const compliantReportingAlmostEligibleClientRecord: ClientRecord = {
@@ -410,6 +416,8 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecordRa
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const UsTnCustodyLevelDowngradeEligibleResidentRecord: WorkflowsResidentRecord =
@@ -470,6 +478,8 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
       ],
     },
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const UsTnAnnualReclassificationEligibleResidentRecord: WorkflowsResidentRecord =
@@ -542,4 +552,6 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };

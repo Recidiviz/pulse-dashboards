@@ -57,6 +57,8 @@ describe("UsIdCRCWorkReleaseReferralRecord", () => {
         },
       },
       ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
     };
   });
 
@@ -164,6 +166,8 @@ test("transforms eligible record with life temporal criteria", () => {
       },
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdCRCWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();

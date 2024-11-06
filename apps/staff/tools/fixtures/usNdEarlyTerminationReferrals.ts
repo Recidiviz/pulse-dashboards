@@ -58,6 +58,8 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
       outOfState: false,
       ICOut: false,
     },
+    isEligible: true,
+    isAlmostEligible: false,
   },
   {
     stateCode: "US_ND",
@@ -99,6 +101,8 @@ const data: UsNdEarlyTerminationReferralRecordRaw[] = [
       outOfState: false,
       ICOut: false,
     },
+    isEligible: false,
+    isAlmostEligible: true,
   },
 ];
 

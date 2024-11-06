@@ -19,6 +19,8 @@ exports[`schema for almostEligible 1`] = `
       "reclassType": "SEMIANNUAL",
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;
@@ -42,6 +44,8 @@ exports[`schema for fullyEligible 1`] = `
     "workAssignments": "Argo Labs, Lab Technician; 2023-10-03: Present",
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;

@@ -30,6 +30,8 @@ export const usIdPastFtrdFixture: FirestoreFixture<UsIdPastFTRDReferralRecordRaw
           },
         },
         ineligibleCriteria: {},
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_ID",
@@ -40,6 +42,8 @@ export const usIdPastFtrdFixture: FirestoreFixture<UsIdPastFTRDReferralRecordRaw
             eligibleDate: "2025-06-09",
           },
         },
+        isEligible: false,
+        isAlmostEligible: true,
       },
     ],
     idFunc: externalIdFunc,

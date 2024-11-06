@@ -32,6 +32,8 @@ const baseCriteriaSchema = z.record(z.record(z.any()).nullable());
 export const opportunitySchemaBase = z.object({
   stateCode: z.string(),
   externalId: z.string(),
+  isEligible: z.boolean(),
+  isAlmostEligible: z.boolean(),
   eligibleCriteria: baseCriteriaSchema,
   ineligibleCriteria: baseCriteriaSchema,
   caseNotes: z.record(z.array(caseNoteSchema)).default({}),

@@ -64,6 +64,8 @@ export const baseUsMoOverdueRestrictiveHousingReferralRecordFixture = <
       ...additionalCriteria,
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
     metadata: {
       mostRecentHearingDate: "2022-09-03",
       mostRecentHearingType: "hearing type",

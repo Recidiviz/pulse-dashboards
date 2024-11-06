@@ -68,6 +68,8 @@ export const usOrEarnedDischargeReferrals =
           },
         ],
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
     {
       stateCode: "US_OR",
@@ -117,5 +119,7 @@ export const usOrEarnedDischargeReferrals =
           },
         ],
       },
+      isEligible: true,
+      isAlmostEligible: false,
     },
   ]);

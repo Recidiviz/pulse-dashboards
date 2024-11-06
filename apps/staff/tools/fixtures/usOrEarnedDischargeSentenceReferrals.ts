@@ -40,6 +40,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
             sentenceStatute: "STATUTE",
           },
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_OR",
@@ -60,6 +62,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
             sentenceStatute: "STATUTE2",
           },
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_OR",
@@ -81,6 +85,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
             sentenceStatute: "STATUTE",
           },
         },
+        isEligible: false,
+        isAlmostEligible: true,
       },
       {
         stateCode: "US_OR",
@@ -101,6 +107,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
             sentenceStatute: "STATUTE2",
           },
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
     ],
     idFunc: ({ externalId, opportunityId }) => `${externalId}_${opportunityId}`,

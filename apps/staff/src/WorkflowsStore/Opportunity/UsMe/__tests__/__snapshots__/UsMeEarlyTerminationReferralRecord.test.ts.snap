@@ -17,6 +17,8 @@ exports[`transform record with null pending violation criteria 1`] = `
   },
   "externalId": "abc123",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;
@@ -42,6 +44,8 @@ exports[`transform record with pending violation ineligibleCriteria 1`] = `
       "violationDate": 2022-07-13T00:00:00.000Z,
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;
@@ -64,6 +68,8 @@ exports[`transform record with restitution case 1`] = `
   },
   "externalId": "abc123",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;
@@ -87,6 +93,8 @@ exports[`transform record with restitution ineligibleCriteria 1`] = `
       "amountOwed": 500,
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_ME",
 }
 `;
@@ -107,6 +115,8 @@ exports[`transform record without restitution case 1`] = `
   },
   "externalId": "abc123",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;

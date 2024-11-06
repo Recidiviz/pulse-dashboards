@@ -57,6 +57,8 @@ describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
         },
       },
       ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
     };
   });
 
@@ -153,6 +155,8 @@ test("transforms eligible record with life temporal criteria", () => {
       },
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usIdCRCResidentWorkerSchema.parse(rawRecord)).toMatchSnapshot();

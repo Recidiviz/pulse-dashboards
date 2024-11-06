@@ -96,6 +96,8 @@ exports[`ineligiibleCriteria 1`] = `
         "eligibleDate": 2024-01-03T00:00:00.000Z,
       },
     },
+    "isAlmostEligible": false,
+    "isEligible": true,
     "metadata": {
       "ICOut": false,
       "multipleSentences": false,
@@ -158,6 +160,8 @@ exports[`transform record 1`] = `
     "sentenceLengthMonths": 24,
   },
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "metadata": {
     "ICOut": false,
     "multipleSentences": false,

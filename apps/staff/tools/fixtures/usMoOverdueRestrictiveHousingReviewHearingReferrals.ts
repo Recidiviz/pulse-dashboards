@@ -67,6 +67,8 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           cdvsSinceLastHearing: [],
           numMinorCdvsBeforeLastHearing: "3",
         },
+        isEligible: false,
+        isAlmostEligible: true,
       },
       {
         externalId: "RES016",
@@ -110,6 +112,8 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           cdvsSinceLastHearing: [],
           numMinorCdvsBeforeLastHearing: "3",
         },
+        isEligible: false,
+        isAlmostEligible: true,
       },
       {
         externalId: "RES017",
@@ -153,6 +157,8 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           cdvsSinceLastHearing: [],
           numMinorCdvsBeforeLastHearing: "3",
         },
+        isEligible: false,
+        isAlmostEligible: true,
       },
       {
         externalId: "RES018",
@@ -200,6 +206,8 @@ export const usMoOverdueRestrictiveHousingReviewHearingReferrals =
           cdvsSinceLastHearing: [],
           numMinorCdvsBeforeLastHearing: "3",
         },
+        isEligible: true,
+        isAlmostEligible: false,
       },
     ],
   );

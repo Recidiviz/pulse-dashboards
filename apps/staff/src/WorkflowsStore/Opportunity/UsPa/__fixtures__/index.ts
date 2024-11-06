@@ -41,6 +41,8 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
       statue30: true,
       statue37: false,
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
 export const usPaAdminSupervisionEligibleClientRecord: ClientRecord = {

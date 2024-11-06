@@ -44,6 +44,8 @@ test("transform record with restitution case", () => {
     },
     ineligibleCriteria: {},
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -55,6 +57,8 @@ test("transform record without restitution case", () => {
     externalId: "abc123",
     eligibleCriteria: defaultEligibleCriteria,
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -73,6 +77,8 @@ test("transform record with restitution ineligibleCriteria", () => {
         amountOwed: 500,
       },
     },
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -92,6 +98,8 @@ test("transform record with pending violation ineligibleCriteria", () => {
         violationDate: "2022-07-13",
       },
     },
+    isEligible: false,
+    isAlmostEligible: true,
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -106,6 +114,8 @@ test("transform record with null pending violation criteria", () => {
       usMeNoPendingViolationsWhileSupervised: null,
     },
     ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();

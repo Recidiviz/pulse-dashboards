@@ -52,6 +52,8 @@ test("transform record for SLD", () => {
         },
       ],
     },
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   expect(transformer(rawRecord)).toMatchSnapshot();

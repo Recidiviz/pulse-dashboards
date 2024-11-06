@@ -27,6 +27,8 @@ exports[`schema for almostEligible 1`] = `
       "yearsRequiredToServe": 10,
     },
   },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "stateCode": "US_PA",
 }
 `;
@@ -57,6 +59,8 @@ exports[`schema for fullyEligible 1`] = `
   },
   "externalId": "CLIENT004",
   "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_PA",
 }
 `;

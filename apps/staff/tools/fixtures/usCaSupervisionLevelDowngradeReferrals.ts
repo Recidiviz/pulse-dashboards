@@ -37,6 +37,8 @@ export const usCaSupervisionLevelDowngradeReferrals =
           usCaHousingTypeIsNotTransient: {},
         },
         ineligibleCriteria: {},
+        isEligible: true,
+        isAlmostEligible: false,
       },
       {
         stateCode: "US_CA",
@@ -53,6 +55,8 @@ export const usCaSupervisionLevelDowngradeReferrals =
           usCaHousingTypeIsNotTransient: {},
         },
         ineligibleCriteria: {},
+        isEligible: true,
+        isAlmostEligible: false,
       },
     ],
   );

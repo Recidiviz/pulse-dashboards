@@ -101,6 +101,8 @@ function createTestUnit() {
     eligibleCriteria: {},
     ineligibleCriteria: {},
     caseNotes: {},
+    isEligible: true,
+    isAlmostEligible: false,
   };
 
   // using an ineligible to avoid wasted work creating opportunities we don't need
