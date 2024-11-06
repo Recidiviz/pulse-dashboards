@@ -1,3 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`Generate header 1`] = `"Search for TEST_FIELDS above to review and refer eligible TEST_PEOPLE for mock opportunity."`;

@@ -67,7 +67,7 @@ export function OpportunityPreviewModal({
           footerContent={
             <OpportunityProfileFooter
               currentOpportunity={opportunity}
-              navigiableOpportunities={navigableOpportunities}
+              navigableOpportunities={navigableOpportunities}
               modalRef={modalRef}
             />
           }

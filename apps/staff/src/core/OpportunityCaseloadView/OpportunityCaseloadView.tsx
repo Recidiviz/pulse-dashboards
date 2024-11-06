@@ -16,12 +16,18 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import React from "react";
 import styled from "styled-components/macro";
 
+import { useRootStore } from "../../components/StoreProvider";
+import { OpportunityCaseloadViewPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadViewPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
+import ModelHydrator from "../ModelHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import { OpportunityPersonList } from "./OpportunityPersonList";
+import WorkflowsResults from "../WorkflowsResults";
+import { HydratedOpportunityPersonList } from "./HydratedOpportunityPersonList";
 
 const Wrapper = styled.div`
   /* leaving extra space for the Intercom button */
@@ -29,13 +35,61 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-export const OpportunityCaseloadView = function OpportunityCaseloadView() {
-  return (
-    <WorkflowsNavLayout>
-      <Wrapper>
-        <CaseloadSelect />
-        <OpportunityPersonList />
-      </Wrapper>
-    </WorkflowsNavLayout>
+export const OpportunityCaseloadViewWithPresenter = observer(
+  function OpportunityCaseloadViewWithPresenter({
+    presenter,
+  }: {
+    presenter: OpportunityCaseloadViewPresenter;
+  }) {
+    const {
+      selectedSearchIds,
+      opportunityType,
+      hasOpportunities,
+      ctaTextAndHeaderText,
+    } = presenter;
+
+    const selectedSearchIdsCount = selectedSearchIds?.length || 0;
+
+    return (
+      <WorkflowsNavLayout>
+        <Wrapper>
+          <CaseloadSelect />
+          <ModelHydrator model={presenter}>
+            <React.Fragment>
+              {(selectedSearchIdsCount === 0 || !hasOpportunities) && (
+                <WorkflowsResults
+                  headerText={ctaTextAndHeaderText.headerText}
+                  callToActionText={ctaTextAndHeaderText.ctaText}
+                />
+              )}
+              {selectedSearchIdsCount > 0 && hasOpportunities && (
+                <HydratedOpportunityPersonList
+                  opportunityType={opportunityType}
+                />
+              )}
+            </React.Fragment>
+          </ModelHydrator>
+        </Wrapper>
+      </WorkflowsNavLayout>
+    );
+  },
+);
+
+export const OpportunityCaseloadView = observer(function OpportunityCaseload() {
+  const {
+    workflowsStore,
+    workflowsStore: { opportunityConfigurationStore, selectedOpportunityType },
+  } = useRootStore();
+
+  return !selectedOpportunityType ? null : (
+    <OpportunityCaseloadViewWithPresenter
+      presenter={
+        new OpportunityCaseloadViewPresenter(
+          workflowsStore,
+          opportunityConfigurationStore,
+          selectedOpportunityType,
+        )
+      }
+    />
   );
-};
+});

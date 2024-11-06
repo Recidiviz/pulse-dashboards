@@ -22,10 +22,7 @@ import { OpportunityType } from "~datatypes";
 import { DENIED_UPDATE } from "../testUtils";
 import { Opportunity } from "../types";
 import { monthsOrDaysRemainingFromToday } from "../utils/criteriaUtils";
-import {
-  countOpportunities,
-  generateOpportunityInitialHeader,
-} from "../utils/generateHeadersUtils";
+import { countOpportunities } from "../utils/generateHeadersUtils";
 
 vi.mock("../../subscriptions");
 vi.mock("firebase/firestore");
@@ -51,15 +48,6 @@ describe("monthsOrDaysRemainingFromToday", () => {
       "7 more days",
     );
   });
-});
-
-test("Generate header", () => {
-  const header = generateOpportunityInitialHeader(
-    "Mock Opportunity",
-    "TEST_PERSON",
-    "TEST_FIELD",
-  );
-  expect(header).toMatchSnapshot();
 });
 
 describe("Generate counts for opportunities", () => {

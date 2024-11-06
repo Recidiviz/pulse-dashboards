@@ -28,7 +28,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 
 type OpportunityProfileFooterProps = {
-  navigiableOpportunities?: Opportunity[];
+  navigableOpportunities?: Opportunity[];
   currentOpportunity: Opportunity;
   modalRef: React.MutableRefObject<HTMLDivElement | null>;
 };
@@ -58,39 +58,39 @@ const NavigationKeyboardShortcutIcon = styled.span`
 
 export const OpportunityProfileFooter: React.FC<
   OpportunityProfileFooterProps
-> = ({ currentOpportunity, navigiableOpportunities, modalRef }) => {
+> = ({ currentOpportunity, navigableOpportunities, modalRef }) => {
   const { workflowsStore } = useRootStore();
   const { justiceInvolvedPersonTitle } = workflowsStore;
 
   const currentOpportunityIndex =
-    currentOpportunity && navigiableOpportunities
-      ? navigiableOpportunities.indexOf(currentOpportunity)
+    currentOpportunity && navigableOpportunities
+      ? navigableOpportunities.indexOf(currentOpportunity)
       : -1;
-  const totalOpportunities = navigiableOpportunities?.length ?? 0;
+  const totalOpportunities = navigableOpportunities?.length ?? 0;
 
   // returns true if there is a {next/previous} JII eligible in the same opportunity
   // direction is 1 for next, -1 for previous
   const canNavigateOpportunity = useCallback(
     (direction: number) => {
-      if (!navigiableOpportunities || currentOpportunityIndex === -1) {
+      if (!navigableOpportunities || currentOpportunityIndex === -1) {
         return false;
       }
       const nextOpportunityIndex = currentOpportunityIndex + direction;
       return (
         nextOpportunityIndex > -1 &&
-        nextOpportunityIndex < navigiableOpportunities?.length
+        nextOpportunityIndex < navigableOpportunities?.length
       ); // not out of range of items
     },
-    [currentOpportunityIndex, navigiableOpportunities],
+    [currentOpportunityIndex, navigableOpportunities],
   );
 
   const navigateOpportunity = useCallback(
     (direction: number) => {
-      if (!navigiableOpportunities || !canNavigateOpportunity(direction)) {
+      if (!navigableOpportunities || !canNavigateOpportunity(direction)) {
         return false;
       }
       const nextOpportunityIndex = currentOpportunityIndex + direction;
-      const nextOpportunity = navigiableOpportunities[nextOpportunityIndex];
+      const nextOpportunity = navigableOpportunities[nextOpportunityIndex];
       workflowsStore.updateSelectedPerson(
         nextOpportunity.person.pseudonymizedId,
       );
@@ -103,7 +103,7 @@ export const OpportunityProfileFooter: React.FC<
     [
       canNavigateOpportunity,
       currentOpportunityIndex,
-      navigiableOpportunities,
+      navigableOpportunities,
       workflowsStore,
       modalRef,
     ],

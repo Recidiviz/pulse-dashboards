@@ -194,6 +194,7 @@ export class WorkflowsStore implements Hydratable {
       );
     this.userSubscription = new UserSubscription(rootStore);
     this.locationsSubscription = new LocationSubscription(rootStore);
+
     // persistent storage for justice-involved persons across subscription changes
     reaction(
       () => [this.caseloadSubscription?.map((s) => s.data).flat()],
@@ -994,6 +995,7 @@ export class WorkflowsStore implements Hydratable {
     this.formDownloadingFlag = value;
   }
 
+  // TODO: Make into a label
   /**
    * Title to display for the search bar in workflows
    */

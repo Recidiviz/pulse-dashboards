@@ -15,137 +15,113 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isEmpty } from "lodash";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import pluralize from "pluralize";
 import simplur from "simplur";
 
-import { OpportunityType } from "~datatypes";
-
-import {
-  useOpportunityConfigurations,
-  useRootStore,
-} from "../../components/StoreProvider";
-import { TenantId } from "../../RootStore/types";
-import TENANTS from "../../tenants";
-import { getWelcomeText, pluralizeWord } from "../../utils";
-import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
+import { useRootStore } from "../../components/StoreProvider";
+import { WorkflowsHomepagePresenter } from "../../WorkflowsStore/presenters/WorkflowsHomepagePresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
-import { SystemId } from "../models/types";
-import { CaseloadOpportunitiesHydrator } from "../OpportunitiesHydrator";
+import ModelHydrator from "../ModelHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import { OpportunitySummaries } from "./OpportunitySummaries";
 
-function getSelectOpportunitiesText(
-  opportunityTypes: OpportunityType[],
-  opportunityConfigs: Record<OpportunityType, OpportunityConfiguration>,
-): string {
-  const labels = opportunityTypes
-    .slice(0, 2)
-    .map((ot) => opportunityConfigs[ot].label);
-  return labels.join(" and ");
-}
-
-/**
- * Depending on system type and the search field title, return the correct pluralized
- * form of the searchable options.
- *
- * e.g "caseloads", "facilities", "caseload and/or facility"
- */
-function getHydratedCallToActionPluralizedText(
-  numSearchIds: number,
-  searchFieldTitle: string,
-  tenantId?: TenantId,
-  activeSystem?: SystemId,
-): string {
-  if (activeSystem === "INCARCERATION" && searchFieldTitle !== "case manager") {
-    return `${pluralizeWord(searchFieldTitle, numSearchIds)}`;
-  } else if (activeSystem === "ALL" && tenantId) {
-    const facilitiesSearchOverride =
-      TENANTS[tenantId].workflowsSystemConfigs?.INCARCERATION
-        ?.searchTitleOverride ?? "location";
-    if (facilitiesSearchOverride !== "case manager") {
-      return `${pluralizeWord("caseload", numSearchIds)} and/or ${pluralizeWord(facilitiesSearchOverride, numSearchIds)}`;
-    }
-  }
-
-  // We default to using "caseload" in most situations.
-  return `${pluralizeWord("caseload", numSearchIds)}`;
-}
-
-const WorkflowsHomepage = observer(
-  function WorkflowsHomepage(): React.ReactElement | null {
-    const { workflowsStore } = useRootStore();
-
+export const WorkflowsHomepageWithPresenter = observer(
+  function WorkflowsHomepageWithPresenter({
+    presenter,
+  }: {
+    presenter: WorkflowsHomepagePresenter;
+  }) {
     const {
       selectedSearchIds,
-      opportunityTypes,
-      user,
-      workflowsSearchFieldTitle,
+      activeOpportunityTypes,
+      opportunitiesByType,
       supportsMultipleSystems,
-      justiceInvolvedPersonTitle,
-      activeSystem,
-      rootStore: { currentTenantId },
-      allOpportunitiesByType,
-    } = workflowsStore;
+      userGivenNames,
+      hasOpportunities,
+      labels: {
+        justiceInvolvedPersonTitle,
+        listOfSelectedOpportunities,
+        workflowsSearchFieldTitle,
+        searchResultLabel,
+      },
+    } = presenter;
 
-    const opportunityConfigs = useOpportunityConfigurations();
+    const selectedSearchIdsCount = selectedSearchIds?.length || 0;
 
-    const initialCallToAction = supportsMultipleSystems
-      ? `Search above to review and refer people eligible for opportunities like  ${getSelectOpportunitiesText(
-          opportunityTypes,
-          opportunityConfigs,
-        )}.`
-      : `Search for ${pluralizeWord(
-          workflowsSearchFieldTitle,
-        )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
-      opportunities like ${getSelectOpportunitiesText(opportunityTypes, opportunityConfigs)}.`;
-
-    const emptyCallToAction =
-      supportsMultipleSystems || workflowsSearchFieldTitle === "caseload"
-        ? `None of the selected caseloads are eligible for opportunities. Search for another caseload.`
-        : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-            selectedSearchIds.length,
-          ]} ${pluralizeWord(
-            workflowsSearchFieldTitle,
-            selectedSearchIds.length,
-          )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`;
-
-    const hydratedCallToAction = `Hi, ${
-      user?.info.givenNames
-    }. We’ve found some outstanding items across ${
-      selectedSearchIds.length
-    } ${getHydratedCallToActionPluralizedText(selectedSearchIds.length, workflowsSearchFieldTitle, currentTenantId, activeSystem)}.`;
-
-    const initial = (
-      <WorkflowsResults
-        headerText={getWelcomeText(user?.info.givenNames)}
-        callToActionText={initialCallToAction}
-      />
-    );
-
-    const empty = <WorkflowsResults callToActionText={emptyCallToAction} />;
-
-    const hydrated = (
-      <WorkflowsResults headerText={hydratedCallToAction}>
-        <OpportunitySummaries
-          opportunityTypes={opportunityTypes}
-          opportunitiesByType={allOpportunitiesByType}
-        />
-      </WorkflowsResults>
-    );
+    const ctaAndHeaderText = () => {
+      // If no search ids are selected, show a welcome message
+      if (selectedSearchIdsCount === 0)
+        return {
+          headerText: `Hi, ${userGivenNames}.`,
+          ctaText: supportsMultipleSystems
+            ? `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`
+            : `Search for ${pluralize(
+                workflowsSearchFieldTitle,
+              )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
+                opportunities like ${listOfSelectedOpportunities}.`,
+        };
+      // Else if no opportunities are found, show a call to action to select another search id
+      else if (
+        isEmpty(opportunitiesByType) ||
+        Object.values(opportunitiesByType || {}).every((opps) => isEmpty(opps))
+      )
+        return {
+          ctaText:
+            supportsMultipleSystems || workflowsSearchFieldTitle === "caseload"
+              ? "None of the selected caseloads are eligible for opportunities. Search for another caseload."
+              : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
+                  selectedSearchIdsCount,
+                ]} ${pluralize(
+                  workflowsSearchFieldTitle,
+                  selectedSearchIdsCount,
+                )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`,
+        };
+      // else show the header text with the number of opportunities found
+      else
+        return {
+          headerText: `Hi, ${userGivenNames}. We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`,
+        };
+    };
 
     return (
       <WorkflowsNavLayout>
         <CaseloadTypeSelect />
         <CaseloadSelect />
-        <CaseloadOpportunitiesHydrator
-          {...{ initial, empty, hydrated, opportunityTypes }}
-        />
+        <ModelHydrator model={presenter}>
+          <WorkflowsResults
+            headerText={ctaAndHeaderText().headerText}
+            callToActionText={ctaAndHeaderText().ctaText}
+          >
+            {hasOpportunities &&
+              activeOpportunityTypes &&
+              opportunitiesByType && (
+                <OpportunitySummaries
+                  opportunityTypes={activeOpportunityTypes}
+                  opportunitiesByType={opportunitiesByType}
+                />
+              )}
+          </WorkflowsResults>
+        </ModelHydrator>
       </WorkflowsNavLayout>
     );
   },
 );
+
+const WorkflowsHomepage = observer(function WorkflowsHomepage() {
+  const {
+    workflowsStore: { opportunityConfigurationStore },
+    workflowsStore,
+  } = useRootStore();
+
+  const presenter = new WorkflowsHomepagePresenter(
+    workflowsStore,
+    opportunityConfigurationStore,
+  );
+  return <WorkflowsHomepageWithPresenter presenter={presenter} />;
+});
 
 export default WorkflowsHomepage;

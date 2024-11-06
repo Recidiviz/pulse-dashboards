@@ -15,20 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { pluralizeWord } from "../../../utils";
 import { Opportunity } from "..";
-
-export const generateOpportunityInitialHeader = (
-  label: string,
-  justiceInvolvedPersonTitle: string,
-  workflowsSearchFieldTitle: string,
-): string => {
-  return `Search for ${pluralizeWord(
-    workflowsSearchFieldTitle,
-  )} above to review and refer eligible ${pluralizeWord(
-    justiceInvolvedPersonTitle,
-  )} for ${label.toLowerCase()}.`;
-};
 
 /**
  * This counts the number of opportunities in a list using the default counting algorithm if there is not one defined for the opportunityType.
