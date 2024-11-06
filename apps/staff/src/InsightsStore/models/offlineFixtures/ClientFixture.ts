@@ -20,8 +20,10 @@ import { size } from "lodash";
 import {
   clientInfoFixture,
   ClientRecord,
+  clientRecordSchema,
   excludedSupervisionOfficerFixture,
   OpportunityType,
+  RawClientRecord,
   supervisionOfficerFixture,
 } from "~datatypes";
 
@@ -63,10 +65,9 @@ export const clientFixture: Record<string, ClientRecord> = Object.entries(
    * @returns
    */
   (acc, [pId, insightsClientInfo], idx) => {
-    acc[pId] = {
+    const raw: RawClientRecord = {
       // Workflows fields filled by Workflows fixture.
       ...rawWorkflowsClientsData[idx],
-      personType: "CLIENT",
       stateCode: "US_XX",
       // Workflows fields filled by Insights data
       personExternalId: insightsClientInfo.clientId,
@@ -83,6 +84,7 @@ export const clientFixture: Record<string, ClientRecord> = Object.entries(
               idx % ELIGIBLE_OPPORTUNITY_CASES.length
             ] as OpportunityType[]),
     };
+    acc[pId] = clientRecordSchema.parse(raw);
 
     return acc;
   },
