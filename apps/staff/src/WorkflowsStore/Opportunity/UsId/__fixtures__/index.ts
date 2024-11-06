@@ -264,6 +264,7 @@ export const LSUEligibleClientRecord: ClientRecord = {
 
 export const EarnedDischargeEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
+  supervisionStartDate: new Date("2019-12-20"),
   allEligibleOpportunities: ["earnedDischarge"],
 };
 

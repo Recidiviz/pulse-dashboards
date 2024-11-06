@@ -180,13 +180,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.supervisionLevelStart = record.supervisionLevelStart;
     this.address = record.address;
     this.rawPhoneNumber = record.phoneNumber;
-    this.expirationDate = record.supervisionLevelStart;
+    this.expirationDate = record.expirationDate;
     this.currentBalance = record.currentBalance;
-    this.lastPaymentDate = record.supervisionLevelStart;
+    this.lastPaymentDate = record.lastPaymentDate;
     this.lastPaymentAmount = record.lastPaymentAmount;
     this.probationSpecialConditions = record.specialConditions;
     this.paroleSpecialConditions = record.boardConditions ?? [];
-    this.supervisionStartDate = record.supervisionLevelStart;
+    this.supervisionStartDate = record.supervisionStartDate;
     this.currentEmployers = record.currentEmployers;
     this.emailAddress = record.emailAddress;
 
