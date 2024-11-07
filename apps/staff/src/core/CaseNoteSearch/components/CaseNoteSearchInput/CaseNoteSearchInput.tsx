@@ -78,6 +78,7 @@ export function CaseNoteSearchInput({
         </SearchInputAside>
       )}
       <SearchInput
+        className="fs-exclude"
         {...props}
         placeholder="Search Case Notes"
         onKeyDown={(e) => {

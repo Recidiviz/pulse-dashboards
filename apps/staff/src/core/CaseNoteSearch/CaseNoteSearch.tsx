@@ -62,16 +62,19 @@ const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
   return (
     <NoteViewWrapper>
       <NoteHeader>
-        <NoteTextLight>
+        <NoteTextLight className="fs-exclude">
           {formatWorkflowsDateString(note.eventDate)}
         </NoteTextLight>
         <NoteAdditionalInfo>
-          <NoteTextLight>{note.noteType}</NoteTextLight>
+          <NoteTextLight className="fs-exclude">{note.noteType}</NoteTextLight>
           <NoteTextLight> | </NoteTextLight>
-          <NoteTextLight>{note.contactMode}</NoteTextLight>
+          <NoteTextLight className="fs-exclude">
+            {note.contactMode}
+          </NoteTextLight>
         </NoteAdditionalInfo>
       </NoteHeader>
       <NoteTextDark
+        className="fs-exclude"
         dangerouslySetInnerHTML={{ __html: sanitizedNoteBody }}
       ></NoteTextDark>
     </NoteViewWrapper>
@@ -176,7 +179,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
         onRequestClose={() => setModalIsOpen(false)}
       >
         <ModalHeader>
-          <ModalTitle>
+          <ModalTitle className={isNoteView ? "fs-exclude" : ""}>
             {isNoteView && (
               <i
                 className="fa fa-angle-left"

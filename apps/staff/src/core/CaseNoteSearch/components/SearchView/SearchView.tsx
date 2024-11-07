@@ -149,23 +149,28 @@ function Note({ document, handleNoteClick }: NoteProps) {
       onClick={() => handleNoteClick(document.documentId)}
     >
       <NoteHeader>
-        <NoteTextDark>
+        <NoteTextDark className="fs-exclude">
           {document.noteTitle || formatWorkflowsDateString(document.eventDate)}
         </NoteTextDark>
         <NoteAdditionalInfo>
-          <NoteTextDark>{document.noteType}</NoteTextDark>
+          <NoteTextDark className="fs-exclude">
+            {document.noteType}
+          </NoteTextDark>
           <NoteTextDark> | </NoteTextDark>
-          <NoteTextDark>{document.contactMode}</NoteTextDark>
+          <NoteTextDark className="fs-exclude">
+            {document.contactMode}
+          </NoteTextDark>
         </NoteAdditionalInfo>
       </NoteHeader>
       <NotePreview
+        className="fs-exclude"
         dangerouslySetInnerHTML={{
           __html: DomPurify.sanitize(document.preview, {
             FORBID_ATTR: ["style"],
           }),
         }}
       />
-      <NoteTextLight>
+      <NoteTextLight className="fs-exclude">
         {formatWorkflowsDateString(document.eventDate)}
       </NoteTextLight>
     </NoteWrapper>
