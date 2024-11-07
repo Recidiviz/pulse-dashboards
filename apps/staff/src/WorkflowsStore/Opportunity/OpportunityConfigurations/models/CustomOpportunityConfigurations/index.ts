@@ -22,6 +22,7 @@ import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
 import { UsAzOverdueForAcisDtpConfiguration } from "./UsAz/UsAzOverdueForAcisDtpConfiguration";
 import { UsAzOverdueForAcisTprConfiguration } from "./UsAz/UsAzOverdueForAcisTprConfiguration";
+import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
@@ -52,6 +53,7 @@ const localCustomOpportunityConfigurations: Partial<
   usMeMediumTrustee: UsMeMediumTrusteeConfiguration,
   usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
   usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,
+  usAzReleaseToDTP: UsAzReleaseToDTPConfiguration,
 };
 
 const adminPanelOnlyCustomOpportunityConfigurations: Partial<

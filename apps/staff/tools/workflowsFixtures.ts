@@ -55,6 +55,7 @@ import { residentsData } from "./fixtures/residents";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
 import { usAzOverdueForACISDTPReferrals } from "./fixtures/usAzOverdueForACISDTPReferrals";
 import { usAzOverdueForACISTPRReferrals } from "./fixtures/usAzOverdueForACISTPRReferrals";
+import { usAzReleaseToDTPReferrals } from "./fixtures/usAzReleaseToDTPReferrals";
 import { usAzReleaseToTPRReferrals } from "./fixtures/usAzReleaseToTPRReferrals";
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
 import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
@@ -158,6 +159,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   LSUReferrals: LSUReferralsFixture,
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
   usAzReleaseToTPRReferrals,
+  usAzReleaseToDTPReferrals,
   usAzOverdueForACISDTPReferrals,
   usAzOverdueForACISTPRReferrals,
   usCaSupervisionLevelDowngradeReferrals,

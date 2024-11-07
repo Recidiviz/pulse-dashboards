@@ -82,6 +82,73 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "OverdueForTPR",
     },
+    usAzReleaseToDTP: {
+      callToAction:
+        "Review inmates who may be eligible for Drug Transition Program Release",
+      compareBy: null,
+      denialReasons: {},
+      denialText: null,
+      displayName: "Drug Transition Program Release",
+      dynamicEligibilityText:
+        "inmate[|s] may be eligible for Drug Transition Program Release",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: {
+        usAzMeetsFunctionalLiteracy: {
+          text: "Functional literacy complete",
+          tooltip:
+            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+        },
+        custodyLevelIsMinimumOrMedium: {
+          text: "Classified as Minimum or Medium security",
+          tooltip:
+            "Inmates must be classified by the department as minimum or medium custody as determined by an objective risk assessment.",
+        },
+        usAzNoSexualOffenseConviction: {
+          text: "Not convicted of an ineligible sexual crime",
+          tooltip:
+            "Inmates must not have been convicted of a sexual offense pursuant to title 13, chapter 14 or a violation of title 13, chapter 17.",
+        },
+        usAzNotServingIneligibleOffense: {
+          text: "Not convicted of an ineligible violent crime",
+          tooltip:
+            "Inmates must not have been convicted of a violent crime as defined in section 13-901.03, unless the inmate was convicted of assault, aggravated assault or robbery.",
+        },
+        usAzNoActiveFelonyDetainers: { text: "No felony detainers" },
+      },
+      firestoreCollection: "US_AZ-DTPReferrals",
+      hideDenialRevert: false,
+      homepagePosition: 1,
+      ineligibleCriteriaCopy: {
+        usAzMeetsFunctionalLiteracy: {
+          text: "Functional literacy outstanding",
+          tooltip:
+            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+        },
+        usAzNoActiveFelonyDetainers: {
+          text: "Has one or more felony detainers",
+        },
+      },
+      initialHeader: null,
+      isAlert: false,
+      methodologyUrl: "https://example.com",
+      notifications: [],
+      priority: "NORMAL",
+      sidebarComponents: ["Incarceration"],
+      snooze: { defaultSnoozeDays: 20, maxSnoozeDays: 45 },
+      stateCode: "US_AZ",
+      subheading: null,
+      systemType: "INCARCERATION",
+      tabGroups: {
+        "ELIGIBILITY STATUS": [
+          "Fast Trackers",
+          "Approved by Time Comp",
+          "Almost Eligible",
+          "Pending",
+        ],
+      },
+      tooltipEligibilityText: null,
+      urlSection: "DTP",
+    },
     usAzReleaseToTPR: {
       callToAction:
         "Review inmates who may be eligible for Standard Transition Program Release",

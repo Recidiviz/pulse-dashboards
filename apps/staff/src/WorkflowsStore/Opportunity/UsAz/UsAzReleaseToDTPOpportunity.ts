@@ -19,24 +19,24 @@ import { DocumentData } from "firebase/firestore";
 
 import { Resident } from "../../Resident";
 import {
-  UsAzReleaseToTPRReferralRecord,
-  usAzReleaseToTPRSchema,
-} from "./UsAzReleaseToTPRReferralRecord";
+  UsAzReleaseToDTPReferralRecord,
+  usAzReleaseToDTPSchema,
+} from "./UsAzReleaseToDTPReferralRecord";
 import {
   UsAzReleaseToTPRUpdateRecord,
   UsAzReleaseToTransitionProgramOpportunityBase,
 } from "./UsAzReleaseToTransitionProgramOpportunityBase";
 
-export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
-  UsAzReleaseToTPRReferralRecord,
+export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
+  UsAzReleaseToDTPReferralRecord,
   UsAzReleaseToTPRUpdateRecord
 > {
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
-      "usAzReleaseToTPR",
+      "usAzReleaseToDTP",
       resident.rootStore,
-      usAzReleaseToTPRSchema.parse(record),
+      usAzReleaseToDTPSchema.parse(record),
     );
   }
 }

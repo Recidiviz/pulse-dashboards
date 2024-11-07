@@ -120,7 +120,7 @@ export function UsAzDates({
 
   if (metadata.stateCode !== "US_AZ") return null;
 
-  // AZ_TODO: update these tooltips with final copy
+  // TODO(#6705) update tooltips with final copy
   const inTableTooltip =
     "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. This date exists to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination or release date once all criteria have been met. As such, this date should not be shared with inmates.";
 
@@ -216,7 +216,7 @@ export function UsAzDates({
             <DateMethodologyText>
               How are these dates calculated?
             </DateMethodologyText>
-            {/* AZ_TODO fill in the URL if needed */}
+            {/* TODO(#6705) fill in the URL */}
             <InfoButton infoUrl={undefined} />
           </div>
         </InfoTooltipWrapper>
