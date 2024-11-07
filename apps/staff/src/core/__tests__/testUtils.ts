@@ -136,6 +136,7 @@ export const mockOpportunity: Opportunity<Client> = {
     supportsAlmostEligible: false,
     supportsDenial: true,
     highlightCasesOnHomepage: false,
+    highlightedCaseCtaCopy: "highlighted CTA",
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

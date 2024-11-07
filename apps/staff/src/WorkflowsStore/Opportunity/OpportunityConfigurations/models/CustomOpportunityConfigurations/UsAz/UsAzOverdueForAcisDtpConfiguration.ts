@@ -17,8 +17,12 @@
 
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export class UsAzTransitionOverdueConfiguration extends ApiOpportunityConfiguration {
+export class UsAzOverdueForAcisDtpConfiguration extends ApiOpportunityConfiguration {
   get highlightCasesOnHomepage() {
     return true;
+  }
+
+  get highlightedCaseCtaCopy() {
+    return "DTP fast trackers";
   }
 }

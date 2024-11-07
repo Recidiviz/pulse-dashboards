@@ -20,8 +20,9 @@ import { OpportunityType } from "~datatypes";
 import UserStore from "../../../../../RootStore/UserStore";
 import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
+import { UsAzOverdueForAcisDtpConfiguration } from "./UsAz/UsAzOverdueForAcisDtpConfiguration";
+import { UsAzOverdueForAcisTprConfiguration } from "./UsAz/UsAzOverdueForAcisTprConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
-import { UsAzTransitionOverdueConfiguration } from "./UsAz/UsAzTransitionOverdueConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeFurloughReleaseConfiguration } from "./UsMe/UsMeFurloughReleaseConfiguration";
@@ -56,8 +57,8 @@ const localCustomOpportunityConfigurations: Partial<
 const adminPanelOnlyCustomOpportunityConfigurations: Partial<
   Record<string, typeof ApiOpportunityConfiguration>
 > = {
-  usAzOverdueForACISDTP: UsAzTransitionOverdueConfiguration,
-  usAzOverdueForACISTPR: UsAzTransitionOverdueConfiguration,
+  usAzOverdueForACISDTP: UsAzOverdueForAcisDtpConfiguration,
+  usAzOverdueForACISTPR: UsAzOverdueForAcisTprConfiguration,
   usNdATP: UsNdMinimumCustodyConfiguration,
   usNdTransferToMinFacility: UsNdMinimumCustodyConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,

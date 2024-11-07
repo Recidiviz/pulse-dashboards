@@ -268,4 +268,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get highlightCasesOnHomepage() {
     return false;
   }
+
+  get highlightedCaseCtaCopy(): string {
+    throw new Error(`Implement highlightedCaseCtaCopy() for ${this.label}`);
+  }
 }

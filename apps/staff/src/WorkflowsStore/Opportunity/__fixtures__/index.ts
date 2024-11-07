@@ -88,6 +88,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   supportsDenial: false,
   supportsAlmostEligible: false,
   highlightCasesOnHomepage: false,
+  highlightedCaseCtaCopy: "highlighted CTA",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

@@ -47,4 +47,43 @@ export const usAzOverdueForACISTPRReferrals =
       isEligible: true,
       isAlmostEligible: false,
     },
+    {
+      stateCode: "US_AZ",
+      externalId: "AZ_RES009",
+      eligibleCriteria: {
+        usAzIncarcerationPastAcisTprDate: {
+          acisTprDate: "2023-09-27",
+        },
+      },
+      ineligibleCriteria: {},
+      caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_AZ",
+      externalId: "AZ_RES010",
+      eligibleCriteria: {
+        usAzIncarcerationPastAcisTprDate: {
+          acisTprDate: "2023-09-27",
+        },
+      },
+      ineligibleCriteria: {},
+      caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_AZ",
+      externalId: "AZ_RES011",
+      eligibleCriteria: {
+        usAzIncarcerationPastAcisTprDate: {
+          acisTprDate: "2023-10-28",
+        },
+      },
+      ineligibleCriteria: {},
+      caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
   ]);

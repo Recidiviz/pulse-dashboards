@@ -47,4 +47,30 @@ export const usAzOverdueForACISDTPReferrals =
       isEligible: true,
       isAlmostEligible: false,
     },
+    {
+      stateCode: "US_AZ",
+      externalId: "AZ_RES012",
+      eligibleCriteria: {
+        usAzIncarcerationPastAcisDtpDate: {
+          acisDtpDate: "2023-10-16",
+        },
+      },
+      ineligibleCriteria: {},
+      caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+    {
+      stateCode: "US_AZ",
+      externalId: "AZ_RES013",
+      eligibleCriteria: {
+        usAzIncarcerationPastAcisDtpDate: {
+          acisDtpDate: "2023-09-30",
+        },
+      },
+      ineligibleCriteria: {},
+      caseNotes: {},
+      isEligible: true,
+      isAlmostEligible: false,
+    },
   ]);

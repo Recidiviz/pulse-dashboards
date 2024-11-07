@@ -35,6 +35,7 @@ function generateMockOpps(type: string, count: number): Opportunity[] {
         type,
         config: {
           highlightCasesOnHomepage: true,
+          highlightedCaseCtaCopy: `${type} candidates`,
         },
         person: {
           externalId: `${i}`,
@@ -167,17 +168,19 @@ describe("OpportunityCaseHighlights", () => {
     const res = screen.queryAllByText("I am candidate", { exact: false });
 
     expect(res.map((r) => r.textContent)).toEqual(
-      [0, 1, 2, 3].map((i) => `I am candidate ${i}`),
+      [0, 1, 2].map((i) => `I am candidate ${i}`),
     );
   });
 
-  it("only displays 5 candidates", () => {
+  it("displays at most 3 candidates per opportunity", () => {
     render(
       <BrowserRouter>
         <OpportunityCaseHighlights
-          opportunityTypes={["LSU"]}
+          opportunityTypes={["LSU", "pastFTRD", "earlyTermination"]}
           opportunitiesByType={{
             LSU: shuffle(generateMockOpps("LSU", 40)),
+            pastFTRD: shuffle(generateMockOpps("pastFTRD", 40)),
+            earlyTermination: shuffle(generateMockOpps("earlyTermination", 2)),
           }}
         />
       </BrowserRouter>,
@@ -185,17 +188,18 @@ describe("OpportunityCaseHighlights", () => {
 
     expect(
       screen.queryAllByText("I am candidate", { exact: false }),
-    ).toHaveLength(5);
+    ).toHaveLength(8);
   });
 
-  it("interlaces candidates for different opportunities together by eligibility date", () => {
+  it("separates candidates by opportunity", () => {
     render(
       <BrowserRouter>
         <OpportunityCaseHighlights
-          opportunityTypes={["LSU", "pastFTRD"]}
+          opportunityTypes={["LSU", "pastFTRD", "earlyTermination"]}
           opportunitiesByType={{
-            LSU: shuffle(generateMockOpps("LSU", 4)),
-            pastFTRD: shuffle(generateMockOpps("pastFTRD", 4)),
+            LSU: shuffle(generateMockOpps("LSU", 40)),
+            pastFTRD: shuffle(generateMockOpps("pastFTRD", 40)),
+            earlyTermination: shuffle(generateMockOpps("earlyTermination", 2)),
           }}
         />
       </BrowserRouter>,
@@ -204,7 +208,26 @@ describe("OpportunityCaseHighlights", () => {
     const res = screen.queryAllByText("I am candidate", { exact: false });
 
     expect(res.map((r) => r.textContent)).toEqual(
-      [0, 0, 1, 1, 2].map((i) => `I am candidate ${i}`),
+      [0, 1, 2, 0, 1, 2, 0, 1].map((i) => `I am candidate ${i}`),
     );
+  });
+
+  it("renders links to all candidates when more than 3 candidates for a single opportunity", () => {
+    render(
+      <BrowserRouter>
+        <OpportunityCaseHighlights
+          opportunityTypes={["LSU", "pastFTRD", "earlyTermination"]}
+          opportunitiesByType={{
+            LSU: shuffle(generateMockOpps("LSU", 40)),
+            pastFTRD: shuffle(generateMockOpps("pastFTRD", 40)),
+            earlyTermination: shuffle(generateMockOpps("earlyTermination", 2)),
+          }}
+        />
+      </BrowserRouter>,
+    );
+
+    expect(screen.queryByText("See all 40 LSU candidates")).not.toBeNull();
+    expect(screen.queryByText("See all 40 pastFTRD candidates")).not.toBeNull();
+    expect(screen.queryByText("earlyTermination", { exact: false })).toBeNull();
   });
 });

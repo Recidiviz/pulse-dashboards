@@ -70,5 +70,6 @@ export interface OpportunityConfiguration {
   supportsDenial: boolean;
   supportsAlmostEligible: boolean;
   highlightCasesOnHomepage: boolean;
+  highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;
 }
