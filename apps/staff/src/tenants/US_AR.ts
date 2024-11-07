@@ -25,8 +25,6 @@ const US_AR_CONFIG: TenantConfig = {
   availableStateCodes: [dashboard.US_AR],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["INCARCERATION"],
-  workflowsHomepage: "residents",
-  workflowsHomepageName: "Residents",
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "LOCATION",
@@ -35,7 +33,7 @@ const US_AR_CONFIG: TenantConfig = {
     },
   },
   navigation: {
-    workflows: ["residents"],
+    workflows: ["home", "residents"],
   },
 };
 
