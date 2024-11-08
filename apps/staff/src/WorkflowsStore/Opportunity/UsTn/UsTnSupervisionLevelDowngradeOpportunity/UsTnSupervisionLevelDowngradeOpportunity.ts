@@ -29,6 +29,7 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsTnSupervisionLevelDowngradeReferralRecord
 > {
+  // TODO(#6707) move to configuration
   readonly caseNotesTitle = "Relevant Contact Codes";
 
   constructor(client: Client, record: DocumentData) {

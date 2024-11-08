@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import { CaseNotes } from "../OpportunityDetailSidebarComponents";
 import { UsAzDates } from "../ResidentDetailSidebarComponents/US_AZ/UsAzDates";
 import { Divider } from "../styles";
 import { ResidentProfileProps } from "../types";
@@ -28,10 +29,28 @@ export function UsAzResidentInformation({
 
   if (stateCode !== "US_AZ") return null;
 
+  // In Arizona, case notes are used to display the resident's home plan for
+  // transition program release opportunities
+  const opportunitiesWithCaseNotes = resident.flattenedOpportunities.filter(
+    (opp) =>
+      [
+        "usAzOverdueForACISDTP",
+        "usAzOverdueForACISTPR",
+        "usAzReleaseToDTP",
+        "usAzReleaseToTPR",
+      ].includes(opp.type),
+  );
+
   return (
     <>
       <Divider />
       <UsAzDates resident={resident} />
+      {opportunitiesWithCaseNotes.length > 0 && (
+        <>
+          <Divider />
+          <CaseNotes opportunity={opportunitiesWithCaseNotes[0]} />
+        </>
+      )}
     </>
   );
 }

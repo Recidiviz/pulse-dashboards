@@ -36,6 +36,9 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
   ReferralRecord extends DocumentData,
   UpdateRecord extends OpportunityUpdate,
 > extends OpportunityBase<Resident, ReferralRecord, UpdateRecord> {
+  // TODO(#6707) move to configuration
+  readonly caseNotesTitle = "Additional Information from ACIS";
+
   get almostEligible() {
     return !!this.record.metadata.tabName?.startsWith("ALMOST_ELIGIBLE");
   }

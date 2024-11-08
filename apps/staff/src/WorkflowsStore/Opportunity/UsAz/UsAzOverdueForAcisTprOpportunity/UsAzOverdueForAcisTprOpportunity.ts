@@ -27,6 +27,9 @@ export class UsAzOverdueForAcisTprOpportunity extends OpportunityBase<
   Resident,
   DocumentData
 > {
+  // TODO(#6707) move to configuration
+  readonly caseNotesTitle = "Additional Information from ACIS";
+
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
