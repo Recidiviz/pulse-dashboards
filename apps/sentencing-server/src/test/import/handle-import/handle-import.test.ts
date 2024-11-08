@@ -140,50 +140,6 @@ describe("handle_import", () => {
       ]);
     });
 
-    test("should capture an exception if old cases aren't included", async () => {
-      dataProviderSingleton.setData([
-        // New case
-        {
-          external_id: "new-case-ext-id",
-          state_code: StateCode.US_ID,
-          staff_id: fakeStaff.externalId,
-          client_id: fakeClient.externalId,
-          due_date: faker.date.future(),
-          completion_date: faker.date.future(),
-          sentence_date: faker.date.past(),
-          assigned_date: faker.date.past(),
-          county: faker.location.county(),
-          lsir_score: faker.number.int({ max: 100 }).toString(),
-          lsir_level: faker.number.int().toString(),
-          report_type: "PSI Assigned Full",
-        },
-      ]);
-
-      const response = await callHandleImportCaseData(testServer);
-
-      expect(response.statusCode).toBe(200);
-      const sentryReports = await testAndGetSentryReports();
-      expect(sentryReports[0].error?.message).toContain(
-        "Error when importing cases! These cases exist in the database but are missing from the data import:",
-      );
-
-      const dbCases = await testPrismaClient.case.findMany();
-
-      // The old case should still be there and the new case inserted
-      expect(dbCases).toHaveLength(2);
-
-      expect(dbCases).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            externalId: fakeCase.externalId,
-          }),
-          expect.objectContaining({
-            externalId: "new-case-ext-id",
-          }),
-        ]),
-      );
-    });
-
     test("should upsert existing cases and add new cases", async () => {
       dataProviderSingleton.setData([
         // Existing case
@@ -613,51 +569,6 @@ describe("handle_import", () => {
       ]);
     });
 
-    test("should capture an exception if old clients aren't included", async () => {
-      dataProviderSingleton.setData([
-        // New client
-        {
-          external_id: "new-client-ext-id",
-          pseudonymized_id: "new-client-pid",
-          case_ids: JSON.stringify([]),
-          state_code: StateCode.US_ID,
-          full_name: JSON.stringify({
-            given_names: faker.person.firstName(),
-            middle_names: faker.person.firstName(),
-            surname: faker.person.lastName(),
-            name_suffix: faker.person.suffix(),
-          }),
-          gender: faker.helpers.enumValue(Gender),
-          county: faker.location.county(),
-          birth_date: faker.date.birthdate(),
-        },
-      ]);
-
-      const response = await callHandleImportClientData(testServer);
-
-      expect(response.statusCode).toBe(200);
-      const sentryReports = await testAndGetSentryReports();
-      expect(sentryReports[0].error?.message).toContain(
-        "Error when importing clients! These clients exist in the database but are missing from the data import:",
-      );
-
-      const dbClients = await testPrismaClient.client.findMany();
-
-      // Only the old client should be there and the new one inserted
-      expect(dbClients).toHaveLength(2);
-
-      expect(dbClients).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            externalId: fakeClient.externalId,
-          }),
-          expect.objectContaining({
-            externalId: "new-client-ext-id",
-          }),
-        ]),
-      );
-    });
-
     test("should upsert existing clients and insert new ones", async () => {
       dataProviderSingleton.setData([
         // New client
@@ -975,49 +886,6 @@ describe("handle_import", () => {
           expect.objectContaining({
             externalId: "staff-ext-1",
             email: "existing_staff@gmail.com",
-          }),
-        ]),
-      );
-    });
-
-    test("should capture an exception if old staff aren't included", async () => {
-      dataProviderSingleton.setData([
-        // new staff
-        {
-          external_id: "new-staff-ext-id",
-          pseudonymized_id: "new-staff-pid",
-          case_ids: JSON.stringify(["new-case-ext-id"]),
-          state_code: StateCode.US_ID,
-          full_name: JSON.stringify({
-            given_names: faker.person.firstName(),
-            middle_names: faker.person.firstName(),
-            surname: faker.person.lastName(),
-            name_suffix: faker.person.suffix(),
-          }),
-          email: faker.internet.email(),
-        },
-      ]);
-
-      const response = await callHandleImportStaffData(testServer);
-
-      expect(response.statusCode).toBe(200);
-      const sentryReports = await testAndGetSentryReports();
-      expect(sentryReports[0].error?.message).toContain(
-        "Error when importing staff! These staff exist in the database but are missing from the data import:",
-      );
-
-      const dbStaff = await testPrismaClient.staff.findMany();
-
-      // Only the old staff should be there and the new one inserted
-      expect(dbStaff).toHaveLength(2);
-
-      expect(dbStaff).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            externalId: fakeStaff.externalId,
-          }),
-          expect.objectContaining({
-            externalId: "new-staff-ext-id",
           }),
         ]),
       );

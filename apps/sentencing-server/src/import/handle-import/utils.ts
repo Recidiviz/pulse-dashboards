@@ -60,13 +60,6 @@ export async function transformAndLoadClientData(
     select: { externalId: true },
   });
 
-  const existingClientExternalIds = (
-    await prismaClient.client.findMany({
-      select: { externalId: true },
-    })
-  ).map(({ externalId }) => externalId);
-  const newClientExternalIds: string[] = [];
-
   // Load new client data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const datum of data) {
@@ -98,8 +91,6 @@ export async function transformAndLoadClientData(
       },
     };
 
-    newClientExternalIds.push(newClient.externalId);
-
     // Load data
     await prismaClient.client.upsert({
       where: {
@@ -121,17 +112,6 @@ export async function transformAndLoadClientData(
   if (errors.length > 0) {
     throw errors.join("\n");
   }
-
-  // Check to make sure there aren't any missing cases in the data import
-  const missingClients = existingClientExternalIds.filter(
-    (id) => !newClientExternalIds.includes(id),
-  );
-
-  if (missingClients.length > 0) {
-    captureException(
-      `Error when importing clients! These clients exist in the database but are missing from the data import: ${JSON.stringify(missingClients)}`,
-    );
-  }
 }
 
 export async function transformAndLoadStaffData(
@@ -144,8 +124,6 @@ export async function transformAndLoadStaffData(
   const existingCases = await prismaClient.case.findMany({
     select: { externalId: true },
   });
-
-  const newStaffExternalIds: string[] = [];
 
   // Load new staff data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
@@ -171,8 +149,6 @@ export async function transformAndLoadStaffData(
       },
     };
 
-    newStaffExternalIds.push(newStaff.externalId);
-
     // Load data
     await prismaClient.staff.upsert({
       where: {
@@ -186,23 +162,6 @@ export async function transformAndLoadStaffData(
   if (errors.length > 0) {
     throw errors.join("\n");
   }
-
-  // Check to make sure there aren't any missing staff in the data import
-  const missingStaff = await prismaClient.staff.findMany({
-    where: {
-      NOT: {
-        externalId: {
-          in: newStaffExternalIds,
-        },
-      },
-    },
-  });
-
-  if (missingStaff.length > 0) {
-    captureException(
-      `Error when importing staff! These staff exist in the database but are missing from the data import: ${JSON.stringify(missingStaff)}`,
-    );
-  }
 }
 
 export async function transformAndLoadCaseData(
@@ -212,8 +171,6 @@ export async function transformAndLoadCaseData(
   const prismaClient = getPrismaClientForStateCode(stateCode);
   const errors: string[] = [];
 
-  const newCaseExternalIds: string[] = [];
-
   // Load new case data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
   for await (const datum of data) {
@@ -221,8 +178,6 @@ export async function transformAndLoadCaseData(
     if (!caseData) {
       continue;
     }
-
-    newCaseExternalIds.push(caseData.external_id);
 
     const staffExternalIds = (
       await prismaClient.staff.findMany({
@@ -272,23 +227,6 @@ export async function transformAndLoadCaseData(
 
   if (errors.length > 0) {
     throw errors.join("\n");
-  }
-
-  // Check to make sure there aren't any missing cases in the data import
-  const missingCases = await prismaClient.case.findMany({
-    where: {
-      NOT: {
-        externalId: {
-          in: newCaseExternalIds,
-        },
-      },
-    },
-  });
-
-  if (missingCases.length > 0) {
-    captureException(
-      `Error when importing cases! These cases exist in the database but are missing from the data import: ${JSON.stringify(missingCases)}`,
-    );
   }
 }
 
