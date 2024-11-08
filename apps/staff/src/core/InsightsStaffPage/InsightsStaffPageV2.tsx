@@ -188,6 +188,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               opportunitiesByType={opportunitiesByType}
               opportunityTypes={opportunityTypes}
               officerPseudoId={officerPseudoId}
+              zeroGrantOpportunities={
+                outlierOfficerData?.zeroGrantOpportunities
+              }
             />
           ) : (
             <EmptyCard

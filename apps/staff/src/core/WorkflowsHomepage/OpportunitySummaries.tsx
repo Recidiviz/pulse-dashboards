@@ -17,6 +17,7 @@
 
 import { OpportunityType } from "~datatypes";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { OpportunityCaseHighlights } from "./OpportunityCaseHighlights";
@@ -30,11 +31,15 @@ export const OpportunitySummaries = function OpportunitySummaries({
   opportunitiesByType,
   opportunityTypes,
   officerPseudoId,
+  zeroGrantOpportunities,
 }: {
   opportunitiesByType: Partial<Record<OpportunityType, Opportunity[]>>;
   opportunityTypes: OpportunityType[];
   officerPseudoId?: string;
+  zeroGrantOpportunities?: string[];
 }) {
+  const { zeroGrantsFlag } = useFeatureVariants();
+
   // TODO(#5959): Hide the last synced date from the supervisor homepage.
   // take the last synced date from an arbitrary person's record
   const firstOpportunityPerson = Object.values(opportunitiesByType).find(
@@ -60,6 +65,10 @@ export const OpportunitySummaries = function OpportunitySummaries({
               opportunities={opportunities}
               opportunityType={opportunityType}
               officerPseudoId={officerPseudoId}
+              showZeroGrantsPill={
+                zeroGrantsFlag &&
+                zeroGrantOpportunities?.includes(opportunityType)
+              }
             />
           );
         }

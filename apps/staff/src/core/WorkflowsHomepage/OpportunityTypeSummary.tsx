@@ -33,18 +33,38 @@ import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { countOpportunities, Opportunity } from "../../WorkflowsStore";
 import { PersonInitialsAvatar } from "../Avatar";
+import InsightsPill from "../InsightsPill";
 import { insightsUrl, workflowsUrl } from "../views";
 
-const OpportunityTypeSummaryWrapper = styled.div<{
+const ViewAllLabel = styled.div<{ $isMobile: boolean }>`
+  ${({ $isMobile }) => ($isMobile ? typography.Sans16 : typography.Sans18)}
+  color: ${palette.signal.links};
+  display: flex;
+  align-items: center;
+  width: 7rem;
+  padding-top: ${rem(spacing.md)};
+`;
+
+const OpportunityTypeSummaryLink = styled(Link)<{
   isMobile: boolean;
 }>`
   display: flex;
   flex-flow: row ${({ isMobile }) => !isMobile && "no"}wrap;
   justify-content: space-between;
-  padding-top: ${rem(spacing.md)};
-  border-top: 1px solid ${palette.slate20};
-  &:not(:first-child) {
-    margin-top: ${rem(spacing.xxl)};
+  padding: ${rem(spacing.md)} ${rem(spacing.md)} ${rem(spacing.xxl)}
+    ${rem(spacing.md)};
+  border-bottom: 1px solid ${palette.slate20};
+  :first-child {
+    border-top: 1px solid ${palette.slate20};
+  }
+  &:hover,
+  &:focus {
+    ${ViewAllLabel} {
+      color: ${palette.pine4};
+      text-decoration: underline;
+      text-underline-offset: ${rem(spacing.xs)};
+    }
+    background-color: ${palette.slate10};
   }
 `;
 
@@ -70,27 +90,24 @@ const ViewAllArrow = styled.div`
   padding-bottom: 1px;
 `;
 
-const ViewAllLink = styled(Link)<{ $isMobile: boolean }>`
-  ${({ $isMobile }) => ($isMobile ? typography.Sans16 : typography.Sans18)}
-  color: ${palette.signal.links};
+const OpportunityInfoWrapper = styled.div<{
+  isMobile: boolean;
+  showZeroGrantsPill: boolean;
+}>`
   display: flex;
-  align-items: center;
-  width: 7rem;
-  padding-top: ${rem(spacing.md)};
-
-  &:hover,
-  &:focus {
-    color: ${palette.pine4};
-    font-weight: 600;
-    text-decoration: underline;
-  }
+  ${({ isMobile }) => isMobile && `gap: ${rem(spacing.md)};`}
+  width: ${({ showZeroGrantsPill }) =>
+    showZeroGrantsPill ? rem(300) : "fit-content"};
+  justify-content: ${({ isMobile }) =>
+    isMobile ? "flex-start" : "space-between"};
+  flex-shrink: 0;
 `;
 
 const ClientsWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-flow: row nowrap;
 
-  ${({ isMobile }) => isMobile && "margin: 0 1rem 1rem;"}
+  ${({ isMobile }) => isMobile && "margin: 0 1rem 1rem; order: -1;"}
 `;
 
 const ClientAvatarWrapper = styled.div`
@@ -125,10 +142,12 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   opportunities,
   opportunityType,
   officerPseudoId,
+  showZeroGrantsPill,
 }: {
   opportunities: Opportunity[];
   opportunityType: OpportunityType;
   officerPseudoId?: string;
+  showZeroGrantsPill?: boolean;
 }): React.ReactElement | null {
   const { isMobile } = useIsMobile(true);
   const { eligibilityTextForCount, urlSection } =
@@ -155,9 +174,10 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     : workflowsUrl("opportunityClients", { urlSection });
 
   return (
-    <OpportunityTypeSummaryWrapper
+    <OpportunityTypeSummaryLink
       isMobile={isMobile}
-      className="OpportunityTypeSummaryWrapper"
+      className="OpportunityTypeSummaryLink"
+      to={navigationURL}
     >
       <OpportunityHeaderWrapper isMobile={isMobile}>
         <OpportunityHeader isMobile={isMobile}>
@@ -175,45 +195,56 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
             </ReviewStatusCount>
           )}
         </ReviewStatusWrapper>
-        {/* TODO(#5320): add url parameter to specify where the View All
-        link should navigate to when coming from insights */}
-        <ViewAllLink
+        <ViewAllLabel
           $isMobile={isMobile}
-          className={`ViewAllLink__${opportunityType}`}
-          to={navigationURL}
+          className={`ViewAllLabel__${opportunityType}`}
         >
           View all{" "}
           <ViewAllArrow>
             <Icon
-              className="ViewAllLink__icon"
+              className="ViewAllLabel__icon"
               kind={IconSVG.Arrow}
               fill={palette.signal.links}
               height={16}
               width={16}
             />
           </ViewAllArrow>
-        </ViewAllLink>
+        </ViewAllLabel>
       </OpportunityHeaderWrapper>
-      <ClientsWrapper isMobile={isMobile} className="OpportunityClientsWrapper">
-        {previewOpportunities.map((opportunity) => (
-          <ClientAvatarWrapper key={opportunity.person.recordId}>
-            <PersonInitialsAvatar
-              size={56}
-              name={opportunity.person.displayPreferredName}
-            />
-          </ClientAvatarWrapper>
-        ))}
-        {numOpportunitiesToDisplay > 0 && (
-          <ClientAvatarWrapper>
-            <PersonInitialsAvatar
-              size={56}
-              name={`+ ${numOpportunitiesToDisplay}`}
-              splitName={false}
-            />
-          </ClientAvatarWrapper>
+      <OpportunityInfoWrapper
+        isMobile={isMobile}
+        showZeroGrantsPill={!!showZeroGrantsPill}
+      >
+        {showZeroGrantsPill && (
+          <InsightsPill
+            label="Zero Grants"
+            tooltipCopy="This officer has not granted any clients this opportunity in the past 12 months."
+          />
         )}
-      </ClientsWrapper>
-    </OpportunityTypeSummaryWrapper>
+        <ClientsWrapper
+          isMobile={isMobile}
+          className="OpportunityClientsWrapper"
+        >
+          {previewOpportunities.map((opportunity) => (
+            <ClientAvatarWrapper key={opportunity.person.recordId}>
+              <PersonInitialsAvatar
+                size={isMobile ? 40 : 56}
+                name={opportunity.person.displayPreferredName}
+              />
+            </ClientAvatarWrapper>
+          ))}
+          {numOpportunitiesToDisplay > 0 && (
+            <ClientAvatarWrapper>
+              <PersonInitialsAvatar
+                size={isMobile ? 40 : 56}
+                name={`+ ${numOpportunitiesToDisplay}`}
+                splitName={false}
+              />
+            </ClientAvatarWrapper>
+          )}
+        </ClientsWrapper>
+      </OpportunityInfoWrapper>
+    </OpportunityTypeSummaryLink>
   );
 });
 
