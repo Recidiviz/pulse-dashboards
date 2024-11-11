@@ -17,15 +17,17 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { opportunitySchemaBase } from "~datatypes";
-
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OpportunityBase } from "../../OpportunityBase";
+import {
+  UsAzOverdueForAcisTprReferralRecord,
+  usAzOverdueForAcisTprSchema,
+} from "./UsAzOverdueForAcisTprReferralRecord";
 
 export class UsAzOverdueForAcisTprOpportunity extends OpportunityBase<
   Resident,
-  DocumentData
+  UsAzOverdueForAcisTprReferralRecord
 > {
   // TODO(#6707) move to configuration
   readonly caseNotesTitle = "Additional Information from ACIS";
@@ -35,7 +37,7 @@ export class UsAzOverdueForAcisTprOpportunity extends OpportunityBase<
       resident,
       "usAzOverdueForACISTPR",
       resident.rootStore,
-      opportunitySchemaBase.parse(record),
+      usAzOverdueForAcisTprSchema.parse(record),
     );
   }
 

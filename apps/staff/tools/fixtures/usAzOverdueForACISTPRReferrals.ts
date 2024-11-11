@@ -15,22 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityRecordBase } from "~datatypes";
+import { relativeFixtureDate } from "~datatypes";
 
+import { UsAzOverdueForAcisTprReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprReferralRecord";
 import { fixtureWithIdKey } from "./utils";
 
 export const usAzOverdueForACISTPRReferrals =
-  fixtureWithIdKey<OpportunityRecordBase>("externalId", [
+  fixtureWithIdKey<UsAzOverdueForAcisTprReferralRecordRaw>("externalId", [
     {
       stateCode: "US_AZ",
       externalId: "AZ_RES005",
       eligibleCriteria: {
         usAzIncarcerationPastAcisTprDate: {
-          acisTprDate: "2023-10-10",
+          acisTprDate: relativeFixtureDate({ days: -15 }),
         },
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -12 }),
+            noteTitle: "Return to CC Supervisor",
+          },
+        ],
+      },
       isEligible: true,
       isAlmostEligible: false,
     },
@@ -39,11 +47,18 @@ export const usAzOverdueForACISTPRReferrals =
       externalId: "AZ_RES006",
       eligibleCriteria: {
         usAzIncarcerationPastAcisTprDate: {
-          acisTprDate: "2023-09-17",
+          acisTprDate: relativeFixtureDate({ days: -23 }),
         },
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -7 }),
+            noteTitle: "Home Plan Cancelled",
+          },
+        ],
+      },
       isEligible: true,
       isAlmostEligible: false,
     },
@@ -52,11 +67,18 @@ export const usAzOverdueForACISTPRReferrals =
       externalId: "AZ_RES009",
       eligibleCriteria: {
         usAzIncarcerationPastAcisTprDate: {
-          acisTprDate: "2023-09-27",
+          acisTprDate: relativeFixtureDate({ days: -5 }),
         },
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       isEligible: true,
       isAlmostEligible: false,
     },
@@ -65,11 +87,18 @@ export const usAzOverdueForACISTPRReferrals =
       externalId: "AZ_RES010",
       eligibleCriteria: {
         usAzIncarcerationPastAcisTprDate: {
-          acisTprDate: "2023-09-27",
+          acisTprDate: relativeFixtureDate({ days: -41 }),
         },
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -34 }),
+            noteTitle: "Home Plan In Progress",
+          },
+        ],
+      },
       isEligible: true,
       isAlmostEligible: false,
     },
@@ -78,11 +107,18 @@ export const usAzOverdueForACISTPRReferrals =
       externalId: "AZ_RES011",
       eligibleCriteria: {
         usAzIncarcerationPastAcisTprDate: {
-          acisTprDate: "2023-10-28",
+          acisTprDate: relativeFixtureDate({ days: -2 }),
         },
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Cancelled",
+          },
+        ],
+      },
       isEligible: true,
       isAlmostEligible: false,
     },

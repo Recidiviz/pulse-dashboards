@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsAzReleaseToDTPReferralRecord } from "../../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToDTPReferralRecord";
+import { relativeFixtureDate } from "~datatypes";
+
+import { UsAzReleaseToDTPReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToDTPReferralRecord";
 import { fixtureWithIdKey } from "./utils";
 
 export const usAzReleaseToDTPReferrals =
-  fixtureWithIdKey<UsAzReleaseToDTPReferralRecord>("externalId", [
+  fixtureWithIdKey<UsAzReleaseToDTPReferralRecordRaw>("externalId", [
     // Eligible - Fast Tracker
     {
       stateCode: "US_AZ",
@@ -41,7 +43,14 @@ export const usAzReleaseToDTPReferrals =
         usAzEnrolledInOrMeetsMandatoryLiteracy: null,
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabDescription: "FAST_TRACK",
       },
@@ -69,7 +78,14 @@ export const usAzReleaseToDTPReferrals =
         usAzEnrolledInOrMeetsMandatoryLiteracy: null,
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabDescription: "APPROVED_BY_TIME_COMP",
       },
@@ -98,7 +114,14 @@ export const usAzReleaseToDTPReferrals =
       ineligibleCriteria: {
         usAzNoActiveFelonyDetainers: null,
       },
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabName: "ALMOST_ELIGIBLE_1",
         tabDescription: "ALMOST_ELIGIBLE_BETWEEN_7_AND_180_DAYS",
@@ -128,7 +151,14 @@ export const usAzReleaseToDTPReferrals =
       ineligibleCriteria: {
         usAzEnrolledInOrMeetsMandatoryLiteracy: null,
       },
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabName: "ALMOST_ELIGIBLE_1",
         tabDescription: "ALMOST_ELIGIBLE_MISSING_MANLIT_BETWEEN_7_AND_180_DAYS",
@@ -157,7 +187,14 @@ export const usAzReleaseToDTPReferrals =
         usAzEnrolledInOrMeetsMandatoryLiteracy: null,
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabName: "ALMOST_ELIGIBLE_2",
         tabDescription: "ALMOST_ELIGIBLE_BETWEEN_181_AND_365_DAYS",

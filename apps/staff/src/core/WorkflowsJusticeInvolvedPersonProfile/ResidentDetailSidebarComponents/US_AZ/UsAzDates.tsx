@@ -19,10 +19,8 @@ import { palette, Sans14, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import {
-  formatDueDateFromToday,
-  formatWorkflowsDateString,
-} from "../../../../utils";
+import { formatDueDateFromToday, formatWorkflowsDate } from "../../../../utils";
+import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";
 import { InfoButton } from "../../InfoButton";
 import {
   DetailsHeading,
@@ -109,7 +107,7 @@ const DateMethodologyText = styled(Sans14)`
 
 type DateInfo = {
   label: string;
-  date: string | null;
+  date?: Date;
   tooltip?: string;
 };
 
@@ -135,21 +133,19 @@ export function UsAzDates({
       ? [
           {
             label: "DTP",
-            date: metadata.acisDtpDate,
-            tooltip: inTableTooltip,
+            date: optionalFieldToDate(metadata.acisDtpDate),
           },
         ]
       : [];
 
     dates = [
-      { label: "SED", date: metadata.sedDate },
-      { label: "ERCD", date: metadata.ercdDate },
-      { label: "CSBD", date: metadata.csbdDate },
+      { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
+      { label: "ERCD", date: optionalFieldToDate(metadata.ercdDate) },
+      { label: "CSBD", date: optionalFieldToDate(metadata.csbdDate) },
       ...optionalDtpDate,
       {
         label: "TPR",
-        date: metadata.acisTprDate,
-        tooltip: inTableTooltip,
+        date: optionalFieldToDate(metadata.acisTprDate),
       },
     ];
   } else {
@@ -158,18 +154,18 @@ export function UsAzDates({
       ? [
           {
             label: "Projected DTP",
-            date: metadata.projectedDtpDate,
+            date: optionalFieldToDate(metadata.projectedDtpDate),
             tooltip: inTableTooltip,
           },
         ]
       : [];
 
     dates = [
-      { label: "SED", date: metadata.sedDate },
+      { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
       ...optionalProjectedDtpDate,
       {
         label: "Projected TPR",
-        date: metadata.projectedTprDate,
+        date: optionalFieldToDate(metadata.projectedTprDate),
         tooltip: inTableTooltip,
       },
     ];
@@ -196,7 +192,7 @@ export function UsAzDates({
               )}
             </ShadedDateTableCell>
             <DateTableCell>
-              {formatWorkflowsDateString(date)}
+              {formatWorkflowsDate(date)}
               {date && (
                 <>
                   {" "}

@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsAzReleaseToTPRReferralRecord } from "../../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTPRReferralRecord";
+import { relativeFixtureDate } from "~datatypes";
+
+import { UsAzReleaseToTPRReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsAz";
 import { fixtureWithIdKey } from "./utils";
 
 export const usAzReleaseToTPRReferrals =
-  fixtureWithIdKey<UsAzReleaseToTPRReferralRecord>("externalId", [
+  fixtureWithIdKey<UsAzReleaseToTPRReferralRecordRaw>("externalId", [
     // Eligible - Fast Tracker
     {
       stateCode: "US_AZ",
@@ -41,7 +43,14 @@ export const usAzReleaseToTPRReferrals =
         usAzMeetsFunctionalLiteracyTpr: null,
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabDescription: "FAST_TRACK",
       },
@@ -69,7 +78,14 @@ export const usAzReleaseToTPRReferrals =
         usAzMeetsFunctionalLiteracyTpr: null,
       },
       ineligibleCriteria: {},
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabDescription: "APPROVED_BY_TIME_COMP",
       },
@@ -98,7 +114,14 @@ export const usAzReleaseToTPRReferrals =
       ineligibleCriteria: {
         usAzMeetsFunctionalLiteracyTpr: null,
       },
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabName: "ALMOST_ELIGIBLE_1",
         tabDescription: "ALMOST_ELIGIBLE_MISSING_MANLIT_BETWEEN_7_AND_180_DAYS",
@@ -128,7 +151,14 @@ export const usAzReleaseToTPRReferrals =
       ineligibleCriteria: {
         usAzNoActiveFelonyDetainers: null,
       },
-      caseNotes: {},
+      caseNotes: {
+        "Home Plan Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -1 }),
+            noteTitle: "Home Plan Not Started",
+          },
+        ],
+      },
       metadata: {
         tabName: "ALMOST_ELIGIBLE_2",
         tabDescription:
