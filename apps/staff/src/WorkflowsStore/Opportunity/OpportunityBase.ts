@@ -493,10 +493,11 @@ export class OpportunityBase<
     return buildOpportunityCompareFunction(sortParams);
   }
 
-  async markSubmitted(): Promise<void> {
+  async markSubmitted(subcategory?: string): Promise<void> {
     await this.rootStore.firestoreStore.updateOpportunitySubmitted(
       this.currentUserEmail,
       this,
+      subcategory,
     );
 
     this.rootStore.analyticsStore.trackOpportunityMarkedSubmitted({
@@ -594,6 +595,21 @@ export class OpportunityBase<
 
   get subcategory(): string | undefined {
     return undefined;
+  }
+
+  subcategoryHeadingFor(subcategory: string): string {
+    return this.config.subcategoryHeadings?.[subcategory] ?? subcategory;
+  }
+
+  // The possible subcategories of the Submitted status that this opportunity can
+  // logically transition INTO from its current state
+  get submittedSubcategories(): string[] | undefined {
+    // From all the possible options, filter out this opportunity's current subcategory, if any
+    const possibleSubcategories =
+      this.config.markSubmittedOptionsByTab?.[this.tabTitle()];
+    return possibleSubcategories?.filter(
+      (subcategory) => subcategory !== this.subcategory,
+    );
   }
 
   get submittedTabTitle(): OpportunityTab {

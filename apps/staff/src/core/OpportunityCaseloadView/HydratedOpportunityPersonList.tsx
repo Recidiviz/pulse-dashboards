@@ -174,7 +174,7 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
       }
     };
 
-    const peopleInActiveTab = presenter.peopleInActiveTab;
+    const { peopleInActiveTab, peopleInActiveTabBySubcategory } = presenter;
 
     return (
       <FlexWrapper>
@@ -235,18 +235,20 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
           <EmptyTabGroupWrapper>
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
-        ) : presenter.peopleInActiveTabBySubcategory ? (
+        ) : peopleInActiveTabBySubcategory ? (
           /* Subcategories display */
-          Object.entries(presenter.peopleInActiveTabBySubcategory).map(
-            ([category, people]) => (
+          (presenter.subcategoryOrder ?? [])
+            .filter((category) => peopleInActiveTabBySubcategory[category])
+            .map((category) => (
               <div key={category}>
                 <SubcategoryHeading>
                   {presenter.headingText(category)}
                 </SubcategoryHeading>
-                <CaseloadOpportunityGrid items={people} />
+                <CaseloadOpportunityGrid
+                  items={peopleInActiveTabBySubcategory[category]}
+                />
               </div>
-            ),
-          )
+            ))
         ) : (
           /* Ordinary tab display with no subcategories */
           <CaseloadOpportunityGrid items={peopleInActiveTab} />

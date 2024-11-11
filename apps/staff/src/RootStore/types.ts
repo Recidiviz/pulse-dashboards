@@ -103,7 +103,8 @@ export type FeatureVariant =
   | "sortableOpportunityTabs"
   | "fullWidthTimeline"
   | "zeroGrantsFlag"
-  | "usOrEarnedDischargeSentence";
+  | "usOrEarnedDischargeSentence"
+  | "oppTabSubcategories";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -156,6 +157,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   fullWidthTimeline: {},
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
+  oppTabSubcategories: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

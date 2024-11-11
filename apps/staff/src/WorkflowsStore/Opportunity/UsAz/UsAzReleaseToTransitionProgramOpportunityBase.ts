@@ -99,4 +99,25 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
       return undefined;
     }
   }
+
+  get submittedSubcategories() {
+    const possibleSubcategories = super.submittedSubcategories;
+    // If the current opp is almost eligible, only "in progress" or "awaiting home plan
+    // approval" are allowed depending on the subcategory
+    if (this.almostEligible) {
+      if (this.tprDateInLessThan180Days) {
+        return possibleSubcategories?.filter(
+          (cat) =>
+            cat === "HOME_PLAN_IN_PROGRESS" ||
+            cat === "AWAITING_HOME_PLAN_APPROVAL",
+        );
+      } else {
+        return possibleSubcategories?.filter(
+          (cat) => cat === "HOME_PLAN_IN_PROGRESS",
+        );
+      }
+    } else {
+      return possibleSubcategories;
+    }
+  }
 }

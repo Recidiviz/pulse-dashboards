@@ -136,7 +136,8 @@ export interface Opportunity<
   readonly caseNotesTitle?: string;
   readonly hideUnknownCaseNoteDates?: boolean;
   readonly eligibilityCallToActionText?: string;
-  subcategory?: string;
+  readonly subcategory?: string;
+  subcategoryHeadingFor: (subcategory: string) => string | undefined;
   tabTitle: (category?: OpportunityTabGroup) => OpportunityTab;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
@@ -144,9 +145,10 @@ export interface Opportunity<
   readonly DenialConfirmationModal?: React.ComponentType<DenialConfirmationModalProps>;
   isSubmitted: boolean;
   readonly submittedTabTitle: string;
-  markSubmitted: () => Promise<void>;
+  markSubmitted: (subcategory?: string) => Promise<void>;
   deleteSubmitted: () => Promise<void>;
   submittedUpdate: Submission | undefined;
+  readonly submittedSubcategories: string[] | undefined;
   sentryTrackingId: string | undefined;
   instanceDetails: string | undefined;
   labelAddendum: string | undefined;

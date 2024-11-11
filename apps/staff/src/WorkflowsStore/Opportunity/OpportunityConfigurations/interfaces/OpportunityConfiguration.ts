@@ -73,4 +73,11 @@ export interface OpportunityConfiguration {
   highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;
   zeroGrantsTooltip?: string;
+
+  // Map tabs to lists of the subcategories within that tab
+  subcategoryOrderings?: Partial<Record<OpportunityTab, string[]>>;
+
+  // Map tabs to lists of the subcategories of Submitted that we are allowed to
+  // transition to from that tab. If not present, we show one Mark Submitted button
+  markSubmittedOptionsByTab?: Partial<Record<OpportunityTab, string[]>>;
 }

@@ -45,9 +45,9 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
 
   get subcategoryHeadings(): Record<UsAzTransitionProgramSubcategory, string> {
     return {
-      HOME_PLAN_IN_PROGRESS: "Home plan in progress",
-      AWAITING_HOME_PLAN_APPROVAL: "Awaiting home plan approval",
-      AWAITING_RELEASE: "Awaiting release",
+      HOME_PLAN_IN_PROGRESS: "Home Plan in Progress",
+      AWAITING_HOME_PLAN_APPROVAL: "Awaiting Home Plan Approval",
+      AWAITING_RELEASE: "Awaiting Release",
       PROJECTED_TPR_IN_LESS_THAN_180_DAYS:
         "Projected DTP date in the next 6 months",
       PROJECTED_TPR_IN_AT_LEAST_180_DAYS:
@@ -73,6 +73,24 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
 
   get submittedTabTitle(): OpportunityTab {
     return "Pending";
+  }
+
+  get markSubmittedOptionsByTab(): Partial<
+    Record<OpportunityTab, UsAzTransitionProgramSubcategory[]>
+  > {
+    const allPendingSubcategories:
+      | UsAzTransitionProgramSubcategory[]
+      | undefined = this.subcategoryOrderings["Pending"];
+
+    return {
+      "Fast Trackers": allPendingSubcategories,
+      "Approved by Time Comp": allPendingSubcategories,
+      Pending: allPendingSubcategories,
+      "Almost Eligible": [
+        "HOME_PLAN_IN_PROGRESS",
+        "AWAITING_HOME_PLAN_APPROVAL",
+      ],
+    };
   }
 
   get tabPrefaceCopy() {

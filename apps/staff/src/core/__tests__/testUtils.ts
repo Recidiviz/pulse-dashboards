@@ -81,6 +81,8 @@ export const mockOpportunity: Opportunity<Client> = {
   tabTitle: (tabGroup) =>
     tabGroup === "ELIGIBILITY STATUS" ? "Eligible Now" : "Other",
   subcategory: undefined,
+  submittedSubcategories: undefined,
+  subcategoryHeadingFor: () => undefined,
   compare: () => 1,
   showEligibilityStatus: () => true,
   nonOMSRequirements: [],

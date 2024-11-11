@@ -65,7 +65,8 @@ export const MenuButton = observer(function MenuButton({
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
 }) {
-  const { submittedOpportunityStatus } = useFeatureVariants();
+  const { oppTabSubcategories, submittedOpportunityStatus } =
+    useFeatureVariants();
 
   const { config } = opportunity;
 
@@ -90,10 +91,14 @@ export const MenuButton = observer(function MenuButton({
     );
   };
 
-  const markSubmitted = async () => {
-    await opportunity.markSubmitted();
+  const markSubmitted = async (subcategory?: string) => {
+    await opportunity.markSubmitted(subcategory);
+
+    const toastStatus = subcategory
+      ? opportunity.subcategoryHeadingFor(subcategory)
+      : config.submittedTabTitle;
     toast(
-      `Marked ${opportunity.person.displayName} as ${config.submittedTabTitle} for ${config.label}`,
+      `Marked ${opportunity.person.displayName} as ${toastStatus} for ${config.label}`,
       {
         id: "submittedToast", // prevent duplicate toasts
         position: "bottom-left",
@@ -101,20 +106,44 @@ export const MenuButton = observer(function MenuButton({
     );
   };
 
+  const { submittedSubcategories } = opportunity;
+
   if (submittedOpportunityStatus) {
     return (
       <Dropdown>
         <StatusAwareToggle>{toggleText}</StatusAwareToggle>
         <DropdownMenu>
-          {opportunity.isSubmitted ? (
-            <OpportunityStatusDropdownMenuItem onClick={deleteSubmitted}>
-              {undoSubmitText}
-            </OpportunityStatusDropdownMenuItem>
-          ) : (
-            <OpportunityStatusDropdownMenuItem onClick={markSubmitted}>
-              {submittedText}
-            </OpportunityStatusDropdownMenuItem>
-          )}
+          {
+            // If there are subcategories for submitted, show a menu option for each submitted category
+            oppTabSubcategories &&
+            submittedSubcategories &&
+            submittedSubcategories.length > 0 ? (
+              <>
+                {submittedSubcategories.map((subcategory) => (
+                  <OpportunityStatusDropdownMenuItem
+                    key={subcategory}
+                    onClick={async () => {
+                      await markSubmitted(subcategory);
+                    }}
+                  >
+                    {opportunity.subcategoryHeadingFor(subcategory)}
+                  </OpportunityStatusDropdownMenuItem>
+                ))}
+              </>
+            ) : // If there are no subcategories, show a button to undo or mark submitted
+            // depending on the opportunity's current status
+            opportunity.isSubmitted ? (
+              <OpportunityStatusDropdownMenuItem onClick={deleteSubmitted}>
+                {undoSubmitText}
+              </OpportunityStatusDropdownMenuItem>
+            ) : (
+              <OpportunityStatusDropdownMenuItem
+                onClick={() => markSubmitted()}
+              >
+                {submittedText}
+              </OpportunityStatusDropdownMenuItem>
+            )
+          }
           <>
             {config.supportsDenial && (
               <OpportunityStatusDropdownMenuItem onClick={onDenialButtonClick}>

@@ -222,6 +222,17 @@ export class OpportunityCaseloadPresenter {
     return opportunitiesBySubcategory(this.peopleInActiveTab);
   }
 
+  get subcategoryOrder(): string[] | undefined {
+    const peopleBySubcategory = this.peopleInActiveTabBySubcategory;
+    if (!peopleBySubcategory) return undefined;
+
+    // Respect any order defined in the configuration if one exists
+    return (
+      this.config.subcategoryOrderings?.[this.activeTab] ??
+      Object.keys(peopleBySubcategory)
+    );
+  }
+
   headingText(subcategory: string) {
     return this.config.subcategoryHeadings?.[subcategory];
   }
