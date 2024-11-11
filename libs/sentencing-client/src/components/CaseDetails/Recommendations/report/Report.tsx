@@ -22,6 +22,7 @@ import { CaseInsight } from "../../../../api";
 import { convertDecimalToPercentage } from "../../../../utils/utils";
 import RecidivizLogo from "../../../assets/recidiviz-logo-bw.png";
 import { SelectedRecommendation } from "../../../CaseDetails/types";
+import { INDIVIDUALS_STRING } from "../../components/charts/common/constants";
 import {
   getDescriptionGender,
   getSubtitleLsirScore,
@@ -115,37 +116,40 @@ export function Report({
   }: {
     numberOfRecords?: string;
   }) => {
+    if (!insight) return null;
+
+    const genderString = getDescriptionGender(insight.gender);
+    const lsirScore = getSubtitleLsirScore(
+      insight.assessmentScoreBucketStart,
+      insight.assessmentScoreBucketEnd,
+    );
+
     return (
-      insight && (
-        <Styled.AttributesContainer>
-          {numberOfRecords && (
-            <Styled.NumberOfRecords>
-              {numberOfRecords} records
-            </Styled.NumberOfRecords>
+      <Styled.AttributesContainer>
+        {numberOfRecords && (
+          <Styled.NumberOfRecords>
+            {numberOfRecords} records
+          </Styled.NumberOfRecords>
+        )}
+        <Styled.AttributeChipsWrapper>
+          {genderString && genderString !== INDIVIDUALS_STRING && (
+            <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
           )}
-          <Styled.AttributeChipsWrapper>
-            <Styled.AttributeChip>
-              {getDescriptionGender(insight.gender)}
-            </Styled.AttributeChip>
-            <Styled.AttributeChip>
-              {getSubtitleLsirScore(
-                insight.assessmentScoreBucketStart,
-                insight.assessmentScoreBucketEnd,
-              )}
-            </Styled.AttributeChip>
-            <Styled.AttributeChip>
-              <OffenseText
-                rollupOffense={insight.rollupOffense}
-                rollupNcicCategory={insight.rollupNcicCategory}
-                rollupCombinedOffenseCategory={
-                  insight.rollupCombinedOffenseCategory
-                }
-                rollupViolentOffense={insight.rollupViolentOffense}
-              />
-            </Styled.AttributeChip>
-          </Styled.AttributeChipsWrapper>
-        </Styled.AttributesContainer>
-      )
+          {lsirScore && (
+            <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>
+          )}
+          <Styled.AttributeChip>
+            <OffenseText
+              rollupOffense={insight.rollupOffense}
+              rollupNcicCategory={insight.rollupNcicCategory}
+              rollupCombinedOffenseCategory={
+                insight.rollupCombinedOffenseCategory
+              }
+              rollupViolentOffense={insight.rollupViolentOffense}
+            />
+          </Styled.AttributeChip>
+        </Styled.AttributeChipsWrapper>
+      </Styled.AttributesContainer>
     );
   };
 
@@ -287,7 +291,6 @@ export function Report({
                       }}
                     />
                     {/* Chart caption */}
-
                     <Styled.ChartCaption>{chartCaption}</Styled.ChartCaption>
                   </Styled.SentencingRecidivismRateSection>
                 );

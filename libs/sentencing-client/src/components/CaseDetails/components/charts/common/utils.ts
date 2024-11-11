@@ -19,6 +19,7 @@ import _ from "lodash";
 
 import { CaseInsight } from "../../../../../api/APIClient";
 import { GenderToDisplayName } from "../../../constants";
+import { INDIVIDUALS_STRING } from "./constants";
 
 export function getDescriptionGender(rollupGender: CaseInsight["gender"]) {
   let genderString;
@@ -40,6 +41,8 @@ export function getDescriptionGender(rollupGender: CaseInsight["gender"]) {
     GenderToDisplayName[rollupGender] === GenderToDisplayName.TRANS_MALE
   ) {
     genderString = "trans men";
+  } else {
+    genderString = INDIVIDUALS_STRING;
   }
 
   return ` ${genderString}`;

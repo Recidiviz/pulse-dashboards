@@ -18,9 +18,11 @@
 import moment from "moment";
 
 import { CaseInsight } from "../../../../../api";
+import ciLegendImg from "../../../../assets/ci-legend.png";
+import { INDIVIDUALS_STRING } from "../common/constants";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
-import { TextContainer } from "../components/Styles";
+import * as Styled from "../components/Styles";
 
 interface OffenseSpanProps {
   rollupOffense: string | undefined;
@@ -57,10 +59,12 @@ export function OffenseText({
 
 interface RecidivismPlotExplanationProps {
   insight: CaseInsight;
+  isTooltip?: boolean;
 }
 
 export function RecidivismPlotExplanation({
   insight,
+  isTooltip = false,
 }: RecidivismPlotExplanationProps) {
   const {
     rollupOffense,
@@ -75,27 +79,41 @@ export function RecidivismPlotExplanation({
   const genderString = getDescriptionGender(gender);
 
   return (
-    <TextContainer>
-      Based on gender, risk score, and type of conviction, the recidivism rates
-      represent the percentage of individuals who have been convicted of a
-      subsequent offense or violated the conditions of their probation or parole
-      over the course of the three years immediately after their release into
-      the community. The rates are based on{" "}
-      {rollupRecidivismNumRecords.toLocaleString()} records of{" "}
-      <span>{genderString}</span>
-      <LsirScoreText
-        rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
-        rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
-      />{" "}
-      with{" "}
-      <OffenseText
-        rollupOffense={rollupOffense}
-        rollupNcicCategory={rollupNcicCategory}
-        rollupCombinedOffenseCategory={rollupCombinedOffenseCategory}
-        rollupViolentOffense={rollupViolentOffense}
-      />{" "}
-      from 2010-{moment().year() - 3}. The shaded areas represent the confidence
-      intervals, or the range of possible values for the true recidivism rate.
-    </TextContainer>
+    <Styled.TextContainer>
+      <Styled.TextWrapper>
+        These recidivism rates represent the percentage of individuals who have
+        been incarcerated, re-incarcerated, or been given a new probation
+        sentence during the three years immediately after the start of their
+        probation sentence or their release into the community. The rates are
+        based on {rollupRecidivismNumRecords.toLocaleString()} records of{" "}
+        {genderString === INDIVIDUALS_STRING ? (
+          INDIVIDUALS_STRING
+        ) : (
+          <span>{genderString}</span>
+        )}
+        <LsirScoreText
+          rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
+          rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
+        />{" "}
+        with{" "}
+        <OffenseText
+          rollupOffense={rollupOffense}
+          rollupNcicCategory={rollupNcicCategory}
+          rollupCombinedOffenseCategory={rollupCombinedOffenseCategory}
+          rollupViolentOffense={rollupViolentOffense}
+        />
+        , using IDOC data from 2010-{moment().year() - 3}.{" "}
+        {isTooltip &&
+          `The shaded areas represent the confidence intervals, or the range of
+      possible values for the true recidivism rate.`}
+      </Styled.TextWrapper>
+      {!isTooltip && (
+        <img
+          src={ciLegendImg}
+          height="68px"
+          alt="Confidence Intervals: Shaded areas represent the range of possible values for the true recidivism rate."
+        />
+      )}
+    </Styled.TextContainer>
   );
 }

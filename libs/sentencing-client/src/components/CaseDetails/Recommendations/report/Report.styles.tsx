@@ -131,7 +131,7 @@ export const OverviewWrapper = styled.div`
   padding: 16px;
 
   &:not(:last-child) {
-    min-width: 180px;
+    min-width: 210px;
     border-right: 0.5px solid ${customPalette.black};
   }
 `;
@@ -293,6 +293,7 @@ export const NumberOfRecords = styled.div`
 export const AttributeChipsWrapper = styled.div`
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
 
   div:first-child {
     text-transform: capitalize;
@@ -312,6 +313,7 @@ export const AttributeChip = styled.div`
   padding: 4px 8px;
   border: 1px solid ${customPalette.black};
   border-radius: 4px;
+  white-space: nowrap;
 `;
 
 export const ExternalId = styled.span`

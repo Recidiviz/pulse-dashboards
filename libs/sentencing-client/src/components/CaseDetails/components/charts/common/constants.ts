@@ -26,3 +26,5 @@ export const RECOMMENDATION_TYPE_TO_BORDER_COLOR = {
   Rider: "#C78F38",
   Term: "#B6253D",
 };
+
+export const INDIVIDUALS_STRING = "individuals";

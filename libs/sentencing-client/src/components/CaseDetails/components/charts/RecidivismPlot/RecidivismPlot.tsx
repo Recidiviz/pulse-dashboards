@@ -75,7 +75,7 @@ export function RecidivismPlot({
             headerText="Previous Sentences"
             content={
               <CommonStyled.ChartTooltipContentSection>
-                <RecidivismPlotExplanation insight={insight} />
+                <RecidivismPlotExplanation insight={insight} isTooltip />
               </CommonStyled.ChartTooltipContentSection>
             }
           />
@@ -84,8 +84,8 @@ export function RecidivismPlot({
       <CommonStyled.ChartSubTitle>
         {recidivismPlotSubtitle && (
           <>
-            {recidivismPlotSubtitle} (Based on {rollupRecidivismNumRecords}{" "}
-            records)
+            {recidivismPlotSubtitle} (Based on{" "}
+            {rollupRecidivismNumRecords?.toLocaleString()} records)
           </>
         )}
       </CommonStyled.ChartSubTitle>

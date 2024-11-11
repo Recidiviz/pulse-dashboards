@@ -143,7 +143,6 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
         <Styled.SummaryReportTitle>
           Make Recommendation & Download Report
         </Styled.SummaryReportTitle>
-
         {/* Step 1: Download Insights Report */}
         <Styled.SectionWrapper>
           <div>Step 1</div>
@@ -176,7 +175,6 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
             )}
           </Styled.ActionButton>
         </Styled.SectionWrapper>
-
         {/* Step 2: Download Insights Report */}
         <Styled.SectionWrapper>
           <div>Step 2</div>

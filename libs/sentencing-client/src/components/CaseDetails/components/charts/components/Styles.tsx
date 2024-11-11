@@ -21,6 +21,12 @@ import styled from "styled-components/macro";
 import { customPalette } from "../../../../../components/styles/palette";
 
 export const TextContainer = styled.div`
+  display: flex;
+  gap: 32px;
+`;
+
+export const TextWrapper = styled.div`
+  font-size: 11.5px;
   span {
     font-weight: bold;
   }

@@ -83,8 +83,8 @@ export function DispositionChart({
       <CommonStyled.ChartSubTitle>
         {dispositionChartSubtitle && (
           <>
-            {dispositionChartSubtitle} (Based on {dispositionNumRecords}{" "}
-            records)
+            {dispositionChartSubtitle} (Based on{" "}
+            {dispositionNumRecords?.toLocaleString()} records)
           </>
         )}
       </CommonStyled.ChartSubTitle>

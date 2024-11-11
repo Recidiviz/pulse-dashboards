@@ -18,7 +18,7 @@
 import { CaseInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
-import { TextContainer } from "../components/Styles";
+import * as Styled from "../components/Styles";
 
 interface DispositionChartExplanationProps {
   insight: CaseInsight;
@@ -37,16 +37,18 @@ export function DispositionChartExplanation({
   const genderString = getDescriptionGender(gender);
 
   return (
-    <TextContainer>
-      This information represents the percentage of cases sentenced to
-      particular dispositions over the past 5 years. The rates are based on{" "}
-      {dispositionNumRecords.toLocaleString()} records of{" "}
-      <span>{genderString}</span>
-      <LsirScoreText
-        rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
-        rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
-      />{" "}
-      with <span>{offense} convictions</span>.
-    </TextContainer>
+    <Styled.TextContainer>
+      <Styled.TextWrapper>
+        Historical Sentencing represents the percentage of cases sentenced to a
+        particular disposition over the past 5 years. The rates are based on{" "}
+        {dispositionNumRecords.toLocaleString()} records of{" "}
+        <span>{genderString}</span>
+        <LsirScoreText
+          rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
+          rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
+        />{" "}
+        with <span>{offense} convictions</span>.
+      </Styled.TextWrapper>
+    </Styled.TextContainer>
   );
 }
