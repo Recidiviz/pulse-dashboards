@@ -17,6 +17,7 @@
 
 import { palette, Sans14, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { formatDueDateFromToday, formatWorkflowsDate } from "../../../../utils";
@@ -98,11 +99,15 @@ const DateExplainer = styled(Sans14)<{ $datePast: boolean }>`
 const DateMethodologyText = styled(Sans14)`
   display: inline;
   color: ${palette.slate70};
-  border-bottom: 1px dashed ${palette.pine3};
-  padding-bottom: ${rem(spacing.xs)};
-  margin-right: ${rem(spacing.xs)};
+  &:hover {
+    color: ${palette.slate};
+  }
+`;
 
-  cursor: default;
+const DateMethodologyUnderlinedText = styled.span`
+  border-bottom: 1px dashed ${palette.pine3};
+  padding-bottom: ${rem(spacing.xxs)};
+  margin-right: ${rem(spacing.xs)};
 `;
 
 type DateInfo = {
@@ -118,58 +123,58 @@ export function UsAzDates({
 
   if (metadata.stateCode !== "US_AZ") return null;
 
-  // TODO(#6705) update tooltips with final copy
   const inTableTooltip =
-    "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. This date exists to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination or release date once all criteria have been met. As such, this date should not be shared with inmates.";
+    "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. We include this projected date here to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination on release date once all transition release criteria have been met. As such, this date should not be shared with inmates.  For more details on how Recidiviz projects release dates, please click on “How are these dates calculated?” below.";
 
-  const dateCalculationTooltip =
-    "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. This date exists to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination or release date once all criteria have been met. As such, this date should not be shared with inmates.";
+  // Only show a DTP date for people with a DTP opportunity; by default show TPR
+  const useDtp = resident.flattenedOpportunities.find(
+    (opp) =>
+      opp.type === "usAzReleaseToDTP" || opp.type === "usAzOverdueForACISDTP",
+  );
+  const hasAcisDates = useDtp ? !!metadata.acisDtpDate : !!metadata.acisTprDate;
 
-  let dates: DateInfo[];
+  // Show all dates (ERCD, CSBD, TPR/DTP) if we have a date from ACIS
+  const acisDate = useDtp
+    ? [
+        {
+          label: "DTP",
+          date: optionalFieldToDate(metadata.acisDtpDate),
+        },
+      ]
+    : [
+        {
+          label: "TPR",
+          date: optionalFieldToDate(metadata.acisTprDate),
+        },
+      ];
 
-  // For people with real TPR dates, show SED, ERCD, CSBD, DTP if it exists, and TPR
-  if (metadata.acisTprDate) {
-    const optionalDtpDate = metadata.acisDtpDate
-      ? [
-          {
-            label: "DTP",
-            date: optionalFieldToDate(metadata.acisDtpDate),
-          },
-        ]
-      : [];
+  const realDates = [
+    { label: "ERCD", date: optionalFieldToDate(metadata.ercdDate) },
+    { label: "CSBD", date: optionalFieldToDate(metadata.csbdDate) },
+    ...acisDate,
+  ];
 
-    dates = [
-      { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
-      { label: "ERCD", date: optionalFieldToDate(metadata.ercdDate) },
-      { label: "CSBD", date: optionalFieldToDate(metadata.csbdDate) },
-      ...optionalDtpDate,
-      {
-        label: "TPR",
-        date: optionalFieldToDate(metadata.acisTprDate),
-      },
-    ];
-  } else {
-    // For people with projected TPR dates, show SED, projected DTP if it exists, and projected TPR
-    const optionalProjectedDtpDate = metadata.projectedDtpDate
-      ? [
-          {
-            label: "Projected DTP",
-            date: optionalFieldToDate(metadata.projectedDtpDate),
-            tooltip: inTableTooltip,
-          },
-        ]
-      : [];
+  // If we don't have a date from ACIS, only show the projected TPR/DTP date
+  const projectedDates = useDtp
+    ? [
+        {
+          label: "Projected DTP",
+          date: optionalFieldToDate(metadata.projectedDtpDate),
+          tooltip: inTableTooltip,
+        },
+      ]
+    : [
+        {
+          label: "Projected TPR",
+          date: optionalFieldToDate(metadata.projectedTprDate),
+          tooltip: inTableTooltip,
+        },
+      ];
 
-    dates = [
-      { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
-      ...optionalProjectedDtpDate,
-      {
-        label: "Projected TPR",
-        date: optionalFieldToDate(metadata.projectedTprDate),
-        tooltip: inTableTooltip,
-      },
-    ];
-  }
+  const dates: DateInfo[] = [
+    { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
+    ...(hasAcisDates ? realDates : projectedDates),
+  ];
 
   const today = new Date();
 
@@ -207,15 +212,19 @@ export function UsAzDates({
       </DateTable>
 
       <DateCalculationInfo>
-        <InfoTooltipWrapper contents={dateCalculationTooltip} maxWidth={340}>
-          <div>
-            <DateMethodologyText>
-              How are these dates calculated?
-            </DateMethodologyText>
-            {/* TODO(#6705) fill in the URL */}
+        <Link
+          to={
+            "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view"
+          }
+          target="_blank"
+        >
+          <DateMethodologyText>
+            <DateMethodologyUnderlinedText>
+              {"How are these dates calculated? "}
+            </DateMethodologyUnderlinedText>
             <InfoButton infoUrl={undefined} />
-          </div>
-        </InfoTooltipWrapper>
+          </DateMethodologyText>
+        </Link>
       </DateCalculationInfo>
     </DetailsSection>
   );

@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityTab } from "../../types";
 import {
   UsAzOverdueForAcisTprReferralRecord,
   usAzOverdueForAcisTprSchema,
@@ -49,5 +50,9 @@ export class UsAzOverdueForAcisTprOpportunity extends OpportunityBase<
     return new Date(
       this.record.eligibleCriteria.usAzIncarcerationPastAcisTprDate.acisTprDate,
     );
+  }
+
+  tabTitle(): OpportunityTab {
+    return "Overdue";
   }
 }

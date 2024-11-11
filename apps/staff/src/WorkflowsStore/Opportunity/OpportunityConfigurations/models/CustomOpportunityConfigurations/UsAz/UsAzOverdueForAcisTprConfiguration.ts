@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityTabGroups } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzOverdueForAcisTprConfiguration extends ApiOpportunityConfiguration {
@@ -24,5 +25,9 @@ export class UsAzOverdueForAcisTprConfiguration extends ApiOpportunityConfigurat
 
   get highlightedCaseCtaCopy() {
     return "TPR fast trackers";
+  }
+
+  get tabGroups() {
+    return { "ELIGIBILITY STATUS": ["Overdue"] } as OpportunityTabGroups;
   }
 }
