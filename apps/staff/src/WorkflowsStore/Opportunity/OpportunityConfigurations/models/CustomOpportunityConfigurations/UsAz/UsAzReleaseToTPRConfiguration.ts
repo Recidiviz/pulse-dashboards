@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityType } from "~datatypes";
+
 import { OpportunityTab, OpportunityTabGroups } from "../../../../types";
 import { UsAzTransitionProgramSubcategory } from "../../../../UsAz";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
@@ -104,5 +106,13 @@ export class UsAzReleaseToTPRConfiguration extends ApiOpportunityConfiguration {
       Pending:
         "This tab contains cases that have been marked as in progress in one of the other tabs. This tab will automatically update if the inmate's status changes.",
     };
+  }
+
+  get linkedOverdueOpportunityType(): OpportunityType {
+    return "usAzOverdueForACISTPR";
+  }
+
+  get overdueOpportunityCalloutCopy() {
+    return "overdue for their STP date";
   }
 }

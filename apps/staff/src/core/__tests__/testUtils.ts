@@ -139,6 +139,7 @@ export const mockOpportunity: Opportunity<Client> = {
     supportsDenial: true,
     highlightCasesOnHomepage: false,
     highlightedCaseCtaCopy: "highlighted CTA",
+    overdueOpportunityCalloutCopy: "overdue",
     zeroGrantsTooltip:
       "Officer has not granted this opportunity in the past 12 months",
   },

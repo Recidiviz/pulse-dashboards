@@ -43,7 +43,7 @@ export class UsAzOverdueForAcisTprOpportunity extends OpportunityBase<
   }
 
   get highlightCalloutText(): string {
-    return `${this.person.displayName} is past their TPR date on ${formatWorkflowsDate(this.eligibilityDate)}`;
+    return `${this.person.displayName} is past their STP date on ${formatWorkflowsDate(this.eligibilityDate)}`;
   }
 
   get eligibilityDate(): Date {

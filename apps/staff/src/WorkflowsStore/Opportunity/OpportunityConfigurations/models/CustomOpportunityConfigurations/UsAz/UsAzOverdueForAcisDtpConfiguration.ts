@@ -24,7 +24,7 @@ export class UsAzOverdueForAcisDtpConfiguration extends ApiOpportunityConfigurat
   }
 
   get highlightedCaseCtaCopy() {
-    return "DTP fast trackers";
+    return "overdue DTP cases";
   }
 
   get tabGroups() {

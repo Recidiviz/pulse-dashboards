@@ -269,6 +269,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return false;
   }
 
+  get overdueOpportunityCalloutCopy() {
+    return "";
+  }
+
   get highlightedCaseCtaCopy(): string {
     throw new Error(`Implement highlightedCaseCtaCopy() for ${this.label}`);
   }

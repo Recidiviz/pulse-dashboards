@@ -23,6 +23,7 @@ import toast from "react-hot-toast";
 
 import { OpportunityType } from "~datatypes";
 
+import { workflowsUrl } from "../../core/views";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -281,6 +282,29 @@ export class OpportunityCaseloadPresenter {
     return this.selectedPerson?.opportunities[this.opportunityType]?.find(
       (opp) => opp.selectId === this.workflowsStore.selectedOpportunityId,
     );
+  }
+
+  get overdueOpportunityUrl(): string | undefined {
+    if (!this.config.linkedOverdueOpportunityType) return;
+    const urlSection =
+      this.workflowsStore.opportunityConfigurationStore.opportunities[
+        this.config.linkedOverdueOpportunityType
+      ].urlSection;
+    return workflowsUrl("opportunityClients", { urlSection });
+  }
+
+  get overdueOpportunityCount(): number {
+    const { linkedOverdueOpportunityType } = this.config;
+    if (!linkedOverdueOpportunityType) return 0;
+
+    return (
+      this.workflowsStore.eligibleOpportunities[linkedOverdueOpportunityType]
+        ?.length || 0
+    );
+  }
+
+  get overdueOpportunityCalloutCopy() {
+    return this.config.overdueOpportunityCalloutCopy;
   }
 
   dismissNotification(id: string) {

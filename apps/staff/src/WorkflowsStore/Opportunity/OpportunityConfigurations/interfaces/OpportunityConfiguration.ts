@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityType } from "~datatypes";
+
 import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import {
@@ -73,6 +75,8 @@ export interface OpportunityConfiguration {
   highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;
   zeroGrantsTooltip?: string;
+  linkedOverdueOpportunityType?: OpportunityType;
+  overdueOpportunityCalloutCopy: string;
 
   // Map tabs to lists of the subcategories within that tab
   subcategoryOrderings?: Partial<Record<OpportunityTab, string[]>>;

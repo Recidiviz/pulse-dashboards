@@ -89,6 +89,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   supportsAlmostEligible: false,
   highlightCasesOnHomepage: false,
   highlightedCaseCtaCopy: "highlighted CTA",
+  overdueOpportunityCalloutCopy: "overdue",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

@@ -59,6 +59,7 @@ import { Heading } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
+import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
 import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
@@ -173,8 +174,13 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
         );
       }
     };
-
-    const { peopleInActiveTab, peopleInActiveTabBySubcategory } = presenter;
+    const {
+      peopleInActiveTab,
+      overdueOpportunityCount,
+      overdueOpportunityUrl,
+      peopleInActiveTabBySubcategory,
+      overdueOpportunityCalloutCopy,
+    } = presenter;
 
     return (
       <FlexWrapper>
@@ -188,6 +194,11 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
             {presenter.callToAction}
           </OpportunityPageExplainer>
         )}
+        <LinkedOpportunityCallout
+          overdueOpportunityCount={overdueOpportunityCount}
+          overdueOpportunityUrl={overdueOpportunityUrl}
+          overdueOpportunityCalloutCopy={overdueOpportunityCalloutCopy}
+        />
         {presenter.activeOpportunityNotifications && (
           <OpportunityNotifications
             notifications={presenter.activeOpportunityNotifications}

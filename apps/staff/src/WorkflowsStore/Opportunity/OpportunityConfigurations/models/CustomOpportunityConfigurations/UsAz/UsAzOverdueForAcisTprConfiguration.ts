@@ -24,7 +24,7 @@ export class UsAzOverdueForAcisTprConfiguration extends ApiOpportunityConfigurat
   }
 
   get highlightedCaseCtaCopy() {
-    return "TPR fast trackers";
+    return "overdue STP cases";
   }
 
   get tabGroups() {

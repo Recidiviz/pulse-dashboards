@@ -43,7 +43,7 @@ export class UsAzOverdueForAcisDtpOpportunity extends OpportunityBase<
   }
 
   get highlightCalloutText(): string {
-    return `${this.person.displayName} is past their DPR date on ${formatWorkflowsDate(this.eligibilityDate)}`;
+    return `${this.person.displayName} is past their DTP date on ${formatWorkflowsDate(this.eligibilityDate)}`;
   }
 
   get eligibilityDate(): Date {
