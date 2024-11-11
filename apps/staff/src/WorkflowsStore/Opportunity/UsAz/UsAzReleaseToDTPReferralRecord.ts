@@ -19,7 +19,7 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-export const zodNullableObject = z.object({}).nullable();
+const zodNullableObject = z.object({}).nullable();
 
 const possiblyIneligibleCriteria = z
   .object({
@@ -37,19 +37,18 @@ export const usAzReleaseToDTPSchema = opportunitySchemaBase
       z.object({}),
       possiblyIneligibleCriteria
         .extend({
+          usAzNoSexualArsonOrDangerousCrimesAgainstChildren: zodNullableObject,
           custodyLevelIsMinimumOrMedium: zodNullableObject,
-          usAzNoArsonConviction: zodNullableObject,
-          usAzNoDangerousCrimesAgainstChildrenConviction: zodNullableObject,
-          usAzNoDomesticViolenceConviction: zodNullableObject,
-          usAzNoDrugOffenseConviction: zodNullableObject,
-          usAzNoDtpDateOrDenialOrPreviousDtpRelease: zodNullableObject,
-          usAzNoDtpRemovalsFromSelfImprovementPrograms: zodNullableObject,
-          usAzNoSexualExploitationOfChildrenConviction: zodNullableObject,
-          usAzNoSexualOffenseConviction: zodNullableObject,
           usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
-          usAzNoViolationsAndEligibleLegalStatus: zodNullableObject,
-          usAzNoViolentConviction: zodNullableObject,
           usAzNotServingFlatSentence: zodNullableObject,
+          usAzNoViolationsAndEligibleLegalStatus: zodNullableObject,
+          usAzNoAcisDtpOrTprDateSet: zodNullableObject,
+          usAzOnlyDrugOffenseConvictions: zodNullableObject,
+          usAzNoDomesticViolenceConviction: zodNullableObject,
+          usAzNoSexualExploitationOfChildrenConviction: zodNullableObject,
+          usAzNoViolentConviction: zodNullableObject,
+          usAzNoDtpDenialOrPreviousDtpRelease: zodNullableObject,
+          usAzNoDtpRemovalsFromSelfImprovementPrograms: zodNullableObject,
         })
         .passthrough(),
     ]),

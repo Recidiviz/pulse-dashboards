@@ -24,7 +24,7 @@ const zodNullableObject = z.object({}).nullable();
 const possiblyIneligibleCriteria = z
   .object({
     usAzNoActiveFelonyDetainers: zodNullableObject,
-    usAzMeetsFunctionalLiteracy: zodNullableObject,
+    usAzMeetsFunctionalLiteracyTpr: zodNullableObject,
   })
   .partial();
 
@@ -36,21 +36,19 @@ export const usAzReleaseToTPRSchema = opportunitySchemaBase
       }),
       possiblyIneligibleCriteria
         .extend({
-          usAzTime90DaysBeforeRelease: zodNullableObject,
-          usAzNoSexualOffenseConviction: zodNullableObject,
-          usAzNoArsonConviction: zodNullableObject,
+          usAzNoSexualArsonOrDangerousCrimesAgainstChildren: zodNullableObject,
+          custodyLevelIsMinimumOrMedium: zodNullableObject,
+          usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
+          usAzNoViolationsAndEligibleLegalStatus: zodNullableObject,
+          usAzNoAcisDtpOrTprDateSet: zodNullableObject,
           usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
             zodNullableObject,
-          custodyLevelIsMinimumOrMedium: zodNullableObject,
-          noNonviolentIncarcerationViolationWithin6Months: zodNullableObject,
-          usAzNoMajorViolentViolationDuringIncarceration: zodNullableObject,
-          usAzAtLeast24MonthsSinceLastCsed: zodNullableObject,
-          usAzIsUsCitizenOrLegalPermanentResident: zodNullableObject,
-          usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
-          usAzNoDangerousCrimesAgainstChildrenConviction: zodNullableObject,
-          usAzNoTprDateOrDenialOrReleaseInCurrentIncarceration:
-            zodNullableObject,
+          usAzNoTprDenialOrReleaseInCurrentIncarceration: zodNullableObject,
+          usAzNotServingFlatSentence: zodNullableObject,
           usAzNoTprRemovalsFromSelfImprovementPrograms: zodNullableObject,
+          usAzAtLeast24MonthsSinceLastCsed: zodNullableObject,
+          usAzEligibleOrAlmostEligibleForOverdueForRecidivizDtp:
+            zodNullableObject,
         })
         .passthrough(),
     ]),
