@@ -94,6 +94,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
     clientsEligibleCount,
     officersWithEligibleClients,
     opportunityType,
+    zeroGrantsTooltip,
   },
 }) => {
   return (
@@ -120,6 +121,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
         officersWithEligibleClients={officersWithEligibleClients}
         supervisionJiiLabel={labels.supervisionJiiLabel}
         opportunityType={opportunityType}
+        zeroGrantsTooltip={zeroGrantsTooltip}
       />
     </CardWrapper>
   );

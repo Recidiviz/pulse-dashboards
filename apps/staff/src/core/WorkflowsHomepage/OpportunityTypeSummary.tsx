@@ -150,7 +150,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   showZeroGrantsPill?: boolean;
 }): React.ReactElement | null {
   const { isMobile } = useIsMobile(true);
-  const { eligibilityTextForCount, urlSection } =
+  const { eligibilityTextForCount, urlSection, zeroGrantsTooltip } =
     useOpportunityConfigurations()[opportunityType];
 
   const defaultAvatarsShown = 4;
@@ -216,10 +216,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
         showZeroGrantsPill={!!showZeroGrantsPill}
       >
         {showZeroGrantsPill && (
-          <InsightsPill
-            label="Zero Grants"
-            tooltipCopy="This officer has not granted any clients this opportunity in the past 12 months."
-          />
+          <InsightsPill label="Zero Grants" tooltipCopy={zeroGrantsTooltip} />
         )}
         <ClientsWrapper
           isMobile={isMobile}

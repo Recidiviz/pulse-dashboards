@@ -272,4 +272,12 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get highlightedCaseCtaCopy(): string {
     throw new Error(`Implement highlightedCaseCtaCopy() for ${this.label}`);
   }
+
+  // TODO(#6450): Stop coalescing once the recidiviz-data config change deploys
+  get zeroGrantsTooltip() {
+    return (
+      this.configurationObject.zeroGrantsTooltip ??
+      "This officer has not granted any clients this opportunity in the past 12 months."
+    );
+  }
 }

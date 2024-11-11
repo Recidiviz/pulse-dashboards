@@ -122,11 +122,17 @@ export type InsightsSupervisorOpportunityDetailOfficerListProps = {
   supervisionJiiLabel: string;
   label: string;
   opportunityType: OpportunityType;
+  zeroGrantsTooltip?: string;
 };
 
 export const InsightsSupervisorOpportunityDetailOfficerList: React.FC<
   InsightsSupervisorOpportunityDetailOfficerListProps
-> = ({ officersWithEligibleClients, supervisionJiiLabel, opportunityType }) => {
+> = ({
+  officersWithEligibleClients,
+  supervisionJiiLabel,
+  opportunityType,
+  zeroGrantsTooltip,
+}) => {
   const { zeroGrantsFlag } = useFeatureVariants();
 
   const isOverflowing = officersWithEligibleClients.length > 7;
@@ -156,8 +162,7 @@ export const InsightsSupervisorOpportunityDetailOfficerList: React.FC<
                 {showZeroGrantsPill && (
                   <InsightsPill
                     label="Zero Grants"
-                    // TODO(#6450): Pull tooltip copy from opportunity config
-                    tooltipCopy="This officer has not granted any clients this opportunity in the past 12 months."
+                    tooltipCopy={zeroGrantsTooltip}
                   />
                 )}
                 <ClientsCountText>

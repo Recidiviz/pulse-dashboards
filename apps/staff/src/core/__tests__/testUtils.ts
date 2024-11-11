@@ -137,6 +137,8 @@ export const mockOpportunity: Opportunity<Client> = {
     supportsDenial: true,
     highlightCasesOnHomepage: false,
     highlightedCaseCtaCopy: "highlighted CTA",
+    zeroGrantsTooltip:
+      "Officer has not granted this opportunity in the past 12 months",
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

@@ -409,7 +409,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   private initializeOpportunityDetail(
     opportunityType: OpportunityType,
   ): RawOpportunityInfo {
-    const { homepagePosition, priority, label } =
+    const { homepagePosition, priority, label, zeroGrantsTooltip } =
       this.opportunityConfigurationStore.opportunities[opportunityType];
     return {
       priority,
@@ -418,6 +418,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       clientsEligibleCount: 0,
       homepagePosition,
       opportunityType,
+      zeroGrantsTooltip,
     };
   }
 

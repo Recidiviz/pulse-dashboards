@@ -72,4 +72,5 @@ export interface OpportunityConfiguration {
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;
+  zeroGrantsTooltip?: string;
 }

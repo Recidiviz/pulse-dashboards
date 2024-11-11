@@ -44,4 +44,5 @@ export type OpportunityInfo = {
   officersWithEligibleClients: SupervisionOfficerWithOpportunityDetails[];
   clientsEligibleCount: number;
   opportunityType: OpportunityType;
+  zeroGrantsTooltip?: string;
 };

@@ -90,6 +90,7 @@ export const apiOpportunityConfigurationSchema = z.object({
   ),
   homepagePosition: z.number(),
   methodologyUrl: z.string(),
+  zeroGrantsTooltip: nullishAsUndefined(z.string()),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({
