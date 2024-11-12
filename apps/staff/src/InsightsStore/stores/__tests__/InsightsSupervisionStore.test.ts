@@ -744,3 +744,15 @@ test("setUserHasSeenActionStrategy", async () => {
     pseudoId: "hashed-agonzalez123",
   });
 });
+
+test("hydrate vitalsForSupervisor", async () => {
+  const testSupervisorPseudoId =
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
+  await flowResult(store.populateVitalsForSupervisor(testSupervisorPseudoId));
+  expect(
+    store.vitalsMetricsBySupervisorPseudoId.get(testSupervisorPseudoId),
+  ).toBeDefined();
+  expect(
+    store.vitalsMetricsBySupervisorPseudoId.get(testSupervisorPseudoId),
+  ).toMatchSnapshot();
+});

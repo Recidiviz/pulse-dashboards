@@ -27,6 +27,7 @@ import {
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   SupervisionOfficerMetricOutlier,
+  VitalsMetricForOfficer,
 } from "~datatypes";
 
 // This type represents the state of fully hydrated data
@@ -127,3 +128,12 @@ export interface PresenterWithHoverManager {
   hoveredOfficerId?: string;
   updateHoveredOfficerId: (officerId: string | undefined) => void;
 }
+
+export type VitalsMetricDetailForOfficer =
+  | Pick<SupervisionOfficer, "displayName">
+  | Pick<VitalsMetricForOfficer, "officerPseudonymizedId" | "metricValue">;
+
+export type SupervisorVitalsMetricDetail = {
+  label: string;
+  officersWithMetricValues: VitalsMetricDetailForOfficer[];
+};

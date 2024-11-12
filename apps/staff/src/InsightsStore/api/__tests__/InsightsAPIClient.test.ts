@@ -29,12 +29,11 @@ import {
   rawMetricBenchmarksFixture,
   rawSupervisionOfficerFixture,
   rawSupervisionOfficerMetricEventFixture,
-  rawSupervisionOfficerVitalsMetricFixture,
+  rawSupervisionVitalsMetricFixture,
   rawSupervisorUserInfoFixture,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
   supervisionOfficerSupervisorsFixture,
-  supervisionOfficerVitalsMetricFixture,
   supervisorUserInfoFixture,
 } from "~datatypes";
 
@@ -257,12 +256,55 @@ describe("InsightsAPIClient", () => {
 
   it("vitalsForSupervisor parses the data", async () => {
     fetchMock.mockResponse(
-      JSON.stringify({ events: rawSupervisionOfficerVitalsMetricFixture }),
+      JSON.stringify({ events: rawSupervisionVitalsMetricFixture }),
     );
     const response = await client.vitalsForSupervisor(
       supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
     );
 
-    expect(response).toEqual(supervisionOfficerVitalsMetricFixture.slice(0, 3));
+    expect(response).toMatchInlineSnapshot(`
+      [
+        {
+          "metricId": "timely_contact",
+          "vitalsMetrics": [
+            {
+              "metric30DDelta": -7,
+              "metricValue": 87,
+              "officerPseudonymizedId": "hashed-so1",
+            },
+            {
+              "metric30DDelta": -1,
+              "metricValue": 57,
+              "officerPseudonymizedId": "hashed-so2",
+            },
+            {
+              "metric30DDelta": 1.2,
+              "metricValue": 31,
+              "officerPseudonymizedId": "hashed-so3",
+            },
+          ],
+        },
+        {
+          "metricId": "timely_risk_assessment",
+          "vitalsMetrics": [
+            {
+              "metric30DDelta": -4,
+              "metricValue": 99,
+              "officerPseudonymizedId": "hashed-so1",
+            },
+            {
+              "metric30DDelta": -1.7,
+              "metricValue": 86,
+              "officerPseudonymizedId": "hashed-so2",
+            },
+            {
+              "metric30DDelta": 0.7,
+              "metricValue": 97,
+              "officerPseudonymizedId": "hashed-so3",
+            },
+          ],
+        },
+      ]
+    `);
   });
 });

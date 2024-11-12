@@ -19,20 +19,23 @@ import { z } from "zod";
 
 import { VITALS_METRIC_IDS } from "../utils/constants";
 
-const vitalsMetricSchema = z.object({
-  metricId: VITALS_METRIC_IDS,
+const vitalsMetricForOfficerSchema = z.object({
+  officerPseudonymizedId: z.string(),
   metricValue: z.number(),
   metric30DDelta: z.number(),
 });
 
-export const supervisionOfficerVitalsMetricSchema = z.object({
-  officerPseudonymizedId: z.string(),
-  vitalsMetrics: z.array(vitalsMetricSchema),
+export const supervisionVitalsMetricSchema = z.object({
+  metricId: VITALS_METRIC_IDS,
+  vitalsMetrics: z.array(vitalsMetricForOfficerSchema),
 });
 
-export type SupervisionOfficerVitalsMetric = z.infer<
-  typeof supervisionOfficerVitalsMetricSchema
+export type SupervisionVitalsMetric = z.infer<
+  typeof supervisionVitalsMetricSchema
 >;
-export type RawSupervisionOfficerVitalsMetric = z.input<
-  typeof supervisionOfficerVitalsMetricSchema
+export type RawSupervisionVitalsMetric = z.input<
+  typeof supervisionVitalsMetricSchema
+>;
+export type VitalsMetricForOfficer = z.infer<
+  typeof vitalsMetricForOfficerSchema
 >;

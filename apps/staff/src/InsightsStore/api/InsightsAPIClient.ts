@@ -35,8 +35,8 @@ import {
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorSchema,
   supervisionOfficerSupervisorsFixture,
-  SupervisionOfficerVitalsMetric,
   supervisionOfficerVitalsMetricFixture,
+  SupervisionVitalsMetric,
   UserInfo,
   userInfoSchema,
 } from "~datatypes";
@@ -206,16 +206,25 @@ export class InsightsAPIClient implements InsightsAPI {
   // TODO #6671 - Instead of using fixture data, make request to endpoint once it is deployed
   async vitalsForSupervisor(
     supervisorPseudoId: string,
-  ): Promise<Array<SupervisionOfficerVitalsMetric>> {
-    return supervisionOfficerVitalsMetricFixture.filter((officerMetric) => {
-      const supervisor = supervisionOfficerSupervisorsFixture.find(
-        (s) => s.pseudonymizedId === supervisorPseudoId,
-      );
-      if (!supervisor) return false;
-      const officerPseudoIds = supervisionOfficerFixture
-        .filter((o) => o.supervisorExternalIds.includes(supervisor?.externalId))
-        .map((o) => o.pseudonymizedId);
-      return officerPseudoIds.includes(officerMetric.officerPseudonymizedId);
+  ): Promise<Array<SupervisionVitalsMetric>> {
+    const supervisor = supervisionOfficerSupervisorsFixture.find(
+      (s) => s.pseudonymizedId === supervisorPseudoId,
+    );
+    if (!supervisor) return [];
+    return supervisionOfficerVitalsMetricFixture.map((metric) => {
+      return {
+        ...metric,
+        vitalsMetrics: metric.vitalsMetrics.filter((metricForOfficer) => {
+          const officersForSupervisor = supervisionOfficerFixture
+            .filter((o) =>
+              o.supervisorExternalIds.includes(supervisor?.externalId),
+            )
+            .map((o) => o.pseudonymizedId);
+          return officersForSupervisor.includes(
+            metricForOfficer.officerPseudonymizedId,
+          );
+        }),
+      };
     });
   }
 }

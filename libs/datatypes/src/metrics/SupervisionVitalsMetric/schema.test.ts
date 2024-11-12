@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rawSupervisionOfficerVitalsMetricFixture } from "./fixture";
-import { supervisionOfficerVitalsMetricSchema } from "./schema";
+import { rawSupervisionVitalsMetricFixture } from "./fixture";
+import { supervisionVitalsMetricSchema } from "./schema";
 
 test("transformations", () => {
-  rawSupervisionOfficerVitalsMetricFixture.forEach((so) =>
-    expect(supervisionOfficerVitalsMetricSchema.parse(so)).toMatchSnapshot(),
+  rawSupervisionVitalsMetricFixture.forEach((so) =>
+    expect(supervisionVitalsMetricSchema.parse(so)).toMatchSnapshot(),
   );
 });

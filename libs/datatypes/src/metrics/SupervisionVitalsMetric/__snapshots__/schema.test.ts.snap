@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`transformations 1`] = `
+{
+  "metricId": "timely_contact",
+  "vitalsMetrics": [
+    {
+      "metric30DDelta": -7,
+      "metricValue": 87,
+      "officerPseudonymizedId": "hashed-so1",
+    },
+    {
+      "metric30DDelta": -1,
+      "metricValue": 57,
+      "officerPseudonymizedId": "hashed-so2",
+    },
+    {
+      "metric30DDelta": 1.2,
+      "metricValue": 31,
+      "officerPseudonymizedId": "hashed-so3",
+    },
+    {
+      "metric30DDelta": 3.4,
+      "metricValue": 22,
+      "officerPseudonymizedId": "hashed-so4",
+    },
+    {
+      "metric30DDelta": -3,
+      "metricValue": 50,
+      "officerPseudonymizedId": "hashed-so5",
+    },
+    {
+      "metric30DDelta": -0.2,
+      "metricValue": 22,
+      "officerPseudonymizedId": "hashed-so8",
+    },
+    {
+      "metric30DDelta": 5.9,
+      "metricValue": 79,
+      "officerPseudonymizedId": "hashed-so6",
+    },
+    {
+      "metric30DDelta": 1.5,
+      "metricValue": 89,
+      "officerPseudonymizedId": "hashed-so7",
+    },
+  ],
+}
+`;
+
+exports[`transformations 2`] = `
+{
+  "metricId": "timely_risk_assessment",
+  "vitalsMetrics": [
+    {
+      "metric30DDelta": -4,
+      "metricValue": 99,
+      "officerPseudonymizedId": "hashed-so1",
+    },
+    {
+      "metric30DDelta": -1.7,
+      "metricValue": 86,
+      "officerPseudonymizedId": "hashed-so2",
+    },
+    {
+      "metric30DDelta": 0.7,
+      "metricValue": 97,
+      "officerPseudonymizedId": "hashed-so3",
+    },
+    {
+      "metric30DDelta": 0.9,
+      "metricValue": 98,
+      "officerPseudonymizedId": "hashed-so4",
+    },
+    {
+      "metric30DDelta": -5.9,
+      "metricValue": 89,
+      "officerPseudonymizedId": "hashed-so5",
+    },
+    {
+      "metric30DDelta": 1,
+      "metricValue": 90,
+      "officerPseudonymizedId": "hashed-so8",
+    },
+    {
+      "metric30DDelta": 0,
+      "metricValue": 100,
+      "officerPseudonymizedId": "hashed-so6",
+    },
+    {
+      "metric30DDelta": -3.4,
+      "metricValue": 79,
+      "officerPseudonymizedId": "hashed-so7",
+    },
+  ],
+}
+`;

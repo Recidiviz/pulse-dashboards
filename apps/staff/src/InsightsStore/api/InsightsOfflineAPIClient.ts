@@ -41,8 +41,8 @@ import {
   supervisionOfficerMetricEventFixture,
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorsFixture,
-  SupervisionOfficerVitalsMetric,
   supervisionOfficerVitalsMetricFixture,
+  SupervisionVitalsMetric,
   UserInfo,
 } from "~datatypes";
 
@@ -223,16 +223,25 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
 
   async vitalsForSupervisor(
     supervisorPseudoId: string,
-  ): Promise<Array<SupervisionOfficerVitalsMetric>> {
-    return supervisionOfficerVitalsMetricFixture.filter((officerMetric) => {
-      const supervisor = supervisionOfficerSupervisorsFixture.find(
-        (s) => s.pseudonymizedId === supervisorPseudoId,
-      );
-      if (!supervisor) return false;
-      const officerPseudoIds = supervisionOfficerFixture
-        .filter((o) => o.supervisorExternalIds.includes(supervisor?.externalId))
-        .map((o) => o.pseudonymizedId);
-      return officerPseudoIds.includes(officerMetric.officerPseudonymizedId);
+  ): Promise<Array<SupervisionVitalsMetric>> {
+    const supervisor = supervisionOfficerSupervisorsFixture.find(
+      (s) => s.pseudonymizedId === supervisorPseudoId,
+    );
+    if (!supervisor) return [];
+    return supervisionOfficerVitalsMetricFixture.map((metric) => {
+      return {
+        ...metric,
+        vitalsMetrics: metric.vitalsMetrics.filter((metricForOfficer) => {
+          const officersForSupervisor = supervisionOfficerFixture
+            .filter((o) =>
+              o.supervisorExternalIds.includes(supervisor?.externalId),
+            )
+            .map((o) => o.pseudonymizedId);
+          return officersForSupervisor.includes(
+            metricForOfficer.officerPseudonymizedId,
+          );
+        }),
+      };
     });
   }
 }

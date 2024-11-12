@@ -33,6 +33,7 @@ import {
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   SupervisionOfficerSupervisor,
+  SupervisionVitalsMetric,
   UserInfo,
 } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
@@ -92,6 +93,9 @@ export class InsightsSupervisionStore {
   clientInfoByClientPseudoId: Map<string, ClientInfo> = new Map();
 
   actionStrategiesEnabled = true;
+
+  vitalsMetricsBySupervisorPseudoId: Map<string, SupervisionVitalsMetric[]> =
+    new Map();
 
   constructor(
     public readonly insightsStore: InsightsStore,
@@ -577,6 +581,25 @@ export class InsightsSupervisionStore {
     this.excludedOfficersBySupervisorPseudoId.set(
       supervisorPseudoId,
       excludedOfficersData,
+    );
+  }
+
+  /**
+   * Fetches vitals metrics data for the specified supervisor
+   */
+  *populateVitalsForSupervisor(
+    supervisorPseudoId: string,
+  ): FlowMethod<InsightsAPI["vitalsForSupervisor"], void> {
+    if (this.vitalsMetricsBySupervisorPseudoId.has(supervisorPseudoId)) return;
+
+    const vitalsForSupervisor =
+      yield this.insightsStore.apiClient.vitalsForSupervisor(
+        supervisorPseudoId,
+      );
+
+    this.vitalsMetricsBySupervisorPseudoId.set(
+      supervisorPseudoId,
+      vitalsForSupervisor,
     );
   }
 

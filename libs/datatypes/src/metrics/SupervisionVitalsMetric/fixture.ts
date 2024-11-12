@@ -21,8 +21,8 @@ import {
 } from "../../people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
 import { VITALS_METRIC_IDS } from "../utils/constants";
 import {
-  RawSupervisionOfficerVitalsMetric,
-  supervisionOfficerVitalsMetricSchema,
+  RawSupervisionVitalsMetric,
+  supervisionVitalsMetricSchema,
 } from "./schema";
 
 const timelyContactValues = [
@@ -98,26 +98,25 @@ const timelyRiskAssessmentValues = [
 const allOfficerPseudoIds = rawSupervisionOfficerFixture
   .map((o) => o.pseudonymizedId)
   .concat(rawExcludedSupervisionOfficerFixture.map((o) => o.pseudonymizedId));
-export const rawSupervisionOfficerVitalsMetricFixture: RawSupervisionOfficerVitalsMetric[] =
-  allOfficerPseudoIds.map((pseudonymizedId, idx) => {
-    return {
-      officerPseudonymizedId: pseudonymizedId,
-      vitalsMetrics: [
-        {
-          metricId: VITALS_METRIC_IDS.enum.timely_contact,
-          metricValue: timelyContactValues[idx].metricValue,
-          metric30DDelta: timelyContactValues[idx].metric30DDelta,
-        },
-        {
-          metricId: VITALS_METRIC_IDS.enum.timely_risk_assessment,
-          metricValue: timelyRiskAssessmentValues[idx].metricValue,
-          metric30DDelta: timelyRiskAssessmentValues[idx].metric30DDelta,
-        },
-      ],
-    };
-  });
+export const rawSupervisionVitalsMetricFixture: RawSupervisionVitalsMetric[] = [
+  {
+    metricId: VITALS_METRIC_IDS.enum.timely_contact,
+    vitalsMetrics: timelyContactValues.map((contact, idx) => {
+      return { ...contact, officerPseudonymizedId: allOfficerPseudoIds[idx] };
+    }),
+  },
+  {
+    metricId: VITALS_METRIC_IDS.enum.timely_risk_assessment,
+    vitalsMetrics: timelyRiskAssessmentValues.map((assessment, idx) => {
+      return {
+        ...assessment,
+        officerPseudonymizedId: allOfficerPseudoIds[idx],
+      };
+    }),
+  },
+];
 
 export const supervisionOfficerVitalsMetricFixture =
-  rawSupervisionOfficerVitalsMetricFixture.map((m) =>
-    supervisionOfficerVitalsMetricSchema.parse(m),
+  rawSupervisionVitalsMetricFixture.map((m) =>
+    supervisionVitalsMetricSchema.parse(m),
   );
