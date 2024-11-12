@@ -20,15 +20,14 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
-import { CaseNoteSearchResults, caseNoteSearchSchema } from "~datatypes";
-import { castToError } from "~hydration-utils";
+import { CaseNoteSearchResults } from "~datatypes";
 
 import {
   PartiallyTypedRootStore,
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { formatWorkflowsDateString } from "../../utils";
+import { formatWorkflowsDate } from "../../utils";
 import {
   ModalCloseButton,
   ModalHeader,
@@ -44,29 +43,26 @@ import {
   NoteViewWrapper,
   PrototypePill,
 } from "./common/Styles";
-import {
-  CASE_NOTE_SEARCH_RESULTS_STATUS,
-  CASE_NOTE_SEARCH_VIEWS,
-  SortOrder,
-} from "./common/types";
+import { CASE_NOTE_SEARCH_VIEWS, SortOrder } from "./common/types";
 import { CaseNoteSearchInput } from "./components/CaseNoteSearchInput/CaseNoteSearchInput";
 import { SearchView } from "./components/SearchView/SearchView";
+import { trpc } from "./trpc";
 
 const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
   if (!note) return null;
 
-  const sanitizedNoteBody = note.noteBody
-    ? DomPurify.sanitize(note.noteBody, { FORBID_ATTR: ["style"] })
+  const sanitizedNoteBody = note.fullText
+    ? DomPurify.sanitize(note.fullText, { FORBID_ATTR: ["style"] })
     : "";
 
   return (
     <NoteViewWrapper>
       <NoteHeader>
         <NoteTextLight className="fs-exclude">
-          {formatWorkflowsDateString(note.eventDate)}
+          {formatWorkflowsDate(note.date)}
         </NoteTextLight>
         <NoteAdditionalInfo>
-          <NoteTextLight className="fs-exclude">{note.noteType}</NoteTextLight>
+          <NoteTextLight className="fs-exclude">{note.type}</NoteTextLight>
           <NoteTextLight> | </NoteTextLight>
           <NoteTextLight className="fs-exclude">
             {note.contactMode}
@@ -84,81 +80,75 @@ const NoteView = ({ note }: { note?: CaseNoteSearchResults[0] }) => {
 export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const { isMobile } = useIsMobile(true);
   // TODO(#5636) Eliminate PartiallyTypedRootStore
-  const { workflowsStore, analyticsStore, userStore, apiStore } =
+  const { workflowsStore, analyticsStore, userStore } =
     useRootStore() as PartiallyTypedRootStore;
-
-  const { selectedPerson } = workflowsStore;
-
   const [currentView, setCurrentView] =
     React.useState<CASE_NOTE_SEARCH_VIEWS>("SEARCH_VIEW");
   const [sortOrder, setSortOrder] = React.useState<SortOrder>("Relevance");
   const [docId, setDocId] = React.useState<string>();
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [searchResults, setSearchResults] =
-    React.useState<CaseNoteSearchResults>([]);
-  const [resultsStatus, setResultsStatus] =
-    React.useState<CASE_NOTE_SEARCH_RESULTS_STATUS>("NO_RESULTS");
-
-  const isNoteView = currentView === "NOTE_VIEW";
-  const currentNote = docId
-    ? searchResults.find((d) => d.documentId === docId)
-    : undefined;
-  const currentNoteTitle =
-    currentNote?.noteTitle || formatWorkflowsDateString(currentNote?.eventDate);
   const [scrollPosition, setScrollPosition] = React.useState(0);
 
+  const { selectedPerson } = workflowsStore;
   if (!selectedPerson) return null;
 
-  const handleResponseData = (
-    results: CaseNoteSearchResults | null,
-    error: string | null,
-  ) => {
-    const numResults = results?.length ?? 0;
+  const shouldUseOfflineData = isDemoMode() || isOfflineMode();
+
+  const logResults = (numResults?: number, error?: string) => {
+    if (shouldUseOfflineData) {
+      return;
+    }
 
     analyticsStore.trackCaseNoteSearch({
       userPseudonymizedId: userStore.userPseudoId,
       clientPseudonymizedId: selectedPerson.pseudonymizedId,
       numResults,
-      error: error,
+      error,
     });
-
-    if (error) {
-      setResultsStatus("ERROR");
-      return new Error(error);
-    }
-
-    setResultsStatus(numResults > 0 ? "OK" : "NO_RESULTS");
-    setSearchResults(results ?? []);
   };
 
-  const handleReturnClick = async () => {
-    setResultsStatus("LOADING");
+  const {
+    data,
+    status,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = trpc.search.useInfiniteQuery(
+    {
+      query: searchQuery,
+      clientExternalId: selectedPerson.externalId,
+      userExternalId: userStore.externalId,
+    },
+    {
+      getNextPageParam: (lastPage) =>
+        lastPage.nextPageToken && lastPage.nextPageToken?.length > 0
+          ? lastPage.nextPageToken
+          : null,
+      enabled: searchQuery !== "" && !shouldUseOfflineData,
+      cacheTime: 0,
+      onSuccess: (data) => logResults(data.pages.flat().length, undefined),
+      onError: (err) => logResults(undefined, err?.message),
+    },
+  );
+
+  const isNoteView = currentView === "NOTE_VIEW";
+
+  const searchResults = data?.pages.map((page) => page.results).flat() ?? [];
+
+  const currentNote = docId
+    ? searchResults.find((d) => d.documentId === docId)
+    : undefined;
+
+  const currentNoteTitle =
+    currentNote?.title || formatWorkflowsDate(currentNote?.date);
+
+  const handleReturnClick = async (newSearchQuery: string) => {
+    setSearchQuery(newSearchQuery);
     setCurrentView("SEARCH_VIEW");
     setScrollPosition(0);
     if (!modalIsOpen) setModalIsOpen(true);
-
-    if (isDemoMode() || isOfflineMode()) {
-      const { caseNoteSearchData } = await import(
-        "../../../tools/fixtures/caseNoteSearch"
-      );
-
-      const { results, error } = caseNoteSearchData;
-
-      handleResponseData(results, error);
-    } else {
-      const baseUrl = `${import.meta.env.VITE_PROTOTYPES_API_URL}`;
-      const endpoint = `${baseUrl}/search?query=${searchQuery}&external_id=${selectedPerson.externalId}&user_id=${userStore.externalId}&state_code=${selectedPerson.stateCode}`;
-
-      try {
-        const data = await apiStore.get(endpoint);
-        const parsedData = caseNoteSearchSchema.parse(data);
-        const { results, error } = parsedData;
-        handleResponseData(results, error);
-      } catch (e) {
-        handleResponseData(null, castToError(e).message);
-      }
-    }
   };
 
   const handleNoteClick = (docId: string) => {
@@ -166,12 +156,19 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
     setCurrentView("NOTE_VIEW");
   };
 
+  const handleReachedBottom = async () => {
+    if (!hasNextPage || isFetching || isFetchingNextPage) return;
+    await fetchNextPage();
+    if (sortOrder === "Date") {
+      setScrollPosition(0);
+    }
+  };
+
   return (
     <Wrapper>
       <CaseNoteSearchInput
-        value={searchQuery}
+        initialValue={searchQuery}
         onPressReturn={handleReturnClick}
-        onChange={(e) => setSearchQuery(e.target.value)}
       />
       <StyledModal
         isMobile={isMobile}
@@ -199,16 +196,18 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
           <NoteView note={currentNote} />
         ) : (
           <SearchView
-            resultsStatus={resultsStatus}
+            searchStatus={status}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage ?? false}
             searchQuery={searchQuery}
             searchResults={searchResults}
-            setSearchQuery={setSearchQuery}
             handleNoteClick={handleNoteClick}
             handleReturnClick={handleReturnClick}
             sortOrder={sortOrder}
             updateSortOrder={setSortOrder}
             initialScrollPosition={scrollPosition}
             setScrollPosition={setScrollPosition}
+            onReachedBottom={handleReachedBottom}
           />
         )}
       </StyledModal>

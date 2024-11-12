@@ -18,6 +18,7 @@
 import { protos, SearchServiceClient } from "@google-cloud/discoveryengine";
 import { captureException } from "@sentry/node";
 import _ from "lodash";
+import moment from "moment";
 
 import { EXCLUDE_FILTER_CONDITIONS } from "~@case-notes-server/trpc/common/constants";
 import { IncludeFilterConditions } from "~@case-notes-server/trpc/common/types";
@@ -102,9 +103,10 @@ function extractCaseNotesResults(
     try {
       const noteBody = data["note_body"]?.stringValue ?? undefined;
       const dateString = data["note_date"]?.stringValue ?? undefined;
+
       results.push({
         documentId: documentId,
-        date: dateString ? new Date(dateString) : undefined,
+        date: dateString ? moment.utc(dateString).toDate() : undefined,
         contactMode: data["note_mode"]?.stringValue ?? undefined,
         type: data["note_type"]?.stringValue ?? undefined,
         title: data["note_title"]?.stringValue ?? undefined,

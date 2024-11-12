@@ -17,6 +17,7 @@
 
 import { BigQuery } from "@google-cloud/bigquery";
 import _ from "lodash";
+import moment from "moment";
 import { z } from "zod";
 
 import { EXCLUDE_FILTER_CONDITIONS } from "~@case-notes-server/trpc/common/constants";
@@ -37,7 +38,9 @@ const exactMatchSchema = z
     return results.map((result) => {
       return {
         documentId: result.id,
-        date: result.note_date ? new Date(result.note_date) : undefined,
+        date: result.note_date
+          ? moment.utc(result.note_date).toDate()
+          : undefined,
         contactMode: result.note_mode ?? undefined,
         type: result.note_type ?? undefined,
         title: result.note_title ?? undefined,

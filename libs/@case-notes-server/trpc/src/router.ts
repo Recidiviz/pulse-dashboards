@@ -96,13 +96,7 @@ export const appRouter = router({
     .input(searchSchema)
     .query(
       async ({
-        input: {
-          withSnippet,
-          userExternalId,
-          query,
-          clientExternalId,
-          pageToken,
-        },
+        input: { withSnippet, userExternalId, query, clientExternalId, cursor },
         ctx: { stateCode },
       }) => {
         if (
@@ -133,7 +127,7 @@ export const appRouter = router({
         } = await vertexSearch({
           withSnippet,
           query,
-          pageToken,
+          pageToken: cursor,
           includeFilterConditions,
           projectId: process.env["VERTEX_PROJECT_ID"],
           engineId: process.env["VERTEX_ENGINE_ID"],
@@ -144,7 +138,7 @@ export const appRouter = router({
         let performedExactMatchSearch = false;
         let exactMatchQuery;
         // Only fetch exact match results if we're requesting the first page of results
-        if (!pageToken) {
+        if (!cursor) {
           performedExactMatchSearch = true;
 
           try {
@@ -169,7 +163,7 @@ export const appRouter = router({
             queryInfo: {
               query,
               clientExternalId,
-              pageToken,
+              pageToken: cursor,
               stateCode,
               userExternalId,
               timestamp: requestTime,

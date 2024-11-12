@@ -15,13 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type CaseNoteSearchResults = {
-  documentId?: string | null;
-  date?: Date;
-  contactMode?: string | null;
-  type?: string | null;
-  title?: string | null;
-  preview?: string;
-  fullText?: string | null;
-  snippet?: string;
-}[];
+import { createTRPCReact } from "@trpc/react-query";
+
+import { AppRouter } from "~@case-notes-server/trpc/router";
+
+export const trpc = createTRPCReact<AppRouter>();

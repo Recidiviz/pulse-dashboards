@@ -51,7 +51,7 @@
     },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-config-files", "env-dev"],
+      "dependsOn": ["load-config-files", "env-staging"],
       "options": {
         "commands": [
           "vite dev --force",

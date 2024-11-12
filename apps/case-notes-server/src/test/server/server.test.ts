@@ -96,7 +96,7 @@ describe("search", () => {
     const { results } = await testTRPCClient.search.query({
       query: "housing",
       clientExternalId: "fake-external-id",
-      pageToken: "fake-page-token",
+      cursor: "fake-page-token",
       userExternalId: "fake-user-external-id",
     });
 

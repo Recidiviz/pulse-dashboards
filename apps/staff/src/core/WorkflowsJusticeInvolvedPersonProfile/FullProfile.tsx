@@ -16,11 +16,14 @@
 // =============================================================================
 
 import { palette, Sans16, spacing, typography } from "@recidiviz/design-system";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink } from "@trpc/client";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
+import superjson from "superjson";
 
 import {
   useFeatureVariants,
@@ -30,6 +33,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { Client } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseNoteSearch } from "../CaseNoteSearch";
+import { trpc } from "../CaseNoteSearch/trpc";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
@@ -318,6 +322,7 @@ export const FullProfile = observer(
   function FullProfile(): React.ReactElement | null {
     const {
       workflowsStore: { selectedPerson: person },
+      userStore,
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
     const { caseNoteSearch, fullWidthTimeline } = useFeatureVariants();
@@ -335,6 +340,27 @@ export const FullProfile = observer(
       ? "Additional information"
       : "Progress toward success";
 
+    const queryClient = new QueryClient();
+
+    const trpcClient = trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: import.meta.env["VITE_CASE_NOTES_API_URL"],
+          async headers() {
+            const token = userStore.getToken ? await userStore.getToken() : "";
+            const stateCode = person.stateCode;
+
+            return {
+              Authorization: `Bearer ${token}`,
+              StateCode: `${stateCode}`,
+            };
+          },
+        }),
+      ],
+      // Required to get Date objects to serialize correctly.
+      transformer: superjson,
+    });
+
     return (
       <WorkflowsNavLayout>
         <Wrapper isMobile={isMobile}>
@@ -349,7 +375,11 @@ export const FullProfile = observer(
           </Header>
           {caseNoteSearch && (
             <CasenoteSearchWrapper>
-              <CaseNoteSearch />
+              <trpc.Provider client={trpcClient} queryClient={queryClient}>
+                <QueryClientProvider client={queryClient}>
+                  <CaseNoteSearch />
+                </QueryClientProvider>
+              </trpc.Provider>
               <Divider />
             </CasenoteSearchWrapper>
           )}

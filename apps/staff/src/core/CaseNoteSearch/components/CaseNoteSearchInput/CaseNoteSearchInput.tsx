@@ -17,6 +17,7 @@
 
 import { palette, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { useState } from "react";
 import styled from "styled-components/macro";
 
 import SearchIconComponent from "../../../../assets/static/images/search.svg?react";
@@ -57,19 +58,22 @@ const SearchIcon = styled(SearchIconComponent)`
   margin: ${rem(3)};
 `;
 
-interface CaseNoteSearchInputProps
-  extends React.ComponentPropsWithoutRef<"input"> {
+interface CaseNoteSearchInputProps {
+  initialValue?: string;
   hasSearchIcon?: boolean;
   hasPrototypeBadge?: boolean;
-  onPressReturn: () => void;
+  onPressReturn: (searchQuery: string) => void;
 }
 
 export function CaseNoteSearchInput({
+  initialValue = "",
   onPressReturn,
   hasSearchIcon = true,
   hasPrototypeBadge = true,
   ...props
 }: CaseNoteSearchInputProps) {
+  const [searchQuery, setSearchQuery] = useState(initialValue);
+
   return (
     <SearchInputWrapper>
       {hasSearchIcon && (
@@ -80,9 +84,11 @@ export function CaseNoteSearchInput({
       <SearchInput
         className="fs-exclude"
         {...props}
+        value={searchQuery}
+        onChange={(event) => setSearchQuery(event.target.value)}
         placeholder="Search Case Notes"
         onKeyDown={(e) => {
-          if (e.key === "Enter") onPressReturn();
+          if (e.key === "Enter") onPressReturn(searchQuery);
         }}
       />
       {hasPrototypeBadge && (

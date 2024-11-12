@@ -21,6 +21,7 @@ export const searchSchema = z.object({
   query: z.string(),
   userExternalId: z.string(),
   clientExternalId: z.string().optional(),
-  pageToken: z.string().optional(),
   withSnippet: z.boolean().default(false),
+  // We have to use "cursor" specifically because React Query uses it as a reserved key to indicate that this query supports infinite scrolling
+  cursor: z.string().optional(),
 });
