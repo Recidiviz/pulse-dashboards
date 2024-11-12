@@ -262,7 +262,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get supportsAlmostEligible() {
-    return !!this.ineligibleCriteriaCopy;
+    return Object.keys(this.ineligibleCriteriaCopy).length > 0;
   }
 
   get highlightCasesOnHomepage() {
