@@ -76,7 +76,7 @@ export function hydrateSnooze(
 
 export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   constructor(
-    private configurationObject: IApiOpportunityConfiguration,
+    protected configurationObject: IApiOpportunityConfiguration,
     private userStore: UserStore,
   ) {}
 
@@ -151,7 +151,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     if (tabs) return tabs;
     return {
       "ELIGIBILITY STATUS": generateTabs(this),
-    } as OpportunityTabGroups;
+    };
   }
 
   get methodologyUrl() {

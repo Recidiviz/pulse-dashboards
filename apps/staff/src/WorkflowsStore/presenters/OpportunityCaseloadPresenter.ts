@@ -17,7 +17,7 @@
 
 import { toTitleCase } from "@artsy/to-title-case";
 import { arrayMove } from "@dnd-kit/sortable";
-import { intersection } from "lodash";
+import { difference, intersection } from "lodash";
 import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
@@ -149,15 +149,18 @@ export class OpportunityCaseloadPresenter {
   }
 
   private get defaultOrderedTabs(): OpportunityTab[] {
-    // The ordering of tabs is the user's preference from firestore,
-    // or the default for this tab group if they don't have one
-    return (
+    const customOrder =
       this.updatesSubscription?.data?.customTabOrderings?.[
         this.opportunityType
-      ]?.[this.activeTabGroup] ??
-      this.config.tabGroups[this.activeTabGroup] ??
-      []
-    );
+      ]?.[this.activeTabGroup] ?? [];
+    const configOrder = this.config.tabGroups[this.activeTabGroup] ?? [];
+    return [
+      // Only list tabs that are included in the config
+      // First list tabs that exist in the custom order
+      ...intersection(customOrder, configOrder),
+      // Then list those that don't
+      ...difference(configOrder, customOrder),
+    ];
   }
 
   private get unorderedTabs(): OpportunityTab[] {

@@ -23,7 +23,6 @@ import {
   Opportunity,
   OpportunityRequirement,
   OpportunityTab,
-  OpportunityTabGroups,
 } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
@@ -52,7 +51,7 @@ export class UsMoOverdueRestrictiveHousingConfiguration extends ApiOpportunityCo
         "Overridden",
         "Missing Review Date",
       ],
-    } as OpportunityTabGroups;
+    } as const;
   }
 
   get omsCriteriaHeader() {

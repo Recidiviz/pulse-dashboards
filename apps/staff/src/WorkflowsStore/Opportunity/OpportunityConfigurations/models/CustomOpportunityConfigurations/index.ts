@@ -24,6 +24,7 @@ import { UsAzOverdueForAcisDtpConfiguration } from "./UsAz/UsAzOverdueForAcisDtp
 import { UsAzOverdueForAcisTprConfiguration } from "./UsAz/UsAzOverdueForAcisTprConfiguration";
 import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
+import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeFurloughReleaseConfiguration } from "./UsMe/UsMeFurloughReleaseConfiguration";
@@ -54,6 +55,9 @@ const localCustomOpportunityConfigurations: Partial<
   usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
   usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,
   usAzReleaseToDTP: UsAzReleaseToDTPConfiguration,
+  usIdCRCResidentWorker: UsIdFacilitiesConfiguration,
+  usIdCRCWorkRelease: UsIdFacilitiesConfiguration,
+  usIdExpandedCRC: UsIdFacilitiesConfiguration,
 };
 
 const adminPanelOnlyCustomOpportunityConfigurations: Partial<

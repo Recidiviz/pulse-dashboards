@@ -15,22 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityTabGroups } from "../../../../types";
+import { generateTabs } from "../../../../utils/tabUtils";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export class UsAzOverdueForAcisTprConfiguration extends ApiOpportunityConfiguration {
-  get highlightCasesOnHomepage() {
-    return true;
-  }
-
-  get highlightedCaseCtaCopy() {
-    return "overdue STP cases";
-  }
-
-  get tabGroups() {
-    return { "ELIGIBILITY STATUS": ["Overdue"] } as const;
-  }
-
-  get supportsSubmitted() {
-    return false;
+export class UsIdFacilitiesConfiguration extends ApiOpportunityConfiguration {
+  get tabGroups(): OpportunityTabGroups {
+    return {
+      ...this.configurationObject.tabGroups,
+      "ELIGIBILITY STATUS": generateTabs(this),
+    };
   }
 }

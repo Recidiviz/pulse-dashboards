@@ -31,6 +31,7 @@ import {
   Submission,
   UpdateLog,
 } from "../../FirestoreStore";
+import { PartialRecord } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 import { FormBase } from "./Forms/FormBase";
 import { OpportunityConfiguration } from "./OpportunityConfigurations";
@@ -199,9 +200,9 @@ export type OpportunityTabGroup =
   | "GENDER"
   | "GENDER - Transgender Only";
 // NOTE: Consider changing the key type to string, because the source of truth is what is set in the configs as opposed to the code.
-export type OpportunityTabGroups = Record<
+export type OpportunityTabGroups = PartialRecord<
   OpportunityTabGroup,
-  OpportunityTab[]
+  Readonly<OpportunityTab[]>
 >;
 
 export type DenialConfirmationModalProps = {

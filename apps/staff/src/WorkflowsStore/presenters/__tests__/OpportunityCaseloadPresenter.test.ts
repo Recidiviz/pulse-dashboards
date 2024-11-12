@@ -109,7 +109,11 @@ describe("one tab group, no supervision presenter", () => {
       },
     };
 
-    expect(presenter.displayTabs).toEqual(preferredTabs);
+    // Mock config doesn't support Almost Eligible, so that one gets dropped
+    expect(presenter.displayTabs).toEqual([
+      "Marked Ineligible",
+      "Eligible Now",
+    ]);
   });
 });
 

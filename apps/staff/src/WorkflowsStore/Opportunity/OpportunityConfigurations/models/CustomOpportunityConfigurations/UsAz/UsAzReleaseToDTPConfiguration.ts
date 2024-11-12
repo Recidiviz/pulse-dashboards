@@ -17,7 +17,7 @@
 
 import { OpportunityType } from "~datatypes";
 
-import { OpportunityTab, OpportunityTabGroups } from "../../../../types";
+import { OpportunityTab } from "../../../../types";
 import { UsAzTransitionProgramSubcategory } from "../../../../UsAz";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
@@ -30,7 +30,7 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
         "Almost Eligible",
         "Pending",
       ],
-    } as OpportunityTabGroups;
+    } as const;
   }
 
   get nonOMSCriteriaHeader() {
