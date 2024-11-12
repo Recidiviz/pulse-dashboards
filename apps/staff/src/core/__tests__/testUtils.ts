@@ -137,6 +137,7 @@ export const mockOpportunity: Opportunity<Client> = {
     tabPrefaceCopy: {},
     supportsAlmostEligible: false,
     supportsDenial: true,
+    supportsSubmitted: true,
     highlightCasesOnHomepage: false,
     highlightedCaseCtaCopy: "highlighted CTA",
     overdueOpportunityCalloutCopy: "overdue",

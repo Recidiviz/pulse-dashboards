@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { OpportunityType } from "~datatypes";
 import { Hydratable } from "~hydration-utils";
 
+import { StatusPalette } from "../../core/utils/workflowsUtils";
 import {
   AutoSnoozeUpdate,
   Denial,
@@ -138,6 +139,7 @@ export interface Opportunity<
   readonly eligibilityCallToActionText?: string;
   readonly subcategory?: string;
   subcategoryHeadingFor: (subcategory: string) => string | undefined;
+  readonly subcategoryText?: string;
   tabTitle: (category?: OpportunityTabGroup) => OpportunityTab;
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
@@ -157,6 +159,7 @@ export interface Opportunity<
   denied: boolean;
   highlightCalloutText: string;
   accordionKey: string;
+  customStatusPalette?: StatusPalette;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

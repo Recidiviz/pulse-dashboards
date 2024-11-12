@@ -24,8 +24,8 @@ export const OPPORTUNITY_STATUS_COLORS = {
   eligible: {
     icon: palette.signal.highlight,
     iconAlmost: palette.data.gold1,
-    background: "rgb(247,251,249)",
-    border: "rgb(234,246,241)",
+    background: "transparent",
+    border: rgba(palette.slate, 0.1),
     text: palette.pine4,
     buttonFill: palette.signal.links,
     link: palette.signal.links,
@@ -72,7 +72,7 @@ export const OPPORTUNITY_STATUS_COLORS = {
   alert: {
     icon: palette.signal.error,
     iconAlmost: palette.signal.error,
-    background: rgba(palette.signal.error, 0.05),
+    background: "transparent",
     border: rgba(palette.slate, 0.1),
     text: palette.signal.error,
     buttonFill: palette.data.gold1,
@@ -103,7 +103,10 @@ export function useStatusColors({
   isSubmitted,
   denial,
   almostEligible,
+  customStatusPalette,
 }: Opportunity): StatusPalette {
+  if (customStatusPalette) return customStatusPalette;
+
   if (isSubmitted) return OPPORTUNITY_STATUS_COLORS.submitted;
 
   if (isAlert) {

@@ -86,6 +86,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   emptyTabCopy: {},
   tabPrefaceCopy: {},
   supportsDenial: false,
+  supportsSubmitted: false,
   supportsAlmostEligible: false,
   highlightCasesOnHomepage: false,
   highlightedCaseCtaCopy: "highlighted CTA",

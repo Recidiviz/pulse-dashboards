@@ -17,6 +17,7 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { UsAzResidentMetadata } from "../../../FirestoreStore";
 import { Resident } from "../../Resident";
 import {
   UsAzReleaseToDTPReferralRecord,
@@ -37,6 +38,15 @@ export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramO
       "usAzReleaseToDTP",
       resident.rootStore,
       usAzReleaseToDTPSchema.parse(record),
+    );
+  }
+
+  get eligibilityDate(): Date {
+    const metadata = this.person.metadata as UsAzResidentMetadata;
+    return new Date(
+      metadata.acisDtpDate ??
+        metadata.projectedDtpDate ??
+        metadata.projectedTprDate,
     );
   }
 }

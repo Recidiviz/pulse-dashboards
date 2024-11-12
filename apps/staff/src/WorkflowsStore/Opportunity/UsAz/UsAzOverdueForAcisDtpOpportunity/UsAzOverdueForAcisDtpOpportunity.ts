@@ -55,4 +55,8 @@ export class UsAzOverdueForAcisDtpOpportunity extends OpportunityBase<
   tabTitle(): OpportunityTab {
     return "Overdue";
   }
+
+  get eligibleStatusMessage() {
+    return "Overdue";
+  }
 }

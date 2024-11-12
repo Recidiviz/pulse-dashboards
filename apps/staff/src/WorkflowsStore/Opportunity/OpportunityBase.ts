@@ -34,6 +34,7 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
+import { StatusPalette } from "../../core/utils/workflowsUtils";
 import {
   AutoSnoozeUpdate,
   Denial,
@@ -601,6 +602,12 @@ export class OpportunityBase<
     return this.config.subcategoryHeadings?.[subcategory] ?? subcategory;
   }
 
+  // Copy to display for the opportuinty's current subcategory
+  get subcategoryCopy(): string | undefined {
+    if (!this.subcategory) return undefined;
+    return this.subcategoryHeadingFor(this.subcategory);
+  }
+
   // The possible subcategories of the Submitted status that this opportunity can
   // logically transition INTO from its current state
   get submittedSubcategories(): string[] | undefined {
@@ -728,6 +735,11 @@ export class OpportunityBase<
 
   // Used to optionally display information appended to an opportunity label
   get labelAddendum(): string | undefined {
+    return undefined;
+  }
+
+  // Used to implement custom logic for the palette to use for this opportunity
+  get customStatusPalette(): StatusPalette | undefined {
     return undefined;
   }
 }

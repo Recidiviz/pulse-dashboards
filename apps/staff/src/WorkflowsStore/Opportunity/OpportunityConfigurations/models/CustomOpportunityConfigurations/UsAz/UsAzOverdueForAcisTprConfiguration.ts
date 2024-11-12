@@ -30,4 +30,8 @@ export class UsAzOverdueForAcisTprConfiguration extends ApiOpportunityConfigurat
   get tabGroups() {
     return { "ELIGIBILITY STATUS": ["Overdue"] } as OpportunityTabGroups;
   }
+
+  get supportsSubmitted() {
+    return false;
+  }
 }

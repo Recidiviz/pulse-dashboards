@@ -48,6 +48,7 @@ export function buildActedOnText({
   snoozedBy,
   submittedTabTitle,
   submittedUpdate,
+  subcategoryCopy,
 }: {
   denial?: Denial;
   isSubmitted: boolean;
@@ -56,6 +57,7 @@ export function buildActedOnText({
   snoozedBy?: string;
   submittedTabTitle: string;
   submittedUpdate?: Submission;
+  subcategoryCopy?: string;
 }): string | undefined {
   if (!isSubmitted && !denial) return;
 
@@ -65,7 +67,9 @@ export function buildActedOnText({
 
   if (!actionBy || !actionDate) return;
 
-  return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()} by ${actionBy} on ${format(
+  const subcategorySubstr = subcategoryCopy ? `: ${subcategoryCopy}` : "";
+
+  return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr} by ${actionBy} on ${format(
     actionDate,
     "LLLL d, yyyy",
   )}.`;

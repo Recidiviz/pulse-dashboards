@@ -28,6 +28,7 @@ import { HydratorProps } from "./types";
 
 const Wrapper = styled.div`
   position: relative;
+  height: 100%;
 `;
 
 const StatusWrapper = styled(animated.div)`

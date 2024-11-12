@@ -71,6 +71,7 @@ export interface OpportunityConfiguration {
   tabPrefaceCopy: Partial<Record<OpportunityTab, string>>;
   supportsDenial: boolean;
   supportsAlmostEligible: boolean;
+  supportsSubmitted: boolean;
   highlightCasesOnHomepage: boolean;
   highlightedCaseCtaCopy: string;
   subcategoryHeadings?: Record<string, string>;

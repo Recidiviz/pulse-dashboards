@@ -29,26 +29,25 @@ export function UsAzResidentInformation({
 
   if (stateCode !== "US_AZ") return null;
 
-  // In Arizona, case notes are used to display the resident's home plan for
-  // transition program release opportunities
-  const opportunitiesWithCaseNotes = resident.flattenedOpportunities.filter(
-    (opp) =>
-      [
-        "usAzOverdueForACISDTP",
-        "usAzOverdueForACISTPR",
-        "usAzReleaseToDTP",
-        "usAzReleaseToTPR",
-      ].includes(opp.type),
+  // In Arizona, case notes are used to display the resident's home plan for transition
+  // program release opportunities; each resident should only have one such opportunity
+  const opportunityWithCaseNotes = resident.flattenedOpportunities.find((opp) =>
+    [
+      "usAzOverdueForACISDTP",
+      "usAzOverdueForACISTPR",
+      "usAzReleaseToDTP",
+      "usAzReleaseToTPR",
+    ].includes(opp.type),
   );
 
   return (
     <>
       <Divider />
       <UsAzDates resident={resident} />
-      {opportunitiesWithCaseNotes.length > 0 && (
+      {opportunityWithCaseNotes && (
         <>
           <Divider />
-          <CaseNotes opportunity={opportunitiesWithCaseNotes[0]} />
+          <CaseNotes opportunity={opportunityWithCaseNotes} />
         </>
       )}
     </>

@@ -70,6 +70,11 @@ export const MenuButton = observer(function MenuButton({
 
   const { config } = opportunity;
 
+  // If we don't support submission or denial, show no button
+  if (!config.supportsSubmitted && !config.supportsDenial) {
+    return null;
+  }
+
   const toggleText = config.isAlert ? "Override?" : "Update status";
 
   const submittedText = `Mark ${opportunity.submittedTabTitle}`;
@@ -108,7 +113,7 @@ export const MenuButton = observer(function MenuButton({
 
   const { submittedSubcategories } = opportunity;
 
-  if (submittedOpportunityStatus) {
+  if (submittedOpportunityStatus && config.supportsSubmitted) {
     return (
       <Dropdown>
         <StatusAwareToggle>{toggleText}</StatusAwareToggle>
@@ -138,7 +143,7 @@ export const MenuButton = observer(function MenuButton({
               </OpportunityStatusDropdownMenuItem>
             ) : (
               <OpportunityStatusDropdownMenuItem
-                onClick={() => markSubmitted()}
+                onClick={async () => await markSubmitted()}
               >
                 {submittedText}
               </OpportunityStatusDropdownMenuItem>

@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
 import { DocumentData } from "firebase/firestore";
 
+import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
 import { OpportunityUpdate } from "../../../FirestoreStore";
 import { Resident } from "../../Resident";
 import { OpportunityBase } from "../OpportunityBase";
@@ -72,14 +74,15 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
   }
 
   get almostEligibleStatusMessage() {
-    // TODO(#6705): Make sure to handle all possible tab descriptions with appropriate copy
     switch (this.record.metadata.tabDescription) {
       case "ALMOST_ELIGIBLE_MISSING_MANLIT_BETWEEN_7_AND_180_DAYS":
         return "Missing functional literacy requirement";
       case "ALMOST_ELIGIBLE_MISSING_CRITERIA_AND_BETWEEN_181_AND_365_DAYS":
         return "Missing criteria and date in >6 months";
       case "ALMOST_ELIGIBLE_BETWEEN_181_AND_365_DAYS":
+        return "Date in >6 months";
       case "ALMOST_ELIGIBLE_BETWEEN_7_AND_180_DAYS":
+        return "Date in less than 6 months";
       default:
         return "Almost eligible";
     }
@@ -119,5 +122,25 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
     } else {
       return possibleSubcategories;
     }
+  }
+
+  get customStatusPalette() {
+    if (this.isSubmitted) {
+      return OPPORTUNITY_STATUS_COLORS.submitted;
+    }
+
+    if (this.almostEligible) {
+      return OPPORTUNITY_STATUS_COLORS.almostEligible;
+    }
+
+    if (this.record.metadata.tabDescription === "FAST_TRACK") {
+      return {
+        ...OPPORTUNITY_STATUS_COLORS.alert,
+        text: palette.pine4,
+        icon: palette.signal.highlight,
+      };
+    }
+
+    return OPPORTUNITY_STATUS_COLORS.eligible;
   }
 }

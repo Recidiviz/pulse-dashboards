@@ -22,10 +22,6 @@ import { UsAzTransitionProgramSubcategory } from "../../../../UsAz";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzReleaseToTPRConfiguration extends ApiOpportunityConfiguration {
-  get denialReasons() {
-    return {};
-  }
-
   get tabGroups() {
     return {
       "ELIGIBILITY STATUS": [

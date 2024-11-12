@@ -34,23 +34,21 @@ const possiblyIneligibleCriteria = z
 export const usAzReleaseToDTPSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z.union([
-      z.object({}),
-      possiblyIneligibleCriteria
-        .extend({
-          usAzNoSexualArsonOrDangerousCrimesAgainstChildren: zodNullableObject,
-          custodyLevelIsMinimumOrMedium: zodNullableObject,
-          usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
-          usAzNotServingFlatSentence: zodNullableObject,
-          usAzNoViolationsAndEligibleLegalStatus: zodNullableObject,
-          usAzNoAcisDtpOrTprDateSet: zodNullableObject,
-          usAzOnlyDrugOffenseConvictions: zodNullableObject,
-          usAzNoDomesticViolenceConviction: zodNullableObject,
-          usAzNoSexualExploitationOfChildrenConviction: zodNullableObject,
-          usAzNoViolentConviction: zodNullableObject,
-          usAzNoDtpDenialOrPreviousDtpRelease: zodNullableObject,
-          usAzNoDtpRemovalsFromSelfImprovementPrograms: zodNullableObject,
-        })
-        .passthrough(),
+      z.record(z.never()), // empty object
+      possiblyIneligibleCriteria.extend({
+        usAzNoSexualArsonOrDangerousCrimesAgainstChildren: zodNullableObject,
+        custodyLevelIsMinimumOrMedium: zodNullableObject,
+        usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
+        usAzNotServingFlatSentence: zodNullableObject,
+        usAzNoViolationsAndEligibleLegalStatus: zodNullableObject,
+        usAzNoAcisDtpOrTprDateSet: zodNullableObject,
+        usAzOnlyDrugOffenseConvictions: zodNullableObject,
+        usAzNoDomesticViolenceConviction: zodNullableObject,
+        usAzNoSexualExploitationOfChildrenConviction: zodNullableObject,
+        usAzNoViolentConviction: zodNullableObject,
+        usAzNoDtpDenialOrPreviousDtpRelease: zodNullableObject,
+        usAzNoDtpRemovalsFromSelfImprovementPrograms: zodNullableObject,
+      }),
     ]),
     ineligibleCriteria: z.union([
       z.object({

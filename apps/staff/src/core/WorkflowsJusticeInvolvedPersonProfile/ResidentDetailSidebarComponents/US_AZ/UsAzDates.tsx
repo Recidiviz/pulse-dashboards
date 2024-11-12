@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14, spacing, typography } from "@recidiviz/design-system";
+import {
+  Icon,
+  palette,
+  Sans14,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
@@ -98,16 +104,14 @@ const DateExplainer = styled(Sans14)<{ $datePast: boolean }>`
 
 const DateMethodologyText = styled(Sans14)`
   display: inline;
+
   color: ${palette.slate70};
   &:hover {
     color: ${palette.slate};
   }
-`;
 
-const DateMethodologyUnderlinedText = styled.span`
   border-bottom: 1px dashed ${palette.pine3};
   padding-bottom: ${rem(spacing.xxs)};
-  margin-right: ${rem(spacing.xs)};
 `;
 
 type DateInfo = {
@@ -183,32 +187,34 @@ export function UsAzDates({
       <DetailsHeading>Dates to Keep Track of</DetailsHeading>
 
       <DateTable>
-        {dates.map(({ label, date, tooltip }) => (
-          <DateTableRow>
-            <ShadedDateTableCell>
-              {label}
-              {tooltip && (
-                <>
-                  {" "}
-                  <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                    <InfoButton infoUrl={undefined} />
-                  </InfoTooltipWrapper>
-                </>
-              )}
-            </ShadedDateTableCell>
-            <DateTableCell>
-              {formatWorkflowsDate(date)}
-              {date && (
-                <>
-                  {" "}
-                  <DateExplainer $datePast={new Date(date) < today}>
-                    {`(${formatDueDateFromToday(new Date(date))})`}
-                  </DateExplainer>
-                </>
-              )}
-            </DateTableCell>
-          </DateTableRow>
-        ))}
+        <tbody>
+          {dates.map(({ label, date, tooltip }) => (
+            <DateTableRow key={label}>
+              <ShadedDateTableCell>
+                {label}
+                {tooltip && (
+                  <>
+                    {" "}
+                    <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
+                      <InfoButton infoUrl={undefined} />
+                    </InfoTooltipWrapper>
+                  </>
+                )}
+              </ShadedDateTableCell>
+              <DateTableCell>
+                {formatWorkflowsDate(date)}
+                {date && (
+                  <>
+                    {" "}
+                    <DateExplainer $datePast={new Date(date) < today}>
+                      {`(${formatDueDateFromToday(new Date(date))})`}
+                    </DateExplainer>
+                  </>
+                )}
+              </DateTableCell>
+            </DateTableRow>
+          ))}
+        </tbody>
       </DateTable>
 
       <DateCalculationInfo>
@@ -219,10 +225,8 @@ export function UsAzDates({
           target="_blank"
         >
           <DateMethodologyText>
-            <DateMethodologyUnderlinedText>
-              {"How are these dates calculated? "}
-            </DateMethodologyUnderlinedText>
-            <InfoButton infoUrl={undefined} />
+            {"How are these dates calculated? "}
+            <Icon kind="Info" size={12} />
           </DateMethodologyText>
         </Link>
       </DateCalculationInfo>

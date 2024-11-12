@@ -265,6 +265,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return Object.keys(this.ineligibleCriteriaCopy).length > 0;
   }
 
+  get supportsSubmitted() {
+    return true;
+  }
+
   get highlightCasesOnHomepage() {
     return false;
   }
