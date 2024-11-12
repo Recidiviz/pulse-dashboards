@@ -27,7 +27,7 @@ import DownloadIcon from "../../assets/download-icon.svg?react";
 import * as Styled from "../CaseDetails.styles";
 import { PDF_PAGE_WIDTH } from "../constants";
 import { SelectedRecommendation } from "../types";
-import { OldReport } from "./report/OldReport";
+import { Report } from "./report/Report";
 import { generateRecommendationSummary } from "./summaryUtils";
 
 const BUTTON_CHANGE_TIMEOUT = 5000;
@@ -117,20 +117,13 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   };
 
   const renderReport = () => (
-    <OldReport
+    <Report
       fullName={fullName}
+      age={age}
       externalId={externalId}
       selectedRecommendation={selectedRecommendation}
       insight={insight}
     />
-    // TODO(Recidiviz/recidiviz-data#33816) Ungate when new report is finalized
-    // <Report
-    //   fullName={fullName}
-    //   age={age}
-    //   externalId={externalId}
-    //   selectedRecommendation={selectedRecommendation}
-    //   insight={insight}
-    // />
   );
 
   return (
