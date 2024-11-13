@@ -24,6 +24,7 @@ import { UsAzOverdueForAcisDtpConfiguration } from "./UsAz/UsAzOverdueForAcisDtp
 import { UsAzOverdueForAcisTprConfiguration } from "./UsAz/UsAzOverdueForAcisTprConfiguration";
 import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
+import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
@@ -36,6 +37,7 @@ import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRe
 import { UsNdMinimumCustodyConfiguration } from "./UsNd/UsNdMinimumCustodyConfiguration";
 import { UsOrEarnedDischargeConfiguration } from "./UsOr/UsOrEarnedDischargeConfiguration";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
+import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
 
 const localCustomOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
@@ -58,6 +60,8 @@ const localCustomOpportunityConfigurations: Partial<
   usIdCRCResidentWorker: UsIdFacilitiesConfiguration,
   usIdCRCWorkRelease: UsIdFacilitiesConfiguration,
   usIdExpandedCRC: UsIdFacilitiesConfiguration,
+  compliantReporting: CompliantReportingConfiguration,
+  LSU: LSUConfiguration,
 };
 
 const adminPanelOnlyCustomOpportunityConfigurations: Partial<

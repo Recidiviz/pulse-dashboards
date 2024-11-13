@@ -35,4 +35,8 @@ export class UsMeSCCPConfiguration extends ApiOpportunityConfiguration {
       },
     ];
   }
+
+  get supportsAlmostEligible() {
+    return true;
+  }
 }

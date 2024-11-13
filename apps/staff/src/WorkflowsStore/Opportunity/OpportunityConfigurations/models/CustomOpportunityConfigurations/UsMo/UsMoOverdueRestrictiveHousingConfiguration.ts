@@ -80,4 +80,8 @@ export class UsMoOverdueRestrictiveHousingConfiguration extends ApiOpportunityCo
       },
     ];
   }
+
+  get supportsAlmostEligible() {
+    return true;
+  }
 }
