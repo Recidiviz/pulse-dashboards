@@ -20,6 +20,7 @@ import { ascending, descending } from "d3-array";
 import { action, computed, flowResult, makeObservable, observable } from "mobx";
 
 import {
+  ActionStrategyCopy,
   ExcludedSupervisionOfficer,
   OpportunityInfo,
   OpportunityType,
@@ -37,7 +38,6 @@ import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPer
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import {
-  ActionStrategyCopy,
   ByMetricAndCategory2DMap,
   ConfigLabels,
   MetricAndOutliersInfo,
@@ -440,7 +440,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    * Provides the Action Strategy copy with prompt and body text
    * @returns an ActionStrategyCopy object
    */
-  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+  get actionStrategyCopy(): ActionStrategyCopy[string] | undefined {
     return this.supervisionStore.getActionStrategyCopy(this.supervisorPseudoId);
   }
 

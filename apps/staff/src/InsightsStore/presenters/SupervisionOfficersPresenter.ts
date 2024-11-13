@@ -18,7 +18,11 @@
 import { compact, uniq } from "lodash/fp";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { SupervisionOfficer, SupervisionOfficerSupervisor } from "~datatypes";
+import {
+  ActionStrategyCopy,
+  SupervisionOfficer,
+  SupervisionOfficerSupervisor,
+} from "~datatypes";
 import {
   castToError,
   Hydratable,
@@ -28,7 +32,6 @@ import {
 
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
-  ActionStrategyCopy,
   ConfigLabels,
   HighlightedOfficersDetail,
   OutlierOfficerData,
@@ -146,7 +149,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
     return this.outlierDataOrError;
   }
 
-  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+  get actionStrategyCopy(): ActionStrategyCopy[string] | undefined {
     return this.supervisionStore.getActionStrategyCopy(this.supervisorPseudoId);
   }
 

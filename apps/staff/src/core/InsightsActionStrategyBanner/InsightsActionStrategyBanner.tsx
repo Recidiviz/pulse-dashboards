@@ -21,7 +21,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { ActionStrategyCopy } from "../../InsightsStore/presenters/types";
+import { ActionStrategyCopy } from "~datatypes";
+
 import { InsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import { Banner } from "../sharedComponents";
 
@@ -41,7 +42,7 @@ const StyledLink = styled(Link)`
 `;
 
 type InsightsActionStrategyBannerType = {
-  actionStrategy: ActionStrategyCopy;
+  actionStrategy: ActionStrategyCopy[string];
   bannerViewedCallback: () => void;
   disableBannerCallback: () => void;
   pseudoId: string;

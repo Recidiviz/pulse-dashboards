@@ -22,6 +22,7 @@ import {
   CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
 } from "../../../metrics/utils/constants";
+import { rawActionStrategyCopyFixture } from "../../ActionStrategyCopy/fixture";
 import {
   InsightsConfig,
   insightsConfigSchema,
@@ -150,6 +151,7 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
       displayName: "Sex Offense Caseloads",
     },
   ],
+  actionStrategyCopy: rawActionStrategyCopyFixture,
 };
 
 export const InsightsConfigFixture: InsightsConfig = insightsConfigSchema.parse(

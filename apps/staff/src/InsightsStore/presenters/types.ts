@@ -116,14 +116,6 @@ export type RawOpportunityInfoByOpportunityType = Map<
   RawOpportunityInfo
 >;
 
-/**
- * Type for object to hold the copy for the Action Strategy banner and modal
- */
-export type ActionStrategyCopy = {
-  prompt: string;
-  body: string;
-};
-
 export interface PresenterWithHoverManager {
   hoveredOfficerId?: string;
   updateHoveredOfficerId: (officerId: string | undefined) => void;

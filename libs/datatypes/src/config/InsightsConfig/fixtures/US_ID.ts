@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rawActionStrategyCopyFixture } from "../../ActionStrategyCopy/fixture";
 import { RawInsightsConfig } from "../schema";
 
 const US_ID: RawInsightsConfig = {
@@ -78,6 +79,7 @@ const US_ID: RawInsightsConfig = {
   supervisorHasNoOutlierOfficersLabel:
     "Nice! No officers are outliers on any metrics this month.",
   worseThanRateLabel: "Far above the statewide rate",
+  actionStrategyCopy: rawActionStrategyCopyFixture,
 };
 
 export default US_ID;

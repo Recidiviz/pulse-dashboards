@@ -18,6 +18,7 @@
 import { flowResult, makeObservable } from "mobx";
 
 import {
+  ActionStrategyCopy,
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
   SupervisionOfficerSupervisor,
@@ -32,7 +33,7 @@ import {
 import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
-import { ActionStrategyCopy, ConfigLabels, OutlierOfficerData } from "./types";
+import { ConfigLabels, OutlierOfficerData } from "./types";
 import { getOutlierOfficerData } from "./utils";
 
 export abstract class SupervisionOfficerPresenterBase<
@@ -239,7 +240,7 @@ export abstract class SupervisionOfficerPresenterBase<
    * Provides the Action Strategy copy with prompt and body text
    * @returns an ActionStrategyCopy object
    */
-  get actionStrategyCopy(): ActionStrategyCopy | undefined {
+  get actionStrategyCopy(): ActionStrategyCopy[string] | undefined {
     return this.supervisionStore.getActionStrategyCopy(this.officerPseudoId);
   }
 

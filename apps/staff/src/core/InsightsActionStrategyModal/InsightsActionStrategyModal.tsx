@@ -30,9 +30,10 @@ import { useEffect, useState } from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
+import { ActionStrategyCopy } from "~datatypes";
+
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { ActionStrategyCopy } from "../../InsightsStore/presenters/types";
 import { TEN_SECONDS } from "../../InsightsStore/presenters/utils";
 import LanternLogo from "../LanternLogo";
 
@@ -140,7 +141,7 @@ const Wrapper = styled.div`
 type ActionStratetgyModalProps = {
   isOpen: boolean;
   onBackClick?: () => void;
-  actionStrategy: ActionStrategyCopy;
+  actionStrategy: ActionStrategyCopy[string];
   pseudoId: string;
   trackViewed: () => void;
   supervisorHomepage: boolean;

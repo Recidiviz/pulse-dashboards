@@ -110,6 +110,8 @@ export type * from "./people/WorkflowsJusticeInvolvedPerson/schema";
 // -----------------------------------------------------------------------------
 export * from "./config/ActionStrategy/fixture";
 export * from "./config/ActionStrategy/schema";
+export * from "./config/ActionStrategyCopy/fixture";
+export * from "./config/ActionStrategyCopy/schema";
 export * from "./config/InsightsConfig/fixtures/fixture";
 export * from "./config/InsightsConfig/schema";
 

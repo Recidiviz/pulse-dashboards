@@ -17,6 +17,8 @@
 
 import { z } from "zod";
 
+import { actionStrategyCopySchema } from "../ActionStrategyCopy/schema";
+
 const caseloadCategorySchema = z.object({
   // The ID of the caseload category as it appears in the data
   id: z.string(),
@@ -69,6 +71,7 @@ export const insightsConfigSchema = z.object({
   docLabel: z.string(),
   outliersHover: z.string(),
   caseloadCategories: z.array(caseloadCategorySchema).optional(),
+  actionStrategyCopy: actionStrategyCopySchema,
 });
 
 export type InsightsConfig = z.infer<typeof insightsConfigSchema>;
