@@ -23,6 +23,7 @@ import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
 import copyIcon from "../../assets/static/images/copy.svg";
+import { useRootStore } from "../../components/StoreProvider";
 
 const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
   color: ${palette.data.teal1};
@@ -55,13 +56,19 @@ const PersonId: React.FC<{
     successDuration: 5000,
   });
 
+  const { currentTenantId } = useRootStore();
+
+  // TODO(#6737): Parameterize this and pull from same source as insights if possible
+  const stateIdDescriptor =
+    currentTenantId === "US_AZ" ? "ADC number" : `${docLabel} ID`;
+
   useEffect(() => {
-    if (isCopied) toast(`${docLabel} ID copied!`, { duration: 5000 });
-  }, [isCopied, docLabel]);
+    if (isCopied) toast(`${stateIdDescriptor} copied!`, { duration: 5000 });
+  }, [isCopied, stateIdDescriptor]);
 
   return (
     <PersonIdWithCopyIcon
-      title={`Copy ${docLabel} ID to clipboard`}
+      title={`Copy ${stateIdDescriptor} to clipboard`}
       className="fs-exclude"
       onClick={(e) => {
         e.preventDefault(); // if PersonId is in a link, prevent the link from being followed
