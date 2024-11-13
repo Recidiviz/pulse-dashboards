@@ -17,7 +17,7 @@
 
 /* eslint camelcase: 0 */
 import { CSG, RECIDIVIZ_TENANT } from "../tenants";
-import * as workflows from "./TenantStore/dashboardTenants";
+import { DASHBOARD_TENANTS } from "./TenantStore/dashboardTenants";
 import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
 
@@ -36,19 +36,7 @@ export function isTenantId(tenantId: string): tenantId is TenantId {
 
 const InternalTenantIds = [RECIDIVIZ_TENANT, CSG] as const;
 
-export const TenantIds = [
-  lantern.US_MO,
-  workflows.US_AZ,
-  workflows.US_AR,
-  workflows.US_PA,
-  workflows.US_CA,
-  pathways.US_ID,
-  pathways.US_TN,
-  workflows.US_ME,
-  workflows.US_MI,
-  pathways.US_ND,
-  workflows.US_OR,
-] as const;
+export const TenantIds = DASHBOARD_TENANTS;
 
 export type InternalTenantId = (typeof InternalTenantIds)[number];
 export type TenantId = (typeof TenantIds)[number];
