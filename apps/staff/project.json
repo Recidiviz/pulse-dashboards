@@ -33,34 +33,55 @@
         "cwd": "{projectRoot}"
       }
     },
-    "load-config-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["./load_config_files.sh"],
-        "cwd": "{projectRoot}"
-      }
-    },
-    "env-dev": {
+
+    "env-dev-spa": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "source ./load_environment.sh env_dev_spa,env_dev_server && printenv > .env.dev"
-        ]
+        "command": "vite-node tools/loadEnvironment.ts --env env_dev_spa --filename .env.dev-spa"
       }
+    },
+    "dev-spa": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["env-dev-spa"],
+      "options": { "command": "vite dev --force", "cwd": "{projectRoot}" }
     },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": ["load-config-files", "env-dev"],
       "options": {
-        "commands": [
-          "vite dev --force",
-          "nodemon server.js",
-          "redis-server --port 6380"
-        ],
-        "cwd": "{projectRoot}"
+        "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
       }
     },
+    "env-dev-be": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node tools/loadEnvironment.ts --env env_dev_spa env_dev_be_spa --filename .env.dev-be"
+      }
+    },
+    "dev-be": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["env-dev-be"],
+      "options": {
+        "commands": ["nx dev-spa staff", "nx dev staff-shared-server"]
+      }
+    },
+
+    "env-dev-demo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node tools/loadEnvironment.ts --env env_dev_spa env_dev_demo_spa --filename .env.demo"
+      }
+    },
+    "demo": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["env-dev-demo"],
+      "options": {
+        "commands": ["nx dev-spa staff", "nx dev staff-shared-server -c demo"]
+      }
+    },
+
     "update-workflows-fixture": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -85,7 +106,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["update-workflows-fixture"],
       "options": {
-        "command": "firebase --project=demo-dev emulators:start --import ../../dist/firestore-emulator-fixtures/apps/staff",
+        "command": "firebase --project=demo-dev emulators:start --only auth,firestore --import ../../dist/firestore-emulator-fixtures/apps/staff",
         "cwd": "{projectRoot}"
       }
     },
@@ -94,36 +115,34 @@
       "options": {
         "commands": [
           "vite dev",
-          "nodemon server.js",
-          "redis-server --port 6380",
-          "cd ../../ && nx firebase-offline staff"
+          "cd ../../ && nx firebase-offline staff",
+          "cd ../../ && nx offline staff-shared-server"
         ],
         "cwd": "{projectRoot}"
       }
     },
-    "link-shared-filters": {
+    "offline-python": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "{projectRoot}",
-        "command": ". ./link_shared_filters.sh"
+        "commands": [
+          "nx offline staff",
+          "nx python-backend-offline staff-shared-server"
+        ],
+        "cwd": "{workspaceRoot}"
       }
     },
     "env-prod": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "source ./load_environment.sh env_production && printenv > .env.build"
-        ]
+        "command": "vite-node tools/loadEnvironment.ts --env env_production --filename .env.build"
       }
     },
     "build": {
       "executor": "@nx/vite:build",
       "dependsOn": [
         { "projects": ["sentencing-server"], "target": "prisma-generate" },
-        "load-config-files",
-        "env-prod",
-        "link-shared-filters"
+        "env-prod"
       ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
@@ -133,18 +152,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "source ./load_environment.sh env_staging && printenv > .env.build-staging"
-        ]
+        "command": "vite-node tools/loadEnvironment.ts --env env_staging --filename .env.build-staging"
       }
     },
     "build-staging": {
       "executor": "@nx/vite:build",
       "dependsOn": [
         { "projects": ["sentencing-server"], "target": "prisma-generate" },
-        "load-config-files",
-        "env-staging",
-        "link-shared-filters"
+        "env-staging"
       ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
@@ -154,9 +169,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "/bin/bash -c 'source ./load_environment.sh env_staging && printenv > .env.build-preview-ci'"
-        ]
+        "command": "vite-node tools/loadEnvironment.ts --env env_staging --filename .env.build-preview-ci"
       }
     },
     "build-preview-ci": {
@@ -173,24 +186,20 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": [
-          "source ./load_environment.sh env_staging_demo && printenv > .env.build-demo"
-        ]
+        "command": "vite-node tools/loadEnvironment.ts --env env_staging_demo --filename .env.build-demo"
       }
     },
     "build-demo": {
       "executor": "@nx/vite:build",
       "dependsOn": [
         { "projects": ["sentencing-server"], "target": "prisma-generate" },
-        "load-config-files",
-        "env-demo",
-        "link-shared-filters"
+        "env-demo"
       ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
     },
-    "env-e2e": {
+    "env-build-e2e": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
@@ -201,7 +210,7 @@
       "executor": "@nx/vite:build",
       "dependsOn": [
         { "projects": ["sentencing-server"], "target": "prisma-generate" },
-        "env-e2e"
+        "env-build-e2e"
       ],
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"

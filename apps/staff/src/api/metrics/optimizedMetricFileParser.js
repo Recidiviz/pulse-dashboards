@@ -16,13 +16,14 @@
 // =============================================================================
 
 import toInteger from "lodash/fp/toInteger";
+
 import {
   convertFromStringToUnflattenedMatrix,
   getDimensionKey,
   getDimensionValue,
   getValueKey,
   validateMetadata,
-} from "shared-filters";
+} from "~staff-shared-server";
 
 /**
  * Expands the optimized metric file format into an array of json objects.

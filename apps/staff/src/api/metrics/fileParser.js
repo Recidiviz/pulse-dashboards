@@ -16,7 +16,8 @@
 // =============================================================================
 
 import toInteger from "lodash/fp/toInteger";
-import { convertFromStringToUnflattenedMatrix } from "shared-filters";
+
+import { convertFromStringToUnflattenedMatrix } from "~staff-shared-server";
 
 import expandMetricRepresentation from "./optimizedMetricFileParser";
 

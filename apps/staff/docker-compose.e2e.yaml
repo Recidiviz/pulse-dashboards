@@ -41,10 +41,10 @@ services:
 
   server:
     image: danrecidiviz/firebase-tools-react:latest
-    working_dir: /home/node/app/apps/staff
+    working_dir: /home/node/app/dist/libs/staff-shared-server
     volumes:
       - ../../:/home/node/app
-    command: yarn run env-cmd -f .env.offline node server.js
+    command: yarn start-e2e
     ports:
       - "3001:3001"
     healthcheck:

@@ -20,10 +20,12 @@ import * as Sentry from "@sentry/react";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
 import { PSIStore } from "~sentencing-client";
+import {
+  demoAuthConfig,
+  devAuthConfig,
+  productionAuthConfig,
+} from "~staff-shared-server";
 
-import demoAuthConfig from "../auth_config_demo.json";
-import devAuthConfig from "../auth_config_dev.json";
-import productionAuthConfig from "../auth_config_production.json";
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
 import { WorkflowsStore } from "../WorkflowsStore";

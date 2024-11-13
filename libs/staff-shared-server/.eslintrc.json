@@ -1,0 +1,22 @@
+{
+  "extends": ["../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*", "src/server/core/demo_data"],
+  "overrides": [
+    {
+      "extends": ["plugin:vitest-globals/recommended"],
+      "files": [
+        "src/setupTests.ts",
+        "src/setupTestsGlobal.ts",
+        "**/__tests__/**/*",
+        "**/__mocks__/**/*",
+        "*.test.ts",
+        "*.test.tsx",
+        "*.test.js",
+        "*.test.jsx"
+      ],
+      "env": {
+        "vitest-globals/env": true
+      }
+    }
+  ]
+}

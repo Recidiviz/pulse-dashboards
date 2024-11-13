@@ -18,7 +18,8 @@
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useMemo } from "react";
-import { isAllItem } from "shared-filters";
+
+import { isAllItem } from "~staff-shared-server";
 
 import {
   matrixViolationTypeToLabel,

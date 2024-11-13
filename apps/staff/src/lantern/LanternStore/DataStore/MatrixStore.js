@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { matchesTopLevelFilters } from "shared-filters";
+import { matchesTopLevelFilters } from "~staff-shared-server";
 
 import { REPORTED_VIOLATIONS, VIOLATION_TYPE } from "../../utils/constants";
 import BaseDataStore from "./BaseDataStore";

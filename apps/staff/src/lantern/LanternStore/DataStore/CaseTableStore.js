@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { matchesAllFilters } from "shared-filters";
+import { matchesAllFilters } from "~staff-shared-server";
 
 import { ADMISSION_TYPE_LABELS } from "../../../RootStore/TenantStore/filterOptions";
 import { US_PA } from "../../../RootStore/TenantStore/lanternTenants";

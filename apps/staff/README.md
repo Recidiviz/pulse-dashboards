@@ -12,33 +12,7 @@ Bringing criminal justice analysis to decision makers to help reduce incarcerati
 
 ## Development
 
-### Getting set up
-
-1. Follow any steps laid out in [the main README for this repo](../../README.md#getting-set-up).
-
-1. [Install Redis Version 7](https://redis.io/download#installation) (matches Memorystore for Redis version):
-
-   Via Homebrew:
-   `brew install redis@7.2`
-
-   Using wget:
-
-   ```sh
-   :> wget https://download.redis.io/releases/redis-7.0.15.tar.gz
-   :> tar xzf redis-7.0.15.tar.gz
-   :> cd redis-7.0.15
-   :> make
-
-   <!-- Run redis with: -->
-   :> src/redis-server
-
-   <!-- Interact with Redis -->
-   :> src/redis-cli
-   ```
-
-   [Instructions for installing Redis 5.0.14 on Windows](https://github.com/tporadowski/redis#redis-5014-for-windows)
-
-#### Environment variables
+### Environment variables
 
 Environment variables, auth configs, and service accounts are stored in Google Secrets Manager and loaded into the environment prior to launching or deploying the app.
 
@@ -68,28 +42,13 @@ Expected frontend environment variables include:
 - `VITE_SENTENCING_API_BASE` - base URL of the sentencing backend API server
 - `VITE_PROTOTYPES_API_URL` - base URL of the prototypes backend API server
 
-Expected backend environment variables include:
-
-- `AUTH_ENV` - a string indicating the "auth environment" used to point to the correct Auth0 tenant. Either "development" or "production". Must match the frontend `VITE_AUTH_ENV` variable.
-- `GOOGLE_APPLICATION_CREDENTIALS` - a relative path pointing to the JSON file containing the credentials of the service account used to communicate with Google Cloud Storage, for metric retrieval.
-- `METRIC_BUCKET` - the name of the Google Cloud Storage bucket where the metrics reside.
-- `IS_OFFLINE` (OPTIONAL) - whether or not to run the backend in offline mode, which will retrieve static fixture data from the `server/core/demo_data` directory instead of pulling data from dynamic, live sources. This should only be set when running locally and should be provided through the command line, along with the frontend sibling above. To run the app in offline mode, use the following command: `yarn offline`
-- `RECIDIVIZ_DATA_API_URL` - App Engine backend, used for impersonating a user.
-- `SENTRY_ENV` - Name of environment in Sentry ("staging" or "production")
-- `SENTRY_DSN` - Key to interact with Sentry
-- `METADATA_NAMESPACE` - String used to access the user app metadata from the token
-- `FIREBASE_PROJECT` - Name of the TCP project where Firebase is hosted
-- `FIREBASE_CREDENTIAL` - Service account used to authenticate/authorize access to Firebase
-
 The build process, as described below, ensures that the proper values are compiled and included in the static bundle at build time, for the right environment.
 
 ### Authentication
 
 The backend API server and most frontend views in the app are authenticated via [Auth0](https://auth0.com/). You can control which views are authenticated by specifying the allowed paths in `ProtectedLayout.tsx`. If you are setting this app up completely fresh, you will need to create your own Auth0 account.
 
-This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. The development and staging environments should be configured in `auth_config_dev.json`, demo environment in `auth_config_demo.json` and production in `auth_config_production.json`. Which file is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `VITE_AUTH_ENV` environment variable on the frontend. It is important that the same config file be loaded on the backend and frontend servers in a given tier so that API authentication will work.
-
-In order to load these configs, run `./load_config_files.sh` from the `./apps/staff` directory. It must be run from this directory so that the config files are created and saved in the correct place.
+This setup assumes you have two separate Auth0 tenants, one for staging/demo/development and one for production. Configs live in `~staff-shared-server`. Which config is loaded and used relies on the `AUTH_ENV` environment variable on the backend and the `VITE_AUTH_ENV` environment variable on the frontend. It is important that the same config be loaded on the backend and frontend servers in a given tier so that API authentication will work.
 
 ### Nx
 
@@ -123,21 +82,19 @@ Content found in the folder `src/core/content` can be synced with an external go
 
 ### Running the application locally
 
-A script is available for starting the development servers. The React frontend is served out of port `3000` and the Node/Express backend is served out of port `3001`. A Redis server will be started on port `6380` (this is one higher than the default, and was chosen to make it possible to run Pathways and Case Triage at the same time).
+A script is available for starting the development servers.
 
 `nx dev staff`
 
-This will start both the API Express server on port `3001` and the Redis server on port `6380`. You could start the frontend server separately using `nx spa staff`.
+This will start both the frontend dev server and a local backend from `~staff-shared-server`. You could start the frontend server on its own using using `nx dev-spa staff`.
 
-API calls to the new Pathways backend are made to the staging version of the app.
+API calls to the Python backend are made to the staging version of the app.
 
 The development servers will remain active until you either close your terminal or shut down the entire setup at once using `control+c`.
 
-**Note:** The development servers do not need to be restarted when source code is modified. The assets will automatically be recompiled and the browser will be refreshed (when there's a frontend change). Thanks, Webpack!
+### Running the application locally with a local Python backend
 
-### Running the application locally with a local Pathways new backend
-
-If you have not run the Case Triage server locally before, run (from your `recidiviz-data` repository):
+If you have not run the Python server (fka "Case Triage backend", fka "new Pathways backend") locally before, run (from your `recidiviz-data` repository):
 
 `./recidiviz/tools/case_triage/initialize_development_environment.sh`
 
@@ -145,7 +102,7 @@ This script also may need to be rerun periodically when new secrets are added to
 
 Then, to run the new backend locally, run (also from your `recidiviz-data` repository):
 
-`docker-compose -f docker-compose.yaml -f docker-compose.case-triage.yaml up --remove-orphans`
+`docker compose -f docker-compose.yaml -f docker-compose.case-triage.yaml up --remove-orphans`
 
 If you get errors about not having access to containers, you may need to run `gcloud auth login` and `gcloud auth configure-docker` first to authenticate with the Google Cloud registry.
 
@@ -155,15 +112,17 @@ To create the required databases and add data to them, use the [load_fixtures](h
 
 **Tip:** To inspect and/or edit the database contents locally, you can use a GUI like [Postico](https://eggerapps.at/postico/), and connect to the `postgres` database using the host/user/password defined in [docker-compose.yaml](https://github.com/Recidiviz/recidiviz-data/blob/62210d3ebab17c4424abcb17395989f1209e8f0e/docker-compose.yaml#L87-L91). If you edit the contents manually, run the [reset_cache](https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/tools/pathways/reset_cache.py) script to update the cache with the new contents.
 
-To run the frontend against a local new backend, run (now from `pulse-dashboards`):
+To run the frontend against a local Python backend, run (now from `pulse-dashboards`):
 
-`nx dev:be staff`
+`nx dev-be staff`
 
 ### Running the application locally and fetching from the Demo GCS bucket
 
 Similarly to running the application locally, the application can be run but the Backend will fetch from a Demo GCS bucket, where all of the data is anonymized and randomized. Non-recidiviz employees should use this option.
 
 `nx demo staff`
+
+Similar to the `dev` command, this will start both the frontend and backend servers.
 
 ### Running the Frontend and Backend together in Offline mode
 
@@ -181,50 +140,20 @@ If you are running in offline mode, you may need to run through the following st
    :> git pull origin main
    ```
 
-1. Check that you have all of the required environment variables and files set up:
-
-   - [ ] copy `src/auth_config.json.example` into three new files called `src/auth_config_demo.json`, `src/auth_config_dev.json`, and `src/auth_config_production.json`
-
-1. Make sure your `redis-server` is not still running from a previous session. To avoid this situation, always shutdown the demo server by using `CTRL + c`. If you need to shutdown the redis-server from an earlier run, you can use the command:
-
-   ```
-   :> redis-cli -p 6380 shutdown
-   ```
-
 1. Make sure you can run the Firebase emulator; this requires Firebase Tools as described above as well as a recent version of Java.
+   The Firebase emulator has its own set of fixtures that it automatically imports when starting up; to change those fixtures, edit the fixture files in `tools/fixtures` and then run `nx update-workflows-fixture staff`.
 
-To download data/fixture files to be used offline, run the `download_fixture_with_metadata.sh` script. The only argument to the script is the path to the file in GCS. You must have credentials to access GCS, and `gsutil` installed.
+1. Follow any setup steps for Offline Mode in `/libs/staff-shared-server`
 
-The script may be used to download both ".json" and ".txt" files. If downloading a ".txt" file, it can take some time to download and process the metadata json, so please be patient.
+### Running the Frontend and Backend together in Offline mode with the Python backend
 
-You may also need to install `jq`, a bash command line json processor. It can be installed using homebrew, `brew install jq`.
-
-Example usage:
-`apps/staff/server/core/demo_data/download_fixture_with_metadata.sh gs://some-data-bucket/US_ID/vitals_summaries.txt`
-
-The Firebase emulator has its own set of fixtures that it automatically imports when starting up; to change those fixtures, edit the fixture files in `tools/fixtures` and then run `nx update-workflows-fixture staff`.
-
-### Running the Frontend and Backend together in Offline mode with the new Pathways backend
-
-When working on metrics that use the new Pathways backend, you can run a new backend in offline mode by running `nx offline:be staff` (this is temporary until we have ironed out all the kinks- eventually, `nx offline staff` will be able to do this).
-
-Before running this, first follow the same steps from the above section on offline mode. Then:
-
-- If you do not already have Docker installed, install it from <https://www.docker.com/products/docker-desktop>
-- If you use a Mac, you may need to turn off AirPlay Receiver in System Preferences --> Sharing in order to make port 5000 available.
-- Configure docker authentication by running `gcloud auth configure-docker us-docker.pkg.dev`
-
-Run `nx pull-pathways-backend staff` to pull the docker image from the registry. You should do this periodically to incorporate new changes.
-
-Run `nx offline:be staff`, which runs the necessary containers for the new backend and its databases. The output from the backend docker container will be interspersed with the output from the other services that start up (redis, emulators, etc.) Once the server starts up, it will import fixture data from `server/core/demo_data` into a PostgreSQL database that the backend reads from. If fixture data changes during development, the server will restart and re-import the data. Because of the way Flask works, this import happens twice when you run `nx offline:be staff`, but only once if fixture files change while it's running.
+Similar to dev mode, in offline mode we do not run the Python backend locally by default. If you are working on features that require this backend, you can run it along with the rest of offline mode with `nx offline-python staff`. (Because it runs in Docker Compose, after stopping the server with Ctrl-C you can also run `nx python-backend-shutdown staff-shared-server` to clean it up.)
 
 It is possible that the frontend finishes loading before the backend has finished setting up. If that happens, you may see a "no data available" indicator in the frontend and/or failed requests in the console. To fix this, wait for the container output to display the message "finished initializing pathways database" and refresh the page (this should take no more than a minute).
 
-To generate new fixture data, run `./apps/staff/tools/generate_pathways_fixtures.sh`.
+To swap out the backend for a specific metric, set its id to "OLD" or "NEW in the development `metricBackendOverrides` section in [flags.ts](./src/flags.ts) ("NEW" indicates the Python backend). To swap out the backend for all supported metrics, change the `defaultMetricBackend` to "OLD" or "NEW".
 
-To load fixture data from a GCS bucket, run `gsutil -m cp "gs://$BUCKET_NAME/US_OZ/*.csv" ./apps/staff/server/core/demo_data/`.
-
-To swap out the backend for a specific metric, set its id to "OLD" or "NEW in the development `metricBackendOverrides` section in [flags.ts](./src/flags.ts). To swap out the backend for all supported metrics, change the `defaultMetricBackend` to "OLD" or "NEW".
+The offline version of the Pathways backend is managed by `libs/staff-shared-server`, please see documentation in that library for additional information and troubleshooting.
 
 ## Deploys
 
@@ -237,7 +166,7 @@ To deploy the frontend or backend to any of these environments, run `nx deploy s
 Things to note:
 
 - Each time the frontend is bundled, the `build` directory will be wiped clean. A [bundle analysis](#bundle-analysis) report, found in `build/report.html`, will also be generated. This will include the appropriate environment variables that were downloaded from Secret Manager.
-- The new Pathways backend is deployed to the Case Triage Cloud Run service during the `recidiviz-data` deploy. New versions can be deployed manually in the Cloud Console, but this should only be done sparingly.
+- The Python backend is deployed to the Case Triage Cloud Run service during the `recidiviz-data` deploy. New versions can be deployed manually in the Cloud Console, but this should only be done sparingly.
 - Test vigorously on staging before deploying to production, and don't be afraid to rollback the deploy of frontend or backend through the Firebase and GAE consoles.
 
 ### Cherry-pick deploys
@@ -326,37 +255,6 @@ If the package is not required in production it should be added as a development
 
 See the [Yarn documentation](https://yarnpkg.com/en/docs) for more details and a full list of commands available via the CLI.
 
-### Redis
-
-We use [Memorystore for Redis](https://cloud.google.com/memorystore/docs/redis/redis-overview) as an external cache for the backend API. When developing locally, the `redis-server` will be started with the `nx server:dev staff` or `nx offline staff` scripts.
-
-Here are a few helpful commands for inspecting the local redis cache:
-
-```bash
-# Follow along with commands sent to the redis-server
-:> redis-cli -p 6380 MONITOR
-
-# Clear your local redis cache
-:> redis-cli -p 6380 FLUSHALL
-
-:> redis-cli -p 6380
-# List all the available keys in the cache
-[localhost:6380]> KEYS *
-
-# Get the value of the key
-[localhost:6380]> GET key_name
-```
-
-Here's how you can access the staging and production instances on gcloud:
-
-```
-// Log into the VM
-:> gcloud compute ssh --zone "us-central1-a" "pulse-dashboard-vm-1" --tunnel-through-iap --project "recidiviz-dashboard-production"
-
-// Connect to redis instance - variables are found on the instance page
-:> redis-cli -h <host> -p <port> -a <password>
-```
-
 ### Vitest
 
 [Vitest](https://vitest.dev/) is our testing framework. It provides a friendly testing API, a powerful and easy-to-use mocking functionality, and plenty of speed. Snapshot testing is also a nice feature but should be used with caution. It is served best as a supplement, rather than a substitute, of a robust set of unit tests that properly describes what a piece of code is intended to do.
@@ -412,18 +310,12 @@ A quick overview of the directory structure and suggestions on where to put diff
   utils/
   App.js
   index.js
-/server/
-   server.js
 /tools/
 ```
 
 ### Application root (/)
 
-Home to files such as `server.js`, for running the backend server, and `package.json` for configuring build, dependencies, etc. Files in the application root are generally not bundled by Webpack.
-
-### build
-
-The bundled, static frontend. This is what gets exposed on the public frontend server.
+Home to files such as `package.json` for configuring build, dependencies, etc. Files in the application root are generally not bundled by our build tooling.
 
 ### public
 
@@ -431,7 +323,7 @@ These are the raw public assets that form the _website itself_, i.e. `index.html
 
 ### src
 
-Application frontend source code. If you're writing it, it should most likely end up here or in `/server` below.
+Application frontend source code. If you're writing it, it should most likely end up here, or in a library imported here.
 
 #### src/assets
 
@@ -472,14 +364,6 @@ The root store for both UP and Lantern dashboards. This store initializes the Us
 #### src/utils
 
 Application configuration files, constants, utilities shared across both Lantern and UP dashboards.
-
-### server
-
-Application backend source code. If you're writing it, it should most likely end up here or in `/src` above.
-
-### server.js
-
-The actual entry point to the backend, i.e. where the Node/Express server, middleware, and routing are defined.
 
 ### tools
 

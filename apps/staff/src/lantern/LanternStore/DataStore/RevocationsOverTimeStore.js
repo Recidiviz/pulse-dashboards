@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { matchesAllFilters } from "shared-filters";
+import { matchesAllFilters } from "~staff-shared-server";
 
 import { METRIC_PERIOD_MONTHS } from "../../utils/constants";
 import BaseDataStore from "./BaseDataStore";

@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { action, computed, makeObservable, observable, reaction } from "mobx";
-import { matchesAllFilters } from "shared-filters";
+
+import { matchesAllFilters } from "~staff-shared-server";
 
 import {
   DISTRICT,

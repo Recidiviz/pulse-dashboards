@@ -1,0 +1,191 @@
+{
+  "name": "staff-shared-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/staff-shared-server/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/staff-shared-server"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "load-dev-config-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["vite-node tools/loadDevConfigFiles.ts"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "load-env": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node tools/loadEnvironment.ts"
+      },
+      "configurations": {
+        "dev": {
+          "args": ["--env env_dev_server", "--filename .env.dev.dev"]
+        },
+        "demo": {
+          "args": [
+            "--env env_dev_server env_dev_demo_server",
+            "--filename .env.dev.demo"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "load-dev-config-files",
+        { "target": "load-env", "params": "forward" }
+      ],
+      "options": {
+        "commands": [
+          "redis-server --port 6380",
+          "node --experimental-default-type=module --import=extensionless/register --watch src/server/index.js"
+        ],
+        "cwd": "{projectRoot}"
+      },
+      "configurations": { "dev": {}, "demo": {} },
+      "defaultConfiguration": "dev"
+    },
+    "offline": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "redis-server --port 6380",
+          "node --experimental-default-type=module --import=extensionless/register --watch src/server/index.js"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "load-build-config-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["vite-node tools/loadBuildConfigFiles.ts"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "create-build-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["vite-node tools/createBuildPackageJson.ts"],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "esbuild": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "cache": true,
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/libs/staff-shared-server",
+        "bundle": false,
+        "format": ["esm"],
+        "main": "{projectRoot}/src/server/index.js",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
+        "generatePackageJson": true,
+        "assets": [
+          {
+            "input": "{projectRoot}/src",
+            "glob": "server/assets/**/*",
+            "output": "/"
+          }
+        ],
+        "target": "node20"
+      },
+      "configurations": {
+        "deploy": {
+          "esbuildConfig": "{projectRoot}/esbuild.deploy.config.js"
+        },
+        "e2e": {}
+      },
+      "defaultConfiguration": "deploy"
+    },
+    "build": {
+      "dependsOn": ["load-build-config-files", "create-build-package-json"],
+      "command": "nx esbuild staff-shared-server -c deploy"
+    },
+    "build-e2e": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["create-build-package-json"],
+      "options": {
+        "commands": [
+          "nx esbuild staff-shared-server -c e2e",
+          "cp libs/staff-shared-server/.env.offline dist/libs/staff-shared-server"
+        ],
+        "parallel": false
+      }
+    },
+    "deploy": {
+      "dependsOn": ["build"],
+      "command": "gcloud app deploy",
+      "configurations": {
+        "staging": {
+          "args": [
+            "dist/libs/staff-shared-server/gae-staging.yaml",
+            "--project recidiviz-dashboard-staging"
+          ]
+        },
+        "production": {
+          "args": [
+            "dist/libs/staff-shared-server/gae-production.yaml",
+            "--project recidiviz-dashboard-production"
+          ]
+        },
+        "demo": {
+          "args": [
+            "dist/libs/staff-shared-server/gae-staging-demo.yaml",
+            "--project recidiviz-dashboard-staging"
+          ]
+        }
+      },
+      "defaultConfiguration": "staging"
+    },
+    "pull-python-backend": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose pull case_triage_backend",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "python-backend-offline": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh tools/run_python_backend.sh",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "python-backend-shutdown": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose down",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

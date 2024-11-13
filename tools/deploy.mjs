@@ -149,10 +149,6 @@ const deployBackendPrompt = await inquirer.prompt({
 });
 
 if (deployBackendPrompt.deployBackend) {
-  // Load environment files (auth config, service accounts, GAE config)
-  console.log("Loading environment files from Secret Manager...");
-  await $`nx load-config-files staff`.pipe(process.stdout);
-
   const gaeVersion = nextVersion.replaceAll(".", "-");
   let retryBackend = false;
   do {
@@ -160,20 +156,18 @@ if (deployBackendPrompt.deployBackend) {
       switch (deployEnv) {
         case "production":
           // eslint-disable-next-line no-await-in-loop
-          await $`gcloud app deploy gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
+          await $`nx deploy staff-shared-server -c production --version ${gaeVersion}`.pipe(
             process.stdout,
           );
           publishReleaseNotes = true;
           break;
         case "demo":
           // eslint-disable-next-line no-await-in-loop
-          await $`gcloud app deploy gae-staging-demo.yaml --project recidiviz-dashboard-staging`.pipe(
-            process.stdout,
-          );
+          await $`nx deploy staff-shared-server -c demo`.pipe(process.stdout);
           break;
         default:
           // eslint-disable-next-line no-await-in-loop
-          await $`gcloud app deploy gae-staging.yaml --project recidiviz-dashboard-staging`.pipe(
+          await $`nx deploy staff-shared-server -c staging`.pipe(
             process.stdout,
           );
           break;
@@ -201,7 +195,7 @@ const deployFrontendPrompt = await inquirer.prompt({
 
 if (deployFrontendPrompt.deployFrontend) {
   // Build the application
-  console.log("Building application...");
+  console.log("Building frontend application...");
   switch (deployEnv) {
     case "production":
       await $`nx build staff`.pipe(process.stdout);

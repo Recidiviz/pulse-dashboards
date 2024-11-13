@@ -25,7 +25,8 @@ import {
   reaction,
   toJS,
 } from "mobx";
-import { filterOptimizedDataFormat } from "shared-filters";
+
+import { filterOptimizedDataFormat } from "~staff-shared-server";
 
 import {
   callMetricsApi,

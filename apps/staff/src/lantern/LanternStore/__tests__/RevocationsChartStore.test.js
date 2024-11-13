@@ -27,9 +27,9 @@ const mockFilteredData = [
 ];
 vi.mock("@sentry/react");
 vi.mock("..");
-vi.mock("shared-filters", async (importOriginal) => {
+vi.mock("~staff-shared-server", async (importOriginal) => {
   return {
-    ...(await importOriginal("shared-filters")),
+    ...(await importOriginal("~staff-shared-server")),
     filterOptimizedDataFormat: vi.fn(() => mockFilteredData),
   };
 });

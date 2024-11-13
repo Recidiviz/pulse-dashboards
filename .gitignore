@@ -30,8 +30,6 @@ node_modules/
 coverage/
 
 # Secrets
-auth_config.json
-auth_config*.json
 gae*.yaml
 src/assets/scripts/metrics/*.json
 recidiviz-production-*.json
@@ -50,6 +48,8 @@ yarn-error.log*
 package-lock.json
 .yalc
 yalc.lock
+# this is generated as part of the build process
+libs/staff-shared-server/package.json
 
 # Redis dump
 dump.rdb
