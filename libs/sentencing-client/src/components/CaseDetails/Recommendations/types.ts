@@ -66,7 +66,7 @@ export type RecommendationOption = {
 };
 
 export type GenerateRecommendationProps = {
-  recommendation?: keyof typeof RecommendationType | null;
+  recommendation?: string | null;
   fullName?: string;
   lastName?: string;
   needs: Case["needsToBeAddressed"];

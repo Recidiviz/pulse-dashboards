@@ -17,7 +17,6 @@
 
 import {
   AsamCareRecommendation,
-  CaseRecommendation,
   CaseStatus,
   Gender,
   MentalHealthDiagnosis,
@@ -51,8 +50,6 @@ const PleaEnum = z.nativeEnum(Plea);
 const NeedsToBeAddressedEnum = z.nativeEnum(NeedToBeAddressed);
 
 const CaseStatusEnum = z.nativeEnum(CaseStatus);
-
-const CaseRecommendationEnum = z.nativeEnum(CaseRecommendation);
 
 const OnboardingTopicEnum = z.nativeEnum(OnboardingTopic);
 
@@ -97,7 +94,7 @@ export const updateCaseSchema = z.object({
     needsToBeAddressed: z.array(NeedsToBeAddressedEnum).optional(),
     otherNeedToBeAddressed: z.string().nullable().optional(),
     status: CaseStatusEnum.optional(),
-    selectedRecommendation: CaseRecommendationEnum.nullable().optional(),
+    selectedRecommendation: z.string().nullable().optional(),
     recommendedOpportunities: OpportunitiesSchema.optional(),
     currentOnboardingTopic: OnboardingTopicEnum.optional(),
     recommendationSummary: z.string().nullable().optional(),

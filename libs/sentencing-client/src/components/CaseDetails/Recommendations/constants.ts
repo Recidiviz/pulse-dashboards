@@ -17,7 +17,6 @@
 
 import { Case } from "@prisma/client";
 
-import { RecommendationType } from "../types";
 import { NeedsToDisplayName, Pronouns } from "./types";
 
 const neutralPronouns = {
@@ -85,7 +84,7 @@ export const needToDisplayNameMap: NeedsToDisplayName = {
  * A map of recommendation type and exclusion list
  */
 export const needsListExclusions: {
-  [key in RecommendationType]: Case["needsToBeAddressed"];
+  [key: string]: Case["needsToBeAddressed"];
 } = {
   Rider: riderOrTermExclusionList,
   Term: riderOrTermExclusionList,

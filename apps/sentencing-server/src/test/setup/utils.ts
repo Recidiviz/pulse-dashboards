@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { CaseRecommendation, Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const PRISMA_TABLES = Prisma.dmmf.datamodel.models
   .map((model) => model.name)
@@ -33,7 +33,7 @@ export async function resetDb(prismaClient: PrismaClient) {
 export function createFakeRecidivismSeries() {
   return [
     {
-      recommendationType: "Probation" satisfies CaseRecommendation,
+      recommendationType: "Probation",
       dataPoints: [
         {
           cohortMonths: faker.number.int({ max: 100 }),
@@ -44,7 +44,7 @@ export function createFakeRecidivismSeries() {
       ],
     },
     {
-      recommendationType: "Rider" satisfies CaseRecommendation,
+      recommendationType: "Rider",
       dataPoints: [
         {
           cohortMonths: faker.number.int({ max: 100 }),
@@ -55,7 +55,7 @@ export function createFakeRecidivismSeries() {
       ],
     },
     {
-      recommendationType: "Term" satisfies CaseRecommendation,
+      recommendationType: "Term",
       dataPoints: [
         {
           cohortMonths: faker.number.int({ max: 100 }),

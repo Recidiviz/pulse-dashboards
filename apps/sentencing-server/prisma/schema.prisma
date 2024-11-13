@@ -170,13 +170,6 @@ enum CaseStatus {
   Complete
 }
 
-enum CaseRecommendation {
-  Probation
-  Rider
-  Term
-  None
-}
-
 enum PriorCriminalHistoryCriterion {
   None
   Significant
@@ -331,8 +324,8 @@ model Case {
   currentOnboardingTopic OnboardingTopic @default(OffenseLsirScore)
 
   // Case Recommendation Fields
-  status                   CaseStatus          @default(NotYetStarted)
-  selectedRecommendation   CaseRecommendation?
+  status                   CaseStatus    @default(NotYetStarted)
+  selectedRecommendation   String?
   recommendedOpportunities Opportunity[]
   recommendationSummary    String?
 }
@@ -368,7 +361,7 @@ model Insight {
 
 model RecidivismSeries {
   id                 String                     @id @default(cuid())
-  recommendationType CaseRecommendation
+  recommendationType String
   dataPoints         RecidvismSeriesDataPoint[]
 
   // These should always be linked to an insight and deleted when the insight is deleted
@@ -395,8 +388,8 @@ model RecidvismSeriesDataPoint {
 }
 
 model Disposition {
-  id                 String             @id @default(cuid())
-  recommendationType CaseRecommendation
+  id                 String @id @default(cuid())
+  recommendationType String
   percentage         Float
 
   // These should always be linked to an insight and deleted when the insight is deleted

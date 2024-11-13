@@ -17,7 +17,6 @@
 
 import { faker } from "@faker-js/faker";
 import {
-  CaseRecommendation,
   CaseStatus,
   Gender,
   OnboardingTopic,
@@ -141,7 +140,11 @@ export const fakeCase = {
   needsToBeAddressed: [],
   otherNeedToBeAddressed: null,
   status: faker.helpers.enumValue(CaseStatus),
-  selectedRecommendation: faker.helpers.enumValue(CaseRecommendation),
+  selectedRecommendation: faker.helpers.arrayElement([
+    "Probation",
+    "Rider",
+    "Term",
+  ]),
   isLsirScoreLocked: false,
   currentOnboardingTopic: faker.helpers.enumValue(OnboardingTopic),
   recommendedOpportunities: [
@@ -224,7 +227,7 @@ export const fakeInsightPrismaInput = {
   rollupRecidivismSeries: {
     // Can't use createMany because of nested writes
     create: fakeRecidivismSeries.map((series) => ({
-      recommendationType: series.recommendationType as CaseRecommendation,
+      recommendationType: series.recommendationType,
       dataPoints: {
         createMany: {
           data: series.dataPoints,

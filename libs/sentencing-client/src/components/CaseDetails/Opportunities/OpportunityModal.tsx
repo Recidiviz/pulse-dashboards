@@ -48,7 +48,7 @@ type OpportunityModalProps = {
   isOpen: boolean;
   selectedOpportunity?: OpportunitiesType[number];
   isAddedOpportunity: boolean;
-  selectedRecommendation?: keyof typeof RecommendationType | null;
+  selectedRecommendation?: string | null;
   hideModal: () => void;
   toggleOpportunity: () => void;
 };

@@ -295,7 +295,7 @@ export const formatPhoneNumberWithExtension = (phoneNumberString: string) => {
 
 export const getOpportunityButtonTooltipText = (
   isAddedOpportunity: boolean,
-  selectedRecommendation?: keyof typeof RecommendationType | null,
+  selectedRecommendation?: string | null,
 ) => {
   return isAddedOpportunity && selectedRecommendation
     ? "Switch your recommendation back to Probation if you want to add or remove opportunities"

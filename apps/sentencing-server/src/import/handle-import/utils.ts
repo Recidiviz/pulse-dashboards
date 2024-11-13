@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { CaseRecommendation, Gender, Prisma } from "@prisma/client";
+import { Gender, Prisma } from "@prisma/client";
 import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";
@@ -314,7 +314,7 @@ export async function transformAndLoadOpportunityData(
 }
 
 function transformRecidivismSeries(
-  recommendationType: CaseRecommendation,
+  recommendationType: string,
   dataPoints?: z.infer<typeof recidivismSeriesSchema>,
 ): Prisma.RecidivismSeriesCreateWithoutInsightInput | undefined {
   if (dataPoints === undefined) {

@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const RECOMMENDATION_TYPE_TO_COLOR = {
+export const RECOMMENDATION_TYPE_TO_COLOR: { [key: string]: string } = {
   Probation: "#25636F",
   Rider: "#D9A95F",
   Term: "#BA4F4F",
 };
 
-export const RECOMMENDATION_TYPE_TO_BORDER_COLOR = {
+export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {
   Probation: "#003331",
   Rider: "#C78F38",
   Term: "#B6253D",

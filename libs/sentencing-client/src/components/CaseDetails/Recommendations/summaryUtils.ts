@@ -32,7 +32,7 @@ import { GenerateRecommendationProps } from "./types";
 
 export const formatNeedsList = (
   needs: Case["needsToBeAddressed"],
-  recommendationType: keyof typeof RecommendationType,
+  recommendationType: string,
 ): string[] => {
   const exclusionList = needsListExclusions[recommendationType];
 
@@ -70,21 +70,22 @@ export const generateRecommendationSummary = ({
   const hasOpportunities = opportunityDescriptions.length > 0;
   const hasNeedsAndOpportunities = hasNeeds && hasOpportunities;
 
-  const templates = {
-    Probation: {
-      default: `
-              After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} ${needsList} needs, including ${opportunitiesList}. Should probation be granted, a list of potential resources will be made available to ${salutation} ${formatPossessiveName(name)} supervising officer. Hopefully the defendant will take advantage of the resources available to ${object} while on supervision and make the changes necessary to set ${possessive} life on a better path.
-          `,
-      noNeeds: `
-              After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community to support ${object}, including ${opportunitiesList}. Should probation be granted, a list of potential resources will be made available to ${salutation} ${formatPossessiveName(name)} supervising officer. Hopefully the defendant will take advantage of the resources available to ${object} while on supervision and make the changes necessary to set ${possessive} life on a better path.
-           `,
-      noOpportunities: `
-              After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} ${needsList} needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set ${possessive} life on a better path.
-           `,
-      noNeedsNoOpportunities: `
-              After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set ${possessive} life on a better path.
-           `,
-    },
+  const probationTemplate = {
+    default: `
+            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} ${needsList} needs, including ${opportunitiesList}. Should probation be granted, a list of potential resources will be made available to ${salutation} ${formatPossessiveName(name)} supervising officer. Hopefully the defendant will take advantage of the resources available to ${object} while on supervision and make the changes necessary to set ${possessive} life on a better path.
+        `,
+    noNeeds: `
+            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community to support ${object}, including ${opportunitiesList}. Should probation be granted, a list of potential resources will be made available to ${salutation} ${formatPossessiveName(name)} supervising officer. Hopefully the defendant will take advantage of the resources available to ${object} while on supervision and make the changes necessary to set ${possessive} life on a better path.
+         `,
+    noOpportunities: `
+            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} ${needsList} needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set ${possessive} life on a better path.
+         `,
+    noNeedsNoOpportunities: `
+            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set ${possessive} life on a better path.
+         `,
+  };
+
+  const templates: { [key: string]: string } = {
     Rider: `
           I recommend that ${salutation} ${name} be sentenced to a period of retained jurisdiction where they can address their ${needsList} issues.
        `,
@@ -98,13 +99,13 @@ export const generateRecommendationSummary = ({
 
   if (recommendation === RecommendationType.Probation) {
     if (hasNeedsAndOpportunities) {
-      return trimExtraSpaces(templates.Probation.default);
+      return trimExtraSpaces(probationTemplate.default);
     } else if (!hasNeeds && hasOpportunities) {
-      return trimExtraSpaces(templates.Probation.noNeeds);
+      return trimExtraSpaces(probationTemplate.noNeeds);
     } else if (hasNeeds && !hasOpportunities) {
-      return trimExtraSpaces(templates.Probation.noOpportunities);
+      return trimExtraSpaces(probationTemplate.noOpportunities);
     } else {
-      return trimExtraSpaces(templates.Probation.noNeedsNoOpportunities);
+      return trimExtraSpaces(probationTemplate.noNeedsNoOpportunities);
     }
   } else if (templates[recommendation]) {
     return trimExtraSpaces(templates[recommendation]);
