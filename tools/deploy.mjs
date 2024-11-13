@@ -274,12 +274,9 @@ if (deployEnv === "staging" || deployEnv === "production") {
   if (deploySentencingServerPrompt.deploySentencingServer) {
     console.log("Building and deploying the application...");
 
-    console.log("Loading env variables...");
-    await $`nx load-env-files sentencing-server`.pipe(process.stdout);
-
     // Start docker and configure docker to upload to container registry
     // Only needed for staging deploys
-    if (deployEnv === "staging") {
+    if (deployEnv === "staging" || (deployEnv === "production" && isCpDeploy)) {
       try {
         await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
           process.stdout,
@@ -327,7 +324,11 @@ if (deployEnv === "staging" || deployEnv === "production") {
   }
 }
 
-if (deployEnv === "staging" || deployEnv === "production") {
+if (
+  deployEnv === "staging" ||
+  deployEnv === "production" ||
+  deployEnv === "demo"
+) {
   const deployCaseNotesServerPrompt = await inquirer.prompt({
     type: "confirm",
     name: "deployCaseNotesServer",
@@ -337,12 +338,13 @@ if (deployEnv === "staging" || deployEnv === "production") {
   if (deployCaseNotesServerPrompt.deployCaseNotesServer) {
     console.log("Building and deploying the application...");
 
-    console.log("Loading env variables...");
-    await $`nx load-env-files case-notes-server`.pipe(process.stdout);
-
     // Start docker and configure docker to upload to container registry
     // Only needed for staging deploys
-    if (deployEnv === "staging") {
+    if (
+      deployEnv === "staging" ||
+      (deployEnv === "production" && isCpDeploy) ||
+      deployEnv === "demo"
+    ) {
       try {
         await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
           process.stdout,
@@ -367,6 +369,10 @@ if (deployEnv === "staging" || deployEnv === "production") {
           );
         } else if (deployEnv === "production" && isCpDeploy) {
           await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+        } else if (deployEnv === "demo") {
+          await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration demo`.pipe(
             process.stdout,
           );
         }

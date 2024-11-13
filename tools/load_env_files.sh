@@ -9,6 +9,7 @@ env_file=$1
 env_staging_file=$2
 env_prod_file=$3
 env_test_file=$4
+env_demo_file=${5:-null}
 
 # Download env files
 echo "Downloading env files..."
@@ -24,3 +25,8 @@ env_prod=$(gcloud secrets versions access latest --secret=$env_prod_file --proje
 echo "${env_prod}" > .env.production
 env_test=$(gcloud secrets versions access latest --secret=$env_test_file --project recidiviz-dashboard-staging)
 echo "${env_test}" > .env.test
+
+if [ -n "$env_demo_file" ]; then
+    env_demo=$(gcloud secrets versions access latest --secret=$env_demo_file --project recidiviz-dashboard-staging)
+    echo "${env_demo}" > .env.demo
+fi

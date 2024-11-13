@@ -14,7 +14,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh env_case_notes_server env_staging_case_notes_server env_prod_case_notes_server env_test_case_notes_server",
+        "command": "../../tools/load_env_files.sh env_case_notes_server env_staging_case_notes_server env_prod_case_notes_server env_test_case_notes_server env_demo_case_notes_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -109,12 +109,19 @@
           "tags": [
             "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA"
           ]
+        },
+        "demo": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA"
+          ]
         }
       },
       "defaultConfiguration": "dev"
     },
     "deploy-app": {
       "executor": "@nx-extend/gcp-cloud-run:deploy",
+      "dependsOn": ["load-env-files"],
       "options": {
         "region": "us-central1",
         "envVars": {
@@ -134,14 +141,21 @@
         "staging": {
           "project": "recidiviz-dashboard-staging",
           "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
-          "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:case-notes-db",
-          "memory": "512Mi"
+          "memory": "512Mi",
+          "serviceAccount": "case-notes-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
         },
         "production": {
           "project": "recidiviz-dashboard-production",
           "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
-          "cloudSqlInstance": "recidiviz-dashboard-production:us-central1:case-notes-db",
-          "memory": "512Mi"
+          "memory": "512Mi",
+          "serviceAccount": "case-notes-server@recidiviz-dashboard-production.iam.gserviceaccount.com"
+        },
+        "demo": {
+          "name": "case-notes-server-demo",
+          "project": "recidiviz-dashboard-staging",
+          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/case-notes-server:$COMMIT_SHA",
+          "memory": "512Mi",
+          "serviceAccount": "case-notes-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
         }
       },
       "defaultConfiguration": "staging"
