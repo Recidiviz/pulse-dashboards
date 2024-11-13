@@ -288,6 +288,8 @@ describe("case router", () => {
           lsirScore: 10,
           reportType: "FullPSI",
           clientGender: "MALE",
+          recommendedMinSentenceLength: 10,
+          recommendedMaxSentenceLength: 20,
         },
       });
 
@@ -336,6 +338,8 @@ describe("case router", () => {
           offense: expect.objectContaining({
             name: fakeOffense.name,
           }),
+          recommendedMinSentenceLength: 10,
+          recommendedMaxSentenceLength: 20,
         }),
       );
     });

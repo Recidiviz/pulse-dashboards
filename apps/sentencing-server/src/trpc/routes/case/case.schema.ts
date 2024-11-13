@@ -100,5 +100,7 @@ export const updateCaseSchema = z.object({
     recommendationSummary: z.string().nullable().optional(),
     reportType: ReportTypeEnum.optional(),
     clientGender: GenderEnum.optional(),
+    recommendedMinSentenceLength: z.number().int().optional(),
+    recommendedMaxSentenceLength: z.number().int().optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });

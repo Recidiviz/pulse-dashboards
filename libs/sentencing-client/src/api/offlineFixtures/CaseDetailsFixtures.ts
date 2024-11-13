@@ -57,6 +57,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     otherNeedToBeAddressed: null,
     status: "InProgress",
     selectedRecommendation: null,
+    recommendedMaxSentenceLength: null,
+    recommendedMinSentenceLength: null,
     recommendedOpportunities: [],
     isLsirScoreLocked: false,
     currentOnboardingTopic: "OffenseLsirScore",

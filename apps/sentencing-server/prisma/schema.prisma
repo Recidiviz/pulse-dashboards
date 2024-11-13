@@ -324,10 +324,12 @@ model Case {
   currentOnboardingTopic OnboardingTopic @default(OffenseLsirScore)
 
   // Case Recommendation Fields
-  status                   CaseStatus    @default(NotYetStarted)
-  selectedRecommendation   String?
-  recommendedOpportunities Opportunity[]
-  recommendationSummary    String?
+  status                       CaseStatus    @default(NotYetStarted)
+  selectedRecommendation       String?
+  recommendedMinSentenceLength Int?
+  recommendedMaxSentenceLength Int?
+  recommendedOpportunities     Opportunity[]
+  recommendationSummary        String?
 }
 
 model Insight {

@@ -45,6 +45,8 @@ export type UpdateCaseInput = Pick<
   | "currentOnboardingTopic"
   | "recommendationSummary"
   | "reportType"
+  | "recommendedMinSentenceLength"
+  | "recommendedMaxSentenceLength"
 > & {
   recommendedOpportunities?: {
     opportunityName: OpportunityNameIdentifier;

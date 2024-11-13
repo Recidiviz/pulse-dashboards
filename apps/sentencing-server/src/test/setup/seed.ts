@@ -159,6 +159,8 @@ export const fakeCase = {
       genericDescription: null,
     },
   ],
+  recommendedMaxSentenceLength: faker.number.int({ max: 100 }),
+  recommendedMinSentenceLength: faker.number.int({ max: 100 }),
 };
 
 export const fakeCasePrismaInput = {
