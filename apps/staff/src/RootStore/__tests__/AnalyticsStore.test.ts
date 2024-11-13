@@ -34,10 +34,12 @@ describe("AnalyticsStore", () => {
 
   async function getAnalyticsStoreWithEnv(
     env: string,
+    deploy_env: string,
     authEnv: string,
     rootStore: typeof RootStore = mockRootStore,
   ) {
     vi.stubEnv("MODE", env);
+    vi.stubEnv("VITE_DEPLOY_ENV", deploy_env);
     vi.stubEnv("VITE_AUTH_ENV", authEnv);
     const AnalyticsStore = (await import("../AnalyticsStore")).default;
 
@@ -55,25 +57,26 @@ describe("AnalyticsStore", () => {
       analyticsStore = await getAnalyticsStoreWithEnv(
         "staging",
         "staging",
+        "staging",
         rootStore,
       );
     });
 
-    it("disables analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeTrue();
+    it("should log analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeTrue();
     });
 
-    it("does not call track", () => {
+    it("does call track", () => {
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).not.toHaveBeenCalled();
+      expect(window.analytics.track).toHaveBeenCalled();
     });
 
-    it("does not call page", () => {
+    it("does call page", () => {
       analyticsStore.page("/foo");
-      expect(window.analytics.page).not.toHaveBeenCalled();
+      expect(window.analytics.page).toHaveBeenCalled();
     });
   });
 
@@ -88,12 +91,13 @@ describe("AnalyticsStore", () => {
       analyticsStore = await getAnalyticsStoreWithEnv(
         "production",
         "production",
+        "production",
         rootStore,
       );
     });
 
-    it("disables analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeTrue();
+    it("should log analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeTrue();
     });
 
     it("does not call track", () => {
@@ -121,12 +125,13 @@ describe("AnalyticsStore", () => {
       analyticsStore = await getAnalyticsStoreWithEnv(
         "production",
         "production",
+        "production",
         rootStore,
       );
     });
 
-    it("disables analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeTrue();
+    it("should log analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeTrue();
     });
 
     it("does not call track", () => {
@@ -145,11 +150,15 @@ describe("AnalyticsStore", () => {
 
   describe("Demo mode", () => {
     beforeEach(async () => {
-      analyticsStore = await getAnalyticsStoreWithEnv("staging", "demo");
+      analyticsStore = await getAnalyticsStoreWithEnv(
+        "staging",
+        "staging",
+        "demo",
+      );
     });
 
-    it("disables analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeTrue();
+    it("should log analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeTrue();
     });
 
     it("does not call track", () => {
@@ -171,11 +180,12 @@ describe("AnalyticsStore", () => {
       analyticsStore = await getAnalyticsStoreWithEnv(
         "development",
         "development",
+        "development",
       );
     });
 
-    it("disables analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeTrue();
+    it("logs analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeTrue();
     });
 
     it("does not call track", () => {
@@ -194,11 +204,11 @@ describe("AnalyticsStore", () => {
 
   describe("Test environment", () => {
     beforeEach(async () => {
-      analyticsStore = await getAnalyticsStoreWithEnv("test", "test");
+      analyticsStore = await getAnalyticsStoreWithEnv("test", "test", "test");
     });
 
-    it("disables analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeTrue();
+    it("should log analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeTrue();
     });
 
     it("does not call track", () => {
@@ -217,11 +227,15 @@ describe("AnalyticsStore", () => {
 
   describe("Staging environment", () => {
     beforeEach(async () => {
-      analyticsStore = await getAnalyticsStoreWithEnv("staging", "staging");
+      analyticsStore = await getAnalyticsStoreWithEnv(
+        "staging",
+        "staging",
+        "staging",
+      );
     });
 
-    it("does not disable analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeFalse();
+    it("does not log analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeFalse();
     });
 
     it("does call analytics to track", () => {
@@ -243,11 +257,12 @@ describe("AnalyticsStore", () => {
       analyticsStore = await getAnalyticsStoreWithEnv(
         "production",
         "production",
+        "production",
       );
     });
 
-    it("does not disable analytics", () => {
-      expect(analyticsStore.disableAnalytics).toBeFalse();
+    it("does not log analytics", () => {
+      expect(analyticsStore.shouldLogAnalyticsEvent).toBeFalse();
     });
 
     it("does call analytics to track", () => {

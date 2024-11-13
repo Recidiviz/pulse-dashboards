@@ -138,7 +138,15 @@ export default class AnalyticsStore {
     this.rootStore = rootStore;
   }
 
-  get disableAnalytics(): boolean {
+  get shouldLogAnalyticsEvent(): boolean {
+    const {
+      isImpersonating,
+      userStore: { isRecidivizUser },
+    } = this.rootStore;
+    return isImpersonating || isAnalyticsDisabled || isRecidivizUser;
+  }
+
+  get shouldSkipWriteToSegment(): boolean {
     const {
       isImpersonating,
       userStore: { isRecidivizUser },
@@ -160,12 +168,9 @@ export default class AnalyticsStore {
       traits,
     )}`;
 
-    if (this.disableAnalytics) {
-      // eslint-disable-next-line
-      console.log(log);
-      return;
-    }
-
+    // eslint-disable-next-line
+    if (this.shouldLogAnalyticsEvent) console.log(log);
+    if (this.shouldSkipWriteToSegment) return;
     window.analytics.identify(userId, traits);
   }
 
@@ -181,11 +186,9 @@ export default class AnalyticsStore {
       fullMetadata,
     )}`;
 
-    if (this.disableAnalytics) {
-      // eslint-disable-next-line
-      console.log(log);
-      return;
-    }
+    // eslint-disable-next-line
+    if (this.shouldLogAnalyticsEvent) console.log(log);
+    if (this.shouldSkipWriteToSegment) return;
     window.analytics.track(eventName, fullMetadata);
   }
 
@@ -196,11 +199,9 @@ export default class AnalyticsStore {
       isImpersonating ? "[Impersonation]" : ""
     }[Analytics] Tracking pageview: ${pagePath}`;
 
-    if (this.disableAnalytics) {
-      // eslint-disable-next-line
-      console.log(log);
-      return;
-    }
+    // eslint-disable-next-line
+    if (this.shouldLogAnalyticsEvent) console.log(log);
+    if (this.shouldSkipWriteToSegment) return;
     window.analytics.page(pagePath);
   }
 

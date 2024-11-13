@@ -49,7 +49,6 @@ export interface RootStore {
   analyticsStore: {
     rootStore: RootStore;
     sessionId: string;
-    disableAnalytics: boolean;
     identify: (userId: string) => void;
     track: (eventName: string, metadata?: Record<string, unknown>) => void;
     page: (pagePath: string) => void;
