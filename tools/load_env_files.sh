@@ -26,7 +26,7 @@ echo "${env_prod}" > .env.production
 env_test=$(gcloud secrets versions access latest --secret=$env_test_file --project recidiviz-dashboard-staging)
 echo "${env_test}" > .env.test
 
-if [ -n "$env_demo_file" ]; then
-    env_demo=$(gcloud secrets versions access latest --secret=$env_demo_file --project recidiviz-dashboard-staging)
+if [ "$env_demo_file" != null ]; then
+    env_demo=$(gcloud secrets versions access latest --secret=$5 --project recidiviz-dashboard-staging)
     echo "${env_demo}" > .env.demo
 fi
