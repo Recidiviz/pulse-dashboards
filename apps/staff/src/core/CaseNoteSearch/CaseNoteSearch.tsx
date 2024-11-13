@@ -19,7 +19,7 @@ import DomPurify from "dompurify";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { isOfflineMode } from "~client-env-utils";
 import { CaseNoteSearchResults } from "~datatypes";
 
 import {
@@ -93,7 +93,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const { selectedPerson } = workflowsStore;
   if (!selectedPerson) return null;
 
-  const shouldUseOfflineData = isDemoMode() || isOfflineMode();
+  const shouldUseOfflineData = isOfflineMode();
 
   const logResults = (numResults?: number, error?: string) => {
     if (shouldUseOfflineData) {
