@@ -32,9 +32,6 @@ export const eligibleCriteriaLsuED = z
       }),
       { latestUaDates: [], latestUaResults: [] },
     ),
-    noFelonyWithin24Months: z
-      .null()
-      .transform((output) => (output === null ? true : output)),
   })
   .passthrough();
 

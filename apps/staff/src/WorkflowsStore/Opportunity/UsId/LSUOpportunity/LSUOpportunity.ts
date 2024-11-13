@@ -42,11 +42,6 @@ export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
     tooltip:
       "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
   },
-  noFelonyWithin24Months: {
-    text: "No felony convictions in past 24 months",
-    tooltip:
-      "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
-  },
 };
 
 export const LSU_CRITERIA: Record<
@@ -95,7 +90,7 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   eligibleCriteria: LSUEarnedDischargeEligibleCriteria,
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
-  const { negativeDaWithin90Days, noFelonyWithin24Months } = eligibleCriteria;
+  const { negativeDaWithin90Days } = eligibleCriteria;
 
   if (!some(negativeDaWithin90Days?.latestUaResults)) {
     // TODO(#2468): Reassess how to indicate no UA required
@@ -107,10 +102,6 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
     } else {
       requirements.push(LSU_CRITERIA.negativeDaWithin90Days);
     }
-  }
-
-  if (noFelonyWithin24Months) {
-    requirements.push(LSU_CRITERIA.noFelonyWithin24Months);
   }
 
   return requirements;

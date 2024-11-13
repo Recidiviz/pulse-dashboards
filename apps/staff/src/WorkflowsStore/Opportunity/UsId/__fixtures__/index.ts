@@ -70,7 +70,6 @@ export const LSUReferralRecordFixture: LSUReferralRecordRaw = {
       latestUaDates: ["2022-05-28"],
       latestUaResults: [false],
     },
-    noFelonyWithin24Months: null,
     usIdIncomeVerifiedWithin3Months: {
       incomeVerifiedDate: "2022-06-03",
     },
@@ -134,7 +133,6 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
       latestUaDates: ["2022-05-28"],
       latestUaResults: [false],
     },
-    noFelonyWithin24Months: null,
     onSupervisionAtLeastOneYear: {
       eligibleDate: "2022-06-01",
     },

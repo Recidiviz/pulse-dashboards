@@ -32,7 +32,6 @@ exports[`can transform record with eligible and ineligible criteria 1`] = `
         false,
       ],
     },
-    "noFelonyWithin24Months": true,
     "onSupervisionAtLeastOneYear": {
       "eligibleDate": 2022-05-28T00:00:00.000Z,
     },
@@ -70,7 +69,6 @@ exports[`optional criteria have sane fallbacks 1`] = `
       "latestUaDates": [],
       "latestUaResults": [],
     },
-    "noFelonyWithin24Months": true,
     "onSupervisionAtLeastOneYear": {
       "eligibleDate": 2022-05-28T00:00:00.000Z,
     },
@@ -130,7 +128,6 @@ exports[`transform record 1`] = `
         false,
       ],
     },
-    "noFelonyWithin24Months": true,
     "onSupervisionAtLeastOneYear": {
       "eligibleDate": 2022-05-28T00:00:00.000Z,
     },

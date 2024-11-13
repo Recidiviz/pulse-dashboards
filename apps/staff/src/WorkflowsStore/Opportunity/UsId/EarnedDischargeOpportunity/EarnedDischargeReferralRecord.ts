@@ -100,6 +100,9 @@ export const usIdEarnedDischargeSchema = opportunitySchemaBase.extend({
   ineligibleCriteria: ineligibleCriteriaLsuED.pipe(collapsedCriteriaSchema),
   eligibleCriteria: eligibleCriteriaLsuED
     .extend({
+      noFelonyWithin24Months: z
+        .null()
+        .transform((output) => (output === null ? true : output)),
       usIdLsirLevelLowModerateForXDays: z.object({
         eligibleDate: dateStringSchema,
         riskLevel: z.enum(["LOW", "MODERATE"]),

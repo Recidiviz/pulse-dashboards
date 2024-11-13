@@ -33,7 +33,6 @@ test("transform record", () => {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -92,7 +91,6 @@ test("optional criteria have sane fallbacks", () => {
         eligibleDate: "2022-01-03",
       },
       negativeDaWithin90Days: null,
-      noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -128,7 +126,6 @@ test("can transform record with eligible and ineligible criteria", () => {
         latestUaDates: ["2022-01-03"],
         latestUaResults: [false],
       },
-      noFelonyWithin24Months: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2024-06-03",
       },

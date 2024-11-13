@@ -7,10 +7,6 @@ exports[`almost eligible days remaining on supervision > requirements met 1`] = 
     "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
   },
   {
-    "text": "No felony convictions in past 24 months",
-    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
-  },
-  {
     "text": "Verified compliant employment",
     "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
   },
@@ -30,10 +26,6 @@ exports[`almost eligible income verified within 3 months > requirements met 1`] 
   {
     "text": "Negative UA within past 90 days",
     "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
-  },
-  {
-    "text": "No felony convictions in past 24 months",
-    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
   },
   {
     "text": "No active NCO, CPO, or restraining order",
@@ -66,10 +58,6 @@ exports[`almost eligible on supervision at least a year > requirements met 1`] =
     "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
   },
   {
-    "text": "No felony convictions in past 24 months",
-    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
-  },
-  {
     "text": "Verified compliant employment",
     "tooltip": "Policy requirement: Verified employment status, full-time student, or adequate lawful income from non-employment sources have been confirmed within past 3 months",
   },
@@ -89,10 +77,6 @@ exports[`fully eligible > requirements met 1`] = `
   {
     "text": "Negative UA within past 90 days",
     "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
-  },
-  {
-    "text": "No felony convictions in past 24 months",
-    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
   },
   {
     "text": "Verified compliant employment",
@@ -118,10 +102,6 @@ exports[`no UA required > requirements met 1`] = `
   {
     "text": "No UA needed",
     "tooltip": "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
-  },
-  {
-    "text": "No felony convictions in past 24 months",
-    "tooltip": "Policy requirement: Has not committed a felony while on probation or parole in past 24 months",
   },
   {
     "text": "Verified compliant employment",
