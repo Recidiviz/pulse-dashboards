@@ -59,4 +59,8 @@ export class UsAzOverdueForAcisTprOpportunity extends OpportunityBase<
   get eligibleStatusMessage() {
     return "Overdue";
   }
+
+  showEligibilityStatus(): boolean {
+    return true;
+  }
 }

@@ -162,15 +162,21 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         insightsOnboarding: {},
         supervisorHomepageWorkflows: {},
         nonOMSCriteria: {
-          activeTenants: ["US_OR", "US_ME", "US_MI"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
         },
         submittedOpportunityStatus: {
-          activeTenants: ["US_OR", "US_ME", "US_MI"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
         },
         sortableOpportunityTabs: {
           activeTenants: ["US_OR", "US_ME", "US_MI"],
         },
         usOrEarnedDischargeSentence: {},
+        oppTabSubcategories: {
+          activeTenants: ["US_AZ"],
+        },
+        fullWidthTimeline: {
+          activeTenants: ["US_AZ"],
+        },
       }
     : {
         ...allFeatureVariants,

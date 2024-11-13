@@ -80,11 +80,11 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
 
     return (
       <TitleText>
+        <OpportunityLabelWithoutPill>
+          {opportunity.config.label}
+        </OpportunityLabelWithoutPill>
         {opportunity.showEligibilityStatus("OpportunityModuleHeader") && (
           <>
-            <OpportunityLabelWithoutPill>
-              {opportunity.config.label}
-            </OpportunityLabelWithoutPill>
             <Separator> • </Separator>
             <span
               className="EligibilityStatus"
