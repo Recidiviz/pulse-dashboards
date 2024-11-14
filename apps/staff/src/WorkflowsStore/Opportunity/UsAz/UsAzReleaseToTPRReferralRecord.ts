@@ -19,6 +19,8 @@ import { z } from "zod";
 
 import { opportunitySchemaBase } from "~datatypes";
 
+import { usAzOverdueForAcisTprEligibleCriteria } from "./UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprReferralRecord";
+
 const zodNullableObject = z.object({}).nullable();
 
 const possiblyIneligibleCriteria = z
@@ -31,9 +33,11 @@ const possiblyIneligibleCriteria = z
 export const usAzReleaseToTPRSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z.union([
-      z.object({
-        usAzNotIncarcerationWithin6MonthsOfAcisDtpDate: zodNullableObject,
-      }),
+      z
+        .object({
+          usAzNotIncarcerationWithin6MonthsOfAcisDtpDate: zodNullableObject,
+        })
+        .passthrough(),
       possiblyIneligibleCriteria
         .extend({
           usAzNoSexualArsonOrDangerousCrimesAgainstChildren: zodNullableObject,
@@ -53,7 +57,7 @@ export const usAzReleaseToTPRSchema = opportunitySchemaBase
         .passthrough(),
     ]),
     ineligibleCriteria: z.union([
-      z.object({ usAzIncarcerationPastAcisTprDate: zodNullableObject }),
+      usAzOverdueForAcisTprEligibleCriteria,
       possiblyIneligibleCriteria.passthrough(),
     ]),
     metadata: z

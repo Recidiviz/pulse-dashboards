@@ -26,6 +26,7 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { UsAzResidentMetadata } from "../../../../FirestoreStore";
 import { formatDueDateFromToday, formatWorkflowsDate } from "../../../../utils";
 import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";
 import { InfoButton } from "../../InfoButton";
@@ -56,6 +57,7 @@ const DateTableCell = styled.td`
 const ShadedDateTableCell = styled(DateTableCell)`
   background-color: ${palette.marble3};
   white-space: nowrap;
+  width: 30%;
 `;
 
 const DateTableRow = styled.tr`
@@ -120,21 +122,11 @@ type DateInfo = {
   tooltip?: string;
 };
 
-export function UsAzDates({
-  resident,
-}: ResidentProfileProps): React.ReactElement | null {
-  const { metadata } = resident;
-
-  if (metadata.stateCode !== "US_AZ") return null;
-
-  const inTableTooltip =
-    "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. We include this projected date here to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination on release date once all transition release criteria have been met. As such, this date should not be shared with inmates.  For more details on how Recidiviz projects release dates, please click on “How are these dates calculated?” below.";
-
-  // Only show a DTP date for people with a DTP opportunity; by default show TPR
-  const useDtp = resident.flattenedOpportunities.find(
-    (opp) =>
-      opp.type === "usAzReleaseToDTP" || opp.type === "usAzOverdueForACISDTP",
-  );
+export function metadataToDates(
+  metadata: UsAzResidentMetadata,
+  useDtp: boolean,
+  inTableTooltip: string,
+): DateInfo[] {
   const hasAcisDates = useDtp ? !!metadata.acisDtpDate : !!metadata.acisTprDate;
 
   // Show all dates (ERCD, CSBD, TPR/DTP) if we have a date from ACIS
@@ -175,10 +167,29 @@ export function UsAzDates({
         },
       ];
 
-  const dates: DateInfo[] = [
+  return [
     { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
     ...(hasAcisDates ? realDates : projectedDates),
   ];
+}
+
+export function UsAzDates({
+  resident,
+}: ResidentProfileProps): React.ReactElement | null {
+  const { metadata } = resident;
+
+  if (metadata.stateCode !== "US_AZ") return null;
+
+  // Only show a DTP date for people with a DTP opportunity; by default show TPR
+  const useDtp = resident.flattenedOpportunities.find(
+    (opp) =>
+      opp.type === "usAzReleaseToDTP" || opp.type === "usAzOverdueForACISDTP",
+  );
+
+  const inTableTooltip =
+    "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. We include this projected date here to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination on release date once all transition release criteria have been met. As such, this date should not be shared with inmates.  For more details on how Recidiviz projects release dates, please click on “How are these dates calculated?” below.";
+
+  const dates = metadataToDates(metadata, !!useDtp, inTableTooltip);
 
   const today = new Date();
 

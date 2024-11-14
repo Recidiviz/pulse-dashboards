@@ -19,6 +19,8 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
+import { usAzOverdueForAcisDtpEligibleCriteria } from "./UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpReferralRecord";
+
 const zodNullableObject = z.object({}).nullable();
 
 const possiblyIneligibleCriteria = z
@@ -35,27 +37,25 @@ export const usAzReleaseToDTPSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z.union([
       z.record(z.never()), // empty object
-      possiblyIneligibleCriteria.extend({
-        usAzNoSexualArsonOrDangerousCrimesAgainstChildren: zodNullableObject,
-        custodyLevelIsMinimumOrMedium: zodNullableObject,
-        usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
-        usAzNotServingFlatSentence: zodNullableObject,
-        usAzNoViolationsAndEligibleLegalStatus: zodNullableObject,
-        usAzNoAcisDtpOrTprDateSet: zodNullableObject,
-        usAzOnlyDrugOffenseConvictions: zodNullableObject,
-        usAzNoDomesticViolenceConviction: zodNullableObject,
-        usAzNoSexualExploitationOfChildrenConviction: zodNullableObject,
-        usAzNoViolentConviction: zodNullableObject,
-        usAzNoDtpDenialOrPreviousDtpRelease: zodNullableObject,
-        usAzNoDtpRemovalsFromSelfImprovementPrograms: zodNullableObject,
-      }),
+      possiblyIneligibleCriteria
+        .extend({
+          usAzNoSexualArsonOrDangerousCrimesAgainstChildren: zodNullableObject,
+          custodyLevelIsMinimumOrMedium: zodNullableObject,
+          usAzNoUnsatisfactoryProgramRatingsWithin3Months: zodNullableObject,
+          usAzNotServingFlatSentence: zodNullableObject,
+          usAzNoViolationsAndEligibleLegalStatus: zodNullableObject,
+          usAzNoAcisDtpOrTprDateSet: zodNullableObject,
+          usAzOnlyDrugOffenseConvictions: zodNullableObject,
+          usAzNoDomesticViolenceConviction: zodNullableObject,
+          usAzNoSexualExploitationOfChildrenConviction: zodNullableObject,
+          usAzNoViolentConviction: zodNullableObject,
+          usAzNoDtpDenialOrPreviousDtpRelease: zodNullableObject,
+          usAzNoDtpRemovalsFromSelfImprovementPrograms: zodNullableObject,
+        })
+        .passthrough(),
     ]),
     ineligibleCriteria: z.union([
-      z.object({
-        usAzIncarcerationPastAcisDtpDate: z.object({
-          recidivizDtpDate: dateStringSchema,
-        }),
-      }),
+      usAzOverdueForAcisDtpEligibleCriteria,
       possiblyIneligibleCriteria.passthrough(),
     ]),
     metadata: z

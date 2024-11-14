@@ -237,6 +237,18 @@ export class OpportunityCaseloadPresenter {
     );
   }
 
+  get navigablePeople() {
+    // The subcategory order should always be defined if there are currently subcategories
+    const { peopleInActiveTabBySubcategory, subcategoryOrder } = this;
+    if (peopleInActiveTabBySubcategory && subcategoryOrder) {
+      return subcategoryOrder.flatMap(
+        (category) => peopleInActiveTabBySubcategory[category],
+      );
+    }
+
+    return this.peopleInActiveTab;
+  }
+
   headingText(subcategory: string) {
     return this.config.subcategoryHeadings?.[subcategory];
   }

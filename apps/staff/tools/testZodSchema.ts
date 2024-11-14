@@ -203,12 +203,10 @@ async function testCollection(opportunityType: SchemaKey, limit?: number) {
   const failures: Record<string, z.ZodIssue[]> = {};
   (await query.get()).docs.forEach((d) => {
     const raw = d.data();
-    // TODO(#6666) Remove the exception for AZ TPR/DTP opportunities, which rely on
-    // eligible/ineligible criteria being unions whose first element can't use passthrough
+    // TODO(#6666) Remove the exception for AZ DTP opportunity, whose eligible criteria
+    // can be either an empty object or an object with specific keys so we can't use passthrough
     const isOpportunity =
-      !!raw.eligibleCriteria &&
-      opportunityType !== "usAzReleaseToTPR" &&
-      opportunityType !== "usAzReleaseToDTP";
+      !!raw.eligibleCriteria && opportunityType !== "usAzReleaseToDTP";
     if (isOpportunity) {
       raw.eligibleCriteria.PASSTHROUGH_NULL = null;
       raw.eligibleCriteria.PASSTHROUGH_OBJ = { test: "valid" };
