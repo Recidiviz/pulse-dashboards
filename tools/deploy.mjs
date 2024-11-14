@@ -149,6 +149,9 @@ const deployBackendPrompt = await inquirer.prompt({
 });
 
 if (deployBackendPrompt.deployBackend) {
+  console.log("Building backend application ...");
+  await $`nx build staff-shared-server`.pipe(process.stdout);
+
   const gaeVersion = nextVersion.replaceAll(".", "-");
   let retryBackend = false;
   do {
@@ -156,18 +159,20 @@ if (deployBackendPrompt.deployBackend) {
       switch (deployEnv) {
         case "production":
           // eslint-disable-next-line no-await-in-loop
-          await $`nx deploy staff-shared-server -c production --version ${gaeVersion}`.pipe(
+          await $`gcloud app deploy dist/libs/staff-shared-server/gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
             process.stdout,
           );
           publishReleaseNotes = true;
           break;
         case "demo":
           // eslint-disable-next-line no-await-in-loop
-          await $`nx deploy staff-shared-server -c demo`.pipe(process.stdout);
+          await $`gcloud app deploy dist/libs/staff-shared-server/gae-staging-demo.yaml --project recidiviz-dashboard-staging`.pipe(
+            process.stdout,
+          );
           break;
         default:
           // eslint-disable-next-line no-await-in-loop
-          await $`nx deploy staff-shared-server -c staging`.pipe(
+          await $`gcloud app deploy dist/libs/staff-shared-server/gae-staging.yaml --project recidiviz-dashboard-staging`.pipe(
             process.stdout,
           );
           break;

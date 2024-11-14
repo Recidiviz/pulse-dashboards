@@ -141,31 +141,6 @@
         "parallel": false
       }
     },
-    "deploy": {
-      "dependsOn": ["build"],
-      "command": "gcloud app deploy",
-      "configurations": {
-        "staging": {
-          "args": [
-            "dist/libs/staff-shared-server/gae-staging.yaml",
-            "--project recidiviz-dashboard-staging"
-          ]
-        },
-        "production": {
-          "args": [
-            "dist/libs/staff-shared-server/gae-production.yaml",
-            "--project recidiviz-dashboard-production"
-          ]
-        },
-        "demo": {
-          "args": [
-            "dist/libs/staff-shared-server/gae-staging-demo.yaml",
-            "--project recidiviz-dashboard-staging"
-          ]
-        }
-      },
-      "defaultConfiguration": "staging"
-    },
     "pull-python-backend": {
       "executor": "nx:run-commands",
       "options": {
