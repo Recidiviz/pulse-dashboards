@@ -46,7 +46,7 @@ export class StaffStore {
       this.staffInfo = yield this.psiStore.apiClient.getStaffInfo();
       this.caseBriefsById = keyBy(this.staffInfo.cases, "id");
     } catch (error) {
-      captureException(new Error("Error while loading insights"), {
+      captureException(new Error("Error while loading staff info"), {
         extra: {
           message: `loadStaffInfo error: ${error}`,
           staffId: this.psiStore.staffPseudoId,
