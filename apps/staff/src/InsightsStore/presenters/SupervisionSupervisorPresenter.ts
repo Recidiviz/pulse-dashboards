@@ -18,6 +18,7 @@
 import { captureException } from "@sentry/react";
 import { ascending, descending } from "d3-array";
 import { action, computed, flowResult, makeObservable, observable } from "mobx";
+import simplur from "simplur";
 
 import {
   ActionStrategyCopy,
@@ -318,6 +319,22 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   }
 
   /**
+   * Checks if Vitals is enabled based on user permissions.
+   * @returns `true` if vitals is enabled, otherwise `false`.
+   */
+  get isVitalsEnabled() {
+    const { userStore } = this.supervisionStore.insightsStore.rootStore;
+
+    // Check if...
+    return (
+      // ...the user has allowed navigation to vitals (previously named operations) and...
+      userStore.getRoutePermission("operations") &&
+      // ...if the active feature variant for supervisorHomepageVitals is enabled.
+      !!userStore.activeFeatureVariants.supervisorHomepageVitals
+    );
+  }
+
+  /**
    * Populates the caseload by getting all officers and populating opportunities for them.
    */
   async populateCaseload() {
@@ -367,6 +384,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
           oppDetail.officersWithEligibleClients.push({
             ...officer,
             clientsEligibleCount: opportunities.length,
+            clientsEligibleCountWithLabel: simplur`${opportunities.length} ${this.labels.supervisionJiiLabel}[|s]`,
           });
           oppDetail.clientsEligibleCount += opportunities.length;
 

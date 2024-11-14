@@ -24,7 +24,6 @@ import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 
 const PillWrapper = styled(Pill)`
   ${typography.Sans12}
-  width: ${rem(82)};
   height: ${rem(22)};
   margin-right: 0;
 `;

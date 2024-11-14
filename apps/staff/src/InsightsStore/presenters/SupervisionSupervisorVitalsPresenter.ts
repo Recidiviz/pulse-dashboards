@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable } from "mobx";
+import { ascending } from "d3-array";
+import { computed, flowResult, makeAutoObservable } from "mobx";
 
 import {
   ExcludedSupervisionOfficer,
@@ -47,7 +48,11 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
     protected supervisionStore: InsightsSupervisionStore,
     public supervisorPseudoId: string,
   ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+    makeAutoObservable(
+      this,
+      { vitalsMetricDetails: computed },
+      { autoBind: true },
+    );
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: this.expectPopulated(),
@@ -64,17 +69,18 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   mergeOfficerNames(
     metrics: VitalsMetricForOfficer[],
   ): VitalsMetricDetailForOfficer[] {
-    return metrics
-      .map((metric) => {
-        const displayName = this.allOfficers.find(
-          (o) => o.pseudonymizedId === metric.officerPseudonymizedId,
-        )?.displayName;
-        return {
+    const metricDetails: VitalsMetricDetailForOfficer[] = [];
+    metrics.forEach((metric) => {
+      const displayName = this.allOfficers.find(
+        (o) => o.pseudonymizedId === metric.officerPseudonymizedId,
+      )?.displayName;
+      if (displayName)
+        metricDetails.push({
           ...metric,
           displayName,
-        };
-      })
-      .filter((m) => m.displayName);
+        });
+    });
+    return metricDetails;
   }
 
   get vitalsMetricDetails(): SupervisorVitalsMetricDetail[] {
@@ -84,9 +90,12 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
     if (!metrics) return [];
 
     return metrics.map((metric) => {
+      const sortedMetrics = [...metric.vitalsMetrics].sort((a, b) =>
+        ascending(a.metricValue, b.metricValue),
+      );
       return {
         label: this.labelForMetricId(metric.metricId),
-        officersWithMetricValues: this.mergeOfficerNames(metric.vitalsMetrics),
+        officersWithMetricValues: this.mergeOfficerNames(sortedMetrics),
       };
     });
   }

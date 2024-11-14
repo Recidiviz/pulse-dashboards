@@ -15,69 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  IconSVG,
-  palette,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
-import { rem } from "polished";
+import { Icon, IconSVG, palette } from "@recidiviz/design-system";
 import React from "react";
 import simplur from "simplur";
-import styled from "styled-components/macro";
 
 import { OpportunityInfo } from "~datatypes";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";
 import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
-import { InsightsSupervisorOpportunityDetailOfficerList } from "./InsightsSupervisorOpportunityDetailOfficerList";
-
-const WRAPPER_HEIGHT = rem(560);
-const WRAPPER_WIDTH = rem(315);
-const BORDER_RADIUS = rem(4);
-
-const CardWrapper = styled.div`
-  max-width: ${WRAPPER_WIDTH};
-  height: ${WRAPPER_HEIGHT};
-  padding: ${rem(spacing.lg)} ${rem(0)} ${rem(spacing.md)} ${rem(spacing.sm)};
-  gap: ${rem(32)};
-  overflow: hidden;
-  border-radius: ${BORDER_RADIUS};
-  border: ${rem(1)} solid ${palette.slate30};
-  border-top-width: ${rem(1)};
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
-
-const CardHeader = styled.div`
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: ${rem(0)} ${rem(spacing.md)} ${rem(0)} ${rem(spacing.sm)};
-  min-height: ${rem(spacing.xl)};
-`;
-
-const CardHeaderText = styled.div`
-  display: grid;
-  gap: ${rem(4)};
-  direction: column;
-`;
-
-const CardTitle = styled.h1`
-  ${typography.Sans14};
-  color: ${palette.pine1};
-  padding: 0;
-  margin: 0;
-`;
-const CardSubtitle = styled.h2`
-  ${typography.Sans12};
-  color: ${palette.slate70};
-  padding: 0;
-  margin: 0;
-`;
+import InsightsPill from "../InsightsPill";
+import { InsightsSupervisorDetailCardListItem } from "./InsightsSupervisorDetailCardListItem";
+import {
+  CardHeader,
+  CardHeaderText,
+  CardSubtitle,
+  CardTitle,
+  CardWrapper,
+  SupervisorDetailCardList,
+} from "./styles";
 
 type InsightsSupervisorOpportunityDetailCard = {
   opportunityInfo: OpportunityInfo;
@@ -97,6 +53,10 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
     zeroGrantsTooltip,
   },
 }) => {
+  const { zeroGrantsFlag } = useFeatureVariants();
+
+  const isOverflowing = officersWithEligibleClients.length > 7;
+
   return (
     <CardWrapper>
       <CardHeader>
@@ -116,13 +76,29 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
           </InsightsTooltip>
         ) : undefined}
       </CardHeader>
-      <InsightsSupervisorOpportunityDetailOfficerList
-        label={label}
-        officersWithEligibleClients={officersWithEligibleClients}
-        supervisionJiiLabel={labels.supervisionJiiLabel}
-        opportunityType={opportunityType}
-        zeroGrantsTooltip={zeroGrantsTooltip}
-      />
+      <SupervisorDetailCardList isOverflowing={isOverflowing}>
+        {officersWithEligibleClients.map((officer) => {
+          const showZeroGrantsPill =
+            zeroGrantsFlag &&
+            officer.zeroGrantOpportunities?.includes(opportunityType);
+          return (
+            <InsightsSupervisorDetailCardListItem
+              officerName={officer.displayName}
+              officerPseudoId={officer.pseudonymizedId}
+              officerValue={officer.clientsEligibleCountWithLabel}
+              showPill={!!showZeroGrantsPill}
+              key={officer.pseudonymizedId}
+            >
+              {showZeroGrantsPill && (
+                <InsightsPill
+                  label="Zero Grants"
+                  tooltipCopy={zeroGrantsTooltip}
+                />
+              )}
+            </InsightsSupervisorDetailCardListItem>
+          );
+        })}
+      </SupervisorDetailCardList>
     </CardWrapper>
   );
 };

@@ -121,9 +121,11 @@ export interface PresenterWithHoverManager {
   updateHoveredOfficerId: (officerId: string | undefined) => void;
 }
 
-export type VitalsMetricDetailForOfficer =
-  | Pick<SupervisionOfficer, "displayName">
-  | Pick<VitalsMetricForOfficer, "officerPseudonymizedId" | "metricValue">;
+export type VitalsMetricDetailForOfficer = Pick<
+  SupervisionOfficer,
+  "displayName"
+> &
+  Pick<VitalsMetricForOfficer, "officerPseudonymizedId" | "metricValue">;
 
 export type SupervisorVitalsMetricDetail = {
   label: string;

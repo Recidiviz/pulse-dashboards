@@ -81,6 +81,7 @@ export type FeatureVariant =
   | "workflowsSupervisorSearch"
   | "supervisorHomepage"
   | "supervisorHomepageWorkflows"
+  | "supervisorHomepageVitals"
   | "usPaSpecialCircumstances"
   | "lastSyncedDate"
   | "caseNoteSearch"
@@ -134,6 +135,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   workflowsSupervisorSearch: {},
   supervisorHomepage: {},
   supervisorHomepageWorkflows: {},
+  supervisorHomepageVitals: {},
   usPaSpecialCircumstances: {},
   lastSyncedDate: {},
   caseNoteSearch: {},

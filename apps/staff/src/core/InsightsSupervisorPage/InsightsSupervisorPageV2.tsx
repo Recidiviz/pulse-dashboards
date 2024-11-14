@@ -39,6 +39,7 @@ import { insightsUrl } from "../views";
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
 import InsightsStaffCardV2, { EmptyCard } from "./InsightsStaffCardV2";
 import { InsightsSupervisorOpportunityDetailCard } from "./InsightsSupervisorOpportunityDetailCard";
+import { InsightsSupervisorVitals } from "./InsightsSupervisorVitals";
 
 const HighlightedDescription = styled.span`
   border-bottom: 1px dashed ${palette.slate85};
@@ -72,6 +73,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     timePeriod,
     labels,
     isWorkflowsEnabled,
+    isVitalsEnabled,
     opportunitiesDetails,
     actionStrategyCopy,
     setUserHasSeenActionStrategy,
@@ -215,6 +217,9 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
                 </Body>
               </Wrapper>
             </InsightsPageSection>
+          )}
+          {isVitalsEnabled && (
+            <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
           )}
         </Body>
       </Wrapper>

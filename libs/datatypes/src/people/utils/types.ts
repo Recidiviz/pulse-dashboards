@@ -36,6 +36,7 @@ export type SupervisionOfficerWithOpportunityDetails = (
   | SupervisionOfficer
 ) & {
   clientsEligibleCount: number;
+  clientsEligibleCountWithLabel: string;
 };
 
 export type OpportunityInfo = {
