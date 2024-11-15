@@ -40,14 +40,15 @@ export function DispositionChartExplanation({
     <Styled.TextContainer>
       <Styled.TextWrapper>
         Historical Sentencing represents the percentage of cases sentenced to a
-        particular disposition over the past 5 years. The rates are based on{" "}
+        particular disposition. The rates are based on{" "}
         {dispositionNumRecords.toLocaleString()} records of{" "}
         <span>{genderString}</span>
         <LsirScoreText
           rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
           rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
         />{" "}
-        with <span>{offense} convictions</span>.
+        with <span>{offense} convictions</span>, using IDOC data from 2010 to
+        present.
       </Styled.TextWrapper>
     </Styled.TextContainer>
   );

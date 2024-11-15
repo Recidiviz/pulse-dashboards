@@ -195,9 +195,7 @@ export function Report({
         {/* Historical Sentencing */}
         <Styled.BreakdownByDisposition>
           <Styled.TitleAttributesWrapper>
-            <Styled.SectionTitle>
-              Historical Sentencing <span>(Past 5 years)</span>
-            </Styled.SectionTitle>
+            <Styled.SectionTitle>Historical Sentencing</Styled.SectionTitle>
             <AttributeChips
               numberOfRecords={insight?.dispositionNumRecords.toLocaleString()}
             />
