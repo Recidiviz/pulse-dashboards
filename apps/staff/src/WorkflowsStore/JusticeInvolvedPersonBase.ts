@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
+import { get, some } from "lodash";
 import { action, computed, makeObservable, observable } from "mobx";
 
 import { FullName, OpportunityType, StaffRecord, WorkflowsJusticeInvolvedPersonRecord } from "~datatypes";
 
-import { SearchField } from "../core/models/types";
+import { AnyWorkflowsSystemConfig } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
 import {
   ContactMethodType,
@@ -96,6 +98,7 @@ export class JusticeInvolvedPersonBase<
       this.record.allEligibleOpportunities,
     );
   }
+  bannerText?: string | undefined;
 
   get profileUrl(): string {
     return workflowsUrl("residentProfile", {
@@ -255,11 +258,26 @@ export class JusticeInvolvedPersonBase<
     });
   }
 
-  get searchField(): SearchField | undefined {
-    return undefined;
+  get systemConfig(): AnyWorkflowsSystemConfig {
+    throw new Error("systemConfig must be overriden");
   }
 
-  get searchIdValue(): string | undefined {
-    return this.assignedStaffId;
+  get searchIdValue(): string[] | undefined {
+    return get(this.record, this.systemConfig.searchField);
+  }
+
+  matchesSearch(searchIds: string[]): boolean {
+    const searchIdValue = this.searchIdValue;
+    switch (this.systemConfig.searchOp) {
+      case "array-contains-any":
+        if (!Array.isArray(searchIdValue)) return false;
+        return some(searchIds, (id) => searchIdValue.includes(id));
+      case "in":
+      case undefined:
+        if (typeof searchIdValue !== "string") return false;
+        return searchIds.includes(searchIdValue);
+      default:
+        assertNever(this.systemConfig.searchOp);
+    }
   }
 }

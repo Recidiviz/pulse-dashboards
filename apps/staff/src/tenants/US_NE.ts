@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_NE_CONFIG: TenantConfig = {
+const US_NE_CONFIG: TenantConfig<"US_NE"> = {
   name: "Nebraska",
   stateCode: "NE",
   domain: "corrections.nebraska.gov",
@@ -28,7 +28,7 @@ const US_NE_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
     },
   },
   navigation: {

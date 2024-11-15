@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { query, where } from "firebase/firestore";
+import { FieldPath, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
@@ -41,7 +41,9 @@ beforeEach(() => {
 
   workflowsStoreMock = observable({
     selectedSearchIds: ["TEST1"],
-    searchField: "officerId",
+    systemConfigFor: vi.fn(() => ({
+      searchField: "officerId",
+    })),
     rootStore: {
       currentTenantId: "US_ND",
       firestoreStore: {
@@ -59,13 +61,17 @@ beforeEach(() => {
 test("dataSource reflects observables with defined search field", () => {
   runInAction(() => {
     // @ts-ignore
-    workflowsStoreMock.searchField = "facilityId";
+    workflowsStoreMock.systemConfigFor = vi.fn(() => ({
+      searchField: "facilityId",
+    }));
   });
   sub.subscribe();
 
   expect(collectionMock).toHaveBeenCalledWith({ key: "clients" });
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
-  expect(whereMock).toHaveBeenCalledWith("facilityId", "in", ["TEST1"]);
+  expect(whereMock).toHaveBeenCalledWith(new FieldPath("facilityId"), "in", [
+    "TEST1",
+  ]);
   expect(queryMock).toHaveBeenCalled();
 });
 
@@ -94,7 +100,10 @@ test("dataSource reacts to observables", () => {
   });
 
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
-  expect(whereMock).toHaveBeenCalledWith("officerId", "in", ["TEST1", "TEST2"]);
+  expect(whereMock).toHaveBeenCalledWith(new FieldPath("officerId"), "in", [
+    "TEST1",
+    "TEST2",
+  ]);
 });
 
 test("dataSource can be unset and reset", () => {
@@ -115,7 +124,10 @@ test("dataSource can be unset and reset", () => {
   });
 
   expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
-  expect(whereMock).toHaveBeenCalledWith("officerId", "in", ["TEST1", "TEST2"]);
+  expect(whereMock).toHaveBeenCalledWith(new FieldPath("officerId"), "in", [
+    "TEST1",
+    "TEST2",
+  ]);
 });
 
 test("FirestoreConverter inserts inferred properties when reading snapshot", () => {

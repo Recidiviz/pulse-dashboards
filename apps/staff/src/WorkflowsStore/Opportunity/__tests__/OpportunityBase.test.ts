@@ -597,7 +597,7 @@ describe("tracking", () => {
     expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
-      searchField: undefined,
+      searchField: "officerId",
       searchIdValue: undefined,
       tabTitle: opp.tabTitle(),
       opportunityId: opp.sentryTrackingId,

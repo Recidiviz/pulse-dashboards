@@ -51,11 +51,11 @@ import {
 } from "~hydration-utils";
 
 import {
+  AnyWorkflowsSystemConfig,
   Searchable,
   SearchableGroup,
   SearchType,
   SystemId,
-  WorkflowsSystemConfig,
 } from "../core/models/types";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
@@ -559,18 +559,6 @@ export class WorkflowsStore implements Hydratable {
     return this.activeSystemConfig?.searchType;
   }
 
-  get searchField(): keyof ClientRecord | keyof WorkflowsResidentRecord {
-    const searchField = this.activeSystemConfig?.searchField;
-    if (searchField) {
-      return searchField;
-    }
-
-    if (this.searchType === "LOCATION") {
-      return "facilityId";
-    }
-    return "officerId";
-  }
-
   get staffSubscription():
     | StaffSubscription<StaffRecord>[]
     | (
@@ -636,17 +624,16 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get caseloadPersons(): JusticeInvolvedPerson[] {
-    const personTypeMatchesActiveSystem = (p: JusticeInvolvedPerson) =>
-      this.activeSystem === "ALL" ||
-      (this.activeSystem === "INCARCERATION" && p instanceof Resident) ||
-      (this.activeSystem === "SUPERVISION" && p instanceof Client);
+    return values(this.justiceInvolvedPersons).filter((p) => {
+      const personTypeMatchesActiveSystem =
+        this.activeSystem === "ALL" ||
+        (this.activeSystem === "INCARCERATION" && p instanceof Resident) ||
+        (this.activeSystem === "SUPERVISION" && p instanceof Client);
 
-    return values(this.justiceInvolvedPersons).filter(
-      (p) =>
-        p.searchIdValue &&
-        this.selectedSearchIds.includes(p.searchIdValue) &&
-        personTypeMatchesActiveSystem(p),
-    );
+      return (
+        personTypeMatchesActiveSystem && p.matchesSearch(this.selectedSearchIds)
+      );
+    });
   }
 
   get caseloadPersonsSorted(): JusticeInvolvedPerson[] {
@@ -970,23 +957,6 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
-  /**
-   * For use when the activeSystem is "ALL", as the LocationSubscription and resident
-   * CaseloadSubscription need to pull the location searchField directly from the
-   * tenant config.
-   */
-  get locationSearchField(): string | undefined {
-    const {
-      rootStore: { currentTenantId },
-    } = this;
-
-    if (!currentTenantId) return undefined;
-
-    return Object.values(tenants[currentTenantId].workflowsSystemConfigs ?? {})
-      .filter((config) => config.searchType === "LOCATION")
-      .map((c) => c.searchField)[0];
-  }
-
   get formIsDownloading(): boolean {
     return this.formDownloadingFlag;
   }
@@ -1028,20 +998,24 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
-  get activeSystemConfig():
-    | WorkflowsSystemConfig<ClientRecord>
-    | WorkflowsSystemConfig<WorkflowsResidentRecord>
-    | undefined {
+  get activeSystemConfig(): AnyWorkflowsSystemConfig | undefined {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId || !this.activeSystem || this.activeSystem === "ALL") {
       return undefined;
     }
 
+    return this.systemConfigFor(this.activeSystem);
+  }
+
+  systemConfigFor(system: Exclude<SystemId, "ALL">): AnyWorkflowsSystemConfig {
+    const fallback: AnyWorkflowsSystemConfig = {
+      searchField: ["officerId"],
+      searchType: "OFFICER",
+    };
+    const { currentTenantId } = this.rootStore;
+    if (!currentTenantId) return fallback;
     return (
-      tenants[currentTenantId].workflowsSystemConfigs?.[this.activeSystem] ?? {
-        searchField: "officerId",
-        searchType: "OFFICER",
-      }
+      tenants[currentTenantId].workflowsSystemConfigs?.[system] ?? fallback
     );
   }
 

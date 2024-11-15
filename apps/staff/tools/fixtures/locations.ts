@@ -47,6 +47,20 @@ const data: LocationRecord[] = [
     id: "FACILITY1",
     name: "Lunar Penal Colony",
   },
+  {
+    stateCode: "US_ID",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "LRC",
+    name: "Lunar Reentry Center",
+  },
+  {
+    stateCode: "US_ID",
+    system: "INCARCERATION",
+    idType: "facilityId",
+    id: "PRC",
+    name: "Phobos Reentry Center",
+  },
 
   //
   // Michigan

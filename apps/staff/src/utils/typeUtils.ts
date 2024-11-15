@@ -80,3 +80,15 @@ export type AllPossibleKeys<T> = T extends any ? keyof T : never;
 export type RemoveIndexSignature<T> = {
   [K in keyof T as string extends K ? never : K]: T[K];
 };
+
+// Countdown for bounded recursion
+// prettier-ignore
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]];
+
+// Takes an object, evaluates to the set of tuples that are paths to values within that object
+export type Leaves<T, D extends number = 10> = [D] extends [never]
+  ? never
+  : T extends object
+    ? { [K in keyof T]-?: [K, ...Leaves<T[K], Prev[D]>] }[keyof T]
+    : [];

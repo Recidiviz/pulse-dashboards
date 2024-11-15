@@ -32,7 +32,6 @@ import {
   SpecialConditionCode,
 } from "~datatypes";
 
-import { SearchField } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
 import {
   DeclineReason,
@@ -307,19 +306,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return conditionsToDisplay;
   }
 
-  get searchField(): SearchField | undefined {
-    const { currentTenantId } = this.rootStore;
-    return (
-      currentTenantId &&
-      tenants[currentTenantId]?.workflowsSystemConfigs?.SUPERVISION?.searchField
-    );
-  }
-
-  get searchIdValue(): string {
-    const searchField = this.searchField;
-    return searchField === "officerId"
-      ? this.record[searchField]
-      : this.assignedStaffId;
+  get systemConfig() {
+    return this.rootStore.workflowsStore.systemConfigFor("SUPERVISION");
   }
 
   get profileMilestones(): Milestone[] {

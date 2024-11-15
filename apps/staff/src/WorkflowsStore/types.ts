@@ -21,7 +21,7 @@ import {
   WorkflowsJusticeInvolvedPersonRecord,
 } from "~datatypes";
 
-import { SearchField, StaffFilter } from "../core/models/types";
+import { AnyWorkflowsSystemConfig, StaffFilter } from "../core/models/types";
 import {
   CombinedUserRecord,
   PersonUpdateRecord,
@@ -95,11 +95,15 @@ export type JusticeInvolvedPerson = {
    * The value of the field on the person record that is used to return search results. Defaults to
    * the person's assigned staff ID.
    */
-  searchIdValue: string | undefined;
+  searchIdValue: string[] | undefined;
   /**
    * The category of search that was conducted (officer, facility, or facility unit.)
    */
-  searchField: SearchField | undefined;
+  systemConfig: AnyWorkflowsSystemConfig;
+  /**
+   * Returns true if this person is matched by the list of searchIds
+   */
+  matchesSearch: (searchIds: string[]) => boolean;
   /**
    * The date when the data about this person was most recently synced from the state
    */

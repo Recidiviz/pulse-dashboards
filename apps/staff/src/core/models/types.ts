@@ -23,7 +23,8 @@ import {
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import { TenantId } from "../../RootStore/types";
+import { TenantConfigId, TenantId } from "../../RootStore/types";
+import { Leaves } from "../../utils/typeUtils";
 import {
   JusticeInvolvedPerson,
   StaffFilterFunction,
@@ -51,7 +52,7 @@ export type ApiData = {
 export type RawApiData = Record<string, ApiData>;
 export type RawMetricData = Record<string, string>[];
 
-export type TenantConfig = {
+export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   name: string;
   stateCode: string;
   domain?: string;
@@ -64,8 +65,8 @@ export type TenantConfig = {
   tableColumns?: TableColumns;
   workflowsSupportedSystems?: SystemId[];
   workflowsSystemConfigs?: {
-    INCARCERATION?: WorkflowsSystemConfig<ResidentSearchFields>;
-    SUPERVISION?: WorkflowsSystemConfig<ClientSearchFields>;
+    INCARCERATION?: WorkflowsSystemConfig<WorkflowsResidentRecord, TENANT_ID>;
+    SUPERVISION?: WorkflowsSystemConfig<ClientRecord, TENANT_ID>;
   };
   workflowsHomepage?: WorkflowsPage;
   workflowsHomepageName?: string;
@@ -106,17 +107,18 @@ export type SnoozeTaskConfig = {
   };
 };
 
-export type SearchField = "officerId" | "facilityId" | "facilityUnitId";
-
-export type ResidentSearchFields = Pick<WorkflowsResidentRecord, SearchField>;
-
-export type ClientSearchFields = Pick<ClientRecord, "officerId">;
-
-export type WorkflowsSystemConfig<T> = {
+export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
   searchType: SearchType;
-  searchField: keyof T;
+  searchField: Leaves<R & { metadata: { stateCode: T } }> & string[];
+  locationIdType?: "facilityId" | "facilityUnitId";
+  searchOp?: "in" | "array-contains-any";
   searchTitleOverride?: string;
+  onlySurfaceEligible?: boolean;
 };
+
+export type AnyWorkflowsSystemConfig =
+  | WorkflowsSystemConfig<ClientRecord, any>
+  | WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
 
 export type Searchable = {
   searchLabel: string;

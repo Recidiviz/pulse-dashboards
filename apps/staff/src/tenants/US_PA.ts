@@ -19,7 +19,7 @@ import { TenantConfig } from "../core/models/types";
 import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboards from "../RootStore/TenantStore/dashboardTenants";
 
-const US_PA_CONFIG: TenantConfig = {
+const US_PA_CONFIG: TenantConfig<"US_PA"> = {
   name: "Pennsylvania",
   stateCode: "PA",
   domain: "pa.gov",
@@ -28,7 +28,7 @@ const US_PA_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
       searchTitleOverride: "agent",
     },
   },

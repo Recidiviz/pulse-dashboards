@@ -25,7 +25,7 @@ import {
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 
-const US_ND_CONFIG: TenantConfig = {
+const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   name: "North Dakota",
   stateCode: "ND",
   domain: "nd.gov",
@@ -35,7 +35,7 @@ const US_ND_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
       searchTitleOverride: "case manager",
     },
   },

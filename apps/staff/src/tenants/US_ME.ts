@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_ME_CONFIG: TenantConfig = {
+const US_ME_CONFIG: TenantConfig<"US_ME"> = {
   name: "Maine",
   stateCode: "ME",
   domain: "maine.gov",
@@ -29,12 +29,12 @@ const US_ME_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
       searchTitleOverride: "case manager",
     },
     SUPERVISION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
       searchTitleOverride: "officer",
     },
   },

@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_OR_CONFIG: TenantConfig = {
+const US_OR_CONFIG: TenantConfig<"US_OR"> = {
   name: "Oregon",
   stateCode: "OR",
   domain: "doc.oregon.gov",
@@ -28,7 +28,7 @@ const US_OR_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "CASELOAD",
-      searchField: "officerId",
+      searchField: ["officerId"],
       searchTitleOverride: "caseload",
     },
   },

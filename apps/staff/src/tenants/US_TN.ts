@@ -26,7 +26,7 @@ import {
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const US_TN_CONFIG: TenantConfig = {
+const US_TN_CONFIG: TenantConfig<"US_TN"> = {
   name: "Tennessee",
   stateCode: "TN",
   domain: "tn.gov",
@@ -38,7 +38,7 @@ const US_TN_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "LOCATION",
-      searchField: "facilityUnitId",
+      searchField: ["facilityUnitId"],
       searchTitleOverride: "unit",
     },
   },

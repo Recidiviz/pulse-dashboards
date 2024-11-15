@@ -30,24 +30,15 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
   }
 
   get dataSource(): Query | undefined {
-    const { searchField, activeSystem, locationSearchField } =
-      this.rootStore.workflowsStore;
+    const { searchField, locationIdType } =
+      this.rootStore.workflowsStore.systemConfigFor("INCARCERATION");
     const stateCode = this.rootStore.currentTenantId;
     if (!stateCode) return;
 
-    const constraints = [where("stateCode", "==", stateCode)];
-
-    if (activeSystem === "ALL" && locationSearchField) {
-      /* If activeSystem is ALL, then we need to select the location type's search field. */
-      constraints.push(where("idType", "==", locationSearchField));
-    } else {
-      /* If the activeSystem is already selected, then we can use the computed searchField */
-      constraints.push(where("idType", "==", searchField));
-    }
-
     return query(
       this.rootStore.firestoreStore.collection({ key: "locations" }),
-      ...constraints,
+      where("stateCode", "==", stateCode),
+      where("idType", "==", locationIdType ?? searchField),
     );
   }
 }

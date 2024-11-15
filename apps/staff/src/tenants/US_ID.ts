@@ -30,7 +30,7 @@ import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const US_ID_CONFIG: TenantConfig = {
+const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   name: "Idaho",
   stateCode: "ID",
   domain: "idoc.idaho.gov",
@@ -65,8 +65,11 @@ const US_ID_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "LOCATION",
-      searchField: "facilityId",
+      searchField: ["metadata", "crcFacilities"],
+      locationIdType: "facilityId",
+      searchOp: "array-contains-any",
       searchTitleOverride: "facility",
+      onlySurfaceEligible: true,
     },
   },
   navigation: {

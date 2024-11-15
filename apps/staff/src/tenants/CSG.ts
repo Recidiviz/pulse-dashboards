@@ -20,7 +20,7 @@ import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import * as lantern from "../RootStore/TenantStore/lanternTenants";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 
-export const CSG_CONFIG: TenantConfig = {
+export const CSG_CONFIG: TenantConfig<"CSG"> = {
   name: "CSG",
   stateCode: "CSG",
   domain: "csg.org",

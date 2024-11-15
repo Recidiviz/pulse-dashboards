@@ -20,7 +20,7 @@ import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 
-const US_MO_CONFIG: TenantConfig = {
+const US_MO_CONFIG: TenantConfig<"US_MO"> = {
   name: "Missouri",
   stateCode: "MO",
   domain: "doc.mo.gov",
@@ -30,7 +30,7 @@ const US_MO_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "LOCATION",
-      searchField: "facilityId",
+      searchField: ["facilityId"],
       searchTitleOverride: "facility",
     },
   },

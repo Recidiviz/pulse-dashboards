@@ -20,7 +20,7 @@ import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const US_MI_CONFIG: TenantConfig = {
+const US_MI_CONFIG: TenantConfig<"US_MI"> = {
   name: "Michigan",
   stateCode: "MI",
   domain: "michigan.gov",
@@ -31,12 +31,12 @@ const US_MI_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
       searchTitleOverride: "agent",
     },
     INCARCERATION: {
       searchType: "LOCATION",
-      searchField: "facilityId",
+      searchField: ["facilityId"],
       searchTitleOverride: "facility",
     },
   },

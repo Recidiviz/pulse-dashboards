@@ -76,7 +76,7 @@ export type UsAzResidentMetadata = {
 
 export type UsIdResidentMetadata = {
   stateCode: "US_ID";
-  crcFacility: string;
+  crcFacilities: string[];
   initialParoleHearingDate: string | null;
   nextParoleHearingDate: string | null;
   tentativeParoleDate: string | null;

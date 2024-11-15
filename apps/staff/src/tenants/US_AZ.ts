@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_AZ_CONFIG: TenantConfig = {
+const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
   name: "Arizona",
   stateCode: "AZ",
   domain: "corrections.az.gov",
@@ -28,7 +28,7 @@ const US_AZ_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     INCARCERATION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
     },
   },
   navigation: {

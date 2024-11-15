@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_IA_CONFIG: TenantConfig = {
+const US_IA_CONFIG: TenantConfig<"US_IA"> = {
   name: "Iowa",
   stateCode: "IA",
   domain: "doc.iowa.gov",
@@ -28,7 +28,7 @@ const US_IA_CONFIG: TenantConfig = {
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",
-      searchField: "officerId",
+      searchField: ["officerId"],
     },
   },
   navigation: {

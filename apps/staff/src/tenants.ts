@@ -52,7 +52,7 @@ export const RECIDIVIZ_TENANT = "RECIDIVIZ";
 export const CSG = "CSG";
 
 export type Tenants = {
-  [key in TenantConfigId]: TenantConfig;
+  [K in TenantConfigId]: TenantConfig<K>;
 };
 
 // Add any new tenant IDs to the list in `fetchOfflineUser.js` to enable in offline mode.
@@ -80,12 +80,12 @@ const TENANTS: Tenants = {
     workflowsSystemConfigs: {
       INCARCERATION: {
         searchType: "OFFICER",
-        searchField: "officerId",
+        searchField: ["officerId"],
         searchTitleOverride: "case manager",
       },
       SUPERVISION: {
         searchType: "OFFICER",
-        searchField: "officerId",
+        searchField: ["officerId"],
         searchTitleOverride: "officer",
       },
     },

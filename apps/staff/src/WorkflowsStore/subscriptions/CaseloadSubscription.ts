@@ -15,10 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { DocumentData, Query, query, where } from "firebase/firestore";
+import {
+  DocumentData,
+  FieldPath,
+  Query,
+  query,
+  where,
+} from "firebase/firestore";
 import { z } from "zod";
 
-import type { FirestoreCollectionKey } from "~firestore-api";
+import { FirestoreCollectionKey } from "~firestore-api";
 
 import { WorkflowsStore } from "../WorkflowsStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
@@ -47,10 +53,7 @@ export class CaseloadSubscription<
   get dataSource(): Query | undefined {
     const {
       selectedSearchIds,
-      searchField,
       rootStore: { currentTenantId, firestoreStore },
-      activeSystem,
-      locationSearchField,
     } = this.workflowsStore;
 
     if (!currentTenantId || !selectedSearchIds.length) {
@@ -59,17 +62,21 @@ export class CaseloadSubscription<
 
     const { firestoreCollectionKey, personType } = this;
 
-    const constraints = [where("stateCode", "==", currentTenantId)];
-    if (
-      personType === "RESIDENT" &&
-      activeSystem === "ALL" &&
-      locationSearchField
-    ) {
-      /* If activeSystem is ALL, then we need to select the location type's search field. */
-      constraints.push(where(locationSearchField, "in", selectedSearchIds));
-    } else {
-      /* If the activeSystem is already selected, then we can use the computed searchField */
-      constraints.push(where(searchField, "in", selectedSearchIds));
+    const config = this.workflowsStore.systemConfigFor(
+      personType === "RESIDENT" ? "INCARCERATION" : "SUPERVISION",
+    );
+
+    const constraints = [
+      where("stateCode", "==", currentTenantId),
+      where(
+        new FieldPath(...config.searchField),
+        config.searchOp ?? "in",
+        selectedSearchIds,
+      ),
+    ];
+
+    if (config.onlySurfaceEligible) {
+      constraints.push(where("allEligibleOpportunities", "!=", []));
     }
 
     return query(
