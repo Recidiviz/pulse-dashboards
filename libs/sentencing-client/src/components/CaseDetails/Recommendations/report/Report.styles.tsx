@@ -313,7 +313,6 @@ export const AttributeChip = styled.div`
   padding: 4px 8px;
   border: 1px solid ${customPalette.black};
   border-radius: 4px;
-  white-space: nowrap;
 `;
 
 export const ExternalId = styled.span`

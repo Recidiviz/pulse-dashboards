@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { printFormattedRecordString } from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
@@ -41,7 +42,8 @@ export function DispositionChartExplanation({
       <Styled.TextWrapper>
         Historical Sentencing represents the percentage of cases sentenced to a
         particular disposition. The rates are based on{" "}
-        {dispositionNumRecords.toLocaleString()} records of{" "}
+        {dispositionNumRecords.toLocaleString()}{" "}
+        {printFormattedRecordString(dispositionNumRecords)} of{" "}
         <span>{genderString}</span>
         <LsirScoreText
           rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}

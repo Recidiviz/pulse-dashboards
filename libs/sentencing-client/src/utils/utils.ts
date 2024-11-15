@@ -135,3 +135,8 @@ export const extractDistrictAndCounty = (input: string) => {
     .map((str) => str.trim().toLocaleLowerCase());
   return { district, county };
 };
+
+/** Displays `record` for 1 record or `records` for 0 or more than 1 records */
+export const printFormattedRecordString = (numberOfRecords: number) => {
+  return numberOfRecords === 1 ? `record` : `records`;
+};

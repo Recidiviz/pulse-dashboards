@@ -19,12 +19,15 @@ import _ from "lodash";
 import moment from "moment";
 
 import { CaseInsight } from "../../../../api";
-import { convertDecimalToPercentage } from "../../../../utils/utils";
+import {
+  convertDecimalToPercentage,
+  printFormattedRecordString,
+} from "../../../../utils/utils";
 import RecidivizLogo from "../../../assets/recidiviz-logo-bw.png";
 import { SelectedRecommendation } from "../../../CaseDetails/types";
 import { INDIVIDUALS_STRING } from "../../components/charts/common/constants";
 import {
-  getDescriptionGender,
+  getSubtitleGender,
   getSubtitleLsirScore,
 } from "../../components/charts/common/utils";
 import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
@@ -111,14 +114,10 @@ export function Report({
 
   const chartCaptions = insight ? getChartCaptions(insight) : {};
 
-  const AttributeChips = ({
-    numberOfRecords,
-  }: {
-    numberOfRecords?: string;
-  }) => {
+  const HistoricalSentencingAttributeChips = () => {
     if (!insight) return null;
-
-    const genderString = getDescriptionGender(insight.gender);
+    const numberOfRecords = insight?.dispositionNumRecords.toLocaleString();
+    const genderString = getSubtitleGender(insight.gender);
     const lsirScore = getSubtitleLsirScore(
       insight.assessmentScoreBucketStart,
       insight.assessmentScoreBucketEnd,
@@ -128,7 +127,40 @@ export function Report({
       <Styled.AttributesContainer>
         {numberOfRecords && (
           <Styled.NumberOfRecords>
-            {numberOfRecords} records
+            {numberOfRecords}{" "}
+            {printFormattedRecordString(insight?.dispositionNumRecords)}
+          </Styled.NumberOfRecords>
+        )}
+        <Styled.AttributeChipsWrapper>
+          {genderString && genderString !== INDIVIDUALS_STRING && (
+            <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
+          )}
+          {lsirScore && (
+            <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>
+          )}
+          <Styled.AttributeChip>{insight?.offense}</Styled.AttributeChip>
+        </Styled.AttributeChipsWrapper>
+      </Styled.AttributesContainer>
+    );
+  };
+
+  const CumulativeRecidivismRatesAttributeChips = () => {
+    if (!insight) return null;
+
+    const genderString = getSubtitleGender(insight.rollupGender);
+    const lsirScore = getSubtitleLsirScore(
+      insight.rollupAssessmentScoreBucketStart,
+      insight.rollupAssessmentScoreBucketEnd,
+    );
+    const numberOfRecords =
+      insight?.rollupRecidivismNumRecords.toLocaleString();
+
+    return (
+      <Styled.AttributesContainer>
+        {numberOfRecords && (
+          <Styled.NumberOfRecords>
+            {numberOfRecords}{" "}
+            {printFormattedRecordString(insight?.rollupRecidivismNumRecords)}
           </Styled.NumberOfRecords>
         )}
         <Styled.AttributeChipsWrapper>
@@ -196,9 +228,7 @@ export function Report({
         <Styled.BreakdownByDisposition>
           <Styled.TitleAttributesWrapper>
             <Styled.SectionTitle>Historical Sentencing</Styled.SectionTitle>
-            <AttributeChips
-              numberOfRecords={insight?.dispositionNumRecords.toLocaleString()}
-            />
+            <HistoricalSentencingAttributeChips />
           </Styled.TitleAttributesWrapper>
 
           <Styled.SentencingRecidivismRateContainer>
@@ -242,9 +272,7 @@ export function Report({
             <Styled.SectionTitle>
               Cumulative Recidivism Rate <span>(36 months)</span>
             </Styled.SectionTitle>
-            <AttributeChips
-              numberOfRecords={insight?.rollupRecidivismNumRecords.toLocaleString()}
-            />
+            <CumulativeRecidivismRatesAttributeChips />
           </Styled.TitleAttributesWrapper>
 
           <Styled.SentencingRecidivismRateContainer>

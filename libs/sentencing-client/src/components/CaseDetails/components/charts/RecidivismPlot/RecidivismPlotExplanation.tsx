@@ -17,6 +17,7 @@
 
 import moment from "moment";
 
+import { printFormattedRecordString } from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
 import ciLegendImg from "../../../../assets/ci-legend.png";
 import { INDIVIDUALS_STRING } from "../common/constants";
@@ -67,16 +68,16 @@ export function RecidivismPlotExplanation({
   isTooltip = false,
 }: RecidivismPlotExplanationProps) {
   const {
+    rollupGender,
     rollupOffense,
     rollupNcicCategory,
     rollupCombinedOffenseCategory,
     rollupViolentOffense,
+    rollupAssessmentScoreBucketStart,
+    rollupAssessmentScoreBucketEnd,
     rollupRecidivismNumRecords,
-    assessmentScoreBucketStart,
-    assessmentScoreBucketEnd,
-    gender,
   } = insight;
-  const genderString = getDescriptionGender(gender);
+  const genderString = rollupGender && getDescriptionGender(rollupGender);
 
   return (
     <Styled.TextContainer>
@@ -85,15 +86,16 @@ export function RecidivismPlotExplanation({
         been incarcerated, re-incarcerated, or been given a new probation
         sentence during the three years immediately after the start of their
         probation sentence or their release into the community. The rates are
-        based on {rollupRecidivismNumRecords.toLocaleString()} records of{" "}
-        {genderString === INDIVIDUALS_STRING ? (
+        based on {rollupRecidivismNumRecords.toLocaleString()}{" "}
+        {printFormattedRecordString(rollupRecidivismNumRecords)} of{" "}
+        {genderString === INDIVIDUALS_STRING || !genderString ? (
           INDIVIDUALS_STRING
         ) : (
           <span>{genderString}</span>
         )}
         <LsirScoreText
-          rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
-          rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
+          rollupAssessmentScoreBucketStart={rollupAssessmentScoreBucketStart}
+          rollupAssessmentScoreBucketEnd={rollupAssessmentScoreBucketEnd}
         />{" "}
         with{" "}
         <OffenseText
