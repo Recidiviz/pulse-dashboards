@@ -18,7 +18,7 @@
 import { toTitleCase } from "@artsy/to-title-case";
 import { arrayMove } from "@dnd-kit/sortable";
 import { difference, intersection } from "lodash";
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, reaction } from "mobx";
 import toast from "react-hot-toast";
 
 import { OpportunityType } from "~datatypes";
@@ -39,6 +39,7 @@ import {
 } from "../Opportunity";
 import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
 import { CollectionDocumentSubscription } from "../subscriptions";
+import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
 /**
  * Responsible for presenting information about the caseload relative to a user's
@@ -52,6 +53,8 @@ export class OpportunityCaseloadPresenter {
   private userSelectedTab?: OpportunityTab;
   private userOrderedTabs?: OpportunityTab[];
   private readonly updatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
+
+  private _navigablePeople: Opportunity<JusticeInvolvedPerson>[] = [];
 
   constructor(
     private readonly analyticsStore: AnalyticsStore,
@@ -73,7 +76,19 @@ export class OpportunityCaseloadPresenter {
 
     this.sortingEnabled = !!featureVariants.sortableOpportunityTabs;
 
-    makeAutoObservable(this);
+    // only update the list of people to navigate through when a new sidebar is opened
+    reaction(
+      () => this.selectedPerson,
+      (_, previousPerson) => {
+        if (previousPerson === undefined) this.updateNavigablePeople();
+      },
+      // populate the list if there's already a selected person upon page load
+      { fireImmediately: true },
+    );
+
+    makeAutoObservable(this, {
+      updateNavigablePeople: action,
+    });
   }
 
   get activeTab() {
@@ -238,15 +253,27 @@ export class OpportunityCaseloadPresenter {
   }
 
   get navigablePeople() {
-    // The subcategory order should always be defined if there are currently subcategories
-    const { peopleInActiveTabBySubcategory, subcategoryOrder } = this;
-    if (peopleInActiveTabBySubcategory && subcategoryOrder) {
-      return subcategoryOrder.flatMap(
-        (category) => peopleInActiveTabBySubcategory[category],
-      );
-    }
+    return this._navigablePeople;
+  }
 
-    return this.peopleInActiveTab;
+  /**
+   * Set the list of people that a user can navigate through to the current contents of
+   * the active tab, in display order (taking into account subcategories if applicable).
+   * Called when a new preview modal is opened, so that the list of navigable
+   * people does not change even if people move in/out of the active tab.
+   */
+  updateNavigablePeople() {
+    const { peopleInActiveTabBySubcategory, subcategoryOrder } = this;
+
+    // the subcategory order should always be defined if there are currently
+    // subcategories
+    if (peopleInActiveTabBySubcategory && subcategoryOrder) {
+      this._navigablePeople = subcategoryOrder.flatMap(
+        (category) => peopleInActiveTabBySubcategory[category] ?? [],
+      );
+    } else {
+      this._navigablePeople = this.peopleInActiveTab;
+    }
   }
 
   headingText(subcategory: string) {

@@ -122,6 +122,7 @@ export const HydratedOpportunityPersonList = observer(
       opportunityType,
       supervisionPresenter,
     );
+
     return <HydratedOpportunityPersonListWithPresenter presenter={presenter} />;
   },
 );
@@ -267,7 +268,7 @@ export const HydratedOpportunityPersonListWithPresenter = observer(
 
         <OpportunityPreviewModal
           opportunity={presenter.selectedOpportunity}
-          navigableOpportunities={peopleInActiveTab}
+          navigableOpportunities={presenter.navigablePeople}
           selectedPerson={presenter.selectedPerson}
         />
         <WorkflowsLastSynced

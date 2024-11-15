@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../../components/StoreProvider";
@@ -36,7 +37,7 @@ import { UsMiMinMaxReleaseDates } from "./US_MI/UsMiMinMaxReleaseDates";
 import { UsNdIncarcerationDetails } from "./US_ND/UsNdIncarcerationDetails";
 import { UsTnFacilityAdmissionDateSubsection } from "./US_TN/UsTnFacilityAdmissionDateSubsection";
 
-function ReleaseDate({
+const ReleaseDate = observer(function ReleaseDate({
   resident,
   opportunity,
 }: ResidentWithOptionalOpportunityProps): React.ReactElement {
@@ -64,7 +65,7 @@ function ReleaseDate({
       </SecureDetailsContent>
     </>
   );
-}
+});
 
 export function Incarceration({
   resident,
