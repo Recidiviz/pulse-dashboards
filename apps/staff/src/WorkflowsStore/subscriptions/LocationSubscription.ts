@@ -38,7 +38,7 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
     return query(
       this.rootStore.firestoreStore.collection({ key: "locations" }),
       where("stateCode", "==", stateCode),
-      where("idType", "==", locationIdType ?? searchField),
+      where("idType", "==", locationIdType ?? searchField[0]),
     );
   }
 }
