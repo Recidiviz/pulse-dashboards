@@ -81,7 +81,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   // TODO(#5780): move infoItems to presenter
   const infoItems = [
     {
-      title: "current clients",
+      title: "active clients",
       info: numClientsOnCaseload,
     },
     {
