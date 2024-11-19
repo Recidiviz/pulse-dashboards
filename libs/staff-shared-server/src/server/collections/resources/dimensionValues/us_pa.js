@@ -42,6 +42,8 @@ const DEFAULT_SUPERVISION_LEVELS = [
   "medium",
   "minimum",
   "special",
+  "absconsion",
+  "in_custody",
 ];
 
 const DEFAULT_VIOLATION_TYPES = [

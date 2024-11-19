@@ -42,6 +42,8 @@ const SUPERVISION_LEVELS = [
   "medium",
   "minimum",
   "special",
+  "absconsion",
+  "in_custody",
 ];
 const SUPERVISION_TYPES = ["all", "dual", "parole", "probation"];
 const VIOLATION_TYPES = [

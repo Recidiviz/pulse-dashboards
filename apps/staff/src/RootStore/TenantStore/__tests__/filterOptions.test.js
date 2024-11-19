@@ -452,10 +452,6 @@ describe("filterOptionsMap", () => {
     it("returns the correct supervisionLevel filter options", () => {
       const expected = {
         componentEnabled: true,
-        defaultOption: {
-          label: "All",
-          value: "All",
-        },
         defaultValue: "All",
         options: [
           {
@@ -485,6 +481,14 @@ describe("filterOptionsMap", () => {
           {
             label: "Monitored Supervision",
             value: "ELECTRONIC_MONITORING_ONLY",
+          },
+          {
+            label: "Absconsion",
+            value: "ABSCONSION",
+          },
+          {
+            label: "In Custody",
+            value: "IN_CUSTODY",
           },
         ],
       };
