@@ -27,6 +27,7 @@ import NotFound from "../components/NotFound";
 import {
   PartiallyTypedRootStore,
   useRootStore,
+  useUserStore,
 } from "../components/StoreProvider";
 import useIntercom from "../hooks/useIntercom";
 import { LANTERN_TENANTS } from "../RootStore/TenantStore/lanternTenants";
@@ -39,11 +40,15 @@ import Revocations from "./Revocations";
 const LanternLayout: React.FC = (): React.ReactElement | null => {
   // TODO(#5636) Eliminate PartiallyTypedRootStore
   const { currentTenantId } = useRootStore() as PartiallyTypedRootStore;
+  const userStore = useUserStore();
   useIntercom();
 
   setTranslateLocale(currentTenantId);
 
-  if (!LANTERN_TENANTS.includes(currentTenantId)) {
+  if (
+    !LANTERN_TENANTS.includes(currentTenantId) ||
+    !userStore.userAllowedNavigation?.revocations
+  ) {
     return <NotFound />;
   }
 

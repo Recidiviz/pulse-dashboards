@@ -88,8 +88,6 @@ const US_MO_CONFIG: TenantConfig<"US_MO"> = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
-    // TODO remove once LANTERN is deprecated
-    // @ts-ignore
     revocations: [],
     methodology: ["system"],
   },

@@ -463,6 +463,27 @@ describe("getRoutePermission", () => {
       expect(store.getRoutePermission("workflows")).toBeFalse();
     });
   });
+
+  test("lantern permissions", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    const userAppMetadata = {
+      [metadataField]: {
+        stateCode: "US_MO",
+        routes: {
+          lantern: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({
+      email_verified: true,
+      ...userAppMetadata,
+    });
+    const store = new UserStore({
+      authSettings: testAuthSettings,
+    });
+    await store.authorize(mockHandleUrl);
+    expect(store.getRoutePermission("revocations")).toBe(true);
+  });
 });
 
 describe("isUserAllowedRoute", () => {
@@ -649,6 +670,37 @@ describe("userAllowedNavigation", () => {
       methodology: ["system"],
       libertyToPrison: ["countOverTime"],
       system: ["libertyToPrison"],
+    };
+    expect(store.userAllowedNavigation).toEqual(expected);
+  });
+
+  test("allows revocations when lantern permission is set", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    tenants[stateCode].navigation = {
+      system: [
+        PATHWAYS_PAGES.libertyToPrison,
+        PATHWAYS_PAGES.prison,
+        PATHWAYS_PAGES.supervision,
+      ],
+      libertyToPrison: [PATHWAYS_SECTIONS.countOverTime],
+      prison: [PATHWAYS_SECTIONS.countOverTime],
+      supervision: [PATHWAYS_SECTIONS.countOverTime],
+      revocations: [],
+      methodology: [DASHBOARD_VIEWS.system],
+    };
+    const userAppMetadata = {
+      [metadataField]: {
+        stateCode,
+        routes: {
+          lantern: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...userAppMetadata });
+    await store.authorize(mockHandleUrl);
+    const expected = {
+      revocations: [],
+      methodology: [],
     };
     expect(store.userAllowedNavigation).toEqual(expected);
   });

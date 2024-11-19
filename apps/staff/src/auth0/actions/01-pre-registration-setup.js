@@ -77,6 +77,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         system_supervision: true,
         system_supervisionToLiberty: true,
         system_supervisionToPrison: true,
+        lantern: true,
       });
       return;
     }
@@ -176,10 +177,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
         // In that case, they will have a role of "unknown" and no permissions.
         const hasNoPermissions =
           !restrictions.routes || Object.keys(restrictions.routes).length === 0;
-        // Users in lantern states are allowed to have no routes; they'll just get redirected to
-        // lantern. TODO(#4731): restrict lantern access based on routes.
-        const hasLanternAccess = stateCode === "us_mo" || stateCode === "us_pa";
-        if (hasNoPermissions && !hasLanternAccess) {
+        if (hasNoPermissions) {
           throw new Error("User has no permissions");
         }
 

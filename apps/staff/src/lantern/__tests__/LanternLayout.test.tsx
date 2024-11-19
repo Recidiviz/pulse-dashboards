@@ -21,7 +21,7 @@ import { Mock } from "vitest";
 import mockWithTestId from "../../../__helpers__/mockWithTestId";
 import IE11Banner from "../../components/IE11Banner";
 import NotFound from "../../components/NotFound";
-import { useRootStore } from "../../components/StoreProvider";
+import { useRootStore, useUserStore } from "../../components/StoreProvider";
 import useIntercom from "../../hooks/useIntercom";
 import LanternLayout from "../LanternLayout";
 import LanternTopBar from "../LanternTopBar";
@@ -35,6 +35,7 @@ vi.mock("mobx-react-lite", () => {
 });
 vi.mock("../../components/StoreProvider", () => ({
   useRootStore: vi.fn(),
+  useUserStore: vi.fn(),
 }));
 vi.mock("../../hooks/useIntercom");
 vi.mock("../../utils/i18nSettings");
@@ -44,6 +45,7 @@ vi.mock("../../components/IE11Banner");
 vi.mock("../LanternTopBar");
 
 const mockUseRootStore = useRootStore as Mock;
+const mockUseUserStore = useUserStore as Mock;
 
 describe("LanternLayout tests", () => {
   beforeEach(() => {
@@ -57,6 +59,11 @@ describe("LanternLayout tests", () => {
       currentTenantId: "US_PA",
       pageStore: {},
     });
+    mockUseUserStore.mockReturnValue({
+      userAllowedNavigation: {
+        revocations: [],
+      },
+    });
   });
 
   it("should render Revocations for lantern tenants", async () => {
@@ -68,6 +75,16 @@ describe("LanternLayout tests", () => {
     mockUseRootStore.mockReturnValue({
       currentTenantId: "US_XX",
       pageStore: {},
+    });
+    const { getByTestId } = render(<LanternLayout />);
+    expect(getByTestId("not-found-id")).toBeInTheDocument();
+  });
+
+  it("should render NotFound if revocations not in allowed navigation", () => {
+    mockUseUserStore.mockReturnValue({
+      userAllowedNavigation: {
+        workflows: ["home"],
+      },
     });
     const { getByTestId } = render(<LanternLayout />);
     expect(getByTestId("not-found-id")).toBeInTheDocument();

@@ -55,8 +55,21 @@ exports.onExecutePostLogin = async (event, api) => {
   /** Set stateCode in appMetadata for everyone. */
   api.user.setAppMetadata("stateCode", stateCode);
 
-  /** Set featureVariants to allow CSG access to insights (permission is still required) */
   if (stateCode === "csg") {
+    /** Set route permissions */
+    api.user.setAppMetadata("routes", {
+      system_libertyToPrison: true,
+      system_prison: true,
+      system_prisonToSupervision: true,
+      system_supervision: true,
+      system_supervisionToLiberty: true,
+      system_supervisionToPrison: true,
+      insights: true,
+      "insights_supervision_supervisors-list": true,
+      lantern: true,
+    });
+
+    /** Set featureVariants to allow CSG access to insights */
     api.user.setAppMetadata("featureVariants", {
       insightsLeadershipPageAllDistricts: {},
     });
@@ -124,10 +137,7 @@ exports.onExecutePostLogin = async (event, api) => {
     // In that case, they will have a role of "unknown" and no permissions.
     const hasNoPermissions =
       !restrictions.routes || Object.keys(restrictions.routes).length === 0;
-    // Users in lantern states are allowed to have no routes; they'll just get redirected to
-    // lantern. TODO(#4731): restrict lantern access based on routes.
-    const hasLanternAccess = stateCode === "us_mo" || stateCode === "us_pa";
-    if (hasNoPermissions && !hasLanternAccess) {
+    if (hasNoPermissions) {
       throw new Error("User has no permissions");
     }
 

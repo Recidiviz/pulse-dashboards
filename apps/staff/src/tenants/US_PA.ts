@@ -36,8 +36,6 @@ const US_PA_CONFIG: TenantConfig<"US_PA"> = {
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients"],
-    // TODO remove once LANTERN is deprecated
-    // @ts-ignore
     revocations: [],
   },
 };

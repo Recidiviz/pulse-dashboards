@@ -19,7 +19,7 @@ import { psiRootPath } from "~sentencing-client";
 
 import { MetricId, SystemId } from "./models/types";
 
-export const UNRESTRICTED_PAGES = ["revocations", "profile", "methodology", ""];
+export const UNRESTRICTED_PAGES = ["profile", "methodology", ""];
 
 export type DashboardView = keyof typeof DASHBOARD_VIEWS;
 /**
@@ -33,6 +33,7 @@ export const DASHBOARD_VIEWS = {
   workflows: "workflows",
   insights: "insights",
   psi: psiRootPath,
+  revocations: "revocations", // lantern
 } as const;
 export type DashboardViewRootPath = (typeof DASHBOARD_VIEWS)[DashboardView];
 

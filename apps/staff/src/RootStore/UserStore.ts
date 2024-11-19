@@ -514,7 +514,9 @@ export default class UserStore {
         // special case for the "workflows" route:
         // there are actual multiple "routes" in the config that control the same URL route.
         // if any of them are true then the route should be permitted
-        (route === "workflows" && r[0].startsWith("workflows") && r[1]),
+        (route === "workflows" && r[0].startsWith("workflows") && r[1]) ||
+        // special case for the "lantern" route, which maps to the "revocations" navigation item
+        (route === "revocations" && r[0] === "lantern"),
     );
     // If the route does not exist in the RoutePermissions object, default to false;
     if (!routePermission) return false;
