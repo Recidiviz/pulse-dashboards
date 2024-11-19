@@ -162,6 +162,9 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usMoOverdueRHPilot: {},
         enableSnooze: {},
         insightsOnboarding: {},
+        supervisorHomepage: {
+          activeTenants: ["US_TN"],
+        },
         supervisorHomepageWorkflows: {},
         nonOMSCriteria: {
           activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
